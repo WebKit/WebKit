@@ -41,9 +41,10 @@ namespace JSC {
 class BlockAllocator;
 class CopiedBlock;
 class CopyWorkListSegment;
+template <typename T> class GCArraySegment;
 class HandleBlock;
+class JSCell;
 class VM;
-class MarkStackSegment;
 class MarkedBlock;
 class WeakBlock;
 
@@ -95,7 +96,7 @@ private:
     SuperRegion m_superRegion;
     RegionSet m_copiedRegionSet;
     RegionSet m_markedRegionSet;
-    // WeakBlocks and MarkStackSegments use the same RegionSet since they're the same size.
+    // WeakBlocks and GCArraySegments use the same RegionSet since they're the same size.
     RegionSet m_fourKBBlockRegionSet;
     RegionSet m_workListRegionSet;
 
@@ -235,7 +236,7 @@ inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<WeakBlock>()
 }
 
 template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<MarkStackSegment>()
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<GCArraySegment<const JSCell*>>()
 {
     return m_fourKBBlockRegionSet;
 }
@@ -271,7 +272,7 @@ inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<WeakBlo
 }
 
 template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkStackSegment>>()
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<GCArraySegment<const JSCell*>>>()
 {
     return m_fourKBBlockRegionSet;
 }

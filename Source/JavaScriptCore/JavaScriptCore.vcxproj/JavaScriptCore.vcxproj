@@ -1008,6 +1008,8 @@
     <ClInclude Include="..\heap\CopyWriteBarrier.h" />
     <ClInclude Include="..\heap\DeferGC.h" />
     <ClInclude Include="..\heap\DelayedReleaseScope.h" />
+    <ClInclude Include="..\heap\GCSegmentedArray.h" />
+    <ClInclude Include="..\heap\GCSegmentedArrayInlines.h" />
     <ClInclude Include="..\heap\GCAssertions.h" />
     <ClInclude Include="..\heap\GCThread.h" />
     <ClInclude Include="..\heap\GCThreadSharedData.h" />
@@ -1034,7 +1036,6 @@
     <ClInclude Include="..\heap\MarkedBlockSet.h" />
     <ClInclude Include="..\heap\MarkedSpace.h" />
     <ClInclude Include="..\heap\MarkStack.h" />
-    <ClInclude Include="..\heap\MarkStackInlines.h" />
     <ClInclude Include="..\heap\RecursiveAllocationScope.h" />
     <ClInclude Include="..\heap\Region.h" />
     <ClInclude Include="..\heap\SlotVisitor.h" />

@@ -514,6 +514,8 @@ javascriptcore_sources += \
     Source/JavaScriptCore/heap/DeferGC.cpp \
 	Source/JavaScriptCore/heap/DeferGC.h \
     Source/JavaScriptCore/heap/DelayedReleaseScope.h \
+	Source/JavaScriptCore/heap/GCSegmentedArray.h \
+	Source/JavaScriptCore/heap/GCSegmentedArrayInlines.h \
 	Source/JavaScriptCore/heap/GCAssertions.h \
 	Source/JavaScriptCore/heap/GCIncomingRefCounted.h \
 	Source/JavaScriptCore/heap/GCIncomingRefCountedInlines.h \
@@ -556,7 +558,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/MachineStackMarker.h \
 	Source/JavaScriptCore/heap/MarkStack.cpp \
 	Source/JavaScriptCore/heap/MarkStack.h \
-	Source/JavaScriptCore/heap/MarkStackInlines.h \
 	Source/JavaScriptCore/heap/HeapRootVisitor.h \
 	Source/JavaScriptCore/heap/MarkedAllocator.cpp \
 	Source/JavaScriptCore/heap/MarkedAllocator.h \

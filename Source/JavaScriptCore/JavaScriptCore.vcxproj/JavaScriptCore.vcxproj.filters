@@ -1655,6 +1655,12 @@
     <ClInclude Include="..\heap\DeferGC.h">
       <Filter>heap</Filter>
     </ClInclude>
+    <ClInclude Include="..\heap\GCSegmentedArray.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap\GCSegmentedArrayInlines.h">
+      <Filter>heap</Filter>
+    </ClInclude>
     <ClInclude Include="..\heap\GCAssertions.h">
       <Filter>heap</Filter>
     </ClInclude>
@@ -1731,9 +1737,6 @@
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\MarkStack.h">
-      <Filter>heap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\heap\MarkStackInlines.h">
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\RecursiveAllocationScope.h">

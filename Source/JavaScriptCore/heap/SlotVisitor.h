@@ -28,8 +28,9 @@
 
 #include "CopyToken.h"
 #include "HandleTypes.h"
-#include "MarkStackInlines.h"
+#include "MarkStack.h"
 
+#include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace JSC {
@@ -37,9 +38,11 @@ namespace JSC {
 class ConservativeRoots;
 class GCThreadSharedData;
 class Heap;
-template<typename T> class Weak;
-template<typename T> class WriteBarrierBase;
 template<typename T> class JITWriteBarrier;
+class UnconditionalFinalizer;
+template<typename T> class Weak;
+class WeakReferenceHarvester;
+template<typename T> class WriteBarrierBase;
 
 class SlotVisitor {
     WTF_MAKE_NONCOPYABLE(SlotVisitor);

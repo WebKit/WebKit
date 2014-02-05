@@ -25,90 +25,12 @@
 
 #include "config.h"
 #include "MarkStack.h"
-#include "MarkStackInlines.h"
-
-#include "ConservativeRoots.h"
-#include "CopiedSpace.h"
-#include "CopiedSpaceInlines.h"
-#include "Heap.h"
-#include "JSArray.h"
-#include "JSCell.h"
-#include "JSObject.h"
-
-#include "SlotVisitorInlines.h"
-#include "Structure.h"
-#include "WriteBarrier.h"
-#include <wtf/Atomics.h>
-#include <wtf/DataLog.h>
-#include <wtf/MainThread.h>
 
 namespace JSC {
 
-COMPILE_ASSERT(MarkStackSegment::blockSize == WeakBlock::blockSize, blockSizeMatch);
-
 MarkStackArray::MarkStackArray(BlockAllocator& blockAllocator)
-    : m_blockAllocator(blockAllocator)
-    , m_top(0)
-    , m_numberOfSegments(0)
+    : GCSegmentedArray<const JSCell*>(blockAllocator)
 {
-    m_segments.push(MarkStackSegment::create(m_blockAllocator.allocate<MarkStackSegment>()));
-    m_numberOfSegments++;
-}
-
-MarkStackArray::~MarkStackArray()
-{
-    ASSERT(m_numberOfSegments == 1);
-    ASSERT(m_segments.size() == 1);
-    m_blockAllocator.deallocate(MarkStackSegment::destroy(m_segments.removeHead()));
-    m_numberOfSegments--;
-    ASSERT(!m_numberOfSegments);
-    ASSERT(!m_segments.size());
-}
-
-void MarkStackArray::clear()
-{
-    if (!m_segments.head())
-        return;
-    MarkStackSegment* next;
-    for (MarkStackSegment* current = m_segments.head(); current->next(); current = next) {
-        next = current->next();
-        m_segments.remove(current);
-        m_blockAllocator.deallocate(MarkStackSegment::destroy(current));
-    }
-    m_top = 0;
-    m_numberOfSegments = 1;
-#if !ASSERT_DISABLED
-    m_segments.head()->m_top = 0;
-#endif
-}
-
-void MarkStackArray::expand()
-{
-    ASSERT(m_segments.head()->m_top == s_segmentCapacity);
-    
-    MarkStackSegment* nextSegment = MarkStackSegment::create(m_blockAllocator.allocate<MarkStackSegment>());
-    m_numberOfSegments++;
-    
-#if !ASSERT_DISABLED
-    nextSegment->m_top = 0;
-#endif
-
-    m_segments.push(nextSegment);
-    setTopForEmptySegment();
-    validatePrevious();
-}
-
-bool MarkStackArray::refill()
-{
-    validatePrevious();
-    if (top())
-        return true;
-    m_blockAllocator.deallocate(MarkStackSegment::destroy(m_segments.removeHead()));
-    ASSERT(m_numberOfSegments > 1);
-    m_numberOfSegments--;
-    setTopForFullSegment();
-    validatePrevious();
-    return true;
 }
 
 void MarkStackArray::donateSomeCellsTo(MarkStackArray& other)
@@ -133,11 +55,11 @@ void MarkStackArray::donateSomeCellsTo(MarkStackArray& other)
 
     // Remove our head and the head of the other list before we start moving segments around.
     // We'll add them back on once we're done donating.
-    MarkStackSegment* myHead = m_segments.removeHead();
-    MarkStackSegment* otherHead = other.m_segments.removeHead();
+    GCArraySegment<const JSCell*>* myHead = m_segments.removeHead();
+    GCArraySegment<const JSCell*>* otherHead = other.m_segments.removeHead();
 
     while (segmentsToDonate--) {
-        MarkStackSegment* current = m_segments.removeHead();
+        GCArraySegment<const JSCell*>* current = m_segments.removeHead();
         ASSERT(current);
         ASSERT(m_numberOfSegments > 1);
         other.m_segments.push(current);
@@ -165,8 +87,8 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other, size_t idleThread
     // If other has an entire segment, steal it and return.
     if (other.m_numberOfSegments > 1) {
         // Move the heads of the lists aside. We'll push them back on after.
-        MarkStackSegment* otherHead = other.m_segments.removeHead();
-        MarkStackSegment* myHead = m_segments.removeHead();
+        GCArraySegment<const JSCell*>* otherHead = other.m_segments.removeHead();
+        GCArraySegment<const JSCell*>* myHead = m_segments.removeHead();
 
         ASSERT(other.m_segments.head()->m_top == s_segmentCapacity);
 
@@ -186,30 +108,6 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other, size_t idleThread
     size_t numberOfCellsToSteal = (other.size() + idleThreadCount - 1) / idleThreadCount; // Round up to steal 1 / 1.
     while (numberOfCellsToSteal-- > 0 && other.canRemoveLast())
         append(other.removeLast());
-}
-
-void MarkStackArray::fillVector(Vector<const JSCell*>& vector)
-{
-    ASSERT(vector.size() == size());
-
-    MarkStackSegment* currentSegment = m_segments.head();
-    if (!currentSegment)
-        return;
-
-    unsigned count = 0;
-    for (unsigned i = 0; i < m_top; ++i) {
-        ASSERT(currentSegment->data()[i]);
-        vector[count++] = currentSegment->data()[i];
-    }
-
-    currentSegment = currentSegment->next();
-    while (currentSegment) {
-        for (unsigned i = 0; i < s_segmentCapacity; ++i) {
-            ASSERT(currentSegment->data()[i]);
-            vector[count++] = currentSegment->data()[i];
-        }
-        currentSegment = currentSegment->next();
-    }
 }
 
 } // namespace JSC

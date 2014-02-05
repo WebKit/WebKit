@@ -1,3 +1,50 @@
+2014-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Refactor MarkStackArray to allow more than JSCells to be stored
+        https://bugs.webkit.org/show_bug.cgi?id=128203
+
+        Reviewed by Geoffrey Garen.
+
+        This patch refactors MarkStackArray into a separate template class named GCSegmentedArray.
+        This class allows subclassing to add functionality that only MarkStackArray wants.
+        Since it uses the JSC BlockAllocator instead of FastMalloc, this class can be used during 
+        conservative stack scanning, which disallows using FastMalloc.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/BlockAllocator.h:
+        * heap/GCSegmentedArray.h: Added.
+        (JSC::GCArraySegment::GCArraySegment):
+        (JSC::GCArraySegment::data):
+        * heap/GCSegmentedArrayInlines.h: Added.
+        (JSC::GCSegmentedArray<T>::GCSegmentedArray):
+        (JSC::GCSegmentedArray<T>::~GCSegmentedArray):
+        (JSC::GCSegmentedArray<T>::clear):
+        (JSC::GCSegmentedArray<T>::expand):
+        (JSC::GCSegmentedArray<T>::refill):
+        (JSC::GCSegmentedArray<T>::fillVector):
+        (JSC::GCArraySegment<T>::create):
+        (JSC::GCSegmentedArray<T>::postIncTop):
+        (JSC::GCSegmentedArray<T>::preDecTop):
+        (JSC::GCSegmentedArray<T>::setTopForFullSegment):
+        (JSC::GCSegmentedArray<T>::setTopForEmptySegment):
+        (JSC::GCSegmentedArray<T>::top):
+        (JSC::GCSegmentedArray<T>::validatePrevious):
+        (JSC::GCSegmentedArray<T>::append):
+        (JSC::GCSegmentedArray<T>::canRemoveLast):
+        (JSC::GCSegmentedArray<T>::removeLast):
+        (JSC::GCSegmentedArray<T>::isEmpty):
+        (JSC::GCSegmentedArray<T>::size):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackArray::MarkStackArray):
+        (JSC::MarkStackArray::~MarkStackArray):
+        (JSC::MarkStackArray::donateSomeCellsTo):
+        (JSC::MarkStackArray::stealSomeCellsFrom):
+        * heap/MarkStack.h:
+        * heap/MarkStackInlines.h:
+
 2014-02-04  Anders Carlsson  <andersca@apple.com>
 
         Rename the substring sharing StringImpl::create variants to better indicate what they do
