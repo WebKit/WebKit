@@ -728,10 +728,48 @@ bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGeneratorNumber(const IDBIden
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey&, bool& keyExists)
+bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyData& keyData, bool& keyExists)
 {
-    // FIXME: When Get support is implemented, we need to implement this also (<rdar://problem/15779644>)
-    return false;
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    keyExists = false;
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to see if key exists in objectstore without established, in-progress transaction");
+        return false;
+    }
+
+    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
+    if (!keyBuffer) {
+        LOG_ERROR("Unable to serialize IDBKey to check for existence");
+        return false;
+    }
+
+    SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT key FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT) LIMIT 1;"));
+    if (sql.prepare() != SQLResultOk
+        || sql.bindInt64(1, objectStoreID) != SQLResultOk
+        || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLResultOk) {
+        LOG_ERROR("Could not get record from object store %lli from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
+    }
+
+    int sqlResult = sql.step();
+    if (sqlResult == SQLResultOk || sqlResult == SQLResultDone) {
+        keyExists = false;
+        return true;
+    }
+
+    if (sqlResult != SQLResultRow) {
+        // There was an error fetching the record from the database.
+        LOG_ERROR("Could not check if key exists in object store (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
+    }
+
+    keyExists = true;
+    return true;
 }
 
 bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey& key, const uint8_t* valueBuffer, size_t valueSize)
@@ -841,6 +879,26 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& tr
     transaction->closeCursor(*cursor);
 
     return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::deleteRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyData& keyData)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to get count from database without an established, in-progress transaction");
+        return false;
+    }
+
+    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+        LOG_ERROR("Attempt to delete range from a read-only transaction");
+        return false;
+    }
+
+    return deleteRecord(*transaction, objectStoreID, keyData);
 }
 
 bool UniqueIDBDatabaseBackingStoreSQLite::deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData)
@@ -964,7 +1022,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBI
     }
 
     {
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT value FROM Records WHERE objectStoreID = ? AND key = ?;"));
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT value FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"));
         if (sql.prepare() != SQLResultOk
             || sql.bindInt64(1, objectStoreID) != SQLResultOk
             || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLResultOk) {
@@ -1016,7 +1074,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const
     }
 
     {
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT value FROM Records WHERE objectStoreID = ? AND key >= ? AND key <= ? ORDER BY key;"));
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT value FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;"));
         if (sql.prepare() != SQLResultOk
             || sql.bindInt64(1, objectStoreID) != SQLResultOk
             || sql.bindBlob(2, lowerBuffer->data(), lowerBuffer->size()) != SQLResultOk

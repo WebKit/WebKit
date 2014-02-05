@@ -249,7 +249,7 @@ bool IDBRequest::shouldEnqueueEvent() const
 
 void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
 {
-    LOG(StorageAPI, "IDBRequest::onError()");
+    LOG(StorageAPI, "IDBRequest::onError() (%s) '%s'", error->name().utf8().data(), error->message().utf8().data());
     if (!shouldEnqueueEvent())
         return;
 

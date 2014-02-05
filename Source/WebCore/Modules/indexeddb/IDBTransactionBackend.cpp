@@ -116,7 +116,13 @@ void IDBTransactionBackend::abort()
 
 void IDBTransactionBackend::abort(PassRefPtr<IDBDatabaseError> error)
 {
-    LOG(StorageAPI, "IDBTransactionBackend::abort");
+#ifndef NDEBUG
+    if (error)
+        LOG(StorageAPI, "IDBTransactionBackend::abort - (%s) %s", error->name().utf8().data(), error->message().utf8().data());
+    else
+        LOG(StorageAPI, "IDBTransactionBackend::abort (no error)");
+#endif
+
     if (m_state == Finished)
         return;
 

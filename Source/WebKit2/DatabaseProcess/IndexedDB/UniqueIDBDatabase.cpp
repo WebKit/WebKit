@@ -837,7 +837,7 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
 
     if (putMode == IDBDatabaseBackend::AddOnly) {
         bool keyExists;
-        if (!m_backingStore->keyExistsInObjectStore(transaction, objectStoreMetadata.id, *key, keyExists)) {
+        if (!m_backingStore->keyExistsInObjectStore(transaction, objectStoreMetadata.id, keyData, keyExists)) {
             postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error checking for key existence")));
             return;
         }
@@ -845,6 +845,13 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
             postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::ConstraintError, ASCIILiteral("Key already exists in the object store")));
             return;
         }
+    }
+
+    // The spec says that even if we're about to overwrite the record, perform the steps to delete it first.
+    // This is important because formally deleting it from from the object store also removes it from the appropriate indexes.
+    if (!m_backingStore->deleteRecord(transaction, objectStoreMetadata.id, keyData)) {
+        postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Replacing an existing key in backing store, unable to delete previous record.")));
+        return;
     }
 
     if (!m_backingStore->putRecord(transaction, objectStoreMetadata.id, *key, value.data(), value.size())) {

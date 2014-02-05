@@ -1,3 +1,28 @@
+2014-02-04  Brady Eidson  <beidson@apple.com>
+
+        IDB: indexeddb/mozilla/add-twice-failure.html fails
+        <rdar://problem/15982569> and https://bugs.webkit.org/show_bug.cgi?id=128208
+
+        Reviewed by Tim Horton.
+
+        Note that besides making indexeddb/mozilla/add-twice-failure.html pass this also makes some other tests
+        pass and also improves the failure modes of others.
+
+        A full accounting of which tests pass is coming soon.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::putRecordInBackingStore): After checking for existence of the key and before
+          adding the record, remove any previous record. (Defined by the spec, found exploring this test).
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore): Implement this.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteRecord): Add a form to be used as mentioned above in
+          UniqueIDBDatabase::putRecordInBackingStore.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore): CAST the key argument properly.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore): Ditto.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
 2014-02-04  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose more WKWebProcessPlugInNodeHandle properties

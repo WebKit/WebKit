@@ -1,3 +1,23 @@
+2014-02-04  Brady Eidson  <beidson@apple.com>
+
+        IDB: indexeddb/mozilla/add-twice-failure.html fails
+        <rdar://problem/15982569> and https://bugs.webkit.org/show_bug.cgi?id=128208
+
+        Reviewed by Tim Horton.
+
+        Covered specifically by indexeddb/mozilla/add-twice-failure.html and a handful of others.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onError): Improve logging.
+
+        * Modules/indexeddb/IDBTransactionBackend.cpp:
+        (WebCore::IDBTransactionBackend::abort): Improve logging.
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::PutOperation::perform): Don’t abort the transaction when an error occurred.
+
+        * WebCore.exp.in:
+
 2014-02-04  Yoav Weiss  <yoav@yoav.ws>
 
         Use srcset's pixel density to determine intrinsic size
