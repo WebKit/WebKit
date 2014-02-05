@@ -392,6 +392,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/ImageOptions.h \
 	Source/WebKit2/Shared/ImmutableDictionary.cpp \
 	Source/WebKit2/Shared/ImmutableDictionary.h \
+	Source/WebKit2/Shared/InteractionInformationAtPosition.h \
 	Source/WebKit2/Shared/LayerTreeContext.h \
 	Source/WebKit2/Shared/MutableDictionary.cpp \
 	Source/WebKit2/Shared/MutableDictionary.h \
@@ -510,6 +511,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebTouchEvent.cpp \
 	Source/WebKit2/Shared/WebUserContentURLPattern.h \
 	Source/WebKit2/Shared/WebWheelEvent.cpp \
+	Source/WebKit2/UIProcess/API/APILoaderClient.h \
+	Source/WebKit2/UIProcess/API/APIPolicyClient.h \
 	Source/WebKit2/UIProcess/API/C/gtk/WKAPICastGtk.h \
 	Source/WebKit2/UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp \
 	Source/WebKit2/UIProcess/API/C/gtk/WKFullScreenClientGtk.h \
@@ -615,7 +618,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKPluginSiteDataManager.h \
 	Source/WebKit2/UIProcess/API/C/WKPluginSiteDataManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKPreferences.cpp \
-	Source/WebKit2/UIProcess/API/C/WKPreferences.h \
+	Source/WebKit2/UIProcess/API/C/WKPreferencesRef.h \
 	Source/WebKit2/UIProcess/API/C/WKPreferencesPrivate.h \
 	Source/WebKit2/UIProcess/API/C/WKProtectionSpace.cpp \
 	Source/WebKit2/UIProcess/API/C/WKProtectionSpace.h \

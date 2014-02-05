@@ -1835,6 +1835,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBHistograms.h \
 	Source/WebCore/Modules/indexeddb/IDBIndex.cpp \
 	Source/WebCore/Modules/indexeddb/IDBIndex.h \
+	Source/WebCore/Modules/indexeddb/IDBIndexMetadata.h \
 	Source/WebCore/Modules/indexeddb/IDBKey.cpp \
 	Source/WebCore/Modules/indexeddb/IDBKey.h \
 	Source/WebCore/Modules/indexeddb/IDBKeyData.cpp \
@@ -1849,6 +1850,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBLevelDBCoding.h \
 	Source/WebCore/Modules/indexeddb/IDBObjectStore.cpp \
 	Source/WebCore/Modules/indexeddb/IDBObjectStore.h \
+	Source/WebCore/Modules/indexeddb/IDBObjectStoreMetadata.h \
 	Source/WebCore/Modules/indexeddb/IDBOpenDBRequest.cpp \
 	Source/WebCore/Modules/indexeddb/IDBOpenDBRequest.h \
 	Source/WebCore/Modules/indexeddb/IDBOperation.h \
@@ -5866,6 +5868,7 @@ platform_sources += \
 	Source/WebCore/platform/leveldb/LevelDBWriteBatch.cpp \
 	Source/WebCore/platform/network/soup/GOwnPtrSoup.cpp \
 	Source/WebCore/platform/network/soup/GOwnPtrSoup.h \
+	Source/WebCore/platform/network/soup/GUniquePtrSoup.h \
 	Source/WebCore/platform/network/soup/ProxyServerSoup.cpp \
 	Source/WebCore/platform/network/soup/ResourceError.h \
 	Source/WebCore/platform/network/soup/ResourceErrorSoup.cpp \
@@ -6184,7 +6187,7 @@ platformgtk_sources += \
 	Source/WebCore/platform/gtk/FileSystemGtk.cpp \
 	Source/WebCore/platform/gtk/GRefPtrGtk.cpp \
 	Source/WebCore/platform/gtk/GRefPtrGtk.h \
-	Source/WebCore/platform/gtk/GUniquePtr.h \
+	Source/WebCore/platform/gtk/GUniquePtrGtk.h \
 	Source/WebCore/platform/gtk/GtkClickCounter.cpp \
 	Source/WebCore/platform/gtk/GtkClickCounter.h \
 	Source/WebCore/platform/gtk/GtkInputMethodFilter.cpp \
@@ -6337,7 +6340,6 @@ endif
 if USE_ACCELERATED_COMPOSITING
 if USE_TEXTURE_MAPPER_GL
 webcore_sources += \
-	Source/WebCore/platform/graphics/filters/texmap/TextureMapperPlatformCompiledProgram.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperGL.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperGL.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperShaderProgram.cpp \

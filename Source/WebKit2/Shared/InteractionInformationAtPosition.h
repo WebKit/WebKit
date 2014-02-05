@@ -28,8 +28,11 @@
 
 #include "ArgumentCoders.h"
 #include <WebCore/IntPoint.h>
-#include <WebCore/SelectionRect.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(IOS)
+#include <WebCore/SelectionRect.h>
+#endif
 
 namespace WebKit {
 

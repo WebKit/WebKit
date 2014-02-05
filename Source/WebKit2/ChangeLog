@@ -1,3 +1,10 @@
+2014-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am:
+        * Shared/InteractionInformationAtPosition.h:
+
 2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(JAVASCRIPT_DEBUGGER) leftovers

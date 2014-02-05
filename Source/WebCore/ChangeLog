@@ -1,3 +1,9 @@
+2014-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am:
+
 2014-02-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Partially revert r162947 so that Document::topDocument() again Walk over the chain of
