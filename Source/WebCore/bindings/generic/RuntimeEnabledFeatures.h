@@ -308,14 +308,7 @@ private:
     bool m_isFontLoadEventsEnabled;
 #endif
 
-#ifndef CLASS_IF_GCC
-#if COMPILER(GCC)
-#define CLASS_IF_GCC class
-#else
-#define CLASS_IF_GCC
-#endif
-#endif
-    friend CLASS_IF_GCC NeverDestroyed<RuntimeEnabledFeatures>;
+    friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };
 
 } // namespace WebCore

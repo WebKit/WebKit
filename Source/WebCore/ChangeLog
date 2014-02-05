@@ -1,3 +1,17 @@
+2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove CLASS_IF_GCC workarounds
+        https://bugs.webkit.org/show_bug.cgi?id=128207
+
+        Reviewed by Anders Carlsson.
+
+        Remove the CLASS_IF_GCC macro that was defined to 'class' when using the GCC compiler.
+        The macro was then used in class friendship declarations for templated classes to avoid
+        corner-case compiler failures on both GCC pre-4.7 and MSVC pre-2013. The problematic
+        versions of both compilers are no longer supported, so this macro is good to go.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+
 2014-02-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         MediaPlayerPrivateGStreamerBase should have virtual destructor

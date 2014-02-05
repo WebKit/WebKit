@@ -35,15 +35,9 @@ enum AllocationEffort { AllocationCanFail, AllocationMustSucceed };
 
 class Region;
 
-#if COMPILER(GCC)
-#define CLASS_IF_GCC class
-#else
-#define CLASS_IF_GCC
-#endif
-
 template<typename T>
 class HeapBlock : public DoublyLinkedListNode<T> {
-    friend CLASS_IF_GCC DoublyLinkedListNode<T>;
+    friend class WTF::DoublyLinkedListNode<T>;
 public:
     static HeapBlock* destroy(HeapBlock* block) WARN_UNUSED_RETURN
     {
