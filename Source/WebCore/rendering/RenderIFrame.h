@@ -39,13 +39,9 @@ public:
     HTMLIFrameElement& iframeElement() const;
 
     bool flattenFrame() const;
-    bool isSeamless() const;
 
 private:
     void frameOwnerElement() const = delete;
-
-    virtual LayoutUnit minPreferredLogicalWidth() const override;
-    virtual LayoutUnit maxPreferredLogicalWidth() const override;
 
     virtual bool shouldComputeSizeAsReplaced() const override;
     virtual bool isInlineBlockOrInlineTable() const override;
@@ -62,8 +58,6 @@ private:
 #endif
 
     virtual bool requiresLayer() const override;
-
-    void layoutSeamlessly();
 
     RenderView* contentRootRenderer() const;
 };

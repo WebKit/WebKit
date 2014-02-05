@@ -1,3 +1,103 @@
+2014-02-04  Andreas Kling  <akling@apple.com>
+
+        Remove <iframe seamless> support.
+        <https://webkit.org/b/128213>
+
+        Rubber-stamped by Antti Koivisto.
+
+        * fast/frames/seamless/resources/css-cascade-child.html: Removed.
+        * fast/frames/seamless/resources/done.html: Removed.
+        * fast/frames/seamless/resources/nested-seamless.html: Removed.
+        * fast/frames/seamless/resources/percent-square.html: Removed.
+        * fast/frames/seamless/resources/quirks-square.html: Removed.
+        * fast/frames/seamless/resources/span.html: Removed.
+        * fast/frames/seamless/resources/square.html: Removed.
+        * fast/frames/seamless/resources/two-inline-blocks.html: Removed.
+        * fast/frames/seamless/seamless-basic-expected.txt: Removed.
+        * fast/frames/seamless/seamless-basic.html: Removed.
+        * fast/frames/seamless/seamless-body-margin-expected.txt: Removed.
+        * fast/frames/seamless/seamless-body-margin.html: Removed.
+        * fast/frames/seamless/seamless-border-padding-expected.txt: Removed.
+        * fast/frames/seamless/seamless-border-padding.html: Removed.
+        * fast/frames/seamless/seamless-contenteditable-not-inherited-expected.txt: Removed.
+        * fast/frames/seamless/seamless-contenteditable-not-inherited.html: Removed.
+        * fast/frames/seamless/seamless-css-cascade-expected.txt: Removed.
+        * fast/frames/seamless/seamless-css-cascade.html: Removed.
+        * fast/frames/seamless/seamless-custom-font-pruning-crash-expected.txt: Removed.
+        * fast/frames/seamless/seamless-custom-font-pruning-crash.html: Removed.
+        * fast/frames/seamless/seamless-designMode-expected.txt: Removed.
+        * fast/frames/seamless/seamless-designMode.html: Removed.
+        * fast/frames/seamless/seamless-document-write-expected.txt: Removed.
+        * fast/frames/seamless/seamless-document-write.html: Removed.
+        * fast/frames/seamless/seamless-float-expected.txt: Removed.
+        * fast/frames/seamless/seamless-float.html: Removed.
+        * fast/frames/seamless/seamless-form-get-expected.txt: Removed.
+        * fast/frames/seamless/seamless-form-get-named-expected.txt: Removed.
+        * fast/frames/seamless/seamless-form-get-named.html: Removed.
+        * fast/frames/seamless/seamless-form-get-override-expected.txt: Removed.
+        * fast/frames/seamless/seamless-form-get-override.html: Removed.
+        * fast/frames/seamless/seamless-form-get.html: Removed.
+        * fast/frames/seamless/seamless-form-post-expected.txt: Removed.
+        * fast/frames/seamless/seamless-form-post-named-expected.txt: Removed.
+        * fast/frames/seamless/seamless-form-post-named.html: Removed.
+        * fast/frames/seamless/seamless-form-post-override-expected.txt: Removed.
+        * fast/frames/seamless/seamless-form-post-override.html: Removed.
+        * fast/frames/seamless/seamless-form-post.html: Removed.
+        * fast/frames/seamless/seamless-hyperlink-expected.txt: Removed.
+        * fast/frames/seamless/seamless-hyperlink-named-expected.txt: Removed.
+        * fast/frames/seamless/seamless-hyperlink-named.html: Removed.
+        * fast/frames/seamless/seamless-hyperlink-override-expected.txt: Removed.
+        * fast/frames/seamless/seamless-hyperlink-override.html: Removed.
+        * fast/frames/seamless/seamless-hyperlink.html: Removed.
+        * fast/frames/seamless/seamless-inherited-document-style-expected.txt: Removed.
+        * fast/frames/seamless/seamless-inherited-document-style.html: Removed.
+        * fast/frames/seamless/seamless-inherited-origin-expected.txt: Removed.
+        * fast/frames/seamless/seamless-inherited-origin.html: Removed.
+        * fast/frames/seamless/seamless-inline-expected.txt: Removed.
+        * fast/frames/seamless/seamless-inline.html: Removed.
+        * fast/frames/seamless/seamless-min-max-expected.txt: Removed.
+        * fast/frames/seamless/seamless-min-max.html: Removed.
+        * fast/frames/seamless/seamless-nested-crash-expected.txt: Removed.
+        * fast/frames/seamless/seamless-nested-crash.html: Removed.
+        * fast/frames/seamless/seamless-nested-expected.txt: Removed.
+        * fast/frames/seamless/seamless-nested.html: Removed.
+        * fast/frames/seamless/seamless-percent-height-expected.txt: Removed.
+        * fast/frames/seamless/seamless-percent-height.html: Removed.
+        * fast/frames/seamless/seamless-quirks-expected.txt: Removed.
+        * fast/frames/seamless/seamless-quirks.html: Removed.
+        * fast/frames/seamless/seamless-sandbox-flag-expected.txt: Removed.
+        * fast/frames/seamless/seamless-sandbox-flag.html: Removed.
+        * fast/frames/seamless/seamless-sandbox-srcdoc-expected.txt: Removed.
+        * fast/frames/seamless/seamless-sandbox-srcdoc.html: Removed.
+        * fast/frames/seamless/seamless-srcdoc-expected.txt: Removed.
+        * fast/frames/seamless/seamless-srcdoc.html: Removed.
+        * fast/frames/seamless/seamless-window-location-expected.txt: Removed.
+        * fast/frames/seamless/seamless-window-location-href-expected.txt: Removed.
+        * fast/frames/seamless/seamless-window-location-href.html: Removed.
+        * fast/frames/seamless/seamless-window-location-replace-expected.txt: Removed.
+        * fast/frames/seamless/seamless-window-location-replace.html: Removed.
+        * fast/frames/seamless/seamless-window-location-sandbox-expected.txt: Removed.
+        * fast/frames/seamless/seamless-window-location-sandbox.html: Removed.
+        * fast/frames/seamless/seamless-window-location.html: Removed.
+        * fast/frames/seamless/seamless-window-open-expected.txt: Removed.
+        * fast/frames/seamless/seamless-window-open-override-expected.txt: Removed.
+        * fast/frames/seamless/seamless-window-open-override.html: Removed.
+        * fast/frames/seamless/seamless-window-open.html: Removed.
+        * fast/multicol/resources/seamless.html: Removed.
+        * fast/multicol/seamless-flowed-through-columns-expected.html: Removed.
+        * fast/multicol/seamless-flowed-through-columns.html: Removed.
+        * fast/regions/resources/seamless.html: Removed.
+        * fast/regions/seamless-iframe-flowed-into-regions-expected.html: Removed.
+        * fast/regions/seamless-iframe-flowed-into-regions.html: Removed.
+        * http/tests/security/seamless/resources/square.html: Removed.
+        * http/tests/security/seamless/seamless-cross-origin-expected.txt: Removed.
+        * http/tests/security/seamless/seamless-cross-origin.html: Removed.
+        * http/tests/security/seamless/seamless-sandbox-srcdoc-expected.txt: Removed.
+        * http/tests/security/seamless/seamless-sandbox-srcdoc.html: Removed.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-02-04  Zalan Bujtas  <zalan@apple.com>
 
         And one more test to tag with ImageOnlyFailure.

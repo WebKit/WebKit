@@ -734,9 +734,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     pageSettings.setStandardFontFamily("sans");
     pageSettings.setHyperlinkAuditingEnabled(false);
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(true);
-#if ENABLE(IFRAME_SEAMLESS)
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().setSeamlessIFramesEnabled(true);
-#endif
     pageSettings.setScriptEnabled(true);
     pageSettings.setPluginsEnabled(true);
     pageSettings.setLocalStorageEnabled(true);

@@ -332,7 +332,6 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::setCSSRegionsEnabled(mainView(), true);
     DumpRenderTreeSupportEfl::setShouldTrackVisitedLinks(false);
     DumpRenderTreeSupportEfl::setTracksRepaints(mainFrame(), false);
-    DumpRenderTreeSupportEfl::setSeamlessIFramesEnabled(true);
     DumpRenderTreeSupportEfl::setWebAudioEnabled(mainView(), false);
 
     // Reset capacities for the memory cache for dead objects.

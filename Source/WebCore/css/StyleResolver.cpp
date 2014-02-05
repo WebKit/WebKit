@@ -1344,10 +1344,6 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         || style.hasFilter()))
         style.setTransformStyle3D(TransformStyle3DFlat);
 
-    // Seamless iframes behave like blocks. Map their display to inline-block when marked inline.
-    if (e && e->hasTagName(iframeTag) && style.display() == INLINE && toHTMLIFrameElement(e)->shouldDisplaySeamlessly())
-        style.setDisplay(INLINE_BLOCK);
-
     adjustGridItemPosition(style, parentStyle);
 
 #if ENABLE(SVG)

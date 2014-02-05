@@ -1,9 +1,0 @@
-Test that seamless iframes inherit styles from their parent iframe instead of using StyleResolver::styleForDocument defaults.
-PASS window.getComputedStyle(rootElement)['-webkit-rtl-ordering'] is "visual"
-PASS window.getComputedStyle(rootElement)['-webkit-locale'] is "en_US"
-PASS window.getComputedStyle(rootElement)['writing-mode'] is "lr"
-PASS window.getComputedStyle(rootElement)['direction'] is "rtl"
-PASS window.getComputedStyle(rootElement)['font'] is "normal normal normal 18px/normal Ahem"
-'-webkit-user-modify', on the other hand, should not be inherited.
-PASS window.getComputedStyle(rootElement)['-webkit-user-modify'] is "read-only"
-

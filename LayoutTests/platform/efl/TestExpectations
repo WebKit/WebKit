@@ -1483,9 +1483,6 @@ webkit.org/b/109951 compositing/transitions/transform-on-large-layer.html [ Imag
 # CUSTOM_ELEMENTS is not enabled.
 webkit.org/b/110958 fast/dom/custom [ Skip ]
 
-# Failing after r143256.
-webkit.org/b/110282 fast/regions/seamless-iframe-flowed-into-regions.html [ ImageOnlyFailure ]
-
 webkit.org/b/110316 svg/as-background-image/tiled-background-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/110338 fast/events/touch/emulate-touch-events.html [ Failure ]
@@ -1716,8 +1713,6 @@ webkit.org/b/118126 fast/flexbox/image-percent-max-height.html [ ImageOnlyFailur
 webkit.org/b/124656 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 
 webkit.org/b/124657 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
-
-webkit.org/b/124565 fast/multicol/seamless-flowed-through-columns.html [ ImageOnlyFailure ]
 
 webkit.org/b/124658 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 

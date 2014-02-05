@@ -113,8 +113,6 @@
 
 #define AllowContinuousSpellCheckingPreferenceKey "AllowContinuousSpellCheckingPreferenceKey" // default: true
 
-#define SeamlessIFramesPreferenceKey "SeamlessIFramesPreferenceKey" // default: false
-
 #define WebKitDOMPasteAllowedPreferenceKey "WebKitDOMPasteAllowedPreferenceKey" // default: false
 
 #define WebKitApplicationChromeModePreferenceKey "WebKitApplicationChromeMode" // default: false

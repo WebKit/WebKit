@@ -1,8 +1,0 @@
-PASS iframe1.seamless is true
-PASS iframe2.seamless is true
-PASS window.getComputedStyle(iframe1).width is "200px"
-PASS window.getComputedStyle(iframe1).height is "100px"
-PASS window.getComputedStyle(iframe2).width is "300px"
-PASS window.getComputedStyle(iframe2).height is "150px"
-
-

@@ -84,7 +84,6 @@ my (
     $geolocationSupport,
     $highDPICanvasSupport,
     $icondatabaseSupport,
-    $iframeSeamlessSupport,
     $indexedDatabaseSupport,
     $inputSpeechSupport,
     $inputTypeColorSupport,
@@ -281,9 +280,6 @@ my @features = (
 
     { option => "icon-database", desc => "Toggle Icondatabase support",
       define => "ENABLE_ICONDATABASE", default => !isIOSWebKit(), value => \$icondatabaseSupport },
-
-    { option => "iframe-seamless", desc => "Toggle iframe seamless attribute support",
-      define => "ENABLE_IFRAME_SEAMLESS", default => 1, value => \$iframeSeamlessSupport },
 
     { option => "indexed-database", desc => "Toggle Indexed Database support",
       define => "ENABLE_INDEXED_DATABASE", default => (isGtk() || isEfl()), value => \$indexedDatabaseSupport },

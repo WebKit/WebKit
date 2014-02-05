@@ -1,2 +1,0 @@
-PASS frames[0].frames[0].document.body.textContent is "DONE\n"
-

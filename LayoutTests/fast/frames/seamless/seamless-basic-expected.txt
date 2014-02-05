@@ -1,8 +1,0 @@
-Test basic seamless auto-sizing-to-content functionality.
-PASS iframe.seamless is true
-PASS window.getComputedStyle(iframe).display is "block"
-PASS window.getComputedStyle(iframe).width is "200px"
-PASS window.getComputedStyle(iframe).height is "100px"
-PASS window.getComputedStyle(iframe).height is "200px"
-PASS window.getComputedStyle(iframe).width is "100px"
-

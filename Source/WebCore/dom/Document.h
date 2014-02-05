@@ -834,9 +834,6 @@ public:
     // Returns 0 if this is the top level document.
     HTMLFrameOwnerElement* ownerElement() const;
 
-    HTMLIFrameElement* seamlessParentIFrame() const;
-    bool shouldDisplaySeamlesslyWithParent() const;
-
     // Used by DOM bindings; no direction known.
     String title() const { return m_title.string(); }
     void setTitle(const String&);
@@ -1209,7 +1206,6 @@ public:
     void didRemoveAllPendingStylesheet();
     void setNeedsNotifyRemoveAllPendingStylesheet() { m_needsNotifyRemoveAllPendingStylesheet = true; }
     void clearStyleResolver();
-    void notifySeamlessChildDocumentsOfStylesheetUpdate() const;
 
     bool inStyleRecalc() { return m_inStyleRecalc; }
 
@@ -1290,8 +1286,6 @@ private:
     void buildAccessKeyMap(TreeScope* root);
 
     void createStyleResolver();
-
-    void seamlessParentUpdatedStylesheets();
 
     void loadEventDelayTimerFired(Timer<Document>&);
 

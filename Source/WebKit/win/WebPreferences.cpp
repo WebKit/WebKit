@@ -1322,16 +1322,16 @@ HRESULT WebPreferences::setAllowContinuousSpellChecking(BOOL enabled)
     return S_OK;
 }
 
-HRESULT WebPreferences::areSeamlessIFramesEnabled(BOOL* enabled)
+HRESULT WebPreferences::unused7()
 {
-    *enabled = boolValueForKey(SeamlessIFramesPreferenceKey);
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
-HRESULT WebPreferences::setSeamlessIFramesEnabled(BOOL enabled)
+HRESULT WebPreferences::unused8()
 {
-    setBoolValue(SeamlessIFramesPreferenceKey, enabled);
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
 HRESULT WebPreferences::isDOMPasteAllowed(BOOL* enabled)

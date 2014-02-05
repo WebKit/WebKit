@@ -340,10 +340,6 @@ fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]
 # CSS Regions tests for region styling and scoped styles
 fast/regions/style-scoped
 
-# seamless iframes exhibit odd repaint issues in regions and columns, but only in DumpRenderTree
-fast/regions/seamless-iframe-flowed-into-regions.html
-fast/multicol/seamless-flowed-through-columns.html
-
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow
 fast/dom/HTMLTemplateElement/cycles-in-shadow.html

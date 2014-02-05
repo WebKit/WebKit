@@ -80,7 +80,6 @@ public:
     static bool isCommandEnabled(const Evas_Object* ewkView, const char* name);
     static void setCSSGridLayoutEnabled(const Evas_Object* ewkView, bool enabled);
     static void setCSSRegionsEnabled(const Evas_Object* ewkView, bool enabled);
-    static void setSeamlessIFramesEnabled(bool);
     static void setWebAudioEnabled(Evas_Object* ewkView, bool);
 
     static void forceLayout(Evas_Object* ewkFrame);

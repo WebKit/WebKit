@@ -206,8 +206,6 @@ public:
     void removeRenderCounter() { ASSERT(m_renderCounterCount > 0); m_renderCounterCount--; }
     bool hasRenderCounters() { return m_renderCounterCount; }
     
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
-
     IntRect pixelSnappedLayoutOverflowRect() const { return pixelSnappedIntRect(layoutOverflowRect()); }
 
     ImageQualityController& imageQualityController();
@@ -239,7 +237,7 @@ protected:
     virtual bool requiresColumns(int desiredColumnCount) const override;
     
 private:
-    bool initializeLayoutState(LayoutState&);
+    void initializeLayoutState(LayoutState&);
 
     virtual void computeColumnCountAndWidth() override;
     virtual ColumnInfo::PaginationUnit paginationUnit() const override;

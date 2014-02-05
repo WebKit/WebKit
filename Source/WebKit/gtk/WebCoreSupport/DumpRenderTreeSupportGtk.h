@@ -105,7 +105,6 @@ public:
     static void setCSSGridLayoutEnabled(WebKitWebView*, bool enabled);
     static void setCSSRegionsEnabled(WebKitWebView*, bool enabled);
     static void setExperimentalContentSecurityPolicyFeaturesEnabled(bool);
-    static void setSeamlessIFramesEnabled(bool);
     static void setShadowDOMEnabled(bool);
 
     static void deliverAllMutationsIfNecessary();

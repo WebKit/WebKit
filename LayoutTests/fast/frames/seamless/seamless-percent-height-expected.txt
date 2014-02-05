@@ -1,4 +1,0 @@
-Test that the 'initial containing block height' is 0 for seamless child documents.
-PASS window.getComputedStyle(iframe).width is "200px"
-PASS window.getComputedStyle(iframe).height is "0px"
-

@@ -329,11 +329,6 @@ void WKBundleSetShadowDOMEnabled(WKBundleRef bundleRef, bool enabled)
     toImpl(bundleRef)->setShadowDOMEnabled(enabled);
 }
 
-void WKBundleSetSeamlessIFramesEnabled(WKBundleRef bundleRef, bool enabled)
-{
-    toImpl(bundleRef)->setSeamlessIFramesEnabled(enabled);
-}
-
 void WKBundleDispatchPendingLoadRequests(WKBundleRef bundleRef)
 {
     toImpl(bundleRef)->dispatchPendingLoadRequests();

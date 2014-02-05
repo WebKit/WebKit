@@ -53,26 +53,14 @@ PassRef<RenderStyle> resolveForDocument(const Document& document)
 
     RenderView& renderView = *document.renderView();
 
-    // HTML5 states that seamless iframes should replace default CSS values
-    // with values inherited from the containing iframe element. However,
-    // some values (such as the case of designMode = "on") still need to
-    // be set by this "document style".
     auto documentStyle = RenderStyle::create();
-    bool seamlessWithParent = document.shouldDisplaySeamlesslyWithParent();
-    if (seamlessWithParent) {
-        RenderStyle* iframeStyle = document.seamlessParentIFrame()->renderStyle();
-        if (iframeStyle)
-            documentStyle.get().inheritFrom(iframeStyle);
-    }
 
-    // FIXME: It's not clear which values below we want to override in the seamless case!
     documentStyle.get().setDisplay(BLOCK);
-    if (!seamlessWithParent) {
-        documentStyle.get().setRTLOrdering(document.visuallyOrdered() ? VisualOrder : LogicalOrder);
-        documentStyle.get().setZoom(!document.printing() ? renderView.frame().pageZoomFactor() : 1);
-        documentStyle.get().setPageScaleTransform(renderView.frame().frameScaleFactor());
-        documentStyle.get().setLocale(document.contentLanguage());
-    }
+    documentStyle.get().setRTLOrdering(document.visuallyOrdered() ? VisualOrder : LogicalOrder);
+    documentStyle.get().setZoom(!document.printing() ? renderView.frame().pageZoomFactor() : 1);
+    documentStyle.get().setPageScaleTransform(renderView.frame().frameScaleFactor());
+    documentStyle.get().setLocale(document.contentLanguage());
+
     // This overrides any -webkit-user-modify inherited from the parent iframe.
     documentStyle.get().setUserModify(document.inDesignMode() ? READ_WRITE : READ_ONLY);
 #if PLATFORM(IOS)
@@ -104,10 +92,6 @@ PassRef<RenderStyle> resolveForDocument(const Document& document)
         if (renderView.hasColumns() || renderView.multiColumnFlowThread())
             renderView.updateColumnProgressionFromStyle(&documentStyle.get());
     }
-
-    // Seamless iframes want to inherit their font from their parent iframe, so early return before setting the font.
-    if (seamlessWithParent)
-        return documentStyle;
 
     const Settings& settings = renderView.frame().settings();
 

@@ -211,6 +211,6 @@ interface IWebPreferences : IUnknown
     HRESULT isCSSRegionsEnabled([out, retval] BOOL* enabled);
     HRESULT setCSSRegionsEnabled([in] BOOL enabled);
 
-    HRESULT areSeamlessIFramesEnabled([out, retval] BOOL* enabled);
-    HRESULT setSeamlessIFramesEnabled([in] BOOL enabled);
+    HRESULT unused7();
+    HRESULT unused8();
 }

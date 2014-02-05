@@ -872,7 +872,6 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
     preferences->setShouldPrintBackgrounds(TRUE);
     preferences->setCacheModel(WebCacheModelDocumentBrowser);
     preferences->setLoadsImagesAutomatically(TRUE);
-    preferences->setSeamlessIFramesEnabled(TRUE);
     preferences->setTextAreasAreResizable(TRUE);
 
     if (persistentUserStyleSheetLocation) {

@@ -98,9 +98,6 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 #if ENABLE(CSP_NEXT)
     , m_areExperimentalContentSecurityPolicyFeaturesEnabled(false)
 #endif
-#if ENABLE(IFRAME_SEAMLESS)
-    , m_areSeamlessIFramesEnabled(false)
-#endif
 #if ENABLE(FONT_LOAD_EVENTS)
     , m_isFontLoadEventsEnabled(false)
 #endif

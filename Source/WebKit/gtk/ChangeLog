@@ -1,3 +1,13 @@
+2014-02-04  Andreas Kling  <akling@apple.com>
+
+        Remove <iframe seamless> support.
+        <https://webkit.org/b/128213>
+
+        Rubber-stamped by Antti Koivisto.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2014-01-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Fixing the GTK build after r163232.

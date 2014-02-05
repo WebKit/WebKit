@@ -1358,8 +1358,6 @@ webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Timeout ]
 
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
 
-webkit.org/b/106125 fast/regions/seamless-iframe-flowed-into-regions.html [ ImageOnlyFailure ]
-
 webkit.org/b/110320 fast/dom/shadow/shadow-dom-event-dispatching-distributed-text-node.html [ Failure ]
 webkit.org/b/110320 fast/dom/shadow/shadow-dom-event-dispatching-text-node-in-shadow-root.html [ Failure ]
 
@@ -1493,8 +1491,6 @@ webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/tex
 
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Failure ]
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
-
-webkit.org/b/124565 fast/multicol/seamless-flowed-through-columns.html [ ImageOnlyFailure ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 

@@ -1,6 +1,0 @@
-Test that a quirks-mode document inside a seamless iframe sizes correctly.
-PASS iframe.seamless is true
-PASS iframe.contentDocument.compatMode is "BackCompat"
-PASS window.getComputedStyle(iframe).width is "200px"
-PASS window.getComputedStyle(iframe).height is "100px"
-

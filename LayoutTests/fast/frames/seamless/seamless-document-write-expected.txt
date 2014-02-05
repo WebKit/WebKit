@@ -1,3 +1,0 @@
-This test ensures that content written into a seamless iframe correctly inherits style.
-PASS window.getComputedStyle(framedElement).getPropertyCSSValue('color').cssText is "rgb(255, 0, 0)"
-

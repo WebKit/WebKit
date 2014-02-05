@@ -167,7 +167,6 @@ public:
     void setShadowDOMEnabled(bool);
     void setCSSRegionsEnabled(bool);
     void setCSSCompositingEnabled(bool);
-    void setSeamlessIFramesEnabled(bool);
     void dispatchPendingLoadRequests();
 
 private:

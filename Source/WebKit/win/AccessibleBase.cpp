@@ -904,8 +904,6 @@ static long MSAARole(AccessibilityRole role)
             return ROLE_SYSTEM_ALERT;
         case WebCore::DisclosureTriangleRole:
             return ROLE_SYSTEM_BUTTONDROPDOWN;
-        case WebCore::SeamlessWebAreaRole:
-            return ROLE_SYSTEM_GROUPING;
         case WebCore::IncrementorRole:
         case WebCore::SpinButtonRole:
             return ROLE_SYSTEM_SPINBUTTON;

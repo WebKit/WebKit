@@ -2263,16 +2263,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitMockScrollbarsEnabledPreferenceKey];
 }
 
-- (BOOL)seamlessIFramesEnabled
-{
-    return [self _boolValueForKey:WebKitSeamlessIFramesEnabledPreferenceKey];
-}
-
-- (void)setSeamlessIFramesEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitSeamlessIFramesEnabledPreferenceKey];
-}
-
 - (NSString *)pictographFontFamily
 {
     return [self _stringValueForKey: WebKitPictographFontPreferenceKey];

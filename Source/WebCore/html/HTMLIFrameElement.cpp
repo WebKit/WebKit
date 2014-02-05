@@ -41,7 +41,6 @@ inline HTMLIFrameElement::HTMLIFrameElement(const QualifiedName& tagName, Docume
     : HTMLFrameElementBase(tagName, document)
 {
     ASSERT(hasTagName(iframeTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, Document& document)
@@ -51,7 +50,7 @@ PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tag
 
 bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (name == widthAttr || name == heightAttr || name == alignAttr || name == frameborderAttr || name == seamlessAttr)
+    if (name == widthAttr || name == heightAttr || name == alignAttr || name == frameborderAttr)
         return true;
     return HTMLFrameElementBase::isPresentationAttribute(name);
 }
@@ -82,10 +81,6 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicSt
         setSandboxFlags(value.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(value, invalidTokens));
         if (!invalidTokens.isNull())
             document().addConsoleMessage(OtherMessageSource, ErrorMessageLevel, "Error while parsing the 'sandbox' attribute: " + invalidTokens);
-    } else if (name == seamlessAttr) {
-        // If we're adding or removing the seamless attribute, we need to force the content document to recalculate its StyleResolver.
-        if (contentDocument())
-            contentDocument()->styleResolverChanged(DeferRecalcStyle);
     } else
         HTMLFrameElementBase::parseAttribute(name, value);
 }
@@ -98,20 +93,6 @@ bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
 RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     return createRenderer<RenderIFrame>(*this, std::move(style));
-}
-
-bool HTMLIFrameElement::shouldDisplaySeamlessly() const
-{
-    return contentDocument() && contentDocument()->shouldDisplaySeamlesslyWithParent();
-}
-
-void HTMLIFrameElement::didRecalcStyle(Style::Change styleChange)
-{
-    if (!shouldDisplaySeamlessly())
-        return;
-    Document* childDocument = contentDocument();
-    if (styleChange >= Style::Inherit || childDocument->childNeedsStyleRecalc() || childDocument->needsStyleRecalc())
-        contentDocument()->recalcStyle(styleChange == Style::Detach ? Style::Force : styleChange);
 }
 
 }

@@ -1,3 +1,82 @@
+2014-02-04  Andreas Kling  <akling@apple.com>
+
+        Remove <iframe seamless> support.
+        <https://webkit.org/b/128213>
+
+        Seamless iframes were behind a runtime flag that we never enabled,
+        and the only other engine that implemented them (Blink) recently
+        removed them. Since the feature is very invasive, let's take it
+        out for now.
+
+        Rubber-stamped by Antti Koivisto.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::parentObjectIfExists):
+        (WebCore::AccessibilityRenderObject::parentObject):
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::populatePseudoTypeByNameMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * css/html.css:
+        (iframe):
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::implicitOpen):
+        (WebCore::Document::initSecurityContext):
+        * dom/Document.h:
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::SecurityContext):
+        * dom/SecurityContext.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::HTMLIFrameElement):
+        (WebCore::HTMLIFrameElement::isPresentationAttribute):
+        (WebCore::HTMLIFrameElement::parseAttribute):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLIFrameElement.idl:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::findFrameForNavigation):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::calculateScrollbarModesForLayout):
+        (WebCore::FrameView::isInChildFrameWithFrameFlattening):
+        * page/Location.cpp:
+        (WebCore::Location::setLocation):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::stretchesToViewport):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::shouldComputeSizeAsReplaced):
+        (WebCore::RenderIFrame::isInlineBlockOrInlineTable):
+        (WebCore::RenderIFrame::flattenFrame):
+        (WebCore::RenderIFrame::layout):
+        * rendering/RenderIFrame.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::initializeLayoutState):
+        (WebCore::RenderView::layout):
+        * rendering/RenderView.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveTree):
+
 2014-02-04  Tim Horton  <timothy_horton@apple.com>
 
         [iOS][wk2] Make development builds of WebKit work on device

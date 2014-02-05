@@ -1,7 +1,0 @@
-Test that floated seamless iframes 'shrink-wrap' their contents, as floated divs would.
-PASS window.getComputedStyle(iframe1).width is "150px"
-PASS window.getComputedStyle(iframe1).height is "50px"
-PASS window.getComputedStyle(iframe2).width is "100px"
-PASS window.getComputedStyle(iframe2).height is "100px"
-
-

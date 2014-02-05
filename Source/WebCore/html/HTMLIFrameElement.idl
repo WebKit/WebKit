@@ -27,7 +27,6 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect] attribute DOMString marginWidth;
     [Reflect] attribute DOMString name;
     [Reflect] attribute DOMString sandbox;
-    [Reflect, Conditional=IFRAME_SEAMLESS] attribute boolean seamless;
     [Reflect] attribute DOMString scrolling;
     [Reflect, URL] attribute DOMString src;
     [Reflect] attribute DOMString srcdoc;

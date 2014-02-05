@@ -1,9 +1,0 @@
-Test that sandbox disables nested seamless iframes correctly.
-PASS iframe.seamless is true
-PASS nestedFrame.seamless is true
-PASS window.getComputedStyle(iframe).display is "block"
-PASS window.getComputedStyle(iframe).borderWidth is "0px"
-PASS window.getComputedStyle(iframe).borderStyle is "none"
-PASS window.getComputedStyle(iframe).width is "200px"
-PASS window.getComputedStyle(iframe).height is "150px"
-

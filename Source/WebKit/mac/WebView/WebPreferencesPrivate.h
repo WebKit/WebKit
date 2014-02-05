@@ -287,10 +287,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)mediaPlaybackAllowsAirPlay;
 #endif
 
-// This is a global setting.
-- (BOOL)seamlessIFramesEnabled;
-- (void)setSeamlessIFramesEnabled:(BOOL)enabled;
-
 // Other private methods
 #if TARGET_OS_IPHONE
 - (size_t)_maximumImageSize;

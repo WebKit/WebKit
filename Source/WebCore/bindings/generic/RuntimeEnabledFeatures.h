@@ -219,11 +219,6 @@ public:
     void setExperimentalContentSecurityPolicyFeaturesEnabled(bool isEnabled) { m_areExperimentalContentSecurityPolicyFeaturesEnabled = isEnabled; }
 #endif
 
-#if ENABLE(IFRAME_SEAMLESS)
-    bool seamlessIFramesEnabled() const { return m_areSeamlessIFramesEnabled; }
-    void setSeamlessIFramesEnabled(bool isEnabled) { m_areSeamlessIFramesEnabled = isEnabled; }
-#endif
-
     bool langAttributeAwareFormControlUIEnabled() const { return m_isLangAttributeAwareFormControlUIEnabled; }
     // The lang attribute support is incomplete and should only be turned on for tests.
     void setLangAttributeAwareFormControlUIEnabled(bool isEnabled) { m_isLangAttributeAwareFormControlUIEnabled = isEnabled; }
@@ -307,10 +302,6 @@ private:
 
 #if ENABLE(CSP_NEXT)
     bool m_areExperimentalContentSecurityPolicyFeaturesEnabled;
-#endif
-
-#if ENABLE(IFRAME_SEAMLESS)
-    bool m_areSeamlessIFramesEnabled;
 #endif
 
 #if ENABLE(FONT_LOAD_EVENTS)

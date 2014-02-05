@@ -32,8 +32,6 @@ class HTMLIFrameElement final : public HTMLFrameElementBase {
 public:
     static PassRefPtr<HTMLIFrameElement> create(const QualifiedName&, Document&);
 
-    bool shouldDisplaySeamlessly() const;
-
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 
@@ -47,8 +45,6 @@ private:
 
     virtual bool rendererIsNeeded(const RenderStyle&) override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
-
-    virtual void didRecalcStyle(Style::Change) override;
 };
 
 NODE_TYPE_CASTS(HTMLIFrameElement)

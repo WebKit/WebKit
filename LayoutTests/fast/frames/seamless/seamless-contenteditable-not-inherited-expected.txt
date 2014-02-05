@@ -1,4 +1,0 @@
-This test ensures that content inside a seamless iframe does not inherit editability via the contenteditable attribute on a parent element, but does via a CSS rule that cascades into the frame.
-PASS window.getComputedStyle(span).getPropertyCSSValue('-webkit-user-modify').cssText is "read-only"
-PASS window.getComputedStyle(p).getPropertyCSSValue('-webkit-user-modify').cssText is "read-write"
-

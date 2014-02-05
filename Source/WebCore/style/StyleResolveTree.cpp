@@ -871,8 +871,7 @@ void resolveTree(Element& current, Change change)
 
 void resolveTree(Document& document, Change change)
 {
-    bool resolveRootStyle = change == Force || (document.shouldDisplaySeamlesslyWithParent() && change >= Inherit);
-    if (resolveRootStyle) {
+    if (change == Force) {
         auto documentStyle = resolveForDocument(document);
 
         // Inserting the pictograph font at the end of the font fallback list is done by the

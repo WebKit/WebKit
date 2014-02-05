@@ -163,9 +163,6 @@ namespace WebCore {
             PseudoFutureCue,
             PseudoPastCue,
 #endif
-#if ENABLE(IFRAME_SEAMLESS)
-            PseudoSeamlessDocument,
-#endif
         };
 
         enum MarginBoxType {

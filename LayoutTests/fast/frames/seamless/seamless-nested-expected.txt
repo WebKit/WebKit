@@ -1,6 +1,0 @@
-Test that nested seamless iframes size correctly.
-PASS iframe.seamless is true
-PASS nestedFrame.seamless is true
-PASS window.getComputedStyle(iframe).width is "200px"
-PASS window.getComputedStyle(iframe).height is "100px"
-

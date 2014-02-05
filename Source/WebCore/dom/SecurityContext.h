@@ -48,8 +48,7 @@ enum SandboxFlag {
     SandboxTopNavigation = 1 << 5,
     SandboxPopups = 1 << 6, // See https://www.w3.org/Bugs/Public/show_bug.cgi?id=12393
     SandboxAutomaticFeatures = 1 << 7,
-    SandboxSeamlessIframes = 1 << 8,
-    SandboxPointerLock = 1 << 9,
+    SandboxPointerLock = 1 << 8,
     SandboxAll = -1 // Mask with all bits set to 1.
 };
 
@@ -81,10 +80,6 @@ protected:
 
     void didFailToInitializeSecurityOrigin() { m_haveInitializedSecurityOrigin = false; }
     bool haveInitializedSecurityOrigin() const { return m_haveInitializedSecurityOrigin; }
-
-    // Set in Document::initSecurityContext() at Document creation, per:
-    // http://www.whatwg.org/specs/web-apps/current-work/#attr-iframe-seamless
-    bool m_mayDisplaySeamlesslyWithParent;
 
 private:
     bool m_haveInitializedSecurityOrigin;

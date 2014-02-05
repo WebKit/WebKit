@@ -51,42 +51,12 @@ HTMLIFrameElement& RenderIFrame::iframeElement() const
 
 bool RenderIFrame::shouldComputeSizeAsReplaced() const
 {
-    // When we're seamless, we use normal block/box sizing code except when inline.
-    return !isSeamless();
+    return true;
 }
 
 bool RenderIFrame::isInlineBlockOrInlineTable() const
 {
-    return isSeamless() && isInline();
-}
-
-LayoutUnit RenderIFrame::minPreferredLogicalWidth() const
-{
-    if (!isSeamless())
-        return RenderFrameBase::minPreferredLogicalWidth();
-
-    RenderView* childRoot = contentRootRenderer();
-    if (!childRoot)
-        return 0;
-
-    return childRoot->minPreferredLogicalWidth() + borderAndPaddingLogicalWidth();
-}
-
-LayoutUnit RenderIFrame::maxPreferredLogicalWidth() const
-{
-    if (!isSeamless())
-        return RenderFrameBase::maxPreferredLogicalWidth();
-
-    RenderView* childRoot = contentRootRenderer();
-    if (!childRoot)
-        return 0;
-
-    return childRoot->maxPreferredLogicalWidth() + borderAndPaddingLogicalWidth();
-}
-
-bool RenderIFrame::isSeamless() const
-{
-    return iframeElement().shouldDisplaySeamlessly();
+    return isInline();
 }
 
 bool RenderIFrame::requiresLayer() const
@@ -103,9 +73,6 @@ RenderView* RenderIFrame::contentRootRenderer() const
 bool RenderIFrame::flattenFrame() const
 {
     Frame* frame = iframeElement().document().frame();
-
-    if (isSeamless())
-        return false; // Seamless iframes are already "flat", don't try to flatten them.
 
     bool enabled = frame && frame->settings().frameFlatteningEnabled();
 
@@ -125,47 +92,17 @@ bool RenderIFrame::flattenFrame() const
     return boundingRect.maxX() > 0 && boundingRect.maxY() > 0;
 }
 
-void RenderIFrame::layoutSeamlessly()
-{
-    updateLogicalWidth();
-    // FIXME: Containers set their height to 0 before laying out their kids (as we're doing here)
-    // however, this causes FrameView::layout() to add vertical scrollbars, incorrectly inflating
-    // the resulting contentHeight(). We'll need to make FrameView::layout() smarter.
-    setLogicalHeight(0);
-    updateWidgetPosition(); // Tell the Widget about our new width/height (it will also layout the child document).
-
-    // Laying out our kids is normally responsible for adjusting our height, so we set it here.
-    // Replaced elements normally do not respect padding, but seamless elements should: we'll add
-    // both padding and border to the child's logical height here.
-    FrameView* childFrameView = childView();
-    if (childFrameView) // Widget should never be null during layout(), but just in case.
-        setLogicalHeight(childFrameView->contentsHeight() + borderTop() + borderBottom() + paddingTop() + paddingBottom());
-    updateLogicalHeight();
-
-    updateWidgetPosition(); // Notify the Widget of our final height.
-
-    // Assert that the child document did a complete layout.
-    RenderView* childRoot = childFrameView ? childFrameView->frame().contentRenderer() : 0;
-    ASSERT(!childFrameView || !childFrameView->layoutPending());
-    ASSERT_UNUSED(childRoot, !childRoot || !childRoot->needsLayout());
-}
-
 void RenderIFrame::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
-    if (isSeamless()) {
-        layoutSeamlessly();
-        // Do not return so as to share the layer and overflow updates below.
-    } else {
-        updateLogicalWidth();
-        // No kids to layout as a replaced element.
-        updateLogicalHeight();
+    updateLogicalWidth();
+    // No kids to layout as a replaced element.
+    updateLogicalHeight();
 
-        if (flattenFrame())
-            layoutWithFlattening(style().width().isFixed(), style().height().isFixed());
-    }
+    if (flattenFrame())
+        layoutWithFlattening(style().width().isFixed(), style().height().isFixed());
 
     clearOverflow();
     addVisualEffectOverflow();
