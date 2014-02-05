@@ -88,6 +88,15 @@ static void globalObjectIsAvailableForFrame(WKBundlePageRef page, WKBundleFrameR
         [loadDelegate webProcessPlugInBrowserContextController:pluginContextController globalObjectIsAvailableForFrame:wrapper(*toImpl(frame)) inScriptWorld:wrapper(*toImpl(scriptWorld))];
 }
 
+static void didRemoveFrameFromHierarchy(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void* clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:didRemoveFrameFromHierarchy:)])
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController didRemoveFrameFromHierarchy:wrapper(*toImpl(frame))];
+}
+
 static void didCommitLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo)
 {
     WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
@@ -156,6 +165,7 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
     client.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
     client.didFinishLoadForFrame = didFinishLoadForFrame;
     client.globalObjectIsAvailableForFrame = globalObjectIsAvailableForFrame;
+    client.didRemoveFrameFromHierarchy = didRemoveFrameFromHierarchy;
 
     client.didLayoutForFrame = didLayoutForFrame;
     client.didLayout = didLayout;

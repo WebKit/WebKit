@@ -41,6 +41,7 @@
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller didFinishLoadForFrame:(WKWebProcessPlugInFrame *)frame;
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller didSameDocumentNavigationForFrame:(WKWebProcessPlugInFrame *)frame;
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller globalObjectIsAvailableForFrame:(WKWebProcessPlugInFrame *)frame inScriptWorld:(WKWebProcessPlugInScriptWorld *)scriptWorld;
+- (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didRemoveFrameFromHierarchy:(WKWebProcessPlugInFrame *)frame;
 
 // Layout
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller didLayoutForFrame:(WKWebProcessPlugInFrame *)frame;

@@ -1,3 +1,17 @@
+2014-02-05  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Notify WKWebProcessPlugInLoadDelegate when a frame is removed from the frame hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=128239
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h: Declared new
+        delegate method.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didRemoveFrameFromHierarchy): Implemented this page loader client callback by calling the
+        load delegate.
+        (setUpPageLoaderClient): Set the above callback in the client structure.
+
 2014-02-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SVG) guards
