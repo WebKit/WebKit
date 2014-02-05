@@ -1,3 +1,11 @@
+2014-02-04  Zalan Bujtas  <zalan@apple.com>
+
+        Some tests introduced by 163415 need ImageOnlyFailure tag.
+
+        Unreviewed gardering.
+
+        * TestExpectations:
+
 2014-02-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG PutByVal on typed arrays should detect OutOfBounds sooner
