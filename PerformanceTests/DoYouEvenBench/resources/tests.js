@@ -35,12 +35,6 @@ Suites.push({
     name: 'EmberJS-TodoMVC',
     url: 'todomvc/architecture-examples/emberjs/index.html',
     prepare: function (runner, contentWindow, contentDocument) {
-        contentWindow.Todos.Store = contentWindow.DS.Store.extend({
-            revision: 12,
-            adapter: 'Todos.LSAdapter',
-            commit: function () { }
-        });
-
         return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
             return {

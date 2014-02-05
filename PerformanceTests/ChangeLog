@@ -1,3 +1,35 @@
+2014-02-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DoYouEvenBench: Update Ember.js test case
+        https://bugs.webkit.org/show_bug.cgi?id=128227
+
+        Reviewed by Benjamin Poulain.
+
+        Updated the Ember.js TodoMVC implementation.
+
+        * DoYouEvenBench/resources/tests.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/bower.json:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/bower_components/ember-data/ember-data.js: Added.
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/bower_components/ember-localstorage-adapter/localstorage_adapter.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/bower_components/ember/ember.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/bower_components/handlebars/handlebars.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/bower_components/jquery/jquery.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/bower_components/todomvc-common/base.css:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/bower_components/todomvc-common/base.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/index.html:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/js/app.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/js/controllers/todo_controller.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/js/controllers/todos_controller.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/js/helpers/pluralize.js: Added.
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/js/libs/ember-data.js: Removed.
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/js/models/store.js: Removed.
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/js/models/todo.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/js/router.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/js/views/edit_todo_view.js:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/js/views/todos_view.js: Added.
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/readme.md:
+        * DoYouEvenBench/resources/todomvc/architecture-examples/emberjs/test.html:
+
 2014-02-04  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add initial performance test for shape-outside: content-box
