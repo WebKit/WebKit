@@ -666,16 +666,18 @@ EditorState WebPage::editorState() const
             result.lastMarkedRect = result.firstMarkedRect;
         result.markedText = plainText(compositionRange.get());
     }
+    FrameView* view = frame.view();
     if (selection.isCaret()) {
-        result.caretRectAtStart = frame.selection().absoluteCaretBounds();
+        result.caretRectAtStart = view->contentsToRootView(frame.selection().absoluteCaretBounds());
         result.caretRectAtEnd = result.caretRectAtStart;
         if (m_shouldReturnWordAtSelection)
             result.wordAtSelection = plainText(wordRangeFromPosition(selection.start()).get());
     } else if (selection.isRange()) {
-        result.caretRectAtStart = VisiblePosition(selection.start()).absoluteCaretBounds();
-        result.caretRectAtEnd = VisiblePosition(selection.end()).absoluteCaretBounds();
+        result.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds());
+        result.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds());
         RefPtr<Range> selectedRange = selection.toNormalizedRange();
         selectedRange->collectSelectionRects(result.selectionRects);
+        convertSelectionRectsToRootView(view, result.selectionRects);
         result.selectedTextLength = plainText(selectedRange.get(), TextIteratorDefaultBehavior, true).length();
     }
 #endif

@@ -1,3 +1,15 @@
+2014-02-05  Enrica Casucci  <enrica@apple.com>
+
+        WK2: Caret, selections and autocorrection bubbles are incorrectly positioned when inside an iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=128264
+        <rdar://problem/15986954>
+
+        Reviewed by Simon Fraser.
+
+        Adding new exported function.
+
+        * WebCore.exp.in:
+
 2014-02-05  Antti Koivisto  <antti@apple.com>
 
         ElementRuleCollector should not use StyleResolver::State

@@ -707,6 +707,9 @@ private:
     void didReceiveWebPageMessage(IPC::Connection*, IPC::MessageDecoder&);
     void didReceiveSyncWebPageMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
+#if PLATFORM(IOS)
+    static void convertSelectionRectsToRootView(WebCore::FrameView*, Vector<WebCore::SelectionRect>&);
+#endif
 #if !PLATFORM(MAC)
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
 #endif

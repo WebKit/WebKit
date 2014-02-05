@@ -1,3 +1,25 @@
+2014-02-05  Enrica Casucci  <enrica@apple.com>
+
+        WK2: Caret, selections and autocorrection bubbles are incorrectly positioned when inside an iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=128264
+        <rdar://problem/15986954>
+
+        Reviewed by Simon Fraser.
+
+        Everywhere we return rectangles to the UIProcess, we need to convert them
+        to root view coordinates. Also, we should allow hit testing to go into child
+        frames.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::updateSelectionWithTouches):
+        (WebKit::WebPage::convertSelectionRectsToRootView):
+        (WebKit::WebPage::requestAutocorrectionData):
+        (WebKit::WebPage::getPositionInformation):
+
 2014-02-05  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WKRemoteObjectInterface fails with doubles, NSNull, and empty NSStrings

@@ -384,9 +384,9 @@ static IntPoint constrainPoint(const IntPoint& point, Frame* frame, Node* assist
 void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    FloatPoint adjustedPoint(point);
+    IntPoint adjustedPoint(frame.view()->rootViewToContents(point));
 
-    IntPoint constrainedPoint = m_assistedNode ? constrainPoint(point, &frame, m_assistedNode.get()) : point;
+    IntPoint constrainedPoint = m_assistedNode ? constrainPoint(adjustedPoint, &frame, m_assistedNode.get()) : adjustedPoint;
     VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
     if (position.isNull()) {
         send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, 0, callbackID));
@@ -578,7 +578,7 @@ static PassRefPtr<Range> rangeAtWordBoundaryForPosition(Frame* frame, const Visi
 void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches, bool baseIsStart, uint64_t callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    VisiblePosition position = frame.visiblePositionForPoint(point);
+    VisiblePosition position = frame.visiblePositionForPoint(frame.view()->rootViewToContents(point));
     if (position.isNull()) {
         send(Messages::WebPageProxy::TouchesCallback(point, touches, callbackID));
         return;
@@ -649,6 +649,14 @@ void WebPage::extendSelection(uint32_t granularity)
     frame.selection().setSelectedRange(wordRangeFromPosition(position).get(), position.affinity(), true);
 }
 
+void WebPage::convertSelectionRectsToRootView(FrameView* view, Vector<SelectionRect>& selectionRects)
+{
+    for (size_t i = 0; i < selectionRects.size(); ++i) {
+        SelectionRect& currentRect = selectionRects[i];
+        currentRect.setRect(view->contentsToRootView(currentRect.rect()));
+    }
+}
+
 void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uint64_t callbackID)
 {
     RefPtr<Range> range;
@@ -674,6 +682,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uin
     Vector<FloatRect> rectsForText;
     rectsForText.resize(selectionRects.size());
 
+    convertSelectionRectsToRootView(frame.view(), selectionRects);
     for (size_t i = 0; i < selectionRects.size(); i++)
         rectsForText[i] = selectionRects[i].rect();
 
@@ -852,13 +861,16 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
     }
 
     if (!elementIsLinkOrImage) {
-        Frame& frame = m_page->mainFrame();
-        hitNode = frame.eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent).innerNode();
-        if (hitNode->isTextNode()) {
-            VisiblePosition position = frame.visiblePositionForPoint(point);
+        HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent | HitTestRequest::AllowChildFrameContent);
+        hitNode = result.innerNode();
+        if (hitNode && hitNode->isTextNode()) {
+            m_page->focusController().setFocusedFrame(result.innerNodeFrame());
+            FrameView* view = result.innerNodeFrame()->view();
+            VisiblePosition position = result.innerNodeFrame()->visiblePositionForPoint(view->rootViewToContents(point));
             RefPtr<Range> range = wordRangeFromPosition(position);
             if (range)
                 range->collectSelectionRects(info.selectionRects);
+            convertSelectionRectsToRootView(view, info.selectionRects);
         } else {
             // FIXME: implement the logic for the block selection.
         }
