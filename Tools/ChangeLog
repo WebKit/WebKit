@@ -1,3 +1,9 @@
+2014-02-05  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Unreviewed. Add myself to contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-02-05  Sergio Correia  <sergio.correia@openbossa.org>
 
         Unreviewed. Add myself to contributor and watch lists
