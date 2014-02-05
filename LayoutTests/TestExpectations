@@ -61,7 +61,7 @@ webkit.org/b/120148 [ Debug ] webaudio/javascriptaudionode-downmix8-2channel-inp
 webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
 webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas-2x.html [ ImageOnlyFailure ]
 webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas-2x.html [ ImageOnlyFailure ]
-webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ Failure ]
+webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ ImageOnlyFailure ]
 
 webaudio/javascriptaudionode-downmix8-2channel-input.html
 
