@@ -1,3 +1,14 @@
+2014-02-05  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix srcset change test flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=128265
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/hidpi/image-srcset-change-dynamically-from-js-2x-expected.txt:
+        * fast/hidpi/image-srcset-change-dynamically-from-js-2x.html:
+        * platform/gtk-wk2/fast/hidpi/image-srcset-change-dynamically-from-js-2x-expected.txt: Removed.
+
 2014-02-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move characterAt index checks from InlineIterator to RenderText

@@ -5,7 +5,6 @@
 <script>
     if (window.testRunner) {
         testRunner.dumpAsText();
-        testRunner.dumpResourceResponseMIMETypes();
     }
 
     function updateSrc() {
@@ -16,6 +15,8 @@
     }
 
     addEventListener("DOMContentLoaded", function() {
+        if (sessionStorage.pageReloaded)
+            testRunner.dumpResourceResponseMIMETypes();
         updateSrc();
     }, false);
     addEventListener("load", function() {
