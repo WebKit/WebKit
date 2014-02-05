@@ -26,6 +26,7 @@
 InspectorFrontendAPI = {};
 
 InspectorTest = {};
+InspectorTest.dumpInspectorProtocolMessages = false;
 InspectorTest._dispatchTable = [];
 InspectorTest._requestId = -1;
 InspectorTest.eventHandler = {};
@@ -42,6 +43,11 @@ InspectorTest.sendCommand = function(method, params, handler)
     var messageObject = { "method": method,
                           "params": params,
                           "id": this._requestId };
+
+    // This matches the debug dumping in InspectorBackend, which is bypassed
+    // by InspectorTest. Return messages should be dumped by InspectorBackend.
+    if (this.dumpInspectorProtocolMessages)
+        console.log("frontend: " + JSON.stringify(messageObject));
 
     InspectorFrontendHost.sendMessageToBackend(JSON.stringify(messageObject));
 
@@ -165,8 +171,9 @@ InspectorTest.initializeInspectorModels = function()
     {
         if (assertion)
             return;
-        InspectorTest.completeTest();
+
         InspectorTest.log("ASSERT:" + message);
+        InspectorTest.completeTest();
     };
 
     // Note: This function overwrites the InspectorFrontendAPI, so there's currently no
@@ -194,8 +201,12 @@ InspectorTest.initializeInspectorModels = function()
         "Revision",
         "SourceCodeRevision",
         "SourceCode",
+        "SourceCodeLocation",
+        "Script",
+        "TextRange",
         "Resource",
         "ResourceCollection",
+        "SourceMapResource",
         "DOMTreeManager",
         "DOMNode",
         "ContentFlow",
@@ -206,7 +217,17 @@ InspectorTest.initializeInspectorModels = function()
         "CSSStyleManager",
         "Color",
         "RuntimeObserver",
-        "RuntimeManager"
+        "RuntimeManager",
+        "DebuggerObserver",
+        "DebuggerManager",
+        "BreakpointAction",
+        "Breakpoint",
+        "Probe",
+        "ProbeSet",
+        "ProbeManager",
+        "ProbeSetDataFrame",
+        "ProbeSetDataTable",
+        "RemoteObject"
     ];
 
     // This corresponds to loading the scripts in Main.hml.
@@ -225,6 +246,7 @@ InspectorTest.initializeInspectorModels = function()
     InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);
     InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
+    InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerObserver);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
     if (InspectorBackend.registerRuntimeDispatcher)
         InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
@@ -232,7 +254,9 @@ InspectorTest.initializeInspectorModels = function()
     WebInspector.frameResourceManager = new WebInspector.FrameResourceManager;
     WebInspector.domTreeManager = new WebInspector.DOMTreeManager;
     WebInspector.cssStyleManager = new WebInspector.CSSStyleManager;
+    WebInspector.debuggerManager = new WebInspector.DebuggerManager;
     WebInspector.runtimeManager = new WebInspector.RuntimeManager;
+    WebInspector.probeManager = new WebInspector.ProbeManager;
 }
 
 

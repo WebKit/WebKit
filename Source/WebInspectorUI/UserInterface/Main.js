@@ -114,6 +114,7 @@ WebInspector.loaded = function()
     this.sourceMapManager = new WebInspector.SourceMapManager;
     this.layerTreeManager = new WebInspector.LayerTreeManager;
     this.dashboardManager = new WebInspector.DashboardManager;
+    this.probeManager = new WebInspector.ProbeManager;
 
     // Enable the Console Agent after creating the singleton managers.
     if (window.ConsoleAgent)

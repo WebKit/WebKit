@@ -71,8 +71,8 @@ public:
     virtual void enable(ErrorString*) override;
     virtual void disable(ErrorString*) override;
     virtual void setBreakpointsActive(ErrorString*, bool active) override;
-    virtual void setBreakpointByUrl(ErrorString*, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::Location>>& locations, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::BreakpointActionIdentifier>>& breakpointActionIdentifiers) override;
-    virtual void setBreakpoint(ErrorString*, const RefPtr<Inspector::InspectorObject>& location, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Debugger::Location>& actualLocation, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::BreakpointActionIdentifier>>& breakpointActionIdentifiers) override;
+    virtual void setBreakpointByUrl(ErrorString*, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::Location>>& locations) override;
+    virtual void setBreakpoint(ErrorString*, const RefPtr<Inspector::InspectorObject>& location, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Debugger::Location>& actualLocation) override;
     virtual void removeBreakpoint(ErrorString*, const String& breakpointIdentifier) override;
     virtual void continueToLocation(ErrorString*, const RefPtr<InspectorObject>& location) override;
     virtual void searchInContent(ErrorString*, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>>&) override;
@@ -133,9 +133,9 @@ private:
 
     virtual void didParseSource(JSC::SourceID, const Script&) override final;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) override final;
-    virtual void didSampleProbe(JSC::ExecState*, int probeIdentifier, int hitCount, const Deprecated::ScriptValue& sample) override final;
 
     virtual void breakpointActionSound(int breakpointActionIdentifier) override;
+    virtual void breakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, int hitCount, const Deprecated::ScriptValue& sample) override final;
 
     PassRefPtr<Inspector::TypeBuilder::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
     bool assertPaused(ErrorString*);
@@ -163,7 +163,6 @@ private:
     bool m_enabled;
     bool m_javaScriptPauseScheduled;
     int m_nextProbeSampleId;
-    int m_nextBreakpointActionIdentifier;
 };
 
 } // namespace Inspector

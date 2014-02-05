@@ -37,7 +37,8 @@
             "type": "object",
             "properties": [
                 { "name": "type", "type": "string", "enum": ["log", "evaluate", "sound", "probe"], "description": "Different kinds of breakpoint actions." },
-                { "name": "data", "type": "string", "optional": true, "description": "Data associated with this breakpoint type (e.g. for type \"eval\" this is the JavaScript string to evalulate)." }
+                { "name": "data", "type": "string", "optional": true, "description": "Data associated with this breakpoint type (e.g. for type \"eval\" this is the JavaScript string to evalulate)." },
+                { "name": "id", "$ref": "BreakpointActionIdentifier", "optional": true, "description": "A frontend-assigned identifier for this breakpoint action." }
             ],
             "description": "Action to perform when a breakpoint is triggered."
         },
@@ -124,8 +125,7 @@
             ],
             "returns": [
                 { "name": "breakpointId", "$ref": "BreakpointId", "description": "Id of the created breakpoint for further reference." },
-                { "name": "locations", "type": "array", "items": { "$ref": "Location"}, "description": "List of the locations this breakpoint resolved into upon addition." },
-                { "name": "breakpointActionIdentifiers", "type": "array", "items": { "$ref": "BreakpointActionIdentifier" }, "description": "Assigned breakpoint action identifiers." }
+                { "name": "locations", "type": "array", "items": { "$ref": "Location"}, "description": "List of the locations this breakpoint resolved into upon addition." }
             ],
             "description": "Sets JavaScript breakpoint at given location specified either by URL or URL regex. Once this command is issued, all existing parsed scripts will have breakpoints resolved and returned in <code>locations</code> property. Further matching script parsing will result in subsequent <code>breakpointResolved</code> events issued. This logical breakpoint will survive page reloads."
         },
@@ -137,8 +137,7 @@
             ],
             "returns": [
                 { "name": "breakpointId", "$ref": "BreakpointId", "description": "Id of the created breakpoint for further reference." },
-                { "name": "actualLocation", "$ref": "Location", "description": "Location this breakpoint resolved into." },
-                { "name": "breakpointActionIdentifiers", "type": "array", "items": { "$ref": "BreakpointActionIdentifier" }, "description": "Assigned breakpoint action identifiers." }
+                { "name": "actualLocation", "$ref": "Location", "description": "Location this breakpoint resolved into." }
             ],
             "description": "Sets JavaScript breakpoint at a given location."
         },
@@ -295,7 +294,7 @@
         },
         {
             "name": "didSampleProbe",
-            "description": "Fires when a new proben sample is collected.",
+            "description": "Fires when a new probe sample is collected.",
             "parameters": [
                 { "name": "sample", "$ref": "ProbeSample", "description": "A collected probe sample." }
             ]

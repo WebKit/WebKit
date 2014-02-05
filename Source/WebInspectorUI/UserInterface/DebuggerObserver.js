@@ -67,6 +67,11 @@ WebInspector.DebuggerObserver.prototype = {
     {
         WebInspector.debuggerManager.playBreakpointActionSound(breakpointActionIdentifier);
     },
+
+    didSampleProbe: function(sample)
+    {
+        WebInspector.probeManager.didSampleProbe(sample);
+    }
 };
 
 WebInspector.DebuggerObserver.prototype.__proto__ = WebInspector.Object.prototype;

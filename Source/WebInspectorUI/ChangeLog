@@ -1,3 +1,114 @@
+2014-02-05  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add probe manager and model objects to the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=127117
+
+        Reviewed by Timothy Hatcher.
+
+        Add the probe manager, and the following model objects:
+
+        - ProbeObject corresponds to a single probe breakpoint action.
+        - ProbeSetObject contains all ProbeObjects for one Breakpoint.
+        - ProbeSetDataFrame holds probe samples from multiple
+        probes fired from the same breakpoint hit/debugger pause.
+        - ProbeSetDataTable keeps track of multiple such data frames
+        and manages probe sample lifetimes across page navigations.
+
+        The probe manager updates probe model objects whenever breakpoints
+        are added, removed, or modified.
+
+        The inspector frontend now assigns breakpoint action identifiers,
+        rather than the backend. This lets ProbeObjects keep stable
+        identifiers that match the probe's samples, even when the underlying
+        breakpoint is re-added with a different identifier (such as when
+        editing probe expressions).
+
+        * UserInterface/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.get probeActions): Added.
+        (WebInspector.Breakpoint.prototype.createAction):
+        (WebInspector.Breakpoint.prototype.removeAction):
+        (WebInspector.Breakpoint.prototype.clearActions): Added.
+        * UserInterface/BreakpointAction.js:
+        (WebInspector.BreakpointAction):
+        (WebInspector.BreakpointAction.prototype.get id):
+        (WebInspector.BreakpointAction.prototype.get info):
+        * UserInterface/DebuggerManager.js:
+        (WebInspector.DebuggerManager.restoreBreakpointsSoon):
+        (WebInspector.DebuggerManager): Restore saved breakpoints
+        from cookies on the second run loop, so that all managers will
+        be able to received breakpoint added events.
+        (WebInspector.DebuggerManager.prototype.addBreakpoint):
+        (WebInspector.DebuggerManager.prototype.removeBreakpoint):
+        (WebInspector.DebuggerManager.prototype.get nextBreakpointActionIdentifier):
+        The debugger manager assigns unique breakpoint action identifiers with this getter.
+
+        (WebInspector.DebuggerManager.prototype._debuggerBreakpointActionType):
+        (WebInspector.DebuggerManager.prototype.didSetBreakpoint):
+        (WebInspector.DebuggerManager.prototype._setBreakpoint):
+        (WebInspector.DebuggerManager.prototype.didRemoveBreakpoint):
+        (WebInspector.DebuggerManager.prototype._removeBreakpoint):
+        * UserInterface/DebuggerObserver.js:
+        (WebInspector.DebuggerObserver.prototype.didSampleProbe):
+        * UserInterface/InspectorJSBackendCommands.js:
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/Probe.js: Added.
+        (WebInspector.ProbeSample):
+        (WebInspector.Probe):
+        (WebInspector.Probe.prototype.get id):
+        (WebInspector.Probe.prototype.get breakpoint):
+        (WebInspector.Probe.prototype.get expression):
+        (WebInspector.Probe.prototype.set expression):
+        (WebInspector.Probe.prototype.get samples):
+        (WebInspector.Probe.prototype.clearSamples):
+        (WebInspector.Probe.prototype.addSample):
+        * UserInterface/ProbeManager.js: Added.
+        (WebInspector.ProbeManager):
+        (WebInspector.ProbeManager.prototype.probeSetForBreakpoint):
+        (WebInspector.ProbeManager.prototype._breakpointRemoved):
+        (WebInspector.ProbeManager.prototype._breakpointActionsChanged.get var):
+        (WebInspector.ProbeManager.prototype._breakpointActionsChanged.set get knownProbeIdentifiers):
+        (WebInspector.ProbeManager.prototype._breakpointActionsChanged):
+        * UserInterface/ProbeSet.js: Added.
+        (WebInspector.ProbeSet):
+        (WebInspector.ProbeSet.prototype.get breakpoint):
+        (WebInspector.ProbeSet.prototype.get probes):
+        (WebInspector.ProbeSet.prototype.get dataTable):
+        (WebInspector.ProbeSet.prototype.clear):
+        (WebInspector.ProbeSet.prototype.clearSamples):
+        (WebInspector.ProbeSet.prototype.createProbe):
+        (WebInspector.ProbeSet.prototype.removeProbe):
+        (WebInspector.ProbeSet.prototype.willRemove):
+        (WebInspector.ProbeSet.prototype._mainResourceChanged):
+        (WebInspector.ProbeSet.prototype._createDataTable):
+        (WebInspector.ProbeSet.prototype._sampleCollected):
+        (WebInspector.ProbeSet.prototype._breakpointResolvedStateDidChange):
+        * UserInterface/ProbeSetDataFrame.js: Added.
+        (WebInspector.ProbeSetDataFrame):
+        (WebInspector.ProbeSetDataFrame.compare):
+        (WebInspector.ProbeSetDataFrame.prototype.get key):
+        (WebInspector.ProbeSetDataFrame.prototype.get count):
+        (WebInspector.ProbeSetDataFrame.prototype.get index):
+        (WebInspector.ProbeSetDataFrame.prototype.get isSeparator):
+        (WebInspector.ProbeSetDataFrame.prototype.set isSeparator):
+        (WebInspector.ProbeSetDataFrame.prototype.addSampleForProbe):
+        (WebInspector.ProbeSetDataFrame.prototype.missingKeys):
+        (WebInspector.ProbeSetDataFrame.prototype.isComplete):
+        (WebInspector.ProbeSetDataFrame.prototype.fillMissingValues):
+        * UserInterface/ProbeSetDataTable.js: Added.
+        (WebInspector.ProbeSetDataTable):
+        (WebInspector.ProbeSetDataTable.prototype.get frames):
+        (WebInspector.ProbeSetDataTable.prototype.get separators):
+        (WebInspector.ProbeSetDataTable.prototype.willRemove):
+        (WebInspector.ProbeSetDataTable.prototype.mainResourceChanged):
+        (WebInspector.ProbeSetDataTable.prototype.addSampleForProbe):
+        (WebInspector.ProbeSetDataTable.prototype.addProbe):
+        (WebInspector.ProbeSetDataTable.prototype.removeProbe):
+        (WebInspector.ProbeSetDataTable.prototype.createFrame):
+        (WebInspector.ProbeSetDataTable.prototype.addFrame):
+        (WebInspector.ProbeSetDataTable.prototype.addSeparator):
+
 2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Avoid no-op regenerations of GResourceBundle.xml, GResourceBundle.c

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -203,6 +203,13 @@ WebInspector.Breakpoint.prototype = {
         };
     },
 
+    get probeActions()
+    {
+        return this._actions.filter(function(action) {
+            return action.type === WebInspector.BreakpointAction.Type.Probe;
+        });
+    },
+
     cycleToNextMode: function()
     {
         if (this.disabled) {
@@ -281,9 +288,9 @@ WebInspector.Breakpoint.prototype = {
         }
     },
 
-    createAction: function(type, precedingAction)
+    createAction: function(type, precedingAction, data)
     {
-        var newAction = new WebInspector.BreakpointAction(this, type, null);
+        var newAction = new WebInspector.BreakpointAction(this, type, data || null);
 
         if (!precedingAction)
             this._actions.push(newAction);
@@ -328,6 +335,16 @@ WebInspector.Breakpoint.prototype = {
 
         if (!this._actions.length)
             this.autoContinue = false;
+
+        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
+    },
+
+    clearActions: function(type)
+    {
+        if (!type)
+            this._actions = [];
+        else
+            this._actions = this._actions.filter(function(action) { action.type != type; });
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
     },

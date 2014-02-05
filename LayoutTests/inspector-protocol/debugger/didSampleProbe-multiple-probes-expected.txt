@@ -1,11 +1,10 @@
 Debugger.setBreakpoint with multiple probe actions at the same breakpoint. Test Debugger.didSampleProbe events for the probe samples.
 
 Found breakpoint.js
-PASS: Should receive two breakpoint action identifiers on Debugger.setBreakpoint callback.
 Running breakpointActions to trigger probe samples.
 inside breakpointActions a:(12) b:([object Object])
 Received probe sample payload: {"type":"number","value":12,"description":"12"}
 Received probe sample payload: {"type":"number","value":12,"description":"12"}
-PASS: Samples from probe actions on the same breakpoint should have unique action identifiers.
+PASS: Samples from different probe actions should have unique action identifiers.
 PASS: Samples from probe actions on the same breakpoint should have the same batch identifiers.
 

@@ -1,3 +1,32 @@
+2014-02-05  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add probe manager and model objects to the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=127117
+
+        Reviewed by Timothy Hatcher.
+
+        The inspector frontend now assigns breakpoint action identifiers,
+        rather than the backend. Remove return values containing breakpoint
+        identifiers, and remove tracking and assignment of action identifiers.
+
+        * inspector/ScriptDebugListener.h:
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::evaluateBreakpointAction):
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionProbe):
+        Pass BreakpointAction by reference rather than just the action identifier.
+
+        * inspector/ScriptDebugServer.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::objectGroupForBreakpointAction):
+        (Inspector::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (Inspector::InspectorDebuggerAgent::breakpointActionsFromProtocol):
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::InspectorDebuggerAgent::setBreakpoint):
+        (Inspector::InspectorDebuggerAgent::removeBreakpoint):
+        (Inspector::InspectorDebuggerAgent::breakpointActionProbe):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/protocol/Debugger.json: Revert change to setBreakpoint return values. Add optional identifier to breakpoint actions.
+
 2014-02-05  Filip Pizlo  <fpizlo@apple.com>
 
         JSC on Mac should pull LLVM from prefix=/usr/local/LLVMForJavaScriptCore and not /usr/local

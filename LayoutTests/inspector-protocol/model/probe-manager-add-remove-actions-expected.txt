@@ -1,0 +1,18 @@
+Testing that the probe manager properly handles addition and removal of related probes.
+
+Breakpoint autocontinue state changed: true
+Probe set was added. New count: 1
+Probe with identifier 1 was added to probe set.
+Probe set's probe count: 1
+Breakpoint actions changed. New count: 1
+Probe with identifier 2 was added to probe set.
+Probe set's probe count: 2
+Breakpoint actions changed. New count: 2
+Breakpoint was added.
+PASS: Breakpoint should be resolved.
+inside breakpointActions a:(12) b:([object Object])
+Breakpoint resolved state changed: true
+Hit test checkpoint event #0 with type: probe-object-sample-added
+Probe with identifier 1 added sample: [object Object]
+Hit test checkpoint event #1 with type: probe-object-sample-added
+

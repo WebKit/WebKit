@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@ WebInspector.BreakpointAction = function(breakpoint, typeOrInfo, data)
         console.error("Unexpected type passed to WebInspector.BreakpointAction");
 
     console.assert(typeof this._type === "string");
+    this._id = WebInspector.debuggerManager.nextBreakpointActionIdentifier;
 };
 
 WebInspector.BreakpointAction.Type = {
@@ -53,12 +54,18 @@ WebInspector.BreakpointAction.Type = {
 
 WebInspector.BreakpointAction.prototype = {
     constructor: WebInspector.BreakpointAction,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 
     get breakpoint()
     {
         return this._breakpoint;
+    },
+
+    get id()
+    {
+        return this._id;
     },
 
     get type()
@@ -83,11 +90,9 @@ WebInspector.BreakpointAction.prototype = {
 
     get info()
     {
-        var obj = {type: this._type};
+        var obj = {type: this._type, id: this._id};
         if (this._data)
             obj.data = this._data;
         return obj;
     }
 };
-
-WebInspector.BreakpointAction.prototype.__proto__ = WebInspector.Object.prototype;

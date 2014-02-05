@@ -1,3 +1,31 @@
+2014-02-05  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add probe manager and model objects to the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=127117
+
+        Reviewed by Timothy Hatcher.
+
+        Set up the debugger and probe managers when testing models.
+
+        Add a workalike for InspectorBackend.dumpInspectorProtocolMessages to
+        InspectorTest.
+
+        Add listeners for breakpoints and probes that produce
+        useful, deterministic trace output. Use the tracing in a new test.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorTest.sendCommand):
+        (InspectorTest.initializeInspectorModels.console.assert):
+        (InspectorTest.initializeInspectorModels):
+        * inspector-protocol/debugger/didSampleProbe-multiple-probes-expected.txt:
+        * inspector-protocol/debugger/didSampleProbe-multiple-probes.html:
+        * inspector-protocol/model/probe-manager-add-remove-actions-expected.txt: Added.
+        * inspector-protocol/model/probe-manager-add-remove-actions.html: Added.
+        * inspector-protocol/resources/probe-helper.js:
+        (ProbeHelper.stringifyProbeSample):
+        (ProbeHelper.installTracingListeners.WebInspector):
+        (ProbeHelper.installTracingListeners):
+
 2014-02-05  Antti Koivisto  <antti@apple.com>
 
         ElementRuleCollector should not use StyleResolver::State

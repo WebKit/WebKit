@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,8 @@ WebInspector.DebuggerManager = function()
     this._breakpointScriptIdentifierMap = {};
     this._breakpointIdMap = {};
 
+    this._nextBreakpointActionIdentifier = 1;
+
     this._scriptIdMap = {};
     this._scriptURLMap = {};
 
@@ -64,11 +66,14 @@ WebInspector.DebuggerManager = function()
 
     this._updateBreakOnExceptionsState();
 
-    var savedBreakpoints = this._breakpointsSetting.value;
-    for (var i = 0; i < savedBreakpoints.length; ++i) {
-        var breakpoint = new WebInspector.Breakpoint(savedBreakpoints[i]);
-        this.addBreakpoint(breakpoint, true);
+    function restoreBreakpointsSoon() {
+        for (cookie of this._breakpointsSetting.value)
+            this.addBreakpoint(new WebInspector.Breakpoint(cookie));
     }
+
+    // Ensure that all managers learn about restored breakpoints,
+    // regardless of their initialization order.
+    setTimeout(restoreBreakpointsSoon.bind(this), 0);
 };
 
 WebInspector.DebuggerManager.Event = {
@@ -221,7 +226,7 @@ WebInspector.DebuggerManager.prototype = {
 
     addBreakpoint: function(breakpoint, skipEventDispatch)
     {
-        console.assert(breakpoint);
+        console.assert(breakpoint instanceof WebInspector.Breakpoint, "Bad argument to DebuggerManger.addBreakpoint: ", breakpoint);
         if (!breakpoint)
             return;
 
@@ -260,7 +265,7 @@ WebInspector.DebuggerManager.prototype = {
 
         this._breakpoints.remove(breakpoint);
 
-        if (breakpoint.id)
+        if (breakpoint.identifier)
             this._removeBreakpoint(breakpoint);
 
         if (breakpoint.url) {
@@ -280,6 +285,10 @@ WebInspector.DebuggerManager.prototype = {
                     delete this._breakpointScriptIdentifierMap[breakpoint.scriptIdentifier];
             }
         }
+
+        // Disable the breakpoint first, so removing actions doesn't re-add the breakpoint.
+        breakpoint.disabled = true;
+        breakpoint.clearActions();
 
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointRemoved, {breakpoint: breakpoint});
     },
@@ -431,6 +440,11 @@ WebInspector.DebuggerManager.prototype = {
         return this.isBreakpointRemovable(breakpoint);
     },
 
+    get nextBreakpointActionIdentifier()
+    {
+        return this._nextBreakpointActionIdentifier++;
+    },
+
     // Private
 
     _sourceCodeLocationFromPayload: function(payload)
@@ -487,6 +501,8 @@ WebInspector.DebuggerManager.prototype = {
             return DebuggerAgent.BreakpointActionType.Evaluate;
         case WebInspector.BreakpointAction.Type.Sound:
             return DebuggerAgent.BreakpointActionType.Sound;
+        case WebInspector.BreakpointAction.Type.Probe:
+            return DebuggerAgent.BreakpointActionType.Probe;
         default:
             console.assert(false);
             return DebuggerAgent.BreakpointActionType.Log;
@@ -495,10 +511,10 @@ WebInspector.DebuggerManager.prototype = {
 
     _setBreakpoint: function(breakpoint, callback)
     {
-        console.assert(!breakpoint.id);
+        console.assert(!breakpoint.identifier);
         console.assert(!breakpoint.disabled);
 
-        if (breakpoint.id || breakpoint.disabled)
+        if (breakpoint.identifier || breakpoint.disabled)
             return;
 
         function didSetBreakpoint(error, breakpointIdentifier)
@@ -508,7 +524,7 @@ WebInspector.DebuggerManager.prototype = {
 
             this._breakpointIdMap[breakpointIdentifier] = breakpoint;
 
-            breakpoint.id = breakpointIdentifier;
+            breakpoint.identifier = breakpointIdentifier;
             breakpoint.resolved = true;
 
             if (typeof callback === "function")
@@ -552,9 +568,7 @@ WebInspector.DebuggerManager.prototype = {
 
     _removeBreakpoint: function(breakpoint, callback)
     {
-        console.assert(breakpoint.id);
-
-        if (!breakpoint.id)
+        if (!breakpoint.identifier)
             return;
 
         function didRemoveBreakpoint(error)
@@ -562,9 +576,9 @@ WebInspector.DebuggerManager.prototype = {
             if (error)
                 console.error(error);
 
-            delete this._breakpointIdMap[breakpoint.id];
+            delete this._breakpointIdMap[breakpoint.identifier];
 
-            breakpoint.id = null;
+            breakpoint.identifier = null;
 
             // Don't reset resolved here since we want to keep disabled breakpoints looking like they
             // are resolved in the user interface. They will get marked as unresolved in reset.
@@ -573,7 +587,7 @@ WebInspector.DebuggerManager.prototype = {
                 callback();
         }
 
-        DebuggerAgent.removeBreakpoint(breakpoint.id, didRemoveBreakpoint.bind(this));
+        DebuggerAgent.removeBreakpoint(breakpoint.identifier, didRemoveBreakpoint.bind(this));
     },
 
     _breakpointDisplayLocationDidChange: function(event)
@@ -582,7 +596,7 @@ WebInspector.DebuggerManager.prototype = {
             return;
 
         var breakpoint = event.target;
-        if (!breakpoint.id || breakpoint.disabled)
+        if (!breakpoint.identifier || breakpoint.disabled)
             return;
 
         // Remove the breakpoint with its old id.

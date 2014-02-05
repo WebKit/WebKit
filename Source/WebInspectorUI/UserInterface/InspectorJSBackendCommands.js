@@ -21,8 +21,8 @@ InspectorBackend.registerEvent("Debugger.playBreakpointActionSound", ["breakpoin
 InspectorBackend.registerCommand("Debugger.enable", [], []);
 InspectorBackend.registerCommand("Debugger.disable", [], []);
 InspectorBackend.registerCommand("Debugger.setBreakpointsActive", [{"name": "active", "type": "boolean", "optional": false}], []);
-InspectorBackend.registerCommand("Debugger.setBreakpointByUrl", [{"name": "lineNumber", "type": "number", "optional": false}, {"name": "url", "type": "string", "optional": true}, {"name": "urlRegex", "type": "string", "optional": true}, {"name": "columnNumber", "type": "number", "optional": true}, {"name": "options", "type": "object", "optional": true}], ["breakpointId", "locations", "breakpointActionIdentifiers"]);
-InspectorBackend.registerCommand("Debugger.setBreakpoint", [{"name": "location", "type": "object", "optional": false}, {"name": "options", "type": "object", "optional": true}], ["breakpointId", "actualLocation", "breakpointActionIdentifiers"]);
+InspectorBackend.registerCommand("Debugger.setBreakpointByUrl", [{"name": "lineNumber", "type": "number", "optional": false}, {"name": "url", "type": "string", "optional": true}, {"name": "urlRegex", "type": "string", "optional": true}, {"name": "columnNumber", "type": "number", "optional": true}, {"name": "options", "type": "object", "optional": true}], ["breakpointId", "locations"]);
+InspectorBackend.registerCommand("Debugger.setBreakpoint", [{"name": "location", "type": "object", "optional": false}, {"name": "options", "type": "object", "optional": true}], ["breakpointId", "actualLocation"]);
 InspectorBackend.registerCommand("Debugger.removeBreakpoint", [{"name": "breakpointId", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("Debugger.continueToLocation", [{"name": "location", "type": "object", "optional": false}], []);
 InspectorBackend.registerCommand("Debugger.stepOver", [], []);

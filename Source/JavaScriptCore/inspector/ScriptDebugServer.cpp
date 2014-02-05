@@ -113,7 +113,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         
         JSC::ExecState* state = debuggerCallFrame->scope()->globalObject()->globalExec();
         Deprecated::ScriptValue wrappedResult = Deprecated::ScriptValue(state->vm(), exception ? exception : result);
-        dispatchDidSampleProbe(state, breakpointAction.identifier, wrappedResult);
+        dispatchBreakpointActionProbe(state, breakpointAction, wrappedResult);
         break;
     }
     default:
@@ -176,7 +176,7 @@ void ScriptDebugServer::dispatchBreakpointActionSound(ExecState* exec, int break
         listener->breakpointActionSound(breakpointActionIdentifier);
 }
 
-void ScriptDebugServer::dispatchDidSampleProbe(ExecState* exec, int identifier, const Deprecated::ScriptValue& sample)
+void ScriptDebugServer::dispatchBreakpointActionProbe(ExecState* exec, const ScriptBreakpointAction& action, const Deprecated::ScriptValue& sample)
 {
     if (m_callingListeners)
         return;
@@ -191,7 +191,7 @@ void ScriptDebugServer::dispatchDidSampleProbe(ExecState* exec, int identifier, 
     Vector<ScriptDebugListener*> listenersCopy;
     copyToVector(*listeners, listenersCopy);
     for (auto listener : listenersCopy)
-        listener->didSampleProbe(exec, identifier, m_hitCount, sample);
+        listener->breakpointActionProbe(exec, action, m_hitCount, sample);
 }
 
 void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
