@@ -30,6 +30,7 @@
 #include "APIArray.h"
 #include "APILoaderClient.h"
 #include "APIPolicyClient.h"
+#include "APIUIClient.h"
 #include "APIURLRequest.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
@@ -72,6 +73,7 @@
 #include "WebInspectorProxy.h"
 #include "WebInspectorProxyMessages.h"
 #include "WebNotificationManagerProxy.h"
+#include "WebOpenPanelParameters.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroup.h"
@@ -248,6 +250,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     : m_pageClient(pageClient)
     , m_loaderClient(std::make_unique<API::LoaderClient>())
     , m_policyClient(std::make_unique<API::PolicyClient>())
+    , m_uiClient(std::make_unique<API::UIClient>())
     , m_process(process)
     , m_pageGroup(pageGroup)
     , m_mainFrame(nullptr)
@@ -434,15 +437,20 @@ void WebPageProxy::initializeFormClient(const WKPageFormClientBase* formClient)
     m_formClient.initialize(formClient);
 }
 
-void WebPageProxy::initializeUIClient(const WKPageUIClientBase* client)
+void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient> uiClient)
 {
+    if (!uiClient) {
+        m_uiClient = std::make_unique<API::UIClient>();
+        return;
+    }
+
+    m_uiClient = std::move(uiClient);
+
     if (!isValid())
         return;
 
-    m_uiClient.initialize(client);
-
-    m_process->send(Messages::WebPage::SetCanRunBeforeUnloadConfirmPanel(m_uiClient.canRunBeforeUnloadConfirmPanel()), m_pageID);
-    setCanRunModal(m_uiClient.canRunModal());
+    m_process->send(Messages::WebPage::SetCanRunBeforeUnloadConfirmPanel(m_uiClient->canRunBeforeUnloadConfirmPanel()), m_pageID);
+    setCanRunModal(m_uiClient->canRunModal());
 }
 
 void WebPageProxy::initializeFindClient(const WKPageFindClientBase* client)
@@ -567,7 +575,7 @@ void WebPageProxy::close()
     m_loaderClient = nullptr;
     m_policyClient = nullptr;
     m_formClient.initialize(0);
-    m_uiClient.initialize(0);
+    m_uiClient = nullptr;
 #if PLATFORM(EFL)
     m_uiPopupMenuClient.initialize(0);
 #endif
@@ -2556,7 +2564,7 @@ void WebPageProxy::willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, cons
 
 void WebPageProxy::createNewPage(const ResourceRequest& request, const WindowFeatures& windowFeatures, uint32_t opaqueModifiers, int32_t opaqueMouseButton, uint64_t& newPageID, WebPageCreationParameters& newPageParameters)
 {
-    RefPtr<WebPageProxy> newPage = m_uiClient.createNewPage(this, request, windowFeatures, static_cast<WebEvent::Modifiers>(opaqueModifiers), static_cast<WebMouseEvent::Button>(opaqueMouseButton));
+    RefPtr<WebPageProxy> newPage = m_uiClient->createNewPage(this, request, windowFeatures, static_cast<WebEvent::Modifiers>(opaqueModifiers), static_cast<WebMouseEvent::Button>(opaqueMouseButton));
     if (!newPage) {
         newPageID = 0;
         return;
@@ -2569,7 +2577,7 @@ void WebPageProxy::createNewPage(const ResourceRequest& request, const WindowFea
     
 void WebPageProxy::showPage()
 {
-    m_uiClient.showPage(this);
+    m_uiClient->showPage(this);
 }
 
 void WebPageProxy::closePage(bool stopResponsivenessTimer)
@@ -2578,7 +2586,7 @@ void WebPageProxy::closePage(bool stopResponsivenessTimer)
         m_process->responsivenessTimer()->stop();
 
     m_pageClient.clearAllEditCommands();
-    m_uiClient.close(this);
+    m_uiClient->close(this);
 }
 
 void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const String& message)
@@ -2589,7 +2597,7 @@ void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const String& message)
     // Since runJavaScriptAlert() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    m_uiClient.runJavaScriptAlert(this, message, frame);
+    m_uiClient->runJavaScriptAlert(this, message, frame);
 }
 
 void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const String& message, bool& result)
@@ -2600,7 +2608,7 @@ void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const String& message,
     // Since runJavaScriptConfirm() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    result = m_uiClient.runJavaScriptConfirm(this, message, frame);
+    result = m_uiClient->runJavaScriptConfirm(this, message, frame);
 }
 
 void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const String& message, const String& defaultValue, String& result)
@@ -2611,7 +2619,7 @@ void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const String& message, 
     // Since runJavaScriptPrompt() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    result = m_uiClient.runJavaScriptPrompt(this, message, defaultValue, frame);
+    result = m_uiClient->runJavaScriptPrompt(this, message, defaultValue, frame);
 }
 
 void WebPageProxy::shouldInterruptJavaScript(bool& result)
@@ -2619,12 +2627,12 @@ void WebPageProxy::shouldInterruptJavaScript(bool& result)
     // Since shouldInterruptJavaScript() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    result = m_uiClient.shouldInterruptJavaScript(this);
+    result = m_uiClient->shouldInterruptJavaScript(this);
 }
 
 void WebPageProxy::setStatusText(const String& text)
 {
-    m_uiClient.setStatusText(this, text);
+    m_uiClient->setStatusText(this, text);
 }
 
 void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResult::Data& hitTestResultData, uint32_t opaqueModifiers, IPC::MessageDecoder& decoder)
@@ -2636,7 +2644,7 @@ void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResult::Data& hitTest
 
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
 
-    m_uiClient.mouseDidMoveOverElement(this, hitTestResultData, modifiers, userData.get());
+    m_uiClient->mouseDidMoveOverElement(this, hitTestResultData, modifiers, userData.get());
 }
 
 void WebPageProxy::connectionWillOpen(IPC::Connection* connection)
@@ -2681,7 +2689,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
         ASSERT_NOT_REACHED();
     }
 
-    m_uiClient.unavailablePluginButtonClicked(this, pluginUnavailabilityReason, pluginInformation.get());
+    m_uiClient->unavailablePluginButtonClicked(this, pluginUnavailabilityReason, pluginInformation.get());
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -2694,52 +2702,52 @@ void WebPageProxy::webGLPolicyForURL(const String& url, uint32_t& loadPolicy)
 
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
 {
-    m_uiClient.setToolbarsAreVisible(this, toolbarsAreVisible);
+    m_uiClient->setToolbarsAreVisible(this, toolbarsAreVisible);
 }
 
 void WebPageProxy::getToolbarsAreVisible(bool& toolbarsAreVisible)
 {
-    toolbarsAreVisible = m_uiClient.toolbarsAreVisible(this);
+    toolbarsAreVisible = m_uiClient->toolbarsAreVisible(this);
 }
 
 void WebPageProxy::setMenuBarIsVisible(bool menuBarIsVisible)
 {
-    m_uiClient.setMenuBarIsVisible(this, menuBarIsVisible);
+    m_uiClient->setMenuBarIsVisible(this, menuBarIsVisible);
 }
 
 void WebPageProxy::getMenuBarIsVisible(bool& menuBarIsVisible)
 {
-    menuBarIsVisible = m_uiClient.menuBarIsVisible(this);
+    menuBarIsVisible = m_uiClient->menuBarIsVisible(this);
 }
 
 void WebPageProxy::setStatusBarIsVisible(bool statusBarIsVisible)
 {
-    m_uiClient.setStatusBarIsVisible(this, statusBarIsVisible);
+    m_uiClient->setStatusBarIsVisible(this, statusBarIsVisible);
 }
 
 void WebPageProxy::getStatusBarIsVisible(bool& statusBarIsVisible)
 {
-    statusBarIsVisible = m_uiClient.statusBarIsVisible(this);
+    statusBarIsVisible = m_uiClient->statusBarIsVisible(this);
 }
 
 void WebPageProxy::setIsResizable(bool isResizable)
 {
-    m_uiClient.setIsResizable(this, isResizable);
+    m_uiClient->setIsResizable(this, isResizable);
 }
 
 void WebPageProxy::getIsResizable(bool& isResizable)
 {
-    isResizable = m_uiClient.isResizable(this);
+    isResizable = m_uiClient->isResizable(this);
 }
 
 void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
 {
-    m_uiClient.setWindowFrame(this, m_pageClient.convertToDeviceSpace(newWindowFrame));
+    m_uiClient->setWindowFrame(this, m_pageClient.convertToDeviceSpace(newWindowFrame));
 }
 
 void WebPageProxy::getWindowFrame(FloatRect& newWindowFrame)
 {
-    newWindowFrame = m_pageClient.convertToUserSpace(m_uiClient.windowFrame(this));
+    newWindowFrame = m_pageClient.convertToUserSpace(m_uiClient->windowFrame(this));
 }
     
 void WebPageProxy::screenToWindow(const IntPoint& screenPoint, IntPoint& windowPoint)
@@ -2760,7 +2768,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t f
     // Since runBeforeUnloadConfirmPanel() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    shouldClose = m_uiClient.runBeforeUnloadConfirmPanel(this, message, frame);
+    shouldClose = m_uiClient->runBeforeUnloadConfirmPanel(this, message, frame);
 }
 
 #if USE(TILED_BACKING_STORE)
@@ -2788,7 +2796,7 @@ void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)
 
 void WebPageProxy::pageDidScroll()
 {
-    m_uiClient.pageDidScroll(this);
+    m_uiClient->pageDidScroll(this);
 #if !PLATFORM(IOS) && PLATFORM(MAC)
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
 #endif
@@ -2810,7 +2818,7 @@ void WebPageProxy::runOpenPanel(uint64_t frameID, const FileChooserSettings& set
     // Since runOpenPanel() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    if (!m_uiClient.runOpenPanel(this, frame, parameters.get(), m_openPanelResultListener.get()))
+    if (!m_uiClient->runOpenPanel(this, frame, parameters.get(), m_openPanelResultListener.get()))
         didCancelForOpenPanel();
 }
 
@@ -2822,7 +2830,7 @@ void WebPageProxy::printFrame(uint64_t frameID)
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    m_uiClient.printFrame(this, frame);
+    m_uiClient->printFrame(this, frame);
 
     endPrinting(); // Send a message synchronously while m_isPerformingDOMPrintOperation is still true.
     m_isPerformingDOMPrintOperation = false;
@@ -2931,7 +2939,7 @@ void WebPageProxy::didEndColorPicker()
 
 void WebPageProxy::didDraw()
 {
-    m_uiClient.didDraw(this);
+    m_uiClient->didDraw(this);
 }
 
 // Inspector
@@ -3454,14 +3462,14 @@ void WebPageProxy::didCancelCheckingText(uint64_t requestID)
 void WebPageProxy::setFocus(bool focused)
 {
     if (focused)
-        m_uiClient.focus(this);
+        m_uiClient->focus(this);
     else
-        m_uiClient.unfocus(this);
+        m_uiClient->unfocus(this);
 }
 
 void WebPageProxy::takeFocus(uint32_t direction)
 {
-    m_uiClient.takeFocus(this, (static_cast<FocusDirection>(direction) == FocusDirectionForward) ? kWKFocusDirectionForward : kWKFocusDirectionBackward);
+    m_uiClient->takeFocus(this, (static_cast<FocusDirection>(direction) == FocusDirectionForward) ? kWKFocusDirectionForward : kWKFocusDirectionBackward);
 }
 
 void WebPageProxy::setToolTip(const String& toolTip)
@@ -3533,8 +3541,8 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
         // FIXME: Dispatch additional events to the didNotHandleWheelEvent client function.
         if (!handled) {
-            if (m_uiClient.implementsDidNotHandleWheelEvent())
-                m_uiClient.didNotHandleWheelEvent(this, oldestCoalescedEvent->last());
+            if (m_uiClient->implementsDidNotHandleWheelEvent())
+                m_uiClient->didNotHandleWheelEvent(this, oldestCoalescedEvent->last());
 #if PLATFORM(MAC)
             m_pageClient.wheelEventWasNotHandledByWebCore(oldestCoalescedEvent->last());
 #endif
@@ -3563,8 +3571,8 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         if (handled)
             break;
 
-        if (m_uiClient.implementsDidNotHandleKeyEvent())
-            m_uiClient.didNotHandleKeyEvent(this, event);
+        if (m_uiClient->implementsDidNotHandleKeyEvent())
+            m_uiClient->didNotHandleKeyEvent(this, event);
         break;
     }
 #if ENABLE(TOUCH_EVENTS)
@@ -3908,7 +3916,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.userAgent = userAgent();
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
-    parameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();
+    parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = deviceScaleFactor();
     parameters.mediaVolume = m_mediaVolume;
@@ -3990,7 +3998,7 @@ void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originI
 
         RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromDatabaseIdentifier(record->originIdentifier);
 
-        uint64_t newQuota = m_uiClient.exceededDatabaseQuota(this, frame, origin.get(),
+        uint64_t newQuota = m_uiClient->exceededDatabaseQuota(this, frame, origin.get(),
             record->databaseName, record->displayName, record->currentQuota,
             record->currentOriginUsage, record->currentDatabaseUsage, record->expectedUsage);
 
@@ -4008,7 +4016,7 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
     RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
     RefPtr<GeolocationPermissionRequestProxy> request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
 
-    if (m_uiClient.decidePolicyForGeolocationPermissionRequest(this, frame, origin.get(), request.get()))
+    if (m_uiClient->decidePolicyForGeolocationPermissionRequest(this, frame, origin.get(), request.get()))
         return;
 
     if (m_pageClient.decidePolicyForGeolocationPermissionRequest(*frame, *origin, *request))
@@ -4025,7 +4033,7 @@ void WebPageProxy::requestNotificationPermission(uint64_t requestID, const Strin
     RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromString(originString);
     RefPtr<NotificationPermissionRequest> request = m_notificationPermissionRequestManager.createRequest(requestID);
     
-    if (!m_uiClient.decidePolicyForNotificationPermissionRequest(this, origin.get(), request.get()))
+    if (!m_uiClient->decidePolicyForNotificationPermissionRequest(this, origin.get(), request.get()))
         request->deny();
 }
 
@@ -4053,28 +4061,28 @@ float WebPageProxy::headerHeight(WebFrameProxy* frame)
 {
     if (frame->isDisplayingPDFDocument())
         return 0;
-    return m_uiClient.headerHeight(this, frame);
+    return m_uiClient->headerHeight(this, frame);
 }
 
 float WebPageProxy::footerHeight(WebFrameProxy* frame)
 {
     if (frame->isDisplayingPDFDocument())
         return 0;
-    return m_uiClient.footerHeight(this, frame);
+    return m_uiClient->footerHeight(this, frame);
 }
 
 void WebPageProxy::drawHeader(WebFrameProxy* frame, const FloatRect& rect)
 {
     if (frame->isDisplayingPDFDocument())
         return;
-    m_uiClient.drawHeader(this, frame, rect);
+    m_uiClient->drawHeader(this, frame, rect);
 }
 
 void WebPageProxy::drawFooter(WebFrameProxy* frame, const FloatRect& rect)
 {
     if (frame->isDisplayingPDFDocument())
         return;
-    m_uiClient.drawFooter(this, frame, rect);
+    m_uiClient->drawFooter(this, frame, rect);
 }
 
 void WebPageProxy::runModal()
@@ -4088,7 +4096,7 @@ void WebPageProxy::runModal()
     // See http://webkit.org/b/89590 for more discussion.
     m_process->connection()->wakeUpRunLoop();
 
-    m_uiClient.runModal(this);
+    m_uiClient->runModal(this);
 }
 
 void WebPageProxy::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)
@@ -4168,7 +4176,7 @@ void WebPageProxy::setCanRunModal(bool canRunModal)
     // It's only possible to change the state for a WebPage which
     // already qualifies for running modal child web pages, otherwise
     // there's no other possibility than not allowing it.
-    m_canRunModal = m_uiClient.canRunModal() && canRunModal;
+    m_canRunModal = m_uiClient->canRunModal() && canRunModal;
     m_process->send(Messages::WebPage::SetCanRunModal(m_canRunModal), m_pageID);
 }
 
@@ -4267,7 +4275,7 @@ void WebPageProxy::updateBackingStoreDiscardableState()
 
 void WebPageProxy::saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, API::Data* data)
 {
-    m_uiClient.saveDataToFileInDownloadsFolder(this, suggestedFilename, mimeType, originatingURLString, data);
+    m_uiClient->saveDataToFileInDownloadsFolder(this, suggestedFilename, mimeType, originatingURLString, data);
 }
 
 void WebPageProxy::savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference& dataReference)

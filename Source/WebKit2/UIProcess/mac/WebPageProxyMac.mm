@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebPageProxy.h"
 
+#import "APIUIClient.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
@@ -133,7 +134,7 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
         return;
 
     // In case the UI client overrides getWindowFrame(), we call it here to make sure we send the appropriate window frame.
-    FloatRect windowFrameInScreenCoordinates = m_uiClient.windowFrame(this);
+    FloatRect windowFrameInScreenCoordinates = m_uiClient->windowFrame(this);
     FloatRect windowFrameInUnflippedScreenCoordinates = m_pageClient.convertToUserSpace(windowFrameInScreenCoordinates);
 
     process().send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, windowFrameInUnflippedScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);

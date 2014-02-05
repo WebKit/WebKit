@@ -449,7 +449,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
         0, // unavailablePluginButtonClicked
     };
 
-    inspectorPage->initializeUIClient(reinterpret_cast<const WKPageUIClientBase*>(&uiClient));
+    WKPageSetPageUIClient(toAPI(inspectorPage), &uiClient.base);
 
     return inspectorPage;
 }

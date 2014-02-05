@@ -177,9 +177,8 @@
 		1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A9C5412B816CF008FE984 /* NetscapePluginModule.h */; };
 		1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A9C9912B821CD008FE984 /* NetscapePluginModuleMac.mm */; };
 		1A4A9F3312B844E2008FE984 /* PluginQuirks.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A9F3112B844E2008FE984 /* PluginQuirks.h */; };
+		1A4D664818A2D91A00D82E21 /* APIUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4D664718A2D91A00D82E21 /* APIUIClient.h */; };
 		1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */ = {isa = PBXBuildFile; fileRef = 1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */; };
-		1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */; };
-		1A594ABB112A1FB6009DE7C7 /* WebUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */; };
 		1A5B1C501898606F004FCF9B /* WKNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A5B1C4E1898606F004FCF9B /* WKNavigation.mm */; };
 		1A5B1C511898606F004FCF9B /* WKNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5B1C4F1898606F004FCF9B /* WKNavigation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A5B1C5418987EDF004FCF9B /* WebDocumentLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */; };
@@ -1822,13 +1821,12 @@
 		1A4A9C5412B816CF008FE984 /* NetscapePluginModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginModule.h; sourceTree = "<group>"; };
 		1A4A9C9912B821CD008FE984 /* NetscapePluginModuleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapePluginModuleMac.mm; sourceTree = "<group>"; };
 		1A4A9F3112B844E2008FE984 /* PluginQuirks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginQuirks.h; sourceTree = "<group>"; };
+		1A4D664718A2D91A00D82E21 /* APIUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUIClient.h; sourceTree = "<group>"; };
 		1A4F976A100E7B6600637A18 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		1A4F976E100E7B6600637A18 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUIClient.cpp; sourceTree = "<group>"; };
-		1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUIClient.h; sourceTree = "<group>"; };
 		1A5B1C4E1898606F004FCF9B /* WKNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNavigation.mm; sourceTree = "<group>"; };
 		1A5B1C4F1898606F004FCF9B /* WKNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigation.h; sourceTree = "<group>"; };
 		1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDocumentLoader.cpp; sourceTree = "<group>"; };
@@ -5072,8 +5070,6 @@
 				33367632130C99B2006C9DE2 /* WebResourceCacheManagerProxy.cpp */,
 				33367633130C99B2006C9DE2 /* WebResourceCacheManagerProxy.h */,
 				33367634130C99B2006C9DE2 /* WebResourceCacheManagerProxy.messages.in */,
-				1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */,
-				1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */,
 			);
 			path = UIProcess;
 			sourceTree = "<group>";
@@ -5090,6 +5086,7 @@
 				BC111B47112F616900337BAB /* mac */,
 				1A2464F21891E45100234C5B /* APILoaderClient.h */,
 				1AFDD3141891B54000153970 /* APIPolicyClient.h */,
+				1A4D664718A2D91A00D82E21 /* APIUIClient.h */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -6538,6 +6535,7 @@
 				BC1BE1F212D54DBD0004A228 /* WebGeolocationProvider.h in Headers */,
 				0F174AA3142A4CB70039250F /* APIGeometry.h in Headers */,
 				BCF69F871176CD6F00471A52 /* WebHistoryClient.h in Headers */,
+				1A4D664818A2D91A00D82E21 /* APIUIClient.h in Headers */,
 				7801C09A142290C400FAF9AF /* WebHitTestResult.h in Headers */,
 				511B24AB132E097200065A0C /* WebIconDatabase.h in Headers */,
 				51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */,
@@ -6629,7 +6627,6 @@
 				1FB00AC9185F76460019142E /* WKWebProcessPlugInPageGroupInternal.h in Headers */,
 				F634445612A885C8000612D8 /* WebSecurityOrigin.h in Headers */,
 				BCC5715B115ADAEF001CCAF9 /* WebSystemInterface.h in Headers */,
-				1A594ABB112A1FB6009DE7C7 /* WebUIClient.h in Headers */,
 				BCA0EF7F12331E78007D3CFB /* WebUndoStep.h in Headers */,
 				1AC1336C18565C7A00F3EC05 /* APIPageHandle.h in Headers */,
 				1AB474E8184D44D00051B622 /* WKBundlePageDiagnosticLoggingClient.h in Headers */,
@@ -8038,7 +8035,6 @@
 				D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */,
 				BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */,
 				C0337DD8127A51B6008FF4F4 /* WebTouchEvent.cpp in Sources */,
-				1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */,
 				BCA0EF8012331E78007D3CFB /* WebUndoStep.cpp in Sources */,
 				2DA944AF1884E9BA00ED86DB /* WebPageProxyIOS.mm in Sources */,
 				BCE2315E122C30CA00D5C35A /* APIURLRequest.cpp in Sources */,

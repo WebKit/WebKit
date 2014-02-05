@@ -57,7 +57,6 @@
 #include <WebCore/AlternativeTextClient.h> // FIXME: Needed by WebPageProxyMessages.h for DICTATION_ALTERNATIVES.
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenuProxy.h"
-#include "WebUIClient.h"
 #include <WebCore/Color.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/DragSession.h>
@@ -100,6 +99,7 @@
 namespace API {
 class LoaderClient;
 class PolicyClient;
+class UIClient;
 class URLRequest;
 }
 
@@ -369,7 +369,7 @@ public:
     void initializeFormClient(const WKPageFormClientBase*);
     void setLoaderClient(std::unique_ptr<API::LoaderClient>);
     void setPolicyClient(std::unique_ptr<API::PolicyClient>);
-    void initializeUIClient(const WKPageUIClientBase*);
+    void setUIClient(std::unique_ptr<API::UIClient>);
 #if PLATFORM(EFL)
     void initializeUIPopupMenuClient(const WKPageUIPopupMenuClientBase*);
 #endif
@@ -1176,7 +1176,7 @@ private:
     std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;
     WebFormClient m_formClient;
-    WebUIClient m_uiClient;
+    std::unique_ptr<API::UIClient> m_uiClient;
 #if PLATFORM(EFL)
     WebUIPopupMenuClient m_uiPopupMenuClient;
 #endif

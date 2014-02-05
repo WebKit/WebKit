@@ -1,3 +1,111 @@
+2014-02-05  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WebUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=128274
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/APIUIClient.h: Added.
+        (API::UIClient::~UIClient):
+        (API::UIClient::createNewPage):
+        (API::UIClient::showPage):
+        (API::UIClient::close):
+        (API::UIClient::takeFocus):
+        (API::UIClient::focus):
+        (API::UIClient::unfocus):
+        (API::UIClient::runJavaScriptAlert):
+        (API::UIClient::runJavaScriptConfirm):
+        (API::UIClient::runJavaScriptPrompt):
+        (API::UIClient::setStatusText):
+        (API::UIClient::mouseDidMoveOverElement):
+        (API::UIClient::unavailablePluginButtonClicked):
+        (API::UIClient::implementsDidNotHandleKeyEvent):
+        (API::UIClient::didNotHandleKeyEvent):
+        (API::UIClient::implementsDidNotHandleWheelEvent):
+        (API::UIClient::didNotHandleWheelEvent):
+        (API::UIClient::toolbarsAreVisible):
+        (API::UIClient::setToolbarsAreVisible):
+        (API::UIClient::menuBarIsVisible):
+        (API::UIClient::setMenuBarIsVisible):
+        (API::UIClient::statusBarIsVisible):
+        (API::UIClient::setStatusBarIsVisible):
+        (API::UIClient::isResizable):
+        (API::UIClient::setIsResizable):
+        (API::UIClient::setWindowFrame):
+        (API::UIClient::windowFrame):
+        (API::UIClient::canRunBeforeUnloadConfirmPanel):
+        (API::UIClient::runBeforeUnloadConfirmPanel):
+        (API::UIClient::didDraw):
+        (API::UIClient::pageDidScroll):
+        (API::UIClient::exceededDatabaseQuota):
+        (API::UIClient::runOpenPanel):
+        (API::UIClient::decidePolicyForGeolocationPermissionRequest):
+        (API::UIClient::decidePolicyForNotificationPermissionRequest):
+        (API::UIClient::headerHeight):
+        (API::UIClient::footerHeight):
+        (API::UIClient::drawHeader):
+        (API::UIClient::drawFooter):
+        (API::UIClient::printFrame):
+        (API::UIClient::canRunModal):
+        (API::UIClient::runModal):
+        (API::UIClient::saveDataToFileInDownloadsFolder):
+        (API::UIClient::shouldInterruptJavaScript):
+        (API::UIClient::showColorPicker):
+        (API::UIClient::hideColorPicker):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setUIClient):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::showPage):
+        (WebKit::WebPageProxy::closePage):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        (WebKit::WebPageProxy::shouldInterruptJavaScript):
+        (WebKit::WebPageProxy::setStatusText):
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+        (WebKit::WebPageProxy::setToolbarsAreVisible):
+        (WebKit::WebPageProxy::getToolbarsAreVisible):
+        (WebKit::WebPageProxy::setMenuBarIsVisible):
+        (WebKit::WebPageProxy::getMenuBarIsVisible):
+        (WebKit::WebPageProxy::setStatusBarIsVisible):
+        (WebKit::WebPageProxy::getStatusBarIsVisible):
+        (WebKit::WebPageProxy::setIsResizable):
+        (WebKit::WebPageProxy::getIsResizable):
+        (WebKit::WebPageProxy::setWindowFrame):
+        (WebKit::WebPageProxy::getWindowFrame):
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        (WebKit::WebPageProxy::pageDidScroll):
+        (WebKit::WebPageProxy::runOpenPanel):
+        (WebKit::WebPageProxy::printFrame):
+        (WebKit::WebPageProxy::didDraw):
+        (WebKit::WebPageProxy::setFocus):
+        (WebKit::WebPageProxy::takeFocus):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+        (WebKit::WebPageProxy::requestNotificationPermission):
+        (WebKit::WebPageProxy::headerHeight):
+        (WebKit::WebPageProxy::footerHeight):
+        (WebKit::WebPageProxy::drawHeader):
+        (WebKit::WebPageProxy::drawFooter):
+        (WebKit::WebPageProxy::runModal):
+        (WebKit::WebPageProxy::setCanRunModal):
+        (WebKit::WebPageProxy::saveDataToFileInDownloadsFolder):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebUIClient.cpp: Removed.
+        * UIProcess/WebUIClient.h: Removed.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-05  Enrica Casucci  <enrica@apple.com>
 
         WK2: Caret, selections and autocorrection bubbles are incorrectly positioned when inside an iframe.
