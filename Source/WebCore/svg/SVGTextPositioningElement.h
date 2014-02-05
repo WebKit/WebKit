@@ -21,7 +21,6 @@
 #ifndef SVGTextPositioningElement_h
 #define SVGTextPositioningElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedNumberList.h"
 #include "SVGTextContentElement.h"
@@ -50,5 +49,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

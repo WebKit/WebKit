@@ -207,7 +207,6 @@ StylePropertyShorthand marginShorthand()
     return StylePropertyShorthand(CSSPropertyMargin, marginProperties, WTF_ARRAY_LENGTH(marginProperties));
 }
 
-#if ENABLE(SVG)
 StylePropertyShorthand markerShorthand()
 {
     static const CSSPropertyID markerProperties[] = {
@@ -217,7 +216,6 @@ StylePropertyShorthand markerShorthand()
     };
     return StylePropertyShorthand(CSSPropertyMarker, markerProperties, WTF_ARRAY_LENGTH(markerProperties));
 }
-#endif
 
 StylePropertyShorthand outlineShorthand()
 {
@@ -580,10 +578,8 @@ StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
         return webkitTransformOriginShorthand();
     case CSSPropertyWebkitTextDecoration:
         return webkitTextDecorationShorthand();
-#if ENABLE(SVG)
     case CSSPropertyMarker:
         return markerShorthand();
-#endif
     default:
         return StylePropertyShorthand();
     }
@@ -802,12 +798,10 @@ Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID prope
     case CSSPropertyWebkitTextDecorationStyle:
     case CSSPropertyWebkitTextDecorationColor:
         return makeVector(webkitTextDecorationShorthand());
-#if ENABLE(SVG)
     case CSSPropertyMarkerStart:
     case CSSPropertyMarkerMid:
     case CSSPropertyMarkerEnd:
         return makeVector(markerShorthand());
-#endif
     default:
         break;
     }

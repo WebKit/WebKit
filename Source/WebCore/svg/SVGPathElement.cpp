@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPathElement.h"
 
 #include "Attribute.h"
@@ -411,5 +409,3 @@ RenderPtr<RenderElement> SVGPathElement::createElementRenderer(PassRef<RenderSty
 }
 
 }
-
-#endif // ENABLE(SVG)

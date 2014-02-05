@@ -188,10 +188,8 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         else {
             width = fontData->widthForGlyph(glyph);
 
-#if ENABLE(SVG)
             // SVG uses horizontalGlyphStretch(), when textLength is used to stretch/squeeze text.
             width *= m_run.horizontalGlyphStretch();
-#endif
 
             // We special case spaces in two ways when applying word rounding.
             // First, we round spaces to an adjusted width in all fonts.

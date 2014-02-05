@@ -20,7 +20,6 @@
 #ifndef SVGResources_h
 #define SVGResources_h
 
-#if ENABLE(SVG)
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -189,5 +188,4 @@ private:
 
 }
 
-#endif
 #endif

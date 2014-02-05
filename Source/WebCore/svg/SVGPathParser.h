@@ -24,7 +24,6 @@
 #ifndef SVGPathParser_h
 #define SVGPathParser_h
 
-#if ENABLE(SVG)
 #include "SVGPathConsumer.h"
 #include "SVGPathSeg.h"
 #include <wtf/text/WTFString.h>
@@ -69,5 +68,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGPathParser_h

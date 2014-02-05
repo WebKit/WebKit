@@ -27,8 +27,6 @@
 #ifndef SVGParsingError_h
 #define SVGParsingError_h
 
-#if ENABLE(SVG)
-
 namespace WebCore {
 
 enum SVGParsingError {
@@ -39,5 +37,4 @@ enum SVGParsingError {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGParsingError_h

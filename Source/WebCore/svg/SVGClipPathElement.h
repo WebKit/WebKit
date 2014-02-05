@@ -21,7 +21,6 @@
 #ifndef SVGClipPathElement_h
 #define SVGClipPathElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGExternalResourcesRequired.h"
@@ -60,5 +59,4 @@ NODE_TYPE_CASTS(SVGClipPathElement)
 
 }
 
-#endif
 #endif

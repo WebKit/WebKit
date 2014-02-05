@@ -23,8 +23,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGAnimationElement.h"
 
 #include "Attribute.h"
@@ -691,5 +689,3 @@ void SVGAnimationElement::checkInvalidCSSAttributeType(SVGElement* target)
 }
 
 }
-
-#endif // ENABLE(SVG)

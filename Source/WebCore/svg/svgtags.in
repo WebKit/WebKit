@@ -1,15 +1,12 @@
 namespace="SVG"
 namespaceURI="http://www.w3.org/2000/svg"
-guardFactoryWith="ENABLE(SVG)"
 fallbackInterfaceName="SVGUnknownElement"
 fallbackJSInterfaceName="SVGElement"
 
 a
-#if ENABLE_SVG_FONTS
 altGlyph generateTypeHelpers
 altGlyphDef generateTypeHelpers
 altGlyphItem generateTypeHelpers
-#endif
 animate
 animateColor
 animateMotion generateTypeHelpers

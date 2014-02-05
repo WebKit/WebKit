@@ -120,6 +120,10 @@
 #include "ResourceLoadScheduler.h"
 #include "ResourceLoader.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGDocumentExtensions.h"
+#include "SVGElementFactory.h"
+#include "SVGNames.h"
+#include "SVGSVGElement.h"
 #include "SchemeRegistry.h"
 #include "ScopedEventQueue.h"
 #include "ScriptCallStack.h"
@@ -161,12 +165,6 @@
 #include "XSLTProcessor.h"
 #endif
 
-#if ENABLE(SVG)
-#include "SVGDocumentExtensions.h"
-#include "SVGElementFactory.h"
-#include "SVGNames.h"
-#include "SVGSVGElement.h"
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
 #include "TouchList.h"
@@ -669,10 +667,8 @@ void Document::dropChildren()
 
 void Document::commonTeardown()
 {
-#if ENABLE(SVG)
     if (svgExtensions())
         accessSVGExtensions()->pauseAnimations();
-#endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     clearScriptedAnimationController();
@@ -1048,10 +1044,8 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& name, bool crea
     // FIXME: Use registered namespaces and look up in a hash to find the right factory.
     if (name.namespaceURI() == xhtmlNamespaceURI)
         element = HTMLElementFactory::createElement(name, *this, nullptr, createdByParser);
-#if ENABLE(SVG)
     else if (name.namespaceURI() == SVGNames::svgNamespaceURI)
         element = SVGElementFactory::createElement(name, *this, createdByParser);
-#endif
 #if ENABLE(MATHML)
     else if (name.namespaceURI() == MathMLNames::mathmlNamespaceURI)
         element = MathMLElementFactory::createElement(name, *this, createdByParser);
@@ -2379,13 +2373,11 @@ void Document::implicitClose()
     HTMLLinkElement::dispatchPendingLoadEvents();
     HTMLStyleElement::dispatchPendingLoadEvents();
 
-#if ENABLE(SVG)
     // To align the HTML load event and the SVGLoad event for the outermost <svg> element, fire it from
     // here, instead of doing it from SVGElement::finishedParsingChildren (if externalResourcesRequired="false",
     // which is the default, for ='true' its fired at a later time, once all external resources finished loading).
     if (svgExtensions())
         accessSVGExtensions()->dispatchSVGLoadEventToOutermostSVGElements();
-#endif
 
     dispatchWindowLoadEvent();
     enqueuePageshowEvent(PageshowEventNotPersisted);
@@ -2449,10 +2441,8 @@ void Document::implicitClose()
     }
 #endif
 
-#if ENABLE(SVG)
     if (svgExtensions())
         accessSVGExtensions()->startAnimations();
-#endif
 }
 
 void Document::setParsing(bool b)
@@ -4286,7 +4276,6 @@ PassRefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const S
     return Attr::create(*this, qName, emptyString());
 }
 
-#if ENABLE(SVG)
 const SVGDocumentExtensions* Document::svgExtensions()
 {
     return m_svgExtensions.get();
@@ -4303,7 +4292,6 @@ bool Document::hasSVGRootNode() const
 {
     return documentElement() && documentElement()->hasTagName(SVGNames::svgTag);
 }
-#endif
 
 PassRefPtr<HTMLCollection> Document::ensureCachedCollection(CollectionType type)
 {

@@ -31,19 +31,16 @@
 #include "JSCSSPrimitiveValue.h"
 #include "JSCSSValueList.h"
 #include "JSNode.h"
+#include "JSSVGColor.h"
+#include "JSSVGPaint.h"
 #include "JSWebKitCSSTransformValue.h"
+#include "SVGColor.h"
+#include "SVGPaint.h"
 #include "WebKitCSSTransformValue.h"
 
 #if ENABLE(CSS_FILTERS)
 #include "JSWebKitCSSFilterValue.h"
 #include "WebKitCSSFilterValue.h"
-#endif
-
-#if ENABLE(SVG)
-#include "JSSVGColor.h"
-#include "JSSVGPaint.h"
-#include "SVGColor.h"
-#include "SVGPaint.h"
 #endif
 
 using namespace JSC;
@@ -96,12 +93,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSValue* value)
 #endif
     else if (value->isValueList())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSValueList, value);
-#if ENABLE(SVG)
     else if (value->isSVGPaint())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SVGPaint, value);
     else if (value->isSVGColor())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SVGColor, value);
-#endif
     else if (value->isPrimitiveValue())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSPrimitiveValue, value);
     else

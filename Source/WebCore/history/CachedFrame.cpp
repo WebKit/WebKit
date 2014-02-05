@@ -45,14 +45,11 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageTransitionEvent.h"
+#include "SVGDocumentExtensions.h"
 #include "ScriptController.h"
 #include "SerializedScriptValue.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/CString.h>
-
-#if ENABLE(SVG)
-#include "SVGDocumentExtensions.h"
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
 #include "Chrome.h"
@@ -93,10 +90,8 @@ void CachedFrameBase::restore()
     Frame& frame = m_view->frame();
     m_cachedFrameScriptData->restore(frame);
 
-#if ENABLE(SVG)
     if (m_document->svgExtensions())
         m_document->accessSVGExtensions()->unpauseAnimations();
-#endif
 
     frame.animation().resumeAnimationsForDocument(m_document.get());
     frame.eventHandler().setMousePressNode(m_mousePressNode.get());

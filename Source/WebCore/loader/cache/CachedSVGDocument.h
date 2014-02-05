@@ -23,7 +23,6 @@
 #ifndef CachedSVGDocument_h
 #define CachedSVGDocument_h
 
-#if ENABLE(SVG)
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
 #include "SVGDocument.h"
@@ -52,7 +51,5 @@ private:
 CACHED_RESOURCE_TYPE_CASTS(CachedSVGDocument, CachedResource, CachedResource::SVGDocumentResource)
 
 } // namespace WebCore
-
-#endif // USE(SVG)
 
 #endif // CachedSVGDocument_h

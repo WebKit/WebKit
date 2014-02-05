@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGInlineTextBox.h"
 
-#if ENABLE(SVG)
 #include "FontCache.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -683,5 +682,3 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
 }
 
 } // namespace WebCore
-
-#endif

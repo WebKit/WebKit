@@ -20,7 +20,7 @@
 #ifndef SVGFEPointLightElement_h
 #define SVGFEPointLightElement_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFELightElement.h"
 
 namespace WebCore {
@@ -39,5 +39,5 @@ NODE_TYPE_CASTS(SVGFEPointLightElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(FILTERS)
 #endif

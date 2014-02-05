@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGSwitchElement.h"
 
 #include "ElementIterator.h"
@@ -68,5 +66,3 @@ RenderPtr<RenderElement> SVGSwitchElement::createElementRenderer(PassRef<RenderS
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -22,7 +22,6 @@
 
 [
     JSGenerateToNativeObject,
-    Conditional=SVG,
 ] interface SVGElement : Element {
     [TreatNullAs=NullString, SetterRaisesException] attribute DOMString xmlbase;
     readonly attribute SVGSVGElement ownerSVGElement;

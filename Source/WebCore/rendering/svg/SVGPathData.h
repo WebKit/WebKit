@@ -20,7 +20,6 @@
 #ifndef SVGPathData_h
 #define SVGPathData_h
 
-#if ENABLE(SVG)
 namespace WebCore {
 
 class SVGElement;
@@ -30,5 +29,4 @@ void updatePathFromGraphicsElement(SVGElement*, Path&);
 
 };
 
-#endif // ENABLE(SVG)
 #endif // SVGPathData_h

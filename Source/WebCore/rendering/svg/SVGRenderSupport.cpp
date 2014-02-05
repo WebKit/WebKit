@@ -23,8 +23,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGRenderSupport.h"
 
 #include "NodeRenderStyle.h"
@@ -449,5 +447,3 @@ void SVGRenderSupport::styleChanged(RenderElement& renderer)
 }
 
 }
-
-#endif

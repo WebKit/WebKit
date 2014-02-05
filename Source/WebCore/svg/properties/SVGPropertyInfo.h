@@ -20,7 +20,6 @@
 #ifndef SVGPropertyInfo_h
 #define SVGPropertyInfo_h
 
-#if ENABLE(SVG)
 #include "QualifiedName.h"
 #include <wtf/PassRefPtr.h>
 
@@ -75,5 +74,4 @@ public:
 
 }
 
-#endif // ENABLE(SVG)
 #endif // SVGPropertyInfo_h

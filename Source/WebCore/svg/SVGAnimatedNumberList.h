@@ -20,7 +20,6 @@
 #ifndef SVGAnimatedNumberList_h
 #define SVGAnimatedNumberList_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
 #include "SVGNumberList.h"
@@ -56,5 +55,4 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

@@ -54,6 +54,7 @@
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
+#include "SVGSMILElement.h"
 #include "ScriptController.h"
 #include "SubstituteData.h"
 #include "TextIterator.h"
@@ -77,9 +78,6 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 
-#if ENABLE(SVG)
-#include "SVGSMILElement.h"
-#endif
 
 /**
  * SECTION:webkitwebframe

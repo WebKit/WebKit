@@ -79,10 +79,8 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
         return new CachedCSSStyleSheet(request, charset);
     case CachedResource::Script:
         return new CachedScript(request, charset);
-#if ENABLE(SVG)
     case CachedResource::SVGDocumentResource:
         return new CachedSVGDocument(request);
-#endif
     case CachedResource::FontResource:
         return new CachedFont(request);
     case CachedResource::RawResource:
@@ -218,12 +216,10 @@ CachedResourceHandle<CachedXSLStyleSheet> CachedResourceLoader::requestXSLStyleS
 }
 #endif
 
-#if ENABLE(SVG)
 CachedResourceHandle<CachedSVGDocument> CachedResourceLoader::requestSVGDocument(CachedResourceRequest& request)
 {
     return toCachedSVGDocument(requestResource(CachedResource::SVGDocumentResource, request).get());
 }
-#endif
 
 #if ENABLE(LINK_PREFETCH)
 CachedResourceHandle<CachedResource> CachedResourceLoader::requestLinkResource(CachedResource::Type type, CachedResourceRequest& request)
@@ -251,9 +247,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
 #endif
-#if ENABLE(SVG)
     case CachedResource::SVGDocumentResource:
-#endif
     case CachedResource::CSSStyleSheet:
         // These resource can inject script into the current document (Script,
         // XSL) or exfiltrate the content of the current document (CSS).
@@ -320,9 +314,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
             return false;
         }
         break;
-#if ENABLE(SVG)
     case CachedResource::SVGDocumentResource:
-#endif
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
         if (!m_document->securityOrigin()->canRequest(url)) {
@@ -353,9 +345,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
         if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowStyleFromSource(url))
             return false;
         break;
-#if ENABLE(SVG)
     case CachedResource::SVGDocumentResource:
-#endif
     case CachedResource::ImageResource:
         if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowImageFromSource(url))
             return false;

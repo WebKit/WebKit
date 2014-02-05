@@ -23,8 +23,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGUseElement.h"
 
 #include "CachedResourceLoader.h"
@@ -993,5 +991,3 @@ void SVGUseElement::setCachedDocument(CachedResourceHandle<CachedSVGDocument> ca
 }
 
 }
-
-#endif // ENABLE(SVG)

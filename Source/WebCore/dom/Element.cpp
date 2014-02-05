@@ -66,6 +66,9 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "SVGDocumentExtensions.h"
+#include "SVGElement.h"
+#include "SVGNames.h"
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "StyleProperties.h"
@@ -79,12 +82,6 @@
 #include <wtf/BitVector.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
-
-#if ENABLE(SVG)
-#include "SVGDocumentExtensions.h"
-#include "SVGElement.h"
-#include "SVGNames.h"
-#endif
 
 namespace WebCore {
 
@@ -166,12 +163,10 @@ Element::~Element()
     if (hasSyntheticAttrChildNodes())
         detachAllAttrNodesFromElement();
 
-#if ENABLE(SVG)
     if (hasPendingResources()) {
         document().accessSVGExtensions()->removeElementFromPendingResources(this);
         ASSERT(!hasPendingResources());
     }
-#endif
 }
 
 inline ElementRareData* Element::elementRareData() const
@@ -392,12 +387,11 @@ void Element::synchronizeAllAttributes() const
         ASSERT(isStyledElement());
         static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
     }
-#if ENABLE(SVG)
+
     if (elementData()->animatedSVGAttributesAreDirty()) {
         ASSERT(isSVGElement());
         toSVGElement(this)->synchronizeAnimatedSVGAttribute(anyQName());
     }
-#endif
 }
 
 inline void Element::synchronizeAttribute(const QualifiedName& name) const
@@ -409,12 +403,11 @@ inline void Element::synchronizeAttribute(const QualifiedName& name) const
         static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
         return;
     }
-#if ENABLE(SVG)
+
     if (UNLIKELY(elementData()->animatedSVGAttributesAreDirty())) {
         ASSERT(isSVGElement());
         toSVGElement(this)->synchronizeAnimatedSVGAttribute(name);
     }
-#endif
 }
 
 inline void Element::synchronizeAttribute(const AtomicString& localName) const
@@ -428,13 +421,12 @@ inline void Element::synchronizeAttribute(const AtomicString& localName) const
         static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
         return;
     }
-#if ENABLE(SVG)
+
     if (elementData()->animatedSVGAttributesAreDirty()) {
         // We're not passing a namespace argument on purpose. SVGNames::*Attr are defined w/o namespaces as well.
         ASSERT_WITH_SECURITY_IMPLICATION(isSVGElement());
         toSVGElement(this)->synchronizeAnimatedSVGAttribute(QualifiedName(nullAtom, localName, nullAtom));
     }
-#endif
 }
 
 const AtomicString& Element::getAttribute(const QualifiedName& name) const
@@ -908,16 +900,14 @@ IntRect Element::boundsInRootViewSpace()
         return IntRect();
 
     Vector<FloatQuad> quads;
-#if ENABLE(SVG)
+
     if (isSVGElement() && renderer()) {
         // Get the bounding rectangle from the SVG model.
         SVGElement* svgElement = toSVGElement(this);
         FloatRect localRect;
         if (svgElement->getBoundingBox(localRect))
             quads.append(renderer()->localToAbsoluteQuad(localRect));
-    } else
-#endif
-    {
+    } else {
         // Get the bounding rectangle from the box model.
         if (renderBoxModelObject())
             renderBoxModelObject()->absoluteQuads(quads);
@@ -956,16 +946,13 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect()
     document().updateLayoutIgnorePendingStylesheets();
 
     Vector<FloatQuad> quads;
-#if ENABLE(SVG)
     if (isSVGElement() && renderer() && !renderer()->isSVGRoot()) {
         // Get the bounding rectangle from the SVG model.
         SVGElement* svgElement = toSVGElement(this);
         FloatRect localRect;
         if (svgElement->getBoundingBox(localRect))
             quads.append(renderer()->localToAbsoluteQuad(localRect));
-    } else
-#endif
-    {
+    } else {
         // Get the bounding rectangle from the box model.
         if (renderBoxModelObject())
             renderBoxModelObject()->absoluteQuads(quads);
@@ -1436,10 +1423,9 @@ void Element::removedFrom(ContainerNode& insertionPoint)
     }
 
     ContainerNode::removedFrom(insertionPoint);
-#if ENABLE(SVG)
+
     if (hasPendingResources())
         document().accessSVGExtensions()->removeElementFromPendingResources(this);
-#endif
 }
 
 void Element::unregisterNamedFlowContentElement()
@@ -2504,13 +2490,11 @@ const AtomicString& Element::UIActions() const
 
 bool Element::childShouldCreateRenderer(const Node& child) const
 {
-#if ENABLE(SVG)
     // Only create renderers for SVG elements whose parents are SVG elements, or for proper <svg xmlns="svgNS"> subdocuments.
     if (child.isSVGElement()) {
         ASSERT(!isSVGElement());
         return child.hasTagName(SVGNames::svgTag) && toSVGElement(child).isValid();
     }
-#endif
     return ContainerNode::childShouldCreateRenderer(child);
 }
 
@@ -2666,10 +2650,8 @@ bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
     if (name == HTMLNames::styleAttr)
         return false;
 
-#if ENABLE(SVG)
     if (isSVGElement())
         return !toSVGElement(this)->isAnimatableAttribute(name);
-#endif
 
     return true;
 }
@@ -3059,7 +3041,6 @@ void Element::createUniqueElementData()
     }
 }
 
-#if ENABLE(SVG)
 bool Element::hasPendingResources() const
 {
     return hasRareData() && elementRareData()->hasPendingResources();
@@ -3074,6 +3055,5 @@ void Element::clearHasPendingResources()
 {
     ensureElementRareData().setHasPendingResources(false);
 }
-#endif
 
 } // namespace WebCore

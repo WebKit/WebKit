@@ -21,7 +21,6 @@
 #ifndef RenderSVGTransformableContainer_h
 #define RenderSVGTransformableContainer_h
 
-#if ENABLE(SVG)
 #include "RenderSVGContainer.h"
 #include "SVGGraphicsElement.h"
 
@@ -51,5 +50,4 @@ private:
 
 }
 
-#endif // ENABLE(SVG)
 #endif // RenderSVGTransformableContainer_h

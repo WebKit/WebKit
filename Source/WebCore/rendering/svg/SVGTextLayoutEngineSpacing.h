@@ -20,7 +20,6 @@
 #ifndef SVGTextLayoutEngineSpacing_h
 #define SVGTextLayoutEngineSpacing_h
 
-#if ENABLE(SVG)
 #include "SVGTextMetrics.h"
 
 namespace WebCore {
@@ -49,5 +48,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

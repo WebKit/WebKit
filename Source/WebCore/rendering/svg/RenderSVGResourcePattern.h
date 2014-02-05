@@ -21,7 +21,6 @@
 #ifndef RenderSVGResourcePattern_h
 #define RenderSVGResourcePattern_h
 
-#if ENABLE(SVG)
 #include "ImageBuffer.h"
 #include "Pattern.h"
 #include "PatternAttributes.h"
@@ -72,5 +71,4 @@ private:
 
 }
 
-#endif
 #endif

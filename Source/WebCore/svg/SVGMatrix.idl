@@ -20,9 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    Conditional=SVG,
-] interface SVGMatrix {
+interface SVGMatrix {
     // FIXME: these attributes should all be floats but since we implement
     // AffineTransform with doubles setting these as doubles makes more sense.
     [StrictTypeChecking] attribute double a;

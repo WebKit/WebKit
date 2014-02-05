@@ -20,7 +20,6 @@
 #ifndef SVGImageLoader_h
 #define SVGImageLoader_h
 
-#if ENABLE(SVG)
 #include "ImageLoader.h"
 
 namespace WebCore {
@@ -38,5 +37,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGImageLoader_h

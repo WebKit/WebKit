@@ -20,10 +20,7 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGResourceRadialGradient.h"
-
 
 namespace WebCore {
 
@@ -77,5 +74,3 @@ void RenderSVGResourceRadialGradient::buildGradient(GradientData* gradientData) 
 }
 
 }
-
-#endif

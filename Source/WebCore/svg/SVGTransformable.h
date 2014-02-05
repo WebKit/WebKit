@@ -21,7 +21,6 @@
 #ifndef SVGTransformable_h
 #define SVGTransformable_h
 
-#if ENABLE(SVG)
 #include "SVGLocatable.h"
 #include "SVGTransform.h"
 #include <wtf/text/WTFString.h>
@@ -50,5 +49,4 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGTransformable_h

@@ -20,7 +20,6 @@
 #ifndef RenderSVGBlock_h
 #define RenderSVGBlock_h
 
-#if ENABLE(SVG)
 #include "RenderBlockFlow.h"
 #include "SVGGraphicsElement.h"
 #include "SVGRenderSupport.h"
@@ -52,5 +51,4 @@ private:
 };
 
 }
-#endif
 #endif

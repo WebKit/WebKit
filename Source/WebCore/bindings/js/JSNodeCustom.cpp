@@ -58,22 +58,19 @@
 #include "JSHTMLElementWrapperFactory.h"
 #include "JSNotation.h"
 #include "JSProcessingInstruction.h"
+#include "JSSVGElementWrapperFactory.h"
 #include "JSText.h"
 #include "Node.h"
 #include "Notation.h"
 #include "ProcessingInstruction.h"
 #include "RegisteredEventListener.h"
+#include "SVGElement.h"
 #include "ShadowRoot.h"
 #include "StyleSheet.h"
 #include "StyledElement.h"
 #include "Text.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-
-#if ENABLE(SVG)
-#include "JSSVGElementWrapperFactory.h"
-#include "SVGElement.h"
-#endif
 
 using namespace JSC;
 
@@ -202,10 +199,8 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
         case Node::ELEMENT_NODE:
             if (node->isHTMLElement())
                 wrapper = createJSHTMLWrapper(exec, globalObject, toHTMLElement(node));
-#if ENABLE(SVG)
             else if (node->isSVGElement())
                 wrapper = createJSSVGWrapper(exec, globalObject, toSVGElement(node));
-#endif
             else
                 wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Element, node);
             break;

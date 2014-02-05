@@ -23,8 +23,6 @@
 #ifndef RenderSVGContainer_h
 #define RenderSVGContainer_h
 
-#if ENABLE(SVG)
-
 #include "RenderSVGModelObject.h"
 
 namespace WebCore {
@@ -86,5 +84,4 @@ RENDER_OBJECT_TYPE_CASTS(RenderSVGContainer, isSVGContainer())
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // RenderSVGContainer_h

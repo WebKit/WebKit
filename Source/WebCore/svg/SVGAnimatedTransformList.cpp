@@ -22,8 +22,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGAnimatedTransformList.h"
 
 #include "SVGAnimateTransformElement.h"
@@ -150,5 +148,3 @@ float SVGAnimatedTransformListAnimator::calculateDistance(const String& fromStri
 }
 
 }
-
-#endif // ENABLE(SVG)

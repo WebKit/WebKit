@@ -21,7 +21,6 @@
 #ifndef SVGLineElement_h
 #define SVGLineElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
@@ -61,5 +60,4 @@ NODE_TYPE_CASTS(SVGLineElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

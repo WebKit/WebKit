@@ -22,8 +22,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPathSegListBuilder.h"
 
 #include "ExceptionCode.h"
@@ -156,5 +154,3 @@ void SVGPathSegListBuilder::closePath()
 }
 
 }
-
-#endif // ENABLE(SVG)

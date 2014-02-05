@@ -27,8 +27,6 @@
 #ifndef SVGImage_h
 #define SVGImage_h
 
-#if ENABLE(SVG)
-
 #include "Image.h"
 
 namespace WebCore {
@@ -105,6 +103,4 @@ IMAGE_TYPE_CASTS(SVGImage)
 
 }
 
-
-#endif // ENABLE(SVG)
 #endif // SVGImage_h

@@ -34,13 +34,11 @@
 #include "URL.h"
 #include "PasteboardHelper.h"
 #include "RenderImage.h"
+#include "SVGNames.h"
+#include "XLinkNames.h"
 #include "markup.h"
 #include <gtk/gtk.h>
 
-#if ENABLE(SVG)
-#include "SVGNames.h"
-#include "XLinkNames.h"
-#endif
 
 namespace WebCore {
 
@@ -195,10 +193,8 @@ static URL getURLForImageElement(Element& element)
     AtomicString urlString;
     if (isHTMLImageElement(element) || isHTMLInputElement(element))
         urlString = element.getAttribute(HTMLNames::srcAttr);
-#if ENABLE(SVG)
     else if (element.hasTagName(SVGNames::imageTag))
         urlString = element.getAttribute(XLinkNames::hrefAttr);
-#endif
     else if (element.hasTagName(HTMLNames::embedTag) || isHTMLObjectElement(element))
         urlString = element.imageSourceURL();
 

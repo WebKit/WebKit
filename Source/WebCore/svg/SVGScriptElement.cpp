@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGScriptElement.h"
 
 #include "Attribute.h"
@@ -209,5 +207,3 @@ bool SVGScriptElement::isAnimatableAttribute(const QualifiedName& name) const
 #endif
 
 }
-
-#endif // ENABLE(SVG)

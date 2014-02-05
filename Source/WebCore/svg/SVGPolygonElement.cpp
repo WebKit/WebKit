@@ -19,9 +19,8 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPolygonElement.h"
+
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -38,5 +37,3 @@ PassRefPtr<SVGPolygonElement> SVGPolygonElement::create(const QualifiedName& tag
 }
 
 }
-
-#endif // ENABLE(SVG)

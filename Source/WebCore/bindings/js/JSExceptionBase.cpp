@@ -29,15 +29,13 @@
 #include "JSDOMCoreException.h"
 #include "JSEventException.h"
 #include "JSRangeException.h"
+#include "JSSVGException.h"
 #include "JSXMLHttpRequestException.h"
+#include "JSXPathException.h"
 #if ENABLE(SQL_DATABASE)
 #include "SQLException.h"
 #include "JSSQLException.h"
 #endif
-#if ENABLE(SVG)
-#include "JSSVGException.h"
-#endif
-#include "JSXPathException.h"
 
 namespace WebCore {
 
@@ -51,10 +49,8 @@ ExceptionBase* toExceptionBase(JSC::JSValue value)
         return reinterpret_cast<ExceptionBase*>(eventException);
     if (XMLHttpRequestException* xmlHttpException = toXMLHttpRequestException(value))
         return reinterpret_cast<ExceptionBase*>(xmlHttpException);
-#if ENABLE(SVG)
     if (SVGException* svgException = toSVGException(value))
         return reinterpret_cast<ExceptionBase*>(svgException);
-#endif
     if (XPathException* pathException = toXPathException(value))
         return reinterpret_cast<ExceptionBase*>(pathException);
 #if ENABLE(SQL_DATABASE)

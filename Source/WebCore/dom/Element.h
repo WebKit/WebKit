@@ -496,12 +496,10 @@ public:
 
     virtual bool childShouldCreateRenderer(const Node&) const override;
 
-#if ENABLE(SVG)
     bool hasPendingResources() const;
     void setHasPendingResources();
     void clearHasPendingResources();
     virtual void buildPendingResource() { };
-#endif
 
 #if ENABLE(FULLSCREEN_API)
     enum {

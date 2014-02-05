@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGEllipseElement.h"
 
 #include "Attribute.h"
@@ -151,5 +149,3 @@ RenderPtr<RenderElement> SVGEllipseElement::createElementRenderer(PassRef<Render
 }
 
 }
-
-#endif // ENABLE(SVG)

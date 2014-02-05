@@ -21,7 +21,6 @@
 #ifndef SVGDocumentExtensions_h
 #define SVGDocumentExtensions_h
 
-#if ENABLE(SVG)
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -110,5 +109,4 @@ private:
 
 }
 
-#endif
 #endif

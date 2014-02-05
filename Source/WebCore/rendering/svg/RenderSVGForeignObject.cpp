@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGForeignObject.h"
 
 #include "GraphicsContext.h"
@@ -209,5 +207,3 @@ const RenderObject* RenderSVGForeignObject::pushMappingToContainer(const RenderL
 }
 
 }
-
-#endif

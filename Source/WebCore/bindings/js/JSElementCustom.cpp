@@ -38,12 +38,9 @@
 #include "JSDOMBinding.h"
 #include "JSHTMLElementWrapperFactory.h"
 #include "JSNodeList.h"
-#include "NodeList.h"
-
-#if ENABLE(SVG)
 #include "JSSVGElementWrapperFactory.h"
+#include "NodeList.h"
 #include "SVGElement.h"
-#endif
 
 using namespace JSC;
 
@@ -61,10 +58,8 @@ JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Eleme
     JSDOMWrapper* wrapper;        
     if (element->isHTMLElement())
         wrapper = createJSHTMLWrapper(exec, globalObject, toHTMLElement(element));
-#if ENABLE(SVG)
     else if (element->isSVGElement())
         wrapper = createJSSVGWrapper(exec, globalObject, toSVGElement(element));
-#endif
     else
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Element, element);
 

@@ -18,7 +18,7 @@
  */
 
 [
-    Conditional=SVG&FILTERS,
+    Conditional=FILTERS,
 ] interface SVGFEDropShadowElement : SVGElement {
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber dx;

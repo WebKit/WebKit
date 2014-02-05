@@ -20,7 +20,6 @@
 #ifndef SVGLengthContext_h
 #define SVGLengthContext_h
 
-#if ENABLE(SVG)
 #include "FloatRect.h"
 #include "SVGUnitTypes.h"
 
@@ -88,5 +87,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGLengthContext_h

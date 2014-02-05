@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTextLayoutAttributes.h"
 
 #include <stdio.h>
@@ -74,5 +72,3 @@ void SVGTextLayoutAttributes::dump() const
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -25,7 +25,6 @@
  */
 
 [
-    Conditional=SVG,
     CustomToJSObject,
     ObjCPolymorphic,
     ImplementationLacksVTable

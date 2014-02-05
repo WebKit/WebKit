@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGTextPath.h"
 
 #include "FloatQuad.h"
@@ -80,5 +78,3 @@ bool RenderSVGTextPath::stretchMethod() const
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -43,9 +43,9 @@ SpeechRecognitionEvent conditional=SCRIPTED_SPEECH
 SpeechSynthesisEvent conditional=SPEECH_SYNTHESIS
 WebGLContextEvent conditional=WEBGL
 StorageEvent
-SVGEvents interfaceName=Event, conditional=SVG
-SVGZoomEvent conditional=SVG
-SVGZoomEvents interfaceName=SVGZoomEvent, conditional=SVG
+SVGEvents interfaceName=Event
+SVGZoomEvent
+SVGZoomEvents interfaceName=SVGZoomEvent
 IDBVersionChangeEvent conditional=INDEXED_DATABASE
 TouchEvent conditional=TOUCH_EVENTS, runtimeConditional=touchEnabled
 DeviceMotionEvent conditional=DEVICE_ORIENTATION

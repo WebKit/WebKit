@@ -21,7 +21,6 @@
 #ifndef SVGLengthList_h
 #define SVGLengthList_h
 
-#if ENABLE(SVG)
 #include "SVGLength.h"
 #include <wtf/Vector.h>
 
@@ -45,5 +44,4 @@ struct SVGPropertyTraits<SVGLengthList> {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

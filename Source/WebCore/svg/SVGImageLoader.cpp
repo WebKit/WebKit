@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGImageLoader.h"
 
 #include "CachedImage.h"
@@ -57,5 +55,3 @@ String SVGImageLoader::sourceURI(const AtomicString& attribute) const
 }
 
 }
-
-#endif // ENABLE(SVG)

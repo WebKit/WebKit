@@ -20,9 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    Conditional=SVG,
-] interface SVGLength { 
+interface SVGLength { 
     // Length Unit Types
     const unsigned short SVG_LENGTHTYPE_UNKNOWN    = 0;
     const unsigned short SVG_LENGTHTYPE_NUMBER     = 1;

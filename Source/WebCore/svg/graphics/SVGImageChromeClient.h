@@ -29,8 +29,6 @@
 #ifndef SVGImageChromeClient_h
 #define SVGImageChromeClient_h
 
-#if ENABLE(SVG)
-
 #include "EmptyClients.h"
 
 namespace WebCore {
@@ -70,5 +68,4 @@ inline SVGImageChromeClient* toSVGImageChromeClient(ChromeClient* client)
     
 } 
 
-#endif // ENABLE(SVG)
 #endif // SVGImageChromeClient_h

@@ -20,9 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    Conditional=SVG,
-] interface SVGAngle { 
+interface SVGAngle { 
     // Angle Unit Types
     const unsigned short SVG_ANGLETYPE_UNKNOWN = 0;
     const unsigned short SVG_ANGLETYPE_UNSPECIFIED = 1;

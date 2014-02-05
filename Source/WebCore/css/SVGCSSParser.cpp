@@ -22,7 +22,6 @@
 
 #include "config.h"
 
-#if ENABLE(SVG)
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSParser.h"
@@ -365,5 +364,3 @@ PassRefPtr<CSSValue> CSSParser::parseSVGColor()
 }
 
 }
-
-#endif // ENABLE(SVG)

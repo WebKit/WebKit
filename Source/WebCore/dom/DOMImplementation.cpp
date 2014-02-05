@@ -44,6 +44,8 @@
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
+#include "SVGDocument.h"
+#include "SVGNames.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
@@ -52,21 +54,14 @@
 #include "XMLNames.h"
 #include <wtf/StdLibExtras.h>
 
-#if ENABLE(SVG)
-#include "SVGNames.h"
-#include "SVGDocument.h"
-#endif
-
 namespace WebCore {
 
 typedef HashSet<String, CaseFoldingHash> FeatureSet;
 
-#if ENABLE(SVG)
 static void addString(FeatureSet& set, const char* string)
 {
     set.add(string);
 }
-#endif
 
 #if ENABLE(VIDEO)
 class DOMImplementationSupportsTypeClient : public MediaPlayerSupportsTypeClient {
@@ -85,8 +80,6 @@ private:
     String m_host;
 };
 #endif
-
-#if ENABLE(SVG)
 
 static bool isSupportedSVG10Feature(const String& feature, const String& version)
 {
@@ -185,7 +178,6 @@ static bool isSupportedSVG11Feature(const String& feature, const String& version
     return feature.startsWith("http://www.w3.org/tr/svg11/feature#", false)
         && svgFeatures.contains(feature.right(feature.length() - 35));
 }
-#endif
 
 DOMImplementation::DOMImplementation(Document& document)
     : m_document(document)
@@ -197,13 +189,8 @@ bool DOMImplementation::hasFeature(const String& feature, const String& version)
     if (feature.startsWith("http://www.w3.org/TR/SVG", false)
         || feature.startsWith("org.w3c.dom.svg", false)
         || feature.startsWith("org.w3c.svg", false)) {
-#if ENABLE(SVG)
         // FIXME: SVG 2.0 support?
         return isSupportedSVG10Feature(feature, version) || isSupportedSVG11Feature(feature, version);
-#else
-        UNUSED_PARAM(version);
-        return false;
-#endif
     }
 
     return true;
@@ -228,12 +215,9 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     const String& qualifiedName, DocumentType* doctype, ExceptionCode& ec)
 {
     RefPtr<Document> doc;
-#if ENABLE(SVG)
     if (namespaceURI == SVGNames::svgNamespaceURI)
         doc = SVGDocument::create(0, URL());
-    else
-#endif
-    if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
+    else if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
         doc = Document::createXHTML(0, URL());
     else
         doc = Document::create(0, URL());
@@ -368,10 +352,9 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
     if (isTextMIMEType(type))
         return TextDocument::create(frame, url);
 
-#if ENABLE(SVG)
     if (type == "image/svg+xml")
         return SVGDocument::create(frame, url);
-#endif
+
     if (isXMLMIMEType(type))
         return Document::create(frame, url);
 

@@ -120,9 +120,7 @@ private:
     static const uint32_t s_flagHasNameAttribute = 1 << 1;
     static const uint32_t s_flagPresentationAttributeStyleIsDirty = 1 << 2;
     static const uint32_t s_flagStyleAttributeIsDirty = 1 << 3;
-#if ENABLE(SVG)
     static const uint32_t s_flagAnimatedSVGAttributesAreDirty = 1 << 4;
-#endif
     static const uint32_t s_flagsMask = (1 << s_flagCount) - 1;
 
     inline void updateFlag(uint32_t flag, bool set) const
@@ -149,10 +147,8 @@ protected:
     bool presentationAttributeStyleIsDirty() const { return m_arraySizeAndFlags & s_flagPresentationAttributeStyleIsDirty; }
     void setPresentationAttributeStyleIsDirty(bool isDirty) const { updateFlag(s_flagPresentationAttributeStyleIsDirty, isDirty); }
 
-#if ENABLE(SVG)
     bool animatedSVGAttributesAreDirty() const { return m_arraySizeAndFlags & s_flagAnimatedSVGAttributesAreDirty; }
     void setAnimatedSVGAttributesAreDirty(bool dirty) const { updateFlag(s_flagAnimatedSVGAttributesAreDirty, dirty); }
-#endif
 
     mutable RefPtr<StyleProperties> m_inlineStyle;
     mutable SpaceSplitString m_classNames;
@@ -163,9 +159,7 @@ private:
     friend class StyledElement;
     friend class ShareableElementData;
     friend class UniqueElementData;
-#if ENABLE(SVG)
     friend class SVGElement;
-#endif
 
     void destroy();
 

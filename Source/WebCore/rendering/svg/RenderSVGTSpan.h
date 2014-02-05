@@ -22,7 +22,6 @@
 #ifndef RenderSVGTSpan_h
 #define RenderSVGTSpan_h
 
-#if ENABLE(SVG)
 #include "RenderSVGInline.h"
 #include "SVGTextPositioningElement.h"
 
@@ -42,5 +41,4 @@ private:
 };
 }
 
-#endif // ENABLE(SVG)
 #endif // !RenderSVGTSpan_h

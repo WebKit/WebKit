@@ -31,17 +31,14 @@
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
+#include "JSSVGDocument.h"
 #include "JSTouch.h"
 #include "JSTouchList.h"
 #include "Location.h"
 #include "NodeTraversal.h"
 #include "ScriptController.h"
-#include "TouchList.h"
-
-#if ENABLE(SVG)
-#include "JSSVGDocument.h"
 #include "SVGDocument.h"
-#endif
+#include "TouchList.h"
 
 #include <wtf/GetPtr.h>
 
@@ -97,10 +94,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* documen
 
     if (document->isHTMLDocument())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, HTMLDocument, document);
-#if ENABLE(SVG)
     else if (document->isSVGDocument())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SVGDocument, document);
-#endif
     else
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Document, document);
 

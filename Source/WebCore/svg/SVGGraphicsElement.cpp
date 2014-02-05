@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGGraphicsElement.h"
 
 #include "AffineTransform.h"
@@ -176,5 +174,3 @@ void SVGGraphicsElement::toClipPath(Path& path)
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -21,7 +21,6 @@
 #ifndef SVGInlineFlowBox_h
 #define SVGInlineFlowBox_h
 
-#if ENABLE(SVG)
 #include "InlineFlowBox.h"
 #include "RenderSVGInline.h"
 
@@ -56,7 +55,5 @@ private:
 INLINE_BOX_OBJECT_TYPE_CASTS(SVGInlineFlowBox, isSVGInlineFlowBox())
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)
 
 #endif // SVGInlineFlowBox_h

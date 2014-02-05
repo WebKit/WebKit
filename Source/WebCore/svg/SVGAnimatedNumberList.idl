@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SVG,
     SkipVTableValidation
 ] interface SVGAnimatedNumberList {
     readonly attribute SVGNumberList baseVal;

@@ -165,14 +165,13 @@ static bool canMapBetweenRenderers(const RenderObject& renderer, const RenderObj
         const RenderStyle& style = current->style();
         if (style.position() == FixedPosition || style.isFlippedBlocksWritingMode())
             return false;
-        
+
         if (current->hasColumns() || current->hasTransform() || current->isRenderFlowThread())
             return false;
 
-    #if ENABLE(SVG)
         if (current->isSVGRoot())
             return false;
-    #endif
+
         if (current == &ancestor)
             break;
     }

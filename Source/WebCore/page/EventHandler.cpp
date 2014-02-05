@@ -76,6 +76,10 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
+#include "SVGDocument.h"
+#include "SVGElementInstance.h"
+#include "SVGNames.h"
+#include "SVGUseElement.h"
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "Settings.h"
@@ -92,13 +96,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TemporaryChange.h>
-
-#if ENABLE(SVG)
-#include "SVGDocument.h"
-#include "SVGElementInstance.h"
-#include "SVGNames.h"
-#include "SVGUseElement.h"
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -141,9 +138,7 @@ const unsigned InvalidTouchIdentifier = 0;
 // IE sends VK_PROCESSKEY which has value 229;
 const int CompositionEventKeyCode = 229;
 
-#if ENABLE(SVG)
 using namespace SVGNames;
-#endif
 
 // The amount of time to wait before sending a fake mouse event, triggered
 // during a scroll. The short interval is used if the content responds to the mouse events
@@ -338,9 +333,7 @@ EventHandler::EventHandler(Frame& frame)
     , m_mouseDownMayStartAutoscroll(false)
     , m_mouseDownWasInSubframe(false)
     , m_fakeMouseMoveEventTimer(this, &EventHandler::fakeMouseMoveEventTimerFired)
-#if ENABLE(SVG)
     , m_svgPan(false)
-#endif
     , m_resizeLayer(0)
     , m_eventHandlerWillResetCapturingMouseEventsElement(nullptr)
     , m_clickCount(0)
@@ -408,10 +401,8 @@ void EventHandler::clear()
     m_resizeLayer = 0;
     m_elementUnderMouse = nullptr;
     m_lastElementUnderMouse = nullptr;
-#if ENABLE(SVG)
     m_instanceUnderMouse = 0;
     m_lastInstanceUnderMouse = 0;
-#endif
     m_lastMouseMoveEventSubframe = 0;
     m_lastScrollbarUnderMouse = 0;
     m_clickCount = 0;
@@ -708,7 +699,6 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     if (event.isOverWidget() && passWidgetMouseDownEventToWidget(event))
         return true;
 
-#if ENABLE(SVG)
     if (m_frame.document()->isSVGDocument()
         && toSVGDocument(m_frame.document())->zoomAndPanEnabled()) {
         if (event.event().shiftKey() && singleClick) {
@@ -717,7 +707,6 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
             return true;
         }
     }
-#endif
 
     // We don't do this at the start of mouse down handling,
     // because we don't want to do it until we know we didn't hit a widget.
@@ -874,7 +863,6 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     // done in handleMousePressEvent, but not if the mouse press was on an existing selection.
     VisibleSelection newSelection = m_frame.selection().selection();
 
-#if ENABLE(SVG)
     // Special case to limit selection to the containing block for SVG text.
     // FIXME: Isn't there a better non-SVG-specific way to do this?
     if (Node* selectionBaseNode = newSelection.base().deprecatedNode())
@@ -882,7 +870,6 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
             if (selectionBaseRenderer->isSVGText())
                 if (target->renderer()->containingBlock() != selectionBaseRenderer->containingBlock())
                     return;
-#endif
 
     if (m_selectionInitiationState == HaveNotStartedSelection && !dispatchSelectStart(target))
         return;
@@ -1775,12 +1762,10 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
 
     cancelFakeMouseMoveEvent();
 
-#if ENABLE(SVG)
     if (m_svgPan) {
         toSVGDocument(m_frame.document())->updatePan(m_frame.view()->windowToContents(m_lastKnownMousePosition));
         return true;
     }
-#endif
 
     if (m_frameSetBeingResized)
         return !dispatchMouseEvent(eventNames().mousemoveEvent, m_frameSetBeingResized.get(), false, 0, mouseEvent, false);
@@ -1920,13 +1905,11 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     m_mousePressed = false;
     setLastKnownMousePosition(mouseEvent);
 
-#if ENABLE(SVG)
     if (m_svgPan) {
         m_svgPan = false;
         toSVGDocument(m_frame.document())->updatePan(m_frame.view()->windowToContents(m_lastKnownMousePosition));
         return true;
     }
-#endif
 
     if (m_frameSetBeingResized)
         return !dispatchMouseEvent(eventNames().mouseupEvent, m_frameSetBeingResized.get(), true, m_clickCount, mouseEvent, false);
@@ -2252,7 +2235,6 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
     return m_frame.document()->prepareMouseEvent(request, documentPointForWindowPoint(m_frame, mev.position()), mev);
 }
 
-#if ENABLE(SVG)
 static inline SVGElementInstance* instanceAssociatedWithShadowTreeElement(Node* referenceNode)
 {
     if (!referenceNode || !referenceNode->isSVGElement())
@@ -2268,7 +2250,6 @@ static inline SVGElementInstance* instanceAssociatedWithShadowTreeElement(Node* 
 
     return toSVGUseElement(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode);
 }
-#endif
 
 void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMouseEvent& mouseEvent, bool fireMouseOverOut)
 {
@@ -2286,7 +2267,6 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
     }
 
     m_elementUnderMouse = targetElement;
-#if ENABLE(SVG)
     m_instanceUnderMouse = instanceAssociatedWithShadowTreeElement(targetElement);
 
     // <use> shadow tree elements may have been recloned, update node under mouse in any case
@@ -2319,7 +2299,6 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
             }
         }
     }
-#endif
 
     // Fire mouseout/mouseover if the mouse has shifted to a different node.
     if (fireMouseOverOut) {
@@ -2362,9 +2341,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         if (m_lastElementUnderMouse && &m_lastElementUnderMouse->document() != m_frame.document()) {
             m_lastElementUnderMouse = nullptr;
             m_lastScrollbarUnderMouse = 0;
-#if ENABLE(SVG)
             m_lastInstanceUnderMouse = 0;
-#endif
         }
 
         if (m_lastElementUnderMouse != m_elementUnderMouse) {
@@ -2376,9 +2353,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
                 m_elementUnderMouse->dispatchMouseEvent(mouseEvent, eventNames().mouseoverEvent, 0, m_lastElementUnderMouse.get());
         }
         m_lastElementUnderMouse = m_elementUnderMouse;
-#if ENABLE(SVG)
         m_lastInstanceUnderMouse = instanceAssociatedWithShadowTreeElement(m_elementUnderMouse.get());
-#endif
     }
 }
 

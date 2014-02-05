@@ -26,14 +26,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     ${SQLITE_INCLUDE_DIR}
 )
 
-if (ENABLE_SVG)
-    list(APPEND WebKit_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/svg"
-        "${WEBCORE_DIR}/svg/animation"
-        "${WEBCORE_DIR}/rendering/svg"
-    )
-endif ()
-
 if (ENABLE_VIDEO)
     list(APPEND WebKit_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/gstreamer"

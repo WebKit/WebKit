@@ -22,8 +22,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPathParser.h"
 
 #include "AffineTransform.h"
@@ -504,5 +502,3 @@ bool SVGPathParser::decomposeArcToCubic(float angle, float rx, float ry, FloatPo
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -223,10 +223,6 @@ if (ENABLE_SPELLCHECK)
     find_package(Enchant REQUIRED)
 endif ()
 
-if (NOT ENABLE_SVG)
-    set(ENABLE_SVG_FONTS 0)
-endif ()
-
 if (${OPENGL_FOUND} AND (${GLX_FOUND} OR ${EGL_FOUND}))
     set(ENABLE_WEBGL 1)
     set(ENABLE_TEXTURE_MAPPER 1)

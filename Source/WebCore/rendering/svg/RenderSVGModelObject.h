@@ -31,8 +31,6 @@
 #ifndef RenderSVGModelObject_h
 #define RenderSVGModelObject_h
 
-#if ENABLE(SVG)
-
 #include "RenderElement.h"
 #include "SVGElement.h"
 #include "SVGRenderSupport.h"
@@ -86,5 +84,4 @@ RENDER_OBJECT_TYPE_CASTS(RenderSVGModelObject, isRenderSVGModelObject());
 
 }
 
-#endif // ENABLE(SVG)
 #endif

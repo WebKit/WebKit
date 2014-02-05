@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG
-] interface SVGMPathElement : SVGElement {
+interface SVGMPathElement : SVGElement {
 };
 
 SVGMPathElement implements SVGExternalResourcesRequired;

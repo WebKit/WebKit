@@ -20,9 +20,8 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGAnimateColorElement.h"
+
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -54,5 +53,3 @@ void SVGAnimateColorElement::determinePropertyValueTypes(const String& from, con
 }
 
 }
-
-#endif // ENABLE(SVG)

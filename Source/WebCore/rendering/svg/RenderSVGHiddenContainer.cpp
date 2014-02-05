@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGHiddenContainer.h"
 
 #include "RenderSVGPath.h"
@@ -56,5 +54,3 @@ bool RenderSVGHiddenContainer::nodeAtFloatPoint(const HitTestRequest&, HitTestRe
 }
 
 }
-
-#endif // ENABLE(SVG)

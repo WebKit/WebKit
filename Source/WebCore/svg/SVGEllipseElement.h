@@ -21,7 +21,6 @@
 #ifndef SVGEllipseElement_h
 #define SVGEllipseElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
@@ -61,5 +60,4 @@ NODE_TYPE_CASTS(SVGEllipseElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

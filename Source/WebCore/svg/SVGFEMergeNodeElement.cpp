@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFEMergeNodeElement.h"
 
 #include "Attribute.h"
@@ -94,4 +94,4 @@ void SVGFEMergeNodeElement::svgAttributeChanged(const QualifiedName& attrName)
 
 }
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(FILTERS)

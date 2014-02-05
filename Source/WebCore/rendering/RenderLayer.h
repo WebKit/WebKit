@@ -614,11 +614,7 @@ public:
     bool canUseConvertToLayerCoords() const
     {
         // These RenderObject have an impact on their layers' without them knowing about it.
-        return !renderer().hasColumns() && !renderer().hasTransform()
-#if ENABLE(SVG)
-            && !renderer().isSVGRoot()
-#endif
-            ;
+        return !renderer().hasColumns() && !renderer().hasTransform() && !renderer().isSVGRoot();
     }
 
     // FIXME: adjustForColumns allows us to position compositing layers in columns correctly, but eventually they need to be split across columns too.

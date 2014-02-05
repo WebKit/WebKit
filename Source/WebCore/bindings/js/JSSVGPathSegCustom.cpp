@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "JSSVGPathSeg.h"
 
 #include "JSDOMBinding.h"
@@ -115,5 +113,3 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, SVGPathSeg* objec
 }
 
 }
-
-#endif // ENABLE(SVG)

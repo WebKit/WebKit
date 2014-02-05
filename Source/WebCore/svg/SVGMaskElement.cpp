@@ -22,8 +22,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGMaskElement.h"
 
 #include "Attribute.h"
@@ -171,5 +169,3 @@ bool SVGMaskElement::selfHasRelativeLengths() const
 }
 
 }
-
-#endif // ENABLE(SVG)

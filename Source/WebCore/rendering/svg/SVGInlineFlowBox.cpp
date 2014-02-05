@@ -23,7 +23,6 @@
 #include "config.h"
 #include "SVGInlineFlowBox.h"
 
-#if ENABLE(SVG)
 #include "DocumentMarkerController.h"
 #include "GraphicsContext.h"
 #include "RenderedDocumentMarker.h"
@@ -134,5 +133,3 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

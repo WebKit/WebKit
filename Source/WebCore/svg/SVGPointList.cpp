@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPointList.h"
 
 #include <wtf/text/StringBuilder.h>
@@ -47,5 +45,3 @@ String SVGPointList::valueAsString() const
 }
 
 }
-
-#endif // ENABLE(SVG)

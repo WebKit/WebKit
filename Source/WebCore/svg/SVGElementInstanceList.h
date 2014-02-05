@@ -20,7 +20,6 @@
 #ifndef SVGElementInstanceList_h
 #define SVGElementInstanceList_h
 
-#if ENABLE(SVG)
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -45,7 +44,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

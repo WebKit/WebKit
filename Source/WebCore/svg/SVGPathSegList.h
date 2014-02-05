@@ -20,7 +20,6 @@
 #ifndef SVGPathSegList_h
 #define SVGPathSegList_h
 
-#if ENABLE(SVG)
 #include "SVGListProperty.h"
 #include "SVGPathSeg.h"
 #include "SVGPropertyTraits.h"
@@ -56,5 +55,4 @@ struct SVGPropertyTraits<SVGPathSegList> {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

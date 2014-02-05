@@ -26,8 +26,6 @@
 #ifndef SVGPoint_h
 #define SVGPoint_h
 
-#if ENABLE(SVG)
-
 #include "FloatPoint.h"
 
 namespace WebCore {
@@ -35,7 +33,5 @@ namespace WebCore {
 typedef FloatPoint SVGPoint;
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)
 
 #endif // SVGPoint_h

@@ -145,6 +145,7 @@ class StyleResolver;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
+class SVGDocumentExtensions;
 class Text;
 class TextResourceDecoder;
 class TreeWalker;
@@ -155,10 +156,6 @@ class XPathEvaluator;
 class XPathExpression;
 class XPathNSResolver;
 class XPathResult;
-
-#if ENABLE(SVG)
-class SVGDocumentExtensions;
-#endif
 
 #if ENABLE(XSLT)
 class TransformSource;
@@ -484,11 +481,7 @@ public:
     bool isSVGDocument() const { return m_documentClasses & SVGDocumentClass; }
     bool isPluginDocument() const { return m_documentClasses & PluginDocumentClass; }
     bool isMediaDocument() const { return m_documentClasses & MediaDocumentClass; }
-#if ENABLE(SVG)
     bool hasSVGRootNode() const;
-#else
-    static bool hasSVGRootNode() { return false; }
-#endif
     virtual bool isFrameSet() const { return false; }
 
     bool isSrcdocDocument() const { return m_isSrcdocDocument; }
@@ -1046,10 +1039,8 @@ public:
 
     virtual void removeAllEventListeners() override;
 
-#if ENABLE(SVG)
     const SVGDocumentExtensions* svgExtensions();
     SVGDocumentExtensions* accessSVGExtensions();
-#endif
 
     void initSecurityContext();
     void initContentSecurityPolicy();
@@ -1473,9 +1464,7 @@ private:
 
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 
-#if ENABLE(SVG)
     OwnPtr<SVGDocumentExtensions> m_svgExtensions;
-#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<AnnotatedRegionValue> m_annotatedRegions;

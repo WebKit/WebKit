@@ -20,7 +20,6 @@
 #ifndef SVGTextMetricsBuilder_h
 #define SVGTextMetricsBuilder_h
 
-#if ENABLE(SVG)
 #include "SVGTextLayoutAttributes.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
@@ -65,5 +64,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

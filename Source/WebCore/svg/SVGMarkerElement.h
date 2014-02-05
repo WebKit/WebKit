@@ -21,7 +21,6 @@
 #ifndef SVGMarkerElement_h
 #define SVGMarkerElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedAngle.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
@@ -169,5 +168,4 @@ NODE_TYPE_CASTS(SVGMarkerElement)
 
 }
 
-#endif
 #endif

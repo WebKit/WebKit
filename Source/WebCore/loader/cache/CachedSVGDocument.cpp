@@ -21,8 +21,6 @@
 */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "CachedSVGDocument.h"
 
 #include "CachedResourceClient.h"
@@ -67,6 +65,3 @@ void CachedSVGDocument::finishLoading(ResourceBuffer* data)
 }
 
 }
-
-#endif
-

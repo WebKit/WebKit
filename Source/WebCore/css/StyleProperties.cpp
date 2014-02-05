@@ -197,14 +197,12 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getLayeredShorthandValue(webkitTransitionShorthand());
     case CSSPropertyWebkitAnimation:
         return getLayeredShorthandValue(webkitAnimationShorthand());
-#if ENABLE(SVG)
     case CSSPropertyMarker: {
         RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyMarkerStart);
         if (value)
             return value->cssText();
         return String();
     }
-#endif
     case CSSPropertyBorderRadius:
         return get4Values(borderRadiusShorthand());
     default:

@@ -23,7 +23,6 @@
 #ifndef SVGRootInlineBox_h
 #define SVGRootInlineBox_h
 
-#if ENABLE(SVG)
 #include "RootInlineBox.h"
 #include "SVGRenderSupport.h"
 #include "SVGTextLayoutEngine.h"
@@ -61,7 +60,5 @@ private:
 INLINE_BOX_OBJECT_TYPE_CASTS(SVGRootInlineBox, isSVGRootInlineBox())
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)
 
 #endif // SVGRootInlineBox_h

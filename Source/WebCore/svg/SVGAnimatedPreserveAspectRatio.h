@@ -20,7 +20,6 @@
 #ifndef SVGAnimatedPreserveAspectRatio_h
 #define SVGAnimatedPreserveAspectRatio_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
 #include "SVGPreserveAspectRatio.h"
@@ -56,5 +55,4 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

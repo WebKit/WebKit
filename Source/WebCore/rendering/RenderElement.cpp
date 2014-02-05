@@ -507,9 +507,7 @@ void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
     if (newChild->hasLayer() && !layerCreationAllowedForSubtree())
         toRenderLayerModelObject(newChild)->layer()->removeOnlyThisLayer();
 
-#if ENABLE(SVG)
     SVGRenderSupport::childAdded(*this, *newChild);
-#endif
 }
 
 void RenderElement::removeChild(RenderObject& oldChild)
@@ -747,14 +745,12 @@ RenderLayer* RenderElement::findNextLayer(RenderLayer* parentLayer, RenderObject
 
 bool RenderElement::layerCreationAllowedForSubtree() const
 {
-#if ENABLE(SVG)
     RenderElement* parentRenderer = parent();
     while (parentRenderer) {
         if (parentRenderer->isSVGHiddenContainer())
             return false;
         parentRenderer = parentRenderer->parent();
     }
-#endif
     
     return true;
 }
@@ -931,9 +927,8 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 
     if (s_noLongerAffectsParentBlock)
         removeAnonymousWrappersForInlinesIfNecessary();
-#if ENABLE(SVG)
+
     SVGRenderSupport::styleChanged(*this);
-#endif
 
     if (!m_parent)
         return;

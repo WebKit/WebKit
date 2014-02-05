@@ -20,7 +20,7 @@
 #ifndef SVGAltGlyphDefElement_h
 #define SVGAltGlyphDefElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FONTS)
+#if ENABLE(SVG_FONTS)
 #include "SVGElement.h"
 #include <wtf/Vector.h>
 
@@ -44,4 +44,3 @@ NODE_TYPE_CASTS(SVGAltGlyphDefElement)
 
 #endif
 #endif
-

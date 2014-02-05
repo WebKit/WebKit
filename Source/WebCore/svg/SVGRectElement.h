@@ -21,7 +21,6 @@
 #ifndef SVGRectElement_h
 #define SVGRectElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
@@ -64,5 +63,4 @@ NODE_TYPE_CASTS(SVGRectElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

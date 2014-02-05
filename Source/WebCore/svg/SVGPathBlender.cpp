@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPathBlender.h"
 
 #include "AnimationUtilities.h"
@@ -409,5 +407,3 @@ void SVGPathBlender::cleanup()
 }
 
 }
-
-#endif // ENABLE(SVG)

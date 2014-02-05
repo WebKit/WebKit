@@ -19,7 +19,6 @@
  */
 
 [
-    Conditional=SVG,
     DoNotCheckConstants,
     ImplementationLacksVTable,
 ] exception SVGException {

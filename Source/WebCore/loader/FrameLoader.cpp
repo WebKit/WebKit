@@ -94,6 +94,13 @@
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
+#include "SVGDocument.h"
+#include "SVGLocatable.h"
+#include "SVGNames.h"
+#include "SVGPreserveAspectRatio.h"
+#include "SVGSVGElement.h"
+#include "SVGViewElement.h"
+#include "SVGViewSpec.h"
 #include "SchemeRegistry.h"
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
@@ -118,16 +125,6 @@
 #include "SharedWorkerRepository.h"
 #endif
 
-#if ENABLE(SVG)
-#include "SVGDocument.h"
-#include "SVGLocatable.h"
-#include "SVGNames.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGSVGElement.h"
-#include "SVGViewElement.h"
-#include "SVGViewSpec.h"
-#endif
-
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 #include "Archive.h"
 #endif
@@ -144,10 +141,7 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-#if ENABLE(SVG)
 using namespace SVGNames;
-#endif
 
 static const char defaultAcceptHeader[] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 

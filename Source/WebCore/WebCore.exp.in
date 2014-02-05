@@ -2976,10 +2976,8 @@ __ZN7WebCore25PlatformSpeechSynthesizerD2Ev
 __ZN7WebCore28PlatformSpeechSynthesisVoice6createERKN3WTF6StringES4_S4_bb
 #endif
 
-#if ENABLE(SVG)
 __ZN7WebCore8Document13svgExtensionsEv
 __ZN7WebCore8Document19accessSVGExtensionsEv
-#endif
 
 #if ENABLE(ASYNC_SCROLLING)
 __ZN7WebCore13ScrollingTree16handleWheelEventERKNS_18PlatformWheelEventE

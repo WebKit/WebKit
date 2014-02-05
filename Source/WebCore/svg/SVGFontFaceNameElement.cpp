@@ -45,5 +45,5 @@ PassRef<CSSFontFaceSrcValue> SVGFontFaceNameElement::srcValue() const
 
 }
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(SVG_FONTS)
 

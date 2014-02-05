@@ -694,11 +694,9 @@ bool RenderImage::needsPreferredWidthsRecalculation() const
 
 RenderBox* RenderImage::embeddedContentBox() const
 {
-#if ENABLE(SVG)
     CachedImage* cachedImage = imageResource().cachedImage();
     if (cachedImage && cachedImage->image() && cachedImage->image()->isSVGImage())
         return static_cast<SVGImage*>(cachedImage->image())->embeddedContentBox();
-#endif
 
     return 0;
 }

@@ -19,8 +19,8 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 #include "SVGMetadataElement.h"
+
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -37,5 +37,3 @@ PassRefPtr<SVGMetadataElement> SVGMetadataElement::create(const QualifiedName& t
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -20,7 +20,6 @@
 #include "config.h"
 #include "SVGImageForContainer.h"
 
-#if ENABLE(SVG)
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
@@ -55,5 +54,3 @@ PassNativeImagePtr SVGImageForContainer::nativeImageForCurrentFrame()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

@@ -20,7 +20,7 @@
 #ifndef SVGFEConvolveMatrixElement_h
 #define SVGFEConvolveMatrixElement_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "FEConvolveMatrix.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
@@ -103,5 +103,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(FILTERS)
 #endif

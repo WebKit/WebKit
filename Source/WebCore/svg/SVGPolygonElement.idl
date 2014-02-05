@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG
-] interface SVGPolygonElement : SVGGraphicsElement {
+interface SVGPolygonElement : SVGGraphicsElement {
     readonly attribute SVGPointList points;
     readonly attribute SVGPointList animatedPoints;
 };

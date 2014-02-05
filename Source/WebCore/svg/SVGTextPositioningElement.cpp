@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTextPositioningElement.h"
 
 #include "Attribute.h"
@@ -173,5 +171,3 @@ SVGTextPositioningElement* SVGTextPositioningElement::elementFromRenderer(Render
 }
 
 }
-
-#endif // ENABLE(SVG)

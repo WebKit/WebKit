@@ -1300,11 +1300,9 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
             textOrder.append(AccessibilityText(accessibleNameForNode(object->node()), AlternativeText));
     }
     
-#if ENABLE(SVG)
     // SVG elements all can have a <svg:title> element inside which should act as the descriptive text.
     if (node->isSVGElement())
         textOrder.append(AccessibilityText(toSVGElement(node)->title(), AlternativeText));
-#endif
     
 #if ENABLE(MATHML)
     if (node->isMathMLElement())
@@ -1504,11 +1502,9 @@ String AccessibilityNodeObject::accessibilityDescription() const
             return alt;
     }
 
-#if ENABLE(SVG)
     // SVG elements all can have a <svg:title> element inside which should act as the descriptive text.
     if (m_node && m_node->isSVGElement())
         return toSVGElement(m_node)->title();
-#endif
     
 #if ENABLE(MATHML)
     if (m_node && m_node->isMathMLElement())

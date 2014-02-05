@@ -25,7 +25,6 @@
 #ifndef SVGRenderingContext_h
 #define SVGRenderingContext_h
 
-#if ENABLE(SVG)
 #include "ImageBuffer.h"
 #include "PaintInfo.h"
 
@@ -123,5 +122,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGRenderingContext_h

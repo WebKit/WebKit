@@ -23,7 +23,6 @@
 #ifndef RenderSVGRoot_h
 #define RenderSVGRoot_h
 
-#if ENABLE(SVG)
 #include "FloatRect.h"
 #include "RenderReplaced.h"
 
@@ -127,5 +126,4 @@ RENDER_OBJECT_TYPE_CASTS(RenderSVGRoot, isSVGRoot())
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // RenderSVGRoot_h

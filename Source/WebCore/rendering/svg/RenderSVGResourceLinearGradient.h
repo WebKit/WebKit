@@ -21,7 +21,6 @@
 #ifndef RenderSVGResourceLinearGradient_h
 #define RenderSVGResourceLinearGradient_h
 
-#if ENABLE(SVG)
 #include "LinearGradientAttributes.h"
 #include "RenderSVGResourceGradient.h"
 #include "SVGLinearGradientElement.h"
@@ -56,5 +55,4 @@ private:
 
 }
 
-#endif
 #endif

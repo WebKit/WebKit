@@ -22,8 +22,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPathBuilder.h"
 
 #include "Path.h"
@@ -70,5 +68,3 @@ void SVGPathBuilder::closePath()
 }
 
 }
-
-#endif // ENABLE(SVG)

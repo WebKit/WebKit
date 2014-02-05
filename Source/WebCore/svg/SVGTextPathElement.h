@@ -20,7 +20,6 @@
 #ifndef SVGTextPathElement_h
 #define SVGTextPathElement_h
 
-#if ENABLE(SVG)
 #include "SVGNames.h"
 #include "SVGTextContentElement.h"
 #include "SVGURIReference.h"
@@ -145,5 +144,4 @@ NODE_TYPE_CASTS(SVGTextPathElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

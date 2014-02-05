@@ -5,7 +5,7 @@ EventException
 FileException conditional=BLOB
 RangeException
 SQLException conditional=SQL_DATABASE
-SVGException conditional=SVG
+SVGException
 XMLHttpRequestException
 XPathException
 

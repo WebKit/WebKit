@@ -38,6 +38,8 @@
 #include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
+#include "SVGNames.h"
+#include "SVGScriptElement.h"
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
 #include "ScriptRunner.h"
@@ -50,11 +52,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
-
-#if ENABLE(SVG)
-#include "SVGNames.h"
-#include "SVGScriptElement.h"
-#endif
 
 namespace WebCore {
 
@@ -394,10 +391,8 @@ ScriptElement* toScriptElementIfPossible(Element* element)
     if (isHTMLScriptElement(element))
         return toHTMLScriptElement(element);
 
-#if ENABLE(SVG)
     if (isSVGScriptElement(element))
         return toSVGScriptElement(element);
-#endif
 
     return 0;
 }

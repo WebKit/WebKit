@@ -25,7 +25,6 @@
 #ifndef SVGAnimationElement_h
 #define SVGAnimationElement_h
 
-#if ENABLE(SVG)
 #include "SMILTime.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
@@ -251,5 +250,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGAnimationElement_h

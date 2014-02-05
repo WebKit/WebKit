@@ -21,7 +21,6 @@
 #ifndef SVGGraphicsElement_h
 #define SVGGraphicsElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedTransformList.h"
 #include "SVGElement.h"
 #include "SVGTests.h"
@@ -81,5 +80,4 @@ NODE_TYPE_CASTS(SVGGraphicsElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGGraphicsElement_h

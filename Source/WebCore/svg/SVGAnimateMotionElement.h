@@ -20,7 +20,6 @@
 
 #ifndef SVGAnimateMotionElement_h
 #define SVGAnimateMotionElement_h
-#if ENABLE(SVG)
 #include "Path.h"
 #include "SVGAnimationElement.h"
 
@@ -76,5 +75,4 @@ NODE_TYPE_CASTS(SVGAnimateMotionElement)
     
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGAnimateMotionElement_h

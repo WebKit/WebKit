@@ -50,17 +50,6 @@
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
-#include "RenderTableCell.h"
-#include "RenderView.h"
-#include "RenderWidget.h"
-#include "ShadowRoot.h"
-#include "SimpleLineLayoutResolver.h"
-#include "StyleProperties.h"
-#include <wtf/HexNumber.h>
-#include <wtf/Vector.h>
-#include <wtf/unicode/CharacterNames.h>
-
-#if ENABLE(SVG)
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
 #include "RenderSVGImage.h"
@@ -69,8 +58,16 @@
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
+#include "RenderTableCell.h"
+#include "RenderView.h"
+#include "RenderWidget.h"
 #include "SVGRenderTreeAsText.h"
-#endif
+#include "ShadowRoot.h"
+#include "SimpleLineLayoutResolver.h"
+#include "StyleProperties.h"
+#include <wtf/HexNumber.h>
+#include <wtf/Vector.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -509,7 +506,6 @@ static void writeSimpleLine(TextStream& ts, const RenderText& o, const LayoutRec
 
 void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavior behavior)
 {
-#if ENABLE(SVG)
     if (o.isSVGShape()) {
         write(ts, *toRenderSVGShape(&o), indent);
         return;
@@ -542,7 +538,6 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         writeSVGImage(ts, *toRenderSVGImage(&o), indent);
         return;
     }
-#endif
 
     writeIndent(ts, indent);
 

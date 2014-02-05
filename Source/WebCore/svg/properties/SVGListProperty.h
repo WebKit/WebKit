@@ -20,7 +20,6 @@
 #ifndef SVGListProperty_h
 #define SVGListProperty_h
 
-#if ENABLE(SVG)
 #include "SVGException.h"
 #include "SVGPropertyTearOff.h"
 #include "SVGPropertyTraits.h"
@@ -479,5 +478,4 @@ protected:
 
 }
 
-#endif // ENABLE(SVG)
 #endif // SVGListProperty_h

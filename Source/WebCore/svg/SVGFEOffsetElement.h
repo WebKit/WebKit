@@ -21,7 +21,7 @@
 #ifndef SVGFEOffsetElement_h
 #define SVGFEOffsetElement_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "FEOffset.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -49,5 +49,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif
 #endif

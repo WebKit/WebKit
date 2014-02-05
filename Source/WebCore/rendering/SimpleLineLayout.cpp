@@ -185,10 +185,7 @@ bool canUseFor(const RenderBlockFlow& flow)
             return false;
     }
     if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isTextFragment()
-#if ENABLE(SVG)
-        || textRenderer.isSVGInlineText()
-#endif
-        )
+        || textRenderer.isSVGInlineText())
         return false;
     if (style.font().codePath(TextRun(textRenderer.text())) != Font::Simple)
         return false;

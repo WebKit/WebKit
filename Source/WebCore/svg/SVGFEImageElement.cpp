@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFEImageElement.h"
 
 #include "Attr.h"
@@ -222,4 +222,4 @@ void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
 
 }
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(FILTERS)

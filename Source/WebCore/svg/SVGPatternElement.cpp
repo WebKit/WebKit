@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPatternElement.h"
 
 #include "AffineTransform.h"
@@ -262,5 +260,3 @@ bool SVGPatternElement::selfHasRelativeLengths() const
 }
 
 }
-
-#endif // ENABLE(SVG)

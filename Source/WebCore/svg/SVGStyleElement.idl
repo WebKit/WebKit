@@ -24,9 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG
-] interface SVGStyleElement : SVGElement {
+interface SVGStyleElement : SVGElement {
              attribute boolean disabled;
              [SetterRaisesException] attribute DOMString type;
              [SetterRaisesException] attribute DOMString media;

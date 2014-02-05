@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGFitToViewBox.h"
 
 #include "AffineTransform.h"
@@ -100,5 +98,3 @@ void SVGFitToViewBox::addSupportedAttributes(HashSet<QualifiedName>& supportedAt
 }
 
 }
-
-#endif // ENABLE(SVG)

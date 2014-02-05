@@ -29,9 +29,7 @@
 [
     Constructor,
     Constructor(DOMPath path),
-#if defined(ENABLE_SVG) && ENABLE_SVG
     Constructor(DOMString text),
-#endif
     Conditional=CANVAS_PATH,
     InterfaceName=Path,
 ] interface DOMPath {

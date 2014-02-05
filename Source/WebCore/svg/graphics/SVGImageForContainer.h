@@ -26,8 +26,6 @@
 #ifndef SVGImageForContainer_h
 #define SVGImageForContainer_h
 
-#if ENABLE(SVG)
-
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
@@ -79,6 +77,4 @@ private:
     const float m_zoom;
 };
 }
-
-#endif // ENABLE(SVG)
 #endif // SVGImageForContainer_h

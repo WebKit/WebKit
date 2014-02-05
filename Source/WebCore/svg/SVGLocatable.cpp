@@ -21,8 +21,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGLocatable.h"
 
 #include "RenderElement.h"
@@ -116,5 +114,3 @@ AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, Exceptio
 }
 
 }
-
-#endif // ENABLE(SVG)

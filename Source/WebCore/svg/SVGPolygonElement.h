@@ -21,7 +21,6 @@
 #ifndef SVGPolygonElement_h
 #define SVGPolygonElement_h
 
-#if ENABLE(SVG)
 #include "SVGPolyElement.h"
 
 namespace WebCore {
@@ -38,5 +37,4 @@ NODE_TYPE_CASTS(SVGPolygonElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

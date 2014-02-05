@@ -219,12 +219,10 @@ bool CSSValue::equals(const CSSValue& other) const
         case WebKitCSSFilterClass:
             return compareCSSValues<WebKitCSSFilterValue>(*this, other);
 #endif
-#if ENABLE(SVG)
         case SVGColorClass:
             return compareCSSValues<SVGColor>(*this, other);
         case SVGPaintClass:
             return compareCSSValues<SVGPaint>(*this, other);
-#endif
         default:
             ASSERT_NOT_REACHED();
             return false;
@@ -307,12 +305,10 @@ String CSSValue::cssText() const
     case WebKitCSSFilterClass:
         return toWebKitCSSFilterValue(this)->customCSSText();
 #endif
-#if ENABLE(SVG)
     case SVGColorClass:
         return toSVGColor(this)->customCSSText();
     case SVGPaintClass:
         return toSVGPaint(this)->customCSSText();
-#endif
     }
     ASSERT_NOT_REACHED();
     return String();
@@ -416,14 +412,12 @@ void CSSValue::destroy()
         delete toWebKitCSSFilterValue(this);
         return;
 #endif
-#if ENABLE(SVG)
     case SVGColorClass:
         delete toSVGColor(this);
         return;
     case SVGPaintClass:
         delete toSVGPaint(this);
         return;
-#endif
     }
     ASSERT_NOT_REACHED();
 }
@@ -448,12 +442,10 @@ PassRefPtr<CSSValue> CSSValue::cloneForCSSOM() const
     case ImageSetClass:
         return toCSSImageSetValue(this)->cloneForCSSOM();
 #endif
-#if ENABLE(SVG)
     case SVGColorClass:
         return toSVGColor(this)->cloneForCSSOM();
     case SVGPaintClass:
         return toSVGPaint(this)->cloneForCSSOM();
-#endif
     default:
         ASSERT(!isSubtypeExposedToCSSOM());
         return TextCloneCSSValue::create(classType(), cssText());

@@ -41,10 +41,7 @@ namespace WebCore {
 
 class Element;
 
-class RenderLayer::FilterInfo
-#if ENABLE(SVG)
-    final : public CachedSVGDocumentClient
-#endif
+class RenderLayer::FilterInfo final : public CachedSVGDocumentClient
 {
 public:
     static FilterInfo& get(RenderLayer&);
@@ -58,10 +55,8 @@ public:
     FilterEffectRenderer* renderer() const { return m_renderer.get(); }
     void setRenderer(PassRefPtr<FilterEffectRenderer>);
     
-#if ENABLE(SVG)
     void updateReferenceFilterClients(const FilterOperations&);
     void removeReferenceFilterClients();
-#endif
 
 private:
     explicit FilterInfo(RenderLayer&);
@@ -69,9 +64,7 @@ private:
 
     friend void WTF::deleteOwnedPtr<FilterInfo>(FilterInfo*);
 
-#if ENABLE(SVG)
     virtual void notifyFinished(CachedResource*) override;
-#endif
 
     static HashMap<const RenderLayer*, OwnPtr<FilterInfo>>& map();
 
@@ -89,10 +82,8 @@ private:
     RefPtr<FilterEffectRenderer> m_renderer;
     LayoutRect m_dirtySourceRect;
 
-#if ENABLE(SVG)
     Vector<RefPtr<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
-#endif
 };
 
 } // namespace WebCore

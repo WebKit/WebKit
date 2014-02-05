@@ -19,7 +19,6 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 #include "SVGTitleElement.h"
 
 #include "Document.h"
@@ -66,5 +65,3 @@ void SVGTitleElement::childrenChanged(const ChildChange& change)
 }
 
 }
-
-#endif // ENABLE(SVG)

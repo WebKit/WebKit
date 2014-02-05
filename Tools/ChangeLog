@@ -1,3 +1,13 @@
+2014-02-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(SVG) guards
+        https://bugs.webkit.org/show_bug.cgi?id=127991
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/GNUmakefile.am:
+
 2014-02-04  Andreas Kling  <akling@apple.com>
 
         Remove <iframe seamless> support.

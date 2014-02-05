@@ -63,6 +63,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderSVGRoot.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
 #include "RenderStyle.h"
@@ -70,6 +71,8 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "SVGDocument.h"
+#include "SVGSVGElement.h"
 #include "ScrollAnimator.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
@@ -81,12 +84,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 #include <wtf/TemporaryChange.h>
-
-#if ENABLE(SVG)
-#include "RenderSVGRoot.h"
-#include "SVGDocument.h"
-#include "SVGSVGElement.h"
-#endif
 
 #if USE(TILED_BACKING_STORE)
 #include "TiledBackingStore.h"
@@ -588,7 +585,6 @@ void FrameView::applyOverflowToViewport(RenderElement* o, ScrollbarMode& hMode, 
     EOverflow overflowX = o->style().overflowX();
     EOverflow overflowY = o->style().overflowY();
 
-#if ENABLE(SVG)
     if (o->isSVGRoot()) {
         // overflow is ignored in stand-alone SVG documents.
         if (!toRenderSVGRoot(o)->isEmbeddedThroughFrameContainingSVGDocument())
@@ -596,7 +592,6 @@ void FrameView::applyOverflowToViewport(RenderElement* o, ScrollbarMode& hMode, 
         overflowX = OHIDDEN;
         overflowY = OHIDDEN;
     }
-#endif
 
     switch (overflowX) {
         case OHIDDEN:
@@ -1028,7 +1023,6 @@ RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
 
 inline void FrameView::forceLayoutParentViewIfNeeded()
 {
-#if ENABLE(SVG)
     RenderWidget* ownerRenderer = frame().ownerRenderer();
     if (!ownerRenderer)
         return;
@@ -1055,7 +1049,6 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
 
     // Synchronously enter layout, to layout the view containing the host object/embed/iframe.
     frameView->layout();
-#endif
 }
 
 void FrameView::layout(bool allowSubtree)
@@ -1357,7 +1350,6 @@ void FrameView::layout(bool allowSubtree)
 
 RenderBox* FrameView::embeddedContentBox() const
 {
-#if ENABLE(SVG)
     RenderView* renderView = this->renderView();
     if (!renderView)
         return nullptr;
@@ -1369,7 +1361,6 @@ RenderBox* FrameView::embeddedContentBox() const
     // Curently only embedded SVG documents participate in the size-negotiation logic.
     if (toRenderBox(firstChild)->isSVGRoot())
         return toRenderBox(firstChild);
-#endif
 
     return nullptr;
 }
@@ -1845,7 +1836,6 @@ bool FrameView::scrollToAnchor(const String& name)
     // Setting to null will clear the current target.
     frame().document()->setCSSTarget(anchorElement);
 
-#if ENABLE(SVG)
     if (frame().document()->isSVGDocument()) {
         if (SVGSVGElement* svg = toSVGDocument(frame().document())->rootElement()) {
             svg->setupInitialView(name, anchorElement);
@@ -1853,7 +1843,6 @@ bool FrameView::scrollToAnchor(const String& name)
                 return true;
         }
     }
-#endif
   
     // Implement the rule that "" and "top" both mean top of page as in other browsers.
     if (!anchorElement && !(name.isEmpty() || equalIgnoringCase(name, "top")))

@@ -83,6 +83,8 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGDocument.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
@@ -110,10 +112,6 @@
 #include <wtf/StdLibExtras.h>
 #include <yarr/RegularExpression.h>
 
-#if ENABLE(SVG)
-#include "SVGDocument.h"
-#include "SVGDocumentExtensions.h"
-#endif
 
 #if USE(TILED_BACKING_STORE)
 #include "TiledBackingStore.h"
@@ -1036,14 +1034,12 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
 
     m_editor->dismissCorrectionPanelAsIgnored();
 
-#if ENABLE(SVG)
     // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
     // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.
     if (document->isSVGDocument()) {
         if (!toSVGDocument(document)->zoomAndPanEnabled())
             return;
     }
-#endif
 
     if (m_pageZoomFactor != pageZoomFactor) {
         if (FrameView* view = this->view()) {

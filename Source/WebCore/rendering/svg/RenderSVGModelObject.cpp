@@ -29,8 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGModelObject.h"
 
 #include "RenderLayerModelObject.h"
@@ -193,5 +191,3 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

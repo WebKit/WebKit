@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGAnimatedPreserveAspectRatio.h"
 
 #include "SVGAnimateElement.h"
@@ -87,5 +85,3 @@ float SVGAnimatedPreserveAspectRatioAnimator::calculateDistance(const String&, c
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGRectElement.h"
 
 #include "Attribute.h"
@@ -166,5 +164,3 @@ RenderPtr<RenderElement> SVGRectElement::createElementRenderer(PassRef<RenderSty
 }
 
 }
-
-#endif // ENABLE(SVG)

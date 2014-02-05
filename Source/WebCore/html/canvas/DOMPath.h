@@ -31,12 +31,9 @@
 #if ENABLE(CANVAS_PATH)
 
 #include "CanvasPathMethods.h"
+#include "SVGPathUtilities.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-
-#if ENABLE(SVG)
-#include "SVGPathUtilities.h"
-#endif
 
 namespace WebCore {
 
@@ -47,14 +44,12 @@ public:
     static PassRefPtr<DOMPath> create(const Path& path) { return adoptRef(new DOMPath(path)); }
     static PassRefPtr<DOMPath> create(const DOMPath* path) { return create(path->path()); }
 
-#if ENABLE(SVG)
     static PassRefPtr<DOMPath> create(const String& pathData)
     {
         Path path;
         buildPathFromString(pathData, path);
         return create(path);
     }
-#endif
 
     const Path& path() const { return m_path; }
 

@@ -21,7 +21,6 @@
 #ifndef SVGPreserveAspectRatio_h
 #define SVGPreserveAspectRatio_h
 
-#if ENABLE(SVG)
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
@@ -86,5 +85,4 @@ struct SVGPropertyTraits<SVGPreserveAspectRatio> {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGPreserveAspectRatio_h

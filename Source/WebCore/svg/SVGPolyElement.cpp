@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPolyElement.h"
 
 #include "Attribute.h"
@@ -165,5 +163,3 @@ bool isSVGPolyElement(const Node& node)
 }
 
 }
-
-#endif // ENABLE(SVG)

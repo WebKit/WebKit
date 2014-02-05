@@ -21,7 +21,6 @@
 #ifndef SVGRadialGradientElement_h
 #define SVGRadialGradientElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedLength.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
@@ -61,5 +60,4 @@ NODE_TYPE_CASTS(SVGRadialGradientElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

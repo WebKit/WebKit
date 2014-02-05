@@ -20,7 +20,6 @@
 #ifndef SVGImageCache_h
 #define SVGImageCache_h
 
-#if ENABLE(SVG)
 #include "FloatSize.h"
 #include "Image.h"
 #include "IntSize.h"
@@ -58,5 +57,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGImageCache_h

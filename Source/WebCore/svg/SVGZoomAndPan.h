@@ -21,7 +21,6 @@
 #ifndef SVGZoomAndPan_h
 #define SVGZoomAndPan_h
 
-#if ENABLE(SVG)
 #include "QualifiedName.h"
 #include "SVGNames.h"
 #include <wtf/HashSet.h>
@@ -82,5 +81,4 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGZoomAndPan_h

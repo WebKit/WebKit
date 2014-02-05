@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTextMetricsBuilder.h"
 
 #include "RenderSVGInlineText.h"
@@ -223,5 +221,3 @@ void SVGTextMetricsBuilder::buildMetricsAndLayoutAttributes(RenderSVGText* textR
 }
 
 }
-
-#endif // ENABLE(SVG)

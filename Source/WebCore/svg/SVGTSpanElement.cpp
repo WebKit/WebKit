@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTSpanElement.h"
 
 #include "RenderInline.h"
@@ -75,5 +73,3 @@ bool SVGTSpanElement::rendererIsNeeded(const RenderStyle& style)
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SVG,
     SkipVTableValidation
 ] interface SVGAnimatedRect {
     readonly attribute SVGRect baseVal;

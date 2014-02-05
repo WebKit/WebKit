@@ -21,7 +21,6 @@
 #ifndef SVGScriptElement_h
 #define SVGScriptElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedString.h"
 #include "SVGElement.h"
@@ -91,5 +90,4 @@ NODE_TYPE_CASTS(SVGScriptElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

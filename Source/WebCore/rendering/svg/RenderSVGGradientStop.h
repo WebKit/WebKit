@@ -22,7 +22,6 @@
 #ifndef RenderSVGGradientStop_h
 #define RenderSVGGradientStop_h
 
-#if ENABLE(SVG)
 #include "RenderElement.h"
 #include "SVGStopElement.h"
 
@@ -65,5 +64,4 @@ RENDER_OBJECT_TYPE_CASTS(RenderSVGGradientStop, isSVGGradientStop())
 
 }
 
-#endif // ENABLE(SVG)
 #endif // RenderSVGGradientStop_h

@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGClipPathElement.h"
 
 #include "Attribute.h"
@@ -120,5 +118,3 @@ RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(PassRef<Rende
 }
 
 }
-
-#endif // ENABLE(SVG)

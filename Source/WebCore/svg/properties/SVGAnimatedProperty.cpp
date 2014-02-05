@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGAnimatedProperty.h"
 
 #include "SVGElement.h"
@@ -66,5 +64,3 @@ SVGAnimatedProperty::Cache* SVGAnimatedProperty::animatedPropertyCache()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

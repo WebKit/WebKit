@@ -21,7 +21,6 @@
 #ifndef SVGPathSegClosePath_h
 #define SVGPathSegClosePath_h
 
-#if ENABLE(SVG)
 #include "SVGPathSegWithContext.h"
 
 namespace WebCore {
@@ -45,5 +44,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

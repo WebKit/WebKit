@@ -20,7 +20,7 @@
 #ifndef SVGFEMorphologyElement_h
 #define SVGFEMorphologyElement_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "FEMorphology.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedNumber.h"
@@ -85,5 +85,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(FILTERS)
 #endif

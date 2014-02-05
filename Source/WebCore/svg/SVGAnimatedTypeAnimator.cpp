@@ -20,8 +20,6 @@
 
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGAnimatedTypeAnimator.h"
 
 #include "SVGAttributeToPropertyMap.h"
@@ -108,5 +106,3 @@ SVGElementAnimatedPropertyList SVGAnimatedTypeAnimator::findAnimatedPropertiesFo
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

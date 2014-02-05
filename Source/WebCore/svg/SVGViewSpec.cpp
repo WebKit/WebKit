@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGViewSpec.h"
 
 #include "Document.h"
@@ -295,5 +293,3 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
 }
 
 }
-
-#endif // ENABLE(SVG)

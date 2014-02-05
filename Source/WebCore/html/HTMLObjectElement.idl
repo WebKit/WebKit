@@ -49,10 +49,8 @@
     // Introduced in DOM Level 2:
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 
-#if defined(ENABLE_SVG) && ENABLE_SVG
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     [CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
-#endif
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

@@ -20,7 +20,6 @@
 #ifndef SVGTextMetrics_h
 #define SVGTextMetrics_h
 
-#if ENABLE(SVG)
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -82,5 +81,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

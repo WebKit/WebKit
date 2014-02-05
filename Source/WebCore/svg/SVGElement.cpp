@@ -23,8 +23,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGElement.h"
 
 #include "Attr.h"
@@ -1150,5 +1148,3 @@ void SVGElement::accessKeyAction(bool sendMouseEvents)
 }
 
 }
-
-#endif // ENABLE(SVG)

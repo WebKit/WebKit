@@ -20,7 +20,6 @@
 #ifndef SVGPathByteStream_h
 #define SVGPathByteStream_h
 
-#if ENABLE(SVG)
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -77,5 +76,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGPathByteStream_h

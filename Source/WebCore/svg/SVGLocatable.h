@@ -22,7 +22,6 @@
 #ifndef SVGLocatable_h
 #define SVGLocatable_h
 
-#if ENABLE(SVG)
 #include "AffineTransform.h"
 
 namespace WebCore {
@@ -64,5 +63,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGLocatable_h

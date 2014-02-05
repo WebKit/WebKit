@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFEConvolveMatrixElement.h"
 
 #include "Attr.h"
@@ -346,4 +346,4 @@ PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* fil
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(FILTERS)

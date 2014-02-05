@@ -20,7 +20,6 @@
 #ifndef SVGAnimatedColor_h
 #define SVGAnimatedColor_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedTypeAnimator.h"
 
 namespace WebCore {
@@ -43,7 +42,5 @@ public:
     virtual float calculateDistance(const String& fromString, const String& toString) override;
 };
 } // namespace WebCore
-
-#endif // ENABLE(SVG)
 
 #endif

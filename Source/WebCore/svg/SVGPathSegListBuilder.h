@@ -24,7 +24,6 @@
 #ifndef SVGPathSegListBuilder_h
 #define SVGPathSegListBuilder_h
 
-#if ENABLE(SVG)
 #include "FloatPoint.h"
 #include "SVGPathConsumer.h"
 #include "SVGPathSegList.h"
@@ -72,5 +71,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGPathSegListBuilder_h

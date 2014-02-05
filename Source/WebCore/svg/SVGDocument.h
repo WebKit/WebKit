@@ -20,7 +20,6 @@
 
 #ifndef SVGDocument_h
 #define SVGDocument_h
-#if ENABLE(SVG)
 
 #include "Document.h"
 #include "FloatPoint.h"
@@ -65,7 +64,4 @@ DOCUMENT_TYPE_CASTS(SVGDocument)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGDocument_h
-
-// vim:ts=4:noet

@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG,
-] interface SVGElementInstanceList {
+interface SVGElementInstanceList {
     readonly attribute unsigned long length;
 
     SVGElementInstance item([Default=Undefined] optional unsigned long index);

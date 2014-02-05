@@ -35,12 +35,10 @@
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
 #include "RenderImage.h"
+#include "RenderSVGImage.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 
-#if ENABLE(SVG)
-#include "RenderSVGImage.h"
-#endif
 #if ENABLE(VIDEO)
 #include "RenderVideo.h"
 #endif
@@ -328,10 +326,8 @@ RenderImageResource* ImageLoader::renderImageResource()
     if (renderer->isRenderImage() && !toRenderImage(*renderer).isGeneratedContent())
         return &toRenderImage(*renderer).imageResource();
 
-#if ENABLE(SVG)
     if (renderer->isSVGImage())
         return &toRenderSVGImage(renderer)->imageResource();
-#endif
 
 #if ENABLE(VIDEO)
     if (renderer->isVideo())

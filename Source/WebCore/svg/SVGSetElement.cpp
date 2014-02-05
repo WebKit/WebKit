@@ -19,8 +19,8 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 #include "SVGSetElement.h"
+
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -44,7 +44,3 @@ void SVGSetElement::updateAnimationMode()
 }
 
 }
-
-// vim:ts=4:noet
-#endif // ENABLE(SVG)
-

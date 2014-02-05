@@ -21,7 +21,6 @@
 #ifndef SVGAnimatedProperty_h
 #define SVGAnimatedProperty_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedPropertyDescription.h"
 #include "SVGPropertyInfo.h"
 #include <wtf/RefCounted.h>
@@ -94,5 +93,4 @@ protected:
 
 }
 
-#endif // ENABLE(SVG)
 #endif // SVGAnimatedProperty_h

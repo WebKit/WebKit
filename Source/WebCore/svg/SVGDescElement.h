@@ -21,7 +21,6 @@
 #ifndef SVGDescElement_h
 #define SVGDescElement_h
 
-#if ENABLE(SVG)
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -40,5 +39,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

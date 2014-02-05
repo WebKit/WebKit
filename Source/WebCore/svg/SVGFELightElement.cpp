@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFELightElement.h"
 
 #include "Attribute.h"
@@ -221,4 +221,4 @@ void SVGFELightElement::childrenChanged(const ChildChange& change)
 
 }
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(FILTERS)

@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTextLayoutAttributesBuilder.h"
 
 #include "RenderSVGInlineText.h"
@@ -230,5 +228,3 @@ void SVGTextLayoutAttributesBuilder::fillCharacterDataMap(const TextPosition& po
 }
 
 }
-
-#endif // ENABLE(SVG)

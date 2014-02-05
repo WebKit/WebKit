@@ -96,6 +96,7 @@
 #include "RenderTheme.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
+#include "SVGNames.h"
 #include "ScaleTransformOperation.h"
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
@@ -119,9 +120,6 @@
 #include "RenderLayerFilterInfo.h"
 #endif
 
-#if ENABLE(SVG)
-#include "SVGNames.h"
-#endif
 
 #define MIN_INTERSECT_FOR_REVEAL 32
 
@@ -1532,10 +1530,8 @@ bool RenderLayer::cannotBlitToWindow() const
 
 bool RenderLayer::isTransparent() const
 {
-#if ENABLE(SVG)
     if (renderer().element() && renderer().element()->isSVGElement())
         return false;
-#endif
     return renderer().isTransparent() || renderer().hasMask();
 }
 
@@ -3850,7 +3846,6 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
         return true;
     }
 
-#if ENABLE(SVG)
     if (style.clipPath()->type() == ClipPathOperation::Reference) {
         ReferenceClipPathOperation* referenceClipPathOperation = static_cast<ReferenceClipPathOperation*>(style.clipPath());
         Element* element = renderer().document().getElementById(referenceClipPathOperation->fragment());
@@ -3860,7 +3855,6 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
             static_cast<RenderSVGResourceClipper*>(element->renderer())->applyClippingToContext(renderer(), rootRelativeBounds, paintingInfo.paintDirtyRect, context);
         }
     }
-#endif
 
     return false;
 }
@@ -6677,12 +6671,10 @@ void RenderLayer::updateOrRemoveFilterClients()
         return;
     }
 
-#if ENABLE(SVG)
     if (renderer().style().filter().hasReferenceFilter())
         FilterInfo::get(*this).updateReferenceFilterClients(renderer().style().filter());
     else if (FilterInfo* filterInfo = FilterInfo::getIfExists(*this))
         filterInfo->removeReferenceFilterClients();
-#endif
 }
 
 void RenderLayer::updateOrRemoveFilterEffectRenderer()

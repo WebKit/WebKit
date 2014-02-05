@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGResourceLinearGradient.h"
 
 
@@ -61,5 +59,3 @@ void RenderSVGResourceLinearGradient::buildGradient(GradientData* gradientData) 
 }
 
 }
-
-#endif

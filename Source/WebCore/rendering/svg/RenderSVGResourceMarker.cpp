@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGResourceMarker.h"
 
 #include "GraphicsContext.h"
@@ -157,5 +155,3 @@ void RenderSVGResourceMarker::calcViewport()
 }
 
 }
-
-#endif // ENABLE(SVG)

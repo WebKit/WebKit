@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "CSSComputedStyleDeclaration.h"
 
 #include "CSSPrimitiveValueMappings.h"
@@ -209,7 +207,3 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID prop
 }
 
 }
-
-#endif // ENABLE(SVG)
-
-// vim:ts=4:noet

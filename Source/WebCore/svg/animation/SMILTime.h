@@ -26,8 +26,6 @@
 #ifndef SMILTime_h
 #define SMILTime_h
 
-#if ENABLE(SVG)
-
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -98,5 +96,4 @@ SMILTime operator*(const SMILTime&, const SMILTime&);
 
 }
 
-#endif // ENABLE(SVG)
 #endif // SMILTime_h

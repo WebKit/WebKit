@@ -26,8 +26,6 @@
 */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGRenderStyleDefs.h"
 
 #include "RenderStyle.h"
@@ -279,5 +277,3 @@ bool StyleInheritedResourceData::operator==(const StyleInheritedResourceData& ot
 }
 
 }
-
-#endif // ENABLE(SVG)

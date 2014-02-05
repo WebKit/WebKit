@@ -21,8 +21,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGViewportContainer.h"
 
 #include "GraphicsContext.h"
@@ -153,5 +151,3 @@ void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, const LayoutPoint& 
 }
 
 }
-
-#endif // ENABLE(SVG)

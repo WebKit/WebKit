@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGResourcePattern.h"
 
 #include "ElementIterator.h"
@@ -274,5 +272,3 @@ std::unique_ptr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const Pat
 }
 
 }
-
-#endif

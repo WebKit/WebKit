@@ -20,7 +20,6 @@
 #ifndef SVGAnimatedPointList_h
 #define SVGAnimatedPointList_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
 #include "SVGPointList.h"
@@ -49,5 +48,4 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

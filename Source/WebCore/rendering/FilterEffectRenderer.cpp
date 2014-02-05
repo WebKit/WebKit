@@ -29,6 +29,8 @@
 
 #include "FilterEffectRenderer.h"
 
+#include "CachedSVGDocument.h"
+#include "CachedSVGDocumentReference.h"
 #include "ColorSpace.h"
 #include "Document.h"
 #include "ElementIterator.h"
@@ -40,18 +42,13 @@
 #include "FloatConversion.h"
 #include "Frame.h"
 #include "RenderLayer.h"
+#include "SVGElement.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 #include "Settings.h"
+#include "SourceAlpha.h"
 
 #include <algorithm>
 #include <wtf/MathExtras.h>
-
-#if ENABLE(SVG)
-#include "CachedSVGDocument.h"
-#include "CachedSVGDocumentReference.h"
-#include "SVGElement.h"
-#include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SourceAlpha.h"
-#endif
 
 namespace WebCore {
 
@@ -97,7 +94,6 @@ GraphicsContext* FilterEffectRenderer::inputContext()
 
 PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElement* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* filterOperation)
 {
-#if ENABLE(SVG)
     if (!renderer)
         return 0;
 
@@ -141,12 +137,6 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElemen
         m_effects.append(effect);
     }
     return effect;
-#else
-    UNUSED_PARAM(renderer);
-    UNUSED_PARAM(previousEffect);
-    UNUSED_PARAM(filterOperation);
-    return 0;
-#endif
 }
 
 bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations& operations, FilterConsumer consumer)

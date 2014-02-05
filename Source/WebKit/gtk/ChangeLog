@@ -1,3 +1,13 @@
+2014-02-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(SVG) guards
+        https://bugs.webkit.org/show_bug.cgi?id=127991
+
+        Reviewed by Sam Weinig.
+
+        * GNUmakefile.am:
+        * webkit/webkitwebframe.cpp:
+
 2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Replace DEFINE_STATIC_LOCAL with NeverDestroyed<T> in GTK WK1 and WK2 code

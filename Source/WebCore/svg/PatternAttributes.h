@@ -20,7 +20,6 @@
 #ifndef PatternAttributes_h
 #define PatternAttributes_h
 
-#if ENABLE(SVG)
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
 
@@ -162,5 +161,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

@@ -366,9 +366,7 @@ static void initializeSupportedNonImageMimeTypes()
         "application/atom+xml",
 #endif
         "application/json",
-#if ENABLE(SVG)
         "image/svg+xml",
-#endif
 #if ENABLE(FTPDIR)
         "application/x-ftp-directory",
 #endif

@@ -26,7 +26,6 @@
 
 [
     NoInterfaceObject,
-    Conditional=SVG,
     ObjCProtocol
 ] interface SVGFilterPrimitiveStandardAttributes {
     readonly attribute SVGAnimatedLength x;

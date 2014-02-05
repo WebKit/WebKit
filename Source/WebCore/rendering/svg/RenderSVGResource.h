@@ -20,7 +20,6 @@
 #ifndef RenderSVGResource_h
 #define RenderSVGResource_h
 
-#if ENABLE(SVG)
 #include "RenderSVGShape.h"
 #include "RenderStyleConstants.h"
 #include "SVGDocumentExtensions.h"
@@ -87,5 +86,4 @@ public:
 
 }
 
-#endif
 #endif

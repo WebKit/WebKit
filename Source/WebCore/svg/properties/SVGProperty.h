@@ -20,7 +20,6 @@
 #ifndef SVGProperty_h
 #define SVGProperty_h
 
-#if ENABLE(SVG)
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -41,5 +40,4 @@ public:
 
 }
 
-#endif // ENABLE(SVG)
 #endif // SVGProperty_h

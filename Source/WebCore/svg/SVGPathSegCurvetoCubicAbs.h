@@ -22,7 +22,6 @@
 #ifndef SVGPathSegCurvetoCubicAbs_h
 #define SVGPathSegCurvetoCubicAbs_h
 
-#if ENABLE(SVG)
 #include "SVGPathSegCurvetoCubic.h"
 
 namespace WebCore {
@@ -46,5 +45,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

@@ -21,7 +21,6 @@
 #ifndef SVGGradientElement_h
 #define SVGGradientElement_h
 
-#if ENABLE(SVG)
 #include "Gradient.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
@@ -114,5 +113,4 @@ NODE_TYPE_CASTS(SVGGradientElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

@@ -78,10 +78,7 @@ public:
     CachedResourceHandle<CachedFont> requestFont(CachedResourceRequest&);
     CachedResourceHandle<CachedRawResource> requestRawResource(CachedResourceRequest&);
     CachedResourceHandle<CachedRawResource> requestMainResource(CachedResourceRequest&);
-
-#if ENABLE(SVG)
     CachedResourceHandle<CachedSVGDocument> requestSVGDocument(CachedResourceRequest&);
-#endif
 #if ENABLE(XSLT)
     CachedResourceHandle<CachedXSLStyleSheet> requestXSLStyleSheet(CachedResourceRequest&);
 #endif

@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGViewElement.h"
 
 #include "Attribute.h"
@@ -92,5 +90,3 @@ void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomicStrin
 }
 
 }
-
-#endif // ENABLE(SVG)

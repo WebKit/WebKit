@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGImage.h"
 
 #include "Attr.h"
@@ -216,5 +214,3 @@ void RenderSVGImage::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

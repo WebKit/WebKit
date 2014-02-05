@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG,
-] interface SVGPatternElement : SVGElement {
+interface SVGPatternElement : SVGElement {
     readonly attribute SVGAnimatedEnumeration   patternUnits;
     readonly attribute SVGAnimatedEnumeration   patternContentUnits;
     readonly attribute SVGAnimatedTransformList patternTransform;

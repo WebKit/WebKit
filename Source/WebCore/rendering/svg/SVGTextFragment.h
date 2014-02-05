@@ -20,7 +20,6 @@
 #ifndef SVGTextFragment_h
 #define SVGTextFragment_h
 
-#if ENABLE(SVG)
 #include "AffineTransform.h"
 
 namespace WebCore {
@@ -111,5 +110,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

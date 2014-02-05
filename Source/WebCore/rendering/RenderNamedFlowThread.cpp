@@ -564,10 +564,9 @@ static Node* nextNodeInsideContentElement(const Node* currNode, const Element* c
     ASSERT(currNode);
     ASSERT(contentElement && contentElement->inNamedFlow());
 
-#if ENABLE(SVG)
     if (currNode->renderer() && currNode->renderer()->isSVGRoot())
         return NodeTraversal::nextSkippingChildren(currNode, contentElement);
-#endif
+
     return NodeTraversal::next(currNode, contentElement);
 }
 

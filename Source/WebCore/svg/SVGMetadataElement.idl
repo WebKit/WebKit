@@ -19,8 +19,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    Conditional=SVG
-] interface SVGMetadataElement : SVGElement {
+interface SVGMetadataElement : SVGElement {
 };
 

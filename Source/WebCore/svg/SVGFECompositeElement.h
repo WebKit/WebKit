@@ -21,7 +21,7 @@
 #ifndef SVGFECompositeElement_h
 #define SVGFECompositeElement_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "FEComposite.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedNumber.h"
@@ -100,5 +100,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif
 #endif

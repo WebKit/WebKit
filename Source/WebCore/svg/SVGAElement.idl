@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG
-] interface SVGAElement : SVGGraphicsElement {
+interface SVGAElement : SVGGraphicsElement {
     [ImplementedAs=svgTarget] readonly attribute SVGAnimatedString target;
 };
 

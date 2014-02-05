@@ -25,8 +25,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGText.h"
 
 #include "FloatQuad.h"
@@ -561,5 +559,3 @@ void RenderSVGText::updateFirstLetter()
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -24,7 +24,6 @@
 #ifndef SVGRenderSupport_h
 #define SVGRenderSupport_h
 
-#if ENABLE(SVG)
 #include "PaintInfo.h"
 
 namespace WebCore {
@@ -97,5 +96,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGRenderSupport_h

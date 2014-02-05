@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTextContentElement.h"
 
 #include "CSSPropertyNames.h"
@@ -304,5 +302,3 @@ SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* 
 }
 
 }
-
-#endif // ENABLE(SVG)

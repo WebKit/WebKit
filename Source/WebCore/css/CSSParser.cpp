@@ -3049,10 +3049,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         validPrimitive = false;
         break;
 #endif
-#if ENABLE(SVG)
     default:
         return parseSVGValue(propId, important);
-#endif
     }
 
     if (validPrimitive) {
@@ -5911,12 +5909,10 @@ PassRefPtr<CSSValue> CSSParser::parseClipPath()
         m_valueList->next();
         return parseValidPrimitive(valueId, value);
     }
-#if ENABLE(SVG)
     if (value->unit == CSSPrimitiveValue::CSS_URI) {
         m_valueList->next();
         return CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_URI);
     }
-#endif
 
     return parseBasicShapeAndOrBox(CSSPropertyWebkitClipPath);
 }
@@ -7050,11 +7046,9 @@ PassRefPtr<CSSValueList> CSSParser::parseShadow(CSSParserValueList* valueList, C
                 // Other operators aren't legal or we aren't done with the current shadow
                 // value.  Treat as invalid.
                 return 0;
-#if ENABLE(SVG)
             // -webkit-svg-shadow does not support multiple values.
             if (propId == CSSPropertyWebkitSvgShadow)
                 return 0;
-#endif
             // The value is good.  Commit it.
             context.commitValue();
         } else if (validUnit(val, FLength, CSSStrictMode)) {
@@ -9205,11 +9199,9 @@ bool CSSParser::parseFilter(CSSParserValueList* valueList, RefPtr<CSSValue>& res
 
         // See if the specified primitive is one we understand.
         if (value->unit == CSSPrimitiveValue::CSS_URI) {
-#if ENABLE(SVG)
             RefPtr<WebKitCSSFilterValue> referenceFilterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::ReferenceFilterOperation);
             referenceFilterValue->append(CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_URI));
             list->append(referenceFilterValue.release());
-#endif
         } else {
             const CSSParserString name = value->function->name;
             unsigned maximumArgumentCount = 1;
@@ -11059,7 +11051,6 @@ restartAfterComment:
             break;
         }
 
-#if ENABLE(SVG)
         // Use SVG parser for numbers on SVG presentation attributes.
         if (m_context.mode == SVGAttributeMode) {
             // We need to take care of units like 'em' or 'ex'.
@@ -11079,7 +11070,6 @@ restartAfterComment:
             if (!parseSVGNumber(tokenStart<SrcCharacterType>(), character - tokenStart<SrcCharacterType>(), yylval->number))
                 break;
         } else
-#endif
             yylval->number = charactersToDouble(tokenStart<SrcCharacterType>(), currentCharacter<SrcCharacterType>() - tokenStart<SrcCharacterType>());
  
         // Type of the function.

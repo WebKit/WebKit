@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTests.h"
 
 #include "Attribute.h"
@@ -221,5 +219,3 @@ SVGStringList& SVGTests::systemLanguage()
 }
 
 }
-
-#endif // ENABLE(SVG)

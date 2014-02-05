@@ -20,7 +20,6 @@
 #ifndef SVGPathStringBuilder_h
 #define SVGPathStringBuilder_h
 
-#if ENABLE(SVG)
 #include "SVGPathConsumer.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -57,5 +56,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGPathStringBuilder_h

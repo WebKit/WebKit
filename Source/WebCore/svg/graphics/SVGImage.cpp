@@ -26,8 +26,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGImage.h"
 
 #include "Chrome.h"
@@ -402,5 +400,3 @@ bool isInSVGImage(const Element* element)
 }
 
 }
-
-#endif // ENABLE(SVG)

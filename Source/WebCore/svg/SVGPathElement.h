@@ -21,7 +21,6 @@
 #ifndef SVGPathElement_h
 #define SVGPathElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGExternalResourcesRequired.h"
@@ -135,5 +134,4 @@ NODE_TYPE_CASTS(SVGPathElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

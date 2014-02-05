@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGStringList.h"
 
 #include "SVGElement.h"
@@ -79,5 +77,3 @@ String SVGStringList::valueAsString() const
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SVG,
     DoNotCheckConstants
 ] interface SVGGradientElement : SVGElement {
     // Spread Method Types

@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
 
 #include "Console.h"
@@ -378,5 +376,3 @@ void SVGDocumentExtensions::unregisterSVGFontFaceElement(SVGFontFaceElement* ele
 #endif
 
 }
-
-#endif

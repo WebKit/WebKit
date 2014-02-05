@@ -21,8 +21,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGAElement.h"
 
 #include "Attr.h"
@@ -241,5 +239,3 @@ bool SVGAElement::willRespondToMouseClickEvents()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

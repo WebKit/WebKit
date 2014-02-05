@@ -21,7 +21,6 @@
 
 #ifndef SVGParserUtilities_h
 #define SVGParserUtilities_h
-#if ENABLE(SVG)
 
 #include "ParserUtilities.h"
 #include <wtf/HashSet.h>
@@ -89,5 +88,4 @@ bool parseGlyphName(const String& input, HashSet<String>& values);
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGParserUtilities_h

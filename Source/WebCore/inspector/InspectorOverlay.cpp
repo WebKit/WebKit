@@ -121,11 +121,7 @@ static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region,
     FrameView* mainView = containingFrame->page()->mainFrame().view();
 
     // RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
-#if ENABLE(SVG)
     bool isSVGRenderer = renderer->node() && renderer->node()->isSVGElement() && !renderer->isSVGRoot();
-#else
-    bool isSVGRenderer = false;
-#endif
 
     if (isSVGRenderer) {
         highlight->type = HighlightTypeRects;

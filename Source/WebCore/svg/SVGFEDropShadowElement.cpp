@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFEDropShadowElement.h"
 
 #include "Attribute.h"
@@ -174,4 +174,4 @@ PassRefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder* filterB
 
 }
 
-#endif // ENABLE(SVG)
+#endif

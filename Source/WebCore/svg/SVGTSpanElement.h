@@ -21,7 +21,6 @@
 #ifndef SVGTSpanElement_h
 #define SVGTSpanElement_h
 
-#if ENABLE(SVG)
 #include "SVGTextPositioningElement.h"
 
 namespace WebCore {
@@ -40,5 +39,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

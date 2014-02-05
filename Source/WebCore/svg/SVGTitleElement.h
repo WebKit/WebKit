@@ -20,7 +20,6 @@
 
 #ifndef SVGTitleElement_h
 #define SVGTitleElement_h
-#if ENABLE(SVG)
 
 #include "SVGElement.h"
 #include "SVGNames.h"
@@ -45,7 +44,4 @@ NODE_TYPE_CASTS(SVGTitleElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

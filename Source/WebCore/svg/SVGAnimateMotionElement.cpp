@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGAnimateMotionElement.h"
 
 #include "AffineTransform.h"
@@ -332,4 +330,3 @@ void SVGAnimateMotionElement::updateAnimationMode()
 }
 
 }
-#endif // ENABLE(SVG)

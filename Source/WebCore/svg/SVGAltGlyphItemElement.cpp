@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FONTS)
+#if ENABLE(SVG_FONTS)
 #include "SVGAltGlyphItemElement.h"
 
 #include "ElementIterator.h"

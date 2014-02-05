@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGMarkerElement.h"
 
 #include "Attribute.h"
@@ -257,5 +255,3 @@ PassRefPtr<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>> SVGMarker
 }
 
 }
-
-#endif

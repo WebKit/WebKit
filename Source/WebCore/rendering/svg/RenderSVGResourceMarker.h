@@ -20,7 +20,6 @@
 #ifndef RenderSVGResourceMarker_h
 #define RenderSVGResourceMarker_h
 
-#if ENABLE(SVG)
 #include "RenderSVGResourceContainer.h"
 #include "SVGMarkerElement.h"
 
@@ -79,6 +78,5 @@ private:
 };
 
 }
-#endif
 
 #endif

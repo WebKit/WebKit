@@ -21,7 +21,6 @@
 #ifndef SVGTextElement_h
 #define SVGTextElement_h
 
-#if ENABLE(SVG)
 #include "SVGTextPositioningElement.h"
 
 namespace WebCore {
@@ -45,5 +44,4 @@ NODE_TYPE_CASTS(SVGTextElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

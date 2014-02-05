@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTextElement.h"
 
 #include "Attribute.h"
@@ -89,5 +87,3 @@ bool SVGTextElement::childShouldCreateRenderer(const Node& child) const
 }
 
 }
-
-#endif // ENABLE(SVG)

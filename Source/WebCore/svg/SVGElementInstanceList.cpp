@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGElementInstanceList.h"
 
 #include "SVGElementInstance.h"
@@ -56,7 +54,3 @@ SVGElementInstance* SVGElementInstanceList::item(unsigned index)
 }
 
 }
-
-#endif // ENABLE(SVG)
-
-// vim:ts=4:noet

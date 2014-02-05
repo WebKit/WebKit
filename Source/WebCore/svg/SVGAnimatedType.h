@@ -20,7 +20,6 @@
 #ifndef SVGAnimatedType_h
 #define SVGAnimatedType_h
 
-#if ENABLE(SVG)
 #include "FloatRect.h"
 #include "SVGAngle.h"
 #include "SVGColor.h"
@@ -303,5 +302,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGAnimatedType_h

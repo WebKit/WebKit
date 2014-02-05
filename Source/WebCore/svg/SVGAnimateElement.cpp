@@ -21,8 +21,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGAnimateElement.h"
 
 #include "CSSParser.h"
@@ -458,5 +456,3 @@ bool isSVGAnimateElement(const Node& node)
 }
 
 }
-
-#endif // ENABLE(SVG)

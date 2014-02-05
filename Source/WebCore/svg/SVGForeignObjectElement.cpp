@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGForeignObjectElement.h"
 
 #include "Attribute.h"
@@ -168,5 +166,3 @@ bool SVGForeignObjectElement::selfHasRelativeLengths() const
 }
 
 }
-
-#endif

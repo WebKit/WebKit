@@ -21,7 +21,6 @@
 #ifndef SVGCursorElement_h
 #define SVGCursorElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedString.h"
@@ -77,5 +76,4 @@ NODE_TYPE_CASTS(SVGCursorElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

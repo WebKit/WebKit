@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGResourceSolidColor.h"
 
 #include "Frame.h"
@@ -96,5 +94,3 @@ void RenderSVGResourceSolidColor::postApplyResource(RenderElement&, GraphicsCont
 }
 
 }
-
-#endif

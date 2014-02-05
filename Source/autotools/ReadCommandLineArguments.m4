@@ -131,13 +131,6 @@ AC_ARG_ENABLE(geolocation,
     [enable_geolocation="yes"])
 AC_MSG_RESULT([$enable_geolocation])
 
-AC_MSG_CHECKING([whether to enable SVG support])
-AC_ARG_ENABLE(svg, 
-    AC_HELP_STRING([--enable-svg], [enable support for SVG [default=yes]]),
-    [],
-    [enable_svg="yes"])
-AC_MSG_RESULT([$enable_svg])
-
 AC_MSG_CHECKING([whether to enable support for SVG fonts])
 AC_ARG_ENABLE(svg_fonts, 
     AC_HELP_STRING([--enable-svg-fonts], [enable support for SVG fonts (experimental) [default=yes]]),

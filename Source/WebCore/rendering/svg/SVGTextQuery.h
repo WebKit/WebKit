@@ -20,7 +20,6 @@
 #ifndef SVGTextQuery_h
 #define SVGTextQuery_h
 
-#if ENABLE(SVG)
 #include "FloatRect.h"
 #include "SVGPoint.h"
 #include "SVGTextFragment.h"
@@ -72,5 +71,4 @@ private:
 
 }
 
-#endif
 #endif

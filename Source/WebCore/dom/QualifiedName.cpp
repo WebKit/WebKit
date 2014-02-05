@@ -27,6 +27,7 @@
 
 #include "QualifiedName.h"
 #include "HTMLNames.h"
+#include "SVGNames.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
@@ -39,19 +40,13 @@
 #include "MathMLNames.h"
 #endif
 
-#if ENABLE(SVG)
-#include "SVGNames.h"
-#endif
-
 namespace WebCore {
 
 static const int staticQualifiedNamesCount = HTMLNames::HTMLTagsCount + HTMLNames::HTMLAttrsCount
 #if ENABLE(MATHML)
     + MathMLNames::MathMLTagsCount + MathMLNames::MathMLAttrsCount
 #endif
-#if ENABLE(SVG)
     + SVGNames::SVGTagsCount + SVGNames::SVGAttrsCount
-#endif
     + XLinkNames::XLinkAttrsCount
     + XMLNSNames::XMLNSAttrsCount
     + XMLNames::XMLAttrsCount;

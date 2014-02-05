@@ -139,9 +139,7 @@ private:
     ContainerSizeRequests m_pendingContainerSizeRequests;
 
     RefPtr<Image> m_image;
-#if ENABLE(SVG)
     std::unique_ptr<SVGImageCache> m_svgImageCache;
-#endif
     unsigned char m_isManuallyCached : 1;
     unsigned char m_shouldPaintBrokenImage : 1;
 };

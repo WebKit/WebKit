@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPaint.h"
 
 #include "SVGException.h"
@@ -117,5 +115,3 @@ bool SVGPaint::equals(const SVGPaint& other) const
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -20,7 +20,6 @@
 #ifndef RenderSVGResourceMasker_h
 #define RenderSVGResourceMasker_h
 
-#if ENABLE(SVG)
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "IntSize.h"
@@ -68,5 +67,4 @@ private:
 
 }
 
-#endif
 #endif

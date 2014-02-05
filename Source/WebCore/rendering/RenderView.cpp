@@ -260,9 +260,7 @@ void RenderView::layout()
                 || box.style().logicalHeight().isViewportPercentage()
                 || box.style().logicalMinHeight().isViewportPercentage()
                 || box.style().logicalMaxHeight().isViewportPercentage()
-#if ENABLE(SVG)
                 || box.isSVGRoot()
-#endif
                 )
                 box.setChildNeedsLayout(MarkOnlyThis);
         }

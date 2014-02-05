@@ -26,7 +26,6 @@
 // SVGViewSpec intentionally doesn't inherit from SVGZoomAndPan & SVGFitToViewBox on the IDLs.
 // It would require that any of those classes would be RefCounted, and we want to avoid that.
 [
-    Conditional=SVG,
     JSGenerateToJSObject
 ] interface SVGViewSpec {
       readonly attribute SVGTransformList transform;

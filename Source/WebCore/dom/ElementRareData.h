@@ -116,10 +116,8 @@ public:
     IntSize savedLayerScrollOffset() const { return m_savedLayerScrollOffset; }
     void setSavedLayerScrollOffset(IntSize size) { m_savedLayerScrollOffset = size; }
 
-#if ENABLE(SVG)
     bool hasPendingResources() const { return m_hasPendingResources; }
     void setHasPendingResources(bool has) { m_hasPendingResources = has; }
-#endif
 
 private:
     short m_tabIndex;
@@ -131,9 +129,7 @@ private:
 #if ENABLE(FULLSCREEN_API)
     unsigned m_containsFullScreenElement : 1;
 #endif
-#if ENABLE(SVG)
     unsigned m_hasPendingResources : 1;
-#endif
     unsigned m_childrenAffectedByHover : 1;
     unsigned m_childrenAffectedByActive : 1;
     unsigned m_childrenAffectedByDrag : 1;
@@ -179,9 +175,7 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
 #if ENABLE(FULLSCREEN_API)
     , m_containsFullScreenElement(false)
 #endif
-#if ENABLE(SVG)
     , m_hasPendingResources(false)
-#endif
     , m_childrenAffectedByHover(false)
     , m_childrenAffectedByActive(false)
     , m_childrenAffectedByDrag(false)

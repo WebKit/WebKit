@@ -22,7 +22,6 @@
 #ifndef SVGInlineTextBox_h
 #define SVGInlineTextBox_h
 
-#if ENABLE(SVG)
 #include "InlineTextBox.h"
 #include "SVGTextLayoutEngine.h"
 #include "RenderSVGInlineText.h"
@@ -96,5 +95,4 @@ INLINE_BOX_OBJECT_TYPE_CASTS(SVGInlineTextBox, isSVGInlineTextBox())
 
 } // namespace WebCore
 
-#endif
 #endif // SVGInlineTextBox_h

@@ -994,9 +994,7 @@ wrap
 // -webkit-line-align
 edges
 
-#if (defined(ENABLE_SVG) && ENABLE_SVG) || (defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT)
 alphabetic
-#endif
 
 // position
 #if defined(ENABLE_CSS_STICKY_POSITION) && ENABLE_CSS_STICKY_POSITION

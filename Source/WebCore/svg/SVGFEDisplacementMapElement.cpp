@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFEDisplacementMapElement.h"
 
 #include "Attribute.h"
@@ -166,4 +166,4 @@ PassRefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder* fi
 
 }
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(FILTERS)

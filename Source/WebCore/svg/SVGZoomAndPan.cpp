@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGZoomAndPan.h"
 
 #include "SVGParserUtilities.h"
@@ -69,5 +67,3 @@ NO_RETURN_DUE_TO_ASSERT void SVGZoomAndPan::setZoomAndPan(unsigned short)
 }
 
 }
-
-#endif // ENABLE(SVG)

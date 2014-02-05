@@ -21,8 +21,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGLengthContext.h"
 
 #include "CSSHelper.h"
@@ -309,5 +307,3 @@ bool SVGLengthContext::determineViewport(FloatSize& viewportSize) const
 }
 
 }
-
-#endif

@@ -29,9 +29,7 @@ static inline bool isContainingBlockCandidateForAbsolutelyPositionedObject(Rende
 {
     return object.style().position() != StaticPosition
         || (object.hasTransform() && object.isRenderBlock())
-#if ENABLE(SVG)
         || object.isSVGForeignObject()
-#endif
         || object.isRenderView();
 }
 

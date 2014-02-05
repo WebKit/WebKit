@@ -69,9 +69,7 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
         || parentNode->isDocumentNode()
         || parentNode->hasTagName(HTMLNames::linkTag)
         || isHTMLStyleElement(parentNode)
-#if ENABLE(SVG)
         || parentNode->hasTagName(SVGNames::styleTag)
-#endif
         || parentNode->nodeType() == Node::PROCESSING_INSTRUCTION_NODE;
 }
 #endif

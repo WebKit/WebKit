@@ -23,7 +23,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "RenderSVGResourceFilter.h"
 
 #include "ElementChildIterator.h"

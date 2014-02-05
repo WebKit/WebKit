@@ -18,8 +18,6 @@
 */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "JSSVGLength.h"
 
 #include "ExceptionCode.h"
@@ -100,5 +98,3 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -20,7 +20,6 @@
 #ifndef SVGPathSegListPropertyTearOff_h
 #define SVGPathSegListPropertyTearOff_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGPathSegList.h"
 
@@ -160,5 +159,4 @@ private:
 
 }
 
-#endif // ENABLE(SVG)
 #endif // SVGListPropertyTearOff_h

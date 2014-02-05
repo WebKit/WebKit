@@ -21,7 +21,6 @@
 #ifndef SVGExternalResourcesRequired_h
 #define SVGExternalResourcesRequired_h
 
-#if ENABLE(SVG)
 #include "QualifiedName.h"
 #include <wtf/HashSet.h>
 
@@ -61,5 +60,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

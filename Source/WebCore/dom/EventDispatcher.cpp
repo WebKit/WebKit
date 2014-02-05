@@ -37,13 +37,10 @@
 #include "PseudoElement.h"
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
-#include "TouchEvent.h"
-
-#if ENABLE(SVG)
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGUseElement.h"
-#endif
+#include "TouchEvent.h"
 
 namespace WebCore {
 
@@ -182,7 +179,6 @@ inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
         return *hostElement;
     }
 
-#if ENABLE(SVG)
     if (!referenceNode.isSVGElement() || !referenceNode.isInShadowTree())
         return referenceNode;
 
@@ -196,7 +192,6 @@ inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
     SVGUseElement* useElement = toSVGUseElement(shadowHostElement);
     if (SVGElementInstance* instance = useElement->instanceForShadowTreeElement(&referenceNode))
         return *instance;
-#endif
 
     return referenceNode;
 }

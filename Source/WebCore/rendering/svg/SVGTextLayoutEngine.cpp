@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTextLayoutEngine.h"
 
 #include "RenderSVGTextPath.h"
@@ -651,5 +649,3 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
 }
 
 }
-
-#endif // ENABLE(SVG)

@@ -21,7 +21,6 @@
 #ifndef SVGCircleElement_h
 #define SVGCircleElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
@@ -60,5 +59,4 @@ NODE_TYPE_CASTS(SVGCircleElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGCircleElement_h

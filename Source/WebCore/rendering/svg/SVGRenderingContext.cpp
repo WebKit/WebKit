@@ -23,8 +23,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGRenderingContext.h"
 
 #include "BasicShapes.h"
@@ -355,5 +353,3 @@ bool SVGRenderingContext::bufferForeground(std::unique_ptr<ImageBuffer>& imageBu
 }
 
 }
-
-#endif

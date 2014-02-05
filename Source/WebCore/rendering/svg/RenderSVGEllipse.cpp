@@ -25,8 +25,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGEllipse.h"
 
 #include "SVGCircleElement.h"
@@ -153,5 +151,3 @@ bool RenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const
 }
 
 }
-
-#endif // ENABLE(SVG)

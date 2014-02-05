@@ -21,7 +21,6 @@
 #ifndef SVGPropertyTraits_h
 #define SVGPropertyTraits_h
 
-#if ENABLE(SVG)
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -61,5 +60,4 @@ struct SVGPropertyTraits<String> {
 
 }
 
-#endif
 #endif

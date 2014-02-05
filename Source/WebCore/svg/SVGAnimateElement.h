@@ -23,7 +23,6 @@
 #ifndef SVGAnimateElement_h
 #define SVGAnimateElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedType.h"
 #include "SVGAnimatedTypeAnimator.h"
 #include "SVGAnimationElement.h"
@@ -81,5 +80,4 @@ NODE_TYPE_CASTS(SVGAnimateElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGAnimateElement_h

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CachedSVGDocumentReference.h"
 
-#if ENABLE(SVG) && ENABLE(CSS_FILTERS)
+#if ENABLE(CSS_FILTERS)
 #include "CachedResourceHandle.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"

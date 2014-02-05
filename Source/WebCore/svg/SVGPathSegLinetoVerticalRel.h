@@ -22,7 +22,6 @@
 #ifndef SVGPathSegLinetoVerticalRel_h
 #define SVGPathSegLinetoVerticalRel_h
 
-#if ENABLE(SVG)
 #include "SVGPathSegLinetoVertical.h"
 
 namespace WebCore {
@@ -46,5 +45,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

@@ -22,7 +22,6 @@
 #ifndef SVGAnimateColorElement_h
 #define SVGAnimateColorElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimateElement.h"
 
 namespace WebCore {
@@ -38,5 +37,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGAnimateColorElement_h

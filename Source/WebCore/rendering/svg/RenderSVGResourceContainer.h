@@ -20,7 +20,6 @@
 #ifndef RenderSVGResourceContainer_h
 #define RenderSVGResourceContainer_h
 
-#if ENABLE(SVG)
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGResource.h"
 
@@ -100,5 +99,4 @@ Renderer* getRenderSVGResourceById(Document& document, const AtomicString& id)
 
 }
 
-#endif
 #endif

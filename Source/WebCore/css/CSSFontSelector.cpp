@@ -43,6 +43,8 @@
 #include "FontCache.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "SVGFontFaceElement.h"
+#include "SVGNames.h"
 #include "Settings.h"
 #include "SimpleFontData.h"
 #include "StyleProperties.h"
@@ -51,11 +53,6 @@
 #include "WebKitFontFamilyNames.h"
 #include <wtf/Ref.h>
 #include <wtf/text/AtomicString.h>
-
-#if ENABLE(SVG)
-#include "SVGFontFaceElement.h"
-#include "SVGNames.h"
-#endif
 
 namespace WebCore {
 

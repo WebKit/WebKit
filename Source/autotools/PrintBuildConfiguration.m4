@@ -32,7 +32,6 @@ Features:
  FTL JIT compilation                                      : $enable_ftl_jit
  Opcode stats                                             : $enable_opcode_stats
  SVG fonts support                                        : $enable_svg_fonts
- SVG support                                              : $enable_svg
  Spellcheck support                                       : $enable_spellcheck
  Credential storage support                               : $enable_credential_storage
  Web Audio support                                        : $enable_web_audio

@@ -121,10 +121,8 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
     case CachedResource::XSLStyleSheet:
         return ResourceLoadPriorityHigh;
 #endif
-#if ENABLE(SVG)
     case CachedResource::SVGDocumentResource:
         return ResourceLoadPriorityLow;
-#endif
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return ResourceLoadPriorityVeryLow;

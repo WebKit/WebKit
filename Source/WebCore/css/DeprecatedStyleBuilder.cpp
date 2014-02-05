@@ -2071,13 +2071,8 @@ class ApplyPropertyDisplay {
 private:
     static inline bool isValidDisplayValue(StyleResolver* styleResolver, EDisplay displayPropertyValue)
     {
-#if ENABLE(SVG)
         if (styleResolver->element() && styleResolver->element()->isSVGElement() && styleResolver->style()->styleType() == NOPSEUDO)
             return (displayPropertyValue == INLINE || displayPropertyValue == BLOCK || displayPropertyValue == NONE);
-#else
-        UNUSED_PARAM(styleResolver);
-        UNUSED_PARAM(displayPropertyValue);
-#endif
         return true;
     }
 public:
@@ -2123,14 +2118,12 @@ public:
             auto& primitiveValue = toCSSPrimitiveValue(*value);
             if (primitiveValue.getValueID() == CSSValueNone)
                 setValue(styleResolver->style(), 0);
-#if ENABLE(SVG)
             else if (primitiveValue.primitiveType() == CSSPrimitiveValue::CSS_URI) {
                 String cssURLValue = primitiveValue.getStringValue();
                 URL url = styleResolver->document().completeURL(cssURLValue);
                 // FIXME: It doesn't work with external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=126133)
                 setValue(styleResolver->style(), ReferenceClipPathOperation::create(cssURLValue, url.fragmentIdentifier()));
             }
-#endif
             return;
         }
         if (!value->isValueList())

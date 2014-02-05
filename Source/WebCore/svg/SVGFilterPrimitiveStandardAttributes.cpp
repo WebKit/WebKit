@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 #include "Attribute.h"
@@ -174,4 +174,4 @@ void invalidateFilterPrimitiveParent(SVGElement* element)
 
 }
 
-#endif // ENABLE(SVG)
+#endif

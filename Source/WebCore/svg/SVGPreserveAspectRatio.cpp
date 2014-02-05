@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPreserveAspectRatio.h"
 
 #include "AffineTransform.h"
@@ -353,5 +351,3 @@ String SVGPreserveAspectRatio::valueAsString() const
 }
 
 }
-
-#endif // ENABLE(SVG)

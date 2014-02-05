@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGColor.h"
 
 #include "CSSParser.h"
@@ -110,5 +108,3 @@ bool SVGColor::equals(const SVGColor& other) const
 }
 
 }
-
-#endif // ENABLE(SVG)

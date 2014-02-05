@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFEDistantLightElement.h"
 #include "SVGNames.h"
 
@@ -45,4 +45,4 @@ PassRefPtr<LightSource> SVGFEDistantLightElement::lightSource() const
 
 }
 
-#endif // ENABLE(SVG)
+#endif

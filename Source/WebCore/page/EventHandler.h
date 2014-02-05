@@ -463,11 +463,9 @@ private:
 
     Timer<EventHandler> m_fakeMouseMoveEventTimer;
 
-#if ENABLE(SVG)
     bool m_svgPan;
     RefPtr<SVGElementInstance> m_instanceUnderMouse;
     RefPtr<SVGElementInstance> m_lastInstanceUnderMouse;
-#endif
 
     RenderLayer* m_resizeLayer;
 

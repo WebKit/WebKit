@@ -21,7 +21,7 @@
 #ifndef SVGFEImageElement_h
 #define SVGFEImageElement_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "ImageBuffer.h"
@@ -72,5 +72,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(FILTERS)
 #endif

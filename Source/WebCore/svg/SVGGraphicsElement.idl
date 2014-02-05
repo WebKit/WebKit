@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SVG,
-] interface SVGGraphicsElement : SVGElement {
+interface SVGGraphicsElement : SVGElement {
     readonly attribute SVGAnimatedTransformList transform;
 
     readonly attribute SVGElement nearestViewportElement;

@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGSymbolElement.h"
 
 #include "RenderSVGHiddenContainer.h"
@@ -107,5 +105,3 @@ RenderPtr<RenderElement> SVGSymbolElement::createElementRenderer(PassRef<RenderS
 }
 
 }
-
-#endif // ENABLE(SVG)

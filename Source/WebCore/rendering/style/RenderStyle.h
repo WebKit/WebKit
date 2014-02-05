@@ -48,6 +48,8 @@
 #include "Pagination.h"
 #include "RenderStyleConstants.h"
 #include "RoundedRect.h"
+#include "SVGPaint.h"
+#include "SVGRenderStyle.h"
 #include "ShadowData.h"
 #include "ShapeValue.h"
 #include "StyleBackgroundData.h"
@@ -84,11 +86,6 @@
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 #include "TextSizeAdjustment.h"
-#endif
-
-#if ENABLE(SVG)
-#include "SVGPaint.h"
-#include "SVGRenderStyle.h"
 #endif
 
 template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<T>(u); }
@@ -150,9 +147,7 @@ protected:
     // list of associated pseudo styles
     OwnPtr<PseudoStyleCache> m_cachedPseudoStyles;
 
-#if ENABLE(SVG)
     DataRef<SVGRenderStyle> m_svgStyle;
-#endif
 
 // !START SYNC!: Keep this in sync with the copy constructor in RenderStyle.cpp and implicitlyInherited() in StyleResolver.cpp
 
@@ -1452,7 +1447,6 @@ public:
 #endif
     void setTextSecurity(ETextSecurity aTextSecurity) { SET_VAR(rareInheritedData, textSecurity, aTextSecurity); }
 
-#if ENABLE(SVG)
     const SVGRenderStyle& svgStyle() const { return *m_svgStyle; }
     SVGRenderStyle& accessSVGStyle() { return *m_svgStyle.access(); }
 
@@ -1490,7 +1484,6 @@ public:
     void setBaselineShiftValue(SVGLength s) { accessSVGStyle().setBaselineShiftValue(s); }
     SVGLength kerning() const { return svgStyle().kerning(); }
     void setKerning(SVGLength k) { accessSVGStyle().setKerning(k); }
-#endif
 
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     void setShapeInside(PassRefPtr<ShapeValue> value)
@@ -1904,11 +1897,9 @@ private:
 
     Color colorIncludingFallback(int colorProperty, bool visitedLink) const;
 
-#if ENABLE(SVG)
     Color stopColor() const { return svgStyle().stopColor(); }
     Color floodColor() const { return svgStyle().floodColor(); }
     Color lightingColor() const { return svgStyle().lightingColor(); }
-#endif
 
     void appendContent(std::unique_ptr<ContentData>);
 };

@@ -20,7 +20,6 @@
 #ifndef SVGListPropertyTearOff_h
 #define SVGListPropertyTearOff_h
 
-#if ENABLE(SVG)
 #include "SVGListProperty.h"
 
 namespace WebCore {
@@ -210,5 +209,4 @@ protected:
 
 }
 
-#endif // ENABLE(SVG)
 #endif // SVGListPropertyTearOff_h

@@ -21,8 +21,6 @@
 
 #include "config.h"
 
-#if ENABLE(SVG)
-
 #include "SVGZoomEvent.h"
 #include "EventNames.h"
 
@@ -75,5 +73,3 @@ EventInterface SVGZoomEvent::eventInterface() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

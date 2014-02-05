@@ -22,7 +22,6 @@
 #ifndef SVGAngle_h
 #define SVGAngle_h
 
-#if ENABLE(SVG)
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
@@ -69,5 +68,4 @@ struct SVGPropertyTraits<SVGAngle> {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGAngle_h

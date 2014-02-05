@@ -24,7 +24,6 @@
 #ifndef RenderSVGImage_h
 #define RenderSVGImage_h
 
-#if ENABLE(SVG)
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
@@ -95,5 +94,4 @@ RENDER_OBJECT_TYPE_CASTS(RenderSVGImage, isSVGImage())
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // RenderSVGImage_h

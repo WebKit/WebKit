@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGBlock.h"
 
 #include "RenderSVGResource.h"
@@ -85,5 +83,3 @@ void RenderSVGBlock::styleDidChange(StyleDifference diff, const RenderStyle* old
 }
 
 }
-
-#endif

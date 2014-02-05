@@ -21,7 +21,6 @@
 #ifndef SVGStringList_h
 #define SVGStringList_h
 
-#if ENABLE(SVG)
 #include "QualifiedName.h"
 #include "SVGPropertyTraits.h"
 #include <wtf/Vector.h>
@@ -56,5 +55,4 @@ struct SVGPropertyTraits<SVGStringList> {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

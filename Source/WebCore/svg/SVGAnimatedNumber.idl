@@ -25,7 +25,6 @@
  */
 
 [
-    Conditional=SVG,
     SkipVTableValidation
 ] interface SVGAnimatedNumber {
     [StrictTypeChecking, SetterRaisesException] attribute float baseVal;

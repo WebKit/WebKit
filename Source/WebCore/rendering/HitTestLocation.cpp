@@ -39,11 +39,8 @@
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "Scrollbar.h"
-
-#if ENABLE(SVG)
 #include "SVGNames.h"
 #include "XLinkNames.h"
-#endif
 
 namespace WebCore {
 

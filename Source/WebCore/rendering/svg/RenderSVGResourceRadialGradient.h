@@ -21,7 +21,6 @@
 #ifndef RenderSVGResourceRadialGradient_h
 #define RenderSVGResourceRadialGradient_h
 
-#if ENABLE(SVG)
 #include "RadialGradientAttributes.h"
 #include "RenderSVGResourceGradient.h"
 #include "SVGRadialGradientElement.h"
@@ -60,5 +59,4 @@ private:
 
 }
 
-#endif
 #endif

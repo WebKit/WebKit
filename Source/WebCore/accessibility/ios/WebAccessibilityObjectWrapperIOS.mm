@@ -576,11 +576,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (BOOL)isSVGGroupElement
 {
     // If an SVG group element has a title, it should be an accessible element on iOS.
-#if ENABLE(SVG)
     Node* node = m_object->node();
     if (node && node->hasTagName(SVGNames::gTag) && [[self accessibilityLabel] length] > 0)
         return YES;
-#endif
     
     return NO;
 }

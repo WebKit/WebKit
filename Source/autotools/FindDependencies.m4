@@ -323,17 +323,6 @@ if test "$enable_gamepad" = "yes" && test "$os_linux" = no; then
     enable_gamepad=no;
 fi
 
-# Turn off svg features if --disable-svg is requested.
-if test "$enable_svg" = "no"; then
-   enable_svg_fonts=no
-fi
-
-# Check for SVG features, enabling SVG if necessary.
-if test "$enable_svg_fonts" = "yes" && test "$enable_svg" = "no"; then
-    AC_MSG_WARN([SVG feature(s) requested but SVG is disabled.. Enabling SVG support])
-    enable_svg=yes
-fi
-
 if test "$enable_opcode_stats" = "yes"; then
     if test "$enable_jit" = "yes"; then
         AC_MSG_ERROR([JIT must be disabled for Opcode stats to work.])

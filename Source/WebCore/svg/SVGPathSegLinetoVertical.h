@@ -21,7 +21,6 @@
 #ifndef SVGPathSegLinetoVertical_h
 #define SVGPathSegLinetoVertical_h
 
-#if ENABLE(SVG)
 #include "SVGPathSegWithContext.h"
 
 namespace WebCore {
@@ -47,5 +46,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

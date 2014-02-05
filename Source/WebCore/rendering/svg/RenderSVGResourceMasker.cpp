@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGResourceMasker.h"
 
 #include "Element.h"
@@ -169,5 +167,3 @@ FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& objec
 }
 
 }
-
-#endif // ENABLE(SVG)

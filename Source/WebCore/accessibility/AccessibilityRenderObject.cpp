@@ -814,10 +814,10 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     // We should also use absoluteQuads for SVG elements, otherwise transforms won't be applied.
     Vector<FloatQuad> quads;
     bool isSVGRoot = false;
-#if ENABLE(SVG)
+
     if (obj->isSVGRoot())
         isSVGRoot = true;
-#endif
+
     if (obj->isText())
         quads = toRenderText(obj)->absoluteQuadsClippedToEllipsis();
     else if (isWebArea() || isSVGRoot)
@@ -827,11 +827,9 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     
     LayoutRect result = boundingBoxForQuads(obj, quads);
 
-#if ENABLE(SVG)
     Document* document = this->document();
     if (document && document->isSVGDocument())
         offsetBoundingBoxForRemoteSVGElement(result);
-#endif
     
     // The size of the web area should be the content size, not the clipped size.
     if (isWebArea())
@@ -865,17 +863,14 @@ LayoutRect AccessibilityRenderObject::elementRect() const
     
 bool AccessibilityRenderObject::supportsPath() const
 {
-#if ENABLE(SVG)
     if (m_renderer && m_renderer->isSVGShape())
         return true;
-#endif
     
     return false;
 }
 
 Path AccessibilityRenderObject::elementPath() const
 {
-#if ENABLE(SVG)
     if (m_renderer && m_renderer->isSVGShape() && toRenderSVGShape(m_renderer)->hasPath()) {
         Path path = toRenderSVGShape(m_renderer)->path();
         
@@ -887,7 +882,6 @@ Path AccessibilityRenderObject::elementPath() const
         
         return path;
     }
-#endif
     
     return Path();
 }
@@ -2484,14 +2478,12 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (headingLevel())
         return HeadingRole;
     
-#if ENABLE(SVG)
     if (m_renderer->isSVGImage())
         return ImageRole;
     if (m_renderer->isSVGRoot())
         return SVGRootRole;
     if (node && node->hasTagName(SVGNames::gTag))
         return GroupRole;
-#endif
 
 #if ENABLE(MATHML)
     if (node && node->hasTagName(MathMLNames::mathTag))
@@ -2804,7 +2796,6 @@ void AccessibilityRenderObject::detachRemoteSVGRoot()
 
 AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement() const
 {
-#if ENABLE(SVG)
     if (!m_renderer || !m_renderer->isRenderImage())
         return nullptr;
     
@@ -2845,9 +2836,6 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement() const
         return nullptr;
     
     return toAccessibilitySVGRoot(rootSVGObject);
-#else
-    return nullptr;
-#endif
 }
     
 void AccessibilityRenderObject::addRemoteSVGChildren()

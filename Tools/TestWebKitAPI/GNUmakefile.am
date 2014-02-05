@@ -258,10 +258,10 @@ webcore_layer_deps = \
 	libWebCoreGtk.la \
 	libWebCore.la \
 	libWebCoreModules.la
-if ENABLE_SVG
+
 webcore_layer_deps += \
 	libWebCoreSVG.la
-endif
+
 if ENABLE_INDEXED_DATABASE
 webcore_layer_deps += \
 	libLevelDB.la

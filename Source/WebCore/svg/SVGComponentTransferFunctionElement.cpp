@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGComponentTransferFunctionElement.h"
 
 #include "Attribute.h"
@@ -152,4 +152,4 @@ ComponentTransferFunction SVGComponentTransferFunctionElement::transferFunction(
 
 }
 
-#endif // ENABLE(SVG)
+#endif

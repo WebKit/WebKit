@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGSVGElement.h"
 
 #include "AffineTransform.h"
@@ -783,5 +781,3 @@ Element* SVGSVGElement::getElementById(const AtomicString& id)
 }
 
 }
-
-#endif // ENABLE(SVG)

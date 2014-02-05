@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFEMorphologyElement.h"
 
 #include "Attribute.h"
@@ -176,4 +176,4 @@ PassRefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder* filterB
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(FILTERS)

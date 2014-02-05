@@ -23,8 +23,6 @@
 #ifndef CachedSVGDocumentClient_h
 #define CachedSVGDocumentClient_h
 
-#if ENABLE(SVG)
-
 #include "CachedResourceClient.h"
 
 namespace WebCore {
@@ -39,7 +37,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)
 
 #endif // CachedSVGDocumentClient_h

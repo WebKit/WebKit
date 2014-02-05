@@ -20,7 +20,6 @@
 #ifndef SVGAttributeToPropertyMap_h
 #define SVGAttributeToPropertyMap_h
 
-#if ENABLE(SVG)
 #include "SVGPropertyInfo.h"
 #include <wtf/HashMap.h>
 
@@ -55,5 +54,4 @@ private:
 
 }
 
-#endif
 #endif

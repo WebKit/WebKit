@@ -21,7 +21,6 @@
 #ifndef SVGImageElement_h
 #define SVGImageElement_h
 
-#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
@@ -80,5 +79,4 @@ NODE_TYPE_CASTS(SVGImageElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

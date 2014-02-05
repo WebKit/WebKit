@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGCircleElement.h"
 
 #include "Attribute.h"
@@ -145,5 +143,3 @@ RenderPtr<RenderElement> SVGCircleElement::createElementRenderer(PassRef<RenderS
 }
 
 }
-
-#endif // ENABLE(SVG)

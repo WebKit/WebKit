@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=SVG&FILTERS,
+    Conditional=FILTERS,
     DoNotCheckConstants
 ] interface SVGFEConvolveMatrixElement : SVGElement {
     // Edge Mode Values

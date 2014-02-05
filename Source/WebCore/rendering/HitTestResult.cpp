@@ -46,13 +46,10 @@
 #include "RenderInline.h"
 #include "Scrollbar.h"
 #include "ShadowRoot.h"
-#include "UserGestureIndicator.h"
-
-#if ENABLE(SVG)
 #include "SVGImageElement.h"
 #include "SVGNames.h"
+#include "UserGestureIndicator.h"
 #include "XLinkNames.h"
-#endif
 
 namespace WebCore {
 
@@ -323,10 +320,8 @@ URL HitTestResult::absoluteImageURL() const
         || isHTMLImageElement(m_innerNonSharedNode.get())
         || isHTMLInputElement(m_innerNonSharedNode.get())
         || m_innerNonSharedNode->hasTagName(objectTag)
-#if ENABLE(SVG)
-        || isSVGImageElement(m_innerNonSharedNode.get())
-#endif
-       ) {
+        || isSVGImageElement(m_innerNonSharedNode.get())) 
+        {
         Element* element = toElement(m_innerNonSharedNode.get());
         urlString = element->imageSourceURL();
     } else
@@ -518,10 +513,8 @@ URL HitTestResult::absoluteLinkURL() const
     AtomicString urlString;
     if (isHTMLAnchorElement(m_innerURLElement.get()) || isHTMLAreaElement(m_innerURLElement.get()) || m_innerURLElement->hasTagName(linkTag))
         urlString = m_innerURLElement->getAttribute(hrefAttr);
-#if ENABLE(SVG)
     else if (m_innerURLElement->hasTagName(SVGNames::aTag))
         urlString = m_innerURLElement->getAttribute(XLinkNames::hrefAttr);
-#endif
     else
         return URL();
 
@@ -535,10 +528,9 @@ bool HitTestResult::isLiveLink() const
 
     if (isHTMLAnchorElement(m_innerURLElement.get()))
         return toHTMLAnchorElement(m_innerURLElement.get())->isLiveLink();
-#if ENABLE(SVG)
+
     if (m_innerURLElement->hasTagName(SVGNames::aTag))
         return m_innerURLElement->isLink();
-#endif
 
     return false;
 }

@@ -163,7 +163,6 @@ DerivedSources/WebCore/MathMLElementFactory.cpp DerivedSources/WebCore/MathMLNam
 #
 # FIXME: allow a more fine-grained inclusion/generation of sources per SVG feature
 # ----
-if ENABLE_SVG
 nodist_libWebCoreSVG_la_SOURCES = \
 	$(webcore_svg_built_sources)
 
@@ -195,8 +194,6 @@ libWebCoreSVG_la_CPPFLAGS = \
 
 WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in
 WEBCORE_CSS_VALUE_KEYWORDS += $(WebCore)/css/SVGCSSValueKeywords.in
-
-endif # END_ENABLE_SVG
 
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
 DerivedSources/WebCore/SVGNames.cpp: DerivedSources/WebCore/SVGElementFactory.cpp
@@ -473,10 +470,8 @@ noinst_LTLIBRARIES += \
 	libWebCoreModules.la \
 	libWebCore.la
 
-if ENABLE_SVG
 noinst_LTLIBRARIES += \
 	libWebCoreSVG.la
-endif
 
 # Artificial dependencies to try to force a relink of the WebCore libraries when their makefiles change.
 webcore_lib_for_dep = libWebCore.la

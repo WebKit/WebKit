@@ -20,7 +20,6 @@
 #ifndef RadialGradientAttributes_h
 #define RadialGradientAttributes_h
 
-#if ENABLE(SVG)
 #include "GradientAttributes.h"
 
 namespace WebCore {
@@ -79,7 +78,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

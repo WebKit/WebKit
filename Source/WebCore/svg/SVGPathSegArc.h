@@ -21,7 +21,6 @@
 #ifndef SVGPathSegArc_h
 #define SVGPathSegArc_h
 
-#if ENABLE(SVG)
 #include "SVGPathSegWithContext.h"
 
 namespace WebCore {
@@ -102,5 +101,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

@@ -46,9 +46,7 @@ namespace WebCore {
 
 // CSS Filters
 
-#if ENABLE(SVG)
 class CachedSVGDocumentReference;
-#endif
 
 class FilterOperation : public RefCounted<FilterOperation> {
 public:
@@ -160,10 +158,8 @@ public:
     const String& url() const { return m_url; }
     const String& fragment() const { return m_fragment; }
 
-#if ENABLE(SVG)
     CachedSVGDocumentReference* cachedSVGDocumentReference() const { return m_cachedSVGDocumentReference.get(); }
     CachedSVGDocumentReference* getOrCreateCachedSVGDocumentReference();
-#endif
 
     FilterEffect* filterEffect() const { return m_filterEffect.get(); }
     void setFilterEffect(PassRefPtr<FilterEffect> filterEffect) { m_filterEffect = filterEffect; }
@@ -181,9 +177,7 @@ private:
 
     String m_url;
     String m_fragment;
-#if ENABLE(SVG)
     std::unique_ptr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
-#endif
     RefPtr<FilterEffect> m_filterEffect;
 };
 

@@ -390,7 +390,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitShapePadding,
 #endif
 #endif
-#if ENABLE(SVG)
     CSSPropertyBufferedRendering,
     CSSPropertyClipPath,
     CSSPropertyClipRule,
@@ -430,7 +429,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyGlyphOrientationVertical,
     CSSPropertyWebkitSvgShadow,
     CSSPropertyVectorEffect
-#endif
 };
 
 const unsigned numComputedProperties = WTF_ARRAY_LENGTH(computedProperties);
@@ -1660,10 +1658,9 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 
         renderer = styledNode->renderer();
 
-#if ENABLE(SVG)
         if (propertyID == CSSPropertyDisplay && !renderer && isSVGElement(*styledNode) && !toSVGElement(*styledNode).isValid())
             return nullptr;
-#endif
+
         style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID);
 
         // FIXME: Some of these cases could be narrowed down or optimized better.
@@ -2764,12 +2761,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             ClipPathOperation* operation = style->clipPath();
             if (!operation)
                 return cssValuePool().createIdentifierValue(CSSValueNone);
-#if ENABLE(SVG)
             if (operation->type() == ClipPathOperation::Reference) {
                 ReferenceClipPathOperation& referenceOperation = toReferenceClipPathOperation(*operation);
                 return CSSPrimitiveValue::create(referenceOperation.url(), CSSPrimitiveValue::CSS_URI);
             }
-#endif
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             if (operation->type() == ClipPathOperation::Shape) {
                 ShapeClipPathOperation& shapeOperation = toShapeClipPathOperation(*operation);
@@ -2971,7 +2966,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             break;
 #endif
 
-#if ENABLE(SVG)
         case CSSPropertyBufferedRendering:
         case CSSPropertyClipPath:
         case CSSPropertyClipRule:
@@ -3015,7 +3009,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWritingMode:
         case CSSPropertyWebkitSvgShadow:
             return svgPropertyValue(propertyID, DoNotUpdateLayout);
-#endif
     }
 
     logUnimplementedPropertyID(propertyID);

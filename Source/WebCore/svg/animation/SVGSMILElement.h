@@ -25,7 +25,7 @@
 
 #ifndef SVGSMILElement_h
 #define SVGSMILElement_h
-#if ENABLE(SVG)
+
 #include "SMILTime.h"
 #include "SVGElement.h"
 
@@ -242,5 +242,4 @@ NODE_TYPE_CASTS(SVGSMILElement)
 
 }
 
-#endif // ENABLE(SVG)
 #endif // SVGSMILElement_h

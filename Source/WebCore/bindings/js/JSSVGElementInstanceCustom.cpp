@@ -25,9 +25,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
-
 #include "JSSVGElementInstance.h"
 
 #include "JSEventTarget.h"
@@ -48,5 +45,3 @@ void JSSVGElementInstance::visitChildren(JSC::JSCell* cell, JSC::SlotVisitor& vi
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

@@ -21,8 +21,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPathTraversalStateBuilder.h"
 
 #include "PathTraversalState.h"
@@ -96,5 +94,3 @@ SVGPoint SVGPathTraversalStateBuilder::currentPoint()
 }
 
 }
-
-#endif // ENABLE(SVG)

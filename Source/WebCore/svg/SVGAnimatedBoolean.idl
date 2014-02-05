@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SVG,
     SkipVTableValidation
 ] interface SVGAnimatedBoolean {
     [StrictTypeChecking, SetterRaisesException] attribute boolean baseVal;

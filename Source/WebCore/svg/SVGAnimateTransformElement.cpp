@@ -21,8 +21,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGAnimateTransformElement.h"
 
 #include "Attribute.h"
@@ -81,5 +79,3 @@ void SVGAnimateTransformElement::parseAttribute(const QualifiedName& name, const
 }
 
 }
-
-#endif // ENABLE(SVG)

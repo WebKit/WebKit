@@ -22,7 +22,6 @@
 #ifndef SVGStyleElement_h
 #define SVGStyleElement_h
 
-#if ENABLE(SVG)
 #include "InlineStyleSheetOwner.h"
 #include "SVGElement.h"
 
@@ -73,5 +72,4 @@ NODE_TYPE_CASTS(SVGStyleElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGStyleElement_h

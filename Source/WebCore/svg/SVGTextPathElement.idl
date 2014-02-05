@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG
-] interface SVGTextPathElement : SVGTextContentElement {
+interface SVGTextPathElement : SVGTextContentElement {
     // textPath Method Types
     const unsigned short TEXTPATH_METHODTYPE_UNKNOWN   = 0;
     const unsigned short TEXTPATH_METHODTYPE_ALIGN     = 1;

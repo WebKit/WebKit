@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTextLayoutEngineSpacing.h"
 
 #include "Font.h"
@@ -108,5 +106,3 @@ float SVGTextLayoutEngineSpacing::calculateCSSKerningAndSpacing(const SVGRenderS
 }
 
 }
-
-#endif // ENABLE(SVG)

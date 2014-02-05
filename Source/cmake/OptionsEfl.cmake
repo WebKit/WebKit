@@ -165,10 +165,6 @@ if (ENABLE_WEBKIT2 AND ENABLE_NETSCAPE_PLUGIN_API)
     set(ENABLE_PLUGIN_PROCESS 1)
 endif ()
 
-if (NOT ENABLE_SVG)
-    set(ENABLE_SVG_FONTS 0)
-endif ()
-
 if (ENABLE_BATTERY_STATUS)
     find_package(DBus REQUIRED)
     find_package(E_DBus 1.7 COMPONENTS EUKit)

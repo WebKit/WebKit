@@ -26,7 +26,6 @@
 #ifndef RenderSVGShape_h
 #define RenderSVGShape_h
 
-#if ENABLE(SVG)
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
@@ -136,5 +135,4 @@ RENDER_OBJECT_TYPE_CASTS(RenderSVGShape, isSVGShape())
 
 }
 
-#endif // ENABLE(SVG)
 #endif

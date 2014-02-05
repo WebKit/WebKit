@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFESpotLightElement.h"
 #include "SVGNames.h"
 
@@ -48,6 +48,4 @@ PassRefPtr<LightSource> SVGFESpotLightElement::lightSource() const
 
 }
 
-#endif // ENABLE(SVG)
-
-// vim:ts=4:noet
+#endif // ENABLE(FILTERS)

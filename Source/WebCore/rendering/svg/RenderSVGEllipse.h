@@ -27,7 +27,6 @@
 #ifndef RenderSVGEllipse_h
 #define RenderSVGEllipse_h
 
-#if ENABLE(SVG)
 #include "RenderSVGShape.h"
 
 namespace WebCore {
@@ -56,5 +55,4 @@ private:
 
 }
 
-#endif // ENABLE(SVG)
 #endif

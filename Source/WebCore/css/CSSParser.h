@@ -206,12 +206,10 @@ public:
     bool parseFontFaceSrc();
     bool parseFontFaceUnicodeRange();
 
-#if ENABLE(SVG)
     bool parseSVGValue(CSSPropertyID propId, bool important);
     PassRefPtr<CSSValue> parseSVGPaint();
     PassRefPtr<CSSValue> parseSVGColor();
     PassRefPtr<CSSValue> parseSVGStrokeDasharray();
-#endif
 
     // CSS3 Parsing Routines (for properties specific to CSS3)
     PassRefPtr<CSSValueList> parseShadow(CSSParserValueList*, CSSPropertyID);

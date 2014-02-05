@@ -20,7 +20,6 @@
 #ifndef SVGResourcesCycleSolver_h
 #define SVGResourcesCycleSolver_h
 
-#if ENABLE(SVG)
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 
@@ -49,5 +48,4 @@ private:
 
 }
 
-#endif
 #endif

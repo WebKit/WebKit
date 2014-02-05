@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGFEFloodElement.h"
 
 #include "Attribute.h"
@@ -74,4 +74,4 @@ PassRefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*, Filter* fil
 
 }
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)

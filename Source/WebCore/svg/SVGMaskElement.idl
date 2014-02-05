@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG,
-] interface SVGMaskElement : SVGElement {
+interface SVGMaskElement : SVGElement {
     readonly attribute SVGAnimatedEnumeration maskUnits;
     readonly attribute SVGAnimatedEnumeration maskContentUnits;
 

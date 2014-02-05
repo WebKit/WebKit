@@ -19,9 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    Conditional=SVG,
-] interface SVGDocument : Document {
+interface SVGDocument : Document {
     readonly attribute SVGSVGElement        rootElement;
 
     // Overwrite the one in events::DocumentEvent

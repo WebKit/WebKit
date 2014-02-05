@@ -21,7 +21,6 @@
 #ifndef SVGPolylineElement_h
 #define SVGPolylineElement_h
 
-#if ENABLE(SVG)
 #include "SVGPolyElement.h"
 
 namespace WebCore {
@@ -38,5 +37,4 @@ NODE_TYPE_CASTS(SVGPolylineElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

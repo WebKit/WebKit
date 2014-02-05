@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SMILTimeContainer.h"
 
-#if ENABLE(SVG)
 #include "Document.h"
 #include "ElementIterator.h"
 #include "SVGNames.h"
@@ -326,5 +325,3 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
 }
 
 }
-
-#endif // ENABLE(SVG)

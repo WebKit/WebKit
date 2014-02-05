@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGGradientElement.h"
 
 #include "ElementIterator.h"
@@ -167,5 +165,3 @@ bool isSVGGradientElement(const Node& node)
 }
 
 }
-
-#endif // ENABLE(SVG)

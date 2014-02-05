@@ -21,7 +21,6 @@
 #ifndef SVGLangSpace_h
 #define SVGLangSpace_h
 
-#if ENABLE(SVG)
 #include "QualifiedName.h"
 #include <wtf/HashSet.h>
 
@@ -48,5 +47,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGLangSpace_h

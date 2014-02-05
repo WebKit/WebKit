@@ -56,6 +56,8 @@
 #include "CSSValueList.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "CachedSVGDocument.h"
+#include "CachedSVGDocumentReference.h"
 #include "CalculationValue.h"
 #include "ContentData.h"
 #include "Counter.h"
@@ -99,8 +101,12 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RuleSet.h"
+#include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElement.h"
 #include "SVGFontFaceElement.h"
+#include "SVGNames.h"
+#include "SVGURIReference.h"
 #include "SecurityOrigin.h"
 #include "SelectorCheckerFastPath.h"
 #include "Settings.h"
@@ -148,15 +154,6 @@
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLAudioElement.h"
-#endif
-
-#if ENABLE(SVG)
-#include "CachedSVGDocument.h"
-#include "CachedSVGDocumentReference.h"
-#include "SVGDocument.h"
-#include "SVGElement.h"
-#include "SVGNames.h"
-#include "SVGURIReference.h"
 #endif
 
 #if ENABLE(VIDEO_TRACK)
@@ -239,7 +236,7 @@ inline void StyleResolver::State::clear()
     m_parentNode = nullptr;
     m_regionForStyling = nullptr;
     m_pendingImageProperties.clear();
-#if ENABLE(CSS_FILTERS) && ENABLE(SVG)
+#if ENABLE(CSS_FILTERS)
     m_filtersWithPendingSVGDocuments.clear();
 #endif
 }
@@ -447,10 +444,8 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
     StyledElement* p = toStyledElement(parent);
     if (p->inlineStyle())
         return 0;
-#if ENABLE(SVG)
     if (p->isSVGElement() && toSVGElement(p)->animatedSMILStyleProperties())
         return 0;
-#endif
     if (p->hasID() && m_ruleSets.features().idsInRules.contains(p->idForStyleResolution().impl()))
         return 0;
 
@@ -565,18 +560,14 @@ bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledE
         if (sharingCandidate->hasClass() && classNamesAffectedByRules(sharingCandidate->classNames()))
             return false;
     } else if (sharingCandidate->hasClass()) {
-#if ENABLE(SVG)
         // SVG elements require a (slow!) getAttribute comparision because "class" is an animatable attribute for SVG.
         if (state.element()->isSVGElement()) {
             if (state.element()->getAttribute(classAttr) != sharingCandidate->getAttribute(classAttr))
                 return false;
         } else {
-#endif
             if (state.element()->classNames() != sharingCandidate->classNames())
                 return false;
-#if ENABLE(SVG)
         }
-#endif
     } else
         return false;
 
@@ -610,10 +601,8 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->needsStyleRecalc())
         return false;
-#if ENABLE(SVG)
     if (element->isSVGElement() && toSVGElement(element)->animatedSMILStyleProperties())
         return false;
-#endif
     if (element->isLink() != state.element()->isLink())
         return false;
     if (element->hovered() != state.element()->hovered())
@@ -706,10 +695,8 @@ RenderStyle* StyleResolver::locateSharedStyle()
     // If the element has inline style it is probably unique.
     if (state.styledElement()->inlineStyle())
         return 0;
-#if ENABLE(SVG)
     if (state.styledElement()->isSVGElement() && toSVGElement(state.styledElement())->animatedSMILStyleProperties())
         return 0;
-#endif
     // Ids stop style sharing if they show up in the stylesheets.
     if (state.styledElement()->hasID() && m_ruleSets.features().idsInRules.contains(state.styledElement()->idForStyleResolution().impl()))
         return 0;
@@ -1346,7 +1333,6 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
     adjustGridItemPosition(style, parentStyle);
 
-#if ENABLE(SVG)
     if (e && e->isSVGElement()) {
         // Spec: http://www.w3.org/TR/SVG/masking.html#OverflowProperty
         if (style.overflowY() == OSCROLL)
@@ -1372,7 +1358,6 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if ((e->hasTagName(SVGNames::foreignObjectTag) || e->hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
             style.setDisplay(BLOCK);
     }
-#endif
 }
 
 void StyleResolver::adjustGridItemPosition(RenderStyle& style, const RenderStyle& parentStyle) const
@@ -1801,10 +1786,8 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:
-#if ENABLE(SVG)
     case CSSPropertyFill:
     case CSSPropertyStroke:
-#endif
         return true;
     default:
         break;
@@ -3053,10 +3036,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         ASSERT_NOT_REACHED();
         return;
     default:
-#if ENABLE(SVG)
         // Try the SVG properties
         applySVGProperty(id, value);
-#endif
         return;
     }
 }
@@ -3333,7 +3314,6 @@ static FilterOperation::OperationType filterOperationForType(WebKitCSSFilterValu
     return FilterOperation::NONE;
 }
 
-#if ENABLE(CSS_FILTERS) && ENABLE(SVG)
 void StyleResolver::loadPendingSVGDocuments()
 {
     State& state = m_state;
@@ -3351,7 +3331,6 @@ void StyleResolver::loadPendingSVGDocuments()
 
     state.filtersWithPendingSVGDocuments().clear();
 }
-#endif
 
 bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& outOperations)
 {
@@ -3383,7 +3362,6 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
         FilterOperation::OperationType operationType = filterOperationForType(filterValue->operationType());
 
         if (operationType == FilterOperation::REFERENCE) {
-#if ENABLE(SVG)
             if (filterValue->length() != 1)
                 continue;
             CSSValue* argument = filterValue->itemWithoutBoundsCheck(0);
@@ -3400,7 +3378,6 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
                 state.filtersWithPendingSVGDocuments().append(operation);
 
             operations.operations().append(operation);
-#endif
             continue;
         }
 
@@ -3666,7 +3643,7 @@ void StyleResolver::loadPendingResources()
     // Start loading images referenced by this style.
     loadPendingImages();
 
-#if ENABLE(CSS_FILTERS) && ENABLE(SVG)
+#if ENABLE(CSS_FILTERS)
     // Start loading the SVG Documents referenced by this style.
     loadPendingSVGDocuments();
 #endif

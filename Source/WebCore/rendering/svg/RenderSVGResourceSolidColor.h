@@ -20,7 +20,6 @@
 #ifndef RenderSVGResourceSolidColor_h
 #define RenderSVGResourceSolidColor_h
 
-#if ENABLE(SVG)
 #include "Color.h"
 #include "RenderSVGResource.h"
 
@@ -50,5 +49,4 @@ private:
 
 }
 
-#endif
 #endif

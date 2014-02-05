@@ -18,7 +18,7 @@
  */
 
 [
-    Conditional=SVG&SVG_FONTS
+    Conditional=SVG_FONTS
 ] interface SVGHKernElement : SVGElement {
 };
 

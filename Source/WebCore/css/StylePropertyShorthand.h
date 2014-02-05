@@ -115,9 +115,7 @@ StylePropertyShorthand widthShorthand();
 
 StylePropertyShorthand webkitTextDecorationShorthand();
 
-#if ENABLE(SVG)
 StylePropertyShorthand markerShorthand();
-#endif
 
 // Returns empty value if the property is not a shorthand.
 StylePropertyShorthand shorthandForProperty(CSSPropertyID);

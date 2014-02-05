@@ -32,9 +32,7 @@ struct ExpectedTextRunSize {
     const void* pointer;
     int integers[2];
     float float1;
-#if ENABLE(SVG)
     float float2;
-#endif
     float float3;
     uint32_t bitfields : 10;
     unsigned anUnsigned;

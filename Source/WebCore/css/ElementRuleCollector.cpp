@@ -459,13 +459,9 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         addElementStyleProperties(m_state.styledElement()->inlineStyle(), isInlineStyleCacheable);
     }
 
-#if ENABLE(SVG)
     // Now check SMIL animation override style.
     if (includeSMILProperties && matchAuthorAndUserStyles && m_state.styledElement() && m_state.styledElement()->isSVGElement())
         addElementStyleProperties(toSVGElement(m_state.styledElement())->animatedSMILStyleProperties(), false /* isCacheable */);
-#else
-    UNUSED_PARAM(includeSMILProperties);
-#endif
 }
 
 bool ElementRuleCollector::hasAnyMatchingRules(RuleSet* ruleSet)

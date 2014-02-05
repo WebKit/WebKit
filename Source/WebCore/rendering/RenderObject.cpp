@@ -53,20 +53,17 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderNamedFlowThread.h"
+#include "RenderSVGResourceContainer.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "SVGRenderSupport.h"
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TransformState.h"
 #include "htmlediting.h"
 #include <algorithm>
 #include <wtf/RefCountedLeakCounter.h>
-
-#if ENABLE(SVG)
-#include "RenderSVGResourceContainer.h"
-#include "SVGRenderSupport.h"
-#endif
 
 #if PLATFORM(IOS)
 #include "SelectionRect.h"
@@ -564,10 +561,8 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (object->isTextControl())
         return true;
 
-#if ENABLE(SVG)
     if (object->isSVGRoot())
         return true;
-#endif
 
     if (!object->hasOverflowClip())
         return false;
@@ -1776,11 +1771,10 @@ RenderElement* RenderObject::container(const RenderLayerModelObject* repaintCont
         // FIXME: The definition of view() has changed to not crawl up the render tree.  It might
         // be safe now to use it.
         while (o && o->parent() && !(o->hasTransform() && o->isRenderBlock())) {
-#if ENABLE(SVG)
             // foreignObject is the containing block for its contents.
             if (o->isSVGForeignObject())
                 break;
-#endif
+
             // The render flow thread is the top most containing block
             // for the fixed positioned elements.
             if (o->isOutOfFlowRenderFlowThread())
@@ -1796,10 +1790,9 @@ RenderElement* RenderObject::container(const RenderLayerModelObject* repaintCont
         // we may not have one if we're part of an uninstalled subtree.  We'll
         // climb as high as we can though.
         while (o && o->style().position() == StaticPosition && !o->isRenderView() && !(o->hasTransform() && o->isRenderBlock())) {
-#if ENABLE(SVG)
             if (o->isSVGForeignObject()) // foreignObject is the containing block for contents inside it
                 break;
-#endif
+
             if (repaintContainerSkipped && o == repaintContainer)
                 *repaintContainerSkipped = true;
 
@@ -1896,10 +1889,8 @@ void RenderObject::willBeRemovedFromTree()
     if (RenderNamedFlowThread* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
         containerFlowThread->removeFlowChild(this);
 
-#if ENABLE(SVG)
     // Update cached boundaries in SVG renderers, if a child is removed.
     parent()->setNeedsBoundariesUpdate();
-#endif
 }
 
 void RenderObject::removeFromRenderFlowThread()
@@ -2412,8 +2403,6 @@ bool RenderObject::canBeReplacedWithInlineRunIn() const
     return true;
 }
 
-#if ENABLE(SVG)
-
 void RenderObject::setNeedsBoundariesUpdate()
 {
     if (auto renderer = parent())
@@ -2457,8 +2446,6 @@ bool RenderObject::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const
     ASSERT_NOT_REACHED();
     return false;
 }
-
-#endif // ENABLE(SVG)
 
 } // namespace WebCore
 

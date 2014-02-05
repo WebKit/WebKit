@@ -33,7 +33,7 @@ SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE
 SpeechRecognition conditional=SCRIPTED_SPEECH
 SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS
-SVGElementInstance conditional=SVG
+SVGElementInstance
 TextTrack conditional=VIDEO_TRACK
 TextTrackCue conditional=VIDEO_TRACK
 TextTrackList conditional=VIDEO_TRACK

@@ -19,7 +19,6 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 #include "SVGDocument.h"
 
 #include "EventNames.h"
@@ -106,6 +105,3 @@ PassRefPtr<Document> SVGDocument::cloneDocumentWithoutChildren() const
 }
 
 }
-
-// vim:ts=4:noet
-#endif // ENABLE(SVG)

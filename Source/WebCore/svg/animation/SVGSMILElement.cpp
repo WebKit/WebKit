@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGSMILElement.h"
 
 #include "Attribute.h"
@@ -1190,5 +1188,3 @@ void SVGSMILElement::endedActiveInterval()
 }
 
 }
-
-#endif

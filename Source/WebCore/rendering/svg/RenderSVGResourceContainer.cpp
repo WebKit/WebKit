@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGResourceContainer.h"
 
 #include "RenderLayer.h"
@@ -224,5 +222,3 @@ AffineTransform RenderSVGResourceContainer::transformOnNonScalingStroke(RenderOb
 }
 
 }
-
-#endif

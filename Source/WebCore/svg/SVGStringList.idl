@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG,
-] interface SVGStringList {
+interface SVGStringList {
     readonly attribute unsigned long numberOfItems;
 
     [RaisesException] void clear();

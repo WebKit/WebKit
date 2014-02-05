@@ -58,10 +58,8 @@ public:
     EventListenerVector* find(const AtomicString& eventType);
     Vector<AtomicString> eventTypes() const;
 
-#if ENABLE(SVG)
     void removeFirstEventListenerCreatedFromMarkup(const AtomicString& eventType);
     void copyEventListenersNotCreatedFromMarkupToTarget(EventTarget*);
-#endif
 
 private:
     friend class EventListenerIterator;

@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGCursorElement.h"
 
 #include "Attr.h"
@@ -140,5 +138,3 @@ void SVGCursorElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 }
 
 }
-
-#endif // ENABLE(SVG)

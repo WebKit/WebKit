@@ -22,7 +22,6 @@
 #ifndef RenderSVGResourceGradient_h
 #define RenderSVGResourceGradient_h
 
-#if ENABLE(SVG)
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
@@ -78,5 +77,4 @@ private:
 
 }
 
-#endif
 #endif

@@ -21,8 +21,6 @@
 #ifndef SVGPolyElement_h
 #define SVGPolyElement_h
 
-#if ENABLE(SVG)
-
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
@@ -70,7 +68,5 @@ bool isSVGPolyElement(const Node&);
 NODE_TYPE_CASTS(SVGPolyElement)
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)
 
 #endif

@@ -21,7 +21,6 @@
 #ifndef SVGPathSeg_h
 #define SVGPathSeg_h
 
-#if ENABLE(SVG)
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -91,5 +90,4 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

@@ -28,17 +28,14 @@
 #include "StyleCachedImage.h"
 #include "StyleImage.h"
 #include "StylePendingImage.h"
-#include "TreeScope.h"
-#include <wtf/MathExtras.h>
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
-
-#if ENABLE(SVG)
 #include "SVGCursorElement.h"
 #include "SVGLengthContext.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
-#endif
+#include "TreeScope.h"
+#include <wtf/MathExtras.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(CSS_IMAGE_SET)
 #include "CSSImageSetValue.h"
@@ -47,7 +44,6 @@
 
 namespace WebCore {
 
-#if ENABLE(SVG)
 static inline SVGCursorElement* resourceReferencedByCursorElement(const String& url, Document& document)
 {
     Element* element = SVGURIReference::targetElementFromIRIString(url, document);
@@ -56,7 +52,6 @@ static inline SVGCursorElement* resourceReferencedByCursorElement(const String& 
 
     return 0;
 }
-#endif
 
 CSSCursorImageValue::CSSCursorImageValue(PassRef<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot)
     : CSSValue(CursorImageClass)
@@ -77,7 +72,6 @@ CSSCursorImageValue::~CSSCursorImageValue()
 {
     detachPendingImage();
 
-#if ENABLE(SVG)
     if (!isSVGCursor())
         return;
 
@@ -90,7 +84,6 @@ CSSCursorImageValue::~CSSCursorImageValue()
         if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(toCSSImageValue(m_imageValue.get()).url(), referencedElement->document()))
             cursorElement->removeClient(referencedElement);
     }
-#endif
 }
 
 String CSSCursorImageValue::customCSSText() const
@@ -108,9 +101,6 @@ String CSSCursorImageValue::customCSSText() const
 
 bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
 {
-#if !ENABLE(SVG)
-    UNUSED_PARAM(element);
-#else
     if (!element || !element->isSVGElement())
         return false;
 
@@ -136,7 +126,6 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
         cursorElement->addClient(svgElement);
         return true;
     }
-#endif
 
     return false;
 }
@@ -151,7 +140,6 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
     if (!m_accessedImage) {
         m_accessedImage = true;
 
-#if ENABLE(SVG)
         // For SVG images we need to lazily substitute in the correct URL. Rather than attempt
         // to change the URL of the CSSImageValue (which would then change behavior like cssText),
         // we create an alternate CSSImageValue to use.
@@ -165,7 +153,6 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
                 return cachedImage;
             }
         }
-#endif
 
         if (m_imageValue.get().isImageValue()) {
             detachPendingImage();
@@ -195,7 +182,6 @@ StyleImage* CSSCursorImageValue::cachedOrPendingImage(Document& document)
     return m_image.get();
 }
 
-#if ENABLE(SVG)
 bool CSSCursorImageValue::isSVGCursor() const
 {
     if (m_imageValue.get().isImageValue()) {
@@ -223,7 +209,6 @@ void CSSCursorImageValue::removeReferencedElement(SVGElement* element)
 {
     m_referencedElements.remove(element);
 }
-#endif
 
 bool CSSCursorImageValue::equals(const CSSCursorImageValue& other) const
 {

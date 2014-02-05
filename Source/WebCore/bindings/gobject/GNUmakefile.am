@@ -534,7 +534,7 @@ $(top_builddir)/DerivedSources/webkitdom/WebKitDOMDeprecated.h: $(WebCore)/bindi
 	$(AM_V_GEN)cp -f $< $@
 
 # Filter out SVG and IndexedDB for now
-gdom_feature_defines := $(filter-out ENABLE_INDEXED_DATABASE=1, $(filter-out ENABLE_SVG%, $(feature_defines))) ENABLE_INDEXED_DATABASE=0
+gdom_feature_defines := $(filter-out ENABLE_INDEXED_DATABASE=1, $(feature_defines)) ENABLE_INDEXED_DATABASE=0
 DerivedSources/webkitdom/WebKitDOM%.cpp DerivedSources/webkitdom/WebKitDOM%.h DerivedSources/webkitdom/WebKitDOM%Private.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorGObject.pm $(WebCore)/bindings/gobject/GNUmakefile.am $(supplemental_dependency_file)
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --include $(WebCore)/Modules --include $(WebCore)/dom --include $(WebCore)/html --include $(WebCore)/css --include $(WebCore)/page --include $(WebCore)/fileapi --include $(WebCore)/xml --include $(WebCore)/svg --outputDir "$(GENSOURCES_WEBKITDOM)" --defines "LANGUAGE_GOBJECT=1 $(gdom_feature_defines)" --generator GObject --supplementalDependencyFile $(supplemental_dependency_file) $<
 

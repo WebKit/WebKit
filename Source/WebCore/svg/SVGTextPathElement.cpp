@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTextPathElement.h"
 
 #include "Attribute.h"
@@ -198,5 +196,3 @@ bool SVGTextPathElement::selfHasRelativeLengths() const
 }
 
 }
-
-#endif // ENABLE(SVG)

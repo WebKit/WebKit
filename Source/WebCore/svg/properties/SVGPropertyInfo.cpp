@@ -20,8 +20,6 @@
 #include "config.h"
 #include "SVGPropertyInfo.h"
 
-#if ENABLE(SVG)
-
 namespace WebCore {
 
 SVGPropertyInfo::SVGPropertyInfo(AnimatedPropertyType newType, AnimatedPropertyState newState, const QualifiedName& newAttributeName, const AtomicString& newPropertyIdentifier, SynchronizeProperty newSynchronizeProperty, LookupOrCreateWrapperForAnimatedProperty newLookupOrCreateWrapperForAnimatedProperty)
@@ -35,5 +33,3 @@ SVGPropertyInfo::SVGPropertyInfo(AnimatedPropertyType newType, AnimatedPropertyS
 }
 
 } // namespace
-
-#endif // ENABLE(SVG)

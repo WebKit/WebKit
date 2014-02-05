@@ -22,7 +22,6 @@
 #ifndef SVGPathSegCurvetoQuadraticAbs_h
 #define SVGPathSegCurvetoQuadraticAbs_h
 
-#if ENABLE(SVG)
 #include "SVGPathSegCurvetoQuadratic.h"
 
 namespace WebCore {
@@ -46,5 +45,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif

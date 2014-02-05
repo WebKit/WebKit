@@ -24,9 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG
-] interface SVGPathSegLinetoAbs : SVGPathSeg {
+interface SVGPathSegLinetoAbs : SVGPathSeg {
     [StrictTypeChecking] attribute float x;
     [StrictTypeChecking] attribute float y;
 };

@@ -83,17 +83,13 @@ RenderLayer::FilterInfo::FilterInfo(RenderLayer& layer)
 
 RenderLayer::FilterInfo::~FilterInfo()
 {
-#if ENABLE(SVG)
     removeReferenceFilterClients();
-#endif
 }
 
 void RenderLayer::FilterInfo::setRenderer(PassRefPtr<FilterEffectRenderer> renderer)
 { 
     m_renderer = renderer; 
 }
-
-#if ENABLE(SVG)
 
 void RenderLayer::FilterInfo::notifyFinished(CachedResource*)
 {
@@ -141,8 +137,6 @@ void RenderLayer::FilterInfo::removeReferenceFilterClients()
     }
     m_internalSVGReferences.clear();
 }
-
-#endif
 
 } // namespace WebCore
 

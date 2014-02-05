@@ -24,9 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=SVG,
-] interface SVGAnimationElement : SVGElement {
+interface SVGAnimationElement : SVGElement {
     readonly attribute SVGElement targetElement;
 
     float getStartTime();

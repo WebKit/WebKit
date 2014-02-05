@@ -22,8 +22,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGContainer.h"
 
 #include "GraphicsContext.h"
@@ -198,5 +196,3 @@ bool RenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTest
 }
 
 }
-
-#endif // ENABLE(SVG)

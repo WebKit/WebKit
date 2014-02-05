@@ -22,8 +22,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "RenderSVGInlineText.h"
 
 #include "CSSFontSelector.h"
@@ -247,5 +245,3 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
 }
 
 }
-
-#endif // ENABLE(SVG)

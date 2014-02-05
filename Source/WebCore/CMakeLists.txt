@@ -2604,14 +2604,12 @@ else ()
     )
 endif ()
 
-if (ENABLE_SVG)
-    list(APPEND WebCore_CSS_PROPERTY_NAMES
-        ${WEBCORE_DIR}/css/SVGCSSPropertyNames.in
-    )
-    list(APPEND WebCore_CSS_VALUE_KEYWORDS
-        ${WEBCORE_DIR}/css/SVGCSSValueKeywords.in
-    )
-endif ()
+list(APPEND WebCore_CSS_PROPERTY_NAMES
+    ${WEBCORE_DIR}/css/SVGCSSPropertyNames.in
+)
+list(APPEND WebCore_CSS_VALUE_KEYWORDS
+    ${WEBCORE_DIR}/css/SVGCSSValueKeywords.in
+)
 
 if (ENABLE_SMOOTH_SCROLLING)
     list(APPEND WebCore_SOURCES
@@ -3200,10 +3198,8 @@ endif ()
 
 GENERATE_DOM_NAMES(SVG ${WEBCORE_DIR}/svg/svgattrs.in ${WEBCORE_DIR}/svg/svgtags.in "${SVG_EXTRA_DEFINES}")
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/SVGNames.cpp)
-if (ENABLE_SVG)
-    list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/SVGElementFactory.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/JSSVGElementWrapperFactory.cpp)
-endif ()
 
+list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/SVGElementFactory.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/JSSVGElementWrapperFactory.cpp)
 
 GENERATE_DOM_NAMES(XLink ${WEBCORE_DIR}/svg/xlinkattrs.in)
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/XLinkNames.cpp)

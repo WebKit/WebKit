@@ -18,7 +18,7 @@
  */
 
 [
-    Conditional=SVG&SVG_FONTS
+    Conditional=SVG_FONTS
 ] interface SVGGlyphRefElement : SVGElement {
     // FIXME: Use [Reflect] after https://bugs.webkit.org/show_bug.cgi?id=64843 is fixed.
     [SetterRaisesException] attribute DOMString glyphRef;

@@ -21,7 +21,6 @@
 #ifndef SVGLength_h
 #define SVGLength_h
 
-#if ENABLE(SVG)
 #include "AnimationUtilities.h"
 #include "SVGLengthContext.h"
 #include "SVGParsingError.h"
@@ -172,5 +171,4 @@ struct SVGPropertyTraits<SVGLength> {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGLength_h

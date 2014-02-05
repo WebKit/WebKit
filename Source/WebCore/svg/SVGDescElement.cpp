@@ -19,8 +19,8 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 #include "SVGDescElement.h"
+
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -42,7 +42,3 @@ String SVGDescElement::description() const
 }
 
 }
-
-// vim:ts=4:noet
-#endif // ENABLE(SVG)
-

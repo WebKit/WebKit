@@ -163,7 +163,6 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
         changedDefaultStyle = true;
     }
 
-#if ENABLE(SVG)
     if (element->isSVGElement() && !svgStyleSheet) {
         // SVG rules.
         svgStyleSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
@@ -171,7 +170,6 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
         defaultPrintStyle->addRulesFromSheet(svgStyleSheet, printEval());
         changedDefaultStyle = true;
     }
-#endif
 
 #if ENABLE(MATHML)
     if (element->isMathMLElement() && !mathMLStyleSheet) {

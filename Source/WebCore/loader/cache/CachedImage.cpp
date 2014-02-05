@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "RenderElement.h"
 #include "ResourceBuffer.h"
+#include "SVGImage.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
@@ -51,10 +52,6 @@
 
 #if USE(CG)
 #include "PDFDocumentImage.h"
-#endif
-
-#if ENABLE(SVG)
-#include "SVGImage.h"
 #endif
 
 #if ENABLE(DISK_IMAGE_CACHE)
@@ -131,10 +128,9 @@ void CachedImage::didRemoveClient(CachedResourceClient* c)
     ASSERT(c->resourceClientType() == CachedImageClient::expectedType());
 
     m_pendingContainerSizeRequests.remove(static_cast<CachedImageClient*>(c));
-#if ENABLE(SVG)
+
     if (m_svgImageCache)
         m_svgImageCache->removeClientFromCache(static_cast<CachedImageClient*>(c));
-#endif
 
     CachedResource::didRemoveClient(c);
 }
@@ -213,15 +209,11 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
     if (!m_image)
         return Image::nullImage();
 
-#if ENABLE(SVG)
     if (m_image->isSVGImage()) {
         Image* image = m_svgImageCache->imageForRenderer(renderer);
         if (image != Image::nullImage())
             return image;
     }
-#else
-    UNUSED_PARAM(renderer);
-#endif
     return m_image.get();
 }
 
@@ -235,17 +227,13 @@ void CachedImage::setContainerSizeForRenderer(const CachedImageClient* renderer,
         m_pendingContainerSizeRequests.set(renderer, SizeAndZoom(containerSize, containerZoom));
         return;
     }
-#if ENABLE(SVG)
+
     if (!m_image->isSVGImage()) {
         m_image->setContainerSize(containerSize);
         return;
     }
 
     m_svgImageCache->setContainerSizeForRenderer(renderer, containerSize, containerZoom);
-#else
-    UNUSED_PARAM(containerZoom);
-    m_image->setContainerSize(containerSize);
-#endif
 }
 
 bool CachedImage::usesImageContainerSize() const
@@ -301,13 +289,9 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
 #endif // !PLATFORM(IOS)
 #endif // ENABLE(CSS_IMAGE_ORIENTATION)
 
-#if ENABLE(SVG)
     else if (m_image->isSVGImage() && sizeType == UsedSize) {
         imageSize = m_svgImageCache->imageSizeForRenderer(renderer);
     }
-#else
-    UNUSED_PARAM(sizeType);
-#endif
 
     if (multiplier == 1.0f)
         return imageSize;
@@ -360,14 +344,11 @@ inline void CachedImage::createImage()
     else if (m_response.mimeType() == "application/pdf")
         m_image = PDFDocumentImage::create(this);
 #endif
-#if ENABLE(SVG)
     else if (m_response.mimeType() == "image/svg+xml") {
         RefPtr<SVGImage> svgImage = SVGImage::create(this);
         m_svgImageCache = std::make_unique<SVGImageCache>(svgImage.get());
         m_image = svgImage.release();
-    }
-#endif
-    else
+    } else
         m_image = BitmapImage::create(this);
 
     if (m_image) {

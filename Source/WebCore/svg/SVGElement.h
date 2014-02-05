@@ -23,7 +23,6 @@
 #ifndef SVGElement_h
 #define SVGElement_h
 
-#if ENABLE(SVG)
 #include "CSSPropertyNames.h"
 #include "SVGAnimatedString.h"
 #include "SVGElementTypeHelpers.h"
@@ -214,5 +213,4 @@ NODE_TYPE_CASTS(SVGElement)
 
 }
 
-#endif
 #endif

@@ -17,6 +17,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[Conditional=SVG&SVG_FONTS] interface SVGAltGlyphItemElement : SVGElement {
+[Conditional=SVG_FONTS] interface SVGAltGlyphItemElement : SVGElement {
 };
 

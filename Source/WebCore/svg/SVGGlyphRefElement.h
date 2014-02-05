@@ -20,7 +20,7 @@
 #ifndef SVGGlyphRefElement_h
 #define SVGGlyphRefElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FONTS)
+#if ENABLE(SVG_FONTS)
 #include "SVGElement.h"
 #include "SVGURIReference.h"
 

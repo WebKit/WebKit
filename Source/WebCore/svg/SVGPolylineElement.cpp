@@ -19,9 +19,8 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGPolylineElement.h"
+
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -38,5 +37,3 @@ PassRefPtr<SVGPolylineElement> SVGPolylineElement::create(const QualifiedName& t
 }
 
 }
-
-#endif // ENABLE(SVG)

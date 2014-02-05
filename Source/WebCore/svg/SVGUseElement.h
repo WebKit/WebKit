@@ -21,7 +21,6 @@
 #ifndef SVGUseElement_h
 #define SVGUseElement_h
 
-#if ENABLE(SVG)
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
 #include "SVGAnimatedBoolean.h"
@@ -131,5 +130,4 @@ NODE_TYPE_CASTS(SVGUseElement)
 
 }
 
-#endif
 #endif

@@ -20,7 +20,6 @@
 #ifndef SVGPathSource_h
 #define SVGPathSource_h
 
-#if ENABLE(SVG)
 #include "SVGPathSeg.h"
 
 namespace WebCore {
@@ -51,5 +50,4 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGPathSource_h

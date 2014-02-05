@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 #include "SMILTime.h"
 
 #include <float.h>
@@ -63,5 +62,3 @@ SMILTime WebCore::operator*(const SMILTime& a,  const SMILTime& b)
         return SMILTime::indefinite();
     return a.value() * b.value();
 }
-#endif
-

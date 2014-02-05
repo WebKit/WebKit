@@ -18,7 +18,6 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 #include "SVGTransformDistance.h"
 
 #include "FloatConversion.h"
@@ -232,5 +231,3 @@ float SVGTransformDistance::distance() const
 }
 
 }
-
-#endif

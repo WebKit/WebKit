@@ -26,10 +26,7 @@
 #ifndef PaintInfo_h
 #define PaintInfo_h
 
-#if ENABLE(SVG)
 #include "AffineTransform.h"
-#endif
-
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
@@ -90,7 +87,6 @@ struct PaintInfo {
     bool skipRootBackground() const { return paintBehavior & PaintBehaviorSkipRootBackground; }
     bool paintRootBackgroundOnly() const { return paintBehavior & PaintBehaviorRootBackgroundOnly; }
 
-#if ENABLE(SVG)
     void applyTransform(const AffineTransform& localToAncestorTransform)
     {
         if (localToAncestorTransform.isIdentity())
@@ -105,7 +101,6 @@ struct PaintInfo {
         rect.setLocation(LayoutPoint(tranformedRect.location()));
         rect.setSize(LayoutSize(tranformedRect.size()));
     }
-#endif
 
     GraphicsContext* context;
     LayoutRect rect;

@@ -27,9 +27,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
-
 #include "SVGException.h"
 
 namespace WebCore {
@@ -62,5 +59,3 @@ bool SVGException::initializeDescription(ExceptionCode ec, ExceptionCodeDescript
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

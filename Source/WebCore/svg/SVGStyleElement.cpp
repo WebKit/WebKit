@@ -21,8 +21,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGStyleElement.h"
 
 #include "Attribute.h"
@@ -162,5 +160,3 @@ void SVGStyleElement::childrenChanged(const ChildChange& change)
 }
 
 }
-
-#endif // ENABLE(SVG)

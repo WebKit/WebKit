@@ -26,8 +26,6 @@
 #ifndef SVGUnknownElement_h
 #define SVGUnknownElement_h
 
-#if ENABLE(SVG)
-
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -55,7 +53,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)
 
 #endif // SVGUnknownElement_h

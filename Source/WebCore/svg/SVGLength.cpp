@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGLength.h"
 
 #include "CSSHelper.h"
@@ -413,5 +411,3 @@ SVGLengthMode SVGLength::lengthModeForAnimatedLengthAttribute(const QualifiedNam
 }
 
 }
-
-#endif

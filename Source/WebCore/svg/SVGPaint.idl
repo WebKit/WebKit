@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SVG,
     ImplementationLacksVTable,
 ] interface SVGPaint : SVGColor {
     const unsigned short SVG_PAINTTYPE_UNKNOWN = 0;

@@ -26,8 +26,6 @@
 #ifndef SMILTimeContainer_h
 #define SMILTimeContainer_h
 
-#if ENABLE(SVG)
-
 #include "QualifiedName.h"
 #include "SMILTime.h"
 #include "Timer.h"
@@ -99,5 +97,4 @@ private:
 };
 }
 
-#endif // ENABLE(SVG)
 #endif // SMILTimeContainer_h

@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTransformList.h"
 
 #include "AffineTransform.h"
@@ -82,5 +80,3 @@ void SVGTransformList::parse(const String& transform)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)

@@ -62,9 +62,7 @@ class RenderNamedFlowThread;
 class RenderTheme;
 class TransformState;
 class VisiblePosition;
-#if ENABLE(SVG)
 class RenderSVGResourceContainer;
-#endif
 #if PLATFORM(IOS)
 class SelectionRect;
 #endif
@@ -419,7 +417,6 @@ public:
     virtual bool isRenderMathMLUnderOver() const { return false; }
 #endif // ENABLE(MATHML)
 
-#if ENABLE(SVG)
     // FIXME: Until all SVG renders can be subclasses of RenderSVGModelObject we have
     // to add SVG renderer methods to RenderObject with an ASSERT_NOT_REACHED() default implementation.
     virtual bool isRenderSVGModelObject() const { return false; }
@@ -473,7 +470,6 @@ public:
     // coordinates instead of in repaint container coordinates.  Eventually the
     // rest of the rendering tree will move to a similar model.
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
-#endif
 
     bool hasAspectRatio() const { return isReplaced() && (isImage() || isVideo() || isCanvas()); }
     bool isAnonymous() const { return m_bitfields.isAnonymous(); }
@@ -660,9 +656,7 @@ public:
     bool canContainFixedPositionObjects() const
     {
         return isRenderView() || (hasTransform() && isRenderBlock())
-#if ENABLE(SVG)
                 || isSVGForeignObject()
-#endif
                 || isOutOfFlowRenderFlowThread();
     }
 
@@ -1092,10 +1086,8 @@ inline void RenderObject::setNeedsLayout(MarkingBehavior markParents)
 
 inline bool RenderObject::preservesNewline() const
 {
-#if ENABLE(SVG)
     if (isSVGInlineText())
         return false;
-#endif
         
     return style().preserveNewline();
 }

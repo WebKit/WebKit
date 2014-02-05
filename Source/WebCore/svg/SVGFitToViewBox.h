@@ -21,7 +21,6 @@
 #ifndef SVGFitToViewBox_h
 #define SVGFitToViewBox_h
 
-#if ENABLE(SVG)
 #include "FloatRect.h"
 #include "QualifiedName.h"
 #include "SVGNames.h"
@@ -69,5 +68,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
 #endif // SVGFitToViewBox_h

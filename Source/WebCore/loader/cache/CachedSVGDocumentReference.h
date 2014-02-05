@@ -26,7 +26,7 @@
 #ifndef CachedSVGDocumentReference_h
 #define CachedSVGDocumentReference_h
 
-#if ENABLE(SVG) && ENABLE(CSS_FILTERS)
+#if ENABLE(CSS_FILTERS)
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
 #include <wtf/text/WTFString.h>
@@ -55,6 +55,6 @@ private:
 
 };
 
-#endif // ENABLE(SVG) && ENABLE(CSS_FILTERS)
+#endif // ENABLE(CSS_FILTERS)
 
 #endif // CachedSVGDocumentReference_h

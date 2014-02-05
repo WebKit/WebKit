@@ -20,7 +20,6 @@
 #include "config.h"
 #include "SVGTextQuery.h"
 
-#if ENABLE(SVG)
 #include "FloatConversion.h"
 #include "InlineFlowBox.h"
 #include "RenderBlockFlow.h"
@@ -551,5 +550,3 @@ int SVGTextQuery::characterNumberAtPosition(const SVGPoint& position) const
 }
 
 }
-
-#endif

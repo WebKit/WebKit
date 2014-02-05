@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGTransformable.h"
 
 #include "AffineTransform.h"
@@ -209,5 +207,3 @@ bool SVGTransformable::parseTransformAttribute(SVGTransformList& list, const UCh
 }
 
 }
-
-#endif // ENABLE(SVG)

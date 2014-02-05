@@ -277,10 +277,8 @@ static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer
         return AccessibilityMediaControl::create(renderer);
 #endif
 
-#if ENABLE(SVG)
     if (renderer->isSVGRoot())
         return AccessibilitySVGRoot::create(renderer);
-#endif
     
     // Search field buttons
     if (node && node->isElementNode() && toElement(node)->isSearchFieldCancelButtonElement())

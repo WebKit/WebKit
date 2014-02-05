@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SVG,
     SkipVTableValidation
 ] interface SVGAnimatedEnumeration {
     [StrictTypeChecking, SetterRaisesException] attribute unsigned short baseVal;

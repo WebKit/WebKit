@@ -20,7 +20,6 @@
 #ifndef SVGTransformListPropertyTearOff_h
 #define SVGTransformListPropertyTearOff_h
 
-#if ENABLE(SVG)
 #include "SVGListPropertyTearOff.h"
 #include "SVGTransformList.h"
 
@@ -78,5 +77,4 @@ private:
 
 }
 
-#endif // ENABLE(SVG)
 #endif // SVGListPropertyTearOff_h

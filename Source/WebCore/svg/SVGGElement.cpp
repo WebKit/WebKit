@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG)
 #include "SVGGElement.h"
 
 #include "RenderSVGHiddenContainer.h"
@@ -109,5 +107,3 @@ bool SVGGElement::rendererIsNeeded(const RenderStyle&)
 }
 
 }
-
-#endif // ENABLE(SVG)
