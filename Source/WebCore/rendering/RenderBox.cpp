@@ -1539,6 +1539,14 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
         return;
     }
 
+#if ENABLE(CSS_SHAPES)
+    ShapeValue* shapeOutsideValue = style().shapeOutside();
+    if (!view().frameView().isInLayout() && isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image) {
+        ShapeOutsideInfo::ensureInfo(*this).dirtyShapeSize();
+        markShapeOutsideDependentsForLayout();
+    }
+#endif
+
     bool didFullRepaint = repaintLayerRectsForImage(image, style().backgroundLayers(), true);
     if (!didFullRepaint)
         repaintLayerRectsForImage(image, style().maskLayers(), false);

@@ -1,0 +1,32 @@
+<html>
+<head>
+<style>
+.container {
+    font: 50px/1 Ahem, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: green;
+}
+
+.shape-outside {
+    width: 100px;
+    height: 100px;
+    float: left;
+    -webkit-shape-outside: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100px' height='100px'><rect x='0' y='50' width='49' height='49' fill='blue'/></svg>");
+}
+</style>
+<script>
+window.onload = function() {
+    var container = document.querySelector('.container');
+    var shape = document.createElement('div');
+    shape.className = 'shape-outside';
+    container.insertBefore(shape, container.firstChild);
+}
+</script>
+</head>
+<body>
+<div class='container'>
+<p>X<br>X<br>X</p>
+</div>
+</body>
+</html>
+

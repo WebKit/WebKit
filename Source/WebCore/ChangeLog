@@ -1,3 +1,27 @@
+2014-02-05  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Dynamically created element with image valued shape-outside doesn't update automatically
+        https://bugs.webkit.org/show_bug.cgi?id=128187
+
+        Reviewed by Dean Jackson.
+
+        Corrected the way shape-outside handles the completion of an image load. Move
+        the shape-outside imageChanged() logic from RenderBlock to RenderBox and call
+        markShapeOutsideDependentsForLayout() instead of parent()->setNeedsLayoutAndPrefWidthsRecalc().
+        The latter did not deal with descendants of the shape element's siblings correctly and it
+        failed when the shape element was inserted dynamically. The markShapeOutsideDependentsForLayout()
+        method can't be called during layout, so the imageChanged() code checks for that. The only
+        scenario where imageChanged() can be called during layout (that I've discovered so far anyway)
+        is when an SVG Image is renderered  with drawImage(). The Shape::createRasterShape() does this,
+        and the corresponding imageChanged() notification can be safely ignored.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-insert-svg-shape.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::imageChanged):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::imageChanged):
+
 2014-02-05  Andreas Kling  <akling@apple.com>
 
         CTTE: ImageLoader is always owned by an Element.

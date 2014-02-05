@@ -1355,10 +1355,6 @@ void RenderBlock::imageChanged(WrappedImagePtr image, const IntRect*)
         markShapeInsideDescendantsForLayout();
     }
 #endif
-
-    ShapeValue* shapeOutsideValue = style().shapeOutside();
-    if (isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image)
-        parent()->setNeedsLayoutAndPrefWidthsRecalc();
 }
 #endif
 

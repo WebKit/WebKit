@@ -1,3 +1,13 @@
+2014-02-05  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Dynamically created element with image valued shape-outside doesn't update automatically
+        https://bugs.webkit.org/show_bug.cgi?id=128187
+
+        Reviewed by Dean Jackson.
+
+        * fast/shapes/shape-outside-floats/shape-outside-insert-svg-shape-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-insert-svg-shape.html: Added.
+
 2014-02-05  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Add expectations for two flaky media layout tests
