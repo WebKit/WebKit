@@ -1,3 +1,17 @@
+2014-02-05  Andreas Kling  <akling@apple.com>
+
+        Turn on ENABLE(8BIT_TEXTRUN) for everyone.
+        <https://webkit.org/b/128273>
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::subRun):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/RenderBlock.h:
+
 2014-02-05  Enrica Casucci  <enrica@apple.com>
 
         WK2: Caret, selections and autocorrection bubbles are incorrectly positioned when inside an iframe.

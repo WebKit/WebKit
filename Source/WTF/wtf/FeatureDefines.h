@@ -60,10 +60,6 @@
 #define ENABLE_ASYNC_SCROLLING 1
 #endif
 
-#if !defined(ENABLE_8BIT_TEXTRUN)
-#define ENABLE_8BIT_TEXTRUN 1
-#endif
-
 #if !defined(ENABLE_CONTEXT_MENUS)
 #define ENABLE_CONTEXT_MENUS 0
 #endif
@@ -168,10 +164,6 @@
 
 /* --------- Apple MAC port (not IOS) --------- */
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-
-#if !defined(ENABLE_8BIT_TEXTRUN)
-#define ENABLE_8BIT_TEXTRUN 1
-#endif
 
 #if !defined(ENABLE_CSS_IMAGE_SET)
 #define ENABLE_CSS_IMAGE_SET 1
@@ -312,10 +304,6 @@
 #define ENABLE_SUBPIXEL_LAYOUT 1
 #endif
 
-#if !defined(ENABLE_8BIT_TEXTRUN)
-#define ENABLE_8BIT_TEXTRUN 1
-#endif
-
 #endif /* PLATFORM(EFL) */
 
 /* --------- Gtk port (Unix, Windows, Mac) --------- */
@@ -331,10 +319,6 @@
 #define ENABLE_SUBPIXEL_LAYOUT 1
 #endif
 
-#if !defined(ENABLE_8BIT_TEXTRUN)
-#define ENABLE_8BIT_TEXTRUN 1
-#endif
-
 #endif /* PLATFORM(GTK) */
 
 /* ENABLE macro defaults for WebCore */
@@ -342,10 +326,6 @@
 
 #if !defined(ENABLE_3D_RENDERING)
 #define ENABLE_3D_RENDERING 0
-#endif
-
-#if !defined(ENABLE_8BIT_TEXTRUN)
-#define ENABLE_8BIT_TEXTRUN 0
 #endif
 
 #if !defined(ENABLE_ACCELERATED_2D_CANVAS)
