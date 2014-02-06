@@ -51,6 +51,7 @@ public:
     void endTrackingDeltas();
 
     bool isTrackingDeltas() const { return m_isTrackingDeltas; }
+    bool isFirstWheelEvent() const { return m_recentWheelEventDeltas.size() <= 1; }
 
     void recordWheelEventDelta(const PlatformWheelEvent&);
     DominantScrollGestureDirection dominantScrollGestureDirection() const;

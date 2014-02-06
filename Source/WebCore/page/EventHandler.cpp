@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2012 Digia Plc. and/or its subsidiary(-ies)
  *
@@ -2528,6 +2528,35 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     view = m_frame.view();
+    
+#if PLATFORM(MAC)
+    if (useLatchedWheelEventElement && m_latchedWheelEventElement == element) {
+        bool enclosingFrameIsMainFrame = view ? view->frame().isMainFrame() : false;
+
+        // If we are latched, and have nowhere to scroll, treat the scroll event as ended so that we don't
+        // cause the scroll to break free of the current scrolling widget.
+        if (!enclosingFrameIsMainFrame) {
+            bool didHandleWheelEvent = view ? view->wheelEvent(event) : false;
+            if (!didHandleWheelEvent) {
+                // If we are just starting a scroll event, and have nowhere left to scroll, allow
+                // the enclosing frame to handle the scroll.
+                didHandleWheelEvent = !m_recentWheelEventDeltaTracker->isFirstWheelEvent();
+            }
+
+            m_isHandlingWheelEvent = false;
+            return didHandleWheelEvent;
+        }
+
+        if (!m_recentWheelEventDeltaTracker->isFirstWheelEvent()) {
+            // When the main frame is our parent, and we have been scrolling within this region, we do not
+            // want to have the main frame consume any remaining scroll events. Keep them latched to this
+            // element.
+            m_isHandlingWheelEvent = false;
+            return true;
+        }
+    }
+#endif
+
     bool didHandleEvent = view ? view->wheelEvent(event) : false;
     m_isHandlingWheelEvent = false;
     return didHandleEvent;
