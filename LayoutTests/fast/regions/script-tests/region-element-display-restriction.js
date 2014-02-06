@@ -22,7 +22,6 @@ function createRegionElement(elementType, displayType)
 shouldBeFalse('createRegionElement("div", "none")');
 shouldBeTrue('createRegionElement("div", "block")');
 shouldBeTrue('createRegionElement("div", "inline-block")');
-shouldBeFalse('createRegionElement("div", "run-in")');
 shouldBeFalse('createRegionElement("div", "compact")');
 shouldBeFalse('createRegionElement("div", "inline")');
 shouldBeFalse('createRegionElement("div", "table")');

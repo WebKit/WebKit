@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS createRegionElement("div", "none") is false
 PASS createRegionElement("div", "block") is true
 PASS createRegionElement("div", "inline-block") is true
-PASS createRegionElement("div", "run-in") is false
 PASS createRegionElement("div", "compact") is false
 PASS createRegionElement("div", "inline") is false
 PASS createRegionElement("div", "table") is false

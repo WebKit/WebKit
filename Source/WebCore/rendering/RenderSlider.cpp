@@ -63,11 +63,6 @@ HTMLInputElement& RenderSlider::element() const
     return toHTMLInputElement(nodeForNonAnonymous());
 }
 
-bool RenderSlider::canBeReplacedWithInlineRunIn() const
-{
-    return false;
-}
-
 int RenderSlider::baselinePosition(FontBaseline, bool /*firstLine*/, LineDirectionMode, LinePositionMode) const
 {
     // FIXME: Patch this function for writing-mode.

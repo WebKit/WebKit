@@ -143,11 +143,6 @@ void RenderListBox::updateFromElement()
     }
 }
 
-bool RenderListBox::canBeReplacedWithInlineRunIn() const
-{
-    return false;
-}
-
 void RenderListBox::selectionChanged()
 {
     repaint();

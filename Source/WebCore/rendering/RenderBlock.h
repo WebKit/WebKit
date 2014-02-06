@@ -339,9 +339,6 @@ public:
 
     LayoutUnit computeStartPositionDeltaForChildAvoidingFloats(const RenderBox& child, LayoutUnit childMarginStart, RenderRegion* = 0);
 
-    void placeRunInIfNeeded(RenderObject& newChild);
-    bool runInIsPlacedIntoSiblingBlock(RenderObject& runIn);
-
 #ifndef NDEBUG
     void checkPositionedObjectsNeedLayout();
     virtual void showLineTreeAndMark(const InlineBox* = nullptr, const char* = nullptr, const InlineBox* = nullptr, const char* = nullptr, const RenderObject* = nullptr) const;
@@ -576,10 +573,6 @@ private:
     RenderBlock* continuationBefore(RenderObject* beforeChild);
     RenderBlock* containingColumnsBlock(bool allowAnonymousColumnBlock = true);
     RenderBlock* columnsBlockForSpanningElement(RenderObject* newChild);
-
-    RenderBoxModelObject& createReplacementRunIn(RenderBoxModelObject& runIn);
-    void moveRunInUnderSiblingBlockIfNeeded(RenderObject& runIn);
-    void moveRunInToOriginalPosition(RenderObject& runIn);
 
 private:
     bool hasRareData() const;

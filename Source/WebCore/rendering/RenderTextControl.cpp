@@ -344,9 +344,4 @@ int RenderTextControl::innerLineHeight() const
 }
 #endif
 
-bool RenderTextControl::canBeReplacedWithInlineRunIn() const
-{
-    return false;
-}
-
 } // namespace WebCore

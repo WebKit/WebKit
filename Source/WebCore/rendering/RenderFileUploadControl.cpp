@@ -73,11 +73,6 @@ HTMLInputElement& RenderFileUploadControl::inputElement() const
     return toHTMLInputElement(nodeForNonAnonymous());
 }
 
-bool RenderFileUploadControl::canBeReplacedWithInlineRunIn() const
-{
-    return false;
-}
-
 void RenderFileUploadControl::updateFromElement()
 {
     ASSERT(inputElement().isFileUpload());

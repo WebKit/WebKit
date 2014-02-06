@@ -515,7 +515,7 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     "polygon", "portrait", "pre", "pre-line", "pre-wrap", "preserve-3d", "progress", "push-button",
     "radio", "read-only", "read-write", "read-write-plaintext-only", "rectangle", "region",
     "relative", "repeat", "repeat-x", "repeat-y", "reset", "reverse", "rgb", "rgba",
-    "ridge", "right", "round", "row-resize", "rtl", "run-in", "running",
+    "ridge", "right", "round", "row-resize", "rtl", "running",
     "s-resize", "sans-serif", "scroll", "scrollbar", "se-resize", "searchfield",
     "searchfield-cancel-button", "searchfield-decoration",
     "searchfield-results-button", "searchfield-results-decoration",

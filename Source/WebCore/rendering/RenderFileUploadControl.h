@@ -48,7 +48,6 @@ private:
 
     virtual const char* renderName() const override { return "RenderFileUploadControl"; }
 
-    virtual bool canBeReplacedWithInlineRunIn() const override;
     virtual void updateFromElement() override;
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     virtual void computePreferredLogicalWidths() override;

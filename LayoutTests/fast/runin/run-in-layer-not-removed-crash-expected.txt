@@ -1,3 +1,0 @@
-Webkit Bug 81265: Crash due to layer tree information not updated when moving run-in children.
-Test passes if it does not crash.
-

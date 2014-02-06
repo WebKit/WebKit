@@ -46,7 +46,6 @@ private:
     virtual const char* renderName() const override { return "RenderProgress"; }
     virtual bool isProgress() const override { return true; }
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
-    virtual bool canBeReplacedWithInlineRunIn() const override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
     void animationTimerFired(Timer<RenderProgress>&);

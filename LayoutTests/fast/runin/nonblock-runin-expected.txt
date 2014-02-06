@@ -1,5 +1,0 @@
-Test for https://bugs.webkit.org/show_bug.cgi?id=12052. Before the change, display: run-in; with non-RenderBlock element hit ASSERTion and run-in video made Safari crash.
-
-PASS
-
-PASS

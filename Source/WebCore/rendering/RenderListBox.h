@@ -67,7 +67,6 @@ private:
     virtual bool isListBox() const override { return true; }
 
     virtual void updateFromElement() override;
-    virtual bool canBeReplacedWithInlineRunIn() const override;
     virtual bool hasControlClip() const override { return true; }
     virtual void paintObject(PaintInfo&, const LayoutPoint&) override;
     virtual LayoutRect controlClipRect(const LayoutPoint&) const override;

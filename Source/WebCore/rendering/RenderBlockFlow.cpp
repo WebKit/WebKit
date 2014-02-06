@@ -160,11 +160,6 @@ void RenderBlockFlow::willBeDestroyed()
     if (renderNamedFlowFragment())
         setRenderNamedFlowFragment(0);
 
-    if (!documentBeingDestroyed()) {
-        if (firstChild() && firstChild()->isRunIn())
-            moveRunInToOriginalPosition(*firstChild());
-    }
-
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from. Effects that do :before/:after only on hover could crash otherwise.
     destroyLeftoverChildren();
@@ -2951,7 +2946,7 @@ void RenderBlockFlow::setMultiColumnFlowThread(RenderMultiColumnFlowThread* flow
 
 static bool shouldCheckLines(const RenderBlockFlow& blockFlow)
 {
-    return !blockFlow.isFloatingOrOutOfFlowPositioned() && !blockFlow.isRunIn() && blockFlow.style().height().isAuto();
+    return !blockFlow.isFloatingOrOutOfFlowPositioned() && blockFlow.style().height().isAuto();
 }
 
 RootInlineBox* RenderBlockFlow::lineAtIndex(int i) const
@@ -3030,7 +3025,7 @@ static int getHeightForLineCount(const RenderBlockFlow& block, int lineCount, bo
                 int result = getHeightForLineCount(toRenderBlockFlow(*obj), lineCount, false, count);
                 if (result != -1)
                     return result + obj->y() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : LayoutUnit());
-            } else if (!obj->isFloatingOrOutOfFlowPositioned() && !obj->isRunIn())
+            } else if (!obj->isFloatingOrOutOfFlowPositioned())
                 normalFlowChildWithoutLines = obj;
         }
         if (normalFlowChildWithoutLines && !lineCount)

@@ -151,7 +151,6 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<Rend
         return createRenderer<RenderInline>(element, std::move(style));
     case BLOCK:
     case INLINE_BLOCK:
-    case RUN_IN:
     case COMPACT:
         return createRenderer<RenderBlockFlow>(element, std::move(style));
     case LIST_ITEM:
@@ -518,12 +517,8 @@ void RenderElement::removeChild(RenderObject& oldChild)
 void RenderElement::destroyLeftoverChildren()
 {
     while (m_firstChild) {
-        if (m_firstChild->isListMarker() || (m_firstChild->style().styleType() == FIRST_LETTER && !m_firstChild->isText()))
+        if (m_firstChild->isListMarker() || (m_firstChild->style().styleType() == FIRST_LETTER && !m_firstChild->isText())) {
             m_firstChild->removeFromParent(); // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
-        else if (m_firstChild->isRunIn() && m_firstChild->node()) {
-            m_firstChild->node()->setRenderer(nullptr);
-            m_firstChild->node()->setNeedsStyleRecalc();
-            m_firstChild->destroy();
         } else {
             // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
             if (m_firstChild->node())

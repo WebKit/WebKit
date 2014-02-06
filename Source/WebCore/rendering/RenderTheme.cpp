@@ -89,7 +89,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
         || style.display() == TABLE_ROW || style.display() == TABLE_COLUMN_GROUP || style.display() == TABLE_COLUMN
         || style.display() == TABLE_CELL || style.display() == TABLE_CAPTION)
         style.setDisplay(INLINE_BLOCK);
-    else if (style.display() == COMPACT || style.display() == RUN_IN || style.display() == LIST_ITEM || style.display() == TABLE)
+    else if (style.display() == COMPACT || style.display() == LIST_ITEM || style.display() == TABLE)
         style.setDisplay(BLOCK);
 
     if (UAHasAppearance && isControlStyled(&style, border, background, backgroundColor)) {

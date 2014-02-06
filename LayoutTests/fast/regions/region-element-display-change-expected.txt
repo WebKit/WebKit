@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS testElement(element, "none") is false
 PASS testElement(element, "block") is true
 PASS testElement(element, "inline-block") is true
-PASS testElement(element, "run-in") is false
 PASS testElement(element, "compact") is false
 PASS testElement(element, "inline") is false
 PASS testElement(element, "table") is false

@@ -81,7 +81,6 @@ private:
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) override { }
     virtual bool avoidsFloats() const override { return true; }
     virtual bool canHaveGeneratedChildren() const override { return false; }
-    virtual bool canBeReplacedWithInlineRunIn() const override;
     
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
 

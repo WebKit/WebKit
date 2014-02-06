@@ -340,7 +340,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "mathematical", "use-script", "no-change", "reset-size"
     ],
     "display": [
-        "none", "inline", "block", "list-item", "run-in", "compact", "inline-block", "table", "inline-table",
+        "none", "inline", "block", "list-item", "compact", "inline-block", "table", "inline-table",
         "table-row-group", "table-header-group", "table-footer-group", "table-row", "table-column-group",
         "table-column", "table-cell", "table-caption", "-webkit-box", "-webkit-inline-box", "-wap-marquee",
         "-webkit-flex", "-webkit-inline-flex", "-webkit-grid", "-webkit-inline-grid"

@@ -2394,11 +2394,6 @@ Node* RenderObject::generatingPseudoHostElement() const
     return toPseudoElement(node())->hostElement();
 }
 
-bool RenderObject::canBeReplacedWithInlineRunIn() const
-{
-    return true;
-}
-
 void RenderObject::setNeedsBoundariesUpdate()
 {
     if (auto renderer = parent())

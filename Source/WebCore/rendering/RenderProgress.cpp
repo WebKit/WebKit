@@ -71,11 +71,6 @@ void RenderProgress::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit l
     computedValues.m_extent = isHorizontalWritingMode() ? frameSize.height() : frameSize.width();
 }
 
-bool RenderProgress::canBeReplacedWithInlineRunIn() const
-{
-    return false;
-}
-
 double RenderProgress::animationProgress() const
 {
     return m_animating ? (fmod((monotonicallyIncreasingTime() - m_animationStartTime), m_animationDuration) / m_animationDuration) : 0;

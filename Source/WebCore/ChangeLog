@@ -1,5 +1,60 @@
 2014-02-06  Andreas Kling  <akling@apple.com>
 
+        Remove display:run-in support.
+        <https://webkit.org/b/127874>
+        <rdar://problem/15926949>
+
+        Remove support for the "run-in" display type. Blink recently removed
+        this and Gecko never supported in the first place.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * css/StyleResolver.cpp:
+        (WebCore::equivalentBlockDisplay):
+        (WebCore::doesNotInheritTextDecoration):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        (WebCore::RenderBlock::makeChildrenNonInline):
+        (WebCore::canMergeContiguousAnonymousBlocks):
+        (WebCore::RenderBlock::renderName):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        (WebCore::shouldCheckLines):
+        (WebCore::getHeightForLineCount):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        (WebCore::RenderElement::destroyLeftoverChildren):
+        * rendering/RenderFileUploadControl.cpp:
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateFromStyle):
+        (WebCore::RenderInline::renderName):
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.cpp:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderProgress.cpp:
+        * rendering/RenderProgress.h:
+        * rendering/RenderSlider.cpp:
+        * rendering/RenderSlider.h:
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        * rendering/style/RenderStyleConstants.h:
+
+2014-02-06  Andreas Kling  <akling@apple.com>
+
         Remove leftover cruft from scoped stylesheet implementation.
         <https://webkit.org/b/128139>
 
