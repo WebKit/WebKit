@@ -3,7 +3,7 @@
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  * Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
  * Copyright (C) 2009-2010 ProFUSION embedded systems
- * Copyright (C) 2009-2011 Samsung Electronics
+ * Copyright (C) 2009-2014 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +32,8 @@
 
 #include "Frame.h"
 #include "FrameView.h"
-#include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
-#include "HostWindow.h"
-#include "JSDOMWindowBase.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "PluginPackage.h"
@@ -52,33 +49,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-bool PluginView::dispatchNPEvent(NPEvent& event)
+Window PluginView::getRootWindow(Frame* parentFrame)
 {
-    if (!m_plugin->pluginFuncs()->event)
-        return false;
-
-    PluginView::setCurrentPluginView(this);
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
-    setCallingPlugin(true);
-
-    bool accepted = m_plugin->pluginFuncs()->event(m_instance, &event);
-
-    setCallingPlugin(false);
-    PluginView::setCurrentPluginView(0);
-    return accepted;
+    Evas* evas = evas_object_evas_get(parentFrame->view()->evasObject());
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(evas);
+    return static_cast<Window>(ecore_evas_window_get(ecoreEvas));
 }
-
-#if defined(XP_UNIX)
-void PluginView::handleFocusInEvent()
-{
-    notImplemented();
-}
-
-void PluginView::handleFocusOutEvent()
-{
-    notImplemented();
-}
-#endif
 
 void PluginView::handleKeyboardEvent(KeyboardEvent*)
 {
@@ -117,11 +93,6 @@ void PluginView::handleMouseEvent(MouseEvent* event)
         event->setDefaultHandled();
 }
 
-void PluginView::updatePluginWidget()
-{
-    notImplemented();
-}
-
 void PluginView::setFocus(bool focused)
 {
     if (focused)
@@ -142,29 +113,6 @@ void PluginView::hide()
     setSelfVisible(false);
 
     Widget::hide();
-}
-
-void PluginView::paint(GraphicsContext* context, const IntRect& rect)
-{
-    if (!m_isStarted)
-        paintMissingPluginIcon(context, rect);
-}
-
-void PluginView::setParent(ScrollView* parent)
-{
-    Widget::setParent(parent);
-
-    if (parent)
-        init();
-}
-
-void PluginView::setNPWindowRect(const IntRect&)
-{
-    notImplemented();
-}
-
-void PluginView::setNPWindowIfNeeded()
-{
 }
 
 void PluginView::setParentVisible(bool visible)
@@ -221,7 +169,7 @@ bool PluginView::platformGetValueStatic(NPNVariable variable, void* value, NPErr
         return true;
 
     case NPNVSupportsWindowless:
-        *static_cast<NPBool*>(value) = false;
+        *static_cast<NPBool*>(value) = true;
         *result = NPERR_NO_ERROR;
         return true;
 
@@ -312,19 +260,9 @@ void PluginView::invalidateRect(const IntRect& rect)
     invalidateWindowlessPluginRect(rect);
 }
 
-void PluginView::invalidateRect(NPRect* rect)
+Display* PluginView::getPluginDisplay(Frame*)
 {
-    if (!rect) {
-        invalidate();
-        return;
-    }
-
-    invalidateRect(IntRect(rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top));
-}
-
-void PluginView::invalidateRegion(NPRegion)
-{
-    notImplemented();
+    return static_cast<Display*>(ecore_x_display_get());
 }
 
 void PluginView::forceRedraw()
@@ -337,7 +275,41 @@ bool PluginView::platformStart()
     ASSERT(m_isStarted);
     ASSERT(m_status == PluginStatusLoadedSuccessfully);
 
-    notImplemented();
+    if (m_plugin->pluginFuncs()->getvalue) {
+        PluginView::setCurrentPluginView(this);
+        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+        setCallingPlugin(true);
+        m_plugin->pluginFuncs()->getvalue(m_instance, NPPVpluginNeedsXEmbed, &m_needsXEmbed);
+        setCallingPlugin(false);
+        PluginView::setCurrentPluginView(0);
+    }
+
+    setPlatformWidget(0);
+    m_pluginDisplay = getPluginDisplay(nullptr);
+
+    show();
+
+    NPSetWindowCallbackStruct* ws = new NPSetWindowCallbackStruct();
+    ws->type = 0;
+
+    m_npWindow.type = NPWindowTypeDrawable;
+    m_npWindow.window = 0; // Not used?
+
+    Screen* screen = static_cast<Screen*>(ecore_x_default_screen_get());
+    m_visual = static_cast<Visual*>(ecore_x_default_visual_get(m_pluginDisplay, screen));
+    m_colormap = ecore_x_default_colormap_get(m_pluginDisplay, screen);
+
+    ws->depth = ecore_x_default_depth_get(m_pluginDisplay, screen);
+    ws->display = m_pluginDisplay;
+    ws->visual = m_visual;
+    ws->colormap = m_colormap;
+
+    m_npWindow.ws_info = ws;
+
+    // FIXME: remove in favor of null events, like mac port?
+    if (!(m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall)))
+        updatePluginWidget(); // was: setNPWindowIfNeeded(), but this doesn't produce 0x0 rects at first go
+
     return true;
 }
 

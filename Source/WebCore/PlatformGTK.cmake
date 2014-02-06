@@ -282,6 +282,8 @@ if (ENABLE_NETSCAPE_PLUGIN_API)
         plugins/gtk/PluginPackageGtk.cpp
         plugins/gtk/PluginViewGtk.cpp
         plugins/gtk/gtk2xtbin.c
+
+        plugins/x11/PluginViewX11.cpp
     )
 else ()
     list(APPEND WebCore_SOURCES

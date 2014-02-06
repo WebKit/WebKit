@@ -1,3 +1,43 @@
+2014-02-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][GTK] Share plugin's implementation between EFL and Gtk ports.
+        https://bugs.webkit.org/show_bug.cgi?id=70592
+
+        Reviewed by Gyuyoung Kim.
+
+        Merge common logics of PluginViewGtk.cpp and PluginViewEfl.cpp to PluginViewX11.cpp.
+        So, this patch improves the windowless plugin support for the EFL port.
+
+        * GNUmakefile.am: Add include path for gtk2xtbin.h header file.
+        * GNUmakefile.list.am: Added PluginViewX11.cpp into source lists.
+        * PlatformEfl.cmake: Ditto.
+        * PlatformGTK.cmake: Ditto.
+        * plugins/PluginView.h: Added getRootWindow and getPluginDisply which implement platform specific code.
+        * plugins/efl/PluginViewEfl.cpp:
+        (WebCore::PluginView::getRootWindow):
+        (WebCore::PluginView::platformGetValueStatic): Turn on NPNVSupportsWindowless support.
+        (WebCore::PluginView::getPluginDisplay):
+        (WebCore::PluginView::platformStart):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::getRootWindow):
+        (WebCore::setXButtonEventSpecificFields):
+        (WebCore::setXMotionEventSpecificFields):
+        (WebCore::setXCrossingEventSpecificFields):
+        (WebCore::PluginView::getPluginDisplay):
+        (WebCore::PluginView::platformStart):
+        * plugins/x11/PluginViewX11.cpp: Moved common logics from PluginViewGtk.cpp
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::handleFocusInEvent):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::invalidateRegion):
+        (WebCore::PluginView::handleFocusOutEvent):
+        (WebCore::PluginView::initXEvent):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+
 2014-02-05  Anders Carlsson  <andersca@apple.com>
 
         Fix a warning.

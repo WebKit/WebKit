@@ -6222,7 +6222,8 @@ webcoregtk_sources += \
 	Source/WebCore/plugins/gtk/gtk2xtbin.h \
 	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
 	Source/WebCore/plugins/gtk/PluginViewGtk.cpp \
-	Source/WebCore/plugins/gtk/xembed.h
+	Source/WebCore/plugins/gtk/xembed.h \
+	Source/WebCore/plugins/x11/PluginViewX11.cpp
 platformgtk_sources += \
 	Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.h \
 	Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.cpp

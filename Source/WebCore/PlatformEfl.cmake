@@ -191,6 +191,8 @@ if (ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES
         plugins/efl/PluginPackageEfl.cpp
         plugins/efl/PluginViewEfl.cpp
+
+        plugins/x11/PluginViewX11.cpp
     )
 endif ()
 

@@ -93,6 +93,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/text/icu \
 	-I$(srcdir)/Source/WebCore/platform/win \
 	-I$(srcdir)/Source/WebCore/plugins \
+	-I$(srcdir)/Source/WebCore/plugins/gtk \
 	-I$(srcdir)/Source/WebCore/plugins/win \
 	-I$(srcdir)/Source/WebCore/rendering \
 	-I$(srcdir)/Source/WebCore/rendering/line \
