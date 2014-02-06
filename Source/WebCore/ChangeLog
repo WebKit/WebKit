@@ -1,6 +1,6 @@
 2014-02-05  Benjamin Poulain  <benjamin@webkit.org>
 
-        Add HTMLNames::classAttr has a regular name in SVGElement::isAnimatableAttribute
+        Add HTMLNames::classAttr as a regular name in SVGElement::isAnimatableAttribute
         https://bugs.webkit.org/show_bug.cgi?id=128166
 
         Reviewed by Sam Weinig.
