@@ -125,6 +125,8 @@ public:
 #if ENABLE(FTL_JIT)
     ExecutionCounter tierUpCounter;
     RefPtr<CodeBlock> osrEntryBlock;
+    unsigned osrEntryRetry;
+    bool abandonOSREntry;
 #endif // ENABLE(FTL_JIT)
 };
 

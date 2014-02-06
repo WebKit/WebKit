@@ -73,13 +73,24 @@ void ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete(
             ") result: ", result, "\n");
     }
     
-    if (result == CompilationSuccessful)
-        m_dfgCodeBlock->jitCode()->dfg()->osrEntryBlock = codeBlock;
+    JITCode* jitCode = m_dfgCodeBlock->jitCode()->dfg();
+        
+    switch (result) {
+    case CompilationSuccessful:
+        jitCode->osrEntryBlock = codeBlock;
+        return;
+    case CompilationFailed:
+        jitCode->osrEntryRetry = 0;
+        jitCode->abandonOSREntry = true;
+        return;
+    case CompilationDeferred:
+        return;
+    case CompilationInvalidated:
+        jitCode->osrEntryRetry = 0;
+        return;
+    }
     
-    // FIXME: if we failed, we might want to just turn off OSR entry rather than
-    // totally turning off tier-up.
-    m_dfgCodeBlock->jitCode()->dfg()->setOptimizationThresholdBasedOnCompilationResult(
-        m_dfgCodeBlock.get(), result);
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } } // JSC::DFG

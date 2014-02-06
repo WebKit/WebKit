@@ -1,5 +1,26 @@
 2014-02-04  Filip Pizlo  <fpizlo@apple.com>
 
+        Make FTL OSR entry something we only try after we've already compiled the function with the FTL and it still got stuck in a loop after that without ever returning like a sensible function oughta have
+        https://bugs.webkit.org/show_bug.cgi?id=128234
+
+        Reviewed by Geoffrey Garen.
+        
+        Use DFG::JITCode::osrEntryRetry as a counter to decide when to invoke OSR entry. That
+        comes into play only after we've done a replacement compile.
+        
+        This appears to still give us a speed-up on the kinds of things that OSR entry is good
+        for, while also eliminating pointless OSR entry compilations on other things.
+
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::JITCode):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete):
+        * runtime/Options.h:
+
+2014-02-04  Filip Pizlo  <fpizlo@apple.com>
+
         Don't speculate on ToThis if we already know that arg0 has a questionable record with structure checks
         https://bugs.webkit.org/show_bug.cgi?id=128229
 

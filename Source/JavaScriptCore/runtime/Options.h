@@ -197,6 +197,7 @@ typedef OptionRange optionRange;
     v(int32, ftlTierUpCounterIncrementForLoop, 1) \
     v(int32, ftlTierUpCounterIncrementForReturn, 15) \
     v(unsigned, ftlOSREntryFailureCountForReoptimization, 15) \
+    v(unsigned, ftlOSREntryRetryThreshold, 100) \
     \
     v(int32, evalThresholdMultiplier, 10) \
     \

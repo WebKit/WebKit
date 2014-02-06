@@ -34,6 +34,10 @@ namespace JSC { namespace DFG {
 
 JITCode::JITCode()
     : DirectJITCode(DFGJIT)
+#if ENABLE(FTL_JIT)
+    , osrEntryRetry(0)
+    , abandonOSREntry(false)
+#endif // ENABLE(FTL_JIT)
 {
 }
 
