@@ -1,3 +1,11 @@
+2014-02-06  Andrei Bucur  <abucur@adobe.com>
+
+        Adding myself as a reviewer.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove the WTF_COMPILER_SUPPORTS_CXX_GENERALIZED_INITIALIZERS macro
