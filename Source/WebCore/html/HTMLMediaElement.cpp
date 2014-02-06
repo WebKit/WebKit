@@ -4268,7 +4268,7 @@ void HTMLMediaElement::updatePlayState()
         invalidateCachedTime();
 
         if (playerPaused) {
-            if (m_mediaSession->requiresFullscreenForVideoPlayback(*this))
+            if (m_mediaSession->requiresFullscreenForVideoPlayback(*this) && !isFullscreen())
                 enterFullscreen();
 
             // Set rate, muted before calling play in case they were set before the media engine was setup.
@@ -4843,6 +4843,8 @@ void HTMLMediaElement::toggleFullscreenState()
 void HTMLMediaElement::enterFullscreen()
 {
     LOG(Media, "HTMLMediaElement::enterFullscreen");
+    if (m_isFullscreen)
+        return;
 
 #if ENABLE(FULLSCREEN_API)
     if (document().settings() && document().settings()->fullScreenEnabled()) {
@@ -4850,7 +4852,7 @@ void HTMLMediaElement::enterFullscreen()
         return;
     }
 #endif
-    ASSERT(!m_isFullscreen);
+
     m_isFullscreen = true;
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();

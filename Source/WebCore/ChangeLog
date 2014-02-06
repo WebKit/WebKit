@@ -1,3 +1,16 @@
+2014-02-06  Eric Carlson  <eric.carlson@apple.com>
+
+        No need to enterFullscreen() when already in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=128276
+
+        Reviewed by Jer Noble.
+
+        No new tests, this is just cleanup.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlayState): Don't call enterFullscreen() if already there.
+        (WebCore::HTMLMediaElement::enterFullscreen): Return early if m_isFullscreen is already true.
+
 2014-02-06  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Null dereference applying animation with CSS regions
