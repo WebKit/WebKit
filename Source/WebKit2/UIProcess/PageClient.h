@@ -55,6 +55,7 @@ namespace WebKit {
 class DrawingAreaProxy;
 class FindIndicator;
 class NativeWebKeyboardEvent;
+class RemoteLayerTreeTransaction;
 class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebPopupMenuProxy;
@@ -149,7 +150,7 @@ public:
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
 #endif // PLATFORM(EFL) || PLATFORM(GTK)
 
-#if PLATFORM(EFL) || PLATFORM(IOS)
+#if PLATFORM(EFL)
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 #endif
 
@@ -238,11 +239,9 @@ public:
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS)
-    virtual void mainDocumentDidReceiveMobileDocType() = 0;
-
     virtual void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius) = 0;
 
-    virtual void didChangeViewportArguments(const WebCore::ViewportArguments&) = 0;
+    virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) = 0;
 
     virtual void startAssistingNode(const WebCore::IntRect&, bool hasNextFocusable, bool hasPreviousFocusable) = 0;
     virtual void stopAssistingNode() = 0;

@@ -38,6 +38,7 @@ namespace WebKit {
 class DrawingAreaProxy;
 class GeolocationPermissionRequestProxy;
 class LayerTreeContext;
+class RemoteLayerTreeTransaction;
 class WebFrameProxy;
 class WebPageProxy;
 class WebSecurityOrigin;
@@ -57,9 +58,7 @@ struct InteractionInformationAtPosition;
 - (void)_setAcceleratedCompositingRootLayer:(CALayer *)rootLayer;
 
 - (void)_didCommitLoadForMainFrame;
-- (void)_didChangeContentSize:(CGSize)contentsSize;
-- (void)_didReceiveMobileDocTypeForMainFrame;
-- (void)_didChangeViewportArguments:(const WebCore::ViewportArguments&)viewportArguments;
+- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
 
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius;
 

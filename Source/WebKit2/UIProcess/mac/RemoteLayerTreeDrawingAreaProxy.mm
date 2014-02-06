@@ -89,6 +89,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 #if ENABLE(ASYNC_SCROLLING)
     m_webPageProxy->scrollingCoordinatorProxy()->updateScrollingTree(scrollingTreeTransaction);
 #endif
+#if PLATFORM(IOS)
+    m_webPageProxy->didCommitLayerTree(layerTreeTransaction);
+#endif
 }
 
 } // namespace WebKit

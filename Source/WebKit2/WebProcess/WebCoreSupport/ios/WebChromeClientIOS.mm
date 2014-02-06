@@ -53,7 +53,7 @@ void WebChromeClient::elementDidBlur(const WebCore::Node* node)
 
 void WebChromeClient::didReceiveMobileDocType()
 {
-    m_page->send(Messages::WebPageProxy::MainDocumentDidReceiveMobileDocType());
+    // FIXME: update the ViewportConfiguration accordingly.
 }
 
 void WebChromeClient::setNeedsScrollNotifications(WebCore::Frame*, bool)

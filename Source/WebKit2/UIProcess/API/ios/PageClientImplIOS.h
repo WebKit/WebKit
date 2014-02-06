@@ -62,7 +62,6 @@ private:
     virtual void toolTipChanged(const String&, const String&) override;
     virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, WebSecurityOrigin&, GeolocationPermissionRequestProxy&) override;
     virtual void didCommitLoadForMainFrame() override;
-    virtual void didChangeContentSize(const WebCore::IntSize&) override;
     virtual void setCursor(const WebCore::Cursor&) override;
     virtual void setCursorHiddenUntilMouseMoves(bool) override;
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
@@ -101,11 +100,9 @@ private:
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
     virtual void clearCustomSwipeViews() override;
 
-    virtual void mainDocumentDidReceiveMobileDocType() override;
-
     virtual void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius) override;
 
-    void didChangeViewportArguments(const WebCore::ViewportArguments& viewportArguments) override;
+    virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
 
     virtual void startAssistingNode(const WebCore::IntRect&, bool hasNextFocusable, bool hasPreviousFocusable) override;
     virtual void stopAssistingNode() override;

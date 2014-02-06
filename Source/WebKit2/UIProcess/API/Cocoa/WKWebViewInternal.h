@@ -32,11 +32,10 @@
 #if PLATFORM(IOS)
 #import "WKContentViewInternal.h"
 #import <UIKit/UIScrollView_Private.h>
-#import <UIKit/_UIWebViewportHandler.h>
 #endif
 
 #if PLATFORM(IOS)
-#define WK_WEB_VIEW_PROTOCOLS <UIScrollViewDelegate, WKContentViewDelegate, _UIWebViewportHandlerDelegate>
+#define WK_WEB_VIEW_PROTOCOLS <UIScrollViewDelegate, WKContentViewDelegate>
 #endif
 
 #if !defined(WK_WEB_VIEW_PROTOCOLS)

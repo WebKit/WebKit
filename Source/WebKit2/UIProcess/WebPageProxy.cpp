@@ -2874,7 +2874,7 @@ void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
 }
 #endif // PLATFORM(EFL) || PLATFORM(GTK)
 
-#if PLATFORM(EFL) || PLATFORM(IOS)
+#if PLATFORM(EFL)
 void WebPageProxy::didChangeContentSize(const IntSize& size)
 {
     m_pageClient.didChangeContentSize(size);

@@ -1,5 +1,60 @@
 2014-02-05  Benjamin Poulain  <benjamin@webkit.org>
 
+        [iOS] Synchronize the WKContentView and UIScrollView updates with the tiles being commited
+        https://bugs.webkit.org/show_bug.cgi?id=127886
+
+        Reviewed by Simon Fraser.
+
+        The updates of the views on the UIProcess side was completely disconnected
+        from the tiles updates from the DrawingArea. There is a non-negligible time
+        between the size/scale update and the new tiles coming, which causes
+        visual glitches.
+
+        There are three main cases where the tiles and content would be out of sync
+        with the UIViews:
+        -When loading a new page with different content width of a different viewport.
+        -When a page changes its viewport.
+        -When the viewport-constrainted viewport size changes.
+
+        To fix the issue, WKView is modified to maintain the old state of WKContentView
+        and UIScrollView until the new tiles are available.
+
+        Geometry/scale update are split in two phases:
+        1) A source (the page or the user) changes parameters of the geometry. The WebProcess updates
+           its layout accordingly.
+           At this point, the UIViews are unchanged and are left with the old parameters.
+        2) Eventually, new tiles come and commitLayerTree() is called on the drawing area proxy.
+           At that point, WKContentView and its UIScrollView are updated to match the committed
+           size and scale for the page.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ViewportConfiguration.cpp: Added.
+        (WebCore::constraintsAreAllRelative):
+        (WebCore::ViewportConfiguration::ViewportConfiguration):
+        (WebCore::ViewportConfiguration::setDefaultConfiguration):
+        (WebCore::ViewportConfiguration::setContentsSize):
+        (WebCore::ViewportConfiguration::setMinimumLayoutSize):
+        (WebCore::ViewportConfiguration::setViewportArguments):
+        (WebCore::ViewportConfiguration::layoutSize):
+        (WebCore::ViewportConfiguration::initialScale):
+        (WebCore::ViewportConfiguration::minimumScale):
+        (WebCore::ViewportConfiguration::maximumScale):
+        (WebCore::ViewportConfiguration::allowsUserScaling):
+        (WebCore::viewportArgumentValueIsValid):
+        (WebCore::applyViewportArgument):
+        (WebCore::ViewportConfiguration::updateConfiguration):
+        (WebCore::ViewportConfiguration::layoutWidth):
+        (WebCore::ViewportConfiguration::layoutHeight):
+        * page/ViewportConfiguration.h: Added.
+        (WebCore::ViewportConfigurationConfiguration::ViewportConfigurationConfiguration):
+        (WebCore::ViewportConfiguration::defaultConfiguration):
+        (WebCore::ViewportConfiguration::contentsSize):
+        (WebCore::ViewportConfiguration::minimumLayoutSize):
+        (WebCore::ViewportConfiguration::viewportArguments):
+
+2014-02-05  Benjamin Poulain  <benjamin@webkit.org>
+
         SelectorCodeGenerator::generateElementHasTagName should match the local name before the namespace
         https://bugs.webkit.org/show_bug.cgi?id=128167
 

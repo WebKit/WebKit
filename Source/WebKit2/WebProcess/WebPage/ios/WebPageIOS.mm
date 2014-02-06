@@ -79,6 +79,27 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
     return false;
 }
 
+void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArguments)
+{
+    m_viewportConfiguration.setViewportArguments(viewportArguments);
+    viewportConfigurationChanged();
+}
+
+double WebPage::minimumPageScaleFactor() const
+{
+    return m_viewportConfiguration.minimumScale();
+}
+
+double WebPage::maximumPageScaleFactor() const
+{
+    return m_viewportConfiguration.maximumScale();
+}
+
+bool WebPage::allowsUserScaling() const
+{
+    return m_viewportConfiguration.allowsUserScaling();
+}
+
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event, bool)
 {
     bool eventWasHandled = false;
@@ -958,6 +979,30 @@ void WebPage::elementDidBlur(WebCore::Node* node)
         send(Messages::WebPageProxy::StopAssistingNode());
         m_assistedNode = 0;
     }
+}
+
+void WebPage::setViewportConfigurationMinimumLayoutSize(const IntSize& size)
+{
+    m_viewportConfiguration.setMinimumLayoutSize(size);
+    viewportConfigurationChanged();
+}
+
+void WebPage::viewportConfigurationChanged()
+{
+    setFixedLayoutSize(m_viewportConfiguration.layoutSize());
+
+    double scale;
+    if (m_userHasChangedPageScaleFactor)
+        scale = std::max(std::min(pageScaleFactor(), m_viewportConfiguration.maximumScale()), m_viewportConfiguration.minimumScale());
+    else
+        scale = m_viewportConfiguration.initialScale();
+
+    m_page->setPageScaleFactor(scale, m_page->mainFrame().view()->scrollPosition());
+}
+
+void WebPage::willStartUserTriggeredZooming()
+{
+    m_userHasChangedPageScaleFactor = true;
 }
 
 void WebPage::didFinishScrolling(const WebCore::FloatPoint& contentOffset)

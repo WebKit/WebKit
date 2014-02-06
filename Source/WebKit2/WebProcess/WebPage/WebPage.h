@@ -58,6 +58,7 @@
 #include <WebCore/TextChecking.h>
 #include <WebCore/UserActivity.h>
 #include <WebCore/ViewState.h>
+#include <WebCore/ViewportConfiguration.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -411,6 +412,12 @@ public:
 #endif
 
 #if PLATFORM(IOS)
+    void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
+
+    double minimumPageScaleFactor() const;
+    double maximumPageScaleFactor() const;
+    bool allowsUserScaling() const;
+
     void handleTap(const WebCore::IntPoint&);
     void tapHighlightAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
 
@@ -629,6 +636,9 @@ public:
     void updateVisibilityState(bool isInitialState = false);
 
 #if PLATFORM(IOS)
+    void setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize&);
+    void viewportConfigurationChanged();
+    void willStartUserTriggeredZooming();
     void didFinishScrolling(const WebCore::FloatPoint& contentOffset);
     void didFinishZooming(float);
 #endif
@@ -1049,6 +1059,9 @@ private:
     RefPtr<WebCore::Range> m_currentWordRange;
     RefPtr<WebCore::Node> m_interactionNode;
     bool m_shouldReturnWordAtSelection;
+
+    WebCore::ViewportConfiguration m_viewportConfiguration;
+    bool m_userHasChangedPageScaleFactor;
 #endif
 
     WebInspectorClient* m_inspectorClient;

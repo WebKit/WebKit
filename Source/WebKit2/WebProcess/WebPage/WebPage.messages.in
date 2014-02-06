@@ -41,6 +41,8 @@ messages -> WebPage LegacyReceiver {
     MouseEventSyncForTesting(WebKit::WebMouseEvent event) -> (bool handled)
     WheelEventSyncForTesting(WebKit::WebWheelEvent event) -> (bool handled)
 #if PLATFORM(IOS)
+    SetViewportConfigurationMinimumLayoutSize(WebCore::IntSize size)
+
     HandleTap(WebCore::IntPoint point)
     TapHighlightAtPosition(uint64_t requestID, WebCore::FloatPoint point)
     BlurAssistedNode()
@@ -313,6 +315,7 @@ messages -> WebPage LegacyReceiver {
     SetVisibilityStatePrerender()
 
 #if PLATFORM(IOS)
+    WillStartUserTriggeredZooming();
     DidFinishScrolling(WebCore::FloatPoint contentOffset);
     DidFinishZooming(float scale);
 #endif

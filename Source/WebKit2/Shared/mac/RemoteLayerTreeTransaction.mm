@@ -348,6 +348,11 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_createdLayers;
     encoder << m_changedLayerProperties;
     encoder << m_destroyedLayerIDs;
+    encoder << m_contentsSize;
+    encoder << m_pageScaleFactor;
+    encoder << m_minimumScaleFactor;
+    encoder << m_maximumScaleFactor;
+    encoder << m_allowsUserScaling;
 }
 
 bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLayerTreeTransaction& result)
@@ -370,6 +375,21 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
         if (!layerID)
             return false;
     }
+
+    if (!decoder.decode(result.m_contentsSize))
+        return false;
+
+    if (!decoder.decode(result.m_pageScaleFactor))
+        return false;
+
+    if (!decoder.decode(result.m_minimumScaleFactor))
+        return false;
+
+    if (!decoder.decode(result.m_maximumScaleFactor))
+        return false;
+
+    if (!decoder.decode(result.m_allowsUserScaling))
+        return false;
 
     return true;
 }

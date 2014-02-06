@@ -501,9 +501,7 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
 
     m_page->send(Messages::WebPageProxy::DidChangeContentSize(size));
 #endif
-#if PLATFORM(IOS)
-    m_page->send(Messages::WebPageProxy::DidChangeContentSize(size));
-#endif
+
 
     m_page->drawingArea()->mainFrameContentSizeChanged(size);
 
@@ -849,10 +847,9 @@ void WebChromeClient::exitFullScreenForElement(WebCore::Element* element)
 
 void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& viewportArguments) const
 {
-#if PLATFORM(IOS)
-    m_page->send(Messages::WebPageProxy::DidChangeViewportArguments(viewportArguments));
-#else
     UNUSED_PARAM(viewportArguments);
+#if PLATFORM(IOS)
+    m_page->viewportPropertiesDidChange(viewportArguments);
 #endif
 #if USE(TILED_BACKING_STORE)
     if (!m_page->useFixedLayout())

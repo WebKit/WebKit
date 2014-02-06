@@ -155,11 +155,31 @@ public:
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, LayerProperties> changedLayers() const { return m_changedLayerProperties; }
     Vector<WebCore::GraphicsLayer::PlatformLayerID> destroyedLayers() const { return m_destroyedLayerIDs; }
 
+    WebCore::IntSize contentsSize() const { return m_contentsSize; }
+    void setContentsSize(const WebCore::IntSize& size) { m_contentsSize = size; };
+
+    double pageScaleFactor() const { return m_pageScaleFactor; }
+    void setPageScaleFactor(double pageScaleFactor) { m_pageScaleFactor = pageScaleFactor; }
+
+    double minimumScaleFactor() const { return m_minimumScaleFactor; }
+    void setMinimumScaleFactor(double scale) { m_minimumScaleFactor = scale; }
+
+    double maximumScaleFactor() const { return m_maximumScaleFactor; }
+    void setMaximumScaleFactor(double scale) { m_maximumScaleFactor = scale; }
+
+    bool allowsUserScaling() const { return m_allowsUserScaling; }
+    void setAllowsUserScaling(bool allowsUserScaling) { m_allowsUserScaling = allowsUserScaling; }
+
 private:
     WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, LayerProperties> m_changedLayerProperties;
     Vector<LayerCreationProperties> m_createdLayers;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayerIDs;
+    WebCore::IntSize m_contentsSize;
+    double m_pageScaleFactor;
+    double m_minimumScaleFactor;
+    double m_maximumScaleFactor;
+    bool m_allowsUserScaling;
 };
 
 } // namespace WebKit

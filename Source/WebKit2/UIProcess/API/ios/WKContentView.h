@@ -39,13 +39,14 @@ typedef NS_ENUM(unsigned, WKContentType)
     Image
 };
 
+namespace WebKit {
+class RemoteLayerTreeTransaction;
+}
+
 @protocol WKContentViewDelegate <NSObject>
 @optional
-- (void)contentView:(WKContentView *)contentView contentsSizeDidChange:(CGSize)newSize;
 - (void)contentViewDidCommitLoadForMainFrame:(WKContentView *)contentView;
-- (void)contentViewDidReceiveMobileDocType:(WKContentView *)contentView;
-- (void)contentView:(WKContentView *)contentView didChangeViewportArgumentsSize:(CGSize)newSize initialScale:(float)initialScale minimumScale:(float)minimumScale maximumScale:(float)maximumScale allowsUserScaling:(float)allowsUserScaling;
-
+- (void)contentView:(WKContentView *)contentView didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
 @end
 
 WK_API_CLASS
@@ -66,10 +67,12 @@ WK_API_CLASS
 
 - (void)setMinimumSize:(CGSize)size;
 - (void)setViewportSize:(CGSize)size;
+- (void)setMinimumLayoutSize:(CGSize)size;
 
 - (void)didFinishScrollTo:(CGPoint)contentOffset;
 - (void)didScrollTo:(CGPoint)contentOffset;
 - (void)didZoomToScale:(CGFloat)scale;
 - (void)willStartZoomOrScroll;
+- (void)willStartUserTriggeredZoom;
 
 @end

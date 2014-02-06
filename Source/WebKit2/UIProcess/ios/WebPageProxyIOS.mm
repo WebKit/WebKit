@@ -229,6 +229,16 @@ void WebPageProxy::autocorrectionContextCallback(const String& beforeText, const
     callback->performCallbackWithReturnValue(beforeText, markedText, selectedText, afterText, location, length);
 }
 
+void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize& size)
+{
+    m_process->send(Messages::WebPage::SetViewportConfigurationMinimumLayoutSize(size), m_pageID);
+}
+
+void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
+{
+    m_pageClient.didCommitLayerTree(layerTreeTransaction);
+}
+
 void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::TextGranularity granularity, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback> callback)
 {
     if (!isValid()) {
@@ -417,6 +427,11 @@ bool WebPageProxy::acceptsFirstMouse(int, const WebKit::WebMouseEvent&)
     return false;
 }
 
+void WebPageProxy::willStartUserTriggeredZooming()
+{
+    process().send(Messages::WebPage::WillStartUserTriggeredZooming(), m_pageID);
+}
+
 void WebPageProxy::didFinishScrolling(const WebCore::FloatPoint& contentOffset)
 {
     process().send(Messages::WebPage::DidFinishScrolling(contentOffset), m_pageID);
@@ -441,19 +456,9 @@ void WebPageProxy::blurAssistedNode()
     process().send(Messages::WebPage::BlurAssistedNode(), m_pageID);
 }
 
-void WebPageProxy::mainDocumentDidReceiveMobileDocType()
-{
-    m_pageClient.mainDocumentDidReceiveMobileDocType();
-}
-
 void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius)
 {
     m_pageClient.didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
-}
-
-void WebPageProxy::didChangeViewportArguments(const WebCore::ViewportArguments& viewportArguments)
-{
-    m_pageClient.didChangeViewportArguments(viewportArguments);
 }
 
 void WebPageProxy::startAssistingNode(const WebCore::IntRect& scrollRect, bool hasNextFocusable, bool hasPreviousFocusable)

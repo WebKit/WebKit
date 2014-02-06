@@ -147,11 +147,6 @@ void PageClientImpl::didCommitLoadForMainFrame()
     [m_view _didCommitLoadForMainFrame];
 }
 
-void PageClientImpl::didChangeContentSize(const IntSize& contentsSize)
-{
-    [m_view _didChangeContentSize:contentsSize];
-}
-
 void PageClientImpl::setCursor(const Cursor&)
 {
     notImplemented();
@@ -344,19 +339,14 @@ void PageClientImpl::clearCustomSwipeViews()
     notImplemented();
 }
 
-void PageClientImpl::mainDocumentDidReceiveMobileDocType()
-{
-    [m_view _didReceiveMobileDocTypeForMainFrame];
-}
-
 void PageClientImpl::didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius)
 {
     [m_view _didGetTapHighlightForRequest:requestID color:color quads:highlightedQuads topLeftRadius:topLeftRadius topRightRadius:topRightRadius bottomLeftRadius:bottomLeftRadius bottomRightRadius:bottomRightRadius];
 }
 
-void PageClientImpl::didChangeViewportArguments(const WebCore::ViewportArguments& viewportArguments)
+void PageClientImpl::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction)
 {
-    [m_view _didChangeViewportArguments:viewportArguments];
+    [m_view _didCommitLayerTree:layerTreeTransaction];
 }
 
 void PageClientImpl::startAssistingNode(const WebCore::IntRect&, bool, bool)

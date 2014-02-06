@@ -1,3 +1,73 @@
+2014-02-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS] Synchronize the WKContentView and UIScrollView updates with the tiles being commited
+        https://bugs.webkit.org/show_bug.cgi?id=127886
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::mainFrameContentsSize):
+        (WebKit::RemoteLayerTreeTransaction::setMainFrameContentsSize):
+        (WebKit::RemoteLayerTreeTransaction::pageScaleFactor):
+        (WebKit::RemoteLayerTreeTransaction::setPageScaleFactor):
+        (WebKit::RemoteLayerTreeTransaction::minimumScaleFactor):
+        (WebKit::RemoteLayerTreeTransaction::setMinimumScaleFactor):
+        (WebKit::RemoteLayerTreeTransaction::maximumScaleFactor):
+        (WebKit::RemoteLayerTreeTransaction::setMaximumScaleFactor):
+        (WebKit::RemoteLayerTreeTransaction::allowsUserScaling):
+        (WebKit::RemoteLayerTreeTransaction::setAllowsUserScaling):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didCommitLayerTree):
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView setMinimumLayoutSize:]):
+        (-[WKContentView willStartUserTriggeredZoom]):
+        (-[WKContentView _didCommitLayerTree:WebKit::]):
+        * UIProcess/API/ios/WKContentViewInternal.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView contentViewDidCommitLoadForMainFrame:]):
+        (-[WKView contentView:didCommitLayerTree:WebKit::]):
+        (-[WKView scrollViewWillBeginZooming:withView:]):
+        (-[WKView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        (-[WKView _frameOrBoundsChanged]):
+        (-[WKView minimumLayoutSizeOverride]):
+        (-[WKView setMinimumLayoutSizeOverride:]):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setVirtualViewportMinimumLayoutSize):
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        (WebKit::WebPageProxy::willStartUserTriggeredZooming):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        (WebKit::WebChromeClient::dispatchViewportPropertiesDidChange):
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::didReceiveMobileDocType):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::mainFrameDidLayout):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportPropertiesDidChange):
+        (WebKit::WebPage::minimumPageScaleFactor):
+        (WebKit::WebPage::maximumPageScaleFactor):
+        (WebKit::WebPage::allowsUserScaling):
+        (WebKit::WebPage::setVirtualViewportMinimumLayoutSize):
+        (WebKit::WebPage::virtualViewportChanged):
+        (WebKit::WebPage::willStartUserTriggeredZooming):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
 2014-02-05  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Add the minimumLayoutSizeOverride SPI to WKWebView

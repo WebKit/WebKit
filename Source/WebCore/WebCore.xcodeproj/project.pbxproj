@@ -983,6 +983,8 @@
 		26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */; };
 		26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */; };
 		26F40D4A14904A6300CA67C4 /* EventLoopIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26F40D4914904A6300CA67C4 /* EventLoopIOS.mm */; };
+		26F9A83818A046AC00AEB88A /* ViewportConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */; };
+		26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26FAE4CC1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26FAE4C81852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp */; };
 		26FAE4CD1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 26FAE4C91852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h */; };
 		26FAE4CE1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26FAE4CA1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp */; };
@@ -7769,6 +7771,8 @@
 		26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSystemIOS.mm; path = ios/FileSystemIOS.mm; sourceTree = "<group>"; };
 		26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecASCIIFastPath.h; sourceTree = "<group>"; };
 		26F40D4914904A6300CA67C4 /* EventLoopIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EventLoopIOS.mm; path = ios/EventLoopIOS.mm; sourceTree = "<group>"; };
+		26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportConfiguration.cpp; sourceTree = "<group>"; };
+		26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportConfiguration.h; sourceTree = "<group>"; };
 		26FAE4C81852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandleCFURLConnectionDelegate.cpp; sourceTree = "<group>"; };
 		26FAE4C91852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandleCFURLConnectionDelegate.h; sourceTree = "<group>"; };
 		26FAE4CA1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SynchronousResourceHandleCFURLConnectionDelegate.cpp; sourceTree = "<group>"; };
@@ -16199,6 +16203,8 @@
 				BC8BF1591058141800A40A07 /* UserStyleSheetTypes.h */,
 				F513A3E915FF4841001526DB /* ValidationMessageClient.h */,
 				8678D0BA1878E810003ABDE6 /* ViewState.h */,
+				26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */,
+				26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */,
 				1ABA80051897355500DCE9D6 /* VisitedLinkProvider.cpp */,
 				1ABA7FFF1897341200DCE9D6 /* VisitedLinkProvider.h */,
 				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
@@ -24374,6 +24380,7 @@
 				B2FA3D790AB75A6F000E5AC4 /* JSSVGFEFloodElement.h in Headers */,
 				B2FA3D7B0AB75A6F000E5AC4 /* JSSVGFEFuncAElement.h in Headers */,
 				B2FA3D7D0AB75A6F000E5AC4 /* JSSVGFEFuncBElement.h in Headers */,
+				26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */,
 				B2FA3D7F0AB75A6F000E5AC4 /* JSSVGFEFuncGElement.h in Headers */,
 				B2FA3D810AB75A6F000E5AC4 /* JSSVGFEFuncRElement.h in Headers */,
 				B2FA3D830AB75A6F000E5AC4 /* JSSVGFEGaussianBlurElement.h in Headers */,
@@ -26928,6 +26935,7 @@
 				148AFDA60AF58360008CC700 /* ExceptionHandlers.mm in Sources */,
 				A024575116CEAA27000E5671 /* EXTDrawBuffers.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,
+				26F9A83818A046AC00AEB88A /* ViewportConfiguration.cpp in Sources */,
 				44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */,
 				7728694E14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp in Sources */,
 				97C740141603F7A10011FF2D /* FeatureObserver.cpp in Sources */,

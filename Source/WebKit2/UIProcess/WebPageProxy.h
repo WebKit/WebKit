@@ -139,6 +139,7 @@ class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class PageClient;
+class RemoteLayerTreeTransaction;
 class RemoteScrollingCoordinatorProxy;
 class StringPairVector;
 class WebBackForwardList;
@@ -438,6 +439,8 @@ public:
     void executeEditCommand(const String& commandName);
     void validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback>);
 #if PLATFORM(IOS)
+    void setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize&);
+    void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
     void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback>);
     void updateSelectionWithTouches(const WebCore::IntPoint, uint32_t touches, bool baseIsStart, PassRefPtr<TouchesCallback>);
     void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback>);
@@ -821,6 +824,7 @@ public:
     bool suppressVisibilityUpdates() { return m_suppressVisibilityUpdates; }
 
 #if PLATFORM(IOS)
+    void willStartUserTriggeredZooming();
     void didFinishScrolling(const WebCore::FloatPoint& contentOffset);
     void didFinishZooming(float newScale);
 
@@ -993,7 +997,7 @@ private:
 #if USE(COORDINATED_GRAPHICS)
     void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
 #endif
-#if PLATFORM(EFL) || PLATFORM(IOS)
+#if PLATFORM(EFL)
     void didChangeContentSize(const WebCore::IntSize&);
 #endif
 
@@ -1135,11 +1139,7 @@ private:
 #endif // PLATFORM(MAC) && !PLATFORM(IOS)
 
 #if PLATFORM(IOS)
-    void mainDocumentDidReceiveMobileDocType();
-
     void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& geometries, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius);
-
-    void didChangeViewportArguments(const WebCore::ViewportArguments& viewportArguments);
 
     void startAssistingNode(const WebCore::IntRect&, bool hasNextFocusable, bool hasPreviousFocusable);
     void stopAssistingNode();

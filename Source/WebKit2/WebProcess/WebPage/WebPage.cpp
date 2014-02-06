@@ -281,6 +281,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 #if PLATFORM(IOS)
     , m_shouldReturnWordAtSelection(false)
+    , m_userHasChangedPageScaleFactor(false)
 #endif
     , m_inspectorClient(0)
     , m_backgroundColor(Color::white)
@@ -3075,6 +3076,12 @@ void WebPage::mainFrameDidLayout()
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     m_viewGestureGeometryCollector.mainFrameDidLayout();
 #endif
+#if PLATFORM(IOS)
+    if (FrameView* frameView = mainFrameView()) {
+        m_viewportConfiguration.setContentsSize(frameView->contentsSize());
+        viewportConfigurationChanged();
+    }
+#endif
 }
 
 void WebPage::addPluginView(PluginView* pluginView)
@@ -3977,6 +3984,22 @@ void WebPage::didCommitLoad(WebFrame* frame)
         if (page && page->pageScaleFactor() != 1)
             scalePage(1, IntPoint());
     }
+#if PLATFORM(IOS)
+    m_userHasChangedPageScaleFactor = false;
+
+    // FIXME: Setup a real configuration.
+    ViewportConfiguration::Parameters defaultConfiguration;
+    defaultConfiguration.width = 980;
+    defaultConfiguration.widthIsSet = true;
+    defaultConfiguration.allowsUserScaling = true;
+    defaultConfiguration.minimumScale = 0.25;
+    defaultConfiguration.maximumScale = 5;
+
+    m_viewportConfiguration.setDefaultConfiguration(defaultConfiguration);
+    m_viewportConfiguration.setViewportArguments(ViewportArguments());
+    m_viewportConfiguration.setContentsSize(m_viewportConfiguration.minimumLayoutSize());
+    viewportConfigurationChanged();
+#endif
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     resetPrimarySnapshottedPlugIn();

@@ -32,14 +32,10 @@
 #import "WKScrollView.h"
 #import <UIKit/UIScreen.h>
 #import <UIKit/UIScrollView_Private.h>
-#import <UIKit/_UIWebViewportHandler.h>
+#import <WebKit2/RemoteLayerTreeTransaction.h>
 #import <wtf/RetainPtr.h>
 
-static const float minWebViewScale = 0.25;
-static const float maxWebViewScale = 5;
-static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebViewportStandardViewportWidth, UIWebViewportGrowsAndShrinksToFitHeight }, UIWebViewportScaleForScalesToFit, minWebViewScale, maxWebViewScale, true };
-
-@interface WKView () <UIScrollViewDelegate, WKContentViewDelegate, _UIWebViewportHandlerDelegate>
+@interface WKView () <UIScrollViewDelegate, WKContentViewDelegate>
 - (void)_setDocumentScale:(CGFloat)newScale;
 @end
 
@@ -47,9 +43,9 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
     RetainPtr<WKScrollView> _scrollView;
     RetainPtr<WKContentView> _contentView;
 
-    BOOL _userHasChangedPageScale;
-    RetainPtr<_UIWebViewportHandler> _viewportHandler;
+    BOOL _isWaitingForNewLayerTreeAfterDidCommitLoad;
     BOOL _hasStaticMinimumLayoutSize;
+    CGSize _minimumLayoutSizeOverride;
 }
 
 - (id)initWithCoder:(NSCoder *)coder
@@ -103,81 +99,26 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 
 #pragma mark WKContentViewDelegate
 
-- (void)contentView:(WKContentView *)contentView contentsSizeDidChange:(CGSize)newSize
-{
-    CGFloat zoomScale = [_scrollView zoomScale];
-    CGSize contentsSizeInScrollViewCoordinates = CGSizeMake(newSize.width * zoomScale, newSize.height * zoomScale);
-    [_scrollView setContentSize:contentsSizeInScrollViewCoordinates];
-
-    [_viewportHandler update:^{
-         [_viewportHandler setDocumentBounds:{CGPointZero, newSize}];
-    }];
-}
-
 - (void)contentViewDidCommitLoadForMainFrame:(WKContentView *)contentView
 {
-    _userHasChangedPageScale = NO;
-
-    WKContentType contentType = [_contentView contentType];
-    [_viewportHandler update:^{
-        [_viewportHandler clearWebKitViewportConfigurationFlags];
-        struct _UIWebViewportConfiguration configuration = standardViewportConfiguration;
-
-        if (contentType == PlainText) {
-            CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
-            configuration.size.width = screenWidth;
-        } else if (contentType == WKContentType::Image)
-            configuration.minimumScale = 0.01;
-
-        [_viewportHandler resetViewportConfiguration:&configuration];
-    }];
+    _isWaitingForNewLayerTreeAfterDidCommitLoad = YES;
 }
 
-- (void)contentViewDidReceiveMobileDocType:(WKContentView *)contentView
+- (void)contentView:(WKContentView *)contentView didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
-    [_viewportHandler update:^{
-        struct _UIWebViewportConfiguration configuration = standardViewportConfiguration;
-        configuration.minimumScale = 1;
-        configuration.size = CGSizeMake(320.0, UIWebViewportGrowsAndShrinksToFitHeight);
-        [_viewportHandler resetViewportConfiguration:&configuration];
-    }];
-}
+    [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
+    [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
+    [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];
+    if (![_scrollView isZooming] && ![_scrollView isZoomBouncing])
+        [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
 
-- (void)contentView:(WKContentView *)contentView didChangeViewportArgumentsSize:(CGSize)newSize initialScale:(float)initialScale minimumScale:(float)minimumScale maximumScale:(float)maximumScale allowsUserScaling:(float)allowsUserScaling
-{
-    [_viewportHandler update:^{
-        [_viewportHandler applyWebKitViewportArgumentsSize:newSize
-                                              initialScale:initialScale
-                                              minimumScale:minimumScale
-                                              maximumScale:maximumScale
-                                         allowsUserScaling:allowsUserScaling];
-    }];
-}
-
-#pragma mark - _UIWebViewportHandlerDelegate
-
-- (void)viewportHandlerDidChangeScales:(_UIWebViewportHandler *)viewportHandler
-{
-    ASSERT(viewportHandler == _viewportHandler);
-    [_scrollView setMinimumZoomScale:viewportHandler.minimumScale];
-    [_scrollView setMaximumZoomScale:viewportHandler.maximumScale];
-    [_scrollView setZoomEnabled:viewportHandler.allowsUserScaling];
-
-    if (!_userHasChangedPageScale)
-        [self _setDocumentScale:viewportHandler.initialScale];
-    else {
-        CGFloat currentScale = [_scrollView zoomScale];
-        CGFloat validScale = std::max(std::min(currentScale, static_cast<CGFloat>(viewportHandler.maximumScale)), static_cast<CGFloat>(viewportHandler.minimumScale));
-        [self _setDocumentScale:validScale];
+    if (_isWaitingForNewLayerTreeAfterDidCommitLoad) {
+        UIEdgeInsets inset = [_scrollView contentInset];
+        [_scrollView setContentOffset:CGPointMake(-inset.left, -inset.top)];
+        _isWaitingForNewLayerTreeAfterDidCommitLoad = NO;
     }
-}
 
-- (void)viewportHandler:(_UIWebViewportHandler *)viewportHandler didChangeViewportSize:(CGSize)newSize
-{
-    ASSERT(viewportHandler == _viewportHandler);
-    [_contentView setViewportSize:newSize];
 }
-
 
 #pragma mark - UIScrollViewDelegate
 
@@ -190,7 +131,7 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
     if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan)
-        _userHasChangedPageScale = YES;
+        [_contentView willStartUserTriggeredZoom];
     [_contentView willStartZoomOrScroll];
 }
 
@@ -255,20 +196,14 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
     [_contentView setFrame:bounds];
     [_scrollView addSubview:_contentView.get()];
 
-    _viewportHandler = adoptNS([[_UIWebViewportHandler alloc] init]);
-    [_viewportHandler setDelegate:self];
-
     [self _frameOrBoundsChanged];
 }
 
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = [self bounds];
-    if (!_hasStaticMinimumLayoutSize) {
-        [_viewportHandler update:^{
-            [_viewportHandler setAvailableViewSize:bounds.size];
-        }];
-    }
+    if (!_hasStaticMinimumLayoutSize)
+        [_contentView setMinimumLayoutSize:bounds.size];
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
 }
@@ -310,15 +245,14 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 - (CGSize)minimumLayoutSizeOverride
 {
     ASSERT(_hasStaticMinimumLayoutSize);
-    return [_viewportHandler availableViewSize];
+    return _minimumLayoutSizeOverride;
 }
 
 - (void)setMinimumLayoutSizeOverride:(CGSize)minimumLayoutSizeOverride
 {
     _hasStaticMinimumLayoutSize = YES;
-    [_viewportHandler update:^{
-        [_viewportHandler setAvailableViewSize:minimumLayoutSizeOverride];
-    }];
+    _minimumLayoutSizeOverride = minimumLayoutSizeOverride;
+    [_contentView setMinimumLayoutSize:minimumLayoutSizeOverride];
 }
 
 @end
