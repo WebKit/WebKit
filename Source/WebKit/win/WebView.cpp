@@ -5563,7 +5563,7 @@ void WebView::resetIME(Frame* targetFrame)
 void WebView::updateSelectionForIME()
 {
     Frame& targetFrame = m_page->focusController().focusedOrMainFrame();
-    if (!targetFrame.editor().cancelCompositionIfSelectionIsInvalid())
+    if (targetFrame.editor().cancelCompositionIfSelectionIsInvalid())
         resetIME(&targetFrame);
 }
 
