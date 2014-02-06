@@ -1,3 +1,10 @@
+2014-02-06  Alexey Proskuryakov  <ap@apple.com>
+
+        media/video-load-preload-metadata.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=128312
+
+        * platform/mac/TestExpectations: Marked it as such.
+
 2014-02-06  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/clear.html fails
