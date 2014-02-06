@@ -1,5 +1,18 @@
 2014-02-06  Anders Carlsson  <andersca@apple.com>
 
+        Add a remoteObjectRegistry property to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=128331
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView resizeSubviewsWithOldSize:]):
+        (-[WKWebView _remoteObjectRegistry]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+2014-02-06  Anders Carlsson  <andersca@apple.com>
+
         Add WKNavigationResponse class
         https://bugs.webkit.org/show_bug.cgi?id=128326
 

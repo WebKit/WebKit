@@ -27,7 +27,11 @@
 
 #if WK_API_ENABLED
 
+@class WKRemoteObjectRegistry;
+
 @interface WKWebView (WKPrivate)
+
+@property (nonatomic, readonly) WKRemoteObjectRegistry *_remoteObjectRegistry;
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setMinimumLayoutSizeOverride) CGSize _minimumLayoutSizeOverride;

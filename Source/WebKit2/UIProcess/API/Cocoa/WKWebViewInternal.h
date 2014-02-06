@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebView.h"
+#import "WKWebViewPrivate.h"
 
 #if WK_API_ENABLED
 

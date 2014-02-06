@@ -33,6 +33,7 @@
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKProcessClass.h"
+#import "WKRemoteObjectRegistryInternal.h"
 #import "WKWebViewConfiguration.h"
 #import "WebBackForwardList.h"
 #import "WebPageProxy.h"
@@ -50,6 +51,8 @@
 @implementation WKWebView {
     RetainPtr<WKWebViewConfiguration> _configuration;
     std::unique_ptr<WebKit::NavigationState> _navigationState;
+
+    RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
 
 #if PLATFORM(IOS)
     RetainPtr<WKScrollView> _scrollView;
@@ -109,6 +112,13 @@
     _page->setLoaderClient(_navigationState->createLoaderClient());
 
     return self;
+}
+
+- (void)dealloc
+{
+    [_remoteObjectRegistry _invalidate];
+
+    [super dealloc];
 }
 
 - (WKWebViewConfiguration *)configuration
@@ -308,7 +318,34 @@
     [_scrollView setContentOffset:contentOffset];
 }
 
-#pragma mark Private API
+#pragma mark OS X-specific methods
+
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+
+- (void)resizeSubviewsWithOldSize:(NSSize)oldSize
+{
+    [_wkView setFrame:self.bounds];
+}
+
+#endif
+
+@end
+
+@implementation WKWebView (WKPrivate)
+
+- (WKRemoteObjectRegistry *)_remoteObjectRegistry
+{
+    if (!_remoteObjectRegistry) {
+        _remoteObjectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page]0;
+        _page->process().context().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
+    }
+
+    return _remoteObjectRegistry.get();
+}
+
+#pragma mark iOS-specific methods
+
+#if PLATFORM(IOS)
 
 - (CGSize)_minimumLayoutSizeOverride
 {
@@ -324,15 +361,6 @@
 }
 
 #endif
-
-#pragma mark OS X-specific methods
-
-#if PLATFORM(MAC) && !PLATFORM(IOS)
-
-- (void)resizeSubviewsWithOldSize:(NSSize)oldSize
-{
-    [_wkView setFrame:self.bounds];
-}
 
 #endif
 
