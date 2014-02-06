@@ -1171,8 +1171,10 @@ void Page::setIsVisible(bool isVisible, bool isInitialState)
 
         unthrottleTimers();
 
+#if ENABLE(PAGE_VISIBILITY_API)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame().animation().resumeAnimations();
+#endif
 
         resumeAnimatingImages();
     }
@@ -1194,8 +1196,10 @@ void Page::setIsVisible(bool isVisible, bool isInitialState)
         if (m_pageThrottler->shouldThrottleTimers())
             throttleTimers();
 
+#if ENABLE(PAGE_VISIBILITY_API)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame().animation().suspendAnimations();
+#endif
 
         for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (FrameView* frameView = frame->view())

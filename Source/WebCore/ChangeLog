@@ -1,3 +1,13 @@
+2014-02-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(PAGE_VISIBILITY_API) build
+        https://bugs.webkit.org/show_bug.cgi?id=127907
+
+        Reviewed by Brent Fulgham.
+
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisible):
+
 2014-02-05  Oliver Hunt  <oliver@apple.com>
 
         Change custom getter signature to make the base reference an object pointer
