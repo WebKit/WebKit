@@ -1,3 +1,14 @@
+2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Convert a parameter to PassRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=128327
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addProfile):
+        * inspector/InspectorInstrumentation.h:
+
 2014-01-30  Oliver Hunt  <oliver@apple.com>
 
         Push DOM attributes into the prototype chain

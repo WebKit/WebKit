@@ -187,7 +187,7 @@ inline void InspectorInstrumentation::addStartProfilingMessageToConsole(Page* pa
 #endif
 }
 
-inline void InspectorInstrumentation::addProfile(Page* page, RefPtr<ScriptProfile> profile, PassRefPtr<ScriptCallStack> callStack)
+inline void InspectorInstrumentation::addProfile(Page* page, PassRefPtr<ScriptProfile> profile, PassRefPtr<ScriptCallStack> callStack)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))

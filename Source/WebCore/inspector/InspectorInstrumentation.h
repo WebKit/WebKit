@@ -222,7 +222,7 @@ public:
     static void didFireAnimationFrame(const InspectorInstrumentationCookie&);
 
     static void addStartProfilingMessageToConsole(Page*, const String& title, unsigned lineNumber, unsigned columnNumber, const String& sourceURL);
-    static void addProfile(Page*, RefPtr<ScriptProfile>, PassRefPtr<ScriptCallStack>);
+    static void addProfile(Page*, PassRefPtr<ScriptProfile>, PassRefPtr<ScriptCallStack>);
     static String getCurrentUserInitiatedProfileName(Page*, bool incrementProfileNumber);
     static bool profilerEnabled(Page*);
 
