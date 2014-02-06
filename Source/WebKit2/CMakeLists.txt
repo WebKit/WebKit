@@ -353,7 +353,6 @@ set(WebKit2_SOURCES
     UIProcess/WebResourceCacheManagerProxy.cpp
     UIProcess/WebTextChecker.cpp
     UIProcess/WebTextCheckerClient.cpp
-    UIProcess/WebUIClient.cpp
     UIProcess/WebVibrationProvider.cpp
     UIProcess/WebVibrationProxy.cpp
     UIProcess/WebViewportAttributes.cpp

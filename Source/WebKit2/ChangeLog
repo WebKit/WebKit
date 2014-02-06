@@ -1,3 +1,9 @@
+2014-02-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt on EFL build after r163480
+
+        * CMakeLists.txt: Removed WebUIClient.cpp from source lists.
+
 2014-02-05  Oliver Hunt  <oliver@apple.com>
 
         Change custom getter signature to make the base reference an object pointer
