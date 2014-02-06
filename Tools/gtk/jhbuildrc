@@ -15,13 +15,35 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild") )
-import jhbuildrc_common
-jhbuildrc_common.init(globals(), "gtk")
+import multiprocessing
+import sys
 
 __gtk_tools_directory = os.path.abspath(os.path.dirname(__file__))
 sys.path = [__gtk_tools_directory] + sys.path
 import common
+
+build_policy = 'updated'
+
+__moduleset_file_uri = 'file://' + os.path.join(__gtk_tools_directory, 'jhbuild.modules')
+__extra_modulesets = os.environ.get("WEBKIT_EXTRA_MODULESETS", "").split(",")
+moduleset = [ __moduleset_file_uri, ]
+if __extra_modulesets != ['']:
+    moduleset.extend(__extra_modulesets)
+
+__extra_modules = os.environ.get("WEBKIT_EXTRA_MODULES", "").split(",")
+modules = [ 'webkitgtk-testing-dependencies', ]
+if __extra_modules != ['']:
+    modules.extend(__extra_modules)
+
+if os.environ.has_key('WEBKIT_OUTPUTDIR'):
+    checkoutroot = os.path.abspath(os.path.join(os.environ['WEBKIT_OUTPUTDIR'], 'Dependencies', 'Source'))
+    prefix = os.path.abspath(os.path.join(os.environ['WEBKIT_OUTPUTDIR'], 'Dependencies', 'Root'))
+else:
+    checkoutroot = os.path.abspath(common.top_level_path('WebKitBuild','Dependencies', 'Source'))
+    prefix = os.path.abspath(common.top_level_path('WebKitBuild','Dependencies', 'Root'))
+
+nonotify = True
+notrayicon = True
 
 if 'NUMBER_OF_PROCESSORS' in os.environ:
     jobs = os.environ['NUMBER_OF_PROCESSORS']

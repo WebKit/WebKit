@@ -20,10 +20,7 @@ import glob
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild"))
-import jhbuildrc_common
-
-resources_path = jhbuildrc_common.top_level_path() + "/Source/WebInspectorUI/"
+resources_path = common.top_level_path() + "/Source/WebInspectorUI/"
 inspector_files = \
     glob.glob(resources_path + 'UserInterface/*.html') + \
     glob.glob(resources_path + 'UserInterface/*.js') + \
