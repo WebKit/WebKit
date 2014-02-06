@@ -490,7 +490,7 @@ void Heap::markRoots()
 
     m_sharedData.didStartMarking();
     SlotVisitor& visitor = m_slotVisitor;
-    visitor.setup();
+    visitor.didStartMarking();
     HeapRootVisitor heapRootVisitor(visitor);
 
 #if ENABLE(GGC)

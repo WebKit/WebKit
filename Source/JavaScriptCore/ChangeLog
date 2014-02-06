@@ -1,3 +1,50 @@
+2014-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Handling of opaque roots is wrong in EdenCollections
+        https://bugs.webkit.org/show_bug.cgi?id=128210
+
+        Reviewed by Oliver Hunt.
+
+        The set of opaque roots is always cleared during each collection. We should instead persist 
+        the set of opaque roots across EdenCollections and only clear it at the beginning of FullCollections.
+
+        Also added a couple of custom objects to the jsc shell that allow us to test this.
+
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::reset):
+        (JSC::GCThreadSharedData::didStartMarking):
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * heap/Heap.h:
+        (JSC::Heap::setShouldDoFullCollection):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::reset):
+        * heap/SlotVisitor.h:
+        * jsc.cpp:
+        (WTF::Element::Element):
+        (WTF::Element::root):
+        (WTF::Element::setRoot):
+        (WTF::Element::create):
+        (WTF::Element::createStructure):
+        (WTF::ElementHandleOwner::isReachableFromOpaqueRoots):
+        (WTF::Root::Root):
+        (WTF::Root::element):
+        (WTF::Root::setElement):
+        (WTF::Root::create):
+        (WTF::Root::createStructure):
+        (WTF::Root::visitChildren):
+        (WTF::Element::handleOwner):
+        (WTF::Element::finishCreation):
+        (GlobalObject::finishCreation):
+        (functionCreateRoot):
+        (functionCreateElement):
+        (functionGetElement):
+        (functionSetElementRoot):
+        (functionGCAndSweep):
+        (functionFullGC):
+        (functionEdenGC):
+
 2014-02-05  Anders Carlsson  <andersca@apple.com>
 
         Remove unused functions.

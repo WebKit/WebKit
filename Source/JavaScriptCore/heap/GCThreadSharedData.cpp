@@ -118,16 +118,11 @@ GCThreadSharedData::~GCThreadSharedData()
     }
 #endif
 }
-    
+
 void GCThreadSharedData::reset()
 {
     ASSERT(m_sharedMarkStack.isEmpty());
     
-#if ENABLE(PARALLEL_GC)
-    m_opaqueRoots.clear();
-#else
-    ASSERT(m_opaqueRoots.isEmpty());
-#endif
     m_weakReferenceHarvesters.removeAll();
 
     if (m_shouldHashCons) {
@@ -158,6 +153,13 @@ void GCThreadSharedData::endCurrentPhase()
 
 void GCThreadSharedData::didStartMarking()
 {
+    if (m_vm->heap.operationInProgress() == FullCollection) {
+#if ENABLE(PARALLEL_GC)
+        m_opaqueRoots.clear();
+#else
+        ASSERT(m_opaqueRoots.isEmpty());
+#endif
+}
     std::lock_guard<std::mutex> lock(m_markingMutex);
     m_parallelMarkersShouldExit = false;
     startNextPhase(Mark);

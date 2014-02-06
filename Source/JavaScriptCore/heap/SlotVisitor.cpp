@@ -36,8 +36,16 @@ SlotVisitor::~SlotVisitor()
     clearMarkStack();
 }
 
-void SlotVisitor::setup()
+void SlotVisitor::didStartMarking()
 {
+    if (heap()->operationInProgress() == FullCollection) {
+#if ENABLE(PARALLEL_GC)
+        ASSERT(m_opaqueRoots.isEmpty()); // Should have merged by now.
+#else
+        m_opaqueRoots.clear();
+#endif
+    }
+
     m_shared.m_shouldHashCons = m_shared.m_vm->haveEnoughNewStringsToHashCons();
     m_shouldHashCons = m_shared.m_shouldHashCons;
 #if ENABLE(PARALLEL_GC)
@@ -52,11 +60,6 @@ void SlotVisitor::reset()
     m_bytesCopied = 0;
     m_visitCount = 0;
     ASSERT(m_stack.isEmpty());
-#if ENABLE(PARALLEL_GC)
-    ASSERT(m_opaqueRoots.isEmpty()); // Should have merged by now.
-#else
-    m_opaqueRoots.clear();
-#endif
     if (m_shouldHashCons) {
         m_uniqueStrings.clear();
         m_shouldHashCons = false;

@@ -78,7 +78,7 @@ public:
     GCThreadSharedData& sharedData() const { return m_shared; }
     bool isEmpty() { return m_stack.isEmpty(); }
 
-    void setup();
+    void didStartMarking();
     void reset();
     void clearMarkStack();
 

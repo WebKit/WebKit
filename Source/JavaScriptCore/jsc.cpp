@@ -92,13 +92,136 @@
 using namespace JSC;
 using namespace WTF;
 
+namespace {
+
+class Element;
+class ElementHandleOwner;
+class Root;
+
+class Element : public JSNonFinalObject {
+public:
+    Element(VM& vm, Structure* structure, Root* root)
+        : Base(vm, structure)
+        , m_root(root)
+    {
+    }
+
+    typedef JSNonFinalObject Base;
+    static const bool needsDestruction = false;
+
+    Root* root() const { return m_root; }
+    void setRoot(Root* root) { m_root = root; }
+
+    static Element* create(VM& vm, JSGlobalObject* globalObject, Root* root)
+    {
+        Structure* structure = createStructure(vm, globalObject, jsNull());
+        Element* element = new (NotNull, allocateCell<Element>(vm.heap, sizeof(Element))) Element(vm, structure, root);
+        element->finishCreation(vm);
+        return element;
+    }
+
+    void finishCreation(VM&);
+
+    static ElementHandleOwner* handleOwner();
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    DECLARE_INFO;
+
+private:
+    Root* m_root;
+};
+
+class ElementHandleOwner : public WeakHandleOwner {
+public:
+    virtual bool isReachableFromOpaqueRoots(Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+    {
+        Element* element = jsCast<Element*>(handle.slot()->asCell());
+        return visitor.containsOpaqueRoot(element->root());
+    }
+};
+
+class Root : public JSDestructibleObject {
+public:
+    Root(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    Element* element()
+    {
+        return m_element.get();
+    }
+
+    void setElement(Element* element)
+    {
+        Weak<Element> newElement(element, Element::handleOwner());
+        m_element.swap(newElement);
+    }
+
+    static Root* create(VM& vm, JSGlobalObject* globalObject)
+    {
+        Structure* structure = createStructure(vm, globalObject, jsNull());
+        Root* root = new (NotNull, allocateCell<Root>(vm.heap, sizeof(Root))) Root(vm, structure);
+        root->finishCreation(vm);
+        return root;
+    }
+
+    typedef JSDestructibleObject Base;
+
+    DECLARE_INFO;
+    static const bool needsDestruction = true;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    static void visitChildren(JSCell* thisObject, SlotVisitor& visitor)
+    {
+        Base::visitChildren(thisObject, visitor);
+        visitor.addOpaqueRoot(thisObject);
+    }
+
+private:
+    Weak<Element> m_element;
+};
+
+const ClassInfo Element::s_info = { "Element", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Element) };
+const ClassInfo Root::s_info = { "Root", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Root) };
+
+ElementHandleOwner* Element::handleOwner()
+{
+    static ElementHandleOwner* owner = 0;
+    if (!owner)
+        owner = new ElementHandleOwner();
+    return owner;
+}
+
+void Element::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    m_root->setElement(this);
+}
+
+}
+
 static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer);
 
+static EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCreateElement(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionGetElement(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDebug(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDescribe(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionGC(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState*);
 #ifndef NDEBUG
 static EncodedJSValue JSC_HOST_CALL functionReleaseExecutableMemory(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState*);
@@ -219,7 +342,9 @@ protected:
         addFunction(vm, "describe", functionDescribe, 1);
         addFunction(vm, "print", functionPrint, 1);
         addFunction(vm, "quit", functionQuit, 0);
-        addFunction(vm, "gc", functionGC, 0);
+        addFunction(vm, "gc", functionGCAndSweep, 0);
+        addFunction(vm, "fullGC", functionFullGC, 0);
+        addFunction(vm, "edenGC", functionEdenGC, 0);
 #ifndef NDEBUG
         addFunction(vm, "dumpCallFrame", functionDumpCallFrame, 0);
         addFunction(vm, "releaseExecutableMemory", functionReleaseExecutableMemory, 0);
@@ -241,6 +366,10 @@ protected:
         addFunction(vm, "setSamplingFlags", functionSetSamplingFlags, 1);
         addFunction(vm, "clearSamplingFlags", functionClearSamplingFlags, 1);
 #endif
+        addConstructableFunction(vm, "Root", functionCreateRoot, 0);
+        addConstructableFunction(vm, "Element", functionCreateElement, 1);
+        addFunction(vm, "getElement", functionGetElement, 1);
+        addFunction(vm, "setElementRoot", functionSetElementRoot, 2);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -357,10 +486,57 @@ EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL functionGC(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    return JSValue::encode(Root::create(exec->vm(), exec->lexicalGlobalObject()));
+}
+
+EncodedJSValue JSC_HOST_CALL functionCreateElement(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    JSValue arg = exec->argument(0);
+    return JSValue::encode(Element::create(exec->vm(), exec->lexicalGlobalObject(), arg.isNull() ? nullptr : jsCast<Root*>(exec->argument(0))));
+}
+
+EncodedJSValue JSC_HOST_CALL functionGetElement(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    Element* result = jsCast<Root*>(exec->argument(0).asCell())->element();
+    return JSValue::encode(result ? result : jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    Element* element = jsCast<Element*>(exec->argument(0));
+    Root* root = jsCast<Root*>(exec->argument(1));
+    element->setRoot(root);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState* exec)
 {
     JSLockHolder lock(exec);
     exec->heap()->collectAllGarbage();
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    Heap* heap = exec->heap();
+    heap->setShouldDoFullCollection(true);
+    exec->heap()->collect();
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    Heap* heap = exec->heap();
+    heap->setShouldDoFullCollection(false);
+    heap->collect();
     return JSValue::encode(jsUndefined());
 }
 
