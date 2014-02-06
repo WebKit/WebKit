@@ -258,7 +258,8 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
             return;
         }
 
-        auto preflightResult = std::make_unique<CrossOriginPreflightResultCacheItem>(static_cast<StoredCredentials>(m_options.allowCredentials));
+        StoredCredentials allowCredentials = m_options.allowCredentials;
+        auto preflightResult = std::make_unique<CrossOriginPreflightResultCacheItem>(allowCredentials);
         if (!preflightResult->parse(response, accessControlErrorDescription)
             || !preflightResult->allowsCrossOriginMethod(m_actualRequest->httpMethod(), accessControlErrorDescription)
             || !preflightResult->allowsCrossOriginHeaders(m_actualRequest->httpHeaderFields(), accessControlErrorDescription)) {

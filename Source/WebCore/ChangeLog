@@ -1,3 +1,10 @@
+2014-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Windows build.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+
 2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] getComputedStyle() is wrong for grid-definition-{columns|rows}
