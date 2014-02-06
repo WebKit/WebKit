@@ -1,3 +1,20 @@
+2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove the WTF_COMPILER_SUPPORTS_CXX_GENERALIZED_INITIALIZERS macro
+        https://bugs.webkit.org/show_bug.cgi?id=128267
+
+        Reviewed by Andreas Kling.
+
+        Remove the WTF_COMPILER_SUPPORTS_CXX_GENERALIZED_INITIALIZERS macro that was manually defined for compilers
+        that support the C++11 initializer lists. The feature is well supported in Clang, MSVC and also GCC. It
+        was actually already used unguarded in HashSet.
+
+        * wtf/Compiler.h:
+        * wtf/HashMap.h:
+        (WTF::HashMap::HashMap):
+        * wtf/Vector.h:
+        (WTF::Vector::Vector):
+
 2014-02-05  Andreas Kling  <akling@apple.com>
 
         Remove ENABLE(DIRECTORY_UPLOAD).

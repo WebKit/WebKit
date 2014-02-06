@@ -83,7 +83,6 @@ TEST(WTF_Vector, AppendLast)
         vector.append(const_cast<const unsigned&>(vector.last()));
 }
 
-#if COMPILER_SUPPORTS(CXX_GENERALIZED_INITIALIZERS)
 TEST(WTF_Vector, InitializerList)
 {
     Vector<int> vector = { 1, 2, 3, 4 };
@@ -94,7 +93,6 @@ TEST(WTF_Vector, InitializerList)
     EXPECT_EQ(3, vector[2]);
     EXPECT_EQ(4, vector[3]);
 }
-#endif
 
 TEST(WTF_Vector, Reverse)
 {

@@ -21,6 +21,7 @@
 #ifndef WTF_HashMap_h
 #define WTF_HashMap_h
 
+#include <initializer_list>
 #include <wtf/HashTable.h>
 #include <wtf/IteratorRange.h>
 
@@ -72,13 +73,11 @@ public:
     {
     }
 
-#if COMPILER_SUPPORTS(CXX_GENERALIZED_INITIALIZERS)
     HashMap(std::initializer_list<KeyValuePairType> initializerList)
     {
         for (const auto& keyValuePair : initializerList)
             add(keyValuePair.key, keyValuePair.value);
     }
-#endif
 
     void swap(HashMap&);
 

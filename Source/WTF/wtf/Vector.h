@@ -21,6 +21,7 @@
 #ifndef WTF_Vector_h
 #define WTF_Vector_h
 
+#include <initializer_list>
 #include <limits>
 #include <string.h>
 #include <type_traits>
@@ -548,14 +549,12 @@ public:
             TypeOperations::uninitializedFill(begin(), end(), val);
     }
 
-#if COMPILER_SUPPORTS(CXX_GENERALIZED_INITIALIZERS)
     Vector(std::initializer_list<T> initializerList)
     {
         reserveInitialCapacity(initializerList.size());
         for (const auto& element : initializerList)
             uncheckedAppend(element);
     }
-#endif
 
     ~Vector()
     {

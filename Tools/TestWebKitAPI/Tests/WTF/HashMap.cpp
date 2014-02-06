@@ -130,7 +130,6 @@ TEST(WTF_HashMap, MoveOnlyKeys)
     ASSERT_TRUE(moveOnlyKeys.isEmpty());
 }
 
-#if COMPILER_SUPPORTS(CXX_GENERALIZED_INITIALIZERS)
 TEST(WTF_HashMap, InitializerList)
 {
     HashMap<unsigned, std::string> map = {
@@ -148,6 +147,5 @@ TEST(WTF_HashMap, InitializerList)
     EXPECT_EQ("four", map.get(4));
     EXPECT_EQ(std::string(), map.get(5));
 }
-#endif
 
 } // namespace TestWebKitAPI
