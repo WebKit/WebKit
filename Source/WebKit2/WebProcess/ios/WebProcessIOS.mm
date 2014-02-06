@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebProcess.h"
 
+#import "WebProcessCreationParameters.h"
 #import <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -52,9 +53,9 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear)
     notImplemented();
 }
 
-void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters&, IPC::MessageDecoder&)
+void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, IPC::MessageDecoder&)
 {
-    notImplemented();
+    m_presenterApplicationPid = parameters.presenterApplicationPid;
 }
 
 void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
