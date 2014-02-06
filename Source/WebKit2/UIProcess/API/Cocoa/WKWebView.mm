@@ -363,6 +363,22 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
     [_scrollView setContentOffset:contentOffset];
 }
 
+#pragma mark Private API
+
+- (CGSize)_minimumLayoutSizeOverride
+{
+    ASSERT(_hasStaticMinimumLayoutSize);
+    return [_viewportHandler availableViewSize];
+}
+
+- (void)_setMinimumLayoutSizeOverride:(CGSize)minimumLayoutSizeOverride
+{
+    _hasStaticMinimumLayoutSize = YES;
+    [_viewportHandler update:^{
+        [_viewportHandler setAvailableViewSize:minimumLayoutSizeOverride];
+    }];
+}
+
 #endif
 
 #pragma mark OS X-specific methods
