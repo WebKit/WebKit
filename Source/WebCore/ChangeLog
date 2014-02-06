@@ -1,3 +1,18 @@
+2014-02-06  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Simplify BasicShapeInset creation
+        https://bugs.webkit.org/show_bug.cgi?id=128314
+
+        Reviewed by David Hyatt.
+
+        Introduce convertToLengthSize helper function in order to simplify and make BasicShapeInset more readable.
+
+        No new tests, no behavior change.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::convertToLengthSize):
+        (WebCore::basicShapeForValue):
+
 2014-02-06  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Windows build.

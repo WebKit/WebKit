@@ -186,6 +186,15 @@ static Length convertToLength(const RenderStyle* style, const RenderStyle* rootS
     return value->convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(style, rootStyle, style->effectiveZoom());
 }
 
+static LengthSize convertToLengthSize(const RenderStyle* style, const RenderStyle* rootStyle, CSSPrimitiveValue* value)
+{
+    if (!value)
+        return LengthSize(Length(0, Fixed), Length(0, Fixed));
+
+    Pair* pair = value->getPairValue();
+    return LengthSize(convertToLength(style, rootStyle, pair->first()), convertToLength(style, rootStyle, pair->second()));
+}
+
 static BasicShapeCenterCoordinate convertToCenterCoordinate(const RenderStyle* style, const RenderStyle* rootStyle, CSSPrimitiveValue* value)
 {
     BasicShapeCenterCoordinate::Direction direction;
@@ -356,50 +365,15 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         const CSSBasicShapeInset* rectValue = static_cast<const CSSBasicShapeInset* >(basicShapeValue);
         RefPtr<BasicShapeInset> rect = BasicShapeInset::create();
 
-        if (rectValue->top())
-            rect->setTop(convertToLength(style, rootStyle, rectValue->top()));
-        else {
-            rect->setTop(Length(0, Fixed));
-            return rect;
-        }
-        if (rectValue->right())
-            rect->setRight(convertToLength(style, rootStyle, rectValue->right()));
-        else
-            rect->setRight(Length(0, Fixed));
+        rect->setTop(convertToLength(style, rootStyle, rectValue->top()));
+        rect->setRight(convertToLength(style, rootStyle, rectValue->right()));
+        rect->setBottom(convertToLength(style, rootStyle, rectValue->bottom()));
+        rect->setLeft(convertToLength(style, rootStyle, rectValue->left()));
 
-        if (rectValue->bottom())
-            rect->setBottom(convertToLength(style, rootStyle, rectValue->bottom()));
-        else
-            rect->setBottom(Length(0, Fixed));
-
-        if (rectValue->left())
-            rect->setLeft(convertToLength(style, rootStyle, rectValue->left()));
-        else
-            rect->setLeft(Length(0, Fixed));
-
-        if (rectValue->topLeftRadius()) {
-            Pair* topLeftRadius = rectValue->topLeftRadius()->getPairValue();
-            rect->setTopLeftRadius(LengthSize(convertToLength(style, rootStyle, topLeftRadius->first()), convertToLength(style, rootStyle, topLeftRadius->second())));
-        } else
-            rect->setTopLeftRadius(LengthSize(Length(0, Fixed), Length(0, Fixed)));
-
-        if (rectValue->topRightRadius()) {
-            Pair* topRightRadius = rectValue->topRightRadius()->getPairValue();
-            rect->setTopRightRadius(LengthSize(convertToLength(style, rootStyle, topRightRadius->first()), convertToLength(style, rootStyle, topRightRadius->second())));
-        } else
-            rect->setTopRightRadius(LengthSize(Length(0, Fixed), Length(0, Fixed)));
-
-        if (rectValue->bottomRightRadius()) {
-            Pair* bottomRightRadius = rectValue->bottomRightRadius()->getPairValue();
-            rect->setBottomRightRadius(LengthSize(convertToLength(style, rootStyle, bottomRightRadius->first()), convertToLength(style, rootStyle, bottomRightRadius->second())));
-        } else
-            rect->setBottomRightRadius(LengthSize(Length(0, Fixed), Length(0, Fixed)));
-
-        if (rectValue->topLeftRadius()) {
-            Pair* bottomLeftRadius = rectValue->bottomLeftRadius()->getPairValue();
-            rect->setBottomLeftRadius(LengthSize(convertToLength(style, rootStyle, bottomLeftRadius->first()), convertToLength(style, rootStyle, bottomLeftRadius->second())));
-        } else
-            rect->setBottomLeftRadius(LengthSize(Length(0, Fixed), Length(0, Fixed)));
+        rect->setTopLeftRadius(convertToLengthSize(style, rootStyle, rectValue->topLeftRadius()));
+        rect->setTopRightRadius(convertToLengthSize(style, rootStyle, rectValue->topRightRadius()));
+        rect->setBottomRightRadius(convertToLengthSize(style, rootStyle, rectValue->bottomRightRadius()));
+        rect->setBottomLeftRadius(convertToLengthSize(style, rootStyle, rectValue->bottomLeftRadius()));
 
         basicShape = rect.release();
         break;
