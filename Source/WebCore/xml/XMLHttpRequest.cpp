@@ -241,7 +241,8 @@ String XMLHttpRequest::responseText(ExceptionCode& ec)
 
 void XMLHttpRequest::didCacheResponseJSON()
 {
-    ASSERT(m_responseTypeCode == ResponseTypeJSON && doneWithoutErrors());
+    ASSERT(m_responseTypeCode == ResponseTypeJSON);
+    ASSERT(doneWithoutErrors());
     m_responseCacheIsValid = true;
     m_responseBuilder.clear();
 }
@@ -250,11 +251,11 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 {
     if (m_responseTypeCode != ResponseTypeDefault && m_responseTypeCode != ResponseTypeDocument) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     if (!doneWithoutErrors())
-        return 0;
+        return nullptr;
 
     if (!m_createdDocument) {
         bool isHTML = equalIgnoringCase(responseMIMEType(), "text/html");
@@ -285,10 +286,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 Blob* XMLHttpRequest::responseBlob()
 {
     ASSERT(m_responseTypeCode == ResponseTypeBlob);
-
-    // We always return null before DONE.
-    if (m_state != DONE)
-        return 0;
+    ASSERT(doneWithoutErrors());
 
     if (!m_responseBlob) {
         // FIXME: This causes two (or more) unnecessary copies of the data.
@@ -319,9 +317,7 @@ Blob* XMLHttpRequest::responseBlob()
 ArrayBuffer* XMLHttpRequest::responseArrayBuffer()
 {
     ASSERT(m_responseTypeCode == ResponseTypeArrayBuffer);
-
-    if (m_state != DONE)
-        return 0;
+    ASSERT(doneWithoutErrors());
 
     if (!m_responseArrayBuffer) {
         if (m_binaryResponseBuilder)

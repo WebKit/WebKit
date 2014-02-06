@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <title>XMLHttpRequest: blob, arraybuffer and document response getters should return null in case of timeout error</title>
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <div id="log"></div>
+    <script>
+    function runTest(name, fileName, mimeType, setupClient, checkResponse) {
+      var test = async_test(name)
+      test.step(function() {
+        var client = new XMLHttpRequest()
+        client.timeout = 10
+        var url = "/resources/load-then-wait.cgi?name=../xmlhttprequest/" + fileName + "&waitFor=0.1&mimeType=" + mimeType
+        client.open("GET", url, true)
+        setupClient(test, client)
+        client.hasTimedout = false;
+        client.ontimeout = test.step_func(function () {
+            checkResponse(test, client)
+            client.hasTimedout = true
+        })
+        client.onloadend = test.step_func(function () {
+            assert_true(client.hasTimedout, "xhr should have timed out")
+            test.done()
+        })
+        client.send(null)
+      })
+    }
+    
+    runTest("getting arraybuffer response within timeout event callback",
+        "ontimeout-response-getters.html","text/html",
+        function(test, client) {client.responseType = "arraybuffer"},
+        function(test, client) {assert_true(client.response == null, "arraybuffer response must be empty")}
+    )
+    
+    runTest("getting blob response within timeout event callback",
+        "ontimeout-response-getters.html","text/html",
+        function(test, client) {client.responseType = "blob"},
+        function(test, client) {assert_true(client.response == null, "blob response must be empty")}
+    )
+    
+    runTest("getting json response within timeout event callback",
+        "resources/test.json","text/plain",
+        function(test, client) {client.responseType = "json"},
+        function(test, client) {assert_true(client.response == null, "json response must be empty")}
+    )
+
+    runTest("getting document response within timeout event callback",
+        "resources/test.xml","text/xml",
+        function(test, client) {client.responseType = "document"},
+        function(test, client) {assert_true(client.response == null, "document response must be empty")}
+    )
+    </script>
+  </body>
+</html>
+

@@ -190,6 +190,13 @@ JSValue JSXMLHttpRequest::responseText(ExecState* exec) const
 
 JSValue JSXMLHttpRequest::response(ExecState* exec) const
 {
+    // FIXME: Use CachedAttribute for other types than JSON as well.
+    if (m_response && impl().responseCacheIsValid())
+        return m_response.get();
+
+    if (!impl().doneWithoutErrors() && impl().responseTypeCode() > XMLHttpRequest::ResponseTypeText)
+        return jsNull();
+
     switch (impl().responseTypeCode()) {
     case XMLHttpRequest::ResponseTypeDefault:
     case XMLHttpRequest::ResponseTypeText:
@@ -197,13 +204,6 @@ JSValue JSXMLHttpRequest::response(ExecState* exec) const
 
     case XMLHttpRequest::ResponseTypeJSON:
         {
-            // FIXME: Use CachedAttribute for other types as well.
-            if (m_response && impl().responseCacheIsValid())
-                return m_response.get();
-
-            if (!impl().doneWithoutErrors())
-                return jsNull();
-
             JSValue value = JSONParse(exec, impl().responseTextIgnoringResponseType());
             if (!value)
                 value = jsNull();

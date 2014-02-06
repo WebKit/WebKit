@@ -10,12 +10,17 @@ function testBlob(blobURL, blobType, doneFunction) {
     shouldBeEqualToString("xhr.responseType", "blob");
     xhr.send();
     xhr.onreadystatechange = function() {
-        if (xhr.readyState != 4) {
+        if (xhr.readyState != xhr.DONE)
             shouldBeNull("xhr.response");
-            return;
-        }
+    }
+    xhr.onerror = function() {
+        shouldBeNull("xhr.response");
+    };
+    xhr.onload = function() {
         shouldBeTrue("xhr.response instanceof Blob");
         shouldBeEqualToString("xhr.response.type", blobType);
+    };
+    xhr.onloadend = function() {
         doneFunction();
     }
 }

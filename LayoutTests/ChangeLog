@@ -1,3 +1,25 @@
+2014-02-06  Youenn Fablet  <youennf@gmail.com>
+
+        [XHR] Ensure response return null when error flag is set for blob and arraybuffer
+        https://bugs.webkit.org/show_bug.cgi?id=127050
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added test cases that check XHR response in case of timeout and abort for arraybuffer, blob, document and json.
+
+        * fast/files/script-tests/xhr-response-blob.js: updated to expect null for blob response in case of XHR requesting a file that does not exist
+        (.xhr.onreadystatechange):
+        (.xhr.onerror):
+        (.xhr.onload):
+        (.xhr.onloadend):
+        (testBlob):
+        * fast/files/xhr-response-blob-expected.txt:
+        * http/tests/resources/load-then-wait.cgi: Added (similar to load-and-stall except that it sends the whole document and then wait for some time before completing the response).
+        * http/tests/xmlhttprequest/onabort-response-getters-expected.txt: Added.
+        * http/tests/xmlhttprequest/onabort-response-getters.html: Added.
+        * http/tests/xmlhttprequest/ontimeout-response-getters-expected.txt: Added.
+        * http/tests/xmlhttprequest/ontimeout-response-getters.html: Added.
+
 2014-02-05  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/autoincrement-indexes.html fails

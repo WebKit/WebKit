@@ -1,3 +1,27 @@
+2014-02-06  Youenn Fablet  <youennf@gmail.com>
+
+        [XHR] Ensure response return null when error flag is set for blob and arraybuffer
+        https://bugs.webkit.org/show_bug.cgi?id=127050
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added a check in JSXMLHttpRequest::response to ensure response return null when error flag is set for blob and arraybuffer
+        This check also applies to document and json response types (no change in behavior for those types but code path change)
+        Added assertions in the related XMLHttpRequest blob and array buffer getters
+        Minor code clean-up.
+        The test cases check all four response types in case of timeout and abort
+
+        Tests: http/tests/xmlhttprequest/onabort-response-getters.html
+               http/tests/xmlhttprequest/ontimeout-response-getters.html
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::response):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didCacheResponseJSON):
+        (WebCore::XMLHttpRequest::responseXML):
+        (WebCore::XMLHttpRequest::responseBlob):
+        (WebCore::XMLHttpRequest::responseArrayBuffer):
+
 2014-02-05  Gavin Barraclough  <barraclough@apple.com>
 
         Change Page, FocusController to use ViewState
