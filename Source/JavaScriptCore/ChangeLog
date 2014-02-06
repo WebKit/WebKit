@@ -1,3 +1,13 @@
+2014-02-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't speculate on ToThis if we already know that arg0 has a questionable record with structure checks
+        https://bugs.webkit.org/show_bug.cgi?id=128229
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2014-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Handling of opaque roots is wrong in EdenCollections

@@ -1970,7 +1970,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
                     || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
                     || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
-                    || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCacheWatchpoint)) {
+                    || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCacheWatchpoint)
+                    || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
                     setThis(addToGraph(ToThis, op1));
                 } else {
                     addToGraph(
