@@ -304,7 +304,7 @@ static ProtoChainGenerationResult generateProtoChainAccessStub(ExecState* exec, 
             operationFunction = operationCallGetter;
         } else {
 #if USE(JSVALUE64)
-            // EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName);
+            // EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
             stubJit.setupArgumentsWithExecState(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR, MacroAssembler::TrustedImmPtr(propertyName.impl()));
             operationFunction = FunctionPtr(slot.customGetter());
 #else
@@ -617,7 +617,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
                 operationFunction = operationCallGetter;
             } else {
 #if USE(JSVALUE64)
-                // EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName);
+                // EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
                 stubJit.setupArgumentsWithExecState(baseGPR, baseGPR, MacroAssembler::TrustedImmPtr(ident.impl()));
                 operationFunction = FunctionPtr(slot.customGetter());
 #else

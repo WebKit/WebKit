@@ -33,9 +33,9 @@ bool JSDOMPluginArray::canGetItemsForName(ExecState*, DOMPluginArray* pluginArra
     return pluginArray->canGetItemsForName(propertyNameToAtomicString(propertyName));
 }
 
-EncodedJSValue JSDOMPluginArray::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue JSDOMPluginArray::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSDOMPluginArray* thisObj = jsCast<JSDOMPluginArray*>(JSValue::decode(slotBase));
+    JSDOMPluginArray* thisObj = jsCast<JSDOMPluginArray*>(slotBase);
     return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName))));
 }
 

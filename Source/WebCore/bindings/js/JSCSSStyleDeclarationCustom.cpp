@@ -303,7 +303,7 @@ static inline JSValue cssPropertyGetterPixelOrPosPrefix(ExecState* exec, JSCSSSt
     return getPropertyValueFallback(exec, thisObj, propertyID);
 }
 
-static EncodedJSValue cssPropertyGetterPixelOrPosPrefixCallback(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, unsigned propertyID)
+static EncodedJSValue cssPropertyGetterPixelOrPosPrefixCallback(ExecState* exec, JSObject*, EncodedJSValue thisValue, unsigned propertyID)
 {
     JSCSSStyleDeclaration* thisObject = jsDynamicCast<JSCSSStyleDeclaration*>(JSValue::decode(thisValue));
     if (!thisObject)
@@ -320,7 +320,7 @@ static inline JSValue cssPropertyGetter(ExecState* exec, JSCSSStyleDeclaration* 
     return getPropertyValueFallback(exec, thisObj, propertyID);
 }
 
-static EncodedJSValue cssPropertyGetterCallback(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, unsigned propertyID)
+static EncodedJSValue cssPropertyGetterCallback(ExecState* exec, JSObject*, EncodedJSValue thisValue, unsigned propertyID)
 {
     JSCSSStyleDeclaration* thisObject = jsDynamicCast<JSCSSStyleDeclaration*>(JSValue::decode(thisValue));
     if (!thisObject)

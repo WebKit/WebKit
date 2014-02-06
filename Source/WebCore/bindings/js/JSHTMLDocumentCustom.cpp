@@ -57,9 +57,9 @@ bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, Prop
     return atomicPropertyName && document->hasDocumentNamedItem(*atomicPropertyName);
 }
 
-EncodedJSValue JSHTMLDocument::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue JSHTMLDocument::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSHTMLDocument* thisObj = jsCast<JSHTMLDocument*>(JSValue::decode(slotBase));
+    JSHTMLDocument* thisObj = jsCast<JSHTMLDocument*>(slotBase);
     HTMLDocument& document = thisObj->impl();
 
     AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);

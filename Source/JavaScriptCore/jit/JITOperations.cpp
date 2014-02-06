@@ -219,7 +219,7 @@ EncodedJSValue JIT_OPERATION operationCallCustomGetter(ExecState* exec, JSCell* 
     
     Identifier ident(vm, uid);
     
-    return function(exec, JSValue::encode(base), JSValue::encode(base), ident);
+    return function(exec, jsCast<JSObject*>(base), JSValue::encode(base), ident);
 }
 
 EncodedJSValue JIT_OPERATION operationCallGetter(ExecState* exec, JSCell* base, JSCell* getterSetter)

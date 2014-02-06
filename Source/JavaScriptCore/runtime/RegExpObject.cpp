@@ -39,10 +39,10 @@
 
 namespace JSC {
 
-static EncodedJSValue regExpObjectGlobal(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-static EncodedJSValue regExpObjectIgnoreCase(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-static EncodedJSValue regExpObjectMultiline(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-static EncodedJSValue regExpObjectSource(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
+static EncodedJSValue regExpObjectGlobal(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+static EncodedJSValue regExpObjectIgnoreCase(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+static EncodedJSValue regExpObjectMultiline(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+static EncodedJSValue regExpObjectSource(ExecState*, JSObject*, EncodedJSValue, PropertyName);
 
 } // namespace JSC
 
@@ -160,17 +160,17 @@ static inline RegExpObject* asRegExpObject(EncodedJSValue value)
     return jsCast<RegExpObject*>(JSValue::decode(value));
 }
 
-EncodedJSValue regExpObjectGlobal(ExecState*, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue regExpObjectGlobal(ExecState*, JSObject* slotBase, EncodedJSValue, PropertyName)
 {
     return JSValue::encode(jsBoolean(asRegExpObject(slotBase)->regExp()->global()));
 }
 
-EncodedJSValue regExpObjectIgnoreCase(ExecState*, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue regExpObjectIgnoreCase(ExecState*, JSObject* slotBase, EncodedJSValue, PropertyName)
 {
     return JSValue::encode(jsBoolean(asRegExpObject(slotBase)->regExp()->ignoreCase()));
 }
  
-EncodedJSValue regExpObjectMultiline(ExecState*, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue regExpObjectMultiline(ExecState*, JSObject* slotBase, EncodedJSValue, PropertyName)
 {            
     return JSValue::encode(jsBoolean(asRegExpObject(slotBase)->regExp()->multiline()));
 }
@@ -283,7 +283,7 @@ static inline JSValue regExpObjectSourceInternal(ExecState* exec, String pattern
 
     
     
-EncodedJSValue regExpObjectSource(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue regExpObjectSource(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName)
 {
     String pattern = asRegExpObject(slotBase)->regExp()->pattern();
     if (pattern.is8Bit())

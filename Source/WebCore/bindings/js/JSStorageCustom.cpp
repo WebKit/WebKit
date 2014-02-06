@@ -42,11 +42,11 @@ bool JSStorage::canGetItemsForName(ExecState* exec, Storage* impl, PropertyName 
     return result;
 }
 
-EncodedJSValue JSStorage::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue JSStorage::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSStorage* thisObj = jsCast<JSStorage*>(JSValue::decode(slotBase));
+    JSStorage* thisObj = jsCast<JSStorage*>(slotBase);
         
-    JSValue prototype = asObject(JSValue::decode(slotBase))->prototype();
+    JSValue prototype = slotBase->prototype();
     if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return JSValue::encode(asObject(prototype)->get(exec, propertyName));
  

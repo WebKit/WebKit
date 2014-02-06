@@ -40,9 +40,9 @@ bool JSNamedNodeMap::canGetItemsForName(ExecState*, NamedNodeMap* impl, Property
     return impl->getNamedItem(propertyNameToAtomicString(propertyName));
 }
 
-EncodedJSValue JSNamedNodeMap::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue JSNamedNodeMap::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSNamedNodeMap* thisObj = jsCast<JSNamedNodeMap*>(JSValue::decode(slotBase));
+    JSNamedNodeMap* thisObj = jsCast<JSNamedNodeMap*>(slotBase);
     return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().getNamedItem(propertyNameToAtomicString(propertyName))));
 }
 

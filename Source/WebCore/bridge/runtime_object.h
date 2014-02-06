@@ -78,9 +78,9 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
 
 private:
-    static EncodedJSValue fallbackObjectGetter(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-    static EncodedJSValue fieldGetter(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-    static EncodedJSValue methodGetter(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
+    static EncodedJSValue fallbackObjectGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue fieldGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue methodGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
 
     RefPtr<Instance> m_instance;
 };

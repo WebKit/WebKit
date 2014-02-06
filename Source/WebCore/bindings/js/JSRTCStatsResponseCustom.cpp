@@ -40,9 +40,9 @@ bool JSRTCStatsResponse::canGetItemsForName(ExecState*, RTCStatsResponse* respon
     return response->canGetItemsForName(propertyNameToAtomicString(propertyName));
 }
 
-EncodedJSValue JSRTCStatsResponse::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue JSRTCStatsResponse::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSRTCStatsResponse* thisObj = jsCast<JSRTCStatsResponse*>(JSValue::decode(slotBase));
+    JSRTCStatsResponse* thisObj = jsCast<JSRTCStatsResponse*>(slotBase);
     return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName))));
 }
 

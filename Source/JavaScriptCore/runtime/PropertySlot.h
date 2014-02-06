@@ -31,6 +31,7 @@ namespace JSC {
 
 class ExecState;
 class GetterSetter;
+class JSObject;
 
 // ECMA 262-3 8.6.1
 // Property attributes
@@ -61,8 +62,8 @@ public:
     {
     }
 
-    typedef EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName);
-    typedef EncodedJSValue (*GetIndexValueFunc)(ExecState*, EncodedJSValue slotBase, EncodedJSValue thisValue, unsigned);
+    typedef EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
+    typedef EncodedJSValue (*GetIndexValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, unsigned);
 
     JSValue getValue(ExecState*, PropertyName) const;
     JSValue getValue(ExecState*, unsigned propertyName) const;

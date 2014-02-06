@@ -60,7 +60,7 @@ void RuntimeArray::destroy(JSCell* cell)
     static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
 }
 
-EncodedJSValue RuntimeArray::lengthGetter(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue RuntimeArray::lengthGetter(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName)
 {
     RuntimeArray* thisObject = jsDynamicCast<RuntimeArray*>(JSValue::decode(thisValue));
     if (!thisObject)
@@ -68,9 +68,9 @@ EncodedJSValue RuntimeArray::lengthGetter(ExecState* exec, EncodedJSValue, Encod
     return JSValue::encode(jsNumber(thisObject->getLength()));
 }
 
-EncodedJSValue RuntimeArray::indexGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, unsigned index)
+EncodedJSValue RuntimeArray::indexGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, unsigned index)
 {
-    RuntimeArray* thisObj = jsCast<RuntimeArray*>(JSValue::decode(slotBase));
+    RuntimeArray* thisObj = jsCast<RuntimeArray*>(slotBase);
     return JSValue::encode(thisObj->getConcreteArray()->valueAt(exec, index));
 }
 

@@ -40,9 +40,9 @@ bool JSStyleSheetList::canGetItemsForName(ExecState*, StyleSheetList* styleSheet
     return styleSheetList->getNamedItem(propertyNameToString(propertyName));
 }
 
-EncodedJSValue JSStyleSheetList::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue JSStyleSheetList::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSStyleSheetList* thisObj = jsCast<JSStyleSheetList*>(JSValue::decode(slotBase));
+    JSStyleSheetList* thisObj = jsCast<JSStyleSheetList*>(slotBase);
     HTMLStyleElement* element = thisObj->impl().getNamedItem(propertyNameToString(propertyName));
     ASSERT(element);
     return JSValue::encode(toJS(exec, thisObj->globalObject(), element->sheet()));
