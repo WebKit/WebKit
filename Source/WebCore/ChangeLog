@@ -1,3 +1,28 @@
+2014-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Modernize CrossOriginPreflightResultCache
+        https://bugs.webkit.org/show_bug.cgi?id=128309
+
+        Reviewed by Antti Koivisto.
+
+        Use std::chrono::steady_clock instead of currentTime() for determining when
+        cache items expire, Use std::unique_ptr instead of OwnPtr, use NeverDestroyed,
+        get rid of unnecessary container typedefs now that we have auto. Finally,
+        de-indent the entire class declaration.
+
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCache::CrossOriginPreflightResultCache):
+        (WebCore::parseAccessControlMaxAge):
+        (WebCore::CrossOriginPreflightResultCacheItem::parse):
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsRequest):
+        (WebCore::CrossOriginPreflightResultCache::shared):
+        (WebCore::CrossOriginPreflightResultCache::appendEntry):
+        (WebCore::CrossOriginPreflightResultCache::canSkipPreflight):
+        * loader/CrossOriginPreflightResultCache.h:
+        (WebCore::CrossOriginPreflightResultCacheItem::CrossOriginPreflightResultCacheItem):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+
 2014-02-06  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         Menclose with no notation attribute does not display anything.

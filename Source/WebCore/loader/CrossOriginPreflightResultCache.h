@@ -29,59 +29,56 @@
 
 #include "URLHash.h"
 #include "ResourceHandleTypes.h"
+#include <chrono>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-    class HTTPHeaderMap;
-    class ResourceResponse;
+class HTTPHeaderMap;
+class ResourceResponse;
 
-    class CrossOriginPreflightResultCacheItem {
-        WTF_MAKE_NONCOPYABLE(CrossOriginPreflightResultCacheItem); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        CrossOriginPreflightResultCacheItem(StoredCredentials credentials)
-            : m_absoluteExpiryTime(0)
-            , m_credentials(credentials)
-        {
-        }
+class CrossOriginPreflightResultCacheItem {
+    WTF_MAKE_NONCOPYABLE(CrossOriginPreflightResultCacheItem); WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit CrossOriginPreflightResultCacheItem(StoredCredentials credentials)
+        : m_credentials(credentials)
+    {
+    }
 
-        bool parse(const ResourceResponse&, String& errorDescription);
-        bool allowsCrossOriginMethod(const String&, String& errorDescription) const;
-        bool allowsCrossOriginHeaders(const HTTPHeaderMap&, String& errorDescription) const;
-        bool allowsRequest(StoredCredentials, const String& method, const HTTPHeaderMap& requestHeaders) const;
+    bool parse(const ResourceResponse&, String& errorDescription);
+    bool allowsCrossOriginMethod(const String&, String& errorDescription) const;
+    bool allowsCrossOriginHeaders(const HTTPHeaderMap&, String& errorDescription) const;
+    bool allowsRequest(StoredCredentials, const String& method, const HTTPHeaderMap& requestHeaders) const;
 
-    private:
-        typedef HashSet<String, CaseFoldingHash> HeadersSet;
+private:
+    // FIXME: A better solution to holding onto the absolute expiration time might be
+    // to start a timer for the expiration delta that removes this from the cache when
+    // it fires.
+    std::chrono::steady_clock::time_point m_absoluteExpiryTime;
+    StoredCredentials m_credentials;
+    HashSet<String> m_methods;
+    HashSet<String, CaseFoldingHash> m_headers;
+};
 
-        // FIXME: A better solution to holding onto the absolute expiration time might be
-        // to start a timer for the expiration delta that removes this from the cache when
-        // it fires.
-        double m_absoluteExpiryTime;
-        StoredCredentials m_credentials;
-        HashSet<String> m_methods;
-        HeadersSet m_headers;
-    };
+class CrossOriginPreflightResultCache {
+    WTF_MAKE_NONCOPYABLE(CrossOriginPreflightResultCache); WTF_MAKE_FAST_ALLOCATED;
 
-    class CrossOriginPreflightResultCache {
-        WTF_MAKE_NONCOPYABLE(CrossOriginPreflightResultCache); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        static CrossOriginPreflightResultCache& shared();
+public:
+    static CrossOriginPreflightResultCache& shared();
 
-        void appendEntry(const String& origin, const URL&, PassOwnPtr<CrossOriginPreflightResultCacheItem>);
-        bool canSkipPreflight(const String& origin, const URL&, StoredCredentials, const String& method, const HTTPHeaderMap& requestHeaders);
+    void appendEntry(const String& origin, const URL&, std::unique_ptr<CrossOriginPreflightResultCacheItem>);
+    bool canSkipPreflight(const String& origin, const URL&, StoredCredentials, const String& method, const HTTPHeaderMap& requestHeaders);
 
-        void empty();
+    void empty();
 
-    private:
-        CrossOriginPreflightResultCache() { }
+private:
+    friend NeverDestroyed<CrossOriginPreflightResultCache>;
+    CrossOriginPreflightResultCache();
 
-        typedef HashMap<std::pair<String, URL>, OwnPtr<CrossOriginPreflightResultCacheItem>> CrossOriginPreflightResultHashMap;
-
-        CrossOriginPreflightResultHashMap m_preflightHashMap;
-    };
+    HashMap<std::pair<String, URL>, std::unique_ptr<CrossOriginPreflightResultCacheItem>> m_preflightHashMap;
+};
 
 } // namespace WebCore
 

@@ -29,21 +29,25 @@
 
 #include "CrossOriginAccessControl.h"
 #include "ResourceResponse.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 // These values are at the discretion of the user agent.
-static const unsigned defaultPreflightCacheTimeoutSeconds = 5;
-static const unsigned maxPreflightCacheTimeoutSeconds = 600; // Should be short enough to minimize the risk of using a poisoned cache after switching to a secure network.
+static const auto defaultPreflightCacheTimeout = std::chrono::seconds(5);
+static const auto maxPreflightCacheTimeout = std::chrono::seconds(600); // Should be short enough to minimize the risk of using a poisoned cache after switching to a secure network.
 
-static bool parseAccessControlMaxAge(const String& string, unsigned& expiryDelta)
+CrossOriginPreflightResultCache::CrossOriginPreflightResultCache()
+{
+}
+
+static bool parseAccessControlMaxAge(const String& string, std::chrono::seconds& expiryDelta)
 {
     // FIXME: this will not do the correct thing for a number starting with a '+'
     bool ok = false;
-    expiryDelta = string.toUIntStrict(&ok);
+    expiryDelta = std::chrono::seconds(string.toUIntStrict(&ok));
     return ok;
 }
 
@@ -99,14 +103,14 @@ bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response
         return false;
     }
 
-    unsigned expiryDelta;
+    std::chrono::seconds expiryDelta;
     if (parseAccessControlMaxAge(response.httpHeaderField("Access-Control-Max-Age"), expiryDelta)) {
-        if (expiryDelta > maxPreflightCacheTimeoutSeconds)
-            expiryDelta = maxPreflightCacheTimeoutSeconds;
+        if (expiryDelta > maxPreflightCacheTimeout)
+            expiryDelta = maxPreflightCacheTimeout;
     } else
-        expiryDelta = defaultPreflightCacheTimeoutSeconds;
+        expiryDelta = defaultPreflightCacheTimeout;
 
-    m_absoluteExpiryTime = monotonicallyIncreasingTime() + expiryDelta;
+    m_absoluteExpiryTime = std::chrono::steady_clock::now() + expiryDelta;
     return true;
 }
 
@@ -133,7 +137,7 @@ bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHea
 bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentials includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders) const
 {
     String ignoredExplanation;
-    if (m_absoluteExpiryTime < monotonicallyIncreasingTime())
+    if (m_absoluteExpiryTime < std::chrono::steady_clock::now())
         return false;
     if (includeCredentials == AllowStoredCredentials && m_credentials == DoNotAllowStoredCredentials)
         return false;
@@ -146,28 +150,29 @@ bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentials includ
 
 CrossOriginPreflightResultCache& CrossOriginPreflightResultCache::shared()
 {
-    DEFINE_STATIC_LOCAL(CrossOriginPreflightResultCache, cache, ());
     ASSERT(isMainThread());
+
+    static NeverDestroyed<CrossOriginPreflightResultCache> cache;
     return cache;
 }
 
-void CrossOriginPreflightResultCache::appendEntry(const String& origin, const URL& url, PassOwnPtr<CrossOriginPreflightResultCacheItem> preflightResult)
+void CrossOriginPreflightResultCache::appendEntry(const String& origin, const URL& url, std::unique_ptr<CrossOriginPreflightResultCacheItem> preflightResult)
 {
     ASSERT(isMainThread());
-    m_preflightHashMap.set(std::make_pair(origin, url), preflightResult);
+    m_preflightHashMap.set(std::make_pair(origin, url), std::move(preflightResult));
 }
 
 bool CrossOriginPreflightResultCache::canSkipPreflight(const String& origin, const URL& url, StoredCredentials includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders)
 {
     ASSERT(isMainThread());
-    CrossOriginPreflightResultHashMap::iterator cacheIt = m_preflightHashMap.find(std::make_pair(origin, url));
-    if (cacheIt == m_preflightHashMap.end())
+    auto it = m_preflightHashMap.find(std::make_pair(origin, url));
+    if (it == m_preflightHashMap.end())
         return false;
 
-    if (cacheIt->value->allowsRequest(includeCredentials, method, requestHeaders))
+    if (it->value->allowsRequest(includeCredentials, method, requestHeaders))
         return true;
 
-    m_preflightHashMap.remove(cacheIt);
+    m_preflightHashMap.remove(it);
     return false;
 }
 
