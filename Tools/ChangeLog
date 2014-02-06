@@ -1,3 +1,18 @@
+2014-02-05  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Remove legacy behavior mode in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=128298
+
+        Reviewed by Gyuyoung Kim.
+
+        MiniBrowser is crashing when the legacy mode is set in creating webview.
+        As EFL application cannot use this API for creating webview after r146265,
+        it would be better to remove this invalid option.
+
+        * MiniBrowser/efl/main.c:
+        (window_create): Do not create webview with WKViewCreate API.
+        (elm_main): Remove 'legacy' option.
+
 2014-02-05  Andreas Kling  <akling@apple.com>
 
         Remove ENABLE(DIRECTORY_UPLOAD).

@@ -151,8 +151,6 @@ static const Ecore_Getopt options = {
             ('s', "window-size", "window size in following format (width)x(height)."),
         ECORE_GETOPT_STORE_STR
             ('u', "user-agent", "user agent to set."),
-        ECORE_GETOPT_STORE_DEF_BOOL
-            ('b', "legacy", "Legacy mode", EINA_FALSE),
         ECORE_GETOPT_STORE_DOUBLE
             ('r', "device-pixel-ratio", "Ratio between the CSS units and device pixels."),
         ECORE_GETOPT_CALLBACK_NOARGS
@@ -1819,15 +1817,11 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height,
     ewkViewClass->input_picker_color_dismiss = on_color_picker_dismiss;
 
     Evas *evas = evas_object_evas_get(window->elm_window);
-    if (legacy_behavior_enabled) {
-        // Use raw WK2 api to create a view using legacy mode.
-        window->ewk_view = (Evas_Object*)WKViewCreate(evas, 0, 0);
-    } else {
-        Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
-        Ewk_Context *context = opener ? ewk_view_context_get(opener) : ewk_context_default_get();
-        Ewk_Page_Group *pageGroup = opener ? ewk_view_page_group_get(opener) : ewk_page_group_create("");
-        window->ewk_view = ewk_view_smart_add(evas, smart, context, pageGroup);
-    }
+    Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
+    Ewk_Context *context = opener ? ewk_view_context_get(opener) : ewk_context_default_get();
+    Ewk_Page_Group *pageGroup = opener ? ewk_view_page_group_get(opener) : ewk_page_group_create("");
+    window->ewk_view = ewk_view_smart_add(evas, smart, context, pageGroup);
+
     ewk_view_theme_set(window->ewk_view, TEST_THEME_DIR "/default.edj");
     if (device_pixel_ratio)
         ewk_view_device_pixel_ratio_set(window->ewk_view, (float)device_pixel_ratio);
@@ -1940,7 +1934,6 @@ elm_main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_STR(evas_engine_name),
         ECORE_GETOPT_VALUE_STR(window_size_string),
         ECORE_GETOPT_VALUE_STR(user_agent_string),
-        ECORE_GETOPT_VALUE_BOOL(legacy_behavior_enabled),
         ECORE_GETOPT_VALUE_DOUBLE(device_pixel_ratio),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(encoding_detector_enabled),
