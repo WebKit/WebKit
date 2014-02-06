@@ -1,3 +1,10 @@
+2014-02-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r163520, remove Andrei from committers list, because
+        he is reviewer now, and webkit-patch doesn't like duplicated entries.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-02-06  Andrei Bucur  <abucur@adobe.com>
 
         Adding myself as a reviewer.
