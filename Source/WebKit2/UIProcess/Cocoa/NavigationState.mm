@@ -34,6 +34,7 @@
 #import "WKNavigationActionInternal.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
+#import "WKNavigationResponseInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
@@ -127,18 +128,6 @@ static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationTyp
     return WKNavigationTypeOther;
 }
 
-static RetainPtr<WKFrameInfo> frameInfoFromWebFrameProxy(WebFrameProxy& webFrameProxy)
-{
-    auto frameInfo = adoptNS([[WKFrameInfo alloc] init]);
-
-    [frameInfo setMainFrame:webFrameProxy.isMainFrame()];
-
-    // FIXME: This should use the full request of the frame, not just the URL.
-    [frameInfo setRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:webFrameProxy.url()]]];
-
-    return frameInfo;
-}
-
 void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy* destinationFrame, const NavigationActionData& navigationActionData, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest& request, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
@@ -154,8 +143,10 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     // FIXME: Set up the navigation action object.
     auto navigationAction = adoptNS([[WKNavigationAction alloc] init]);
 
-    if (sourceFrame)
-        [navigationAction setSourceFrame:frameInfoFromWebFrameProxy(*sourceFrame).get()];
+    if (sourceFrame) {
+        auto frameInfo = adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*sourceFrame]);
+        [navigationAction setSourceFrame:frameInfo.get()];
+    }
 
     [navigationAction setNavigationType:toWKNavigationType(navigationActionData.navigationType)];
     [navigationAction setRequest:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
@@ -182,7 +173,7 @@ void NavigationState::PolicyClient::decidePolicyForNewWindowAction(WebPageProxy*
     decidePolicyForNavigationAction(webPageProxy, nullptr, navigationActionData, sourceFrame, request, request, std::move(listener), userData);
 }
 
-void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& resourceRequest, bool canShowMIMEType, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
+void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFrameProxy* frame, const WebCore::ResourceResponse& resourceResponse, const WebCore::ResourceRequest& resourceRequest, bool canShowMIMEType, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler) {
         // FIXME: <rdar://problem/15949822> Figure out what the "default delegate behavior" should be here.
@@ -195,9 +186,13 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
         return;
 
     // FIXME: Set up the navigation response object.
-    WKNavigationResponse *navigationResponse = nil;
+    auto navigationResponse = adoptNS([[WKNavigationResponse alloc] init]);
 
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse decisionHandler:[listener](WKNavigationResponsePolicyDecision policyDecision) {
+    [navigationResponse setFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*frame]).get()];
+    [navigationResponse setResponse:resourceResponse.nsURLResponse()];
+    [navigationResponse setCanShowMIMEType:canShowMIMEType];
+
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse.get() decisionHandler:[listener](WKNavigationResponsePolicyDecision policyDecision) {
         switch (policyDecision) {
         case WKNavigationResponsePolicyDecisionAllow:
             listener->use();

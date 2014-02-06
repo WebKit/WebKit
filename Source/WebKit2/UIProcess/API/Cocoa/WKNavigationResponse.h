@@ -23,17 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFrameInfo.h"
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-namespace WebKit {
-class WebFrameProxy;
-}
+@class WKFrameInfo;
 
-@interface WKFrameInfo ()
+WK_API_CLASS
+@interface WKNavigationResponse : NSObject
 
-- (instancetype)initWithWebFrameProxy:(WebKit::WebFrameProxy&)webFrameProxy;
+@property (nonatomic, readonly) WKFrameInfo *frame;
+@property (nonatomic, readonly) NSURLResponse *response;
+@property (nonatomic, readonly) BOOL canShowMIMEType;
 
 @end
 

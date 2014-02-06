@@ -23,17 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFrameInfo.h"
+#import "config.h"
+#import "WKNavigationResponseInternal.h"
 
 #if WK_API_ENABLED
 
-namespace WebKit {
-class WebFrameProxy;
+#import <wtf/RetainPtr.h>
+
+@implementation WKNavigationResponse {
+    RetainPtr<WKFrameInfo> _frame;
+    RetainPtr<NSURLResponse> _response;
 }
 
-@interface WKFrameInfo ()
+- (WKFrameInfo *)frame
+{
+    return _frame.get();
+}
 
-- (instancetype)initWithWebFrameProxy:(WebKit::WebFrameProxy&)webFrameProxy;
+- (void)setFrame:(WKFrameInfo *)frame
+{
+    _frame = frame;
+}
+
+- (NSURLResponse *)response
+{
+    return _response.get();
+}
+
+- (void)setResponse:(NSURLResponse *)response
+{
+    _response = adoptNS([response copy]);
+}
 
 @end
 

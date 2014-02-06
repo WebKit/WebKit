@@ -1,5 +1,27 @@
 2014-02-06  Anders Carlsson  <andersca@apple.com>
 
+        Add WKNavigationResponse class
+        https://bugs.webkit.org/show_bug.cgi?id=128326
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo initWithWebFrameProxy:WebKit::]):
+        * UIProcess/API/Cocoa/WKFrameInfoInternal.h:
+        * UIProcess/API/Cocoa/WKNavigationResponse.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKFrameInfo.mm.
+        * UIProcess/API/Cocoa/WKNavigationResponse.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKFrameInfo.mm.
+        (-[WKNavigationResponse frame]):
+        (-[WKNavigationResponse setFrame:]):
+        (-[WKNavigationResponse response]):
+        (-[WKNavigationResponse setResponse:]):
+        * UIProcess/API/Cocoa/WKNavigationResponseInternal.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKFrameInfoInternal.h.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::PolicyClient::decidePolicyForResponse):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-02-06  Anders Carlsson  <andersca@apple.com>
+
         Replace ’ with ' to silence the check-for-webkit-framework-include-consistency script.
 
         * UIProcess/API/Cocoa/WKWebView.h:
