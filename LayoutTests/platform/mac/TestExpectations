@@ -1347,4 +1347,4 @@ webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
 
 webkit.org/b/127310 svg/filters/feComponentTransfer-style-crash.xhtml [ Pass Failure Timeout ]
 
-webkit.org/b/128312 [ Mavericks ] media/video-load-preload-metadata.html is flaky [ Pass Failure ]
+webkit.org/b/128312 [ Mavericks ] media/video-load-preload-metadata.html [ Pass Failure ]

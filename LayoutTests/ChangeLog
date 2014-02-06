@@ -1,3 +1,9 @@
+2014-02-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix a copy/paste mistake in TestExpectations.
+
+        * platform/mac/TestExpectations:
+
 2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] getComputedStyle() is wrong for grid-definition-{columns|rows}
