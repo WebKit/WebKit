@@ -1373,6 +1373,7 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(TOUCH_EVENTS)
+#if ENABLE(ASYNC_SCROLLING)
 static bool anyTouchIsInNonFastScrollableRegion(RemoteScrollingCoordinatorProxy& scrollingCoordinator, const WebTouchEvent& event)
 {
     for (auto touchPoint : event.touchPoints()) {
@@ -1382,6 +1383,7 @@ static bool anyTouchIsInNonFastScrollableRegion(RemoteScrollingCoordinatorProxy&
 
     return false;
 }
+#endif // ENABLE(ASYNC_SCROLLING)
 
 void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
 {
@@ -1392,9 +1394,12 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     // and animation on the page itself (kinetic scrolling, tap to zoom) etc, then
     // we do not send any of the events to the page even if is has listeners.
     if (!m_isPageSuspended) {
+
+#if ENABLE(ASYNC_SCROLLING)
         // FIXME: we should only do this check for the start of a touch gesture.
         if (!anyTouchIsInNonFastScrollableRegion(*m_scrollingCoordinatorProxy, event))
             return;
+#endif
 
         m_touchEventQueue.append(event);
         m_process->responsivenessTimer()->start();
@@ -1416,7 +1421,7 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
         }
     }
 }
-#endif
+#endif // ENABLE(TOUCH_EVENTS)
 
 void WebPageProxy::scrollBy(ScrollDirection direction, ScrollGranularity granularity)
 {

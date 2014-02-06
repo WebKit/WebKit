@@ -1,3 +1,13 @@
+2014-02-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the build after r163516 for !ENABLE(ASYNC_SCROLLING) platforms
+        https://bugs.webkit.org/show_bug.cgi?id=128299
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleTouchEvent):
+
 2014-02-05  Gavin Barraclough  <barraclough@apple.com>
 
         Change Page, FocusController to use ViewState
