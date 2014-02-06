@@ -254,6 +254,13 @@ void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
     m_mainFrameScrollPosition = position;
 }
 
+bool ScrollingTree::isPointInNonFastScrollableRegion(IntPoint p)
+{
+    MutexLocker lock(m_mutex);
+    
+    return m_nonFastScrollableRegion.contains(p);
+}
+
 bool ScrollingTree::isRubberBandInProgress()
 {
     MutexLocker lock(m_mutex);    

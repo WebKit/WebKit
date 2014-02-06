@@ -291,9 +291,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_syncNavigationActionPolicyAction(PolicyUse)
     , m_syncNavigationActionPolicyDownloadID(0)
     , m_processingMouseMoveEvent(false)
-#if ENABLE(TOUCH_EVENTS)
-    , m_needTouchEvents(false)
-#endif
     , m_pageID(pageID)
     , m_session(session)
     , m_isPageSuspended(false)
@@ -1376,6 +1373,16 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(TOUCH_EVENTS)
+static bool anyTouchIsInNonFastScrollableRegion(RemoteScrollingCoordinatorProxy& scrollingCoordinator, const WebTouchEvent& event)
+{
+    for (auto touchPoint : event.touchPoints()) {
+        if (scrollingCoordinator.isPointInNonFastScrollableRegion(touchPoint.location()))
+            return true;
+    }
+
+    return false;
+}
+
 void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
 {
     if (!isValid())
@@ -1384,7 +1391,11 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     // If the page is suspended, which should be the case during panning, pinching
     // and animation on the page itself (kinetic scrolling, tap to zoom) etc, then
     // we do not send any of the events to the page even if is has listeners.
-    if (m_needTouchEvents && !m_isPageSuspended) {
+    if (!m_isPageSuspended) {
+        // FIXME: we should only do this check for the start of a touch gesture.
+        if (!anyTouchIsInNonFastScrollableRegion(*m_scrollingCoordinatorProxy, event))
+            return;
+
         m_touchEventQueue.append(event);
         m_process->responsivenessTimer()->start();
         if (m_shouldSendEventsSynchronously) {
@@ -2881,13 +2892,6 @@ void WebPageProxy::didChangeContentSize(const IntSize& size)
 }
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
-void WebPageProxy::needTouchEvents(bool needTouchEvents)
-{
-    m_needTouchEvents = needTouchEvents;
-}
-#endif
-
 #if ENABLE(INPUT_TYPE_COLOR)
 void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const IntRect& elementRect)
 {
@@ -3879,7 +3883,6 @@ void WebPageProxy::resetStateAfterProcessExited()
     m_processingMouseMoveEvent = false;
 
 #if ENABLE(TOUCH_EVENTS)
-    m_needTouchEvents = false;
     m_touchEventQueue.clear();
 #endif
 

@@ -821,13 +821,6 @@ PassRefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Pag
 }
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
-void WebChromeClient::needTouchEvents(bool needTouchEvents)
-{
-    m_page->send(Messages::WebPageProxy::NeedTouchEvents(needTouchEvents));
-}
-#endif
-
 #if ENABLE(FULLSCREEN_API)
 bool WebChromeClient::supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard)
 {

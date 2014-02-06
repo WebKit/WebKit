@@ -94,10 +94,6 @@ messages -> WebPageProxy {
     DidChangeContentSize(WebCore::IntSize newSize)
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
-    NeedTouchEvents(bool needTouchEvents)
-#endif
-
 #if ENABLE(INPUT_TYPE_COLOR)
     ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect);
     SetColorPickerColor(WebCore::Color color);

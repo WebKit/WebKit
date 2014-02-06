@@ -54,6 +54,8 @@ public:
     // Inform the web process that the scroll position changed (called from the scrolling tree)
     void scrollPositionChanged(WebCore::ScrollingNodeID, const WebCore::FloatPoint& newScrollPosition);
 
+    bool isPointInNonFastScrollableRegion(const WebCore::IntPoint&) const;
+
     // Called externally when native views move around.
     void scrollPositionChangedViaDelegatedScrolling(WebCore::ScrollingNodeID, const WebCore::IntPoint&);
 

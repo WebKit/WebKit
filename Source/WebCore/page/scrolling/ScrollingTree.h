@@ -76,6 +76,8 @@ public:
     virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
     FloatPoint mainFrameScrollPosition();
 
+    bool isPointInNonFastScrollableRegion(IntPoint);
+    
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) = 0;
 #endif

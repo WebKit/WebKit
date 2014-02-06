@@ -230,7 +230,7 @@ private:
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    virtual void needTouchEvents(bool) override;
+    virtual void needTouchEvents(bool) override { }
 #endif
 
 #if PLATFORM(IOS)

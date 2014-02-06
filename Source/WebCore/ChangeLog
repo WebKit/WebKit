@@ -1,3 +1,38 @@
+2014-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Transfer the non-fast-scrollable region to the UI process for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=128293
+
+        Reviewed by Benjamin Poulain.
+
+        Two main changes to support sending the non-fast scrollable region
+        to the UI process for iOS:
+        
+        1. Add ScrollingCoordinator::frameViewNonFastScrollableRegionChanged(),
+        which is called when we've updated the touch event region (this can happen
+        independenly of layout). When called we just scheduled a scrolling tree
+        commit with the new region.
+        
+        2. Avoid thinking that we have a new root node with every remote scrolling
+        transaction. This was a side-effect of reconstructing the scrolling state
+        tree in the UI process, and caused us to try to grab a nonFastScrollableRegion
+        from a node which never had one set.
+
+        * WebCore.exp.in:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::frameViewNonFastScrollableRegionChanged):
+        * page/scrolling/ScrollingStateTree.h:
+        (WebCore::ScrollingStateTree::setHasNewRootStateNode):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitNewTreeState):
+        (WebCore::ScrollingTree::isPointInNonFastScrollableRegion):
+        * page/scrolling/ScrollingTree.h:
+
 2014-02-05  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS] Synchronize the WKContentView and UIScrollView updates with the tiles being commited

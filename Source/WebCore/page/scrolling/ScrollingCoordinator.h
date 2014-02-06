@@ -125,6 +125,9 @@ public:
     // Should be called whenever the set of fixed objects changes.
     void frameViewFixedObjectsDidChange(FrameView*);
 
+    // Called whenever the non-fast scrollable region changes for reasons other than layout.
+    virtual void frameViewNonFastScrollableRegionChanged(FrameView*) { }
+
     // Should be called whenever the root layer for the given frame view changes.
     virtual void frameViewRootLayerDidChange(FrameView*);
 

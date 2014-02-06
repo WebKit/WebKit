@@ -1,3 +1,41 @@
+2014-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Transfer the non-fast-scrollable region to the UI process for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=128293
+
+        Reviewed by Benjamin Poulain.
+
+        Two main changes to support sending the non-fast scrollable region
+        to the UI process for iOS:
+        
+        1. Add ScrollingCoordinator::frameViewNonFastScrollableRegionChanged(),
+        which is called when we've updated the touch event region (this can happen
+        independenly of layout). When called we just scheduled a scrolling tree
+        commit with the new region.
+        
+        2. Avoid thinking that we have a new root node with every remote scrolling
+        transaction. This was a side-effect of reconstructing the scrolling state
+        tree in the UI process, and caused us to try to grab a nonFastScrollableRegion
+        from a node which never had one set.
+        
+        Now that we have the non-fast scrollable region in the UI process, we can
+        use it to avoid sending sync messages to the web process.
+        
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode): Encode hasNewRootNode.
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode): Decode hasNewRootNode and set it on
+        the state tree.
+        (WebKit::RemoteScrollingCoordinatorTransaction::encode): Encode the nonFastScrollableRegion
+        now that we can encode Regions.
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode): Decode the nonFastScrollableRegion
+        now that we can decode Regions.
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::isPointInNonFastScrollableRegion):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleTouchEvent): If we're not in the non-fast scrollable region,
+        don't both sending touch events to the web process.
+
 2014-02-05  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS] Synchronize the WKContentView and UIScrollView updates with the tiles being commited

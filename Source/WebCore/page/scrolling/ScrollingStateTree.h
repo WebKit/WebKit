@@ -66,6 +66,7 @@ public:
     bool hasChangedProperties() const { return m_hasChangedProperties; }
 
     bool hasNewRootStateNode() const { return m_hasNewRootStateNode; }
+    void setHasNewRootStateNode(bool hasNewRoot) { m_hasNewRootStateNode = hasNewRoot; }
     
     int nodeCount() const { return m_stateNodeMap.size(); }
 

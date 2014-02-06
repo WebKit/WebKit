@@ -78,6 +78,7 @@ private:
 
     virtual void frameViewLayoutUpdated(FrameView*) override;
     virtual void frameViewRootLayerDidChange(FrameView*) override;
+    virtual void frameViewNonFastScrollableRegionChanged(FrameView*) override;
 
     virtual bool requestScrollPositionUpdate(FrameView*, const IntPoint&) override;
 

@@ -94,6 +94,24 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
 
 Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, const IntPoint& frameLocation) const
 {
+#if PLATFORM(IOS)
+    // On iOS, we use nonFastScrollableRegion to represent the region covered by elements with touch event handlers.
+    ASSERT(frame->isMainFrame());
+    UNUSED_PARAM(frameLocation);
+
+    Document* document = frame->document();
+    if (!document)
+        return Region();
+
+    Vector<IntRect> touchRects;
+    document->getTouchRects(touchRects);
+    
+    Region touchRegion;
+    for (auto rect : touchRects)
+        touchRegion.unite(rect);
+
+    return touchRegion;
+#else
     Region nonFastScrollableRegion;
     FrameView* frameView = frame->view();
     if (!frameView)
@@ -126,6 +144,7 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, 
         nonFastScrollableRegion.unite(computeNonFastScrollableRegion(subframe, offset));
 
     return nonFastScrollableRegion;
+#endif
 }
 
 unsigned ScrollingCoordinator::computeCurrentWheelEventHandlerCount()
