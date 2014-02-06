@@ -1,3 +1,11 @@
+2014-02-05  Anders Carlsson  <andersca@apple.com>
+
+        Remove unused functions.
+
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getOwnPropertySlot):
+        * runtime/RegExpObject.cpp:
+
 2014-02-05  Oliver Hunt  <oliver@apple.com>
 
         Change custom getter signature to make the base reference an object pointer

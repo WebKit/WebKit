@@ -155,11 +155,6 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
     return Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow);
 }
 
-static inline RegExpObject* asRegExpObject(EncodedJSValue value)
-{
-    return jsCast<RegExpObject*>(JSValue::decode(value));
-}
-
 EncodedJSValue regExpObjectGlobal(ExecState*, JSObject* slotBase, EncodedJSValue, PropertyName)
 {
     return JSValue::encode(jsBoolean(asRegExpObject(slotBase)->regExp()->global()));
