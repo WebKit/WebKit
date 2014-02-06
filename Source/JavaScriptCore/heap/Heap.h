@@ -102,9 +102,9 @@ namespace JSC {
             return MarkedBlock::blockFor(cell)->isRemembered(cell);
         }
         static bool isWriteBarrierEnabled();
-        JS_EXPORT_PRIVATE void writeBarrier(const JSCell*);
-        void writeBarrier(const JSCell*, JSValue);
-        void writeBarrier(const JSCell*, JSCell*);
+        JS_EXPORT_PRIVATE static void writeBarrier(const JSCell*);
+        static void writeBarrier(const JSCell*, JSValue);
+        static void writeBarrier(const JSCell*, JSCell*);
 
         WriteBarrierBuffer& writeBarrierBuffer() { return m_writeBarrierBuffer; }
         void flushWriteBarrierBuffer(JSCell*);
@@ -401,7 +401,7 @@ namespace JSC {
             return;
         if (!to || isMarked(to))
             return;
-        addToRememberedSet(from);
+        Heap::heap(from)->addToRememberedSet(from);
     }
 
     inline void Heap::writeBarrier(const JSCell* from, JSValue to)

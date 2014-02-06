@@ -1333,7 +1333,6 @@
 		C2981FDD17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h in Headers */ = {isa = PBXBuildFile; fileRef = C2981FDB17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C29ECB031804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = C29ECB011804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm */; };
 		C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */ = {isa = PBXBuildFile; fileRef = C2A7F687160432D400F76B98 /* JSDestructibleObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */; };
 		C2C0F7CD17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2C0F7CB17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp */; };
@@ -2766,7 +2765,6 @@
 		C29ECB011804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CurrentThisInsideBlockGetterTest.mm; path = API/tests/CurrentThisInsideBlockGetterTest.mm; sourceTree = "<group>"; };
 		C29ECB021804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurrentThisInsideBlockGetterTest.h; path = API/tests/CurrentThisInsideBlockGetterTest.h; sourceTree = "<group>"; };
 		C2A7F687160432D400F76B98 /* JSDestructibleObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDestructibleObject.h; sourceTree = "<group>"; };
-		C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrierInlines.h; sourceTree = "<group>"; };
 		C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedAllocator.h; sourceTree = "<group>"; };
 		C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedAllocator.cpp; sourceTree = "<group>"; };
 		C2C0F7CB17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredTransitions.cpp; path = dfg/DFGDesiredTransitions.cpp; sourceTree = "<group>"; };
@@ -3626,7 +3624,6 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
-				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -4644,7 +4641,6 @@
 				65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */,
 				2A68295B1875F80500B6C3E2 /* CopyWriteBarrier.h in Headers */,
 				2A4EC90C1860D6C20094F782 /* WriteBarrierBuffer.h in Headers */,
-				C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */,
 				FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */,
 				A532439318569709002ED692 /* CodeGeneratorInspectorStrings.py in Headers */,
 				A532439218569709002ED692 /* CodeGeneratorInspector.py in Headers */,

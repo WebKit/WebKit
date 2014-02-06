@@ -84,7 +84,7 @@ PropertyTable::PropertyTable(VM& vm, JSCell* owner, const PropertyTable& other)
     iterator end = this->end();
     for (iterator iter = begin(); iter != end; ++iter) {
         iter->key->ref();
-        vm.heap.writeBarrier(owner, iter->specificValue.get());
+        Heap::writeBarrier(owner, iter->specificValue.get());
     }
 
     // Copy the m_deletedOffsets vector.
@@ -109,7 +109,7 @@ PropertyTable::PropertyTable(VM& vm, JSCell* owner, unsigned initialCapacity, co
         ASSERT(canInsert());
         reinsert(*iter);
         iter->key->ref();
-        vm.heap.writeBarrier(owner, iter->specificValue.get());
+        Heap::writeBarrier(owner, iter->specificValue.get());
     }
 
     // Copy the m_deletedOffsets vector.

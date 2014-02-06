@@ -208,7 +208,7 @@ CheckedBoolean MapData::ensureSpaceForAppend(CallFrame* callFrame)
         replaceAndPackBackingStore(newEntries, requiredSize);
     else
         replaceBackingStore(newEntries, requiredSize);
-    callFrame->heap()->writeBarrier(this);
+    Heap::writeBarrier(this);
     return true;
 }
 

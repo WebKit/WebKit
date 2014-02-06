@@ -29,7 +29,6 @@
 #include "JSCJSValueInlines.h"
 #include "SlotVisitorInlines.h"
 #include "WeakMapData.h"
-#include "WriteBarrierInlines.h"
 
 namespace JSC {
 

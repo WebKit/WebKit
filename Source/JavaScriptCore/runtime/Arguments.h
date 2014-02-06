@@ -31,7 +31,6 @@
 #include "JSGlobalObject.h"
 #include "Interpreter.h"
 #include "ObjectConstructor.h"
-#include "WriteBarrierInlines.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {

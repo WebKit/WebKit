@@ -1,3 +1,16 @@
+2014-02-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r163542.
+        http://trac.webkit.org/changeset/163542
+        https://bugs.webkit.org/show_bug.cgi?id=128324
+
+        Caused many assertion failures (Requested by ap on #webkit).
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::jsFunction):
+
 2014-02-06  Frédéric Wang  <fred.wang@free.fr>
 
         Do not draw multi-characters <mi> in italic.

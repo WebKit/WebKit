@@ -77,9 +77,9 @@ protected:
     {
     }
 
-    void set(VM& vm, CodeLocationDataLabelPtr location, JSCell* owner, JSCell* value)
+    void set(VM&, CodeLocationDataLabelPtr location, JSCell* owner, JSCell* value)
     {
-        vm.heap.writeBarrier(owner, value);
+        Heap::writeBarrier(owner, value);
         m_location = location;
         ASSERT(((!!m_location) && m_location.executableAddress() != JITWriteBarrierFlag) || (location.executableAddress() == m_location.executableAddress()));
         MacroAssembler::repatchPointer(m_location, value);

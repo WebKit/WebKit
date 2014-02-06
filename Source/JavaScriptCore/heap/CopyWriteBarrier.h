@@ -68,10 +68,10 @@ public:
         return get();
     }
     
-    void set(VM& vm, const JSCell* owner, T* value)
+    void set(VM&, const JSCell* owner, T* value)
     {
         this->m_value = value;
-        vm.heap.writeBarrier(owner);
+        Heap::writeBarrier(owner);
     }
     
     void setWithoutWriteBarrier(T* value)

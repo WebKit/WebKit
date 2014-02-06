@@ -71,7 +71,13 @@ template<class T> inline void validateCell(T)
 // We have a separate base class with no constructors for use in Unions.
 template <typename T> class WriteBarrierBase {
 public:
-    void set(VM&, const JSCell* owner, T* value);
+    void set(VM& vm, const JSCell* owner, T* value)
+    {
+        ASSERT(value);
+        ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
+        validateCell(value);
+        setEarlyValue(vm, owner, value);
+    }
     
     // This is meant to be used like operator=, but is called copyFrom instead, in
     // order to kindly inform the C++ compiler that its advice is not appreciated.
@@ -80,11 +86,20 @@ public:
         m_cell = other.m_cell;
     }
 
-    void setMayBeNull(VM&, const JSCell* owner, T* value);
+    void setMayBeNull(VM& vm, const JSCell* owner, T* value)
+    {
+        if (value)
+            validateCell(value);
+        setEarlyValue(vm, owner, value);
+    }
 
     // Should only be used by JSCell during early initialisation
     // when some basic types aren't yet completely instantiated
-    void setEarlyValue(VM&, const JSCell* owner, T* value);
+    void setEarlyValue(VM&, const JSCell* owner, T* value)
+    {
+        this->m_cell = reinterpret_cast<JSCell*>(value);
+        Heap::writeBarrier(owner, this->m_cell);
+    }
     
     T* get() const
     {
@@ -136,7 +151,13 @@ private:
 
 template <> class WriteBarrierBase<Unknown> {
 public:
-    void set(VM&, const JSCell* owner, JSValue);
+    void set(VM&, const JSCell* owner, JSValue value)
+    {
+        ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
+        m_value = JSValue::encode(value);
+        Heap::writeBarrier(owner, value);
+    }
+
     void setWithoutWriteBarrier(JSValue value)
     {
         m_value = JSValue::encode(value);

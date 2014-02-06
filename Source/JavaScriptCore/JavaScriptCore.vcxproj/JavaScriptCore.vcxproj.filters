@@ -2438,9 +2438,6 @@
     <ClInclude Include="..\runtime\WriteBarrier.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\WriteBarrierInlines.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\tools\CodeProfile.h">
       <Filter>tools</Filter>
     </ClInclude>
