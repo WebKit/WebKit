@@ -1,3 +1,20 @@
+2014-02-06  Frédéric Wang  <fred.wang@free.fr>
+
+        Do not draw multi-characters <mi> in italic.
+        https://bugs.webkit.org/show_bug.cgi?id=44208
+
+        Reviewed by Chris Fleizach.
+
+        Add tests for single-char/multi-char <mi> elements, the mathvariant
+        attribute and MathML token elements dynamically modified.
+
+        * mathml/presentation/attributes-mathvariant-expected.html:
+        * mathml/presentation/attributes-mathvariant.html:
+        * mathml/presentation/tokenElements-dynamic-expected.html: Added.
+        * mathml/presentation/tokenElements-dynamic.html: Added.
+        * mathml/presentation/tokenElements-mathvariant-expected.html:
+        * mathml/presentation/tokenElements-mathvariant.html:
+
 2014-02-06  Alexey Proskuryakov  <ap@apple.com>
 
         Fix a copy/paste mistake in TestExpectations.

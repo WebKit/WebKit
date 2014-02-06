@@ -11213,6 +11213,7 @@
     <ClCompile Include="..\rendering\mathml\RenderMathMLSpace.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLSquareRoot.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLScripts.cpp" />
+    <ClCompile Include="..\rendering\mathml\RenderMathMLToken.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLUnderOver.cpp" />
     <ClCompile Include="..\rendering\style\BasicShapes.cpp" />
     <ClCompile Include="..\rendering\style\ContentData.cpp">
@@ -19904,6 +19905,7 @@
     <ClInclude Include="..\rendering\mathml\RenderMathMLSpace.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLSquareRoot.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLScripts.h" />
+    <ClInclude Include="..\rendering\mathml\RenderMathMLToken.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLUnderOver.h" />
     <ClInclude Include="..\rendering\style\BasicShapes.h" />
     <ClInclude Include="..\rendering\style\BorderData.h" />

@@ -4531,6 +4531,8 @@ webcore_sources += \
 	Source/WebCore/rendering/mathml/RenderMathMLSquareRoot.h \
 	Source/WebCore/rendering/mathml/RenderMathMLScripts.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLScripts.h \
+	Source/WebCore/rendering/mathml/RenderMathMLToken.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLToken.h \
 	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.h \
 	Source/WebCore/rendering/shapes/BoxShape.cpp \

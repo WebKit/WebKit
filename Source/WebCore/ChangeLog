@@ -1,3 +1,41 @@
+2014-02-06  Frédéric Wang  <fred.wang@free.fr>
+
+        Do not draw multi-characters <mi> in italic.
+        https://bugs.webkit.org/show_bug.cgi?id=44208
+
+        Reviewed by Chris Fleizach.
+
+        This test prevents multi-char <mi> to be drawn in italic and prepare
+        further improvements to MathML token and mfenced elements (bugs 124838
+        and bug 99620).
+
+        Test: mathml/presentation/tokenElements-dynamic.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/mathml.css:
+        (mi, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose):
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::didAttachRenderers):
+        (WebCore::MathMLTextElement::childrenChanged):
+        (WebCore::MathMLTextElement::createElementRenderer):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderMathMLToken):
+        * rendering/mathml/RenderMathMLToken.cpp: Added.
+        (WebCore::RenderMathMLToken::RenderMathMLToken):
+        (WebCore::RenderMathMLToken::addChild):
+        (WebCore::RenderMathMLToken::createWrapperIfNeeded):
+        (WebCore::RenderMathMLToken::updateTokenContent):
+        (WebCore::RenderMathMLToken::updateStyle):
+        (WebCore::RenderMathMLToken::styleDidChange):
+        (WebCore::RenderMathMLToken::updateFromElement):
+        * rendering/mathml/RenderMathMLToken.h: Added.
+        (WebCore::RenderMathMLToken::element):
+        (WebCore::RenderMathMLToken>):
+
 2014-02-06  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Simplify BasicShapeInset creation

@@ -2745,6 +2745,9 @@
     <ClCompile Include="..\rendering\mathml\RenderMathMLScripts.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\mathml\RenderMathMLToken.cpp">
+      <Filter>rendering\mathml</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\mathml\RenderMathMLUnderOver.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
@@ -9588,6 +9591,9 @@
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\mathml\RenderMathMLScripts.h">
+      <Filter>rendering\mathml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\mathml\RenderMathMLToken.h">
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\mathml\RenderMathMLUnderOver.h">

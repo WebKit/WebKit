@@ -2220,6 +2220,7 @@ set(WebCore_SOURCES
     rendering/mathml/RenderMathMLScripts.cpp
     rendering/mathml/RenderMathMLSpace.cpp
     rendering/mathml/RenderMathMLSquareRoot.cpp
+    rendering/mathml/RenderMathMLToken.cpp
     rendering/mathml/RenderMathMLUnderOver.cpp
 
     rendering/shapes/BoxShape.cpp

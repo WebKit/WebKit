@@ -15,12 +15,21 @@
          implementation relies on CSS style instead. See also bug 108778.
       -->
     <div>
+      <!-- FIXME: we add new lines to workaround a width/spacing bug. -->
       <math>
-        <mi style="font-style: normal;">A</mi>
-        <mi style="font-style: italic;">A</mi>
+        <mtext style="font-style: normal;">A</mtext>
+      </math><br/>
+      <math>
         <mtext style="font-style: italic;">A</mtext>
-        <mi style="font-style: normal; font-weight: bold;">A</mi>
-        <mi style="font-weight: bold; font-style: italic;">A</mi>
+      </math><br/>
+      <math>
+        <mtext style="font-style: italic;">A</mtext>
+      </math><br/>
+      <math>
+        <mtext style="font-weight: bold;">A</mtext>
+      </math><br/>
+      <math>
+        <mtext style="font-weight: bold; font-style: italic;">A</mtext>
       </math>
     </div>
 
