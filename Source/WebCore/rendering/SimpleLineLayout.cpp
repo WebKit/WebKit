@@ -89,11 +89,6 @@ static bool canUseForText(const RenderText& textRenderer, const SimpleFontData& 
 
 bool canUseFor(const RenderBlockFlow& flow)
 {
-#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(EFL)
-    // FIXME: Non-mac platforms are hitting ASSERT(run.charactersLength() >= run.length())
-    // https://bugs.webkit.org/show_bug.cgi?id=123338
-    return false;
-#else
     if (!flow.frame().settings().simpleLineLayoutEnabled())
         return false;
     if (!flow.firstChild())
@@ -200,7 +195,6 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
 
     return true;
-#endif
 }
 
 struct Style {

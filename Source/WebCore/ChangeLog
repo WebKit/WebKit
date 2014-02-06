@@ -1,3 +1,13 @@
+2014-02-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Re-enable simple line layout on non-Mac platforms
+        https://bugs.webkit.org/show_bug.cgi?id=123338
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+
 2014-02-06  Koop Mast <kwm@FreeBSD.org>
 
         Use system default compiler instead of gcc, as final fall through.
