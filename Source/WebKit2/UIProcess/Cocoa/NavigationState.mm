@@ -30,6 +30,7 @@
 
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
+#import "WKFrameInfoInternal.h"
 #import "WKNavigationActionInternal.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
@@ -126,6 +127,15 @@ static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationTyp
     return WKNavigationTypeOther;
 }
 
+static RetainPtr<WKFrameInfo> frameInfoFromWebFrameProxy(WebFrameProxy& webFrameProxy)
+{
+    auto frameInfo = adoptNS([[WKFrameInfo alloc] init]);
+
+    [frameInfo setMainFrame:webFrameProxy.isMainFrame()];
+
+    return frameInfo;
+}
+
 void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy* destinationFrame, const NavigationActionData& navigationActionData, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
@@ -140,6 +150,12 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
 
     // FIXME: Set up the navigation action object.
     auto navigationAction = adoptNS([[WKNavigationAction alloc] init]);
+
+    if (sourceFrame) {
+        auto sourceFrameInfo = frameInfoFromWebFrameProxy(*sourceFrame);
+        [sourceFrameInfo setRequest:originalRequest.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
+        [navigationAction setSourceFrame:sourceFrameInfo.get()];
+    }
 
     [navigationAction setNavigationType:toWKNavigationType(navigationActionData.navigationType)];
 

@@ -24,26 +24,27 @@
  */
 
 #import "config.h"
-#import "WKNavigationActionInternal.h"
+#import "WKFrameInfoInternal.h"
 
 #if WK_API_ENABLED
 
 #import <wtf/RetainPtr.h>
 
-@implementation WKNavigationAction {
-    RetainPtr<WKFrameInfo> _sourceFrame;
+@implementation WKFrameInfo {
+    RetainPtr<NSURLRequest> _request;
 }
 
-- (WKFrameInfo *)sourceFrame
+- (NSURLRequest *)request
 {
-    return _sourceFrame.get();
+    return _request.get();
 }
 
-- (void)setSourceFrame:(WKFrameInfo *)sourceFrame
+- (void)setRequest:(NSURLRequest *)request
 {
-    _sourceFrame = sourceFrame;
+    _request = adoptNS([request copy]);
 }
 
 @end
 
 #endif
+

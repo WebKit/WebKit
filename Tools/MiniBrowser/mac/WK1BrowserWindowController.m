@@ -43,6 +43,7 @@
     [_webView setFrameLoadDelegate:self];
     [_webView setUIDelegate:self];
     [_webView setResourceLoadDelegate:self];
+    [_webView setPolicyDelegate:self];
 
     [containerView addSubview:_webView];
 }
@@ -255,6 +256,13 @@
 
 - (IBAction)dumpSourceToConsole:(id)sender
 {
+}
+
+- (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
+{
+    NSLog(@"request %@ actionInformation %@", request, actionInformation);
+
+    [listener use];
 }
 
 // WebFrameLoadDelegate Methods

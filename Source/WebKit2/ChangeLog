@@ -1,3 +1,25 @@
+2014-02-05  Anders Carlsson  <andersca@apple.com>
+
+        Add sourceFrame to WKNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=128280
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKFrameInfo.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKNavigationActionInternal.h.
+        * UIProcess/API/Cocoa/WKFrameInfo.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKNavigationActionInternal.h.
+        (-[WKFrameInfo request]):
+        (-[WKFrameInfo setRequest:]):
+        * UIProcess/API/Cocoa/WKFrameInfoInternal.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKNavigationActionInternal.h.
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction sourceFrame]):
+        (-[WKNavigationAction setSourceFrame:]):
+        * UIProcess/API/Cocoa/WKNavigationActionInternal.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::frameInfoFromWebFrameProxy):
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-05  Enrica Casucci  <enrica@apple.com>
 
         WK2: Tap highlight is positioned incorrectly in iframes.

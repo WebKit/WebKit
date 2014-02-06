@@ -672,6 +672,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 - (void)browsingContextController:(WKBrowsingContextController *)browsingContext decidePolicyForNavigationAction:(NSDictionary *)actionInformation decisionHandler:(WKPolicyDecisionHandler)decisionHandler
 {
     LOG(@"decidePolicyForNavigationAction");
+    NSLog(@"action information %@", actionInformation);
     decisionHandler(WKPolicyDecisionAllow);
 }
 

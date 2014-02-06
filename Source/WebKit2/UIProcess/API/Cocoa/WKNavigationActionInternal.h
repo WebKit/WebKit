@@ -29,6 +29,8 @@
 
 @interface WKNavigationAction ()
 
+@property (nonatomic, readwrite, strong) WKFrameInfo *sourceFrame;
+
 @property (nonatomic, readwrite) WKNavigationType navigationType;
 
 @end

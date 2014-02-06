@@ -23,26 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKNavigationActionInternal.h"
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <wtf/RetainPtr.h>
+WK_API_CLASS
+@interface WKFrameInfo : NSObject
 
-@implementation WKNavigationAction {
-    RetainPtr<WKFrameInfo> _sourceFrame;
-}
-
-- (WKFrameInfo *)sourceFrame
-{
-    return _sourceFrame.get();
-}
-
-- (void)setSourceFrame:(WKFrameInfo *)sourceFrame
-{
-    _sourceFrame = sourceFrame;
-}
+@property (nonatomic, readonly, getter=isMainFrame) BOOL mainFrame;
+@property (nonatomic, readonly) NSURLRequest *request;
 
 @end
 

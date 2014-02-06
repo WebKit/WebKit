@@ -28,6 +28,8 @@
 
 #if WK_API_ENABLED
 
+@class WKFrameInfo;
+
 typedef NS_ENUM(NSInteger, WKNavigationType) {
     WKNavigationTypeLinkActivated,
     WKNavigationTypeFormSubmitted,
@@ -39,6 +41,8 @@ typedef NS_ENUM(NSInteger, WKNavigationType) {
 
 WK_API_CLASS
 @interface WKNavigationAction : NSObject
+
+@property (nonatomic, readonly) WKFrameInfo *sourceFrame;
 
 @property (nonatomic, readonly) WKNavigationType navigationType;
 
