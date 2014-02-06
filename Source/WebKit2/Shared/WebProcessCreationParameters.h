@@ -131,6 +131,7 @@ struct WebProcessCreationParameters {
 
     bool shouldForceScreenFontSubstitution;
     bool shouldEnableKerningAndLigaturesByDefault;
+    bool shouldEnableFTL;
 #endif // PLATFORM(MAC)
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

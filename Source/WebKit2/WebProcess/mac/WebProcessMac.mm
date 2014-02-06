@@ -36,6 +36,7 @@
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessProxyMessages.h"
+#import <JavaScriptCore/Options.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/Font.h>
@@ -171,6 +172,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
     Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
+
+    JSC::Options::useFTLJIT() = parameters.shouldEnableFTL;
 
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 
