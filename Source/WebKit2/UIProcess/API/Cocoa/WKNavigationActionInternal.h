@@ -32,6 +32,7 @@
 @property (nonatomic, readwrite, strong) WKFrameInfo *sourceFrame;
 
 @property (nonatomic, readwrite) WKNavigationType navigationType;
+@property (nonatomic, readwrite, copy) NSURLRequest *request;
 
 @end
 

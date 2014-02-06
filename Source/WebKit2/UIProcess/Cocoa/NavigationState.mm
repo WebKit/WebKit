@@ -136,7 +136,7 @@ static RetainPtr<WKFrameInfo> frameInfoFromWebFrameProxy(WebFrameProxy& webFrame
     return frameInfo;
 }
 
-void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy* destinationFrame, const NavigationActionData& navigationActionData, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
+void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy* destinationFrame, const NavigationActionData& navigationActionData, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest& request, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
         // FIXME: <rdar://problem/15949822> Figure out what the "default delegate behavior" should be here.
@@ -158,6 +158,7 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     }
 
     [navigationAction setNavigationType:toWKNavigationType(navigationActionData.navigationType)];
+    [navigationAction setRequest:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
 
     [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[listener](WKNavigationPolicyDecision policyDecision) {
         switch (policyDecision) {

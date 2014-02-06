@@ -32,6 +32,7 @@
 
 @implementation WKNavigationAction {
     RetainPtr<WKFrameInfo> _sourceFrame;
+    RetainPtr<NSURLRequest> _request;
 }
 
 - (WKFrameInfo *)sourceFrame
@@ -42,6 +43,16 @@
 - (void)setSourceFrame:(WKFrameInfo *)sourceFrame
 {
     _sourceFrame = sourceFrame;
+}
+
+- (NSURLRequest *)request
+{
+    return _request.get();
+}
+
+- (void)setRequest:(NSURLRequest *)request
+{
+    _request = adoptNS([request copy]);
 }
 
 @end
