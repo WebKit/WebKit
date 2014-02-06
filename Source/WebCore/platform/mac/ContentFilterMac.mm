@@ -102,6 +102,12 @@ ContentFilter::ContentFilter(const ResourceResponse& response)
     if ([getNEFilterSourceClass() filterRequired]) {
         m_neFilterSource = adoptNS([[getNEFilterSourceClass() alloc] initWithURL:[response.nsURLResponse() URL] direction:NEFilterSourceDirectionInbound socketIdentifier:0]);
         m_neFilterSourceQueue = dispatch_queue_create("com.apple.WebCore.NEFilterSourceQueue", DISPATCH_QUEUE_SERIAL);
+        
+        long long expectedContentSize = [response.nsURLResponse() expectedContentLength];
+        if (expectedContentSize < 0 || expectedContentSize > NSUIntegerMax)
+            m_originalData = adoptNS([[NSMutableData alloc] init]);
+        else
+            m_originalData = adoptNS([[NSMutableData alloc] initWithCapacity:(NSUInteger)expectedContentSize]);
     }
 #endif
 }
@@ -136,11 +142,25 @@ void ContentFilter::addData(const char* data, int length)
     if (!m_neFilterSource)
         return;
 
+    // FIXME: NEFilterSource doesn't buffer data like WebFilterEvaluator does,
+    // so we need to do it ourselves so getReplacementData() can return the
+    // original bytes back to the loader. We should find a way to remove this
+    // additional copy.
+    [m_originalData appendBytes:data length:length];
+
     ref();
-    [m_neFilterSource addData:[NSData dataWithBytesNoCopy:(void*)data length:length freeWhenDone:NO] withCompletionQueue:m_neFilterSourceQueue completionHandler:^(NEFilterSourceStatus status, NSData *) {
-       m_neFilterSourceStatus = status;
-       deref();
+    dispatch_semaphore_t neFilterSourceSemaphore = dispatch_semaphore_create(0);
+    [m_neFilterSource addData:[NSData dataWithBytes:(void*)data length:length] withCompletionQueue:m_neFilterSourceQueue completionHandler:^(NEFilterSourceStatus status, NSData *) {
+        m_neFilterSourceStatus = status;
+        deref();
+        dispatch_semaphore_signal(neFilterSourceSemaphore);
     }];
+
+    // FIXME: We have to block here since DocumentLoader expects to have a
+    // blocked/not blocked answer from the filter immediately after calling
+    // addData(). We should find a way to make this asynchronous.
+    dispatch_semaphore_wait(neFilterSourceSemaphore, DISPATCH_TIME_FOREVER);
+    dispatch_release(neFilterSourceSemaphore);
 #endif
 }
     
@@ -158,19 +178,18 @@ void ContentFilter::finishedAddingData()
         return;
 
     ref();
-    m_neFilterSourceSemaphore = dispatch_semaphore_create(0);
+    dispatch_semaphore_t neFilterSourceSemaphore = dispatch_semaphore_create(0);
     [m_neFilterSource dataCompleteWithCompletionQueue:m_neFilterSourceQueue completionHandler:^(NEFilterSourceStatus status, NSData *) {
         m_neFilterSourceStatus = status;
         deref();
-
-        dispatch_semaphore_signal(m_neFilterSourceSemaphore);
+        dispatch_semaphore_signal(neFilterSourceSemaphore);
     }];
-    
+
     // FIXME: We have to block here since DocumentLoader expects to have a
     // blocked/not blocked answer from the filter immediately after calling
     // finishedAddingData(). We should find a way to make this asynchronous.
-    dispatch_semaphore_wait(m_neFilterSourceSemaphore, DISPATCH_TIME_FOREVER);
-    dispatch_release(m_neFilterSourceSemaphore);
+    dispatch_semaphore_wait(neFilterSourceSemaphore, DISPATCH_TIME_FOREVER);
+    dispatch_release(neFilterSourceSemaphore);
 #endif
 
     ASSERT(!needsMoreData());
@@ -196,11 +215,21 @@ bool ContentFilter::didBlockData() const
 
 const char* ContentFilter::getReplacementData(int& length) const
 {
-    // FIXME: This will return a null pointer with length 0 when using
-    // NEFilterSource. We need to show a proper error page instead.
     ASSERT(!needsMoreData());
-    length = [m_replacementData length];
-    return static_cast<const char*>([m_replacementData bytes]);
+
+    if (didBlockData()) {
+        length = [m_replacementData length];
+        return static_cast<const char*>([m_replacementData bytes]);
+    }
+
+    NSData *originalData = m_replacementData.get();
+#if HAVE(NE_FILTER_SOURCE)
+    if (!originalData)
+        originalData = m_originalData.get();
+#endif
+
+    length = [originalData length];
+    return static_cast<const char*>([originalData bytes]);
 }
 
 } // namespace WebCore

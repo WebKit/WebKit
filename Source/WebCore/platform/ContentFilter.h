@@ -37,6 +37,7 @@
 #endif
 
 #if PLATFORM(MAC)
+OBJC_CLASS NSMutableData;
 OBJC_CLASS WebFilterEvaluator;
 #endif
 
@@ -82,7 +83,7 @@ private:
     std::atomic<long> m_neFilterSourceStatus;
     RetainPtr<NEFilterSource> m_neFilterSource;
     dispatch_queue_t m_neFilterSourceQueue;
-    dispatch_semaphore_t m_neFilterSourceSemaphore;
+    RetainPtr<NSMutableData> m_originalData;
 #endif
 };
 

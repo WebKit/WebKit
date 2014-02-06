@@ -1,3 +1,25 @@
+2014-02-04  Andy Estes  <aestes@apple.com>
+
+        Buffer incoming data in ContentFilter when using NEFilterSource
+        https://bugs.webkit.org/show_bug.cgi?id=127979
+
+        Reviewed by Sam Weinig.
+
+        WebFilterEvaluator buffers incoming data and returns it to us as
+        replacement data if the load is allowed. NEFilterSource doesn't do
+        this, so we need to do our own buffering.
+
+        * platform/ContentFilter.h: Forward-declared NSMutableData and added
+        m_originalData.
+        * platform/mac/ContentFilterMac.mm:
+        (WebCore::ContentFilter::ContentFilter): Constructed m_originalData
+        with an initial capacity (if we know the expected content size).
+        (WebCore::ContentFilter::addData): Buffered incoming data if we are
+        using NEFilterSource.
+        (WebCore::ContentFilter::finishedAddingData):
+        (WebCore::ContentFilter::getReplacementData): Returned m_originalData
+        if the load wasn't blocked.
+
 2014-02-05  Andreas Kling  <akling@apple.com>
 
         Remove ENABLE(DIRECTORY_UPLOAD).
