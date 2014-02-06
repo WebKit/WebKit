@@ -392,7 +392,7 @@ bool JSTestObj::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyNa
     return getStaticValueSlot<JSTestObj, Base>(exec, JSTestObjTable, thisObject, propertyName, slot);
 }
 
-EncodedJSValue jsTestObjReadOnlyLongAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReadOnlyLongAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -405,7 +405,7 @@ EncodedJSValue jsTestObjReadOnlyLongAttr(ExecState* exec, EncodedJSValue slotBas
 }
 
 
-EncodedJSValue jsTestObjReadOnlyStringAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReadOnlyStringAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -418,7 +418,7 @@ EncodedJSValue jsTestObjReadOnlyStringAttr(ExecState* exec, EncodedJSValue slotB
 }
 
 
-EncodedJSValue jsTestObjReadOnlyTestObjAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReadOnlyTestObjAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -431,7 +431,7 @@ EncodedJSValue jsTestObjReadOnlyTestObjAttr(ExecState* exec, EncodedJSValue slot
 }
 
 
-EncodedJSValue jsTestObjConstructorStaticReadOnlyLongAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjConstructorStaticReadOnlyLongAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     UNUSED_PARAM(thisValue);
     UNUSED_PARAM(slotBase);
@@ -441,7 +441,7 @@ EncodedJSValue jsTestObjConstructorStaticReadOnlyLongAttr(ExecState* exec, Encod
 }
 
 
-EncodedJSValue jsTestObjConstructorStaticStringAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjConstructorStaticStringAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     UNUSED_PARAM(thisValue);
     UNUSED_PARAM(slotBase);
@@ -451,7 +451,7 @@ EncodedJSValue jsTestObjConstructorStaticStringAttr(ExecState* exec, EncodedJSVa
 }
 
 
-EncodedJSValue jsTestObjConstructorTestSubObj(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjConstructorTestSubObj(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -461,7 +461,7 @@ EncodedJSValue jsTestObjConstructorTestSubObj(ExecState* exec, EncodedJSValue sl
 }
 
 
-EncodedJSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -476,7 +476,7 @@ EncodedJSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, E
 }
 
 
-EncodedJSValue jsTestObjEnumAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjEnumAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -489,7 +489,7 @@ EncodedJSValue jsTestObjEnumAttr(ExecState* exec, EncodedJSValue slotBase, Encod
 }
 
 
-EncodedJSValue jsTestObjByteAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjByteAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -502,7 +502,7 @@ EncodedJSValue jsTestObjByteAttr(ExecState* exec, EncodedJSValue slotBase, Encod
 }
 
 
-EncodedJSValue jsTestObjOctetAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjOctetAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -515,7 +515,7 @@ EncodedJSValue jsTestObjOctetAttr(ExecState* exec, EncodedJSValue slotBase, Enco
 }
 
 
-EncodedJSValue jsTestObjShortAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjShortAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -528,7 +528,7 @@ EncodedJSValue jsTestObjShortAttr(ExecState* exec, EncodedJSValue slotBase, Enco
 }
 
 
-EncodedJSValue jsTestObjUnsignedShortAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjUnsignedShortAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -541,7 +541,7 @@ EncodedJSValue jsTestObjUnsignedShortAttr(ExecState* exec, EncodedJSValue slotBa
 }
 
 
-EncodedJSValue jsTestObjLongAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjLongAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -554,7 +554,7 @@ EncodedJSValue jsTestObjLongAttr(ExecState* exec, EncodedJSValue slotBase, Encod
 }
 
 
-EncodedJSValue jsTestObjLongLongAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjLongLongAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -567,7 +567,7 @@ EncodedJSValue jsTestObjLongLongAttr(ExecState* exec, EncodedJSValue slotBase, E
 }
 
 
-EncodedJSValue jsTestObjUnsignedLongLongAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjUnsignedLongLongAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -580,7 +580,7 @@ EncodedJSValue jsTestObjUnsignedLongLongAttr(ExecState* exec, EncodedJSValue slo
 }
 
 
-EncodedJSValue jsTestObjStringAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjStringAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -593,7 +593,7 @@ EncodedJSValue jsTestObjStringAttr(ExecState* exec, EncodedJSValue slotBase, Enc
 }
 
 
-EncodedJSValue jsTestObjTestObjAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjTestObjAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -606,7 +606,7 @@ EncodedJSValue jsTestObjTestObjAttr(ExecState* exec, EncodedJSValue slotBase, En
 }
 
 
-EncodedJSValue jsTestObjXMLObjAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjXMLObjAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -619,7 +619,7 @@ EncodedJSValue jsTestObjXMLObjAttr(ExecState* exec, EncodedJSValue slotBase, Enc
 }
 
 
-EncodedJSValue jsTestObjCreate(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjCreate(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -632,7 +632,7 @@ EncodedJSValue jsTestObjCreate(ExecState* exec, EncodedJSValue slotBase, Encoded
 }
 
 
-EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -645,7 +645,7 @@ EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, EncodedJSValue slot
 }
 
 
-EncodedJSValue jsTestObjReflectedIntegralAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReflectedIntegralAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -658,7 +658,7 @@ EncodedJSValue jsTestObjReflectedIntegralAttr(ExecState* exec, EncodedJSValue sl
 }
 
 
-EncodedJSValue jsTestObjReflectedUnsignedIntegralAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReflectedUnsignedIntegralAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -671,7 +671,7 @@ EncodedJSValue jsTestObjReflectedUnsignedIntegralAttr(ExecState* exec, EncodedJS
 }
 
 
-EncodedJSValue jsTestObjReflectedBooleanAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReflectedBooleanAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -684,7 +684,7 @@ EncodedJSValue jsTestObjReflectedBooleanAttr(ExecState* exec, EncodedJSValue slo
 }
 
 
-EncodedJSValue jsTestObjReflectedURLAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReflectedURLAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -697,7 +697,7 @@ EncodedJSValue jsTestObjReflectedURLAttr(ExecState* exec, EncodedJSValue slotBas
 }
 
 
-EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -710,7 +710,7 @@ EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, EncodedJSValue slot
 }
 
 
-EncodedJSValue jsTestObjReflectedCustomIntegralAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReflectedCustomIntegralAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -723,7 +723,7 @@ EncodedJSValue jsTestObjReflectedCustomIntegralAttr(ExecState* exec, EncodedJSVa
 }
 
 
-EncodedJSValue jsTestObjReflectedCustomBooleanAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReflectedCustomBooleanAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -736,7 +736,7 @@ EncodedJSValue jsTestObjReflectedCustomBooleanAttr(ExecState* exec, EncodedJSVal
 }
 
 
-EncodedJSValue jsTestObjReflectedCustomURLAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -749,7 +749,7 @@ EncodedJSValue jsTestObjReflectedCustomURLAttr(ExecState* exec, EncodedJSValue s
 }
 
 
-EncodedJSValue jsTestObjTypedArrayAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjTypedArrayAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -762,7 +762,7 @@ EncodedJSValue jsTestObjTypedArrayAttr(ExecState* exec, EncodedJSValue slotBase,
 }
 
 
-EncodedJSValue jsTestObjAttrWithGetterException(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjAttrWithGetterException(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -776,7 +776,7 @@ EncodedJSValue jsTestObjAttrWithGetterException(ExecState* exec, EncodedJSValue 
 }
 
 
-EncodedJSValue jsTestObjAttrWithSetterException(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjAttrWithSetterException(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -789,7 +789,7 @@ EncodedJSValue jsTestObjAttrWithSetterException(ExecState* exec, EncodedJSValue 
 }
 
 
-EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -803,7 +803,7 @@ EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* exec, EncodedJS
 }
 
 
-EncodedJSValue jsTestObjStringAttrWithSetterException(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjStringAttrWithSetterException(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -816,7 +816,7 @@ EncodedJSValue jsTestObjStringAttrWithSetterException(ExecState* exec, EncodedJS
 }
 
 
-EncodedJSValue jsTestObjCustomAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjCustomAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -826,7 +826,7 @@ EncodedJSValue jsTestObjCustomAttr(ExecState* exec, EncodedJSValue slotBase, Enc
 }
 
 
-EncodedJSValue jsTestObjWithScriptStateAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjWithScriptStateAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -838,7 +838,7 @@ EncodedJSValue jsTestObjWithScriptStateAttribute(ExecState* exec, EncodedJSValue
 }
 
 
-EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -853,7 +853,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* exec, Enc
 }
 
 
-EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -867,7 +867,7 @@ EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, EncodedJ
 }
 
 
-EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -884,7 +884,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exe
 }
 
 
-EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -899,7 +899,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecSt
 }
 
 
-EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -916,7 +916,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(
 }
 
 
-EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -931,7 +931,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttrib
 }
 
 
-EncodedJSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -944,7 +944,7 @@ EncodedJSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec
 
 
 #if ENABLE(Condition1)
-EncodedJSValue jsTestObjConditionalAttr1(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr1(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -959,7 +959,7 @@ EncodedJSValue jsTestObjConditionalAttr1(ExecState* exec, EncodedJSValue slotBas
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-EncodedJSValue jsTestObjConditionalAttr2(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr2(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -974,7 +974,7 @@ EncodedJSValue jsTestObjConditionalAttr2(ExecState* exec, EncodedJSValue slotBas
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-EncodedJSValue jsTestObjConditionalAttr3(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr3(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -989,7 +989,7 @@ EncodedJSValue jsTestObjConditionalAttr3(ExecState* exec, EncodedJSValue slotBas
 #endif
 
 #if ENABLE(Condition1)
-EncodedJSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1001,7 +1001,7 @@ EncodedJSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, EncodedJSVa
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-EncodedJSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1013,7 +1013,7 @@ EncodedJSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, EncodedJSVa
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-EncodedJSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1024,7 +1024,7 @@ EncodedJSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, EncodedJSVa
 
 #endif
 
-EncodedJSValue jsTestObjCachedAttribute1(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjCachedAttribute1(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1040,7 +1040,7 @@ EncodedJSValue jsTestObjCachedAttribute1(ExecState* exec, EncodedJSValue slotBas
 }
 
 
-EncodedJSValue jsTestObjCachedAttribute2(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjCachedAttribute2(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1056,7 +1056,7 @@ EncodedJSValue jsTestObjCachedAttribute2(ExecState* exec, EncodedJSValue slotBas
 }
 
 
-EncodedJSValue jsTestObjAnyAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjAnyAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1069,7 +1069,7 @@ EncodedJSValue jsTestObjAnyAttribute(ExecState* exec, EncodedJSValue slotBase, E
 }
 
 
-EncodedJSValue jsTestObjContentDocument(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjContentDocument(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1080,7 +1080,7 @@ EncodedJSValue jsTestObjContentDocument(ExecState* exec, EncodedJSValue slotBase
 }
 
 
-EncodedJSValue jsTestObjMutablePoint(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjMutablePoint(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1093,7 +1093,7 @@ EncodedJSValue jsTestObjMutablePoint(ExecState* exec, EncodedJSValue slotBase, E
 }
 
 
-EncodedJSValue jsTestObjImmutablePoint(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjImmutablePoint(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1106,7 +1106,7 @@ EncodedJSValue jsTestObjImmutablePoint(ExecState* exec, EncodedJSValue slotBase,
 }
 
 
-EncodedJSValue jsTestObjStrawberry(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjStrawberry(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1119,7 +1119,7 @@ EncodedJSValue jsTestObjStrawberry(ExecState* exec, EncodedJSValue slotBase, Enc
 }
 
 
-EncodedJSValue jsTestObjStrictFloat(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjStrictFloat(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1132,7 +1132,7 @@ EncodedJSValue jsTestObjStrictFloat(ExecState* exec, EncodedJSValue slotBase, En
 }
 
 
-EncodedJSValue jsTestObjDescription(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjDescription(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1145,7 +1145,7 @@ EncodedJSValue jsTestObjDescription(ExecState* exec, EncodedJSValue slotBase, En
 }
 
 
-EncodedJSValue jsTestObjId(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjId(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1158,7 +1158,7 @@ EncodedJSValue jsTestObjId(ExecState* exec, EncodedJSValue slotBase, EncodedJSVa
 }
 
 
-EncodedJSValue jsTestObjHash(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjHash(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1171,7 +1171,7 @@ EncodedJSValue jsTestObjHash(ExecState* exec, EncodedJSValue slotBase, EncodedJS
 }
 
 
-EncodedJSValue jsTestObjReplaceableAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjReplaceableAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1184,7 +1184,7 @@ EncodedJSValue jsTestObjReplaceableAttribute(ExecState* exec, EncodedJSValue slo
 }
 
 
-EncodedJSValue jsTestObjNullableDoubleAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjNullableDoubleAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1200,7 +1200,7 @@ EncodedJSValue jsTestObjNullableDoubleAttribute(ExecState* exec, EncodedJSValue 
 }
 
 
-EncodedJSValue jsTestObjNullableLongAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjNullableLongAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1216,7 +1216,7 @@ EncodedJSValue jsTestObjNullableLongAttribute(ExecState* exec, EncodedJSValue sl
 }
 
 
-EncodedJSValue jsTestObjNullableBooleanAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjNullableBooleanAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1232,7 +1232,7 @@ EncodedJSValue jsTestObjNullableBooleanAttribute(ExecState* exec, EncodedJSValue
 }
 
 
-EncodedJSValue jsTestObjNullableStringAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjNullableStringAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1248,7 +1248,7 @@ EncodedJSValue jsTestObjNullableStringAttribute(ExecState* exec, EncodedJSValue 
 }
 
 
-EncodedJSValue jsTestObjNullableLongSettableAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjNullableLongSettableAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1264,7 +1264,7 @@ EncodedJSValue jsTestObjNullableLongSettableAttribute(ExecState* exec, EncodedJS
 }
 
 
-EncodedJSValue jsTestObjNullableStringValue(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjNullableStringValue(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1281,7 +1281,7 @@ EncodedJSValue jsTestObjNullableStringValue(ExecState* exec, EncodedJSValue slot
 }
 
 
-EncodedJSValue jsTestObjAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1294,7 +1294,7 @@ EncodedJSValue jsTestObjAttribute(ExecState* exec, EncodedJSValue slotBase, Enco
 }
 
 
-EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
@@ -1307,7 +1307,7 @@ EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* exec, EncodedJS
 }
 
 
-EncodedJSValue jsTestObjConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestObjConstructor(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObj* domObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (!domObject)
@@ -3684,85 +3684,85 @@ void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)
 // Constant getters
 
 #if ENABLE(Condition1)
-EncodedJSValue jsTestObjCONDITIONAL_CONST(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONDITIONAL_CONST(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(0)));
 }
 
 #endif
-EncodedJSValue jsTestObjCONST_VALUE_0(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_0(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(0)));
 }
 
-EncodedJSValue jsTestObjCONST_VALUE_1(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_1(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(1)));
 }
 
-EncodedJSValue jsTestObjCONST_VALUE_2(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_2(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(2)));
 }
 
-EncodedJSValue jsTestObjCONST_VALUE_4(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_4(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(4)));
 }
 
-EncodedJSValue jsTestObjCONST_VALUE_8(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_8(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(8)));
 }
 
-EncodedJSValue jsTestObjCONST_VALUE_9(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_9(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(-1)));
 }
 
-EncodedJSValue jsTestObjCONST_VALUE_10(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_10(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     return JSValue::encode(jsStringOrNull(exec, String("my constant string")));
 }
 
-EncodedJSValue jsTestObjCONST_VALUE_11(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_11(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(0xffffffff)));
 }
 
-EncodedJSValue jsTestObjCONST_VALUE_12(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_12(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(0x01)));
 }
 
-EncodedJSValue jsTestObjCONST_VALUE_13(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_13(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(0X20)));
 }
 
-EncodedJSValue jsTestObjCONST_VALUE_14(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_14(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(0x1abc)));
 }
 
-EncodedJSValue jsTestObjCONST_JAVASCRIPT(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_JAVASCRIPT(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(15)));
 }
 
-EncodedJSValue jsTestObjReadonly(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjReadonly(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return JSValue::encode(jsNumber(static_cast<int>(0)));

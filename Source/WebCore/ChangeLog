@@ -1,3 +1,9 @@
+2014-02-05  Andreas Kling  <akling@apple.com>
+
+        Rebaseline the bindings tests after Oliver's hackery.
+
+        * bindings/scripts/test/JS/:
+
 2014-02-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][GTK] Share plugin's implementation between EFL and Gtk ports.
