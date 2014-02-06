@@ -435,6 +435,8 @@ webkit.org/b/127316 svg/dom/SVGPolygonElement-baseVal-list-removal-crash.html [ 
 webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
 webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
 
+webkit.org/b/128315 editing/caret/caret-color.html [ Pass Failure ]
+
 ### END OF (3) Unclassified failures
 ########################################
 
