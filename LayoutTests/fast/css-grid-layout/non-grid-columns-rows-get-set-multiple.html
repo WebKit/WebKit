@@ -7,27 +7,11 @@ if (window.testRunner)
 </script>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
-.grid {
-    /* Give an explicit size to the grid so that percentage grid tracks have a consistent resolution */
-    width: 800px;
-    height: 600px;
-}
-.gridItem {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 1;
-    width: 7px;
-    height: 11px;
-}
-.gridItem2 {
-    -webkit-grid-column: 2;
-    -webkit-grid-row: 2;
-    width: 17px;
-    height: 3px;
-}
 .gridWithFixed {
     -webkit-grid-definition-columns: 7px 11px;
     -webkit-grid-definition-rows: 17px 2px;
 }
+
 .gridWithPercent {
     -webkit-grid-definition-columns: 53% 99%;
     -webkit-grid-definition-rows: 27% 52%;
@@ -60,7 +44,7 @@ if (window.testRunner)
 }
 .gridWithFitContentAndFitAvailable {
     -webkit-grid-definition-columns: -webkit-content-available;
-    -webkit-grid-definition-rows: -webkit-fitcontent -webkit-fit-available;
+    -webkit-grid-definition-rows: -webkit-fit-content -webkit-fit-available;
 }
 .gridWithMinMaxContent {
     -webkit-grid-definition-columns: -webkit-min-content -webkit-max-content;
@@ -77,8 +61,8 @@ if (window.testRunner)
     font: 10px Ahem;
 }
 .gridWithFractionFraction {
-    -webkit-grid-definition-columns: 2fr 3fr;
-    -webkit-grid-definition-rows: 3fr 5fr;
+    -webkit-grid-definition-columns: 1fr 2fr;
+    -webkit-grid-definition-rows: 3fr 4fr;
 }
 .gridWithFractionMinMax {
     -webkit-grid-definition-columns: minmax(-webkit-min-content, 45px) 2fr;
@@ -88,28 +72,22 @@ if (window.testRunner)
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<div class="grid gridWithFixed" id="gridWithFixedElement"></div>
-<div class="grid gridWithPercent" id="gridWithPercentElement"></div>
-<div class="grid gridWithAuto" id="gridWithAutoElement">
-  <div class="gridItem2"></div>
-</div>
-<div class="grid gridWithEM" id="gridWithEMElement"></div>
-<div class="grid gridWithNoneAndAuto" id="gridWithNoneAndAuto"></div>
-<div class="grid gridWithNoneAndFixed" id="gridWithNoneAndFixed"></div>
-<div class="grid gridWithThreeItems" id="gridWithThreeItems"></div>
-<div class="grid gridWithPercentAndViewportPercent" id="gridWithPercentAndViewportPercent"></div>
-<div class="grid gridWithFitContentAndFitAvailable" id="gridWithFitContentAndFitAvailable"></div>
-<div class="grid gridWithMinMaxContent" id="gridWithMinMaxContent"></div>
-<div class="grid gridWithMinMaxContent" id="gridWithMinMaxContentWithChildrenElement">
-  <div class="gridItem"></div>
-  <div class="gridItem2"></div>
-</div>
-<div class="grid gridWithMinMaxAndFixed" id="gridWithMinMaxAndFixed"></div>
-<div class="grid gridWithMinMaxAndMinMaxContent" id="gridWithMinMaxAndMinMaxContent"></div>
-<div class="grid gridWithFractionFraction" id="gridWithFractionFraction"></div>
-<div class="grid gridWithFractionMinMax" id="gridWithFractionMinMax"></div>
+<div class="gridWithFixed" id="gridWithFixedElement"></div>
+<div class="gridWithPercent" id="gridWithPercentElement"></div>
+<div class="gridWithAuto" id="gridWithAutoElement"></div>
+<div class="gridWithEM" id="gridWithEMElement"></div>
+<div class="gridWithNoneAndAuto" id="gridWithNoneAndAuto"></div>
+<div class="gridWithNoneAndFixed" id="gridWithNoneAndFixed"></div>
+<div class="gridWithThreeItems" id="gridWithThreeItems"></div>
+<div class="gridWithPercentAndViewportPercent" id="gridWithPercentAndViewportPercent"></div>
+<div class="gridWithFitContentAndFitAvailable" id="gridWithFitContentAndFitAvailable"></div>
+<div class="gridWithMinMaxContent" id="gridWithMinMaxContent"></div>
+<div class="gridWithMinMaxAndFixed" id="gridWithMinMaxAndFixed"></div>
+<div class="gridWithMinMaxAndMinMaxContent" id="gridWithMinMaxAndMinMaxContent"></div>
+<div class="gridWithFractionFraction" id="gridWithFractionFraction"></div>
+<div class="gridWithFractionMinMax" id="gridWithFractionMinMax"></div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
-<script src="resources/grid-columns-rows-get-set-multiple.js"></script>
+<script src="resources/non-grid-columns-rows-get-set-multiple.js"></script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

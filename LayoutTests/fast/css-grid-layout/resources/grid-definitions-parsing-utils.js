@@ -1,9 +1,9 @@
-function testGridDefinitionsValues(element, columnValue, rowValue)
+function testGridDefinitionsValues(element, columnValue, rowValue, computedColumnValue, computedRowValue)
 {
     window.element = element;
     var elementID = element.id || "element";
-    shouldBeEqualToString("window.getComputedStyle(" + elementID + ", '').getPropertyValue('-webkit-grid-definition-columns')", columnValue);
-    shouldBeEqualToString("window.getComputedStyle(" + elementID + ", '').getPropertyValue('-webkit-grid-definition-rows')", rowValue);
+    shouldBeEqualToString("window.getComputedStyle(" + elementID + ", '').getPropertyValue('-webkit-grid-definition-columns')", computedColumnValue || columnValue);
+    shouldBeEqualToString("window.getComputedStyle(" + elementID + ", '').getPropertyValue('-webkit-grid-definition-rows')", computedRowValue || rowValue);
 }
 
 function testGridDefinitionsSetJSValues(columnValue, rowValue, computedColumnValue, computedRowValue, jsColumnValue, jsRowValue)
@@ -21,7 +21,7 @@ function checkGridDefinitionsSetJSValues(useGrid, columnValue, rowValue, compute
     window.element = document.createElement("div");
     document.body.appendChild(element);
     if (useGrid) {
-        element.style.display = "grid";
+        element.style.display = "-webkit-grid";
         element.style.width = "800px";
         element.style.height = "600px";
     }

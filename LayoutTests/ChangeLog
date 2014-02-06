@@ -1,3 +1,46 @@
+2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] getComputedStyle() is wrong for grid-definition-{columns|rows}
+        https://bugs.webkit.org/show_bug.cgi?id=127033
+
+        Reviewed by Andreas Kling.
+
+        Updated the expected results of many tests, as we should expect
+        the used values instead of the resolved ones when asking for
+        getComputedStyle().
+
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-element-repeat-get-set-expected.txt:
+        * fast/css-grid-layout/grid-element-repeat-get-set.html:
+        * fast/css-grid-layout/named-grid-line-get-set-expected.txt:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-expected.txt: Copied from LayoutTests/fast/css-grid-layout/grid-columns-rows-get-set-expected.txt.
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-multiple-expected.txt: Copied from LayoutTests/fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt.
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-multiple.html: Copied from LayoutTests/fast/css-grid-layout/grid-columns-rows-get-set-multiple.html.
+        * fast/css-grid-layout/non-grid-columns-rows-get-set.html: Copied from LayoutTests/fast/css-grid-layout/grid-columns-rows-get-set.html.
+        * fast/css-grid-layout/non-grid-element-repeat-get-set-expected.txt: Copied from LayoutTests/fast/css-grid-layout/grid-element-repeat-get-set-expected.txt.
+        * fast/css-grid-layout/non-grid-element-repeat-get-set.html: Copied from LayoutTests/fast/css-grid-layout/grid-element-repeat-get-set.html.
+        * fast/css-grid-layout/non-named-grid-line-get-set-expected.txt: Copied from LayoutTests/fast/css-grid-layout/named-grid-line-get-set-expected.txt.
+        * fast/css-grid-layout/non-named-grid-line-get-set.html: Added.
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        (testInherit):
+        (testInitial):
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+        (testInherit):
+        (testInitial):
+        * fast/css-grid-layout/resources/grid-definitions-parsing-utils.js:
+        (testGridDefinitionsValues):
+        (checkGridDefinitionsSetJSValues):
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set-multiple.js: Copied from LayoutTests/fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js.
+        (testInherit):
+        (testInitial):
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set.js: Copied from LayoutTests/fast/css-grid-layout/resources/grid-columns-rows-get-set.js.
+        (testInherit):
+        (testInitial):
+
 2014-02-06  Alexey Proskuryakov  <ap@apple.com>
 
         editing/caret/caret-color.html is flaky on WK2

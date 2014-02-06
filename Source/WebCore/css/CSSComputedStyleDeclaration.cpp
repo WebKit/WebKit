@@ -57,6 +57,7 @@
 #include "PseudoElement.h"
 #include "Rect.h"
 #include "RenderBox.h"
+#include "RenderGrid.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "SVGElement.h"
@@ -969,7 +970,7 @@ static PassRef<CSSValue> valueForGridTrackBreadth(const GridLength& trackBreadth
     return zoomAdjustedPixelValueForLength(trackBreadthLength, style);
 }
 
-static PassRefPtr<CSSValue> valueForGridTrackSize(const GridTrackSize& trackSize, const RenderStyle* style, RenderView* renderView)
+static PassRefPtr<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSize, const RenderStyle* style, RenderView* renderView)
 {
     switch (trackSize.type()) {
     case LengthTrackSizing:
@@ -1002,8 +1003,11 @@ static void addValuesForNamedGridLinesAtIndex(const NamedGridLinesMap& namedGrid
     }
 }
 
-static PassRef<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trackSizes, const NamedGridLinesMap& namedGridLines, const RenderStyle* style, RenderView* renderView)
+static PassRef<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, RenderObject* renderer, const RenderStyle* style, RenderView* renderView)
 {
+    const Vector<GridTrackSize>& trackSizes = direction == ForColumns ? style->gridColumns() : style->gridRows();
+    const NamedGridLinesMap& namedGridLines = direction == ForColumns ? style->namedGridColumnLines() : style->namedGridRowLines();
+
     // Handle the 'none' case here.
     if (!trackSizes.size()) {
         ASSERT(namedGridLines.isEmpty());
@@ -1011,11 +1015,24 @@ static PassRef<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trac
     }
 
     auto list = CSSValueList::createSpaceSeparated();
-    for (size_t i = 0; i < trackSizes.size(); ++i) {
-        addValuesForNamedGridLinesAtIndex(namedGridLines, i, list.get());
-        list.get().append(valueForGridTrackSize(trackSizes[i], style, renderView));
+    if (renderer && renderer->isRenderGrid()) {
+        const Vector<LayoutUnit>& trackPositions = direction == ForColumns ? toRenderGrid(renderer)->columnPositions() : toRenderGrid(renderer)->rowPositions();
+        // There are at least #tracks + 1 grid lines (trackPositions). Apart from that, the grid container can generate implicit grid tracks,
+        // so we'll have more trackPositions than trackSizes as the latter only contain the explicit grid.
+        ASSERT(trackPositions.size() - 1 >= trackSizes.size());
+
+        for (unsigned i = 0; i < trackSizes.size(); ++i) {
+            addValuesForNamedGridLinesAtIndex(namedGridLines, i, list.get());
+            list.get().append(zoomAdjustedPixelValue(trackPositions[i + 1] - trackPositions[i], style));
+        }
+    } else {
+        for (unsigned i = 0; i < trackSizes.size(); ++i) {
+            addValuesForNamedGridLinesAtIndex(namedGridLines, i, list.get());
+            list.get().append(specifiedValueForGridTrackSize(trackSizes[i], style, renderView));
+        }
     }
-    // Those are the trailing <string>* allowed in the syntax.
+
+    // Those are the trailing <ident>* allowed in the syntax.
     addValuesForNamedGridLinesAtIndex(namedGridLines, trackSizes.size(), list.get());
     return std::move(list);
 }
@@ -1519,6 +1536,8 @@ static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, Rend
     switch (propertyID) {
     case CSSPropertyWidth:
     case CSSPropertyHeight:
+    case CSSPropertyWebkitGridDefinitionColumns:
+    case CSSPropertyWebkitGridDefinitionRows:
     case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyWebkitTransformOrigin:
     case CSSPropertyWebkitTransform:
@@ -2049,16 +2068,23 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             }
             return list.release();
         }
-        case CSSPropertyWebkitGridAutoColumns:
-            return valueForGridTrackSize(style->gridAutoColumns(), style.get(), m_node->document().renderView());
         case CSSPropertyWebkitGridAutoFlow:
             return cssValuePool().createValue(style->gridAutoFlow());
+
+        // Specs mention that getComputedStyle() should return the used value of the property instead of the computed
+        // one for grid-definition-{rows|columns} but not for the grid-auto-{rows|columns} as things like
+        // grid-auto-columns: 2fr; cannot be resolved to a value in pixels as the '2fr' means very different things
+        // depending on the size of the explicit grid or the number of implicit tracks added to the grid. See
+        // http://lists.w3.org/Archives/Public/www-style/2013Nov/0014.html
+        case CSSPropertyWebkitGridAutoColumns:
+            return specifiedValueForGridTrackSize(style->gridAutoColumns(), style.get(), m_node->document().renderView());
         case CSSPropertyWebkitGridAutoRows:
-            return valueForGridTrackSize(style->gridAutoRows(), style.get(), m_node->document().renderView());
+            return specifiedValueForGridTrackSize(style->gridAutoRows(), style.get(), m_node->document().renderView());
+
         case CSSPropertyWebkitGridDefinitionColumns:
-            return valueForGridTrackList(style->gridColumns(), style->namedGridColumnLines(), style.get(), m_node->document().renderView());
+            return valueForGridTrackList(ForColumns, renderer, style.get(), m_node->document().renderView());
         case CSSPropertyWebkitGridDefinitionRows:
-            return valueForGridTrackList(style->gridRows(), style->namedGridRowLines(), style.get(), m_node->document().renderView());
+            return valueForGridTrackList(ForRows, renderer, style.get(), m_node->document().renderView());
 
         case CSSPropertyWebkitGridColumnStart:
             return valueForGridPosition(style->gridItemColumnStart());

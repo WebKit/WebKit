@@ -7,23 +7,6 @@ if (window.testRunner)
 </script>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
-.grid {
-    /* Give an explicit size to the grid so that percentage grid tracks have a consistent resolution */
-    width: 800px;
-    height: 600px;
-}
-.gridItem {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 1;
-    width: 7px;
-    height: 11px;
-}
-.gridItem2 {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 1;
-    width: 17px;
-    height: 3px;
-}
 .gridWithNone {
     -webkit-grid-definition-columns: none;
     -webkit-grid-definition-rows: none;
@@ -77,31 +60,20 @@ if (window.testRunner)
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<div class="grid gridWithNone" id="gridWithNoneElement"></div>
-<div class="grid gridWithFixed" id="gridWithFixedElement"></div>
-<div class="grid gridWithPercent" id="gridWithPercentElement"></div>
-<div class="grid gridWithAuto" id="gridWithAutoElement"></div>
-<div class="grid gridWithAuto" id="gridWithAutoWithChildrenElement">
-  <div class="gridItem"></div>
-</div>
-<div class="grid gridWithEM" id="gridWithEMElement"></div>
-<div class="grid gridWithViewPortPercentage" id="gridWithViewPortPercentageElement"></div>
-<div class="grid gridWithFitContent" id="gridWithFitContentElement"></div>
-<div class="grid gridWithFitAvailable" id="gridWithFitAvailableElement"></div>
-<div class="grid gridWithMinMax" id="gridWithMinMaxElement"></div>
-<div class="grid gridWithMinContent" id="gridWithMinContentElement"></div>
-<div class="grid gridWithMinContent" id="gridWithMinContentWithChildrenElement">
-    <div class="gridItem"></div>
-    <div class="gridItem2"></div>
-</div>
-<div class="grid gridWithMaxContent" id="gridWithMaxContentElement"></div>
-<div class="grid gridWithMaxContent" id="gridWithMaxContentWithChildrenElement">
-    <div class="gridItem"></div>
-    <div class="gridItem2"></div>
-</div>
-<div class="grid gridWithFraction" id="gridWithFractionElement"></div>
+<div class="gridWithNone" id="gridWithNoneElement"></div>
+<div class="gridWithFixed" id="gridWithFixedElement"></div>
+<div class="gridWithPercent" id="gridWithPercentElement"></div>
+<div class="gridWithAuto" id="gridWithAutoElement"></div>
+<div class="gridWithEM" id="gridWithEMElement"></div>
+<div class="gridWithViewPortPercentage" id="gridWithViewPortPercentageElement"></div>
+<div class="gridWithFitContent" id="gridWithFitContentElement"></div>
+<div class="gridWithFitAvailable" id="gridWithFitAvailableElement"></div>
+<div class="gridWithMinMax" id="gridWithMinMax"></div>
+<div class="gridWithMinContent" id="gridWithMinContent"></div>
+<div class="gridWithMaxContent" id="gridWithMaxContent"></div>
+<div class="gridWithFraction" id="gridWithFraction"></div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
-<script src="resources/grid-columns-rows-get-set.js"></script>
+<script src="resources/non-grid-columns-rows-get-set.js"></script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

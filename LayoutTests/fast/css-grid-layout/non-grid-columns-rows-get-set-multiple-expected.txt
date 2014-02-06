@@ -1,0 +1,106 @@
+Test that setting and getting grid-definition-columns and grid-definition-rows works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting |grid-definition-columns| and |grid-definition-rows| set through CSS
+PASS window.getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-definition-columns') is "7px 11px"
+PASS window.getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-definition-rows') is "17px 2px"
+PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('-webkit-grid-definition-columns') is "53% 99%"
+PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('-webkit-grid-definition-rows') is "27% 52%"
+PASS window.getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-grid-definition-columns') is "auto auto"
+PASS window.getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-grid-definition-rows') is "auto auto"
+PASS window.getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-definition-columns') is "100px 120px"
+PASS window.getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-definition-rows') is "150px 170px"
+PASS window.getComputedStyle(gridWithThreeItems, '').getPropertyValue('-webkit-grid-definition-columns') is "15px auto 100px"
+PASS window.getComputedStyle(gridWithThreeItems, '').getPropertyValue('-webkit-grid-definition-rows') is "120px 18px auto"
+PASS window.getComputedStyle(gridWithPercentAndViewportPercent, '').getPropertyValue('-webkit-grid-definition-columns') is "50% 120px"
+PASS window.getComputedStyle(gridWithPercentAndViewportPercent, '').getPropertyValue('-webkit-grid-definition-rows') is "35% 168px"
+PASS window.getComputedStyle(gridWithFitContentAndFitAvailable, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(gridWithFitContentAndFitAvailable, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(gridWithMinMaxContent, '').getPropertyValue('-webkit-grid-definition-columns') is "-webkit-min-content -webkit-max-content"
+PASS window.getComputedStyle(gridWithMinMaxContent, '').getPropertyValue('-webkit-grid-definition-rows') is "-webkit-max-content -webkit-min-content"
+PASS window.getComputedStyle(gridWithMinMaxAndFixed, '').getPropertyValue('-webkit-grid-definition-columns') is "minmax(45px, 30%) 15px"
+PASS window.getComputedStyle(gridWithMinMaxAndFixed, '').getPropertyValue('-webkit-grid-definition-rows') is "120px minmax(35%, 10px)"
+PASS window.getComputedStyle(gridWithMinMaxAndMinMaxContent, '').getPropertyValue('-webkit-grid-definition-columns') is "minmax(-webkit-min-content, 30%) 15px"
+PASS window.getComputedStyle(gridWithMinMaxAndMinMaxContent, '').getPropertyValue('-webkit-grid-definition-rows') is "120px minmax(35%, -webkit-max-content)"
+PASS window.getComputedStyle(gridWithFractionFraction, '').getPropertyValue('-webkit-grid-definition-columns') is "1fr 2fr"
+PASS window.getComputedStyle(gridWithFractionFraction, '').getPropertyValue('-webkit-grid-definition-rows') is "3fr 4fr"
+PASS window.getComputedStyle(gridWithFractionMinMax, '').getPropertyValue('-webkit-grid-definition-columns') is "minmax(-webkit-min-content, 45px) 2fr"
+PASS window.getComputedStyle(gridWithFractionMinMax, '').getPropertyValue('-webkit-grid-definition-rows') is "3fr minmax(14px, -webkit-max-content)"
+
+Test the initial value
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+
+Test getting and setting grid-definition-rows and grid-definition-columns through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "18px 22px"
+PASS element.style.webkitGridDefinitionColumns is "18px 22px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "66px 70px"
+PASS element.style.webkitGridDefinitionRows is "66px 70px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "55% 80%"
+PASS element.style.webkitGridDefinitionColumns is "55% 80%"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "40% 63%"
+PASS element.style.webkitGridDefinitionRows is "40% 63%"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "auto auto"
+PASS element.style.webkitGridDefinitionColumns is "auto auto"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "auto auto"
+PASS element.style.webkitGridDefinitionRows is "auto auto"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "auto 160px 22px"
+PASS element.style.webkitGridDefinitionColumns is "auto 16em 22px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "56% 100px auto"
+PASS element.style.webkitGridDefinitionRows is "56% 10em auto"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "160px minmax(16px, 20px)"
+PASS element.style.webkitGridDefinitionColumns is "16em minmax(16px, 20px)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "minmax(10%, 15%) auto"
+PASS element.style.webkitGridDefinitionRows is "minmax(10%, 15%) auto"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "160px 2fr"
+PASS element.style.webkitGridDefinitionColumns is "16em 2fr"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "14fr auto"
+PASS element.style.webkitGridDefinitionRows is "14fr auto"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "50% 96px"
+PASS element.style.webkitGridDefinitionColumns is "50% 12vw"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "5% 510px"
+PASS element.style.webkitGridDefinitionRows is "5% 85vh"
+
+Test getting wrong values set from CSS
+PASS getComputedStyle(gridWithNoneAndAuto, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
+PASS getComputedStyle(gridWithNoneAndAuto, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+PASS getComputedStyle(gridWithNoneAndFixed, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
+PASS getComputedStyle(gridWithNoneAndFixed, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+
+Test setting and getting wrong values from JS
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+
+Test setting grid-definition-columns and grid-definition-rows to 'inherit' through JS
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "50px 1fr last"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "101% middle 45px"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "50px 1fr last"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "101% middle 45px"
+
+Test setting grid-definition-columns and grid-definition-rows to 'initial' through JS
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "150% middle 55px"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "1fr line 2fr line"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

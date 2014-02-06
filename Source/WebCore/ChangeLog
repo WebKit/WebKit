@@ -1,3 +1,54 @@
+2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] getComputedStyle() is wrong for grid-definition-{columns|rows}
+        https://bugs.webkit.org/show_bug.cgi?id=127033
+
+        Reviewed by Andreas Kling.
+
+        Tests: fast/css-grid-layout/non-grid-columns-rows-get-set-multiple.html
+               fast/css-grid-layout/non-grid-columns-rows-get-set.html
+               fast/css-grid-layout/non-grid-element-repeat-get-set.html
+               fast/css-grid-layout/non-named-grid-line-get-set.html
+
+        According to the specs getComputedStyle() should return the used
+        values instead of the resolved values for compatibility with early
+        implementations. This means that grid-definition-{columns|rows}
+        are now layout dependent as we need to compute the used values for
+        grid track sizes.
+
+        Updated the outcome of existing tests and added a bunch of new
+        ones that check the behavior of the different properties outside
+        grid containers.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::specifiedValueForGridTrackSize):
+        (WebCore::valueForGridTrackList):
+        (WebCore::isLayoutDependent):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::GridIterator):
+        (WebCore::RenderGrid::computedUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::computeUsedBreadthOfMinLength):
+        (WebCore::RenderGrid::computeUsedBreadthOfMaxLength):
+        (WebCore::RenderGrid::computeUsedBreadthOfSpecifiedLength):
+        (WebCore::RenderGrid::computeNormalizedFractionBreadth):
+        (WebCore::RenderGrid::gridTrackSize):
+        (WebCore::RenderGrid::minContentForChild):
+        (WebCore::RenderGrid::maxContentForChild):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        (WebCore::RenderGrid::tracksAreWiderThanMinTrackBreadth):
+        (WebCore::RenderGrid::growGrid):
+        (WebCore::RenderGrid::autoPlacementMajorAxisDirection):
+        (WebCore::RenderGrid::autoPlacementMinorAxisDirection):
+        (WebCore::RenderGrid::layoutGridItems):
+        (WebCore::RenderGrid::resolveGridPositionsFromAutoPlacementPosition):
+        (WebCore::RenderGrid::resolveGridPositionsFromStyle):
+        (WebCore::RenderGrid::gridAreaBreadthForChild):
+        (WebCore::RenderGrid::populateGridPositions):
+        (WebCore::RenderGrid::findChildLogicalPosition):
+        * rendering/RenderGrid.h:
+
 2014-02-06  Anders Carlsson  <andersca@apple.com>
 
         Modernize CrossOriginPreflightResultCache
