@@ -1,3 +1,17 @@
+2014-02-05  Enrica Casucci  <enrica@apple.com>
+
+        WK2: Tap highlight is positioned incorrectly in iframes.
+        https://bugs.webkit.org/show_bug.cgi?id=128277
+        <rdar://problem/15975993>
+
+        Reviewed by Benjamin Poulain.
+
+        We need to convert the quad to root view coordinates
+        before returning it to the UIProcess for drawing the highlight.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::tapHighlightAtPosition):
+
 2014-02-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix attempt on EFL build after r163480

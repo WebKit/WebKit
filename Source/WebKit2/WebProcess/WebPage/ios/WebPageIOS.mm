@@ -318,6 +318,16 @@ void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& posit
     if (renderer) {
         renderer->absoluteQuads(quads);
         Color highlightColor = node->computedStyle()->tapHighlightColor();
+        if (!node->document().frame()->isMainFrame()) {
+            FrameView* view = node->document().frame()->view();
+            for (size_t i = 0; i < quads.size(); ++i) {
+                FloatQuad& currentQuad = quads[i];
+                currentQuad.setP1(view->contentsToRootView(roundedIntPoint(currentQuad.p1())));
+                currentQuad.setP2(view->contentsToRootView(roundedIntPoint(currentQuad.p2())));
+                currentQuad.setP3(view->contentsToRootView(roundedIntPoint(currentQuad.p3())));
+                currentQuad.setP4(view->contentsToRootView(roundedIntPoint(currentQuad.p4())));
+            }
+        }
 
         RoundedRect::Radii borderRadii;
         if (renderer->isBox()) {
