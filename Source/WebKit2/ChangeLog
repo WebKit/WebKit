@@ -1,5 +1,22 @@
 2014-02-06  Anders Carlsson  <andersca@apple.com>
 
+        Add preferences property to WKWebViewConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=128337
+
+        Reviewed by Sam Weinig.
+
+        Also use RetainPtr for processClass and preferences so we won't leak them.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration processClass]):
+        (-[WKWebViewConfiguration setProcessClass:]):
+        (-[WKWebViewConfiguration preferences]):
+        (-[WKWebViewConfiguration setPreferences:]):
+
+2014-02-06  Anders Carlsson  <andersca@apple.com>
+
         Add a remoteObjectRegistry property to WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=128331
 
