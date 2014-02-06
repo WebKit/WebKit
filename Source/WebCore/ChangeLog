@@ -1,3 +1,32 @@
+2014-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Support encoding and decoding of Regions
+        https://bugs.webkit.org/show_bug.cgi?id=128284
+
+        Reviewed by Anders Carlsson.
+
+        Region changes to make it encodable:
+        
+        Make Region::Span public and give it a default constructor.
+        Allow getting and setting of Shape internals, and a way to update
+        the Region bounds after changing the shape. Also add a way to test
+        for valid spans and segments.
+
+        * platform/graphics/Region.cpp:
+        (WebCore::Region::Shape::isValid):
+        (WebCore::Region::updateBoundsFromShape):
+        * platform/graphics/Region.h:
+        (WebCore::Region::isValid):
+        (WebCore::Region::Span::Span):
+        (WebCore::Region::shapeSegments):
+        (WebCore::Region::shapeSpans):
+        (WebCore::Region::setShapeSegments):
+        (WebCore::Region::setShapeSpans):
+        (WebCore::Region::Shape::segments):
+        (WebCore::Region::Shape::spans):
+        (WebCore::Region::Shape::setSegments):
+        (WebCore::Region::Shape::setSpans):
+
 2014-02-05  Andreas Kling  <akling@apple.com>
 
         Rebaseline the bindings tests after Oliver's hackery.

@@ -1,3 +1,24 @@
+2014-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Support encoding and decoding of Regions
+        https://bugs.webkit.org/show_bug.cgi?id=128284
+
+        Reviewed by Anders Carlsson.
+        
+        Support encoding and decoding of Region, and its internal
+        struct Region::Span.
+        
+        ArgumentCoders had to be taught about how to encode
+        Vectors with inline capacity.
+
+        * Platform/IPC/ArgumentCoders.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Region::Span>::encode):
+        (IPC::ArgumentCoder<Region::Span>::decode):
+        (IPC::ArgumentCoder<Region>::encode):
+        (IPC::ArgumentCoder<Region>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2014-02-05  Anders Carlsson  <andersca@apple.com>
 
         Add -[WKNavigationAction request]

@@ -319,10 +319,10 @@ Region::Shape::SegmentIterator Region::Shape::segments_end(SpanIterator it) cons
 #ifndef NDEBUG
 void Region::Shape::dump() const
 {
-    for (Shape::SpanIterator span = spans_begin(), end = spans_end(); span != end; ++span) {
+    for (auto span = spans_begin(), end = spans_end(); span != end; ++span) {
         printf("%6d: (", span->y);
 
-        for (Shape::SegmentIterator segment = segments_begin(span), end = segments_end(span); segment != end; ++segment)
+        for (auto segment = segments_begin(span), end = segments_end(span); segment != end; ++segment)
             printf("%d ", *segment);
         printf(")\n");
     }
@@ -330,6 +330,27 @@ void Region::Shape::dump() const
     printf("\n");
 }
 #endif
+
+bool Region::Shape::isValid() const
+{
+    for (auto span = spans_begin(), end = spans_end(); span != end && span + 1 != end; ++span) {
+        int y = span->y;
+        int height = (span + 1)->y - y;
+        
+        if (height < 0)
+            return false;
+
+        for (auto segment = segments_begin(span), end = segments_end(span); segment != end && segment + 1 != end; segment += 2) {
+            int x = *segment;
+            int width = *(segment + 1) - x;
+            
+            if (width < 0)
+                return false;
+        }
+    }
+
+    return true;
+}
 
 IntRect Region::Shape::bounds() const
 {
@@ -549,6 +570,11 @@ void Region::dump() const
     m_shape.dump();
 }
 #endif
+
+void Region::updateBoundsFromShape()
+{
+    m_bounds = m_shape.bounds();
+}
 
 void Region::intersect(const Region& region)
 {

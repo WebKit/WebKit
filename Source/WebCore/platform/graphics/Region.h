@@ -64,16 +64,36 @@ public:
     void dump() const;
 #endif
 
-private:
+    bool isValid() const { return m_shape.isValid(); }
+
+    // This is internal to Region, but exposed just for encoding.
+    // FIXME: figure out a better way to encode WebCore classes.
     struct Span {
+        Span()
+            : y(0)
+            , segmentIndex(0)
+        {
+        }
+
         Span(int y, size_t segmentIndex)
-            : y(y), segmentIndex(segmentIndex)
+            : y(y)
+            , segmentIndex(segmentIndex)
         {
         }
 
         int y;
         size_t segmentIndex;
     };
+
+    // For encoding/decoding only.
+    const Vector<int, 32>& shapeSegments() const { return m_shape.segments(); }
+    const Vector<Span, 16>& shapeSpans() const { return m_shape.spans(); }
+
+    void setShapeSegments(const Vector<int>& segments) { m_shape.setSegments(segments); }
+    void setShapeSpans(const Vector<Span>& spans) { m_shape.setSpans(spans); }
+    void updateBoundsFromShape();
+
+private:
 
     class Shape {
     public:
@@ -105,6 +125,15 @@ private:
 
         template<typename CompareOperation>
         static bool compareShapes(const Shape& shape1, const Shape& shape2);
+        
+        bool isValid() const;
+
+        // For encoding/decoding only.
+        const Vector<int, 32>& segments() const { return m_segments; }
+        const Vector<Span, 16>& spans() const { return m_spans; }
+
+        void setSegments(const Vector<int>& segments) { m_segments = segments; }
+        void setSpans(const Vector<Span>& spans) { m_spans = spans; }
 
 #ifndef NDEBUG
         void dump() const;

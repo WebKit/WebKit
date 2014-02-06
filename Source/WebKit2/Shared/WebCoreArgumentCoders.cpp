@@ -51,6 +51,7 @@
 #include <WebCore/Length.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
+#include <WebCore/Region.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -198,6 +199,55 @@ bool ArgumentCoder<IntSize>::decode(ArgumentDecoder& decoder, IntSize& intSize)
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
 }
 
+template<> struct ArgumentCoder<WebCore::Region::Span> {
+    static void encode(ArgumentEncoder&, const WebCore::Region::Span&);
+    static bool decode(ArgumentDecoder&, WebCore::Region::Span&);
+};
+
+void ArgumentCoder<Region::Span>::encode(ArgumentEncoder& encoder, const Region::Span& span)
+{
+    encoder << span.y;
+    encoder << (uint64_t)span.segmentIndex;
+}
+
+bool ArgumentCoder<Region::Span>::decode(ArgumentDecoder& decoder, Region::Span& span)
+{
+    if (!decoder.decode(span.y))
+        return false;
+    
+    uint64_t segmentIndex;
+    if (!decoder.decode(segmentIndex))
+        return false;
+    
+    span.segmentIndex = segmentIndex;
+    return true;
+}
+
+void ArgumentCoder<Region>::encode(ArgumentEncoder& encoder, const Region& region)
+{
+    encoder.encode(region.shapeSegments());
+    encoder.encode(region.shapeSpans());
+}
+
+bool ArgumentCoder<Region>::decode(ArgumentDecoder& decoder, Region& region)
+{
+    Vector<int> segments;
+    if (!decoder.decode(segments))
+        return false;
+
+    Vector<Region::Span> spans;
+    if (!decoder.decode(spans))
+        return false;
+    
+    region.setShapeSegments(segments);
+    region.setShapeSpans(spans);
+    region.updateBoundsFromShape();
+    
+    if (!region.isValid())
+        return false;
+
+    return true;
+}
 
 void ArgumentCoder<Length>::encode(ArgumentEncoder& encoder, const Length& length)
 {

@@ -51,6 +51,7 @@ class KeyframeValueList;
 class URL;
 class Notification;
 class ProtectionSpace;
+class Region;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -160,6 +161,11 @@ template<> struct ArgumentCoder<WebCore::IntRect> {
 template<> struct ArgumentCoder<WebCore::IntSize> {
     static void encode(ArgumentEncoder&, const WebCore::IntSize&);
     static bool decode(ArgumentDecoder&, WebCore::IntSize&);
+};
+
+template<> struct ArgumentCoder<WebCore::Region> {
+    static void encode(ArgumentEncoder&, const WebCore::Region&);
+    static bool decode(ArgumentDecoder&, WebCore::Region&);
 };
 
 template<> struct ArgumentCoder<WebCore::Length> {
