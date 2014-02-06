@@ -20,6 +20,9 @@ import os
 import subprocess
 import sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild") )
+import jhbuildrc_common
+
 def is_source_file_listing(line):
     return line.strip().startswith('Source')
 
@@ -86,7 +89,7 @@ def get_unlisted_headers(listed_makefile_headers):
 def get_missing_headers(listed_makefile_headers):
     missing = set()
     for header in listed_makefile_headers:
-        if not os.path.exists(common.top_level_path(header)):
+        if not os.path.exists(jhbuildrc_common.top_level_path(header)):
             missing.add(header)
     return missing
 

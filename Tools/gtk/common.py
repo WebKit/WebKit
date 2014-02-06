@@ -21,7 +21,6 @@ import select
 import subprocess
 import sys
 
-script_dir = None
 build_dir = None
 library_build_dir = None
 tests_library_build_dir = None
@@ -69,17 +68,6 @@ def binary_build_path(*args):
         else:
             library_build_dir = build_path('Programs', *args)
     return library_build_dir
-
-
-def script_path(*args):
-    global script_dir
-    if not script_dir:
-        script_dir = os.path.join(os.path.dirname(__file__), '..', 'Scripts')
-    return os.path.join(*(script_dir,) + args)
-
-
-def top_level_path(*args):
-    return os.path.join(*((os.path.join(os.path.dirname(__file__), '..', '..'),) + args))
 
 
 def get_build_path(fatal=True):
