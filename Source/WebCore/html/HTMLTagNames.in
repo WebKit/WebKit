@@ -64,7 +64,7 @@ hr interfaceName=HTMLHRElement
 html generateTypeHelpers
 i interfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement, generateTypeHelpers
-image interfaceName=HTMLElement
+image interfaceName=HTMLUnknownElement
 img interfaceName=HTMLImageElement, constructorNeedsFormElement, generateTypeHelpers
 input constructorNeedsFormElement, constructorNeedsCreatedByParser, generateTypeHelpers
 ins interfaceName=HTMLModElement

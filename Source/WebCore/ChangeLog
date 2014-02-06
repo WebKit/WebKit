@@ -1,3 +1,14 @@
+2014-02-06  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Create a HTMLUnknownElement when using createElement('image')
+        https://bugs.webkit.org/show_bug.cgi?id=125896
+
+        Reviewed by Antti Koivisto.
+
+        Backported from Blink: https://chromium.googlesource.com/chromium/blink/+/fd8a7b65f3300fb9245db24d5ed240c80b7f76ad
+
+        * html/HTMLTagNames.in:
+
 2014-02-06  Youenn Fablet  <youennf@gmail.com>
 
         [XHR] Ensure response return null when error flag is set for blob and arraybuffer
