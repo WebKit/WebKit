@@ -30,16 +30,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-/* Hash table */
-
-static const HashTableValue JSattributeTableValues[] =
-{
-    { "readonly", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
-};
-
-static const HashTable JSattributeTable = { 4, 3, true, JSattributeTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSattributeConstructorTableValues[] =
@@ -72,10 +62,12 @@ bool JSattributeConstructor::getOwnPropertySlot(JSObject* object, ExecState* exe
 
 static const HashTableValue JSattributePrototypeTableValues[] =
 {
+    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "readonly", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSattributePrototypeTable = { 1, 0, false, JSattributePrototypeTableValues, 0 };
+static const HashTable JSattributePrototypeTable = { 4, 3, true, JSattributePrototypeTableValues, 0 };
 const ClassInfo JSattributePrototype::s_info = { "attributePrototype", &Base::s_info, &JSattributePrototypeTable, 0, CREATE_METHOD_TABLE(JSattributePrototype) };
 
 JSObject* JSattributePrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -83,7 +75,13 @@ JSObject* JSattributePrototype::self(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSattribute>(vm, globalObject);
 }
 
-const ClassInfo JSattribute::s_info = { "attribute", &Base::s_info, &JSattributeTable, 0 , CREATE_METHOD_TABLE(JSattribute) };
+bool JSattributePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+{
+    JSattributePrototype* thisObject = jsCast<JSattributePrototype*>(object);
+    return getStaticPropertySlot<JSattributePrototype, JSObject>(exec, JSattributePrototypeTable, thisObject, propertyName, slot);
+}
+
+const ClassInfo JSattribute::s_info = { "attribute", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSattribute) };
 
 JSattribute::JSattribute(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<attribute> impl)
     : JSDOMWrapper(structure, globalObject)
@@ -117,7 +115,7 @@ bool JSattribute::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
 {
     JSattribute* thisObject = jsCast<JSattribute*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSattribute, Base>(exec, JSattributeTable, thisObject, propertyName, slot);
+    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
@@ -133,9 +131,11 @@ EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJ
 }
 
 
-EncodedJSValue jsattributeConstructor(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsattributeConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue thisValue, PropertyName)
 {
-    JSattribute* domObject = jsDynamicCast<JSattribute*>(JSValue::decode(thisValue));
+    UNUSED_PARAM(baseValue);
+    UNUSED_PARAM(thisValue);
+    JSattributePrototype* domObject = jsDynamicCast<JSattributePrototype*>(baseValue);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSattribute::getConstructor(exec->vm(), domObject->globalObject()));

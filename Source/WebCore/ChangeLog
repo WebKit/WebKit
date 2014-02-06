@@ -1,3 +1,30 @@
+2014-01-30  Oliver Hunt  <oliver@apple.com>
+
+        Push DOM attributes into the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=127969
+
+        Reviewed by Mark Lam.
+
+        This patch does the actual work of moving dom attributes up the
+        prototype chain. There are still a few class and edge cases
+        where we can't do this without impacting existing behaviour,
+        but they can be fixed separately in later patches.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getStaticPropertySlotEntryWithoutCaching):
+        (WebCore::getStaticPropertySlotEntryWithoutCaching<JSDOMWrapper>):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (HasComplexGetOwnProperty):
+        (ConstructorShouldBeOnInstance):
+        (AttributeShouldBeOnInstance):
+        (InstanceAttributeCount):
+        (PrototypeAttributeCount):
+        (InstanceOverridesGetOwnPropertySlot):
+        (PrototypeOverridesGetOwnPropertySlot):
+        (GenerateAttributesHashTable):
+        (GenerateImplementation):
+
 2014-02-06  Andreas Kling  <akling@apple.com>
 
         Remove display:run-in support.

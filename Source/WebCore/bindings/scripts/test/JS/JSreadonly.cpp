@@ -28,15 +28,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-/* Hash table */
-
-static const HashTableValue JSreadonlyTableValues[] =
-{
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsreadonlyConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
-};
-
-static const HashTable JSreadonlyTable = { 2, 1, true, JSreadonlyTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSreadonlyConstructorTableValues[] =
@@ -69,10 +60,11 @@ bool JSreadonlyConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec
 
 static const HashTableValue JSreadonlyPrototypeTableValues[] =
 {
+    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsreadonlyConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSreadonlyPrototypeTable = { 1, 0, false, JSreadonlyPrototypeTableValues, 0 };
+static const HashTable JSreadonlyPrototypeTable = { 2, 1, true, JSreadonlyPrototypeTableValues, 0 };
 const ClassInfo JSreadonlyPrototype::s_info = { "readonlyPrototype", &Base::s_info, &JSreadonlyPrototypeTable, 0, CREATE_METHOD_TABLE(JSreadonlyPrototype) };
 
 JSObject* JSreadonlyPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -80,7 +72,13 @@ JSObject* JSreadonlyPrototype::self(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSreadonly>(vm, globalObject);
 }
 
-const ClassInfo JSreadonly::s_info = { "readonly", &Base::s_info, &JSreadonlyTable, 0 , CREATE_METHOD_TABLE(JSreadonly) };
+bool JSreadonlyPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+{
+    JSreadonlyPrototype* thisObject = jsCast<JSreadonlyPrototype*>(object);
+    return getStaticPropertySlot<JSreadonlyPrototype, JSObject>(exec, JSreadonlyPrototypeTable, thisObject, propertyName, slot);
+}
+
+const ClassInfo JSreadonly::s_info = { "readonly", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSreadonly) };
 
 JSreadonly::JSreadonly(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<readonly> impl)
     : JSDOMWrapper(structure, globalObject)
@@ -114,12 +112,14 @@ bool JSreadonly::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
 {
     JSreadonly* thisObject = jsCast<JSreadonly*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSreadonly, Base>(exec, JSreadonlyTable, thisObject, propertyName, slot);
+    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-EncodedJSValue jsreadonlyConstructor(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsreadonlyConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue thisValue, PropertyName)
 {
-    JSreadonly* domObject = jsDynamicCast<JSreadonly*>(JSValue::decode(thisValue));
+    UNUSED_PARAM(baseValue);
+    UNUSED_PARAM(thisValue);
+    JSreadonlyPrototype* domObject = jsDynamicCast<JSreadonlyPrototype*>(baseValue);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSreadonly::getConstructor(exec->vm(), domObject->globalObject()));

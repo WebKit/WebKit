@@ -16,8 +16,7 @@
         debug("See what happens if we put the anchor prototype on a div");
         testDiv.__proto__ = testAnchor.__proto__;
         shouldBeTrue("testDiv instanceof HTMLAnchorElement")
-        /* This will change to an exception once attributes are on the prototype chain */
-        shouldBeUndefined("testDiv.href")
+        shouldThrow("testDiv.href")
         testDiv.__proto__ = testAnchor;
         shouldBeTrue("testDiv instanceof HTMLAnchorElement")
         shouldThrow("testDiv.href")
