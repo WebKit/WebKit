@@ -754,8 +754,7 @@ private:
     void setViewIsVisible(bool);
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
     void setWindowResizerSize(const WebCore::IntSize&);
-    void setIsInWindow(bool);
-    void setIsVisuallyIdle(bool);
+    void updateIsInWindow(bool isInitialState = false);
     void setViewState(WebCore::ViewState::Flags, bool wantsDidUpdateViewState);
     void setViewStateInternal(WebCore::ViewState::Flags, bool isInitialState);
     void validateCommand(const String&, uint64_t);

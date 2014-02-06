@@ -1,3 +1,26 @@
+2014-02-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Change Page, FocusController to use ViewState
+        https://bugs.webkit.org/show_bug.cgi?id=126533
+
+        Reviewed by Tim Horton.
+
+        These classes currently maintain a set of separate fields to represent the view state;
+        combine these into a single field, and allow WebPage to send the combined update rather
+        than individual changes.
+
+        Maintain existing interface for WebKit1 clients.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+            - Combined separate calls to Page::setViewState.
+        (WebKit::WebPage::updateIsInWindow):
+            - Simplied from setIsInWindow.
+        (WebKit::WebPage::setViewState):
+            - Combined separate calls to Page::setViewState.
+        * WebProcess/WebPage/WebPage.h:
+            - Declare updateIsInWindow.
+
 2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r163480.

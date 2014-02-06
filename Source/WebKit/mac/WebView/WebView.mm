@@ -5352,7 +5352,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     if (_private && _private->page) {
         _private->page->resumeScriptedAnimations();
-        _private->page->focusController().setContentIsVisible(true);
+        _private->page->setIsVisible(true, false);
     }
 }
 
@@ -5365,7 +5365,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     if (_private && _private->page) {
         _private->page->suspendScriptedAnimations();
-        _private->page->focusController().setContentIsVisible(false);
+        _private->page->setIsVisible(false, false);
     }
 }
 
