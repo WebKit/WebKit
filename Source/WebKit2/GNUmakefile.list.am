@@ -982,8 +982,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebTextChecker.h \
 	Source/WebKit2/UIProcess/WebTextCheckerClient.cpp \
 	Source/WebKit2/UIProcess/WebTextCheckerClient.h \
-	Source/WebKit2/UIProcess/WebUIClient.cpp \
-	Source/WebKit2/UIProcess/WebUIClient.h \
 	Source/WebKit2/UIProcess/InspectorServer/HTTPRequest.cpp \
 	Source/WebKit2/UIProcess/InspectorServer/HTTPRequest.h \
 	Source/WebKit2/UIProcess/InspectorServer/WebInspectorServer.cpp \

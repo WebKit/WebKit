@@ -1,3 +1,9 @@
+2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r163480.
+
+        * GNUmakefile.list.am: Removing the WebUIClient build targets.
+
 2014-02-05  Simon Fraser  <simon.fraser@apple.com>
 
         Transfer the non-fast-scrollable region to the UI process for iOS
