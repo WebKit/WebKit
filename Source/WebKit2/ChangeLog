@@ -1,3 +1,16 @@
+2014-02-06  Anders Carlsson  <andersca@apple.com>
+
+        The source frame request is not the same thing as the original request
+        https://bugs.webkit.org/show_bug.cgi?id=128317
+
+        Reviewed by Andreas Kling.
+
+        Grab the source frame URL From the WebFrameProxy object.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::frameInfoFromWebFrameProxy):
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+
 2014-02-06  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/clear.html fails

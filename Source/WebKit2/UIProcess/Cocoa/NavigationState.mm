@@ -133,6 +133,9 @@ static RetainPtr<WKFrameInfo> frameInfoFromWebFrameProxy(WebFrameProxy& webFrame
 
     [frameInfo setMainFrame:webFrameProxy.isMainFrame()];
 
+    // FIXME: This should use the full request of the frame, not just the URL.
+    [frameInfo setRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:webFrameProxy.url()]]];
+
     return frameInfo;
 }
 
@@ -151,11 +154,8 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     // FIXME: Set up the navigation action object.
     auto navigationAction = adoptNS([[WKNavigationAction alloc] init]);
 
-    if (sourceFrame) {
-        auto sourceFrameInfo = frameInfoFromWebFrameProxy(*sourceFrame);
-        [sourceFrameInfo setRequest:originalRequest.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
-        [navigationAction setSourceFrame:sourceFrameInfo.get()];
-    }
+    if (sourceFrame)
+        [navigationAction setSourceFrame:frameInfoFromWebFrameProxy(*sourceFrame).get()];
 
     [navigationAction setNavigationType:toWKNavigationType(navigationActionData.navigationType)];
     [navigationAction setRequest:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
