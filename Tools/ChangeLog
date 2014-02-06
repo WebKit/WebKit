@@ -1,3 +1,9 @@
+2014-02-06  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-02-06  Peter Szanka  <h868064@stud.u-szeged.hu>
 
         Extract common parts from jhbuildrc files.

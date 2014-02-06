@@ -642,6 +642,15 @@
             "catfishman"
          ]
       },
+      "Denis Nomiyama" : {
+         "emails" : [
+            "d.nomiyama@samsung.com"
+         ],
+         "expertise" : "The WebKitGTK+ Port",
+         "nicks" : [
+            "dnomi"
+         ]
+      },
       "Diego Gonzalez" : {
          "emails" : [
             "diegohcg@webkit.org",
