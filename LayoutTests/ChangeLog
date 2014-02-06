@@ -1,3 +1,22 @@
+2014-02-06  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        Menclose with no notation attribute does not display anything.
+        https://bugs.webkit.org/show_bug.cgi?id=127889
+
+        Reviewed by Chris Fleizach.
+
+        * mathml/presentation/menclose-notation-default-longdiv.html: Added.
+        * mathml/presentation/menclose-notation-invalid-empty-expected.html: Added.
+        * mathml/presentation/menclose-notation-invalid-empty.html: Added.
+        * platform/efl/mathml/presentation/menclose-notation-default-longdiv-expected.png: Added.
+        * platform/efl/mathml/presentation/menclose-notation-default-longdiv-expected.txt: Added.
+        * platform/gtk/mathml/presentation/menclose-notation-default-longdiv-expected.png: Added.
+        * platform/gtk/mathml/presentation/menclose-notation-default-longdiv-expected.txt: Added.
+        * platform/mac/mathml/presentation/menclose-notation-default-longdiv-expected.png: Added.
+        * platform/mac/mathml/presentation/menclose-notation-default-longdiv-expected.txt: Added.
+        Added new test cases to test the functionality of menclose with no
+        notation attribute, invalid and empty notation attribute.
+
 2014-02-06  Alexey Proskuryakov  <ap@apple.com>
 
         media/video-load-preload-metadata.html is flaky

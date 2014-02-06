@@ -65,6 +65,7 @@ void RenderMathMLMenclose::computePreferredLogicalWidths()
     ASSERT(preferredLogicalWidthsDirty());
 
     RenderMathMLBlock::computePreferredLogicalWidths();
+    const int paddingTop = 6;
 
     MathMLMencloseElement* menclose = toMathMLMencloseElement(element());
     const Vector<String>& notationValues = menclose->notationValues();
@@ -76,6 +77,10 @@ void RenderMathMLMenclose::computePreferredLogicalWidths()
         }
     }
 
+    if (menclose->isDefaultLongDiv()) {
+        style().setPaddingTop(Length(paddingTop, Fixed));
+        style().setPaddingLeft(Length(menclose->longDivLeftPadding().toInt(), Fixed));
+    }
     setPreferredLogicalWidthsDirty(false);
 }
 
@@ -99,8 +104,8 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
     MathMLMencloseElement* menclose = toMathMLMencloseElement(element());
     const Vector<String>& notationValues = menclose->notationValues();
     size_t notationalValueSize = notationValues.size();
-    bool isDefaultLongDiv = !notationalValueSize;
-    if (notationalValueSize && checkNotationalValuesValidity(notationValues)) {
+    bool isDefaultLongDiv = menclose->isDefaultLongDiv();
+    if ((notationalValueSize && checkNotationalValuesValidity(notationValues)) || isDefaultLongDiv) {
         IntRect rect = absoluteBoundingBoxRect();
         int left = rect.x();
         int top = rect.y();
@@ -140,6 +145,8 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
                 midxPoint = style().paddingLeft().value();
             root.addBezierCurveTo(FloatPoint(left, top), FloatPoint(left + midxPoint, top + halfboxHeight), FloatPoint(left, top + boxHeight));
             info.context->strokePath(root);
+            if (isDefaultLongDiv)
+                info.context->drawLine(IntPoint(left, top), IntPoint(left + boxWidth + midxPoint, top));
         }
     }
 }

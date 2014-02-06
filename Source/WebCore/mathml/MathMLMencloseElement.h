@@ -36,6 +36,8 @@ public:
     static PassRefPtr<MathMLMencloseElement> create(const QualifiedName& tagName, Document&);
     const Vector<String>& notationValues() const { return m_notationValues; }
     bool isRadical() const { return m_isRadicalValue; }
+    String longDivLeftPadding() const;
+    bool isDefaultLongDiv() const { return !hasAttribute(MathMLNames::notationAttr); }
 
 private:
     MathMLMencloseElement(const QualifiedName&, Document&);
@@ -43,7 +45,6 @@ private:
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
     virtual void finishParsingChildren() override;
-    String longDivLeftPadding() const;
 
     Vector<String> m_notationValues;
     bool m_isRadicalValue;
