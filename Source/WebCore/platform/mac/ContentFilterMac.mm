@@ -104,7 +104,7 @@ ContentFilter::ContentFilter(const ResourceResponse& response)
         m_neFilterSourceQueue = dispatch_queue_create("com.apple.WebCore.NEFilterSourceQueue", DISPATCH_QUEUE_SERIAL);
         
         long long expectedContentSize = [response.nsURLResponse() expectedContentLength];
-        if (expectedContentSize < 0 || expectedContentSize > NSUIntegerMax)
+        if (expectedContentSize < 0)
             m_originalData = adoptNS([[NSMutableData alloc] init]);
         else
             m_originalData = adoptNS([[NSMutableData alloc] initWithCapacity:(NSUInteger)expectedContentSize]);

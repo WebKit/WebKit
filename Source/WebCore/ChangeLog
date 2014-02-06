@@ -1,3 +1,11 @@
+2014-02-05  Anders Carlsson  <andersca@apple.com>
+
+        Fix a warning.
+
+        * platform/mac/ContentFilterMac.mm:
+        (WebCore::ContentFilter::ContentFilter):
+        Remove an unnecessary comparison.
+
 2014-02-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(PAGE_VISIBILITY_API) build
