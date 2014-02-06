@@ -1,5 +1,16 @@
 2014-02-06  Anders Carlsson  <andersca@apple.com>
 
+        Add backForwardList property to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=128320
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView backForwardList]):
+
+2014-02-06  Anders Carlsson  <andersca@apple.com>
+
         The source frame request is not the same thing as the original request
         https://bugs.webkit.org/show_bug.cgi?id=128317
 

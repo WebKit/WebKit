@@ -34,6 +34,7 @@
 #import <AppKit/AppKit.h>
 #endif
 
+@class WKBackForwardList;
 @class WKNavigation;
 @class WKWebViewConfiguration;
 
@@ -56,6 +57,9 @@ WK_API_CLASS
 @property (nonatomic, readonly) WKWebViewConfiguration *configuration;
 
 @property (nonatomic, weak) id <WKNavigationDelegate> navigationDelegate;
+
+/*! @abstract The view’s back-forward list. */
+@property (nonatomic, readonly) WKBackForwardList *backForwardList;
 
 /*! @abstract Returns a view initialized with the specified frame and configuration.
  @param frame The frame for the new view.

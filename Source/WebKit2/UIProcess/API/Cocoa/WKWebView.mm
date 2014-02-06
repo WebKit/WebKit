@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "NavigationState.h"
+#import "WKBackForwardListInternal.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKProcessClass.h"
@@ -113,6 +114,11 @@
 - (WKWebViewConfiguration *)configuration
 {
     return [[_configuration copy] autorelease];
+}
+
+- (WKBackForwardList *)backForwardList
+{
+    return wrapper(_page->backForwardList());
 }
 
 - (id <WKNavigationDelegate>)navigationDelegate
