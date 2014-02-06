@@ -207,14 +207,14 @@ void IDBTransactionBackend::start()
 
 void IDBTransactionBackend::commit()
 {
-    LOG(StorageAPI, "IDBTransactionBackend::commit (Transaction %lli)", static_cast<long long>(m_id));
+    LOG(StorageAPI, "IDBTransactionBackend::commit transaction %lli in state %u", static_cast<long long>(m_id), m_state);
 
     // In multiprocess ports, front-end may have requested a commit but an abort has already
     // been initiated asynchronously by the back-end.
     if (m_state == Finished)
         return;
 
-    ASSERT(m_state == Unused || m_state == Running);
+    ASSERT(m_state == Unopened || m_state == Unused || m_state == Running);
     m_commitPending = true;
 
     // Front-end has requested a commit, but there may be tasks like createIndex which
@@ -229,7 +229,7 @@ void IDBTransactionBackend::commit()
     // alive while executing this method.
     RefPtr<IDBTransactionBackend> backend(this);
 
-    bool unused = m_state == Unused;
+    bool unused = m_state == Unused || m_state == Unopened;
     m_state = Finished;
 
     bool committed = unused;

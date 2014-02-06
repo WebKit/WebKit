@@ -100,7 +100,22 @@ void DatabaseProcessIDBConnection::openTransaction(uint64_t requestID, int64_t t
 {
     ASSERT(m_uniqueIDBDatabase);
 
-    LOG(IDB, "DatabaseProcess openTransaction request ID %llu", requestID);
+#ifndef NDEBUG
+    const char* modeString = nullptr;
+    switch (static_cast<IndexedDB::TransactionMode>(intMode)) {
+    case IndexedDB::TransactionMode::ReadOnly:
+        modeString = "readonly";
+        break;
+    case IndexedDB::TransactionMode::ReadWrite:
+        modeString = "readwrite";
+        break;
+    case IndexedDB::TransactionMode::VersionChange:
+        modeString = "versionchange";
+        break;
+    }
+
+    LOG(IDB, "DatabaseProcess openTransaction id %llu in mode '%s', request ID %llu", transactionID, modeString, requestID);
+#endif
 
     if (intMode > IndexedDB::TransactionModeMaximum) {
         send(Messages::WebIDBServerConnection::DidOpenTransaction(requestID, false));

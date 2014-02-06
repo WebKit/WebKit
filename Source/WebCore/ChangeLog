@@ -1,3 +1,29 @@
+2014-02-06  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/clear.html fails
+        <rdar://problem/15997155> and https://bugs.webkit.org/show_bug.cgi?id=128282
+
+        Reviewed by David Kilzer.
+
+        Covered by storage/indexeddb/mozilla/clear.html (and probably others)
+
+        Update the value deserializer to take into account whether or not there was an IDBKey:
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValueBuffer):
+        * bindings/js/IDBBindingUtilities.h:
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess): Call the new form of deserializeIDBValueBuffer.
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::clearObjectStore): Update logging.
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::setActive): Update logging.
+
+        * Modules/indexeddb/IDBTransactionBackend.cpp:
+        (WebCore::IDBTransactionBackend::commit): Fix ASSERTs to reflect multi-process worlds.
+
 2014-02-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Re-enable simple line layout on non-Mac platforms

@@ -303,10 +303,18 @@ Deprecated::ScriptValue deserializeIDBValue(DOMRequestState* requestState, PassR
     return Deprecated::ScriptValue(exec->vm(), jsNull());
 }
 
-Deprecated::ScriptValue deserializeIDBValueBuffer(DOMRequestState* requestState, PassRefPtr<SharedBuffer> prpBuffer)
+Deprecated::ScriptValue deserializeIDBValueBuffer(DOMRequestState* requestState, PassRefPtr<SharedBuffer> prpBuffer, bool keyIsDefined)
 {
     ExecState* exec = requestState->exec();
     RefPtr<SharedBuffer> buffer = prpBuffer;
+
+    // If the key doesn't exist, then the value must be undefined (as opposed to null).
+    if (!keyIsDefined) {
+        // We either shouldn't have a buffer or it should be of size 0.
+        ASSERT(!buffer || !buffer->size());
+        return Deprecated::ScriptValue(exec->vm(), jsUndefined());
+    }
+
     if (buffer) {
         // FIXME: The extra copy here can be eliminated by allowing SerializedScriptValue to take a raw const char* or const uint8_t*.
         Vector<uint8_t> value;
@@ -314,6 +322,7 @@ Deprecated::ScriptValue deserializeIDBValueBuffer(DOMRequestState* requestState,
         RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(value);
         return SerializedScriptValue::deserialize(exec, serializedValue.get(), NonThrowing);
     }
+
     return Deprecated::ScriptValue(exec->vm(), jsNull());
 }
 

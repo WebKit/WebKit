@@ -1,3 +1,16 @@
+2014-02-06  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/clear.html fails
+        <rdar://problem/15997155> and https://bugs.webkit.org/show_bug.cgi?id=128282
+
+        Reviewed by David Kilzer.
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::openTransaction): Update logging.
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp:
+        (WebKit::SQLiteIDBTransaction::commit): Update ASSERT.
+
 2014-02-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the build after r163516 for !ENABLE(ASYNC_SCROLLING) platforms

@@ -287,7 +287,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackend> prpBackend)
     RefPtr<IDBKey> key = backend->key();
     RefPtr<IDBKey> primaryKey = backend->primaryKey();
 
-    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), backend->valueBuffer());
+    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), backend->valueBuffer(), !!key);
 
     ASSERT(!m_pendingCursor);
     RefPtr<IDBCursor> cursor;
@@ -327,7 +327,10 @@ void IDBRequest::onSuccess(PassRefPtr<SharedBuffer> valueBuffer)
         return;
 
     DOMRequestState::Scope scope(m_requestState);
-    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer);
+
+    // FIXME: By not knowing whether or not the key is defined here, we don't know
+    // if a null valueBuffer means the value is null or the value is undefined.
+    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer, true);
     onSuccessInternal(value);
 }
 
@@ -354,7 +357,10 @@ void IDBRequest::onSuccess(PassRefPtr<SharedBuffer> valueBuffer, PassRefPtr<IDBK
     ASSERT(keyPath == effectiveObjectStore(m_source)->keyPath());
 #endif
     DOMRequestState::Scope scope(m_requestState);
-    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer);
+
+    // FIXME: By not knowing whether or not the key is defined here, we don't know
+    // if a null valueBuffer means the value is null or the value is undefined.
+    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer, true);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
 #ifndef NDEBUG
@@ -412,7 +418,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey
 
     DOMRequestState::Scope scope(m_requestState);
 
-    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), buffer);
+    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), buffer, !!key);
 
     ASSERT(m_pendingCursor);
     setResultCursor(m_pendingCursor.release(), key, primaryKey, value);

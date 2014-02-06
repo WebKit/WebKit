@@ -67,8 +67,9 @@ bool SQLiteIDBTransaction::begin(SQLiteDatabase& database)
 
 bool SQLiteIDBTransaction::commit()
 {
-    ASSERT(m_sqliteTransaction);
-    if (!m_sqliteTransaction->inProgress())
+    // It's okay to not have a SQLite transaction or not have started it yet because it's okay for a WebProcess
+    // to request the commit of a transaction immediately after creating it before it has even been used.
+    if (!m_sqliteTransaction || !m_sqliteTransaction->inProgress())
         return false;
 
     m_sqliteTransaction->commit();
