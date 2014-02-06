@@ -813,20 +813,20 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
     LocalRegister qualifiedNameImpl(m_registerAllocator);
     m_assembler.loadPtr(Assembler::Address(elementAddressRegister, Element::tagQNameMemoryOffset() + QualifiedName::implMemoryOffset()), qualifiedNameImpl);
 
-    const AtomicString& selectorNamespaceURI = nameToMatch.namespaceURI();
-    if (selectorNamespaceURI != starAtom) {
-        // Generate namespaceURI == element->namespaceURI().
-        LocalRegister constantRegister(m_registerAllocator);
-        m_assembler.move(Assembler::TrustedImmPtr(selectorNamespaceURI.impl()), constantRegister);
-        failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), constantRegister));
-    }
-
     const AtomicString& selectorLocalName = nameToMatch.localName();
     if (selectorLocalName != starAtom) {
         // Generate localName == element->localName().
         LocalRegister constantRegister(m_registerAllocator);
         m_assembler.move(Assembler::TrustedImmPtr(selectorLocalName.impl()), constantRegister);
         failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), constantRegister));
+    }
+
+    const AtomicString& selectorNamespaceURI = nameToMatch.namespaceURI();
+    if (selectorNamespaceURI != starAtom) {
+        // Generate namespaceURI == element->namespaceURI().
+        LocalRegister constantRegister(m_registerAllocator);
+        m_assembler.move(Assembler::TrustedImmPtr(selectorNamespaceURI.impl()), constantRegister);
+        failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), constantRegister));
     }
 }
 

@@ -1,5 +1,17 @@
 2014-02-05  Benjamin Poulain  <benjamin@webkit.org>
 
+        SelectorCodeGenerator::generateElementHasTagName should match the local name before the namespace
+        https://bugs.webkit.org/show_bug.cgi?id=128167
+
+        Reviewed by Sam Weinig.
+
+        The local name is a stricter filter than the namespace, it should always run first.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasTagName):
+
+2014-02-05  Benjamin Poulain  <benjamin@webkit.org>
+
         Add HTMLNames::classAttr as a regular name in SVGElement::isAnimatableAttribute
         https://bugs.webkit.org/show_bug.cgi?id=128166
 
