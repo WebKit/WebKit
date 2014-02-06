@@ -1,3 +1,16 @@
+2014-02-06  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Null dereference applying animation with CSS regions
+        https://bugs.webkit.org/show_bug.cgi?id=128218
+
+        Reviewed by Andrei Bucur.
+
+        Added test for crash caused by using animations with DOM children of regions flowed
+        into another flow thread.
+
+        * fast/regions/animation-element-in-region-flowed-to-other-thread-expected.html: Added.
+        * fast/regions/animation-element-in-region-flowed-to-other-thread.html: Added.
+
 2014-02-06  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Verify copy/paste of misspellings asynchronously

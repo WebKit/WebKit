@@ -452,7 +452,7 @@ static void attachChildren(ContainerNode& current)
         attachDistributedChildren(toInsertionPoint(current));
 
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
-        ASSERT(!child->renderer() || current.shadowRoot() || isInsertionPoint(current));
+        ASSERT((!child->renderer() || child->inNamedFlow()) || current.shadowRoot() || isInsertionPoint(current));
         if (child->renderer())
             continue;
         if (child->isTextNode()) {

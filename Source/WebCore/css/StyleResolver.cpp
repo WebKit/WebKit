@@ -3122,6 +3122,9 @@ void StyleResolver::checkForTextSizeAdjust(RenderStyle* style)
 
 void StyleResolver::checkForZoomChange(RenderStyle* style, RenderStyle* parentStyle)
 {
+    if (!parentStyle)
+        return;
+    
     if (style->effectiveZoom() == parentStyle->effectiveZoom())
         return;
 

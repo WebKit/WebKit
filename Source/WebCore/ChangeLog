@@ -1,3 +1,26 @@
+2014-02-06  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Null dereference applying animation with CSS regions
+        https://bugs.webkit.org/show_bug.cgi?id=128218
+
+        Reviewed by Andrei Bucur.
+
+        The first issue (the null dereference) was caused by the checkForZoomChange method
+        not guarding against a null parentStyle parameter, as the checkForGenericFamilyChange 
+        method does, which in the crashing scenario is called just before the faulty
+        checkForZoomChange method.
+        The second issue was an assert which was caused by the fact that detaching is performed
+        in a certain situation if the element has a renderer or if it's inside a named flow.
+        However, when reattaching and asserting the element has no renderer, the 
+        "inside named flow" condition was no longer considered.
+
+        Test: fast/regions/animation-element-in-region-flowed-to-other-thread.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::checkForZoomChange):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::attachChildren):
+
 2014-02-06  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Create a HTMLUnknownElement when using createElement('image')
