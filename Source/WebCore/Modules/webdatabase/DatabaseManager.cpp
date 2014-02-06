@@ -467,7 +467,7 @@ void DatabaseManager::interruptAllDatabasesForContext(ScriptExecutionContext* co
 
 void DatabaseManager::logErrorMessage(ScriptExecutionContext* context, const String& message)
 {
-    context->addConsoleMessage(StorageMessageSource, ErrorMessageLevel, message);
+    context->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
 }
 
 } // namespace WebCore

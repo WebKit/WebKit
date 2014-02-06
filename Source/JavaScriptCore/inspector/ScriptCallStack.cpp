@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2010 Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (c) 2008, Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +15,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,46 +30,62 @@
  */
 
 #include "config.h"
-#include "ScriptCallFrame.h"
+#include "ScriptCallStack.h"
 
-#include "InspectorWebFrontendDispatchers.h"
-#include <inspector/InspectorValues.h>
-#include <wtf/RefPtr.h>
+#include "InspectorValues.h"
 
-using namespace Inspector;
+namespace Inspector {
 
-namespace WebCore {
+PassRefPtr<ScriptCallStack> ScriptCallStack::create(Vector<ScriptCallFrame>& frames)
+{
+    return adoptRef(new ScriptCallStack(frames));
+}
 
-ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& scriptName, unsigned lineNumber, unsigned column)
-    : m_functionName(functionName)
-    , m_scriptName(scriptName)
-    , m_lineNumber(lineNumber)
-    , m_column(column)
+ScriptCallStack::ScriptCallStack(Vector<ScriptCallFrame>& frames)
+{
+    m_frames.swap(frames);
+}
+
+ScriptCallStack::~ScriptCallStack()
 {
 }
 
-ScriptCallFrame::~ScriptCallFrame()
+const ScriptCallFrame& ScriptCallStack::at(size_t index) const
 {
+    ASSERT(m_frames.size() > index);
+    return m_frames[index];
 }
 
-bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
+size_t ScriptCallStack::size() const
 {
-    return m_functionName == o.m_functionName
-        && m_scriptName == o.m_scriptName
-        && m_lineNumber == o.m_lineNumber
-        && m_column == o.m_column;
+    return m_frames.size();
+}
+
+bool ScriptCallStack::isEqual(ScriptCallStack* o) const
+{
+    if (!o)
+        return false;
+
+    size_t frameCount = o->m_frames.size();
+    if (frameCount != m_frames.size())
+        return false;
+
+    for (size_t i = 0; i < frameCount; ++i) {
+        if (!m_frames[i].isEqual(o->m_frames[i]))
+            return false;
+    }
+
+    return true;
 }
 
 #if ENABLE(INSPECTOR)
-PassRefPtr<Inspector::TypeBuilder::Console::CallFrame> ScriptCallFrame::buildInspectorObject() const
+PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Console::CallFrame>> ScriptCallStack::buildInspectorArray() const
 {
-    return Inspector::TypeBuilder::Console::CallFrame::create()
-        .setFunctionName(m_functionName)
-        .setUrl(m_scriptName)
-        .setLineNumber(m_lineNumber)
-        .setColumnNumber(m_column)
-        .release();
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Console::CallFrame>> frames = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Console::CallFrame>::create();
+    for (size_t i = 0; i < m_frames.size(); i++)
+        frames->addItem(m_frames.at(i).buildInspectorObject());
+    return frames;
 }
 #endif
 
-} // namespace WebCore
+} // namespace Inspector

@@ -48,14 +48,12 @@
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceRequest.h"
-#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandle.h"
 #include "WebSocketChannelClient.h"
 #include "WebSocketHandshake.h"
-
 #include <runtime/ArrayBuffer.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
@@ -198,7 +196,7 @@ void WebSocketChannel::fail(const String& reason)
     ASSERT(!m_suspended);
     if (m_document) {
         InspectorInstrumentation::didReceiveWebSocketFrameError(m_document, m_identifier, reason);
-        m_document->addConsoleMessage(NetworkMessageSource, ErrorMessageLevel, "WebSocket connection to '" + m_handshake->url().stringCenterEllipsizedToLength() + "' failed: " + reason);
+        m_document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, "WebSocket connection to '" + m_handshake->url().stringCenterEllipsizedToLength() + "' failed: " + reason);
     }
 
     // Hybi-10 specification explicitly states we must not continue to handle incoming data
@@ -335,7 +333,7 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle* handle, const Soc
         else
             message = "WebSocket network error: " + error.localizedDescription();
         InspectorInstrumentation::didReceiveWebSocketFrameError(m_document, m_identifier, message);
-        m_document->addConsoleMessage(NetworkMessageSource, ErrorMessageLevel, message);
+        m_document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, message);
     }
     m_shouldDiscardReceivedData = true;
     handle->disconnect();

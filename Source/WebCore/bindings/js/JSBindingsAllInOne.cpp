@@ -143,7 +143,6 @@
 #include "PageScriptDebugServer.cpp"
 #include "ScheduledAction.cpp"
 #include "ScriptCachedFrameData.cpp"
-#include "ScriptCallStackFactory.cpp"
 #include "ScriptController.cpp"
 #include "ScriptProfiler.cpp"
 #include "ScriptState.cpp"

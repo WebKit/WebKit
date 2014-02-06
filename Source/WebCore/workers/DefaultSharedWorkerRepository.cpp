@@ -44,7 +44,6 @@
 #include "NotImplemented.h"
 #include "PageGroup.h"
 #include "PlatformStrategies.h"
-#include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
 #include "SharedWorker.h"
@@ -56,6 +55,7 @@
 #include "WorkerReportingProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerScriptLoaderClient.h"
+#include <inspector/ScriptCallStack.h>
 #include <mutex>
 #include <wtf/HashSet.h>
 #include <wtf/Threading.h>

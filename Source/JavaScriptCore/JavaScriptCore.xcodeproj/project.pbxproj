@@ -1013,6 +1013,23 @@
 		A5CEEE14187F3BAD00E55C99 /* InspectorAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */; };
 		A5CEEE15187F3BAD00E55C99 /* InspectorAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEEE13187F3BAD00E55C99 /* InspectorAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5D0A1BB1862301B00C7B496 /* InspectorEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = A5D0A1BA1862301B00C7B496 /* InspectorEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5FD0067189AFE9C00633231 /* ScriptArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */; };
+		A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0066189AFE9C00633231 /* ScriptArguments.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5FD006D189B00AA00633231 /* ScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */; };
+		A5FD006E189B00AA00633231 /* ScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD006A189B00A900633231 /* ScriptCallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5FD006F189B00AA00633231 /* ScriptCallStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD006B189B00A900633231 /* ScriptCallStack.cpp */; };
+		A5FD0070189B00AA00633231 /* ScriptCallStack.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD006C189B00AA00633231 /* ScriptCallStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5FD0074189B038C00633231 /* ConsoleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0071189B038C00633231 /* ConsoleTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5FD0075189B038C00633231 /* IdentifiersFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0072189B038C00633231 /* IdentifiersFactory.cpp */; };
+		A5FD0076189B038C00633231 /* IdentifiersFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0073189B038C00633231 /* IdentifiersFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5FD0079189B051000633231 /* ConsoleMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0077189B051000633231 /* ConsoleMessage.cpp */; };
+		A5FD007A189B051000633231 /* ConsoleMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0078189B051000633231 /* ConsoleMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5FD007D189B0B4C00633231 /* ScriptCallStackFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD007B189B0B4C00633231 /* ScriptCallStackFactory.cpp */; };
+		A5FD007E189B0B4C00633231 /* ScriptCallStackFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD007C189B0B4C00633231 /* ScriptCallStackFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5FD0081189B191A00633231 /* InspectorConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD007F189B191A00633231 /* InspectorConsoleAgent.cpp */; };
+		A5FD0082189B191A00633231 /* InspectorConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0080189B191A00633231 /* InspectorConsoleAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5FD0085189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0083189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp */; };
+		A5FD0086189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0084189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h */; };
 		A700873917CBE85300C3E643 /* MapConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A700873717CBE85300C3E643 /* MapConstructor.cpp */; };
 		A700873A17CBE85300C3E643 /* MapConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A700873817CBE85300C3E643 /* MapConstructor.h */; };
 		A700873D17CBE8D300C3E643 /* MapPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A700873B17CBE8D300C3E643 /* MapPrototype.cpp */; };
@@ -2457,6 +2474,23 @@
 		A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAgent.cpp; sourceTree = "<group>"; };
 		A5CEEE13187F3BAD00E55C99 /* InspectorAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgent.h; sourceTree = "<group>"; };
 		A5D0A1BA1862301B00C7B496 /* InspectorEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorEnvironment.h; sourceTree = "<group>"; };
+		A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArguments.cpp; sourceTree = "<group>"; };
+		A5FD0066189AFE9C00633231 /* ScriptArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptArguments.h; sourceTree = "<group>"; };
+		A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallFrame.cpp; sourceTree = "<group>"; };
+		A5FD006A189B00A900633231 /* ScriptCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallFrame.h; sourceTree = "<group>"; };
+		A5FD006B189B00A900633231 /* ScriptCallStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallStack.cpp; sourceTree = "<group>"; };
+		A5FD006C189B00AA00633231 /* ScriptCallStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallStack.h; sourceTree = "<group>"; };
+		A5FD0071189B038C00633231 /* ConsoleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleTypes.h; sourceTree = "<group>"; };
+		A5FD0072189B038C00633231 /* IdentifiersFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdentifiersFactory.cpp; sourceTree = "<group>"; };
+		A5FD0073189B038C00633231 /* IdentifiersFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdentifiersFactory.h; sourceTree = "<group>"; };
+		A5FD0077189B051000633231 /* ConsoleMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsoleMessage.cpp; sourceTree = "<group>"; };
+		A5FD0078189B051000633231 /* ConsoleMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleMessage.h; sourceTree = "<group>"; };
+		A5FD007B189B0B4C00633231 /* ScriptCallStackFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallStackFactory.cpp; sourceTree = "<group>"; };
+		A5FD007C189B0B4C00633231 /* ScriptCallStackFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallStackFactory.h; sourceTree = "<group>"; };
+		A5FD007F189B191A00633231 /* InspectorConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorConsoleAgent.cpp; sourceTree = "<group>"; };
+		A5FD0080189B191A00633231 /* InspectorConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorConsoleAgent.h; sourceTree = "<group>"; };
+		A5FD0083189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectConsoleAgent.cpp; sourceTree = "<group>"; };
+		A5FD0084189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectConsoleAgent.h; sourceTree = "<group>"; };
 		A700873717CBE85300C3E643 /* MapConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapConstructor.cpp; sourceTree = "<group>"; };
 		A700873817CBE85300C3E643 /* MapConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapConstructor.h; sourceTree = "<group>"; };
 		A700873B17CBE8D300C3E643 /* MapPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapPrototype.cpp; sourceTree = "<group>"; };
@@ -4483,10 +4517,14 @@
 			children = (
 				A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */,
 				A5CEEE13187F3BAD00E55C99 /* InspectorAgent.h */,
+				A5FD007F189B191A00633231 /* InspectorConsoleAgent.cpp */,
+				A5FD0080189B191A00633231 /* InspectorConsoleAgent.h */,
 				A57D23E31890CEBF0031C7FA /* InspectorDebuggerAgent.cpp */,
 				A57D23E41890CEBF0031C7FA /* InspectorDebuggerAgent.h */,
 				A50E4B5D18809DD50068A46D /* InspectorRuntimeAgent.cpp */,
 				A50E4B5E18809DD50068A46D /* InspectorRuntimeAgent.h */,
+				A5FD0083189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp */,
+				A5FD0084189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h */,
 				A57D23E71891B0770031C7FA /* JSGlobalObjectDebuggerAgent.cpp */,
 				A57D23E81891B0770031C7FA /* JSGlobalObjectDebuggerAgent.h */,
 				A50E4B5F18809DD50068A46D /* JSGlobalObjectRuntimeAgent.cpp */,
@@ -4529,10 +4567,15 @@
 				A513E5CC185FB992007E95AD /* agents */,
 				A5BA15E01823409D00A82E69 /* remote */,
 				A532438E185696CE002ED692 /* scripts */,
+				A5FD0077189B051000633231 /* ConsoleMessage.cpp */,
+				A5FD0078189B051000633231 /* ConsoleMessage.h */,
+				A5FD0071189B038C00633231 /* ConsoleTypes.h */,
 				A57D23EF1891B5B40031C7FA /* ContentSearchUtilities.cpp */,
 				A57D23F01891B5B40031C7FA /* ContentSearchUtilities.h */,
 				A54982011891D0B00081E5B8 /* EventLoop.cpp */,
 				A54982021891D0B00081E5B8 /* EventLoop.h */,
+				A5FD0072189B038C00633231 /* IdentifiersFactory.cpp */,
+				A5FD0073189B038C00633231 /* IdentifiersFactory.h */,
 				A513E5B5185B8BD3007E95AD /* InjectedScript.cpp */,
 				A513E5B6185B8BD3007E95AD /* InjectedScript.h */,
 				A514B2C0185A684400F3C7CB /* InjectedScriptBase.cpp */,
@@ -4568,7 +4611,15 @@
 				A503FA18188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h */,
 				A503FA13188E0FAF00110F14 /* JavaScriptCallFrame.cpp */,
 				A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */,
+				A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */,
+				A5FD0066189AFE9C00633231 /* ScriptArguments.h */,
 				A503FA1F188EFF6800110F14 /* ScriptBreakpoint.h */,
+				A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */,
+				A5FD006A189B00A900633231 /* ScriptCallFrame.h */,
+				A5FD006B189B00A900633231 /* ScriptCallStack.cpp */,
+				A5FD006C189B00AA00633231 /* ScriptCallStack.h */,
+				A5FD007B189B0B4C00633231 /* ScriptCallStackFactory.cpp */,
+				A5FD007C189B0B4C00633231 /* ScriptCallStackFactory.h */,
 				A503FA20188EFF6800110F14 /* ScriptDebugListener.h */,
 				A503FA23188EFFFD00110F14 /* ScriptDebugServer.cpp */,
 				A503FA24188EFFFD00110F14 /* ScriptDebugServer.h */,
@@ -4726,6 +4777,7 @@
 				0F6B1CC61862C47800845D97 /* FTLUnwindInfo.h in Headers */,
 				C2239D1816262BDD005AC5FD /* CopyVisitor.h in Headers */,
 				C2239D1916262BDD005AC5FD /* CopyVisitorInlines.h in Headers */,
+				A5FD007A189B051000633231 /* ConsoleMessage.h in Headers */,
 				C218D1401655CFD50062BB81 /* CopyWorkList.h in Headers */,
 				5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */,
 				0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */,
@@ -4762,6 +4814,7 @@
 				0FFB921A16D02EC50055A5DB /* DFGBasicBlockInlines.h in Headers */,
 				A70B083317A0B79B00DAF14B /* DFGBinarySwitch.h in Headers */,
 				A7D89CF417A0B8CC00773AD8 /* DFGBlockInsertionSet.h in Headers */,
+				A5FD006E189B00AA00633231 /* ScriptCallFrame.h in Headers */,
 				0F8364B7164B0C110053329A /* DFGBranchDirection.h in Headers */,
 				A1A009C01831A22D00CF8711 /* MacroAssemblerARM64.h in Headers */,
 				86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */,
@@ -4779,6 +4832,7 @@
 				A503FA1E188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h in Headers */,
 				0F38B01A17CFE75500B144D3 /* DFGCompilationMode.h in Headers */,
 				0F3B3A1B153E68F4003ED0FF /* DFGConstantFoldingPhase.h in Headers */,
+				A5FD0082189B191A00633231 /* InspectorConsoleAgent.h in Headers */,
 				0FBE0F7316C1DB050082C5E8 /* DFGCPSRethreadingPhase.h in Headers */,
 				A7D89CF617A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.h in Headers */,
 				0FFFC95A14EF90A900C72532 /* DFGCSEPhase.h in Headers */,
@@ -4826,6 +4880,7 @@
 				0F2BDC451522801B00CD8910 /* DFGMinifiedGraph.h in Headers */,
 				0F2E892D16D02BAF009E4FD2 /* DFGMinifiedID.h in Headers */,
 				0F2BDC461522802000CD8910 /* DFGMinifiedNode.h in Headers */,
+				A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */,
 				A737810E1799EA2E00817533 /* DFGNaturalLoops.h in Headers */,
 				86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */,
 				0FFB921B16D02F010055A5DB /* DFGNodeAllocator.h in Headers */,
@@ -4874,6 +4929,7 @@
 				0F2BDC481522802900CD8910 /* DFGValueSource.h in Headers */,
 				0F620174143FCD330068B77C /* DFGVariableAccessData.h in Headers */,
 				0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */,
+				A5FD0074189B038C00633231 /* ConsoleTypes.h in Headers */,
 				0F2BDC491522809600CD8910 /* DFGVariableEvent.h in Headers */,
 				0F2BDC4B1522809D00CD8910 /* DFGVariableEventStream.h in Headers */,
 				A514B2C3185A684400F3C7CB /* InjectedScriptBase.h in Headers */,
@@ -4923,6 +4979,7 @@
 				0FEA0A241709606900BB722C /* FTLIntrinsicRepository.h in Headers */,
 				0FEA0A0E170513DB00BB722C /* FTLJITCode.h in Headers */,
 				A78A9781179738D5009DF744 /* FTLJITFinalizer.h in Headers */,
+				A5FD0076189B038C00633231 /* IdentifiersFactory.h in Headers */,
 				0F5A6284188C98D40072C9DF /* FTLValueRange.h in Headers */,
 				0F8F2B96172E04A3007DBDA5 /* FTLLink.h in Headers */,
 				0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */,
@@ -5021,6 +5078,7 @@
 				A7A4AE1017973B4D005612B1 /* JITStubsX86Common.h in Headers */,
 				0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */,
 				0FC712E317CD8793008CC93C /* JITToDFGDeferredCompilationCallback.h in Headers */,
+				A5FD0070189B00AA00633231 /* ScriptCallStack.h in Headers */,
 				A76F54A313B28AAB00EF2BCE /* JITWriteBarrier.h in Headers */,
 				BC18C4160E16F5CD00B34460 /* JSActivation.h in Headers */,
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
@@ -5197,6 +5255,7 @@
 				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
 				BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */,
 				0FFB922016D033B70055A5DB /* NodeConstructors.h in Headers */,
+				A5FD007E189B0B4C00633231 /* ScriptCallStackFactory.h in Headers */,
 				7EFF00640EC05A9A00AA7C93 /* NodeInfo.h in Headers */,
 				BC18C43F0E16F5CD00B34460 /* Nodes.h in Headers */,
 				BC18C4410E16F5CD00B34460 /* NumberConstructor.h in Headers */,
@@ -5347,6 +5406,7 @@
 				A7A8AF4117ADB5F3005AB174 /* Uint16Array.h in Headers */,
 				866739D313BFDE710023D87C /* Uint16WithFraction.h in Headers */,
 				A7A8AF4217ADB5F3005AB174 /* Uint32Array.h in Headers */,
+				A5FD0086189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h in Headers */,
 				A7A8AF3F17ADB5F3005AB174 /* Uint8Array.h in Headers */,
 				A7A8AF4017ADB5F3005AB174 /* Uint8ClampedArray.h in Headers */,
 				0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */,
@@ -5820,6 +5880,7 @@
 				A790DD6F182F499700588807 /* JSSetIterator.cpp in Sources */,
 				0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */,
 				147F39C0107EC37600427A48 /* ArrayPrototype.cpp in Sources */,
+				A5FD006D189B00AA00633231 /* ScriptCallFrame.cpp in Sources */,
 				0F24E54017EA9F5900ABB217 /* AssemblyHelpers.cpp in Sources */,
 				14816E1B154CC56C00B8054C /* BlockAllocator.cpp in Sources */,
 				14280863107EC11A0013E7B2 /* BooleanConstructor.cpp in Sources */,
@@ -5973,6 +6034,7 @@
 				147F39C8107EC37600427A48 /* ErrorConstructor.cpp in Sources */,
 				147F39C9107EC37600427A48 /* ErrorInstance.cpp in Sources */,
 				147F39CA107EC37600427A48 /* ErrorPrototype.cpp in Sources */,
+				A5FD0067189AFE9C00633231 /* ScriptArguments.cpp in Sources */,
 				1429D8780ED21ACD00B89619 /* ExceptionHelpers.cpp in Sources */,
 				86CA032E1038E8440028A609 /* Executable.cpp in Sources */,
 				A7B48F490EE8936F00DCBDB6 /* ExecutableAllocator.cpp in Sources */,
@@ -6001,6 +6063,7 @@
 				A78A9780179738D5009DF744 /* FTLJITFinalizer.cpp in Sources */,
 				0F8F2B95172E04A0007DBDA5 /* FTLLink.cpp in Sources */,
 				A74DEF95182D991400522C22 /* JSMapIterator.cpp in Sources */,
+				A5FD0081189B191A00633231 /* InspectorConsoleAgent.cpp in Sources */,
 				0FCEFADF180738C000472CE4 /* FTLLocation.cpp in Sources */,
 				0FEA0A0F170513DB00BB722C /* FTLLowerDFGToLLVM.cpp in Sources */,
 				0FD8A31B17D51F2200CA2C40 /* FTLOSREntry.cpp in Sources */,
@@ -6091,7 +6154,9 @@
 				86E3C616167BABEE006D760A /* JSContext.mm in Sources */,
 				14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */,
 				A72028B61797601E0098028C /* JSCTestRunnerUtils.cpp in Sources */,
+				A5FD0075189B038C00633231 /* IdentifiersFactory.cpp in Sources */,
 				B59F89391891F29F00D5CCDC /* UnlinkedInstructionStream.cpp in Sources */,
+				A5FD006F189B00AA00633231 /* ScriptCallStack.cpp in Sources */,
 				0F2B66EB17B6B5AB00A7AE3F /* JSDataView.cpp in Sources */,
 				0F2B66ED17B6B5AB00A7AE3F /* JSDataViewPrototype.cpp in Sources */,
 				978801401471AD920041B016 /* JSDateMath.cpp in Sources */,
@@ -6200,6 +6265,7 @@
 				148F21BC107EC54D0042EC2C /* Parser.cpp in Sources */,
 				93052C340FB792190048FDC3 /* ParserArena.cpp in Sources */,
 				0F9FC8C314E1B5FE00D52AE0 /* PolymorphicPutByIdList.cpp in Sources */,
+				A5FD0085189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp in Sources */,
 				0F98206016BFE38100240D02 /* PreciseJumpTargets.cpp in Sources */,
 				95742F650DD11F5A000917FB /* Profile.cpp in Sources */,
 				0FC97F35182020D7002C9B26 /* ProfiledCodeBlockJettisoningWatchpoint.cpp in Sources */,
@@ -6247,6 +6313,7 @@
 				C225494315F7DBAA0065E898 /* SlotVisitor.cpp in Sources */,
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
 				0F8F2B9E17306C8D007DBDA5 /* SourceCode.cpp in Sources */,
+				A5FD0079189B051000633231 /* ConsoleMessage.cpp in Sources */,
 				0F493AFA16D0CAD30084508B /* SourceProvider.cpp in Sources */,
 				E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */,
 				0F6B1CC918641DF800845D97 /* ArityCheckFailReturnThunks.cpp in Sources */,
@@ -6269,6 +6336,7 @@
 				C2DF442F1707AC0100A5CA96 /* SuperRegion.cpp in Sources */,
 				0F919D2815856773004A4E7D /* SymbolTable.cpp in Sources */,
 				0FC314131814559100033232 /* TempRegisterSet.cpp in Sources */,
+				A5FD007D189B0B4C00633231 /* ScriptCallStackFactory.cpp in Sources */,
 				0FA2C17B17D7CF84009D015F /* TestRunnerUtils.cpp in Sources */,
 				A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */,
 				0F2B670717B6B5AB00A7AE3F /* TypedArrayController.cpp in Sources */,

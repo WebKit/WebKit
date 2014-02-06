@@ -98,7 +98,7 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
 {
     ASSERT(isMainThread());
 
-    m_document.addConsoleMessage(JSMessageSource, ErrorMessageLevel, buildConsoleError(xssInfo, m_document.url().string()));
+    m_document.addConsoleMessage(MessageSource::JS, MessageLevel::Error, buildConsoleError(xssInfo, m_document.url().string()));
 
     FrameLoader& frameLoader = m_document.frame()->loader();
     if (xssInfo.m_didBlockEntirePage)

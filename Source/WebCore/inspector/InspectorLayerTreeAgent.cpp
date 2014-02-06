@@ -34,7 +34,6 @@
 
 #include "InspectorLayerTreeAgent.h"
 
-#include "IdentifiersFactory.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
@@ -44,6 +43,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
+#include <inspector/IdentifiersFactory.h>
 
 using namespace Inspector;
 

@@ -50,7 +50,7 @@ bool checkShapeImageOrigin(Document& document, CachedImage& cachedImage)
 
     const URL& url = cachedImage.url();
     String urlString = url.isNull() ? "''" : url.stringCenterEllipsizedToLength();
-    document.addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, "Unsafe attempt to load URL " + urlString + ".");
+    document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Unsafe attempt to load URL " + urlString + ".");
 
     return false;
 }

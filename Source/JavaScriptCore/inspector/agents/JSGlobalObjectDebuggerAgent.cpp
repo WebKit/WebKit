@@ -29,15 +29,20 @@
 #if ENABLE(INSPECTOR)
 
 #include "InjectedScriptManager.h"
+#include "InspectorConsoleAgent.h"
 #include "JSGlobalObject.h"
+#include "ScriptArguments.h"
+#include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 
 using namespace JSC;
 
 namespace Inspector {
 
-JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(InjectedScriptManager* injectedScriptManager, JSC::JSGlobalObject& globalObject)
+JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(InjectedScriptManager* injectedScriptManager, JSC::JSGlobalObject& globalObject, InspectorConsoleAgent* consoleAgent)
     : InspectorDebuggerAgent(injectedScriptManager)
     , m_scriptDebugServer(globalObject)
+    , m_consoleAgent(consoleAgent)
 {
 }
 
@@ -60,6 +65,11 @@ InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString* e
 
     ExecState* exec = m_scriptDebugServer.globalObject().globalExec();
     return injectedScriptManager()->injectedScriptFor(exec);
+}
+
+void JSGlobalObjectDebuggerAgent::breakpointActionLog(JSC::ExecState* exec, const String& message)
+{
+    m_consoleAgent->addMessageToConsole(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(exec, ScriptCallStack::maxCallStackSizeToCapture, true), 0);
 }
 
 } // namespace Inspector

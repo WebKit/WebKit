@@ -43,6 +43,8 @@
 #include "ScriptState.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
+#include <inspector/ScriptCallStack.h>
+#include <inspector/ScriptCallStackFactory.h>
 
 using namespace Inspector;
 
@@ -113,9 +115,9 @@ void PageDebuggerAgent::unmuteConsole()
     PageConsole::unmute();
 }
 
-void PageDebuggerAgent::breakpointActionLog(JSC::ExecState*, const String& message)
+void PageDebuggerAgent::breakpointActionLog(JSC::ExecState* exec, const String& message)
 {
-    m_pageAgent->page()->console().addMessage(JSMessageSource, LogMessageLevel, message);
+    m_pageAgent->page()->console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(exec, ScriptCallStack::maxCallStackSizeToCapture, true));
 }
 
 InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)

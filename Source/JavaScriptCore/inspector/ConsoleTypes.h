@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,27 +23,52 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ConsoleAPITypes_h
-#define ConsoleAPITypes_h
+#ifndef ConsoleTypes_h
+#define ConsoleTypes_h
 
-namespace WebCore {
+namespace Inspector {
 
-enum MessageType {
-    LogMessageType,
-    DirMessageType,
-    DirXMLMessageType,
-    TableMessageType,
-    TraceMessageType,
-    StartGroupMessageType,
-    StartGroupCollapsedMessageType,
-    EndGroupMessageType,
-    ClearMessageType,
-    AssertMessageType,
-    TimingMessageType,
-    ProfileMessageType,
-    ProfileEndMessageType
+enum class MessageSource {
+    XML,
+    JS,
+    Network,
+    ConsoleAPI,
+    Storage,
+    AppCache,
+    Rendering,
+    CSS,
+    Security,
+    Other,
 };
 
-} // namespace WebCore
+enum class MessageType {
+    Log,
+    Dir,
+    DirXML,
+    Table,
+    Trace,
+    StartGroup,
+    StartGroupCollapsed,
+    EndGroup,
+    Clear,
+    Assert,
+    Timing,
+    Profile,
+    ProfileEnd,
+};
 
-#endif // ConsoleAPITypes_h
+enum class MessageLevel {
+    Log = 1,
+    Warning = 2,
+    Error = 3,
+    Debug = 4,
+};
+
+} // namespace Inspector
+
+// These will likely move out of the inspector namespace.
+using Inspector::MessageSource;
+using Inspector::MessageType;
+using Inspector::MessageLevel;
+
+#endif // ConsoleTypes_h

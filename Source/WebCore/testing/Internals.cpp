@@ -57,7 +57,6 @@
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "InspectorClient.h"
-#include "InspectorConsoleAgent.h"
 #include "InspectorController.h"
 #include "InspectorCounters.h"
 #include "InspectorForwarding.h"
@@ -65,8 +64,8 @@
 #include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
 #include "InstrumentingAgents.h"
-#include "InternalSettings.h"
 #include "IntRect.h"
+#include "InternalSettings.h"
 #include "Language.h"
 #include "MainFrame.h"
 #include "MallocStatistics.h"
@@ -95,6 +94,7 @@
 #include "TreeScope.h"
 #include "TypeConversions.h"
 #include "ViewportArguments.h"
+#include "WebConsoleAgent.h"
 #include "WorkerThread.h"
 #include <bytecode/CodeBlock.h>
 #include <inspector/InspectorAgentBase.h>
@@ -1427,9 +1427,11 @@ Vector<String> Internals::consoleMessageArgumentCounts() const
     InstrumentingAgents* instrumentingAgents = instrumentationForPage(document->page());
     if (!instrumentingAgents)
         return Vector<String>();
-    InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent();
+
+    InspectorConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent();
     if (!consoleAgent)
         return Vector<String>();
+
     Vector<unsigned> counts = consoleAgent->consoleMessageArgumentCounts();
     Vector<String> result(counts.size());
     for (size_t i = 0; i < counts.size(); i++)

@@ -34,7 +34,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "CommandLineAPIHost.h"
-#include "DOMWindow.h"
 #include "InspectorDOMAgent.h"
 #include "Node.h"
 #include "PageInjectedScriptManager.h"
@@ -43,21 +42,17 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PageConsoleAgent::PageConsoleAgent(InstrumentingAgents* instrumentingAgents, PageInjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
-    : InspectorConsoleAgent(instrumentingAgents, injectedScriptManager)
+PageConsoleAgent::PageConsoleAgent(PageInjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
+    : WebConsoleAgent(injectedScriptManager)
     , m_inspectorDOMAgent(domAgent)
 {
-}
-
-PageConsoleAgent::~PageConsoleAgent()
-{
-    m_inspectorDOMAgent = nullptr;
 }
 
 void PageConsoleAgent::clearMessages(ErrorString* errorString)
 {
     m_inspectorDOMAgent->releaseDanglingNodes();
-    InspectorConsoleAgent::clearMessages(errorString);
+
+    WebConsoleAgent::clearMessages(errorString);
 }
 
 class InspectableNode final : public CommandLineAPIHost::InspectableObject {
@@ -79,7 +74,7 @@ void PageConsoleAgent::addInspectedNode(ErrorString* errorString, int nodeId)
         return;
     }
 
-    if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
+    if (CommandLineAPIHost* commandLineAPIHost = static_cast<PageInjectedScriptManager*>(m_injectedScriptManager)->commandLineAPIHost())
         commandLineAPIHost->addInspectedObject(adoptPtr(new InspectableNode(node)));
 }
 

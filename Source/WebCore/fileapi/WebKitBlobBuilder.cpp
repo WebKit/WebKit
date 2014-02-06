@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-
 #include "WebKitBlobBuilder.h"
 
 #include "Blob.h"
@@ -38,7 +37,6 @@
 #include "File.h"
 #include "HistogramSupport.h"
 #include "LineEnding.h"
-#include "ScriptCallStack.h"
 #include "TextEncoding.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>

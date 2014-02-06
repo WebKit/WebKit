@@ -33,10 +33,10 @@
 #include "ErrorEvent.h"
 #include "MessagePort.h"
 #include "PublicURLManager.h"
-#include "ScriptCallStack.h"
 #include "Settings.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
+#include <inspector/ScriptCallStack.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
 
@@ -50,6 +50,8 @@
 #if ENABLE(SQL_DATABASE)
 #include "DatabaseContext.h"
 #endif
+
+using namespace Inspector;
 
 namespace WebCore {
 

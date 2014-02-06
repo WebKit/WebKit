@@ -1,3 +1,12 @@
+2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Console support to JSContext Inspection
+        https://bugs.webkit.org/show_bug.cgi?id=127941
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/WebChromeClient.h:
+
 2014-02-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Correct IME Regression after r141479

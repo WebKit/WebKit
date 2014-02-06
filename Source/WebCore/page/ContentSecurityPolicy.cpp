@@ -35,17 +35,18 @@
 #include "FormDataList.h"
 #include "Frame.h"
 #include "InspectorInstrumentation.h"
-#include "URL.h"
+#include "JSMainThreadExecState.h"
 #include "PingLoader.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
-#include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
 #include "ScriptState.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicyViolationEvent.h"
 #include "TextEncoding.h"
+#include "URL.h"
 #include <inspector/InspectorValues.h>
+#include <inspector/ScriptCallStack.h>
+#include <inspector/ScriptCallStackFactory.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
@@ -1726,7 +1727,7 @@ static void gatherSecurityPolicyViolationEventData(SecurityPolicyViolationEventI
     init.sourceFile = String();
     init.lineNumber = 0;
 
-    RefPtr<ScriptCallStack> stack = createScriptCallStack(2, false);
+    RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2, false);
     if (!stack)
         return;
 
@@ -1788,7 +1789,7 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     cspReport->setString("original-policy", header);
     cspReport->setString("blocked-uri", stripURLForUseInReport(document, blockedURL));
 
-    RefPtr<ScriptCallStack> stack = createScriptCallStack(2, false);
+    RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2, false);
     if (stack) {
         const ScriptCallFrame& callFrame = getFirstNonNativeFrame(stack);
 
@@ -1899,7 +1900,7 @@ void ContentSecurityPolicy::reportMissingReportURI(const String& policy) const
 void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, JSC::ExecState* state) const
 {
     // FIXME: <http://webkit.org/b/114317> ContentSecurityPolicy::logToConsole should include a column number
-    m_scriptExecutionContext->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, message, contextURL, contextLine.oneBasedInt(), 0, state);
+    m_scriptExecutionContext->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, contextURL, contextLine.oneBasedInt(), 0, state);
 }
 
 void ContentSecurityPolicy::reportBlockedScriptExecutionToInspector(const String& directiveText) const

@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Refused to display 'deny-X-FrameOption.html' in a frame because it set 'X-Frame-Options' to 'deny'.
 
-deny-X-FrameOption.html:0:0
+deny-X-FrameOption.html:30:17
 

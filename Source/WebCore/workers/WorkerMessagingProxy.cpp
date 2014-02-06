@@ -26,14 +26,13 @@
  */
 
 #include "config.h"
-
 #include "WorkerMessagingProxy.h"
 
 #include "ContentSecurityPolicy.h"
 #include "CrossThreadTask.h"
+#include "DOMWindow.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "DedicatedWorkerThread.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "ErrorEvent.h"
 #include "Event.h"
@@ -43,12 +42,13 @@
 #include "MessageEvent.h"
 #include "NotImplemented.h"
 #include "PageGroup.h"
-#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerInspectorController.h"
+#include <inspector/ConsoleTypes.h>
 #include <inspector/InspectorAgentBase.h>
+#include <inspector/ScriptCallStack.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

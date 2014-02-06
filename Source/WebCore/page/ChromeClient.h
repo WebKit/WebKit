@@ -23,8 +23,6 @@
 #define ChromeClient_h
 
 #include "AXObjectCache.h"
-#include "ConsoleAPITypes.h"
-#include "ConsoleTypes.h"
 #include "Cursor.h"
 #include "FocusDirection.h"
 #include "FrameLoader.h"
@@ -37,6 +35,7 @@
 #include "ScrollingCoordinator.h"
 #include "SearchPopupMenu.h"
 #include "WebCoreKeyboardUIMode.h"
+#include <inspector/ConsoleTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>

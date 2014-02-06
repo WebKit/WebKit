@@ -39,7 +39,6 @@
 #include "IDBOpenDBRequest.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "Logging.h"
-#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {

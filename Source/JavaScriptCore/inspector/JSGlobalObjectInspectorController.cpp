@@ -35,6 +35,7 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorFrontendChannel.h"
 #include "JSGlobalObject.h"
+#include "JSGlobalObjectConsoleAgent.h"
 #include "JSGlobalObjectDebuggerAgent.h"
 #include "JSGlobalObjectRuntimeAgent.h"
 
@@ -53,7 +54,11 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     InspectorRuntimeAgent* runtimeAgent = runtimeAgentPtr.get();
     m_agents.append(std::move(runtimeAgentPtr));
 
-    auto debuggerAgentPtr = std::make_unique<JSGlobalObjectDebuggerAgent>(m_injectedScriptManager.get(), m_globalObject);
+    auto consoleAgentPtr = std::make_unique<JSGlobalObjectConsoleAgent>(m_injectedScriptManager.get());
+    InspectorConsoleAgent* consoleAgent = consoleAgentPtr.get();
+    m_agents.append(std::move(consoleAgentPtr));
+
+    auto debuggerAgentPtr = std::make_unique<JSGlobalObjectDebuggerAgent>(m_injectedScriptManager.get(), m_globalObject, consoleAgent);
     InspectorDebuggerAgent* debuggerAgent = debuggerAgentPtr.get();
     m_agents.append(std::move(debuggerAgentPtr));
 

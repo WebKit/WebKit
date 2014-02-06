@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,28 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IdentifiersFactory_h
-#define IdentifiersFactory_h
-
-#include <wtf/text/WTFString.h>
+#include "config.h"
+#include "JSGlobalObjectConsoleAgent.h"
 
 #if ENABLE(INSPECTOR)
 
-namespace WebCore {
+namespace Inspector {
 
-class IdentifiersFactory {
-public:
-    static void setProcessId(long processId) { s_processId = processId; }
-    static String createIdentifier();
-    static String requestId(unsigned long identifier);
-private:
-    static String addProcessIdPrefixTo(const String& id);
+JSGlobalObjectConsoleAgent::JSGlobalObjectConsoleAgent(InjectedScriptManager* injectedScriptManager)
+    : InspectorConsoleAgent(injectedScriptManager)
+{
+}
 
-    static long s_processId;
-};
+void JSGlobalObjectConsoleAgent::setMonitoringXHREnabled(ErrorString* errorString, bool)
+{
+    *errorString = ASCIILiteral("Not supported for JavaScript context");
+}
 
-} // namespace WebCore
+void JSGlobalObjectConsoleAgent::addInspectedNode(ErrorString* errorString, int)
+{
+    *errorString = ASCIILiteral("Not supported for JavaScript context");
+}
 
-#endif // !defined(IdentifiersFactory_h)
+void JSGlobalObjectConsoleAgent::addInspectedHeapObject(ErrorString* errorString, int)
+{
+    *errorString = ASCIILiteral("Not supported for JavaScript context");
+}
+
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)

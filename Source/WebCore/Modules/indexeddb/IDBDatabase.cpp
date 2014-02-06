@@ -44,9 +44,9 @@
 #include "IDBTransaction.h"
 #include "IDBVersionChangeEvent.h"
 #include "Logging.h"
-#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include <atomic>
+#include <inspector/ScriptCallStack.h>
 #include <limits>
 #include <wtf/Atomics.h>
 

@@ -31,8 +31,6 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ConsoleAPITypes.h"
-#include "ConsoleTypes.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -42,17 +40,20 @@
 #include "Page.h"
 #include "PageConsole.h"
 #include "PageGroup.h"
-#include "ScriptArguments.h"
-#include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <bindings/ScriptValue.h>
+#include <inspector/ConsoleTypes.h>
+#include <inspector/ScriptArguments.h>
+#include <inspector/ScriptCallStack.h>
+#include <inspector/ScriptCallStackFactory.h>
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -81,13 +82,13 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
 
     String message;
     bool gotMessage = arguments->getFirstArgumentAsString(message);
-    InspectorInstrumentation::addMessageToConsole(page, ConsoleAPIMessageSource, type, level, message, state, arguments);
+    InspectorInstrumentation::addMessageToConsole(page, MessageSource::ConsoleAPI, type, level, message, state, arguments);
 
     if (page->settings().privateBrowsingEnabled())
         return;
 
     if (gotMessage)
-        page->chrome().client().addMessageToConsole(ConsoleAPIMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
+        page->chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, type, level, message, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
 
     if (!page->settings().logsPageMessagesToSystemConsoleEnabled() && !PageConsole::shouldPrintExceptions())
         return;
@@ -96,7 +97,7 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
 
     printf(": ");
 
-    PageConsole::printMessageSourceAndLevelPrefix(ConsoleAPIMessageSource, level, printTrace);
+    PageConsole::printMessageSourceAndLevelPrefix(MessageSource::ConsoleAPI, level, printTrace);
 
     for (size_t i = 0; i < arguments->argumentCount(); ++i) {
         String argAsString = arguments->argumentAt(i).toString(arguments->globalState());
@@ -125,12 +126,12 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
 
 void Console::debug(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    internalAddMessage(page(), LogMessageType, DebugMessageLevel, state, arguments);
+    internalAddMessage(page(), MessageType::Log, MessageLevel::Debug, state, arguments);
 }
 
 void Console::error(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    internalAddMessage(page(), LogMessageType, ErrorMessageLevel, state, arguments);
+    internalAddMessage(page(), MessageType::Log, MessageLevel::Error, state, arguments);
 }
 
 void Console::info(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
@@ -140,37 +141,37 @@ void Console::info(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 
 void Console::log(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    internalAddMessage(page(), LogMessageType, LogMessageLevel, state, arguments);
+    internalAddMessage(page(), MessageType::Log, MessageLevel::Log, state, arguments);
 }
 
 void Console::warn(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    internalAddMessage(page(), LogMessageType, WarningMessageLevel, state, arguments);
+    internalAddMessage(page(), MessageType::Log, MessageLevel::Warning, state, arguments);
 }
 
 void Console::dir(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    internalAddMessage(page(), DirMessageType, LogMessageLevel, state, arguments);
+    internalAddMessage(page(), MessageType::Dir, MessageLevel::Log, state, arguments);
 }
 
 void Console::dirxml(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    internalAddMessage(page(), DirXMLMessageType, LogMessageLevel, state, arguments);
+    internalAddMessage(page(), MessageType::DirXML, MessageLevel::Log, state, arguments);
 }
 
 void Console::table(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    internalAddMessage(page(), TableMessageType, LogMessageLevel, state, arguments);
+    internalAddMessage(page(), MessageType::Table, MessageLevel::Log, state, arguments);
 }
 
 void Console::clear(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    internalAddMessage(page(), ClearMessageType, LogMessageLevel, state, arguments, true);
+    internalAddMessage(page(), MessageType::Clear, MessageLevel::Log, state, arguments, true);
 }
 
 void Console::trace(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    internalAddMessage(page(), TraceMessageType, LogMessageLevel, state, arguments, true, true);
+    internalAddMessage(page(), MessageType::Trace, MessageLevel::Log, state, arguments, true, true);
 }
 
 void Console::assertCondition(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments, bool condition)
@@ -178,7 +179,7 @@ void Console::assertCondition(JSC::ExecState* state, PassRefPtr<ScriptArguments>
     if (condition)
         return;
 
-    internalAddMessage(page(), AssertMessageType, ErrorMessageLevel, state, arguments, true);
+    internalAddMessage(page(), MessageType::Assert, MessageLevel::Error, state, arguments, true);
 }
 
 void Console::count(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
@@ -243,17 +244,17 @@ void Console::timeStamp(PassRefPtr<ScriptArguments> arguments)
 
 void Console::group(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, StartGroupMessageType, LogMessageLevel, String(), state, arguments);
+    InspectorInstrumentation::addMessageToConsole(page(), MessageSource::ConsoleAPI, MessageType::StartGroup, MessageLevel::Log, String(), state, arguments);
 }
 
 void Console::groupCollapsed(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, StartGroupCollapsedMessageType, LogMessageLevel, String(), state, arguments);
+    InspectorInstrumentation::addMessageToConsole(page(), MessageSource::ConsoleAPI, MessageType::StartGroupCollapsed, MessageLevel::Log, String(), state, arguments);
 }
 
 void Console::groupEnd()
 {
-    InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, EndGroupMessageType, LogMessageLevel, String(), String(), 0, 0);
+    InspectorInstrumentation::addMessageToConsole(page(), MessageSource::ConsoleAPI, MessageType::EndGroup, MessageLevel::Log, String(), String(), 0, 0);
 }
 
 Page* Console::page() const

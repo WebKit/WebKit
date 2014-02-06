@@ -31,20 +31,20 @@
 #ifndef WorkerConsoleAgent_h
 #define WorkerConsoleAgent_h
 
-#include "InspectorConsoleAgent.h"
-#include <wtf/PassOwnPtr.h>
+#include "WebConsoleAgent.h"
 
 #if ENABLE(INSPECTOR)
 
 namespace WebCore {
 
-class WorkerConsoleAgent : public InspectorConsoleAgent {
+class WorkerConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_NONCOPYABLE(WorkerConsoleAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerConsoleAgent(InstrumentingAgents*, PageInjectedScriptManager*);
-    virtual ~WorkerConsoleAgent();
+    WorkerConsoleAgent(PageInjectedScriptManager*);
+    virtual ~WorkerConsoleAgent() { }
 
-    virtual bool isWorkerAgent() override { return true; }
+    virtual bool isWorkerAgent() const override { return true; }
 
 private:
     virtual void addInspectedNode(ErrorString*, int nodeId) override;

@@ -36,7 +36,6 @@
 #include "HTMLParserIdioms.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
-#include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 
 #if ENABLE(VIDEO)
@@ -293,7 +292,7 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         errorEventSender().dispatchEventSoon(this);
 
         DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin image load denied by Cross-Origin Resource Sharing policy.")));
-        element().document().addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, consoleMessage);
+        element().document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
 
         ASSERT(!m_hasPendingLoadEvent);
 

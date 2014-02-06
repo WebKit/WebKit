@@ -49,7 +49,7 @@ InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)
     , m_inspectorPageAgent(nullptr)
     , m_inspectorCSSAgent(nullptr)
     , m_inspectorLayerTreeAgent(nullptr)
-    , m_inspectorConsoleAgent(nullptr)
+    , m_webConsoleAgent(nullptr)
     , m_inspectorDOMAgent(nullptr)
     , m_inspectorResourceAgent(nullptr)
     , m_pageRuntimeAgent(nullptr)
@@ -75,7 +75,7 @@ void InstrumentingAgents::reset()
     m_inspectorPageAgent = nullptr;
     m_inspectorCSSAgent = nullptr;
     m_inspectorLayerTreeAgent = nullptr;
-    m_inspectorConsoleAgent = nullptr;
+    m_webConsoleAgent = nullptr;
     m_inspectorDOMAgent = nullptr;
     m_inspectorResourceAgent = nullptr;
     m_pageRuntimeAgent = nullptr;

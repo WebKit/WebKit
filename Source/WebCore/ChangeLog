@@ -1,5 +1,276 @@
 2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add Console support to JSContext Inspection
+        https://bugs.webkit.org/show_bug.cgi?id=127941
+
+        Reviewed by Geoffrey Garen.
+
+          - Move InspectorConsoleAgent and dependencies to JavaScriptCore
+            and into the Inspector namespace.
+          - Update Console Message enum types to enum classes and update
+            all users to the new, simpler names.
+          - Since we are updating addConsoleMessage callsites anyways, add
+            ASCIILiteral where appropriate.
+          - Add WebConsoleAgent base of Page/Worker ConsoleAgent to implement
+            what could not be pushed into JavaScriptCore.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * ForwardingHeaders/inspector/ConsoleMessage.h: Added.
+        * ForwardingHeaders/inspector/ConsoleTypes.h: Added.
+        * ForwardingHeaders/inspector/IdentifiersFactory.h: Added.
+        * ForwardingHeaders/inspector/ScriptArguments.h: Added.
+        * ForwardingHeaders/inspector/ScriptCallFrame.h: Added.
+        * ForwardingHeaders/inspector/ScriptCallStack.h: Added.
+        * ForwardingHeaders/inspector/ScriptCallStackFactory.h: Added.
+        * ForwardingHeaders/inspector/agents/InspectorConsoleAgent.h: Added.
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        Add / remove files from builds.
+
+        * inspector/WebConsoleAgent.h:
+        * inspector/WebConsoleAgent.cpp: Added.
+        (WebCore::WebConsoleAgent::WebConsoleAgent):
+        (WebCore::WebConsoleAgent::setMonitoringXHREnabled):
+        (WebCore::WebConsoleAgent::frameWindowDiscarded):
+        (WebCore::WebConsoleAgent::didFinishXHRLoading):
+        (WebCore::WebConsoleAgent::didReceiveResponse):
+        (WebCore::WebConsoleAgent::didFailLoading):
+        (WebCore::WebConsoleAgent::addInspectedHeapObject):
+        Implement what could not be pushed down into JavaScriptCore.
+
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::webConsoleAgent):
+        (WebCore::InstrumentingAgents::setWebConsoleAgent):
+        Hold a WebConsoleAgent instead of InspectorConsoleAgent.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        * Modules/quota/DOMWindowQuota.cpp:
+        (WebCore::DOMWindowQuota::webkitStorageInfo):
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::looping):
+        (WebCore::AudioBufferSourceNode::setLooping):
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::setPanningModel):
+        * Modules/webdatabase/DatabaseBase.cpp:
+        (WebCore::DatabaseBase::logErrorMessage):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::logErrorMessage):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        (WebCore::WebSocket::send):
+        (WebCore::WebSocket::close):
+        (WebCore::WebSocket::setBinaryType):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::fail):
+        (WebCore::WebSocketChannel::didFailSocketStream):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::JSSubtleCrypto::encrypt):
+        (WebCore::JSSubtleCrypto::decrypt):
+        (WebCore::JSSubtleCrypto::sign):
+        (WebCore::JSSubtleCrypto::verify):
+        (WebCore::JSSubtleCrypto::wrapKey):
+        (WebCore::JSSubtleCrypto::unwrapKey):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::canExecuteScripts):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallWith):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::logError):
+        * css/MediaList.cpp:
+        (WebCore::addResolutionWarningMessageToConsole):
+        * dom/Document.cpp:
+        (WebCore::Document::logExceptionToConsole):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::addMessage):
+        * dom/Document.h:
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::executeScript):
+        (WebCore::ScriptElement::notifyFinished):
+        * dom/ScriptExecutionContext.cpp:
+        * dom/ScriptExecutionContext.h:
+        * dom/ViewportArguments.cpp:
+        (WebCore::viewportErrorMessageLevel):
+        (WebCore::reportViewportWarning):
+        * fileapi/Blob.cpp:
+        * fileapi/WebKitBlobBuilder.cpp:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseAttribute):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::printWarningToConsole):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init):
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::didBlockScript):
+        * inspector/CommandLineAPIHost.cpp:
+        * inspector/CommandLineAPIHost.h:
+        (WebCore::CommandLineAPIHost::init):
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorConsoleAgent.h: Removed.
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        (WebCore::InspectorInstrumentation::consoleCount):
+        (WebCore::InspectorInstrumentation::stopConsoleTiming):
+        (WebCore::InspectorInstrumentation::consoleTimeStamp):
+        (WebCore::InspectorInstrumentation::addProfile):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::frameWindowDiscardedImpl):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didFailLoadingImpl):
+        (WebCore::InspectorInstrumentation::didFinishXHRLoadingImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::isConsoleAssertMessage):
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        (WebCore::InspectorInstrumentation::consoleCountImpl):
+        (WebCore::InspectorInstrumentation::startConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::consoleAgentEnabled):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        * inspector/InspectorPageAgent.cpp:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::addProfileFinishedMessageToConsole):
+        (WebCore::InspectorProfilerAgent::addStartProfilingMessageToConsole):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::buildInitiatorObject):
+        * inspector/InspectorTimelineAgent.cpp:
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::PageConsoleAgent):
+        (WebCore::PageConsoleAgent::clearMessages):
+        (WebCore::PageConsoleAgent::addInspectedNode):
+        * inspector/PageConsoleAgent.h:
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::breakpointActionLog):
+        * inspector/PageInjectedScriptHost.h:
+        * inspector/PageInjectedScriptManager.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        (WebCore::WebConsoleAgent::~WebConsoleAgent):
+        * inspector/WorkerConsoleAgent.cpp:
+        (WebCore::WorkerConsoleAgent::WorkerConsoleAgent):
+        (WebCore::WorkerConsoleAgent::addInspectedNode):
+        * inspector/WorkerConsoleAgent.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::breakpointActionLog):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::reportLocalLoadFailed):
+        (WebCore::FrameLoader::handleBeforeUnloadEvent):
+        (WebCore::FrameLoader::shouldInterruptLoadForXFrameOptions):
+        (WebCore::createWindow):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::logWarning):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::corsPolicyPreventedLoad):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::abort):
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didReceiveManifestResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::printAccessDeniedMessage):
+        * page/ChromeClient.h:
+        * page/Console.cpp:
+        (WebCore::internalAddMessage):
+        (WebCore::Console::debug):
+        (WebCore::Console::error):
+        (WebCore::Console::log):
+        (WebCore::Console::warn):
+        (WebCore::Console::dir):
+        (WebCore::Console::dirxml):
+        (WebCore::Console::table):
+        (WebCore::Console::clear):
+        (WebCore::Console::trace):
+        (WebCore::Console::assertCondition):
+        (WebCore::Console::group):
+        (WebCore::Console::groupCollapsed):
+        (WebCore::Console::groupEnd):
+        * page/Console.h:
+        * page/ConsoleTypes.h: Removed.
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        (WebCore::ContentSecurityPolicy::logToConsole):
+        * page/DOMSecurityPolicy.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        (WebCore::DOMWindow::dispatchMessageEventWithOriginCheck):
+        (WebCore::DOMWindow::close):
+        (WebCore::DOMWindow::printErrorMessage):
+        * page/DOMWindow.h:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveResponse):
+        (WebCore::EventSource::didFailAccessControlCheck):
+        * page/PageConsole.cpp:
+        (WebCore::PageConsole::printMessageSourceAndLevelPrefix):
+        (WebCore::PageConsole::addMessage):
+        * page/PageConsole.h:
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::requestPointerLock):
+        * platform/CrossThreadCopier.h:
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::checkShapeImageOrigin):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::reportMessage):
+        (WebCore::SVGDocumentExtensions::reportWarning):
+        (WebCore::SVGDocumentExtensions::reportError):
+        * testing/Internals.cpp:
+        (WebCore::Internals::consoleMessageArgumentCounts):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        * workers/SharedWorkerGlobalScope.cpp:
+        (WebCore::SharedWorkerGlobalScope::logExceptionToConsole):
+        * workers/SharedWorkerGlobalScope.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::addMessageToWorkerConsole):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerMessagingProxy.cpp:
+        * workers/WorkerReportingProxy.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::logConsoleError):
+        (WebCore::XMLHttpRequest::send):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::XSLTProcessor::parseErrorFunc):
+
+2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Convert a parameter to PassRefPtr
         https://bugs.webkit.org/show_bug.cgi?id=128327
 

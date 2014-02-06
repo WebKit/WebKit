@@ -2436,8 +2436,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/ScheduledAction.h \
 	Source/WebCore/bindings/js/ScriptCachedFrameData.cpp \
 	Source/WebCore/bindings/js/ScriptCachedFrameData.h \
-	Source/WebCore/bindings/js/ScriptCallStackFactory.cpp \
-	Source/WebCore/bindings/js/ScriptCallStackFactory.h \
 	Source/WebCore/bindings/js/ScriptController.cpp \
 	Source/WebCore/bindings/js/ScriptController.h \
 	Source/WebCore/bindings/js/ScriptHeapSnapshot.h \
@@ -3744,15 +3742,10 @@ webcore_sources += \
 	Source/WebCore/inspector/CommandLineAPIHost.h \
 	Source/WebCore/inspector/CommandLineAPIModule.cpp \
 	Source/WebCore/inspector/CommandLineAPIModule.h \
-	Source/WebCore/inspector/ConsoleAPITypes.h \
-	Source/WebCore/inspector/ConsoleMessage.cpp \
-	Source/WebCore/inspector/ConsoleMessage.h \
 	Source/WebCore/inspector/DOMEditor.cpp \
 	Source/WebCore/inspector/DOMEditor.h \
 	Source/WebCore/inspector/DOMPatchSupport.cpp \
 	Source/WebCore/inspector/DOMPatchSupport.h \
-	Source/WebCore/inspector/IdentifiersFactory.cpp \
-	Source/WebCore/inspector/IdentifiersFactory.h \
 	Source/WebCore/inspector/InjectedScriptCanvasModule.cpp \
 	Source/WebCore/inspector/InjectedScriptCanvasModule.h \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.cpp \
@@ -3764,8 +3757,6 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorClient.h \
 	Source/WebCore/inspector/InspectorController.cpp \
 	Source/WebCore/inspector/InspectorController.h \
-	Source/WebCore/inspector/InspectorConsoleAgent.cpp \
-	Source/WebCore/inspector/InspectorConsoleAgent.h \
 	Source/WebCore/inspector/InspectorConsoleInstrumentation.h \
 	Source/WebCore/inspector/InspectorCounters.cpp \
 	Source/WebCore/inspector/InspectorCounters.h \
@@ -3838,14 +3829,10 @@ webcore_sources += \
 	Source/WebCore/inspector/PageInjectedScriptManager.h \
 	Source/WebCore/inspector/PageRuntimeAgent.cpp \
 	Source/WebCore/inspector/PageRuntimeAgent.h \
-	Source/WebCore/inspector/ScriptArguments.cpp \
-	Source/WebCore/inspector/ScriptArguments.h \
-	Source/WebCore/inspector/ScriptCallFrame.cpp \
-	Source/WebCore/inspector/ScriptCallFrame.h \
-	Source/WebCore/inspector/ScriptCallStack.cpp \
-	Source/WebCore/inspector/ScriptCallStack.h \
 	Source/WebCore/inspector/TimelineRecordFactory.cpp \
 	Source/WebCore/inspector/TimelineRecordFactory.h \
+	Source/WebCore/inspector/WebConsoleAgent.cpp \
+	Source/WebCore/inspector/WebConsoleAgent.h \
 	Source/WebCore/inspector/WebDebuggerAgent.cpp \
 	Source/WebCore/inspector/WebDebuggerAgent.h \
 	Source/WebCore/inspector/WorkerConsoleAgent.cpp \
@@ -4054,7 +4041,6 @@ webcore_sources += \
 	Source/WebCore/page/ChromeClient.h \
 	Source/WebCore/page/Console.cpp \
 	Source/WebCore/page/Console.h \
-	Source/WebCore/page/ConsoleTypes.h \
 	Source/WebCore/page/ContentSecurityPolicy.cpp \
 	Source/WebCore/page/ContentSecurityPolicy.h \
 	Source/WebCore/page/ContextMenuClient.h \

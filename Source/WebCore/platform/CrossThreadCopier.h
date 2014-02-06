@@ -66,8 +66,8 @@ namespace WebCore {
             typedef T Type;
         };
 
-        template<typename T> struct IsConvertibleToInteger {
-            static const bool value = std::is_integral<T>::value || std::is_convertible<T, long double>::value;
+        template<typename T> struct IsEnumOrConvertibleToInteger {
+            static const bool value = std::is_integral<T>::value || std::is_enum<T>::value || std::is_convertible<T, long double>::value;
         };
 
         template<typename T> struct IsThreadSafeRefCountedPointer {
@@ -83,7 +83,7 @@ namespace WebCore {
         }
     };
 
-    template<bool isConvertibleToInteger, bool isThreadSafeRefCounted, typename T> struct CrossThreadCopierBase;
+    template<bool isEnumOrConvertibleToInteger, bool isThreadSafeRefCounted, typename T> struct CrossThreadCopierBase;
 
     // Integers get passed through without any changes.
     template<typename T> struct CrossThreadCopierBase<true, false, T> : public CrossThreadCopierPassThrough<T> {
@@ -199,7 +199,7 @@ namespace WebCore {
 #endif
 
     template<typename T>
-    struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHelper::IsConvertibleToInteger<T>::value, CrossThreadCopierBaseHelper::IsThreadSafeRefCountedPointer<T>::value, T> {
+    struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHelper::IsEnumOrConvertibleToInteger<T>::value, CrossThreadCopierBaseHelper::IsThreadSafeRefCountedPointer<T>::value, T> {
     };
 
     template<typename T> struct AllowCrossThreadAccessWrapper {

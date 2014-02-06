@@ -90,7 +90,7 @@ private:
     
     virtual void setResizable(bool) override;
     
-    virtual void addMessageToConsole(WebCore::MessageSource, WebCore::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) override;
+    virtual void addMessageToConsole(Inspector::MessageSource, Inspector::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) override;
     
     virtual bool canRunBeforeUnloadConfirmPanel() override;
     virtual bool runBeforeUnloadConfirmPanel(const String& message, WebCore::Frame*) override;

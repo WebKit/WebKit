@@ -159,7 +159,6 @@ list(APPEND WebCore_SOURCES
     bindings/js/PageScriptDebugServer.cpp
     bindings/js/ScheduledAction.cpp
     bindings/js/ScriptCachedFrameData.cpp
-    bindings/js/ScriptCallStackFactory.cpp
     bindings/js/ScriptController.cpp
     bindings/js/ScriptGlobalObject.cpp
     bindings/js/ScriptProfile.cpp

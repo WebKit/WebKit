@@ -37,8 +37,8 @@
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "Logging.h"
-#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
+#include <inspector/ScriptCallStack.h>
 #include <limits>
 
 namespace WebCore {

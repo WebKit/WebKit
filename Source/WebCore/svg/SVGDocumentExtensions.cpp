@@ -131,17 +131,17 @@ void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
 static void reportMessage(Document* document, MessageLevel level, const String& message)
 {
     if (document->frame())
-        document->addConsoleMessage(RenderingMessageSource, level, message);
+        document->addConsoleMessage(MessageSource::Rendering, level, message);
 }
 
 void SVGDocumentExtensions::reportWarning(const String& message)
 {
-    reportMessage(m_document, WarningMessageLevel, "Warning: " + message);
+    reportMessage(m_document, MessageLevel::Warning, "Warning: " + message);
 }
 
 void SVGDocumentExtensions::reportError(const String& message)
 {
-    reportMessage(m_document, ErrorMessageLevel, "Error: " + message);
+    reportMessage(m_document, MessageLevel::Error, "Error: " + message);
 }
 
 void SVGDocumentExtensions::addPendingResource(const AtomicString& id, Element* element)

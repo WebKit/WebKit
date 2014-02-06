@@ -94,7 +94,7 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
 void MixedContentChecker::logWarning(bool allowed, const String& action, const URL& target) const
 {
     String message = makeString((allowed ? "" : "[blocked] "), "The page at ", m_frame.document()->url().stringCenterEllipsizedToLength(), " ", action, " insecure content from ", target.stringCenterEllipsizedToLength(), ".\n");
-    m_frame.document()->addConsoleMessage(SecurityMessageSource, WarningMessageLevel, message);
+    m_frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 }
 
 } // namespace WebCore

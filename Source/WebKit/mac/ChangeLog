@@ -1,3 +1,16 @@
+2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Console support to JSContext Inspection
+        https://bugs.webkit.org/show_bug.cgi?id=127941
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (stringForMessageSource):
+        (stringForMessageLevel):
+        (WebChromeClient::addMessageToConsole):
+
 2014-02-05  Gavin Barraclough  <barraclough@apple.com>
 
         Change Page, FocusController to use ViewState

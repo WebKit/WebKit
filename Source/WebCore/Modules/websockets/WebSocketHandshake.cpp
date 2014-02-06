@@ -44,7 +44,6 @@
 #include "URL.h"
 #include "Logging.h"
 #include "ResourceRequest.h"
-#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include <wtf/CryptographicallyRandomNumber.h>

@@ -21,12 +21,11 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
 #include "config.h"
-
 #include "WorkerGlobalScope.h"
 
 #include "ActiveDOMObject.h"
@@ -39,13 +38,12 @@
 #include "EventException.h"
 #include "ExceptionCode.h"
 #include "InspectorConsoleInstrumentation.h"
-#include "URL.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
 #include "ScheduledAction.h"
-#include "ScriptCallStack.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
+#include "URL.h"
 #include "WorkerInspectorController.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
@@ -55,11 +53,14 @@
 #include "WorkerThreadableLoader.h"
 #include "XMLHttpRequestException.h"
 #include <bindings/ScriptValue.h>
+#include <inspector/ScriptCallStack.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotificationCenter.h"
 #endif
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -275,9 +276,9 @@ void WorkerGlobalScope::addMessageToWorkerConsole(MessageSource source, MessageL
 {
     ASSERT(isContextThread());
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(this, source, LogMessageType, level, message, callStack, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(this, source, MessageType::Log, level, message, callStack, requestIdentifier);
     else
-        InspectorInstrumentation::addMessageToConsole(this, source, LogMessageType, level, message, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(this, source, MessageType::Log, level, message, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
 }
 
 bool WorkerGlobalScope::isContextThread() const

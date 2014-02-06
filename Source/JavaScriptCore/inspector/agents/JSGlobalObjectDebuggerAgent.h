@@ -33,11 +33,13 @@
 
 namespace Inspector {
 
+class InspectorConsoleAgent;
+
 class JSGlobalObjectDebuggerAgent final : public InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    JSGlobalObjectDebuggerAgent(InjectedScriptManager*, JSC::JSGlobalObject&);
+    JSGlobalObjectDebuggerAgent(InjectedScriptManager*, JSC::JSGlobalObject&, InspectorConsoleAgent*);
     virtual ~JSGlobalObjectDebuggerAgent() { }
 
     virtual JSGlobalObjectScriptDebugServer& scriptDebugServer() override { return m_scriptDebugServer; }
@@ -46,8 +48,7 @@ public:
     virtual void stopListeningScriptDebugServer(bool isBeingDestroyed) override;
     virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
 
-    // FIXME: This needs a ConsoleAgent to send a log to.
-    virtual void breakpointActionLog(JSC::ExecState*, const String&) override final { }
+    virtual void breakpointActionLog(JSC::ExecState*, const String&) override;
 
     // FIXME: JavaScript inspector does not yet have a console object to mute.
     virtual void muteConsole() override { }
@@ -55,6 +56,7 @@ public:
 
 private:
     JSGlobalObjectScriptDebugServer m_scriptDebugServer;
+    InspectorConsoleAgent* m_consoleAgent;
 };
 
 } // namespace Inspector

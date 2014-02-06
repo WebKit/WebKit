@@ -47,7 +47,6 @@ namespace WebCore {
 class InspectorApplicationCacheAgent;
 class InspectorCSSAgent;
 class InspectorCanvasAgent;
-class InspectorConsoleAgent;
 class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;
 class InspectorDOMStorageAgent;
@@ -62,6 +61,7 @@ class InspectorWorkerAgent;
 class Page;
 class PageDebuggerAgent;
 class PageRuntimeAgent;
+class WebConsoleAgent;
 class WorkerGlobalScope;
 class WorkerRuntimeAgent;
 
@@ -87,8 +87,8 @@ public:
     InspectorCSSAgent* inspectorCSSAgent() const { return m_inspectorCSSAgent; }
     void setInspectorCSSAgent(InspectorCSSAgent* agent) { m_inspectorCSSAgent = agent; }
 
-    InspectorConsoleAgent* inspectorConsoleAgent() const { return m_inspectorConsoleAgent; }
-    void setInspectorConsoleAgent(InspectorConsoleAgent* agent) { m_inspectorConsoleAgent = agent; }
+    WebConsoleAgent* webConsoleAgent() const { return m_webConsoleAgent; }
+    void setWebConsoleAgent(WebConsoleAgent* agent) { m_webConsoleAgent = agent; }
 
     InspectorDOMAgent* inspectorDOMAgent() const { return m_inspectorDOMAgent; }
     void setInspectorDOMAgent(InspectorDOMAgent* agent) { m_inspectorDOMAgent = agent; }
@@ -149,7 +149,7 @@ private:
     InspectorPageAgent* m_inspectorPageAgent;
     InspectorCSSAgent* m_inspectorCSSAgent;
     InspectorLayerTreeAgent* m_inspectorLayerTreeAgent;
-    InspectorConsoleAgent* m_inspectorConsoleAgent;
+    WebConsoleAgent* m_webConsoleAgent;
     InspectorDOMAgent* m_inspectorDOMAgent;
     InspectorResourceAgent* m_inspectorResourceAgent;
     PageRuntimeAgent* m_pageRuntimeAgent;

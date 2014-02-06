@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2008, 2010 Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (c) 2010 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +15,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,43 +29,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptCallStack_h
-#define ScriptCallStack_h
+#ifndef ScriptCallFrame_h
+#define ScriptCallFrame_h
+
+#include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INSPECTOR)
-#include "InspectorWebTypeBuilders.h"
+#include "InspectorJSTypeBuilders.h"
 #endif
 
-#include "ScriptCallFrame.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+namespace Inspector {
 
-namespace WebCore {
-
-class ScriptCallStack : public RefCounted<ScriptCallStack> {
+class JS_EXPORT_PRIVATE ScriptCallFrame  {
 public:
-    static const size_t maxCallStackSizeToCapture = 200;
-    
-    static PassRefPtr<ScriptCallStack> create(Vector<ScriptCallFrame>&);
+    ScriptCallFrame(const String& functionName, const String& scriptName, unsigned lineNumber, unsigned column);
+    ~ScriptCallFrame();
 
-    ~ScriptCallStack();
+    const String& functionName() const { return m_functionName; }
+    const String& sourceURL() const { return m_scriptName; }
+    unsigned lineNumber() const { return m_lineNumber; }
+    unsigned columnNumber() const { return m_column; }
 
-    const ScriptCallFrame &at(size_t) const;
-    size_t size() const;
-
-    bool isEqual(ScriptCallStack*) const;
+    bool isEqual(const ScriptCallFrame&) const;
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Console::CallFrame>> buildInspectorArray() const;
+    PassRefPtr<Inspector::TypeBuilder::Console::CallFrame> buildInspectorObject() const;
 #endif
 
 private:
-    ScriptCallStack(Vector<ScriptCallFrame>&);
-
-    Vector<ScriptCallFrame> m_frames;
+    String m_functionName;
+    String m_scriptName;
+    unsigned m_lineNumber;
+    unsigned m_column;
 };
 
-} // namespace WebCore
+} // namespace Inspector
 
-#endif // ScriptCallStack_h
+#endif // ScriptCallFrame_h

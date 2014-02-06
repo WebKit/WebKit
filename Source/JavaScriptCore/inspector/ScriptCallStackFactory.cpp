@@ -1,11 +1,12 @@
 /*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  * Copyright (c) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -15,7 +16,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,78 +33,30 @@
 #include "config.h"
 #include "ScriptCallStackFactory.h"
 
-#include "InspectorInstrumentation.h"
-#include "JSDOMBinding.h"
-#include "JSMainThreadExecState.h"
+#include "ArgList.h"
+#include "CallFrame.h"
+#include "CallFrameInlines.h"
+#include "JSCJSValue.h"
+#include "JSFunction.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
-#include <bindings/ScriptValue.h>
-#include <interpreter/CallFrame.h>
-#include <interpreter/CallFrameInlines.h>
-#include <interpreter/StackVisitor.h>
-#include <runtime/ArgList.h>
-#include <runtime/JSCJSValue.h>
-#include <runtime/JSFunction.h>
-#include <runtime/VM.h>
+#include "ScriptValue.h"
+#include "StackVisitor.h"
+#include "VM.h"
+#include <wtf/RefCountedArray.h>
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;
 
-namespace WebCore {
-
-class ScriptExecutionContext;
+namespace Inspector {
 
 class CreateScriptCallStackFunctor {
 public:
-    CreateScriptCallStackFunctor(Vector<ScriptCallFrame>& frames,  size_t remainingCapacity)
-        : m_frames(frames)
-        , m_remainingCapacityForFrameCapture(remainingCapacity)
-    {
-    }
-
-    StackVisitor::Status operator()(StackVisitor& visitor)
-    {
-        if (m_remainingCapacityForFrameCapture) {
-            unsigned line;
-            unsigned column;
-            visitor->computeLineAndColumn(line, column);
-            m_frames.append(ScriptCallFrame(visitor->functionName(), visitor->sourceURL(), line, column));
-
-            m_remainingCapacityForFrameCapture--;
-            return StackVisitor::Continue;
-        }
-        return StackVisitor::Done;
-    }
-
-private:
-    Vector<ScriptCallFrame>& m_frames;
-    size_t m_remainingCapacityForFrameCapture;
-};
-
-PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool emptyIsAllowed)
-{
-    Vector<ScriptCallFrame> frames;
-    if (JSC::ExecState* exec = JSMainThreadExecState::currentState()) {
-        CallFrame* frame = exec->vm().topCallFrame;
-        CreateScriptCallStackFunctor functor(frames, maxStackSize);
-        frame->iterate(functor);
-    }
-    if (frames.isEmpty() && !emptyIsAllowed) {
-        // No frames found. It may happen in the case where
-        // a bound function is called from native code for example.
-        // Fallback to setting lineNumber to 0, and source and function name to "undefined".
-        frames.append(ScriptCallFrame("undefined", "undefined", 0, 0));
-    }
-    return ScriptCallStack::create(frames);
-}
-
-class CreateScriptCallStackForConsoleFunctor {
-public:
-    CreateScriptCallStackForConsoleFunctor(bool needToSkipAFrame,  size_t remainingCapacity, Vector<ScriptCallFrame>& frames)
+    CreateScriptCallStackFunctor(bool needToSkipAFrame, Vector<ScriptCallFrame>& frames, size_t remainingCapacity)
         : m_needToSkipAFrame(needToSkipAFrame)
-        , m_remainingCapacityForFrameCapture(remainingCapacity)
         , m_frames(frames)
+        , m_remainingCapacityForFrameCapture(remainingCapacity)
     {
     }
 
@@ -115,12 +68,6 @@ public:
         }
 
         if (m_remainingCapacityForFrameCapture) {
-            // This early exit is necessary to maintain our old behaviour
-            // but the stack trace we produce now is complete and handles all
-            // ways in which code may be running
-            if (!visitor->callee() && m_frames.size())
-                return StackVisitor::Done;
-
             unsigned line;
             unsigned column;
             visitor->computeLineAndColumn(line, column);
@@ -129,27 +76,56 @@ public:
             m_remainingCapacityForFrameCapture--;
             return StackVisitor::Continue;
         }
+
         return StackVisitor::Done;
     }
 
 private:
     bool m_needToSkipAFrame;
-    size_t m_remainingCapacityForFrameCapture;
     Vector<ScriptCallFrame>& m_frames;
+    size_t m_remainingCapacityForFrameCapture;
 };
+
+PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize, bool emptyIsAllowed)
+{
+    Vector<ScriptCallFrame> frames;
+
+    if (exec) {
+        CallFrame* frame = exec->vm().topCallFrame;
+        CreateScriptCallStackFunctor functor(false, frames, maxStackSize);
+        frame->iterate(functor);
+    }
+
+    if (frames.isEmpty() && !emptyIsAllowed) {
+        // No frames found. It may happen in the case where
+        // a bound function is called from native code for example.
+        // Fallback to setting lineNumber to 0, and source and function name to "undefined".
+        frames.append(ScriptCallFrame(ASCIILiteral("undefined"), ASCIILiteral("undefined"), 0, 0));
+    }
+
+    return ScriptCallStack::create(frames);
+}
 
 PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
-    ASSERT(exec);
+
     CallFrame* frame = exec->vm().topCallFrame;
-    CreateScriptCallStackForConsoleFunctor functor(true, maxStackSize, frames);
+    CreateScriptCallStackFunctor functor(true, frames, maxStackSize);
     frame->iterate(functor);
+
     if (frames.isEmpty()) {
-        CreateScriptCallStackForConsoleFunctor functor(false, maxStackSize, frames);
+        CreateScriptCallStackFunctor functor(false, frames, maxStackSize);
         frame->iterate(functor);
     }
+
     return ScriptCallStack::create(frames);
+}
+
+PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec)
+{
+    // FIXME: Caller should use createScriptCallStack alternative with the exec and appropriate max.
+    return createScriptCallStack(exec, ScriptCallStack::maxCallStackSizeToCapture);
 }
 
 PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JSC::JSValue& exception, size_t maxStackSize)
@@ -160,10 +136,10 @@ PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* e
         if (!stackTrace[i].callee && frames.size())
             break;
 
-        String functionName = stackTrace[i].friendlyFunctionName(exec);
         unsigned line;
         unsigned column;
         stackTrace[i].computeLineAndColumn(line, column);
+        String functionName = stackTrace[i].friendlyFunctionName(exec);
         frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL, line, column));
     }
 
@@ -184,17 +160,6 @@ PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* e
     }
 
     return ScriptCallStack::create(frames);
-}
-
-PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec)
-{
-    size_t maxStackSize = 1;
-    if (InspectorInstrumentation::hasFrontends()) {
-        ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-        if (InspectorInstrumentation::consoleAgentEnabled(scriptExecutionContext))
-            maxStackSize = ScriptCallStack::maxCallStackSizeToCapture;
-    }
-    return createScriptCallStack(exec, maxStackSize);
 }
 
 PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned skipArgumentCount)

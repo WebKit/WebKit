@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -370,25 +370,25 @@ void WebChromeClient::setResizable(bool b)
 inline static NSString *stringForMessageSource(MessageSource source)
 {
     switch (source) {
-    case XMLMessageSource:
+    case MessageSource::XML:
         return WebConsoleMessageXMLMessageSource;
-    case JSMessageSource:
+    case MessageSource::JS:
         return WebConsoleMessageJSMessageSource;
-    case NetworkMessageSource:
+    case MessageSource::Network:
         return WebConsoleMessageNetworkMessageSource;
-    case ConsoleAPIMessageSource:
+    case MessageSource::ConsoleAPI:
         return WebConsoleMessageConsoleAPIMessageSource;
-    case StorageMessageSource:
+    case MessageSource::Storage:
         return WebConsoleMessageStorageMessageSource;
-    case AppCacheMessageSource:
+    case MessageSource::AppCache:
         return WebConsoleMessageAppCacheMessageSource;
-    case RenderingMessageSource:
+    case MessageSource::Rendering:
         return WebConsoleMessageRenderingMessageSource;
-    case CSSMessageSource:
+    case MessageSource::CSS:
         return WebConsoleMessageCSSMessageSource;
-    case SecurityMessageSource:
+    case MessageSource::Security:
         return WebConsoleMessageSecurityMessageSource;
-    case OtherMessageSource:
+    case MessageSource::Other:
         return WebConsoleMessageOtherMessageSource;
     }
     ASSERT_NOT_REACHED();
@@ -398,20 +398,20 @@ inline static NSString *stringForMessageSource(MessageSource source)
 inline static NSString *stringForMessageLevel(MessageLevel level)
 {
     switch (level) {
-    case DebugMessageLevel:
+    case MessageLevel::Debug:
         return WebConsoleMessageDebugMessageLevel;
-    case LogMessageLevel:
+    case MessageLevel::Log:
         return WebConsoleMessageLogMessageLevel;
-    case WarningMessageLevel:
+    case MessageLevel::Warning:
         return WebConsoleMessageWarningMessageLevel;
-    case ErrorMessageLevel:
+    case MessageLevel::Error:
         return WebConsoleMessageErrorMessageLevel;
     }
     ASSERT_NOT_REACHED();
     return @"";
 }
 
-void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned int lineNumber, unsigned columnNumber, const String& sourceURL)
+void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceURL)
 {
 #if !PLATFORM(IOS)
     id delegate = [m_webView UIDelegate];
@@ -432,7 +432,7 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
         respondsToNewSelector = YES;
     else {
         // The old selector only takes JSMessageSource messages.
-        if (source != JSMessageSource)
+        if (source != MessageSource::JS)
             return;
         selector = @selector(webView:addMessageToConsole:);
         if (![delegate respondsToSelector:selector])

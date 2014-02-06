@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,29 +25,25 @@
  */
 
 #include "config.h"
+#include "IdentifiersFactory.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "IdentifiersFactory.h"
-
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
+namespace Inspector {
 
 namespace {
 static long s_lastUsedIdentifier = 0;
 }
 
-// static
-long IdentifiersFactory::s_processId;
+long IdentifiersFactory::s_processId = 0;
 
-// static
 String IdentifiersFactory::createIdentifier()
 {
     return addProcessIdPrefixTo(String::number(++s_lastUsedIdentifier));
 }
 
-// static
 String IdentifiersFactory::requestId(unsigned long identifier)
 {
     if (identifier)
@@ -54,7 +51,6 @@ String IdentifiersFactory::requestId(unsigned long identifier)
     return String();
 }
 
-// static
 String IdentifiersFactory::addProcessIdPrefixTo(const String& id)
 {
     StringBuilder builder;
@@ -64,6 +60,6 @@ String IdentifiersFactory::addProcessIdPrefixTo(const String& id)
     return builder.toString();
 }
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)

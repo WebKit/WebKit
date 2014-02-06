@@ -37,7 +37,6 @@
 #include "Event.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "IdentifiersFactory.h"
 #include "InspectorClient.h"
 #include "InspectorCounters.h"
 #include "InspectorInstrumentation.h"
@@ -53,6 +52,7 @@
 #include "ResourceResponse.h"
 #include "ScriptProfiler.h"
 #include "TimelineRecordFactory.h"
+#include <inspector/IdentifiersFactory.h>
 #include <wtf/CurrentTime.h>
 
 using namespace Inspector;

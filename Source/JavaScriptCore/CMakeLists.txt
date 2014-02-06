@@ -227,7 +227,9 @@ set(JavaScriptCore_SOURCES
     heap/WriteBarrierBuffer.cpp
     heap/WriteBarrierSupport.cpp
 
+    inspector/ConsoleMessage.cpp
     inspector/ContentSearchUtilities.cpp
+    inspector/IdentifiersFactory.cpp
     inspector/InjectedScript.cpp
     inspector/InjectedScriptBase.cpp
     inspector/InjectedScriptHost.cpp
@@ -241,8 +243,13 @@ set(JavaScriptCore_SOURCES
     inspector/JSJavaScriptCallFrame.cpp
     inspector/JSJavaScriptCallFramePrototype.cpp
     inspector/JavaScriptCallFrame.cpp
+    inspector/ScriptArguments.cpp
+    inspector/ScriptCallFrame.cpp
+    inspector/ScriptCallStack.cpp
+    inspector/ScriptCallStackFactory.cpp
     inspector/ScriptDebugServer.cpp
     inspector/agents/InspectorAgent.cpp
+    inspector/agents/InspectorConsoleAgent.cpp
     inspector/agents/InspectorDebuggerAgent.cpp
     inspector/agents/InspectorRuntimeAgent.cpp
 
@@ -796,6 +803,7 @@ ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/parser/Lexer.cpp ${DERIVED_S
 set(JavaScriptCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 
 set(JavaScriptCore_INSPECTOR_DOMAINS
+    inspector/protocol/Console.json
     inspector/protocol/Debugger.json
     inspector/protocol/GenericTypes.json
     inspector/protocol/InspectorDomain.json

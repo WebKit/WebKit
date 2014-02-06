@@ -1,10 +1,11 @@
 /*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  * Copyright (c) 2010 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +15,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -31,17 +32,17 @@
 #include "config.h"
 #include "ScriptArguments.h"
 
-#include <bindings/ScriptValue.h>
+#include "ScriptValue.h"
 
-namespace WebCore {
+namespace Inspector {
 
 PassRefPtr<ScriptArguments> ScriptArguments::create(JSC::ExecState* scriptState, Vector<Deprecated::ScriptValue>& arguments)
 {
     return adoptRef(new ScriptArguments(scriptState, arguments));
 }
 
-ScriptArguments::ScriptArguments(JSC::ExecState* scriptState, Vector<Deprecated::ScriptValue>& arguments)
-    : m_globalObject(scriptState->vm(), scriptState->lexicalGlobalObject())
+ScriptArguments::ScriptArguments(JSC::ExecState* execState, Vector<Deprecated::ScriptValue>& arguments)
+    : m_globalObject(execState->vm(), execState->lexicalGlobalObject())
 {
     m_arguments.swap(arguments);
 }
@@ -60,6 +61,7 @@ JSC::ExecState* ScriptArguments::globalState() const
 {
     if (m_globalObject)
         return const_cast<JSC::JSGlobalObject*>(m_globalObject.get())->globalExec();
+
     return nullptr;
 }
 
@@ -95,7 +97,8 @@ bool ScriptArguments::isEqual(ScriptArguments* other) const
         if (!m_arguments[i].isEqual(other->globalState(), other->m_arguments[i]))
             return false;
     }
+
     return true;
 }
 
-} // namespace WebCore
+} // namespace Inspector

@@ -31,27 +31,25 @@
 #ifndef ConsoleMessage_h
 #define ConsoleMessage_h
 
-#include "ConsoleAPITypes.h"
-#include "ConsoleTypes.h"
-#include "InspectorWebFrontendDispatchers.h"
-#include "ScriptState.h"
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#if ENABLE(INSPECTOR)
 
-namespace Inspector {
-class InjectedScriptManager;
-class InspectorObject;
+#include "ConsoleTypes.h"
+#include "InspectorJSFrontendDispatchers.h"
+#include <wtf/Forward.h>
+
+namespace JSC {
+class ExecState;
 }
 
-namespace WebCore {
+namespace Inspector {
 
-class DOMWindow;
+class InjectedScriptManager;
 class ScriptArguments;
-class ScriptCallFrame;
 class ScriptCallStack;
 
-class ConsoleMessage {
-    WTF_MAKE_NONCOPYABLE(ConsoleMessage); WTF_MAKE_FAST_ALLOCATED;
+class JS_EXPORT_PRIVATE ConsoleMessage {
+    WTF_MAKE_NONCOPYABLE(ConsoleMessage);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
     ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned column, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
@@ -59,18 +57,21 @@ public:
     ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, JSC::ExecState*, unsigned long requestIdentifier = 0);
     ~ConsoleMessage();
 
-    void addToFrontend(Inspector::InspectorConsoleFrontendDispatcher*, Inspector::InjectedScriptManager*, bool generatePreview);
-    void updateRepeatCountInConsole(Inspector::InspectorConsoleFrontendDispatcher*);
-    void incrementCount() { ++m_repeatCount; }
-    bool isEqual(ConsoleMessage* msg) const;
+    void addToFrontend(InspectorConsoleFrontendDispatcher*, InjectedScriptManager*, bool generatePreview);
+    void updateRepeatCountInConsole(InspectorConsoleFrontendDispatcher*);
 
     MessageSource source() const { return m_source; }
     const String& message() const { return m_message; }
     MessageType type() const { return m_type; }
+    JSC::ExecState* scriptState() const;
 
-    void windowCleared(DOMWindow*);
+    void incrementCount() { ++m_repeatCount; }
 
-    unsigned argumentCount();
+    unsigned argumentCount() const;
+
+    bool isEqual(ConsoleMessage* msg) const;
+
+    void clear();
 
 private:
     void autogenerateMetadata(bool canGenerateCallStack, JSC::ExecState* = nullptr);
@@ -88,6 +89,8 @@ private:
     String m_requestId;
 };
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ConsoleMessage_h
+
+#endif // ENABLE(INSPECTOR)

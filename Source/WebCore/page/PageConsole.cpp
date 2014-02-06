@@ -31,23 +31,24 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ConsoleAPITypes.h"
-#include "ConsoleTypes.h"
 #include "Document.h"
 #include "Frame.h"
 #include "InspectorConsoleInstrumentation.h"
 #include "InspectorController.h"
 #include "JSMainThreadExecState.h"
 #include "Page.h"
-#include "ScriptArguments.h"
-#include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <bindings/ScriptValue.h>
+#include <inspector/ConsoleTypes.h>
+#include <inspector/ScriptArguments.h>
+#include <inspector/ScriptCallStack.h>
+#include <inspector/ScriptCallStackFactory.h>
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -80,34 +81,34 @@ void PageConsole::printMessageSourceAndLevelPrefix(MessageSource source, Message
 {
     const char* sourceString;
     switch (source) {
-    case XMLMessageSource:
+    case MessageSource::XML:
         sourceString = "XML";
         break;
-    case JSMessageSource:
+    case MessageSource::JS:
         sourceString = "JS";
         break;
-    case NetworkMessageSource:
+    case MessageSource::Network:
         sourceString = "NETWORK";
         break;
-    case ConsoleAPIMessageSource:
+    case MessageSource::ConsoleAPI:
         sourceString = "CONSOLE";
         break;
-    case StorageMessageSource:
+    case MessageSource::Storage:
         sourceString = "STORAGE";
         break;
-    case AppCacheMessageSource:
+    case MessageSource::AppCache:
         sourceString = "APPCACHE";
         break;
-    case RenderingMessageSource:
+    case MessageSource::Rendering:
         sourceString = "RENDERING";
         break;
-    case CSSMessageSource:
+    case MessageSource::CSS:
         sourceString = "CSS";
         break;
-    case SecurityMessageSource:
+    case MessageSource::Security:
         sourceString = "SECURITY";
         break;
-    case OtherMessageSource:
+    case MessageSource::Other:
         sourceString = "OTHER";
         break;
     default:
@@ -118,16 +119,16 @@ void PageConsole::printMessageSourceAndLevelPrefix(MessageSource source, Message
 
     const char* levelString;
     switch (level) {
-    case DebugMessageLevel:
+    case MessageLevel::Debug:
         levelString = "DEBUG";
         break;
-    case LogMessageLevel:
+    case MessageLevel::Log:
         levelString = "LOG";
         break;
-    case WarningMessageLevel:
+    case MessageLevel::Warning:
         levelString = "WARN";
         break;
-    case ErrorMessageLevel:
+    case MessageLevel::Error:
         levelString = "ERROR";
         break;
     default:
@@ -147,6 +148,7 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     String url;
     if (document)
         url = document->url().string();
+
     // FIXME: The below code attempts to determine line numbers for parser generated errors, but this is not the only reason why we can get here.
     // For example, if we are still parsing and get a WebSocket network error, it will be erroneously attributed to a line where parsing was paused.
     // Also, we should determine line numbers for script generated messages (e.g. calling getImageData on a canvas).
@@ -162,7 +164,7 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
             column = position.m_column.oneBasedInt();
         }
     }
-    addMessage(source, level, message, url, line, column, 0, 0, requestIdentifier);
+    addMessage(source, level, message, url, line, column, 0, JSMainThreadExecState::currentState(), requestIdentifier);
 }
 
 void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
@@ -172,15 +174,15 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
 
 void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
-    if (muteCount && source != ConsoleAPIMessageSource)
+    if (muteCount && source != MessageSource::ConsoleAPI)
         return;
 
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(&m_page, source, LogMessageType, level, message, callStack, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(&m_page, source, MessageType::Log, level, message, callStack, requestIdentifier);
     else
-        InspectorInstrumentation::addMessageToConsole(&m_page, source, LogMessageType, level, message, url, lineNumber, columnNumber, state, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(&m_page, source, MessageType::Log, level, message, url, lineNumber, columnNumber, state, requestIdentifier);
 
-    if (source == CSSMessageSource)
+    if (source == MessageSource::CSS)
         return;
 
     if (m_page.settings().privateBrowsingEnabled())

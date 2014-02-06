@@ -202,6 +202,7 @@ EXTRA_DIST += \
 	Source/JavaScriptCore/icu/LICENSE \
 	Source/JavaScriptCore/icu/README \
 	Source/JavaScriptCore/inspector/InjectedScriptSource.js \
+	Source/JavaScriptCore/inspector/protocol/Console.json \
 	Source/JavaScriptCore/inspector/protocol/Debugger.json \
 	Source/JavaScriptCore/inspector/protocol/GenericTypes.json \
 	Source/JavaScriptCore/inspector/protocol/InspectorDomain.json \
@@ -243,6 +244,7 @@ endif
 # Inspector Interfaces
 
 JavaScriptCore_INSPECTOR_DOMAINS := \
+    $(JavaScriptCore)/inspector/protocol/Console.json \
     $(JavaScriptCore)/inspector/protocol/Debugger.json \
     $(JavaScriptCore)/inspector/protocol/GenericTypes.json \
     $(JavaScriptCore)/inspector/protocol/InspectorDomain.json \

@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  * Copyright (c) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,47 +29,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptArguments_h
-#define ScriptArguments_h
+#ifndef ScriptCallStackFactory_h
+#define ScriptCallStackFactory_h
 
-#include <heap/Strong.h>
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
-namespace Deprecated {
-class ScriptValue;
-}
 
 namespace JSC {
 class ExecState;
-class JSGlobalObject;
+class JSValue;
 }
 
-namespace WebCore {
+namespace Inspector {
 
-class ScriptArguments : public RefCounted<ScriptArguments> {
-public:
-    static PassRefPtr<ScriptArguments> create(JSC::ExecState*, Vector<Deprecated::ScriptValue>& arguments);
+class ScriptArguments;
+class ScriptCallStack;
 
-    ~ScriptArguments();
+// FIXME: The subtle differences between these should be eliminated.
+JS_EXPORT_PRIVATE PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState*, size_t maxStackSize, bool emptyIsAllowed);
+JS_EXPORT_PRIVATE PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState*, size_t maxStackSize);
+JS_EXPORT_PRIVATE PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState*);
+JS_EXPORT_PRIVATE PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState*, JSC::JSValue& exception, size_t maxStackSize);
+JS_EXPORT_PRIVATE PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState*, unsigned skipArgumentCount);
 
-    const Deprecated::ScriptValue& argumentAt(size_t) const;
-    size_t argumentCount() const { return m_arguments.size(); }
+} // namespace Inspector
 
-    JSC::ExecState* globalState() const;
-
-    bool getFirstArgumentAsString(WTF::String& result, bool checkForNullOrUndefined = false);
-    bool isEqual(ScriptArguments*) const;
-
-private:
-    ScriptArguments(JSC::ExecState*, Vector<Deprecated::ScriptValue>& arguments);
-
-    JSC::Strong<JSC::JSGlobalObject> m_globalObject;
-    Vector<Deprecated::ScriptValue> m_arguments;
-};
-
-} // namespace WebCore
-
-#endif // ScriptArguments_h
+#endif // ScriptCallStackFactory_h

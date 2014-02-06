@@ -36,7 +36,6 @@
 
 #include "CommandLineAPIHost.h"
 #include "InspectorClient.h"
-#include "InspectorConsoleAgent.h"
 #include "InspectorForwarding.h"
 #include "InspectorHeapProfilerAgent.h"
 #include "InspectorInstrumentation.h"
@@ -90,7 +89,9 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     m_instrumentingAgents->setWorkerRuntimeAgent(m_runtimeAgent);
     m_agents.append(std::move(runtimeAgent));
 
-    auto consoleAgent = std::make_unique<WorkerConsoleAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get());
+    auto consoleAgent = std::make_unique<WorkerConsoleAgent>(m_injectedScriptManager.get());
+    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.get());
+
     auto debuggerAgent = std::make_unique<WorkerDebuggerAgent>(m_injectedScriptManager.get(), m_instrumentingAgents.get(), &workerGlobalScope);
     m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
     m_agents.append(std::move(debuggerAgent));

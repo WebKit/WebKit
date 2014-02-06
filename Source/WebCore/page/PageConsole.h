@@ -29,8 +29,8 @@
 #ifndef PageConsole_h
 #define PageConsole_h
 
-#include "ConsoleTypes.h"
-#include "ScriptCallStack.h"
+#include <inspector/ConsoleTypes.h>
+#include <inspector/ScriptCallStack.h>
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -51,8 +51,8 @@ public:
     static void printSourceURLAndPosition(const String& sourceURL, unsigned lineNumber, unsigned columnNumber = 0);
     static void printMessageSourceAndLevelPrefix(MessageSource, MessageLevel, bool showAsTrace = false);
 
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> = 0, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
-    void addMessage(MessageSource, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>);
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack> = 0, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
+    void addMessage(MessageSource, MessageLevel, const String& message, PassRefPtr<Inspector::ScriptCallStack>);
     void addMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = 0);
 
     static void mute();

@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+// FIXME: Rename to WebInjectedScriptHost.
 class PageInjectedScriptHost final : public Inspector::InjectedScriptHost {
 public:
     static PassRefPtr<PageInjectedScriptHost> create() { return adoptRef(new PageInjectedScriptHost); }

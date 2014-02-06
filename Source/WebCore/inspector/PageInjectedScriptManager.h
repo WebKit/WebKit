@@ -34,6 +34,7 @@ namespace WebCore {
 
 class DOMWindow;
 
+// FIXME: Rename to WebInjectedScriptManager.
 class PageInjectedScriptManager final : public Inspector::InjectedScriptManager {
 public:
     PageInjectedScriptManager(Inspector::InspectorEnvironment&, PassRefPtr<Inspector::InjectedScriptHost>);

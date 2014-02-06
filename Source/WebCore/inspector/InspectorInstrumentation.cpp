@@ -35,8 +35,6 @@
 
 #include "CSSRule.h"
 #include "CSSStyleRule.h"
-#include "ConsoleAPITypes.h"
-#include "ConsoleTypes.h"
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "Database.h"
@@ -46,7 +44,6 @@
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
-#include "InspectorConsoleAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
@@ -64,16 +61,18 @@
 #include "PageRuntimeAgent.h"
 #include "RenderObject.h"
 #include "RenderView.h"
-#include "ScriptArguments.h"
-#include "ScriptCallStack.h"
 #include "ScriptController.h"
 #include "ScriptProfile.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
+#include "WebConsoleAgent.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
 #include "XMLHttpRequest.h"
+#include <inspector/ConsoleTypes.h>
+#include <inspector/ScriptArguments.h>
+#include <inspector/ScriptCallStack.h>
 #include <inspector/agents/InspectorDebuggerAgent.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -183,7 +182,7 @@ void InspectorInstrumentation::didInvalidateStyleAttrImpl(InstrumentingAgents* i
 
 void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents* instrumentingAgents, DOMWindow* window)
 {
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->frameWindowDiscarded(window);
 }
 
@@ -600,7 +599,7 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
     InstrumentingAgents* instrumentingAgents = cookie.instrumentingAgents();
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didReceiveResponse(identifier, loader, response, resourceLoader);
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->didReceiveResponse(identifier, response); // This should come AFTER resource notification, front-end relies on this.
 }
 
@@ -645,7 +644,7 @@ void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents* instrumen
         timelineAgent->didFinishLoadingResource(identifier, true, 0, loader->frame());
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didFailLoading(identifier, loader, error);
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
 }
 
@@ -669,7 +668,7 @@ void InspectorInstrumentation::didFailXHRLoadingImpl(InstrumentingAgents* instru
 
 void InspectorInstrumentation::didFinishXHRLoadingImpl(InstrumentingAgents* instrumentingAgents, ThreadableLoaderClient* client, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber)
 {
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->didFinishXHRLoading(identifier, url, sendURL, sendLineNumber, sendColumnNumber);
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didFinishXHRLoading(client, identifier, sourceString);
@@ -752,7 +751,7 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
         return;
 
     if (loader->frame()->isMainFrame()) {
-        if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+        if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
             consoleAgent->reset();
 
         if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
@@ -862,13 +861,13 @@ void InspectorInstrumentation::didWriteHTMLImpl(const InspectorInstrumentationCo
 // JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
 static bool isConsoleAssertMessage(MessageSource source, MessageType type)
 {
-    return source == ConsoleAPIMessageSource && type == AssertMessageType;
+    return source == MessageSource::ConsoleAPI && type == MessageType::Assert;
 }
 
 // FIXME: Drop this once we no longer generate stacks outside of Inspector.
 void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->addMessageToConsole(source, type, level, message, callStack, requestIdentifier);
     // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
     if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
@@ -879,7 +878,7 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* inst
 
 void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
 {
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->addMessageToConsole(source, type, level, message, state, arguments, requestIdentifier);
     // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
     if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
@@ -890,13 +889,13 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* inst
 
 void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
 {
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->addMessageToConsole(source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier);
 }
 
 void InspectorInstrumentation::consoleCountImpl(InstrumentingAgents* instrumentingAgents, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->count(state, arguments);
 }
 
@@ -904,13 +903,13 @@ void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents* instr
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->time(frame, title);
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->startTiming(title);
 }
 
 void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, const String& title, PassRefPtr<ScriptCallStack> stack)
 {
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->stopTiming(title, stack);
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->timeEnd(frame, title);
@@ -1072,7 +1071,7 @@ bool InspectorInstrumentation::canvasAgentEnabled(ScriptExecutionContext* script
 bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
 {
     InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext);
-    InspectorConsoleAgent* consoleAgent = instrumentingAgents ? instrumentingAgents->inspectorConsoleAgent() : nullptr;
+    InspectorConsoleAgent* consoleAgent = instrumentingAgents ? instrumentingAgents->webConsoleAgent() : nullptr;
     return consoleAgent && consoleAgent->enabled();
 }
 

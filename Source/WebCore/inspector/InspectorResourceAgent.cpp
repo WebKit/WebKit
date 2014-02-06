@@ -29,10 +29,9 @@
  */
 
 #include "config.h"
+#include "InspectorResourceAgent.h"
 
 #if ENABLE(INSPECTOR)
-
-#include "InspectorResourceAgent.h"
 
 #include "CachedRawResource.h"
 #include "CachedResource.h"
@@ -44,11 +43,11 @@
 #include "FrameLoader.h"
 #include "HTTPHeaderMap.h"
 #include "IconController.h"
-#include "IdentifiersFactory.h"
 #include "InspectorClient.h"
 #include "InspectorPageAgent.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
+#include "JSMainThreadExecState.h"
 #include "MemoryCache.h"
 #include "NetworkResourcesData.h"
 #include "Page.h"
@@ -58,15 +57,16 @@
 #include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
 #include "URL.h"
 #include "WebSocketFrame.h"
 #include "XMLHttpRequest.h"
+#include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorValues.h>
+#include <inspector/ScriptCallStack.h>
+#include <inspector/ScriptCallStackFactory.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HexNumber.h>
 #include <wtf/ListHashSet.h>
@@ -439,7 +439,7 @@ void InspectorResourceAgent::didScheduleStyleRecalculation(Document* document)
 
 PassRefPtr<Inspector::TypeBuilder::Network::Initiator> InspectorResourceAgent::buildInitiatorObject(Document* document)
 {
-    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
+    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), ScriptCallStack::maxCallStackSizeToCapture, true);
     if (stackTrace && stackTrace->size() > 0) {
         RefPtr<Inspector::TypeBuilder::Network::Initiator> initiatorObject = Inspector::TypeBuilder::Network::Initiator::create()
             .setType(Inspector::TypeBuilder::Network::Initiator::Type::Script);

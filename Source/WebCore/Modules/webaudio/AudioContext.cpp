@@ -55,7 +55,7 @@
 #include "Page.h"
 #include "PannerNode.h"
 #include "PeriodicWave.h"
-#include "ScriptCallStack.h"
+#include <inspector/ScriptCallStack.h>
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
 #include "WaveShaperNode.h"

@@ -1,10 +1,11 @@
 /*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  * Copyright (c) 2010 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +15,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,29 +29,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptCallStackFactory_h
-#define ScriptCallStackFactory_h
+#ifndef ScriptArguments_h
+#define ScriptArguments_h
 
+#include <heap/Strong.h>
 #include <wtf/Forward.h>
-#include <wtf/RefCountedArray.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+namespace Deprecated {
+class ScriptValue;
+}
 
 namespace JSC {
 class ExecState;
-class JSValue;
-struct StackFrame;
+class JSGlobalObject;
 }
 
-namespace WebCore {
+namespace Inspector {
 
-class ScriptArguments;
-class ScriptCallStack;
+class JS_EXPORT_PRIVATE ScriptArguments : public RefCounted<ScriptArguments> {
+public:
+    static PassRefPtr<ScriptArguments> create(JSC::ExecState*, Vector<Deprecated::ScriptValue>& arguments);
+    ~ScriptArguments();
 
-PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool emptyStackIsAllowed);
-PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState*, size_t maxStackSize);
-PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState*, JSC::JSValue& exception, size_t maxStackSize);
-PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState*);
-PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState*, unsigned skipArgumentCount);
+    const Deprecated::ScriptValue& argumentAt(size_t) const;
+    size_t argumentCount() const { return m_arguments.size(); }
 
-} // namespace WebCore
+    JSC::ExecState* globalState() const;
 
-#endif // ScriptCallStackFactory_h
+    bool getFirstArgumentAsString(String& result, bool checkForNullOrUndefined = false);
+    bool isEqual(ScriptArguments*) const;
+
+private:
+    ScriptArguments(JSC::ExecState*, Vector<Deprecated::ScriptValue>& arguments);
+
+    JSC::Strong<JSC::JSGlobalObject> m_globalObject;
+    Vector<Deprecated::ScriptValue> m_arguments;
+};
+
+} // namespace Inspector
+
+#endif // ScriptArguments_h

@@ -760,7 +760,6 @@ set(WebCore_INSPECTOR_DOMAINS
     inspector/protocol/ApplicationCache.json
     inspector/protocol/CSS.json
     inspector/protocol/Canvas.json
-    inspector/protocol/Console.json
     inspector/protocol/DOM.json
     inspector/protocol/DOMDebugger.json
     inspector/protocol/DOMStorage.json
@@ -1566,16 +1565,13 @@ set(WebCore_SOURCES
 
     inspector/CommandLineAPIHost.cpp
     inspector/CommandLineAPIModule.cpp
-    inspector/ConsoleMessage.cpp
     inspector/DOMEditor.cpp
     inspector/DOMPatchSupport.cpp
-    inspector/IdentifiersFactory.cpp
     inspector/InjectedScriptCanvasModule.cpp
     inspector/InspectorApplicationCacheAgent.cpp
     inspector/InspectorCSSAgent.cpp
     inspector/InspectorCanvasAgent.cpp
     inspector/InspectorClient.cpp
-    inspector/InspectorConsoleAgent.cpp
     inspector/InspectorController.cpp
     inspector/InspectorCounters.cpp
     inspector/InspectorDOMAgent.cpp
@@ -1609,10 +1605,8 @@ set(WebCore_SOURCES
     inspector/PageInjectedScriptHost.cpp
     inspector/PageInjectedScriptManager.cpp
     inspector/PageRuntimeAgent.cpp
-    inspector/ScriptArguments.cpp
-    inspector/ScriptCallFrame.cpp
-    inspector/ScriptCallStack.cpp
     inspector/TimelineRecordFactory.cpp
+    inspector/WebConsoleAgent.cpp
     inspector/WebDebuggerAgent.cpp
     inspector/WorkerConsoleAgent.cpp
     inspector/WorkerDebuggerAgent.cpp

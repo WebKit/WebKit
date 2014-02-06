@@ -34,8 +34,8 @@
 #include "JSDOMWindowCustom.h"
 #include "JSExceptionBase.h"
 #include "SecurityOrigin.h"
-#include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
+#include <inspector/ScriptCallStack.h>
+#include <inspector/ScriptCallStackFactory.h>
 #include <interpreter/Interpreter.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
@@ -45,6 +45,7 @@
 #include <wtf/MathExtras.h>
 
 using namespace JSC;
+using namespace Inspector;
 
 namespace WebCore {
 

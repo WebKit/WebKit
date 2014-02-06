@@ -37,11 +37,14 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+namespace Inspector {
+class ScriptArguments;
+}
+
 namespace WebCore {
 
 class Frame;
 class Page;
-class ScriptArguments;
 
 typedef Vector<RefPtr<ScriptProfile>> ProfilesArray;
 
@@ -50,26 +53,26 @@ public:
     static PassRefPtr<Console> create(Frame* frame) { return adoptRef(new Console(frame)); }
     virtual ~Console();
 
-    void debug(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void error(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void info(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void log(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void clear(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void warn(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void dir(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void dirxml(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void table(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void trace(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void assertCondition(JSC::ExecState*, PassRefPtr<ScriptArguments>, bool condition);
-    void count(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void debug(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void error(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void info(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void log(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void clear(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void warn(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void dir(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void dirxml(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void table(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void trace(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void assertCondition(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>, bool condition);
+    void count(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
     const ProfilesArray& profiles() const { return m_profiles; }
     void profile(JSC::ExecState*, const String& = String());
     void profileEnd(JSC::ExecState*, const String& = String());
     void time(const String&);
     void timeEnd(JSC::ExecState*, const String&);
-    void timeStamp(PassRefPtr<ScriptArguments>);
-    void group(JSC::ExecState*, PassRefPtr<ScriptArguments>);
-    void groupCollapsed(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void timeStamp(PassRefPtr<Inspector::ScriptArguments>);
+    void group(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    void groupCollapsed(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
     void groupEnd();
 
 private:
