@@ -6,7 +6,7 @@
 </head>
 <body>
 <div>
-<div id="src" contenteditable="true" spellcheck="true"></div><br/>
+<div id="src" contenteditable="true" spellcheck="true"></div>
 <div id="dst" contenteditable="true" spellcheck="false"></div>
 </div>
 <script language="javascript">
@@ -14,25 +14,35 @@ description('Test if WebKit does not spellcheck text when pasting text to an ele
             'To test manually, copy the text "zz apple" and paste it to the textarea. ' +
             'When "zz" is not marked as misspelled, this test succeeds.');
 
-// Insert a misspelled word to initialize a spellchecker.
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
+
 var srcNode = document.getElementById('src');
 srcNode.focus();
-document.execCommand("InsertText", false, 'z');
-document.execCommand("InsertText", false, 'z');
-document.execCommand("InsertText", false, ' ');
-document.execCommand("InsertText", false, 'a');
-document.execCommand("InsertText", false, 'p');
-document.execCommand("InsertText", false, 'p');
-document.execCommand("InsertText", false, 'l');
-document.execCommand("InsertText", false, 'e');
-shouldBeTrue('internals.hasSpellingMarker(0, 2)');
-window.getSelection().selectAllChildren(srcNode);
-document.execCommand('Copy');
+evalAndLog('document.execCommand("InsertText", false, "z")');
+evalAndLog('document.execCommand("InsertText", false, "z")');
+evalAndLog('document.execCommand("InsertText", false, " ")');
+evalAndLog('document.execCommand("InsertText", false, "a")');
+evalAndLog('document.execCommand("InsertText", false, "p")');
+evalAndLog('document.execCommand("InsertText", false, "p")');
+evalAndLog('document.execCommand("InsertText", false, "l")');
+evalAndLog('document.execCommand("InsertText", false, "e")');
 
-var dstNode = document.getElementById('dst');
-dstNode.focus();
-document.execCommand('Paste');
-shouldBeFalse('internals.hasSpellingMarker(0, 2)');
+if (window.internals) {
+    shouldBecomeEqual('internals.hasSpellingMarker(0, 2)', 'true', function() {
+        window.getSelection().selectAllChildren(srcNode);
+        evalAndLog('document.execCommand("Copy")');
+
+        var dstNode = document.getElementById('dst');
+        dstNode.focus();
+        evalAndLog('document.execCommand("Paste")');
+        shouldBecomeDifferent('internals.hasSpellingMarker(0, 2)', 'true', finishJSTest);
+     });
+}
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

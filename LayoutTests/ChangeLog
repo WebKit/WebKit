@@ -1,3 +1,33 @@
+2014-02-06  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Verify copy/paste of misspellings asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=128246
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactoring two spelling tests that use copy/paste to be able to
+        verify spelling markers asynchronously.
+        Additionally, use evalAndLog() to make test expectation more readable.
+        Fix the description according to the tests.
+
+        Start off verifying whether spelling marker is available when continuous spell
+        checking (spellcheck attribute, respectively) is on.
+        Without this test case, the tests passed even spellchecking
+        or copy/paste were not implemented (EFL).
+
+        * editing/spelling/spellcheck-paste-continuous-disabled-expected.txt:
+        * editing/spelling/spellcheck-paste-continuous-disabled.html:
+        Remove unnecessary spellcheck=true attribute. It's default value and we
+        do not manipulate it at all.
+        Add destination element where paste operation is performed.
+
+        * editing/spelling/spellcheck-paste-disabled-expected.txt:
+        * editing/spelling/spellcheck-paste-disabled.html:
+
+        * platform/efl/TestExpectations:
+        Mark spellcheck-paste-continuous-disabled.html as failing since EFL does not
+        implement copy/paste feature.
+
 2014-02-06  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Create a HTMLUnknownElement when using createElement('image')
