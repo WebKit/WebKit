@@ -1221,6 +1221,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/WeakMapPrototype.h \
 	Source/JavaScriptCore/runtime/WeakRandom.h \
 	Source/JavaScriptCore/runtime/WriteBarrier.h \
+    Source/JavaScriptCore/runtime/WriteBarrierInlines.h \
 	Source/JavaScriptCore/tools/CodeProfile.cpp \
 	Source/JavaScriptCore/tools/CodeProfile.h \
 	Source/JavaScriptCore/tools/CodeProfiling.cpp \

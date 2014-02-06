@@ -23,68 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CopyWriteBarrier_h
-#define CopyWriteBarrier_h
+#ifndef WriteBarrierInlines_h
+#define WriteBarrierInlines_h
 
-#include "Heap.h"
+#include "VM.h"
+#include "WriteBarrier.h"
 
 namespace JSC {
 
 template <typename T>
-class CopyWriteBarrier {
-public:
-    CopyWriteBarrier()
-        : m_value(0)
-    {
-    }
-    
-    CopyWriteBarrier(VM& vm, const JSCell* owner, T& value)
-    {
-        this->set(vm, owner, &value);
-    }
-    
-    CopyWriteBarrier(VM& vm, const JSCell* owner, T* value)
-    {
-        this->set(vm, owner, value);
-    }
-    
-    bool operator!() const { return !m_value; }
-    
-    typedef T* (CopyWriteBarrier::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return m_value ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
-    
-    T* get() const
-    {
-        return m_value;
-    }
-    
-    T* operator*() const
-    {
-        return get();
-    }
-    
-    T* operator->() const
-    {
-        return get();
-    }
-    
-    void set(VM& vm, const JSCell* owner, T* value)
-    {
-        this->m_value = value;
-        vm.heap.writeBarrier(owner);
-    }
-    
-    void setWithoutWriteBarrier(T* value)
-    {
-        this->m_value = value;
-    }
-    
-    void clear() { m_value = 0; }
+inline void WriteBarrierBase<T>::set(VM& vm, const JSCell* owner, T* value)
+{
+    ASSERT(value);
+    ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
+    validateCell(value);
+    setEarlyValue(vm, owner, value);
+}
 
-private:
-    T* m_value;
-};
+template <typename T>
+inline void WriteBarrierBase<T>::setMayBeNull(VM& vm, const JSCell* owner, T* value)
+{
+    if (value)
+        validateCell(value);
+    setEarlyValue(vm, owner, value);
+}
 
-} // namespace JSC
+template <typename T>
+inline void WriteBarrierBase<T>::setEarlyValue(VM& vm, const JSCell* owner, T* value)
+{
+    this->m_cell = reinterpret_cast<JSCell*>(value);
+    vm.heap.writeBarrier(owner, this->m_cell);
+}
 
-#endif // CopyWriteBarrier_h
+inline void WriteBarrierBase<Unknown>::set(VM& vm, const JSCell* owner, JSValue value)
+{
+    ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
+    m_value = JSValue::encode(value);
+    vm.heap.writeBarrier(owner, value);
+}
+
+} // namespace JSC 
+
+#endif // WriteBarrierInlines_h
