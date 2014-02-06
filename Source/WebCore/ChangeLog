@@ -1,3 +1,15 @@
+2014-02-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add HTMLNames::classAttr has a regular name in SVGElement::isAnimatableAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=128166
+
+        Reviewed by Sam Weinig.
+
+        For historical reasons, classAttr was treated separately. There is no reasons for that anymore.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::isAnimatableAttribute):
+
 2014-02-05  Simon Fraser  <simon.fraser@apple.com>
 
         Support encoding and decoding of Regions
