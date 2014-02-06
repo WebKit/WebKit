@@ -2275,15 +2275,6 @@ sub debugWebKitTestRunner
     return 1;
 }
 
-sub runTestWebKitAPI
-{
-    if (isAppleMacWebKit()) {
-        return runMacWebKitApp(File::Spec->catfile(productDir(), "TestWebKitAPI"));
-    }
-
-    return 1;
-}
-
 sub readRegistryString
 {
     my ($valueName) = @_;
