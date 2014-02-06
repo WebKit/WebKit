@@ -1,3 +1,23 @@
+2014-02-06  Andreas Kling  <akling@apple.com>
+
+        Remove leftover cruft from scoped stylesheet implementation.
+        <https://webkit.org/b/128139>
+
+        Kill some pointless non-null checks that were left behind by the
+        removed <style scoped> code. Also pruned outdated comments and
+        FIXME's about such scopes.
+
+        Reviewed by Antti Koivisto.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addChildRules):
+        (WebCore::RuleSet::addRulesFromSheet):
+        * css/RuleSet.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::checkRegionStyle):
+
 2014-02-05  Brent Fulgham  <bfulgham@apple.com>
 
         Wheel events don't latch to inner scrollable elements 

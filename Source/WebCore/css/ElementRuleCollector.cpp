@@ -157,7 +157,6 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     // Check whether other types of rules are applicable in the current tree scope. Criteria for this:
     // a) it's a UA rule
     // b) the tree scope allows author rules
-    // c) the rules comes from a scoped style sheet within the same tree scope
     if (!MatchingUARulesScope::isMatchingUARules()
         && !m_element.treeScope().applyAuthorStyles())
         return;

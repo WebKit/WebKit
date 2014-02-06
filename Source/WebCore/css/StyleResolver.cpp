@@ -1393,9 +1393,6 @@ void StyleResolver::adjustGridItemPosition(RenderStyle& style, const RenderStyle
 
 bool StyleResolver::checkRegionStyle(Element* regionElement)
 {
-    // FIXME (BUG 72472): We don't add @-webkit-region rules of scoped style sheets for the moment,
-    // so all region rules are global by default. Verify whether that can stand or needs changing.
-
     unsigned rulesSize = m_ruleSets.authorStyle()->regionSelectorsAndRuleSets().size();
     for (unsigned i = 0; i < rulesSize; ++i) {
         ASSERT(m_ruleSets.authorStyle()->regionSelectorsAndRuleSets().at(i).ruleSet.get());
