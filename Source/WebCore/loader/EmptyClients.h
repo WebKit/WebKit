@@ -156,10 +156,6 @@ public:
     virtual void reachedMaxAppCacheSize(int64_t) override { }
     virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t) override { }
 
-#if ENABLE(DIRECTORY_UPLOAD)
-    virtual void enumerateChosenDirectory(FileChooser*) { }
-#endif
-
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) override;
 #endif

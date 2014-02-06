@@ -91,9 +91,6 @@ private:
     virtual void updateRendering(PassRefPtr<Icon>) override;
 
     PassRefPtr<FileList> createFileList(const Vector<FileChooserFileInfo>& files) const;
-#if ENABLE(DIRECTORY_UPLOAD)
-    void receiveDropForDirectoryUpload(const Vector<String>&);
-#endif
     void requestIcon(const Vector<String>&);
 
     void applyFileChooserSettings(const FileChooserSettings&);

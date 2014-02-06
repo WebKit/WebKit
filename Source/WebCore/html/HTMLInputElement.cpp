@@ -747,12 +747,6 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else if (name == onwebkitspeechchangeAttr)
         setAttributeEventListener(eventNames().webkitspeechchangeEvent, name, value);
 #endif
-#if ENABLE(DIRECTORY_UPLOAD)
-    else if (name == webkitdirectoryAttr) {
-        HTMLTextFormControlElement::parseAttribute(name, value);
-        FeatureObserver::observe(&document(), FeatureObserver::PrefixedDirectoryAttribute);
-    }
-#endif
     else
         HTMLTextFormControlElement::parseAttribute(name, value);
     m_inputType->attributeChanged();

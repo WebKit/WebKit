@@ -1,3 +1,13 @@
+2014-02-05  Andreas Kling  <akling@apple.com>
+
+        Remove ENABLE(DIRECTORY_UPLOAD).
+        <https://webkit.org/b/128275>
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * Source/autotools/SetupWebKitFeatures.m4:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2014-02-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SVG) guards

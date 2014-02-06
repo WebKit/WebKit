@@ -98,7 +98,6 @@ interface HTMLInputElement : HTMLElement {
 
     // Non-standard attributes
     [Reflect] attribute DOMString align;
-    [Conditional=DIRECTORY_UPLOAD, Reflect] attribute boolean webkitdirectory;
     [Reflect] attribute DOMString useMap;
     [Reflect] attribute boolean incremental;
     [Conditional=INPUT_SPEECH, Reflect] attribute boolean webkitSpeech;

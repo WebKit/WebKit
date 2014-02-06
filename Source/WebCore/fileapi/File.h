@@ -55,10 +55,6 @@ public:
         return adoptRef(new File(path, srcURL, type));
     }
 
-#if ENABLE(DIRECTORY_UPLOAD)
-    static PassRefPtr<File> createWithRelativePath(const String& path, const String& relativePath);
-#endif
-
     // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
     static PassRefPtr<File> createWithName(const String& path, const String& name, ContentTypeLookupPolicy policy = WellKnownContentTypes)
     {
@@ -76,11 +72,6 @@ public:
     // This returns the current date and time if the file's last modifiecation date is not known (per spec: http://www.w3.org/TR/FileAPI/#dfn-lastModifiedDate).
     double lastModifiedDate() const;
 
-#if ENABLE(DIRECTORY_UPLOAD)
-    // Returns the relative path of this file in the context of a directory selection.
-    const String& webkitRelativePath() const { return m_relativePath; }
-#endif
-
     // Note that this involves synchronous file operation. Think twice before calling this function.
     void captureSnapshot(long long& snapshotSize, double& snapshotModificationTime) const;
 
@@ -93,10 +84,6 @@ private:
 
     String m_path;
     String m_name;
-
-#if ENABLE(DIRECTORY_UPLOAD)
-    String m_relativePath;
-#endif
 };
 
 inline File* toFile(Blob* blob)

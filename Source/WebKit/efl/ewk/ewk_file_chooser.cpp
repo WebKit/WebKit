@@ -36,13 +36,8 @@ Eina_Bool ewk_file_chooser_allows_multiple_files_get(const Ewk_File_Chooser* cho
 
 Eina_Bool ewk_file_chooser_allows_directory_upload_get(const Ewk_File_Chooser* chooser)
 {
-#if ENABLE(DIRECTORY_UPLOAD)
-    EINA_SAFETY_ON_NULL_RETURN_VAL(chooser, false);
-    return chooser->fileChooser->settings().allowsDirectoryUpload;
-#else
     UNUSED_PARAM(chooser);
     return false;
-#endif
 }
 
 Eina_List* ewk_file_chooser_accept_mimetypes_get(const Ewk_File_Chooser* chooser)

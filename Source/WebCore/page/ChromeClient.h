@@ -273,11 +273,6 @@ public:
     // Asynchronous request to load an icon for specified filenames.
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*) = 0;
 
-#if ENABLE(DIRECTORY_UPLOAD)
-    // Asychronous request to enumerate all files in a directory chosen by the user.
-    virtual void enumerateChosenDirectory(FileChooser*) = 0;
-#endif
-
     // Notification that the given form element has changed. This function
     // will be called frequently, so handling should be very fast.
     virtual void formStateDidChange(const Node*) = 0;

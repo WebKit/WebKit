@@ -1,3 +1,34 @@
+2014-02-05  Andreas Kling  <akling@apple.com>
+
+        Remove ENABLE(DIRECTORY_UPLOAD).
+        <https://webkit.org/b/128275>
+
+        This is a non-standard Chrome extension that none of the WebKit
+        ports have even been building.
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * fileapi/File.cpp:
+        * fileapi/File.h:
+        * fileapi/File.idl:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        (WebCore::FileInputType::createFileList):
+        (WebCore::FileInputType::receiveDroppedFiles):
+        * html/FileInputType.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/HTMLInputElement.idl:
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/FileChooser.h:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendKeyValuePairItems):
+
 2014-02-05  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/autoincrement-indexes.html fails

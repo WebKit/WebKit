@@ -32,6 +32,5 @@
 #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
     readonly attribute Date lastModifiedDate;
 #endif
-    [Conditional=DIRECTORY_UPLOAD] readonly attribute DOMString webkitRelativePath;
 };
 

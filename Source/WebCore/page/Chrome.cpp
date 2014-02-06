@@ -466,13 +466,6 @@ void Chrome::disableSuddenTermination()
     m_client.disableSuddenTermination();
 }
 
-#if ENABLE(DIRECTORY_UPLOAD)
-void Chrome::enumerateChosenDirectory(FileChooser* fileChooser)
-{
-    m_client.enumerateChosenDirectory(fileChooser);
-}
-#endif
-
 #if ENABLE(INPUT_TYPE_COLOR)
 PassOwnPtr<ColorChooser> Chrome::createColorChooser(ColorChooserClient* client, const Color& initialColor)
 {

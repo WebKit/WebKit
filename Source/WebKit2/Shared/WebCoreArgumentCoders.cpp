@@ -1071,9 +1071,6 @@ bool ArgumentCoder<DictationAlternative>::decode(ArgumentDecoder& decoder, Dicta
 void ArgumentCoder<FileChooserSettings>::encode(ArgumentEncoder& encoder, const FileChooserSettings& settings)
 {
     encoder << settings.allowsMultipleFiles;
-#if ENABLE(DIRECTORY_UPLOAD)
-    encoder << settings.allowsDirectoryUpload;
-#endif
     encoder << settings.acceptMIMETypes;
     encoder << settings.selectedFiles;
 #if ENABLE(MEDIA_CAPTURE)
@@ -1085,10 +1082,6 @@ bool ArgumentCoder<FileChooserSettings>::decode(ArgumentDecoder& decoder, FileCh
 {
     if (!decoder.decode(settings.allowsMultipleFiles))
         return false;
-#if ENABLE(DIRECTORY_UPLOAD)
-    if (!decoder.decode(settings.allowsDirectoryUpload))
-        return false;
-#endif
     if (!decoder.decode(settings.acceptMIMETypes))
         return false;
     if (!decoder.decode(settings.selectedFiles))

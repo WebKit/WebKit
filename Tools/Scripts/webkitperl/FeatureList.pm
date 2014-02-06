@@ -248,9 +248,6 @@ my @features = (
     { option => "device-orientation", desc => "Toggle Device Orientation support",
       define => "ENABLE_DEVICE_ORIENTATION", default => isIOSWebKit(), value => \$deviceOrientationSupport },
 
-    { option => "directory-upload", desc => "Toggle Directory Upload support",
-      define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
-
     { option => "dom4-events-constructor", desc => "Expose DOM4 Events constructors",
       define => "ENABLE_DOM4_EVENTS_CONSTRUCTOR", default => (isAppleWebKit() || isGtk() || isEfl()), value => \$dom4EventsConstructor },
 
