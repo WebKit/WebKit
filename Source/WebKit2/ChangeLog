@@ -1,5 +1,11 @@
 2014-02-06  Anders Carlsson  <andersca@apple.com>
 
+        Replace ’ with ' to silence the check-for-webkit-framework-include-consistency script.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+
+2014-02-06  Anders Carlsson  <andersca@apple.com>
+
         Add backForwardList property to WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=128320
 

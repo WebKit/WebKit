@@ -58,7 +58,7 @@ WK_API_CLASS
 
 @property (nonatomic, weak) id <WKNavigationDelegate> navigationDelegate;
 
-/*! @abstract The view’s back-forward list. */
+/*! @abstract The view's back-forward list. */
 @property (nonatomic, readonly) WKBackForwardList *backForwardList;
 
 /*! @abstract Returns a view initialized with the specified frame and configuration.
