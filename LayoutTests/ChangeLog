@@ -1,3 +1,11 @@
+2014-02-06  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add test expectations for tests crashing after r162816.
+
+        * platform/efl-wk2/TestExpectations:
+
 2014-02-06  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Null dereference applying animation with CSS regions

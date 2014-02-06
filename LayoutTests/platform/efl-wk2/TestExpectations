@@ -115,6 +115,22 @@ webkit.org/b/128259 http/tests/navigation/https-in-page-cache.html [ Crash ]
 webkit.org/b/128259 loader/image-loader-adoptNode-assert.html [ Crash ]
 webkit.org/b/128259 media/sources-fallback-codecs.html [ Crash ]
 
+# Started to crash after r162816
+webkit.org/b/127439 fast/events/before-unload-in-subframe.html [ Crash ]
+webkit.org/b/127439 fast/events/platform-wheelevent-in-scrolling-div.html [ Crash ]
+webkit.org/b/127439 fast/events/scale-and-scroll-iframe-window.html [ Crash ]
+webkit.org/b/127439 fast/forms/input-maxlength-unsupported.html [ Crash ]
+webkit.org/b/127439 fullscreen/full-screen-frameset.html [ Crash ]
+webkit.org/b/127439 fullscreen/full-screen-iframe-not-allowed.html [ Crash Pass ]
+webkit.org/b/127439 fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent.html [ Crash ]
+webkit.org/b/127439 fullscreen/parent-flow-inline-with-block-child.html [ Crash ]
+webkit.org/b/127439 fullscreen/video-cursor-auto-hide.html [ Crash Failure ]
+webkit.org/b/127439 http/tests/fullscreen/fullscreenelement-same-origin.html [ Crash ]
+webkit.org/b/127439 media/controls-css-overload.html [ Crash ]
+webkit.org/b/127439 media/video-controls-in-media-document.html [ Crash Failure Pass ]
+webkit.org/b/127439 scrollbars/hidden-iframe-scrollbar-crash.html [ Crash ]
+webkit.org/b/127439 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
