@@ -1,3 +1,22 @@
+2014-02-06  Oliver Hunt  <oliver@apple.com>
+
+        Make 32bit pass the correct this value to custom getters
+        https://bugs.webkit.org/show_bug.cgi?id=128313
+
+        Reviewed by Mark Lam.
+
+        Now that the custom getter calling convetion uses a single register
+        for the slot base we can easily pass the correct |thisValue| instead
+        of simply relying on the thisValue not be relevant to existing
+        custom getters. This also means that 32bit can call custom getters
+        directly.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/Repatch.cpp:
+        (JSC::generateProtoChainAccessStub):
+        (JSC::tryBuildGetByIDList):
+
 2014-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Heap::writeBarrier shouldn't be static

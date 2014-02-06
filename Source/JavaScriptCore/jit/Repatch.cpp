@@ -303,17 +303,13 @@ static ProtoChainGenerationResult generateProtoChainAccessStub(ExecState* exec, 
             stubJit.setupArgumentsWithExecState(scratchGPR, resultGPR);
             operationFunction = operationCallGetter;
         } else {
-#if USE(JSVALUE64)
             // EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
+#if USE(JSVALUE64)
             stubJit.setupArgumentsWithExecState(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR, MacroAssembler::TrustedImmPtr(propertyName.impl()));
-            operationFunction = FunctionPtr(slot.customGetter());
 #else
-            stubJit.move(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR);
-            stubJit.setupArgumentsWithExecState(scratchGPR,
-                MacroAssembler::TrustedImmPtr(FunctionPtr(slot.customGetter()).executableAddress()),
-                MacroAssembler::TrustedImmPtr(propertyName.impl()));
-            operationFunction = operationCallCustomGetter;
+            stubJit.setupArgumentsWithExecState(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR, MacroAssembler::TrustedImm32(JSValue::CellTag), MacroAssembler::TrustedImmPtr(propertyName.impl()));
 #endif
+            operationFunction = FunctionPtr(slot.customGetter());
         }
 
         // Need to make sure that whenever this call is made in the future, we remember the
@@ -619,14 +615,10 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
 #if USE(JSVALUE64)
                 // EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
                 stubJit.setupArgumentsWithExecState(baseGPR, baseGPR, MacroAssembler::TrustedImmPtr(ident.impl()));
-                operationFunction = FunctionPtr(slot.customGetter());
 #else
-                stubJit.setupArgumentsWithExecState(
-                    baseGPR,
-                    MacroAssembler::TrustedImmPtr(FunctionPtr(slot.customGetter()).executableAddress()),
-                    MacroAssembler::TrustedImmPtr(ident.impl()));
-                operationFunction = operationCallCustomGetter;
+                stubJit.setupArgumentsWithExecState(baseGPR, baseGPR, MacroAssembler::TrustedImm32(JSValue::CellTag), MacroAssembler::TrustedImmPtr(ident.impl()));
 #endif
+                operationFunction = FunctionPtr(slot.customGetter());
             }
             
             // Need to make sure that whenever this call is made in the future, we remember the
