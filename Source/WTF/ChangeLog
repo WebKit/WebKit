@@ -1,3 +1,10 @@
+2014-02-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge in build correction to prevent needless "rebuild all" builds.
+
+        * WTF.vcxproj/WTFGenerated.make: Avoid re-copying identical files, which
+        forces a complete rebuild.
+
 2014-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r162723.

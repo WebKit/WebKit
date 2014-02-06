@@ -1,3 +1,19 @@
+2014-02-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r154146
+
+    2013-08-15  Brent Fulgham  <bfulgham@apple.com> 
+     
+            [Windows] Consolidate WebKit Bundle handling 
+            https://bugs.webkit.org/show_bug.cgi?id=119869 
+     
+            Reviewed by Tim Horton. 
+     
+            * WebCoreSupport/WebInspectorClient.cpp: 
+            (WebInspectorClient::openInspectorFrontend): Switch to new 
+            WebCore::webkitBundle() method. 
+            (WebInspectorFrontendClient::localizedStringsURL): Ditto. 
+
 2014-02-03  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r154394

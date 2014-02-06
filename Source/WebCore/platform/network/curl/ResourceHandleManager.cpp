@@ -42,6 +42,7 @@
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
+#include "WebCoreBundleWin.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -68,9 +69,9 @@ static const bool ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
 static CString certificatePath()
 {
 #if USE(CF)
-    CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
-    if (webKitBundle) {
-        RetainPtr<CFURLRef> certURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle, CFSTR("cacert"), CFSTR("pem"), CFSTR("certificates")));
+    CFBundleRef webKitBundleRef = webKitBundle();
+    if (webKitBundleRef) {
+        RetainPtr<CFURLRef> certURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundleRef, CFSTR("cacert"), CFSTR("pem"), CFSTR("certificates")));
         if (certURLRef) {
             char path[MAX_PATH];
             CFURLGetFileSystemRepresentation(certURLRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH);

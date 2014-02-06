@@ -6799,6 +6799,9 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaQueryListListener.cpp" />
     <ClCompile Include="..\dom\InlineStyleSheetOwner.cpp" />
     <ClCompile Include="..\dom\TextNodeTraversal.cpp" />
+    <ClCompile Include="..\platform\win\WebCoreBundleWin.cpp">
+      <Filter>platform\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -14280,6 +14283,9 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSDedicatedWorkerContext.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaQueryListListener.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSSVGGraphicsElement.h" />
+    <ClInclude Include="..\platform\win\WebCoreBundleWin.h">
+      <Filter>platform\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
