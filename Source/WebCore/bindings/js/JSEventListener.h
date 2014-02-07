@@ -84,7 +84,9 @@ namespace WebCore {
 
         if (!m_jsFunction) {
             JSC::JSObject* function = initializeJSFunction(scriptExecutionContext);
-            JSC::Heap::writeBarrier(m_wrapper.get(), function);
+            JSC::JSObject* wrapper = m_wrapper.get();
+            if (wrapper)
+                JSC::Heap::heap(wrapper)->writeBarrier(wrapper, function);
             m_jsFunction = JSC::Weak<JSC::JSObject>(function);
         }
 

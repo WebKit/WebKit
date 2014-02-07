@@ -47,7 +47,7 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
     , m_isolatedWorld(&isolatedWorld)
 {
     if (wrapper) {
-        JSC::Heap::writeBarrier(wrapper, function);
+        JSC::Heap::heap(wrapper)->writeBarrier(wrapper, function);
         m_jsFunction = JSC::Weak<JSC::JSObject>(function);
     } else
         ASSERT(!function);

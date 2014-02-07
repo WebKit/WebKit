@@ -1087,8 +1087,7 @@ void Heap::writeBarrier(const JSCell* from)
     ASSERT_GC_OBJECT_LOOKS_VALID(const_cast<JSCell*>(from));
     if (!from || !isMarked(from))
         return;
-    Heap* heap = Heap::heap(from);
-    heap->addToRememberedSet(from);
+    addToRememberedSet(from);
 #else
     UNUSED_PARAM(from);
 #endif

@@ -1740,7 +1740,7 @@ void JIT_OPERATION operationOSRWriteBarrier(ExecState* exec, JSCell* cell)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    exec->heap()->writeBarrier(cell);
+    vm->heap.writeBarrier(cell);
 }
 
 // NB: We don't include the value as part of the barrier because the write barrier elision
@@ -1750,7 +1750,7 @@ void JIT_OPERATION operationUnconditionalWriteBarrier(ExecState* exec, JSCell* c
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    Heap::writeBarrier(cell);
+    vm->heap.writeBarrier(cell);
 }
 
 void JIT_OPERATION operationInitGlobalConst(ExecState* exec, Instruction* pc)

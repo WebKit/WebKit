@@ -42,6 +42,7 @@
 #include "JSTypeInfo.h"
 #include "Watchpoint.h"
 #include "Weak.h"
+#include "WriteBarrierInlines.h"
 #include <wtf/CompilationThread.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/PrintStream.h>

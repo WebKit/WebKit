@@ -1403,6 +1403,7 @@
     <ClInclude Include="..\runtime\WeakMapPrototype.h" />
     <ClInclude Include="..\runtime\WeakRandom.h" />
     <ClInclude Include="..\runtime\WriteBarrier.h" />
+    <ClInclude Include="..\runtime\WriteBarrierInlines.h" />
     <ClInclude Include="..\tools\CodeProfile.h" />
     <ClInclude Include="..\tools\CodeProfiling.h" />
     <ClInclude Include="..\tools\ProfileTreeNode.h" />

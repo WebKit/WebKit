@@ -1,3 +1,19 @@
+2014-02-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Heap::writeBarrier shouldn't be static
+        https://bugs.webkit.org/show_bug.cgi?id=127807
+
+        Reviewed by Geoffrey Garen.
+
+        Currently it looks up the Heap in which to fire the write barrier by using 
+        the cell passed to it. Almost every call site already has a reference to the 
+        VM or the Heap itself. It seems wasteful to look it up all over again.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::jsFunction):
+
 2014-02-06  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed, fix build error on 64bit debug build
