@@ -1,3 +1,37 @@
+2014-02-07  Samuel White  <samuel_white@apple.com>
+
+        AX: Find and select text with respect to insertion point using accessibility API.
+        https://bugs.webkit.org/show_bug.cgi?id=128026
+
+        Reviewed by Chris Fleizach.
+
+        Added method to AccessibilityUIElement to enable testing of accessibility text selection.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (selectTextWithCriteriaCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (selectTextParameterizedAttributeForCriteria):
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::uiElementCountForSearchPredicate):
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::selectTextParameterizedAttributeForCriteria):
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+
 2014-02-07  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Disable gtk-doc in EWS

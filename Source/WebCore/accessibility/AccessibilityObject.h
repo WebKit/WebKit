@@ -386,6 +386,27 @@ struct PlainTextRange {
     bool isNull() const { return !start && !length; }
 };
 
+enum AccessibilitySelectTextActivity {
+    FindAndSelectActivity
+};
+
+enum AccessibilitySelectTextAmbiguityResolution {
+    ClosestAfterSelectionAmbiguityResolution,
+    ClosestBeforeSelectionAmbiguityResolution,
+    ClosestToSelectionAmbiguityResolution
+};
+
+struct AccessibilitySelectTextCriteria {
+    AccessibilitySelectTextActivity activity;
+    AccessibilitySelectTextAmbiguityResolution ambiguityResolution;
+    Vector<String> searchStrings;
+    
+    AccessibilitySelectTextCriteria(AccessibilitySelectTextActivity activity, AccessibilitySelectTextAmbiguityResolution ambiguityResolution)
+        : activity(activity)
+        , ambiguityResolution(ambiguityResolution)
+    { }
+};
+
 class AccessibilityObject : public RefCounted<AccessibilityObject> {
 protected:
     AccessibilityObject();
@@ -596,6 +617,11 @@ public:
     void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
     virtual bool isDescendantOfBarrenParent() const { return false; }
     
+    // Text selection
+    PassRefPtr<Range> rangeOfStringClosestToRangeInDirection(Range*, AccessibilitySearchDirection, Vector<String>&) const;
+    PassRefPtr<Range> selectionRange() const;
+    String selectText(AccessibilitySelectTextCriteria*);
+    
     virtual AccessibilityObject* observableObject() const { return 0; }
     virtual void linkedUIElements(AccessibilityChildrenVector&) const { }
     virtual AccessibilityObject* titleUIElement() const { return 0; }
@@ -670,6 +696,7 @@ public:
     Page* page() const;
     virtual Document* document() const;
     virtual FrameView* documentFrameView() const;
+    Frame* frame() const;
     MainFrame* mainFrame() const;
     Document* topDocument() const;
     String language() const;

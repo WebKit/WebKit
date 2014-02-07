@@ -516,6 +516,117 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
     }
 }
 
+// Returns the range that is fewer positions away from the reference range.
+// NOTE: The after range is expected to ACTUALLY be after the reference range and the before
+// range is expected to ACTUALLY be before. These are not checked for performance reasons.
+static PassRefPtr<Range> rangeClosestToRange(Range* referenceRange, PassRefPtr<Range> afterRange, PassRefPtr<Range> beforeRange)
+{
+    ASSERT(referenceRange);
+    ASSERT(!afterRange || afterRange->startPosition() > referenceRange->startPosition());
+    ASSERT(!beforeRange || beforeRange->endPosition() < referenceRange->endPosition());
+    
+    if (!referenceRange || (!afterRange && !beforeRange))
+        return nullptr;
+    if (afterRange && !beforeRange)
+        return afterRange;
+    if (!afterRange && beforeRange)
+        return beforeRange;
+    
+    unsigned positionsToAfterRange = Position::positionCountBetweenPositions(afterRange->startPosition(), referenceRange->startPosition());
+    unsigned positionsToBeforeRange = Position::positionCountBetweenPositions(afterRange->endPosition(), referenceRange->endPosition());
+    
+    return positionsToAfterRange < positionsToBeforeRange ? afterRange : beforeRange;
+}
+
+PassRefPtr<Range> AccessibilityObject::rangeOfStringClosestToRangeInDirection(Range* referenceRange, AccessibilitySearchDirection searchDirection, Vector<String>& searchStrings) const
+{
+    Frame* frame = this->frame();
+    if (!frame)
+        return nullptr;
+    
+    if (!referenceRange)
+        return nullptr;
+    
+    bool isBackwardSearch = searchDirection == SearchDirectionPrevious;
+    FindOptions findOptions = AtWordStarts | CaseInsensitive | StartInSelection;
+    if (isBackwardSearch)
+        findOptions |= Backwards;
+    
+    RefPtr<Range> closestStringRange = nullptr;
+    for (const auto& searchString : searchStrings) {
+        if (RefPtr<Range> searchStringRange = frame->editor().rangeOfString(searchString, referenceRange, findOptions)) {
+            if (!closestStringRange)
+                closestStringRange = searchStringRange;
+            else {
+                // If searching backward, use the trailing range edges to correctly determine which
+                // range is closest. Similarly, if searching forward, use the leading range edges.
+                Position closestStringPosition = isBackwardSearch ? closestStringRange->endPosition() : closestStringRange->startPosition();
+                Position searchStringPosition = isBackwardSearch ? searchStringRange->endPosition() : searchStringRange->startPosition();
+                
+                int closestPositionOffset = closestStringPosition.computeOffsetInContainerNode();
+                int searchPositionOffset = searchStringPosition.computeOffsetInContainerNode();
+                Node* closestContainerNode = closestStringPosition.containerNode();
+                Node* searchContainerNode = searchStringPosition.containerNode();
+                
+                short result = Range::compareBoundaryPoints(closestContainerNode, closestPositionOffset, searchContainerNode, searchPositionOffset, ASSERT_NO_EXCEPTION);
+                if ((!isBackwardSearch && result > 0) || (isBackwardSearch && result < 0))
+                    closestStringRange = searchStringRange;
+            }
+        }
+    }
+    return closestStringRange;
+}
+
+// Returns the range of the entire document if there is no selection.
+PassRefPtr<Range> AccessibilityObject::selectionRange() const
+{
+    Frame* frame = this->frame();
+    if (!frame)
+        return nullptr;
+    
+    const VisibleSelection& selection = frame->selection().selection();
+    if (!selection.isNone())
+        return selection.firstRange();
+    
+    return Range::create(*frame->document());
+}
+
+String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria)
+{
+    ASSERT(criteria);
+    
+    if (!criteria)
+        return String();
+    
+    Frame* frame = this->frame();
+    if (!frame)
+        return String();
+    
+    AccessibilitySelectTextActivity& activity = criteria->activity;
+    AccessibilitySelectTextAmbiguityResolution& ambiguityResolution = criteria->ambiguityResolution;
+    Vector<String>& searchStrings = criteria->searchStrings;
+    RefPtr<Range> selectedStringRange = selectionRange();
+    
+    RefPtr<Range> closestAfterStringRange = nullptr;
+    RefPtr<Range> closestBeforeStringRange = nullptr;
+    // Search forward if necessary.
+    if (ambiguityResolution == ClosestAfterSelectionAmbiguityResolution || ambiguityResolution == ClosestToSelectionAmbiguityResolution)
+        closestAfterStringRange = rangeOfStringClosestToRangeInDirection(selectedStringRange.get(), SearchDirectionNext, searchStrings);
+    // Search backward if necessary.
+    if (ambiguityResolution == ClosestBeforeSelectionAmbiguityResolution || ambiguityResolution == ClosestToSelectionAmbiguityResolution)
+        closestBeforeStringRange = rangeOfStringClosestToRangeInDirection(selectedStringRange.get(), SearchDirectionPrevious, searchStrings);
+    
+    // Determine which candidate is closest to the selection and perform the activity.
+    if (RefPtr<Range> closestStringRange = rangeClosestToRange(selectedStringRange.get(), closestAfterStringRange, closestBeforeStringRange)) {
+        if (activity == FindAndSelectActivity) {
+            frame->selection().setSelectedRange(closestStringRange.get(), DOWNSTREAM, true);
+            return closestStringRange->text();
+        }
+    }
+    
+    return String();
+}
+
 bool AccessibilityObject::hasAttributesRequiredForInclusion() const
 {
     // These checks are simplified in the interest of execution speed.
@@ -606,6 +717,15 @@ bool AccessibilityObject::press() const
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     actionElem->accessKeyAction(true);
     return true;
+}
+
+Frame* AccessibilityObject::frame() const
+{
+    Node* node = this->node();
+    if (!node)
+        return nullptr;
+    
+    return node->document().frame();
 }
 
 MainFrame* AccessibilityObject::mainFrame() const

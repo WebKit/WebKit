@@ -59,6 +59,7 @@ AXUIElementCountForSearchPredicate
 AXUIElementsForSearchPredicate
 AXEndTextMarkerForBounds
 AXStartTextMarkerForBounds
+AXSelectTextWithCriteria
 
 ----------------------
 {{-1.000000, -1.000000}, {59.000000, 18.000000}}

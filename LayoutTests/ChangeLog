@@ -1,3 +1,16 @@
+2014-02-07  Samuel White  <samuel_white@apple.com>
+
+        AX: Find and select text with respect to insertion point using accessibility API.
+        https://bugs.webkit.org/show_bug.cgi?id=128026
+
+        Reviewed by Chris Fleizach.
+
+        Tests that text selection via the accessibility API works as expected.
+
+        * platform/mac/accessibility/bounds-for-range-expected.txt:
+        * platform/mac/accessibility/select-text-expected.txt: Added.
+        * platform/mac/accessibility/select-text.html: Added.
+
 2014-02-06  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/create-index-with-integer-keys.html fails

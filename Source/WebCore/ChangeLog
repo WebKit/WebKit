@@ -1,3 +1,34 @@
+2014-02-07  Samuel White  <samuel_white@apple.com>
+
+        AX: Find and select text with respect to insertion point using accessibility API.
+        https://bugs.webkit.org/show_bug.cgi?id=128026
+
+        Reviewed by Chris Fleizach.
+
+        Added facilities to support semi-ambiguous text selection through the accessibility API. All
+        requests are handled with respect to the current selection. The requests are disambiguated in
+        WebCore using passed parameters such as: SelectStringAfterSelection , ..Before.., ..ClosestTo...,
+        etc. Callers can also supply an array of strings to select and the closest that matches the
+        disambiguation criteria will be used.
+
+        Test: platform/mac/accessibility/select-text.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::rangeClosestToRange):
+        (WebCore::AccessibilityObject::rangeOfStringClosestToRangeInDirection):
+        (WebCore::AccessibilityObject::selectionRange):
+        (WebCore::AccessibilityObject::selectText):
+        (WebCore::AccessibilityObject::frame):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilitySelectTextCriteria::AccessibilitySelectTextCriteria):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute):
+        (-[WebAccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        * dom/Position.cpp:
+        (WebCore::Position::positionCountBetweenPositions):
+        * dom/Position.h:
+
 2014-02-07  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         FloatingObject m_paginationStrut should be LayoutUnit

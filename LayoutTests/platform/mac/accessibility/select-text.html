@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<title>Select Text</title>
+</head>
+<body>
+
+<p id="text">The quick brown fox <span id="target">jumps</span> over the lazy dog.</p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests the ability to select text with respect to selection.");
+    
+    function selectedText() {
+        return window.getSelection().toString();
+    }
+    
+    function selectElementText(element) {
+        var range = document.createRange();
+        range.selectNodeContents(element);
+        
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+    
+    if (window.accessibilityController) {
+        var text = accessibilityController.accessibleElementById("text");
+        var result = 0;
+        var selection = 0;
+        var target = document.getElementById("target");
+        
+        // Select text after selection (single search string).
+        selectElementText(target);
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestAfterSelection", "lazy");
+        shouldBe("result", "'lazy'");
+        selection = selectedText();
+        shouldBe("selection", "'lazy'");
+        
+        // Select text after selection (multiple search strings).
+        selectElementText(target);
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestAfterSelection", ["lazy", "over"]);
+        shouldBe("result", "'over'");
+        selection = selectedText();
+        shouldBe("selection", "'over'");
+        
+        // Select text before selection (single search string).
+        selectElementText(target);
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestBeforeSelection", "quick");
+        shouldBe("result", "'quick'");
+        selection = selectedText();
+        shouldBe("selection", "'quick'");
+        
+        // Select text before selection (multiple search strings).
+        selectElementText(target);
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestBeforeSelection", ["quick", "fox"]);
+        shouldBe("result", "'fox'");
+        selection = selectedText();
+        shouldBe("selection", "'fox'");
+        
+        // Select text closest to selection (single search string).
+        selectElementText(target);
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "dog");
+        shouldBe("result", "'dog'");
+        selection = selectedText();
+        shouldBe("selection", "'dog'");
+        
+        // Select text closest to selection (multiple search strings).
+        selectElementText(target);
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", ["dog", "fox"]);
+        shouldBe("result", "'fox'");
+        selection = selectedText();
+        shouldBe("selection", "'fox'");
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

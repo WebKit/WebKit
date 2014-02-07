@@ -270,6 +270,41 @@ static NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSCo
     return parameterizedAttribute;
 }
 
+static NSDictionary *selectTextParameterizedAttributeForCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings)
+{
+    NSMutableDictionary *parameterizedAttribute = [NSMutableDictionary dictionary];
+    
+    if (ambiguityResolution)
+        [parameterizedAttribute setObject:[NSString stringWithJSStringRef:ambiguityResolution] forKey:@"AXSelectTextAmbiguityResolution"];
+    
+    if (searchStrings) {
+        NSMutableArray *searchStringsParameter = [NSMutableArray array];
+        if (JSValueIsString(context, searchStrings)) {
+            JSRetainPtr<JSStringRef> searchStringsString(Adopt, JSValueToStringCopy(context, searchStrings, nullptr));
+            if (searchStringsString)
+                [searchStringsParameter addObject:[NSString stringWithJSStringRef:searchStringsString.get()]];
+        }
+        else if (JSValueIsObject(context, searchStrings)) {
+            JSObjectRef searchStringsArray = JSValueToObject(context, searchStrings, nullptr);
+            unsigned searchStringsArrayLength = 0;
+            
+            JSRetainPtr<JSStringRef> lengthPropertyString(Adopt, JSStringCreateWithUTF8CString("length"));
+            JSValueRef searchStringsArrayLengthValue = JSObjectGetProperty(context, searchStringsArray, lengthPropertyString.get(), nullptr);
+            if (searchStringsArrayLengthValue && JSValueIsNumber(context, searchStringsArrayLengthValue))
+                searchStringsArrayLength = static_cast<unsigned>(JSValueToNumber(context, searchStringsArrayLengthValue, nullptr));
+            
+            for (unsigned i = 0; i < searchStringsArrayLength; ++i) {
+                JSRetainPtr<JSStringRef> searchStringsString(Adopt, JSValueToStringCopy(context, JSObjectGetPropertyAtIndex(context, searchStringsArray, i, nullptr), nullptr));
+                if (searchStringsString)
+                    [searchStringsParameter addObject:[NSString stringWithJSStringRef:searchStringsString.get()]];
+            }
+        }
+        [parameterizedAttribute setObject:searchStringsParameter forKey:@"AXSelectTextSearchStrings"];
+    }
+    
+    return parameterizedAttribute;
+}
+
 void AccessibilityUIElement::getLinkedUIElements(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
@@ -1108,6 +1143,18 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPre
     id value = [m_element accessibilityAttributeValue:@"AXUIElementsForSearchPredicate" forParameter:parameterizedAttribute];
     if ([value isKindOfClass:[NSArray class]])
         return AccessibilityUIElement::create([value lastObject]);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSDictionary *parameterizedAttribute = selectTextParameterizedAttributeForCriteria(context, ambiguityResolution, searchStrings);
+    id result = [m_element accessibilityAttributeValue:@"AXSelectTextWithCriteria" forParameter:parameterizedAttribute];
+    if ([result isKindOfClass:[NSString class]])
+        return [result createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
     
     return nullptr;

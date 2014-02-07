@@ -185,6 +185,21 @@ using namespace HTMLNames;
 #define NSAccessibilityPlaceholderValueAttribute @"AXPlaceholderValue"
 #endif
 
+#define NSAccessibilityTextMarkerIsValidParameterizedAttribute @"AXTextMarkerIsValid"
+#define NSAccessibilityIndexForTextMarkerParameterizedAttribute @"AXIndexForTextMarker"
+#define NSAccessibilityTextMarkerForIndexParameterizedAttribute @"AXTextMarkerForIndex"
+
+#ifndef NSAccessibilityScrollToVisibleAction
+#define NSAccessibilityScrollToVisibleAction @"AXScrollToVisible"
+#endif
+
+#ifndef NSAccessibilityPathAttribute
+#define NSAccessibilityPathAttribute @"AXPath"
+#endif
+
+#define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
+#define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
+
 // Search
 #ifndef NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute
 #define NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute @"AXUIElementCountForSearchPredicate"
@@ -356,20 +371,38 @@ using namespace HTMLNames;
 #define NSAccessibilityVisitedLinkSearchKey @"AXVisitedLinkSearchKey"
 #endif
 
-#define NSAccessibilityTextMarkerIsValidParameterizedAttribute @"AXTextMarkerIsValid"
-#define NSAccessibilityIndexForTextMarkerParameterizedAttribute @"AXIndexForTextMarker"
-#define NSAccessibilityTextMarkerForIndexParameterizedAttribute @"AXTextMarkerForIndex"
-
-#ifndef NSAccessibilityScrollToVisibleAction
-#define NSAccessibilityScrollToVisibleAction @"AXScrollToVisible"
+// Text selection
+#ifndef NSAccessibilitySelectTextActivity
+#define NSAccessibilitySelectTextActivity @"AXSelectTextActivity"
 #endif
 
-#ifndef NSAccessibilityPathAttribute
-#define NSAccessibilityPathAttribute @"AXPath"
+#ifndef NSAccessibilitySelectTextActivityFindAndSelect
+#define NSAccessibilitySelectTextActivityFindAndSelect @"AXSelectTextActivityFindAndSelect"
 #endif
 
-#define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
-#define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
+#ifndef NSAccessibilitySelectTextAmbiguityResolution
+#define NSAccessibilitySelectTextAmbiguityResolution @"AXSelectTextAmbiguityResolution"
+#endif
+
+#ifndef NSAccessibilitySelectTextAmbiguityResolutionClosestAfterSelection
+#define NSAccessibilitySelectTextAmbiguityResolutionClosestAfterSelection @"AXSelectTextAmbiguityResolutionClosestAfterSelection"
+#endif
+
+#ifndef NSAccessibilitySelectTextAmbiguityResolutionClosestBeforeSelection
+#define NSAccessibilitySelectTextAmbiguityResolutionClosestBeforeSelection @"AXSelectTextAmbiguityResolutionClosestBeforeSelection"
+#endif
+
+#ifndef NSAccessibilitySelectTextAmbiguityResolutionClosestToSelection
+#define NSAccessibilitySelectTextAmbiguityResolutionClosestToSelection @"AXSelectTextAmbiguityResolutionClosestToSelection"
+#endif
+
+#ifndef NSAccessibilitySelectTextSearchStrings
+#define NSAccessibilitySelectTextSearchStrings @"AXSelectTextSearchStrings"
+#endif
+
+#ifndef NSAccessibilitySelectTextWithCriteriaParameterizedAttribute
+#define NSAccessibilitySelectTextWithCriteriaParameterizedAttribute @"AXSelectTextWithCriteria"
+#endif
 
 // Math attributes
 #define NSAccessibilityMathRootRadicandAttribute @"AXMathRootRadicand"
@@ -576,6 +609,37 @@ static AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate
             NSString *searchKey = [searchKeyParameter objectAtIndex:i];
             if ([searchKey isKindOfClass:[NSString class]])
                 criteria.searchKeys.uncheckedAppend(accessibilitySearchKeyForString(searchKey));
+        }
+    }
+    
+    return criteria;
+}
+
+#pragma mark Select text helpers
+
+static AccessibilitySelectTextCriteria accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute(const NSDictionary *parameterizedAttribute)
+{
+    NSString *ambiguityResolutionParameter = parameterizedAttribute[NSAccessibilitySelectTextAmbiguityResolution];
+    NSArray *searchStringsParameter = parameterizedAttribute[NSAccessibilitySelectTextSearchStrings];
+    
+    AccessibilitySelectTextActivity activity = FindAndSelectActivity;
+    
+    AccessibilitySelectTextAmbiguityResolution ambiguityResolution = ClosestToSelectionAmbiguityResolution;
+    if ([ambiguityResolutionParameter isKindOfClass:[NSString class]]) {
+        if ([ambiguityResolutionParameter isEqualToString:NSAccessibilitySelectTextAmbiguityResolutionClosestAfterSelection])
+            ambiguityResolution = ClosestAfterSelectionAmbiguityResolution;
+        else if ([ambiguityResolutionParameter isEqualToString:NSAccessibilitySelectTextAmbiguityResolutionClosestBeforeSelection])
+            ambiguityResolution = ClosestBeforeSelectionAmbiguityResolution;
+    }
+    
+    AccessibilitySelectTextCriteria criteria(activity, ambiguityResolution);
+    
+    if ([searchStringsParameter isKindOfClass:[NSArray class]]) {
+        size_t searchStringsCount = static_cast<size_t>([searchStringsParameter count]);
+        criteria.searchStrings.reserveInitialCapacity(searchStringsCount);
+        for (NSString *searchString in searchStringsParameter) {
+            if ([searchString isKindOfClass:[NSString class]])
+                criteria.searchStrings.uncheckedAppend(searchString);
         }
     }
     
@@ -2928,6 +2992,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                       NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute,
                       NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute,
                       NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute,
+                      NSAccessibilitySelectTextWithCriteriaParameterizedAttribute,
                       nil];
     }
     
@@ -3314,6 +3379,11 @@ static RenderObject* rendererForView(NSView* view)
     }
     
     // dispatch
+    if ([attribute isEqualToString:NSAccessibilitySelectTextWithCriteriaParameterizedAttribute]) {
+        AccessibilitySelectTextCriteria criteria = accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute(dictionary);
+        return m_object->selectText(&criteria);
+    }
+    
     if ([attribute isEqualToString:NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute]) {
         AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
         AccessibilityObject::AccessibilityChildrenVector results;

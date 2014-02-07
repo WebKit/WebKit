@@ -1,0 +1,23 @@
+The quick brown fox jumps over the lazy dog.
+
+This tests the ability to select text with respect to selection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is 'lazy'
+PASS selection is 'lazy'
+PASS result is 'over'
+PASS selection is 'over'
+PASS result is 'quick'
+PASS selection is 'quick'
+PASS result is 'fox'
+PASS selection is 'fox'
+PASS result is 'dog'
+PASS selection is 'dog'
+PASS result is 'fox'
+PASS selection is 'fox'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

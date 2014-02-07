@@ -822,6 +822,12 @@ AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSCon
     return 0;
 }
 
+JSStringRef AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings)
+{
+    // FIXME: Implement.
+    return nullptr;
+}
+
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
 {
     // FIXME: implement
