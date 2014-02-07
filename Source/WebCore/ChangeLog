@@ -1,3 +1,11 @@
+2014-02-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix for 32-bit iOS.
+
+        Use magic ? values to allow the exported symbol to be different on 32- and 64-bit builds.
+
+        * WebCore.exp.in:
+
 2014-02-07  Anders Carlsson  <andersca@apple.com>
 
         Convert ProgressTracker to std::chrono
