@@ -105,10 +105,16 @@ void WebPageGroup::setPreferences(WebPreferences* preferences)
     if (!m_preferences) {
         m_preferences = preferences;
         m_preferences->addPageGroup(this);
+
+        for (auto& webPageProxy : m_pages)
+            webPageProxy->setPreferences(*m_preferences);
     } else {
         m_preferences->removePageGroup(this);
         m_preferences = preferences;
         m_preferences->addPageGroup(this);
+
+        for (auto& webPageProxy : m_pages)
+            webPageProxy->setPreferences(*m_preferences);
 
         preferencesDidChange();
     }
