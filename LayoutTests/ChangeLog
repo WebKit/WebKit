@@ -1,3 +1,11 @@
+2014-02-07  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Remove test expectations after r163586 and skip two http tests.
+
+        * platform/efl-wk2/TestExpectations:
+
 2014-02-07  Lukasz Bialek  <l.bialek@samsung.com>
 
         [EFL] editing/style/block-style-005.html failing
