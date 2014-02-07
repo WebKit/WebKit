@@ -1,3 +1,10 @@
+2014-02-07  Alexey Proskuryakov  <ap@apple.com>
+
+        32-bit build fix.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute):
+
 2014-02-07  Mihai Tica  <mitica@adobe.com>
 
         [CSS Background Blending] Unprefix the -webkit-background-blend-mode property

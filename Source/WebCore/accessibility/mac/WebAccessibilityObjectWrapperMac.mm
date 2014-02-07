@@ -619,8 +619,8 @@ static AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate
 
 static AccessibilitySelectTextCriteria accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute(const NSDictionary *parameterizedAttribute)
 {
-    NSString *ambiguityResolutionParameter = parameterizedAttribute[NSAccessibilitySelectTextAmbiguityResolution];
-    NSArray *searchStringsParameter = parameterizedAttribute[NSAccessibilitySelectTextSearchStrings];
+    NSString *ambiguityResolutionParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextAmbiguityResolution];
+    NSArray *searchStringsParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextSearchStrings];
     
     AccessibilitySelectTextActivity activity = FindAndSelectActivity;
     
