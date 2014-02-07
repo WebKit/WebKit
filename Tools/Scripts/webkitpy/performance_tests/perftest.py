@@ -253,14 +253,18 @@ class PerfTest(object):
         # DoYouEvenBench
         re.compile(re.escape("CONSOLE MESSAGE: line 140: Miss the info bar? Run TodoMVC from a server to avoid a cross-origin error.")),
         re.compile(re.escape("CONSOLE MESSAGE: line 315: TypeError: Attempted to assign to readonly property.")),
-        re.compile(re.escape("CONSOLE MESSAGE: line 339: DEBUG: -------------------------------")),
-        re.compile(re.escape("CONSOLE MESSAGE: line 339: DEBUG: Ember.VERSION : 1.0.0-rc.1")),
-        re.compile(re.escape("CONSOLE MESSAGE: line 339: DEBUG: Handlebars.VERSION : 1.0.0-rc.3")),
-        re.compile(re.escape("CONSOLE MESSAGE: line 339: DEBUG: jQuery.VERSION : 1.9.1")),
-        re.compile(re.escape("CONSOLE MESSAGE: line 339: DEPRECATION: Namespaces should not begin with lowercase")),
-        re.compile(re.escape("processAllNamespaces@ember.js:4359:36")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 3285: DEBUG: -------------------------------")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 3285: DEBUG: Ember      : 1.3.1")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 3285: DEBUG: Ember Data : 1.0.0-beta.6")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 3285: DEBUG: Handlebars : 1.3.0")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 3285: DEBUG: jQuery     : 2.1.0")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 3285: DEPRECATION: Namespaces should not begin with lowercase")),
+        re.compile(re.escape("processAllNamespaces@app.js:2:40")),
+        re.compile(re.escape("processAllNamespaces@jquery.js:3380:17")),
         re.compile(re.escape("CONSOLE MESSAGE: line 124: Booting in DEBUG mode")),
         re.compile(re.escape("CONSOLE MESSAGE: line 125: You can configure event logging with DEBUG.events.logAll()/logNone()/logByName()/logByAction()")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 3285: Ember Views require jQuery 1.7, 1.8, 1.9, 1.10, or 2.0")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 3285: DEPRECATION: Namespaces should not begin with lowercase.")),
     ]
 
     def _filter_output(self, output):

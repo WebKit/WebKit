@@ -1,3 +1,9 @@
+2014-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix DoYouEvenBench after r163429.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+
 2014-02-06  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
 
         Add support for multiple sources for AutoInstaller
