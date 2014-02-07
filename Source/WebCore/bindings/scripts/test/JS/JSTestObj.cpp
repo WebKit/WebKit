@@ -2728,7 +2728,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptArgumentsAndCal
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, 0));
+    RefPtr<Inspector::ScriptArguments> scriptArguments(Inspector::createScriptArguments(exec, 0));
     impl.withScriptArgumentsAndCallStack(scriptArguments.release());
     return JSValue::encode(jsUndefined());
 }

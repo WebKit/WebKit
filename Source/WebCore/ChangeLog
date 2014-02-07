@@ -1,3 +1,12 @@
+2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Regenerate JSTestObj now that ScriptArguments moved. Generator knows what to do.
+
+        Rubber-stamped by Zalan Bujtas.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack):
+
 2014-02-04  Jeffrey Pfau  <jpfau@apple.com>
 
         Make adoption agency use the task queue
