@@ -1,3 +1,23 @@
+2014-02-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert r154384 and r154674 as they broke selection rect computations for text with ligatures.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawEmphasisMarks):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::offsetForPosition):
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForSimpleText):
+        (WebCore::Font::selectionRectForSimpleText):
+        (WebCore::Font::offsetForPositionForSimpleText):
+        * platform/graphics/GlyphBuffer.h:
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::WidthIterator::advanceInternal):
+        (WebCore::WidthIterator::advanceOneCharacter):
+        * platform/graphics/WidthIterator.h:
+
 2014-02-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Add support for text document viewport configuration

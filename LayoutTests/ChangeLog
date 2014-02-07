@@ -1,3 +1,11 @@
+2014-02-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert r154384 and r154674 as they broke selection rect computations for text with ligatures.
+
+        * fast/text/partial-textruns-expected.html: Removed.
+        * fast/text/partial-textruns.html: Removed.
+        * fast/text/resources/PTS55F-webfont.ttf: Removed.
+
 2014-02-07  Brendan Long  <b.long@cablelabs.com>
 
         Update TextTrack API to current spec

@@ -127,34 +127,32 @@ int Font::emphasisMarkHeight(const AtomicString& mark) const
 
 float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
 {
-    WidthIterator it(this, run, 0, false, forTextEmphasis);
-    GlyphBuffer localGlyphBuffer;
-    it.advance(run.length(), &localGlyphBuffer);
+    float initialAdvance;
 
-    if (localGlyphBuffer.isEmpty())
+    WidthIterator it(this, run, 0, false, forTextEmphasis);
+    // FIXME: Using separate glyph buffers for the prefix and the suffix is incorrect when kerning or
+    // ligatures are enabled.
+    GlyphBuffer localGlyphBuffer;
+    it.advance(from, &localGlyphBuffer);
+    float beforeWidth = it.m_runWidthSoFar;
+    it.advance(to, &glyphBuffer);
+
+    if (glyphBuffer.isEmpty())
         return 0;
 
-    float totalWidth = it.m_runWidthSoFar;
-    float beforeWidth = 0;
-    int glyphPos = 0;
-    for (; glyphPos < localGlyphBuffer.size() && it.m_characterIndexOfGlyph[glyphPos] < from; ++glyphPos)
-        beforeWidth += localGlyphBuffer.advanceAt(glyphPos).width();
-    int glyphFrom = glyphPos;
-
-    float afterWidth = totalWidth;
-    glyphPos = localGlyphBuffer.size() - 1;
-    for (; glyphPos >= glyphFrom && it.m_characterIndexOfGlyph[glyphPos] >= to; --glyphPos)
-        afterWidth -= localGlyphBuffer.advanceAt(glyphPos).width();
-    int glyphTo = glyphPos + 1;
-
-    glyphBuffer.add(&localGlyphBuffer, glyphFrom, glyphTo - glyphFrom);
+    float afterWidth = it.m_runWidthSoFar;
 
     if (run.rtl()) {
-        glyphBuffer.reverse(0, glyphBuffer.size());
-        return totalWidth - afterWidth;
-    }
+        float finalRoundingWidth = it.m_finalRoundingWidth;
+        it.advance(run.length(), &localGlyphBuffer);
+        initialAdvance = finalRoundingWidth + it.m_runWidthSoFar - afterWidth;
+    } else
+        initialAdvance = beforeWidth;
 
-    return beforeWidth;
+    if (run.rtl())
+        glyphBuffer.reverse(0, glyphBuffer.size());
+
+    return initialAdvance;
 }
 
 float Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
@@ -301,22 +299,15 @@ FloatRect Font::selectionRectForSimpleText(const TextRun& run, const FloatPoint&
 {
     GlyphBuffer glyphBuffer;
     WidthIterator it(this, run);
-    it.advance(run.length(), &glyphBuffer);
-
-    float totalWidth = it.m_runWidthSoFar;
-    float beforeWidth = 0;
-    int glyphPos = 0;
-    for (; glyphPos < glyphBuffer.size() && it.m_characterIndexOfGlyph[glyphPos] < from; ++glyphPos)
-        beforeWidth += glyphBuffer.advanceAt(glyphPos).width();
-    int glyphFrom = glyphPos;
-
-    float afterWidth = totalWidth;
-    glyphPos = glyphBuffer.size() - 1;
-    for (; glyphPos >= glyphFrom && it.m_characterIndexOfGlyph[glyphPos] >= to; --glyphPos)
-        afterWidth -= glyphBuffer.advanceAt(glyphPos).width();
+    it.advance(from, &glyphBuffer);
+    float beforeWidth = it.m_runWidthSoFar;
+    it.advance(to, &glyphBuffer);
+    float afterWidth = it.m_runWidthSoFar;
 
     // Using roundf() rather than ceilf() for the right edge as a compromise to ensure correct caret positioning.
     if (run.rtl()) {
+        it.advance(run.length(), &glyphBuffer);
+        float totalWidth = it.m_runWidthSoFar;
         return FloatRect(floorf(point.x() + totalWidth - afterWidth), point.y(), roundf(point.x() + totalWidth - beforeWidth) - floorf(point.x() + totalWidth - afterWidth), h);
     }
 
@@ -325,50 +316,45 @@ FloatRect Font::selectionRectForSimpleText(const TextRun& run, const FloatPoint&
 
 int Font::offsetForPositionForSimpleText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
-    GlyphBuffer glyphBuffer;
-    WidthIterator it(this, run);
-    it.advance(run.length(), &glyphBuffer);
+    float delta = x;
 
-    int characterOffset = 0;
+    WidthIterator it(this, run);
+    GlyphBuffer localGlyphBuffer;
+    unsigned offset;
     if (run.rtl()) {
-        float currentX = it.m_runWidthSoFar;
-        for (int glyphPosition = 0; glyphPosition <= glyphBuffer.size(); ++glyphPosition) {
-            if (glyphPosition == glyphBuffer.size()) {
-                characterOffset = run.length();
+        delta -= floatWidthForSimpleText(run);
+        while (1) {
+            offset = it.m_currentCharacter;
+            float w;
+            if (!it.advanceOneCharacter(w, localGlyphBuffer))
                 break;
-            }
-            characterOffset = it.m_characterIndexOfGlyph[glyphPosition];
-            float glyphWidth = glyphBuffer.advanceAt(glyphPosition).width();
+            delta += w;
             if (includePartialGlyphs) {
-                if (currentX - glyphWidth / 2.0f <= x)
+                if (delta - w / 2 >= 0)
                     break;
             } else {
-                if (currentX - glyphWidth <= x)
+                if (delta >= 0)
                     break;
             }
-            currentX -= glyphWidth;
         }
     } else {
-        float currentX = 0;
-        for (int glyphPosition = 0; glyphPosition <= glyphBuffer.size(); ++glyphPosition) {
-            if (glyphPosition == glyphBuffer.size()) {
-                characterOffset = run.length();
+        while (1) {
+            offset = it.m_currentCharacter;
+            float w;
+            if (!it.advanceOneCharacter(w, localGlyphBuffer))
                 break;
-            }
-            characterOffset = it.m_characterIndexOfGlyph[glyphPosition];
-            float glyphWidth = glyphBuffer.advanceAt(glyphPosition).width();
+            delta -= w;
             if (includePartialGlyphs) {
-                if (currentX + glyphWidth / 2.0f >= x)
+                if (delta + w / 2 <= 0)
                     break;
             } else {
-                if (currentX + glyphWidth >= x)
+                if (delta <= 0)
                     break;
             }
-            currentX += glyphWidth;
         }
     }
 
-    return characterOffset;
+    return offset;
 }
 
-} // namespace WebCore
+}

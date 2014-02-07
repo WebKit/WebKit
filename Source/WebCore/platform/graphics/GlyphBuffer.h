@@ -122,16 +122,6 @@ public:
 #endif
     }
 
-    void add(const GlyphBuffer* glyphBuffer, int from, int len)
-    {
-        m_glyphs.append(glyphBuffer->glyphs(from), len);
-        m_advances.append(glyphBuffer->advances(from), len);
-        m_fontData.append(glyphBuffer->m_fontData.data() + from, len);
-#if PLATFORM(WIN)
-        m_offsets.append(glyphBuffer->m_offsets.data() + from, len);
-#endif
-    }
-
     void add(Glyph glyph, const SimpleFontData* font, float width, const FloatSize* offset = 0)
     {
         m_fontData.append(font);
