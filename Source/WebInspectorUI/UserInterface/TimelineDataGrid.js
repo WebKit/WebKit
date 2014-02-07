@@ -49,7 +49,7 @@ WebInspector.TimelineDataGrid = function(treeOutline, columns, delegate, editCal
     }
 
     if (this._filterableColumns.length) {
-        var items = [new WebInspector.FlexibleSpaceNavigationItem, this.columns[this._filterableColumns[0]].scopeBar, new WebInspector.FlexibleSpaceNavigationItem];
+        var items = [new WebInspector.FlexibleSpaceNavigationItem, this.columns.get(this._filterableColumns[0]).get("scopeBar"), new WebInspector.FlexibleSpaceNavigationItem];
         this._navigationBar = new WebInspector.NavigationBar(null, items);
         var container = this.element.appendChild(document.createElement("div"));
         container.className = "navigation-bar-container";
@@ -149,7 +149,7 @@ WebInspector.TimelineDataGrid.prototype = {
         console.assert(dataGridNode);
 
         for (var identifier of this._filterableColumns) {
-            var scopeBar = this.columns[identifier].scopeBar;
+            var scopeBar = this.columns.get(identifier).scopeBar;
             if (!scopeBar || scopeBar.defaultItem.selected)
                 continue;
 

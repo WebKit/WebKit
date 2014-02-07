@@ -1,3 +1,54 @@
+2014-02-07  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Clean up DataGrid and add table columns incrementally
+        https://bugs.webkit.org/show_bug.cgi?id=128332
+
+        Reviewed by Timothy Hatcher.
+
+        Miscellaneous improvements to DataGrid to make it more maintainable.
+        In particular, it now uses a `Map` to store column settings, and the
+        construction sequence has been simplified so that it is safe to add
+        columns at the end of the constructor (or any later time).
+
+        DataGrid stores a bunch of settings per-column, but before this was done
+        by both storing properties on the provided `column` objects as well as
+        keeping several `columnIdentifier`-keyed maps for properties like `group`
+        and `hidden`.
+
+        Improve code readability by using for..of loops, destructuring assignment,
+        `Node.createElement`, and updating variable names. All variables that refer
+        to DOM nodes now have a `Element` suffix to distinguish them from model objects.
+
+        * UserInterface/DataGrid.js:
+        (.sortDataGrid):
+        (WebInpector.DataGrid): Create all DOM elements before populating columns.
+        Remove redundant objects for storing per-column values. Copy column settings
+        into a map rather than mutating the passed-in JSON-like settings data structure.
+
+        (WebInspector.DataGrid.createSortableDataGrid):
+        (WebInspector.DataGrid.prototype.get length):
+        (WebInspector.DataGrid.prototype.updateLayout):
+        (WebInspector.DataGrid.prototype.get scrollContainer):
+        (WebInspector.DataGrid.prototype.isScrolledToLastRow):
+        (WebInspector.DataGrid.prototype.scrollToLastRow):
+        (WebInspector.DataGrid.prototype._positionResizerElements):
+        (WebInspector.DataGrid.prototype.addCreationNode):
+        (WebInspector.DataGrid.prototype.):
+        (WebInspector.DataGrid.prototype.sortNodes):
+        (WebInspector.DataGrid.prototype.dataGridNodeFromPoint):
+        (WebInspector.DataGrid.prototype._clickInHeaderCell):
+        (WebInspector.DataGrid.prototype.isColumnSortColumn):
+        (WebInspector.DataGrid.prototype.headerTableHeader):
+        (WebInspector.DataGrid.prototype._copyTextForDataGridNode):
+        (WebInspector.DataGrid.prototype._resizerDragging):
+        (WebInspector.DataGridNode.prototype.createCells):
+        (WebInspector.DataGridNode.prototype.createCell.get var):
+        (WebInspector.DataGridNode.prototype.elementWithColumnIdentifier):
+        (WebInspector.DataGridNode.prototype._attach):
+        * UserInterface/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype.treeElementMatchesActiveScopeFilters.scopeBar.this.columns.get scopeBar):
+        (WebInspector.TimelineDataGrid.prototype.treeElementMatchesActiveScopeFilters):
+
 2014-02-07  Mihai Tica  <mitica@adobe.com>
 
         [CSS Background Blending] Unprefix the -webkit-background-blend-mode property
