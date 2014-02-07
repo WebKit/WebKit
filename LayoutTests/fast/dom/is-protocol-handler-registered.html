@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test makes sure that navigator.isProtocolHandlerRegistered throws the proper exceptions and returns the default state of handler.</p>
+<pre id="console"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.navigator.isProtocolHandlerRegistered)
+    debug('PASS window.navigator.isProtocolHandlerRegistered is defined.');
+else
+    debug('FAIL window.navigator.isProtocolHandlerRegistered is not defined.');
+
+var invalidUrl = "%S";
+var succeeded = false;
+try {
+    window.navigator.isProtocolHandlerRegistered(protocol, invalidUrl);
+    succeeded = false;
+} catch (e) {
+    succeeded = true;
+}
+if (succeeded)
+    debug('PASS Invalid url "' + invalidUrl + '" threw SyntaxError exception.');
+else
+    debug('FAIL Invalid url "' + invalidUrl + '" allowed.');
+
+try {
+    var state = window.navigator.isProtocolHandlerRegistered("bitcoin", "valid protocol %s");
+    if (state == "registered")
+        debug('PASS window.navigator.isProtocolHandlerRegistered returns "registered" state');
+    else
+        debug("FAIL window.navigator.isProtocolHandlerRegistered doesn't return the default state.");
+} catch (e) {
+    debug('FAIL window.navigator.isProtocolHandlerRegistered call is failed: "' + e.message + '".');
+}
+</script>
+</body>
+</html>

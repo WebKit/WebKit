@@ -1,0 +1,6 @@
+This test makes sure that navigator.isProtocolHandlerRegistered throws the proper exceptions and returns the default state of handler.
+
+PASS window.navigator.isProtocolHandlerRegistered is defined.
+PASS Invalid url "%S" threw SyntaxError exception.
+PASS window.navigator.isProtocolHandlerRegistered returns "registered" state
+

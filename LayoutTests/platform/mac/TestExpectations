@@ -1086,6 +1086,9 @@ webkit.org/b/121331 http/tests/misc/submit-post-keygen.html [ Pass Failure Timeo
 # Feature not implemented
 webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 
+# isProtocolHandlerRegistered() isn't supported yet.
+webkit.org/b/92749 fast/dom/is-protocol-handler-registered.html [ Skip ]
+
 # Snapshotted plugins not enabled on WK1
 plugins/snapshotting [ Skip ]
 

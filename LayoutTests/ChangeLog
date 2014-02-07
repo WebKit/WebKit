@@ -1,3 +1,22 @@
+2014-02-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add a test case for navigator.isProtocolHandlerRegistered
+        https://bugs.webkit.org/show_bug.cgi?id=128302
+
+        Reviewed by Anders Carlsson.
+
+        Add a test case for navigator.isProtocolHandlerRegistered. This new test will
+        check if "navigator.isProtocolHandlerRegistered" throws the proper exceptions
+        and returns a proper state of handler.
+
+        Currently, this function is only supported by EFL WK1 port.
+
+        * fast/dom/is-protocol-handler-registered-expected.txt: Added.
+        * fast/dom/is-protocol-handler-registered.html: Added.
+        * platform/efl-wk2/TestExpectations: Skip this test.
+        * platform/gtk/TestExpectations: ditto.
+        * platform/mac/TestExpectations: ditto.
+
 2014-02-06  Jeffrey Pfau  <jpfau@apple.com>
 
         loadSubframe can return null in SubframeLoader::loadOrRedirectSubframe
