@@ -67,8 +67,8 @@ public:
     const LayoutRect& frameRect() const { ASSERT(isPlaced()); return m_frameRect; }
     void setFrameRect(const LayoutRect& frameRect) { ASSERT(!isInPlacedTree()); m_frameRect = frameRect; }
 
-    int paginationStrut() const { return m_paginationStrut; }
-    void setPaginationStrut(int strut) { m_paginationStrut = strut; }
+    LayoutUnit paginationStrut() const { return m_paginationStrut; }
+    void setPaginationStrut(LayoutUnit strut) { m_paginationStrut = strut; }
 
 #ifndef NDEBUG
     bool isInPlacedTree() const { return m_isInPlacedTree; }
@@ -88,7 +88,7 @@ private:
     RenderBox& m_renderer;
     RootInlineBox* m_originatingLine;
     LayoutRect m_frameRect;
-    int m_paginationStrut; // FIXME: This should be a LayoutUnit, since it's a vertical offset.
+    LayoutUnit m_paginationStrut;
 
     unsigned m_type : 2; // Type (left or right aligned)
     unsigned m_shouldPaint : 1;

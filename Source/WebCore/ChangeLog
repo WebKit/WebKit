@@ -1,3 +1,19 @@
+2014-02-07  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        FloatingObject m_paginationStrut should be LayoutUnit
+        https://bugs.webkit.org/show_bug.cgi?id=119808
+
+        Reviewed by Andreas Kling.
+
+        Make the paginationStrut in FloatingObject have the same type as all
+        of the other paginationStruts in the code.
+
+        * rendering/FloatingObjects.h:
+        (WebCore::FloatingObject::paginationStrut):
+        (WebCore::FloatingObject::setPaginationStrut):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::positionNewFloatOnLine):
+
 2014-02-06  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/create-index-with-integer-keys.html fails
