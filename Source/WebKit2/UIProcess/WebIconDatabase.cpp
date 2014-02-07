@@ -79,7 +79,7 @@ void WebIconDatabase::setDatabasePath(const String& path)
 
     // FIXME: WebIconDatabases are per-WebContext but WebContext's don't have their own notion of the current private browsing setting.
     // As we clean up private browsing throughout the stack we need to clean it up here.
-    m_iconDatabaseImpl->setPrivateBrowsingEnabled(WebPreferences::anyPageGroupsAreUsingPrivateBrowsing());
+    m_iconDatabaseImpl->setPrivateBrowsingEnabled(WebPreferences::anyPagesAreUsingPrivateBrowsing());
 
     if (!m_iconDatabaseImpl->open(directoryName(path), pathGetFileName(path))) {
         LOG_ERROR("Unable to open WebKit2 icon database on disk");

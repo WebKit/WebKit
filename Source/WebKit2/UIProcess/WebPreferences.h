@@ -39,14 +39,10 @@
 
 namespace WebKit {
 
-class WebPageGroup;
+class WebPageProxy;
 
 class WebPreferences : public API::ObjectImpl<API::Object::Type::Preferences> {
 public:
-    static PassRefPtr<WebPreferences> create()
-    {
-        return adoptRef(new WebPreferences);
-    }
     static PassRefPtr<WebPreferences> create(const String& identifier)
     {
         return adoptRef(new WebPreferences(identifier));
@@ -56,8 +52,8 @@ public:
 
     PassRefPtr<WebPreferences> copy() const;
 
-    void addPageGroup(WebPageGroup*);
-    void removePageGroup(WebPageGroup*);
+    void addPage(WebPageProxy&);
+    void removePage(WebPageProxy&);
 
     const WebPreferencesStore& store() const { return m_store; }
 
@@ -72,10 +68,9 @@ public:
     // Exposed for WebKitTestRunner use only.
     void forceUpdate() { update(); }
 
-    static bool anyPageGroupsAreUsingPrivateBrowsing();
+    static bool anyPagesAreUsingPrivateBrowsing();
 
 private:
-    WebPreferences();
     explicit WebPreferences(const String&);
     WebPreferences(const WebPreferences&);
 
@@ -96,9 +91,10 @@ private:
 
     void updatePrivateBrowsingValue(bool value);
 
-    HashSet<WebPageGroup*> m_pageGroups;
-    WebPreferencesStore m_store;
     String m_identifier;
+    WebPreferencesStore m_store;
+
+    HashSet<WebPageProxy*> m_pages;
 };
 
 } // namespace WebKit

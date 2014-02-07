@@ -377,7 +377,7 @@ void WebContext::ensureNetworkProcess()
 
     NetworkProcessCreationParameters parameters;
 
-    parameters.privateBrowsingEnabled = WebPreferences::anyPageGroupsAreUsingPrivateBrowsing();
+    parameters.privateBrowsingEnabled = WebPreferences::anyPagesAreUsingPrivateBrowsing();
 
     parameters.cacheModel = m_cacheModel;
 
@@ -619,7 +619,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
     process->send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
 #endif
 
-    if (WebPreferences::anyPageGroupsAreUsingPrivateBrowsing())
+    if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
         process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID), 0);
 
     m_processes.append(process);

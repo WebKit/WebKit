@@ -34,12 +34,7 @@ namespace WebKit {
 
 // FIXME: Manipulating this variable is not thread safe.
 // Instead of tracking private browsing state as a boolean preference, we should let the client provide storage sessions explicitly.
-static unsigned privateBrowsingPageGroupCount;
-
-WebPreferences::WebPreferences()
-{
-    platformInitializeStore();
-}
+static unsigned privateBrowsingPageCount;
 
 WebPreferences::WebPreferences(const String& identifier)
     : m_identifier(identifier)
@@ -55,7 +50,7 @@ WebPreferences::WebPreferences(const WebPreferences& other)
 
 WebPreferences::~WebPreferences()
 {
-    ASSERT(m_pageGroups.isEmpty());
+    ASSERT(m_pages.isEmpty());
 }
 
 PassRefPtr<WebPreferences> WebPreferences::copy() const
@@ -63,30 +58,35 @@ PassRefPtr<WebPreferences> WebPreferences::copy() const
     return adoptRef(new WebPreferences(*this));
 }
 
-void WebPreferences::addPageGroup(WebPageGroup* pageGroup)
+void WebPreferences::addPage(WebPageProxy& webPageProxy)
 {
-    bool didAddPageGroup = m_pageGroups.add(pageGroup).isNewEntry;
-    if (didAddPageGroup && privateBrowsingEnabled()) {
-        if (!privateBrowsingPageGroupCount)
+    ASSERT(!m_pages.contains(&webPageProxy));
+    m_pages.add(&webPageProxy);
+
+    if (privateBrowsingEnabled()) {
+        if (!privateBrowsingPageCount)
             WebContext::willStartUsingPrivateBrowsing();
-        ++privateBrowsingPageGroupCount;
+
+        ++privateBrowsingPageCount;
     }
 }
 
-void WebPreferences::removePageGroup(WebPageGroup* pageGroup)
+void WebPreferences::removePage(WebPageProxy& webPageProxy)
 {
-    bool didRemovePageGroup = m_pageGroups.remove(pageGroup);
-    if (didRemovePageGroup && privateBrowsingEnabled()) {
-        --privateBrowsingPageGroupCount;
-        if (!privateBrowsingPageGroupCount)
+    ASSERT(m_pages.contains(&webPageProxy));
+    m_pages.remove(&webPageProxy);
+
+    if (privateBrowsingEnabled()) {
+        --privateBrowsingPageCount;
+        if (!privateBrowsingPageCount)
             WebContext::willStopUsingPrivateBrowsing();
     }
 }
 
 void WebPreferences::update()
 {
-    for (HashSet<WebPageGroup*>::iterator it = m_pageGroups.begin(), end = m_pageGroups.end(); it != end; ++it)
-        (*it)->preferencesDidChange();
+    for (auto& webPageProxy : m_pages)
+        webPageProxy->preferencesDidChange();
 }
 
 void WebPreferences::updateStringValueForKey(const String& key, const String& value)
@@ -128,22 +128,22 @@ void WebPreferences::updatePrivateBrowsingValue(bool value)
 {
     platformUpdateBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey(), value);
 
-    unsigned pageGroupsChanged = m_pageGroups.size();
-    if (!pageGroupsChanged)
+    unsigned pagesChanged = m_pages.size();
+    if (!pagesChanged)
         return;
 
     if (value) {
-        if (!privateBrowsingPageGroupCount)
+        if (!privateBrowsingPageCount)
             WebContext::willStartUsingPrivateBrowsing();
-        privateBrowsingPageGroupCount += pageGroupsChanged;
+        privateBrowsingPageCount += pagesChanged;
     }
 
     update(); // FIXME: Only send over the changed key and value.
 
     if (!value) {
-        ASSERT(privateBrowsingPageGroupCount >= pageGroupsChanged);
-        privateBrowsingPageGroupCount -= pageGroupsChanged;
-        if (!privateBrowsingPageGroupCount)
+        ASSERT(privateBrowsingPageCount >= pagesChanged);
+        privateBrowsingPageCount -= pagesChanged;
+        if (!privateBrowsingPageCount)
             WebContext::willStopUsingPrivateBrowsing();
     }
 }
@@ -166,9 +166,9 @@ FOR_EACH_WEBKIT_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 
 #undef DEFINE_PREFERENCE_GETTER_AND_SETTERS
 
-bool WebPreferences::anyPageGroupsAreUsingPrivateBrowsing()
+bool WebPreferences::anyPagesAreUsingPrivateBrowsing()
 {
-    return privateBrowsingPageGroupCount;
+    return privateBrowsingPageCount;
 }
 
 } // namespace WebKit

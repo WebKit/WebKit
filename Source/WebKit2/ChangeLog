@@ -1,3 +1,36 @@
+2014-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Make it possible for each web page to have different preferences
+        https://bugs.webkit.org/show_bug.cgi?id=128403
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreate):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureNetworkProcess):
+        (WebKit::WebContext::createNewWebProcess):
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::setDatabasePath):
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::WebPageGroup):
+        (WebKit::WebPageGroup::~WebPageGroup):
+        (WebKit::WebPageGroup::setPreferences):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::~WebPageProxy):
+        (WebKit::WebPageProxy::setPreferences):
+        (WebKit::WebPageProxy::preferencesDidChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::~WebPreferences):
+        (WebKit::WebPreferences::addPage):
+        (WebKit::WebPreferences::removePage):
+        (WebKit::WebPreferences::update):
+        (WebKit::WebPreferences::updatePrivateBrowsingValue):
+        (WebKit::WebPreferences::anyPagesAreUsingPrivateBrowsing):
+        * UIProcess/WebPreferences.h:
+
 2014-02-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Add support for text document viewport configuration

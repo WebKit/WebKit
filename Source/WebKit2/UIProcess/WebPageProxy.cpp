@@ -349,6 +349,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
 
     WebContext::statistics().wkPageCount++;
 
+    m_preferences->addPage(*this);
     m_pageGroup->addPage(this);
 
 #if ENABLE(INSPECTOR)
@@ -381,6 +382,7 @@ WebPageProxy::~WebPageProxy()
     if (m_hasSpellDocumentTag)
         TextChecker::closeSpellDocumentWithTag(m_spellDocumentTag);
 
+    m_preferences->removePage(*this);
     m_pageGroup->removePage(this);
 
 #ifndef NDEBUG
@@ -403,6 +405,18 @@ bool WebPageProxy::isValid() const
         return false;
 
     return m_isValid;
+}
+
+void WebPageProxy::setPreferences(WebPreferences& preferences)
+{
+    if (&preferences == &m_preferences.get())
+        return;
+
+    m_preferences->removePage(*this);
+    m_preferences = preferences;
+    m_preferences->addPage(*this);
+
+    preferencesDidChange();
 }
 
 PassRefPtr<API::Array> WebPageProxy::relatedPages() const
@@ -2067,7 +2081,7 @@ void WebPageProxy::preferencesDidChange()
         return;
 
 #if ENABLE(INSPECTOR_SERVER)
-    if (m_pageGroup->preferences().developerExtrasEnabled())
+    if (m_preferences->developerExtrasEnabled())
         inspector()->enableRemoteInspection();
 #endif
 

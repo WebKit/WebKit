@@ -729,7 +729,7 @@ public:
     PlatformProcessIdentifier processIdentifier() const;
 
     WebPreferences& preferences() { return m_preferences.get(); }
-    void setPreferences(WebPreferences& preferences) { m_preferences = preferences; }
+    void setPreferences(WebPreferences&);
 
     WebPageGroup& pageGroup() { return m_pageGroup.get(); }
 

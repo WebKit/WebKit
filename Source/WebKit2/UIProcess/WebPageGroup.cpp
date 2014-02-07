@@ -86,13 +86,11 @@ WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundl
     : m_data(pageGroupData(identifier, visibleToInjectedBundle, visibleToHistoryClient))
     , m_preferences(WebPreferences::create(m_data.identifer))
 {
-    m_preferences->addPageGroup(this);
     webPageGroupMap().set(m_data.pageGroupID, this);
 }
 
 WebPageGroup::~WebPageGroup()
 {
-    m_preferences->removePageGroup(this);
     webPageGroupMap().remove(pageGroupID());
 }
 
@@ -111,14 +109,10 @@ void WebPageGroup::setPreferences(WebPreferences* preferences)
     if (preferences == m_preferences)
         return;
 
-    m_preferences->removePageGroup(this);
     m_preferences = preferences;
-    m_preferences->addPageGroup(this);
 
     for (auto& webPageProxy : m_pages)
         webPageProxy->setPreferences(*m_preferences);
-
-    preferencesDidChange();
 }
 
 WebPreferences& WebPageGroup::preferences() const
