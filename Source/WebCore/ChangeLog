@@ -1,3 +1,21 @@
+2014-02-07  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Vector-effect updates require a re-layout
+        https://bugs.webkit.org/show_bug.cgi?id=127553
+
+        Reviewed by Andreas Kling.
+
+        As noted in the stale SVGRenderStyle::diff() comment, now that layout() observes vector-effect
+        we need to trigger a re-layout on attribute changes.
+
+        Merged from Blink: https://src.chromium.org/viewvc/blink?revision=152570&view=revision
+
+        Tests: svg/custom/non-scaling-stroke-update-expected.svg
+               svg/custom/non-scaling-stroke-update.svg
+
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff):
+
 2014-02-07  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
 
         Renaming isTableElement() to isRenderedTable() as per the FIXME comment
