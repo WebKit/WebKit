@@ -1,3 +1,12 @@
+2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] make should build WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=128351
+
+        Reviewed by Daniel Bates.
+
+        * Source/Makefile:
+
 2014-02-05  Andreas Kling  <akling@apple.com>
 
         Remove ENABLE(DIRECTORY_UPLOAD).
