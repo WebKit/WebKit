@@ -47,7 +47,7 @@ public:
         virtual void xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection*, xpc_object_t) = 0;
     };
 
-    RemoteInspectorXPCConnection(xpc_connection_t, Client*);
+    RemoteInspectorXPCConnection(xpc_connection_t, dispatch_queue_t, Client*);
     virtual ~RemoteInspectorXPCConnection();
 
     void close();

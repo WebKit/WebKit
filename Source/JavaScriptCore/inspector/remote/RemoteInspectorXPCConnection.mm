@@ -45,12 +45,14 @@ namespace Inspector {
 #define RemoteInspectorXPCConnectionUserInfoKey @"userInfo"
 #define RemoteInspectorXPCConnectionSerializedMessageKey "msgData"
 
-RemoteInspectorXPCConnection::RemoteInspectorXPCConnection(xpc_connection_t connection, Client* client)
+RemoteInspectorXPCConnection::RemoteInspectorXPCConnection(xpc_connection_t connection, dispatch_queue_t queue, Client* client)
     : m_connection(connection)
-    , m_queue(dispatch_queue_create("com.apple.JavaScriptCore.remote-inspector-xpc-connection", DISPATCH_QUEUE_SERIAL))
+    , m_queue(queue)
     , m_client(client)
     , m_closed(false)
 {
+    dispatch_retain(m_queue);
+
     xpc_retain(m_connection);
     xpc_connection_set_target_queue(m_connection, m_queue);
     xpc_connection_set_event_handler(m_connection, ^(xpc_object_t object) {

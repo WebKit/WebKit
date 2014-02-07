@@ -80,7 +80,8 @@ RemoteInspector& RemoteInspector::shared()
 }
 
 RemoteInspector::RemoteInspector()
-    : m_nextAvailableIdentifier(1)
+    : m_xpcQueue(dispatch_queue_create("com.apple.JavaScriptCore.remote-inspector-xpc", DISPATCH_QUEUE_SERIAL))
+    , m_nextAvailableIdentifier(1)
     , m_notifyToken(0)
     , m_enabled(false)
     , m_hasActiveDebugSession(false)
@@ -172,7 +173,7 @@ void RemoteInspector::start()
 
     m_enabled = true;
 
-    notify_register_dispatch(WIRServiceAvailableNotification, &m_notifyToken, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(int) {
+    notify_register_dispatch(WIRServiceAvailableNotification, &m_notifyToken, m_xpcQueue, ^(int) {
         RemoteInspector::shared().setupXPCConnectionIfNeeded();
     });
 
@@ -211,11 +212,11 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
     if (m_xpcConnection)
         return;
 
-    xpc_connection_t connection = xpc_connection_create_mach_service(WIRXPCMachPortName, dispatch_get_main_queue(), 0);
+    xpc_connection_t connection = xpc_connection_create_mach_service(WIRXPCMachPortName, m_xpcQueue, 0);
     if (!connection)
         return;
 
-    m_xpcConnection = adoptRef(new RemoteInspectorXPCConnection(connection, this));
+    m_xpcConnection = adoptRef(new RemoteInspectorXPCConnection(connection, m_xpcQueue, this));
     m_xpcConnection->sendMessage(@"syn", nil); // Send a simple message to initialize the XPC connection.
     xpc_release(connection);
 

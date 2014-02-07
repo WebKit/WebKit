@@ -95,6 +95,7 @@ private:
     HashMap<unsigned, std::pair<RemoteInspectorDebuggable*, RemoteInspectorDebuggableInfo>> m_debuggableMap;
     HashMap<unsigned, RefPtr<RemoteInspectorDebuggableConnection>> m_connectionMap;
     RefPtr<RemoteInspectorXPCConnection> m_xpcConnection;
+    dispatch_queue_t m_xpcQueue;
     unsigned m_nextAvailableIdentifier;
     int m_notifyToken;
     bool m_enabled;

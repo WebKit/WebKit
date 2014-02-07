@@ -1,3 +1,23 @@
+2014-02-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Eliminate race between XPC connection queue and Notification queue
+        https://bugs.webkit.org/show_bug.cgi?id=128384
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::RemoteInspector):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        Create the queue to use for RemoteInspector xpc connection
+        management and the connection itself.
+
+        * inspector/remote/RemoteInspectorXPCConnection.h:
+        * inspector/remote/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::RemoteInspectorXPCConnection):
+        Use the passed in queue instead of creating one for itself.
+
 2014-02-07  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION (r160628): LLint does not appear to handle impure get own property properly
