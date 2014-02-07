@@ -30,7 +30,7 @@ public:
     static PassRefPtr<HTMLDetailsElement> create(const QualifiedName& tagName, Document& document);
     void toggleOpen();
 
-    Element* findMainSummary() const;
+    const Element* findMainSummary() const;
 
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);

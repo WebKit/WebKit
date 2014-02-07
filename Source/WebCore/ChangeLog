@@ -1,3 +1,14 @@
+2014-02-06  Andreas Kling  <akling@apple.com>
+
+        Use child iterator in HTMLDetailsElement::findMainSummary().
+        <https://webkit.org/b/128335>
+
+        Reviewed by Antti Koivisto.
+
+        * html/HTMLDetailsElement.h:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::findMainSummary):
+
 2014-02-06  Antti Koivisto  <antti@apple.com>
 
         Add missing &.
