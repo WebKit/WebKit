@@ -1009,10 +1009,6 @@ private:
     void didChangeContentSize(const WebCore::IntSize&);
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
-    void needTouchEvents(bool);
-#endif
-
 #if ENABLE(INPUT_TYPE_COLOR)
     void showColorPicker(const WebCore::Color& initialColor, const WebCore::IntRect&);
     void didChooseColor(const WebCore::Color&);
@@ -1174,6 +1170,10 @@ private:
     void processNextQueuedWheelEvent();
     void sendWheelEvent(const WebWheelEvent&);
 
+#if ENABLE(TOUCH_EVENTS)
+    bool shouldStartTrackingTouchEvents(const WebTouchEvent&) const;
+#endif
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void findPlugin(const String& mimeType, uint32_t processType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, uint64_t& pluginProcessToken, String& newMIMEType, uint32_t& pluginLoadPolicy, String& unavailabilityDescription);
 #endif
@@ -1331,6 +1331,7 @@ private:
     OwnPtr<NativeWebMouseEvent> m_currentlyProcessedMouseDownEvent;
 
 #if ENABLE(TOUCH_EVENTS)
+    bool m_isTrackingTouchEvents;
     Deque<QueuedTouchEvents> m_touchEventQueue;
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)

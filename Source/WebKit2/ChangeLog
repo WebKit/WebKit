@@ -1,3 +1,22 @@
+2014-02-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Fitler touch events only based on touch start
+        https://bugs.webkit.org/show_bug.cgi?id=128354
+
+        Reviewed by Simon Fraser.
+
+        Touch Events track their target, we should not test the touch regions
+        again after a touch sequence starts.
+
+        This patch adds a boolean flag to know if we are sending events to the WebProcess
+        (m_isTrackingTouchEvents). The flag is updated every time a touch sequence starts.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::shouldStartTrackingTouchEvents):
+        (WebKit::WebPageProxy::handleTouchEvent):
+        * UIProcess/WebPageProxy.h:
+
 2014-02-07  Anders Carlsson  <andersca@apple.com>
 
         Simplify WebPreferences creation inside WebPageGroup

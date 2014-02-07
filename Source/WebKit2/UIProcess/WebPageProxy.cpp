@@ -297,6 +297,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_syncNavigationActionPolicyAction(PolicyUse)
     , m_syncNavigationActionPolicyDownloadID(0)
     , m_processingMouseMoveEvent(false)
+#if ENABLE(TOUCH_EVENTS)
+    , m_isTrackingTouchEvents(false)
+#endif
     , m_pageID(pageID)
     , m_session(session)
     , m_isPageSuspended(false)
@@ -1382,34 +1385,35 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(TOUCH_EVENTS)
-#if ENABLE(ASYNC_SCROLLING)
-static bool anyTouchIsInNonFastScrollableRegion(RemoteScrollingCoordinatorProxy& scrollingCoordinator, const WebTouchEvent& event)
+
+bool WebPageProxy::shouldStartTrackingTouchEvents(const WebTouchEvent& touchStartEvent) const
 {
-    for (auto touchPoint : event.touchPoints()) {
-        if (scrollingCoordinator.isPointInNonFastScrollableRegion(touchPoint.location()))
+#if ENABLE(ASYNC_SCROLLING)
+    for (auto touchPoint : touchStartEvent.touchPoints()) {
+        if (m_scrollingCoordinatorProxy->isPointInNonFastScrollableRegion(touchPoint.location()))
             return true;
     }
 
     return false;
-}
 #endif // ENABLE(ASYNC_SCROLLING)
+    return true;
+}
 
 void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
 {
     if (!isValid())
         return;
 
+    if (event.type() == WebEvent::TouchStart)
+        m_isTrackingTouchEvents = shouldStartTrackingTouchEvents(event);
+
+    if (!m_isTrackingTouchEvents)
+        return;
+
     // If the page is suspended, which should be the case during panning, pinching
     // and animation on the page itself (kinetic scrolling, tap to zoom) etc, then
     // we do not send any of the events to the page even if is has listeners.
     if (!m_isPageSuspended) {
-
-#if ENABLE(ASYNC_SCROLLING)
-        // FIXME: we should only do this check for the start of a touch gesture.
-        if (!anyTouchIsInNonFastScrollableRegion(*m_scrollingCoordinatorProxy, event))
-            return;
-#endif
-
         m_touchEventQueue.append(event);
         m_process->responsivenessTimer()->start();
         if (m_shouldSendEventsSynchronously) {
@@ -1429,6 +1433,9 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
             lastEvent.deferredTouchEvents.append(event);
         }
     }
+
+    if (event.type() == WebEvent::TouchEnd || event.type() == WebEvent::TouchCancel)
+        m_isTrackingTouchEvents = false;
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
