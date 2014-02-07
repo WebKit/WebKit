@@ -1,5 +1,46 @@
 2014-02-07  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] API::FrameHandle has a generic wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=128366
+
+        Reviewed by Anders Carlsson.
+
+        Added WKFrameHandle.
+
+        * Shared/API/Cocoa/WKFrameHandle.h: Added.
+        * Shared/API/Cocoa/WKFrameHandle.mm: Added.
+        (-[WKFrameHandle dealloc]): Calls the API::FrameHandle destructor.
+        (-[WKFrameHandle isEqual:]): Checks for frame ID equality.
+        (-[WKFrameHandle hash]): Returns the frame ID.
+        (-[WKFrameHandle _frameID]): Ditto.
+        (-[WKFrameHandle copyWithZone:]): Retains self.
+        (+[WKFrameHandle supportsSecureCoding]): Returns YES.
+        (-[WKFrameHandle initWithCoder:]): Decodes the frame ID and constructs an API::FrameHandle
+        with it.
+        (-[WKFrameHandle encodeWithCoder:]): Encodes the frame ID.
+        (-[WKFrameHandle _apiObject]): Returns the wrapped API::FrameHandle.
+        * Shared/API/Cocoa/WKFrameHandleInternal.h: Added.
+        (WebKit::wrapper): Added. Returns an API::FrameHandle’s wrapper as a WKFrameHandle.
+
+        * Shared/APIFrameHandle.cpp:
+        (API::FrameHandle::create): Changed to return a PassRefPtr.
+        * Shared/APIFrameHandle.h: Made the constructor public for -[WKFrameHandle initWithCoder:].
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Allocate a WKFrameHandle if the object is an API::FrameHandle.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h: Declared handle property.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (+[WKWebProcessPlugInFrame lookUpFrameFromHandle:]): Added. Calls WebProcess::webFrame to
+        look up a frame with the given handle’s frame ID.
+        (-[WKWebProcessPlugInFrame handle]): Added. Returns a new handle with the frame’s ID.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrameInternal.h: Updated #import.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h: Added.
+
+2014-02-07  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] WKWebProcessPlugInNodeHandle methods leak and may crash
         https://bugs.webkit.org/show_bug.cgi?id=128365
 

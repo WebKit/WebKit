@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIFrameHandle_h
-#define APIFrameHandle_h
+#import "WKFrameHandle.h"
 
-#include "APIObject.h"
-#include <wtf/RefPtr.h>
+#if WK_API_ENABLED
 
-namespace API {
+#import "APIFrameHandle.h"
+#import "WKObject.h"
 
-class FrameHandle : public ObjectImpl<Object::Type::FrameHandle> {
-public:
-    explicit FrameHandle(uint64_t frameID);
+namespace WebKit {
 
-    static PassRefPtr<FrameHandle> create(uint64_t frameID);
-    virtual ~FrameHandle();
+inline WKFrameHandle *wrapper(API::FrameHandle& frameHandle)
+{
+    ASSERT([frameHandle.wrapper() isKindOfClass:[WKFrameHandle self]]);
+    return (WKFrameHandle *)frameHandle.wrapper();
+}
 
-    uint64_t frameID() const { return m_frameID; }
+}
 
-private:
-    uint64_t m_frameID;
-};
+@interface WKFrameHandle () <WKObject>
 
-} // namespace API
+@property (nonatomic, readonly) uint64_t _frameID;
 
-#endif // APIFrameHandle_h
+@end
+
+#endif // WK_API_ENABLED

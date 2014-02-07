@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIFrameHandle_h
-#define APIFrameHandle_h
+#import "WKWebProcessPlugInFrame.h"
 
-#include "APIObject.h"
-#include <wtf/RefPtr.h>
+#if WK_API_ENABLED
 
-namespace API {
+@interface WKWebProcessPlugInFrame (WKPrivate)
 
-class FrameHandle : public ObjectImpl<Object::Type::FrameHandle> {
-public:
-    explicit FrameHandle(uint64_t frameID);
++ (instancetype)lookUpFrameFromHandle:(WKFrameHandle *)handle;
 
-    static PassRefPtr<FrameHandle> create(uint64_t frameID);
-    virtual ~FrameHandle();
+@end
 
-    uint64_t frameID() const { return m_frameID; }
-
-private:
-    uint64_t m_frameID;
-};
-
-} // namespace API
-
-#endif // APIFrameHandle_h
+#endif // WK_API_ENABLED

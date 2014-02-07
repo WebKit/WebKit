@@ -28,7 +28,7 @@
 
 namespace API {
 
-RefPtr<FrameHandle> FrameHandle::create(uint64_t frameID)
+PassRefPtr<FrameHandle> FrameHandle::create(uint64_t frameID)
 {
     return adoptRef(new FrameHandle(frameID));
 }
