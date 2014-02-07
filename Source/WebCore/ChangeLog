@@ -1,5 +1,12 @@
 2014-02-06  Antti Koivisto  <antti@apple.com>
 
+        Add missing &.
+
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::shouldDirtyAllStyle):
+
+2014-02-06  Antti Koivisto  <antti@apple.com>
+
         Check selectors exactly when invalidating style
         https://bugs.webkit.org/show_bug.cgi?id=128321
 

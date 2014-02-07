@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static bool shouldDirtyAllStyle(const Vector<RefPtr<StyleRuleBase>> rules)
+static bool shouldDirtyAllStyle(const Vector<RefPtr<StyleRuleBase>>& rules)
 {
     for (auto& rule : rules) {
         if (rule->isMediaRule()) {
