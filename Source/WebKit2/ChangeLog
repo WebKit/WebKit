@@ -1,3 +1,20 @@
+2014-02-07  Dean Jackson  <dino@apple.com>
+
+        WebGL doesn't update with remotely hosted layers
+        https://bugs.webkit.org/show_bug.cgi?id=128390
+
+        Reviewed by Simon Fraser.
+
+        PlatformCALayerRemote was intercepting the setNeedsDisplay calls to
+        WebGL layers, and thus causing them to not draw. Fix this by adding an
+        override in PlatformCALayerRemoteCustom to check if it is a WebGLLayer
+        and call setNeedsDisplay directly.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+        (PlatformCALayerRemoteCustom::setNeedsDisplay):
+
 2014-02-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Fitler touch events only based on touch start

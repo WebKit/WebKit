@@ -57,6 +57,8 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLa
 
     m_platformLayer = customLayer;
     [customLayer web_disableAllActions];
+
+    m_providesContents = [customLayer isKindOfClass:NSClassFromString(@"WebGLLayer")];
 }
 
 PlatformCALayerRemoteCustom::~PlatformCALayerRemoteCustom()
@@ -66,4 +68,15 @@ PlatformCALayerRemoteCustom::~PlatformCALayerRemoteCustom()
 uint32_t PlatformCALayerRemoteCustom::hostingContextID()
 {
     return m_layerHostingContext->contextID();
+}
+
+void PlatformCALayerRemoteCustom::setNeedsDisplay(const FloatRect* rect)
+{
+    if (m_providesContents) {
+        if (rect)
+            [m_platformLayer setNeedsDisplayInRect:*rect];
+        else
+            [m_platformLayer setNeedsDisplay];
+    } else
+        PlatformCALayerRemote::setNeedsDisplay(rect);
 }
