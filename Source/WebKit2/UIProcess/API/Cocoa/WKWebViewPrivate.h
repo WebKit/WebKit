@@ -34,7 +34,7 @@
 @property (nonatomic, readonly) WKRemoteObjectRegistry *_remoteObjectRegistry;
 
 #if TARGET_OS_IPHONE
-@property (nonatomic, setter=_setMinimumLayoutSizeOverride) CGSize _minimumLayoutSizeOverride;
+@property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
 #endif
 
 @end
