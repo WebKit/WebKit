@@ -5562,7 +5562,7 @@ void WebView::updateSelectionForIME()
     if (!targetFrame)
         return;
 
-    if (!targetFrame->editor().cancelCompositionIfSelectionIsInvalid())
+    if (targetFrame->editor().cancelCompositionIfSelectionIsInvalid())
         resetIME(targetFrame);
 }
 
