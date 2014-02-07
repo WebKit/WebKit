@@ -1,3 +1,14 @@
+2014-02-07  Krzysztof Czech  <k.czech@samsung.com>
+
+        Build fix after r163632
+
+        Unreviewed EFL build fix
+
+        Added empty stub to WKTR to not break EFL build.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+
 2014-02-07  Samuel White  <samuel_white@apple.com>
 
         AX: Find and select text with respect to insertion point using accessibility API.
