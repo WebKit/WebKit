@@ -42,7 +42,7 @@ pid_t WKPageGetProcessIdentifier(WKPageRef pageRef)
 bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
 {
     WebPageProxy* webPageProxy = toImpl(page);
-    bool privateBrowsingEnabled = webPageProxy->pageGroup().preferences()->privateBrowsingEnabled();
+    bool privateBrowsingEnabled = webPageProxy->pageGroup().preferences().privateBrowsingEnabled();
 
     return webPageProxy->process().context().isURLKnownHSTSHost(toImpl(url)->string(), privateBrowsingEnabled);
 }

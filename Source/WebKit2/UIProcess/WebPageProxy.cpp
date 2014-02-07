@@ -241,18 +241,19 @@ static const char* webKeyboardEventTypeString(WebEvent::Type type)
 }
 #endif // !LOG_DISABLED
 
-PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, API::Session& session, uint64_t pageID)
+PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, WebPreferences& preferences, API::Session& session, uint64_t pageID)
 {
-    return adoptRef(new WebPageProxy(pageClient, process, pageGroup, session, pageID));
+    return adoptRef(new WebPageProxy(pageClient, process, pageGroup, preferences, session, pageID));
 }
 
-WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, API::Session& session, uint64_t pageID)
+WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, WebPreferences& preferences, API::Session& session, uint64_t pageID)
     : m_pageClient(pageClient)
     , m_loaderClient(std::make_unique<API::LoaderClient>())
     , m_policyClient(std::make_unique<API::PolicyClient>())
     , m_uiClient(std::make_unique<API::UIClient>())
     , m_process(process)
     , m_pageGroup(pageGroup)
+    , m_preferences(preferences)
     , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
     , m_geolocationPermissionRequestManager(*this)
@@ -552,7 +553,7 @@ void WebPageProxy::initializeWebPage()
 
 bool WebPageProxy::isProcessSuppressible() const
 {
-    return (m_viewState & ViewState::IsVisuallyIdle) && m_pageGroup->preferences()->pageVisibilityBasedProcessSuppressionEnabled();
+    return (m_viewState & ViewState::IsVisuallyIdle) && m_preferences->pageVisibilityBasedProcessSuppressionEnabled();
 }
 
 void WebPageProxy::close()
@@ -855,7 +856,7 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->context().pluginInfoStore().findPlugin(newMimeType, URL());
-    if (!plugin.path.isNull() && m_pageGroup->preferences()->pluginsEnabled())
+    if (!plugin.path.isNull() && m_preferences->pluginsEnabled())
         return true;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -2064,7 +2065,7 @@ void WebPageProxy::preferencesDidChange()
     // even if nothing changed in UI process, so that overrides get removed.
 
     // Preferences need to be updated during synchronous printing to make "print backgrounds" preference work when toggled from a print dialog checkbox.
-    m_process->send(Messages::WebPage::PreferencesDidChange(pageGroup().preferences()->store()), m_pageID, m_isPerformingDOMPrintOperation ? IPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
+    m_process->send(Messages::WebPage::PreferencesDidChange(m_preferences->store()), m_pageID, m_isPerformingDOMPrintOperation ? IPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
 void WebPageProxy::didCreateMainFrame(uint64_t frameID)
@@ -3908,7 +3909,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.viewSize = m_pageClient.viewSize();
     parameters.viewState = m_viewState;
     parameters.drawingAreaType = m_drawingArea->type();
-    parameters.store = m_pageGroup->preferences()->store();
+    parameters.store = m_preferences->store();
     parameters.pageGroupData = m_pageGroup->data();
     parameters.drawsBackground = m_drawsBackground;
     parameters.drawsTransparentBackground = m_drawsTransparentBackground;

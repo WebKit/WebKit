@@ -785,7 +785,7 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPa
 PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
 {
     WebPageGroup* group = pageGroup ? pageGroup : &m_defaultPageGroup.get();
-    return createWebPage(pageClient, group, group->preferences()->privateBrowsingEnabled() ? API::Session::legacyPrivateSession() : API::Session::defaultSession(), relatedPage);
+    return createWebPage(pageClient, group, group->preferences().privateBrowsingEnabled() ? API::Session::legacyPrivateSession() : API::Session::defaultSession(), relatedPage);
 }
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)

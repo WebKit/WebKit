@@ -1,3 +1,50 @@
+2014-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Begin work on making preferences per page instead of per page group
+        https://bugs.webkit.org/show_bug.cgi?id=128349
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupGetPreferences):
+        * UIProcess/API/C/mac/WKPagePrivateMac.cpp:
+        (WKPageIsURLKnownHSTSHost):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _preferencesDidChange]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createWebPage):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorPageGroups::createInspectorPageGroup):
+        (WebKit::WebInspectorProxy::attach):
+        (WebKit::WebInspectorProxy::detach):
+        (WebKit::WebInspectorProxy::setAttachedWindowHeight):
+        (WebKit::WebInspectorProxy::setAttachedWindowWidth):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::shouldOpenAttached):
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::preferences):
+        * UIProcess/WebPageGroup.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::isProcessSuppressible):
+        (WebKit::WebPageProxy::canShowMIMEType):
+        (WebKit::WebPageProxy::preferencesDidChange):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::preferences):
+        (WebKit::WebPageProxy::setPreferences):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        * UIProcess/mac/ViewGestureController.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::windowFrameDidChange):
+        (WebKit::WebInspectorProxy::platformAttach):
+
 2014-02-06  Gavin Barraclough  <barraclough@apple.com>
 
         Remove ChildProcess::m_activeTasks

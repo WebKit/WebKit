@@ -56,7 +56,7 @@ public:
     const WebPageGroupData& data() { return m_data; }
 
     void setPreferences(WebPreferences*);
-    WebPreferences* preferences() const;
+    WebPreferences& preferences() const;
     void preferencesDidChange();
     
     void addUserStyleSheet(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserStyleLevel);

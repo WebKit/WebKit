@@ -39,6 +39,7 @@
 #include "WebContext.h"
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
+#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPluginSiteDataManager.h"
 #include "WebProcessMessages.h"
@@ -170,7 +171,7 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
 PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, WebPageGroup& pageGroup, API::Session& session)
 {
     uint64_t pageID = generatePageID();
-    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageGroup, session, pageID);
+    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageGroup, pageGroup.preferences(), session, pageID);
     m_pageMap.set(pageID, webPage.get());
     globalPageMap().set(pageID, webPage.get());
 #if PLATFORM(MAC)

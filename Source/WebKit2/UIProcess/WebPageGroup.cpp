@@ -114,7 +114,7 @@ void WebPageGroup::setPreferences(WebPreferences* preferences)
     }
 }
 
-WebPreferences* WebPageGroup::preferences() const
+WebPreferences& WebPageGroup::preferences() const
 {
     if (!m_preferences) {
         if (!m_data.identifer.isNull())
@@ -123,7 +123,8 @@ WebPreferences* WebPageGroup::preferences() const
             m_preferences = WebPreferences::create();
         m_preferences->addPageGroup(const_cast<WebPageGroup*>(this));
     }
-    return m_preferences.get();
+
+    return *m_preferences;
 }
 
 void WebPageGroup::preferencesDidChange()

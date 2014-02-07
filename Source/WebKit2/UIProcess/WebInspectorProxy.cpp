@@ -105,11 +105,11 @@ private:
 
 #ifndef NDEBUG
         // Allow developers to inspect the Web Inspector in debug builds.
-        pageGroup->preferences()->setDeveloperExtrasEnabled(true);
-        pageGroup->preferences()->setLogsPageMessagesToSystemConsoleEnabled(true);
+        pageGroup->preferences().setDeveloperExtrasEnabled(true);
+        pageGroup->preferences().setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
 
-        pageGroup->preferences()->setApplicationChromeModeEnabled(true);
+        pageGroup->preferences().setApplicationChromeModeEnabled(true);
 
         return pageGroup.release();
     }
@@ -270,10 +270,10 @@ void WebInspectorProxy::attach(AttachmentSide side)
     m_isAttached = true;
     m_attachmentSide = side;
 
-    inspectorPageGroup()->preferences()->setInspectorAttachmentSide(side);
+    inspectorPageGroup()->preferences().setInspectorAttachmentSide(side);
 
     if (m_isVisible)
-        inspectorPageGroup()->preferences()->setInspectorStartsAttached(true);
+        inspectorPageGroup()->preferences().setInspectorStartsAttached(true);
 
     switch (m_attachmentSide) {
     case AttachmentSideBottom:
@@ -296,7 +296,7 @@ void WebInspectorProxy::detach()
     m_isAttached = false;
 
     if (m_isVisible)
-        inspectorPageGroup()->preferences()->setInspectorStartsAttached(false);
+        inspectorPageGroup()->preferences().setInspectorStartsAttached(false);
 
     m_page->process().send(Messages::WebInspector::Detached(), m_page->pageID());
 
@@ -305,13 +305,13 @@ void WebInspectorProxy::detach()
 
 void WebInspectorProxy::setAttachedWindowHeight(unsigned height)
 {
-    inspectorPageGroup()->preferences()->setInspectorAttachedHeight(height);
+    inspectorPageGroup()->preferences().setInspectorAttachedHeight(height);
     platformSetAttachedWindowHeight(height);
 }
 
 void WebInspectorProxy::setAttachedWindowWidth(unsigned width)
 {
-    inspectorPageGroup()->preferences()->setInspectorAttachedWidth(width);
+    inspectorPageGroup()->preferences().setInspectorAttachedWidth(width);
     platformSetAttachedWindowWidth(width);
 }
 
@@ -429,7 +429,7 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
         return;
 
     m_isAttached = shouldOpenAttached();
-    m_attachmentSide = static_cast<AttachmentSide>(inspectorPageGroup()->preferences()->inspectorAttachmentSide());
+    m_attachmentSide = static_cast<AttachmentSide>(inspectorPageGroup()->preferences().inspectorAttachmentSide());
 
     WebPageProxy* inspectorPage = platformCreateInspectorPage();
     ASSERT(inspectorPage);
@@ -563,7 +563,7 @@ bool WebInspectorProxy::canAttach()
 
 bool WebInspectorProxy::shouldOpenAttached()
 {
-    return inspectorPageGroup()->preferences()->inspectorStartsAttached() && canAttach();
+    return inspectorPageGroup()->preferences().inspectorStartsAttached() && canAttach();
 }
 
 #if ENABLE(INSPECTOR_SERVER)

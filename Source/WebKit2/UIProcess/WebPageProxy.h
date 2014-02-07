@@ -54,6 +54,7 @@
 #include "WebHitTestResult.h"
 #include "WebPageContextMenuClient.h"
 #include "WebPageCreationParameters.h"
+#include "WebPreferences.h"
 #include <WebCore/AlternativeTextClient.h> // FIXME: Needed by WebPageProxyMessages.h for DICTATION_ALTERNATIVES.
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenuProxy.h"
@@ -330,7 +331,7 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
     , public IPC::MessageSender {
 public:
 
-    static PassRefPtr<WebPageProxy> create(PageClient&, WebProcessProxy&, WebPageGroup&, API::Session&, uint64_t pageID);
+    static PassRefPtr<WebPageProxy> create(PageClient&, WebProcessProxy&, WebPageGroup&, WebPreferences&, API::Session&, uint64_t pageID);
     virtual ~WebPageProxy();
 
     void setSession(API::Session&);
@@ -723,6 +724,9 @@ public:
     WebProcessProxy& process() { return m_process.get(); }
     PlatformProcessIdentifier processIdentifier() const;
 
+    WebPreferences& preferences() { return m_preferences.get(); }
+    void setPreferences(WebPreferences& preferences) { m_preferences = preferences; }
+
     WebPageGroup& pageGroup() { return m_pageGroup.get(); }
 
     bool isValid() const;
@@ -872,7 +876,7 @@ public:
 #endif
 
 private:
-    WebPageProxy(PageClient&, WebProcessProxy&, WebPageGroup&, API::Session&, uint64_t pageID);
+    WebPageProxy(PageClient&, WebProcessProxy&, WebPageGroup&, WebPreferences&, API::Session&, uint64_t pageID);
     void platformInitialize();
 
     void updateViewState(WebCore::ViewState::Flags flagsToUpdate = WebCore::ViewState::AllFlags);
@@ -1193,6 +1197,8 @@ private:
 
     Ref<WebProcessProxy> m_process;
     Ref<WebPageGroup> m_pageGroup;
+    Ref<WebPreferences> m_preferences;
+
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebFrameProxy> m_focusedFrame;
     RefPtr<WebFrameProxy> m_frameSetLargestFrame;

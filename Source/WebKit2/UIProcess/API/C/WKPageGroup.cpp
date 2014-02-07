@@ -55,7 +55,7 @@ void WKPageGroupSetPreferences(WKPageGroupRef pageGroupRef, WKPreferencesRef pre
 
 WKPreferencesRef WKPageGroupGetPreferences(WKPageGroupRef pageGroupRef)
 {
-    return toAPI(toImpl(pageGroupRef)->preferences());
+    return toAPI(&toImpl(pageGroupRef)->preferences());
 }
 
 void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroupRef, WKStringRef sourceRef, WKURLRef baseURL, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames injectedFrames)

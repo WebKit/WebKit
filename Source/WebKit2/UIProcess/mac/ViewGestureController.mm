@@ -402,7 +402,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     [m_swipeSnapshotLayer setName:@"Gesture Swipe Snapshot Layer"];
     [m_swipeSnapshotLayer web_disableAllActions];
 
-    if (m_webPageProxy.pageGroup().preferences()->viewGestureDebuggingEnabled()) {
+    if (m_webPageProxy.preferences().viewGestureDebuggingEnabled()) {
         CAFilter* filter = [CAFilter filterWithType:kCAFilterGaussianBlur];
         [filter setValue:[NSNumber numberWithFloat:3] forKey:@"inputRadius"];
         [m_swipeSnapshotLayer setFilters:@[filter]];
