@@ -29,14 +29,18 @@
 #if WK_API_ENABLED
 
 #import "NavigationState.h"
+#import "RemoteObjectRegistry.h"
+#import "RemoteObjectRegistryMessages.h"
 #import "WKBackForwardListInternal.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKProcessClass.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKWebViewConfiguration.h"
+#import "WebContext.h"
 #import "WebBackForwardList.h"
 #import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import <WebKit2/RemoteLayerTreeTransaction.h>
 #import <wtf/RetainPtr.h>
 
@@ -318,6 +322,8 @@
     [_scrollView setContentOffset:contentOffset];
 }
 
+#endif
+
 #pragma mark OS X-specific methods
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
@@ -336,7 +342,7 @@
 - (WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
     if (!_remoteObjectRegistry) {
-        _remoteObjectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page]0;
+        _remoteObjectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page]);
         _page->process().context().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
     }
 
@@ -359,8 +365,6 @@
     _minimumLayoutSizeOverride = minimumLayoutSizeOverride;
     [_contentView setMinimumLayoutSize:minimumLayoutSizeOverride];
 }
-
-#endif
 
 #endif
 
