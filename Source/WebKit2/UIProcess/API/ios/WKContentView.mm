@@ -157,15 +157,6 @@ using namespace WebKit;
     return _browsingContextController.get();
 }
 
-- (WKContentType)contentType
-{
-    if (_page->mainFrame()->mimeType() == "text/plain")
-        return WKContentType::PlainText;
-    else if (_page->mainFrame()->isDisplayingStandaloneImageDocument())
-        return WKContentType::Image;
-    return WKContentType::Standard;
-}
-
 - (WKPageRef)_pageRef
 {
     return toAPI(_page.get());

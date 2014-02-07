@@ -30,7 +30,7 @@
 namespace WebCore {
 
 TextDocument::TextDocument(Frame* frame, const URL& url)
-    : HTMLDocument(frame, url)
+    : HTMLDocument(frame, url, TextDocumentClass)
 {
     setCompatibilityMode(QuirksMode);
     lockCompatibilityMode();

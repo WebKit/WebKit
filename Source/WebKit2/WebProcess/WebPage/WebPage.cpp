@@ -3959,15 +3959,11 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if PLATFORM(IOS)
     m_userHasChangedPageScaleFactor = false;
 
-    // FIXME: Setup a real configuration.
-    ViewportConfiguration::Parameters defaultConfiguration;
-    defaultConfiguration.width = 980;
-    defaultConfiguration.widthIsSet = true;
-    defaultConfiguration.allowsUserScaling = true;
-    defaultConfiguration.minimumScale = 0.25;
-    defaultConfiguration.maximumScale = 5;
+    if (frame->coreFrame()->document()->isTextDocument())
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::plainTextParameters());
+    else
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
 
-    m_viewportConfiguration.setDefaultConfiguration(defaultConfiguration);
     m_viewportConfiguration.setViewportArguments(ViewportArguments());
     m_viewportConfiguration.setContentsSize(m_viewportConfiguration.minimumLayoutSize());
     viewportConfigurationChanged();

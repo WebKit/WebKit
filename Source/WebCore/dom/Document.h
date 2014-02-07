@@ -240,6 +240,7 @@ enum DocumentClass {
     PluginDocumentClass = 1 << 3,
     MediaDocumentClass = 1 << 4,
     SVGDocumentClass = 1 << 5,
+    TextDocumentClass = 1 << 6
 };
 
 typedef unsigned char DocumentClassFlags;
@@ -481,6 +482,7 @@ public:
     bool isSVGDocument() const { return m_documentClasses & SVGDocumentClass; }
     bool isPluginDocument() const { return m_documentClasses & PluginDocumentClass; }
     bool isMediaDocument() const { return m_documentClasses & MediaDocumentClass; }
+    bool isTextDocument() const { return m_documentClasses & TextDocumentClass; }
     bool hasSVGRootNode() const;
     virtual bool isFrameSet() const { return false; }
 

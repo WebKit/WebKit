@@ -29,6 +29,10 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 
+#if PLATFORM(IOS)
+#include "WebCoreSystemInterface.h"
+#endif
+
 namespace WebCore {
 
 #if !ASSERT_DISABLED
@@ -44,11 +48,7 @@ ViewportConfiguration::ViewportConfiguration()
 {
     // Setup a reasonable default configuration to avoid computing infinite scale/sizes.
     // Those are the original iPhone configuration.
-    m_defaultConfiguration.width = 980;
-    m_defaultConfiguration.widthIsSet = true;
-    m_defaultConfiguration.allowsUserScaling = true;
-    m_defaultConfiguration.minimumScale = 0.25;
-    m_defaultConfiguration.maximumScale = 5;
+    m_defaultConfiguration = ViewportConfiguration::webpageParameters();
     updateConfiguration();
 }
 
@@ -138,6 +138,35 @@ double ViewportConfiguration::minimumScale() const
     minimumScale = std::min(std::max(minimumScale, m_configuration.minimumScale), m_configuration.maximumScale);
 
     return minimumScale;
+}
+
+ViewportConfiguration::Parameters ViewportConfiguration::webpageParameters()
+{
+    Parameters parameters;
+    parameters.width = 980;
+    parameters.widthIsSet = true;
+    parameters.allowsUserScaling = true;
+    parameters.minimumScale = 0.25;
+    parameters.maximumScale = 5;
+    return parameters;
+}
+
+ViewportConfiguration::Parameters ViewportConfiguration::plainTextParameters()
+{
+    Parameters parameters;
+
+#if PLATFORM(IOS)
+    parameters.width = static_cast<int>(wkGetViewportScreenSize().width);
+#else
+    // FIXME: this needs to be unified with ViewportArguments on all ports.
+    parameters.width = 320;
+#endif
+
+    parameters.widthIsSet = true;
+    parameters.allowsUserScaling = true;
+    parameters.minimumScale = 0.25;
+    parameters.maximumScale = 5;
+    return parameters;
 }
 
 static inline bool viewportArgumentValueIsValid(float value)

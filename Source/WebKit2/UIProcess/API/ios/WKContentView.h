@@ -32,13 +32,6 @@
 @class WKContentView;
 @class WKWebViewConfiguration;
 
-typedef NS_ENUM(unsigned, WKContentType)
-{
-    Standard = 0,
-    PlainText,
-    Image
-};
-
 namespace WebKit {
 class RemoteLayerTreeTransaction;
 }
@@ -55,7 +48,6 @@ WK_API_CLASS
 @property (readonly, nonatomic) WKBrowsingContextController *browsingContextController;
 
 @property (nonatomic, assign) id <WKContentViewDelegate> delegate;
-@property (nonatomic, readonly) WKContentType contentType;
 
 @property (readonly) WKPageRef _pageRef;
 
