@@ -42,9 +42,16 @@ import tempfile
 import urllib2
 import urlparse
 import zipfile
+import re
+from distutils import dir_util
+from glob import glob
+import urlparse
 
 _log = logging.getLogger(__name__)
-
+_MIRROR_REGEXS = re.compile('.*sourceforge.*'), re.compile('.*pypi.*')
+_PYPI_ENV_VAR = 'PYPI_MIRRORS'
+_SOURCEFORGE_ENV_VAR = 'SOURCEFORGE_MIRRORS'
+_CACHE_ENV_VAR = 'LOCAL_AUTOINSTALL_CACHE'
 
 class AutoInstaller(object):
 
@@ -259,6 +266,14 @@ class AutoInstaller(object):
 
         return target_path
 
+    def _copy_unpackaged_files_from_local_cache(self, path, scratch_dir):
+
+        target_basename = os.path.basename(path)
+        target_path = os.path.join(scratch_dir, target_basename)
+
+        shutil.copy(path, target_path)
+        return target_path
+
     def _prepare_package(self, path, scratch_dir):
         """Prepare a package for use, if necessary, and return the new path.
 
@@ -277,24 +292,66 @@ class AutoInstaller(object):
             new_path = self._unzip(path, scratch_dir)
         elif path.endswith(".tar.gz"):
             new_path = self._extract_targz(path, scratch_dir)
+        elif _CACHE_ENV_VAR in os.environ:
+            new_path = path
+            if os.path.dirname(path) == os.path.normpath(os.environ[_CACHE_ENV_VAR]):
+                new_path = self._copy_unpackaged_files_from_local_cache(path, scratch_dir)
         else:
             # No preparation is needed.
             new_path = path
 
         return new_path
 
+    def _parse_colon_separated_mirrors_from_env(self):
+        """
+        Pypi mirror examle: PYPI_MIRRORS=pypi.hustunique.com...
+        Sourceforge mirror example: SOURCEFORGE_MIRRORS=aarnet.dl.sourceforge.net:citylan.dl.sourceforge.net...
+        Mirror sources: http://www.pypi-mirrors.org/, http://sourceforge.net/apps/trac/sourceforge/wiki/Mirrors
+        """
+        try:
+            pypi_mirrors_list = os.environ[_PYPI_ENV_VAR].split(':')
+        except(KeyError):
+            pypi_mirrors_list = ()
+
+        try:
+            sourceforge_mirrors_list = os.environ[_SOURCEFORGE_ENV_VAR].split(':')
+        except(KeyError):
+            sourceforge_mirrors_list = ()
+
+        mirroriterators = iter(sourceforge_mirrors_list), iter(pypi_mirrors_list)
+        return zip(_MIRROR_REGEXS, mirroriterators)
+
+    def _replace_domain_with_next_mirror(self, url, mirrors):
+        parsed_url = list(urlparse.urlparse(url))
+        new_url = None
+        try:
+            for regex, addresses in mirrors:
+                if regex.match(parsed_url[1]):
+                    parsed_url[1] = addresses.next()
+                    new_url = urlparse.urlunparse(parsed_url)
+        except StopIteration, e:
+            _log.info('Ran out of mirrors.')
+
+        return new_url
+
     def _download_to_stream(self, url, stream):
+        mirrors = self._parse_colon_separated_mirrors_from_env()
         failures = 0
         while True:
             try:
-                netstream = urllib2.urlopen(url)
+                netstream = urllib2.urlopen(url, timeout=30)
                 break
             except IOError, err:
                 # Try multiple times
-                if failures < 5:
+                if failures < 2:
                     _log.warning("Failed to download %s, %s retrying" % (
                         url, err))
                     failures += 1
+                    continue
+
+                url = self._replace_domain_with_next_mirror(url, mirrors)
+                if url:
+                    failures = 0
                     continue
 
                 # Append existing Error message to new Error.
@@ -319,14 +376,30 @@ class AutoInstaller(object):
             stream.write(data)
         netstream.close()
 
+    def _check_package_in_local_autoinstall_cache(self, filename):
+        if _CACHE_ENV_VAR not in os.environ:
+            return False
+        path = glob(os.path.join(os.environ[_CACHE_ENV_VAR], filename) + '*')
+        if not path:
+            return False
+
+        return path[0]
+
     def _download(self, url, scratch_dir):
         url_path = urlparse.urlsplit(url)[2]
         url_path = os.path.normpath(url_path)  # Removes trailing slash.
         target_filename = os.path.basename(url_path)
-        target_path = os.path.join(scratch_dir, target_filename)
 
+        cache = self._check_package_in_local_autoinstall_cache(target_filename)
+        if cache:
+            return cache
+
+        target_path = os.path.join(scratch_dir, target_filename)
         with open(target_path, "wb") as stream:
             self._download_to_stream(url, stream)
+
+        if _CACHE_ENV_VAR in os.environ:
+            dir_util.copy_tree(scratch_dir, os.environ[_CACHE_ENV_VAR])
 
         return target_path
 

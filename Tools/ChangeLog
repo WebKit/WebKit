@@ -1,3 +1,33 @@
+2014-02-06  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
+
+        Add support for multiple sources for AutoInstaller
+        https://bugs.webkit.org/show_bug.cgi?id=124848
+
+        Reviewed by Ryosuke Niwa.
+
+        The autoinstaller in the webkitpy currently fails if the download source of a package is unavailable.
+        This patch adds support for multiple sources to the script. The sources are provided in three environment variables.
+        If it exists, the script will look at a local cache. If not, it will try to download the package from the original url.
+        If it fails, it gets a mirror from the corresponding environment variable.(One for sourceforge.org and one for pypi.python.org)
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller._copy_unpackaged_files_from_local_cache):  If the package is not packaged in its original form,
+        this method will copy it to the scratch directory. Otherwise it would be deleted from the cache, which we do not want.
+        (AutoInstaller._prepare_package): If the package is not zipped or tarred, and the file is in the cache, the
+        _copy_unpackaged_files_from_local_cache function is called.
+        (AutoInstaller._parse_colon_separated_mirrors_from_env): This will read the mirrors from the environment variables if possible,
+        and prepares them for further use.
+        (AutoInstaller):
+        (AutoInstaller._replace_domain_with_next_mirror): If the original download url fails, it is replaced by a mirror provided
+        in the environment variables. The function identifies the original source, and replaces it with a mirror. If it can't be done,
+        the return url will be None, indicating that no mirrors are provided, or none of them could be reached.
+        (AutoInstaller._download_to_stream): The timeout for one try is now limited to 30 seconds. Without this, the script waited for
+        roughly 4 minutes before retrying. After three failiures the script will try to switch to a mirror.
+        (AutoInstaller._check_package_in_local_autoinstall_cache): This method searches the cache for the currently downloaded module.
+        If it's found there, its path is returned.
+        (AutoInstaller._download):  Before downloading the module, it is looked up in the cache. If it's not found there,
+        the script will continue with the download, and cache the module.
+
 2014-02-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove run-test-webkit-api
