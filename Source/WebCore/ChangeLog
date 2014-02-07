@@ -1,3 +1,37 @@
+2014-02-06  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/create-index-with-integer-keys.html fails
+        <rdar://problem/16002857> and https://bugs.webkit.org/show_bug.cgi?id=128316
+
+        Reviewed by Geoff Garen.
+
+        Tested by storage/indexeddb/create-index-with-integer-keys.html (and probably some others)
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update): Update createIDBKeyFromScriptValueAndKeyPath usage.
+        (WebCore::IDBCursor::setValueReady): Update createIDBKeyFromScriptValueAndKeyPath usage.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::put): Update usage of binding utilities.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess): Update createIDBKeyFromScriptValueAndKeyPath usage.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::internalCreateIDBKeyFromScriptValueAndKeyPath):
+        (WebCore::createIDBKeyFromScriptValueAndKeyPath): Changed to take an ExecState*.
+        (WebCore::deserializeIDBValueBuffer): Added new version that starts with ExecState* and Vector<uint8_t>
+          instead of RequestState and SharedBuffer.
+        (WebCore::generateIndexKeysForValue): Moved from IDBObjectStore.cpp and changed to take an ExecState*
+        * bindings/js/IDBBindingUtilities.h:
+
+        Added new blob fetcher that works with uint8_t buffers:
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::getColumnBlobAsVector):
+        * platform/sql/SQLiteStatement.h:
+
+        * WebCore.exp.in:
+
 2014-02-07  Frédéric Wang  <fred.wang@free.fr>
 
         childShouldCreateRenderer should return false for the mspace element

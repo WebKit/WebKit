@@ -175,9 +175,9 @@ private:
     void didDeleteIndex(uint64_t requestID, bool success);
     void didPutRecordInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, uint32_t errorCode, const String& errorMessage);
     void didGetRecordFromBackingStore(uint64_t requestID, const WebCore::IDBGetResult&, uint32_t errorCode, const String& errorMessage);
-    void didOpenCursorInBackingStore(uint64_t requestID, int64_t cursorID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<char>&, uint32_t errorCode, const String& errorMessage);
-    void didAdvanceCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<char>&, uint32_t errorCode, const String& errorMessage);
-    void didIterateCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<char>&, uint32_t errorCode, const String& errorMessage);
+    void didOpenCursorInBackingStore(uint64_t requestID, int64_t cursorID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<uint8_t>&, uint32_t errorCode, const String& errorMessage);
+    void didAdvanceCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<uint8_t>&, uint32_t errorCode, const String& errorMessage);
+    void didIterateCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<uint8_t>&, uint32_t errorCode, const String& errorMessage);
     void didCountInBackingStore(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage);
     void didDeleteRangeInBackingStore(uint64_t requestID, uint32_t errorCode, const String& errorMessage);
 

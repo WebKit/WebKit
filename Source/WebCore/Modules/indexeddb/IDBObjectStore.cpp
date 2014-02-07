@@ -36,6 +36,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBIndex.h"
 #include "IDBKey.h"
+#include "IDBKeyData.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBTransaction.h"
@@ -92,29 +93,6 @@ PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, cons
     if (ec)
         return 0;
     return get(context, keyRange.release(), ec);
-}
-
-static void generateIndexKeysForValue(DOMRequestState* requestState, const IDBIndexMetadata& indexMetadata, const Deprecated::ScriptValue& objectValue, IDBObjectStore::IndexKeys* indexKeys)
-{
-    ASSERT(indexKeys);
-    RefPtr<IDBKey> indexKey = createIDBKeyFromScriptValueAndKeyPath(requestState, objectValue, indexMetadata.keyPath);
-
-    if (!indexKey)
-        return;
-
-    if (!indexMetadata.multiEntry || indexKey->type() != IDBKey::ArrayType) {
-        if (!indexKey->isValid())
-            return;
-
-        indexKeys->append(indexKey);
-    } else {
-        ASSERT(indexMetadata.multiEntry);
-        ASSERT(indexKey->type() == IDBKey::ArrayType);
-        indexKey = IDBKey::createMultiEntryArray(indexKey->array());
-
-        for (size_t i = 0; i < indexKey->array().size(); ++i)
-            indexKeys->append(indexKey->array()[i]);
-    }
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState* state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
@@ -195,7 +173,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackend::PutMode putMode, 
         return 0;
     }
     if (usesInLineKeys) {
-        RefPtr<IDBKey> keyPathKey = createIDBKeyFromScriptValueAndKeyPath(&requestState, value, keyPath);
+        RefPtr<IDBKey> keyPathKey = createIDBKeyFromScriptValueAndKeyPath(requestState.exec(), value, keyPath);
         if (keyPathKey && !keyPathKey->isValid()) {
             ec = IDBDatabaseException::DataError;
             return 0;
@@ -221,9 +199,17 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackend::PutMode putMode, 
     Vector<int64_t> indexIds;
     Vector<IndexKeys> indexKeys;
     for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
-        IndexKeys keys;
-        generateIndexKeysForValue(&requestState, it->value, value, &keys);
+        Vector<IDBKeyData> keyDatas;
+        generateIndexKeysForValue(requestState.exec(), it->value, value, keyDatas);
         indexIds.append(it->key);
+
+        // FIXME: Much of the Indexed DB code needs to use IDBKeyData directly to avoid wasteful conversions like this.
+        Vector<RefPtr<IDBKey>> keys;
+        for (auto& i : keyDatas) {
+            RefPtr<IDBKey> key = i.maybeCreateIDBKey();
+            if (key)
+                keys.append(key.release());
+        }
         indexKeys.append(keys);
     }
 
@@ -338,9 +324,15 @@ private:
             RefPtr<IDBKey> primaryKey = cursor->idbPrimaryKey();
             Deprecated::ScriptValue value = cursor->value();
 
-            IDBObjectStore::IndexKeys indexKeys;
-            generateIndexKeysForValue(request->requestState(), m_indexMetadata, value, &indexKeys);
+            Vector<IDBKeyData> indexKeyDatas;
+            generateIndexKeysForValue(request->requestState()->exec(), m_indexMetadata, value, indexKeyDatas);
 
+            Vector<RefPtr<IDBKey>> indexKeys;
+            for (auto& i : indexKeyDatas) {
+                RefPtr<IDBKey> key = i.maybeCreateIDBKey();
+                if (key)
+                    indexKeys.append(key.release());
+            }
             Vector<IDBObjectStore::IndexKeys, 1> indexKeysList;
             indexKeysList.append(indexKeys);
 

@@ -58,7 +58,7 @@ public:
 
     const WebCore::IDBKeyData& currentKey() const { return m_currentKey; }
     const WebCore::IDBKeyData& currentPrimaryKey() const { return m_currentPrimaryKey; }
-    const Vector<char>& currentValueBuffer() const { return m_currentValueBuffer; }
+    const Vector<uint8_t>& currentValueBuffer() const { return m_currentValueBuffer; }
 
     bool advance(uint64_t count);
     bool iterate(const WebCore::IDBKeyData& targetKey);
@@ -83,7 +83,7 @@ private:
 
     WebCore::IDBKeyData m_currentKey;
     WebCore::IDBKeyData m_currentPrimaryKey;
-    Vector<char> m_currentValueBuffer;
+    Vector<uint8_t> m_currentValueBuffer;
 
     std::unique_ptr<WebCore::SQLiteStatement> m_statement;
 

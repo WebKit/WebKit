@@ -428,6 +428,32 @@ void SQLiteStatement::getColumnBlobAsVector(int col, Vector<char>& result)
         result[i] = (static_cast<const unsigned char*>(blob))[i];
 }
 
+void SQLiteStatement::getColumnBlobAsVector(int col, Vector<uint8_t>& result)
+{
+    ASSERT(col >= 0);
+
+    if (!m_statement && prepareAndStep() != SQLITE_ROW) {
+        result.clear();
+        return;
+    }
+
+    if (columnCount() <= col) {
+        result.clear();
+        return;
+    }
+
+    const void* blob = sqlite3_column_blob(m_statement, col);
+    if (!blob) {
+        result.clear();
+        return;
+    }
+        
+    int size = sqlite3_column_bytes(m_statement, col);
+    result.resize((size_t)size);
+    for (int i = 0; i < size; ++i)
+        result[i] = (static_cast<const uint8_t*>(blob))[i];
+}
+
 bool SQLiteStatement::returnTextResults(int col, Vector<String>& v)
 {
     ASSERT(col >= 0);

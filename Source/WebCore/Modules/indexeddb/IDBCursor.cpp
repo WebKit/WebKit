@@ -142,7 +142,7 @@ PassRefPtr<IDBRequest> IDBCursor::update(JSC::ExecState* state, Deprecated::Scri
     const IDBKeyPath& keyPath = objectStore->metadata().keyPath;
     const bool usesInLineKeys = !keyPath.isNull();
     if (usesInLineKeys) {
-        RefPtr<IDBKey> keyPathKey = createIDBKeyFromScriptValueAndKeyPath(m_request->requestState(), value, keyPath);
+        RefPtr<IDBKey> keyPathKey = createIDBKeyFromScriptValueAndKeyPath(m_request->requestState()->exec(), value, keyPath);
         if (!keyPathKey || !keyPathKey->isEqual(m_currentPrimaryKey.get())) {
             ec = IDBDatabaseException::DataError;
             return 0;
@@ -276,7 +276,7 @@ void IDBCursor::setValueReady(DOMRequestState* state, PassRefPtr<IDBKey> key, Pa
         const IDBObjectStoreMetadata metadata = objectStore->metadata();
         if (metadata.autoIncrement && !metadata.keyPath.isNull()) {
 #ifndef NDEBUG
-            RefPtr<IDBKey> expectedKey = createIDBKeyFromScriptValueAndKeyPath(m_request->requestState(), value, metadata.keyPath);
+            RefPtr<IDBKey> expectedKey = createIDBKeyFromScriptValueAndKeyPath(m_request->requestState()->exec(), value, metadata.keyPath);
             ASSERT(!expectedKey || expectedKey->isEqual(m_currentPrimaryKey.get()));
 #endif
             bool injected = injectIDBKeyIntoScriptValue(m_request->requestState(), m_currentPrimaryKey, value, metadata.keyPath);

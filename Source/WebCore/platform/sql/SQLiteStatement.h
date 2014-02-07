@@ -83,6 +83,7 @@ public:
     int64_t getColumnInt64(int col);
     String getColumnBlobAsString(int col);
     void getColumnBlobAsVector(int col, Vector<char>&);
+    void getColumnBlobAsVector(int col, Vector<uint8_t>&);
 
     bool returnTextResults(int col, Vector<String>&);
     bool returnIntResults(int col, Vector<int>&);

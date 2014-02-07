@@ -951,7 +951,7 @@ void UniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBId
     int64_t cursorID = 0;
     IDBKeyData key;
     IDBKeyData primaryKey;
-    Vector<char> valueBuffer;
+    Vector<uint8_t> valueBuffer;
     int32_t errorCode = 0;
     String errorMessage;
     bool success = m_backingStore->openCursor(transactionIdentifier, objectStoreID, indexID, cursorDirection, cursorType, taskType, keyRange, cursorID, key, primaryKey, valueBuffer);
@@ -964,7 +964,7 @@ void UniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBId
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didOpenCursorInBackingStore, requestID, cursorID, key, primaryKey, valueBuffer, errorCode, errorMessage));
 }
 
-void UniqueIDBDatabase::didOpenCursorInBackingStore(uint64_t requestID, int64_t cursorID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<char>& valueBuffer, uint32_t errorCode, const String& errorMessage)
+void UniqueIDBDatabase::didOpenCursorInBackingStore(uint64_t requestID, int64_t cursorID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<uint8_t>& valueBuffer, uint32_t errorCode, const String& errorMessage)
 {
     RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
     ASSERT(request);
@@ -976,7 +976,7 @@ void UniqueIDBDatabase::advanceCursorInBackingStore(uint64_t requestID, const ID
 {
     IDBKeyData key;
     IDBKeyData primaryKey;
-    Vector<char> valueBuffer;
+    Vector<uint8_t> valueBuffer;
     int32_t errorCode = 0;
     String errorMessage;
     bool success = m_backingStore->advanceCursor(cursorIdentifier, count, key, primaryKey, valueBuffer);
@@ -989,7 +989,7 @@ void UniqueIDBDatabase::advanceCursorInBackingStore(uint64_t requestID, const ID
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didAdvanceCursorInBackingStore, requestID, key, primaryKey, valueBuffer, errorCode, errorMessage));
 }
 
-void UniqueIDBDatabase::didAdvanceCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<char>& valueBuffer, uint32_t errorCode, const String& errorMessage)
+void UniqueIDBDatabase::didAdvanceCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<uint8_t>& valueBuffer, uint32_t errorCode, const String& errorMessage)
 {
     RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
     ASSERT(request);
@@ -1001,7 +1001,7 @@ void UniqueIDBDatabase::iterateCursorInBackingStore(uint64_t requestID, const ID
 {
     IDBKeyData key;
     IDBKeyData primaryKey;
-    Vector<char> valueBuffer;
+    Vector<uint8_t> valueBuffer;
     int32_t errorCode = 0;
     String errorMessage;
     bool success = m_backingStore->iterateCursor(cursorIdentifier, iterateKey, key, primaryKey, valueBuffer);
@@ -1014,7 +1014,7 @@ void UniqueIDBDatabase::iterateCursorInBackingStore(uint64_t requestID, const ID
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didIterateCursorInBackingStore, requestID, key, primaryKey, valueBuffer, errorCode, errorMessage));
 }
 
-void UniqueIDBDatabase::didIterateCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<char>& valueBuffer, uint32_t errorCode, const String& errorMessage)
+void UniqueIDBDatabase::didIterateCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<uint8_t>& valueBuffer, uint32_t errorCode, const String& errorMessage)
 {
     RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
     ASSERT(request);

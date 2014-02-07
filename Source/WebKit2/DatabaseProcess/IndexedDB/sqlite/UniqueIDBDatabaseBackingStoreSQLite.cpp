@@ -34,6 +34,7 @@
 #include "SQLiteIDBCursor.h"
 #include "SQLiteIDBTransaction.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/IDBBindingUtilities.h>
 #include <WebCore/IDBDatabaseMetadata.h>
 #include <WebCore/IDBGetResult.h>
 #include <WebCore/IDBKeyData.h>
@@ -43,6 +44,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
 
+using namespace JSC;
 using namespace WebCore;
 
 namespace WebKit {
@@ -612,6 +614,50 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& trans
         return false;
     }
 
+    // Write index records for any records that already exist in this object store.
+    SQLiteIDBCursor* cursor = transaction->openCursor(objectStoreID, IDBIndexMetadata::InvalidId, IndexedDB::CursorDirection::Next, IndexedDB::CursorType::KeyAndValue, IDBDatabaseBackend::NormalTask, IDBKeyRangeData());
+
+    if (!cursor) {
+        LOG_ERROR("Cannot open cursor to populate indexes in database");
+        return false;
+    }
+
+    m_cursors.set(cursor->identifier(), cursor);
+
+    OwnPtr<JSLockHolder> lockHolder;
+    while (!cursor->currentKey().isNull) {
+        const IDBKeyData& key = cursor->currentKey();
+        const Vector<uint8_t>& valueBuffer = cursor->currentValueBuffer();
+
+        if (!m_globalObject) {
+            ASSERT(!m_vm);
+            m_vm = VM::create();
+            lockHolder = adoptPtr(new JSLockHolder(m_vm.get()));
+            m_globalObject.set(*m_vm, JSGlobalObject::create(*m_vm, JSGlobalObject::createStructure(*m_vm, jsNull())));
+        }
+
+        if (!lockHolder)
+            lockHolder = adoptPtr(new JSLockHolder(m_vm.get()));
+
+        Deprecated::ScriptValue value = deserializeIDBValueBuffer(m_globalObject->globalExec(), valueBuffer, true);
+        Vector<IDBKeyData> indexKeys;
+        generateIndexKeysForValue(m_globalObject->globalExec(), metadata, value, indexKeys);
+
+        for (auto& indexKey : indexKeys) {
+            if (!uncheckedPutIndexRecord(objectStoreID, metadata.id, key, indexKey)) {
+                LOG_ERROR("Unable to put index record for newly created index");
+                return false;
+            }
+        }
+
+        if (!cursor->advance(1)) {
+            LOG_ERROR("Error advancing cursor while indexing existing records for new index.");
+            return false;
+        }
+    }
+
+    transaction->closeCursor(*cursor);
+
     return true;
 }
 
@@ -825,6 +871,11 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putIndexRecord(const IDBIdentifier& tr
         return false;
     }
 
+    return uncheckedPutIndexRecord(objectStoreID, indexID, keyValue, indexKey);
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::uncheckedPutIndexRecord(int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyData& keyValue, const WebCore::IDBKeyData& indexKey)
+{
     RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
     if (!indexKeyBuffer) {
         LOG_ERROR("Unable to serialize index key to be stored in the database");
@@ -1135,7 +1186,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::count(const IDBIdentifier& transaction
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange, int64_t& cursorID, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& valueBuffer)
+bool UniqueIDBDatabaseBackingStoreSQLite::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange, int64_t& cursorID, IDBKeyData& key, IDBKeyData& primaryKey, Vector<uint8_t>& valueBuffer)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -1160,7 +1211,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::openCursor(const IDBIdentifier& transa
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::advanceCursor(const IDBIdentifier& cursorIdentifier, uint64_t count, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& valueBuffer)
+bool UniqueIDBDatabaseBackingStoreSQLite::advanceCursor(const IDBIdentifier& cursorIdentifier, uint64_t count, IDBKeyData& key, IDBKeyData& primaryKey, Vector<uint8_t>& valueBuffer)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -1188,7 +1239,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::advanceCursor(const IDBIdentifier& cur
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::iterateCursor(const IDBIdentifier& cursorIdentifier, const IDBKeyData& targetKey, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& valueBuffer)
+bool UniqueIDBDatabaseBackingStoreSQLite::iterateCursor(const IDBIdentifier& cursorIdentifier, const IDBKeyData& targetKey, IDBKeyData& key, IDBKeyData& primaryKey, Vector<uint8_t>& valueBuffer)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);

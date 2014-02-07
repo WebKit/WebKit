@@ -1,3 +1,38 @@
+2014-02-06  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/create-index-with-integer-keys.html fails
+        <rdar://problem/16002857> and https://bugs.webkit.org/show_bug.cgi?id=128316
+
+        Reviewed by Geoff Garen.
+
+        Update Vector<char> to Vector<uint8_t> throughout:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::openCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::didOpenCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::advanceCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::didAdvanceCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::iterateCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::didIterateCursorInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        Update Vector<char> to Vector<uint8_t> throughout:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::SQLiteIDBCursor::advanceOnce):
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.h:
+        (WebKit::SQLiteIDBCursor::currentValueBuffer):
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createIndex): Create a script value from the value data, use
+          generateIndexKeysForValue to get the index keys, and then write the resulting index records.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::putIndexRecord): Call through to uncheckedPutIndexRecord.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::uncheckedPutIndexRecord): Version of putIndexRecord that doesn’t
+          validate the transaction or its mode.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::openCursor): Update Vector<char> to Vector<uint8_t>.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::advanceCursor): Ditto.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::iterateCursor): Ditto.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
 2014-02-07  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] WebView should be able to configure to set fixed layout

@@ -364,7 +364,7 @@ void IDBRequest::onSuccess(PassRefPtr<SharedBuffer> valueBuffer, PassRefPtr<IDBK
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
 #ifndef NDEBUG
-    RefPtr<IDBKey> expectedKey = createIDBKeyFromScriptValueAndKeyPath(requestState(), value, keyPath);
+    RefPtr<IDBKey> expectedKey = createIDBKeyFromScriptValueAndKeyPath(requestState()->exec(), value, keyPath);
     ASSERT(!expectedKey || expectedKey->isEqual(primaryKey.get()));
 #endif
     bool injected = injectIDBKeyIntoScriptValue(requestState(), primaryKey, value, keyPath);
