@@ -25,7 +25,7 @@
 #include "LengthFunctions.h"
 
 #include "LayoutUnit.h"
-#include "Length.h"
+#include "LengthSize.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -208,6 +208,11 @@ float floatValueForLength(const Length& length, float maximumValue, RenderView* 
     }
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatSize& boxSize)
+{
+    return FloatSize(floatValueForLength(lengthSize.width(), boxSize.width()), floatValueForLength(lengthSize.height(), boxSize.height()));
 }
 
 } // namespace WebCore

@@ -1,0 +1,40 @@
+<html>
+<head>
+<style>
+.container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 120px;
+    font: 10px / 1 Ahem, sans-serif;
+}
+.shape-outside {
+    -webkit-shape-outside: inset(0px round 50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: green;
+    float: left;
+}
+</style>
+</script>
+</head>
+<body>
+<div class='container'>
+    <div class='shape-outside'></div>
+    x<br/>
+    x<br/>
+    x<br/>
+    x<br/>
+    x<br/>
+    x<br/>
+    x<br/>
+    x<br/>
+</div>
+
+<p style="margin-top: 100px;">The black rectangles should respect the boundaries of the shape-outside (green circle),
+thus they shouldn't overlap with the green circle.</p>
+<p><a href='http://webkit.org/b/127852'>Bug 127852</a>: [CSS Shapes] Rounded Insets Let Content Overlap Shape</p>
+</p>
+</body>
+</html>

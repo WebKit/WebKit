@@ -1,3 +1,23 @@
+2014-02-06  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Rounded Insets Let Content Overlap Shape
+        https://bugs.webkit.org/show_bug.cgi?id=127852
+
+        Reviewed by Bem Jones-Bey.
+
+        Using LengthSize to FloatSize conversion from LengthSize.h lead to miscalculated
+        inset border radius, when the border radius was defined by percentages. This patch
+        fixes the behavior and removes the incorrect conversion.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html
+
+        * css/LengthFunctions.cpp:
+        (WebCore::floatSizeForLengthSize): Add new helper function for LengthSize to FloatSize conversion.
+        * css/LengthFunctions.h:
+        * platform/LengthSize.h: Remove floatSize conversion.
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape): Use new helper function to calculate the right with for the inset border radius.
+
 2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Regenerate JSTestObj now that ScriptArguments moved. Generator knows what to do.

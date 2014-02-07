@@ -26,9 +26,11 @@
 
 namespace WebCore {
 
+class FloatSize;
 class LayoutUnit;
 class RenderView;
 struct Length;
+struct LengthSize;
 
 int minimumIntValueForLength(const Length&, LayoutUnit maximumValue, RenderView* = 0, bool roundPercentages = false);
 int intValueForLength(const Length&, LayoutUnit maximumValue, RenderView* = 0, bool roundPercentages = false);
@@ -36,6 +38,7 @@ LayoutUnit minimumValueForLength(const Length&, LayoutUnit maximumValue, RenderV
 LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue, RenderView* = 0, bool roundPercentages = false);
 float floatValueForLength(const Length&, LayoutUnit maximumValue, RenderView* = 0);
 float floatValueForLength(const Length&, float maximumValue, RenderView* = 0);
+FloatSize floatSizeForLengthSize(const LengthSize&, const FloatSize&);
 
 } // namespace WebCore
 

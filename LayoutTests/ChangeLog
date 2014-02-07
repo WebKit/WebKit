@@ -1,3 +1,13 @@
+2014-02-06  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Rounded Insets Let Content Overlap Shape
+        https://bugs.webkit.org/show_bug.cgi?id=127852
+
+        Reviewed by Bem Jones-Bey.
+
+        * fast/shapes/shape-outside-floats/shape-outside-rounded-inset-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html: Added.
+
 2014-02-04  Jeffrey Pfau  <jpfau@apple.com>
 
         Make adoption agency use the task queue

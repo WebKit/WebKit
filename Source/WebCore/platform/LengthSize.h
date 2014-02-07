@@ -21,7 +21,6 @@
 #ifndef LengthSize_h
 #define LengthSize_h
 
-#include "FloatSize.h"
 #include "Length.h"
 
 namespace WebCore {
@@ -52,11 +51,6 @@ public:
     LengthSize blend(const LengthSize& from, double progress) const
     {
         return LengthSize(m_width.blend(from.width(), progress), m_height.blend(from.height(), progress));
-    }
-
-    FloatSize floatSize() const
-    {
-        return FloatSize(m_width.value(), m_height.value());
     }
 
 private:
