@@ -29,5 +29,7 @@ INFOPLIST_FILE = $(INFOPLIST_FILE_$(PLATFORM_NAME));
 INFOPLIST_FILE_macosx = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist;
 INFOPLIST_FILE_iphoneos = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist;
 
+CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*] = Configurations/WebContent-iOS.entitlements
+
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_macosx = -framework AppKit;
