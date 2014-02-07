@@ -423,7 +423,7 @@
 		29D55DF1161BF9F10031A2E3 /* WebPageGroupProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29D55DEF161BF9F10031A2E3 /* WebPageGroupProxyMessageReceiver.cpp */; };
 		29D55DF2161BF9F10031A2E3 /* WebPageGroupProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D55DF0161BF9F10031A2E3 /* WebPageGroupProxyMessages.h */; };
 		2D125C5E1857EA05003BA3CB /* ViewGestureController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D125C5C1857EA05003BA3CB /* ViewGestureController.h */; };
-		2D125C5F1857EA05003BA3CB /* ViewGestureController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D125C5D1857EA05003BA3CB /* ViewGestureController.mm */; };
+		2D125C5F1857EA05003BA3CB /* ViewGestureControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */; };
 		2D1B5D5D185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D1B5D5B185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp */; };
 		2D1B5D5E185869C8006C6596 /* ViewGestureControllerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */; };
 		2D28F3E41885CCC1004B9EAE /* WebChromeClientIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F3E01885CCC1004B9EAE /* WebChromeClientIOS.mm */; };
@@ -2112,7 +2112,7 @@
 		29D55DEF161BF9F10031A2E3 /* WebPageGroupProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageGroupProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		29D55DF0161BF9F10031A2E3 /* WebPageGroupProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageGroupProxyMessages.h; sourceTree = "<group>"; };
 		2D125C5C1857EA05003BA3CB /* ViewGestureController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureController.h; sourceTree = "<group>"; };
-		2D125C5D1857EA05003BA3CB /* ViewGestureController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewGestureController.mm; sourceTree = "<group>"; };
+		2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewGestureControllerMac.mm; sourceTree = "<group>"; };
 		2D1B5D5A18586599006C6596 /* ViewGestureController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ViewGestureController.messages.in; sourceTree = "<group>"; };
 		2D1B5D5B185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureControllerMessageReceiver.cpp; sourceTree = "<group>"; };
 		2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureControllerMessages.h; sourceTree = "<group>"; };
@@ -5826,7 +5826,7 @@
 				1AF05D8514688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h */,
 				1AF05D8414688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm */,
 				2D125C5C1857EA05003BA3CB /* ViewGestureController.h */,
-				2D125C5D1857EA05003BA3CB /* ViewGestureController.mm */,
+				2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */,
 				2D1B5D5A18586599006C6596 /* ViewGestureController.messages.in */,
 				2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */,
 				2D6CD118189058A500E5A4A0 /* ViewSnapshotStore.mm */,
@@ -7932,7 +7932,7 @@
 				BCD3675C148C26C000447E87 /* WebConnectionToUIProcess.cpp in Sources */,
 				BC4A62A714744EC7006C681A /* WebConnectionToWebProcess.cpp in Sources */,
 				BC82836516B354F600A278FE /* WebContentProcessMain.mm in Sources */,
-				2D125C5F1857EA05003BA3CB /* ViewGestureController.mm in Sources */,
+				2D125C5F1857EA05003BA3CB /* ViewGestureControllerMac.mm in Sources */,
 				BC82839916B48DC000A278FE /* WebContentServiceEntryPoint.mm in Sources */,
 				BCB9E2441120DACA00A137E0 /* WebContext.cpp in Sources */,
 				31A505F91680025500A930EB /* WebContextClient.cpp in Sources */,

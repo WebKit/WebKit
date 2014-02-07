@@ -1,3 +1,21 @@
+2014-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        Rename ViewGestureController.mm to ViewGestureControllerMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=128387
+
+        Reviewed by Anders Carlsson.
+
+        As a precursor to having a second nearly completely divergent
+        ViewGestureController implementation for iOS.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm: Renamed from Source/WebKit2/UIProcess/mac/ViewGestureController.mm.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Rename ViewGestureController.mm to ViewGestureControllerMac.mm.
+        Unfortunately, since we're not renaming the class, the header
+        has to keep its name (and will be the recipient of a giant #if in a later
+        patch), because the message receiver generated code will try to import
+        ViewGestureController.h (without the Mac suffix).
+
 2014-02-07  Anders Carlsson  <andersca@apple.com>
 
         Copying a WebPreferences object should be done through a member function
