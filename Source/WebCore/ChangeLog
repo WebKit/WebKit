@@ -1,3 +1,13 @@
+2014-02-06  Jeffrey Pfau  <jpfau@apple.com>
+
+        loadSubframe can return null in SubframeLoader::loadOrRedirectSubframe
+        https://bugs.webkit.org/show_bug.cgi?id=128344
+
+        Reviewed by Ryosuke Niwa.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadOrRedirectSubframe):
+
 2014-02-06  Andreas Kling  <akling@apple.com>
 
         Use child iterator in HTMLDetailsElement::findMainSummary().
