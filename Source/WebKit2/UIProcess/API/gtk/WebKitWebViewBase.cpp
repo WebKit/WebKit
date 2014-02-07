@@ -945,7 +945,7 @@ void webkitWebViewBaseUpdatePreferences(WebKitWebViewBase* webkitWebViewBase)
         return;
 #endif
 
-    priv->pageProxy->pageGroup().preferences()->setAcceleratedCompositingEnabled(false);
+    priv->pageProxy->pageGroup().preferences().setAcceleratedCompositingEnabled(false);
 }
 
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebContext* context, WebPageGroup* pageGroup)

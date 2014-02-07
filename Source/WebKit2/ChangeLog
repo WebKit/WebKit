@@ -1,3 +1,10 @@
+2014-02-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on GTK build since r163597
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseUpdatePreferences):
+
 2014-02-06  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Need a ObjC SPI to get the process identifier for web process.
