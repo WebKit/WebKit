@@ -30,8 +30,6 @@
 	<string>WebContentServiceInitializer</string>
 	<key>XPCService</key>
 	<dict>
-		<key>JoinExistingSession</key>
-		<true/>
 		<key>ServiceType</key>
 		<string>Application</string>
 		<key>RunLoopType</key>
