@@ -1,3 +1,18 @@
+2014-02-07  Frédéric Wang  <fred.wang@free.fr>
+
+        childShouldCreateRenderer should return false for the mspace element
+        https://bugs.webkit.org/show_bug.cgi?id=128325
+
+        Reviewed by Chris Fleizach.
+
+        Add tests to ensure that the mspace element does not have renderer
+        children.
+
+        * mathml/presentation/mspace-children-expected.png: Added.
+        * mathml/presentation/mspace-children-expected.txt: Added.
+        * mathml/presentation/mspace-children.html: Added.
+        * platform/mathml/presentation/mspace-children-expected.txt: Added.
+
 2014-02-07  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Rename grid-definition-{columns|rows} to match the new syntax

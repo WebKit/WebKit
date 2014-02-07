@@ -86,7 +86,7 @@ RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(PassRef<Render
 
 bool MathMLTextElement::childShouldCreateRenderer(const Node& child) const
 {
-    return child.isTextNode();
+    return !hasLocalName(mspaceTag) && child.isTextNode();
 }
 
 }
