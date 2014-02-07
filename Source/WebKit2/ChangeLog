@@ -1,3 +1,79 @@
+2014-02-06  Jeremy Jones  <jeremyj@apple.com>
+
+        Add support for AVKit fullscreen to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=128143
+
+        Reviewed by Simon Fraser.
+
+        Add WebVideoFullscreenManager and WebVideoFullscreenManagerProxy that implement 
+        WebVideoFullscreenModel and WebVideoFullscreenInterface.
+
+        * DerivedSources.make:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+            initialize member m_videoFullscreenManager
+    
+        (WebKit::WebPageProxy::videoFullscreenManager):
+            add accessor for videoFullscreenManager
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebVideoFullscreenManagerProxy.cpp: Added.
+        (WebKit::WebVideoFullscreenManagerProxy::create):
+        (WebKit::WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy):
+        (WebKit::WebVideoFullscreenManagerProxy::~WebVideoFullscreenManagerProxy):
+            add basic creation for object.
+
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerID):
+        (WebKit::WebVideoFullscreenManagerProxy::requestExitFullScreen):
+        (WebKit::WebVideoFullscreenManagerProxy::play):
+        (WebKit::WebVideoFullscreenManagerProxy::pause):
+        (WebKit::WebVideoFullscreenManagerProxy::togglePlayState):
+        (WebKit::WebVideoFullscreenManagerProxy::seekToTime):
+        (WebKit::WebVideoFullscreenManagerProxy::didExitFullscreen):
+            implement WebVideoFullscreenModel to send IPC message.
+
+        * UIProcess/WebVideoFullscreenManagerProxy.h: Added.
+        * UIProcess/WebVideoFullscreenManagerProxy.messages.in: Added.
+            this interface closely matches WebVideoFullscreenInterface
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::supportsFullscreenForNode):
+        (WebKit::WebChromeClient::enterFullscreenForNode):
+        (WebKit::WebChromeClient::exitFullscreenForNode):
+            Forward these requests onto the videoFullscreenManager
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::videoFullscreenManager):
+            accessor for m_videoFullscreenManager
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebVideoFullscreenManager.cpp: Added.
+        (WebKit::WebVideoFullscreenManager::create):
+        (WebKit::WebVideoFullscreenManager::WebVideoFullscreenManager):
+        (WebKit::WebVideoFullscreenManager::~WebVideoFullscreenManager):
+            add basic creation for object.
+
+        (WebKit::WebVideoFullscreenManager::supportsFullscreen):
+        (WebKit::WebVideoFullscreenManager::enterFullscreenForNode):
+        (WebKit::WebVideoFullscreenManager::exitFullscreenForNode):
+            implement interface called by WebChromeClient
+
+        (WebKit::WebVideoFullscreenManager::setDuration):
+        (WebKit::WebVideoFullscreenManager::setCurrentTime):
+        (WebKit::WebVideoFullscreenManager::setRate):
+        (WebKit::WebVideoFullscreenManager::setVideoDimensions):
+        (WebKit::WebVideoFullscreenManager::setVideoLayer):
+        (WebKit::WebVideoFullscreenManager::setVideoLayerID):
+        (WebKit::WebVideoFullscreenManager::enterFullscreen):
+        (WebKit::WebVideoFullscreenManager::exitFullscreen):
+            implement WebVideoFullscreenInterface to send IPC message.
+
+        * WebProcess/WebVideoFullscreenManager.h: Added.
+        * WebProcess/WebVideoFullscreenManager.messages.in: Added.
+            this interface closely matches WebVideoFullscreenModel
+
 2014-02-06  Anders Carlsson  <andersca@apple.com>
 
         Begin work on making preferences per page instead of per page group

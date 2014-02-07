@@ -273,7 +273,7 @@ void WebVideoFullscreenInterfaceAVKit::setVideoLayer(PlatformLayer* videoLayer)
     m_playerController.get().playerLayer = (CALayer<AVPlayerLayer>*)videoLayer;
 }
 
-void WebVideoFullscreenInterfaceAVKit::enterFullscreen(std::function<void()> completion)
+void WebVideoFullscreenInterfaceAVKit::enterFullscreenWithCompletionHandler(std::function<void()> completion)
 {
     RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
     
@@ -299,10 +299,10 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen(std::function<void()> com
 
 void WebVideoFullscreenInterfaceAVKit::enterFullscreen()
 {
-    enterFullscreen(nullptr);
+    enterFullscreenWithCompletionHandler(nullptr);
 }
 
-void WebVideoFullscreenInterfaceAVKit::exitFullscreen(std::function<void()> completion)
+void WebVideoFullscreenInterfaceAVKit::exitFullscreenWithCompletionHandler(std::function<void()> completion)
 {
     m_playerController.clear();
     RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
@@ -324,7 +324,7 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(std::function<void()> comp
 
 void WebVideoFullscreenInterfaceAVKit::exitFullscreen()
 {
-    exitFullscreen(nullptr);
+    exitFullscreenWithCompletionHandler(nullptr);
 }
 
 #endif

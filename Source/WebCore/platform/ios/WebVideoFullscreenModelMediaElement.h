@@ -47,7 +47,7 @@ class WebVideoFullscreenModelMediaElement : public WebVideoFullscreenModel, publ
     
 public:
     WebVideoFullscreenModelMediaElement();
-    virtual ~WebVideoFullscreenModelMediaElement() { }
+    virtual ~WebVideoFullscreenModelMediaElement();
     void setWebVideoFullscreenInterface(WebVideoFullscreenInterface* interface) {m_videoFullscreenInterface = interface;}
     void setMediaElement(HTMLMediaElement*);
     

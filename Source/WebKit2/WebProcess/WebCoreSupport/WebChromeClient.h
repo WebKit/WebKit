@@ -238,6 +238,12 @@ private:
     virtual void elementDidBlur(const WebCore::Node*) override;
 #endif
 
+#if PLATFORM(IOS)
+    virtual bool supportsFullscreenForNode(const WebCore::Node*);
+    virtual void enterFullscreenForNode(WebCore::Node*);
+    virtual void exitFullscreenForNode(WebCore::Node*);
+#endif
+
 #if ENABLE(FULLSCREEN_API)
     virtual bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) override;
     virtual void enterFullScreenForElement(WebCore::Element*) override;

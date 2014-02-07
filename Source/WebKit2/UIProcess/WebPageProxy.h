@@ -149,6 +149,7 @@ class WebColorPickerResultListenerProxy;
 class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebFullScreenManagerProxy;
+class WebVideoFullscreenManagerProxy;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebOpenPanelResultListenerProxy;
@@ -361,6 +362,9 @@ public:
 
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxy* fullScreenManager();
+#endif
+#if PLATFORM(IOS)
+    RefPtr<WebVideoFullscreenManagerProxy> videoFullscreenManager();
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1214,6 +1218,9 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebFullScreenManagerProxy> m_fullScreenManager;
+#endif
+#if PLATFORM(IOS)
+    RefPtr<WebVideoFullscreenManagerProxy> m_videoFullscreenManager;
 #endif
 
 #if ENABLE(VIBRATION)

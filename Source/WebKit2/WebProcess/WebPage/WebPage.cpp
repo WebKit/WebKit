@@ -182,6 +182,10 @@
 #include "WebPrintOperationGtk.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "WebVideoFullscreenManager.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -2582,6 +2586,15 @@ WebInspector* WebPage::inspector()
     if (!m_inspector)
         m_inspector = WebInspector::create(this, m_inspectorClient);
     return m_inspector.get();
+}
+#endif
+    
+#if PLATFORM(IOS)
+WebVideoFullscreenManager* WebPage::videoFullscreenManager()
+{
+    if (!m_videoFullscreenManager)
+        m_videoFullscreenManager = WebVideoFullscreenManager::create(this);
+    return m_videoFullscreenManager.get();
 }
 #endif
 

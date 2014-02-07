@@ -154,6 +154,7 @@ class WebNotificationClient;
 class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPopupMenu;
+class WebVideoFullscreenManager;
 class WebWheelEvent;
 struct AttributedString;
 struct EditorState;
@@ -204,6 +205,10 @@ public:
 
 #if ENABLE(INSPECTOR)
     WebInspector* inspector();
+#endif
+    
+#if PLATFORM(IOS)
+    WebVideoFullscreenManager* videoFullscreenManager();
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -1004,6 +1009,9 @@ private:
 
 #if ENABLE(INSPECTOR)
     RefPtr<WebInspector> m_inspector;
+#endif
+#if PLATFORM(IOS)
+    RefPtr<WebVideoFullscreenManager> m_videoFullscreenManager;
 #endif
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebFullScreenManager> m_fullScreenManager;

@@ -37,6 +37,7 @@
 #import <WebCore/EventListener.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/HTMLElement.h>
+#import <WebCore/HTMLMediaElement.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreThreadRun.h>
@@ -47,6 +48,10 @@ using namespace WebCore;
 WebVideoFullscreenModelMediaElement::WebVideoFullscreenModelMediaElement()
     : EventListener(EventListener::CPPEventListenerType)
     , m_isListening{false}
+{
+}
+
+WebVideoFullscreenModelMediaElement::~WebVideoFullscreenModelMediaElement()
 {
 }
 

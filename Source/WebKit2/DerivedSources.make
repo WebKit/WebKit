@@ -50,6 +50,7 @@ VPATH = \
     $(WebKit2)/WebProcess/Storage \
     $(WebKit2)/WebProcess/WebCoreSupport \
     $(WebKit2)/WebProcess/WebPage \
+    $(WebKit2)/WebProcess/ios \
     $(WebKit2)/WebProcess \
     $(WebKit2)/UIProcess \
     $(WebKit2)/UIProcess/Databases \
@@ -60,6 +61,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Plugins \
     $(WebKit2)/UIProcess/Storage \
     $(WebKit2)/UIProcess/mac \
+    $(WebKit2)/UIProcess/ios \
 #
 
 MESSAGE_RECEIVERS = \
@@ -126,6 +128,8 @@ MESSAGE_RECEIVERS = \
     WebResourceCacheManager \
     WebResourceCacheManagerProxy \
     WebResourceLoader \
+    WebVideoFullscreenManager \
+    WebVideoFullscreenManagerProxy \
 #
 
 SCRIPTS = \

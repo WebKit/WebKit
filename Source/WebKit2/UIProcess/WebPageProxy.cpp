@@ -96,8 +96,8 @@
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/WindowFeatures.h>
-#include <wtf/NeverDestroyed.h>
 #include <stdio.h>
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(ASYNC_SCROLLING)
 #include "RemoteScrollingCoordinatorProxy.h"
@@ -129,6 +129,11 @@
 
 #if PLATFORM(MAC)
 #include "ViewSnapshotStore.h"
+#endif
+
+#if PLATFORM(IOS)
+#include "WebVideoFullscreenManagerProxy.h"
+#include "WebVideoFullscreenManagerProxyMessages.h"
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -348,6 +353,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
 #endif
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = WebFullScreenManagerProxy::create(*this, m_pageClient.fullScreenManagerProxyClient());
+#endif
+#if PLATFORM(IOS)
+    m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this);
 #endif
 #if ENABLE(VIBRATION)
     m_vibration = WebVibrationProxy::create(this);
@@ -2969,6 +2977,13 @@ WebInspectorProxy* WebPageProxy::inspector()
 WebFullScreenManagerProxy* WebPageProxy::fullScreenManager()
 {
     return m_fullScreenManager.get();
+}
+#endif
+    
+#if PLATFORM(IOS)
+RefPtr<WebVideoFullscreenManagerProxy> WebPageProxy::videoFullscreenManager()
+{
+    return m_videoFullscreenManager;
 }
 #endif
 

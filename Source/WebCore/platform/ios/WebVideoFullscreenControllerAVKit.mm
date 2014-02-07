@@ -82,7 +82,7 @@ using namespace WebCore;
 {
     RetainPtr<WebVideoFullscreenController> strongSelf(self);
     
-    _interface->exitFullscreen([strongSelf]{
+    _interface->exitFullscreenWithCompletionHandler([strongSelf]{
         WebThreadRun([strongSelf]{
             strongSelf->_model->setMediaElement(nullptr);
             strongSelf->_interface->setWebVideoFullscreenModel(nullptr);

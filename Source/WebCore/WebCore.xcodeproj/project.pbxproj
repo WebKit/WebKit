@@ -5903,7 +5903,7 @@
 		E44613A70CD6331000FADA75 /* HTMLSourceElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44613950CD6331000FADA75 /* HTMLSourceElement.cpp */; };
 		E44613A80CD6331000FADA75 /* HTMLSourceElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613960CD6331000FADA75 /* HTMLSourceElement.h */; };
 		E44613AA0CD6331000FADA75 /* HTMLVideoElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44613980CD6331000FADA75 /* HTMLVideoElement.cpp */; };
-		E44613AB0CD6331000FADA75 /* HTMLVideoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613990CD6331000FADA75 /* HTMLVideoElement.h */; };
+		E44613AB0CD6331000FADA75 /* HTMLVideoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613990CD6331000FADA75 /* HTMLVideoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E44613AD0CD6331000FADA75 /* MediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = E446139B0CD6331000FADA75 /* MediaError.h */; };
 		E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E446139D0CD6331000FADA75 /* TimeRanges.cpp */; };
 		E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = E446139E0CD6331000FADA75 /* TimeRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };

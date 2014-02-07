@@ -64,11 +64,11 @@ public:
     void setRate(bool isPlaying, float playbackRate) override;
     void setVideoDimensions(bool hasVideo, float width, float height) override;
     void setVideoLayer(PlatformLayer*) override;
-    void setVideoLayerID(uint32_t videoContextID) override {UNUSED_PARAM(videoContextID);};
+    void setVideoLayerID(uint32_t) override { };
     void enterFullscreen() override;
-    void enterFullscreen(std::function<void()> completion);
+    void enterFullscreenWithCompletionHandler(std::function<void()>);
     void exitFullscreen() override;
-    void exitFullscreen(std::function<void()> completion);
+    void exitFullscreenWithCompletionHandler(std::function<void()>);
 };
 
 }

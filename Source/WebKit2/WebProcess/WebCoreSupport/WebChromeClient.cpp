@@ -69,6 +69,10 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 
+#if PLATFORM(IOS)
+#include "WebVideoFullscreenManager.h"
+#endif
+
 #if ENABLE(ASYNC_SCROLLING)
 #include "RemoteScrollingCoordinator.h"
 #endif
@@ -821,6 +825,23 @@ PassRefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Pag
 }
 #endif
 
+#if PLATFORM(IOS)
+bool WebChromeClient::supportsFullscreenForNode(const WebCore::Node* node)
+{
+    return m_page->videoFullscreenManager()->supportsFullscreen(node);
+}
+
+void WebChromeClient::enterFullscreenForNode(WebCore::Node* node)
+{
+    m_page->videoFullscreenManager()->enterFullscreenForNode(node);
+}
+
+void WebChromeClient::exitFullscreenForNode(WebCore::Node* node)
+{
+    m_page->videoFullscreenManager()->exitFullscreenForNode(node);
+}
+#endif
+    
 #if ENABLE(FULLSCREEN_API)
 bool WebChromeClient::supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard)
 {

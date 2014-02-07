@@ -1,3 +1,28 @@
+2014-02-06  Jeremy Jones  <jeremyj@apple.com>
+
+        Add support for AVKit fullscreen to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=128143
+
+        Reviewed by Simon Fraser.
+
+        Rename overloaded functions to prevent ambiguous template parameter
+        compile error in generated code.
+
+        Rename overloaded exitFullscreen to exitFullscreenWithCompletionHandler.
+        Rename overloaded enterFullscreen to enterFullscreenWithCompletionHandler.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController exitFullscreen]):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreenWithCompletionHandler):
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreenWithCompletionHandler):
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen):
+        * platform/ios/WebVideoFullscreenModelMediaElement.h:
+
 2014-02-06  Jeffrey Pfau  <jpfau@apple.com>
 
         loadSubframe can return null in SubframeLoader::loadOrRedirectSubframe

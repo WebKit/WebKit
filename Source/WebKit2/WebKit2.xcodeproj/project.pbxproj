@@ -606,9 +606,14 @@
 		37FC19471850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37FC194A18510D6A008CFA47 /* WKNSURLAuthenticationChallenge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37FC194818510D6A008CFA47 /* WKNSURLAuthenticationChallenge.mm */; };
 		37FC194B18510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */; };
+		3F418EF91887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF51887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp */; };
+		3F418EFB1887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF71887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp */; };
 		3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */; };
 		3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BB15893F630090FF62 /* WebColorChooser.h */; };
 		3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorPicker.h */; };
+		3F889D14188778C900FEADAF /* WebVideoFullscreenManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.cpp */; };
+		3F889D15188778C900FEADAF /* WebVideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F889D13188778C900FEADAF /* WebVideoFullscreenManagerProxy.h */; };
+		3F889D171887859300FEADAF /* WebVideoFullscreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.cpp */; };
 		4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
 		51032F18180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51032F16180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp */; };
@@ -2300,9 +2305,19 @@
 		37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		37FC194818510D6A008CFA47 /* WKNSURLAuthenticationChallenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLAuthenticationChallenge.mm; sourceTree = "<group>"; };
 		37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLAuthenticationChallenge.h; sourceTree = "<group>"; };
+		3F418EF51887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVideoFullscreenManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		3F418EF61887BD97002795FD /* WebVideoFullscreenManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenManagerMessages.h; sourceTree = "<group>"; };
+		3F418EF71887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVideoFullscreenManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		3F418EF81887BD97002795FD /* WebVideoFullscreenManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenManagerProxyMessages.h; sourceTree = "<group>"; };
 		3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorChooser.cpp; sourceTree = "<group>"; };
 		3F87B9BB15893F630090FF62 /* WebColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooser.h; sourceTree = "<group>"; };
 		3F87B9BF158940D80090FF62 /* WebColorPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPicker.h; sourceTree = "<group>"; };
+		3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebVideoFullscreenManager.cpp; path = ios/WebVideoFullscreenManager.cpp; sourceTree = "<group>"; };
+		3F889D0E1887699C00FEADAF /* WebVideoFullscreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenManager.h; path = ios/WebVideoFullscreenManager.h; sourceTree = "<group>"; };
+		3F889D101887710000FEADAF /* WebVideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebVideoFullscreenManager.messages.in; path = ios/WebVideoFullscreenManager.messages.in; sourceTree = "<group>"; };
+		3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebVideoFullscreenManagerProxy.cpp; path = ios/WebVideoFullscreenManagerProxy.cpp; sourceTree = "<group>"; };
+		3F889D13188778C900FEADAF /* WebVideoFullscreenManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenManagerProxy.h; path = ios/WebVideoFullscreenManagerProxy.h; sourceTree = "<group>"; };
+		3F889D1618877A2400FEADAF /* WebVideoFullscreenManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = WebVideoFullscreenManagerProxy.messages.in; path = ios/WebVideoFullscreenManagerProxy.messages.in; sourceTree = "<group>"; };
 		4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockingResponseMap.h; sourceTree = "<group>"; };
 		510031F61379CACB00C8DFE4 /* SecItemShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = SecItemShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
@@ -4198,6 +4213,9 @@
 				2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */,
 				2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */,
 				2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */,
+				3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.cpp */,
+				3F889D13188778C900FEADAF /* WebVideoFullscreenManagerProxy.h */,
+				3F889D1618877A2400FEADAF /* WebVideoFullscreenManagerProxy.messages.in */,
 			);
 			name = ios;
 			sourceTree = "<group>";
@@ -4206,6 +4224,9 @@
 			isa = PBXGroup;
 			children = (
 				2DA944B21884E9EC00ED86DB /* WebProcessIOS.mm */,
+				3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.cpp */,
+				3F889D0E1887699C00FEADAF /* WebVideoFullscreenManager.h */,
+				3F889D101887710000FEADAF /* WebVideoFullscreenManager.messages.in */,
 			);
 			name = ios;
 			sourceTree = "<group>";
@@ -6042,6 +6063,10 @@
 				33367654130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessages.h */,
 				51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */,
 				51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */,
+				3F418EF51887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp */,
+				3F418EF61887BD97002795FD /* WebVideoFullscreenManagerMessages.h */,
+				3F418EF71887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp */,
+				3F418EF81887BD97002795FD /* WebVideoFullscreenManagerProxyMessages.h */,
 			);
 			name = "Derived Sources";
 			path = DerivedSources/WebKit2;
@@ -6603,6 +6628,7 @@
 				BC1DFEA412B31F87005DF730 /* WebOpenPanelResultListenerProxy.h in Headers */,
 				BC032D8F10F437A00058C15A /* WebPage.h in Headers */,
 				5153569D1291B1D2000749DC /* WebPageContextMenuClient.h in Headers */,
+				3F889D15188778C900FEADAF /* WebVideoFullscreenManagerProxy.h in Headers */,
 				BC7B6206129A0A6700D174A4 /* WebPageGroup.h in Headers */,
 				BC7B625212A43C9600D174A4 /* WebPageGroupData.h in Headers */,
 				BC7B621512A4219A00D174A4 /* WebPageGroupProxy.h in Headers */,
@@ -7921,6 +7947,7 @@
 				F6A25FDC12ADC6CC00DC40CC /* WebDatabaseManager.cpp in Sources */,
 				F62A76B612B1B25F0005F1B6 /* WebDatabaseManagerMessageReceiver.cpp in Sources */,
 				51E35209180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm in Sources */,
+				3F418EF91887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp in Sources */,
 				F62A765C12B1ABC30005F1B6 /* WebDatabaseManagerProxy.cpp in Sources */,
 				BCAC112012C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp in Sources */,
 				F62A76B812B1B25F0005F1B6 /* WebDatabaseManagerProxyMessageReceiver.cpp in Sources */,
@@ -8056,6 +8083,7 @@
 				33367635130C99B2006C9DE2 /* WebResourceCacheManagerProxy.cpp in Sources */,
 				33367657130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp in Sources */,
 				510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */,
+				3F889D14188778C900FEADAF /* WebVideoFullscreenManagerProxy.cpp in Sources */,
 				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,
 				378E1A3D181ED6FF0031007A /* APIObject.mm in Sources */,
 				51FB08FF1639DE1A00EC324A /* WebResourceLoadScheduler.cpp in Sources */,
@@ -8166,7 +8194,9 @@
 				BC85806312B8505700EDEB2E /* WKOpenPanelParameters.cpp in Sources */,
 				BC85806212B8505700EDEB2E /* WKOpenPanelResultListener.cpp in Sources */,
 				51FCB18817BBFE0300394CD8 /* SynchronousNetworkLoaderClient.cpp in Sources */,
+				3F418EFB1887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp in Sources */,
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
+				3F889D171887859300FEADAF /* WebVideoFullscreenManager.cpp in Sources */,
 				BC7B633812A45ABA00D174A4 /* WKPageGroup.cpp in Sources */,
 				BCE17B7D1381F1170012A641 /* WKPagePrivateMac.cpp in Sources */,
 				7C135AA8173B0BCA00586AE2 /* WKPluginInformation.cpp in Sources */,
