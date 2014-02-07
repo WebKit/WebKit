@@ -1,5 +1,11 @@
 2014-02-06  Brady Eidson  <beidson@apple.com>
 
+        Unreviewed build fix after r163612.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+
+2014-02-06  Brady Eidson  <beidson@apple.com>
+
         IDB: Remove the entirely unnecessary "Value Key" concept
         https://bugs.webkit.org/show_bug.cgi?id=128360
 

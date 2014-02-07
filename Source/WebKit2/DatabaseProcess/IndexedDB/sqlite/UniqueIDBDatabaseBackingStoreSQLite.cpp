@@ -34,7 +34,6 @@
 #include "SQLiteIDBCursor.h"
 #include "SQLiteIDBTransaction.h"
 #include <WebCore/FileSystem.h>
-#include <WebCore/IDBBindingUtilities.h>
 #include <WebCore/IDBDatabaseMetadata.h>
 #include <WebCore/IDBGetResult.h>
 #include <WebCore/IDBKeyData.h>
