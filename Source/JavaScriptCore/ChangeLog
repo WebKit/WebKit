@@ -1,3 +1,26 @@
+2014-02-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSManagedValue should automatically call removeManagedReference:withOwner: upon dealloc
+        https://bugs.webkit.org/show_bug.cgi?id=124053
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSManagedValue.h:
+        * API/JSManagedValue.mm:
+        (+[JSManagedValue managedValueWithValue:andOwner:]):
+        (-[JSManagedValue initWithValue:]):
+        (-[JSManagedValue dealloc]):
+        (-[JSManagedValue didAddOwner:]):
+        (-[JSManagedValue didRemoveOwner:]):
+        * API/JSManagedValueInternal.h: Added.
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine addManagedReference:withOwner:]):
+        (-[JSVirtualMachine removeManagedReference:withOwner:]):
+        * API/WebKitAvailability.h:
+        * API/tests/testapi.mm:
+        (-[TextXYZ click]):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Console support to JSContext Inspection

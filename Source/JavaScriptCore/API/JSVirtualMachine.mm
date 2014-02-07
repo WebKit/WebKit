@@ -31,6 +31,7 @@
 
 #import "APICast.h"
 #import "APIShims.h"
+#import "JSManagedValueInternal.h"
 #import "JSVirtualMachine.h"
 #import "JSVirtualMachineInternal.h"
 #import "JSWrapperMap.h"
@@ -161,7 +162,12 @@ static id getInternalObjcObject(id object)
         [m_externalObjectGraph setObject:ownedObjects forKey:owner];
         [ownedObjects release];
     }
-    NSMapInsert(ownedObjects, object, reinterpret_cast<void*>(reinterpret_cast<size_t>(NSMapGet(ownedObjects, object)) + 1));
+
+    if ([object isKindOfClass:[JSManagedValue class]])
+        [object didAddOwner:owner];
+        
+    size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects, object));
+    NSMapInsert(ownedObjects, object, reinterpret_cast<void*>(count + 1));
 }
 
 - (void)removeManagedReference:(id)object withOwner:(id)owner
@@ -186,6 +192,9 @@ static id getInternalObjcObject(id object)
     
     if (count == 1)
         NSMapRemove(ownedObjects, object);
+
+    if ([object isKindOfClass:[JSManagedValue class]])
+        [object didRemoveOwner:owner];
 
     if (![ownedObjects count])
         [m_externalObjectGraph removeObjectForKey:owner];

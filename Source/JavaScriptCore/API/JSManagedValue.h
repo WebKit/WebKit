@@ -27,6 +27,7 @@
 #define JSManagedValue_h
 
 #import <JavaScriptCore/JSBase.h>
+#import <JavaScriptCore/WebKitAvailability.h>
 
 #if JSC_OBJC_API_ENABLED
 
@@ -63,6 +64,18 @@ OBJC_VISIBLE
 @result The new JSManagedValue.
 */
 + (JSManagedValue *)managedValueWithValue:(JSValue *)value;
+// FIXME: There's a bug in earlier versions of clang that shipped on 10.8 that causes the NS_AVAILABLE macro
+// to be ignored by the preprocessor when it follows a class method. The compiler then tries to treat the 
+// macro as part of the selector.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
++ (JSManagedValue *)managedValueWithValue:(JSValue *)value andOwner:(id)owner NS_AVAILABLE(10_10, 8_0);
+#else
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
++ (JSManagedValue *)managedValueWithValue:(JSValue *)value andOwner:(id)owner __attribute__((availability(macosx,__NSi_10_10)));
+#else
++ (JSManagedValue *)managedValueWithValue:(JSValue *)value andOwner:(id)owner __attribute__((availability(ios,__NSi_8_0)));
+#endif
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
 /*!
 @method

@@ -172,13 +172,6 @@ bool testXYZTested = false;
     JSValue *function = [m_onclickHandler value];
     [function callWithArguments:[NSArray array]];
 }
-- (void)dealloc
-{
-    [[m_onclickHandler value].context.virtualMachine removeManagedReference:m_onclickHandler withOwner:self];
-#if !__has_feature(objc_arc)
-    [super dealloc];
-#endif
-}
 @end
 
 @class TinyDOMNode;
@@ -211,18 +204,6 @@ bool testXYZTested = false;
 #endif
 
     return self;
-}
-
-- (void)dealloc
-{
-    for (TinyDOMNode *child in m_children)
-        [m_sharedVirtualMachine removeManagedReference:child withOwner:self];
-
-#if !__has_feature(objc_arc)
-    [m_children release];
-    [m_sharedVirtualMachine release];
-    [super dealloc];
-#endif
 }
 
 - (void)appendChild:(TinyDOMNode *)child

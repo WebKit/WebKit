@@ -27,10 +27,30 @@
 #define __WebKitAvailability__
 
 #ifdef __APPLE__
+
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CoreFoundation.h>
-#else
+
+#if !defined(NS_AVAILABLE)
+#define NS_AVAILABLE(_mac, _ios)
+#endif // !defined(NS_AVAILABLE)
+#if !defined(CF_AVAILABLE)
 #define CF_AVAILABLE(_mac, _ios)
+#endif // !defined(CF_AVAILABLE)
+
+#else // __APPLE__
+
+#define CF_AVAILABLE(_mac, _ios)
+#define NS_AVAILABLE(_mac, _ios)
+
+#endif // __APPLE__
+
+#if !defined(__NSi_10_10)
+#define __NSi_10_10 introduced=10.10
+#endif
+
+#if !defined(__NSi_8_0)
+#define __NSi_8_0 introduced=8.0
 #endif
 
 #endif /* __WebKitAvailability__ */
