@@ -171,12 +171,10 @@ public:
     operator CGRect() const;
 #endif
 
-#if !PLATFORM(IOS)
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if PLATFORM(MAC) && !PLATFORM(IOS) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     FloatRect(const NSRect&);
     operator NSRect() const;
 #endif
-#endif // !PLATFORM(IOS)
 
 #if USE(CAIRO)
     FloatRect(const cairo_rectangle_t&);

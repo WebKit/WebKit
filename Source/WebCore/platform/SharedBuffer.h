@@ -42,7 +42,7 @@
 #include "GUniquePtrSoup.h"
 #endif
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
 OBJC_CLASS NSData;
 #endif
 
@@ -67,7 +67,7 @@ public:
     
     ~SharedBuffer();
     
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
     // FIXME: This class exists as a temporary workaround so that code that does:
     // [buffer->createNSData() autorelease] will fail to compile.
     // Once both Mac and iOS builds with this change we can change the return type to be RetainPtr<NSData>,

@@ -409,7 +409,7 @@ float Font::width(const TextRun& run, int& charsConsumed, String& glyphName) con
     return width(run);
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 PassOwnPtr<TextLayout> Font::createLayout(RenderText*, float, bool) const
 {
     return nullptr;

@@ -157,7 +157,7 @@ public:
     {
         return glyphDataAndPageForCharacter(c, mirror, variant).first;
     }
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     const SimpleFontData* fontDataForCombiningCharacterSequence(const UChar*, size_t length, FontDataVariant) const;
 #endif
     std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(UChar32 c, bool mirror, FontDataVariant variant) const

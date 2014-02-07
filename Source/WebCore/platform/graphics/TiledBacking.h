@@ -32,7 +32,7 @@ static const int defaultTileWidth = 512;
 static const int defaultTileHeight = 512;
 
 class IntRect;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 class PlatformCALayer;
 #endif
 
@@ -100,7 +100,7 @@ public:
     virtual IntRect tileGridExtent() const = 0;
     virtual void setScrollingModeIndication(ScrollingModeIndication) = 0;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual PlatformCALayer* tiledScrollingIndicatorLayer() = 0;
 #endif
 };

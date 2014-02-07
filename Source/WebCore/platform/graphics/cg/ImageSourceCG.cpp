@@ -57,7 +57,7 @@ const CFStringRef kCGImageSourceSkipMetadata = CFSTR("kCGImageSourceSkipMetadata
 bool ImageSource::s_acceleratedImageDecoding;
 #endif
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, size_t count)
 {
     SharedBuffer* sharedBuffer = static_cast<SharedBuffer*>(info);
@@ -151,7 +151,7 @@ bool ImageSource::initialized() const
 
 void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (!m_decoder)
         m_decoder = CGImageSourceCreateIncremental(0);
     // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.  We use SharedBuffer's ability

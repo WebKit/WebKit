@@ -50,7 +50,7 @@
 #undef VERSION
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #if PLATFORM(IOS)
 #include <OpenGLES/ES2/gl.h>
 #ifdef __OBJC__
@@ -484,7 +484,7 @@ public:
     static PassRefPtr<GraphicsContext3D> createForCurrentGLContext();
     ~GraphicsContext3D();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     PlatformGraphicsContext3D platformGraphicsContext3D() const { return m_contextObj; }
     Platform3DObject platformTexture() const { return m_compositorTexture; }
     CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }

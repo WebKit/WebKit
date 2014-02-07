@@ -32,7 +32,7 @@
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
 #endif
 

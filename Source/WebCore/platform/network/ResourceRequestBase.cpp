@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-#if !USE(SOUP) && (!PLATFORM(MAC) || USE(CFNETWORK))
+#if !USE(SOUP) && (!PLATFORM(COCOA) || USE(CFNETWORK))
 double ResourceRequestBase::s_defaultTimeoutInterval = INT_MAX;
 #else
 // Will use NSURLRequest default timeout unless set to a non-zero value with setDefaultTimeoutInterval().
@@ -522,7 +522,7 @@ void ResourceRequestBase::updateResourceRequest(HTTPBodyUpdatePolicy bodyPolicy)
     }
 }
 
-#if !PLATFORM(MAC) && !USE(CFNETWORK) && !USE(SOUP)
+#if !PLATFORM(COCOA) && !USE(CFNETWORK) && !USE(SOUP)
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
     // This is used by the loader to control the number of issued parallel load requests. 

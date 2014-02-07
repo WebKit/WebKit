@@ -41,7 +41,7 @@
 #endif
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "ResourceLoadPriority.h"
 #include "WebCoreSystemInterface.h"
 #include <dlfcn.h>
@@ -84,7 +84,7 @@ static CFURLRequestCopyContentDispositionEncodingFallbackArrayFunction findCFURL
 {
     return reinterpret_cast<CFURLRequestCopyContentDispositionEncodingFallbackArrayFunction>(GetProcAddress(findCFNetworkModule(), "_CFURLRequestCopyContentDispositionEncodingFallbackArray"));
 }
-#elif PLATFORM(MAC)
+#elif PLATFORM(COCOA)
 static CFURLRequestSetContentDispositionEncodingFallbackArrayFunction findCFURLRequestSetContentDispositionEncodingFallbackArrayFunction()
 {
     return reinterpret_cast<CFURLRequestSetContentDispositionEncodingFallbackArrayFunction>(dlsym(RTLD_DEFAULT, "_CFURLRequestSetContentDispositionEncodingFallbackArray"));
@@ -192,7 +192,7 @@ void ResourceRequest::doUpdatePlatformRequest()
 #endif
 
     m_cfRequest = adoptCF(cfRequest);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     updateNSURLRequest();
 #endif
 }
@@ -228,7 +228,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
     }
 
     m_cfRequest = adoptCF(cfRequest);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     updateNSURLRequest();
 #endif
 }
@@ -332,12 +332,12 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
     CFMutableURLRequestRef cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
     wkSetRequestStorageSession(storageSession, cfRequest);
     m_cfRequest = adoptCF(cfRequest);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     updateNSURLRequest();
 #endif
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 void ResourceRequest::applyWebArchiveHackForMail()
 {
 #if !PLATFORM(IOS)

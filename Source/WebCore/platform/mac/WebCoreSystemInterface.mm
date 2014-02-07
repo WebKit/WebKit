@@ -151,10 +151,8 @@ NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
 
 NSCursor *(*wkCursor)(const char*);
 
-#if PLATFORM(MAC)
 NSArray *(*wkSpeechSynthesisGetVoiceIdentifiers)(void);
 NSString *(*wkSpeechSynthesisGetDefaultVoiceIdentifierForLocale)(NSLocale *);
-#endif
 
 void (*wkUnregisterUniqueIdForElement)(id element);
 void (*wkAccessibilityHandleFocusChanged)(void);

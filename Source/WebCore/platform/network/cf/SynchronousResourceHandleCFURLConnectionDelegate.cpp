@@ -40,10 +40,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
 #include "WebCoreURLResponse.h"
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
 
 #if PLATFORM(IOS)
 #include "WebCoreThread.h"
@@ -102,14 +102,14 @@ CFURLRequestRef SynchronousResourceHandleCFURLConnectionDelegate::willSendReques
     return cfRequest;
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 static void setDefaultMIMEType(CFURLResponseRef response)
 {
     static CFStringRef defaultMIMETypeString = defaultMIMEType().createCFString().leakRef();
     
     CFURLResponseSetMIMEType(response, defaultMIMETypeString);
 }
-#endif // !PLATFORM(MAC)
+#endif // !PLATFORM(COCOA)
 
 void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLResponseRef cfResponse)
 {
@@ -118,7 +118,7 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLR
     if (!m_handle->client())
         return;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
     CFHTTPMessageRef msg = wkGetCFURLResponseHTTPResponse(cfResponse);
     int statusCode = msg ? CFHTTPMessageGetResponseStatusCode(msg) : 0;

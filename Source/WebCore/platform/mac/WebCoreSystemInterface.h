@@ -65,7 +65,7 @@ typedef FMFont ATSUFontID;
 typedef UInt16 ATSGlyphRef;
 #endif
 
-#if PLATFORM(MAC) && USE(CA)
+#if PLATFORM(COCOA) && USE(CA)
 #if !PLATFORM(IOS_SIMULATOR)
 typedef struct __IOSurface *IOSurfaceRef;
 #endif // !PLATFORM(IOS_SIMULATOR)
@@ -261,7 +261,7 @@ extern CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(cons
 
 extern CGSize (*wkCTRunGetInitialAdvance)(CTRunRef);
 
-#if PLATFORM(MAC) && USE(CA) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(COCOA) && USE(CA) && !PLATFORM(IOS_SIMULATOR)
 extern CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
 extern CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 #endif
@@ -280,10 +280,8 @@ extern NSCursor *(*wkCursor)(const char*);
 #endif // !PLATFORM(IOS)
     
 #if !PLATFORM(IOS)
-#if PLATFORM(MAC)
 extern NSArray *(*wkSpeechSynthesisGetVoiceIdentifiers)(void);
 extern NSString *(*wkSpeechSynthesisGetDefaultVoiceIdentifierForLocale)(NSLocale *);
-#endif
 
 extern void (*wkUnregisterUniqueIdForElement)(id element);
 extern void (*wkAccessibilityHandleFocusChanged)(void);    

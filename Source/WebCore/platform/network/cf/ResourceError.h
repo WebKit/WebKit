@@ -37,7 +37,7 @@
 #include <wincrypt.h> // windows.h must be included before wincrypt.h.
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 OBJC_CLASS NSError;
 #endif
 
@@ -72,7 +72,7 @@ public:
     operator CFStreamError() const;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     ResourceError(NSError *);
     NSError *nsError() const;
     operator NSError *() const;
@@ -88,7 +88,7 @@ private:
     bool m_dataIsUpToDate;
 #if USE(CFNETWORK)
     mutable RetainPtr<CFErrorRef> m_platformError;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     mutable RetainPtr<NSError> m_platformNSError;
 #endif
 #if PLATFORM(WIN)

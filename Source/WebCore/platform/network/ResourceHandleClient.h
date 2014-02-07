@@ -35,7 +35,7 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 OBJC_CLASS NSCachedURLResponse;
 #endif
 
@@ -92,7 +92,7 @@ namespace WebCore {
         // Client will pass an updated request using ResourceHandle::continueWillCacheResponse() when ready.
 #if USE(CFNETWORK)
         virtual void willCacheResponseAsync(ResourceHandle*, CFCachedURLResponseRef);
-#elif PLATFORM(MAC)
+#elif PLATFORM(COCOA)
         virtual void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse *);
 #endif
 
@@ -120,7 +120,7 @@ namespace WebCore {
         virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
 #endif // PLATFORM(WIN)
 
-#elif PLATFORM(MAC)
+#elif PLATFORM(COCOA)
         virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *response) { return response; }
         virtual void willStopBufferingData(ResourceHandle*, const char*, unsigned) { }
 #endif

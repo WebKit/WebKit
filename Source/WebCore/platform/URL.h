@@ -39,7 +39,7 @@ typedef const struct __CFURL* CFURLRef;
 #include "GUniquePtrSoup.h"
 #endif
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
 OBJC_CLASS NSURL;
 #endif
 
@@ -169,7 +169,7 @@ public:
     GUniquePtr<SoupURI> createSoupURI() const;
 #endif
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
     URL(NSURL*);
     operator NSURL*() const;
 #endif

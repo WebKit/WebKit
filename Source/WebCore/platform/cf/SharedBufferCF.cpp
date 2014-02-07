@@ -49,9 +49,9 @@ SharedBuffer::SharedBuffer(CFDataRef cfData)
 {
 }
 
-// Mac is a CF platform but has an even more efficient version of this method,
-// so only use this version for non-Mac
-#if !PLATFORM(MAC)
+// Using Foundation allows for an even more efficient implementation of this function,
+// so only use this version for non-Foundation.
+#if !USE(FOUNDATION)
 RetainPtr<CFDataRef> SharedBuffer::createCFData()
 {
     if (m_cfData) {

@@ -31,7 +31,7 @@
 #if ENABLE(DRAG_SUPPORT)
 namespace WebCore {
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, 
     DragOperation sourceOperationMask, DragApplicationFlags flags)
     : m_clientPosition(clientPosition)

@@ -60,7 +60,7 @@ DisplayRefreshMonitor::DisplayRefreshMonitor(PlatformDisplayID displayID)
     , m_unscheduledFireCount(0)
     , m_displayID(displayID)
     , m_clientsToBeNotified(nullptr)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_displayLink(0)
 #endif
 {

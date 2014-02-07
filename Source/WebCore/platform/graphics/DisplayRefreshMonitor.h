@@ -35,7 +35,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 typedef struct __CVDisplayLink *CVDisplayLinkRef;
 #endif
 

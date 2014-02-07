@@ -312,7 +312,7 @@ Vector<String> listDirectory(const String& path, const String& filter)
 }
 #endif
 
-#if !PLATFORM(MAC)
+#if !OS(DARWIN) || PLATFORM(EFL) || PLATFORM(GTK)
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
     char buffer[PATH_MAX];

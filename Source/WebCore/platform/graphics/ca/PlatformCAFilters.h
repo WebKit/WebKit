@@ -52,7 +52,7 @@ public:
     static int numAnimatedFilterProperties(FilterOperation::OperationType);
     static const char* animatedFilterPropertyName(FilterOperation::OperationType, int internalFilterPropertyIndex);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static RetainPtr<NSValue> filterValueForOperation(const FilterOperation*, int internalFilterPropertyIndex);
 #endif
 

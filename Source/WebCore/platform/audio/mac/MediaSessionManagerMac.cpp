@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaSessionManager.h"
 
-#if USE(AUDIO_SESSION) && PLATFORM(MAC)
+#if USE(AUDIO_SESSION)
 
 #include "AudioSession.h"
 #include "Logging.h"
@@ -36,7 +36,7 @@ using namespace WebCore;
 
 static const size_t kWebAudioBufferSize = 128;
 
-#if PLATFORM(IOS) ||__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static const size_t kLowPowerVideoBufferSize = 4096;
 #endif
 
@@ -54,4 +54,4 @@ void MediaSessionManager::updateSessionState()
 #endif
 }
 
-#endif // USE(AUDIO_SESSION) && PLATFORM(MAC)
+#endif // USE(AUDIO_SESSION)

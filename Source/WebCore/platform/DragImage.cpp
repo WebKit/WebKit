@@ -201,7 +201,7 @@ DragImageRef createDragImageForImage(Frame& frame, Node& node, IntRect& imageRec
     return createDragImageFromSnapshot(snapshotNode(frame, node), &node);
 }
 
-#if !PLATFORM(MAC) && (!PLATFORM(WIN) || OS(WINCE))
+#if !PLATFORM(COCOA) && (!PLATFORM(WIN) || OS(WINCE))
 DragImageRef createDragImageForLink(URL&, const String&, FontRenderingMode)
 {
     return nullptr;

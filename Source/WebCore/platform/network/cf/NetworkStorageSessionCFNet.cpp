@@ -30,7 +30,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PassOwnPtr.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
 #else
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -55,7 +55,7 @@ void NetworkStorageSession::switchToNewTestingSession()
 {
     // Set a private session for testing to avoid interfering with global cookies. This should be different from private browsing session.
     // FIXME: It looks like creating a new session with the same identifier may be just creating a reference to the same storage. See <rdar://problem/11571450> and <rdar://problem/12384380>.
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(CFSTR("Private WebKit Session")))));
 #else
     defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(CFSTR("Private WebKit Session"), defaultNetworkStorageSession()->platformSession()))));
@@ -93,7 +93,7 @@ std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrows
 {
     RetainPtr<CFStringRef> cfIdentifier = String(identifierBase + ".PrivateBrowsing").createCFString();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     auto session = std::make_unique<NetworkStorageSession>(adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get())));
 #else
     auto session = std::make_unique<NetworkStorageSession>(adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession())));

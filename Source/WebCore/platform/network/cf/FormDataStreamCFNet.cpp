@@ -48,7 +48,7 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 extern "C" void CFURLRequestSetHTTPRequestBody(CFMutableURLRequestRef mutableHTTPRequest, CFDataRef httpBody);
 extern "C" void CFURLRequestSetHTTPHeaderFieldValue(CFMutableURLRequestRef mutableHTTPRequest, CFStringRef httpHeaderField, CFStringRef httpHeaderFieldValue);
 extern "C" void CFURLRequestSetHTTPRequestBodyStream(CFMutableURLRequestRef req, CFReadStreamRef bodyStream);

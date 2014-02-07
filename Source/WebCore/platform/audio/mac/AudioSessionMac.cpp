@@ -164,4 +164,4 @@ void AudioSession::setPreferredBufferSize(size_t bufferSize)
 
 }
 
-#endif // USE(AUDIO_SESSION) && PLATFORM(MAC)
+#endif // USE(AUDIO_SESSION) && PLATFORM(MAC) && !PLATFORM(IOS)

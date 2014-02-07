@@ -286,7 +286,7 @@ static void initializeSupportedImageMIMETypesForEncoding()
     supportedImageMIMETypesForEncoding = new HashSet<String>;
 
 #if USE(CG)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<CFArrayRef> supportedTypes = adoptCF(CGImageDestinationCopyTypeIdentifiers());
     CFIndex count = CFArrayGetCount(supportedTypes.get());
     for (CFIndex i = 0; i < count; i++) {

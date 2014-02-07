@@ -573,7 +573,7 @@ PassRefPtr<FontData> FontCache::getFontData(const FontDescription& description, 
     if (familyIndex == familyCount)
         familyIndex = cAllFamiliesScanned;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (!result) {
         // We didn't find a font. Try to find a similar font using our own specific knowledge about our platform.
         // For example on OS X, we know to map any families containing the words Arabic, Pashto, or Urdu to the

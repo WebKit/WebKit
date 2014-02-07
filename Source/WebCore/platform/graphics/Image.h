@@ -40,7 +40,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
 OBJC_CLASS NSImage;
 #endif
 
@@ -148,7 +148,7 @@ public:
     virtual NSImage* getNSImage() { return 0; }
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual CFDataRef getTIFFRepresentation() { return 0; }
 #endif
 

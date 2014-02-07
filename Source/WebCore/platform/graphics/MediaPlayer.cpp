@@ -53,7 +53,7 @@
 #define PlatformMediaEngineClassName MediaPlayerPrivateGStreamer
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #if PLATFORM(IOS)
 #include "MediaPlayerPrivateIOS.h"
 #else
@@ -213,7 +213,7 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions r
 
 #if USE(AVFOUNDATION)
     if (Settings::isAVFoundationEnabled()) {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
 #if ENABLE(MEDIA_SOURCE)
         MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(addMediaEngine);
@@ -769,7 +769,7 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
     if (!engine)
         return IsNotSupported;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // YouTube will ask if the HTMLMediaElement canPlayType video/webm, then
     // video/x-flv, then finally video/mp4, and will then load a URL of the first type
     // in that list which returns "probably". When Perian is installed,

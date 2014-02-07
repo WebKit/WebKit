@@ -50,7 +50,7 @@ private:
     bool m_isSuspended;
     LayerFlushSchedulerClient* m_client;
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<CFRunLoopObserverRef> m_runLoopObserver;
     static void runLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context);
 

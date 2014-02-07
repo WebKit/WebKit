@@ -29,7 +29,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 #endif
@@ -47,11 +47,11 @@ public:
 
     static void switchToNewTestingSession();
 
-#if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)
+#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     bool isPrivateBrowsingSession() const { return m_isPrivate; }
 #endif
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
     NetworkStorageSession(RetainPtr<CFURLStorageSessionRef>);
     // May be null, in which case a Foundation default should be used.
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
@@ -68,7 +68,7 @@ public:
 #endif
 
 private:
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
     NetworkStorageSession();
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
 #elif USE(SOUP)
@@ -77,7 +77,7 @@ private:
     RefPtr<NetworkingContext> m_context;
 #endif
 
-#if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)
+#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     bool m_isPrivate;
 #endif
 };

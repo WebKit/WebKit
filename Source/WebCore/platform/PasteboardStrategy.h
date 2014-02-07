@@ -51,7 +51,7 @@ public:
     virtual URL readURLFromPasteboard(int index, const String& pasteboardType) = 0;
     virtual long changeCount() = 0;
 #endif // PLATFORM(IOS)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void getTypes(Vector<String>& types, const String& pasteboardName) = 0;
     virtual PassRefPtr<SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) = 0;
     virtual void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) = 0;

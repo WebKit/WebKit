@@ -36,7 +36,7 @@
 #include <wtf/Functional.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 OBJC_CLASS NSMutableData;
 OBJC_CLASS WebFilterEvaluator;
 #endif
@@ -74,7 +74,7 @@ public:
 private:
     explicit ContentFilter(const ResourceResponse&);
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<WebFilterEvaluator> m_platformContentFilter;
     RetainPtr<NSData> m_replacementData;
 #endif

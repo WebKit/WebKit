@@ -176,7 +176,7 @@ Cursor::Cursor(Type type)
 {
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 
 PlatformCursor Cursor::platformCursor() const
 {

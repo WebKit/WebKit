@@ -100,7 +100,7 @@ private:
 #endif
 };
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN) && !PLATFORM(EFL)
+#if !PLATFORM(COCOA) && !PLATFORM(WIN) && !PLATFORM(EFL)
 
 inline NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(true)

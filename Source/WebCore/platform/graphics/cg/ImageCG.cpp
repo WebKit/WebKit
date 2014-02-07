@@ -35,7 +35,7 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
 #endif
 

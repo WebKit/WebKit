@@ -113,12 +113,10 @@ public:
     operator CGSize() const;
 #endif
 
-#if !PLATFORM(IOS)
-#if (PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES))
+#if PLATFORM(MAC) && !PLATFORM(IOS) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     explicit FloatSize(const NSSize &); // don't do this implicitly since it's lossy
     operator NSSize() const;
 #endif
-#endif // !PLATFORM(IOS)
 
     void dump(PrintStream& out) const;
 

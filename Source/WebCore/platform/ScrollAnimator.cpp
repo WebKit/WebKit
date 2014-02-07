@@ -81,7 +81,7 @@ void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Events in the PlatformWheelEventPhaseMayBegin phase have no deltas, and therefore never passes through the scroll handling logic below.
     // This causes us to return with an 'unhandled' return state, even though this event was successfully processed.
     //

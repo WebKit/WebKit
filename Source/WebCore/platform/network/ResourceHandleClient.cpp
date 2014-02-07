@@ -66,7 +66,7 @@ void ResourceHandleClient::willCacheResponseAsync(ResourceHandle* handle, CFCach
 {
     handle->continueWillCacheResponse(response);
 }
-#elif PLATFORM(MAC)
+#elif PLATFORM(COCOA)
 void ResourceHandleClient::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *response)
 {
     handle->continueWillCacheResponse(response);

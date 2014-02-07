@@ -40,11 +40,8 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringHash.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
-#endif
-
-#if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -189,11 +186,11 @@ public:
     CTFontRef getCTFont() const { return m_platformData.font(); }
     bool shouldNotBeUsedForArabic() const { return m_shouldNotBeUsedForArabic; };
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
 #endif
 
-#if PLATFORM(MAC) || USE(HARFBUZZ)
+#if PLATFORM(COCOA) || USE(HARFBUZZ)
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
 #endif
 
@@ -287,7 +284,7 @@ private:
         RefPtr<SimpleFontData> verticalRightOrientation;
         RefPtr<SimpleFontData> uprightOrientation;
         RefPtr<SimpleFontData> nonSyntheticItalic;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         mutable RetainPtr<CFMutableDictionaryRef> compositeFontReferences;
 #endif
 
@@ -304,11 +301,11 @@ private:
     float m_syntheticBoldOffset;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     mutable HashMap<unsigned, RetainPtr<CFDictionaryRef>> m_CFStringAttributes;
 #endif
 
-#if PLATFORM(MAC) || USE(HARFBUZZ)
+#if PLATFORM(COCOA) || USE(HARFBUZZ)
     mutable OwnPtr<HashMap<String, bool>> m_combiningCharacterSequenceSupport;
 #endif
 

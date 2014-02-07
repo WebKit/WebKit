@@ -29,7 +29,7 @@
 #include "NetworkStorageSession.h"
 #include <wtf/MainThread.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
 #elif PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"

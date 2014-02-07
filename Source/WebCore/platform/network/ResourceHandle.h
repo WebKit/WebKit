@@ -54,11 +54,11 @@ typedef void* LPVOID;
 typedef LPVOID HINTERNET;
 #endif
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
 #include <wtf/RetainPtr.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 OBJC_CLASS NSCachedURLResponse;
 OBJC_CLASS NSData;
 OBJC_CLASS NSError;
@@ -75,7 +75,7 @@ typedef int CFHTTPCookieStorageAcceptPolicy;
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 #endif
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 #endif
 
@@ -100,7 +100,7 @@ class SharedBuffer;
 template <typename T> class Timer;
 
 class ResourceHandle : public RefCounted<ResourceHandle>
-#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
+#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
     , public AuthenticationClient
 #endif
     {
@@ -110,10 +110,10 @@ public:
 
     virtual ~ResourceHandle();
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
     void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
 #endif
-#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
+#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
     bool shouldUseCredentialStorage();
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
     virtual void receivedCredential(const AuthenticationChallenge&, const Credential&) override;
@@ -121,7 +121,7 @@ public:
     virtual void receivedCancellation(const AuthenticationChallenge&) override;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     bool canAuthenticateAgainstProtectionSpace(const ProtectionSpace&);
 #endif
@@ -215,7 +215,7 @@ public:
     // Called in response to ResourceHandleClient::willCacheResponseAsync().
 #if USE(CFNETWORK)
     void continueWillCacheResponse(CFCachedURLResponseRef);
-#elif PLATFORM(MAC)
+#elif PLATFORM(COCOA)
     void continueWillCacheResponse(NSCachedURLResponse *);
 #endif
 
@@ -233,7 +233,7 @@ public:
     using RefCounted<ResourceHandle>::ref;
     using RefCounted<ResourceHandle>::deref;
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
     static CFStringRef synchronousLoadRunLoopMode();
 #endif
 #if PLATFORM(IOS) && USE(CFNETWORK)
@@ -270,7 +270,7 @@ private:
     virtual void refAuthenticationClient() override { ref(); }
     virtual void derefAuthenticationClient() override { deref(); }
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
     enum class SchedulingBehavior {
         Asynchronous,
         Synchronous

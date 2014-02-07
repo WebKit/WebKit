@@ -174,7 +174,7 @@ bool ResourceResponse::platformCompare(const ResourceResponse& a, const Resource
 
 #endif // USE(CFNETWORK)
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
 
 void ResourceResponse::setCertificateChain(CFArrayRef certificateChain)
 {
@@ -190,7 +190,7 @@ RetainPtr<CFArrayRef> ResourceResponse::certificateChain() const
     return adoptCF(wkCopyNSURLResponseCertificateChain(nsURLResponse()));
 }
 
-#endif // PLATFORM(MAC) || USE(CFNETWORK)
+#endif // PLATFORM(COCOA) || USE(CFNETWORK)
 
 } // namespace WebCore
 

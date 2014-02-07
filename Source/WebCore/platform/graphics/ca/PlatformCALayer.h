@@ -49,7 +49,7 @@ class PlatformCALayer;
 typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 
 class PlatformCALayer : public RefCounted<PlatformCALayer> {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     friend class PlatformCALayerMac;
 #elif PLATFORM(WIN)
     friend class PlatformCALayerWin;
@@ -218,7 +218,7 @@ public:
 
     virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) = 0;
 #endif
 

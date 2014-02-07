@@ -43,7 +43,7 @@ namespace WebCore {
     String fileButtonNoFilesSelectedLabel();
     String defaultDetailsSummaryText();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     String copyImageUnknownFileLabel();
 #endif
 
@@ -105,7 +105,7 @@ namespace WebCore {
     String contextMenuItemTagDefaultDirection();
     String contextMenuItemTagLeftToRight();
     String contextMenuItemTagRightToLeft();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     String contextMenuItemTagSearchInSpotlight();
     String contextMenuItemTagShowFonts();
     String contextMenuItemTagStyles();
@@ -179,7 +179,7 @@ namespace WebCore {
     // technical standard 35, Locale Data Markup Language, e.g. "'Week' ww, yyyy"
     String weekFormatInLDML();
 #endif
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(COCOA)
     String AXARIAContentGroupText(const String& ariaType);
 #endif
 
@@ -196,7 +196,7 @@ namespace WebCore {
     String allFilesText();
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     String builtInPDFPluginName();
     String pdfDocumentTypeDescription();
     String postScriptDocumentTypeDescription();
@@ -249,7 +249,7 @@ namespace WebCore {
     String textTrackOffMenuItemText();
     String textTrackAutomaticMenuItemText();
     String textTrackNoLabelText();
-#if PLATFORM(MAC) || PLATFORM(WIN)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     String textTrackCountryAndLanguageMenuItemText(const String& title, const String& country, const String& language);
     String textTrackLanguageMenuItemText(const String& title, const String& language);
     String closedCaptionTrackMenuItemText(const String&);

@@ -43,7 +43,7 @@ CFURLAuthChallengeRef createCF(const AuthenticationChallenge&);
 CFURLCredentialRef createCF(const Credential&);
 CFURLProtectionSpaceRef createCF(const ProtectionSpace&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 AuthenticationChallenge core(CFURLAuthChallengeRef);
 #endif
 Credential core(CFURLCredentialRef);

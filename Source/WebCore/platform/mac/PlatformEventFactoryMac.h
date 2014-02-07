@@ -39,7 +39,7 @@ public:
     static PlatformKeyboardEvent createPlatformKeyboardEvent(NSEvent *);
 };
 
-#if PLATFORM(MAC) && defined(__OBJC__)
+#if PLATFORM(COCOA) && defined(__OBJC__)
 // FIXME: This doesn't really belong here.
 IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
 

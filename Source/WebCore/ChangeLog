@@ -1,3 +1,159 @@
+2014-02-07  Dan Bernstein  <mitz@apple.com>
+
+        Stop using PLATFORM(MAC) in WebCore/platform except where it means “OS X but not iOS”
+        https://bugs.webkit.org/show_bug.cgi?id=128404
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebCore.xcconfig: Removed KeyEventMac.mm from
+        EXCLUDED_SOURCE_FILE_NAMES_iphoneos, because that file contains !PLATFORM(IOS) guards.
+        Removed WheelEventMac.mm from the same definition, because that file no longer exists.
+        * platform/ContentFilter.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * platform/ContextMenu.h: Ditto.
+        * platform/ContextMenuItem.h: Ditto.
+        * platform/Cursor.cpp: Ditto.
+        * platform/Cursor.h: Ditto.
+        * platform/DragData.cpp: Ditto.
+        * platform/DragImage.cpp: Ditto.
+        * platform/Language.cpp:
+        (WebCore::displayNameForLanguageLocale): Changed PLATFORM(MAC) to USE(CF) && !PLATFORM(WIN).
+        * platform/LocalizedStrings.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebCore::contextMenuItemTagSearchWeb):
+        * platform/LocalizedStrings.h: Ditto.
+        * platform/MIMETypeRegistry.cpp: Ditto.
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/PasteboardStrategy.h: Ditto.
+        * platform/PlatformKeyboardEvent.h: Ditto.
+        * platform/PlatformMenuDescription.h: Ditto.
+        * platform/PlatformSpeechSynthesizer.h: Ditto.
+        * platform/PlatformWheelEvent.h: Ditto.
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/SchemeRegistry.cpp: Ditto.
+        (WebCore::localURLSchemes):
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsLocal):
+        (WebCore::SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely):
+        * platform/ScrollAnimator.cpp: Ditto.
+        (WebCore::ScrollAnimator::handleWheelEvent):
+        * platform/ScrollAnimator.h: Ditto.
+        * platform/ScrollView.cpp: Ditto.
+        * platform/ScrollView.h: Ditto.
+        * platform/ScrollbarThemeComposite.h: Ditto.
+        * platform/SharedBuffer.h: Changed PLATFORM(MAC) to USE(FOUNDATION) around NSData-related
+        code.
+        * platform/URL.h: Changed PLATFORM(MAC) to USE(FOUNDATION) around NSURL-related code.
+        * platform/Widget.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * platform/Widget.h: Ditto.
+        * platform/audio/AudioSession.cpp: Changed !PLATFORM(MAC) && !PLATFORM(IOS) to
+        !PLATFORM(COCOA).
+        * platform/audio/HRTFElevation.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * platform/audio/MediaSessionManager.cpp: Ditto.
+        * platform/audio/mac/AudioSessionMac.cpp: Updated comment.
+        * platform/audio/mac/MediaSessionManagerMac.cpp: Removed PLATFORM(MAC) from Cocoa-only file.
+        * platform/cf/SharedBufferCF.cpp: Changed !PLATFORM(MAC) to !USE(FOUNDATION) and updated
+        comment.
+        * platform/cf/URLCF.cpp: Changed !PLATFORM(MAC) to !USE(FOUNDATION).
+        * platform/graphics/BitmapImage.h: Changed one instance of PLATFORM(MAC) to
+        USE(CG) || USE(APPKIT), and another to PLATFORM(COCOA).
+        * platform/graphics/DisplayRefreshMonitor.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebCore::DisplayRefreshMonitor::DisplayRefreshMonitor):
+        * platform/graphics/DisplayRefreshMonitor.h: Ditto.
+        * platform/graphics/FloatPoint.h: Collapsed nested #ifs into a single #if.
+        * platform/graphics/FloatRect.h: Ditto.
+        * platform/graphics/FloatSize.h: Ditto.
+        * platform/graphics/Font.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * platform/graphics/Font.h: Ditto.
+        * platform/graphics/FontCache.cpp: Ditto.
+        (WebCore::FontCache::getFontData):
+        * platform/graphics/FontCache.h: Ditto. Also removed redundant friend class declaration.
+        * platform/graphics/FontGlyphs.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter):
+        * platform/graphics/GlyphPage.h: Ditto.
+        * platform/graphics/GraphicsContext3D.h: Ditto.
+        * platform/graphics/Image.h: Changed PLATFORM(MAC) to USE(APPKIT) around use of NSImage.
+        Changed another PLATFORM(MAC) to PLATFORM(COCOA).
+        * platform/graphics/IntRect.h: Collapsed nested #ifs into a single #if.
+        * platform/graphics/IntSize.h: Ditto.
+        * platform/graphics/MediaPlayer.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebCore::installedMediaEngines):
+        (WebCore::MediaPlayer::supportsType):
+        * platform/graphics/SimpleFontData.cpp: Ditto.
+        (WebCore::SimpleFontData::nonSyntheticItalicFontData):
+        (WebCore::SimpleFontData::DerivedFontData::~DerivedFontData):
+        * platform/graphics/SimpleFontData.h: Ditto.
+        * platform/graphics/TiledBacking.h: Ditto.
+        * platform/graphics/ca/GraphicsLayerCA.cpp: Ditto.
+        (WebCore::GraphicsLayerCA::filtersCanBeComposited):
+        (WebCore::GraphicsLayerCA::createPlatformCALayer):
+        * platform/graphics/ca/LayerFlushScheduler.h: Ditto.
+        * platform/graphics/ca/PlatformCAAnimation.h: Ditto.
+        * platform/graphics/ca/PlatformCAFilters.h: Ditto.
+        * platform/graphics/ca/PlatformCALayer.h: Ditto.
+        * platform/graphics/cg/BitmapImageCG.cpp: Ditto.
+        * platform/graphics/cg/GraphicsContextCG.cpp: Ditto.
+        (WebCore::GraphicsContext::setAllowsFontSmoothing):
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h: Ditto.
+        * platform/graphics/cg/ImageBufferCG.cpp: Ditto.
+        * platform/graphics/cg/ImageBufferDataCG.h: Ditto.
+        * platform/graphics/cg/ImageCG.cpp: Ditto.
+        * platform/graphics/cg/ImageSourceCG.cpp: Ditto.
+        (WebCore::ImageSource::setData):
+        * platform/graphics/cg/ImageSourceCG.h: Ditto.
+        * platform/graphics/cg/PathCG.cpp: Ditto.
+        (WebCore::Path::platformAddPathForRoundedRect):
+        * platform/graphics/cg/PatternCG.cpp: Ditto.
+        * platform/graphics/gpu/DrawingBuffer.h: Ditto.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovieView): Removed PLATFORM(MAC) guards, since
+        this file is only used on Mac and iOS.
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension): Changed the GL_EXT_draw_buffers check to
+        match the implementation.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp: Changed PLATFORM(MAC) to
+        PLATFORM(COCOA).
+        * platform/mac/KeyEventMac.mm: Added !PLATFORM(IOS).
+        * platform/mac/PlatformEventFactoryMac.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * platform/mac/WebCoreSystemInterface.h: Ditto. Removed redundant check for PLATFORM(MAC).
+        * platform/mac/WebCoreSystemInterface.mm: Removed redundant check for PLATFORM(MAC).
+        * platform/network/Credential.h: Changed PLATFORM(IOS) || PLATFORM(MAC) to PLATFORM(COCOA).
+        * platform/network/NetworkStateNotifier.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * platform/network/NetworkStorageSession.h: Ditto.
+        * platform/network/NetworkingContext.h: Ditto.
+        * platform/network/ProtectionSpace.cpp: Ditto.
+        (WebCore::ProtectionSpace::receivesCredentialSecurely):
+        * platform/network/ResourceHandle.cpp: Ditto.
+        (WebCore::ResourceHandle::clearAuthentication):
+        (WebCore::ResourceHandle::shouldContentSniffURL):
+        * platform/network/ResourceHandle.h: Ditto.
+        * platform/network/ResourceHandleClient.cpp: Ditto.
+        * platform/network/ResourceHandleClient.h: Ditto.
+        * platform/network/ResourceHandleInternal.h: Ditto.
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/ResourceRequestBase.cpp: Ditto.
+        * platform/network/cf/AuthenticationCF.h: Ditto.
+        * platform/network/cf/CookieStorageCFNet.cpp: Ditto.
+        * platform/network/cf/CredentialStorageCFNet.cpp: Ditto.
+        * platform/network/cf/FormDataStreamCFNet.cpp: Ditto.
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp: Ditto.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession):
+        (WebCore::NetworkStorageSession::createPrivateBrowsingSession):
+        * platform/network/cf/ResourceError.h: Ditto.
+        * platform/network/cf/ResourceHandleCFNet.cpp: Ditto.
+        (WebCore::ResourceHandle::createCFURLConnection):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+        * platform/network/cf/ResourceRequest.h: Ditto.
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/cf/ResourceRequestCFNet.cpp: Ditto.
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::setStorageSession):
+        * platform/network/cf/ResourceResponse.h: Ditto.
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse):
+        * platform/network/mac/ResourceResponseMac.mm: Ditto.
+        * platform/posix/FileSystemPOSIX.cpp: Changed PLATFORM(MAC) to OS(DARWIN) &&
+        !PLATFORM(EFL) && !PLATFORM(GTK).
+        * platform/text/TextBoundaries.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+
 2014-02-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert r154384 and r154674 as they broke selection rect computations for text with ligatures.

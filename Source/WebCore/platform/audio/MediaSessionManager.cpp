@@ -176,7 +176,7 @@ void MediaSessionManager::applicationWillEnterForeground() const
     }
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void MediaSessionManager::updateSessionState()
 {
 }

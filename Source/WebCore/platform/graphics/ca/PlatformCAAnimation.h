@@ -34,7 +34,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 OBJC_CLASS CAPropertyAnimation;
 typedef CAPropertyAnimation* PlatformAnimationRef;
 #elif PLATFORM(WIN)
@@ -51,7 +51,7 @@ class TimingFunction;
 class PlatformCAAnimation : public RefCounted<PlatformCAAnimation> {
 public:
     friend class PlatformCALayer;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     friend class PlatformCALayerMac;
 #elif PLATFORM(WIN)
     friend class PlatformCALayerWin;
@@ -154,7 +154,7 @@ protected:
 private:
     AnimationType m_type;
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<CAPropertyAnimation> m_animation;
 #elif PLATFORM(WIN)
     RetainPtr<CACFAnimationRef> m_animation;

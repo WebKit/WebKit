@@ -42,7 +42,7 @@
 #include <CoreGraphics/CGContextPrivate.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
 #endif
 

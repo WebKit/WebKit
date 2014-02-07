@@ -34,7 +34,7 @@
 #include "PlatformMenuDescription.h"
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #elif PLATFORM(WIN)
 #include <windows.h>
@@ -87,7 +87,7 @@ namespace WebCore {
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
         Vector<ContextMenuItem> m_items;
 #else
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         // Keep this in sync with the PlatformMenuDescription typedef
         RetainPtr<NSMutableArray> m_platformDescription;
 #else

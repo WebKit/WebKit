@@ -50,7 +50,7 @@ URL::URL(CFURLRef url)
     parse(urlBytes.data());
 }
 
-#if !PLATFORM(MAC)
+#if !USE(FOUNDATION)
 RetainPtr<CFURLRef> URL::createCFURL() const
 {
     // FIXME: What should this return for invalid URLs?

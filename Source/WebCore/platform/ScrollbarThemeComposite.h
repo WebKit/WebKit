@@ -28,7 +28,7 @@
 
 #include "ScrollbarTheme.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 typedef id ScrollbarPainter;
 #else
 typedef void* ScrollbarPainter;

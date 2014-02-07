@@ -50,7 +50,7 @@
 #include "WebCoreThread.h"
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "PlatformCALayerMac.h"
 #include "WebCoreSystemInterface.h"
 #endif
@@ -315,7 +315,7 @@ std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* facto
 #if ENABLE(CSS_FILTERS)
 bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     return PlatformCALayerMac::filtersCanBeComposited(filters);
 #elif PLATFORM(WIN)
     return PlatformCALayerWin::filtersCanBeComposited(filters);
@@ -325,7 +325,7 @@ bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
     
 PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     return PlatformCALayerMac::create(layerType, owner);
 #elif PLATFORM(WIN)
     return PlatformCALayerWin::create(layerType, owner);
@@ -334,7 +334,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALay
     
 PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     return PlatformCALayerMac::create(platformLayer, owner);
 #elif PLATFORM(WIN)
     return PlatformCALayerWin::create(platformLayer, owner);

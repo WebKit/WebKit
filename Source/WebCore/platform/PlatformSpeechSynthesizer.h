@@ -32,7 +32,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS WebSpeechSynthesisWrapper;
 #endif
@@ -86,7 +86,7 @@ private:
     bool m_voiceListIsInitialized;
     PlatformSpeechSynthesizerClient* m_speechSynthesizerClient;
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<WebSpeechSynthesisWrapper> m_platformSpeechWrapper;
 #endif
 };

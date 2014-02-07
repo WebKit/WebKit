@@ -35,7 +35,7 @@ String preferredExtensionForImageSourceType(const String& type);
 
 String MIMETypeForImageSourceType(const String& type);
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, size_t count);
 #endif
 

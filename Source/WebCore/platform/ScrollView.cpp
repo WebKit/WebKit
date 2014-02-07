@@ -1397,7 +1397,7 @@ void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAl
         updateScrollbars(scrollOffset());
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 
 void ScrollView::platformAddChild(Widget*)
 {
@@ -1409,7 +1409,7 @@ void ScrollView::platformRemoveChild(Widget*)
 
 #endif
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 
 void ScrollView::platformSetScrollbarsSuppressed(bool)
 {
@@ -1425,7 +1425,7 @@ void ScrollView::platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle)
 
 #endif
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 
 void ScrollView::platformSetScrollbarModes()
 {

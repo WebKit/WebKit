@@ -53,7 +53,7 @@ class WAKView;
 #endif
 #endif // PLATFORM(IOS)
 
-#if PLATFORM(MAC) && defined __OBJC__
+#if PLATFORM(COCOA) && defined __OBJC__
 @protocol WebCoreFrameScrollView;
 #endif
 
@@ -446,7 +446,7 @@ private:
     void calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect);
     void updateOverhangAreas();
 
-#if PLATFORM(MAC) && defined __OBJC__
+#if PLATFORM(COCOA) && defined __OBJC__
 public:
     NSView* documentView() const;
 

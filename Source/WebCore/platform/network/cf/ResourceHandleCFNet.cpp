@@ -51,7 +51,7 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "ResourceHandleCFURLConnectionDelegateWithOperationQueue.h"
 #include "WebCoreSystemInterface.h"
 #if USE(CFNETWORK)
@@ -217,7 +217,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     CFDictionaryAddValue(propertiesDictionary.get(), kCFURLConnectionSocketStreamProperties, streamProperties);
     CFRelease(streamProperties);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (client() && client()->usesAsyncCallbacks())
         d->m_connectionDelegate = adoptRef(new ResourceHandleCFURLConnectionDelegateWithOperationQueue(this));
     else
@@ -546,7 +546,7 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 void ResourceHandle::schedule(SchedulePair* pair)
 {
     CFRunLoopRef runLoop = pair->runLoop();

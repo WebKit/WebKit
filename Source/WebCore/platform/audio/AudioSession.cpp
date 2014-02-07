@@ -61,7 +61,7 @@ void AudioSession::endedAudioInterruption()
         (*i)->endedAudioInterruption();
 }
 
-#if !PLATFORM(IOS) && !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 class AudioSessionPrivate {
 };
 
@@ -124,7 +124,7 @@ void AudioSession::setPreferredBufferSize(size_t)
 {
     notImplemented();
 }
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(COCOA)
 
 }
 

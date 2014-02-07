@@ -136,12 +136,10 @@ public:
     operator CGPoint() const;
 #endif
 
-#if !PLATFORM(IOS)
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if PLATFORM(MAC) && !PLATFORM(IOS) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     FloatPoint(const NSPoint&);
     operator NSPoint() const;
 #endif
-#endif // !PLATFORM(IOS)
 
     FloatPoint matrixTransform(const TransformationMatrix&) const;
     FloatPoint matrixTransform(const AffineTransform&) const;

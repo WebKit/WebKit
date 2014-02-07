@@ -32,7 +32,7 @@
 
 OBJC_CLASS NSURLRequest;
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
 typedef const struct _CFURLRequest* CFURLRequestRef;
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 #endif
@@ -75,7 +75,7 @@ namespace WebCore {
         }
         
 #if USE(CFNETWORK)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         ResourceRequest(NSURLRequest *);
         void updateNSURLRequest();
 #endif
@@ -87,7 +87,7 @@ namespace WebCore {
 #endif
             , m_cfRequest(cfRequest)
         {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
             updateNSURLRequest();
 #endif
         }
@@ -104,7 +104,7 @@ namespace WebCore {
 
         void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         void applyWebArchiveHackForMail();
         NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
 #endif
@@ -115,7 +115,7 @@ namespace WebCore {
         void setCachePartition(const String& cachePartition) { m_cachePartition = partitionName(cachePartition); }
 #endif
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
         CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const;
         void setStorageSession(CFURLStorageSessionRef);
 #endif
@@ -123,7 +123,7 @@ namespace WebCore {
         static bool httpPipeliningEnabled();
         static void setHTTPPipeliningEnabled(bool);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         static bool useQuickLookResourceCachingQuirks();
 #endif
 
@@ -149,7 +149,7 @@ namespace WebCore {
 #if USE(CFNETWORK)
         RetainPtr<CFURLRequestRef> m_cfRequest;
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         RetainPtr<NSURLRequest> m_nsRequest;
 #endif
 #if ENABLE(CACHE_PARTITIONING)

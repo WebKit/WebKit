@@ -36,7 +36,7 @@ static URLSchemesMap& localURLSchemes()
 
     if (localSchemes.isEmpty()) {
         localSchemes.add("file");
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         localSchemes.add("applewebdata");
 #endif
     }
@@ -122,7 +122,7 @@ void SchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme)
 {
     if (scheme == "file")
         return;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (scheme == "applewebdata")
         return;
 #endif
@@ -325,7 +325,7 @@ bool SchemeRegistry::schemeShouldBypassContentSecurityPolicy(const String& schem
 
 bool SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely(const String& scheme)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (equalIgnoringCase(scheme, "applewebdata"))
         return true;
 #endif

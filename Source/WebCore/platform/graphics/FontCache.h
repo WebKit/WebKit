@@ -185,7 +185,7 @@ private:
     PassRefPtr<SimpleFontData> getSystemFontFallbackForCharacters(const FontDescription&, const SimpleFontData*, const UChar* characters, int length);
 #endif
     PassOwnPtr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     PassRefPtr<SimpleFontData> similarFontPlatformData(const FontDescription&);
 #endif
 
@@ -194,14 +194,11 @@ private:
     // Don't purge if this count is > 0;
     int m_purgePreventCount;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     friend class ComplexTextController;
 #endif
     friend class SimpleFontData; // For getCachedFontData(const FontPlatformData*)
     friend class FontGlyphs;
-#if PLATFORM(IOS)
-    friend class ComplexTextController;
-#endif
 };
 
 // Get the global fontCache.

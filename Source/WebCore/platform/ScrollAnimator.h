@@ -67,7 +67,7 @@ public:
     virtual bool handleTouchEvent(const PlatformTouchEvent&);
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) { }
 #endif
 

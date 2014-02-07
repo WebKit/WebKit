@@ -43,7 +43,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
 #endif
 
@@ -1615,7 +1615,7 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 void GraphicsContext::setAllowsFontSmoothing(bool allowsFontSmoothing)
 {
     UNUSED_PARAM(allowsFontSmoothing);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     CGContextRef context = platformContext();
     CGContextSetAllowsFontSmoothing(context, allowsFontSmoothing);
 #endif

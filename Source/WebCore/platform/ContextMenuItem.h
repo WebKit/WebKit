@@ -33,7 +33,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSMenuItem;
 #elif PLATFORM(GTK)
@@ -137,7 +137,7 @@ namespace WebCore {
         ContextMenuItemTagTextDirectionDefault,
         ContextMenuItemTagTextDirectionLeftToRight,
         ContextMenuItemTagTextDirectionRightToLeft,
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         ContextMenuItemTagCorrectSpellingAutomatically,
         ContextMenuItemTagSubstitutionsMenu,
         ContextMenuItemTagShowSubstitutions,
@@ -177,7 +177,7 @@ namespace WebCore {
     };
 
 #if ENABLE(CONTEXT_MENUS)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     typedef NSMenuItem* PlatformMenuItemDescription;
 #elif PLATFORM(GTK)
     typedef GtkMenuItem* PlatformMenuItemDescription;
@@ -247,7 +247,7 @@ namespace WebCore {
         bool m_checked;
         Vector<ContextMenuItem> m_subMenuItems;
 #else
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         RetainPtr<NSMenuItem> m_platformDescription;
 #else
         PlatformMenuItemDescription m_platformDescription;

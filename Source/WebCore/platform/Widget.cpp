@@ -141,7 +141,7 @@ IntPoint Widget::convertToContainingWindow(const IntPoint& localPoint) const
     return convertFromRootToContainingWindow(this, localPoint);
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 IntRect Widget::convertFromRootToContainingWindow(const Widget*, const IntRect& rect)
 {
     return rect;

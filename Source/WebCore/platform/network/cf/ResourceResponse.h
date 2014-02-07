@@ -53,7 +53,7 @@ public:
     {
         m_isNull = !cfResponse;
     }
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     ResourceResponse(NSURLResponse *);
 #endif
 #else
@@ -88,11 +88,11 @@ public:
 #if USE(CFNETWORK)
     CFURLResponseRef cfURLResponse() const;
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     NSURLResponse *nsURLResponse() const;
 #endif
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
     void setCertificateChain(CFArrayRef);
     RetainPtr<CFArrayRef> certificateChain() const;
 #endif
@@ -105,7 +105,7 @@ private:
     void platformLazyInit(InitLevel);
     PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void initNSURLResponse() const;
 #endif
 
@@ -117,10 +117,10 @@ private:
 #if USE(CFNETWORK)
     mutable RetainPtr<CFURLResponseRef> m_cfResponse;
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     mutable RetainPtr<NSURLResponse> m_nsResponse;
 #endif
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
     // Certificate chain is normally part of NS/CFURLResponse, but there is no way to re-add it to a deserialized response after IPC.
     RetainPtr<CFArrayRef> m_externalCertificateChain;
 #endif

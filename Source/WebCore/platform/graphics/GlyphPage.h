@@ -169,7 +169,7 @@ public:
 
     // Implemented by the platform.
     bool fill(unsigned offset, unsigned length, UChar* characterBuffer, unsigned bufferLength, const SimpleFontData*);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static bool mayUseMixedFontDataWhenFilling(const UChar* characterBuffer, unsigned bufferLength, const SimpleFontData*);
 #else
     static bool mayUseMixedFontDataWhenFilling(const UChar*, unsigned, const SimpleFontData*) { return false; }
