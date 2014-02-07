@@ -337,9 +337,6 @@ webkit.org/b/49142 fast/css/style-scoped
 # fails because of antialiasing differences.
 fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]
 
-# CSS Regions tests for region styling and scoped styles
-fast/regions/style-scoped
-
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow
 fast/dom/HTMLTemplateElement/cycles-in-shadow.html

@@ -351,9 +351,6 @@ webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
 
 webkit.org/b/97655 fast/css/style-scoped [ Failure ]
 webkit.org/b/97655 fast/css/style-scoped/style-scoped-with-dom-operation.html [ Pass ]
-webkit.org/b/97655 fast/regions/style-scoped/style-scoped-in-flow-override-container-style.html [ ImageOnlyFailure ]
-webkit.org/b/97655 fast/regions/style-scoped/style-scoped-in-flow-override-region-styling.html [ ImageOnlyFailure ]
-webkit.org/b/97655 fast/regions/style-scoped/style-scoped-in-flow.html [ ImageOnlyFailure ]
 
 # Apparently our WebkitTestRunner is disregarding window features? We open the window sized 800x600.
 webkit.org/b/122535 fast/dom/Window/open-window-min-size.html [ Failure ]

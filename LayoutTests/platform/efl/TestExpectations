@@ -457,9 +457,6 @@ webkit.org/b/90928 fast/dom/Orientation [ Skip ]
 # EFL port does not implement DeviceMotion
 webkit.org/b/95300 fast/dom/DeviceMotion [ Skip ]
 
-# CSS Regions tests for region styling and scoped styles, of which the latter are not enabled by default.
-webkit.org/b/82340 fast/regions/style-scoped [ ImageOnlyFailure ]
-
 # This port does not enable HIDDEN_PAGE_DOM_TIMER_THROTTLING
 fast/dom/timer-throttling-hidden-page.html [ WontFix ]
 

@@ -1,3 +1,28 @@
+2014-02-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Remove style-scoped tests
+        https://bugs.webkit.org/show_bug.cgi?id=128361
+
+        Reviewed by Andrei Bucur.
+
+        Remove tests combining style-scoped and regions. The support was removed from code base
+        and the tests were skipped from a long time.
+
+        * fast/regions/style-scoped/style-scoped-in-flow-expected.html: Removed.
+        * fast/regions/style-scoped/style-scoped-in-flow-override-container-style-expected.html: Removed.
+        * fast/regions/style-scoped/style-scoped-in-flow-override-container-style.html: Removed.
+        * fast/regions/style-scoped/style-scoped-in-flow-override-region-styling-expected.html: Removed.
+        * fast/regions/style-scoped/style-scoped-in-flow-override-region-styling-multiple-regions-expected.html: Removed.
+        * fast/regions/style-scoped/style-scoped-in-flow-override-region-styling-multiple-regions.html: Removed.
+        * fast/regions/style-scoped/style-scoped-in-flow-override-region-styling.html: Removed.
+        * fast/regions/style-scoped/style-scoped-in-flow.html: Removed.
+        * platform/efl/TestExpectations:
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2014-02-07  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Vector-effect updates require a re-layout
