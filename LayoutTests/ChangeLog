@@ -1,3 +1,10 @@
+2014-02-07  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed GTK port gardening
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2014-02-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Verify misspellings after lines merge/split asynchronously

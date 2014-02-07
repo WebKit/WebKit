@@ -287,8 +287,6 @@ Bug(GTK) media/W3C/audio/networkState/networkState_during_loadstart.html [ Failu
 # Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
 
-Bug(GTK) fast/dom/Window/window-postmessage-clone.html [ Timeout ]
-
 Bug(GTK) plugins/evaluate-js-after-removing-plugin-element.html [ Timeout ]
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
 
@@ -368,7 +366,7 @@ Bug(GTK) editing/spelling/spelling-insert-html.html [ Failure ]
 Bug(GTK) fast/css/bidi-override-in-anonymous-block.html [ Failure ]
 Bug(GTK) fast/css/disabled-author-styles.html [ Failure ]
 Bug(GTK) fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
-Bug(GTK) fast/dom/Window/window-postmessage-clone.html [ Failure ]
+Bug(GTK) fast/dom/Window/window-postmessage-clone.html [ Failure Timeout ]
 Bug(GTK) fast/dynamic/window-resize-scrollbars-test.html [ Failure ]
 Bug(GTK) fast/events/backspace-navigates-back.html [ Failure ]
 Bug(GTK) fast/events/keydown-leftright-keys.html [ Failure ]
