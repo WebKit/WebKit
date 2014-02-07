@@ -110,7 +110,7 @@ void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExec
     // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
     // will return a 0 value.  Either this should return 0 or the other code path should do a callback with
     // a failure.
-    thisPtr->m_mainThreadLoader = DocumentThreadableLoader::create(document, thisPtr, *request, options);
+    thisPtr->m_mainThreadLoader = DocumentThreadableLoader::create(*document, *thisPtr, *request, options);
     ASSERT(thisPtr->m_mainThreadLoader);
 }
 

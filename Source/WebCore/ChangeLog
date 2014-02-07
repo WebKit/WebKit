@@ -1,3 +1,32 @@
+2014-02-07  Andreas Kling  <akling@apple.com>
+
+        CTTE: DocumentThreadableLoader always has a Document.
+        <https://webkit.org/b/128364>
+
+        DocumentThreadableLoader always has an "owner" Document, so store
+        that as a reference instead of a pointer. Removed some unnecessary
+        assertions exposed by this change.
+
+        Reviewed by Antti Koivisto.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadResourceSynchronously):
+        (WebCore::DocumentThreadableLoader::create):
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::didReceiveData):
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::didFail):
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        (WebCore::DocumentThreadableLoader::securityOrigin):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::create):
+        (WebCore::ThreadableLoader::loadResourceSynchronously):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader):
+
 2014-02-07  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Vector-effect updates require a re-layout

@@ -59,7 +59,7 @@ PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* co
     if (context->isWorkerGlobalScope())
         return WorkerThreadableLoader::create(static_cast<WorkerGlobalScope*>(context), client, WorkerRunLoop::defaultMode(), request, options);
 
-    return DocumentThreadableLoader::create(toDocument(context), client, request, options);
+    return DocumentThreadableLoader::create(toDocument(*context), *client, request, options);
 }
 
 void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, const ResourceRequest& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
@@ -71,7 +71,7 @@ void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context
         return;
     }
 
-    DocumentThreadableLoader::loadResourceSynchronously(toDocument(context), request, client, options);
+    DocumentThreadableLoader::loadResourceSynchronously(*toDocument(context), request, client, options);
 }
 
 } // namespace WebCore
