@@ -476,11 +476,15 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
     
 AccessibilityObject* AccessibilityRenderObject::parentObjectIfExists() const
 {
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+    
     // WebArea's parent should be the scroll view containing it.
     if (isWebArea())
-        return axObjectCache()->get(&m_renderer->view().frameView());
+        return cache->get(&m_renderer->view().frameView());
 
-    return axObjectCache()->get(renderParentObject());
+    return cache->get(renderParentObject());
 }
     
 AccessibilityObject* AccessibilityRenderObject::parentObject() const
@@ -498,13 +502,17 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
             return parent;
     }
     
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+    
     RenderObject* parentObj = renderParentObject();
     if (parentObj)
-        return axObjectCache()->getOrCreate(parentObj);
+        return cache->getOrCreate(parentObj);
     
     // WebArea's parent should be the scroll view containing it.
     if (isWebArea())
-        return axObjectCache()->getOrCreate(&m_renderer->view().frameView());
+        return cache->getOrCreate(&m_renderer->view().frameView());
     
     return 0;
 }
@@ -562,6 +570,9 @@ Element* AccessibilityRenderObject::anchorElement() const
         return 0;
     
     AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+    
     RenderObject* currRenderer;
     
     // Search up the render tree for a RenderObject with a DOM node.  Defer to an earlier continuation, though.
@@ -1587,8 +1598,12 @@ bool AccessibilityRenderObject::isTabItemSelected() const
     Vector<Element*> elements;
     elementsFromAttribute(elements, aria_controlsAttr);
     
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return false;
+    
     for (const auto& element : elements) {
-        AccessibilityObject* tabPanel = axObjectCache()->getOrCreate(element);
+        AccessibilityObject* tabPanel = cache->getOrCreate(element);
 
         // A tab item should only control tab panels.
         if (!tabPanel || tabPanel->roleValue() != TabPanelRole)
@@ -1731,7 +1746,10 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(H
     if (!imageElement)
         return 0;
     
-    return axObjectCache()->getOrCreate(imageElement);
+    if (AXObjectCache* cache = axObjectCache())
+        return cache->getOrCreate(imageElement);
+    
+    return nullptr;
 }
     
 void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& result)
@@ -1902,11 +1920,12 @@ bool AccessibilityRenderObject::nodeIsTextControl(const Node* node) const
     if (!node)
         return false;
 
-    const AccessibilityObject* axObjectForNode = axObjectCache()->getOrCreate(const_cast<Node*>(node));
-    if (!axObjectForNode)
-        return false;
+    if (AXObjectCache* cache = axObjectCache()) {
+        if (AccessibilityObject* axObjectForNode = cache->getOrCreate(const_cast<Node*>(node)))
+            return axObjectForNode->isTextControl();
+    }
 
-    return axObjectForNode->isTextControl();
+    return false;
 }
 
 IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
@@ -2276,10 +2295,13 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
     if (!target)
         return 0;
     
-    AccessibilityObject* obj = axObjectCache()->getOrCreate(target);
-    if (obj && obj->isAccessibilityRenderObject())
-    // an activedescendant is only useful if it has a renderer, because that's what's needed to post the notification
-        return obj;
+    if (AXObjectCache* cache = axObjectCache()) {
+        AccessibilityObject* obj = cache->getOrCreate(target);
+        if (obj && obj->isAccessibilityRenderObject())
+            // an activedescendant is only useful if it has a renderer, because that's what's needed to post the notification
+            return obj;
+    }
+    
     return 0;
 }
 
@@ -2309,12 +2331,16 @@ void AccessibilityRenderObject::handleAriaExpandedChanged()
     }
     
     // Post that the row count changed.
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return;
+    
     if (containerParent)
-        axObjectCache()->postNotification(containerParent, document(), AXObjectCache::AXRowCountChanged);
+        cache->postNotification(containerParent, document(), AXObjectCache::AXRowCountChanged);
 
     // Post that the specific row either collapsed or expanded.
     if (roleValue() == RowRole || roleValue() == TreeItemRole)
-        axObjectCache()->postNotification(this, document(), isExpanded() ? AXObjectCache::AXRowExpanded : AXObjectCache::AXRowCollapsed);
+        cache->postNotification(this, document(), isExpanded() ? AXObjectCache::AXRowExpanded : AXObjectCache::AXRowCollapsed);
 }
 
 void AccessibilityRenderObject::handleActiveDescendantChanged()
@@ -2388,8 +2414,10 @@ AccessibilityObject* AccessibilityRenderObject::observableObject() const
 {
     // Find the object going up the parent chain that is used in accessibility to monitor certain notifications.
     for (RenderObject* renderer = m_renderer; renderer && renderer->node(); renderer = renderer->parent()) {
-        if (renderObjectIsObservable(renderer))
-            return axObjectCache()->getOrCreate(renderer);
+        if (renderObjectIsObservable(renderer)) {
+            if (AXObjectCache* cache = axObjectCache())
+                return cache->getOrCreate(renderer);
+        }
     }
     
     return 0;
@@ -2714,6 +2742,9 @@ void AccessibilityRenderObject::textChanged()
     // If this element supports ARIA live regions, or is part of a region with an ARIA editable role,
     // then notify the AT of changes.
     AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return;
+    
     for (RenderObject* renderParent = m_renderer; renderParent; renderParent = renderParent->parent()) {
         AccessibilityObject* parent = cache->get(renderParent);
         if (!parent)

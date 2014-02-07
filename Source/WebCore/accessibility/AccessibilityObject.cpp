@@ -377,7 +377,9 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
         return 0;
 
     AXObjectCache* cache = node->document().axObjectCache();
-
+    if (!cache)
+        return nullptr;
+    
     AccessibilityObject* accessibleObject = cache->getOrCreate(node->renderer());
     while (accessibleObject && accessibleObject->accessibilityIsIgnored()) {
         node = NodeTraversal::next(node);
@@ -463,7 +465,8 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
     if (!criteria)
         return;
 
-    axObjectCache()->startCachingComputedObjectAttributesUntilTreeMutates();
+    if (AXObjectCache* cache = axObjectCache())
+        cache->startCachingComputedObjectAttributesUntilTreeMutates();
 
     // This search mechanism only searches the elements before/after the starting object.
     // It does this by stepping up the parent chain and at each level doing a DFS.
@@ -1660,8 +1663,10 @@ AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntP
     if (isAttachment()) {
         Widget* widget = widgetForAttachmentView();
         // Normalize the point for the widget's bounds.
-        if (widget && widget->isFrameView())
-            return axObjectCache()->getOrCreate(widget)->accessibilityHitTest(IntPoint(point - widget->frameRect().location()));
+        if (widget && widget->isFrameView()) {
+            if (AXObjectCache* cache = axObjectCache())
+                return cache->getOrCreate(widget)->accessibilityHitTest(IntPoint(point - widget->frameRect().location()));
+        }
     }
     
     // Check if there are any mock elements that need to be handled.
@@ -1678,7 +1683,7 @@ AXObjectCache* AccessibilityObject::axObjectCache() const
     Document* doc = document();
     if (doc)
         return doc->axObjectCache();
-    return 0;
+    return nullptr;
 }
     
 AccessibilityObject* AccessibilityObject::focusedUIElement() const
@@ -2017,7 +2022,8 @@ void AccessibilityObject::notifyIfIgnoredValueChanged()
 {
     bool isIgnored = accessibilityIsIgnored();
     if (lastKnownIsIgnoredValue() != isIgnored) {
-        axObjectCache()->childrenChanged(parentObject());
+        if (AXObjectCache* cache = axObjectCache())
+            cache->childrenChanged(parentObject());
         setLastKnownIsIgnoredValue(isIgnored);
     }
 }
@@ -2102,7 +2108,10 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     
 bool AccessibilityObject::accessibilityIsIgnored() const
 {
-    AXComputedObjectAttributeCache* attributeCache = axObjectCache()->computedObjectAttributeCache();
+    AXComputedObjectAttributeCache* attributeCache = nullptr;
+    if (AXObjectCache* cache = axObjectCache())
+        attributeCache = cache->computedObjectAttributeCache();
+    
     if (attributeCache) {
         AccessibilityObjectInclusion ignored = attributeCache->getIgnored(axObjectID());
         switch (ignored) {

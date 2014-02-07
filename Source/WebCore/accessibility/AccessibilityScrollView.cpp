@@ -149,7 +149,11 @@ AccessibilityScrollbar* AccessibilityScrollView::addChildScrollbar(Scrollbar* sc
     if (!scrollbar)
         return 0;
     
-    AccessibilityScrollbar* scrollBarObject = toAccessibilityScrollbar(axObjectCache()->getOrCreate(scrollbar));
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+
+    AccessibilityScrollbar* scrollBarObject = toAccessibilityScrollbar(cache->getOrCreate(scrollbar));
     scrollBarObject->setParent(this);
     m_children.append(scrollBarObject);
     return scrollBarObject;
@@ -192,7 +196,10 @@ AccessibilityObject* AccessibilityScrollView::webAreaObject() const
     if (!doc || !doc->hasLivingRenderTree())
         return 0;
 
-    return axObjectCache()->getOrCreate(doc);
+    if (AXObjectCache* cache = axObjectCache())
+        return cache->getOrCreate(doc);
+    
+    return nullptr;
 }
 
 AccessibilityObject* AccessibilityScrollView::accessibilityHitTest(const IntPoint& point) const
@@ -229,10 +236,14 @@ AccessibilityObject* AccessibilityScrollView::parentObject() const
 {
     if (!m_scrollView || !m_scrollView->isFrameView())
         return 0;
-    
+
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+
     HTMLFrameOwnerElement* owner = toFrameView(m_scrollView)->frame().ownerElement();
     if (owner && owner->renderer())
-        return axObjectCache()->getOrCreate(owner);
+        return cache->getOrCreate(owner);
 
     return 0;
 }
@@ -242,9 +253,13 @@ AccessibilityObject* AccessibilityScrollView::parentObjectIfExists() const
     if (!m_scrollView || !m_scrollView->isFrameView())
         return 0;
     
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+
     HTMLFrameOwnerElement* owner = toFrameView(m_scrollView)->frame().ownerElement();
     if (owner && owner->renderer())
-        return axObjectCache()->get(owner);
+        return cache->get(owner);
     
     return 0;
 }

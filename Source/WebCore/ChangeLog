@@ -1,3 +1,42 @@
+2014-02-06  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash in WebCore::AXObjectCache::computedObjectAttributeCache
+        https://bugs.webkit.org/show_bug.cgi?id=128310
+
+        Reviewed by Alexey Proskuryakov.
+
+        Be more careful about using axObjectCache() directly since it can return null.
+        I audited the usage cases of this method and ensured the ptr was not null in cases
+        where I thought we might get hit by this.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::parentObject):
+        (WebCore::AccessibilityNodeObject::menuForMenuButton):
+        (WebCore::AccessibilityNodeObject::menuButtonForMenu):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::firstAccessibleObjectFromNode):
+        (WebCore::AccessibilityObject::findMatchingObjects):
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest):
+        (WebCore::AccessibilityObject::axObjectCache):
+        (WebCore::AccessibilityObject::notifyIfIgnoredValueChanged):
+        (WebCore::AccessibilityObject::accessibilityIsIgnored):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::parentObjectIfExists):
+        (WebCore::AccessibilityRenderObject::parentObject):
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::isTabItemSelected):
+        (WebCore::AccessibilityRenderObject::accessibilityParentForImageMap):
+        (WebCore::AccessibilityRenderObject::nodeIsTextControl):
+        (WebCore::AccessibilityRenderObject::activeDescendant):
+        (WebCore::AccessibilityRenderObject::handleAriaExpandedChanged):
+        (WebCore::AccessibilityRenderObject::observableObject):
+        (WebCore::AccessibilityRenderObject::textChanged):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::addChildScrollbar):
+        (WebCore::AccessibilityScrollView::webAreaObject):
+        (WebCore::AccessibilityScrollView::parentObject):
+        (WebCore::AccessibilityScrollView::parentObjectIfExists):
+
 2014-02-06  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Rounded Insets Let Content Overlap Shape
