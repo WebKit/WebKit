@@ -1,3 +1,41 @@
+2014-02-06  Brady Eidson  <beidson@apple.com>
+
+        IDB: Remove the entirely unnecessary "Value Key" concept
+        https://bugs.webkit.org/show_bug.cgi?id=128360
+
+        Reviewed by Dan Bernstein.
+
+        No new tests (No change in behavior)
+
+        All cursor operations were set up to pass a value key parameter around, but it was:
+        1 - Entirely unused
+        2 - The same thing that the primary key is supposed to be
+
+        * Modules/indexeddb/IDBCallbacks.h:
+
+        * Modules/indexeddb/IDBCursorBackend.cpp:
+        (WebCore::IDBCursorBackend::updateCursorData):
+        (WebCore::IDBCursorBackend::clear):
+        * Modules/indexeddb/IDBCursorBackend.h:
+
+        * Modules/indexeddb/IDBCursorBackendOperations.cpp:
+        (WebCore::CursorAdvanceOperation::perform):
+        (WebCore::CursorIterationOperation::perform):
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * Modules/indexeddb/IDBRequest.h:
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::OpenCursorOperation::perform):
+
+        * Modules/indexeddb/IDBServerConnection.h:
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::openCursor):
+        (WebCore::IDBServerConnectionLevelDB::cursorAdvance):
+        (WebCore::IDBServerConnectionLevelDB::cursorIterate):
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h:
+
 2014-02-06  Jeremy Jones  <jeremyj@apple.com>
 
         Add support for AVKit fullscreen to WebKit2

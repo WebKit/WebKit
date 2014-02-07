@@ -1,3 +1,54 @@
+2014-02-06  Brady Eidson  <beidson@apple.com>
+
+        IDB: Remove the entirely unnecessary "Value Key" concept
+        https://bugs.webkit.org/show_bug.cgi?id=128360
+
+        Reviewed by Dan Bernstein.
+
+        All cursor operations were set up to pass a value key parameter around, but it was:
+        1 - Entirely unused
+        2 - The same thing that the primary key is supposed to be
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::openCursor):
+        (WebKit::DatabaseProcessIDBConnection::cursorAdvance):
+        (WebKit::DatabaseProcessIDBConnection::cursorIterate):
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::openCursor):
+        (WebKit::UniqueIDBDatabase::cursorAdvance):
+        (WebKit::UniqueIDBDatabase::cursorIterate):
+        (WebKit::UniqueIDBDatabase::openCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::didOpenCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::advanceCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::didAdvanceCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::iterateCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::didIterateCursorInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::SQLiteIDBCursor::advanceOnce): Clean this logic up to not need temporaries,
+          and also to save the correct primary key (previously the 'value key')
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.h:
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::openCursor):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::advanceCursor):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::iterateCursor):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::didOpenCursor):
+        (WebKit::WebIDBServerConnection::didAdvanceCursor):
+        (WebKit::WebIDBServerConnection::didIterateCursor):
+        (WebKit::WebIDBServerConnection::openCursor):
+        (WebKit::WebIDBServerConnection::cursorAdvance):
+        (WebKit::WebIDBServerConnection::cursorIterate):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
 2014-02-06  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on GTK build since r163597

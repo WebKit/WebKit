@@ -296,9 +296,9 @@ void DatabaseProcessIDBConnection::openCursor(uint64_t requestID, int64_t transa
 
     LOG(IDB, "DatabaseProcess openCursor request ID %llu, object store id %lli", requestID, objectStoreID);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->openCursor(IDBIdentifier(*this, transactionID), objectStoreID, indexID, static_cast<IndexedDB::CursorDirection>(cursorDirection), static_cast<IndexedDB::CursorType>(cursorType), static_cast<IDBDatabaseBackend::TaskType>(taskType), keyRangeData, [connection, requestID](int64_t cursorID, const IDBKeyData& resultKey, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, const IDBKeyData& valueKey, uint32_t errorCode, const String& errorMessage) {
+    m_uniqueIDBDatabase->openCursor(IDBIdentifier(*this, transactionID), objectStoreID, indexID, static_cast<IndexedDB::CursorDirection>(cursorDirection), static_cast<IndexedDB::CursorType>(cursorType), static_cast<IDBDatabaseBackend::TaskType>(taskType), keyRangeData, [connection, requestID](int64_t cursorID, const IDBKeyData& resultKey, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
         IPC::DataReference data = value ? IPC::DataReference(reinterpret_cast<const uint8_t*>(value->data()), value->size()) : IPC::DataReference();
-        connection->send(Messages::WebIDBServerConnection::DidOpenCursor(requestID, cursorID, resultKey, primaryKey, data, valueKey, errorCode, errorMessage));
+        connection->send(Messages::WebIDBServerConnection::DidOpenCursor(requestID, cursorID, resultKey, primaryKey, data, errorCode, errorMessage));
     });
 }
 
@@ -308,9 +308,9 @@ void DatabaseProcessIDBConnection::cursorAdvance(uint64_t requestID, int64_t cur
 
     LOG(IDB, "DatabaseProcess cursorAdvance request ID %llu, cursor id %lli", requestID, cursorID);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->cursorAdvance(IDBIdentifier(*this, cursorID), count, [connection, requestID](const IDBKeyData& resultKey, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, const IDBKeyData& valueKey, uint32_t errorCode, const String& errorMessage) {
+    m_uniqueIDBDatabase->cursorAdvance(IDBIdentifier(*this, cursorID), count, [connection, requestID](const IDBKeyData& resultKey, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
         IPC::DataReference data = value ? IPC::DataReference(reinterpret_cast<const uint8_t*>(value->data()), value->size()) : IPC::DataReference();
-        connection->send(Messages::WebIDBServerConnection::DidAdvanceCursor(requestID, resultKey, primaryKey, data, valueKey, errorCode, errorMessage));
+        connection->send(Messages::WebIDBServerConnection::DidAdvanceCursor(requestID, resultKey, primaryKey, data, errorCode, errorMessage));
     });
 }
 
@@ -320,9 +320,9 @@ void DatabaseProcessIDBConnection::cursorIterate(uint64_t requestID, int64_t cur
 
     LOG(IDB, "DatabaseProcess cursorIterate request ID %llu, cursor id %lli", requestID, cursorID);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->cursorIterate(IDBIdentifier(*this, cursorID), key, [connection, requestID](const IDBKeyData& resultKey, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, const IDBKeyData& valueKey, uint32_t errorCode, const String& errorMessage) {
+    m_uniqueIDBDatabase->cursorIterate(IDBIdentifier(*this, cursorID), key, [connection, requestID](const IDBKeyData& resultKey, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
         IPC::DataReference data = value ? IPC::DataReference(reinterpret_cast<const uint8_t*>(value->data()), value->size()) : IPC::DataReference();
-        connection->send(Messages::WebIDBServerConnection::DidIterateCursor(requestID, resultKey, primaryKey, data, valueKey, errorCode, errorMessage));
+        connection->send(Messages::WebIDBServerConnection::DidIterateCursor(requestID, resultKey, primaryKey, data, errorCode, errorMessage));
     });
 }
 

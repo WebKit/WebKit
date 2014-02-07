@@ -93,7 +93,6 @@ public:
     virtual void onSuccess(int64_t);
     virtual void onSuccess();
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer>);
-    virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey> valueKey);
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey>>&, const Vector<RefPtr<IDBKey>>&, const Vector<RefPtr<SharedBuffer>>&) { ASSERT_NOT_REACHED(); } // Not implemented. Callback should not reach the renderer side.
 
     // ActiveDOMObject

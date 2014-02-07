@@ -151,15 +151,15 @@ void OpenCursorOperation::perform(std::function<void()> completionCallback)
     LOG(StorageAPI, "OpenCursorOperation");
 
     RefPtr<OpenCursorOperation> operation(this);
-    auto callback = [this, operation, completionCallback](int64_t cursorID, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> valueBuffer, PassRefPtr<IDBKey> valueKey, PassRefPtr<IDBDatabaseError>) {
+    auto callback = [this, operation, completionCallback](int64_t cursorID, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> valueBuffer, PassRefPtr<IDBDatabaseError>) {
         // FIXME: When the LevelDB port fails to open a backing store cursor it calls onSuccess(nullptr);
         // This seems nonsensical and might have to change soon, breaking them.
         if (!cursorID)
             m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
         else {
             RefPtr<IDBCursorBackend> cursor = IDBCursorBackend::create(cursorID, m_cursorType, m_taskType, *m_transaction, m_objectStoreID);
-            if (key || primaryKey || valueBuffer || valueKey)
-                cursor->updateCursorData(key.get(), primaryKey.get(), valueBuffer.get(), valueKey.get());
+            if (key || primaryKey || valueBuffer)
+                cursor->updateCursorData(key.get(), primaryKey.get(), valueBuffer.get());
 
             m_callbacks->onSuccess(cursor.release());
         }

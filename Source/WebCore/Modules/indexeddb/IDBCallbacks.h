@@ -67,7 +67,6 @@ public:
 
     // From IDBCursor.advance()/continue()
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer>) = 0;
-    virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey> valueKey) = 0;
 
     // From IDBCursor.advance()/continue()
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey>>& keys, const Vector<RefPtr<IDBKey>>& primaryKeys, const Vector<RefPtr<SharedBuffer>>& values) = 0;

@@ -79,7 +79,7 @@ public:
     virtual void deleteIndex(IDBTransactionBackend&, const DeleteIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void get(IDBTransactionBackend&, const GetOperation&, std::function<void(const IDBGetResult&, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
-    virtual void openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void count(IDBTransactionBackend&, const CountOperation&, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void deleteRange(IDBTransactionBackend&, const DeleteRangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void clearObjectStore(IDBTransactionBackend&, const ClearObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
@@ -87,8 +87,8 @@ public:
     virtual void changeDatabaseVersion(IDBTransactionBackend&, const IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
 
     // Cursor-level operations
-    virtual void cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
-    virtual void cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
 };
 
 } // namespace WebCore

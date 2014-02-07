@@ -272,7 +272,6 @@ bool SQLiteIDBCursor::advanceOnce()
         m_currentKey = IDBKeyData();
         m_currentPrimaryKey = IDBKeyData();
         m_currentValueBuffer.clear();
-        m_currentValueKey = IDBKeyData();
 
         return true;
     }
@@ -287,8 +286,7 @@ bool SQLiteIDBCursor::advanceOnce()
     Vector<char> keyData;
     m_statement->getColumnBlobAsVector(0, keyData);
 
-    IDBKeyData key;
-    if (!deserializeIDBKeyData(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.size(), key)) {
+    if (!deserializeIDBKeyData(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.size(), m_currentKey)) {
         LOG_ERROR("Unable to deserialize key data from database while advancing cursor");
         m_completed = true;
         m_errored = true;
@@ -296,13 +294,10 @@ bool SQLiteIDBCursor::advanceOnce()
     }
 
     m_statement->getColumnBlobAsVector(1, keyData);
-
-    m_currentKey = key;
-    m_currentPrimaryKey = key;
     m_currentValueBuffer = keyData;
 
     if (m_indexID != IDBIndexMetadata::InvalidId) {
-        if (!deserializeIDBKeyData(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.size(), m_currentValueKey)) {
+        if (!deserializeIDBKeyData(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.size(), m_currentPrimaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
             m_completed = true;
             m_errored = true;

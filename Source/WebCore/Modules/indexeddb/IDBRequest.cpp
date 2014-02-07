@@ -407,12 +407,7 @@ void IDBRequest::onSuccessInternal(const Deprecated::ScriptValue& value)
 
 void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> buffer)
 {
-    onSuccess(key, primaryKey, buffer, nullptr);
-}
-
-void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> buffer, PassRefPtr<IDBKey>)
-{
-    LOG(StorageAPI, "IDBRequest::onSuccess(key, primaryKey, valueBuffer, valueKey)");
+    LOG(StorageAPI, "IDBRequest::onSuccess(key, primaryKey, valueBuffer)");
     if (!shouldEnqueueEvent())
         return;
 
