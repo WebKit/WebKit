@@ -61,6 +61,9 @@ typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
 @property (nonatomic, readonly) WKBrowsingContextHandle *handle;
 
 @property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
+
+@property (nonatomic, readonly) pid_t processIdentifier;
+
 @end
 
 #endif // WK_API_ENABLED

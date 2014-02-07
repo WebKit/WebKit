@@ -918,6 +918,11 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     return _remoteObjectRegistry.get();
 }
 
+- (pid_t)processIdentifier
+{
+    return _page->processIdentifier();
+}
+
 @end
 
 #endif // WK_API_ENABLED

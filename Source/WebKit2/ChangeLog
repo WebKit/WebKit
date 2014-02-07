@@ -1,3 +1,17 @@
+2014-02-06  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Need a ObjC SPI to get the process identifier for web process.
+        https://bugs.webkit.org/show_bug.cgi?id=128356
+
+        Reviewed by Dan Bernstein.
+
+        Add a SPI for WKBrowsingContextController to return the process identifier of web
+        process in the current page.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController processIdentifier]):
+        * UIProcess/API/Cocoa/WKBrowsingContextControllerPrivate.h:
+
 2014-02-06  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on EFL build since r163597
