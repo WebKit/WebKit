@@ -27,10 +27,10 @@
 #define ProgressTracker_h
 
 #include "Timer.h"
+#include <chrono>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -74,9 +74,9 @@ private:
     long long m_totalPageAndResourceBytesToLoad;
     long long m_totalBytesReceived;
     double m_lastNotifiedProgressValue;
-    double m_lastNotifiedProgressTime;
+    std::chrono::steady_clock::time_point m_lastNotifiedProgressTime;
     double m_progressNotificationInterval;
-    double m_progressNotificationTimeInterval;
+    std::chrono::milliseconds m_progressNotificationTimeInterval;
     bool m_finalProgressChangedSent;    
     double m_progressValue;
     RefPtr<Frame> m_originatingProgressFrame;
@@ -87,7 +87,7 @@ private:
     Timer<ProgressTracker> m_progressHeartbeatTimer;
     unsigned m_heartbeatsWithNoProgress;
     long long m_totalBytesReceivedBeforePreviousHeartbeat;
-    double m_mainLoadCompletionTimeStamp;
+    std::chrono::steady_clock::time_point m_mainLoadCompletionTime;
     bool m_isMainLoad;
 };
     

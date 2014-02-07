@@ -1,3 +1,18 @@
+2014-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Convert ProgressTracker to std::chrono
+        https://bugs.webkit.org/show_bug.cgi?id=128377
+
+        Reviewed by Andreas Kling.
+
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::ProgressTracker):
+        (WebCore::ProgressTracker::reset):
+        (WebCore::ProgressTracker::progressStarted):
+        (WebCore::ProgressTracker::finalProgressComplete):
+        (WebCore::ProgressTracker::incrementProgress):
+        * loader/ProgressTracker.h:
+
 2014-02-07  Alexey Proskuryakov  <ap@apple.com>
 
         32-bit build fix.
