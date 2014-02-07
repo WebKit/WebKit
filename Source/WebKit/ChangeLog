@@ -1,3 +1,11 @@
+2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed Windows Build Fix after r163568.
+
+        Remove old symbol export. It is now const. Waiting for bot to produce new symbol.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-02-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SVG) guards
