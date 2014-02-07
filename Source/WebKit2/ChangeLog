@@ -1,3 +1,17 @@
+2014-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Crash in MiniBrowser when using Command-W to close a WK2 window
+        https://bugs.webkit.org/show_bug.cgi?id=128355
+        <rdar://problem/16008531>
+
+        Reviewed by Simon Fraser.
+
+        Don't set the API clients to nullptr when closing the page, just create new empty ones instead.
+        Too much code depends on the clients never being null.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+
 2014-02-03  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] iOS should use accelerated drawing by default, except in the simulator

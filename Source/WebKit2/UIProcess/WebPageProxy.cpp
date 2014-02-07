@@ -578,10 +578,10 @@ void WebPageProxy::close()
 
     resetState();
 
-    m_loaderClient = nullptr;
-    m_policyClient = nullptr;
+    m_loaderClient = std::make_unique<API::LoaderClient>();
+    m_policyClient = std::make_unique<API::PolicyClient>();
     m_formClient.initialize(0);
-    m_uiClient = nullptr;
+    m_uiClient = std::make_unique<API::UIClient>();
 #if PLATFORM(EFL)
     m_uiPopupMenuClient.initialize(0);
 #endif
