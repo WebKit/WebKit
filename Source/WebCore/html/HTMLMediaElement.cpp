@@ -1374,9 +1374,12 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
             activeSetChanged = true;
 
     for (size_t i = 0; i < currentCuesSize; ++i) {
-        currentCues[i].data()->updateDisplayTree(movieTime);
+        TextTrackCue* cue = currentCues[i].data();
 
-        if (!currentCues[i].data()->isActive())
+        if (cue->isRenderable())
+            toVTTCue(cue)->updateDisplayTree(movieTime);
+
+        if (!cue->isActive())
             activeSetChanged = true;
     }
 
@@ -1668,7 +1671,8 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue> c
         m_currentlyActiveCues.remove(index);
     }
 
-    cue->removeDisplayTree();
+    if (cue->isRenderable())
+        toVTTCue(cue.get())->removeDisplayTree();
     updateActiveTextTrackCues(currentTime());
 }
 

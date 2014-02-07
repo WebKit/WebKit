@@ -1,3 +1,60 @@
+2014-02-07  Brendan Long  <b.long@cablelabs.com>
+
+        Update TextTrack API to current spec
+        https://bugs.webkit.org/show_bug.cgi?id=122218
+
+        Refactoring VTTCue out of TextTrackCue.
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-vttcue.html
+
+        * CMakeLists.txt: Add VTTCue and rename RenderTextTrackCue to RenderVTTCue.
+        * DerivedSources.cpp: Same.
+        * DerivedSources.make: Same.
+        * GNUmakefile.list.am: Same.
+        * PlatformGTK.cmake:  Same.
+        * WebCore.vcxproj/WebCore.vcxproj: Same.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Same.
+        * WebCore.xcodeproj/project.pbxproj: Same.
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::toJS): Use VTTCue DOM wrapper for VTTCue and its subclasses.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Convert to VTTCue as needed.
+        (WebCore::HTMLMediaElement::textTrackRemoveCue): Same.
+        * html/HTMLMediaElement.h: Only print cue.text in debug output if the cue type has a .text attribute
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): Convert to VTTCue as needed, and fix TextTrackCueBox to VTTCueBox.
+        (WebCore::MediaControlTextTrackContainerElement::updateTimerFired): Convert to VTTCue as needed.
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::addGenericCue): Use refactored VTTCue attributes.
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::newCuesParsed): Use VTTCue's constructor instead of deprecated TextTrackCue constructor.
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::setMode): Convert to VTTCue as needed.
+        (WebCore::TextTrack::hasCue): Make this function only accept VTTCues, since it's only used for them anyway, and convert existing cues to VTTCues as needed.
+        * html/track/TextTrack.h: Same as hasCue above.
+        * html/track/TextTrackCue.cpp: Refactor a lot of code out. Everything that was removed went to VTTCue.cpp.
+        (WebCore::TextTrackCue::create): For backwards compatibility, just call VTTCue::create().
+        (WebCore::TextTrackCue::TextTrackCue): Refactor a lot of code out.
+        (WebCore::TextTrackCue::~TextTrackCue): Same.
+        (WebCore::TextTrackCue::didChange): Same.
+        (WebCore::TextTrackCue::setIsActive): Same.
+        * html/track/TextTrackCue.h: Same.
+        * html/track/TextTrackCue.idl: Remove VTTCue attributes and add custom toJS function.
+        * html/track/TextTrackCueGeneric.cpp: Use VTTCue instead of TextTrackCue.
+        * html/track/TextTrackCueGeneric.h: Same.
+        * html/track/VTTCue.cpp: Copied from Source/WebCore/html/track/TextTrackCue.cpp.
+        * html/track/VTTCue.h: Copied from Source/WebCore/html/track/TextTrackCue.h.
+        * html/track/VTTCue.idl: Copied from Source/WebCore/html/track/TextTrackCue.idl.
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::getNewCues): Use VTTCue instead of TextTrackCue.
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsStyleSheetOverride): Use VTTCueBox instead of TextTrackCueBox.
+        * rendering/RenderVTTCue.cpp: Renamed from Source/WebCore/rendering/RenderTextTrackCue.cpp. Changed to use VTTCue instead of TextTrackCue.
+        * rendering/RenderVTTCue.h: Renamed from Source/WebCore/rendering/RenderTextTrackCue.h. Changed to use VTTCue instead of TextTrackCue.
+        * rendering/RenderingAllInOne.cpp: Rename RenderTextTrackCue to RenderVTTCue.
+
 2014-02-07  Gavin Barraclough  <barraclough@apple.com>
 
         Should report user input to PageThrottler

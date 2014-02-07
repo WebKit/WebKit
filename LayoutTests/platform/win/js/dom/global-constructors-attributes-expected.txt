@@ -1628,6 +1628,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').hasOwnProperty('get') is
 PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').value is VTTCue
+PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitAnimationEvent').value is WebKitAnimationEvent
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitAnimationEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitAnimationEvent').hasOwnProperty('set') is false

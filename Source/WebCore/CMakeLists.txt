@@ -2183,11 +2183,11 @@ set(WebCore_SOURCES
     rendering/RenderTextControlSingleLine.cpp
     rendering/RenderTextFragment.cpp
     rendering/RenderTextLineBoxes.cpp
-    rendering/RenderTextTrackCue.cpp
     rendering/RenderTheme.cpp
     rendering/RenderTreeAsText.cpp
     rendering/RenderVideo.cpp
     rendering/RenderView.cpp
+    rendering/RenderVTTCue.cpp
     rendering/RenderWidget.cpp
     rendering/RootInlineBox.cpp
     rendering/ScrollBehavior.cpp
@@ -2698,6 +2698,7 @@ if (ENABLE_VIDEO_TRACK)
         html/track/TrackEvent.idl
         html/track/VideoTrack.idl
         html/track/VideoTrackList.idl
+        html/track/VTTCue.idl
     )
 
     list(APPEND WebCore_SOURCES
@@ -2717,6 +2718,7 @@ if (ENABLE_VIDEO_TRACK)
         html/track/TrackListBase.cpp
         html/track/VideoTrack.cpp
         html/track/VideoTrackList.cpp
+        html/track/VTTCue.cpp
         html/track/WebVTTElement.cpp
         html/track/WebVTTParser.cpp
         html/track/WebVTTTokenizer.cpp

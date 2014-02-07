@@ -1823,6 +1823,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('get') is fal
 PASS Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'URL').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'URL').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').value is VTTCue
+PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'WaveShaperNode').value is WaveShaperNode
 PASS Object.getOwnPropertyDescriptor(global, 'WaveShaperNode').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WaveShaperNode').hasOwnProperty('set') is false

@@ -8,7 +8,7 @@ RUN(video.play())
 EVENT(cuechange) from TextTrack
 EVENT(cuechange) from <track>
 Cue entered
-EXPECTED ([object TextTrackCue] == '[object TextTrackCue]') OK
+EXPECTED ([object VTTCue] == '[object VTTCue]') OK
 EXPECTED (currentCue.id == '1') OK
 
 EVENT(cuechange) from TextTrack
@@ -18,7 +18,7 @@ Cue exited
 EVENT(cuechange) from TextTrack
 EVENT(cuechange) from <track>
 Cue entered
-EXPECTED ([object TextTrackCue] == '[object TextTrackCue]') OK
+EXPECTED ([object VTTCue] == '[object VTTCue]') OK
 EXPECTED (currentCue.id == '2') OK
 
 EVENT(cuechange) from TextTrack
@@ -28,7 +28,7 @@ Cue exited
 EVENT(cuechange) from TextTrack
 EVENT(cuechange) from <track>
 Cue entered
-EXPECTED ([object TextTrackCue] == '[object TextTrackCue]') OK
+EXPECTED ([object VTTCue] == '[object VTTCue]') OK
 EXPECTED (currentCue.id == '3') OK
 
 EVENT(cuechange) from TextTrack

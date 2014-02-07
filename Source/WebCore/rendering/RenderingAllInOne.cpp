@@ -108,12 +108,12 @@
 #include "RenderTextControlSingleLine.cpp"
 #include "RenderTextFragment.cpp"
 #include "RenderTextLineBoxes.cpp"
-#include "RenderTextTrackCue.cpp"
 #include "RenderTheme.cpp"
 #if PLATFORM(WIN)
 #include "RenderThemeWin.cpp"
 #endif
 #include "RenderTreeAsText.cpp"
+#include "RenderVTTCue.cpp"
 #include "RenderVideo.cpp"
 #include "RenderView.cpp"
 #include "RenderWidget.cpp"

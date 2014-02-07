@@ -22,35 +22,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
 [
     Conditional=VIDEO_TRACK,
-    JSGenerateToNativeObject,
     Constructor(double startTime, double endTime, DOMString text),
     ConstructorCallWith=ScriptExecutionContext,
-    EventTarget,
-    JSCustomMarkFunction,
-    CustomIsReachable,
-    CustomToJSObject,
-    SkipVTableValidation,
-] interface TextTrackCue {
-    readonly attribute TextTrack track;
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
+] interface VTTCue : TextTrackCue {
+    [SetterRaisesException] attribute DOMString vertical;
+    attribute boolean snapToLines;
+    [SetterRaisesException] attribute double line;
+    [SetterRaisesException] attribute double position;
+    [SetterRaisesException] attribute double size;
+    [SetterRaisesException] attribute DOMString align;
+    attribute DOMString text;
+    DocumentFragment getCueAsHTML();
 
-    attribute DOMString id;
-    [SetterRaisesException] attribute double startTime;
-    [SetterRaisesException] attribute double endTime;
-    attribute boolean pauseOnExit;
-
-    attribute EventListener onenter;
-    attribute EventListener onexit;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+#if defined(ENABLE_WEBVTT_REGIONS) && ENABLE_WEBVTT_REGIONS
+    attribute DOMString regionId;
+#endif
 };
-

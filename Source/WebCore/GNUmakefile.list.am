@@ -743,6 +743,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSVideoTrack.h \
 	DerivedSources/WebCore/JSVideoTrackList.cpp \
 	DerivedSources/WebCore/JSVideoTrackList.h \
+	DerivedSources/WebCore/JSVTTCue.cpp \
+	DerivedSources/WebCore/JSVTTCue.h \
 	DerivedSources/WebCore/JSWaveShaperNode.cpp \
 	DerivedSources/WebCore/JSWaveShaperNode.h \
 	DerivedSources/WebCore/JSPeriodicWave.cpp \
@@ -1543,6 +1545,7 @@ dom_binding_idls += \
 	$(WebCore)/html/track/TrackEvent.idl \
 	$(WebCore)/html/track/VideoTrack.idl \
 	$(WebCore)/html/track/VideoTrackList.idl \
+	$(WebCore)/html/track/VTTCue.idl \
 	$(WebCore)/inspector/CommandLineAPIHost.idl \
 	$(WebCore)/inspector/InspectorFrontendHost.idl \
 	$(WebCore)/inspector/ScriptProfile.idl \
@@ -3692,6 +3695,8 @@ webcore_sources += \
 	Source/WebCore/html/track/VideoTrack.h \
 	Source/WebCore/html/track/VideoTrackList.cpp \
 	Source/WebCore/html/track/VideoTrackList.h \
+	Source/WebCore/html/track/VTTCue.cpp \
+	Source/WebCore/html/track/VTTCue.h \
 	Source/WebCore/html/track/WebVTTElement.cpp \
 	Source/WebCore/html/track/WebVTTElement.h \
 	Source/WebCore/html/track/WebVTTParser.cpp \
@@ -4452,8 +4457,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderTextControlMultiLine.h \
 	Source/WebCore/rendering/RenderTextControlSingleLine.cpp \
 	Source/WebCore/rendering/RenderTextControlSingleLine.h \
-	Source/WebCore/rendering/RenderTextTrackCue.cpp \
-	Source/WebCore/rendering/RenderTextTrackCue.h \
 	Source/WebCore/rendering/RenderTextFragment.cpp \
 	Source/WebCore/rendering/RenderTextFragment.h \
 	Source/WebCore/rendering/RenderTextLineBoxes.cpp \
@@ -4466,6 +4469,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderVideo.h \
 	Source/WebCore/rendering/RenderView.cpp \
 	Source/WebCore/rendering/RenderView.h \
+	Source/WebCore/rendering/RenderVTTCue.cpp \
+	Source/WebCore/rendering/RenderVTTCue.h \
 	Source/WebCore/rendering/RenderWidget.cpp \
 	Source/WebCore/rendering/RenderWidget.h \
 	Source/WebCore/rendering/RootInlineBox.cpp \

@@ -83,6 +83,7 @@ function testExpected(testFuncString, expected, comparison)
         case '!=':  success = observed != expected; break;
         case '==': success = observed == expected; break;
         case '===': success = observed === expected; break;
+        case 'instanceof': success = observed instanceof expected; break;
     }
 
     reportExpected(success, testFuncString, comparison, expected, observed)

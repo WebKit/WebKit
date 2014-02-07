@@ -29,6 +29,7 @@
 
 #include "JSTextTrackCue.h"
 #include "JSTrackCustom.h"
+#include "JSVTTCue.h"
 #include "TextTrack.h"
 
 using namespace JSC;
@@ -54,6 +55,27 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
         return false;
 
     return visitor.containsOpaqueRoot(root(textTrackCue.track()));
+}
+
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, TextTrackCue* cue)
+{
+    if (!cue)
+        return jsNull();
+
+    JSObject* wrapper = getCachedWrapper(currentWorld(exec), cue);
+
+    if (wrapper)
+        return wrapper;
+
+    // This switch will make more sense once we support DataCue
+    switch (cue->cueType()) {
+    case TextTrackCue::WebVTT:
+    case TextTrackCue::Generic:
+        return CREATE_DOM_WRAPPER(exec, globalObject, VTTCue, cue);
+    default:
+        ASSERT_NOT_REACHED();
+        return jsNull();
+    }
 }
 
 void JSTextTrackCue::visitChildren(JSCell* cell, SlotVisitor& visitor)

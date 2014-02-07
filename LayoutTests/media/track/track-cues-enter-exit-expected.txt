@@ -7,21 +7,21 @@ RUN(video.play())
 
 EVENT(enter)
 This cue is the currently active cue:
-EXPECTED ([object TextTrackCue] == '[object TextTrackCue]') OK
+EXPECTED ([object VTTCue] == '[object VTTCue]') OK
 EXPECTED (currentCue.id == '1') OK
 
 EVENT(exit)
 
 EVENT(enter)
 This cue is the currently active cue:
-EXPECTED ([object TextTrackCue] == '[object TextTrackCue]') OK
+EXPECTED ([object VTTCue] == '[object VTTCue]') OK
 EXPECTED (currentCue.id == '2') OK
 
 EVENT(exit)
 
 EVENT(enter)
 This cue is the currently active cue:
-EXPECTED ([object TextTrackCue] == '[object TextTrackCue]') OK
+EXPECTED ([object VTTCue] == '[object VTTCue]') OK
 EXPECTED (currentCue.id == '3') OK
 
 EVENT(exit)

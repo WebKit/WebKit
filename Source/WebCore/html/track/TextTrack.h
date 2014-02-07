@@ -32,6 +32,7 @@
 #include "ExceptionCode.h"
 #include "TextTrackCue.h"
 #include "TrackBase.h"
+#include "VTTCue.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -110,7 +111,7 @@ public:
     void addCue(PassRefPtr<TextTrackCue>);
     virtual void removeCue(TextTrackCue*, ExceptionCode&);
 
-    bool hasCue(TextTrackCue*, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
+    bool hasCue(VTTCue*, VTTCue::CueMatchRules = VTTCue::MatchAllFields);
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
     TextTrackRegionList* regions();

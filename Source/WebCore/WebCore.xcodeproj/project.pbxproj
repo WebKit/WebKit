@@ -2933,8 +2933,6 @@
 		86BE340315058CB200CE0FD8 /* PerformanceEntryList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BE33FD15058CB200CE0FD8 /* PerformanceEntryList.cpp */; };
 		86BE340415058CB200CE0FD8 /* PerformanceEntryList.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BE33FE15058CB200CE0FD8 /* PerformanceEntryList.h */; };
 		86D982F7125C154000AD9E3D /* DocumentTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D982F6125C154000AD9E3D /* DocumentTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86FF886115DE3D0700BD6B28 /* RenderTextTrackCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86FF885E15DE3B8200BD6B28 /* RenderTextTrackCue.cpp */; };
-		86FF886215DE3D0700BD6B28 /* RenderTextTrackCue.h in Headers */ = {isa = PBXBuildFile; fileRef = 86FF885F15DE3B8200BD6B28 /* RenderTextTrackCue.h */; };
 		8931DE5B14C44C44000DC9D2 /* JSBlobCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */; };
 		898785F0122E1E87003AABDA /* JSFileException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 898785EE122E1E87003AABDA /* JSFileException.cpp */; };
 		898785F1122E1E87003AABDA /* JSFileException.h in Headers */ = {isa = PBXBuildFile; fileRef = 898785EF122E1E87003AABDA /* JSFileException.h */; };
@@ -5317,6 +5315,12 @@
 		BE16C59317CFE17200852C04 /* InbandGenericTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16C58F17CFE17200852C04 /* InbandGenericTextTrack.h */; };
 		BE16C59417CFE17200852C04 /* InbandWebVTTTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16C59017CFE17200852C04 /* InbandWebVTTTextTrack.cpp */; };
 		BE16C59517CFE17200852C04 /* InbandWebVTTTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16C59117CFE17200852C04 /* InbandWebVTTTextTrack.h */; };
+		BE20507918A458680080647E /* VTTCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE20507618A458460080647E /* VTTCue.cpp */; };
+		BE20507A18A4586B0080647E /* VTTCue.h in Headers */ = {isa = PBXBuildFile; fileRef = BE20507718A458460080647E /* VTTCue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BE20507D18A458BF0080647E /* RenderVTTCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE20507B18A458B10080647E /* RenderVTTCue.cpp */; };
+		BE20507E18A458C20080647E /* RenderVTTCue.h in Headers */ = {isa = PBXBuildFile; fileRef = BE20507C18A458B10080647E /* RenderVTTCue.h */; };
+		BE20508118A460BC0080647E /* JSVTTCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE20507F18A460AA0080647E /* JSVTTCue.cpp */; };
+		BE20508218A460C30080647E /* JSVTTCue.h in Headers */ = {isa = PBXBuildFile; fileRef = BE20508018A460AA0080647E /* JSVTTCue.h */; };
 		BE6DF70B171CA2C500DD52B8 /* JSVideoTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */; };
 		BE6DF70D171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */; };
 		BE6DF711171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */; };
@@ -9824,8 +9828,6 @@
 		86BE33FE15058CB200CE0FD8 /* PerformanceEntryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceEntryList.h; sourceTree = "<group>"; };
 		86BE33FF15058CB200CE0FD8 /* PerformanceEntryList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceEntryList.idl; sourceTree = "<group>"; };
 		86D982F6125C154000AD9E3D /* DocumentTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentTiming.h; sourceTree = "<group>"; };
-		86FF885E15DE3B8200BD6B28 /* RenderTextTrackCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextTrackCue.cpp; sourceTree = "<group>"; };
-		86FF885F15DE3B8200BD6B28 /* RenderTextTrackCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextTrackCue.h; sourceTree = "<group>"; };
 		892ABE5C16EEE2AA009F3587 /* JSNavigatorStorageQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorStorageQuota.cpp; sourceTree = "<group>"; };
 		892ABE5D16EEE2AA009F3587 /* JSNavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorStorageQuota.h; sourceTree = "<group>"; };
 		892ABE5F16EEE2E5009F3587 /* JSDOMWindowQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowQuota.h; sourceTree = "<group>"; };
@@ -12516,6 +12518,13 @@
 		BE16C58F17CFE17200852C04 /* InbandGenericTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandGenericTextTrack.h; sourceTree = "<group>"; };
 		BE16C59017CFE17200852C04 /* InbandWebVTTTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandWebVTTTextTrack.cpp; sourceTree = "<group>"; };
 		BE16C59117CFE17200852C04 /* InbandWebVTTTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandWebVTTTextTrack.h; sourceTree = "<group>"; };
+		BE20507618A458460080647E /* VTTCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTTCue.cpp; sourceTree = "<group>"; };
+		BE20507718A458460080647E /* VTTCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTTCue.h; sourceTree = "<group>"; };
+		BE20507818A458460080647E /* VTTCue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VTTCue.idl; sourceTree = "<group>"; };
+		BE20507B18A458B10080647E /* RenderVTTCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderVTTCue.cpp; sourceTree = "<group>"; };
+		BE20507C18A458B10080647E /* RenderVTTCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderVTTCue.h; sourceTree = "<group>"; };
+		BE20507F18A460AA0080647E /* JSVTTCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVTTCue.cpp; sourceTree = "<group>"; };
+		BE20508018A460AA0080647E /* JSVTTCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVTTCue.h; sourceTree = "<group>"; };
 		BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVideoTrackCustom.cpp; sourceTree = "<group>"; };
 		BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVideoTrackListCustom.cpp; sourceTree = "<group>"; };
 		BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioTrackCustom.cpp; sourceTree = "<group>"; };
@@ -18236,6 +18245,8 @@
 				E44614130CD6826900FADA75 /* JSTimeRanges.h */,
 				07846340145B151A00A58DF1 /* JSTrackEvent.cpp */,
 				07846341145B151A00A58DF1 /* JSTrackEvent.h */,
+				BE20507F18A460AA0080647E /* JSVTTCue.cpp */,
+				BE20508018A460AA0080647E /* JSVTTCue.h */,
 				15C77092100D3CA8005BA267 /* JSValidityState.cpp */,
 				15C77091100D3CA8005BA267 /* JSValidityState.h */,
 				BE8EF046171C9014009B48C3 /* JSVideoTrack.cpp */,
@@ -19103,6 +19114,9 @@
 				070334D21459FFAC008D8D45 /* TrackEvent.idl */,
 				BE88E0BF1715CE2600658D98 /* TrackListBase.cpp */,
 				BE88E0C01715CE2600658D98 /* TrackListBase.h */,
+				BE20507618A458460080647E /* VTTCue.cpp */,
+				BE20507718A458460080647E /* VTTCue.h */,
+				BE20507818A458460080647E /* VTTCue.idl */,
 				BE88E0D21715D2A200658D98 /* VideoTrack.cpp */,
 				BE88E0D31715D2A200658D98 /* VideoTrack.h */,
 				BE88E0D41715D2A200658D98 /* VideoTrack.idl */,
@@ -21755,8 +21769,6 @@
 				BCEA484F097D93020094C9E4 /* RenderTextFragment.h */,
 				E4C91A17180999FB00A17F6D /* RenderTextLineBoxes.cpp */,
 				E4C91A15180999F100A17F6D /* RenderTextLineBoxes.h */,
-				86FF885E15DE3B8200BD6B28 /* RenderTextTrackCue.cpp */,
-				86FF885F15DE3B8200BD6B28 /* RenderTextTrackCue.h */,
 				BCEA484A097D93020094C9E4 /* RenderTheme.cpp */,
 				BCEA484B097D93020094C9E4 /* RenderTheme.h */,
 				FED13D500CEA949700D89466 /* RenderThemeIOS.h */,
@@ -21765,6 +21777,8 @@
 				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
+				BE20507B18A458B10080647E /* RenderVTTCue.cpp */,
+				BE20507C18A458B10080647E /* RenderVTTCue.h */,
 				E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */,
 				E4B41E340CBFB60900AF2ECE /* RenderVideo.h */,
 				BCEA4828097D93020094C9E4 /* RenderView.cpp */,
@@ -22688,6 +22702,7 @@
 				FD31601012B0267600C1A359 /* AudioListener.h in Headers */,
 				0705852417FDC140005F2BCB /* MediaTrackConstraints.h in Headers */,
 				A14832CA187F678000DA63A6 /* WebCoreThreadMessage.h in Headers */,
+				BE20507E18A458C20080647E /* RenderVTTCue.h in Headers */,
 				FD31601312B0267600C1A359 /* AudioNode.h in Headers */,
 				FD31601612B0267600C1A359 /* AudioNodeInput.h in Headers */,
 				FD31601812B0267600C1A359 /* AudioNodeOutput.h in Headers */,
@@ -25020,7 +25035,6 @@
 				083DAEA70F01A7FB00342754 /* RenderTextControlMultiLine.h in Headers */,
 				083DAEA90F01A7FB00342754 /* RenderTextControlSingleLine.h in Headers */,
 				BCEA488E097D93020094C9E4 /* RenderTextFragment.h in Headers */,
-				86FF886215DE3D0700BD6B28 /* RenderTextTrackCue.h in Headers */,
 				BCEA488A097D93020094C9E4 /* RenderTheme.h in Headers */,
 				BCEA4887097D93020094C9E4 /* RenderThemeMac.h in Headers */,
 				93F1998C08245E59001E9ABC /* RenderTreeAsText.h in Headers */,
@@ -25169,6 +25183,7 @@
 				41D168EA10226E89009BC827 /* SharedWorkerRepository.h in Headers */,
 				E1B7839C163740A70007B692 /* SharedWorkerStrategy.h in Headers */,
 				41D168EE10226E89009BC827 /* SharedWorkerThread.h in Headers */,
+				BE20507A18A4586B0080647E /* VTTCue.h in Headers */,
 				B2C3DA650D006CD600EF6F26 /* SimpleFontData.h in Headers */,
 				E4B65A5C132FACB00070E7BE /* TileLayer.h in Headers */,
 				C5A1EA7D152BCF08004D00B6 /* SimplifyMarkupCommand.h in Headers */,
@@ -25285,6 +25300,7 @@
 				51D719F6181106E00016DC51 /* IDBVersionChangeEvent.h in Headers */,
 				0FF50272102BA96A0066F39A /* StyleMedia.h in Headers */,
 				BC5EB74E0E81E06700B25965 /* StyleMultiColData.h in Headers */,
+				BE20508218A460C30080647E /* JSVTTCue.h in Headers */,
 				A80E6DFC0A199067007FB8C5 /* StyleProperties.h in Headers */,
 				E1B25107152A0BB00069B779 /* StylePropertyShorthand.h in Headers */,
 				BC2272E40E82EE9B00E7F975 /* StyleRareInheritedData.h in Headers */,
@@ -26920,6 +26936,7 @@
 				FD31609412B026F700C1A359 /* FFTConvolver.cpp in Sources */,
 				FD31609612B026F700C1A359 /* FFTFrame.cpp in Sources */,
 				932AD70517EFA2C30038F8FF /* MainFrame.cpp in Sources */,
+				BE20507918A458680080647E /* VTTCue.cpp in Sources */,
 				FD3160C012B0272A00C1A359 /* FFTFrameMac.cpp in Sources */,
 				976D6C80122B8A3D001FD1F7 /* File.cpp in Sources */,
 				934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */,
@@ -28159,6 +28176,7 @@
 				8A7CC97012076F8A001D4588 /* PendingScript.cpp in Sources */,
 				E526AF3F1727F8F200E41781 /* Performance.cpp in Sources */,
 				0F54DCD81880F867003EEDBB /* DOMTouchEvent.mm in Sources */,
+				BE20508118A460BC0080647E /* JSVTTCue.cpp in Sources */,
 				07DC5FD417D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp in Sources */,
 				86BE340315058CB200CE0FD8 /* PerformanceEntryList.cpp in Sources */,
 				8AF4E55511DC5A36000ED3DE /* PerformanceNavigation.cpp in Sources */,
@@ -28328,7 +28346,6 @@
 				083DAEA60F01A7FB00342754 /* RenderTextControlMultiLine.cpp in Sources */,
 				083DAEA80F01A7FB00342754 /* RenderTextControlSingleLine.cpp in Sources */,
 				BCEA488D097D93020094C9E4 /* RenderTextFragment.cpp in Sources */,
-				86FF886115DE3D0700BD6B28 /* RenderTextTrackCue.cpp in Sources */,
 				BCEA4889097D93020094C9E4 /* RenderTheme.cpp in Sources */,
 				BCEA4888097D93020094C9E4 /* RenderThemeMac.mm in Sources */,
 				93F19AD508245E59001E9ABC /* RenderTreeAsText.cpp in Sources */,
@@ -28584,6 +28601,7 @@
 				E139866315478474001E3F65 /* StyleResolver.cpp in Sources */,
 				E4BBED4C14FCDBA1003F0B98 /* StyleRule.cpp in Sources */,
 				E4946EAE156E64DD00D3297F /* StyleRuleImport.cpp in Sources */,
+				BE20507D18A458BF0080647E /* RenderVTTCue.cpp in Sources */,
 				A8EA800D0A19516E00A8EF5F /* StyleSheet.cpp in Sources */,
 				E4F9EEF2156D9FFA00D23E7E /* StyleSheetContents.cpp in Sources */,
 				A8EA800B0A19516E00A8EF5F /* StyleSheetList.cpp in Sources */,

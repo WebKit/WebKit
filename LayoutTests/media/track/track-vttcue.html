@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var cues;
+
+            function serialize(documentFragment)
+            {
+                return new XMLSerializer().serializeToString(documentFragment);
+            }
+
+            function trackLoaded()
+            {
+                var testTrack = document.getElementById('testTrack');
+                cues = testTrack.track.cues;
+
+                consoleWrite("<br>*** Test cue loaded from the file.");
+                run("trackCue = cues[0]");
+
+                testExpected("trackCue", TextTrackCue, "instanceof");
+                testExpected("trackCue.track", testTrack.track);
+                testExpected("trackCue.id", "1");
+                testExpected("trackCue.startTime", 0);
+                testExpected("trackCue.endTime", 0.3);
+                testExpected("trackCue.pauseOnExit", false);
+
+                testExpected("trackCue", VTTCue, "instanceof");
+                testExpected("trackCue.vertical", "");
+                testExpected("trackCue.snapToLines", true);
+                testExpected("trackCue.line", -1);
+                testExpected("trackCue.position", 50);
+                testExpected("trackCue.size", 100);
+                testExpected("trackCue.align", "middle");
+                testExpected("trackCue.text", "Lorem");
+                testExpected("serialize(trackCue.getCueAsHTML())", 'Lorem');
+
+                consoleWrite("<br>*** Create a new cue, check values");
+                run("newCue = new VTTCue(3.14, 6.28, 'Pie')");
+
+                testExpected("newCue", TextTrackCue, "instanceof");
+                testExpected("newCue.track", null);
+                testExpected("newCue.id", '');
+                testExpected("newCue.startTime", 3.14);
+                testExpected("newCue.endTime", 6.28);
+                testExpected("newCue.pauseOnExit", false);
+
+                testExpected("newCue", VTTCue, "instanceof");
+                testExpected("newCue.vertical", "");
+                testExpected("newCue.snapToLines", true);
+                testExpected("newCue.line", -1);
+                testExpected("newCue.position", 50);
+                testExpected("newCue.size", 100);
+                testExpected("newCue.align", "middle");
+                testExpected("newCue.text", "Pie");
+                testExpected("serialize(newCue.getCueAsHTML())", 'Pie');
+
+                endTest();
+            }
+
+            setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body>
+        <p>Tests VTTCue interface</p>
+        <video>
+            <track id="testTrack" src="captions-webvtt/captions-fast.vtt" kind="captions" onload="trackLoaded()" default>
+        </video>
+    </body>
+</html>
