@@ -142,7 +142,7 @@ void WebProcessConnection::didReceiveMessage(IPC::Connection* connection, IPC::M
 void WebProcessConnection::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
     // Force all timers to run at full speed when processing a synchronous message
-    ActivityAssertion activityAssertion(PluginProcess::shared());
+    ActivityAssertion activityAssertion(PluginProcess::shared().connectionActivity());
 
     ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), connection);
 
@@ -181,7 +181,7 @@ void WebProcessConnection::didClose(IPC::Connection*)
 void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete)
 {
     // Ensure we don't clamp any timers during destruction
-    ActivityAssertion activityAssertion(PluginProcess::shared());
+    ActivityAssertion activityAssertion(PluginProcess::shared().connectionActivity());
 
     PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(pluginInstanceID);
     
@@ -230,7 +230,7 @@ void WebProcessConnection::createPluginInternal(const PluginCreationParameters& 
 void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> reply)
 {
     // Ensure we don't clamp any timers during initialization
-    ActivityAssertion activityAssertion(PluginProcess::shared());
+    ActivityAssertion activityAssertion(PluginProcess::shared().connectionActivity());
 
     PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(creationParameters.pluginInstanceID);
 

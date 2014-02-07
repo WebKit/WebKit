@@ -1,3 +1,43 @@
+2014-02-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove ChildProcess::m_activeTasks
+        https://bugs.webkit.org/show_bug.cgi?id=128342
+
+        Reviewed by Anders Carlson.
+
+        Currently we funnel a number of different user activities
+        to a single UserActivity object, which requires a call down
+        from WebCore to WebKit2. Split these out so we can track
+        them separately.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::PluginProcess):
+            - added m_connectionActivity.
+        * PluginProcess/PluginProcess.h:
+        (WebKit::PluginProcess::connectionActivity):
+            - added m_connectionActivity.
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        (WebKit::WebProcessConnection::destroyPlugin):
+        (WebKit::WebProcessConnection::createPlugin):
+            - use connectionActivity
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess):
+            - use a separate UserActivity for Java.
+        * Shared/ActivityAssertion.cpp:
+        (WebKit::ActivityAssertion::ActivityAssertion):
+        (WebKit::ActivityAssertion::~ActivityAssertion):
+        * Shared/ActivityAssertion.h:
+            - ChildProcess -> UserActivity
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::ChildProcess):
+        * Shared/ChildProcess.h:
+            - remove m_activeTasks.
+        (WebKit::ChildProcess::processSuppressionEnabled):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+            - removed [inc|dec]rementActivePageCount
+
 2014-02-06  Pratik Solanki  <psolanki@apple.com>
 
         [iOS] WebKit2 can't access the GPU

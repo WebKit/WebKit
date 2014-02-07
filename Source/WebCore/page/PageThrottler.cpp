@@ -42,8 +42,9 @@ PageThrottler::PageThrottler(Page& page)
     , m_throttleState(PageNotThrottledState)
     , m_throttleHysteresisTimer(this, &PageThrottler::throttleHysteresisTimerFired)
     , m_visuallyNonIdle("Page is not visually idle.")
+    , m_pageActivity("Page is active.")
 {
-    m_page.chrome().client().incrementActivePageCount();
+    m_pageActivity.beginActivity();
 }
 
 PageThrottler::~PageThrottler()
@@ -54,7 +55,7 @@ PageThrottler::~PageThrottler()
         (*it)->invalidate();
 
     if (m_throttleState != PageThrottledState)
-        m_page.chrome().client().decrementActivePageCount();
+        m_pageActivity.endActivity();
 }
 
 std::unique_ptr<PageActivityAssertionToken> PageThrottler::createActivityToken()
@@ -66,7 +67,7 @@ void PageThrottler::throttlePage()
 {
     m_throttleState = PageThrottledState;
 
-    m_page.chrome().client().decrementActivePageCount();
+    m_pageActivity.endActivity();
 
     for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
@@ -85,7 +86,7 @@ void PageThrottler::unthrottlePage()
         return;
 
     if (oldState == PageThrottledState)
-        m_page.chrome().client().incrementActivePageCount();
+        m_pageActivity.beginActivity();
     
     for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())

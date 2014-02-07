@@ -63,6 +63,8 @@ public:
     bool openFile(const String& urlString);
 #endif
 
+    UserActivity& connectionActivity() { return m_connectionActivity; }
+
 private:
     PluginProcess();
     ~PluginProcess();
@@ -117,6 +119,7 @@ private:
 #endif
 
     static void lowMemoryHandler(bool critical);
+    UserActivity m_connectionActivity;
 };
 
 } // namespace WebKit

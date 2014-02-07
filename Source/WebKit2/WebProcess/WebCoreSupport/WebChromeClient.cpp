@@ -935,14 +935,4 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView* frameVi
     return m_page->drawingArea()->shouldUseTiledBackingForFrameView(frameView);
 }
 
-void WebChromeClient::incrementActivePageCount()
-{
-    WebProcess::shared().incrementActiveTaskCount();
-}
-
-void WebChromeClient::decrementActivePageCount()
-{
-    WebProcess::shared().decrementActiveTaskCount();
-}
-
 } // namespace WebKit

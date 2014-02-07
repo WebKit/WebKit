@@ -36,7 +36,6 @@ ChildProcess::ChildProcess()
     , m_terminationCounter(0)
     , m_terminationTimer(RunLoop::main(), this, &ChildProcess::terminationTimerFired)
     , m_processSuppressionDisabled("Process Suppression Disabled by UIProcess")
-    , m_activeTasks("Process Suppression Disabled by WebProcess")
 {
 }
 
@@ -83,16 +82,6 @@ void ChildProcess::setProcessSuppressionEnabled(bool enabled)
         m_processSuppressionDisabled.endActivity();
     else
         m_processSuppressionDisabled.beginActivity();
-}
-
-void ChildProcess::incrementActiveTaskCount()
-{
-    m_activeTasks.beginActivity();
-}
-
-void ChildProcess::decrementActiveTaskCount()
-{
-    m_activeTasks.endActivity();
 }
 
 void ChildProcess::initializeProcess(const ChildProcessInitializationParameters&)

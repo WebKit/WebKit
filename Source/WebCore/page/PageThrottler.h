@@ -75,6 +75,7 @@ private:
     Timer<PageThrottler> m_throttleHysteresisTimer;
     HashSet<PageActivityAssertionToken*> m_activityTokens;
     UserActivity m_visuallyNonIdle;
+    UserActivity m_pageActivity;
 };
 
 }
