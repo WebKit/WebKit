@@ -69,7 +69,7 @@ private:
     template<typename T> void sendToAllProcessesInGroup(const T&, uint64_t destinationID);
 
     WebPageGroupData m_data;
-    mutable RefPtr<WebPreferences> m_preferences;
+    RefPtr<WebPreferences> m_preferences;
     HashSet<WebPageProxy*> m_pages;
 };
 

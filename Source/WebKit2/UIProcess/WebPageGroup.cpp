@@ -65,25 +65,34 @@ WebPageGroup* WebPageGroup::get(uint64_t pageGroupID)
     return webPageGroupMap().get(pageGroupID);
 }
 
-WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
+static WebPageGroupData pageGroupData(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
 {
-    m_data.pageGroupID = generatePageGroupID();
+    WebPageGroupData data;
+
+    data.pageGroupID = generatePageGroupID();
 
     if (!identifier.isEmpty())
-        m_data.identifer = identifier;
+        data.identifer = identifier;
     else
-        m_data.identifer = m_data.identifer = makeString("__uniquePageGroupID-", String::number(m_data.pageGroupID));
+        data.identifer = makeString("__uniquePageGroupID-", String::number(data.pageGroupID));
 
-    m_data.visibleToInjectedBundle = visibleToInjectedBundle;
-    m_data.visibleToHistoryClient = visibleToHistoryClient;
-    
+    data.visibleToInjectedBundle = visibleToInjectedBundle;
+    data.visibleToHistoryClient = visibleToHistoryClient;
+
+    return data;
+}
+
+WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
+    : m_data(pageGroupData(identifier, visibleToInjectedBundle, visibleToHistoryClient))
+    , m_preferences(WebPreferences::create(m_data.identifer))
+{
+    m_preferences->addPageGroup(this);
     webPageGroupMap().set(m_data.pageGroupID, this);
 }
 
 WebPageGroup::~WebPageGroup()
 {
-    if (m_preferences)
-        m_preferences->removePageGroup(this);
+    m_preferences->removePageGroup(this);
     webPageGroupMap().remove(pageGroupID());
 }
 
@@ -102,34 +111,18 @@ void WebPageGroup::setPreferences(WebPreferences* preferences)
     if (preferences == m_preferences)
         return;
 
-    if (!m_preferences) {
-        m_preferences = preferences;
-        m_preferences->addPageGroup(this);
+    m_preferences->removePageGroup(this);
+    m_preferences = preferences;
+    m_preferences->addPageGroup(this);
 
-        for (auto& webPageProxy : m_pages)
-            webPageProxy->setPreferences(*m_preferences);
-    } else {
-        m_preferences->removePageGroup(this);
-        m_preferences = preferences;
-        m_preferences->addPageGroup(this);
+    for (auto& webPageProxy : m_pages)
+        webPageProxy->setPreferences(*m_preferences);
 
-        for (auto& webPageProxy : m_pages)
-            webPageProxy->setPreferences(*m_preferences);
-
-        preferencesDidChange();
-    }
+    preferencesDidChange();
 }
 
 WebPreferences& WebPageGroup::preferences() const
 {
-    if (!m_preferences) {
-        if (!m_data.identifer.isNull())
-            m_preferences = WebPreferences::create(m_data.identifer);
-        else
-            m_preferences = WebPreferences::create();
-        m_preferences->addPageGroup(const_cast<WebPageGroup*>(this));
-    }
-
     return *m_preferences;
 }
 
