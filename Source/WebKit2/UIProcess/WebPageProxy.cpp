@@ -548,7 +548,7 @@ void WebPageProxy::initializeWebPage()
 #endif
 
 #if ENABLE(INSPECTOR_SERVER)
-    if (pageGroup().preferences()->developerExtrasEnabled())
+    if (pageGroup().preferences().developerExtrasEnabled())
         inspector()->enableRemoteInspection();
 #endif
 
@@ -2060,7 +2060,7 @@ void WebPageProxy::preferencesDidChange()
         return;
 
 #if ENABLE(INSPECTOR_SERVER)
-    if (m_pageGroup->preferences()->developerExtrasEnabled())
+    if (m_pageGroup->preferences().developerExtrasEnabled())
         inspector()->enableRemoteInspection();
 #endif
 

@@ -54,7 +54,7 @@ CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy(WebPageProxy* webPagePr
     , m_discardBackingStoreTimer(RunLoop::current(), this, &CoordinatedDrawingAreaProxy::discardBackingStore)
 {
     // Construct the proxy early to allow messages to be sent to the web process while AC is entered there.
-    if (webPageProxy->pageGroup().preferences()->forceCompositingMode())
+    if (webPageProxy->pageGroup().preferences().forceCompositingMode())
         m_coordinatedLayerTreeHostProxy = adoptPtr(new CoordinatedLayerTreeHostProxy(this));
 }
 

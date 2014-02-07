@@ -1,3 +1,56 @@
+2014-02-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on EFL build since r163597
+
+        preferences() changed return type from pointer to reference.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (EwkSettings::preferences):
+        (ewk_settings_fullscreen_enabled_set):
+        (ewk_settings_fullscreen_enabled_get):
+        (ewk_settings_javascript_enabled_set):
+        (ewk_settings_javascript_enabled_get):
+        (ewk_settings_loads_images_automatically_set):
+        (ewk_settings_loads_images_automatically_get):
+        (ewk_settings_developer_extras_enabled_set):
+        (ewk_settings_developer_extras_enabled_get):
+        (ewk_settings_file_access_from_file_urls_allowed_set):
+        (ewk_settings_file_access_from_file_urls_allowed_get):
+        (ewk_settings_frame_flattening_enabled_set):
+        (ewk_settings_frame_flattening_enabled_get):
+        (ewk_settings_dns_prefetching_enabled_set):
+        (ewk_settings_dns_prefetching_enabled_get):
+        (ewk_settings_encoding_detector_enabled_set):
+        (ewk_settings_encoding_detector_enabled_get):
+        (ewk_settings_preferred_minimum_contents_width_set):
+        (ewk_settings_preferred_minimum_contents_width_get):
+        (ewk_settings_offline_web_application_cache_enabled_set):
+        (ewk_settings_offline_web_application_cache_enabled_get):
+        (ewk_settings_scripts_can_open_windows_set):
+        (ewk_settings_scripts_can_open_windows_get):
+        (ewk_settings_local_storage_enabled_set):
+        (ewk_settings_local_storage_enabled_get):
+        (ewk_settings_plugins_enabled_set):
+        (ewk_settings_plugins_enabled_get):
+        (ewk_settings_default_font_size_set):
+        (ewk_settings_default_font_size_get):
+        (ewk_settings_private_browsing_enabled_set):
+        (ewk_settings_private_browsing_enabled_get):
+        (ewk_settings_text_autosizing_enabled_set):
+        (ewk_settings_text_autosizing_enabled_get):
+        (ewk_settings_spatial_navigation_enabled_set):
+        (ewk_settings_spatial_navigation_enabled_get):
+        (EwkSettings::setDefaultTextEncodingName):
+        * UIProcess/API/efl/ewk_settings_private.h:
+        (EwkSettings::EwkSettings):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::preferencesDidChange):
+
 2014-02-06  Anders Carlsson  <andersca@apple.com>
 
         Crash in MiniBrowser when using Command-W to close a WK2 window

@@ -27,9 +27,8 @@
 #ifndef ewk_settings_private_h
 #define ewk_settings_private_h
 
-namespace WebKit {
-class WebPreferences;
-}
+#include <WebKit2/WebPreferences.h>
+
 class EwkView;
 /**
  * \struct  Ewk_Settings
@@ -41,11 +40,11 @@ public:
         : m_view(viewImpl)
     {
         ASSERT(m_view);
-        m_defaultTextEncodingName = preferences()->defaultTextEncodingName().utf8().data();
+        m_defaultTextEncodingName = preferences().defaultTextEncodingName().utf8().data();
     }
 
-    const WebKit::WebPreferences* preferences() const;
-    WebKit::WebPreferences* preferences();
+    const WebKit::WebPreferences& preferences() const;
+    WebKit::WebPreferences& preferences();
 
     const char* defaultTextEncodingName() const;
     void setDefaultTextEncodingName(const char*);
