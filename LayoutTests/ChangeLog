@@ -1,3 +1,18 @@
+2014-02-07  Lukasz Bialek  <l.bialek@samsung.com>
+
+        [EFL] editing/style/block-style-005.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=114612
+
+        Reviewed by Ryosuke Niwa.
+
+        After r148378 editing/style/block-style-005.htm test stopped passing.
+        Number of "moveSelectionByLineCommand" is changed to 4 to match intended
+        test behaviour. Test is confirmed to pass in EFL and GTK ports now.
+
+        * editing/style/block-style-005.html:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2014-02-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Remove style-scoped tests

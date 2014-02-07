@@ -1547,8 +1547,6 @@ webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain-no-r
 # Newly added test in r148131 is failing.
 webkit.org/b/114876 media/click-volume-bar-not-pausing.html [ Failure ]
 
-webkit.org/b/114612 editing/style/block-style-005.html [ Failure ]
-
 # Unidentified failing media tests
 webkit.org/b/115419 http/tests/media/video-redirect.html [ Failure ]
 webkit.org/b/115419 media/media-can-play-ogg.html [ Failure ]
