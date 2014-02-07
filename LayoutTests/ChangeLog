@@ -1,3 +1,18 @@
+2014-02-04  Jeffrey Pfau  <jpfau@apple.com>
+
+        Make adoption agency use the task queue
+        https://bugs.webkit.org/show_bug.cgi?id=109445
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        * fast/parser/adoption-agency-crash-01-expected.txt: Added.
+        * fast/parser/adoption-agency-crash-01.html: Added.
+        * fast/parser/adoption-agency-crash-02-expected.txt: Added.
+        * fast/parser/adoption-agency-crash-02.html: Added.
+        * fast/parser/adoption-agency-crash-03-expected.txt: Added.
+        * fast/parser/adoption-agency-crash-03.html: Added.
+
 2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Console support to JSContext Inspection
