@@ -70,7 +70,13 @@ namespace WebKit {
 #define DEFAULT_FRAME_FLATTENING_ENABLED false
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#define DEFAULT_ACCELERATED_DRAWING_ENABLED true
+#else
+#define DEFAULT_ACCELERATED_DRAWING_ENABLED false
+#endif
+
+#if PLATFORM(IOS) && PLATFORM(IOS_SIMULATOR)
 #define DEFAULT_CANVAS_USES_ACCELERATED_DRAWING false
 #else
 #define DEFAULT_CANVAS_USES_ACCELERATED_DRAWING true
@@ -98,7 +104,7 @@ namespace WebKit {
     macro(NeedsSiteSpecificQuirks, needsSiteSpecificQuirks, Bool, bool, false) \
     macro(AcceleratedCompositingEnabled, acceleratedCompositingEnabled, Bool, bool, true) \
     macro(ForceCompositingMode, forceCompositingMode, Bool, bool, false) \
-    macro(AcceleratedDrawingEnabled, acceleratedDrawingEnabled, Bool, bool, false) \
+    macro(AcceleratedDrawingEnabled, acceleratedDrawingEnabled, Bool, bool, DEFAULT_ACCELERATED_DRAWING_ENABLED) \
     macro(CanvasUsesAcceleratedDrawing, canvasUsesAcceleratedDrawing, Bool, bool, DEFAULT_CANVAS_USES_ACCELERATED_DRAWING) \
     macro(CompositingBordersVisible, compositingBordersVisible, Bool, bool, false) \
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \

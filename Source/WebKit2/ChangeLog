@@ -1,3 +1,16 @@
+2014-02-03  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] iOS should use accelerated drawing by default, except in the simulator
+        https://bugs.webkit.org/show_bug.cgi?id=128140
+        <rdar://problem/15974171>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPreferencesStore.h:
+        Turn full-page accelerated drawing on for iOS, except the simulator which doesn't support it.
+        Turn canvas accelerated drawing on for all platforms except the iOS simulator, for the same reason.
+        The defaults remain the same for non-iOS platforms.
+
 2014-02-06  Jeremy Jones  <jeremyj@apple.com>
 
         Add support for AVKit fullscreen to WebKit2
