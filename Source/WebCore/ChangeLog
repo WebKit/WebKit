@@ -1,3 +1,21 @@
+2014-02-07  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Rename grid-definition-{columns|rows} to match the new syntax
+        https://bugs.webkit.org/show_bug.cgi?id=127989
+
+        Reviewed by Andreas Kling.
+
+        In the latest WD, grid-definition-{columns|rows} were renamed to grid-template-{columns|rows}.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::isLayoutDependent):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2014-02-07  Andreas Kling  <akling@apple.com>
 
         CTTE: DocumentThreadableLoader always has a Document.

@@ -8,7 +8,7 @@ if (window.testRunner)
 function repaintTest()
 {
     var gridElement = document.getElementsByClassName("grid")[0];
-    gridElement.style.webkitGridDefinitionRows = "100px 50px";
+    gridElement.style.webkitGridTemplateRows = "100px 50px";
 }
 window.addEventListener("load", runRepaintTest, false);
 </script>
@@ -20,15 +20,15 @@ body {
 
 .grid {
     width: -webkit-fit-content;
-    -webkit-grid-definition-rows: 50px 100px;
-    -webkit-grid-definition-columns: 100px;
+    -webkit-grid-template-rows: 50px 100px;
+    -webkit-grid-template-columns: 100px;
 }
 .sizedToGridArea {
     background-color: purple;
 }
 </style>
 <body>
-<div>This test checks that changing the grid-definition-rows lead to a repaint. The final grid element should be 100px * 150px, the grid item should be 100px * 100px. No trace of the elements before the grid-definition-rows change should be seen.</div>
+<div>This test checks that changing the grid-template-rows lead to a repaint. The final grid element should be 100px * 150px, the grid item should be 100px * 100px. No trace of the elements before the grid-template-rows change should be seen.</div>
 <div class="constrainedContainer">
     <div class="grid">
         <div class="sizedToGridArea"></div>

@@ -10,8 +10,8 @@ if (window.testRunner)
 function testLayout(gridElementID, gridTracks, size)
 {
     var gridElement = document.getElementById(gridElementID);
-    gridElement.style.webkitGridDefinitionColumns = gridTracks.columns;
-    gridElement.style.webkitGridDefinitionRows = gridTracks.rows;
+    gridElement.style.webkitGridTemplateColumns = gridTracks.columns;
+    gridElement.style.webkitGridTemplateRows = gridTracks.rows;
     var gridItem = gridElement.firstChild.nextSibling;
     gridItem.setAttribute("data-expected-width", size.width);
     gridItem.setAttribute("data-expected-height", size.height);

@@ -7,8 +7,8 @@ if (window.testRunner)
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-definition-columns: 70% 30%;
-    -webkit-grid-definition-rows: 40% 60%;
+    -webkit-grid-template-columns: 70% 30%;
+    -webkit-grid-template-rows: 40% 60%;
     width: 400px;
     height: 300px;
 }
@@ -35,22 +35,22 @@ if (window.testRunner)
 </style>
 <script src="../../resources/check-layout.js"></script>
 <script>
-function changeGridDefinitionsAndCheckValues()
+function changeGridTemplatesAndCheckValues()
 {
     var grid0 = document.getElementsByClassName("grid")[0];
     var grid1 = document.getElementsByClassName("grid")[1];
     var grid2 = document.getElementsByClassName("grid")[2];
     document.body.offsetLeft;
-    grid0.style.webkitGridDefinitionColumns = "40% 60%";
+    grid0.style.webkitGridTemplateColumns = "40% 60%";
 
-    grid1.style.webkitGridDefinitionRows = "30% 70%";
+    grid1.style.webkitGridTemplateRows = "30% 70%";
 
-    grid2.style.webkitGridDefinitionColumns = "40% 60%";
-    grid2.style.webkitGridDefinitionRows = "30% 70%";
+    grid2.style.webkitGridTemplateColumns = "40% 60%";
+    grid2.style.webkitGridTemplateRows = "30% 70%";
 
     checkLayout('.grid');
 }
-window.addEventListener("load", changeGridDefinitionsAndCheckValues, false);
+window.addEventListener("load", changeGridTemplatesAndCheckValues, false);
 </script>
 <body>
 

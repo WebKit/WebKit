@@ -2568,8 +2568,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         parsedValue = parseGridTrackSize(*m_valueList);
         break;
 
-    case CSSPropertyWebkitGridDefinitionColumns:
-    case CSSPropertyWebkitGridDefinitionRows:
+    case CSSPropertyWebkitGridTemplateColumns:
+    case CSSPropertyWebkitGridTemplateRows:
         if (!cssGridLayoutEnabled())
             return false;
         return parseGridTrackList(propId, important);

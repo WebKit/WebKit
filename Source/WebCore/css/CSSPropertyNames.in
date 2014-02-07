@@ -304,8 +304,8 @@ z-index
 -webkit-grid-auto-rows
 -webkit-grid-column-end
 -webkit-grid-column-start
--webkit-grid-definition-columns
--webkit-grid-definition-rows
+-webkit-grid-template-columns
+-webkit-grid-template-rows
 -webkit-grid-row-end
 -webkit-grid-row-start
 -webkit-grid-column

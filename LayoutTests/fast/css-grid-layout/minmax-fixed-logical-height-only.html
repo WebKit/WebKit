@@ -12,38 +12,38 @@ if (window.testRunner)
 }
 
 #grid1 {
-    -webkit-grid-definition-columns: 30px;
-    -webkit-grid-definition-rows: minmax(20px, 80px) 160px;
+    -webkit-grid-template-columns: 30px;
+    -webkit-grid-template-rows: minmax(20px, 80px) 160px;
 }
 
 #grid2 {
-    -webkit-grid-definition-columns: 30px;
-    -webkit-grid-definition-rows: minmax(50%, 120px) minmax(20px, 40%);
+    -webkit-grid-template-columns: 30px;
+    -webkit-grid-template-rows: minmax(50%, 120px) minmax(20px, 40%);
 }
 
 #grid3 {
-    -webkit-grid-definition-columns: 30px;
+    -webkit-grid-template-columns: 30px;
     /* Overlapping range. */
-    -webkit-grid-definition-rows: minmax(10px, 180px) minmax(30px, 150px);
+    -webkit-grid-template-rows: minmax(10px, 180px) minmax(30px, 150px);
 }
 
 #grid4 {
-    -webkit-grid-definition-columns: 30px;
-    -webkit-grid-definition-rows: minmax(20px, 80px) 60px;
+    -webkit-grid-template-columns: 30px;
+    -webkit-grid-template-rows: minmax(20px, 80px) 60px;
     -webkit-writing-mode: vertical-rl;
 }
 
 #grid5 {
-    -webkit-grid-definition-columns: 30px;
+    -webkit-grid-template-columns: 30px;
     /* 90% > 80px, 80px should be ignored. */
-    -webkit-grid-definition-rows: minmax(90%, 80px) minmax(10px, 60%);
+    -webkit-grid-template-rows: minmax(90%, 80px) minmax(10px, 60%);
     -webkit-writing-mode: vertical-lr;
 }
 
 #grid6 {
     /* Overlapping range. */
-    -webkit-grid-definition-columns: 30px;
-    -webkit-grid-definition-rows: minmax(10px, 180px) minmax(30px, 150px);
+    -webkit-grid-template-columns: 30px;
+    -webkit-grid-template-rows: minmax(10px, 180px) minmax(30px, 150px);
     -webkit-writing-mode: horizontal-bt;
 }
 

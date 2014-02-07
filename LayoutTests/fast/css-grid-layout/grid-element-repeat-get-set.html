@@ -28,48 +28,48 @@ if (window.testRunner)
 }
 
 .singleSingleTrackRepeat {
-    -webkit-grid-definition-rows: repeat(1, 18px);
-    -webkit-grid-definition-columns: repeat(1, 15%);
+    -webkit-grid-template-rows: repeat(1, 18px);
+    -webkit-grid-template-columns: repeat(1, 15%);
 }
 
 .twoSingleTrackRepeat {
-    -webkit-grid-definition-rows: repeat(2, auto);
-    -webkit-grid-definition-columns: repeat(2, minmax(15px, 50%));
+    -webkit-grid-template-rows: repeat(2, auto);
+    -webkit-grid-template-columns: repeat(2, minmax(15px, 50%));
 }
 
 .twoDoubleTrackRepeat {
-    -webkit-grid-definition-rows: repeat(2, minmax(5px, 10px)  auto);
-    -webkit-grid-definition-columns: repeat(2, auto minmax(100px, 120px));
+    -webkit-grid-template-rows: repeat(2, minmax(5px, 10px)  auto);
+    -webkit-grid-template-columns: repeat(2, auto minmax(100px, 120px));
 }
 
 .twoDoubleTrackWithNamedGridLineRepeat {
-    -webkit-grid-definition-rows: repeat(2, 10px 'start' auto 'end');
-    -webkit-grid-definition-columns: repeat(2, auto 'middle' 250px 'end');
+    -webkit-grid-template-rows: repeat(2, 10px 'start' auto 'end');
+    -webkit-grid-template-columns: repeat(2, auto 'middle' 250px 'end');
 }
 
 .twoDoubleTrackWithTrailingNamedGridLineRepeat {
-    -webkit-grid-definition-rows: repeat(2, 'before' 10px);
-    -webkit-grid-definition-columns: repeat(2, 'before' auto);
+    -webkit-grid-template-rows: repeat(2, 'before' 10px);
+    -webkit-grid-template-columns: repeat(2, 'before' auto);
 }
 
 .trailingNamedGridLineRepeat {
-    -webkit-grid-definition-rows: repeat(1, 10px) 'end';
-    -webkit-grid-definition-columns: repeat(1, 250px) 'end';
+    -webkit-grid-template-rows: repeat(1, 10px) 'end';
+    -webkit-grid-template-columns: repeat(1, 250px) 'end';
 }
 
 .leadingNamedGridLineRepeat {
-    -webkit-grid-definition-rows: 'start' repeat(2, 10px);
-    -webkit-grid-definition-columns: 'start' repeat(2, 250px);
+    -webkit-grid-template-rows: 'start' repeat(2, 10px);
+    -webkit-grid-template-columns: 'start' repeat(2, 250px);
 }
 
 .mixRepeatAfterNonRepeat {
-    -webkit-grid-definition-rows: auto repeat(2, 10px);
-    -webkit-grid-definition-columns: 'start' 140px repeat(2, 250px);
+    -webkit-grid-template-rows: auto repeat(2, 10px);
+    -webkit-grid-template-columns: 'start' 140px repeat(2, 250px);
 }
 
 .mixNonRepeatAfterRepeat {
-    -webkit-grid-definition-rows: repeat(2, 10px) 'end' auto;
-    -webkit-grid-definition-columns: repeat(2, 250px) 15% 'last';
+    -webkit-grid-template-rows: repeat(2, 10px) 'end' auto;
+    -webkit-grid-template-columns: repeat(2, 250px) 15% 'last';
 }
 </style>
 <script src="../../resources/js-test-pre.js"></script>
@@ -99,19 +99,19 @@ if (window.testRunner)
 
 <script src="resources/grid-definitions-parsing-utils.js"></script>
 <script>
-    description('Test that setting and getting grid-definition-columns and grid-definition-rows with repeat() works as expected');
+    description('Test that setting and getting grid-template-columns and grid-template-rows with repeat() works as expected');
 
-    debug("Test getting grid-definition-columns and grid-definition-rows set through CSS");
-    testGridDefinitionsValues(document.getElementById("singleSingleTrackRepeatWithSize"), "120px", "18px");
-    testGridDefinitionsValues(document.getElementById("twoSingleTrackRepeat"), "400px 400px", "0px 0px");
-    testGridDefinitionsValues(document.getElementById("twoSingleTrackRepeatWithChildren"), "400px 400px", "44px 77px");
-    testGridDefinitionsValues(document.getElementById("twoDoubleTrackRepeat"), "33px 120px 0px 120px", "10px 77px 10px 0px");
-    testGridDefinitionsValues(document.getElementById("twoDoubleTrackWithNamedGridLineRepeat"), "33px middle 250px end 0px middle 250px end", "10px start 77px end 10px start 0px end");
-    testGridDefinitionsValues(document.getElementById("twoDoubleTrackWithTrailingNamedGridLineRepeat"), "before 0px before 0px", "before 10px before 10px");
-    testGridDefinitionsValues(document.getElementById("trailingNamedGridLineRepeat"), "250px end", "10px end");
-    testGridDefinitionsValues(document.getElementById("leadingNamedGridLineRepeat"), "start 250px 250px", "start 10px 10px");
-    testGridDefinitionsValues(document.getElementById("mixRepeatAfterNonRepeat"), "start 140px 250px 250px", "44px 10px 10px");
-    testGridDefinitionsValues(document.getElementById("mixNonRepeatAfterRepeat"), "250px 250px 120px last", "10px 10px end 0px");
+    debug("Test getting grid-template-columns and grid-template-rows set through CSS");
+    testGridTemplatesValues(document.getElementById("singleSingleTrackRepeatWithSize"), "120px", "18px");
+    testGridTemplatesValues(document.getElementById("twoSingleTrackRepeat"), "400px 400px", "0px 0px");
+    testGridTemplatesValues(document.getElementById("twoSingleTrackRepeatWithChildren"), "400px 400px", "44px 77px");
+    testGridTemplatesValues(document.getElementById("twoDoubleTrackRepeat"), "33px 120px 0px 120px", "10px 77px 10px 0px");
+    testGridTemplatesValues(document.getElementById("twoDoubleTrackWithNamedGridLineRepeat"), "33px middle 250px end 0px middle 250px end", "10px start 77px end 10px start 0px end");
+    testGridTemplatesValues(document.getElementById("twoDoubleTrackWithTrailingNamedGridLineRepeat"), "before 0px before 0px", "before 10px before 10px");
+    testGridTemplatesValues(document.getElementById("trailingNamedGridLineRepeat"), "250px end", "10px end");
+    testGridTemplatesValues(document.getElementById("leadingNamedGridLineRepeat"), "start 250px 250px", "start 10px 10px");
+    testGridTemplatesValues(document.getElementById("mixRepeatAfterNonRepeat"), "start 140px 250px 250px", "44px 10px 10px");
+    testGridTemplatesValues(document.getElementById("mixNonRepeatAfterRepeat"), "250px 250px 120px last", "10px 10px end 0px");
 
     debug("");
     debug("Test invalid repeat syntax.");
@@ -119,7 +119,7 @@ if (window.testRunner)
         element = document.createElement("div");
         document.body.appendChild(element);
         element.style.gridColumns = gridColumn;
-        shouldBeEqualToString("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "none");
+        shouldBeEqualToString("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "none");
         document.body.removeChild(element);
     }
     testInvalidSyntax("repeat(");

@@ -286,8 +286,8 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitGridAutoRows,
     CSSPropertyWebkitGridColumnEnd,
     CSSPropertyWebkitGridColumnStart,
-    CSSPropertyWebkitGridDefinitionColumns,
-    CSSPropertyWebkitGridDefinitionRows,
+    CSSPropertyWebkitGridTemplateColumns,
+    CSSPropertyWebkitGridTemplateRows,
     CSSPropertyWebkitGridRowEnd,
     CSSPropertyWebkitGridRowStart,
     CSSPropertyWebkitHighlight,
@@ -1536,8 +1536,8 @@ static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, Rend
     switch (propertyID) {
     case CSSPropertyWidth:
     case CSSPropertyHeight:
-    case CSSPropertyWebkitGridDefinitionColumns:
-    case CSSPropertyWebkitGridDefinitionRows:
+    case CSSPropertyWebkitGridTemplateColumns:
+    case CSSPropertyWebkitGridTemplateRows:
     case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyWebkitTransformOrigin:
     case CSSPropertyWebkitTransform:
@@ -2081,9 +2081,9 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitGridAutoRows:
             return specifiedValueForGridTrackSize(style->gridAutoRows(), style.get(), m_node->document().renderView());
 
-        case CSSPropertyWebkitGridDefinitionColumns:
+        case CSSPropertyWebkitGridTemplateColumns:
             return valueForGridTrackList(ForColumns, renderer, style.get(), m_node->document().renderView());
-        case CSSPropertyWebkitGridDefinitionRows:
+        case CSSPropertyWebkitGridTemplateRows:
             return valueForGridTrackList(ForRows, renderer, style.get(), m_node->document().renderView());
 
         case CSSPropertyWebkitGridColumnStart:

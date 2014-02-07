@@ -2655,7 +2655,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.style()->setGridAutoRows(trackSize);
         return;
     }
-    case CSSPropertyWebkitGridDefinitionColumns: {
+    case CSSPropertyWebkitGridTemplateColumns: {
         if (isInherit) {
             m_state.style()->setGridColumns(m_state.parentStyle()->gridColumns());
             m_state.style()->setNamedGridColumnLines(m_state.parentStyle()->namedGridColumnLines());
@@ -2674,7 +2674,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.style()->setNamedGridColumnLines(namedGridLines);
         return;
     }
-    case CSSPropertyWebkitGridDefinitionRows: {
+    case CSSPropertyWebkitGridTemplateRows: {
         if (isInherit) {
             m_state.style()->setGridRows(m_state.parentStyle()->gridRows());
             m_state.style()->setNamedGridRowLines(m_state.parentStyle()->namedGridRowLines());

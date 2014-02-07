@@ -7,28 +7,28 @@ if (window.testRunner)
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .gridMaxMaxContent {
-    -webkit-grid-definition-columns: 50px;
-    -webkit-grid-definition-rows: minmax(10px, -webkit-max-content) minmax(10px, 1fr);
+    -webkit-grid-template-columns: 50px;
+    -webkit-grid-template-rows: minmax(10px, -webkit-max-content) minmax(10px, 1fr);
 }
 
 .gridMinMinContent {
-    -webkit-grid-definition-columns: 50px;
-    -webkit-grid-definition-rows: minmax(10px, 1fr) minmax(-webkit-min-content, 50px);
+    -webkit-grid-template-columns: 50px;
+    -webkit-grid-template-rows: minmax(10px, 1fr) minmax(-webkit-min-content, 50px);
 }
 
 .gridWithIntrinsicSizeBiggerThanFlex {
-    -webkit-grid-definition-columns: 50px;
-    -webkit-grid-definition-rows: minmax(-webkit-min-content, 0.5fr) minmax(18px, 2fr);
+    -webkit-grid-template-columns: 50px;
+    -webkit-grid-template-rows: minmax(-webkit-min-content, 0.5fr) minmax(18px, 2fr);
 }
 
 .gridShrinkBelowItemsIntrinsicSize {
-    -webkit-grid-definition-columns: 50px;
-    -webkit-grid-definition-rows: minmax(0px, 1fr) minmax(0px, 2fr);
+    -webkit-grid-template-columns: 50px;
+    -webkit-grid-template-rows: minmax(0px, 1fr) minmax(0px, 2fr);
 }
 
 .gridWithNonFlexingItems {
-    -webkit-grid-definition-columns: 50px;
-    -webkit-grid-definition-rows: 40px minmax(-webkit-min-content, 1fr) auto minmax(20px, 2fr);
+    -webkit-grid-template-columns: 50px;
+    -webkit-grid-template-rows: 40px minmax(-webkit-min-content, 1fr) auto minmax(20px, 2fr);
 }
 
 .thirdRowFirstColumn {

@@ -19,28 +19,28 @@ if (window.testRunner)
     width: 77px;
 }
 .gridWithFixed {
-    -webkit-grid-definition-columns: "first" 10px;
-    -webkit-grid-definition-rows: "first" 15px;
+    -webkit-grid-template-columns: "first" 10px;
+    -webkit-grid-template-rows: "first" 15px;
 }
 .gridWithPercent {
-    -webkit-grid-definition-columns: 53% "last";
-    -webkit-grid-definition-rows: 27% "last";
+    -webkit-grid-template-columns: 53% "last";
+    -webkit-grid-template-rows: 27% "last";
 }
 .gridWithAuto {
-    -webkit-grid-definition-columns: "first" auto;
-    -webkit-grid-definition-rows: auto "last";
+    -webkit-grid-template-columns: "first" auto;
+    -webkit-grid-template-rows: auto "last";
 }
 .gridWithMinMax {
-    -webkit-grid-definition-columns: "first" minmax(10%, 15px);
-    -webkit-grid-definition-rows: minmax(20px, 50%) "last";
+    -webkit-grid-template-columns: "first" minmax(10%, 15px);
+    -webkit-grid-template-rows: minmax(20px, 50%) "last";
 }
 .gridWithFixedMultiple {
-    -webkit-grid-definition-columns: "first" "nav" 10px "last";
-    -webkit-grid-definition-rows: "first" "nav" 15px "last";
+    -webkit-grid-template-columns: "first" "nav" 10px "last";
+    -webkit-grid-template-rows: "first" "nav" 15px "last";
 }
 .gridWithPercentageSameStringMultipleTimes {
-    -webkit-grid-definition-columns: "first" "nav" 10% "nav" 15% "last";
-    -webkit-grid-definition-rows: "first" "nav2" 25% "nav2" 75% "last";
+    -webkit-grid-template-columns: "first" "nav" 10% "nav" 15% "last";
+    -webkit-grid-template-rows: "first" "nav2" 25% "nav2" 75% "last";
 }
 </style>
 <script src="../../resources/js-test-pre.js"></script>
@@ -57,36 +57,36 @@ if (window.testRunner)
 <div class="grid gridWithPercentageSameStringMultipleTimes" id="gridWithPercentageSameStringMultipleTimes"></div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
 <script>
-    description('Test that setting and getting grid-definition-columns and grid-definition-rows works as expected');
+    description('Test that setting and getting grid-template-columns and grid-template-rows works as expected');
 
-    debug("Test getting -webkit-grid-definition-columns and -webkit-grid-definition-rows set through CSS");
-    testGridDefinitionsValues(document.getElementById("gridWithFixedElement"), "first 10px", "first 15px");
-    testGridDefinitionsValues(document.getElementById("gridWithPercentElement"), "424px last", "162px last");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoElement"), "first 0px", "0px last");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoWithChildrenElement"), "first 77px", "22px last");
-    testGridDefinitionsValues(document.getElementById("gridWithMinMax"), "first 80px", "300px last");
-    testGridDefinitionsValues(document.getElementById("gridWithFixedMultiple"), "nav first 10px last", "nav first 15px last");
-    testGridDefinitionsValues(document.getElementById("gridWithPercentageSameStringMultipleTimes"), "nav first 80px nav 120px last", "first nav2 150px nav2 450px last");
-
-    debug("");
-    debug("Test getting and setting -webkit-grid-definition-columns and -webkit-grid-definition-rows through JS");
-    testGridDefinitionsSetJSValues("'first' 18px", "66px 'last'", "first 18px", "66px last", "first 18px", "66px last");
-    testGridDefinitionsSetJSValues("'first' 55%", "40% 'last'", "first 440px", "240px last", "first 55%", "40% last");
-    testGridDefinitionsSetJSValues("'first' auto", "auto 'last'", "first 0px", "0px last", "first auto", "auto last");
-    testGridDefinitionsSetJSValues("'first' -webkit-min-content", "-webkit-min-content 'last'", "first 0px", "0px last", "first -webkit-min-content", "-webkit-min-content last");
-    testGridDefinitionsSetJSValues("'first' -webkit-max-content", "-webkit-max-content 'last'", "first 0px", "0px last", "first -webkit-max-content", "-webkit-max-content last");
-    testGridDefinitionsSetJSValues("'first' minmax(55%, 45px)", "minmax(30px, 40%) 'last'", "first 440px", "240px last", "first minmax(55%, 45px)", "minmax(30px, 40%) last");
-    testGridDefinitionsSetJSValues("'first' minmax(22em, -webkit-max-content)", "minmax(-webkit-max-content, 5em) 'last'", "first 220px", "50px last", "first minmax(22em, -webkit-max-content)", "minmax(-webkit-max-content, 5em) last");
-    testGridDefinitionsSetJSValues("'first' minmax(22em, -webkit-min-content)", "minmax(-webkit-min-content, 5em) 'last'", "first 220px", "50px last", "first minmax(22em, -webkit-min-content)", "minmax(-webkit-min-content, 5em) last");
-    testGridDefinitionsSetJSValues("'first' minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content) 'last'", "first 0px", "0px last", "first minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content) last");
-    testGridDefinitionsSetJSValues("'first' 'nav' minmax(-webkit-min-content, -webkit-max-content) 'last'", "'first' 'nav' minmax(-webkit-max-content, -webkit-min-content) 'last'", "nav first 0px last", "nav first 0px last", "first nav minmax(-webkit-min-content, -webkit-max-content) last", "first nav minmax(-webkit-max-content, -webkit-min-content) last");
-    testGridDefinitionsSetJSValues("'first' 'nav' minmax(-webkit-min-content, -webkit-max-content) 'nav' auto 'last'", "'first' 'nav2' minmax(-webkit-max-content, -webkit-min-content) 'nav2' minmax(10px, 15px) 'last'", "nav first 0px nav 0px last", "first nav2 0px nav2 15px last", "first nav minmax(-webkit-min-content, -webkit-max-content) nav auto last", "first nav2 minmax(-webkit-max-content, -webkit-min-content) nav2 minmax(10px, 15px) last");
-    testGridDefinitionsSetJSValues("'foo' 'bar' auto 'foo' auto 'bar'", "'foo' 'bar' auto 'foo' auto 'bar'", "foo bar 0px foo 0px bar", "foo bar 0px foo 0px bar", "foo bar auto foo auto bar", "foo bar auto foo auto bar");
+    debug("Test getting -webkit-grid-template-columns and -webkit-grid-template-rows set through CSS");
+    testGridTemplatesValues(document.getElementById("gridWithFixedElement"), "first 10px", "first 15px");
+    testGridTemplatesValues(document.getElementById("gridWithPercentElement"), "424px last", "162px last");
+    testGridTemplatesValues(document.getElementById("gridWithAutoElement"), "first 0px", "0px last");
+    testGridTemplatesValues(document.getElementById("gridWithAutoWithChildrenElement"), "first 77px", "22px last");
+    testGridTemplatesValues(document.getElementById("gridWithMinMax"), "first 80px", "300px last");
+    testGridTemplatesValues(document.getElementById("gridWithFixedMultiple"), "nav first 10px last", "nav first 15px last");
+    testGridTemplatesValues(document.getElementById("gridWithPercentageSameStringMultipleTimes"), "nav first 80px nav 120px last", "first nav2 150px nav2 450px last");
 
     debug("");
-    debug("Test getting and setting invalid -webkit-grid-definition-columns and -webkit-grid-definition-rows through JS");
-    testGridDefinitionsSetBadJSValues("foo", "bar");
-    testGridDefinitionsSetBadJSValues("foo bar", "bar foo");
+    debug("Test getting and setting -webkit-grid-template-columns and -webkit-grid-template-rows through JS");
+    testGridTemplatesSetJSValues("'first' 18px", "66px 'last'", "first 18px", "66px last", "first 18px", "66px last");
+    testGridTemplatesSetJSValues("'first' 55%", "40% 'last'", "first 440px", "240px last", "first 55%", "40% last");
+    testGridTemplatesSetJSValues("'first' auto", "auto 'last'", "first 0px", "0px last", "first auto", "auto last");
+    testGridTemplatesSetJSValues("'first' -webkit-min-content", "-webkit-min-content 'last'", "first 0px", "0px last", "first -webkit-min-content", "-webkit-min-content last");
+    testGridTemplatesSetJSValues("'first' -webkit-max-content", "-webkit-max-content 'last'", "first 0px", "0px last", "first -webkit-max-content", "-webkit-max-content last");
+    testGridTemplatesSetJSValues("'first' minmax(55%, 45px)", "minmax(30px, 40%) 'last'", "first 440px", "240px last", "first minmax(55%, 45px)", "minmax(30px, 40%) last");
+    testGridTemplatesSetJSValues("'first' minmax(22em, -webkit-max-content)", "minmax(-webkit-max-content, 5em) 'last'", "first 220px", "50px last", "first minmax(22em, -webkit-max-content)", "minmax(-webkit-max-content, 5em) last");
+    testGridTemplatesSetJSValues("'first' minmax(22em, -webkit-min-content)", "minmax(-webkit-min-content, 5em) 'last'", "first 220px", "50px last", "first minmax(22em, -webkit-min-content)", "minmax(-webkit-min-content, 5em) last");
+    testGridTemplatesSetJSValues("'first' minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content) 'last'", "first 0px", "0px last", "first minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content) last");
+    testGridTemplatesSetJSValues("'first' 'nav' minmax(-webkit-min-content, -webkit-max-content) 'last'", "'first' 'nav' minmax(-webkit-max-content, -webkit-min-content) 'last'", "nav first 0px last", "nav first 0px last", "first nav minmax(-webkit-min-content, -webkit-max-content) last", "first nav minmax(-webkit-max-content, -webkit-min-content) last");
+    testGridTemplatesSetJSValues("'first' 'nav' minmax(-webkit-min-content, -webkit-max-content) 'nav' auto 'last'", "'first' 'nav2' minmax(-webkit-max-content, -webkit-min-content) 'nav2' minmax(10px, 15px) 'last'", "nav first 0px nav 0px last", "first nav2 0px nav2 15px last", "first nav minmax(-webkit-min-content, -webkit-max-content) nav auto last", "first nav2 minmax(-webkit-max-content, -webkit-min-content) nav2 minmax(10px, 15px) last");
+    testGridTemplatesSetJSValues("'foo' 'bar' auto 'foo' auto 'bar'", "'foo' 'bar' auto 'foo' auto 'bar'", "foo bar 0px foo 0px bar", "foo bar 0px foo 0px bar", "foo bar auto foo auto bar", "foo bar auto foo auto bar");
+
+    debug("");
+    debug("Test getting and setting invalid -webkit-grid-template-columns and -webkit-grid-template-rows through JS");
+    testGridTemplatesSetBadJSValues("foo", "bar");
+    testGridTemplatesSetBadJSValues("foo bar", "bar foo");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
