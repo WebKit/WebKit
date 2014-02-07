@@ -1,5 +1,19 @@
 2014-02-07  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] WKRemoteObjectInterface doesn’t support aribtrary argument classes
+        https://bugs.webkit.org/show_bug.cgi?id=128368
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterface.h: Declared new methods.
+        * Shared/API/Cocoa/WKRemoteObjectInterface.mm:
+        (propertyListClasses): Removed NSNull, which is not really a property list class.
+        (classesForSelectorArgument): Added helper function.
+        (-[WKRemoteObjectInterface classesForSelector:argumentIndex:]): Added.
+        (-[WKRemoteObjectInterface setClasses:forSelector:argumentIndex:]): Added.
+
+2014-02-07  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] API::FrameHandle has a generic wrapper
         https://bugs.webkit.org/show_bug.cgi?id=128366
 

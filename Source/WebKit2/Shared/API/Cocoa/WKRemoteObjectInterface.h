@@ -32,12 +32,15 @@
 WK_API_CLASS
 @interface WKRemoteObjectInterface : NSObject
 
-@property (readonly) Protocol *protocol;
-@property (readonly) NSString *identifier;
++ (instancetype)remoteObjectInterfaceWithProtocol:(Protocol *)protocol;
 
 - (id)initWithProtocol:(Protocol *)protocol identifier:(NSString *)identifier;
 
-+ (instancetype)remoteObjectInterfaceWithProtocol:(Protocol *)protocol;
+@property (readonly) Protocol *protocol;
+@property (readonly) NSString *identifier;
+
+- (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex;
+- (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex;
 
 @end
 

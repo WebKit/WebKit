@@ -55,7 +55,7 @@ static bool isContainerClass(Class objectClass)
 static NSSet *propertyListClasses()
 {
     // FIXME: Add more property list classes if needed.
-    static NSSet *propertyListClasses = [[NSSet alloc] initWithObjects:[NSArray class], [NSDictionary class], [NSNull class], [NSNumber class], [NSString class], nil];
+    static NSSet *propertyListClasses = [[NSSet alloc] initWithObjects:[NSArray class], [NSDictionary class], [NSNumber class], [NSString class], nil];
 
     return propertyListClasses;
 }
@@ -139,6 +139,28 @@ static void initializeAllowedArgumentClasses(WKRemoteObjectInterface *interface)
 + (instancetype)remoteObjectInterfaceWithProtocol:(Protocol *)protocol
 {
     return [[[self alloc] initWithProtocol:protocol identifier:NSStringFromProtocol(protocol)] autorelease];
+}
+
+static RetainPtr<NSSet>& classesForSelectorArgument(WKRemoteObjectInterface *interface, SEL selector, NSUInteger argumentIndex)
+{
+    auto it = interface->_allowedArgumentClasses.find(selector);
+    if (it == interface->_allowedArgumentClasses.end())
+        [NSException raise:NSInvalidArgumentException format:@"Interface does not contain selector \"%s\"", sel_getName(selector)];
+
+    if (argumentIndex >= it->value.size())
+        [NSException raise:NSInvalidArgumentException format:@"Argument index %ld is out of range for selector \"%s\"", (unsigned long)argumentIndex, sel_getName(selector)];
+
+    return it->value[argumentIndex];
+}
+
+- (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex
+{
+    return [[classesForSelectorArgument(self, selector, argumentIndex).get() retain] autorelease];
+}
+
+- (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex
+{
+    classesForSelectorArgument(self, selector, argumentIndex) = adoptNS([classes copy]);
 }
 
 static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL selector)
