@@ -1,3 +1,19 @@
+2014-02-07  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Disable gtk-doc in EWS
+        https://bugs.webkit.org/show_bug.cgi?id=128370
+
+        Reviewed by Carlos Garcia Campos.
+
+        Disable gtk-doc generation in EWS due to http://webkit.org/b/128369.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (GtkPort.build_webkit_command): Add --disable-gtk-doc arg.
+        (GtkWK2Port.build_webkit_command): Ditto.
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_gtk_port): Ditto.
+        (DeprecatedPortTest.test_gtk_wk2_port): Ditto.
+
 2014-02-07  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] WebView should be able to configure to set fixed layout
