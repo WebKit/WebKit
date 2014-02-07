@@ -70,6 +70,9 @@ public:
     StyleResolver::MatchResult& matchedResult();
     const Vector<RefPtr<StyleRuleBase>>& matchedRuleList() const;
 
+    bool hasMatchedRules() const { return m_matchedRules && !m_matchedRules->isEmpty(); }
+    void clearMatchedRules();
+
 private:
     void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
 
@@ -84,7 +87,6 @@ private:
     void sortAndTransferMatchedRules();
 
     void addMatchedRule(const RuleData*);
-    void clearMatchedRules();
 
     Element& m_element;
     RenderStyle* m_style;

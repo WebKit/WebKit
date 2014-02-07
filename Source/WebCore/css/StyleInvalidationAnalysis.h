@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef StyleInvalidationAnalysis_h
 #define StyleInvalidationAnalysis_h
 
+#include "DocumentRuleSets.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicStringImpl.h>
 
@@ -36,18 +37,14 @@ class StyleSheetContents;
 
 class StyleInvalidationAnalysis {
 public:
-    StyleInvalidationAnalysis(const Vector<StyleSheetContents*>&);
+    StyleInvalidationAnalysis(const Vector<StyleSheetContents*>&, const MediaQueryEvaluator&);
 
     bool dirtiesAllStyle() const { return m_dirtiesAllStyle; }
     void invalidateStyle(Document&);
 
 private:
-
-    void analyzeStyleSheet(StyleSheetContents*);
-
     bool m_dirtiesAllStyle;
-    HashSet<AtomicStringImpl*> m_idScopes;
-    HashSet<AtomicStringImpl*> m_classScopes;
+    DocumentRuleSets m_ruleSets;
 };
 
 }

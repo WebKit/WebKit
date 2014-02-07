@@ -166,6 +166,8 @@ public:
 
     unsigned ruleCount() const { return m_ruleCount; }
 
+    bool hasShadowPseudoElementRules() const { return !m_shadowPseudoElementRules.isEmpty(); }
+
 private:
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, const MediaQueryEvaluator& medium, StyleResolver*, bool hasDocumentSecurityOrigin, AddRuleFlags);
     bool findBestRuleSetAndAdd(const CSSSelector*, RuleData&);

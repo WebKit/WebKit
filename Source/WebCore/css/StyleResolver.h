@@ -168,6 +168,8 @@ public:
     const DocumentRuleSets& ruleSets() const { return m_ruleSets; }
     SelectorFilter& selectorFilter() { return m_selectorFilter; }
 
+    const MediaQueryEvaluator& mediaQueryEvaluator() const { return *m_medium; }
+
 private:
     void initElement(Element*);
     RenderStyle* locateSharedStyle();

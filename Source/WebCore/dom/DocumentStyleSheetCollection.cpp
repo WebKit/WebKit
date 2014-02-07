@@ -366,6 +366,7 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
         return;
     if (!m_document.styleResolverIfExists())
         return;
+    StyleResolver& styleResolver = *m_document.styleResolverIfExists();
 
     // Find out which stylesheets are new.
     unsigned oldStylesheetCount = m_activeAuthorStyleSheets.size();
@@ -396,7 +397,7 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
     // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
     if (!m_document.body() || m_document.hasNodesWithPlaceholderStyle())
         return;
-    StyleInvalidationAnalysis invalidationAnalysis(addedSheets);
+    StyleInvalidationAnalysis invalidationAnalysis(addedSheets, styleResolver.mediaQueryEvaluator());
     if (invalidationAnalysis.dirtiesAllStyle())
         return;
     invalidationAnalysis.invalidateStyle(m_document);

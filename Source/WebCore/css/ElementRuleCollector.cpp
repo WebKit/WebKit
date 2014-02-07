@@ -94,7 +94,7 @@ inline void ElementRuleCollector::addMatchedRule(const RuleData* rule)
     m_matchedRules->append(rule);
 }
 
-inline void ElementRuleCollector::clearMatchedRules()
+void ElementRuleCollector::clearMatchedRules()
 {
     if (!m_matchedRules)
         return;
@@ -359,7 +359,7 @@ void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* r
         PseudoId dynamicPseudo = NOPSEUDO;
         if (ruleMatches(ruleData, dynamicPseudo)) {
             // For SharingRules testing, any match is good enough, we don't care what is matched.
-            if (m_mode == SelectorChecker::SharingRules) {
+            if (m_mode == SelectorChecker::SharingRules || m_mode == SelectorChecker::StyleInvalidation) {
                 addMatchedRule(&ruleData);
                 break;
             }

@@ -3657,7 +3657,7 @@ inline StyleResolver::MatchedProperties::MatchedProperties()
 {
 }
 
-inline StyleResolver::MatchedProperties::~MatchedProperties()
+StyleResolver::MatchedProperties::~MatchedProperties()
 {
 }
 

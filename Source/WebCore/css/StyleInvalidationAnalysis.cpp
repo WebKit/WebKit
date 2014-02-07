@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,106 +29,100 @@
 #include "CSSSelectorList.h"
 #include "Document.h"
 #include "ElementIterator.h"
+#include "ElementRuleCollector.h"
+#include "SelectorFilter.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
-#include "StyledElement.h"
 
 namespace WebCore {
 
-StyleInvalidationAnalysis::StyleInvalidationAnalysis(const Vector<StyleSheetContents*>& sheets)
-    : m_dirtiesAllStyle(false)
+static bool shouldDirtyAllStyle(const Vector<RefPtr<StyleRuleBase>> rules)
 {
-    for (unsigned i = 0; i < sheets.size() && !m_dirtiesAllStyle; ++i)
-        analyzeStyleSheet(sheets[i]);
-}
-
-static bool determineSelectorScopes(const CSSSelectorList& selectorList, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes)
-{
-    for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-        const CSSSelector* scopeSelector = 0;
-        // This picks the widest scope, not the narrowest, to minimize the number of found scopes.
-        for (const CSSSelector* current = selector; current; current = current->tagHistory()) {
-            // Prefer ids over classes.
-            if (current->m_match == CSSSelector::Id)
-                scopeSelector = current;
-            else if (current->m_match == CSSSelector::Class && (!scopeSelector || scopeSelector->m_match != CSSSelector::Id))
-                scopeSelector = current;
-            CSSSelector::Relation relation = current->relation();
-            if (relation != CSSSelector::Descendant && relation != CSSSelector::Child && relation != CSSSelector::SubSelector)
-                break;
-        }
-        if (!scopeSelector)
-            return false;
-        ASSERT(scopeSelector->m_match == CSSSelector::Class || scopeSelector->m_match == CSSSelector::Id);
-        if (scopeSelector->m_match == CSSSelector::Id)
-            idScopes.add(scopeSelector->value().impl());
-        else
-            classScopes.add(scopeSelector->value().impl());
-    }
-    return true;
-}
-
-void StyleInvalidationAnalysis::analyzeStyleSheet(StyleSheetContents* styleSheetContents)
-{
-    ASSERT(!styleSheetContents->isLoading());
-
-    // See if all rules on the sheet are scoped to some specific ids or classes.
-    // Then test if we actually have any of those in the tree at the moment.
-    const Vector<RefPtr<StyleRuleImport>>& importRules = styleSheetContents->importRules();
-    for (unsigned i = 0; i < importRules.size(); ++i) {
-        if (!importRules[i]->styleSheet())
+    for (auto& rule : rules) {
+        if (rule->isMediaRule()) {
+            if (shouldDirtyAllStyle(static_cast<StyleRuleMedia&>(*rule).childRules()))
+                return true;
             continue;
-        analyzeStyleSheet(importRules[i]->styleSheet());
-        if (m_dirtiesAllStyle)
-            return;
-    }
-    const Vector<RefPtr<StyleRuleBase>>& rules = styleSheetContents->childRules();
-    for (unsigned i = 0; i < rules.size(); i++) {
-        StyleRuleBase* rule = rules[i].get();
-        if (!rule->isStyleRule()) {
-            // FIXME: Media rules and maybe some others could be allowed.
-            m_dirtiesAllStyle = true;
-            return;
         }
-        StyleRule* styleRule = static_cast<StyleRule*>(rule);
-        if (!determineSelectorScopes(styleRule->selectorList(), m_idScopes, m_classScopes)) {
-            m_dirtiesAllStyle = true;
-            return;
-        }
-    }
-}
-
-static bool elementMatchesSelectorScopes(const Element& element, const HashSet<AtomicStringImpl*>& idScopes, const HashSet<AtomicStringImpl*>& classScopes)
-{
-    if (!idScopes.isEmpty() && element.hasID() && idScopes.contains(element.idForStyleResolution().impl()))
-        return true;
-    if (classScopes.isEmpty() || !element.hasClass())
-        return false;
-    const SpaceSplitString& classNames = element.classNames();
-    for (unsigned i = 0; i < classNames.size(); ++i) {
-        if (classScopes.contains(classNames[i].impl()))
+        // FIXME: At least font faces don't need full recalc in all cases.
+        if (!rule->isStyleRule())
             return true;
     }
     return false;
 }
 
+static bool shouldDirtyAllStyle(const StyleSheetContents& sheet)
+{
+    for (auto& import : sheet.importRules()) {
+        if (!import->styleSheet())
+            continue;
+        if (shouldDirtyAllStyle(*import->styleSheet()))
+            return true;
+    }
+    if (shouldDirtyAllStyle(sheet.childRules()))
+        return true;
+    return false;
+}
+
+static bool shouldDirtyAllStyle(const Vector<StyleSheetContents*>& sheets)
+{
+    for (auto& sheet : sheets) {
+        if (shouldDirtyAllStyle(*sheet))
+            return true;
+    }
+    return false;
+}
+
+StyleInvalidationAnalysis::StyleInvalidationAnalysis(const Vector<StyleSheetContents*>& sheets, const MediaQueryEvaluator& mediaQueryEvaluator)
+    : m_dirtiesAllStyle(shouldDirtyAllStyle(sheets))
+{
+    if (m_dirtiesAllStyle)
+        return;
+
+    m_ruleSets.resetAuthorStyle();
+    for (auto& sheet : sheets)
+        m_ruleSets.authorStyle()->addRulesFromSheet(sheet, mediaQueryEvaluator);
+
+    // FIXME: We don't descent into shadow trees or otherwise handle shadow pseudo elements.
+    if (m_ruleSets.authorStyle()->hasShadowPseudoElementRules())
+        m_dirtiesAllStyle = true;
+}
+
+static void invalidateStyleRecursively(Element& element, SelectorFilter& filter, const DocumentRuleSets& ruleSets)
+{
+    if (element.styleChangeType() > InlineStyleChange)
+        return;
+    if (element.styleChangeType() == NoStyleChange) {
+        ElementRuleCollector ruleCollector(element, nullptr, ruleSets, filter);
+        ruleCollector.setMode(SelectorChecker::StyleInvalidation);
+        ruleCollector.matchAuthorRules(false);
+
+        if (ruleCollector.hasMatchedRules())
+            element.setNeedsStyleRecalc(InlineStyleChange);
+    }
+
+    auto children = childrenOfType<Element>(element);
+    if (!children.first())
+        return;
+    filter.pushParent(&element);
+    for (auto& child : children)
+        invalidateStyleRecursively(child, filter, ruleSets);
+    filter.popParent();
+}
+
 void StyleInvalidationAnalysis::invalidateStyle(Document& document)
 {
     ASSERT(!m_dirtiesAllStyle);
-    if (m_idScopes.isEmpty() && m_classScopes.isEmpty())
+    if (!m_ruleSets.authorStyle())
         return;
 
-    auto it = descendantsOfType<Element>(document).begin();
-    auto end = descendantsOfType<Element>(document).end();
-    while (it != end) {
-        if (elementMatchesSelectorScopes(*it, m_idScopes, m_classScopes)) {
-            it->setNeedsStyleRecalc();
-            // The whole subtree is now invalidated, we can skip to the next sibling.
-            it.traverseNextSkippingChildren();
-            continue;
-        }
-        ++it;
-    }
+    Element* documentElement = document.documentElement();
+    if (!documentElement)
+        return;
+
+    SelectorFilter filter;
+    filter.setupParentStack(documentElement);
+    invalidateStyleRecursively(*documentElement, filter, m_ruleSets);
 }
 
 }

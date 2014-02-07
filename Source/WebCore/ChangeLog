@@ -1,3 +1,44 @@
+2014-02-06  Antti Koivisto  <antti@apple.com>
+
+        Check selectors exactly when invalidating style
+        https://bugs.webkit.org/show_bug.cgi?id=128321
+
+        Reviewed by Andreas Kling.
+        
+        Selectors are now really fast to match with the JIT. Take advantage of this by invalidating
+        the document style exactly when a new stylesheet arrives (instead of using heuristics).
+        
+        This reduces need for large style recalculations in some common cases.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::clearMatchedRules):
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::hasMatchedRules):
+        * css/RuleSet.h:
+        (WebCore::RuleSet::hasShadowPseudoElementRules):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        * css/SelectorChecker.h:
+        
+            Add new mode where all pseudo elements match so we can invalidate their element.
+
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::shouldDirtyAllStyle):
+        (WebCore::StyleInvalidationAnalysis::StyleInvalidationAnalysis):
+        (WebCore::invalidateStyleRecursively):
+        (WebCore::StyleInvalidationAnalysis::invalidateStyle):
+        
+            Switch to real selector checker.
+
+        * css/StyleInvalidationAnalysis.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::MatchedProperties::~MatchedProperties):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::mediaQueryEvaluator):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::analyzeStyleSheetChange):
+
 2014-02-06  Gavin Barraclough  <barraclough@apple.com>
 
         Remove ChildProcess::m_activeTasks
