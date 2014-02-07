@@ -92,7 +92,6 @@ Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class* api)
 Evas_Object* EWKViewCreate(WKContextRef context, WKPageGroupRef pageGroup, Evas* canvas, Evas_Smart* smart)
 {
     WKRetainPtr<WKViewRef> wkView = adoptWK(WKViewCreate(context, pageGroup));
-    WKPageSetUseFixedLayout(WKViewGetPage(wkView.get()), true);
     if (EwkView* ewkView = EwkView::create(wkView.get(), canvas, smart))
         return ewkView->evasObject();
 
@@ -721,4 +720,20 @@ Eina_Bool ewk_view_script_execute(Evas_Object* ewkView, const char* script, Ewk_
     WKRetainPtr<WKStringRef> scriptString(AdoptWK, WKStringCreateWithUTF8CString(script));
     WKPageRunJavaScriptInMainFrame(impl->wkPage(), scriptString.get(), context, runJavaScriptCallback);
     return true;
+}
+
+Eina_Bool ewk_view_layout_fixed_set(Evas_Object* ewkView, Eina_Bool enabled)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+
+    WKPageSetUseFixedLayout(WKViewGetPage(impl->wkView()), enabled);
+
+    return true;
+}
+
+Eina_Bool ewk_view_layout_fixed_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+
+    return WKPageUseFixedLayout(WKViewGetPage(impl->wkView()));
 }

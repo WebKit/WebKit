@@ -1084,3 +1084,12 @@ TEST_F(EWK2UnitTestBase, ewk_view_script_execute)
 
     ASSERT_FALSE(ewk_view_script_execute(webView(), 0, 0, 0));
 }
+
+TEST_F(EWK2ViewTest, ewk_view_layout_fixed)
+{
+    // Fixed layout is not used in webview as default.
+    EXPECT_FALSE(ewk_view_layout_fixed_get(webView()));
+
+    EXPECT_TRUE(ewk_view_layout_fixed_set(webView(), true));
+    EXPECT_TRUE(ewk_view_layout_fixed_get(webView()));
+}
