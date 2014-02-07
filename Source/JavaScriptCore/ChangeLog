@@ -1,3 +1,27 @@
+2014-02-06  Michael Saboff  <msaboff@apple.com>
+
+        Workaround REGRESSION(r163195-r163227): Crash beneath NSErrorUserInfoFromJSException when installing AppleInternal.mpkg
+        https://bugs.webkit.org/show_bug.cgi?id=128347
+
+        Reviewed by Geoffrey Garen.
+
+        Added a flag to VM class called m_ignoreStackLimit that disables stack limit checks.
+        We set this flag in JSContextGroupCreate() and JSGlobalContextCreateInGroup().
+
+        Disabled stack overflow tests in testapi.js since it uses these paths.
+
+        THis patch will be reverted as part of a comprehensive solution to the problem.
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupCreate):
+        (JSGlobalContextCreateInGroup):
+        * API/tests/testapi.js:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::updateStackLimitWithReservedZoneSize):
+        * runtime/VM.h:
+        (JSC::VM::ignoreStackLimit):
+
 2014-02-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         +[JSContext currentCallee] should return the currently executing JS function

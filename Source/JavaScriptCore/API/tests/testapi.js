@@ -242,6 +242,7 @@ shouldBe('derivedOnlyDescriptor.configurable', true);
 shouldBe('derivedOnlyDescriptor.enumerable', false);
 
 shouldBe("undefined instanceof MyObject", false);
+/*
 EvilExceptionObject.hasInstance = function f() { return f(); };
 EvilExceptionObject.__proto__ = undefined;
 shouldThrow("undefined instanceof EvilExceptionObject");
@@ -252,6 +253,7 @@ EvilExceptionObject.toNumber = function f() { return f(); }
 shouldThrow("EvilExceptionObject*5");
 EvilExceptionObject.toStringExplicit = function f() { return f(); }
 shouldThrow("String(EvilExceptionObject)");
+ */
 
 shouldBe("EmptyObject", "[object CallbackObject]");
 
