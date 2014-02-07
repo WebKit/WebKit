@@ -1,65 +1,97 @@
+description('Spelling markers should remain while merging two lines.');
 
-description('For Bug 41423: Spelling marker should remain after hitting a backspace key.');
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
 
 var testRoot = document.createElement("div");
 document.body.insertBefore(testRoot, document.body.firstChild);
 
 function setup(targetName)
 {
-    testRoot.innerHTML = "<div id='" + targetName + "' contentEditable><div>OK</div><div>OK zz OK</div></div>";
-    document.getElementById(targetName).focus();
+    var div = document.createElement("div");
+    div.id = targetName;
+    div.contentEditable = true;
+    div.innerHTML = "<div>OK</div><div>OK zz OK</div>";
+    testRoot.appendChild(div);
+
+    div.focus();
     return document.getSelection();
 }
 
-function firstLineText()
+function firstLineText(targetName)
 {
-    return testRoot.firstChild.firstChild.innerText.trim();
+    var div = document.getElementById(targetName);
+    return div.firstChild.innerText.trim();
 }
 
-function testWithDelete()
+function testTwoLinesMisspellings()
 {
-    window.sel = setup("target1");
+    window.sel = setup("target1"); // ^OK
 
-    sel.modify("move", "forward", "line");
-    for (var i = 0; i < 3; i++) // 3 for ["OK, "zz", "OK"].length
+    sel.modify("move", "forward", "line"); // ^OK zz OK
+    for (var i = 0; i < 3; i++)
         sel.modify("move", "forward", "word");
 
-    shouldBe("firstLineText()", "'OK'");
-    shouldBe("sel.anchorNode.data", "'OK zz OK'");
-    shouldBeTrue("internals.hasSpellingMarker(3, 2)");
-
-    sel.modify("move", "left", "lineboundary");
-    document.execCommand("Delete", false);
-    sel.modify("move", "right", "line"); // Moves to the line ending to focus the "OK zz OK" text.
-
-    shouldBe("sel.anchorNode.data", "'OKOK zz OK'");
-    shouldBe("firstLineText()", "'OKOK zz OK'");
-    shouldBeTrue("internals.hasSpellingMarker(5, 2)");
+    shouldBeEqualToString("firstLineText('target1')", "OK");
+    shouldBeEqualToString("sel.anchorNode.data", "OK zz OK");
+    if (window.internals)
+        shouldBecomeEqual("internals.hasSpellingMarker(3, 2)", "true", done);
+    else
+        done();
 }
 
-function testWithForwardDelete()
+function testMisspellingsAfterLineMergeUsingDelete()
 {
-    window.sel = setup("target1");
+    window.sel = setup("target2"); // ^OK
 
-    sel.modify("move", "forward", "line");
-    for (var i = 0; i < 3; i++) // 3 for ["OK, "zz", "OK"].length
-        sel.modify("move", "forward", "word");
+    sel.modify("move", "forward", "line"); // ^OK zz OK
+    document.execCommand("Delete", false); // OK^OK zz OK
+    sel.modify("move", "right", "line"); // OKOK zz OK^
 
-    shouldBe("firstLineText()", "'OK'");
-    shouldBe("sel.anchorNode.data", "'OK zz OK'");
-    shouldBeTrue("internals.hasSpellingMarker(3, 2)");
-
-    sel.modify("move", "left", "line");
-    document.execCommand("ForwardDelete", false);
-    sel.modify("move", "right", "line"); // Moves to the line ending to focus the "OK zz OK" text.
-
-    shouldBe("firstLineText()", "'OKOK zz OK'");
-    shouldBe("sel.anchorNode.data", "'OKOK zz OK'");
-    shouldBeTrue("internals.hasSpellingMarker(5, 2)");
+    shouldBeEqualToString("firstLineText('target2')", "OKOK zz OK");
+    shouldBeEqualToString("sel.anchorNode.data", "OKOK zz OK");
+    if (window.internals)
+        shouldBecomeEqual("internals.hasSpellingMarker(5, 2)", "true", done);
+    else
+        done();
 }
 
-testWithDelete();
-testWithForwardDelete();
-testRoot.style.display = "none";
+function testMisspellingsAfterLineMergeUsingForwardDelete()
+{
+    window.sel = setup("target3"); // ^OK
+
+    sel.modify("move", "forward", "word"); // OK^
+    document.execCommand("ForwardDelete", false); // OK^OK zz OK
+    sel.modify("move", "right", "line"); // OKOK zz OK^
+
+    shouldBeEqualToString("firstLineText('target3')", "OKOK zz OK");
+    shouldBeEqualToString("sel.anchorNode.data", "OKOK zz OK");
+    if (window.internals)
+        shouldBecomeEqual("internals.hasSpellingMarker(5, 2)", "true", done);
+    else
+        done();
+}
+
+var tests = [ function() { testTwoLinesMisspellings(); },
+              function() { testMisspellingsAfterLineMergeUsingDelete(); },
+              function() { testMisspellingsAfterLineMergeUsingForwardDelete(); }
+];
+
+function done()
+{
+    var next = tests.shift();
+    if (next)
+        return window.setTimeout(next, 0);
+
+    if (window.internals)
+        testRoot.style.display = "none";
+
+    finishJSTest();
+}
+done();
 
 var successfullyParsed = true;

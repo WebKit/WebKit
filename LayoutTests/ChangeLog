@@ -1,3 +1,26 @@
+2014-02-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Verify misspellings after lines merge/split asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=128305
+
+        Reviewed by Ryosuke Niwa.
+
+        Adapt two spelling tests to use asynchronous spellchecking.
+
+        * editing/spelling/script-tests/spelling-backspace-between-lines.js:
+        (testTwoLinesMisspellings):
+        (testMisspellingsAfterLineMergeUsingDelete):
+        (testMisspellingsAfterLineMergeUsingForwardDelete):
+        Group test cases into separated methods.
+        Use shouldBeEqualToString to compare strings.
+        Add newly created div elements instead of overriding
+        the previous one in order that non DumpRenderTree users
+        can see what has been tested.
+
+        * editing/spelling/spelling-backspace-between-lines-expected.txt:
+        * editing/spelling/spelling-linebreak-expected.txt:
+        * editing/spelling/spelling-linebreak.html:
+
 2014-02-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add a test case for navigator.isProtocolHandlerRegistered

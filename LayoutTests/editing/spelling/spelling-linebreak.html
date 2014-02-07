@@ -8,17 +8,20 @@
     font-size: 24px; 
 }
 </style>
+<script src="../../resources/js-test-pre.js"></script>
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
 
 <script>
-function log(msg) {
-    document.getElementById("console").innerHTML += (msg + "\n");
+
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
 }
 
 function editingTest() {
 
-    if (window.testRunner)
-        testRunner.dumpAsText();
     var elem = document.getElementById("test");
     var selection = window.getSelection();
     selection.setPosition(elem, 6);
@@ -34,11 +37,10 @@ function editingTest() {
 
     if (window.testRunner) {
         selection.setPosition(elem, 0);
-        if (internals.hasSpellingMarker(6, 2))
-           log("PASS");
-        else
-           log("FAIL");
-        document.getElementById("root").style.display = "none";
+        shouldBecomeEqual("internals.hasSpellingMarker(6, 2)", "true", function() {
+            document.getElementById("root").style.display = "none";
+            finishJSTest();
+        });
     }
 
 }
@@ -48,15 +50,19 @@ function editingTest() {
 <title>Editing Test</title> 
 </head> 
 <body>
-<div>You should see 'zz a' on the first line below, and 'a' on the second line. 'zz' (and only 'zz') should be marked as misspelled.</div>
+<script>
+description("Misspellings should be preserved when a line-break command "
+    + "splits a text node. You should see 'Hello,zz a' on the first line below, "
+    + "and 'a' on the second line. "
+    + "This test succeeds when 'zz' (and only 'zz') is marked as misspelled.");
+</script>
 <div contenteditable id="root" class="editing">
 <!-- wee need leading "Hello," to preserve the marker even after setPosition() -->
 <span id="test">Hello,</span>
 </div>
-<pre id="console"></pre>
 <script>
 editingTest();
 </script>
-
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
