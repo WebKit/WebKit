@@ -1,3 +1,59 @@
+2014-02-07  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Background Blending] Unprefix the -webkit-background-blend-mode property
+
+        https://bugs.webkit.org/show_bug.cgi?id=128270
+
+        Reviewed by Dean Jackson.
+
+        This patch consist of unprefixing the -webkit-background-blend-mode. 
+        The property now changes to background-blend-mode.        
+
+        * css3/compositing/background-blend-mode-background-attachement-fixed-expected.html:
+        * css3/compositing/background-blend-mode-background-attachement-fixed.html:
+        * css3/compositing/background-blend-mode-background-clip-content-box-expected.html:
+        * css3/compositing/background-blend-mode-background-clip-content-box.html:
+        * css3/compositing/background-blend-mode-background-clip-padding-box-expected.html:
+        * css3/compositing/background-blend-mode-background-clip-padding-box.html:
+        * css3/compositing/background-blend-mode-background-origin-border-box-expected.html:
+        * css3/compositing/background-blend-mode-background-origin-border-box.html:
+        * css3/compositing/background-blend-mode-background-position-percentage-expected.html:
+        * css3/compositing/background-blend-mode-background-position-percentage.html:
+        * css3/compositing/background-blend-mode-background-repeat-no-repeat-expected.html:
+        * css3/compositing/background-blend-mode-background-repeat-no-repeat.html:
+        * css3/compositing/background-blend-mode-background-size-contain-expected.html:
+        * css3/compositing/background-blend-mode-background-size-contain.html:
+        * css3/compositing/background-blend-mode-background-size-cover-expected.html:
+        * css3/compositing/background-blend-mode-background-size-cover.html:
+        * css3/compositing/background-blend-mode-crossfade-image.html:
+        * css3/compositing/background-blend-mode-data-uri-svg-image.html:
+        * css3/compositing/background-blend-mode-default-value.html:
+        * css3/compositing/background-blend-mode-different-image-formats.html:
+        * css3/compositing/background-blend-mode-gif-color-2.html:
+        * css3/compositing/background-blend-mode-gif-color.html:
+        * css3/compositing/background-blend-mode-gradient-color.html:
+        * css3/compositing/background-blend-mode-gradient-gradient.html:
+        * css3/compositing/background-blend-mode-gradient-image.html:
+        * css3/compositing/background-blend-mode-image-color.html:
+        * css3/compositing/background-blend-mode-image-image.html:
+        * css3/compositing/background-blend-mode-image-svg.html:
+        * css3/compositing/background-blend-mode-multiple-background-layers.html:
+        * css3/compositing/background-blend-mode-property-expected.txt:
+        * css3/compositing/background-blend-mode-property-parsing-expected.txt:
+        * css3/compositing/background-blend-mode-separate-layer-declaration.html:
+        * css3/compositing/background-blend-mode-single-layer-no-blending.html:
+        * css3/compositing/background-blend-mode-svg-color.html:
+        * css3/compositing/background-blend-mode-svg.html:
+        * css3/compositing/background-blend-mode-tiled-layers.html:
+        * css3/compositing/blend-mode-layers.html:
+        * css3/compositing/effect-background-blend-mode-stacking.html:
+        * css3/compositing/effect-background-blend-mode-tiled.html:
+        * css3/compositing/effect-background-blend-mode.html:
+        * css3/compositing/script-tests/background-blend-mode-property-parsing.js:
+        (testBlendModeRule):
+        * css3/compositing/script-tests/background-blend-mode-property.js:
+        (testblendmode):
+
 2014-02-07  Samuel White  <samuel_white@apple.com>
 
         AX: Find and select text with respect to insertion point using accessibility API.

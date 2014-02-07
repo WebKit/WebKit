@@ -2028,7 +2028,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #endif
 
     case CSSPropertyBackgroundAttachment:
-    case CSSPropertyWebkitBackgroundBlendMode:
+    case CSSPropertyBackgroundBlendMode:
     case CSSPropertyBackgroundClip:
     case CSSPropertyWebkitBackgroundClip:
     case CSSPropertyWebkitBackgroundComposite:
@@ -4310,7 +4310,7 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                         m_valueList->next();
                     }
                     break;
-                case CSSPropertyWebkitBackgroundBlendMode:
+                case CSSPropertyBackgroundBlendMode:
                     if (cssCompositingEnabled() && (val->id == CSSValueNormal || val->id == CSSValueMultiply
                         || val->id == CSSValueScreen || val->id == CSSValueOverlay || val->id == CSSValueDarken
                         || val->id == CSSValueLighten ||  val->id == CSSValueColorDodge || val->id == CSSValueColorBurn

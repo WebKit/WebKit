@@ -1,3 +1,23 @@
+2014-02-07  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Background Blending] Unprefix the -webkit-background-blend-mode property
+
+        https://bugs.webkit.org/show_bug.cgi?id=128270
+
+        Reviewed by Dean Jackson.
+
+        This patch consist of unprefixing the -webkit-background-blend-mode.
+        The property now changes to background-blend-mode.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillProperty):
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+
 2014-02-07  Samuel White  <samuel_white@apple.com>
 
         AX: Find and select text with respect to insertion point using accessibility API.

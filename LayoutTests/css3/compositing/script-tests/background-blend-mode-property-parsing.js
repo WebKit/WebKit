@@ -1,4 +1,4 @@
-description("Test the parsing of the -webkit-background-blend-mode property.");
+description("Test the parsing of the background-blend-mode property.");
 
 function jsWrapperClass(node)
 {
@@ -30,16 +30,16 @@ function testBlendModeRule(description, rule, expectedLength, expectedValue, exp
     debug("");
     debug(description + " : " + rule);
 
-    stylesheet.insertRule("body { -webkit-background-blend-mode: " + rule + "; }", 0);
+    stylesheet.insertRule("body { background-blend-mode: " + rule + "; }", 0);
     cssRule = stylesheet.cssRules.item(0);
   
     shouldBe("cssRule.type", "1");
 
     declaration = cssRule.style;
     shouldBe("declaration.length", "1");
-    shouldBe("declaration.getPropertyValue('-webkit-background-blend-mode')", "'" + expectedValue + "'");
+    shouldBe("declaration.getPropertyValue('background-blend-mode')", "'" + expectedValue + "'");
 
-    blendModeRule = declaration.getPropertyCSSValue('-webkit-background-blend-mode');
+    blendModeRule = declaration.getPropertyCSSValue('background-blend-mode');
 	if(rule.indexOf(',') == -1)
     	shouldBeType("blendModeRule", "CSSPrimitiveValue");
 	else

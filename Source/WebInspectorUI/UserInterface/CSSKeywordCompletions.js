@@ -138,6 +138,9 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "background-repeat": [
         "repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round"
     ],
+    "background-blend-mode": [
+        "normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity",
+    ],
     "text-underline": [
         "none", "dotted", "dashed", "solid", "double", "dot-dash", "dot-dot-dash", "wave"
     ],
@@ -614,9 +617,6 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "from-image", "snap"
     ],
     "-webkit-blend-mode": [
-        "normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity",
-    ],
-    "-webkit-background-blend-mode": [
         "normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity",
     ],
     "mix": [

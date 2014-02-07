@@ -86,6 +86,7 @@ namespace WebCore {
 // List of all properties we know how to compute, omitting shorthands.
 static const CSSPropertyID computedProperties[] = {
     CSSPropertyBackgroundAttachment,
+    CSSPropertyBackgroundBlendMode,
     CSSPropertyBackgroundClip,
     CSSPropertyBackgroundColor,
     CSSPropertyBackgroundImage,
@@ -221,7 +222,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitAnimationTimingFunction,
     CSSPropertyWebkitAppearance,
     CSSPropertyWebkitBackfaceVisibility,
-    CSSPropertyWebkitBackgroundBlendMode,
     CSSPropertyWebkitBackgroundClip,
     CSSPropertyWebkitBackgroundComposite,
     CSSPropertyWebkitBackgroundOrigin,
@@ -2844,7 +2844,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitBlendMode:
             return cssValuePool().createValue(style->blendMode());
 #endif
-        case CSSPropertyWebkitBackgroundBlendMode: {
+        case CSSPropertyBackgroundBlendMode: {
             const FillLayer* layers = style->backgroundLayers();
             if (!layers->next())
                 return cssValuePool().createValue(layers->blendMode());

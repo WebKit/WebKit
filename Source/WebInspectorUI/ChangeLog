@@ -1,3 +1,13 @@
+2014-02-07  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Background Blending] Unprefix the -webkit-background-blend-mode property
+
+        https://bugs.webkit.org/show_bug.cgi?id=128270
+
+        Reviewed by Dean Jackson.
+
+        * UserInterface/CSSKeywordCompletions.js: Refactor -webkit-background-blend-mode to background-blend-mode.
+
 2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Console support to JSContext Inspection

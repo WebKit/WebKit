@@ -41,6 +41,7 @@ line-height [Inherited]
 // The remaining properties are listed in alphabetical order
 background
 background-attachment
+background-blend-mode
 background-clip
 background-color
 background-image
@@ -220,7 +221,6 @@ z-index
 -webkit-appearance
 -webkit-aspect-ratio [Inherited]
 -webkit-backface-visibility
--webkit-background-blend-mode
 -webkit-background-clip
 -webkit-background-composite
 -webkit-background-origin
