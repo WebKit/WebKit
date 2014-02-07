@@ -96,7 +96,6 @@ using namespace WebKit;
         return nil;
 
     InitializeWebKit2();
-    RunLoop::initializeMainRunLoop();
 
     _pageClient = std::make_unique<PageClientImpl>(self);
 
@@ -254,7 +253,6 @@ using namespace WebKit;
 - (void)_commonInitializationWithContextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
 {
     InitializeWebKit2();
-    RunLoop::initializeMainRunLoop();
 
     _pageClient = std::make_unique<PageClientImpl>(self);
     _page = toImpl(contextRef)->createWebPage(*_pageClient, toImpl(pageGroupRef), toImpl(relatedPage));
