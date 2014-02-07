@@ -191,7 +191,7 @@ bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String& scriptString
 
     if (m_pluginView && !m_pluginView->isBeingDestroyed()) {
         if (Page* page = m_pluginView->frame()->page())
-            page->pageThrottler().reportInterestingEvent();
+            page->pageThrottler().pluginDidEvaluate();
     }
 
     ExecState* exec = globalObject->globalExec();

@@ -118,6 +118,7 @@
 #include <WebCore/MainFrame.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageThrottler.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PrintContext.h>
@@ -1665,6 +1666,8 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
 
 void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
+    m_page->pageThrottler().didReceiveUserInput();
+
 #if ENABLE(CONTEXT_MENUS)
     // Don't try to handle any pending mouse events if a context menu is showing.
     if (m_isShowingContextMenu) {
@@ -1745,6 +1748,8 @@ static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page)
 
 void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
 {
+    m_page->pageThrottler().didReceiveUserInput();
+
     bool handled = false;
 
     if (canHandleUserEvents()) {
@@ -1774,6 +1779,8 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 {
+    m_page->pageThrottler().didReceiveUserInput();
+
     bool handled = false;
 
     if (canHandleUserEvents()) {

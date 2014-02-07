@@ -50,7 +50,8 @@ public:
 
     void setIsVisuallyIdle(bool);
 
-    void reportInterestingEvent();
+    void didReceiveUserInput() { reportInterestingEvent(); }
+    void pluginDidEvaluate() { reportInterestingEvent(); }
 
 private:
     enum PageThrottleState {
@@ -62,6 +63,8 @@ private:
     friend class PageActivityAssertionToken;
     void addActivityToken(PageActivityAssertionToken&);
     void removeActivityToken(PageActivityAssertionToken&);
+
+    void reportInterestingEvent();
 
     void startThrottleHysteresisTimer();
     void stopThrottleHysteresisTimer();
