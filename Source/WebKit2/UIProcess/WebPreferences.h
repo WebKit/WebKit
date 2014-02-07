@@ -52,12 +52,9 @@ public:
         return adoptRef(new WebPreferences(identifier));
     }
 
-    static PassRefPtr<WebPreferences> create(const WebPreferences& other)
-    {
-        return adoptRef(new WebPreferences(other));
-    }
-
     virtual ~WebPreferences();
+
+    PassRefPtr<WebPreferences> copy() const;
 
     void addPageGroup(WebPageGroup*);
     void removePageGroup(WebPageGroup*);

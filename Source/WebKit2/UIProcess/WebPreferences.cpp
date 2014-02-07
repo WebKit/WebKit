@@ -58,6 +58,11 @@ WebPreferences::~WebPreferences()
     ASSERT(m_pageGroups.isEmpty());
 }
 
+PassRefPtr<WebPreferences> WebPreferences::copy() const
+{
+    return adoptRef(new WebPreferences(*this));
+}
+
 void WebPreferences::addPageGroup(WebPageGroup* pageGroup)
 {
     bool didAddPageGroup = m_pageGroups.add(pageGroup).isNewEntry;
