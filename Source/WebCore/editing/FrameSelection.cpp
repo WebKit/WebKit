@@ -1288,7 +1288,7 @@ void CaretBase::clearCaretRect()
 
 static inline bool caretRendersInsideNode(Node* node)
 {
-    return node && !isTableElement(node) && !editingIgnoresContent(node);
+    return node && !isRenderedTable(node) && !editingIgnoresContent(node);
 }
 
 static RenderObject* caretRenderer(Node* node)

@@ -1057,7 +1057,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
     if (outerNode->isRootEditableElement()) {
         lastNode = blockElement;
     } else {
-        lastNode = outerNode->cloneNode(isTableElement(outerNode.get()));
+        lastNode = outerNode->cloneNode(isRenderedTable(outerNode.get()));
         appendNode(lastNode, blockElement);
     }
 
@@ -1072,7 +1072,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
 
         for (size_t i = ancestors.size(); i != 0; --i) {
             Node* item = ancestors[i - 1].get();
-            RefPtr<Node> child = item->cloneNode(isTableElement(item));
+            RefPtr<Node> child = item->cloneNode(isRenderedTable(item));
             appendNode(child, toElement(lastNode.get()));
             lastNode = child.release();
         }
@@ -1190,7 +1190,7 @@ void CompositeEditCommand::moveParagraphWithClones(const VisiblePosition& startO
     beforeParagraph = VisiblePosition(beforeParagraph.deepEquivalent());
     afterParagraph = VisiblePosition(afterParagraph.deepEquivalent());
 
-    if (beforeParagraph.isNotNull() && !isTableElement(beforeParagraph.deepEquivalent().deprecatedNode())
+    if (beforeParagraph.isNotNull() && !isRenderedTable(beforeParagraph.deepEquivalent().deprecatedNode())
         && ((!isEndOfParagraph(beforeParagraph) && !isStartOfParagraph(beforeParagraph)) || beforeParagraph == afterParagraph)) {
         // FIXME: Trim text between beforeParagraph and afterParagraph if they aren't equal.
         insertNodeAt(createBreakElement(document()), beforeParagraph.deepEquivalent());

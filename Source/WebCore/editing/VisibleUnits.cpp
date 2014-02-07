@@ -1159,7 +1159,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             node = n;
             offset = 0;
             n = NodeTraversal::previousPostOrder(n, startBlock);
-        } else if (editingIgnoresContent(n) || isTableElement(n)) {
+        } else if (editingIgnoresContent(n) || isRenderedTable(n)) {
             node = n;
             type = Position::PositionIsBeforeAnchor;
             n = n->previousSibling() ? n->previousSibling() : NodeTraversal::previousPostOrder(n, startBlock);
@@ -1239,7 +1239,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
             node = n;
             offset = r->caretMaxOffset();
             n = NodeTraversal::next(n, stayInsideBlock);
-        } else if (editingIgnoresContent(n) || isTableElement(n)) {
+        } else if (editingIgnoresContent(n) || isRenderedTable(n)) {
             node = n;
             type = Position::PositionIsAfterAnchor;
             n = NodeTraversal::nextSkippingChildren(n, stayInsideBlock);

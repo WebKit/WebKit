@@ -1,3 +1,35 @@
+2014-02-07  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
+
+        Renaming isTableElement() to isRenderedTable() as per the FIXME comment
+        https://bugs.webkit.org/show_bug.cgi?id=127769
+
+        Reviewed by Andreas Kling.
+
+        Rename method and use IsTable() instead of local type checking.
+
+        * dom/Position.cpp:
+        (WebCore::Position::parentAnchoredEquivalent):
+        (WebCore::Position::upstream):
+        (WebCore::Position::downstream):
+        (WebCore::Position::isCandidate):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+        (WebCore::CompositeEditCommand::moveParagraphWithClones):
+        * editing/FrameSelection.cpp:
+        (WebCore::caretRendersInsideNode):
+        * editing/VisibleUnits.cpp:
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        * editing/htmlediting.cpp:
+        (WebCore::firstInSpecialElement):
+        (WebCore::lastInSpecialElement):
+        (WebCore::isRenderedTable):
+        * editing/htmlediting.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localCaretRect):
+
 2014-02-06  Brady Eidson  <beidson@apple.com>
 
         IDB: Remove the entirely unnecessary "Value Key" concept
