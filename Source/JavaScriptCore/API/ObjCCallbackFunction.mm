@@ -464,7 +464,7 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
     CallbackData callbackData;
     JSValueRef result;
     @autoreleasepool {
-        [context beginCallbackWithData:&callbackData thisValue:thisObject argumentCount:argumentCount arguments:arguments];
+        [context beginCallbackWithData:&callbackData calleeValue:function thisValue:thisObject argumentCount:argumentCount arguments:arguments];
         result = impl->call(context, thisObject, argumentCount, arguments, exception);
         if (context.exception)
             *exception = valueInternalValue(context.exception);
@@ -484,7 +484,7 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
     CallbackData callbackData;
     JSValueRef result;
     @autoreleasepool {
-        [context beginCallbackWithData:&callbackData thisValue:nil argumentCount:argumentCount arguments:arguments];
+        [context beginCallbackWithData:&callbackData calleeValue:constructor thisValue:nil argumentCount:argumentCount arguments:arguments];
         result = impl->call(context, NULL, argumentCount, arguments, exception);
         if (context.exception)
             *exception = valueInternalValue(context.exception);

@@ -1141,6 +1141,28 @@ void testObjectiveCAPI()
     @autoreleasepool {
         checkResult(@"[JSContext currentThis] == nil outside of callback", ![JSContext currentThis]);
         checkResult(@"[JSContext currentArguments] == nil outside of callback", ![JSContext currentArguments]);
+        if ([JSContext currentCallee])
+            checkResult(@"[JSContext currentCallee] == nil outside of callback", ![JSContext currentCallee]);
+    }
+
+    if ([JSContext currentCallee]) {
+        @autoreleasepool {
+            JSContext *context = [[JSContext alloc] init];
+            context[@"testFunction"] = ^{
+                checkResult(@"testFunction.foo === 42", [[JSContext currentCallee][@"foo"] toInt32] == 42);
+            };
+            context[@"testFunction"][@"foo"] = @42;
+            [context[@"testFunction"] callWithArguments:nil];
+
+            context[@"TestConstructor"] = ^{
+                JSValue *newThis = [JSValue valueWithNewObjectInContext:[JSContext currentContext]];
+                JSGlobalContextRef contextRef = [[JSContext currentContext] JSGlobalContextRef];
+                JSObjectRef newThisRef = JSValueToObject(contextRef, [newThis JSValueRef], NULL);
+                JSObjectSetPrototype(contextRef, newThisRef, [[JSContext currentCallee][@"prototype"] JSValueRef]);
+                return newThis;
+            };
+            checkResult(@"(new TestConstructor) instanceof TestConstructor", [context evaluateScript:@"(new TestConstructor) instanceof TestConstructor"]);
+        }
     }
 
     @autoreleasepool {

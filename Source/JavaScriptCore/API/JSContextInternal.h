@@ -36,6 +36,7 @@ struct CallbackData {
     CallbackData *next;
     JSContext *context;
     JSValue *preservedException;
+    JSValueRef calleeValue;
     JSValueRef thisValue;
     size_t argumentCount;
     const JSValueRef *arguments;
@@ -64,7 +65,7 @@ private:
 - (JSValue *)valueFromNotifyException:(JSValueRef)exception;
 - (BOOL)boolFromNotifyException:(JSValueRef)exception;
 
-- (void)beginCallbackWithData:(CallbackData *)callbackData thisValue:(JSValueRef)thisValue argumentCount:(size_t)argumentCount arguments:(const JSValueRef *)arguments;
+- (void)beginCallbackWithData:(CallbackData *)callbackData calleeValue:(JSValueRef)calleeValue thisValue:(JSValueRef)thisValue argumentCount:(size_t)argumentCount arguments:(const JSValueRef *)arguments;
 - (void)endCallbackWithData:(CallbackData *)callbackData;
 
 - (JSValue *)wrapperForObjCObject:(id)object;

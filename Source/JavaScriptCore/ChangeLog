@@ -1,5 +1,26 @@
 2014-02-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        +[JSContext currentCallee] should return the currently executing JS function
+        https://bugs.webkit.org/show_bug.cgi?id=122621
+
+        Reviewed by Geoffrey Garen.
+
+        It would be useful if there was a +[JSContext currentObject] API which was 
+        callable from ObjC API callbacks. Its purpose would be to allow convenient 
+        access to the JSValue wrapper for the currently-executing block callback.
+
+        * API/JSContext.h:
+        * API/JSContext.mm:
+        (+[JSContext currentCallee]):
+        (-[JSContext beginCallbackWithData:calleeValue:thisValue:argumentCount:arguments:]):
+        * API/JSContextInternal.h:
+        * API/ObjCCallbackFunction.mm:
+        (JSC::objCCallbackFunctionCallAsFunction):
+        (JSC::objCCallbackFunctionCallAsConstructor):
+        * API/tests/testapi.mm:
+
+2014-02-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Fix iOS builds after r163574
 
         * API/JSManagedValue.h:
