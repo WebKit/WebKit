@@ -1,3 +1,13 @@
+2014-02-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reenable AppNap
+        https://bugs.webkit.org/show_bug.cgi?id=128394
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferencesStore.h:
+            - pageVisibilityBasedProcessSuppressionEnabled shoud default to true.
+
 2014-02-07  Tim Horton  <timothy_horton@apple.com>
 
         Rename ViewGestureController.mm to ViewGestureControllerMac.mm
