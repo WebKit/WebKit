@@ -573,9 +573,10 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         Structure* structure = baseCell->structure();
         
         if (!structure->isUncacheableDictionary()
-            && !structure->typeInfo().prohibitsPropertyCaching()) {
+            && !structure->typeInfo().prohibitsPropertyCaching()
+            && !structure->typeInfo().newImpurePropertyFiresWatchpoints()) {
             ConcurrentJITLocker locker(codeBlock->m_lock);
-            
+
             pc[4].u.structure.set(
                 vm, codeBlock->ownerExecutable(), structure);
             if (isInlineOffset(slot.cachedOffset())) {

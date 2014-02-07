@@ -1,3 +1,16 @@
+2014-02-07  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION (r160628): LLint does not appear to handle impure get own property properly
+        https://bugs.webkit.org/show_bug.cgi?id=127943
+
+        Reviewed by Filip Pizlo.
+
+        Make sure the LLINT doesn't attempt to cache property
+        access on structures with impureGetOwnPropertySlot set.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2014-02-06  Michael Saboff  <msaboff@apple.com>
 
         Workaround REGRESSION(r163195-r163227): Crash beneath NSErrorUserInfoFromJSException when installing AppleInternal.mpkg
