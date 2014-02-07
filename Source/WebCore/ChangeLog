@@ -1,3 +1,14 @@
+2014-02-06  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed, fix build error on 64bit debug build
+
+        Apply static_cast<long long> to int64_t variable when '%lli' is used.
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::clearObjectStore):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::setActive):
+
 2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Console support to JSContext Inspection

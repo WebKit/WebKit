@@ -308,7 +308,7 @@ void IDBDatabaseBackend::deleteRange(int64_t transactionId, int64_t objectStoreI
 
 void IDBDatabaseBackend::clearObjectStore(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
 {
-    LOG(StorageAPI, "IDBDatabaseBackend::clearObjectStore %lli in transaction %lli", objectStoreId, transactionId);
+    LOG(StorageAPI, "IDBDatabaseBackend::clearObjectStore %lli in transaction %lli", static_cast<long long>(objectStoreId), static_cast<long long>(transactionId));
     IDBTransactionBackend* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
