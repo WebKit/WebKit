@@ -69,13 +69,15 @@ typedef enum {
  *   #WebKitWebView instances created by the application: if the process
  *   hangs or crashes all the web views in the application will be affected.
  *   This is the default process model, and it should suffice for most cases.
- * @WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW: Use one process
- *   for each #WebKitWebView. The main advantage of this process model is that
- *   the rendering process for a web view can crash while the rest of the
- *   views keep working normally. This process model is indicated for
- *   applications which may use a number of web views and the content of
- *   in each must not interfere with the rest -- for example a full-fledged
- *   web browser with support for multiple tabs.
+ * @WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES: Use one process
+ *   for each #WebKitWebView, while still allowing for some of them to
+ *   share a process in certain situations. The main advantage
+ *   of this process model is that the rendering process for a web view
+ *   can crash while the rest of the views keep working normally. This
+ *   process model is indicated for applications which may use a number
+ *   of web views and the content of in each must not interfere with the
+ *   rest — for example a full-fledged web browser with support for
+ *   multiple tabs.
  *
  * Enum values used for determining the #WebKitWebContext process model.
  *
@@ -83,7 +85,7 @@ typedef enum {
  */
 typedef enum {
     WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS,
-    WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW,
+    WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES,
 } WebKitProcessModel;
 
 /**

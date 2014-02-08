@@ -1,3 +1,22 @@
+2014-02-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Make process model names properly meaningful
+        https://bugs.webkit.org/show_bug.cgi?id=128389
+
+        Reviewed by Carlos Garcia Campos.
+
+        The name WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW
+        is misleading because there are situations in which web views may
+        share the same web process even when multi-process mode is enabled;
+        for example when opening a related view and both interact using JS.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+        Update usage of WebKitProcessModel enum values.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestMultiprocess.cpp:
+        (beforeAll):
+        Ditto.
+
 2014-02-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] build-webkit script always generate-gtk-doc even if '--disable-gtk-doc' param is passed

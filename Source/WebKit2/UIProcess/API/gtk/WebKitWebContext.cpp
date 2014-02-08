@@ -163,9 +163,6 @@ struct _WebKitWebContextPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS, ProcessModelSharedSecondaryProcess);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW, ProcessModelMultipleSecondaryProcesses);
-
 WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
 static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass)
@@ -898,15 +895,19 @@ void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context
  * determine how auxiliary processes are handled. The default setting
  * (%WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS) is suitable for most
  * applications which embed a small amount of WebViews, or are used to
- * display documents which are considered safe -- like local files.
+ * display documents which are considered safe — like local files.
  *
- * Applications which may potentially use a large amount of WebViews --for
- * example a multi-tabbed web browser-- may want to use
- * %WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW to use one
- * process per view. Using this model, when a WebView hangs or crashes,
- * the rest of the WebViews in the application will still work normally.
+ * Applications which may potentially use a large amount of WebViews
+ * —for example a multi-tabbed web browser— may want to use
+ * %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES, which will use
+ * one process per view most of the time, while still allowing for web
+ * views to share a process when needed (for example when different
+ * views interact with each other). Using this model, when a process
+ * hangs or crashes, only the WebViews using it stop working, while
+ * the rest of the WebViews in the application will still function
+ * normally.
  *
- * This method <strong>must be called before any other functions</strong>,
+ * This method **must be called before any other functions**,
  * as early as possible in your application. Calling it later will make
  * your application crash.
  *
@@ -916,10 +917,24 @@ void webkit_web_context_set_process_model(WebKitWebContext* context, WebKitProce
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    if (processModel != context->priv->context->processModel()) {
-        context->priv->context->setUsesNetworkProcess(processModel == ProcessModelMultipleSecondaryProcesses);
-        context->priv->context->setProcessModel(static_cast<ProcessModel>(processModel));
+    ProcessModel newProcessModel;
+
+    switch (processModel) {
+    case WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS:
+        newProcessModel = ProcessModelSharedSecondaryProcess;
+        break;
+    case WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES:
+        newProcessModel = ProcessModelMultipleSecondaryProcesses;
+        break;
+    default:
+        g_assert_not_reached();
     }
+
+    if (newProcessModel == context->priv->context->processModel())
+        return;
+
+    context->priv->context->setUsesNetworkProcess(newProcessModel == ProcessModelMultipleSecondaryProcesses);
+    context->priv->context->setProcessModel(newProcessModel);
 }
 
 /**
@@ -936,7 +951,15 @@ void webkit_web_context_set_process_model(WebKitWebContext* context, WebKitProce
 WebKitProcessModel webkit_web_context_get_process_model(WebKitWebContext* context)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS);
-    return static_cast<WebKitProcessModel>(context->priv->context->processModel());
+
+    switch (context->priv->context->processModel()) {
+    case ProcessModelSharedSecondaryProcess:
+        return WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS;
+    case ProcessModelMultipleSecondaryProcesses:
+        return WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES;
+    default:
+        g_assert_not_reached();
+    }
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy)
