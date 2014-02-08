@@ -650,7 +650,6 @@ if (ENABLE_WEBKIT2)
             html/track/TrackEvent.idl
             html/track/VideoTrack.idl
             html/track/VideoTrackList.idl
-            html/track/VTTCue.idl
         )
     endif ()
 
