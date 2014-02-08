@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WKBase.h"
+#import "WKBrowsingContextController.h"
+#import "WKBrowsingContextGroup.h"
+#import "WKProcessGroup.h"
 #import <UIKit/UIKit.h>
-#import <WebKit2/WKBase.h>
-#import <WebKit2/WKBrowsingContextController.h>
-#import <WebKit2/WKBrowsingContextGroup.h>
-#import <WebKit2/WKProcessGroup.h>
+#import <wtf/RetainPtr.h>
 
 @class WKContentView;
 @class WKWebViewConfiguration;
@@ -40,6 +41,9 @@ class RemoteLayerTreeTransaction;
 @optional
 - (void)contentViewDidCommitLoadForMainFrame:(WKContentView *)contentView;
 - (void)contentView:(WKContentView *)contentView didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
+
+// FIXME: This doesn't belong in a 'delegate'.
+- (RetainPtr<CGImageRef>)takeViewSnapshotForContentView:(WKContentView *)contentView;
 @end
 
 WK_API_CLASS

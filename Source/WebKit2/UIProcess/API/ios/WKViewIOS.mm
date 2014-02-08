@@ -26,14 +26,21 @@
 #import "config.h"
 #import "WKViewPrivate.h"
 
+#import "RemoteLayerTreeTransaction.h"
+#import "ViewGestureController.h"
+#import "WebPageProxy.h"
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKContentView.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKScrollView.h"
+#import "WKAPICast.h"
+#import <UIKit/UIImage_Private.h>
 #import <UIKit/UIScreen.h>
 #import <UIKit/UIScrollView_Private.h>
-#import <WebKit2/RemoteLayerTreeTransaction.h>
+#import <UIKit/UIWindow_Private.h>
 #import <wtf/RetainPtr.h>
+
+using namespace WebKit;
 
 @interface WKView () <UIScrollViewDelegate, WKContentViewDelegate>
 - (void)_setDocumentScale:(CGFloat)newScale;
@@ -44,6 +51,10 @@
     RetainPtr<WKContentView> _contentView;
 
     BOOL _isWaitingForNewLayerTreeAfterDidCommitLoad;
+    std::unique_ptr<ViewGestureController> _gestureController;
+    
+    BOOL _allowsBackForwardNavigationGestures;
+
     BOOL _hasStaticMinimumLayoutSize;
     CGSize _minimumLayoutSizeOverride;
 }
@@ -97,6 +108,26 @@
     return [_contentView browsingContextController];
 }
 
+- (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
+{
+    _allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
+    
+    WebPageProxy *webPageProxy = toImpl([_contentView _pageRef]);
+    
+    if (allowsBackForwardNavigationGestures && !_gestureController) {
+        _gestureController = std::make_unique<ViewGestureController>(*webPageProxy);
+        _gestureController->installSwipeHandler(self);
+    } else
+        _gestureController = nullptr;
+    
+    webPageProxy->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
+}
+
+- (BOOL)allowsBackForwardNavigationGestures
+{
+    return _allowsBackForwardNavigationGestures;
+}
+
 #pragma mark WKContentViewDelegate
 
 - (void)contentViewDidCommitLoadForMainFrame:(WKContentView *)contentView
@@ -104,13 +135,16 @@
     _isWaitingForNewLayerTreeAfterDidCommitLoad = YES;
 }
 
-- (void)contentView:(WKContentView *)contentView didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
+- (void)contentView:(WKContentView *)contentView didCommitLayerTree:(const RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
     [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
     [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];
     if (![_scrollView isZooming] && ![_scrollView isZoomBouncing])
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
+    
+    if (_gestureController)
+        _gestureController->setRenderTreeSize(layerTreeTransaction.renderTreeSize());
 
     if (_isWaitingForNewLayerTreeAfterDidCommitLoad) {
         UIEdgeInsets inset = [_scrollView contentInset];
@@ -217,6 +251,17 @@
 
     CGPoint contentOffset = [_scrollView convertPoint:contentOffsetInDocumentCoordinates fromView:_contentView.get()];
     [_scrollView setContentOffset:contentOffset];
+}
+
+
+- (RetainPtr<CGImageRef>)takeViewSnapshotForContentView:(WKContentView *)contentView
+{
+    // FIXME: We should be able to use acquire an IOSurface directly, instead of going to CGImage here and back in ViewSnapshotStore.
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
+    [self drawViewHierarchyInRect:[self bounds] afterScreenUpdates:NO];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image.CGImage;
 }
 
 @end

@@ -1,3 +1,85 @@
+2014-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Swipe): Support for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=128363
+        <rdar://problem/15194194>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::renderTreeSize):
+        (WebKit::RemoteLayerTreeTransaction::setRenderTreeSize):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        Send the render tree size along with remote layer tree commits,
+        so that we can act upon it (to hide snapshots) in the UI process
+        in sync with layer commits.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        We want allowsBackForwardNavigationGestures for both platforms.
+
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _takeViewSnapshot]):
+        * UIProcess/API/ios/WKContentViewInternal.h:
+        Plumb snapshotting through to WKViewIOS.
+
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView setAllowsBackForwardNavigationGestures:]):
+        (-[WKView allowsBackForwardNavigationGestures]):
+        Create/destroy the gesture controller when we turn on/off back-forward swipe.
+        Tell WebPageProxy to save snapshots if swipe is enabled.
+
+        (-[WKView contentView:didCommitLayerTree:]):
+        Forward the current transaction's render tree size to ViewGestureController.
+
+        (-[WKView takeViewSnapshotForContentView:]):
+        Snapshot the view. This is not the best SPI to use, we should consider
+        using one of those which returns an IOSurface and plumbing it through
+        to ViewSnapshotStore, but all of our PageClient abstraction makes that annoying.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::recordNavigationSnapshot):
+        Record snapshots on iOS as well.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm: Added.
+        (-[WKSwipeInteractiveTransitionDelegate initWithViewGestureController:WebKit::swipingView:]):
+        (-[WKSwipeInteractiveTransitionDelegate WebKit::ViewGestureController::directionForTransition:]):
+        (-[WKSwipeInteractiveTransitionDelegate startInteractiveTransition:]):
+        (-[WKSwipeInteractiveTransitionDelegate shouldBeginInteractiveTransition:]):
+        (-[WKSwipeInteractiveTransitionDelegate interactiveTransition:gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKSwipeInteractiveTransitionDelegate interactiveTransition:gestureRecognizer:shouldReceiveTouch:]):
+        (-[WKSwipeInteractiveTransitionDelegate gestureRecognizerForInteractiveTransition:WithTarget:action:]):
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::~ViewGestureController):
+        (WebKit::ViewGestureController::installSwipeHandler):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::canSwipeInDirection):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        (WebKit::ViewGestureController::setRenderTreeSize):
+        (WebKit::ViewGestureController::swipeSnapshotWatchdogTimerFired):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+
+        * UIProcess/mac/ViewGestureController.h:
+        Add iOS-specific methods, and don't include all of the Mac-specific code.
+        We can move towards sharing more logic in the future.
+
+        * UIProcess/mac/ViewGestureController.messages.in:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::ViewGestureController):
+        * UIProcess/mac/ViewSnapshotStore.h:
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        (WebKit::ViewSnapshotStore::snapshotAndRenderTreeSize):
+        Make ViewSnapshotStore build/work without IOSurface.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-07  Anders Carlsson  <andersca@apple.com>
 
         Implement more of WKPreferences

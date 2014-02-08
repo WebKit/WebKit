@@ -26,16 +26,22 @@
 #ifndef ViewGestureController_h
 #define ViewGestureController_h
 
-#if !PLATFORM(IOS)
-
 #include "MessageReceiver.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/Timer.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
+
+#if PLATFORM(IOS)
+OBJC_CLASS UIView;
+OBJC_CLASS WKSwipeTransitionController;
+OBJC_CLASS _UIViewControllerTransitionContext;
+OBJC_CLASS _UINavigationInteractiveTransitionBase;
+#else
 OBJC_CLASS NSEvent;
 OBJC_CLASS NSView;
+#endif
 
 namespace WebKit {
 
@@ -47,63 +53,81 @@ class ViewGestureController : private IPC::MessageReceiver {
 public:
     ViewGestureController(WebPageProxy&);
     ~ViewGestureController();
-
+    
+    enum class ViewGestureType {
+        None,
+#if !PLATFORM(IOS)
+        Magnification,
+        SmartMagnification,
+#endif
+        Swipe
+    };
+    
+    enum class SwipeTransitionStyle {
+        Overlap,
+        Push
+    };
+    
+    enum class SwipeDirection {
+        Left,
+        Right
+    };
+    
+#if !PLATFORM(IOS)
     double magnification() const;
 
     void handleMagnificationGesture(double scale, WebCore::FloatPoint origin);
     void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
 
     bool handleScrollWheelEvent(NSEvent *);
-    void didHitRenderTreeSizeThreshold();
-
     void wheelEventWasNotHandledByWebCore(NSEvent *);
 
     void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = std::move(views); }
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
 
     void endActiveGesture();
-
-    enum class ViewGestureType {
-        None,
-        Magnification,
-        SmartMagnification,
-        Swipe
-    };
-
-    enum class SwipeTransitionStyle {
-        Overlap,
-        Push
-    };
+#else
+    void installSwipeHandler(UIView *);
+    bool canSwipeInDirection(SwipeDirection);
+    void beginSwipeGesture(_UINavigationInteractiveTransitionBase *, SwipeDirection);
+    void endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *, bool cancelled);
+    void setRenderTreeSize(uint64_t);
+#endif
 
 private:
     // IPC::MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    
+    void removeSwipeSnapshot();
+    void swipeSnapshotWatchdogTimerFired(WebCore::Timer<ViewGestureController>*);
 
+#if !PLATFORM(IOS)
     // Message handlers.
     void didCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds, bool frameHandlesMagnificationGesture);
     void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, bool frameHandlesMagnificationGesture);
+    void didHitRenderTreeSizeThreshold();
 
     void endMagnificationGesture();
     WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
 
-    enum class SwipeDirection { Left, Right };
     void trackSwipeGesture(NSEvent *, SwipeDirection);
     void beginSwipeGesture(WebBackForwardListItem* targetItem, SwipeDirection);
     void handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, SwipeDirection);
     void endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled);
-    void removeSwipeSnapshot();
-    void swipeSnapshotWatchdogTimerFired(WebCore::Timer<ViewGestureController>*);
-
+#endif
+    
     WebPageProxy& m_webPageProxy;
+    ViewGestureType m_activeGestureType;
+    
+    WebCore::Timer<ViewGestureController> m_swipeWatchdogTimer;
 
+#if !PLATFORM(IOS)
     double m_magnification;
     WebCore::FloatPoint m_magnificationOrigin;
 
     WebCore::FloatRect m_lastSmartMagnificationUnscaledTargetRect;
     bool m_lastMagnificationGestureWasSmartMagnification;
     WebCore::FloatPoint m_lastSmartMagnificationOrigin;
-
-    ViewGestureType m_activeGestureType;
 
     WebCore::FloatRect m_visibleContentRect;
     bool m_visibleContentRectIsValid;
@@ -113,7 +137,6 @@ private:
     Vector<RetainPtr<CALayer>> m_currentSwipeLiveLayers;
 
     SwipeTransitionStyle m_swipeTransitionStyle;
-    WebCore::Timer<ViewGestureController> m_swipeWatchdogTimer;
     Vector<RetainPtr<NSView>> m_customSwipeViews;
     WebCore::FloatRect m_currentSwipeCustomViewBounds;
 
@@ -121,10 +144,17 @@ private:
     // the scroll event that would have started a swipe, we'll fill these in.
     bool m_hasPendingSwipe;
     SwipeDirection m_pendingSwipeDirection;
+#else
+    CGRect m_originalLiveSwipeViewFrame;
+    
+    UIView *m_liveSwipeView;
+    RetainPtr<UIView> m_snapshotView;
+    RetainPtr<UIView> m_transitionContainerView;
+    RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
+    uint64_t m_targetRenderTreeSize;
+#endif
 };
 
 } // namespace WebKit
-
-#endif // !PLATFORM(IOS)
 
 #endif // ViewGestureController_h

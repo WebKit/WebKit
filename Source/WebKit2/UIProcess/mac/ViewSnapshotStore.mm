@@ -26,18 +26,17 @@
 #import "config.h"
 #import "ViewSnapshotStore.h"
 
-#if !PLATFORM(IOS)
-
 #import "WebBackForwardList.h"
 #import "WebPageProxy.h"
 #import <CoreGraphics/CoreGraphics.h>
-#import <IOSurface/IOSurface.h>
 #import <WebCore/UUID.h>
 
 #if defined(__has_include) && __has_include(<CoreGraphics/CoreGraphicsPrivate.h>)
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 #endif
 
+#if USE(IOSURFACE)
+#import <IOSurface/IOSurface.h>
 extern "C" CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef surface, size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, CGColorSpaceRef space, CGBitmapInfo bitmapInfo);
 
 #if defined(__has_include) && __has_include(<IOSurface/IOSurfacePrivate.h>)
@@ -48,8 +47,9 @@ enum {
 };
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 extern "C" IOReturn IOSurfaceSetPurgeable(IOSurfaceRef buffer, uint32_t newState, uint32_t *oldState);
+#endif
 #endif
 
 using namespace WebCore;
@@ -118,6 +118,7 @@ void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
     m_snapshotMap.remove(oldestSnapshotUUID);
 }
 
+#if USE(IOSURFACE)
 static std::pair<RetainPtr<IOSurfaceRef>, RetainPtr<CGContextRef>> createIOSurfaceFromImage(CGImageRef image)
 {
     unsigned pixelFormat = 'BGRA';
@@ -149,6 +150,7 @@ static std::pair<RetainPtr<IOSurfaceRef>, RetainPtr<CGContextRef>> createIOSurfa
 
     return std::make_pair(surface, surfaceContext);
 }
+#endif
 
 void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
 {
@@ -173,23 +175,30 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
     }
 
     item->setSnapshotUUID(createCanonicalUUIDString());
-
-    auto surfaceAndContext = createIOSurfaceFromImage(snapshotImage.get());
-
+    
     Snapshot snapshot;
-    snapshot.surface = surfaceAndContext.first;
-    snapshot.surfaceContext = surfaceAndContext.second;
     snapshot.creationTime = std::chrono::steady_clock::now();
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if USE(IOSURFACE)
+    auto surfaceAndContext = createIOSurfaceFromImage(snapshotImage.get());
+    snapshot.surface = surfaceAndContext.first;
+    snapshot.surfaceContext = surfaceAndContext.second;
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     IOSurfaceSetPurgeable(snapshot.surface.get(), kIOSurfacePurgeableVolatile, nullptr);
+#endif
+#else
+    snapshot.image = snapshotImage;
 #endif
 
     m_snapshotMap.add(item->snapshotUUID(), snapshot);
     m_renderTreeSizeMap.add(item->snapshotUUID(), webPageProxy.renderTreeSize());
 }
 
+#if USE(IOSURFACE)
 std::pair<RetainPtr<IOSurfaceRef>, uint64_t> ViewSnapshotStore::snapshotAndRenderTreeSize(WebBackForwardListItem* item)
+#else
+std::pair<RetainPtr<CGImageRef>, uint64_t> ViewSnapshotStore::snapshotAndRenderTreeSize(WebBackForwardListItem* item)
+#endif
 {
     if (item->snapshotUUID().isEmpty())
         return std::make_pair(nullptr, 0);
@@ -199,14 +208,15 @@ std::pair<RetainPtr<IOSurfaceRef>, uint64_t> ViewSnapshotStore::snapshotAndRende
         return std::make_pair(nullptr, 0);
 
     const auto& snapshot = m_snapshotMap.find(item->snapshotUUID());
-    RetainPtr<IOSurfaceRef> surface;
 
-    if (snapshot != m_snapshotMap.end())
-        surface = snapshot->value.surface;
-
-    return std::make_pair(surface, renderTreeSize->value);
+    if (snapshot == m_snapshotMap.end())
+        return std::make_pair(nullptr, renderTreeSize->value);
+    
+#if USE(IOSURFACE)
+    return std::make_pair(snapshot->value.surface, renderTreeSize->value);
+#else
+    return std::make_pair(snapshot->value.image, renderTreeSize->value);
+#endif
 }
 
 } // namespace WebKit
-
-#endif

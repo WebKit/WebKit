@@ -353,6 +353,7 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_minimumScaleFactor;
     encoder << m_maximumScaleFactor;
     encoder << m_allowsUserScaling;
+    encoder << m_renderTreeSize;
 }
 
 bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLayerTreeTransaction& result)
@@ -389,6 +390,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
         return false;
 
     if (!decoder.decode(result.m_allowsUserScaling))
+        return false;
+    
+    if (!decoder.decode(result.m_renderTreeSize))
         return false;
 
     return true;

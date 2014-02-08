@@ -46,6 +46,10 @@
 #import <WebCore/ViewportArguments.h>
 #import <wtf/RetainPtr.h>
 
+#if USE(IOSURFACE)
+#import <IOSurface/IOSurface.h>
+#endif
+
 #if __has_include(<QuartzCore/QuartzCorePrivate.h>)
 #import <QuartzCore/QuartzCorePrivate.h>
 #endif
@@ -356,6 +360,11 @@ using namespace WebKit;
     // FIXME: The line below is commented out since wrapper(WebContext&) now returns a WKProcessClass.
     // As part of the new API we should figure out where geolocation fits in, see <rdar://problem/15885544>.
     // [[wrapper(_page->process().context()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:toAPI(&origin) frame:toAPI(&frame) request:toAPI(&permissionRequest) window:[self window]];
+}
+
+- (RetainPtr<CGImageRef>)_takeViewSnapshot
+{
+    return [_delegate takeViewSnapshotForContentView:self];
 }
 
 @end

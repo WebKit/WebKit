@@ -70,7 +70,6 @@
 @property (readonly, getter=isUsingUISideCompositing) BOOL usingUISideCompositing;
 @property (readwrite) BOOL allowsMagnification;
 @property (readwrite) double magnification;
-@property (readwrite) BOOL allowsBackForwardNavigationGestures;
 
 @property(copy, nonatomic) NSColor *underlayColor;
 

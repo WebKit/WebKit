@@ -26,13 +26,15 @@
 #ifndef ViewSnapshotStore_h
 #define ViewSnapshotStore_h
 
-#if !PLATFORM(IOS)
-
 #include <chrono>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
+
+#if USE(IOSURFACE)
+#include <IOSurface/IOSurface.h>
+#endif
 
 namespace WebKit {
 
@@ -48,7 +50,11 @@ public:
     static ViewSnapshotStore& shared();
 
     void recordSnapshot(WebPageProxy&);
+#if USE(IOSURFACE)
     std::pair<RetainPtr<IOSurfaceRef>, uint64_t> snapshotAndRenderTreeSize(WebBackForwardListItem*);
+#else
+    std::pair<RetainPtr<CGImageRef>, uint64_t> snapshotAndRenderTreeSize(WebBackForwardListItem*);
+#endif
 
     void disableSnapshotting() { m_enabled = false; }
     void enableSnapshotting() { m_enabled = true; }
@@ -57,8 +63,12 @@ private:
     void pruneSnapshots(WebPageProxy&);
 
     struct Snapshot {
+#if USE(IOSURFACE)
         RetainPtr<IOSurfaceRef> surface;
         RetainPtr<CGContextRef> surfaceContext;
+#else
+        RetainPtr<CGImageRef> image;
+#endif
 
         std::chrono::steady_clock::time_point creationTime;
     };
@@ -70,7 +80,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // !PLATFORM(IOS)
 
 #endif // ViewSnapshotStore_h

@@ -325,8 +325,7 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
 
 RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()
 {
-    notImplemented();
-    return nullptr;
+    return [m_view _takeViewSnapshot];
 }
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
