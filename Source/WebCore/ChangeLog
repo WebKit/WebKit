@@ -1,5 +1,15 @@
 2014-02-08  Andreas Kling  <akling@apple.com>
 
+        Remove two unused function declarations.
+
+        Scrub "highQualityRepaintTimerFired" declarations from RenderImage
+        and RenderBoxModelObject since they're not actually defined.
+
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderImage.h:
+
+2014-02-08  Andreas Kling  <akling@apple.com>
+
         CTTE: SVGTRefTargetEventListener is always owned by SVGTRefElement.
         <https://webkit.org/b/128432>
 

@@ -49,8 +49,6 @@ public:
 
     HTMLMapElement* imageMap() const;
     void areaElementFocusChanged(HTMLAreaElement*);
-
-    void highQualityRepaintTimerFired(Timer<RenderImage>*);
     
 #if PLATFORM(IOS)
     virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned, unsigned) override;
