@@ -61,6 +61,10 @@ function startTest() {
 }
 
 function finishTest() {
+    document.removeEventListener("visibilitychange",
+                              onVisibilityChange, false);
+    window2.removeEventListener("load", window2Loaded, false);
+
     if (window.testRunner) {
         testRunner.resetPageVisibility();
     }

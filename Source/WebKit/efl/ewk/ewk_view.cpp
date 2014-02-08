@@ -4442,7 +4442,7 @@ void ewk_view_mixed_content_run_set(Evas_Object* ewkView, bool hasRun)
         evas_object_smart_callback_call(ewkView, "mixedcontent,run", 0);
 }
 
-Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibility_State pageVisibilityState, Eina_Bool initialState)
+Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibility_State pageVisibilityState, Eina_Bool)
 {
 #if ENABLE(PAGE_VISIBILITY_API)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
@@ -4452,7 +4452,7 @@ Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibilit
     if (pageVisibilityState == EWK_PAGE_VISIBILITY_STATE_UNLOADED)
         return false;
 
-    priv->page->setIsVisible(pageVisibilityState == EWK_PAGE_VISIBILITY_STATE_VISIBLE, initialState);
+    priv->page->setIsVisible(pageVisibilityState == EWK_PAGE_VISIBILITY_STATE_VISIBLE);
     if (pageVisibilityState == EWK_PAGE_VISIBILITY_STATE_PRERENDER)
         priv->page->setIsPrerender();
 
@@ -4461,7 +4461,6 @@ Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibilit
     DBG("PAGE_VISIBILITY_API is disabled.");
     UNUSED_PARAM(ewkView);
     UNUSED_PARAM(pageVisibilityState);
-    UNUSED_PARAM(initialState);
     return false;
 #endif
 }

@@ -1148,7 +1148,7 @@ void Page::resumeAnimatingImages()
         CachedImage::resumeAnimatingImagesForLoader(frame->document()->cachedResourceLoader());
 }
 
-void Page::setViewState(ViewState::Flags viewState, bool isInitialState)
+void Page::setViewState(ViewState::Flags viewState)
 {
     ViewState::Flags changed = m_viewState ^ viewState;
     if (!changed)
@@ -1158,19 +1158,19 @@ void Page::setViewState(ViewState::Flags viewState, bool isInitialState)
     m_focusController->setViewState(viewState);
 
     if (changed & ViewState::IsVisible)
-        setIsVisibleInternal(viewState & ViewState::IsVisible, isInitialState);
+        setIsVisibleInternal(viewState & ViewState::IsVisible);
     if (changed & ViewState::IsInWindow)
         setIsInWindowInternal(viewState & ViewState::IsInWindow);
     if (changed & ViewState::IsVisuallyIdle)
         setIsVisuallyIdleInternal(viewState & ViewState::IsVisuallyIdle);
 }
 
-void Page::setIsVisible(bool isVisible, bool isInitialState)
+void Page::setIsVisible(bool isVisible)
 {
-    setViewState(isVisible ? m_viewState | ViewState::IsVisible : m_viewState & ~ViewState::IsVisible, isInitialState);
+    setViewState(isVisible ? m_viewState | ViewState::IsVisible : m_viewState & ~ViewState::IsVisible);
 }
 
-void Page::setIsVisibleInternal(bool isVisible, bool isInitialState)
+void Page::setIsVisibleInternal(bool isVisible)
 {
     // FIXME: The visibility state should be stored on the top-level document.
     // https://bugs.webkit.org/show_bug.cgi?id=116769
@@ -1199,16 +1199,12 @@ void Page::setIsVisibleInternal(bool isVisible, bool isInitialState)
     }
 
 #if ENABLE(PAGE_VISIBILITY_API)
-    if (!isInitialState) {
-        Vector<Ref<Document>> documents;
-        for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
-            documents.append(*frame->document());
+    Vector<Ref<Document>> documents;
+    for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
+        documents.append(*frame->document());
 
-        for (size_t i = 0, size = documents.size(); i < size; ++i)
-            documents[i]->visibilityStateChanged();
-    }
-#else
-    UNUSED_PARAM(isInitialState);
+    for (size_t i = 0, size = documents.size(); i < size; ++i)
+        documents[i]->visibilityStateChanged();
 #endif
 
     if (!isVisible) {

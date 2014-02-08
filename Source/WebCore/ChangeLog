@@ -1,3 +1,22 @@
+2014-02-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove isInitialState flag from Page::setViewState
+        https://bugs.webkit.org/show_bug.cgi?id=128428
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+            - removed isInitialState.
+        * page/Page.cpp:
+        (WebCore::Page::setViewState):
+            - removed isInitialState.
+        (WebCore::Page::setIsVisible):
+            - removed isInitialState.
+        (WebCore::Page::setIsVisibleInternal):
+            - removed isInitialState.
+        * page/Page.h:
+            - removed isInitialState.
+
 2014-02-07  Simon Fraser  <simon.fraser@apple.com>
 
         Encode requestedScrollPosition on ScrollingStateScrollingNodes to send to the UI process

@@ -15,6 +15,7 @@ var frame1, frame2, frame3, frame4, frame5, subframe1, subFrame2, subFrame3;
 var docsLoaded = 0;
 var mainPageVisibilityChangeDone = false;
 var frame2VisiblityChangeDone = false;
+var finishTestDone = false;
 
 function startTest() {
     ++docsLoaded;
@@ -43,6 +44,11 @@ function startTest() {
 }
 
 function finishTest() {
+    document.removeEventListener(
+        "visibilitychange", onMainPageVisibilityChange, false);
+    frame2.contentDocument.removeEventListener(
+        "visibilitychange", onFrame2VisibilityChange, false);
+
     if (window.testRunner)
         testRunner.resetPageVisibility();
     finishJSTest();

@@ -290,8 +290,8 @@ public:
     unsigned pageCount() const;
 
     // Notifications when the Page starts and stops being presented via a native window.
-    void setViewState(ViewState::Flags, bool isInitial = false);
-    void setIsVisible(bool isVisible, bool isInitial);
+    void setViewState(ViewState::Flags);
+    void setIsVisible(bool);
     void setIsPrerender();
     bool isVisible() const { return m_viewState & ViewState::IsVisible; }
 
@@ -419,7 +419,7 @@ private:
     void initGroup();
 
     void setIsInWindowInternal(bool);
-    void setIsVisibleInternal(bool isVisible, bool isInitial);
+    void setIsVisibleInternal(bool);
     void setIsVisuallyIdleInternal(bool);
 
 #if ASSERT_DISABLED

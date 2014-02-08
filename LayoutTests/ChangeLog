@@ -1,3 +1,15 @@
+2014-02-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove isInitialState flag from Page::setViewState
+        https://bugs.webkit.org/show_bug.cgi?id=128428
+
+        Reviewed by Sam Weinig.
+
+        * fast/events/page-visibility-iframe-delete-test.html:
+        * fast/events/page-visibility-iframe-move-test.html:
+            - resetPageVisibility will now cause additional visibiliy events to fire;
+              clean up the event listeners to avoid this affecting the test results.
+
 2014-02-07  Beth Dakin  <bdakin@apple.com>
 
         Should get rid of TileController's CoverageForSlowScrolling mode

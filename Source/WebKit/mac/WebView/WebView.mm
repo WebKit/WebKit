@@ -994,7 +994,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     [self _registerDraggedTypes];
 #endif
 
-    [self _setIsVisible:[self _isViewVisible] isInitialState:YES];
+    [self _setIsVisible:[self _isViewVisible]];
 
     WebPreferences *prefs = [self preferences];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
@@ -4009,7 +4009,7 @@ static inline IMP getMethod(id o, SEL s)
 - (void)_updateVisibilityState
 {
     if (_private && _private->page)
-        [self _setIsVisible:[self _isViewVisible] isInitialState:NO];
+        [self _setIsVisible:[self _isViewVisible]];
 }
 
 - (void)_updateActiveState
@@ -4374,16 +4374,18 @@ static Vector<String> toStringVector(NSArray* patterns)
     return WebPageVisibilityStateVisible;
 }
 
-- (void)_setIsVisible:(BOOL)isVisible isInitialState:(BOOL)isInitialState
+- (void)_setIsVisible:(BOOL)isVisible
 {
     if (_private->page)
-        _private->page->setIsVisible(isVisible, isInitialState);
+        _private->page->setIsVisible(isVisible);
 }
 
 - (void)_setVisibilityState:(WebPageVisibilityState)visibilityState isInitialState:(BOOL)isInitialState
 {
+    UNUSED_PARAM(isInitialState);
+
     if (_private->page) {
-        _private->page->setIsVisible(visibilityState == WebPageVisibilityStateVisible, isInitialState);
+        _private->page->setIsVisible(visibilityState == WebPageVisibilityStateVisible);
         if (visibilityState == WebPageVisibilityStatePrerender)
             _private->page->setIsPrerender();
     }
@@ -5352,7 +5354,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     if (_private && _private->page) {
         _private->page->resumeScriptedAnimations();
-        _private->page->setIsVisible(true, false);
+        _private->page->setIsVisible(true);
     }
 }
 
@@ -5365,7 +5367,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     if (_private && _private->page) {
         _private->page->suspendScriptedAnimations();
-        _private->page->setIsVisible(false, false);
+        _private->page->setIsVisible(false);
     }
 }
 

@@ -384,7 +384,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     setMemoryCacheMessagesEnabled(parameters.areMemoryCacheClientCallsEnabled);
 
-    m_page->setViewState(m_viewState, true);
+    m_page->setViewState(m_viewState);
     updateIsInWindow(true);
 
     setMinimumLayoutSize(parameters.minimumLayoutSize);
@@ -434,7 +434,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
 {
     if (m_viewState != parameters.viewState)
-        setViewStateInternal(parameters.viewState, true);
+        setViewState(parameters.viewState);
     if (m_layerHostingMode != parameters.layerHostingMode)
         setLayerHostingMode(static_cast<unsigned>(parameters.layerHostingMode));
 }
@@ -2069,24 +2069,19 @@ void WebPage::updateIsInWindow(bool isInitialState)
 
 void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewState)
 {
-    setViewStateInternal(viewState, false);
-
-    if (wantsDidUpdateViewState)
-        m_sendDidUpdateViewStateTimer.startOneShot(0);
-}
-
-void WebPage::setViewStateInternal(ViewState::Flags viewState, bool isInitialState)
-{
     ViewState::Flags changed = m_viewState ^ viewState;
     m_viewState = viewState;
 
     m_drawingArea->viewStateDidChange(changed);
-    m_page->setViewState(viewState, isInitialState);
+    m_page->setViewState(viewState);
     for (auto* pluginView : m_pluginViews)
         pluginView->viewStateDidChange(changed);
 
     if (changed & ViewState::IsInWindow)
         updateIsInWindow();
+
+    if (wantsDidUpdateViewState)
+        m_sendDidUpdateViewStateTimer.startOneShot(0);
 }
 
 void WebPage::setLayerHostingMode(unsigned layerHostingMode)

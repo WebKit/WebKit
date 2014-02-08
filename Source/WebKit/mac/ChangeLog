@@ -1,3 +1,19 @@
+2014-02-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove isInitialState flag from Page::setViewState
+        https://bugs.webkit.org/show_bug.cgi?id=128428
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _updateVisibilityState]):
+        (-[WebView _setIsVisible:]):
+        (-[WebView _setVisibilityState:isInitialState:]):
+        (-[WebView _windowWillOrderOnScreen:]):
+        (-[WebView _windowWillOrderOffScreen:]):
+            - don't pass isInitialState to setViewState.
+
 2014-02-06  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL build scaffolding
