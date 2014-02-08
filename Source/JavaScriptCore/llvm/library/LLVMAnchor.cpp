@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config_llvm.h"
-
-#if HAVE(LLVM)
-
 // This is a hack for ensuring that the build system relinks JavaScriptCore if any
-// of the LLVM libraries are known to have changed.
-#include "WebKitLLVMLibraryToken.h"
-
-#endif // HAVE(LLVM)
-
+// of the LLVM libraries are known to have changed. Ths file will get touched by our
+// perl scripts to trigger a rebuild if a change in LLVM was detected.

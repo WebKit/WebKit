@@ -1,3 +1,13 @@
+2014-02-06  Filip Pizlo  <fpizlo@apple.com>
+
+        More FTL build scaffolding
+        https://bugs.webkit.org/show_bug.cgi?id=128330
+
+        Reviewed by Geoffrey Garen.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * llvm/library/LLVMAnchor.cpp:
+
 2014-02-07  Mark Lam  <mark.lam@apple.com>
 
         iOS port needs to clear VM::stackPointerAtVMEntry when it drops locks.
