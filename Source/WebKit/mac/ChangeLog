@@ -1,3 +1,12 @@
+2014-02-07  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix.
+
+        * Misc/WebElementDictionary.mm:
+        (+[WebElementDictionary initializeLookupTable]):
+        (-[WebElementDictionary _image]):
+        (-[WebElementDictionary _imageRect]):
+
 2014-02-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Console support to JSContext Inspection
