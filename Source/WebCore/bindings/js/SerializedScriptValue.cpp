@@ -2540,12 +2540,6 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec,
     return adoptRef(new SerializedScriptValue(buffer, blobURLs, arrayBufferContentsArray.release()));
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
-{
-    Vector<uint8_t> buffer;
-    return adoptRef(new SerializedScriptValue(buffer));
-}
-
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& string)
 {
     Vector<uint8_t> buffer;
@@ -2555,11 +2549,6 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& st
 }
 
 #if ENABLE(INDEXED_DATABASE)
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSC::ExecState* exec, JSC::JSValue value)
-{
-    return SerializedScriptValue::create(exec, value, 0, 0);
-}
-
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double value)
 {
     Vector<uint8_t> buffer;
@@ -2567,9 +2556,11 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double valu
     return adoptRef(new SerializedScriptValue(buffer));
 }
 
-JSValue SerializedScriptValue::deserialize(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue()
 {
-    return deserialize(exec, globalObject, 0);
+    Vector<uint8_t> buffer;
+    CloneSerializer::serializeUndefined(buffer);
+    return adoptRef(new SerializedScriptValue(buffer));
 }
 #endif
 
@@ -2612,14 +2603,6 @@ JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* glob
     return result.first;
 }
 
-#if ENABLE(INSPECTOR)
-Deprecated::ScriptValue SerializedScriptValue::deserializeForInspector(JSC::ExecState* scriptState)
-{
-    JSValue value = deserialize(scriptState, scriptState->lexicalGlobalObject(), 0);
-    return Deprecated::ScriptValue(scriptState->vm(), value);
-}
-#endif
-
 JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception, MessagePortArray* messagePorts)
 {
     ExecState* exec = toJS(destinationContext);
@@ -2643,13 +2626,7 @@ JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, J
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::nullValue()
 {
-    return SerializedScriptValue::create();
-}
-
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue()
-{
     Vector<uint8_t> buffer;
-    CloneSerializer::serializeUndefined(buffer);
     return adoptRef(new SerializedScriptValue(buffer));
 }
 

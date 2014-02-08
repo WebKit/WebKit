@@ -77,9 +77,7 @@ public:
         return adoptRef(new SerializedScriptValue(buffer));
     }
 
-    static PassRefPtr<SerializedScriptValue> create();
     static PassRefPtr<SerializedScriptValue> nullValue();
-    static PassRefPtr<SerializedScriptValue> undefinedValue();
     static PassRefPtr<SerializedScriptValue> booleanValue(bool value);
 
     static PassRefPtr<SerializedScriptValue> serialize(const Deprecated::ScriptValue&, JSC::ExecState*, SerializationErrorMode = Throwing);
@@ -94,17 +92,13 @@ public:
     JSValueRef deserialize(JSContextRef, JSValueRef* exception, MessagePortArray*);
     JSValueRef deserialize(JSContextRef, JSValueRef* exception);
 
-#if ENABLE(INSPECTOR)
-    Deprecated::ScriptValue deserializeForInspector(JSC::ExecState*);
-#endif
-
     const Vector<uint8_t>& data() const { return m_data; }
     const Vector<String>& blobURLs() const { return m_blobURLs; }
 
 #if ENABLE(INDEXED_DATABASE)
-    static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue);
+    // FIXME: Get rid of these. The only caller immediately deserializes the result, so it's a very roundabout way to create a JSValue.
     static PassRefPtr<SerializedScriptValue> numberValue(double value);
-    JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*);
+    static PassRefPtr<SerializedScriptValue> undefinedValue();
 #endif
 
     static PassRefPtr<SerializedScriptValue> createFromWireBytes(const Vector<uint8_t>& data)
