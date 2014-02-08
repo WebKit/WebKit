@@ -165,9 +165,6 @@ protected:
     void paintCompositionBackground(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, int startPos, int endPos);
     void paintDocumentMarkers(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, bool background);
     void paintCompositionUnderline(GraphicsContext*, const FloatPoint& boxOrigin, const CompositionUnderline&);
-#if PLATFORM(MAC)
-    void paintCustomHighlight(const LayoutPoint&, const AtomicString& type);
-#endif
 
 private:
     void paintDecoration(GraphicsContext&, const FloatPoint& boxOrigin, TextDecoration, TextDecorationStyle, const ShadowData*, TextPainter&);

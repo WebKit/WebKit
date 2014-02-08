@@ -302,8 +302,6 @@ rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
 rect: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-highlight) : none
-rect: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-character) : auto
 rect: style.getPropertyCSSValue(-webkit-hyphenate-character) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
@@ -798,8 +796,6 @@ g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
 g: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-highlight) : none
-g: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-character) : auto
 g: style.getPropertyCSSValue(-webkit-hyphenate-character) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto

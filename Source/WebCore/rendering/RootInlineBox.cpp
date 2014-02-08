@@ -168,38 +168,6 @@ void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const LayoutPoint& pa
         ellipsisBox()->paint(paintInfo, paintOffset, lineTop, lineBottom);
 }
 
-#if PLATFORM(MAC)
-
-void RootInlineBox::addHighlightOverflow()
-{
-    Page* page = renderer().frame().page();
-    if (!page)
-        return;
-
-    // Highlight acts as a selection inflation.
-    FloatRect rootRect(0, selectionTop(), logicalWidth(), selectionHeight());
-    IntRect inflatedRect = enclosingIntRect(page->chrome().client().customHighlightRect(renderer().element(), renderer().style().highlight(), rootRect));
-    setOverflowFromLogicalRects(inflatedRect, inflatedRect, lineTop(), lineBottom());
-}
-
-void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const AtomicString& highlightType)
-{
-    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
-        return;
-
-    Page* page = renderer().frame().page();
-    if (!page)
-        return;
-
-    // Get the inflated rect so that we can properly hit test.
-    FloatRect rootRect(paintOffset.x() + x(), paintOffset.y() + selectionTop(), logicalWidth(), selectionHeight());
-    FloatRect inflatedRect = page->chrome().client().customHighlightRect(renderer().element(), highlightType, rootRect);
-    if (inflatedRect.intersects(paintInfo.rect))
-        page->chrome().client().paintCustomHighlight(renderer().element(), highlightType, rootRect, rootRect, false, true);
-}
-
-#endif
-
 void RootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     // Check if we are in the correct region.
@@ -208,11 +176,6 @@ void RootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     
     InlineFlowBox::paint(paintInfo, paintOffset, lineTop, lineBottom);
     paintEllipsisBox(paintInfo, paintOffset, lineTop, lineBottom);
-#if PLATFORM(MAC)
-    const RenderStyle& lineStyle = this->lineStyle();
-    if (lineStyle.highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-        paintCustomHighlight(paintInfo, paintOffset, lineStyle.highlight());
-#endif
 }
 
 bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom)

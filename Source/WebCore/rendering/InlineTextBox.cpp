@@ -585,12 +585,6 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
     // and composition underlines.
     if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
-#if PLATFORM(MAC)
-        // Custom highlighters go behind everything else.
-        if (lineStyle.highlight() != nullAtom && !context->paintingDisabled())
-            paintCustomHighlight(adjustedPaintOffset, lineStyle.highlight());
-#endif
-
         if (containsComposition && !useCustomUnderlines)
             paintCompositionBackground(context, boxOrigin, lineStyle, font,
                 renderer().frame().editor().compositionStart(),
@@ -813,23 +807,6 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
     FloatPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
     context->drawHighlightForText(font, constructTextRun(style, font), localOrigin, selHeight, c, style.colorSpace(), sPos, ePos);
 }
-
-#if PLATFORM(MAC)
-
-void InlineTextBox::paintCustomHighlight(const LayoutPoint& paintOffset, const AtomicString& type)
-{
-    Page* page = renderer().frame().page();
-    if (!page)
-        return;
-
-    const RootInlineBox& rootBox = root();
-    FloatRect rootRect(paintOffset.x() + rootBox.x(), paintOffset.y() + selectionTop(), rootBox.logicalWidth(), selectionHeight());
-    FloatRect textRect(paintOffset.x() + x(), rootRect.y(), logicalWidth(), rootRect.height());
-
-    page->chrome().client().paintCustomHighlight(renderer().textNode(), type, textRect, rootRect, true, false);
-}
-
-#endif
 
 static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)
 {

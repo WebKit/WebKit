@@ -45,7 +45,6 @@ namespace WebCore {
 #endif
 - (BOOL)_canSmartCopyOrDelete;
 
-- (id <WebHTMLHighlighter>)_highlighterForType:(NSString*)type;
 - (WebFrame *)_frame;
 #if !PLATFORM(IOS)
 - (void)_lookUpInDictionaryFromMenu:(id)sender;

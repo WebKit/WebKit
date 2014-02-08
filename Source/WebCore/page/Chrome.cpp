@@ -559,15 +559,6 @@ void ChromeClient::populateVisitedLinks()
 {
 }
 
-FloatRect ChromeClient::customHighlightRect(Node*, const AtomicString&, const FloatRect&)
-{
-    return FloatRect();
-}
-
-void ChromeClient::paintCustomHighlight(Node*, const AtomicString&, const FloatRect&, const FloatRect&, bool, bool)
-{
-}
-
 bool ChromeClient::shouldReplaceWithGeneratedFileForUpload(const String&, String&)
 {
     return false;

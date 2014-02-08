@@ -739,39 +739,6 @@ void WebChromeClient::annotatedRegionsChanged()
 
 #endif
 
-FloatRect WebChromeClient::customHighlightRect(Node* node, const AtomicString& type, const FloatRect& lineRect)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    NSView *documentView = [[kit(node->document().frame()) frameView] documentView];
-    if (![documentView isKindOfClass:[WebHTMLView class]])
-        return NSZeroRect;
-
-    WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
-    id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
-    return [highlighter highlightRectForLine:lineRect representedNode:kit(node)];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return NSZeroRect;
-}
-
-void WebChromeClient::paintCustomHighlight(Node* node, const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect,
-    bool behindText, bool entireLine)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    NSView *documentView = [[kit(node->document().frame()) frameView] documentView];
-    if (![documentView isKindOfClass:[WebHTMLView class]])
-        return;
-
-    WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
-    id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
-    [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:behindText entireLine:entireLine representedNode:kit(node)];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 #if ENABLE(INPUT_TYPE_COLOR)
 PassOwnPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient* client, const Color& initialColor)
 {

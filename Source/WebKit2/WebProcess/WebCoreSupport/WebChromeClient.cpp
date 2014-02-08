@@ -663,18 +663,6 @@ void WebChromeClient::populateVisitedLinks()
 {
 }
 
-FloatRect WebChromeClient::customHighlightRect(Node*, const AtomicString& /*type*/, const FloatRect& /*lineRect*/)
-{
-    notImplemented();
-    return FloatRect();
-}
-
-void WebChromeClient::paintCustomHighlight(Node*, const AtomicString& /*type*/, const FloatRect& /*boxRect*/, const FloatRect& /*lineRect*/, 
-                                           bool /*behindText*/, bool /*entireLine*/)
-{
-    notImplemented();
-}
-
 bool WebChromeClient::shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename)
 {
     generatedFilename = m_page->injectedBundleUIClient().shouldGenerateFileForUpload(m_page, path);

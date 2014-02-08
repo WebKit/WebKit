@@ -123,10 +123,6 @@ void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPo
         return;
 
     GraphicsContext* context = paintInfo.context;
-#if PLATFORM(MAC)
-    if (style().highlight() != nullAtom && !context->paintingDisabled())
-        paintCustomHighlight(toPoint(paintOffset - location()), style().highlight(), true);
-#endif
 
     LayoutSize contentSize(cWidth, cHeight);
     LayoutPoint contentLocation = location() + paintOffset;

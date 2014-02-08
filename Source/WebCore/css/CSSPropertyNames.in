@@ -312,7 +312,6 @@ z-index
 -webkit-grid-row
 -webkit-grid-template
 -webkit-grid-auto-flow
--webkit-highlight [Inherited]
 -webkit-hyphenate-character [Inherited]
 -webkit-hyphenate-limit-after [Inherited]
 -webkit-hyphenate-limit-before [Inherited]

@@ -70,7 +70,6 @@ public:
     Color visitedLinkTextEmphasisColor;    
 
     OwnPtr<ShadowData> textShadow; // Our text shadow information for shadowed text drawing.
-    AtomicString highlight; // Apple-specific extension for custom highlight rendering.
     
     RefPtr<CursorList> cursorData;
     Length indent;

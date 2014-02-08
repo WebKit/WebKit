@@ -2929,7 +2929,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitFontKerning:
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitFontVariantLigatures:
-    case CSSPropertyWebkitHighlight:
     case CSSPropertyWebkitHyphenateCharacter:
     case CSSPropertyWebkitHyphenateLimitAfter:
     case CSSPropertyWebkitHyphenateLimitBefore:

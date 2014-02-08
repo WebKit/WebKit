@@ -144,10 +144,6 @@ private:
 
     virtual void populateVisitedLinks() override;
     
-    virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WTF::AtomicString& type, const WebCore::FloatRect& lineRect) override;
-    virtual void paintCustomHighlight(WebCore::Node*, const AtomicString& type, const WebCore::FloatRect& boxRect, const WebCore::FloatRect& lineRect,
-        bool behindText, bool entireLine) override;
-    
     virtual bool shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename) override;
     virtual String generateReplacementFile(const String& path) override;
     

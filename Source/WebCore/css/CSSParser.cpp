@@ -2686,11 +2686,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         validPrimitive = validUnit(value, FLength);
         break;
 
-    case CSSPropertyWebkitHighlight:
-        if (id == CSSValueNone || value->unit == CSSPrimitiveValue::CSS_STRING)
-            validPrimitive = true;
-        break;
-
     case CSSPropertyWebkitHyphenateCharacter:
         if (id == CSSValueAuto || value->unit == CSSPrimitiveValue::CSS_STRING)
             validPrimitive = true;

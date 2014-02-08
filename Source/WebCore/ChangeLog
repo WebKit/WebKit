@@ -1,5 +1,53 @@
 2014-02-08  Dan Bernstein  <mitz@apple.com>
 
+        Remove client-drawn highlights (-webkit-highlight, WebHTMLHighlighter)
+        https://bugs.webkit.org/show_bug.cgi?id=128456
+
+        Reviewed by Anders Carlsson.
+
+        Updated fast/css/getComputedStyle and svg/css results.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Removed CSSPropertyWebKitHighlight case.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Ditto.
+        * css/CSSPropertyNames.in: Removed -webkit-highlight.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder): Removed
+        CSSPropertyWebKitHighlight handler.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty): Removed CSSPropertyWebKitHighlight case.
+        * page/Chrome.cpp: Removed customHighlightRect and paintCustomHighlight.
+        * page/ChromeClient.h: Ditto.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Removed painting custom highlight.
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::createLineBoxesFromBidiRuns): Removed adding overflow for custom
+        highlights.
+        * rendering/RenderBox.cpp: Removed paintCustomHighlight.
+        * rendering/RenderBox.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced): Removed painting custom highlight.
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint): Ditto.
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paintSnapshot): Ditto.
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint): Ditto.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paint): Ditto.
+        * rendering/RootInlineBox.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout): Removed highlight comparison.
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData): Removed initializer.
+        (WebCore::StyleRareInheritedData::operator==): Removed highlight comparison.
+        * rendering/style/StyleRareInheritedData.h: Removed highlight member variable.
+
+2014-02-08  Dan Bernstein  <mitz@apple.com>
+
         One more build fix fix.
 
         * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:

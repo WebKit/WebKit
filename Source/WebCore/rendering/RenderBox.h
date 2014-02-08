@@ -634,10 +634,6 @@ protected:
     BackgroundBleedAvoidance determineBackgroundBleedAvoidance(GraphicsContext*) const;
     bool backgroundHasOpaqueTopLayer() const;
 
-#if PLATFORM(MAC)
-    void paintCustomHighlight(const LayoutPoint&, const AtomicString& type, bool behindText);
-#endif
-
     void computePositionedLogicalWidth(LogicalExtentComputedValues&, RenderRegion* = 0) const;
 
     LayoutUnit computeIntrinsicLogicalWidthUsing(Length logicalWidthLength, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;

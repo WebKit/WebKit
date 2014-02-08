@@ -152,7 +152,6 @@ zoom: 1;
 -webkit-font-kerning: auto;
 -webkit-font-smoothing: auto;
 -webkit-font-variant-ligatures: normal;
--webkit-highlight: none;
 -webkit-hyphenate-character: auto;
 -webkit-hyphenate-limit-after: auto;
 -webkit-hyphenate-limit-before: auto;

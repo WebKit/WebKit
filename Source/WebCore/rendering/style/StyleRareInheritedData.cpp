@@ -147,7 +147,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , visitedLinkTextFillColor(o.visitedLinkTextFillColor)
     , visitedLinkTextEmphasisColor(o.visitedLinkTextEmphasisColor)
     , textShadow(o.textShadow ? adoptPtr(new ShadowData(*o.textShadow)) : nullptr)
-    , highlight(o.highlight)
     , cursorData(o.cursorData)
     , indent(o.indent)
     , m_effectiveZoom(o.m_effectiveZoom)
@@ -261,7 +260,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && tapHighlightColor == o.tapHighlightColor
 #endif
         && shadowDataEquivalent(o)
-        && highlight == o.highlight
         && cursorDataEquivalent(cursorData.get(), o.cursorData.get())
         && indent == o.indent
         && m_effectiveZoom == o.m_effectiveZoom

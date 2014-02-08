@@ -290,7 +290,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitGridTemplateRows,
     CSSPropertyWebkitGridRowEnd,
     CSSPropertyWebkitGridRowStart,
-    CSSPropertyWebkitHighlight,
     CSSPropertyWebkitHyphenateCharacter,
     CSSPropertyWebkitHyphenateLimitAfter,
     CSSPropertyWebkitHyphenateLimitBefore,
@@ -2118,10 +2117,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
                 return zoomAdjustedPixelValue(sizingBox(renderer).height(), style.get());
             }
             return zoomAdjustedPixelValueForLength(style->height(), style.get());
-        case CSSPropertyWebkitHighlight:
-            if (style->highlight() == nullAtom)
-                return cssValuePool().createIdentifierValue(CSSValueNone);
-            return cssValuePool().createValue(style->highlight(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitHyphens:
             return cssValuePool().createValue(style->hyphens());
         case CSSPropertyWebkitHyphenateCharacter:

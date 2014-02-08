@@ -594,9 +594,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     
     NSArray *pageRects;
 
-    NSMutableDictionary *highlighters;
-
-    
 #if !PLATFORM(IOS)
     WebTextCompletionController *completionController;
 #endif
@@ -692,7 +689,6 @@ static NSCellStateValue kit(TriState state)
     [completionController release];
 #endif
     [dataSource release];
-    [highlighters release];
 #if !PLATFORM(IOS)
     [trackingAreaForNonKeyWindow release];
     if (promisedDragTIFFDataSource)
@@ -731,7 +727,6 @@ static NSCellStateValue kit(TriState state)
     [completionController release];
 #endif
     [dataSource release];
-    [highlighters release];
 #if !PLATFORM(IOS)
     [trackingAreaForNonKeyWindow release];
     if (promisedDragTIFFDataSource)
@@ -746,7 +741,6 @@ static NSCellStateValue kit(TriState state)
     completionController = nil;
 #endif
     dataSource = nil;
-    highlighters = nil;
 #if !PLATFORM(IOS)
     trackingAreaForNonKeyWindow = nil;
     promisedDragTIFFDataSource = 0;
@@ -2086,18 +2080,6 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
         coreFrame->editor().decreaseSelectionListLevel();
-}
-
-- (void)_setHighlighter:(id<WebHTMLHighlighter>)highlighter ofType:(NSString*)type
-{
-    if (!_private->highlighters)
-        _private->highlighters = [[NSMutableDictionary alloc] init];
-    [_private->highlighters setObject:highlighter forKey:type];
-}
-
-- (void)_removeHighlighterOfType:(NSString*)type
-{
-    [_private->highlighters removeObjectForKey:type];
 }
 
 #if !PLATFORM(IOS)
@@ -5536,11 +5518,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
     return _private->mouseDownEvent;
 }
 #endif
-
-- (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type
-{
-    return [_private->highlighters objectForKey:type];
-}
 
 - (WebFrame *)_frame
 {

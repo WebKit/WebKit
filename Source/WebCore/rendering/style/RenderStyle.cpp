@@ -481,8 +481,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
     }
 
     if (rareInheritedData.get() != other->rareInheritedData.get()) {
-        if (rareInheritedData->highlight != other->rareInheritedData->highlight
-            || rareInheritedData->indent != other->rareInheritedData->indent
+        if (rareInheritedData->indent != other->rareInheritedData->indent
 #if ENABLE(CSS3_TEXT)
             || rareInheritedData->m_textAlignLast != other->rareInheritedData->m_textAlignLast
             || rareInheritedData->m_textIndentLine != other->rareInheritedData->m_textIndentLine

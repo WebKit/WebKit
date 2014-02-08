@@ -1622,28 +1622,6 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
     return false;
 }
 
-#if PLATFORM(MAC)
-
-void RenderBox::paintCustomHighlight(const LayoutPoint& paintOffset, const AtomicString& type, bool behindText)
-{
-    Page* page = frame().page();
-    if (!page)
-        return;
-
-    InlineBox* boxWrap = inlineBoxWrapper();
-    RootInlineBox* r = boxWrap ? &boxWrap->root() : 0;
-    if (r) {
-        FloatRect rootRect(paintOffset.x() + r->x(), paintOffset.y() + r->selectionTop(), r->logicalWidth(), r->selectionHeight());
-        FloatRect imageRect(paintOffset.x() + x(), rootRect.y(), width(), rootRect.height());
-        page->chrome().client().paintCustomHighlight(element(), type, imageRect, rootRect, behindText, false);
-    } else {
-        FloatRect imageRect(paintOffset.x() + x(), paintOffset.y() + y(), width(), height());
-        page->chrome().client().paintCustomHighlight(element(), type, imageRect, imageRect, behindText, false);
-    }
-}
-
-#endif
-
 bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumulatedOffset)
 {
     if (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseSelfOutline || paintInfo.phase == PaintPhaseMask)

@@ -1196,10 +1196,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     GraphicsContext* context = paintInfo.context;
 
     if (isImage()) {
-#if PLATFORM(MAC)
-        if (style().highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-            paintCustomHighlight(paintOffset, style().highlight(), true);
-#endif
         context->drawImage(m_image->image(this, marker.size()).get(), style().colorSpace(), marker);
         if (selectionState() != SelectionNone) {
             LayoutRect selRect = localSelectionRect();
@@ -1208,12 +1204,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         }
         return;
     }
-
-#if PLATFORM(MAC)
-    // FIXME: paint gap between marker and list item proper
-    if (style().highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-        paintCustomHighlight(paintOffset, style().highlight(), true);
-#endif
 
     if (selectionState() != SelectionNone) {
         LayoutRect selRect = localSelectionRect();
