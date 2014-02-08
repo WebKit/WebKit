@@ -14,7 +14,7 @@
       if (window.testRunner) 
         testRunner.dumpAsText();
       var div = document.getElementById("clip");
-      if (getComputedStyle(div,'').getPropertyValue("clip") != "rect(5px 24px 1px 12px)") {
+      if (getComputedStyle(div,'').getPropertyValue("clip") != "rect(5px, 24px, 1px, 12px)") {
           log("FAILED");
           return;
       }

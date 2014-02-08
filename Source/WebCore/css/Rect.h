@@ -82,7 +82,7 @@ private:
     Rect(const Rect& cloneFrom) : RectBase(cloneFrom), RefCounted<Rect>() { }
     static String generateCSSString(const String& top, const String& right, const String& bottom, const String& left)
     {
-        return "rect(" + top + ' ' + right + ' ' + bottom + ' ' + left + ')';
+        return "rect(" + top + ", " + right + ", " + bottom + ", " + left + ')';
     }
 };
 

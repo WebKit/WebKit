@@ -1,3 +1,15 @@
+2014-02-07  Dirk Schulze  <krit@webkit.org>
+
+        Per CSSOM, computed rect() function values must be comma separated
+        https://bugs.webkit.org/show_bug.cgi?id=128401
+
+        Reviewed by Simon Fraser.
+
+        Updated tests.
+
+        * css/Rect.h:
+        (WebCore::Rect::generateCSSString):
+
 2014-02-07  Gavin Barraclough  <barraclough@apple.com>
 
         Remove isInitialState flag from Page::setViewState
