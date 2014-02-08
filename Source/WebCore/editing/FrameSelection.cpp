@@ -250,33 +250,33 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
     setSelection(newSelection, UserTriggered | DoNotRevealSelection | CloseTyping | ClearTypingStyle, AlignCursorOnScrollIfNeeded, granularity);
 }
 
-bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelection& newSelection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity, EUserTriggered userTriggered)
+bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelection& newSelectionPossiblyWithoutDirection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity, EUserTriggered userTriggered)
 {
     bool closeTyping = options & CloseTyping;
     bool shouldClearTypingStyle = options & ClearTypingStyle;
 
-    VisibleSelection s = newSelection;
+    VisibleSelection newSelection = newSelectionPossiblyWithoutDirection;
     if (shouldAlwaysUseDirectionalSelection(m_frame))
-        s.setIsDirectional(true);
+        newSelection.setIsDirectional(true);
 
     if (!m_frame) {
-        m_selection = s;
+        m_selection = newSelection;
         return false;
     }
 
     // <http://bugs.webkit.org/show_bug.cgi?id=23464>: Infinite recursion at FrameSelection::setSelection
     // if document->frame() == m_frame we can get into an infinite loop
-    if (s.base().anchorNode()) {
-        Document& document = s.base().anchorNode()->document();
-        if (document.frame() && document.frame() != m_frame && &document != m_frame->document()) {
-            RefPtr<Frame> guard = document.frame();
-            document.frame()->selection().setSelection(s, options, align, granularity);
-            // It's possible that during the above set selection, this FrameSelection has been modified by
-            // selectFrameElementInParentIfFullySelected, but that the selection is no longer valid since
-            // the frame is about to be destroyed. If this is the case, clear our selection.
-            if (guard->hasOneRef() && !m_selection.isNonOrphanedCaretOrRange())
-                clear();
-            return false;
+    if (Document* newSelectionDocument = newSelection.base().document()) {
+        if (RefPtr<Frame> newSelectionFrame = newSelectionDocument->frame()) {
+            if (newSelectionFrame != m_frame && newSelectionDocument != m_frame->document()) {
+                newSelectionFrame->selection().setSelection(newSelection, options, align, granularity);
+                // It's possible that during the above set selection, this FrameSelection has been modified by
+                // selectFrameElementInParentIfFullySelected, but that the selection is no longer valid since
+                // the frame is about to be destroyed. If this is the case, clear our selection.
+                if (newSelectionFrame->hasOneRef() && !m_selection.isNonOrphanedCaretOrRange())
+                    clear();
+                return false;
+            }
         }
     }
 
@@ -292,25 +292,25 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     if (shouldClearTypingStyle)
         clearTypingStyle();
 
-    if (m_selection == s) {
-        // Even if selection was not changed, selection offsets may have been changed.
-        updateSelectionCachesIfSelectionIsInsideTextFormControl(userTriggered);
-        return false;
-    }
-
     VisibleSelection oldSelection = m_selection;
+    m_selection = newSelection;
 
-    m_selection = s;
+    // Selection offsets should increase when LF is inserted before the caret in InsertLineBreakCommand. See <https://webkit.org/b/56061>.
+    if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(newSelection.start()))
+        textControl->selectionChanged(userTriggered == UserTriggered);
+
+    if (oldSelection == newSelection)
+        return false;
+
     setCaretRectNeedsUpdate();
-    
-    if (!s.isNone() && !(options & DoNotSetFocus))
+
+    if (!newSelection.isNone() && !(options & DoNotSetFocus))
         setFocusedElementIfNeeded();
 
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
     m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation();
     selectFrameElementInParentIfFullySelected();
-    updateSelectionCachesIfSelectionIsInsideTextFormControl(userTriggered);
     m_frame->editor().respondToChangedSelection(oldSelection, options);
     m_frame->document()->enqueueDocumentEvent(Event::create(eventNames().selectionchangeEvent, false, false));
 
@@ -1706,10 +1706,7 @@ void FrameSelection::selectAll()
     VisibleSelection newSelection(VisibleSelection::selectionFromContentsOfNode(root.get()));
 
     if (shouldChangeSelection(newSelection))
-        setSelection(newSelection);
-
-    selectFrameElementInParentIfFullySelected();
-    updateSelectionCachesIfSelectionIsInsideTextFormControl(UserTriggered);
+        setSelection(newSelection, UserTriggered | CloseTyping | ClearTypingStyle | DoNotRevealSelection);
 }
 
 bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping)
@@ -1910,12 +1907,6 @@ void FrameSelection::caretBlinkTimerFired(Timer<FrameSelection>&)
     m_caretPaint = !caretPaint;
     invalidateCaretRect();
 #endif
-}
-
-void FrameSelection::updateSelectionCachesIfSelectionIsInsideTextFormControl(EUserTriggered userTriggered)
-{
-    if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(m_selection.start()))
-        textControl->selectionChanged(userTriggered == UserTriggered);
 }
 
 // Helper function that tells whether a particular node is an element that has an entire
