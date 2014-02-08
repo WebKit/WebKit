@@ -1,5 +1,13 @@
 2014-02-08  Mark Rowe  <mrowe@apple.com>
 
+        <https://webkit.org/b/128452> Don't duplicate the list of input files for postprocess-headers.sh
+
+        Reviewed by Dan Bernstein.
+
+        * postprocess-headers.sh: Pull the list of headers to process out of the environment.
+
+2014-02-08  Mark Rowe  <mrowe@apple.com>
+
         Fix the iOS build.
 
         * API/WebKitAvailability.h: Skip the workarounds specific to OS X when we're building for iOS.

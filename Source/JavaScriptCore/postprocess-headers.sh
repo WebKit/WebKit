@@ -8,8 +8,8 @@ fi
 
 UNIFDEF_OPTIONS+=" -D__MAC_OS_X_VERSION_MIN_REQUIRED=${TARGET_MAC_OS_X_VERSION_MAJOR}"
 
-
-for HEADER in JSBase.h JSContext.h JSManagedValue.h JSValue.h JSVirtualMachine.h WebKitAvailability.h; do
+for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do
+    eval HEADER=\${SCRIPT_INPUT_FILE_${i}};
     unifdef -B ${UNIFDEF_OPTIONS} -o ${HEADER}.unifdef ${HEADER}
     case $? in
     0)
