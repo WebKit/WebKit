@@ -124,8 +124,7 @@ public:
         SpellCorrectionTriggered = 1 << 3,
         DoNotSetFocus = 1 << 4,
         DictationTriggered = 1 << 5,
-        DoNotUpdateAppearance = 1 << 6,
-        DoNotRevealSelection = 1 << 7,
+        DoNotRevealSelection = 1 << 6,
     };
     typedef unsigned SetSelectionOptions; // Union of values in SetSelectionOption and EUserTriggered
     static inline EUserTriggered selectionOptionsToUserTriggered(SetSelectionOptions options)
@@ -280,6 +279,8 @@ public:
 private:
     enum EPositionType { START, END, BASE, EXTENT };
 
+    bool setSelectionWithoutUpdatingAppearance(const VisibleSelection&, SetSelectionOptions, CursorAlignOnScroll, TextGranularity, EUserTriggered);
+
     void respondToNodeModification(Node*, bool baseRemoved, bool extentRemoved, bool startRemoved, bool endRemoved);
     TextDirection directionOfEnclosingBlock();
     TextDirection directionOfSelection();
@@ -302,6 +303,8 @@ private:
 
 #if HAVE(ACCESSIBILITY)
     void notifyAccessibilityForSelectionChange();
+#else
+    void notifyAccessibilityForSelectionChange() { }
 #endif
 
     void updateSelectionCachesIfSelectionIsInsideTextFormControl(EUserTriggered);

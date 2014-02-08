@@ -250,11 +250,10 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
     setSelection(newSelection, UserTriggered | DoNotRevealSelection | CloseTyping | ClearTypingStyle, AlignCursorOnScrollIfNeeded, granularity);
 }
 
-void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity)
+bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelection& newSelection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity, EUserTriggered userTriggered)
 {
     bool closeTyping = options & CloseTyping;
     bool shouldClearTypingStyle = options & ClearTypingStyle;
-    EUserTriggered userTriggered = selectionOptionsToUserTriggered(options);
 
     VisibleSelection s = newSelection;
     if (shouldAlwaysUseDirectionalSelection(m_frame))
@@ -262,7 +261,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
 
     if (!m_frame) {
         m_selection = s;
-        return;
+        return false;
     }
 
     // <http://bugs.webkit.org/show_bug.cgi?id=23464>: Infinite recursion at FrameSelection::setSelection
@@ -277,7 +276,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
             // the frame is about to be destroyed. If this is the case, clear our selection.
             if (guard->hasOneRef() && !m_selection.isNonOrphanedCaretOrRange())
                 clear();
-            return;
+            return false;
         }
     }
 
@@ -296,7 +295,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
     if (m_selection == s) {
         // Even if selection was not changed, selection offsets may have been changed.
         updateSelectionCachesIfSelectionIsInsideTextFormControl(userTriggered);
-        return;
+        return false;
     }
 
     VisibleSelection oldSelection = m_selection;
@@ -307,21 +306,30 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
     if (!s.isNone() && !(options & DoNotSetFocus))
         setFocusedElementIfNeeded();
 
-    if (!(options & DoNotUpdateAppearance)) {
-#if ENABLE(TEXT_CARET)
-        m_frame->document()->updateLayoutIgnorePendingStylesheets();
-#else
-        m_frame->document()->updateStyleIfNeeded();
-#endif
-        updateAppearance();
-    }
-
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
     m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation();
     selectFrameElementInParentIfFullySelected();
     updateSelectionCachesIfSelectionIsInsideTextFormControl(userTriggered);
     m_frame->editor().respondToChangedSelection(oldSelection, options);
+    m_frame->document()->enqueueDocumentEvent(Event::create(eventNames().selectionchangeEvent, false, false));
+
+    return true;
+}
+
+void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity)
+{
+    EUserTriggered userTriggered = selectionOptionsToUserTriggered(options);
+    if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity, userTriggered))
+        return;
+
+#if ENABLE(TEXT_CARET)
+    m_frame->document()->updateLayoutIgnorePendingStylesheets();
+#else
+    m_frame->document()->updateStyleIfNeeded();
+#endif
+    updateAppearance();
+
     if (userTriggered == UserTriggered && !(options & DoNotRevealSelection)) {
         ScrollAlignment alignment;
 
@@ -332,10 +340,8 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
 
         revealSelection(alignment, RevealExtent);
     }
-#if HAVE(ACCESSIBILITY)
+
     notifyAccessibilityForSelectionChange();
-#endif
-    m_frame->document()->enqueueDocumentEvent(Event::create(eventNames().selectionchangeEvent, false, false));
 }
 
 static bool removingNodeRemovesPosition(Node* node, const Position& position)
@@ -1237,7 +1243,8 @@ void FrameSelection::prepareForDestruction()
     if (view)
         view->clearSelection();
 
-    setSelection(VisibleSelection(), CloseTyping | ClearTypingStyle | DoNotUpdateAppearance);
+    setSelectionWithoutUpdatingAppearance(VisibleSelection(), CloseTyping | ClearTypingStyle,
+        AlignCursorOnScrollIfNeeded, CharacterGranularity, NotUserTriggered);
     m_previousCaretNode.clear();
 }
 
