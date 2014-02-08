@@ -110,7 +110,7 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
         frameLoader.client().didDetectXSS(m_document.url(), xssInfo.m_didBlockEntirePage);
 
         if (!m_reportURL.isEmpty())
-            PingLoader::sendViolationReport(m_document.frame(), m_reportURL, generateViolationReport());
+            PingLoader::sendViolationReport(*m_document.frame(), m_reportURL, generateViolationReport());
     }
 
     if (xssInfo.m_didBlockEntirePage)

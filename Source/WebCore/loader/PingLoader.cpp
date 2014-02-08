@@ -49,41 +49,41 @@
 
 namespace WebCore {
 
-void PingLoader::loadImage(Frame* frame, const URL& url)
+void PingLoader::loadImage(Frame& frame, const URL& url)
 {
-    if (!frame->document()->securityOrigin()->canDisplay(url)) {
-        FrameLoader::reportLocalLoadFailed(frame, url);
+    if (!frame.document()->securityOrigin()->canDisplay(url)) {
+        FrameLoader::reportLocalLoadFailed(&frame, url);
         return;
     }
 
     ResourceRequest request(url);
     request.setHTTPHeaderField("Cache-Control", "max-age=0");
-    String referrer = SecurityPolicy::generateReferrerHeader(frame->document()->referrerPolicy(), request.url(), frame->loader().outgoingReferrer());
+    String referrer = SecurityPolicy::generateReferrerHeader(frame.document()->referrerPolicy(), request.url(), frame.loader().outgoingReferrer());
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
-    frame->loader().addExtraFieldsToSubresourceRequest(request);
+    frame.loader().addExtraFieldsToSubresourceRequest(request);
 
     createPingLoader(frame, request);
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
-void PingLoader::sendPing(Frame* frame, const URL& pingURL, const URL& destinationURL)
+void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinationURL)
 {
     ResourceRequest request(pingURL);
     request.setHTTPMethod("POST");
     request.setHTTPContentType("text/ping");
     request.setHTTPBody(FormData::create("PING"));
     request.setHTTPHeaderField("Cache-Control", "max-age=0");
-    frame->loader().addExtraFieldsToSubresourceRequest(request);
+    frame.loader().addExtraFieldsToSubresourceRequest(request);
 
-    SecurityOrigin* sourceOrigin = frame->document()->securityOrigin();
+    SecurityOrigin* sourceOrigin = frame.document()->securityOrigin();
     RefPtr<SecurityOrigin> pingOrigin = SecurityOrigin::create(pingURL);
     FrameLoader::addHTTPOriginIfNeeded(request, sourceOrigin->toString());
     request.setHTTPHeaderField("Ping-To", destinationURL);
-    if (!SecurityPolicy::shouldHideReferrer(pingURL, frame->loader().outgoingReferrer())) {
-        request.setHTTPHeaderField("Ping-From", frame->document()->url());
+    if (!SecurityPolicy::shouldHideReferrer(pingURL, frame.loader().outgoingReferrer())) {
+        request.setHTTPHeaderField("Ping-From", frame.document()->url());
         if (!sourceOrigin->isSameSchemeHostPort(pingOrigin.get())) {
-            String referrer = SecurityPolicy::generateReferrerHeader(frame->document()->referrerPolicy(), pingURL, frame->loader().outgoingReferrer());
+            String referrer = SecurityPolicy::generateReferrerHeader(frame.document()->referrerPolicy(), pingURL, frame.loader().outgoingReferrer());
             if (!referrer.isEmpty())
                 request.setHTTPReferrer(referrer);
         }
@@ -92,40 +92,40 @@ void PingLoader::sendPing(Frame* frame, const URL& pingURL, const URL& destinati
     createPingLoader(frame, request);
 }
 
-void PingLoader::sendViolationReport(Frame* frame, const URL& reportURL, PassRefPtr<FormData> report)
+void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, PassRefPtr<FormData> report)
 {
     ResourceRequest request(reportURL);
     request.setHTTPMethod("POST");
     request.setHTTPContentType("application/json");
     request.setHTTPBody(report);
-    frame->loader().addExtraFieldsToSubresourceRequest(request);
+    frame.loader().addExtraFieldsToSubresourceRequest(request);
 
-    String referrer = SecurityPolicy::generateReferrerHeader(frame->document()->referrerPolicy(), reportURL, frame->loader().outgoingReferrer());
+    String referrer = SecurityPolicy::generateReferrerHeader(frame.document()->referrerPolicy(), reportURL, frame.loader().outgoingReferrer());
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 
     createPingLoader(frame, request);
 }
 
-void PingLoader::createPingLoader(Frame* frame, ResourceRequest& request)
+void PingLoader::createPingLoader(Frame& frame, ResourceRequest& request)
 {
     // No need to free the PingLoader object or manage it via a smart pointer - it will kill itself as soon as it receives a response.
     new PingLoader(frame, request);
 }
 
-PingLoader::PingLoader(Frame* frame, ResourceRequest& request)
+PingLoader::PingLoader(Frame& frame, ResourceRequest& request)
     : m_timeout(this, &PingLoader::timeoutTimerFired)
 {
-    unsigned long identifier = frame->page()->progress().createUniqueIdentifier();
+    unsigned long identifier = frame.page()->progress().createUniqueIdentifier();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
     // Itseems like the PingLoader should be associated with the current
     // Document in the Frame, but the activeDocumentLoader will be associated
     // with the provisional DocumentLoader if there is a provisional
     // DocumentLoader.
-    m_shouldUseCredentialStorage = frame->loader().client().shouldUseCredentialStorage(frame->loader().activeDocumentLoader(), identifier);
-    m_handle = ResourceHandle::create(frame->loader().networkingContext(), request, this, false, false);
+    m_shouldUseCredentialStorage = frame.loader().client().shouldUseCredentialStorage(frame.loader().activeDocumentLoader(), identifier);
+    m_handle = ResourceHandle::create(frame.loader().networkingContext(), request, this, false, false);
 
-    InspectorInstrumentation::continueAfterPingLoader(frame, identifier, frame->loader().activeDocumentLoader(), request, ResourceResponse());
+    InspectorInstrumentation::continueAfterPingLoader(frame, identifier, frame.loader().activeDocumentLoader(), request, ResourceResponse());
 
     // If the server never responds, FrameLoader won't be able to cancel this load and
     // we'll sit here waiting forever. Set a very generous timeout, just in case.

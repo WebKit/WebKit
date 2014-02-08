@@ -1,3 +1,30 @@
+2014-02-08  Anders Carlsson  <andersca@apple.com>
+
+        Slight CTTE in PingLoader
+        https://bugs.webkit.org/show_bug.cgi?id=128462
+
+        Reviewed by Dan Bernstein.
+
+        PingLoader always wants a non-null frame.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::sendPings):
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::didBlockScript):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::continueAfterPingLoader):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        (WebCore::PingLoader::createPingLoader):
+        (WebCore::PingLoader::PingLoader):
+        * loader/PingLoader.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation):
+
 2014-02-08  Dan Bernstein  <mitz@apple.com>
 
         Remove client-drawn highlights (-webkit-highlight, WebHTMLHighlighter)

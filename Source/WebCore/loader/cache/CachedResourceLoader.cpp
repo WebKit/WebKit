@@ -149,14 +149,15 @@ Frame* CachedResourceLoader::frame() const
 
 CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResourceRequest& request)
 {
-    if (Frame* f = frame()) {
-        if (f->loader().pageDismissalEventBeingDispatched() != FrameLoader::NoDismissal) {
+    if (Frame* frame = this->frame()) {
+        if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::NoDismissal) {
             URL requestURL = request.resourceRequest().url();
             if (requestURL.isValid() && canRequest(CachedResource::ImageResource, requestURL, request.options(), request.forPreload()))
-                PingLoader::loadImage(f, requestURL);
-            return 0;
+                PingLoader::loadImage(*frame, requestURL);
+            return nullptr;
         }
     }
+    
     request.setDefer(clientDefersImage(request.resourceRequest().url()) ? CachedResourceRequest::DeferredByClient : CachedResourceRequest::NoDefer);
     return toCachedImage(requestResource(CachedResource::ImageResource, request).get());
 }

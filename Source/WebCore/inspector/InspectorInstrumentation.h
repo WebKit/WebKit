@@ -164,7 +164,7 @@ public:
 
     static void applyEmulatedMedia(Frame*, String*);
     static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
-    static void continueAfterPingLoader(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
+    static void continueAfterPingLoader(Frame&, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCached(Page*, unsigned long identifier);
     static void didLoadResourceFromMemoryCache(Page*, DocumentLoader*, CachedResource*);
     static InspectorInstrumentationCookie willReceiveResourceData(Frame*, unsigned long identifier, int length);
@@ -1186,10 +1186,10 @@ inline void InspectorInstrumentation::willSendRequest(Frame* frame, unsigned lon
 #endif
 }
 
-inline void InspectorInstrumentation::continueAfterPingLoader(Frame* frame, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& response)
+inline void InspectorInstrumentation::continueAfterPingLoader(Frame& frame, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& response)
 {
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(&frame))
         InspectorInstrumentation::continueAfterPingLoaderImpl(instrumentingAgents, identifier, loader, request, response);
 #else
     UNUSED_PARAM(frame);

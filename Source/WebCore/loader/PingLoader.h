@@ -54,15 +54,15 @@ class ResourceResponse;
 class PingLoader : private ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(PingLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static void loadImage(Frame*, const URL& url);
-    static void sendPing(Frame*, const URL& pingURL, const URL& destinationURL);
-    static void sendViolationReport(Frame*, const URL& reportURL, PassRefPtr<FormData> report);
+    static void loadImage(Frame&, const URL&);
+    static void sendPing(Frame&, const URL& pingURL, const URL& destinationURL);
+    static void sendViolationReport(Frame&, const URL& reportURL, PassRefPtr<FormData> report);
 
     virtual ~PingLoader();
 
 private:
-    static void createPingLoader(Frame*, ResourceRequest&);
-    PingLoader(Frame*, ResourceRequest&);
+    static void createPingLoader(Frame&, ResourceRequest&);
+    PingLoader(Frame&, ResourceRequest&);
 
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override { delete this; }
     virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int) override { delete this; }

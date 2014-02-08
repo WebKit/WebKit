@@ -516,7 +516,7 @@ void HTMLAnchorElement::sendPings(const URL& destinationURL)
 
     SpaceSplitString pingURLs(getAttribute(pingAttr), false);
     for (unsigned i = 0; i < pingURLs.size(); i++)
-        PingLoader::sendPing(document().frame(), document().completeURL(pingURLs[i]), destinationURL);
+        PingLoader::sendPing(*document().frame(), document().completeURL(pingURLs[i]), destinationURL);
 }
 
 void HTMLAnchorElement::handleClick(Event* event)
