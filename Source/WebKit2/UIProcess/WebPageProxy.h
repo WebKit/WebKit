@@ -331,7 +331,6 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
     , public IPC::MessageReceiver
     , public IPC::MessageSender {
 public:
-
     static PassRefPtr<WebPageProxy> create(PageClient&, WebProcessProxy&, WebPageGroup&, WebPreferences&, API::Session&, uint64_t pageID);
     virtual ~WebPageProxy();
 

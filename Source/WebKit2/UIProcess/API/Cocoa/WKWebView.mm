@@ -34,6 +34,7 @@
 #import "WKBackForwardListInternal.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
+#import "WKPreferencesInternal.h"
 #import "WKProcessClass.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKWebViewConfiguration.h"
@@ -85,6 +86,9 @@
 
     if (![_configuration processClass])
         [_configuration setProcessClass:adoptNS([[WKProcessClass alloc] init]).get()];
+
+    if (![_configuration preferences])
+        [_configuration setPreferences:adoptNS([[WKPreferences alloc] init]).get()];
 
     CGRect bounds = self.bounds;
 

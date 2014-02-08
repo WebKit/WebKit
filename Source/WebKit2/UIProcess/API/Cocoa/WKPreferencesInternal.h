@@ -23,35 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKPreferencesInternal.h"
+#import "WKPreferences.h"
 
 #if WK_API_ENABLED
 
-#import "WebPreferences.h"
+#import <wtf/RefPtr.h>
 
-@implementation WKPreferences
-
-- (instancetype)init
-{
-    if ((self = [super init]))
-        return nil;
-
-    _preferences = WebKit::WebPreferences::create(String());
-
-    return self;
+namespace WebKit {
+class WebPreferences;
 }
 
-- (int)minimumFontSize
-{
-    return _preferences->minimumFontSize();
-}
-
-- (void)setMinimumFontSize:(int)minimumFontSize
-{
-    _preferences->setMinimumFontSize(minimumFontSize);
+@interface WKPreferences () {
+    RefPtr<WebKit::WebPreferences> _preferences;
 }
 
 @end
 
-#endif // WK_API_ENABLED
+#endif

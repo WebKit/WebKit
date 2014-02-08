@@ -1,3 +1,24 @@
+2014-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Implement more of WKPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=128411
+
+        Reviewed by Tim Horton.
+
+        Give WKPreferences an underlying WebKit::WebPreferences object, add a minimumFontSize preference
+        and make sure that WKWebView's initializer creates a WKPreferences object if the configuration doesn't specify one.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences init]):
+        (-[WKPreferences minimumFontSize]):
+        (-[WKPreferences setMinimumFontSize:]):
+        * UIProcess/API/Cocoa/WKPreferencesInternal.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKPreferences.mm.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-07  Brady Eidson  <beidson@apple.com>
 
         IDB: Some Mozilla cursor mutation tests fail

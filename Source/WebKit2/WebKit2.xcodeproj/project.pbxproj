@@ -149,6 +149,7 @@
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
 		1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */; };
 		1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */; };
+		1A3C888018A5ABAE00C4C962 /* WKPreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */; };
 		1A3CC16618906ACF001E6ED8 /* WKWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CC16418906ACF001E6ED8 /* WKWebView.mm */; };
 		1A3CC16718906ACF001E6ED8 /* WKWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3CC16518906ACF001E6ED8 /* WKWebView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A3CC16918907EB0001E6ED8 /* WKProcessClassInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3CC16818907EB0001E6ED8 /* WKProcessClassInternal.h */; };
@@ -1811,6 +1812,7 @@
 		1A334DEA16DE8B68006A8E38 /* StorageAreaMap.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageAreaMap.messages.in; sourceTree = "<group>"; };
 		1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaMapMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMapMessages.h; sourceTree = "<group>"; };
+		1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesInternal.h; sourceTree = "<group>"; };
 		1A3CC16418906ACF001E6ED8 /* WKWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebView.mm; sourceTree = "<group>"; };
 		1A3CC16518906ACF001E6ED8 /* WKWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebView.h; sourceTree = "<group>"; };
 		1A3CC16818907EB0001E6ED8 /* WKProcessClassInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessClassInternal.h; sourceTree = "<group>"; };
@@ -4348,6 +4350,7 @@
 				1A1B0EB718A424CD0038481A /* WKNavigationResponseInternal.h */,
 				1AFDD3161891C94700153970 /* WKPreferences.h */,
 				1AFDD3181891CA1200153970 /* WKPreferences.mm */,
+				1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */,
 				1A158418189044F50017616C /* WKProcessClass.h */,
 				1A158417189044F50017616C /* WKProcessClass.mm */,
 				1A43E828188F3CDC009E4D30 /* WKProcessClassConfiguration.h */,
@@ -6864,6 +6867,7 @@
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,
 				1A4A9AA812B7E796008FE984 /* WKTextInputWindowController.h in Headers */,
 				5175095A1897249700408FAC /* IDBIdentifier.h in Headers */,
+				1A3C888018A5ABAE00C4C962 /* WKPreferencesInternal.h in Headers */,
 				BC407608124FF0270068F20A /* WKType.h in Headers */,
 				7CD5EBBF1746B04C000C1C45 /* WKTypeRefWrapper.h in Headers */,
 				BC40760A124FF0270068F20A /* WKURL.h in Headers */,
