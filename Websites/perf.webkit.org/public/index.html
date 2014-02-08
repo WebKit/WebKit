@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebKit Perf Monitor</title>
+<script src="js/jquery.js" defer></script>
+<script src="js/jquery.flot.js" defer></script>
+<script src="js/jquery.flot.crosshair.js" defer></script>
+<script src="js/jquery.flot.fillbetween.js" defer></script>
+<script src="js/jquery.flot.resize.js" defer></script>
+<script src="js/jquery.flot.selection.js" defer></script>
+<script src="js/jquery.flot.time.js" defer></script>
+<script src="js/helper-classes.js" defer></script>
+<script src="js/shared.js" defer></script>
+<script src="js/statistics.js" defer></script>
+<link rel="stylesheet" href="common.css">
+<style type="text/css">
+
+#numberOfDaysPicker {
+    display: inline-block;
+    margin: 5px 0px;
+    border: solid 1px #ccc;
+    color: #666;
+    border-radius: 5px;
+    padding: 5px 8px;
+}
+
+#numberOfDaysPicker input {
+    height: 0.9em;
+    margin-right: 1em;
+}
+
+td, th {
+    border: none;
+    border-collapse: collapse;
+}
+
+#dashboard > tbody > tr > td {
+    vertical-align: top;
+}
+
+#dashboard > thead th {
+    padding-top: 1.5em;
+    text-shadow: #bbb 1px 1px 2px;
+    font-size: large;
+    font-weight: normal;
+}
+
+#dashboard td {
+    
+}
+
+.chart {
+    position: relative;
+    border: solid 1px #ccc;
+    border-radius: 5px;
+    margin: 10px 10px 0px 0px;
+}
+
+.chart.worse {
+    background: #fcc;
+}
+
+.chart.better {
+    background: #cfc;
+}
+
+#charts .pane {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    width: 200px;
+}
+
+.chart header {
+    height: 3em;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#dashboard header {
+    padding: 10px;
+    width: 200px;
+}
+
+.chart h2, .chart h3 {
+    margin: 0 0 0.3em 0;
+    padding: 0;
+    font-size: 1em;
+    font-weight: normal;
+    width: 200px;
+    word-break: break-all;
+}
+
+.chart h2 {
+    font-size: normal;
+}
+
+.chart h3 {
+    font-size: normal;
+}
+
+#dashboard .chart h3 {
+    display: none;
+}
+
+.chart .status {
+    font-size: small;
+    color: #666;
+}
+
+.plot {
+    margin: 5px 5px 10px 5px;
+}
+
+.closeButton svg {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    width: 15px;
+    height: 15px;
+}
+
+#dashboard .plot {
+    width: 400px;
+    height: 100px;
+    cursor: pointer;
+    cursor: hand;
+}
+
+#charts .plot {
+    height: 300px;
+    margin-left: 250px;
+}
+
+#dashboard .overviewPlot {
+    display: none;
+}
+
+#charts .overviewPlot {
+    margin: 10px 0px 0px 0px;
+    padding: 0;
+    height: 70px;
+}
+
+.summaryTable {
+    font-size: small;
+    color: #666;
+    border: 0;
+}
+
+#dashboard .summaryTable {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 180px;
+}
+
+#dashboard .arrow {
+    width: 20px;
+    height: 40px;
+    position: absolute;
+    bottom: 50px;
+    left: 5px;
+}
+
+#dashboard .unit {
+    display: none;
+}
+
+#charts .unit {
+    font-size: small;
+    width: 50px;
+    text-align: center;
+    position: absolute;
+    bottom: 10px;
+    left: 245px;
+}
+
+#charts .arrow {
+    width: 20px;
+    height: 40px;
+    position: absolute;
+    top: 10px;
+    left: 220px;
+}
+
+.chart svg {
+    stroke: #ccc;
+    fill: #ccc;
+    color: #ccc;
+}
+
+.chart.worse svg {
+    stroke: #c99;
+    fill: #c99;
+    color: #c99;
+}
+
+.chart.better svg {
+    stroke: #9c9;
+    fill: #9c9;
+    color: #9c9;
+}
+
+.chart .yaxistoggler {
+    position: absolute;
+    bottom: 10px;
+    left: 225px;
+    width: 10px;
+    height: 25px;
+}
+
+#dashboard  .yaxistoggler {
+    display: none;
+}
+
+.tooltip {
+    position: relative;
+    border-radius: 5px;
+    padding: 5px;
+    opacity: 0.8;
+    background: #333;
+    color: #eee;
+    font-size: small;
+    line-height: 130%;
+    width: 30ex;
+}
+
+.tooltip:after {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    margin-left: -9px;
+    bottom: -19px;
+    content: "";
+    display: block;
+    border-style: solid;
+    border-width: 10px;
+    border-color: #333 transparent transparent transparent;
+}
+
+.tooltip a {
+    text-decoration: underline;
+    color: #fff;
+    text-shadow: none;
+}
+
+.clickTooltip {
+    opacity: 0.6;
+}
+
+.hoverTooltip {
+    z-index: 99999;
+}
+
+#testPicker {
+    display: inline-block;
+    margin: 10px 0px;
+    border: solid 1px #ccc;
+    color: #666;
+    border-radius: 5px;
+    padding: 5px 8px;
+}
+
+#numberOfDaysPicker {
+    display: inline-block;
+    margin: 5px 0px;
+    border: solid 1px #ccc;
+    color: #666;
+    border-radius: 5px;
+    padding: 5px 8px;
+}
+
+#numberOfDaysPicker input {
+    height: 0.9em;
+    margin-right: 1em;
+}
+
+</style>
+<script>
+
+(function () {
+    var charts = [];
+    var minTime;
+    var currentZoom;
+    var sharedPlotOptions = {
+        lines: { show: true, lineWidth: 1 },
+        xaxis: {
+            mode: "time",
+            timeformat: "%m/%d",
+            minTickSize: [1, 'day'],
+            max: Date.now(), // FIXME: This is likely broken for non-PST
+        },
+        yaxis: { tickLength: 0 },
+        series: { shadowSize: 0 },
+        points: { show: false },
+        grid: {
+            hoverable: true,
+            borderWidth: 1,
+            borderColor: '#999',
+            backgroundColor: '#fff',
+        }
+    };
+
+    function computeYAxisBoundsToFitLines(minTime, results, baseline, target) {
+        var stdevOfAllRuns = results.sampleStandardDeviation(minTime);
+        var movingAverage = results.exponentialMovingArithmeticMean(minTime, /* alpha, the degree of weighting decrease */ 0.3);
+        var min = results.min(minTime);
+        var max = results.max(minTime);
+
+        if (baseline) {
+            min = Math.min(min, baseline.min(minTime));
+            max = Math.max(max, baseline.max(minTime));
+        }
+        if (target) {
+            min = Math.min(min, target.min(minTime));
+            max = Math.max(max, target.max(minTime));
+        }
+
+        var marginSize = (max - min) * 0.1;
+        return {min: min - marginSize, max: max + marginSize,
+            adjustedMin: Math.min(results.lastResult().mean() - marginSize, Math.max(movingAverage - stdevOfAllRuns * 2, min) - marginSize),
+            adjustedMax: Math.max(results.lastResult().mean() + marginSize, Math.min(movingAverage + stdevOfAllRuns * 2, max) + marginSize) };
+    }
+
+    function computeStatus(smallerIsBetter, lastResult, baseline, target) {
+        var relativeDifferenceWithBaseline = baseline ? lastResult.relativeDifference(baseline.lastResult()) : 0;
+        var relativeDifferenceWithTarget = target ? lastResult.relativeDifference(target.lastResult()) : 0;
+        var statusText = '';
+        var status = '';
+
+        if (relativeDifferenceWithBaseline && relativeDifferenceWithBaseline > 0 != smallerIsBetter) {
+            statusText = Math.abs(relativeDifferenceWithBaseline * 100).toFixed(2) + '% ' + (smallerIsBetter ? 'above' : 'below') + ' baseline';
+            status = 'worse';
+        } else if (relativeDifferenceWithTarget && relativeDifferenceWithTarget > 0 == smallerIsBetter) {
+            statusText = Math.abs(relativeDifferenceWithTarget * 100).toFixed(2) + '% ' + (smallerIsBetter ? 'below' : 'above') + ' target';
+            status = 'better';
+        } else if (relativeDifferenceWithTarget)
+            statusText = Math.abs(relativeDifferenceWithTarget * 100).toFixed(2) + '% until target';
+
+        if (statusText)
+            statusText += '<br>';
+        statusText += buildLabelWithLinks(lastResult.build());
+
+        return {class: status, text: statusText};
+    }
+
+    function addPlotDataForRun(plotData, name, runs, color, interactive) {
+        var entry = {color: color, data: runs.meanPlotData()};
+        if (!interactive) {
+            entry.clickable = false;
+            entry.hoverable = false;
+        }
+        if (runs.hasConfidenceInterval()) {
+            var lowerName = name.toLowerCase();
+            var confienceEntry = $.extend(true, {}, entry, {lines: {lineWidth: 0}, clickable: false, hoverable: false});
+            plotData.push($.extend(true, {}, confienceEntry, {id: lowerName, data: runs.upperConfidencePlotData()}));
+            plotData.push($.extend(true, {}, confienceEntry,
+                {fillBetween: lowerName, lines: {fill: 0.3}, data: runs.lowerConfidencePlotData()}));
+        }
+        plotData.push(entry);
+    }
+
+    function createSummaryRowMarkup(name, runs) {
+        return '<tr><td>' + name + '</td><td>' + runs.lastResult().label() + '</td></tr>';
+    }
+
+    function buildLabelWithLinks(build, previousBuild) {
+        function linkifyIfNotNull(label, url) {
+            return url ? '<a href="' + url + '" target="_blank">' + label + '</a>' : label;
+        }
+
+        var formattedRevisions = build.formattedRevisions(previousBuild);
+        var markup = ['Committed: ' + build.formattedTime(),
+            'Build: ' + linkifyIfNotNull(build.buildNumber(), build.buildUrl()) + ' (' + build.formattedBuildTime() + ')'];
+        for (var repositoryName in formattedRevisions)
+            markup.push(linkifyIfNotNull(formattedRevisions[repositoryName].label, formattedRevisions[repositoryName].url));
+        return markup.join('<br>');
+    }
+
+    function Chart(container, isDashboard, platform, metric, bugTrackers, onClose) {
+        var linkifiedFullName = metric.fullName;
+        if (metric.test.url)
+            linkifiedFullName = '<a href="' + metric.test.url + '">' + linkifiedFullName + '</a>';
+        var section = $('<section class="chart"><div class="pane"><header><h2>' + linkifiedFullName + '</h2>'
+            + '<h3 class="platform">' + platform.name + '</h3>'
+            + '<span class="status"></span></header>'
+            + '<table class="summaryTable"><tbody></tbody></table>'
+            + '<div class="overviewPlot"></div></div>'
+            + '<div class="plot"></div>'
+            + '<div class="unit"></div>'
+            + '<svg viewBox="0 0 20 100" class="arrow">'
+            + '<g stroke-width="10"><line x1="10" y1="8" x2="10" y2="92" />'
+            + '<polygon points="5,85 15,85 10,90" class="downwardArrowHead" />'
+            + '<polygon points="5,15 15,15 10,10" class="upwardArrowHead" />'
+            + '</g></svg>'
+            + '<a href="#" class="toggleYAxis"><svg viewBox="0 0 40 100" class="yaxistoggler"><g stroke-width="10">'
+            + '<line x1="20" y1="8" x2="20" y2="82" />'
+            + '<polygon points="15,15 25,15 20,10" />'
+            + '<polygon points="15,75 25,75 20,80" />'
+            + '<line x1="0" y1="92" x2="40" y2="92" />'
+            + '</g></svg></a>'
+            + '<a href="#" class="closeButton"><svg viewBox="0 0 100 100">'
+            + '<g stroke-width="10"><circle cx="50" cy="50" r="45" fill="transparent"/><polygon points="30,30 70,70" />'
+            + '<polygon points="30,70 70,30" /></g></svg></a></section>');
+
+        $(container).append(section);
+
+        var self = this;
+        if (onClose) {
+            section.find('.closeButton').bind('click', function (event) {
+                event.preventDefault();
+                section.remove();
+                charts.splice(charts.indexOf(self), 1);
+                onClose(self);
+                return false;
+            });
+        } else
+            section.find('.closeButton').hide();
+
+        section.find('.yaxistoggler').bind('click', function (event) {
+            self.toggleYAxis();
+            event.preventDefault();
+            return false;
+        });
+
+        var plotData = [];
+        var results;
+        var baseline;
+        var target;
+
+        var tooltip = new Tooltip(container, 'tooltip hoverTooltip');
+        var bounds;
+        var plotContainer = section.find('.plot');
+        var mainPlot;
+        var overviewPlot;
+        var clickTooltips = [];
+        var shouldShowEntireYAxis = false;
+
+        this.platform = function () { return platform; }
+        this.metric = function () { return metric; }
+
+        this.populate = function (passedResults, passedBaseline, passedTarget) {
+            results = passedResults;
+            baseline = passedBaseline;
+            target = passedTarget;
+
+            var summaryRows = '';
+            if (target) {
+                addPlotDataForRun(plotData, 'Target', target, '#039');
+                summaryRows = createSummaryRowMarkup('Target', target) + summaryRows;
+            }
+            if (baseline) {
+                addPlotDataForRun(plotData, 'Baseline', baseline, '#930');
+                summaryRows = createSummaryRowMarkup('Baseline', baseline) + summaryRows;
+            }
+            addPlotDataForRun(plotData, 'Current', results, '#666', true);
+            summaryRows = createSummaryRowMarkup('Current', results) + summaryRows;
+
+            var status = computeStatus(results.smallerIsBetter(), results.lastResult(), baseline, target);
+            section.addClass(status.class);
+            section.find('.status').html(status.text);
+            section.find('.summaryTable tbody').html(summaryRows);
+            section.find('.unit').html(results.unit());
+            if (results.smallerIsBetter()) {
+                section.find('.arrow .downwardArrowHead').show();
+                section.find('.arrow .upwardArrowHead').hide();
+            } else {
+                section.find('.arrow .downwardArrowHead').hide();
+                section.find('.arrow .upwardArrowHead').show();
+            }
+        }
+
+        this.attachMainPlot = function (xMin, xMax) {
+            if (!bounds)
+                return;
+
+            var mainPlotOptions = $.extend(true, {}, sharedPlotOptions, {
+                xaxis: {
+                    min: xMin,
+                },
+                yaxis: {
+                    tickLength: null,
+                    min: shouldShowEntireYAxis ? 0 : bounds.adjustedMin,
+                    max: shouldShowEntireYAxis ? bounds.max : bounds.adjustedMax,
+                },
+                crosshair: {'mode': 'x', color: '#c90', lineWidth: 1},
+                grid: {clickable: true},
+            });
+            if (xMax)
+                mainPlotOptions.xaxis.max = xMax;
+            if (isDashboard) {
+                mainPlotOptions.yaxis.labelWidth = 20;
+                mainPlotOptions.yaxis.ticks = [mainPlotOptions.yaxis.min, mainPlotOptions.yaxis.max];
+                mainPlotOptions.grid.autoHighlight = false;
+            } else {
+                mainPlotOptions.yaxis.labelWidth = 30;
+                mainPlotOptions.selection = {mode: "x"};
+                plotData[plotData.length - 1].points = {show: true, radius: 1};
+            }
+            mainPlot = $.plot(plotContainer, plotData, mainPlotOptions);
+            plotData[plotData.length - 1].points = {};
+
+            for (var i = 0; i < clickTooltips.length; i++) {
+                if (clickTooltips[i])
+                    clickTooltips[i].remove();
+            }
+            clickTooltips = [];
+        }
+
+        this.toggleYAxis = function () {
+            shouldShowEntireYAxis = !shouldShowEntireYAxis;
+            if (currentZoom)
+                this.attachMainPlot(currentZoom.from, currentZoom.to);
+            else
+                this.attachMainPlot(minTime);
+        }
+
+        this.zoom = function (from, to) {
+            this.attachMainPlot(from, to);
+            if (overviewPlot)
+                overviewPlot.setSelection({xaxis: {from: from, to: to}}, true);
+        }
+
+        this.clearZoom = function () {
+            this.attachMainPlot(minTime);
+            if (overviewPlot)
+                overviewPlot.clearSelection();
+        }
+        
+        this.setCrosshair = function (pos) {
+            if (mainPlot)
+                mainPlot.setCrosshair(pos);
+        }
+
+        this.clearCrosshair = function () {
+            if (mainPlot)
+                mainPlot.clearCrosshair();
+        }
+
+        this.hideTooltip = function() {
+            if (tooltip)
+                tooltip.hide();
+        }
+
+        function toggleClickTooltip(index, pageX, pageY) {
+            if (clickTooltips[index])
+                clickTooltips[index].toggle();
+            else {
+                // FIXME: Put this on URLState.
+                var newTooltip = new Tooltip(container, 'tooltip clickTooltip');
+                showTooltipWithResults(newTooltip, pageX, pageY, results.resultAt(index), results.resultAt(index - 1));
+                newTooltip.bindClick(function () { toggleClickTooltip(index, pageX, pageY); });
+                newTooltip.bindMouseEnter(function () { tooltip.hide(); });
+                clickTooltips[index] = newTooltip;
+            }
+            tooltip.hide();
+        }
+
+        function showTooltipWithResults(tooltip, x, y, result, resultToCompare) {
+            var newBugUrls = '';
+            if (resultToCompare) {
+                var title = (resultToCompare.isBetterThan(result) ? 'REGRESSION: ' : '') + result.metric().fullName
+                    + ' got ' + result.formattedProgressionOrRegression(resultToCompare)
+                    + ' around ' + result.build().formattedTime();
+                var revisions = result.build().formattedRevisions(resultToCompare.build());
+
+                for (var trackerName in bugTrackers) {
+                    var repositories = bugTrackers[trackerName].repositories;
+                    var description = 'Platform: ' + result.build().platform().name + '\n\n';
+                    for (var i = 0; i < repositories.length; ++i) {
+                        var repositoryName = repositories[i];
+                        var revision = revisions[repositoryName];
+                        if (!revision)
+                            continue;
+                        if (revision.url)
+                            description += repositoryName + ': ' + revision.url;
+                        else
+                            description += revision.label;
+                        description += '\n';
+                    }
+                    var url = bugTrackers[trackerName].newBugUrl
+                        .replace(/\$title/g, encodeURIComponent(title))
+                        .replace(/\$description/g, encodeURIComponent(description))
+                        .replace(/\$link/g, encodeURIComponent(location.href));
+                    if (newBugUrls)
+                        newBugUrls += ',';
+                    newBugUrls += ' <a href="' + url + '" target="_blank">' + trackerName + '</a>';
+                }
+                newBugUrls = 'File:' + newBugUrls;
+            }
+            tooltip.show(x, y, result.label(resultToCompare) + '<br>'
+                + buildLabelWithLinks(result.build(), resultToCompare ? resultToCompare.build() : null) + '<br>'
+                + newBugUrls);
+        }
+
+        tooltip.bindClick(function () {
+            if (tooltip.currentItem)
+                toggleClickTooltip(tooltip.currentItem.dataIndex, tooltip.currentItem.pageX, tooltip.currentItem.pageY);
+        });
+
+        function closestItemForPageXRespectingPlotOffset(item, plot, series, pageX) {
+            if (!series || !series.data.length)
+                return null;
+
+            var offset = $(plotContainer).offset();
+            var points = series.datapoints.points;
+            var size = series.datapoints.pointsize;
+            var xInPlot = pageX - offset.left;
+
+            if (xInPlot < plot.getPlotOffset().left)
+                return null;
+            if (item)
+                return item;
+
+            var previousPoint;
+            var index = 0;
+            while (1) {
+                var currentPoint = plot.pointOffset({x: points[index * size], y: points[index * size + 1]});
+                if (xInPlot < currentPoint.left) {
+                    if (previousPoint && xInPlot < (previousPoint.left + currentPoint.left) / 2) {
+                        index -= 1;
+                        currentPoint = previousPoint;
+                    }
+                    break;
+                }
+                if (index + 1 >= series.data.length)
+                    break;
+                previousPoint = currentPoint;
+                index++;
+            }
+
+            // Ideally we want to return a real item object but flot doesn't provide an API to obtain one
+            // so create an object that contain properties we use.
+            return {dataIndex: index, pageX: offset.left + currentPoint.left, pageY: offset.top + currentPoint.top};
+        }
+
+        // Return a plot generator. This function is called when we change the number of days to show.
+        this.attach = function () {
+            if (!results)
+                return;
+
+            bounds = computeYAxisBoundsToFitLines(minTime, results, baseline, target);
+
+            var overviewContainer = section.find('.overviewPlot');
+            if (!isDashboard) {
+                overviewPlot = $.plot(overviewContainer, plotData,
+                    $.extend(true, {}, sharedPlotOptions, {
+                        xaxis: {
+                            min: minTime,
+                            // The maximum number of ticks we can fit on the overflow plot is 4.
+                            tickSize: [(TestBuild.now() - minTime) / 4 / 1000, 'second']
+                        },
+                        grid: { hoverable: false, clickable: false },
+                        selection: { mode: "x" },
+                        yaxis: {
+                            show: false,
+                            min: bounds.min,
+                            max: bounds.max,
+                        }
+                }));
+
+                $(plotContainer).bind("plotselected", function (event, ranges) { Chart.zoom(ranges.xaxis.from, ranges.xaxis.to); });
+                $(overviewContainer).bind("plotselected", function (event, ranges) { Chart.zoom(ranges.xaxis.from, ranges.xaxis.to); });
+                $(overviewContainer).bind("plotunselected", function () { Chart.clearZoom(minTime) });
+            }
+
+            if (currentZoom)
+                this.zoom(currentZoom.from, currentZoom.to);
+            else
+                this.attachMainPlot(minTime);
+
+            var self = this;
+
+            // FIXME: Crosshair should stay where it was between charts.
+            $(plotContainer).bind("plothover", function (event, pos, item) {
+                for (var i = 0; i < charts.length; i++) {
+                    if (charts[i] !== self) {
+                        charts[i].setCrosshair(pos);
+                        charts[i].hideTooltip();
+                    }
+                }
+                if (isDashboard)
+                    return;
+                var data = mainPlot.getData();
+                item = closestItemForPageXRespectingPlotOffset(item, mainPlot, data[data.length - 1], pos.pageX);
+                if (!item)
+                    return;
+
+                showTooltipWithResults(tooltip, item.pageX, item.pageY, results.resultAt(item.dataIndex), results.resultAt(item.dataIndex - 1));
+                tooltip.currentItem = item;
+            });
+
+            $(plotContainer).bind("mouseleave", function (event) {
+                var offset = $(plotContainer).offset();
+                if (offset.left <= event.pageX && offset.top <= event.pageY && event.pageX <= offset.left + $(plotContainer).outerWidth()
+                    && event.pageY <= offset.top + $(plotContainer).outerHeight())
+                    return 0;
+                for (var i = 0; i < charts.length; i++) {
+                    charts[i].clearCrosshair();
+                    charts[i].hideTooltip();
+                }
+
+            });
+
+            if (isDashboard) { // FIXME: This code doesn't belong here.
+                $(plotContainer).bind('click', function (event) {
+                    openChart(results.platform(), results.metric());
+                });
+            } else {
+                $(plotContainer).bind("plotclick", function (event, pos, item) {
+                    if (tooltip.currentItem)
+                        toggleClickTooltip(tooltip.currentItem.dataIndex, tooltip.currentItem.pageX, tooltip.currentItem.pageY);
+                });
+            }
+        };
+        
+        charts.push(this);
+    }
+
+    Chart.clear = function () {
+        charts = [];
+    }
+
+    Chart.setMinTime = function (newMinTime) {
+        minTime = newMinTime;
+        for (var i = 0; i < charts.length; i++)
+            charts[i].attach();
+    }
+
+    Chart.onzoomchange = function (from, to) { };
+
+    Chart.zoom = function (from, to) {
+        currentZoom = {from: from, to: to};
+        for (var i = 0; i < charts.length; i++)
+            charts[i].zoom(from, to);
+        this.onzoomchange(from, to);
+    }
+
+    Chart.clearZoom = function (minTime) {
+        currentZoom = undefined;
+        for (var i = 0; i < charts.length; i++)
+            charts[i].clearZoom();
+        this.onzoomchange();
+    }
+
+    window.Chart = Chart;
+})();
+
+// FIXME: We need to devise a way to fetch runs in multiple chunks so that
+// we don't have to fetch the entire time series to just show the last 3 days.
+// FIXME: We should do a mass-fetch where we fetch JSONs for multiple runs at once.
+function fetchTest(repositories, builders, filename, platform, metric, callback) {
+
+    function createRunAndResults(rawRuns) {
+        if (!rawRuns)
+            return null;
+
+        var runs = new PerfTestRuns(metric, platform);
+        var results = rawRuns.map(function (rawRun) {
+            // FIXME: Creating PerfTestResult and keeping them alive in memory all the time seems like a terrible idea.
+            // We should create PerfTestResult on demand.
+            return new PerfTestResult(runs, rawRun, new TestBuild(repositories, builders, platform, rawRun));
+        });
+        sortedResults = results.sort(function (a, b) { return a.build().time() - b.build().time(); });
+        sortedResults.forEach(function (result) { runs.addResult(result); });
+        return runs;
+    }
+
+    $.getJSON('api/runs/' + filename, function (data) {
+        callback(createRunAndResults(data.current), createRunAndResults(data.baseline), createRunAndResults(data.target));
+    });
+}
+
+function init() {
+    var allPlatforms;
+    var tests = [];
+    var fullNameToMetric;
+    var dashboardPlatforms;
+    var runsCache = {}; // FIXME: We need to clear this cache at some point.
+    var repositories;
+    var builders;
+    var bugTrackers;
+
+    // FIXME: Show some error message when we get 404.
+    function getOrFetchTest(platform, metric, callback) {
+        var filename = fileNameFromPlatformAndTest(platform.id, metric.id);
+        var caches = runsCache[filename];
+
+        if (caches)
+            setTimeout(function () { callback(caches.current, caches.baseline, caches.target); }, 0);
+        else {
+            fetchTest(repositories, builders, filename, platform, metric, function (current, baseline, target) {
+                runsCache[filename] = {current:current, baseline:baseline, target:target};
+                callback(current, baseline, target);
+            });
+        }
+    }
+
+    function showDashboard() {
+        var dashboardTable = $('<table id="dashboard"></table>');
+        $('#mainContents').html(dashboardTable);
+
+        // Split dashboard platforms into groups of three so that it doesn't grow horizontally too much.
+        // FIXME: Make this adaptive.
+        for (var i = 0; i < Math.ceil(dashboardPlatforms.length / 3); i++)
+            addPlatformsToDashboard(dashboardTable, dashboardPlatforms.slice(i * 3, (i + 1) * 3));
+
+        URLState.remove('chartList');
+    }
+
+    function addPlatformsToDashboard(dashboardTable, selectedPlatforms) {
+        var header = document.createElement('thead');
+        selectedPlatforms.forEach(function (platform) {
+            var cell = document.createElement('th');
+            $(cell).text(platform.name);
+            header.appendChild(cell);
+        });
+        dashboardTable.append(header);
+
+        var tbody = $(document.createElement('tbody'));
+        dashboardTable.append(tbody);
+        var row = document.createElement('tr');
+        tbody.append(row);
+
+        selectedPlatforms.forEach(function (platform) {
+            var cell = document.createElement('td');
+            row.appendChild(cell);
+
+            platform.metrics.forEach(function (metric) {
+                var chart = new Chart(cell, true, platform, metric, bugTrackers);
+                getOrFetchTest(platform, metric, function (results, baseline, target) {
+                    // FIXME: We shouldn't rely on the order in which XHR finishes to order plots.
+                    if (dashboardTable.parent().length) {
+                        chart.populate(results, baseline, target);
+                        chart.attach();
+                    }
+                });
+            });
+        });
+    }
+
+    function showCharts(lists) {
+        var chartsContainer = document.createElement('section');
+        chartsContainer.id = 'charts';
+        $('#mainContents').html(chartsContainer);
+
+        var testPicker = document.createElement('section');
+        testPicker.id = 'testPicker';
+
+        function addOption(select, label, value) {
+            var option = document.createElement('option');
+            option.appendChild(document.createTextNode(label));
+            if (value)
+                option.value = value;
+            select.appendChild(option);
+        }
+
+        var testList = document.createElement('select');
+        testList.id = 'testList';
+        testPicker.appendChild(testList);
+        for (var i = 0; i < tests.length; ++i) {
+            if (tests[i].parentTest)
+                continue;
+            addOption(testList, tests[i].fullName, tests[i].id);
+        }
+
+        var metricList = document.createElement('select');
+        metricList.id = 'metricList';
+        testPicker.appendChild(metricList);
+
+        var platformList = document.createElement('select');
+        platformList.id = 'platformList';
+        testPicker.appendChild(platformList);
+        const OPTION_VALUE_FOR_ALL = '-';
+        addOption(platformList, 'All platforms', OPTION_VALUE_FOR_ALL);
+        for (var i = 0; i < allPlatforms.length; ++i)
+            addOption(platformList, allPlatforms[i].name);
+
+        testList.onchange = function () {
+            while (metricList.firstChild)
+                metricList.removeChild(metricList.firstChild);
+
+            addOption(metricList, 'All metrics', OPTION_VALUE_FOR_ALL);
+            for (var i = 0; i < tests.length; ++i) {
+                if (tests[i].id != testList.value && (!tests[i].parentTest || tests[i].parentTest.id != testList.value))
+                    continue;
+                var selectedTest = tests[i].id == testList.value ? tests[i] : tests[i].parentTest;
+                for (var j = 0; j < tests[i].metrics.length; ++j) {
+                    var fullName = tests[i].metrics[j].fullName;
+                    var relativeName = fullName.replace(selectedTest.fullName, '').replace(/^[:/]/, '');
+                    addOption(metricList, relativeName, fullName);
+                }
+            }
+        }
+        metricList.onchange = function () {
+            var metric = fullNameToMetric[metricList.value];
+            var shouldAddAllMetrics = metricList.value === OPTION_VALUE_FOR_ALL;
+            for (var i = 0; i < platformList.options.length; ++i) {
+                var option = platformList.options[i];
+                if (option.value === OPTION_VALUE_FOR_ALL) // Adding all metrics for all platforms will be too slow.
+                    option.disabled = shouldAddAllMetrics;
+                else {
+                    var platform = nameToPlatform[option.value];
+                    var platformHasMetric = platform.metrics.indexOf(metric) >= 0;
+                    option.disabled = !shouldAddAllMetrics && !platformHasMetric;
+                }
+            }
+        }
+        testList.onchange();
+        metricList.onchange();
+
+        $(testPicker).append(' <a href="">Add Chart</a>');
+
+        function removeChart(chart) {
+            for (var i = 0; i < chartList.length; i++) {
+                if (chartList[i][0] == chart.platform().name && chartList[i][1] == chart.metric().fullName) {
+                    chartList.splice(i, 1);
+                    break;
+                }
+            }
+            URLState.set('chartList', JSON.stringify(chartList));
+        }
+
+        function createChartFromListPair(platformName, metricFullName) {
+            var platform = nameToPlatform[platformName];
+            var metric = fullNameToMetric[metricFullName]
+            var chart = new Chart(chartsContainer, false, platform, metric, bugTrackers, removeChart);
+
+            getOrFetchTest(platform, metric, function (results, baseline, target) {
+                if (!chartsContainer.parentNode)
+                    return;
+                chart.populate(results, baseline, target);
+                chart.attach();
+            });
+        }
+
+        $(testPicker).children('a').bind('click', function (event) {
+            event.preventDefault();
+
+            var newChartList = [];
+            if (platformList.value === OPTION_VALUE_FOR_ALL) {
+                for (var i = 0; i < allPlatforms.length; ++i) {
+                    createChartFromListPair(allPlatforms[i].name, metricList.value);
+                    newChartList.push([allPlatforms[i].name, metricList.value]);
+                }
+            } else if (metricList.value === OPTION_VALUE_FOR_ALL) {
+                for (var i = 0; i < tests.length; ++i) {
+                    if (tests[i].id != testList.value && (!tests[i].parentTest || tests[i].parentTest.id != testList.value))
+                        continue;
+                    for (var j = 0; j < tests[i].metrics.length; ++j) {
+                        createChartFromListPair(platformList.value, tests[i].metrics[j].fullName);
+                        newChartList.push([platformList.value, tests[i].metrics[j].fullName]);
+                    }
+                }
+            } else {
+                createChartFromListPair(platformList.value, metricList.value);
+                newChartList.push([platformList.value, metricList.value]);
+            }
+
+            chartList = chartList.concat(newChartList);
+            URLState.set('chartList', JSON.stringify(chartList));
+
+            return false;
+        });
+
+        $('#mainContents').append(testPicker);
+
+        var chartList = [];
+        try {
+            chartList = JSON.parse(URLState.get('chartList', ''));
+            // FIXME: Should we verify that platform and test names are valid here?
+        } catch (exception) {
+            // Ignore any exception thrown by parse.
+        }
+
+        chartList.forEach(function (item) { createChartFromListPair(item[0], item[1]); });
+    }
+
+    // FIXME: We should use exponential slider for charts page where we expect to have
+    // the full JSON as opposed to the dashboard where we can't afford loading really big JSON files.
+    var exponential = true;
+    (function () {
+        var input = $('#numberOfDays')[0];
+        var updating = 0;
+        function updateSpanAndCall(newNumberOfDays) {
+            $('#numberOfDays').next().text(newNumberOfDays + ' days');
+            // FIXME: This is likely broken for non-PST.
+            Chart.setMinTime(Date.now() - newNumberOfDays * 24 * 3600 * 1000);
+        }
+        $('#numberOfDays').bind('change', function () {
+            var newNumberOfDays = Math.round(exponential ? Math.exp(input.value) : input.value);
+            URLState.remove('zoom');
+            Chart.clearZoom();
+            URLState.set('days', newNumberOfDays);
+            updateSpanAndCall(newNumberOfDays);
+        });
+        function onchange() {
+            var newNumberOfDays = URLState.get('days', Math.round(exponential ? Math.exp(input.defaultValue) : input.defaultValue));
+            $('#numberOfDays').val(exponential ? Math.log(newNumberOfDays) : newNumberOfDays);
+            updateSpanAndCall(newNumberOfDays);
+        }
+        URLState.watch('days', onchange);
+        onchange();
+    })();
+
+    URLState.watch('mode', function () { setMode(URLState.get('mode')); });
+    URLState.watch('chartList', function (changedStates) {
+        var modeChanged = changedStates.indexOf('mode') >= 0;
+        if (URLState.get('mode') == 'charts' && !modeChanged)
+            setMode('charts');
+    });
+
+    function zoomChartsIfParsedCorrectly() {
+        try {
+            zoomValues = JSON.parse(URLState.get('zoom', '[]'));
+            if (zoomValues.length != 2)
+                return false;
+            Chart.zoom(parseFloat(zoomValues[0]), parseFloat(zoomValues[1]));
+        } catch (exception) {
+            // Ignore all exceptions thrown by JSON.parse.
+        }
+        return true;
+    }
+
+    URLState.watch('zoom', function (changedStates) {
+        var modeChanged = changedStates.indexOf('mode') >= 0;
+        if (URLState.get('mode') == 'charts' && !modeChanged) {
+            if (!zoomChartsIfParsedCorrectly())
+                return Chart.clearZoom();
+        }
+    });
+
+    Chart.onzoomchange = function (from, to) {
+        if (from && to)
+            URLState.set('zoom', JSON.stringify([from, to]));
+        else
+            URLState.remove('zoom');
+    }
+
+    window.openChart = function (platform, metric) {
+        URLState.set('chartList', JSON.stringify([[platform.name, metric.fullName]]));
+        setMode('charts');
+    }
+
+    window.setMode = function (newMode) {
+        URLState.set('mode', newMode);
+
+        Chart.clear();
+        if (newMode == 'dashboard') {
+            URLState.remove('zoom');
+            Chart.clearZoom();
+            showDashboard();
+        } else { // FIXME: Dynamically obtain the list of tests to show.
+            showCharts();
+            zoomChartsIfParsedCorrectly();
+        }
+    }
+
+    function fullName(test) {
+        var names = [];
+        do {
+            names.push(test.name);
+            test = test.parentTest;
+        } while (test);
+        names.reverse();
+        return names.join('/');
+    }
+
+    // Perhaps we want an ordered list of platforms.
+    $.getJSON('data/manifest.json', function (data) {
+        var manifest = data;
+
+        nameToTest = {};
+        for (var testId in manifest.tests) {
+            var test = manifest.tests[testId];
+            test.parentTest = manifest.tests[manifest.tests[testId].parentId];
+            test.id = testId;
+            test.metrics = [];
+            tests.push(test);
+        }
+        tests.forEach(function (test) {
+            test.fullName = fullName(test);
+            nameToTest[test.fullName] = test;
+        });
+        tests.sort(function (a, b) {
+            if (a.fullName < b.fullName)
+                return -1;
+            if (a.fullName > b.fullName)
+                return 1;
+            return 0;
+        });
+
+        fullNameToMetric = {};
+        for (var metricId in manifest.metrics) {
+            var entry = manifest.metrics[metricId];
+            entry.id = metricId;
+            entry.test = manifest.tests[entry.test];
+            entry.fullName = entry.test.fullName + ':' + entry.name;
+            if (entry.aggregator)
+                entry.fullName += ':' + entry.aggregator;
+            entry.test.metrics.push(entry);
+            fullNameToMetric[entry.fullName] = entry;
+        }
+
+        tests.forEach(function (test) {
+            test.metrics.sort(function (a, b) {
+                if (a.name < b.name)
+                    return -1;
+                if (a.name > b.name)
+                    return 1;
+                return 0;
+            });
+        });
+
+        allPlatforms = [];
+        nameToPlatform = {};
+        for (var platformId in manifest.all) {
+            var platform = manifest.all[platformId];
+            platform.id = platformId;
+            allPlatforms.push(platform);
+            nameToPlatform[platform.name] = platform;
+            // FIXME: Sort tests
+            for (var i = 0; i < platform.metrics.length; ++i)
+                platform.metrics[i] = manifest.metrics[platform.metrics[i]];
+        }
+        allPlatforms.sort(function (a, b) { return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0); });
+
+        dashboardPlatforms = [];
+        for (var platformId in manifest.dashboard) {
+            var platform = manifest.dashboard[platformId];
+            platform.id = platformId;
+            for (var i = 0; i < platform.metrics.length; ++i)
+                platform.metrics[i] = manifest.metrics[platform.metrics[i]];
+            platform.metrics.sort(function (a, b) { return a.fullName < b.fullName ? -1 : (a.fullName > b.fullName ? 1 : 0); });
+            dashboardPlatforms.push(manifest.dashboard[platformId]);
+        }
+        dashboardPlatforms.sort(function (a, b) { return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0); });
+
+        repositories = manifest.repositories;
+        builders = manifest.builders;
+        bugTrackers = manifest.bugTrackers;
+
+        setMode(URLState.get('mode', 'dashboard'));
+    });
+}
+
+window.addEventListener('DOMContentLoaded', init, false);
+
+</script>
+</head>
+<body>
+
+<header id="title">
+<h1><a href="/">WebKit Perf Monitor</a></h1>
+<ul>
+    <li><a href="javascript:setMode('dashboard');">Dashboard</a></li>
+    <li><a href="javascript:setMode('charts');">Charts</a></li>
+</ul>
+</header>
+
+<div id="numberOfDaysPicker"><input id="numberOfDays" type="range" min="1" max="5.9" step="0.001" value="2.3"><span class="output"></span></div>
+
+<div id="mainContents"></div>
+</body>
+</html>

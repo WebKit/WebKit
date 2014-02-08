@@ -1,0 +1,16 @@
+{
+    "debug": true,
+    "jsonCacheMaxAge": 600,
+    "JSONDirectory": "../public/data/",
+    "database": {
+        "host": "localhost",
+        "port": "5432",
+        "username": "webkit-perf-db-user",
+        "password": "password",
+        "name": "webkit-perf-db"
+    },
+    "testServer": {
+        "hostname": "localhost",
+        "port": 80
+    }
+}

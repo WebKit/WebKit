@@ -1,0 +1,2058 @@
+2014-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge database-common.js and utility.js into run-tests.js.
+
+        Reviewed by Matthew Hanson.
+
+        Now that run-tests is the only node.js script, merged database-common.js and utility.js into it.
+        Also moved init-database.sql out of the database directory and removed the directory entirely.
+
+        * database: Removed.
+        * database/database-common.js: Removed.
+        * database/utility.js: Removed.
+        * init-database.sql: Moved from database/init-database.sql.
+        * run-tests.js:
+        (connect): Moved from database-common.js.
+        (pathToDatabseSQL): Extracted from pathToLocalScript.
+        (pathToTests): Moved from database-common.js.
+        (config): Ditto.
+        (TaskQueue): Ditto.
+        (SerializedTaskQueue): Ditto.
+        (main):
+        (initializeDatabase):
+        (TestEnvironment.it):
+        (TestEnvironment.queryAndFetchAll):
+        (sendHttpRequest):
+
+2014-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the dependency on node.js from the production code.
+
+        Reviewed by Ricky Mondello.
+
+        Work towards <rdar://problem/15955053> Upstream SafariPerfMonitor.
+
+        Removed node.js dependency from TestRunsGenerator. It was really a design mistake to invoke node.js from php.
+        It added so much complexity with only theoretical extensibility of adding aggregators.  It turns out that
+        many aggregators we'd like to add are a lot more complicated than ones that could be written under the current
+        infrastructure, and we need to make the other aspects (e.g. the level of aggregations) a lot more extensible.
+        Removing and simplifying TestRunsGenerator allows us to implement such extensions in the future.
+
+        Also removed the js files that are no longer used.
+
+        * config.json: Moved from database/config.json.
+        * database/aggregate.js: Removed. No longer used.
+        * database/database-common.js: Removed unused functions, and updated the path to config.json.
+        * database/process-jobs.js: Removed. No longer used.
+        * database/sample-data.sql: Removed. We have a much better corpus of data now.
+        * database/schema.graffle: Removed. It's completely obsolete.
+        * public/include/db.php: Updated the path to config.json.
+        * public/include/evaluator.js: Removed.
+
+        * public/include/report-processor.php:
+        (TestRunsGenerator::aggregate): Directly aggregate values via newly added aggregate_values method instead of
+        storing values into $expressions and calling evaluate_expressions_by_node.
+        (TestRunsGenerator::aggregate_values): Added.
+        (TestRunsGenerator::compute_caches): Directly compute the caches.
+
+2014-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Don't fail the platform merges even if there are no test configurations to be moved to the new platform.
+
+        * public/admin/platforms.php:
+        * public/include/db.php:
+
+2014-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Zoomed y-axis view is ununsable when the last result is an outlier.
+
+        Reviewed by Stephanie Lewis.
+
+        Show two standard deviations from the exponential moving average with alpha = 0.3 instead of the mean of
+        the last result so that the graph looks sane if the last result was an outlier. However, always show
+        the last result's mean even if it was an outlier.
+
+        * public/index.html:
+        * public/js/helper-classes.js:
+        (unscaledMeansForAllResults): Extracted from min/max/sampleStandardDeviation.
+        Also added the ability to cache the unscaled means to avoid recomputation.
+        (PerfTestRuns.min): Refactored to use unscaledMeansForAllResults.
+        (PerfTestRuns.max): Ditto.
+        (PerfTestRuns.sampleStandardDeviation): Ditto.
+        (PerfTestRuns.exponentialMovingArithmeticMean): Added.
+
+2014-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Minor fixes.
+
+        * public/admin/tests.php:
+        * public/js/helper-classes.js:
+
+2014-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use two standard deviations instead as I mentioned in the mailing list.
+
+        * public/index.html:
+
+2014-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The performance dashboard erroneously shows upward arrow for combined metrics.
+
+        A single outlier can ruin the zoomed y-axis view.
+
+        Rubber-stamped by Antti Koivisto.
+
+        * public/index.html:
+        (computeYAxisBoundsToFitLines): Added adjustedMax and adjustedMin, which are pegged at 4 standard deviations
+        from the latest results' mean.
+        (Chart): Renamed shouldStartYAxisAtZero to shouldShowEntireYAxis.
+        (Chart.attachMainPlot): Use the adjusted max and min when we're not showing the entire y-axis.
+        (Chart.toggleYAxis):
+        * public/js/helper-classes.js:
+        (PerfTestRuns.sampleStandardDeviation): Added.
+        (PerfTestRuns.smallerIsBetter): 'Combined' is a smaller is better metric.
+
+2014-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't include the confidence interval when computing the y-axis.
+
+        Rubber-stamped by Simon Fraser.
+
+        * public/js/helper-classes.js:
+        (PerfTestRuns.min):
+        (PerfTestRuns.max):
+
+2014-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Tiny CSS tweak for tooltips.
+
+        * public/index.html:
+
+2014-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the erroneously repeated code.
+
+        * public/admin/test-configurations.php:
+
+2014-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/15704893> perf dashboard should show baseline numbers
+
+        Reviewed by Stephanie Lewis.
+
+        * public/admin/bug-trackers.php:
+        (associated_repositories): Return an array of HTMLs instead of echo'ing as expected by AdministrativePage.
+        Also fixed a typo.
+
+        * public/admin/platforms.php:
+        (merge_list): Ditto.
+
+        * public/admin/test-configurations.php: Added.
+        (add_run): Adds a "synthetic" test run and a corresponding build. It doesn't create run_iterations and
+        build_revisions as they're not meaningful for baseline / target numbers.
+        (delete_run): Deletes a synthetic test run and its build. It verifies that the specified build has exactly
+        one test run so that we don't accidentally delete a reported test run.
+        (generate_rows_for_configurations): Generates rows of configuration IDs and types.
+        (generate_rows_for_test_runs): Ditto for test runs. It also emits the form to add new "synthetic" test runs
+        and delete existing ones.
+
+        * public/admin/tests.php: We wrongfully assumed there is exactly one test configuration for each metric
+        on each platform; there could be configurations of distinct types such as "current" and "baseline".
+        Thus, update all test configurations for a given metric when updating config_is_in_dashboard.
+
+        * public/api/runs.php: Remove the NotImplemented when we have multiple test configurations.
+        (fetch_runs_for_config): "Synthetic" test runs created on test-configurations page are missing revision
+        data so we need to left-outer-join (instead of inner-join) build_revisions. To avoid making the query
+        unreadable, don't join revision_repository here. Instead, fetch the list of repositories upfront and
+        resolve names in parse_revisions_array. This actually reduces the query time by ~10%.
+
+        (parse_revisions_array): Skip an empty array created for "synthetic" test runs.
+
+        * public/include/admin-header.php:
+        (AdministrativePage::render_table): Now custom columns support sub columns. e.g. a configuration column may
+        have id and type sub columns, and each custom column could generate multiple rows.
+
+        Any table with sub columns now generates two rows for thead. We generate td's in in the first row without
+        sub columns with rowspan of 2, and generate ones with sub columns with colspan set to the sub column count.
+        We then proceed to generate the second header row with sub column names.
+
+        When generating the actual content, we first generate all custom columns as they may have multiple rows in
+        which case regular columns need rowspan set to the maximum number of rows.
+
+        Once we've generated the first row, we proceed to generate subsequent rows for those custom columns that
+        have multiple rows.
+
+        (AdministrativePage::render_custom_cells): Added. This function is responsible for generating table cells
+        for a given row in a given custom column. It generates an empty td when the custom column doesn't have
+        enough rows. It also generates empty an td when it doesn't have enough columns in some rows except when
+        the entire row consists of exactly one cell for a custom column with sub columns, in which case the cell is
+        expanded to occupy all sub columns.
+
+        * public/include/manifest.php:
+        (ManifestGenerator::platforms): Don't add the metric more than once.
+
+        * public/include/test-name-resolver.php:
+        (TestNameResolver::__construct): We had wrongfully assumed that we have exactly one test configuration on
+        each platform for each metric like tests.php. Fixed that. Also fetch the list of aggregators to compute the
+        full metric name later.
+        (TestNameResolver::map_metrics_to_tests): Populate $this->id_to_metric.
+        (TestNameResolver::test_id_for_full_name): Simplified the code using array_get.
+        (TestNameResolver::full_name_for_test): Added.
+        (TestNameResolver::full_name_for_metric): Added.
+        (TestNameResolver::configurations_for_metric_and_platform): Renamed as it returns multiple configurations.
+
+        * public/js/helper-classes.js:
+        (TestBuild): Use the build time as the maximum time when revision information is missing for "synthetic"
+        test runs created to set baseline and target points.
+
+2014-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r57928. Removed a superfluous close parenthesis.
+
+        * public/api/runs.php:
+
+2014-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build & typo fixes.
+
+        * public/admin/platforms.php:
+        * tests/admin-platforms.js:
+
+2014-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/15704893> perf dashboard should show baseline numbers
+
+        Rubber-stamped by Antti Koivisto.
+
+        Organize some code into functions in runs.php.
+
+        Also added back $paths that was erroneously removed in r57925 from json-header.php.
+
+        * public/api/runs.php:
+        (fetch_runs_for_config): Extracted.
+        (format_run): Ditto.
+
+2014-01-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge the upstream json-shared.php as of https://trac.webkit.org/r162693.
+
+        * database/config.json:
+        * public/admin/reprocess-report.php:
+        * public/api/report.php:
+        * public/api/runs.php:
+        * public/include/json-header.php:
+
+2014-01-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Commit yet another forgotten change.
+
+        Something went horribly wrong with my merge :(
+
+        * database/init-database.sql:
+
+2014-01-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Commit one more forgotten change. Sorry for making a mess here.
+
+2014-01-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Commit the forgotten files.
+
+        * public/admin/platforms.php: Added.
+        * tests/admin-platforms.js: Added.
+
+2014-01-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/15889905> SafariPerfMonitor: there should be a way to merge and hide platforms
+
+        Reviewed by Stephanie Lewis.
+
+        Added /admin/platforms/ page to hide and merge platforms.
+
+        Merging two platforms is tricky because we need to migrate test runs as well as some test configurations.
+        Recall that each test (e.g. Dromaeo) can have many "test metrics" (e.g. MaxAllocations, EndAllocations),
+        and they have a distinct "test configuration" for each platform (e.g. MaxAllocation on Mountain Lion), and
+        each test configuration a distinct "test run" for each build.
+
+        In order to merge platform A into platform B, we must migrate all test runs that belong to platform A via
+        their test configurations into platform B.
+
+        Suppose we're migrating a test run R for test configuration T_A in platform A for metric M. Since M exists
+        independent of platforms, R should continue to relate to M through some test configuration. Unfortunately,
+        we can't simply move T_A into platform B since we may already have a test configuration T_B for metric M
+        in platform B, in which case R should relate to T_B instead.
+
+        Thus, we first migrate all test runs for which we already have corresponding test configurations in the
+        new platform. We then migrate the test configurations of the remaining test runs.
+
+        * database/init-database.sql: Added platform_hidden.
+
+        * public/admin/platforms.php: Added.
+        (merge_platforms): Added. Implements the algorithm described above.
+        (merge_list): Added.
+
+        * public/admin/tests.php: Disable the checkbox to show a test configuration on the dashboard if its platform
+        is hidden since it doesn't do anything.
+
+        * public/include/admin-header.php: Added the hyperlink to /admin/platforms.
+        (update_field): Don't bail out if the newly added "update-column" is set to the field name even if $_POST is
+        missing it since unchecked checkbox doesn't set the value in $_POST.
+        (AdministrativePage::render_form_control_for_column): Added the support for boolean edit mode. Also used
+        switch statement instead of repeated if's.
+        (AdministrativePage::render_table): Emit "update-column" for update_field.
+
+        * public/include/db.php: Disable warnings when we're not in the debug mode.
+
+        * public/include/manifest.php:
+        (ManifestGenerator::platforms): Skip platforms that have been hidden.
+
+        * run-tests.js:
+        (TestEnvironment.postJSON):
+        (TestEnvironment.httpGet):
+        (TestEnvironment.httpPost): Added.
+        (sendHttpRequest): Set the content type if specified.
+
+        * tests/admin-platforms.js: Added tests.
+
+2014-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extract the code to compute full test names from tests.php.
+
+        Reviewed by Stephanie Lewis.
+
+        Extracted TestNameResolver out of tests.php. This reduces the number of global variables in tests.php
+        and paves our way to re-use the code in other pages.
+
+        * public/admin/tests.php:
+
+        * public/include/db.php:
+        (array_set_default): Renamed from array_item_set_default and moved from tests.php as it's used in both
+        tests.php and test-name-resolver.php.
+
+        * public/include/test-name-resolver.php: Added.
+        (TestNameResolver::__construct):
+        (TestNameResolver::compute_full_name): Moved from tests.php.
+        (TestNameResolver::map_metrics_to_tests): Ditto.
+        (TestNameResolver::sort_tests_by_full_name): Ditto.
+        (TestNameResolver::tests): Added.
+        (TestNameResolver::test_id_for_full_name): Ditto.
+        (TestNameResolver::metrics_for_test_id): Ditto.
+        (TestNameResolver::child_metrics_for_test_id): Ditto.
+        (TestNameResolver::configuration_for_metric_and_platform): Ditto.
+
+2014-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/15867325> Perf dashboard is erroneously associating reported results with old revisions
+
+        Reviewed by Stephanie Lewis.
+
+        Add the ability to reprocess reports so that I can re-associate wrongfully associated reports.
+
+        Added public/admin/reprocess-report.php. It doesn't have any nice UI to find reports and it returns JSON
+        but that's sufficient to correct the wrongfully processed reports for now.
+
+        * public/admin/reprocess-report.php: Added. Takes a report id in $_GET or $_POST and process the report.
+        We should eventually add a nice UI to find and reprocess reports.
+
+        * public/api/report.php: ReportProcessor and TestRunsGenerator have been removed.
+
+        * public/include/db.php: Added the forgotten call to prefixed_column_names.
+
+        * public/include/report-processor.php: Copied from public/api/report.php.
+        (ReportProcessor::__construct): Fetch the list of aggregators here for simplicity.
+        (ReportProcessor::process): Optionally takes $existing_report_id. When this value is specified, we don't
+        create a new report or authenticate the builder password (the password is never stored in the report).
+        Also use select_first_row instead of query_and_fetch_all to find the builder for simplicity.
+        (ReportProcessor::construct_build_data): Extracted from store_report_and_get_build_data.
+        (ReportProcessor::store_report): Ditto.
+
+        * tests/admin-reprocess-report.js: Added.
+
+2014-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/15867325> Perf dashboard is erroneously associating reported results with old revisions
+
+        Reviewed by Ricky Mondello.
+
+        The bug was caused by a build fix r57645. It attempted to treat multiple reports from the same builder
+        for the same build number as a single build by ignoring build time. This was necessary to associate
+        multiple reports by a single build - e.g. for different performance test suites - because the scripts
+        we use to submit results computed its own "build time" when they're called.
+
+        An unintended consequence of this change was revealed when we moved a buildbot master to the new machine
+        last week; new reports were wrongfully associated with old build numbers.
+
+        Fixed the bug by not allowing reports made more than 1 day after the initial build time to be assigned
+        to the same build. Instead, we create a new build object for those reports. Since the longest set of
+        tests we have only take a couple of hours to run, 24 hours should be more than enough.
+
+        * database/init-database.sql: We can no longer constrain that each build number is unique to a builder
+        or that build number and build time pair is unique. Instead, constrain the uniqueness of the tuple
+        (builder, build number, build time).
+
+        * public/api/report.php:
+        (ReportProcessor::resolve_build_id): Look for any builds made within the past one day. Create a new build
+        when no such build exists. This prevents a report from being associated with a very old build of the same
+        build number.
+
+        Also check that revision numbers or hashes match when we're adding revision info. This will let us catch
+        a similar bug in the future sooner.
+
+        * tests/api-report.js: Added three test cases.
+
+2014-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merged the upstream changes to db.php
+        See http://trac.webkit.org/browser/trunk/Websites/test-results/public/include/db.php
+
+        * public/include/db.php:
+
+2014-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update other scripts and tests per previous patch.
+
+        * public/include/manifest.php:
+        * tests/admin-regenerate-manifest.js:
+
+2014-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove metrics_unit.
+
+        Reviewed by Ricky Mondello.
+
+        This column is no longer used by the front-end code since r48360.
+
+        * database/init-database.sql:
+        * public/admin/tests.php:
+
+2014-01-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix.
+
+        * public/api/report.php:
+
+2014-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/15832456> Automate DoYouEvenBench (124497)
+
+        Reviewed by Ricky Mondello.
+
+        Support a new alternative format for aggregated results where we have raw values as well as
+        the list aggregators so that instead of
+        "metrics": {"Time": ["Arithmetic"]}
+        we can have
+        "metrics": {"Time": { "aggregators" : ["Arithmetic"], "current": [300, 310, 320, 330] }}
+
+        This allows single JSON generated by run-perf-tests in WebKit to be shared between the perf
+        dashboard and the generated results page, which doesn't know how to aggregate values.
+
+        We need to keep the support for the old format because all other existing performance tests
+        all rely on the old format. Even if we updated the tests, we need the dashboard to support
+        the old format during the transition.
+
+        * public/api/report.php:
+        (ReportProcessor::recursively_ensure_tests): Support the new format in addition to the old one.
+        (ReportProcessor::aggregator_list_if_exists): Replaced is_list_of_aggregators.
+
+        * tests/api-report.js: Updated one of aggregator test cases to test the new format.
+
+2013-05-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; Tweak the CSS so that chart panes align vertically.
+
+        * public/index.html:
+
+2013-05-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor should support Combined metric.
+
+        * public/js/helper-classes.js:
+        (PerfTestRuns): Added 'Combined' metric. In general, it could be used for smaller-is-better
+        value as well but assume it to be greater-is-better for now.
+
+2013-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Commit the forgotten init-database change to add iteration_relative_time.
+
+        * database/init-database.sql:
+
+2013-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13993069> SafariPerfMonitor: Support accepting (relative time, value) pairs
+
+        Reviewed by Ricky Mondello.
+
+        Add the support for each value to have a relative time. This is necessary for frame rate history
+        since a frame rate needs to be associated with a time it was sampled.
+
+        * database/init-database.sql: Added iteration_relative_time to run_iterations.
+
+        * public/api/report.php:
+        (TestRunsGenerator::test_value_list_to_values_by_iterations): Reject any non-numeral values here.
+        This code is used to aggregate values but it doesn't make sense to aggregate iteration values
+        with relative time since taking the average of two frame rates for two subtests taken at two
+        different times doesn't make any sense.
+        (TestRunsGenerator::compute_caches): When we encounter an array value while computing sum, mean,
+        etc..., use the second element since we assume values are of the form (relative time, frame rate).
+        Also exit early with an error if the number of elements in the array is not a pair.
+        (TestRunsGenerator::commit): Store the relative time and the frame rate as needed.
+
+        * tests/api-report.js: Added a test case. Also modified existing test cases to account for
+        iteration_relative_time.
+
+2013-05-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13654488> SafariPerfMonitor: Support accepting single-value results
+
+        Reviewed by Ricky Mondello.
+
+        Support that. It's one line change.
+
+        * public/api/report.php:
+        (ReportProcessor.recursively_ensure_tests): When there is exactly one value, wrap it inside an array
+        to match the convention assumed elsewhere.
+        * tests/api-report.js: Added a test case.
+
+2013-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor shows popups for points outside of the visible region.
+
+        Rubber-stamped by Simon Fraser.
+
+        * public/index.html:
+        (Chart.closestItemForPageXRespectingPlotOffset): renamed from closestItemForPageX.
+        (Chart.attach): Always use closestItemForPageXRespectingPlotOffset to work around the fact flot
+        may return an item underneath y-axis labels.
+
+2013-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Tweak the CSS a little to avoid the test name overlapping with the summary table.
+
+        * public/index.html:
+
+2013-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed. Fix the typo. The anchor element should wrap the svg element, not the other way around.
+
+        * public/index.html:
+
+2013-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13992266> Should be a toggle to show entire Y-axis range
+        <rdar://problem/13992271> Should scale Y axis to include error ranges
+
+        Reviewed by Ricky Mondello.
+
+        Add the feature. Also made adjust y-axis respect confidence interval delta so that the gray shade behind
+        the main graph doesn't go outside the graph even when the y-axis is adjusted.
+
+        * database/config.json:
+        * public/index.html:
+        (Chart): Add a SVG arrow to toggle y-axis mode, and bind click on the arrow to toggleYAxis().
+        (Chart.attachMainPlot): Respect shouldStartYAxisAtZero.
+        (Chart.toggleYAxis): Toggle the y-axis mode of this chart by toggling shouldStartYAxisAtZero and calling
+        attachMainPlot.
+        * public/js/helper-classes.js:
+        (PerfTestResult.confidenceIntervalDelta):
+        (PerfTestResult.unscaledConfidenceIntervalDelta): Extracted.
+        (PerfTestRuns.min): Take confidence interval delta into account.
+        (PerfTestRuns.max): Ditto.
+        (PerfTestRuns.hasConfidenceInterval): Not sure why this function was checking the typeof. Just use isNaN.
+
+2013-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        A build fix of the previous. Don't look for a test with NULL parent because NULL != NULL in our beloved SQL.
+
+        * public/api/report.php:
+        (ReportProcessor::recursively_ensure_tests):
+        * tests/api-report.js: Added a test.
+
+2013-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fixes.
+
+        * public/api/report.php:
+        (ReportProcessor::process): Explicitly exit with error when builder name or build time is missing.
+        Also, tolerate reports without any revision information.
+
+        (ReportProcessor::recursively_ensure_tests): When looking for a test, don't forget to compare its
+        parent test.
+
+        * tests/api-report.js: Added few test cases.
+
+2013-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Commit another change that was supposed to be committed in r50331.
+
+        * run-tests.js:
+        (TestEnvironment.this.postJSON):
+        (TestEnvironment.this.httpGet):
+        (sendHttpRequest):
+
+2013-04-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Commit the remaining files.
+
+        * public/admin/regenerate-manifest.php:
+        * public/include/admin-header.php:
+        * public/include/json-header.php:
+        * public/include/manifest.php:
+        * run-tests.js:
+        (TestEnvironment.this.postJSON):
+        (TestEnvironment.this.httpGet):
+        (sendHttpRequest):
+
+2013-03-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Add some tests for admin/regenerate-manifest.
+
+        Reviewed by Ricky Mondello.
+
+        Added some tests for admin/regenerate-manifest.
+
+        * public/admin/regenerate-manifest.php: Use require_once instead of require.
+        * public/include/admin-header.php: Ditto.
+        * public/include/json-header.php: Ditto.
+
+        * public/include/manifest.php:
+        (ManifestGenerator::builders): Removed a reference to a non-existent variable.
+        When there are no builders, simply return an empty array.
+
+        * run-tests.js:
+        (TestEnvironment.postJSON):
+        (TestEnvironment.httpGet): Added.
+        (sendHttpRequest): Renamed from postHttpRequest as it now takes method as an argument.
+
+        * tests/admin-regenerate-manifest.js: Added with a bunch of test cases.
+
+2013-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed. Added more tests for api/report to ensure it creates tests, metrics, test_runs,
+        and run_iterations. Also fixed a typo in report.php found by new tests.
+
+        * public/api/report.php:
+        (main): Fix a bug in the regular expression to wrap numbers with double quotations.
+        * tests/api-report.js: Added more test cases.
+
+2013-03-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13399038> SafariPerfMonitor: Need integration tests
+
+        Reviewed by Ricky Mondello.
+
+        Add a test runner script and some simple test cases.
+
+        * database/config.json: Added the configuration for "testServer".
+        * database/database-common.js:
+        (pathToTests): Added.
+        * run-tests.js: Added.
+        (main):
+
+        (confirmUserWantsDatabaseToBeInitializedIfNeeded): Checks whether there are any non-empty tables,
+        and if there are, asks the user if it’s okay to delete all of the data contained therein.
+        (confirmUserWantsDatabaseToBeInitializedIfNeeded.findNonEmptyTable): Find a table with non-zero
+        number of rows.
+        (confirmUserWantsDatabaseToBeInitializedIfNeeded.fetchTableNames): Fetch the list of all tables
+        in the current database using PostgreSQL's information_schema.
+        (askYesOrNoQuestion):
+
+        (initializeDatabase): Executes init-database.sql. It drops all tables and creates them again.
+
+        (TestEnvironment): The global object exposed in tests. Provides various utility functions.
+        (TestEnvironment.assert): Exposes assert to tests.
+        (TestEnvironment.console): Exposes console to tests.
+        (TestEnvironment.describe): Adds a description.
+        (TestEnvironment.it): Adds a test case.
+        (TestEnvironment.postJSON):
+        (TestEnvironment.queryAndFetchAll):
+        (TestEnvironment.sha256):
+        (TestEnvironment.notifyDone): Ends the current test case.
+
+        (postHttpRequest):
+
+        (TestContext): An object created for each test case. Conceptually, this object is always on
+        "stack" when a test case is running. TestEnvironment and an uncaughtException handler accesses
+        this object via currentTestContext.
+        (TestContext.description):
+        (TestContext.done):
+        (TestContext.logError):
+
+        * tests: Added.
+        * tests/api-report.js: Added some basic tests for /api/report.php.
+
+2013-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed administrative page fix. Make it possible to remove all configuration from dashboard.
+
+        The problem was that we were detecting whether we're updating dashboard or not by checking
+        the existence of metric_configurations in $_POST but this key doesn't exist when we're removing
+        all configurations. Use separate 'dashboard' action to execute the code even when
+        metric_configurations is empty.
+
+        * public/admin/tests.php:
+
+2013-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Extract a class to aggregate and store values from ReportProcessor.
+
+        Reviewed by Ricky Mondello.
+
+        This patch extracts TestRunsGenerator, which aggregates and compute caches of values,
+        from ReportProcessor as a preparation to replace deprecated aggregate.js.
+
+        * public/api/report.php:
+        (ReportProcessor::exit_with_error): Moved.
+        (ReportProcessor::process): Use the extracted TestRunsGenerator.
+        (TestRunsGenerator): Added.
+        (TestRunsGenerator::exit_with_error): Copied from ReportProcessor.
+        (TestRunsGenerator::add_aggregated_metric): Moved.
+        (TestRunsGenerator::add_values_for_aggregation): Moved. Made public.
+        (TestRunsGenerator::aggregate): Moved. Made public.
+        (TestRunsGenerator::aggregate_current_test_level): Moved.
+        (TestRunsGenerator::test_value_list_to_values_by_iterations): Moved.
+        (TestRunsGenerator::evaluate_expressions_by_node): Moved.
+        (TestRunsGenerator::compute_caches): Moved. Made public.
+        (TestRunsGenerator::add_values_to_commit): Moved. Made public.
+        (TestRunsGenerator::commit): Moved. Made public. Also takes build_id and platform_id.
+        (TestRunsGenerator::rollback_with_error): Moved.
+
+2013-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Administrative pages should update manifest JSON as needed.
+
+        Reviewed by Remy Demarest.
+
+        Regenerate the manifest file when updating fields or adding new items that are included in
+        the manifest JSON.
+
+        * public/admin/bug-trackers.php:
+        * public/admin/builders.php:
+        * public/admin/regenerate-manifest.php:
+        * public/admin/repositories.php:
+        * public/admin/tests.php:
+        * public/include/admin-header.php:
+        (regenerate_manifest): Extracted from regenerate-manifest.php.
+
+2013-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix for memory test results.
+
+        Make aggregation work in the nested cases. We start from the "leaf" tests and move our ways up,
+        aggregating at each level.
+
+        * public/api/report.php:
+        (ReportProcessor::recursively_ensure_tests):
+        (ReportProcessor::add_aggregated_metric): Renamed from ensure_aggregated_metric.
+        (ReportProcessor::add_values_for_aggregation):
+        (ReportProcessor::aggregate):
+        (ReportProcessor::aggregate_current_test_level): Extracted from aggregate.
+
+2013-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fixes. iteration_count_cache should be the total number of values in all iteration group,
+        not the number of iteration groups. Also, don't set group number when the entire run belongs
+        a single iteration group.
+
+        * public/api/report.php:
+        (ReportProcessor::commit):
+
+2013-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Introduce iteration groups
+
+        Reviewed by Remy Demarest.
+
+        In WebKit land, we're going to use multiple instances of DumpRenderTree or WebKitTestRunner to amortize
+        the runtime environment variances to get more stable results. And it's desirable to keep track of
+        the instance of DumpRenderTree or WebKitTestRunner used to generate each iteration value.
+
+        This patch introduces "iteration groups" to keep track of this extra information.
+
+        Instead of receiving a flat array of iteration values, we can now receive a two dimensional array where
+        the outer array denotes iteration groups and each inner array contains iteration values for each group.
+
+
+        * database/init-database.sql: Add iteration_group column.
+        * public/api/report.php:
+        (ReportProcessor::recursively_ensure_tests): Always use the two dimensional array internally.
+
+        (ReportProcessor::aggregate): test_value_list_to_values_by_iterations now returns an associative array
+        contains the list of values indexed by the iteration order and group sizes. Store the group size so
+        that we can restore the iteration groups before passing it to node.js and restore them later.
+
+        (ReportProcessor::test_value_list_to_values_by_iterations): Flatten iteration groups into an array
+        of values and construct group_size array to restore the groups later in ReportProcessor::aggregate.
+
+        Also check that each iteration group in each subtest are consistent with one another. To see why we need
+        to do this, suppose we're aggregating two tests T1 and T2 with the following values. Then it's important
+        that each iteration group in T1 and T2 have the same size:
+        T1 = [[1, 2], [3, 4, 5]]
+        T2 = [[6, 7], [8, 9, 10]]
+
+        so that the aggregated result (the sum in this case) can have the same groups as in:
+        T  = [[7, 9], [11, 13, 15]]
+
+        If some iteration groups in T1 and T2 had a different size as in:
+        T1 = [[1, 2, 3], [4, 5]]
+        T2 = [[6, 7], [8, 9, 10]]
+
+        Then iteration groups of the aggregated T is ambiguous.
+
+        (ReportProcessor::compute_caches): Flatten iteration groups to compute caches (e.g. mean, stdev, etc...)
+        (ReportProcessor::commit): Store iteration_group values.
+
+2013-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed. Delete the migration tool for webkit-perf.appspot.com now that we have successfully
+        migrated to perf.webkit.org.
+
+        * database/perf-webkit-migrator.js: Removed.
+
+2013-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Don't forget to add metrics of the top level tests e.g. Dromaeo:Time:Arithmetic.
+
+        * public/index.html:
+        (.showCharts):
+
+2013-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Make it possible to add charts for all subtests or all platforms.
+
+        Reviewed by Ricky Mondello.
+
+        It is often desirable to see charts of a given test for all platforms, or to be able to see
+        charts of all subtests on a given platform when trying to triage perf. regressions.
+
+        Support this use case by adding the ability to do so on the charts page.
+
+        Also, we used to disable items on the test list based on the platform chosen. This turned out
+        to be a bad UI because in many situations you want to be able to compare results of the same test
+        on multiple platforms.
+
+        In this new UI, we have three select elements, each of which selects the following:
+        1. Top-level test - Test suite such as Dromaeo
+        2. Metric - Pages and subtests under the suite such as www.webkit.org for dom-modify:Runs
+           (where dom-modify is the name of the subtest and Runs is a metric in that subtest) for Dromaeo.
+        3. Platform - Mountain Lion, Qt, etc...
+
+        A user can select "all" for metric and platform but we disallow doing both at once since adding
+        all metrics on all platforms tends to add way too many charts and hang the browser. I also can't
+        think of a use case where you want to look at that many charts at once. We can support this later
+        if valid use cases come up.
+
+        * public/index.html:
+        (.showCharts.addOption): Extracted.
+        (.showCharts): Added "metricList" that shows the list of test and metrics (in the form of
+        relative metrics paths such as "DOMWalk:Time") for each top-level test selected in testList.
+        metricList has onchange handler that enables/disables items on platformList.
+        
+        (init): Sort tests and test metrics here instead of doing that in showCharts.
+
+2013-02-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13316756> SafariPerfMonitor: tooltip should include a link to build URLs
+
+        Reviewed by Remy Demarest and Ricky Mondello.
+
+        Added a hyperlink to build page in tooltips. Repeating the entire build URL in each build
+        was a bad idea because it bloats the resultant JSON file too much. So move the build URL
+        templates to the manifest file instead. Each build now only contains the builder id.
+
+        * public/api/runs.php: Removed the part of the query that joined builders table. This
+        speeds up the query quite a bit.
+
+        * public/include/manifest.php:
+        (ManifestGenerator::generate): Generate builders field.
+        (ManifestGenerator::builders): Added. Returns an associative array of builder ids to an
+        associative array that contains name and its build URL template.
+
+        * public/index.html:
+        (.buildLabelWithLinks.linkifyIfNotNull): Renamed from linkifiedLabel. Take a label and url
+        instead of a revision since this function is used for revisions and build page URLs now.
+        (.buildLabelWithLinks): Include the linkified build number.
+
+        * public/js/helper-classes.js:
+        (TestBuild.builder): Added.
+        (TestBuild.buildNumber): Added.
+        (TestBuild.buildUrl): Returns the build URL. The variable name in the URL template has been
+        changed from %s to $buildNumber to be more descriptive and consistent with other URL templates.
+
+2013-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Tooltips interfere with user interactions
+
+        Rubber-stamped by Simon Fraser.
+
+        Disable tooltip on the dashboard page since graphs are too small to be useful there.
+        Also, show graphs for only 10 days by default as opposed to 20.
+        Finally, dismiss the hovering tooltip when mouse enters a "pinned" tooltip.
+
+        * public/index.html:
+        * public/js/helper-classes.js:
+
+2013-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix some serious typo. We're supposed to be using SHA-256, not SHA-1 to hash our passwords,
+        to be compatible with webkit-perf.appspot.com.
+
+        * public/admin/builders.php:
+        * public/api/report.php:
+
+2013-02-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed.
+
+        Add a missing constraint on builds table. For a given builder, there should be exactly
+        one build for a given build number.
+
+        Also add report_committed_at to reports table to record the time at which a given report
+        was processed and test_runs and run_iterations rows were committed into the database.
+
+        * database/config.json:
+        * public/api/report.php:
+
+2013-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed. Add more checks for empty SQL query results.
+
+        * public/include/manifest.php:
+
+2013-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        More build fixes on perf.webkit.org.
+
+        * public/api/runs.php: Make PostgreSQL happier.
+        * public/include/manifest.php: Don't assume we always have bug trackers.
+
+2013-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: index.html duplicates the code in PerfTestRuns to determine smallerIsBetter
+        and fix other miscellaneous UI bugs.
+
+        Rubber-stamped by Simon Fraser.
+
+        Removed the code to determine whether smaller value is better or not for a given test in index.html
+        in the favor of using that of PerfTestRuns.
+
+        * public/include/manifest.php: Fixed a typo.
+        * public/index.html:
+        (Chart):
+        (Chart.attachMainPlot): Fixed a bug to access previousPoint.left even when previousPoint is null.
+
+        * public/js/helper-classes.js:
+        (PerfTestRuns): Added EndAllocations, MaxAllocations, and MeanAllocations.
+
+        (PerfTestRuns.computeScalingFactorIfNeeded): When the mean is almost 10,000 units, we may end up
+        using 5 digits instead of 4, resulting in the use of scientific notations. Go up to the next unit
+        at roughly 2,000 units to avoid this.
+
+        (Tooltip.show): Show the tooltip even when the new content is identical to the previous content.
+        The only thing we can avoid is innerHTML.
+
+2013-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another build fix. The path to node is /usr/local/bin/node, not /usr/bin/local/node
+
+        * public/include/evaluator.js:
+
+2013-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13267898> SafariPerfMonitor: Bug trackers should be configurable
+
+        Reviewed by Remy Demarest.
+
+        Made the list of bug trackers configurable. Namely, each bug tracker can be added in
+        admin/bug-trackers.php and can be associated with multiple repositories.
+
+        The association between bug trackers and repositories (such as WebKit, Safari, etc...) are used
+        to determine the set of bug trackers to show for a given set of blame lists.
+        e.g. if a test regressed due to a change in Safari, then we don't want to show WebKit Bugzilla as
+        a place to file bugs against the regression.
+F
+        * database/init-database.sql: Added bug_trackers and tracker_repositories.
+        Also drop those tables before creating them (note "DROP TABLE reports" was missing).
+
+        * public/admin/bug-trackers.php: Added. The administrative interface for adding and managing
+        bug trackers, namely associated repositories.
+
+        * public/include/admin-header.php: Added a link to bug-trackers.php
+        * public/include/manifest.php:
+        (ManifestGenerator::generate): Include the list of bug trackers in the manifest.
+        Also moved the code to fetch repositories table here from ManifestGenerator::repositories.
+
+        (ManifestGenerator::repositories):
+
+        (ManifestGenerator::bug_trackers): Added. Generates an associative array of bug trackers where
+        keys are names of bug trackers and values are associative arrays with keys 'new_bug_url' and
+        'repositories' where the latter contains the list of associated repository names.
+
+        * public/index.html:
+        (Chart): Takes bugTrackers as as argument.
+        (Chart.showTooltipWithResults): Removed the hard-coded list.
+        (init):
+        (init.addPlatformsToDashboard):
+        (init.showCharts.createChartFromListPair):
+        (init): Stores the list of bug trackers in the manifest to a local variable.
+
+2013-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        A follow up on the previous build fix. When using proc_open, we need to make evalulator.js executable.
+
+        * public/include/evaluator.js:
+
+2013-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Extract the code to generate tabular view in administrative pages
+
+        Reviewed by Remy Demarest.
+
+        Extracted AdministrativePage to share the code to generate a tabular view of data and a form to insert
+        new row into the database.
+
+        * public/admin/aggregators.php: Use AdministrativePage.
+        * public/admin/builders.php: Ditto.
+        * public/admin/repositories.php: Ditto.
+        * public/include/admin-header.php:
+        (AdministrativePage): Added.
+        (AdministrativePage::__construct): column_info is an associative array that maps a SQL column name
+        to an associative array that describes the column.
+            - editing_mode: Specifies the type of form ('text', 'url', or 'string') to show for this column.
+            - label: Human readable name of the column.
+            - pre_insertion: Signifies that this column exists only before the row is inserted. e.g. password
+              column exists only before we create password_hash column at the insertion time.
+
+        (AdministrativePage::name_to_titlecase): Converts an underscored lowercase name to a human readable
+        titlecase (e.g. new_bug is converted to New Bug).
+        (AdministrativePage::column_label): Obtains the label specified in column_info or titlecased column name.
+        (AdministrativePage::render_form_control_for_column): "Renders" a text form control such as input and
+        textarea for a given editing mode ('text', 'url', or 'string').
+        (AdministrativePage::render_table): Renders a whole SQL table after sorting rows by the specified column.
+        (AdministrativePage::render_form_to_add): Renders a form to insert new row.
+
+2013-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Some systems don't support r+. Use proc_open instead.
+
+        * public/api/report.php:
+
+2013-02-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Use the mean data series as supposed to upper or lower confidence bounds
+        when computing the y-axis of data points to show tooltips at.
+
+        * public/index.html:
+
+2013-02-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed. Removed .htaccess in favor of directly putting directives in httpd.conf.
+
+        * Install.md:
+        * public/.htaccess: Removed.
+
+2013-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed.
+
+        * public/include/manifest.php: Build fix. db is on this.
+        * public/js/statistics.js:
+        (Statistics.confidenceInterval): Added. An utility function for debugging purposes.
+
+2013-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13165667> SafariPerfMonitor doesn't work on perf.webkit.org (Part 2)
+
+        Reviewed by Anders Carlsson.
+
+        Rewrote and merged populate-from-report.js into report.php.
+
+        * database/config.json: Added a path to node.js.
+
+        * database/init-database.sql: Don't require unit to be always present since it's no longer used by the front end.
+        Once we land this patch and update the administrative pages, we can remove this column.
+
+        Also add a new reports table to store JSON reported by builders. We used to store everything in jobs table but
+        that table is going away once we remove the node.js backend.
+
+        * database/populate-from-report.js: Removed.
+        * public/api/report.php: Added.
+        (ReportProcessor):
+        (ReportProcessor.__construct):
+        (ReportProcessor.process):
+
+        (ReportProcessor.store_report_and_get_build_data): We store the report into the database as soon as it has been
+        verified to be submitted by a known builder.
+
+        (ReportProcessor.exit_with_error): Store the error message and details in the database if the report had been
+        stored. If not, then notify that to the client via 'failureStored' in the JSON response.
+        (ReportProcessor.resolve_build_id): Insert build and build_revisions rows if needed. We don't do this atomically
+        inside a transaction because there could be multiple reports for a single build, each containing results for
+        different tests.
+
+        (ReportProcessor.recursively_ensure_tests): Parse a tree of tests and insert tests and test_metrics rows as
+        needed. It also computes the metrics to aggregate and prepares values to commit via ensure_aggregated_metric,
+        add_values_to_commit, and add_values_for_aggregation.
+
+        (ReportProcessor.is_list_of_aggregators): When a metric is an aggregation, it contains an array of aggregator
+        names, e.g. ["Arithmetic", "Geometric"], instead of a dictionary of configuration types to their values,
+        e.g. {Time: {current: [1, 2, 3,]}}. This function detects the former. (Note that dictionary and list are both
+        array's in PHP).
+
+        (ReportProcessor.ensure_aggregated_metric): Create a metric with aggregator to add it to the list of metrics
+        to be aggregated in ReportProcessor.aggregate.
+
+        (ReportProcessor.add_values_for_aggregation): Called by test metrics with aggregated parent test metrics.
+
+        (ReportProcessor.aggregate): Compute results for aggregated metrics. Consider a matrix with rows representing
+        child tests and columns representing "iterations" for a given aggregated metrics M. Initially, we have values
+        given for each row (child metrics of M). This function extracts each column (iteration) via
+        test_value_list_to_values_by_iterations, and feeds it into evaluate_expressions_by_node to get aggregated values
+        for each column (iteration of M). Finally, it registers those aggregated values to be committed.
+
+        Note that we don't want to start a new node.js process for each aggregation, so we accumulate all values to be
+        aggregated in node.js in $expressions. Each entry in $expressions is a JSON string that contains code and
+        values to be aggregated. node.js gives us back a list of JSON strings that contain aggregated values.
+
+        (ReportProcessor.test_value_list_to_values_by_iterations): See above.
+        (ReportProcessor.evaluate_expressions_by_node): See above.
+
+        (ReportProcessor.compute_caches): Compute cached mean, sum, and square sums for each run we're about to add
+        using evaluate_expressions_by_node. We can't do this before computing aggregated results since those aggregated
+        results also need the said caches.
+
+        (ReportProcessor.add_values_to_commit):
+
+        (ReportProcessor.commit): Add test_runs and run_iterations atomically inside a transaction, rolling back
+        the transaction as needed if anything goes wrong.
+
+        (ReportProcessor.rollback_with_error)
+        (main):
+        * public/include/db.php:
+        (Database.prepare_params): Use $values (instead of $placeholders) to compute the current index since
+        placeholders ($1, $2, etc...) may be split up into multiple arrays given they may not necessarily show up
+        contiguously in a SQL statement.
+
+        (Database.select_or_insert_row): Added. Selects a row if the attempt to insert the same row fails. It
+        automatically creates a query string from a dictionary of unprefixed column names and table. It returns
+        a column value of the choice.
+
+        (Database.begin_transaction): Added.
+        (Database.commit_transaction): Added.
+        (Database.rollback_transaction): Added.
+
+        * public/include/evaluator.js: Added.
+        * public/include/json-header.php:
+        (exit_with_error): Take error details and merge it with "additional details". This allows report.php to provide
+        context under which the request failed.
+        (successful_exit): Merge "additional details".
+        (set_exit_detail): Added. Sets "additional details" to the JSON returned by exit_with_error or successful_exit.
+        (merge_additional_details):
+
+2013-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Add more helper functions to db.php
+
+        Reviewed by Remy Demarest.
+
+        Added Database::insert_row and array_get to make common database operations easier.
+
+        * public/admin/aggregators.php: Use Database::insert_row instead of
+        execute_query_and_expect_one_row_to_be_affected.
+
+        * public/admin/builders.php: Ditto.
+
+        * public/admin/tests.php: Ditto; We used to run a separate SELECT query just to get the id after
+        inserting a row. With insert_row, we don't need that.
+
+        * public/include/admin-header.php: Ditto.
+
+        * public/include/db.php:
+        (array_get): Added. It returns the value of an array given a key if the key exists; otherwise
+        return the default value (defaults to NULL) if the key doesn't exist.
+
+        (Database::column_names): Added. Prefixes an array of column names and creates a comma separated
+        list of the names.
+
+        (Database::prepare_params): Added. Takes an associative array of column names and their values,
+        and builds up arrays for placeholder (e.g. $1, $2, etc...) and values, then returns an array of
+        column names all in the same order.
+
+        (Database::insert_row): Added. Inserts a new row into the specified table where column names have
+        the given prefix. Values are given in a form of an associative array where keys are unprefixed
+        column names and values are corresponding values. When the row is successfully inserted, it returns
+        the specified column's value (defaults to prefix_id). If NULL is specified, it returns a boolean
+        indicating the success of the insertion.
+
+2013-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13165667> SafariPerfMonitor doesn't work on perf.webkit.org (Part 1)
+
+        Reviewed by Conrad Shultz.
+
+        Rewrote the manifest generator in PHP.
+
+        * database/generate-manifest.js: Removed.
+        * public/admin/regenerate-manifest.php: Added. Use ManifestGenerator to generate and store the manifest.
+        * public/include/db.php:
+        (array_ensure_item_has_array): Added.
+        * public/include/evaluator.js: Added.
+        * public/include/json-header.php:
+        * public/include/manifest.php: Added.
+
+2013-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dates on overflow plot are overlapping
+
+        Rubber-stamped by Simon Fraser.
+
+        Don't show more than 5 days.
+
+        * public/index.html:
+        * public/js/helper-classes.js:
+        (TestBuild.UTCtoPST):
+        (TestBuild.now):
+
+2013-02-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Show build time as well as commit time on the dashboard and tooltips.
+
+        Rubber-stamped by Simon Fraser.
+
+        Include both the maximum commit time and build time in buildLabelWithLinks.
+        Also use ISO format to save the screen real estate.
+
+        * public/index.html:
+        (buildLabelWithLinks):
+        * public/js/helper-classes.js:
+        (TestBuild):
+        (TestBuild.buildTime):
+        (TestBuild.formattedBuildTime):
+
+2013-02-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; Convert metric.name to metric.unit in the front end.
+
+        * public/js/helper-classes.js:
+
+2013-02-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13166276> SafariPerfMonitor: Need hyperlinks to file bugs
+
+        Rubber-stamped by Simon Fraser.
+
+        This patch adds hyperlinks to file new bugs on Radar and WebKit Bugzilla. Because we want to include information
+        such as the degree of progression or regression and the regression ranges when filing new bugs, broke various
+        label() functions into smaller pieces to be used in both generating tooltips and the hyperlinks.
+
+        * public/index.html:
+        (.buildLabelWithLinks): Extracted from TestBuild.label.
+        (.showTooltipWithResults): Extracted from Tooltip.show. Also added the code to generate hyperlinks to file new bugs
+        on Radar and WebKit Bugzilla.
+        * public/js/helper-classes.js:
+        (PerfTestResult.metric): Replaced test() as runs.test() no longer exists.
+        (PerfTestResult.isBetterThan): Added.
+        (PerfTestResult.formattedRelativeDifference): Extracted from PerfTestResult.label.
+        (PerfTestResult.formattedProgressionOrRegression): Ditto. Also use "better" and "worse" instead of arrow symbols
+        to indicate progressions or regressions.
+        (PerfTestResult.label):
+        (TestBuild.formattedTime): Added.
+        (TestBuild.platform): Added.
+        (TestBuild.formattedRevisions): Extracted from TestBuild.label. Merged a part of linkifyLabel.
+        (TestBuild.smallerIsBetter): Added.
+        (Tooltip.show): Take a raw markup instead of two results.
+
+2013-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13151520> SafariPerfMonitor: Dashboard can cause excessive horizontal scrolling when there are many platforms
+
+        Rubber-stamped by Tim Horton.
+
+        Stack platforms when there are more than 3 of them since making the layout adaptive is tricky
+        since each platform may have a different number of tests to be shown on the dashboard.
+
+        * public/index.html:
+
+2013-02-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Don't prefix a SVn revision with 'r' when constructing a changeset / blame URL.
+
+        * public/js/helper-classes.js:
+        (TestBuild.label):
+
+2013-02-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: repository names or revisions are double-quoted when they contain a space
+
+        Rubber-stamped by Tim Horton.
+
+        The bug was in the PHP code that parsed Postgres array. Trim double quotations as needed.
+
+        Also fixed a bug in TestBuild where we used to show the revision range as r1234-1250 when
+        the revision r1234 was the revision used in the previous build.
+
+        * public/api/runs.php:
+        (parse_revisions_array): Trim double quotations around repository names and revisions.
+        * public/js/helper-classes.js:
+        (TestBuild.label):
+
+2013-02-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13151558> SafariPerfMonitor: Tooltip is unusable
+
+        Rubber-stamped by Tim Horton.
+
+        * public/index.html:
+        (Chart.attachMainPlot): Disable auto highlighting (circle around a data point that shows up on hover)
+        on the dashboard page as it's way too noisy.
+
+        (Chart.hideTooltip): Added. Hides the tooltip that shows up on hover.
+
+        (.toggleClickTooltip): Extracted from the code for "mouseout" bind (now replaced by "mouseleave").
+        Pins or unpins a tooltip. When pinning a tooltip, we create a tooltip behind the scene and show that
+        so that the tooltip for hover can be reused further.
+
+        (.closestItemForPageX): Find the closest item given pageX. We iterate data points from left to right,
+        and find the first point that lies on the right of the cursor position. We then compute the midpoint
+        between this and the previous point and pick the closer of the two. It returns an item-like object
+        that has all properties we need since flot doesn't provide an API to retrieve the real item object.
+
+        (Chart): Call toggleClickTooltip when a (hover) tooltip is clicked.
+
+        (Chart.attach): In "plothover" bind, call closestItemForPageX when item is not provided by flot on
+        the first or "current" data points (as opposed to target or baseline data points).
+
+        Also bind the code to clear crosshair and hide tooltips to "mouseleave" instead of "mouseout", and
+        avoid triggering this code when the cursor is still within the plot's rectangle (e.g. when a cursor
+        moves onto a tooltip) to avoid the premature dismissal of a tooltip.
+
+        * public/js/helper-classes.js:
+        (Tooltip.ensureContainer): Don't automatically close then the user clicks on tooltip. Delegate this
+        work to the client via bindClick.
+
+        (Tooltip.show): Move tooltip up by 5px. Also added a FIXME to move this offset computation to the client.
+
+        (Tooltip.bindClick): Added.
+
+2013-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Yet another build fix. metricId*s*.
+
+        * public/admin/tests.php:
+
+2013-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another build fix. Use the new payload format for the aggregate job.
+
+        * public/admin/tests.php:
+
+2013-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fixes.
+
+        * database/aggregate.js: Use variables that actually exist.
+        * database/database-common.js:
+        (ensureConfigurationIdFromList): Add the newly added configuration to the list so that subsequent
+        function calls will find this configuration.
+
+2013-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13130139> SafariPerfMonitor: Add ReadMe
+
+        Reviewed by Ricky Mondello.
+
+        Turned InstallManual into a proper markdown document and added ReadMe.md.
+
+        * InstallManual: Removed.
+        * InstallManual.md: Moved from InstallManual.
+        * ReadMe.md: Added.
+
+2013-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13109335> SafariPerfMonitor: Add baseline and target lines
+
+        Reviewed by Ricky Mondello.
+
+        This patch prepares the front end code to process baseline and target results properly.
+
+        * public/index.html:
+        (fetchTest.createRunAndResults): Extracted.
+        (fetchTest): Call createRunAndResults on current, baseline, and target values of the JSON.
+        Deleted the comment about how sorting will be unnecessary once we start results in the server side
+        since sorting by the maximum revision commit time turned out to be non-trivial in php.
+
+2013-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13057071> SafariPerfMonitor: Use newer version of flot that supports timezone properly
+
+        Reviewed by Tim Horton.
+
+        Use flot at https://github.com/flot/flot/commit/ec168da2cb8619ebf59c7e721d12c44a7960ff41.
+        These files are "dynamically linked" to our app.
+
+        * public/index.html:
+        * public/js/jquery-1.8.2.min.js: Removed.
+        * public/js/jquery.colorhelpers.js: Added.
+        * public/js/jquery.flot.categories.js: Added.
+        * public/js/jquery.flot.crosshair.js: Added.
+        * public/js/jquery.flot.errorbars.js: Added.
+        * public/js/jquery.flot.fillbetween.js: Added.
+        * public/js/jquery.flot.js: Added.
+        * public/js/jquery.flot.min.js: Removed.
+        * public/js/jquery.flot.navigate.js: Added.
+        * public/js/jquery.flot.resize.js: Added.
+        * public/js/jquery.flot.selection.js: Added.
+        * public/js/jquery.flot.stack.js: Added.
+        * public/js/jquery.flot.symbol.js: Added.
+        * public/js/jquery.flot.threshold.js: Added.
+        * public/js/jquery.flot.time.js: Added.
+        * public/js/jquery.js: Added.
+
+2013-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Return NaN instead of throwing when there aren't enough samples.
+
+        Reviewed by Sam Weinig.
+
+        It's better to return NaN when we don't have enough samples so that we can treat it
+        as if we don't have any confidence interval.
+
+        * public/js/statistics.js:
+        (Statistics.new):
+
+2013-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Apparently Safari sometimes appends / at the end of hash location. Remove that.
+
+        * public/js/helper-classes.js:
+        (URLState.parseIfNeeded):
+
+2013-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13081582> SafariPerfMonitor: Always use parameterized SQL functions in php code
+
+        Reviewed by Ricky Mondello.
+
+        Parameterized execute_query_and_expect_one_row_to_be_affected and updated the code accordingly.
+
+        * public/admin/aggregators.php: Use heredoc.
+        * public/admin/builders.php:
+        * public/admin/jobs.php:
+        * public/admin/repositories.php:
+        * public/admin/tests.php: Updated the forms to use unprefixed field names to match other pages.
+        This allows us to use update_field when updating test's url and metric's unit. Changed the action
+        to regenerate aggregated matrix from "update" to "add" to simplify the dependencies in if-else.
+        Also removed a stray code to update unit and url simultaneously since it's never used.
+        * public/include/admin-header.php:
+        (execute_query_and_expect_one_row_to_be_affected): Added $params. Also automatically convert
+        empty strings to NULL as it was previously done via $db->quote_string_or_null_if_empty in callers.
+        (update_field): Moved from repositories.php.
+        (add_job):
+        * public/include/db.php:
+        (quote_string_or_null_if_empty): Removed now that nobody uses this function.
+
+2013-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fixes. Treat mean, sum, and square sum as float, not int.
+
+        Also use 95% confidence interval instead of 90% confidence interval.
+
+        * public/api/runs.php:
+        * public/js/helper-classes.js:
+        (.this.confidenceIntervalDelta):
+
+2013-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an administrative page to edit repository information.
+
+        Reviewed by Ricky Mondello.
+
+        * public/admin/repositories.php: Added.
+        * public/include/admin-header.php:
+
+2013-01-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13067539> SafariPerfMonitor: Automatically create aggregated metrics from builder reports
+
+        Reviewed by Ricky Mondello.
+
+        Auto-create aggregated matrix such as arithmetic means and geometric means as requested and add a job
+        to aggregate results for those matrix in populate-from-report.js.
+
+        * database/generate-manifest.js:
+        (.): Include aggregator names such as Arithmetic and Geometric in the list of metrics.
+        * database/init-database.sql: Remove an erroneous unique constraint. There could be multiple matrix that share
+        the same test and name (e.g. Dromaeo, Time) with different aggregators (e.g. Arithmetic and Geometric).
+        * database/populate-from-report.js:
+        (main):
+        (getReport): No change even though the diff looks as if it moved.
+        (processReport): Extracted from main. Fetch the list of aggregators, pass that to recursivelyEnsureTestsIdsAndMetricsIds
+        to obtain the list of aggregated metrics (such as arithmetic means) that need to be passed to aggregate.js
+        (scheduleJobs): Extracted from processReport. Add a job to aggregate results.
+        (recursivelyEnsureTestsIdsAndMetricsIds): When a metric is a list of names, assume them as aggregator names,
+        and add corresponding metrics for them. Note we convert those names to ids using the dictionary we obtained
+        in processReport.
+        (ensureMetricId): Take an aggregator id as an argument.
+        * database/process-jobs.js: Support multiple metric ids and build id. Note that aggregate.js aggregates results
+        for all builds when the build id is not specified.
+        * public/admin/tests.php:
+        * public/index.html: Include the aggregator name in the full name since there could be multiple metrics
+        of the same name with different aggregators.
+
+2013-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Don't pass in arguments to in the wrong order.
+
+        * database/aggregate.js:
+
+2013-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/13057110> SafariPerfMonitor: x-axis is messed up
+
+        Reviewed by Ricky Mondello.
+
+        Since the version of flot we use doesn't support showing graphs in the current locate or
+        in a specific timezone, convert all timestamps to PST manually (Date's constructor will still
+        treat them as in UTC). We don't want to use the current locate because other websites on
+        webkit.org assume PST.
+
+        Also append this information to build's label.
+
+        * public/js/helper-classes.js:
+        (TestBuild):
+        (TestBuild.label):
+
+2013-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Store test URLs reported by builders.
+
+        Reviewed by Ricky Mondello.
+
+        * database/populate-from-report.js:
+        (recursivelyEnsureTestsIdsAndMetricsIds): Pass in the test url.
+        (ensureTestId): Store the URL.
+
+2013-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Yet another build fix; don't blow up even if we didn't have any test configurations.
+
+        * public/admin/tests.php:
+
+2013-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix; don't instantiate Date when a timestamp wasn't provided.
+
+        * database/populate-from-report.js:
+
+2013-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename SafariPerfDashboard to SafariPerfMonitor and add a install manual.
+
+        Reviewed by Tim Horton.
+
+        Added an install manual.
+
+        * InstallManual: Added.
+
+2012-12-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Minor build fix. Don't unset builderPassword when it's not set.
+
+        * public/api/report.php:
+
+2012-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Prettify JSON payloads and make very large payloads not explode the table in jobs.php.
+
+        Reviewed by Ricky Mondello.
+
+        * public/admin/admin.css: Make a very large payload scrollable.
+        * public/admin/jobs.php: Format JSONs.
+
+2012-12-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/12897424> SafariPerfMonitor: Add ability to report results from bots
+
+        Reviewed by Ricky Mondello.
+
+        Add report.php and populate-from-report.js that process JSON files submitted by builders.
+
+        * database/populate-from-report.js: Added.
+        (main):
+        (getReport): Obtains the payload (the actual report) from "jobs" table.
+        (recursivelyEnsureTestsIdsAndMetricsIds): "reports.tests" contain a tree of tests, test metrics,
+        and their results. This function recursively traverses tests and metrics and ensure their ids.
+        (ensureTestId):
+        (metricToUnit): Maps a metric name to a unit. This should really be done in the client side since
+        there is no point in storing unit given that every metric maps to exactly one unit (i.e. the mapping
+        is a "function" in mathematical sense).
+        (ensureMetricId):
+        (ensureRepositoryIdsForAllRevisions):
+        (getIdOrCreateBuildWithRevisions):
+        (ensureBuildIdAndRevisions): Obtains a build id given a builder name, a build number, and a build time
+        if one already exists. If not, then inserts a new build and corresponding revisions information (e.g.
+        build 123 may contain WebKit revision r456789). We don't retrieve rows for revisions since we don't use
+        it elsewhere.
+        (insertRun): Insert new rows into "test_runs" and "run_iterations" tables, thereby recording the new
+        test results all in a single transaction. This allows us to keep the database consistent in that either
+        a build has been reported or not at least in "test_runs" and "run_iterations" tables. It'll be ideal if
+        we could do the same for "builds" and "build_revisions" but that's not a hard requirement as far as
+        other parts of the application are concerned.
+        (scheduleQueriesToInsertRun):
+        * database/process-jobs.js: Add a call to populate-from-report.js.
+        * public/api/report.php: Added. Adds a new job named "report" to be processed by populate-from-report.js.
+        * public/include/db.php: Support parameterized query.
+        * public/include/json-header.php: Always include 'status' in the response so that builder submitting
+        a test result could confirm that the submission indeed succeeded.
+
+2012-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename get(Id)OrCreate*(Id) to ensure*Id as suggested by Ricky on one of his code reviews.
+
+        * database/aggregate.js:
+        * database/database-common.js:
+        (selectColumnCreatingRowIfNeeded):
+        (ensureRepositoryId):
+        (ensureConfigurationIdFromList):
+        * database/perf-webkit-migrator.js:
+        (.migrateStat.):
+        (.migrateStat):
+        (getOrCreateBuildId):
+
+2012-12-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extract commonly-used functions from aggregate.js and perf-webkit-migrator.js.
+
+        Reviewed by Ricky Mondello.
+
+        As a preparation to add report.js that processes a JSON file submitted by bots, extract various functions
+        and classes from aggregate.js and perf-webkit-migrator.js to be shared.
+
+        * database/aggregate.js: Extracted TaskQueue and SerializedTaskQueue into utility.js.
+        (main):
+        (processBuild):
+        (saveAggregatedResults):
+        * database/database-common.js:
+        (getIdOrCreatePlatform): Extracted from webkit-perf-migrator.js.
+        (getIdOrCreateRepository): Ditto.
+        (getConfigurationsForPlatformAndMetrics): Renamed from fetchConfigurations. Extracted from aggregator.js.
+        (getIdFromListOrInsertConfiguration): Renamed from getOrInsertConfiguration. Extracted from aggregator.js.
+        * database/perf-webkit-migrator.js:
+        * database/utility.js: Added.
+        (TaskQueue): Extracted from aggregator.js. Fixed a bug that prevented tasks added after start() is called
+        from being executed.
+        (TaskQueue.startTasksInQueue): Execute remaining tasks without serializing them. If the queue is empty,
+        call the callback passed into start().
+        (TaskQueue.taskCallback): The function each task calls back. Decrement the counter and call statTasksInQueue.
+        (TaskQueue.addTask):
+        (TaskQueue.start):
+        (SerializedTaskQueue): Unlike TaskQueue, this class executes each task sequentially.
+        (SerializedTaskQueue.executeNextTask):
+        (SerializedTaskQueue.addTask):
+        (SerializedTaskQueue.start):
+
+2012-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert erroneously committed changes.
+
+        * database/config.json:
+
+2012-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        aggregator.js should be able to accept multiple metric ids and a single build id.
+
+        Reviewed by Ricky Mondello.
+
+        Make aggregator.js accept multiple ids and generate results for single build when bots are
+        reporting new results.
+
+        * database/aggregate.js:
+        (parseArgv): Added. Returns an object containing the parsed representation of argv,
+        which currently contains metricIDs and buildIds.
+        (main): Use parseArgv and processConfigurations
+        (processPlatform): Use build ids passed in or obtain all builds for the given platform.
+        (processPlatform.processConfigurations): Extracted.
+
+2012-12-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an administrative page for builders.
+
+        Reviewed by Ricky Mondello.
+
+        We need an administrative page to add and edit builder information.
+        Also renamed "slaves" to "builders" in order to reduce the amount of technical jargon we use.
+
+        * database/init-database.sql: Renamed slaves table to builders. Drop slave_os and slave_spec
+        since we don't have plans to use those columns in near future. Also make builder_name unique
+        as required by the rest of the app.
+        * public/admin/builders.php: Added.
+        * public/api/runs.php: Updated per the table rename.
+        * public/include/admin-header.php: Added a link to builders.php.
+
+2012-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fixes for r46982.
+
+        * database/aggregate.js:
+        (fetchConfigurations):  Bind i so that it's not always metricIds.length.
+        (fetchBuildsForPlatform): Return run_build as build_id since that's what caller expects.
+        (processBuild): Don't print "." until we've committed transactions. It's misleading.
+
+2012-12-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed. Move some php files to public/include as suggested by Mark on a code review.
+
+        * public/admin/aggregators.php:
+        * public/admin/footer.php: Removed.
+        * public/admin/header.php: Removed.
+        * public/admin/index.php:
+        * public/admin/jobs.php:
+        * public/admin/tests.php:
+        * public/api/json-header.php: Removed.
+        * public/api/runs.php:
+        * public/db.php: Removed.
+        * public/include: Added.
+        * public/include/admin-footer.php: Copied from public/admin/footer.php.
+        * public/include/admin-header.php: Copied from public/admin/header.php.
+        * public/include/db.php: Copied from public/db.php.
+        * public/include/json-header.php: Copied from public/api/json-header.php.
+
+2012-12-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/12822613> SafariPerfMonitor: implement naive value aggregation mechanism
+
+        Reviewed by Ricky Mondello.
+
+        Added the initial implementation of value aggregation.
+        Also added abilities to configure the dashboard page in tests.php.
+
+        * database/aggregate.js: Added.
+        (TaskQueue): Added. Execute all tasks at once and waits for those tasks to complete.
+        (TaskQueue.addTask):
+        (TaskQueue.start):
+        (SerializedTaskQueue): Added. Execute tasks sequentially after one another until all of them are completed.
+        (SerializedTaskQueue.addTask):
+        (SerializedTaskQueue.start):
+        (main):
+        (processPlatform):
+        (fetchConfigurations):
+        (fetchBuildsForPlatform):
+        (processBuild):
+        (testsWithDifferentIterationCounts):
+        (aggregateIterationsForMetric): Retrieve run_iterations and aggregate results in memory.
+        (saveAggregatedResults): Insert into test_runs and test_config in transactions.
+        (getOrInsertConfiguration):
+        (fetchAggregators):
+        * database/database-common.js:
+        (fetchTable): Log an error as an error.
+        (getOrCreateId): Extracted from perf-webkit-migrator.
+        (statistics): Added.
+        * database/perf-webkit-migrator.js:
+        (migrateTestConfig): Converted units to respective metric names. Also removed the code to add jobs to update
+        runs JSON since runs JSONs are generated on demand now.
+        (migrateStat):
+        (getOrCreatePlatformId):
+        (getOrCreateTestId):
+        (getOrCreateConfigurationId):
+        (getOrCreateRevisionId):
+        (getOrCreateRepositoryId):
+        (getOrCreateBuildId):
+        * database/process-jobs.js:
+        (processJob): Handle 'aggregate' type.
+
+2012-12-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix the dashboard after adding test_metrics.
+
+        Reviewed by Ricky Mondello.
+
+        Rename test to metrics in various functions and sort tests on the charts page.
+        Also representing whether a test appears or not by setting a flag on dashboard
+        was bogus because test objects are shared by multiple platforms. Instead, store
+        dashboard platform list as intended by the manifest JSON.
+
+        * public/index.html:
+        (PerfTestRuns): Renamed test to metric.
+        (fetchTest): Ditto.
+        (showCharts): Ditto; also sort metrics' full names before adding them to the select element.
+        (fullName): Moved so that it appears above where it's called.
+        * public/js/helper-classes.js:
+
+2012-12-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update tests.php to reflect recent changes in the database schema.
+
+        Reviewed by Conrad Shultz.
+
+        Made the following changes to tests.php:
+        1. Disallow adding metrics to tests without subtests.
+        2. Made dashboard configurable by adding checkboxes for each platform on each metric.
+        3. Linkified tests with subtests instead of showing all them at once.
+
+        * public/admin/admin.css:
+        (.action-field, .notice):
+        (label):
+        * public/admin/header.php: Specify paths by absolute paths so that tests.php can use PATH_INFO.
+        (execute_query_and_expect_one_row_to_be_affected): Return a boolean. Used in tests.php while adding test_metrics.
+        (add_job): Extracted.
+        * public/admin/tests.php: See above.
+        (array_item_set_default): Added.
+        (array_item_or_default): Renamed from get_value_with_default.
+        (compute_full_name): Extracted.
+        (sort_tests): Ditto.
+        (map_metrics_to_tests): Ditto.
+
+2012-12-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/12832324> SafariPerfMonitor: Linkify test names
+
+        Reviewed by Simon Fraser.
+
+        Linkify the headers using metric.test.url when it's provided.
+
+        * public/index.html:
+
+2012-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use parameterized pg_query_params in query_and_fetch_all
+
+        Reviewed by Conrad Shultz.
+
+        Address a review comment by Mark by using pg_query_params instead of pg_query in query_and_fetch_all.
+
+        * public/api/runs.php:
+        * public/db.php:
+        (ctype_alnum_underscore): Added.
+
+2012-12-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update the migration tool to support test_metrics.
+
+        Reviewed by Mark Rowe.
+
+        Updated the migration tool from webkit-perf.appspot.com to support test_metrics.
+        Also import run_iteration rows as runs JSON files now include individual values.
+
+        * database/database-common.js:
+        (addJob): Extracted.
+        * database/perf-webkit-migrator.js:
+        (migrateTestConfig): Interchange the order in which we fetch runs and add configurations
+        so that we can pass in the metric name and unit to getOrCreateConfigurationId.
+        (getOrCreateConfigurationId): Updated to add both test configuration and test metric.
+        (ensureCheckout):
+
+2012-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Suppress "Undefined index" warning.
+
+        * public/admin/tests.php:
+
+2012-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a commit error in r46756. api/ should obviously be added under public/
+
+        * api: Removed.
+        * api/json-header.php: Removed.
+        * api/runs.php: Removed.
+        * public/api: Copied from api.
+
+2012-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Linkify revisions and revisions range
+        <rdar://problem/12801010>
+
+        Reviewed by Mark Rowe.
+
+        Linkify revisions in TestBuild.label. Pass in manifest.repositories to TestBuild's constructor
+        since it needs to know "url" and "blameUrl".
+
+        Also tweaked the appearance of graphs on charts page to better align graphs when unit names are long.
+
+        * public/index.html:
+        * public/js/helper-classes.js:
+        (TestBuild):
+        (TestBuild.revision): Renamed from webkitRevision. Now returns an arbitrary revision number.
+        (TestBuild.label): Add labels for all revisions.
+        (TestBuild):
+        (.ensureContainer):
+
+2012-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make the generation of "runs" JSON dynamic and support test_metrics.
+
+        Reviewed by Mark Rowe.
+
+        It turned out that we can fetch all runs for a given configuration in roughly 100-200ms.
+
+        Since there could be hundreds, if not thousands, of tests for each configuration and users
+        aren't necessarily interested in looking at all test results, it's much more efficient to
+        generate runs JSON dynamically (i.e. polling) upon a request instead of generating all of them
+        when bots report new results (i.e. pushing).
+
+        Rewrote the script to generate runs JSON in php and also supported test_metrics table.
+
+        * api: Added.
+        * api/json-header.php: Added. Sets Content-Type and cache policies (10 minutes by default).
+        (exit_with_error): Added.
+        (successful_exit): Added.
+        * api/runs.php: Added. Ported database/database-common.js. It's much shorter in php!
+        * database/generate-runs.js: Removed.
+        * database/process-jobs.js: No longer supports "runs".
+        * public/.htaccess: Added. Always add MultiView so that api/runs can receive a path info.
+        * public/db.php: Print "Nothing to see here." when it's accessed directly.
+        (ends_with): Added.
+        * public/index.html: Fetch runs JSONs from /api/runs/ instead of data/.
+
+2012-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update tests.php and sample-data.sql per addition of test_metrics.
+
+        Rubber-stamped by Timothy Hatcher.
+
+        Remove a useless code from tests.php that used to update the unit and the url of a test
+        since it's no longer used, and add the UI and the ability to add a new aggregator to a test.
+
+        Also update the sample data to reflect the addition of test_metrics.
+
+        * database/sample-data.sql:
+        * public/admin/tests.php:
+
+2012-11-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Share more code between admin pages.
+
+        Reviewed by Timothy Hatcher.
+
+        Added notice and execute_query_and_expect_one_row_to_be_affected helper functions to share more code
+        between admin pages.
+
+        Also moved the code to connect to the database into header.php to be shared. Admin pages just need
+        to check the nullity of global $db now.
+
+        * public/admin/aggregators.php:
+        * public/admin/header.php:
+        (notice): Added
+        (execute_query_and_expect_one_row_to_be_affected): Added.
+        * public/admin/index.php:
+        * public/admin/jobs.php:
+        * public/admin/tests.php:
+
+2012-11-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Add admin page to edit aggregators
+        <rdar://problem/12782687>
+
+        Reviewed by Mark Rowe.
+
+        Add aggregators.php. It's very simple. We should probably share more code between various admin pages.
+
+        * public/admin/aggregators.php: Added.
+        * public/admin/header.php:
+        * public/admin/jobs.php: Removed an erroneous hidden input element.
+
+2012-11-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a syntax error in init-database.sql and add the missing drop table at the beginning.
+
+        * database/init-database.sql:
+
+2012-11-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Allow multiple metrics per test
+        <rdar://problem/12773506>
+
+        Rubber-stamped by Mark Rowe.
+
+        Introduce a new table test_metrics. This table represents metrics each test can have
+        such as time, memory allocation, frame rate as well as aggregation such as arithmetic mean
+        and geometric mean.
+
+        Updated admin/tests.php and index.html accordingly.
+
+        Also create few indexes based on postgres' "explain analysis" as suggested by Mark.
+
+        * database/generate-manifest.js:
+        (buildPlatformMapIfPossible):
+        * database/generate-runs.js:
+        (fetchRuns):
+        * database/init-database.sql:
+        * database/schema.graffle:
+        * public/admin/admin.css:
+        (table):
+        (tbody.odd):
+        * public/admin/tests.php:
+        * public/index.html:
+
+2012-11-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SafariPerfMonitor: Improve the webkit-perf migration tool
+        <rdar://problem/12760882>
+
+        Reviewed by Mark Rowe.
+
+        Make the migrator tool skip runs when fetching runs failed since webkit-perf.appspot.com is unreliable
+        and we don't want to pause the whole importation process until the user comes back to decide whether
+        to retry or not.
+
+        Also place form controls next to each test in tests.php so that users don't have to scroll all the way
+        down to make modifications.
+
+        Finally, add unique constraint to (run_config, run_build) in test_runs table in order to optimize a query
+        of the form: "SELECT run_id FROM test_runs WHERE run_config = $1 AND run_build = $2",
+
+        * database/init-database.sql:
+        * database/perf-webkit-migrator.js:
+        (migrateTestConfig):
+        * database/schema.graffle:
+        * public/admin/admin.css:
+        (table):
+        * public/admin/tests.php:
+
+2012-11-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Create a new performance dashboard
+        <rdar://problem/12625582>
+
+        Rubber-stamped by Mark Rowe.
+
+        Add the initial implementation of the perf dashboard.
+
+        * database: Added.
+        * database/config.json: Added.
+        * database/database-common.js: Added.
+        (connect):
+        (fetchTable):
+        (manifestPath):
+        (pathToRunsJSON):
+        (pathToLocalScript):
+        (config):
+        * database/generate-manifest.js: Added.
+        (ensureProperty):
+        (buildTestMap):
+        (buildPlatformMapIfPossible):
+        (generateFileIfPossible):
+        * database/perf-webkit-migrator.js: Added.
+        * database/process-jobs.js: Added.
+        * database/sample-data.sql: Added.
+        * database/schema.graffle: Added.
+        * public: Added.
+        * public/admin: Added.
+        * public/admin/README: Added.
+        * public/admin/admin.css: Added.
+        * public/admin/footer.php: Added.
+        * public/admin/header.php: Added.
+        * public/admin/index.php: Added.
+        * public/admin/jobs.php: Added.
+        * public/admin/tests.php: Added.
+        * public/common.css: Added.
+        * public/data: Added.
+        * public/db.php: Added.
+        * public/index.html: Added.
+        * public/js: Added.
+        * public/js/helper-classes.js: Added.
+        * public/js/jquery-1.8.2.min.js: Added.
+        * public/js/jquery.flot.min.js: Added.
+        * public/js/jquery.flot.plugins.js: Added.
+        * public/js/shared.js: Added.
+        (fileNameFromPlatformAndTest):
+        * public/js/statistics.js: Added.
+
