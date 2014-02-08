@@ -1,3 +1,15 @@
+2014-02-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Add initial performance tests for inset shape
+        https://bugs.webkit.org/show_bug.cgi?id=128378
+
+        Reviewed by Ryosuke Niwa.
+
+        * Layout/Shapes/ShapeOutsideContentBox.html: Move js to shapes.js.
+        * Layout/Shapes/ShapeOutsideInset.html: Added.
+        * Layout/Shapes/resources/shapes.js: Added.
+        (.):
+
 2014-02-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Undelete the "build" directory erroneously removed in r163427.
