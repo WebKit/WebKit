@@ -31,7 +31,7 @@
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CoreFoundation.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+#if !TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
 /* To support availability macros that mention newer OS X versions when building on older OS X versions,
    we provide our own definitions of the underlying macros that the availability macros expand to. We're
    free to expand the macros as no-ops since frameworks built on older OS X versions only ship bundled with

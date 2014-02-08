@@ -1,3 +1,9 @@
+2014-02-08  Mark Rowe  <mrowe@apple.com>
+
+        Fix the iOS build.
+
+        * API/WebKitAvailability.h: Skip the workarounds specific to OS X when we're building for iOS.
+
 2014-02-07  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/128448> Fix use of availability macros on recently-added APIs
