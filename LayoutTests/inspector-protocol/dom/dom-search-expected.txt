@@ -17,7 +17,14 @@ body.inside-iframe
 Count: 2
 body.main-frame
 body.inside-iframe
+=== Query: "<BODY>" ===
+Count: 2
+body.main-frame
+body.inside-iframe
 === Query: "onload" ===
+Count: 1
+body.main-frame
+=== Query: "ONLOAD" ===
 Count: 1
 body.main-frame
 === Query: "runTest()" ===
@@ -30,6 +37,12 @@ body.main-frame
 Count: 1
 body.main-frame
 === Query: "runTest()\"" ===
+Count: 1
+body.main-frame
+=== Query: "RUNTEST()" ===
+Count: 1
+body.main-frame
+=== Query: "runtest()" ===
 Count: 1
 body.main-frame
 === Query: ".body-inside-iframe" ===
@@ -48,6 +61,9 @@ head.inside-iframe
 body.inside-iframe
 div.base1.inside-iframe
 p.inside-iframe
+=== Query: "BODY[ONLOAD]" ===
+Count: 1
+body.main-frame
 === Query: "/html/body" ===
 Count: 2
 body.main-frame
@@ -55,4 +71,8 @@ body.inside-iframe
 === Query: "/html/body/@onload" ===
 Count: 1
 body.main-frame
+=== Query: "/HTML/BODY" ===
+Count: 2
+body.main-frame
+body.inside-iframe
 

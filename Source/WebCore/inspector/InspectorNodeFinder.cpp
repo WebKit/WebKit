@@ -105,9 +105,9 @@ void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node* parentNode)
 
 bool InspectorNodeFinder::matchesAttribute(const Attribute& attribute)
 {
-    if (attribute.localName().find(m_whitespaceTrimmedQuery) != notFound)
+    if (attribute.localName().string().findIgnoringCase(m_whitespaceTrimmedQuery) != notFound)
         return true;
-    return m_exactAttributeMatch ? attribute.value() == m_attributeQuery : attribute.value().find(m_attributeQuery) != notFound;
+    return m_exactAttributeMatch ? attribute.value() == m_attributeQuery : attribute.value().string().findIgnoringCase(m_attributeQuery) != notFound;
 }
 
 bool InspectorNodeFinder::matchesElement(const Element& element)
