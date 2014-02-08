@@ -324,6 +324,18 @@ struct WKViewInterpretKeyEventsParameters {
     return _data->_page->drawsTransparentBackground();
 }
 
+- (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
+{
+    _data->_allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
+    _data->_page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
+    _data->_page->setShouldUseImplicitRubberBandControl(allowsBackForwardNavigationGestures);
+}
+
+- (BOOL)allowsBackForwardNavigationGestures
+{
+    return _data->_allowsBackForwardNavigationGestures;
+}
+
 - (BOOL)acceptsFirstResponder
 {
     return YES;
@@ -3273,18 +3285,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (BOOL)allowsMagnification
 {
     return _data->_allowsMagnification;
-}
-
-- (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
-{
-    _data->_allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
-    _data->_page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
-    _data->_page->setShouldUseImplicitRubberBandControl(allowsBackForwardNavigationGestures);
-}
-
-- (BOOL)allowsBackForwardNavigationGestures
-{
-    return _data->_allowsBackForwardNavigationGestures;
 }
 
 - (void)magnifyWithEvent:(NSEvent *)event

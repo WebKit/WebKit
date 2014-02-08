@@ -1,3 +1,11 @@
+2014-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        Build fix. Wrong section of the file.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setAllowsBackForwardNavigationGestures:]):
+        (-[WKView allowsBackForwardNavigationGestures]):
+
 2014-02-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] The WebPageProxy's copy of pageScaleFactor is not update when the scale is changed from the viewport configuration
