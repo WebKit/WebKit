@@ -37,7 +37,7 @@ OBJC_CLASS NSEvent;
 #endif
 
 #if PLATFORM(IOS)
-OBCJ_CLASS WebEvent;
+OBJC_CLASS WebEvent;
 #endif
 
 #if PLATFORM(GTK)

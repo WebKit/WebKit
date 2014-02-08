@@ -1,5 +1,11 @@
 2014-02-07  Dan Bernstein  <mitz@apple.com>
 
+        iOS build fix.
+
+        * platform/PlatformKeyboardEvent.h: Fixed a typo.
+
+2014-02-07  Dan Bernstein  <mitz@apple.com>
+
         Stop using PLATFORM(MAC) in WebCore/platform except where it means “OS X but not iOS”
         https://bugs.webkit.org/show_bug.cgi?id=128404
 
