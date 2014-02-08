@@ -1,3 +1,32 @@
+2014-02-07  Mark Lam  <mark.lam@apple.com>
+
+        Unify JSLock implementation for iOS and non-iOS ports.
+        <https://webkit.org/b/128409>
+
+        Reviewed by Michael Saboff.
+
+        The iOS and non-iOS implementations of dropAllLocks(),
+        dropAllLocksUnconditionally(), and grabAllLocks() effectively do the
+        same work. The main difference is that the iOS implementation acquires
+        the JSLock spin lock in the DropAllLocks class while the other ports
+        acquire it when it calls JSLock::lock() and unlock().
+
+        The other difference is that the iOS implementation will only increment
+        m_locksDropDepth if it actually drops locks, whereas other ports will
+        increment it unconditionally. Analogously, iOS decrements the depth only
+        when needed while other ports will decrement it unconditionally when
+        re-grabbing locks.
+
+        We can unify the 2 implementations by having both use the iOS
+        implementation for a start.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::dropAllLocksUnconditionally):
+        (JSC::JSLock::grabAllLocks):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+
 2014-02-06  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL build scaffolding

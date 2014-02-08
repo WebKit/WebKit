@@ -208,7 +208,6 @@ bool JSLock::currentThreadIsHoldingLock()
 // This function returns the number of locks that were dropped.
 unsigned JSLock::dropAllLocks(SpinLock& spinLock)
 {
-#if PLATFORM(IOS)
     ASSERT_UNUSED(spinLock, spinLock.IsHeld());
     // Check if this thread is currently holding the lock.
     // FIXME: Maybe we want to require this, guard with an ASSERT?
@@ -231,17 +230,10 @@ unsigned JSLock::dropAllLocks(SpinLock& spinLock)
     }
     m_lock.unlock();
     return lockCount;
-#else
-    if (m_lockDropDepth++)
-        return 0;
-
-    return dropAllLocksUnconditionally(spinLock);
-#endif
 }
 
 unsigned JSLock::dropAllLocksUnconditionally(SpinLock& spinLock)
 {
-#if PLATFORM(IOS)
     ASSERT_UNUSED(spinLock, spinLock.IsHeld());
     // Check if this thread is currently holding the lock.
     // FIXME: Maybe we want to require this, guard with an ASSERT?
@@ -258,19 +250,10 @@ unsigned JSLock::dropAllLocksUnconditionally(SpinLock& spinLock)
     }
     m_lock.unlock();
     return lockCount;
-#else
-    UNUSED_PARAM(spinLock);
-    unsigned lockCount = m_lockCount;
-    for (unsigned i = 0; i < lockCount; ++i)
-        unlock();
-
-    return lockCount;
-#endif
 }
 
 void JSLock::grabAllLocks(unsigned lockCount, SpinLock& spinLock)
 {
-#if PLATFORM(IOS)
     ASSERT(spinLock.IsHeld());
     // If no locks were dropped, nothing to do!
     if (!lockCount)
@@ -293,13 +276,6 @@ void JSLock::grabAllLocks(unsigned lockCount, SpinLock& spinLock)
     ASSERT(!m_lockCount);
     m_lockCount = lockCount;
     --m_lockDropDepth;
-#else
-    UNUSED_PARAM(spinLock);
-    for (unsigned i = 0; i < lockCount; ++i)
-        lock();
-
-    --m_lockDropDepth;
-#endif
 }
 
 JSLock::DropAllLocks::DropAllLocks(ExecState* exec, AlwaysDropLocksTag alwaysDropLocks)
@@ -309,9 +285,7 @@ JSLock::DropAllLocks::DropAllLocks(ExecState* exec, AlwaysDropLocksTag alwaysDro
     if (!m_vm)
         return;
     SpinLock& spinLock = m_vm->apiLock().m_spinLock;
-#if PLATFORM(IOS)
     SpinLockHolder holder(&spinLock);
-#endif
 
     WTFThreadData& threadData = wtfThreadData();
     
@@ -332,9 +306,7 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm, AlwaysDropLocksTag alwaysDropLocks)
     if (!m_vm)
         return;
     SpinLock& spinLock = m_vm->apiLock().m_spinLock;
-#if PLATFORM(IOS)
     SpinLockHolder holder(&spinLock);
-#endif
 
     WTFThreadData& threadData = wtfThreadData();
     
@@ -353,9 +325,7 @@ JSLock::DropAllLocks::~DropAllLocks()
     if (!m_vm)
         return;
     SpinLock& spinLock = m_vm->apiLock().m_spinLock;
-#if PLATFORM(IOS)
     SpinLockHolder holder(&spinLock);
-#endif
     m_vm->apiLock().grabAllLocks(m_lockCount, spinLock);
 
     WTFThreadData& threadData = wtfThreadData();
