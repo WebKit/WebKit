@@ -417,6 +417,7 @@ void encodeIDBKey(const IDBKey& key, Vector<char, DefaultInlineBufferSize>& into
     switch (key.type()) {
     case IDBKey::InvalidType:
     case IDBKey::MinType:
+    case IDBKey::MaxType:
         ASSERT_NOT_REACHED();
         into.appendVector(encodeByte(IDBKeyNullTypeByte));
         return;
