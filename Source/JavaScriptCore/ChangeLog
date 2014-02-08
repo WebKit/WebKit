@@ -1,3 +1,42 @@
+2014-02-07  Mark Lam  <mark.lam@apple.com>
+
+        Fix bug in stack limit adjustments in JSLock.
+        <https://webkit.org/b/128406>
+
+        Reviewed by Geoffrey Garen.
+
+        1. JSLock::unlock() was only clearing the VM::stackPointerAtEntry when
+           m_vm->stackPointerAtVMEntry == entryStackPointer. FYI,
+           entryStackPointer is a field in JSLock.
+
+           When DropAllLocks::~DropAllLocks() will call JSLock::grabAllLocks()
+           to relock the JSLock, JSLock::grabAllLocks() will set a new
+           entryStackPointer value. Thereafter, DropAllLocks::~DropAllLocks() will
+           restore the saved VM::stackPointerAtEntry, which will now defer from
+           the JSLock's entryStackPointer value.
+
+           It turns out that when m_vm->stackPointerAtVMEntry was initialized,
+           it was set to whatever value entryStackPointer is set to. At no time
+           do we ever expect the 2 values to differ. The only time it differs is
+           when this bug manifests.
+
+           The fix is to remove the entryStackPointer field in JSLock and its uses
+           altogether.
+
+        2. DropAllLocks was unconditionally clearing VM::stackPointerAtEntry in
+           its constructor instead of letting JSLock::unlock() do the clearing.
+
+           However, DropAllLocks will not actually drop locks if it isn't required
+           to (e.g. when alwaysDropLocks is DontAlwaysDropLocks), and when we've
+           already drop locks once (i.e. JSLock::m_lockDropDepth is not 0).
+
+           We should not have cleared VM::stackPointerAtEntry here if we don't
+           actually drop the locks.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+
 2014-02-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Eliminate race between XPC connection queue and Notification queue

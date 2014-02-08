@@ -142,7 +142,7 @@ void JSLock::unlock()
     m_lockCount--;
 
     if (!m_lockCount) {
-        if (m_vm && m_vm->stackPointerAtVMEntry == entryStackPointer) {
+        if (m_vm) {
             m_vm->stackPointerAtVMEntry = nullptr;
             m_vm->updateStackLimitWithReservedZoneSize(wtfThreadData().savedReservedZoneSize());
         }
@@ -312,8 +312,6 @@ JSLock::DropAllLocks::DropAllLocks(ExecState* exec, AlwaysDropLocksTag alwaysDro
     threadData.setSavedLastStackTop(m_vm->lastStackTop());
     threadData.setSavedReservedZoneSize(m_vm->reservedZoneSize());
 
-    m_vm->stackPointerAtVMEntry = nullptr;
-
     if (alwaysDropLocks)
         m_lockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
     else
@@ -336,8 +334,6 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm, AlwaysDropLocksTag alwaysDropLocks)
     threadData.setSavedStackPointerAtVMEntry(m_vm->stackPointerAtVMEntry);
     threadData.setSavedLastStackTop(m_vm->lastStackTop());
     threadData.setSavedReservedZoneSize(m_vm->reservedZoneSize());
-
-    m_vm->stackPointerAtVMEntry = nullptr;
 
     if (alwaysDropLocks)
         m_lockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
