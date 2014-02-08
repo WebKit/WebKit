@@ -101,6 +101,7 @@ static JSValue idbKeyToJSValue(ExecState* exec, JSDOMGlobalObject* globalObject,
     case IDBKey::NumberType:
         return jsNumber(key->number());
     case IDBKey::MinType:
+    case IDBKey::MaxType:
     case IDBKey::InvalidType:
         ASSERT_NOT_REACHED();
         return jsUndefined();

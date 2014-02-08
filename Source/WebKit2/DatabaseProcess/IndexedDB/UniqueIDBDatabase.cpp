@@ -866,6 +866,8 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
         }
     }
 
+    m_backingStore->notifyCursorsOfChanges(transaction, objectStoreMetadata.id);
+
     if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && key.type == IDBKey::NumberType) {
         if (!m_backingStore->updateKeyGeneratorNumber(transaction, objectStoreMetadata.id, keyNumber, keyWasGenerated)) {
             postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error updating key generator")));
@@ -1048,6 +1050,8 @@ void UniqueIDBDatabase::deleteRangeInBackingStore(uint64_t requestID, const IDBI
         LOG_ERROR("Failed to delete range from backing store.");
         postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get count from backing store")));
     }
+
+    m_backingStore->notifyCursorsOfChanges(transactionIdentifier, objectStoreID);
 
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, 0, String(StringImpl::empty())));
 }

@@ -98,6 +98,7 @@ public:
 
     // In order of the least to the highest precedent in terms of sort order.
     enum Type {
+        MaxType = -1,
         InvalidType = 0,
         ArrayType,
         StringType,

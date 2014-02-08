@@ -45,6 +45,22 @@ struct IDBKeyData {
 
     IDBKeyData(const IDBKey*);
 
+    static IDBKeyData minimum()
+    {
+        IDBKeyData result;
+        result.type = IDBKey::MinType;
+        result.isNull = false;
+        return result;
+    }
+
+    static IDBKeyData maximum()
+    {
+        IDBKeyData result;
+        result.type = IDBKey::MaxType;
+        result.isNull = false;
+        return result;
+    }
+
     PassRefPtr<IDBKey> maybeCreateIDBKey() const;
 
     IDBKeyData isolatedCopy() const;

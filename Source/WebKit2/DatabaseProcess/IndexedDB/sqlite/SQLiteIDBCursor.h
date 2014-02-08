@@ -56,6 +56,8 @@ public:
     const IDBIdentifier& identifier() const { return m_cursorIdentifier; }
     SQLiteIDBTransaction* transaction() const { return m_transaction; }
 
+    int64_t objectStoreID() const { return m_objectStoreID; }
+
     const WebCore::IDBKeyData& currentKey() const { return m_currentKey; }
     const WebCore::IDBKeyData& currentPrimaryKey() const { return m_currentPrimaryKey; }
     const Vector<uint8_t>& currentValueBuffer() const { return m_currentValueBuffer; }
@@ -65,12 +67,24 @@ public:
 
     bool didError() const { return m_errored; }
 
+    void objectStoreRecordsChanged();
+
 private:
     SQLiteIDBCursor(SQLiteIDBTransaction*, const IDBIdentifier& cursorIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&);
 
     bool establishStatement();
-    bool createSQLiteStatement(const String& sql, int64_t idToBind);
+    bool createSQLiteStatement(const String& sql);
+    bool bindArguments();
 
+    void resetAndRebindStatement();
+
+    enum class AdvanceResult {
+        Success,
+        Failure,
+        ShouldAdvanceAgain
+    };
+
+    AdvanceResult internalAdvanceOnce();
     bool advanceOnce();
     bool advanceUnique();
 
@@ -81,11 +95,17 @@ private:
     WebCore::IndexedDB::CursorDirection m_cursorDirection;
     WebCore::IDBKeyRangeData m_keyRange;
 
+    WebCore::IDBKeyData m_currentLowerKey;
+    WebCore::IDBKeyData m_currentUpperKey;
+
+    int64_t m_currentRecordID;
     WebCore::IDBKeyData m_currentKey;
     WebCore::IDBKeyData m_currentPrimaryKey;
     Vector<uint8_t> m_currentValueBuffer;
 
     std::unique_ptr<WebCore::SQLiteStatement> m_statement;
+    bool m_statementNeedsReset;
+    int64_t m_boundID;
 
     bool m_completed;
     bool m_errored;

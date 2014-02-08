@@ -73,6 +73,7 @@ public:
     SQLiteIDBCursor* openCursor(int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&);
 
     void closeCursor(SQLiteIDBCursor&);
+    void notifyCursorsOfChanges(int64_t objectStoreID);
 
     WebCore::IndexedDB::TransactionMode mode() const { return m_mode; }
     bool inProgress() const;

@@ -1,3 +1,46 @@
+2014-02-07  Brady Eidson  <beidson@apple.com>
+
+        IDB: Some Mozilla cursor mutation tests fail
+        <rdar://problem/16011680> and https://bugs.webkit.org/show_bug.cgi?id=128374
+
+        Reviewed by Sam Weinig.
+
+        Tested by:
+        storage/indexeddb/mozilla/cursor-mutation-objectstore-only.html
+        storage/indexeddb/mozilla/cursor-mutation.html
+
+        The previous comment about LevelDB was wrong.
+        Apparently calling onSuccess() with a null SharedBuffer means the cursor reached the end.
+        Update to distinguish between an error and reaching the end:
+        * Modules/indexeddb/IDBCursorBackendOperations.cpp:
+        (WebCore::CursorAdvanceOperation::perform):
+        (WebCore::CursorIterationOperation::perform):
+ 
+        Add a new IDBKey type - Maximum - To be used in comparisons between keys.
+        This will allow the DatabaseProcess to operate on the range of all keys:
+        * Modules/indexeddb/IDBKey.cpp:
+        (WebCore::IDBKey::compare):
+        * Modules/indexeddb/IDBKey.h:
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::IDBKeyData):
+        (WebCore::IDBKeyData::maybeCreateIDBKey):
+        (WebCore::IDBKeyData::isolatedCopy):
+        (WebCore::IDBKeyData::encode):
+        (WebCore::IDBKeyData::decode):
+        (WebCore::IDBKeyData::compare):
+        (WebCore::IDBKeyData::loggingString):
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyData::minimum):
+        (WebCore::IDBKeyData::maximum):
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::idbKeyToJSValue):
+
+        Remove an unused callback:
+        * Modules/indexeddb/IDBCallbacks.h:
+        * Modules/indexeddb/IDBRequest.h:
+
 2014-02-07  Roger Fong  <roger_fong@apple.com>
 
         CGContextGetUserSpaceToDeviceSpaceTransform returns the wrong value on Windows.

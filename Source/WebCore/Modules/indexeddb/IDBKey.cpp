@@ -76,6 +76,7 @@ int IDBKey::compare(const IDBKey* other) const
                 (m_number > other-> m_number) ? 1 : 0;
     case InvalidType:
     case MinType:
+    case MaxType:
         ASSERT_NOT_REACHED();
         return 0;
     }

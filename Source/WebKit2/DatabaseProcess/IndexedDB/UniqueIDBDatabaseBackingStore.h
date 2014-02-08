@@ -82,6 +82,7 @@ public:
     virtual bool openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&, int64_t& cursorID, WebCore::IDBKeyData&, WebCore::IDBKeyData&, Vector<uint8_t>&) = 0;
     virtual bool advanceCursor(const IDBIdentifier& cursorIdentifier, uint64_t count, WebCore::IDBKeyData&, WebCore::IDBKeyData&, Vector<uint8_t>&) = 0;
     virtual bool iterateCursor(const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData&, WebCore::IDBKeyData&, WebCore::IDBKeyData&, Vector<uint8_t>&) = 0;
+    virtual void notifyCursorsOfChanges(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID) = 0;
 };
 
 } // namespace WebKit

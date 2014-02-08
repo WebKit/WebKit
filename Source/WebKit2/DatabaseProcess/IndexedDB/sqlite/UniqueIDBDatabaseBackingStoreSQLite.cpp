@@ -1267,6 +1267,21 @@ bool UniqueIDBDatabaseBackingStoreSQLite::iterateCursor(const IDBIdentifier& cur
     return true;
 }
 
+void UniqueIDBDatabaseBackingStoreSQLite::notifyCursorsOfChanges(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to notify cursors of changes in database without an established, in-progress transaction");
+        return;
+    }
+
+    transaction->notifyCursorsOfChanges(objectStoreID);
+}
+
 int UniqueIDBDatabaseBackingStoreSQLite::idbKeyCollate(int aLength, const void* aBuffer, int bLength, const void* bBuffer)
 {
     IDBKeyData a, b;

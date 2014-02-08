@@ -1,3 +1,57 @@
+2014-02-07  Brady Eidson  <beidson@apple.com>
+
+        IDB: Some Mozilla cursor mutation tests fail
+        <rdar://problem/16011680> and https://bugs.webkit.org/show_bug.cgi?id=128374
+
+        Reviewed by Sam Weinig.
+
+        After a SQLite statement is prepared, stepping it will not pick up any subsequent changes
+        to the object store.
+
+        By keeping track of the current record we’re looking at in the object store and being told
+        that the object store changed its contents, we can reset the statement to pick up where it
+        left off but with the new object store contents.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::putRecordInBackingStore): Tell the backing store to notify
+          its cursors that the object store changed its records.
+        (WebKit::UniqueIDBDatabase::deleteRangeInBackingStore): Ditto.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::notifyCursorsOfChanges): Tell the transaction
+          to notify its cursors that the object store changed its records.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp:
+        (WebKit::SQLiteIDBTransaction::notifyCursorsOfChanges): Tell the relevant cursors that their
+          object store changed its records.
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::SQLiteIDBCursor::SQLiteIDBCursor):
+        (WebKit::getIndexStatement): All statements now have a lower and upper range. By default we bind
+          IDBKey::Minimum to the lower range and IDBKey::Maximum to the upper range.
+        (WebKit::getObjectStoreStatement): Ditto.
+        (WebKit::SQLiteIDBCursor::establishStatement):
+        (WebKit::SQLiteIDBCursor::createSQLiteStatement):
+        (WebKit::SQLiteIDBCursor::objectStoreRecordsChanged): Set the flag indicating the statement
+          needs to be reset and rebound.
+        (WebKit::SQLiteIDBCursor::resetAndRebindStatement):
+        (WebKit::SQLiteIDBCursor::bindArguments): Factored out to be shared between statement prepare()
+          and statement reset().
+        (WebKit::SQLiteIDBCursor::advance):
+        (WebKit::SQLiteIDBCursor::advanceOnce): If the statement needs to be reset, do so before advancing it.
+        (WebKit::SQLiteIDBCursor::internalAdvanceOnce): In a few cases, tell advanceOnce that it needs to
+          try again because it is on a missing record or is repeating a record.
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.h:
+        (WebKit::SQLiteIDBCursor::objectStoreID):
+
+        Make sure Maximum and Minimum keys are never sent across IPC, as that doesn’t make sense:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<IDBKeyData>::encode):
+        (IPC::ArgumentCoder<IDBKeyData>::decode):
+
 2014-02-07  Anders Carlsson  <andersca@apple.com>
 
         Make it possible for each web page to have different preferences

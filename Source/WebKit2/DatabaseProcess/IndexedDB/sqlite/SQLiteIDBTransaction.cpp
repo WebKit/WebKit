@@ -123,6 +123,14 @@ void SQLiteIDBTransaction::closeCursor(SQLiteIDBCursor& cursor)
     m_cursors.remove(cursor.identifier());
 }
 
+void SQLiteIDBTransaction::notifyCursorsOfChanges(int64_t objectStoreID)
+{
+    for (auto& i : m_cursors) {
+        if (i.value->objectStoreID() == objectStoreID)
+            i.value->objectStoreRecordsChanged();
+    }
+}
+
 void SQLiteIDBTransaction::clearCursors()
 {
     for (auto& cursor : m_cursors.values())
