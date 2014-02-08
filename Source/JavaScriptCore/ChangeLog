@@ -1,3 +1,35 @@
+2014-02-07  Mark Lam  <mark.lam@apple.com>
+
+        JSLock should not "restore" VM stack values if it did not re-grab locks.
+        <https://webkit.org/b/128447>
+
+        Reviewed by Geoffrey Garen.
+
+        In the existing code, if DropAllLocks is instantiate with DontAlwaysDropLocks
+        in a thread that does not own the JSLock, then a bug will manifest where:
+
+        1. The DropAllLocks constructor will save the VM's stackPointerAtEntry,
+           lastStackTop, and reservedZoneSize even though it will not drop the JSLock.
+        2. The DropAllLocks destructor will restore those 3 values to the VM even
+           though the JSLock will not grab its internal lock.
+
+        The former only causes busy work but does not impact correctness. The latter
+        however, will corrupt those 3 VM values which belong to the thread that
+        actually owns the JSLock.
+
+        The fix is to only save the values when the JSLock will actually drop its
+        internal lock, and only restore the values if it did re-grab the internal lock.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::dropAllLocksUnconditionally):
+        (JSC::JSLock::grabAllLocks):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        - Moved the saving of VM stack values to dropAllLocks() and
+          dropAllLocksUnconditionally().
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+        - Moved the restoring of VM stack values to grabAllLocks().
+
 2014-02-07  Filip Pizlo  <fpizlo@apple.com>
 
         Don't throw away code if there is code on the worklists

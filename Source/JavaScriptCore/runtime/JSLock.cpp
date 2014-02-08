@@ -221,6 +221,11 @@ unsigned JSLock::dropAllLocks(SpinLock& spinLock)
     if (m_lockDropDepth)
         return 0;
 
+    WTFThreadData& threadData = wtfThreadData();
+    threadData.setSavedStackPointerAtVMEntry(m_vm->stackPointerAtVMEntry);
+    threadData.setSavedLastStackTop(m_vm->lastStackTop());
+    threadData.setSavedReservedZoneSize(m_vm->reservedZoneSize());
+
     // m_lockDropDepth is only incremented if any locks were dropped.
     ++m_lockDropDepth;
     m_lockCount = 0;
@@ -240,6 +245,11 @@ unsigned JSLock::dropAllLocksUnconditionally(SpinLock& spinLock)
     unsigned lockCount = m_lockCount;
     if (!lockCount || m_ownerThread != WTF::currentThread())
         return 0;
+
+    WTFThreadData& threadData = wtfThreadData();
+    threadData.setSavedStackPointerAtVMEntry(m_vm->stackPointerAtVMEntry);
+    threadData.setSavedLastStackTop(m_vm->lastStackTop());
+    threadData.setSavedReservedZoneSize(m_vm->reservedZoneSize());
 
     // m_lockDropDepth is only incremented if any locks were dropped.
     ++m_lockDropDepth;
@@ -276,6 +286,11 @@ void JSLock::grabAllLocks(unsigned lockCount, SpinLock& spinLock)
     ASSERT(!m_lockCount);
     m_lockCount = lockCount;
     --m_lockDropDepth;
+
+    WTFThreadData& threadData = wtfThreadData();
+    m_vm->stackPointerAtVMEntry = threadData.savedStackPointerAtVMEntry();
+    m_vm->setLastStackTop(threadData.savedLastStackTop());
+    m_vm->updateStackLimitWithReservedZoneSize(threadData.savedReservedZoneSize());
 }
 
 JSLock::DropAllLocks::DropAllLocks(ExecState* exec, AlwaysDropLocksTag alwaysDropLocks)
@@ -286,12 +301,6 @@ JSLock::DropAllLocks::DropAllLocks(ExecState* exec, AlwaysDropLocksTag alwaysDro
         return;
     SpinLock& spinLock = m_vm->apiLock().m_spinLock;
     SpinLockHolder holder(&spinLock);
-
-    WTFThreadData& threadData = wtfThreadData();
-    
-    threadData.setSavedStackPointerAtVMEntry(m_vm->stackPointerAtVMEntry);
-    threadData.setSavedLastStackTop(m_vm->lastStackTop());
-    threadData.setSavedReservedZoneSize(m_vm->reservedZoneSize());
 
     if (alwaysDropLocks)
         m_lockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
@@ -308,12 +317,6 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm, AlwaysDropLocksTag alwaysDropLocks)
     SpinLock& spinLock = m_vm->apiLock().m_spinLock;
     SpinLockHolder holder(&spinLock);
 
-    WTFThreadData& threadData = wtfThreadData();
-    
-    threadData.setSavedStackPointerAtVMEntry(m_vm->stackPointerAtVMEntry);
-    threadData.setSavedLastStackTop(m_vm->lastStackTop());
-    threadData.setSavedReservedZoneSize(m_vm->reservedZoneSize());
-
     if (alwaysDropLocks)
         m_lockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
     else
@@ -327,12 +330,6 @@ JSLock::DropAllLocks::~DropAllLocks()
     SpinLock& spinLock = m_vm->apiLock().m_spinLock;
     SpinLockHolder holder(&spinLock);
     m_vm->apiLock().grabAllLocks(m_lockCount, spinLock);
-
-    WTFThreadData& threadData = wtfThreadData();
-
-    m_vm->stackPointerAtVMEntry = threadData.savedStackPointerAtVMEntry();
-    m_vm->setLastStackTop(threadData.savedLastStackTop());
-    m_vm->updateStackLimitWithReservedZoneSize(threadData.savedReservedZoneSize());
 }
 
 } // namespace JSC
