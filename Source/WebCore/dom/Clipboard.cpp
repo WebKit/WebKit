@@ -266,7 +266,7 @@ void Clipboard::updateDragImage()
     m_pasteboard->setDragImage(computedImage, computedHotSpot);
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 
 DragImageRef Clipboard::createDragImage(IntPoint& location) const
 {

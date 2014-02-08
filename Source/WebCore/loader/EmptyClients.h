@@ -382,7 +382,7 @@ public:
 
     virtual void registerForIconNotification(bool) override { }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual RemoteAXObjectRef accessibilityRemoteObject() override { return 0; }
     virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse* response) const override { return response; }
 #endif
@@ -484,7 +484,7 @@ public:
     virtual int pasteboardChangeCount() override { return 0; }
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual NSString* userVisibleString(NSURL*) override { return 0; }
     virtual DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector<RefPtr<ArchiveResource>>&) override { return 0; };
     virtual void setInsertionPasteboard(const String&) override { };
@@ -557,7 +557,7 @@ public:
     virtual void speak(const String&) override { }
     virtual void stopSpeaking() override { }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void searchWithSpotlight() override { }
 #endif
 

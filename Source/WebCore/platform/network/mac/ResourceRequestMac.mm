@@ -250,13 +250,13 @@ void ResourceRequest::updateFromDelegatePreservingOldHTTPBody(const ResourceRequ
     setHTTPBody(oldHTTPBody.release());
 }
 
+#if !PLATFORM(IOS)
 void ResourceRequest::applyWebArchiveHackForMail()
 {
-#if !PLATFORM(IOS)
     // Hack because Mail checks for this property to detect data / archive loads
     [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)nsURLRequest(DoNotUpdateHTTPBody)];
-#endif
 }
+#endif
 
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 {

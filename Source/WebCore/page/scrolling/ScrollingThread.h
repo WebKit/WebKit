@@ -35,7 +35,7 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -67,7 +67,7 @@ private:
     void initializeRunLoop();
     void wakeUpRunLoop();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static void threadRunLoopSourceCallback(void* scrollingThread);
     void threadRunLoopSourceCallback();
 #endif
@@ -80,7 +80,7 @@ private:
     std::mutex m_functionsMutex;
     Vector<std::function<void ()>> m_functions;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // FIXME: We should use WebCore::RunLoop here.
     RetainPtr<CFRunLoopRef> m_threadRunLoop;
     RetainPtr<CFRunLoopSourceRef> m_threadRunLoopSource;

@@ -1351,7 +1351,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
         int listIndex = toRenderListBox(renderer())->listIndexAtOffset(toIntSize(localOffset));
         if (listIndex >= 0) {
             if (!isDisabledFormControl()) {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
                 updateSelectedState(listIndex, mouseEvent->metaKey(), mouseEvent->shiftKey());
 #else
                 updateSelectedState(listIndex, mouseEvent->ctrlKey(), mouseEvent->shiftKey());
@@ -1456,7 +1456,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             ASSERT_UNUSED(listItems, !listItems.size() || static_cast<size_t>(endIndex) < listItems.size());
             setActiveSelectionEndIndex(endIndex);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
             m_allowsNonContiguousSelection = m_multiple && isSpatialNavigationEnabled(document().frame());
 #else
             m_allowsNonContiguousSelection = m_multiple && (isSpatialNavigationEnabled(document().frame()) || static_cast<KeyboardEvent*>(event)->ctrlKey());

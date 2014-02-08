@@ -34,10 +34,6 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#endif
-
 namespace WebCore {
 
 class GraphicsLayer;

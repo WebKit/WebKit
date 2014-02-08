@@ -32,10 +32,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
-#include <CoreServices/CoreServices.h>
-#endif
-
 namespace WebCore {
 
 // Pack 8 bits into one byte

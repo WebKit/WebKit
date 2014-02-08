@@ -39,7 +39,7 @@
 #include <wtf/Threading.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -135,7 +135,7 @@ public:
     // containers while scrolling.
     virtual bool supportsFixedPositionLayers() const { return false; }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Dispatched by the scrolling tree during handleWheelEvent. This is required as long as scrollbars are painted on the main thread.
     void handleWheelEventPhase(PlatformWheelEventPhase);
 #endif

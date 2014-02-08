@@ -330,7 +330,7 @@ public:
     virtual IntRect visibleRectForTiledBackingStore() const { return IntRect(); }
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual NSResponder *firstResponder() { return 0; }
     virtual void makeFirstResponder(NSResponder *) { }
     // Focuses on the containing view associated with this page.

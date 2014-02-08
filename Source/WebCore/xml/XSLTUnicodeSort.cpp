@@ -36,11 +36,11 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/Collator.h>
 
-#if PLATFORM(MAC)
+#if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
 #include "SoftLinking.h"
 #endif
 
-#if PLATFORM(MAC)
+#if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
 
 SOFT_LINK_LIBRARY(libxslt)
 SOFT_LINK(libxslt, xsltComputeSortResult, xmlXPathObjectPtr*, (xsltTransformContextPtr ctxt, xmlNodePtr sort), (ctxt, sort))

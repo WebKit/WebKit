@@ -240,7 +240,7 @@ public:
     static bool isAVFoundationEnabled() { return gAVFoundationEnabled; }
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static void setQTKitEnabled(bool flag);
     static bool isQTKitEnabled() { return gQTKitEnabled; }
 #endif
@@ -388,7 +388,7 @@ private:
     static bool gAVFoundationEnabled;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static bool gQTKitEnabled;
 #endif
         

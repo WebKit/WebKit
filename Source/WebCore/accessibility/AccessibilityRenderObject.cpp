@@ -910,7 +910,7 @@ IntPoint AccessibilityRenderObject::clickPoint()
     VisibleSelection visSelection = selection();
     VisiblePositionRange range = VisiblePositionRange(visSelection.visibleStart(), visSelection.visibleEnd());
     IntRect bounds = boundsForVisiblePositionRange(range);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bounds.setLocation(m_renderer->view().frameView().screenToContents(bounds.location()));
 #endif        
     return IntPoint(bounds.x() + (bounds.width() / 2), bounds.y() - (bounds.height() / 2));
@@ -1994,7 +1994,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
     if (!renderView)
         return VisiblePosition();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     FrameView* frameView = &renderView->frameView();
 #endif
 
@@ -2033,7 +2033,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
             break;
         Frame& frame = toFrameView(widget)->frame();
         renderView = frame.document()->renderView();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         frameView = toFrameView(widget);
 #endif
     }
@@ -2913,7 +2913,7 @@ void AccessibilityRenderObject::addAttachmentChildren()
         m_children.append(axWidget);
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 void AccessibilityRenderObject::updateAttachmentViewParents()
 {
     // Only the unignored parent should set the attachment parent, because that's what is reflected in the AX 
@@ -3002,7 +3002,7 @@ void AccessibilityRenderObject::addChildren()
     addCanvasChildren();
     addRemoteSVGChildren();
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     updateAttachmentViewParents();
 #endif
 }

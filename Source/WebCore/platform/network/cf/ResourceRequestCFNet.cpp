@@ -337,13 +337,11 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 #endif
 }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 void ResourceRequest::applyWebArchiveHackForMail()
 {
-#if !PLATFORM(IOS)
     // Hack because Mail checks for this property to detect data / archive loads
     _CFURLRequestSetProtocolProperty(cfURLRequest(DoNotUpdateHTTPBody), CFSTR("WebDataRequest"), CFSTR(""));
-#endif
 }
 #endif
 

@@ -83,7 +83,7 @@ void ScrollingThread::createThreadIfNeeded()
 
         m_threadIdentifier = createThread(threadCallback, this, "WebCore: Scrolling");
         
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         m_initializeRunLoopConditionVariable.wait(lock, [this]{ return m_threadRunLoop; });
 #endif
     }

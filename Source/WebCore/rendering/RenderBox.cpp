@@ -794,7 +794,7 @@ bool RenderBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularit
     
     RenderLayer* l = layer();
     if (l) {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         // On Mac only we reset the inline direction position when doing a document scroll (e.g., hitting Home/End).
         if (granularity == ScrollByDocument)
             scrolled = l->scroll(logicalToPhysical(ScrollInlineDirectionBackward, isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), ScrollByDocument, multiplier);

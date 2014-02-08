@@ -28,7 +28,7 @@
 
 typedef const struct OpaqueJSContext* JSContextRef;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #define TEST_SUPPORT_EXPORT WTF_EXPORT_PRIVATE
 #else
 #define TEST_SUPPORT_EXPORT

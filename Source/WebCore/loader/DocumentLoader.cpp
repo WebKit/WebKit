@@ -850,7 +850,7 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
     ASSERT_UNUSED(resource, resource == m_mainResource);
     ASSERT(!m_response.isNull());
 
-#if USE(CFNETWORK) || PLATFORM(MAC)
+#if USE(CFNETWORK) || PLATFORM(COCOA)
     // Workaround for <rdar://problem/6060782>
     if (m_response.isNull())
         m_response = ResourceResponse(URL(), "text/html", 0, String(), String());

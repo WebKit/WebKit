@@ -75,7 +75,7 @@ class TimeRanges;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Widget;
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 class DisplaySleepDisabler;
 #endif
 #if ENABLE(ENCRYPTED_MEDIA_V2)
@@ -659,7 +659,7 @@ private:
     bool isAutoplaying() const { return m_autoplaying; }
 
     void updateSleepDisabling();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool shouldDisableSleep() const;
 #endif
 
@@ -811,7 +811,7 @@ private:
     friend class MediaController;
     RefPtr<MediaController> m_mediaController;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     OwnPtr<DisplaySleepDisabler> m_sleepDisabler;
 #endif
 

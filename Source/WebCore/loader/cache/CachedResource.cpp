@@ -888,7 +888,7 @@ bool CachedResource::isUsingDiskImageCache() const
 }
 #endif
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
 void CachedResource::tryReplaceEncodedData(PassRefPtr<SharedBuffer> newBuffer)
 {
     if (!m_data)

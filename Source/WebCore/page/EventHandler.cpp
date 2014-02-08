@@ -298,7 +298,7 @@ static inline bool shouldGesturesTriggerActive()
 }
 #endif
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 
 inline bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
 {
@@ -350,7 +350,7 @@ EventHandler::EventHandler(Frame& frame)
     , m_mouseDownTimestamp(0)
     , m_recentWheelEventDeltaTracker(adoptPtr(new WheelEventDeltaTracker))
     , m_widgetIsLatched(false)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_mouseDownView(nil)
     , m_sendingEventToSubview(false)
 #if !PLATFORM(IOS)
@@ -759,7 +759,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
             return false;
     }
 
-#if PLATFORM(MAC) // FIXME: Why does this assertion fire on other platforms?
+#if PLATFORM(COCOA) // FIXME: Why does this assertion fire on other platforms?
     ASSERT(m_mouseDownMayStartSelect || m_mouseDownMayStartAutoscroll);
 #endif
 
@@ -1155,7 +1155,7 @@ bool EventHandler::logicalScrollRecursively(ScrollLogicalDirection direction, Sc
     FrameView* view = frame->view();
     
     bool scrolled = false;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Mac also resets the scroll position in the inline direction.
     if (granularity == ScrollByDocument && view && view->logicalScroll(ScrollInlineDirectionBackward, ScrollByDocument))
         scrolled = true;
@@ -2217,7 +2217,7 @@ void EventHandler::clearDragState()
     m_dragTarget = nullptr;
     m_capturingMouseEventsElement = nullptr;
     m_shouldOnlyFireDragOverEvent = false;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     m_sendingEventToSubview = false;
 #endif
 }
@@ -2492,7 +2492,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     if (m_baseEventType == PlatformEvent::NoType && shouldTurnVerticalTicksIntoHorizontal(result, e))
         event = event.copyTurningVerticalTicksIntoHorizontalTicks();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     switch (event.phase()) {
     case PlatformWheelEventPhaseBegan:
         m_recentWheelEventDeltaTracker->beginTrackingDeltas();
@@ -2543,7 +2543,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     DominantScrollGestureDirection dominantDirection = DominantScrollGestureDirection::None;
 
     // Workaround for scrolling issues <rdar://problem/14758615>.
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (m_recentWheelEventDeltaTracker->isTrackingDeltas())
         dominantDirection = m_recentWheelEventDeltaTracker->dominantScrollGestureDirection();
 #endif
@@ -2926,7 +2926,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     keypress->setTarget(element);
     if (keydownResult)
         keypress->setDefaultPrevented(true);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     keypress->keypressCommands() = keydown->keypressCommands();
 #endif
     element->dispatchEvent(keypress, IGNORE_EXCEPTION);
@@ -3293,7 +3293,7 @@ bool EventHandler::isKeyboardOptionTab(KeyboardEvent* event)
 
 bool EventHandler::eventInvertsTabsToLinksClientCallResult(KeyboardEvent* event)
 {
-#if PLATFORM(MAC) || PLATFORM(EFL)
+#if PLATFORM(COCOA) || PLATFORM(EFL)
     return EventHandler::isKeyboardOptionTab(event);
 #else
     UNUSED_PARAM(event);

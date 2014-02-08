@@ -428,7 +428,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     case ContextMenuItemTagTextDirectionRightToLeft:
         frame->editor().command("MakeTextWritingDirectionRightToLeft").execute();
         break;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     case ContextMenuItemTagSearchInSpotlight:
         m_client.searchWithSpotlight();
         break;
@@ -445,7 +445,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     case ContextMenuItemTagCheckGrammarWithSpelling:
         frame->editor().toggleGrammarChecking();
         break;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     case ContextMenuItemTagShowFonts:
         frame->editor().showFontPanel();
         break;
@@ -467,7 +467,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         frame->editor().capitalizeWord();
         break;
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     case ContextMenuItemTagChangeBack:
         frame->editor().changeBackToReplacedString(m_hitTestResult.replacedString());
         break;
@@ -520,26 +520,26 @@ void ContextMenuController::createAndAppendFontSubMenu(ContextMenuItem& fontMenu
 {
     ContextMenu fontMenu;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     ContextMenuItem showFonts(ActionType, ContextMenuItemTagShowFonts, contextMenuItemTagShowFonts());
 #endif
     ContextMenuItem bold(CheckableActionType, ContextMenuItemTagBold, contextMenuItemTagBold());
     ContextMenuItem italic(CheckableActionType, ContextMenuItemTagItalic, contextMenuItemTagItalic());
     ContextMenuItem underline(CheckableActionType, ContextMenuItemTagUnderline, contextMenuItemTagUnderline());
     ContextMenuItem outline(ActionType, ContextMenuItemTagOutline, contextMenuItemTagOutline());
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     ContextMenuItem styles(ActionType, ContextMenuItemTagStyles, contextMenuItemTagStyles());
     ContextMenuItem showColors(ActionType, ContextMenuItemTagShowColors, contextMenuItemTagShowColors());
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     appendItem(showFonts, &fontMenu);
 #endif
     appendItem(bold, &fontMenu);
     appendItem(italic, &fontMenu);
     appendItem(underline, &fontMenu);
     appendItem(outline, &fontMenu);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     appendItem(styles, &fontMenu);
     appendItem(*separatorItem(), &fontMenu);
     appendItem(showColors, &fontMenu);
@@ -563,19 +563,19 @@ void ContextMenuController::createAndAppendSpellingAndGrammarSubMenu(ContextMenu
         contextMenuItemTagCheckSpellingWhileTyping());
     ContextMenuItem grammarWithSpelling(CheckableActionType, ContextMenuItemTagCheckGrammarWithSpelling, 
         contextMenuItemTagCheckGrammarWithSpelling());
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     ContextMenuItem correctSpelling(CheckableActionType, ContextMenuItemTagCorrectSpellingAutomatically, 
         contextMenuItemTagCorrectSpellingAutomatically());
 #endif
 
     appendItem(showSpellingPanel, &spellingAndGrammarMenu);
     appendItem(checkSpelling, &spellingAndGrammarMenu);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     appendItem(*separatorItem(), &spellingAndGrammarMenu);
 #endif
     appendItem(checkAsYouType, &spellingAndGrammarMenu);
     appendItem(grammarWithSpelling, &spellingAndGrammarMenu);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     appendItem(correctSpelling, &spellingAndGrammarMenu);
 #endif
 
@@ -585,7 +585,7 @@ void ContextMenuController::createAndAppendSpellingAndGrammarSubMenu(ContextMenu
 #endif // !PLATFORM(GTK)
 
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 void ContextMenuController::createAndAppendSpeechSubMenu(ContextMenuItem& speechMenuItem)
 {
@@ -668,7 +668,7 @@ void ContextMenuController::createAndAppendTextDirectionSubMenu(ContextMenuItem&
 
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 void ContextMenuController::createAndAppendSubstitutionsSubMenu(ContextMenuItem& substitutionsMenuItem)
 {
@@ -722,13 +722,13 @@ static bool selectionContainsPossibleWord(Frame* frame)
     return false;
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #define SUPPORTS_TOGGLE_VIDEO_FULLSCREEN 1
 #else
 #define SUPPORTS_TOGGLE_VIDEO_FULLSCREEN 0
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #define SUPPORTS_TOGGLE_SHOW_HIDE_MEDIA_CONTROLS 1
 #else
 #define SUPPORTS_TOGGLE_SHOW_HIDE_MEDIA_CONTROLS 0
@@ -773,7 +773,7 @@ void ContextMenuController::populate()
         contextMenuItemTagEnterVideoFullscreen());
     ContextMenuItem ToggleVideoFullscreen(ActionType, ContextMenuItemTagToggleVideoFullscreen,
         contextMenuItemTagEnterVideoFullscreen());
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     ContextMenuItem SearchSpotlightItem(ActionType, ContextMenuItemTagSearchInSpotlight, 
         contextMenuItemTagSearchInSpotlight());
 #endif
@@ -865,7 +865,7 @@ void ContextMenuController::populate()
         if (imageURL.isEmpty() && linkURL.isEmpty() && mediaURL.isEmpty()) {
             if (m_hitTestResult.isSelected()) {
                 if (selectionContainsPossibleWord(frame)) {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
                     String selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
                     ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedString));
 
@@ -879,7 +879,7 @@ void ContextMenuController::populate()
                 }
 
                 appendItem(CopyItem, m_contextMenu.get());
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
                 appendItem(*separatorItem(), m_contextMenu.get());
 
                 ContextMenuItem SpeechMenuItem(SubmenuType, ContextMenuItemTagSpeechMenu, contextMenuItemTagSpeechMenu());
@@ -956,7 +956,7 @@ void ContextMenuController::populate()
                         appendItem(IgnoreGrammarItem, m_contextMenu.get());
                     appendItem(*separatorItem(), m_contextMenu.get());
                     haveContextMenuItemsForMisspellingOrGrammer = true;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
                 } else {
                     // If the string was autocorrected, generate a contextual menu item allowing it to be changed back.
                     String replacedString = m_hitTestResult.replacedString();
@@ -996,7 +996,7 @@ void ContextMenuController::populate()
         }
 
         if (m_hitTestResult.isSelected() && !inPasswordField && selectionContainsPossibleWord(frame)) {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
             String selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
             ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedString));
 
@@ -1028,7 +1028,7 @@ void ContextMenuController::populate()
             createAndAppendSpellingAndGrammarSubMenu(SpellingAndGrammarMenuItem);
             appendItem(SpellingAndGrammarMenuItem, m_contextMenu.get());
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
             ContextMenuItem substitutionsMenuItem(SubmenuType, ContextMenuItemTagSubstitutionsMenu, 
                 contextMenuItemTagSubstitutionsMenu());
             createAndAppendSubstitutionsSubMenu(substitutionsMenuItem);
@@ -1049,7 +1049,7 @@ void ContextMenuController::populate()
                 createAndAppendFontSubMenu(FontMenuItem);
                 appendItem(FontMenuItem, m_contextMenu.get());
             }
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
             ContextMenuItem SpeechMenuItem(SubmenuType, ContextMenuItemTagSpeechMenu, contextMenuItemTagSpeechMenu());
             createAndAppendSpeechSubMenu(SpeechMenuItem);
             appendItem(SpeechMenuItem, m_contextMenu.get());
@@ -1232,7 +1232,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagCheckSpellingWhileTyping:
             shouldCheck = frame->editor().isContinuousSpellCheckingEnabled();
             break;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         case ContextMenuItemTagSubstitutionsMenu:
         case ContextMenuItemTagTransformationsMenu:
             break;
@@ -1270,7 +1270,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagStopSpeaking:
             shouldEnable = m_client.isSpeaking();
             break;
-#else // PLATFORM(MAC) ends here
+#else // PLATFORM(COCOA) ends here
         case ContextMenuItemTagStopSpeaking:
             break;
 #endif

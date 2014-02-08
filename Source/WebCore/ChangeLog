@@ -1,3 +1,137 @@
+2014-02-08  Dan Bernstein  <mitz@apple.com>
+
+        Stop using PLATFORM(MAC) in WebCore except where it means “OS X but not iOS”
+        https://bugs.webkit.org/show_bug.cgi?id=128464
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/webaudio/AudioContext.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebCore::AudioContext::constructCommon):
+        * accessibility/AccessibilityNodeObject.cpp: Ditto.
+        (WebCore::AccessibilityNodeObject::visibleText):
+        * accessibility/AccessibilityObject.h: Ditto.
+        * accessibility/AccessibilityRenderObject.cpp: Ditto.
+        (WebCore::AccessibilityRenderObject::clickPoint):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h: Ditto.
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::platform): Made it explicit that this function returns
+        "mac" when built for iOS.
+        * bindings/js/ScriptController.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebCore::ScriptController::ScriptController):
+        * bindings/js/ScriptController.h: Ditto.
+        * crypto/CryptoKey.cpp: Changed PLATFORM(MAC) to OS(DARWIN) && !PLATFORM(EFL) &&
+        !PLATFORM(GTK) when checking for whether to use CoreCrypto.
+        * crypto/keys/CryptoKeyRSA.h: Ditto.
+        * dom/Clipboard.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * dom/Document.cpp: Ditto.
+        (WebCore::Document::implicitClose):
+        * dom/KeyboardEvent.h: Ditto.
+        * editing/Editor.cpp: Ditto.
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::copyImage):
+        * editing/Editor.h: Ditto.
+        * editing/FrameSelection.h: Ditto.
+        * editing/TypingCommand.cpp: Ditto.
+        (WebCore::TypingCommand::typingAddedToOpenCommand):
+        * history/HistoryItem.h: Ditto.
+        * html/HTMLMediaElement.cpp: Ditto.
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h: Ditto.
+        * html/HTMLPlugInElement.cpp: Ditto.
+        (WebCore::registeredPluginReplacements):
+        * html/HTMLPlugInImageElement.cpp: Ditto.
+        (WebCore::HTMLPlugInImageElement::setDisplayState):
+        * html/HTMLSelectElement.cpp: Ditto.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * html/shadow/MediaControlElements.cpp: Ditto.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler):
+        * html/shadow/MediaControlElements.h: Ditto.
+        * inspector/InspectorIndexedDBAgent.cpp: Ditto.
+        * loader/CookieJar.cpp: Ditto.
+        * loader/DocumentLoader.cpp: Ditto.
+        (WebCore::DocumentLoader::dataReceived):
+        * loader/DocumentLoader.h: Ditto.
+        (WebCore::DocumentLoader::didTellClientAboutLoad):
+        * loader/EmptyClients.h: Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadArchive): Added !PLATFORM(IOS) around Mac-only workaround.
+        (WebCore::FrameLoader::defaultObjectContentType): Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebCore::FrameLoader::subresourceCachePolicy): Ditto.
+        * loader/ResourceBuffer.h: Changed PLATFORM(MAC) to USE(FOUNDATION) around functions that
+        are implemented using Foundation.
+        * loader/ResourceLoadScheduler.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebCore::ResourceLoadScheduler::scheduleLoad):
+        * loader/ResourceLoader.cpp: Ditto.
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        * loader/ResourceLoader.h: Ditto.
+        * loader/archive/cf/LegacyWebArchive.cpp: Ditto.
+        * loader/cache/CachedResource.cpp: Changed PLATFORM(MAC) to USE(FOUNDATION) around function
+        that is implemented using other USE(FOUNDATION)-guarded code.
+        * loader/cache/CachedResource.h: Ditto.
+        * page/Chrome.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * page/ChromeClient.h: Ditto.
+        * page/ContextMenuClient.h: Ditto.
+        * page/ContextMenuController.cpp: Ditto.
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::createAndAppendFontSubMenu):
+        (WebCore::ContextMenuController::createAndAppendSpellingAndGrammarSubMenu):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded):
+        * page/DragClient.h: Ditto.
+        * page/DragController.cpp: Ditto.
+        (WebCore::dragLocForDHTMLDrag):
+        (WebCore::dragLocForSelectionDrag):
+        (WebCore::DragController::startDrag):
+        (WebCore::DragController::doImageDrag):
+        * page/EditorClient.h: Ditto.
+        * page/EventHandler.cpp: Ditto.
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::logicalScrollRecursively):
+        (WebCore::EventHandler::clearDragState):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::eventInvertsTabsToLinksClientCallResult):
+        * page/EventHandler.h: Ditto.
+        * page/FrameView.cpp: Ditto.
+        (WebCore::FrameView::layout):
+        * page/Page.h: Ditto.
+        * page/Settings.cpp: Ditto.
+        * page/Settings.h: Ditto.
+        * page/scrolling/ScrollingCoordinator.cpp: Ditto.
+        * page/scrolling/ScrollingCoordinator.h: Ditto.
+        * page/scrolling/ScrollingStateNode.h: Removed unused #include.
+        * page/scrolling/ScrollingThread.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebCore::ScrollingThread::createThreadIfNeeded):
+        * page/scrolling/ScrollingThread.h: Ditto.
+        * platform/network/cf/ResourceRequest.h: Added !PLATFORM(IOS) around
+        applyWebArchiveHackForMail.
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::applyWebArchiveHackForMail): Ditto.
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::applyWebArchiveHackForMail): Ditto.
+        * plugins/PluginViewNone.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA)
+        * rendering/RenderBox.cpp: Ditto.
+        (WebCore::RenderBox::logicalScroll):
+        * rendering/RenderLayerBacking.cpp: Ditto.
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        * rendering/RenderMenuList.h: Ditto.
+        * rendering/RenderText.cpp: Ditto.
+        (WebCore::RenderText::previousOffsetForBackwardDeletion):
+        * rendering/break_lines.cpp: Removed unused #include.
+        * testing/js/WebCoreTestSupport.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * xml/XSLStyleSheetLibxslt.cpp: Changed PLATFORM(MAC) to OS(DARWIN) && !PLATFORM(EFL) &&
+        !PLATFORM(GTK) around soft-linking libxslt.
+        * xml/XSLTExtensions.cpp: Ditto.
+        * xml/XSLTProcessorLibxslt.cpp: Ditto.
+        * xml/XSLTUnicodeSort.cpp: Ditto.
+
 2014-02-08  Andreas Kling  <akling@apple.com>
 
         Remove unused ChromeClient::formStateDidChange().

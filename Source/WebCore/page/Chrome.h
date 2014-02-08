@@ -28,7 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #ifndef __OBJC__
 class NSView;
 #endif
@@ -167,7 +167,7 @@ public:
 
     bool requiresFullscreenForVideoPlayback();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void focusNSView(NSView*);
 #endif
 

@@ -53,7 +53,7 @@ namespace WebCore {
 
 JSValue JSInspectorFrontendHost::platform(ExecState* execState)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
     DEFINE_STATIC_LOCAL(const String, platform, (ASCIILiteral("mac")));
 #elif OS(WINDOWS)
     DEFINE_STATIC_LOCAL(const String, platform, (ASCIILiteral("windows")));

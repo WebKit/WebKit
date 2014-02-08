@@ -51,9 +51,9 @@ public:
     virtual void startDrag(DragImageRef, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard&, Frame&, bool linkDrag = false) = 0;
     virtual void dragEnded() { }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Mac-specific helper function to allow access to web archives and NSPasteboard extras in WebKit.
-    // This is not abstract as that would require another #if PLATFORM(MAC) for the SVGImage client empty implentation.
+    // This is not abstract as that would require another #if PLATFORM(COCOA) for the SVGImage client empty implentation.
     virtual void declareAndWriteDragImage(const String&, Element&, const URL&, const String&, Frame*) { }
 #endif
 

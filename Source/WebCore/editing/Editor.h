@@ -41,7 +41,7 @@
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 OBJC_CLASS NSAttributedString;
 OBJC_CLASS NSDictionary;
 #endif
@@ -419,7 +419,7 @@ public:
     DeleteButtonController& deleteButtonController() const { return *m_deleteButtonController; }
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool insertParagraphSeparatorInQuotedContent();
     const SimpleFontData* fontForSelection(bool&) const;
     NSDictionary* fontAttributesForSelectionStart() const;
@@ -434,7 +434,7 @@ public:
 #endif // !PLATFORM(IOS)
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(EFL)
+#if PLATFORM(COCOA) || PLATFORM(EFL)
     void writeSelectionToPasteboard(Pasteboard&);
     void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);
 #endif
@@ -469,7 +469,7 @@ private:
 
     bool unifiedTextCheckerEnabled() const;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     PassRefPtr<SharedBuffer> selectionInWebArchiveFormat();
     PassRefPtr<Range> adjustedSelectionRange();
     PassRefPtr<DocumentFragment> createFragmentForImageResourceAndAddResource(PassRefPtr<ArchiveResource>);

@@ -256,7 +256,7 @@ public:
 
     virtual bool canReuse(const ResourceRequest&) const { return true; }
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
     void tryReplaceEncodedData(PassRefPtr<SharedBuffer>);
 #endif
 

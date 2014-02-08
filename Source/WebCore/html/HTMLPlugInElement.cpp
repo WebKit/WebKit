@@ -55,7 +55,7 @@
 #include "npruntime_impl.h"
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "QuickTimePluginReplacement.h"
 #endif
 
@@ -313,7 +313,7 @@ void HTMLPlugInElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     }
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 static void registrar(const ReplacementPlugin&);
 #endif
 
@@ -326,14 +326,14 @@ static Vector<ReplacementPlugin*>& registeredPluginReplacements()
         return registeredReplacements;
     enginesQueried = true;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     QuickTimePluginReplacement::registerPluginReplacement(registrar);
 #endif
     
     return registeredReplacements;
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 static void registrar(const ReplacementPlugin& replacement)
 {
     registeredPluginReplacements().append(new ReplacementPlugin(replacement));

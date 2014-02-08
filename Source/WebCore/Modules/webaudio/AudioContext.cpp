@@ -196,7 +196,7 @@ void AudioContext::constructCommon()
         m_restrictions = NoRestrictions;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     addBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
 #endif
 }

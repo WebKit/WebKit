@@ -406,7 +406,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::rawDataRepresentation()
     return plistData;
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 
 ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFDataRef responseData)
 {

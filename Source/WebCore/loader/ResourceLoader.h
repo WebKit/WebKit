@@ -120,7 +120,7 @@ public:
     virtual void didFail(ResourceHandle*, const ResourceError&) override;
     virtual void wasBlocked(ResourceHandle*) override;
     virtual void cannotShowURL(ResourceHandle*) override;
-#if PLATFORM(MAC) && !USE(CFNETWORK)
+#if PLATFORM(COCOA) && !USE(CFNETWORK)
     virtual void willStopBufferingData(ResourceHandle*, const char* data, unsigned length) override { willStopBufferingData(data, length); }
 #endif
     virtual bool shouldUseCredentialStorage(ResourceHandle*) override { return shouldUseCredentialStorage(); }
@@ -133,13 +133,13 @@ public:
     virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace& protectionSpace) override { return canAuthenticateAgainstProtectionSpace(protectionSpace); }
 #endif
     virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) override { receivedCancellation(challenge); }
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #if USE(CFNETWORK)
     virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #else
     virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
 #endif
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
 #if PLATFORM(WIN) && USE(CFNETWORK)
     // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
     virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;

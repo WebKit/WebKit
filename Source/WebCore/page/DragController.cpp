@@ -682,7 +682,7 @@ static void selectElement(Element& element)
 static IntPoint dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const IntPoint& dragOrigin, const IntPoint& dragImageOffset, bool isLinkImage)
 {
     // dragImageOffset is the cursor position relative to the lower-left corner of the image.
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // We add in the Y dimension because we are a flipped view, so adding moves the image down.
     const int yOffset = dragImageOffset.y();
 #else
@@ -701,7 +701,7 @@ static IntPoint dragLocForSelectionDrag(Frame& src)
     int xpos = draggingRect.maxX();
     xpos = draggingRect.x() < xpos ? draggingRect.x() : xpos;
     int ypos = draggingRect.maxY();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Deal with flipped coordinates on Mac
     ypos = draggingRect.y() > ypos ? draggingRect.y() : ypos;
 #else
@@ -769,7 +769,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             if (enclosingTextFormControl(src.selection().selection().start()))
                 clipboard.pasteboard().writePlainText(src.editor().selectedTextForClipboard(), Pasteboard::CannotSmartReplace);
             else {
-#if PLATFORM(MAC) || PLATFORM(EFL)
+#if PLATFORM(COCOA) || PLATFORM(EFL)
                 src.editor().writeSelectionToPasteboard(clipboard.pasteboard());
 #else
                 // FIXME: Convert all other platforms to match Mac and delete this.
@@ -880,7 +880,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
         float scale = fittedSize.width() / (float)layoutRect.width();
         float dx = scale * (layoutRect.x() - mouseDownPoint.x());
         float originY = layoutRect.y();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         // Compensate for accursed flipped coordinates in Cocoa.
         originY += layoutRect.height();
 #endif

@@ -111,7 +111,7 @@
 #include "WebKitPlaybackTargetAvailabilityEvent.h"
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "DisplaySleepDisabler.h"
 #endif
 
@@ -5476,7 +5476,7 @@ void HTMLMediaElement::applyMediaFragmentURI()
 
 void HTMLMediaElement::updateSleepDisabling()
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (!shouldDisableSleep() && m_sleepDisabler)
         m_sleepDisabler = nullptr;
     else if (shouldDisableSleep() && !m_sleepDisabler)
@@ -5484,7 +5484,7 @@ void HTMLMediaElement::updateSleepDisabling()
 #endif
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 bool HTMLMediaElement::shouldDisableSleep() const
 {
 #if ENABLE(PAGE_VISIBILITY_API)

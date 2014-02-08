@@ -29,7 +29,7 @@
 #include "PopupMenuClient.h"
 #include "RenderFlexibleBox.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #define POPUP_MENU_PULLS_DOWN 0
 #else
 #define POPUP_MENU_PULLS_DOWN 1

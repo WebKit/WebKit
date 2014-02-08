@@ -32,7 +32,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
 OBJC_CLASS NSData;
 #endif
 
@@ -64,7 +64,7 @@ public:
     unsigned getSomeData(const char*& data, unsigned position = 0) const;
     
     SharedBuffer* sharedBuffer() const;
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
     void tryReplaceSharedBufferContents(SharedBuffer*);
 #endif
     PassRefPtr<ResourceBuffer> copy() const;
@@ -80,7 +80,7 @@ public:
     // Ensure this buffer has no other clients before calling this.
     PassOwnPtr<PurgeableBuffer> releasePurgeableBuffer();
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
     SharedBuffer::NSDataRetainPtrWithoutImplicitConversionOperator createNSData();
 #endif
 #if USE(CF)

@@ -40,14 +40,14 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #elif PLATFORM(WIN)
 #include "AccessibilityObjectWrapperWin.h"
 #include "COMPtr.h"
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 typedef struct _NSRange NSRange;
 
@@ -732,7 +732,7 @@ public:
     virtual void updateChildrenIfNecessary();
     virtual void setNeedsToUpdateChildren() { }
     virtual void clearChildren();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void detachFromParent();
 #else
     virtual void detachFromParent() { }
@@ -911,7 +911,7 @@ public:
 #endif
 #endif
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void overrideAttachmentParent(AccessibilityObject* parent);
 #else
     void overrideAttachmentParent(AccessibilityObject*) { }
@@ -963,7 +963,7 @@ protected:
     unsigned getLengthForTextRange() const { return text().length(); }
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN)
     COMPtr<AccessibilityObjectWrapper> m_wrapper;

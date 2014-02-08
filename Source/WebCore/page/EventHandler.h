@@ -52,7 +52,7 @@ class WebEvent;
 #endif
 #endif // PLATFORM(IOS)
 
-#if PLATFORM(MAC) && !defined(__OBJC__)
+#if PLATFORM(COCOA) && !defined(__OBJC__)
 class NSView;
 #endif
 
@@ -246,7 +246,7 @@ public:
     
     void sendScrollEvent(); // Ditto
 
-#if PLATFORM(MAC) && defined(__OBJC__)
+#if PLATFORM(COCOA) && defined(__OBJC__)
 #if !PLATFORM(IOS)
     void mouseDown(NSEvent *);
     void mouseDragged(NSEvent *);
@@ -279,7 +279,7 @@ public:
 #else
     static WebEvent *currentEvent();
 #endif // !PLATFORM(IOS)
-#endif // PLATFORM(MAC) && defined(__OBJC__)
+#endif // PLATFORM(COCOA) && defined(__OBJC__)
 
 #if PLATFORM(IOS)
     void invalidateClick();
@@ -413,7 +413,7 @@ private:
 
     bool capturesDragging() const { return m_capturesDragging; }
 
-#if PLATFORM(MAC) && defined(__OBJC__)
+#if PLATFORM(COCOA) && defined(__OBJC__)
     NSView *mouseDownViewIfStillGood();
 
     PlatformMouseEvent currentPlatformMouseEvent() const;
@@ -518,7 +518,7 @@ private:
 
     RefPtr<Element> m_previousWheelScrolledElement;
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(COCOA)
     NSView *m_mouseDownView;
     bool m_sendingEventToSubview;
 #if !PLATFORM(IOS)

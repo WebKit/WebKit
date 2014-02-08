@@ -264,7 +264,7 @@ private:
     void addCanvasChildren();
     void addAttachmentChildren();
     void addRemoteSVGChildren();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void updateAttachmentViewParents();
 #endif
 

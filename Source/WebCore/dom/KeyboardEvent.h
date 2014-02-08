@@ -32,7 +32,7 @@ namespace WebCore {
 class Node;
 class PlatformKeyboardEvent;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 struct KeypressCommand {
     KeypressCommand() { }
     explicit KeypressCommand(const String& commandName) : commandName(commandName) { ASSERT(isASCIILower(commandName[0U])); }
@@ -103,7 +103,7 @@ public:
     virtual bool isKeyboardEvent() const override;
     virtual int which() const override;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // We only have this need to store keypress command info on the Mac.
     Vector<KeypressCommand>& keypressCommands() { return m_keypressCommands; }
 #endif
@@ -118,7 +118,7 @@ private:
     unsigned m_location;
     bool m_altGraphKey : 1;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Commands that were sent by AppKit when interpreting the event. Doesn't include input method commands.
     Vector<KeypressCommand> m_keypressCommands;
 #endif

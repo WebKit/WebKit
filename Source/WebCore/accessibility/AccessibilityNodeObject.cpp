@@ -1350,7 +1350,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     case CheckBoxRole:
     case ListBoxOptionRole:
     // MacOS does not expect native <li> elements to expose label information, it only expects leaf node elements to do that.
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
     case ListItemRole:
 #endif
     case MenuButtonRole:

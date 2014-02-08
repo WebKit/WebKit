@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
 #if USE(COORDINATED_GRAPHICS)
@@ -255,7 +255,7 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
     updateSynchronousScrollingReasons();
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 void ScrollingCoordinator::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
     ASSERT(isMainThread());

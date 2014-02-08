@@ -37,7 +37,7 @@
 #include "ViewportArguments.h"
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #import <wtf/RetainPtr.h>
 typedef struct objc_object* id;
 #endif
@@ -164,7 +164,7 @@ public:
 
     bool isCurrentDocument(Document*) const;
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     id viewState() const;
     void setViewState(id);
     
@@ -263,7 +263,7 @@ private:
     String m_sharedLinkUniqueIdentifier;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<id> m_viewState;
     std::unique_ptr<HashMap<String, RetainPtr<id>>> m_transientProperties;
 #endif

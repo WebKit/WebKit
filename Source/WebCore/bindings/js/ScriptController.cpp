@@ -74,7 +74,7 @@ ScriptController::ScriptController(Frame& frame)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_windowScriptNPObject(0)
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_windowScriptObject(0)
 #endif
 {
@@ -379,7 +379,7 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
 
 #endif
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
     if (!widget->isPluginView())
@@ -406,7 +406,7 @@ JSObject* ScriptController::jsObjectForPluginElement(HTMLPlugInElement* plugin)
     return jsElementValue.getObject();
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 
 void ScriptController::updatePlatformScriptObjects()
 {
