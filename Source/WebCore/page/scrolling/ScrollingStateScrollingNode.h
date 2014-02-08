@@ -99,9 +99,10 @@ public:
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
     void setScrollBehaviorForFixedElements(ScrollBehaviorForFixedElements);
 
-    const IntPoint& requestedScrollPosition() const { return m_requestedScrollPosition; }
-    void setRequestedScrollPosition(const IntPoint&, bool representsProgrammaticScroll);
-
+    const FloatPoint& requestedScrollPosition() const { return m_requestedScrollPosition; }
+    bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
+    void setRequestedScrollPosition(const FloatPoint&, bool representsProgrammaticScroll);
+    
     int headerHeight() const { return m_headerHeight; }
     void setHeaderHeight(int);
 
@@ -125,8 +126,6 @@ public:
     ScrollbarPainter horizontalScrollbarPainter() const { return m_horizontalScrollbarPainter.get(); }
 #endif
     void setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
-
-    bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
 
     virtual void dumpProperties(TextStream&, int indent) const override;
 
@@ -156,7 +155,7 @@ private:
     ScrollBehaviorForFixedElements m_behaviorForFixed;
     int m_headerHeight;
     int m_footerHeight;
-    IntPoint m_requestedScrollPosition;
+    FloatPoint m_requestedScrollPosition;
     bool m_requestedScrollPositionRepresentsProgrammaticScroll;
 };
 

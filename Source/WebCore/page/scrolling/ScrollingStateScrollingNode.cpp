@@ -186,7 +186,7 @@ void ScrollingStateScrollingNode::setScrollBehaviorForFixedElements(ScrollBehavi
     setPropertyChanged(BehaviorForFixedElements);
 }
 
-void ScrollingStateScrollingNode::setRequestedScrollPosition(const IntPoint& requestedScrollPosition, bool representsProgrammaticScroll)
+void ScrollingStateScrollingNode::setRequestedScrollPosition(const FloatPoint& requestedScrollPosition, bool representsProgrammaticScroll)
 {
     m_requestedScrollPosition = requestedScrollPosition;
     m_requestedScrollPositionRepresentsProgrammaticScroll = representsProgrammaticScroll;
@@ -285,7 +285,7 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) con
 
     if (m_requestedScrollPosition != IntPoint()) {
         writeIndent(ts, indent + 1);
-        ts << "(requested scroll position " << m_requestedScrollPosition.x() << " " << m_requestedScrollPosition.y() << ")\n";
+        ts << "(requested scroll position " << TextStream::FormatNumberRespectingIntegers(m_requestedScrollPosition.x()) << " " << TextStream::FormatNumberRespectingIntegers(m_requestedScrollPosition.y()) << ")\n";
     }
 
     if (m_scrollOrigin != IntPoint()) {

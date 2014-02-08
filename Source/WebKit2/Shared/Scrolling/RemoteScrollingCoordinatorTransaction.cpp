@@ -118,7 +118,8 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(ArgumentEncoder& encoder
     SCROLLING_NODE_ENCODE(ReasonsForSynchronousScrolling, synchronousScrollingReasons)
     SCROLLING_NODE_ENCODE(ScrollableAreaParams, scrollableAreaParameters)
     SCROLLING_NODE_ENCODE_ENUM(BehaviorForFixedElements, scrollBehaviorForFixedElements)
-    // FIXME: encode requestedScrollPosition?
+    SCROLLING_NODE_ENCODE(RequestedScrollPosition, requestedScrollPosition)
+    SCROLLING_NODE_ENCODE(RequestedScrollPosition, requestedScrollPositionRepresentsProgrammaticScroll)
     SCROLLING_NODE_ENCODE(HeaderHeight, headerHeight)
     SCROLLING_NODE_ENCODE(FooterHeight, footerHeight)
 }
@@ -154,7 +155,19 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(ArgumentDecoder& decoder
     SCROLLING_NODE_DECODE(ReasonsForSynchronousScrolling, SynchronousScrollingReasons, setSynchronousScrollingReasons);
     SCROLLING_NODE_DECODE(ScrollableAreaParams, ScrollableAreaParameters, setScrollableAreaParameters);
     SCROLLING_NODE_DECODE_ENUM(BehaviorForFixedElements, ScrollBehaviorForFixedElements, setScrollBehaviorForFixedElements);
-    // FIXME: decode requestedScrollPosition?
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
+        FloatPoint scrollPosition;
+        if (!decoder.decode(scrollPosition))
+            return false;
+
+        bool representsProgrammaticScroll;
+        if (!decoder.decode(representsProgrammaticScroll))
+            return false;
+
+        node.setRequestedScrollPosition(scrollPosition, representsProgrammaticScroll);
+    }
+
     SCROLLING_NODE_DECODE(HeaderHeight, int, setHeaderHeight);
     SCROLLING_NODE_DECODE(FooterHeight, int, setFooterHeight);
 

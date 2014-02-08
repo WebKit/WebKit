@@ -1,3 +1,19 @@
+2014-02-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Encode requestedScrollPosition on ScrollingStateScrollingNodes to send to the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=128416
+
+        Reviewed by Tim Horton.
+        
+        Change requestedScrollPosition() to be a FloatPoint, and export
+        ScrollingStateScrollingNode::setRequestedScrollPosition(WebCore::FloatPoint const&, bool)
+        for WK2.
+
+        * WebCore.exp.in:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::setRequestedScrollPosition):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+
 2014-02-07  Beth Dakin  <bdakin@apple.com>
 
         Should get rid of TileController's CoverageForSlowScrolling mode
