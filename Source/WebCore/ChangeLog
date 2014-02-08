@@ -1,5 +1,24 @@
 2014-02-08  Andreas Kling  <akling@apple.com>
 
+        CTTE: SVGTRefTargetEventListener is always owned by SVGTRefElement.
+        <https://webkit.org/b/128432>
+
+        Tighten up the relationship between SVGTRefElement and its internal
+        event listener helper by storing the listener in a Ref, and making
+        the listeners backpointer to the element be a reference.
+
+        Reviewed by Anders Carlsson.
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefTargetEventListener::create):
+        (WebCore::SVGTRefTargetEventListener::SVGTRefTargetEventListener):
+        (WebCore::SVGTRefTargetEventListener::operator==):
+        (WebCore::SVGTRefTargetEventListener::handleEvent):
+        (WebCore::SVGTRefElement::SVGTRefElement):
+        * svg/SVGTRefElement.h:
+
+2014-02-07  Andreas Kling  <akling@apple.com>
+
         Devirtualize RenderBlockFlowRareData.
         <https://webkit.org/b/128427>
 

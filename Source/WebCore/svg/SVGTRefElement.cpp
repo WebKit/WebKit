@@ -56,9 +56,9 @@ PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, 
 
 class SVGTRefTargetEventListener : public EventListener {
 public:
-    static PassRefPtr<SVGTRefTargetEventListener> create(SVGTRefElement* trefElement)
+    static PassRef<SVGTRefTargetEventListener> create(SVGTRefElement& trefElement)
     {
-        return adoptRef(new SVGTRefTargetEventListener(trefElement));
+        return adoptRef(*new SVGTRefTargetEventListener(trefElement));
     }
 
     static const SVGTRefTargetEventListener* cast(const EventListener* listener)
@@ -72,21 +72,20 @@ public:
     bool isAttached() const { return m_target.get(); }
 
 private:
-    SVGTRefTargetEventListener(SVGTRefElement* trefElement);
+    explicit SVGTRefTargetEventListener(SVGTRefElement& trefElement);
 
     virtual void handleEvent(ScriptExecutionContext*, Event*) override;
     virtual bool operator==(const EventListener&) override;
 
-    SVGTRefElement* m_trefElement;
+    SVGTRefElement& m_trefElement;
     RefPtr<Element> m_target;
 };
 
-SVGTRefTargetEventListener::SVGTRefTargetEventListener(SVGTRefElement* trefElement)
+SVGTRefTargetEventListener::SVGTRefTargetEventListener(SVGTRefElement& trefElement)
     : EventListener(SVGTRefTargetEventListenerType)
     , m_trefElement(trefElement)
     , m_target(0)
 {
-    ASSERT(m_trefElement);
 }
 
 void SVGTRefTargetEventListener::attach(PassRefPtr<Element> target)
@@ -113,7 +112,7 @@ void SVGTRefTargetEventListener::detach()
 bool SVGTRefTargetEventListener::operator==(const EventListener& listener)
 {
     if (const SVGTRefTargetEventListener* targetListener = SVGTRefTargetEventListener::cast(&listener))
-        return m_trefElement == targetListener->m_trefElement;
+        return &m_trefElement == &targetListener->m_trefElement;
     return false;
 }
 
@@ -121,15 +120,15 @@ void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext*, Event* eve
 {
     ASSERT(isAttached());
 
-    if (event->type() == eventNames().DOMSubtreeModifiedEvent && m_trefElement != event->target())
-        m_trefElement->updateReferencedText(m_target.get());
+    if (event->type() == eventNames().DOMSubtreeModifiedEvent && &m_trefElement != event->target())
+        m_trefElement.updateReferencedText(m_target.get());
     else if (event->type() == eventNames().DOMNodeRemovedFromDocumentEvent)
-        m_trefElement->detachTarget();
+        m_trefElement.detachTarget();
 }
 
 inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document& document)
     : SVGTextPositioningElement(tagName, document)
-    , m_targetListener(SVGTRefTargetEventListener::create(this))
+    , m_targetListener(SVGTRefTargetEventListener::create(*this))
 {
     ASSERT(hasTagName(SVGNames::trefTag));
     registerAnimatedPropertiesForSVGTRefElement();
