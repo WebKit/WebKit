@@ -35,6 +35,7 @@
 #import <WebKit2/WKNavigationData.h>
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKURLCF.h>
+#import <WebKit2/WKView.h>
 #import <WebKit2/WKViewPrivate.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;

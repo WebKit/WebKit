@@ -1,3 +1,9 @@
+2014-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        Touch Minibrowser for a hopeful build fix.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+
 2014-02-07  Krzysztof Czech  <k.czech@samsung.com>
 
         Build fix after r163632
