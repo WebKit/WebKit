@@ -324,18 +324,6 @@ struct WKViewInterpretKeyEventsParameters {
     return _data->_page->drawsTransparentBackground();
 }
 
-- (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
-{
-    _data->_allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
-    _data->_page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
-    _data->_page->setShouldUseImplicitRubberBandControl(allowsBackForwardNavigationGestures);
-}
-
-- (BOOL)allowsBackForwardNavigationGestures
-{
-    return _data->_allowsBackForwardNavigationGestures;
-}
-
 - (BOOL)acceptsFirstResponder
 {
     return YES;
@@ -3243,6 +3231,18 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)setWindowOcclusionDetectionEnabled:(BOOL)flag
 {
     _data->_windowOcclusionDetectionEnabled = flag;
+}
+
+- (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
+{
+    _data->_allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
+    _data->_page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
+    _data->_page->setShouldUseImplicitRubberBandControl(allowsBackForwardNavigationGestures);
+}
+
+- (BOOL)allowsBackForwardNavigationGestures
+{
+    return _data->_allowsBackForwardNavigationGestures;
 }
 
 // This method forces a drawing area geometry update, even if frame size updates are disabled.

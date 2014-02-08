@@ -1,3 +1,13 @@
+2014-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        Move allowsBackForwardNavigationGestures back to private because apparently our build systems are broken.
+
+        * UIProcess/API/Cocoa/WKView.h:
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setAllowsBackForwardNavigationGestures:]):
+        (-[WKView allowsBackForwardNavigationGestures]):
+
 2014-02-07  Anders Carlsson  <andersca@apple.com>
 
         Simplify web page creation
