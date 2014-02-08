@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,13 @@ void DesiredTransition::reallyAdd(VM& vm, CommonData* common)
             m_oldStructure, m_newStructure));
 }
 
+void DesiredTransition::visitChildren(SlotVisitor& visitor)
+{
+    visitor.appendUnbarrieredPointer(&m_codeOriginOwner);
+    visitor.appendUnbarrieredPointer(&m_oldStructure);
+    visitor.appendUnbarrieredPointer(&m_newStructure);
+}
+
 DesiredTransitions::DesiredTransitions()
 {
 }
@@ -68,6 +75,12 @@ void DesiredTransitions::reallyAdd(VM& vm, CommonData* common)
 {
     for (unsigned i = 0; i < m_transitions.size(); i++)
         m_transitions[i].reallyAdd(vm, common);
+}
+
+void DesiredTransitions::visitChildren(SlotVisitor& visitor)
+{
+    for (unsigned i = 0; i < m_transitions.size(); i++)
+        m_transitions[i].visitChildren(visitor);
 }
 
 } } // namespace JSC::DFG

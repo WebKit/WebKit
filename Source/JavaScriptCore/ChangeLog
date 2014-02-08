@@ -1,3 +1,62 @@
+2014-02-07  Filip Pizlo  <fpizlo@apple.com>
+
+        GC should safepoint the DFG worklist in a smarter way rather than just waiting for everything to complete
+        https://bugs.webkit.org/show_bug.cgi?id=128297
+
+        Reviewed by Oliver Hunt.
+        
+        This makes DFG worklist threads have a rightToRun lock that gives them the ability to
+        be safepointed by the GC in much the same way as you'd expect from a fully
+        multithreaded VM.
+        
+        The idea is that the worklist threads's roots are the DFG::Plan. They only touch those
+        roots when holding the rightToRun lock. They currently grab that lock to run the
+        compiler, but relinquish it when accessing - and waiting on - the worklist.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlockSet::mark):
+        * dfg/DFGCompilationKey.cpp:
+        (JSC::DFG::CompilationKey::visitChildren):
+        * dfg/DFGCompilationKey.h:
+        * dfg/DFGDesiredStructureChains.cpp:
+        (JSC::DFG::DesiredStructureChains::visitChildren):
+        * dfg/DFGDesiredStructureChains.h:
+        * dfg/DFGDesiredTransitions.cpp:
+        (JSC::DFG::DesiredTransition::visitChildren):
+        (JSC::DFG::DesiredTransitions::visitChildren):
+        * dfg/DFGDesiredTransitions.h:
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::visitChildren):
+        * dfg/DFGDesiredWeakReferences.h:
+        * dfg/DFGDesiredWriteBarriers.cpp:
+        (JSC::DFG::DesiredWriteBarrier::visitChildren):
+        (JSC::DFG::DesiredWriteBarriers::visitChildren):
+        * dfg/DFGDesiredWriteBarriers.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::visitChildren):
+        * dfg/DFGPlan.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::~Worklist):
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::suspendAllThreads):
+        (JSC::DFG::Worklist::resumeAllThreads):
+        (JSC::DFG::Worklist::visitChildren):
+        (JSC::DFG::Worklist::runThread):
+        (JSC::DFG::Worklist::threadFunction):
+        * dfg/DFGWorklist.h:
+        (JSC::DFG::numberOfWorklists):
+        (JSC::DFG::worklistForIndexOrNull):
+        * heap/CodeBlockSet.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::collect):
+        * runtime/IntendedStructureChain.cpp:
+        (JSC::IntendedStructureChain::visitChildren):
+        * runtime/IntendedStructureChain.h:
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+        (JSC::VM::prepareToDiscardCode):
+
 2014-02-07  Mark Lam  <mark.lam@apple.com>
 
         Unify JSLock implementation for iOS and non-iOS ports.

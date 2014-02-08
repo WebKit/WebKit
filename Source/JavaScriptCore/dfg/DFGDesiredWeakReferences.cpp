@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 
 #include "CodeBlock.h"
 #include "DFGCommonData.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 
@@ -54,6 +55,12 @@ void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
         JSCell* target = m_references[i];
         common->weakReferences.append(WriteBarrier<JSCell>(vm, m_codeBlock->ownerExecutable(), target));
     }
+}
+
+void DesiredWeakReferences::visitChildren(SlotVisitor& visitor)
+{
+    for (unsigned i = m_references.size(); i--;)
+        visitor.appendUnbarrieredPointer(&m_references[i]);
 }
 
 } } // namespace JSC::DFG

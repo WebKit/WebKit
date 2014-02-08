@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "DFGCompilationKey.h"
 
 #include "CodeBlock.h"
+#include "CodeBlockSet.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -39,6 +40,11 @@ void CompilationKey::dump(PrintStream& out) const
         return;
     }
     out.print("(Compile of ", *m_profiledBlock, " with ", m_mode, ")");
+}
+
+void CompilationKey::visitChildren(CodeBlockSet& codeBlocks)
+{
+    codeBlocks.mark(m_profiledBlock);
 }
 
 } } // namespace JSC::DFG

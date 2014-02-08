@@ -316,16 +316,6 @@ VM::VM(VMType vmType, HeapType heapType)
     m_typedArrayController = adoptRef(new SimpleTypedArrayController());
 }
 
-#if ENABLE(DFG_JIT)
-static void cleanWorklist(VM& vm, DFG::Worklist* worklist)
-{
-    if (!worklist)
-        return;
-    worklist->waitUntilAllPlansForVMAreReady(vm);
-    worklist->removeAllReadyPlansForVM(vm);
-}
-#endif // ENABLE(DFG_JIT)
-
 VM::~VM()
 {
     // Never GC, ever again.
@@ -334,8 +324,12 @@ VM::~VM()
 #if ENABLE(DFG_JIT)
     // Make sure concurrent compilations are done, but don't install them, since there is
     // no point to doing so.
-    cleanWorklist(*this, DFG::existingGlobalDFGWorklistOrNull());
-    cleanWorklist(*this, DFG::existingGlobalFTLWorklistOrNull());
+    for (unsigned i = DFG::numberOfWorklists(); i--;) {
+        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i)) {
+            worklist->waitUntilAllPlansForVMAreReady(*this);
+            worklist->removeAllReadyPlansForVM(*this);
+        }
+    }
 #endif // ENABLE(DFG_JIT)
     
     // Clear this first to ensure that nobody tries to remove themselves from it.
@@ -508,20 +502,13 @@ void VM::stopSampling()
     interpreter->stopSampling();
 }
 
-#if ENABLE(DFG_JIT)
-static void prepareToDiscardCodeFor(VM& vm, DFG::Worklist* worklist)
-{
-    if (!worklist)
-        return;
-    worklist->completeAllPlansForVM(vm);
-}
-#endif // ENABLE(DFG_JIT)
-
 void VM::prepareToDiscardCode()
 {
 #if ENABLE(DFG_JIT)
-    prepareToDiscardCodeFor(*this, DFG::existingGlobalDFGWorklistOrNull());
-    prepareToDiscardCodeFor(*this, DFG::existingGlobalFTLWorklistOrNull());
+    for (unsigned i = DFG::numberOfWorklists(); i--;) {
+        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
+            worklist->completeAllPlansForVM(*this);
+    }
 #endif // ENABLE(DFG_JIT)
 }
 

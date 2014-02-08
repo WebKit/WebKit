@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 #include "DFGDesiredWriteBarriers.h"
 
 #include "CodeBlock.h"
-#include "JSCJSValueInlines.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 
@@ -68,6 +68,24 @@ void DesiredWriteBarrier::trigger(VM& vm)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void DesiredWriteBarrier::visitChildren(SlotVisitor& visitor)
+{
+    switch (m_type) {
+    case ConstantType: {
+        WriteBarrier<Unknown>& barrier = m_codeBlock->constants()[m_which.index];
+        visitor.append(&barrier);
+        return;
+    }
+        
+    case InlineCallFrameExecutableType: {
+        InlineCallFrame* inlineCallFrame = m_which.inlineCallFrame;
+        WriteBarrier<ScriptExecutable>& executable = inlineCallFrame->executable;
+        visitor.append(&executable);
+        return;
+    } }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 DesiredWriteBarriers::DesiredWriteBarriers()
 {
 }
@@ -80,6 +98,12 @@ void DesiredWriteBarriers::trigger(VM& vm)
 {
     for (unsigned i = 0; i < m_barriers.size(); i++)
         m_barriers[i].trigger(vm);
+}
+
+void DesiredWriteBarriers::visitChildren(SlotVisitor& visitor)
+{
+    for (unsigned i = 0; i < m_barriers.size(); i++)
+        m_barriers[i].visitChildren(visitor);
 }
 
 } } // namespace JSC::DFG

@@ -58,6 +58,7 @@ public:
     
     // Mark a pointer that may be a CodeBlock that belongs to the set of DFG
     // blocks. This is defined in CodeBlock.h.
+    void mark(CodeBlock* candidateCodeBlock);
     void mark(void* candidateCodeBlock);
     
     // Delete all code blocks that are only referenced by this set (i.e. owned

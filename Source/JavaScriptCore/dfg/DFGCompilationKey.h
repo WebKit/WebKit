@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 namespace JSC {
 
 class CodeBlock;
+class CodeBlockSet;
 
 namespace DFG {
 
@@ -78,6 +79,8 @@ public:
     {
         return WTF::pairIntHash(WTF::PtrHash<CodeBlock*>::hash(m_profiledBlock), m_mode);
     }
+    
+    void visitChildren(CodeBlockSet&);
     
     void dump(PrintStream&) const;
 

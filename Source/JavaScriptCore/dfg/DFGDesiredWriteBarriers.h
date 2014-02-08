@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@ namespace JSC {
 
 class JSFunction;
 class ScriptExecutable;
+class SlotVisitor;
 class VM;
 struct InlineCallFrame;
 
@@ -50,6 +51,8 @@ public:
     DesiredWriteBarrier(Type, CodeBlock*, InlineCallFrame*, JSCell* owner);
 
     void trigger(VM&);
+    
+    void visitChildren(SlotVisitor&);
 
 private:
     JSCell* m_owner;
@@ -78,6 +81,8 @@ public:
     }
 
     void trigger(VM&);
+    
+    void visitChildren(SlotVisitor&);
 
 private:
     Vector<DesiredWriteBarrier> m_barriers;

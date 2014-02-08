@@ -46,6 +46,8 @@
 namespace JSC {
 
 class CodeBlock;
+class CodeBlockSet;
+class SlotVisitor;
 
 namespace DFG {
 
@@ -68,6 +70,8 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     void notifyReady();
     
     CompilationKey key();
+    
+    void visitChildren(SlotVisitor&, CodeBlockSet&);
     
     VM& vm;
     RefPtr<CodeBlock> codeBlock;

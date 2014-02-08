@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@ namespace JSC {
 
 class CodeBlock;
 class ScriptExecutable;
+class SlotVisitor;
 class Structure;
 class VM;
 
@@ -46,6 +47,8 @@ public:
     DesiredTransition(CodeBlock*, ScriptExecutable*, Structure*, Structure*);
 
     void reallyAdd(VM&, CommonData*);
+    
+    void visitChildren(SlotVisitor&);
 
 private:
     CodeBlock* m_codeBlock;
@@ -61,6 +64,7 @@ public:
 
     void addLazily(CodeBlock*, ScriptExecutable*, Structure*, Structure*);
     void reallyAdd(VM&, CommonData*);
+    void visitChildren(SlotVisitor&);
 
 private:
     Vector<DesiredTransition> m_transitions;

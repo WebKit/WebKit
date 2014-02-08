@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,12 @@ bool DesiredStructureChains::areStillValid() const
             return false;
     }
     return true;
+}
+
+void DesiredStructureChains::visitChildren(SlotVisitor& visitor)
+{
+    for (unsigned i = m_vector.size(); i--;)
+        m_vector[i]->visitChildren(visitor);
 }
 
 } } // namespace JSC::DFG

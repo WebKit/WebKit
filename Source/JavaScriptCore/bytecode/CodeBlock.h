@@ -894,7 +894,7 @@ public:
     void setSteppingMode(SteppingMode);
 
     void clearDebuggerRequests() { m_debuggerRequests = 0; }
-
+    
     // FIXME: Make these remaining members private.
 
     int m_numCalleeRegisters;
@@ -1273,9 +1273,20 @@ inline void CodeBlockSet::mark(void* candidateCodeBlock)
     if (iter == m_set.end())
         return;
     
-    (*iter)->m_mayBeExecuting = true;
+    mark(*iter);
+}
+
+inline void CodeBlockSet::mark(CodeBlock* codeBlock)
+{
+    if (!codeBlock)
+        return;
+    
+    if (codeBlock->m_mayBeExecuting)
+        return;
+    
+    codeBlock->m_mayBeExecuting = true;
 #if ENABLE(GGC)
-    m_currentlyExecuting.append(static_cast<CodeBlock*>(candidateCodeBlock));
+    m_currentlyExecuting.append(codeBlock);
 #endif
 }
 

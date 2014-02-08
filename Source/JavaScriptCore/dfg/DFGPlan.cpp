@@ -404,6 +404,20 @@ CompilationKey Plan::key()
     return CompilationKey(codeBlock->alternative(), mode);
 }
 
+void Plan::visitChildren(SlotVisitor& visitor, CodeBlockSet& codeBlocks)
+{
+    for (unsigned i = mustHandleValues.size(); i--;)
+        visitor.appendUnbarrieredValue(&mustHandleValues[i]);
+    
+    codeBlocks.mark(codeBlock.get());
+    codeBlocks.mark(profiledDFGCodeBlock.get());
+    
+    chains.visitChildren(visitor);
+    weakReferences.visitChildren(visitor);
+    writeBarriers.visitChildren(visitor);
+    transitions.visitChildren(visitor);
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

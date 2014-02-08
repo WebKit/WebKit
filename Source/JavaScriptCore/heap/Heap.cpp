@@ -524,6 +524,14 @@ void Heap::markRoots()
             visitor.append(scratchBufferRoots);
             visitor.donateAndDrain();
         }
+        {
+            GCPHASE(VisitDFGWorklists);
+            MARK_LOG_ROOT(visitor, "DFG Worklists");
+            for (unsigned i = DFG::numberOfWorklists(); i--;) {
+                if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
+                    worklist->visitChildren(visitor, m_codeBlocks);
+            }
+        }
 #endif
         {
             GCPHASE(VisitProtectedObjects);
@@ -801,10 +809,12 @@ void Heap::collect()
     JAVASCRIPTCORE_GC_BEGIN();
     RELEASE_ASSERT(m_operationInProgress == NoOperation);
     
-    {
-        RecursiveAllocationScope scope(*this);
-        m_vm->prepareToDiscardCode();
+#if ENABLE(DFG_JIT)
+    for (unsigned i = DFG::numberOfWorklists(); i--;) {
+        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
+            worklist->suspendAllThreads();
     }
+#endif
 
     bool isFullCollection = m_shouldDoFullCollection;
     if (isFullCollection) {
@@ -950,6 +960,13 @@ void Heap::collect()
     if (Options::showObjectStatistics())
         HeapStatistics::showObjectStatistics(this);
     
+#if ENABLE(DFG_JIT)
+    for (unsigned i = DFG::numberOfWorklists(); i--;) {
+        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
+            worklist->resumeAllThreads();
+    }
+#endif
+
     if (Options::logGC()) {
         double after = currentTimeMS();
         dataLog(after - before, " ms, ", currentHeapSize / 1024, " kb]\n");
