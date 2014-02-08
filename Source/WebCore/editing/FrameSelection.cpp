@@ -135,35 +135,31 @@ Element* FrameSelection::rootEditableElementOrDocumentElement() const
 
 void FrameSelection::moveTo(const VisiblePosition &pos, EUserTriggered userTriggered, CursorAlignOnScroll align)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
-    setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity(), m_selection.isDirectional()), options, align);
+    setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity(), m_selection.isDirectional()),
+        defaultSetSelectionOptions(userTriggered), align);
 }
 
 void FrameSelection::moveTo(const VisiblePosition &base, const VisiblePosition &extent, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
-    setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity(), selectionHasDirection), options);
+    setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::moveTo(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
-    setSelection(VisibleSelection(pos, affinity, m_selection.isDirectional()), options);
+    setSelection(VisibleSelection(pos, affinity, m_selection.isDirectional()), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::moveTo(const Range *r, EAffinity affinity, EUserTriggered userTriggered)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
     VisibleSelection selection = r ? VisibleSelection(r->startPosition(), r->endPosition(), affinity) : VisibleSelection(Position(), Position(), affinity);
-    setSelection(selection, options);
+    setSelection(selection, defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::moveTo(const Position &base, const Position &extent, EAffinity affinity, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
-    setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), options);
+    setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
 void DragCaretController::setCaretPosition(const VisiblePosition& position)
@@ -247,10 +243,10 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
     if (m_selection == newSelection || !shouldChangeSelection(newSelection))
         return;
 
-    setSelection(newSelection, UserTriggered | DoNotRevealSelection | CloseTyping | ClearTypingStyle, AlignCursorOnScrollIfNeeded, granularity);
+    setSelection(newSelection, defaultSetSelectionOptions() | FireSelectEvent, AlignCursorOnScrollIfNeeded, granularity);
 }
 
-bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelection& newSelectionPossiblyWithoutDirection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity, EUserTriggered userTriggered)
+bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelection& newSelectionPossiblyWithoutDirection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity)
 {
     bool closeTyping = options & CloseTyping;
     bool shouldClearTypingStyle = options & ClearTypingStyle;
@@ -297,7 +293,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
     // Selection offsets should increase when LF is inserted before the caret in InsertLineBreakCommand. See <https://webkit.org/b/56061>.
     if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(newSelection.start()))
-        textControl->selectionChanged(userTriggered == UserTriggered);
+        textControl->selectionChanged(options & FireSelectEvent);
 
     if (oldSelection == newSelection)
         return false;
@@ -319,8 +315,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
 void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity)
 {
-    EUserTriggered userTriggered = selectionOptionsToUserTriggered(options);
-    if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity, userTriggered))
+    if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity))
         return;
 
 #if ENABLE(TEXT_CARET)
@@ -330,7 +325,7 @@ void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectio
 #endif
     updateAppearance();
 
-    if (userTriggered == UserTriggered && !(options & DoNotRevealSelection)) {
+    if (options & RevealSelection) {
         ScrollAlignment alignment;
 
         if (m_frame->editor().behavior().shouldCenterAlignWhenSelectionIsRevealed())
@@ -1243,8 +1238,7 @@ void FrameSelection::prepareForDestruction()
     if (view)
         view->clearSelection();
 
-    setSelectionWithoutUpdatingAppearance(VisibleSelection(), CloseTyping | ClearTypingStyle,
-        AlignCursorOnScrollIfNeeded, CharacterGranularity, NotUserTriggered);
+    setSelectionWithoutUpdatingAppearance(VisibleSelection(), defaultSetSelectionOptions(), AlignCursorOnScrollIfNeeded, CharacterGranularity);
     m_previousCaretNode.clear();
 }
 
@@ -1267,25 +1261,25 @@ void FrameSelection::setEnd(const VisiblePosition &pos, EUserTriggered trigger)
 void FrameSelection::setBase(const VisiblePosition &pos, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(pos.deepEquivalent(), m_selection.extent(), pos.affinity(), selectionHasDirection), CloseTyping | ClearTypingStyle | userTriggered);
+    setSelection(VisibleSelection(pos.deepEquivalent(), m_selection.extent(), pos.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::setExtent(const VisiblePosition &pos, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(m_selection.base(), pos.deepEquivalent(), pos.affinity(), selectionHasDirection), CloseTyping | ClearTypingStyle | userTriggered);
+    setSelection(VisibleSelection(m_selection.base(), pos.deepEquivalent(), pos.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::setBase(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(pos, m_selection.extent(), affinity, selectionHasDirection), CloseTyping | ClearTypingStyle | userTriggered);
+    setSelection(VisibleSelection(pos, m_selection.extent(), affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::setExtent(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(m_selection.base(), pos, affinity, selectionHasDirection), CloseTyping | ClearTypingStyle | userTriggered);
+    setSelection(VisibleSelection(m_selection.base(), pos, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
 void CaretBase::clearCaretRect()
@@ -1706,7 +1700,7 @@ void FrameSelection::selectAll()
     VisibleSelection newSelection(VisibleSelection::selectionFromContentsOfNode(root.get()));
 
     if (shouldChangeSelection(newSelection))
-        setSelection(newSelection, UserTriggered | CloseTyping | ClearTypingStyle | DoNotRevealSelection);
+        setSelection(newSelection, defaultSetSelectionOptions() | FireSelectEvent);
 }
 
 bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping)
@@ -2422,7 +2416,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
 
     VisibleSelection newSelection = frameSelection.selection();
     newSelection.expandUsingGranularity(WordGranularity);
-    frameSelection.setSelection(newSelection, CloseTyping | ClearTypingStyle, AlignCursorOnScrollIfNeeded, frameSelection.granularity());
+    frameSelection.setSelection(newSelection, defaultSetSelectionOptions(), AlignCursorOnScrollIfNeeded, frameSelection.granularity());
 
     Position startPos(frameSelection.selection().start());
     Position endPos(frameSelection.selection().end());

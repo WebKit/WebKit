@@ -314,7 +314,7 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
     if (AlternativeTextClient* client = alternativeTextClient())
         client->recordAutocorrectionResponse(AutocorrectionReverted, corrected, correction);
     m_frame.document()->updateLayout();
-    m_frame.selection().setSelection(selectionOfCorrected, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle | FrameSelection::SpellCorrectionTriggered);
+    m_frame.selection().setSelection(selectionOfCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SpellCorrectionTriggered);
     RefPtr<Range> range = Range::create(*m_frame.document(), m_frame.selection().selection().start(), m_frame.selection().selection().end());
 
     DocumentMarkerController& markers = m_frame.document()->markers();

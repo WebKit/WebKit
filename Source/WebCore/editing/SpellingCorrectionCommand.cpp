@@ -104,7 +104,7 @@ void SpellingCorrectionCommand::doApply()
     if (!fragment)
         return;
 
-    applyCommandToComposite(SetSelectionCommand::create(m_selectionToBeCorrected, FrameSelection::SpellCorrectionTriggered | FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle));
+    applyCommandToComposite(SetSelectionCommand::create(m_selectionToBeCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SpellCorrectionTriggered));
 #if USE(AUTOCORRECTION_PANEL)
     applyCommandToComposite(SpellingCorrectionRecordUndoCommand::create(document(), m_corrected, m_correction));
 #endif

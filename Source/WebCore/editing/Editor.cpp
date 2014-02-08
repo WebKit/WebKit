@@ -1102,7 +1102,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
     document().updateLayout();
 
     VisibleSelection newSelection(cmd->startingSelection());
-    changeSelectionAfterCommand(newSelection, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle);
+    changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
     dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
 
     m_alternativeTextController->respondToUnappliedEditing(cmd.get());
@@ -1118,7 +1118,7 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
     document().updateLayout();
 
     VisibleSelection newSelection(cmd->endingSelection());
-    changeSelectionAfterCommand(newSelection, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle);
+    changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
     dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
 
     m_lastEditCommand = 0;

@@ -1,3 +1,40 @@
+2014-02-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Split UserTriggered into FireSelectEvent and RevealSelection for selection options
+        https://bugs.webkit.org/show_bug.cgi?id=128441
+
+        Reviewed by Darin Adler.
+
+        Split UserTriggered by FireSelectEvent and RevealSelection for selection options.
+
+        Also added defaultSetSelectionOptions() to abstract away the default options.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::respondToUnappliedSpellCorrection):
+        * editing/Editor.cpp:
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::reappliedEditing):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::moveTo):
+        (WebCore::FrameSelection::setSelectionByMouseIfDifferent): UserTriggered | DoNotRevealSelection
+        is replaced by FireSelectEvent.
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance): Check options & FireSelectEvent
+        instead of options & UserTriggered.
+        (WebCore::FrameSelection::setSelection): Check options & RevealSelection instead of
+        options & UserTriggered && !(options & DoNotRevealSelection).
+        (WebCore::FrameSelection::prepareForDestruction):
+        (WebCore::FrameSelection::setBase):
+        (WebCore::FrameSelection::setExtent):
+        (WebCore::FrameSelection::selectAll):
+        (WebCore::FrameSelection::wordSelectionContainingCaretSelection):
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::defaultSetSelectionOptions): Added.
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::doApply):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::selectionChanged): Renamed the argument.
+        * html/HTMLTextFormControlElement.h:
+
 2014-02-08  Zan Dobersek  <zdobersek@igalia.com>
 
         Move TreeScope, IdTargetObserverRegistry to std::unique_ptr

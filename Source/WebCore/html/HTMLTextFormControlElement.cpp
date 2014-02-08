@@ -475,7 +475,7 @@ void HTMLTextFormControlElement::restoreCachedSelection()
     setSelectionRange(m_cachedSelectionStart, m_cachedSelectionEnd, m_cachedSelectionDirection);
 }
 
-void HTMLTextFormControlElement::selectionChanged(bool userTriggered)
+void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
 {
     if (!isTextFormControl())
         return;
@@ -483,9 +483,12 @@ void HTMLTextFormControlElement::selectionChanged(bool userTriggered)
     // FIXME: Don't re-compute selection start and end if this function was called inside setSelectionRange.
     // selectionStart() or selectionEnd() will return cached selection when this node doesn't have focus
     cacheSelection(computeSelectionStart(), computeSelectionEnd(), computeSelectionDirection());
+    
+    if (!shouldFireSelectEvent)
+        return;
 
     if (Frame* frame = document().frame()) {
-        if (frame->selection().isRange() && userTriggered)
+        if (frame->selection().isRange())
             dispatchEvent(Event::create(eventNames().selectEvent, true, false));
     }
 }

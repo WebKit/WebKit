@@ -118,18 +118,18 @@ public:
     enum CursorAlignOnScroll { AlignCursorOnScrollIfNeeded,
                                AlignCursorOnScrollAlways };
     enum SetSelectionOption {
-        // 1 << 0 is reserved for EUserTriggered
+        FireSelectEvent = 1 << 0,
         CloseTyping = 1 << 1,
         ClearTypingStyle = 1 << 2,
         SpellCorrectionTriggered = 1 << 3,
         DoNotSetFocus = 1 << 4,
         DictationTriggered = 1 << 5,
-        DoNotRevealSelection = 1 << 6,
+        RevealSelection = 1 << 6,
     };
     typedef unsigned SetSelectionOptions; // Union of values in SetSelectionOption and EUserTriggered
-    static inline EUserTriggered selectionOptionsToUserTriggered(SetSelectionOptions options)
+    static inline SetSelectionOptions defaultSetSelectionOptions(EUserTriggered userTriggered = NotUserTriggered)
     {
-        return static_cast<EUserTriggered>(options & UserTriggered);
+        return CloseTyping | ClearTypingStyle | (userTriggered ? (RevealSelection | FireSelectEvent) : 0);
     }
 
     explicit FrameSelection(Frame* = 0);
@@ -143,7 +143,7 @@ public:
     void moveTo(const Position&, const Position&, EAffinity, EUserTriggered = NotUserTriggered);
 
     const VisibleSelection& selection() const { return m_selection; }
-    void setSelection(const VisibleSelection&, SetSelectionOptions = CloseTyping | ClearTypingStyle, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
+    void setSelection(const VisibleSelection&, SetSelectionOptions = defaultSetSelectionOptions(), CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
     void clear();
@@ -279,7 +279,7 @@ public:
 private:
     enum EPositionType { START, END, BASE, EXTENT };
 
-    bool setSelectionWithoutUpdatingAppearance(const VisibleSelection&, SetSelectionOptions, CursorAlignOnScroll, TextGranularity, EUserTriggered);
+    bool setSelectionWithoutUpdatingAppearance(const VisibleSelection&, SetSelectionOptions, CursorAlignOnScroll, TextGranularity);
 
     void respondToNodeModification(Node*, bool baseRemoved, bool extentRemoved, bool startRemoved, bool endRemoved);
     TextDirection directionOfEnclosingBlock();
