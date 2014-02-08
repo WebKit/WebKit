@@ -195,6 +195,10 @@ namespace WebKit {
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
     macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \
     macro(IncrementalRenderingSuppressionTimeout, incrementalRenderingSuppressionTimeout, Double, double, 5) \
+    macro(MinimumFontSize, minimumFontSize, Double, double, 0) \
+    macro(MinimumLogicalFontSize, minimumLogicalFontSize, Double, double, 9) \
+    macro(DefaultFontSize, defaultFontSize, Double, double, 16) \
+    macro(DefaultFixedFontSize, defaultFixedFontSize, Double, double, 13) \
     \
 
 #define FOR_EACH_WEBKIT_FLOAT_PREFERENCE(macro) \
@@ -202,10 +206,6 @@ namespace WebKit {
 
 #define FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
     macro(FontSmoothingLevel, fontSmoothingLevel, UInt32, uint32_t, FontSmoothingLevelMedium) \
-    macro(MinimumFontSize, minimumFontSize, UInt32, uint32_t, 0) \
-    macro(MinimumLogicalFontSize, minimumLogicalFontSize, UInt32, uint32_t, 9) \
-    macro(DefaultFontSize, defaultFontSize, UInt32, uint32_t, 16) \
-    macro(DefaultFixedFontSize, defaultFixedFontSize, UInt32, uint32_t, 13) \
     macro(LayoutFallbackWidth, layoutFallbackWidth, UInt32, uint32_t, 980) \
     macro(DeviceWidth, deviceWidth, UInt32, uint32_t, 0) \
     macro(DeviceHeight, deviceHeight, UInt32, uint32_t, 0) \

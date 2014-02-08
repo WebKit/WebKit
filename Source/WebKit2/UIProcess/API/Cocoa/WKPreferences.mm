@@ -42,12 +42,12 @@
     return self;
 }
 
-- (unsigned)minimumFontSize
+- (CGFloat)minimumFontSize
 {
     return _preferences->minimumFontSize();
 }
 
-- (void)setMinimumFontSize:(unsigned)minimumFontSize
+- (void)setMinimumFontSize:(CGFloat)minimumFontSize
 {
     _preferences->setMinimumFontSize(minimumFontSize);
 }
