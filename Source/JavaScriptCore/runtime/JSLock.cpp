@@ -225,6 +225,10 @@ unsigned JSLock::dropAllLocks(SpinLock& spinLock)
     // m_lockDropDepth is only incremented if any locks were dropped.
     ++m_lockDropDepth;
     m_lockCount = 0;
+    if (m_vm) {
+        m_vm->stackPointerAtVMEntry = nullptr;
+        m_vm->updateStackLimitWithReservedZoneSize(wtfThreadData().savedReservedZoneSize());
+    }
     m_lock.unlock();
     return lockCount;
 #else
@@ -248,6 +252,10 @@ unsigned JSLock::dropAllLocksUnconditionally(SpinLock& spinLock)
     // m_lockDropDepth is only incremented if any locks were dropped.
     ++m_lockDropDepth;
     m_lockCount = 0;
+    if (m_vm) {
+        m_vm->stackPointerAtVMEntry = nullptr;
+        m_vm->updateStackLimitWithReservedZoneSize(wtfThreadData().savedReservedZoneSize());
+    }
     m_lock.unlock();
     return lockCount;
 #else

@@ -1,5 +1,21 @@
 2014-02-07  Mark Lam  <mark.lam@apple.com>
 
+        iOS port needs to clear VM::stackPointerAtVMEntry when it drops locks.
+        <https://webkit.org/b/128424>
+
+        Reviewed by Geoffrey Garen.
+
+        The iOS code path for dropping locks differ from the non-iOS code path
+        in that it (iOS) does not clear m_vm->stackPointerAtVMEntry nor reset the
+        VM stack limit. This is now fixed by copying that snippit from
+        JSLock::unlock().
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::dropAllLocksUnconditionally):
+
+2014-02-07  Mark Lam  <mark.lam@apple.com>
+
         Removed superflous JSLock::entryStackPointer field.
         <https://webkit.org/b/128413>
 
