@@ -105,7 +105,7 @@ using namespace WebKit;
     _pageClient = std::make_unique<PageClientImpl>(self);
 
     WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.preferences = [_configuration preferences]->_preferences.get();
+    webPageConfiguration.preferences = configuration.preferences->_preferences.get();
 
     _page = configuration.processClass->_context->createWebPage(*_pageClient, std::move(webPageConfiguration));
     _page->initializeWebPage();
