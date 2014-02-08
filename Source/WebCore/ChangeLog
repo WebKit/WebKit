@@ -1,3 +1,16 @@
+2014-02-07  David Kilzer  <ddkilzer@apple.com>
+
+        [ASan] Use new/delete in PODFreeListArena
+        <http://webkit.org/b/128437>
+
+        Reviewed by Oliver Hunt.
+
+        * platform/PODFreeListArena.h:
+        (WebCore::PODFreeListArena::allocateObject): Use new when
+        ADDRESS_SANITIZER is defined.
+        (WebCore::PODFreeListArena::freeObject): Use delete when
+        ADDRESS_SANITIZER is defined.
+
 2014-02-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge updateSelectionCachesIfSelectionIsInsideTextFormControl into setSelectionWithoutUpdatingAppearance

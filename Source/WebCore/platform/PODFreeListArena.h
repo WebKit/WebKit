@@ -40,6 +40,9 @@ public:
 
     template<class Argument1Type> T* allocateObject(const Argument1Type& argument1)
     {
+#if defined(ADDRESS_SANITIZER)
+        return new T(argument1);
+#else
         size_t roundedSize = roundUp(sizeof(T), minAlignment<T>());
         void* ptr = allocate(roundedSize);
         if (ptr) {
@@ -47,15 +50,20 @@ public:
             new(ptr) T(argument1);
         }
         return static_cast<T*>(ptr);
+#endif
     }
 
     void freeObject(T* ptr)
     {
+#if defined(ADDRESS_SANITIZER)
+        delete ptr;
+#else
         for (typename Vector<OwnPtr<FreeListChunk>>::const_iterator it = m_chunks.begin(), end = m_chunks.end(); it != end; ++it) {
             FreeListChunk* chunk = static_cast<FreeListChunk*>(it->get());
             if (chunk->contains(ptr))
                 chunk->free(ptr);
         }
+#endif
     }
 
 private:
