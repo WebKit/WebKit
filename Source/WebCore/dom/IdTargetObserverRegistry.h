@@ -26,10 +26,10 @@
 #ifndef IdTargetObserverRegistry_h
 #define IdTargetObserverRegistry_h
 
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -40,18 +40,20 @@ class IdTargetObserverRegistry {
     WTF_MAKE_FAST_ALLOCATED;
     friend class IdTargetObserver;
 public:
-    static PassOwnPtr<IdTargetObserverRegistry> create();
+    IdTargetObserverRegistry()
+        : m_notifyingObserversInSet(0)
+    { }
+
     void notifyObservers(const AtomicString& id);
     void notifyObservers(const AtomicStringImpl& id);
 
 private:
-    IdTargetObserverRegistry() : m_notifyingObserversInSet(0) { }
     void addObserver(const AtomicString& id, IdTargetObserver*);
     void removeObserver(const AtomicString& id, IdTargetObserver*);
     void notifyObserversInternal(const AtomicStringImpl& id);
 
     typedef HashSet<IdTargetObserver*> ObserverSet;
-    typedef HashMap<const AtomicStringImpl*, OwnPtr<ObserverSet>> IdToObserverSetMap;
+    typedef HashMap<const AtomicStringImpl*, std::unique_ptr<ObserverSet>> IdToObserverSetMap;
     IdToObserverSetMap m_registry;
     ObserverSet* m_notifyingObserversInSet;
 };

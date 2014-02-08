@@ -28,6 +28,7 @@
 #define TreeScope_h
 
 #include "DocumentOrderedMap.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/text/AtomicString.h>
 
@@ -79,7 +80,7 @@ public:
     Element* elementFromPoint(int x, int y) const;
 
     // For accessibility.
-    bool shouldCacheLabelsByForAttribute() const { return m_labelsByForAttribute; }
+    bool shouldCacheLabelsByForAttribute() const { return !!m_labelsByForAttribute; }
     void addLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement&);
     void removeLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement&);
     HTMLLabelElement* labelElementForId(const AtomicString& forAttributeValue);
@@ -164,12 +165,12 @@ private:
     TreeScope* m_parentTreeScope;
     unsigned m_selfOnlyRefCount;
 
-    OwnPtr<DocumentOrderedMap> m_elementsById;
-    OwnPtr<DocumentOrderedMap> m_elementsByName;
-    OwnPtr<DocumentOrderedMap> m_imageMapsByName;
-    OwnPtr<DocumentOrderedMap> m_labelsByForAttribute;
+    std::unique_ptr<DocumentOrderedMap> m_elementsById;
+    std::unique_ptr<DocumentOrderedMap> m_elementsByName;
+    std::unique_ptr<DocumentOrderedMap> m_imageMapsByName;
+    std::unique_ptr<DocumentOrderedMap> m_labelsByForAttribute;
 
-    OwnPtr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
+    std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
 
     mutable RefPtr<DOMSelection> m_selection;
 };

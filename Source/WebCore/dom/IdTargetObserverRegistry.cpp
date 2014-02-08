@@ -30,11 +30,6 @@
 
 namespace WebCore {
 
-PassOwnPtr<IdTargetObserverRegistry> IdTargetObserverRegistry::create()
-{
-    return adoptPtr(new IdTargetObserverRegistry());
-}
-
 void IdTargetObserverRegistry::addObserver(const AtomicString& id, IdTargetObserver* observer)
 {
     if (id.isEmpty())
@@ -42,7 +37,7 @@ void IdTargetObserverRegistry::addObserver(const AtomicString& id, IdTargetObser
     
     IdToObserverSetMap::AddResult result = m_registry.add(id.impl(), nullptr);
     if (result.isNewEntry)
-        result.iterator->value = adoptPtr(new ObserverSet());
+        result.iterator->value = std::make_unique<ObserverSet>();
 
     result.iterator->value->add(observer);
 }

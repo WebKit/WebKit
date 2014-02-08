@@ -63,7 +63,7 @@ TreeScope::TreeScope(ContainerNode* rootNode, Document* document)
     , m_documentScope(document)
     , m_parentTreeScope(document)
     , m_selfOnlyRefCount(0)
-    , m_idTargetObserverRegistry(IdTargetObserverRegistry::create())
+    , m_idTargetObserverRegistry(std::make_unique<IdTargetObserverRegistry>())
 {
     ASSERT(rootNode);
     ASSERT(document);
@@ -77,7 +77,7 @@ TreeScope::TreeScope(Document* document)
     , m_documentScope(document)
     , m_parentTreeScope(nullptr)
     , m_selfOnlyRefCount(0)
-    , m_idTargetObserverRegistry(IdTargetObserverRegistry::create())
+    , m_idTargetObserverRegistry(std::make_unique<IdTargetObserverRegistry>())
 {
     ASSERT(document);
     m_rootNode->setTreeScope(*this);
@@ -107,9 +107,9 @@ TreeScope::~TreeScope()
 
 void TreeScope::destroyTreeScopeData()
 {
-    m_elementsById.clear();
-    m_imageMapsByName.clear();
-    m_labelsByForAttribute.clear();
+    m_elementsById = nullptr;
+    m_imageMapsByName = nullptr;
+    m_labelsByForAttribute = nullptr;
 }
 
 void TreeScope::clearDocumentScope()
@@ -153,7 +153,7 @@ const Vector<Element*>* TreeScope::getAllElementsById(const AtomicString& elemen
 void TreeScope::addElementById(const AtomicStringImpl& elementId, Element& element)
 {
     if (!m_elementsById)
-        m_elementsById = adoptPtr(new DocumentOrderedMap);
+        m_elementsById = std::make_unique<DocumentOrderedMap>();
     m_elementsById->add(elementId, element, *this);
     m_idTargetObserverRegistry->notifyObservers(elementId);
 }
@@ -178,7 +178,7 @@ Element* TreeScope::getElementByName(const AtomicString& name) const
 void TreeScope::addElementByName(const AtomicStringImpl& name, Element& element)
 {
     if (!m_elementsByName)
-        m_elementsByName = adoptPtr(new DocumentOrderedMap);
+        m_elementsByName = std::make_unique<DocumentOrderedMap>();
     m_elementsByName->add(name, element, *this);
 }
 
@@ -206,7 +206,7 @@ void TreeScope::addImageMap(HTMLMapElement& imageMap)
     if (!name)
         return;
     if (!m_imageMapsByName)
-        m_imageMapsByName = adoptPtr(new DocumentOrderedMap);
+        m_imageMapsByName = std::make_unique<DocumentOrderedMap>();
     m_imageMapsByName->add(*name, imageMap, *this);
 }
 
@@ -298,7 +298,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
 
     if (!m_labelsByForAttribute) {
         // Populate the map on first access.
-        m_labelsByForAttribute = adoptPtr(new DocumentOrderedMap);
+        m_labelsByForAttribute = std::make_unique<DocumentOrderedMap>();
 
         for (auto& label : descendantsOfType<HTMLLabelElement>(*rootNode())) {
             const AtomicString& forValue = label.fastGetAttribute(forAttr);
