@@ -32,6 +32,7 @@
 #import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/text/StringView.h>
 
 @class WebView;
 @class WebEditorUndoTarget;

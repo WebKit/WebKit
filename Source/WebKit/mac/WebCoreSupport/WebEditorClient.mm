@@ -71,7 +71,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RunLoop.h>
-#import <wtf/text/StringView.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)

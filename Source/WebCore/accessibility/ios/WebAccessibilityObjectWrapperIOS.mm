@@ -1530,17 +1530,17 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     }
 }
 
-static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, const UChar* chars, int length)
+static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, NSString *text)
 {
     // skip invisible text
     if (!node->renderer())
         return;
     
     // easier to calculate the range before appending the string
-    NSRange attrStringRange = NSMakeRange([attrString length], length);
+    NSRange attrStringRange = NSMakeRange([attrString length], [text length]);
     
     // append the string from this node
-    [[attrString mutableString] appendString:[NSString stringWithCharacters:chars length:length]];
+    [[attrString mutableString] appendString:text];
     
     // set new attributes
     AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
@@ -1602,7 +1602,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
                 if (!listMarkerText.isEmpty()) 
                     [array addObject:[NSString stringWithCharacters:listMarkerText.deprecatedCharacters() length:listMarkerText.length()]];
                 // There was not an element representation, so just return the text.
-                [array addObject:[NSString stringWithCharacters:it.characters() length:it.length()]];
+                [array addObject:adoptNS([it.text().createNSStringWithoutCopying() copy]).get()];
             }
             else
             {
@@ -1610,13 +1610,13 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 
                 if (!listMarkerText.isEmpty()) {
                     NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
-                    AXAttributedStringAppendText(attrString, node, listMarkerText.deprecatedCharacters(), listMarkerText.length());
+                    AXAttributedStringAppendText(attrString, node, listMarkerText);
                     [array addObject:attrString];
                     [attrString release];
                 }
                 
                 NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] init];
-                AXAttributedStringAppendText(attrString, node, it.characters(), it.length());
+                AXAttributedStringAppendText(attrString, node, it.text().createNSStringWithoutCopying().get());
                 [array addObject:attrString];
                 [attrString release];
             }

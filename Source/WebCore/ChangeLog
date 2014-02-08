@@ -1,6 +1,16 @@
 2014-02-08  Dan Bernstein  <mitz@apple.com>
 
-        iOS build fix after r163712
+        More (and more correct) iOS build fix after r163712.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (AXAttributedStringAppendText):
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::wordsInCurrentParagraph):
+
+2014-02-08  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix after r163712.
 
         * page/ios/FrameIOS.mm:
         (WebCore::Frame::indexCountOfWordPrecedingSelection):
