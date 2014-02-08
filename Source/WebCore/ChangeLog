@@ -1,3 +1,15 @@
+2014-02-07  Roger Fong  <roger_fong@apple.com>
+
+        CGContextGetUserSpaceToDeviceSpaceTransform returns the wrong value on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=128395.
+        
+        Rubberstamped by Zalan Bujtas.
+
+        The call essentially returns 0 and causes an assertion failure when running many layout tests.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp: Don't make the call on Windows. We default to 1.
+        (WebCore::GraphicsContext::platformInit):
+
 2014-02-07  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix.
