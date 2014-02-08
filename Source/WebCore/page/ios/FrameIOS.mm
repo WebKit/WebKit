@@ -128,25 +128,23 @@ int Frame::indexCountOfWordPrecedingSelection(NSString *word) const
 
     WordAwareIterator it(searchRange.get());
     while (!it.atEnd()) {
-        const UChar* chars = it.characters();
+        StringView text = it.text();
         int length = it.length();
-        if (length > 1 || !isSpaceOrNewline(chars[0])) {
+        if (length > 1 || !isSpaceOrNewline(text[0])) {
             int startOfWordBoundary = 0;
             for (int i = 1; i < length; i++) {
-                if (isSpaceOrNewline(chars[i]) || chars[i] == 0xA0) {
+                if (isSpaceOrNewline(text[i]) || text[i] == 0xA0) {
                     int wordLength = i - startOfWordBoundary;
-                    NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(chars) + startOfWordBoundary length:wordLength freeWhenDone:NO];
+                    RetainPtr<NSString> chunk = text.substring(startOfWordBoundary, wordLength).createNSStringWithoutCopying();
                     if ([chunk isEqualToString:word])
                         ++result;
-                    [chunk release];
                     startOfWordBoundary += wordLength + 1;
                 }
             }
             if (startOfWordBoundary < length) {
-                NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(chars) + startOfWordBoundary length:length - startOfWordBoundary freeWhenDone:NO];
+                RetainPtr<NSString> chunk = text.substring(startOfWordBoundary, length - startOfWordBoundary).createNSStringWithoutCopying();
                 if ([chunk isEqualToString:word])
                     ++result;
-                [chunk release];
             }
         }
         it.advance();
@@ -185,25 +183,23 @@ NSArray *Frame::wordsInCurrentParagraph() const
 
     WordAwareIterator it(searchRange.get());
     while (!it.atEnd()) {
-        const UChar* chars = it.characters();
+        StringView text = it.text();
         int length = it.length();
-        if (length > 1 || !isSpaceOrNewline(chars[0])) {
+        if (length > 1 || !isSpaceOrNewline(text[0])) {
             int startOfWordBoundary = 0;
             for (int i = 1; i < length; i++) {
-                if (isSpaceOrNewline(chars[i]) || chars[i] == 0xA0) {
+                if (isSpaceOrNewline(text[i]) || text[i] == 0xA0) {
                     int wordLength = i - startOfWordBoundary;
                     if (wordLength > 0) {
-                        NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(chars) + startOfWordBoundary length:wordLength freeWhenDone:NO];
-                        [words addObject:chunk];
-                        [chunk release];
+                        RetainPtr<NSString> chunk = text.substring(startOfWordBoundary, wordLength).createNSStringWithoutCopying();
+                        [words addObject:chunk.get()];
                     }
                     startOfWordBoundary += wordLength + 1;
                 }
             }
             if (startOfWordBoundary < length) {
-                NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(chars) + startOfWordBoundary length:length - startOfWordBoundary freeWhenDone:NO];
-                [words addObject:chunk];
-                [chunk release];
+                RetainPtr<NSString> chunk = text.substring(startOfWordBoundary, length - startOfWordBoundary).createNSStringWithoutCopying();
+                [words addObject:chunk.get()];
             }
         }
         it.advance();
