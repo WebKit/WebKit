@@ -1,3 +1,10 @@
+2014-02-07  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL WebKit2 build fix after r163671.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::WebView): Use WebPageConfiguration in creating WebPage.
+
 2014-02-07  Gavin Barraclough  <barraclough@apple.com>
 
         Add better comments to code that boosts the NetworkProcess
