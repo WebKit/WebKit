@@ -34,7 +34,7 @@
 
 - (instancetype)init
 {
-    if ((self = [super init]))
+    if (!(self = [super init]))
         return nil;
 
     _preferences = WebKit::WebPreferences::create(String());
@@ -42,12 +42,12 @@
     return self;
 }
 
-- (int)minimumFontSize
+- (unsigned)minimumFontSize
 {
     return _preferences->minimumFontSize();
 }
 
-- (void)setMinimumFontSize:(int)minimumFontSize
+- (void)setMinimumFontSize:(unsigned)minimumFontSize
 {
     _preferences->setMinimumFontSize(minimumFontSize);
 }

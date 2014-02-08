@@ -35,7 +35,7 @@
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKPreferencesInternal.h"
-#import "WKProcessClass.h"
+#import "WKProcessClassInternal.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKWebViewConfiguration.h"
 #import "WebContext.h"
@@ -110,7 +110,10 @@
 #endif
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-    _wkView = [[WKView alloc] initWithFrame:bounds configuration:_configuration.get()];
+    WebKit::WebPageConfiguration webPageConfiguration;
+    webPageConfiguration.preferences = [_configuration preferences]->_preferences.get();
+
+    _wkView = [[WKView alloc] initWithFrame:bounds context:*[_configuration.get() processClass]->_context configuration:std::move(webPageConfiguration)];
     [self addSubview:_wkView.get()];
     _page = WebKit::toImpl([_wkView pageRef]);
 #endif

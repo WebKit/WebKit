@@ -35,6 +35,7 @@
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKGeolocationProviderIOS.h"
 #import "WKInteractionView.h"
+#import "WKPreferencesInternal.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKProcessClassInternal.h"
 #import "WKWebViewConfiguration.h"
@@ -104,6 +105,7 @@ using namespace WebKit;
     _pageClient = std::make_unique<PageClientImpl>(self);
 
     WebPageConfiguration webPageConfiguration;
+    webPageConfiguration.preferences = [_configuration preferences]->_preferences.get();
 
     _page = configuration.processClass->_context->createWebPage(*_pageClient, std::move(webPageConfiguration));
     _page->initializeWebPage();

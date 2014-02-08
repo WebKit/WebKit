@@ -34,6 +34,7 @@ class WebPreferences;
 }
 
 @interface WKPreferences () {
+@package
     RefPtr<WebKit::WebPreferences> _preferences;
 }
 

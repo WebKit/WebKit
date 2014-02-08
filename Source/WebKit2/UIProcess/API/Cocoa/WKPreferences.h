@@ -35,7 +35,7 @@
 WK_API_CLASS
 @interface WKPreferences : NSObject
 
-@property (nonatomic) int minimumFontSize;
+@property (nonatomic) unsigned minimumFontSize;
 
 @end
 

@@ -1,3 +1,42 @@
+2014-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Pass the preferences through from the WKWebViewConfiguration object
+        https://bugs.webkit.org/show_bug.cgi?id=128430
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences init]):
+        Don't return nil if [super init] returns a valid object.
+
+        (-[WKPreferences minimumFontSize]):
+        (-[WKPreferences setMinimumFontSize:]):
+        Change this property to be unsigned.
+
+        * UIProcess/API/Cocoa/WKPreferencesInternal.h:
+        Use @package.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        Set up a WebKit::WebPageConfiguration and use the new -[WKView initWithFrame:context:configuration:] method.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:configuration:]):
+        Set the preferences.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:context:configuration:]):
+        Add a new initializer that takes a WebContext and a WebPageConfiguration.
+
+        (-[WKView _registerDraggedTypes]):
+        This shouldn't be in the private category.
+        
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        Call the new initializer.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+
 2014-02-07  Tim Horton  <timothy_horton@apple.com>
 
         Fix the WebKit2 build after r163671.

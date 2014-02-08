@@ -59,7 +59,6 @@
 #import "WKTextInputWindowController.h"
 #import "WKViewInternal.h"
 #import "WKViewPrivate.h"
-#import "WKWebViewConfiguration.h"
 #import "WebBackForwardList.h"
 #import "WebContext.h"
 #import "WebEventFactory.h"
@@ -257,11 +256,6 @@ struct WKViewInterpretKeyEventsParameters {
 @implementation WKView
 
 #if WK_API_ENABLED
-
-- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
-{
-    return [self initWithFrame:frame contextRef:toAPI(configuration.processClass->_context.get()) pageGroupRef:nullptr];
-}
 
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
 {
@@ -2886,29 +2880,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_page->suppressVisibilityUpdates();
 }
 
-@end
-
-@implementation WKView (Private)
-
-- (void)saveBackForwardSnapshotForCurrentItem
-{
-    _data->_page->recordNavigationSnapshot();
-}
-
-- (void)_registerDraggedTypes
-{
-    NSMutableSet *types = [[NSMutableSet alloc] initWithArray:PasteboardTypes::forEditing()];
-    [types addObjectsFromArray:PasteboardTypes::forURL()];
-    [self registerForDraggedTypes:[types allObjects]];
-    [types release];
-}
-
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
-{
-    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:nil];
-}
-
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
+- (instancetype)initWithFrame:(NSRect)frame context:(WebContext&)context configuration:(WebPageConfiguration)webPageConfiguration
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -2933,13 +2905,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [trackingArea release];
 
     _data = [[WKViewData alloc] init];
-
-    WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.pageGroup = toImpl(pageGroupRef);
-    webPageConfiguration.relatedPage = toImpl(relatedPage);
-
     _data->_pageClient = std::make_unique<PageClientImpl>(self);
-    _data->_page = toImpl(contextRef)->createWebPage(*_data->_pageClient, std::move(webPageConfiguration));
+    _data->_page = context.createWebPage(*_data->_pageClient, std::move(webPageConfiguration));
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
     _data->_page->initializeWebPage();
 
@@ -2966,6 +2933,37 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [workspaceNotificationCenter addObserver:self selector:@selector(_activeSpaceDidChange:) name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
 
     return self;
+}
+
+- (void)_registerDraggedTypes
+{
+    NSMutableSet *types = [[NSMutableSet alloc] initWithArray:PasteboardTypes::forEditing()];
+    [types addObjectsFromArray:PasteboardTypes::forURL()];
+    [self registerForDraggedTypes:[types allObjects]];
+    [types release];
+}
+
+@end
+
+@implementation WKView (Private)
+
+- (void)saveBackForwardSnapshotForCurrentItem
+{
+    _data->_page->recordNavigationSnapshot();
+}
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
+{
+    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:nil];
+}
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
+{
+    WebPageConfiguration webPageConfiguration;
+    webPageConfiguration.pageGroup = toImpl(pageGroupRef);
+    webPageConfiguration.relatedPage = toImpl(relatedPage);
+
+    return [self initWithFrame:frame context:*toImpl(contextRef) configuration:webPageConfiguration];
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080

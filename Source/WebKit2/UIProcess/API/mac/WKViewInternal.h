@@ -43,18 +43,20 @@ namespace WebCore {
 }
 
 namespace WebKit {
-    class DrawingAreaProxy;
-    class FindIndicator;
-    class LayerTreeContext;
-    struct ColorSpaceData;
-    struct EditorState;
+class DrawingAreaProxy;
+class FindIndicator;
+class LayerTreeContext;
+class WebContext;
+struct ColorSpaceData;
+struct EditorState;
+struct WebPageConfiguration;
 }
 
 @class WKFullScreenWindowController;
 
 @interface WKView ()
 #if WK_API_ENABLED
-- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
+- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration;
 #endif
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
