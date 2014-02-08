@@ -135,6 +135,13 @@ public:
         return characters16()[index];
     }
 
+    size_t find(UChar character, unsigned start = 0) const
+    {
+        if (is8Bit())
+            return WTF::find(characters8(), length(), character, start);
+        return WTF::find(characters16(), length(), character, start);
+    }
+
 #if USE(CF)
     // This function converts null strings to empty strings.
     WTF_EXPORT_STRING_API RetainPtr<CFStringRef> createCFStringWithoutCopying() const;

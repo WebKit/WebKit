@@ -28,6 +28,7 @@
 #define StringBuilder_h
 
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -89,6 +90,14 @@ public:
             append(other.characters16(), other.m_length);
     }
 
+    void append(StringView stringView)
+    {
+        if (stringView.is8Bit())
+            append(stringView.characters8(), stringView.length());
+        else
+            append(stringView.characters16(), stringView.length());
+    }
+    
     void append(const String& string, unsigned offset, unsigned length)
     {
         if (!string.length())

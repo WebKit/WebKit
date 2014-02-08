@@ -157,10 +157,9 @@ static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue
     return jsString(exec, string);
 }
 
-template <typename CharType>
-static NEVER_INLINE String substituteBackreferencesSlow(const String& replacement, const String& source, const int* ovector, RegExp* reg, size_t i)
+static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, StringView source, const int* ovector, RegExp* reg, size_t i)
 {
-    Vector<CharType> substitutedReplacement;
+    StringBuilder substitutedReplacement;
     int offset = 0;
     do {
         if (i + 1 == replacement.length())
@@ -170,7 +169,7 @@ static NEVER_INLINE String substituteBackreferencesSlow(const String& replacemen
         if (ref == '$') {
             // "$$" -> "$"
             ++i;
-            substitutedReplacement.append(replacement.getCharactersWithUpconvert<CharType>() + offset, i - offset);
+            substitutedReplacement.append(replacement.substring(offset, i - offset));
             offset = i + 1;
             continue;
         }
@@ -210,28 +209,25 @@ static NEVER_INLINE String substituteBackreferencesSlow(const String& replacemen
             continue;
 
         if (i - offset)
-            substitutedReplacement.append(replacement.getCharactersWithUpconvert<CharType>() + offset, i - offset);
+            substitutedReplacement.append(replacement.substring(offset, i - offset));
         i += 1 + advance;
         offset = i + 1;
         if (backrefStart >= 0)
-            substitutedReplacement.append(source.getCharactersWithUpconvert<CharType>() + backrefStart, backrefLength);
+            substitutedReplacement.append(source.substring(backrefStart, backrefLength));
     } while ((i = replacement.find('$', i + 1)) != notFound);
 
     if (replacement.length() - offset)
-        substitutedReplacement.append(replacement.getCharactersWithUpconvert<CharType>() + offset, replacement.length() - offset);
+        substitutedReplacement.append(replacement.substring(offset));
 
-    substitutedReplacement.shrinkToFit();
-    return String::adopt(substitutedReplacement);
+    return substitutedReplacement.toString();
 }
 
-static inline String substituteBackreferences(const String& replacement, const String& source, const int* ovector, RegExp* reg)
+static inline String substituteBackreferences(const String& replacement, StringView source, const int* ovector, RegExp* reg)
 {
     size_t i = replacement.find('$');
-    if (UNLIKELY(i != notFound)) {
-        if (replacement.is8Bit() && source.is8Bit())
-            return substituteBackreferencesSlow<LChar>(replacement, source, ovector, reg, i);
-        return substituteBackreferencesSlow<UChar>(replacement, source, ovector, reg, i);
-    }
+    if (UNLIKELY(i != notFound))
+        return substituteBackreferencesSlow(replacement, source, ovector, reg, i);
+
     return replacement;
 }
 
