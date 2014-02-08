@@ -723,11 +723,6 @@ void WebChromeClient::scheduleAnimation()
 }
 #endif
 
-void WebChromeClient::formStateDidChange(const Node*)
-{
-    notImplemented();
-}
-
 void WebChromeClient::didAssociateFormControls(const Vector<RefPtr<WebCore::Element>>& elements)
 {
     return m_page->injectedBundleFormClient().didAssociateFormControls(m_page, elements);

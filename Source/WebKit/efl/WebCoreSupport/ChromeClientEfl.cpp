@@ -497,11 +497,6 @@ void ChromeClientEfl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
         chooser->chooseFile(filenames[0]);
 }
 
-void ChromeClientEfl::formStateDidChange(const Node*)
-{
-    notImplemented();
-}
-
 void ChromeClientEfl::setCursor(const Cursor& cursor)
 {
     ewk_view_cursor_set(m_view, cursor);

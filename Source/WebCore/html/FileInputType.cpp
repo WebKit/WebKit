@@ -349,7 +349,6 @@ void FileInputType::setFiles(PassRefPtr<FileList> files)
     m_fileList = files;
 
     input->setFormControlValueMatchesRenderer(true);
-    input->notifyFormStateChanged();
     input->setNeedsValidityCheck();
 
     Vector<String> paths;

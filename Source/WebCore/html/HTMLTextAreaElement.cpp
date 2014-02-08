@@ -341,7 +341,6 @@ void HTMLTextAreaElement::updateValue() const
     ASSERT(renderer());
     m_value = innerTextValue();
     const_cast<HTMLTextAreaElement*>(this)->setFormControlValueMatchesRenderer(true);
-    const_cast<HTMLTextAreaElement*>(this)->notifyFormStateChanged();
     m_isDirty = true;
     m_wasModifiedByUser = true;
     const_cast<HTMLTextAreaElement*>(this)->updatePlaceholderVisibility(false);
@@ -394,7 +393,6 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue)
         setSelectionRange(endOfString, endOfString);
     }
 
-    notifyFormStateChanged();
     setTextAsOfLastFormControlChangeEvent(normalizedValue);
 }
 

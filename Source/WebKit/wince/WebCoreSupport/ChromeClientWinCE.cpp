@@ -367,11 +367,6 @@ void ChromeClientWinCE::AXFinishFrameLoad()
     notImplemented();
 }
 
-void ChromeClientWinCE::formStateDidChange(const Node*)
-{
-    notImplemented();
-}
-
 bool ChromeClientWinCE::selectItemWritingDirectionIsNatural()
 {
     return false;

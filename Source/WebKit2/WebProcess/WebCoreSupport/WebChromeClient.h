@@ -188,10 +188,6 @@ private:
     virtual void scheduleAnimation() override;
 #endif
 
-    // Notification that the given form element has changed. This function
-    // will be called frequently, so handling should be very fast.
-    virtual void formStateDidChange(const WebCore::Node*) override;
-
     virtual void didAssociateFormControls(const Vector<RefPtr<WebCore::Element>>&) override;
     virtual bool shouldNotifyOnFormChanges() override;
 

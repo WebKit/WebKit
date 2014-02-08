@@ -128,8 +128,6 @@ public:
     virtual void setCursorHiddenUntilMouseMoves(bool);
     virtual void setLastSetCursorToCurrentCursor();
 
-    virtual void formStateDidChange(const WebCore::Node*) { }
-
     // Pass 0 as the GraphicsLayer to detatch the root layer.
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
     // Sets a flag to specify that the next time content is drawn to the window,

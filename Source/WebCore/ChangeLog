@@ -1,3 +1,30 @@
+2014-02-08  Andreas Kling  <akling@apple.com>
+
+        Remove unused ChromeClient::formStateDidChange().
+        <https://webkit.org/b/128469>
+
+        Nobody listens for this callback anymore so remove it and stop
+        spamming no-op virtual dispatches in forms code.
+
+        Reviewed by Anders Carlsson.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::setFiles):
+        * html/HTMLFormControlElementWithState.cpp:
+        * html/HTMLFormControlElementWithState.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::selectOption):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updateValue):
+        (WebCore::HTMLTextAreaElement::setValueCommon):
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+
 2014-02-08  Chris J. Shull  <chrisjshull@gmail.com>
 
         Web Inspector: Find evaluates attributes in a case sensitive manner

@@ -40,7 +40,6 @@ public:
     virtual FormControlState saveFormControlState() const;
     // The specified FormControlState must have at least one string value.
     virtual void restoreFormControlState(const FormControlState&) { }
-    void notifyFormStateChanged();
 
 protected:
     HTMLFormControlElementWithState(const QualifiedName& tagName, Document&, HTMLFormElement*);

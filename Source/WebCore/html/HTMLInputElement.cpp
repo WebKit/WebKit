@@ -533,7 +533,6 @@ void HTMLInputElement::updateType()
     addToRadioButtonGroup();
 
     setNeedsValidityCheck();
-    notifyFormStateChanged();
 }
 
 void HTMLInputElement::subtreeHasChanged()
@@ -1024,8 +1023,6 @@ void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior even
 
     if (!valueChanged)
         return;
-
-    notifyFormStateChanged();
 }
 
 void HTMLInputElement::setValueInternal(const String& sanitizedValue, TextFieldEventBehavior eventBehavior)
@@ -1080,7 +1077,6 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     // Input event is fired by the Node::defaultEventHandler for editable controls.
     if (!isTextField())
         dispatchInputEvent();
-    notifyFormStateChanged();
 
     setNeedsValidityCheck();
 

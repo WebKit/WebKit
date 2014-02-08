@@ -268,10 +268,6 @@ public:
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
     // Asynchronous request to load an icon for specified filenames.
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*) = 0;
-
-    // Notification that the given form element has changed. This function
-    // will be called frequently, so handling should be very fast.
-    virtual void formStateDidChange(const Node*) = 0;
         
     virtual void elementDidFocus(const Node*) { };
     virtual void elementDidBlur(const Node*) { };

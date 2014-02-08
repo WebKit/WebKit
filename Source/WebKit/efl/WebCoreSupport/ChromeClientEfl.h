@@ -147,7 +147,6 @@ public:
 
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*);
-    virtual void formStateDidChange(const Node*);
 
     virtual void setCursor(const Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);

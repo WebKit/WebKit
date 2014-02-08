@@ -62,8 +62,6 @@ public:
     virtual void suppressFormNotifications() override;
     virtual void restoreFormNotifications() override;
     
-    virtual void formStateDidChange(const WebCore::Node*) override { }
-
     virtual void elementDidFocus(const WebCore::Node*) override;
     virtual void elementDidBlur(const WebCore::Node*) override;
 

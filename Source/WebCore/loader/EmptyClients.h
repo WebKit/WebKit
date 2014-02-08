@@ -167,8 +167,6 @@ public:
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) override;
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*) override { }
 
-    virtual void formStateDidChange(const Node*) override { }
-
     virtual void elementDidFocus(const Node*) override { }
     virtual void elementDidBlur(const Node*) override { }
 

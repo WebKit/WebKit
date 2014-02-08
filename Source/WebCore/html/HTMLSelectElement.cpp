@@ -661,7 +661,6 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
 
     scrollToSelection();
     setNeedsValidityCheck();
-    notifyFormStateChanged();
 }
 
 void HTMLSelectElement::listBoxOnChange()
@@ -909,7 +908,6 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
     }
 
     setNeedsValidityCheck();
-    notifyFormStateChanged();
 }
 
 int HTMLSelectElement::optionToListIndex(int optionIndex) const

@@ -153,8 +153,6 @@ public:
     virtual bool shouldReplaceWithGeneratedFileForUpload(const WTF::String& path, WTF::String &generatedFilename) override;
     virtual WTF::String generateReplacementFile(const WTF::String& path) override;
 
-    virtual void formStateDidChange(const WebCore::Node*) override { }
-
     virtual void elementDidFocus(const WebCore::Node*) override;
     virtual void elementDidBlur(const WebCore::Node*) override;
 
