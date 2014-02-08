@@ -323,6 +323,13 @@ private:
 };
 #endif
 
+struct WebPageConfiguration {
+    WebPageGroup* pageGroup = nullptr;
+    WebPreferences* preferences = nullptr;
+    API::Session* session = nullptr;
+    WebPageProxy* relatedPage = nullptr;
+};
+
 class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorPicker::Client
@@ -331,7 +338,7 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
     , public IPC::MessageReceiver
     , public IPC::MessageSender {
 public:
-    static PassRefPtr<WebPageProxy> create(PageClient&, WebProcessProxy&, WebPageGroup&, WebPreferences&, API::Session&, uint64_t pageID);
+    static PassRefPtr<WebPageProxy> create(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     virtual ~WebPageProxy();
 
     void setSession(API::Session&);
@@ -879,7 +886,7 @@ public:
 #endif
 
 private:
-    WebPageProxy(PageClient&, WebProcessProxy&, WebPageGroup&, WebPreferences&, API::Session&, uint64_t pageID);
+    WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();
 
     void updateViewState(WebCore::ViewState::Flags flagsToUpdate = WebCore::ViewState::AllFlags);

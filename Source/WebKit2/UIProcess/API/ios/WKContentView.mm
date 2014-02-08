@@ -103,7 +103,9 @@ using namespace WebKit;
 
     _pageClient = std::make_unique<PageClientImpl>(self);
 
-    _page = configuration.processClass->_context->createWebPage(*_pageClient, nullptr);
+    WebPageConfiguration webPageConfiguration;
+
+    _page = configuration.processClass->_context->createWebPage(*_pageClient, std::move(webPageConfiguration));
     _page->initializeWebPage();
     _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
     _page->setUseFixedLayout(true);
@@ -250,7 +252,12 @@ using namespace WebKit;
     InitializeWebKit2();
 
     _pageClient = std::make_unique<PageClientImpl>(self);
-    _page = toImpl(contextRef)->createWebPage(*_pageClient, toImpl(pageGroupRef), toImpl(relatedPage));
+
+    WebPageConfiguration webPageConfiguration;
+    webPageConfiguration.group = toImpl(pageGroupRef);
+    webPageConfiguration.relatedPage = toImpl(relatedPage);
+
+    _page = toImpl(contextRef)->createWebPage(*_pageClient, std::move(webPageConfiguration));
     _page->initializeWebPage();
     _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
     _page->setUseFixedLayout(true);

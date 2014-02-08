@@ -1,3 +1,31 @@
+2014-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Simplify web page creation
+        https://bugs.webkit.org/show_bug.cgi?id=128425
+
+        Reviewed by Andreas Kling.
+
+        Add a WebPageConfiguration class and stick the page group, preferences, session etc there
+        instead of adding more and more parameters to the WebPageProxy constructor.
+
+        Make WebContext::createWebPage fill in the missing pieces in the WebPageConfiguration object.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:configuration:]):
+        (-[WKContentView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createWebPage):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        * UIProcess/WebProcessProxy.h:
+
 2014-02-07  Tim Horton  <timothy_horton@apple.com>
 
         Build fix. Wrong section of the file.

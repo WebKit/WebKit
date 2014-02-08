@@ -763,8 +763,15 @@ WebProcessProxy& WebContext::createNewWebProcessRespectingProcessCountLimit()
     return *result;
 }
 
-PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageGroup* pageGroup, API::Session& session, WebPageProxy* relatedPage)
+PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageConfiguration configuration)
 {
+    if (!configuration.pageGroup)
+        configuration.pageGroup = &m_defaultPageGroup.get();
+    if (!configuration.preferences)
+        configuration.preferences = &configuration.pageGroup->preferences();
+    if (!configuration.session)
+        configuration.session = configuration.preferences->privateBrowsingEnabled() ? &API::Session::legacyPrivateSession() : &API::Session::defaultSession();
+
     RefPtr<WebProcessProxy> process;
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
         process = &ensureSharedWebProcess();
@@ -772,20 +779,14 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPa
         if (m_haveInitialEmptyProcess) {
             process = m_processes.last();
             m_haveInitialEmptyProcess = false;
-        } else if (relatedPage) {
+        } else if (configuration.relatedPage) {
             // Sharing processes, e.g. when creating the page via window.open().
-            process = &relatedPage->process();
+            process = &configuration.relatedPage->process();
         } else
             process = &createNewWebProcessRespectingProcessCountLimit();
     }
 
-    return process->createWebPage(pageClient, pageGroup ? *pageGroup : m_defaultPageGroup.get(), session);
-}
-
-PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
-{
-    WebPageGroup* group = pageGroup ? pageGroup : &m_defaultPageGroup.get();
-    return createWebPage(pageClient, group, group->preferences().privateBrowsingEnabled() ? API::Session::legacyPrivateSession() : API::Session::defaultSession(), relatedPage);
+    return process->createWebPage(pageClient, std::move(configuration));
 }
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
