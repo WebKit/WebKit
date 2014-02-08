@@ -254,7 +254,7 @@ using namespace WebKit;
     _pageClient = std::make_unique<PageClientImpl>(self);
 
     WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.group = toImpl(pageGroupRef);
+    webPageConfiguration.pageGroup = toImpl(pageGroupRef);
     webPageConfiguration.relatedPage = toImpl(relatedPage);
 
     _page = toImpl(contextRef)->createWebPage(*_pageClient, std::move(webPageConfiguration));

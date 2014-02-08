@@ -1,3 +1,10 @@
+2014-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the WebKit2 build after r163671.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+
 2014-02-07  Gavin Barraclough  <barraclough@apple.com>
 
         Remove isInitialState flag from Page::setViewState
