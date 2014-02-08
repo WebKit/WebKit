@@ -1710,7 +1710,7 @@ void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
         updateRect.scale(1 / frame().frameScaleFactor());
 
         ASSERT(renderView());
-        renderView()->layer()->setBackingNeedsRepaintInRect(updateRect);
+        renderView()->layer()->setBackingNeedsRepaintInRect(updateRect, GraphicsLayer::DoNotClipToLayer);
     }
 
     repaintSlowRepaintObjects();
@@ -1736,7 +1736,7 @@ void FrameView::repaintSlowRepaintObjects()
     // Renderers with fixed backgrounds may be in compositing layers, so we need to explicitly
     // repaint them after scrolling.
     for (auto& renderer : *m_slowRepaintObjects)
-        renderer->repaint();
+        renderer->repaintSlowRepaintObject();
 }
 
 // Note that this gets called at painting time.

@@ -733,6 +733,9 @@ public:
     // Repaint a specific subrectangle within a given object.  The rect |r| is in the object's coordinate space.
     void repaintRectangle(const LayoutRect&, bool immediate = false, bool shouldClipToLayer = true) const;
 
+    // Repaint a slow repaint object, which, at this time, means we are repainting an object with background-attachment:fixed.
+    void repaintSlowRepaintObject() const;
+
     bool checkForRepaintDuringLayout() const;
 
     // Returns the rect that should be repainted whenever this object changes.  The rect is in the view's

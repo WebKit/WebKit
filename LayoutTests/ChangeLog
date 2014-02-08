@@ -1,3 +1,16 @@
+2014-02-07  Beth Dakin  <bdakin@apple.com>
+
+        Should get rid of TileController's CoverageForSlowScrolling mode
+        https://bugs.webkit.org/show_bug.cgi?id=128339
+
+        Reviewed by Simon Fraser.
+
+        Slow scrolling no longer creates tiles of a different size.
+
+        * platform/mac-wk2/tiled-drawing/fixed-background/fixed-non-propagated-body-background-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tile-coverage-slow-scrolling-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tile-size-slow-zoomed-expected.txt:
+
 2014-02-07  Brady Eidson  <beidson@apple.com>
 
         IDB: Some Mozilla cursor mutation tests fail

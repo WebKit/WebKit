@@ -216,12 +216,6 @@ static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backin
         if (frameView.verticalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForVerticalScrolling;
     }
-    if (ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(backing->owningLayer())) {
-        // Ask our TiledBacking for large tiles unless the only reason we're main-thread-scrolling
-        // is a page overlay (find-in-page, the Web Inspector highlight mechanism, etc.).
-        if (scrollingCoordinator->synchronousScrollingReasons() & ~ScrollingCoordinator::ForcedOnMainThread)
-            tileCoverage |= TiledBacking::CoverageForSlowScrolling;
-    }
     return tileCoverage;
 }
 

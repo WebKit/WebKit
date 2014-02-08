@@ -1304,6 +1304,35 @@ void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate, bool sh
     repaintUsingContainer(repaintContainer ? repaintContainer : view, pixelSnappedIntRect(dirtyRect), immediate, shouldClipToLayer);
 }
 
+void RenderObject::repaintSlowRepaintObject() const
+{
+    // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
+    RenderView* view;
+    if (!isRooted(&view))
+        return;
+
+    // Don't repaint if we're printing.
+    if (view->printing())
+        return;
+
+    RenderLayerModelObject* repaintContainer = containerForRepaint();
+    if (!repaintContainer)
+        repaintContainer = view;
+
+    bool shouldClipToLayer = true;
+    IntRect repaintRect;
+
+    // If this is the root background, we need to check if there is an extended background rect. If
+    // there is, then we should not allow painting to clip to the layer size.
+    if (isRoot() || isBody()) {
+        shouldClipToLayer = !view->frameView().hasExtendedBackgroundRectForPainting();
+        repaintRect = pixelSnappedIntRect(view->backgroundRect(view));
+    } else
+        repaintRect = pixelSnappedIntRect(clippedOverflowRectForRepaint(repaintContainer));
+
+    repaintUsingContainer(repaintContainer, repaintRect, false, shouldClipToLayer);
+}
+
 IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const
 {
     return pixelSnappedIntRect(absoluteClippedOverflowRect());

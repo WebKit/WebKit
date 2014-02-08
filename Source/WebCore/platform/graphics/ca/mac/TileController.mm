@@ -299,11 +299,6 @@ bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleR
     scaledRect.scale(m_scale);
     IntRect currentCoverageRectInTileCoords(enclosingIntRect(scaledRect));
 
-    IntSize newTileSize = computeTileSize();
-    bool tileSizeChanged = newTileSize != m_tileSize;
-    if (tileSizeChanged)
-        return true;
-
     TileIndex topLeft;
     TileIndex bottomRight;
     getTileIndexRangeForRect(currentCoverageRectInTileCoords, topLeft, bottomRight);
@@ -499,38 +494,6 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
     if (!m_isInWindow)
         return visibleRect;
 
-    // If our tile coverage is just for slow-scrolling, then we want to limit the tile coverage to the visible rect, but
-    // we should include the margin tiles if we're close to an edge.
-    if (m_tileCoverage & CoverageForSlowScrolling) {
-        FloatSize coverageSize = visibleRect.size();
-        FloatPoint coverageOrigin = visibleRect.location();
-        float tileWidth = visibleRect.width();
-        float tileHeight = visibleRect.height();
-
-        // We're within one tile from the top, so we should make sure we have a top-margin tile.
-        if (visibleRect.y() < tileHeight) {
-            coverageSize.setHeight(coverageSize.height() + topMarginHeight());
-            coverageOrigin.setY(coverageOrigin.y() - topMarginHeight());
-        }
-
-        // We're within one tile from the left edge, so we should make sure we have a left-margin tile.
-        if (visibleRect.x() < tileWidth) {
-            coverageSize.setWidth(coverageSize.width() + leftMarginWidth());
-            coverageOrigin.setX(coverageOrigin.x() - leftMarginWidth());
-        }
-
-        IntSize layerSize = expandedIntSize(m_tileCacheLayer->bounds().size());
-        // We're within one tile from the bottom edge, so we should make sure we have a bottom-margin tile.
-        if (visibleRect.y() + tileHeight > layerSize.height() - tileHeight)
-            coverageSize.setHeight(coverageSize.height() + bottomMarginHeight());
-
-        // We're within one tile from the right edge, so we should make sure we have a right-margin tile.
-        if (visibleRect.x() + tileWidth > layerSize.width() - tileWidth)
-            coverageSize.setWidth(coverageSize.width() + rightMarginWidth());
-
-        return FloatRect(coverageOrigin, coverageSize);
-    }
-
     bool largeVisibleRectChange = !previousVisibleRect.isEmpty() && !visibleRect.intersects(previousVisibleRect);
     
     // FIXME: look at how far the document can scroll in each dimension.
@@ -559,17 +522,6 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
     coverageTop = std::max(coverageTop, coverageBounds.y());
 
     return FloatRect(coverageLeft, coverageTop, coverageHorizontalSize, coverageVerticalSize);
-}
-
-IntSize TileController::computeTileSize() const
-{
-    if (m_tileCoverage & CoverageForSlowScrolling) {
-        FloatSize tileSize = m_visibleRect.size();
-        tileSize.scale(m_scale);
-        return expandedIntSize(tileSize);
-    }
-
-    return IntSize(defaultTileWidth, defaultTileHeight);
 }
 
 void TileController::scheduleTileRevalidation(double interval)
@@ -710,49 +662,40 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
     scaledRect.scale(m_scale);
     IntRect coverageRectInTileCoords(enclosingIntRect(scaledRect));
 
-    IntSize oldTileSize = m_tileSize;
-    m_tileSize = computeTileSize();
-    bool tileSizeChanged = m_tileSize != oldTileSize;
+    TileCohort currCohort = nextTileCohort();
+    unsigned tilesInCohort = 0;
 
-    if (tileSizeChanged) {
-        removeAllTiles();
-        m_cohortList.clear();
-    } else {
-        TileCohort currCohort = nextTileCohort();
-        unsigned tilesInCohort = 0;
-        
-        // Move tiles newly outside the coverage rect into the cohort map.
-        for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-            TileInfo& tileInfo = it->value;
-            TileIndex tileIndex = it->key;
+    // Move tiles newly outside the coverage rect into the cohort map.
+    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
+        TileInfo& tileInfo = it->value;
+        TileIndex tileIndex = it->key;
 
-            PlatformCALayer* tileLayer = tileInfo.layer.get();
-            IntRect tileRect = rectForTileIndex(tileIndex);
-            if (tileRect.intersects(coverageRectInTileCoords)) {
-                tileInfo.cohort = VisibleTileCohort;
-                if (tileInfo.hasStaleContent) {
-                    // FIXME: store a dirty region per layer?
-                    tileLayer->setNeedsDisplay();
-                    tileInfo.hasStaleContent = false;
-                }
-            } else {
-                // Add to the currentCohort if not already in one.
-                if (tileInfo.cohort == VisibleTileCohort) {
-                    tileInfo.cohort = currCohort;
-                    ++tilesInCohort;
-                    
-                    if (m_unparentsOffscreenTiles)
-                        tileLayer->removeFromSuperlayer();
-                }
+        PlatformCALayer* tileLayer = tileInfo.layer.get();
+        IntRect tileRect = rectForTileIndex(tileIndex);
+        if (tileRect.intersects(coverageRectInTileCoords)) {
+            tileInfo.cohort = VisibleTileCohort;
+            if (tileInfo.hasStaleContent) {
+                // FIXME: store a dirty region per layer?
+                tileLayer->setNeedsDisplay();
+                tileInfo.hasStaleContent = false;
+            }
+        } else {
+            // Add to the currentCohort if not already in one.
+            if (tileInfo.cohort == VisibleTileCohort) {
+                tileInfo.cohort = currCohort;
+                ++tilesInCohort;
+
+                if (m_unparentsOffscreenTiles)
+                    tileLayer->removeFromSuperlayer();
             }
         }
-        
-        if (tilesInCohort)
-            startedNewCohort(currCohort);
-
-        if (!m_aggressivelyRetainsTiles)
-            scheduleCohortRemoval();
     }
+
+    if (tilesInCohort)
+        startedNewCohort(currCohort);
+
+    if (!m_aggressivelyRetainsTiles)
+        scheduleCohortRemoval();
 
     // Ensure primary tile coverage tiles.
     m_primaryTileCoverageRect = ensureTilesForRect(tileCoverageRect, CoverageType::PrimaryTiles);

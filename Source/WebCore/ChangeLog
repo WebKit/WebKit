@@ -1,3 +1,40 @@
+2014-02-07  Beth Dakin  <bdakin@apple.com>
+
+        Should get rid of TileController's CoverageForSlowScrolling mode
+        https://bugs.webkit.org/show_bug.cgi?id=128339
+
+        Reviewed by Simon Fraser.
+
+        This patch gets rid of CoverageForSlowScrolling in the TileController. It also 
+        makes sure that margin tiles are properly invalidated on pages with slow repaint 
+        objects that cause slow scrolling. 
+
+        When we invalidate because of slow scrolling, don’t clip the update rect to the 
+        layer bounds.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsSlowPath):
+
+        Call new RenderObject paint function repaintSlowRepaintObject() instead of the 
+        more-generic repaint().
+        (WebCore::FrameView::repaintSlowRepaintObjects):
+
+        Remove CoverageForSlowScrolling.
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::tilesWouldChangeForVisibleRect):
+        (WebCore::TileController::computeTileCoverageRect):
+        (WebCore::TileController::revalidateTiles):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::computeTileCoverage):
+
+        Handle repainting a slow repaint object. Don’t clip when we shouldn’t, use the 
+        RenderView’s backgroundRect as a repaintRect when this is the root background 
+        since that will take the extended background rect into consideration.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintSlowRepaintObject):
+        * rendering/RenderObject.h:
+
 2014-02-06  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL build scaffolding
