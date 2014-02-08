@@ -1,3 +1,20 @@
+2014-02-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Add typesafe casts for DrawingAreaProxy classes
+        https://bugs.webkit.org/show_bug.cgi?id=128419
+
+        Reviewed by Andreas Kling.
+        
+        Add typesafe casts, and use one in RemoteScrollingCoordinatorProxy::layerTreeHost().
+
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::layerTreeHost):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+
 2014-02-06  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL build scaffolding

@@ -63,6 +63,8 @@ private:
     WebCore::IntSize m_lastSentLayerPosition;
 };
 
+DRAWING_AREA_PROXY_TYPE_CASTS(RemoteLayerTreeDrawingAreaProxy, type() == DrawingAreaTypeRemoteLayerTree);
+
 } // namespace WebKit
 
 #endif // RemoteLayerTreeDrawingAreaProxy_h

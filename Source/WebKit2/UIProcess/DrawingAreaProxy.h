@@ -114,6 +114,9 @@ private:
 #endif
 };
 
+#define DRAWING_AREA_PROXY_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, DrawingAreaProxy, value, value->predicate, value.predicate)
+
 } // namespace WebKit
 
 #endif // DrawingAreaProxy_h

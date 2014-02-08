@@ -155,6 +155,8 @@ private:
     WebCore::FloatPoint m_transientZoomOrigin;
 };
 
+DRAWING_AREA_TYPE_CASTS(TiledCoreAnimationDrawingArea, type() == DrawingAreaTypeTiledCoreAnimation);
+
 } // namespace WebKit
 
 #endif // !PLATFORM(IOS)

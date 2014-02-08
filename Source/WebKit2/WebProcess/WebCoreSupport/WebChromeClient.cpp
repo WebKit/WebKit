@@ -506,7 +506,6 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
     m_page->send(Messages::WebPageProxy::DidChangeContentSize(size));
 #endif
 
-
     m_page->drawingArea()->mainFrameContentSizeChanged(size);
 
     FrameView* frameView = frame->view();

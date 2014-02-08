@@ -71,7 +71,7 @@ const RemoteLayerTreeHost* RemoteScrollingCoordinatorProxy::layerTreeHost() cons
         return nullptr;
     }
 
-    RemoteLayerTreeDrawingAreaProxy* remoteDrawingArea = static_cast<RemoteLayerTreeDrawingAreaProxy*>(drawingArea);
+    RemoteLayerTreeDrawingAreaProxy* remoteDrawingArea = toRemoteLayerTreeDrawingAreaProxy(drawingArea);
     return &remoteDrawingArea->remoteLayerTreeHost();
 }
 
