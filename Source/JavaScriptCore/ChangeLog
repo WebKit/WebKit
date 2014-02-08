@@ -1,5 +1,16 @@
 2014-02-07  Mark Lam  <mark.lam@apple.com>
 
+        Removed superflous JSLock::entryStackPointer field.
+        <https://webkit.org/b/128413>
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::lock):
+        * runtime/JSLock.h:
+
+2014-02-07  Mark Lam  <mark.lam@apple.com>
+
         Revert workaround committed in http://trac.webkit.org/r163595.
         <https://webkit.org/b/128408>
 

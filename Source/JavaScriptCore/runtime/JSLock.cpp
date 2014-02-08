@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2008, 2012, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -125,8 +125,7 @@ void JSLock::lock()
         WTFThreadData& threadData = wtfThreadData();
 
         if (!m_vm->stackPointerAtVMEntry) {
-            entryStackPointer = &holder; // A proxy for the current stack pointer.
-            m_vm->stackPointerAtVMEntry = entryStackPointer;
+            m_vm->stackPointerAtVMEntry = &holder; // A proxy for the current stack pointer.
             threadData.setSavedReservedZoneSize(m_vm->updateStackLimitWithReservedZoneSize(Options::reservedZoneSize()));
         }
 
