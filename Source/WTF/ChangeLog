@@ -1,3 +1,12 @@
+2014-02-06  Andreas Kling  <akling@apple.com>
+
+        Remove unused ENABLE(REPAINT_THROTTLING) flag.
+        <https://webkit.org/b/128329>
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/FeatureDefines.h:
+
 2014-02-06  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL build scaffolding
