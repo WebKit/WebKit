@@ -1,3 +1,14 @@
+2014-02-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] The WebPageProxy's copy of pageScaleFactor is not update when the scale is changed from the viewport configuration
+        https://bugs.webkit.org/show_bug.cgi?id=128415
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportConfigurationChanged):
+        The scale needs to be updated through WebPage::scalePage().
+
 2014-02-07  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Swipe): Support for iOS

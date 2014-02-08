@@ -997,7 +997,7 @@ void WebPage::viewportConfigurationChanged()
     else
         scale = m_viewportConfiguration.initialScale();
 
-    m_page->setPageScaleFactor(scale, m_page->mainFrame().view()->scrollPosition());
+    scalePage(scale, m_page->mainFrame().view()->scrollPosition());
 }
 
 void WebPage::willStartUserTriggeredZooming()
