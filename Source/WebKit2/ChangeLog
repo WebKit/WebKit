@@ -1,3 +1,17 @@
+2014-02-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Add better comments to code that boosts the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=128431
+
+        Rubber stamped by Tim Horton
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        (WebKit::XPCServiceEventHandler):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService):
+
 2014-02-07  Tim Horton  <timothy_horton@apple.com>
 
        Build fix.

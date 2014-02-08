@@ -147,10 +147,9 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 initializerFunctionPtr(peer, event);
             }
 
-            if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "pre-bootstrap")) {
-                // Hold on to the pre-bootstrap message.
+            // Leak a boost onto the NetworkProcess.
+            if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "pre-bootstrap"))
                 xpc_retain(event);
-            }
         }
     });
 

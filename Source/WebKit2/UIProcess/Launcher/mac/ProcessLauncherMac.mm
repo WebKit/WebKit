@@ -181,6 +181,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     xpc_connection_resume(connection);
 
 #if ENABLE(NETWORK_PROCESS)
+    // Leak a boost onto the NetworkProcess.
     if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
         xpc_object_t preBootstrapMessage = xpc_dictionary_create(0, 0, 0);
         xpc_dictionary_set_string(preBootstrapMessage, "message-name", "pre-bootstrap");
