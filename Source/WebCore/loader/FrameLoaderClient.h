@@ -93,7 +93,6 @@ namespace WebCore {
 #endif
     class SecurityOrigin;
     class SharedBuffer;
-    class SocketStreamHandle;
     class StringWithDirection;
     class SubstituteData;
     class Widget;
@@ -311,8 +310,6 @@ namespace WebCore {
         virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() = 0;
 
         virtual bool shouldPaintBrokenImage(const URL&) const { return true; }
-
-        virtual void dispatchWillOpenSocketStream(SocketStreamHandle*) { }
 
         virtual void dispatchGlobalObjectAvailable(DOMWrapperWorld&) { }
         virtual void dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(DOMWindowExtension*) { }

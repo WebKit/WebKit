@@ -1,3 +1,16 @@
+2014-02-08  Andreas Kling  <akling@apple.com>
+
+        Remove unused FrameLoaderClient::dispatchWillOpenSocketStream().
+        <https://webkit.org/b/128472>
+
+        Nobody listens for this callback anymore so remove it.
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::willOpenSocketStream):
+        * loader/FrameLoaderClient.h:
+
 2014-02-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Split UserTriggered into FireSelectEvent and RevealSelection for selection options
