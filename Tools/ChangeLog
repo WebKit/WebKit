@@ -1,3 +1,13 @@
+2014-02-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] build-webkit script always generate-gtk-doc even if '--disable-gtk-doc' param is passed
+        https://bugs.webkit.org/show_bug.cgi?id=128376
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+
 2014-02-06  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL build scaffolding

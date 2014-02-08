@@ -1855,14 +1855,16 @@ sub buildAutotoolsProject($@)
 
     chdir ".." or die;
 
-    if ($project eq 'WebKit' && !isCrossCompilation() && !($noWebKit1 && $noWebKit2)) {
-        my @docGenerationOptions = ("$sourceDir/Tools/gtk/generate-gtkdoc", "--skip-html");
-        push(@docGenerationOptions, productDir());
+    if (!checkForArgumentAndRemoveFromARGV("--disable-gtk-doc")) {
+        if ($project eq 'WebKit' && !isCrossCompilation() && !($noWebKit1 && $noWebKit2)) {
+            my @docGenerationOptions = ("$sourceDir/Tools/gtk/generate-gtkdoc", "--skip-html");
+            push(@docGenerationOptions, productDir());
 
-        unshift(@docGenerationOptions, jhbuildWrapperPrefixIfNeeded());
+            unshift(@docGenerationOptions, jhbuildWrapperPrefixIfNeeded());
 
-        if (system(@docGenerationOptions)) {
-            die "\n gtkdoc did not build without warnings\n";
+            if (system(@docGenerationOptions)) {
+                die "\n gtkdoc did not build without warnings\n";
+            }
         }
     }
 
