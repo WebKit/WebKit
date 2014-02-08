@@ -35,12 +35,6 @@ Content-Location: http://localhost/top_frame.html
 <HTML><HEAD><TITLE>A page that contains multiple nested frames</TITLE>
 <META content=3D"text/html; charset=3Dwindows-1252" =
 http-equiv=3DContent-Type>
-<SCRIPT>=0A=
-if (window.testRunner) {=0A=
-  testRunner.dumpAsText();=0A=
-  testRunner.dumpChildFramesAsText();=0A=
-}=0A=
-</SCRIPT>
 
 <META name=3DGENERATOR content=3D"MSHTML 9.00.8112.16421"></HEAD>
 <BODY>This page contains several frames.<BR><IFRAME=20

@@ -1,6 +1,0 @@
-This page tests that CSS and JavaScript resources are retrieved correctly for MHTML files.
-
-There should be only one red square below:
-
-
-

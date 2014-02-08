@@ -21,10 +21,8 @@ ss"></link>
   <script src=3D"resources/remove_image_script.js" type=3D"text/javascript"=
 ></script>
   <script>
-    if (window.testRunner) {
-      testRunner.dumpAsText();
+    if (window.testRunner)
       testRunner.waitUntilDone();
-    }
   </script>
 <base href=3D"http://localhost/"></base></head><body onload=3D"onLoad()">
 This page tests that CSS and JavaScript resources are retrieved correctly=

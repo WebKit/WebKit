@@ -25,10 +25,8 @@ href=3D"http://localhost/resources/hide_image.css">
 src=3D"http://localhost/resources/remove_image_script.js"></SCRIPT>
 
 <SCRIPT>=0A=
-    if (window.testRunner) {=0A=
-      testRunner.dumpAsText();=0A=
+    if (window.testRunner)=0A=
       testRunner.waitUntilDone();=0A=
-    }=0A=
   </SCRIPT>
 
 <META name=3DGENERATOR content=3D"MSHTML 9.00.8112.16421"></HEAD>

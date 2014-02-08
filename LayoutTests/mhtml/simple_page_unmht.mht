@@ -16,10 +16,6 @@ Content-Location: http://localhost/simple_page.html
 
 
 <title>A simple page</title>
-<script>
-if (window.testRunner)
-  testRunner.dumpAsText();
-</script>
 <base href=3D"http://localhost/"></base></head><body>
 <h1>This is a very simple page</h1>
 Very <b>basic</b> page.

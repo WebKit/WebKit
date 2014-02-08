@@ -1,3 +1,61 @@
+2014-02-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Convert current MHTML tests into reftests
+        https://bugs.webkit.org/show_bug.cgi?id=116443
+
+        Reviewed by Andreas Kling.
+
+        Convert the current set of MHTML tests into reference tests. Reference files are copied from the *_original files
+        where available (with the *_original files removed) or from the source markup and code that's stored in the archive.
+        Both the archives and the reference files are adjusted to now dump pixel output instead of text.
+
+        * mhtml/check_domain-expected.html: Added.
+        * mhtml/check_domain-expected.txt: Removed.
+        * mhtml/check_domain.mht:
+        * mhtml/frame_4.html_original: Removed.
+        * mhtml/multi_frames.html_original: Removed.
+        * mhtml/multi_frames_binary-expected.html: Added.
+        * mhtml/multi_frames_binary-expected.txt: Removed.
+        * mhtml/multi_frames_binary.mht:
+        * mhtml/multi_frames_ie-expected.html: Added.
+        * mhtml/multi_frames_ie-expected.txt: Removed.
+        * mhtml/multi_frames_ie.mht:
+        * mhtml/multi_frames_unmht-expected.html: Added.
+        * mhtml/multi_frames_unmht-expected.txt: Removed.
+        * mhtml/multi_frames_unmht.mht:
+        * mhtml/page_with_css_and_js_ie-expected.html: Copied from LayoutTests/mhtml/page_with_css_and_js.html_original.
+        * mhtml/page_with_css_and_js_ie-expected.txt: Removed.
+        * mhtml/page_with_css_and_js_ie.mht:
+        * mhtml/page_with_css_and_js_unmht-expected.html: Renamed from LayoutTests/mhtml/page_with_css_and_js.html_original.
+        * mhtml/page_with_css_and_js_unmht-expected.txt: Removed.
+        * mhtml/page_with_css_and_js_unmht.mht:
+        * mhtml/page_with_image.html_original: Removed.
+        * mhtml/page_with_image_ie-expected.html: Added.
+        * mhtml/page_with_image_ie-expected.txt: Removed.
+        * mhtml/page_with_image_ie.mht:
+        * mhtml/page_with_image_unmht-expected.html: Added.
+        * mhtml/page_with_image_unmht-expected.txt: Removed.
+        * mhtml/page_with_image_unmht.mht:
+        * mhtml/resources/frame_0.html: Renamed from LayoutTests/mhtml/frame_0.html_original.
+        * mhtml/resources/frame_1.html: Renamed from LayoutTests/mhtml/frame_1.html_original.
+        * mhtml/resources/frame_2.html: Renamed from LayoutTests/mhtml/frame_2.html_original.
+        * mhtml/resources/frame_4.html: Added.
+        * mhtml/resources/hide_image.css: Added.
+        (#secondDiv):
+        * mhtml/resources/remove_image_script.js: Added.
+        (onLoad):
+        * mhtml/resources/style.css: Copied from LayoutTests/mhtml/shared_buffer_bug.mht.
+        (h1):
+        * mhtml/shared_buffer_bug-expected.html: Added.
+        * mhtml/shared_buffer_bug-expected.txt: Removed.
+        * mhtml/shared_buffer_bug.mht:
+        * mhtml/simple_page_ie-expected.html: Copied from LayoutTests/mhtml/simple_page.html_original.
+        * mhtml/simple_page_ie-expected.txt: Removed.
+        * mhtml/simple_page_ie.mht:
+        * mhtml/simple_page_unmht-expected.html: Renamed from LayoutTests/mhtml/simple_page.html_original.
+        * mhtml/simple_page_unmht-expected.txt: Removed.
+        * mhtml/simple_page_unmht.mht:
+
 2014-02-07  Gavin Barraclough  <barraclough@apple.com>
 
         Remove isInitialState flag from Page::setViewState

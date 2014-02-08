@@ -17,10 +17,8 @@ Content-Location: http://localhost/simple_page.html
 
 <title>A simple page</title>
 <script>
-if (window.testRunner) {
-  testRunner.dumpAsText();
+if (window.testRunner)
   testRunner.waitUntilDone();
-}
 
 window.onload = function() {
   var span=3Ddocument.createElement("span");

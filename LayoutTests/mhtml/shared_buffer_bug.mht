@@ -14,12 +14,6 @@ Content-Location: http://localhost/sharred_buffer_bug.html
 <html><head><meta charset=3D"ISO-8859-1">
 <link rel=3D"stylesheet" type=3D"text/css" href=3D"http://localhost/resourc=
 es/style.css">
-<script>
-if (window.testRunner) {
-  testRunner.dumpAsText();
-}
-</script>
-
 </head>
 
 <body>

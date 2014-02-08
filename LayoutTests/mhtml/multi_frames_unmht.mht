@@ -16,12 +16,6 @@ Content-Location: http://localhost/top_frame.html
 
 
 <title>A page that contains multiple nested frames</title>
-<script>
-if (window.testRunner) {
-  testRunner.dumpAsText();
-  testRunner.dumpChildFramesAsText();
-}
-</script>
 <base href=3D"http://localhost/"></base></head><body>
 This page contains several frames.<br>
 <iframe src=3D"http://localhost/frame_0.html"></iframe><br>

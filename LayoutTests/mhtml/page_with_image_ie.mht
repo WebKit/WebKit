@@ -19,12 +19,6 @@ Content-Location: http://localhost/page_with_image.html
 <HTML><HEAD><TITLE>Page with square</TITLE>
 <META content=3D"text/html; charset=3Dwindows-1252" =
 http-equiv=3DContent-Type>
-<SCRIPT>=0A=
-if (window.testRunner) {=0A=
-  testRunner.dumpAsText();=0A=
-}=0A=
-=0A=
-</SCRIPT>
 
 <META name=3DGENERATOR content=3D"MSHTML 9.00.8112.16421"></HEAD>
 <BODY>This is a red square:<BR><IMG=20
