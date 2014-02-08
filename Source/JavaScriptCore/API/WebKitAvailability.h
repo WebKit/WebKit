@@ -31,26 +31,37 @@
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CoreFoundation.h>
 
-#if !defined(NS_AVAILABLE)
-#define NS_AVAILABLE(_mac, _ios)
-#endif // !defined(NS_AVAILABLE)
-#if !defined(CF_AVAILABLE)
-#define CF_AVAILABLE(_mac, _ios)
-#endif // !defined(CF_AVAILABLE)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+/* To support availability macros that mention newer OS X versions when building on older OS X versions,
+   we provide our own definitions of the underlying macros that the availability macros expand to. We're
+   free to expand the macros as no-ops since frameworks built on older OS X versions only ship bundled with
+   an application rather than as part of the system.
+*/
 
-#else // __APPLE__
-
-#define CF_AVAILABLE(_mac, _ios)
-#define NS_AVAILABLE(_mac, _ios)
-
-#endif // __APPLE__
-
-#if !defined(__NSi_10_10)
-#define __NSi_10_10 introduced=10.10
+#ifndef __NSi_10_10
+#define __NSi_10_10 introduced=10.0
 #endif
 
-#if !defined(__NSi_8_0)
-#define __NSi_8_0 introduced=8.0
+#ifndef __AVAILABILITY_INTERNAL__MAC_10_9
+#define __AVAILABILITY_INTERNAL__MAC_10_9
+#endif
+
+#ifndef __AVAILABILITY_INTERNAL__MAC_10_10
+#define __AVAILABILITY_INTERNAL__MAC_10_10
+#endif
+
+#ifndef AVAILABLE_MAC_OS_X_VERSION_10_9_AND_LATER
+#define AVAILABLE_MAC_OS_X_VERSION_10_9_AND_LATER
+#endif
+
+#ifndef AVAILABLE_MAC_OS_X_VERSION_10_10_AND_LATER
+#define AVAILABLE_MAC_OS_X_VERSION_10_10_AND_LATER
+#endif
+
+#endif /* __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090 */
+
+#else
+#define CF_AVAILABLE(_mac, _ios)
 #endif
 
 #endif /* __WebKitAvailability__ */

@@ -5695,13 +5695,14 @@
 				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/JSManagedValue.h",
 				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/JSValue.h",
 				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/JSVirtualMachine.h",
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/WebKitAvailability.h",
 			);
 			name = "Postprocess Headers";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n\nif [[ ${TARGET_MAC_OS_X_VERSION_MAJOR} == \"1080\" ]]; then\n    UNIFDEF_OPTION=\"-DJSC_OBJC_API_AVAILABLE_MAC_OS_X_1080\";\nelse\n    UNIFDEF_OPTION=\"-UJSC_OBJC_API_AVAILABLE_MAC_OS_X_1080\";\nfi\n\nfor HEADER in JSBase.h JSContext.h JSManagedValue.h JSValue.h JSVirtualMachine.h; do\n    unifdef -B ${UNIFDEF_OPTION} -o ${HEADER}.unifdef ${HEADER}\n    case $? in\n    0)\n        rm ${HEADER}.unifdef\n        ;;\n    1)\n        mv ${HEADER}{.unifdef,}\n        ;;\n    *)\n        exit 1\n    esac\ndone\n";
+			shellScript = "exec ${SRCROOT}/postprocess-headers.sh";
 		};
 		5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;

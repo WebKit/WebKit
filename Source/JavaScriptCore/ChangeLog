@@ -1,3 +1,18 @@
+2014-02-07  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/128448> Fix use of availability macros on recently-added APIs
+
+        Reviewed by Dan Bernstein.
+
+        * API/JSContext.h: Remove some #ifs.
+        * API/JSManagedValue.h: Ditto.
+        * API/WebKitAvailability.h: #define the macros that availability macros mentioning
+        newer OS X versions would expand to when building on older OS versions.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Call the new postprocess-headers.sh.
+        * postprocess-headers.sh: Extracted from the Xcode project. Updated to remove content
+        from headers based on the __MAC_OS_X_VERSION_MIN_REQUIRED macro, and to
+        process WebKitAvailability.h.
+
 2014-02-07  Mark Lam  <mark.lam@apple.com>
 
         JSLock should not "restore" VM stack values if it did not re-grab locks.
