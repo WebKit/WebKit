@@ -1,5 +1,18 @@
 2014-02-08  Andreas Kling  <akling@apple.com>
 
+        Devirtualize RenderBlockFlowRareData.
+        <https://webkit.org/b/128427>
+
+        This class had a virtual destructor for no reason. Removing it
+        shrinks RenderBlockFlowRareData by 8 bytes.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::~RenderBlockFlowRareData):
+
+2014-02-08  Andreas Kling  <akling@apple.com>
+
         Use renderer iterators in two more places.
         <https://webkit.org/b/128371>
 

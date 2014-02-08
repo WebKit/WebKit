@@ -125,7 +125,7 @@ public:
         { 
         }
 
-        virtual ~RenderBlockFlowRareData()
+        ~RenderBlockFlowRareData()
         {
         }
 
