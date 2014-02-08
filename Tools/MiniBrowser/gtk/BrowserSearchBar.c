@@ -274,9 +274,13 @@ void browser_search_bar_open(BrowserSearchBar *searchBar)
 {
     g_return_if_fail(BROWSER_IS_SEARCH_BAR(searchBar));
 
+    GtkEntry *entry = GTK_ENTRY(searchBar->entry);
+
     gtk_widget_show(GTK_WIDGET(searchBar));
-    gtk_widget_grab_focus(GTK_WIDGET(searchBar->entry));
-    gtk_editable_select_region(GTK_EDITABLE(searchBar->entry), 0, -1);
+    gtk_widget_grab_focus(GTK_WIDGET(entry));
+    gtk_editable_select_region(GTK_EDITABLE(entry), 0, -1);
+    if (gtk_entry_get_text_length(entry))
+        doSearch(searchBar);
 }
 
 void browser_search_bar_close(BrowserSearchBar *searchBar)
