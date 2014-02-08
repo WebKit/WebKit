@@ -35,7 +35,6 @@
 #include "RenderObject.h"
 #include "SplitElementCommand.h"
 #include "Text.h"
-#include "TextIterator.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 

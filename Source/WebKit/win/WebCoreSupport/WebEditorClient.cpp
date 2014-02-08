@@ -657,7 +657,7 @@ void WebEditorClient::learnWord(const String& word)
     ed->learnWord(BString(word));
 }
 
-void WebEditorClient::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
+void WebEditorClient::checkSpellingOfString(StringView text, int* misspellingLocation, int* misspellingLength)
 {
     *misspellingLocation = -1;
     *misspellingLength = 0;
@@ -667,7 +667,7 @@ void WebEditorClient::checkSpellingOfString(const UChar* text, int length, int* 
         return;
 
     initViewSpecificSpelling(m_webView);
-    ed->checkSpellingOfString(m_webView, text, length, misspellingLocation, misspellingLength);
+    ed->checkSpellingOfString(m_webView, text.toStringWithoutCopying().deprecatedCharacters(), text.length(), misspellingLocation, misspellingLength);
 }
 
 String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String& inputWord)
@@ -677,7 +677,7 @@ String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String& 
     return String();
 }
 
-void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector<GrammarDetail>& details, int* badGrammarLocation, int* badGrammarLength)
+void WebEditorClient::checkGrammarOfString(StringView text, Vector<GrammarDetail>& details, int* badGrammarLocation, int* badGrammarLength)
 {
     details.clear();
     *badGrammarLocation = -1;
@@ -689,7 +689,7 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
 
     initViewSpecificSpelling(m_webView);
     COMPtr<IEnumWebGrammarDetails> enumDetailsObj;
-    if (FAILED(ed->checkGrammarOfString(m_webView, text, length, &enumDetailsObj, badGrammarLocation, badGrammarLength)))
+    if (FAILED(ed->checkGrammarOfString(m_webView, text.toStringWithoutCopying().deprecatedCharacters(), text.length(), &enumDetailsObj, badGrammarLocation, badGrammarLength)))
         return;
 
     while (true) {

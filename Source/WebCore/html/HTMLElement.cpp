@@ -56,7 +56,6 @@
 #include "StyleProperties.h"
 #include "SubframeLoader.h"
 #include "Text.h"
-#include "TextIterator.h"
 #include "XMLNames.h"
 #include "markup.h"
 #include <wtf/NeverDestroyed.h>

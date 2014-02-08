@@ -409,7 +409,7 @@ void EditorClientEfl::learnWord(const String&)
     notImplemented();
 }
 
-void EditorClientEfl::checkSpellingOfString(const UChar*, int, int*, int*)
+void EditorClientEfl::checkSpellingOfString(StringView, int*, int*)
 {
     notImplemented();
 }
@@ -420,7 +420,7 @@ String EditorClientEfl::getAutoCorrectSuggestionForMisspelledWord(const String&)
     return String();
 }
 
-void EditorClientEfl::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
+void EditorClientEfl::checkGrammarOfString(StringView, Vector<GrammarDetail>&, int*, int*)
 {
     notImplemented();
 }

@@ -1,3 +1,18 @@
+2014-02-08  Darin Adler  <darin@apple.com>
+
+        Change TextIterator to use StringView, preparing to wean it from deprecatedCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=128233
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm:
+        (-[WKDOMTextIterator currentTextPointer]): Call TextIterator::deprecatedTextIteratorCharacters.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::checkSpellingOfString): Use StringView.
+        (WebKit::WebEditorClient::checkGrammarOfString): Ditto.
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Ditto.
+
 2014-02-08  Piotr Grad  <p.grad@samsung.com>
 
         [GTK] Build break in WebKitWebViewBase.cpp::webkitWebViewBaseCreateWebPage

@@ -853,7 +853,7 @@ static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrS
         [attrString removeAttribute:NSAccessibilityBlockQuoteLevelAttribute range:range];
 }
 
-static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, Node* node, const UChar* chars, int charLength, NSRange range)
+static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, Node* node, StringView text, NSRange range)
 {
     if (unifiedTextCheckerEnabled(node->document().frame())) {
         // Check the spelling directly since document->markersForNode() does not store the misspelled marking when the cursor is in a word.
@@ -861,7 +861,7 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
         
         // checkTextOfParagraph is the only spelling/grammar checker implemented in WK1 and WK2
         Vector<TextCheckingResult> results;
-        checkTextOfParagraph(checker, chars, charLength, TextCheckingTypeSpelling, results);
+        checkTextOfParagraph(*checker, text, TextCheckingTypeSpelling, results);
         
         size_t size = results.size();
         NSNumber* trueValue = [NSNumber numberWithBool:YES];
@@ -874,15 +874,11 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
         }
         return;
     }
-    
-    int currentPosition = 0;
-    while (charLength > 0) {
-        const UChar* charData = chars + currentPosition;
-        TextCheckerClient* checker = node->document().frame()->editor().textChecker();
-        
+
+    for (unsigned currentPosition = 0; currentPosition < text.length(); ) {
         int misspellingLocation = -1;
         int misspellingLength = 0;
-        checker->checkSpellingOfString(charData, charLength, &misspellingLocation, &misspellingLength);
+        node->document().frame()->editor().textChecker()->checkSpellingOfString(text.substring(currentPosition), &misspellingLocation, &misspellingLength);
         if (misspellingLocation == -1 || !misspellingLength)
             break;
         
@@ -891,8 +887,8 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, [NSNumber numberWithBool:YES], spellRange);
 #endif
-        charLength -= (misspellingLocation + misspellingLength);
-        currentPosition += (misspellingLocation + misspellingLength);
+
+        currentPosition += misspellingLocation + misspellingLength;
     }
 }
 
@@ -945,17 +941,17 @@ static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, N
         [attrString removeAttribute:attribute range:range];
 }
 
-static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, const UChar* chars, int length)
+static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, StringView text)
 {
     // skip invisible text
     if (!node->renderer())
         return;
     
     // easier to calculate the range before appending the string
-    NSRange attrStringRange = NSMakeRange([attrString length], length);
+    NSRange attrStringRange = NSMakeRange([attrString length], text.length());
     
     // append the string from this node
-    [[attrString mutableString] appendString:[NSString stringWithCharacters:chars length:length]];
+    [[attrString mutableString] appendString:text.createNSStringWithoutCopying().get()];
     
     // add new attributes and remove irrelevant inherited ones
     // NOTE: color attributes are handled specially because -[NSMutableAttributedString addAttribute: value: range:] does not merge
@@ -976,7 +972,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AccessibilityObject::anchorElementForNode(node), attrStringRange);
     
     // do spelling last because it tends to break up the range
-    AXAttributeStringSetSpelling(attrString, node, chars, length, attrStringRange);
+    AXAttributeStringSetSpelling(attrString, node, text, attrStringRange);
 }
 
 static NSString* nsStringForReplacedNode(Node* replacedNode)
@@ -1028,9 +1024,8 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
             // Add the text of the list marker item if necessary.
             String listMarkerText = m_object->listMarkerTextForNodeAndPosition(node, VisiblePosition(it.range()->startPosition()));
             if (!listMarkerText.isEmpty())
-                AXAttributedStringAppendText(attrString, node, listMarkerText.deprecatedCharacters(), listMarkerText.length());
-            
-            AXAttributedStringAppendText(attrString, node, it.characters(), it.length());
+                AXAttributedStringAppendText(attrString, node, listMarkerText);
+            AXAttributedStringAppendText(attrString, node, it.text());
         } else {
             Node* replacedNode = node->childNode(offset);
             NSString *attachmentString = nsStringForReplacedNode(replacedNode);

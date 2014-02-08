@@ -63,7 +63,6 @@
 #import "RenderText.h"
 #import "ResourceBuffer.h"
 #import "SharedBuffer.h"
-#import "TextIterator.h"
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
 
@@ -87,7 +86,6 @@ using WebCore::RenderObject;
 using WebCore::RenderStyle;
 using WebCore::RenderText;
 using WebCore::RootInlineBox;
-using WebCore::TextIterator;
 using WebCore::VisiblePosition;
 
 @implementation DOMRange (UIKitExtensions)

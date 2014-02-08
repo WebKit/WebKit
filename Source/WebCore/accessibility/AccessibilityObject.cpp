@@ -59,7 +59,6 @@
 #include "Settings.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
-#include "TextIterator.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
@@ -330,13 +329,11 @@ bool AccessibilityObject::hasMisspelling() const
     if (!textChecker)
         return false;
     
-    const UChar* chars = stringValue().deprecatedCharacters();
-    int charsLength = stringValue().length();
     bool isMisspelled = false;
 
     if (unifiedTextCheckerEnabled(frame)) {
         Vector<TextCheckingResult> results;
-        checkTextOfParagraph(textChecker, chars, charsLength, TextCheckingTypeSpelling, results);
+        checkTextOfParagraph(*textChecker, stringValue(), TextCheckingTypeSpelling, results);
         if (!results.isEmpty())
             isMisspelled = true;
         return isMisspelled;
@@ -344,7 +341,7 @@ bool AccessibilityObject::hasMisspelling() const
 
     int misspellingLength = 0;
     int misspellingLocation = -1;
-    textChecker->checkSpellingOfString(chars, charsLength, &misspellingLocation, &misspellingLength);
+    textChecker->checkSpellingOfString(stringValue(), &misspellingLocation, &misspellingLength);
     if (misspellingLength || misspellingLocation != -1)
         isMisspelled = true;
     

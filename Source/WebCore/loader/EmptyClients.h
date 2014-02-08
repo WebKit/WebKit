@@ -403,9 +403,9 @@ public:
     virtual bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const override { return true; }
     virtual void ignoreWordInSpellDocument(const String&) override { }
     virtual void learnWord(const String&) override { }
-    virtual void checkSpellingOfString(const UChar*, int, int*, int*) override { }
+    virtual void checkSpellingOfString(StringView, int*, int*) override { }
     virtual String getAutoCorrectSuggestionForMisspelledWord(const String&) override { return String(); }
-    virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*) override { }
+    virtual void checkGrammarOfString(StringView, Vector<GrammarDetail>&, int*, int*) override { }
 
 #if USE(UNIFIED_TEXT_CHECKING)
     virtual Vector<TextCheckingResult> checkTextOfParagraph(StringView, TextCheckingTypeMask) override { return Vector<TextCheckingResult>(); }

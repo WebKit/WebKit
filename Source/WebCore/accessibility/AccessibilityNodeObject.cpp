@@ -74,7 +74,6 @@
 #include "SVGNames.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
-#include "TextIterator.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "Widget.h"

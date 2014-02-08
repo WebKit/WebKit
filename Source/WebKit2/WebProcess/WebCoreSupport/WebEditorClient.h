@@ -135,9 +135,9 @@ private:
     virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const override;
     virtual void ignoreWordInSpellDocument(const String&) override;
     virtual void learnWord(const String&) override;
-    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) override;
+    virtual void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) override;
     virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord) override;
-    virtual void checkGrammarOfString(const UChar*, int length, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override;
+    virtual void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override;
 #if USE(UNIFIED_TEXT_CHECKING)
     virtual Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, WebCore::TextCheckingTypeMask checkingTypes) override;
 #endif

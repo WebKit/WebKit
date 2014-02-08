@@ -42,14 +42,14 @@ class TextCheckerClientGtk : public WebCore::TextCheckerClient {
     public:
         TextCheckerClientGtk(WebKitSpellChecker*);
         ~TextCheckerClientGtk();
-        virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const;
-        virtual void ignoreWordInSpellDocument(const WTF::String&);
-        virtual void learnWord(const WTF::String&);
-        virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
-        virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&);
-        virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
-        virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses);
-    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) { }
+        virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const override;
+        virtual void ignoreWordInSpellDocument(const WTF::String&) override;
+        virtual void learnWord(const WTF::String&) override;
+        virtual void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) override;
+        virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) override;
+        virtual void checkGrammarOfString(StringView, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override;
+        virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) override;
+        virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) override { }
 
         void updateSpellCheckingLanguage(const char*);
     private:

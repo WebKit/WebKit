@@ -86,34 +86,34 @@ public:
     void undo();
     void redo();    
     
-    virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting);
-    virtual void textFieldDidBeginEditing(WebCore::Element*);
-    virtual void textFieldDidEndEditing(WebCore::Element*);
-    virtual void textDidChangeInTextField(WebCore::Element*);
-    virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*);
-    virtual void textWillBeDeletedInTextField(WebCore::Element* input);
-    virtual void textDidChangeInTextArea(WebCore::Element*);
+    virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting) override;
+    virtual void textFieldDidBeginEditing(WebCore::Element*) override;
+    virtual void textFieldDidEndEditing(WebCore::Element*) override;
+    virtual void textDidChangeInTextField(WebCore::Element*) override;
+    virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) override;
+    virtual void textWillBeDeletedInTextField(WebCore::Element* input) override;
+    virtual void textDidChangeInTextArea(WebCore::Element*) override;
 
     void handleKeyboardEvent(WebCore::KeyboardEvent*);
     void handleInputMethodKeydown(WebCore::KeyboardEvent*);
 
-    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const;
-    virtual void ignoreWordInSpellDocument(const WTF::String&);
-    virtual void learnWord(const WTF::String&);
-    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
-    virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&);
-    virtual void checkGrammarOfString(const UChar*, int length, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
-    virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail& detail);
-    virtual void updateSpellingUIWithMisspelledWord(const WTF::String&);
-    virtual void showSpellingUI(bool show);
-    virtual bool spellingUIIsShowing();
-    virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses);
+    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const override;
+    virtual void ignoreWordInSpellDocument(const WTF::String&) override;
+    virtual void learnWord(const WTF::String&) override;
+    virtual void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) override;
+    virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) override;
+    virtual void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override;
+    virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) override;
+    virtual void updateSpellingUIWithMisspelledWord(const WTF::String&) override;
+    virtual void showSpellingUI(bool show) override;
+    virtual bool spellingUIIsShowing() override;
+    virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) override;
 
-    virtual void willSetInputMethodState();
-    virtual void setInputMethodState(bool);
-    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) { }
+    virtual void willSetInputMethodState() override;
+    virtual void setInputMethodState(bool) override;
+    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) override { }
 
-    virtual WebCore::TextCheckerClient* textChecker() { return this; }
+    virtual WebCore::TextCheckerClient* textChecker() override { return this; }
 
 private:
     WebView* m_webView;

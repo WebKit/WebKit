@@ -466,7 +466,7 @@ void EditorClientWinCE::learnWord(const String& text)
     notImplemented();
 }
 
-void EditorClientWinCE::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
+void EditorClientWinCE::checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength)
 {
     notImplemented();
 }
@@ -478,7 +478,7 @@ String EditorClientWinCE::getAutoCorrectSuggestionForMisspelledWord(const String
     return String();
 }
 
-void EditorClientWinCE::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
+void EditorClientWinCE::checkGrammarOfString(StringVIew, Vector<GrammarDetail>&, int*, int*)
 {
     notImplemented();
 }

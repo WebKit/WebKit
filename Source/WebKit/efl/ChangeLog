@@ -1,3 +1,15 @@
+2014-02-08  Darin Adler  <darin@apple.com>
+
+        Change TextIterator to use StringView, preparing to wean it from deprecatedCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=128233
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::checkSpellingOfString): Use StringView.
+        (WebCore::EditorClientEfl::checkGrammarOfString): Ditto.
+        * WebCoreSupport/EditorClientEfl.h: Ditto.
+
 2014-02-07  Gavin Barraclough  <barraclough@apple.com>
 
         Remove isInitialState flag from Page::setViewState

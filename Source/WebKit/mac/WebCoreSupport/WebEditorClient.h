@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,22 +40,17 @@ class WebEditorClient : public WebCore::EditorClient, public WebCore::TextChecke
 public:
     WebEditorClient(WebView *);
     virtual ~WebEditorClient();
+
+    void didCheckSucceed(int sequence, NSArray *results);
+
+private:
     virtual void pageDestroyed() override;
 
-#if !PLATFORM(IOS)
     virtual bool isGrammarCheckingEnabled() override;
     virtual void toggleGrammarChecking() override;
     virtual bool isContinuousSpellCheckingEnabled() override;
     virtual void toggleContinuousSpellChecking() override;
     virtual int spellCheckerDocumentTag() override;
-#else
-    virtual bool isGrammarCheckingEnabled() override { return false; }
-    virtual void toggleGrammarChecking() override { }
-    // Note: isContinuousSpellCheckingEnabled() is implemented.
-    virtual bool isContinuousSpellCheckingEnabled() override;
-    virtual void toggleContinuousSpellChecking() override { }
-    virtual int spellCheckerDocumentTag() override { return 0; }
-#endif
 
     virtual bool smartInsertDeleteEnabled() override;
     virtual bool isSelectTrailingWhitespaceEnabled() override;
@@ -65,7 +60,7 @@ public:
     virtual bool shouldBeginEditing(WebCore::Range*) override;
     virtual bool shouldEndEditing(WebCore::Range*) override;
     virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction) override;
-    virtual bool shouldInsertText(const WTF::String&, WebCore::Range*, WebCore::EditorInsertAction) override;
+    virtual bool shouldInsertText(const String&, WebCore::Range*, WebCore::EditorInsertAction) override;
     virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting) override;
 
     virtual bool shouldApplyStyle(WebCore::StyleProperties*, WebCore::Range*) override;
@@ -78,11 +73,11 @@ public:
     virtual void didWriteSelectionToPasteboard() override;
     virtual void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) override;
 
-    virtual NSString* userVisibleString(NSURL *) override;
+    virtual NSString *userVisibleString(NSURL *) override;
     virtual WebCore::DocumentFragment* documentFragmentFromAttributedString(NSAttributedString *, Vector< RefPtr<WebCore::ArchiveResource>>&) override;
     virtual void setInsertionPasteboard(const String&) override;
-    virtual NSURL* canonicalizeURL(NSURL*) override;
-    virtual NSURL* canonicalizeURLString(NSString*) override;
+    virtual NSURL *canonicalizeURL(NSURL *) override;
+    virtual NSURL *canonicalizeURLString(NSString *) override;
     
 #if USE(APPKIT)
     virtual void uppercaseWord() override;
@@ -110,7 +105,7 @@ public:
     virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*) override;
 #endif
 
-    TextCheckerClient* textChecker() override { return this; }
+    virtual TextCheckerClient* textChecker() override { return this; }
 
     virtual void respondToChangedContents() override;
     virtual void respondToChangedSelection(WebCore::Frame*) override;
@@ -152,42 +147,24 @@ public:
     virtual int pasteboardChangeCount() override;
 #endif
     
-#if !PLATFORM(IOS)
     virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const override;
-    virtual void ignoreWordInSpellDocument(const WTF::String&) override;
-    virtual void learnWord(const WTF::String&) override;
-    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) override;
-    virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) override;
-    virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override;
+    virtual void ignoreWordInSpellDocument(const String&) override;
+    virtual void learnWord(const String&) override;
+    virtual void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) override;
+    virtual String getAutoCorrectSuggestionForMisspelledWord(const String&) override;
+    virtual void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override;
     virtual Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, WebCore::TextCheckingTypeMask checkingTypes) override;
-    virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) override;
-    virtual void updateSpellingUIWithMisspelledWord(const WTF::String&) override;
+    virtual void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail&) override;
+    virtual void updateSpellingUIWithMisspelledWord(const String&) override;
     virtual void showSpellingUI(bool show) override;
     virtual bool spellingUIIsShowing() override;
-    virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) override;
-#else
-    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const override { return true; }
-    virtual void ignoreWordInSpellDocument(const WTF::String&) override { }
-    virtual void learnWord(const WTF::String&) override { }
-    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) override { }
-    virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) override { return ""; }
-    virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) override { }
-    virtual Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, WebCore::TextCheckingTypeMask checkingTypes) override;
-    virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) override { }
-    virtual void updateSpellingUIWithMisspelledWord(const WTF::String&) override { }
-    virtual void showSpellingUI(bool show) override { }
-    virtual bool spellingUIIsShowing() override { return false; }
-    virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) override { }
-#endif // PLATFORM(IOS)
+    virtual void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) override;
+
     virtual void willSetInputMethodState() override;
     virtual void setInputMethodState(bool enabled) override;
     virtual void requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest>) override;
 
-    void didCheckSucceed(int sequence, NSArray* results);
-
-private:
     void registerUndoOrRedoStep(PassRefPtr<WebCore::UndoStep>, bool isRedo);
-    WebEditorClient();
 
     WebView *m_webView;
     RetainPtr<WebEditorUndoTarget> m_undoTarget;
@@ -199,3 +176,72 @@ private:
     bool m_hasDelayedContentChangeNotification;
 #endif
 };
+
+#if PLATFORM(IOS)
+
+inline bool WebEditorClient::isGrammarCheckingEnabled()
+{
+    return false;
+}
+
+inline void WebEditorClient::toggleGrammarChecking()
+{
+}
+
+inline void WebEditorClient::toggleContinuousSpellChecking()
+{
+}
+
+inline int WebEditorClient::spellCheckerDocumentTag()
+{
+    return 0;
+}
+
+inline bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const
+{
+    return true;
+}
+
+inline void WebEditorClient::ignoreWordInSpellDocument(const String&)
+{
+}
+
+inline void WebEditorClient::learnWord(const String&)
+{
+}
+
+inline void WebEditorClient::checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength)
+{
+}
+
+inline String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String&)
+{
+    return "";
+}
+
+inline void WebEditorClient::checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength)
+{
+}
+
+inline void WebEditorClient::updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail&)
+{
+}
+
+inline void WebEditorClient::updateSpellingUIWithMisspelledWord(const String&)
+{
+}
+
+inline void WebEditorClient::showSpellingUI(bool show)
+{
+}
+
+inline bool WebEditorClient::spellingUIIsShowing()
+{
+    return false;
+}
+
+inline void WebEditorClient::getGuessesForWord(const String&, const String&, Vector<String>&)
+{
+}
+
+#endif

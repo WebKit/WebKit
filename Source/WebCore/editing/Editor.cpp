@@ -2107,7 +2107,7 @@ String Editor::misspelledWordAtCaretOrRange(Node* clickedNode) const
     int wordLength = word.length();
     int misspellingLocation = -1;
     int misspellingLength = 0;
-    textChecker()->checkSpellingOfString(word.deprecatedCharacters(), wordLength, &misspellingLocation, &misspellingLength);
+    textChecker()->checkSpellingOfString(word, &misspellingLocation, &misspellingLength);
 
     return misspellingLength == wordLength ? word : String();
 }
@@ -2121,7 +2121,7 @@ String Editor::misspelledSelectionString() const
 
     int misspellingLocation = -1;
     int misspellingLength = 0;
-    textChecker()->checkSpellingOfString(selectedString.deprecatedCharacters(), length, &misspellingLocation, &misspellingLength);
+    textChecker()->checkSpellingOfString(selectedString, &misspellingLocation, &misspellingLength);
     
     // The selection only counts as misspelled if the selected text is exactly one misspelled word
     if (misspellingLength != length)
@@ -2423,14 +2423,13 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     RefPtr<SpellCheckRequest> request = SpellCheckRequest::create(resolveTextCheckingTypeMask(textCheckingOptions), TextCheckingProcessIncremental, asynchronous ? paragraphRange : rangeToCheck, paragraphRange);
 
     if (asynchronous) {
-        m_spellChecker->requestCheckingFor(request);
+        m_spellChecker->requestCheckingFor(request.release());
         return;
     }
 
     Vector<TextCheckingResult> results;
-    checkTextOfParagraph(textChecker(), paragraphToCheck.textDeprecatedCharacters(), paragraphToCheck.textLength(),
-        resolveTextCheckingTypeMask(textCheckingOptions), results);
-    markAndReplaceFor(request, results);
+    checkTextOfParagraph(*textChecker(), paragraphToCheck.text(), resolveTextCheckingTypeMask(textCheckingOptions), results);
+    markAndReplaceFor(request.release(), results);
 }
 
 static bool isAutomaticTextReplacementType(TextCheckingType type)

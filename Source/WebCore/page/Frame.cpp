@@ -91,7 +91,6 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "StyleProperties.h"
-#include "TextIterator.h"
 #include "TextNodeTraversal.h"
 #include "TextResourceDecoder.h"
 #include "UserContentController.h"

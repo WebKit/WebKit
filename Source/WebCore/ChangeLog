@@ -1,3 +1,157 @@
+2014-02-08  Darin Adler  <darin@apple.com>
+
+        Change TextIterator to use StringView, preparing to wean it from deprecatedCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=128233
+
+        Reviewed by Anders Carlsson.
+
+        * accessibility/AccessibilityNodeObject.cpp: Removed unneeded TextIterator.h include.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::hasMisspelling): Updated to use StringView for checkSpelling.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetSpelling): Changed to take a StringView.
+        (AXAttributedStringAppendText): Ditto.
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]): Pass StringView.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::misspelledWordAtCaretOrRange): Pass StringView.
+        (WebCore::Editor::misspelledSelectionString): Ditto.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Ditto.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::findGrammaticalErrors): Renamed this function. Changed to use StringView.
+        (WebCore::findMisspellings): Use StringView.
+        (WebCore::TextCheckingHelper::findFirstMisspelling): Ditto. Also separated out assertions
+        that were asserting multiple things with &&.
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar): Ditto.
+        (WebCore::TextCheckingHelper::findFirstGrammarDetail): Ditto.
+        (WebCore::TextCheckingHelper::findFirstBadGrammar): Ditto.
+        (WebCore::TextCheckingHelper::isUngrammatical): Ditto.
+        (WebCore::TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange): Ditto.
+        (WebCore::checkTextOfParagraph): Ditto.
+
+        * editing/TextCheckingHelper.h: Made TextCheckingParagraph::text public. Deleted
+        TextCheckingParagraph::textDeprecatedCharacters. Added comments about additional
+        TextCheckingParagraph refinements. Changed checkTextOfParagraph to take a client
+        reference instead of pointer and StringView instead of characters pointer with length.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::appendTextToStringBuilder): Use data members directly,
+        rather than using functions, since we already checked m_textCharacters for null.
+        (WebCore::CharacterIterator::string): Use text() instead of characters().
+        (WebCore::WordAwareIterator::WordAwareIterator): Removed initialization of
+        m_previousText now that it's a StringView rather than a pointer.
+        (WebCore::WordAwareIterator::advance): Use TextIterator::text instead of
+        TextIterator::characters. Also added a FIXME about a fundamental problem
+        with the implementation of this class!
+        (WebCore::WordAwareIterator::length): Updated for m_previousText change.
+        (WebCore::WordAwareIterator::text): Replaced WordAwareIterator::characters with this.
+        (WebCore::SearchBuffer::append): Changed to take a StringView.
+        (WebCore::SearchBuffer::prependContext): Ditto.
+        (WebCore::SearchBuffer::isWordStartMatch): Use StringView.
+        (WebCore::SearchBuffer::search): Ditto.
+        (WebCore::findPlainText): Ditto.
+
+        * editing/TextIterator.h: Added TextIterator::text that returns a StringView, and
+        renamed TextIterator::characters to TextIterator::deprecatedTextIteratorCharacters
+        (easy to search for in source code). Added SimplifiedBackwardsTextIterator::text
+        and removed SimplifiedBackwardsTextIterator::characters. Added CharacterIterator::text,
+        and removed CharacterIterator::characters. Added WordAwareIterator::text and removed
+        WorkdAwareIterator::characters. Changed WordAwareIterator data members to use StringView.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::appendTrailingWhitespace): Use TextIterator::text instead
+        of TextIterator::characters.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousBoundary): Updated to use StringView.
+        (WebCore::nextBoundary): Ditto.
+        (WebCore::startWordBoundary): Ditto.
+        (WebCore::startOfWord): Ditto.
+        (WebCore::endWordBoundary): Ditto.
+        (WebCore::endOfWord): Fixed formatting.
+        (WebCore::previousWordPositionBoundary): Updated to use StringView.
+        (WebCore::previousWordPosition): Fixed formatting and got rid of local variable.
+        (WebCore::nextWordPositionBoundary): Updated to use StringView.
+        (WebCore::nextWordPosition): Fixed formatting and got rid of local variable.
+        (WebCore::inSameLine): Fixed formatting.
+        (WebCore::isStartOfLine): Ditto.
+        (WebCore::isEndOfLine): Ditto.
+        (WebCore::absoluteLineDirectionPointToLocalPointInBlock): Changed to take a reference.
+        (WebCore::previousLinePosition): Fixed formatting chand changed to pass a reference.
+        (WebCore::nextLinePosition): Ditto.
+        (WebCore::startSentenceBoundary): Updated to use StringView and got rid of a local.
+        (WebCore::startOfSentence): Fixed formatting.
+        (WebCore::endSentenceBoundary): Updated to use StringView and got rid of a local.
+        (WebCore::endOfSentence): Fixed formatting.
+        (WebCore::previousSentencePositionBoundary): Updated to use StringView and got rid of
+        a local.
+        (WebCore::previousSentencePosition): Ditto.
+        (WebCore::nextSentencePositionBoundary): Ditto.
+        (WebCore::nextSentencePosition): Fixed formatting.
+        (WebCore::endOfParagraph): Ditto.
+        (WebCore::inSameParagraph): Ditto.
+        (WebCore::isStartOfParagraph): Ditto.
+        (WebCore::isEndOfParagraph): Ditto.
+        (WebCore::inSameBlock): Ditto.
+        (WebCore::isStartOfBlock): Ditto.
+        (WebCore::isEndOfBlock): Ditto.
+        (WebCore::startOfDocument): Ditto.
+        (WebCore::endOfDocument): Ditto.
+        (WebCore::inSameDocument): Ditto.
+        (WebCore::isStartOfDocument): Ditto.
+        (WebCore::isEndOfDocument): Ditto.
+        (WebCore::isEndOfEditableOrNonEditableContent): Ditto.
+
+        * loader/EmptyClients.h: Use StringView.
+
+        * platform/mac/HTMLConverter.mm:
+        (+[WebHTMLConverter editingAttributedStringFromRange:]): Use StringView.
+
+        * platform/text/TextBoundaries.cpp:
+        (WebCore::endOfFirstWordBoundaryContext): Use StringView and unsigned.
+        (WebCore::startOfLastWordBoundaryContext): Ditto.
+
+        * platform/text/TextBoundaries.h: Change interfaces to use StringView,
+        and in some cases, unsigned instead of int. All call sites were better off
+        with unsigned.
+
+        * platform/text/TextCheckerClient.h: Use StringView.
+
+        * platform/text/mac/TextBoundaries.mm: Changed conditionals to say
+        USE(APPKIT) instead of PLATFORM(IOS), since that's the real issue.
+        (WebCore::isSkipCharacter): Tweaked formatting.
+        (WebCore::isWhitespaceCharacter): Ditto.
+        (WebCore::isWordDelimitingCharacter): Ditto, also removed local variable.
+        (WebCore::isSymbolCharacter): Ditto.
+        (WebCore::tokenizerForString): Ditto.
+        (WebCore::findSimpleWordBoundary): Use StringView. Also changed to mostly
+        use unsigned instead of int.
+        (WebCore::findComplexWordBoundary): Use StringView. Also restructured to
+        be much more readable, with early returns and such.
+        (WebCore::findWordBoundary): Use StringView and unsigned.
+        (WebCore::findEndWordBoundary): Removed redudant copy of the findWordBoundary
+        function and changed this to just call findWordBoundary. The reason this
+        function exists is to optimize this case for some non-Mac, non-iOS platforms.
+        We can always do that for Mac and/or iOS later if we like.
+        (WebCore::findNextWordFromIndex): Use StringView. Also use wordBreakIterator
+        instead of using UBreakIterator directly so we get a cached iterator instead
+        of creating and destroying a new one each time this function is called.
+
+        * bindings/objc/DOMUIKitExtensions.mm: Removed unneeded includes.
+        * dom/Element.cpp: Ditto.
+        * dom/PositionIterator.cpp: Ditto.
+        * editing/ApplyBlockElementCommand.cpp: Ditto.
+        * editing/IndentOutdentCommand.cpp: Ditto.
+        * editing/InsertListCommand.cpp: Ditto.
+        * editing/markup.cpp: Ditto.
+        * html/HTMLElement.cpp: Ditto.
+        * html/HTMLTextAreaElement.cpp: Ditto.
+        * page/Frame.cpp: Ditto.
+        * rendering/RenderTextControl.cpp: Ditto.
+
 2014-02-08  Andreas Kling  <akling@apple.com>
 
         Remove two unused function declarations.

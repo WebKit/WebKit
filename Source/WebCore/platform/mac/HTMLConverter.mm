@@ -2472,6 +2472,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
 }
 
 #if !PLATFORM(IOS)
+
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
 + (NSAttributedString *)editingAttributedStringFromRange:(Range*)range
 {
@@ -2523,18 +2524,20 @@ static NSInteger _colCompare(id block1, id block2, void *)
         else
             [attrs.get() removeObjectForKey:NSBackgroundColorAttributeName];
 
-        RetainPtr<NSString> substring = adoptNS([[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(it.characters()) length:currentTextLength freeWhenDone:NO]);
-        [string replaceCharactersInRange:NSMakeRange(stringLength, 0) withString:substring.get()];
+        [string replaceCharactersInRange:NSMakeRange(stringLength, 0) withString:it.text().createNSStringWithoutCopying().get()];
         [string setAttributes:attrs.get() range:NSMakeRange(stringLength, currentTextLength)];
         stringLength += currentTextLength;
     }
 
     return [string autorelease];
 }
+
 #endif
+
 @end
 
 #if !PLATFORM(IOS)
+
 static NSFileWrapper *fileWrapperForURL(DocumentLoader *dataSource, NSURL *URL)
 {
     if ([URL isFileURL])
@@ -2585,4 +2588,5 @@ static NSFileWrapper *fileWrapperForElement(Element* element)
 
     return wrapper;
 }
+
 #endif

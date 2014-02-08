@@ -32,7 +32,6 @@
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "Text.h"
-#include "TextIterator.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 

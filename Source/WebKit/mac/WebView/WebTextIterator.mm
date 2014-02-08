@@ -94,7 +94,7 @@ using namespace WebCore;
 
 - (const unichar *)currentTextPointer
 {
-    return _private->_textIterator->characters();
+    return _private->_textIterator->deprecatedTextIteratorCharacters();
 }
 
 - (NSUInteger)currentTextLength
@@ -113,7 +113,7 @@ using namespace WebCore;
 
 - (NSString *)currentText
 {
-    return [NSString stringWithCharacters:_private->_textIterator->characters() length:_private->_textIterator->length()];
+    return [[_private->_textIterator->text().createNSString().get() retain] autorelease];
 }
 
 @end

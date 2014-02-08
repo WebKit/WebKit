@@ -30,7 +30,6 @@
 #include "ScrollbarTheme.h"
 #include "StyleInheritedData.h"
 #include "TextControlInnerElements.h"
-#include "TextIterator.h"
 #include "VisiblePosition.h"
 #include <wtf/unicode/CharacterNames.h>
 

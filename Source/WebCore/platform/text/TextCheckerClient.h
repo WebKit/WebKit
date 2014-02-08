@@ -44,9 +44,9 @@ public:
     virtual bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const = 0;
     virtual void ignoreWordInSpellDocument(const String&) = 0;
     virtual void learnWord(const String&) = 0;
-    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) = 0;
+    virtual void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) = 0;
     virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord) = 0;
-    virtual void checkGrammarOfString(const UChar*, int length, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) = 0;
+    virtual void checkGrammarOfString(StringView, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) = 0;
 
 #if USE(UNIFIED_TEXT_CHECKING)
     virtual Vector<TextCheckingResult> checkTextOfParagraph(StringView, TextCheckingTypeMask checkingTypes) = 0;

@@ -1,3 +1,26 @@
+2014-02-08  Darin Adler  <darin@apple.com>
+
+        Change TextIterator to use StringView, preparing to wean it from deprecatedCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=128233
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebEditorClient.h: Made most data members private. Moved inlines
+        for iOS out of the class definition. Fixed formatting. Added missing virtual keyword.
+        Changed interfaces to use StringView.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::checkTextOfParagraph): Use the new StringView::createNSStringWithoutCopying
+        function instead of a similar function that was local in this file.
+        (WebEditorClient::ignoreWordInSpellDocument): Tweaked formatting.
+        (WebEditorClient::checkSpellingOfString): Changed to take a StringView.
+        (WebEditorClient::checkGrammarOfString): Ditto.
+
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator currentTextPointer]): Call TextIterator::deprecatedTextIteratorCharacters.
+        (-[WebTextIterator currentText]): Convert a the text to an NSString with TextIterator::text
+        instead of with TextIterator::characters/length.
+
 2014-02-07  Gavin Barraclough  <barraclough@apple.com>
 
         Remove isInitialState flag from Page::setViewState

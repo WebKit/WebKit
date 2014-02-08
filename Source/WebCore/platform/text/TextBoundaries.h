@@ -27,6 +27,7 @@
 #define TextBoundaries_h
 
 #include <unicode/uchar.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -41,12 +42,12 @@ namespace WebCore {
         return lineBreak == U_LB_COMPLEX_CONTEXT || lineBreak == WK_U_LB_CONDITIONAL_JAPANESE_STARTER || lineBreak == U_LB_IDEOGRAPHIC;
     }
 
-    int endOfFirstWordBoundaryContext(const UChar* characters, int length);
-    int startOfLastWordBoundaryContext(const UChar* characters, int length);
+    unsigned endOfFirstWordBoundaryContext(StringView);
+    unsigned startOfLastWordBoundaryContext(StringView);
 
-    void findWordBoundary(const UChar*, int len, int position, int* start, int* end);
-    void findEndWordBoundary(const UChar*, int len, int position, int* end);
-    int findNextWordFromIndex(const UChar*, int len, int position, bool forward);
+    void findWordBoundary(StringView, int position, int* start, int* end);
+    void findEndWordBoundary(StringView, int position, int* end);
+    int findNextWordFromIndex(StringView, int position, bool forward);
 
 }
 

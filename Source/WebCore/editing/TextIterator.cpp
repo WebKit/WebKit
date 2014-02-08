@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2014 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,9 +76,9 @@ public:
     ~SearchBuffer();
 
     // Returns number of characters appended; guaranteed to be in the range [1, length].
-    size_t append(const UChar*, size_t length);
+    size_t append(StringView);
     bool needsMoreContext() const;
-    void prependContext(const UChar*, size_t length);
+    void prependContext(StringView);
     void reachedBreak();
 
     // Result is the size in characters of what was found.
@@ -480,7 +480,7 @@ UChar TextIterator::characterAt(unsigned index) const
         return 0;
 
     if (!m_textCharacters)
-        return string()[startOffset() + index];
+        return m_text[m_positionStartOffset + index];
 
     return m_textCharacters[index];
 }
@@ -488,9 +488,9 @@ UChar TextIterator::characterAt(unsigned index) const
 void TextIterator::appendTextToStringBuilder(StringBuilder& builder) const
 {
     if (!m_textCharacters)
-        builder.append(string(), startOffset(), length());
+        builder.append(m_text, m_positionStartOffset, m_textLength);
     else
-        builder.append(characters(), length());
+        builder.append(m_textCharacters, m_textLength);
 }
 
 bool TextIterator::handleTextNode()
@@ -1484,13 +1484,22 @@ void CharacterIterator::advance(int count)
     m_runOffset = 0;
 }
 
+static void append(Vector<UChar>& buffer, StringView string)
+{
+    unsigned oldSize = buffer.size();
+    unsigned length = string.length();
+    buffer.grow(oldSize + length);
+    for (unsigned i = 0; i < length; ++i)
+        buffer[oldSize + i] = string[i];
+}
+
 String CharacterIterator::string(int numChars)
 {
     Vector<UChar> result;
     result.reserveInitialCapacity(numChars);
     while (numChars > 0 && !atEnd()) {
         int runSize = std::min(numChars, length());
-        result.append(characters(), runSize);
+        append(result, text().substring(0, runSize));
         numChars -= runSize;
         advance(runSize);
     }
@@ -1580,8 +1589,7 @@ void BackwardsCharacterIterator::advance(int count)
 // --------
 
 WordAwareIterator::WordAwareIterator(const Range* r)
-    : m_previousText(0)
-    , m_didLookAhead(true) // so we consider the first chunk from the text iterator
+    : m_didLookAhead(true) // so we consider the first chunk from the text iterator
     , m_textIterator(r)
 {
     advance(); // get in position over the first chunk of text
@@ -1602,7 +1610,7 @@ WordAwareIterator::~WordAwareIterator()
 
 void WordAwareIterator::advance()
 {
-    m_previousText = 0;
+    m_previousText = StringView();
     m_buffer.clear();      // toss any old buffer we built up
 
     // If last time we did a look-ahead, start with that looked-ahead chunk now
@@ -1622,30 +1630,32 @@ void WordAwareIterator::advance()
     
     while (1) {
         // If this chunk ends in whitespace we can just use it as our chunk.
-        if (isSpaceOrNewline(m_textIterator.characters()[m_textIterator.length() - 1]))
+        if (isSpaceOrNewline(m_textIterator.text()[m_textIterator.length() - 1]))
             return;
 
         // If this is the first chunk that failed, save it in previousText before look ahead
         if (m_buffer.isEmpty()) {
-            m_previousText = m_textIterator.characters();
-            m_previousLength = m_textIterator.length();
+            // FIXME: It's not safe to keep a StringView alive to the previous text once the
+            // TextIterator advances. In cases where the TextIterator synthesizes a character,
+            // the pointer is no longer valid once we call advance. To fix this, we might need
+            // to add a new function to TextIterator to handle those cases.
+            m_previousText = m_textIterator.text();
         }
 
         // Look ahead to next chunk.  If it is whitespace or a break, we can use the previous stuff
         m_textIterator.advance();
-        if (m_textIterator.atEnd() || m_textIterator.length() == 0 || isSpaceOrNewline(m_textIterator.characters()[0])) {
+        if (m_textIterator.atEnd() || !m_textIterator.length() || isSpaceOrNewline(m_textIterator.text()[0])) {
             m_didLookAhead = true;
             return;
         }
 
         if (m_buffer.isEmpty()) {
             // Start gobbling chunks until we get to a suitable stopping point
-            m_buffer.append(m_previousText, m_previousLength);
-            m_previousText = 0;
+            append(m_buffer, m_previousText);
+            m_previousText = StringView();
         }
-        m_buffer.append(m_textIterator.characters(), m_textIterator.length());
-        int exception = 0;
-        m_range->setEnd(m_textIterator.range()->endContainer(), m_textIterator.range()->endOffset(), exception);
+        append(m_buffer, m_textIterator.text());
+        m_range->setEnd(m_textIterator.range()->endContainer(), m_textIterator.range()->endOffset());
     }
 }
 
@@ -1654,17 +1664,17 @@ int WordAwareIterator::length() const
     if (!m_buffer.isEmpty())
         return m_buffer.size();
     if (m_previousText)
-        return m_previousLength;
+        return m_previousText.length();
     return m_textIterator.length();
 }
 
-const UChar* WordAwareIterator::characters() const
+StringView WordAwareIterator::text() const
 {
     if (!m_buffer.isEmpty())
-        return m_buffer.data();
+        return StringView(m_buffer.data(), m_buffer.size());
     if (m_previousText)
         return m_previousText;
-    return m_textIterator.characters();
+    return m_textIterator.text();
 }
 
 // --------
@@ -2062,9 +2072,9 @@ inline SearchBuffer::~SearchBuffer()
     unlockSearcher();
 }
 
-inline size_t SearchBuffer::append(const UChar* characters, size_t length)
+inline size_t SearchBuffer::append(StringView text)
 {
-    ASSERT(length);
+    ASSERT(text.length());
 
     if (m_atBreak) {
         m_buffer.shrink(0);
@@ -2077,9 +2087,11 @@ inline size_t SearchBuffer::append(const UChar* characters, size_t length)
     }
 
     size_t oldLength = m_buffer.size();
-    size_t usableLength = std::min(m_buffer.capacity() - oldLength, length);
+    size_t usableLength = std::min<size_t>(m_buffer.capacity() - oldLength, text.length());
     ASSERT(usableLength);
-    m_buffer.append(characters, usableLength);
+    m_buffer.grow(oldLength + usableLength);
+    for (unsigned i = 0; i < usableLength; ++i)
+        m_buffer[oldLength + i] = text[i];
     foldQuoteMarksAndSoftHyphens(m_buffer.data() + oldLength, usableLength);
     return usableLength;
 }
@@ -2089,24 +2101,24 @@ inline bool SearchBuffer::needsMoreContext() const
     return m_needsMoreContext;
 }
 
-inline void SearchBuffer::prependContext(const UChar* characters, size_t length)
+inline void SearchBuffer::prependContext(StringView text)
 {
     ASSERT(m_needsMoreContext);
     ASSERT(m_prefixLength == m_buffer.size());
 
-    if (!length)
+    if (!text.length())
         return;
 
     m_atBreak = false;
 
-    size_t wordBoundaryContextStart = length;
+    size_t wordBoundaryContextStart = text.length();
     if (wordBoundaryContextStart) {
-        U16_BACK_1(characters, 0, wordBoundaryContextStart);
-        wordBoundaryContextStart = startOfLastWordBoundaryContext(characters, wordBoundaryContextStart);
+        U16_BACK_1(text, 0, wordBoundaryContextStart);
+        wordBoundaryContextStart = startOfLastWordBoundaryContext(text.substring(0, wordBoundaryContextStart));
     }
 
-    size_t usableLength = std::min(m_buffer.capacity() - m_prefixLength, length - wordBoundaryContextStart);
-    m_buffer.insert(0, characters + length - usableLength, usableLength);
+    size_t usableLength = std::min(m_buffer.capacity() - m_prefixLength, text.length() - wordBoundaryContextStart);
+    WebCore::append(m_buffer, text.substring(text.length() - usableLength, usableLength));
     m_prefixLength += usableLength;
 
     if (wordBoundaryContextStart || m_prefixLength == m_buffer.capacity())
@@ -2234,7 +2246,7 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
 
     size_t wordBreakSearchStart = start + length;
     while (wordBreakSearchStart > start)
-        wordBreakSearchStart = findNextWordFromIndex(m_buffer.data(), m_buffer.size(), wordBreakSearchStart, false /* backwards */);
+        wordBreakSearchStart = findNextWordFromIndex(StringView(m_buffer.data(), m_buffer.size()), wordBreakSearchStart, false /* backwards */);
     return wordBreakSearchStart == start;
 }
 
@@ -2275,9 +2287,9 @@ nextMatch:
         if (m_options & AtWordStarts) {
             // Ensure that there is sufficient context before matchStart the next time around for
             // determining if it is at a word boundary.
-            int wordBoundaryContextStart = matchStart;
+            unsigned wordBoundaryContextStart = matchStart;
             U16_BACK_1(m_buffer.data(), 0, wordBoundaryContextStart);
-            wordBoundaryContextStart = startOfLastWordBoundaryContext(m_buffer.data(), wordBoundaryContextStart);
+            wordBoundaryContextStart = startOfLastWordBoundaryContext(StringView(m_buffer.data(), wordBoundaryContextStart));
             overlap = std::min(size - 1, std::max(overlap, size - wordBoundaryContextStart));
         }
         memcpy(m_buffer.data(), m_buffer.data() + size - overlap, overlap * sizeof(UChar));
@@ -2601,14 +2613,14 @@ static size_t findPlainText(CharacterIterator& it, const String& target, FindOpt
         RefPtr<Range> beforeStartRange = startRange->ownerDocument().createRange();
         beforeStartRange->setEnd(startRange->startContainer(), startRange->startOffset(), IGNORE_EXCEPTION);
         for (SimplifiedBackwardsTextIterator backwardsIterator(beforeStartRange.get()); !backwardsIterator.atEnd(); backwardsIterator.advance()) {
-            buffer.prependContext(backwardsIterator.characters(), backwardsIterator.length());
+            buffer.prependContext(backwardsIterator.text());
             if (!buffer.needsMoreContext())
                 break;
         }
     }
 
     while (!it.atEnd()) {
-        it.advance(buffer.append(it.characters(), it.length()));
+        it.advance(buffer.append(it.text()));
 tryAgain:
         size_t matchStartOffset;
         if (size_t newMatchLength = buffer.search(matchStartOffset)) {

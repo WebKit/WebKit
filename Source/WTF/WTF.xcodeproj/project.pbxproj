@@ -71,6 +71,8 @@
 		7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
 		8134013915B092FD001FF0B8 /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8134013715B092FD001FF0B8 /* Base64.h */; };
+		93934BD318A1E8C300D0D6A1 /* StringViewObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD218A1E8C300D0D6A1 /* StringViewObjC.mm */; };
+		93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */; };
 		93AC91A818942FC400244939 /* LChar.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AC91A718942FC400244939 /* LChar.h */; };
 		93B1AA80180E5AF3004A2F05 /* PassRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B1AA7F180E5AF3004A2F05 /* PassRef.h */; };
 		974CFC8E16A4F327006D5404 /* WeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 974CFC8D16A4F327006D5404 /* WeakPtr.h */; };
@@ -344,6 +346,8 @@
 		7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcRuntimeExtras.h; sourceTree = "<group>"; };
 		8134013615B092FD001FF0B8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		8134013715B092FD001FF0B8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		93934BD218A1E8C300D0D6A1 /* StringViewObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StringViewObjC.mm; path = mac/StringViewObjC.mm; sourceTree = "<group>"; };
+		93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringViewCF.cpp; path = cf/StringViewCF.cpp; sourceTree = "<group>"; };
 		93AC91A718942FC400244939 /* LChar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LChar.h; sourceTree = "<group>"; };
 		93B1AA7F180E5AF3004A2F05 /* PassRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassRef.h; sourceTree = "<group>"; };
 		974CFC8D16A4F327006D5404 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtr.h; sourceTree = "<group>"; };
@@ -620,6 +624,7 @@
 		A5BA15F11824339F00A82E69 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				93934BD218A1E8C300D0D6A1 /* StringViewObjC.mm */,
 				A5BA15F41824348000A82E69 /* StringImplMac.mm */,
 				A5BA15F2182433A900A82E69 /* StringMac.mm */,
 			);
@@ -632,6 +637,7 @@
 				A5BA15F7182435A600A82E69 /* AtomicStringCF.cpp */,
 				A5BA15F8182435A600A82E69 /* StringCF.cpp */,
 				A5BA15F9182435A600A82E69 /* StringImplCF.cpp */,
+				93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */,
 			);
 			name = cf;
 			sourceTree = "<group>";
@@ -1226,7 +1232,6 @@
 				A8A473BC151A825B004123FF /* DynamicAnnotations.cpp in Sources */,
 				A8A473B3151A825B004123FF /* fast-dtoa.cc in Sources */,
 				A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */,
-				A5BA15FC182435A600A82E69 /* StringImplCF.cpp in Sources */,
 				A5BA15FA182435A600A82E69 /* AtomicStringCF.cpp in Sources */,
 				E15556F518A0CC18006F48FB /* CryptographicUtilities.cpp in Sources */,
 				0F9D3360165DBA73005AD387 /* FilePrintStream.cpp in Sources */,
@@ -1245,25 +1250,28 @@
 				A8A47400151A825B004123FF /* PageAllocationAligned.cpp in Sources */,
 				A8A47402151A825B004123FF /* PageBlock.cpp in Sources */,
 				0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */,
-				A5BA15F51824348000A82E69 /* StringImplMac.mm in Sources */,
 				143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */,
 				A8A47414151A825B004123FF /* RandomNumber.cpp in Sources */,
 				A8A4741A151A825B004123FF /* RefCountedLeakCounter.cpp in Sources */,
 				2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */,
 				2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */,
 				1469419316EAAF6D0024E146 /* RunLoopTimerCF.cpp in Sources */,
-				1469419916EAB0410024E146 /* SchedulePairCF.cpp in Sources */,
-				A5BA15F3182433A900A82E69 /* StringMac.mm in Sources */,
-				1469419716EAAFF80024E146 /* SchedulePairMac.mm in Sources */,
 				A8A47421151A825B004123FF /* SHA1.cpp in Sources */,
+				1469419916EAB0410024E146 /* SchedulePairCF.cpp in Sources */,
+				1469419716EAAFF80024E146 /* SchedulePairMac.mm in Sources */,
 				A748745217A0BDAE00FA04CB /* SixCharacterHash.cpp in Sources */,
 				A8A47425151A825B004123FF /* SizeLimits.cpp in Sources */,
 				A8A47427151A825B004123FF /* StackBounds.cpp in Sources */,
 				FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */,
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
 				A8A47440151A825B004123FF /* StringImpl.cpp in Sources */,
+				A5BA15FC182435A600A82E69 /* StringImplCF.cpp in Sources */,
+				A5BA15F51824348000A82E69 /* StringImplMac.mm in Sources */,
+				A5BA15F3182433A900A82E69 /* StringMac.mm in Sources */,
 				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
 				A8A47443151A825B004123FF /* StringStatics.cpp in Sources */,
+				93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */,
+				93934BD318A1E8C300D0D6A1 /* StringViewObjC.mm in Sources */,
 				A8A473B7151A825B004123FF /* strtod.cc in Sources */,
 				A8A47431151A825B004123FF /* TCSystemAlloc.cpp in Sources */,
 				A8A47448151A825B004123FF /* ThreadIdentifierDataPthreads.cpp in Sources */,

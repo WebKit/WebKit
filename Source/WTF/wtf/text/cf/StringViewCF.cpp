@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,59 +24,18 @@
  */
 
 #import "config.h"
-#import "WKDOMTextIterator.h"
+#import "StringView.h"
 
-#if WK_API_ENABLED
+#import "RetainPtr.h"
 
-#import "WKDOMInternals.h"
-#import "WKDOMRange.h"
-#import <WebCore/TextIterator.h>
-#import <wtf/OwnPtr.h>
+namespace WTF {
 
-@interface WKDOMTextIterator () {
-@public
-    OwnPtr<WebCore::TextIterator> _textIterator;
-}
-@end
-
-@implementation WKDOMTextIterator
-
-- (id)initWithRange:(WKDOMRange *)range
+RetainPtr<CFStringRef> StringView::createCFStringWithoutCopying() const
 {
-    self = [super init];
-    if (!self)
-        return nil;
+    if (is8Bit())
+        return adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, characters8(), length(), kCFStringEncodingISOLatin1, false, kCFAllocatorNull));
 
-    _textIterator = adoptPtr(new WebCore::TextIterator(WebKit::toWebCoreRange(range)));
-
-    return self;
+    return adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, characters16(), length(), kCFAllocatorNull));
 }
 
-- (void)advance
-{
-    _textIterator->advance();
 }
-
-- (BOOL)atEnd
-{
-    return _textIterator->atEnd();
-}
-
-- (WKDOMRange *)currentRange
-{
-    return WebKit::toWKDOMRange(_textIterator->range().get());
-}
-
-- (const unichar *)currentTextPointer
-{
-    return _textIterator->deprecatedTextIteratorCharacters();
-}
-
-- (NSUInteger)currentTextLength
-{
-    return _textIterator->length();
-}
-
-@end
-
-#endif // WK_API_ENABLED

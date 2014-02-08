@@ -53,7 +53,6 @@
 #include "Range.h"
 #include "RenderBlock.h"
 #include "StyleProperties.h"
-#include "TextIterator.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"

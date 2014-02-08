@@ -90,9 +90,9 @@ public:
     virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const override;
     virtual void ignoreWordInSpellDocument(const WTF::String&) override;
     virtual void learnWord(const WTF::String&) override;
-    virtual void checkSpellingOfString(const UChar*, int, int*, int*) override;
+    virtual void checkSpellingOfString(StringView, int*, int*) override;
     virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) override;
-    virtual void checkGrammarOfString(const UChar*, int, WTF::Vector<WebCore::GrammarDetail>&, int*, int*) override;
+    virtual void checkGrammarOfString(StringView, WTF::Vector<WebCore::GrammarDetail>&, int*, int*) override;
     virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) override;
     virtual void updateSpellingUIWithMisspelledWord(const WTF::String&) override;
     virtual void showSpellingUI(bool) override;
