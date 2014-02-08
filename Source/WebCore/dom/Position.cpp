@@ -36,6 +36,7 @@
 #include "PositionIterator.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
+#include "RenderIterator.h"
 #include "RenderLineBreak.h"
 #include "RenderText.h"
 #include "RuntimeEnabledFeatures.h"
@@ -1334,15 +1335,11 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
 
 TextDirection Position::primaryDirection() const
 {
-    TextDirection primaryDirection = LTR;
-    for (const RenderObject* r = m_anchorNode->renderer(); r; r = r->parent()) {
-        if (r->isRenderBlockFlow()) {
-            primaryDirection = toRenderBlockFlow(r)->style().direction();
-            break;
-        }
-    }
-
-    return primaryDirection;
+    if (!m_anchorNode->renderer())
+        return LTR;
+    if (auto* blockFlow = lineageOfType<RenderBlockFlow>(*m_anchorNode->renderer()).first())
+        return blockFlow->style().direction();
+    return LTR;
 }
 
 

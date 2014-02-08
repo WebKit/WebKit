@@ -1,3 +1,20 @@
+2014-02-08  Andreas Kling  <akling@apple.com>
+
+        Use renderer iterators in two more places.
+        <https://webkit.org/b/128371>
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Position.cpp:
+        (WebCore::Position::primaryDirection):
+
+            Use lineageOfType instead of walking the parent chain.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::insertOnlyThisLayer):
+
+            Use childrenOfType instead of walking the children.
+
 2014-02-07  David Kilzer  <ddkilzer@apple.com>
 
         [ASan] Use new/delete in PODFreeListArena

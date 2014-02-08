@@ -81,6 +81,7 @@
 #include "RenderFlowThread.h"
 #include "RenderGeometryMap.h"
 #include "RenderInline.h"
+#include "RenderIterator.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderMarquee.h"
@@ -1833,10 +1834,8 @@ void RenderLayer::insertOnlyThisLayer()
     }
 
     // Remove all descendant layers from the hierarchy and add them to the new position.
-    for (RenderObject* curr = renderer().firstChild(); curr; curr = curr->nextSibling()) {
-        if (curr->isRenderElement())
-            toRenderElement(curr)->moveLayers(m_parent, this);
-    }
+    for (auto& child : childrenOfType<RenderElement>(renderer()))
+        child.moveLayers(m_parent, this);
 
     // Clear out all the clip rects.
     clearClipRectsIncludingDescendants();
