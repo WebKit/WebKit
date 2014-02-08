@@ -70,6 +70,8 @@ public:
     void suspendAllThreads();
     void resumeAllThreads();
     
+    bool isActive() const { return !!m_plans.size(); }
+    
     void visitChildren(SlotVisitor&, CodeBlockSet&); // Only called on the main thread after suspending all threads.
     
     void dump(PrintStream&) const;

@@ -1,5 +1,21 @@
 2014-02-07  Filip Pizlo  <fpizlo@apple.com>
 
+        Don't throw away code if there is code on the worklists
+        https://bugs.webkit.org/show_bug.cgi?id=128443
+
+        Reviewed by Joseph Pecoraro.
+        
+        If we throw away compiled code and there is code currently being JITed then the JIT
+        will get confused after it resumes: it will see a code block that had claimed to belong
+        to an executable except that it doesn't belong to any executables anymore.
+
+        * dfg/DFGWorklist.h:
+        (JSC::DFG::Worklist::isActive):
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteAllCompiledCode):
+
+2014-02-07  Filip Pizlo  <fpizlo@apple.com>
+
         GC should safepoint the DFG worklist in a smarter way rather than just waiting for everything to complete
         https://bugs.webkit.org/show_bug.cgi?id=128297
 

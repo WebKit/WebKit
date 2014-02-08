@@ -732,6 +732,22 @@ void Heap::deleteAllCompiledCode()
     // up deleting code that is live on the stack.
     if (m_vm->entryScope)
         return;
+    
+    // If we have things on any worklist, then don't delete code. This is kind of
+    // a weird heuristic. It's definitely not safe to throw away code that is on
+    // the worklist. But this change was made in a hurry so we just avoid throwing
+    // away any code if there is any code on any worklist. I suspect that this
+    // might not actually be too dumb: if there is code on worklists then that
+    // means that we are running some hot JS code right now. Maybe causing
+    // recompilations isn't a good idea.
+#if ENABLE(DFG_JIT)
+    for (unsigned i = DFG::numberOfWorklists(); i--;) {
+        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i)) {
+            if (worklist->isActive())
+                return;
+        }
+    }
+#endif // ENABLE(DFG_JIT)
 
     for (ExecutableBase* current = m_compiledCode.head(); current; current = current->next()) {
         if (!current->isFunctionExecutable())
