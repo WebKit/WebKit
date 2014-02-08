@@ -219,7 +219,6 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(GC_VALIDATION)
     , m_initializingObjectClass(0)
 #endif
-    , m_ignoreStackLimit(false)
     , m_stackLimit(0)
 #if ENABLE(LLINT_C_LOOP)
     , m_jsStackLimit(0)
@@ -739,11 +738,6 @@ void VM:: clearExceptionStack()
 
 size_t VM::updateStackLimitWithReservedZoneSize(size_t reservedZoneSize)
 {
-    if (m_ignoreStackLimit) {
-        setStackLimit(0);
-        return 0;
-    }
-
     size_t oldReservedZoneSize = m_reservedZoneSize;
     m_reservedZoneSize = reservedZoneSize;
 

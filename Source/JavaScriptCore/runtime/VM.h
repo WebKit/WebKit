@@ -387,8 +387,6 @@ namespace JSC {
 #endif
         void* stackLimit() { return m_stackLimit; }
 
-        void ignoreStackLimit() { m_ignoreStackLimit = true; }
-
         bool isSafeToRecurse(size_t neededStackInBytes = 0) const
         {
             ASSERT(wtfThreadData().stack().isGrowingDownward());
@@ -523,7 +521,6 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
         const ClassInfo* m_initializingObjectClass;
 #endif
-        bool m_ignoreStackLimit;
         size_t m_reservedZoneSize;
 #if ENABLE(LLINT_C_LOOP)
         struct {

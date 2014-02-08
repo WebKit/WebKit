@@ -57,9 +57,7 @@ using namespace JSC;
 JSContextGroupRef JSContextGroupCreate()
 {
     initializeThreading();
-    VM* vm = VM::createContextGroup().leakRef();
-    vm->ignoreStackLimit();
-    return toRef(vm);
+    return toRef(VM::createContextGroup().leakRef());
 }
 
 JSContextGroupRef JSContextGroupRetain(JSContextGroupRef group)
@@ -131,13 +129,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 {
     initializeThreading();
 
-    RefPtr<VM> vm;
-    if (group)
-        vm = PassRefPtr<VM>(toJS(group));
-    else {
-        vm = VM::createContextGroup();
-        vm->ignoreStackLimit();
-    }
+    RefPtr<VM> vm = group ? PassRefPtr<VM>(toJS(group)) : VM::createContextGroup();
 
     APIEntryShim entryShim(vm.get(), false);
     vm->makeUsableFromMultipleThreads();

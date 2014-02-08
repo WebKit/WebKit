@@ -1,5 +1,25 @@
 2014-02-07  Mark Lam  <mark.lam@apple.com>
 
+        Revert workaround committed in http://trac.webkit.org/r163595.
+        <https://webkit.org/b/128408>
+
+        Reviewed by Geoffrey Garen.
+
+        Now that we have fixed the bugs in JSLock's stack limit adjusments
+        in https://bugs.webkit.org/show_bug.cgi?id=128406, we can revert the
+        workaround in r163595.
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupCreate):
+        (JSGlobalContextCreateInGroup):
+        * API/tests/testapi.js:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::updateStackLimitWithReservedZoneSize):
+        * runtime/VM.h:
+
+2014-02-07  Mark Lam  <mark.lam@apple.com>
+
         Fix bug in stack limit adjustments in JSLock.
         <https://webkit.org/b/128406>
 
