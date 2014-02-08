@@ -1340,12 +1340,6 @@ void FrameView::layout(bool allowSubtree)
     InspectorInstrumentation::didLayout(cookie, root);
 
     --m_nestedLayoutCount;
-
-    if (m_nestedLayoutCount)
-        return;
-
-    if (Page* page = frame().page())
-        page->chrome().client().layoutUpdated(&frame());
 }
 
 RenderBox* FrameView::embeddedContentBox() const

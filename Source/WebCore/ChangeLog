@@ -1,3 +1,18 @@
+2014-02-08  Andreas Kling  <akling@apple.com>
+
+        Remove unused ChromeClient::layoutUpdated().
+        <https://webkit.org/b/128470>
+
+        Nobody listens for this callback anymore so remove it.
+
+        Reviewed by Anders Carlsson.
+
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2014-02-08  Dan Bernstein  <mitz@apple.com>
 
         Stop using PLATFORM(MAC) in WebCore except where it means “OS X but not iOS”

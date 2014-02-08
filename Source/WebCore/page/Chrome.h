@@ -93,7 +93,6 @@ public:
     void scrollRectIntoView(const IntRect&) const;
 
     void contentsSizeChanged(Frame*, const IntSize&) const;
-    void layoutUpdated(Frame*) const;
 
     void setWindowRect(const FloatRect&) const;
     FloatRect windowRect() const;

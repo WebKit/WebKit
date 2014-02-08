@@ -179,7 +179,6 @@ public:
     virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const { }
 
     virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
-    virtual void layoutUpdated(Frame*) const { }
     virtual void scrollRectIntoView(const IntRect&) const { }; // Currently only Mac has a non empty implementation.
 
     virtual bool shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason) const { return false; }
