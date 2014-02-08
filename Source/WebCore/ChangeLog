@@ -1,5 +1,12 @@
 2014-02-08  Dan Bernstein  <mitz@apple.com>
 
+        One more build fix fix.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+
+2014-02-08  Dan Bernstein  <mitz@apple.com>
+
         More (and more correct) iOS build fix after r163712.
 
         * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:

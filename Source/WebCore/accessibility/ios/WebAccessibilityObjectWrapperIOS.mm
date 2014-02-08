@@ -1602,7 +1602,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
                 if (!listMarkerText.isEmpty()) 
                     [array addObject:[NSString stringWithCharacters:listMarkerText.deprecatedCharacters() length:listMarkerText.length()]];
                 // There was not an element representation, so just return the text.
-                [array addObject:adoptNS([it.text().createNSStringWithoutCopying() copy]).get()];
+                [array addObject:it.text().createNSString().get()];
             }
             else
             {
