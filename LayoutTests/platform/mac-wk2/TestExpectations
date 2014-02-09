@@ -478,6 +478,7 @@ storage/indexeddb/mozilla/create-index-with-integer-keys.html [ Pass ]
 storage/indexeddb/mozilla/cursor-mutation-objectstore-only.html [ Pass ]
 storage/indexeddb/mozilla/cursor-mutation.html [ Pass ]
 storage/indexeddb/mozilla/cursors.html [ Pass ]
+storage/indexeddb/mozilla/versionchange-abort.html [ Pass ]
 
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################

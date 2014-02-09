@@ -135,7 +135,9 @@ PassRefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
 
 uint64_t IDBDatabase::version() const
 {
-    return m_metadata.version;
+    // NoIntVersion is a special value for internal use only and shouldn't be exposed to script.
+    // DefaultIntVersion should be exposed instead.
+    return m_metadata.version != IDBDatabaseMetadata::NoIntVersion ? m_metadata.version : IDBDatabaseMetadata::DefaultIntVersion;
 }
 
 PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const Dictionary& options, ExceptionCode& ec)
