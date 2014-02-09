@@ -222,9 +222,7 @@ private:
     virtual bool shouldLoadMediaElementURL(const WebCore::URL&) const override;
 #endif
 
-#if PLATFORM(MAC)
     virtual RemoteAXObjectRef accessibilityRemoteObject() override { return 0; }
-#endif
     
     RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);
 
