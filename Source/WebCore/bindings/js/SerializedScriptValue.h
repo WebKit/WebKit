@@ -68,8 +68,6 @@ class SerializedScriptValue :
 #endif
 public:
     static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, ArrayBufferArray*, SerializationErrorMode = Throwing);
-    static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, MessagePortArray*, ArrayBufferArray*, JSValueRef* exception);
-    static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, JSValueRef* exception);
 
     static PassRefPtr<SerializedScriptValue> create(const String&);
     static PassRefPtr<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
@@ -78,18 +76,18 @@ public:
     }
 
     static PassRefPtr<SerializedScriptValue> nullValue();
-    static PassRefPtr<SerializedScriptValue> booleanValue(bool value);
 
-    static PassRefPtr<SerializedScriptValue> serialize(const Deprecated::ScriptValue&, JSC::ExecState*, SerializationErrorMode = Throwing);
-    static PassRefPtr<SerializedScriptValue> serialize(const Deprecated::ScriptValue&, JSC::ExecState*, MessagePortArray*, ArrayBufferArray*, bool&);
+    JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*, MessagePortArray*, SerializationErrorMode = Throwing);
+
+    static PassRefPtr<SerializedScriptValue> create(const Deprecated::ScriptValue&, JSC::ExecState*, MessagePortArray*, ArrayBufferArray*, bool& didThrow);
     static Deprecated::ScriptValue deserialize(JSC::ExecState*, SerializedScriptValue*, SerializationErrorMode = Throwing);
 
     static uint32_t wireFormatVersion();
 
     String toString();
-    
-    JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*, MessagePortArray*, SerializationErrorMode = Throwing);
-    JSValueRef deserialize(JSContextRef, JSValueRef* exception, MessagePortArray*);
+
+    // API implementation helpers. These don't expose special behavior for ArrayBuffers or MessagePorts.
+    static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, JSValueRef* exception);
     JSValueRef deserialize(JSContextRef, JSValueRef* exception);
 
     const Vector<uint8_t>& data() const { return m_data; }
@@ -119,6 +117,7 @@ private:
     SerializedScriptValue(Vector<unsigned char>&);
     SerializedScriptValue(Vector<unsigned char>&, Vector<String>& blobURLs);
     SerializedScriptValue(Vector<unsigned char>&, Vector<String>& blobURLs, PassOwnPtr<ArrayBufferContentsArray>);
+
     Vector<unsigned char> m_data;
     OwnPtr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
     Vector<String> m_blobURLs;

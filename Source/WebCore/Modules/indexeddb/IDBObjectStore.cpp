@@ -145,7 +145,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackend::PutMode putMode, 
 
     // FIXME: Expose the JS engine exception state through ScriptState.
     bool didThrow = false;
-    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::serialize(value, state, nullptr, nullptr, didThrow);
+    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(value, state, nullptr, nullptr, didThrow);
     if (didThrow) {
         // Setting an explicit ExceptionCode here would defer handling the already thrown exception.
         return 0;

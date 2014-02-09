@@ -1,3 +1,20 @@
+2014-02-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove some unused functions from SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=128407
+
+        Reviewed by Oliver Hunt.
+
+        Removed more unused code, particularly in API helpers. Renamed one serialize()
+        function to create(), because it does the same thing as other create() functions.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::put):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+
 2014-02-08  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/versionchange-abort.html fails

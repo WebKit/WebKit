@@ -2564,14 +2564,12 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue()
 }
 #endif
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, 
-                                                                MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,
-                                                                JSValueRef* exception)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, JSValueRef* exception)
 {
     ExecState* exec = toJS(originContext);
     APIEntryShim entryShim(exec);
     JSValue value = toJS(exec, apiValue);
-    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(exec, value, messagePorts, arrayBuffers);
+    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(exec, value, nullptr, nullptr);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());
@@ -2580,12 +2578,6 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef ori
     }
     ASSERT(serializedValue);
     return serializedValue.release();
-}
-
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue,
-                                                                JSValueRef* exception)
-{
-    return create(originContext, apiValue, 0, 0, exception);
 }
 
 String SerializedScriptValue::toString()
@@ -2603,11 +2595,11 @@ JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* glob
     return result.first;
 }
 
-JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception, MessagePortArray* messagePorts)
+JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception)
 {
     ExecState* exec = toJS(destinationContext);
     APIEntryShim entryShim(exec);
-    JSValue value = deserialize(exec, exec->lexicalGlobalObject(), messagePorts);
+    JSValue value = deserialize(exec, exec->lexicalGlobalObject(), nullptr);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());
@@ -2618,31 +2610,13 @@ JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, J
     return toRef(exec, value);
 }
 
-
-JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception)
-{
-    return deserialize(destinationContext, exception, 0);
-}
-
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::nullValue()
 {
     Vector<uint8_t> buffer;
     return adoptRef(new SerializedScriptValue(buffer));
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value)
-{
-    Vector<uint8_t> buffer;
-    CloneSerializer::serializeBoolean(value, buffer);
-    return adoptRef(new SerializedScriptValue(buffer));
-}
-
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::serialize(const Deprecated::ScriptValue& value, JSC::ExecState* scriptState, SerializationErrorMode throwExceptions)
-{
-    return SerializedScriptValue::create(scriptState, value.jsValue(), nullptr, nullptr, throwExceptions);
-}
-
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::serialize(const Deprecated::ScriptValue& value, JSC::ExecState* scriptState, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const Deprecated::ScriptValue& value, JSC::ExecState* scriptState, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
 {
     RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(scriptState, value.jsValue(), messagePorts, arrayBuffers);
     didThrow = scriptState->hadException();
