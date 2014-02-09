@@ -107,7 +107,7 @@ private:
     static bool s_shouldNotifyInspector;
     static bool s_shouldDeliver;
 
-    OwnPtr<MutationObserverInterestGroup> m_mutationRecipients;
+    std::unique_ptr<MutationObserverInterestGroup> m_mutationRecipients;
     RefPtr<MutationRecord> m_mutation;
 };
 

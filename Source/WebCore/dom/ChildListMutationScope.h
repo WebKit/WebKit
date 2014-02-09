@@ -34,9 +34,9 @@
 #include "Document.h"
 #include "MutationObserver.h"
 #include "Node.h"
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -52,10 +52,10 @@ public:
     void childAdded(Node&);
     void willRemoveChild(Node&);
 
-    bool hasObservers() const { return m_observers; }
+    bool hasObservers() const { return !!m_observers; }
 
 private:
-    ChildListMutationAccumulator(ContainerNode&, PassOwnPtr<MutationObserverInterestGroup>);
+    ChildListMutationAccumulator(ContainerNode&, std::unique_ptr<MutationObserverInterestGroup>);
 
     void enqueueMutationRecord();
     bool isEmpty();
@@ -70,7 +70,7 @@ private:
     RefPtr<Node> m_nextSibling;
     Node* m_lastAdded;
 
-    OwnPtr<MutationObserverInterestGroup> m_observers;
+    std::unique_ptr<MutationObserverInterestGroup> m_observers;
 };
 
 class ChildListMutationScope {

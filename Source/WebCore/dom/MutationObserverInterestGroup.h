@@ -34,14 +34,16 @@
 #include "Document.h"
 #include "MutationObserver.h"
 #include "QualifiedName.h"
+#include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class MutationObserverInterestGroup {
 public:
-    static PassOwnPtr<MutationObserverInterestGroup> createForChildListMutation(Node& target)
+    MutationObserverInterestGroup(HashMap<MutationObserver*, MutationRecordDeliveryOptions>& observers, MutationRecordDeliveryOptions oldValueFlag);
+
+    static std::unique_ptr<MutationObserverInterestGroup> createForChildListMutation(Node& target)
     {
         if (!target.document().hasMutationObserversOfType(MutationObserver::ChildList))
             return nullptr;
@@ -50,7 +52,7 @@ public:
         return createIfNeeded(target, MutationObserver::ChildList, oldValueFlag);
     }
 
-    static PassOwnPtr<MutationObserverInterestGroup> createForCharacterDataMutation(Node& target)
+    static std::unique_ptr<MutationObserverInterestGroup> createForCharacterDataMutation(Node& target)
     {
         if (!target.document().hasMutationObserversOfType(MutationObserver::CharacterData))
             return nullptr;
@@ -58,7 +60,7 @@ public:
         return createIfNeeded(target, MutationObserver::CharacterData, MutationObserver::CharacterDataOldValue);
     }
 
-    static PassOwnPtr<MutationObserverInterestGroup> createForAttributesMutation(Node& target, const QualifiedName& attributeName)
+    static std::unique_ptr<MutationObserverInterestGroup> createForAttributesMutation(Node& target, const QualifiedName& attributeName)
     {
         if (!target.document().hasMutationObserversOfType(MutationObserver::Attributes))
             return nullptr;
@@ -70,8 +72,7 @@ public:
     void enqueueMutationRecord(PassRefPtr<MutationRecord>);
 
 private:
-    static PassOwnPtr<MutationObserverInterestGroup> createIfNeeded(Node& target, MutationObserver::MutationType, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName = 0);
-    MutationObserverInterestGroup(HashMap<MutationObserver*, MutationRecordDeliveryOptions>& observers, MutationRecordDeliveryOptions oldValueFlag);
+    static std::unique_ptr<MutationObserverInterestGroup> createIfNeeded(Node& target, MutationObserver::MutationType, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName = nullptr);
 
     bool hasOldValue(MutationRecordDeliveryOptions options) { return options & m_oldValueFlag; }
 

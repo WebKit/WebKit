@@ -1,5 +1,30 @@
 2014-02-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        Manage MutationObserverInterestGroup through std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=128468
+
+        Reviewed by Andreas Kling.
+
+        Use std::unique_ptr instead of OwnPtr for managing MutationObserverInterestGroup objects.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::ChildListMutationAccumulator::ChildListMutationAccumulator):
+        * dom/ChildListMutationScope.h:
+        (WebCore::ChildListMutationAccumulator::hasObservers):
+        * dom/Element.cpp:
+        (WebCore::Element::willModifyAttribute):
+        * dom/MutationObserverInterestGroup.cpp:
+        (WebCore::MutationObserverInterestGroup::createIfNeeded):
+        * dom/MutationObserverInterestGroup.h:
+        (WebCore::MutationObserverInterestGroup::createForChildListMutation):
+        (WebCore::MutationObserverInterestGroup::createForCharacterDataMutation):
+        (WebCore::MutationObserverInterestGroup::createForAttributesMutation):
+
+2014-02-09  Zan Dobersek  <zdobersek@igalia.com>
+
         Manage MessagePort, MessagePortChannel and friends through std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=128467
 
