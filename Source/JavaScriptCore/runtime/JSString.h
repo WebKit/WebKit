@@ -350,7 +350,7 @@ namespace JSC {
     {
         if (c <= maxSingleCharacterString)
             return vm->smallStrings.singleCharacterString(c);
-        return JSString::create(*vm, StringImpl::create(&c, 1));
+        return JSString::create(*vm, String(&c, 1).impl());
     }
 
     ALWAYS_INLINE JSString* jsSingleCharacterSubstring(ExecState* exec, const String& s, unsigned offset)
@@ -358,8 +358,9 @@ namespace JSC {
         VM* vm = &exec->vm();
         ASSERT(offset < static_cast<unsigned>(s.length()));
         UChar c = s.characterAt(offset);
-        
-        return jsSingleCharacterString(vm, c);
+        if (c <= maxSingleCharacterString)
+            return vm->smallStrings.singleCharacterString(c);
+        return JSString::create(*vm, StringImpl::createSubstringSharingImpl(s.impl(), offset, 1));
     }
 
     inline JSString* jsNontrivialString(VM* vm, const String& s)
@@ -398,7 +399,8 @@ namespace JSC {
             return vm->smallStrings.emptyString();
         if (size == 1) {
             UChar c = s.characterAt(0);
-            return jsSingleCharacterString(vm, c);
+            if (c <= maxSingleCharacterString)
+                return vm->smallStrings.singleCharacterString(c);
         }
         return JSString::create(*vm, s.impl());
     }
@@ -423,7 +425,8 @@ namespace JSC {
             return vm->smallStrings.emptyString();
         if (length == 1) {
             UChar c = s.characterAt(offset);
-            return jsSingleCharacterString(vm, c);
+            if (c <= maxSingleCharacterString)
+                return vm->smallStrings.singleCharacterString(c);
         }
         return JSString::createHasOtherOwner(*vm, StringImpl::createSubstringSharingImpl8(s.impl(), offset, length));
     }
