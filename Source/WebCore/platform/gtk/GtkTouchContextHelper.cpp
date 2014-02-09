@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2013 Carlos Garnacho <carlosg@gnome.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventFactory_h
-#define WebEventFactory_h
+#include "config.h"
+#include "GtkTouchContextHelper.h"
 
-#include "WebEvent.h"
-#include <WebCore/CompositionResults.h>
-#include <WebCore/GtkTouchContextHelper.h>
+#include <gtk/gtk.h>
 
-typedef union _GdkEvent GdkEvent;
+namespace WebCore {
 
-namespace WebKit {
+bool GtkTouchContextHelper::handleEvent(GdkEvent* touchEvent)
+{
+#ifndef GTK_API_VERSION_2
+    uint32_t sequence = GPOINTER_TO_UINT(gdk_event_get_event_sequence(touchEvent));
 
-class WebEventFactory {
-public:
-    static WebMouseEvent createWebMouseEvent(const GdkEvent*, int);
-    static WebWheelEvent createWebWheelEvent(const GdkEvent*);
-    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const WebCore::CompositionResults&);
-    static WebTouchEvent createWebTouchEvent(const GdkEvent*, const WebCore::GtkTouchContextHelper&);
-};
+    switch (touchEvent->type) {
+    case GDK_TOUCH_BEGIN: {
+        ASSERT(m_touchEvents.contains(sequence));
+        GUniquePtr<GdkEvent> event(gdk_event_copy(touchEvent));
+        m_touchEvents.add(sequence, std::move(event));
+        break;
+    }
+    case GDK_TOUCH_UPDATE: {
+        auto it = m_touchEvents.find(sequence);
+        ASSERT(it != m_touchEvents.end());
+        it->value.reset(gdk_event_copy(touchEvent));
+        break;
+    }
+    case GDK_TOUCH_END:
+        ASSERT(m_touchEvents.contains(sequence));
+        m_touchEvents.remove(sequence);
+        break;
+    default:
+        return false;
+    }
+#endif // GTK_API_VERSION_2
 
-} // namespace WebKit
+    return true;
+}
 
-#endif // WebEventFactory_h
+} // namespace WebCore

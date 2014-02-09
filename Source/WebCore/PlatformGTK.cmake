@@ -202,6 +202,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/GtkInputMethodFilter.cpp
     platform/gtk/GtkPluginWidget.cpp
     platform/gtk/GtkPopupMenu.cpp
+    platform/gtk/GtkTouchContextHelper.cpp
     platform/gtk/GtkUtilities.cpp
     platform/gtk/GtkVersioning.c
     platform/gtk/KeyBindingTranslator.cpp
@@ -529,6 +530,7 @@ if (ENABLE_WEBKIT2)
         dom/Range.idl
         dom/ShadowRoot.idl
         dom/Text.idl
+        dom/Touch.idl
         dom/TreeWalker.idl
         dom/UIEvent.idl
         dom/WebKitNamedFlow.idl

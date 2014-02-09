@@ -56,6 +56,7 @@ list(APPEND WebKit2_SOURCES
     Shared/gtk/LayerTreeContextGtk.cpp
     Shared/gtk/NativeWebKeyboardEventGtk.cpp
     Shared/gtk/NativeWebMouseEventGtk.cpp
+    Shared/gtk/NativeWebTouchEventGtk.cpp
     Shared/gtk/NativeWebWheelEventGtk.cpp
     Shared/gtk/PrintInfoGtk.cpp
     Shared/gtk/ProcessExecutablePathGtk.cpp
@@ -565,6 +566,8 @@ if (ENABLE_PLUGIN_PROCESS)
         Shared/WebKeyboardEvent.cpp
         Shared/WebKit2Initialize.cpp
         Shared/WebMouseEvent.cpp
+        Shared/WebPlatformTouchPoint.cpp
+        Shared/WebTouchEvent.cpp
         Shared/WebWheelEvent.cpp
 
         Shared/Plugins/NPIdentifierData.cpp
@@ -583,6 +586,7 @@ if (ENABLE_PLUGIN_PROCESS)
 
         Shared/gtk/NativeWebKeyboardEventGtk.cpp
         Shared/gtk/NativeWebMouseEventGtk.cpp
+        Shared/gtk/NativeWebTouchEventGtk.cpp
         Shared/gtk/NativeWebWheelEventGtk.cpp
         Shared/gtk/ProcessExecutablePathGtk.cpp
         Shared/gtk/WebEventFactory.cpp

@@ -33,6 +33,7 @@
 #include "config.h"
 #include "EventSenderProxy.h"
 
+#include "NotImplemented.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <gdk/gdkkeysyms.h>
@@ -440,5 +441,121 @@ void EventSenderProxy::leapForward(int milliseconds)
     m_eventQueue.last().delay = milliseconds;
     m_time += milliseconds / 1000.0;
 }
+
+void updateEventCoordinates(GdkEvent* touchEvent, int x, int y)
+{
+    touchEvent->touch.x = x;
+    touchEvent->touch.y = y;
+
+    int xRoot, yRoot;
+    gdk_window_get_root_coords(touchEvent->touch.window, x, y, &xRoot, &yRoot);
+    touchEvent->touch.x_root = xRoot;
+    touchEvent->touch.y_root = yRoot;
+}
+
+GUniquePtr<GdkEvent> EventSenderProxy::createTouchEvent(GdkEventType eventType, int id)
+{
+    GUniquePtr<GdkEvent> touchEvent(gdk_event_new(eventType));
+
+    touchEvent->touch.sequence = static_cast<GdkEventSequence*>(GINT_TO_POINTER(id));
+    touchEvent->touch.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
+    g_object_ref(touchEvent->touch.window);
+    gdk_event_set_device(touchEvent.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(touchEvent->button.window))));
+    touchEvent->touch.time = GDK_CURRENT_TIME;
+
+    return touchEvent;
+}
+
+void EventSenderProxy::addTouchPoint(int x, int y)
+{
+    // Touch ID is array index plus one, so 0 is skipped.
+    GUniquePtr<GdkEvent> event = createTouchEvent(static_cast<GdkEventType>(GDK_TOUCH_BEGIN), m_touchEvents.size() + 1);
+    updateEventCoordinates(event.get(), x, y);
+    m_touchEvents.append(std::move(event));
+    m_updatedTouchEvents.add(GPOINTER_TO_INT(event->touch.sequence));
+}
+
+void EventSenderProxy::updateTouchPoint(int index, int x, int y)
+{
+    ASSERT(index >= 0 && index < m_touchEvents.size());
+
+    const auto& event = m_touchEvents[index];
+    ASSERT(event);
+
+    event->type = GDK_TOUCH_UPDATE;
+    updateEventCoordinates(event.get(), x, y);
+    m_updatedTouchEvents.add(GPOINTER_TO_INT(event->touch.sequence));
+}
+
+void EventSenderProxy::sendUpdatedTouchEvents()
+{
+    for (auto id : m_updatedTouchEvents)
+        sendOrQueueEvent(gdk_event_copy(m_touchEvents[id - 1].get()));
+
+    m_updatedTouchEvents.clear();
+}
+
+void EventSenderProxy::touchStart()
+{
+    sendUpdatedTouchEvents();
+}
+
+void EventSenderProxy::touchMove()
+{
+    sendUpdatedTouchEvents();
+}
+
+void EventSenderProxy::touchEnd()
+{
+    sendUpdatedTouchEvents();
+}
+
+void EventSenderProxy::touchCancel()
+{
+    notImplemented();
+}
+
+void EventSenderProxy::clearTouchPoints()
+{
+    m_updatedTouchEvents.clear();
+    m_touchEvents.clear();
+}
+
+void EventSenderProxy::releaseTouchPoint(int index)
+{
+    ASSERT(index >= 0 && index < m_touchEvents.size());
+
+    const auto& event = m_touchEvents[index];
+    event->type = GDK_TOUCH_END;
+    m_updatedTouchEvents.add(GPOINTER_TO_INT(event->touch.sequence));
+}
+
+void EventSenderProxy::cancelTouchPoint(int index)
+{
+    notImplemented();
+}
+
+void EventSenderProxy::setTouchPointRadius(int radiusX, int radiusY)
+{
+    notImplemented();
+}
+
+void EventSenderProxy::setTouchModifier(WKEventModifiers modifier, bool enable)
+{
+    guint state = webkitModifiersToGDKModifiers(modifier);
+
+    for (const auto& event : m_touchEvents) {
+        if (event->type == GDK_TOUCH_END)
+            continue;
+
+        if (enable)
+            event->touch.state |= state;
+        else
+            event->touch.state &= ~(state);
+
+        m_updatedTouchEvents.add(GPOINTER_TO_INT(event->touch.sequence));
+    }
+}
+
 
 } // namespace WTR

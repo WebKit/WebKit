@@ -2997,8 +2997,11 @@ webcore_sources += \
 	Source/WebCore/dom/TextNodeTraversal.cpp \
 	Source/WebCore/dom/TextNodeTraversal.h \
 	Source/WebCore/dom/Text.h \
+	Source/WebCore/dom/Touch.cpp \
 	Source/WebCore/dom/Touch.h \
+	Source/WebCore/dom/TouchEvent.cpp \
 	Source/WebCore/dom/TouchEvent.h \
+	Source/WebCore/dom/TouchList.cpp \
 	Source/WebCore/dom/TouchList.h \
 	Source/WebCore/dom/TransformSource.h \
 	Source/WebCore/dom/TransformSourceLibxslt.cpp \
@@ -6178,6 +6181,8 @@ platformgtk_sources += \
 	Source/WebCore/platform/gtk/GtkInputMethodFilter.h \
 	Source/WebCore/platform/gtk/GtkPopupMenu.cpp \
 	Source/WebCore/platform/gtk/GtkPopupMenu.h \
+	Source/WebCore/platform/gtk/GtkTouchContextHelper.cpp \
+	Source/WebCore/platform/gtk/GtkTouchContextHelper.h \
 	Source/WebCore/platform/gtk/GtkUtilities.cpp \
 	Source/WebCore/platform/gtk/GtkUtilities.h \
 	Source/WebCore/platform/gtk/GtkVersioning.c \

@@ -28,9 +28,13 @@
 #define EventSenderProxy_h
 
 #include <wtf/Deque.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(GTK)
+#include <WebCore/GUniquePtrGtk.h>
 #include <gdk/gdk.h>
+#include <wtf/HashSet.h>
 #elif PLATFORM(EFL)
 #include <WebKit2/EWebKit2.h>
 #endif
@@ -90,6 +94,8 @@ private:
 #if PLATFORM(GTK)
     void sendOrQueueEvent(GdkEvent*);
     GdkEvent* createMouseButtonEvent(GdkEventType, unsigned button, WKEventModifiers);
+    GUniquePtr<GdkEvent> createTouchEvent(GdkEventType, int id);
+    void sendUpdatedTouchEvents();
 #elif PLATFORM(EFL)
     void sendOrQueueEvent(const WTREvent&);
     void dispatchEvent(const WTREvent&);
@@ -110,6 +116,8 @@ private:
 #elif PLATFORM(GTK)
     Deque<WTREventQueueItem> m_eventQueue;
     unsigned m_mouseButtonCurrentlyDown;
+    Vector<GUniquePtr<GdkEvent>> m_touchEvents;
+    HashSet<int> m_updatedTouchEvents;
 #elif PLATFORM(EFL)
     Deque<WTREvent> m_eventQueue;
     WKEventMouseButton m_mouseButton;

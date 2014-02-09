@@ -141,6 +141,7 @@ namespace WebKit {
 #endif
 
         virtual void numWheelEventHandlersChanged(unsigned) { }
+        virtual void needTouchEvents(bool) { }
 
         virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);
         virtual void setNeedsOneShotDrawingSynchronization();

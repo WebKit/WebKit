@@ -1,3 +1,16 @@
+2014-02-09  Carlos Garnacho  <carlosg@gnome.org>
+
+        [GTK] Allow building with touch events enabled
+        https://bugs.webkit.org/show_bug.cgi?id=98931
+
+        Reviewed by Carlos Garcia Campos.
+
+        Even though WebKit1 GTK code doesn't implement touch events,
+        Fix build if ENABLE_TOUCH_EVENTS is present for WK2.
+
+        * WebCoreSupport/ChromeClientGtk.h:
+        (WebKit::ChromeClient::needTouchEvents): Add empty stub
+
 2014-02-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cleanup the interface of FrameSelection

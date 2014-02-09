@@ -1,3 +1,37 @@
+2014-02-09  Carlos Garnacho  <carlosg@gnome.org>
+
+        [GTK] Implement support touch events
+        https://bugs.webkit.org/show_bug.cgi?id=98931
+
+        Reviewed by Carlos Garcia Campos.
+
+        In GTK+ >= 3.4.0, GdkEventTouch is available to inform about multitouch events. Use these to implement
+        touch events on this platform. If a touch is left unhandled and is the "pointer emulating" one, mouse
+        events will be generated as a fallback.
+
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * Shared/gtk/NativeWebTouchEventGtk.cpp:
+        * Shared/NativeWebTouchEvent.h:
+        (WebKit::NativeWebTouchEvent::nativeEvent):
+        (WebKit::NativeWebTouchEvent::touchContext): Add GTK+ implementation of NativeWebTouchEvent.
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::touchPhaseFromEvents):
+        (WebKit::WebEventFactory::createWebTouchEvent): Add methods to generate WebTouchEvents out
+        of GdkEventTouch events, a GtkTouchContextHelper object is used to hold information about all current
+        touches, in order to build information about all individual touchpoints.
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithTouchEvent): Implement pointer emulation. If a touch event was unhandled
+        in DOM and pertains to the touch sequence that emulates pointer events. The event gets transformed to its
+        mouse event counterpart and handled by the widget again.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize): Listen for touch events
+        (webkitWebViewBaseTouchEvent):
+        (webkit_web_view_base_class_init): Add implementation for the touch_events() handler, this merely
+        lets the pageProxy handle the NativeWebTouchEvent we create to wrap the GdkEvent received.
+
 2014-02-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162768.

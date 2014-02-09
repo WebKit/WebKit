@@ -1,3 +1,21 @@
+2014-02-09  Carlos Garnacho  <carlosg@gnome.org>
+
+        [GTK] Add touch-events related code to build
+        https://bugs.webkit.org/show_bug.cgi?id=98931
+
+        Reviewed by Carlos Garcia Campos.
+
+        Tests in fast/events/touch have been enabled on GTK+ now that touch
+        support is implemented, and thus all expected bits are there.
+
+        * platform/gtk/GtkTouchContextHelper.cpp:
+        * platform/gtk/GtkTouchContextHelper.h: Add helper object to track all touchpoints, handy
+        when creating WebTouchEvents.
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * bindings/gobject/GNUmakefile.am: Add touch related code and idls to build, those are
+        necessary now that GTK+ implements touch events.
+
 2014-02-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Switch the rest of CSS code from OwnPtr over to std::unique_ptr

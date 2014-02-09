@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2013 Carlos Garnacho <carlosg@gnome.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventFactory_h
-#define WebEventFactory_h
+#include "config.h"
+#include "NativeWebTouchEvent.h"
 
-#include "WebEvent.h"
-#include <WebCore/CompositionResults.h>
-#include <WebCore/GtkTouchContextHelper.h>
-
-typedef union _GdkEvent GdkEvent;
+#include "WebEventFactory.h"
+#include <gdk/gdk.h>
 
 namespace WebKit {
 
-class WebEventFactory {
-public:
-    static WebMouseEvent createWebMouseEvent(const GdkEvent*, int);
-    static WebWheelEvent createWebWheelEvent(const GdkEvent*);
-    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const WebCore::CompositionResults&);
-    static WebTouchEvent createWebTouchEvent(const GdkEvent*, const WebCore::GtkTouchContextHelper&);
-};
+NativeWebTouchEvent::NativeWebTouchEvent(GdkEvent* event, WebCore::GtkTouchContextHelper& context)
+    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, context))
+    , m_nativeEvent(gdk_event_copy(event))
+    , m_touchContext(context)
+{
+}
+
+NativeWebTouchEvent::NativeWebTouchEvent(const NativeWebTouchEvent& event)
+    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event.nativeEvent(), event.touchContext()))
+    , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
+    , m_touchContext(event.touchContext())
+{
+}
 
 } // namespace WebKit
-
-#endif // WebEventFactory_h

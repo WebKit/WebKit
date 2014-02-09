@@ -1,3 +1,13 @@
+2014-02-09  Carlos Garnacho  <carlosg@gnome.org>
+
+        [GTK] Enable touch features
+        https://bugs.webkit.org/show_bug.cgi?id=98931
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/autotools/SetupWebKitFeatures.m4:
+        * Source/cmake/OptionsGTK.cmake: set ENABLE_TOUCH_EVENTS to 1 if building with GTK+.
+
 2014-02-06  Andreas Kling  <akling@apple.com>
 
         Remove unused ENABLE(REPAINT_THROTTLING) flag.
