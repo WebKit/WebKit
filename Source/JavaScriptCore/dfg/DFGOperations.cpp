@@ -278,8 +278,8 @@ static inline EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t in
 
 EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue property = JSValue::decode(encodedProperty);
@@ -295,7 +295,7 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
             if (propertyAsUInt32 == propertyAsDouble)
                 return getByVal(exec, base, propertyAsUInt32);
         } else if (property.isString()) {
-            if (JSValue result = base->fastGetOwnProperty(exec, asString(property)->value(exec)))
+            if (JSValue result = base->fastGetOwnProperty(vm, asString(property)->value(exec)))
                 return JSValue::encode(result);
         }
     }
@@ -309,8 +309,8 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
 
 EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base, EncodedJSValue encodedProperty)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
     JSValue property = JSValue::decode(encodedProperty);
 
@@ -322,7 +322,7 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
         if (propertyAsUInt32 == propertyAsDouble)
             return getByVal(exec, base, propertyAsUInt32);
     } else if (property.isString()) {
-        if (JSValue result = base->fastGetOwnProperty(exec, asString(property)->value(exec)))
+        if (JSValue result = base->fastGetOwnProperty(vm, asString(property)->value(exec)))
             return JSValue::encode(result);
     }
 

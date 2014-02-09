@@ -133,7 +133,7 @@ public:
     void zap() { *reinterpret_cast<uintptr_t**>(this) = 0; }
     bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }
 
-    JSValue fastGetOwnProperty(ExecState*, const String&);
+    JSValue fastGetOwnProperty(VM&, const String&);
 
     static ptrdiff_t structureOffset()
     {

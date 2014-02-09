@@ -1,3 +1,21 @@
+2014-02-09  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of ExecState to JSCell::fastGetOwnProperty().
+        <https://webkit.org/b/128497>
+
+        Knocks off a couple of instructions.
+
+        Reviewed by Anders Carlsson.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::fastGetOwnProperty):
+
 2014-02-09  Anders Carlsson  <andersca@apple.com>
 
         Convert some JSC code over to std::mutex
