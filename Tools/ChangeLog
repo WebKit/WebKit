@@ -1,3 +1,16 @@
+2014-02-08  Andreas Kling  <akling@apple.com>
+
+        Let Instruments time profiler run until tests finish.
+        <https://webkit.org/b/128488>
+
+        Pass "-T 0" to iprofiler to ensure that we get a time profile of the
+        entire performance test run instead of just the first 10 seconds.
+
+        Reviewed by Brady Eidson.
+
+        * Scripts/webkitpy/common/system/profiler.py:
+        (IProfiler.attach_to_pid):
+
 2014-02-08  Rajaram Gaunker  <zimbabao@gmail.com>
 
         [GTK] Add stdlib include file to fix ImageDiff build with libc++

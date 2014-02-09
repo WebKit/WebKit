@@ -214,7 +214,7 @@ class IProfiler(SingleFileOutputProfiler):
         # FIXME: iprofiler requires us to pass the directory separately
         # from the basename of the file, with no control over the extension.
         fs = self._host.filesystem
-        cmd = ["iprofiler", "-timeprofiler", "-a", pid,
+        cmd = ["iprofiler", "-T", "0", "-timeprofiler", "-a", pid,
                 "-d", fs.dirname(self._output_path), "-o", fs.splitext(fs.basename(self._output_path))[0]]
         # FIXME: Consider capturing instead of letting instruments spam to stderr directly.
         self._profiler_process = self._host.executive.popen(cmd)
