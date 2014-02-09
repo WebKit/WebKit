@@ -1,3 +1,19 @@
+2014-02-08  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/index-prev-no-duplicate.html fails
+        <rdar://problem/16018918> and https://bugs.webkit.org/show_bug.cgi?id=128444
+
+        Reviewed by Dan Bernstein.
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::getIndexStatement): Return different statements for unique cursors that will
+          sort the values in reverse of the cursor direction, matching expected IndexedDB behavior.
+        (WebKit::SQLiteIDBCursor::establishStatement):
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::uncheckedPutIndexRecord): Insert the values as
+          strings since we need the collation function to be called for proper sorting.
+
 2014-02-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cleanup the interface of FrameSelection

@@ -888,7 +888,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::uncheckedPutIndexRecord(int64_t object
         return false;
     }
     {
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IndexRecords VALUES (?, ?, CAST(? AS TEXT), ?);"));
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IndexRecords VALUES (?, ?, CAST(? AS TEXT), CAST(? AS TEXT));"));
         if (sql.prepare() != SQLResultOk
             || sql.bindInt64(1, indexID) != SQLResultOk
             || sql.bindInt64(2, objectStoreID) != SQLResultOk
