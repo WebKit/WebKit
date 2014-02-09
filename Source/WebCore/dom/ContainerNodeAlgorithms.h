@@ -197,7 +197,6 @@ namespace Private {
 inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument(Node& node)
 {
     ASSERT(m_insertionPoint.inDocument());
-    Ref<Node> protect(node);
     if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node.insertedInto(m_insertionPoint))
         m_postInsertionNotificationTargets.append(node);
     if (node.isContainerNode())

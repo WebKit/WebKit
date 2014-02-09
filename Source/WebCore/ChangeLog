@@ -1,3 +1,16 @@
+2014-02-09  Andreas Kling  <akling@apple.com>
+
+        Reduce ref churn in ChildInsertionNotifier.
+        <https://webkit.org/b/128494>
+
+        All callers of notifyNodeInsertedIntoDocument() already hold a strong
+        reference on the Node, so there's no need to ref it again inside.
+
+        Reviewed by Anders Carlsson.
+
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument):
+
 2014-02-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Manage ShadowData through std::unique_ptr
