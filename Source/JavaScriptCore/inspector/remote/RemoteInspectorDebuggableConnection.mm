@@ -94,7 +94,7 @@ void RemoteInspectorDebuggableConnection::dispatchAsyncOnDebuggable(void (^block
 
 bool RemoteInspectorDebuggableConnection::setup()
 {
-    MutexLocker locker(m_debuggableLock);
+    std::lock_guard<std::mutex> lock(m_debuggableMutex);
 
     if (!m_debuggable)
         return false;
@@ -115,7 +115,7 @@ bool RemoteInspectorDebuggableConnection::setup()
 
 void RemoteInspectorDebuggableConnection::closeFromDebuggable()
 {
-    MutexLocker locker(m_debuggableLock);
+    std::lock_guard<std::mutex> lock(m_debuggableMutex);
 
     m_debuggable = nullptr;
 }
@@ -125,7 +125,7 @@ void RemoteInspectorDebuggableConnection::close()
     ref();
     dispatchAsyncOnDebuggable(^{
         {
-            MutexLocker locker(m_debuggableLock);
+            std::lock_guard<std::mutex> lock(m_debuggableMutex);
 
             if (m_debuggable) {
                 if (m_connected)
@@ -143,7 +143,7 @@ void RemoteInspectorDebuggableConnection::sendMessageToBackend(NSString *message
     ref();
     dispatchAsyncOnDebuggable(^{
         {
-            MutexLocker locker(m_debuggableLock);
+            std::lock_guard<std::mutex> lock(m_debuggableMutex);
 
             if (m_debuggable)
                 m_debuggable->dispatchMessageFromRemoteFrontend(message);

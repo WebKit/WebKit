@@ -31,6 +31,7 @@
 #include "CodeProfiling.h"
 #include <wtf/HashSet.h>
 #include <wtf/MetaAllocator.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PageReservation.h>
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
 #include <wtf/PassOwnPtr.h>
@@ -57,7 +58,7 @@ public:
     DemandExecutableAllocator()
         : MetaAllocator(jitAllocationGranule)
     {
-        MutexLocker lock(allocatorsMutex());
+        std::lock_guard<std::mutex> lock(allocatorsMutex());
         allocators().add(this);
         // Don't preallocate any memory here.
     }
@@ -65,7 +66,7 @@ public:
     virtual ~DemandExecutableAllocator()
     {
         {
-            MutexLocker lock(allocatorsMutex());
+            std::lock_guard<std::mutex> lock(allocatorsMutex());
             allocators().remove(this);
         }
         for (unsigned i = 0; i < reservations.size(); ++i)
@@ -75,7 +76,7 @@ public:
     static size_t bytesAllocatedByAllAllocators()
     {
         size_t total = 0;
-        MutexLocker lock(allocatorsMutex());
+        std::lock_guard<std::mutex> lock(allocatorsMutex());
         for (HashSet<DemandExecutableAllocator*>::const_iterator allocator = allocators().begin(); allocator != allocators().end(); ++allocator)
             total += (*allocator)->bytesAllocated();
         return total;
@@ -84,7 +85,7 @@ public:
     static size_t bytesCommittedByAllocactors()
     {
         size_t total = 0;
-        MutexLocker lock(allocatorsMutex());
+        std::lock_guard<std::mutex> lock(allocatorsMutex());
         for (HashSet<DemandExecutableAllocator*>::const_iterator allocator = allocators().begin(); allocator != allocators().end(); ++allocator)
             total += (*allocator)->bytesCommitted();
         return total;
@@ -93,7 +94,7 @@ public:
 #if ENABLE(META_ALLOCATOR_PROFILE)
     static void dumpProfileFromAllAllocators()
     {
-        MutexLocker lock(allocatorsMutex());
+        std::lock_guard<std::mutex> lock(allocatorsMutex());
         for (HashSet<DemandExecutableAllocator*>::const_iterator allocator = allocators().begin(); allocator != allocators().end(); ++allocator)
             (*allocator)->dumpProfile();
     }
@@ -138,9 +139,11 @@ private:
         DEFINE_STATIC_LOCAL(HashSet<DemandExecutableAllocator*>, sAllocators, ());
         return sAllocators;
     }
-    static Mutex& allocatorsMutex()
+
+    static std::mutex& allocatorsMutex()
     {
-        DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+        static NeverDestroyed<std::mutex> mutex;
+
         return mutex;
     }
 };

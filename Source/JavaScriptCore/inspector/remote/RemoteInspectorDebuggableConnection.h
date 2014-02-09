@@ -31,8 +31,8 @@
 #import "InspectorFrontendChannel.h"
 #import "RemoteInspectorDebuggable.h"
 #import <dispatch/dispatch.h>
+#import <mutex>
 #import <wtf/RetainPtr.h>
-#import <wtf/Threading.h>
 #import <wtf/ThreadSafeRefCounted.h>
 
 OBJC_CLASS NSString;
@@ -62,8 +62,8 @@ private:
 
     // This connection from the RemoteInspector singleton to the Debuggable
     // can be used on multiple threads. So any access to the debuggable
-    // itself must take this lock to ensure m_debuggable is valid.
-    Mutex m_debuggableLock;
+    // itself must take this mutex to ensure m_debuggable is valid.
+    std::mutex m_debuggableMutex;
 
     RemoteInspectorDebuggable* m_debuggable;
     dispatch_queue_t m_queueForDebuggable;

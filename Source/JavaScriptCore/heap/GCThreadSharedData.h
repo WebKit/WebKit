@@ -92,7 +92,7 @@ private:
     unsigned m_numberOfActiveParallelMarkers;
     bool m_parallelMarkersShouldExit;
 
-    Mutex m_opaqueRootsLock;
+    std::mutex m_opaqueRootsMutex;
     HashSet<void*> m_opaqueRoots;
 
     SpinLock m_copyLock;

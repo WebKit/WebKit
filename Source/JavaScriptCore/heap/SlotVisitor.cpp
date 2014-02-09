@@ -240,11 +240,9 @@ void SlotVisitor::mergeOpaqueRoots()
     StackStats::probe();
     ASSERT(!m_opaqueRoots.isEmpty()); // Should only be called when opaque roots are non-empty.
     {
-        MutexLocker locker(m_shared.m_opaqueRootsLock);
-        HashSet<void*>::iterator begin = m_opaqueRoots.begin();
-        HashSet<void*>::iterator end = m_opaqueRoots.end();
-        for (HashSet<void*>::iterator iter = begin; iter != end; ++iter)
-            m_shared.m_opaqueRoots.add(*iter);
+        std::lock_guard<std::mutex> lock(m_shared.m_opaqueRootsMutex);
+        for (auto* root : m_opaqueRoots)
+            m_shared.m_opaqueRoots.add(root);
     }
     m_opaqueRoots.clear();
 }

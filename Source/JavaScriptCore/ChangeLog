@@ -1,3 +1,46 @@
+2014-02-09  Anders Carlsson  <andersca@apple.com>
+
+        Convert some JSC code over to std::mutex
+        https://bugs.webkit.org/show_bug.cgi?id=128500
+
+        Reviewed by Dan Bernstein.
+
+        * API/JSVirtualMachine.mm:
+        (wrapperCacheMutex):
+        (+[JSVMWrapperCache addWrapper:forJSContextGroupRef:]):
+        (+[JSVMWrapperCache wrapperForJSContextGroupRef:]):
+        * heap/GCThreadSharedData.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::mergeOpaqueRoots):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::containsOpaqueRootTriState):
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::registerDebuggable):
+        (Inspector::RemoteInspector::unregisterDebuggable):
+        (Inspector::RemoteInspector::updateDebuggable):
+        (Inspector::RemoteInspector::sendMessageToRemoteFrontend):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::stop):
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        (Inspector::RemoteInspector::pushListingSoon):
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorDebuggableConnection::setup):
+        (Inspector::RemoteInspectorDebuggableConnection::closeFromDebuggable):
+        (Inspector::RemoteInspectorDebuggableConnection::close):
+        (Inspector::RemoteInspectorDebuggableConnection::sendMessageToBackend):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::DemandExecutableAllocator::DemandExecutableAllocator):
+        (JSC::DemandExecutableAllocator::~DemandExecutableAllocator):
+        (JSC::DemandExecutableAllocator::bytesAllocatedByAllAllocators):
+        (JSC::DemandExecutableAllocator::bytesCommittedByAllocactors):
+        (JSC::DemandExecutableAllocator::dumpProfileFromAllAllocators):
+        (JSC::DemandExecutableAllocator::allocatorsMutex):
+
 2014-02-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r163737.

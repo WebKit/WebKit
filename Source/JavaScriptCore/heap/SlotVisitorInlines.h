@@ -176,7 +176,7 @@ inline TriState SlotVisitor::containsOpaqueRootTriState(void* root)
 {
     if (m_opaqueRoots.contains(root))
         return TrueTriState;
-    MutexLocker locker(m_shared.m_opaqueRootsLock);
+    std::lock_guard<std::mutex> lock(m_shared.m_opaqueRootsMutex);
     if (m_shared.m_opaqueRoots.contains(root))
         return TrueTriState;
     return MixedTriState;
