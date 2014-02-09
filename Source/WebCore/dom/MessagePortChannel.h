@@ -32,9 +32,8 @@
 #define MessagePortChannel_h
 
 #include "SerializedScriptValue.h"
-#include <wtf/OwnPtr.h>
+#include <memory>
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -49,13 +48,14 @@ namespace WebCore {
     class SerializedScriptValue;
 
     // The overwhelmingly common case is sending a single port, so handle that efficiently with an inline buffer of size 1.
-    typedef Vector<OwnPtr<MessagePortChannel>, 1> MessagePortChannelArray;
+    typedef Vector<std::unique_ptr<MessagePortChannel>, 1> MessagePortChannelArray;
 
     // MessagePortChannel is a platform-independent interface to the remote side of a message channel.
     // It acts as a wrapper around the platform-dependent PlatformMessagePortChannel implementation which ensures that the platform-dependent close() method is invoked before destruction.
     class MessagePortChannel {
         WTF_MAKE_NONCOPYABLE(MessagePortChannel); WTF_MAKE_FAST_ALLOCATED;
     public:
+        explicit MessagePortChannel(PassRefPtr<PlatformMessagePortChannel>);
         static void createChannel(PassRefPtr<MessagePort>, PassRefPtr<MessagePort>);
 
         // Entangles the channel with a port (called when a port has been cloned, after the clone has been marshaled to its new owning thread and is ready to receive messages).
@@ -75,10 +75,10 @@ namespace WebCore {
         bool hasPendingActivity();
 
         // Sends a message and optional cloned port to the remote port.
-        void postMessageToRemote(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
+        void postMessageToRemote(PassRefPtr<SerializedScriptValue>, std::unique_ptr<MessagePortChannelArray>);
 
         // Extracts a message from the message queue for this port.
-        bool tryGetMessageFromRemote(RefPtr<SerializedScriptValue>&, OwnPtr<MessagePortChannelArray>&);
+        bool tryGetMessageFromRemote(RefPtr<SerializedScriptValue>&, std::unique_ptr<MessagePortChannelArray>&);
 
         // Returns the entangled port if run by the same thread (see MessagePort::locallyEntangledPort() for more details).
         MessagePort* locallyEntangledPort(const ScriptExecutionContext*);
@@ -86,7 +86,6 @@ namespace WebCore {
         ~MessagePortChannel();
 
     private:
-        explicit MessagePortChannel(PassRefPtr<PlatformMessagePortChannel>);
         RefPtr<PlatformMessagePortChannel> m_channel;
     };
 

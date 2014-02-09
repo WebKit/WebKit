@@ -33,8 +33,8 @@
 
 #include "MessagePort.h"
 #include "WorkerThread.h"
+#include <memory>
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ namespace WebCore {
 
         virtual void terminateWorkerGlobalScope() = 0;
 
-        virtual void postMessageToWorkerGlobalScope(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>) = 0;
+        virtual void postMessageToWorkerGlobalScope(PassRefPtr<SerializedScriptValue>, std::unique_ptr<MessagePortChannelArray>) = 0;
 
         virtual bool hasPendingActivity() const = 0;
 

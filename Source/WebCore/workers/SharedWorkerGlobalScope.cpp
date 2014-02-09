@@ -47,7 +47,7 @@ namespace WebCore {
 PassRefPtr<MessageEvent> createConnectEvent(PassRefPtr<MessagePort> prpPort)
 {
     RefPtr<MessagePort> port = prpPort;
-    RefPtr<MessageEvent> event = MessageEvent::create(adoptPtr(new MessagePortArray(1, port)), Deprecated::ScriptValue(), String(), String(), port);
+    RefPtr<MessageEvent> event = MessageEvent::create(std::make_unique<MessagePortArray>(1, port), Deprecated::ScriptValue(), String(), String(), port);
     event->initEvent(eventNames().connectEvent, false, false);
     return event.release();
 }

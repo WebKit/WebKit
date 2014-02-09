@@ -33,8 +33,8 @@
 
 #if ENABLE(SHARED_WORKERS)
 
+#include <memory>
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -53,7 +53,7 @@ namespace WebCore {
         static bool isAvailable();
 
         // Connects the passed SharedWorker object with the specified worker thread, creating a new thread if necessary.
-        static void connect(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, const URL&, const String& name, ExceptionCode&);
+        static void connect(PassRefPtr<SharedWorker>, std::unique_ptr<MessagePortChannel>, const URL&, const String& name, ExceptionCode&);
 
         // Invoked when a document has been detached.
         static void documentDetached(Document*);

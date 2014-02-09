@@ -30,9 +30,8 @@
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "MessagePortChannel.h"
+#include <memory>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -59,14 +58,14 @@ namespace WebCore {
         void start();
         void close();
 
-        void entangle(PassOwnPtr<MessagePortChannel>);
-        PassOwnPtr<MessagePortChannel> disentangle();
+        void entangle(std::unique_ptr<MessagePortChannel>);
+        std::unique_ptr<MessagePortChannel> disentangle();
 
         // Returns 0 if there is an exception, or if the passed-in array is 0/empty.
-        static PassOwnPtr<MessagePortChannelArray> disentanglePorts(const MessagePortArray*, ExceptionCode&);
+        static std::unique_ptr<MessagePortChannelArray> disentanglePorts(const MessagePortArray*, ExceptionCode&);
 
         // Returns 0 if the passed array is 0/empty.
-        static PassOwnPtr<MessagePortArray> entanglePorts(ScriptExecutionContext&, PassOwnPtr<MessagePortChannelArray>);
+        static std::unique_ptr<MessagePortArray> entanglePorts(ScriptExecutionContext&, std::unique_ptr<MessagePortChannelArray>);
 
         void messageAvailable();
         bool started() const { return m_started; }
@@ -108,7 +107,7 @@ namespace WebCore {
         virtual void refEventTarget() override { ref(); }
         virtual void derefEventTarget() override { deref(); }
 
-        OwnPtr<MessagePortChannel> m_entangledChannel;
+        std::unique_ptr<MessagePortChannel> m_entangledChannel;
 
         bool m_started;
         bool m_closed;

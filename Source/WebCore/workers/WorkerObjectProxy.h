@@ -33,7 +33,7 @@
 
 #include "WorkerReportingProxy.h"
 #include "MessagePort.h"
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ namespace WebCore {
     // A proxy to talk to the worker object.
     class WorkerObjectProxy : public WorkerReportingProxy {
     public:
-        virtual void postMessageToWorkerObject(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>) = 0;
+        virtual void postMessageToWorkerObject(PassRefPtr<SerializedScriptValue>, std::unique_ptr<MessagePortChannelArray>) = 0;
 
         virtual void confirmMessageFromWorkerObject(bool hasPendingActivity) = 0;
         virtual void reportPendingActivity(bool hasPendingActivity) = 0;

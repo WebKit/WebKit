@@ -66,7 +66,7 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext& context, c
 
     RefPtr<MessageChannel> channel = MessageChannel::create(context);
     worker->m_port = channel->port1();
-    OwnPtr<MessagePortChannel> remotePort = channel->port2()->disentangle();
+    std::unique_ptr<MessagePortChannel> remotePort = channel->port2()->disentangle();
     ASSERT(remotePort);
 
     worker->suspendIfNeeded();
@@ -80,7 +80,7 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext& context, c
         return 0;
     }
 
-    SharedWorkerRepository::connect(worker.get(), remotePort.release(), scriptURL, name, ec);
+    SharedWorkerRepository::connect(worker.get(), std::move(remotePort), scriptURL, name, ec);
 
     return worker.release();
 }

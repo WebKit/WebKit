@@ -41,9 +41,9 @@ bool SharedWorkerRepository::isAvailable()
     return DefaultSharedWorkerRepository::instance().isAvailable();
 }
 
-void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const URL& url, const String& name, ExceptionCode& ec)
+void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, std::unique_ptr<MessagePortChannel> port, const URL& url, const String& name, ExceptionCode& ec)
 {
-    DefaultSharedWorkerRepository::instance().connectToWorker(worker, port, url, name, ec);
+    DefaultSharedWorkerRepository::instance().connectToWorker(worker, std::move(port), url, name, ec);
 }
 
 void SharedWorkerRepository::documentDetached(Document* document)

@@ -96,10 +96,10 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     const String originArg = exec->argument(4).toString(exec)->value(exec);
     const String lastEventIdArg = exec->argument(5).toString(exec)->value(exec);
     DOMWindow* sourceArg = toDOMWindow(exec->argument(6));
-    OwnPtr<MessagePortArray> messagePorts;
+    std::unique_ptr<MessagePortArray> messagePorts;
     OwnPtr<ArrayBufferArray> arrayBuffers;
     if (!exec->argument(7).isUndefinedOrNull()) {
-        messagePorts = adoptPtr(new MessagePortArray);
+        messagePorts = std::make_unique<MessagePortArray>();
         arrayBuffers = adoptPtr(new ArrayBufferArray);
         fillMessagePortArray(exec, exec->argument(7), *messagePorts, *arrayBuffers);
         if (exec->hadException())
@@ -110,7 +110,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
         return jsUndefined();
 
     MessageEvent& event = jsEvent->impl();
-    event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, messagePorts.release());
+    event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, std::move(messagePorts));
     jsEvent->m_data.set(exec->vm(), jsEvent, dataArg.jsValue());
     return jsUndefined();
 }

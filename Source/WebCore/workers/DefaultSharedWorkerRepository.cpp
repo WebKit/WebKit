@@ -254,21 +254,21 @@ void SharedWorkerProxy::close()
 
 class SharedWorkerConnectTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<SharedWorkerConnectTask> create(PassOwnPtr<MessagePortChannel> channel)
+    static PassOwnPtr<SharedWorkerConnectTask> create(std::unique_ptr<MessagePortChannel> channel)
     {
-        return adoptPtr(new SharedWorkerConnectTask(channel));
+        return adoptPtr(new SharedWorkerConnectTask(std::move(channel)));
     }
 
 private:
-    SharedWorkerConnectTask(PassOwnPtr<MessagePortChannel> channel)
-        : m_channel(channel)
+    SharedWorkerConnectTask(std::unique_ptr<MessagePortChannel> channel)
+        : m_channel(std::move(channel))
     {
     }
 
     virtual void performTask(ScriptExecutionContext* scriptContext)
     {
         RefPtr<MessagePort> port = MessagePort::create(*scriptContext);
-        port->entangle(m_channel.release());
+        port->entangle(std::move(m_channel));
         ASSERT_WITH_SECURITY_IMPLICATION(scriptContext->isWorkerGlobalScope());
         WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(scriptContext);
         // Since close() stops the thread event loop, this should not ever get called while closing.
@@ -277,13 +277,13 @@ private:
         workerGlobalScope->dispatchEvent(createConnectEvent(port));
     }
 
-    OwnPtr<MessagePortChannel> m_channel;
+    std::unique_ptr<MessagePortChannel> m_channel;
 };
 
 // Loads the script on behalf of a worker.
 class SharedWorkerScriptLoader : public RefCounted<SharedWorkerScriptLoader>, private WorkerScriptLoaderClient {
 public:
-    SharedWorkerScriptLoader(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, PassRefPtr<SharedWorkerProxy>);
+    SharedWorkerScriptLoader(PassRefPtr<SharedWorker>, std::unique_ptr<MessagePortChannel>, PassRefPtr<SharedWorkerProxy>);
     void load(const URL&);
 
 private:
@@ -292,14 +292,14 @@ private:
     virtual void notifyFinished();
 
     RefPtr<SharedWorker> m_worker;
-    OwnPtr<MessagePortChannel> m_port;
+    std::unique_ptr<MessagePortChannel> m_port;
     RefPtr<SharedWorkerProxy> m_proxy;
     RefPtr<WorkerScriptLoader> m_scriptLoader;
 };
 
-SharedWorkerScriptLoader::SharedWorkerScriptLoader(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, PassRefPtr<SharedWorkerProxy> proxy)
+SharedWorkerScriptLoader::SharedWorkerScriptLoader(PassRefPtr<SharedWorker> worker, std::unique_ptr<MessagePortChannel> port, PassRefPtr<SharedWorkerProxy> proxy)
     : m_worker(worker)
-    , m_port(port)
+    , m_port(std::move(port))
     , m_proxy(proxy)
 {
 }
@@ -331,9 +331,9 @@ void SharedWorkerScriptLoader::notifyFinished()
     else {
         InspectorInstrumentation::scriptImported(m_worker->scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
         DefaultSharedWorkerRepository::instance().workerScriptLoaded(*m_proxy, m_worker->scriptExecutionContext()->userAgent(m_scriptLoader->url()),
-                                                                     m_scriptLoader->script(), m_port.release(),
-                                                                     m_worker->scriptExecutionContext()->contentSecurityPolicy()->deprecatedHeader(),
-                                                                     m_worker->scriptExecutionContext()->contentSecurityPolicy()->deprecatedHeaderType());
+            m_scriptLoader->script(), std::move(m_port),
+            m_worker->scriptExecutionContext()->contentSecurityPolicy()->deprecatedHeader(),
+            m_worker->scriptExecutionContext()->contentSecurityPolicy()->deprecatedHeaderType());
     }
     m_worker->unsetPendingActivity(m_worker.get());
     this->deref(); // This frees this object - must be the last action in this function.
@@ -355,7 +355,7 @@ bool DefaultSharedWorkerRepository::isAvailable()
     return platformStrategies()->sharedWorkerStrategy()->isAvailable();
 }
 
-void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy, const String& userAgent, const String& workerScript, PassOwnPtr<MessagePortChannel> port, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
+void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy, const String& userAgent, const String& workerScript, std::unique_ptr<MessagePortChannel> port, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
 {
     MutexLocker lock(m_lock);
     if (proxy.isClosing())
@@ -367,7 +367,7 @@ void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy,
         proxy.setThread(thread);
         thread->start();
     }
-    proxy.thread()->runLoop().postTask(SharedWorkerConnectTask::create(port));
+    proxy.thread()->runLoop().postTask(SharedWorkerConnectTask::create(std::move(port)));
 }
 
 bool DefaultSharedWorkerRepository::hasSharedWorkers(Document* document)
@@ -398,7 +398,7 @@ void DefaultSharedWorkerRepository::documentDetached(Document* document)
         m_proxies[i]->documentDetached(document);
 }
 
-void DefaultSharedWorkerRepository::connectToWorker(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const URL& url, const String& name, ExceptionCode& ec)
+void DefaultSharedWorkerRepository::connectToWorker(PassRefPtr<SharedWorker> worker, std::unique_ptr<MessagePortChannel> port, const URL& url, const String& name, ExceptionCode& ec)
 {
     MutexLocker lock(m_lock);
     ASSERT(worker->scriptExecutionContext()->securityOrigin()->canAccess(SecurityOrigin::create(url).get()));
@@ -415,9 +415,9 @@ void DefaultSharedWorkerRepository::connectToWorker(PassRefPtr<SharedWorker> wor
     }
     // If proxy is already running, just connect to it - otherwise, kick off a loader to load the script.
     if (proxy->thread())
-        proxy->thread()->runLoop().postTask(SharedWorkerConnectTask::create(port));
+        proxy->thread()->runLoop().postTask(SharedWorkerConnectTask::create(std::move(port)));
     else {
-        RefPtr<SharedWorkerScriptLoader> loader = adoptRef(new SharedWorkerScriptLoader(worker, port, proxy.release()));
+        RefPtr<SharedWorkerScriptLoader> loader = adoptRef(new SharedWorkerScriptLoader(worker, std::move(port), proxy.release()));
         loader->load(url);
     }
 }

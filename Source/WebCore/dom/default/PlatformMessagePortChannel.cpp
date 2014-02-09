@@ -37,14 +37,9 @@
 
 namespace WebCore {
 
-std::unique_ptr<PlatformMessagePortChannel::EventData> PlatformMessagePortChannel::EventData::create(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
-{
-    return std::unique_ptr<EventData>(new EventData(message, channels));
-}
-
-PlatformMessagePortChannel::EventData::EventData(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
+PlatformMessagePortChannel::EventData::EventData(PassRefPtr<SerializedScriptValue> message, std::unique_ptr<MessagePortChannelArray> channels)
     : m_message(message)
-    , m_channels(channels)
+    , m_channels(std::move(channels))
 {
 }
 
@@ -53,14 +48,14 @@ void MessagePortChannel::createChannel(PassRefPtr<MessagePort> port1, PassRefPtr
     RefPtr<PlatformMessagePortChannel::MessagePortQueue> queue1 = PlatformMessagePortChannel::MessagePortQueue::create();
     RefPtr<PlatformMessagePortChannel::MessagePortQueue> queue2 = PlatformMessagePortChannel::MessagePortQueue::create();
 
-    OwnPtr<MessagePortChannel> channel1 = adoptPtr(new MessagePortChannel(PlatformMessagePortChannel::create(queue1, queue2)));
-    OwnPtr<MessagePortChannel> channel2 = adoptPtr(new MessagePortChannel(PlatformMessagePortChannel::create(queue2, queue1)));
+    auto channel1 = std::make_unique<MessagePortChannel>(PlatformMessagePortChannel::create(queue1, queue2));
+    auto channel2 = std::make_unique<MessagePortChannel>(PlatformMessagePortChannel::create(queue2, queue1));
 
     channel1->m_channel->m_entangledChannel = channel2->m_channel;
     channel2->m_channel->m_entangledChannel = channel1->m_channel;
 
-    port1->entangle(channel2.release());
-    port2->entangle(channel1.release());
+    port1->entangle(std::move(channel2));
+    port2->entangle(std::move(channel1));
 }
 
 MessagePortChannel::MessagePortChannel(PassRefPtr<PlatformMessagePortChannel> channel)
@@ -91,17 +86,17 @@ void MessagePortChannel::disentangle()
         remote->setRemotePort(0);
 }
 
-void MessagePortChannel::postMessageToRemote(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
+void MessagePortChannel::postMessageToRemote(PassRefPtr<SerializedScriptValue> message, std::unique_ptr<MessagePortChannelArray> channels)
 {
     MutexLocker lock(m_channel->m_mutex);
     if (!m_channel->m_outgoingQueue)
         return;
-    bool wasEmpty = m_channel->m_outgoingQueue->appendAndCheckEmpty(PlatformMessagePortChannel::EventData::create(message, channels));
+    bool wasEmpty = m_channel->m_outgoingQueue->appendAndCheckEmpty(std::make_unique<PlatformMessagePortChannel::EventData>(message, std::move(channels)));
     if (wasEmpty && m_channel->m_remotePort)
         m_channel->m_remotePort->messageAvailable();
 }
 
-bool MessagePortChannel::tryGetMessageFromRemote(RefPtr<SerializedScriptValue>& message, OwnPtr<MessagePortChannelArray>& channels)
+bool MessagePortChannel::tryGetMessageFromRemote(RefPtr<SerializedScriptValue>& message, std::unique_ptr<MessagePortChannelArray>& channels)
 {
     MutexLocker lock(m_channel->m_mutex);
     auto result = m_channel->m_incomingQueue->tryGetMessage();
