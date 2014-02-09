@@ -932,7 +932,7 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
         valueNotCell = branchTest64(NonZero, regT0, tagMaskRegister);
 
     if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
-        Jump ownerNotMarked = checkMarkWord(regT0, regT1, regT2);
+        Jump ownerNotMarked = checkMarkWord(owner);
         callOperation(operationUnconditionalWriteBarrier, owner);
         ownerNotMarked.link(this);
     } else
@@ -986,7 +986,7 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
         valueNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
 
     if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
-        Jump ownerNotMarked = checkMarkWord(regT0, regT1, regT2);
+        Jump ownerNotMarked = checkMarkWord(owner);
         callOperation(operationUnconditionalWriteBarrier, owner);
         ownerNotMarked.link(this);
     } else

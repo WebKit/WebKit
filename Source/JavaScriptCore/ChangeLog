@@ -1,3 +1,13 @@
+2014-02-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Baseline JIT uses the wrong version of checkMarkWord in emitWriteBarrier
+        https://bugs.webkit.org/show_bug.cgi?id=128474
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier):
+
 2014-02-08  Mark Lam  <mark.lam@apple.com>
 
         Rename a field and some variables in JSLock to better describe what they contain.
