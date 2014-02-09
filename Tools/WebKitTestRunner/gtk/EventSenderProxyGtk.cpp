@@ -291,7 +291,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
 
     GdkEvent* pressEvent = gdk_event_new(GDK_KEY_PRESS);
     pressEvent->key.keyval = gdkKeySym;
-    pressEvent->key.state = webkitModifiersToGDKModifiers(modifiers);
+    pressEvent->key.state = modifiers;
     pressEvent->key.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformWindow()));
     g_object_ref(pressEvent->key.window);
     gdk_event_set_device(pressEvent, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(pressEvent->key.window))));
