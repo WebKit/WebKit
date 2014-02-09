@@ -364,7 +364,7 @@ StyleRuleSupports::StyleRuleSupports(const StyleRuleSupports& o)
 }
 #endif
 
-StyleRuleRegion::StyleRuleRegion(Vector<OwnPtr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
+StyleRuleRegion::StyleRuleRegion(Vector<std::unique_ptr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     : StyleRuleGroup(Region, adoptRules)
 {
     m_selectorList.adoptSelectorVector(*selectors);

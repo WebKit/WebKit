@@ -1,5 +1,51 @@
 2014-02-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        Switch the rest of CSS code from OwnPtr over to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=128471
+
+        Reviewed by Andreas Kling.
+
+        Replace the remaining uses of OwnPtr in the CSS code with std::unique_ptr, covering
+        the CSSParser, CSSParserSelector and CSSSelector classes and a few additional, closely related classes.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::markSupportsRuleHeaderStart):
+        (WebCore::CSSParser::createKeyframesRule):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::rewriteSpecifiersWithElementName):
+        (WebCore::CSSParser::rewriteSpecifiers):
+        * css/CSSParser.h:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::CSSParserSelector):
+        (WebCore::CSSParserSelector::~CSSParserSelector):
+        (WebCore::CSSParserSelector::adoptSelectorVector):
+        (WebCore::CSSParserSelector::insertTagHistory):
+        (WebCore::CSSParserSelector::appendTagHistory):
+        (WebCore::CSSParserSelector::prependTagSelector):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserSelector::releaseSelector):
+        (WebCore::CSSParserSelector::setTagHistory):
+        (WebCore::CSSParserSelector::clearTagHistory):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::setSelectorList):
+        * css/CSSSelector.h:
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+        * css/CSSSelectorList.h:
+        * css/CSSValueList.cpp:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleRegion::StyleRuleRegion):
+        * css/StyleRule.h:
+        (WebCore::StyleRule::parserAdoptSelectorVector):
+        (WebCore::StyleRulePage::parserAdoptSelectorVector):
+        (WebCore::StyleRuleRegion::create):
+
+2014-02-09  Zan Dobersek  <zdobersek@igalia.com>
+
         Manage MutationObserverInterestGroup through std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=128468
 

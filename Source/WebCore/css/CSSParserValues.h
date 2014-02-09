@@ -165,7 +165,7 @@ struct CSSParserFunction {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CSSParserString name;
-    OwnPtr<CSSParserValueList> args;
+    std::unique_ptr<CSSParserValueList> args;
 };
 
 class CSSParserSelector {
@@ -175,7 +175,7 @@ public:
     explicit CSSParserSelector(const QualifiedName&);
     ~CSSParserSelector();
 
-    PassOwnPtr<CSSSelector> releaseSelector() { return m_selector.release(); }
+    std::unique_ptr<CSSSelector> releaseSelector() { return std::move(m_selector); }
 
     void setValue(const AtomicString& value) { m_selector->setValue(value); }
     void setAttribute(const QualifiedName& value, bool isCaseInsensitive) { m_selector->setAttribute(value, isCaseInsensitive); }
@@ -184,7 +184,7 @@ public:
     void setRelation(CSSSelector::Relation value) { m_selector->m_relation = value; }
     void setForPage() { m_selector->setForPage(); }
 
-    void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& selectorVector);
+    void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
 
     CSSSelector::PseudoType pseudoType() const { return m_selector->pseudoType(); }
     bool isCustomPseudoElement() const { return m_selector->isCustomPseudoElement(); }
@@ -193,15 +193,15 @@ public:
     bool hasShadowDescendant() const;
 
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
-    void setTagHistory(PassOwnPtr<CSSParserSelector> selector) { m_tagHistory = selector; }
-    void clearTagHistory() { m_tagHistory.clear(); }
-    void insertTagHistory(CSSSelector::Relation before, PassOwnPtr<CSSParserSelector>, CSSSelector::Relation after);
-    void appendTagHistory(CSSSelector::Relation, PassOwnPtr<CSSParserSelector>);
+    void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = std::move(selector); }
+    void clearTagHistory() { m_tagHistory.reset(); }
+    void insertTagHistory(CSSSelector::Relation before, std::unique_ptr<CSSParserSelector>, CSSSelector::Relation after);
+    void appendTagHistory(CSSSelector::Relation, std::unique_ptr<CSSParserSelector>);
     void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
 
 private:
-    OwnPtr<CSSSelector> m_selector;
-    OwnPtr<CSSParserSelector> m_tagHistory;
+    std::unique_ptr<CSSSelector> m_selector;
+    std::unique_ptr<CSSParserSelector> m_tagHistory;
 };
 
 inline bool CSSParserSelector::hasShadowDescendant() const

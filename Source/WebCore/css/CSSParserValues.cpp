@@ -147,12 +147,12 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
 }
 
 CSSParserSelector::CSSParserSelector()
-    : m_selector(adoptPtr(new CSSSelector))
+    : m_selector(std::make_unique<CSSSelector>())
 {
 }
 
 CSSParserSelector::CSSParserSelector(const QualifiedName& tagQName)
-    : m_selector(adoptPtr(new CSSSelector(tagQName)))
+    : m_selector(std::make_unique<CSSSelector>(tagQName))
 {
 }
 
@@ -160,22 +160,22 @@ CSSParserSelector::~CSSParserSelector()
 {
     if (!m_tagHistory)
         return;
-    Vector<OwnPtr<CSSParserSelector>, 16> toDelete;
-    OwnPtr<CSSParserSelector> selector = m_tagHistory.release();
+    Vector<std::unique_ptr<CSSParserSelector>, 16> toDelete;
+    std::unique_ptr<CSSParserSelector> selector = std::move(m_tagHistory);
     while (true) {
-        OwnPtr<CSSParserSelector> next = selector->m_tagHistory.release();
-        toDelete.append(selector.release());
+        std::unique_ptr<CSSParserSelector> next = std::move(selector->m_tagHistory);
+        toDelete.append(std::move(selector));
         if (!next)
             break;
-        selector = next.release();
+        selector = std::move(next);
     }
 }
 
-void CSSParserSelector::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& selectorVector)
+void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector)
 {
-    OwnPtr<CSSSelectorList> selectorList = adoptPtr(new CSSSelectorList);
+    auto selectorList = std::make_unique<CSSSelectorList>();
     selectorList->adoptSelectorVector(selectorVector);
-    m_selector->setSelectorList(selectorList.release());
+    m_selector->setSelectorList(std::move(selectorList));
 }
 
 bool CSSParserSelector::isSimple() const
@@ -198,32 +198,32 @@ bool CSSParserSelector::isSimple() const
     return false;
 }
 
-void CSSParserSelector::insertTagHistory(CSSSelector::Relation before, PassOwnPtr<CSSParserSelector> selector, CSSSelector::Relation after)
+void CSSParserSelector::insertTagHistory(CSSSelector::Relation before, std::unique_ptr<CSSParserSelector> selector, CSSSelector::Relation after)
 {
     if (m_tagHistory)
-        selector->setTagHistory(m_tagHistory.release());
+        selector->setTagHistory(std::move(m_tagHistory));
     setRelation(before);
     selector->setRelation(after);
-    m_tagHistory = selector;
+    m_tagHistory = std::move(selector);
 }
 
-void CSSParserSelector::appendTagHistory(CSSSelector::Relation relation, PassOwnPtr<CSSParserSelector> selector)
+void CSSParserSelector::appendTagHistory(CSSSelector::Relation relation, std::unique_ptr<CSSParserSelector> selector)
 {
     CSSParserSelector* end = this;
     while (end->tagHistory())
         end = end->tagHistory();
     end->setRelation(relation);
-    end->setTagHistory(selector);
+    end->setTagHistory(std::move(selector));
 }
 
 void CSSParserSelector::prependTagSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
 {
-    OwnPtr<CSSParserSelector> second = adoptPtr(new CSSParserSelector);
-    second->m_selector = m_selector.release();
-    second->m_tagHistory = m_tagHistory.release();
-    m_tagHistory = second.release();
+    auto second = std::make_unique<CSSParserSelector>();
+    second->m_selector = std::move(m_selector);
+    second->m_tagHistory = std::move(m_tagHistory);
+    m_tagHistory = std::move(second);
 
-    m_selector = adoptPtr(new CSSSelector(tagQName, tagIsForNamespaceRule));
+    m_selector = std::make_unique<CSSSelector>(tagQName, tagIsForNamespaceRule);
     m_selector->m_relation = CSSSelector::SubSelector;
 }
 

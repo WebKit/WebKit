@@ -25,8 +25,6 @@
 #include "QualifiedName.h"
 #include "RenderStyleConstants.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
     class CSSSelectorList;
@@ -208,7 +206,7 @@ namespace WebCore {
         void setValue(const AtomicString&);
         void setAttribute(const QualifiedName&, bool isCaseInsensitive);
         void setArgument(const AtomicString&);
-        void setSelectorList(PassOwnPtr<CSSSelectorList>);
+        void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
         bool parseNth() const;
         bool matchNth(int count) const;
@@ -263,7 +261,7 @@ namespace WebCore {
             QualifiedName m_attribute; // used for attribute selector
             AtomicString m_attributeCanonicalLocalName;
             AtomicString m_argument; // Used for :contains, :lang and :nth-*
-            OwnPtr<CSSSelectorList> m_selectorList; // Used for :-webkit-any and :not
+            std::unique_ptr<CSSSelectorList> m_selectorList; // Used for :-webkit-any and :not
         
         private:
             RareData(PassRefPtr<AtomicStringImpl> value);

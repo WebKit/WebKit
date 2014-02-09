@@ -287,20 +287,20 @@ public:
     bool parseFontVariantLigatures(bool important);
 
     // Faster than doing a new/delete each time since it keeps one vector.
-    OwnPtr<Vector<OwnPtr<CSSParserSelector>>> createSelectorVector();
-    void recycleSelectorVector(OwnPtr<Vector<OwnPtr<CSSParserSelector>>>);
+    std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> createSelectorVector();
+    void recycleSelectorVector(std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>);
 
     PassRefPtr<StyleRuleBase> createImportRule(const CSSParserString&, PassRefPtr<MediaQuerySet>);
     PassRefPtr<StyleKeyframe> createKeyframe(CSSParserValueList&);
-    PassRefPtr<StyleRuleKeyframes> createKeyframesRule(const String&, PassOwnPtr<Vector<RefPtr<StyleKeyframe>>>);
+    PassRefPtr<StyleRuleKeyframes> createKeyframesRule(const String&, std::unique_ptr<Vector<RefPtr<StyleKeyframe>>>);
 
     typedef Vector<RefPtr<StyleRuleBase>> RuleList;
     PassRefPtr<StyleRuleBase> createMediaRule(PassRefPtr<MediaQuerySet>, RuleList*);
     PassRefPtr<StyleRuleBase> createEmptyMediaRule(RuleList*);
-    PassRefPtr<StyleRuleBase> createStyleRule(Vector<OwnPtr<CSSParserSelector>>* selectors);
+    PassRefPtr<StyleRuleBase> createStyleRule(Vector<std::unique_ptr<CSSParserSelector>>* selectors);
     PassRefPtr<StyleRuleBase> createFontFaceRule();
-    PassRefPtr<StyleRuleBase> createPageRule(PassOwnPtr<CSSParserSelector> pageSelector);
-    PassRefPtr<StyleRuleBase> createRegionRule(Vector<OwnPtr<CSSParserSelector>>* regionSelector, RuleList* rules);
+    PassRefPtr<StyleRuleBase> createPageRule(std::unique_ptr<CSSParserSelector> pageSelector);
+    PassRefPtr<StyleRuleBase> createRegionRule(Vector<std::unique_ptr<CSSParserSelector>>* regionSelector, RuleList* rules);
     void createMarginAtRule(CSSSelector::MarginBoxType);
 #if ENABLE(CSS3_CONDITIONAL_RULES)
     PassRefPtr<StyleRuleBase> createSupportsRule(bool conditionIsSupported, RuleList*);
@@ -317,7 +317,7 @@ public:
 
     void rewriteSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector&, bool isNamespacePlaceholder = false);
     void rewriteSpecifiersWithNamespaceIfNeeded(CSSParserSelector&);
-    OwnPtr<CSSParserSelector> rewriteSpecifiers(OwnPtr<CSSParserSelector>, OwnPtr<CSSParserSelector>);
+    std::unique_ptr<CSSParserSelector> rewriteSpecifiers(std::unique_ptr<CSSParserSelector>, std::unique_ptr<CSSParserSelector>);
 
     void invalidBlockHit();
 
@@ -336,7 +336,7 @@ public:
     RefPtr<StyleRuleBase> m_rule;
     RefPtr<StyleKeyframe> m_keyframe;
     std::unique_ptr<MediaQuery> m_mediaQuery;
-    OwnPtr<CSSParserValueList> m_valueList;
+    std::unique_ptr<CSSParserValueList> m_valueList;
 #if ENABLE(CSS3_CONDITIONAL_RULES)
     bool m_supportsCondition;
 #endif
@@ -362,7 +362,7 @@ public:
     size_t m_parsedTextPrefixLength;
     SourceRange m_selectorRange;
     SourceRange m_propertyRange;
-    OwnPtr<RuleSourceDataList> m_currentRuleDataStack;
+    std::unique_ptr<RuleSourceDataList> m_currentRuleDataStack;
     RefPtr<CSSRuleSourceData> m_currentRuleData;
     RuleSourceDataList* m_ruleSourceDataResult;
 
@@ -559,12 +559,12 @@ private:
 
     int (CSSParser::*m_lexFunc)(void*);
 
-    OwnPtr<Vector<OwnPtr<CSSParserSelector>>> m_recycledSelectorVector;
+    std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> m_recycledSelectorVector;
 
     RefPtr<CSSCalcValue> m_parsedCalculation;
 
 #if ENABLE(CSS3_CONDITIONAL_RULES)
-    OwnPtr<RuleSourceDataList> m_supportsRuleDataStack;
+    std::unique_ptr<RuleSourceDataList> m_supportsRuleDataStack;
 #endif
 
     // defines units allowed for a certain property, used in parseUnit

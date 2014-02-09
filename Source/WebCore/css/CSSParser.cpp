@@ -430,7 +430,7 @@ void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, int 
     setStyleSheet(sheet);
     m_defaultNamespace = starAtom; // Reset the default namespace.
     if (ruleSourceDataResult)
-        m_currentRuleDataStack = adoptPtr(new RuleSourceDataList());
+        m_currentRuleDataStack = std::make_unique<RuleSourceDataList>();
     m_ruleSourceDataResult = ruleSourceDataResult;
 
     m_logErrors = logErrors && sheet->singleOwnerDocument() && !sheet->baseURL().isEmpty() && sheet->singleOwnerDocument()->page();
@@ -439,7 +439,7 @@ void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, int 
     setupParser("", string, "");
     cssyyparse(this);
     sheet->shrinkToFit();
-    m_currentRuleDataStack.clear();
+    m_currentRuleDataStack.reset();
     m_ruleSourceDataResult = 0;
     m_rule = 0;
     m_ignoreErrorsInDeclaration = false;
@@ -1421,7 +1421,7 @@ bool CSSParser::parseDeclaration(MutableStyleProperties* declaration, const Stri
 
     RefPtr<CSSRuleSourceData> ruleSourceData = prpRuleSourceData;
     if (ruleSourceData) {
-        m_currentRuleDataStack = adoptPtr(new RuleSourceDataList());
+        m_currentRuleDataStack = std::make_unique<RuleSourceDataList>();
         m_currentRuleDataStack->append(ruleSourceData);
     }
 
@@ -1449,7 +1449,7 @@ bool CSSParser::parseDeclaration(MutableStyleProperties* declaration, const Stri
         }
 
         fixUnparsedPropertyRanges(ruleSourceData.get());
-        m_currentRuleDataStack.clear();
+        m_currentRuleDataStack.reset();
     }
 
     return ok;
@@ -2061,12 +2061,12 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         CSSPropertyID propId1, propId2;
         bool result = false;
         if (parseFillProperty(propId, propId1, propId2, val1, val2)) {
-            OwnPtr<ShorthandScope> shorthandScope;
+            std::unique_ptr<ShorthandScope> shorthandScope;
             if (propId == CSSPropertyBackgroundPosition ||
                 propId == CSSPropertyBackgroundRepeat ||
                 propId == CSSPropertyWebkitMaskPosition ||
                 propId == CSSPropertyWebkitMaskRepeat) {
-                shorthandScope = adoptPtr(new ShorthandScope(this, propId));
+                shorthandScope = std::make_unique<ShorthandScope>(this, propId);
             }
             addProperty(propId1, val1.release(), important);
             if (val2)
@@ -11378,7 +11378,7 @@ PassRefPtr<StyleRuleBase> CSSParser::createSupportsRule(bool conditionIsSupporte
 void CSSParser::markSupportsRuleHeaderStart()
 {
     if (!m_supportsRuleDataStack)
-        m_supportsRuleDataStack = adoptPtr(new RuleSourceDataList());
+        m_supportsRuleDataStack = std::make_unique<RuleSourceDataList>();
 
     RefPtr<CSSRuleSourceData> data = CSSRuleSourceData::create(CSSRuleSourceData::SUPPORTS_RULE);
     data->ruleHeaderRange.start = tokenStartOffset();
@@ -11474,9 +11474,9 @@ void CSSParser::logError(const String& message, int lineNumber)
     console.addMessage(MessageSource::CSS, MessageLevel::Warning, message, m_styleSheet->baseURL().string(), lineNumber + 1, 0);
 }
 
-PassRefPtr<StyleRuleKeyframes> CSSParser::createKeyframesRule(const String& name, PassOwnPtr<Vector<RefPtr<StyleKeyframe>>> popKeyframes)
+PassRefPtr<StyleRuleKeyframes> CSSParser::createKeyframesRule(const String& name, std::unique_ptr<Vector<RefPtr<StyleKeyframe>>> popKeyframes)
 {
-    OwnPtr<Vector<RefPtr<StyleKeyframe>>> keyframes = popKeyframes;
+    std::unique_ptr<Vector<RefPtr<StyleKeyframe>>> keyframes = std::move(popKeyframes);
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<StyleRuleKeyframes> rule = StyleRuleKeyframes::create();
     for (size_t i = 0; i < keyframes->size(); ++i)
@@ -11486,7 +11486,7 @@ PassRefPtr<StyleRuleKeyframes> CSSParser::createKeyframesRule(const String& name
     return rule.release();
 }
 
-PassRefPtr<StyleRuleBase> CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector>>* selectors)
+PassRefPtr<StyleRuleBase> CSSParser::createStyleRule(Vector<std::unique_ptr<CSSParserSelector>>* selectors)
 {
     RefPtr<StyleRule> rule;
     if (selectors) {
@@ -11580,11 +11580,11 @@ void CSSParser::rewriteSpecifiersWithElementName(const AtomicString& namespacePr
 
     // For shadow-ID pseudo-elements to be correctly matched, the ShadowDescendant combinator has to be used.
     // We therefore create a new Selector with that combinator here in any case, even if matching any (host) element in any namespace (i.e. '*').
-    lastShadowDescendant->setTagHistory(adoptPtr(new CSSParserSelector(tag)));
+    lastShadowDescendant->setTagHistory(std::make_unique<CSSParserSelector>(tag));
     lastShadowDescendant->setRelation(CSSSelector::ShadowDescendant);
 }
 
-OwnPtr<CSSParserSelector> CSSParser::rewriteSpecifiers(OwnPtr<CSSParserSelector> specifiers, OwnPtr<CSSParserSelector> newSpecifier)
+std::unique_ptr<CSSParserSelector> CSSParser::rewriteSpecifiers(std::unique_ptr<CSSParserSelector> specifiers, std::unique_ptr<CSSParserSelector> newSpecifier)
 {
 #if ENABLE(VIDEO_TRACK)
     if (newSpecifier->isCustomPseudoElement() || newSpecifier->pseudoType() == CSSSelector::PseudoCue) {
@@ -11592,27 +11592,27 @@ OwnPtr<CSSParserSelector> CSSParser::rewriteSpecifiers(OwnPtr<CSSParserSelector>
     if (newSpecifier->isCustomPseudoElement()) {
 #endif
         // Unknown pseudo element always goes at the top of selector chain.
-        newSpecifier->appendTagHistory(CSSSelector::ShadowDescendant, specifiers.release());
+        newSpecifier->appendTagHistory(CSSSelector::ShadowDescendant, std::move(specifiers));
         return newSpecifier;
     }
     if (specifiers->isCustomPseudoElement()) {
         // Specifiers for unknown pseudo element go right behind it in the chain.
-        specifiers->insertTagHistory(CSSSelector::SubSelector, newSpecifier.release(), CSSSelector::ShadowDescendant);
+        specifiers->insertTagHistory(CSSSelector::SubSelector, std::move(newSpecifier), CSSSelector::ShadowDescendant);
         return specifiers;
     }
-    specifiers->appendTagHistory(CSSSelector::SubSelector, newSpecifier.release());
+    specifiers->appendTagHistory(CSSSelector::SubSelector, std::move(newSpecifier));
     return specifiers;
 }
 
-PassRefPtr<StyleRuleBase> CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
+PassRefPtr<StyleRuleBase> CSSParser::createPageRule(std::unique_ptr<CSSParserSelector> pageSelector)
 {
     // FIXME: Margin at-rules are ignored.
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<StyleRulePage> rule;
     if (pageSelector) {
         rule = StyleRulePage::create(createStyleProperties());
-        Vector<OwnPtr<CSSParserSelector>> selectorVector;
-        selectorVector.append(pageSelector);
+        Vector<std::unique_ptr<CSSParserSelector>> selectorVector;
+        selectorVector.append(std::move(pageSelector));
         rule->parserAdoptSelectorVector(selectorVector);
         processAndAddNewRuleToSourceTreeIfNeeded();
     } else
@@ -11621,22 +11621,22 @@ PassRefPtr<StyleRuleBase> CSSParser::createPageRule(PassOwnPtr<CSSParserSelector
     return rule.release();
 }
 
-OwnPtr<Vector<OwnPtr<CSSParserSelector>>> CSSParser::createSelectorVector()
+std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> CSSParser::createSelectorVector()
 {
     if (m_recycledSelectorVector) {
         m_recycledSelectorVector->shrink(0);
         return std::move(m_recycledSelectorVector);
     }
-    return adoptPtr(new Vector<OwnPtr<CSSParserSelector>>);
+    return std::make_unique<Vector<std::unique_ptr<CSSParserSelector>>>();
 }
 
-void CSSParser::recycleSelectorVector(OwnPtr<Vector<OwnPtr<CSSParserSelector>>> vector)
+void CSSParser::recycleSelectorVector(std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> vector)
 {
     if (vector && !m_recycledSelectorVector)
         m_recycledSelectorVector = std::move(vector);
 }
 
-PassRefPtr<StyleRuleBase> CSSParser::createRegionRule(Vector<OwnPtr<CSSParserSelector>>* regionSelector, RuleList* rules)
+PassRefPtr<StyleRuleBase> CSSParser::createRegionRule(Vector<std::unique_ptr<CSSParserSelector>>* regionSelector, RuleList* rules)
 {
     if (!cssRegionsEnabled() || !regionSelector || !rules) {
         popRuleData();

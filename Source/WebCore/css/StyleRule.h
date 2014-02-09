@@ -117,7 +117,7 @@ public:
     const StyleProperties& properties() const { return m_properties.get(); }
     MutableStyleProperties& mutableProperties();
     
-    void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
     void parserAdoptSelectorArray(CSSSelector* selectors) { m_selectorList.adoptSelectorArray(selectors); }
 
@@ -172,7 +172,7 @@ public:
     const StyleProperties& properties() const { return m_properties.get(); }
     MutableStyleProperties& mutableProperties();
 
-    void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
 
     PassRef<StyleRulePage> copy() const { return adoptRef(*new StyleRulePage(*this)); }
@@ -241,7 +241,7 @@ private:
 
 class StyleRuleRegion : public StyleRuleGroup {
 public:
-    static PassRef<StyleRuleRegion> create(Vector<OwnPtr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
+    static PassRef<StyleRuleRegion> create(Vector<std::unique_ptr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
         return adoptRef(*new StyleRuleRegion(selectors, adoptRules));
     }
@@ -251,7 +251,7 @@ public:
     PassRef<StyleRuleRegion> copy() const { return adoptRef(*new StyleRuleRegion(*this)); }
 
 private:
-    StyleRuleRegion(Vector<OwnPtr<CSSParserSelector>>*, Vector<RefPtr<StyleRuleBase>>& adoptRules);
+    StyleRuleRegion(Vector<std::unique_ptr<CSSParserSelector>>*, Vector<RefPtr<StyleRuleBase>>& adoptRules);
     StyleRuleRegion(const StyleRuleRegion&);
     
     CSSSelectorList m_selectorList;

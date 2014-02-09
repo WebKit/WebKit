@@ -52,7 +52,7 @@ void CSSSelectorList::adopt(CSSSelectorList& list)
     list.m_selectorArray = 0;
 }
 
-void CSSSelectorList::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& selectorVector)
+void CSSSelectorList::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector)
 {
     deleteSelectors();
     size_t flattenedSize = 0;
@@ -68,7 +68,7 @@ void CSSSelectorList::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& sel
         while (current) {
             {
                 // Move item from the parser selector vector into m_selectorArray without invoking destructor (Ugh.)
-                CSSSelector* currentSelector = current->releaseSelector().leakPtr();
+                CSSSelector* currentSelector = current->releaseSelector().release();
                 memcpy(&m_selectorArray[arrayIndex], currentSelector, sizeof(CSSSelector));
 
                 // Free the underlying memory without invoking the destructor.

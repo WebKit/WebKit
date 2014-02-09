@@ -27,6 +27,7 @@
 #define CSSSelectorList_h
 
 #include "CSSSelector.h"
+#include <memory>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ public:
     ~CSSSelectorList();
 
     void adopt(CSSSelectorList& list);
-    void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& selectorVector);
+    void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
     void adoptSelectorArray(CSSSelector* selectors) { ASSERT(!m_selectorArray); m_selectorArray = selectors; }
 
     bool isValid() const { return !!m_selectorArray; }
