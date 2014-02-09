@@ -1,3 +1,14 @@
+2014-02-09  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF_MAKE_FAST_ALLOCATED to more classes
+        https://bugs.webkit.org/show_bug.cgi?id=128506
+
+        Reviewed by Andreas Kling.
+
+        * bytecode/UnlinkedInstructionStream.h:
+        * runtime/SymbolTable.h:
+        * runtime/WriteBarrier.h:
+
 2014-02-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API NSDate conversion is off by 1000x (ms vs s)

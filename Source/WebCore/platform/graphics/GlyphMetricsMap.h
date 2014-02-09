@@ -40,7 +40,7 @@ namespace WebCore {
 const float cGlyphSizeUnknown = -1;
 
 template<class T> class GlyphMetricsMap {
-    WTF_MAKE_NONCOPYABLE(GlyphMetricsMap);
+    WTF_MAKE_NONCOPYABLE(GlyphMetricsMap); WTF_MAKE_FAST_ALLOCATED;
 public:
     GlyphMetricsMap() : m_filledPrimaryPage(false) { }
     T metricsForGlyph(Glyph glyph)
@@ -54,7 +54,9 @@ public:
     }
 
 private:
-    struct GlyphMetricsPage {
+    class GlyphMetricsPage {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         static const size_t size = 256; // Usually covers Latin-1 in a single page.
         std::array<T, size> m_metrics;
 

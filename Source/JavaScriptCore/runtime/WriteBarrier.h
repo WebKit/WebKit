@@ -175,6 +175,7 @@ private:
 };
 
 template <typename T> class WriteBarrier : public WriteBarrierBase<T> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WriteBarrier()
     {

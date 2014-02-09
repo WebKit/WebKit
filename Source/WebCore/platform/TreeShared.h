@@ -33,7 +33,7 @@ template<typename NodeType> void adopted(TreeShared<NodeType>*);
 #endif
 
 template<typename NodeType> class TreeShared {
-    WTF_MAKE_NONCOPYABLE(TreeShared);
+    WTF_MAKE_NONCOPYABLE(TreeShared); WTF_MAKE_FAST_ALLOCATED;
 protected:
     TreeShared()
         : m_refCount(1)

@@ -475,6 +475,7 @@ public:
 
 private:
     class WatchpointCleanup : public UnconditionalFinalizer {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         WatchpointCleanup(SymbolTable*);
         virtual ~WatchpointCleanup();

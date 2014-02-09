@@ -316,6 +316,7 @@ public:
 typedef Vector<LayerFragment, 1> LayerFragments;
 
 class RenderLayer final : public ScrollableArea {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     friend class RenderReplica;
 

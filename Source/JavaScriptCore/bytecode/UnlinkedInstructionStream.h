@@ -33,6 +33,7 @@
 namespace JSC {
 
 class UnlinkedInstructionStream {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit UnlinkedInstructionStream(const Vector<UnlinkedInstruction>&);
 

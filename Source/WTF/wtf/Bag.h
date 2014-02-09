@@ -31,7 +31,9 @@ namespace WTF {
 template<typename T>
 class Bag {
 private:
-    struct Node {
+    class Node {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         T m_item;
         Node* m_next;
     };

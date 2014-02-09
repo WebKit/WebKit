@@ -1,3 +1,20 @@
+2014-02-09  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF_MAKE_FAST_ALLOCATED to more classes
+        https://bugs.webkit.org/show_bug.cgi?id=128506
+
+        Reviewed by Andreas Kling.
+
+        * dom/Node.h:
+        * dom/ScriptElement.h:
+        * loader/ImageLoader.h:
+        * loader/cache/CachedResourceClient.h:
+        * platform/TreeShared.h:
+        * platform/graphics/GlyphMetricsMap.h:
+        * rendering/InlineBox.h:
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.h:
+
 2014-02-09  Andreas Kling  <akling@apple.com>
 
         Reduce ref churn in ChildNodesLazySnapshot iteration.

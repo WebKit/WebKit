@@ -38,6 +38,7 @@ template<typename T> class EventSender;
 typedef EventSender<ImageLoader> ImageEventSender;
 
 class ImageLoader : public CachedImageClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ImageLoader();
 

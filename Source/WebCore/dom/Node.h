@@ -119,7 +119,6 @@ class Node : public EventTarget, public ScriptWrappable, public TreeShared<Node>
     friend class Document;
     friend class TreeScope;
     friend class TreeScopeAdopter;
-
 public:
     enum NodeType {
         ELEMENT_NODE = 1,

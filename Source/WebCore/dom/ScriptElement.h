@@ -35,7 +35,6 @@ class ScriptElement;
 class ScriptSourceCode;
 
 class ScriptElement : private CachedResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     ScriptElement(Element*, bool createdByParser, bool isEvaluated);
     virtual ~ScriptElement();

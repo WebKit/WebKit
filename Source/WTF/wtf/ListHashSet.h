@@ -44,7 +44,7 @@ template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListH
 template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetConstIterator;
 
 template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNode;
-template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNodeAllocator;
+template<typename ValueArg, size_t inlineCapacity> class ListHashSetNodeAllocator;
 
 template<typename HashArg> struct ListHashSetNodeHashFunctions;
 template<typename HashArg> struct ListHashSetTranslator;
@@ -158,7 +158,10 @@ private:
     std::unique_ptr<NodeAllocator> m_allocator;
 };
 
-template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNodeAllocator {
+template<typename ValueArg, size_t inlineCapacity> class ListHashSetNodeAllocator {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
     typedef ListHashSetNode<ValueArg, inlineCapacity> Node;
     typedef ListHashSetNodeAllocator<ValueArg, inlineCapacity> NodeAllocator;
 

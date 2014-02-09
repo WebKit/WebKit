@@ -31,7 +31,6 @@ namespace WebCore {
 class CachedResource;
 
 class CachedResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum CachedResourceClientType {
         BaseResourceType,
