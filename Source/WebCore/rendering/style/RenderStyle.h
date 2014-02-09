@@ -1270,7 +1270,7 @@ public:
 
     // CSS3 Setters
     void setOutlineOffset(int v) { SET_VAR(m_background, m_outline.m_offset, v); }
-    void setTextShadow(PassOwnPtr<ShadowData>, bool add = false);
+    void setTextShadow(std::unique_ptr<ShadowData>, bool add = false);
     void setTextStrokeColor(const Color& c) { SET_VAR(rareInheritedData, textStrokeColor, c); }
     void setTextStrokeWidth(float w) { SET_VAR(rareInheritedData, textStrokeWidth, w); }
     void setTextFillColor(const Color& c) { SET_VAR(rareInheritedData, textFillColor, c); }
@@ -1289,7 +1289,7 @@ public:
     void setBoxOrdinalGroup(unsigned int og) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, ordinal_group, og); }
     void setBoxOrient(EBoxOrient o) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, orient, o); }
     void setBoxPack(EBoxPack p) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, pack, p); }
-    void setBoxShadow(PassOwnPtr<ShadowData>, bool add = false);
+    void setBoxShadow(std::unique_ptr<ShadowData>, bool add = false);
     void setBoxReflect(PassRefPtr<StyleReflection> reflect) { if (rareNonInheritedData->m_boxReflect != reflect) rareNonInheritedData.access()->m_boxReflect = reflect; }
     void setBoxSizing(EBoxSizing s) { SET_VAR(m_box, m_boxSizing, s); }
     void setFlexGrow(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexGrow, f); }

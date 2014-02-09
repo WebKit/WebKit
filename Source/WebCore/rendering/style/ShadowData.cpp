@@ -33,7 +33,7 @@ ShadowData::ShadowData(const ShadowData& o)
     , m_color(o.m_color)
     , m_style(o.m_style)
     , m_isWebkitBoxShadow(o.m_isWebkitBoxShadow)
-    , m_next(o.m_next ? adoptPtr(new ShadowData(*o.m_next)) : nullptr)
+    , m_next(o.m_next ? std::make_unique<ShadowData>(*o.m_next) : nullptr)
 {
 }
 

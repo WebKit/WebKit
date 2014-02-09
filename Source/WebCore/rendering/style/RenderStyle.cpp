@@ -1022,30 +1022,30 @@ void RenderStyle::setPageScaleTransform(float scale)
     setTransformOriginY(Length(0, Fixed));
 }
 
-void RenderStyle::setTextShadow(PassOwnPtr<ShadowData> shadowData, bool add)
+void RenderStyle::setTextShadow(std::unique_ptr<ShadowData> shadowData, bool add)
 {
     ASSERT(!shadowData || (!shadowData->spread() && shadowData->style() == Normal));
 
     StyleRareInheritedData* rareData = rareInheritedData.access();
     if (!add) {
-        rareData->textShadow = shadowData;
+        rareData->textShadow = std::move(shadowData);
         return;
     }
 
-    shadowData->setNext(rareData->textShadow.release());
-    rareData->textShadow = shadowData;
+    shadowData->setNext(std::move(rareData->textShadow));
+    rareData->textShadow = std::move(shadowData);
 }
 
-void RenderStyle::setBoxShadow(PassOwnPtr<ShadowData> shadowData, bool add)
+void RenderStyle::setBoxShadow(std::unique_ptr<ShadowData> shadowData, bool add)
 {
     StyleRareNonInheritedData* rareData = rareNonInheritedData.access();
     if (!add) {
-        rareData->m_boxShadow = shadowData;
+        rareData->m_boxShadow = std::move(shadowData);
         return;
     }
 
-    shadowData->setNext(rareData->m_boxShadow.release());
-    rareData->m_boxShadow = shadowData;
+    shadowData->setNext(std::move(rareData->m_boxShadow));
+    rareData->m_boxShadow = std::move(shadowData);
 }
 
 static RoundedRect::Radii calcRadiiFor(const BorderData& border, const LayoutSize& size, RenderView* renderView)

@@ -204,7 +204,7 @@ StyleShadowSVGData::StyleShadowSVGData()
 
 inline StyleShadowSVGData::StyleShadowSVGData(const StyleShadowSVGData& other)
     : RefCounted<StyleShadowSVGData>()
-    , shadow(other.shadow ? adoptPtr(new ShadowData(*other.shadow)) : nullptr)
+    , shadow(other.shadow ? std::make_unique<ShadowData>(*other.shadow) : nullptr)
 {
 }
 

@@ -31,8 +31,6 @@
 #include "SVGLength.h"
 #include "SVGPaint.h"
 #include "ShadowData.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -224,7 +222,7 @@ namespace WebCore {
             return !(*this == other);
         }
 
-        OwnPtr<ShadowData> shadow;
+        std::unique_ptr<ShadowData> shadow;
 
     private:
         StyleShadowSVGData();

@@ -2307,8 +2307,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitBoxShadow: {
         if (isInherit) {
             if (id == CSSPropertyTextShadow)
-                return state.style()->setTextShadow(state.parentStyle()->textShadow() ? adoptPtr(new ShadowData(*state.parentStyle()->textShadow())) : nullptr);
-            return state.style()->setBoxShadow(state.parentStyle()->boxShadow() ? adoptPtr(new ShadowData(*state.parentStyle()->boxShadow())) : nullptr);
+                return state.style()->setTextShadow(state.parentStyle()->textShadow() ? std::make_unique<ShadowData>(*state.parentStyle()->textShadow()) : nullptr);
+            return state.style()->setBoxShadow(state.parentStyle()->boxShadow() ? std::make_unique<ShadowData>(*state.parentStyle()->boxShadow()) : nullptr);
         }
         if (isInitial || primitiveValue) // initial | none
             return id == CSSPropertyTextShadow ? state.style()->setTextShadow(nullptr) : state.style()->setBoxShadow(nullptr);
@@ -2340,11 +2340,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             else if (state.style())
                 color = state.style()->color();
 
-            OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(IntPoint(x, y), blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent));
+            auto shadowData = std::make_unique<ShadowData>(IntPoint(x, y), blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
             if (id == CSSPropertyTextShadow)
-                state.style()->setTextShadow(shadowData.release(), i.index()); // add to the list if this is not the first entry
+                state.style()->setTextShadow(std::move(shadowData), i.index()); // add to the list if this is not the first entry
             else
-                state.style()->setBoxShadow(shadowData.release(), i.index()); // add to the list if this is not the first entry
+                state.style()->setBoxShadow(std::move(shadowData), i.index()); // add to the list if this is not the first entry
         }
         return;
     }

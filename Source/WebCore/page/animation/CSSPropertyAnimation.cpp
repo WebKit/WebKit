@@ -99,18 +99,18 @@ static inline ShadowStyle blendFunc(const AnimationBase* anim, ShadowStyle from,
     return result > 0 ? Normal : Inset;
 }
 
-static inline PassOwnPtr<ShadowData> blendFunc(const AnimationBase* anim, const ShadowData* from, const ShadowData* to, double progress)
+static inline std::unique_ptr<ShadowData> blendFunc(const AnimationBase* anim, const ShadowData* from, const ShadowData* to, double progress)
 {
     ASSERT(from && to);
     if (from->style() != to->style())
-        return adoptPtr(new ShadowData(*to));
+        return std::make_unique<ShadowData>(*to);
 
-    return adoptPtr(new ShadowData(blend(from->location(), to->location(), progress),
-                                   blend(from->radius(), to->radius(), progress),
-                                   blend(from->spread(), to->spread(), progress),
-                                   blendFunc(anim, from->style(), to->style(), progress),
-                                   from->isWebkitBoxShadow(),
-                                   blend(from->color(), to->color(), progress)));
+    return std::make_unique<ShadowData>(blend(from->location(), to->location(), progress),
+        blend(from->radius(), to->radius(), progress),
+        blend(from->spread(), to->spread(), progress),
+        blendFunc(anim, from->style(), to->style(), progress),
+        from->isWebkitBoxShadow(),
+        blend(from->color(), to->color(), progress));
 }
 
 static inline TransformOperations blendFunc(const AnimationBase* anim, const TransformOperations& from, const TransformOperations& to, double progress)
@@ -601,7 +601,7 @@ static inline const ShadowData* shadowForBlending(const ShadowData* srcShadow, c
 
 class PropertyWrapperShadow : public AnimationPropertyWrapperBase {
 public:
-    PropertyWrapperShadow(CSSPropertyID prop, const ShadowData* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassOwnPtr<ShadowData>, bool))
+    PropertyWrapperShadow(CSSPropertyID prop, const ShadowData* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::unique_ptr<ShadowData>, bool))
         : AnimationPropertyWrapperBase(prop)
         , m_getter(getter)
         , m_setter(setter)
@@ -649,22 +649,22 @@ public:
     }
 
 private:
-    PassOwnPtr<ShadowData> blendSimpleOrMatchedShadowLists(const AnimationBase* anim, double progress, const ShadowData* shadowA, const ShadowData* shadowB) const
+    std::unique_ptr<ShadowData> blendSimpleOrMatchedShadowLists(const AnimationBase* anim, double progress, const ShadowData* shadowA, const ShadowData* shadowB) const
     {
-        OwnPtr<ShadowData> newShadowData;
+        std::unique_ptr<ShadowData> newShadowData;
         ShadowData* lastShadow = 0;
 
         while (shadowA || shadowB) {
             const ShadowData* srcShadow = shadowForBlending(shadowA, shadowB);
             const ShadowData* dstShadow = shadowForBlending(shadowB, shadowA);
 
-            OwnPtr<ShadowData> blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
+            std::unique_ptr<ShadowData> blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
             ShadowData* blendedShadowPtr = blendedShadow.get();
 
             if (!lastShadow)
-                newShadowData = blendedShadow.release();
+                newShadowData = std::move(blendedShadow);
             else
-                lastShadow->setNext(blendedShadow.release());
+                lastShadow->setNext(std::move(blendedShadow));
 
             lastShadow = blendedShadowPtr;
 
@@ -672,10 +672,10 @@ private:
             shadowB = shadowB ? shadowB->next() : 0;
         }
 
-        return newShadowData.release();
+        return newShadowData;
     }
 
-    PassOwnPtr<ShadowData> blendMismatchedShadowLists(const AnimationBase* anim, double progress, const ShadowData* shadowA, const ShadowData* shadowB, int fromLength, int toLength) const
+    std::unique_ptr<ShadowData> blendMismatchedShadowLists(const AnimationBase* anim, double progress, const ShadowData* shadowA, const ShadowData* shadowB, int fromLength, int toLength) const
     {
         // The shadows in ShadowData are stored in reverse order, so when animating mismatched lists,
         // reverse them and match from the end.
@@ -691,7 +691,7 @@ private:
             shadowB = shadowB->next();
         }
 
-        OwnPtr<ShadowData> newShadowData;
+        std::unique_ptr<ShadowData> newShadowData;
 
         int maxLength = std::max(fromLength, toLength);
         for (int i = 0; i < maxLength; ++i) {
@@ -701,17 +701,17 @@ private:
             const ShadowData* srcShadow = shadowForBlending(fromShadow, toShadow);
             const ShadowData* dstShadow = shadowForBlending(toShadow, fromShadow);
 
-            OwnPtr<ShadowData> blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
+            std::unique_ptr<ShadowData> blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
             // Insert at the start of the list to preserve the order.
-            blendedShadow->setNext(newShadowData.release());
-            newShadowData = blendedShadow.release();
+            blendedShadow->setNext(std::move(newShadowData));
+            newShadowData = std::move(blendedShadow);
         }
 
-        return newShadowData.release();
+        return newShadowData;
     }
 
     const ShadowData* (RenderStyle::*m_getter)() const;
-    void (RenderStyle::*m_setter)(PassOwnPtr<ShadowData>, bool);
+    void (RenderStyle::*m_setter)(std::unique_ptr<ShadowData>, bool);
 };
 
 class PropertyWrapperMaybeInvalidColor : public AnimationPropertyWrapperBase {

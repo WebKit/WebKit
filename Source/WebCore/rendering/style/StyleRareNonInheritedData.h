@@ -124,7 +124,7 @@ public:
     OwnPtr<CounterDirectiveMap> m_counterDirectives;
     String m_altText;
 
-    OwnPtr<ShadowData> m_boxShadow;  // For box-shadow decorations.
+    std::unique_ptr<ShadowData> m_boxShadow; // For box-shadow decorations.
     
     RefPtr<StyleReflection> m_boxReflect;
 

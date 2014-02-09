@@ -1,3 +1,41 @@
+2014-02-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Manage ShadowData through std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=128466
+
+        Reviewed by Andreas Kling.
+
+        Use std::unique_ptr instead of OwnPtr to manage ShadowData objects.
+
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::PropertyWrapperShadow::PropertyWrapperShadow):
+        (WebCore::PropertyWrapperShadow::blendSimpleOrMatchedShadowLists):
+        (WebCore::PropertyWrapperShadow::blendMismatchedShadowLists):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setTextShadow):
+        (WebCore::RenderStyle::setBoxShadow):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::setShadow):
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleShadowSVGData::StyleShadowSVGData):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/style/ShadowData.cpp:
+        (WebCore::ShadowData::ShadowData):
+        * rendering/style/ShadowData.h:
+        (WebCore::ShadowData::setNext):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2014-02-09  Carlos Garnacho  <carlosg@gnome.org>
 
         [GTK] Add touch-events related code to build

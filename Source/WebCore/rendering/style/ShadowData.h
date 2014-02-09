@@ -28,8 +28,6 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include "LayoutRect.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -84,7 +82,7 @@ public:
     bool isWebkitBoxShadow() const { return m_isWebkitBoxShadow; }
 
     const ShadowData* next() const { return m_next.get(); }
-    void setNext(PassOwnPtr<ShadowData> shadow) { m_next = shadow; }
+    void setNext(std::unique_ptr<ShadowData> shadow) { m_next = std::move(shadow); }
 
     void adjustRectForShadow(LayoutRect&, int additionalOutlineSize = 0) const;
     void adjustRectForShadow(FloatRect&, int additionalOutlineSize = 0) const;
@@ -96,7 +94,7 @@ private:
     Color m_color;
     ShadowStyle m_style;
     bool m_isWebkitBoxShadow;
-    OwnPtr<ShadowData> m_next;
+    std::unique_ptr<ShadowData> m_next;
 };
 
 } // namespace WebCore
