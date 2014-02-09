@@ -1,3 +1,24 @@
+2014-02-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API NSDate conversion is off by 1000x (ms vs s)
+        https://bugs.webkit.org/show_bug.cgi?id=128386
+
+        Reviewed by Michael Saboff.
+
+        * API/JSValue.mm:
+        (valueToObjectWithoutCopy):
+        (valueToDate):
+        (objectToValueWithoutCopy):
+        * API/tests/DateTests.h: Added.
+        * API/tests/DateTests.mm: Added.
+        (+[DateTests NSDateToJSDateTest]):
+        (+[DateTests JSDateToNSDateTest]):
+        (+[DateTests roundTripThroughJSDateTest]):
+        (+[DateTests roundTripThroughObjCDateTest]):
+        * API/tests/testapi.mm:
+        (checkResult):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2014-02-09  Andreas Kling  <akling@apple.com>
 
         Pass VM instead of ExecState to JSCell::fastGetOwnProperty().

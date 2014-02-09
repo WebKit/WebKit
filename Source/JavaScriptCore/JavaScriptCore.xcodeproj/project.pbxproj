@@ -1345,13 +1345,14 @@
 		C25F8BCE157544A900245B71 /* IncrementalSweeper.h in Headers */ = {isa = PBXBuildFile; fileRef = C25F8BCC157544A900245B71 /* IncrementalSweeper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C283190016FE4B7D00157BFD /* HandleBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C28318FF16FE4B7D00157BFD /* HandleBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C283190216FE533E00157BFD /* HandleBlockInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C283190116FE533E00157BFD /* HandleBlockInlines.h */; };
+		C288B2DE18A54D3E007BE40B /* DateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = C288B2DD18A54D3E007BE40B /* DateTests.mm */; };
 		C2981FD817BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2981FD617BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp */; };
 		C2981FD917BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h in Headers */ = {isa = PBXBuildFile; fileRef = C2981FD717BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2981FDC17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2981FDA17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp */; };
 		C2981FDD17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h in Headers */ = {isa = PBXBuildFile; fileRef = C2981FDB17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C29ECB031804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = C29ECB011804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm */; };
 		C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */ = {isa = PBXBuildFile; fileRef = C2A7F687160432D400F76B98 /* JSDestructibleObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-       C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */; };
 		C2C0F7CD17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2C0F7CB17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp */; };
@@ -2795,6 +2796,8 @@
 		C25F8BCC157544A900245B71 /* IncrementalSweeper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IncrementalSweeper.h; sourceTree = "<group>"; };
 		C28318FF16FE4B7D00157BFD /* HandleBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleBlock.h; sourceTree = "<group>"; };
 		C283190116FE533E00157BFD /* HandleBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleBlockInlines.h; sourceTree = "<group>"; };
+		C288B2DC18A54D3E007BE40B /* DateTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DateTests.h; path = API/tests/DateTests.h; sourceTree = "<group>"; };
+		C288B2DD18A54D3E007BE40B /* DateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DateTests.mm; path = API/tests/DateTests.mm; sourceTree = "<group>"; };
 		C2981FD617BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredWeakReferences.cpp; path = dfg/DFGDesiredWeakReferences.cpp; sourceTree = "<group>"; };
 		C2981FD717BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredWeakReferences.h; path = dfg/DFGDesiredWeakReferences.h; sourceTree = "<group>"; };
 		C2981FDA17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredWriteBarriers.cpp; path = dfg/DFGDesiredWriteBarriers.cpp; sourceTree = "<group>"; };
@@ -2802,7 +2805,7 @@
 		C29ECB011804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CurrentThisInsideBlockGetterTest.mm; path = API/tests/CurrentThisInsideBlockGetterTest.mm; sourceTree = "<group>"; };
 		C29ECB021804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurrentThisInsideBlockGetterTest.h; path = API/tests/CurrentThisInsideBlockGetterTest.h; sourceTree = "<group>"; };
 		C2A7F687160432D400F76B98 /* JSDestructibleObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDestructibleObject.h; sourceTree = "<group>"; };
-       C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrierInlines.h; sourceTree = "<group>"; };
+		C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrierInlines.h; sourceTree = "<group>"; };
 		C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedAllocator.h; sourceTree = "<group>"; };
 		C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedAllocator.cpp; sourceTree = "<group>"; };
 		C2C0F7CB17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredTransitions.cpp; path = dfg/DFGDesiredTransitions.cpp; sourceTree = "<group>"; };
@@ -3228,6 +3231,8 @@
 				14D857740A4696C80032146C /* testapi.js */,
 				86D22219167EF9440024C804 /* testapi.mm */,
 				651122E5140469BA002B101D /* testRegExp.cpp */,
+				C288B2DC18A54D3E007BE40B /* DateTests.h */,
+				C288B2DD18A54D3E007BE40B /* DateTests.mm */,
 			);
 			name = tests;
 			sourceTree = "<group>";
@@ -3663,7 +3668,7 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
-               C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
+				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -4698,7 +4703,7 @@
 				65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */,
 				2A68295B1875F80500B6C3E2 /* CopyWriteBarrier.h in Headers */,
 				2A4EC90C1860D6C20094F782 /* WriteBarrierBuffer.h in Headers */,
-               C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */,
+				C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */,
 				FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */,
 				A532439318569709002ED692 /* CodeGeneratorInspectorStrings.py in Headers */,
 				A532439218569709002ED692 /* CodeGeneratorInspector.py in Headers */,
@@ -5852,6 +5857,7 @@
 				C29ECB031804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm in Sources */,
 				1440F6100A4F85670005F061 /* testapi.c in Sources */,
 				86D2221A167EF9440024C804 /* testapi.mm in Sources */,
+				C288B2DE18A54D3E007BE40B /* DateTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

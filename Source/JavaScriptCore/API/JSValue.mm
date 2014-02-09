@@ -656,7 +656,7 @@ static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef co
         return (JSContainerConvertor::Task){ object, wrapped, ContainerNone };
 
     if (isDate(object, context))
-        return (JSContainerConvertor::Task){ object, [NSDate dateWithTimeIntervalSince1970:JSValueToNumber(context, object, 0)], ContainerNone };
+        return (JSContainerConvertor::Task){ object, [NSDate dateWithTimeIntervalSince1970:JSValueToNumber(context, object, 0) / 1000.0], ContainerNone };
 
     if (isArray(object, context))
         return (JSContainerConvertor::Task){ object, [NSMutableArray array], ContainerArray };
@@ -759,7 +759,7 @@ id valueToDate(JSGlobalContextRef context, JSValueRef value, JSValueRef* excepti
             return wrapped;
     }
 
-    double result = JSValueToNumber(context, value, exception);
+    double result = JSValueToNumber(context, value, exception) / 1000.0;
     return *exception ? nil : [NSDate dateWithTimeIntervalSince1970:result];
 }
 
@@ -889,7 +889,7 @@ static ObjcContainerConvertor::Task objectToValueWithoutCopy(JSContext *context,
         }
 
         if ([object isKindOfClass:[NSDate class]]) {
-            JSValueRef argument = JSValueMakeNumber(contextRef, [object timeIntervalSince1970]);
+            JSValueRef argument = JSValueMakeNumber(contextRef, [object timeIntervalSince1970] * 1000.0);
             JSObjectRef result = JSObjectMakeDate(contextRef, 1, &argument, 0);
             return (ObjcContainerConvertor::Task){ object, result, ContainerNone };
         }

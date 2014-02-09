@@ -26,6 +26,7 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 
 #import "CurrentThisInsideBlockGetterTest.h"
+#import "DateTests.h"
 
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
@@ -34,6 +35,7 @@ extern "C" const char * _Block_signature(id);
 
 extern int failed;
 extern "C" void testObjectiveCAPI(void);
+extern "C" void checkResult(NSString *, bool);
 
 #if JSC_OBJC_API_ENABLED
 
@@ -450,7 +452,7 @@ static bool evilAllocationObjectWasDealloced = false;
 }
 @end
 
-static void checkResult(NSString *description, bool passed)
+extern "C" void checkResult(NSString *description, bool passed)
 {
     NSLog(@"TEST: \"%@\": %@", description, passed ? @"PASSED" : @"FAILED");
     if (!passed)
@@ -1256,6 +1258,7 @@ void testObjectiveCAPI()
     }
 
     currentThisInsideBlockGetterTest();
+    runDateTests();
 }
 
 #else
