@@ -3605,7 +3605,7 @@ HRESULT STDMETHODCALLTYPE WebView::selectionRect(RECT* rc)
 {
     WebCore::Frame& frame = m_page->focusController().focusedOrMainFrame();
 
-    IntRect ir = enclosingIntRect(frame.selection().bounds());
+    IntRect ir = enclosingIntRect(frame.selection().selectionBounds());
     ir = frame.view()->convertToContainingWindow(ir);
     ir.move(-frame.view()->scrollOffset().width(), -frame.view()->scrollOffset().height());
     rc->left = ir.x();

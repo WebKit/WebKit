@@ -500,7 +500,7 @@ void DumpRenderTreeSupportGtk::rectangleForSelection(WebKitWebFrame* frame, cair
     if (!coreFrame)
         return;
 
-    IntRect bounds = enclosingIntRect(coreFrame->selection().bounds());
+    IntRect bounds = enclosingIntRect(coreFrame->selection().selectionBounds());
     rectangle->x = bounds.x();
     rectangle->y = bounds.y();
     rectangle->width = bounds.width();

@@ -201,7 +201,7 @@ void FindController::findStringMatches(const String& string, FindOptions options
 
 bool FindController::getFindIndicatorBitmapAndRect(Frame* frame, ShareableBitmap::Handle& handle, IntRect& selectionRect)
 {
-    selectionRect = enclosingIntRect(frame->selection().bounds());
+    selectionRect = enclosingIntRect(frame->selection().selectionBounds());
 
     // Selection rect can be empty for matches that are currently obscured from view.
     if (selectionRect.isEmpty())
@@ -427,7 +427,7 @@ void FindController::drawRect(PageOverlay* /*pageOverlay*/, GraphicsContext& gra
         return;
 
     if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
-        IntRect findIndicatorRect = selectedFrame->view()->contentsToWindow(enclosingIntRect(selectedFrame->selection().bounds()));
+        IntRect findIndicatorRect = selectedFrame->view()->contentsToWindow(enclosingIntRect(selectedFrame->selection().selectionBounds()));
 
         if (findIndicatorRect != m_findIndicatorRect)
             hideFindIndicator();

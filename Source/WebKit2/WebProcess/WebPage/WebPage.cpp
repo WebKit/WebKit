@@ -1524,7 +1524,7 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, dou
     frameView->paintContentsForSnapshot(graphicsContext.get(), rect, shouldPaintSelection, coordinateSpace);
 
     if (options & SnapshotOptionsPaintSelectionRectangle) {
-        FloatRect selectionRectangle = m_mainFrame->coreFrame()->selection().bounds();
+        FloatRect selectionRectangle = m_mainFrame->coreFrame()->selection().selectionBounds();
         graphicsContext->setStrokeColor(Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
         graphicsContext->strokeRect(selectionRectangle, 1);
     }

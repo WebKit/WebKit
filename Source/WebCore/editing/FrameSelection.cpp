@@ -1344,7 +1344,7 @@ bool CaretBase::updateCaretRect(Document* document, const VisiblePosition& caret
     return true;
 }
 
-RenderObject* FrameSelection::caretRenderer() const
+RenderObject* FrameSelection::caretRendererWithoutUpdatingLayout() const
 {
     return WebCore::caretRenderer(m_selection.start().deprecatedNode());
 }
@@ -1977,7 +1977,7 @@ bool FrameSelection::shouldDeleteSelection(const VisibleSelection& selection) co
     return m_frame->editor().client()->shouldDeleteRange(selection.toNormalizedRange().get());
 }
 
-FloatRect FrameSelection::bounds(bool clipToVisibleContent) const
+FloatRect FrameSelection::selectionBounds(bool clipToVisibleContent) const
 {
     if (!m_frame->document())
         return LayoutRect();
@@ -2065,7 +2065,7 @@ void FrameSelection::revealSelection(const ScrollAlignment& alignment, RevealExt
         rect = absoluteCaretBounds();
         break;
     case VisibleSelection::RangeSelection:
-        rect = revealExtentOption == RevealExtent ? VisiblePosition(m_selection.extent()).absoluteCaretBounds() : enclosingIntRect(bounds(false));
+        rect = revealExtentOption == RevealExtent ? VisiblePosition(m_selection.extent()).absoluteCaretBounds() : enclosingIntRect(selectionBounds(false));
         break;
     }
 

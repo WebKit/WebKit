@@ -199,7 +199,7 @@ WebCore::IntRect DumpRenderTreeSupportEfl::selectionRectangle(const Evas_Object*
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, WebCore::IntRect());
 
-    return enclosingIntRect(frame->selection().bounds());
+    return enclosingIntRect(frame->selection().selectionBounds());
 }
 
 // Compare with "WebKit/Tools/DumpRenderTree/mac/FrameLoadDelegate.mm

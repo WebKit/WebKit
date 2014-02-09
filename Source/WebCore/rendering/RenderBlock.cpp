@@ -2277,7 +2277,7 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     RenderObject* caretPainter;
     bool isContentEditable;
     if (type == CursorCaret) {
-        caretPainter = frame().selection().caretRenderer();
+        caretPainter = frame().selection().caretRendererWithoutUpdatingLayout();
         isContentEditable = frame().selection().selection().hasEditableStyle();
     } else {
         caretPainter = frame().page()->dragCaretController().caretRenderer();

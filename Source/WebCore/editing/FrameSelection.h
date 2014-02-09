@@ -165,10 +165,8 @@ public:
     void setExtent(const VisiblePosition&, EUserTriggered = NotUserTriggered);
     void setExtent(const Position&, EAffinity, EUserTriggered = NotUserTriggered);
 
-    Position end() const { return m_selection.end(); }
-
     // Return the renderer that is responsible for painting the caret (in the selection start node)
-    RenderObject* caretRenderer() const;
+    RenderObject* caretRendererWithoutUpdatingLayout() const;
 
     // Caret rect local to the caret's renderer
     LayoutRect localCaretRect();
@@ -193,8 +191,6 @@ public:
     void textWasReplaced(CharacterData*, unsigned offset, unsigned oldLength, unsigned newLength);
 
     void setCaretVisible(bool caretIsVisible) { setCaretVisibility(caretIsVisible ? Visible : Hidden); }
-    bool recomputeCaretRect();
-    void invalidateCaretRect();
     void paintCaret(GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect);
 
     // Used to suspend caret blinking while the mouse is down.
@@ -257,14 +253,12 @@ public:
     enum EndPointsAdjustmentMode { AdjustEndpointsAtBidiBoundary, DoNotAdjsutEndpoints };
     void setSelectionByMouseIfDifferent(const VisibleSelection&, TextGranularity, EndPointsAdjustmentMode = DoNotAdjsutEndpoints);
 
-    void paintDragCaret(GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
-
     EditingStyle* typingStyle() const;
     PassRefPtr<MutableStyleProperties> copyTypingStyle() const;
     void setTypingStyle(PassRefPtr<EditingStyle>);
     void clearTypingStyle();
 
-    FloatRect bounds(bool clipToVisibleContent = true) const;
+    FloatRect selectionBounds(bool clipToVisibleContent = true) const;
 
     void getClippedVisibleTextRectangles(Vector<FloatRect>&) const;
 
@@ -317,6 +311,8 @@ private:
     void caretBlinkTimerFired(Timer<FrameSelection>&);
 
     void setCaretVisibility(CaretVisibility);
+    bool recomputeCaretRect();
+    void invalidateCaretRect();
 
     bool dispatchSelectStart();
 

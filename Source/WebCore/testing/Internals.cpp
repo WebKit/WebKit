@@ -2135,7 +2135,7 @@ PassRefPtr<ClientRect> Internals::selectionBounds(ExceptionCode& ec)
         return ClientRect::create();
     }
 
-    return ClientRect::create(document->frame()->selection().bounds());
+    return ClientRect::create(document->frame()->selection().selectionBounds());
 }
 
 #if ENABLE(VIBRATION)

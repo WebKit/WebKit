@@ -5682,7 +5682,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if (!coreFrame)
         return;
 
-    NSRect rect = coreFrame->selection().bounds();
+    NSRect rect = coreFrame->selection().selectionBounds();
 
     NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
     NSFont *font = [attributes objectForKey:NSFontAttributeName];
@@ -6528,7 +6528,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     if (![self _hasSelection])
         return NSZeroRect;
-    return core([self _frame])->selection().bounds();
+    return core([self _frame])->selection().selectionBounds();
 }
 
 - (NSArray *)selectionTextRects
@@ -6579,7 +6579,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     if (![self _hasSelection])
         return NSZeroRect;
-    return core([self _frame])->selection().bounds();
+    return core([self _frame])->selection().selectionBounds();
 }
 
 #if !PLATFORM(IOS)

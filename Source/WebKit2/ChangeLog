@@ -1,3 +1,16 @@
+2014-02-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cleanup the interface of FrameSelection
+        https://bugs.webkit.org/show_bug.cgi?id=128481
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::getFindIndicatorBitmapAndRect):
+        (WebKit::FindController::drawRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaledSnapshotWithOptions):
+
 2014-02-08  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/cursors.html fails
