@@ -273,7 +273,7 @@ public:
     PassRefPtr<Node> nextNode()
     {
         if (LIKELY(!hasSnapshot())) {
-            RefPtr<Node> node = m_currentNode;
+            RefPtr<Node> node = m_currentNode.release();
             if (node)
                 m_currentNode = node->nextSibling();
             return node.release();

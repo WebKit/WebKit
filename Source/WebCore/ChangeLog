@@ -1,5 +1,18 @@
 2014-02-09  Andreas Kling  <akling@apple.com>
 
+        Reduce ref churn in ChildNodesLazySnapshot iteration.
+        <https://webkit.org/b/128492>
+
+        Add a missing release() in ChildNodesLazySnapshot::nextNode()
+        so we don't have to churn the ref count.
+
+        Reviewed by Sam Weinig.
+
+        * dom/ContainerNode.h:
+        (WebCore::ChildNodesLazySnapshot::nextNode):
+
+2014-02-09  Andreas Kling  <akling@apple.com>
+
         Reduce ref churn in ChildInsertionNotifier.
         <https://webkit.org/b/128494>
 
