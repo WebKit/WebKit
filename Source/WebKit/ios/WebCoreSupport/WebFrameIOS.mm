@@ -185,7 +185,7 @@ using namespace WebCore;
     if ([self selectionState] == WebTextSelectionStateRange) {
         Frame *frame = [self coreFrame];
         FrameSelection& frameSelection = frame->selection();
-        VisiblePosition end(frameSelection.end());
+        VisiblePosition end(frameSelection.selection().end());
         frameSelection.moveTo(end);
     }
 }
@@ -500,7 +500,7 @@ using namespace WebCore;
         frameSelection.moveTo(frameSelection.selection().start(), frameSelection.selection().end());
     
     if (frameSelection.selection().isCaret()) {
-        VisiblePosition pos(frameSelection.end());
+        VisiblePosition pos(frameSelection.selection().end());
         if (isStartOfLine(pos) && isEndOfLine(pos)) {
             VisiblePosition next(pos.next());
             if (next.isNotNull())
@@ -510,7 +510,7 @@ using namespace WebCore;
             while (pos.isNotNull()) {
                 VisiblePosition wordStart(startOfWord(pos));
                 if (wordStart != pos) {
-                    frameSelection.moveTo(wordStart, frameSelection.end());
+                    frameSelection.moveTo(wordStart, frameSelection.selection().end());
                     break;
                 }
                 pos = pos.previous();
