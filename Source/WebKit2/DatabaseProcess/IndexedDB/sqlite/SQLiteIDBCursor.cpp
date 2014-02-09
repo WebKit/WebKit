@@ -337,7 +337,10 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
     m_statement->getColumnBlobAsVector(2, keyData);
     m_currentValueBuffer = keyData;
 
-    if (m_indexID != IDBIndexMetadata::InvalidId) {
+    // The primaryKey of an ObjectStore cursor is the same as its key.
+    if (m_indexID == IDBIndexMetadata::InvalidId)
+        m_currentPrimaryKey = m_currentKey;
+    else {
         if (!deserializeIDBKeyData(keyData.data(), keyData.size(), m_currentPrimaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
             m_completed = true;
@@ -387,10 +390,18 @@ bool SQLiteIDBCursor::iterate(const WebCore::IDBKeyData& targetKey)
     if (targetKey.isNull || !result)
         return result;
 
-    while (!m_completed && m_currentKey.compare(targetKey)) {
-        result = advance(1);
+    while (!m_completed) {
         if (!result)
             return false;
+
+        // Search for the next key >= the target if the cursor is a Next cursor, or the next key <= if the cursor is a Previous cursor.
+        if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate) {
+            if (m_currentKey.compare(targetKey) >= 0)
+                break;
+        } else if (m_currentKey.compare(targetKey) <= 0)
+            break;
+
+        result = advance(1);
     }
 
     return result;

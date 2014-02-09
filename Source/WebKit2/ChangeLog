@@ -1,3 +1,15 @@
+2014-02-08  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/cursors.html fails
+        <rdar://problem/16017998> and https://bugs.webkit.org/show_bug.cgi?id=128423
+
+        Reviewed by Dan Bernstein.
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::SQLiteIDBCursor::internalAdvanceOnce): Store the primary key for object store cursors.
+        (WebKit::SQLiteIDBCursor::iterate): We’re not supposed to check for equality to the target key.
+          Depending on the direction of the cursor we should check for the next highest or next lowest key.
+
 2014-02-08  Dan Bernstein  <mitz@apple.com>
 
         Remove client-drawn highlights (-webkit-highlight, WebHTMLHighlighter)
