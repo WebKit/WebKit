@@ -211,8 +211,8 @@ unsigned JSLock::dropAllLocks(SpinLock& spinLock)
     ASSERT_UNUSED(spinLock, spinLock.IsHeld());
     // Check if this thread is currently holding the lock.
     // FIXME: Maybe we want to require this, guard with an ASSERT?
-    unsigned lockCount = m_lockCount;
-    if (!lockCount || m_ownerThread != WTF::currentThread())
+    unsigned locksToDrop = m_lockCount;
+    if (!locksToDrop || m_ownerThread != WTF::currentThread())
         return 0;
 
     // Don't drop the locks if they've already been dropped once.
@@ -234,7 +234,7 @@ unsigned JSLock::dropAllLocks(SpinLock& spinLock)
         m_vm->updateStackLimitWithReservedZoneSize(wtfThreadData().savedReservedZoneSize());
     }
     m_lock.unlock();
-    return lockCount;
+    return locksToDrop;
 }
 
 unsigned JSLock::dropAllLocksUnconditionally(SpinLock& spinLock)
@@ -242,8 +242,8 @@ unsigned JSLock::dropAllLocksUnconditionally(SpinLock& spinLock)
     ASSERT_UNUSED(spinLock, spinLock.IsHeld());
     // Check if this thread is currently holding the lock.
     // FIXME: Maybe we want to require this, guard with an ASSERT?
-    unsigned lockCount = m_lockCount;
-    if (!lockCount || m_ownerThread != WTF::currentThread())
+    unsigned locksToDrop = m_lockCount;
+    if (!locksToDrop || m_ownerThread != WTF::currentThread())
         return 0;
 
     WTFThreadData& threadData = wtfThreadData();
@@ -259,21 +259,21 @@ unsigned JSLock::dropAllLocksUnconditionally(SpinLock& spinLock)
         m_vm->updateStackLimitWithReservedZoneSize(wtfThreadData().savedReservedZoneSize());
     }
     m_lock.unlock();
-    return lockCount;
+    return locksToDrop;
 }
 
-void JSLock::grabAllLocks(unsigned lockCount, SpinLock& spinLock)
+void JSLock::grabAllLocks(unsigned droppedLockCount, SpinLock& spinLock)
 {
     ASSERT(spinLock.IsHeld());
     // If no locks were dropped, nothing to do!
-    if (!lockCount)
+    if (!droppedLockCount)
         return;
 
     ThreadIdentifier currentThread = WTF::currentThread();
     // Check if this thread is currently holding the lock.
     // FIXME: Maybe we want to prohibit this, guard against with an ASSERT?
     if (m_ownerThread == currentThread && m_lockCount) {
-        m_lockCount += lockCount;
+        m_lockCount += droppedLockCount;
         --m_lockDropDepth;
         return;
     }
@@ -284,7 +284,7 @@ void JSLock::grabAllLocks(unsigned lockCount, SpinLock& spinLock)
 
     m_ownerThread = currentThread;
     ASSERT(!m_lockCount);
-    m_lockCount = lockCount;
+    m_lockCount = droppedLockCount;
     --m_lockDropDepth;
 
     WTFThreadData& threadData = wtfThreadData();
@@ -294,7 +294,7 @@ void JSLock::grabAllLocks(unsigned lockCount, SpinLock& spinLock)
 }
 
 JSLock::DropAllLocks::DropAllLocks(ExecState* exec, AlwaysDropLocksTag alwaysDropLocks)
-    : m_lockCount(0)
+    : m_droppedLockCount(0)
     , m_vm(exec ? &exec->vm() : nullptr)
 {
     if (!m_vm)
@@ -303,13 +303,13 @@ JSLock::DropAllLocks::DropAllLocks(ExecState* exec, AlwaysDropLocksTag alwaysDro
     SpinLockHolder holder(&spinLock);
 
     if (alwaysDropLocks)
-        m_lockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
+        m_droppedLockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
     else
-        m_lockCount = m_vm->apiLock().dropAllLocks(spinLock);
+        m_droppedLockCount = m_vm->apiLock().dropAllLocks(spinLock);
 }
 
 JSLock::DropAllLocks::DropAllLocks(VM* vm, AlwaysDropLocksTag alwaysDropLocks)
-    : m_lockCount(0)
+    : m_droppedLockCount(0)
     , m_vm(vm)
 {
     if (!m_vm)
@@ -318,9 +318,9 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm, AlwaysDropLocksTag alwaysDropLocks)
     SpinLockHolder holder(&spinLock);
 
     if (alwaysDropLocks)
-        m_lockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
+        m_droppedLockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
     else
-        m_lockCount = m_vm->apiLock().dropAllLocks(spinLock);
+        m_droppedLockCount = m_vm->apiLock().dropAllLocks(spinLock);
 }
 
 JSLock::DropAllLocks::~DropAllLocks()
@@ -329,7 +329,7 @@ JSLock::DropAllLocks::~DropAllLocks()
         return;
     SpinLock& spinLock = m_vm->apiLock().m_spinLock;
     SpinLockHolder holder(&spinLock);
-    m_vm->apiLock().grabAllLocks(m_lockCount, spinLock);
+    m_vm->apiLock().grabAllLocks(m_droppedLockCount, spinLock);
 }
 
 } // namespace JSC

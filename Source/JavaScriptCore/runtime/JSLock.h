@@ -108,7 +108,7 @@ namespace JSC {
             JS_EXPORT_PRIVATE ~DropAllLocks();
             
         private:
-            intptr_t m_lockCount;
+            intptr_t m_droppedLockCount;
             RefPtr<VM> m_vm;
         };
 
