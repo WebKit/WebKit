@@ -849,18 +849,7 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
     ASSERT(length);
     ASSERT_UNUSED(resource, resource == m_mainResource);
     ASSERT(!m_response.isNull());
-
-#if USE(CFNETWORK) || PLATFORM(COCOA)
-    // Workaround for <rdar://problem/6060782>
-    if (m_response.isNull())
-        m_response = ResourceResponse(URL(), "text/html", 0, String(), String());
-#endif
-
-    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
-    // See <rdar://problem/6304600> for more details.
-#if !USE(CF)
     ASSERT(!mainResourceLoader() || !mainResourceLoader()->defersLoading());
-#endif
 
 #if USE(CONTENT_FILTERING)
     bool loadWasBlockedBeforeFinishing = false;
