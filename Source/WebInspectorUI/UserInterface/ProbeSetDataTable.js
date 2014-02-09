@@ -101,7 +101,7 @@ WebInspector.ProbeSetDataTable.prototype = {
     removeProbe: function(probe)
     {
         for (var frame of this.frames)
-            delete frames[i][probe.id];
+            delete frame[probe.id];
     },
 
     // Protected - can be overridden by subclasses.

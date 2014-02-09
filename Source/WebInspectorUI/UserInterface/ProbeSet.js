@@ -99,7 +99,7 @@ WebInspector.ProbeSet.prototype = {
         console.assert(probe.breakpoint === this.breakpoint, "Probe and ProbeSet must have same breakpoint.", probe, this);
 
         this._probes.push(probe);
-        this._probesByIdentifier.set(probe.identifier, probe);
+        this._probesByIdentifier.set(probe.id, probe);
 
         this.dataTable.addProbe(probe);
         this.dispatchEventToListeners(WebInspector.ProbeSet.Event.ProbeAdded, probe);
@@ -109,10 +109,10 @@ WebInspector.ProbeSet.prototype = {
     {
         console.assert(probe instanceof WebInspector.Probe, "Tried to remove non-probe ", probe, " to probe group", this);
         console.assert(this._probes.indexOf(probe) != -1, "Tried to remove probe", probe, " not in group ", this);
-        console.assert(this._probesByIdentifier.has(probe.identifier), "Tried to remove probe", probe, " not in group ", this);
+        console.assert(this._probesByIdentifier.has(probe.id), "Tried to remove probe", probe, " not in group ", this);
 
         this._probes.splice(this._probes.indexOf(probe), 1);
-        this._probesByIdentifier.delete(probe.identifier);
+        this._probesByIdentifier.delete(probe.id);
         this.dataTable.removeProbe(probe);
         this.dispatchEventToListeners(WebInspector.ProbeSet.Event.ProbeRemoved, probe);
     },
@@ -147,7 +147,7 @@ WebInspector.ProbeSet.prototype = {
         console.assert(sample instanceof WebInspector.ProbeSample, "Tried to add non-sample to probe group: ", sample);
 
         var probe = event.target;
-        if (!this._probesByIdentifier.has(probe.identifier))
+        if (!this._probesByIdentifier.has(probe.id))
             return;
 
         console.assert(this.dataTable);

@@ -1,3 +1,130 @@
+2014-02-07  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: show probe sets for script content views in the details sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=128333
+
+        Reviewed by Timothy Hatcher.
+
+        This patch adds a new details sidebar for showing the probes associated with any
+        breakpoint in the currently visible source file. Each probe set (corresponding to
+        multiple actions of single breakpoint) gets its own ProbeSetDetailsSection. The
+        section contains a custom DataGrid subclass to display probe data, and some icons
+        for clearing samples, deleting the probe, and adding a new probe expression.
+
+        The table containing probe data keeps its columns in sync with the probe set's
+        probe expressions. To support this, DataGrid has been further refactored to support
+        removing columns, and inserting columns (rather than only appending). With this
+        capability, probe columns are removed and re-inserted when the expression changes.
+
+        The availability of the probe details sidebar is controlled by providing the
+        probe sets matching the script content view's resource URL as supplemental
+        represented objects.
+
+        Lastly, added the utility EventListenerSet class. This holds a set of event listeners
+        that should be added and removed together, and takes care of binding `thisObject`
+        according to whether the event emitter is a `Node` or `WebInspector.Object`.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/BreakpointActionView.js:
+        (WebInspector.BreakpointActionView):
+        (WebInspector.BreakpointActionView.prototype._removeAction): Renamed from removeButtonClicked.
+        (WebInspector.BreakpointActionView.prototype._codeMirrorBlurred): Change the behavior
+        of CodeMirror-backed editors for probe and evaluate expression actions. If the expression
+        consists entirely of trimmable whitespace, then delete the action rather than saving it.
+
+        * UserInterface/DataGrid.js:
+        (WebInspector.DataGrid): Copy over the column data into a map inside insertColumn() instead.
+        (WebInspector.DataGrid.prototype.insertColumn): Renamed from addColumn. It now takes an
+        optional `insertionIndex` argument and splices the column before the element at that index.
+        Also, convert code to use EventListenerSet for adding/removing per-column event listeners.
+
+        (WebInspector.DataGrid.prototype.removeColumn): Added. It splices the column out.
+        (WebInspector.DataGridNode.prototype.isEventWithinDisclosureTriangle): Whitespace.
+        * UserInterface/EventListenerSet.js: Added.
+        (WebInspector.EventListenerSet):
+        (WebInspector.EventListenerSet.prototype.register):
+        (WebInspector.EventListenerSet.prototype.unregister):
+        (WebInspector.EventListenerSet.prototype.install):
+        (WebInspector.EventListenerSet.prototype.uninstall):
+        * UserInterface/Images/NavigationItemProbes.pdf: Added.
+        * UserInterface/LayerTreeDataGrid.js:
+        (WebInspector.LayerTreeDataGrid.prototype._updateChildren): Fix a missing column.get().
+        * UserInterface/Main.html: Add new JavaScript and CSS files.
+        * UserInterface/Main.js:
+        (WebInspector.contentLoaded): Add the probe details sidebar.
+        * UserInterface/ProbeDetailsSidebarPanel.css: Added.
+        (.sidebar > .panel.probes > .navigation-bar):
+        (.sidebar > .panel.probes > .content):
+        (.details-section.probe-set .options > .probe-add):
+        (.details-section.probe-set .options > .probe-clear-samples):
+        (.details-section.probe-set .options > .probe-remove):
+        (.details-section.probe-set .options > input):
+        (.panel.probes ::-webkit-scrollbar):
+        (.panel.probes ::-webkit-scrollbar-track):
+        (.panel.probes ::-webkit-scrollbar-thumb):
+        (.panel.probes ::-webkit-scrollbar-corner):
+        (.popover .probe-popover):
+        (.popover .probe-popover input):
+        * UserInterface/ProbeDetailsSidebarPanel.js: Added.
+        (WebInspector.ProbeDetailsSidebarPanel):
+        (WebInspector.ProbeDetailsSidebarPanel.prototype.get inspectedProbeSets):
+        (WebInspector.ProbeDetailsSidebarPanel.prototype._probeSetAdded):
+        * UserInterface/ProbeManager.js: Remove unused `probeSetForBreakpoint` function.
+        * UserInterface/ProbeSet.js: Fix erroneous uses of `probe.identifier` instead of `probe.id`.
+        (WebInspector.ProbeSet.prototype.removeProbe):
+        (WebInspector.ProbeSet.prototype._sampleCollected):
+        * UserInterface/ProbeSetDataGrid.css: Added.
+        (.details-section.probe-set .data-grid .data-container tr.past-value td):
+        (.details-section.probe-set .data-grid > .data-container td.unknown-value):
+        (.details-section.probe-set .data-grid .data-container tr.revealed.highlighted):
+        (@-webkit-keyframes blink-frame-highlight):
+        (100%):
+        (.details-section.probe-set .data-grid .data-container tr.separator):
+        (.details-section.probe-set .data-grid > .data-container tr.data-updated):
+        (@-webkit-keyframes blink-probe-frame):
+        (.details-section.probe-set .data-grid .data-container .selected .section *):
+        (.details-section.probe-set .data-grid .data-container .selected td.unknown-value):
+        (.details-section.probe-set .data-grid .data-container .section):
+        (.details-section.probe-set .data-grid th):
+        (.details-section.probe-set .data-grid th:not(:last-child)):
+        (.details-section.probe-set .data-grid td):
+        * UserInterface/ProbeSetDataGrid.js: Added.
+        (WebInspector.ProbeSetDataGrid):
+        (WebInspector.ProbeSetDataGrid.prototype.closed):
+        (WebInspector.ProbeSetDataGrid.prototype._setupProbe):
+        (WebInspector.ProbeSetDataGrid.prototype._teardownProbe):
+        (WebInspector.ProbeSetDataGrid.prototype._setupData):
+        (WebInspector.ProbeSetDataGrid.prototype._teardownData):
+        (WebInspector.ProbeSetDataGrid.prototype._updateNodeForFrame.else.sortFunction):
+        (WebInspector.ProbeSetDataGrid.prototype._updateNodeForFrame.else.set node):
+        (WebInspector.ProbeSetDataGrid.prototype._dataFrameInserted):
+        (WebInspector.ProbeSetDataGrid.prototype._dataSeparatorInserted):
+        (WebInspector.ProbeSetDataGrid.prototype._probeExpressionChanged.get var):
+        * UserInterface/ProbeSetDataGridNode.js: Added.
+        (WebInspector.ProbeSetDataGridNode):
+        (WebInspector.ProbeSetDataGridNode.prototype.get element):
+        (WebInspector.ProbeSetDataGridNode.prototype.get data):
+        (WebInspector.ProbeSetDataGridNode.prototype.set frame):
+        (WebInspector.ProbeSetDataGridNode.prototype.get frame):
+        (WebInspector.ProbeSetDataGridNode.prototype.createCellContent):
+        (WebInspector.ProbeSetDataGridNode.prototype.updateCellsFromFrame):
+        (WebInspector.ProbeSetDataGridNode.prototype.updateCellsForSeparator):
+        * UserInterface/ProbeSetDataTable.js:
+        (WebInspector.ProbeSetDataTable.prototype.removeProbe): Fix a typo in for..of loop refactor.
+        * UserInterface/ProbeSetDetailsSection.js: Added.
+        (WebInspector.ProbeSetDetailsSection):
+        (WebInspector.ProbeSetDetailsSection.prototype.closed):
+        (WebInspector.ProbeSetDetailsSection.prototype._probeSetPositionTextOrLink):
+        (WebInspector.ProbeSetDetailsSection.prototype._addProbeButtonClicked):
+        (WebInspector.ProbeSetDetailsSection.prototype._removeButtonClicked):
+        (WebInspector.ProbeSetDetailsSection.prototype._clearSamplesButtonClicked):
+        * UserInterface/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView):
+        (WebInspector.TextResourceContentView.prototype.get supplementalRepresentedObjects):
+        Add probe sets whose breakpoint matches the represented object's URL.
+        (WebInspector.TextResourceContentView.prototype._probeSetsChanged): Tell listeners
+        to re-fetch `supplementalRepresentedObjects` when probe sets are added or removed.
+
 2014-02-08  Dan Bernstein  <mitz@apple.com>
 
         Remove client-drawn highlights (-webkit-highlight, WebHTMLHighlighter)

@@ -77,7 +77,7 @@ WebInspector.LayerTreeDataGrid.prototype = {
 
         // Iterate through nodes by DOM order first so we can establish
         // the DOM index.
-        var elements = this.dataTableBody.rows;
+        var elements = this.dataTableBodyElement.rows;
         for (var i = 0, count = elements.length - 1; i < count; ++i)
             elements[i]._dataGridNode._domIndex = i;
 

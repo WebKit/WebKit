@@ -64,11 +64,6 @@ WebInspector.ProbeManager.prototype = {
         return sets;
     },
 
-    probeSetForBreakpoint: function(breakpoint)
-    {
-        return this._probeSetsByBreakpoint.get(breakpoint);
-    },
-
     // Protected (called by WebInspector.DebuggerObserver)
 
     didSampleProbe: function(sample)

@@ -280,9 +280,10 @@ WebInspector.contentLoaded = function()
     this.cssStyleDetailsSidebarPanel = new WebInspector.CSSStyleDetailsSidebarPanel;
     this.applicationCacheDetailsSidebarPanel = new WebInspector.ApplicationCacheDetailsSidebarPanel;
     this.scopeChainDetailsSidebarPanel = new WebInspector.ScopeChainDetailsSidebarPanel;
+    this.probeDetailsSidebarPanel = new WebInspector.ProbeDetailsSidebarPanel;
 
     this.detailsSidebarPanels = [this.resourceDetailsSidebarPanel, this.applicationCacheDetailsSidebarPanel, this.scopeChainDetailsSidebarPanel,
-        this.domNodeDetailsSidebarPanel, this.cssStyleDetailsSidebarPanel];
+        this.domNodeDetailsSidebarPanel, this.cssStyleDetailsSidebarPanel, this.probeDetailsSidebarPanel];
 
     if (window.LayerTreeAgent) {
         this.layerTreeSidebarPanel = new WebInspector.LayerTreeSidebarPanel;

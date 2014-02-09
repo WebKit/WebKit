@@ -59,7 +59,7 @@ WebInspector.BreakpointActionView = function(action, delegate, omitFocus)
 
     var removeActionButton = header.appendChild(document.createElement("button"));
     removeActionButton.className = "breakpoint-action-remove-button";
-    removeActionButton.addEventListener("click", this._removeActionButtonClicked.bind(this));
+    removeActionButton.addEventListener("click", this._removeAction.bind(this));
     removeActionButton.title = WebInspector.UIString("Remove this breakpoint action");
 
     this._bodyElement = this._element.appendChild(document.createElement("div"));
@@ -116,7 +116,7 @@ WebInspector.BreakpointActionView.prototype = {
         this._delegate.breakpointActionViewAppendActionView(this, newAction);
     },
 
-    _removeActionButtonClicked: function(event)
+    _removeAction: function()
     {
         this._action.breakpoint.removeAction(this._action);
         this._delegate.breakpointActionViewRemoveActionView(this);
@@ -190,7 +190,13 @@ WebInspector.BreakpointActionView.prototype = {
 
     _codeMirrorBlurred: function(event)
     {
-        this._action.data = this._codeMirror.getValue();
+        // Throw away the expression if it's just whitespace.
+        var data = (this._codeMirror.getValue() || "").trim();
+
+        if (!data.length)
+            this._removeAction();
+        else
+            this._action.data = data;
     },
 
     _codeMirrorViewportChanged: function(event)

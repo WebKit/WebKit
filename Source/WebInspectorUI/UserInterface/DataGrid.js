@@ -28,17 +28,6 @@ WebInspector.DataGrid = function(columnsData, editCallback, deleteCallback)
     this.columns = new Map;
     this.orderedColumns = [];
 
-    for (var columnIdentifier in columnsData) {
-        columnData = new Map;
-        for (var propertyName in columnsData[columnIdentifier])
-            columnData.set(propertyName, columnsData[columnIdentifier][propertyName]);
-
-        columnData.set("ordinal", this.orderedColumns.length);
-        columnData.set("columnIdentifier", columnIdentifier);
-        this.orderedColumns.push(columnIdentifier);
-        this.columns.set(columnIdentifier, columnData);
-    }
-
     this.children = [];
     this.selectedNode = null;
     this.expandNodesWhenArrowing = false;
@@ -63,7 +52,6 @@ WebInspector.DataGrid = function(columnsData, editCallback, deleteCallback)
     this._headerTableColumnGroupElement = this._headerTableElement.createChild("colgroup");
     this._headerTableBodyElement = this._headerTableElement.createChild("tbody");
     this._headerTableRowElement = this._headerTableBodyElement.createChild("tr");
-
     this._headerTableCellElements = new Map;
 
     this._scrollContainerElement = document.createElement("div");
@@ -96,8 +84,8 @@ WebInspector.DataGrid = function(columnsData, editCallback, deleteCallback)
     this.element.appendChild(this._headerTableElement);
     this.element.appendChild(this._scrollContainerElement);
 
-    for (var columnIdentifier of this.orderedColumns)
-        this.addColumn(columnIdentifier);
+    for (var columnIdentifier in columnsData)
+        this.insertColumn(columnIdentifier, columnsData[columnIdentifier]);
 
     this._generateSortIndicatorImagesIfNeeded();
 }
@@ -394,25 +382,48 @@ WebInspector.DataGrid.prototype = {
         this.updateLayout();
     },
 
-    addColumn: function(columnIdentifier)
-    {
-        var column = this.columns.get(columnIdentifier);
-        console.assert(column);
+    insertColumn: function(columnIdentifier, columnData, insertionIndex) {
+        if (typeof insertionIndex === "undefined")
+            insertionIndex = this.orderedColumns.length;
+        insertionIndex = Number.constrain(insertionIndex, 0, this.orderedColumns.length);
+
+        var listeners = new WebInspector.EventListenerSet(this, "DataGrid column DOM listeners");
+
+        // Copy configuration properties instead of keeping a reference to the passed-in object.
+        var column = new Map;
+        for (var propertyName in columnData)
+            column.set(propertyName, columnData[propertyName]);
+
+        column.set("listeners", listeners);
+        column.set("ordinal", insertionIndex);
+        column.set("columnIdentifier", columnIdentifier);
+        this.orderedColumns.splice(insertionIndex, 0, columnIdentifier);
+
+        for (var [identifier, existingColumn] of this.columns) {
+            var ordinal = existingColumn.get("ordinal");
+            if (ordinal >= insertionIndex) // Also adjust the "old" column at insertion index.
+                existingColumn.set("ordinal", ordinal + 1);
+        }
+        this.columns.set(columnIdentifier, column);
 
         if (column.has("disclosure"))
             this.disclosureColumnIdentifier = columnIdentifier;
 
-        var headerColumnElement = this._headerTableColumnGroupElement.createChild("col");
+        var headerColumnElement = document.createElement("col");
         if (column.has("width"))
             headerColumnElement.style.width = column.get("width");
         column.set("element", headerColumnElement);
+        var referenceElement = this._headerTableColumnGroupElement.children[insertionIndex];
+        this._headerTableColumnGroupElement.insertBefore(headerColumnElement, referenceElement);
 
-        var headerCellElement = this._headerTableRowElement.createChild("th");
+        var headerCellElement = document.createElement("th");
         headerCellElement.className = columnIdentifier + "-column";
         headerCellElement.columnIdentifier = columnIdentifier;
         if (column.has("aligned"))
             headerCellElement.classList.add(column.get("aligned"));
         this._headerTableCellElements.set(columnIdentifier, headerCellElement);
+        var referenceElement = this._headerTableRowElement.children[insertionIndex];
+        this._headerTableRowElement.insertBefore(headerCellElement, referenceElement);
 
         var div = headerCellElement.createChild("div");
         if (column.has("titleDOMFragment"))
@@ -426,7 +437,7 @@ WebInspector.DataGrid.prototype = {
         }
 
         if (column.has("sortable")) {
-            headerCellElement.addEventListener("click", this._clickInHeaderCell.bind(this), false);
+            listeners.register(headerCellElement, "click", this._clickInHeaderCell, false);
             headerCellElement.classList.add("sortable");
         }
 
@@ -442,9 +453,9 @@ WebInspector.DataGrid.prototype = {
             var collapseDiv = headerCellElement.createChild("div");
             collapseDiv.className = "collapser-button";
             collapseDiv.title = this._collapserButtonCollapseColumnsToolTip();
-            collapseDiv.addEventListener("mouseover", this._mouseoverColumnCollapser.bind(this));
-            collapseDiv.addEventListener("mouseout", this._mouseoutColumnCollapser.bind(this));
-            collapseDiv.addEventListener("click", this._clickInColumnCollapser.bind(this));
+            listeners.register(collapseDiv, "mouseover", this._mouseoverColumnCollapser);
+            listeners.register(collapseDiv, "mouseout", this._mouseoutColumnCollapser);
+            listeners.register(collapseDiv, "click", this._clickInColumnCollapser);
 
             headerCellElement.collapsesGroup = column.get("collapsesGroup");
             headerCellElement.classList.add("collapser");
@@ -453,17 +464,56 @@ WebInspector.DataGrid.prototype = {
         this._headerTableColumnGroupElement.span = this.orderedColumns.length;
 
         var dataColumnElement = headerColumnElement.cloneNode();
-        this._dataTableColumnGroupElement.appendChild(dataColumnElement);
+        var referenceElement = this._dataTableColumnGroupElement.children[insertionIndex];
+        this._dataTableColumnGroupElement.insertBefore(dataColumnElement, referenceElement);
         column.set("bodyElement", dataColumnElement);
 
-        var fillerCellElement = this._fillerRowElement.createChild("td");
+        var fillerCellElement = document.createElement("td");
         fillerCellElement.className = columnIdentifier + "-column";
         fillerCellElement.__columnIdentifier = columnIdentifier;
         if (column.has("group"))
             fillerCellElement.classList.add("column-group-" + column.get("group"));
+        var referenceElement = this._fillerRowElement.children[insertionIndex];
+        this._fillerRowElement.insertBefore(fillerCellElement, referenceElement);
+
+        listeners.install();
 
         if (column.has("hidden"))
             this._hideColumn(columnIdentifier);
+    },
+
+    removeColumn: function(columnIdentifier)
+    {
+        console.assert(this.columns.has(columnIdentifier));
+        var removedColumn = this.columns.get(columnIdentifier);
+        this.columns.delete(columnIdentifier);
+        this.orderedColumns.splice(this.orderedColumns.indexOf(columnIdentifier), 1);
+
+        var removedOrdinal = removedColumn.get("ordinal");
+        for (var [identifier, column] of this.columns) {
+            var ordinal = column.get("ordinal");
+            if (ordinal > removedOrdinal)
+                column.set("ordinal", ordinal - 1);
+        }
+
+        removedColumn.get("listeners").uninstall(true);
+
+        if (removedColumn.has("disclosure"))
+            delete this.disclosureColumnIdentifier;
+
+        if (removedColumn.has("sort"))
+            delete this._sortColumnCell;
+
+        this._headerTableCellElements.delete(columnIdentifier);
+        this._headerTableRowElement.children[removedOrdinal].remove();
+        this._headerTableColumnGroupElement.children[removedOrdinal].remove();
+        this._dataTableColumnGroupElement.children[removedOrdinal].remove();
+        this._fillerRowElement.children[removedOrdinal].remove();
+
+        this._headerTableColumnGroupElement.span = this.orderedColumns.length;
+
+        for (var child of this.children)
+            child.refresh();
     },
 
     _enumerateChildren: function(rootNode, result, maxLevel)
@@ -1746,7 +1796,7 @@ WebInspector.DataGridNode.prototype = {
         var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
         if (!cell.classList.contains("disclosure"))
             return false;
-        
+
         var left = cell.totalOffsetLeft + this.leftPadding;
         return event.pageX >= left && event.pageX <= left + this.disclosureToggleWidth;
     },
