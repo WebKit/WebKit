@@ -1406,7 +1406,6 @@ set(WebCore_SOURCES
     html/HTMLMarqueeElement.cpp
     html/HTMLMediaElement.cpp
     html/HTMLMediaSession.cpp
-    html/HTMLMediaSource.cpp
     html/HTMLMenuElement.cpp
     html/HTMLMetaElement.cpp
     html/HTMLMeterElement.cpp

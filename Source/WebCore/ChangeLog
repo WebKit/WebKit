@@ -1,3 +1,9 @@
+2014-02-10  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL WebKit2 build fix after r163816.
+
+        * CMakeLists.txt: Remove HTMLMediaSource.cpp
+
 2014-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLTextFormControlElement::setSelectionRange shouldn't use VisiblePosition
