@@ -1,3 +1,16 @@
+2014-02-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Minibrowser: During text search, make navigation through list of matched words circular
+        https://bugs.webkit.org/show_bug.cgi?id=128463
+
+        Reviewed by Carlos Garcia Campos.
+
+        Initialize search options to WEBKIT_FIND_OPTIONS_WRAP_AROUND to make navigation
+        circular.
+
+        * MiniBrowser/gtk/BrowserSearchBar.c:
+        (doSearch):
+
 2014-02-10  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Code cleanup: Remove BUILDING_ON / TARGETING definitions.

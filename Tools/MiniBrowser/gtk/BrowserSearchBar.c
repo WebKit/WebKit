@@ -63,7 +63,7 @@ static void doSearch(BrowserSearchBar *searchBar)
     if (!gtk_entry_get_icon_stock(entry, GTK_ENTRY_ICON_SECONDARY))
         gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_CLEAR);
 
-    WebKitFindOptions options = WEBKIT_FIND_OPTIONS_NONE;
+    WebKitFindOptions options = WEBKIT_FIND_OPTIONS_WRAP_AROUND;
     if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(searchBar->caseCheckButton)))
         options |= WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE;
     if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(searchBar->begginigWordCheckButton)))
