@@ -34,8 +34,8 @@ void HashTable::createTable(VM& vm) const
     for (int i = 0; i < compactSize; ++i)
         entries[i].setKey(0);
     for (int i = 0; values[i].key; ++i) {
-        StringImpl* identifier = Identifier::add(&vm, values[i].key).leakRef();
-        int hashIndex = identifier->existingHash() & compactHashSizeMask;
+        StringImpl& identifier = Identifier::add(&vm, values[i].key).leakRef();
+        int hashIndex = identifier.existingHash() & compactHashSizeMask;
         HashEntry* entry = &entries[hashIndex];
 
         if (entry->key()) {
@@ -47,7 +47,7 @@ void HashTable::createTable(VM& vm) const
             entry = entry->next();
         }
 
-        entry->initialize(identifier, values[i].attributes, values[i].value1, values[i].value2, values[i].intrinsic);
+        entry->initialize(&identifier, values[i].attributes, values[i].value1, values[i].value2, values[i].intrinsic);
     }
     table = entries;
 }

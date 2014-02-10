@@ -88,7 +88,7 @@ struct IdentifierLCharFromUCharTranslator {
     }
 };
 
-PassRefPtr<StringImpl> Identifier::add(VM* vm, const char* c)
+PassRef<StringImpl> Identifier::add(VM* vm, const char* c)
 {
     ASSERT(c);
     ASSERT(c[0]);
@@ -103,15 +103,15 @@ PassRefPtr<StringImpl> Identifier::add(VM* vm, const char* c)
     // The boolean in the pair tells us if that is so.
     RefPtr<StringImpl> addedString = addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
 
-    return addedString.release();
+    return addedString.releaseNonNull();
 }
 
-PassRefPtr<StringImpl> Identifier::add(ExecState* exec, const char* c)
+PassRef<StringImpl> Identifier::add(ExecState* exec, const char* c)
 {
     return add(&exec->vm(), c);
 }
 
-PassRefPtr<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
+PassRef<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
 {
     if (length == 1) {
         UChar c = s[0];
@@ -121,19 +121,19 @@ PassRefPtr<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
     }
     
     if (!length)
-        return StringImpl::empty();
+        return *StringImpl::empty();
     CharBuffer<UChar> buf = { s, static_cast<unsigned>(length) };
     HashSet<StringImpl*>::AddResult addResult = vm->identifierTable->add<CharBuffer<UChar>, IdentifierLCharFromUCharTranslator >(buf);
     
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
-    return addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
+    return addResult.isNewEntry ? adoptRef(**addResult.iterator) : **addResult.iterator;
 }
 
-PassRefPtr<StringImpl> Identifier::addSlowCase(VM* vm, StringImpl* r)
+PassRef<StringImpl> Identifier::addSlowCase(VM* vm, StringImpl* r)
 {
     if (r->isEmptyUnique())
-        return r;
+        return *r;
     ASSERT(!r->isIdentifier());
     // The empty & null strings are static singletons, and static strings are handled
     // in ::add() in the header, so we should never get here with a zero length string.
@@ -144,13 +144,13 @@ PassRefPtr<StringImpl> Identifier::addSlowCase(VM* vm, StringImpl* r)
         if (c <= maxSingleCharacterString)
             r = vm->smallStrings.singleCharacterStringRep(c);
             if (r->isIdentifier())
-                return r;
+                return *r;
     }
 
-    return *vm->identifierTable->add(r).iterator;
+    return **vm->identifierTable->add(r).iterator;
 }
 
-PassRefPtr<StringImpl> Identifier::addSlowCase(ExecState* exec, StringImpl* r)
+PassRef<StringImpl> Identifier::addSlowCase(ExecState* exec, StringImpl* r)
 {
     return addSlowCase(&exec->vm(), r);
 }

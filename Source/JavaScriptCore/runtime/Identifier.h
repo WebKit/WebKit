@@ -95,8 +95,8 @@ namespace JSC {
         static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
 
         // Only to be used with string literals.
-        static PassRefPtr<StringImpl> add(VM*, const char*);
-        JS_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(ExecState*, const char*);
+        static PassRef<StringImpl> add(VM*, const char*);
+        JS_EXPORT_PRIVATE static PassRef<StringImpl> add(ExecState*, const char*);
 
     private:
         String m_string;
@@ -107,31 +107,31 @@ namespace JSC {
         static bool equal(const Identifier& a, const Identifier& b) { return a.m_string.impl() == b.m_string.impl(); }
         static bool equal(const Identifier& a, const LChar* b) { return equal(a.m_string.impl(), b); }
 
-        template <typename T> static PassRefPtr<StringImpl> add(VM*, const T*, int length);
-        static PassRefPtr<StringImpl> add8(VM*, const UChar*, int length);
+        template <typename T> static PassRef<StringImpl> add(VM*, const T*, int length);
+        static PassRef<StringImpl> add8(VM*, const UChar*, int length);
         template <typename T> ALWAYS_INLINE static bool canUseSingleCharacterString(T);
 
-        static PassRefPtr<StringImpl> add(ExecState* exec, StringImpl* r)
+        static PassRef<StringImpl> add(ExecState* exec, StringImpl* r)
         {
 #ifndef NDEBUG
             checkCurrentIdentifierTable(exec);
 #endif
             if (r->isIdentifier())
-                return r;
+                return *r;
             return addSlowCase(exec, r);
         }
-        static PassRefPtr<StringImpl> add(VM* vm, StringImpl* r)
+        static PassRef<StringImpl> add(VM* vm, StringImpl* r)
         {
 #ifndef NDEBUG
             checkCurrentIdentifierTable(vm);
 #endif
             if (r->isIdentifier())
-                return r;
+                return *r;
             return addSlowCase(vm, r);
         }
 
-        JS_EXPORT_PRIVATE static PassRefPtr<StringImpl> addSlowCase(ExecState*, StringImpl* r);
-        JS_EXPORT_PRIVATE static PassRefPtr<StringImpl> addSlowCase(VM*, StringImpl* r);
+        JS_EXPORT_PRIVATE static PassRef<StringImpl> addSlowCase(ExecState*, StringImpl* r);
+        JS_EXPORT_PRIVATE static PassRef<StringImpl> addSlowCase(VM*, StringImpl* r);
 
         JS_EXPORT_PRIVATE static void checkCurrentIdentifierTable(ExecState*);
         JS_EXPORT_PRIVATE static void checkCurrentIdentifierTable(VM*);
@@ -178,7 +178,7 @@ namespace JSC {
     };
 
     template <typename T>
-    PassRefPtr<StringImpl> Identifier::add(VM* vm, const T* s, int length)
+    PassRef<StringImpl> Identifier::add(VM* vm, const T* s, int length)
     {
         if (length == 1) {
             T c = s[0];
@@ -187,13 +187,13 @@ namespace JSC {
         }
         
         if (!length)
-            return StringImpl::empty();
+            return *StringImpl::empty();
         CharBuffer<T> buf = { s, static_cast<unsigned>(length) };
         HashSet<StringImpl*>::AddResult addResult = vm->identifierTable->add<CharBuffer<T>, IdentifierCharBufferTranslator<T>>(buf);
         
         // If the string is newly-translated, then we need to adopt it.
         // The boolean in the pair tells us if that is so.
-        return addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
+        return addResult.isNewEntry ? adoptRef(**addResult.iterator) : **addResult.iterator;
     }
 
     inline bool operator==(const Identifier& a, const Identifier& b)

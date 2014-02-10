@@ -1,3 +1,22 @@
+2014-02-10  Andreas Kling  <akling@apple.com>
+
+        Make the Identifier::add() family return PassRef<StringImpl>.
+        <https://webkit.org/b/128542>
+
+        This knocks one branch off of creating an Identifier from another
+        string source.
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        (JSC::Identifier::add8):
+        (JSC::Identifier::addSlowCase):
+        * runtime/Identifier.h:
+        (JSC::Identifier::add):
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+
 2014-02-09  Mark Lam  <mark.lam@apple.com>
 
         Remove unnecessary spinLock in JSLock.
