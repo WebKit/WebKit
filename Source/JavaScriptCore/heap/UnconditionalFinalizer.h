@@ -35,7 +35,8 @@ namespace JSC {
 // associated with each CodeBlock.
 
 class UnconditionalFinalizer : public ListableHandler<UnconditionalFinalizer> {
-public:    
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     virtual void finalizeUnconditionally() = 0;
 
 protected:

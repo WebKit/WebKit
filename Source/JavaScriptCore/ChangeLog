@@ -1,3 +1,10 @@
+2014-02-10  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Windows build.
+
+        * heap/UnconditionalFinalizer.h:
+        * runtime/SymbolTable.h:
+
 2014-02-10  Andreas Kling  <akling@apple.com>
 
         Make the Identifier::add() family return PassRef<StringImpl>.
