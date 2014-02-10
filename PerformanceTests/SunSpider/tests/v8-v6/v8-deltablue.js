@@ -669,6 +669,8 @@ Planner.prototype.extractPlanFromConstraints = function (constraints) {
   return this.makePlan(sources);
 }
 
+noInline(Planner.prototype.extractPlanFromConstraints);
+
 /**
  * Recompute the walkabout strengths and stay flags of all variables
  * downstream of the given constraint and recompute the actual

@@ -341,7 +341,7 @@ static void compileStub(
     
     LinkBuffer patchBuffer(*vm, &jit, codeBlock);
     exit.m_code = FINALIZE_CODE_IF(
-        shouldShowDisassembly() || Options::verboseOSR(),
+        shouldShowDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
         patchBuffer,
         ("FTL OSR exit #%u (%s, %s) from %s, with operands = %s, and record = %s",
             exitID, toCString(exit.m_codeOrigin).data(),

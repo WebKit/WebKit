@@ -1,5 +1,31 @@
 2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
+        <1/100 probability FTL failure: v8-v6/v8-deltablue.js.ftl-eager: Exception: TypeError: undefined is not an object (evaluating 'c.isInput')
+        https://bugs.webkit.org/show_bug.cgi?id=128278
+
+        Reviewed by Mark Hahnenberg.
+        
+        Fix another FTL flake due to bytecode liveness corner cases. Hopefully it's the last
+        one.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock): Make sure that inside a constructor, the 'this' result is always set. This makes it easier to unify the treatment of 'this' for OSR exit: we just say that it's always live.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode): Assume that 'this' is live. We were already sort of doing this for calls because the callsite would claim it to be live. But we didn't do it for constructors. It's true that *at the callsite* 'this' won't be live, but inside the inlined constructor, it almost certainly will be.
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run): I just noticed this benign bug. We should only return 'true' if we actually injected checks.
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub): Make it easier to just dump disassembly for FTL OSR exits.
+        * runtime/Options.h: Ditto.
+        * tests/stress/inlined-constructor-this-liveness.js: Added.
+        (Foo):
+        (foo):
+        * tests/stress/inlined-function-this-liveness.js: Added.
+        (bar):
+        (foo):
+
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
+
         Actually register those DFG::Safepoints
         https://bugs.webkit.org/show_bug.cgi?id=128521
 

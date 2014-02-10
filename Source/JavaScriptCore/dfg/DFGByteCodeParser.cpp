@@ -1956,6 +1956,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // Initialize all locals to undefined.
             for (int i = 0; i < m_inlineStackTop->m_codeBlock->m_numVars; ++i)
                 set(virtualRegisterForLocal(i), constantUndefined(), ImmediateSet);
+            if (m_inlineStackTop->m_codeBlock->specializationKind() == CodeForConstruct)
+                set(virtualRegisterForArgument(0), constantUndefined(), ImmediateSet);
             NEXT_OPCODE(op_enter);
             
         case op_touch_entry:

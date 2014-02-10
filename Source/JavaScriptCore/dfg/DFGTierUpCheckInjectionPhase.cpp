@@ -52,7 +52,7 @@ public:
             return false;
         
         if (m_graph.m_profiledBlock->m_didFailFTLCompilation)
-            return true;
+            return false;
         
 #if ENABLE(FTL_JIT)
         FTL::CapabilityLevel level = FTL::canCompile(m_graph);

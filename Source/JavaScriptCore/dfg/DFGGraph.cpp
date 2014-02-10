@@ -711,8 +711,9 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
 
         // Arguments are always live. This would be redundant if it wasn't for our
         // op_call_varargs inlining.
+        // FIXME: 'this' might not be live, but we don't have a way of knowing.
+        // https://bugs.webkit.org/show_bug.cgi?id=128519
         if (reg.isArgument()
-            && reg.toArgument()
             && static_cast<size_t>(reg.toArgument()) < inlineCallFrame->arguments.size())
             return true;
         
