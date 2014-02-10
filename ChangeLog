@@ -1,3 +1,16 @@
+2014-02-10  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        Add the CSS_SHAPE_INSIDE to CMake feature list
+        https://bugs.webkit.org/show_bug.cgi?id=128530
+
+        Reviewed by Gyuyoung Kim.
+
+        CSS_SHAPE_INSIDE flag was added in r163333,
+        this patch is adding this flag to CMake feature list.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-02-09  Carlos Garnacho  <carlosg@gnome.org>
 
         [GTK] Enable touch features
