@@ -73,7 +73,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 - (void)handleDisplayLink:(CADisplayLink *)sender
 {
-    ASSERT(WebThreadIsCurrent());
+    ASSERT(isMainThread());
     m_monitor->displayLinkFired(sender.timestamp);
 }
 
