@@ -105,7 +105,9 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection text
 
     g_signal_handler_disconnect(m_popup->platformMenu(), unmapHandler);
 
-    ASSERT(m_client);
+    if (!m_client)
+        return;
+
     m_client->valueChangedForPopupMenu(this, m_activeItem);
 }
 
