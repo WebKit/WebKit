@@ -1,5 +1,21 @@
 2014-02-10  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        [CSSRegions] Add tests for scrolling composited content
+        https://bugs.webkit.org/show_bug.cgi?id=128527
+
+        Reviewed by Andrei Bucur.
+
+        Add tests take simulate scrolling in the context of regions and composited content:
+        1. scroll an empty region that is composited
+        2. scroll a region that displays composited content
+
+        * compositing/regions/composited-content-fixed-region-scrolled-expected.txt: Added.
+        * compositing/regions/composited-content-fixed-region-scrolled.html: Added.
+        * compositing/regions/fixed-empty-region-scrolled-expected.txt: Added.
+        * compositing/regions/fixed-empty-region-scrolled.html: Added.
+
+2014-02-10  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [CSS Regions] Fix Propagating Border and Padding for Inline Replaced Elements Flowed in Regions
         https://bugs.webkit.org/show_bug.cgi?id=123143
 

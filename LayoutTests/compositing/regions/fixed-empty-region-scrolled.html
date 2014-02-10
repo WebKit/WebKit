@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body { height: 2000px; }
+            .transformed { -webkit-transform: scale3d(1, 1, 1); }
+            #red { position: absolute; width: 100px; height: 100px; top: 200px; left: 100px; background-color: red; }
+            #region { -webkit-flow-from: flow; position: fixed; width: 100px; height: 100px; top: 100px; left: 100px; background-color: green; }
+        </style>
+    </head>
+    <body>
+        <p>Test that a fixed positioned empty region is painted properly when scrolled.</p>
+        <p>On success you should see PASS and green below.</p>
+        <div id="result"></div>
+        <div id="red"></div>
+        <div id="region" class="transformed"></div>
+        <script>
+            function scrollFixed() {
+                window.scrollTo(0, 100);
+                var hitElement = document.elementFromPoint(150, 150);
+                if (hitElement == document.getElementById("region"))
+                    document.getElementById("result").innerHTML = "PASS";
+                else
+                    document.getElementById("result").innerHTML = "FAIL";
+                if (window.testRunner)
+                    window.testRunner.dumpAsText();
+            }
+
+            window.addEventListener('load', scrollFixed, false);
+        </script>
+    </body>
+</html>

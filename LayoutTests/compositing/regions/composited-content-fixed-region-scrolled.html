@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body { height: 2000px; }
+            .transformed { -webkit-transform: scale3d(1, 1, 1); }
+            #red { position: absolute; width: 100px; height: 100px; top: 200px; left: 100px; background-color: red; }
+            #content { -webkit-flow-into: flow; width: 100px; height: 100px; background-color: green; }
+            #region { -webkit-flow-from: flow; position: fixed; top: 100px; left: 100px; }
+        </style>
+    </head>
+    <body>
+        <p>Test that a fixed positioned region with composited content displayed inside is painted properly when scrolled.</p>
+        <p>On success you should see PASS and green below.</p>
+        <div id="result"></div>
+        <div id="red"></div>
+        <div id="content" class="transformed"></div>
+        <div id="region"></div>
+        <script>
+            function scrollFixed() {
+                window.scrollTo(0, 100);
+                var hitElement = document.elementFromPoint(150, 150);
+                if (hitElement == document.getElementById("content"))
+                    document.getElementById("result").innerHTML = "PASS";
+                else
+                    document.getElementById("result").innerHTML = "FAIL";
+                if (window.testRunner)
+                    window.testRunner.dumpAsText();
+            }
+
+            window.addEventListener('load', scrollFixed, false);
+        </script>
+    </body>
+</html>
