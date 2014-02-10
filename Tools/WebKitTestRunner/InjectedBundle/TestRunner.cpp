@@ -485,19 +485,12 @@ void TestRunner::setDefersLoading(bool shouldDeferLoading)
 
 void TestRunner::setPageVisibility(JSStringRef state)
 {
-    WKPageVisibilityState visibilityState = kWKPageVisibilityStateVisible;
-
-    if (JSStringIsEqualToUTF8CString(state, "hidden"))
-        visibilityState = kWKPageVisibilityStateHidden;
-    else if (JSStringIsEqualToUTF8CString(state, "prerender"))
-        visibilityState = kWKPageVisibilityStatePrerender;
-
-    InjectedBundle::shared().setVisibilityState(visibilityState, false);
+    InjectedBundle::shared().setHidden(JSStringIsEqualToUTF8CString(state, "hidden") || JSStringIsEqualToUTF8CString(state, "prerender"));
 }
 
 void TestRunner::resetPageVisibility()
 {
-    InjectedBundle::shared().setVisibilityState(kWKPageVisibilityStateVisible, true);
+    InjectedBundle::shared().setHidden(false);
 }
 
 typedef WTF::HashMap<unsigned, JSValueRef> CallbackMap;

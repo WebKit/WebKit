@@ -1,3 +1,26 @@
+2014-02-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove WKPageSetVisibilityState
+        https://bugs.webkit.org/show_bug.cgi?id=128551
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::initializeView):
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::runTest):
+            - visibilityState of offs-creen WKView is automatically prerender.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::setHidden):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPageVisibility):
+        (WTR::TestRunner::resetPageVisibility):
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+            - removed calls to WKPageSetVisibilityState.
+
 2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add GUniqueOutPtr and use it instead of GOwnPtr

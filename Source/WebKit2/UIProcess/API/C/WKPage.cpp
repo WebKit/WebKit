@@ -436,12 +436,6 @@ void WKPageListenForLayoutMilestones(WKPageRef pageRef, WKLayoutMilestones miles
     toImpl(pageRef)->listenForLayoutMilestones(toLayoutMilestones(milestones));
 }
 
-void WKPageSetVisibilityState(WKPageRef pageRef, WKPageVisibilityState state, bool)
-{
-    if (state == kWKPageVisibilityStatePrerender)
-        toImpl(pageRef)->setVisibilityStatePrerender();
-}
-
 bool WKPageHasHorizontalScrollbar(WKPageRef pageRef)
 {
     return toImpl(pageRef)->hasHorizontalScrollbar();

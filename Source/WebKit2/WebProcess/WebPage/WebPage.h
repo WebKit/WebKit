@@ -638,7 +638,6 @@ public:
     void numWheelEventHandlersChanged(unsigned);
     void recomputeShortCircuitHorizontalWheelEventsState();
 
-    void setVisibilityStatePrerender();
     void updateVisibilityState(bool isInitialState = false);
 
 #if PLATFORM(IOS)

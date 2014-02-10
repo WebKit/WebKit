@@ -1743,13 +1743,6 @@ void WebPageProxy::listenForLayoutMilestones(WebCore::LayoutMilestones milestone
     m_process->send(Messages::WebPage::ListenForLayoutMilestones(milestones), m_pageID);
 }
 
-void WebPageProxy::setVisibilityStatePrerender()
-{
-    if (!isValid())
-        return;
-    m_process->send(Messages::WebPage::SetVisibilityStatePrerender(), m_pageID);
-}
-
 void WebPageProxy::setSuppressScrollbarAnimations(bool suppressAnimations)
 {
     if (!isValid())

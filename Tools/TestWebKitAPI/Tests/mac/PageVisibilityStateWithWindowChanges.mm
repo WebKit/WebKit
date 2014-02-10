@@ -77,14 +77,13 @@ public:
     virtual void initializeView(WKView *) override;
     virtual void teardownView(WebView *) override;
     virtual void teardownView(WKView *) override;
-    virtual void setPrerender(WebView *);
-    virtual void setPrerender(WKView *);
 };
 
 void PageVisibilityStateWithWindowChanges::initializeView(WebView *webView)
 {
     // Released in teardownView.
     webView.UIDelegate = [[PageVisibilityStateDelegate alloc] init];
+    [webView _setVisibilityState:WebPageVisibilityStatePrerender isInitialState:YES];
 }
 
 void PageVisibilityStateWithWindowChanges::teardownView(WebView *webView)
@@ -92,11 +91,6 @@ void PageVisibilityStateWithWindowChanges::teardownView(WebView *webView)
     id uiDelegate = webView.UIDelegate;
     webView.UIDelegate = nil;
     [uiDelegate release];
-}
-
-void PageVisibilityStateWithWindowChanges::setPrerender(WebView *webView)
-{
-    [webView _setVisibilityState:WebPageVisibilityStatePrerender isInitialState:YES];
 }
 
 void PageVisibilityStateWithWindowChanges::initializeView(WKView *wkView)
@@ -115,11 +109,6 @@ void PageVisibilityStateWithWindowChanges::teardownView(WKView *wkView)
     // We do not need to teardown the WKPageUIClient.
 }
 
-void PageVisibilityStateWithWindowChanges::setPrerender(WKView *wkView)
-{
-    WKPageSetVisibilityState(wkView.pageRef, kWKPageVisibilityStatePrerender, true);
-}
-
 
 template <typename View>
 void PageVisibilityStateWithWindowChanges::runTest(View view)
@@ -127,11 +116,6 @@ void PageVisibilityStateWithWindowChanges::runTest(View view)
     // This WebView does not have a window and superview. PageVisibility should be "hidden".
     EXPECT_NULL([view window]);
     EXPECT_NULL([view superview]);
-    EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
-    EXPECT_JS_EQ(view, "document.hidden", "true");
-
-    // Mark the page as being a "prerender".
-    setPrerender(view);
     EXPECT_JS_EQ(view, "document.visibilityState", "prerender");
     EXPECT_JS_EQ(view, "document.hidden", "true");
 

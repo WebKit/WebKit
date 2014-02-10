@@ -312,8 +312,6 @@ messages -> WebPage LegacyReceiver {
     HandleAlternativeTextUIResult(String result)
 #endif
 
-    SetVisibilityStatePrerender()
-
 #if PLATFORM(IOS)
     WillStartUserTriggeredZooming();
     DidFinishScrolling(WebCore::FloatPoint contentOffset);

@@ -41,6 +41,8 @@ using namespace WebKit;
 extern "C" {
 WK_EXPORT bool WKArrayIsMutable(WKArrayRef array);
 
+WK_EXPORT void WKPageSetVisibilityState(WKPageRef, WKPageVisibilityState, bool);
+
 WK_EXPORT bool WKDictionaryAddItem(WKMutableDictionaryRef dictionary, WKStringRef key, WKTypeRef item);
 WK_EXPORT bool WKDictionaryIsMutable(WKDictionaryRef dictionary);
 WK_EXPORT void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionary, WKStringRef key);
@@ -53,6 +55,10 @@ WK_EXPORT CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphi
 bool WKArrayIsMutable(WKArrayRef)
 {
     return false;
+}
+
+void WKPageSetVisibilityState(WKPageRef, WKPageVisibilityState, bool)
+{
 }
 
 bool WKDictionaryIsMutable(WKDictionaryRef dictionaryRef)
@@ -69,7 +75,6 @@ void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionaryRef, WKStringRef ke
 {
     toImpl(dictionaryRef)->remove(toImpl(keyRef)->string());
 }
-
 
 #if PLATFORM(MAC)
 CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphicsContext)

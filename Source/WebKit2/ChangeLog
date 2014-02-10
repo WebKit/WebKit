@@ -1,3 +1,34 @@
+2014-02-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove WKPageSetVisibilityState
+        https://bugs.webkit.org/show_bug.cgi?id=128551
+
+        Reviewed by Anders Carlsson.
+
+        Made prerender state automatic. We should move this further
+        up into WebCore, but this requires refactoring for the Page
+        construction order.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKPageSetVisibilityState):
+            - deprecated.
+        * UIProcess/API/C/WKPage.cpp:
+            - removed WKPageSetVisibilityState.
+        * UIProcess/API/C/WKPage.h:
+            - removed WKPageSetVisibilityState.
+        * UIProcess/WebPageProxy.cpp:
+            - removed setVisibilityStatePrerender.
+        * UIProcess/WebPageProxy.h:
+            - removed setVisibilityStatePrerender.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+            - removed setVisibilityStatePrerender.
+            - When creating a Page, automatically set the prerender state.
+        * WebProcess/WebPage/WebPage.h:
+            - removed setVisibilityStatePrerender.
+        * WebProcess/WebPage/WebPage.messages.in:
+            - removed SetVisibilityStatePrerender.
+
 2014-02-10  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/object-store-remove-values.html fails

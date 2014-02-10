@@ -384,7 +384,11 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     setMemoryCacheMessagesEnabled(parameters.areMemoryCacheClientCallsEnabled);
 
+    // If the page is created off-screen, its visibilityState should be prerender.
     m_page->setViewState(m_viewState);
+    if (!isVisible())
+        m_page->setIsPrerender();
+
     updateIsInWindow(true);
 
     setMinimumLayoutSize(parameters.minimumLayoutSize);
@@ -3718,12 +3722,6 @@ FrameView* WebPage::mainFrameView() const
         return frame->view();
     
     return 0;
-}
-
-void WebPage::setVisibilityStatePrerender()
-{
-    if (m_page)
-        m_page->setIsPrerender();
 }
 
 void WebPage::setScrollingPerformanceLoggingEnabled(bool enabled)
