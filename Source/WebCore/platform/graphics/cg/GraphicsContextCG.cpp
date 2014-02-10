@@ -127,7 +127,9 @@ void GraphicsContext::platformInit(CGContextRef cgContext, bool shouldUseContext
     if (cgContext) {
         CGAffineTransform baseDeviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(cgContext);
         ASSERT(fabs(baseDeviceMatrix.a) == fabs(baseDeviceMatrix.d));
-#if !PLATFORM(WIN)
+#if PLATFORM(WIN)
+        m_pixelSnappingFactor = 1;
+#else
         m_pixelSnappingFactor = baseDeviceMatrix.a;
 #endif
 #if PLATFORM(IOS)

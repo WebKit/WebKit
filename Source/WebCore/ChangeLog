@@ -1,3 +1,10 @@
+2014-02-10  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed test fix.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp: m_pixelSnappingFactor was not set to 1.
+        (WebCore::GraphicsContext::platformInit):
+
 2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add GUniqueOutPtr and use it instead of GOwnPtr
