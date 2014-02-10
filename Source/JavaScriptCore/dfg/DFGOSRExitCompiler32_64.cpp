@@ -29,6 +29,7 @@
 
 #include "DFGOSRExitCompiler.h"
 
+#include "DFGOperations.h"
 #include "DFGOSRExitCompilerCommon.h"
 #include "DFGSpeculativeJIT.h"
 #include "Operations.h"

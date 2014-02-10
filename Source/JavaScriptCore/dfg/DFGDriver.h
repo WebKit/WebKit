@@ -27,6 +27,7 @@
 #define DFGDriver_h
 
 #include "CallFrame.h"
+#include "DFGCompilationMode.h"
 #include "DFGPlan.h"
 #include <wtf/Platform.h>
 

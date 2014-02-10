@@ -30,6 +30,7 @@
 #include "DFGBackwardsPropagationPhase.h"
 
 #include "DFGBasicBlockInlines.h"
+#include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "Operations.h"
 

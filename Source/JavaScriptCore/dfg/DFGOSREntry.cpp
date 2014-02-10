@@ -30,6 +30,7 @@
 #include "DFGOSREntry.h"
 
 #include "CallFrame.h"
+#include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "DFGNode.h"
 #include "JIT.h"

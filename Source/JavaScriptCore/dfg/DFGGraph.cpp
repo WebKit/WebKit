@@ -30,9 +30,11 @@
 #include "DFGGraph.h"
 
 #include "BytecodeLivenessAnalysisInlines.h"
+#include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGClobberSet.h"
 #include "DFGJITCode.h"
+#include "DFGVariableAccessDataDump.h"
 #include "FullBytecodeLiveness.h"
 #include "FunctionExecutableDump.h"
 #include "JIT.h"

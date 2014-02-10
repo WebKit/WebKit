@@ -30,6 +30,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeOrigin.h"
 #include "DFGCommon.h"
 #include "MacroAssembler.h"
 

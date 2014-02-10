@@ -30,6 +30,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGCommon.h"
 #include "DFGMinifiedID.h"
 #include "DataFormat.h"
 #include "MacroAssembler.h"

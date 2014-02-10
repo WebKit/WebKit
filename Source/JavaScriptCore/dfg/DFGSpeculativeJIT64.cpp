@@ -27,12 +27,14 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGSpeculativeJIT.h"
 
 #include "Arguments.h"
 #include "ArrayPrototype.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGOperations.h"
+#include "DFGSlowPathGenerator.h"
 #include "Debugger.h"
 #include "JSCJSValueInlines.h"
 #include "ObjectPrototype.h"

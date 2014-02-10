@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGFlushedAt.h"
 #include "DFGVariableAccessData.h"
 
 namespace JSC { namespace DFG {

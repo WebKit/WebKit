@@ -28,14 +28,17 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGSpeculativeJIT.h"
 
 #include "ArrayPrototype.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGOperations.h"
+#include "DFGSlowPathGenerator.h"
 #include "Debugger.h"
 #include "JSActivation.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

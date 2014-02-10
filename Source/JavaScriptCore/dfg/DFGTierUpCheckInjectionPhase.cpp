@@ -29,6 +29,7 @@
 
 #include "DFGTierUpCheckInjectionPhase.h"
 
+#include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "FTLCapabilities.h"

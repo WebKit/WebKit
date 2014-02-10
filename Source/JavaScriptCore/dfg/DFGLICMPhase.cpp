@@ -35,9 +35,11 @@
 #include "DFGClobberSet.h"
 #include "DFGClobberize.h"
 #include "DFGEdgeDominates.h"
+#include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "DFGSafeToExecute.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

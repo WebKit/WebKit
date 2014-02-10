@@ -31,6 +31,7 @@
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGBlockInsertionSet.h"
+#include "DFGGraph.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
 #include "DFGPhase.h"
 #include "Operations.h"

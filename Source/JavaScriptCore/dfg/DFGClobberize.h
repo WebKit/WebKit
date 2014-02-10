@@ -32,6 +32,7 @@
 
 #include "DFGAbstractHeap.h"
 #include "DFGEdgeUsesStructure.h"
+#include "DFGGraph.h"
 
 namespace JSC { namespace DFG {
 

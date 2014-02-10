@@ -30,6 +30,7 @@
 #include "DFGJITFinalizer.h"
 
 #include "CodeBlock.h"
+#include "DFGCommon.h"
 #include "DFGPlan.h"
 #include "Operations.h"
 

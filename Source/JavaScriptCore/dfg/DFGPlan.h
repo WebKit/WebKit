@@ -30,6 +30,7 @@
 
 #include "CompilationResult.h"
 #include "DFGCompilationKey.h"
+#include "DFGCompilationMode.h"
 #include "DFGDesiredIdentifiers.h"
 #include "DFGDesiredStructureChains.h"
 #include "DFGDesiredTransitions.h"
@@ -39,6 +40,7 @@
 #include "DFGFinalizer.h"
 #include "DeferredCompilationCallback.h"
 #include "Operands.h"
+#include "ProfilerCompilation.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {

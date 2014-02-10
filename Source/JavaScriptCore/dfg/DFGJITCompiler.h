@@ -29,12 +29,19 @@
 #if ENABLE(DFG_JIT)
 
 #include "CCallHelpers.h"
+#include "CodeBlock.h"
 #include "DFGDisassembler.h"
 #include "DFGGraph.h"
 #include "DFGInlineCacheWrapper.h"
 #include "DFGJITCode.h"
 #include "DFGOSRExitCompilationInfo.h"
 #include "DFGRegisterBank.h"
+#include "FPRInfo.h"
+#include "GPRInfo.h"
+#include "JITCode.h"
+#include "JITInlineCacheGenerator.h"
+#include "LinkBuffer.h"
+#include "MacroAssembler.h"
 #include "TempRegisterSet.h"
 
 namespace JSC {

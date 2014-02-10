@@ -30,8 +30,12 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGArrayMode.h"
+#include "DFGCommon.h"
+#include "DFGOSRExitJumpPlaceholder.h"
 #include "DFGOperations.h"
 #include "DFGSlowPathGenerator.h"
+#include "DFGSpeculativeJIT.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {

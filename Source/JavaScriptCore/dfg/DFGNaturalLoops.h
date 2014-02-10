@@ -32,6 +32,7 @@
 
 #include "DFGAnalysis.h"
 #include "DFGBasicBlock.h"
+#include "DFGCommon.h"
 
 namespace JSC { namespace DFG {
 

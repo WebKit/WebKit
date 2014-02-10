@@ -30,6 +30,7 @@
 #include "DFGNode.h"
 
 #include "DFGGraph.h"
+#include "DFGNodeAllocator.h"
 #include "Operations.h"
 
 namespace JSC { namespace DFG {

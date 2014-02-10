@@ -31,12 +31,18 @@
 #if ENABLE(DFG_JIT)
 
 #include "AssemblyHelpers.h"
+#include "CodeBlock.h"
 #include "DFGArgumentPosition.h"
+#include "DFGBasicBlock.h"
 #include "DFGDominators.h"
 #include "DFGLongLivedState.h"
 #include "DFGNaturalLoops.h"
+#include "DFGNode.h"
+#include "DFGNodeAllocator.h"
 #include "DFGPlan.h"
 #include "DFGScannable.h"
+#include "DFGVariadicFunction.h"
+#include "InlineCallFrameSet.h"
 #include "JSStack.h"
 #include "MethodOfGettingAValueProfile.h"
 #include <wtf/BitVector.h>

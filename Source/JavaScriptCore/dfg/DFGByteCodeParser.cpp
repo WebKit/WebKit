@@ -31,7 +31,9 @@
 
 #include "ArrayConstructor.h"
 #include "CallLinkStatus.h"
+#include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
+#include "DFGArrayMode.h"
 #include "DFGCapabilities.h"
 #include "DFGJITCode.h"
 #include "GetByIdStatus.h"

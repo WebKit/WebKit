@@ -29,6 +29,7 @@
 
 #include "DFGOSRExitJumpPlaceholder.h"
 
+#include "DFGJITCompiler.h"
 #include "DFGSpeculativeJIT.h"
 #include "Operations.h"
 

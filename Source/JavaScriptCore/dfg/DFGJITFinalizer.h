@@ -33,6 +33,7 @@
 #include "DFGFinalizer.h"
 #include "DFGJITCode.h"
 #include "LinkBuffer.h"
+#include "MacroAssembler.h"
 
 namespace JSC { namespace DFG {
 

@@ -29,6 +29,7 @@
 
 #include "DFGWorklist.h"
 
+#include "CodeBlock.h"
 #include "DeferGC.h"
 #include "DFGLongLivedState.h"
 #include "DFGSafepoint.h"

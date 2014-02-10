@@ -1,9 +1,8 @@
-2014-02-10  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
-        Remove extra includes from DFG
-        https://bugs.webkit.org/show_bug.cgi?id=126983
+        Unreviewed, roll out http://trac.webkit.org/changeset/163796
 
-        Reviewed by Andreas Kling.
+        The change was not justified in any way and it has a net negative effect on the code.
 
         * dfg/DFGAbstractInterpreter.h:
         * dfg/DFGAbstractValue.h:

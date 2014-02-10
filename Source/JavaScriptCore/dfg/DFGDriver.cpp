@@ -31,10 +31,13 @@
 
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
+#include "DFGPlan.h"
 #include "DFGThunks.h"
 #include "DFGWorklist.h"
 #include "Debugger.h"
+#include "JITCode.h"
 #include "Operations.h"
+#include "Options.h"
 #include "SamplingTool.h"
 #include <wtf/Atomics.h>
 
