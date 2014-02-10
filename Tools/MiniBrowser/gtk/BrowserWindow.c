@@ -346,7 +346,7 @@ static gboolean webViewLeaveFullScreen(WebKitWebView *webView, BrowserWindow *wi
 
 static GtkWidget *webViewCreate(WebKitWebView *webView, BrowserWindow *window)
 {
-    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(webkit_web_view_get_context(webView)));
+    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(webView));
     webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
 
     GtkWidget *newWindow = browser_window_new(newWebView, GTK_WINDOW(window));

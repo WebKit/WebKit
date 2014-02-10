@@ -1,3 +1,31 @@
+2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to create a webview related to another one
+        https://bugs.webkit.org/show_bug.cgi?id=128498
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add webkit_web_view_new_with_related_view() to create a new
+        WebView sharing the same web process as the given one.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextCreatePageForWebView): Use the given related
+        WebView to pass a related WebPageProxy to webkitWebViewBaseCreateWebPage().
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Pass the related web view to webkitWebContextCreatePageForWebView().
+        (webkitWebViewSetProperty):
+        (webkit_web_view_class_init): Add related-view construct-only property.
+        (webkit_web_view_new_with_related_view): New public method to
+        create a web view with a related one.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreate): Pass nullptr as related page to webkitWebViewBaseCreateWebPage().
+        (webkitWebViewBaseCreateWebPage): Use the given related
+        WebPageProxy to initialize the web page configuration.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+
 2014-02-10  Lukasz Bialek  <l.bialek@samsung.com>
 
         [EFL] Spelling unit tests should use ecore_main_loop_iterate()

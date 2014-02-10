@@ -266,6 +266,9 @@ WEBKIT_API GtkWidget *
 webkit_web_view_new_with_context                     (WebKitWebContext          *context);
 
 WEBKIT_API GtkWidget *
+webkit_web_view_new_with_related_view                (WebKitWebView             *web_view);
+
+WEBKIT_API GtkWidget *
 webkit_web_view_new_with_group                       (WebKitWebViewGroup        *group);
 
 WEBKIT_API WebKitWebContext *

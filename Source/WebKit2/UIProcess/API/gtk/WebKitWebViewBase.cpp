@@ -939,7 +939,7 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 WebKitWebViewBase* webkitWebViewBaseCreate(WebContext* context, WebPageGroup* pageGroup)
 {
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, NULL));
-    webkitWebViewBaseCreateWebPage(webkitWebViewBase, context, pageGroup);
+    webkitWebViewBaseCreateWebPage(webkitWebViewBase, context, pageGroup, nullptr);
     return webkitWebViewBase;
 }
 
@@ -965,12 +965,13 @@ void webkitWebViewBaseUpdatePreferences(WebKitWebViewBase* webkitWebViewBase)
     priv->pageProxy->pageGroup().preferences().setAcceleratedCompositingEnabled(false);
 }
 
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebContext* context, WebPageGroup* pageGroup)
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebContext* context, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
     WebPageConfiguration webPageConfiguration;
     webPageConfiguration.pageGroup = pageGroup;
+    webPageConfiguration.relatedPage = relatedPage;
     priv->pageProxy = context->createWebPage(*priv->pageClient, std::move(webPageConfiguration));
     priv->pageProxy->initializeWebPage();
 

@@ -1,3 +1,20 @@
+2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to create a webview related to another one
+        https://bugs.webkit.org/show_bug.cgi?id=128498
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewCreate): Use webkit_web_view_new_with_related_view() when
+        creating a new web view for window.open().
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestMultiprocess.cpp:
+        (testMultiprocessWebViewCreateReadyClose): Add test case to check
+        that window.open() works when creating the new WebView related to
+        the existing one, and that no new web process is spawned when
+        using webkit_web_view_new_with_related_view().
+        (beforeAll):
+
 2014-02-10  Eva Balazsfalvi  <balazsfalvi.eva@stud.u-szeged.hu>
 
         If not running on Mac, build-webkit should not print Safari related output
