@@ -1,3 +1,10 @@
+2014-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Flaky Test: animations/play-state-suspend.html
+        https://bugs.webkit.org/show_bug.cgi?id=50959
+
+        * platform/mac/TestExpectations: Marked it as such.
+
 2014-02-10  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/object-store-remove-values.html fails
