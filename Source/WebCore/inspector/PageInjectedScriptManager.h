@@ -26,6 +26,8 @@
 #ifndef PageInjectedScriptManager_h
 #define PageInjectedScriptManager_h
 
+#if ENABLE(INSPECTOR)
+
 #include "CommandLineAPIHost.h"
 #include <inspector/InjectedScriptManager.h>
 #include <wtf/RefPtr.h>
@@ -54,5 +56,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(PageInjectedScriptManager_h)

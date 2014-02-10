@@ -1,3 +1,16 @@
+2014-02-10  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Fix EFL build with INSPECTOR disabled
+        https://bugs.webkit.org/show_bug.cgi?id=125064
+
+        Reviewed by Csaba Osztrogonác.
+
+        * bindings/js/PageScriptDebugServer.cpp:
+        * bindings/js/PageScriptDebugServer.h:
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        * bindings/js/WorkerScriptDebugServer.h:
+        * inspector/PageInjectedScriptManager.h:
+
 2014-02-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix a few mistakes that landed with r163749.

@@ -31,6 +31,8 @@
 #ifndef WorkerScriptDebugServer_h
 #define WorkerScriptDebugServer_h
 
+#if ENABLE(INSPECTOR)
+
 #include <inspector/ScriptDebugServer.h>
 
 namespace WebCore {
@@ -64,5 +66,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)
 
 #endif // WorkerScriptDebugServer_h

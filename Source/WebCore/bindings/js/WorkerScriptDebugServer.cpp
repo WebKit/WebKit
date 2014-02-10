@@ -32,6 +32,8 @@
 #include "config.h"
 #include "WorkerScriptDebugServer.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "JSDOMBinding.h"
 #include "Timer.h"
 #include "WorkerDebuggerAgent.h"
@@ -109,3 +111,5 @@ void WorkerScriptDebugServer::interruptAndRunTask(PassOwnPtr<ScriptDebugServer::
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

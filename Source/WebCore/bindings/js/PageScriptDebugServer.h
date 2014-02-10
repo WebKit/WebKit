@@ -31,6 +31,8 @@
 #ifndef PageScriptDebugServer_h
 #define PageScriptDebugServer_h
 
+#if ENABLE(INSPECTOR)
+
 #include <inspector/ScriptDebugServer.h>
 #include <wtf/Forward.h>
 
@@ -78,5 +80,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)
 
 #endif // PageScriptDebugServer_h

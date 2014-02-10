@@ -30,6 +30,8 @@
 #ifndef InjectedScriptManager_h
 #define InjectedScriptManager_h
 
+#if ENABLE(INSPECTOR)
+
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorEnvironment.h"
@@ -81,5 +83,7 @@ private:
 };
 
 } // namespace Inspector
+
+#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InjectedScriptManager_h)

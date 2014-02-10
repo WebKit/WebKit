@@ -32,6 +32,8 @@
 #include "config.h"
 #include "PageScriptDebugServer.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "Document.h"
 #include "EventLoop.h"
 #include "FrameView.h"
@@ -271,3 +273,5 @@ void PageScriptDebugServer::setJavaScriptPaused(FrameView* view, bool paused)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)
