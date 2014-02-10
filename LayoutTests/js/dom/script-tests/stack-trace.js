@@ -7,21 +7,74 @@ description(
 'This test checks stack trace corectness in special cases.'
 );
 
+function stackTraceLineFor(stackTrace, frameIndex) {
+    var i = frameIndex;
+    var indexOfAt = stackTrace[i].indexOf('@')
+    var indexOfLastSlash = stackTrace[i].lastIndexOf('/');
+    if (indexOfLastSlash == -1)
+        indexOfLastSlash = indexOfAt
+    var functionName = stackTrace[i].substring(0, indexOfAt);
+    var fileName = stackTrace[i].substring(indexOfLastSlash + 1);
+    return functionName + " at " + fileName;
+}
+
 function printStack(stackTrace) {
     debug("--> Stack Trace:")
     stackTrace = stackTrace.split("\n");
     var length = Math.min(stackTrace.length, 100);
-    for (var i = 0; i < length; i++) {
-        var indexOfAt = stackTrace[i].indexOf('@')
-        var indexOfLastSlash = stackTrace[i].lastIndexOf('/');
-        if (indexOfLastSlash == -1)
-            indexOfLastSlash = indexOfAt
-        var functionName = stackTrace[i].substring(0, indexOfAt);
-        var fileName = stackTrace[i].substring(indexOfLastSlash + 1);
-        debug("    " + i + "   " + functionName + " at " + fileName);
-    }
+    for (var i = 0; i < length; i++)
+        debug("    " + i + "   " + stackTraceLineFor(stackTrace, i));
     debug('');
 }
+
+function dumpPattern(pattern) {
+    for (var i = 0; i < pattern.length; i++)
+        debug("    " + i + "   " + pattern[i]);
+}
+
+function matchesPatternAtLine(pattern, patternIndex, traceLine) {
+    var patternLine = pattern[patternIndex];
+    return traceLine.slice(0, patternLine.length) == patternLine;
+}
+
+function matchPattern(pattern, traceLine) {
+    for (var i = 0; i < pattern.length; i++) {
+        if (matchesPatternAtLine(pattern, i, traceLine))
+            return i;
+    }
+    return -1;
+}
+
+function checkStackForPattern(stackTrace, pattern) {
+    stackTrace = stackTrace.split("\n");
+    var length = Math.min(stackTrace.length, 100);
+
+    // Get the match in the pattern for the first line:
+    var firstStackTraceLine = stackTraceLineFor(stackTrace, 0);
+    var patternIndex = matchPattern(pattern, firstStackTraceLine);
+    if (patternIndex < 0) {
+        debug("--> Stack Trace FAILED to match pattern:")
+        dumpPattern(pattern);
+        debug('');
+        return;
+    }
+
+    for (var i = 1; i < length; i++) {
+        patternIndex = ++patternIndex % pattern.length;
+        var traceLine = stackTraceLineFor(stackTrace, i);
+        if (!matchesPatternAtLine(pattern, patternIndex, traceLine)) {
+            debug("--> Stack Trace FAILED to match pattern:")
+            dumpPattern(pattern);
+            debug('');
+            return;
+        }
+    }
+
+    debug("--> Stack Trace matches pattern:")
+    dumpPattern(pattern);
+    debug('');
+}
+
 function hostThrower() { Element.prototype.appendChild.call({ }, [{ }]);  }
 function callbacker(f) { [0].map(f); }
 function outer(errorName) { inner(errorName); }
@@ -69,7 +122,16 @@ function selfRecursive3() {
     eval("selfRecursive3()");
 }
 
-try { selfRecursive3(); } catch (e) { printStack(e.stack) }                   // selfRecursive3 -> eval -> selfRecursive3 -> eval ...
+try {
+    selfRecursive3();
+} catch (e) {
+    var pattern = [
+        " at eval code",
+        "eval at [native code]",
+        "selfRecursive3 at stack-trace.js"
+    ];
+    checkStackForPattern(e.stack, pattern);
+}
 
 var callCount = 0;
 

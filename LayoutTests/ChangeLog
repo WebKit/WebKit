@@ -1,3 +1,46 @@
+2014-02-10  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION(r163660-r163664): js/dom/stack-trace.html fails.
+        <https://webkit.org/b/128544>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The failing test is fragile. The test intends to test a recursion pattern
+        i.e. the top of the stack trace should show a repeated cycle of certain
+        function calls. However, the test makes a faulty assumption about which
+        function in that recursion pattern will be the one that overflows the
+        stack.
+
+        The fix is to make the test check for repetition of that recursion pattern
+        instead of making a specific assumption as to which function within that
+        recursion pattern will overflow the stack.
+
+        * TestExpectations: reverted skipped test.
+        * js/dom/script-tests/stack-trace.js:
+        (stackTraceLineFor):
+        - refactored this code to generated the stack trace line out of printStack.
+        (printStack):
+        - updated to use stackTraceLineFor.
+        (dumpPattern):
+        - utility function to dump the recursion pattern being matched.
+        (matchesPatternAtLine):
+        (matchPattern):
+        (checkStackForPattern):
+        - utility functions for testing if the stack trace matches the expected
+          recursion pattern. The pattern is an array of stack trace lines that
+          we should see repeated in the stack trace starting from the top.
+
+          The top line of the stack trace may match any line in the pattern.
+          Thereafter, subsequent lines much patch lines in the pattern starting
+          with the line after the first match. When we run out of pattern lines,
+          we'll go back to the first pattern line and continue the matching test
+          until we run out of stack trace lines to match.
+
+          If any mismatch is found, the test fails.
+
+        * js/dom/stack-trace-expected.txt:
+        - updates baseline for expected results.
+
 2014-02-10  Alexey Proskuryakov  <ap@apple.com>
 
         svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html frequently asserts
