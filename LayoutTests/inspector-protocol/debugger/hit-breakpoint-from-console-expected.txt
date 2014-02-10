@@ -1,0 +1,8 @@
+Debugger.setBreakpoint on line:18 in <script src="resources/breakpoint.js">
+
+Found breakpoint.js
+inside breakpointActions a:(2) b:([object Object])
+inside breakpointActions a:(12) b:([object Object])
+Hit Breakpoint!
+PASS
+

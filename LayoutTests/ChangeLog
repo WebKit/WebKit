@@ -1,3 +1,13 @@
+2014-02-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        Web Inspector: add test for hitting breakpoints from functions called via console
+        https://bugs.webkit.org/show_bug.cgi?id=126845
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector-protocol/debugger/hit-breakpoint-from-console-expected.txt: Added.
+        * inspector-protocol/debugger/hit-breakpoint-from-console.html: Added.
+
 2014-02-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Handling of opaque roots is wrong in EdenCollections
