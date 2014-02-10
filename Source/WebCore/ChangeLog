@@ -1,3 +1,25 @@
+2014-02-10  David Kilzer  <ddkilzer@apple.com>
+
+        Add type-safe casts for ContentData subclasses
+        <http://webkit.org/b/128510>
+
+        Reviewed by Darin Adler.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::contentToCSSValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingImages):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setContent):
+        - Switch to toFooContentData() methods.
+
+        * rendering/style/ContentData.h:
+        - Define toFooContentData() methods.
+        - Extract FooContentData::equals() methods so that the
+          toFooContentData() methods can be used.
+
 2014-02-09  Dirk Schulze  <dschulze@chromium.org>
 
         -webkit-clip-path should support fill, stroke, view-box keywords

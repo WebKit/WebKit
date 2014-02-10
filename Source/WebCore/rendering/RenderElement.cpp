@@ -127,7 +127,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<Rend
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style.get().contentData();
     if (contentData && !contentData->next() && contentData->isImage() && !element.isPseudoElement()) {
-        auto styleImage = const_cast<StyleImage*>(static_cast<const ImageContentData*>(contentData)->image());
+        auto styleImage = const_cast<StyleImage*>(toImageContentData(contentData)->image());
         auto image = createRenderer<RenderImage>(element, std::move(style), styleImage);
         if (styleImage)
             image->setIsGeneratedContent();

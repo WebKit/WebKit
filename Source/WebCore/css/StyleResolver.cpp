@@ -3547,11 +3547,11 @@ void StyleResolver::loadPendingImages()
         case CSSPropertyContent: {
             for (ContentData* contentData = const_cast<ContentData*>(m_state.style()->contentData()); contentData; contentData = contentData->next()) {
                 if (contentData->isImage()) {
-                    StyleImage* image = static_cast<ImageContentData*>(contentData)->image();
+                    StyleImage* image = toImageContentData(contentData)->image();
                     if (image->isPendingImage()) {
                         RefPtr<StyleImage> loadedImage = loadPendingImage(static_cast<StylePendingImage*>(image));
                         if (loadedImage)
-                            static_cast<ImageContentData*>(contentData)->setImage(loadedImage.release());
+                            toImageContentData(contentData)->setImage(loadedImage.release());
                     }
                 }
             }
