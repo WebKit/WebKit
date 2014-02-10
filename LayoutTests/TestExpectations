@@ -98,3 +98,5 @@ webkit.org/b/127860 [ Debug ] js/function-apply-aliased.html [ Skip ]
 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
 webkit.org/b/127697 fast/writing-mode/ruby-text-logical-left.html [ Skip ]
+
+webkit.org/b/128537 fast/workers/dedicated-worker-lifecycle.html [ Skip ]
