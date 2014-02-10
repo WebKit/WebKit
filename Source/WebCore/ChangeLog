@@ -1,3 +1,15 @@
+2014-02-10  Changhun Kang  <temoochin@company100.net>
+
+        Remove unnecessary comment lines.
+        https://bugs.webkit.org/show_bug.cgi?id=127894
+
+        Reviewed by Darin Adler.
+
+        No new tests. No change in behavior.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeRequest):
+
 2014-02-10  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Fix EFL build with INSPECTOR disabled
