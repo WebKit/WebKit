@@ -1,3 +1,41 @@
+2014-02-09  Dirk Schulze  <dschulze@chromium.org>
+
+        -webkit-clip-path should support fill, stroke, view-box keywords
+        https://bugs.webkit.org/show_bug.cgi?id=128393
+
+        Reviewed by Dean Jackson.
+
+        CSS Masking uses the keywords fill, stroke and view-box for SVG shapes.
+        This patch updates the parser, style resolver and SVG implementation of
+        the prefixed clip-path property.
+
+        Remove the unexposed and obsolete keyword bounding-box.
+
+        Tests: svg/clip-path/clip-path-shape-fill-expected.svg
+               svg/clip-path/clip-path-shape-fill.svg
+               svg/clip-path/clip-path-shape-stroke-expected.svg
+               svg/clip-path/clip-path-shape-stroke.svg
+               svg/clip-path/clip-path-shape-view-box-expected.svg
+               svg/clip-path/clip-path-shape-view-box.svg
+
+        * css/CSSParser.cpp: Parse fill, stroke, view-box. Remove bounding-box.
+        (WebCore::isBoxValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator LayoutBox):
+        * css/CSSValueKeywords.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyClipPath::applyValue):
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeReferenceBox):
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::setShapeSize):
+        (WebCore::ShapeInfo::logicalTopOffset):
+        (WebCore::ShapeInfo::logicalLeftOffset):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/svg/SVGRenderingContext.cpp: Use different reference boxes per keyword.
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+
 2014-02-09  Dean Jackson  <dino@apple.com>
 
         [WebGL] Remove state restorer code

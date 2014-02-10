@@ -1,3 +1,23 @@
+2014-02-09  Dirk Schulze  <krit@webkit.org>
+
+        -webkit-clip-path should support fill, stroke, view-box keywords
+        https://bugs.webkit.org/show_bug.cgi?id=128393
+
+        Reviewed by Dean Jackson.
+
+        Update or add new tests for changed clip-path keywords.
+
+        * css3/masking/clip-path-circle-bounding-box.html: Removed.
+        * fast/masking/parsing-clip-path-shape.html:
+        * platform/mac/css3/masking/clip-path-circle-bounding-box-expected.png: Removed.
+        * platform/mac/css3/masking/clip-path-circle-bounding-box-expected.txt: Removed.
+        * svg/clip-path/clip-path-shape-fill-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-fill.svg: Added.
+        * svg/clip-path/clip-path-shape-stroke-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-stroke.svg: Added.
+        * svg/clip-path/clip-path-shape-view-box-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-view-box.svg: Added.
+
 2014-02-09  Carlos Garnacho  <carlosg@gnome.org>
 
         [GTK] Enable touch features

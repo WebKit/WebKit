@@ -745,7 +745,7 @@ padding-box
 margin-box
 
 // clip-path
-bounding-box
+view-box
 
 //
 // background-size

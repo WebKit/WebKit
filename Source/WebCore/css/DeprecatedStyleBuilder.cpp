@@ -2139,7 +2139,9 @@ public:
                 || primitiveValue.getValueID() == CSSValueBorderBox
                 || primitiveValue.getValueID() == CSSValuePaddingBox
                 || primitiveValue.getValueID() == CSSValueMarginBox
-                || primitiveValue.getValueID() == CSSValueBoundingBox)
+                || primitiveValue.getValueID() == CSSValueFill
+                || primitiveValue.getValueID() == CSSValueStroke
+                || primitiveValue.getValueID() == CSSValueViewBox)
                 && referenceBox == BoxMissing)
                 referenceBox = LayoutBox(primitiveValue);
             else

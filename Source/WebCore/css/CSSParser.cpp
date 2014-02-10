@@ -5821,7 +5821,9 @@ static bool isBoxValue(CSSValueID valueId, CSSPropertyID propId)
     case CSSValueBorderBox:
     case CSSValueMarginBox:
         return true;
-    case CSSValueBoundingBox:
+    case CSSValueFill:
+    case CSSValueStroke:
+    case CSSValueViewBox:
         return propId == CSSPropertyWebkitClipPath;
     default: break;
     }

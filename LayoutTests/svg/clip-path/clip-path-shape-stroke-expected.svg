@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <clipPath id="clip">
+        <circle cx="100" cy="100" r="100"/>
+    </clipPath>
+</defs>
+<rect x="10" y="10" width="180" height="180" fill="green" stroke="green" stroke-width="20" style="-webkit-clip-path: circle() stroke;"/>
+</svg>

@@ -3790,6 +3790,10 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
                 referenceBox = box.paddingBoxRect();
                 referenceBox.moveBy(rootRelativeBounds.location());
                 break;
+            // fill, stroke, view-box compute to border-box for HTML elements.
+            case Fill:
+            case Stroke:
+            case ViewBox:
             case BorderBox:
                 referenceBox = box.borderBoxRect();
                 referenceBox.moveBy(rootRelativeBounds.location());
@@ -3797,7 +3801,6 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
             case MarginBox:
                 // FIXME: Support margin-box. Use bounding client rect for now.
                 // https://bugs.webkit.org/show_bug.cgi?id=127984
-            case BoundingBox:
             case BoxMissing:
                 // FIXME: If no reference box was specified the spec demands to use
                 // the border-box. However, the current prefixed version of clip-path uses

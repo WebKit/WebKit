@@ -5126,9 +5126,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LayoutBox layoutBox)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (layoutBox) {
-    case BoundingBox:
-        m_value.valueID = CSSValueBoundingBox;
-        break;
     case MarginBox:
         m_value.valueID = CSSValueMarginBox;
         break;
@@ -5141,6 +5138,15 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LayoutBox layoutBox)
     case ContentBox:
         m_value.valueID = CSSValueContentBox;
         break;
+    case Fill:
+        m_value.valueID = CSSValueFill;
+        break;
+    case Stroke:
+        m_value.valueID = CSSValueStroke;
+        break;
+    case ViewBox:
+        m_value.valueID = CSSValueViewBox;
+        break;
     case BoxMissing:
         ASSERT_NOT_REACHED();
         m_value.valueID = CSSValueNone;
@@ -5151,8 +5157,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LayoutBox layoutBox)
 template<> inline CSSPrimitiveValue::operator LayoutBox() const
 {
     switch (getValueID()) {
-    case CSSValueBoundingBox:
-        return BoundingBox;
     case CSSValueMarginBox:
         return MarginBox;
     case CSSValueBorderBox:
@@ -5161,6 +5165,13 @@ template<> inline CSSPrimitiveValue::operator LayoutBox() const
         return PaddingBox;
     case CSSValueContentBox:
         return ContentBox;
+    // The following are used in an SVG context.
+    case CSSValueFill:
+        return Fill;
+    case CSSValueStroke:
+        return Stroke;
+    case CSSValueViewBox:
+        return ViewBox;
     default:
         break;
     }

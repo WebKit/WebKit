@@ -35,6 +35,7 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderView.h"
+#include "SVGLengthContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 
@@ -121,8 +122,19 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
 
     ClipPathOperation* clipPathOperation = style.clipPath();
     if (clipPathOperation && clipPathOperation->type() == ClipPathOperation::Shape) {
-        ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(clipPathOperation);
-        m_paintInfo->context->clipPath(clipPath->pathForReferenceRect(renderer.objectBoundingBox()), clipPath->windRule());
+        ShapeClipPathOperation& clipPath = toShapeClipPathOperation(*clipPathOperation);
+        FloatRect referenceBox;
+        if (clipPath.referenceBox() == Stroke)
+            // FIXME: strokeBoundingBox() takes dasharray into account but shouldn't.
+            referenceBox = renderer.strokeBoundingBox();
+        else if (clipPath.referenceBox() == ViewBox && renderer.element()) {
+            FloatSize viewportSize;
+            SVGLengthContext(toSVGElement(renderer.element())).determineViewport(viewportSize);
+            referenceBox.setWidth(viewportSize.width());
+            referenceBox.setHeight(viewportSize.height());
+        } else
+            referenceBox = renderer.objectBoundingBox();
+        m_paintInfo->context->clipPath(clipPath.pathForReferenceRect(referenceBox), clipPath.windRule());
     }
 
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(*m_renderer);

@@ -89,7 +89,9 @@ public:
             logicalHeight -= m_renderer.borderAndPaddingLogicalHeight();
             logicalWidth -= m_renderer.borderAndPaddingLogicalWidth();
             break;
-        case BoundingBox:
+        case Fill:
+        case Stroke:
+        case ViewBox:
         case BoxMissing:
             ASSERT_NOT_REACHED();
             break;
@@ -176,7 +178,9 @@ protected:
         case BorderBox: return LayoutUnit();
         case PaddingBox: return m_renderer.borderBefore();
         case ContentBox: return m_renderer.borderAndPaddingBefore();
-        case BoundingBox: break;
+        case Fill: break;
+        case Stroke: break;
+        case ViewBox: break;
         case BoxMissing: break;
         }
         ASSERT_NOT_REACHED();
@@ -193,7 +197,9 @@ protected:
         case BorderBox: return LayoutUnit();
         case PaddingBox: return m_renderer.borderStart();
         case ContentBox: return m_renderer.borderAndPaddingStart();
-        case BoundingBox: break;
+        case Fill: break;
+        case Stroke: break;
+        case ViewBox: break;
         case BoxMissing: break;
         }
         ASSERT_NOT_REACHED();
