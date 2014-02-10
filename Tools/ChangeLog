@@ -1,3 +1,18 @@
+2014-02-10  Eva Balazsfalvi  <balazsfalvi.eva@stud.u-szeged.hu>
+
+        If not running on Mac, build-webkit should not print Safari related output
+        https://bugs.webkit.org/show_bug.cgi?id=127169
+
+        Reviewed by Darin Adler.
+
+        * Scripts/build-webkit:
+        (writeCongrats):
+        * Scripts/webkitdirs.pm:
+        (isAppleWebKit):
+        (isAppleMacWebKit):
+        (isAppleWinWebKit):
+        (launcherName):
+
 2014-02-10  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Minibrowser: During text search, make navigation through list of matched words circular

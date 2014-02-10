@@ -1108,17 +1108,17 @@ sub isCrossCompilation()
 
 sub isAppleWebKit()
 {
-    return !(isGtk() or isEfl() or isWinCE());
+    return isAppleMacWebKit() || isAppleWinWebKit();
 }
 
 sub isAppleMacWebKit()
 {
-    return isAppleWebKit() && isDarwin();
+    return isDarwin() && !isGtk();
 }
 
 sub isAppleWinWebKit()
 {
-    return isAppleWebKit() && (isCygwin() || isWindows()) && !isWinCairo();
+    return (isCygwin() || isWindows()) && !isWinCairo() && !isGtk() && !isWinCE();
 }
 
 sub willUseIOSDeviceSDKWhenBuilding()
@@ -1310,8 +1310,10 @@ sub launcherName()
 {
     if (isGtk()) {
         return "GtkLauncher";
-    } elsif (isAppleWebKit()) {
+    } elsif (isAppleMacWebKit()) {
         return "Safari";
+    } elsif (isAppleWinWebKit()) {
+        return "WinLauncher";
     } elsif (isEfl()) {
         return "EWebLauncher/MiniBrowser";
     } elsif (isWinCE()) {

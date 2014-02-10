@@ -370,7 +370,9 @@ sub writeCongrats()
     print "\n";
     print "====================================================================\n";
     print " WebKit is now built ($buildTime). \n";
-    print " To run $launcherName with this newly-built code, use the\n";
-    print " \"$launcherPath\" script.\n";
+    if ($launcherPath && $launcherName) {
+        print " To run $launcherName with this newly-built code, use the\n";
+        print " \"$launcherPath\" script.\n";
+    }
     print "====================================================================\n";
 }
