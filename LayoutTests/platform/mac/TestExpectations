@@ -271,8 +271,6 @@ http/tests/images/webp-progressive-load.html
 # Times out because plugins aren't allowed to execute JS after NPP_Destroy has been called in WebKit1's OOP plugins implementation
 webkit.org/b/48929 plugins/evaluate-js-after-removing-plugin-element.html
 
-webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
-
 # DRT does not support toggling caret browsing on / off
 editing/selection/caret-mode-paragraph-keys-navigation.html
 
@@ -1214,8 +1212,6 @@ webkit.org/b/122038 animations/transform-non-accelerated.html [ Pass Failure ]
 
 webkit.org/b/122039 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Pass Failure ]
 
-webkit.org/b/122040 animations/combo-transform-translate+scale.html [ Pass Failure ]
-
 webkit.org/b/122042 media/media-controller-playback.html [ Pass Failure ]
 
 webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Failure ]
@@ -1349,6 +1345,8 @@ webkit.org/b/127310 svg/filters/feComponentTransfer-style-crash.xhtml [ Pass Fai
 
 webkit.org/b/128312 [ Mavericks ] media/video-load-preload-metadata.html [ Pass Failure ]
 
-# These tests were always flaky, but became a lot more so at the same time.
+# These tests were always flaky, but became a lot more so at in r163472-r163476.
+webkit.org/b/49182 [ Debug ] animations/stop-animation-on-suspend.html [ Pass Failure ]
 webkit.org/b/50959 [ Debug ] animations/play-state-suspend.html [ Pass Failure ]
+webkit.org/b/122040 [ Debug ] animations/combo-transform-translate+scale.html [ Pass Failure ]
 webkit.org/b/128379 [ Debug ] animations/suspend-resume-animation.html [ Pass Failure ]
