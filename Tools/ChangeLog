@@ -1,3 +1,15 @@
+2014-02-10  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Code cleanup: Remove BUILDING_ON / TARGETING definitions.
+        https://bugs.webkit.org/show_bug.cgi?id=128242
+
+        Reviewed by Brent Fulgham.
+
+        The BUILDING_ON_* and TARGETING_* macros have not been used for a while.
+        According to the FIXME: they are removed.
+
+        * DumpRenderTree/config.h:
+
 2014-02-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix a few mistakes that landed with r163749.
