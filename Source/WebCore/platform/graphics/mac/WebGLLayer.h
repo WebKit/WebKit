@@ -39,7 +39,6 @@ namespace WebCore {
 @interface WebGLLayer : CAOpenGLLayer
 #endif
 {
-    WebCore::GraphicsLayer* m_layerOwner;
     WebCore::GraphicsContext3D* m_context;
 }
 

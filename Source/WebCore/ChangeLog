@@ -1,3 +1,17 @@
+2014-02-09  Dean Jackson  <dino@apple.com>
+
+        Remove unused layer owner from WebGLLayer
+        https://bugs.webkit.org/show_bug.cgi?id=128512
+
+        Reviewed by Dirk Schulze.
+
+        The m_layerOwner and ObjC category were not
+        used anywhere.
+
+        * platform/graphics/mac/WebGLLayer.h:
+        * platform/graphics/mac/WebGLLayer.mm:
+        (-[WebGLLayer display]):
+
 2014-02-09  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove PageClientEfl

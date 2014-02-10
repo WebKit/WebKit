@@ -155,22 +155,6 @@ static void freeData(void *, const void *data, size_t /* size */)
 #else
     [super display];
 #endif
-    if (m_layerOwner)
-        m_layerOwner->layerDidDisplay(self);
-}
-
-@end
-
-@implementation WebGLLayer(WebGLLayerAdditions)
-
--(void)setLayerOwner:(GraphicsLayer*)aLayer
-{
-    m_layerOwner = aLayer;
-}
-
--(GraphicsLayer*)layerOwner
-{
-    return m_layerOwner;
 }
 
 @end
