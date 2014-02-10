@@ -377,7 +377,7 @@ void MediaPlayerPrivateGStreamer::load(const String& url)
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void MediaPlayerPrivateGStreamer::load(const String& url, PassRefPtr<HTMLMediaSource> mediaSource)
+void MediaPlayerPrivateGStreamer::load(const String& url, MediaSourcePrivateClient* mediaSource)
 {
     String mediasourceUri = String::format("mediasource%s", url.utf8().data());
     m_mediaSource = mediaSource;

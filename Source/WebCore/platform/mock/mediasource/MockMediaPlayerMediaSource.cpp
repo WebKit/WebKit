@@ -29,8 +29,8 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ExceptionCodePlaceholder.h"
-#include "HTMLMediaSource.h"
 #include "MediaPlayer.h"
+#include "MediaSourcePrivateClient.h"
 #include "MockMediaSourcePrivate.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
@@ -100,7 +100,7 @@ void MockMediaPlayerMediaSource::load(const String&)
     ASSERT_NOT_REACHED();
 }
 
-void MockMediaPlayerMediaSource::load(const String&, PassRefPtr<HTMLMediaSource> source)
+void MockMediaPlayerMediaSource::load(const String&, MediaSourcePrivateClient* source)
 {
     m_mediaSource = source;
     m_mediaSourcePrivate = MockMediaSourcePrivate::create(this);

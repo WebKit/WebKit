@@ -68,7 +68,7 @@ class AudioSourceProvider;
 class AuthenticationChallenge;
 class Document;
 #if ENABLE(MEDIA_SOURCE)
-class HTMLMediaSource;
+class MediaSourcePrivateClient;
 #endif
 class MediaPlayerPrivateInterface;
 class TextTrackRepresentation;
@@ -304,7 +304,7 @@ public:
 
     bool load(const URL&, const ContentType&, const String& keySystem);
 #if ENABLE(MEDIA_SOURCE)
-    bool load(const URL&, const ContentType&, PassRefPtr<HTMLMediaSource>);
+    bool load(const URL&, const ContentType&, MediaSourcePrivateClient*);
 #endif
     void cancelLoad();
 
@@ -574,7 +574,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    RefPtr<HTMLMediaSource> m_mediaSource;
+    RefPtr<MediaSourcePrivateClient> m_mediaSource;
 #endif
 };
 

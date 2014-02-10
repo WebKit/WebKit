@@ -28,8 +28,8 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
-#import "HTMLMediaSource.h"
 #import "MediaSourcePrivateAVFObjC.h"
+#import "MediaSourcePrivateClient.h"
 #import "MediaTimeMac.h"
 #import "PlatformClockCM.h"
 #import "SoftLinking.h"
@@ -232,7 +232,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&)
     m_player->networkStateChanged();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::load(const String& url, PassRefPtr<HTMLMediaSource> source)
+void MediaPlayerPrivateMediaSourceAVFObjC::load(const String& url, MediaSourcePrivateClient* source)
 {
     UNUSED_PARAM(url);
 

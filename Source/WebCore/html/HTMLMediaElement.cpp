@@ -117,7 +117,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 #include "DOMWindow.h"
-#include "HTMLMediaSource.h"
+#include "MediaSource.h"
 #include "Performance.h"
 #include "VideoPlaybackQuality.h"
 #endif
@@ -1230,11 +1230,11 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     ASSERT(!m_mediaSource);
 
     if (url.protocolIs(mediaSourceBlobProtocol))
-        m_mediaSource = HTMLMediaSource::lookup(url.string());
+        m_mediaSource = MediaSource::lookup(url.string());
 
     if (m_mediaSource) {
         if (m_mediaSource->attachToElement(this))
-            m_player->load(url, contentType, m_mediaSource);
+            m_player->load(url, contentType, m_mediaSource.get());
         else {
             // Forget our reference to the MediaSource, so we leave it alone
             // while processing remainder of load failure.

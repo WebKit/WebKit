@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-void MediaSourceGStreamer::open(PassRefPtr<HTMLMediaSource> mediaSource, WebKitMediaSrc* src)
+void MediaSourceGStreamer::open(MediaSourcePrivateClient* mediaSource, WebKitMediaSrc* src)
 {
     mediaSource->setPrivateAndOpen(adoptRef(*new MediaSourceGStreamer(src)));
 }

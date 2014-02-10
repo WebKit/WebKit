@@ -58,6 +58,14 @@
 
 namespace WebCore {
 
+URLRegistry* MediaSource::s_registry = 0;
+
+void MediaSource::setRegistry(URLRegistry* registry)
+{
+    ASSERT(!s_registry);
+    s_registry = registry;
+}
+
 PassRefPtr<MediaSource> MediaSource::create(ScriptExecutionContext& context)
 {
     RefPtr<MediaSource> mediaSource(adoptRef(new MediaSource(context)));

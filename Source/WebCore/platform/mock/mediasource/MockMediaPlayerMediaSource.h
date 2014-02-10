@@ -58,7 +58,7 @@ private:
 
     // MediaPlayerPrivate Overrides
     virtual void load(const String& url) override;
-    virtual void load(const String& url, PassRefPtr<HTMLMediaSource>) override;
+    virtual void load(const String& url, MediaSourcePrivateClient*) override;
     virtual void cancelLoad() override;
     virtual void play() override;
     virtual void pause() override;
@@ -83,7 +83,7 @@ private:
     virtual double totalFrameDelay() override;
 
     MediaPlayer* m_player;
-    RefPtr<HTMLMediaSource> m_mediaSource;
+    RefPtr<MediaSourcePrivateClient> m_mediaSource;
     RefPtr<MockMediaSourcePrivate> m_mediaSourcePrivate;
 
     MediaTime m_currentTime;

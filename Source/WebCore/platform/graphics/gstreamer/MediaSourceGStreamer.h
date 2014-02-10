@@ -40,7 +40,7 @@ namespace WebCore {
 
 class MediaSourceGStreamer final : public MediaSourcePrivate {
 public:
-    static void open(PassRefPtr<HTMLMediaSource>, WebKitMediaSrc*);
+    static void open(MediaSourcePrivateClient*, WebKitMediaSrc*);
     ~MediaSourceGStreamer();
     AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&);
     double duration() { return m_duration; }

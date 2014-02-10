@@ -658,7 +658,7 @@ void MediaPlayerPrivateQTKit::loadInternal(const String& url)
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void MediaPlayerPrivateQTKit::load(const String&, PassRefPtr<HTMLMediaSource>)
+void MediaPlayerPrivateQTKit::load(const String&, MediaSourcePrivateClient*)
 {
     m_networkState = MediaPlayer::FormatError;
     m_player->networkStateChanged();

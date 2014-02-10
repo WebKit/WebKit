@@ -1,3 +1,63 @@
+2014-02-10  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Fix layering violations in MediaSource
+        https://bugs.webkit.org/show_bug.cgi?id=128546
+
+        Reviewed by Eric Carlson.
+
+        Code in Modules should be considered part of html/ and should have the
+        same layering properties. Get rid of HTMLMediaSource (which was intended
+        to allow Modules/mediasource to be considered part of platform/) and add
+        a new client interface allowing communication from platform/ -> 
+        Modules/mediasource.
+
+        Replace HTMLMediaSource -> MediaSourcePrivateClient:
+        * html/HTMLMediaSource.cpp: Removed.
+        * html/HTMLMediaSource.h: Removed.
+        * platform/graphics/MediaSourcePrivateClient.h: Added.
+        (WebCore::MediaSourcePrivateClient::~MediaSourcePrivateClient):
+
+        Move registry support from HTMLMediaSource -> MediaSource.
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::setRegistry): Moved from HTMLMediaSource.cpp.
+        * Modules/mediasource/MediaSource.h:
+        (WebCore::MediaSource::lookup): Ditto.
+
+        Update references to HTMLMediaSource -> MediaSource:
+        * Modules/mediasource/MediaSourceRegistry.cpp:
+        (WebCore::MediaSourceRegistry::MediaSourceRegistry): 
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        * html/HTMLMediaElement.h:
+
+        Update references to HTMLMediaSource -> MediaSourcePrivateClient:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::load):
+        (WebCore::MediaPlayer::load): Ditto.
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::load):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::load):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaSourceGStreamer.cpp:
+        (WebCore::MediaSourceGStreamer::open):
+        * platform/graphics/gstreamer/MediaSourceGStreamer.h:
+        * platform/graphics/ios/MediaPlayerPrivateIOS.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::load):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::load):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+
 2014-02-10  Alexey Proskuryakov  <ap@apple.com>
 
         Remove some unused functions from SerializedScriptValue

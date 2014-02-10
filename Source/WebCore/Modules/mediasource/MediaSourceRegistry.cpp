@@ -76,7 +76,7 @@ URLRegistrable* MediaSourceRegistry::lookup(const String& url) const
 
 MediaSourceRegistry::MediaSourceRegistry()
 {
-    HTMLMediaSource::setRegistry(this);
+    MediaSource::setRegistry(this);
 }
 
 } // namespace WebCore

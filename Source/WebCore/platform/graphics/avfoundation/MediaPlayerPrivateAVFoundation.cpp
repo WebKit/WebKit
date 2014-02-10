@@ -187,7 +187,7 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void MediaPlayerPrivateAVFoundation::load(const String&, PassRefPtr<HTMLMediaSource>)
+void MediaPlayerPrivateAVFoundation::load(const String&, MediaSourcePrivateClient*)
 {
     m_networkState = MediaPlayer::FormatError;
     m_player->networkStateChanged();

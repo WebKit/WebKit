@@ -82,6 +82,7 @@ class DisplaySleepDisabler;
 class MediaKeys;
 #endif
 #if ENABLE(MEDIA_SOURCE)
+class MediaSource;
 class VideoPlaybackQuality;
 #endif
 
@@ -722,7 +723,7 @@ private:
     int m_processingMediaPlayerCallback;
 
 #if ENABLE(MEDIA_SOURCE)
-    RefPtr<HTMLMediaSource> m_mediaSource;
+    RefPtr<MediaSource> m_mediaSource;
     unsigned long m_droppedVideoFrames;
 #endif
 

@@ -90,7 +90,7 @@ private:
 
     virtual void load(const String& url) override;
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String&, PassRefPtr<HTMLMediaSource>) override { }
+    virtual void load(const String&, MediaSourcePrivateClient*) override { }
 #endif
     virtual void cancelLoad() override;
 

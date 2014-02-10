@@ -45,7 +45,7 @@
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-#include "HTMLMediaSource.h"
+#include "MediaSourcePrivateClient.h"
 #endif
 
 #if USE(GSTREAMER)
@@ -86,7 +86,7 @@ public:
 
     virtual void load(const String&) { }
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String&, PassRefPtr<HTMLMediaSource>) { }
+    virtual void load(const String&, MediaSourcePrivateClient*) { }
 #endif
     virtual void cancelLoad() { }
 
@@ -388,8 +388,9 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
 }
 
 #if ENABLE(MEDIA_SOURCE)
-bool MediaPlayer::load(const URL& url, const ContentType& contentType, PassRefPtr<HTMLMediaSource> mediaSource)
+bool MediaPlayer::load(const URL& url, const ContentType& contentType, MediaSourcePrivateClient* mediaSource)
 {
+    ASSERT(mediaSource);
     m_mediaSource = mediaSource;
     m_contentMIMEType = contentType.type().lower();
     m_contentTypeCodecs = contentType.parameter(codecs());
@@ -451,7 +452,7 @@ void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
     if (m_private) {
 #if ENABLE(MEDIA_SOURCE)
         if (m_mediaSource)
-            m_private->load(m_url.string(), m_mediaSource);
+            m_private->load(m_url.string(), m_mediaSource.get());
         else
 #endif
         m_private->load(m_url.string());
