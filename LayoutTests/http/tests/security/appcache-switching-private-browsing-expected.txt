@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 8: Test started
+CONSOLE MESSAGE: line 18: PASS
+This test passes if the application cache does not load while in private browsing
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+

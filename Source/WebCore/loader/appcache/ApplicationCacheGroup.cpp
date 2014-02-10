@@ -96,7 +96,7 @@ ApplicationCacheGroup::~ApplicationCacheGroup()
     cacheStorage().cacheGroupDestroyed(this);
 }
     
-ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceRequest& request, DocumentLoader*)
+ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceRequest& request, DocumentLoader* documentLoader)
 {
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return 0;
@@ -104,6 +104,9 @@ ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceReque
     URL url(request.url());
     if (url.hasFragmentIdentifier())
         url.removeFragmentIdentifier();
+
+    if (documentLoader->frame() && documentLoader->frame()->settings().privateBrowsingEnabled())
+        return 0;
 
     if (ApplicationCacheGroup* group = cacheStorage().cacheGroupForURL(url)) {
         ASSERT(group->newestCache());
@@ -152,6 +155,13 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const URL& passedManifestU
         return;
     }
 
+    // Don't access anything on disk if private browsing is enabled.
+    if (frame->settings().privateBrowsingEnabled()) {
+        postListenerTask(ApplicationCacheHost::CHECKING_EVENT, documentLoader);
+        postListenerTask(ApplicationCacheHost::ERROR_EVENT, documentLoader);
+        return;
+    }
+
     URL manifestURL(passedManifestURL);
     if (manifestURL.hasFragmentIdentifier())
         manifestURL.removeFragmentIdentifier();
@@ -195,13 +205,6 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const URL& passedManifestU
     if (!protocolHostAndPortAreEqual(manifestURL, request.url()))
         return;
 
-    // Don't change anything on disk if private browsing is enabled.
-    if (frame->settings().privateBrowsingEnabled()) {
-        postListenerTask(ApplicationCacheHost::CHECKING_EVENT, documentLoader);
-        postListenerTask(ApplicationCacheHost::ERROR_EVENT, documentLoader);
-        return;
-    }
-
     ApplicationCacheGroup* group = cacheStorage().findOrCreateCacheGroup(manifestURL);
 
     documentLoader->applicationCacheHost()->setCandidateApplicationCacheGroup(group);
@@ -222,6 +225,13 @@ void ApplicationCacheGroup::selectCacheWithoutManifestURL(Frame* frame)
 
     DocumentLoader* documentLoader = frame->loader().documentLoader();
     ASSERT(!documentLoader->applicationCacheHost()->applicationCache());
+
+    // Don't access anything on disk if private browsing is enabled.
+    if (frame->settings().privateBrowsingEnabled()) {
+        postListenerTask(ApplicationCacheHost::CHECKING_EVENT, documentLoader);
+        postListenerTask(ApplicationCacheHost::ERROR_EVENT, documentLoader);
+        return;
+    }
 
     ApplicationCache* mainResourceCache = documentLoader->applicationCacheHost()->mainResourceApplicationCache();
 
@@ -431,13 +441,13 @@ void ApplicationCacheGroup::update(Frame* frame, ApplicationCacheUpdateOption up
         return;
     }
 
-    // Don't change anything on disk if private browsing is enabled.
+    // Don't access anything on disk if private browsing is enabled.
     if (frame->settings().privateBrowsingEnabled()) {
         ASSERT(m_pendingMasterResourceLoaders.isEmpty());
         ASSERT(m_pendingEntries.isEmpty());
         ASSERT(!m_cacheBeingUpdated);
         postListenerTask(ApplicationCacheHost::CHECKING_EVENT, frame->loader().documentLoader());
-        postListenerTask(ApplicationCacheHost::NOUPDATE_EVENT, frame->loader().documentLoader());
+        postListenerTask(ApplicationCacheHost::ERROR_EVENT, frame->loader().documentLoader());
         return;
     }
 

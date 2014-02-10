@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 31: Application cache not loaded
+This test passes if the application cache does not load while in private browsing
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+

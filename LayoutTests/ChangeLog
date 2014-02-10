@@ -1,3 +1,16 @@
+2014-02-07  Jeffrey Pfau  <jpfau@apple.com>
+
+        Disable access to application cache when in private browsing
+        https://bugs.webkit.org/show_bug.cgi?id=128426
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/security/appcache-in-private-browsing-expected.txt: Added.
+        * http/tests/security/appcache-in-private-browsing.html: Added.
+        * http/tests/security/appcache-switching-private-browsing-expected.txt: Added.
+        * http/tests/security/appcache-switching-private-browsing.html: Added.
+        * http/tests/security/resources/frame-for-appcache-in-private-browsing.html: Added.
+
 2014-02-10  Alexey Proskuryakov  <ap@apple.com>
 
         Move animation tests that have similar failing behavior in debug builds together,
