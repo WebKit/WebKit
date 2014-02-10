@@ -2616,18 +2616,6 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::nullValue()
     return adoptRef(new SerializedScriptValue(buffer));
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const Deprecated::ScriptValue& value, JSC::ExecState* scriptState, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
-{
-    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(scriptState, value.jsValue(), messagePorts, arrayBuffers);
-    didThrow = scriptState->hadException();
-    return serializedValue.release();
-}
-
-Deprecated::ScriptValue SerializedScriptValue::deserialize(JSC::ExecState* scriptState, SerializedScriptValue* value, SerializationErrorMode throwExceptions)
-{
-    return Deprecated::ScriptValue(scriptState->vm(), value->deserialize(scriptState, scriptState->lexicalGlobalObject(), 0, throwExceptions));
-}
-
 void SerializedScriptValue::maybeThrowExceptionIfSerializationFailed(ExecState* exec, SerializationReturnCode code)
 {
     if (code == SuccessfullyCompleted)

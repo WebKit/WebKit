@@ -132,29 +132,25 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackend::PutMode putMode, 
     RefPtr<IDBKey> key = prpKey;
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
-        return 0;
+        return nullptr;
     }
     if (!m_transaction->isActive()) {
         ec = IDBDatabaseException::TransactionInactiveError;
-        return 0;
+        return nullptr;
     }
     if (m_transaction->isReadOnly()) {
         ec = IDBDatabaseException::ReadOnlyError;
-        return 0;
+        return nullptr;
     }
 
-    // FIXME: Expose the JS engine exception state through ScriptState.
-    bool didThrow = false;
-    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(value, state, nullptr, nullptr, didThrow);
-    if (didThrow) {
-        // Setting an explicit ExceptionCode here would defer handling the already thrown exception.
-        return 0;
-    }
+    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(state, value.jsValue(), nullptr, nullptr);
+    if (state->hadException())
+        return nullptr;
 
     if (serializedValue->blobURLs().size() > 0) {
         // FIXME: Add Blob/File/FileList support
         ec = IDBDatabaseException::DataCloneError;
-        return 0;
+        return nullptr;
     }
 
     const IDBKeyPath& keyPath = m_metadata.keyPath;
@@ -166,26 +162,26 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackend::PutMode putMode, 
 
     if (putMode != IDBDatabaseBackend::CursorUpdate && usesInLineKeys && key) {
         ec = IDBDatabaseException::DataError;
-        return 0;
+        return nullptr;
     }
     if (!usesInLineKeys && !hasKeyGenerator && !key) {
         ec = IDBDatabaseException::DataError;
-        return 0;
+        return nullptr;
     }
     if (usesInLineKeys) {
         RefPtr<IDBKey> keyPathKey = createIDBKeyFromScriptValueAndKeyPath(requestState.exec(), value, keyPath);
         if (keyPathKey && !keyPathKey->isValid()) {
             ec = IDBDatabaseException::DataError;
-            return 0;
+            return nullptr;
         }
         if (!hasKeyGenerator && !keyPathKey) {
             ec = IDBDatabaseException::DataError;
-            return 0;
+            return nullptr;
         }
         if (hasKeyGenerator && !keyPathKey) {
             if (!canInjectIDBKeyIntoScriptValue(&requestState, value, keyPath)) {
                 ec = IDBDatabaseException::DataError;
-                return 0;
+                return nullptr;
             }
         }
         if (keyPathKey)
@@ -193,7 +189,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackend::PutMode putMode, 
     }
     if (key && !key->isValid()) {
         ec = IDBDatabaseException::DataError;
-        return 0;
+        return nullptr;
     }
 
     Vector<int64_t> indexIds;

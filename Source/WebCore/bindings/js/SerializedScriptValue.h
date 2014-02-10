@@ -79,9 +79,6 @@ public:
 
     JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*, MessagePortArray*, SerializationErrorMode = Throwing);
 
-    static PassRefPtr<SerializedScriptValue> create(const Deprecated::ScriptValue&, JSC::ExecState*, MessagePortArray*, ArrayBufferArray*, bool& didThrow);
-    static Deprecated::ScriptValue deserialize(JSC::ExecState*, SerializedScriptValue*, SerializationErrorMode = Throwing);
-
     static uint32_t wireFormatVersion();
 
     String toString();

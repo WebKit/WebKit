@@ -299,9 +299,12 @@ Deprecated::ScriptValue deserializeIDBValue(DOMRequestState* requestState, PassR
 {
     ExecState* exec = requestState->exec();
     RefPtr<SerializedScriptValue> serializedValue = prpValue;
+    JSValue result;
     if (serializedValue)
-        return SerializedScriptValue::deserialize(exec, serializedValue.get(), NonThrowing);
-    return Deprecated::ScriptValue(exec->vm(), jsNull());
+        result = serializedValue->deserialize(exec, exec->lexicalGlobalObject(), 0);
+    else
+        result = jsNull();
+    return Deprecated::ScriptValue(exec->vm(), result);
 }
 
 Deprecated::ScriptValue deserializeIDBValueBuffer(DOMRequestState* requestState, PassRefPtr<SharedBuffer> prpBuffer, bool keyIsDefined)
@@ -324,12 +327,14 @@ Deprecated::ScriptValue deserializeIDBValueBuffer(JSC::ExecState* exec, const Ve
         return Deprecated::ScriptValue(exec->vm(), jsUndefined());
     }
 
+    JSValue result;
     if (buffer.size()) {
         RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(buffer);
-        return SerializedScriptValue::deserialize(exec, serializedValue.get(), NonThrowing);
-    }
+        result = serializedValue->deserialize(exec, exec->lexicalGlobalObject(), 0, NonThrowing);
+    } else
+        result = jsNull();
 
-    return Deprecated::ScriptValue(exec->vm(), jsNull());
+    return Deprecated::ScriptValue(exec->vm(), result);
 }
 
 Deprecated::ScriptValue idbKeyToScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKey> key)

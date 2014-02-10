@@ -1,3 +1,20 @@
+2014-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove some unused functions from SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=128407
+
+        Reviewed by Oliver Hunt.
+
+        Removed functions that used Deprecated::ScriptValue
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::put):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValue):
+        (WebCore::deserializeIDBValueBuffer):
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/js/SerializedScriptValue.h:
+
 2014-02-10  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Unreviewed test fix.
