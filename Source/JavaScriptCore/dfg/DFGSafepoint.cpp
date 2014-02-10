@@ -45,8 +45,11 @@ Safepoint::Safepoint(Plan& plan)
 Safepoint::~Safepoint()
 {
     RELEASE_ASSERT(m_didCallBegin);
-    if (ThreadData* data = m_plan.threadData)
+    if (ThreadData* data = m_plan.threadData) {
+        RELEASE_ASSERT(data->m_safepoint == this);
+        data->m_safepoint = nullptr;
         data->m_rightToRun.lock();
+    }
 }
 
 void Safepoint::add(Scannable* scannable)
@@ -58,8 +61,11 @@ void Safepoint::add(Scannable* scannable)
 void Safepoint::begin()
 {
     RELEASE_ASSERT(!m_didCallBegin);
-    if (ThreadData* data = m_plan.threadData)
+    if (ThreadData* data = m_plan.threadData) {
+        RELEASE_ASSERT(!data->m_safepoint);
+        data->m_safepoint = this;
         data->m_rightToRun.unlock();
+    }
     m_didCallBegin = true;
 }
 

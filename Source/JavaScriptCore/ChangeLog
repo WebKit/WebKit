@@ -1,3 +1,16 @@
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Actually register those DFG::Safepoints
+        https://bugs.webkit.org/show_bug.cgi?id=128521
+
+        Reviewed by Mark Hahnenberg.
+        
+        No test because GC + thread + JIT = ???.
+
+        * dfg/DFGSafepoint.cpp:
+        (JSC::DFG::Safepoint::~Safepoint):
+        (JSC::DFG::Safepoint::begin):
+
 2014-02-10  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Fix EFL build with INSPECTOR disabled
