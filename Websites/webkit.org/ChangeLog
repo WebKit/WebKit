@@ -1,3 +1,17 @@
+2014-02-10  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Change tools.html to say Xcode 5 is required to build
+        https://bugs.webkit.org/show_bug.cgi?id=128545
+
+        Reviewed by Andreas Kling.
+
+        The Mac port doesn't build with Xcode 4.6 anymore, so update to tell
+        people to get Xcode 5. It looks like Xcode 5 doesn't have the command
+        line tools in the downloads pane anymore, so direct folks to use
+        xcode-select to install the command line tools as well.
+
+        * building/tools.html:
+
 2014-01-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Host DoYouEvenBench on webkit.org
