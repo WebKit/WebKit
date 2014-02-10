@@ -76,7 +76,7 @@ UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite()
     m_sqliteDB = nullptr;
 
     if (m_vm) {
-        JSLockHolder lockHolder(JSLockHolder(m_vm.get()));
+        JSLockHolder lockHolder(m_vm.get());
         m_globalObject.clear();
         m_vm = nullptr;
     }

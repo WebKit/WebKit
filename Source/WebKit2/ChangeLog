@@ -3,6 +3,16 @@
         IDB: storage/indexeddb/mozilla/object-store-remove-values.html fails
         <rdar://problem/16029319> and https://bugs.webkit.org/show_bug.cgi?id=128487
 
+        Missed one piece of review feedback before landing.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite):
+
+2014-02-10  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/object-store-remove-values.html fails
+        <rdar://problem/16029319> and https://bugs.webkit.org/show_bug.cgi?id=128487
+
         Reviewed by Tim Horton.
 
         * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
