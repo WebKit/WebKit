@@ -353,11 +353,6 @@ private:
 
     void destroyGraphicsContext3D();
     void markContextChanged();
-    void cleanupAfterGraphicsCall(bool changed)
-    {
-        if (changed)
-            markContextChanged();
-    }
 
     // Query whether it is built on top of compliant GLES2 implementation.
     bool isGLES2Compliant() { return m_isGLES2Compliant; }
@@ -793,8 +788,6 @@ private:
 
     // Check if EXT_draw_buffers extension is supported and if it satisfies the WebGL requirements.
     bool supportsDrawBuffers();
-
-    friend class WebGLStateRestorer;
 };
 
 } // namespace WebCore

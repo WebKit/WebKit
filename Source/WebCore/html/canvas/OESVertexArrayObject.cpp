@@ -106,8 +106,6 @@ void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayOb
         extensions->bindVertexArrayOES(0);
         m_context->setBoundVertexArrayObject(0);
     }
-    
-    m_context->cleanupAfterGraphicsCall(false);
 }
 
 } // namespace WebCore
