@@ -1350,3 +1350,5 @@ webkit.org/b/49182 [ Debug ] animations/stop-animation-on-suspend.html [ Pass Fa
 webkit.org/b/50959 [ Debug ] animations/play-state-suspend.html [ Pass Failure ]
 webkit.org/b/122040 [ Debug ] animations/combo-transform-translate+scale.html [ Pass Failure ]
 webkit.org/b/128379 [ Debug ] animations/suspend-resume-animation.html [ Pass Failure ]
+
+webkit.org/b/119747 [ Debug ] svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html [ Skip ]
