@@ -98,7 +98,7 @@ namespace JSC {
         ExecutableBase* executable() const { return m_executable.get(); }
 
         // To call either of these methods include Executable.h
-        inline bool isHostFunction() const;
+        bool isHostFunction() const;
         FunctionExecutable* jsExecutable() const;
 
         JS_EXPORT_PRIVATE const SourceCode* sourceCode() const;

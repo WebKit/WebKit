@@ -1,3 +1,9 @@
+2014-02-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, don't mark isHostFunction() inline in the header file because that really confuses EFL.
+
+        * runtime/JSFunction.h:
+
 2014-02-09  Anders Carlsson  <andersca@apple.com>
 
         Add WTF_MAKE_FAST_ALLOCATED to more classes
