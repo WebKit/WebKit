@@ -95,6 +95,7 @@ WEBKIT_EDITING_COMMAND_REDO
 <SUBSECTION>
 webkit_web_view_new
 webkit_web_view_new_with_context
+webkit_web_view_new_with_related_view
 webkit_web_view_new_with_group
 webkit_web_view_get_context
 webkit_web_view_get_group

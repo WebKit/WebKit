@@ -42,7 +42,7 @@ WebKit::WebSoupCustomProtocolRequestManager* webkitWebContextGetRequestManager(W
 void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID, API::URLRequest*);
 void webkitWebContextStopLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID);
 void webkitWebContextDidFinishLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID);
-void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, WebKitWebViewGroup*);
+void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, WebKitWebViewGroup*, WebKitWebView*);
 void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext*, WebKit::WebPageProxy*);
 WebKitWebViewGroup* webkitWebContextGetDefaultWebViewGroup(WebKitWebContext*);
