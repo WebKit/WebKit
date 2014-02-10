@@ -1,3 +1,14 @@
+2014-02-04  Carlos Garnacho  <carlosg@gnome.org>
+
+        [GTK] Ensure generated events have given modifiers GDK understands
+        https://bugs.webkit.org/show_bug.cgi?id=128171
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::webkitModifiersToGDKModifiers): Move around
+        (WTR::EventSenderProxy::createMouseButtonEvent):
+
 2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(JAVASCRIPT_DEBUGGER) leftovers
