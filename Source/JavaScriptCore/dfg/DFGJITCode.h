@@ -32,7 +32,6 @@
 
 #include "CompilationResult.h"
 #include "DFGCommonData.h"
-#include "DFGMinifiedGraph.h"
 #include "DFGOSREntry.h"
 #include "DFGOSRExit.h"
 #include "DFGVariableEventStream.h"

@@ -29,10 +29,7 @@
 
 #include "DFGCSEPhase.h"
 
-#include "DFGAbstractHeap.h"
 #include "DFGClobberize.h"
-#include "DFGEdgeUsesStructure.h"
-#include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "Operations.h"
 #include <array>

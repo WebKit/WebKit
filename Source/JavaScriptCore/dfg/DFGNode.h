@@ -31,20 +31,13 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
-#include "CodeOrigin.h"
 #include "DFGAbstractValue.h"
 #include "DFGAdjacencyList.h"
 #include "DFGArithMode.h"
 #include "DFGArrayMode.h"
-#include "DFGCommon.h"
 #include "DFGLazyJSValue.h"
-#include "DFGNodeFlags.h"
 #include "DFGNodeType.h"
 #include "DFGVariableAccessData.h"
-#include "JSCJSValue.h"
-#include "Operands.h"
-#include "SpeculatedType.h"
-#include "StructureSet.h"
 #include "ValueProfile.h"
 #include <wtf/ListDump.h>
 

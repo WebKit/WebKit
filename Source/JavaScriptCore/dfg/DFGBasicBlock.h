@@ -28,13 +28,10 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAbstractValue.h"
 #include "DFGAvailability.h"
 #include "DFGBranchDirection.h"
-#include "DFGFlushedAt.h"
 #include "DFGNode.h"
 #include "DFGVariadicFunction.h"
-#include "Operands.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>

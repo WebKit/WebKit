@@ -28,12 +28,8 @@
 
 #include "DFGCommon.h"
 #include "DFGDoubleFormatState.h"
-#include "DFGFlushFormat.h"
 #include "DFGFlushedAt.h"
-#include "DFGNodeFlags.h"
 #include "Operands.h"
-#include "SpeculatedType.h"
-#include "VirtualRegister.h"
 #include <wtf/Platform.h>
 #include <wtf/UnionFind.h>
 #include <wtf/Vector.h>

@@ -30,12 +30,10 @@
 #include "DFGCFAPhase.h"
 
 #include "DFGAbstractInterpreterInlines.h"
-#include "DFGGraph.h"
 #include "DFGInPlaceAbstractState.h"
 #include "DFGPhase.h"
 #include "DFGSafeToExecute.h"
 #include "OperandsInlines.h"
-#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

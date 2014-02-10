@@ -33,16 +33,12 @@
 #include "DFGAbstractInterpreter.h"
 #include "DFGGenerationInfo.h"
 #include "DFGInPlaceAbstractState.h"
-#include "DFGJITCompiler.h"
-#include "DFGOSRExit.h"
 #include "DFGOSRExitJumpPlaceholder.h"
 #include "DFGSilentRegisterSavePlan.h"
 #include "DFGValueSource.h"
 #include "JITOperations.h"
 #include "MarkedAllocator.h"
 #include "PutKind.h"
-#include "ValueRecovery.h"
-#include "VirtualRegister.h"
 
 namespace JSC { namespace DFG {
 

@@ -31,7 +31,6 @@
 
 #include "ArrayPrototype.h"
 #include "DFGClobberize.h"
-#include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "Operations.h"
 

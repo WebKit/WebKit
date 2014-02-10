@@ -29,7 +29,6 @@
 
 #include "DFGVirtualRegisterAllocationPhase.h"
 
-#include "DFGGraph.h"
 #include "DFGScoreBoard.h"
 #include "Operations.h"
 #include "StackAlignment.h"

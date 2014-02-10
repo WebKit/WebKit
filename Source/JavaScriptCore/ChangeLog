@@ -1,3 +1,101 @@
+2014-02-10  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove extra includes from DFG
+        https://bugs.webkit.org/show_bug.cgi?id=126983
+
+        Reviewed by Andreas Kling.
+
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGAdjacencyList.h:
+        * dfg/DFGArgumentPosition.h:
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        * dfg/DFGArrayMode.cpp:
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        * dfg/DFGAtTailAbstractState.h:
+        * dfg/DFGAvailability.h:
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGBasicBlockInlines.h:
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGCFAPhase.cpp:
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        * dfg/DFGCapabilities.cpp:
+        * dfg/DFGCapabilities.h:
+        * dfg/DFGClobberize.h:
+        * dfg/DFGCommonData.cpp:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp:
+        * dfg/DFGDCEPhase.cpp:
+        * dfg/DFGDominators.h:
+        * dfg/DFGDriver.cpp:
+        * dfg/DFGDriver.h:
+        * dfg/DFGFixupPhase.cpp:
+        * dfg/DFGFlushLivenessAnalysisPhase.cpp:
+        * dfg/DFGGenerationInfo.h:
+        * dfg/DFGGraph.cpp:
+        * dfg/DFGGraph.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        * dfg/DFGInPlaceAbstractState.h:
+        * dfg/DFGInlineCacheWrapperInlines.h:
+        * dfg/DFGInvalidationPointInjectionPhase.cpp:
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGJITFinalizer.cpp:
+        * dfg/DFGJITFinalizer.h:
+        * dfg/DFGLICMPhase.cpp:
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        * dfg/DFGMinifiedNode.h:
+        * dfg/DFGNaturalLoops.h:
+        * dfg/DFGNode.cpp:
+        * dfg/DFGNode.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        * dfg/DFGOSREntry.cpp:
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        * dfg/DFGOSRExit.cpp:
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitBase.cpp:
+        * dfg/DFGOSRExitCompilationInfo.h:
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        * dfg/DFGOSRExitCompiler64.cpp:
+        * dfg/DFGOSRExitJumpPlaceholder.cpp:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPhase.h:
+        * dfg/DFGPlan.h:
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGResurrectionForValidationPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        * dfg/DFGSSALoweringPhase.cpp:
+        * dfg/DFGSaneStringGetByValSlowPathGenerator.h:
+        * dfg/DFGSlowPathGenerator.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * dfg/DFGStackLayoutPhase.cpp:
+        * dfg/DFGStoreBarrierElisionPhase.cpp:
+        * dfg/DFGStrengthReductionPhase.cpp:
+        * dfg/DFGThunks.cpp:
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        * dfg/DFGUnificationPhase.cpp:
+        * dfg/DFGValidate.h:
+        * dfg/DFGValueSource.h:
+        * dfg/DFGVariableAccessData.h:
+        * dfg/DFGVariableAccessDataDump.cpp:
+        * dfg/DFGVariableEvent.h:
+        * dfg/DFGVariableEventStream.h:
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        * dfg/DFGWorklist.cpp:
+
 2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         JSC environment variables should override other mechanisms for setting options

@@ -33,10 +33,6 @@
 #include "ArrayProfile.h"
 #include "DFGFiltrationResult.h"
 #include "DFGStructureAbstractValue.h"
-#include "JSCell.h"
-#include "SpeculatedType.h"
-#include "DumpContext.h"
-#include "StructureSet.h"
 
 namespace JSC { namespace DFG {
 

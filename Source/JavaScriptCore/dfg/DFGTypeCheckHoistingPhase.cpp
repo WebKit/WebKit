@@ -29,11 +29,8 @@
 
 #include "DFGTypeCheckHoistingPhase.h"
 
-#include "DFGBasicBlock.h"
-#include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
-#include "DFGVariableAccessDataDump.h"
 #include "Operations.h"
 #include <wtf/HashMap.h>
 

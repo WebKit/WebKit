@@ -26,7 +26,6 @@
 #ifndef DFGBasicBlockInlines_h
 #define DFGBasicBlockInlines_h
 
-#include "DFGBasicBlock.h"
 #include "DFGGraph.h"
 
 #if ENABLE(DFG_JIT)

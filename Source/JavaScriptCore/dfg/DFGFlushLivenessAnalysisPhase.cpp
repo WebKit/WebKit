@@ -30,7 +30,6 @@
 #include "DFGFlushLivenessAnalysisPhase.h"
 
 #include "DFGBasicBlockInlines.h"
-#include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "OperandsInlines.h"

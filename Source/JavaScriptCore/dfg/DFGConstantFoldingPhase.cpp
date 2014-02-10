@@ -30,14 +30,9 @@
 #include "DFGConstantFoldingPhase.h"
 
 #include "DFGAbstractInterpreterInlines.h"
-#include "DFGBasicBlock.h"
-#include "DFGGraph.h"
 #include "DFGInPlaceAbstractState.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
-#include "GetByIdStatus.h"
-#include "Operations.h"
-#include "PutByIdStatus.h"
 
 namespace JSC { namespace DFG {
 

@@ -30,7 +30,6 @@
 #include "DFGVariableAccessDataDump.h"
 
 #include "DFGGraph.h"
-#include "DFGVariableAccessData.h"
 #include "Operations.h"
 
 namespace JSC { namespace DFG {

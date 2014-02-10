@@ -30,7 +30,6 @@
 #include "DFGDCEPhase.h"
 
 #include "DFGBasicBlockInlines.h"
-#include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "Operations.h"

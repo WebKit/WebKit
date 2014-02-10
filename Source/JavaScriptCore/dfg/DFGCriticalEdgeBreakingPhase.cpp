@@ -31,7 +31,6 @@
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGBlockInsertionSet.h"
-#include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "Operations.h"
 #include <wtf/HashMap.h>

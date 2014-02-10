@@ -29,8 +29,6 @@
 
 #include "DFGInPlaceAbstractState.h"
 
-#include "CodeBlock.h"
-#include "DFGBasicBlock.h"
 #include "GetByIdStatus.h"
 #include "Operations.h"
 #include "PutByIdStatus.h"

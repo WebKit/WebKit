@@ -30,7 +30,6 @@
 #include "DFGInvalidationPointInjectionPhase.h"
 
 #include "DFGClobberize.h"
-#include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "Operations.h"

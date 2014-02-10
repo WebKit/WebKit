@@ -30,7 +30,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGCommon.h"
 #include "DFGMinifiedGraph.h"
 #include "DFGVariableEvent.h"
 #include "Operands.h"

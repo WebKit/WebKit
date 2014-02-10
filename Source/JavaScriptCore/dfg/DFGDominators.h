@@ -32,7 +32,6 @@
 
 #include "DFGAnalysis.h"
 #include "DFGBasicBlock.h"
-#include "DFGCommon.h"
 #include <wtf/FastBitVector.h>
 
 namespace JSC { namespace DFG {

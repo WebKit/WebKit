@@ -29,9 +29,7 @@
 
 #include "DFGOSRExitBase.h"
 
-#include "CodeBlock.h"
 #include "DFGBasicBlock.h"
-#include "DFGNode.h"
 #include "Operations.h"
 
 namespace JSC { namespace DFG {

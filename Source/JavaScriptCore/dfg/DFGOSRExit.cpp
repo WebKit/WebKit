@@ -29,8 +29,6 @@
 
 #include "DFGOSRExit.h"
 
-#include "AssemblyHelpers.h"
-#include "DFGGraph.h"
 #include "DFGSpeculativeJIT.h"
 #include "Operations.h"
 

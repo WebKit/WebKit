@@ -29,8 +29,6 @@
 
 #include "DFGOSRExitCompiler.h"
 
-#include "CallFrame.h"
-#include "DFGCommon.h"
 #include "DFGJITCode.h"
 #include "DFGOSRExitPreparation.h"
 #include "LinkBuffer.h"

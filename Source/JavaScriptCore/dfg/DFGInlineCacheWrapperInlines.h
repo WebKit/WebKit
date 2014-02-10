@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGInlineCacheWrapper.h"
 #include "DFGSlowPathGenerator.h"
 
 namespace JSC { namespace DFG {
