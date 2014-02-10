@@ -1,3 +1,33 @@
+2014-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLTextFormControlElement::setSelectionRange shouldn't use VisiblePosition
+        https://bugs.webkit.org/show_bug.cgi?id=128478
+
+        Reviewed by Darin Adler.
+
+        Added positionForIndex to compute Position given a selection index. This function doesn't
+        synchronously trigger like visiblePositionForIndex.
+
+        Also added assertions in visiblePositionForIndex and visiblePositionForIndex to make sure
+        they are inverse of one another.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setSelectionRange): Use positionForIndex. Also removed
+        the now tautological assertions since we would never create a position outside the inner text
+        element.
+
+        (WebCore::HTMLTextFormControlElement::indexForVisiblePosition): Fixed the bug where this
+        function could return a selection index beyond innerTextElement in some types of input
+        elements such as search fields. fast/forms/search-disabled-readonly.html hits the newly
+        added assertion without this change. Note we can't use visiblePositionForIndex here as that
+        would result in a mutual recursion with the assertion in visiblePositionForIndex.
+
+        (WebCore::HTMLTextFormControlElement::visiblePositionForIndex): Added an assertion.
+
+        (WebCore::positionForIndex): Added. It's here with prototype at the beginning of the file
+        so that it's right next to HTMLTextFormControlElement::innerText() where we do a similar
+        DOM traversal to obtain the inner text value.
+
 2014-02-07  Jeffrey Pfau  <jpfau@apple.com>
 
         Disable access to application cache when in private browsing

@@ -52,6 +52,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static Position positionForIndex(TextControlInnerTextElement*, unsigned);
+
 HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, document, form)
     , m_lastChangeWasUserEdit(false)
@@ -296,25 +298,18 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     end = std::max(end, 0);
     start = std::min(std::max(start, 0), end);
 
-    if (!hasVisibleTextArea(*renderer(), innerTextElement())) {
+    TextControlInnerTextElement* innerText = innerTextElement();
+    if (!hasVisibleTextArea(*renderer(), innerText)) {
         cacheSelection(start, end, direction);
         return;
     }
-    VisiblePosition startPosition = visiblePositionForIndex(start);
-    VisiblePosition endPosition;
+    Position startPosition = positionForIndex(innerText, start);
+    Position endPosition;
     if (start == end)
         endPosition = startPosition;
     else
-        endPosition = visiblePositionForIndex(end);
+        endPosition = positionForIndex(innerText, end);
 
-#if !PLATFORM(IOS)
-    // startPosition and endPosition can be null position for example when
-    // "-webkit-user-select: none" style attribute is specified.
-    if (startPosition.isNotNull() && endPosition.isNotNull()) {
-        ASSERT(startPosition.deepEquivalent().deprecatedNode()->shadowHost() == this
-            && endPosition.deepEquivalent().deprecatedNode()->shadowHost() == this);
-    }
-#endif
     VisibleSelection newSelection;
     if (direction == SelectionHasBackwardDirection)
         newSelection = VisibleSelection(endPosition, startPosition);
@@ -328,15 +323,20 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
 
 int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& pos) const
 {
-    if (enclosingTextFormControl(pos.deepEquivalent()) != this)
+    TextControlInnerTextElement* innerText = innerTextElement();
+    if (!innerText || !innerText->contains(pos.deepEquivalent().anchorNode()))
         return 0;
     bool forSelectionPreservation = false;
-    return WebCore::indexForVisiblePosition(innerTextElement(), pos, forSelectionPreservation);
+    unsigned index = WebCore::indexForVisiblePosition(innerTextElement(), pos, forSelectionPreservation);
+    ASSERT(VisiblePosition(positionForIndex(innerTextElement(), index)) == pos);
+    return index;
 }
 
 VisiblePosition HTMLTextFormControlElement::visiblePositionForIndex(int index) const
 {
-    return visiblePositionForIndexUsingCharacterIterator(innerTextElement(), index);
+    VisiblePosition position = positionForIndex(innerTextElement(), index);
+    ASSERT(indexForVisiblePosition(position) == index);
+    return position;
 }
 
 int HTMLTextFormControlElement::selectionStart() const
@@ -555,6 +555,24 @@ String HTMLTextFormControlElement::innerTextValue() const
             result.append(toText(node)->data());
     }
     return finishText(result);
+}
+
+static Position positionForIndex(TextControlInnerTextElement* innerText, unsigned index)
+{
+    unsigned remainingCharactersToMoveForward = index;
+    for (Node* node = innerText; node; node = NodeTraversal::next(node, innerText)) {
+        if (node->hasTagName(brTag)) {
+            if (!remainingCharactersToMoveForward)
+                return positionBeforeNode(node);
+            remainingCharactersToMoveForward--;
+        } else if (node->isTextNode()) {
+            Text* text = toText(node);
+            if (remainingCharactersToMoveForward < text->length())
+                return Position(text, remainingCharactersToMoveForward);
+            remainingCharactersToMoveForward -= text->length();
+        }
+    }
+    return lastPositionInNode(innerText);
 }
 
 #if PLATFORM(IOS)
