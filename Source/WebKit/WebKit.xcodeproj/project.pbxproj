@@ -2014,7 +2014,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/mac/WebKit.exp",
-				"$(SRCROOT)/ios/WebKit.IOS.exp",
+				"$(SRCROOT)/ios/WebKit.iOS.exp",
 				"$(SRCROOT)/mac/WebKit.mac.exp",
 			);
 			name = "Generate Export Files";

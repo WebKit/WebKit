@@ -1,3 +1,10 @@
+2014-02-09  Mark Rowe  <mrowe@apple.com>
+
+        Stop relinking WebKit on every build.
+
+        * WebKit.xcodeproj/project.pbxproj: Fix the case on an input file for the Generate Export Files
+        script phase so it will run only when the inputs change rather than on every build.
+
 2014-02-09  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove PageClientEfl
