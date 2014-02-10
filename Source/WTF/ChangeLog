@@ -1,3 +1,36 @@
+2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add GUniqueOutPtr and use it instead of GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=127554
+
+        Reviewed by Gustavo Noronha Silva.
+
+        GUniqueOutPtr is a simplified version of GOwnPtr for the cases
+        where we need the address of the contained pointer. GUniqueOutPtr
+        uses GUniquePtr to free the contained object and to release the
+        container pointer. The API is very simple to make sure this is
+        only used when outPtr() is needed. It can't be constructed with a
+        pointer, and there's not method to set a new pointer. Another
+        difference with the old GOwnPtr is that outPtr() can be used
+        multiple times, because it frees any pointer previously set.
+
+        * GNUmakefile.list.am:
+        * wtf/PlatformEfl.cmake:
+        * wtf/PlatformGTK.cmake:
+        * wtf/gobject/GOwnPtr.cpp: Removed.
+        * wtf/gobject/GOwnPtr.h: Removed.
+        * wtf/gobject/GUniquePtr.h:
+        (WTF::GUniqueOutPtr::GUniqueOutPtr):
+        (WTF::GUniqueOutPtr::~GUniqueOutPtr):
+        (WTF::GUniqueOutPtr::outPtr):
+        (WTF::GUniqueOutPtr::reset):
+        (WTF::GUniqueOutPtr::release):
+        (WTF::GUniqueOutPtr::operator*):
+        (WTF::GUniqueOutPtr::operator->):
+        (WTF::GUniqueOutPtr::get):
+        (WTF::GUniqueOutPtr::operator!):
+        (WTF::GUniqueOutPtr::operator UnspecifiedBoolType):
+
 2014-02-10  Darin Adler  <darin@apple.com>
 
         Stop using String::deprecatedCharacters to call WTF::Collator

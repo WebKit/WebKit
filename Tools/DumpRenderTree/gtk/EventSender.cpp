@@ -47,7 +47,6 @@
 #include <webkit/webkitwebview.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Platform.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -805,7 +804,7 @@ static GdkEvent* createKeyPressEvent(JSContextRef context, size_t argumentCount,
 
     // When synthesizing an event, an invalid hardware_keycode value
     // can cause it to be badly processed by Gtk+.
-    GOwnPtr<GdkKeymapKey> keys;
+    GUniqueOutPtr<GdkKeymapKey> keys;
     gint nKeys;
     if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeySym, &keys.outPtr(), &nKeys))
         pressEvent->key.hardware_keycode = keys.get()[0].keycode;

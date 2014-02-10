@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitTestBus.h"
 
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,8 +37,8 @@ bool WebKitTestBus::run()
         return false;
     }
 
-    GOwnPtr<char> output;
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<char> output;
+    GUniqueOutPtr<GError> error;
     if (!g_spawn_command_line_sync(dbusLaunch.get(), &output.outPtr(), 0, 0, &error.outPtr())) {
         g_warning("Error starting DBUS daemon: %s", error->message);
         return false;

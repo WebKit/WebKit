@@ -4,7 +4,6 @@ list(APPEND WTF_SOURCES
     efl/RefPtrEfl.cpp
     efl/RunLoopEfl.cpp
 
-    gobject/GOwnPtr.cpp
     gobject/GRefPtr.cpp
 )
 

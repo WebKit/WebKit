@@ -5854,8 +5854,6 @@ platform_sources += \
 	Source/WebCore/platform/leveldb/LevelDBTransaction.cpp \
 	Source/WebCore/platform/leveldb/LevelDBWriteBatch.h \
 	Source/WebCore/platform/leveldb/LevelDBWriteBatch.cpp \
-	Source/WebCore/platform/network/soup/GOwnPtrSoup.cpp \
-	Source/WebCore/platform/network/soup/GOwnPtrSoup.h \
 	Source/WebCore/platform/network/soup/ProxyServerSoup.cpp \
 	Source/WebCore/platform/network/soup/ResourceError.h \
 	Source/WebCore/platform/network/soup/ResourceErrorSoup.cpp \

@@ -37,8 +37,8 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 using namespace WebCore;
 
@@ -48,7 +48,7 @@ static uint64_t getCacheDiskFreeSize(SoupCache* cache)
 {
     ASSERT(cache);
 
-    GOwnPtr<char> cacheDir;
+    GUniqueOutPtr<char> cacheDir;
     g_object_get(G_OBJECT(cache), "cache-dir", &cacheDir.outPtr(), NULL);
     if (!cacheDir)
         return 0;

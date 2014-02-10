@@ -28,7 +28,7 @@
 
 #include "AuthenticationChallenge.h"
 #include "CookieJarSoup.h"
-#include "GOwnPtrSoup.h"
+#include "GUniquePtrSoup.h"
 #include "Logging.h"
 #include "ResourceHandle.h"
 #include <libsoup/soup.h>
@@ -210,7 +210,7 @@ char* SoupNetworkSession::httpProxy() const
     if (!soupResolver)
         return nullptr;
 
-    GOwnPtr<SoupURI> uri;
+    GUniqueOutPtr<SoupURI> uri;
     g_object_get(soupResolver, SOUP_PROXY_RESOLVER_WK_PROXY_URI, &uri.outPtr(), nullptr);
 
     return uri ? soup_uri_to_string(uri.get(), FALSE) : nullptr;

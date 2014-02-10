@@ -23,7 +23,6 @@
 #include "WebViewTest.h"
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 
 static WebKitTestServer* kServer;
@@ -36,7 +35,6 @@ public:
     FaviconDatabaseTest()
         : m_webContext(webkit_web_context_get_default())
         , m_favicon(0)
-        , m_error(0)
         , m_faviconNotificationReceived(false)
     {
         WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext);
@@ -84,7 +82,6 @@ public:
 
     void getFaviconForPageURIAndWaitUntilReady(const char* pageURI)
     {
-        m_error.clear();
         if (m_favicon) {
             cairo_surface_destroy(m_favicon);
             m_favicon = 0;
@@ -98,7 +95,7 @@ public:
     WebKitWebContext* m_webContext;
     cairo_surface_t* m_favicon;
     CString m_faviconURI;
-    GOwnPtr<GError> m_error;
+    GUniqueOutPtr<GError> m_error;
     bool m_faviconNotificationReceived;
 };
 

@@ -32,7 +32,6 @@
 #include "Pasteboard.h"
 #include "TextResourceDecoder.h"
 #include <gtk/gtk.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 
 namespace WebCore {
@@ -259,18 +258,13 @@ void PasteboardHelper::fillDataObjectFromDropData(GtkSelectionData* data, guint 
     } else if (target == unknownAtom) {
         GRefPtr<GVariant> variant = g_variant_new_parsed(reinterpret_cast<const char*>(gtk_selection_data_get_data(data)));
 
-        GOwnPtr<gchar> key;
-        GOwnPtr<gchar> value;
+        GUniqueOutPtr<gchar> key;
+        GUniqueOutPtr<gchar> value;
         GVariantIter iter;
 
         g_variant_iter_init(&iter, variant.get());
-        while (g_variant_iter_next(&iter, "{ss}", &key.outPtr(), &value.outPtr())) {
+        while (g_variant_iter_next(&iter, "{ss}", &key.outPtr(), &value.outPtr()))
             dataObject->setUnknownTypeData(key.get(), value.get());
-
-            // FIXME: should GOwnPtr be smarter about this and replace the existing ptr when outPtr() is used?
-            key.clear();
-            value.clear();
-        }
     }
 }
 

@@ -38,7 +38,7 @@ public:
 
     static void canExecuteEditingCommandReadyCallback(GObject*, GAsyncResult* result, EditorTest* test)
     {
-        GOwnPtr<GError> error;
+        GUniqueOutPtr<GError> error;
         test->m_canExecuteEditingCommand = webkit_web_view_can_execute_editing_command_finish(test->m_webView, result, &error.outPtr());
         g_assert(!error.get());
         g_main_loop_quit(test->m_mainLoop);

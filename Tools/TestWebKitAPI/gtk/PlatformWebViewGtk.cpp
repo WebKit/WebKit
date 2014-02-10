@@ -28,7 +28,7 @@
 
 #include <WebCore/GUniquePtrGtk.h>
 #include <gtk/gtk.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace TestWebKitAPI {
 
@@ -67,7 +67,7 @@ static void doKeyStroke(GtkWidget* viewWidget, unsigned int keyVal)
     gdk_event_set_device(event.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(viewWidget))));
 
     // When synthesizing an event, an invalid hardware_keycode value can cause it to be badly processed by GTK+.
-    GOwnPtr<GdkKeymapKey> keys;
+    GUniqueOutPtr<GdkKeymapKey> keys;
     int keysCount;
     if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), keyVal, &keys.outPtr(), &keysCount))
         event->key.hardware_keycode = keys.get()[0].keycode;

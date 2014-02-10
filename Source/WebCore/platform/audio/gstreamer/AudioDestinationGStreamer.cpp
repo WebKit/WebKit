@@ -24,12 +24,12 @@
 
 #include "AudioChannel.h"
 #include "AudioSourceProvider.h"
-#include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGStreamer.h"
 #include "Logging.h"
 #include "WebKitWebAudioSourceGStreamer.h"
 #include <gst/gst.h>
 #include <gst/pbutils/pbutils.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace WebCore {
 
@@ -150,8 +150,8 @@ void AudioDestinationGStreamer::finishBuildingPipelineAfterWavParserPadReady(Gst
 
 gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
 {
-    GOwnPtr<GError> error;
-    GOwnPtr<gchar> debug;
+    GUniqueOutPtr<GError> error;
+    GUniqueOutPtr<gchar> debug;
 
     switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_WARNING:

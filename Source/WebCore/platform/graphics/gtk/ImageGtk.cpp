@@ -30,7 +30,6 @@
 #include "GUniquePtrGtk.h"
 #include "GdkCairoUtilities.h"
 #include "SharedBuffer.h"
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <cairo.h>
@@ -67,7 +66,7 @@ static CString getThemeIconFileName(const char* name, int size)
 
 static PassRefPtr<SharedBuffer> loadResourceSharedBuffer(CString name)
 {
-    GOwnPtr<gchar> content;
+    GUniqueOutPtr<gchar> content;
     gsize length;
     if (!g_file_get_contents(name.data(), &content.outPtr(), &length, 0))
         return SharedBuffer::create();

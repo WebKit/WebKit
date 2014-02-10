@@ -211,8 +211,6 @@ wtf_sources += \
     Source/WTF/wtf/dtoa/strtod.h \
     Source/WTF/wtf/dtoa/utils.h \
     Source/WTF/wtf/gobject/GMutexLocker.h \
-    Source/WTF/wtf/gobject/GOwnPtr.cpp \
-    Source/WTF/wtf/gobject/GOwnPtr.h \
     Source/WTF/wtf/gobject/GRefPtr.cpp \
     Source/WTF/wtf/gobject/GRefPtr.h \
     Source/WTF/wtf/gobject/GTypedefs.h \

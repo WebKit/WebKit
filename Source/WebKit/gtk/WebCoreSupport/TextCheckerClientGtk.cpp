@@ -28,7 +28,6 @@
 #include "webkitspellchecker.h"
 #include "webkitwebsettingsprivate.h"
 #include <glib.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
 

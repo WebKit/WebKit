@@ -24,7 +24,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <wtf/MathExtras.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 // The Windows composition key event code is 299 or VK_PROCESSKEY. We need to
 // emit this code for web compatibility reasons when key events trigger
@@ -317,7 +317,7 @@ void GtkInputMethodFilter::handlePreeditChanged()
     if (!m_enabled)
         return;
 
-    GOwnPtr<gchar> newPreedit;
+    GUniqueOutPtr<gchar> newPreedit;
     gtk_im_context_get_preedit_string(m_context.get(), &newPreedit.outPtr(), 0, &m_cursorOffset);
 
     if (m_preventNextCommit) {

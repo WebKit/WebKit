@@ -106,7 +106,7 @@ static void testWebExtensionWindowObjectCleared(WebViewTest* test, gconstpointer
     test->loadHtml("<html><header></header><body></body></html>", 0);
     test->waitUntilLoadFinished();
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.echo('Foo');", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
@@ -133,7 +133,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     test->loadHtml("<html><header></header><body><div id='console'></div></body></html>", 0);
     test->waitUntilLoadFinished();
 
-    GOwnPtr<char> result;
+    GUniqueOutPtr<char> result;
     gulong scriptDialogID = g_signal_connect(test->m_webView, "script-dialog", G_CALLBACK(scriptDialogCallback), &result.outPtr());
 
     static const char* mainWorldScript =
@@ -143,7 +143,6 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
         "document.open(1, 2, 3);";
     test->runJavaScriptAndWaitUntilFinished(mainWorldScript, 0);
     g_assert_cmpstr(result.get(), ==, "Main World");
-    result.clear();
 
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
     g_assert(javascriptResult);
@@ -165,7 +164,6 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
         test);
     g_main_loop_run(test->m_mainLoop);
     g_assert_cmpstr(result.get(), ==, "Isolated World");
-    result.clear();
 
     // Check that 'top.foo' defined in main world is not visible in isolated world.
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);

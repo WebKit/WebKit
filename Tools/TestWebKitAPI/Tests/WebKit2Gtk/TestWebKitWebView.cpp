@@ -86,7 +86,7 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     test->loadHtml(html, 0);
     test->waitUntilLoadFinished();
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.getElementById('WebKitLink').title;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
@@ -144,7 +144,6 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     javascriptResult = test->runJavaScriptFromGResourceAndWaitUntilFinished("/wrong/path/to/resource.js", &error.outPtr());
     g_assert(!javascriptResult);
     g_assert_error(error.get(), G_RESOURCE_ERROR, G_RESOURCE_ERROR_NOT_FOUND);
-    error.clear();
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("foo();", &error.outPtr());
     g_assert(!javascriptResult);
@@ -346,7 +345,7 @@ public:
 
     static void webViewSavedToStreamCallback(GObject* object, GAsyncResult* result, SaveWebViewTest* test)
     {
-        GOwnPtr<GError> error;
+        GUniqueOutPtr<GError> error;
         test->m_inputStream = adoptGRef(webkit_web_view_save_finish(test->m_webView, result, &error.outPtr()));
         g_assert(G_IS_INPUT_STREAM(test->m_inputStream.get()));
         g_assert(!error);
@@ -356,7 +355,7 @@ public:
 
     static void webViewSavedToFileCallback(GObject* object, GAsyncResult* result, SaveWebViewTest* test)
     {
-        GOwnPtr<GError> error;
+        GUniqueOutPtr<GError> error;
         g_assert(webkit_web_view_save_to_file_finish(test->m_webView, result, &error.outPtr()));
         g_assert(!error);
 
@@ -405,7 +404,7 @@ static void testWebViewSave(SaveWebViewTest* test, gconstpointer)
     // strings read since the 'Date' field and the boundaries will be
     // different on each case. MHTML functionality will be tested by
     // Layout tests, so checking the amount of bytes is enough.
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     gchar buffer[512] = { 0 };
     gssize readBytes = 0;
     gssize totalBytesFromStream = 0;
@@ -458,7 +457,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     // Wait untill the page is loaded. Initial visibility should be 'hidden'.
     test->waitUntilLoadFinished();
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.visibilityState;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
@@ -507,7 +506,7 @@ public:
 
     static void onSnapshotCancelledReady(WebKitWebView* web_view, GAsyncResult* res, SnapshotWebViewTest* test)
     {
-        GOwnPtr<GError> error;
+        GUniqueOutPtr<GError> error;
         test->m_surface = webkit_web_view_get_snapshot_finish(web_view, res, &error.outPtr());
         g_assert(!test->m_surface);
         g_assert_error(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED);

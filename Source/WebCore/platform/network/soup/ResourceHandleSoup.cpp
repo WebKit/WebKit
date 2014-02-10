@@ -32,7 +32,7 @@
 #include "CookieJarSoup.h"
 #include "CredentialStorage.h"
 #include "FileSystem.h"
-#include "GOwnPtrSoup.h"
+#include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
@@ -55,7 +55,6 @@
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/SHA1.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
@@ -504,7 +503,7 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
         return;
     }
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     ResourceHandleInternal* d = handle->getInternal();
     gssize bytesSkipped = g_input_stream_skip_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
     if (error) {
@@ -610,7 +609,7 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
     ResourceHandleInternal* d = handle->getInternal();
     ASSERT(!d->m_inputStream);
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     d->m_inputStream = adoptGRef(soup_multipart_input_stream_next_part_finish(d->m_multipartInputStream.get(), result, &error.outPtr()));
 
     if (error) {
@@ -657,7 +656,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         return;
     }
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     GRefPtr<GInputStream> inputStream = adoptGRef(soup_request_send_finish(d->m_soupRequest.get(), result, &error.outPtr()));
     if (error) {
         handle->client()->didFail(handle.get(), ResourceError::httpError(soupMessage, error.get(), d->m_soupRequest.get()));
@@ -727,7 +726,7 @@ static void continueAfterDidReceiveResponse(ResourceHandle* handle)
 
 static bool addFileToSoupMessageBody(SoupMessage* message, const String& fileNameString, size_t offset, size_t lengthToSend, unsigned long& totalBodySize)
 {
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     CString fileName = fileSystemRepresentation(fileNameString);
     GMappedFile* fileMapping = g_mapped_file_new(fileName.data(), false, &error.outPtr());
     if (error)
@@ -978,12 +977,11 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const R
 {
     ResourceHandleInternal* d = handle->getInternal();
 
-    GOwnPtr<GError> error;
-
     GUniquePtr<SoupURI> soupURI = request.createSoupURI();
     if (!soupURI)
         return false;
 
+    GUniqueOutPtr<GError> error;
     d->m_soupRequest = adoptGRef(soup_session_request_uri(d->soupSession(), soupURI.get(), &error.outPtr()));
     if (error) {
         d->m_soupRequest.clear();
@@ -1301,7 +1299,7 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
         return;
     }
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     gssize bytesRead = g_input_stream_read_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
 
     if (error) {

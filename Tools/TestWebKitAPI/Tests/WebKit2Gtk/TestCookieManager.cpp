@@ -88,7 +88,7 @@ public:
 
     static void getAcceptPolicyReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
     {
-        GOwnPtr<GError> error;
+        GUniqueOutPtr<GError> error;
         WebKitCookieAcceptPolicy policy = webkit_cookie_manager_get_accept_policy_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
         g_assert(!error.get());
 
@@ -113,7 +113,7 @@ public:
 
     static void getDomainsReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
     {
-        GOwnPtr<GError> error;
+        GUniqueOutPtr<GError> error;
         char** domains = webkit_cookie_manager_get_domains_with_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
         g_assert(!error.get());
 

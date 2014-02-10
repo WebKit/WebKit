@@ -37,7 +37,7 @@
 #include <wtf/text/WTFString.h>
 #if PLATFORM(GTK) || PLATFORM(EFL)
 #include <glib.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #endif
 
 #include <sys/wait.h>
@@ -74,7 +74,7 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     argv[3] = 0;
 
     int status;
-    GOwnPtr<char> stdOut;
+    GUniqueOutPtr<char> stdOut;
 
     // If the disposition of SIGCLD signal is set to SIG_IGN (default)
     // then the signal will be ignored and g_spawn_sync() will not be

@@ -39,7 +39,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/gobject/GlibUtilities.h>
 
@@ -123,7 +122,7 @@ void ProcessLauncher::launchProcess()
     argv[i++] = const_cast<char*>(realPluginPath.data());
     argv[i++] = 0;
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     if (!g_spawn_async(0, argv, 0, G_SPAWN_LEAVE_DESCRIPTORS_OPEN, childSetupFunction, GINT_TO_POINTER(sockets[1]), &pid, &error.outPtr())) {
         g_printerr("Unable to fork a new WebProcess: %s.\n", error->message);
         ASSERT_NOT_REACHED();

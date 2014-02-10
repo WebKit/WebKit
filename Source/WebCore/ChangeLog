@@ -1,3 +1,65 @@
+2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add GUniqueOutPtr and use it instead of GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=127554
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use GUniqueOutPtr instead of GOwnPtr.
+
+        * GNUmakefile.list.am:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::handleMessage):
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::handleMessage):
+        * platform/glib/BatteryProviderUPower.cpp:
+        (BatteryProviderUPower::startUpdating):
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::initializeGStreamer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::getTag):
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::encodeImage):
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::loadResourceSharedBuffer):
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::setURIList):
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::readFromFile):
+        * platform/gtk/GamepadsGtk.cpp:
+        (WebCore::GamepadDeviceGtk::readCallback):
+        * platform/gtk/GtkInputMethodFilter.cpp:
+        (WebCore::GtkInputMethodFilter::handlePreeditChanged):
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::fillDataObjectFromDropData):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::systemFont):
+        * platform/gtk/SharedBufferGtk.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/network/gtk/CredentialBackingStore.cpp:
+        (WebCore::credentialForChallengeAsyncReadyCallback):
+        * platform/network/soup/GOwnPtrSoup.cpp: Removed.
+        * platform/network/soup/GOwnPtrSoup.h: Removed.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::redirectSkipCallback):
+        (WebCore::nextMultipartResponsePartCallback):
+        (WebCore::sendRequestCallback):
+        (WebCore::addFileToSoupMessageBody):
+        (WebCore::createSoupRequestAndMessageForHandle):
+        (WebCore::readCallback):
+        * platform/network/soup/SocketStreamHandleSoup.cpp:
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+        (WebCore::connectedCallback):
+        (WebCore::readReadyCallback):
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::httpProxy):
+
 2014-02-10  Darin Adler  <darin@apple.com>
 
         Automatically generate isRendererOfType in RENDER_OBJECT_TYPE_CASTS

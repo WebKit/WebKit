@@ -29,7 +29,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/ProcessID.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -244,7 +243,7 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
     if (!introspectionData)
         introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, 0);
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     unsigned registrationID = g_dbus_connection_register_object(
         connection,
         "/org/webkit/gtk/WebExtensionTest",

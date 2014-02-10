@@ -34,7 +34,7 @@
 #include "TrackPrivateBase.h"
 #include <glib-object.h>
 #include <gst/gst.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
@@ -143,7 +143,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
 
 bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, String& value)
 {
-    GOwnPtr<gchar> tagValue;
+    GUniqueOutPtr<gchar> tagValue;
     if (gst_tag_list_get_string(tags, tagName, &tagValue.outPtr())) {
         INFO_MEDIA_MESSAGE("Track %d got %s %s.", m_index, tagName, tagValue.get());
         value = tagValue.get();

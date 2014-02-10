@@ -103,7 +103,7 @@ static bool isStyleSheetInjectedForURLAtPath(WebViewTest* test, const char* path
     test->loadURI(kServer->getURIForPath(path).data());
     test->waitUntilLoadFinished();
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished(kStyleSheetTestScript, &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());

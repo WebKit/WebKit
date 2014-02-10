@@ -25,7 +25,7 @@
 #include "BatteryProviderUPowerClient.h"
 #include <cmath>
 #include <limits>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 using namespace WebCore;
 
@@ -51,7 +51,7 @@ void BatteryProviderUPower::startUpdating()
     ASSERT(!m_upowerClient);
     m_upowerClient = adoptGRef(up_client_new());
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     if (!up_client_enumerate_devices_sync(m_upowerClient.get(), 0, &error.outPtr())) {
         m_client->updateBatteryStatus(NotAvailable);
         return;

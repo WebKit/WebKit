@@ -30,7 +30,6 @@
 #include "FileList.h"
 #include "FileSystem.h"
 #include "FontDescription.h"
-#include <wtf/gobject/GOwnPtr.h>
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
@@ -48,6 +47,7 @@
 #include <gdk/gdk.h>
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(PROGRESS_ELEMENT)
@@ -444,7 +444,7 @@ void RenderThemeGtk::systemFont(CSSValueID, FontDescription& fontDescription) co
         return;
 
     // This will be a font selection string like "Sans 10" so we cannot use it as the family name.
-    GOwnPtr<gchar> fontName;
+    GUniqueOutPtr<gchar> fontName;
     g_object_get(settings, "gtk-font-name", &fontName.outPtr(), NULL);
 
     PangoFontDescription* pangoDescription = pango_font_description_from_string(fontName.get());
