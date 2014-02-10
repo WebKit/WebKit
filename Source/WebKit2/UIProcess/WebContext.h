@@ -74,6 +74,7 @@ class WebIconDatabase;
 class WebPageGroup;
 class WebPageProxy;
 struct StatisticsData;
+struct WebPageConfiguration;
 struct WebProcessCreationParameters;
     
 typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
@@ -156,8 +157,7 @@ public:
 
     StorageManager& storageManager() const { return *m_storageManager; }
 
-    PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageGroup*, API::Session&, WebPageProxy* relatedPage = 0);
-    PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageGroup*, WebPageProxy* relatedPage = 0);
+    PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageConfiguration);
 
     const String& injectedBundlePath() const { return m_injectedBundlePath; }
 
