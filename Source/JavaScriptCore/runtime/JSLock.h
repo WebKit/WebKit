@@ -112,6 +112,8 @@ namespace JSC {
         };
 
     private:
+        void lock(intptr_t lockCount);
+        void unlock(intptr_t unlockCount);
         void setOwnerThread(ThreadIdentifier owner) { m_ownerThread = owner; }
 
         unsigned dropAllLocks();

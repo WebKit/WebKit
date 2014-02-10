@@ -1,3 +1,42 @@
+2014-02-10  Mark Lam  <mark.lam@apple.com>
+
+        Change JSLock::dropAllLocks() and friends to use lock() and unlock().
+        <https://webkit.org/b/128451>
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, JSLock's dropAllLocks(), dropAllLocksUnconditionally(), and
+        grabAllLocks() implement locking / unlocking by duplicating the code from
+        lock() and unlock(). Instead, they should just call lock() and unlock().
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        - Modified lock() and unlock() into a version that takes an entry count
+          to lock / unlock. The previous lock() and unlock() now calls these
+          new versions with an entry count of 1.
+
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::dropAllLocksUnconditionally):
+        (JSC::JSLock::grabAllLocks):
+        - Delegate to unlock() and lock() instead of duplicating the lock / unlock
+          code.
+        - There a some differences with calling lock() instead of duplicating its
+          code in grabAllLock() i.e. lock() does the following additional work:
+
+          1. lock() does a re-entry check that is not needed by grabAllLocks().
+             However, this is effectively a no-op since we never own the JSLock
+             before calling grabAllLocks().
+
+          2. set VM stackPointerAtVMEntry.
+          3. update VM stackLimit and reservedZoneSize.
+          4. set VM lastStackTop.
+             These 3 steps are just busy work which are also effective no-ops
+             because immediately after lock() returns, grabAllLocks() will write
+             over those values with their saved versions in the threadData.
+
+        * runtime/JSLock.h:
+
 2014-02-10  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Windows build.

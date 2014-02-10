@@ -100,9 +100,15 @@ void JSLock::willDestroyVM(VM* vm)
 
 void JSLock::lock()
 {
+    lock(1);
+}
+
+void JSLock::lock(intptr_t lockCount)
+{
+    ASSERT(lockCount > 0);
     ThreadIdentifier currentThread = WTF::currentThread();
     if (currentThreadIsHoldingLock()) {
-        m_lockCount++;
+        m_lockCount += lockCount;
         return;
     }
 
@@ -110,7 +116,7 @@ void JSLock::lock()
 
     setOwnerThread(currentThread);
     ASSERT(!m_lockCount);
-    m_lockCount = 1;
+    m_lockCount = lockCount;
 
     WTFThreadData& threadData = wtfThreadData();
 
@@ -125,9 +131,15 @@ void JSLock::lock()
 
 void JSLock::unlock()
 {
-    RELEASE_ASSERT(currentThreadIsHoldingLock());
+    unlock(1);
+}
 
-    m_lockCount--;
+void JSLock::unlock(intptr_t unlockCount)
+{
+    RELEASE_ASSERT(currentThreadIsHoldingLock());
+    ASSERT(m_lockCount >= unlockCount);
+
+    m_lockCount -= unlockCount;
 
     if (!m_lockCount) {
         if (m_vm) {
@@ -218,13 +230,8 @@ unsigned JSLock::dropAllLocks()
     ++m_lockDropDepth;
 
     unsigned droppedLockCount = m_lockCount;
-    m_lockCount = 0;
-    if (m_vm) {
-        m_vm->stackPointerAtVMEntry = nullptr;
-        m_vm->updateStackLimitWithReservedZoneSize(wtfThreadData().savedReservedZoneSize());
-    }
-    setOwnerThread(0);
-    m_lock.unlock();
+    unlock(droppedLockCount);
+
     return droppedLockCount;
 }
 
@@ -244,13 +251,8 @@ unsigned JSLock::dropAllLocksUnconditionally()
     ++m_lockDropDepth;
 
     unsigned droppedLockCount = m_lockCount;
-    m_lockCount = 0;
-    if (m_vm) {
-        m_vm->stackPointerAtVMEntry = nullptr;
-        m_vm->updateStackLimitWithReservedZoneSize(wtfThreadData().savedReservedZoneSize());
-    }
-    setOwnerThread(0);
-    m_lock.unlock();
+    unlock(droppedLockCount);
+
     return droppedLockCount;
 }
 
@@ -261,12 +263,8 @@ void JSLock::grabAllLocks(unsigned droppedLockCount)
         return;
 
     ASSERT(!currentThreadIsHoldingLock());
+    lock(droppedLockCount);
 
-    m_lock.lock();
-
-    setOwnerThread(WTF::currentThread());
-    ASSERT(!m_lockCount);
-    m_lockCount = droppedLockCount;
     --m_lockDropDepth;
 
     WTFThreadData& threadData = wtfThreadData();
