@@ -1,3 +1,24 @@
+2014-02-10  Lukasz Bialek  <l.bialek@samsung.com>
+
+        [EFL] Spelling unit tests should use ecore_main_loop_iterate()
+        https://bugs.webkit.org/show_bug.cgi?id=127427
+
+        Reviewed by Gyuyoung Kim.
+
+        r148670 gets rid of EFL's idlers in a favor of timers to load languages.
+        ecore_main_loop_iterate() can be used now.
+
+        Add function that loads spellchecking languages and waits for loading
+        to be finished:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::waitForLanguageLoading):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+
+        Apply added function to tests that should wait for languages to be loaded:
+        * UIProcess/API/efl/tests/test_ewk2_text_checker.cpp:
+        (EWK2TextCheckerTest::resetCallbacksExecutionStats):
+        (TEST_F):
+
 2014-02-09  Carlos Garnacho  <carlosg@gnome.org>
 
         [GTK] Implement support touch events

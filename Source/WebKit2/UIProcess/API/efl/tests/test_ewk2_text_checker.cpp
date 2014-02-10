@@ -42,7 +42,6 @@ static const uint64_t defaultDocumentTag = 123;
 static const char expectedMisspelledWord[] = "aa";
 static const Evas_Object* defaultView = 0;
 static bool isSettingEnabled = false;
-static Ecore_Timer* timeoutTimer = 0;
 static double defaultTimeoutInSeconds = 0.5;
 
 static bool wasContextMenuShown = false;
@@ -76,19 +75,6 @@ public:
         callbacksExecutionStats.wordGuesses = false;
         callbacksExecutionStats.wordLearn = false;
         callbacksExecutionStats.wordIgnore = false;
-    }
-
-    /**
-     * Handle the timeout, it may happen for the asynchronous tests.
-     *
-     * @internal
-     *
-     * @return the ECORE_CALLBACK_CANCEL flag to delete the timer automatically
-     */
-    static Eina_Bool onTimeout(void*)
-    {
-        ecore_main_loop_quit();
-        return ECORE_CALLBACK_CANCEL;
     }
 
     /**
@@ -505,11 +491,8 @@ TEST_F(EWK2TextCheckerTest, spelling_suggestion_for_double_clicked_word)
 TEST_F(EWK2TextCheckerTest, ewk_text_checker_spell_checking_languages_get)
 {
     ewk_text_checker_continuous_spell_checking_enabled_set(false);
-    // The language is being loaded on the idler, wait for it.
-    timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
-    ecore_main_loop_begin();
 
-    Eina_List* loadedLanguages = ewk_text_checker_spell_checking_languages_get();
+    Eina_List* loadedLanguages = waitUntilSpellingLanguagesLoaded(1, defaultTimeoutInSeconds);
     // No dictionary is available/installed.
     if (!loadedLanguages)
         return;
@@ -522,10 +505,8 @@ TEST_F(EWK2TextCheckerTest, ewk_text_checker_spell_checking_languages_get)
 
     // Repeat the checking when continuous spell checking setting is on.
     ewk_text_checker_continuous_spell_checking_enabled_set(true);
-    timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
-    ecore_main_loop_begin();
 
-    loadedLanguages = ewk_text_checker_spell_checking_languages_get();
+    loadedLanguages = waitUntilSpellingLanguagesLoaded(1, defaultTimeoutInSeconds);
     if (!loadedLanguages)
         return;
 
@@ -664,12 +645,8 @@ TEST_F(EWK2TextCheckerTest, ewk_text_checker_spell_checking_available_languages_
     // Set all available languages.
     ewk_text_checker_spell_checking_languages_set(languages.toString().utf8().data());
 
-    // Languages are being loaded on the idler, wait for them.
-    timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
-    ecore_main_loop_begin();
-
     // Get the languages in use.
-    Eina_List* loadedLanguages = ewk_text_checker_spell_checking_languages_get();
+    Eina_List* loadedLanguages = waitUntilSpellingLanguagesLoaded(eina_list_count(availableLanguages), defaultTimeoutInSeconds);
     ASSERT_EQ(eina_list_count(loadedLanguages), eina_list_count(availableLanguages));
 
     i = 0;
@@ -698,11 +675,7 @@ TEST_F(EWK2TextCheckerTest, ewk_text_checker_spell_checking_languages)
     // Set the default language.
     ewk_text_checker_spell_checking_languages_set(0);
 
-    // Languages are being loaded on the idler, wait for them.
-    timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
-    ecore_main_loop_begin();
-
-    Eina_List* loadedLanguages = ewk_text_checker_spell_checking_languages_get();
+    Eina_List* loadedLanguages = waitUntilSpellingLanguagesLoaded(1, defaultTimeoutInSeconds);
     // No dictionary is available/installed or the SPELLCHECK macro is disabled.
     if (!loadedLanguages)
         return;
@@ -734,10 +707,7 @@ TEST_F(EWK2TextCheckerTest, ewk_text_checker_spell_checking_languages)
     // Set both languages (the first and the last) from the list.
     ewk_text_checker_spell_checking_languages_set(languages.toString().utf8().data());
 
-    timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
-    ecore_main_loop_begin();
-
-    loadedLanguages = ewk_text_checker_spell_checking_languages_get();
+    loadedLanguages = waitUntilSpellingLanguagesLoaded(2, defaultTimeoutInSeconds);
     ASSERT_EQ(2, eina_list_count(loadedLanguages));
 
     EXPECT_STREQ(firstExpected, static_cast<const char*>(eina_list_nth(loadedLanguages, 0)));

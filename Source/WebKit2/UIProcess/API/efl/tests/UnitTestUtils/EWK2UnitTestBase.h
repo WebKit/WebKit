@@ -51,6 +51,7 @@ protected:
     bool waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilURLChangedTo(const char* expectedURL, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilTrue(bool &flag, double timeoutSeconds = defaultTimeoutSeconds);
+    Eina_List* waitUntilSpellingLanguagesLoaded(unsigned expectedLanguageCount, double timeoutValue = defaultTimeoutSeconds);
 
     void mouseClick(int x, int y, int button = 1 /*Left*/);
     void mouseDoubleClick(int x, int y, int button = 1 /*Left*/);
