@@ -1,3 +1,9 @@
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, revert the accidental change from r163789.
+
+        * tests/v8-v6/v8-deltablue.js:
+
 2013-12-10  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of forward exit on DoubleAsInt32
