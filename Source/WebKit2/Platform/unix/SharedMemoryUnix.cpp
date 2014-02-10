@@ -200,7 +200,7 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
         }
     }
 
-    while ((fcntl(duplicatedHandle, F_SETFD, FD_CLOEXEC | accessModeFile(protection)) == -1)) {
+    while (fcntl(duplicatedHandle, F_SETFD, FD_CLOEXEC) == -1 || fcntl(duplicatedHandle, F_SETFL, accessModeFile(protection)) == -1) {
         if (errno != EINTR) {
             ASSERT_NOT_REACHED();
             closeWithRetry(duplicatedHandle);
