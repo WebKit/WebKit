@@ -107,6 +107,8 @@ WK_EXPORT void WKBundlePageListenForLayoutMilestones(WKBundlePageRef page, WKLay
 
 WK_EXPORT WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef page);
 
+WK_EXPORT bool WKBundlePageIsUsingEphemeralSession(WKBundlePageRef page);
+
 #ifdef __cplusplus
 }
 #endif

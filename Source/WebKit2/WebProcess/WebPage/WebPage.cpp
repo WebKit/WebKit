@@ -2102,6 +2102,11 @@ uint64_t WebPage::sessionID() const
     return m_page->settings().privateBrowsingEnabled() ? SessionTracker::legacyPrivateSessionID : SessionTracker::defaultSessionID;
 }
 
+bool WebPage::isUsingEphemeralSession() const
+{
+    return SessionTracker::isEphemeralID(sessionID());
+}
+
 void WebPage::setSessionID(uint64_t sessionID)
 {
     m_sessionID = sessionID;

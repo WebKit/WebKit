@@ -1,3 +1,17 @@
+2014-02-10  Martin Hock  <mhock@apple.com>
+
+        Add API for accessing session ephemerality from a page bundle
+        https://bugs.webkit.org/show_bug.cgi?id=128410
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageIsUsingEphemeralSession):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::isUsingEphemeralSession):
+        * WebProcess/WebPage/WebPage.h:
+
 2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Create the inspector view using the same web process as the inspected page
