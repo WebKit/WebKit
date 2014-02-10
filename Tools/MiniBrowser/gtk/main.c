@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
     const gchar *multiprocess = g_getenv("MINIBROWSER_MULTIPROCESS");
     if (multiprocess && *multiprocess) {
         webkit_web_context_set_process_model(webkit_web_context_get_default(),
-            WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW);
+            WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
     }
 
     GOptionContext *context = g_option_context_new(NULL);

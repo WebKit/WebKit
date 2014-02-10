@@ -122,11 +122,11 @@ void beforeAll()
         ==, WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS);
 
     webkit_web_context_set_process_model(webkit_web_context_get_default(),
-        WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW);
+        WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
 
     // Check that the getter returns the newly-set value
     g_assert_cmpuint(webkit_web_context_get_process_model(webkit_web_context_get_default()),
-        ==, WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW);
+        ==, WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
 
     bus = new WebKitTestBus();
     if (!bus->run())
