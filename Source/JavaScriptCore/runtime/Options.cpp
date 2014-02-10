@@ -77,18 +77,19 @@ static bool parse(const char* string, OptionRange& value)
 }
 
 template<typename T>
-void overrideOptionWithHeuristic(T& variable, const char* name)
+bool overrideOptionWithHeuristic(T& variable, const char* name)
 {
 #if !OS(WINCE)
     const char* stringValue = getenv(name);
     if (!stringValue)
-        return;
+        return false;
     
     if (parse(stringValue, variable))
-        return;
+        return true;
     
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
 #endif
+    return false;
 }
 
 static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads)
@@ -236,7 +237,8 @@ void Options::initialize()
     // The evn var should be the name of the option prefixed with
     // "JSC_".
 #define FOR_EACH_OPTION(type_, name_, defaultValue_) \
-    overrideOptionWithHeuristic(name_(), "JSC_" #name_);
+    if (overrideOptionWithHeuristic(name_(), "JSC_" #name_)) \
+        s_options[OPT_##name_].didOverride = true;
     JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
 
@@ -273,6 +275,7 @@ bool Options::setOption(const char* arg)
         bool success = parse(valueStr, value);          \
         if (success) {                                  \
             name_() = value;                            \
+            s_options[OPT_##name_].didOverride = true;  \
             recomputeDependentOptions();                \
             return true;                                \
         }                                               \

@@ -268,7 +268,8 @@ public:
 
     // Declare accessors for each option:
 #define FOR_EACH_OPTION(type_, name_, defaultValue_) \
-    ALWAYS_INLINE static type_& name_() { return s_options[OPT_##name_].u.type_##Val; }
+    ALWAYS_INLINE static type_& name_() { return s_options[OPT_##name_].u.type_##Val; } \
+    static bool name_##WasOverridden() { return s_options[OPT_##name_].didOverride; }
 
     JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
@@ -291,6 +292,7 @@ private:
             int32 int32Val;
             OptionRange optionRangeVal;
         } u;
+        bool didOverride;
     };
 
     // For storing constant meta data about each option:

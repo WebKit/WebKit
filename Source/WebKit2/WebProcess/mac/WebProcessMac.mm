@@ -173,7 +173,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
     Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
 
-    JSC::Options::useFTLJIT() = parameters.shouldEnableFTL;
+    if (!JSC::Options::useFTLJITWasOverridden())
+        JSC::Options::useFTLJIT() = parameters.shouldEnableFTL;
 
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 

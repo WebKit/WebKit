@@ -1,3 +1,13 @@
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC environment variables should override other mechanisms for setting options
+        https://bugs.webkit.org/show_bug.cgi?id=128511
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to create a webview related to another one
