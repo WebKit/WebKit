@@ -87,7 +87,7 @@ public:
 
     void endActiveGesture();
 #else
-    void installSwipeHandler(UIView *);
+    void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
     bool canSwipeInDirection(SwipeDirection);
     void beginSwipeGesture(_UINavigationInteractiveTransitionBase *, SwipeDirection);
     void endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *, bool cancelled);
@@ -144,9 +144,7 @@ private:
     // the scroll event that would have started a swipe, we'll fill these in.
     bool m_hasPendingSwipe;
     SwipeDirection m_pendingSwipeDirection;
-#else
-    CGRect m_originalLiveSwipeViewFrame;
-    
+#else    
     UIView *m_liveSwipeView;
     RetainPtr<UIView> m_snapshotView;
     RetainPtr<UIView> m_transitionContainerView;

@@ -1,3 +1,37 @@
+2014-02-10  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][wk2] WebKit2 View Gestures (Swipe): Forward swipe gesture 
+        https://bugs.webkit.org/show_bug.cgi?id=128523
+        <rdar://problem/16020378>
+
+        Reviewed by Darin Adler.
+
+        We can't install the gesture recognizer on a view that's going to be
+        reparented during the swipe, because the gesture will be cancelled.
+        Install the recognizer on the WKView and move the WKView's scrollview
+        child around instead.
+
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView setAllowsBackForwardNavigationGestures:]):
+        We'll install the gesture recognizer on the WKView, but swipe the scrollview.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (-[WKSwipeTransitionController initWithViewGestureController:gestureRecognizerView:]):
+        Clarify that WKSwipeTransitionController gets handed only the view to install the gesture recognizer on.
+        (-[WKSwipeTransitionController gestureRecognizerForInteractiveTransition:WithTarget:action:]):
+        Use public enum values so we can get rid of one private header.
+
+        (WebKit::ViewGestureController::installSwipeHandler):
+        Separate out the gesture recognizer view from the one that gets swiped.
+
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        Record a snapshot before beginning the swipe. This is important for the back-then-forward
+        swipe case, and matches the behavior of the Mac implementation.
+
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/mac/ViewGestureController.h:
+        Slight geometry adjustments due to the change in targetted view.
+
 2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         JSC environment variables should override other mechanisms for setting options

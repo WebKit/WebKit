@@ -116,7 +116,7 @@ using namespace WebKit;
     
     if (allowsBackForwardNavigationGestures && !_gestureController) {
         _gestureController = std::make_unique<ViewGestureController>(*webPageProxy);
-        _gestureController->installSwipeHandler(self);
+        _gestureController->installSwipeHandler(self, [self scrollView]);
     } else
         _gestureController = nullptr;
     

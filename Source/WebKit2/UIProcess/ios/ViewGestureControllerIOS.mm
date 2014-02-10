@@ -35,7 +35,6 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
-#import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIScreenEdgePanGestureRecognizer.h>
 #import <UIKit/UIViewControllerTransitioning_Private.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
@@ -50,26 +49,31 @@
 using namespace WebCore;
 
 @interface WKSwipeTransitionController : NSObject <_UINavigationInteractiveTransitionBaseDelegate>
-- (instancetype)initWithViewGestureController:(WebKit::ViewGestureController*)gestureController swipingView:(UIView *)view;
+- (instancetype)initWithViewGestureController:(WebKit::ViewGestureController*)gestureController gestureRecognizerView:(UIView *)gestureRecognizerView;
 @end
 
 @implementation WKSwipeTransitionController
 {
     WebKit::ViewGestureController *_gestureController;
     RetainPtr<_UINavigationInteractiveTransitionBase> _backTransitionController;
+    RetainPtr<_UINavigationInteractiveTransitionBase> _forwardTransitionController;
 }
 
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
 
-- (instancetype)initWithViewGestureController:(WebKit::ViewGestureController*)gestureController swipingView:(UIView *)view
+- (instancetype)initWithViewGestureController:(WebKit::ViewGestureController*)gestureController gestureRecognizerView:(UIView *)gestureRecognizerView
 {
     self = [super init];
     if (self) {
         _gestureController = gestureController;
 
         _backTransitionController = adoptNS([_UINavigationInteractiveTransitionBase alloc]);
-        _backTransitionController = [_backTransitionController initWithGestureRecognizerView:view animator:nil delegate:self];
+        _backTransitionController = [_backTransitionController initWithGestureRecognizerView:gestureRecognizerView animator:nil delegate:self];
+        
+        _forwardTransitionController = adoptNS([_UINavigationInteractiveTransitionBase alloc]);
+        _forwardTransitionController = [_forwardTransitionController initWithGestureRecognizerView:gestureRecognizerView animator:nil delegate:self];
+        [_forwardTransitionController setShouldReverseTranslation:YES];
     }
     return self;
 }
@@ -104,10 +108,10 @@ static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
     UIScreenEdgePanGestureRecognizer *recognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:target action:action];
     switch ([self directionForTransition:transition]) {
     case WebKit::ViewGestureController::SwipeDirection::Left:
-        [recognizer setEdges:UIMinXEdge];
+        [recognizer setEdges:UIRectEdgeLeft];
         break;
     case WebKit::ViewGestureController::SwipeDirection::Right:
-        [recognizer setEdges:UIMaxXEdge];
+        [recognizer setEdges:UIRectEdgeRight];
         break;
     }
     return recognizer;
@@ -129,24 +133,26 @@ ViewGestureController::~ViewGestureController()
 {
 }
 
-void ViewGestureController::installSwipeHandler(UIView *view)
+void ViewGestureController::installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView)
 {
     ASSERT(!m_swipeInteractiveTransitionDelegate);
-    m_swipeInteractiveTransitionDelegate = adoptNS([[WKSwipeTransitionController alloc] initWithViewGestureController:this swipingView:view]);
-    m_liveSwipeView = view;
+    m_swipeInteractiveTransitionDelegate = adoptNS([[WKSwipeTransitionController alloc] initWithViewGestureController:this gestureRecognizerView:gestureRecognizerView]);
+    m_liveSwipeView = swipingView;
 }
 
 void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransitionBase *transition, SwipeDirection direction)
 {
     if (m_activeGestureType != ViewGestureType::None)
         return;
+    
+    ViewSnapshotStore::shared().recordSnapshot(m_webPageProxy);
 
     WebKit::WebBackForwardListItem* targetItem = direction == SwipeDirection::Left ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
 
     auto snapshot = WebKit::ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
 
     RetainPtr<UIViewController> snapshotViewController = adoptNS([[UIViewController alloc] init]);
-    m_snapshotView = adoptNS([[UIView alloc] initWithFrame:[m_liveSwipeView bounds]]);
+    m_snapshotView = adoptNS([[UIView alloc] initWithFrame:[m_liveSwipeView frame]]);
     if (snapshot) {
 #if USE(IOSURFACE)
         uint32_t purgeabilityState = kIOSurfacePurgeableNonVolatile;
@@ -171,9 +177,6 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     RetainPtr<UIViewController> targettedViewController = adoptNS([[UIViewController alloc] init]);
     [targettedViewController setView:m_liveSwipeView];
 
-    m_originalLiveSwipeViewFrame = m_liveSwipeView.frame;
-    m_liveSwipeView.frame = m_liveSwipeView.bounds;
-    
     UINavigationControllerOperation transitionOperation = direction == SwipeDirection::Left ? UINavigationControllerOperationPop : UINavigationControllerOperationPush;
     RetainPtr<_UINavigationParallaxTransition> animationController = adoptNS([[_UINavigationParallaxTransition alloc] initWithCurrentOperation:transitionOperation]);
 
@@ -181,8 +184,8 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [transitionContext _setFromViewController:targettedViewController.get()];
     [transitionContext _setToViewController:snapshotViewController.get()];
     [transitionContext _setContainerView:m_transitionContainerView.get()];
-    [transitionContext _setFromStartFrame:[m_liveSwipeView bounds]];
-    [transitionContext _setToEndFrame:[m_liveSwipeView bounds]];
+    [transitionContext _setFromStartFrame:[m_liveSwipeView frame]];
+    [transitionContext _setToEndFrame:[m_liveSwipeView frame]];
     [transitionContext _setToStartFrame:CGRectZero];
     [transitionContext _setFromEndFrame:CGRectZero];
     [transitionContext _setAnimator:animationController.get()];
@@ -213,9 +216,6 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     [[m_transitionContainerView superview] insertSubview:m_liveSwipeView aboveSubview:m_transitionContainerView.get()];
     [m_transitionContainerView removeFromSuperview];
     m_transitionContainerView = nullptr;
-    
-    [m_liveSwipeView setFrame:m_originalLiveSwipeViewFrame];
-    [m_snapshotView setFrame:m_originalLiveSwipeViewFrame];
     
     if (cancelled) {
         removeSwipeSnapshot();
