@@ -31,9 +31,10 @@
 #if PLATFORM(IOS)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS UIWebTouchEventsGestureRecognizer;
-#endif // PLATFORM(IOS)
-
-#if PLATFORM(EFL)
+#elif PLATFORM(GTK)
+#include <WebCore/GUniquePtrGtk.h>
+#include <WebCore/GtkTouchContextHelper.h>
+#elif PLATFORM(EFL)
 #include "EwkTouchEvent.h"
 #include <WebCore/AffineTransform.h>
 #include <wtf/RefPtr.h>
@@ -46,8 +47,12 @@ public:
 #if PLATFORM(IOS)
     explicit NativeWebTouchEvent(UIWebTouchEventsGestureRecognizer *);
     const UIWebTouchEventsGestureRecognizer* nativeEvent() const { return m_nativeEvent.get(); }
-#endif
-#if PLATFORM(EFL)
+#elif PLATFORM(GTK)
+    NativeWebTouchEvent(const NativeWebTouchEvent&);
+    NativeWebTouchEvent(GdkEvent*, WebCore::GtkTouchContextHelper&);
+    const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
+    const WebCore::GtkTouchContextHelper& touchContext() const { return m_touchContext; }
+#elif PLATFORM(EFL)
     NativeWebTouchEvent(EwkTouchEvent*, const WebCore::AffineTransform&);
     const EwkTouchEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #endif
@@ -55,8 +60,10 @@ public:
 private:
 #if PLATFORM(IOS)
     RetainPtr<UIWebTouchEventsGestureRecognizer> m_nativeEvent;
-#endif
-#if PLATFORM(EFL)
+#elif PLATFORM(GTK)
+    GUniquePtr<GdkEvent> m_nativeEvent;
+    const WebCore::GtkTouchContextHelper& m_touchContext;
+#elif PLATFORM(EFL)
     RefPtr<EwkTouchEvent> m_nativeEvent;
 #endif
 };

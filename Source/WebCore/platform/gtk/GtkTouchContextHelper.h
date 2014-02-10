@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2013 Carlos Garnacho <carlosg@gnome.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventFactory_h
-#define WebEventFactory_h
+#ifndef GtkTouchContextHelper_h
+#define GtkTouchContextHelper_h
 
-#include "WebEvent.h"
-#include <WebCore/CompositionResults.h>
-#include <WebCore/GtkTouchContextHelper.h>
+#include "GUniquePtrGtk.h"
+#include <wtf/HashMap.h>
+#include <wtf/Noncopyable.h>
 
-typedef union _GdkEvent GdkEvent;
+namespace WebCore {
 
-namespace WebKit {
+typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
 
-class WebEventFactory {
+class GtkTouchContextHelper {
+    WTF_MAKE_NONCOPYABLE(GtkTouchContextHelper);
 public:
-    static WebMouseEvent createWebMouseEvent(const GdkEvent*, int);
-    static WebWheelEvent createWebWheelEvent(const GdkEvent*);
-    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const WebCore::CompositionResults&);
-    static WebTouchEvent createWebTouchEvent(const GdkEvent*, const WebCore::GtkTouchContextHelper&);
+    GtkTouchContextHelper() { };
+    bool handleEvent(GdkEvent*);
+    const TouchEventsMap& touchEvents() const { return m_touchEvents; };
+
+private:
+    TouchEventsMap m_touchEvents;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // WebEventFactory_h
+#endif

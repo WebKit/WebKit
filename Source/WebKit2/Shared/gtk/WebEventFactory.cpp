@@ -34,6 +34,7 @@
 #include <WebCore/GtkVersioning.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
+#include <gtk/gtk.h>
 #include <wtf/ASCIICType.h>
 
 using namespace WebCore;
@@ -201,6 +202,77 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
                             false /* isSystemKey */,
                             modifiersForEvent(event),
                             gdk_event_get_time(event));
+}
+
+#ifndef GTK_API_VERSION_2
+static WebPlatformTouchPoint::TouchPointState touchPhaseFromEvents(const GdkEvent* current, const GdkEvent* event)
+{
+    if (gdk_event_get_event_sequence(current) != gdk_event_get_event_sequence(event))
+        return WebPlatformTouchPoint::TouchStationary;
+
+    switch (current->type) {
+    case GDK_TOUCH_UPDATE:
+        return WebPlatformTouchPoint::TouchMoved;
+    case GDK_TOUCH_BEGIN:
+        return WebPlatformTouchPoint::TouchPressed;
+    case GDK_TOUCH_END:
+        return WebPlatformTouchPoint::TouchReleased;
+    default:
+        return WebPlatformTouchPoint::TouchStationary;
+    }
+}
+
+static void appendTouchEvent(Vector<WebPlatformTouchPoint>& touchPointList, const GdkEvent* event, WebPlatformTouchPoint::TouchPointState state)
+{
+    uint32_t identifier = GPOINTER_TO_UINT(gdk_event_get_event_sequence(event));
+
+    gdouble x, y;
+    gdk_event_get_coords(event, &x, &y);
+
+    gdouble xRoot, yRoot;
+    gdk_event_get_root_coords(event, &xRoot, &yRoot);
+
+    WebPlatformTouchPoint touchPoint(identifier, state, IntPoint(xRoot, yRoot), IntPoint(x, y));
+    touchPointList.uncheckedAppend(touchPoint);
+}
+#endif // GTK_API_VERSION_2
+
+WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, const WebCore::GtkTouchContextHelper& touchContext)
+{
+#ifndef GTK_API_VERSION_2
+    WebEvent::Type type = WebEvent::NoType;
+    const auto& touchEvents = touchContext.touchEvents();
+    int numEvents = touchEvents.size();
+
+    switch (event->type) {
+    case GDK_TOUCH_BEGIN:
+        type = WebEvent::TouchStart;
+        break;
+    case GDK_TOUCH_UPDATE:
+        type = WebEvent::TouchMove;
+        break;
+    case GDK_TOUCH_END:
+        type = WebEvent::TouchEnd;
+        ++numEvents;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    Vector<WebPlatformTouchPoint> touchPointList;
+    touchPointList.reserveInitialCapacity(numEvents);
+
+    for (auto it = touchEvents.begin(); it != touchEvents.end(); ++it)
+        appendTouchEvent(touchPointList, it->value.get(), touchPhaseFromEvents(it->value.get(), event));
+
+    // Touch was already removed from the GtkTouchContextHelper, add it here.
+    if (event->type == GDK_TOUCH_END)
+        appendTouchEvent(touchPointList, event, WebPlatformTouchPoint::TouchReleased);
+
+    return WebTouchEvent(type, touchPointList, modifiersForEvent(event), gdk_event_get_time(event));
+#else
+    return WebTouchEvent();
+#endif // GTK_API_VERSION_2
 }
 
 } // namespace WebKit

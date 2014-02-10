@@ -143,6 +143,7 @@ namespace WebKit {
 #endif
 
         virtual void numWheelEventHandlersChanged(unsigned) { }
+        virtual void needTouchEvents(bool) { }
 
 #if USE(ACCELERATED_COMPOSITING) 
         virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);

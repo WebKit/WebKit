@@ -262,6 +262,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMStyleSheetPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMText.cpp \
 	DerivedSources/webkitdom/WebKitDOMTextPrivate.h \
+	DerivedSources/webkitdom/WebKitDOMTouch.cpp \
+	DerivedSources/webkitdom/WebKitDOMTouchPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMTimeRanges.cpp \
 	DerivedSources/webkitdom/WebKitDOMTimeRangesPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMTreeWalker.cpp \
@@ -323,6 +325,7 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMProcessingInstruction.h \
 	DerivedSources/webkitdom/WebKitDOMRange.h \
 	DerivedSources/webkitdom/WebKitDOMText.h \
+	DerivedSources/webkitdom/WebKitDOMTouch.h \
 	DerivedSources/webkitdom/WebKitDOMTreeWalker.h \
 	DerivedSources/webkitdom/WebKitDOMUIEvent.h \
 	DerivedSources/webkitdom/WebKitDOMBlob.h \

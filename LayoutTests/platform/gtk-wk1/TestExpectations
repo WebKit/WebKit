@@ -257,6 +257,9 @@ webkit.org/b/35300 http/tests/loading/307-after-303-after-post.html [ Failure ]
 # Needs custom policy delegate enhancement to log downloads
 Bug(GTK) http/tests/download [ Failure ]
 
+# Touch support only implemented in WK2
+fast/events/touch [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

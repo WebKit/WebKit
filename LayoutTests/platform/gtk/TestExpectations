@@ -153,9 +153,6 @@ webkit.org/b/98927 fast/dom/DeviceOrientation [ Skip ]
 webkit.org/b/61140 fast/notifications [ Skip ]
 webkit.org/b/61140 http/tests/notifications [ Skip ]
 
-# These tests require touch support.
-webkit.org/b/98931 fast/events/touch [ Skip ]
-
 # StorageTracker is not enabled.
 webkit.org/b/98933 storage/domstorage/localstorage/storagetracker [ Skip ]
 

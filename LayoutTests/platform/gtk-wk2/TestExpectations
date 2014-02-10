@@ -186,6 +186,23 @@ webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.h
 webkit.org/b/120401 fast/events [ Skip ]
 webkit.org/b/120401 editing/selection [ Skip ]
 
+# Tests in the gesture folder exercise IOS-specific code, non appliable to GTK+
+fast/events/touch/gesture [ Skip ]
+
+# These tests rely on touch event grouping, which X11/GTK+ doesn't do by design
+webkit.org/b/128172 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
+webkit.org/b/128172 fast/events/touch/basic-multi-touch-events.html [ Failure ]
+webkit.org/b/128172 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
+webkit.org/b/128172 fast/events/touch/frame-hover-update.html [ Failure ]
+webkit.org/b/128172 fast/events/touch/multi-touch-grouped-targets.html [ Timeout Failure ]
+webkit.org/b/128172 fast/events/touch/multi-touch-inside-nested-iframes.html [ Timeout ]
+webkit.org/b/128172 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
+webkit.org/b/128172 fast/events/touch/basic-single-touch-events.html [ Timeout ]
+webkit.org/b/128172 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
+webkit.org/b/128172 fast/events/touch/touch-target.html [ Timeout ]
+webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Timeout ]
+webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
