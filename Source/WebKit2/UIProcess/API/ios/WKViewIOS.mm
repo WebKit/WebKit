@@ -57,6 +57,9 @@ using namespace WebKit;
 
     BOOL _hasStaticMinimumLayoutSize;
     CGSize _minimumLayoutSizeOverride;
+
+    UIEdgeInsets _obscuredInsets;
+    bool _isChangingObscuredInsetsInteractively;
 }
 
 - (id)initWithCoder:(NSCoder *)coder
@@ -298,6 +301,32 @@ using namespace WebKit;
     _hasStaticMinimumLayoutSize = YES;
     _minimumLayoutSizeOverride = minimumLayoutSizeOverride;
     [_contentView setMinimumLayoutSize:minimumLayoutSizeOverride];
+}
+
+- (UIEdgeInsets)_obscuredInsets
+{
+    return _obscuredInsets;
+}
+
+- (void)_setObscuredInsets:(UIEdgeInsets)obscuredInsets
+{
+    ASSERT(obscuredInsets.top >= 0);
+    ASSERT(obscuredInsets.left >= 0);
+    ASSERT(obscuredInsets.bottom >= 0);
+    ASSERT(obscuredInsets.right >= 0);
+    _obscuredInsets = obscuredInsets;
+}
+
+- (void)_beginInteractiveObscuredInsetsChange
+{
+    ASSERT(!_isChangingObscuredInsetsInteractively);
+    _isChangingObscuredInsetsInteractively = YES;
+}
+
+- (void)_endInteractiveObscuredInsetsChange
+{
+    ASSERT(_isChangingObscuredInsetsInteractively);
+    _isChangingObscuredInsetsInteractively = NO;
 }
 
 @end

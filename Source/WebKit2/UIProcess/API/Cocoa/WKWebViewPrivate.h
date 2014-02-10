@@ -35,6 +35,12 @@
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
+
+// Define the inset of the scrollview unusable by the web page.
+@property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
+
+- (void)_beginInteractiveObscuredInsetsChange;
+- (void)_endInteractiveObscuredInsetsChange;
 #endif
 
 @end

@@ -1,3 +1,24 @@
+2014-02-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Add empty definition for an API allowing clients to define obscured edges over the scrollview
+        https://bugs.webkit.org/show_bug.cgi?id=128396
+
+        Reviewed by Simon Fraser.
+
+        ObscuredInset defines the area of the scrollview unusable for positioning content.
+        The API is unused in this patch.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _obscuredInset]):
+        (-[WKWebView _setObscuredInset:]):
+        (-[WKWebView _commitObscuredInset]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _obscuredInset]):
+        (-[WKView _setObscuredInset:]):
+        (-[WKView _commitObscuredInset]):
+
 2014-02-10  Martin Hock  <mhock@apple.com>
 
         Add API for accessing session ephemerality from a page bundle
