@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGLICMPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGLICMPhase.h"
 
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGAtTailAbstractState.h"

@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "GCAwareJITStubRoutine.h"
 
 #if ENABLE(JIT)
+
+#include "GCAwareJITStubRoutine.h"
 
 #include "Heap.h"
 #include "VM.h"

@@ -24,10 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGNodeFlags.h"
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGNodeFlags.h"
+
+#include "Operations.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>
 

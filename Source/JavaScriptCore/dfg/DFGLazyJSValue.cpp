@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGLazyJSValue.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGLazyJSValue.h"
 
 #include "Operations.h"
 

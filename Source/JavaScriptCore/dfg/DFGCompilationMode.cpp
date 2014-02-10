@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGCompilationMode.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGCompilationMode.h"
+
+#include "Operations.h"
 
 namespace WTF {
 

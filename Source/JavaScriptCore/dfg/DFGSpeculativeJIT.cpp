@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGSpeculativeJIT.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGSpeculativeJIT.h"
 
 #include "Arguments.h"
 #include "DFGAbstractInterpreterInlines.h"
@@ -35,8 +36,8 @@
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGSaneStringGetByValSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
-#include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
+#include "Operations.h"
 #include "ScratchRegisterAllocator.h"
 #include "WriteBarrierBuffer.h"
 #include <wtf/MathExtras.h>

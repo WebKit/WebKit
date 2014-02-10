@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "CodeBlock.h"
+#include "Operations.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {

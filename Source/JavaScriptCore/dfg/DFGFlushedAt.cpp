@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGFlushedAt.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGFlushedAt.h"
+
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

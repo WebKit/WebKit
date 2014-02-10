@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGDesiredStructureChains.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGDesiredStructureChains.h"
+
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

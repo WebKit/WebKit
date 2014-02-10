@@ -32,7 +32,6 @@
 #include "ArgList.h"
 #include "ArityCheckFailReturnThunks.h"
 #include "ArrayBufferNeuteringWatchpoint.h"
-#include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
 #include "CommonIdentifiers.h"

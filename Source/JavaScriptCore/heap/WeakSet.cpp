@@ -27,6 +27,7 @@
 #include "WeakSet.h"
 
 #include "Heap.h"
+#include "Operations.h"
 #include "VM.h"
 
 namespace JSC {

@@ -24,13 +24,15 @@
  */
 
 #include "config.h"
-#include "DFGWorklist.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGWorklist.h"
 
 #include "CodeBlock.h"
 #include "DeferGC.h"
 #include "DFGLongLivedState.h"
+#include "Operations.h"
 #include <mutex>
 
 namespace JSC { namespace DFG {

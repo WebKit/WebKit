@@ -29,10 +29,11 @@
 #include "CopyVisitor.h"
 #include "CopyVisitorInlines.h"
 #include "GCThread.h"
-#include "VM.h"
 #include "MarkStack.h"
+#include "Operations.h"
 #include "SlotVisitor.h"
 #include "SlotVisitorInlines.h"
+#include "VM.h"
 
 namespace JSC {
 

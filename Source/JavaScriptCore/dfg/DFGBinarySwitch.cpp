@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGBinarySwitch.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGBinarySwitch.h"
+
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

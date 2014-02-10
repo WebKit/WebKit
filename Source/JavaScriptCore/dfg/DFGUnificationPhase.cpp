@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGUnificationPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGUnificationPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"

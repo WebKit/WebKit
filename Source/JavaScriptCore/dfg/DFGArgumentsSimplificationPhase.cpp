@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGArgumentsSimplificationPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGArgumentsSimplificationPhase.h"
 
 #include "DFGBasicBlock.h"
 #include "DFGGraph.h"

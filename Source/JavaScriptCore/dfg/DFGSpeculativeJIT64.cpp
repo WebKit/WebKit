@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGSpeculativeJIT.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGSpeculativeJIT.h"
 
 #include "Arguments.h"
 #include "ArrayPrototype.h"

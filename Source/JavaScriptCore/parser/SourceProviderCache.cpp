@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SourceProviderCache.h"
 
+#include "Operations.h"
+
 namespace JSC {
 
 SourceProviderCache::~SourceProviderCache()

@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(DFG_JIT)
+
 #include "DFGGraph.h"
 
 #include "BytecodeLivenessAnalysisInlines.h"
@@ -42,8 +45,6 @@
 #include "StackAlignment.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
-
-#if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {
 
@@ -792,4 +793,4 @@ JSArrayBufferView* Graph::tryGetFoldableViewForChild1(Node* node)
 
 } } // namespace JSC::DFG
 
-#endif
+#endif // ENABLE(DFG_JIT)

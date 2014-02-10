@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGInPlaceAbstractState.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGInPlaceAbstractState.h"
 
 #include "CodeBlock.h"
 #include "DFGBasicBlock.h"

@@ -29,7 +29,6 @@
 #include "CodeBlock.h"
 #include "CommonIdentifiers.h"
 #include "CallFrame.h"
-#include "CallFrameInlines.h"
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
 #include "GetterSetter.h"

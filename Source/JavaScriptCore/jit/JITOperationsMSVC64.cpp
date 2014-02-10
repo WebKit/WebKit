@@ -29,6 +29,7 @@
 
 #include "CallFrame.h"
 #include "JSCJSValue.h"
+#include "Operations.h"
 
 namespace JSC {
 

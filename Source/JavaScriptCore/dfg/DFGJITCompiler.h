@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "CCallHelpers.h"
-#include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "DFGDisassembler.h"
 #include "DFGGraph.h"

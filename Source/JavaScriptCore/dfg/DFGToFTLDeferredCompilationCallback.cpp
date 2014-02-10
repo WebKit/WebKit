@@ -24,13 +24,15 @@
  */
 
 #include "config.h"
-#include "DFGToFTLDeferredCompilationCallback.h"
 
 #if ENABLE(FTL_JIT)
+
+#include "DFGToFTLDeferredCompilationCallback.h"
 
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "Executable.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

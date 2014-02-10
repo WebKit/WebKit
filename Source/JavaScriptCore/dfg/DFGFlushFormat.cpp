@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGFlushFormat.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGFlushFormat.h"
+
+#include "Operations.h"
 
 namespace WTF {
 

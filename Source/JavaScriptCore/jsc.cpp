@@ -25,7 +25,6 @@
 #include "APIShims.h"
 #include "ButterflyInlines.h"
 #include "BytecodeGenerator.h"
-#include "CallFrameInlines.h"
 #include "Completion.h"
 #include "CopiedSpaceInlines.h"
 #include "ExceptionHelpers.h"

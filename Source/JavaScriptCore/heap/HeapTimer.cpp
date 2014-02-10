@@ -29,7 +29,7 @@
 #include "APIShims.h"
 #include "JSObject.h"
 #include "JSString.h"
-
+#include "Operations.h"
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 

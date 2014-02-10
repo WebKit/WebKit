@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGOSRExitBase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGOSRExitBase.h"
 
 #include "CodeBlock.h"
 #include "DFGBasicBlock.h"

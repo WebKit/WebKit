@@ -28,6 +28,7 @@
 
 #include "BytecodeLivenessAnalysis.h"
 #include "CodeBlock.h"
+#include "Operations.h"
 
 namespace JSC {
 

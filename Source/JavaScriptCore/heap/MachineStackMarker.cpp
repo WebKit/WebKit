@@ -25,6 +25,7 @@
 #include "ConservativeRoots.h"
 #include "Heap.h"
 #include "JSArray.h"
+#include "Operations.h"
 #include "VM.h"
 #include <setjmp.h>
 #include <stdlib.h>

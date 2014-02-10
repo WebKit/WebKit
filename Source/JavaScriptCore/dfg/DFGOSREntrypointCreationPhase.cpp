@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGOSREntrypointCreationPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGOSREntrypointCreationPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGBlockInsertionSet.h"

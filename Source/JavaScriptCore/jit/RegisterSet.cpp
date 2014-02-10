@@ -30,6 +30,7 @@
 
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
+#include "Operations.h"
 
 namespace JSC {
 

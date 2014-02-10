@@ -31,6 +31,7 @@
 #include "Identifier.h"
 #include "NodeInfo.h"
 #include "Nodes.h"
+#include "Operations.h"
 #include <wtf/dtoa.h>
 #include <ctype.h>
 #include <limits.h>

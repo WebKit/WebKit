@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WriteBarrierSupport.h"
 
+#include "Operations.h"
+
 namespace JSC {
 
 #if ENABLE(WRITE_BARRIER_PROFILING)

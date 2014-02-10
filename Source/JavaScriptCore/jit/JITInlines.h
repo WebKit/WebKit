@@ -26,10 +26,9 @@
 #ifndef JITInlines_h
 #define JITInlines_h
 
-
 #if ENABLE(JIT)
 
-#include "CallFrameInlines.h"
+#include "Operations.h"
 
 namespace JSC {
 

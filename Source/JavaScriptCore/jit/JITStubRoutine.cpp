@@ -24,12 +24,13 @@
  */
 
 #include "config.h"
-#include "JITStubRoutine.h"
 
 #if ENABLE(JIT)
 
-#include "JSObject.h"
+#include "JITStubRoutine.h"
 
+#include "JSObject.h"
+#include "Operations.h"
 #include "SlotVisitor.h"
 
 namespace JSC {

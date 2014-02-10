@@ -24,14 +24,16 @@
  */
 
 #include "config.h"
-#include "DFGStoreBarrierElisionPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGStoreBarrierElisionPhase.h"
 
 #include "DFGBasicBlock.h"
 #include "DFGClobberSet.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
+#include "Operations.h"
 #include <wtf/HashSet.h>
 
 namespace JSC { namespace DFG {

@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGAbstractValue.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGAbstractValue.h"
 
 #include "DFGGraph.h"
 #include "Operations.h"

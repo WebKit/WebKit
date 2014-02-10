@@ -24,11 +24,13 @@
  */
 
 #include "config.h"
-#include "DFGNaturalLoops.h"
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGNaturalLoops.h"
+
 #include "DFGGraph.h"
+#include "Operations.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC { namespace DFG {

@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGBackwardsPropagationPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGBackwardsPropagationPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"

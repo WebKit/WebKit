@@ -24,11 +24,13 @@
  */
 
 #include "config.h"
-#include "DFGJumpReplacement.h"
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGJumpReplacement.h"
+
 #include "MacroAssembler.h"
+#include "Operations.h"
 #include "Options.h"
 
 namespace JSC { namespace DFG {

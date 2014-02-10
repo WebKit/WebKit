@@ -127,7 +127,7 @@ MacroAssemblerCodeRef slowPathCallThunkGenerator(VM& vm, const SlowPathCallKey& 
     jit.preserveReturnAddressAfterCall(GPRInfo::nonArgGPR0);
     jit.storePtr(GPRInfo::nonArgGPR0, AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, key.offset()));
     
-    JITCompiler::Call call = jit.call();
+    AssemblyHelpers::Call call = jit.call();
 
     // FIXME: CStack - Need to do something like jit.emitFunctionEpilogue();
     jit.loadPtr(AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, key.offset()), GPRInfo::nonPreservedNonReturnGPR);

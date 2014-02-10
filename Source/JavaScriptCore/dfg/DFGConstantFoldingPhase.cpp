@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGConstantFoldingPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGConstantFoldingPhase.h"
 
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGBasicBlock.h"

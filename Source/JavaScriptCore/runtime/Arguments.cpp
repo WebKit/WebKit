@@ -25,7 +25,6 @@
 #include "config.h"
 #include "Arguments.h"
 
-#include "CallFrameInlines.h"
 #include "JSActivation.h"
 #include "JSArgumentsIterator.h"
 #include "JSFunction.h"

@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGFixupPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGFixupPhase.h"
 
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"

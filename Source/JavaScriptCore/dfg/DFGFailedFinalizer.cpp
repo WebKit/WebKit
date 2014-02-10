@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGFailedFinalizer.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGFailedFinalizer.h"
+
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

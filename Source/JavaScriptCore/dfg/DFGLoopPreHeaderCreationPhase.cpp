@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGLoopPreHeaderCreationPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGLoopPreHeaderCreationPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGBlockInsertionSet.h"

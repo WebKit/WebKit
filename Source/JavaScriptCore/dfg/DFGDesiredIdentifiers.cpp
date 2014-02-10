@@ -24,11 +24,13 @@
  */
 
 #include "config.h"
-#include "DFGDesiredIdentifiers.h"
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGDesiredIdentifiers.h"
+
 #include "CodeBlock.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

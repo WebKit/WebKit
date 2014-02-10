@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGJITCompiler.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGJITCompiler.h"
 
 #include "ArityCheckFailReturnThunks.h"
 #include "CodeBlock.h"
@@ -41,9 +42,10 @@
 #include "DFGSpeculativeJIT.h"
 #include "DFGThunks.h"
 #include "JSCJSValueInlines.h"
-#include "MaxFrameExtentForSlowPathCall.h"
-#include "VM.h"
 #include "LinkBuffer.h"
+#include "MaxFrameExtentForSlowPathCall.h"
+#include "Operations.h"
+#include "VM.h"
 
 namespace JSC { namespace DFG {
 

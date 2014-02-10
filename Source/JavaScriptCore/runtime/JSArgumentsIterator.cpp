@@ -27,6 +27,7 @@
 #include "JSArgumentsIterator.h"
 
 #include "Arguments.h"
+#include "Operations.h"
 
 namespace JSC {
 

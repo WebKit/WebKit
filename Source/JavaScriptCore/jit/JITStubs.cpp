@@ -33,6 +33,8 @@
 #if ENABLE(JIT)
 #include "JITStubs.h"
 
+#include "Operations.h"
+
 #if CPU(ARM_TRADITIONAL)
 #include "JITStubsARM.h"
 #elif CPU(ARM_THUMB2)

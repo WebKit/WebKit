@@ -24,11 +24,13 @@
  */
 
 #include "config.h"
-#include "DFGCommon.h"
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGCommon.h"
+
 #include "DFGNode.h"
+#include "Operations.h"
 
 namespace WTF {
 

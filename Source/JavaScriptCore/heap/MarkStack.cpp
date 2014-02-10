@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MarkStack.h"
 
+#include "Operations.h"
+
 namespace JSC {
 
 MarkStackArray::MarkStackArray(BlockAllocator& blockAllocator)

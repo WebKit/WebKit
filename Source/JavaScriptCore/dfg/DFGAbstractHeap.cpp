@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGAbstractHeap.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGAbstractHeap.h"
+
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

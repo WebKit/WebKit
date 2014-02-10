@@ -31,6 +31,7 @@
 
 #include "CodeBlock.h"
 #include "DFGCommonData.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

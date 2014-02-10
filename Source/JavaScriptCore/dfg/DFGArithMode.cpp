@@ -24,10 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGArithMode.h"
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGArithMode.h"
+
+#include "Operations.h"
 #include <wtf/PrintStream.h>
 
 namespace WTF {

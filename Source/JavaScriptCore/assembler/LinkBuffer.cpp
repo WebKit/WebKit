@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "JITCode.h"
+#include "Operations.h"
 #include "Options.h"
 #include "VM.h"
 #include <wtf/CompilationThread.h>

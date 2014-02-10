@@ -27,6 +27,7 @@
 #include "BytecodeBasicBlock.h"
 
 #include "CodeBlock.h"
+#include "Operations.h"
 #include "PreciseJumpTargets.h"
 
 namespace JSC {

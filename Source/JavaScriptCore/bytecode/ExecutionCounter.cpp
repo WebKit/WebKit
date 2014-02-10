@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "ExecutableAllocator.h"
+#include "Operations.h"
 #include <wtf/StringExtras.h>
 
 namespace JSC {

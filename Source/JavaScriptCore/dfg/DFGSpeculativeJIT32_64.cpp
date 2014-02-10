@@ -25,9 +25,10 @@
  */
 
 #include "config.h"
-#include "DFGSpeculativeJIT.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGSpeculativeJIT.h"
 
 #include "ArrayPrototype.h"
 #include "DFGAbstractInterpreterInlines.h"

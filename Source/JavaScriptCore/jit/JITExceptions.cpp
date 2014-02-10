@@ -27,7 +27,6 @@
 #include "JITExceptions.h"
 
 #include "CallFrame.h"
-#include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "Interpreter.h"
 #include "JITStubs.h"

@@ -29,7 +29,6 @@
 
 #include "Arguments.h"
 #include "ArrayConstructor.h"
-#include "CallFrameInlines.h"
 #include "DFGCompilationMode.h"
 #include "DFGDriver.h"
 #include "DFGOSREntry.h"

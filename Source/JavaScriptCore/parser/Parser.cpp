@@ -29,6 +29,7 @@
 #include "JSCJSValueInlines.h"
 #include "Lexer.h"
 #include "NodeInfo.h"
+#include "Operations.h"
 #include "SourceProvider.h"
 #include "VM.h"
 #include <utility>

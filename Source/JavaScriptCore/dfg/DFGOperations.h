@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGJITCompiler.h"
 #include "JITOperations.h"
 #include "PutKind.h"
 

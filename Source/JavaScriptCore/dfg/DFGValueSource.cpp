@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGValueSource.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGValueSource.h"
+
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

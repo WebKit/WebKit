@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WeakHandleOwner.h"
 
+#include "Operations.h"
+
 namespace JSC {
 
 class SlotVisitor;

@@ -22,7 +22,6 @@
 #include "ObjectConstructor.h"
 
 #include "ButterflyInlines.h"
-#include "CallFrameInlines.h"
 #include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"

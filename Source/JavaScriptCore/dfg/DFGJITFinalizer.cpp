@@ -24,13 +24,15 @@
  */
 
 #include "config.h"
-#include "DFGJITFinalizer.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGJITFinalizer.h"
 
 #include "CodeBlock.h"
 #include "DFGCommon.h"
 #include "DFGPlan.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

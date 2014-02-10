@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGClobberSet.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGClobberSet.h"
 
 #include "DFGClobberize.h"
 #include "Operations.h"

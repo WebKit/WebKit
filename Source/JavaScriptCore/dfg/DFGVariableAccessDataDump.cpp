@@ -24,12 +24,14 @@
  */
 
 #include "config.h"
-#include "DFGVariableAccessDataDump.h"
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGVariableAccessDataDump.h"
+
 #include "DFGGraph.h"
 #include "DFGVariableAccessData.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

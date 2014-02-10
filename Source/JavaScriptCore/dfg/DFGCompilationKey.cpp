@@ -24,12 +24,14 @@
  */
 
 #include "config.h"
+
+#if ENABLE(DFG_JIT)
+
 #include "DFGCompilationKey.h"
 
 #include "CodeBlock.h"
 #include "CodeBlockSet.h"
-
-#if ENABLE(DFG_JIT)
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

@@ -24,10 +24,12 @@
  */
 
 #include "config.h"
-#include "TempRegisterSet.h"
 
 #if ENABLE(JIT)
 
+#include "TempRegisterSet.h"
+
+#include "Operations.h"
 #include "RegisterSet.h"
 
 namespace JSC {

@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGOSREntry.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGOSREntry.h"
 
 #include "CallFrame.h"
 #include "CodeBlock.h"

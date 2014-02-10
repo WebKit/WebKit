@@ -28,6 +28,8 @@
 
 #if ENABLE(JIT)
 
+#include "Operations.h"
+
 namespace JSC {
 
 ExecutableBase* AssemblyHelpers::executableFor(const CodeOrigin& codeOrigin)

@@ -32,6 +32,7 @@
 #include "CommonSlowPaths.h"
 #include "CopiedSpaceInlines.h"
 #include "DFGDriver.h"
+#include "DFGJITCode.h"
 #include "DFGOSRExit.h"
 #include "DFGThunks.h"
 #include "DFGToFTLDeferredCompilationCallback.h"

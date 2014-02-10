@@ -27,9 +27,9 @@
 #include "AbstractPC.h"
 
 #include "CallFrame.h"
-#include "VM.h"
 #include "JSObject.h"
-
+#include "Operations.h"
+#include "VM.h"
 
 namespace JSC {
 

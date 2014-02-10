@@ -24,13 +24,14 @@
  */
 
 #include "config.h"
-#include "DFGVirtualRegisterAllocationPhase.h"
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGVirtualRegisterAllocationPhase.h"
+
 #include "DFGGraph.h"
 #include "DFGScoreBoard.h"
-#include "JSCellInlines.h"
+#include "Operations.h"
 #include "StackAlignment.h"
 #include <wtf/StdLibExtras.h>
 

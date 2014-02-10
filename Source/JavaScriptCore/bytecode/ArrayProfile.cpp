@@ -27,6 +27,7 @@
 #include "ArrayProfile.h"
 
 #include "CodeBlock.h"
+#include "Operations.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringExtras.h>
 #include <wtf/StringPrintStream.h>

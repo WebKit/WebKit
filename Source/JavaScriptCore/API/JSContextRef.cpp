@@ -29,7 +29,6 @@
 
 #include "APICast.h"
 #include "CallFrame.h"
-#include "CallFrameInlines.h"
 #include "InitializeThreading.h"
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"

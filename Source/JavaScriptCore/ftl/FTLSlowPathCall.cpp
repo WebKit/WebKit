@@ -29,9 +29,9 @@
 #if ENABLE(FTL_JIT)
 
 #include "CCallHelpers.h"
-#include "CallFrameInlines.h"
 #include "FTLState.h"
 #include "GPRInfo.h"
+#include "Operations.h"
 
 namespace JSC { namespace FTL {
 

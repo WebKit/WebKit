@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGLivenessAnalysisPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGLivenessAnalysisPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"

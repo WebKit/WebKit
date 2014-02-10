@@ -24,13 +24,15 @@
  */
 
 #include "config.h"
-#include "DFGDisassembler.h"
 
-#if ENABLE(DFG_JIT) && ENABLE(DISASSEMBLER)
+#if ENABLE(DFG_JIT)
+
+#include "DFGDisassembler.h"
 
 #include "CodeBlockWithJITType.h"
 #include "DFGGraph.h"
 #include "DFGJITCode.h"
+#include "Operations.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace DFG {
@@ -172,4 +174,4 @@ void Disassembler::dumpDisassembly(PrintStream& out, const char* prefix, LinkBuf
 
 } } // namespace JSC::DFG
 
-#endif // ENABLE(DFG_JIT) && ENABLE(DISASSEMBLER)
+#endif // ENABLE(DFG_JIT)

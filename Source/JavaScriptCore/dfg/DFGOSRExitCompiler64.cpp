@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGOSRExitCompiler.h"
 
 #if ENABLE(DFG_JIT) && USE(JSVALUE64)
+
+#include "DFGOSRExitCompiler.h"
 
 #include "DFGOperations.h"
 #include "DFGOSRExitCompilerCommon.h"

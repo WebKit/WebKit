@@ -39,8 +39,6 @@ namespace JSC {
 
 class CodeBlock;
 
-#if ENABLE(DISASSEMBLER)
-
 class JITDisassembler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -85,25 +83,6 @@ private:
     MacroAssembler::Label m_endOfSlowPath;
     MacroAssembler::Label m_endOfCode;
 };
-
-#else // ENABLE(DISASSEMBLER)
-
-class JITDisassembler {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    JITDisassembler(CodeBlock*) { }
-
-    void setStartOfCode(MacroAssembler::Label) { }
-    void setForBytecodeMainPath(unsigned, MacroAssembler::Label) { }
-    void setForBytecodeSlowPath(unsigned, MacroAssembler::Label) { }
-    void setEndOfSlowPath(MacroAssembler::Label) { }
-    void setEndOfCode(MacroAssembler::Label) { }
-
-    void dump(LinkBuffer&) { }
-    void reportToProfiler(Profiler::Compilation*, LinkBuffer&) { }
-};
-
-#endif // ENABLE(DISASSEMBLER)
 
 } // namespace JSC
 

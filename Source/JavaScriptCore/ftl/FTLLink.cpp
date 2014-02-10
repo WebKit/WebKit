@@ -30,7 +30,6 @@
 
 #include "ArityCheckFailReturnThunks.h"
 #include "CCallHelpers.h"
-#include "CallFrameInlines.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGCommon.h"
 #include "FTLJITCode.h"
@@ -38,6 +37,7 @@
 #include "JITStubs.h"
 #include "LLVMAPI.h"
 #include "LinkBuffer.h"
+#include "Operations.h"
 #include "ProfilerCompilation.h"
 #include "VirtualRegister.h"
 

@@ -29,7 +29,6 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
-#include "CallFrameInlines.h"
 #include "DFGOperations.h"
 #include "DFGSpeculativeJIT.h"
 #include "FTLThunks.h"

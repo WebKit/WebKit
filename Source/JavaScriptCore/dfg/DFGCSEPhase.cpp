@@ -24,16 +24,17 @@
  */
 
 #include "config.h"
-#include "DFGCSEPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGCSEPhase.h"
 
 #include "DFGAbstractHeap.h"
 #include "DFGClobberize.h"
 #include "DFGEdgeUsesStructure.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
-#include "JSCellInlines.h"
+#include "Operations.h"
 #include <array>
 #include <wtf/FastBitVector.h>
 

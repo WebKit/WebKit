@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGBlockInsertionSet.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGBlockInsertionSet.h"
+
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

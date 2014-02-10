@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
-
 #include "ExecutableAllocator.h"
+
+#include "Operations.h"
 
 #if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
 #include "CodeProfiling.h"

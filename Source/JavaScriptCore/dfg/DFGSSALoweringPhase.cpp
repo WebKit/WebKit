@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "DFGSSALoweringPhase.h"
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGSSALoweringPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"
