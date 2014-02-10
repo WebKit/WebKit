@@ -1,3 +1,13 @@
+2014-02-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Fix a few mistakes that landed with r163749.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::addTouchPoint): Avoid using the GUniquePtr<GdkEvent> after it's been moved
+        into the event vector since moving it invalidates the variable.
+
 2014-02-09  Carlos Garnacho  <carlosg@gnome.org>
 
         [GTK] Fix modifiers on EventSenderProxy::keyDown

@@ -471,8 +471,8 @@ void EventSenderProxy::addTouchPoint(int x, int y)
     // Touch ID is array index plus one, so 0 is skipped.
     GUniquePtr<GdkEvent> event = createTouchEvent(static_cast<GdkEventType>(GDK_TOUCH_BEGIN), m_touchEvents.size() + 1);
     updateEventCoordinates(event.get(), x, y);
-    m_touchEvents.append(std::move(event));
     m_updatedTouchEvents.add(GPOINTER_TO_INT(event->touch.sequence));
+    m_touchEvents.append(std::move(event));
 }
 
 void EventSenderProxy::updateTouchPoint(int index, int x, int y)

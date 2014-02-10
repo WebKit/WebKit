@@ -1,3 +1,14 @@
+2014-02-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Fix a few mistakes that landed with r163749.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * platform/gtk/GtkTouchContextHelper.cpp:
+        (WebCore::GtkTouchContextHelper::handleEvent): When handling GDK_TOUCH_BEGIN, the assertion
+        should ensure that the sequence-to-event map doesn't yet contain pairs with the specific
+        sequence as the key.
+
 2014-02-10  David Kilzer  <ddkilzer@apple.com>
 
         Add type-safe casts for ContentData subclasses
