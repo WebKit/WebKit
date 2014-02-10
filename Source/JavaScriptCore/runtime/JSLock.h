@@ -24,7 +24,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
-#include <wtf/TCSpinLock.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -113,11 +112,12 @@ namespace JSC {
         };
 
     private:
-        unsigned dropAllLocks(SpinLock&);
-        unsigned dropAllLocksUnconditionally(SpinLock&);
-        void grabAllLocks(unsigned lockCount, SpinLock&);
+        void setOwnerThread(ThreadIdentifier owner) { m_ownerThread = owner; }
 
-        SpinLock m_spinLock;
+        unsigned dropAllLocks();
+        unsigned dropAllLocksUnconditionally();
+        void grabAllLocks(unsigned lockCount);
+
         Mutex m_lock;
         ThreadIdentifier m_ownerThread;
         intptr_t m_lockCount;

@@ -1,3 +1,83 @@
+2014-02-09  Mark Lam  <mark.lam@apple.com>
+
+        Remove unnecessary spinLock in JSLock.
+        <https://webkit.org/b/128450>
+
+        Reviewed by Filip Pizlo.
+
+        The JSLock's mutex already provides protection for write access to
+        JSLock's internal state. The only JSLock state that needs to be read
+        from any thread including threads that don't own the JSLock is
+        m_ownerThread, which is used in currentThreadIsHoldingLock() to do an
+        ownership test on the lock.
+
+        It is safe for other threads to read from m_ownerThread because they
+        only need to know whether its value matches their own thread id
+        (provided by WTF::currentThread()).
+
+        Here are the scenarios for how the ownership test can go:
+
+        1. The JSLock has just been initialized and is not owned by any thread.
+
+           In this case, m_ownerThread will be 0 and will not match any thread's
+           thread id. The checking thread will know that it needs to lock the
+           JSLock before using the VM.
+
+        2. The JSLock was previously locked, but now is unlocked.
+
+           When we unlock it in JSLock::unlock(), the owner thread clears
+           m_ownerThread to 0. Hence, this case is the same as (1) above.
+
+        3. The JSLock is locked by Thread A. Thread B is checking ownership.
+
+           In this case, m_ownerThread will contains the Thread A's thread id.
+           Thread B will see that the thread id does not match its own and will
+           proceed to block on the JSLock's mutex to wait for its turn to use
+           the VM.
+
+           With Weak Memory Ordering architectures, Thread A's thread id may
+           not get written out to memory before Thread B inspects m_ownerThread.
+           However, though Thread B may not see Thread A's thread id in
+           m_ownerThread, it will see 0 which is the last value written to it
+           before the JSLock mutex was unlocked. The mutex unlock would have
+           executed a memory fence which would have flushed the 0 to
+           m_ownerThread in memory. Hence, Thread B will know that it does not
+           own the lock.
+
+        Apart from removing the unneeded spin lock code, I also changed the
+        JSLock code to use currentThreadIsHoldingLock() and setOwnerThread()
+        instead of accessing m_ownerThread directly.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::JSLock):
+
+        (JSC::JSLock::lock):
+        - Removed spinLock but left the indentation as is to keep the diff to a
+          minimum for better readability. Will unindent in a subsequent patch.
+
+        (JSC::JSLock::unlock):
+        - Before unlocking the mutex, clear m_ownerThread to indicate that the
+          lock is no longer owned.
+
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        - Removed the check of m_lockCount for determining ownership. Checking
+          m_ownerThread is sufficient.
+
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::dropAllLocksUnconditionally):
+        - Renamed local locksToDrop to the better name droppedLockCount.
+        - Clear m_ownerThread since we're unlocking the JSLock.
+
+        (JSC::JSLock::grabAllLocks):
+        - Removed unneeded lock ownership test for lock re-entry case because
+          grabAllLocks() is never used to re-enter a locked JSLock.
+
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+
+        * runtime/JSLock.h:
+        (JSC::JSLock::setOwnerThread):
+
 2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/163796
