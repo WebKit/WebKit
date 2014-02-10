@@ -304,6 +304,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGGenerationInfo.h \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
+	Source/JavaScriptCore/dfg/DFGGraphSafepoint.cpp \
+	Source/JavaScriptCore/dfg/DFGGraphSafepoint.h \
 	Source/JavaScriptCore/dfg/DFGInPlaceAbstractState.cpp \
 	Source/JavaScriptCore/dfg/DFGInPlaceAbstractState.h \
 	Source/JavaScriptCore/dfg/DFGInlineCacheWrapper.h \
@@ -377,7 +379,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGResurrectionForValidationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGResurrectionForValidationPhase.h \
 	Source/JavaScriptCore/dfg/DFGSafeToExecute.h \
+	Source/JavaScriptCore/dfg/DFGSafepoint.cpp \
+	Source/JavaScriptCore/dfg/DFGSafepoint.h \
 	Source/JavaScriptCore/dfg/DFGSaneStringGetByValSlowPathGenerator.h \
+	Source/JavaScriptCore/dfg/DFGScannable.h \
 	Source/JavaScriptCore/dfg/DFGScoreBoard.h \
 	Source/JavaScriptCore/dfg/DFGSilentRegisterSavePlan.h \
 	Source/JavaScriptCore/dfg/DFGSlowPathGenerator.h \
@@ -398,6 +403,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGStructureAbstractValue.h \
 	Source/JavaScriptCore/dfg/DFGTierUpCheckInjectionPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGTierUpCheckInjectionPhase.h \
+	Source/JavaScriptCore/dfg/DFGThreadData.cpp \
+	Source/JavaScriptCore/dfg/DFGThreadData.h \
 	Source/JavaScriptCore/dfg/DFGThunks.cpp \
 	Source/JavaScriptCore/dfg/DFGThunks.h \
 	Source/JavaScriptCore/dfg/DFGToFTLDeferredCompilationCallback.cpp \

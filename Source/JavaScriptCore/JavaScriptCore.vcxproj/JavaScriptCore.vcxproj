@@ -392,6 +392,7 @@
     <ClCompile Include="..\dfg\DFGFlushFormat.cpp" />
     <ClCompile Include="..\dfg\DFGFlushLivenessAnalysisPhase.cpp" />
     <ClCompile Include="..\dfg\DFGGraph.cpp" />
+    <ClCompile Include="..\dfg\DFGGraphSafepoint.cpp" />
     <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp" />
     <ClCompile Include="..\dfg\DFGInvalidationPointInjectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGJITCode.cpp" />
@@ -424,6 +425,7 @@
     <ClCompile Include="..\dfg\DFGPredictionInjectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPredictionPropagationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGResurrectionForValidationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGSafepoint.cpp" />
     <ClCompile Include="..\dfg\DFGSpeculativeJIT.cpp" />
     <ClCompile Include="..\dfg\DFGSpeculativeJIT32_64.cpp" />
     <ClCompile Include="..\dfg\DFGSpeculativeJIT64.cpp" />
@@ -432,6 +434,7 @@
     <ClCompile Include="..\dfg\DFGStackLayoutPhase.cpp" />
     <ClCompile Include="..\dfg\DFGStoreBarrierElisionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGStrengthReductionPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGThreadData.cpp" />
     <ClCompile Include="..\dfg\DFGThunks.cpp" />
     <ClCompile Include="..\dfg\DFGTierUpCheckInjectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGToFTLDeferredCompilationCallback.cpp" />
@@ -929,6 +932,7 @@
     <ClInclude Include="..\dfg\DFGGenerationInfo.h" />
     <ClInclude Include="..\dfg\DFGGPRInfo.h" />
     <ClInclude Include="..\dfg\DFGGraph.h" />
+    <ClInclude Include="..\dfg\DFGGraphSafepoint.h" />
     <ClInclude Include="..\dfg\DFGInPlaceAbstractState.h" />
     <ClInclude Include="..\dfg\DFGInsertionSet.h" />
     <ClInclude Include="..\dfg\DFGInvalidationPointInjectionPhase.h" />
@@ -969,7 +973,9 @@
     <ClInclude Include="..\dfg\DFGRegisterSet.h" />
     <ClInclude Include="..\dfg\DFGResurrectionForValidationPhase.h" />
     <ClInclude Include="..\dfg\DFGSafeToExecute.h" />
+    <ClInclude Include="..\dfg\DFGSafepoint.h" />
     <ClInclude Include="..\dfg\DFGSaneStringGetByValSlowPathGenerator.h" />
+    <ClInclude Include="..\dfg\DFGScannable.h" />
     <ClInclude Include="..\dfg\DFGScoreBoard.h" />
     <ClInclude Include="..\dfg\DFGScratchRegisterAllocator.h" />
     <ClInclude Include="..\dfg\DFGSilentRegisterSavePlan.h" />
@@ -981,6 +987,7 @@
     <ClInclude Include="..\dfg\DFGStoreBarrierElisionPhase.h" />
     <ClInclude Include="..\dfg\DFGStrengthReductionPhase.h" />
     <ClInclude Include="..\dfg\DFGStructureAbstractValue.h" />
+    <ClInclude Include="..\dfg\DFGThreadData.h" />
     <ClInclude Include="..\dfg\DFGThunks.h" />
     <ClInclude Include="..\dfg\DFGTierUpCheckInjectionPhase.h" />
     <ClInclude Include="..\dfg\DFGToFTLDeferredCompilationCallback.h" />

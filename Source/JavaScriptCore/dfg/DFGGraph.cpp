@@ -791,6 +791,59 @@ JSArrayBufferView* Graph::tryGetFoldableViewForChild1(Node* node)
     return tryGetFoldableView(child(node, 0).node(), node->arrayMode());
 }
 
+void Graph::visitChildren(SlotVisitor& visitor)
+{
+    for (BlockIndex blockIndex = numBlocks(); blockIndex--;) {
+        BasicBlock* block = this->block(blockIndex);
+        if (!block)
+            continue;
+        
+        for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+            Node* node = block->at(nodeIndex);
+            
+            switch (node->op()) {
+            case JSConstant:
+            case WeakJSConstant:
+                visitor.appendUnbarrieredReadOnlyValue(valueOfJSConstant(node));
+                break;
+                
+            case CheckFunction:
+                visitor.appendUnbarrieredReadOnlyPointer(node->function());
+                break;
+                
+            case CheckExecutable:
+                visitor.appendUnbarrieredReadOnlyPointer(node->executable());
+                break;
+                
+            case CheckStructure:
+                for (unsigned i = node->structureSet().size(); i--;)
+                    visitor.appendUnbarrieredReadOnlyPointer(node->structureSet()[i]);
+                break;
+                
+            case StructureTransitionWatchpoint:
+            case NewObject:
+            case ArrayifyToStructure:
+            case NewStringObject:
+                visitor.appendUnbarrieredReadOnlyPointer(node->structure());
+                break;
+                
+            case PutStructure:
+            case PhantomPutStructure:
+            case AllocatePropertyStorage:
+            case ReallocatePropertyStorage:
+                visitor.appendUnbarrieredReadOnlyPointer(
+                    node->structureTransitionData().previousStructure);
+                visitor.appendUnbarrieredReadOnlyPointer(
+                    node->structureTransitionData().newStructure);
+                break;
+                
+            default:
+                break;
+            }
+        }
+    }
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

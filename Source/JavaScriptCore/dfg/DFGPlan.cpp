@@ -42,6 +42,7 @@
 #include "DFGFailedFinalizer.h"
 #include "DFGFlushLivenessAnalysisPhase.h"
 #include "DFGFixupPhase.h"
+#include "DFGGraphSafepoint.h"
 #include "DFGInvalidationPointInjectionPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGLICMPhase.h"
@@ -136,8 +137,10 @@ bool Plan::reportCompileTimes() const
         || (Options::reportFTLCompileTimes() && isFTL(mode));
 }
 
-void Plan::compileInThread(LongLivedState& longLivedState)
+void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadData)
 {
+    this->threadData = threadData;
+    
     double before = 0;
     if (reportCompileTimes())
         before = currentTimeMS();
@@ -314,8 +317,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         
         dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:");
         
-        initializeLLVM();
-        
+        {
+            GraphSafepoint safepoint(dfg);
+            initializeLLVM();
+        }
+            
         FTL::State state(dfg);
         FTL::lowerDFGToLLVM(state);
         
@@ -328,7 +334,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         }
         
         FTL::compile(state);
-
+            
         if (Options::llvmAlwaysFailsBeforeLink()) {
             FTL::fail(state);
             return FTLPath;

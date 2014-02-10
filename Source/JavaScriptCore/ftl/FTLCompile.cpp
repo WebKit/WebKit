@@ -31,6 +31,7 @@
 #include "CodeBlockWithJITType.h"
 #include "CCallHelpers.h"
 #include "DFGCommon.h"
+#include "DFGGraphSafepoint.h"
 #include "DataView.h"
 #include "Disassembler.h"
 #include "FTLExitThunkGenerator.h"
@@ -452,70 +453,74 @@ void compile(State& state)
 {
     char* error = 0;
     
-    LLVMMCJITCompilerOptions options;
-    llvm->InitializeMCJITCompilerOptions(&options, sizeof(options));
-    options.OptLevel = Options::llvmBackendOptimizationLevel();
-    options.NoFramePointerElim = true;
-    if (Options::useLLVMSmallCodeModel())
-        options.CodeModel = LLVMCodeModelSmall;
-    options.EnableFastISel = Options::enableLLVMFastISel();
-    options.MCJMM = llvm->CreateSimpleMCJITMemoryManager(
-        &state, mmAllocateCodeSection, mmAllocateDataSection, mmApplyPermissions, mmDestroy);
+    {
+        GraphSafepoint safepoint(state.graph);
+        
+        LLVMMCJITCompilerOptions options;
+        llvm->InitializeMCJITCompilerOptions(&options, sizeof(options));
+        options.OptLevel = Options::llvmBackendOptimizationLevel();
+        options.NoFramePointerElim = true;
+        if (Options::useLLVMSmallCodeModel())
+            options.CodeModel = LLVMCodeModelSmall;
+        options.EnableFastISel = Options::enableLLVMFastISel();
+        options.MCJMM = llvm->CreateSimpleMCJITMemoryManager(
+            &state, mmAllocateCodeSection, mmAllocateDataSection, mmApplyPermissions, mmDestroy);
     
-    LLVMExecutionEngineRef engine;
+        LLVMExecutionEngineRef engine;
     
-    if (llvm->CreateMCJITCompilerForModule(&engine, state.module, &options, sizeof(options), &error)) {
-        dataLog("FATAL: Could not create LLVM execution engine: ", error, "\n");
-        CRASH();
-    }
+        if (llvm->CreateMCJITCompilerForModule(&engine, state.module, &options, sizeof(options), &error)) {
+            dataLog("FATAL: Could not create LLVM execution engine: ", error, "\n");
+            CRASH();
+        }
 
-    LLVMPassManagerRef functionPasses = 0;
-    LLVMPassManagerRef modulePasses;
+        LLVMPassManagerRef functionPasses = 0;
+        LLVMPassManagerRef modulePasses;
     
-    if (Options::llvmSimpleOpt()) {
-        modulePasses = llvm->CreatePassManager();
-        llvm->AddTargetData(llvm->GetExecutionEngineTargetData(engine), modulePasses);
-        llvm->AddPromoteMemoryToRegisterPass(modulePasses);
-        llvm->AddConstantPropagationPass(modulePasses);
-        llvm->AddInstructionCombiningPass(modulePasses);
-        llvm->AddBasicAliasAnalysisPass(modulePasses);
-        llvm->AddTypeBasedAliasAnalysisPass(modulePasses);
-        llvm->AddGVNPass(modulePasses);
-        llvm->AddCFGSimplificationPass(modulePasses);
-        llvm->RunPassManager(modulePasses, state.module);
-    } else {
-        LLVMPassManagerBuilderRef passBuilder = llvm->PassManagerBuilderCreate();
-        llvm->PassManagerBuilderSetOptLevel(passBuilder, Options::llvmOptimizationLevel());
-        llvm->PassManagerBuilderSetSizeLevel(passBuilder, Options::llvmSizeLevel());
+        if (Options::llvmSimpleOpt()) {
+            modulePasses = llvm->CreatePassManager();
+            llvm->AddTargetData(llvm->GetExecutionEngineTargetData(engine), modulePasses);
+            llvm->AddPromoteMemoryToRegisterPass(modulePasses);
+            llvm->AddConstantPropagationPass(modulePasses);
+            llvm->AddInstructionCombiningPass(modulePasses);
+            llvm->AddBasicAliasAnalysisPass(modulePasses);
+            llvm->AddTypeBasedAliasAnalysisPass(modulePasses);
+            llvm->AddGVNPass(modulePasses);
+            llvm->AddCFGSimplificationPass(modulePasses);
+            llvm->RunPassManager(modulePasses, state.module);
+        } else {
+            LLVMPassManagerBuilderRef passBuilder = llvm->PassManagerBuilderCreate();
+            llvm->PassManagerBuilderSetOptLevel(passBuilder, Options::llvmOptimizationLevel());
+            llvm->PassManagerBuilderSetSizeLevel(passBuilder, Options::llvmSizeLevel());
         
-        functionPasses = llvm->CreateFunctionPassManagerForModule(state.module);
-        modulePasses = llvm->CreatePassManager();
+            functionPasses = llvm->CreateFunctionPassManagerForModule(state.module);
+            modulePasses = llvm->CreatePassManager();
         
-        llvm->AddTargetData(llvm->GetExecutionEngineTargetData(engine), modulePasses);
+            llvm->AddTargetData(llvm->GetExecutionEngineTargetData(engine), modulePasses);
         
-        llvm->PassManagerBuilderPopulateFunctionPassManager(passBuilder, functionPasses);
-        llvm->PassManagerBuilderPopulateModulePassManager(passBuilder, modulePasses);
+            llvm->PassManagerBuilderPopulateFunctionPassManager(passBuilder, functionPasses);
+            llvm->PassManagerBuilderPopulateModulePassManager(passBuilder, modulePasses);
         
-        llvm->PassManagerBuilderDispose(passBuilder);
+            llvm->PassManagerBuilderDispose(passBuilder);
         
-        llvm->InitializeFunctionPassManager(functionPasses);
-        for (LValue function = llvm->GetFirstFunction(state.module); function; function = llvm->GetNextFunction(function))
-            llvm->RunFunctionPassManager(functionPasses, function);
-        llvm->FinalizeFunctionPassManager(functionPasses);
+            llvm->InitializeFunctionPassManager(functionPasses);
+            for (LValue function = llvm->GetFirstFunction(state.module); function; function = llvm->GetNextFunction(function))
+                llvm->RunFunctionPassManager(functionPasses, function);
+            llvm->FinalizeFunctionPassManager(functionPasses);
         
-        llvm->RunPassManager(modulePasses, state.module);
-    }
+            llvm->RunPassManager(modulePasses, state.module);
+        }
 
-    if (DFG::shouldShowDisassembly() || DFG::verboseCompilationEnabled())
-        state.dumpState("after optimization");
+        if (DFG::shouldShowDisassembly() || DFG::verboseCompilationEnabled())
+            state.dumpState("after optimization");
     
-    // FIXME: Need to add support for the case where JIT memory allocation failed.
-    // https://bugs.webkit.org/show_bug.cgi?id=113620
-    state.generatedFunction = reinterpret_cast<GeneratedFunction>(llvm->GetPointerToGlobal(engine, state.function));
-    if (functionPasses)
-        llvm->DisposePassManager(functionPasses);
-    llvm->DisposePassManager(modulePasses);
-    llvm->DisposeExecutionEngine(engine);
+        // FIXME: Need to add support for the case where JIT memory allocation failed.
+        // https://bugs.webkit.org/show_bug.cgi?id=113620
+        state.generatedFunction = reinterpret_cast<GeneratedFunction>(llvm->GetPointerToGlobal(engine, state.function));
+        if (functionPasses)
+            llvm->DisposePassManager(functionPasses);
+        llvm->DisposePassManager(modulePasses);
+        llvm->DisposeExecutionEngine(engine);
+    }
 
     if (shouldShowDisassembly()) {
         for (unsigned i = 0; i < state.jitCode->handles().size(); ++i) {

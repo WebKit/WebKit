@@ -1,5 +1,68 @@
 2014-02-09  Filip Pizlo  <fpizlo@apple.com>
 
+        GC blocks on FTL and then badness
+        https://bugs.webkit.org/show_bug.cgi?id=128291
+
+        Reviewed by Oliver Hunt.
+        
+        Introduce the notion of a DFG::Safepoint, which allows you to unlock the rightToRun
+        mutex for your JIT thread, while supplying the GC with all of the information it would
+        need to scan you at that moment in time. The default way of using this is
+        DFG::GraphSafepoint, where you just supply the Graph. There's a lot of machinery in
+        this patch just to make the Graph scannable.
+        
+        We then use DFG::GraphSafepoint in just two places for now: (1) while initializing LLVM
+        and (2) while invoking LLVM' optimizer and backend.
+        
+        This is a 30% speed-up on Octane/typescript and a 10% speed-up on Octane/gbemu. 2-3%
+        speed-up overall on Octane.
+        
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::visitChildren):
+        * dfg/DFGGraph.h:
+        * dfg/DFGGraphSafepoint.cpp: Added.
+        (JSC::DFG::GraphSafepoint::GraphSafepoint):
+        (JSC::DFG::GraphSafepoint::~GraphSafepoint):
+        * dfg/DFGGraphSafepoint.h: Added.
+        * dfg/DFGOperations.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPlan.h:
+        * dfg/DFGSafepoint.cpp: Added.
+        (JSC::DFG::Safepoint::Safepoint):
+        (JSC::DFG::Safepoint::~Safepoint):
+        (JSC::DFG::Safepoint::add):
+        (JSC::DFG::Safepoint::begin):
+        (JSC::DFG::Safepoint::visitChildren):
+        * dfg/DFGSafepoint.h: Added.
+        * dfg/DFGScannable.h: Added.
+        (JSC::DFG::Scannable::Scannable):
+        (JSC::DFG::Scannable::~Scannable):
+        * dfg/DFGThreadData.cpp: Added.
+        (JSC::DFG::ThreadData::ThreadData):
+        (JSC::DFG::ThreadData::~ThreadData):
+        * dfg/DFGThreadData.h: Added.
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::visitChildren):
+        (JSC::DFG::Worklist::runThread):
+        * dfg/DFGWorklist.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::appendUnbarrieredReadOnlyPointer):
+        (JSC::SlotVisitor::appendUnbarrieredReadOnlyValue):
+
+2014-02-09  Filip Pizlo  <fpizlo@apple.com>
+
         Never include *Inlines.h files in interface headers, and never include *Inlines.h when you could include Operations.h instead
         https://bugs.webkit.org/show_bug.cgi?id=128505
 

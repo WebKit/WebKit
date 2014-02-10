@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGPlan.h"
+#include "DFGThreadData.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -77,12 +78,6 @@ public:
     void dump(PrintStream&) const;
     
 private:
-    struct ThreadData {
-        Worklist* m_worklist;
-        ThreadIdentifier m_identifier;
-        Mutex m_rightToRun;
-    };
-    
     Worklist();
     void finishCreation(unsigned numberOfThreads);
     

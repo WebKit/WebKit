@@ -121,7 +121,7 @@ static CompilationResult compileImpl(
         return CompilationDeferred;
     }
     
-    plan->compileInThread(*vm.dfgState);
+    plan->compileInThread(*vm.dfgState, 0);
     return plan->finalizeWithoutNotifyingCallback();
 }
 #else // ENABLE(DFG_JIT)

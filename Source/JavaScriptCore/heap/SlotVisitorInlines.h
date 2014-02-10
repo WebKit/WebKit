@@ -51,6 +51,12 @@ inline void SlotVisitor::appendUnbarrieredPointer(T** slot)
     internalAppend(slot, cell);
 }
 
+template<typename T>
+inline void SlotVisitor::appendUnbarrieredReadOnlyPointer(T* cell)
+{
+    internalAppend(0, cell);
+}
+
 ALWAYS_INLINE void SlotVisitor::append(JSValue* slot)
 {
     ASSERT(slot);
@@ -61,6 +67,11 @@ ALWAYS_INLINE void SlotVisitor::appendUnbarrieredValue(JSValue* slot)
 {
     ASSERT(slot);
     internalAppend(slot, *slot);
+}
+
+ALWAYS_INLINE void SlotVisitor::appendUnbarrieredReadOnlyValue(JSValue value)
+{
+    internalAppend(0, value);
 }
 
 ALWAYS_INLINE void SlotVisitor::append(JSCell** slot)

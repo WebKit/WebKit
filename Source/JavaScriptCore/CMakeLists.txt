@@ -138,6 +138,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGFlushLivenessAnalysisPhase.cpp
     dfg/DFGFlushedAt.cpp
     dfg/DFGGraph.cpp
+    dfg/DFGGraphSafepoint.cpp
     dfg/DFGInPlaceAbstractState.cpp
     dfg/DFGInvalidationPointInjectionPhase.cpp
     dfg/DFGJITCode.cpp
@@ -172,12 +173,14 @@ set(JavaScriptCore_SOURCES
     dfg/DFGResurrectionForValidationPhase.cpp
     dfg/DFGSSAConversionPhase.cpp
     dfg/DFGSSALoweringPhase.cpp
+    dfg/DFGSafepoint.cpp
     dfg/DFGSpeculativeJIT.cpp
     dfg/DFGSpeculativeJIT32_64.cpp
     dfg/DFGSpeculativeJIT64.cpp
     dfg/DFGStackLayoutPhase.cpp
     dfg/DFGStoreBarrierElisionPhase.cpp
     dfg/DFGStrengthReductionPhase.cpp
+    dfg/DFGThreadData.cpp
     dfg/DFGThunks.cpp
     dfg/DFGTierUpCheckInjectionPhase.cpp
     dfg/DFGTypeCheckHoistingPhase.cpp

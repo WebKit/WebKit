@@ -68,6 +68,9 @@ public:
     void appendUnbarrieredValue(JSValue*);
     template<typename T>
     void appendUnbarrieredWeak(Weak<T>*);
+    template<typename T>
+    void appendUnbarrieredReadOnlyPointer(T*);
+    void appendUnbarrieredReadOnlyValue(JSValue);
     void unconditionallyAppend(JSCell*);
     
     void addOpaqueRoot(void*);

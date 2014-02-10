@@ -40,6 +40,7 @@
 #include "DFGNode.h"
 #include "DFGNodeAllocator.h"
 #include "DFGPlan.h"
+#include "DFGScannable.h"
 #include "DFGVariadicFunction.h"
 #include "InlineCallFrameSet.h"
 #include "JSStack.h"
@@ -78,7 +79,7 @@ enum AddSpeculationMode {
 //
 // The order may be significant for nodes with side-effects (property accesses, value conversions).
 // Nodes that are 'dead' remain in the vector with refCount 0.
-class Graph {
+class Graph : public virtual Scannable {
 public:
     Graph(VM&, Plan&, LongLivedState&);
     ~Graph();
@@ -798,6 +799,8 @@ public:
     JSArrayBufferView* tryGetFoldableView(Node*);
     JSArrayBufferView* tryGetFoldableView(Node*, ArrayMode);
     JSArrayBufferView* tryGetFoldableViewForChild1(Node*);
+    
+    virtual void visitChildren(SlotVisitor&) override;
     
     VM& m_vm;
     Plan& m_plan;

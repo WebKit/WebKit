@@ -32,6 +32,7 @@
 #include "CodeBlock.h"
 #include "DeferGC.h"
 #include "DFGLongLivedState.h"
+#include "DFGSafepoint.h"
 #include "Operations.h"
 #include <mutex>
 
@@ -59,8 +60,7 @@ void Worklist::finishCreation(unsigned numberOfThreads)
 {
     RELEASE_ASSERT(numberOfThreads);
     for (unsigned i = numberOfThreads; i--;) {
-        std::unique_ptr<ThreadData> data = std::make_unique<ThreadData>();
-        data->m_worklist = this;
+        std::unique_ptr<ThreadData> data = std::make_unique<ThreadData>(this);
         data->m_identifier = createThread(threadFunction, data.get(), "JSC Compilation Thread");
         m_threads.append(std::move(data));
     }
@@ -212,6 +212,12 @@ void Worklist::visitChildren(SlotVisitor& visitor, CodeBlockSet& codeBlocks)
         iter->key.visitChildren(codeBlocks);
         iter->value->visitChildren(visitor, codeBlocks);
     }
+    
+    for (unsigned i = m_threads.size(); i--;) {
+        ThreadData* data = m_threads[i].get();
+        if (Safepoint* safepoint = data->m_safepoint)
+            safepoint->visitChildren(visitor);
+    }
 }
 
 size_t Worklist::queueLength()
@@ -267,7 +273,7 @@ void Worklist::runThread(ThreadData* data)
             if (Options::verboseCompilationQueue())
                 dataLog(*this, ": Compiling ", plan->key(), " asynchronously\n");
         
-            plan->compileInThread(longLivedState);
+            plan->compileInThread(longLivedState, data);
         }
         
         {
