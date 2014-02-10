@@ -1,3 +1,10 @@
+2014-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r163660-r163664): js/dom/stack-trace.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=128544
+
+        * TestExpectations: Marked as such (possibly passing on other platforms?)
+
 2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         Skip fast/workers/dedicated-worker-lifecycle
