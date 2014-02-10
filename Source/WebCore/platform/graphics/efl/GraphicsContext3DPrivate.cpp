@@ -105,12 +105,6 @@ void GraphicsContext3DPrivate::releaseResources()
     }
 }
 
-bool GraphicsContext3DPrivate::createSurface(PageClientEfl*, bool)
-{
-    notImplemented();
-    return false;
-}
-
 void GraphicsContext3DPrivate::setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback> callBack)
 {
     m_contextLostCallback = callBack;

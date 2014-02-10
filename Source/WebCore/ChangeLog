@@ -1,3 +1,19 @@
+2014-02-09  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove PageClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=128508
+
+        Reviewed by Andreas Kling.
+
+        PageClientEfl was introduced for accelerated compositing of WebKit1, but
+        it's bad idea because it's layer violation.
+        Indeed, it has never been used since introduced.
+
+        * platform/Widget.h: Back to PlatformPageClient to Evas_Object.
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp:
+        Removed empty method which use PageClientEfl.
+        * platform/graphics/efl/GraphicsContext3DPrivate.h: Ditto.
+
 2014-02-09  Tim Horton  <timothy_horton@apple.com>
 
         [iOS][wk2] ASSERT(WebThreadIsCurrent()) in [WebDisplayLinkHandler handleDisplayLink:]

@@ -56,7 +56,6 @@
 #include "MainFrame.h"
 #include "NetworkStorageSession.h"
 #include "Operations.h"
-#include "PageClientEfl.h"
 #include "PageGroup.h"
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
@@ -256,7 +255,6 @@ struct _Ewk_View_Private_Data {
     OwnPtr<WebCore::Page> page;
     WebCore::ViewportArguments viewportArguments;
     Ewk_History* history;
-    OwnPtr<PageClientEfl> pageClient;
     OwnPtr<WebCore::AcceleratedCompositingContext> acceleratedCompositingContext;
     bool isCompositingActive;
     RefPtr<Evas_Object> compositingObject;
@@ -828,8 +826,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.allowFileAccessFromFileURLs = pageSettings.allowFileAccessFromFileURLs();
 
     priv->history = ewk_history_new(static_cast<WebCore::BackForwardList*>(priv->page->backForward().client()));
-
-    priv->pageClient = adoptPtr(new PageClientEfl(smartData->self));
 
 #ifdef HAVE_ECORE_X
     priv->isUsingEcoreX = WebCore::isUsingEcoreX(smartData->base.evas);
@@ -4929,13 +4925,6 @@ WebCore::Page* corePage(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
     return priv->page.get();
-}
-
-PlatformPageClient corePageClient(Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-    return priv->pageClient.get();
 }
 
 WebCore::NetworkStorageSession* storageSession(const Evas_Object* ewkView)

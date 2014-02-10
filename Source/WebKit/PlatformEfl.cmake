@@ -109,7 +109,6 @@ list(APPEND WebKit_SOURCES
     efl/WebCoreSupport/NavigatorContentUtilsClientEfl.cpp
     efl/WebCoreSupport/NetworkInfoClientEfl.cpp
     efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
-    efl/WebCoreSupport/PageClientEfl.cpp
     efl/WebCoreSupport/PlatformStrategiesEfl.cpp
     efl/WebCoreSupport/ProgressTrackerClientEfl.cpp
     efl/WebCoreSupport/PopupMenuEfl.cpp

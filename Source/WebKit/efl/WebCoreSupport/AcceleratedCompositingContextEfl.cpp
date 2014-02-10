@@ -28,7 +28,6 @@
 #include "GraphicsLayerTextureMapper.h"
 #include "HostWindow.h"
 #include "MainFrame.h"
-#include "PageClientEfl.h"
 #include "TextureMapperGL.h"
 #include "TextureMapperLayer.h"
 #include "ewk_view_private.h"
@@ -56,7 +55,7 @@ AcceleratedCompositingContext::~AcceleratedCompositingContext()
 
 bool AcceleratedCompositingContext::initialize(HostWindow* hostWindow)
 {
-    m_view = hostWindow->platformPageClient()->view();
+    m_view = hostWindow->platformPageClient();
     if (!m_view)
         return false;
 

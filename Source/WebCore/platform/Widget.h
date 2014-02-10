@@ -68,12 +68,7 @@ typedef struct _Evas_Object Evas_Object;
 typedef Evas_Object* PlatformWidget;
 #endif
 
-#if PLATFORM(EFL)
-class PageClientEfl;
-typedef PageClientEfl* PlatformPageClient;
-#else
 typedef PlatformWidget PlatformPageClient;
-#endif
 
 namespace WebCore {
 

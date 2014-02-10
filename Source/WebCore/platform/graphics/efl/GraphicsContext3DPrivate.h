@@ -30,8 +30,6 @@
 #include "GLPlatformContext.h"
 #include <wtf/PassOwnPtr.h>
 
-class PageClientEfl;
-
 namespace WebCore {
 class GraphicsContext3DPrivate
 #if USE(TEXTURE_MAPPER_GL)
@@ -42,7 +40,6 @@ public:
     static PassOwnPtr<GraphicsContext3DPrivate> create(GraphicsContext3D*, HostWindow*);
     ~GraphicsContext3DPrivate();
 
-    bool createSurface(PageClientEfl*, bool);
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     void setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback>);
 #if USE(TEXTURE_MAPPER_GL)
