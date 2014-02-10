@@ -41,6 +41,7 @@
 #include "RegExpObject.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringView.h>
 #include <wtf/unicode/Collator.h>
 
 using namespace WTF;
@@ -231,13 +232,7 @@ static inline String substituteBackreferences(const String& replacement, StringV
     return replacement;
 }
 
-static inline int localeCompare(const String& a, const String& b)
-{
-    return Collator::userDefault()->collate(reinterpret_cast<const ::UChar*>(a.deprecatedCharacters()), a.length(), reinterpret_cast<const ::UChar*>(b.deprecatedCharacters()), b.length());
-}
-
 struct StringRange {
-public:
     StringRange(int pos, int len)
         : position(pos)
         , length(len)
@@ -1295,7 +1290,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
     String s = thisValue.toString(exec)->value(exec);
 
     JSValue a0 = exec->argument(0);
-    return JSValue::encode(jsNumber(localeCompare(s, a0.toString(exec)->value(exec))));
+    return JSValue::encode(jsNumber(Collator().collate(s, a0.toString(exec)->value(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState* exec)

@@ -1,3 +1,15 @@
+2014-02-10  Darin Adler  <darin@apple.com>
+
+        Stop using String::deprecatedCharacters to call WTF::Collator
+        https://bugs.webkit.org/show_bug.cgi?id=128517
+
+        Reviewed by Alexey Proskuryakov.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncLocaleCompare): Use the default constructor for Collator, which now
+        gives the default locale collation rules. Use the new arguments for Collator::collate, which
+        are now StringView. These two changes together eliminate the need for a separate helper function.
+
 2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         <1/100 probability FTL failure: v8-v6/v8-deltablue.js.ftl-eager: Exception: TypeError: undefined is not an object (evaluating 'c.isInput')

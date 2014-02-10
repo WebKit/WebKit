@@ -1,3 +1,15 @@
+2014-02-10  Darin Adler  <darin@apple.com>
+
+        Stop using String::deprecatedCharacters to call WTF::Collator
+        https://bugs.webkit.org/show_bug.cgi?id=128517
+
+        Reviewed by Alexey Proskuryakov.
+
+        * xml/XSLTUnicodeSort.cpp:
+        (WebCore::xsltUnicodeSortFunction): Create the collator in a single line using the
+        new constructor that takes a shouldSortLowercaseFirst boolean. Use the new
+        collateUTF8 function instead of upconverting UTF-8 strings to UTF-16 as the old code did.
+
 2014-02-10  Changhun Kang  <temoochin@company100.net>
 
         Remove unnecessary comment lines.

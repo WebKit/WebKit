@@ -33,7 +33,6 @@
 
 #include <libxslt/templates.h>
 #include <libxslt/xsltutils.h>
-#include <wtf/text/WTFString.h>
 #include <wtf/unicode/Collator.h>
 
 #if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
@@ -162,10 +161,9 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
 
     // We are passing a language identifier to a function that expects a locale identifier.
     // The implementation of Collator should be lenient, and accept both "en-US" and "en_US", for example.
-    // This lets an author to really specify sorting rules, e.g. "de_DE@collation=phonebook", which isn't
+    // This lets an author specify sorting rules, e.g. "de_DE@collation=phonebook", which isn't
     // possible with language alone.
-    Collator collator(comp->has_lang ? (const char*)comp->lang : "en");
-    collator.setOrderLowerFirst(comp->lower_first);
+    Collator collator(comp->has_lang ? reinterpret_cast<const char*>(comp->lang) : "en", comp->lower_first);
 
     /* Shell's sort of node-set */
     for (incr = len / 2; incr > 0; incr /= 2) {
@@ -195,11 +193,8 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                                 results[j + incr]->floatval)
                             tst = 1;
                         else tst = -1;
-                    } else {
-                        String str1 = String::fromUTF8((const char*)results[j]->stringval);
-                        String str2 = String::fromUTF8((const char*)results[j + incr]->stringval);
-                        tst = collator.collate(str1.deprecatedCharacters(), str1.length(), str2.deprecatedCharacters(), str2.length());
-                    }
+                    } else
+                        tst = collator.collateUTF8(reinterpret_cast<const char*>(results[j]->stringval), reinterpret_cast<const char*>(results[j + incr]->stringval));
                     if (descending)
                         tst = -tst;
                 }
@@ -250,11 +245,8 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                                         res[j + incr]->floatval)
                                     tst = 1;
                                 else tst = -1;
-                            } else {
-                                String str1 = String::fromUTF8((const char*)res[j]->stringval);
-                                String str2 = String::fromUTF8((const char*)res[j + incr]->stringval);
-                                tst = collator.collate(str1.deprecatedCharacters(), str1.length(), str2.deprecatedCharacters(), str2.length());
-                            }
+                            } else
+                                tst = collator.collateUTF8(reinterpret_cast<const char*>(res[j]->stringval), reinterpret_cast<const char*>(res[j + incr]->stringval));
                             if (desc)
                                 tst = -tst;
                         }

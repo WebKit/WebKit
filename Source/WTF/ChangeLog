@@ -1,3 +1,57 @@
+2014-02-10  Darin Adler  <darin@apple.com>
+
+        Stop using String::deprecatedCharacters to call WTF::Collator
+        https://bugs.webkit.org/show_bug.cgi?id=128517
+
+        WTF passes ICU’s deprecated ULOC_REQUESTED_LOCALE to ucol_getLocaleByType()
+        rdar://problem/15183390
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch fixes both bugs above by reworking WTF::Collator.
+
+        * wtf/unicode/Collator.h: Fixed formatting. Got rid of the Collator::Result type,
+        since the collator uses the same return value scheme as strcmp and as ICU; an int
+        will do for the return type. Simplified the support for UCONFIG_NO_COLLATION by
+        using a separate copy of the class definition. (We should check if anyone needs
+        UCONFIG_NO_COLLATION support, and remove it if not.) Changed the lower-first flag
+        from a separate function to a constructor argument. Changed the arguments to
+        the collate function to StringView. Added a collate UTF8 function. Changed the
+        m_collate data member to no longer be mutable since we no longer allocate it lazily.
+
+        * wtf/unicode/CollatorDefault.cpp:
+        (WTF::Collator::collate): Rewrote to be simpler.
+        (WTF::Collator::collateUTF8): Added. Converts from UTF-8 to a String and then calls
+        the collate function above.
+
+        * wtf/unicode/icu/CollatorICU.cpp: Added a FIXME about the fact that this file
+        has the wrong name and location. Since we always use ICU, there's no need to mention
+        it in the file name.
+        (WTF::copyASCIIString): Added.
+        (WTF::copyDefaultLocale): Added.
+        (WTF::resolveDefaultLocale): Added. Maps null locale to a default on Mac and iOS,
+        since on those platforms ICU does not use the correct default locale when passed null.
+        (WTF::localesMatch): Added.
+        (WTF::Collator::Collator): Moved most of the code from createCollator here.
+        Simplified it by storing the collator configuration along with the collator in globals.
+        (WTF::Collator::~Collator): Moved most of the code from releaseCollator here.
+        (WTF::getIndexLatin1): Added.
+        (WTF::moveLatin1): Added.
+        (WTF::hasNextLatin1): Added.
+        (WTF::hasPreviousLatin1): Added.
+        (WTF::currentLatin1): Added.
+        (WTF::nextLatin1): Added.
+        (WTF::previousLatin1): Added.
+        (WTF::getStateLatin1): Added.
+        (WTF::setStateLatin1): Added.
+        (WTF::createLatin1Iterator): Added. Uses the functions above to make a UCharIterator
+        that works for a WTF::StringView-style Latin-1 string.
+        (WTF::createIterator): Added. Uses either createLatin1Iterator or uiter_setString to
+        make a UCharIterator that works for a WTF::StringView.
+        (WTF::Collator::collate): Changed to use ucol_strcollIter.
+        (WTF::createIteratorUTF8): Added. Uses uiter_setUTF8.
+        (WTF::Collator::collateUTF8): Added. Like collate, but for null-terminated UTF-8 strings.
+
 2014-02-10  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Code cleanup: Remove BUILDING_ON / TARGETING definitions.

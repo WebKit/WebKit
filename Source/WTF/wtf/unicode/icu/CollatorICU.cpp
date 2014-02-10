@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,22 +29,25 @@
 #include "config.h"
 #include <wtf/unicode/Collator.h>
 
+// FIXME: Merge this with CollatorDefault.cpp into a single Collator.cpp source file.
+
 #if !UCONFIG_NO_COLLATION
 
 #include <mutex>
-#include <wtf/Assertions.h>
-#include <wtf/StringExtras.h>
 #include <unicode/ucol.h>
-#include <string.h>
+#include <wtf/StringExtras.h>
+#include <wtf/text/StringView.h>
 
-#if OS(DARWIN)
-#include <wtf/RetainPtr.h>
+#if OS(DARWIN) && USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/RetainPtr.h>
 #endif
 
 namespace WTF {
 
 static UCollator* cachedCollator;
+static char* cachedCollatorLocale;
+static bool cachedCollatorShouldSortLowercaseFirst;
 
 static std::mutex& cachedCollatorMutex()
 {
@@ -53,105 +56,230 @@ static std::mutex& cachedCollatorMutex()
     std::call_once(onceFlag, []{
         mutex = std::make_unique<std::mutex>().release();
     });
-
     return *mutex;
 }
 
-Collator::Collator(const char* locale)
-    : m_collator(0)
-    , m_locale(locale ? strdup(locale) : 0)
-    , m_lowerFirst(false)
+#if !(OS(DARWIN) && USE(CF))
+
+static inline const char* resolveDefaultLocale(const char* locale)
 {
+    return locale;
 }
 
-std::unique_ptr<Collator> Collator::userDefault()
-{
-#if OS(DARWIN) && USE(CF)
-    // Mac OS X doesn't set UNIX locale to match user-selected one, so ICU default doesn't work.
-#if !OS(IOS)
-    RetainPtr<CFLocaleRef> currentLocale = adoptCF(CFLocaleCopyCurrent());
-    CFStringRef collationOrder = (CFStringRef)CFLocaleGetValue(currentLocale.get(), kCFLocaleCollatorIdentifier);
 #else
-    RetainPtr<CFStringRef> collationOrderRetainer = adoptCF((CFStringRef)CFPreferencesCopyValue(CFSTR("AppleCollationOrder"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
-    CFStringRef collationOrder = collationOrderRetainer.get();
-#endif
-    char buf[256];
-    if (!collationOrder)
-        return std::make_unique<Collator>("");
-    CFStringGetCString(collationOrder, buf, sizeof(buf), kCFStringEncodingASCII);
-    return std::make_unique<Collator>(buf);
+
+static inline char* copyShortASCIIString(CFStringRef string)
+{
+    // OK to have a fixed size buffer and to only handle ASCII since we only use this for locale names.
+    char buffer[256];
+    if (!CFStringGetCString(string, buffer, sizeof(buffer), kCFStringEncodingASCII))
+        return strdup("");
+    return strdup(buffer);
+}
+
+static char* copyDefaultLocale()
+{
+#if !PLATFORM(IOS)
+    return copyShortASCIIString(static_cast<CFStringRef>(CFLocaleGetValue(adoptCF(CFLocaleCopyCurrent()).get(), kCFLocaleCollatorIdentifier)));
 #else
-    return std::make_unique<Collator>(static_cast<const char*>(0));
+    // FIXME: Documentation claims the code above would work on iOS 4.0 and later. After test that works, we should remove this and use that instead.
+    return copyShortASCIIString(adoptCF(static_cast<CFStringRef>(CFPreferencesCopyValue(CFSTR("AppleCollationOrder"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost))).get());
 #endif
 }
 
-Collator::~Collator()
+static inline const char* resolveDefaultLocale(const char* locale)
 {
-    releaseCollator();
-    free(m_locale);
+    if (locale)
+        return locale;
+    // Since iOS and OS X don't set UNIX locale to match the user's selected locale, the ICU default locale is not the right one.
+    // So, instead of passing null to ICU, we pass the name of the user's selected locale.
+    static char* defaultLocale;
+    static std::once_flag initializeDefaultLocaleOnce;
+    std::call_once(initializeDefaultLocaleOnce, []{
+        defaultLocale = copyDefaultLocale();
+    });
+    return defaultLocale;
 }
 
-void Collator::setOrderLowerFirst(bool lowerFirst)
+#endif
+
+static inline bool localesMatch(const char* a, const char* b)
 {
-    m_lowerFirst = lowerFirst;
+    // Two null locales are equal, other locales are compared with strcmp.
+    return a == b || (a && b && !strcmp(a, b));
 }
 
-Collator::Result Collator::collate(const UChar* lhs, size_t lhsLength, const UChar* rhs, size_t rhsLength) const
+Collator::Collator(const char* locale, bool shouldSortLowercaseFirst)
 {
-    if (!m_collator)
-        createCollator();
-
-    return static_cast<Result>(ucol_strcoll(m_collator, lhs, lhsLength, rhs, rhsLength));
-}
-
-void Collator::createCollator() const
-{
-    ASSERT(!m_collator);
     UErrorCode status = U_ZERO_ERROR;
 
     {
         std::lock_guard<std::mutex> lock(cachedCollatorMutex());
-        if (cachedCollator) {
-            const char* cachedCollatorLocale = ucol_getLocaleByType(cachedCollator, ULOC_REQUESTED_LOCALE, &status);
-            ASSERT(U_SUCCESS(status));
-            ASSERT(cachedCollatorLocale);
-
-            UColAttributeValue cachedCollatorLowerFirst = ucol_getAttribute(cachedCollator, UCOL_CASE_FIRST, &status);
-            ASSERT(U_SUCCESS(status));
-
-            // FIXME: default locale is never matched, because ucol_getLocaleByType returns the actual one used, not 0.
-            if (m_locale && 0 == strcmp(cachedCollatorLocale, m_locale)
-                && ((UCOL_LOWER_FIRST == cachedCollatorLowerFirst && m_lowerFirst) || (UCOL_UPPER_FIRST == cachedCollatorLowerFirst && !m_lowerFirst))) {
-                m_collator = cachedCollator;
-                cachedCollator = nullptr;
-                return;
-            }
+        if (cachedCollator && localesMatch(cachedCollatorLocale, locale) && cachedCollatorShouldSortLowercaseFirst == shouldSortLowercaseFirst) {
+            m_collator = cachedCollator;
+            m_locale = cachedCollatorLocale;
+            m_shouldSortLowercaseFirst = shouldSortLowercaseFirst;
+            cachedCollator = nullptr;
+            cachedCollatorLocale = nullptr;
+            return;
         }
     }
 
-    m_collator = ucol_open(m_locale, &status);
+    m_collator = ucol_open(resolveDefaultLocale(locale), &status);
     if (U_FAILURE(status)) {
         status = U_ZERO_ERROR;
-        m_collator = ucol_open("", &status); // Fallback to Unicode Collation Algorithm.
+        m_collator = ucol_open("", &status); // Fall back to Unicode Collation Algorithm.
     }
     ASSERT(U_SUCCESS(status));
 
-    ucol_setAttribute(m_collator, UCOL_CASE_FIRST, m_lowerFirst ? UCOL_LOWER_FIRST : UCOL_UPPER_FIRST, &status);
+    ucol_setAttribute(m_collator, UCOL_CASE_FIRST, shouldSortLowercaseFirst ? UCOL_LOWER_FIRST : UCOL_UPPER_FIRST, &status);
     ASSERT(U_SUCCESS(status));
 
     ucol_setAttribute(m_collator, UCOL_NORMALIZATION_MODE, UCOL_ON, &status);
     ASSERT(U_SUCCESS(status));
+
+    m_locale = locale ? strdup(locale) : nullptr;
+    m_shouldSortLowercaseFirst = shouldSortLowercaseFirst;
 }
 
-void Collator::releaseCollator()
+Collator::~Collator()
 {
     {
         std::lock_guard<std::mutex> lock(cachedCollatorMutex());
         if (cachedCollator)
             ucol_close(cachedCollator);
         cachedCollator = m_collator;
+        cachedCollatorLocale = m_locale;
+        cachedCollatorShouldSortLowercaseFirst = m_shouldSortLowercaseFirst;
         m_collator = nullptr;
+        m_locale = nullptr;
     }
+
+    free(m_locale);
+}
+
+static int32_t getIndexLatin1(UCharIterator* iterator, UCharIteratorOrigin origin)
+{
+    switch (origin) {
+    case UITER_START:
+        return iterator->start;
+    case UITER_CURRENT:
+        return iterator->index;
+    case UITER_LIMIT:
+        return iterator->limit;
+    case UITER_ZERO:
+        return 0;
+    case UITER_LENGTH:
+        return iterator->length;
+    }
+    ASSERT_NOT_REACHED();
+    return U_SENTINEL;
+}
+
+static int32_t moveLatin1(UCharIterator* iterator, int32_t delta, UCharIteratorOrigin origin)
+{
+    return iterator->index = getIndexLatin1(iterator, origin) + delta;
+}
+
+static UBool hasNextLatin1(UCharIterator* iterator)
+{
+    return iterator->index < iterator->limit;
+}
+
+static UBool hasPreviousLatin1(UCharIterator* iterator)
+{
+    return iterator->index > iterator->start;
+}
+
+static UChar32 currentLatin1(UCharIterator* iterator)
+{
+    ASSERT(iterator->index >= iterator->start);
+    if (iterator->index >= iterator->limit)
+        return U_SENTINEL;
+    return static_cast<const LChar*>(iterator->context)[iterator->index];
+}
+
+static UChar32 nextLatin1(UCharIterator* iterator)
+{
+    ASSERT(iterator->index >= iterator->start);
+    if (iterator->index >= iterator->limit)
+        return U_SENTINEL;
+    return static_cast<const LChar*>(iterator->context)[iterator->index++];
+}
+
+static UChar32 previousLatin1(UCharIterator* iterator)
+{
+    if (iterator->index <= iterator->start)
+        return U_SENTINEL;
+    return static_cast<const LChar*>(iterator->context)[--iterator->index];
+}
+
+static uint32_t getStateLatin1(const UCharIterator* iterator)
+{
+    return iterator->index;
+}
+
+static void setStateLatin1(UCharIterator* iterator, uint32_t state, UErrorCode*)
+{
+    iterator->index = state;
+}
+
+static UCharIterator createLatin1Iterator(const LChar* characters, int length)
+{
+    UCharIterator iterator;
+    iterator.context = characters;
+    iterator.length = length;
+    iterator.start = 0;
+    iterator.index = 0;
+    iterator.limit = length;
+    iterator.reservedField = 0;
+    iterator.getIndex = getIndexLatin1;
+    iterator.move = moveLatin1;
+    iterator.hasNext = hasNextLatin1;
+    iterator.hasPrevious = hasPreviousLatin1;
+    iterator.current = currentLatin1;
+    iterator.next = nextLatin1;
+    iterator.previous = previousLatin1;
+    iterator.reservedFn = nullptr;
+    iterator.getState = getStateLatin1;
+    iterator.setState = setStateLatin1;
+    return iterator;
+}
+
+static UCharIterator createIterator(StringView string)
+{
+    if (string.is8Bit())
+        return createLatin1Iterator(string.characters8(), string.length());
+    UCharIterator iterator;
+    uiter_setString(&iterator, string.characters16(), string.length());
+    return iterator;
+}
+
+int Collator::collate(StringView a, StringView b) const
+{
+    UCharIterator iteratorA = createIterator(a);
+    UCharIterator iteratorB = createIterator(b);
+    UErrorCode status = U_ZERO_ERROR;
+    int result = ucol_strcollIter(m_collator, &iteratorA, &iteratorB, &status);
+    ASSERT(U_SUCCESS(status));
+    return result;
+}
+
+static UCharIterator createIteratorUTF8(const char* string)
+{
+    UCharIterator iterator;
+    uiter_setUTF8(&iterator, string, strlen(string));
+    return iterator;
+}
+
+int Collator::collateUTF8(const char* a, const char* b) const
+{
+    UCharIterator iteratorA = createIteratorUTF8(a);
+    UCharIterator iteratorB = createIteratorUTF8(b);
+    UErrorCode status = U_ZERO_ERROR;
+    int result = ucol_strcollIter(m_collator, &iteratorA, &iteratorB, &status);
+    ASSERT(U_SUCCESS(status));
+    return result;
 }
 
 } // namespace WTF
