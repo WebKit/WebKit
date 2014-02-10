@@ -1,5 +1,16 @@
 2014-02-04  Carlos Garnacho  <carlosg@gnome.org>
 
+        [Automake] Add missing $(feature_defines) when generating InjectedBundle bindings
+        https://bugs.webkit.org/show_bug.cgi?id=128170
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/GNUmakefile.am: Add missing $(feature_defines) when
+        generating the InjectedBundle bindings. So the various ENABLE_* defines
+        are available there.
+
+2014-02-04  Carlos Garnacho  <carlosg@gnome.org>
+
         [GTK] Ensure generated events have given modifiers GDK understands
         https://bugs.webkit.org/show_bug.cgi?id=128171
 
