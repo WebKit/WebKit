@@ -90,6 +90,8 @@ private:
     void count(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&);
     void deleteRange(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBKeyRangeData& keyRange);
 
+    void close();
+
     Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;
 

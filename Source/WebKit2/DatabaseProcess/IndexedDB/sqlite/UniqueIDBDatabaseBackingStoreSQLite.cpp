@@ -74,6 +74,12 @@ UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite()
 
     m_transactions.clear();
     m_sqliteDB = nullptr;
+
+    if (m_vm) {
+        JSLockHolder lockHolder(JSLockHolder(m_vm.get()));
+        m_globalObject.clear();
+        m_vm = nullptr;
+    }
 }
 
 std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata()

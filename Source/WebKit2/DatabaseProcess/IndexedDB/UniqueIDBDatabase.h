@@ -165,6 +165,7 @@ private:
 
     // Callbacks from the database workqueue thread, to be performed on the main thread only
     void performNextMainThreadTask();
+    bool performNextMainThreadTaskWithoutAdoptRef();
     void didOpenBackingStoreAndReadMetadata(const WebCore::IDBDatabaseMetadata&, bool success);
     void didCompleteTransactionOperation(const IDBIdentifier& transactionIdentifier, bool success);
     void didChangeDatabaseVersion(uint64_t requestID, bool success);

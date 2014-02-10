@@ -126,31 +126,13 @@ void UniqueIDBDatabase::shutdown(UniqueIDBDatabaseShutdownType type)
 
     m_acceptingNewRequests = false;
 
+    // Balanced by an adoptRef in ::didShutdownBackingStore()
+    ref();
+
     {
         MutexLocker locker(m_databaseTaskMutex);
         m_databaseTasks.clear();
     }
-
-    {
-        MutexLocker locker(m_mainThreadTaskMutex);
-        m_mainThreadTasks.clear();
-    }
-
-    for (const auto& it : m_pendingMetadataRequests)
-        it->requestAborted();
-
-    for (const auto& it : m_pendingTransactionRequests)
-        it.value->requestAborted();
-
-    for (const auto& it : m_pendingDatabaseTasks)
-        it.value->requestAborted();
-
-    m_pendingMetadataRequests.clear();
-    m_pendingTransactionRequests.clear();
-    m_pendingDatabaseTasks.clear();
-        
-    // Balanced by an adoptRef in ::didShutdownBackingStore()
-    ref();
 
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::shutdownBackingStore, type, absoluteDatabaseDirectory()), DatabaseTaskType::Shutdown);
 }
@@ -178,6 +160,22 @@ void UniqueIDBDatabase::didShutdownBackingStore(UniqueIDBDatabaseShutdownType ty
     // Balanced by a ref in ::shutdown()
     RefPtr<UniqueIDBDatabase> protector(adoptRef(this));
 
+    // Empty out remaining main thread tasks.
+    while (performNextMainThreadTaskWithoutAdoptRef()) {
+    }
+
+    // No more requests will be handled, so abort all outstanding requests.
+    for (const auto& it : m_pendingMetadataRequests)
+        it->requestAborted();
+    for (const auto& it : m_pendingTransactionRequests)
+        it.value->requestAborted();
+    for (const auto& it : m_pendingDatabaseTasks)
+        it.value->requestAborted();
+
+    m_pendingMetadataRequests.clear();
+    m_pendingTransactionRequests.clear();
+    m_pendingDatabaseTasks.clear();
+
     if (m_pendingShutdownTask)
         m_pendingShutdownTask->completeRequest(type);
 
@@ -186,6 +184,8 @@ void UniqueIDBDatabase::didShutdownBackingStore(UniqueIDBDatabaseShutdownType ty
 
 void UniqueIDBDatabase::deleteDatabase(std::function<void(bool)> successCallback)
 {
+    ASSERT(isMainThread());
+
     if (!m_acceptingNewRequests) {
         // Someone else has already shutdown this database, so we can't request a delete.
         callOnMainThread([successCallback]() {
@@ -1093,18 +1093,28 @@ void UniqueIDBDatabase::performNextMainThreadTask()
     // Balanced by a ref() in ::postMainThreadTask
     RefPtr<UniqueIDBDatabase> protector(adoptRef(this));
 
+    performNextMainThreadTaskWithoutAdoptRef();
+}
+
+bool UniqueIDBDatabase::performNextMainThreadTaskWithoutAdoptRef()
+{
+    bool moreTasks;
+
     std::unique_ptr<AsyncTask> task;
     {
         MutexLocker locker(m_mainThreadTaskMutex);
 
         // This database might be shutting down, in which case the task queue might be empty.
         if (m_mainThreadTasks.isEmpty())
-            return;
+            return false;
 
         task = m_mainThreadTasks.takeFirst();
+        moreTasks = !m_mainThreadTasks.isEmpty();
     }
 
     task->performTask();
+
+    return moreTasks;
 }
 
 void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<AsyncTask> task, DatabaseTaskType taskType)

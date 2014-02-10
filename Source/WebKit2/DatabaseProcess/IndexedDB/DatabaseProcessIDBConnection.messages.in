@@ -49,6 +49,8 @@ messages -> DatabaseProcessIDBConnection LegacyReceiver {
     
     Count(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, WebCore::IDBKeyRangeData keyRange)
     DeleteRange(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, WebCore::IDBKeyRangeData keyRange)
+    
+    Close()
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

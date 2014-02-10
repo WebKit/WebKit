@@ -1,3 +1,37 @@
+2014-02-10  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/object-store-remove-values.html fails
+        <rdar://problem/16029319> and https://bugs.webkit.org/show_bug.cgi?id=128487
+
+        Reviewed by Tim Horton.
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::disconnectedFromWebProcess):
+        (WebKit::DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata): Update logging.
+        (WebKit::DatabaseProcessIDBConnection::deleteDatabase): If deleteDatabase succeeds,
+          also disconnect from the UniqueIDBDatabase so it can be cleaned up properly.
+        (WebKit::DatabaseProcessIDBConnection::close): New message from the WebProcess to handle
+          clean closures.
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::shutdown): Move most of the cleanup to didShutdownBackingStore.
+        (WebKit::UniqueIDBDatabase::didShutdownBackingStore): Execute all remaining mainThreadTasks
+          (as they represent real results from the backing store thread). 
+        (WebKit::UniqueIDBDatabase::deleteDatabase): Add an ASSERT.
+        (WebKit::UniqueIDBDatabase::performNextMainThreadTask): Call through to performNextMainThreadTaskWithoutAdoptRef.
+        (WebKit::UniqueIDBDatabase::performNextMainThreadTaskWithoutAdoptRef): Execute a task,
+          returning true if there are more tasks left to execute.
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite): Properly
+          handle JSC cleanup.
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::close): Implement this.
+
 2014-02-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Add empty definition for an API allowing clients to define obscured edges over the scrollview

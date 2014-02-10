@@ -144,6 +144,16 @@ void WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata(uint64_t reque
 
 void WebIDBServerConnection::close()
 {
+    LOG(IDB, "WebProcess close");
+
+    RefPtr<WebIDBServerConnection> protector(this);
+
+    for (auto& request : m_serverRequests)
+        request.value->requestAborted();
+
+    m_serverRequests.clear();
+
+    send(Messages::DatabaseProcessIDBConnection::Close());
 }
 
 void WebIDBServerConnection::openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode, BoolCallbackFunction successCallback)

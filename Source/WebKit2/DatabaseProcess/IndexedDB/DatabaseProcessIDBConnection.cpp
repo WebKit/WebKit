@@ -57,8 +57,13 @@ DatabaseProcessIDBConnection::~DatabaseProcessIDBConnection()
 
 void DatabaseProcessIDBConnection::disconnectedFromWebProcess()
 {
+    // It's possible that the m_uniqueIDBDatabase pointer has already been cleared
+    // if the represented database was deleted.
+    if (!m_uniqueIDBDatabase)
+        return;
+
     m_uniqueIDBDatabase->unregisterConnection(*this);
-    m_uniqueIDBDatabase.clear();
+    m_uniqueIDBDatabase = nullptr;
 }
 
 void DatabaseProcessIDBConnection::establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin)
@@ -71,7 +76,7 @@ void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata(uint64_t re
 {
     ASSERT(m_uniqueIDBDatabase);
 
-    LOG(IDB, "DatabaseProcess getOrEstablishIDBDatabaseMetadata request ID %llu", requestID);
+    LOG(IDB, "DatabaseProcess getOrEstablishIDBDatabaseMetadata request ID %llu (connection %p)", requestID, this);
 
     RefPtr<DatabaseProcessIDBConnection> connection(this);
     m_uniqueIDBDatabase->getOrEstablishIDBDatabaseMetadata([connection, requestID](bool success, const IDBDatabaseMetadata& metadata) {
@@ -83,7 +88,7 @@ void DatabaseProcessIDBConnection::deleteDatabase(uint64_t requestID, const Stri
 {
     ASSERT(m_uniqueIDBDatabase);
 
-    LOG(IDB, "DatabaseProcess deleteDatabase request ID %llu", requestID);
+    LOG(IDB, "DatabaseProcess deleteDatabase request ID %llu (connection %p)", requestID, this);
 
     if (databaseName != m_uniqueIDBDatabase->identifier().databaseName()) {
         LOG_ERROR("Request to delete database name that doesn't match with this database connection's database name");
@@ -91,7 +96,12 @@ void DatabaseProcessIDBConnection::deleteDatabase(uint64_t requestID, const Stri
     }
 
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->deleteDatabase([connection, requestID](bool success) {
+    m_uniqueIDBDatabase->deleteDatabase([connection, this, requestID](bool success) {
+        if (success) {
+            // If the database was deleted, this connection should detach from it so it can be cleaned up.
+            m_uniqueIDBDatabase->unregisterConnection(*this);
+            m_uniqueIDBDatabase = nullptr;
+        }
         connection->send(Messages::WebIDBServerConnection::DidDeleteDatabase(requestID, success));
     });
 }
@@ -324,6 +334,13 @@ void DatabaseProcessIDBConnection::cursorIterate(uint64_t requestID, int64_t cur
         IPC::DataReference data = value ? IPC::DataReference(reinterpret_cast<const uint8_t*>(value->data()), value->size()) : IPC::DataReference();
         connection->send(Messages::WebIDBServerConnection::DidIterateCursor(requestID, resultKey, primaryKey, data, errorCode, errorMessage));
     });
+}
+
+void DatabaseProcessIDBConnection::close()
+{
+    LOG(IDB, "DatabaseProcessIDBConnection close");
+
+    disconnectedFromWebProcess();
 }
 
 IPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()

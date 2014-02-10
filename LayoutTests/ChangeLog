@@ -1,3 +1,13 @@
+2014-02-10  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/object-store-remove-values.html fails
+        <rdar://problem/16029319> and https://bugs.webkit.org/show_bug.cgi?id=128487
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk2/TestExpectations: Add the now-passing test (skipped because of
+          unrelated flakiness in IDB tests)
+
 2014-02-10  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: add test for hitting breakpoints from functions called via console
