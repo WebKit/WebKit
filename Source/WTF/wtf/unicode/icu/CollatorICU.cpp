@@ -72,7 +72,7 @@ static inline char* copyShortASCIIString(CFStringRef string)
 {
     // OK to have a fixed size buffer and to only handle ASCII since we only use this for locale names.
     char buffer[256];
-    if (!CFStringGetCString(string, buffer, sizeof(buffer), kCFStringEncodingASCII))
+    if (!string || !CFStringGetCString(string, buffer, sizeof(buffer), kCFStringEncodingASCII))
         return strdup("");
     return strdup(buffer);
 }

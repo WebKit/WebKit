@@ -1,3 +1,15 @@
+2014-02-10  Enrica Casucci  <enrica@apple.com>
+
+        copyShortASCIIString crashes on iOS after r163793.
+        https://bugs.webkit.org/show_bug.cgi?id=128548.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adding null check.
+
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::copyShortASCIIString):
+
 2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add GUniqueOutPtr and use it instead of GOwnPtr
