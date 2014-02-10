@@ -2,7 +2,7 @@
 
 LICENSE=$(cat <<EOF
 /*
- * Copyright (C) 2007-2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2014 Apple Inc. All rights reserved.
  * Copyright (C) 2009-2011 Google Inc. All rights reserved.
  * Copyright (C) 2009-2010 Joseph Pecoraro. All rights reserved.
  * Copyright (C) 2008 Matt Lilek. All rights reserved.
@@ -14,6 +14,7 @@ LICENSE=$(cat <<EOF
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  * Copyright (C) 2013 Seokju Kwon (seokju.kwon@gmail.com)
  * Copyright (C) 2013 Adobe Systems Inc. All rights reserved.
+ * Copyright (C) 2013 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

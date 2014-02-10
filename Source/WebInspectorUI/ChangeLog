@@ -1,3 +1,12 @@
+2014-02-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Update License copyrights in minified JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=128547
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/copy-user-interface-resources.sh:
+
 2014-02-07  Brian Burg  <bburg@apple.com>
 
         Web Inspector: show probe sets for script content views in the details sidebar
