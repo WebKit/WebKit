@@ -1,3 +1,9 @@
+2014-02-10  Brendan Long  <b.long@cablelabs.com>
+
+        Unreviewed GTK build fix after r163816.
+
+        * GNUmakefile.list.am: Remove HTMLMediaSource.h and HTMLMediaSource.cpp
+
 2014-02-10  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL WebKit2 build fix after r163816.
