@@ -604,7 +604,6 @@ protected:
     friend class LineWidth; // Needs to know FloatingObject
 };
 
-template<> inline bool isRendererOfType<const RenderBlockFlow>(const RenderObject& renderer) { return renderer.isRenderBlockFlow(); }
 RENDER_OBJECT_TYPE_CASTS(RenderBlockFlow, isRenderBlockFlow())
 
 inline bool RenderElement::isRenderNamedFlowFragmentContainer() const

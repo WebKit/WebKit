@@ -1,5 +1,52 @@
 2014-02-10  Darin Adler  <darin@apple.com>
 
+        Automatically generate isRendererOfType in RENDER_OBJECT_TYPE_CASTS
+        https://bugs.webkit.org/show_bug.cgi?id=128520
+
+        Reviewed by Andreas Kling.
+
+        * rendering/RenderObject.h: Updated the RENDER_OBJECT_TYPE_CASTS macro so
+        that it generates isRendererOfType specializations as well as type casts
+        and also have the type casts use the isRendererOfType function. The macro
+        also now uses an argument name of "renderer" and allows for a predicate
+        that is more than just a single function call (see RenderTextFragment.h).
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderCounter.h:
+        * rendering/RenderElement.h:
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.h:
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLToken.h:
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.h:
+        Removed specialization of isRendererOfType, since the RENDER_OBJECT_TYPE_CASTS
+        macro handles that now. Also removed some unneeded semicolons.
+
+        * rendering/RenderTextFragment.h: Use RENDER_OBJECT_TYPE_CASTS instead of
+        hand written casts, now that it can handle a non-trivial predicate.
+
+        * rendering/RenderCombineText.h:
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderListMarker.h:
+        * rendering/RenderVideo.h:
+        * rendering/RenderView.h:
+        * rendering/mathml/RenderMathMLFraction.h:
+        * rendering/mathml/RenderMathMLScripts.h:
+        * rendering/mathml/RenderMathMLSpace.h:
+        Removed unneeded semicolons.
+
+2014-02-10  Darin Adler  <darin@apple.com>
+
         Stop using String::deprecatedCharacters to call WTF::Collator
         https://bugs.webkit.org/show_bug.cgi?id=128517
 

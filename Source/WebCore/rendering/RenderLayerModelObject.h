@@ -67,8 +67,6 @@ private:
     static bool s_layerWasSelfPainting;
 };
 
-template <> inline bool isRendererOfType<const RenderLayerModelObject>(const RenderObject& renderer) { return renderer.isRenderLayerModelObject(); }
-
 RENDER_OBJECT_TYPE_CASTS(RenderLayerModelObject, isRenderLayerModelObject())
 
 } // namespace WebCore

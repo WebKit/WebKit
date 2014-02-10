@@ -65,7 +65,7 @@ private:
     WrapperType m_kind;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLScriptsWrapper, isRenderMathMLScriptsWrapper());
+RENDER_OBJECT_TYPE_CASTS(RenderMathMLScriptsWrapper, isRenderMathMLScriptsWrapper())
 
 // Render a base with scripts.
 class RenderMathMLScripts : public RenderMathMLBlock {
@@ -105,7 +105,7 @@ private:
     RenderMathMLScriptsWrapper* m_baseWrapper;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLScripts, isRenderMathMLScripts());
+RENDER_OBJECT_TYPE_CASTS(RenderMathMLScripts, isRenderMathMLScripts())
 
 }
 

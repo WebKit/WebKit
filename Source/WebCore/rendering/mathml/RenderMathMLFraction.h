@@ -58,7 +58,7 @@ private:
     LayoutUnit m_lineThickness;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLFraction, isRenderMathMLFraction());
+RENDER_OBJECT_TYPE_CASTS(RenderMathMLFraction, isRenderMathMLFraction())
 
 }
 

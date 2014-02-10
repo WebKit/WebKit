@@ -341,8 +341,6 @@ private:
     void paintMaskForTextFillBox(ImageBuffer*, const IntRect&, InlineFlowBox*, const LayoutRect&, RenderRegion*);
 };
 
-template <> inline bool isRendererOfType<const RenderBoxModelObject>(const RenderObject& renderer) { return renderer.isBoxModelObject(); }
-
 RENDER_OBJECT_TYPE_CASTS(RenderBoxModelObject, isBoxModelObject())
 
 } // namespace WebCore

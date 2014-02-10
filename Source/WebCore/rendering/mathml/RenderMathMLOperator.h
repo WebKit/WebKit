@@ -97,9 +97,7 @@ private:
     StretchyCharacter* m_stretchyCharacter;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLOperator, isRenderMathMLOperator());
-
-template<> inline bool isRendererOfType<const RenderMathMLOperator>(const RenderObject& renderer) { return renderer.isRenderMathMLOperator(); }
+RENDER_OBJECT_TYPE_CASTS(RenderMathMLOperator, isRenderMathMLOperator())
 
 inline UChar convertHyphenMinusToMinusSign(UChar glyph)
 {

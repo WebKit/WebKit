@@ -62,7 +62,6 @@ private:
     friend class CounterNode;
 };
 
-template<> inline bool isRendererOfType<const RenderCounter>(const RenderObject& renderer) { return renderer.isCounter(); }
 RENDER_OBJECT_TYPE_CASTS(RenderCounter, isCounter())
 
 } // namespace WebCore

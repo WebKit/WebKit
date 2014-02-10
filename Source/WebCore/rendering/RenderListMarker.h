@@ -85,7 +85,7 @@ private:
     RenderListItem& m_listItem;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderListMarker, isListMarker());
+RENDER_OBJECT_TYPE_CASTS(RenderListMarker, isListMarker())
 
 } // namespace WebCore
 

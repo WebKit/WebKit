@@ -216,7 +216,7 @@ private:
     static bool s_noLongerAffectsParentBlock;
 };
 
-template <> inline bool isRendererOfType<const RenderElement>(const RenderObject& renderer) { return renderer.isRenderElement(); }
+RENDER_OBJECT_TYPE_CASTS(RenderElement, isRenderElement())
 
 inline RenderStyle& RenderElement::firstLineStyle() const
 {
@@ -279,8 +279,6 @@ inline bool RenderElement::isRenderInline() const
 {
     return m_baseTypeFlags & RenderInlineFlag;
 }
-
-RENDER_OBJECT_TYPE_CASTS(RenderElement, isRenderElement())
 
 inline Element* RenderElement::generatingElement() const
 {

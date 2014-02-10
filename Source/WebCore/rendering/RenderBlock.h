@@ -620,7 +620,6 @@ private:
     static bool s_canPropagateFloatIntoSibling;
 };
 
-template<> inline bool isRendererOfType<const RenderBlock>(const RenderObject& renderer) { return renderer.isRenderBlock(); }
 RENDER_OBJECT_TYPE_CASTS(RenderBlock, isRenderBlock())
 
 LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);

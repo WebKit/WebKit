@@ -218,6 +218,8 @@ private:
     RenderTextLineBoxes m_lineBoxes;
 };
 
+RENDER_OBJECT_TYPE_CASTS(RenderText, isText())
+
 inline UChar RenderText::uncheckedCharacterAt(unsigned i) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(i < textLength());
@@ -231,9 +233,6 @@ inline UChar RenderText::characterAt(unsigned i) const
 
     return uncheckedCharacterAt(i);
 }
-
-template <> inline bool isRendererOfType<const RenderText>(const RenderObject& renderer) { return renderer.isText(); }
-RENDER_OBJECT_TYPE_CASTS(RenderText, isText())
 
 inline RenderStyle& RenderText::style() const
 {

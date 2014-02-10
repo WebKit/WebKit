@@ -56,7 +56,6 @@ private:
     virtual void updateStyle();
 };
 
-template<> inline bool isRendererOfType<const RenderMathMLToken>(const RenderObject& renderer) { return renderer.isRenderMathMLToken(); }
 RENDER_OBJECT_TYPE_CASTS(RenderMathMLToken, isRenderMathMLToken())
 
 }

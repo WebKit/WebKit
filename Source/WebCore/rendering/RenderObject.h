@@ -1130,7 +1130,8 @@ inline bool RenderObject::backgroundIsKnownToBeObscured()
 }
 
 #define RENDER_OBJECT_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, RenderObject, object, object->predicate, object.predicate)
+    template <> inline bool isRendererOfType<const ToValueTypeName>(const RenderObject& renderer) { return renderer.predicate; } \
+    TYPE_CASTS_BASE(ToValueTypeName, RenderObject, renderer, isRendererOfType<const ToValueTypeName>(*renderer), isRendererOfType<const ToValueTypeName>(renderer))
 
 } // namespace WebCore
 

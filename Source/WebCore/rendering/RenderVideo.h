@@ -90,7 +90,7 @@ private:
     LayoutSize m_cachedImageSize;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderVideo, isVideo());
+RENDER_OBJECT_TYPE_CASTS(RenderVideo, isVideo())
 
 } // namespace WebCore
 

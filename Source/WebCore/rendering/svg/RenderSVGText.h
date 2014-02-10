@@ -105,7 +105,6 @@ private:
     Vector<SVGTextLayoutAttributes*> m_layoutAttributes;
 };
 
-template<> inline bool isRendererOfType<const RenderSVGText>(const RenderObject& renderer) { return renderer.isSVGText(); }
 RENDER_OBJECT_TYPE_CASTS(RenderSVGText, isSVGText())
 
 }

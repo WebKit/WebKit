@@ -719,7 +719,6 @@ private:
     static bool s_hadOverflowClip;
 };
 
-template<> inline bool isRendererOfType<const RenderBox>(const RenderObject& renderer) { return renderer.isBox(); }
 RENDER_OBJECT_TYPE_CASTS(RenderBox, isBox())
 
 inline RenderBox* RenderBox::previousSiblingBox() const

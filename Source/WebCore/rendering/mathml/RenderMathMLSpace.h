@@ -54,7 +54,7 @@ private:
     LayoutUnit m_depth;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLSpace, isRenderMathMLSpace());
+RENDER_OBJECT_TYPE_CASTS(RenderMathMLSpace, isRenderMathMLSpace())
 
 }
 

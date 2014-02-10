@@ -77,8 +77,6 @@ private:
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
 };
 
-template<> inline bool isRendererOfType<const RenderRubyRun>(const RenderObject& renderer) { return renderer.isRubyRun(); }
-
 RENDER_OBJECT_TYPE_CASTS(RenderRubyRun, isRubyRun())
 
 } // namespace WebCore

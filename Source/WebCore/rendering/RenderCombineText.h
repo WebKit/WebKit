@@ -57,7 +57,7 @@ private:
     bool m_needsFontUpdate : 1;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderCombineText, isCombineText());
+RENDER_OBJECT_TYPE_CASTS(RenderCombineText, isCombineText())
 
 } // namespace WebCore
 

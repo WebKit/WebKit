@@ -126,7 +126,6 @@ private:
     bool m_isChildResizing;
 };
 
-template<> inline bool isRendererOfType<const RenderFrameSet>(const RenderObject& renderer) { return renderer.isFrameSet(); }
 RENDER_OBJECT_TYPE_CASTS(RenderFrameSet, isFrameSet())
 
 } // namespace WebCore

@@ -71,20 +71,7 @@ private:
     RenderBoxModelObject* m_firstLetter;
 };
 
-inline RenderTextFragment* toRenderTextFragment(RenderObject* object)
-{ 
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || toRenderText(object)->isTextFragment());
-    return static_cast<RenderTextFragment*>(object);
-}
-
-inline const RenderTextFragment* toRenderTextFragment(const RenderObject* object)
-{ 
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || toRenderText(object)->isTextFragment());
-    return static_cast<const RenderTextFragment*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderTextFragment(const RenderTextFragment*);
+RENDER_OBJECT_TYPE_CASTS(RenderTextFragment, isText() && toRenderText(renderer).isTextFragment())
 
 } // namespace WebCore
 
