@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WebKitBug 123143: [CSS Regions] Fix Propagating Border and Padding for Inline Replaced Elements Flowed in Regions</title>
+        <style>
+            .transformed { -webkit-transform: translateX(20px) scale3d(1, 1, 1); }
+            .region {
+                -webkit-transform: scale3d(1, 1, 1); /* so the div is composited, just like the region*/
+                width:500px;
+                height: 300px;
+                border-width: 4px 5px 6px 7px;
+            }
+            * {
+                padding: 2px;
+                border:solid 3px green;
+                margin: 3px;
+                outline: 3px solid blue;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test that outlines and borders are properly painted for inline replaced transformed elements, having margins and paddings, displayed in region.</p>
+        <div class="region">
+            <span class="content">some text 1.</span><img class="content transformed" src="../resources/apple.jpg"><span class="content">some text 2.</span>
+        </div>
+    </body>
+</html>

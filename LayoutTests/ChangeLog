@@ -1,3 +1,16 @@
+2014-02-10  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Fix Propagating Border and Padding for Inline Replaced Elements Flowed in Regions
+        https://bugs.webkit.org/show_bug.cgi?id=123143
+
+        Reviewed by Andrei Bucur.
+
+        Add test to make sure that outlines and borders are properly painted for inline replaced
+        transformed elements, having margins and paddings, displayed in region.
+
+        * compositing/regions/inline-replaced-transformed-in-region-expected.html: Added.
+        * compositing/regions/inline-replaced-transformed-in-region.html: Added.
+
 2014-02-09  Dirk Schulze  <krit@webkit.org>
 
         -webkit-clip-path should support fill, stroke, view-box keywords
