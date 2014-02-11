@@ -1,3 +1,12 @@
+2014-02-11  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix.
+
+        * platform/ios/TileGrid.mm:
+        (WebCore::TileGrid::dropTilesBetweenRects):
+        (WebCore::TileGrid::dropDistantTiles):
+        (WebCore::TileGrid::dropInvalidTiles):
+
 2014-02-11  James Craig  <jcraig@apple.com>
 
         Web Inspector: AX: Accessibility Node Inspection
