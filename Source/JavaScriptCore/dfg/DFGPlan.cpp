@@ -339,7 +339,12 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             FTL::fail(state);
             return FTLPath;
         }
-        
+
+        if (state.jitCode->stackmaps.stackSize() > Options::llvmMaxStackSize()) {
+            FTL::fail(state);
+            return FTLPath;
+        }
+
         FTL::link(state);
         return FTLPath;
 #else

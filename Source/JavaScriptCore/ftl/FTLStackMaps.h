@@ -47,7 +47,15 @@ struct StackMaps {
         void parse(DataView*, unsigned& offset);
         void dump(PrintStream& out) const;
     };
-    
+
+    struct StackSize {
+        uint32_t functionOffset;
+        uint32_t size;
+
+        void parse(DataView*, unsigned& offset);
+        void dump(PrintStream&) const;
+    };
+
     struct Location {
         enum Kind : int8_t {
             Unprocessed,
@@ -80,7 +88,8 @@ struct StackMaps {
         bool parse(DataView*, unsigned& offset);
         void dump(PrintStream&) const;
     };
-    
+
+    Vector<StackSize> stackSizes;
     Vector<Constant> constants;
     Vector<Record> records;
     
@@ -91,6 +100,8 @@ struct StackMaps {
     typedef HashMap<uint32_t, Vector<Record>, WTF::IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> RecordMap;
     
     RecordMap getRecordMap() const;
+
+    unsigned stackSize() const;
 };
 
 } } // namespace JSC::FTL

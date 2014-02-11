@@ -53,6 +53,17 @@ void StackMaps::Constant::dump(PrintStream& out) const
     out.printf("0x%016llx", integer);
 }
 
+void StackMaps::StackSize::parse(DataView* view, unsigned& offset)
+{
+    functionOffset = view->read<uint32_t>(offset, true);
+    size = view->read<uint32_t>(offset, true);
+}
+
+void StackMaps::StackSize::dump(PrintStream& out) const
+{
+    out.print("(off:", functionOffset, ", size:", size, ")");
+}
+
 void StackMaps::Location::parse(DataView* view, unsigned& offset)
 {
     kind = static_cast<Kind>(view->read<uint8_t>(offset, true));
@@ -116,15 +127,9 @@ bool StackMaps::parse(DataView* view)
     view->read<uint32_t>(offset, true); // Reserved (header)
     
     uint32_t numFunctions = view->read<uint32_t>(offset, true);
+    ASSERT(numFunctions == 1); // There should only be one stack size record
     while (numFunctions--) {
-        // FIXME: Actually use this data.
-        // https://bugs.webkit.org/show_bug.cgi?id=125650
-        uint32_t functionOffset = view->read<uint32_t>(offset, true);
-        uint32_t stackSize = view->read<uint32_t>(offset, true);
-        if (!stackSize || stackSize > (1 << 20)) {
-            dataLog("Bad stack size ", stackSize, " for function offset", functionOffset, "\n");
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        stackSizes.append(readObject<StackSize>(view, offset));
     }
     
     uint32_t numConstants = view->read<uint32_t>(offset, true);
@@ -144,11 +149,14 @@ bool StackMaps::parse(DataView* view)
 
 void StackMaps::dump(PrintStream& out) const
 {
-    out.print("Constants:[", listDump(constants), "], Records:[", listDump(records), "]");
+    out.print("StackSizes[", listDump(stackSizes), "], Constants:[", listDump(constants), "], Records:[", listDump(records), "]");
 }
 
 void StackMaps::dumpMultiline(PrintStream& out, const char* prefix) const
 {
+    out.print(prefix, "StackSizes:\n");
+    for (unsigned i = 0; i < stackSizes.size(); ++i)
+        out.print(prefix, "    ", stackSizes[i], "\n");
     out.print(prefix, "Constants:\n");
     for (unsigned i = 0; i < constants.size(); ++i)
         out.print(prefix, "    ", constants[i], "\n");
@@ -163,6 +171,13 @@ StackMaps::RecordMap StackMaps::getRecordMap() const
     for (unsigned i = records.size(); i--;)
         result.add(records[i].patchpointID, Vector<Record>()).iterator->value.append(records[i]);
     return result;
+}
+
+unsigned StackMaps::stackSize() const
+{
+    RELEASE_ASSERT(stackSizes.size() == 1);
+
+    return stackSizes[0].size;
 }
 
 } } // namespace JSC::FTL
