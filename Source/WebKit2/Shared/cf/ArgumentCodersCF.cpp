@@ -32,7 +32,7 @@
 #include <WebCore/CFURLExtras.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
 #import <Foundation/Foundation.h>
 #endif
 
@@ -524,7 +524,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFURLRef>& result)
     if (!decoder.decode(urlBytes))
         return false;
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
     // FIXME: Move this to ArgumentCodersCFMac.mm and change this file back to be C++
     // instead of Objective-C++.
     if (urlBytes.isEmpty()) {

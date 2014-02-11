@@ -28,15 +28,19 @@
 
 #include "WebEvent.h"
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSView;
-#elif PLATFORM(GTK)
-#include <WebCore/GUniquePtrGtk.h>
-typedef union _GdkEvent GdkEvent;
-#elif PLATFORM(EFL)
+#endif
+
+#if PLATFORM(EFL)
 #include <Evas.h>
 #include <WebCore/AffineTransform.h>
+#endif
+
+#if PLATFORM(GTK)
+#include <WebCore/GUniquePtrGtk.h>
+typedef union _GdkEvent GdkEvent;
 #endif
 
 namespace WebKit {

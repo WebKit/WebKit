@@ -65,7 +65,7 @@ public:
     void setProcessSuppressionEnabled(bool);
     bool processSuppressionEnabled() const { return !m_processSuppressionDisabled.isActive(); }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void setApplicationIsDaemon();
     void setQOS(int latencyQOS, int throughputQOS);
 #endif
@@ -90,7 +90,7 @@ protected:
 
     virtual void stopRunLoop();
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     static void stopNSAppRunLoop();
 #endif
 

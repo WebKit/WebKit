@@ -26,7 +26,7 @@
 #ifndef FontInfo_h
 #define FontInfo_h
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -41,7 +41,7 @@ struct FontInfo {
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, FontInfo&);
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> fontAttributeDictionary;
 #endif
 };

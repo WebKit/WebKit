@@ -26,7 +26,7 @@
 #ifndef WebArchive_h
 #define WebArchive_h
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #include "APIObject.h"
 #include <wtf/PassRefPtr.h>
@@ -76,6 +76,6 @@ private:
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
 
 #endif // WebArchive_h

@@ -26,7 +26,7 @@
 #ifndef PrintInfo_h
 #define PrintInfo_h
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
 OBJC_CLASS NSPrintInfo;
 #elif PLATFORM(GTK)
 typedef struct _GtkPrintSettings GtkPrintSettings;

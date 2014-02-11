@@ -201,7 +201,7 @@
 		1A64245F12DE29A100CAAE2C /* UpdateInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */; };
 		1A66BF8F18A052ED002071B4 /* WKWebViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */; };
 		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
-		1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */; };
+		1A6F9FB711E1408500DB1371 /* CommandLinePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLinePOSIX.cpp */; };
 		1A6FB7AE11E64B6800DB1371 /* PluginView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */; };
 		1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FB7AD11E64B6800DB1371 /* PluginView.h */; };
 		1A6FB7D211E651E200DB1371 /* Plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB7D011E651E200DB1371 /* Plugin.cpp */; };
@@ -415,7 +415,7 @@
 		2984F57D164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2984F57B164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h */; };
 		2984F588164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2984F586164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp */; };
 		2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2984F587164BA095004BC0C6 /* CustomProtocolManagerMessages.h */; };
-		2989A411167D1834004F96D2 /* CustomProtocolManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2989A410167D1834004F96D2 /* CustomProtocolManagerMac.mm */; };
+		2989A411167D1834004F96D2 /* CustomProtocolManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2989A410167D1834004F96D2 /* CustomProtocolManagerCocoa.mm */; };
 		2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2989A412167D184B004F96D2 /* CustomProtocolManager.h */; };
 		29AD3093164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AD3092164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h */; };
 		29AD3096164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AD3095164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm */; };
@@ -1870,7 +1870,7 @@
 		1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateInfo.cpp; sourceTree = "<group>"; };
 		1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewInternal.h; sourceTree = "<group>"; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
-		1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineMac.cpp; sourceTree = "<group>"; };
+		1A6F9FB611E1408500DB1371 /* CommandLinePOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLinePOSIX.cpp; sourceTree = "<group>"; };
 		1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginView.cpp; sourceTree = "<group>"; };
 		1A6FB7AD11E64B6800DB1371 /* PluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginView.h; sourceTree = "<group>"; };
 		1A6FB7D011E651E200DB1371 /* Plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plugin.cpp; sourceTree = "<group>"; };
@@ -2103,7 +2103,7 @@
 		2984F57B164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomProtocolManagerProxyMessages.h; sourceTree = "<group>"; };
 		2984F586164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomProtocolManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		2984F587164BA095004BC0C6 /* CustomProtocolManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomProtocolManagerMessages.h; sourceTree = "<group>"; };
-		2989A410167D1834004F96D2 /* CustomProtocolManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CustomProtocolManagerMac.mm; path = Network/CustomProtocols/mac/CustomProtocolManagerMac.mm; sourceTree = "<group>"; };
+		2989A410167D1834004F96D2 /* CustomProtocolManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomProtocolManagerCocoa.mm; sourceTree = "<group>"; };
 		2989A412167D184B004F96D2 /* CustomProtocolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomProtocolManager.h; path = Network/CustomProtocols/CustomProtocolManager.h; sourceTree = "<group>"; };
 		2989A413167D184B004F96D2 /* CustomProtocolManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CustomProtocolManager.messages.in; path = Network/CustomProtocols/CustomProtocolManager.messages.in; sourceTree = "<group>"; };
 		29AD3092164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomProtocolManagerProxy.h; path = CustomProtocols/CustomProtocolManagerProxy.h; sourceTree = "<group>"; };
@@ -3816,6 +3816,7 @@
 				BC111B5A112F628200337BAB /* mac */,
 				51A8A60D1627F2AC000D90E9 /* Network */,
 				1AAE058C1279DCD400852418 /* Plugins */,
+				3709504918A9FAD20087AE5D /* posix */,
 				0F5947A0187B3B7100437857 /* Scrolling */,
 				BC64696D11DBE603006455B0 /* APIArray.cpp */,
 				BC64696E11DBE603006455B0 /* APIArray.h */,
@@ -4127,19 +4128,20 @@
 		2989A40E167D1813004F96D2 /* CustomProtocols */ = {
 			isa = PBXGroup;
 			children = (
-				2989A40F167D181B004F96D2 /* mac */,
+				2989A40F167D181B004F96D2 /* Cocoa */,
 				2989A412167D184B004F96D2 /* CustomProtocolManager.h */,
 				2989A413167D184B004F96D2 /* CustomProtocolManager.messages.in */,
 			);
 			name = CustomProtocols;
 			sourceTree = "<group>";
 		};
-		2989A40F167D181B004F96D2 /* mac */ = {
+		2989A40F167D181B004F96D2 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				2989A410167D1834004F96D2 /* CustomProtocolManagerMac.mm */,
+				2989A410167D1834004F96D2 /* CustomProtocolManagerCocoa.mm */,
 			);
-			name = mac;
+			name = Cocoa;
+			path = Network/CustomProtocols/Cocoa;
 			sourceTree = "<group>";
 		};
 		29AD3091164B4C100072DEA9 /* CustomProtocols */ = {
@@ -4346,6 +4348,14 @@
 				5160BFE013381DF900918999 /* LoggingFoundation.mm */,
 			);
 			path = foundation;
+			sourceTree = "<group>";
+		};
+		3709504918A9FAD20087AE5D /* posix */ = {
+			isa = PBXGroup;
+			children = (
+				1A6F9FB611E1408500DB1371 /* CommandLinePOSIX.cpp */,
+			);
+			path = posix;
 			sourceTree = "<group>";
 		};
 		37C4C08318149C2A003688B9 /* Cocoa */ = {
@@ -5341,7 +5351,6 @@
 				9F54F88E16488E87007DF81A /* ChildProcessMac.mm */,
 				1A2A4AFE158693920090C9E9 /* ColorSpaceData.h */,
 				1A2A4AFD158693920090C9E9 /* ColorSpaceData.mm */,
-				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
 				CDC3830D1721242D008A2FC3 /* CookieStorageShim.mm */,
 				CDC3830E1721242D008A2FC3 /* CookieStorageShim.h */,
 				CDC382F9172116D3008A2FC3 /* CookieStorageShimLibrary.cpp */,
@@ -7662,7 +7671,7 @@
 				9F54F88F16488E87007DF81A /* ChildProcessMac.mm in Sources */,
 				E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */,
 				1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */,
-				1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */,
+				1A6F9FB711E1408500DB1371 /* CommandLinePOSIX.cpp in Sources */,
 				BC032DAA10F437D10058C15A /* Connection.cpp in Sources */,
 				2DA944A31884E4F000ED86DB /* WebTouchEventIOS.cpp in Sources */,
 				1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */,
@@ -7675,7 +7684,7 @@
 				2DA049B3180CCCD300AAFA9E /* PlatformCALayerRemote.cpp in Sources */,
 				CDC3831017212440008A2FC3 /* CookieStorageShim.mm in Sources */,
 				B878B616133428DC006888E9 /* CorrectionPanel.mm in Sources */,
-				2989A411167D1834004F96D2 /* CustomProtocolManagerMac.mm in Sources */,
+				2989A411167D1834004F96D2 /* CustomProtocolManagerCocoa.mm in Sources */,
 				2984F588164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp in Sources */,
 				29AD3096164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm in Sources */,
 				0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */,

@@ -32,7 +32,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WebSystemInterface.h"
 #endif
 #if PLATFORM(IOS)
@@ -43,7 +43,7 @@ namespace WebKit {
 
 void InitializeWebKit2()
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     InitWebCoreSystemInterface();
 #endif
 #if PLATFORM(IOS)

@@ -30,7 +30,7 @@
 
 #include "PluginProcessAttributes.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "MachPort.h"
 #endif
 
@@ -53,7 +53,7 @@ struct PluginProcessCreationParameters {
     double minimumLifetime;
     double terminationTimeout;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     IPC::MachPort acceleratedCompositingPort;
 #endif
 };

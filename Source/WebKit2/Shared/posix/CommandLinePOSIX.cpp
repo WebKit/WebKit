@@ -28,9 +28,6 @@
 
 namespace WebKit {
 
-// FIXME: There's nothing Mac specific about this command line parser.
-// Maybe we should move it to CommandLinePosix.cpp instead.
-
 bool CommandLine::parse(int argc, char** argv)
 {
     if ((argc % 2))

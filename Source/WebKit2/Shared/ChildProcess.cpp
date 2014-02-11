@@ -163,7 +163,7 @@ void ChildProcess::terminate()
     stopRunLoop();
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void ChildProcess::platformInitialize()
 {
 }

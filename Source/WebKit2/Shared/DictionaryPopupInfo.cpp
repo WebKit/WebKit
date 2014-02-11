@@ -28,7 +28,7 @@
 
 #include "WebCoreArgumentCoders.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "ArgumentCodersCF.h"
 #endif
 
@@ -38,7 +38,7 @@ void DictionaryPopupInfo::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << origin;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool hadOptions = options;
     encoder << hadOptions;
     if (hadOptions)
@@ -50,7 +50,7 @@ bool DictionaryPopupInfo::decode(IPC::ArgumentDecoder& decoder, DictionaryPopupI
 {
     if (!decoder.decode(result.origin))
         return false;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool hadOptions;
     if (!decoder.decode(hadOptions))
         return false;

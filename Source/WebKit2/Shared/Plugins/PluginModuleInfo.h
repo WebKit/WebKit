@@ -28,7 +28,7 @@
 
 #include <WebCore/PluginData.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <mach/machine.h>
 #endif
 
@@ -50,7 +50,7 @@ struct PluginModuleInfo {
     String path;
     WebCore::PluginInfo info;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     cpu_type_t pluginArchitecture;
     String bundleIdentifier;
     String versionString;

@@ -26,7 +26,7 @@
 #ifndef WebArchiveResource_h
 #define WebArchiveResource_h
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #include "APIObject.h"
 #include <wtf/Forward.h>
@@ -67,6 +67,6 @@ private:
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
 
 #endif // WebArchiveResource_h

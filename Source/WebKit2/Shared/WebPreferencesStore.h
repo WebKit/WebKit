@@ -54,7 +54,7 @@ namespace WebKit {
 #define DEFAULT_SCREEN_FONT_SUBSTITUTION_ENABLED true
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #define DEFAULT_HIDDEN_PAGE_DOM_TIMER_THROTTLING_ENABLED true
 #define DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED true
 #define DEFAULT_PDFPLUGIN_ENABLED true
@@ -216,7 +216,7 @@ namespace WebKit {
     macro(InspectorAttachmentSide, inspectorAttachmentSide, UInt32, uint32_t, 0) \
     \
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     macro(StandardFontFamily, standardFontFamily, String, String, "Times") \

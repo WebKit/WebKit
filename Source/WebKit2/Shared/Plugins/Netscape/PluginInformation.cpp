@@ -164,7 +164,7 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const String& 
     return ImmutableDictionary::create(std::move(map));
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void getPlatformPluginModuleInformation(const PluginModuleInfo&, ImmutableDictionary::MapType&)
 {
 }

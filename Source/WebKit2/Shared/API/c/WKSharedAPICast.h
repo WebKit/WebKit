@@ -118,7 +118,7 @@ WK_ADD_API_MAPPING(WKSessionRef, API::Session)
 
 template<> struct APITypeInfo<WKMutableArrayRef> { typedef API::Array* ImplType; };
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 WK_ADD_API_MAPPING(WKWebArchiveRef, WebArchive)
 WK_ADD_API_MAPPING(WKWebArchiveResourceRef, WebArchiveResource)
 WK_ADD_API_MAPPING(WKObjCTypeWrapperRef, ObjCObjectGraph)
@@ -482,7 +482,7 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagMediaPlayPause;
     case WebCore::ContextMenuItemTagMediaMute:
         return kWKContextMenuItemTagMediaMute;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     case WebCore::ContextMenuItemTagCorrectSpellingAutomatically:
         return kWKContextMenuItemTagCorrectSpellingAutomatically;
     case WebCore::ContextMenuItemTagSubstitutionsMenu:
@@ -676,7 +676,7 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagMediaPlayPause;
     case kWKContextMenuItemTagMediaMute:
         return WebCore::ContextMenuItemTagMediaMute;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     case kWKContextMenuItemTagCorrectSpellingAutomatically:
         return WebCore::ContextMenuItemTagCorrectSpellingAutomatically;
     case kWKContextMenuItemTagSubstitutionsMenu:

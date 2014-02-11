@@ -31,14 +31,14 @@
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WKFoundation.h"
 #ifdef __OBJC__
 #include "WKObject.h"
 #endif
 #endif
 
-#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(MAC) && WK_API_ENABLED)
+#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(COCOA) && WK_API_ENABLED)
 
 #if DELEGATE_REF_COUNTING_TO_COCOA
 OBJC_CLASS NSObject;

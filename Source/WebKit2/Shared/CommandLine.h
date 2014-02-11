@@ -37,7 +37,7 @@ namespace WebKit {
 
 class CommandLine {
 public:
-#if PLATFORM(MAC)
+#if OS(UNIX)
     bool parse(int argc, char** argv);
 #endif
     String operator[](const String& key) const

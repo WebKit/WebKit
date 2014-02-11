@@ -34,7 +34,7 @@
 #include "WorkQueue.h"
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
@@ -71,7 +71,7 @@ public:
     void unregisterScheme(const String&);
     bool supportsScheme(const String&);
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void addCustomProtocol(WKCustomProtocol *);
     void removeCustomProtocol(WKCustomProtocol *);
 #endif
@@ -99,7 +99,7 @@ private:
     ChildProcess* m_childProcess;
     RefPtr<WorkQueue> m_messageQueue;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     HashSet<String> m_registeredSchemes;
     Mutex m_registeredSchemesMutex;
 

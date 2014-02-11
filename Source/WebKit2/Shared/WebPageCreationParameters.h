@@ -39,7 +39,7 @@
 #include <WebCore/ViewState.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "ColorSpaceData.h"
 #endif
 
@@ -101,7 +101,7 @@ struct WebPageCreationParameters {
 
     LayerHostingMode layerHostingMode;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     ColorSpaceData colorSpace;
 #endif
 };

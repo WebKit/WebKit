@@ -1,3 +1,94 @@
+2014-02-11  Dan Bernstein  <mitz@apple.com>
+
+        Stop using PLATFORM(MAC) in WebKit2/Shared except where it means “OS X but not iOS”
+        https://bugs.webkit.org/show_bug.cgi?id=128582
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/c/WKContextMenuItem.cpp: Removed workaround for Mac Safari 6 compatibility.
+        (WKContextMenuItemGetTag):
+        * Shared/API/c/WKDeprecatedFunctions.cpp: Added && !PLATFORM(IOS), because these functions
+        are not needed on iOS.
+        * Shared/API/c/WKSharedAPICast.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * Shared/APIObject.h: Ditto.
+        * Shared/ChildProcess.cpp: Ditto.
+        * Shared/ChildProcess.h: Changed PLATFORM(MAC) to PLATFORM(COCOA) around
+        setApplicationIsDaemon and setQOS. Changed it to USE(APPKIT) around stopNSAppRunLoop.
+        * Shared/CommandLine.h: Changed PLATFORM(MAC) to OS(UNIX) around parse().
+        * Shared/DictionaryPopupInfo.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::DictionaryPopupInfo::encode):
+        (WebKit::DictionaryPopupInfo::decode):
+        * Shared/DictionaryPopupInfo.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * Shared/Downloads/Download.h: Ditto.
+        * Shared/DrawingAreaInfo.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * Shared/FontInfo.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::FontInfo::encode):
+        (WebKit::FontInfo::decode):
+        * Shared/FontInfo.h: Ditto.
+        * Shared/LayerTreeContext.h: Ditto.
+        * Shared/NativeWebKeyboardEvent.h: Changed PLATFORM(MAC) to USE(APPKIT) around
+        forward-declaration of NSView.
+        * Shared/NativeWebMouseEvent.h: Ditto.
+        * Shared/NativeWebWheelEvent.h: Ditto.
+        * Shared/Network/CustomProtocols/Cocoa: Renamed from mac.
+        * Shared/Network/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm: Renamed from CustomProtocolManagerMac.mm.
+        * Shared/Network/CustomProtocols/Cocoa/CustomProtocolManagerMac.mm: Removed.
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h: Changed PLATFORM(MAC) to
+        PLATFORM(COCOA).
+        * Shared/Network/CustomProtocols/mac: Removed.
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm: Removed.
+        * Shared/PlatformPopupMenuData.cpp:  Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::PlatformPopupMenuData::encode):
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h: Ditto.
+        * Shared/Plugins/Netscape/PluginInformation.cpp: Ditto.
+        * Shared/Plugins/PluginModuleInfo.h: Ditto.
+        * Shared/Plugins/PluginProcessCreationParameters.cpp: Ditto.
+        (WebKit::PluginProcessCreationParameters::encode):
+        (WebKit::PluginProcessCreationParameters::decode):
+        * Shared/Plugins/PluginProcessCreationParameters.h: Ditto.
+        * Shared/PrintInfo.h: Changed PLATFORM(MAC) to USE(APPKIT) around forward declaration of
+        NSPrintInfo.
+        * Shared/SandboxInitializationParameters.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * Shared/TextCheckerState.h: Changed PLATFORM(MAC) to USE(APPKIT).
+        * Shared/WebArchive.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * Shared/WebArchive.h: Ditto.
+        * Shared/WebArchiveResource.cpp: Ditto.
+        * Shared/WebArchiveResource.h: Ditto.
+        * Shared/WebCoreArgumentCoders.cpp: Ditto.
+        (IPC::ArgumentCoder<ResourceResponse>::encode):
+        (IPC::ArgumentCoder<ResourceResponse>::decode):
+        * Shared/WebCoreArgumentCoders.h: Ditto.
+        * Shared/WebEvent.h: Ditto.
+        * Shared/WebEventConversion.cpp: Ditto.
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        * Shared/WebKit2Initialize.cpp: Ditto.
+        (WebKit::InitializeWebKit2):
+        * Shared/WebPageCreationParameters.cpp: Ditto.
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h: Ditto.
+        * Shared/WebPreferencesStore.h: Ditto.
+        * Shared/WebProcessCreationParameters.cpp: Ditto.
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h: Ditto.
+        * Shared/WebWheelEvent.cpp: Ditto.
+        (WebKit::WebWheelEvent::WebWheelEvent):
+        (WebKit::WebWheelEvent::encode):
+        (WebKit::WebWheelEvent::decode):
+        * Shared/cf/ArgumentCodersCF.cpp: Changed PLATFORM(MAC) to USE(FOUNDATION).
+        (IPC::decode):
+        * Shared/mac/CommandLineMac.cpp: Removed.
+        * Shared/mac/PDFKitImports.h: Removed PLATFORM(MAC)
+        * Shared/posix: Added.
+        * Shared/posix/CommandLinePOSIX.cpp: Renamed from mac/CommandLineMac.cpp and removed
+        comment.
+        * WebKit2.xcodeproj/project.pbxproj: Updated for moves and renames.
+
 2014-02-11  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/cursor-update-updates-indexes.html ASSERTs

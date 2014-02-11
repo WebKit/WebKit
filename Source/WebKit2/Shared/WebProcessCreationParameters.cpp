@@ -35,7 +35,7 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , shouldAlwaysUseComplexTextCodePath(false)
     , shouldUseFontSmoothing(true)
     , defaultRequestTimeoutInterval(INT_MAX)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , nsURLCacheMemoryCapacity(0)
     , nsURLCacheDiskCapacity(0)
     , shouldForceScreenFontSubstitution(false)
@@ -96,10 +96,10 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << textCheckerState;
     encoder << fullKeyboardAccessEnabled;
     encoder << defaultRequestTimeoutInterval;
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
     encoder << uiProcessBundleIdentifier;
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     encoder << presenterApplicationPid;
     encoder << accessibilityEnhancedUserInterfaceEnabled;
     encoder << nsURLCacheMemoryCapacity;
@@ -209,12 +209,12 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
         return false;
     if (!decoder.decode(parameters.defaultRequestTimeoutInterval))
         return false;
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
     if (!decoder.decode(parameters.uiProcessBundleIdentifier))
         return false;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (!decoder.decode(parameters.presenterApplicationPid))
         return false;
     if (!decoder.decode(parameters.accessibilityEnhancedUserInterfaceEnabled))

@@ -30,7 +30,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Noncopyable.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSURLDownload;
@@ -119,7 +119,7 @@ private:
 
     RefPtr<SandboxExtension> m_sandboxExtension;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<NSURLDownload> m_nsURLDownload;
     RetainPtr<WKDownloadAsDelegate> m_delegate;
 #endif

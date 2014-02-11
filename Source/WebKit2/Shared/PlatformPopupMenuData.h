@@ -43,7 +43,7 @@ struct PlatformPopupMenuData {
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, PlatformPopupMenuData&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     FontInfo fontInfo;
     bool shouldPopOver;
 #endif

@@ -52,7 +52,7 @@ public:
 
     bool isEmpty() const;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     uint32_t contextID;
 #elif PLATFORM(GTK)
     uint64_t windowHandle;

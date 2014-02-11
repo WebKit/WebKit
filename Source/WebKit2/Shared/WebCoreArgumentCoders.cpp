@@ -574,7 +574,7 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRe
 
 void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder& encoder, const ResourceResponse& resourceResponse)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool shouldSerializeWebCoreData = !resourceResponse.platformResponseIsUpToDate();
     encoder << shouldSerializeWebCoreData;
 #else
@@ -603,7 +603,7 @@ void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder& encoder, const Res
 
 bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder& decoder, ResourceResponse& resourceResponse)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool hasSerializedWebCoreData;
     if (!decoder.decode(hasSerializedWebCoreData))
         return false;

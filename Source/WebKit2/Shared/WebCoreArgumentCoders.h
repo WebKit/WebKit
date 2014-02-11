@@ -83,7 +83,7 @@ struct ViewportAttributes;
 struct WindowFeatures;
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 namespace WebCore {
 struct KeypressCommand;
 }
@@ -214,7 +214,7 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static const bool kShouldSerializeWebCoreData = false;
 #else
     static const bool kShouldSerializeWebCoreData = true;
@@ -234,7 +234,7 @@ template<> struct ArgumentCoder<WebCore::ResourceResponse> {
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceError> {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static const bool kShouldSerializeWebCoreData = false;
 #else
     static const bool kShouldSerializeWebCoreData = true;
@@ -256,7 +256,7 @@ template<> struct ArgumentCoder<WebCore::Color> {
     static bool decode(ArgumentDecoder&, WebCore::Color&);
 };
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 template<> struct ArgumentCoder<WebCore::KeypressCommand> {
     static void encode(ArgumentEncoder&, const WebCore::KeypressCommand&);
     static bool decode(ArgumentDecoder&, WebCore::KeypressCommand&);

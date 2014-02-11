@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebArchive.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #include "APIArray.h"
 #include "APIData.h"
@@ -157,4 +157,4 @@ LegacyWebArchive* WebArchive::coreLegacyWebArchive()
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)

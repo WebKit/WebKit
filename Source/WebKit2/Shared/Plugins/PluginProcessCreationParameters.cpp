@@ -43,7 +43,7 @@ void PluginProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) cons
     encoder << supportsAsynchronousPluginInitialization;
     encoder << minimumLifetime;
     encoder << terminationTimeout;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     encoder << acceleratedCompositingPort;
 #endif
 }
@@ -58,7 +58,7 @@ bool PluginProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Plug
         return false;
     if (!decoder.decode(result.terminationTimeout))
         return false;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (!decoder.decode(result.acceleratedCompositingPort))
         return false;
 #endif

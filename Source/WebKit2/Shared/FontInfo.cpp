@@ -28,7 +28,7 @@
 
 #include "WebCoreArgumentCoders.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "ArgumentCodersCF.h"
 #endif
 
@@ -36,7 +36,7 @@ namespace WebKit {
 
 void FontInfo::encode(IPC::ArgumentEncoder& encoder) const
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     encoder << static_cast<bool>(fontAttributeDictionary);
     if (fontAttributeDictionary)
         IPC::encode(encoder, fontAttributeDictionary.get());
@@ -47,7 +47,7 @@ void FontInfo::encode(IPC::ArgumentEncoder& encoder) const
 
 bool FontInfo::decode(IPC::ArgumentDecoder& decoder, FontInfo& fontInfo)
 {    
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool hasFontAttributeDictionary;
     if (!decoder.decode(hasFontAttributeDictionary))
         return false;

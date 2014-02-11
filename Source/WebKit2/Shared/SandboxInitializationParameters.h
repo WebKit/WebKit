@@ -29,7 +29,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 OBJC_CLASS NSString;
 #endif
 
@@ -41,7 +41,7 @@ public:
     SandboxInitializationParameters();
     ~SandboxInitializationParameters();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Name must be a literal.
     void addConfDirectoryParameter(const char* name, int confID);
     void addPathParameter(const char* name, NSString *path);
@@ -91,7 +91,7 @@ public:
 #endif
 
 private:
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void appendPathInternal(const char* name, const char* path);
 
     mutable Vector<const char*> m_namedParameters;
@@ -102,7 +102,7 @@ private:
 #endif
 };
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 SandboxInitializationParameters::SandboxInitializationParameters()
 {
 }

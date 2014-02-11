@@ -28,7 +28,7 @@
 
 #include <WebCore/FloatPoint.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -44,7 +44,7 @@ struct DictionaryPopupInfo {
     static bool decode(IPC::ArgumentDecoder&, DictionaryPopupInfo&);
 
     WebCore::FloatPoint origin;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> options;
 #endif
 };

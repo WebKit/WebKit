@@ -41,7 +41,7 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     , m_wheelTicks(wheelTicks)
     , m_granularity(granularity)
     , m_directionInvertedFromDevice(false)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_phase(PhaseNone)
     , m_hasPreciseScrollingDeltas(false)
     , m_scrollCount(0)
@@ -50,7 +50,7 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     ASSERT(isWheelEventType(type));
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, Modifiers modifiers, double timestamp)
     : WebEvent(type, modifiers, timestamp)
     , m_position(position)
@@ -79,7 +79,7 @@ void WebWheelEvent::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_wheelTicks;
     encoder << m_granularity;
     encoder << m_directionInvertedFromDevice;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     encoder << m_phase;
     encoder << m_momentumPhase;
     encoder << m_hasPreciseScrollingDeltas;
@@ -104,7 +104,7 @@ bool WebWheelEvent::decode(IPC::ArgumentDecoder& decoder, WebWheelEvent& t)
         return false;
     if (!decoder.decode(t.m_directionInvertedFromDevice))
         return false;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (!decoder.decode(t.m_phase))
         return false;
     if (!decoder.decode(t.m_momentumPhase))

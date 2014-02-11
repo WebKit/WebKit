@@ -34,7 +34,7 @@ struct TextCheckerState {
     bool isContinuousSpellCheckingEnabled;
     bool isGrammarCheckingEnabled;
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     bool isAutomaticSpellingCorrectionEnabled;
     bool isAutomaticQuoteSubstitutionEnabled;
     bool isAutomaticDashSubstitutionEnabled;

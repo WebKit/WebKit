@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebArchiveResource.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #include "APIData.h"
 #include <WebCore/ArchiveResource.h>
@@ -99,4 +99,4 @@ ArchiveResource* WebArchiveResource::coreArchiveResource()
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
