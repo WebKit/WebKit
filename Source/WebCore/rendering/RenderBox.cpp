@@ -4408,10 +4408,7 @@ bool RenderBox::hasUnsplittableScrollingOverflow() const
 
 bool RenderBox::isUnsplittableForPagination() const
 {
-    return isReplaced() || hasUnsplittableScrollingOverflow() || (parent() && isWritingModeRoot())
-        // FIXME: Treat multi-column elements as unsplittable for now. Remove once we implement the correct
-        // fragmentation model for multicolumn.
-        || isMultiColumnBlockFlow();
+    return isReplaced() || hasUnsplittableScrollingOverflow() || (parent() && isWritingModeRoot());
 }
 
 LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const

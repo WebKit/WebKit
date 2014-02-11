@@ -86,6 +86,9 @@ public:
 
     LayoutSize layoutOffset() const { return m_layoutOffset; }
 
+    LayoutSize pageOffset() const { return m_pageOffset; }
+    void setLineGridPaginationOrigin(const LayoutSize& origin) { m_lineGridPaginationOrigin = origin; }
+    
     bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
 
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)

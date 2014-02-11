@@ -1,3 +1,51 @@
+2014-02-10  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Make columns work with line grids
+        https://bugs.webkit.org/show_bug.cgi?id=128555
+
+        Reviewed by Antti Koivisto.
+
+        Added line-snap-into-columns.html and line-snap-inside-columns.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::pageOffset):
+        (WebCore::LayoutState::setLineGridPaginationOrigin):
+        Change the LayoutState to call into the renderer to compute the line
+        grid pagination origin instead of doing it directly. Added the
+        appropriate getters and setters to enable the renderer to do this.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeLineGridPaginationOrigin):
+         * rendering/RenderBlock.h:
+        An implementation for the old multi-column code. The logic is the
+        same with tweaks made now that the method is on the renderer instead.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::pageLogicalTopForOffset):
+        Fix a bug with flow threads and pageLogicalTopForOffset. Normal CSS region-based
+        flow threads are never embedded in an enclosing pagination context, so they
+        didn't add in the firstPageLogicalTop (or subtract it when computing the region
+        hit). Multi-column flow threads do need to subtract out the firstPageLogicalTop,
+        since it can occur somewhere on the page.
+        
+        Ultimately regions will need to get smarter here too if they want to work with
+        line grids, but for now I just fixed multi-column.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::isUnsplittableForPagination):
+        Undo this change, since it prevents the inheritance of line grids into the
+        multi-column layout.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::computeLineGridPaginationOrigin):
+        * rendering/RenderMultiColumnFlowThread.h:
+        An implementation for the new multi-column code. The logic is the
+        same as the old code. Code duplication is ok, since the old multi-column method
+        in RenderBlock will just be deleted once the new code is turned on, and it's easier
+        not to intertwine them.
+
 2014-02-11  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Overflow above the first region is not properly painted for regions with padding

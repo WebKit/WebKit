@@ -1,3 +1,17 @@
+2014-02-10  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Make columns work with line grids
+        https://bugs.webkit.org/show_bug.cgi?id=128555
+
+        Reviewed by Antti Koivisto.
+
+        Added line-snap-into-columns.html and line-snap-inside-columns.html
+
+        * fast/multicol/newmulticol/line-grid-inside-columns-expected.html: Added.
+        * fast/multicol/newmulticol/line-grid-inside-columns.html: Added.
+        * fast/multicol/newmulticol/line-grid-into-columns-expected.html: Added.
+        * fast/multicol/newmulticol/line-grid-into-columns.html: Added.
+
 2014-02-11  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/cursor-update-updates-indexes.html ASSERTs

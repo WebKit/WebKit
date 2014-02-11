@@ -126,8 +126,8 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
     
     m_isPaginated = m_pageLogicalHeight || m_columnInfo || renderer->isRenderFlowThread();
 
-    if (lineGrid() && renderer->hasColumns() && renderer->style().hasInlineColumnAxis())
-        computeLineGridPaginationOrigin(renderer);
+    if (lineGrid() && (lineGrid()->style().writingMode() == renderer->style().writingMode()) && renderer->isRenderBlock())
+        toRenderBlock(renderer)->computeLineGridPaginationOrigin(*this);
 
     // If we have a new grid to track, then add it to our set.
     if (renderer->style().lineGrid() != RenderStyle::initialLineGrid() && renderer->isRenderBlockFlow())
@@ -222,48 +222,6 @@ void LayoutState::establishLineGrid(RenderBlockFlow* block)
     // We didn't find an already-established grid with this identifier. Our render object establishes the grid.
     m_lineGrid = block;
     m_lineGridOffset = m_layoutOffset; 
-}
-
-void LayoutState::computeLineGridPaginationOrigin(RenderBox* renderer)
-{
-    // We need to cache a line grid pagination origin so that we understand how to reset the line grid
-    // at the top of each column.
-    // Get the current line grid and offset.
-    if (!lineGrid() || lineGrid()->style().writingMode() != renderer->style().writingMode())
-        return;
-
-    // Get the hypothetical line box used to establish the grid.
-    RootInlineBox* lineGridBox = lineGrid()->lineGridBox();
-    if (!lineGridBox)
-        return;
-    
-    bool isHorizontalWritingMode = lineGrid()->isHorizontalWritingMode();
-
-    LayoutUnit lineGridBlockOffset = isHorizontalWritingMode ? lineGridOffset().height() : lineGridOffset().width();
-
-    // Now determine our position on the grid. Our baseline needs to be adjusted to the nearest baseline multiple
-    // as established by the line box.
-    // FIXME: Need to handle crazy line-box-contain values that cause the root line box to not be considered. I assume
-    // the grid should honor line-box-contain.
-    LayoutUnit gridLineHeight = lineGridBox->lineBottomWithLeading() - lineGridBox->lineTopWithLeading();
-    if (!gridLineHeight)
-        return;
-
-    LayoutUnit firstLineTopWithLeading = lineGridBlockOffset + lineGridBox->lineTopWithLeading();
-    
-    if (isPaginated() && pageLogicalHeight()) {
-        LayoutUnit pageLogicalTop = renderer->isHorizontalWritingMode() ? m_pageOffset.height() : m_pageOffset.width();
-        if (pageLogicalTop > firstLineTopWithLeading) {
-            // Shift to the next highest line grid multiple past the page logical top. Cache the delta
-            // between this new value and the page logical top as the pagination origin.
-            LayoutUnit remainder = roundToInt(pageLogicalTop - firstLineTopWithLeading) % roundToInt(gridLineHeight);
-            LayoutUnit paginationDelta = gridLineHeight - remainder;
-            if (isHorizontalWritingMode)
-                m_lineGridPaginationOrigin.setHeight(paginationDelta);
-            else
-                m_lineGridPaginationOrigin.setWidth(paginationDelta);
-        }
-    }
 }
 
 } // namespace WebCore

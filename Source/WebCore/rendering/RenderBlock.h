@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class LayoutState;
 class LineLayoutState;
 class LogicalSelectionOffsetCaches;
 class RenderInline;
@@ -425,6 +426,9 @@ public:
     
     bool isTopLayoutOverflowAllowed() const override;
     bool isLeftLayoutOverflowAllowed() const override;
+
+    // FIXME: Can devirtualize once old column code is gone.
+    virtual void computeLineGridPaginationOrigin(LayoutState&) const;
 
 protected:
     virtual void addOverflowFromChildren();

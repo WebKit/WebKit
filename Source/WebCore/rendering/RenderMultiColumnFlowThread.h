@@ -61,6 +61,8 @@ public:
     bool progressionIsReversed() const { return m_progressionIsReversed; }
     void setProgressionIsReversed(bool reversed) { m_progressionIsReversed = reversed; }
     
+    virtual void computeLineGridPaginationOrigin(LayoutState&) const override;
+    
 private:
     virtual const char* renderName() const override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
