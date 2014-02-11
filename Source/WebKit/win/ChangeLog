@@ -1,3 +1,31 @@
+2014-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fixed pointer truncation on Win64.
+        https://bugs.webkit.org/show_bug.cgi?id=128211
+
+        Reviewed by Brent Fulgham.
+
+        * WebCoreSupport/EmbeddedWidget.cpp:
+        (EmbeddedWidget::createWindow):
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::customizeMenu):
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createPlugin):
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::openInspectorFrontend):
+        (WebInspectorClient::highlight):
+        (WebInspectorClient::releaseFrontend):
+        (WebInspectorFrontendClient::setAttachedWindowHeight):
+        (WebInspectorFrontendClient::closeWindowWithoutNotifications):
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebDropSource.cpp:
+        (generateMouseEvent):
+        * WebFrame.cpp:
+        (WebFrame::createSubframeWithOwnerElement):
+        (WebFrame::initWithWebView):
+        Removed all casts from &HWND to OLE_HANDLE*.
+
 2014-02-11  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error related to toString function.

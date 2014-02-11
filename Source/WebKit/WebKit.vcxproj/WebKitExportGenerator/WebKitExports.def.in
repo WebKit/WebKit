@@ -198,7 +198,7 @@ EXPORTS
         symbolWithPointer(?absoluteCaretBounds@FrameSelection@WebCore@@QAE?AVIntRect@2@XZ, ?absoluteCaretBounds@FrameSelection@WebCore@@QEAA?AVIntRect@2@XZ)
         symbolWithPointer(?afterPseudoElement@Element@WebCore@@QBEPAVPseudoElement@2@XZ, ?afterPseudoElement@Element@WebCore@@QEBAPEAVPseudoElement@2@XZ)
         symbolWithPointer(?beforePseudoElement@Element@WebCore@@QBEPAVPseudoElement@2@XZ, ?beforePseudoElement@Element@WebCore@@QEBAPEAVPseudoElement@2@XZ)
-        symbolWithPointer(?selectionBounds@FrameSelection@WebCore@@QBE?AVFloatRect@2@_N@Z, ?bounds@FrameSelection@WebCore@@QEBA?AVFloatRect@2@_N@Z)
+        symbolWithPointer(?selectionBounds@FrameSelection@WebCore@@QBE?AVFloatRect@2@_N@Z, ?selectionBounds@FrameSelection@WebCore@@QEBA?AVFloatRect@2@_N@Z)
         symbolWithPointer(?fromUTF8@String@WTF@@SA?AV12@PBE@Z, ?fromUTF8@String@WTF@@SA?AV12@PEBE_K@Z)
         symbolWithPointer(?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z, ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PEBE_K@Z)
         symbolWithPointer(?garbageCollectDocumentResources@CachedResourceLoader@WebCore@@QAEXXZ, ?garbageCollectDocumentResources@CachedResourceLoader@WebCore@@QEAAXXZ)
@@ -250,8 +250,8 @@ EXPORTS
         symbolWithPointer(?addRestriction@MediaSessionManager@WebCore@@QAEXW4MediaType@MediaSession@2@I@Z, ?addRestriction@MediaSessionManager@WebCore@@QEAAXW4MediaType@MediaSession@2@I@Z)
         symbolWithPointer(?removeRestriction@MediaSessionManager@WebCore@@QAEXW4MediaType@MediaSession@2@I@Z, ?removeRestriction@MediaSessionManager@WebCore@@QEAAXW4MediaType@MediaSession@2@I@Z)
         symbolWithPointer(?restrictions@MediaSessionManager@WebCore@@QAEIW4MediaType@MediaSession@2@@Z, ?restrictions@MediaSessionManager@WebCore@@QEAAIW4MediaType@MediaSession@2@@Z)
-        symbolWithPointer(?applicationWillEnterForeground@MediaSessionManager@WebCore@@QBEXXZ, ?applicationWillEnterForeground@MediaSessionManager@WebCore@@QBEXXZ)
-        symbolWithPointer(?applicationWillEnterBackground@MediaSessionManager@WebCore@@QBEXXZ, ?applicationWillEnterBackground@MediaSessionManager@WebCore@@QBEXXZ)
+        symbolWithPointer(?applicationWillEnterForeground@MediaSessionManager@WebCore@@QBEXXZ, ?applicationWillEnterForeground@MediaSessionManager@WebCore@@QEBAXXZ)
+        symbolWithPointer(?applicationWillEnterBackground@MediaSessionManager@WebCore@@QBEXXZ, ?applicationWillEnterBackground@MediaSessionManager@WebCore@@QEBAXXZ)
         ?localUserSpecificStorageDirectory@WebCore@@YA?AVString@WTF@@XZ
         symbolWithPointer(?namedItem@StaticNodeList@WebCore@@UBEPAVNode@2@ABVAtomicString@WTF@@@Z, ?namedItem@StaticNodeList@WebCore@@UEBAPEAVNode@2@AEBVAtomicString@WTF@@@Z)
         ?number@String@WTF@@SA?AV12@_J@Z

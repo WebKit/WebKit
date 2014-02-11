@@ -1,3 +1,16 @@
+2014-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fixed pointer truncation on Win64.
+        https://bugs.webkit.org/show_bug.cgi?id=128211
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::rootElement):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setWindowIsKey):
+        Removed all casts from &HWND to OLE_HANDLE*.
+
 2014-02-11  Samuel White  <samuel_white@apple.com>
 
         AX: Add text replacement activity support to NSAccessibilitySelectTextWithCriteriaParameterizedAttribute.

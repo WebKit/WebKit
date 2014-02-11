@@ -98,9 +98,9 @@ PlatformMouseEvent generateMouseEvent(WebView* webView, bool isDrag)
     POINTL pt;
     ::GetCursorPos((LPPOINT)&pt);
     POINTL localpt = pt;
-    HWND viewWindow;
-    if (SUCCEEDED(webView->viewWindow((OLE_HANDLE*)&viewWindow)))
-        ::ScreenToClient(viewWindow, (LPPOINT)&localpt);
+    OLE_HANDLE viewWindow;
+    if (SUCCEEDED(webView->viewWindow(&viewWindow)))
+        ::ScreenToClient(reinterpret_cast<HWND>(viewWindow), reinterpret_cast<LPPOINT>(&localpt));
     return PlatformMouseEvent(IntPoint(localpt.x, localpt.y), IntPoint(pt.x, pt.y),
         isDrag ? LeftButton : NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime());
 }

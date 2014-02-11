@@ -86,8 +86,8 @@ private:
     WebView* m_inspectedWebView;
     WebCore::Page* m_frontendPage;
     WebInspectorFrontendClient* m_frontendClient;
-    HWND m_inspectedWebViewHwnd;
-    HWND m_frontendHwnd;
+    OLE_HANDLE m_inspectedWebViewHandle;
+    OLE_HANDLE m_frontendHandle;
 
     OwnPtr<WebNodeHighlight> m_highlight;
 };

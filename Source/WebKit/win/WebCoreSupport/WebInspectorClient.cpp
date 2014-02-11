@@ -71,7 +71,7 @@ WebInspectorClient::WebInspectorClient(WebView* webView)
     , m_frontendClient(0)
 {
     ASSERT(m_inspectedWebView);
-    m_inspectedWebView->viewWindow((OLE_HANDLE*)&m_inspectedWebViewHwnd);
+    m_inspectedWebView->viewWindow(&m_inspectedWebViewHandle);
 }
 
 WebInspectorClient::~WebInspectorClient()
@@ -171,10 +171,10 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
         return 0;
 
     m_frontendPage = core(frontendWebView.get());
-    auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
+    auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_inspectedWebView, reinterpret_cast<HWND>(m_inspectedWebViewHandle), frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
     m_frontendClient = frontendClient.get();
     m_frontendPage->inspectorController().setInspectorFrontendClient(std::move(frontendClient));
-    m_frontendHwnd = frontendHwnd;
+    m_frontendHandle = reinterpret_cast<OLE_HANDLE>(frontendHwnd);
     return this;
 }
 
@@ -201,8 +201,8 @@ void WebInspectorClient::highlight()
     else
         m_highlight->setShowsWhileWebViewIsVisible(true);
 
-    if (creatingHighlight && IsWindowVisible(m_frontendHwnd))
-        m_highlight->placeBehindWindow(m_frontendHwnd);
+    if (creatingHighlight && IsWindowVisible((HWND)m_frontendHandle))
+        m_highlight->placeBehindWindow(reinterpret_cast<HWND>(m_frontendHandle));
 }
 
 void WebInspectorClient::hideHighlight()
@@ -221,7 +221,7 @@ void WebInspectorClient::releaseFrontend()
 {
     m_frontendClient = 0;
     m_frontendPage = 0;
-    m_frontendHwnd = 0;
+    m_frontendHandle = 0;
 }
 
 WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frontendWebView, HWND frontendWebViewHwnd, WebInspectorClient* inspectorClient, PassOwnPtr<Settings> settings)
@@ -313,12 +313,12 @@ void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned height)
     if (!m_attached)
         return;
 
-    HWND hostWindow;
-    if (!SUCCEEDED(m_inspectedWebView->hostWindow((OLE_HANDLE*)&hostWindow)))
+    OLE_HANDLE hostWindow;
+    if (!SUCCEEDED(m_inspectedWebView->hostWindow(&hostWindow)))
         return;
 
     RECT hostWindowRect;
-    GetClientRect(hostWindow, &hostWindowRect);
+    GetClientRect(reinterpret_cast<HWND>(hostWindow), &hostWindowRect);
 
     RECT inspectedRect;
     GetClientRect(m_inspectedWebViewHwnd, &inspectedRect);
@@ -374,9 +374,9 @@ void WebInspectorFrontendClient::closeWindowWithoutNotifications()
     m_frontendWebView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_frontendHwnd));
 
     // Make sure everything has the right size/position.
-    HWND hostWindow;
-    if (SUCCEEDED(m_inspectedWebView->hostWindow((OLE_HANDLE*)&hostWindow)))
-        SendMessage(hostWindow, WM_SIZE, 0, 0);
+    OLE_HANDLE hostWindow;
+    if (SUCCEEDED(m_inspectedWebView->hostWindow(&hostWindow)))
+        SendMessage(reinterpret_cast<HWND>(hostWindow), WM_SIZE, 0, 0);
 }
 
 void WebInspectorFrontendClient::showWindowWithoutNotifications()

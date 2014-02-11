@@ -1,3 +1,13 @@
+2014-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fixed linking on Win64.
+        https://bugs.webkit.org/show_bug.cgi?id=128211
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Corrected Win64 linker symbols.
+
 2014-02-09  Mark Rowe  <mrowe@apple.com>
 
         Stop relinking WebKit on every build.

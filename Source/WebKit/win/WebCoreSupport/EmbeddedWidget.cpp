@@ -56,16 +56,16 @@ bool EmbeddedWidget::createWindow(HWND parentWindow, const IntSize& size)
 {
     ASSERT(!m_window);
 
-    HWND window;
+    OLE_HANDLE window;
 
     SIZE pluginSize(size);
 
-    HRESULT hr = m_view->createViewWindow((OLE_HANDLE)parentWindow, &pluginSize, (OLE_HANDLE*)&window);
+    HRESULT hr = m_view->createViewWindow(reinterpret_cast<OLE_HANDLE>(parentWindow), &pluginSize, &window);
         
     if (FAILED(hr) || !window)
         return false;
 
-    m_window = window;
+    m_window = reinterpret_cast<HWND>(window);
     return true;
 }
 
