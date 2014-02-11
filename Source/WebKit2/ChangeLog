@@ -1,3 +1,13 @@
+2014-02-11  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/cursor-update-updates-indexes.html ASSERTs
+        <rdar://problem/16034112> and https://bugs.webkit.org/show_bug.cgi?id=128581
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::getRecordFromBackingStore): Always store keyPath for Index get results.
+
 2014-02-11  Alberto Garcia  <berto@igalia.com>
 
         O_CLOEXEC in shm_open does not work on FreeBSD

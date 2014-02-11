@@ -933,10 +933,8 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
         return;
     }
 
-    // A get request that meets the following conditions needs to know the object store keypath
-    // to inject the result key into the result value object.
-    if (objectStoreMetadata.autoIncrement && !objectStoreMetadata.keyPath.isNull())
-        result.keyPath = objectStoreMetadata.keyPath;
+    // We must return a key path to know how to inject the result key into the result value object.
+    result.keyPath = objectStoreMetadata.keyPath;
 
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, result, 0, String(StringImpl::empty())));
 }
