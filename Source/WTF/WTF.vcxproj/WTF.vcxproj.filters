@@ -228,9 +228,6 @@
     <ClCompile Include="..\wtf\gobject\GlibUtilities.cpp">
       <Filter>wtf\gobject</Filter>
     </ClCompile>
-    <ClCompile Include="..\wtf\gobject\GOwnPtr.cpp">
-      <Filter>wtf\gobject</Filter>
-    </ClCompile>
     <ClCompile Include="..\wtf\gobject\GRefPtr.cpp">
       <Filter>wtf\gobject</Filter>
     </ClCompile>
@@ -695,9 +692,6 @@
       <Filter>wtf\gobject</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\gobject\GMutexLocker.h">
-      <Filter>wtf\gobject</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\gobject\GOwnPtr.h">
       <Filter>wtf\gobject</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\gobject\GRefPtr.h">

@@ -1,3 +1,13 @@
+2014-02-11  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error, deleted file in WTF.
+        https://bugs.webkit.org/show_bug.cgi?id=128601
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WTF.vcxproj/WTF.vcxproj: Removed reference to deleted file.
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+
 2014-02-10  Michael Saboff  <msaboff@apple.com>
 
         Re-enable ARM Thumb2 disassembler
