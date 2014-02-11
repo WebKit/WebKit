@@ -1,5 +1,11 @@
 2014-02-11  Alexey Proskuryakov  <ap@apple.com>
 
+        Skip IndexedDB tests again, they are failing.
+
+        * platform/mac-wk2/TestExpectations:
+
+2014-02-11  Alexey Proskuryakov  <ap@apple.com>
+
         Add hooks for wrapping CryptoKeys in SerializedScriptValue
         https://bugs.webkit.org/show_bug.cgi?id=128567
 
