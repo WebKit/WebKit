@@ -1,3 +1,16 @@
+2014-02-11  Brady Eidson  <beidson@apple.com>
+
+        IDB: The test after storage/indexeddb/mozilla/object-identity.html fails in cleanup code
+        <rdar://problem/16040663> and https://bugs.webkit.org/show_bug.cgi?id=128621
+
+        Reviewed by Alexey Proskuryakov.
+
+        Covered by storage/indexeddb/mozilla/object-identity.html.
+
+        * Modules/indexeddb/IDBTransactionBackend.cpp:
+        (WebCore::IDBTransactionBackend::abort): Clear the m_database pointer before calling the onAbort callback.
+        (WebCore::IDBTransactionBackend::commit): Don't run the abort code if there's no m_database pointer.
+
 2014-02-10  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Move the implementation of CDMPrivateAVFoundation back into MediaPlayerPrivateAVFoundationObjC.

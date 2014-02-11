@@ -158,12 +158,12 @@ void IDBTransactionBackend::abort(PassRefPtr<IDBDatabaseError> error)
     ASSERT(!m_database->transactionCoordinator()->isActive(this));
     m_database->transactionFinished(this);
 
+    RefPtr<IDBDatabaseBackend> database = m_database.release();
+
     if (m_callbacks)
         m_callbacks->onAbort(id(), error);
 
-    m_database->transactionFinishedAndAbortFired(this);
-
-    m_database = 0;
+    database->transactionFinishedAndAbortFired(this);
 }
 
 bool IDBTransactionBackend::isTaskQueueEmpty() const
@@ -235,6 +235,14 @@ void IDBTransactionBackend::commit()
     bool committed = unused;
 
     m_database->serverConnection().commitTransaction(m_id, [backend, this, committed, unused](bool success) mutable {
+        // This might be commitTransaction request aborting during or after synchronous IDBTransactionBackend::abort() call.
+        // This can easily happen if the page is navigated before all transactions finish.
+        // In this case we have no further cleanup and don't need to make any callbacks.
+        if (!m_database) {
+            ASSERT(!success);
+            return;
+        }
+
         committed |= success;
 
         // Backing store resources (held via cursors) must be released before script callbacks

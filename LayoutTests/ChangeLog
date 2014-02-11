@@ -1,3 +1,12 @@
+2014-02-11  Brady Eidson  <beidson@apple.com>
+
+        IDB: The test after storage/indexeddb/mozilla/object-identity.html fails in cleanup code
+        <rdar://problem/16040663> and https://bugs.webkit.org/show_bug.cgi?id=128621
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac-wk2/TestExpectations: Enabled all of the storage/indexeddb/mozilla tests except 1.
+
 2014-02-11  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed. Fix typo in layout test introduced in r163811.
