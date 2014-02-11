@@ -1,3 +1,24 @@
+2014-02-10  Jeffrey Pfau  <jpfau@apple.com>
+
+        Bring third-party app cache blocking behavior in line with private browsing app cache blocking behavior
+        https://bugs.webkit.org/show_bug.cgi?id=128557
+
+        Reviewed by Alexey Proskuryakov.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::cacheForMainRequest):
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        (WebCore::ApplicationCacheGroup::update):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadMainResource):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForMainResponse):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForMainError):
+        (WebCore::ApplicationCacheHost::maybeLoadResource):
+        (WebCore::ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache):
+        (WebCore::ApplicationCacheHost::isApplicationCacheBlockedForRequest):
+        * loader/appcache/ApplicationCacheHost.h:
+
 2014-02-11  Brady Eidson  <beidson@apple.com>
 
         IDB: The test after storage/indexeddb/mozilla/object-identity.html fails in cleanup code

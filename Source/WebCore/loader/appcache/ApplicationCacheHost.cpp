@@ -75,7 +75,7 @@ void ApplicationCacheHost::selectCacheWithManifest(const URL& manifestURL)
 void ApplicationCacheHost::maybeLoadMainResource(ResourceRequest& request, SubstituteData& substituteData)
 {
     // Check if this request should be loaded from the application cache
-    if (!substituteData.isValid() && isApplicationCacheEnabled()) {
+    if (!substituteData.isValid() && isApplicationCacheEnabled() && !isApplicationCacheBlockedForRequest(request)) {
         ASSERT(!m_mainResourceApplicationCache);
 
         m_mainResourceApplicationCache = ApplicationCacheGroup::cacheForMainRequest(request, m_documentLoader);
@@ -103,7 +103,7 @@ bool ApplicationCacheHost::maybeLoadFallbackForMainResponse(const ResourceReques
 {
     if (r.httpStatusCode() / 100 == 4 || r.httpStatusCode() / 100 == 5) {
         ASSERT(!m_mainResourceApplicationCache);
-        if (isApplicationCacheEnabled()) {
+        if (isApplicationCacheEnabled() && !isApplicationCacheBlockedForRequest(request)) {
             m_mainResourceApplicationCache = ApplicationCacheGroup::fallbackCacheForMainRequest(request, documentLoader());
 
             if (scheduleLoadFallbackResourceFromApplicationCache(documentLoader()->mainResourceLoader(), m_mainResourceApplicationCache.get()))
@@ -117,7 +117,7 @@ bool ApplicationCacheHost::maybeLoadFallbackForMainError(const ResourceRequest& 
 {
     if (!error.isCancellation()) {
         ASSERT(!m_mainResourceApplicationCache);
-        if (isApplicationCacheEnabled()) {
+        if (isApplicationCacheEnabled() && !isApplicationCacheBlockedForRequest(request)) {
             m_mainResourceApplicationCache = ApplicationCacheGroup::fallbackCacheForMainRequest(request, m_documentLoader);
 
             if (scheduleLoadFallbackResourceFromApplicationCache(documentLoader()->mainResourceLoader(), m_mainResourceApplicationCache.get()))
@@ -159,7 +159,7 @@ void ApplicationCacheHost::finishedLoadingMainResource()
 
 bool ApplicationCacheHost::maybeLoadResource(ResourceLoader* loader, ResourceRequest& request, const URL& originalURL)
 {
-    if (!isApplicationCacheEnabled())
+    if (!isApplicationCacheEnabled() && !isApplicationCacheBlockedForRequest(request))
         return false;
     
     if (request.url() != originalURL)
@@ -391,7 +391,7 @@ bool ApplicationCacheHost::getApplicationCacheFallbackResource(const ResourceReq
 
 bool ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache(ResourceLoader* loader, ApplicationCache* cache)
 {
-    if (!isApplicationCacheEnabled())
+    if (!isApplicationCacheEnabled() && !isApplicationCacheBlockedForRequest(loader->request()))
         return false;
 
     ApplicationCacheResource* resource;
@@ -477,6 +477,12 @@ void ApplicationCacheHost::abort()
 bool ApplicationCacheHost::isApplicationCacheEnabled()
 {
     return m_documentLoader->frame() && m_documentLoader->frame()->settings().offlineWebApplicationCacheEnabled() && !m_documentLoader->frame()->settings().privateBrowsingEnabled();
+}
+
+bool ApplicationCacheHost::isApplicationCacheBlockedForRequest(const ResourceRequest& request)
+{
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(request.url());
+    return m_documentLoader->frame() && !origin->canAccessApplicationCache(m_documentLoader->frame()->document()->topOrigin());
 }
 
 }  // namespace WebCore

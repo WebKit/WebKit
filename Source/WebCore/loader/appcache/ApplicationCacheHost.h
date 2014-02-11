@@ -155,6 +155,7 @@ namespace WebCore {
 
     private:
         bool isApplicationCacheEnabled();
+        bool isApplicationCacheBlockedForRequest(const ResourceRequest&);
         DocumentLoader* documentLoader() const { return m_documentLoader; }
 
         struct DeferredEvent {

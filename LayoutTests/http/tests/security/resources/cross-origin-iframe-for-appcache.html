@@ -6,25 +6,19 @@ function complete() {
 	cleanup();
 }
 
-function timedOut() {
-	try {
-		applicationCache.update();
-		timer = setTimeout(cleanup, 5000);
-	} catch (e) {
-		document.write('Cache not found');
-		cleanup();
-	}
+function error() {
+	document.write('Cache not found');
+	cleanup();
 }
 
 function cleanup() {
-	clearTimeout(timer);
 	top.postMessage('done', '*');
 }
 
 try {
-	timer = setTimeout(timedOut, 5000);
 	applicationCache.addEventListener('noupdate', complete, false);
 	applicationCache.addEventListener('cached', complete, false);
+	applicationCache.addEventListener('error', error, false);
 } catch (e) {
 	document.write('Cache not found');
 	cleanup();
