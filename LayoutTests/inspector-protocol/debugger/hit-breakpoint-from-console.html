@@ -20,7 +20,7 @@ function test()
                 InspectorTest.checkForError(responseObject);
                 // Should NOT hit breakpoint (a < 10).
                 InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, {x:1,y:2})"});
-                // Shoul hit breakpoint (a > 10).
+                // Should hit breakpoint (a > 10).
                 InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
             });
         }

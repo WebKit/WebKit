@@ -1,3 +1,9 @@
+2014-02-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed. Fix typo in layout test introduced in r163811.
+
+        * inspector-protocol/debugger/hit-breakpoint-from-console.html:
+
 2014-02-11  Samuel White  <samuel_white@apple.com>
 
         AX: Add text replacement activity support to NSAccessibilitySelectTextWithCriteriaParameterizedAttribute.
