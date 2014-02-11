@@ -1,3 +1,10 @@
+2014-02-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Animation tests are flaky in Release on EWS, too.
+
+        * platform/mac/TestExpectations: Removed [ Debug ] from several animation test
+        expectations.
+
 2014-02-11  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Support calc() breadth size type
