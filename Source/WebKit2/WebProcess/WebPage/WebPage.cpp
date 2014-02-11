@@ -3957,8 +3957,11 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if PLATFORM(IOS)
     m_userHasChangedPageScaleFactor = false;
 
-    if (frame->coreFrame()->document()->isTextDocument())
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::plainTextParameters());
+    Document* document = frame->coreFrame()->document();
+    if (document->isImageDocument())
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
+    else if (document->isTextDocument())
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
     else
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
 

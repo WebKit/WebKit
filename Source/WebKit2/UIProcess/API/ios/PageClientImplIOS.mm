@@ -260,14 +260,12 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 
 IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
 {
-    notImplemented();
-    return IntPoint();
+    return IntPoint([m_view convertPoint:point fromView:nil]);
 }
 
 IntRect PageClientImpl::windowToScreen(const IntRect& rect)
 {
-    notImplemented();
-    return IntRect();
+    return enclosingIntRect([m_view convertRect:rect toView:nil]);
 }
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)

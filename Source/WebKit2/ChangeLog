@@ -1,3 +1,19 @@
+2014-02-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Add support for image document viewport configuration
+        https://bugs.webkit.org/show_bug.cgi?id=128565
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::screenToWindow):
+        (WebKit::PageClientImpl::windowToScreen):
+        Add the implementation for ImageDocument.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        Use the right default settings when dealing with image documents.
+
 2014-02-10  Simon Fraser  <simon.fraser@apple.com>
 
         Show a debug tile map indicator for UI-side compositing

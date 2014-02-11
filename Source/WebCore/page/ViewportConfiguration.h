@@ -83,7 +83,8 @@ public:
     bool allowsUserScaling() const { return m_configuration.allowsUserScaling; }
 
     static Parameters webpageParameters();
-    static Parameters plainTextParameters();
+    static Parameters textDocumentParameters();
+    static Parameters imageDocumentParameters();
 
 private:
     void updateConfiguration();

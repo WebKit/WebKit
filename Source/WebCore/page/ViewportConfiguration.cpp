@@ -151,7 +151,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::webpageParameters()
     return parameters;
 }
 
-ViewportConfiguration::Parameters ViewportConfiguration::plainTextParameters()
+ViewportConfiguration::Parameters ViewportConfiguration::textDocumentParameters()
 {
     Parameters parameters;
 
@@ -165,6 +165,17 @@ ViewportConfiguration::Parameters ViewportConfiguration::plainTextParameters()
     parameters.widthIsSet = true;
     parameters.allowsUserScaling = true;
     parameters.minimumScale = 0.25;
+    parameters.maximumScale = 5;
+    return parameters;
+}
+
+ViewportConfiguration::Parameters ViewportConfiguration::imageDocumentParameters()
+{
+    Parameters parameters;
+    parameters.width = 980;
+    parameters.widthIsSet = true;
+    parameters.allowsUserScaling = true;
+    parameters.minimumScale = 0.01;
     parameters.maximumScale = 5;
     return parameters;
 }
