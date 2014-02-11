@@ -189,7 +189,7 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& viewRect)
     return viewRect;
 }
 
-IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
+IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
 {
     IntPoint widgetPositionOnScreen = convertWidgetPointToScreenPoint(m_viewWidget, IntPoint());
     IntPoint result(point);
@@ -197,7 +197,7 @@ IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
     return result;
 }
 
-IntRect PageClientImpl::windowToScreen(const IntRect& rect)
+IntRect PageClientImpl::rootViewToScreen(const IntRect& rect)
 {
     return IntRect(convertWidgetPointToScreenPoint(m_viewWidget, rect.location()), rect.size());
 }

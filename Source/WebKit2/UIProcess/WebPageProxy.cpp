@@ -2790,14 +2790,14 @@ void WebPageProxy::getWindowFrame(FloatRect& newWindowFrame)
     newWindowFrame = m_pageClient.convertToUserSpace(m_uiClient->windowFrame(this));
 }
     
-void WebPageProxy::screenToWindow(const IntPoint& screenPoint, IntPoint& windowPoint)
+void WebPageProxy::screenToRootView(const IntPoint& screenPoint, IntPoint& windowPoint)
 {
-    windowPoint = m_pageClient.screenToWindow(screenPoint);
+    windowPoint = m_pageClient.screenToRootView(screenPoint);
 }
     
-void WebPageProxy::windowToScreen(const IntRect& viewRect, IntRect& result)
+void WebPageProxy::rootViewToScreen(const IntRect& viewRect, IntRect& result)
 {
-    result = m_pageClient.windowToScreen(viewRect);
+    result = m_pageClient.rootViewToScreen(viewRect);
 }
     
 void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose)

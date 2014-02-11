@@ -404,8 +404,8 @@ public:
     void showPageBanners();
 #endif // !PLATFORM(IOS)
 
-    WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
-    WebCore::IntRect windowToScreen(const WebCore::IntRect&);
+    WebCore::IntPoint screenToRootView(const WebCore::IntPoint&);
+    WebCore::IntRect rootViewToScreen(const WebCore::IntRect&);
 
     PassRefPtr<WebImage> scaledSnapshotWithOptions(const WebCore::IntRect&, double scaleFactor, SnapshotOptions);
 

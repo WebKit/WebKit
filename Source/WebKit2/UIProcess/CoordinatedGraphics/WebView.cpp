@@ -407,13 +407,13 @@ void WebView::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
     m_undoController.executeUndoRedo(undoOrRedo);
 }
 
-IntPoint WebView::screenToWindow(const IntPoint& point)
+IntPoint WebView::screenToRootView(const IntPoint& point)
 {
     notImplemented();
     return point;
 }
 
-IntRect WebView::windowToScreen(const IntRect&)
+IntRect WebView::rootViewToScreen(const IntRect&)
 {
     notImplemented();
     return IntRect();

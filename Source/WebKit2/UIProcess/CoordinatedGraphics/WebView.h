@@ -168,8 +168,8 @@ protected:
 
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) override;
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
-    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) override;
-    virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) override;
+    virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;
+    virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
 
     virtual void updateTextInputState() override;
 

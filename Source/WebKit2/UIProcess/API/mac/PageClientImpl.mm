@@ -361,7 +361,7 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
     return [m_wkView _convertToUserSpace:rect];
 }
    
-IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
+IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -370,7 +370,7 @@ IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
     return IntPoint([m_wkView convertPoint:windowCoord fromView:nil]);
 }
     
-IntRect PageClientImpl::windowToScreen(const IntRect& rect)
+IntRect PageClientImpl::rootViewToScreen(const IntRect& rect)
 {
     NSRect tempRect = rect;
     tempRect = [m_wkView convertRect:tempRect toView:nil];

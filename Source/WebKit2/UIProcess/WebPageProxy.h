@@ -981,8 +981,8 @@ private:
     void getIsResizable(bool& isResizable);
     void setWindowFrame(const WebCore::FloatRect&);
     void getWindowFrame(WebCore::FloatRect&);
-    void screenToWindow(const WebCore::IntPoint& screenPoint, WebCore::IntPoint& windowPoint);
-    void windowToScreen(const WebCore::IntRect& viewRect, WebCore::IntRect& result);
+    void screenToRootView(const WebCore::IntPoint& screenPoint, WebCore::IntPoint& windowPoint);
+    void rootViewToScreen(const WebCore::IntRect& viewRect, WebCore::IntRect& result);
     void runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose);
     void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     void pageDidScroll();

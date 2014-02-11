@@ -2163,17 +2163,17 @@ void WebPage::resumeActiveDOMObjectsAndAnimations()
     m_page->resumeActiveDOMObjectsAndAnimations();
 }
 
-IntPoint WebPage::screenToWindow(const IntPoint& point)
+IntPoint WebPage::screenToRootView(const IntPoint& point)
 {
     IntPoint windowPoint;
-    sendSync(Messages::WebPageProxy::ScreenToWindow(point), Messages::WebPageProxy::ScreenToWindow::Reply(windowPoint));
+    sendSync(Messages::WebPageProxy::ScreenToRootView(point), Messages::WebPageProxy::ScreenToRootView::Reply(windowPoint));
     return windowPoint;
 }
     
-IntRect WebPage::windowToScreen(const IntRect& rect)
+IntRect WebPage::rootViewToScreen(const IntRect& rect)
 {
     IntRect screenRect;
-    sendSync(Messages::WebPageProxy::WindowToScreen(rect), Messages::WebPageProxy::WindowToScreen::Reply(screenRect));
+    sendSync(Messages::WebPageProxy::RootViewToScreen(rect), Messages::WebPageProxy::RootViewToScreen::Reply(screenRect));
     return screenRect;
 }
 

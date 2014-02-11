@@ -258,12 +258,12 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
     return FloatRect();
 }
 
-IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
+IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
 {
     return IntPoint([m_view convertPoint:point fromView:nil]);
 }
 
-IntRect PageClientImpl::windowToScreen(const IntRect& rect)
+IntRect PageClientImpl::rootViewToScreen(const IntRect& rect)
 {
     return enclosingIntRect([m_view convertRect:rect toView:nil]);
 }
