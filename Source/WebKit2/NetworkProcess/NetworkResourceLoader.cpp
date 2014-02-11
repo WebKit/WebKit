@@ -405,13 +405,6 @@ void NetworkResourceLoader::didReceiveDataArray(ResourceHandle*, CFArrayRef)
 }
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
-void NetworkResourceLoader::willStopBufferingData(ResourceHandle*, const char*, unsigned)
-{
-    notImplemented();
-}
-#endif // PLATFORM(MAC)
-
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)

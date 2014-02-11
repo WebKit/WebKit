@@ -94,7 +94,6 @@ public:
     virtual void didReceiveResponse(const ResourceResponse&);
     virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType);
     virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
-    void willStopBufferingData(const char*, unsigned);
     virtual void didFinishLoading(double finishTime);
     virtual void didFail(const ResourceError&);
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
@@ -120,9 +119,6 @@ public:
     virtual void didFail(ResourceHandle*, const ResourceError&) override;
     virtual void wasBlocked(ResourceHandle*) override;
     virtual void cannotShowURL(ResourceHandle*) override;
-#if PLATFORM(COCOA) && !USE(CFNETWORK)
-    virtual void willStopBufferingData(ResourceHandle*, const char* data, unsigned length) override { willStopBufferingData(data, length); }
-#endif
     virtual bool shouldUseCredentialStorage(ResourceHandle*) override { return shouldUseCredentialStorage(); }
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) override { didReceiveAuthenticationChallenge(challenge); } 
     virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) override { didCancelAuthenticationChallenge(challenge); } 

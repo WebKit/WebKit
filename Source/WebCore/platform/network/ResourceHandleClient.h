@@ -122,7 +122,6 @@ namespace WebCore {
 
 #elif PLATFORM(COCOA)
         virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *response) { return response; }
-        virtual void willStopBufferingData(ResourceHandle*, const char*, unsigned) { }
 #endif
 
     };

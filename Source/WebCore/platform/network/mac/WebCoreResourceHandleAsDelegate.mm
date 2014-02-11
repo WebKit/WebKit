@@ -224,20 +224,6 @@ using namespace WebCore;
     m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapNSData(data), -1);
 }
 
-- (void)connection:(NSURLConnection *)connection willStopBufferingData:(NSData *)data
-{
-    UNUSED_PARAM(connection);
-
-    LOG(Network, "Handle %p delegate connection:%p willStopBufferingData:%p", m_handle, connection, data);
-
-    if (!m_handle || !m_handle->client())
-        return;
-    // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
-    // However, with today's computers and networking speeds, this won't happen in practice.
-    // Could be an issue with a giant local file.
-    m_handle->client()->willStopBufferingData(m_handle, (const char*)[data bytes], static_cast<unsigned>([data length]));
-}
-
 - (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
 {
     UNUSED_PARAM(connection);
