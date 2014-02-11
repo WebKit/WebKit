@@ -55,6 +55,17 @@
             "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
         },
         {
+            "id": "AccessibilityProperties",
+            "description": "A structure holding accessibility properties.",
+            "type": "object",
+            "properties": [
+                { "name": "ignored", "type": "boolean", "description": "Returns whether the accessibility of the DOM node is ignored, whether heuristically or explicitly." },
+                { "name": "role", "type": "string", "description": "Computed value for first recognized role token, default role per element, or overridden role." },
+                { "name": "label", "type": "string", "description": "Computed label value for the node, sometimes calculated by referencing other nodes." },
+                { "name": "nodeId", "$ref": "NodeId", "description": "Target <code>DOMNode</code> id." }
+            ]
+        },
+        {
             "id": "RGBA",
             "type": "object",
             "properties": [
@@ -186,6 +197,16 @@
                 { "name": "listeners", "type": "array", "items": { "$ref": "EventListener"}, "description": "Array of relevant listeners." }
             ],
             "description": "Returns event listeners relevant to the node."
+        },
+        {
+            "name": "getAccessibilityPropertiesForNode",
+            "description": "Returns a dictionary of accessibility properties for the node.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node for which to get accessibility properties." }
+            ],
+            "returns": [
+                { "name": "properties", "$ref": "AccessibilityProperties", "description": "Dictionary of relevant accessibility properties." }
+            ]
         },
         {
             "name": "getOuterHTML",

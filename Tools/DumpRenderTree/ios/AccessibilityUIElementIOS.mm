@@ -473,6 +473,12 @@ JSStringRef AccessibilityUIElement::roleDescription()
     return JSStringCreateWithCharacters(0, 0);
 }
 
+JSStringRef AccessibilityUIElement::computedRoleString()
+{
+    // FIXME: implement
+    return JSStringCreateWithCharacters(0, 0);
+}
+
 JSStringRef AccessibilityUIElement::title()
 {
     return JSStringCreateWithCharacters(0, 0);

@@ -113,6 +113,7 @@ public:
     JSRetainPtr<JSStringRef> role();
     JSRetainPtr<JSStringRef> subrole();
     JSRetainPtr<JSStringRef> roleDescription();
+    JSRetainPtr<JSStringRef> computedRoleString();
     JSRetainPtr<JSStringRef> title();
     JSRetainPtr<JSStringRef> description();
     JSRetainPtr<JSStringRef> language();

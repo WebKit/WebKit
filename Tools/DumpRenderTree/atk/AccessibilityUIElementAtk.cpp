@@ -751,6 +751,12 @@ JSStringRef AccessibilityUIElement::roleDescription()
     return nullptr;
 }
 
+JSStringRef AccessibilityUIElement::computedRoleString()
+{
+    // FIXME: implement http://webkit.org/b/128420
+    return nullptr;
+}
+
 JSStringRef AccessibilityUIElement::title()
 {
     if (!ATK_IS_OBJECT(m_element))

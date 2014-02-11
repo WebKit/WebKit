@@ -1,3 +1,25 @@
+2014-02-11  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AX: Accessibility Node Inspection
+        https://bugs.webkit.org/show_bug.cgi?id=127447
+
+        Reviewed by Timothy Hatcher.
+
+        New computedRoleString interfaces in DumpRenderTree/WebKitTestRunner
+        to support LayoutTest coverage of AccessibilityObject::computedRoleString()
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+
 2014-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix /webkit2/WebKitWebExtension/isolated-world after r163797.

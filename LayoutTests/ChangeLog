@@ -1,3 +1,15 @@
+2014-02-11  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AX: Accessibility Node Inspection
+        https://bugs.webkit.org/show_bug.cgi?id=127447
+
+        Reviewed by Timothy Hatcher.
+
+        New layout verifying AccessibilityObject::computedRoleString()
+
+        * accessibility/roles-computedRoleString-expected.txt: Added.
+        * accessibility/roles-computedRoleString.html: Added.
+
 2014-02-10  Oliver Hunt  <oliver@apple.com>
 
         Stop throwing when attempting to read instance properties directly from the prototype

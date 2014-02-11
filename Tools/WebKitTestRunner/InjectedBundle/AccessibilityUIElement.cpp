@@ -99,6 +99,7 @@ bool AccessibilityUIElement::isDecrementActionSupported() { return false; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::role() { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole() { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription() { return 0; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString() { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::title() { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::description() { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::language() { return 0; }

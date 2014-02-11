@@ -671,6 +671,16 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSString *computedRoleString = descriptionOfValue([m_element accessibilityAttributeValue:@"AXARIARole"], m_element);
+    return [computedRoleString createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 {
     BEGIN_AX_OBJC_EXCEPTIONS

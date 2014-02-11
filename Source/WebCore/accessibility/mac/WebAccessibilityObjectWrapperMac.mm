@@ -2123,6 +2123,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
 
+- (NSString *)computedRoleString
+{
+    if (!m_object)
+        return nil;
+    return m_object->computedRoleString();
+}
+
 - (id)scrollViewParent
 {
     if (!m_object || !m_object->isAccessibilityScrollView())
@@ -2160,6 +2167,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if ([attributeName isEqualToString: NSAccessibilityRoleDescriptionAttribute])
         return [self roleDescription];
+
+    // AXARIARole is only used by DumpRenderTree (so far).
+    if ([attributeName isEqualToString:@"AXARIARole"])
+        return [self computedRoleString];
     
     if ([attributeName isEqualToString: NSAccessibilityParentAttribute]) {
         

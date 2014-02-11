@@ -1,0 +1,169 @@
+ X
+This tests that native elements and ARIA overrides result in the same ARIA computed role, regardless of platform.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: a[href] -> link. 
+PASS: article -> article. 
+PASS: aside -> complementary. 
+PASS: button -> button. 
+PASS: dfn -> definition. 
+PASS: dl -> . 
+PASS: footer -> . 
+PASS: form -> . 
+PASS: header -> banner. 
+PASS: h1 -> heading. 
+PASS: h2 -> heading. 
+PASS: h3 -> heading. 
+PASS: h4 -> heading. 
+PASS: h5 -> heading. 
+PASS: h5 -> heading. 
+PASS: img[alt='X'] -> img. 
+PASS: input[type='button'] -> button. 
+PASS: input[type='checkbox'] -> checkbox. 
+PASS: input[type='date'] -> . 
+PASS: input[type='datetime'] -> . 
+PASS: input[type='datetime-local'] -> . 
+PASS: input[type='email'] -> . 
+PASS: input[type='file'] -> button. 
+PASS: input[type='image'] -> button. 
+PASS: input[type='month'] -> . 
+PASS: input[type='number'] -> . 
+PASS: input[type='password'] -> . 
+PASS: input[type='radio'] -> radio. 
+PASS: input[type='range'] -> slider. 
+PASS: input[type='reset'] -> button. 
+PASS: input[type='search'] -> . 
+PASS: input[type='submit'] -> button. 
+PASS: input[type='tel'] -> . 
+PASS: input[type='text'] -> . 
+PASS: input[type='time'] -> . 
+PASS: input[type='url'] -> . 
+PASS: input[type='week'] -> . 
+PASS: math -> math. 
+PASS: meter -> progressbar. 
+PASS: nav -> navigation. 
+PASS: ol -> list. 
+PASS: li -> listitem. 
+PASS: p -> . 
+PASS: pre -> group. 
+PASS: progress -> progressbar. 
+PASS: section -> region. 
+PASS: select:not([multiple]) -> . 
+PASS: select[multiple] -> listbox. 
+PASS: option -> option. 
+PASS: optgroup -> option. 
+PASS: option -> option. 
+PASS: option -> option. 
+PASS: table -> grid. 
+PASS: tr -> row. 
+PASS: th -> gridcell. 
+PASS: tr -> row. 
+PASS: td -> gridcell. 
+PASS: tr -> row. 
+PASS: td -> gridcell. 
+PASS: textarea -> textbox. 
+PASS: ul -> list. 
+PASS: li -> listitem. 
+PASS: div[role="command"] -> . 
+PASS: div[role="composite"] -> . 
+PASS: div[role="input"] -> . 
+PASS: div[role="landmark"] -> . 
+PASS: div[role="range"] -> . 
+PASS: div[role="roletype"] -> . 
+PASS: div[role="section"] -> . 
+PASS: div[role="sectionhead"] -> . 
+PASS: div[role="select"] -> . 
+PASS: div[role="structure"] -> . 
+PASS: div[role="widget"] -> . 
+PASS: div[role="window"] -> . 
+PASS: div[role="alert"] -> alert. 
+PASS: div[role="alertdialog"] -> alertdialog. 
+PASS: div[role="application"] -> application. 
+PASS: div[role="article"] -> article. 
+PASS: div[role="banner"] -> banner. 
+PASS: div[role="button"] -> button. 
+PASS: div[role="checkbox"] -> checkbox. 
+PASS: div[role="combobox"] -> combobox. 
+PASS: div[role="complementary"] -> complementary. 
+PASS: div[role="contentinfo"] -> contentinfo. 
+PASS: div[role="definition"] -> definition. 
+PASS: div[role="dialog"] -> dialog. 
+PASS: div[role="directory"] -> list. 
+PASS: div[role="document"] -> document. 
+PASS: div[role="form"] -> . 
+PASS: div[role="grid"] -> grid. 
+PASS: div[role="row"] -> row. 
+PASS: div[role="rowheader"] -> gridcell. 
+PASS: div[role="columnheader"] -> gridcell. 
+PASS: div[role="gridcell"] -> gridcell. 
+PASS: div[role="group"] -> group. 
+PASS: div[role="heading"] -> heading. 
+PASS: div[role="img"] -> img. 
+PASS: div[role="link"] -> link. 
+PASS: div[role="list"] -> list. 
+PASS: div[role="listitem"] -> listitem. 
+PASS: div[role="listbox"] -> listbox. 
+PASS: div[role="option"] -> option. 
+PASS: div[role="log"] -> log. 
+PASS: div[role="main"] -> main. 
+PASS: div[role="marquee"] -> marquee. 
+PASS: div[role="math"] -> math. 
+PASS: div[role="menu"] -> menu. 
+PASS: div[role="menuitem"] -> menuitem. 
+PASS: div[role="menuitemcheckbox"] -> menuitemcheckbox. 
+PASS: div[role="menuitemradio"] -> menuitemradio. 
+PASS: div[role="menubar"] -> menubar. 
+PASS: div[role="menuitem"] -> menuitem. 
+PASS: div[role="menuitemcheckbox"] -> menuitemcheckbox. 
+PASS: div[role="menuitemradio"] -> menuitemradio. 
+PASS: div[role="navigation"] -> navigation. 
+PASS: div[role="note"] -> note. 
+PASS: div[role="progressbar"] -> progressbar. 
+PASS: div[role="radiogroup"] -> radiogroup. 
+PASS: div[role="radio"] -> radio. 
+PASS: div[role="region"] -> region. 
+PASS: div[role="scrollbar"] -> scrollbar. 
+PASS: div[role="search"] -> search. 
+PASS: div[role="separator"] -> separator. 
+PASS: div[role="slider"] -> slider. 
+PASS: div[role="spinbutton"] -> spinbutton. 
+PASS: div[role="status"] -> status. 
+PASS: div[role="tablist"] -> tablist. 
+PASS: div[role="tab"] -> tab. 
+PASS: div[role="tabpanel"] -> tabpanel. 
+PASS: div[role="textbox"] -> . 
+PASS: div[role="timer"] -> timer. 
+PASS: div[role="toolbar"] -> toolbar. 
+PASS: div[role="tooltip"] -> tooltip. 
+PASS: div[role="tree"] -> tree. 
+PASS: div[role="treeitem"] -> treeitem. 
+PASS: div[role="treeitem"] -> treeitem. 
+PASS: div[role="treegrid"] -> grid. 
+PASS: div[role="row"] -> row. 
+PASS: div[role="rowheader"] -> gridcell. 
+PASS: div[role="columnheader"] -> gridcell. 
+PASS: div[role="gridcell"] -> gridcell. 
+PASS: div[role="button foo"] -> button. 
+PASS: div[role="foo button bar"] -> button. 
+PASS: div[role="foo  button  bar"] -> button. 
+PASS: div[role="foo	button	bar"] -> . 
+PASS: div[role="foo
+button
+bar"] -> . 
+PASS: img[role="foo"] -> img. 
+PASS: img[role="foo bar"] -> img. 
+PASS: img[role="foo  bar"] -> img. 
+PASS: img[role="foo	bar"] -> img. 
+PASS: img[role="foo	
+bar"] -> img. 
+PASS: img[role="text"] -> text. 
+PASS: img[role="text img"] -> text. 
+PASS: img[role="img text"] -> img. 
+PASS: img[role="presentation"][aria-label] -> img. 
+PASS: a[role="foo bar"] -> link. 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

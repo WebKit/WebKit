@@ -131,6 +131,7 @@ public:
     virtual void setOuterHTML(ErrorString*, int nodeId, const String& outerHTML) override;
     virtual void setNodeValue(ErrorString*, int nodeId, const String& value) override;
     virtual void getEventListenersForNode(ErrorString*, int nodeId, const WTF::String* objectGroup, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::EventListener>>& listenersArray) override;
+    virtual void getAccessibilityPropertiesForNode(ErrorString*, int nodeId, RefPtr<Inspector::TypeBuilder::DOM::AccessibilityProperties>& axProperties) override;
     virtual void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, const RefPtr<Inspector::InspectorArray>* nodeIds, String* searchId, int* resultCount) override;
     virtual void getSearchResults(ErrorString*, const String& searchId, int fromIndex, int toIndex, RefPtr<Inspector::TypeBuilder::Array<int>>&) override;
     virtual void discardSearchResults(ErrorString*, const String& searchId) override;
@@ -233,6 +234,7 @@ private:
     PassRefPtr<Inspector::TypeBuilder::Array<String>> buildArrayForElementAttributes(Element*);
     PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
     PassRefPtr<Inspector::TypeBuilder::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, const AtomicString& eventType, Node*, const String* objectGroupId);
+    PassRefPtr<Inspector::TypeBuilder::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
 
     Node* nodeForPath(const String& path);
     Node* nodeForObjectId(const String& objectId);

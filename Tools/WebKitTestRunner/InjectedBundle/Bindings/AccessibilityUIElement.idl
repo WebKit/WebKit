@@ -43,6 +43,7 @@ interface AccessibilityUIElement {
     readonly attribute DOMString role;
     readonly attribute DOMString subrole;
     readonly attribute DOMString roleDescription;
+    readonly attribute DOMString computedRoleString;
     readonly attribute DOMString title;
     readonly attribute DOMString description;
     readonly attribute DOMString language;

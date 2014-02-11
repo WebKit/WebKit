@@ -805,6 +805,8 @@ public:
 
     unsigned doAXLineForIndex(unsigned);
 
+    String computedRoleString() const;
+
     virtual String stringValueForMSAA() const { return String(); }
     virtual String stringRoleForMSAA() const { return String(); }
     virtual String nameForMSAA() const { return String(); }

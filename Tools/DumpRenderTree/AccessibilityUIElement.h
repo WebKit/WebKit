@@ -117,6 +117,7 @@ public:
     JSStringRef role();
     JSStringRef subrole();
     JSStringRef roleDescription();
+    JSStringRef computedRoleString();
     JSStringRef title();
     JSStringRef description();
     JSStringRef language();

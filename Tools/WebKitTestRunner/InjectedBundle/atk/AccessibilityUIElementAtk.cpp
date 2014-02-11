@@ -913,6 +913,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
     return JSStringCreateWithCharacters(0, 0);
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
+{
+    // FIXME: implement http://webkit.org/b/128420
+    return JSStringCreateWithCharacters(0, 0);
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 {
     if (!ATK_IS_OBJECT(m_element.get()))

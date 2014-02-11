@@ -286,6 +286,11 @@ JSStringRef AccessibilityUIElement::roleDescription()
     return 0;
 }
 
+JSStringRef AccessibilityUIElement::computedRoleString()
+{
+    return 0;
+}
+
 JSStringRef AccessibilityUIElement::title()
 {
     if (!m_element)

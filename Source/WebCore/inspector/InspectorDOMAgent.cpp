@@ -34,6 +34,7 @@
 
 #include "InspectorDOMAgent.h"
 
+#include "AXObjectCache.h"
 #include "Attr.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
@@ -874,6 +875,12 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
     }
 }
 
+void InspectorDOMAgent::getAccessibilityPropertiesForNode(ErrorString* errorString, int nodeId, RefPtr<Inspector::TypeBuilder::DOM::AccessibilityProperties>& axProperties)
+{
+    Node* node = assertNode(errorString, nodeId);
+    axProperties = buildObjectForAccessibilityProperties(node);
+}
+
 void InspectorDOMAgent::performSearch(ErrorString* errorString, const String& whitespaceTrimmedQuery, const RefPtr<InspectorArray>* nodeIds, String* searchId, int* resultCount)
 {
     // FIXME: Search works with node granularity - number of matches within node is not calculated.
@@ -1396,6 +1403,40 @@ PassRefPtr<Inspector::TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildO
         if (!sourceName.isEmpty())
             value->setSourceName(sourceName);
     }
+    return value.release();
+}
+
+PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAccessibilityProperties(Node* node)
+{
+    ASSERT(node);
+    if (!node)
+        return nullptr;
+
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        WebCore::AXObjectCache::enableAccessibility();
+
+    bool ignored = true;
+
+    // Computed ARIA Role
+    String role;
+
+    // Computed Label
+    // FIXME: Waiting on http://webkit.org/b/121134
+    String label;
+
+    if (AXObjectCache* axObjectCache = node->document().axObjectCache()) {
+        if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node)) {
+            ignored = axObject->accessibilityIsIgnored();
+            role = axObject->computedRoleString();
+        }
+    }
+    
+    RefPtr<Inspector::TypeBuilder::DOM::AccessibilityProperties> value = Inspector::TypeBuilder::DOM::AccessibilityProperties::create()
+        .setIgnored(ignored)
+        .setRole(role)
+        .setLabel(label)
+        .setNodeId(pushNodePathToFrontend(node));
+
     return value.release();
 }
 

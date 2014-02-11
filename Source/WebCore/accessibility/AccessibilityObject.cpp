@@ -1610,14 +1610,22 @@ AccessibilityObject* AccessibilityObject::firstAnonymousBlockChild() const
 }
 
 typedef HashMap<String, AccessibilityRole, CaseFoldingHash> ARIARoleMap;
+typedef HashMap<AccessibilityRole, String, DefaultHash<int>::Hash, WTF::UnsignedWithZeroKeyHashTraits<int>> ARIAReverseRoleMap;
+
+static ARIARoleMap* gAriaRoleMap = nullptr;
+static ARIAReverseRoleMap* gAriaReverseRoleMap = nullptr;
 
 struct RoleEntry {
     String ariaRole;
     AccessibilityRole webcoreRole;
 };
 
-static ARIARoleMap* createARIARoleMap()
+static void initializeRoleMap()
 {
+    if (gAriaRoleMap)
+        return;
+    ASSERT(!gAriaReverseRoleMap);
+
     const RoleEntry roles[] = {
         { "alert", ApplicationAlertRole },
         { "alertdialog", ApplicationAlertDialogRole },
@@ -1681,31 +1689,50 @@ static ARIARoleMap* createARIARoleMap()
         { "treegrid", TreeGridRole },
         { "treeitem", TreeItemRole }
     };
-    ARIARoleMap* roleMap = new ARIARoleMap;
 
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(roles); ++i)
-        roleMap->set(roles[i].ariaRole, roles[i].webcoreRole);
-    return roleMap;
+    gAriaRoleMap = new ARIARoleMap;
+    gAriaReverseRoleMap = new ARIAReverseRoleMap;
+    size_t roleLength = WTF_ARRAY_LENGTH(roles);
+    for (size_t i = 0; i < roleLength; ++i) {
+        gAriaRoleMap->set(roles[i].ariaRole, roles[i].webcoreRole);
+        gAriaReverseRoleMap->set(roles[i].webcoreRole, roles[i].ariaRole);
+    }
+}
+
+static ARIARoleMap& ariaRoleMap()
+{
+    initializeRoleMap();
+    return *gAriaRoleMap;
+}
+
+static ARIAReverseRoleMap& reverseAriaRoleMap()
+{
+    initializeRoleMap();
+    return *gAriaReverseRoleMap;
 }
 
 AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value)
 {
     ASSERT(!value.isEmpty());
     
-    static const ARIARoleMap* roleMap = createARIARoleMap();
-
     Vector<String> roleVector;
     value.split(' ', roleVector);
     AccessibilityRole role = UnknownRole;
     unsigned size = roleVector.size();
     for (unsigned i = 0; i < size; ++i) {
         String roleName = roleVector[i];
-        role = roleMap->get(roleName);
+        role = ariaRoleMap().get(roleName);
         if (role)
             return role;
     }
     
     return role;
+}
+
+String AccessibilityObject::computedRoleString() const
+{
+    // FIXME: Need a few special cases that aren't in the RoleMap: option, etc. http://webkit.org/b/128296
+    return reverseAriaRoleMap().get(roleValue());
 }
 
 bool AccessibilityObject::hasHighlighting() const

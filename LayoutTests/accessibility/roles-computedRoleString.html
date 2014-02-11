@@ -1,0 +1,311 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+
+<!-- ==================================================================================================== -->
+<!-- HTML elements in alphabetical order, excepting the need for nesting (e.g. <li> is with its <ol> and <ul> parents) -->
+<!-- This only tests elements that have an exact 1:1 ARIA role mapping, and computed role overrides. -->
+<!-- ==================================================================================================== -->
+<a data-role="link" href="#" data-note="[href]" class="ex">X</a>
+<article data-role="article" class="ex">X</article>
+<aside data-role="complementary" class="ex">X</aside>
+<button data-role="button" class="ex">X</button>
+<dfn data-role="definition" class="ex">X</dfn>
+<dl data-role="" class="ex">
+    <dt>X</dt>
+    <dd>X</dd>
+</dl>
+<footer data-role="" class="ex">X</footer>
+<form data-role="" class="ex">X</form><!-- FIXME: should be form -->
+<header data-role="banner" class="ex">X</header>
+<h1 data-role="heading" class="ex">X</h1>
+<h2 data-role="heading" class="ex">X</h2>
+<h3 data-role="heading" class="ex">X</h3>
+<h4 data-role="heading" class="ex">X</h4>
+<h5 data-role="heading" class="ex">X</h5>
+<h5 data-role="heading" class="ex">X</h6>
+<hr data-role="separator" class="ex">
+<img data-role="img" class="ex" data-note=":not([src]):not([alt])">
+<img data-role="" class="ex" alt="" data-note="[alt='']">
+<img data-role="img" class="ex" src="foo.png" data-note="[src]:not([alt])">
+<img data-role="img" class="ex" alt="X" data-note="[alt='X']">
+<input type="button" value="X" data-role="button" class="ex" data-note="[type='button']">
+<input type="checkbox" data-role="checkbox" class="ex" data-note="[type='checkbox']">
+<input type="date" data-role=""class="ex" data-note="[type='date']">
+<input type="datetime" value="X" data-role="" class="ex" data-note="[type='datetime']">
+<input type="datetime-local" value="X" data-role="" class="ex" data-note="[type='datetime-local']">
+<input type="email" value="X" data-role="" class="ex" data-note="[type='email']">
+<input type="file" data-role="button" class="ex" data-note="[type='file']">
+<input type="hidden" data-role="" class="ex" data-note="[type='hidden']">
+<input type="image" data-role="button" class="ex" data-note="[type='image']">
+<input type="month" value="X" data-role="" class="ex" data-note="[type='month']">
+<input type="number" value="X" data-role="" class="ex" data-note="[type='number']">
+<input type="password" value="X" data-role="" class="ex" data-note="[type='password']">
+<input type="radio" data-role="radio" class="ex" data-note="[type='radio']">
+<input type="range" data-role="slider" class="ex" data-note="[type='range']">
+<input type="reset" data-role="button" class="ex" data-note="[type='reset']">
+<input type="search" value="X" data-role="" class="ex" data-note="[type='search']">
+<input type="submit" data-role="button" class="ex" data-note="[type='submit']">
+<input type="tel" value="X" data-role="" class="ex" data-note="[type='tel']">
+<input type="text" value="X" data-role="" class="ex" data-note="[type='text']">
+<input type="time" value="X" data-role="" class="ex" data-note="[type='time']">
+<input type="url" value="X" data-role="" class="ex" data-note="[type='url']">
+<input type="week" value="X" data-role="" class="ex" data-note="[type='week']">
+<ins data-role="" class="ex">X</ins>
+<mark data-role="" class="ex">X</mark>
+<math data-role="math" class="ex">X</math>
+<!-- skipped <menu> -->
+<!-- skipped <meta> -->
+<meter data-role="progressbar" class="ex" value="0.75">X</meter>
+<nav data-role="navigation" class="ex">X</nav>
+<!-- skipped <noscript> -->
+<!-- skipped <object> -->
+<ol data-role="list" class="ex">
+    <li data-role="listitem" class="ex">X</li>
+</ol>
+<!-- skipped <optgroup> -->
+<!-- skipped <option> -->
+<!-- skipped <output> -->
+<p data-role="" class="ex">X</p>
+<!-- skipped <param> -->
+<pre data-role="group" class="ex">X</pre>
+<progress data-role="progressbar" class="ex" value="0.75">X</progress>
+<q data-role="" class="ex">X</q>
+<!-- skipped <ruby/rp/rt> -->
+<s data-role="" class="ex">X</s>
+<samp data-role="" class="ex">X</samp>
+<!-- skipped <script> -->
+<section data-role="region" class="ex">X</section>
+<select data-role="" class="ex" data-note=":not([multiple])">
+    <option data-role="" class="ex">X</option>
+    <optgroup data-role="" class="ex" label="more">
+        <option data-role="" class="ex">X</option>
+    </optgroup>
+</select>
+<select data-role="listbox" class="ex" multiple data-note="[multiple]">
+    <option data-role="option" class="ex">X</option>
+    <optgroup data-role="option" class="ex" label="more">
+        <option data-role="option" class="ex">Y</option>
+        <option data-role="option" class="ex">Z</option>
+    </optgroup>
+</select>
+<small data-role="" class="ex">X</small>
+<span data-role="" class="ex">X</span>
+<strong data-role="" class="ex">X</strong>
+<sub data-role="" class="ex">X</sub>
+<sup data-role="" class="ex">X</sup>
+<svg data-role="" class="ex">X</svg>
+
+<table data-role="grid" class="ex">
+    <caption data-role="" class="ex">X</caption>
+    <thead data-role="rowgroup" class="ex">
+        <tr data-role="row" class="ex">
+            <th data-role="gridcell" class="ex">X</th><!-- FIXME: should be columnheader -->
+        </tr>
+    </thead>
+    <tbody data-role="rowgroup" class="ex">
+        <tr data-role="row" class="ex">
+            <td data-role="gridcell" class="ex">X</td>
+        </tr>
+    </tbody>
+    <tfoot data-role="rowgroup" class="ex">
+        <tr data-role="row" class="ex">
+            <td data-role="gridcell" class="ex">X</td>
+        </tr>
+    </tfoot>
+</table>
+<textarea data-role="textbox" class="ex">X</textarea>
+<time data-role="" class="ex">X</time>
+<ul data-role="list" class="ex">
+    <li data-role="listitem" class="ex">X</li>
+</ul>
+<var data-role="" class="ex">X</var>
+<wbr data-role="" class="ex">X</wbr>
+
+<!-- ==================================================================================================== -->
+<!-- Abstract ARIA roles in alphabetical order; only generic role should be exposed on abstract roles -->
+<!-- ==================================================================================================== -->
+<div role="command"     data-role="" class="ex">X</div>
+<div role="composite"   data-role="" class="ex">X</div>
+<div role="input"       data-role="" class="ex">X</div>
+<div role="landmark"    data-role="" class="ex">X</div>
+<div role="range"       data-role="" class="ex">X</div>
+<div role="roletype"    data-role="" class="ex">X</div>
+<div role="section"     data-role="" class="ex">X</div>
+<div role="sectionhead" data-role="" class="ex">X</div>
+<div role="select"      data-role="" class="ex">X</div>
+<div role="structure"   data-role="" class="ex">X</div>
+<div role="widget"      data-role="" class="ex">X</div>
+<div role="window"      data-role="" class="ex">X</div>
+
+
+<!-- ==================================================================================================== -->
+<!-- Non-abstract ARIA roles in alphabetical order, excepting the need for nesting (e.g. row is with its grid parent) -->
+<!-- ==================================================================================================== -->
+<div role="alert"                    data-role="alert" class="ex">X</div>
+<div role="alertdialog"              data-role="alertdialog" class="ex">X</div>
+<div role="application"              data-role="application" class="ex">X</div>
+<div role="article"                  data-role="article" class="ex">X</div>
+<div role="banner"                   data-role="banner" class="ex">X</div>
+<div role="button"                   data-role="button" class="ex">X</div>
+<div role="checkbox"                 data-role="checkbox" class="ex">X</div>
+<div role="combobox"                 data-role="combobox" class="ex">X</div>
+<div role="complementary"            data-role="complementary" class="ex">X</div>
+<div role="contentinfo"              data-role="contentinfo" class="ex">X</div>
+<div role="definition"               data-role="definition" class="ex">X</div>
+<div role="dialog"                   data-role="dialog" class="ex">X</div>
+<div role="directory"                data-role="list" class="ex">X</div><!-- FIXME: should be directory -->
+<div role="document"                 data-role="document" class="ex">X</div>
+<div role="form"                     data-role="" class="ex">X</div><!-- FIXME: should be form -->
+<div role="grid"                     data-role="grid" class="ex">
+    <div role="rowgroup"             data-role="rowgroup" class="ex">
+        <div role="row"              data-role="row" class="ex">
+            <div role="rowheader"    data-role="gridcell" class="ex">X</div><!-- FIXME: should be rowheader -->
+            <div role="columnheader" data-role="gridcell" class="ex">X</div><!-- FIXME: should be columnheader -->
+            <div role="gridcell"     data-role="gridcell" class="ex">X</div>
+        </div>
+    </div>
+</div>
+<div role="group"                    data-role="group" class="ex">X</div>
+<div role="heading"                  data-role="heading" class="ex">X</div>
+<div role="img"                      data-role="img" class="ex">X</div>
+<div role="link"                     data-role="link" class="ex">X</div>
+<div role="list"                     data-role="list" class="ex">
+    <div role="listitem"             data-role="listitem" class="ex">X</div>
+</div>
+<div role="listbox" data-role="listbox" class="ex">
+    <div role="option"               data-role="option" class="ex">X</div>
+</div>
+<div role="log"                      data-role="log" class="ex">X</div>
+<div role="main"                     data-role="main" class="ex">X</div>
+<div role="marquee"                  data-role="marquee" class="ex">X</div>
+<div role="math"                     data-role="math" class="ex">X</div>
+<div role="menu"                     data-role="menu" class="ex">
+    <div role="menuitem"             data-role="menuitem" class="ex">X</div>
+    <div role="menuitemcheckbox"     data-role="menuitemcheckbox" class="ex">X</div>
+    <div role="menuitemradio"        data-role="menuitemradio" class="ex">X</div>
+</div>
+<div role="menubar"                  data-role="menubar" class="ex">
+    <div role="menuitem"             data-role="menuitem" class="ex">X</div>
+    <div role="menuitemcheckbox"     data-role="menuitemcheckbox" class="ex">X</div>
+    <div role="menuitemradio"        data-role="menuitemradio" class="ex">X</div>
+</div>
+<div role="navigation"               data-role="navigation" class="ex">X</div>
+<div role="note"                     data-role="note" class="ex">X</div>
+<div role="presentation"             data-role="" class="ex">X</div>
+<div role="progressbar"              data-role="progressbar" class="ex">X</div>
+<div role="radiogroup"               data-role="radiogroup" class="ex">
+    <div role="radio"                data-role="radio" class="ex">X</div>
+</div>
+<div role="region"                   data-role="region" class="ex">X</div>
+<div role="scrollbar"                data-role="scrollbar" class="ex">X</div>
+<div role="search"                   data-role="search" class="ex">X</div>
+<div role="separator"                data-role="separator" class="ex">X</div>
+<div role="slider"                   data-role="slider" class="ex">X</div>
+<div role="spinbutton"               data-role="spinbutton" class="ex">X</div>
+<div role="status"                   data-role="status" class="ex">X</div>
+<div role="tablist"                  data-role="tablist" class="ex">
+    <div role="tab"                  data-role="tab" class="ex">X</div>
+</div>
+<div role="tabpanel"                 data-role="tabpanel" class="ex">X</div>
+<div role="textbox"                  data-role="" class="ex">X</div><!-- FIXME: should be textbox -->
+<div role="timer"                    data-role="timer" class="ex">X</div>
+<div role="toolbar"                  data-role="toolbar" class="ex">X</div>
+<div role="tooltip"                  data-role="tooltip" class="ex">X</div>
+<div role="tree"                     data-role="tree" class="ex">
+    <div role="treeitem"             data-role="treeitem" class="ex">X</div>
+    <div role="group"                data-role="group" class="ex">
+        <div role="treeitem"         data-role="treeitem" class="ex">X</div>
+    </div>
+</div>
+<div role="treegrid"                 data-role="grid" class="ex"><!-- FIXME: should be treegrid -->
+    <div role="rowgroup"             data-role="rowgroup" class="ex">
+        <div role="row"              data-role="row" class="ex">
+            <div role="rowheader"    data-role="gridcell" class="ex">X</div><!-- FIXME: should be rowheader -->
+            <div role="columnheader" data-role="gridcell" class="ex">X</div><!-- FIXME: should be columnheader -->
+            <div role="gridcell"     data-role="gridcell" class="ex">X</div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================================================================================================== -->
+<!-- generic role attribute parsing tests -->
+<!-- ==================================================================================================== -->
+<div role="button foo"               data-role="button" class="ex">X</div>
+<div role="foo button bar"           data-role="button" class="ex">X</div>
+<div role="foo  button  bar"         data-role="button" class="ex">X</div><!-- [sic] Two spaces in role string -->
+
+<!-- FIXME: These two should be button but fail b/c of http://webkit.org/b/128400 -->
+<div role="foo	button	bar"         data-role="" class="ex">X</div><!-- [sic] Tab chars in role string -->
+<div role="foo
+button
+bar"                                 data-role="" class="ex">X</div><!-- [sic] Newlines in role string -->
+
+
+<!-- ==================================================================================================== -->
+<!-- implicit role parsing tests -->
+<!-- ==================================================================================================== -->
+<img role="foo" src="foo.png"        data-role="img" alt="X" class="ex">
+<img role="foo bar" src="foo.png"    data-role="img" alt="X" class="ex">
+<img role="foo  bar" src="foo.png"    data-role="img" alt="X" class="ex"><!-- [sic] Two spaces in role string -->
+<img role="foo	bar" src="foo.png"   data-role="img" alt="X" class="ex"><!-- [sic] Newline in role string -->
+<img role="foo	
+bar" src="foo.png"                   data-role="img" alt="X" class="ex"><!-- [sic] Tab char in role string -->
+<img role="text" src="foo.png"       data-role="text" alt="X" class="ex">
+<img role="text img" src="foo.png"   data-role="text" alt="X" class="ex">
+<img role="img text" src="foo.png"   data-role="img" alt="X" class="ex">
+<img role="presentation"             data-role="img" data-note="[aria-label]" alt="X" src="foo.png" aria-label="X" class="ex"><!-- presentation with global attr should fallback to implicit role -->
+<a href="#" role="foo bar"           data-role="link" class="ex">X</a>
+
+<div id="console"></div>
+<script>
+if (window.testRunner && window.accessibilityController) {
+    description("This tests that native elements and ARIA overrides result in the same ARIA computed role, regardless of platform.")
+    var examples = document.querySelectorAll(".ex");
+    var el, contentAttrRoleString, axElement, computedAriaRole, output, expectedRole, expectation, result, note;
+    for (var i = 0, c = examples.length; i < c; i++) {
+        el = examples[i];
+		el.id = "ex" + i
+
+        axElement = accessibilityController.accessibleElementById(el.id);
+        if (!axElement)
+        	continue;
+
+        computedAriaRole = axElement.computedRoleString;
+
+        contentAttrRoleString = el.getAttribute("role");
+        note = el.getAttribute("data-note")
+        output = el.tagName.toLowerCase() + (contentAttrRoleString ? ("[role=\""+contentAttrRoleString+"\"]") : "") + (note ? note : "");
+        output += " -> ";
+        output += computedAriaRole;
+        output += ". ";
+
+        expectedRole = "";
+        if (el.hasAttribute("data-role")) {
+            expectedRole = el.getAttribute("data-role");
+        }
+
+        expectation = expectedRole;
+        matchedResults = (computedAriaRole == expectedRole)
+
+        result = document.getElementById('console');
+        if (matchedResults) {
+            result.innerText += "PASS: " + output + "\n";
+        } else {
+            result.innerText += "FAIL: " + output + "Expected: " + expectation + ".\n";
+        }
+    }
+
+    // Once tests are complete, hide all the example markup.
+    examples = document.querySelectorAll(".ex");
+    for (var i = 0, c = examples.length; i < c; i++) {
+        el = examples[i];
+        el.style.display = "none";
+    }
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

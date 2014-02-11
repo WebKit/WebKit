@@ -1,3 +1,21 @@
+2014-02-11  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AX: Accessibility Node Inspection
+        https://bugs.webkit.org/show_bug.cgi?id=127447
+
+        Reviewed by Timothy Hatcher.
+
+        New Accessibility section in WebInspector Node Inspector.
+        Version 1.0 only shows computed role. Computed label should come soon.
+
+        Removed CSS fixed table layout b/c CSS bug: http://webkit.org/b/128294
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/DOMNode.js:
+        * UserInterface/DOMNodeDetailsSidebarPanel.js:
+        * UserInterface/DetailsSection.css:
+        * UserInterface/InspectorWebBackendCommands.js:
+
 2014-02-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Update License copyrights in minified JavaScript
