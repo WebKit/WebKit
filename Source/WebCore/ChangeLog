@@ -1,3 +1,11 @@
+2014-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Address the review comments for r163825.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::indexForVisiblePosition):
+        (WebCore::positionForIndex):
+
 2014-02-10  Simon Fraser  <simon.fraser@apple.com>
 
         Try to fix the 32-bit build.

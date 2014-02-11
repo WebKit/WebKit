@@ -321,14 +321,14 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
         frame->selection().setSelection(newSelection);
 }
 
-int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& pos) const
+int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& position) const
 {
     TextControlInnerTextElement* innerText = innerTextElement();
-    if (!innerText || !innerText->contains(pos.deepEquivalent().anchorNode()))
+    if (!innerText || !innerText->contains(position.deepEquivalent().anchorNode()))
         return 0;
     bool forSelectionPreservation = false;
-    unsigned index = WebCore::indexForVisiblePosition(innerTextElement(), pos, forSelectionPreservation);
-    ASSERT(VisiblePosition(positionForIndex(innerTextElement(), index)) == pos);
+    unsigned index = WebCore::indexForVisiblePosition(innerTextElement(), position, forSelectionPreservation);
+    ASSERT(VisiblePosition(positionForIndex(innerTextElement(), index)) == position);
     return index;
 }
 
@@ -566,10 +566,10 @@ static Position positionForIndex(TextControlInnerTextElement* innerText, unsigne
                 return positionBeforeNode(node);
             remainingCharactersToMoveForward--;
         } else if (node->isTextNode()) {
-            Text* text = toText(node);
-            if (remainingCharactersToMoveForward < text->length())
-                return Position(text, remainingCharactersToMoveForward);
-            remainingCharactersToMoveForward -= text->length();
+            Text& text = toText(*node);
+            if (remainingCharactersToMoveForward < text.length())
+                return Position(&text, remainingCharactersToMoveForward);
+            remainingCharactersToMoveForward -= text.length();
         }
     }
     return lastPositionInNode(innerText);
