@@ -1,5 +1,25 @@
 2014-02-10  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r154036
+
+    2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Fix orphan needsLayout state in RenderTextControlSingleLine
+            https://bugs.webkit.org/show_bug.cgi?id=119726
+
+            Reviewed by Kent Tamura.
+
+            Merge https://chromium.googlesource.com/chromium/blink/+/c0aec52ef348b2be0c882f8646fe3cf537831f59
+
+            We should mark the renderer for containerElement, which wraps innerTextElement and innerBlockElement
+            in cases of input[type=search] and input[type=number], dirty.
+
+            * rendering/RenderTextControlSingleLine.cpp:
+            (WebCore::setNeedsLayoutOnAncestors):
+            (WebCore::RenderTextControlSingleLine::layout):
+
+2014-02-10  Lucas Forschler  <lforschler@apple.com>
+
         Merge r156082
 
     2013-09-18  Mihnea Ovidenie  <mihnea@adobe.com>
