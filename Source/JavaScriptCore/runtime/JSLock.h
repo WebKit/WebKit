@@ -99,16 +99,21 @@ namespace JSC {
         class DropAllLocks {
             WTF_MAKE_NONCOPYABLE(DropAllLocks);
         public:
-            // By default, we release all locks conditionally. Some clients, such as Mobile Safari,
-            // may require that we release all locks unconditionally.
-            enum AlwaysDropLocksTag { DontAlwaysDropLocks = 0, AlwaysDropLocks };
-            JS_EXPORT_PRIVATE DropAllLocks(ExecState*, AlwaysDropLocksTag = DontAlwaysDropLocks);
-            JS_EXPORT_PRIVATE DropAllLocks(VM*, AlwaysDropLocksTag = DontAlwaysDropLocks);
+            JS_EXPORT_PRIVATE DropAllLocks(ExecState*);
+            JS_EXPORT_PRIVATE DropAllLocks(VM*);
             JS_EXPORT_PRIVATE ~DropAllLocks();
             
+#if ENABLE(LLINT_C_LOOP)
+            void setDropDepth(unsigned depth) { m_dropDepth = depth; }
+            unsigned dropDepth() const { return m_dropDepth; }
+#endif
+
         private:
             intptr_t m_droppedLockCount;
             RefPtr<VM> m_vm;
+#if ENABLE(LLINT_C_LOOP)
+            unsigned m_dropDepth;
+#endif
         };
 
     private:
@@ -116,9 +121,8 @@ namespace JSC {
         void unlock(intptr_t unlockCount);
         void setOwnerThread(ThreadIdentifier owner) { m_ownerThread = owner; }
 
-        unsigned dropAllLocks();
-        unsigned dropAllLocksUnconditionally();
-        void grabAllLocks(unsigned lockCount);
+        unsigned dropAllLocks(DropAllLocks*);
+        void grabAllLocks(DropAllLocks*, unsigned lockCount);
 
         Mutex m_lock;
         ThreadIdentifier m_ownerThread;

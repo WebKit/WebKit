@@ -1,3 +1,20 @@
+2014-02-10  Mark Lam  <mark.lam@apple.com>
+
+        Removing limitation on JSLock’s lockDropDepth.
+        <https://webkit.org/b/128570>
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePaused):
+        * platform/ios/wak/WebCoreThread.mm:
+        (SendDelegateMessage):
+        (WebThreadRunOnMainThread):
+        - No longer need to specify AlwaysDropLocks, because DropAllLocks is
+          now always unconditional.
+
 2014-02-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Clean up MarkupAccumulator::appendCharactersReplacingEntities

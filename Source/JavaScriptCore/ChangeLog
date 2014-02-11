@@ -1,3 +1,40 @@
+2014-02-10  Mark Lam  <mark.lam@apple.com>
+
+        Removing limitation on JSLock's lockDropDepth.
+        <https://webkit.org/b/128570>
+
+        Reviewed by Geoffrey Garen.
+
+        Now that we've switched to using the C stack, we no longer need to limit
+        the JSLock::lockDropDepth to 2.
+
+        For C loop builds which still use the separate JSStack, the JSLock will
+        enforce ordering for re-grabbing the lock after dropping it. Re-grabbing
+        must occur in the reverse order of the dropping of the locks.
+
+        Ordering is achieved by JSLock::dropAllLocks() stashing away the
+        JSLock:: m_lockDropDepth in its DropAllLocks instance's m_dropDepth
+        before unlocking the lock. Subsequently, JSLock::grabAllLocks() will
+        ensure that JSLocks::m_lockDropDepth equals its DropAllLocks instance's
+        m_dropDepth before allowing the lock to be re-grabbed. Otherwise, it
+        will yield execution and retry again later.
+
+        Note: because JSLocks::m_lockDropDepth is protected by the JSLock's
+        mutex, grabAllLocks() will optimistically lock the JSLock before doing
+        the check on m_lockDropDepth. If the check fails, it will unlock the
+        JSLock, yield, and then relock it again later before retrying the check.
+        This ensures that m_lockDropDepth remains under the protection of the
+        JSLock's mutex.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::grabAllLocks):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+        * runtime/JSLock.h:
+        (JSC::JSLock::DropAllLocks::setDropDepth):
+        (JSC::JSLock::DropAllLocks::dropDepth):
+
 2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support ToThis

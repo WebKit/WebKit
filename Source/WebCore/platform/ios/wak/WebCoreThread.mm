@@ -210,7 +210,7 @@ static void SendDelegateMessage(NSInvocation *invocation)
 
         {
             // Code block created to scope JSC::JSLock::DropAllLocks outside of WebThreadLock()
-            JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM(), JSC::JSLock::DropAllLocks::AlwaysDropLocks);
+            JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM());
             _WebThreadUnlock();
 
             CFRunLoopSourceSignal(delegateSource);
@@ -248,7 +248,7 @@ void WebThreadRunOnMainThread(void(^delegateBlock)())
         return;
     }
 
-    JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM(), JSC::JSLock::DropAllLocks::AlwaysDropLocks);
+    JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM());
     _WebThreadUnlock();
 
     void (^delegateBlockCopy)() = Block_copy(delegateBlock);

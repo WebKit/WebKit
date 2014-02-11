@@ -190,7 +190,7 @@ void PageScriptDebugServer::runEventLoopWhilePaused()
     ASSERT(WebThreadIsLockedOrDisabled());
     {
         if (WebThreadIsEnabled())
-            JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM(), JSC::JSLock::DropAllLocks::AlwaysDropLocks);
+            JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM());
         WebRunLoopEnableNested();
 #endif
 
