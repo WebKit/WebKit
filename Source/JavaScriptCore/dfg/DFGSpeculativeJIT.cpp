@@ -4299,10 +4299,6 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
 
         GPRResult result(this);
         callOperation(operationReallocateButterflyToGrowPropertyStorage, result.gpr(), baseGPR, newSize / sizeof(JSValue));
-        
-        MacroAssembler::Jump notNull = m_jit.branchTestPtr(MacroAssembler::NonZero, result.gpr());
-        m_jit.breakpoint();
-        notNull.link(&m_jit);
 
         storageResult(result.gpr(), node);
         return;
