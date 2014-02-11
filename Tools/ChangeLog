@@ -1,3 +1,24 @@
+2014-02-11  David Kilzer  <ddkilzer@apple.com>
+
+        [ASan] Fix build failures in Tools due to missing $(inherited) values
+        <http://webkit.org/b/128485>
+
+        Reviewed by Dean Jackson.
+
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        - Move $(inherited) from OTHER_LDFLAGS_macosx to OTHER_LDFLAGS.
+
+        * DumpRenderTree/mac/Configurations/ImageDiff.xcconfig:
+        * DumpRenderTree/mac/Configurations/LayoutTestHelper.xcconfig:
+        - Add $(inherited) to OTHER_LDFLAGS.
+
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+        - Add $(inherited) to OTHER_LDFLAGS, or move from
+          OTHER_LDFLAGS_BASE to OTHER_LDFLAGS.
+        - Extract $(OTHER_LDFLAGS_BASE) from platform-specific settings
+          into OTHER_LDFLAGS.
+
 2014-02-11  James Craig  <jcraig@apple.com>
 
         Web Inspector: AX: Accessibility Node Inspection

@@ -27,10 +27,10 @@ PRODUCT_NAME = WebKitTestRunner
 GCC_ENABLE_OBJC_EXCEPTIONS = YES
 
 OTHER_LDFLAGS_BASE = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -framework WebKit2;
-OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE) -framework JavaScriptCore -framework CoreGraphics -framework ImageIO -framework UIKit;
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
+OTHER_LDFLAGS_iphoneos = -framework JavaScriptCore -framework CoreGraphics -framework ImageIO -framework UIKit;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) -framework Carbon -framework Cocoa;
+OTHER_LDFLAGS_macosx = -framework Carbon -framework Cocoa;
 
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Resources;
 SKIP_INSTALL = NO;
