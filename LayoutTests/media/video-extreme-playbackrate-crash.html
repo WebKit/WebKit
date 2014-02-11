@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function start() {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+                waitForEventOnce('canplaythrough', canPlayThrough);
+            }
+
+            function canPlayThrough() {
+                video.playbackRate = 10000000;
+                video.play();
+                video.playbackRate = -10000000;
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video></video>
+        <p>Test that passing extreme playback rate does not cause crash.</p>
+    </body>
+</html>
