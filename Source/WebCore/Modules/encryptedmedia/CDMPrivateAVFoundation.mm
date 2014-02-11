@@ -90,6 +90,21 @@ CDMSessionAVFoundation::CDMSessionAVFoundation(CDMPrivateAVFoundation* parent)
 {
 }
 
+static unsigned short MediaKeyExceptionToErrorCode(MediaPlayer::MediaKeyException error)
+{
+    switch (error) {
+    case MediaPlayer::NoError:
+        return 0;
+    case MediaPlayer::InvalidPlayerState:
+        return INVALID_STATE_ERR;
+    case MediaPlayer::KeySystemNotSupported:
+        return NOT_SUPPORTED_ERR;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
 PassRefPtr<Uint8Array> CDMSessionAVFoundation::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode)
 {
     UNUSED_PARAM(mimeType);
@@ -97,48 +112,24 @@ PassRefPtr<Uint8Array> CDMSessionAVFoundation::generateKeyRequest(const String& 
     MediaPlayer* mediaPlayer = m_parent->cdm()->mediaPlayer();
     if (!mediaPlayer) {
         errorCode = NOT_SUPPORTED_ERR;
-        return 0;
-    }
-
-    String keyURI;
-    String keyID;
-    RefPtr<Uint8Array> certificate;
-    if (!MediaPlayerPrivateAVFoundationObjC::extractKeyURIKeyIDAndCertificateFromInitData(initData, keyURI, keyID, certificate)) {
-        errorCode = INVALID_STATE_ERR;
-        return 0;
-    }
-
-    m_request = MediaPlayerPrivateAVFoundationObjC::takeRequestForPlayerAndKeyURI(mediaPlayer, keyURI);
-    if (!m_request) {
-        errorCode = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     m_sessionId = createCanonicalUUIDString();
 
-    RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:certificate->baseAddress() length:certificate->byteLength()]);
-    NSString* assetStr = keyID;
-    RetainPtr<NSData> assetID = [NSData dataWithBytes: [assetStr cStringUsingEncoding:NSUTF8StringEncoding] length:[assetStr lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
-    NSError* error = 0;
-    RetainPtr<NSData> keyRequest = [m_request.get() streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:assetID.get() options:nil error:&error];
-
-    if (!keyRequest) {
-        NSError* underlyingError = [[error userInfo] objectForKey:NSUnderlyingErrorKey];
-        errorCode = CDM::DomainError;
-        systemCode = [underlyingError code];
-        return 0;
-    }
-
-    errorCode = 0;
-    systemCode = 0;
-    destinationURL = String();
-
-    RefPtr<ArrayBuffer> keyRequestBuffer = ArrayBuffer::create([keyRequest.get() bytes], [keyRequest.get() length]);
-    return Uint8Array::create(keyRequestBuffer, 0, keyRequestBuffer->byteLength());
+    MediaPlayer::MediaKeyException error;
+    RefPtr<Uint8Array> request = mediaPlayer->generateKeyRequest(m_sessionId, mimeType, initData, destinationURL, error, systemCode);
+    errorCode = MediaKeyExceptionToErrorCode(error);
+    return request;
 }
 
 void CDMSessionAVFoundation::releaseKeys()
 {
+    MediaPlayer* mediaPlayer = m_parent->cdm()->mediaPlayer();
+    if (!mediaPlayer)
+        return;
+
+    mediaPlayer->releaseKeys(m_sessionId);
 }
 
 bool CDMSessionAVFoundation::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode)
@@ -146,15 +137,16 @@ bool CDMSessionAVFoundation::update(Uint8Array* key, RefPtr<Uint8Array>& nextMes
     if (!key)
         return false;
 
-    RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:key->baseAddress() length:key->byteLength()]);
-    [[m_request.get() dataRequest] respondWithData:keyData.get()];
-    [m_request.get() finishLoading];
-    errorCode = 0;
-    systemCode = 0;
-    nextMessage = nullptr;
-    m_request = nullptr;
+    MediaPlayer* mediaPlayer = m_parent->cdm()->mediaPlayer();
+    if (!mediaPlayer) {
+        errorCode = NOT_SUPPORTED_ERR;
+        return nullptr;
+    }
 
-    return true;
+    MediaPlayer::MediaKeyException error;
+    bool succeeded = mediaPlayer->update(m_sessionId, key, nextMessage, error, systemCode);
+    errorCode = MediaKeyExceptionToErrorCode(error);
+    return succeeded;
 }
 
 }

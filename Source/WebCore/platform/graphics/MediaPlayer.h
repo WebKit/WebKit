@@ -315,14 +315,22 @@ public:
     void play();
     void pause();
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
     // Represents synchronous exceptions that can be thrown from the Encrypted Media methods.
     // This is different from the asynchronous MediaKeyError.
     enum MediaKeyException { NoError, InvalidPlayerState, KeySystemNotSupported };
+#endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
     MediaKeyException generateKeyRequest(const String& keySystem, const unsigned char* initData, unsigned initDataLength);
     MediaKeyException addKey(const String& keySystem, const unsigned char* key, unsigned keyLength, const unsigned char* initData, unsigned initDataLength, const String& sessionId);
     MediaKeyException cancelKeyRequest(const String& keySystem, const String& sessionId);
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    PassRefPtr<Uint8Array> generateKeyRequest(const String& sessionID, const String& mimeType, Uint8Array* initData, String& destinationURL, MediaKeyException& error, unsigned long& systemCode);
+    void releaseKeys(const String& sessionID);
+    bool update(const String& sessionID, Uint8Array* key, RefPtr<Uint8Array>& nextMessage, MediaKeyException& error, unsigned long& systemCode);
 #endif
 
     bool paused() const;

@@ -72,6 +72,10 @@ public:
     void effectiveRateChanged();
     void sizeChanged();
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    void keyNeeded(Uint8Array*);
+#endif
+
 private:
     // MediaPlayerPrivateInterface
     virtual void load(const String& url) override;

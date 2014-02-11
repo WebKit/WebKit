@@ -534,6 +534,13 @@ void MediaPlayerPrivateMediaSourceAVFObjC::sizeChanged()
     m_player->sizeChanged();
 }
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)
+{
+    m_player->keyNeeded(initData);
+}
+#endif
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
 {
     if (m_readyState == readyState)

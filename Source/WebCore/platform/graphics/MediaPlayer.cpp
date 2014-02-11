@@ -523,6 +523,23 @@ MediaPlayer::MediaKeyException MediaPlayer::cancelKeyRequest(const String& keySy
 }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+PassRefPtr<Uint8Array> MediaPlayer::generateKeyRequest(const String& sessionID, const String& mimeType, Uint8Array* initData, String& destinationURL, MediaKeyException& error, unsigned long& systemCode)
+{
+    return m_private->generateKeyRequest(sessionID, mimeType, initData, destinationURL, error, systemCode);
+}
+
+void MediaPlayer::releaseKeys(const String& sessionID)
+{
+    m_private->releaseKeys(sessionID);
+}
+
+bool MediaPlayer::update(const String& sessionID, Uint8Array* key, RefPtr<Uint8Array>& nextMessage, MediaKeyException& error, unsigned long& systemCode)
+{
+    return m_private->update(sessionID, key, nextMessage, error, systemCode);
+}
+#endif
+    
 double MediaPlayer::duration() const
 {
     return m_private->durationDouble();

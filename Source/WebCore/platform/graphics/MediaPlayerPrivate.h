@@ -207,6 +207,12 @@ public:
     virtual MediaPlayer::MediaKeyException cancelKeyRequest(const String&, const String&) { return MediaPlayer::KeySystemNotSupported; }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    virtual PassRefPtr<Uint8Array> generateKeyRequest(const String&, const String&, Uint8Array*, String&, MediaPlayer::MediaKeyException&, unsigned long&) { return nullptr; }
+    virtual void releaseKeys(const String&) { }
+    virtual bool update(const String&, Uint8Array*, RefPtr<Uint8Array>&, MediaPlayer::MediaKeyException&, unsigned long&) { return false; }
+#endif
+
 #if ENABLE(VIDEO_TRACK)
     virtual bool requiresTextTrackRepresentation() const { return false; }
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) { }

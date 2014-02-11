@@ -1597,14 +1597,69 @@ MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::cancelKeyRequ
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-RetainPtr<AVAssetResourceLoadingRequest> MediaPlayerPrivateAVFoundationObjC::takeRequestForPlayerAndKeyURI(MediaPlayer* player, const String& keyURI)
+PassRefPtr<Uint8Array> MediaPlayerPrivateAVFoundationObjC::generateKeyRequest(const String& sessionId, const String& mimeType, Uint8Array* initData, String& destinationURL, MediaPlayer::MediaKeyException& error, unsigned long& systemCode)
 {
-    MediaPlayerPrivateAVFoundationObjC* _this = playerToPrivateMap().get(player);
-    if (!_this)
-        return nullptr;
+    UNUSED_PARAM(mimeType);
 
-    return _this->m_keyURIToRequestMap.take(keyURI);
+    String keyURI;
+    String keyID;
+    RefPtr<Uint8Array> certificate;
+    if (!MediaPlayerPrivateAVFoundationObjC::extractKeyURIKeyIDAndCertificateFromInitData(initData, keyURI, keyID, certificate)) {
+        error = MediaPlayer::InvalidPlayerState;
+        return 0;
+    }
 
+    RetainPtr<AVAssetResourceLoadingRequest> request = m_keyURIToRequestMap.take(keyURI);
+    if (!request) {
+        error = MediaPlayer::InvalidPlayerState;
+        return 0;
+    }
+
+    m_sessionIDToRequestMap.add(sessionId, request);
+
+    RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:certificate->baseAddress() length:certificate->byteLength()]);
+    NSString* assetStr = keyID;
+    RetainPtr<NSData> assetID = [NSData dataWithBytes: [assetStr cStringUsingEncoding:NSUTF8StringEncoding] length:[assetStr lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
+    NSError* nsError = 0;
+    RetainPtr<NSData> keyRequest = [request streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:assetID.get() options:nil error:&nsError];
+
+    if (!keyRequest) {
+        NSError* underlyingError = [[nsError userInfo] objectForKey:NSUnderlyingErrorKey];
+        systemCode = [underlyingError code];
+        return 0;
+    }
+
+    error = MediaPlayer::NoError;
+    systemCode = 0;
+    destinationURL = String();
+
+    RefPtr<ArrayBuffer> keyRequestBuffer = ArrayBuffer::create([keyRequest.get() bytes], [keyRequest.get() length]);
+    return Uint8Array::create(keyRequestBuffer, 0, keyRequestBuffer->byteLength());
+}
+
+void MediaPlayerPrivateAVFoundationObjC::releaseKeys(const String& sessionId)
+{
+    UNUSED_PARAM(sessionId);
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::update(const String& sessionId, Uint8Array* key, RefPtr<Uint8Array>& nextMessage, MediaPlayer::MediaKeyException& error, unsigned long& systemCode)
+{
+    ASSERT(key);
+
+    RetainPtr<AVAssetResourceLoadingRequest> request = m_sessionIDToRequestMap.get(sessionId);
+    if (!request) {
+        error = MediaPlayer::InvalidPlayerState;
+        return false;
+    }
+
+    RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:key->baseAddress() length:key->byteLength()]);
+    [[request dataRequest] respondWithData:keyData.get()];
+    [request finishLoading];
+    error = MediaPlayer::NoError;
+    systemCode = 0;
+    nextMessage = nullptr;
+
+    return true;
 }
 #endif
 
