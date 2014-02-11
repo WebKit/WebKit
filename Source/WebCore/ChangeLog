@@ -1,3 +1,28 @@
+2014-02-10  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Support ANGLE_instanced_arrays for linux
+        https://bugs.webkit.org/show_bug.cgi?id=127465
+
+        Reviewed by Martin Robinson.
+
+        Support the instanced drawing WebGL extension, ANGLE_instanced_arrays for linux platform.
+        This is a following patch for r162565. Relevant opengl APIs are exposed
+        for WebGLRenderingContext to access them.
+
+        Covered by fast/canvas/webgl/angle-instanced-arrays.html
+
+        * html/canvas/ANGLEInstancedArrays.cpp:
+        (WebCore::ANGLEInstancedArrays::supported):
+        * platform/graphics/OpenGLShims.cpp:
+        (WebCore::initializeOpenGLShims):
+        * platform/graphics/OpenGLShims.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::drawArraysInstanced):
+        (WebCore::GraphicsContext3D::drawElementsInstanced):
+        (WebCore::GraphicsContext3D::vertexAttribDivisor):
+
 2014-02-10  Mark Lam  <mark.lam@apple.com>
 
         Removing limitation on JSLock’s lockDropDepth.

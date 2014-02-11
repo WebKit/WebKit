@@ -354,25 +354,20 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
 #if !PLATFORM(COCOA)
 void GraphicsContext3D::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
 {
-    UNUSED_PARAM(mode);
-    UNUSED_PARAM(first);
-    UNUSED_PARAM(count);
-    UNUSED_PARAM(primcount);
+    makeContextCurrent();
+    ::glDrawArraysInstanced(mode, first, count, primcount);
 }
 
 void GraphicsContext3D::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount)
 {
-    UNUSED_PARAM(mode);
-    UNUSED_PARAM(count);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(primcount);
+    makeContextCurrent();
+    ::glDrawElementsInstanced(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 }
 
 void GraphicsContext3D::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(divisor);
+    makeContextCurrent();
+    ::glVertexAttribDivisor(index, divisor);
 }
 #endif
 

@@ -28,6 +28,10 @@
 #if ENABLE(WEBGL)
 #include "ANGLEInstancedArrays.h"
 
+#if PLATFORM(GTK)
+#include "Extensions3D.h"
+#endif
+
 namespace WebCore {
 
 ANGLEInstancedArrays::ANGLEInstancedArrays(WebGLRenderingContext* context)
@@ -49,11 +53,16 @@ OwnPtr<ANGLEInstancedArrays> ANGLEInstancedArrays::create(WebGLRenderingContext*
     return adoptPtr(new ANGLEInstancedArrays(context));
 }
 
-bool ANGLEInstancedArrays::supported(WebGLRenderingContext*)
+bool ANGLEInstancedArrays::supported(WebGLRenderingContext* context)
 {
 #if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    UNUSED_PARAM(context);
     return true;
+#elif PLATFORM(GTK)
+    Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
+    return extensions->supports("GL_ANGLE_instanced_arrays");
 #else
+    UNUSED_PARAM(context);
     return false;
 #endif
 }

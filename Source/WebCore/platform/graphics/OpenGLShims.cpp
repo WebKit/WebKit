@@ -146,6 +146,8 @@ bool initializeOpenGLShims()
     ASSIGN_FUNCTION_TABLE_ENTRY_EXT(glDeleteVertexArrays);
     ASSIGN_FUNCTION_TABLE_ENTRY(glDetachShader, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glDisableVertexAttribArray, success);
+    ASSIGN_FUNCTION_TABLE_ENTRY(glDrawArraysInstanced, success);
+    ASSIGN_FUNCTION_TABLE_ENTRY(glDrawElementsInstanced, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glEnableVertexAttribArray, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glFramebufferRenderbuffer, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glFramebufferTexture2D, success);
@@ -220,6 +222,7 @@ bool initializeOpenGLShims()
     ASSIGN_FUNCTION_TABLE_ENTRY(glVertexAttrib3fv, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glVertexAttrib4f, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glVertexAttrib4fv, success);
+    ASSIGN_FUNCTION_TABLE_ENTRY(glVertexAttribDivisor, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glVertexAttribPointer, success);
 
     if (!success)

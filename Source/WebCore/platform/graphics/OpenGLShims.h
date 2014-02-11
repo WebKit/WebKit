@@ -69,6 +69,8 @@ typedef void (GLAPIENTRY *glDeleteShaderType) (GLuint);
 typedef void (GLAPIENTRY *glDeleteVertexArraysType) (GLsizei, const GLuint*);
 typedef void (GLAPIENTRY *glDetachShaderType) (GLuint, GLuint);
 typedef void (GLAPIENTRY *glDisableVertexAttribArrayType) (GLuint);
+typedef void (GLAPIENTRY *glDrawArraysInstancedType) (GLenum, GLint, GLsizei, GLsizei);
+typedef void (GLAPIENTRY *glDrawElementsInstancedType) (GLenum, GLsizei, GLenum, const GLvoid*, GLsizei);
 typedef void (GLAPIENTRY *glEnableVertexAttribArrayType) (GLuint);
 typedef void (GLAPIENTRY *glFramebufferRenderbufferType) (GLenum, GLenum, GLenum, GLuint);
 typedef void (GLAPIENTRY *glFramebufferTexture2DType) (GLenum, GLenum, GLenum, GLuint, GLint);
@@ -138,6 +140,7 @@ typedef void (GLAPIENTRY *glVertexAttrib3fType) (GLuint, const GLfloat, const GL
 typedef void (GLAPIENTRY *glVertexAttrib3fvType) (GLuint, const GLfloat*);
 typedef void (GLAPIENTRY *glVertexAttrib4fType) (GLuint, const GLfloat, const GLfloat, const GLfloat, const GLfloat);
 typedef void (GLAPIENTRY *glVertexAttrib4fvType) (GLuint, const GLfloat*);
+typedef void (GLAPIENTRY *glVertexAttribDivisorType) (GLuint, GLuint);
 typedef void (GLAPIENTRY *glVertexAttribPointerType) (GLuint, GLint, GLenum, GLboolean, GLsizei, const GLvoid*);
 
 #define FUNCTION_TABLE_ENTRY(FunctionName) FunctionName##Type FunctionName
@@ -171,6 +174,8 @@ typedef struct _OpenGLFunctionTable {
     FUNCTION_TABLE_ENTRY(glDeleteVertexArrays);
     FUNCTION_TABLE_ENTRY(glDetachShader);
     FUNCTION_TABLE_ENTRY(glDisableVertexAttribArray);
+    FUNCTION_TABLE_ENTRY(glDrawArraysInstanced);
+    FUNCTION_TABLE_ENTRY(glDrawElementsInstanced);
     FUNCTION_TABLE_ENTRY(glEnableVertexAttribArray);
     FUNCTION_TABLE_ENTRY(glFramebufferRenderbuffer);
     FUNCTION_TABLE_ENTRY(glFramebufferTexture2D);
@@ -240,6 +245,7 @@ typedef struct _OpenGLFunctionTable {
     FUNCTION_TABLE_ENTRY(glVertexAttrib3fv);
     FUNCTION_TABLE_ENTRY(glVertexAttrib4f);
     FUNCTION_TABLE_ENTRY(glVertexAttrib4fv);
+    FUNCTION_TABLE_ENTRY(glVertexAttribDivisor);
     FUNCTION_TABLE_ENTRY(glVertexAttribPointer);
 } OpenGLFunctionTable;
 
@@ -282,6 +288,10 @@ typedef struct _OpenGLFunctionTable {
 #define glDeleteVertexArrays                   LOOKUP_GL_FUNCTION(glDeleteVertexArrays)
 #define glDetachShader                         LOOKUP_GL_FUNCTION(glDetachShader)
 #define glDisableVertexAttribArray             LOOKUP_GL_FUNCTION(glDisableVertexAttribArray)
+#define glDrawArraysInstancedEXT               glDrawArraysInstanced
+#define glDrawArraysInstanced                  LOOKUP_GL_FUNCTION(glDrawArraysInstanced)
+#define glDrawElementsInstancedEXT             glDrawElementsInstanced
+#define glDrawElementsInstanced                LOOKUP_GL_FUNCTION(glDrawElementsInstanced)
 #define glEnableVertexAttribArray              LOOKUP_GL_FUNCTION(glEnableVertexAttribArray)
 #define glFramebufferRenderbufferEXT           glFramebufferRenderbuffer
 #define glFramebufferRenderbuffer              LOOKUP_GL_FUNCTION(glFramebufferRenderbuffer)
@@ -365,6 +375,8 @@ typedef struct _OpenGLFunctionTable {
 #define glVertexAttrib3fv                      LOOKUP_GL_FUNCTION(glVertexAttrib3fv)
 #define glVertexAttrib4f                       LOOKUP_GL_FUNCTION(glVertexAttrib4f)
 #define glVertexAttrib4fv                      LOOKUP_GL_FUNCTION(glVertexAttrib4fv)
+#define glVertexAttribDivisorEXT               glVertexAttribDivisor
+#define glVertexAttribDivisor                  LOOKUP_GL_FUNCTION(glVertexAttribDivisor)
 #define glVertexAttribPointer                  LOOKUP_GL_FUNCTION(glVertexAttribPointer)
 #endif
 
