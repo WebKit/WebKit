@@ -335,7 +335,7 @@ class Instruction
                 else
                     $asm.puts "adds #{operands[2].armOperand}, #{operands[1].armOperand}, #{operands[0].armOperand}"
                 end
-            elsif operands.size == 3 and operands[0].immediate?
+            elsif operands.size == 3 and operands[0].register?
                 raise unless operands[1].register?
                 raise unless operands[2].register?
                 $asm.puts "adds #{armFlippedOperands(operands)}"
