@@ -556,6 +556,7 @@ end
 macro writeBarrierOnGlobalObject(valueOperand)
     if GGC
         loadisFromInstruction(valueOperand, t1)
+        loadConstantOrVariableTag(t1, t0)
         bineq t0, CellTag, .writeBarrierDone
     
         loadp CodeBlock[cfr], t3

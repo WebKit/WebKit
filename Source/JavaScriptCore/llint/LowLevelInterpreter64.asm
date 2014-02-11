@@ -409,7 +409,7 @@ end
 macro writeBarrierOnOperands(cellOperand, valueOperand)
     if GGC
         loadisFromInstruction(valueOperand, t1)
-        loadConstantOrVariable(t1, t0)
+        loadConstantOrVariableCell(t1, t0, .writeBarrierDone)
         btpz t0, .writeBarrierDone
     
         writeBarrierOnOperand(cellOperand)
@@ -420,7 +420,7 @@ end
 macro writeBarrierOnGlobalObject(valueOperand)
     if GGC
         loadisFromInstruction(valueOperand, t1)
-        loadConstantOrVariable(t1, t0)
+        loadConstantOrVariableCell(t1, t0, .writeBarrierDone)
         btpz t0, .writeBarrierDone
     
         loadp CodeBlock[cfr], t3

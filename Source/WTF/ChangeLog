@@ -1,3 +1,12 @@
+2014-02-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        32-bit LLInt writeBarrierOnGlobalObject is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=128556
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Platform.h: Removed OBJECT_MARK_LOGGING from Platform.h since it already exists in FeatureDefines.h
+
 2014-02-11  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error, deleted file in WTF.
