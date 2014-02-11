@@ -107,22 +107,39 @@ static bool isValidPropertyName(const String& name)
     return true;
 }
 
-static String convertPropertyNameToAttributeName(const String& name)
+template<typename CharacterType>
+static inline AtomicString convertPropertyNameToAttributeName(const StringImpl& name)
 {
-    StringBuilder builder;
-    builder.append("data-");
+    const CharacterType dataPrefix[] = { 'd', 'a', 't', 'a', '-' };
+
+    Vector<CharacterType, 32> buffer;
 
     unsigned length = name.length();
-    for (unsigned i = 0; i < length; ++i) {
-        UChar character = name[i];
-        if (isASCIIUpper(character)) {
-            builder.append('-');
-            builder.append(toASCIILower(character));
-        } else
-            builder.append(character);
-    }
+    buffer.reserveInitialCapacity(WTF_ARRAY_LENGTH(dataPrefix) + length);
 
-    return builder.toString();
+    buffer.append(dataPrefix, WTF_ARRAY_LENGTH(dataPrefix));
+
+    const CharacterType* characters = name.characters<CharacterType>();
+    for (unsigned i = 0; i < length; ++i) {
+        CharacterType character = characters[i];
+        if (isASCIIUpper(character)) {
+            buffer.append('-');
+            buffer.append(toASCIILower(character));
+        } else
+            buffer.append(character);
+    }
+    return AtomicString(buffer.data(), buffer.size());
+}
+
+static AtomicString convertPropertyNameToAttributeName(const String& name)
+{
+    if (name.isNull())
+        return nullAtom;
+
+    StringImpl* nameImpl = name.impl();
+    if (nameImpl->is8Bit())
+        return convertPropertyNameToAttributeName<LChar>(*nameImpl);
+    return convertPropertyNameToAttributeName<UChar>(*nameImpl);
 }
 
 void DatasetDOMStringMap::ref()
@@ -146,14 +163,27 @@ void DatasetDOMStringMap::getNames(Vector<String>& names)
     }
 }
 
-const AtomicString& DatasetDOMStringMap::item(const String& name, bool& isValid)
+const AtomicString& DatasetDOMStringMap::item(const String& propertyName, bool& isValid)
 {
     isValid = false;
     if (m_element.hasAttributes()) {
-        for (const Attribute& attribute : m_element.attributesIterator()) {
-            if (propertyNameMatchesAttributeName(name, attribute.localName())) {
+        AttributeIteratorAccessor attributeIteratorAccessor = m_element.attributesIterator();
+
+        if (attributeIteratorAccessor.attributeCount() == 1) {
+            // If the node has a single attribute, it is the dataset member accessed in most cases.
+            // Building a new AtomicString in that case is overkill so we do a direct character comparison.
+            const Attribute& attribute = *attributeIteratorAccessor.begin();
+            if (propertyNameMatchesAttributeName(propertyName, attribute.localName())) {
                 isValid = true;
                 return attribute.value();
+            }
+        } else {
+            AtomicString attributeName = convertPropertyNameToAttributeName(propertyName);
+            for (const Attribute& attribute : attributeIteratorAccessor) {
+                if (attribute.localName() == attributeName) {
+                    isValid = true;
+                    return attribute.value();
+                }
             }
         }
     }

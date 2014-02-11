@@ -1,3 +1,32 @@
+2014-02-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Speed up DatasetDOMStringMap::item() when the element has multiple attributes
+        https://bugs.webkit.org/show_bug.cgi?id=128058
+
+        Reviewed by Darin Adler.
+
+        Accessing data attributes by name through DatasetDOMStringMap involes the conversion
+        from JavaScript property name to attribute name (done with propertyNameMatchesAttributeName()).
+
+        When there is a single data attribute, that method is efficient. When there are several attributes,
+        comparing names character by character becomes a bottleneck.
+
+        This patch add an efficent path for this case: instead of converting the attribute name on the fly,
+        the JavaScript property name is converted to an attribute name so that it can compared by its
+        AtomicStringImpl pointer.
+
+        This method puts a lot more pressure on convertPropertyNameToAttributeName()'s speed. The method was
+        improved accordingly to compensate for its new caller.
+
+        When enumerating multiple attributes by name, this patch provides about 80% speedup.
+        I could not measure any slow down on the simple cases.
+
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::convertPropertyNameToAttributeName):
+        (WebCore::DatasetDOMStringMap::item):
+        * dom/ElementData.h:
+        (WebCore::AttributeIteratorAccessor::attributeCount):
+
 2014-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Address the review comments for r163825.

@@ -67,6 +67,9 @@ public:
 
     AttributeConstIterator begin() const { return AttributeConstIterator(m_array, 0); }
     AttributeConstIterator end() const { return AttributeConstIterator(m_array, m_size); }
+
+    unsigned attributeCount() const { return m_size; }
+
 private:
     const Attribute* m_array;
     unsigned m_size;
