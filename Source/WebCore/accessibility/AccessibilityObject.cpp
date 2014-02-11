@@ -601,7 +601,9 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
     
     AccessibilitySelectTextActivity& activity = criteria->activity;
     AccessibilitySelectTextAmbiguityResolution& ambiguityResolution = criteria->ambiguityResolution;
+    String& replacementString = criteria->replacementString;
     Vector<String>& searchStrings = criteria->searchStrings;
+    
     RefPtr<Range> selectedStringRange = selectionRange();
     
     RefPtr<Range> closestAfterStringRange = nullptr;
@@ -615,9 +617,15 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
     
     // Determine which candidate is closest to the selection and perform the activity.
     if (RefPtr<Range> closestStringRange = rangeClosestToRange(selectedStringRange.get(), closestAfterStringRange, closestBeforeStringRange)) {
-        if (activity == FindAndSelectActivity) {
-            frame->selection().setSelectedRange(closestStringRange.get(), DOWNSTREAM, true);
-            return closestStringRange->text();
+        String closestString = closestStringRange->text();
+        if (frame->selection().setSelectedRange(closestStringRange.get(), DOWNSTREAM, true)) {
+            switch (activity) {
+            case FindAndReplaceActivity:
+                frame->editor().replaceSelectionWithText(replacementString, true, true);
+                FALLTHROUGH;
+            case FindAndSelectActivity:
+                return closestString;
+            }
         }
     }
     

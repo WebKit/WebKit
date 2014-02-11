@@ -6,13 +6,13 @@
 </head>
 <body>
 
-<p id="text">The quick brown fox <span id="target">jumps</span> over the lazy dog.</p>
+<p contenteditable="true" id="text">The quick brown fox <span id="target">jumps</span> over the lazy dog.</p>
 
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
-    description("This tests the ability to select text with respect to selection.");
+    description("This tests the ability to select and replace text with respect to selection.");
     
     function selectedText() {
         return window.getSelection().toString();
@@ -74,6 +74,20 @@
         shouldBe("result", "'fox'");
         selection = selectedText();
         shouldBe("selection", "'fox'");
+        
+        // Select and replace text closest to selection (single search string).
+        selectElementText(target);
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "quick", "slow");
+        shouldBe("result", "'quick'");
+        selection = selectedText();
+        shouldBe("selection", "'slow'");
+        
+        // Select and replace text closest to selection (multiple search strings).
+        selectElementText(target);
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", ["dog", "fox"], "cat");
+        shouldBe("result", "'fox'");
+        selection = selectedText();
+        shouldBe("selection", "'cat'");
     }
 </script>
 

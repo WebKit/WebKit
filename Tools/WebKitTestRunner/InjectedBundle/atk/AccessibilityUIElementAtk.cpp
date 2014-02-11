@@ -1308,6 +1308,12 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPre
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString)
+{
+    // FIXME: implement
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfColumnHeaders()
 {
     if (!ATK_IS_TABLE(m_element.get()))
@@ -1792,12 +1798,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int offset)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int offset)
 {
     return stringAtOffset(m_element, ATK_TEXT_BOUNDARY_SENTENCE_START, offset);
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings)
-{
-    // FIXME: implement
-    return nullptr;
 }
 
 } // namespace WTR

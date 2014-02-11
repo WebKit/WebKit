@@ -1,3 +1,37 @@
+2014-02-11  Samuel White  <samuel_white@apple.com>
+
+        AX: Add text replacement activity support to NSAccessibilitySelectTextWithCriteriaParameterizedAttribute.
+        https://bugs.webkit.org/show_bug.cgi?id=128397
+
+        Reviewed by Chris Fleizach.
+
+        Updated testing methods to accept a replacement string. This enables us to test text
+        replacement support for the AXSelectTextWithCriteria parameterized attribute.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (selectTextWithCriteriaCallback):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (selectTextParameterizedAttributeForCriteria):
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::selectTextParameterizedAttributeForCriteria):
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+
 2014-02-11  David Kilzer  <ddkilzer@apple.com>
 
         [ASan] Fix build failures in Tools due to missing $(inherited) values

@@ -387,6 +387,7 @@ struct PlainTextRange {
 };
 
 enum AccessibilitySelectTextActivity {
+    FindAndReplaceActivity,
     FindAndSelectActivity
 };
 
@@ -399,11 +400,13 @@ enum AccessibilitySelectTextAmbiguityResolution {
 struct AccessibilitySelectTextCriteria {
     AccessibilitySelectTextActivity activity;
     AccessibilitySelectTextAmbiguityResolution ambiguityResolution;
+    String replacementString;
     Vector<String> searchStrings;
     
-    AccessibilitySelectTextCriteria(AccessibilitySelectTextActivity activity, AccessibilitySelectTextAmbiguityResolution ambiguityResolution)
+    AccessibilitySelectTextCriteria(AccessibilitySelectTextActivity activity, AccessibilitySelectTextAmbiguityResolution ambiguityResolution, const String& replacementString)
         : activity(activity)
         , ambiguityResolution(ambiguityResolution)
+        , replacementString(replacementString)
     { }
 };
 

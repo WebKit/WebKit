@@ -1,3 +1,15 @@
+2014-02-11  Samuel White  <samuel_white@apple.com>
+
+        AX: Add text replacement activity support to NSAccessibilitySelectTextWithCriteriaParameterizedAttribute.
+        https://bugs.webkit.org/show_bug.cgi?id=128397
+
+        Reviewed by Chris Fleizach.
+
+        Updated test and expectations to handle text replacement.
+
+        * platform/mac/accessibility/select-text-expected.txt:
+        * platform/mac/accessibility/select-text.html:
+
 2014-02-11  Brady Eidson  <beidson@apple.com>
 
         IndexedDB tests on some bots are flakey (timeouts)

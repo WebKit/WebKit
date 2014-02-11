@@ -1,3 +1,21 @@
+2014-02-11  Samuel White  <samuel_white@apple.com>
+
+        AX: Add text replacement activity support to NSAccessibilitySelectTextWithCriteriaParameterizedAttribute.
+        https://bugs.webkit.org/show_bug.cgi?id=128397
+
+        Reviewed by Chris Fleizach.
+
+        Added text replacement support for the AXSelectTextWithCriteria parameterized attribute.
+
+        No new test. Updated platform/mac/accessibility/select-text.html to test the added functionality.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::selectText):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilitySelectTextCriteria::AccessibilitySelectTextCriteria):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute):
+
 2014-02-11  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Unreviewed. Speculative test fix.

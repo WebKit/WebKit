@@ -376,6 +376,10 @@ using namespace HTMLNames;
 #define NSAccessibilitySelectTextActivity @"AXSelectTextActivity"
 #endif
 
+#ifndef NSAccessibilitySelectTextActivityFindAndReplace
+#define NSAccessibilitySelectTextActivityFindAndReplace @"AXSelectTextActivityFindAndReplace"
+#endif
+
 #ifndef NSAccessibilitySelectTextActivityFindAndSelect
 #define NSAccessibilitySelectTextActivityFindAndSelect @"AXSelectTextActivityFindAndSelect"
 #endif
@@ -394,6 +398,10 @@ using namespace HTMLNames;
 
 #ifndef NSAccessibilitySelectTextAmbiguityResolutionClosestToSelection
 #define NSAccessibilitySelectTextAmbiguityResolutionClosestToSelection @"AXSelectTextAmbiguityResolutionClosestToSelection"
+#endif
+
+#ifndef NSAccessibilitySelectTextReplacementString
+#define NSAccessibilitySelectTextReplacementString @"AXSelectTextReplacementString"
 #endif
 
 #ifndef NSAccessibilitySelectTextSearchStrings
@@ -619,10 +627,16 @@ static AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate
 
 static AccessibilitySelectTextCriteria accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute(const NSDictionary *parameterizedAttribute)
 {
+    NSString *activityParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextActivity];
     NSString *ambiguityResolutionParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextAmbiguityResolution];
+    NSString *replacementStringParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextReplacementString];
     NSArray *searchStringsParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextSearchStrings];
     
     AccessibilitySelectTextActivity activity = FindAndSelectActivity;
+    if ([activityParameter isKindOfClass:[NSString class]]) {
+        if ([activityParameter isEqualToString:NSAccessibilitySelectTextActivityFindAndReplace])
+            activity = FindAndReplaceActivity;
+    }
     
     AccessibilitySelectTextAmbiguityResolution ambiguityResolution = ClosestToSelectionAmbiguityResolution;
     if ([ambiguityResolutionParameter isKindOfClass:[NSString class]]) {
@@ -632,7 +646,11 @@ static AccessibilitySelectTextCriteria accessibilitySelectTextCriteriaForCriteri
             ambiguityResolution = ClosestBeforeSelectionAmbiguityResolution;
     }
     
-    AccessibilitySelectTextCriteria criteria(activity, ambiguityResolution);
+    String replacementString;
+    if ([replacementStringParameter isKindOfClass:[NSString class]])
+        replacementString = replacementStringParameter;
+    
+    AccessibilitySelectTextCriteria criteria(activity, ambiguityResolution, replacementString);
     
     if ([searchStringsParameter isKindOfClass:[NSArray class]]) {
         size_t searchStringsCount = static_cast<size_t>([searchStringsParameter count]);
