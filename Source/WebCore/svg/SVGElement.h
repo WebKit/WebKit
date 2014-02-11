@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -110,6 +110,7 @@ public:
     void setCorrespondingElement(SVGElement*);
 
     void synchronizeAnimatedSVGAttribute(const QualifiedName&) const;
+    static void synchronizeAllAnimatedSVGAttribute(SVGElement*);
  
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() override;
 

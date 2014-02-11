@@ -113,6 +113,13 @@ public:
     bool isEquivalent(const ElementData* other) const;
 
     bool isUnique() const { return m_arraySizeAndFlags & s_flagIsUnique; }
+    static uint32_t isUniqueFlag() { return s_flagIsUnique; }
+
+    static ptrdiff_t arraySizeAndFlagsMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_arraySizeAndFlags); }
+    static inline uint32_t styleAttributeIsDirtyFlag() { return s_flagStyleAttributeIsDirty; }
+    static uint32_t animatedSVGAttributesAreDirtyFlag() { return s_flagAnimatedSVGAttributesAreDirty; }
+
+    static uint32_t arraySizeOffset() { return s_flagCount; }
 
 private:
     mutable uint32_t m_arraySizeAndFlags;
@@ -186,6 +193,8 @@ public:
     explicit ShareableElementData(const UniqueElementData&);
     ~ShareableElementData();
 
+    static ptrdiff_t attributeArrayMemoryOffset() { return OBJECT_OFFSETOF(ShareableElementData, m_attributeArray); }
+
     Attribute m_attributeArray[0];
 };
 
@@ -209,8 +218,11 @@ public:
     explicit UniqueElementData(const ShareableElementData&);
     explicit UniqueElementData(const UniqueElementData&);
 
+    static ptrdiff_t attributeVectorMemoryOffset() { return OBJECT_OFFSETOF(UniqueElementData, m_attributeVector); }
+
     mutable RefPtr<StyleProperties> m_presentationAttributeStyle;
-    Vector<Attribute, 4> m_attributeVector;
+    typedef Vector<Attribute, 4> AttributeVector;
+    AttributeVector m_attributeVector;
 };
 
 inline void ElementData::deref()

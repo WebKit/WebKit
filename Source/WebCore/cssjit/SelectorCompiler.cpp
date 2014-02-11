@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,21 @@
 
 #include "CSSSelector.h"
 #include "Element.h"
+#include "ElementData.h"
 #include "FunctionCall.h"
+#include "HTMLNames.h"
 #include "NodeRenderStyle.h"
 #include "QualifiedName.h"
 #include "RegisterAllocator.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
+#include "SVGElement.h"
 #include "StackAllocator.h"
+#include "StyledElement.h"
 #include <JavaScriptCore/LinkBuffer.h>
 #include <JavaScriptCore/MacroAssembler.h>
 #include <JavaScriptCore/VM.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -103,9 +108,11 @@ struct SelectorFragment {
     const AtomicString* id;
     Vector<const AtomicStringImpl*, 1> classNames;
     HashSet<unsigned> pseudoClasses;
+    Vector<const CSSSelector*> attributes;
 };
 
 typedef JSC::MacroAssembler Assembler;
+typedef Vector<SelectorFragment, 8> SelectorFragmentList;
 
 class SelectorCodeGenerator {
 public:
@@ -139,6 +146,10 @@ private:
     // Element properties matchers.
     void generateElementMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateSynchronizeStyleAttribute(Assembler::RegisterID elementDataArraySizeAndFlags);
+    void generateSynchronizeAllAnimatedSVGAttribute(Assembler::RegisterID elementDataArraySizeAndFlags);
+    void generateElementAttributesMatching(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const SelectorFragment&);
+    void generateElementAttributeMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, Assembler::RegisterID decIndexRegister, const CSSSelector* attributeSelector);
     void generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch);
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
@@ -151,7 +162,7 @@ private:
     Vector<std::pair<Assembler::Call, JSC::FunctionPtr>> m_functionCalls;
 
     FunctionType m_functionType;
-    Vector<SelectorFragment, 8> m_selectorFragments;
+    SelectorFragmentList m_selectorFragments;
     bool m_selectorCannotMatchAnything;
 
     StackAllocator::StackReference m_checkingContextStackReference;
@@ -255,9 +266,11 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
             if (m_functionType == FunctionType::CannotCompile)
                 goto CannotHandleSelector;
             break;
+        case CSSSelector::Set:
+            fragment.attributes.append(selector);
+            break;
         case CSSSelector::Unknown:
         case CSSSelector::Exact:
-        case CSSSelector::Set:
         case CSSSelector::List:
         case CSSSelector::Hyphen:
         case CSSSelector::PseudoElement:
@@ -296,10 +309,50 @@ CannotHandleSelector:
     m_selectorFragments.clear();
 }
 
+static inline unsigned minimumRegisterRequirements(const SelectorFragmentList& selectorFragments)
+{
+    // Strict minimum to match anything interesting:
+    // Element + BacktrackingRegister + ElementData + a pointer to values + an index on that pointer + the value we expect;
+    unsigned minimum = 6;
+
+    // Attributes cause some register pressure.
+    for (unsigned selectorFragmentIndex = 0; selectorFragmentIndex < selectorFragments.size(); ++selectorFragmentIndex) {
+        const SelectorFragment& selectorFragment = selectorFragments[selectorFragmentIndex];
+        const Vector<const CSSSelector*>& attributes = selectorFragment.attributes;
+
+        for (unsigned attributeIndex = 0; attributeIndex < attributes.size(); ++attributeIndex) {
+            // Element + ElementData + scratchRegister + attributeArrayPointer + expectedLocalName + qualifiedNameImpl.
+            unsigned attributeMinimum = 6;
+            if (selectorFragment.traversalBacktrackingAction == BacktrackingAction::JumpToDescendantTail
+                || selectorFragment.matchingBacktrackingAction == BacktrackingAction::JumpToDescendantTail)
+                attributeMinimum += 1; // If there is a DescendantTail, there is a backtracking register.
+
+            if (attributes.size() != 1)
+                attributeMinimum += 2; // For the local copy of the counter and attributeArrayPointer.
+
+            const CSSSelector* attributeSelector = attributes[attributeIndex];
+            if (attributeSelector->attribute().prefix() != starAtom && !attributeSelector->attribute().namespaceURI().isNull())
+                attributeMinimum += 1; // Additional register for the expected namespace.
+
+            minimum = std::max(minimum, attributeMinimum);
+        }
+    }
+
+    return minimum;
+}
+
 inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC::MacroAssemblerCodeRef& codeRef)
 {
     if (m_selectorFragments.isEmpty() && !m_selectorCannotMatchAnything)
         return SelectorCompilationStatus::CannotCompile;
+
+    bool reservedCalleeSavedRegisters = false;
+    unsigned availableRegisterCount = m_registerAllocator.availableRegisterCount();
+    unsigned minimumRegisterCountForAttributes = minimumRegisterRequirements(m_selectorFragments);
+    if (availableRegisterCount < minimumRegisterCountForAttributes) {
+        reservedCalleeSavedRegisters = true;
+        m_registerAllocator.reserveCalleeSavedRegisters(m_stackAllocator, minimumRegisterCountForAttributes - availableRegisterCount);
+    }
 
     m_registerAllocator.allocateRegister(elementAddressRegister);
 
@@ -332,21 +385,36 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC
 
     m_registerAllocator.deallocateRegister(elementAddressRegister);
 
-    if (m_functionType == FunctionType::SimpleSelectorChecker) {
-        if (!m_selectorCannotMatchAnything) {
-            // Success.
-            m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
+    if (m_functionType == FunctionType::SimpleSelectorChecker && m_selectorCannotMatchAnything) {
+        m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
+        m_assembler.ret();
+    } else if (m_functionType == FunctionType::SimpleSelectorChecker) {
+        // Success.
+        m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
+        if (!reservedCalleeSavedRegisters)
             m_assembler.ret();
-        }
 
         // Failure.
-        if (m_selectorCannotMatchAnything || !failureCases.empty()) {
+        if (!failureCases.empty()) {
+            Assembler::Jump skipFailureCase;
+            if (reservedCalleeSavedRegisters)
+                skipFailureCase = m_assembler.jump();
+
             failureCases.link(&m_assembler);
             m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
+
+            if (!reservedCalleeSavedRegisters)
+                m_assembler.ret();
+            else
+                skipFailureCase.link(&m_assembler);
+        }
+        if (reservedCalleeSavedRegisters) {
+            m_registerAllocator.restoreCalleeSavedRegisters(m_stackAllocator);
             m_assembler.ret();
         }
     } else {
         ASSERT(m_functionType == FunctionType::SelectorCheckerWithCheckingContext);
+        ASSERT(!m_selectorCannotMatchAnything);
 
         // Success.
         m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
@@ -359,17 +427,17 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC
 
         // Failure.
         if (!failureCases.empty()) {
-            Assembler::Jump jumpToReturn = m_assembler.jump();
+            Assembler::Jump skipFailureCase = m_assembler.jump();
 
             failureCases.link(&m_assembler);
             failureStack.discard();
             m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
 
-            jumpToReturn.link(&m_assembler);
+            skipFailureCase.link(&m_assembler);
         }
 
         m_stackAllocator.merge(std::move(successStack), std::move(failureStack));
-
+        m_registerAllocator.restoreCalleeSavedRegisters(m_stackAllocator);
         m_assembler.ret();
     }
 
@@ -787,7 +855,7 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
 
 void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    if (!fragment.id && fragment.classNames.isEmpty())
+    if (!fragment.id && fragment.classNames.isEmpty() && fragment.attributes.isEmpty())
         return;
 
     //  Generate:
@@ -802,6 +870,166 @@ void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& fai
         generateElementHasId(failureCases, elementDataAddress, *fragment.id);
     if (!fragment.classNames.isEmpty())
         generateElementHasClasses(failureCases, elementDataAddress, fragment.classNames);
+    if (!fragment.attributes.isEmpty())
+    generateElementAttributesMatching(failureCases, elementDataAddress, fragment);
+}
+
+static inline Assembler::Jump testIsHTMLFlagOnNode(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID nodeAddress)
+{
+    return assembler.branchTest32(condition, Assembler::Address(nodeAddress, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsHTML()));
+}
+
+static inline bool canMatchStyleAttribute(const SelectorFragment& fragment)
+{
+    for (unsigned i = 0; i < fragment.attributes.size(); ++i) {
+        const CSSSelector* attributeSelector = fragment.attributes[i];
+        const QualifiedName& attributeName = attributeSelector->attribute();
+        if (Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeName.localName(), attributeName.namespaceURI())
+            || Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeSelector->attributeCanonicalLocalName(), attributeName.namespaceURI())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void SelectorCodeGenerator::generateSynchronizeStyleAttribute(Assembler::RegisterID elementDataArraySizeAndFlags)
+{
+    // The style attribute is updated lazily based on the flag styleAttributeIsDirty.
+    Assembler::Jump styleAttributeNotDirty = m_assembler.branchTest32(Assembler::Zero, elementDataArraySizeAndFlags, Assembler::TrustedImm32(ElementData::styleAttributeIsDirtyFlag()));
+
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(StyledElement::synchronizeStyleAttributeInternal);
+    Assembler::RegisterID elementAddress = elementAddressRegister;
+    functionCall.setFirstArgument(elementAddress);
+    functionCall.call();
+
+    styleAttributeNotDirty.link(&m_assembler);
+}
+
+void SelectorCodeGenerator::generateSynchronizeAllAnimatedSVGAttribute(Assembler::RegisterID elementDataArraySizeAndFlags)
+{
+    // SVG attributes can be updated lazily depending on the flag AnimatedSVGAttributesAreDirty. We need to check
+    // that first.
+    Assembler::Jump animatedSVGAttributesNotDirty = m_assembler.branchTest32(Assembler::Zero, elementDataArraySizeAndFlags, Assembler::TrustedImm32(ElementData::animatedSVGAttributesAreDirtyFlag()));
+
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(SVGElement::synchronizeAllAnimatedSVGAttribute);
+    Assembler::RegisterID elementAddress = elementAddressRegister;
+    functionCall.setFirstArgument(elementAddress);
+    functionCall.call();
+
+    animatedSVGAttributesNotDirty.link(&m_assembler);
+}
+
+void SelectorCodeGenerator::generateElementAttributesMatching(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const SelectorFragment& fragment)
+{
+    LocalRegister scratchRegister(m_registerAllocator);
+    Assembler::RegisterID elementDataArraySizeAndFlags = scratchRegister;
+    Assembler::RegisterID attributeArrayLength = scratchRegister;
+
+    m_assembler.load32(Assembler::Address(elementDataAddress, ElementData::arraySizeAndFlagsMemoryOffset()), elementDataArraySizeAndFlags);
+
+    if (canMatchStyleAttribute(fragment))
+        generateSynchronizeStyleAttribute(elementDataArraySizeAndFlags);
+
+    // FIXME: Systematically generating the function call for animatable SVG attributes causes a runtime penaltly. We should instead
+    // filter from the list of SVGElement::isAnimatableAttribute at runtime when compiling.
+    generateSynchronizeAllAnimatedSVGAttribute(elementDataArraySizeAndFlags);
+
+    // Attributes can be stored either in a separate vector for UniqueElementData, or after the elementData itself
+    // for ShareableElementData.
+    LocalRegister attributeArrayPointer(m_registerAllocator);
+    Assembler::Jump isShareableElementData  = m_assembler.branchTest32(Assembler::Zero, elementDataArraySizeAndFlags, Assembler::TrustedImm32(ElementData::isUniqueFlag()));
+    {
+        ptrdiff_t attributeVectorOffset = UniqueElementData::attributeVectorMemoryOffset();
+        m_assembler.loadPtr(Assembler::Address(elementDataAddress, attributeVectorOffset + UniqueElementData::AttributeVector::dataMemoryOffset()), attributeArrayPointer);
+        m_assembler.load32(Assembler::Address(elementDataAddress, attributeVectorOffset + UniqueElementData::AttributeVector::sizeMemoryOffset()), attributeArrayLength);
+    }
+    Assembler::Jump skipShareable = m_assembler.jump();
+
+    {
+        isShareableElementData.link(&m_assembler);
+        m_assembler.urshift32(elementDataArraySizeAndFlags, Assembler::TrustedImm32(ElementData::arraySizeOffset()), attributeArrayLength);
+        m_assembler.add64(Assembler::TrustedImm32(ShareableElementData::attributeArrayMemoryOffset()), elementDataAddress, attributeArrayPointer);
+    }
+
+    skipShareable.link(&m_assembler);
+
+    // If there are no attributes, fail immediately.
+    failureCases.append(m_assembler.branchTest32(Assembler::Zero, attributeArrayLength));
+
+    unsigned attributeCount = fragment.attributes.size();
+    for (unsigned i = 0; i < attributeCount; ++i) {
+        Assembler::RegisterID decIndexRegister;
+        Assembler::RegisterID currentAttributeAddress;
+
+        bool isLastAttribute = i == (attributeCount - 1);
+        if (!isLastAttribute) {
+            // We need to make a copy to let the next iterations use the values.
+            currentAttributeAddress = m_registerAllocator.allocateRegister();
+            decIndexRegister = m_registerAllocator.allocateRegister();
+            m_assembler.move(attributeArrayPointer, currentAttributeAddress);
+            m_assembler.move(attributeArrayLength, decIndexRegister);
+        } else {
+            currentAttributeAddress = attributeArrayPointer;
+            decIndexRegister = attributeArrayLength;
+        }
+
+        generateElementAttributeMatching(failureCases, currentAttributeAddress, decIndexRegister, fragment.attributes[i]);
+
+        if (!isLastAttribute) {
+            m_registerAllocator.deallocateRegister(decIndexRegister);
+            m_registerAllocator.deallocateRegister(currentAttributeAddress);
+        }
+    }
+}
+
+void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, Assembler::RegisterID decIndexRegister, const CSSSelector* attributeSelector)
+{
+    // Get the localName used for comparison. HTML elements use a lowercase local name known in selectors as canonicalLocalName.
+    LocalRegister localNameToMatch(m_registerAllocator);
+
+    // In general, canonicalLocalName and localName are the same. When they differ, we have to check if the node is HTML to know
+    // which one to use.
+    const AtomicStringImpl* canonicalLocalName = attributeSelector->attributeCanonicalLocalName().impl();
+    const AtomicStringImpl* localName = attributeSelector->attribute().localName().impl();
+    if (canonicalLocalName == localName)
+        m_assembler.move(Assembler::TrustedImmPtr(canonicalLocalName), localNameToMatch);
+    else {
+        m_assembler.move(Assembler::TrustedImmPtr(canonicalLocalName), localNameToMatch);
+        Assembler::Jump elementIsHTML = testIsHTMLFlagOnNode(Assembler::NonZero, m_assembler, elementAddressRegister);
+        m_assembler.move(Assembler::TrustedImmPtr(localName), localNameToMatch);
+        elementIsHTML.link(&m_assembler);
+    }
+
+    Assembler::JumpList successCases;
+    Assembler::Label loopStart(m_assembler.label());
+
+    LocalRegister qualifiedNameImpl(m_registerAllocator);
+    m_assembler.loadPtr(Assembler::Address(currentAttributeAddress, Attribute::nameMemoryOffset()), qualifiedNameImpl);
+
+    bool shouldCheckNamespace = attributeSelector->attribute().prefix() != starAtom;
+    if (shouldCheckNamespace) {
+        Assembler::Jump nameDoesNotMatch = m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameToMatch);
+
+        const AtomicStringImpl* namespaceURI = attributeSelector->attribute().namespaceURI().impl();
+        if (namespaceURI) {
+            LocalRegister namespaceToMatch(m_registerAllocator);
+            m_assembler.move(Assembler::TrustedImmPtr(namespaceURI), namespaceToMatch);
+            successCases.append(m_assembler.branchPtr(Assembler::Equal, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), namespaceToMatch));
+        } else
+            successCases.append(m_assembler.branchTestPtr(Assembler::Zero, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset())));
+        nameDoesNotMatch.link(&m_assembler);
+    } else
+        successCases.append(m_assembler.branchPtr(Assembler::Equal, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameToMatch));
+
+    // If we reached the last element -> failure.
+    failureCases.append(m_assembler.branchSub32(Assembler::Zero, Assembler::TrustedImm32(1), decIndexRegister));
+
+    // Otherwise just loop over.
+    m_assembler.addPtr(Assembler::TrustedImm32(sizeof(Attribute)), currentAttributeAddress);
+    m_assembler.jump().linkTo(loopStart, &m_assembler);
+    successCases.link(&m_assembler);
 }
 
 inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch)

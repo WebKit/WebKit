@@ -1,3 +1,82 @@
+2014-02-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add the basic infrastructure to compile attributes matching in selectors
+        https://bugs.webkit.org/show_bug.cgi?id=128484
+
+        Reviewed by Gavin Barraclough.
+
+        Tests: fast/selectors/querySelector-attribute-match-with-child-backtracking.html
+               fast/selectors/querySelector-long-attribute-match-with-child-backtracking.html
+               fast/selectors/querySelector-long-multiple-attribute-match-with-child-backtracking.html
+               fast/selectors/querySelector-multiple-attribute-match-with-child-backtracking.html
+
+        Add the infrastructure to match attributes. This only add basic support for the 'Set' match
+        type, the other match types will have to be built on top.
+
+        * cssjit/RegisterAllocator.h:
+        (WebCore::RegisterAllocator::availableRegisterCount):
+        (WebCore::RegisterAllocator::allocateRegister):
+        (WebCore::RegisterAllocator::deallocateRegister):
+        (WebCore::RegisterAllocator::reserveCalleeSavedRegisters):
+        (WebCore::RegisterAllocator::restoreCalleeSavedRegisters):
+        (WebCore::RegisterAllocator::allocatedRegisters):
+        (WebCore::RegisterAllocator::RegisterAllocator):
+        (WebCore::RegisterAllocator::~RegisterAllocator):
+        In the worst case, matching attributes can take up to 10 registers. On x86_64, we have
+        8 caller-saved registers. The extra 2 registers are simply added by taking callee-saved registers.
+
+        RegisterAllocator is modified to know support saving and restoring callee saved registers.
+        The list of available registers is changed from a vector to a HashSet because the registers
+        are removed from arbitrary locations in restoreCalleeSavedRegisters(). The m_allocatedRegisters
+        remain a vector since the allocation/release pattern remain ordered.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+
+        (WebCore::SelectorCompiler::minimumRegisterRequirements):
+        This new utility finds the minimum number of registers needed to compile the input. In most
+        cases we have plenty enough. In rare cases we need to saved a few registers to the stack.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::compile):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementDataMatching):
+        (WebCore::SelectorCompiler::testIsHTMLFlagOnNode):
+        (WebCore::SelectorCompiler::canMatchStyleAttribute):
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSynchronizeStyleAttribute):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSynchronizeAllAnimatedSVGAttribute):
+        The style attribute and certain SVG attributes can be modified lazily. In those cases,
+        the element needs to be updated before querying the attributes.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributesMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeMatching):
+        Generate the attribute matching. For each CSSSelector matching an attribute, we generate
+        a loop over all the attributes of the element, maching the particular CSSSelector.
+        This makes no attempt at grouping related queries since those do not seem to happen a lot
+        in practice.
+
+        * dom/Attribute.h:
+        (WebCore::Attribute::nameMemoryOffset):
+        (WebCore::Attribute::nameMatchesFilter):
+        (WebCore::Attribute::matches):
+        * dom/ElementData.h:
+        (WebCore::ElementData::isUniqueFlag):
+        (WebCore::ElementData::arraySizeAndFlagsMemoryOffset):
+        (WebCore::ElementData::styleAttributeIsDirtyFlag):
+        (WebCore::ElementData::animatedSVGAttributesAreDirtyFlag):
+        (WebCore::ElementData::arraySizeOffset):
+        (WebCore::ShareableElementData::attributeArrayMemoryOffset):
+        (WebCore::UniqueElementData::attributeVectorMemoryOffset):
+        * dom/Node.h:
+        (WebCore::Node::flagIsHTML):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::synchronizeStyleAttributeInternal):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::synchronizeStyleAttributeInternal):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::synchronizeAllAnimatedSVGAttribute):
+        (WebCore::SVGElement::synchronizeAnimatedSVGAttribute):
+        * svg/SVGElement.h:
+
 2014-02-10  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/indexes.html fails

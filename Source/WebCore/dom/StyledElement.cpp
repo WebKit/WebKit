@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2010, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -118,13 +118,13 @@ static PresentationAttributeCacheCleaner& presentationAttributeCacheCleaner()
     return cleaner;
 }
 
-void StyledElement::synchronizeStyleAttributeInternal() const
+void StyledElement::synchronizeStyleAttributeInternal(StyledElement* styledElement)
 {
-    ASSERT(elementData());
-    ASSERT(elementData()->styleAttributeIsDirty());
-    elementData()->setStyleAttributeIsDirty(false);
-    if (const StyleProperties* inlineStyle = this->inlineStyle())
-        const_cast<StyledElement*>(this)->setSynchronizedLazyAttribute(styleAttr, inlineStyle->asText());
+    ASSERT(styledElement->elementData());
+    ASSERT(styledElement->elementData()->styleAttributeIsDirty());
+    styledElement->elementData()->setStyleAttributeIsDirty(false);
+    if (const StyleProperties* inlineStyle = styledElement->inlineStyle())
+        styledElement->setSynchronizedLazyAttribute(styleAttr, inlineStyle->asText());
 }
 
 StyledElement::~StyledElement()

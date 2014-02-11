@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2012, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,8 +49,10 @@ public:
     const AtomicString& namespaceURI() const { return m_name.namespaceURI(); }
 
     const QualifiedName& name() const { return m_name; }
+    static ptrdiff_t nameMemoryOffset() { return OBJECT_OFFSETOF(Attribute, m_name); }
 
     bool isEmpty() const { return m_value.isEmpty(); }
+    static bool nameMatchesFilter(const QualifiedName&, const AtomicString& filterPrefix, const AtomicString& filterLocalName, const AtomicString& filterNamespaceURI);
     bool matches(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI) const;
 
     void setValue(const AtomicString& value) { m_value = value; }
@@ -72,11 +74,16 @@ private:
     AtomicString m_value;
 };
 
+inline bool Attribute::nameMatchesFilter(const QualifiedName& name, const AtomicString& filterPrefix, const AtomicString& filterLocalName, const AtomicString& filterNamespaceURI)
+{
+    if (filterLocalName != name.localName())
+        return false;
+    return filterPrefix == starAtom || filterNamespaceURI == name.namespaceURI();
+}
+
 inline bool Attribute::matches(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI) const
 {
-    if (localName != this->localName())
-        return false;
-    return prefix == starAtom || namespaceURI == this->namespaceURI();
+    return nameMatchesFilter(m_name, prefix, localName, namespaceURI);
 }
 
 } // namespace WebCore

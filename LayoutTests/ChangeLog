@@ -1,3 +1,21 @@
+2014-02-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add the basic infrastructure to compile attributes matching in selectors
+        https://bugs.webkit.org/show_bug.cgi?id=128484
+
+        Reviewed by Gavin Barraclough.
+
+        Tests the various cases requiring more register than what is available from the caller-saved pool.
+
+        * fast/selectors/querySelector-attribute-match-with-child-backtracking-expected.txt: Added.
+        * fast/selectors/querySelector-attribute-match-with-child-backtracking.html: Added.
+        * fast/selectors/querySelector-long-attribute-match-with-child-backtracking-expected.txt: Added.
+        * fast/selectors/querySelector-long-attribute-match-with-child-backtracking.html: Added.
+        * fast/selectors/querySelector-long-multiple-attribute-match-with-child-backtracking-expected.txt: Added.
+        * fast/selectors/querySelector-long-multiple-attribute-match-with-child-backtracking.html: Added.
+        * fast/selectors/querySelector-multiple-attribute-match-with-child-backtracking-expected.txt: Added.
+        * fast/selectors/querySelector-multiple-attribute-match-with-child-backtracking.html: Added.
+
 2014-02-10  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/indexes.html fails

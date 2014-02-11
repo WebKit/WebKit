@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -306,6 +306,7 @@ public:
 
     T* buffer() { return m_buffer; }
     const T* buffer() const { return m_buffer; }
+    static ptrdiff_t bufferMemoryOffset() { return OBJECT_OFFSETOF(VectorBufferBase, m_buffer); }
     size_t capacity() const { return m_capacity; }
 
     MallocPtr<T> releaseBuffer()
@@ -383,6 +384,7 @@ public:
 
     using Base::buffer;
     using Base::capacity;
+    using Base::bufferMemoryOffset;
 
     using Base::releaseBuffer;
 
@@ -487,6 +489,7 @@ public:
 
     using Base::buffer;
     using Base::capacity;
+    using Base::bufferMemoryOffset;
 
     MallocPtr<T> releaseBuffer()
     {
@@ -574,6 +577,7 @@ public:
     Vector& operator=(Vector&&);
 
     size_t size() const { return m_size; }
+    static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
     size_t capacity() const { return Base::capacity(); }
     bool isEmpty() const { return !size(); }
 
@@ -607,6 +611,7 @@ public:
 
     T* data() { return Base::buffer(); }
     const T* data() const { return Base::buffer(); }
+    static ptrdiff_t dataMemoryOffset() { return Base::bufferMemoryOffset(); }
 
     iterator begin() { return data(); }
     iterator end() { return begin() + m_size; }

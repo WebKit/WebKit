@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -729,16 +729,24 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString&
         svgAttributeChanged(name);
 }
 
+void SVGElement::synchronizeAllAnimatedSVGAttribute(SVGElement* svgElement)
+{
+    ASSERT(svgElement->elementData());
+    ASSERT(svgElement->elementData()->animatedSVGAttributesAreDirty());
+
+    svgElement->localAttributeToPropertyMap().synchronizeProperties(svgElement);
+    svgElement->elementData()->setAnimatedSVGAttributesAreDirty(false);
+}
+
 void SVGElement::synchronizeAnimatedSVGAttribute(const QualifiedName& name) const
 {
     if (!elementData() || !elementData()->animatedSVGAttributesAreDirty())
         return;
 
     SVGElement* nonConstThis = const_cast<SVGElement*>(this);
-    if (name == anyQName()) {
-        nonConstThis->localAttributeToPropertyMap().synchronizeProperties(nonConstThis);
-        elementData()->setAnimatedSVGAttributesAreDirty(false);
-    } else
+    if (name == anyQName())
+        synchronizeAllAnimatedSVGAttribute(nonConstThis);
+    else
         nonConstThis->localAttributeToPropertyMap().synchronizeProperty(nonConstThis, name);
 }
 

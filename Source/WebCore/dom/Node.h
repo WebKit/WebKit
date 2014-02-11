@@ -561,6 +561,7 @@ public:
 #if ENABLE(CSS_SELECTOR_JIT)
     static ptrdiff_t nodeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_nodeFlags); }
     static int32_t flagIsElement() { return IsElementFlag; }
+    static int32_t flagIsHTML() { return IsHTMLFlag; }
     static int32_t flagIsLink() { return IsLinkFlag; }
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
