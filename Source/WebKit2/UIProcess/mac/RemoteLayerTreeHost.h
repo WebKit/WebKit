@@ -39,20 +39,24 @@ class WebPageProxy;
 
 class RemoteLayerTreeHost {
 public:
-    explicit RemoteLayerTreeHost(WebPageProxy*);
+    explicit RemoteLayerTreeHost();
     virtual ~RemoteLayerTreeHost();
 
     CALayer *getLayer(WebCore::GraphicsLayer::PlatformLayerID) const;
+    CALayer *rootLayer() const { return m_rootLayer; }
 
-    void updateLayerTree(const RemoteLayerTreeTransaction&);
+    // Returns true if the root layer changed.
+    bool updateLayerTree(const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
+
+    void setIsDebugLayerTreeHost(bool flag) { m_isDebugLayerTreeHost = flag; }
+    bool isDebugLayerTreeHost() const { return m_isDebugLayerTreeHost; }
 
 private:
     CALayer *createLayer(RemoteLayerTreeTransaction::LayerCreationProperties);
 
-    WebPageProxy* m_webPageProxy;
-
     CALayer *m_rootLayer;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<CALayer>> m_layers;
+    bool m_isDebugLayerTreeHost;
 };
 
 } // namespace WebKit

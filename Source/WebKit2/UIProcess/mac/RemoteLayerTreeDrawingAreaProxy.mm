@@ -31,12 +31,15 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/WebCoreCALayerExtras.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
-    , m_remoteLayerTreeHost(webPageProxy)
+    , m_remoteLayerTreeHost()
     , m_isWaitingForDidUpdateGeometry(false)
 {
     m_webPageProxy->process().addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID(), *this);
@@ -85,13 +88,152 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
 {
-    m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction);
+    if (m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction))
+        m_webPageProxy->setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost.rootLayer());
+
 #if ENABLE(ASYNC_SCROLLING)
     m_webPageProxy->scrollingCoordinatorProxy()->updateScrollingTree(scrollingTreeTransaction);
 #endif
 #if PLATFORM(IOS)
     m_webPageProxy->didCommitLayerTree(layerTreeTransaction);
 #endif
+
+    showDebugIndicator(m_webPageProxy->preferences().tiledScrollingIndicatorVisible());
+
+    if (m_debugIndicatorLayerTreeHost) {
+        float scale = indicatorScale(layerTreeTransaction.contentsSize());
+        bool rootLayerChanged = m_debugIndicatorLayerTreeHost->updateLayerTree(layerTreeTransaction, scale);
+        updateDebugIndicator(layerTreeTransaction.contentsSize(), rootLayerChanged, scale);
+        m_debugIndicatorLayerTreeHost->rootLayer().name = @"Indicator host root";
+    }
+}
+
+static const float indicatorInset = 10;
+static const float indicatorTopInset = 100;
+
+void RemoteLayerTreeDrawingAreaProxy::setExposedRect(const WebCore::FloatRect& r)
+{
+    DrawingAreaProxy::setExposedRect(r);
+    updateDebugIndicatorPosition();
+}
+
+FloatPoint RemoteLayerTreeDrawingAreaProxy::indicatorLocation() const
+{
+    if (m_webPageProxy->delegatesScrolling()) {
+        FloatPoint tiledMapLocation = exposedRect().location();
+        tiledMapLocation += FloatSize(indicatorInset, indicatorTopInset);
+        float scale = 1 / m_webPageProxy->pageScaleFactor();
+        tiledMapLocation.scale(scale, scale);
+        return tiledMapLocation;
+    }
+    
+    return FloatPoint(indicatorInset, indicatorInset);
+}
+
+void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicatorPosition()
+{
+    if (!m_tileMapHostLayer)
+        return;
+
+    [m_tileMapHostLayer setPosition:indicatorLocation()];
+}
+
+float RemoteLayerTreeDrawingAreaProxy::indicatorScale(IntSize contentsSize) const
+{
+    // Pick a good scale.
+    IntSize viewSize = m_webPageProxy->viewSize();
+
+    float scale = 1;
+    if (!contentsSize.isEmpty()) {
+        float widthScale = std::min<float>((viewSize.width() - 2 * indicatorInset) / contentsSize.width(), 0.05);
+        scale = std::min(widthScale, static_cast<float>(viewSize.height() - indicatorTopInset - indicatorInset) / contentsSize.height());
+    }
+    
+    return scale;
+}
+
+void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize, bool rootLayerChanged, float scale)
+{
+    // Make sure we're the last sublayer.
+    CALayer *rootLayer = m_remoteLayerTreeHost.rootLayer();
+    [m_tileMapHostLayer removeFromSuperlayer];
+    [rootLayer addSublayer:m_tileMapHostLayer.get()];
+
+    // Pick a good scale.
+    IntSize viewSize = m_webPageProxy->viewSize();
+
+    [m_tileMapHostLayer setBounds:FloatRect(FloatPoint(), contentsSize)];
+    [m_tileMapHostLayer setPosition:indicatorLocation()];
+    [m_tileMapHostLayer setTransform:CATransform3DMakeScale(scale, scale, 1)];
+
+    if (rootLayerChanged) {
+        [m_tileMapHostLayer setSublayers:@[]];
+        [m_tileMapHostLayer addSublayer:m_debugIndicatorLayerTreeHost->rootLayer()];
+        [m_tileMapHostLayer addSublayer:m_exposedRectIndicatorLayer.get()];
+    }
+    
+    const float indicatorBorderWidth = 1;
+    float counterScaledBorder = indicatorBorderWidth / scale;
+
+    [m_exposedRectIndicatorLayer setBorderWidth:counterScaledBorder];
+
+    if (m_webPageProxy->delegatesScrolling()) {
+        FloatRect scaledExposedRect = exposedRect();
+        float scale = 1 / m_webPageProxy->pageScaleFactor();
+        scaledExposedRect.scale(scale, scale);
+
+        [m_exposedRectIndicatorLayer setPosition:scaledExposedRect.location()];
+        [m_exposedRectIndicatorLayer setBounds:FloatRect(FloatPoint(), scaledExposedRect.size())];
+    } else {
+        // FIXME: Get the correct scroll position.
+        [m_exposedRectIndicatorLayer setBounds:FloatRect(FloatPoint(), viewSize)];
+    }
+}
+
+void RemoteLayerTreeDrawingAreaProxy::showDebugIndicator(bool show)
+{
+    if (show == !!m_debugIndicatorLayerTreeHost)
+        return;
+    
+    if (!show) {
+        [m_tileMapHostLayer removeFromSuperlayer];
+        m_tileMapHostLayer = nullptr;
+        m_exposedRectIndicatorLayer = nullptr;
+        m_debugIndicatorLayerTreeHost = nullptr;
+        return;
+    }
+    
+    m_debugIndicatorLayerTreeHost = std::make_unique<RemoteLayerTreeHost>();
+    m_debugIndicatorLayerTreeHost->setIsDebugLayerTreeHost(true);
+
+    m_tileMapHostLayer = adoptNS([[CALayer alloc] init]);
+    [m_tileMapHostLayer setName:@"Tile map host"];
+    [m_tileMapHostLayer web_disableAllActions];
+    [m_tileMapHostLayer setAnchorPoint:CGPointZero];
+    [m_tileMapHostLayer setOpacity:0.8];
+    [m_tileMapHostLayer setMasksToBounds:YES];
+    [m_tileMapHostLayer setBorderWidth:2];
+
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    {
+        const CGFloat components[] = { 1, 1, 1, 0.6 };
+        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
+        [m_tileMapHostLayer setBackgroundColor:color.get()];
+
+        const CGFloat borderCmponents[] = { 0, 0, 0, 1 };
+        RetainPtr<CGColorRef> borderColor = adoptCF(CGColorCreate(colorSpace.get(), borderCmponents));
+        [m_tileMapHostLayer setBorderColor:borderColor.get()];
+    }
+    
+    m_exposedRectIndicatorLayer = adoptNS([[CALayer alloc] init]);
+    [m_exposedRectIndicatorLayer web_disableAllActions];
+    [m_exposedRectIndicatorLayer setAnchorPoint:CGPointZero];
+
+    {
+        const CGFloat components[] = { 0, 1, 0, 1 };
+        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
+        [m_exposedRectIndicatorLayer setBorderColor:color.get()];
+    }
 }
 
 } // namespace WebKit

@@ -28,6 +28,7 @@
 
 #include "DrawingAreaProxy.h"
 #include "RemoteLayerTreeHost.h"
+#include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
 
@@ -42,11 +43,21 @@ public:
     virtual ~RemoteLayerTreeDrawingAreaProxy();
 
     const RemoteLayerTreeHost& remoteLayerTreeHost() const { return m_remoteLayerTreeHost; }
-    
+
 private:
     virtual void sizeDidChange() override;
     virtual void deviceScaleFactorDidChange() override;
     virtual void didUpdateGeometry() override;
+
+    void showDebugIndicator(bool);
+
+    virtual void setExposedRect(const WebCore::FloatRect&) override;
+
+    float indicatorScale(WebCore::IntSize contentsSize) const;
+    void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale);
+    void updateDebugIndicatorPosition();
+    
+    WebCore::FloatPoint indicatorLocation() const;
 
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
@@ -61,6 +72,10 @@ private:
 
     WebCore::IntSize m_lastSentSize;
     WebCore::IntSize m_lastSentLayerPosition;
+
+    std::unique_ptr<RemoteLayerTreeHost> m_debugIndicatorLayerTreeHost;
+    RetainPtr<CALayer> m_tileMapHostLayer;
+    RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 };
 
 DRAWING_AREA_PROXY_TYPE_CASTS(RemoteLayerTreeDrawingAreaProxy, type() == DrawingAreaTypeRemoteLayerTree);

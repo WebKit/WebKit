@@ -42,9 +42,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-RemoteLayerTreeHost::RemoteLayerTreeHost(WebPageProxy* webPageProxy)
-    : m_webPageProxy(webPageProxy)
-    , m_rootLayer(nullptr)
+RemoteLayerTreeHost::RemoteLayerTreeHost()
+    : m_rootLayer(nullptr)
+    , m_isDebugLayerTreeHost(false)
 {
 }
 
@@ -52,17 +52,18 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
 {
 }
 
-void RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction)
+bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
 {
     LOG(RemoteLayerTree, "%s", transaction.description().data());
 
     for (auto createdLayer : transaction.createdLayers())
         createLayer(createdLayer);
 
+    bool rootLayerChanged = false;
     CALayer *rootLayer = getLayer(transaction.rootLayerID());
     if (m_rootLayer != rootLayer) {
         m_rootLayer = rootLayer;
-        m_webPageProxy->setAcceleratedCompositingRootLayer(m_rootLayer);
+        rootLayerChanged = true;
     }
 
     for (auto changedLayer : transaction.changedLayers()) {
@@ -81,11 +82,21 @@ void RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged && properties.maskLayerID)
             relatedLayers.set(properties.maskLayerID, getLayer(properties.maskLayerID));
 
-        RemoteLayerTreePropertyApplier::applyPropertiesToLayer(layer, properties, relatedLayers);
+        if (m_isDebugLayerTreeHost) {
+            RemoteLayerTreeTransaction::LayerProperties propertiesCopy(properties);
+            propertiesCopy.masksToBounds = false;
+            if (propertiesCopy.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged)
+                propertiesCopy.borderWidth *= 1 / indicatorScaleFactor;
+            
+            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(layer, propertiesCopy, relatedLayers);
+        } else
+            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(layer, properties, relatedLayers);
     }
 
     for (auto destroyedLayer : transaction.destroyedLayers())
         m_layers.remove(destroyedLayer);
+
+    return rootLayerChanged;
 }
 
 CALayer *RemoteLayerTreeHost::getLayer(GraphicsLayer::PlatformLayerID layerID) const
@@ -116,7 +127,10 @@ CALayer *RemoteLayerTreeHost::createLayer(RemoteLayerTreeTransaction::LayerCreat
         layer = adoptNS([[CATransformLayer alloc] init]);
         break;
     case PlatformCALayer::LayerTypeCustom:
-        layer = WKMakeRenderLayer(properties.hostingContextID);
+        if (!m_isDebugLayerTreeHost)
+            layer = WKMakeRenderLayer(properties.hostingContextID);
+        else
+            layer = adoptNS([[CALayer alloc] init]);
         break;
     default:
         ASSERT_NOT_REACHED();

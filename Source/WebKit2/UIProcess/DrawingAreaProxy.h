@@ -74,12 +74,15 @@ public:
     virtual void commitTransientZoom(double, WebCore::FloatPoint) { }
 
 #if PLATFORM(MAC)
-    void setExposedRect(const WebCore::FloatRect&);
+    virtual void setExposedRect(const WebCore::FloatRect&);
     WebCore::FloatRect exposedRect() const { return m_exposedRect; }
     void exposedRectChangedTimerFired(WebCore::Timer<DrawingAreaProxy>*);
     
     void setCustomFixedPositionRect(const WebCore::FloatRect&);
 #endif
+
+    virtual void showDebugIndicator(bool) { }
+    virtual bool isShowingDebugIndicator() const { return false; }
 
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);

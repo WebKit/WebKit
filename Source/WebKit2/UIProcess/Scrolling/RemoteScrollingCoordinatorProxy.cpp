@@ -139,6 +139,7 @@ void RemoteScrollingCoordinatorProxy::scrollPositionChangedViaDelegatedScrolling
     m_scrollingTree->scrollPositionChangedViaDelegatedScrolling(nodeID, offset);
 }
 
+// This comes from the scrolling tree.
 void RemoteScrollingCoordinatorProxy::scrollPositionChanged(WebCore::ScrollingNodeID scrolledNodeID, const WebCore::FloatPoint& newScrollPosition)
 {
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition));

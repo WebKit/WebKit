@@ -1,5 +1,46 @@
 2014-02-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Show a debug tile map indicator for UI-side compositing
+        https://bugs.webkit.org/show_bug.cgi?id=128553
+
+        Reviewed by Tim Horton.
+        
+        Implement a tiled scrolling indicator for UI-side compositing.
+        
+        The indicator is created by making another RemoteLayerTreeHost,
+        and decoding the transaction in it a second time to create a cloned
+        layer tree. In that clone commit, we modify some layer properties to
+        make things easier to see.
+        
+        The cloned layer tree is hosted in the root layer of the main
+        RemoteLayerTreeHost.
+        
+        RemoteLayerTreeHost was changed to not need a pointer to the WebPageProxy,
+        which it only used in the "root layer changed" case; instead, it now just
+        returns a bool from updateLayerTree() in that situation.
+
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp: Explanatory comment.
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::setExposedRect):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::indicatorLocation):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::updateDebugIndicatorPosition):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::indicatorScale):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::showDebugIndicator):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        (WebKit::RemoteLayerTreeHost::rootLayer):
+        (WebKit::RemoteLayerTreeHost::setIsDebugLayerTreeHost):
+        (WebKit::RemoteLayerTreeHost::isDebugLayerTreeHost):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::RemoteLayerTreeHost):
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+
+2014-02-10  Simon Fraser  <simon.fraser@apple.com>
+
         Put a delegatesScrolling flag on WebPageProxy so that the UI process knows when scrolling is delegated
         https://bugs.webkit.org/show_bug.cgi?id=128429
 
