@@ -1,3 +1,11 @@
+2014-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+        svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html and svg/css/font-face-crash.html
+        frequently assert in ComplexTextController::offsetForPosition
+        https://bugs.webkit.org/show_bug.cgi?id=119747
+
+        * platform/mac/TestExpectations: Skipped the latter test in debug builds.
+
 2014-02-10  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/object-store-inline-autoincrement-key-added-on-put.html fails

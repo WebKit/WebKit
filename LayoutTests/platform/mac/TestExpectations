@@ -1352,3 +1352,4 @@ webkit.org/b/122040 [ Debug ] animations/combo-transform-translate+scale.html [ 
 webkit.org/b/128379 [ Debug ] animations/suspend-resume-animation.html [ Pass Failure ]
 
 webkit.org/b/119747 [ Debug ] svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html [ Skip ]
+webkit.org/b/119747 [ Debug ] svg/css/font-face-crash.html [ Skip ]
