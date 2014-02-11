@@ -33,7 +33,7 @@
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "FTLCapabilities.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

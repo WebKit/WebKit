@@ -32,7 +32,7 @@
 #include "DFGDriver.h"
 #include "JIT.h"
 #include "LLIntEntrypoint.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/Vector.h>

@@ -76,7 +76,7 @@
 #include "WheelEvent.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
-#include <runtime/Operations.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/VM.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/CString.h>

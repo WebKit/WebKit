@@ -30,7 +30,7 @@
 #include "DFGNaturalLoops.h"
 
 #include "DFGGraph.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC { namespace DFG {

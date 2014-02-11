@@ -31,7 +31,7 @@
 
 #include "DFGGraph.h"
 #include "DFGNodeAllocator.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

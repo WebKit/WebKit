@@ -57,7 +57,7 @@
 #include "LiteralParser.h"
 #include "NameInstance.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include "ProtoCallFrame.h"
 #include "RegExpObject.h"

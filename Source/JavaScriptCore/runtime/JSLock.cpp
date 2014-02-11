@@ -25,7 +25,7 @@
 #include "CallFrame.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

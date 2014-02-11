@@ -34,7 +34,7 @@
 #include "JSObject.h"
 #include "JSString.h"
 #include "NativeErrorConstructor.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "SourceCode.h"
 
 #include <wtf/text/StringBuilder.h>

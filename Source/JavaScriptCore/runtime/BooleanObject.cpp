@@ -22,7 +22,7 @@
 #include "BooleanObject.h"
 
 #include "JSScope.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

@@ -34,7 +34,7 @@
 #include "DFGEdgeUsesStructure.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <array>
 #include <wtf/FastBitVector.h>
 

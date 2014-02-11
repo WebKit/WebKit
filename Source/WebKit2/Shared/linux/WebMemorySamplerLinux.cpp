@@ -30,9 +30,9 @@
 
 #include "NotImplemented.h"
 #include <JavaScriptCore/MemoryStatistics.h>
+#include <runtime/JSCInlines.h>
 #include <WebCore/JSDOMWindow.h>
 #include <runtime/JSLock.h>
-#include <runtime/Operations.h>
 #include <string.h>
 #include <sys/sysinfo.h>
 #include <wtf/CurrentTime.h>

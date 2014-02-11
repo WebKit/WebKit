@@ -41,7 +41,7 @@
 #include "JSActivation.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "OperandsInlines.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "StackAlignment.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>

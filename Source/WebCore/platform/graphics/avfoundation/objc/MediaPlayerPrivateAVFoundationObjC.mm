@@ -52,7 +52,7 @@
 #import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
 #import <runtime/DataView.h>
-#import <runtime/Operations.h>
+#import <runtime/JSCInlines.h>
 #import <runtime/TypedArrayInlines.h>
 #import <runtime/Uint16Array.h>
 #import <runtime/Uint32Array.h>

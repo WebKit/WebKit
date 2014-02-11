@@ -35,7 +35,7 @@
 #include "DFGOSRExitPreparation.h"
 #include "LinkBuffer.h"
 #include "OperandsInlines.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "RepatchBuffer.h"
 #include <wtf/StringPrintStream.h>
 

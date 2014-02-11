@@ -24,7 +24,7 @@
 
 #include "JSGlobalObject.h"
 #include "NumberPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

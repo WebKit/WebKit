@@ -30,7 +30,7 @@
 #include "JITStubRoutine.h"
 
 #include "JSObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "SlotVisitor.h"
 
 namespace JSC {

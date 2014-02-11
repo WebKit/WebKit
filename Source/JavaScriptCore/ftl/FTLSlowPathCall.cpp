@@ -31,7 +31,7 @@
 #include "CCallHelpers.h"
 #include "FTLState.h"
 #include "GPRInfo.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace FTL {
 

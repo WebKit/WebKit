@@ -29,7 +29,7 @@
 #include "config.h"
 #include "RegExpCache.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "RegExpObject.h"
 #include "StrongInlines.h"
 

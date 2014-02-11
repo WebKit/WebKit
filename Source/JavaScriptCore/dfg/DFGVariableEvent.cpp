@@ -31,7 +31,7 @@
 
 #include "FPRInfo.h"
 #include "GPRInfo.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

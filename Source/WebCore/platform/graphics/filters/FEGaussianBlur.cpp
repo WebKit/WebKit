@@ -32,7 +32,7 @@
 #include "GraphicsContext.h"
 #include "TextStream.h"
 
-#include <runtime/Operations.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>

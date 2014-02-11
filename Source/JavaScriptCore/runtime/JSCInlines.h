@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ArrayBuffer.h"
+#ifndef JSCInlines_h
+#define JSCInlines_h
 
-#include "ArrayBufferNeuteringWatchpoint.h"
-#include "JSArrayBufferView.h"
-#include "JSCInlines.h"
-#include <wtf/RefPtr.h>
+// This file's only purpose is to collect commonly used *Inlines.h files, so that you don't
+// have to include all of them in every .cpp file. Instead you just include this. It's good
+// style to make sure that every .cpp file includes JSCInlines.h.
+//
+// JSC should never include this file, or any *Inline.h file, from interface headers, since
+// this could lead to a circular dependency.
+//
+// WebCore, or any other downstream client of JSC, is allowed to include this file in headers.
+// In fact, it can make a lot of sense: outside of JSC, this file becomes a kind of umbrella
+// header that pulls in most (all?) of the interesting things in JSC.
 
-namespace JSC {
+#include "CallFrameInlines.h"
+#include "ExceptionHelpers.h"
+#include "GCIncomingRefCountedInlines.h"
+#include "Interpreter.h"
+#include "JSArrayBufferViewInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSFunctionInlines.h"
+#include "JSProxy.h"
+#include "JSString.h"
+#include "Operations.h"
+#include "SlotVisitorInlines.h"
+#include "StructureInlines.h"
 
-bool ArrayBuffer::transfer(ArrayBufferContents& result)
-{
-    Ref<ArrayBuffer> protect(*this);
-
-    if (!m_contents.m_data) {
-        result.m_data = 0;
-        return false;
-    }
-
-    bool isNeuterable = !m_pinCount;
-
-    if (isNeuterable)
-        m_contents.transfer(result);
-    else {
-        m_contents.copyTo(result);
-        if (!result.m_data)
-            return false;
-    }
-
-    for (size_t i = numberOfIncomingReferences(); i--;) {
-        JSCell* cell = incomingReferenceAt(i);
-        if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(cell))
-            view->neuter();
-        else if (ArrayBufferNeuteringWatchpoint* watchpoint = jsDynamicCast<ArrayBufferNeuteringWatchpoint*>(cell))
-            watchpoint->set()->fireAll();
-    }
-    return true;
-}
-
-} // namespace JSC
-
+#endif // JSCInlines_h

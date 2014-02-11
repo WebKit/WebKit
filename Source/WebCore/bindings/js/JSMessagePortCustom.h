@@ -32,8 +32,8 @@
 #define JSMessagePortCustom_h
 
 #include "MessagePort.h"
+#include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValue.h>
-#include <runtime/Operations.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

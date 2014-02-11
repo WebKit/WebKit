@@ -54,6 +54,7 @@
 #include "JSAPIValueWrapper.h"
 #include "JSActivation.h"
 #include "JSArray.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLock.h"

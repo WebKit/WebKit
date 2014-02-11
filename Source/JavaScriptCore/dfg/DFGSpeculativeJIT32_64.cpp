@@ -38,7 +38,7 @@
 #include "Debugger.h"
 #include "JSActivation.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

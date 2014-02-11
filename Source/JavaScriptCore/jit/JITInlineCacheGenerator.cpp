@@ -30,7 +30,7 @@
 
 #include "CodeBlock.h"
 #include "LinkBuffer.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

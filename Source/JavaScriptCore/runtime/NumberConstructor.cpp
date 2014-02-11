@@ -25,7 +25,7 @@
 #include "Lookup.h"
 #include "NumberObject.h"
 #include "NumberPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

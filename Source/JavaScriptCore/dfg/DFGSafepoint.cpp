@@ -32,7 +32,7 @@
 #include "DFGPlan.h"
 #include "DFGScannable.h"
 #include "DFGThreadData.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

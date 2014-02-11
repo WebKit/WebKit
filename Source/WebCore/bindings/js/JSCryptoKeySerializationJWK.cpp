@@ -41,9 +41,9 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include <heap/StrongInlines.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/JSONObject.h>
 #include <runtime/ObjectConstructor.h>
-#include <runtime/Operations.h>
 #include <wtf/text/Base64.h>
 
 using namespace JSC;

@@ -30,7 +30,7 @@
 
 #include "CDM.h"
 #include "MediaKeyError.h"
-#include <runtime/Operations.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint8Array.h>
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RegExpCachedResult.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "RegExpMatchesArray.h"
 
 namespace JSC {

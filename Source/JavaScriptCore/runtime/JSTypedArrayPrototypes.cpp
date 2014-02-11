@@ -27,7 +27,7 @@
 #include "JSTypedArrayPrototypes.h"
 
 #include "JSGenericTypedArrayViewPrototypeInlines.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

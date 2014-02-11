@@ -29,7 +29,7 @@
 #include "CopiedBlock.h"
 #include "CopyWorkList.h"
 #include "MarkedBlock.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "WeakBlock.h"
 #include <wtf/CurrentTime.h>
 

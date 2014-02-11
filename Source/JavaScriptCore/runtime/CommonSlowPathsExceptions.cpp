@@ -30,7 +30,7 @@
 #include "CodeBlock.h"
 #include "JITExceptions.h"
 #include "LLIntCommon.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace CommonSlowPaths {
 

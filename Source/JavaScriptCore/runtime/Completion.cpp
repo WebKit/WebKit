@@ -29,7 +29,7 @@
 #include "Interpreter.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include <wtf/WTFThreadData.h>
 

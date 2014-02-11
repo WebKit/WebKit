@@ -1,3 +1,39 @@
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename Operations.h to JSCInlines.h
+        https://bugs.webkit.org/show_bug.cgi?id=128543
+
+        Rubber stamped by Geoffrey Garen.
+
+        No new tests because no change in behavior.
+
+        * ForwardingHeaders/runtime/JSCInlines.h: Added.
+        * bindings/js/JSCryptoAlgorithmBuilder.cpp:
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        * bindings/js/JSCustomXPathNSResolver.h:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDictionary.h:
+        * bindings/js/JSMessagePortCustom.cpp:
+        * bindings/js/JSMessagePortCustom.h:
+        * bindings/js/JSNodeFilterCondition.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/js/WebCoreTypedArrayController.cpp:
+        * bridge/c/c_utility.h:
+        * bridge/jsc/BridgeJSC.h:
+        * dom/CustomEvent.cpp:
+        * dom/Node.cpp:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLImageLoader.cpp:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/WebConsoleAgent.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        * platform/graphics/filters/FilterEffect.cpp:
+        * testing/MockCDM.cpp:
+        * xml/XMLHttpRequest.cpp:
+
 2014-02-09  Dean Jackson  <dino@apple.com>
 
         Update aspect-ratio property to have constraining keywords

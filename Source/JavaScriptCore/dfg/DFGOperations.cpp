@@ -51,7 +51,7 @@
 #include "JSNameScope.h"
 #include "NameInstance.h"
 #include "ObjectConstructor.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Repatch.h"
 #include "StringConstructor.h"
 #include "TypedArrayInlines.h"

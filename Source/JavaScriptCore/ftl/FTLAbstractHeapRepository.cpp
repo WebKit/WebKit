@@ -30,7 +30,7 @@
 
 #include "JSScope.h"
 #include "JSVariableObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace FTL {
 

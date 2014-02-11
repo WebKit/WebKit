@@ -31,7 +31,7 @@
 
 #include "CodeBlock.h"
 #include "DFGCommonData.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

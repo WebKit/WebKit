@@ -36,7 +36,7 @@
 #include "CommonSlowPaths.h"
 #include "LLIntCLoop.h"
 #include "LLIntSlowPaths.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "VMInspector.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>

@@ -29,7 +29,7 @@
 #include "ArrayBufferView.h"
 #include "DataView.h"
 #include "Error.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

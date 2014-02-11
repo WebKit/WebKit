@@ -26,7 +26,7 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

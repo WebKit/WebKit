@@ -30,7 +30,7 @@
 #include "DFGClobberSet.h"
 
 #include "DFGClobberize.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace DFG {

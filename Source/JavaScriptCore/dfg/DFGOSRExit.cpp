@@ -32,7 +32,7 @@
 #include "AssemblyHelpers.h"
 #include "DFGGraph.h"
 #include "DFGSpeculativeJIT.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

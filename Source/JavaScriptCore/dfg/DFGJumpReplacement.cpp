@@ -30,7 +30,7 @@
 #include "DFGJumpReplacement.h"
 
 #include "MacroAssembler.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Options.h"
 
 namespace JSC { namespace DFG {

@@ -30,7 +30,7 @@
 #include "config.h"
 #include "JSNotAnObject.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

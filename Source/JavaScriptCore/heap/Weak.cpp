@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Weak.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "WeakSetInlines.h"
 
 namespace JSC {

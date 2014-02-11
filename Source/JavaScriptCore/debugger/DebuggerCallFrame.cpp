@@ -33,7 +33,7 @@
 #include "Interpreter.h"
 #include "JSActivation.h"
 #include "JSFunction.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include "StackVisitor.h"
 

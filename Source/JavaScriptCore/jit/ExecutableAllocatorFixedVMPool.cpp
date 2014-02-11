@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ExecutableAllocator.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 
 #if ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
 

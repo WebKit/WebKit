@@ -30,7 +30,7 @@
 #include "JSDOMGlobalObject.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/JSArrayBuffer.h>
-#include <runtime/Operations.h>
+#include <runtime/JSCInlines.h>
 
 namespace WebCore {
 

@@ -32,7 +32,7 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "Executable.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

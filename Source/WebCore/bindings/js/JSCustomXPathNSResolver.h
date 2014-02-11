@@ -29,8 +29,8 @@
 #include "XPathNSResolver.h"
 #include <heap/Strong.h>
 #include <heap/StrongInlines.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValue.h>
-#include <runtime/Operations.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 

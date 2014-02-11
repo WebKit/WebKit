@@ -31,7 +31,7 @@
 #include "Executable.h"
 #include "JIT.h"
 #include "VM.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

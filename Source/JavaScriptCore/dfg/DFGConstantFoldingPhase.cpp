@@ -36,7 +36,7 @@
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "GetByIdStatus.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "PutByIdStatus.h"
 
 namespace JSC { namespace DFG {

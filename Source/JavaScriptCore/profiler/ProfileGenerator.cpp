@@ -32,7 +32,7 @@
 #include "JSStringRef.h"
 #include "JSFunction.h"
 #include "LegacyProfiler.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Profile.h"
 #include "StackVisitor.h"
 #include "Tracing.h"

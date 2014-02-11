@@ -44,7 +44,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "JSFunction.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"

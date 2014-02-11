@@ -28,6 +28,8 @@
 #include "config.h"
 #include "MessageEvent.h"
 
+#include <runtime/JSCInlines.h>
+
 namespace WebCore {
 
 static inline bool isValidSource(EventTarget* source)

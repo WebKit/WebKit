@@ -37,7 +37,7 @@
 #include "CallFrame.h"
 #include "JSCJSValue.h"
 #include "JSFunction.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"

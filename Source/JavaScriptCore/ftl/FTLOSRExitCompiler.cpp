@@ -37,7 +37,7 @@
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "OperandsInlines.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "RegisterPreservationWrapperGenerator.h"
 #include "RepatchBuffer.h"
 

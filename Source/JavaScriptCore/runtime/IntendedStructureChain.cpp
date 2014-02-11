@@ -27,7 +27,7 @@
 #include "IntendedStructureChain.h"
 
 #include "CodeBlock.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "StructureChain.h"
 
 namespace JSC {

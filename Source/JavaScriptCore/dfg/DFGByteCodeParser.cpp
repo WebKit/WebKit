@@ -38,7 +38,7 @@
 #include "DFGJITCode.h"
 #include "GetByIdStatus.h"
 #include "JSActivation.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "PreciseJumpTargets.h"
 #include "PutByIdStatus.h"
 #include "StackAlignment.h"

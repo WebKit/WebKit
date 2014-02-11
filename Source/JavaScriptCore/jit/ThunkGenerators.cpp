@@ -32,7 +32,7 @@
 #include "JSArrayIterator.h"
 #include "JSStack.h"
 #include "MaxFrameExtentForSlowPathCall.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "SpecializedThunkJIT.h"
 #include <wtf/InlineASM.h>
 #include <wtf/StringPrintStream.h>

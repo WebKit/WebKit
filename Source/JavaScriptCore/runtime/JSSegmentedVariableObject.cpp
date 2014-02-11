@@ -29,7 +29,7 @@
 #include "config.h"
 #include "JSSegmentedVariableObject.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

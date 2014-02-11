@@ -29,7 +29,7 @@
 #include "CodeBlock.h"
 #include "LLIntData.h"
 #include "LowLevelInterpreter.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Structure.h"
 #include "StructureChain.h"
 

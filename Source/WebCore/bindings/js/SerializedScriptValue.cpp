@@ -58,13 +58,13 @@
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSArrayBuffer.h>
 #include <runtime/JSArrayBufferView.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/JSDataView.h>
 #include <runtime/JSMap.h>
 #include <runtime/JSSet.h>
 #include <runtime/JSTypedArrays.h>
 #include <runtime/MapData.h>
 #include <runtime/ObjectConstructor.h>
-#include <runtime/Operations.h>
 #include <runtime/PropertyNameArray.h>
 #include <runtime/RegExp.h>
 #include <runtime/RegExpObject.h>

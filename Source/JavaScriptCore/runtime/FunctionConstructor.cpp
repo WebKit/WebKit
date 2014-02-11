@@ -29,7 +29,7 @@
 #include "JSString.h"
 #include "Lexer.h"
 #include "Nodes.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include <wtf/text/StringBuilder.h>
 

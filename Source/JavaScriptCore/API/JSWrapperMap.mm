@@ -36,7 +36,7 @@
 #import "JSWrapperMap.h"
 #import "ObjCCallbackFunction.h"
 #import "ObjcRuntimeExtras.h"
-#import "Operations.h"
+#import "JSCInlines.h"
 #import "WeakGCMap.h"
 #import <wtf/TCSpinLock.h>
 #import <wtf/Vector.h>

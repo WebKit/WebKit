@@ -22,7 +22,7 @@
 
 #include "Executable.h"
 #include "JSFunction.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

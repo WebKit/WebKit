@@ -26,7 +26,7 @@
 #include "FunctionPrototype.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

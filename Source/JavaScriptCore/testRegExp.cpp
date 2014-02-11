@@ -24,8 +24,8 @@
 #include "APIShims.h"
 #include <wtf/CurrentTime.h>
 #include "InitializeThreading.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
-#include "Operations.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ArrayBufferNeuteringWatchpoint.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

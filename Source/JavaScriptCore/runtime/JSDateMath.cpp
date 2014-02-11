@@ -74,7 +74,7 @@
 
 #include "JSObject.h"
 #include "JSScope.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 #include <algorithm>
 #include <limits.h>

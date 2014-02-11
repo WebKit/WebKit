@@ -32,7 +32,7 @@
 #include "CodeCache.h"
 #include "Executable.h"
 #include "JSString.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include "SourceProvider.h"
 #include "Structure.h"

@@ -29,6 +29,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "EventLoop.h"
+#include "JSCInlines.h"
 #include "JSLock.h"
 
 using namespace JSC;

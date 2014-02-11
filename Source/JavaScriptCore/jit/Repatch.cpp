@@ -34,7 +34,7 @@
 #include "FTLThunks.h"
 #include "GCAwareJITStubRoutine.h"
 #include "LinkBuffer.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "PolymorphicPutByIdList.h"
 #include "RepatchBuffer.h"
 #include "ScratchRegisterAllocator.h"

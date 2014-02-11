@@ -32,7 +32,7 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGGraph.h"
 #include "DFGJITCode.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace DFG {

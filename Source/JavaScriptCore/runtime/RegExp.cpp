@@ -24,7 +24,7 @@
 #include "RegExp.h"
 
 #include "Lexer.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "RegExpCache.h"
 #include "Yarr.h"
 #include "YarrJIT.h"

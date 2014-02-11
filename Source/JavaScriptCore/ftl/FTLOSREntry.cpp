@@ -32,7 +32,7 @@
 #include "FTLForOSREntryJITCode.h"
 #include "JSStackInlines.h"
 #include "OperandsInlines.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 #if ENABLE(FTL_JIT)
 

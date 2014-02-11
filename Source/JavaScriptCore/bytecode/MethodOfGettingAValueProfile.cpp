@@ -29,7 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

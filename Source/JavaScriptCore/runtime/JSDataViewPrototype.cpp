@@ -29,7 +29,7 @@
 #include "Error.h"
 #include "JSDataView.h"
 #include "Lookup.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "ToNativeFromValue.h"
 #include "TypedArrayAdaptors.h"
 #include <wtf/FlipBytes.h>

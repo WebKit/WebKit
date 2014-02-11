@@ -31,7 +31,7 @@
 #include "JSCJSValue.h"
 #include "JSCallbackObject.h"
 #include "JSWeakObjectMapRefInternal.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Weak.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>

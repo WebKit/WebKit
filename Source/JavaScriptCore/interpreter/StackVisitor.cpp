@@ -30,7 +30,7 @@
 #include "CallFrameInlines.h"
 #include "Executable.h"
 #include "Interpreter.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/DataLog.h>
 
 namespace JSC {

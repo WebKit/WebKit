@@ -28,9 +28,11 @@
 
 #include "CodeBlock.h"
 #include "DumpContext.h"
+#include "JSCInlines.h"
 #include "JSObject.h"
 #include "JSPropertyNameIterator.h"
 #include "Lookup.h"
+#include "PropertyMapHashTable.h"
 #include "PropertyNameArray.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"

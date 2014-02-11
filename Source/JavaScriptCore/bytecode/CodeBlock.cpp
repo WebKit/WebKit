@@ -49,7 +49,7 @@
 #include "JSNameScope.h"
 #include "LLIntEntrypoint.h"
 #include "LowLevelInterpreter.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "PolymorphicPutByIdList.h"
 #include "ReduceWhitespace.h"
 #include "Repatch.h"

@@ -22,7 +22,7 @@
 
 #include "Error.h"
 #include "ExceptionHelpers.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

@@ -30,7 +30,7 @@
 #include "DFGValidate.h"
 
 #include "CodeBlockWithJITType.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/Assertions.h>
 #include <wtf/BitVector.h>
 

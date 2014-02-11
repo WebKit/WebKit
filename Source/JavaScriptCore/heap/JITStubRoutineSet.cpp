@@ -30,7 +30,7 @@
 #include "JITStubRoutineSet.h"
 
 #include "GCAwareJITStubRoutine.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "SlotVisitor.h"
 
 namespace JSC {

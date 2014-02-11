@@ -35,7 +35,7 @@
 #include "JSONObject.h"
 #include "JSString.h"
 #include "LiteralParser.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Protect.h"
 
 #include <wtf/Assertions.h>

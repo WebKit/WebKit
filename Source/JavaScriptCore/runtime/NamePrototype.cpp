@@ -27,7 +27,7 @@
 #include "NamePrototype.h"
 
 #include "Error.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

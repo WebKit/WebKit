@@ -27,7 +27,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Uint16WithFraction.h"
 #include <wtf/dtoa.h>
 #include <wtf/Assertions.h>

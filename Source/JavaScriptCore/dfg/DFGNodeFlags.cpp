@@ -29,7 +29,7 @@
 
 #include "DFGNodeFlags.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>
 

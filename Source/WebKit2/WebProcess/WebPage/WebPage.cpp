@@ -143,9 +143,9 @@
 #include <WebCore/VisibleUnits.h>
 #include <WebCore/markup.h>
 #include <bindings/ScriptValue.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValue.h>
 #include <runtime/JSLock.h>
-#include <runtime/Operations.h>
 #include <wtf/RunLoop.h>
 
 #if ENABLE(MHTML)

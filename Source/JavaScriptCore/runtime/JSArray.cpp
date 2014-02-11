@@ -27,17 +27,16 @@
 #include "ButterflyInlines.h"
 #include "CachedCall.h"
 #include "CopiedSpace.h"
-#include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "Executable.h"
 #include "GetterSetter.h"
 #include "IndexingHeaderInlines.h"
+#include "JSCInlines.h"
 #include "PropertyNameArray.h"
 #include "Reject.h"
 #include <wtf/AVLTree.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
-#include <Operations.h>
 
 using namespace std;
 using namespace WTF;

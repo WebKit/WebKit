@@ -27,7 +27,7 @@
 #include "JITCode.h"
 
 #include "LLIntThunks.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "RegisterPreservationWrapperGenerator.h"
 #include <wtf/PrintStream.h>
 

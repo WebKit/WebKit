@@ -28,8 +28,8 @@
 #define JSDOMGlobalObject_h
 
 #include "PlatformExportMacros.h"
+#include <runtime/JSCInlines.h>
 #include <runtime/JSGlobalObject.h>
-#include <runtime/Operations.h>
 
 namespace WebCore {
 

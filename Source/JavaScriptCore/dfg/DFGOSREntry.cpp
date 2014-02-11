@@ -35,7 +35,7 @@
 #include "DFGNode.h"
 #include "JIT.h"
 #include "JSStackInlines.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

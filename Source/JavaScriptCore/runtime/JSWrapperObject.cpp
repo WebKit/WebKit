@@ -22,7 +22,7 @@
 #include "config.h"
 #include "JSWrapperObject.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

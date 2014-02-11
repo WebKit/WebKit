@@ -36,7 +36,7 @@
 #include "JSInjectedScriptHostPrototype.h"
 #include "JSTypedArrays.h"
 #include "ObjectConstructor.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "RegExpObject.h"
 #include "SourceCode.h"
 #include "TypedArrayInlines.h"

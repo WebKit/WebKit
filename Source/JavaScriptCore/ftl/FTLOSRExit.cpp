@@ -34,7 +34,7 @@
 #include "FTLExitArgument.h"
 #include "FTLExitArgumentList.h"
 #include "FTLJITCode.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace FTL {
 

@@ -34,7 +34,7 @@
 #include "Lexer.h"
 #include "LiteralParser.h"
 #include "Nodes.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include "StackVisitor.h"
 #include <wtf/dtoa.h>

@@ -28,7 +28,7 @@
 
 #include "JSGlobalObject.h"
 #include "ObjectConstructor.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "ProfilerDatabase.h"
 #include <wtf/StringPrintStream.h>
 

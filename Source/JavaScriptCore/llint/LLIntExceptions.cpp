@@ -33,7 +33,7 @@
 #include "Instruction.h"
 #include "LLIntCommon.h"
 #include "LowLevelInterpreter.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace LLInt {
 

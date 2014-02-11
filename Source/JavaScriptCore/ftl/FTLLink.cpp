@@ -37,7 +37,7 @@
 #include "JITStubs.h"
 #include "LLVMAPI.h"
 #include "LinkBuffer.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "ProfilerCompilation.h"
 #include "VirtualRegister.h"
 

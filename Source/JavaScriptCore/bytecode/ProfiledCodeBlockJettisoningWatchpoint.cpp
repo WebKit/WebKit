@@ -31,7 +31,7 @@
 #include "CodeBlock.h"
 #include "DFGCommon.h"
 #include "DFGExitProfile.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

@@ -32,7 +32,7 @@
 #include "FTLAbstractHeapRepository.h"
 #include "FTLOutput.h"
 #include "FTLTypedPointer.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Options.h"
 
 namespace JSC { namespace FTL {

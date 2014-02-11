@@ -30,7 +30,7 @@
 #include "DFGCommon.h"
 
 #include "DFGNode.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace WTF {
 

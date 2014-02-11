@@ -27,7 +27,7 @@
 #include "TestRunnerUtils.h"
 
 #include "CodeBlock.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

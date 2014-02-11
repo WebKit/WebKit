@@ -39,7 +39,7 @@
 #include "NativeErrorConstructor.h"
 #include "Nodes.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "Reject.h"

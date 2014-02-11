@@ -36,7 +36,7 @@
 #import "Weak.h"
 #import "WeakHandleOwner.h"
 #import "ObjcRuntimeExtras.h"
-#import "Operations.h"
+#import "JSCInlines.h"
 
 class JSManagedValueHandleOwner : public JSC::WeakHandleOwner {
 public:

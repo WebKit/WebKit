@@ -41,7 +41,7 @@
 #include "FTLThunks.h"
 #include "LinkBuffer.h"
 #include "OperandsInlines.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "VirtualRegister.h"
 #include <atomic>
 #include <wtf/ProcessID.h>

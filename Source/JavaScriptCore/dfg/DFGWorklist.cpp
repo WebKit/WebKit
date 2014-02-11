@@ -33,7 +33,7 @@
 #include "DeferGC.h"
 #include "DFGLongLivedState.h"
 #include "DFGSafepoint.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <mutex>
 
 namespace JSC { namespace DFG {

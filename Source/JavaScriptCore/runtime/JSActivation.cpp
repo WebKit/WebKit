@@ -32,7 +32,7 @@
 #include "Arguments.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 using namespace std;
 

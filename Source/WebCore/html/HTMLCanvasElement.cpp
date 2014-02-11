@@ -49,8 +49,8 @@
 #include "Settings.h"
 #include <math.h>
 
+#include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
-#include <runtime/Operations.h>
 
 #if ENABLE(WEBGL)    
 #include "WebGLContextAttributes.h"

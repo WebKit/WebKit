@@ -33,7 +33,7 @@
 #if ENABLE(JIT)
 #include "JITStubs.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 
 #if CPU(ARM_TRADITIONAL)
 #include "JITStubsARM.h"

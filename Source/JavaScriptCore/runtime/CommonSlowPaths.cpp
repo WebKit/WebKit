@@ -51,7 +51,7 @@
 #include "LLIntExceptions.h"
 #include "LowLevelInterpreter.h"
 #include "ObjectConstructor.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "StructureRareDataInlines.h"
 #include <wtf/StringPrintStream.h>
 

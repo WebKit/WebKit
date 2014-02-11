@@ -33,7 +33,7 @@
 #include "JSGlobalObject.h"
 #include "JSObjectRef.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/text/StringHash.h>
 #include <wtf/unicode/UTF8.h>
 

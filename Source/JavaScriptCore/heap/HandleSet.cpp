@@ -30,7 +30,7 @@
 #include "HandleBlockInlines.h"
 #include "HeapRootVisitor.h"
 #include "JSObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/DataLog.h>
 
 namespace JSC {

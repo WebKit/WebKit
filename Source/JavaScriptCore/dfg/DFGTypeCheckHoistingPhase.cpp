@@ -34,7 +34,7 @@
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "DFGVariableAccessDataDump.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/HashMap.h>
 
 namespace JSC { namespace DFG {

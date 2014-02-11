@@ -57,8 +57,8 @@
 #include <mutex>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
-#include <runtime/Operations.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>

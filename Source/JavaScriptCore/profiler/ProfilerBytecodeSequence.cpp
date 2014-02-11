@@ -29,7 +29,7 @@
 #include "CodeBlock.h"
 #include "JSGlobalObject.h"
 #include "Operands.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {

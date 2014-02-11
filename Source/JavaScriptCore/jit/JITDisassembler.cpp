@@ -32,7 +32,7 @@
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
 #include "JIT.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {

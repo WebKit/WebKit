@@ -23,7 +23,7 @@
 
 #include "BooleanPrototype.h"
 #include "JSGlobalObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

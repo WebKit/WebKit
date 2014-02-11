@@ -28,7 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSGlobalObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

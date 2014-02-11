@@ -34,7 +34,7 @@
 #import "JSWrapperMap.h"
 #import "JavaScriptCore.h"
 #import "ObjcRuntimeExtras.h"
-#import "Operations.h"
+#import "JSCInlines.h"
 #import "StrongInlines.h"
 #import <wtf/HashSet.h>
 

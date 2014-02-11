@@ -35,7 +35,7 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 #include "SlowPathCall.h"

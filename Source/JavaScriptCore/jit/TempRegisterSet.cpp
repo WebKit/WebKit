@@ -29,7 +29,7 @@
 
 #include "TempRegisterSet.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "RegisterSet.h"
 
 namespace JSC {

@@ -35,7 +35,7 @@
 #include "JITInlines.h"
 #include "JSArray.h"
 #include "JSFunction.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"

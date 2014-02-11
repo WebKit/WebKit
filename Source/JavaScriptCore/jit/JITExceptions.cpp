@@ -35,7 +35,7 @@
 #include "LLIntOpcode.h"
 #include "LLIntThunks.h"
 #include "Opcode.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "VM.h"
 
 namespace JSC {

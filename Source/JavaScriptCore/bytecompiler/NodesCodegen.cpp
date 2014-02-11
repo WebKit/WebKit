@@ -38,7 +38,7 @@
 #include "JSONObject.h"
 #include "LabelScope.h"
 #include "Lexer.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
 #include "RegExpCache.h"

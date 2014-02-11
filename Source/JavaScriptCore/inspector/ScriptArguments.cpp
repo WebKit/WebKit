@@ -32,6 +32,7 @@
 #include "config.h"
 #include "ScriptArguments.h"
 
+#include "JSCInlines.h"
 #include "ScriptValue.h"
 
 namespace Inspector {

@@ -37,7 +37,7 @@
 #include "DFGSaneStringGetByValSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 #include "LinkBuffer.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "ScratchRegisterAllocator.h"
 #include "WriteBarrierBuffer.h"
 #include <wtf/MathExtras.h>

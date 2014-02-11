@@ -11,7 +11,7 @@
 #include "VM.h"
 #include "JSObject.h"
 #include "JSString.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/StackStats.h>
 
 namespace JSC {

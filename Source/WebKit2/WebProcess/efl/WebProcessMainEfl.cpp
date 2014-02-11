@@ -38,7 +38,7 @@
 #include <WebCore/SoupNetworkSession.h>
 #include <WebKit2/WebProcess.h>
 #include <libsoup/soup.h>
-#include <runtime/Operations.h>
+#include <runtime/JSCInlines.h>
 #include <unistd.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>

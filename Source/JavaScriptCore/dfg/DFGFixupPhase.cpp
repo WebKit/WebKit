@@ -34,7 +34,7 @@
 #include "DFGPhase.h"
 #include "DFGPredictionPropagationPhase.h"
 #include "DFGVariableAccessDataDump.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

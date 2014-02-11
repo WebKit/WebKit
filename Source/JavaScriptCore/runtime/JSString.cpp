@@ -26,7 +26,7 @@
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "StringObject.h"
 #include "StringPrototype.h"
 

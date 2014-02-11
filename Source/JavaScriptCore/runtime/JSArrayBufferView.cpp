@@ -27,7 +27,7 @@
 #include "JSArrayBufferView.h"
 
 #include "JSArrayBuffer.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Reject.h"
 
 namespace JSC {

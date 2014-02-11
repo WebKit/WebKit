@@ -30,7 +30,7 @@
 #include "CodeBlock.h"
 #include "Interpreter.h"
 #include "JSActivation.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "VMEntryScope.h"
 
 namespace JSC {

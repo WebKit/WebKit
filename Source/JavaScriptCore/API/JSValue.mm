@@ -35,7 +35,7 @@
 #import "JSValueInternal.h"
 #import "JSWrapperMap.h"
 #import "ObjcRuntimeExtras.h"
-#import "Operations.h"
+#import "JSCInlines.h"
 #import "JSCJSValue.h"
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>

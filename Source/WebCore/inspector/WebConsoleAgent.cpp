@@ -38,6 +38,8 @@
 #include "ScriptProfiler.h"
 #include "ScriptState.h"
 #include <inspector/ConsoleMessage.h>
+#include <runtime/JSCInlines.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace Inspector;
 

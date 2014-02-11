@@ -1267,6 +1267,7 @@
     <ClInclude Include="..\runtime\JSArrayBufferViewInlines.h" />
     <ClInclude Include="..\runtime\JSArrayIterator.h" />
     <ClInclude Include="..\runtime\JSBoundFunction.h" />
+    <ClInclude Include="..\runtime\JSCInlines.h" />
     <ClInclude Include="..\runtime\JSCJSValue.h" />
     <ClInclude Include="..\runtime\JSCJSValueInlines.h" />
     <ClInclude Include="..\runtime\JSCell.h" />

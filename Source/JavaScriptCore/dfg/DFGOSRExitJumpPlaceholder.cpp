@@ -31,7 +31,7 @@
 
 #include "DFGJITCompiler.h"
 #include "DFGSpeculativeJIT.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

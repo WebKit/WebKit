@@ -51,7 +51,7 @@
 #include "JSValueRef.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "PropertyNameArray.h"
 #include "RegExpConstructor.h"
 

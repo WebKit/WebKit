@@ -31,7 +31,7 @@
 #include "JSString.h"
 #include "JSStringBuilder.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <math.h>
 #include <time.h>
 #include <wtf/MathExtras.h>

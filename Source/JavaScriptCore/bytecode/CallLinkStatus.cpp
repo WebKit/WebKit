@@ -30,7 +30,7 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "LLIntCallLinkInfo.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {

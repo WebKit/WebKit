@@ -31,7 +31,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include "Protect.h"
 #include "VMEntryScope.h"

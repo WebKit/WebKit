@@ -29,7 +29,7 @@
 #include "CopyVisitorInlines.h"
 #include "GenericTypedArrayViewInlines.h"
 #include "JSGenericTypedArrayViewInlines.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

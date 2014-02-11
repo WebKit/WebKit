@@ -25,7 +25,7 @@
 #include "JSFunction.h"
 #include "JSString.h"
 #include "NativeErrorPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

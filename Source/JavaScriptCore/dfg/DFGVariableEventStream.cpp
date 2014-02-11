@@ -32,7 +32,7 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "DFGValueSource.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 

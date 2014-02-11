@@ -27,7 +27,7 @@
 #include "JSNameScope.h"
 
 #include "Error.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

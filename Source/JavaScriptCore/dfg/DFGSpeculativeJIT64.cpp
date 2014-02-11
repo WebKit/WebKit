@@ -36,7 +36,7 @@
 #include "DFGOperations.h"
 #include "DFGSlowPathGenerator.h"
 #include "Debugger.h"
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "ObjectPrototype.h"
 
 namespace JSC { namespace DFG {

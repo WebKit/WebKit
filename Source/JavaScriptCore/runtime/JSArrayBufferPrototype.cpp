@@ -30,7 +30,7 @@
 #include "ExceptionHelpers.h"
 #include "JSArrayBuffer.h"
 #include "JSFunction.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "TypedArrayAdaptors.h"
 
 namespace JSC {

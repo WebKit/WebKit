@@ -33,7 +33,7 @@
 #include "JSStringBuilder.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "PropertyNameArray.h"
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"

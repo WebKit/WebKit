@@ -23,7 +23,7 @@
 
 #include "Lookup.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <time.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>

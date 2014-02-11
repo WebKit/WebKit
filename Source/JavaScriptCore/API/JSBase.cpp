@@ -36,7 +36,7 @@
 #include "JSLock.h"
 #include "JSObject.h"
 #include "OpaqueJSString.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "SourceCode.h"
 #include <wtf/text/StringHash.h>
 

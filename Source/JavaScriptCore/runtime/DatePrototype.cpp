@@ -33,7 +33,7 @@
 #include "JSStringBuilder.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <limits.h>
 #include <locale.h>
 #include <math.h>

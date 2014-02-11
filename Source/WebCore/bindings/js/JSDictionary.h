@@ -30,7 +30,7 @@
 #include <heap/Strong.h>
 #include <heap/StrongInlines.h>
 #include <interpreter/CallFrame.h>
-#include <runtime/Operations.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
 

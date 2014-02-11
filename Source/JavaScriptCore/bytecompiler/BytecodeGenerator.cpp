@@ -36,7 +36,7 @@
 #include "JSFunction.h"
 #include "JSNameScope.h"
 #include "LowLevelInterpreter.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Options.h"
 #include "StackAlignment.h"
 #include "StrongInlines.h"

@@ -31,7 +31,7 @@
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferPrototype.h"
 #include "JSGlobalObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

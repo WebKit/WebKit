@@ -32,6 +32,7 @@
 #include "config.h"
 #include "ScriptFunctionCall.h"
 
+#include "JSCInlines.h"
 #include "JSLock.h"
 #include "ScriptValue.h"
 #include <wtf/text/WTFString.h>

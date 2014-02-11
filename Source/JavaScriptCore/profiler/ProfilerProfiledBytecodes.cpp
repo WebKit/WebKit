@@ -28,7 +28,7 @@
 
 #include "JSGlobalObject.h"
 #include "ObjectConstructor.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace Profiler {
 

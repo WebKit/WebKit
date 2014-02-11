@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SourceProvider.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/TCSpinLock.h>
 

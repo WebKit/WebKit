@@ -1017,6 +1017,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/VM.h \
 	Source/JavaScriptCore/runtime/VMEntryScope.cpp \
 	Source/JavaScriptCore/runtime/VMEntryScope.h \
+	Source/JavaScriptCore/runtime/JSCInlines.h \
 	Source/JavaScriptCore/runtime/JSFunctionInlines.h \
 	Source/JavaScriptCore/runtime/JSGenericTypedArrayView.h \
 	Source/JavaScriptCore/runtime/JSGenericTypedArrayViewConstructor.h \

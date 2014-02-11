@@ -44,7 +44,7 @@
 #include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "VM.h"
 
 namespace JSC { namespace DFG {

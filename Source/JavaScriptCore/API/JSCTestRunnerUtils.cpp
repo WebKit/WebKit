@@ -27,7 +27,7 @@
 #include "JSCTestRunnerUtils.h"
 
 #include "APICast.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "TestRunnerUtils.h"
 
 namespace JSC {

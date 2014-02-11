@@ -35,7 +35,7 @@
 #include "GPRInfo.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

@@ -83,6 +83,7 @@
 		0F16015E156198C900C2587C /* DFGArgumentsSimplificationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F16015B156198BF00C2587C /* DFGArgumentsSimplificationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F190CAC189D82F6000AE5F0 /* ProfilerJettisonReason.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F190CAA189D82F6000AE5F0 /* ProfilerJettisonReason.cpp */; };
 		0F190CAD189D82F6000AE5F0 /* ProfilerJettisonReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F190CAB189D82F6000AE5F0 /* ProfilerJettisonReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F1DD84A18A945BE0026F3FA /* JSCInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1DD84918A945BE0026F3FA /* JSCInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A431534CBAD000F9456 /* DFGArgumentPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1E3A471534CBB9000F9456 /* DFGDoubleFormatState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1534,6 +1535,7 @@
 		0F16015B156198BF00C2587C /* DFGArgumentsSimplificationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArgumentsSimplificationPhase.h; path = dfg/DFGArgumentsSimplificationPhase.h; sourceTree = "<group>"; };
 		0F190CAA189D82F6000AE5F0 /* ProfilerJettisonReason.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerJettisonReason.cpp; path = profiler/ProfilerJettisonReason.cpp; sourceTree = "<group>"; };
 		0F190CAB189D82F6000AE5F0 /* ProfilerJettisonReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerJettisonReason.h; path = profiler/ProfilerJettisonReason.h; sourceTree = "<group>"; };
+		0F1DD84918A945BE0026F3FA /* JSCInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCInlines.h; sourceTree = "<group>"; };
 		0F1E3A431534CBAD000F9456 /* DFGArgumentPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArgumentPosition.h; path = dfg/DFGArgumentPosition.h; sourceTree = "<group>"; };
 		0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDoubleFormatState.h; path = dfg/DFGDoubleFormatState.h; sourceTree = "<group>"; };
 		0F1E3A501537C2CB000F9456 /* DFGSlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSlowPathGenerator.h; path = dfg/DFGSlowPathGenerator.h; sourceTree = "<group>"; };
@@ -3682,7 +3684,6 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
-				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -3818,6 +3819,7 @@
 				BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */,
 				BC1167D80E19BCC9008066DD /* JSCell.h */,
 				0F97496F1687ADE200A4FF6A /* JSCellInlines.h */,
+				0F1DD84918A945BE0026F3FA /* JSCInlines.h */,
 				F692A8870255597D01FF60F7 /* JSCJSValue.cpp */,
 				14ABB36E099C076400E2A24F /* JSCJSValue.h */,
 				865A30F0135007E100CDB49E /* JSCJSValueInlines.h */,
@@ -3865,14 +3867,14 @@
 				A7F9935D0FD7325100A0B2D0 /* JSONObject.h */,
 				7C184E1817BEDBD3007CB63A /* JSPromise.cpp */,
 				7C184E1917BEDBD3007CB63A /* JSPromise.h */,
-				7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */,
-				7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */,
 				7C184E2017BEE240007CB63A /* JSPromiseConstructor.cpp */,
 				7C184E2117BEE240007CB63A /* JSPromiseConstructor.h */,
-				7C184E1C17BEE22E007CB63A /* JSPromisePrototype.cpp */,
-				7C184E1D17BEE22E007CB63A /* JSPromisePrototype.h */,
 				7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */,
 				7C008CD9187124BB00955C24 /* JSPromiseDeferred.h */,
+				7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */,
+				7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */,
+				7C184E1C17BEE22E007CB63A /* JSPromisePrototype.cpp */,
+				7C184E1D17BEE22E007CB63A /* JSPromisePrototype.h */,
 				7C008CDC1871258D00955C24 /* JSPromiseReaction.cpp */,
 				7C008CDD1871258D00955C24 /* JSPromiseReaction.h */,
 				A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */,
@@ -4064,6 +4066,7 @@
 				A7CA3AE017DA41AE006538AF /* WeakMapPrototype.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
+				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -5410,6 +5413,7 @@
 				142E313B134FF0A600AFADB5 /* Strong.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
+				0F1DD84A18A945BE0026F3FA /* JSCInlines.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
 				0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */,
 				C2FE18A416BAEC4000AF3061 /* StructureRareData.h in Headers */,

@@ -100,7 +100,7 @@
 #include "ObjCCallbackFunction.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "ParserError.h"
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"

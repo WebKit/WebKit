@@ -46,7 +46,7 @@
 #include "JSStackInlines.h"
 #include "JSWithScope.h"
 #include "ObjectConstructor.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Repatch.h"
 #include "RepatchBuffer.h"
 

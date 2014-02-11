@@ -30,7 +30,7 @@
 #include "CopyVisitorInlines.h"
 #include "GCThread.h"
 #include "MarkStack.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "SlotVisitor.h"
 #include "SlotVisitorInlines.h"
 #include "VM.h"

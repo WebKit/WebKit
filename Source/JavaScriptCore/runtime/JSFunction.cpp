@@ -40,7 +40,7 @@
 #include "Interpreter.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
 #include "StackVisitor.h"

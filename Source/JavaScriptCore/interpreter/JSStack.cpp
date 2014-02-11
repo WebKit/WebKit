@@ -31,7 +31,7 @@
 
 #include "ConservativeRoots.h"
 #include "Interpreter.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Options.h"
 
 namespace JSC {

@@ -32,7 +32,7 @@
 #include "VM.h"
 #include "JSScriptRefPrivate.h"
 #include "OpaqueJSString.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Parser.h"
 #include "SourceCode.h"
 #include "SourceProvider.h"

@@ -32,8 +32,8 @@
 #include "Settings.h"
 
 #include "JSDOMWindowBase.h"
+#include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
-#include <runtime/Operations.h>
 
 namespace WebCore {
 

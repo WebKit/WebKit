@@ -34,7 +34,7 @@
 #include "DFGOperations.h"
 #include "JIT.h"
 #include "JSCJSValueInlines.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

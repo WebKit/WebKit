@@ -29,7 +29,7 @@
 #include "Heap.h"
 #include "HeapIterationScope.h"
 #include "JSObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Options.h"
 #include <stdlib.h>
 #if OS(UNIX)

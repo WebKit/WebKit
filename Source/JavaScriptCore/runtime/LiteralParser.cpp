@@ -33,7 +33,7 @@
 #include "JSString.h"
 #include "Lexer.h"
 #include "ObjectConstructor.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "StrongInlines.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>

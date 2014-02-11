@@ -27,7 +27,7 @@
 #include "ValueRecovery.h"
 
 #include "CodeBlock.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

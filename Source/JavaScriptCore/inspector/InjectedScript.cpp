@@ -35,6 +35,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorValues.h"
+#include "JSCInlines.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
 #include <wtf/text/WTFString.h>

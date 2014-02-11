@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSPropertyNameIterator.h"
 
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include <wtf/StdLibExtras.h>
 

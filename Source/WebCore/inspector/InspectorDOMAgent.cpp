@@ -93,6 +93,7 @@
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
+#include <runtime/JSCInlines.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>

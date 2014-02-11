@@ -36,7 +36,7 @@
 #include "DFGWorklist.h"
 #include "Debugger.h"
 #include "JITCode.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "Options.h"
 #include "SamplingTool.h"
 #include <wtf/Atomics.h>

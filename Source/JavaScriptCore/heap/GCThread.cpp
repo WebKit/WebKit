@@ -29,7 +29,7 @@
 #include "CopyVisitor.h"
 #include "CopyVisitorInlines.h"
 #include "GCThreadSharedData.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "SlotVisitor.h"
 #include <wtf/MainThread.h>
 #include <wtf/PassOwnPtr.h>

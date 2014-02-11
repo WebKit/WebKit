@@ -35,8 +35,8 @@
 #include "JSEventListener.h"
 #include "JSMessagePortCustom.h"
 #include "MessagePort.h"
-#include <runtime/Error.h>
 #include <runtime/JSArrayBuffer.h>
+#include <runtime/Error.h>
 #include <wtf/text/AtomicString.h>
 
 using namespace JSC;

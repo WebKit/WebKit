@@ -29,7 +29,7 @@
 
 #include "DFGLazyJSValue.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

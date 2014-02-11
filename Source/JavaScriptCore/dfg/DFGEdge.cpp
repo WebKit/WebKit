@@ -30,7 +30,7 @@
 #include "DFGEdge.h"
 
 #include "DFGNode.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

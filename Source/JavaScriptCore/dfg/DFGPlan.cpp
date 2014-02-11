@@ -66,7 +66,7 @@
 #include "DFGWatchpointCollectionPhase.h"
 #include "Debugger.h"
 #include "OperandsInlines.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/CurrentTime.h>
 
 #if ENABLE(FTL_JIT)

@@ -36,7 +36,7 @@
 #include "JSStringJoiner.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "StringRecursionChecker.h"
 #include <algorithm>
 #include <wtf/Assertions.h>

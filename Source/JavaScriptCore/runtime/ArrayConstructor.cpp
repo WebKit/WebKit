@@ -32,7 +32,7 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "Lookup.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

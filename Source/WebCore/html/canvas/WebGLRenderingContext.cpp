@@ -78,7 +78,7 @@
 #include "WebGLTexture.h"
 #include "WebGLUniformLocation.h"
 
-#include <runtime/Operations.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint32Array.h>
 #include <wtf/StdLibExtras.h>

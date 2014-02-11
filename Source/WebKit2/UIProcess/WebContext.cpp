@@ -62,7 +62,7 @@
 #include <WebCore/LinkHash.h>
 #include <WebCore/Logging.h>
 #include <WebCore/ResourceRequest.h>
-#include <runtime/Operations.h>
+#include <runtime/JSCInlines.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

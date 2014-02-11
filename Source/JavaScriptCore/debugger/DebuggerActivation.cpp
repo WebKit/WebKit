@@ -27,7 +27,7 @@
 #include "DebuggerActivation.h"
 
 #include "JSActivation.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

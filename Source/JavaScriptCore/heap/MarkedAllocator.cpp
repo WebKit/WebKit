@@ -30,7 +30,7 @@
 #include "GCActivityCallback.h"
 #include "Heap.h"
 #include "IncrementalSweeper.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "VM.h"
 #include <wtf/CurrentTime.h>
 

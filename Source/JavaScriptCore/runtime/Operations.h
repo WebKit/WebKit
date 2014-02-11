@@ -22,17 +22,9 @@
 #ifndef Operations_h
 #define Operations_h
 
-#include "CallFrameInlines.h"
+#include "CallFrame.h"
 #include "ExceptionHelpers.h"
-#include "GCIncomingRefCountedInlines.h"
-#include "Interpreter.h"
-#include "JSArrayBufferViewInlines.h"
-#include "JSCJSValueInlines.h"
-#include "JSFunctionInlines.h"
-#include "JSProxy.h"
-#include "JSString.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 

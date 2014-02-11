@@ -30,7 +30,7 @@
 
 #include "AssemblyHelpers.h"
 #include "LinkBuffer.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "StackAlignment.h"
 
 namespace JSC {

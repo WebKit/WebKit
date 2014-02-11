@@ -32,7 +32,7 @@
 #include "GCThreadSharedData.h"
 #include "JSCell.h"
 #include "JSObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/Threading.h>
 
 namespace JSC {

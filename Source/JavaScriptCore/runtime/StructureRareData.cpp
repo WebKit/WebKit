@@ -28,7 +28,7 @@
 
 #include "JSPropertyNameIterator.h"
 #include "JSString.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

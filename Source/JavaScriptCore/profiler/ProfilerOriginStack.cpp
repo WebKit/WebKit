@@ -28,7 +28,7 @@
 
 #include "CodeOrigin.h"
 #include "JSGlobalObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "ProfilerDatabase.h"
 
 namespace JSC { namespace Profiler {

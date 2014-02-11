@@ -31,7 +31,7 @@
 
 #include "ArrayBufferNeuteringWatchpoint.h"
 #include "CodeBlock.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

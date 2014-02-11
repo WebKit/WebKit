@@ -30,7 +30,7 @@
 #include "DFGFinalizer.h"
 
 #include "DFGPlan.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

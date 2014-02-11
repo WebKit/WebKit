@@ -25,7 +25,7 @@
 
 #include "Error.h"
 #include "JSObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {

@@ -29,7 +29,7 @@
 
 #include "DFGArithMode.h"
 
-#include "Operations.h"
+#include "JSCInlines.h"
 #include <wtf/PrintStream.h>
 
 namespace WTF {

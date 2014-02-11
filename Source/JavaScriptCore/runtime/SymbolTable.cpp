@@ -30,7 +30,7 @@
 #include "SymbolTable.h"
 
 #include "JSDestructibleObject.h"
-#include "Operations.h"
+#include "JSCInlines.h"
 #include "SlotVisitorInlines.h"
 
 namespace JSC {
