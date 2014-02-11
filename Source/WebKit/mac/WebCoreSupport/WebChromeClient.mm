@@ -996,6 +996,8 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 #endif
 }
 
+#endif // ENABLE(FULLSCREEN_API)
+
 #if ENABLE(SUBTLE_CRYPTO)
 bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
 {
@@ -1008,6 +1010,4 @@ bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<
     key = wrappedKey;
     return true;
 }
-#endif
-
 #endif

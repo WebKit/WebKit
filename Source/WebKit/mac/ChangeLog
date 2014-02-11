@@ -1,3 +1,9 @@
+2014-02-11  Alexey Proskuryakov  <ap@apple.com>
+
+        iOS build fix.
+
+        * WebCoreSupport/WebChromeClient.mm: Fixed incorrectly nested ifdefs.
+
 2014-02-10  Alexey Proskuryakov  <ap@apple.com>
 
         Add hooks for wrapping CryptoKeys in SerializedScriptValue
