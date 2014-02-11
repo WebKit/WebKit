@@ -1,3 +1,16 @@
+2014-02-11  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Overflow above the first region is not properly painted for regions with padding
+        https://bugs.webkit.org/show_bug.cgi?id=128590
+
+        Reviewed by Andrei Bucur.
+
+        Added test for the correct painting of overflow above the first region
+        when the region has padding.
+
+        * fast/regions/region-padding-overflow-hidden-expected.html: Added.
+        * fast/regions/region-padding-overflow-hidden.html: Added.
+
 2014-02-11  Piotr Grad  <p.grad@samsung.com>
 
         [GStreamer] High playback rate causes crash

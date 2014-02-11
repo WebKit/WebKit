@@ -5247,7 +5247,7 @@ void RenderLayer::mapLayerClipRectsToFragmentationLayer(RenderRegion* region, Cl
     LayoutRect flowThreadPortionRect = region->flowThreadPortionRect();
 
     LayoutPoint portionLocation = flowThreadPortionRect.location();
-    LayoutRect regionContentBox = region->contentBoxRect();
+    LayoutRect regionContentBox = region->regionContainer()->contentBoxRect();
     LayoutSize moveOffset = portionLocation - regionContentBox.location();
 
     ClipRect newOverflowClipRect = clipRects.overflowClipRect();

@@ -1,3 +1,22 @@
+2014-02-11  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Overflow above the first region is not properly painted for regions with padding
+        https://bugs.webkit.org/show_bug.cgi?id=128590
+
+        Reviewed by Andrei Bucur.
+
+        Painting is done using the layer of the region's container, so offsetting using the content box
+        of the region itself is incorrect. 
+
+        Test: fast/regions/region-padding-overflow-hidden.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::mapLayerClipRectsToFragmentationLayer):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::regionContainer):
+        (WebCore::RenderRegion::regionContainerLayer):
+        * rendering/RenderRegion.h:
+
 2014-02-11  Benjamin Poulain  <benjamin@webkit.org>
 
         querySelector() does not use the compiler correctly

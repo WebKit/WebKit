@@ -57,6 +57,7 @@ public:
 
     LayoutPoint flowThreadPortionLocation() const;
     
+    RenderBlockFlow* regionContainer() const;
     RenderLayer* regionContainerLayer() const;
 
     virtual void attachRegion();
