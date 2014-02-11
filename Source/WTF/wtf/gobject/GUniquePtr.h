@@ -24,6 +24,7 @@
 #if USE(GLIB)
 
 #include <gio/gio.h>
+#include <wtf/Noncopyable.h>
 
 namespace WTF {
 
@@ -57,9 +58,68 @@ using GUniquePtr = std::unique_ptr<T, GPtrDeleter<T>>;
 FOR_EACH_GLIB_DELETER(WTF_DEFINE_GPTR_DELETER)
 #undef FOR_EACH_GLIB_DELETER
 
+template <typename T> class GUniqueOutPtr {
+    WTF_MAKE_NONCOPYABLE(GUniqueOutPtr);
+public:
+    GUniqueOutPtr()
+        : m_ptr(nullptr)
+    {
+    }
+
+    ~GUniqueOutPtr()
+    {
+        reset();
+    }
+
+    T*& outPtr()
+    {
+        reset();
+        return m_ptr;
+    }
+
+    GUniquePtr<T> release()
+    {
+        GUniquePtr<T> ptr(m_ptr);
+        m_ptr = nullptr;
+        return ptr;
+    }
+
+    T& operator*() const
+    {
+        ASSERT(m_ptr);
+        return *m_ptr;
+    }
+
+    T* operator->() const
+    {
+        ASSERT(m_ptr);
+        return m_ptr;
+    }
+
+    T* get() const { return m_ptr; }
+
+    bool operator!() const { return !m_ptr; }
+
+    // This conversion operator allows implicit conversion to bool but not to other integer types.
+    typedef T* GUniqueOutPtr::*UnspecifiedBoolType;
+    operator UnspecifiedBoolType() const { return m_ptr ? &GUniqueOutPtr::m_ptr : 0; }
+
+private:
+    void reset()
+    {
+        if (m_ptr) {
+            GUniquePtr<T> deletePtr(m_ptr);
+            m_ptr = nullptr;
+        }
+    }
+
+    T* m_ptr;
+};
+
 } // namespace WTF
 
 using WTF::GUniquePtr;
+using WTF::GUniqueOutPtr;
 
 #endif // USE(GLIB)
 

@@ -29,8 +29,8 @@
 #include <WebCore/RefPtrCairo.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/RunLoop.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
@@ -164,13 +164,13 @@ static void processPendingIconsForPageURL(WebKitFaviconDatabase* database, const
     if (!pendingIconRequests)
         return;
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     RefPtr<cairo_surface_t> icon = getIconSurfaceSynchronously(database, pageURL, &error.outPtr());
 
     for (size_t i = 0; i < pendingIconRequests->size(); ++i) {
         GTask* task = pendingIconRequests->at(i).get();
         if (error)
-            g_task_return_error(task, error.release());
+            g_task_return_error(task, error.release().release());
         else {
             GetFaviconSurfaceAsyncData* data = static_cast<GetFaviconSurfaceAsyncData*>(g_task_get_task_data(task));
             data->icon = icon;
@@ -290,7 +290,7 @@ void webkit_favicon_database_get_favicon(WebKitFaviconDatabase* database, const 
 
     // We ask for the icon directly. If we don't get the icon data now,
     // we'll be notified later (even if the database is still importing icons).
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     data->icon = getIconSurfaceSynchronously(database, data->pageURL, &error.outPtr());
     if (data->icon) {
         g_task_return_boolean(task.get(), TRUE);
@@ -301,7 +301,7 @@ void webkit_favicon_database_get_favicon(WebKitFaviconDatabase* database, const 
     data->shouldReleaseIconForPageURL = true;
 
     if (g_error_matches(error.get(), WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND)) {
-        g_task_return_error(task.get(), error.release());
+        g_task_return_error(task.get(), error.release().release());
         return;
     }
 

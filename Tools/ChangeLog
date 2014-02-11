@@ -1,5 +1,53 @@
 2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GLIB] Add GUniqueOutPtr and use it instead of GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=127554
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use GUniqueOutPtr instead of GOwnPtr.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (createKeyPressEvent):
+        * TestWebKitAPI/Tests/WTF/gobject/GUniquePtr.cpp:
+        (TestWebKitAPI::returnOutChar):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestCookieManager.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestInspectorServer.cpp:
+        (testInspectorServerPageList):
+        (openRemoteDebuggingSession):
+        (sendIncompleteRequest):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebExtensions.cpp:
+        (testWebExtensionWindowObjectCleared):
+        (testWebExtensionIsolatedWorld):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFaviconDatabase.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewRunJavaScript):
+        (testWebViewSave):
+        (testWebViewPageVisibility):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebViewGroup.cpp:
+        (isStyleSheetInjectedForURLAtPath):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebViewEditor.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.cpp:
+        * TestWebKitAPI/Tests/gtk/InputMethodFilter.cpp:
+        (TestWebKitAPI::TestInputMethodFilter::sendKeyEventToFilter):
+        * TestWebKitAPI/gtk/PlatformWebViewGtk.cpp:
+        (TestWebKitAPI::doKeyStroke):
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h:
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestBus.cpp:
+        (WebKitTestBus::run):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (resourceGetDataCallback):
+        (WebViewTest::keyStroke):
+        (onSnapshotReady):
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::keyDown):
+
+2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add API to create a webview related to another one
         https://bugs.webkit.org/show_bug.cgi?id=128498
 

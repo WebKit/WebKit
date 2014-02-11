@@ -25,14 +25,14 @@
 #include "MIMETypeRegistry.h"
 #include <cairo.h>
 #include <gtk/gtk.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-static bool encodeImage(cairo_surface_t* surface, const String& mimeType, const double* quality, GOwnPtr<gchar>& buffer, gsize& bufferSize)
+static bool encodeImage(cairo_surface_t* surface, const String& mimeType, const double* quality, GUniqueOutPtr<gchar>& buffer, gsize& bufferSize)
 {
     // List of supported image encoding types comes from the GdkPixbuf documentation.
     // http://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-File-saving.html#gdk-pixbuf-save-to-bufferv
@@ -65,7 +65,7 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, const 
     if (!pixbuf)
         return false;
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     if (type == "jpeg" && quality && *quality >= 0.0 && *quality <= 1.0) {
         String qualityString = String::format("%d", static_cast<int>(*quality * 100.0 + 0.5));
         gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, type.utf8().data(), &error.outPtr(), "quality", qualityString.utf8().data(), NULL);
@@ -79,7 +79,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    GOwnPtr<gchar> buffer;
+    GUniqueOutPtr<gchar> buffer;
     gsize bufferSize;
     if (!encodeImage(m_data.m_surface.get(), mimeType, quality, buffer, bufferSize))
         return "data:,";

@@ -161,7 +161,7 @@ public:
     static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpointer userData)
     {
         size_t dataSize;
-        GOwnPtr<GError> error;
+        GUniqueOutPtr<GError> error;
         unsigned char* data = webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(object), result, &dataSize, &error.outPtr());
         g_assert(!error.get());
         g_assert(data);

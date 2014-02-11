@@ -37,7 +37,6 @@
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
 #include <limits>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -945,8 +944,8 @@ PassRefPtr<TimeRanges> MediaPlayerPrivateGStreamer::buffered() const
 
 gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 {
-    GOwnPtr<GError> err;
-    GOwnPtr<gchar> debug;
+    GUniqueOutPtr<GError> err;
+    GUniqueOutPtr<gchar> debug;
     MediaPlayer::NetworkState error;
     bool issueError = true;
     bool attemptNextLocation = false;

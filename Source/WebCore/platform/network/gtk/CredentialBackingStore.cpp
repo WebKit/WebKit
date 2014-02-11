@@ -34,7 +34,6 @@
 #include <glib/gi18n-lib.h>
 #include <libsecret/secret.h>
 #include <libsoup/soup.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #endif
@@ -77,7 +76,7 @@ static void credentialForChallengeAsyncReadyCallback(SecretService* service, GAs
     void* data = callbackData->data;
     delete callbackData;
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     GUniquePtr<GList> elements(secret_service_search_finish(service, asyncResult, &error.outPtr()));
     if (error || !elements || !elements->data) {
         callback(Credential(), data);

@@ -23,7 +23,6 @@
 #include <cairo.h>
 #include <glib-object.h>
 #include <wtf/HashSet.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 

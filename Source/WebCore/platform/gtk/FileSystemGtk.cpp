@@ -28,7 +28,6 @@
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/gobject/GlibUtilities.h>
@@ -340,7 +339,7 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
 
 int readFromFile(PlatformFileHandle handle, char* data, int length)
 {
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     do {
         gssize bytesRead = g_input_stream_read(g_io_stream_get_input_stream(G_IO_STREAM(handle)),
                                                data, length, 0, &error.outPtr());

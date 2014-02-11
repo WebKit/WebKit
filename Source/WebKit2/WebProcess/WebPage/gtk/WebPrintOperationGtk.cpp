@@ -40,7 +40,6 @@
 #include <WebCore/URL.h>
 #include <gtk/gtk.h>
 #include <wtf/Vector.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 
 #ifdef HAVE_GTK_UNIX_PRINTING
@@ -79,7 +78,7 @@ public:
         GUniquePtr<char>jobName(g_strdup_printf("%s job #%d", applicationName ? applicationName : "WebKit", ++jobNumber));
         m_printJob = adoptGRef(gtk_print_job_new(jobName.get(), printer, m_printSettings.get(), m_pageSetup.get()));
 
-        GOwnPtr<GError> error;
+        GUniqueOutPtr<GError> error;
         cairo_surface_t* surface = gtk_print_job_get_surface(m_printJob.get(), &error.outPtr());
         if (!surface) {
             printDone(printError(frameURL(), error->message));

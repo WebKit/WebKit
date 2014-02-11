@@ -21,7 +21,6 @@
 
 #include "markup.h"
 #include <gtk/gtk.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -102,7 +101,7 @@ void DataObjectGtk::setURIList(const String& uriListString)
                 setURL = true;
             }
 
-            GOwnPtr<GError> error;
+            GUniqueOutPtr<GError> error;
             GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().data(), 0, &error.outPtr()));
             if (!error && filename)
                 m_filenames.append(String::fromUTF8(filename.get()));

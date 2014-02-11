@@ -20,7 +20,7 @@
 #include "SharedBuffer.h"
 
 #include "FileSystem.h"
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 #include <glib.h>
@@ -34,9 +34,9 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
         return 0;
 
     CString filename = fileSystemRepresentation(filePath);
-    GOwnPtr<gchar> contents;
+    GUniqueOutPtr<gchar> contents;
     gsize size;
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     if (!g_file_get_contents(filename.data(), &contents.outPtr(), &size, &error.outPtr())) {
         LOG_ERROR("Failed to fully read contents of file %s - %s", filenameForDisplay(filePath).utf8().data(), error->message);
         return 0;

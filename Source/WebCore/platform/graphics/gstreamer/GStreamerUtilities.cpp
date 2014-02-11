@@ -26,7 +26,7 @@
 
 #include <gst/audio/audio.h>
 #include <gst/gst.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace WebCore {
 
@@ -126,7 +126,7 @@ bool initializeGStreamer()
         return true;
 #endif
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     // FIXME: We should probably pass the arguments from the command line.
     bool gstInitialized = gst_init_check(0, 0, &error.outPtr());
     ASSERT_WITH_MESSAGE(gstInitialized, "GStreamer initialization failed: %s", error ? error->message : "unknown error occurred");

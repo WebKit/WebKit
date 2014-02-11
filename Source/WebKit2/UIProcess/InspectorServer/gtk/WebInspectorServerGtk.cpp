@@ -33,7 +33,6 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <gio/gio.h>
 #include <glib.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -55,7 +54,7 @@ bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char
         return false;
 
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_uri(resourceURI.data()));
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(file.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE, G_FILE_QUERY_INFO_NONE, 0, &error.outPtr()));
     if (!fileInfo) {
         StringBuilder builder;

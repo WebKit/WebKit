@@ -119,7 +119,6 @@
 #include <bindings/ScriptValue.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -670,7 +669,7 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
 static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* event)
 {
     int rectCount;
-    GOwnPtr<GdkRectangle> rects;
+    GUniqueOutPtr<GdkRectangle> rects;
     gdk_region_get_rectangles(event->region, &rects.outPtr(), &rectCount);
 
     RefPtr<cairo_t> cr = adoptRef(gdk_cairo_create(event->window));

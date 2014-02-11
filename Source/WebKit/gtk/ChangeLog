@@ -1,3 +1,24 @@
+2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add GUniqueOutPtr and use it instead of GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=127554
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use GUniqueOutPtr instead of GOwnPtr.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidFailLoad):
+        * WebCoreSupport/TextCheckerClientGtk.cpp:
+        * webkit/webkitdownload.cpp:
+        (webkit_download_open_stream_for_uri):
+        (webkit_download_set_destination_uri):
+        (webkit_download_received_data):
+        * webkit/webkitwebplugin.cpp:
+        (webkit_web_plugin_get_path):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_expose_event):
+
 2014-02-09  Carlos Garnacho  <carlosg@gnome.org>
 
         [GTK] Allow building with touch events enabled

@@ -30,8 +30,8 @@
 #include <gst/gst.h>
 #include <gst/pbutils/pbutils.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 #include <gst/audio/audio.h>
 
@@ -203,8 +203,8 @@ GstFlowReturn AudioFileReader::handleSample(GstAppSink* sink)
 
 gboolean AudioFileReader::handleMessage(GstMessage* message)
 {
-    GOwnPtr<GError> error;
-    GOwnPtr<gchar> debug;
+    GUniqueOutPtr<GError> error;
+    GUniqueOutPtr<gchar> debug;
 
     switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_EOS:

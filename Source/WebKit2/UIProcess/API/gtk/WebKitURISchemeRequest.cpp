@@ -28,7 +28,6 @@
 #include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/ResourceError.h>
 #include <libsoup/soup.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -159,7 +158,7 @@ WebKitWebView* webkit_uri_scheme_request_get_web_view(WebKitURISchemeRequest* re
 static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsyncResult* result, WebKitURISchemeRequest* schemeRequest)
 {
     GRefPtr<WebKitURISchemeRequest> request = adoptGRef(schemeRequest);
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     gssize bytesRead = g_input_stream_read_finish(inputStream, result, &error.outPtr());
     if (bytesRead == -1) {
         webkit_uri_scheme_request_finish_error(request.get(), error.get());

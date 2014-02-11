@@ -39,8 +39,8 @@
 #include <glib/gi18n-lib.h>
 #include <glib/gstdio.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 #ifdef ERROR
@@ -464,7 +464,7 @@ static gboolean webkit_download_open_stream_for_uri(WebKitDownload* download, co
 
     WebKitDownloadPrivate* priv = download->priv;
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_uri(uri));
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
 
     if (append)
         priv->outputStream = g_file_append_to(file.get(), G_FILE_CREATE_NONE, NULL, &error.outPtr());
@@ -705,7 +705,7 @@ void webkit_download_set_destination_uri(WebKitDownload* download, const gchar* 
 
         GRefPtr<GFile> src = adoptGRef(g_file_new_for_uri(priv->destinationURI));
         GRefPtr<GFile> dest = adoptGRef(g_file_new_for_uri(destination_uri));
-        GOwnPtr<GError> error;
+        GUniqueOutPtr<GError> error;
 
         g_file_move(src.get(), dest.get(), G_FILE_COPY_BACKUP, 0, 0, 0, &error.outPtr());
 
@@ -865,7 +865,7 @@ static void webkit_download_received_data(WebKitDownload* download, const gchar*
     ASSERT(priv->outputStream);
 
     gsize bytes_written;
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
 
     g_output_stream_write_all(G_OUTPUT_STREAM(priv->outputStream),
                               data, length, &bytes_written, NULL, &error.outPtr());

@@ -35,7 +35,6 @@
 #include <gudev/gudev.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -80,7 +79,7 @@ GamepadDeviceGtk::~GamepadDeviceGtk()
 gboolean GamepadDeviceGtk::readCallback(GObject* pollableStream, gpointer data)
 {
     GamepadDeviceGtk* gamepadDevice = reinterpret_cast<GamepadDeviceGtk*>(data);
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     struct js_event event;
 
     gssize len = g_pollable_input_stream_read_nonblocking(G_POLLABLE_INPUT_STREAM(pollableStream),

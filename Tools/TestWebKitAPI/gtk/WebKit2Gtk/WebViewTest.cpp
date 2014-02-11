@@ -218,7 +218,7 @@ void WebViewTest::selectAll()
 static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpointer userData)
 {
     size_t dataSize;
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     unsigned char* data = webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(object), result, &dataSize, &error.outPtr());
     g_assert(data);
 
@@ -288,7 +288,7 @@ void WebViewTest::keyStroke(unsigned keyVal, unsigned keyModifiers)
     event->key.state = keyModifiers;
 
     // When synthesizing an event, an invalid hardware_keycode value can cause it to be badly processed by GTK+.
-    GOwnPtr<GdkKeymapKey> keys;
+    GUniqueOutPtr<GdkKeymapKey> keys;
     int keysCount;
     if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), keyVal, &keys.outPtr(), &keysCount))
         event->key.hardware_keycode = keys.get()[0].keycode;
@@ -425,7 +425,7 @@ bool WebViewTest::javascriptResultIsUndefined(WebKitJavascriptResult* javascript
 
 static void onSnapshotReady(WebKitWebView* web_view, GAsyncResult* res, WebViewTest* test)
 {
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     test->m_surface = webkit_web_view_get_snapshot_finish(web_view, res, &error.outPtr());
     g_assert(!test->m_surface || !error.get());
     if (error)

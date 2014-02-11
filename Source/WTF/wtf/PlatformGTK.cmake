@@ -1,5 +1,4 @@
 list(APPEND WTF_SOURCES
-    gobject/GOwnPtr.cpp
     gobject/GRefPtr.cpp
     gobject/GlibUtilities.cpp
 

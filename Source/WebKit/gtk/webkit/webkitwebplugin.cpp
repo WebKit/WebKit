@@ -24,7 +24,7 @@
 #include "webkitglobalsprivate.h"
 #include "webkitwebpluginprivate.h"
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 /**
  * SECTION:webkitwebplugin
@@ -192,7 +192,7 @@ const char* webkit_web_plugin_get_path(WebKitWebPlugin* plugin)
     if (priv->path)
         return priv->path.get();
 
-    GOwnPtr<GError> error;
+    GUniqueOutPtr<GError> error;
     priv->path.reset(g_filename_from_utf8(priv->corePlugin->path().utf8().data(), -1, 0, 0, &error.outPtr()));
 
     if (!error)

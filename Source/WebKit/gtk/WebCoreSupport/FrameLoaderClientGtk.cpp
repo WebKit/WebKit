@@ -95,7 +95,6 @@
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <stdio.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -1040,7 +1039,7 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     if (!errorFile)
         content = makeString("<html><body>", webError->message, "</body></html>");
     else {
-        GOwnPtr<gchar> fileContent;
+        GUniqueOutPtr<gchar> fileContent;
         if (!g_file_load_contents(errorFile.get(), 0, &fileContent.outPtr(), 0, 0, 0))
             content = makeString("<html><body>", webError->message, "</body></html>");
         else

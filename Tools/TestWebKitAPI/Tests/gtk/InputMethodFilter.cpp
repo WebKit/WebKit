@@ -29,7 +29,7 @@
 #include "WTFStringUtilities.h"
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -64,7 +64,7 @@ public:
         gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_display_get_default())));
 #endif
 
-        GOwnPtr<GdkKeymapKey> keys;
+        GUniqueOutPtr<GdkKeymapKey> keys;
         gint nKeys;
         if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeyValue, &keys.outPtr(), &nKeys))
             event->key.hardware_keycode = keys.get()[0].keycode;
