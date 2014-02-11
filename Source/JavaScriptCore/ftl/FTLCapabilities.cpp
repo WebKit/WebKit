@@ -134,6 +134,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MakeRope:
     case NewArrayWithSize:
     case GetById:
+    case ToThis:
         // These are OK.
         break;
     case PutByIdDirect:

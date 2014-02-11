@@ -1,5 +1,21 @@
 2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support ToThis
+        https://bugs.webkit.org/show_bug.cgi?id=127751
+
+        Reviewed by Oliver Hunt.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileToThis):
+        * tests/stress/to-this-polymorphic.js: Added.
+        (foo):
+
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
+
         Rename Operations.h to JSCInlines.h
         https://bugs.webkit.org/show_bug.cgi?id=128543
 

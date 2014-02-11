@@ -303,6 +303,9 @@ private:
         case Phantom:
             compilePhantom();
             break;
+        case ToThis:
+            compileToThis();
+            break;
         case ValueAdd:
             compileValueAdd();
             break;
@@ -887,6 +890,34 @@ private:
     void compilePhantom()
     {
         DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, speculate);
+    }
+    
+    void compileToThis()
+    {
+        LValue value = lowJSValue(m_node->child1());
+        
+        LBasicBlock isCellCase = FTL_NEW_BLOCK(m_out, ("ToThis is cell case"));
+        LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ToThis slow case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ToThis continuation"));
+        
+        m_out.branch(isCell(value), isCellCase, slowCase);
+        
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, slowCase);
+        ValueFromBlock fastResult = m_out.anchor(value);
+        m_out.branch(isType(value, FinalObjectType), continuation, slowCase);
+        
+        m_out.appendTo(slowCase, continuation);
+        J_JITOperation_EJ function;
+        if (m_graph.isStrictModeFor(m_node->codeOrigin))
+            function = operationToThisStrict;
+        else
+            function = operationToThis;
+        ValueFromBlock slowResult = m_out.anchor(
+            vmCall(m_out.operation(function), m_callFrame, value));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(m_out.int64, fastResult, slowResult));
     }
     
     void compileValueAdd()

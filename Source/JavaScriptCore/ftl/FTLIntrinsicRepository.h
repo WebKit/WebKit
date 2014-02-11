@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,7 @@ namespace JSC { namespace FTL {
     macro(J_JITOperation_EA, functionType(int64, intPtr, intPtr)) \
     macro(J_JITOperation_EAZ, functionType(int64, intPtr, intPtr, int32)) \
     macro(J_JITOperation_EDA, functionType(int64, intPtr, doubleType, intPtr)) \
+    macro(J_JITOperation_EJ, functionType(int64, intPtr, int64)) \
     macro(J_JITOperation_EJA, functionType(int64, intPtr, int64, intPtr)) \
     macro(J_JITOperation_EJJ, functionType(int64, intPtr, int64, int64)) \
     macro(J_JITOperation_EJssZ, functionType(int64, intPtr, intPtr, int32)) \
