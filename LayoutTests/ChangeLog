@@ -1,3 +1,25 @@
+2014-02-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Support calc() breadth size type
+        https://bugs.webkit.org/show_bug.cgi?id=103761
+
+        Reviewed by Dean Jackson.
+
+        Added some more tests for track breadths specified with calc().
+
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set.js:
+
 2014-02-11  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] clipping rectangle for "overflow: hidden" should be based on the padding box, not the content box

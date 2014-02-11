@@ -28,6 +28,14 @@ PASS window.getComputedStyle(gridWithFractionFraction, '').getPropertyValue('-we
 PASS window.getComputedStyle(gridWithFractionFraction, '').getPropertyValue('-webkit-grid-template-rows') is "3fr 4fr"
 PASS window.getComputedStyle(gridWithFractionMinMax, '').getPropertyValue('-webkit-grid-template-columns') is "minmax(-webkit-min-content, 45px) 2fr"
 PASS window.getComputedStyle(gridWithFractionMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "3fr minmax(14px, -webkit-max-content)"
+PASS window.getComputedStyle(gridWithCalcCalc, '').getPropertyValue('-webkit-grid-template-columns') is "200px 100px"
+PASS window.getComputedStyle(gridWithCalcCalc, '').getPropertyValue('-webkit-grid-template-rows') is "150px 75px"
+PASS window.getComputedStyle(gridWithCalcAndFixed, '').getPropertyValue('-webkit-grid-template-columns') is "50% 80px"
+PASS window.getComputedStyle(gridWithCalcAndFixed, '').getPropertyValue('-webkit-grid-template-rows') is "88px 25%"
+PASS window.getComputedStyle(gridWithCalcAndMinMax, '').getPropertyValue('-webkit-grid-template-columns') is "calc(30px + 20%) minmax(-webkit-min-content, 80px)"
+PASS window.getComputedStyle(gridWithCalcAndMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "minmax(25%, -webkit-max-content) calc(10% - 7px)"
+PASS window.getComputedStyle(gridWithCalcInsideMinMax, '').getPropertyValue('-webkit-grid-template-columns') is "minmax(calc(23px + 10%), 400px) 120px"
+PASS window.getComputedStyle(gridWithCalcInsideMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "150px minmax(5%, calc(50% - 125px))"
 
 Test the initial value
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is 'none'

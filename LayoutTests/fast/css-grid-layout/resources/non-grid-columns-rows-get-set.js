@@ -11,6 +11,10 @@ testGridTemplatesValues(document.getElementById("gridWithMinMax"), "minmax(10%, 
 testGridTemplatesValues(document.getElementById("gridWithMinContent"), "-webkit-min-content", "-webkit-min-content");
 testGridTemplatesValues(document.getElementById("gridWithMaxContent"), "-webkit-max-content", "-webkit-max-content");
 testGridTemplatesValues(document.getElementById("gridWithFraction"), "1fr", "2fr");
+testGridTemplatesValues(document.getElementById("gridWithCalc"), "150px", "75px");
+testGridTemplatesValues(document.getElementById("gridWithCalcComplex"), "calc(50% + 150px)", "calc(65% + 75px)");
+testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMax"), "minmax(10%, 15px)", "minmax(20px, 50%)");
+testGridTemplatesValues(document.getElementById("gridWithCalcComplexInsideMinMax"), "minmax(10%, calc(50% + 15px))", "minmax(calc(20px + 10%), 50%)");
 
 debug("");
 debug("Test getting wrong values for grid-template-columns and grid-template-rows through CSS (they should resolve to the default: 'none')");

@@ -211,7 +211,7 @@ public:
         case CalcNumber:
             return std::make_unique<CalcExpressionNumber>(m_value->getFloatValue());
         case CalcLength:
-            return std::make_unique<CalcExpressionNumber>(m_value->computeLength<float>(style, rootStyle, zoom));
+            return std::make_unique<CalcExpressionLength>(Length(m_value->computeLength<float>(style, rootStyle, zoom), WebCore::Fixed));
         case CalcPercent:
         case CalcPercentLength: {
             CSSPrimitiveValue* primitiveValue = m_value.get();

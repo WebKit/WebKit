@@ -24,6 +24,14 @@ PASS window.getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-g
 PASS window.getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-template-rows') is "-webkit-max-content"
 PASS window.getComputedStyle(gridWithFraction, '').getPropertyValue('-webkit-grid-template-columns') is "1fr"
 PASS window.getComputedStyle(gridWithFraction, '').getPropertyValue('-webkit-grid-template-rows') is "2fr"
+PASS window.getComputedStyle(gridWithCalc, '').getPropertyValue('-webkit-grid-template-columns') is "150px"
+PASS window.getComputedStyle(gridWithCalc, '').getPropertyValue('-webkit-grid-template-rows') is "75px"
+PASS window.getComputedStyle(gridWithCalcComplex, '').getPropertyValue('-webkit-grid-template-columns') is "calc(50% + 150px)"
+PASS window.getComputedStyle(gridWithCalcComplex, '').getPropertyValue('-webkit-grid-template-rows') is "calc(65% + 75px)"
+PASS window.getComputedStyle(gridWithCalcInsideMinMax, '').getPropertyValue('-webkit-grid-template-columns') is "minmax(10%, 15px)"
+PASS window.getComputedStyle(gridWithCalcInsideMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "minmax(20px, 50%)"
+PASS window.getComputedStyle(gridWithCalcComplexInsideMinMax, '').getPropertyValue('-webkit-grid-template-columns') is "minmax(10%, calc(50% + 15px))"
+PASS window.getComputedStyle(gridWithCalcComplexInsideMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "minmax(calc(20px + 10%), 50%)"
 
 Test getting wrong values for grid-template-columns and grid-template-rows through CSS (they should resolve to the default: 'none')
 PASS window.getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-template-columns') is "none"

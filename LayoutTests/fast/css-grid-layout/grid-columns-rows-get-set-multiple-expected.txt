@@ -30,6 +30,14 @@ PASS window.getComputedStyle(gridWithFractionFraction, '').getPropertyValue('-we
 PASS window.getComputedStyle(gridWithFractionFraction, '').getPropertyValue('-webkit-grid-template-rows') is "225px 375px"
 PASS window.getComputedStyle(gridWithFractionMinMax, '').getPropertyValue('-webkit-grid-template-columns') is "45px 755px"
 PASS window.getComputedStyle(gridWithFractionMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "586px 14px"
+PASS window.getComputedStyle(gridWithCalcCalc, '').getPropertyValue('-webkit-grid-template-columns') is "200px 100px"
+PASS window.getComputedStyle(gridWithCalcCalc, '').getPropertyValue('-webkit-grid-template-rows') is "150px 75px"
+PASS window.getComputedStyle(gridWithCalcAndFixed, '').getPropertyValue('-webkit-grid-template-columns') is "400px 80px"
+PASS window.getComputedStyle(gridWithCalcAndFixed, '').getPropertyValue('-webkit-grid-template-rows') is "88px 150px"
+PASS window.getComputedStyle(gridWithCalcAndMinMax, '').getPropertyValue('-webkit-grid-template-columns') is "190px 80px"
+PASS window.getComputedStyle(gridWithCalcAndMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "150px 53px"
+PASS window.getComputedStyle(gridWithCalcInsideMinMax, '').getPropertyValue('-webkit-grid-template-columns') is "400px 120px"
+PASS window.getComputedStyle(gridWithCalcInsideMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "150px 175px"
 
 Test the initial value
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is 'none'
@@ -60,6 +68,14 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-colum
 PASS element.style.webkitGridTemplateColumns is "16em 2fr"
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "600px 0px"
 PASS element.style.webkitGridTemplateRows is "14fr auto"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "25px 20px"
+PASS element.style.webkitGridTemplateColumns is "calc(25px) calc(2em)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "0px 60px"
+PASS element.style.webkitGridTemplateRows is "auto calc(10%)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "345px 92px"
+PASS element.style.webkitGridTemplateColumns is "calc(25px + 40%) minmax(-webkit-min-content, calc(10% + 12px))"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "100px 0px"
+PASS element.style.webkitGridTemplateRows is "minmax(calc(75% - 350px), -webkit-max-content) auto"
 
 Test getting wrong values set from CSS
 PASS window.getComputedStyle(gridWithNoneAndAuto, '').getPropertyValue('-webkit-grid-template-columns') is "none"
@@ -68,6 +84,10 @@ PASS window.getComputedStyle(gridWithNoneAndFixed, '').getPropertyValue('-webkit
 PASS window.getComputedStyle(gridWithNoneAndFixed, '').getPropertyValue('-webkit-grid-template-rows') is "none"
 
 Test setting and getting wrong values from JS
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"

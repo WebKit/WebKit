@@ -56,6 +56,22 @@ if (window.testRunner)
     -webkit-grid-template-columns: 1fr;
     -webkit-grid-template-rows: 2fr;
 }
+.gridWithCalc {
+    -webkit-grid-template-columns: calc(150px);
+    -webkit-grid-template-rows: calc(75px);
+}
+.gridWithCalcComplex {
+    -webkit-grid-template-columns: calc(50% + 150px);
+    -webkit-grid-template-rows: calc(65% + 75px);
+}
+.gridWithCalcInsideMinMax {
+    -webkit-grid-template-columns: minmax(10%, calc(15px));
+    -webkit-grid-template-rows: minmax(calc(20px), 50%);
+}
+.gridWithCalcComplexInsideMinMax {
+    -webkit-grid-template-columns: minmax(10%, calc(50% + 15px));
+    -webkit-grid-template-rows: minmax(calc(20px + 10%), 50%);
+}
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
@@ -72,6 +88,10 @@ if (window.testRunner)
 <div class="gridWithMinContent" id="gridWithMinContent"></div>
 <div class="gridWithMaxContent" id="gridWithMaxContent"></div>
 <div class="gridWithFraction" id="gridWithFraction"></div>
+<div class="gridWithCalc" id="gridWithCalc"></div>
+<div class="gridWithCalcComplex" id="gridWithCalcComplex"></div>
+<div class="gridWithCalcInsideMinMax" id="gridWithCalcInsideMinMax"></div>
+<div class="gridWithCalcComplexInsideMinMax" id="gridWithCalcComplexInsideMinMax"></div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
 <script src="resources/non-grid-columns-rows-get-set.js"></script>
 <script src="../../resources/js-test-post.js"></script>

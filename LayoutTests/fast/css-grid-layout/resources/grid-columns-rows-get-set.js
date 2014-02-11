@@ -14,6 +14,10 @@ testGridTemplatesValues(document.getElementById("gridWithMinContentWithChildrenE
 testGridTemplatesValues(document.getElementById("gridWithMaxContentElement"), "0px", "0px");
 testGridTemplatesValues(document.getElementById("gridWithMaxContentWithChildrenElement"), "17px", "11px");
 testGridTemplatesValues(document.getElementById("gridWithFractionElement"), "800px", "600px");
+testGridTemplatesValues(document.getElementById("gridWithCalcElement"), "150px", "75px");
+testGridTemplatesValues(document.getElementById("gridWithCalcComplexElement"), "550px", "465px");
+testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMaxElement"), "minmax(10%, 15px)", "minmax(20px, 50%)", "80px", "300px");
+testGridTemplatesValues(document.getElementById("gridWithCalcComplexInsideMinMaxElement"), "minmax(10%, 415px)", "minmax(80px, 50%)", "415px", "300px");
 
 debug("");
 debug("Test getting wrong values for -webkit-grid-template-columns and -webkit-grid-template-rows through CSS (they should resolve to the default: 'none')");
@@ -56,6 +60,13 @@ testGridTemplatesSetJSValues("3600Fr", "154fR", "800px", "600px", "3600fr", "154
 testGridTemplatesSetJSValues("+3fr", "+4fr", "800px", "600px", "3fr", "4fr");
 
 debug("");
+debug("Test getting and setting grid-template-columns and grid-template-rows to calc() values through JS");
+testGridTemplatesSetJSValues("calc(150px)", "calc(75px)", "150px", "75px");
+testGridTemplatesSetJSValues("calc(50% - 30px)", "calc(75px + 10%)", "370px", "135px");
+testGridTemplatesSetJSValues("minmax(25%, calc(30px))", "minmax(calc(75%), 40px)", "200px", "450px", "minmax(25%, calc(30px))", "minmax(calc(75%), 40px)");
+testGridTemplatesSetJSValues("minmax(10%, calc(30px + 10%))", "minmax(calc(25% - 50px), 200px)", "110px", "200px", "minmax(10%, calc(30px + 10%))", "minmax(calc(25% - 50px), 200px)");
+
+debug("");
 debug("Test setting grid-template-columns and grid-template-rows to bad values through JS");
 // No comma and only 1 argument provided.
 testGridTemplatesSetBadJSValues("minmax(10px 20px)", "minmax(10px)")
@@ -76,6 +87,9 @@ testGridTemplatesSetBadJSValues("7.-fr", "-8,0fr");
 // Negative values are not allowed.
 testGridTemplatesSetBadJSValues("-1px", "-6em");
 testGridTemplatesSetBadJSValues("minmax(-1%, 32%)", "minmax(2vw, -6em)");
+// Invalid expressions with calc
+testGridTemplatesSetBadJSValues("calc(16px 30px)", "calc(25px + auto)");
+testGridTemplatesSetBadJSValues("minmax(-webkit-min-content, calc())", "calc(10%(");
 
 debug("");
 debug("Test setting grid-template-columns and grid-template-rows back to 'none' through JS");

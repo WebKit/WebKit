@@ -14,6 +14,10 @@ testGridTemplatesValues(document.getElementById("gridWithMinMaxAndFixed"), "minm
 testGridTemplatesValues(document.getElementById("gridWithMinMaxAndMinMaxContent"), "minmax(-webkit-min-content, 30%) 15px", "120px minmax(35%, -webkit-max-content)", "240px 15px", "120px 210px");
 testGridTemplatesValues(document.getElementById("gridWithFractionFraction"), "1fr 2fr", "3fr 4fr", "320px 480px", "225px 375px");
 testGridTemplatesValues(document.getElementById("gridWithFractionMinMax"), "minmax(-webkit-min-content, 45px) 2fr", "3fr minmax(14px, -webkit-max-content)", "45px 755px", "586px 14px");
+testGridTemplatesValues(document.getElementById("gridWithCalcCalc"), "200px 100px", "150px 75px");
+testGridTemplatesValues(document.getElementById("gridWithCalcAndFixed"), "50% 80px", "88px 25%", "400px 80px", "88px 150px");
+testGridTemplatesValues(document.getElementById("gridWithCalcAndMinMax"), "190px minmax(-webkit-min-content, 80px)", "minmax(25%, -webkit-max-content) 53px", "190px 80px", "150px 53px");
+testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMax"), "minmax(103px, 400px) 120px", "150px minmax(5%, 175px)", "400px 120px", "150px 175px");
 
 debug("");
 debug("Test the initial value");
@@ -30,6 +34,8 @@ testGridTemplatesSetJSValues("auto auto", "auto auto", "0px 0px", "0px 0px");
 testGridTemplatesSetJSValues("auto 16em 22px", "56% 10em auto", "0px 160px 22px", "336px 100px 0px");
 testGridTemplatesSetJSValues("16em minmax(16px, 20px)", "minmax(10%, 15%) auto", "160px 20px", "90px 0px");
 testGridTemplatesSetJSValues("16em 2fr", "14fr auto", "160px 640px", "600px 0px");
+testGridTemplatesSetJSValues("calc(25px) calc(2em)", "auto calc(10%)", "25px 20px", "0px 60px", "calc(25px) calc(2em)", "auto calc(10%)");
+testGridTemplatesSetJSValues("calc(25px + 40%) minmax(-webkit-min-content, calc(10% + 12px))", "minmax(calc(75% - 350px), -webkit-max-content) auto", "345px 92px", "100px 0px", "calc(25px + 40%) minmax(-webkit-min-content, calc(10% + 12px))", "minmax(calc(75% - 350px), -webkit-max-content) auto");
 
 debug("");
 debug("Test getting wrong values set from CSS");
@@ -49,6 +55,9 @@ testGridTemplatesSetBadJSValues("auto minmax(16px, auto)", "minmax(auto, 15%) 10
 // Negative values are not allowed.
 testGridTemplatesSetBadJSValues("-10px minmax(16px, 32px)", "minmax(10%, 15%) -10vw");
 testGridTemplatesSetBadJSValues("10px minmax(16px, -1vw)", "minmax(-1%, 15%) 10vw");
+// Invalid expressions with calc
+testGridTemplatesSetBadJSValues("10px calc(16px 30px)", "calc(25px + auto) 2em");
+testGridTemplatesSetBadJSValues("minmax(-webkit-min-content, calc() 250px", "calc(2em(");
 
 function testInherit()
 {
