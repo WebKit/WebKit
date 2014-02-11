@@ -46,58 +46,73 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+struct EntityDescription {
+    const char* characters;
+    unsigned char length;
+    unsigned char mask;
+};
+
+static const EntityDescription entitySubstitutionList[] = {
+    { "", 0 , 0 },
+    { "&amp;", 5 , EntityAmp },
+    { "&lt;", 4, EntityLt },
+    { "&gt;", 4, EntityGt },
+    { "&quot;", 6, EntityQuot },
+    { "&nbsp;", 6, EntityNbsp },
+};
+
+enum EntitySubstitutionIndex {
+    EntitySubstitutionNullIndex = 0,
+    EntitySubstitutionAmpIndex = 1,
+    EntitySubstitutionLtIndex = 2,
+    EntitySubstitutionGtIndex = 3,
+    EntitySubstitutionQuotIndex = 4,
+    EntitySubstitutionNbspIndex = 5,
+};
+
+static const unsigned maximumEscapedentityCharacter = noBreakSpace;
+static const uint8_t entityMap[maximumEscapedentityCharacter + 1] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    EntitySubstitutionQuotIndex, // '"'.
+    0, 0, 0,
+    EntitySubstitutionAmpIndex, // '&'.
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    EntitySubstitutionLtIndex, // '<'.
+    0,
+    EntitySubstitutionGtIndex, // '>'.
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    EntitySubstitutionNbspIndex // noBreakSpace.
+};
+
+template<typename CharacterType>
+static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& result, const String& source, unsigned offset, unsigned length, EntityMask entityMask)
+{
+    const CharacterType* text = source.characters<CharacterType>() + offset;
+
+    size_t positionAfterLastEntity = 0;
+    for (size_t i = 0; i < length; ++i) {
+        CharacterType character = text[i];
+        uint8_t substitution = character < WTF_ARRAY_LENGTH(entityMap) ? entityMap[character] : static_cast<uint8_t>(EntitySubstitutionNullIndex);
+        if (UNLIKELY(substitution != EntitySubstitutionNullIndex) && entitySubstitutionList[substitution].mask & entityMask) {
+            result.append(text + positionAfterLastEntity, i - positionAfterLastEntity);
+            result.append(entitySubstitutionList[substitution].characters, entitySubstitutionList[substitution].length);
+            positionAfterLastEntity = i + 1;
+        }
+    }
+    result.append(text + positionAfterLastEntity, length - positionAfterLastEntity);
+}
+
 void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result, const String& source, unsigned offset, unsigned length, EntityMask entityMask)
 {
-    DEFINE_STATIC_LOCAL(const String, ampReference, (ASCIILiteral("&amp;")));
-    DEFINE_STATIC_LOCAL(const String, ltReference, (ASCIILiteral("&lt;")));
-    DEFINE_STATIC_LOCAL(const String, gtReference, (ASCIILiteral("&gt;")));
-    DEFINE_STATIC_LOCAL(const String, quotReference, (ASCIILiteral("&quot;")));
-    DEFINE_STATIC_LOCAL(const String, nbspReference, (ASCIILiteral("&nbsp;")));
-
-    static const EntityDescription entityMaps[] = {
-        { '&', ampReference, EntityAmp },
-        { '<', ltReference, EntityLt },
-        { '>', gtReference, EntityGt },
-        { '"', quotReference, EntityQuot },
-        { noBreakSpace, nbspReference, EntityNbsp },
-    };
-
     if (!(offset + length))
         return;
 
     ASSERT(offset + length <= source.length());
 
-    if (source.is8Bit()) {
-        const LChar* text = source.characters8() + offset;
-
-        size_t positionAfterLastEntity = 0;
-        for (size_t i = 0; i < length; ++i) {
-            for (size_t entityIndex = 0; entityIndex < WTF_ARRAY_LENGTH(entityMaps); ++entityIndex) {
-                if (text[i] == entityMaps[entityIndex].entity && entityMaps[entityIndex].mask & entityMask) {
-                    result.append(text + positionAfterLastEntity, i - positionAfterLastEntity);
-                    result.append(entityMaps[entityIndex].reference);
-                    positionAfterLastEntity = i + 1;
-                    break;
-                }
-            }
-        }
-        result.append(text + positionAfterLastEntity, length - positionAfterLastEntity);
-    } else {
-        const UChar* text = source.characters16() + offset;
-
-        size_t positionAfterLastEntity = 0;
-        for (size_t i = 0; i < length; ++i) {
-            for (size_t entityIndex = 0; entityIndex < WTF_ARRAY_LENGTH(entityMaps); ++entityIndex) {
-                if (text[i] == entityMaps[entityIndex].entity && entityMaps[entityIndex].mask & entityMask) {
-                    result.append(text + positionAfterLastEntity, i - positionAfterLastEntity);
-                    result.append(entityMaps[entityIndex].reference);
-                    positionAfterLastEntity = i + 1;
-                    break;
-                }
-            }
-        }
-        result.append(text + positionAfterLastEntity, length - positionAfterLastEntity);
-    }
+    if (source.is8Bit())
+        appendCharactersReplacingEntitiesInternal<LChar>(result, source, offset, length, entityMask);
+    else
+        appendCharactersReplacingEntitiesInternal<UChar>(result, source, offset, length, entityMask);
 }
 
 MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs resolveUrlsMethod, const Range* range, EFragmentSerialization fragmentSerialization)

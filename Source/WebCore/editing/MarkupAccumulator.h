@@ -56,12 +56,6 @@ enum EntityMask {
     EntityMaskInHTMLAttributeValue = EntityMaskInAttributeValue | EntityNbsp,
 };
 
-struct EntityDescription {
-    UChar entity;
-    const String& reference;
-    EntityMask mask;
-};
-
 // FIXME: Noncopyable?
 class MarkupAccumulator {
 public:
