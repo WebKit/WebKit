@@ -1,3 +1,9 @@
+2014-02-11  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Set ENABLE_CSS_SHAPE_INSIDE feature flag on Windows.
+
+        * win/tools/vsprops/FeatureDefines.props:
+
 2014-02-04  Andreas Kling  <akling@apple.com>
 
         Remove <iframe seamless> support.
