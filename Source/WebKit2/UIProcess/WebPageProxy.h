@@ -436,6 +436,9 @@ public:
     void displayView();
     bool canScrollView();
     void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
+    
+    void setDelegatesScrolling(bool delegatesScrolling) { m_delegatesScrolling = delegatesScrolling; }
+    bool delegatesScrolling() const { return m_delegatesScrolling; }
 
     enum class WantsReplyOrNot { DoesNotWantReply, DoesWantReply };
     void viewStateDidChange(WebCore::ViewState::Flags mayHaveChanged, WantsReplyOrNot = WantsReplyOrNot::DoesNotWantReply);
@@ -1366,6 +1369,8 @@ private:
 #endif
 
     PageLoadState m_pageLoadState;
+    
+    bool m_delegatesScrolling;
 
     bool m_mainFrameHasHorizontalScrollbar;
     bool m_mainFrameHasVerticalScrollbar;

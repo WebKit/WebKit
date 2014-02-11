@@ -111,6 +111,7 @@ using namespace WebKit;
     _page->initializeWebPage();
     _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
     _page->setUseFixedLayout(true);
+    _page->setDelegatesScrolling(true);
 
     WebContext::statistics().wkViewCount++;
 
@@ -263,6 +264,7 @@ using namespace WebKit;
     _page->initializeWebPage();
     _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
     _page->setUseFixedLayout(true);
+    _page->setDelegatesScrolling(true);
 
     WebContext::statistics().wkViewCount++;
 

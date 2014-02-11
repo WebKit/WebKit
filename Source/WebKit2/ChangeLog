@@ -1,3 +1,22 @@
+2014-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Put a delegatesScrolling flag on WebPageProxy so that the UI process knows when scrolling is delegated
+        https://bugs.webkit.org/show_bug.cgi?id=128429
+
+        Reviewed by Sam Weinig.
+        
+        Add delegatesScrolling() which defaults to false, but is set to true for iOS
+        by WKContentView.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:configuration:]):
+        (-[WKContentView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setDelegatesScrolling):
+        (WebKit::WebPageProxy::delegatesScrolling):
+
 2014-02-10  Gavin Barraclough  <barraclough@apple.com>
 
         Remove WKPageSetVisibilityState
