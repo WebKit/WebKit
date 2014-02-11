@@ -1,3 +1,36 @@
+2014-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct some uses of 'auto'
+        https://bugs.webkit.org/show_bug.cgi?id=128578
+
+        Reviewed by Anders Carlsson.
+
+        Correct the following instances of "for (auto ...)" to use reference or
+        const references to avoid copies.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::elementsFromAttribute):
+        * css/CSSGridTemplateValue.cpp:
+        (WebCore::stringForPosition):
+        * dom/Node.cpp:
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        * inspector/PageInjectedScriptManager.cpp:
+        (WebCore::PageInjectedScriptManager::discardInjectedScriptsFor):
+        * page/WheelEventDeltaTracker.cpp:
+        (WebCore::WheelEventDeltaTracker::dominantScrollGestureDirection):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+        * platform/graphics/mac/WebLayer.mm:
+        (WebCore::drawLayerContents):
+        * platform/ios/TileGrid.mm:
+        (WebCore::TileGrid::dropTilesBetweenRects):
+        (WebCore::TileGrid::dropDistantTiles):
+        (WebCore::TileGrid::dropInvalidTiles):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::translateIntersectionPointsToSkipInkBoundaries):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::restoreTo):
+
 2014-02-10  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Make columns work with line grids

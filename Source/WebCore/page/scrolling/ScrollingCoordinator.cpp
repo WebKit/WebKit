@@ -107,7 +107,7 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, 
     document->getTouchRects(touchRects);
     
     Region touchRegion;
-    for (auto rect : touchRects)
+    for (const auto& rect : touchRects)
         touchRegion.unite(rect);
 
     return touchRegion;
@@ -132,10 +132,10 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, 
         }
     }
 
-    for (auto it = frameView->children().begin(), end = frameView->children().end(); it != end; ++it) {
-        if (!(*it)->isPluginViewBase())
+    for (const auto& child : frameView->children()) {
+        if (!child->isPluginViewBase())
             continue;
-        PluginViewBase* pluginViewBase = toPluginViewBase((*it).get());
+        PluginViewBase* pluginViewBase = toPluginViewBase(child.get());
         if (pluginViewBase->wantsWheelEvents())
             nonFastScrollableRegion.unite(pluginViewBase->frameRect());
     }

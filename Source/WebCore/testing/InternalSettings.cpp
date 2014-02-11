@@ -107,32 +107,32 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #endif
     settings.setEditingBehaviorType(m_originalEditingBehavior);
 
-    for (auto iter = m_standardFontFamilies.begin(); iter != m_standardFontFamilies.end(); ++iter)
-        settings.setStandardFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    for (const auto& standardFont : m_standardFontFamilies)
+        settings.setStandardFontFamily(standardFont.value, static_cast<UScriptCode>(standardFont.key));
     m_standardFontFamilies.clear();
 
-    for (auto iter = m_fixedFontFamilies.begin(); iter != m_fixedFontFamilies.end(); ++iter)
-        settings.setFixedFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    for (const auto& fixedFont : m_fixedFontFamilies)
+        settings.setFixedFontFamily(fixedFont.value, static_cast<UScriptCode>(fixedFont.key));
     m_fixedFontFamilies.clear();
 
-    for (auto iter = m_serifFontFamilies.begin(); iter != m_serifFontFamilies.end(); ++iter)
-        settings.setSerifFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    for (const auto& serifFont : m_serifFontFamilies)
+        settings.setSerifFontFamily(serifFont.value, static_cast<UScriptCode>(serifFont.key));
     m_serifFontFamilies.clear();
 
-    for (auto iter = m_sansSerifFontFamilies.begin(); iter != m_sansSerifFontFamilies.end(); ++iter)
-        settings.setSansSerifFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    for (const auto& sansSerifFont : m_sansSerifFontFamilies)
+        settings.setSansSerifFontFamily(sansSerifFont.value, static_cast<UScriptCode>(sansSerifFont.key));
     m_sansSerifFontFamilies.clear();
 
-    for (auto iter = m_cursiveFontFamilies.begin(); iter != m_cursiveFontFamilies.end(); ++iter)
-        settings.setCursiveFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    for (const auto& cursiveFont : m_cursiveFontFamilies)
+        settings.setCursiveFontFamily(cursiveFont.value, static_cast<UScriptCode>(cursiveFont.key));
     m_cursiveFontFamilies.clear();
 
-    for (auto iter = m_fantasyFontFamilies.begin(); iter != m_fantasyFontFamilies.end(); ++iter)
-        settings.setFantasyFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    for (const auto& fantasyFont : m_fantasyFontFamilies)
+        settings.setFantasyFontFamily(fantasyFont.value, static_cast<UScriptCode>(fantasyFont.key));
     m_fantasyFontFamilies.clear();
 
-    for (auto iter = m_pictographFontFamilies.begin(); iter != m_pictographFontFamilies.end(); ++iter)
-        settings.setPictographFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    for (const auto& pictographFont : m_pictographFontFamilies)
+        settings.setPictographFontFamily(pictographFont.value, static_cast<UScriptCode>(pictographFont.key));
     m_pictographFontFamilies.clear();
 
 #if ENABLE(TEXT_AUTOSIZING)

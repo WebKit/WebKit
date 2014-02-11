@@ -1694,20 +1694,20 @@ void Node::showTreeForThisAcrossFrame() const
 
 void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
 {
-    for (auto it = m_atomicNameCaches.begin(), end = m_atomicNameCaches.end(); it != end; ++it)
-        it->value->invalidateCache(attrName);
+    for (auto& atomicName : m_atomicNameCaches)
+        atomicName.value->invalidateCache(attrName);
 
-    for (auto it = m_nameCaches.begin(), end = m_nameCaches.end(); it != end; ++it)
-        it->value->invalidateCache(attrName);
+    for (auto& name : m_nameCaches)
+        name.value->invalidateCache(attrName);
 
-    for (auto it = m_cachedCollections.begin(), end = m_cachedCollections.end(); it != end; ++it)
-        it->value->invalidateCache(attrName);
+    for (auto& collection : m_cachedCollections)
+        collection.value->invalidateCache(attrName);
 
     if (attrName)
         return;
 
-    for (auto it = m_tagNodeListCacheNS.begin(), end = m_tagNodeListCacheNS.end(); it != end; ++it)
-        it->value->invalidateCache();
+    for (auto& tagNodeList : m_tagNodeListCacheNS)
+        tagNodeList.value->invalidateCache();
 }
 
 void Node::getSubresourceURLs(ListHashSet<URL>& urls) const

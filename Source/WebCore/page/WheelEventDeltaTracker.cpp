@@ -68,9 +68,8 @@ DominantScrollGestureDirection WheelEventDeltaTracker::dominantScrollGestureDire
     bool allVertical = m_recentWheelEventDeltas.size();
     bool allHorizontal = m_recentWheelEventDeltas.size();
 
-    auto end = m_recentWheelEventDeltas.end();
-    for (auto it = m_recentWheelEventDeltas.begin(); it != end; ++it) {
-        bool isVertical = deltaIsPredominantlyVertical(*it);
+    for (const auto& delta : m_recentWheelEventDeltas) {
+        bool isVertical = deltaIsPredominantlyVertical(delta);
         allVertical &= isVertical;
         allHorizontal &= !isVertical;
     }

@@ -51,16 +51,16 @@ static String stringForPosition(const NamedGridAreaMap& gridAreaMap, size_t row,
 {
     Vector<String> candidates;
 
-    for (auto it = gridAreaMap.begin(), end = gridAreaMap.end(); it != end; ++it) {
-        const GridCoordinate& coordinate = it->value;
+    for (const auto& it : gridAreaMap) {
+        const GridCoordinate& coordinate = it.value;
         if (row >= coordinate.rows.initialPositionIndex && row <= coordinate.rows.finalPositionIndex)
-            candidates.append(it->key);
+            candidates.append(it.key);
     }
 
-    for (auto it = gridAreaMap.begin(), end = gridAreaMap.end(); it != end; ++it) {
-        const GridCoordinate& coordinate = it->value;
-        if (column >= coordinate.columns.initialPositionIndex && column <= coordinate.columns.finalPositionIndex && candidates.contains(it->key))
-            return it->key;
+    for (const auto& it : gridAreaMap) {
+        const GridCoordinate& coordinate = it.value;
+        if (column >= coordinate.columns.initialPositionIndex && column <= coordinate.columns.finalPositionIndex && candidates.contains(it.key))
+            return it.key;
     }
 
     return ".";

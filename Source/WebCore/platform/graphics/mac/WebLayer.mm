@@ -130,7 +130,7 @@ void drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformC
     ThemeMac::setFocusRingClipRect(focusRingClipRect);
 #endif // !PLATFORM(IOS)
 
-    for (auto rect : dirtyRects) {
+    for (const auto& rect : dirtyRects) {
         GraphicsContextStateSaver stateSaver(graphicsContext);
         graphicsContext.clip(rect);
 

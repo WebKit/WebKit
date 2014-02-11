@@ -2265,7 +2265,7 @@ void AccessibilityObject::elementsFromAttribute(Vector<Element*>& elements, cons
     Vector<String> idVector;
     idList.split(' ', idVector);
 
-    for (auto idName : idVector) {
+    for (const auto& idName : idVector) {
         if (Element* idElement = treeScope.getElementById(idName))
             elements.append(idElement);
     }

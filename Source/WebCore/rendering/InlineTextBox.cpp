@@ -103,12 +103,12 @@ static DashArray translateIntersectionPointsToSkipInkBoundaries(const DashArray&
     // Step 3: Output the space between the ranges, but only if the space warrants an underline.
     float previous = 0;
     DashArray result;
-    for (auto i = intermediateTuples.begin(); i != intermediateTuples.end(); i++) {
-        if (i->first - previous > dilationAmount) {
+    for (const auto& tuple : intermediateTuples) {
+        if (tuple.first - previous > dilationAmount) {
             result.append(previous);
-            result.append(i->first);
+            result.append(tuple.first);
         }
-        previous = i->second;
+        previous = tuple.second;
     }
     if (totalWidth - previous > dilationAmount) {
         result.append(previous);

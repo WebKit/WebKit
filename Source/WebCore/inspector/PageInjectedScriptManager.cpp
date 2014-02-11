@@ -60,12 +60,12 @@ void PageInjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
         return;
 
     Vector<long> idsToRemove;
-    for (auto it = m_idToInjectedScript.begin(), end = m_idToInjectedScript.end(); it != end; ++it) {
-        JSC::ExecState* scriptState = it->value.scriptState();
+    for (const auto& it : m_idToInjectedScript) {
+        JSC::ExecState* scriptState = it.value.scriptState();
         if (window != domWindowFromExecState(scriptState))
             continue;
         m_scriptStateToId.remove(scriptState);
-        idsToRemove.append(it->key);
+        idsToRemove.append(it.key);
     }
 
     for (size_t i = 0; i < idsToRemove.size(); i++)
@@ -73,8 +73,8 @@ void PageInjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
 
     // Now remove script states that have id but no injected script.
     Vector<JSC::ExecState*> scriptStatesToRemove;
-    for (auto it = m_scriptStateToId.begin(), end = m_scriptStateToId.end(); it != end; ++it) {
-        JSC::ExecState* scriptState = it->key;
+    for (const auto& it : m_scriptStateToId) {
+        JSC::ExecState* scriptState = it.key;
         if (window == domWindowFromExecState(scriptState))
             scriptStatesToRemove.append(scriptState);
     }
