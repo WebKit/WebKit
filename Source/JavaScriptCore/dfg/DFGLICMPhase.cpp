@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,12 +82,28 @@ public:
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
+            
+            // Skip blocks that are proved to not execute.
+            // FIXME: This shouldn't be needed.
+            // https://bugs.webkit.org/show_bug.cgi?id=128584
+            if (!block->cfaHasVisited)
+                continue;
+            
             const NaturalLoop* loop = m_graph.m_naturalLoops.innerMostLoopOf(block);
             if (!loop)
                 continue;
             LoopData& data = m_data[loop->index()];
-            for (unsigned nodeIndex = block->size(); nodeIndex--;)
-                addWrites(m_graph, block->at(nodeIndex), data.writes);
+            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                Node* node = block->at(nodeIndex);
+                
+                // Don't look beyond parts of the code that definitely always exit.
+                // FIXME: This shouldn't be needed.
+                // https://bugs.webkit.org/show_bug.cgi?id=128584
+                if (node->op() == ForceOSRExit)
+                    break;
+
+                addWrites(m_graph, node, data.writes);
+            }
         }
         
         // For each loop:

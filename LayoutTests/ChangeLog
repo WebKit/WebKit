@@ -1,3 +1,15 @@
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        LICM should gracefully handle unprofiled code
+        https://bugs.webkit.org/show_bug.cgi?id=127848
+
+        Reviewed by Mark Hahnenberg.
+
+        * js/regress/script-tests/unprofiled-licm.js: Added.
+        (foo):
+        * js/regress/unprofiled-licm-expected.txt: Added.
+        * js/regress/unprofiled-licm.html: Added.
+
 2014-02-10  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Make columns work with line grids

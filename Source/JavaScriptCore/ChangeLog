@@ -1,3 +1,13 @@
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        LICM should gracefully handle unprofiled code
+        https://bugs.webkit.org/show_bug.cgi?id=127848
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+
 2014-02-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Obj-C API: JSExport doesn't work for methods that contain protocols in their type signature
