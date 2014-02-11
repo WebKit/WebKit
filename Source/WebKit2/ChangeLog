@@ -1,3 +1,17 @@
+2014-02-11  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB tests on some bots are flakey (timeouts)
+        <rdar://problem/16038745> and https://bugs.webkit.org/show_bug.cgi?id=128612
+
+        Reviewed by Sam Weinig.
+
+        When messing with JSC VM’s and such, always use APIEntryShim instead of JSLockHolder.
+        *ESPECIALLY* when dealing with multiple threads.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite): 
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createIndex):
+
 2014-02-11  Dan Bernstein  <mitz@apple.com>
 
         Stop using PLATFORM(MAC) in WebKit2/Shared except where it means “OS X but not iOS”

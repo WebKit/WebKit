@@ -1,3 +1,12 @@
+2014-02-11  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB tests on some bots are flakey (timeouts)
+        <rdar://problem/16038745> and https://bugs.webkit.org/show_bug.cgi?id=128612
+
+        Reviewed by Sam Weinig.
+
+        * platform/mac-wk2/TestExpectations: Reenable the tests.
+
 2014-02-11  James Craig  <jcraig@apple.com>
 
         Web Inspector: AX: Accessibility Node Inspection
