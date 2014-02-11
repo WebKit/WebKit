@@ -179,7 +179,7 @@ OBJC_VISIBLE
 @property
 @discussion Name of the JSContext. Exposed when remote debugging the context.
 */
-@property (copy) NSString *name;
+@property (copy) NSString *name NS_AVAILABLE(10_10, 8_0);
 
 @end
 

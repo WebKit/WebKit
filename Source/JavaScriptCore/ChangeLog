@@ -1,3 +1,13 @@
+2014-02-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add Availability Macros to new JSC APIs
+        https://bugs.webkit.org/show_bug.cgi?id=128615
+
+        Reviewed by Mark Rowe.
+
+        * API/JSContext.h:
+        * API/JSContextRef.h:
+
 2014-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support CompareEq(ObjectOrOther:, Object:)
