@@ -1,3 +1,23 @@
+2014-02-11  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] clipping rectangle for "overflow: hidden" should be based on the padding box, not the content box
+        https://bugs.webkit.org/show_bug.cgi?id=119546
+
+        Reviewed by Anders Carlsson.
+
+        Added tests for the correct painting of region overflow over the region's padding.
+        This problem was solved by https://bugs.webkit.org/show_bug.cgi?id=118665 and
+        https://bugs.webkit.org/show_bug.cgi?id=128590.
+        Two writing modes (horiz-bt and vert-rl) are still not working properly and a separate
+        issue has been created for them (https://bugs.webkit.org/show_bug.cgi?id=128600).
+
+        * fast/regions/clip-to-padding-box-expected.html: Added.
+        * fast/regions/clip-to-padding-box-margins-expected.html: Added.
+        * fast/regions/clip-to-padding-box-margins.html: Added.
+        * fast/regions/clip-to-padding-box-vertical-lr-expected.html: Added.
+        * fast/regions/clip-to-padding-box-vertical-lr.html: Added.
+        * fast/regions/clip-to-padding-box.html: Added.
+
 2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         LICM should gracefully handle unprofiled code
