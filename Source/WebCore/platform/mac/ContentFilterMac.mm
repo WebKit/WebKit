@@ -115,7 +115,8 @@ ContentFilter::ContentFilter(const ResourceResponse& response)
 ContentFilter::~ContentFilter()
 {
 #if HAVE(NE_FILTER_SOURCE)
-    dispatch_release(m_neFilterSourceQueue);
+    if (m_neFilterSourceQueue)
+        dispatch_release(m_neFilterSourceQueue);
 #endif
 }
 

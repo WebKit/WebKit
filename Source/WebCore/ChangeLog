@@ -1,3 +1,16 @@
+2014-02-11  Andy Estes  <aestes@apple.com>
+
+        [Content Filter] Check for NULL before calling dispatch_release()
+        https://bugs.webkit.org/show_bug.cgi?id=128576
+
+        Reviewed by Darin Adler.
+
+        m_neFilterSourceQueue will be NULL if NEFilterSource isn't enabled, and
+        passing NULL to dispatch_release() is undefined.
+
+        * platform/mac/ContentFilterMac.mm:
+        (WebCore::ContentFilter::~ContentFilter):
+
 2014-01-24  Jer Noble  <jer.noble@apple.com>
 
         [MediaControls] Allow the media controls script to be debuggable by giving it a generated sourceURL
