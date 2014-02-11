@@ -1,3 +1,15 @@
+2014-02-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        querySelector() does not use the compiler correctly
+        https://bugs.webkit.org/show_bug.cgi?id=128588
+
+        Reviewed by Andreas Kling.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::execute):
+        I messed up the refactoring when I landed SelectorQuery. The compiled
+        code was not used the first time through SelectorDataList::execute.
+
 2014-02-11  Piotr Grad  <p.grad@samsung.com>
 
         [GStreamer] High playback rate causes crash

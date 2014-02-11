@@ -309,6 +309,7 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
             if (!compiledSelectorChecker && selectorData.compilationStatus == SelectorCompilationStatus::NotCompiled) {
                 JSC::VM* vm = rootNode.document().scriptExecutionContext()->vm();
                 selectorData.compilationStatus = SelectorCompiler::compileSelector(selectorData.selector, vm, selectorData.compiledSelectorCodeRef);
+                compiledSelectorChecker = selectorData.compiledSelectorCodeRef.code().executableAddress();
             }
 
             if (compiledSelectorChecker) {
