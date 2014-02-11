@@ -1,3 +1,29 @@
+2014-02-10  Dan Bernstein  <mitz@apple.com>
+
+        Stop using PLATFORM(MAC) in WebKit2/platform except where it means “OS X but not iOS”
+        https://bugs.webkit.org/show_bug.cgi?id=128513
+
+        Reviewed by Dean Jackson.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForSyncReply): Changed PLATFORM(MAC) to PLATFORM(COCOA) around use of
+        RunLoop::runForDuration, matching the guard around that function.
+        * Platform/Logging.cpp: Deleted unused definition of logLevelString.
+        * Platform/Module.cpp:
+        (WebKit::Module::Module): Changed PLATFORM(MAC) to USE(CF).
+        * Platform/Module.h: Changed PLATFORM(MAC) to USE(CF), since the “Mac” implementation is
+        just a CFBundle-based implementation.
+        * Platform/PlatformProcessIdentifier.h: Changed PLATFORM(MAC) to PLATFORM(COCOA). Arguably
+        this should be OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK).
+        * Platform/cf: Added.
+        * Platform/cf/ModuleCF.cpp: Renamed from Platform/mac/ModuleMac.mm. This file did not
+        contain any Objective-C code.
+        * Platform/foundation: Added.
+        * Platform/foundation/LoggingFoundation.mm: Renamed from Platform/mac/Logging.mac.mm.
+        * Platform/mac/Logging.mac.mm: Removed.
+        * Platform/mac/ModuleMac.mm: Removed.
+        * WebKit2.xcodeproj/project.pbxproj: Updated for renames.
+
 2014-02-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r163848.

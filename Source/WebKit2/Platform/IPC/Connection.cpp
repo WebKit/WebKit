@@ -545,7 +545,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncReques
         // This allows the WebProcess to still serve clients while waiting for the message to return.
         // Notably, it can continue to process accessibility requests, which are on the main thread.
         if (syncSendFlags & SpinRunLoopWhileWaitingForReply) {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
             // FIXME: Although we run forever, any events incoming will cause us to drop out and exit out. This however doesn't
             // account for a timeout value passed in. Timeout is always NoTimeout in these cases, but that could change.
             RunLoop::current()->runForDuration(1e10);

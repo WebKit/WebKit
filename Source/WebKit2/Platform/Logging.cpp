@@ -66,14 +66,6 @@ WTFLogChannel* logChannelByName(const String& name)
 }
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(EFL)
-String logLevelString()
-{
-    // FIXME: Each platform will need to define their own logLevelString();
-    return emptyString();
-}
-#endif
-
 } // namespace WebKit
 
 #endif // !LOG_DISABLED

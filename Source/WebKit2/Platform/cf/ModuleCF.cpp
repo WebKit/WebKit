@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "Module.h"
+#include "config.h"
+#include "Module.h"
 
 namespace WebKit {
 
