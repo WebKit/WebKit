@@ -89,7 +89,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_wrapFlow(RenderStyle::initialWrapFlow())
     , m_wrapThrough(RenderStyle::initialWrapThrough())
     , m_runningAcceleratedAnimation(false)
-    , m_hasAspectRatio(false)
+    , m_aspectRatioType(RenderStyle::initialAspectRatioType())
 #if ENABLE(CSS_COMPOSITING)
     , m_effectiveBlendMode(RenderStyle::initialBlendMode())
 #endif
@@ -169,7 +169,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_wrapFlow(o.m_wrapFlow)
     , m_wrapThrough(o.m_wrapThrough)
     , m_runningAcceleratedAnimation(o.m_runningAcceleratedAnimation)
-    , m_hasAspectRatio(o.m_hasAspectRatio)
+    , m_aspectRatioType(o.m_aspectRatioType)
 #if ENABLE(CSS_COMPOSITING)
     , m_effectiveBlendMode(o.m_effectiveBlendMode)
 #endif
@@ -263,7 +263,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #if ENABLE(CSS_COMPOSITING)
         && m_effectiveBlendMode == o.m_effectiveBlendMode
 #endif
-        && m_hasAspectRatio == o.m_hasAspectRatio
+        && m_aspectRatioType == o.m_aspectRatioType
         && m_objectFit == o.m_objectFit;
 }
 

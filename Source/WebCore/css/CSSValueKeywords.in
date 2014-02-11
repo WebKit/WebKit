@@ -1050,3 +1050,7 @@ span
 
 // -webkit-column-fill
 balance
+
+// -webkit-aspect-ratio
+from-dimensions
+from-intrinsic

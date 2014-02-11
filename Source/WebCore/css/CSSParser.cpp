@@ -7707,9 +7707,12 @@ bool CSSParser::parseBorderRadius(CSSPropertyID propId, bool important)
 bool CSSParser::parseAspectRatio(bool important)
 {
     unsigned num = m_valueList->size();
-    if (num == 1 && m_valueList->valueAt(0)->id == CSSValueNone) {
-        addProperty(CSSPropertyWebkitAspectRatio, cssValuePool().createIdentifierValue(CSSValueNone), important);
-        return true;
+    if (num == 1) {
+        CSSValueID valueId = m_valueList->valueAt(0)->id;
+        if (valueId == CSSValueAuto || valueId == CSSValueFromDimensions || valueId == CSSValueFromIntrinsic) {
+            addProperty(CSSPropertyWebkitAspectRatio, cssValuePool().createIdentifierValue(valueId), important);
+            return true;
+        }
     }
 
     if (num != 3)

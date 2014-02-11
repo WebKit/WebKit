@@ -2583,8 +2583,12 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitAppearance:
             return cssValuePool().createValue(style->appearance());
         case CSSPropertyWebkitAspectRatio:
-            if (!style->hasAspectRatio())
-                return cssValuePool().createIdentifierValue(CSSValueNone);
+            if (style->aspectRatioType() == AspectRatioAuto)
+                return cssValuePool().createIdentifierValue(CSSValueAuto);
+            if (style->aspectRatioType() == AspectRatioFromDimensions)
+                return cssValuePool().createIdentifierValue(CSSValueFromDimensions);
+            if (style->aspectRatioType() == AspectRatioFromIntrinsic)
+                return cssValuePool().createIdentifierValue(CSSValueFromIntrinsic);
             return CSSAspectRatioValue::create(style->aspectRatioNumerator(), style->aspectRatioDenominator());
         case CSSPropertyWebkitBackfaceVisibility:
             return cssValuePool().createIdentifierValue((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);

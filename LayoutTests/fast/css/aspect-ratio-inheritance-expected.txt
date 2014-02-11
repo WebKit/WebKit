@@ -1,6 +1,10 @@
-PASS testComputedValue("aspectRatioTest", "1 / 4", "-webkit-aspect-ratio") is "1/4"
-PASS testComputedValue("aspectRatioTest", "inherit", "-webkit-aspect-ratio") is "1/2"
-PASS testComputedValue("aspectRatioTest", "none", "-webkit-aspect-ratio") is "none"
+PASS testComputedValue("aspectRatioTest1", "1 / 4", "-webkit-aspect-ratio") is "1/4"
+PASS testComputedValue("aspectRatioTest1", "inherit", "-webkit-aspect-ratio") is "1/2"
+PASS testComputedValue("aspectRatioTest1", "auto", "-webkit-aspect-ratio") is "auto"
+PASS testComputedValue("aspectRatioTest2", "1 / 4", "-webkit-aspect-ratio") is "1/4"
+PASS testComputedValue("aspectRatioTest2", "inherit", "-webkit-aspect-ratio") is "from-dimensions"
+PASS testComputedValue("aspectRatioTest3", "1 / 4", "-webkit-aspect-ratio") is "1/4"
+PASS testComputedValue("aspectRatioTest3", "inherit", "-webkit-aspect-ratio") is "from-intrinsic"
 PASS successfullyParsed is true
 
 TEST COMPLETE

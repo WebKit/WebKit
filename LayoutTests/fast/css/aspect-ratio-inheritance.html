@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <script src="../../resources/js-test-pre.js"></script>
 <div style="-webkit-aspect-ratio: 1 / 2;">
-  <div id="aspectRatioTest"></div>
+  <div id="aspectRatioTest1"></div>
+</div>
+<div style="-webkit-aspect-ratio: from-dimensions;">
+  <div id="aspectRatioTest2"></div>
+</div>
+<div style="-webkit-aspect-ratio: from-intrinsic;">
+  <div id="aspectRatioTest3"></div>
 </div>
 <script>
     function testComputedValue(elementId, value, styleAttribute)
@@ -11,8 +17,12 @@
         var computedValue = window.getComputedStyle(div)[styleAttribute];
         return computedValue;
     }
-    shouldBeEqualToString('testComputedValue("aspectRatioTest", "1 / 4", "-webkit-aspect-ratio")', '1/4');
-    shouldBeEqualToString('testComputedValue("aspectRatioTest", "inherit", "-webkit-aspect-ratio")', '1/2');
-    shouldBeEqualToString('testComputedValue("aspectRatioTest", "none", "-webkit-aspect-ratio")', 'none');
+    shouldBeEqualToString('testComputedValue("aspectRatioTest1", "1 / 4", "-webkit-aspect-ratio")', '1/4');
+    shouldBeEqualToString('testComputedValue("aspectRatioTest1", "inherit", "-webkit-aspect-ratio")', '1/2');
+    shouldBeEqualToString('testComputedValue("aspectRatioTest1", "auto", "-webkit-aspect-ratio")', 'auto');
+    shouldBeEqualToString('testComputedValue("aspectRatioTest2", "1 / 4", "-webkit-aspect-ratio")', '1/4');
+    shouldBeEqualToString('testComputedValue("aspectRatioTest2", "inherit", "-webkit-aspect-ratio")', 'from-dimensions');
+    shouldBeEqualToString('testComputedValue("aspectRatioTest3", "1 / 4", "-webkit-aspect-ratio")', '1/4');
+    shouldBeEqualToString('testComputedValue("aspectRatioTest3", "inherit", "-webkit-aspect-ratio")', 'from-intrinsic');
 </script>
 <script src="../../resources/js-test-post.js"></script>

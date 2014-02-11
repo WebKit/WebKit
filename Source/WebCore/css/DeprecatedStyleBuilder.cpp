@@ -1982,28 +1982,40 @@ class ApplyPropertyAspectRatio {
 public:
     static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
     {
-        if (!styleResolver->parentStyle()->hasAspectRatio())
+        if (styleResolver->parentStyle()->aspectRatioType() == AspectRatioAuto)
             return;
-        styleResolver->style()->setHasAspectRatio(true);
+        styleResolver->style()->setAspectRatioType(styleResolver->parentStyle()->aspectRatioType());
         styleResolver->style()->setAspectRatioDenominator(styleResolver->parentStyle()->aspectRatioDenominator());
         styleResolver->style()->setAspectRatioNumerator(styleResolver->parentStyle()->aspectRatioNumerator());
     }
 
     static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
     {
-        styleResolver->style()->setHasAspectRatio(RenderStyle::initialHasAspectRatio());
+        styleResolver->style()->setAspectRatioType(RenderStyle::initialAspectRatioType());
         styleResolver->style()->setAspectRatioDenominator(RenderStyle::initialAspectRatioDenominator());
         styleResolver->style()->setAspectRatioNumerator(RenderStyle::initialAspectRatioNumerator());
     }
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
+        if (value->isPrimitiveValue()) {
+            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+
+            if (primitiveValue->getValueID() == CSSValueAuto)
+                return styleResolver->style()->setAspectRatioType(AspectRatioAuto);
+            if (primitiveValue->getValueID() == CSSValueFromDimensions)
+                return styleResolver->style()->setAspectRatioType(AspectRatioFromDimensions);
+            if (primitiveValue->getValueID() == CSSValueFromIntrinsic)
+                return styleResolver->style()->setAspectRatioType(AspectRatioFromIntrinsic);
+        }
+
         if (!value->isAspectRatioValue()) {
-            styleResolver->style()->setHasAspectRatio(false);
+            styleResolver->style()->setAspectRatioType(AspectRatioAuto);
             return;
         }
+
         CSSAspectRatioValue* aspectRatioValue = toCSSAspectRatioValue(value);
-        styleResolver->style()->setHasAspectRatio(true);
+        styleResolver->style()->setAspectRatioType(AspectRatioSpecified);
         styleResolver->style()->setAspectRatioDenominator(aspectRatioValue->denominatorValue());
         styleResolver->style()->setAspectRatioNumerator(aspectRatioValue->numeratorValue());
     }

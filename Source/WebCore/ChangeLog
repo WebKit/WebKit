@@ -1,3 +1,35 @@
+2014-02-09  Dean Jackson  <dino@apple.com>
+
+        Update aspect-ratio property to have constraining keywords
+        https://bugs.webkit.org/show_bug.cgi?id=128262
+
+        Reviewed by Simon Fraser.
+
+        Add support for "from-dimensions" and "from-intrinsic"
+        property values to "-webkit-aspect-ratio". I also changed
+        the default value from "none" to "auto", because "none" doesn't
+        make sense any more.
+
+        Covered by enhancing existing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): New keywords.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseAspectRatio): Support new keywords.
+        * css/CSSValueKeywords.in: Add from-dimensions and from-intrinsic.
+        * css/DeprecatedStyleBuilder.cpp: This now has to handle the new
+        values. I also changed "none" to "auto".
+        (WebCore::ApplyPropertyAspectRatio::applyInheritValue):
+        (WebCore::ApplyPropertyAspectRatio::applyInitialValue):
+        (WebCore::ApplyPropertyAspectRatio::applyValue):
+        * rendering/style/RenderStyle.h: hasAspectRatio is now aspectRatioType
+        and indicates one of the three keywords, or a specified number.
+        * rendering/style/RenderStyleConstants.h: New enum.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2014-02-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Add support for image document viewport configuration

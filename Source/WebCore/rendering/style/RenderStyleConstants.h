@@ -214,6 +214,10 @@ enum ObjectFit {
     ObjectFitFill, ObjectFitContain, ObjectFitCover, ObjectFitNone, ObjectFitScaleDown
 };
 
+enum AspectRatioType {
+    AspectRatioAuto, AspectRatioFromIntrinsic, AspectRatioFromDimensions, AspectRatioSpecified
+};
+
 // Word Break Values. Matches WinIE, rather than CSS3
 
 enum EWordBreak {

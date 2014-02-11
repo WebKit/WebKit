@@ -190,7 +190,7 @@ public:
 
     unsigned m_runningAcceleratedAnimation : 1;
 
-    unsigned m_hasAspectRatio : 1; // Whether or not an aspect ratio has been specified.
+    unsigned m_aspectRatioType : 2;
 
 #if ENABLE(CSS_COMPOSITING)
     unsigned m_effectiveBlendMode: 5; // EBlendMode

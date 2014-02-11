@@ -1,3 +1,18 @@
+2014-02-09  Dean Jackson  <dino@apple.com>
+
+        Update aspect-ratio property to have constraining keywords
+        https://bugs.webkit.org/show_bug.cgi?id=128262
+
+        Reviewed by Simon Fraser.
+
+        Add tests for new from-intrinsic and from-dimensions
+        property values.
+
+        * fast/css/aspect-ratio-inheritance-expected.txt:
+        * fast/css/aspect-ratio-inheritance.html:
+        * fast/css/aspect-ratio-parsing-tests-expected.txt:
+        * fast/css/aspect-ratio-parsing-tests.html:
+
 2014-02-10  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION(r163660-r163664): js/dom/stack-trace.html fails.

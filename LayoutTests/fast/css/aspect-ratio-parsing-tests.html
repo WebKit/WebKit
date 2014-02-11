@@ -23,20 +23,23 @@
       shouldBeEqualToString('testParsing("aspectRatioTest", "1.2 / 2", "-webkit-aspect-ratio")', '1.2/2');
       shouldBeEqualToString('testParsing("aspectRatioTest", "2 / 0.5", "-webkit-aspect-ratio")', '2/0.5');
       shouldBeEqualToString('testParsing("aspectRatioTest", "inherit", "-webkit-aspect-ratio")', 'inherit');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "none", "-webkit-aspect-ratio")', 'none');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "from-dimensions", "-webkit-aspect-ratio")', 'from-dimensions');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "from-intrinsic", "-webkit-aspect-ratio")', 'from-intrinsic');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "auto", "-webkit-aspect-ratio")', 'auto');
 
       // The following are invalid and should get ignored.
-      shouldBeEqualToString('testParsing("aspectRatioTest", "1 2", "-webkit-aspect-ratio")', 'none');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "a/1", "-webkit-aspect-ratio")', 'none');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "1/a", "-webkit-aspect-ratio")', 'none');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "abc123", "-webkit-aspect-ratio")', 'none');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "1", "-webkit-aspect-ratio")', 'none');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "1 / 0", "-webkit-aspect-ratio")', 'none');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "0 / 1", "-webkit-aspect-ratio")', 'none');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "0 / 0", "-webkit-aspect-ratio")', 'none');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "-1 / 8", "-webkit-aspect-ratio")', 'none');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "1 / -9", "-webkit-aspect-ratio")', 'none');
-      shouldBeEqualToString('testParsing("aspectRatioTest", "-1 / -4", "-webkit-aspect-ratio")', 'none');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "none", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "1 2", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "a/1", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "1/a", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "abc123", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "1", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "1 / 0", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "0 / 1", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "0 / 0", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "-1 / 8", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "1 / -9", "-webkit-aspect-ratio")', 'auto');
+      shouldBeEqualToString('testParsing("aspectRatioTest", "-1 / -4", "-webkit-aspect-ratio")', 'auto');
     </script>
     <script src="../../resources/js-test-post.js"></script>
   </body>
