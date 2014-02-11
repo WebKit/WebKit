@@ -1,3 +1,15 @@
+2014-02-11  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AX: Accessibility Node Inspection
+        https://bugs.webkit.org/show_bug.cgi?id=127447
+
+        Reviewed by Chris Fleizach.
+
+        Resolving build failure caused by r163891.
+
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::computedRoleString):
+
 2014-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Fixed pointer truncation on Win64.
