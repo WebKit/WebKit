@@ -28,6 +28,7 @@
 
 #import "TextCheckerState.h"
 #import <WebCore/NotImplemented.h>
+#import <wtf/text/StringView.h>
 
 using namespace WebCore;
 
@@ -129,7 +130,7 @@ void TextChecker::closeSpellDocumentWithTag(int64_t)
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t, const UChar*, int, uint64_t)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t, StringView, uint64_t)
 {
     notImplemented();
     return Vector<TextCheckingResult>();
@@ -137,13 +138,13 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t, const UCha
 
 #endif
 
-void TextChecker::checkSpellingOfString(int64_t, const UChar*, uint32_t, int32_t&, int32_t&)
+void TextChecker::checkSpellingOfString(int64_t, StringView, int32_t&, int32_t&)
 {
     // Mac uses checkTextOfParagraph instead.
     notImplemented();
 }
 
-void TextChecker::checkGrammarOfString(int64_t, const UChar*, uint32_t, Vector<WebCore::GrammarDetail>&, int32_t&, int32_t&)
+void TextChecker::checkGrammarOfString(int64_t, StringView, Vector<WebCore::GrammarDetail>&, int32_t&, int32_t&)
 {
     // Mac uses checkTextOfParagraph instead.
     notImplemented();

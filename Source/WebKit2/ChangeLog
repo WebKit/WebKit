@@ -1,3 +1,12 @@
+2014-02-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the iOS build after r163848
+
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::checkGrammarOfString):
+
 2014-02-10  Brady Eidson  <beidson@apple.com>
 
         IDB: storage/indexeddb/mozilla/indexes.html fails
