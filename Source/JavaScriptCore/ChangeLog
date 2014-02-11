@@ -1,3 +1,19 @@
+2014-02-10  Matthew Mirman  <mmirman@apple.com>
+
+        ReallocatePropertyStorage in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=128352
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileReallocatePropertyStorage):
+        * tests/stress/ftl-reallocatepropertystorage.js: Added.
+        (foo):
+
 2014-02-10  Michael Saboff  <msaboff@apple.com>
 
         Fail FTL compilation if the required stack is too big
