@@ -567,7 +567,7 @@ void compile(State& state)
             state.jitCode->stackmaps.dumpMultiline(WTF::dataFile(), "        ");
         }
         
-        StackMaps::RecordMap recordMap = state.jitCode->stackmaps.getRecordMap();
+        StackMaps::RecordMap recordMap = state.jitCode->stackmaps.computeRecordMap();
         fixFunctionBasedOnStackMaps(
             state, state.graph.m_codeBlock, state.jitCode.get(), state.generatedFunction,
             recordMap);

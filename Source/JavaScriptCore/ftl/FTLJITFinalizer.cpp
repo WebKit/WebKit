@@ -78,7 +78,7 @@ bool JITFinalizer::finalizeFunction()
     }
     
     if (exitThunksLinkBuffer) {
-        StackMaps::RecordMap recordMap = jitCode->stackmaps.getRecordMap();
+        StackMaps::RecordMap recordMap = jitCode->stackmaps.computeRecordMap();
         
         for (unsigned i = 0; i < osrExit.size(); ++i) {
             OSRExitCompilationInfo& info = osrExit[i];

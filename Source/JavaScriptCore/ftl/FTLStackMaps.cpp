@@ -165,7 +165,7 @@ void StackMaps::dumpMultiline(PrintStream& out, const char* prefix) const
         out.print(prefix, "    ", records[i], "\n");
 }
 
-StackMaps::RecordMap StackMaps::getRecordMap() const
+StackMaps::RecordMap StackMaps::computeRecordMap() const
 {
     RecordMap result;
     for (unsigned i = records.size(); i--;)

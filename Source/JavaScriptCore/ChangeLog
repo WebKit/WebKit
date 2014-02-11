@@ -1,3 +1,21 @@
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename getRecordMap to computeRecordMap.
+
+        Rubber stamped by Michael Saboff.
+        
+        "get" is such a weird prefix. It implies a getter. We don't prefix our getters with
+        anything in WebKit. Also, this isn't a getter. It actually does work to transform
+        the stackmaps into a hashmap. So, computeRecordMap is a much better name.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::computeRecordMap):
+        * ftl/FTLStackMaps.h:
+
 2014-02-10  Matthew Mirman  <mmirman@apple.com>
 
         ReallocatePropertyStorage in FTL

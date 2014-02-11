@@ -99,7 +99,7 @@ struct StackMaps {
     
     typedef HashMap<uint32_t, Vector<Record>, WTF::IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> RecordMap;
     
-    RecordMap getRecordMap() const;
+    RecordMap computeRecordMap() const;
 
     unsigned stackSize() const;
 };
