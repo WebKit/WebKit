@@ -1,3 +1,25 @@
+2014-01-24  Jer Noble  <jer.noble@apple.com>
+
+        Run UserAgentScripts through jsmin rather than the css preprocessor
+        https://bugs.webkit.org/show_bug.cgi?id=127559
+
+        Reviewed by Tim Horton.
+
+        User Agent JavaScript files were being run through the c++ preprocessor to strip out
+        comments (and presumably to allow #if ENABLE macros, though that feature is entirely
+        unused). This had the side effect of removing important whitespace, namely newlines where
+        there would normally be an implicit semicolon.
+
+        Instead, .js files will now be run through the jsmin minifier, used by the inspector.
+        Jsmin will also strip comments and whitespace, but in a syntactically aware way which will
+        keep newlines when their presence adds an implied semicolon.
+
+        * DerivedSources.make:
+        * Scripts/make-js-file-arrays.py: Added.
+        (stringifyCodepoint):
+        (chunk):
+        (main):
+
 2014-02-11  Andy Estes  <aestes@apple.com>
 
         [Mac] connection:willStopBufferingData: no longer exists in NSURLConnectionDelegate

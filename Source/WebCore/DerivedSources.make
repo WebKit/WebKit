@@ -892,8 +892,8 @@ ifeq ($(OS),MACOS)
 	USER_AGENT_SCRIPTS := $(USER_AGENT_SCRIPTS) $(WebCore)/Modules/plugins/QuickTimePluginReplacement.js
 endif
 
-UserAgentScripts.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(USER_AGENT_SCRIPTS) $(PLATFORM_FEATURE_DEFINES)
-	perl -I$(WebCore)/bindings/scripts $< --defines "$(FEATURE_DEFINES)" $@ UserAgentScriptsData.cpp $(USER_AGENT_SCRIPTS)
+UserAgentScripts.h : Scripts/make-js-file-arrays.py $(USER_AGENT_SCRIPTS)
+	PYTHONPATH=$(InspectorScripts) python $< $@ UserAgentScriptsData.cpp $(USER_AGENT_SCRIPTS)
 
 # --------
 
