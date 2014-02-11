@@ -1,3 +1,15 @@
+2014-02-10  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Add initial performance tests for polygon shape 
+        https://bugs.webkit.org/show_bug.cgi?id=128554
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds performance testing for simple polygon shape-outside.
+        The Shapes performance tests directory is skipped by default.
+
+        * Layout/Shapes/ShapeOutsideSimplePolygon.html: Added.
+
 2014-02-07  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add initial performance tests for inset shape

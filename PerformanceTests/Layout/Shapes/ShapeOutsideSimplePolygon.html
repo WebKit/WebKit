@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="resources/shapes.css" type="text/css"></link>
+        <script src="../../resources/runner.js"></script>
+        <script src="resources/shapes.js"></script>
+    </head>
+    <body>
+        <pre id="log"></pre>
+        <script>
+            var shape = "polygon(0 0, 200px 100px, 0px 200px)";
+            PerfTestRunner.measureTime(createShapeOutsideTest("200px", "200px", shape, 1000));
+        </script>
+    </body>
+</html>
