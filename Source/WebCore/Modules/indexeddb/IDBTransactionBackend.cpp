@@ -83,8 +83,8 @@ IDBTransactionBackend::IDBTransactionBackend(IDBDatabaseBackend* databaseBackend
 
 IDBTransactionBackend::~IDBTransactionBackend()
 {
-    // It shouldn't be possible for this object to get deleted until it's either complete or aborted.
-    ASSERT(m_state == Finished);
+    // It shouldn't be possible for this object to get deleted unless it's unused, complete, or aborted.
+    ASSERT(m_state == Finished || m_state == Unused);
 }
 
 void IDBTransactionBackend::scheduleTask(IDBDatabaseBackend::TaskType type, PassRefPtr<IDBOperation> task, PassRefPtr<IDBSynchronousOperation> abortTask)

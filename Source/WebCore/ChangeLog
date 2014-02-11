@@ -1,3 +1,14 @@
+2014-02-10  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB assertion at IDBTransactionBackend::~IDBTransactionBackend()
+        https://bugs.webkit.org/show_bug.cgi?id=128341
+
+        Reviewed by Maciej Stachowiak.
+
+        * Modules/indexeddb/IDBTransactionBackend.cpp:
+        (WebCore::IDBTransactionBackend::~IDBTransactionBackend): "Finished" is not the only
+          valid value here - In WK2, "Unused" is also valid. Update the ASSERT.
+
 2014-02-10  Alexey Proskuryakov  <ap@apple.com>
 
         Add hooks for wrapping CryptoKeys in SerializedScriptValue
