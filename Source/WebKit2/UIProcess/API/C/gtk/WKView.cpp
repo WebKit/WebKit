@@ -37,7 +37,7 @@ using namespace WebCore;
 
 WKViewRef WKViewCreate(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    return toAPI(webkitWebViewBaseCreate(toImpl(contextRef), toImpl(pageGroupRef)));
+    return toAPI(webkitWebViewBaseCreate(toImpl(contextRef), toImpl(pageGroupRef), nullptr));
 }
 
 WKPageRef WKViewGetPage(WKViewRef viewRef)

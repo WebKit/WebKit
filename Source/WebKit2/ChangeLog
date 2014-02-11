@@ -1,5 +1,22 @@
 2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Create the inspector view using the same web process as the inspected page
+        https://bugs.webkit.org/show_bug.cgi?id=128539
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/C/gtk/WKView.cpp:
+        (WKViewCreate): Pass nullptr as the related page.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreate): Add related page argument and pass it
+        to webkitWebViewBaseCreateWebPage() instead of nullptr.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Pass
+        m_page as related page to webkitWebViewBaseCreate().
+
+2014-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GLIB] Add GUniqueOutPtr and use it instead of GOwnPtr
         https://bugs.webkit.org/show_bug.cgi?id=127554
 
