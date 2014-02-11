@@ -3208,6 +3208,18 @@ private:
             return;
         }
         
+        if (m_node->child1().useKind() == ObjectUse
+            && m_node->child2().useKind() == ObjectOrOtherUse) {
+            compareEqObjectOrOtherToObject(m_node->child2(), m_node->child1());
+            return;
+        }
+        
+        if (m_node->child1().useKind() == ObjectOrOtherUse
+            && m_node->child2().useKind() == ObjectUse) {
+            compareEqObjectOrOtherToObject(m_node->child2(), m_node->child1());
+            return;
+        }
+        
         if (m_node->isBinaryUseKind(UntypedUse)) {
             nonSpeculativeCompare(LLVMIntEQ, operationCompareEq);
             return;
@@ -3606,6 +3618,52 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
+    void compareEqObjectOrOtherToObject(Edge leftChild, Edge rightChild)
+    {
+        LValue rightCell = lowCell(rightChild);
+        LValue leftValue = lowJSValue(leftChild);
+        
+        speculateTruthyObject(rightChild, rightCell, SpecObject);
+        
+        LBasicBlock leftCellCase = FTL_NEW_BLOCK(m_out, ("CompareEqObjectOrOtherToObject left cell case"));
+        LBasicBlock leftNotCellCase = FTL_NEW_BLOCK(m_out, ("CompareEqObjectOrOtherToObject left not cell case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CompareEqObjectOrOtherToObject continuation"));
+        
+        m_out.branch(isCell(leftValue), leftCellCase, leftNotCellCase);
+        
+        LBasicBlock lastNext = m_out.appendTo(leftCellCase, leftNotCellCase);
+        speculateTruthyObject(leftChild, leftValue, SpecObject | (~SpecCell));
+        ValueFromBlock cellResult = m_out.anchor(m_out.equal(rightCell, leftValue));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(leftNotCellCase, continuation);
+        FTL_TYPE_CHECK(
+            jsValueValue(leftValue), leftChild, SpecOther | SpecCell, isNotNully(leftValue));
+        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(m_out.boolean, cellResult, notCellResult));
+    }
+    
+    void speculateTruthyObject(Edge edge, LValue cell, SpeculatedType filter)
+    {
+        if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+            FTL_TYPE_CHECK(jsValueValue(cell), edge, filter, isNotObject(cell));
+            return;
+        }
+        
+        LValue structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, filter,
+            m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())));
+        speculate(
+            BadType, jsValueValue(cell), edge.node(),
+            m_out.testNonZero8(
+                m_out.load8(structure, m_heaps.Structure_typeInfoFlags),
+                m_out.constInt8(MasqueradesAsUndefined)));
+    }
+    
     void nonSpeculativeCompare(LIntPredicate intCondition, S_JITOperation_EJJ helperFunction)
     {
         LValue left = lowJSValue(m_node->child1());
@@ -3912,16 +3970,11 @@ private:
             primitiveResult = m_out.equal(value, m_out.constInt64(ValueUndefined));
             break;
         case EqualNullOrUndefined:
-            primitiveResult = m_out.equal(
-                m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
-                m_out.constInt64(ValueNull));
+            primitiveResult = isNully(value);
             break;
         case SpeculateNullOrUndefined:
             FTL_TYPE_CHECK(
-                jsValueValue(value), edge, SpecCell | SpecOther,
-                m_out.notEqual(
-                    m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
-                    m_out.constInt64(ValueNull)));
+                jsValueValue(value), edge, SpecCell | SpecOther, isNotNully(value));
             primitiveResult = m_out.booleanTrue;
             break;
         }
@@ -4567,6 +4620,19 @@ private:
         return m_out.select(
             value, m_out.constInt64(ValueTrue), m_out.constInt64(ValueFalse));
     }
+    
+    LValue isNotNully(LValue value)
+    {
+        return m_out.notEqual(
+            m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
+            m_out.constInt64(ValueNull));
+    }
+    LValue isNully(LValue value)
+    {
+        return m_out.equal(
+            m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
+            m_out.constInt64(ValueNull));
+    }
 
     void speculate(Edge edge)
     {
@@ -4754,20 +4820,14 @@ private:
         LBasicBlock lastNext = m_out.appendTo(cellCase, primitiveCase);
         
         FTL_TYPE_CHECK(
-            jsValueValue(value), edge, (~SpecCell) | SpecObject,
-            m_out.equal(
-                m_out.loadPtr(value, m_heaps.JSCell_structure),
-                m_out.constIntPtr(vm().stringStructure.get())));
+            jsValueValue(value), edge, (~SpecCell) | SpecObject, isNotObject(value));
         
         m_out.jump(continuation);
         
         m_out.appendTo(primitiveCase, continuation);
         
         FTL_TYPE_CHECK(
-            jsValueValue(value), edge, SpecCell | SpecOther,
-            m_out.notEqual(
-                m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
-                m_out.constInt64(ValueNull)));
+            jsValueValue(value), edge, SpecCell | SpecOther, isNotNully(value));
         
         m_out.jump(continuation);
         

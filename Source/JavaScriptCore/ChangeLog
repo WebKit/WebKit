@@ -1,3 +1,29 @@
+2014-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support CompareEq(ObjectOrOther:, Object:)
+        https://bugs.webkit.org/show_bug.cgi?id=127752
+
+        Reviewed by Oliver Hunt.
+        
+        Also introduce some helpers for reasoning about nullness and truthyness.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::LowerDFGToLLVM::compareEqObjectOrOtherToObject):
+        (JSC::FTL::LowerDFGToLLVM::speculateTruthyObject):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::LowerDFGToLLVM::isNotNully):
+        (JSC::FTL::LowerDFGToLLVM::isNully):
+        (JSC::FTL::LowerDFGToLLVM::speculateObjectOrOther):
+        * tests/stress/compare-eq-object-or-other-to-object.js: Added.
+        (foo):
+        (test):
+        * tests/stress/compare-eq-object-to-object-or-other.js: Added.
+        (foo):
+        (test):
+
 2014-02-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         32-bit LLInt writeBarrierOnGlobalObject is wrong
