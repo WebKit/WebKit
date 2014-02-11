@@ -1,3 +1,13 @@
+2014-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix /webkit2/WebKitWebExtension/isolated-world after r163797.
+
+        Use a global variable for the script result.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebExtensions.cpp:
+        (scriptDialogCallback):
+        (testWebExtensionIsolatedWorld):
+
 2014-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         Make it possible to run tests with --llvmSimpleOpt=false
