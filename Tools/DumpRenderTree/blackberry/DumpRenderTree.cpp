@@ -771,7 +771,23 @@ void DumpRenderTree::exceededDatabaseQuota(WebCore::SecurityOrigin* origin, cons
     if (!testDone && gTestRunner->dumpDatabaseCallbacks())
         printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%s\n", origin->protocol().utf8().data(), origin->host().utf8().data(), origin->port(), name.utf8().data());
 
-    WebCore::DatabaseTracker::tracker().setQuota(mainFrame->document()->securityOrigin(), 5 * 1024 * 1024);
+    WebCore::DatabaseManager& manager = WebCore::DatabaseManager::manager(); 
+    WebCore::DatabaseDetails details = detailsForNameAndOrigin(name, origin);
+    unsigned long long defaultQuota = 5 * 1024 * 1024;
+    double testDefaultQuota = gTestRunner->databaseDefaultQuota();
+    if (testDefaultQuota >= 0)
+        defaultQuota = testDefaultQuota;
+
+    unsigned long long newQuota = defaultQuota;
+
+    double maxQuota = gTestRunner->databaseMaxQuota();
+    if (maxQuota >= 0) {
+        if (defaultQuota < expectedSize && expectedSize <= maxQuota) {
+            newQuota = expectedSize;
+            printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", newQuota);
+        }
+    }
+    manager.setQuota(origin, newQuota);
 }
 
 bool DumpRenderTree::allowsOpeningWindow()
