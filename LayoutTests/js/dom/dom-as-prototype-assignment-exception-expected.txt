@@ -1,11 +1,16 @@
+CONSOLE MESSAGE: Deprecated attempt to access property 'id' on a non-Element object.
+CONSOLE MESSAGE: Deprecated attempt to access property 'id' on a non-Element object.
 Tests to make sure we throw when triggering a custom property with a mismatched this
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS testObject.id threw exception TypeError: Type error.
+PASS testObject.id is undefined.
 PASS testObject.id="foo" threw exception TypeError: Type error.
 PASS testObject.length threw exception TypeError: Type error.
+PASS div.id is 'test'
+PASS div.hasOwnProperty('id') is false
+PASS div.__proto__.id is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

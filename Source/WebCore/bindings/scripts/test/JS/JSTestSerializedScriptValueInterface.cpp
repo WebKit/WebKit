@@ -26,6 +26,7 @@
 
 #include "JSMessagePort.h"
 #include "MessagePort.h"
+#include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "TestSerializedScriptValueInterface.h"
 #include <runtime/JSArray.h>
@@ -131,8 +132,14 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObje
 {
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'value' on a non-TestSerializedScriptValueInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
     JSValue result = impl.value() ? impl.value()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
@@ -144,8 +151,14 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceReadonlyValue(ExecState* exec
 {
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readonlyValue' on a non-TestSerializedScriptValueInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
     JSValue result = impl.readonlyValue() ? impl.readonlyValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
@@ -157,8 +170,14 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, 
 {
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'cachedValue' on a non-TestSerializedScriptValueInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedValue.get())
         return JSValue::encode(cachedValue);
@@ -173,8 +192,14 @@ EncodedJSValue jsTestSerializedScriptValueInterfacePorts(ExecState* exec, JSObje
 {
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'ports' on a non-TestSerializedScriptValueInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
     JSValue result = jsArray(exec, castedThis->globalObject(), impl.ports());
@@ -186,8 +211,14 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState
 {
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'cachedReadonlyValue' on a non-TestSerializedScriptValueInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedReadonlyValue.get())
         return JSValue::encode(cachedValue);

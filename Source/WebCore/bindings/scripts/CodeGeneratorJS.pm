@@ -2124,14 +2124,19 @@ sub GenerateImplementation
                     push(@implContent, "            castedThis = shell->window();\n");
                     push(@implContent, "    }\n");
                     push(@implContent, "    UNUSED_PARAM(slotBase);\n");
-                    push(@implContent, "    if (!castedThis)\n");
-                    push(@implContent, "        return throwVMTypeError(exec);\n");
                 } else {
                     push(@implContent, "    ${className}* castedThis = jsDynamicCast<$className*>(JSValue::decode(thisValue));\n");
                     push(@implContent, "    UNUSED_PARAM(slotBase);\n");
-                    push(@implContent, "    if (!castedThis)\n");
-                    push(@implContent, "        return throwVMTypeError(exec);\n");
                 }
+                $implIncludes{"ScriptExecutionContext.h"} = 1;
+                push(@implContent, "    if (!castedThis) {\n");
+                push(@implContent, "        if (jsDynamicCast<${className}Prototype*>(slotBase)) {\n");
+                push(@implContent, "            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
+                push(@implContent, "            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String(\"Deprecated attempt to access property '$name' on a non-$interfaceName object.\"));\n");
+                push(@implContent, "            return JSValue::encode(jsUndefined());\n");
+                push(@implContent, "        }\n");
+                push(@implContent, "        return throwVMTypeError(exec);\n");
+                push(@implContent, "    }\n");
             } else {
                 push(@implContent, "    UNUSED_PARAM(thisValue);\n");
                 push(@implContent, "    UNUSED_PARAM(slotBase);\n");

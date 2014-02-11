@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSattribute.h"
 
+#include "ScriptExecutionContext.h"
 #include "URL.h"
 #include "attribute.h"
 #include <runtime/JSString.h>
@@ -122,8 +123,14 @@ EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJ
 {
     JSattribute* castedThis = jsDynamicCast<JSattribute*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSattributePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readonly' on a non-attribute object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     attribute& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.readonly());

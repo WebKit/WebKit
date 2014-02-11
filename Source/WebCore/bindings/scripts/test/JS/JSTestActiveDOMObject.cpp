@@ -24,6 +24,7 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSNode.h"
+#include "ScriptExecutionContext.h"
 #include "TestActiveDOMObject.h"
 #include <runtime/Error.h>
 #include <wtf/GetPtr.h>
@@ -134,8 +135,14 @@ EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, JSObject* slot
 {
     JSTestActiveDOMObject* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestActiveDOMObjectPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'excitingAttr' on a non-TestActiveDOMObject object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return JSValue::encode(jsUndefined());
     UNUSED_PARAM(exec);

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestException.h"
 
+#include "ScriptExecutionContext.h"
 #include "TestException.h"
 #include "URL.h"
 #include <runtime/JSString.h>
@@ -130,8 +131,14 @@ EncodedJSValue jsTestExceptionName(ExecState* exec, JSObject* slotBase, EncodedJ
 {
     JSTestException* castedThis = jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestExceptionPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'name' on a non-TestException object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestException& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.name());

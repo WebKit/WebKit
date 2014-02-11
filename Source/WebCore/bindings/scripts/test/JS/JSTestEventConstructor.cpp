@@ -22,6 +22,7 @@
 #include "JSTestEventConstructor.h"
 
 #include "JSDictionary.h"
+#include "ScriptExecutionContext.h"
 #include "TestEventConstructor.h"
 #include "URL.h"
 #include <runtime/Error.h>
@@ -169,8 +170,14 @@ EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, JSObject* slotBase, 
 {
     JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestEventConstructorPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attr1' on a non-TestEventConstructor object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestEventConstructor& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attr1());
@@ -182,8 +189,14 @@ EncodedJSValue jsTestEventConstructorAttr2(ExecState* exec, JSObject* slotBase, 
 {
     JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestEventConstructorPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attr2' on a non-TestEventConstructor object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestEventConstructor& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attr2());

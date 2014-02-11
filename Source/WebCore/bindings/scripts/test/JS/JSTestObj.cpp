@@ -44,6 +44,7 @@
 #include "SVGDocument.h"
 #include "SVGPoint.h"
 #include "SVGStaticPropertyTearOff.h"
+#include "ScriptExecutionContext.h"
 #include "ScriptProfile.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
@@ -396,8 +397,14 @@ EncodedJSValue jsTestObjReadOnlyLongAttr(ExecState* exec, JSObject* slotBase, En
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readOnlyLongAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.readOnlyLongAttr());
@@ -409,8 +416,14 @@ EncodedJSValue jsTestObjReadOnlyStringAttr(ExecState* exec, JSObject* slotBase, 
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readOnlyStringAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.readOnlyStringAttr());
@@ -422,8 +435,14 @@ EncodedJSValue jsTestObjReadOnlyTestObjAttr(ExecState* exec, JSObject* slotBase,
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readOnlyTestObjAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.readOnlyTestObjAttr()));
@@ -455,8 +474,14 @@ EncodedJSValue jsTestObjConstructorTestSubObj(ExecState* exec, JSObject* slotBas
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'TestSubObj' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     return JSValue::encode(JSTestSubObj::getConstructor(exec->vm(), castedThis->globalObject()));
 }
 
@@ -465,8 +490,14 @@ EncodedJSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, J
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'TestSubObjEnabledBySetting' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     if (!castedThis->impl().frame())
         return JSValue::encode(jsUndefined());
     Settings& settings = castedThis->impl().frame()->settings();
@@ -480,8 +511,14 @@ EncodedJSValue jsTestObjEnumAttr(ExecState* exec, JSObject* slotBase, EncodedJSV
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'enumAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.enumAttr());
@@ -493,8 +530,14 @@ EncodedJSValue jsTestObjByteAttr(ExecState* exec, JSObject* slotBase, EncodedJSV
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'byteAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.byteAttr());
@@ -506,8 +549,14 @@ EncodedJSValue jsTestObjOctetAttr(ExecState* exec, JSObject* slotBase, EncodedJS
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'octetAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.octetAttr());
@@ -519,8 +568,14 @@ EncodedJSValue jsTestObjShortAttr(ExecState* exec, JSObject* slotBase, EncodedJS
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'shortAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.shortAttr());
@@ -532,8 +587,14 @@ EncodedJSValue jsTestObjUnsignedShortAttr(ExecState* exec, JSObject* slotBase, E
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'unsignedShortAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.unsignedShortAttr());
@@ -545,8 +606,14 @@ EncodedJSValue jsTestObjLongAttr(ExecState* exec, JSObject* slotBase, EncodedJSV
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'longAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.longAttr());
@@ -558,8 +625,14 @@ EncodedJSValue jsTestObjLongLongAttr(ExecState* exec, JSObject* slotBase, Encode
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'longLongAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.longLongAttr());
@@ -571,8 +644,14 @@ EncodedJSValue jsTestObjUnsignedLongLongAttr(ExecState* exec, JSObject* slotBase
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'unsignedLongLongAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.unsignedLongLongAttr());
@@ -584,8 +663,14 @@ EncodedJSValue jsTestObjStringAttr(ExecState* exec, JSObject* slotBase, EncodedJ
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'stringAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.stringAttr());
@@ -597,8 +682,14 @@ EncodedJSValue jsTestObjTestObjAttr(ExecState* exec, JSObject* slotBase, Encoded
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'testObjAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.testObjAttr()));
@@ -610,8 +701,14 @@ EncodedJSValue jsTestObjXMLObjAttr(ExecState* exec, JSObject* slotBase, EncodedJ
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'XMLObjAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.xmlObjAttr()));
@@ -623,8 +720,14 @@ EncodedJSValue jsTestObjCreate(ExecState* exec, JSObject* slotBase, EncodedJSVal
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'create' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsBoolean(impl.isCreate());
@@ -636,8 +739,14 @@ EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, JSObject* slotBase,
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedStringAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
@@ -649,8 +758,14 @@ EncodedJSValue jsTestObjReflectedIntegralAttr(ExecState* exec, JSObject* slotBas
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedIntegralAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
@@ -662,8 +777,14 @@ EncodedJSValue jsTestObjReflectedUnsignedIntegralAttr(ExecState* exec, JSObject*
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedUnsignedIntegralAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(std::max(0, impl.getIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr)));
@@ -675,8 +796,14 @@ EncodedJSValue jsTestObjReflectedBooleanAttr(ExecState* exec, JSObject* slotBase
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedBooleanAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsBoolean(impl.fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
@@ -688,8 +815,14 @@ EncodedJSValue jsTestObjReflectedURLAttr(ExecState* exec, JSObject* slotBase, En
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedURLAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
@@ -701,8 +834,14 @@ EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, JSObject* slotBase,
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedStringAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
@@ -714,8 +853,14 @@ EncodedJSValue jsTestObjReflectedCustomIntegralAttr(ExecState* exec, JSObject* s
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedCustomIntegralAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
@@ -727,8 +872,14 @@ EncodedJSValue jsTestObjReflectedCustomBooleanAttr(ExecState* exec, JSObject* sl
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedCustomBooleanAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsBoolean(impl.fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
@@ -740,8 +891,14 @@ EncodedJSValue jsTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* slotBa
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedCustomURLAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
@@ -753,8 +910,14 @@ EncodedJSValue jsTestObjTypedArrayAttr(ExecState* exec, JSObject* slotBase, Enco
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'typedArrayAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.typedArrayAttr()));
@@ -766,8 +929,14 @@ EncodedJSValue jsTestObjAttrWithGetterException(ExecState* exec, JSObject* slotB
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attrWithGetterException' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
     JSC::JSValue result = jsNumber(impl.attrWithGetterException(ec));
@@ -780,8 +949,14 @@ EncodedJSValue jsTestObjAttrWithSetterException(ExecState* exec, JSObject* slotB
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attrWithSetterException' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.attrWithSetterException());
@@ -793,8 +968,14 @@ EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* exec, JSObject*
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'stringAttrWithGetterException' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
     JSC::JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
@@ -807,8 +988,14 @@ EncodedJSValue jsTestObjStringAttrWithSetterException(ExecState* exec, JSObject*
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'stringAttrWithSetterException' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.stringAttrWithSetterException());
@@ -820,8 +1007,14 @@ EncodedJSValue jsTestObjCustomAttr(ExecState* exec, JSObject* slotBase, EncodedJ
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'customAttr' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     return JSValue::encode(castedThis->customAttr(exec));
 }
 
@@ -830,8 +1023,14 @@ EncodedJSValue jsTestObjWithScriptStateAttribute(ExecState* exec, JSObject* slot
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptStateAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.withScriptStateAttribute(exec));
     return JSValue::encode(result);
@@ -842,8 +1041,14 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSO
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptExecutionContextAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
@@ -857,8 +1062,14 @@ EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptStateAttributeRaises' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateAttributeRaises(exec, ec)));
@@ -871,8 +1082,14 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exe
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptExecutionContextAttributeRaises' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ExceptionCode ec = 0;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
@@ -888,8 +1105,14 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecSt
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptExecutionContextAndScriptStateAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
@@ -903,8 +1126,14 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptExecutionContextAndScriptStateAttributeRaises' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ExceptionCode ec = 0;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
@@ -920,8 +1149,14 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttrib
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptExecutionContextAndScriptStateWithSpacesAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
@@ -935,8 +1170,14 @@ EncodedJSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptArgumentsAndCallStackAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptArgumentsAndCallStackAttribute()));
     return JSValue::encode(result);
@@ -948,8 +1189,14 @@ EncodedJSValue jsTestObjConditionalAttr1(ExecState* exec, JSObject* slotBase, En
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr1' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.conditionalAttr1());
@@ -963,8 +1210,14 @@ EncodedJSValue jsTestObjConditionalAttr2(ExecState* exec, JSObject* slotBase, En
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr2' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.conditionalAttr2());
@@ -978,8 +1231,14 @@ EncodedJSValue jsTestObjConditionalAttr3(ExecState* exec, JSObject* slotBase, En
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr3' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.conditionalAttr3());
@@ -993,8 +1252,14 @@ EncodedJSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, JSObject* s
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr4' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     return JSValue::encode(JSTestObjectA::getConstructor(exec->vm(), castedThis->globalObject()));
 }
 
@@ -1005,8 +1270,14 @@ EncodedJSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, JSObject* s
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr5' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     return JSValue::encode(JSTestObjectB::getConstructor(exec->vm(), castedThis->globalObject()));
 }
 
@@ -1017,8 +1288,14 @@ EncodedJSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, JSObject* s
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr6' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     return JSValue::encode(JSTestObjectC::getConstructor(exec->vm(), castedThis->globalObject()));
 }
 
@@ -1028,8 +1305,14 @@ EncodedJSValue jsTestObjCachedAttribute1(ExecState* exec, JSObject* slotBase, En
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'cachedAttribute1' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedAttribute1.get())
         return JSValue::encode(cachedValue);
@@ -1044,8 +1327,14 @@ EncodedJSValue jsTestObjCachedAttribute2(ExecState* exec, JSObject* slotBase, En
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'cachedAttribute2' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedAttribute2.get())
         return JSValue::encode(cachedValue);
@@ -1060,8 +1349,14 @@ EncodedJSValue jsTestObjAnyAttribute(ExecState* exec, JSObject* slotBase, Encode
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'anyAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = (impl.anyAttribute().hasNoValue() ? jsNull() : impl.anyAttribute().jsValue());
@@ -1073,8 +1368,14 @@ EncodedJSValue jsTestObjContentDocument(ExecState* exec, JSObject* slotBase, Enc
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'contentDocument' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     TestObj& impl = castedThis->impl();
     return JSValue::encode(shouldAllowAccessToNode(exec, impl.contentDocument()) ? toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.contentDocument())) : jsNull());
 }
@@ -1084,8 +1385,14 @@ EncodedJSValue jsTestObjMutablePoint(ExecState* exec, JSObject* slotBase, Encode
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'mutablePoint' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGStaticPropertyTearOff<TestObj, SVGPoint>::create(impl, impl.mutablePoint(), &TestObj::updateMutablePoint)));
@@ -1097,8 +1404,14 @@ EncodedJSValue jsTestObjImmutablePoint(ExecState* exec, JSObject* slotBase, Enco
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'immutablePoint' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePoint())));
@@ -1110,8 +1423,14 @@ EncodedJSValue jsTestObjStrawberry(ExecState* exec, JSObject* slotBase, EncodedJ
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'strawberry' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.blueberry());
@@ -1123,8 +1442,14 @@ EncodedJSValue jsTestObjStrictFloat(ExecState* exec, JSObject* slotBase, Encoded
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'strictFloat' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.strictFloat());
@@ -1136,8 +1461,14 @@ EncodedJSValue jsTestObjDescription(ExecState* exec, JSObject* slotBase, Encoded
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'description' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.description());
@@ -1149,8 +1480,14 @@ EncodedJSValue jsTestObjId(ExecState* exec, JSObject* slotBase, EncodedJSValue t
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'id' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.id());
@@ -1162,8 +1499,14 @@ EncodedJSValue jsTestObjHash(ExecState* exec, JSObject* slotBase, EncodedJSValue
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'hash' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.hash());
@@ -1175,8 +1518,14 @@ EncodedJSValue jsTestObjReplaceableAttribute(ExecState* exec, JSObject* slotBase
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'replaceableAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.replaceableAttribute());
@@ -1188,8 +1537,14 @@ EncodedJSValue jsTestObjNullableDoubleAttribute(ExecState* exec, JSObject* slotB
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableDoubleAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj& impl = castedThis->impl();
@@ -1204,8 +1559,14 @@ EncodedJSValue jsTestObjNullableLongAttribute(ExecState* exec, JSObject* slotBas
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableLongAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj& impl = castedThis->impl();
@@ -1220,8 +1581,14 @@ EncodedJSValue jsTestObjNullableBooleanAttribute(ExecState* exec, JSObject* slot
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableBooleanAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj& impl = castedThis->impl();
@@ -1236,8 +1603,14 @@ EncodedJSValue jsTestObjNullableStringAttribute(ExecState* exec, JSObject* slotB
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableStringAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj& impl = castedThis->impl();
@@ -1252,8 +1625,14 @@ EncodedJSValue jsTestObjNullableLongSettableAttribute(ExecState* exec, JSObject*
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableLongSettableAttribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj& impl = castedThis->impl();
@@ -1268,8 +1647,14 @@ EncodedJSValue jsTestObjNullableStringValue(ExecState* exec, JSObject* slotBase,
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableStringValue' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ExceptionCode ec = 0;
     bool isNull = false;
     TestObj& impl = castedThis->impl();
@@ -1285,8 +1670,14 @@ EncodedJSValue jsTestObjAttribute(ExecState* exec, JSObject* slotBase, EncodedJS
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attribute' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attribute());
@@ -1298,8 +1689,14 @@ EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* exec, JSObject*
 {
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attributeWithReservedEnumType' on a non-TestObj object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attributeWithReservedEnumType());

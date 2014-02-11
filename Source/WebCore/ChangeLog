@@ -1,3 +1,116 @@
+2014-02-10  Oliver Hunt  <oliver@apple.com>
+
+        Stop throwing when attempting to read instance properties directly from the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=128568
+
+        Reviewed by Mark Lam.
+
+        A number of websites expect to be able to access instance properties
+        directly through the prototype.  This is broken behavior but if we
+        throw an exception the entire site breaks.  This patch simply makes us
+        return undefined when reading, and logs the error to the console.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectExcitingAttr):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::jsTestEventConstructorAttr1):
+        (WebCore::jsTestEventConstructorAttr2):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::jsTestExceptionName):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfaceImplementsStr1):
+        (WebCore::jsTestInterfaceImplementsStr2):
+        (WebCore::jsTestInterfaceImplementsStr3):
+        (WebCore::jsTestInterfaceImplementsNode):
+        (WebCore::jsTestInterfaceSupplementalStr1):
+        (WebCore::jsTestInterfaceSupplementalStr2):
+        (WebCore::jsTestInterfaceSupplementalStr3):
+        (WebCore::jsTestInterfaceSupplementalNode):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjReadOnlyLongAttr):
+        (WebCore::jsTestObjReadOnlyStringAttr):
+        (WebCore::jsTestObjReadOnlyTestObjAttr):
+        (WebCore::jsTestObjConstructorTestSubObj):
+        (WebCore::jsTestObjTestSubObjEnabledBySettingConstructor):
+        (WebCore::jsTestObjEnumAttr):
+        (WebCore::jsTestObjByteAttr):
+        (WebCore::jsTestObjOctetAttr):
+        (WebCore::jsTestObjShortAttr):
+        (WebCore::jsTestObjUnsignedShortAttr):
+        (WebCore::jsTestObjLongAttr):
+        (WebCore::jsTestObjLongLongAttr):
+        (WebCore::jsTestObjUnsignedLongLongAttr):
+        (WebCore::jsTestObjStringAttr):
+        (WebCore::jsTestObjTestObjAttr):
+        (WebCore::jsTestObjXMLObjAttr):
+        (WebCore::jsTestObjCreate):
+        (WebCore::jsTestObjReflectedStringAttr):
+        (WebCore::jsTestObjReflectedIntegralAttr):
+        (WebCore::jsTestObjReflectedUnsignedIntegralAttr):
+        (WebCore::jsTestObjReflectedBooleanAttr):
+        (WebCore::jsTestObjReflectedURLAttr):
+        (WebCore::jsTestObjReflectedCustomIntegralAttr):
+        (WebCore::jsTestObjReflectedCustomBooleanAttr):
+        (WebCore::jsTestObjReflectedCustomURLAttr):
+        (WebCore::jsTestObjTypedArrayAttr):
+        (WebCore::jsTestObjAttrWithGetterException):
+        (WebCore::jsTestObjAttrWithSetterException):
+        (WebCore::jsTestObjStringAttrWithGetterException):
+        (WebCore::jsTestObjStringAttrWithSetterException):
+        (WebCore::jsTestObjCustomAttr):
+        (WebCore::jsTestObjWithScriptStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAttribute):
+        (WebCore::jsTestObjWithScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::jsTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::jsTestObjConditionalAttr1):
+        (WebCore::jsTestObjConditionalAttr2):
+        (WebCore::jsTestObjConditionalAttr3):
+        (WebCore::jsTestObjConditionalAttr4Constructor):
+        (WebCore::jsTestObjConditionalAttr5Constructor):
+        (WebCore::jsTestObjConditionalAttr6Constructor):
+        (WebCore::jsTestObjCachedAttribute1):
+        (WebCore::jsTestObjCachedAttribute2):
+        (WebCore::jsTestObjAnyAttribute):
+        (WebCore::jsTestObjContentDocument):
+        (WebCore::jsTestObjMutablePoint):
+        (WebCore::jsTestObjImmutablePoint):
+        (WebCore::jsTestObjStrawberry):
+        (WebCore::jsTestObjStrictFloat):
+        (WebCore::jsTestObjDescription):
+        (WebCore::jsTestObjId):
+        (WebCore::jsTestObjHash):
+        (WebCore::jsTestObjReplaceableAttribute):
+        (WebCore::jsTestObjNullableDoubleAttribute):
+        (WebCore::jsTestObjNullableLongAttribute):
+        (WebCore::jsTestObjNullableBooleanAttribute):
+        (WebCore::jsTestObjNullableStringAttribute):
+        (WebCore::jsTestObjNullableLongSettableAttribute):
+        (WebCore::jsTestObjNullableStringValue):
+        (WebCore::jsTestObjAttribute):
+        (WebCore::jsTestObjAttributeWithReservedEnumType):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::jsTestSerializedScriptValueInterfaceValue):
+        (WebCore::jsTestSerializedScriptValueInterfaceReadonlyValue):
+        (WebCore::jsTestSerializedScriptValueInterfaceCachedValue):
+        (WebCore::jsTestSerializedScriptValueInterfacePorts):
+        (WebCore::jsTestSerializedScriptValueInterfaceCachedReadonlyValue):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsUnsignedLongLongAttr):
+        (WebCore::jsTestTypedefsImmutableSerializedScriptValue):
+        (WebCore::jsTestTypedefsConstructorTestSubObj):
+        (WebCore::jsTestTypedefsAttrWithGetterException):
+        (WebCore::jsTestTypedefsAttrWithSetterException):
+        (WebCore::jsTestTypedefsStringAttrWithGetterException):
+        (WebCore::jsTestTypedefsStringAttrWithSetterException):
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::jsattributeReadonly):
+
 2014-02-11  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Support calc() breadth size type

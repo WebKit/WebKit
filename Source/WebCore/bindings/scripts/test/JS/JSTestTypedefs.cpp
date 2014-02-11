@@ -31,6 +31,7 @@
 #include "JSTestEventTarget.h"
 #include "JSTestSubObj.h"
 #include "SVGPoint.h"
+#include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "TestTypedefs.h"
 #include "URL.h"
@@ -180,8 +181,14 @@ EncodedJSValue jsTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSObject* slo
 {
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'unsignedLongLongAttr' on a non-TestTypedefs object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestTypedefs& impl = castedThis->impl();
     JSValue result = jsNumber(impl.unsignedLongLongAttr());
@@ -193,8 +200,14 @@ EncodedJSValue jsTestTypedefsImmutableSerializedScriptValue(ExecState* exec, JSO
 {
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'immutableSerializedScriptValue' on a non-TestTypedefs object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestTypedefs& impl = castedThis->impl();
     JSValue result = impl.immutableSerializedScriptValue() ? impl.immutableSerializedScriptValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
@@ -206,8 +219,14 @@ EncodedJSValue jsTestTypedefsConstructorTestSubObj(ExecState* exec, JSObject* sl
 {
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'TestSubObj' on a non-TestTypedefs object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     return JSValue::encode(JSTestSubObj::getConstructor(exec->vm(), castedThis->globalObject()));
 }
 
@@ -216,8 +235,14 @@ EncodedJSValue jsTestTypedefsAttrWithGetterException(ExecState* exec, JSObject* 
 {
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attrWithGetterException' on a non-TestTypedefs object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ExceptionCode ec = 0;
     TestTypedefs& impl = castedThis->impl();
     JSC::JSValue result = jsNumber(impl.attrWithGetterException(ec));
@@ -230,8 +255,14 @@ EncodedJSValue jsTestTypedefsAttrWithSetterException(ExecState* exec, JSObject* 
 {
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attrWithSetterException' on a non-TestTypedefs object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestTypedefs& impl = castedThis->impl();
     JSValue result = jsNumber(impl.attrWithSetterException());
@@ -243,8 +274,14 @@ EncodedJSValue jsTestTypedefsStringAttrWithGetterException(ExecState* exec, JSOb
 {
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'stringAttrWithGetterException' on a non-TestTypedefs object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     ExceptionCode ec = 0;
     TestTypedefs& impl = castedThis->impl();
     JSC::JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
@@ -257,8 +294,14 @@ EncodedJSValue jsTestTypedefsStringAttrWithSetterException(ExecState* exec, JSOb
 {
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'stringAttrWithSetterException' on a non-TestTypedefs object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestTypedefs& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.stringAttrWithSetterException());

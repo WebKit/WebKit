@@ -3,12 +3,17 @@ description(
 );
 
 
-
 var div = document.createElement("div")
+div.id = "test"
 var testObject = { __proto__: div}
-shouldThrow('testObject.id')
+// Needed for compatability with weird websites
+shouldBeUndefined('testObject.id')
 shouldThrow('testObject.id="foo"')
 
 testObject = {__proto__: document.getElementsByTagName("div")}
 shouldThrow("testObject.length")
+
+shouldBe("div.id", "'test'")
+shouldBeFalse("div.hasOwnProperty('id')")
+shouldBeUndefined("div.__proto__.id")
 

@@ -27,6 +27,7 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSTestObj.h"
+#include "ScriptExecutionContext.h"
 #include "TestInterface.h"
 #include "TestObj.h"
 #include "TestSupplemental.h"
@@ -300,8 +301,14 @@ EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* exec, JSObject* slotBase
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsStr1' on a non-TestInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.implementsStr1());
@@ -315,8 +322,14 @@ EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* exec, JSObject* slotBase
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsStr2' on a non-TestInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.implementsStr2());
@@ -330,8 +343,14 @@ EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* exec, JSObject* slotBase
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsStr3' on a non-TestInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     return JSValue::encode(castedThis->implementsStr3(exec));
 }
 
@@ -342,8 +361,14 @@ EncodedJSValue jsTestInterfaceImplementsNode(ExecState* exec, JSObject* slotBase
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsNode' on a non-TestInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.implementsNode()));
@@ -381,8 +406,14 @@ EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSObject* slotBa
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalStr1' on a non-TestInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, TestSupplemental::supplementalStr1(&impl));
@@ -396,8 +427,14 @@ EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSObject* slotBa
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalStr2' on a non-TestInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, TestSupplemental::supplementalStr2(&impl));
@@ -411,8 +448,14 @@ EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSObject* slotBa
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalStr3' on a non-TestInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     return JSValue::encode(castedThis->supplementalStr3(exec));
 }
 
@@ -423,8 +466,14 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSObject* slotBa
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis)
+    if (!castedThis) {
+        if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
+            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalNode' on a non-TestInterface object."));
+            return JSValue::encode(jsUndefined());
+        }
         return throwVMTypeError(exec);
+    }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalNode(&impl)));

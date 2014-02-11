@@ -1,3 +1,15 @@
+2014-02-10  Oliver Hunt  <oliver@apple.com>
+
+        Stop throwing when attempting to read instance properties directly from the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=128568
+
+        Reviewed by Mark Lam.
+
+        Update tests to match required behavior.
+
+        * js/dom/dom-as-prototype-assignment-exception-expected.txt:
+        * js/dom/script-tests/dom-as-prototype-assignment-exception.js:
+
 2014-02-11  Alexey Proskuryakov  <ap@apple.com>
 
         Animation tests are flaky in Release on EWS, too.
