@@ -504,6 +504,7 @@ public:
 
     virtual Node* toNode() override;
     virtual HTMLInputElement* toInputElement();
+    const HTMLInputElement* toInputElement() const { return const_cast<Node*>(this)->toInputElement(); }
 
     virtual EventTargetInterface eventTargetInterface() const override;
     virtual ScriptExecutionContext* scriptExecutionContext() const override final; // Implemented in Document.h

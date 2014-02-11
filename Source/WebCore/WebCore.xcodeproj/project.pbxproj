@@ -1395,6 +1395,7 @@
 		431A2FD713B7707A007791E4 /* SVGAnimatedLengthList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431A2FD613B7707A007791E4 /* SVGAnimatedLengthList.cpp */; };
 		431A302113B89DCC007791E4 /* SVGAnimatedPreserveAspectRatio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431A302013B89DCC007791E4 /* SVGAnimatedPreserveAspectRatio.cpp */; };
 		431A308813B8F978007791E4 /* SVGAnimatedBoolean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431A308713B8F978007791E4 /* SVGAnimatedBoolean.cpp */; };
+		432D3FE818A8658400D7DC03 /* SelectorCheckerTestFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 432D3FE718A8658400D7DC03 /* SelectorCheckerTestFunctions.h */; };
 		4331AC7813B6870000A9E5AE /* SVGAnimatedNumberList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4331AC7713B6870000A9E5AE /* SVGAnimatedNumberList.cpp */; };
 		4358E87C1360A2EE00E4748C /* JSSVGFEDropShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4358E87A1360A2EE00E4748C /* JSSVGFEDropShadowElement.cpp */; };
 		4358E87D1360A2EE00E4748C /* JSSVGFEDropShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4358E87B1360A2EE00E4748C /* JSSVGFEDropShadowElement.h */; };
@@ -8224,6 +8225,7 @@
 		431A2FD613B7707A007791E4 /* SVGAnimatedLengthList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedLengthList.cpp; sourceTree = "<group>"; };
 		431A302013B89DCC007791E4 /* SVGAnimatedPreserveAspectRatio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedPreserveAspectRatio.cpp; sourceTree = "<group>"; };
 		431A308713B8F978007791E4 /* SVGAnimatedBoolean.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedBoolean.cpp; sourceTree = "<group>"; };
+		432D3FE718A8658400D7DC03 /* SelectorCheckerTestFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorCheckerTestFunctions.h; sourceTree = "<group>"; };
 		4331AC7713B6870000A9E5AE /* SVGAnimatedNumberList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedNumberList.cpp; sourceTree = "<group>"; };
 		4358E87A1360A2EE00E4748C /* JSSVGFEDropShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGFEDropShadowElement.cpp; sourceTree = "<group>"; };
 		4358E87B1360A2EE00E4748C /* JSSVGFEDropShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFEDropShadowElement.h; sourceTree = "<group>"; };
@@ -21539,6 +21541,7 @@
 				3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */,
 				3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */,
 				3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */,
+				432D3FE718A8658400D7DC03 /* SelectorCheckerTestFunctions.h */,
 			);
 			path = css;
 			sourceTree = "<group>";
@@ -25928,6 +25931,7 @@
 				83C1D434178D5AB500141E68 /* SVGPathSegLinetoVerticalRel.h in Headers */,
 				83C1D435178D5AB500141E68 /* SVGPathSegMovetoAbs.h in Headers */,
 				A5416FE618810EF80009FC5F /* YouTubeEmbedShadowElement.h in Headers */,
+				432D3FE818A8658400D7DC03 /* SelectorCheckerTestFunctions.h in Headers */,
 				83C1D436178D5AB500141E68 /* SVGPathSegMovetoRel.h in Headers */,
 				FD1762E0176686D900D836A8 /* UpSampler.h in Headers */,
 				FD1762E4176686EA00D836A8 /* DownSampler.h in Headers */,

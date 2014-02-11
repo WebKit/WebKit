@@ -153,7 +153,7 @@ private:
 
     virtual HTMLFormElement* virtualForm() const override;
     virtual bool isDefaultButtonForForm() const override;
-    virtual bool isValidFormControlElement() override;
+    virtual bool isValidFormControlElement() const override;
     void updateAncestorDisabledState() const;
 
     virtual HTMLElement& asHTMLElement() override final { return *this; }

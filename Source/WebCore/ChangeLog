@@ -1,5 +1,56 @@
 2014-02-10  Benjamin Poulain  <benjamin@webkit.org>
 
+        Add a few pseudo type to the selector compiler through function calls
+        https://bugs.webkit.org/show_bug.cgi?id=128514
+
+        Reviewed by Dean Jackson.
+
+        Certain pseudo type checkers rely on virtual function calls. Since those types
+        are uncommon, and this code generator cannot currently make virtual function calls,
+        the checker are added by generating a function call to a wrapper function.
+
+        To avoid code duplication between SelectorChecker and the compiler, all the relevant checking
+        code has been moved to a common header, SelectorCheckerTestFunctions.h.
+        SelectorChecker still inline the functions, while the SelectorCompiler generate local static functions
+        and generate calls to them as needed.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorCheckerTestFunctions.h: Added.
+        (WebCore::isAutofilled):
+        (WebCore::isDefaultButtonForForm):
+        (WebCore::isDisabled):
+        (WebCore::isEnabled):
+        (WebCore::isChecked):
+        (WebCore::isInvalid):
+        (WebCore::isOptionalFormControl):
+        (WebCore::isRequiredFormControl):
+        (WebCore::isValid):
+        (WebCore::matchesReadOnlyPseudoClass):
+        (WebCore::matchesReadWritePseudoClass):
+        (WebCore::shouldAppearIndeterminate):
+        (WebCore::matchesFullScreenPseudoClass):
+        (WebCore::matchesFutureCuePseudoClass):
+        (WebCore::matchesPastCuePseudoClass):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoType):
+        (WebCore::SelectorCompiler::nonConstTestFunctionWrapper):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementFunctionCallTest):
+        * dom/Element.h:
+        (WebCore::Element::isValidFormControlElement):
+        * dom/Node.h:
+        (WebCore::Node::toInputElement):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isValidFormControlElement):
+        * html/HTMLFormControlElement.h:
+
+2014-02-10  Benjamin Poulain  <benjamin@webkit.org>
+
         Add the basic infrastructure to compile attributes matching in selectors
         https://bugs.webkit.org/show_bug.cgi?id=128484
 

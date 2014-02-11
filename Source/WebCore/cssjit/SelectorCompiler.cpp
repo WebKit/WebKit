@@ -39,6 +39,7 @@
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "SVGElement.h"
+#include "SelectorCheckerTestFunctions.h"
 #include "StackAllocator.h"
 #include "StyledElement.h"
 #include <JavaScriptCore/LinkBuffer.h>
@@ -146,6 +147,7 @@ private:
     // Element properties matchers.
     void generateElementMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr);
     void generateSynchronizeStyleAttribute(Assembler::RegisterID elementDataArraySizeAndFlags);
     void generateSynchronizeAllAnimatedSVGAttribute(Assembler::RegisterID elementDataArraySizeAndFlags);
     void generateElementAttributesMatching(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const SelectorFragment&);
@@ -153,7 +155,6 @@ private:
     void generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch);
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
-    void generateElementIsFocused(Assembler::JumpList& failureCases);
     void generateElementIsLink(Assembler::JumpList& failureCases);
 
     Assembler m_assembler;
@@ -217,12 +218,32 @@ static inline FunctionType addPseudoType(CSSSelector::PseudoType type, HashSet<u
 {
     switch (type) {
     case CSSSelector::PseudoAnyLink:
-    case CSSSelector::PseudoLink:
         pseudoClasses.add(CSSSelector::PseudoLink);
         return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoAutofill:
+    case CSSSelector::PseudoChecked:
+    case CSSSelector::PseudoDefault:
+    case CSSSelector::PseudoDisabled:
+    case CSSSelector::PseudoEnabled:
     case CSSSelector::PseudoFocus:
-        pseudoClasses.add(CSSSelector::PseudoFocus);
+    case CSSSelector::PseudoIndeterminate:
+    case CSSSelector::PseudoInvalid:
+    case CSSSelector::PseudoLink:
+    case CSSSelector::PseudoOptional:
+    case CSSSelector::PseudoReadOnly:
+    case CSSSelector::PseudoReadWrite:
+    case CSSSelector::PseudoRequired:
+    case CSSSelector::PseudoValid:
+#if ENABLE(FULLSCREEN_API)
+    case CSSSelector::PseudoFullScreen:
+#endif
+#if ENABLE(VIDEO_TRACK)
+    case CSSSelector::PseudoFutureCue:
+    case CSSSelector::PseudoPastCue:
+#endif
+        pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
+
     default:
         break;
     }
@@ -839,6 +860,40 @@ void SelectorCodeGenerator::generateBacktrackingTailsIfNeeded(const SelectorFrag
     }
 }
 
+struct UnoptimizedPseudoChecker {
+    CSSSelector::PseudoType pseudoId;
+    bool (*testFunction)(const Element*);
+};
+
+template<bool (*testFunction)(Element*)>
+inline bool nonConstTestFunctionWrapper(const Element* element)
+{
+    return testFunction(const_cast<Element*>(element));
+}
+
+static const UnoptimizedPseudoChecker unoptimizedPseudoCheckers[] = {
+    { CSSSelector::PseudoAutofill, isAutofilled },
+    { CSSSelector::PseudoChecked, nonConstTestFunctionWrapper<isChecked> },
+    { CSSSelector::PseudoDefault, isDefaultButtonForForm },
+    { CSSSelector::PseudoDisabled, isDisabled },
+    { CSSSelector::PseudoEnabled, isEnabled },
+    { CSSSelector::PseudoIndeterminate, shouldAppearIndeterminate },
+    { CSSSelector::PseudoInvalid, isInvalid },
+    { CSSSelector::PseudoFocus, SelectorChecker::matchesFocusPseudoClass },
+    { CSSSelector::PseudoOptional, isOptionalFormControl },
+    { CSSSelector::PseudoReadOnly, matchesReadOnlyPseudoClass },
+    { CSSSelector::PseudoReadWrite, matchesReadWritePseudoClass },
+    { CSSSelector::PseudoRequired, isRequiredFormControl },
+    { CSSSelector::PseudoValid, isValid },
+#if ENABLE(FULLSCREEN_API)
+    { CSSSelector::PseudoFullScreen, matchesFullScreenPseudoClass },
+#endif
+#if ENABLE(VIDEO_TRACK)
+    { CSSSelector::PseudoFutureCue, matchesFutureCuePseudoClass },
+    { CSSSelector::PseudoPastCue, matchesPastCuePseudoClass },
+#endif
+};
+
 void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoLink))
@@ -847,8 +902,12 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
     if (fragment.tagName)
         generateElementHasTagName(failureCases, *(fragment.tagName));
 
-    if (fragment.pseudoClasses.contains(CSSSelector::PseudoFocus))
-        generateElementIsFocused(failureCases);
+    if (!fragment.pseudoClasses.isEmpty()) {
+        for (unsigned i = 0; i < WTF_ARRAY_LENGTH(unoptimizedPseudoCheckers); ++i) {
+            if (fragment.pseudoClasses.contains(unoptimizedPseudoCheckers[i].pseudoId))
+                generateElementFunctionCallTest(failureCases, unoptimizedPseudoCheckers[i].testFunction);
+        }
+    }
 
     generateElementDataMatching(failureCases, fragment);
 }
@@ -1032,6 +1091,15 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
     successCases.link(&m_assembler);
 }
 
+void SelectorCodeGenerator::generateElementFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr testFunction)
+{
+    Assembler::RegisterID elementAddress = elementAddressRegister;
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(testFunction);
+    functionCall.setFirstArgument(elementAddress);
+    failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+}
+
 inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch)
 {
     if (nameToMatch == anyQName())
@@ -1099,15 +1167,6 @@ void SelectorCodeGenerator::generateElementHasClasses(Assembler::JumpList& failu
         // Success case.
         classFound.link(&m_assembler);
     }
-}
-
-void SelectorCodeGenerator::generateElementIsFocused(Assembler::JumpList& failureCases)
-{
-    Assembler::RegisterID elementAddress = elementAddressRegister;
-    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-    functionCall.setFunctionAddress(SelectorChecker::matchesFocusPseudoClass);
-    functionCall.setFirstArgument(elementAddress);
-    failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
 }
 
 void SelectorCodeGenerator::generateElementIsLink(Assembler::JumpList& failureCases)

@@ -9083,6 +9083,9 @@
     <ClInclude Include="..\css\SelectorChecker.h">
       <Filter>css</Filter>
     </ClInclude>
+    <ClInclude Include="..\css\SelectorCheckerTestFunctions.h">
+      <Filter>css</Filter>
+    </ClInclude>
     <ClInclude Include="..\css\StyleInvalidationAnalysis.h">
       <Filter>css</Filter>
     </ClInclude>

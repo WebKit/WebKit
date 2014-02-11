@@ -19662,6 +19662,7 @@
     <ClInclude Include="..\css\Rect.h" />
     <ClInclude Include="..\css\RGBColor.h" />
     <ClInclude Include="..\css\SelectorChecker.h" />
+    <ClInclude Include="..\css\SelectorCheckerTestFunctions.h" />
     <ClInclude Include="..\css\StyleInvalidationAnalysis.h" />
     <ClInclude Include="..\css\StyleMedia.h" />
     <ClInclude Include="..\css\StyleProperties.h" />

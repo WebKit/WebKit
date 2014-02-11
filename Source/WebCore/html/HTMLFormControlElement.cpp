@@ -419,7 +419,7 @@ bool HTMLFormControlElement::checkValidity(Vector<RefPtr<FormAssociatedElement>>
     return false;
 }
 
-bool HTMLFormControlElement::isValidFormControlElement()
+bool HTMLFormControlElement::isValidFormControlElement() const
 {
     // If the following assertion fails, setNeedsValidityCheck() is not called
     // correctly when something which changes validity is updated.
