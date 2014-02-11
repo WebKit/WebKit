@@ -1,3 +1,17 @@
+2014-01-24  Jer Noble  <jer.noble@apple.com>
+
+        [MediaControls] Allow the media controls script to be debuggable by giving it a generated sourceURL
+        https://bugs.webkit.org/show_bug.cgi?id=127560
+
+        Reviewed by Eric Carlson.
+
+        When evaluating a script through ScriptController, if that script does not have an
+        explicit sourceURL, it will not appear in the resources section of the Web Inspector.
+        For debug builds only, give the media controls script a generated (i.e. fake) sourceURL.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2014-02-11  Samuel White  <samuel_white@apple.com>
 
         AX: Add text replacement activity support to NSAccessibilitySelectTextWithCriteriaParameterizedAttribute.

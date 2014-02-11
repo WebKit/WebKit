@@ -5701,7 +5701,13 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     if (overlayValue.isFunction())
         return true;
 
-    scriptController.evaluateInWorld(ScriptSourceCode(mediaControlsScript), world);
+#ifndef NDEBUG
+    // Setting a scriptURL allows the source to be debuggable in the inspector.
+    URL scriptURL = URL(ParsedURLString, ASCIILiteral("mediaControlsScript"));
+#else
+    URL scriptURL;
+#endif
+    scriptController.evaluateInWorld(ScriptSourceCode(mediaControlsScript, scriptURL), world);
     if (exec->hadException()) {
         exec->clearException();
         return false;
