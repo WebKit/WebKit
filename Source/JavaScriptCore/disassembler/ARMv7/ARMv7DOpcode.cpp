@@ -48,7 +48,7 @@ const char* const ARMv7DOpcode::s_optionName[8] = {
 };
 
 const char* const ARMv7DOpcode::s_shiftNames[4] = {
-    "lsl", "lsr", "asl", "ror"
+    "lsl", "lsr", "asr", "ror"
 };
 
 const char* const ARMv7DOpcode::s_specialRegisterNames[3] = { "sp", "lr", "pc" };
