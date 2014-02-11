@@ -227,6 +227,11 @@ static inline String toString(BSTR bstr)
     return String(bstr, SysStringLen(bstr));
 }
 
+static inline String toString(BString &bstr)
+{
+    return String(bstr, SysStringLen(bstr));
+}
+
 static inline URL toURL(BSTR bstr)
 {
     return URL(URL(), toString(bstr));
