@@ -1,3 +1,15 @@
+2014-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Make it possible to run tests with --llvmSimpleOpt=false
+        https://bugs.webkit.org/show_bug.cgi?id=128571
+
+        Reviewed by Mark Lam.
+        
+        This also makes it so all run functions for the FTL are safe to call with FTL disabled,
+        because they do their own $enableFTL check.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-02-10  Gavin Barraclough  <barraclough@apple.com>
 
         Remove WKPageSetVisibilityState
