@@ -27,6 +27,7 @@
 
 #import "CurrentThisInsideBlockGetterTest.h"
 #import "DateTests.h"
+#import "JSExportTests.h"
 
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
@@ -1259,6 +1260,7 @@ void testObjectiveCAPI()
 
     currentThisInsideBlockGetterTest();
     runDateTests();
+    runJSExportTests();
 }
 
 #else

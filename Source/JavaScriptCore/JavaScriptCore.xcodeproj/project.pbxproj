@@ -1336,6 +1336,7 @@
 		C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */; };
 		C21122E215DD9AB300790E3A /* GCThreadSharedData.h in Headers */ = {isa = PBXBuildFile; fileRef = C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2160FE715F7E95E00942DFC /* SlotVisitorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB408515C0A3C30048932B /* SlotVisitorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2181FC218A948FB0025A235 /* JSExportTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = C2181FC118A948FB0025A235 /* JSExportTests.mm */; };
 		C218D1401655CFD50062BB81 /* CopyWorkList.h in Headers */ = {isa = PBXBuildFile; fileRef = C218D13F1655CFD50062BB81 /* CopyWorkList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2239D1716262BDD005AC5FD /* CopyVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2239D1216262BDD005AC5FD /* CopyVisitor.cpp */; };
 		C2239D1816262BDD005AC5FD /* CopyVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = C2239D1316262BDD005AC5FD /* CopyVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2796,6 +2797,8 @@
 		C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCThreadSharedData.cpp; sourceTree = "<group>"; };
 		C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCThreadSharedData.h; sourceTree = "<group>"; };
 		C211B574176A224D000E2A23 /* APICallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APICallbackFunction.h; sourceTree = "<group>"; };
+		C2181FC018A948FB0025A235 /* JSExportTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSExportTests.h; path = API/tests/JSExportTests.h; sourceTree = "<group>"; };
+		C2181FC118A948FB0025A235 /* JSExportTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JSExportTests.mm; path = API/tests/JSExportTests.mm; sourceTree = "<group>"; };
 		C218D13F1655CFD50062BB81 /* CopyWorkList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyWorkList.h; sourceTree = "<group>"; };
 		C2239D1216262BDD005AC5FD /* CopyVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CopyVisitor.cpp; sourceTree = "<group>"; };
 		C2239D1316262BDD005AC5FD /* CopyVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyVisitor.h; sourceTree = "<group>"; };
@@ -3249,6 +3252,8 @@
 				651122E5140469BA002B101D /* testRegExp.cpp */,
 				C288B2DC18A54D3E007BE40B /* DateTests.h */,
 				C288B2DD18A54D3E007BE40B /* DateTests.mm */,
+				C2181FC018A948FB0025A235 /* JSExportTests.h */,
+				C2181FC118A948FB0025A235 /* JSExportTests.mm */,
 			);
 			name = tests;
 			sourceTree = "<group>";
@@ -5883,6 +5888,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2181FC218A948FB0025A235 /* JSExportTests.mm in Sources */,
 				C29ECB031804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm in Sources */,
 				1440F6100A4F85670005F061 /* testapi.c in Sources */,
 				86D2221A167EF9440024C804 /* testapi.mm in Sources */,

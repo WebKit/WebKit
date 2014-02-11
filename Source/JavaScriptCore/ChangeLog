@@ -1,3 +1,39 @@
+2014-02-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Obj-C API: JSExport doesn't work for methods that contain protocols in their type signature
+        https://bugs.webkit.org/show_bug.cgi?id=128540
+
+        Reviewed by Oliver Hunt.
+
+        The bug is in parseObjCType in ObjcRuntimeExtras.h. When we see an '@' in the 
+        type signature of a method, we assume that what follows the '@' is a class name, 
+        so we call objc_getClass, and if that returns nil then we give up on the method 
+        and don't export it.
+
+        This assumption doesn't work in the case of id<Protocol> because it's the name 
+        of the protocol that follows the '@', not the name of a class. We should have 
+        another fallback case for protocol names.
+
+        There's another case that also doesn't work, and that's the case of a named class 
+        with a specified prototype in a method signature (e.g. NSObject<MyProtocol>). 
+        There the substring of the type signature that represents the class is "NSObject<MyProtocol>", 
+        which will also cause objc_getClass to return nil.
+
+        * API/ObjcRuntimeExtras.h:
+        (parseObjCType):
+        * API/tests/DateTests.mm: Also fixed an issue I noticed where we don't use an autorelease pool
+        for the DateTests.
+        * API/tests/JSExportTests.h: Added.
+        * API/tests/JSExportTests.mm: Added.
+        (-[TruthTeller returnTrue]):
+        (-[ExportMethodWithIdProtocol methodWithIdProtocol:]):
+        (-[ExportMethodWithClassProtocol methodWithClassProtocol:]):
+        (+[JSExportTests exportInstanceMethodWithIdProtocolTest]):
+        (+[JSExportTests exportInstanceMethodWithClassProtocolTest]):
+        (runJSExportTests):
+        * API/tests/testapi.mm:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2014-02-10  Michael Saboff  <msaboff@apple.com>
 
         Re-enable ARM Thumb2 disassembler

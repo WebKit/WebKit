@@ -142,10 +142,12 @@ static unsigned unitFlags = NSSecondCalendarUnit | NSMinuteCalendarUnit | NSHour
 
 void runDateTests()
 {
-    [DateTests NSDateToJSDateTest];
-    [DateTests JSDateToNSDateTest];
-    [DateTests roundTripThroughJSDateTest];
-    [DateTests roundTripThroughObjCDateTest];
+    @autoreleasepool {
+        [DateTests NSDateToJSDateTest];
+        [DateTests JSDateToNSDateTest];
+        [DateTests roundTripThroughJSDateTest];
+        [DateTests roundTripThroughObjCDateTest];
+    }
 }
 
 #endif // JSC_OBJC_API_ENABLED
