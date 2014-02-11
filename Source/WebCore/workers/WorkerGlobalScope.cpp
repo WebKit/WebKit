@@ -343,4 +343,16 @@ WorkerEventQueue& WorkerGlobalScope::eventQueue() const
     return m_eventQueue;
 }
 
+#if ENABLE(SUBTLE_CRYPTO)
+bool WorkerGlobalScope::wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&)
+{
+    return false;
+}
+
+bool WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&)
+{
+    return false;
+}
+#endif // ENABLE(SUBTLE_CRYPTO)
+
 } // namespace WebCore

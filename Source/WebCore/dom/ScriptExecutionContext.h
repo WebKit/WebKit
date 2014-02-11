@@ -88,6 +88,7 @@ public:
 #if ENABLE(BLOB)
     PublicURLManager& publicURLManager();
 #endif
+
     // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.
     bool canSuspendActiveDOMObjects();
     // Active objects can be asked to suspend even if canSuspendActiveDOMObjects() returns 'false' -
@@ -155,6 +156,11 @@ public:
 
 #if ENABLE(SQL_DATABASE)
     void setDatabaseContext(DatabaseContext*);
+#endif
+
+#if ENABLE(SUBTLE_CRYPTO)
+    virtual bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) = 0;
+    virtual bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) = 0;
 #endif
 
 protected:

@@ -46,6 +46,7 @@
 #include "JSMessagePort.h"
 #include "JSNavigator.h"
 #include "NotImplemented.h"
+#include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include "WebCoreJSClientData.h"
 #include <limits>
@@ -165,6 +166,8 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
 }
 
 #if ENABLE(SUBTLE_CRYPTO)
+
+const uint32_t currentKeyFormatVersion = 1;
 
 enum class CryptoKeyClassSubtag {
     HMAC = 0,
@@ -293,7 +296,11 @@ static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
  *    | ArrayBuffer
  *    | ArrayBufferViewTag ArrayBufferViewSubtag <byteOffset:uint32_t> <byteLength:uint32_t> (ArrayBuffer | ObjectReference)
  *    | ArrayBufferTransferTag <value:uint32_t>
- *    | CryptoKeyTag <extractable:int32_t> <usagesCount:uint32_t> <usages:byte{usagesCount}> CryptoKeyClassSubtag (CryptoKeyHMAC | CryptoKeyAES | CryptoKeyRSA)
+ *    | CryptoKeyTag <wrappedKeyLength:uint32_t> <factor:byte{wrappedKeyLength}>
+ *
+ * Inside wrapped crypto key, data is serialized in this format:
+ *
+ * <keyFormatVersion:uint32_t> <extractable:int32_t> <usagesCount:uint32_t> <usages:byte{usagesCount}> CryptoKeyClassSubtag (CryptoKeyHMAC | CryptoKeyAES | CryptoKeyRSA)
  *
  * String :-
  *      EmptyStringTag
@@ -385,6 +392,24 @@ protected:
     bool m_failed;
     MarkedArgumentBuffer m_gcBuffer;
 };
+
+#if ENABLE(SUBTLE_CRYPTO)
+static bool wrapCryptoKey(ExecState* exec, const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
+{
+    ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(exec);
+    if (!scriptExecutionContext)
+        return false;
+    return scriptExecutionContext->wrapCryptoKey(key, wrappedKey);
+}
+
+static bool unwrapCryptoKey(ExecState* exec, const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
+{
+    ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(exec);
+    if (!scriptExecutionContext)
+        return false;
+    return scriptExecutionContext->unwrapCryptoKey(wrappedKey, key);
+}
+#endif
 
 #if ASSUME_LITTLE_ENDIAN
 template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
@@ -830,7 +855,14 @@ private:
 #if ENABLE(SUBTLE_CRYPTO)
             if (CryptoKey* key = toCryptoKey(obj)) {
                 write(CryptoKeyTag);
-                write(key);
+                Vector<uint8_t> serializedKey;
+                Vector<String> dummyBlobURLs;
+                CloneSerializer rawKeySerializer(m_exec, nullptr, nullptr, dummyBlobURLs, serializedKey);
+                rawKeySerializer.write(key);
+                Vector<uint8_t> wrappedKey;
+                if (!wrapCryptoKey(m_exec, serializedKey, wrappedKey))
+                    return false;
+                write(wrappedKey);
                 return true;
             }
 #endif
@@ -1095,6 +1127,8 @@ private:
 
     void write(const CryptoKey* key)
     {
+        write(currentKeyFormatVersion);
+
         write(key->extractable());
 
         CryptoKeyUsage usages = key->usagesBitmap();
@@ -1989,6 +2023,10 @@ private:
 
     bool readCryptoKey(JSValue& cryptoKey)
     {
+        uint32_t keyFormatVersion;
+        if (!read(keyFormatVersion) || keyFormatVersion > currentKeyFormatVersion)
+            return false;
+
         int32_t extractable;
         if (!read(extractable))
             return false;
@@ -2260,8 +2298,19 @@ private:
         }
 #if ENABLE(SUBTLE_CRYPTO)
         case CryptoKeyTag: {
+            Vector<uint8_t> wrappedKey;
+            if (!read(wrappedKey)) {
+                fail();
+                return JSValue();
+            }
+            Vector<uint8_t> serializedKey;
+            if (!unwrapCryptoKey(m_exec, wrappedKey, serializedKey)) {
+                fail();
+                return JSValue();
+            }
             JSValue cryptoKey;
-            if (!readCryptoKey(cryptoKey)) {
+            CloneDeserializer rawKeyDeserializer(m_exec, m_globalObject, nullptr, nullptr, serializedKey);
+            if (!rawKeyDeserializer.readCryptoKey(cryptoKey)) {
                 fail();
                 return JSValue();
             }

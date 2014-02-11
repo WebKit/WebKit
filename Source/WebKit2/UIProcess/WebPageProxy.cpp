@@ -4479,4 +4479,20 @@ void WebPageProxy::setScrollPinningBehavior(ScrollPinningBehavior pinning)
         m_process->send(Messages::WebPage::SetScrollPinningBehavior(pinning), m_pageID);
 }
 
+#if ENABLE(SUBTLE_CRYPTO)
+void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, bool& succeeded, Vector<uint8_t>& wrappedKey)
+{
+    // FIXME: Implement.
+    wrappedKey = key;
+    succeeded = true;
+}
+
+void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succeeded, Vector<uint8_t>& key)
+{
+    // FIXME: Implement.
+    key = wrappedKey;
+    succeeded = true;
+}
+#endif
+
 } // namespace WebKit

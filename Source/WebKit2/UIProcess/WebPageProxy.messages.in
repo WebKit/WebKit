@@ -334,4 +334,9 @@ messages -> WebPageProxy {
     DidUpdateViewState()
     
     DidSaveToPageCache()
+
+#if ENABLE(SUBTLE_CRYPTO)
+    WrapCryptoKey(Vector<uint8_t> key) -> (bool succeeded, Vector<uint8_t> wrappedKey)
+    UnwrapCryptoKey(Vector<uint8_t> wrappedKey) -> (bool succeeded, Vector<uint8_t> key)
+#endif
 }

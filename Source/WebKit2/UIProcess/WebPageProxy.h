@@ -887,6 +887,11 @@ public:
     RetainPtr<CGImageRef> takeViewSnapshot();
 #endif
 
+#if ENABLE(SUBTLE_CRYPTO)
+    void wrapCryptoKey(const Vector<uint8_t>&, bool& succeeded, Vector<uint8_t>&);
+    void unwrapCryptoKey(const Vector<uint8_t>&, bool& succeeded, Vector<uint8_t>&);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();

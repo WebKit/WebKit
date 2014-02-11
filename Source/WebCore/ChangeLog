@@ -1,3 +1,31 @@
+2014-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Add hooks for wrapping CryptoKeys in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=128567
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/js/SerializedScriptValue.cpp: Changed SerializedScriptValue to serialize
+        wrapped keys. Added a version number to crypto key serialization.
+
+        * dom/Document.cpp:
+        (WebCore::Document::wrapCryptoKey):
+        (WebCore::Document::unwrapCryptoKey):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::wrapCryptoKey):
+        (WebCore::ChromeClient::unwrapCryptoKey):
+        Hand wrapping/unwrapping over to client code.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::wrapCryptoKey):
+        (WebCore::WorkerGlobalScope::unwrapCryptoKey):
+        * workers/WorkerGlobalScope.h:
+        Not implemented in workers. SubtleCrypto is currently not exposed in workers. It used
+        to be possible in WebKit implementation to post a CryptoKey to a worker anyway,
+        but this doesn't work any more.
+
 2014-02-10  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Support ANGLE_instanced_arrays for linux

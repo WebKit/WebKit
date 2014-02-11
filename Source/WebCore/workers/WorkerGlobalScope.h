@@ -135,6 +135,11 @@ namespace WebCore {
 
         virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override;
 
+#if ENABLE(SUBTLE_CRYPTO)
+        virtual bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) override;
+        virtual bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) override;
+#endif
+
     protected:
         WorkerGlobalScope(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, WorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
         void applyContentSecurityPolicyFromString(const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);

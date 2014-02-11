@@ -5994,4 +5994,22 @@ void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)
     m_hasInjectedPlugInsScript = true;
 }
 
+#if ENABLE(SUBTLE_CRYPTO)
+bool Document::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
+{
+    Page* page = this->page();
+    if (!page)
+        return false;
+    return page->chrome().client().wrapCryptoKey(key, wrappedKey);
+}
+
+bool Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
+{
+    Page* page = this->page();
+    if (!page)
+        return false;
+    return page->chrome().client().unwrapCryptoKey(wrappedKey, key);
+}
+#endif // ENABLE(SUBTLE_CRYPTO)
+
 } // namespace WebCore

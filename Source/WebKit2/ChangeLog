@@ -1,3 +1,21 @@
+2014-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Add hooks for wrapping CryptoKeys in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=128567
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::wrapCryptoKey):
+        (WebKit::WebPageProxy::unwrapCryptoKey):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::wrapCryptoKey):
+        (WebKit::WebChromeClient::unwrapCryptoKey):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Dummy implementation, to be filled in later.
+
 2014-02-10  Dan Bernstein  <mitz@apple.com>
 
         Stop using PLATFORM(MAC) in WebKit2/platform except where it means “OS X but not iOS”

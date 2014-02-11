@@ -195,6 +195,11 @@ public:
 
     virtual void numWheelEventHandlersChanged(unsigned) override { }
 
+#if ENABLE(SUBTLE_CRYPTO)
+    virtual bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const override;
+    virtual bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const override;
+#endif
+
 #if PLATFORM(IOS)
     WebView* webView() const { return m_webView; }
 #else

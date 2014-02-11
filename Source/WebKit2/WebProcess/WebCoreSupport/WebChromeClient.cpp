@@ -938,4 +938,23 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView* frameVi
     return m_page->drawingArea()->shouldUseTiledBackingForFrameView(frameView);
 }
 
+#if ENABLE(SUBTLE_CRYPTO)
+bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
+{
+    bool succeeded;
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::WrapCryptoKey(key), Messages::WebPageProxy::WrapCryptoKey::Reply(succeeded, wrappedKey), m_page->pageID()))
+        return false;
+    return succeeded;
+}
+
+bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) const
+{
+    bool succeeded;
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::UnwrapCryptoKey(wrappedKey), Messages::WebPageProxy::UnwrapCryptoKey::Reply(succeeded, key), m_page->pageID()))
+        return false;
+    return succeeded;
+}
+#endif
+
+
 } // namespace WebKit
