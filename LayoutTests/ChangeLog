@@ -1,3 +1,12 @@
+2014-02-10  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/indexes.html fails
+        <rdar://problem/16031590> and https://bugs.webkit.org/show_bug.cgi?id=128563
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk2/TestExpectations: Add the test (still skipped for now due to unrelated reasons).
+
 2014-02-09  Dean Jackson  <dino@apple.com>
 
         Update aspect-ratio property to have constraining keywords

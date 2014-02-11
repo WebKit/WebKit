@@ -72,29 +72,25 @@ static const String& getIndexStatement(bool hasLowerKey, bool isLowerOpen, bool 
     DEFINE_STATIC_LOCAL(Vector<String>, indexStatements, ());
 
     if (indexStatements.isEmpty()) {
-        indexStatements.reserveInitialCapacity(16);
+        indexStatements.reserveInitialCapacity(12);
 
         // Lower missing/open, upper missing/open.
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key, value;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key, value DESC;"));
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key DESC, value DESC;"));
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key DESC, value;"));
 
         // Lower missing/open, upper closed.
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key, value;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key, value DESC;"));
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key DESC, value DESC;"));
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key DESC, value;"));
 
         // Lower closed, upper missing/open.
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key, value;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key, value DESC;"));
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key DESC, value DESC;"));
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key DESC, value;"));
 
         // Lower closed, upper closed.
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key, value;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key, value DESC;"));
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key DESC, value DESC;"));
         indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key DESC, value;"));
     }
@@ -102,16 +98,17 @@ static const String& getIndexStatement(bool hasLowerKey, bool isLowerOpen, bool 
     size_t i = 0;
 
     if (hasLowerKey && !isLowerOpen)
-        i += 8;
+        i += 6;
 
     if (hasUpperKey && !isUpperOpen)
-        i += 4;
+        i += 3;
 
-    if (descending)
-        i += 2;
-
-    if (unique)
-        i += 1;
+    if (descending) {
+        if (!unique)
+            i += 1;
+        else
+            i += 2;
+    }
 
     return indexStatements[i];
 }

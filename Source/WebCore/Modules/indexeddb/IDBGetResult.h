@@ -50,6 +50,11 @@ struct IDBGetResult {
     {
     }
 
+    IDBGetResult(const IDBKeyData& keyData)
+        : keyData(keyData)
+    {
+    }
+
     IDBGetResult(PassRefPtr<SharedBuffer> buffer, PassRefPtr<IDBKey> key, const IDBKeyPath& path)
         : valueBuffer(buffer)
         , keyData(key.get())

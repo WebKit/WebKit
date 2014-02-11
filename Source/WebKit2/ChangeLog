@@ -1,3 +1,22 @@
+2014-02-10  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/indexes.html fails
+        <rdar://problem/16031590> and https://bugs.webkit.org/show_bug.cgi?id=128563
+
+        Reviewed by Tim Horton.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::getRecordFromBackingStore): Pass the cursor type to the backing store.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord): If it’s a key-only cursor,
+          return only the key result.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::getIndexStatement): Fix index statement selection so ascending, unique cursors sort correctly.
+
 2014-02-10  Anders Carlsson  <andersca@apple.com>
 
         Remove a couple of deprecatedCharacters() from WebKit2

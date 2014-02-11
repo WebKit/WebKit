@@ -924,7 +924,7 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
     // IDBIndex get record
 
     IDBGetResult result;
-    if (!m_backingStore->getIndexRecord(transaction, objectStoreMetadata.id, indexID, keyRangeData, result)) {
+    if (!m_backingStore->getIndexRecord(transaction, objectStoreMetadata.id, indexID, keyRangeData, cursorType, result)) {
         postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get index record from backing store")));
         return;
     }

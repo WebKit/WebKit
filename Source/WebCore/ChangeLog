@@ -1,3 +1,18 @@
+2014-02-10  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/indexes.html fails
+        <rdar://problem/16031590> and https://bugs.webkit.org/show_bug.cgi?id=128563
+
+        Reviewed by Tim Horton.
+
+        Tested by storage/indexeddb/mozilla/indexes.html (and probably others)
+
+        * Modules/indexeddb/IDBGetResult.h:
+        (WebCore::IDBGetResult::IDBGetResult): Add a constructor that takes an IDBKeyData argument.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess): If there’s no keyPath then skip the injection step.
+
 2014-02-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Speed up DatasetDOMStringMap::item() when the element has multiple attributes

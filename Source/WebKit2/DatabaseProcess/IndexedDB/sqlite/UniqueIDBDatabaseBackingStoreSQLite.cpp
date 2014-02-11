@@ -909,7 +909,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::uncheckedPutIndexRecord(int64_t object
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, IDBGetResult& result)
+bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, IndexedDB::CursorType cursorType, IDBGetResult& result)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -921,7 +921,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& tr
         return false;
     }
 
-    SQLiteIDBCursor* cursor = transaction->openCursor(objectStoreID, indexID, IndexedDB::CursorDirection::Next, IndexedDB::CursorType::KeyAndValue, IDBDatabaseBackend::NormalTask, keyRangeData);
+    SQLiteIDBCursor* cursor = transaction->openCursor(objectStoreID, indexID, IndexedDB::CursorDirection::Next, cursorType, IDBDatabaseBackend::NormalTask, keyRangeData);
 
     if (!cursor) {
         LOG_ERROR("Cannot open cursor to perform index get in database");
@@ -931,8 +931,12 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& tr
     // Even though we're only using this cursor locally, add it to our cursor set.
     m_cursors.set(cursor->identifier(), cursor);
 
-    result = IDBGetResult(SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size()));
-    result.keyData = cursor->currentPrimaryKey();
+    if (cursorType == IndexedDB::CursorType::KeyOnly)
+        result = IDBGetResult(cursor->currentPrimaryKey());
+    else {
+        result = IDBGetResult(SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size()));
+        result.keyData = cursor->currentPrimaryKey();
+    }
 
     // Closing the cursor will destroy the cursor object and remove it from our cursor set.
     transaction->closeCursor(*cursor);

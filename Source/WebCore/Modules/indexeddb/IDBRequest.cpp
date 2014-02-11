@@ -363,12 +363,16 @@ void IDBRequest::onSuccess(PassRefPtr<SharedBuffer> valueBuffer, PassRefPtr<IDBK
     Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer, true);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
+
+    if (!keyPath.isNull()) {
 #ifndef NDEBUG
-    RefPtr<IDBKey> expectedKey = createIDBKeyFromScriptValueAndKeyPath(requestState()->exec(), value, keyPath);
-    ASSERT(!expectedKey || expectedKey->isEqual(primaryKey.get()));
+        RefPtr<IDBKey> expectedKey = createIDBKeyFromScriptValueAndKeyPath(requestState()->exec(), value, keyPath);
+        ASSERT(!expectedKey || expectedKey->isEqual(primaryKey.get()));
 #endif
-    bool injected = injectIDBKeyIntoScriptValue(requestState(), primaryKey, value, keyPath);
-    ASSERT_UNUSED(injected, injected);
+        bool injected = injectIDBKeyIntoScriptValue(requestState(), primaryKey, value, keyPath);
+        ASSERT_UNUSED(injected, injected);
+    }
+
     onSuccessInternal(value);
 }
 
