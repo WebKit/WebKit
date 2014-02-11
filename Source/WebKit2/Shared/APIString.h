@@ -78,23 +78,15 @@ public:
     size_t maximumUTF8CStringSize() const { return m_string.length() * 3 + 1; }
     size_t getUTF8CString(char* buffer, size_t bufferSize)
     {
-        if (!bufferSize || m_string.isEmpty())
+        if (!bufferSize)
             return 0;
-        char* destination = buffer;
-
-        WTF::Unicode::ConversionResult result;
-        if (m_string.is8Bit()) {
-            const LChar* source = m_string.characters8();
-            result = WTF::Unicode::convertLatin1ToUTF8(&source, source + m_string.length(), &destination, destination + bufferSize - 1);
-        } else {
-            const UChar* source = m_string.characters16();
-            result = WTF::Unicode::convertUTF16ToUTF8(&source, source + m_string.length(), &destination, destination + bufferSize - 1, /* strict */ true);
-        }
-
-        *destination++ = '\0';
+        char* p = buffer;
+        const UChar* d = m_string.deprecatedCharacters();
+        WTF::Unicode::ConversionResult result = WTF::Unicode::convertUTF16ToUTF8(&d, d + m_string.length(), &p, p + bufferSize - 1, /* strict */ true);
+        *p++ = '\0';
         if (result != WTF::Unicode::conversionOK && result != WTF::Unicode::targetExhausted)
             return 0;
-        return destination - buffer;
+        return p - buffer;
     }
 
     bool equal(String* other) { return m_string == other->m_string; }
