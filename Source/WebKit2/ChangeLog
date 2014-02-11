@@ -1,3 +1,14 @@
+2014-02-10  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/object-store-inline-autoincrement-key-added-on-put.html fails
+        <rdar://problem/16033286> and https://bugs.webkit.org/show_bug.cgi?id=128574
+
+        Reviewed by Maciej Stachowiak.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::getRecordFromBackingStore): If there is no value in an object-store get,
+          don’t return *any* results.
+
 2014-02-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the iOS build after r163848

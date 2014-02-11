@@ -482,6 +482,7 @@ fullscreen/anonymous-block-merge-crash.html [ Pass ]
 # storage/indexeddb/mozilla/index-prev-no-duplicate.html [ Pass ]
 # storage/indexeddb/mozilla/indexes.html [ Pass ]
 # storage/indexeddb/mozilla/object-cursors.html [ Pass ]
+# storage/indexeddb/mozilla/object-store-inline-autoincrement-key-added-on-put.html [ Pass ]
 # storage/indexeddb/mozilla/object-store-remove-values.html [ Pass ]
 # storage/indexeddb/mozilla/versionchange-abort.html [ Pass ]
 

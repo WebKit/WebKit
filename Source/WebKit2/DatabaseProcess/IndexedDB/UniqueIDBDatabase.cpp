@@ -905,8 +905,10 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
         if (keyRange->isOnlyKey()) {
             if (!m_backingStore->getKeyRecordFromObjectStore(transaction, objectStoreMetadata.id, *keyRange->lower(), result))
                 postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get key record from object store in backing store")));
-            else
-                postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(result.release()), 0, String(StringImpl::empty())));
+            else {
+                IDBGetResult getResult = result ? IDBGetResult(result.release(), keyRange->lower(), objectStoreMetadata.keyPath) : IDBGetResult();
+                postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, getResult, 0, String(StringImpl::empty())));
+            }
 
             return;
         }
@@ -915,8 +917,10 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
 
         if (!m_backingStore->getKeyRangeRecordFromObjectStore(transaction, objectStoreMetadata.id, *keyRange, result, resultKey))
             postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get key range record from object store in backing store")));
-        else
-            postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(result.release(), resultKey.release(), IDBKeyPath()), 0, String(StringImpl::empty())));
+        else {
+            IDBGetResult getResult = result ? IDBGetResult(result.release(), resultKey.release(), objectStoreMetadata.keyPath) : IDBGetResult();
+            postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, getResult, 0, String(StringImpl::empty())));
+        }
 
         return;
     }

@@ -1,3 +1,12 @@
+2014-02-10  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/object-store-inline-autoincrement-key-added-on-put.html fails
+        <rdar://problem/16033286> and https://bugs.webkit.org/show_bug.cgi?id=128574
+
+        Reviewed by Maciej Stachowiak.
+
+        * platform/mac-wk2/TestExpectations:  Add the test (still skipped for now due to unrelated reasons).
+
 2014-02-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Add the basic infrastructure to compile attributes matching in selectors
