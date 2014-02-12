@@ -380,7 +380,11 @@ namespace JSC {
         JS_EXPORT_PRIVATE JSObject* throwException(ExecState*, JSObject*);
         
         size_t reservedZoneSize() const { return m_reservedZoneSize; }
-        size_t updateStackLimitWithReservedZoneSize(size_t reservedZoneSize);
+        size_t updateReservedZoneSize(size_t reservedZoneSize);
+
+#if ENABLE(FTL_JIT)
+        void updateFTLLargestStackSize(size_t);
+#endif
 
         void** addressOfJSStackLimit() { return &m_jsStackLimit; }
 #if ENABLE(LLINT_C_LOOP)
@@ -511,7 +515,7 @@ namespace JSC {
         static VM*& sharedInstanceInternal();
         void createNativeThunk();
 
-        void setStackLimit(void* limit) { m_stackLimit = limit; }
+        void updateStackLimit();
 
 #if ENABLE(ASSEMBLER)
         bool m_canUseAssembler;
@@ -536,6 +540,10 @@ namespace JSC {
             void* m_stackLimit;
             void* m_jsStackLimit;
         };
+#if ENABLE(FTL_JIT)
+        void* m_ftlStackLimit;
+        size_t m_largestFTLStackSize;
+#endif
 #endif
         void* m_lastStackTop;
         JSValue m_exception;

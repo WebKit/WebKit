@@ -126,7 +126,7 @@ void JSLock::lock(intptr_t lockCount)
     if (!m_vm->stackPointerAtVMEntry) {
         void* p = &p;
         m_vm->stackPointerAtVMEntry = p; // A proxy for the current stack pointer.
-        threadData.setSavedReservedZoneSize(m_vm->updateStackLimitWithReservedZoneSize(Options::reservedZoneSize()));
+        threadData.setSavedReservedZoneSize(m_vm->updateReservedZoneSize(Options::reservedZoneSize()));
     }
 
     m_vm->setLastStackTop(threadData.savedLastStackTop());
@@ -147,7 +147,7 @@ void JSLock::unlock(intptr_t unlockCount)
     if (!m_lockCount) {
         if (m_vm) {
             m_vm->stackPointerAtVMEntry = nullptr;
-            m_vm->updateStackLimitWithReservedZoneSize(wtfThreadData().savedReservedZoneSize());
+            m_vm->updateReservedZoneSize(wtfThreadData().savedReservedZoneSize());
         }
         setOwnerThread(0);
         m_lock.unlock();
@@ -218,7 +218,7 @@ void JSLock::grabAllLocks(DropAllLocks* dropper, unsigned droppedLockCount)
     WTFThreadData& threadData = wtfThreadData();
     m_vm->stackPointerAtVMEntry = threadData.savedStackPointerAtVMEntry();
     m_vm->setLastStackTop(threadData.savedLastStackTop());
-    m_vm->updateStackLimitWithReservedZoneSize(threadData.savedReservedZoneSize());
+    m_vm->updateReservedZoneSize(threadData.savedReservedZoneSize());
 }
 
 JSLock::DropAllLocks::DropAllLocks(ExecState* exec)

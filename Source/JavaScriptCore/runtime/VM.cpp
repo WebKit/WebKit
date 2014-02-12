@@ -227,6 +227,10 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(LLINT_C_LOOP)
     , m_jsStackLimit(0)
 #endif
+#if ENABLE(FTL_JIT)
+    , m_ftlStackLimit(0)
+    , m_largestFTLStackSize(0)
+#endif
     , m_inDefineOwnProperty(false)
     , m_codeCache(CodeCache::create())
     , m_enabledProfiler(nullptr)
@@ -234,7 +238,7 @@ VM::VM(VMType vmType, HeapType heapType)
 {
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();
-    updateStackLimitWithReservedZoneSize(Options::reservedZoneSize());
+    updateReservedZoneSize(Options::reservedZoneSize());
 #if ENABLE(LLINT_C_LOOP)
     interpreter->stack().setReservedZoneSize(Options::reservedZoneSize());
 #endif
@@ -728,22 +732,47 @@ void VM:: clearExceptionStack()
     m_exceptionStack = RefCountedArray<StackFrame>();
 }
 
-size_t VM::updateStackLimitWithReservedZoneSize(size_t reservedZoneSize)
+size_t VM::updateReservedZoneSize(size_t reservedZoneSize)
 {
     size_t oldReservedZoneSize = m_reservedZoneSize;
     m_reservedZoneSize = reservedZoneSize;
 
-    void* stackLimit;
+    updateStackLimit();
+
+    return oldReservedZoneSize;
+}
+
+inline void VM::updateStackLimit()
+{
     if (stackPointerAtVMEntry) {
         ASSERT(wtfThreadData().stack().isGrowingDownward());
         char* startOfStack = reinterpret_cast<char*>(stackPointerAtVMEntry);
-        stackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), reservedZoneSize);
-    } else
-        stackLimit = wtfThreadData().stack().recursionLimit(reservedZoneSize);
+#if ENABLE(FTL_JIT)
+        m_stackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize + m_largestFTLStackSize);
+        m_ftlStackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize + 2 * m_largestFTLStackSize);
+#else
+        m_stackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize);
+#endif
+    } else {
+#if ENABLE(FTL_JIT)
+        m_stackLimit = wtfThreadData().stack().recursionLimit(m_reservedZoneSize + m_largestFTLStackSize);
+        m_ftlStackLimit = wtfThreadData().stack().recursionLimit(m_reservedZoneSize + 2 * m_largestFTLStackSize);
+#else
+        m_stackLimit = wtfThreadData().stack().recursionLimit(m_reservedZoneSize);
+#endif
+    }
 
-    setStackLimit(stackLimit);
-    return oldReservedZoneSize;
 }
+
+#if ENABLE(FTL_JIT)
+void VM::updateFTLLargestStackSize(size_t stackSize)
+{
+    if (stackSize > m_largestFTLStackSize) {
+        m_largestFTLStackSize = stackSize;
+        updateStackLimit();
+    }
+}
+#endif
 
 void releaseExecutableMemory(VM& vm)
 {

@@ -1,3 +1,32 @@
+2014-02-12  Michael Saboff  <msaboff@apple.com>
+
+        Adjust VM::stackLimit based on the size of the largest FTL stack produced
+        https://bugs.webkit.org/show_bug.cgi?id=128562
+
+        Reviewed by Mark Lam.
+
+        Added VM::m_largestFTLStackSize to track the largest stack size of an FTL compiled
+        function. Added VM::m_ftlStackLimit for FTL functions stack limit.  Renamed
+        VM::updateStackLimitWithReservedZoneSize to VM::updateReservedZoneSize.  Renamed
+        VM::setStackLimit to VM::updateStackLimit and changed it to do the updating of the
+        stack limits, including taking into account m_largestFTLStackSize.
+
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * runtime/ErrorHandlingScope.cpp:
+        (JSC::ErrorHandlingScope::ErrorHandlingScope):
+        (JSC::ErrorHandlingScope::~ErrorHandlingScope):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::grabAllLocks):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::updateReservedZoneSize):
+        (JSC::VM::updateStackLimit):
+        (JSC::VM::updateFTLLargestStackSize):
+        * runtime/VM.h:
+
 2014-02-11  Oliver Hunt  <oliver@apple.com>
 
         Make it possible to implement JS builtins in JS
