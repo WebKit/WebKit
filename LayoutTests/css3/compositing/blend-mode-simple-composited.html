@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<head>
+    <script>
+        if (window.testRunner)
+            window.testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "1");
+    </script>
+
+    <style>
+      img {
+          width: 130px;
+          height: 130px;
+         -webkit-transform: translateZ(0);
+      }
+
+      li {
+          margin: 5px;
+          width: 130px;
+          height: 130px;
+          background: -webkit-gradient(linear, left top, right top, color-stop(0%,#0ff), color-stop(24%,#00f), color-stop(50%,#f00), color-stop(75%,#ff0), color-stop(100%,#0f0));
+          display: block;
+          float: left;
+      }
+    </style>
+</head>
+
+<!-- This file should contain a duck on top of a gradient with every type of blending. -->
+<body>
+    <ul>
+        <!-- Separable blend modes -->
+        <li><img style="-webkit-blend-mode: normal" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: overlay" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: screen" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: overlay" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: darken" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: lighten" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: color-dodge" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: color-burn" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: hard-light" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: soft-light" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: difference" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: exclusion" src="resources/ducky.png"></li>
+        <!-- Non separable blend modes -->
+        <li><img style="-webkit-blend-mode: hue" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: saturation" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: color" src="resources/ducky.png"></li>
+        <li><img style="-webkit-blend-mode: luminosity" src="resources/ducky.png"></li>
+    </ul>
+</body>

@@ -1,0 +1,28 @@
+<!DOCTYPE HTML-->
+
+<style>
+    div {
+        width: 100px;
+        height: 100px;
+    }
+
+    .composited_sibling {
+        -webkit-transform: translateZ(0);
+    }
+
+    .blender {
+        margin-top: -30px;
+        -webkit-blend-mode: difference;
+    }
+</style>
+
+<div class="composited_sibling"></div>
+<div class="blender"></div>
+<pre id="layerTree"></pre>
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    var text = document.getElementById("layerTree");
+    text.innerHTML = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+</script>

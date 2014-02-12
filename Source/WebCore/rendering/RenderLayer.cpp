@@ -1683,7 +1683,19 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* context, const Render
         context->save();
         LayoutRect clipRect = paintingExtent(rootLayer, paintDirtyRect, paintBehavior);
         context->clip(clipRect);
+
+#if ENABLE(CSS_COMPOSITING)
+        if (hasBlendMode())
+            context->setCompositeOperation(context->compositeOperation(), m_blendMode);
+#endif
+
         context->beginTransparencyLayer(renderer().opacity());
+
+#if ENABLE(CSS_COMPOSITING)
+        if (hasBlendMode())
+            context->setCompositeOperation(context->compositeOperation(), BlendModeNormal);
+#endif
+
 #ifdef REVEAL_TRANSPARENCY_LAYERS
         context->setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f), ColorSpaceDeviceRGB);
         context->fillRect(clipRect);

@@ -1,3 +1,31 @@
+2014-02-12  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Element Blending] Implement the software path of -webkit-blend-mode with Core Graphics.
+        https://bugs.webkit.org/show_bug.cgi?id=99119
+
+        Reviewed by Simon Fraser.
+
+        * css3/compositing/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer-expected.txt: Copied from LayoutTests/css3/compositing/blend-mode-should-not-have-compositing-layer-expected.txt.
+        * css3/compositing/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer.html: Test if having an overlapping composited sibling forces compositing of a blended element.
+        * css3/compositing/blend-mode-layers.html: Update to test both the software and the hardware path.
+        * css3/compositing/blend-mode-parent-of-composited-blended-has-layer-expected.txt: Renamed from LayoutTests/css3/compositing/should-have-compositing-layer-expected.txt.
+        * css3/compositing/blend-mode-parent-of-composited-blended-has-layer.html: Test if the parent of an accelerated element with -webkit-blend-mode is promoted.
+        * css3/compositing/blend-mode-reflection.html: Update to test both the software and the hardware path.
+        * css3/compositing/blend-mode-should-not-have-compositing-layer.html: Removed.
+        * css3/compositing/blend-mode-simple-composited.html: Test all the blend modes for the hardware path.
+        * css3/compositing/blend-mode-with-composited-descendant-should-have-layer-expected.txt: Renamed from LayoutTests/css3/compositing/blend-mode-should-not-have-compositing-layer-expected.txt.
+        * css3/compositing/blend-mode-with-composited-descendant-should-have-layer.html: Test to ensure that an element with -webkit-blend-mode and a composited descendant is also accelerated.
+        * css3/compositing/should-have-compositing-layer.html: Removed.
+        * platform/mac/css3/compositing/blend-mode-layers-expected.png:
+        * platform/mac/css3/compositing/blend-mode-layers-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-overflow-expected.png:
+        * platform/mac/css3/compositing/blend-mode-overflow-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-reflection-expected.png:
+        * platform/mac/css3/compositing/blend-mode-reflection-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-simple-composited-expected.png: Added.
+        * platform/mac/css3/compositing/blend-mode-simple-composited-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-simple-expected.png:
+
 2014-02-12  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gatdening

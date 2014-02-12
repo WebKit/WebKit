@@ -1989,8 +1989,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
 #if PLATFORM(IOS)
         || requiresCompositingForScrolling(*renderer)
 #endif
-        || requiresCompositingForOverflowScrolling(*renderer->layer())
-        || requiresCompositingForBlending(*renderer);
+        || requiresCompositingForOverflowScrolling(*renderer->layer());
 }
 
 bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
@@ -2029,7 +2028,6 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || (canRender3DTransforms() && renderer.style().backfaceVisibility() == BackfaceVisibilityHidden)
         || requiresCompositingForAnimation(renderer)
         || requiresCompositingForFilters(renderer)
-        || requiresCompositingForBlending(renderer)
         || requiresCompositingForPosition(renderer, layer)
         || requiresCompositingForOverflowScrolling(layer)
         || renderer.isTransparent()
@@ -2093,9 +2091,6 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
     if (requiresCompositingForFilters(*renderer))
         reasons |= CompositingReasonFilters;
 
-    if (requiresCompositingForBlending(*renderer))
-        reasons |= CompositingReasonBlending;
-
     if (requiresCompositingForPosition(*renderer, *renderer->layer()))
         reasons |= renderer->style().position() == FixedPosition ? CompositingReasonPositionFixed : CompositingReasonPositionSticky;
 
@@ -2128,9 +2123,10 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
 
         if (renderer->hasFilter())
             reasons |= CompositingReasonFilterWithCompositedDescendants;
-            
+
         if (renderer->hasBlendMode())
             reasons |= CompositingReasonBlendingWithCompositedDescendants;
+
     } else if (renderer->layer()->indirectCompositingReason() == RenderLayer::IndirectCompositingForPerspective)
         reasons |= CompositingReasonPerspective;
     else if (renderer->layer()->indirectCompositingReason() == RenderLayer::IndirectCompositingForPreserve3D)
@@ -2170,9 +2166,6 @@ const char* RenderLayerCompositor::logReasonsForCompositing(const RenderLayer& l
 
     if (reasons & CompositingReasonFilters)
         return "filters";
-
-    if (reasons & CompositingReasonBlending)
-        return "blending";
 
     if (reasons & CompositingReasonPositionFixed)
         return "position: fixed";
@@ -2441,16 +2434,6 @@ bool RenderLayerCompositor::requiresCompositingForFilters(RenderLayerModelObject
         return false;
 
     return renderer.hasFilter();
-#else
-    UNUSED_PARAM(renderer);
-    return false;
-#endif
-}
-
-bool RenderLayerCompositor::requiresCompositingForBlending(RenderLayerModelObject& renderer) const
-{
-#if ENABLE(CSS_COMPOSITING)
-    return renderer.hasBlendMode();
 #else
     UNUSED_PARAM(renderer);
     return false;

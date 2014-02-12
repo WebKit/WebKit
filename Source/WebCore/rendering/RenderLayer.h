@@ -798,7 +798,7 @@ public:
 
     bool paintsWithTransparency(PaintBehavior paintBehavior) const
     {
-        return isTransparent() && ((paintBehavior & PaintBehaviorFlattenCompositingLayers) || !isComposited());
+        return (isTransparent() || hasBlendMode()) && ((paintBehavior & PaintBehaviorFlattenCompositingLayers) || !isComposited());
     }
 
     bool paintsWithTransform(PaintBehavior) const;

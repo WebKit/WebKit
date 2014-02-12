@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<!-- Test if the parent of a composited layer with mix-blend-mode is promoted. -->
+
+<style>
+    div {
+        width: 100px;
+        height: 100px;
+    }
+    .blender {
+        -webkit-blend-mode: difference;
+        -webkit-transform: translateZ(0);
+        margin: 10px;
+    }
+</style>
+
+<div><div class="blender"></div></div>
+<pre id="layerTree"></pre>
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    var text = document.getElementById("layerTree");
+    text.innerHTML = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+</script>

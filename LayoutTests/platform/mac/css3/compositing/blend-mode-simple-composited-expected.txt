@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x576
+  RenderBlock {HTML} at (0,0) size 800x576
+    RenderBody {BODY} at (8,16) size 784x0
+      RenderBlock {UL} at (0,0) size 784x0
+        RenderBlock (floating) {LI} at (45,5) size 130x130
+        RenderBlock (floating) {LI} at (185,5) size 130x130
+        RenderBlock (floating) {LI} at (325,5) size 130x130
+        RenderBlock (floating) {LI} at (465,5) size 130x130
+        RenderBlock (floating) {LI} at (605,5) size 130x130
+        RenderBlock (floating) {LI} at (45,145) size 130x130
+        RenderBlock (floating) {LI} at (185,145) size 130x130
+        RenderBlock (floating) {LI} at (325,145) size 130x130
+        RenderBlock (floating) {LI} at (465,145) size 130x130
+        RenderBlock (floating) {LI} at (605,145) size 130x130
+        RenderBlock (floating) {LI} at (45,285) size 130x130
+        RenderBlock (floating) {LI} at (185,285) size 130x130
+        RenderBlock (floating) {LI} at (325,285) size 130x130
+        RenderBlock (floating) {LI} at (465,285) size 130x130
+        RenderBlock (floating) {LI} at (605,285) size 130x130
+        RenderBlock (floating) {LI} at (45,425) size 130x130
+layer at (53,21) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (193,21) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (333,21) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (473,21) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (613,21) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (53,161) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (193,161) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (333,161) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (473,161) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (613,161) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (53,301) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (193,301) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (333,301) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (473,301) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (613,301) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130
+layer at (53,441) size 130x130
+  RenderImage {IMG} at (0,0) size 130x130

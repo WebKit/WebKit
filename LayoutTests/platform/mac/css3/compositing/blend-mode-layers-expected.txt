@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x191
-  RenderBlock {HTML} at (0,0) size 800x191
+layer at (0,0) size 800x366
+  RenderBlock {HTML} at (0,0) size 800x366
     RenderBody {BODY} at (8,16) size 784x0
       RenderBlock {UL} at (0,0) size 784x0
         RenderBlock (floating) {LI} at (45,5) size 160x50 [bgcolor=#FF00FF]
@@ -9,7 +9,10 @@ layer at (0,0) size 800x191
         RenderBlock (floating) {LI} at (215,5) size 160x50 [bgcolor=#FF00FF]
           RenderBlock {DIV} at (0,50) size 160x75 [bgcolor=#00FFFF]
         RenderBlock (floating) {LI} at (385,5) size 160x50 [bgcolor=#FF00FF]
+          RenderBlock {DIV} at (0,50) size 160x75 [bgcolor=#00FFFF]
         RenderBlock (floating) {LI} at (555,5) size 160x50 [bgcolor=#FF00FF]
+        RenderBlock (floating) {LI} at (45,180) size 160x50 [bgcolor=#FF00FF]
+        RenderBlock (floating) {LI} at (215,180) size 160x50 [bgcolor=#FF00FF]
 layer at (73,31) size 160x160
   RenderBlock (relative positioned) {DIV} at (0,0) size 160x160
 layer at (53,41) size 80x150
@@ -18,8 +21,6 @@ layer at (243,31) size 160x160
   RenderBlock (relative positioned) {DIV} at (0,0) size 160x160
 layer at (223,41) size 80x150
   RenderBlock (relative positioned) {DIV} at (0,0) size 80x150 [bgcolor=#FFFF00]
-layer at (393,71) size 160x75
-  RenderBlock {DIV} at (0,50) size 160x75 [bgcolor=#00FFFF]
 layer at (413,31) size 160x160
   RenderBlock (relative positioned) {DIV} at (0,0) size 160x160
 layer at (393,41) size 80x150
@@ -29,4 +30,16 @@ layer at (563,71) size 160x75
 layer at (583,31) size 160x160
   RenderBlock (relative positioned) {DIV} at (0,0) size 160x160
 layer at (563,41) size 80x150
+  RenderBlock (relative positioned) {DIV} at (0,0) size 80x150 [bgcolor=#FFFF00]
+layer at (53,246) size 160x75
+  RenderBlock {DIV} at (0,50) size 160x75 [bgcolor=#00FFFF]
+layer at (73,206) size 160x160
+  RenderBlock (relative positioned) {DIV} at (0,0) size 160x160
+layer at (53,216) size 80x150
+  RenderBlock (relative positioned) {DIV} at (0,0) size 80x150 [bgcolor=#FFFF00]
+layer at (223,246) size 160x75
+  RenderBlock {DIV} at (0,50) size 160x75 [bgcolor=#00FFFF]
+layer at (243,206) size 160x160
+  RenderBlock (relative positioned) {DIV} at (0,0) size 160x160
+layer at (223,216) size 80x150
   RenderBlock (relative positioned) {DIV} at (0,0) size 80x150 [bgcolor=#FFFF00]

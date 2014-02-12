@@ -1,3 +1,34 @@
+2014-02-12  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Element Blending] Implement the software path of -webkit-blend-mode with Core Graphics.
+        https://bugs.webkit.org/show_bug.cgi?id=99119
+
+        Reviewed by Simon Fraser.
+
+        This patch adds support for -webkit-blend-mode with Core Graphics.
+        The layer promotion code that forced compositing when blending was detected has been removed.
+        Remaining work for the software path is to detect and implement isolation of the blending operation:
+        as stated in the spec, blending should be limited to the parent stacking context.
+
+        Tests: css3/compositing/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer.html
+               css3/compositing/blend-mode-parent-of-composited-blended-has-layer.html
+               css3/compositing/blend-mode-simple-composited.html
+               css3/compositing/blend-mode-with-composited-descendant-should-have-layer.html
+
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::reasonsForCompositingLayer): Remove CompositingReasonBlending.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers): Set the blendMode on the GraphicsContext.
+        * rendering/RenderLayer.h: paintsWithTransparency should return true when a blendMode is set.
+        * rendering/RenderLayerCompositor.cpp: Remove promotion code when a blendMode is detected.
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer): Remove CompositingReasonBlending reason.
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore): Remove CompositingReasonBlending reason.
+        (WebCore::RenderLayerCompositor::reasonsForCompositing): Remove CompositingReasonBlending reason.
+        (WebCore::RenderLayerCompositor::logReasonsForCompositing): Remove CompositingReasonBlending reason.
+        * rendering/RenderLayerCompositor.h:
+        - Remove the requiresCompositingForBlending method
+        - Remove the CompositingReasonBlending from the CompositingReasons enum.
+
 2014-02-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Switch repaint rect from IntRect to LayoutRect to be able to

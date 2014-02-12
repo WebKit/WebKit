@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<!-- Test if an element with mix-blend-mode having a composited descendant is promoted. -->
+
+<style>
+    div {
+        width: 100px;
+        height: 100px;
+    }
+    .blender {
+        -webkit-blend-mode: difference;
+    }
+    .child {
+        -webkit-transform: translateZ(0);
+        margin: 10px;
+    }
+</style>
+
+<div class="blender"><div class="child"></div></div>
+<pre id="layerTree"></pre>
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    var text = document.getElementById("layerTree");
+    text.innerHTML = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+</script>
