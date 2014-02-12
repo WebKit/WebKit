@@ -123,11 +123,11 @@ java/
 
     def test_baseline_search_path(self):
         # Note that we don't need total coverage here, just path coverage, since this is all data driven.
-        self._assert_search_path('mac-snowleopard', 'mac-snowleopard', ['mac-snowleopard', 'mac-lion', 'mac-mountainlion', 'mac'])
-        self._assert_search_path('mac-lion', 'mac-lion', ['mac-lion', 'mac-mountainlion', 'mac'])
-        self._assert_search_path('mac-mountainlion', 'mac-mountainlion', ['mac-mountainlion', 'mac'])
-        self._assert_search_path('mac-mavericks', 'mac', ['mac'])
-        self._assert_search_path('mac-future', 'mac', ['mac'])
+        self._assert_search_path('mac-snowleopard', 'mac-snowleopard', ['mac-snowleopard', 'mac-lion', 'mac-mountainlion', 'mac-wk1', 'mac'])
+        self._assert_search_path('mac-lion', 'mac-lion', ['mac-lion', 'mac-mountainlion', 'mac-wk1', 'mac'])
+        self._assert_search_path('mac-mountainlion', 'mac-mountainlion', ['mac-mountainlion', 'mac-wk1', 'mac'])
+        self._assert_search_path('mac-mavericks', 'mac-wk1', ['mac-wk1', 'mac'])
+        self._assert_search_path('mac-future', 'mac-wk1', ['mac-wk1', 'mac'])
         self._assert_search_path('mac-snowleopard', 'mac-wk2', ['mac-wk2', 'wk2', 'mac-snowleopard', 'mac-lion', 'mac-mountainlion', 'mac'], use_webkit2=True)
         self._assert_search_path('mac-lion', 'mac-wk2', ['mac-wk2', 'wk2', 'mac-lion', 'mac-mountainlion', 'mac'], use_webkit2=True)
         self._assert_search_path('mac-mountainlion', 'mac-wk2', ['mac-wk2', 'wk2', 'mac-mountainlion', 'mac'], use_webkit2=True)
