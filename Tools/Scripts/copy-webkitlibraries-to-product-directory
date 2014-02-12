@@ -36,6 +36,7 @@ my $wksi = 0;
 my $llvmIncludePackage = "";
 my $llvmLibraryPackage = "";
 my $useFullLibPaths = 0;
+my $force = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -46,6 +47,7 @@ Usage: $programName [options]
   --use-llvm-includes=<path>    Get the LLVM inludes package from <path>
   --use-llvm-libraries=<path>   Get the LLVM libraries package from <path>
   --[no-]use-full-lib-paths     Toggle using full library paths
+  --[no-]force                  Toggle forcing the copy - i.e. ignoring timestamps (default: $force)
 EOF
 
 GetOptions(
@@ -54,7 +56,8 @@ GetOptions(
     'wksi!' => \$wksi,
     'use-llvm-includes=s' => \$llvmIncludePackage,
     'use-llvm-libraries=s' => \$llvmLibraryPackage,
-    'use-full-lib-paths!' => \$useFullLibPaths
+    'use-full-lib-paths!' => \$useFullLibPaths,
+    'force!' => \$force
 );
 
 if ($showHelp) {
@@ -77,7 +80,7 @@ chomp $ranlib;
 sub unpackIfNecessary
 {
     my ($targetDir, $sampleFile, $package, $hasLibraries) = @_;
-    if (!-e $sampleFile || -M $sampleFile > -M $package) {
+    if ($force || !-e $sampleFile || -M $sampleFile > -M $package) {
         print "Unpacking $package into $targetDir\n";
         (system("tar -C $targetDir -xmf $package") == 0) or die;
         if ($hasLibraries) {
@@ -95,7 +98,7 @@ sub unpackIfNecessary
 sub dittoHeaders
 {
     my ($srcHeader, $header) = @_;
-    if (!-e $header || -M $header > -M $srcHeader) {
+    if ($force || !-e $header || -M $header > -M $srcHeader) {
         print "Updating $header\n";
         (system("ditto", $srcHeader, $header) == 0) or die;
     }
@@ -116,7 +119,7 @@ if ($wksi) {
     foreach my $libName (@librariesToCopy) {
         my $srcLib = "WebKitLibraries/" . $libName;
         my $lib = "$libraryDir/" . $libName;
-        if (!-e $lib || -M $lib > -M $srcLib) {
+        if ($force || !-e $lib || -M $lib > -M $srcLib) {
             print "Updating $lib\n";
             (system("ditto", $srcLib, $lib) == 0) or die;
             (system($ranlib, $lib) == 0) or die;
@@ -226,7 +229,8 @@ if ($llvm) {
             my $ranlibToken = "$libraryTargetDirectory/.ranlibToken-$filename";
             unlink($targetLibrary);
             symlink($sourceLibrary, $targetLibrary);
-            if (!-e $ranlibToken
+            if ($force
+                || !-e $ranlibToken
                 || !fileContentsEquals($ranlibToken, $sourceLibrary)
                 || -M $ranlibToken > -M $sourceLibrary) {
                 print "   Ranlib $filename\n";

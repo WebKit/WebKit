@@ -1,3 +1,14 @@
+2014-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to force copy-webkitlibraries-blahblah to copy things regardless of timestamp
+        https://bugs.webkit.org/show_bug.cgi?id=128646
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        (unpackIfNecessary):
+        (dittoHeaders):
+
 2014-02-11  Brian Burg  <bburg@apple.com>
 
         Web Replay: upstream replay input code generator and EncodedValue class
