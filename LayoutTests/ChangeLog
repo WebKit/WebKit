@@ -1,3 +1,15 @@
+2014-02-12  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Fix layout of floated nested region
+        https://bugs.webkit.org/show_bug.cgi?id=128367
+
+        Reviewed by Mihnea Ovidenie.
+
+        Added test for the correct layout of nested, floating regions.
+
+        * fast/regions/nested-floated-region-expected.html: Added.
+        * fast/regions/nested-floated-region.html: Added.
+
 2014-02-12  Brady Eidson  <beidson@apple.com>
 
         Cleanup mac/mac-wk1/mac-wk2 TestExpectations a little bit
