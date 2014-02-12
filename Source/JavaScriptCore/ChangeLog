@@ -1,5 +1,19 @@
 2014-02-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix assertions and incorrect codegen for CompareEq(ObjectOrOther:, Object:)
+        https://bugs.webkit.org/show_bug.cgi?id=128648
+
+        Reviewed by Mark Lam.
+        
+        I did CompareEq(Object:, ObjectOrOther:) correctly but the flipped version wrong.
+        That's what I get for running tests in release mode. It's hard to write a test for
+        the incorrect codegen; that's kind of why the assertions are there.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+
+2014-02-11  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, trivial change to silence FTL assertions
 
         Normally, lowJSValue() should only be used for UntypedUse only. Here we are using it

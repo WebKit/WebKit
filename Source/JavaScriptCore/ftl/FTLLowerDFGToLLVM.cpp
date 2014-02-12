@@ -3216,7 +3216,7 @@ private:
         
         if (m_node->child1().useKind() == ObjectOrOtherUse
             && m_node->child2().useKind() == ObjectUse) {
-            compareEqObjectOrOtherToObject(m_node->child2(), m_node->child1());
+            compareEqObjectOrOtherToObject(m_node->child1(), m_node->child2());
             return;
         }
         
