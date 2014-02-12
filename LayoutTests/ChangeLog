@@ -1,5 +1,17 @@
 2014-02-12  Brady Eidson  <beidson@apple.com>
 
+        Add a mac-wk1 platform directory and TestExpectations file
+        https://bugs.webkit.org/show_bug.cgi?id=128676
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac-wk1/TestExpectations: Added. Skip IndexedDB here.
+        * platform/mac-wk2/TestExpectations: Manage all mac-wk2 IndexedDB expectations here
+          instead of building off the default mac expectations.
+        * platform/mac/TestExpectations: Don’t skip IndexedDB here.
+
+2014-02-12  Brady Eidson  <beidson@apple.com>
+
         IDB: Reimport storage/indexeddb tests from Blink
         https://bugs.webkit.org/show_bug.cgi?id=128636
 

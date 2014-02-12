@@ -131,14 +131,6 @@ canvas/philip/tests/2d.composite.operation.darker.html
 # exceptions that were previously expected
 canvas/philip/tests/2d.drawImage.outsidesource.html
 
-# IndexedDB is not yet enabled.
-storage/indexeddb
-http/tests/security/cross-origin-indexeddb-allowed.html
-http/tests/security/cross-origin-indexeddb.html
-http/tests/security/cross-origin-worker-indexeddb-allowed.html
-http/tests/security/cross-origin-worker-indexeddb.html
-http/tests/security/no-indexeddb-from-sandbox.html
-
 # This port doesn't support DeviceMotion or DeviceOrientation.
 fast/dom/DeviceMotion
 fast/dom/DeviceOrientation

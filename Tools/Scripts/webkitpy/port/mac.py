@@ -84,6 +84,8 @@ class MacPort(ApplePort):
             fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):-1] + [self.port_name]
         if self.get_option('webkit_test_runner'):
             fallback_names = [self._wk2_port_name(), 'wk2'] + fallback_names
+        else:
+            fallback_names = ['mac-wk1'] + fallback_names
         return map(self._webkit_baseline_path, fallback_names)
 
     def _port_specific_expectations_files(self):

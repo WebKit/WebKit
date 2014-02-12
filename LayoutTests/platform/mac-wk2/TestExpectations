@@ -469,9 +469,17 @@ fast/forms/color/input-color-onchange-event.html [ Pass ]
 # This test times out in WebKit1 only.
 fullscreen/anonymous-block-merge-crash.html [ Pass ]
 
-# All IndexedDB tests are skipped in WK1.
-# Until we have a WK1 specific skipped file that WK2 doesn't inherit from,
-# we'll reenable individual tests that are known to pass.
+# Right now, more IndexedDB tests fail than pass.
+# So we'll disable the entire directory...
+storage/indexeddb
+http/tests/security/cross-origin-indexeddb-allowed.html
+http/tests/security/cross-origin-indexeddb.html
+http/tests/security/cross-origin-worker-indexeddb-allowed.html
+http/tests/security/cross-origin-worker-indexeddb.html
+http/tests/security/no-indexeddb-from-sandbox.html
+
+# ...and then re-enable known-passing tests.
+# Eventually we can show only failing tests, and hopefully get rid of this section altogether.
 storage/indexeddb/mozilla/add-twice-failure.html [ Pass ]
 storage/indexeddb/mozilla/autoincrement-indexes.html [ Pass ]
 storage/indexeddb/mozilla/bad-keypath.html [ Pass ]

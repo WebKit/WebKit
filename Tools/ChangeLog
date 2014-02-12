@@ -1,3 +1,14 @@
+2014-02-12  Brady Eidson  <beidson@apple.com>
+
+        Add a mac-wk1 platform directory and TestExpectations file
+        https://bugs.webkit.org/show_bug.cgi?id=128676
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.default_baseline_search_path): When running WK1 tests on Mac,
+          make mac-wk1 be the frontmost search path.
+
 2014-02-11  Oliver Hunt  <oliver@apple.com>
 
         Make it possible to implement JS builtins in JS
