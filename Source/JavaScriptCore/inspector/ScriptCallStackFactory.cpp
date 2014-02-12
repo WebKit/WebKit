@@ -33,17 +33,14 @@
 #include "config.h"
 #include "ScriptCallStackFactory.h"
 
-#include "ArgList.h"
 #include "CallFrame.h"
 #include "JSCJSValue.h"
-#include "JSFunction.h"
 #include "JSCInlines.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
 #include "ScriptValue.h"
 #include "StackVisitor.h"
-#include "VM.h"
 #include <wtf/RefCountedArray.h>
 #include <wtf/text/WTFString.h>
 
@@ -171,4 +168,4 @@ PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned
     return ScriptArguments::create(exec, arguments);
 }
 
-} // namespace WebCore
+} // namespace Inspector

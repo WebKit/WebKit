@@ -1,3 +1,24 @@
+2014-02-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cleanup JavaScriptCore/inspector
+        https://bugs.webkit.org/show_bug.cgi?id=128662
+
+        Reviewed by Timothy Hatcher.
+
+        Now that the code has settled, do a cleanup pass.
+
+        * inspector/ContentSearchUtilities.cpp:
+        * inspector/InspectorValues.cpp:
+        (Inspector::InspectorValue::asObject):
+        (Inspector::InspectorValue::asArray):
+        (Inspector::InspectorValue::parseJSON):
+        (Inspector::InspectorObjectBase::getObject):
+        (Inspector::InspectorObjectBase::getArray):
+        (Inspector::InspectorObjectBase::get):
+        * inspector/ScriptCallStackFactory.cpp:
+        * inspector/ScriptDebugServer.cpp:
+        * inspector/agents/JSGlobalObjectConsoleAgent.h:
+
 2014-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows build fix attempt after r163960.

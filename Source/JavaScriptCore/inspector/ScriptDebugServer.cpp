@@ -39,13 +39,11 @@
 #include "JavaScriptCallFrame.h"
 #include "ScriptValue.h"
 #include "SourceProvider.h"
-#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;
-using namespace Inspector;
 
 namespace Inspector {
 

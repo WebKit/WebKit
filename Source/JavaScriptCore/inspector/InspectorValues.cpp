@@ -332,7 +332,7 @@ bool decodeString(const UChar* start, const UChar* end, String* output)
 PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UChar** valueTokenEnd, int depth)
 {
     if (depth > stackLimit)
-        return 0;
+        return nullptr;
 
     RefPtr<InspectorValue> result;
     const UChar* tokenStart;
@@ -340,7 +340,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
     Token token = parseToken(start, end, &tokenStart, &tokenEnd);
     switch (token) {
     case INVALID_TOKEN:
-        return 0;
+        return nullptr;
     case NULL_TOKEN:
         result = InspectorValue::null();
         break;
@@ -354,7 +354,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
         bool ok;
         double value = charactersToDouble(tokenStart, tokenEnd - tokenStart, &ok);
         if (!ok)
-            return 0;
+            return nullptr;
         result = InspectorBasicValue::create(value);
         break;
     }
@@ -362,7 +362,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
         String value;
         bool ok = decodeString(tokenStart + 1, tokenEnd - 1, &value);
         if (!ok)
-            return 0;
+            return nullptr;
         result = InspectorString::create(value);
         break;
     }
@@ -373,7 +373,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
         while (token != ARRAY_END) {
             RefPtr<InspectorValue> arrayNode = buildValue(start, end, &tokenEnd, depth + 1);
             if (!arrayNode)
-                return 0;
+                return nullptr;
             array->pushValue(arrayNode);
 
             // After a list value, we expect a comma or the end of the list.
@@ -383,14 +383,14 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
                 start = tokenEnd;
                 token = parseToken(start, end, &tokenStart, &tokenEnd);
                 if (token == ARRAY_END)
-                    return 0;
+                    return nullptr;
             } else if (token != ARRAY_END) {
                 // Unexpected value after list value.  Bail out.
-                return 0;
+                return nullptr;
             }
         }
         if (token != ARRAY_END)
-            return 0;
+            return nullptr;
         result = array.release();
         break;
     }
@@ -400,20 +400,20 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
         token = parseToken(start, end, &tokenStart, &tokenEnd);
         while (token != OBJECT_END) {
             if (token != STRING)
-                return 0;
+                return nullptr;
             String key;
             if (!decodeString(tokenStart + 1, tokenEnd - 1, &key))
-                return 0;
+                return nullptr;
             start = tokenEnd;
 
             token = parseToken(start, end, &tokenStart, &tokenEnd);
             if (token != OBJECT_PAIR_SEPARATOR)
-                return 0;
+                return nullptr;
             start = tokenEnd;
 
             RefPtr<InspectorValue> value = buildValue(start, end, &tokenEnd, depth + 1);
             if (!value)
-                return 0;
+                return nullptr;
             object->setValue(key, value);
             start = tokenEnd;
 
@@ -424,21 +424,21 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
                 start = tokenEnd;
                 token = parseToken(start, end, &tokenStart, &tokenEnd);
                  if (token == OBJECT_END)
-                    return 0;
+                    return nullptr;
             } else if (token != OBJECT_END) {
                 // Unexpected value after last object value.  Bail out.
-                return 0;
+                return nullptr;
             }
         }
         if (token != OBJECT_END)
-            return 0;
+            return nullptr;
         result = object.release();
         break;
     }
 
     default:
         // We got a token that's not a value.
-        return 0;
+        return nullptr;
     }
     *valueTokenEnd = tokenEnd;
     return result.release();
@@ -550,12 +550,12 @@ bool InspectorValue::asArray(RefPtr<InspectorArray>*)
 
 PassRefPtr<InspectorObject> InspectorValue::asObject()
 {
-    return 0;
+    return nullptr;
 }
 
 PassRefPtr<InspectorArray> InspectorValue::asArray()
 {
-    return 0;
+    return nullptr;
 }
 
 PassRefPtr<InspectorValue> InspectorValue::parseJSON(const String& json)
@@ -565,7 +565,7 @@ PassRefPtr<InspectorValue> InspectorValue::parseJSON(const String& json)
     const UChar *tokenEnd;
     RefPtr<InspectorValue> value = buildValue(start, end, &tokenEnd, 0);
     if (!value || tokenEnd != end)
-        return 0;
+        return nullptr;
     return value.release();
 }
 
@@ -739,7 +739,7 @@ PassRefPtr<InspectorObject> InspectorObjectBase::getObject(const String& name) c
 {
     PassRefPtr<InspectorValue> value = get(name);
     if (!value)
-        return 0;
+        return nullptr;
     return value->asObject();
 }
 
@@ -747,7 +747,7 @@ PassRefPtr<InspectorArray> InspectorObjectBase::getArray(const String& name) con
 {
     PassRefPtr<InspectorValue> value = get(name);
     if (!value)
-        return 0;
+        return nullptr;
     return value->asArray();
 }
 
@@ -755,7 +755,7 @@ PassRefPtr<InspectorValue> InspectorObjectBase::get(const String& name) const
 {
     Dictionary::const_iterator it = m_data.find(name);
     if (it == m_data.end())
-        return 0;
+        return nullptr;
     return it->value;
 }
 

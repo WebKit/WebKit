@@ -45,7 +45,7 @@ public:
     virtual void addInspectedNode(ErrorString*, int nodeId) override;
     virtual void addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId) override;
 
-    virtual bool isWorkerAgent() const { return false; }
+    virtual bool isWorkerAgent() const override { return false; }
 };
 
 } // namespace Inspector

@@ -212,6 +212,6 @@ String findStylesheetSourceMapURL(const String& content)
 }
 
 } // namespace ContentSearchUtilities
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
