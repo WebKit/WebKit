@@ -1288,7 +1288,7 @@ static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const 
     if (frameView.isOffscreen())
         return false;
 #if PLATFORM(IOS)
-    if (frameView.timersPaused())
+    if (document.frame().timersPaused())
         return false;
 #endif
     if (document.activeDOMObjectsAreSuspended())
