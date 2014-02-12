@@ -4170,6 +4170,9 @@
     <ClCompile Include="..\html\shadow\TextControlInnerElements.cpp">
       <Filter>html\shadow</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\track\DataCue.cpp">
+      <Filter>html\track</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\track\InbandGenericTextTrack.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
@@ -11197,6 +11200,9 @@
     </ClInclude>
     <ClInclude Include="..\html\shadow\TextControlInnerElements.h">
       <Filter>html\shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\track\DataCue.h">
+      <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="..\html\track\InbandGenericTextTrack.h">
       <Filter>html\track</Filter>

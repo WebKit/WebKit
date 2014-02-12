@@ -85,6 +85,7 @@ public:
     virtual bool isOrderedBefore(const TextTrackCue*) const;
 
     enum CueType {
+        Data,
         Generic,
         WebVTT
     };

@@ -263,6 +263,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'DOMTokenList').hasOwnProperty('get
 PASS Object.getOwnPropertyDescriptor(global, 'DOMTokenList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMTokenList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMTokenList').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'DataCue').value is DataCue
+PASS Object.getOwnPropertyDescriptor(global, 'DataCue').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataCue').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataCue').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataCue').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'DelayNode').value is DelayNode
 PASS Object.getOwnPropertyDescriptor(global, 'DelayNode').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DelayNode').hasOwnProperty('set') is false

@@ -164,6 +164,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDatabaseCallback.h \
 	DerivedSources/WebCore/JSDatabaseSync.cpp \
 	DerivedSources/WebCore/JSDatabaseSync.h \
+	DerivedSources/WebCore/JSDataCue.cpp \
+	DerivedSources/WebCore/JSDataCue.h \
 	DerivedSources/WebCore/JSDataTransferItem.cpp \
 	DerivedSources/WebCore/JSDataTransferItem.h \
 	DerivedSources/WebCore/JSDataTransferItemList.cpp \
@@ -1538,6 +1540,7 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
 	$(WebCore)/html/track/AudioTrack.idl \
 	$(WebCore)/html/track/AudioTrackList.idl \
+	$(WebCore)/html/track/DataCue.idl \
 	$(WebCore)/html/track/TextTrack.idl \
 	$(WebCore)/html/track/TextTrackCue.idl \
 	$(WebCore)/html/track/TextTrackCueList.idl \
@@ -3667,6 +3670,8 @@ webcore_sources += \
 	Source/WebCore/html/track/AudioTrack.h \
 	Source/WebCore/html/track/AudioTrackList.cpp \
 	Source/WebCore/html/track/AudioTrackList.h \
+	Source/WebCore/html/track/DataCue.cpp \
+	Source/WebCore/html/track/DataCue.h \
 	Source/WebCore/html/track/InbandGenericTextTrack.cpp \
 	Source/WebCore/html/track/InbandGenericTextTrack.h \
 	Source/WebCore/html/track/InbandTextTrack.cpp \

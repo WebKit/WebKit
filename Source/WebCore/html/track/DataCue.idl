@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2014 Cable Television Labs Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,40 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
 [
     Conditional=VIDEO_TRACK,
-    EventTarget,
-    GenerateIsReachable=ImplElementRoot,
-    JSCustomMarkFunction,
-    SkipVTableValidation,
-] interface TextTrack {
-    readonly attribute DOMString id;
-    [CustomSetter] attribute DOMString kind;
-    readonly attribute DOMString label;
-    [CustomSetter] attribute DOMString language;
-
-    attribute DOMString mode;
-
-    readonly attribute TextTrackCueList cues;
-    readonly attribute TextTrackCueList activeCues;
-             attribute EventListener oncuechange;
-
-    [RaisesException] void addCue(TextTrackCue cue);
-    [RaisesException] void removeCue(TextTrackCue cue);
-
-#if defined(ENABLE_WEBVTT_REGIONS) && ENABLE_WEBVTT_REGIONS
-    readonly attribute TextTrackRegionList regions;
-    void addRegion(TextTrackRegion region);
-    [RaisesException] void removeRegion(TextTrackRegion region);
-#endif
-
-    // EventTarget interface
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
+    Constructor(double startTime, double endTime, ArrayBuffer data),
+    ConstructorCallWith=ScriptExecutionContext,
+] interface DataCue : TextTrackCue {
+    attribute ArrayBuffer data;
+    readonly attribute DOMString? text;
 };

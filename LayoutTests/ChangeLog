@@ -1,3 +1,20 @@
+2014-02-12  Brendan Long  <b.long@cablelabs.com>
+
+        Implement DataCue for metadata cues
+        https://bugs.webkit.org/show_bug.cgi?id=128402
+
+        Reviewed by Eric Carlson.
+
+        * js/dom/global-constructors-attributes-expected.txt: Add DataCue.
+        * media/track/track-datacue-expected.txt: Added.
+        * media/track/track-datacue.html: Added.
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt: Add DataCue.
+        * platform/gtk-wk2/js/dom/global-constructors-attributes-expected.txt: Same.
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt: Same.
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt: Same.
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt: Same.
+        * platform/win/js/dom/global-constructors-attributes-expected.txt: Same.
+
 2014-02-12  Brady Eidson  <beidson@apple.com>
 
         Add a mac-wk1 platform directory and TestExpectations file

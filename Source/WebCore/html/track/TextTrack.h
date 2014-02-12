@@ -108,7 +108,7 @@ public:
     virtual void clearClient() override { m_client = 0; }
     TextTrackClient* client() { return m_client; }
 
-    void addCue(PassRefPtr<TextTrackCue>);
+    void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
     virtual void removeCue(TextTrackCue*, ExceptionCode&);
 
     bool hasCue(VTTCue*, VTTCue::CueMatchRules = VTTCue::MatchAllFields);

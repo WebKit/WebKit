@@ -1,3 +1,34 @@
+2014-02-12  Brendan Long  <b.long@cablelabs.com>
+
+        Implement DataCue for metadata cues
+        https://bugs.webkit.org/show_bug.cgi?id=128402
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-datacue.html
+
+        * CMakeLists.txt: Add DataCue.
+        * DerivedSources.cpp: Add JSDataCue.
+        * DerivedSources.make: Same.
+        * GNUmakefile.list.am: Add DataCue and JSDataCue.
+        * WebCore.vcxproj/WebCore.vcxproj: Add DataCue.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Same.
+        * WebCore.xcodeproj/project.pbxproj: Add DataCue and JSDataCue.
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::toJS): Add DataCue wrapper.
+        * html/track/DataCue.cpp: Copied from Source/WebCore/html/track/TextTrack.idl.
+        * html/track/DataCue.h: Copied from Source/WebCore/html/track/TextTrack.idl.
+        * html/track/DataCue.idl: Copied from Source/WebCore/html/track/TextTrack.idl.
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::addGenericCue): Pass ASSERT_NO_EXCEPTION to addCue().
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::newCuesParsed): Same.
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::addCue): Throw an exception if DataCue is added to a track that isn't kind="metadata".
+        * html/track/TextTrack.h: Add exception code parameter to addCue().
+        * html/track/TextTrack.idl: Add [RaisesException] to addCue().
+        * html/track/TextTrackCue.h: Add Data CueType.
+
 2014-02-12  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Clean up LayoutPoint class.

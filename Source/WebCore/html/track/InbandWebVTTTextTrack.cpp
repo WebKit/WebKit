@@ -71,7 +71,7 @@ void InbandWebVTTTextTrack::newCuesParsed()
             LOG(Media, "InbandWebVTTTextTrack::newCuesParsed ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime(), cueData->endTime(), cueData->content().utf8().data());
             return;
         }
-        addCue(cue.release());
+        addCue(cue.release(), ASSERT_NO_EXCEPTION);
     }
 }
 

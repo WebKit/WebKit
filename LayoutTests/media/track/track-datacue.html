@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            function loaded()
+            {
+                var buf = new ArrayBuffer(5);
+                var bufView = new Uint8Array(buf);
+                bufView[0] = 4;
+                bufView[1] = 5;
+                bufView[2] = 2;
+                bufView[3] = 1;
+                bufView[4] = 9;
+                cue = new DataCue(3, 10, buf);
+
+                consoleWrite("<br>*** Test DataCue's TextTrackCue interface.");
+                testExpected("cue", TextTrackCue, "instanceof");
+                testExpected("cue.track", null);
+                testExpected("cue.id", "");
+                testExpected("cue.startTime", 3);
+                testExpected("cue.endTime", 10);
+                testExpected("cue.pauseOnExit", false);
+
+                consoleWrite("<br>*** Test DataCue interface.");
+                testExpected("cue", DataCue, "instanceof");
+                testArraysEqual("new Uint8Array(cue.data)", new Uint8Array(buf));
+                testExpected("cue.text", null);
+
+                consoleWrite("<br>*** Test adding DataCue to track with kind = 'metadata'.");
+                var video = document.createElement("video");
+                metadataTrack = video.addTextTrack("metadata");
+                metadataTrack.addCue(cue);
+
+                testExpected("cue.track", metadataTrack);
+                testExpected("metadataTrack.cues[0]", cue);
+
+                consoleWrite("<br>*** Test adding DataCue to track with kind != 'metadata'.");
+                ["subtitles", "captions", "descriptions", "chapters"].forEach(function(kind) {
+                    track = video.addTextTrack(kind);
+
+                    testDOMException("track.addCue(cue)", "DOMException.INVALID_NODE_TYPE_ERR");
+                    testExpected("track.cues.length", 0);
+                });
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="loaded()">
+        <p>Tests DataCue interface</p>
+    </body>
+</html>

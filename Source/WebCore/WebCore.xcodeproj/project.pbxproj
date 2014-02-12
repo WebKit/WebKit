@@ -5322,6 +5322,10 @@
 		BE20507E18A458C20080647E /* RenderVTTCue.h in Headers */ = {isa = PBXBuildFile; fileRef = BE20507C18A458B10080647E /* RenderVTTCue.h */; };
 		BE20508118A460BC0080647E /* JSVTTCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE20507F18A460AA0080647E /* JSVTTCue.cpp */; };
 		BE20508218A460C30080647E /* JSVTTCue.h in Headers */ = {isa = PBXBuildFile; fileRef = BE20508018A460AA0080647E /* JSVTTCue.h */; };
+		BE23480C18A9870B00E4B6E8 /* DataCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE23480918A9870300E4B6E8 /* DataCue.cpp */; };
+		BE23480D18A9871400E4B6E8 /* DataCue.h in Headers */ = {isa = PBXBuildFile; fileRef = BE23480A18A9870300E4B6E8 /* DataCue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BE61039D18A9D65200DD50D7 /* JSDataCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE61039B18A9D61200DD50D7 /* JSDataCue.cpp */; };
+		BE61039E18A9D65A00DD50D7 /* JSDataCue.h in Headers */ = {isa = PBXBuildFile; fileRef = BE61039C18A9D61200DD50D7 /* JSDataCue.h */; };
 		BE6DF70B171CA2C500DD52B8 /* JSVideoTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */; };
 		BE6DF70D171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */; };
 		BE6DF711171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */; };
@@ -12526,6 +12530,11 @@
 		BE20507C18A458B10080647E /* RenderVTTCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderVTTCue.h; sourceTree = "<group>"; };
 		BE20507F18A460AA0080647E /* JSVTTCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVTTCue.cpp; sourceTree = "<group>"; };
 		BE20508018A460AA0080647E /* JSVTTCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVTTCue.h; sourceTree = "<group>"; };
+		BE23480918A9870300E4B6E8 /* DataCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCue.cpp; sourceTree = "<group>"; };
+		BE23480A18A9870300E4B6E8 /* DataCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCue.h; sourceTree = "<group>"; };
+		BE23480B18A9870300E4B6E8 /* DataCue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DataCue.idl; sourceTree = "<group>"; };
+		BE61039B18A9D61200DD50D7 /* JSDataCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataCue.cpp; sourceTree = "<group>"; };
+		BE61039C18A9D61200DD50D7 /* JSDataCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataCue.h; sourceTree = "<group>"; };
 		BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVideoTrackCustom.cpp; sourceTree = "<group>"; };
 		BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVideoTrackListCustom.cpp; sourceTree = "<group>"; };
 		BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioTrackCustom.cpp; sourceTree = "<group>"; };
@@ -18042,6 +18051,8 @@
 				49EED13D1051969400099FAB /* JSCanvasRenderingContext.h */,
 				49EED13E1051969400099FAB /* JSCanvasRenderingContext2D.cpp */,
 				49EED13F1051969400099FAB /* JSCanvasRenderingContext2D.h */,
+				BE61039B18A9D61200DD50D7 /* JSDataCue.cpp */,
+				BE61039C18A9D61200DD50D7 /* JSDataCue.h */,
 				2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */,
 				2E0888D31148848A00AF4265 /* JSDOMFormData.h */,
 				FB91392916AE4FC0001FE682 /* JSDOMPath.cpp */,
@@ -19083,6 +19094,9 @@
 				BE88E0CF1715D2A200658D98 /* AudioTrackList.cpp */,
 				BE88E0D01715D2A200658D98 /* AudioTrackList.h */,
 				BE88E0D11715D2A200658D98 /* AudioTrackList.idl */,
+				BE23480918A9870300E4B6E8 /* DataCue.cpp */,
+				BE23480A18A9870300E4B6E8 /* DataCue.h */,
+				BE23480B18A9870300E4B6E8 /* DataCue.idl */,
 				BE16C58E17CFE17200852C04 /* InbandGenericTextTrack.cpp */,
 				BE16C58F17CFE17200852C04 /* InbandGenericTextTrack.h */,
 				0794178F166E855F009416C2 /* InbandTextTrack.cpp */,
@@ -23978,6 +23992,7 @@
 				2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
 				65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */,
+				BE23480D18A9871400E4B6E8 /* DataCue.h in Headers */,
 				51EAC5681815ED3E004F1BA4 /* IDBTransactionCoordinator.h in Headers */,
 				65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */,
 				65DF323C09D1DE65001BE325 /* JSCanvasProxy.h in Headers */,
@@ -25796,6 +25811,7 @@
 				51D719CD181106E00016DC51 /* IDBDatabaseError.h in Headers */,
 				3106037014327D2E00ABF4BA /* WebKitCSSFilterValue.h in Headers */,
 				31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */,
+				BE61039E18A9D65A00DD50D7 /* JSDataCue.h in Headers */,
 				31288E750E3005D6003619AE /* WebKitCSSKeyframesRule.h in Headers */,
 				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
 				8AA61D00144D595B00F37350 /* WebKitCSSRegionRule.h in Headers */,
@@ -27437,6 +27453,7 @@
 				BCEFAF4E0C317E6900FA81F6 /* JSEventCustom.cpp in Sources */,
 				BC60D9BF0D2A269A00B9918F /* JSEventException.cpp in Sources */,
 				93B70D6909EB0C7C009D8468 /* JSEventListener.cpp in Sources */,
+				BE23480C18A9870B00E4B6E8 /* DataCue.cpp in Sources */,
 				E0FEF372B47C53EAC1C1FBEE /* JSEventSource.cpp in Sources */,
 				C6A703325C9D0B6CDCBC4D77 /* JSEventTarget.cpp in Sources */,
 				BC6090200E91B8EC000C68B5 /* JSEventTargetCustom.cpp in Sources */,
@@ -28434,6 +28451,7 @@
 				1AA84F04143BA7BD0051D153 /* ScrollElasticityController.mm in Sources */,
 				0F605AEC15F94848004DF0C0 /* ScrollingConstraints.cpp in Sources */,
 				1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */,
+				BE61039D18A9D65200DD50D7 /* JSDataCue.cpp in Sources */,
 				1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */,
 				CD5596911475B678001D0BD0 /* AudioFileReaderIOS.cpp in Sources */,
 				93C38BFE164473C700091EB2 /* ScrollingStateFixedNode.cpp in Sources */,

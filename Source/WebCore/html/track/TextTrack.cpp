@@ -273,12 +273,23 @@ TextTrackCueList* TextTrack::activeCues() const
     return 0;
 }
 
-void TextTrack::addCue(PassRefPtr<TextTrackCue> prpCue)
+void TextTrack::addCue(PassRefPtr<TextTrackCue> prpCue, ExceptionCode& ec)
 {
     if (!prpCue)
         return;
 
     RefPtr<TextTrackCue> cue = prpCue;
+
+    // 4.7.10.12.6 Text tracks exposing in-band metadata
+    // The UA will use DataCue to expose only text track cue objects that belong to a text track that has a text
+    // track kind of metadata.
+    // If a DataCue is added to a TextTrack via the addCue() method but the text track does not have its text
+    // track kind set to metadata, throw a InvalidNodeTypeError exception and don't add the cue to the TextTrackList
+    // of the TextTrack.
+    if (cue->cueType() == TextTrackCue::Data && kind() != metadataKeyword()) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return;
+    }
 
     // TODO(93143): Add spec-compliant behavior for negative time values.
     if (std::isnan(cue->startTime()) || std::isnan(cue->endTime()) || cue->startTime() < 0 || cue->endTime() < 0)

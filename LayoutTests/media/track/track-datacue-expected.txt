@@ -1,0 +1,36 @@
+Tests DataCue interface
+
+
+*** Test DataCue's TextTrackCue interface.
+EXPECTED (cue instanceof '[object TextTrackCueConstructor]') OK
+EXPECTED (cue.track == 'null') OK
+EXPECTED (cue.id == '') OK
+EXPECTED (cue.startTime == '3') OK
+EXPECTED (cue.endTime == '10') OK
+EXPECTED (cue.pauseOnExit == 'false') OK
+
+*** Test DataCue interface.
+EXPECTED (cue instanceof '[object DataCueConstructor]') OK
+EXPECTED (new Uint8Array(cue.data).length == '5') OK
+EXPECTED (new Uint8Array(cue.data)[0] == '4') OK
+EXPECTED (new Uint8Array(cue.data)[1] == '5') OK
+EXPECTED (new Uint8Array(cue.data)[2] == '2') OK
+EXPECTED (new Uint8Array(cue.data)[3] == '1') OK
+EXPECTED (new Uint8Array(cue.data)[4] == '9') OK
+EXPECTED (cue.text == 'null') OK
+
+*** Test adding DataCue to track with kind = 'metadata'.
+EXPECTED (cue.track == '[object TextTrack]') OK
+EXPECTED (metadataTrack.cues[0] == '[object DataCue]') OK
+
+*** Test adding DataCue to track with kind != 'metadata'.
+TEST(track.addCue(cue)) THROWS(DOMException.INVALID_NODE_TYPE_ERR) OK
+EXPECTED (track.cues.length == '0') OK
+TEST(track.addCue(cue)) THROWS(DOMException.INVALID_NODE_TYPE_ERR) OK
+EXPECTED (track.cues.length == '0') OK
+TEST(track.addCue(cue)) THROWS(DOMException.INVALID_NODE_TYPE_ERR) OK
+EXPECTED (track.cues.length == '0') OK
+TEST(track.addCue(cue)) THROWS(DOMException.INVALID_NODE_TYPE_ERR) OK
+EXPECTED (track.cues.length == '0') OK
+END OF TEST
+

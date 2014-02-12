@@ -15661,6 +15661,7 @@
     <ClCompile Include="..\html\shadow\SliderThumbElement.cpp" />
     <ClCompile Include="..\html\shadow\SpinButtonElement.cpp" />
     <ClCompile Include="..\html\shadow\TextControlInnerElements.cpp" />
+    <ClCompile Include="..\html\track\DataCue.cpp" />
     <ClCompile Include="..\html\track\InbandGenericTextTrack.cpp" />
     <ClCompile Include="..\html\track\InbandTextTrack.cpp" />
     <ClCompile Include="..\html\track\InbandWebVTTTextTrack.cpp" />
@@ -20418,6 +20419,7 @@
     <ClInclude Include="..\html\shadow\SliderThumbElement.h" />
     <ClInclude Include="..\html\shadow\SpinButtonElement.h" />
     <ClInclude Include="..\html\shadow\TextControlInnerElements.h" />
+    <ClInclude Include="..\html\track\DataCue.h" />
     <ClInclude Include="..\html\track\InbandGenericTextTrack.h" />
     <ClInclude Include="..\html\track\InbandTextTrack.h" />
     <ClInclude Include="..\html\track\InbandWebVTTTextTrack.h" />

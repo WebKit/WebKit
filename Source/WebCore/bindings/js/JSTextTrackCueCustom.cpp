@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "JSDataCue.h"
 #include "JSTextTrackCue.h"
 #include "JSTrackCustom.h"
 #include "JSVTTCue.h"
@@ -69,6 +70,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, TextTrackCue* cue
 
     // This switch will make more sense once we support DataCue
     switch (cue->cueType()) {
+    case TextTrackCue::Data:
+        return CREATE_DOM_WRAPPER(exec, globalObject, DataCue, cue);
     case TextTrackCue::WebVTT:
     case TextTrackCue::Generic:
         return CREATE_DOM_WRAPPER(exec, globalObject, VTTCue, cue);
@@ -85,7 +88,7 @@ void JSTextTrackCue::visitChildren(JSCell* cell, SlotVisitor& visitor)
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(jsTextTrackCue->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsTextTrackCue, visitor);
-    
+
     // Mark the cue's track root if it has one.
     TextTrackCue& textTrackCue = jsTextTrackCue->impl();
     if (TextTrack* textTrack = textTrackCue.track())
