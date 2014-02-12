@@ -1,3 +1,9 @@
+2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add failing test expectations to asynchronous spellchecking tests.
+
+        * platform/win/TestExpectations:
+
 2014-02-11  Brady Eidson  <beidson@apple.com>
 
         IDB: Reimport storage/indexeddb tests from Blink

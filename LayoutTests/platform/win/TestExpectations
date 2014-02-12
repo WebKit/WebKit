@@ -2447,18 +2447,26 @@ jquery/attributes.html
 media/W3C/video/events/event_canplaythrough.html
 
 # Spellchecker behavior tests.
-webkit.org/b/108370 editing/spelling/context-menu-suggestions-multiword-selection.html
-webkit.org/b/108370 editing/spelling/context-menu-suggestions-subword-selection.html
-webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html
-webkit.org/b/108370 editing/spelling/spelling-exactly-selected-multiple-words.html
-webkit.org/b/108370 editing/spelling/spelling-exactly-selected-word.html
-webkit.org/b/108370 editing/spelling/spelling-should-select-multiple-words.html
-webkit.org/b/108370 editing/spelling/spelling-with-punctuation-selection.html
-webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html
-webkit.org/b/108370 editing/spelling/spellcheck-async-mutation.html
-webkit.org/b/108370 editing/spelling/spellcheck-async.html
-webkit.org/b/108370 editing/spelling/spellcheck-sequencenum.html
-webkit.org/b/108370 editing/style/iframe-onload-crash-mac.html
+webkit.org/b/108370 editing/spelling/context-menu-suggestions-multiword-selection.html [ Failure ]
+webkit.org/b/108370 editing/spelling/context-menu-suggestions-subword-selection.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-exactly-selected-multiple-words.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-exactly-selected-word.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-should-select-multiple-words.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-with-punctuation-selection.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spellcheck-async-mutation.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spellcheck-async.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spellcheck-sequencenum.html [ Failure ]
+webkit.org/b/108370 editing/style/iframe-onload-crash-mac.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spellcheck-attribute.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spellcheck-paste-continuous-disabled.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-attribute-at-child.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-attribute-change.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-backspace-between-lines.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-hasspellingmarker.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-linebreak.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-unified-emulation.html [ Failure ]
 
 # Disable document.register tests, ENABLE_CUSTOM_ELEMENT disabled
 fast/dom/custom
