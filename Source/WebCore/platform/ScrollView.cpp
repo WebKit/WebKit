@@ -780,18 +780,27 @@ void ScrollView::scrollContentsSlowPath(const IntRect& updateRect)
 
 IntPoint ScrollView::rootViewToContents(const IntPoint& rootViewPoint) const
 {
+    if (delegatesScrolling())
+        return convertFromRootView(rootViewPoint);
+
     IntPoint viewPoint = convertFromRootView(rootViewPoint);
     return viewPoint + scrollOffsetRelativeToDocument();
 }
 
 IntPoint ScrollView::contentsToRootView(const IntPoint& contentsPoint) const
 {
+    if (delegatesScrolling())
+        return convertToRootView(contentsPoint);
+
     IntPoint viewPoint = contentsPoint + IntSize(0, headerHeight()) - scrollOffset();
     return convertToRootView(viewPoint);  
 }
 
 IntRect ScrollView::rootViewToContents(const IntRect& rootViewRect) const
 {
+    if (delegatesScrolling())
+        return convertFromRootView(rootViewRect);
+
     IntRect viewRect = convertFromRootView(rootViewRect);
     viewRect.move(scrollOffsetRelativeToDocument());
     return viewRect;
@@ -799,6 +808,9 @@ IntRect ScrollView::rootViewToContents(const IntRect& rootViewRect) const
 
 IntRect ScrollView::contentsToRootView(const IntRect& contentsRect) const
 {
+    if (delegatesScrolling())
+        return convertToRootView(contentsRect);
+
     IntRect viewRect = contentsRect;
     viewRect.move(-scrollOffset() + IntSize(0, headerHeight()));
     return convertToRootView(viewRect);
@@ -806,6 +818,9 @@ IntRect ScrollView::contentsToRootView(const IntRect& contentsRect) const
 
 IntPoint ScrollView::rootViewToTotalContents(const IntPoint& rootViewPoint) const
 {
+    if (delegatesScrolling())
+        return convertFromRootView(rootViewPoint);
+
     IntPoint viewPoint = convertFromRootView(rootViewPoint);
     return viewPoint + scrollOffset();
 }

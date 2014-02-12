@@ -1,3 +1,18 @@
+2014-02-12  Enrica Casucci  <enrica@apple.com>
+
+        WK2: coordinate mapping for frames does not work when the page is scrolled.
+        https://bugs.webkit.org/show_bug.cgi?id=128690
+        <rdar://problem/16042925>
+
+        Reviewed by Simon Fraser.
+
+        We should not apply the scroll offset when using delegate scrolling.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::rootViewToContents):
+        (WebCore::ScrollView::contentsToRootView):
+        (WebCore::ScrollView::rootViewToTotalContents):
+
 2014-02-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rename PageInjectedScript* to WebInjectedScript*
