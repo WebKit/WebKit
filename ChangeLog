@@ -1,3 +1,13 @@
+2014-02-11  Oliver Hunt  <oliver@apple.com>
+
+        Make it possible to implement JS builtins in JS
+        https://bugs.webkit.org/show_bug.cgi?id=127887
+
+        Reviewed by Michael Saboff.
+
+        * GNUmakefile.am:
+        * Source/cmake/gtest/CMakeLists.txt:
+
 2014-02-12  Ryan Lortie  <desrt@desrt.ca>
 
         'ar T' is not portable and breaks the build on FreeBSD

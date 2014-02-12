@@ -1,3 +1,227 @@
+2014-02-11  Oliver Hunt  <oliver@apple.com>
+
+        Make it possible to implement JS builtins in JS
+        https://bugs.webkit.org/show_bug.cgi?id=127887
+
+        Reviewed by Michael Saboff.
+
+        This patch makes it possible to write builtin functions in JS.
+        The bindings, generators, and definitions are all created automatically
+        based on js files in the builtins/ directory.  This patch includes one
+        such case: Array.prototype.js with an implementation of every().
+
+        There's a lot of refactoring to make it possible for CommonIdentifiers
+        to include the output of the generated files (DerivedSources/JSCBuiltins.{h,cpp})
+        without breaking the offset extractor. The result of this refactoring
+        is that CommonIdentifiers, and a few other miscellaneous headers now
+        need to be included directly as they were formerly captured through other
+        paths.
+
+        In addition this adds a flag to the Lookup table's hashentry to indicate
+        that a static function is actually backed by JS. There is then a lot of
+        logic to thread the special nature of the functon to where it matters.
+        This allows toString(), .caller, etc to mimic the behaviour of a host
+        function.
+
+        Notes on writing builtins:
+         - Each function is compiled independently of the others, and those
+           implementations cannot currently capture all global properties (as
+           that could be potentially unsafe). If a function does capture a
+           global we will deliberately crash.
+         - For those "global" properties that we do want access to, we use
+           the @ prefix, e.g. Object(this) becomes @Object(this). The @ identifiers
+           are private names, and behave just like regular properties, only
+           without the risk of adulteration. Again, in the @Object case, we
+           explicitly duplicate the ObjectConstructor reference on the GlobalObject
+           so that we have guaranteed access to the original version of the
+           constructor.
+         - call, apply, eval, and Function are all rejected identifiers, again
+           to prevent anything from accidentally using an adulterated object.
+           Instead @call and @apply are available, and happily they completely
+           drop the neq_ptr instruction as they're defined as always being the
+           original call/apply functions.
+
+        These restrictions are just intended to make it harder to accidentally
+        make changes that are incorrect (for instance calling whatever has been
+        assigned to global.Object, instead of the original constructor function).
+        However, making a mistake like this should result in a purely semantic
+        error as fundamentally these functions are treated as though they were
+        regular JS code in the host global, and have no more privileges than
+        any other JS.
+
+        The initial proof of concept is Array.prototype.every, this shows a 65%
+        performance improvement, and that improvement is significantly hurt by
+        our poor optimisation of op_in.
+
+        As this is such a limited function, we have not yet exported all symbols
+        that we could possibly need, but as we implement more, the likelihood
+        of encountering missing features will reduce.
+
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnPropertySlot):
+        (JSC::JSCallbackObject<Parent>::put):
+        (JSC::JSCallbackObject<Parent>::deleteProperty):
+        (JSC::JSCallbackObject<Parent>::getStaticValue):
+        (JSC::JSCallbackObject<Parent>::staticFunctionGetter):
+        (JSC::JSCallbackObject<Parent>::callbackGetter):
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/Array.prototype.js:
+        (every):
+        * builtins/BuiltinExecutables.cpp: Added.
+        (JSC::BuiltinExecutables::BuiltinExecutables):
+        (JSC::BuiltinExecutables::createBuiltinExecutable):
+        * builtins/BuiltinExecutables.h:
+        (JSC::BuiltinExecutables::create):
+        * builtins/BuiltinNames.h: Added.
+        (JSC::BuiltinNames::BuiltinNames):
+        (JSC::BuiltinNames::getPrivateName):
+        (JSC::BuiltinNames::getPublicName):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::UnlinkedFunctionExecutable::create):
+        (JSC::UnlinkedFunctionExecutable::toStrictness):
+        (JSC::UnlinkedFunctionExecutable::isBuiltinFunction):
+        (JSC::UnlinkedCodeBlock::isBuiltinFunction):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::isBuiltinFunction):
+        (JSC::BytecodeGenerator::makeFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * create_hash_table:
+        * generate-js-builtins: Added.
+        (getCopyright):
+        (getFunctions):
+        (generateCode):
+        (mangleName):
+        (FunctionExecutable):
+        (Identifier):
+        (JSGlobalObject):
+        (SourceCode):
+        (UnlinkedFunctionExecutable):
+        (VM):
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        (JSC::isSafeBuiltinIdentifier):
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        (JSC::Lexer<T>::lex):
+        * parser/Lexer.h:
+        (JSC::isSafeIdentifier):
+        (JSC::Lexer<T>::lexExpectIdentifier):
+        * parser/Nodes.cpp:
+        (JSC::ProgramNode::setClosedVariables):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::capturedVariables):
+        (JSC::ScopeNode::setClosedVariables):
+        (JSC::ProgramNode::closedVariables):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::didFinishParsing):
+        (JSC::Parser<LexerType>::printUnexpectedTokenText):
+        * parser/Parser.h:
+        (JSC::Scope::getUsedVariables):
+        (JSC::Parser::closedVariables):
+        (JSC::parse):
+        * parser/ParserModes.h:
+        * parser/ParserTokens.h:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        (JSC::CommonIdentifiers::~CommonIdentifiers):
+        (JSC::CommonIdentifiers::getPrivateName):
+        (JSC::CommonIdentifiers::getPublicName):
+        * runtime/CommonIdentifiers.h:
+        (JSC::CommonIdentifiers::builtinNames):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        * runtime/Executable.h:
+        (JSC::EvalExecutable::executableInfo):
+        (JSC::ProgramExecutable::executableInfo):
+        (JSC::FunctionExecutable::isBuiltinFunction):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::createBuiltinFunction):
+        (JSC::JSFunction::calculatedDisplayName):
+        (JSC::JSFunction::sourceCode):
+        (JSC::JSFunction::isHostOrBuiltinFunction):
+        (JSC::JSFunction::isBuiltinFunction):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::nativeFunction):
+        (JSC::JSFunction::nativeConstructor):
+        (JSC::isHostFunction):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::objectConstructor):
+        (JSC::JSGlobalObject::symbolTableHasProperty):
+        * runtime/JSObject.cpp:
+        (JSC::getClassPropertyNames):
+        (JSC::JSObject::reifyStaticFunctionsForDelete):
+        (JSC::JSObject::putDirectBuiltinFunction):
+        * runtime/JSObject.h:
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::HashEntry::builtinGenerator):
+        (JSC::HashEntry::propertyGetter):
+        (JSC::HashEntry::propertyPutter):
+        (JSC::HashTable::entry):
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticValueSlot):
+        (JSC::putEntry):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::finishCreation):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/PropertySlot.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::builtinExecutables):
+
 2014-02-11  Brent Fulgham  <bfulgham@apple.com>
 
         Remove some unintended copies in ranged for loops

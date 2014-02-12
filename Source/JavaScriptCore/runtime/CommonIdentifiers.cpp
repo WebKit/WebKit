@@ -21,13 +21,15 @@
 #include "config.h"
 #include "CommonIdentifiers.h"
 
+#include "BuiltinNames.h"
+#include "JSCBuiltins.h"
 #include "PrivateName.h"
 
 namespace JSC {
 
 #define INITIALIZE_PROPERTY_NAME(name) , name(vm, #name)
 #define INITIALIZE_KEYWORD(name) , name##Keyword(vm, #name)
-#define INITIALIZE_PRIVATE_NAME(name) , name##PrivateName(Identifier::from(PrivateName()))
+#define INITIALIZE_PRIVATE_NAME(name) , name##PrivateName(m_builtinNames->name##PrivateName())
 
 CommonIdentifiers::CommonIdentifiers(VM* vm)
     : nullIdentifier()
@@ -35,11 +37,26 @@ CommonIdentifiers::CommonIdentifiers(VM* vm)
     , underscoreProto(vm, "__proto__")
     , thisIdentifier(vm, "this")
     , useStrictIdentifier(vm, "use strict")
-    , hasNextIdentifier(vm, "hasNext")
+    , m_builtinNames(new BuiltinNames(vm, this))
     JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(INITIALIZE_KEYWORD)
     JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PROPERTY_NAME)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PRIVATE_NAME)
 {
 }
+
+CommonIdentifiers::~CommonIdentifiers()
+{
+}
+
+const Identifier* CommonIdentifiers::getPrivateName(const Identifier& ident) const
+{
+    return m_builtinNames->getPrivateName(ident);
+}
+    
+Identifier CommonIdentifiers::getPublicName(const Identifier& ident) const
+{
+    return m_builtinNames->getPublicName(ident);
+}
+
 
 } // namespace JSC

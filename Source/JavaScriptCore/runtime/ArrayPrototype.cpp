@@ -56,7 +56,6 @@ static EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState*);
 static EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState*);
 static EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState*);
 static EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState*);
 static EncodedJSValue JSC_HOST_CALL arrayProtoFuncForEach(ExecState*);
 static EncodedJSValue JSC_HOST_CALL arrayProtoFuncSome(ExecState*);
 static EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState*);
@@ -953,69 +952,6 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec)
     }
 
     return JSValue::encode(resultArray);
-}
-
-// Documentation for these three is available at:
-// http://developer-test.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Objects:Array:every
-// http://developer-test.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Objects:Array:forEach
-// http://developer-test.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Objects:Array:some
-
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState* exec)
-{
-    JSObject* thisObj = exec->hostThisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    JSValue function = exec->argument(0);
-    CallData callData;
-    CallType callType = getCallData(function, callData);
-    if (callType == CallTypeNone)
-        return throwVMTypeError(exec);
-
-    JSValue applyThis = exec->argument(1);
-
-    JSValue result = jsBoolean(true);
-
-    unsigned k = 0;
-    if (callType == CallTypeJS && isJSArray(thisObj)) {
-        JSFunction* f = jsCast<JSFunction*>(function);
-        JSArray* array = asArray(thisObj);
-        CachedCall cachedCall(exec, f, 3);
-        for (; k < length && !exec->hadException(); ++k) {
-            if (UNLIKELY(!array->canGetIndexQuickly(k)))
-                break;
-            
-            cachedCall.setThis(applyThis);
-            cachedCall.setArgument(0, array->getIndexQuickly(k));
-            cachedCall.setArgument(1, jsNumber(k));
-            cachedCall.setArgument(2, thisObj);
-            JSValue result = cachedCall.call();
-            if (!result.toBoolean(exec))
-                return JSValue::encode(jsBoolean(false));
-        }
-    }
-    for (; k < length && !exec->hadException(); ++k) {
-        PropertySlot slot(thisObj);
-        if (!thisObj->getPropertySlot(exec, k, slot))
-            continue;
-
-        MarkedArgumentBuffer eachArguments;
-        eachArguments.append(slot.getValue(exec, k));
-        eachArguments.append(jsNumber(k));
-        eachArguments.append(thisObj);
-
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-
-        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments).toBoolean(exec);
-        if (!predicateResult) {
-            result = jsBoolean(false);
-            break;
-        }
-    }
-
-    return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncForEach(ExecState* exec)

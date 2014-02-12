@@ -484,7 +484,7 @@ public:
 
     void clearCode();
 
-    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false); }
+    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false); }
 
     unsigned numVariables() { return m_unlinkedEvalCodeBlock->numVariables(); }
     unsigned numberOfFunctionDecls() { return m_unlinkedEvalCodeBlock->numberOfFunctionDecls(); }
@@ -540,7 +540,7 @@ public:
 
     void clearCode();
 
-    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false); }
+    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false); }
 
 private:
     friend class ScriptExecutable;
@@ -630,6 +630,7 @@ public:
     }
         
     FunctionMode functionMode() { return m_unlinkedExecutable->functionMode(); }
+    bool isBuiltinFunction() const { return m_unlinkedExecutable->isBuiltinFunction(); }
     const Identifier& name() { return m_unlinkedExecutable->name(); }
     const Identifier& inferredName() { return m_unlinkedExecutable->inferredName(); }
     JSString* nameValue() const { return m_unlinkedExecutable->nameValue(); }
@@ -676,14 +677,6 @@ private:
     bool m_bodyIncludesBraces;
     bool m_didParseForTheFirstTime;
 };
-
-inline bool isHostFunction(JSValue value, NativeFunction nativeFunction)
-{
-    JSFunction* function = jsCast<JSFunction*>(getJSFunction(value));
-    if (!function || !function->isHostFunction())
-        return false;
-    return function->nativeFunction() == nativeFunction;
-}
 
 inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)
 {

@@ -1,3 +1,16 @@
+2014-02-11  Oliver Hunt  <oliver@apple.com>
+
+        Make it possible to implement JS builtins in JS
+        https://bugs.webkit.org/show_bug.cgi?id=127887
+
+        Reviewed by Michael Saboff.
+
+        CMake updates
+
+        * DumpRenderTree/CMakeLists.txt:
+        * WebKitTestRunner/CMakeLists.txt:
+        * WinCELauncher/CMakeLists.txt:
+
 2014-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to force copy-webkitlibraries-blahblah to copy things regardless of timestamp

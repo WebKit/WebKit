@@ -53,14 +53,22 @@ inline bool JSFunction::isHostFunction() const
 
 inline NativeFunction JSFunction::nativeFunction()
 {
-    ASSERT(isHostFunction());
+    ASSERT(isHostFunctionNonInline());
     return static_cast<NativeExecutable*>(m_executable.get())->function();
 }
 
 inline NativeFunction JSFunction::nativeConstructor()
 {
-    ASSERT(isHostFunction());
+    ASSERT(isHostFunctionNonInline());
     return static_cast<NativeExecutable*>(m_executable.get())->constructor();
+}
+
+inline bool isHostFunction(JSValue value, NativeFunction nativeFunction)
+{
+    JSFunction* function = jsCast<JSFunction*>(getJSFunction(value));
+    if (!function || !function->isHostFunction())
+        return false;
+    return function->nativeFunction() == nativeFunction;
 }
 
 } // namespace JSC

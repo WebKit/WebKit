@@ -43,6 +43,7 @@ namespace JSC {
     // ie. typedef JSValue (*GetFunction)(ExecState*, JSObject* baseObject)
     typedef PropertySlot::GetValueFunc GetFunction;
     typedef PutPropertySlot::PutValueFunc PutFunction;
+    typedef FunctionExecutable* (*BuiltinGenerator)(VM&);
 
     class HashEntry {
         WTF_MAKE_FAST_ALLOCATED;
@@ -68,11 +69,12 @@ namespace JSC {
             return m_intrinsic;
         }
 
+        BuiltinGenerator builtinGenerator() const { ASSERT(m_attributes & Builtin); return m_u.builtinGenerator.generatorValue; }
         NativeFunction function() const { ASSERT(m_attributes & Function); return m_u.function.functionValue; }
         unsigned char functionLength() const { ASSERT(m_attributes & Function); return static_cast<unsigned char>(m_u.function.length); }
 
-        GetFunction propertyGetter() const { ASSERT(!(m_attributes & Function)); return m_u.property.get; }
-        PutFunction propertyPutter() const { ASSERT(!(m_attributes & Function)); return m_u.property.put; }
+        GetFunction propertyGetter() const { ASSERT(!(m_attributes & BuiltinOrFunction)); return m_u.property.get; }
+        PutFunction propertyPutter() const { ASSERT(!(m_attributes & BuiltinOrFunction)); return m_u.property.put; }
 
         intptr_t lexerValue() const { ASSERT(!m_attributes); return m_u.lexer.value; }
 
@@ -93,6 +95,10 @@ namespace JSC {
                 NativeFunction functionValue;
                 intptr_t length; // number of arguments for function
             } function;
+            struct {
+                BuiltinGenerator generatorValue;
+                intptr_t unused;
+            } builtinGenerator;
             struct {
                 GetFunction get;
                 PutFunction put;
@@ -209,7 +215,7 @@ namespace JSC {
     private:
         ALWAYS_INLINE const HashEntry* entry(PropertyName propertyName) const
         {
-            StringImpl* impl = propertyName.publicName();
+            StringImpl* impl = propertyName.uid();
             if (!impl)
                 return 0;
         
@@ -249,7 +255,7 @@ namespace JSC {
         if (!entry) // not found, forward to parent
             return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
 
-        if (entry->attributes() & Function)
+        if (entry->attributes() & BuiltinOrFunction)
             return setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
 
         slot.setCacheableCustom(thisObj, entry->attributes(), entry->propertyGetter());
@@ -286,7 +292,7 @@ namespace JSC {
         if (!entry) // not found, forward to parent
             return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
 
-        ASSERT(!(entry->attributes() & Function));
+        ASSERT(!(entry->attributes() & BuiltinOrFunction));
 
         slot.setCacheableCustom(thisObj, entry->attributes(), entry->propertyGetter());
         return true;
@@ -295,7 +301,7 @@ namespace JSC {
     inline void putEntry(ExecState* exec, const HashEntry* entry, JSObject* base, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
     {
         // If this is a function put it as an override property.
-        if (entry->attributes() & Function) {
+        if (entry->attributes() & BuiltinOrFunction) {
             if (JSObject* thisObject = jsDynamicCast<JSObject*>(slot.thisValue()))
                 thisObject->putDirect(exec->vm(), propertyName, value);
         } else if (!(entry->attributes() & ReadOnly)) {

@@ -36,13 +36,15 @@ class JSObject;
 // ECMA 262-3 8.6.1
 // Property attributes
 enum Attribute {
-    None         = 0,
-    ReadOnly     = 1 << 1,  // property can be only read, not written
-    DontEnum     = 1 << 2,  // property doesn't appear in (for .. in ..)
-    DontDelete   = 1 << 3,  // property can't be deleted
-    Function     = 1 << 4,  // property is a function - only used by static hashtables
-    Accessor     = 1 << 5,  // property is a getter/setter
-    CustomAccessor = 1 << 6,
+    None              = 0,
+    ReadOnly          = 1 << 1,  // property can be only read, not written
+    DontEnum          = 1 << 2,  // property doesn't appear in (for .. in ..)
+    DontDelete        = 1 << 3,  // property can't be deleted
+    Function          = 1 << 4,  // property is a function - only used by static hashtables
+    Accessor          = 1 << 5,  // property is a getter/setter
+    CustomAccessor    = 1 << 6,
+    Builtin           = 1 << 7, // property is a builtin function - only used by static hashtables
+    BuiltinOrFunction = Builtin | Function, // helper only used by static hashtables
 };
 
 class PropertySlot {

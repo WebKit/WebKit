@@ -71,7 +71,7 @@ class Lexer {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Lexer(VM*);
+    Lexer(VM*, JSParserStrictness);
     ~Lexer();
 
     // Character manipulation functions.
@@ -237,6 +237,7 @@ private:
     IdentifierArena* m_arena;
 
     VM* m_vm;
+    bool m_parsingBuiltinFunction;
 };
 
 template <>
@@ -335,6 +336,12 @@ ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(const UChar* chara
     return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
 }
 
+#if ASSERT_DISABLED
+ALWAYS_INLINE bool isSafeBuiltinIdentifier(VM&, const Identifier*) { return true; }
+#else
+bool isSafeBuiltinIdentifier(VM&, const Identifier*);
+#endif
+
 template <typename T>
 ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
 {
@@ -370,10 +377,15 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, un
     ASSERT(currentOffset() >= currentLineStartOffset());
 
     // Create the identifier if needed
-    if (lexerFlags & LexexFlagsDontBuildKeywords)
+    if (lexerFlags & LexexFlagsDontBuildKeywords
+#if !ASSERT_DISABLED
+        && !m_parsingBuiltinFunction
+#endif
+        )
         tokenData->ident = 0;
     else
         tokenData->ident = makeLCharIdentifier(start, ptr - start);
+
     tokenLocation->line = m_lineNumber;
     tokenLocation->lineStartOffset = currentLineStartOffset();
     tokenLocation->startOffset = offsetFromSourcePtr(start);
@@ -381,6 +393,13 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, un
     ASSERT(tokenLocation->startOffset >= tokenLocation->lineStartOffset);
     tokenRecord->m_startPosition = startPosition;
     tokenRecord->m_endPosition = currentPosition();
+#if !ASSERT_DISABLED
+    if (m_parsingBuiltinFunction) {
+        if (!isSafeBuiltinIdentifier(*m_vm, tokenData->ident))
+            return ERRORTOK;
+    }
+#endif
+
     m_lastToken = IDENT;
     return IDENT;
     

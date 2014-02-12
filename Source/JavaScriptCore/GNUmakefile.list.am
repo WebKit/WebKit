@@ -20,6 +20,8 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/ErrorPrototype.lut.h \
 	DerivedSources/JavaScriptCore/JSDataViewPrototype.lut.h \
 	DerivedSources/JavaScriptCore/JSGlobalObject.lut.h \
+	DerivedSources/JavaScriptCore/JSCBuiltins.cpp \
+	DerivedSources/JavaScriptCore/JSCBuiltins.h \
 	DerivedSources/JavaScriptCore/JSONObject.lut.h \
 	DerivedSources/JavaScriptCore/JSPromiseConstructor.lut.h \
 	DerivedSources/JavaScriptCore/JSPromisePrototype.lut.h \
@@ -34,6 +36,9 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/StringConstructor.lut.h \
 	DerivedSources/JavaScriptCore/LLIntDesiredOffsets.h \
 	DerivedSources/JavaScriptCore/LLIntAssembly.h
+
+javascriptcore_builtins_js_nosources += \
+	Source/JavaScriptCore/builtins/Array.prototype.js
 
 javascriptcore_sources += \
 	Source/JavaScriptCore/API/APICallbackFunction.h \
@@ -102,6 +107,8 @@ javascriptcore_sources += \
     Source/JavaScriptCore/bindings/ScriptObject.h \
     Source/JavaScriptCore/bindings/ScriptValue.cpp \
     Source/JavaScriptCore/bindings/ScriptValue.h \
+    Source/JavaScriptCore/builtins/BuiltinExecutables.cpp \
+    Source/JavaScriptCore/builtins/BuiltinExecutables.h \
 	Source/JavaScriptCore/bytecode/ArrayAllocationProfile.cpp \
 	Source/JavaScriptCore/bytecode/ArrayAllocationProfile.h \
 	Source/JavaScriptCore/bytecode/ArrayProfile.cpp \
@@ -1271,7 +1278,9 @@ javascriptcore_sources += \
 	DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.cpp \
 	DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.h \
 	DerivedSources/JavaScriptCore/InspectorJSTypeBuilders.cpp \
-	DerivedSources/JavaScriptCore/InspectorJSTypeBuilders.h
+	DerivedSources/JavaScriptCore/InspectorJSTypeBuilders.h \
+	DerivedSources/JavaScriptCore/JSCBuiltins.cpp \
+	DerivedSources/JavaScriptCore/JSCBuiltins.h
 
 llint_nosources += \
 	Source/JavaScriptCore/llint/LowLevelInterpreter32_64.asm \

@@ -207,6 +207,8 @@
     macro(yield)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
+    macro(apply) \
+    macro(call) \
     macro(iterator) \
     macro(iteratorNext) \
     macro(resolve) \
@@ -217,23 +219,33 @@
     macro(index) \
     macro(values) \
     macro(deferred) \
-    macro(countdownHolder)
+    macro(countdownHolder) \
+    macro(Object) \
+    macro(TypeError) \
+    macro(undefined)
 
 namespace JSC {
-
+    
+    class BuiltinNames;
+    
     class CommonIdentifiers {
         WTF_MAKE_NONCOPYABLE(CommonIdentifiers); WTF_MAKE_FAST_ALLOCATED;
     private:
         CommonIdentifiers(VM*);
+        ~CommonIdentifiers();
         friend class VM;
-
+        
     public:
+        const BuiltinNames& builtinNames() const { return *m_builtinNames; }
         const Identifier nullIdentifier;
         const Identifier emptyIdentifier;
         const Identifier underscoreProto;
         const Identifier thisIdentifier;
         const Identifier useStrictIdentifier;
-        const Identifier hasNextIdentifier;
+    private:
+        std::unique_ptr<BuiltinNames> m_builtinNames;
+
+    public:
         
 #define JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL(name) const Identifier name##Keyword;
         JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL)
@@ -246,6 +258,9 @@ namespace JSC {
 #define JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL(name) const Identifier name##PrivateName;
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL
+        
+        const Identifier* getPrivateName(const Identifier&) const;
+        Identifier getPublicName(const Identifier&) const;
     };
 
 } // namespace JSC
