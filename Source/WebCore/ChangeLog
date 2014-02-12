@@ -1,3 +1,12 @@
+2014-02-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        Document::childrenChanged does not necessarily have a page
+
+        Rubber stamped by Enrica Casucci.
+
+        * dom/Document.cpp:
+        (WebCore::Document::childrenChanged):
+
 2014-02-12  Timothy Hatcher  <timothy@apple.com>
 
         Add a missing ": " between the URL and exception in STDOUT logs.
