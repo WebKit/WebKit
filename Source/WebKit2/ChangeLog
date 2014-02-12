@@ -1,3 +1,16 @@
+2014-02-12  Andy Estes  <aestes@apple.com>
+
+        Fix the iOS build after r163976
+
+        Moved WebPageProxy::{wrap,unwrap}CryptoKey() to a new file built by
+        both Mac and iOS.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm: Added.
+        (WebKit::WebPageProxy::wrapCryptoKey):
+        (WebKit::WebPageProxy::unwrapCryptoKey):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-12  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

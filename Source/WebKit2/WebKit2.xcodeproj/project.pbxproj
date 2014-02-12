@@ -918,6 +918,7 @@
 		9F54F8951648AE0F007DF81A /* PluginProcessManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */; };
 		9FB5F394169E6A80002C25BF /* WKContextPrivateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */; };
 		9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1EB7D5018AC2B6400F178F5 /* WebPageProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1EB7D4E18AC2B6400F178F5 /* WebPageProxyCocoa.mm */; };
 		A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D792D61767CB6E00881CBE /* ActivityAssertion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */; };
 		A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D792D41767CB0900881CBE /* ActivityAssertion.h */; };
@@ -2664,6 +2665,7 @@
 		9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessManagerMac.mm; sourceTree = "<group>"; };
 		9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContextPrivateMac.mm; path = mac/WKContextPrivateMac.mm; sourceTree = "<group>"; };
 		9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = mac/WKContextPrivateMac.h; sourceTree = "<group>"; };
+		A1EB7D4E18AC2B6400F178F5 /* WebPageProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageProxyCocoa.mm; sourceTree = "<group>"; };
 		A1EDD2D91884ACE000BBFE98 /* All.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = All.xcconfig; sourceTree = "<group>"; };
 		A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginProcessShim.xcconfig; sourceTree = "<group>"; };
 		A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SecItemShim.xcconfig; sourceTree = "<group>"; };
@@ -4033,6 +4035,7 @@
 			children = (
 				1ABC3DF41899E437004F0626 /* NavigationState.h */,
 				1ABC3DF31899E437004F0626 /* NavigationState.mm */,
+				A1EB7D4E18AC2B6400F178F5 /* WebPageProxyCocoa.mm */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -7838,6 +7841,7 @@
 				C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */,
 				E19582D6153CC05400B60875 /* PDFKitImports.mm in Sources */,
 				2D870D1016234FFE000A3F20 /* PDFPlugin.mm in Sources */,
+				A1EB7D5018AC2B6400F178F5 /* WebPageProxyCocoa.mm in Sources */,
 				2D2ADF0B16362DDB00197E47 /* PDFPluginAnnotation.mm in Sources */,
 				2DA944A71884E94800ED86DB /* DownloadIOS.mm in Sources */,
 				2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */,
