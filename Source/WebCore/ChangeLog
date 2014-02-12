@@ -1,5 +1,12 @@
 2014-02-11  Dan Bernstein  <mitz@apple.com>
 
+        iOS build fix fix.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::shouldRepaintForImageAnimation):
+
+2014-02-11  Dan Bernstein  <mitz@apple.com>
+
         iOS build fix.
 
         * rendering/RenderElement.cpp:
