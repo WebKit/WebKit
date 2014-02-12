@@ -15,14 +15,15 @@ Starting worker: resources/index-basics.js
 [Worker] store.createIndex('indexName', 'x')
 [Worker] store.createIndex('indexName2', 'y', {unique: false})
 [Worker] store.createIndex('zIndex', 'z', {unique: true})
+PASS [Worker] store.createIndex('index4', 'path', undefined) did not throw exception.
 PASS [Worker] indexObject2.unique is false
 PASS [Worker] indexObject3.unique is true
 [Worker] Expecting TypeError exception from store.createIndex('failureIndex', 'zzz', true)
 PASS [Worker] Exception was thrown.
-PASS [Worker] store.createIndex('failureIndex', 'zzz', true) threw TypeError: Not an object.
+PASS [Worker] store.createIndex('failureIndex', 'zzz', true) threw TypeError: Failed to execute 'createIndex' on 'IDBObjectStore': No function was found that matched the signature provided.
 [Worker] Expecting TypeError exception from store.createIndex('failureIndex', 'zzz', 'string')
 PASS [Worker] Exception was thrown.
-PASS [Worker] store.createIndex('failureIndex', 'zzz', 'string') threw TypeError: Not an object.
+PASS [Worker] store.createIndex('failureIndex', 'zzz', 'string') threw TypeError: Failed to execute 'createIndex' on 'IDBObjectStore': No function was found that matched the signature provided.
 PASS [Worker] 'name' in indexObject is true
 PASS [Worker] indexObject.name is "indexName"
 PASS [Worker] 'objectStore' in indexObject is true
@@ -70,7 +71,7 @@ PASS [Worker] event.target.result is "key2"
 [Worker] Verify that specifying an invalid direction raises an exception:
 [Worker] Expecting TypeError exception from indexObject.openKeyCursor(0, 'invalid-direction')
 PASS [Worker] Exception was thrown.
-PASS [Worker] indexObject.openKeyCursor(0, 'invalid-direction') threw TypeError: Type error
+PASS [Worker] indexObject.openKeyCursor(0, 'invalid-direction') threw TypeError: Failed to execute 'openKeyCursor' on 'IDBIndex': The direction provided ('invalid-direction') is not one of 'next', 'nextunique', 'prev', or 'prevunique'.
 [Worker] 
 [Worker] indexObject.openKeyCursor()
 PASS [Worker] event.target.source is indexObject
@@ -95,7 +96,7 @@ PASS [Worker] event.target.result is null
 [Worker] Verify that specifying an invalid direction raises an exception:
 [Worker] Expecting TypeError exception from indexObject.openCursor(0, 'invalid-direction')
 PASS [Worker] Exception was thrown.
-PASS [Worker] indexObject.openCursor(0, 'invalid-direction') threw TypeError: Type error
+PASS [Worker] indexObject.openCursor(0, 'invalid-direction') threw TypeError: Failed to execute 'openCursor' on 'IDBIndex': The direction provided ('invalid-direction') is not one of 'next', 'nextunique', 'prev', or 'prevunique'.
 [Worker] 
 [Worker] indexObject.openCursor()
 PASS [Worker] event.target.source is indexObject
@@ -131,11 +132,13 @@ PASS [Worker] event.target.result is 2
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
+[Worker] Exception message: Failed to execute 'get' on 'IDBIndex': The parameter is not a valid key.
 [Worker] Passing an invalid key into indexObject.getKey({}).
 [Worker] Expecting exception from indexObject.getKey({})
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
+[Worker] Exception message: Failed to execute 'getKey' on 'IDBIndex': The parameter is not a valid key.
 PASS successfullyParsed is true
 
 TEST COMPLETE

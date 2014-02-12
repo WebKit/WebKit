@@ -42,6 +42,7 @@ cursor.continue();
 Expecting exception from cursor.continue();
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: InvalidStateError: DOM IDBDatabase Exception 11
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
 PASS cursor.value is 'foo'
@@ -54,6 +55,7 @@ cursor.continue();
 Expecting exception from cursor.continue();
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: InvalidStateError: DOM IDBDatabase Exception 11
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
 PASS cursor.value is 'foo'
@@ -66,6 +68,7 @@ cursor.continue();
 Expecting exception from cursor.continue();
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: InvalidStateError: DOM IDBDatabase Exception 11
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
 PASS cursor.value is 'foo'
@@ -78,6 +81,7 @@ cursor.continue();
 Expecting exception from cursor.continue();
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: InvalidStateError: DOM IDBDatabase Exception 11
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
 PASS cursor.value is 'foo'
@@ -90,6 +94,7 @@ cursor.continue();
 Expecting exception from cursor.continue();
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: InvalidStateError: DOM IDBDatabase Exception 11
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
 PASS cursor.value is 'foo'
@@ -102,6 +107,7 @@ cursor.continue();
 Expecting exception from cursor.continue();
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: InvalidStateError: DOM IDBDatabase Exception 11
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
 PASS cursor.value is 'foo'
@@ -114,6 +120,7 @@ cursor.continue();
 Expecting exception from cursor.continue();
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: InvalidStateError: DOM IDBDatabase Exception 11
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
 PASS cursor.value is 'foo'
@@ -126,6 +133,7 @@ cursor.continue();
 Expecting exception from cursor.continue();
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: InvalidStateError: DOM IDBDatabase Exception 11
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
 PASS cursor.value is 'foo'
@@ -138,6 +146,7 @@ cursor.continue();
 Expecting exception from cursor.continue();
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: InvalidStateError: DOM IDBDatabase Exception 11
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
 PASS cursor.value is 'foo'
@@ -150,6 +159,7 @@ cursor.continue();
 Expecting exception from cursor.continue();
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: InvalidStateError: DOM IDBDatabase Exception 11
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
 PASS cursor.value is 'foo'

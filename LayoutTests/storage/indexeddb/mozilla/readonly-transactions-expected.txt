@@ -13,36 +13,44 @@ Expecting exception from db.transaction([osName]).objectStore(osName).add({});
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: ReadOnlyError: DOM IDBDatabase Exception 0
 Expecting exception from db.transaction(osName).objectStore(osName).add({});
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: ReadOnlyError: DOM IDBDatabase Exception 0
 key1 = 1;
 key2 = 2;
 Expecting exception from db.transaction([osName]).objectStore(osName).put({}, key1);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: ReadOnlyError: DOM IDBDatabase Exception 0
 Expecting exception from db.transaction(osName).objectStore(osName).put({}, key2);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: ReadOnlyError: DOM IDBDatabase Exception 0
 Expecting exception from db.transaction([osName]).objectStore(osName).put({}, key1);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: ReadOnlyError: DOM IDBDatabase Exception 0
 Expecting exception from db.transaction(osName).objectStore(osName).put({}, key1);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: ReadOnlyError: DOM IDBDatabase Exception 0
 Expecting exception from db.transaction([osName]).objectStore(osName).delete(key1);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: ReadOnlyError: DOM IDBDatabase Exception 0
 Expecting exception from db.transaction(osName).objectStore(osName).delete(key2);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: ReadOnlyError: DOM IDBDatabase Exception 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

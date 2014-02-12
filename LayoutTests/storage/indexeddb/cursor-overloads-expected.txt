@@ -49,6 +49,39 @@ PASS event.target.result.direction is "prev"
 store.openCursor(IDBKeyRange.only(0), 'prevunique')
 PASS event.target.result is non-null.
 PASS event.target.result.direction is "prevunique"
+store.openKeyCursor()
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "next"
+store.openKeyCursor(0)
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "next"
+store.openKeyCursor(0, 'next')
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "next"
+store.openKeyCursor(0, 'nextunique')
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "nextunique"
+store.openKeyCursor(0, 'prev')
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "prev"
+store.openKeyCursor(0, 'prevunique')
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "prevunique"
+store.openKeyCursor(IDBKeyRange.only(0))
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "next"
+store.openKeyCursor(IDBKeyRange.only(0), 'next')
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "next"
+store.openKeyCursor(IDBKeyRange.only(0), 'nextunique')
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "nextunique"
+store.openKeyCursor(IDBKeyRange.only(0), 'prev')
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "prev"
+store.openKeyCursor(IDBKeyRange.only(0), 'prevunique')
+PASS event.target.result is non-null.
+PASS event.target.result.direction is "prevunique"
 index.openCursor()
 PASS event.target.result is non-null.
 PASS event.target.result.direction is "next"

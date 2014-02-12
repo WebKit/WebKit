@@ -9,6 +9,7 @@ dbname = "data-corruption.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 setVersionSuccess():
+PASS event.dataLoss is "none"
 trans = event.target.transaction
 PASS trans is non-null.
 db.createObjectStore('storeName')

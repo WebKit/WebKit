@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test-pre.js');
+    importScripts('../../../resources/js-test.js');
     importScripts('shared.js');
 }
 
@@ -13,6 +13,7 @@ function test()
     if ('document' in self) {
         shouldBeTrue("'oldVersion' in document.createEvent('IDBVersionChangeEvent')");
         shouldBeTrue("'newVersion' in document.createEvent('IDBVersionChangeEvent')");
+        shouldBeTrue("'dataLoss' in document.createEvent('IDBVersionChangeEvent')");
     }
 
     finishJSTest();

@@ -92,9 +92,41 @@ PASS indexedDB.cmp('𝄞','�') is -1
 PASS indexedDB.cmp('�','𝄞') is 1
 PASS indexedDB.cmp('𝄞','𝄞') is 0
 PASS indexedDB.cmp('�','�') is 0
-PASS indexedDB.cmp('�',[]) is -1
-PASS indexedDB.cmp([],'�') is 1
+PASS indexedDB.cmp('�',new Uint8Array()) is -1
+PASS indexedDB.cmp(new Uint8Array(),'�') is 1
 PASS indexedDB.cmp('�','�') is 0
+PASS indexedDB.cmp(new Uint8Array(),new Uint8Array()) is 0
+PASS indexedDB.cmp(new Uint8Array(),new Uint8Array([0])) is -1
+PASS indexedDB.cmp(new Uint8Array([0]),new Uint8Array()) is 1
+PASS indexedDB.cmp(new Uint8Array(),new Uint8Array()) is 0
+PASS indexedDB.cmp(new Uint8Array([0]),new Uint8Array([0])) is 0
+PASS indexedDB.cmp(new Uint8Array([0]),new Uint8Array([0, 0])) is -1
+PASS indexedDB.cmp(new Uint8Array([0, 0]),new Uint8Array([0])) is 1
+PASS indexedDB.cmp(new Uint8Array([0]),new Uint8Array([0])) is 0
+PASS indexedDB.cmp(new Uint8Array([0, 0]),new Uint8Array([0, 0])) is 0
+PASS indexedDB.cmp(new Uint8Array([0, 0]),new Uint8Array([0, 1])) is -1
+PASS indexedDB.cmp(new Uint8Array([0, 1]),new Uint8Array([0, 0])) is 1
+PASS indexedDB.cmp(new Uint8Array([0, 0]),new Uint8Array([0, 0])) is 0
+PASS indexedDB.cmp(new Uint8Array([0, 1]),new Uint8Array([0, 1])) is 0
+PASS indexedDB.cmp(new Uint8Array([0, 1]),new Uint8Array([1])) is -1
+PASS indexedDB.cmp(new Uint8Array([1]),new Uint8Array([0, 1])) is 1
+PASS indexedDB.cmp(new Uint8Array([0, 1]),new Uint8Array([0, 1])) is 0
+PASS indexedDB.cmp(new Uint8Array([1]),new Uint8Array([1])) is 0
+PASS indexedDB.cmp(new Uint8Array([1]),new Uint8Array([1, 0])) is -1
+PASS indexedDB.cmp(new Uint8Array([1, 0]),new Uint8Array([1])) is 1
+PASS indexedDB.cmp(new Uint8Array([1]),new Uint8Array([1])) is 0
+PASS indexedDB.cmp(new Uint8Array([1, 0]),new Uint8Array([1, 0])) is 0
+PASS indexedDB.cmp(new Uint8Array([1, 0]),new Uint8Array([1, 1])) is -1
+PASS indexedDB.cmp(new Uint8Array([1, 1]),new Uint8Array([1, 0])) is 1
+PASS indexedDB.cmp(new Uint8Array([1, 0]),new Uint8Array([1, 0])) is 0
+PASS indexedDB.cmp(new Uint8Array([1, 1]),new Uint8Array([1, 1])) is 0
+PASS indexedDB.cmp(new Uint8Array([1, 1]),new Uint8Array([255])) is -1
+PASS indexedDB.cmp(new Uint8Array([255]),new Uint8Array([1, 1])) is 1
+PASS indexedDB.cmp(new Uint8Array([1, 1]),new Uint8Array([1, 1])) is 0
+PASS indexedDB.cmp(new Uint8Array([255]),new Uint8Array([255])) is 0
+PASS indexedDB.cmp(new Uint8Array([255]),[]) is -1
+PASS indexedDB.cmp([],new Uint8Array([255])) is 1
+PASS indexedDB.cmp(new Uint8Array([255]),new Uint8Array([255])) is 0
 PASS indexedDB.cmp([],[]) is 0
 PASS indexedDB.cmp([],[-Infinity]) is -1
 PASS indexedDB.cmp([-Infinity],[]) is 1
@@ -184,9 +216,41 @@ PASS indexedDB.cmp(['𝄞'],['�']) is -1
 PASS indexedDB.cmp(['�'],['𝄞']) is 1
 PASS indexedDB.cmp(['𝄞'],['𝄞']) is 0
 PASS indexedDB.cmp(['�'],['�']) is 0
-PASS indexedDB.cmp(['�'],[[]]) is -1
-PASS indexedDB.cmp([[]],['�']) is 1
+PASS indexedDB.cmp(['�'],[new Uint8Array()]) is -1
+PASS indexedDB.cmp([new Uint8Array()],['�']) is 1
 PASS indexedDB.cmp(['�'],['�']) is 0
+PASS indexedDB.cmp([new Uint8Array()],[new Uint8Array()]) is 0
+PASS indexedDB.cmp([new Uint8Array()],[new Uint8Array([0])]) is -1
+PASS indexedDB.cmp([new Uint8Array([0])],[new Uint8Array()]) is 1
+PASS indexedDB.cmp([new Uint8Array()],[new Uint8Array()]) is 0
+PASS indexedDB.cmp([new Uint8Array([0])],[new Uint8Array([0])]) is 0
+PASS indexedDB.cmp([new Uint8Array([0])],[new Uint8Array([0, 0])]) is -1
+PASS indexedDB.cmp([new Uint8Array([0, 0])],[new Uint8Array([0])]) is 1
+PASS indexedDB.cmp([new Uint8Array([0])],[new Uint8Array([0])]) is 0
+PASS indexedDB.cmp([new Uint8Array([0, 0])],[new Uint8Array([0, 0])]) is 0
+PASS indexedDB.cmp([new Uint8Array([0, 0])],[new Uint8Array([0, 1])]) is -1
+PASS indexedDB.cmp([new Uint8Array([0, 1])],[new Uint8Array([0, 0])]) is 1
+PASS indexedDB.cmp([new Uint8Array([0, 0])],[new Uint8Array([0, 0])]) is 0
+PASS indexedDB.cmp([new Uint8Array([0, 1])],[new Uint8Array([0, 1])]) is 0
+PASS indexedDB.cmp([new Uint8Array([0, 1])],[new Uint8Array([1])]) is -1
+PASS indexedDB.cmp([new Uint8Array([1])],[new Uint8Array([0, 1])]) is 1
+PASS indexedDB.cmp([new Uint8Array([0, 1])],[new Uint8Array([0, 1])]) is 0
+PASS indexedDB.cmp([new Uint8Array([1])],[new Uint8Array([1])]) is 0
+PASS indexedDB.cmp([new Uint8Array([1])],[new Uint8Array([1, 0])]) is -1
+PASS indexedDB.cmp([new Uint8Array([1, 0])],[new Uint8Array([1])]) is 1
+PASS indexedDB.cmp([new Uint8Array([1])],[new Uint8Array([1])]) is 0
+PASS indexedDB.cmp([new Uint8Array([1, 0])],[new Uint8Array([1, 0])]) is 0
+PASS indexedDB.cmp([new Uint8Array([1, 0])],[new Uint8Array([1, 1])]) is -1
+PASS indexedDB.cmp([new Uint8Array([1, 1])],[new Uint8Array([1, 0])]) is 1
+PASS indexedDB.cmp([new Uint8Array([1, 0])],[new Uint8Array([1, 0])]) is 0
+PASS indexedDB.cmp([new Uint8Array([1, 1])],[new Uint8Array([1, 1])]) is 0
+PASS indexedDB.cmp([new Uint8Array([1, 1])],[new Uint8Array([255])]) is -1
+PASS indexedDB.cmp([new Uint8Array([255])],[new Uint8Array([1, 1])]) is 1
+PASS indexedDB.cmp([new Uint8Array([1, 1])],[new Uint8Array([1, 1])]) is 0
+PASS indexedDB.cmp([new Uint8Array([255])],[new Uint8Array([255])]) is 0
+PASS indexedDB.cmp([new Uint8Array([255])],[[]]) is -1
+PASS indexedDB.cmp([[]],[new Uint8Array([255])]) is 1
+PASS indexedDB.cmp([new Uint8Array([255])],[new Uint8Array([255])]) is 0
 PASS indexedDB.cmp([[]],[[]]) is 0
 PASS indexedDB.cmp([[]],[[], []]) is -1
 PASS indexedDB.cmp([[], []],[[]]) is 1
@@ -210,266 +274,332 @@ Expecting exception from indexedDB.cmp(void 0, true)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(true, void 0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(void 0, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', void 0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(true, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', true)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(true, false)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(false, true)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(true, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', true)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(false, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', false)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(false, NaN)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(NaN, false)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(false, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', false)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(NaN, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', NaN)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(NaN, new Date(NaN))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(new Date(NaN), NaN)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(NaN, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', NaN)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(new Date(NaN), 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', new Date(NaN))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(new Date(NaN), null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(null, new Date(NaN))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(new Date(NaN), 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', new Date(NaN))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(null, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(null, {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp({}, null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(null, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp({}, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp({}, function () {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(function () {}, {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp({}, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(function () {}, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', function () {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(function () {}, /regex/)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(/regex/, function () {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(function () {}, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', function () {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(/regex/, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', /regex/)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(/regex/, self)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(self, /regex/)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(/regex/, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', /regex/)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(self, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', self)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(self, self.document)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(self.document, self)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(self, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', self)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(self.document, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', self.document)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(self.document, self.document.body)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(self.document.body, self.document)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(self.document, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', self.document)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp(self.document.body, 'valid')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 Expecting exception from indexedDB.cmp('valid', self.document.body)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 
 compare identical keys
 PASS indexedDB.cmp(0, -0) is 0

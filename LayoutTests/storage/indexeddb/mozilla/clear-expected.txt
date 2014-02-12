@@ -14,6 +14,7 @@ Expecting exception from db.transaction('foo').objectStore('foo').clear();
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: ReadOnlyError: DOM IDBDatabase Exception 0
 db.transaction('foo', 'readwrite')
 transaction.objectStore('foo').clear();
 request = db.transaction('foo').objectStore('foo').openCursor();

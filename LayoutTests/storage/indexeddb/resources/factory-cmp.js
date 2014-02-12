@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test-pre.js');
+    importScripts('../../../resources/js-test.js');
     importScripts('shared.js');
 }
 
@@ -49,6 +49,15 @@ function testValidKeys()
         "'\uD834\uDD1E'", // U+1D11E MUSICAL SYMBOL G-CLEF (UTF-16 surrogate pair)
         "'\uFFFD'", // U+FFFD REPLACEMENT CHARACTER
 
+        "new Uint8Array()",
+        "new Uint8Array([0])",
+        "new Uint8Array([0, 0])",
+        "new Uint8Array([0, 1])",
+        "new Uint8Array([1])",
+        "new Uint8Array([1, 0])",
+        "new Uint8Array([1, 1])",
+        "new Uint8Array([255])",
+
         "[]",
 
         "[-Infinity]",
@@ -76,6 +85,15 @@ function testValidKeys()
         "['\u6C34']", // U+6C34 CJK UNIFIED IDEOGRAPH (water)
         "['\uD834\uDD1E']", // U+1D11E MUSICAL SYMBOL G-CLEF (UTF-16 surrogate pair)
         "['\uFFFD']", // U+FFFD REPLACEMENT CHARACTER
+
+        "[new Uint8Array()]",
+        "[new Uint8Array([0])]",
+        "[new Uint8Array([0, 0])]",
+        "[new Uint8Array([0, 1])]",
+        "[new Uint8Array([1])]",
+        "[new Uint8Array([1, 0])]",
+        "[new Uint8Array([1, 1])]",
+        "[new Uint8Array([255])]",
 
         "[[]]",
 

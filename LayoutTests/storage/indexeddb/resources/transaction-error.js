@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test-pre.js');
+    importScripts('../../../resources/js-test.js');
     importScripts('shared.js');
 }
 
@@ -14,6 +14,7 @@ function prepareDatabase()
     request.onerror = unexpectedErrorCallback;
 }
 
+var nonConvertibleToString = {toString: function() { throw "Exception in toString()"; }};
 function startTest()
 {
     debug("");
@@ -22,6 +23,10 @@ function startTest()
     debug("");
     debug("IDBTransaction.error should be null if transaction is not finished:");
     shouldBeNull("trans.error");
+
+    debug("");
+    debug("transaction() should throw if one of the DOMStringList items cannot be converted to a String:");
+    shouldThrow("db.transaction(['storeName', nonConvertibleToString])", "'Exception in toString()'");
 
     debug("");
     debug("If IDBTransaction.abort() is explicitly called, IDBTransaction.error should be null:");
@@ -48,8 +53,8 @@ function testErrorFromRequest()
     trans.onabort = function() {
         debug("Transaction received abort event.");
         shouldBeNonNull("trans.error");
-        debug("trans.webkitErrorMessage = " + trans.webkitErrorMessage);
-        shouldBeNonNull("trans.webkitErrorMessage");
+        debug("trans.error.message = " + trans.error.message);
+        shouldBeNonNull("trans.error.message");
         shouldBe("trans.error", "request_error");
         testErrorFromException();
     };
@@ -80,8 +85,8 @@ function testErrorFromException()
         self.onerror = self.originalWindowOnError;
 
         shouldBeNonNull("trans.error");
-        debug("trans.webkitErrorMessage = " + trans.webkitErrorMessage);
-        shouldBeNonNull("trans.webkitErrorMessage");
+        debug("trans.error.message = " + trans.error.message);
+        shouldBeNonNull("trans.error.message");
         shouldBe("trans.error.name", "'AbortError'");
         testErrorFromCommit();
     };
@@ -112,10 +117,10 @@ function testErrorFromCommit()
                 debug("Transaction received abort event.");
                 shouldBeNonNull("trans.error");
                 shouldBe("trans.error.name", "'ConstraintError'");
-                debug("trans.webkitErrorMessage = " + trans.webkitErrorMessage);
-                shouldBeNonNull("trans.webkitErrorMessage");
+                debug("trans.error.message = " + trans.error.message);
+                shouldBeNonNull("trans.error.message");
                 debug("Note: This fails because of http://wkb.ug/37327");
-                shouldNotBe("trans.webkitErrorMessage.indexOf(indexName)", "-1");
+                shouldNotBe("trans.error.message.indexOf(indexName)", "-1");
                 debug("");
                 finishJSTest();
             };

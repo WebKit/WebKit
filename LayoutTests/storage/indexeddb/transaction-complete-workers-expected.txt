@@ -21,6 +21,7 @@ PASS [Worker] Transaction completed
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
+[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction has finished.
 [Worker] 
 [Worker] recursionTest():
 [Worker] transaction = db.transaction('store')
@@ -50,6 +51,7 @@ PASS [Worker] transaction completed
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
+[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction has finished.
 [Worker] 
 [Worker] trying a timeout callback:
 [Worker] setTimeout(timeoutTest, 0)
@@ -62,6 +64,7 @@ PASS [Worker] transaction started in setTimeout() callback completed
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
+[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction has finished.
 [Worker] 
 [Worker] errorTest():
 [Worker] self.old_onerror = self.onerror
@@ -78,6 +81,7 @@ PASS [Worker] Transaction completed
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
+[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction has finished.
 PASS successfullyParsed is true
 
 TEST COMPLETE

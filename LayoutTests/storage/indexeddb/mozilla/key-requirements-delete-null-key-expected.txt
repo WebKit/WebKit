@@ -13,6 +13,7 @@ Expecting exception from objectStore.delete(null);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: DataError: DOM IDBDatabase Exception 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

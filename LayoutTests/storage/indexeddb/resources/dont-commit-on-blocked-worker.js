@@ -1,4 +1,4 @@
-importScripts('../../../resources/js-test-pre.js');
+importScripts('../../../resources/js-test.js');
 importScripts('shared.js');
 
 removeVendorPrefixes();

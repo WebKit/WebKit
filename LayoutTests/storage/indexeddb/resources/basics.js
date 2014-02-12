@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test-pre.js');
+    importScripts('../../../resources/js-test.js');
     importScripts('shared.js');
 }
 
@@ -11,8 +11,7 @@ function test()
     request = evalAndLog("indexedDB.open('basics')");
     shouldBeTrue("'result' in request");
     evalAndExpectException("request.result", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-    shouldBeTrue("'webkitErrorMessage' in request");
-    evalAndExpectException("request.webkitErrorMessage", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+    shouldBeTrue("'error' in request");
     evalAndExpectException("request.error", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     shouldBeTrue("'source' in request");
     shouldBeNull("request.source");
@@ -33,8 +32,6 @@ function openCallback(evt)
     event = evt;
     shouldBeTrue("'result' in event.target");
     shouldBeTrue("!!event.target.result");
-    shouldBeTrue("'webkitErrorMessage' in event.target");
-    shouldBeUndefined("event.target.webkitErrorMessage");
     shouldBeTrue("'error' in event.target");
     shouldBeNull("event.target.error");
     shouldBeTrue("'source' in event.target");

@@ -29,6 +29,8 @@ PASS 'clear' in store is true
 PASS typeof store.clear is "function"
 PASS 'openCursor' in store is true
 PASS typeof store.openCursor is "function"
+PASS 'openKeyCursor' in store is true
+PASS typeof store.openKeyCursor is "function"
 PASS 'createIndex' in store is true
 PASS typeof store.createIndex is "function"
 PASS 'index' in store is true
@@ -49,6 +51,7 @@ Expecting exception from store.index('asdf')
 PASS Exception was thrown.
 PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
+Exception message: Failed to execute 'index' on 'IDBObjectStore': The specified index was not found.
 createIndex():
 index = store.createIndex('indexName', 'x', {unique: true})
 PASS index is non-null.
@@ -60,6 +63,7 @@ Expecting exception from store.index('asdf')
 PASS Exception was thrown.
 PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
+Exception message: Failed to execute 'index' on 'IDBObjectStore': The specified index was not found.
 indexedDB.open(dbname, 2)
 db.close()
 PASS db.version is 2
@@ -93,6 +97,7 @@ Try to insert a value not handled by structured clone:
 Expecting exception from store.add({x: 'bar', y: self}, 'bar')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'add' on 'IDBObjectStore': An object could not be cloned.
 Try to insert data where key path yields a Date key:
 store.add({x: testDateB, y: 'value'}, 'key')
 addSuccess():
@@ -108,6 +113,7 @@ Expecting exception from store.add({x: 'othervalue'}, null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'add' on 'IDBObjectStore': The parameter is not a valid key.
 db.transaction(['storeName'], 'readwrite')
 store = transaction.objectStore('storeName')
 Ensure invalid key pointed at by index keyPath is ignored
@@ -133,21 +139,25 @@ Expecting exception from store.get({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'get' on 'IDBObjectStore': The parameter is not a valid key.
 Passing an invalid key into store.delete().
 Expecting exception from store.delete({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key.
 Passing an invalid key into store.add().
 Expecting exception from store.add(null, {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'add' on 'IDBObjectStore': The parameter is not a valid key.
 Passing an invalid key into store.put().
 Expecting exception from store.put(null, {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testPreConditions():
 indexedDB.open(dbname, 3)
@@ -164,26 +174,31 @@ Expecting exception from storeWithInLineKeys.put({key: 1}, 'key')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'put' on 'IDBObjectStore': The object store uses in-line keys and the key parameter was provided.
 The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 Expecting exception from storeWithOutOfLineKeys.put({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'put' on 'IDBObjectStore': The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.
 Expecting exception from storeWithInLineKeys.put({key: null})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'put' on 'IDBObjectStore': Evaluating the object store's key path yielded a value that is not a valid key.
 The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.
 Expecting exception from storeWithInLineKeys.put({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'put' on 'IDBObjectStore': Evaluating the object store's key path did not yield a value.
 The key parameter was provided but does not contain a valid key.
 Expecting exception from storeWithOutOfLineKeys.put({}, null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 IDBObjectStore.add()
 The object store uses in-line keys and the key parameter was provided.
@@ -191,26 +206,31 @@ Expecting exception from storeWithInLineKeys.add({key: 1}, 'key')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'add' on 'IDBObjectStore': The object store uses in-line keys and the key parameter was provided.
 The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 Expecting exception from storeWithOutOfLineKeys.add({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'add' on 'IDBObjectStore': The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.
 Expecting exception from storeWithInLineKeys.add({key: null})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'add' on 'IDBObjectStore': Evaluating the object store's key path yielded a value that is not a valid key.
 The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.
 Expecting exception from storeWithInLineKeys.add({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'add' on 'IDBObjectStore': Evaluating the object store's key path did not yield a value.
 The key parameter was provided but does not contain a valid key.
 Expecting exception from storeWithOutOfLineKeys.add({}, null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'add' on 'IDBObjectStore': The parameter is not a valid key.
 PASS successfullyParsed is true
 
 TEST COMPLETE

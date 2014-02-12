@@ -24,7 +24,7 @@ request = objectStore.add('foo', keys[i]);
 request = objectStore.add('foo', keys[i]);
 request = objectStore.openCursor();
 cursor = event.target.result;
-PASS cursor.update(); threw exception TypeError: Not enough arguments.
+PASS cursor.update(); threw exception TypeError: Failed to execute 'update' on 'IDBCursor': 1 argument required, but only 0 present..
 PASS successfullyParsed is true
 
 TEST COMPLETE

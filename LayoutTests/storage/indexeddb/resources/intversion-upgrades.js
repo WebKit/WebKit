@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test-pre.js');
+    importScripts('../../../resources/js-test.js');
     importScripts('shared.js');
 }
 
@@ -55,7 +55,7 @@ function connection1VersionChangeCallback(evt)
 function connection2BlockedCallback(evt)
 {
     preamble(evt);
-    debug("This should not be called: http://wkbug.com/71130");
+    debug("This should not be called: http://crbug.com/100123");
 }
 
 function connection2UpgradeNeeded(evt)
@@ -110,7 +110,7 @@ function connection3Success(evt)
 function errorWhenTryingLowVersion(evt)
 {
     preamble(evt);
-    debug("request.webkitErrorMessage = " + request.webkitErrorMessage);
+    debug("request.error.message = " + request.error.message);
     evalAndLog("request = indexedDB.open(dbname, 4)");
     request.onblocked = unexpectedBlockedCallback;
     request.onerror = unexpectedErrorCallback;

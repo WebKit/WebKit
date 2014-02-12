@@ -32,6 +32,7 @@ Expecting exception from db.transaction('os')
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
 PASS successfullyParsed is true
 
 TEST COMPLETE

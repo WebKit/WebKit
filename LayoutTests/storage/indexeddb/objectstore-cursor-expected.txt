@@ -13,7 +13,7 @@ objectStore = db.createObjectStore('someObjectStore')
 Verify that specifying an invalid direction raises an exception:
 Expecting TypeError exception from objectStore.openCursor(0, 'invalid-direction')
 PASS Exception was thrown.
-PASS objectStore.openCursor(0, 'invalid-direction') threw TypeError: Type error
+PASS objectStore.openCursor(0, 'invalid-direction') threw TypeError: Failed to execute 'openCursor' on 'IDBObjectStore': The direction provided ('invalid-direction') is not one of 'next', 'nextunique', 'prev', or 'prevunique'.
 
 objectStore.add('', testData[nextToAdd])
 objectStore.add('', testData[nextToAdd])

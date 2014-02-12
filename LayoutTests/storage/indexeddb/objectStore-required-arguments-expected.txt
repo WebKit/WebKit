@@ -9,14 +9,14 @@ dbname = "objectStore-required-arguments.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 objectStore = db.createObjectStore('foo');
-PASS objectStore.put(); threw exception TypeError: Not enough arguments.
-PASS objectStore.add(); threw exception TypeError: Not enough arguments.
-PASS objectStore.delete(); threw exception TypeError: Not enough arguments.
-PASS objectStore.get(); threw exception TypeError: Not enough arguments.
-PASS objectStore.createIndex(); threw exception TypeError: Not enough arguments.
-PASS objectStore.createIndex('foo'); threw exception TypeError: Not enough arguments.
-PASS objectStore.index(); threw exception TypeError: Not enough arguments.
-PASS objectStore.deleteIndex(); threw exception TypeError: Not enough arguments.
+PASS objectStore.put(); threw exception TypeError: Failed to execute 'put' on 'IDBObjectStore': 1 argument required, but only 0 present..
+PASS objectStore.add(); threw exception TypeError: Failed to execute 'add' on 'IDBObjectStore': 1 argument required, but only 0 present..
+PASS objectStore.delete(); threw exception TypeError: Failed to execute 'delete' on 'IDBObjectStore': 1 argument required, but only 0 present..
+PASS objectStore.get(); threw exception TypeError: Failed to execute 'get' on 'IDBObjectStore': 1 argument required, but only 0 present..
+PASS objectStore.createIndex(); threw exception TypeError: Failed to execute 'createIndex' on 'IDBObjectStore': 2 arguments required, but only 0 present..
+PASS objectStore.createIndex('foo'); threw exception TypeError: Failed to execute 'createIndex' on 'IDBObjectStore': 2 arguments required, but only 1 present..
+PASS objectStore.index(); threw exception TypeError: Failed to execute 'index' on 'IDBObjectStore': 1 argument required, but only 0 present..
+PASS objectStore.deleteIndex(); threw exception TypeError: Failed to execute 'deleteIndex' on 'IDBObjectStore': 1 argument required, but only 0 present..
 PASS successfullyParsed is true
 
 TEST COMPLETE

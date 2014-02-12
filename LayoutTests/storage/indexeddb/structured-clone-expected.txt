@@ -783,20 +783,25 @@ Other JavaScript object types:
 Expecting exception from store.put(new Error, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'put' on 'IDBObjectStore': An object could not be cloned.
 Expecting exception from store.put(new Function, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'put' on 'IDBObjectStore': An object could not be cloned.
 
 Other host object types:
 Expecting exception from store.put(self, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'put' on 'IDBObjectStore': An object could not be cloned.
 Expecting exception from store.put(document, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'put' on 'IDBObjectStore': An object could not be cloned.
 Expecting exception from store.put(document.body, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'put' on 'IDBObjectStore': An object could not be cloned.
 PASS successfullyParsed is true
 
 TEST COMPLETE

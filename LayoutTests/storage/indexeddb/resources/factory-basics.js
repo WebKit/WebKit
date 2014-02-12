@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test-pre.js');
+    importScripts('../../../resources/js-test.js');
     importScripts('shared.js');
 }
 
@@ -17,10 +17,10 @@ function test()
     shouldBeEqualToString("typeof indexedDB.webkitGetDatabaseNames", "function");
     shouldBeEqualToString("typeof indexedDB.getDatabaseNames", "undefined");
 
-
     name = 'storage/indexeddb/factory-basics';
 
-    request = evalAndLog("indexedDB.webkitGetDatabaseNames()");
+    evalAndLog("request = indexedDB.webkitGetDatabaseNames()");
+    shouldBeNull("request.source");
     request.onsuccess = getDatabaseNamesSuccess1;
     request.onerror = unexpectedErrorCallback;
 }
@@ -33,7 +33,8 @@ function getDatabaseNamesSuccess1(evt)
     shouldBeFalse("databaseNames.contains('" + name + "')");
     shouldBeFalse("databaseNames.contains('DATABASE THAT DOES NOT EXIST')");
 
-    request = evalAndLog("indexedDB.open(name)");
+    evalAndLog("request = indexedDB.open(name)");
+    shouldBeNull("request.source");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -55,7 +56,8 @@ function getDatabaseNamesSuccess2(evt)
     shouldBeTrue("databaseNames.contains('" + name + "')");
     shouldBeFalse("databaseNames.contains('DATABASE THAT DOES NOT EXIST')");
 
-    request = evalAndLog("indexedDB.deleteDatabase('" + name + "')");
+    evalAndLog("request = indexedDB.deleteDatabase('" + name + "')");
+    shouldBeNull("request.source");
     request.onsuccess = deleteDatabaseSuccess;
     request.onerror = unexpectedErrorCallback;
 }

@@ -8,6 +8,7 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 PASS 'IDBVersionChangeEvent' in self is true
 PASS 'oldVersion' in document.createEvent('IDBVersionChangeEvent') is true
 PASS 'newVersion' in document.createEvent('IDBVersionChangeEvent') is true
+PASS 'dataLoss' in document.createEvent('IDBVersionChangeEvent') is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test-pre.js');
+    importScripts('../../../resources/js-test.js');
     importScripts('shared.js');
 }
 
@@ -10,6 +10,7 @@ function prepareDatabase()
 {
     db = event.target.result;
     debug("setVersionSuccess():");
+    shouldBeEqualToString("event.dataLoss", "none");
     self.trans = evalAndLog("trans = event.target.transaction");
     shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;

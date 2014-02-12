@@ -25,6 +25,7 @@ Expecting exception from store.add({x: 'value4', y: 'zzz4'}, 'key4')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
+Exception message: Failed to execute 'add' on 'IDBObjectStore': The transaction is not active.
 PASS event.target.error.name is 'AbortError'
 PASS trans.error is null
 PASS firstError is true
@@ -38,10 +39,12 @@ Expecting exception from store.add({x: 'value5', y: 'zzz5'}, 'key5')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
+Exception message: Failed to execute 'add' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from trans.abort()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'abort' on 'IDBTransaction': The transaction has finished.
 PASS successfullyParsed is true
 
 TEST COMPLETE
