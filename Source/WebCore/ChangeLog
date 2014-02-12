@@ -1,3 +1,18 @@
+2014-02-12  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Remove unused method in RenderFlowThread
+        https://bugs.webkit.org/show_bug.cgi?id=128373
+
+        Reviewed by Mihnea Ovidenie.
+
+        After the landing of https://bugs.webkit.org/show_bug.cgi?id=118665, the 
+        RenderFlowThread::computeRegionClippingRect method is obsolete.
+
+        No new tests needed, this patch only removes an unused method.
+
+        * rendering/RenderFlowThread.cpp:
+        * rendering/RenderFlowThread.h:
+
 2014-02-12  Mihai Tica  <mitica@adobe.com>
 
         [CSS Element Blending] Implement the software path of -webkit-blend-mode with Core Graphics.

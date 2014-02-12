@@ -231,8 +231,6 @@ protected:
     void updateRegionsFlowThreadPortionRect(const RenderRegion* = 0);
     bool shouldRepaint(const LayoutRect&) const;
 
-    LayoutRect computeRegionClippingRect(const LayoutPoint&, const LayoutRect&, const LayoutRect&) const;
-
     bool updateAllLayerToRegionMappings();
 
     // Triggers a layers' update if a layer has moved from a region to another since the last update.
