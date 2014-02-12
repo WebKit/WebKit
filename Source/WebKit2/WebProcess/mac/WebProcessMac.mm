@@ -173,6 +173,9 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
     Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
 
+    if (!JSC::Options::useJITWasOverridden())
+        JSC::Options::useJIT() = parameters.shouldEnableJIT;
+
     if (!JSC::Options::useFTLJITWasOverridden())
         JSC::Options::useFTLJIT() = parameters.shouldEnableFTL;
 

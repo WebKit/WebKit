@@ -1,3 +1,21 @@
+2014-02-11  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2, JSC] Add user default to disable the JIT
+        https://bugs.webkit.org/show_bug.cgi?id=128643
+
+        Reviewed by Filip Pizlo.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Frame::rectForSelection shouldn't instantiate FrameSelection

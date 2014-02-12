@@ -131,6 +131,7 @@ struct WebProcessCreationParameters {
 
     bool shouldForceScreenFontSubstitution;
     bool shouldEnableKerningAndLigaturesByDefault;
+    bool shouldEnableJIT;
     bool shouldEnableFTL;
 #endif // PLATFORM(COCOA)
 

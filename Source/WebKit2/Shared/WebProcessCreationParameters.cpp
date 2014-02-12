@@ -40,6 +40,7 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , nsURLCacheDiskCapacity(0)
     , shouldForceScreenFontSubstitution(false)
     , shouldEnableKerningAndLigaturesByDefault(false)
+    , shouldEnableJIT(false)
     , shouldEnableFTL(false)
 #endif
 #if ENABLE(NETWORK_PROCESS)
@@ -109,6 +110,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << uiProcessBundleResourcePathExtensionHandle;
     encoder << shouldForceScreenFontSubstitution;
     encoder << shouldEnableKerningAndLigaturesByDefault;
+    encoder << shouldEnableJIT;
     encoder << shouldEnableFTL;
 #endif
 
@@ -232,6 +234,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.shouldForceScreenFontSubstitution))
         return false;
     if (!decoder.decode(parameters.shouldEnableKerningAndLigaturesByDefault))
+        return false;
+    if (!decoder.decode(parameters.shouldEnableJIT))
         return false;
     if (!decoder.decode(parameters.shouldEnableFTL))
         return false;
