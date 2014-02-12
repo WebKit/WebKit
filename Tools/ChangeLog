@@ -1,3 +1,87 @@
+2014-02-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Basic framework for a modern jsc CLI
+        https://bugs.webkit.org/show_bug.cgi?id=127435
+
+        Rubber stamped by Geoffrey Garen.
+
+        * Scripts/build-jsc:
+        * jsc-cli: Added.
+        * jsc-cli/jsc-cli: Added.
+        * jsc-cli/jsc-cli.xcodeproj: Added.
+        * jsc-cli/jsc-cli.xcodeproj/project.pbxproj: Added.
+        * jsc-cli/jsc-cli/CLIInstance.h: Added.
+        * jsc-cli/jsc-cli/CLIInstance.m: Added.
+        (-[CLIInstance init]):
+        (-[CLIInstance loadFile:]):
+        (-[CLIInstance run]):
+        * jsc-cli/jsc-cli/JSModule.h: Added.
+        * jsc-cli/jsc-cli/JSModule.m: Added.
+        (coreModules):
+        (isCoreModule):
+        (classForModule):
+        (coreModuleFullPath):
+        (resolveModuleAsFile):
+        (resolveModuleAsDirectory):
+        (nodeModulePaths):
+        (resolveAsNodeModule):
+        (+[JSModule resolve:atPath:]):
+        (globalModuleCache):
+        (isCached):
+        (cachedModule):
+        (cacheModule):
+        (+[JSModule require:atPath:]):
+        (+[JSModule require:atPath:inContext:]):
+        (-[JSModule platformObjectInContext:]):
+        (-[JSModule initWithId:filename:context:]):
+        (-[JSModule dealloc]):
+        (-[JSModule didStartLoading]):
+        (-[JSModule didFinishLoading]):
+        (-[JSModule require:]):
+        (-[JSModule exports]):
+        * jsc-cli/jsc-cli/JSRunLoopThread.h: Added.
+        * jsc-cli/jsc-cli/JSRunLoopThread.m: Added.
+        (jsThreadMain):
+        (+[JSRunLoopThread threadMain]):
+        (-[JSRunLoopThread initWithFiles:andContext:]):
+        (-[JSRunLoopThread startRunLoop]):
+        (-[JSRunLoopThread start]):
+        (-[JSRunLoopThread join]):
+        (-[JSRunLoopThread didReceiveInput:]):
+        (-[JSRunLoopThread performCallback:withError:]):
+        (-[JSRunLoopThread performCallback:withArguments:]):
+        (-[JSRunLoopThread didFinishRunLoopInitialization]):
+        * jsc-cli/jsc-cli/ReadEvalPrintLoop.h: Added.
+        * jsc-cli/jsc-cli/ReadEvalPrintLoop.m: Added.
+        (-[ReadEvalPrintLoop initWithJSThread:]):
+        (prompt):
+        (escapeStringForOutput):
+        (-[ReadEvalPrintLoop processNextInput]):
+        (-[ReadEvalPrintLoop run]):
+        * jsc-cli/jsc-cli/RunLoopThread.h: Added.
+        * jsc-cli/jsc-cli/RunLoopThread.m: Added.
+        (+[RunLoopThread threadMain]):
+        (-[RunLoopThread init]):
+        (-[RunLoopThread dealloc]):
+        (-[RunLoopThread didFinishRunLoopInitialization]):
+        (-[RunLoopThread start]):
+        (-[RunLoopThread join]):
+        * jsc-cli/jsc-cli/ScriptInputSource.h: Added.
+        * jsc-cli/jsc-cli/ScriptInputSource.m: Added.
+        (scriptInputSourceScheduleRoutine):
+        (scriptInputSourcePerformRoutine):
+        (scriptInputSourceCancelRoutine):
+        (-[ScriptInputSource initWithContext:]):
+        (-[ScriptInputSource dealloc]):
+        (-[ScriptInputSource addToCurrentRunLoop]):
+        (-[ScriptInputSource removeFromRemoteRunLoop]):
+        (-[ScriptInputSource didReceiveScript:]):
+        (-[ScriptInputSource didReceiveSignal]):
+        (-[ScriptInputSource runScriptRemotely:]):
+        (-[ScriptInputSource finishAsyncCallback:withResult:]):
+        * jsc-cli/jsc-cli/main.m: Added.
+        (main):
+
 2014-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         One more build fix after r163979.
