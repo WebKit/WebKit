@@ -1,5 +1,17 @@
 2014-02-11  Andreas Kling  <akling@apple.com>
 
+        Protect some RenderFlowThread functions.
+        <https://webkit.org/b/128642>
+
+        Make the RenderFlowThread constructor protected and a handful of
+        member functions private.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderFlowThread.h:
+
+2014-02-11  Andreas Kling  <akling@apple.com>
+
         Don't allocate RenderNamedFlowThread's child list separately.
         <https://webkit.org/b/128640>
 

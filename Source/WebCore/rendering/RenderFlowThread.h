@@ -58,17 +58,8 @@ typedef HashMap<RenderLayer*, RenderNamedFlowFragment*> LayerToRegionMap;
 
 class RenderFlowThread: public RenderBlockFlow {
 public:
-    RenderFlowThread(Document&, PassRef<RenderStyle>);
-    virtual ~RenderFlowThread() { };
-    
-    virtual bool isRenderFlowThread() const override final { return true; }
+    virtual ~RenderFlowThread() { }
 
-    virtual void layout() override final;
-
-    // Always create a RenderLayer for the RenderFlowThread so that we 
-    // can easily avoid drawing the children directly.
-    virtual bool requiresLayer() const override final { return true; }
-    
     virtual void removeFlowChildInfo(RenderObject*);
 #ifndef NDEBUG
     bool hasChildInfo(RenderObject* child) const { return child && child->isBox() && m_regionRangeMap.contains(toRenderBox(child)); }
@@ -218,7 +209,17 @@ public:
     
     bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
 
+private:
+    virtual bool isRenderFlowThread() const override final { return true; }
+    virtual void layout() override final;
+
+    // Always create a RenderLayer for the RenderFlowThread so that we
+    // can easily avoid drawing the children directly.
+    virtual bool requiresLayer() const override final { return true; }
+
 protected:
+    RenderFlowThread(Document&, PassRef<RenderStyle>);
+
     virtual const char* renderName() const = 0;
 
     // Overridden by columns/pages to set up an initial logical width of the page width even when
