@@ -1,3 +1,9 @@
+2014-02-11  Zalan Bujtas  <zalan@apple.com>
+
+        transitions/shorthand-border-transitions.html became flaky. Skip it for now.
+
+        * platform/mac/TestExpectations:
+
 2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows rebaselines.
