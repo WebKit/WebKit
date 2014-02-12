@@ -1,3 +1,34 @@
+2014-02-11  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Switch repaint rect from IntRect to LayoutRect to be able to
+        repaint on device pixel boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=128477
+
+        Reviewed by Simon Fraser.
+
+        RenderLayer needs to be able to repaint on device pixel boundaries. RenderView still
+        repaints on integral position.
+
+        No change in functionality.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutRunsAndFloats):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::repaintAfterLayoutIfNeeded):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::clearRepaintRects):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintUsingContainer):
+        (WebCore::RenderObject::repaint):
+        (WebCore::RenderObject::repaintRectangle):
+        * rendering/RenderObject.h:
+
 2014-02-11  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix fix.

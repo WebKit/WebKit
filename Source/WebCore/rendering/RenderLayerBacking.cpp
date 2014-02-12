@@ -2082,41 +2082,42 @@ void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer
 }
 
 // r is in the coordinate space of the layer's render object
-void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r, GraphicsLayer::ShouldClipToLayer shouldClip)
+void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, GraphicsLayer::ShouldClipToLayer shouldClip)
 {
     ASSERT(!paintsIntoCompositedAncestor());
 
+    FloatRect pixelSnappedRectForPainting = pixelSnappedForPainting(r, deviceScaleFactor());
     FrameView& frameView = owningLayer().renderer().view().frameView();
     if (m_isMainFrameRenderViewLayer && frameView.isTrackingRepaints())
         frameView.addTrackedRepaintRect(pixelSnappedIntRect(r));
 
     if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
-        IntRect layerDirtyRect = r;
+        FloatRect layerDirtyRect = pixelSnappedRectForPainting;
         layerDirtyRect.move(-m_graphicsLayer->offsetFromRenderer());
         m_graphicsLayer->setNeedsDisplayInRect(layerDirtyRect, shouldClip);
     }
 
     if (m_foregroundLayer && m_foregroundLayer->drawsContent()) {
-        IntRect layerDirtyRect = r;
+        FloatRect layerDirtyRect = pixelSnappedRectForPainting;
         layerDirtyRect.move(-m_foregroundLayer->offsetFromRenderer());
         m_foregroundLayer->setNeedsDisplayInRect(layerDirtyRect, shouldClip);
     }
 
     // FIXME: need to split out repaints for the background.
     if (m_backgroundLayer && m_backgroundLayer->drawsContent()) {
-        IntRect layerDirtyRect = r;
+        FloatRect layerDirtyRect = pixelSnappedRectForPainting;
         layerDirtyRect.move(-m_backgroundLayer->offsetFromRenderer());
         m_backgroundLayer->setNeedsDisplayInRect(layerDirtyRect, shouldClip);
     }
 
     if (m_maskLayer && m_maskLayer->drawsContent()) {
-        IntRect layerDirtyRect = r;
+        FloatRect layerDirtyRect = pixelSnappedRectForPainting;
         layerDirtyRect.move(-m_maskLayer->offsetFromRenderer());
         m_maskLayer->setNeedsDisplayInRect(layerDirtyRect, shouldClip);
     }
 
     if (m_scrollingContentsLayer && m_scrollingContentsLayer->drawsContent()) {
-        IntRect layerDirtyRect = r;
+        FloatRect layerDirtyRect = pixelSnappedRectForPainting;
         layerDirtyRect.move(-m_scrollingContentsLayer->offsetFromRenderer());
 #if PLATFORM(IOS)
         // Account for the fact that RenderLayerBacking::updateGraphicsLayerGeometry() bakes scrollOffset into offsetFromRenderer on iOS.

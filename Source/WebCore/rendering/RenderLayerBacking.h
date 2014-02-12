@@ -126,7 +126,7 @@ public:
 
     void setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer = GraphicsLayer::ClipToLayer);
     // r is in the coordinate space of the layer's render object
-    void setContentsNeedDisplayInRect(const IntRect&, GraphicsLayer::ShouldClipToLayer = GraphicsLayer::ClipToLayer);
+    void setContentsNeedDisplayInRect(const LayoutRect&, GraphicsLayer::ShouldClipToLayer = GraphicsLayer::ClipToLayer);
 
     // Notification from the renderer that its content changed.
     void contentChanged(ContentChangeType);

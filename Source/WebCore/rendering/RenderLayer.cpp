@@ -421,9 +421,9 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
             if (!renderer().view().printing()) {
                 bool didRepaint = false;
                 if (m_repaintStatus & NeedsFullRepaint) {
-                    renderer().repaintUsingContainer(repaintContainer, pixelSnappedIntRect(oldRepaintRect));
+                    renderer().repaintUsingContainer(repaintContainer, oldRepaintRect);
                     if (m_repaintRect != oldRepaintRect) {
-                        renderer().repaintUsingContainer(repaintContainer, pixelSnappedIntRect(m_repaintRect));
+                        renderer().repaintUsingContainer(repaintContainer, m_repaintRect);
                         didRepaint = true;
                     }
                 } else if (shouldRepaintAfterLayout()) {
@@ -707,8 +707,8 @@ void RenderLayer::clearRepaintRects()
     ASSERT(!m_hasVisibleContent);
     ASSERT(!m_visibleContentStatusDirty);
 
-    m_repaintRect = IntRect();
-    m_outlineBox = IntRect();
+    m_repaintRect = LayoutRect();
+    m_outlineBox = LayoutRect();
 }
 
 void RenderLayer::updateLayerPositionsAfterDocumentScroll()
@@ -2289,7 +2289,7 @@ void RenderLayer::scrollTo(int x, int y)
 #else
     if (requiresRepaint)
 #endif
-        renderer().repaintUsingContainer(repaintContainer, pixelSnappedIntRect(m_repaintRect));
+        renderer().repaintUsingContainer(repaintContainer, m_repaintRect);
 
     // Schedule the scroll DOM event.
     if (Element* element = renderer().element())
@@ -6203,13 +6203,13 @@ void RenderLayer::setBackingNeedsRepaintInRect(const LayoutRect& r, GraphicsLaye
 
         renderer().view().repaintViewRectangle(absRect);
     } else
-        backing()->setContentsNeedDisplayInRect(pixelSnappedIntRect(r), shouldClip);
+        backing()->setContentsNeedDisplayInRect(r, shouldClip);
 }
 
 // Since we're only painting non-composited layers, we know that they all share the same repaintContainer.
 void RenderLayer::repaintIncludingNonCompositingDescendants(RenderLayerModelObject* repaintContainer)
 {
-    renderer().repaintUsingContainer(repaintContainer, pixelSnappedIntRect(renderer().clippedOverflowRectForRepaint(repaintContainer)));
+    renderer().repaintUsingContainer(repaintContainer, renderer().clippedOverflowRectForRepaint(repaintContainer));
 
     for (RenderLayer* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isComposited())

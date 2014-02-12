@@ -1225,7 +1225,7 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
     return repaintContainer;
 }
 
-void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const IntRect& r, bool immediate, bool shouldClipToLayer) const
+void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const LayoutRect& r, bool immediate, bool shouldClipToLayer) const
 {
     if (!repaintContainer) {
         view().repaintViewRectangle(r, immediate);
@@ -1271,7 +1271,7 @@ void RenderObject::repaint(bool immediate) const
         return; // Don't repaint if we're printing.
 
     RenderLayerModelObject* repaintContainer = containerForRepaint();
-    repaintUsingContainer(repaintContainer ? repaintContainer : view, pixelSnappedIntRect(clippedOverflowRectForRepaint(repaintContainer)), immediate);
+    repaintUsingContainer(repaintContainer ? repaintContainer : view, clippedOverflowRectForRepaint(repaintContainer), immediate);
 }
 
 void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate, bool shouldClipToLayer) const
@@ -1292,7 +1292,7 @@ void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate, bool sh
 
     RenderLayerModelObject* repaintContainer = containerForRepaint();
     computeRectForRepaint(repaintContainer, dirtyRect);
-    repaintUsingContainer(repaintContainer ? repaintContainer : view, pixelSnappedIntRect(dirtyRect), immediate, shouldClipToLayer);
+    repaintUsingContainer(repaintContainer ? repaintContainer : view, dirtyRect, immediate, shouldClipToLayer);
 }
 
 void RenderObject::repaintSlowRepaintObject() const
