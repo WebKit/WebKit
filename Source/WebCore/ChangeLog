@@ -1,3 +1,23 @@
+2014-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Position and thickness of underline as text size changes
+        https://bugs.webkit.org/show_bug.cgi?id=16768
+
+        Reviewed by Dean Jackson.
+
+        This patch adopts the iOS codepath for underlines. It also reorganizes
+        drawLineForText to avoid a costly global state save & restore.
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-thickness.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::computeLineBoundsAndAntialiasingModeForText):
+        (WebCore::GraphicsContext::computeLineBoundsForText):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLinesForText):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDecoration):
+
 2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Frame::rectForSelection shouldn't instantiate FrameSelection

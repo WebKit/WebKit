@@ -1346,9 +1346,6 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
     return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
-// FIXME: We should look to consolidate the iOS and non-iOS implementations of
-// computeLineBoundsAndAntialiasingModeForText() and computeLineBoundsForText().
-#if PLATFORM(IOS)
 static FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContext& initialContext, const FloatPoint& point, float width, bool printing, bool& shouldAntialias, Color& color)
 {
     CGContextRef context = initialContext.platformContext();
@@ -1387,7 +1384,6 @@ static FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContext& in
         CGPoint devicePoint = CGPointApplyAffineTransform(point, t);
         CGPoint deviceOrigin = CGPointMake(roundf(devicePoint.x), ceilf(devicePoint.y) + dy);
         origin = CGPointApplyAffineTransform(deviceOrigin, CGAffineTransformInvert(t));
-        thickness /= scale;
     }
     return FloatRect(origin.x, origin.y, width, thickness);
 }
@@ -1398,43 +1394,6 @@ FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& point, flo
     Color dummyColor;
     return computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, dummyBool, dummyColor);
 }
-#else
-static FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContext& context, const FloatPoint& point, float width, bool printing, bool& shouldAntialias)
-{
-    shouldAntialias = true;
-
-    if (width <= 0)
-        return FloatRect();
-
-    // Use a minimum thickness of 0.5 in user space.
-    // See http://bugs.webkit.org/show_bug.cgi?id=4255 for details of why 0.5 is the right minimum thickness to use.
-    FloatRect initialBounds(point, FloatSize(width, std::max(context.strokeThickness(), 0.5f)));
-
-    if (printing || context.paintingDisabled() || !context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale).preservesAxisAlignment())
-        return initialBounds;
-
-    // On screen, use a minimum thickness of 1.0 in user space (later rounded to an integral number in device space).
-    FloatRect adjustedBounds = initialBounds;
-    adjustedBounds.setHeight(std::max(initialBounds.height(), 1.0f));
-
-    // FIXME: This should be done a better way.
-    // We try to round all parameters to integer boundaries in device space. If rounding pixels in device space
-    // makes our thickness more than double, then there must be a shrinking-scale factor and rounding to pixels
-    // in device space will make the underlines too thick.
-    FloatRect lineRect = context.roundToDevicePixels(adjustedBounds, GraphicsContext::RoundAllSides);
-    if (lineRect.height() < initialBounds.height() * 2) {
-        shouldAntialias = false;
-        return lineRect;
-    }
-    return initialBounds;
-}
-
-FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& point, float width, bool printing)
-{
-    bool dummy;
-    return computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, dummy);
-}
-#endif
 
 void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing)
 {
@@ -1444,41 +1403,25 @@ void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool
     if (width <= 0)
         return;
 
-#if !PLATFORM(IOS)
+    Color localStrokeColor(strokeColor());
+
     bool shouldAntialiasLine;
-    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, shouldAntialiasLine);
+    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, shouldAntialiasLine, localStrokeColor);
+    bool fillColorIsNotEqualToStrokeColor = fillColor() != localStrokeColor;
 
-    bool savedShouldAntialias = shouldAntialias();
-    bool restoreAntialiasMode = savedShouldAntialias != shouldAntialiasLine;
-
-    if (restoreAntialiasMode)
-        CGContextSetShouldAntialias(platformContext(), shouldAntialiasLine);
-
-    bool fillColorIsNotEqualToStrokeColor = fillColor() != strokeColor();
-    if (fillColorIsNotEqualToStrokeColor)
-        setCGFillColor(platformContext(), strokeColor(), strokeColorSpace());
-    CGContextFillRect(platformContext(), bounds);
-    if (fillColorIsNotEqualToStrokeColor)
-        setCGFillColor(platformContext(), fillColor(), fillColorSpace());
-    CGContextSetShouldAntialias(platformContext(), savedShouldAntialias);
-
-    if (restoreAntialiasMode)
-        CGContextSetShouldAntialias(platformContext(), true);
-#else
-    CGContextRef context = platformContext();
-    CGContextSaveGState(context);
-
-    Color color(strokeColor());
-    
-    bool shouldAntialiasLine;
-    FloatRect rect = computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, shouldAntialiasLine, color);
-
+#if PLATFORM(IOS)
     if (m_state.shouldUseContextColors)
-        setCGFillColor(context, color, strokeColorSpace());
-    CGContextFillRect(context, rect);
-
-    CGContextRestoreGState(context);
 #endif
+        if (fillColorIsNotEqualToStrokeColor)
+            setCGFillColor(platformContext(), localStrokeColor, strokeColorSpace());
+
+    CGContextFillRect(platformContext(), bounds);
+
+#if PLATFORM(IOS)
+    if (m_state.shouldUseContextColors)
+#endif
+        if (fillColorIsNotEqualToStrokeColor)
+            setCGFillColor(platformContext(), fillColor(), fillColorSpace());
 }
 
 void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray& widths, bool printing)
@@ -1489,9 +1432,11 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
     if (widths.size() <= 0)
         return;
 
-#if !PLATFORM(IOS)
+    Color localStrokeColor(strokeColor());
+
     bool shouldAntialiasLine;
-    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(*this, point, widths.last(), printing, shouldAntialiasLine);
+    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(*this, point, widths.last(), printing, shouldAntialiasLine, localStrokeColor);
+    bool fillColorIsNotEqualToStrokeColor = fillColor() != localStrokeColor;
     
     Vector<CGRect, 4> dashBounds;
     ASSERT(!(widths.size() % 2));
@@ -1499,43 +1444,19 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
     for (size_t i = 0; i < widths.size(); i += 2)
         dashBounds.append(CGRectMake(bounds.x() + widths[i], bounds.y(), widths[i+1] - widths[i], bounds.height()));
 
-    bool savedShouldAntialias = shouldAntialias();
-    bool restoreAntialiasMode = savedShouldAntialias != shouldAntialiasLine;
-
-    if (restoreAntialiasMode)
-        CGContextSetShouldAntialias(platformContext(), shouldAntialiasLine);
-
-    bool fillColorIsNotEqualToStrokeColor = fillColor() != strokeColor();
-    if (fillColorIsNotEqualToStrokeColor)
-        setCGFillColor(platformContext(), strokeColor(), strokeColorSpace());
-    CGContextFillRects(platformContext(), dashBounds.data(), dashBounds.size());
-    if (fillColorIsNotEqualToStrokeColor)
-        setCGFillColor(platformContext(), fillColor(), fillColorSpace());
-    CGContextSetShouldAntialias(platformContext(), savedShouldAntialias);
-
-    if (restoreAntialiasMode)
-        CGContextSetShouldAntialias(platformContext(), true);
-#else
-    CGContextRef context = platformContext();
-    CGContextSaveGState(context);
-
-    Color color(strokeColor());
-    
-    bool shouldAntialiasLine;
-    FloatRect rect = computeLineBoundsAndAntialiasingModeForText(*this, point, widths.last(), printing, shouldAntialiasLine, color);
-    
-    Vector<CGRect, 4> dashBounds;
-    ASSERT(!(widths.size() % 2));
-    dashBounds.reserveInitialCapacity(dashBounds.size() / 2);
-    for (size_t i = 0; i < widths.size(); i += 2)
-        dashBounds.append(CGRectMake(rect.x() + widths[i], rect.y(), widths[i+1] - widths[i], rect.height()));
-
+#if PLATFORM(IOS)
     if (m_state.shouldUseContextColors)
-        setCGFillColor(context, color, strokeColorSpace());
-    CGContextFillRects(context, dashBounds.data(), dashBounds.size());
-
-    CGContextRestoreGState(context);
 #endif
+        if (fillColorIsNotEqualToStrokeColor)
+            setCGFillColor(platformContext(), localStrokeColor, strokeColorSpace());
+
+    CGContextFillRects(platformContext(), dashBounds.data(), dashBounds.size());
+
+#if PLATFORM(IOS)
+    if (m_state.shouldUseContextColors)
+#endif
+        if (fillColorIsNotEqualToStrokeColor)
+            setCGFillColor(platformContext(), fillColor(), fillColorSpace());
 }
 
 void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)

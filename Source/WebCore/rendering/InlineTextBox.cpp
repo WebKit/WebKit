@@ -1059,9 +1059,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
     
     // Use a special function for underlines to get the positioning exactly right.
     bool isPrinting = renderer().document().printing();
-#if !PLATFORM(IOS)
-    context.setStrokeThickness(textDecorationThickness);
-#else
+
     // On iOS we want to draw crisp decorations. The function drawLineForText takes the context's
     // strokeThickness and renders that at device pixel scale (i.e. a strokeThickness of 1 will
     // produce a 1 device pixel line, so thinner on retina than non-retina). We will also scale
@@ -1075,7 +1073,6 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
     float fontSizeScaling = renderer().style().fontSize() / textDecorationBaseFontSize;
     float strokeThickness = roundf(textDecorationThickness * fontSizeScaling * pageScale);
     context.setStrokeThickness(strokeThickness);
-#endif
 
     bool linesAreOpaque = !isPrinting && (!(decoration & TextDecorationUnderline) || underline.alpha() == 255) && (!(decoration & TextDecorationOverline) || overline.alpha() == 255) && (!(decoration & TextDecorationLineThrough) || linethrough.alpha() == 255);
 
