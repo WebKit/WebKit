@@ -813,6 +813,7 @@ webkit.org/b/84338 editing/pasteboard/copy-element-with-conflicting-background-c
 webkit.org/b/84338 editing/pasteboard/copy-in-password-field.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-null-characters.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-bidi.html [ Failure ]
+webkit.org/b/84338 editing/pasteboard/copy-paste-converts-sticky-and-fixed.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-first-line-in-textarea.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-float.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-pre-line-content.html [ Failure ]
@@ -1809,6 +1810,7 @@ webkit.org/b/127731 plugins/embed-prefers-plugins-for-images.html [ Failure ]
 
 # Subpixel rendering: borders are reporting float values.
 webkit.org/b/128061 css1/units/length_units.html [ Failure ]
+webkit.org/b/128061 fast/block/float/016.html [ Failure ]
 webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
 webkit.org/b/128061 fast/multicol/span/anonymous-style-inheritance.html [ Failure ]
 webkit.org/b/128061 fast/repaint/repaint-during-scroll-with-zoom.html [ Failure ]
@@ -1824,7 +1826,28 @@ webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-background-image-tiled.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-background-images.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
+webkit.org/b/128061 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
 webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failure ]
 # End of subpixel failures.
+
+webkit.org/b/128663 accessibility/roles-computedRoleString.html [ Failure ]
+
+webkit.org/b/128664 fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure ]
+
+webkit.org/b/128665 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
+
+webkit.org/b/128666 fast/regions/overflow-nested-regions.html [ ImageOnlyFailure ]
+
+webkit.org/b/128667 fast/regions/repaint/hover-border-radius.html [ Failure ]
+
+webkit.org/b/128668 fast/sub-pixel/sub-pixel-root-layer.html [ ImageOnlyFailure ]
+
+webkit.org/b/128669 fast/sub-pixel/zoomed-em-border.html [ ImageOnlyFailure ]
+
+# Failing after r163562
+webkit.org/b/128670 fast/dom/webtiming-document-open.html [ Failure ]
+webkit.org/b/128670 fast/dom/webtiming-navigate-within-document.html [ Failure ]
+webkit.org/b/128670 fast/forms/form-hides-table.html [ Failure ]
+webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]

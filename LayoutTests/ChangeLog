@@ -1,3 +1,13 @@
+2014-02-12  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gatdening
+
+        Add test expectations for failing tests.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/parser/xhtml-alternate-entities-expected.png: Rebaseline after r163475.
+        * platform/efl/fast/parser/xhtml-alternate-entities-expected.txt: Ditto.
+
 2014-02-11  Alexey Proskuryakov  <ap@apple.com>
 
         Undo an accidental change.
