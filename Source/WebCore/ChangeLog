@@ -1,3 +1,21 @@
+2014-02-11  Andreas Kling  <akling@apple.com>
+
+        Don't allocate RenderNamedFlowThread's child list separately.
+        <https://webkit.org/b/128640>
+
+        Since we always create the flow-thread child list, there's no reason
+        to put it in a separate heap allocation. Also remove the typedef and
+        use auto instead.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::nextRendererForNode):
+        (WebCore::RenderNamedFlowThread::addFlowChild):
+        (WebCore::RenderNamedFlowThread::removeFlowChild):
+        * rendering/RenderNamedFlowThread.h:
+
 2014-02-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make GraphicsLayerClient::paintContents's clip rect subpixel based.

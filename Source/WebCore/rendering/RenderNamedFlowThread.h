@@ -56,9 +56,9 @@ public:
 
     void addFlowChild(RenderObject* newChild);
     void removeFlowChild(RenderObject*);
-    bool hasChildren() const { return !m_flowThreadChildList->isEmpty(); }
+    bool hasChildren() const { return !m_flowThreadChildList.isEmpty(); }
 #ifndef NDEBUG
-    bool hasChild(RenderObject* child) const { return m_flowThreadChildList->contains(child); }
+    bool hasChild(RenderObject* child) const { return m_flowThreadChildList.contains(child); }
 #endif
 
     void pushDependencies(RenderNamedFlowThreadList&);
@@ -129,8 +129,7 @@ private:
     RenderNamedFlowThreadCountedSet m_layoutBeforeThreadsSet;
 
     // Holds the sorted children of a named flow. This is the only way we can get the ordering right.
-    typedef ListHashSet<RenderObject*> FlowThreadChildList;
-    OwnPtr<FlowThreadChildList> m_flowThreadChildList;
+    ListHashSet<RenderObject*> m_flowThreadChildList;
 
     NamedFlowContentElements m_contentElements;
 

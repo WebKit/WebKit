@@ -47,7 +47,6 @@ namespace WebCore {
 
 RenderNamedFlowThread::RenderNamedFlowThread(Document& document, PassRef<RenderStyle> style, PassRef<WebKitNamedFlow> namedFlow)
     : RenderFlowThread(document, std::move(style))
-    , m_flowThreadChildList(adoptPtr(new FlowThreadChildList()))
     , m_overset(true)
     , m_hasRegionsWithStyling(false)
     , m_namedFlow(std::move(namedFlow))
@@ -100,8 +99,7 @@ void RenderNamedFlowThread::updateWritingMode()
 
 RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
 {
-    const FlowThreadChildList& childList = *(m_flowThreadChildList.get());
-    for (auto& child : childList) {
+    for (auto& child : m_flowThreadChildList) {
         ASSERT(child->node());
         unsigned short position = node->compareDocumentPosition(child->node());
         if (position & Node::DOCUMENT_POSITION_FOLLOWING)
@@ -126,14 +124,14 @@ void RenderNamedFlowThread::addFlowChild(RenderObject* newChild)
 
     RenderObject* beforeChild = nextRendererForNode(childNode);
     if (beforeChild)
-        m_flowThreadChildList->insertBefore(beforeChild, newChild);
+        m_flowThreadChildList.insertBefore(beforeChild, newChild);
     else
-        m_flowThreadChildList->add(newChild);
+        m_flowThreadChildList.add(newChild);
 }
 
 void RenderNamedFlowThread::removeFlowChild(RenderObject* child)
 {
-    m_flowThreadChildList->remove(child);
+    m_flowThreadChildList.remove(child);
 }
 
 bool RenderNamedFlowThread::dependsOn(RenderNamedFlowThread* otherRenderFlowThread) const
