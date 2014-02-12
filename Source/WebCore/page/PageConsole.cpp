@@ -194,6 +194,9 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
         return;
 
     printSourceURLAndPosition(url, lineNumber, columnNumber);
+
+    printf(": ");
+
     printMessageSourceAndLevelPrefix(source, level);
 
     printf(" %s\n", message.utf8().data());

@@ -1,3 +1,15 @@
+2014-02-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add a missing ": " between the URL and exception in STDOUT logs.
+
+        https://bugs.webkit.org/show_bug.cgi?id=128689
+
+        Reviewed by Joseph Pecoraro.
+
+        * page/PageConsole.cpp:
+        (WebCore::PageConsole::addMessage): Print ": " after calling
+        printSourceURLAndPosition now that it does not print it for us.
+
 2014-02-12  Enrica Casucci  <enrica@apple.com>
 
         WK2: coordinate mapping for frames does not work when the page is scrolled.
