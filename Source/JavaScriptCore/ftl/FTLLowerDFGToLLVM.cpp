@@ -3621,7 +3621,7 @@ private:
     void compareEqObjectOrOtherToObject(Edge leftChild, Edge rightChild)
     {
         LValue rightCell = lowCell(rightChild);
-        LValue leftValue = lowJSValue(leftChild);
+        LValue leftValue = lowJSValue(leftChild, ManualOperandSpeculation);
         
         speculateTruthyObject(rightChild, rightCell, SpecObject);
         

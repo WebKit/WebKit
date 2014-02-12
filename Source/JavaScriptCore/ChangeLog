@@ -1,5 +1,17 @@
 2014-02-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, trivial change to silence FTL assertions
+
+        Normally, lowJSValue() should only be used for UntypedUse only. Here we are using it
+        on ObjectOrOtherUse because we execute the speculation ourselves. The way you're
+        supposed to do this is by passing ManualOperandSpeculation to tell lowJSValue() not
+        to assert.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compareEqObjectOrOtherToObject):
+
+2014-02-11  Filip Pizlo  <fpizlo@apple.com>
+
         Use LLVM's dead store elimination
         https://bugs.webkit.org/show_bug.cgi?id=128638
 
