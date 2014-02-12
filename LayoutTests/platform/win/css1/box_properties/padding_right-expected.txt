@@ -46,12 +46,12 @@ layer at (0,0) size 785x1153
           text run at (425,18) width 264: "The text has been right-aligned in order to"
           text run at (460,36) width 229: "make the right padding easier to see."
       RenderBlock {P} at (0,399) size 769x54 [bgcolor=#00FFFF]
-        RenderText {#text} at (19,0) size 574x54
-          text run at (19,0) width 557: "This element should have a right padding of 25%, which is calculated with respect to the"
-          text run at (9,18) width 180: "width of the parent element. "
-          text run at (189,18) width 387: "Both the content background and the padding should be aqua"
-          text run at (2,36) width 77: "(light blue). "
-          text run at (79,36) width 497: "The text has been right-aligned in order to make the right padding easier to see."
+        RenderText {#text} at (19,0) size 575x54
+          text run at (19,0) width 558: "This element should have a right padding of 25%, which is calculated with respect to the"
+          text run at (9,18) width 181: "width of the parent element. "
+          text run at (189,18) width 388: "Both the content background and the padding should be aqua"
+          text run at (2,36) width 78: "(light blue). "
+          text run at (79,36) width 498: "The text has been right-aligned in order to make the right padding easier to see."
       RenderBlock {UL} at (0,469) size 769x72 [bgcolor=#808080]
         RenderListItem {LI} at (40,0) size 704x36
           RenderListMarker at (-17,0) size 7x18: bullet
@@ -107,13 +107,13 @@ layer at (0,0) size 785x1153
                   text run at (419,18) width 248: "The text has been right-aligned in order"
                   text run at (422,36) width 245: "to make the right padding easier to see."
               RenderBlock {P} at (4,248) size 747x72 [bgcolor=#00FFFF]
-                RenderText {#text} at (3,0) size 557x72
-                  text run at (3,0) width 557: "This element should have a right padding of 25%, which is calculated with respect to the"
-                  text run at (27,18) width 180: "width of the parent element. "
-                  text run at (207,18) width 353: "Both the content background and the padding should be"
-                  text run at (36,36) width 111: "aqua (light blue). "
-                  text run at (147,36) width 413: "The text has been right-aligned in order to make the right padding"
-                  text run at (480,54) width 80: "easier to see."
+                RenderText {#text} at (3,0) size 558x72
+                  text run at (3,0) width 558: "This element should have a right padding of 25%, which is calculated with respect to the"
+                  text run at (27,18) width 181: "width of the parent element. "
+                  text run at (207,18) width 354: "Both the content background and the padding should be"
+                  text run at (36,36) width 112: "aqua (light blue). "
+                  text run at (147,36) width 414: "The text has been right-aligned in order to make the right padding"
+                  text run at (480,54) width 81: "easier to see."
               RenderBlock {UL} at (4,336) size 747x72 [bgcolor=#808080]
                 RenderListItem {LI} at (40,0) size 682x36
                   RenderListMarker at (-17,0) size 7x18: bullet

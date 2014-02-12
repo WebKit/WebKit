@@ -40,11 +40,11 @@ layer at (0,0) size 785x991
           text run at (666,0) width 54: "Both the"
           text run at (80,18) width 406: "content background and the padding should be aqua (light blue)."
       RenderBlock {P} at (0,345) size 769x54 [bgcolor=#00FFFF]
-        RenderText {#text} at (192,0) size 567x54
-          text run at (192,0) width 548: "This element should have a left padding of 25%, which is calculated with respect to the"
-          text run at (192,18) width 180: "width of the parent element. "
-          text run at (372,18) width 387: "Both the content background and the padding should be aqua"
-          text run at (192,36) width 73: "(light blue)."
+        RenderText {#text} at (192,0) size 568x54
+          text run at (192,0) width 549: "This element should have a left padding of 25%, which is calculated with respect to the"
+          text run at (192,18) width 181: "width of the parent element. "
+          text run at (372,18) width 388: "Both the content background and the padding should be aqua"
+          text run at (192,36) width 74: "(light blue)."
       RenderBlock {UL} at (0,415) size 769x72 [bgcolor=#808080]
         RenderListItem {LI} at (25,0) size 744x18
           RenderListMarker at (-17,0) size 7x18: bullet
@@ -92,11 +92,11 @@ layer at (0,0) size 785x991
                   text run at (666,0) width 54: "Both the"
                   text run at (80,18) width 406: "content background and the padding should be aqua (light blue)."
               RenderBlock {P} at (4,194) size 747x54 [bgcolor=#00FFFF]
-                RenderText {#text} at (187,0) size 548x54
-                  text run at (187,0) width 548: "This element should have a left padding of 25%, which is calculated with respect to the"
-                  text run at (187,18) width 180: "width of the parent element. "
-                  text run at (367,18) width 353: "Both the content background and the padding should be"
-                  text run at (187,36) width 107: "aqua (light blue)."
+                RenderText {#text} at (186,0) size 549x54
+                  text run at (186,0) width 549: "This element should have a left padding of 25%, which is calculated with respect to the"
+                  text run at (186,18) width 181: "width of the parent element. "
+                  text run at (366,18) width 354: "Both the content background and the padding should be"
+                  text run at (186,36) width 108: "aqua (light blue)."
               RenderBlock {UL} at (4,264) size 747x72 [bgcolor=#808080]
                 RenderListItem {LI} at (25,0) size 722x18
                   RenderListMarker at (-17,0) size 7x18: bullet

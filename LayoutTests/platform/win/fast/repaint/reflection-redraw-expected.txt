@@ -7,28 +7,28 @@ layer at (0,0) size 800x8
 layer at (293,130) size 150x100
   RenderBlock (positioned) {DIV} at (285,10) size 150x100 [bgcolor=#808080] [border: (1px solid #000000)]
     RenderBlock {P} at (11,27) size 128x54 [color=#008000]
-      RenderText {#text} at (12,0) size 126x54
+      RenderText {#text} at (12,0) size 125x54
         text run at (12,0) width 104: "The color of this"
         text run at (1,18) width 126: "text in the reflection"
         text run at (14,36) width 100: "should be green"
 layer at (218,240) size 150x100
   RenderBlock (positioned) {DIV} at (210,120) size 150x100 [bgcolor=#808080] [border: (1px solid #000000)]
     RenderBlock {P} at (11,27) size 128x54 [color=#008000]
-      RenderText {#text} at (12,0) size 126x54
+      RenderText {#text} at (12,0) size 125x54
         text run at (12,0) width 104: "The color of this"
         text run at (1,18) width 126: "text in the reflection"
         text run at (14,36) width 100: "should be green"
 layer at (368,240) size 150x100
   RenderBlock (positioned) {DIV} at (360,120) size 150x100 [bgcolor=#808080] [border: (1px solid #000000)]
     RenderBlock {P} at (11,27) size 128x54 [color=#008000]
-      RenderText {#text} at (12,0) size 126x54
+      RenderText {#text} at (12,0) size 125x54
         text run at (12,0) width 104: "The color of this"
         text run at (1,18) width 126: "text in the reflection"
         text run at (14,36) width 100: "should be green"
 layer at (293,350) size 150x100
   RenderBlock (positioned) {DIV} at (285,230) size 150x100 [bgcolor=#808080] [border: (1px solid #000000)]
     RenderBlock {P} at (11,27) size 128x54 [color=#008000]
-      RenderText {#text} at (12,0) size 126x54
+      RenderText {#text} at (12,0) size 125x54
         text run at (12,0) width 104: "The color of this"
         text run at (1,18) width 126: "text in the reflection"
         text run at (14,36) width 100: "should be green"

@@ -91,10 +91,10 @@ layer at (0,0) size 785x2487
           text run at (0,18) width 365: "the one above it, since margins do not collapse on floating"
           text run at (0,36) width 59: "elements."
       RenderBlock {P} at (0,1154) size 769x55
-        RenderText {#text} at (385,0) size 375x54
-          text run at (385,0) width 375: "There should be one centimeter between this paragraph and"
-          text run at (385,18) width 356: "the (non-floating) one above it, since the float should not"
-          text run at (385,36) width 181: "effect the paragraph spacing."
+        RenderText {#text} at (384,0) size 376x54
+          text run at (384,0) width 376: "There should be one centimeter between this paragraph and"
+          text run at (384,18) width 357: "the (non-floating) one above it, since the float should not"
+          text run at (384,36) width 182: "effect the paragraph spacing."
       RenderBlock {P} at (0,1262) size 769x74
         RenderText {#text} at (0,0) size 750x36
           text run at (0,0) width 555: "There should be two centimeters of padding between this paragraph and the one below. "
@@ -158,10 +158,10 @@ layer at (0,0) size 785x2487
                   text run at (0,18) width 340: "and the one above it, since margins do not collapse on"
                   text run at (0,36) width 111: "floating elements."
               RenderBlock {P} at (4,793) size 747x55
-                RenderText {#text} at (374,0) size 359x54
-                  text run at (374,0) width 348: "There should be one centimeter between this paragraph"
-                  text run at (374,18) width 359: "and the (non-floating) one above it, since the float should"
-                  text run at (374,36) width 205: "not effect the paragraph spacing."
+                RenderText {#text} at (373,0) size 360x54
+                  text run at (373,0) width 349: "There should be one centimeter between this paragraph"
+                  text run at (373,18) width 360: "and the (non-floating) one above it, since the float should"
+                  text run at (373,36) width 206: "not effect the paragraph spacing."
               RenderBlock {P} at (4,901) size 747x74
                 RenderText {#text} at (0,0) size 723x36
                   text run at (0,0) width 555: "There should be two centimeters of padding between this paragraph and the one below. "

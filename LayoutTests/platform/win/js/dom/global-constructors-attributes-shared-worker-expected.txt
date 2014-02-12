@@ -29,6 +29,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedWorkerGlobalScope')
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedWorkerGlobalScope').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedWorkerGlobalScope').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedWorkerGlobalScope').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').value is URL
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WebSocket').value is WebSocket
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WebSocket').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WebSocket').hasOwnProperty('set') is false

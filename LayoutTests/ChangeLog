@@ -1,3 +1,36 @@
+2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows rebaselines.
+
+        * platform/win/css1/box_properties/margin_right-expected.txt:
+        * platform/win/css1/box_properties/padding-expected.txt:
+        * platform/win/css1/box_properties/padding_left-expected.txt:
+        * platform/win/css1/box_properties/padding_right-expected.txt:
+        * platform/win/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/win/css2.1/t0804-c5507-padn-r-00-c-ag-expected.txt:
+        * platform/win/css2.1/t0804-c5509-padn-l-00-b-ag-expected.txt:
+        * platform/win/css2.1/t0804-c5510-padn-00-b-ag-expected.txt:
+        * platform/win/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/win/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/win/fast/css/empty-pseudo-class-expected.txt:
+        * platform/win/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/win/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/win/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/win/fast/repaint/reflection-redraw-expected.txt:
+        * platform/win/fast/table/dynamic-caption-add-remove-before-child-expected.txt:
+        * platform/win/fast/table/multiple-captions-display-expected.txt:
+        * platform/win/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-shared-worker-expected.txt:
+        * platform/win/mathml: Added.
+        * platform/win/mathml/presentation: Added.
+        * platform/win/mathml/presentation/menclose-notation-default-longdiv-expected.txt: Added.
+        * platform/win/tables/mozilla/marvin/body_col-expected.txt:
+        * platform/win/tables/mozilla/marvin/x_th_valign_baseline-expected.txt:
+        * platform/win/tables/mozilla/other/body_col-expected.txt:
+
 2014-02-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r163923.
