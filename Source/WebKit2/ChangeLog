@@ -1,3 +1,12 @@
+2014-02-12  Anders Carlsson  <andersca@apple.com>
+
+        WKProcessClass.h and WKNavigationResponse.h should be public headers
+        https://bugs.webkit.org/show_bug.cgi?id=128683
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-12  Alexey Proskuryakov  <ap@apple.com>
 
         Wrap WebCrypto keys in SerializedScriptValue
