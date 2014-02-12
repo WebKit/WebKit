@@ -1,3 +1,15 @@
+2014-02-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Cleanup the code added for https://bugs.webkit.org/show_bug.cgi?id=128125.
+
+        Not reviewed.
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::restrictionName): Don't need a "break" after a "return" in a case statement.
+        * platform/audio/MediaSession.cpp:
+        (WebCore::stateName): Ditto.
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+
 2014-02-12  Andreas Kling  <akling@apple.com>
 
         RenderNamedFlowThread should only support RenderElement children.

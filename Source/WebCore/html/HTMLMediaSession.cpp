@@ -45,7 +45,7 @@ namespace WebCore {
 #if !LOG_DISABLED
 static const char* restrictionName(HTMLMediaSession::BehaviorRestrictions restriction)
 {
-#define CASE(_restriction) case HTMLMediaSession::_restriction: return #_restriction; break;
+#define CASE(restriction) case HTMLMediaSession::restriction: return #restriction
     switch (restriction) {
     CASE(NoRestrictions);
     CASE(RequireUserGestureForLoad);

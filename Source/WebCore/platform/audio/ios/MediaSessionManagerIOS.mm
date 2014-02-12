@@ -64,9 +64,9 @@ using namespace WebCore;
 
 - (id)initWithCallback:(MediaSessionManageriOS*)callback;
 - (void)clearCallback;
-- (void)interruption:(NSNotification*)notification;
-- (void)applicationWillEnterForeground:(NSNotification*)notification;
-- (void)applicationWillResignActive:(NSNotification*)notification;
+- (void)interruption:(NSNotification *)notification;
+- (void)applicationWillEnterForeground:(NSNotification *)notification;
+- (void)applicationWillResignActive:(NSNotification *)notification;
 @end
 
 namespace WebCore {

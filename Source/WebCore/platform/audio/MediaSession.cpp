@@ -35,7 +35,7 @@ namespace WebCore {
 #if !LOG_DISABLED
 static const char* stateName(MediaSession::State state)
 {
-#define CASE(_state) case MediaSession::_state: return #_state; break;
+#define CASE(state) case MediaSession::state: return #state
     switch (state) {
     CASE(Idle);
     CASE(Playing);
