@@ -85,6 +85,7 @@
 #include "Page.h"
 #include "PageActivityAssertionToken.h"
 #include "PageCache.h"
+#include "PageThrottler.h"
 #include "PageTransitionEvent.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
@@ -1142,7 +1143,7 @@ void FrameLoader::completed()
 void FrameLoader::started()
 {
     if (m_frame.page())
-        m_activityAssertion = m_frame.page()->createActivityToken();
+        m_activityAssertion = m_frame.page()->pageThrottler().pageLoadActivityToken();
     for (Frame* frame = &m_frame; frame; frame = frame->tree().parent())
         frame->loader().m_isComplete = false;
 }

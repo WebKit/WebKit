@@ -499,11 +499,6 @@ double Settings::defaultDOMTimerAlignmentInterval()
     return gDefaultDOMTimerAlignmentInterval;
 }
 
-void Settings::setDOMTimerAlignmentInterval(double interval)
-{
-    m_page->setTimerAlignmentInterval(interval);
-}
-
 double Settings::domTimerAlignmentInterval() const
 {
     return m_page->timerAlignmentInterval();
@@ -693,7 +688,7 @@ void Settings::setHiddenPageDOMTimerThrottlingEnabled(bool flag)
     if (m_hiddenPageDOMTimerThrottlingEnabled == flag)
         return;
     m_hiddenPageDOMTimerThrottlingEnabled = flag;
-    m_page->hiddenPageDOMTimerThrottlingStateChanged();
+    m_page->pageThrottler().hiddenPageDOMTimerThrottlingStateChanged();
 }
 #endif
 

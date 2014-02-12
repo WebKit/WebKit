@@ -169,7 +169,6 @@ public:
     static void setDefaultDOMTimerAlignmentInterval(double);
     static double defaultDOMTimerAlignmentInterval();
 
-    void setDOMTimerAlignmentInterval(double);
     double domTimerAlignmentInterval() const;
 
     void setLayoutInterval(std::chrono::milliseconds);

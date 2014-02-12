@@ -172,6 +172,7 @@ Page::Page(PageClients& pageClients)
     , m_viewMode(ViewModeWindowed)
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
     , m_minimumTimerInterval(Settings::defaultMinDOMTimerInterval())
+    , m_timerThrottlingEnabled(false)
     , m_timerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval())
     , m_isEditable(false)
     , m_isPrerender(false)
@@ -185,7 +186,7 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_alternativeTextClient(pageClients.alternativeTextClient)
     , m_scriptedAnimationsSuspended(false)
-    , m_pageThrottler(std::make_unique<PageThrottler>(*this))
+    , m_pageThrottler(*this, PageInitialViewState)
     , m_console(std::make_unique<PageConsole>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
     , m_inspectorDebuggable(std::make_unique<PageDebuggable>(*this))
@@ -847,7 +848,10 @@ void Page::resumeScriptedAnimations()
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
 {
-    m_pageThrottler->setIsVisuallyIdle(isVisuallyIdle);
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (frame->document())
+            frame->document()->scriptedAnimationControllerSetThrottled(isVisuallyIdle);
+    }
 }
 
 void Page::userStyleSheetLocationChanged()
@@ -1040,21 +1044,23 @@ double Page::minimumTimerInterval() const
     return m_minimumTimerInterval;
 }
 
-void Page::setTimerAlignmentInterval(double interval)
+void Page::setTimerThrottlingEnabled(bool enabled)
 {
-    if (interval == m_timerAlignmentInterval)
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    if (!m_settings->hiddenPageDOMTimerThrottlingEnabled())
+        enabled = false;
+#endif
+
+    if (enabled == m_timerThrottlingEnabled)
         return;
 
-    m_timerAlignmentInterval = interval;
+    m_timerThrottlingEnabled = enabled;
+    m_timerAlignmentInterval = enabled ? Settings::hiddenPageDOMTimerAlignmentInterval() : Settings::defaultDOMTimerAlignmentInterval();
+    
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNextWithWrap(false)) {
         if (frame->document())
             frame->document()->didChangeTimerAlignmentInterval();
     }
-}
-
-double Page::timerAlignmentInterval() const
-{
-    return m_timerAlignmentInterval;
 }
 
 void Page::dnsPrefetchingStateChanged()
@@ -1123,22 +1129,6 @@ void Page::checkSubframeCountConsistency() const
 }
 #endif
 
-void Page::throttleTimers()
-{
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    if (m_settings->hiddenPageDOMTimerThrottlingEnabled())
-        setTimerAlignmentInterval(Settings::hiddenPageDOMTimerAlignmentInterval());
-#endif
-}
-
-void Page::unthrottleTimers()
-{
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    if (m_settings->hiddenPageDOMTimerThrottlingEnabled())
-        setTimerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval());
-#endif
-}
-
 void Page::resumeAnimatingImages()
 {
     // Drawing models which cache painted content while out-of-window (WebKit2's composited drawing areas, etc.)
@@ -1158,6 +1148,7 @@ void Page::setViewState(ViewState::Flags viewState)
 
     m_viewState = viewState;
     m_focusController->setViewState(viewState);
+    m_pageThrottler.setViewState(viewState);
 
     if (changed & ViewState::IsVisible)
         setIsVisibleInternal(viewState & ViewState::IsVisible);
@@ -1190,8 +1181,6 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (FrameView* view = mainFrame().view())
             view->show();
 
-        unthrottleTimers();
-
 #if ENABLE(PAGE_VISIBILITY_API)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame().animation().resumeAnimations();
@@ -1210,9 +1199,6 @@ void Page::setIsVisibleInternal(bool isVisible)
 #endif
 
     if (!isVisible) {
-        if (m_pageThrottler->shouldThrottleTimers())
-            throttleTimers();
-
 #if ENABLE(PAGE_VISIBILITY_API)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame().animation().suspendAnimations();
@@ -1478,24 +1464,6 @@ void Page::resetSeenMediaEngines()
 {
     m_seenMediaEngines.clear();
 }
-
-std::unique_ptr<PageActivityAssertionToken> Page::createActivityToken()
-{
-    return m_pageThrottler->createActivityToken();
-}
-
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-void Page::hiddenPageDOMTimerThrottlingStateChanged()
-{
-    if (m_settings->hiddenPageDOMTimerThrottlingEnabled()) {
-#if ENABLE(PAGE_VISIBILITY_API)
-        if (m_pageThrottler->shouldThrottleTimers())
-            setTimerAlignmentInterval(Settings::hiddenPageDOMTimerAlignmentInterval());
-#endif
-    } else
-        setTimerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval());
-}
-#endif
 
 #if (ENABLE_PAGE_VISIBILITY_API)
 void Page::hiddenPageCSSAnimationSuspensionStateChanged()

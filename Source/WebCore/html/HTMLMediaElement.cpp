@@ -63,6 +63,7 @@
 #include "MediaSessionManager.h"
 #include "PageActivityAssertionToken.h"
 #include "PageGroup.h"
+#include "PageThrottler.h"
 #include "ProgressTracker.h"
 #include "RenderLayerCompositor.h"
 #include "RenderVideo.h"
@@ -4286,7 +4287,7 @@ void HTMLMediaElement::updatePlayState()
         if (hasMediaControls())
             mediaControls()->playbackStarted();
         if (document().page())
-            m_activityToken = document().page()->createActivityToken();
+            m_activityToken = document().page()->pageThrottler().mediaActivityToken();
 
         startPlaybackProgressTimer();
         m_playing = true;

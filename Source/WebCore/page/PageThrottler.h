@@ -29,6 +29,7 @@
 #include "Timer.h"
 
 #include "UserActivity.h"
+#include "ViewState.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -40,18 +41,17 @@ class PageActivityAssertionToken;
 
 class PageThrottler {
 public:
-    PageThrottler(Page&);
+    PageThrottler(Page&, ViewState::Flags);
     ~PageThrottler();
 
-    std::unique_ptr<PageActivityAssertionToken> createActivityToken();
-
-    bool shouldThrottleAnimations() const { return m_throttleState != PageNotThrottledState; }
-    bool shouldThrottleTimers() const { return m_throttleState != PageNotThrottledState; }
-
-    void setIsVisuallyIdle(bool);
+    void setViewState(ViewState::Flags);
 
     void didReceiveUserInput() { reportInterestingEvent(); }
     void pluginDidEvaluate() { reportInterestingEvent(); }
+    std::unique_ptr<PageActivityAssertionToken> mediaActivityToken();
+    std::unique_ptr<PageActivityAssertionToken> pageLoadActivityToken();
+
+    void hiddenPageDOMTimerThrottlingStateChanged();
 
 private:
     enum PageThrottleState {
@@ -73,7 +73,11 @@ private:
     void throttlePage();
     void unthrottlePage();
 
+    void setIsVisuallyIdle(bool);
+    void setIsVisible(bool);
+
     Page& m_page;
+    ViewState::Flags m_viewState;
     PageThrottleState m_throttleState;
     Timer<PageThrottler> m_throttleHysteresisTimer;
     HashSet<PageActivityAssertionToken*> m_activityTokens;

@@ -26,6 +26,7 @@
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
 #include "LayoutRect.h"
+#include "PageThrottler.h"
 #include "PageVisibilityState.h"
 #include "Pagination.h"
 #include "PlatformScreen.h"
@@ -390,14 +391,10 @@ public:
     void sawMediaEngine(const String& engineName);
     void resetSeenMediaEngines();
 
-    PageThrottler& pageThrottler() { return *m_pageThrottler; }
-    std::unique_ptr<PageActivityAssertionToken> createActivityToken();
+    PageThrottler& pageThrottler() { return m_pageThrottler; }
 
     PageConsole& console() { return *m_console; }
 
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    void hiddenPageDOMTimerThrottlingStateChanged();
-#endif
 #if ENABLE(PAGE_VISIBILITY_API)
     void hiddenPageCSSAnimationSuspensionStateChanged();
 #endif
@@ -438,13 +435,11 @@ private:
     void setMinimumTimerInterval(double);
     double minimumTimerInterval() const;
 
-    void setTimerAlignmentInterval(double);
-    double timerAlignmentInterval() const;
+    double timerAlignmentInterval() const { return m_timerAlignmentInterval; }
 
     Vector<Ref<PluginViewBase>> pluginViews();
 
-    void throttleTimers();
-    void unthrottleTimers();
+    void setTimerThrottlingEnabled(bool);
 
     const std::unique_ptr<Chrome> m_chrome;
     const std::unique_ptr<DragCaretController> m_dragCaretController;
@@ -522,6 +517,7 @@ private:
 
     double m_minimumTimerInterval;
 
+    bool m_timerThrottlingEnabled;
     double m_timerAlignmentInterval;
 
     bool m_isEditable;
@@ -544,7 +540,7 @@ private:
     AlternativeTextClient* m_alternativeTextClient;
 
     bool m_scriptedAnimationsSuspended;
-    const std::unique_ptr<PageThrottler> m_pageThrottler;
+    PageThrottler m_pageThrottler;
     const std::unique_ptr<PageConsole> m_console;
 
 #if ENABLE(REMOTE_INSPECTOR)

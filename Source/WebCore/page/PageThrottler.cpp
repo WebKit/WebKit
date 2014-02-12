@@ -37,19 +37,22 @@ namespace WebCore {
 
 static const double kThrottleHysteresisSeconds = 2.0;
 
-PageThrottler::PageThrottler(Page& page)
+PageThrottler::PageThrottler(Page& page, ViewState::Flags viewState)
     : m_page(page)
+    , m_viewState(viewState)
     , m_throttleState(PageNotThrottledState)
     , m_throttleHysteresisTimer(this, &PageThrottler::throttleHysteresisTimerFired)
     , m_visuallyNonIdle("Page is not visually idle.")
     , m_pageActivity("Page is active.")
 {
     m_pageActivity.beginActivity();
+
+    setIsVisuallyIdle(viewState & ViewState::IsVisuallyIdle);
 }
 
 PageThrottler::~PageThrottler()
 {
-    setIsVisuallyIdle(false);
+    m_page.setTimerThrottlingEnabled(false);
 
     for (auto it = m_activityTokens.begin(), end = m_activityTokens.end(); it != end; ++it)
         (*it)->invalidate();
@@ -58,7 +61,17 @@ PageThrottler::~PageThrottler()
         m_pageActivity.endActivity();
 }
 
-std::unique_ptr<PageActivityAssertionToken> PageThrottler::createActivityToken()
+void PageThrottler::hiddenPageDOMTimerThrottlingStateChanged()
+{
+    m_page.setTimerThrottlingEnabled(m_throttleState != PageNotThrottledState);
+}
+
+std::unique_ptr<PageActivityAssertionToken> PageThrottler::mediaActivityToken()
+{
+    return std::make_unique<PageActivityAssertionToken>(*this);
+}
+
+std::unique_ptr<PageActivityAssertionToken> PageThrottler::pageLoadActivityToken()
 {
     return std::make_unique<PageActivityAssertionToken>(*this);
 }
@@ -69,12 +82,7 @@ void PageThrottler::throttlePage()
 
     m_pageActivity.endActivity();
 
-    for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->document())
-            frame->document()->scriptedAnimationControllerSetThrottled(true);
-    }
-
-    m_page.throttleTimers();
+    m_page.setTimerThrottlingEnabled(true);
 }
 
 void PageThrottler::unthrottlePage()
@@ -88,12 +96,26 @@ void PageThrottler::unthrottlePage()
     if (oldState == PageThrottledState)
         m_pageActivity.beginActivity();
     
-    for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->document())
-            frame->document()->scriptedAnimationControllerSetThrottled(false);
-    }
+    m_page.setTimerThrottlingEnabled(false);
+}
 
-    m_page.unthrottleTimers();
+void PageThrottler::setViewState(ViewState::Flags viewState)
+{
+    ViewState::Flags changed = m_viewState ^ viewState;
+    m_viewState = viewState;
+
+    if (changed & ViewState::IsVisible)
+        setIsVisible(viewState & ViewState::IsVisible);
+    if (changed & ViewState::IsVisuallyIdle)
+        setIsVisuallyIdle(viewState & ViewState::IsVisuallyIdle);
+}
+
+void PageThrottler::setIsVisible(bool isVisible)
+{
+    if (isVisible)
+        m_page.setTimerThrottlingEnabled(false);
+    else if (m_throttleState != PageNotThrottledState)
+        m_page.setTimerThrottlingEnabled(true);
 }
 
 void PageThrottler::setIsVisuallyIdle(bool isVisuallyIdle)

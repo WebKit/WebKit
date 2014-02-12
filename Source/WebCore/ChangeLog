@@ -1,3 +1,66 @@
+2014-02-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Clean up PageThrottler interface
+        https://bugs.webkit.org/show_bug.cgi?id=128677
+
+        Reviewed by Benjamin Poulain.
+
+        Currently, responsibility for throttling DOM timers & suspending animations is split
+        between the Page & the PageThrottler. Clarify by making Page responsible for suspending
+        animations (PageThrottler is now purely related to aspects of timer throttling), and
+        move all timer throttling policy to the PageThrottler, with a single function on Page to
+        enable (Page::setTimerThrottlingEnabled).
+
+        Also, transmit the full ViewState to the PageThrottler (not just the IsVisuallyIdle flag),
+        and distinguish between media & page-load activity.
+
+        * WebCore.exp.in:
+            - removed setDOMTimerAlignmentInterval.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+            - createActivityToken -> mediaActivityToken
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::started):
+            - createActivityToken -> pageLoadActivityToken
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+            - added m_timerThrottlingEnabled, made PageThrottler a member
+        (WebCore::Page::setIsVisuallyIdleInternal):
+            - update animiation suspension.
+        (WebCore::Page::setTimerThrottlingEnabled):
+            - setTimerAlignmentInterval -> setTimerThrottlingEnabled
+        (WebCore::Page::setViewState):
+            - pass viewState to PageThrottler.
+        (WebCore::Page::setIsVisibleInternal):
+            - don't update timer throttling.
+        * page/Page.h:
+        (WebCore::Page::pageThrottler):
+            - made PageThrottler a member.
+        (WebCore::Page::timerAlignmentInterval):
+            - inlined.
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - initialize ViewState.
+        (WebCore::PageThrottler::~PageThrottler):
+            - clean up by calling setTimerThrottlingEnabled directly.
+        (WebCore::PageThrottler::hiddenPageDOMTimerThrottlingStateChanged):
+            - moved from Page.
+        (WebCore::PageThrottler::mediaActivityToken):
+        (WebCore::PageThrottler::pageLoadActivityToken):
+            - from Page::createActivityToken
+        (WebCore::PageThrottler::throttlePage):
+        (WebCore::PageThrottler::unthrottlePage):
+            - don't throttle animations here.
+        (WebCore::PageThrottler::setViewState):
+        (WebCore::PageThrottler::setIsVisible):
+            - added, throttle Dom timers.
+        * page/PageThrottler.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setHiddenPageDOMTimerThrottlingEnabled):
+            - removed setDOMTimerAlignmentInterval, hiddenPageDOMTimerThrottlingStateChanged moved to PageThrottler.
+        * page/Settings.h:
+            - removed setDOMTimerAlignmentInterval.
+
 2014-02-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2][iOS] Add back the special viewport for the old xhtml mobile doctype
