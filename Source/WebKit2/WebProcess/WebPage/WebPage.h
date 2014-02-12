@@ -45,7 +45,6 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
-#include "WKGestureTypes.h"
 #include "WebUndoStep.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
@@ -100,6 +99,10 @@ OBJC_CLASS NSObject;
 OBJC_CLASS WKAccessibilityWebPageObject;
 
 #define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
+#endif
+
+#if PLATFORM(IOS)
+#include "WKGestureTypes.h"
 #endif
 
 namespace API {

@@ -1,3 +1,11 @@
+2014-02-11  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed build fix after r163919
+
+        WKGestureTypes.h needs PLATFORM(IOS) guard.
+
+        * WebProcess/WebPage/WebPage.h:
+
 2014-02-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make GraphicsLayerClient::paintContents's clip rect subpixel based.
