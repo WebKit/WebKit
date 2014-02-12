@@ -52,6 +52,7 @@
 #include "MarkupAccumulator.h"
 #include "Range.h"
 #include "RenderBlock.h"
+#include "Settings.h"
 #include "StyleProperties.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
@@ -122,6 +123,11 @@ public:
     void wrapWithNode(Node&, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
     void wrapWithStyleNode(StyleProperties*, Document&, bool isBlock = false);
     String takeResults();
+    
+    bool needRelativeStyleWrapper() const
+    {
+        return m_needRelativeStyleWrapper;
+    }
 
     using MarkupAccumulator::appendString;
 
@@ -157,13 +163,14 @@ private:
     const EAnnotateForInterchange m_shouldAnnotate;
     Node* m_highestNodeToBeSerialized;
     RefPtr<EditingStyle> m_wrappingStyle;
+    bool m_needRelativeStyleWrapper;
 };
 
-inline StyledMarkupAccumulator::StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate,
-    const Range* range, Node* highestNodeToBeSerialized)
+inline StyledMarkupAccumulator::StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate, const Range* range, Node* highestNodeToBeSerialized)
     : MarkupAccumulator(nodes, shouldResolveURLs, range)
     , m_shouldAnnotate(shouldAnnotate)
     , m_highestNodeToBeSerialized(highestNodeToBeSerialized)
+    , m_needRelativeStyleWrapper(false)
 {
 }
 
@@ -317,6 +324,9 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
 
             if (addDisplayInline)
                 newInlineStyle->forceInline();
+            
+            if (element.document().settings() && element.document().settings()->convertPositionStyleOnCopy())
+                m_needRelativeStyleWrapper |= newInlineStyle->convertFixedAndStickyPosition();
 
             // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
             // only the ones that affect it and the nodes within it.
@@ -612,6 +622,12 @@ static String createMarkupInternal(Document& document, const Range& range, const
             if (ancestor == specialCommonAncestor)
                 break;
         }
+    }
+    
+    if (accumulator.needRelativeStyleWrapper() && body && fullySelectedRoot == body) {
+        RefPtr<EditingStyle> positionRelativeStyle = styleFromMatchedRulesAndInlineDecl(body);
+        positionRelativeStyle->style()->setProperty(CSSPropertyPosition, CSSValueRelative);
+        accumulator.wrapWithStyleNode(positionRelativeStyle->style(), document, true);
     }
 
     // FIXME: The interchange newline should be placed in the block that it's in, not after all of the content, unconditionally.

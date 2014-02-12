@@ -1,3 +1,53 @@
+2014-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Convert position:fixed property to position:absolute upon copy
+        https://bugs.webkit.org/show_bug.cgi?id=128194
+
+        Reviewed by Simon Fraser.
+
+        This adds a Setting and Preference that allows clients to opt-in to this behavior.
+
+        This new behavior is only activated if the entire body is copied. If there is a position:fixed
+        element in the copied selection, it is replaced with position:absolute, and a containing
+        block (position:relative) is wrapped around the copied text.
+
+        This patch originally converted position:-webkit-sticky to position:relative. However, we
+        currently don't support copying and pasting of position:-webkit-sticky content (See below).
+        Therefore, this patch only deals with position:fixed.
+
+        Right now we don't copy position:-webkit-sticky. This is because:
+        1. When copying styled elements, we parse the style properties again
+        2. CSSParserContext has a flag which can disable parsing -webkit-sticky
+        3. There are two constructors to CSSParserContext: one that takes a document and sets up the
+        aforementioned flag, and a simple one that doesn't take a document and sets all the enableFoo
+        flags to false
+        4. At the relevant place within copy code, we are far removed from the Document object, so we
+        instead call the second constructor, thereby disabling parsing of -webkit-sticky
+
+        Test: editing/pasteboard/copy-paste-converts-sticky-and-fixed.html
+
+        * WebCore.exp.in: Export the Setting setter
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::convertFixedAndStickyPosition): Converts a single style
+        * editing/EditingStyle.h:
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::StyledMarkupAccumulator): Remember if we found
+        an element which needs the position:relative containing block
+        (WebCore::StyledMarkupAccumulator::appendElement): Surround with the position:relative
+        containing block if necessary
+        (WebCore::createMarkupInternal):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): New setting to opt-in to this new behavior
+        (WebCore::Settings::setConvertPositionStyleOnCopy):
+        * page/Settings.h:
+        (WebCore::Settings::convertPositionStyleOnCopy):
+        * testing/InternalSettings.cpp: Allow setting the setting from a Layout Test
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setConvertPositionStyleOnCopy):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2014-02-11  Youenn Fablet  <youennf@gmail.com>
 
         XMLHttpRequest should not send DNT header

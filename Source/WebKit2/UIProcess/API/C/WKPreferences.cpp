@@ -1235,3 +1235,13 @@ bool WKPreferencesGetViewGestureDebuggingEnabled(WKPreferencesRef preferencesRef
 {
     return toImpl(preferencesRef)->viewGestureDebuggingEnabled();
 }
+
+void WKPreferencesSetConvertPositionStyleOnCopy(WKPreferencesRef preferencesRef, bool convert)
+{
+    toImpl(preferencesRef)->setConvertPositionStyleOnCopy(convert);
+}
+
+bool WKPreferencesGetConvertPositionStyleOnCopy(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->convertPositionStyleOnCopy();
+}

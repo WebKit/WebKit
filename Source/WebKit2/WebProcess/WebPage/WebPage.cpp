@@ -2575,6 +2575,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setMediaSourceEnabled(store.getBoolValueForKey(WebPreferencesKey::mediaSourceEnabledKey()));
 #endif
 
+    settings.setConvertPositionStyleOnCopy(store.getBoolValueForKey(WebPreferencesKey::convertPositionStyleOnCopyKey()));
+
     if (store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey())) {
         if (m_processSuppressionDisabledByWebPreference.isActive())
             m_processSuppressionDisabledByWebPreference.endActivity();

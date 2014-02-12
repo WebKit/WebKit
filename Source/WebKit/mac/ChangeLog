@@ -1,3 +1,18 @@
+2014-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Convert position:sticky and position:fixed properties to position:static and position:absolute upon copy
+        https://bugs.webkit.org/show_bug.cgi?id=128194
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences convertPositionStyleOnCopy]):
+        (-[WebPreferences setConvertPositionStyleOnCopy:]):
+        * WebView/WebPreferencesPrivate.h: Opt-in to new behavior
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2014-02-11  Andy Estes  <aestes@apple.com>
 
         [Mac] connection:willStopBufferingData: no longer exists in NSURLConnectionDelegate

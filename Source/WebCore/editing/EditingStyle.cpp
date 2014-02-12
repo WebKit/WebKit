@@ -1221,6 +1221,20 @@ void EditingStyle::forceInline()
     m_mutableStyle->setProperty(CSSPropertyDisplay, CSSValueInline, propertyIsImportant);
 }
 
+bool EditingStyle::convertFixedAndStickyPosition()
+{
+    if (!m_mutableStyle)
+        return false;
+
+    RefPtr<CSSPrimitiveValue> sticky = cssValuePool().createIdentifierValue(CSSValueWebkitSticky);
+    RefPtr<CSSPrimitiveValue> fixed = cssValuePool().createIdentifierValue(CSSValueFixed);
+    if (m_mutableStyle->propertyMatches(CSSPropertyPosition, fixed.get())) {
+        m_mutableStyle->setProperty(CSSPropertyPosition, cssValuePool().createIdentifierValue(CSSValueAbsolute), m_mutableStyle->propertyIsImportant(CSSPropertyPosition));
+        return true;
+    }
+    return false;
+}
+
 int EditingStyle::legacyFontSize(Document* document) const
 {
     RefPtr<CSSValue> cssValue = m_mutableStyle->getPropertyCSSValue(CSSPropertyFontSize);

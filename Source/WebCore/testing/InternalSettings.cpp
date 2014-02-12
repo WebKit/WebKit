@@ -94,6 +94,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_useLegacyBackgroundSizeShorthandBehavior(settings.useLegacyBackgroundSizeShorthandBehavior())
     , m_autoscrollForDragAndDropEnabled(settings.autoscrollForDragAndDropEnabled())
     , m_pluginReplacementEnabled(RuntimeEnabledFeatures::sharedFeatures().pluginReplacementEnabled())
+    , m_convertPositionStyleOnCopy(settings.convertPositionStyleOnCopy())
 {
 }
 
@@ -155,6 +156,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setTimeWithoutMouseMovementBeforeHidingControls(m_originalTimeWithoutMouseMovementBeforeHidingControls);
     settings.setUseLegacyBackgroundSizeShorthandBehavior(m_useLegacyBackgroundSizeShorthandBehavior);
     settings.setAutoscrollForDragAndDropEnabled(m_autoscrollForDragAndDropEnabled);
+    settings.setConvertPositionStyleOnCopy(m_convertPositionStyleOnCopy);
     RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(m_pluginReplacementEnabled);
 }
 
@@ -525,6 +527,12 @@ void InternalSettings::setBackgroundShouldExtendBeyondPage(bool hasExtendedBackg
 {
     InternalSettingsGuardForSettings();
     settings()->setBackgroundShouldExtendBeyondPage(hasExtendedBackground);
+}
+
+void InternalSettings::setConvertPositionStyleOnCopy(bool convert, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setConvertPositionStyleOnCopy(convert);
 }
 
 }

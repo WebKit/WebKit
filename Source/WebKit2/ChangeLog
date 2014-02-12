@@ -1,3 +1,18 @@
+2014-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Convert position:sticky and position:fixed properties to position:static and position:absolute upon copy
+        https://bugs.webkit.org/show_bug.cgi?id=128194
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetConvertPositionStyleOnCopy):
+        (WKPreferencesGetConvertPositionStyleOnCopy):
+        * UIProcess/API/C/WKPreferencesPrivate.h: Opt-in to new behavior
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-02-11  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Rename screenToWindow to screenToRootView and windowToScreen to rootViewToScreen

@@ -204,3 +204,5 @@ mediaSourceEnabled initial=false
 allowMultiElementImplicitSubmission initial=false
 
 mediaPlaybackAllowsAirPlay initial=true, conditional=IOS_AIRPLAY
+
+convertPositionStyleOnCopy initial=false

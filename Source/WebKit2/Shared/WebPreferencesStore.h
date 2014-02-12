@@ -190,6 +190,7 @@ namespace WebKit {
     macro(SpatialNavigationEnabled, spatialNavigationEnabled, Bool, bool, false) \
     macro(MediaSourceEnabled, mediaSourceEnabled, Bool, bool, false) \
     macro(ViewGestureDebuggingEnabled, viewGestureDebuggingEnabled, Bool, bool, false) \
+    macro(ConvertPositionStyleOnCopy, convertPositionStyleOnCopy, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

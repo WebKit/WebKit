@@ -1,3 +1,15 @@
+2014-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Convert position:sticky and position:fixed properties to position:static and position:absolute upon copy
+        https://bugs.webkit.org/show_bug.cgi?id=128194
+
+        Reviewed by Simon Fraser.
+
+        Checks that the style properties get converted.
+
+        * editing/pasteboard/copy-paste-converts-sticky-and-fixed-expected.txt: Added.
+        * editing/pasteboard/copy-paste-converts-sticky-and-fixed.html: Added.
+
 2014-02-11  Youenn Fablet  <youennf@gmail.com>
 
         XMLHttpRequest should not send DNT header

@@ -2535,6 +2535,16 @@ static bool needsScreenFontsEnabledQuirk()
     [self _setBoolValue:enabled forKey:WebKitMediaSourceEnabledPreferenceKey];
 }
 
+- (BOOL)convertPositionStyleOnCopy
+{
+    return [self _boolValueForKey:WebKitConvertPositionStyleOnCopyPreferenceKey];
+}
+
+- (void)setConvertPositionStyleOnCopy:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitConvertPositionStyleOnCopyPreferenceKey];
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)

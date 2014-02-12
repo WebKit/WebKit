@@ -146,6 +146,7 @@
 #define WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey @"WebKitLowPowerVideoAudioBufferSizeEnabled"
 #define WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey @"WebKitUseLegacyTextAlignPositionedElementBehavior"
 #define WebKitMediaSourceEnabledPreferenceKey @"WebKitMediaSourceEnabled"
+#define WebKitConvertPositionStyleOnCopyPreferenceKey @"WebKitConvertPositionStyleOnCopy"
 
 #if !TARGET_OS_IPHONE
 // These are private both because callers should be using the cover methods and because the
