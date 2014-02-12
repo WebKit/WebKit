@@ -256,7 +256,6 @@ namespace WebCore {
         void updateLayout() const;
         NSRect caretRect() const;
         NSRect rectForScrollToVisible() const;
-        NSRect rectForSelection(VisibleSelection&) const;
         DOMCSSStyleDeclaration* styleAtSelectionStart() const;
         unsigned formElementsCharacterCount() const;
         void setTimersPaused(bool);

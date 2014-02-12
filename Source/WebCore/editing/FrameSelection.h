@@ -68,7 +68,6 @@ protected:
     void invalidateCaretRect(Node*, bool caretRectChanged = false);
     void clearCaretRect();
     bool updateCaretRect(Document*, const VisiblePosition& caretPosition);
-    IntRect absoluteBoundsForLocalRect(Node*, const LayoutRect&) const;
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
     void paintCaret(Node*, GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
 
@@ -168,9 +167,6 @@ public:
     // Return the renderer that is responsible for painting the caret (in the selection start node)
     RenderObject* caretRendererWithoutUpdatingLayout() const;
 
-    // Caret rect local to the caret's renderer
-    LayoutRect localCaretRect();
-
     // Bounds of (possibly transformed) caret in absolute coords
     IntRect absoluteCaretBounds();
     void setCaretRectNeedsUpdate() { CaretBase::setCaretRectNeedsUpdate(); }
@@ -229,8 +225,6 @@ public:
     PassRefPtr<Range> rangeByMovingCurrentSelection(int amount) const;
     PassRefPtr<Range> rangeByExtendingCurrentSelection(int amount) const;
     void selectRangeOnElement(unsigned location, unsigned length, Node*);
-    void suppressCloseTyping() { ++m_closeTypingSuppressions; }
-    void restoreCloseTyping() { --m_closeTypingSuppressions; }
     void clearCurrentSelection();
     void setCaretBlinks(bool caretBlinks = true);
     void setCaretColor(const Color&);
@@ -342,7 +336,6 @@ private:
     bool m_updateAppearanceEnabled : 1;
     bool m_caretBlinks : 1;
     Color m_caretColor;
-    int m_closeTypingSuppressions;
     int m_scrollingSuppressCount;
 #endif
 };

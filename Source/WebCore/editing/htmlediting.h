@@ -256,6 +256,12 @@ inline bool isAmbiguousBoundaryCharacter(UChar character)
 String stringWithRebalancedWhitespace(const String&, bool startIsStartOfParagraph, bool endIsEndOfParagraph);
 const String& nonBreakingSpaceString();
 
+// Miscellaaneous functions that for caret rendering
+
+RenderObject* rendererForCaretPainting(Node*);
+LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition&, RenderObject*&);
+IntRect absoluteBoundsForLocalCaretRect(RenderObject* rendererForCaretPainting, const LayoutRect&);
+
 }
 
 #endif

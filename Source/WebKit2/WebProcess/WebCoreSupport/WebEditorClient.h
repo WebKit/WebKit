@@ -153,8 +153,6 @@ private:
     virtual bool shouldShowUnicodeMenu() override;
 #endif
 #if PLATFORM(IOS)
-    virtual void suppressSelectionNotifications() override;
-    virtual void restoreSelectionNotifications() override;
     virtual void startDelayingAndCoalescingContentChangeNotifications() override;
     virtual void stopDelayingAndCoalescingContentChangeNotifications() override;
     virtual void writeDataToPasteboard(NSDictionary*) override;

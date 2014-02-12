@@ -194,7 +194,6 @@ WebEditorClient::WebEditorClient(WebView *webView)
     , m_undoTarget([[[WebEditorUndoTarget alloc] init] autorelease])
     , m_haveUndoRedoOperations(false)
 #if PLATFORM(IOS)
-    , m_selectionNotificationSuppressions(0)
     , m_delayingContentChangeNotifications(0)
     , m_hasDelayedContentChangeNotification(0)
 #endif
@@ -357,7 +356,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
 #else
     // Selection can be changed while deallocating down the WebView / Frame / Editor.  Do not post in that case because it's already too late
     // for the NSInvocation to retain the WebView.
-    if (![m_webView _isClosing] && m_selectionNotificationSuppressions == 0)
+    if (![m_webView _isClosing])
         WebThreadPostNotification(WebViewDidChangeSelectionNotification, m_webView, nil);
 #endif
 }
@@ -797,18 +796,6 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
 }
 
 #if PLATFORM(IOS)
-
-void WebEditorClient::suppressSelectionNotifications() 
-{
-    m_selectionNotificationSuppressions++;
-}
-
-void WebEditorClient::restoreSelectionNotifications() 
-{
-    --m_selectionNotificationSuppressions;
-    if (m_selectionNotificationSuppressions < 0)
-        m_selectionNotificationSuppressions = 0;
-}
 
 void WebEditorClient::writeDataToPasteboard(NSDictionary* representation)
 {

@@ -134,8 +134,6 @@ private:
     virtual void textDidChangeInTextArea(WebCore::Element*) override;
 
 #if PLATFORM(IOS)
-    virtual void suppressSelectionNotifications() override;
-    virtual void restoreSelectionNotifications() override;
     virtual void startDelayingAndCoalescingContentChangeNotifications() override;
     virtual void stopDelayingAndCoalescingContentChangeNotifications() override;
     virtual void writeDataToPasteboard(NSDictionary*) override;
@@ -172,7 +170,6 @@ private:
     bool m_haveUndoRedoOperations;
     RefPtr<WebCore::TextCheckingRequest> m_textCheckingRequest;
 #if PLATFORM(IOS)
-    int m_selectionNotificationSuppressions;
     bool m_delayingContentChangeNotifications;
     bool m_hasDelayedContentChangeNotification;
 #endif

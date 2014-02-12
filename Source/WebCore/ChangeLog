@@ -1,3 +1,54 @@
+2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Frame::rectForSelection shouldn't instantiate FrameSelection
+        https://bugs.webkit.org/show_bug.cgi?id=128587
+
+        Reviewed by Enrica Casucci.
+
+        Made VisiblePosition::absoluteCaretBounds more interoperable with the one in FrameSelection and made
+        iOS's Frame::rectForScrollToVisible use that function instead.
+
+        The above change allows us to remove:
+        - suppressCloseTyping(), restoreCloseTyping(), and m_closeTypingSuppressions in FrameSelection
+        - suppressSelectionNotifications() and restoreSelectionNotifications() in EditorClient
+
+        See inline comments below for more details.
+
+        * Source/WebCore/WebCore.exp.in:
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance):
+        (WebCore::CaretBase::updateCaretRect):
+        (WebCore::FrameSelection::caretRendererWithoutUpdatingLayout):
+        (WebCore::DragCaretController::caretRenderer):
+        (WebCore::repaintCaretForLocalRect):
+        (WebCore::FrameSelection::recomputeCaretRect): Merged FrameSelection::localCaretRect(). Modified
+        the code to update caretNode when and only when caret rect is updated. Also added an assertion to
+        ensure absoluteCaretBounds() on FrameSelection and VisiblePosition yield the same result.
+
+        (WebCore::CaretBase::paintCaret):
+        * editing/FrameSelection.h:
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::absoluteCaretBounds): Fixed the bug where the old code wasn't respecting
+        the convention to use containing block as the renderer to paint caret.
+
+        * editing/htmlediting.cpp:
+        (WebCore::caretRendersInsideNode): Moved from FrameSelection.cpp.
+        (WebCore::rendererForCaretPainting): Ditto and renamed from caretRenderer.
+        (WebCore::localCaretRectInRendererForCaretPainting): Extracted from FrameSelection::updateCaretRect.
+        (WebCore::absoluteBoundsForLocalCaretRect): Ditto from CaretBase::absoluteBoundsForLocalRect.
+        * editing/htmlediting.h:
+
+        * loader/EmptyClients.h:
+        * page/EditorClient.h:
+        * page/Frame.h:
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::rectForScrollToVisible): Reimplemented in its simplest form using VisiblePosition's
+        absoluteCaretBounds().
+
 2014-02-11  Enrica Casucci  <enrica@apple.com>
 
         Support WebSelections in WK2 on iOS.

@@ -606,51 +606,14 @@ NSRect Frame::caretRect() const
 NSRect Frame::rectForScrollToVisible() const
 {
     VisibleSelection selection(this->selection().selection());
-    return rectForSelection(selection);
-}
 
-NSRect Frame::rectForSelection(VisibleSelection& selection) const
-{
     if (selection.isNone())
         return CGRectZero;
 
     if (selection.isCaret())
         return caretRect();
 
-    EditorClient* client = editor().client();
-    if (client)
-        client->suppressSelectionNotifications();
-
-    VisibleSelection originalSelection(selection);
-    Position position;
-
-    // The selection controllers below need to be associated with a frame in order
-    // to calculate geometry. This causes them to do more work here than we would
-    // like. Ideally, we would have a sort offline geometry-only mode for selection
-    // controllers so we could do this kind of work as cheaply as possible.
-
-    position = originalSelection.start();
-    selection.setBase(position);
-    selection.setExtent(position);
-    FrameSelection startFrameSelection(const_cast<Frame*>(this));
-    startFrameSelection.suppressCloseTyping();
-    startFrameSelection.setSelection(selection);
-    FloatRect startRect(startFrameSelection.absoluteCaretBounds());
-    startFrameSelection.restoreCloseTyping();
-
-    position = originalSelection.end();
-    selection.setBase(position);
-    selection.setExtent(position);
-    FrameSelection endFrameSelection(const_cast<Frame*>(this));
-    endFrameSelection.suppressCloseTyping();
-    endFrameSelection.setSelection(selection);
-    FloatRect endRect(endFrameSelection.absoluteCaretBounds());
-    endFrameSelection.restoreCloseTyping();
-
-    if (client)
-        client->restoreSelectionNotifications();
-
-    return unionRect(startRect, endRect);
+    return unionRect(selection.visibleStart().absoluteCaretBounds(), selection.visibleEnd().absoluteCaretBounds());
 }
 
 DOMCSSStyleDeclaration* Frame::styleAtSelectionStart() const

@@ -45,6 +45,7 @@
 #include "HTMLUListElement.h"
 #include "NodeTraversal.h"
 #include "PositionIterator.h"
+#include "RenderBlock.h"
 #include "RenderElement.h"
 #include "ShadowRoot.h"
 #include "Text.h"
@@ -1258,6 +1259,63 @@ Element* deprecatedEnclosingBlockFlowElement(Node* node)
             return toElement(node);
     }
     return 0;
+}
+
+static inline bool caretRendersInsideNode(Node* node)
+{
+    return node && !isRenderedTable(node) && !editingIgnoresContent(node);
+}
+
+RenderObject* rendererForCaretPainting(Node* node)
+{
+    if (!node)
+        return 0;
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return 0;
+
+    // If caretNode is a block and caret is inside it, then caret should be painted by that block.
+    bool paintedByBlock = renderer->isRenderBlockFlow() && caretRendersInsideNode(node);
+    return paintedByBlock ? renderer : renderer->containingBlock();
+}
+
+LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition& caretPosition, RenderObject*& caretPainter)
+{
+    if (caretPosition.isNull())
+        return LayoutRect();
+
+    ASSERT(caretPosition.deepEquivalent().deprecatedNode()->renderer());
+
+    // First compute a rect local to the renderer at the selection start.
+    RenderObject* renderer;
+    LayoutRect localRect = caretPosition.localCaretRect(renderer);
+
+    // Get the renderer that will be responsible for painting the caret
+    // (which is either the renderer we just found, or one of its containers).
+    caretPainter = rendererForCaretPainting(caretPosition.deepEquivalent().deprecatedNode());
+
+    // Compute an offset between the renderer and the caretPainter.
+    while (renderer != caretPainter) {
+        RenderObject* containerObject = renderer->container();
+        if (!containerObject)
+            return LayoutRect();
+        localRect.move(renderer->offsetFromContainer(containerObject, localRect.location()));
+        renderer = containerObject;
+    }
+
+    return localRect;
+}
+
+IntRect absoluteBoundsForLocalCaretRect(RenderObject* rendererForCaretPainting, const LayoutRect& rect)
+{
+    if (!rendererForCaretPainting || rect.isEmpty())
+        return IntRect();
+
+    LayoutRect localRect(rect);
+    if (rendererForCaretPainting->isBox())
+        toRenderBox(rendererForCaretPainting)->flipForWritingMode(localRect);
+    return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 
 } // namespace WebCore

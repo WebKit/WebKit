@@ -75,16 +75,6 @@ void WebEditorClient::setInsertionPasteboard(const String&)
     notImplemented();
 }
 
-void WebEditorClient::suppressSelectionNotifications()
-{
-    notImplemented();
-}
-
-void WebEditorClient::restoreSelectionNotifications()
-{
-    notImplemented();
-}
-
 void WebEditorClient::startDelayingAndCoalescingContentChangeNotifications()
 {
     notImplemented();

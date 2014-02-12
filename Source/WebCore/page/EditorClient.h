@@ -119,8 +119,6 @@ public:
     virtual void textDidChangeInTextArea(Element*) = 0;
 
 #if PLATFORM(IOS)
-    virtual void suppressSelectionNotifications() = 0;
-    virtual void restoreSelectionNotifications() = 0;
     virtual void startDelayingAndCoalescingContentChangeNotifications() = 0;
     virtual void stopDelayingAndCoalescingContentChangeNotifications() = 0;
     virtual void writeDataToPasteboard(NSDictionary*) = 0;

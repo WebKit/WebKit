@@ -1,3 +1,13 @@
+2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Frame::rectForSelection shouldn't instantiate FrameSelection
+        https://bugs.webkit.org/show_bug.cgi?id=128587
+
+        Reviewed by Enrica Casucci.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+
 2014-02-11  Enrica Casucci  <enrica@apple.com>
 
         Support WebSelections in WK2 on iOS.

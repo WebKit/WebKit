@@ -1,3 +1,15 @@
+2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Frame::rectForSelection shouldn't instantiate FrameSelection
+        https://bugs.webkit.org/show_bug.cgi?id=128587
+
+        Reviewed by Enrica Casucci.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient):
+        (WebEditorClient::respondToChangedSelection):
+
 2014-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Convert position:sticky and position:fixed properties to position:static and position:absolute upon copy

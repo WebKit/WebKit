@@ -470,8 +470,6 @@ public:
     virtual void textDidChangeInTextArea(Element*) override { }
 
 #if PLATFORM(IOS)
-    virtual void suppressSelectionNotifications() override { }
-    virtual void restoreSelectionNotifications() override { }
     virtual void startDelayingAndCoalescingContentChangeNotifications() override { }
     virtual void stopDelayingAndCoalescingContentChangeNotifications() override { }
     virtual void writeDataToPasteboard(NSDictionary*) override { }

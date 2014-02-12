@@ -619,12 +619,9 @@ LayoutRect VisiblePosition::localCaretRect(RenderObject*& renderer) const
 
 IntRect VisiblePosition::absoluteCaretBounds() const
 {
-    RenderObject* renderer;
-    LayoutRect localRect = localCaretRect(renderer);
-    if (localRect.isEmpty() || !renderer)
-        return IntRect();
-
-    return renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
+    RenderObject* renderer = nullptr;
+    LayoutRect localRect = localCaretRectInRendererForCaretPainting(*this, renderer);
+    return absoluteBoundsForLocalCaretRect(renderer, localRect);
 }
 
 int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const
