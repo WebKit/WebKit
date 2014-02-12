@@ -69,6 +69,7 @@ RenderElement::RenderElement(Element& element, PassRef<RenderStyle> style, unsig
     , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
     , m_renderInlineAlwaysCreatesLineBoxes(false)
+    , m_hasPausedImageAnimations(false)
     , m_firstChild(nullptr)
     , m_lastChild(nullptr)
     , m_style(std::move(style))
@@ -81,6 +82,7 @@ RenderElement::RenderElement(Document& document, PassRef<RenderStyle> style, uns
     , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
     , m_renderInlineAlwaysCreatesLineBoxes(false)
+    , m_hasPausedImageAnimations(false)
     , m_firstChild(nullptr)
     , m_lastChild(nullptr)
     , m_style(std::move(style))
@@ -119,6 +121,8 @@ RenderElement::~RenderElement()
         }
 #endif
     }
+    if (m_hasPausedImageAnimations)
+        view().removeRendererWithPausedImageAnimations(*this);
 }
 
 RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<RenderStyle> style)
@@ -1273,6 +1277,47 @@ bool RenderElement::borderImageIsLoadedAndCanBeRendered() const
 
     StyleImage* borderImage = style().borderImage().image();
     return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded();
+}
+
+static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const IntRect& visibleRect)
+{
+    const Document& document = renderer.document();
+    if (document.inPageCache())
+        return false;
+    auto& frameView = renderer.view().frameView();
+    if (frameView.isOffscreen())
+        return false;
+#if PLATFORM(IOS)
+    if (frameView.timersPaused())
+        return false;
+#endif
+    if (document.activeDOMObjectsAreSuspended())
+        return false;
+    if (renderer.style().visibility() != VISIBLE)
+        return false;
+    if (!visibleRect.intersects(renderer.absoluteBoundingBoxRect()))
+        return false;
+
+    return true;
+}
+
+void RenderElement::newImageAnimationFrameAvailable(CachedImage& image)
+{
+    auto visibleRect = view().frameView().visibleContentRect();
+    if (!shouldRepaintForImageAnimation(*this, visibleRect)) {
+        view().addRendererWithPausedImageAnimations(*this);
+        return;
+    }
+    imageChanged(&image);
+}
+
+bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect)
+{
+    ASSERT(m_hasPausedImageAnimations);
+    if (!shouldRepaintForImageAnimation(*this, visibleRect))
+        return false;
+    repaint();
+    return true;
 }
 
 RenderNamedFlowThread* RenderElement::renderNamedFlowThreadWrapper()

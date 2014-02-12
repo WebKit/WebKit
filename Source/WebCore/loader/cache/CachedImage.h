@@ -84,8 +84,6 @@ public:
     bool isManuallyCached() const { return m_isManuallyCached; }
     virtual bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
 
-    static void resumeAnimatingImagesForLoader(CachedResourceLoader*);
-
 #if ENABLE(DISK_IMAGE_CACHE)
     virtual bool canUseDiskImageCache() const override;
     virtual void useDiskImageCache() override;
@@ -128,7 +126,6 @@ private:
     virtual void decodedSizeChanged(const Image*, int delta) override;
     virtual void didDraw(const Image*) override;
 
-    virtual bool shouldPauseAnimation(const Image*) override;
     virtual void animationAdvanced(const Image*) override;
     virtual void changedInRect(const Image*, const IntRect&) override;
 

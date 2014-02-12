@@ -2203,26 +2203,6 @@ void RenderObject::collectAnnotatedRegions(Vector<AnnotatedRegionValue>& regions
 }
 #endif
 
-bool RenderObject::willRenderImage(CachedImage*)
-{
-    // Without visibility we won't render (and therefore don't care about animation).
-    if (style().visibility() != VISIBLE)
-        return false;
-
-#if PLATFORM(IOS)
-    if (document().frame()->timersPaused())
-        return false;
-#else
-    // We will not render a new image when Active DOM is suspended
-    if (document().activeDOMObjectsAreSuspended())
-        return false;
-#endif
-
-    // If we're not in a window (i.e., we're dormant from being put in the b/f cache or in a background tab)
-    // then we don't want to render either.
-    return !document().inPageCache() && !document().view()->isOffscreen();
-}
-
 int RenderObject::maximalOutlineSize(PaintPhase p) const
 {
     if (p != PaintPhaseOutline && p != PaintPhaseSelfOutline && p != PaintPhaseChildOutlines)

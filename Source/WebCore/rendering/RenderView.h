@@ -27,6 +27,7 @@
 #include "PODFreeListArena.h"
 #include "Region.h"
 #include "RenderBlockFlow.h"
+#include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -219,6 +220,10 @@ public:
     void didCreateRenderer() { ++m_rendererCount; }
     void didDestroyRenderer() { --m_rendererCount; }
 
+    void resumePausedImageAnimationsIfNeeded();
+    void addRendererWithPausedImageAnimations(RenderElement&);
+    void removeRendererWithPausedImageAnimations(RenderElement&);
+
     class RepaintRegionAccumulator {
         WTF_MAKE_NONCOPYABLE(RepaintRegionAccumulator);
     public:
@@ -340,6 +345,8 @@ private:
 #if ENABLE(CSS_FILTERS)
     bool m_hasSoftwareFilters;
 #endif
+
+    HashSet<RenderElement*> m_renderersWithPausedImageAnimation;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderView, isRenderView())

@@ -1,0 +1,39 @@
+<html>
+<head>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    description("Test that animated gif outside viewport does not trigger repaint.");
+    function startTrackingRepaints()
+    {
+        document.body.offsetTop;
+        window.internals.startTrackingRepaints();
+        testRunner.display();
+        setTimeout(logRepaints, 200);
+    }
+
+    function logRepaints()
+    {
+        repaintRects = window.internals.repaintRectsAsText();
+        window.internals.stopTrackingRepaints();
+
+        shouldBeEqualToString("repaintRects", "");
+
+        finishJSTest();
+    }
+
+    function start() {
+        if (!window.testRunner || !window.internals)
+            return;
+
+        var img = new Image();
+        img.onload = startTrackingRepaints;
+        img.src = "resources/animated.gif";
+    }
+</script>
+</head>
+<body onload="start()">
+<div style="height:600px"></div>
+<img src="resources/animated.gif">
+<script src="../../resources/js-test-post.js"></script>
+</html>

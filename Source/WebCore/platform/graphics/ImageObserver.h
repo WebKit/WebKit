@@ -40,7 +40,6 @@ public:
     virtual void decodedSizeChanged(const Image*, int delta) = 0;
     virtual void didDraw(const Image*) = 0;
 
-    virtual bool shouldPauseAnimation(const Image*) = 0;
     virtual void animationAdvanced(const Image*) = 0;
 
     virtual void changedInRect(const Image*, const IntRect&) = 0;

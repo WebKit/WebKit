@@ -1,3 +1,13 @@
+2014-02-11  Antti Koivisto  <antti@apple.com>
+
+        GIF animations should be suspended when outside of viewport
+        https://bugs.webkit.org/show_bug.cgi?id=128632
+
+        Reviewed by Andreas Kling.
+
+        * fast/repaint/no-animation-outside-viewport-expected.txt: Added.
+        * fast/repaint/no-animation-outside-viewport.html: Added.
+
 2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add failing test expectations to asynchronous spellchecking tests.

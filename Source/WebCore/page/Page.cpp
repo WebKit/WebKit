@@ -1144,8 +1144,10 @@ void Page::resumeAnimatingImages()
     // Drawing models which cache painted content while out-of-window (WebKit2's composited drawing areas, etc.)
     // require that we repaint animated images to kickstart the animation loop.
 
-    for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
-        CachedImage::resumeAnimatingImagesForLoader(frame->document()->cachedResourceLoader());
+    for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* renderView = frame->contentRenderer())
+            renderView->resumePausedImageAnimationsIfNeeded();
+    }
 }
 
 void Page::setViewState(ViewState::Flags viewState)

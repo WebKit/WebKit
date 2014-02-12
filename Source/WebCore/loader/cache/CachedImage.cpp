@@ -499,25 +499,13 @@ void CachedImage::didDraw(const Image* image)
     CachedResource::didAccessDecodedData(timeStamp);
 }
 
-bool CachedImage::shouldPauseAnimation(const Image* image)
-{
-    if (!image || image != m_image)
-        return false;
-    
-    CachedResourceClientWalker<CachedImageClient> w(m_clients);
-    while (CachedImageClient* c = w.next()) {
-        if (c->willRenderImage(this))
-            return false;
-    }
-
-    return true;
-}
-
 void CachedImage::animationAdvanced(const Image* image)
 {
     if (!image || image != m_image)
         return;
-    notifyObservers();
+    CachedResourceClientWalker<CachedImageClient> clientWalker(m_clients);
+    while (CachedImageClient* client = clientWalker.next())
+        client->newImageAnimationFrameAvailable(*this);
 }
 
 void CachedImage::changedInRect(const Image* image, const IntRect& rect)
@@ -525,27 +513,6 @@ void CachedImage::changedInRect(const Image* image, const IntRect& rect)
     if (!image || image != m_image)
         return;
     notifyObservers(&rect);
-}
-
-void CachedImage::resumeAnimatingImagesForLoader(CachedResourceLoader* loader)
-{
-    const CachedResourceLoader::DocumentResourceMap& resources = loader->allCachedResources();
-
-    for (CachedResourceLoader::DocumentResourceMap::const_iterator it = resources.begin(), end = resources.end(); it != end; ++it) {
-        const CachedResourceHandle<CachedResource>& resource = it->value;
-        if (!resource || !resource->isImage())
-            continue;
-        CachedImage* cachedImage = toCachedImage(resource.get());
-        if (!cachedImage->hasImage())
-            continue;
-        Image* image = cachedImage->image();
-        if (!image->isBitmapImage())
-            continue;
-        BitmapImage* bitmapImage = toBitmapImage(image);
-        if (!bitmapImage->canAnimate())
-            continue;
-        cachedImage->animationAdvanced(bitmapImage);
-    }
 }
 
 bool CachedImage::currentFrameKnownToBeOpaque(const RenderElement* renderer)

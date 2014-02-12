@@ -1178,6 +1178,37 @@ ImageQualityController& RenderView::imageQualityController()
     return *m_imageQualityController;
 }
 
+void RenderView::addRendererWithPausedImageAnimations(RenderElement& renderer)
+{
+    if (renderer.hasPausedImageAnimations()) {
+        ASSERT(m_renderersWithPausedImageAnimation.contains(&renderer));
+        return;
+    }
+    renderer.setHasPausedImageAnimations(true);
+    m_renderersWithPausedImageAnimation.add(&renderer);
+}
+
+void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer)
+{
+    ASSERT(renderer.hasPausedImageAnimations());
+    ASSERT(m_renderersWithPausedImageAnimation.contains(&renderer));
+
+    renderer.setHasPausedImageAnimations(false);
+    m_renderersWithPausedImageAnimation.remove(&renderer);
+}
+
+void RenderView::resumePausedImageAnimationsIfNeeded()
+{
+    auto visibleRect = frameView().visibleContentRect();
+    Vector<RenderElement*, 10> toRemove;
+    for (auto* renderer : m_renderersWithPausedImageAnimation) {
+        if (renderer->repaintForPausedImageAnimationsIfNeeded(visibleRect))
+            toRemove.append(renderer);
+    }
+    for (auto& renderer : toRemove)
+        removeRendererWithPausedImageAnimations(*renderer);
+}
+
 RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
     : m_rootView(view ? view->document().topDocument().renderView() : nullptr)
 {

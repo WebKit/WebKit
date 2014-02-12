@@ -709,13 +709,6 @@ bool BitmapImage::internalAdvanceAnimation(bool skippingFrames)
     // Stop the animation.
     stopAnimation();
     
-#if !PLATFORM(IOS)
-    // See if anyone is still paying attention to this animation.  If not, we don't
-    // advance and will remain suspended at the current frame until the animation is resumed.
-    if (!skippingFrames && imageObserver()->shouldPauseAnimation(this))
-        return false;
-#endif
-
     ++m_currentFrame;
     bool advancedAnimation = true;
     bool destroyAll = false;

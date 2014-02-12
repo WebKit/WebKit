@@ -1947,6 +1947,7 @@ void FrameView::scrollPositionChanged(const IntPoint& oldPosition, const IntPoin
     sendWillRevealEdgeEventsIfNeeded(oldPosition, newPosition);
 
     if (RenderView* renderView = this->renderView()) {
+        renderView->resumePausedImageAnimationsIfNeeded();
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidScroll();
     }

@@ -141,6 +141,10 @@ public:
     bool hasBlendMode() const { return false; }
 #endif
 
+    bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect);
+    bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
+    void setHasPausedImageAnimations(bool b) { m_hasPausedImageAnimations = b; }
+
     RenderNamedFlowThread* renderNamedFlowThreadWrapper();
 
 protected:
@@ -200,12 +204,14 @@ private:
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
     RenderStyle* cachedFirstLineStyle() const;
 
+    virtual void newImageAnimationFrameAvailable(CachedImage&) final override;
+
     unsigned m_baseTypeFlags : 6;
     bool m_ancestorLineBoxDirty : 1;
     bool m_hasInitializedStyle : 1;
 
-    // Specific to RenderInline.
     bool m_renderInlineAlwaysCreatesLineBoxes : 1;
+    bool m_hasPausedImageAnimations : 1;
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;

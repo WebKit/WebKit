@@ -1,3 +1,72 @@
+2014-02-11  Antti Koivisto  <antti@apple.com>
+
+        GIF animations should be suspended when outside of viewport
+        https://bugs.webkit.org/show_bug.cgi?id=128632
+
+        Reviewed by Andreas Kling.
+        
+        Animations are driven by the paint cycle. Speculative tiles keep animations outside the actual viewport going.
+        
+        Pause animations when they are outside the viewport by not painting them.
+
+        Test: fast/repaint/no-animation-outside-viewport.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::animationAdvanced):
+        
+            Call animation specific newImageAnimationFrameAvailable instead of the generic notifyObservers.
+
+        * loader/cache/CachedImage.h:
+        
+            Removed now unnecessary resumeAnimatingImagesForLoader mechanism.
+            Remove unnecessary shouldPauseAnimation. Pausing is now always done when by avoiding repaint.
+
+        * loader/cache/CachedImageClient.h:
+        (WebCore::CachedImageClient::newImageAnimationFrameAvailable):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged):
+        
+            Check if we have image animations to resume when scroll position changes.
+
+        * page/Page.cpp:
+        (WebCore::Page::resumeAnimatingImages):
+        
+            Use the same mechanism when resuming background tabs etc.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::internalAdvanceAnimation):
+        
+            Remove the shouldPauseAnimation test, always rely on pausing on invalidation.
+
+        * platform/graphics/ImageObserver.h:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::~RenderElement):
+        (WebCore::shouldRepaintForImageAnimation):
+        
+            Factor the pausing conditions to a function. Test that the animation is withing the
+            visible rect.
+
+        (WebCore::RenderElement::newImageAnimationFrameAvailable):
+        
+            Add renderer to the paused animation set if we don't continue the animation.
+
+        (WebCore::RenderElement::repaintForPausedImageAnimationsIfNeeded):
+        
+            Resume the paused animations by triggering repaint.
+
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::setHasPausedImageAnimations):
+        (WebCore::RenderElement::hasPausedImageAnimations):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::addRendererWithPausedImageAnimations):
+        (WebCore::RenderView::removeRendererWithPausedImageAnimations):
+        (WebCore::RenderView::resumePausedImageAnimationsIfNeeded):
+        * rendering/RenderView.h:
+
 2014-02-11  Andreas Kling  <akling@apple.com>
 
         Remove unused RenderNamedFlowThread::previousRendererForNode().
