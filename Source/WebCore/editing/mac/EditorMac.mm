@@ -278,6 +278,8 @@ void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 // This was left in a bad state when selectedTextForClipboard was added. Need to look over clients and fix this.
 String Editor::stringSelectionForPasteboard()
 {
+    if (!canCopy())
+        return "";
     String text = selectedText();
     text.replace(noBreakSpace, ' ');
     return text;
@@ -285,6 +287,8 @@ String Editor::stringSelectionForPasteboard()
 
 String Editor::stringSelectionForPasteboardWithImageAltText()
 {
+    if (!canCopy())
+        return "";
     String text = selectedTextForClipboard();
     text.replace(noBreakSpace, ' ');
     return text;
@@ -292,6 +296,8 @@ String Editor::stringSelectionForPasteboardWithImageAltText()
 
 PassRefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboardType)
 {
+    if (!canCopy())
+        return nullptr;
     return Pasteboard::getDataSelection(m_frame, pasteboardType);
 }
 
