@@ -79,6 +79,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
 #import <wtf/PassRefPtr.h>
@@ -1001,13 +1002,15 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 #if ENABLE(SUBTLE_CRYPTO)
 bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
 {
-    wrappedKey = key;
-    return true;
+    Vector<uint8_t> masterKey(16);
+    memset(masterKey.data(), 0, masterKey.size()); // FIXME: Not implemented yet, will be getting a key from client.
+    return wrapSerializedCryptoKey(masterKey, key, wrappedKey);
 }
 
 bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) const
 {
-    key = wrappedKey;
-    return true;
+    Vector<uint8_t> masterKey(16);
+    memset(masterKey.data(), 0, masterKey.size()); // FIXME: Not implemented yet, will be getting a key from client.
+    return unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
 }
 #endif

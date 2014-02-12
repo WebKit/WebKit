@@ -1,3 +1,16 @@
+2014-02-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Wrap WebCrypto keys in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=128680
+
+        Reviewed by Anders Carlsson.
+
+        Retrieve a master key (placeholder code for now), and use it to wrap key data.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::wrapCryptoKey):
+        (WebChromeClient::unwrapCryptoKey):
+
 2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Frame::rectForSelection shouldn't instantiate FrameSelection

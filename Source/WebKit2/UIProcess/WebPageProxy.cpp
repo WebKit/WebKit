@@ -4479,19 +4479,17 @@ void WebPageProxy::setScrollPinningBehavior(ScrollPinningBehavior pinning)
         m_process->send(Messages::WebPage::SetScrollPinningBehavior(pinning), m_pageID);
 }
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(SUBTLE_CRYPTO) && !PLATFORM(COCOA)
 void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, bool& succeeded, Vector<uint8_t>& wrappedKey)
 {
-    // FIXME: Implement.
-    wrappedKey = key;
-    succeeded = true;
+    notImplemented();
+    succeeded = false;
 }
 
 void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succeeded, Vector<uint8_t>& key)
 {
-    // FIXME: Implement.
-    key = wrappedKey;
-    succeeded = true;
+    notImplemented();
+    succeeded = false;
 }
 #endif
 

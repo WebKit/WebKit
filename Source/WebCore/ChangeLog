@@ -1,3 +1,25 @@
+2014-02-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Wrap WebCrypto keys in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=128680
+
+        Reviewed by Anders Carlsson.
+
+        Test: crypto/subtle/rsa-indexeddb.html
+
+        Added Mac code to wrap a key with AES-GCM. We then serialize it into a plist,
+        because more custom formats would be crazy (even the custom format in SerializedScriptValue
+        makes me nervous, we'll certainly need to change CryptoKey in the future).
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/SerializedCryptoKeyWrap.h: Added.
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm: Added.
+        (WebCore::vectorFromNSData):
+        (WebCore::wrapSerializedCryptoKey):
+        (WebCore::unwrapSerializedCryptoKey):
+
 2014-02-12  Brent Fulgham  <bfulgham@apple.com>
 
         Wheel events don't latch to inner scrollable elements 

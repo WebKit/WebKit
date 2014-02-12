@@ -493,6 +493,7 @@ webkit.org/b/107194 http/tests/security/cross-origin-indexeddb.html [ Skip ]
 webkit.org/b/107194 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
 webkit.org/b/107194 http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 webkit.org/b/107194 http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
+crypto/subtle/rsa-indexeddb.html
 
 # crypto.subtle is not yet enabled
 crypto/subtle [ Skip ]

@@ -5784,6 +5784,8 @@
 		E18258AC0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */; };
 		E187056316E54A0D00585E97 /* MainThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = E187056216E54A0D00585E97 /* MainThreadTask.h */; };
 		E18772F1126E2629003DD586 /* Language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18772F0126E2629003DD586 /* Language.cpp */; };
+		E18DF33518AAF12C00773E59 /* SerializedCryptoKeyWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E18DF33818AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E18DF33618AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm */; };
 		E19727161820549E00592D51 /* CryptoKeyType.h in Headers */ = {isa = PBXBuildFile; fileRef = E19727151820549E00592D51 /* CryptoKeyType.h */; };
 		E19AC3EE1824DC7900349426 /* CryptoAlgorithmSHA224.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3E61824DC7900349426 /* CryptoAlgorithmSHA224.cpp */; };
 		E19AC3EF1824DC7900349426 /* CryptoAlgorithmSHA224.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3E71824DC7900349426 /* CryptoAlgorithmSHA224.h */; };
@@ -13076,6 +13078,8 @@
 		E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerGlobalScopeCustom.cpp; sourceTree = "<group>"; };
 		E187056216E54A0D00585E97 /* MainThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThreadTask.h; sourceTree = "<group>"; };
 		E18772F0126E2629003DD586 /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
+		E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedCryptoKeyWrap.h; sourceTree = "<group>"; };
+		E18DF33618AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SerializedCryptoKeyWrapMac.mm; path = mac/SerializedCryptoKeyWrapMac.mm; sourceTree = "<group>"; };
 		E19727151820549E00592D51 /* CryptoKeyType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyType.h; sourceTree = "<group>"; };
 		E19AC3E61824DC7900349426 /* CryptoAlgorithmSHA224.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmSHA224.cpp; sourceTree = "<group>"; };
 		E19AC3E71824DC7900349426 /* CryptoAlgorithmSHA224.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmSHA224.h; sourceTree = "<group>"; };
@@ -21035,6 +21039,7 @@
 				E19AC3F8182566F700349426 /* CryptoKeyMac.cpp */,
 				E164FAA418315E1A00DB4E61 /* CryptoKeyRSAMac.cpp */,
 				E1FE13621834351100892F13 /* CryptoDigestMac.cpp */,
+				E18DF33618AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm */,
 			);
 			name = mac;
 			sourceTree = "<group>";
@@ -21236,6 +21241,7 @@
 				E125F855182C0F8300D84CD9 /* CryptoKeySerialization.h */,
 				E19727151820549E00592D51 /* CryptoKeyType.h */,
 				E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */,
+				E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */,
 				E1FF8F5C1807364B00132674 /* SubtleCrypto.idl */,
 				E1FF8F5D1807442100132674 /* SubtleCrypto.cpp */,
 				E1FF8F5E1807442100132674 /* SubtleCrypto.h */,
@@ -23436,6 +23442,7 @@
 				2E37DFDB12DBAFB800A6B233 /* DOMURL.h in Headers */,
 				15C770A6100D41CD005BA267 /* DOMValidityState.h in Headers */,
 				BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */,
+				E18DF33518AAF12C00773E59 /* SerializedCryptoKeyWrap.h in Headers */,
 				31C0FF490E4CEFDD007D6FE5 /* DOMWebKitAnimationEvent.h in Headers */,
 				31C0FF4B0E4CEFDD007D6FE5 /* DOMWebKitAnimationEventInternal.h in Headers */,
 				415B3A6E17CBE267000FCCE8 /* AccessibilitySearchFieldButtons.h in Headers */,
@@ -26320,6 +26327,7 @@
 				512DD8FB0D91E6AF000F89EE /* ArchiveResource.cpp in Sources */,
 				E1FE137A184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp in Sources */,
 				512DD8F70D91E6AF000F89EE /* ArchiveResourceCollection.cpp in Sources */,
+				E18DF33818AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm in Sources */,
 				49B3760C15C6C6840059131D /* ArrayValue.cpp in Sources */,
 				FD5686C913AC180200B69C68 /* AsyncAudioDecoder.cpp in Sources */,
 				E1CDE92015018ED000862CC5 /* AsyncFileStream.cpp in Sources */,

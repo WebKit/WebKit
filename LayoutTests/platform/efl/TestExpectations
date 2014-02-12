@@ -271,6 +271,7 @@ webkit.org/b/87661 http/tests/security/cross-origin-indexeddb.html [ Skip ]
 webkit.org/b/87661 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
 webkit.org/b/87661 http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 webkit.org/b/87661 http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
+webkit.org/b/87661 crypto/subtle/rsa-indexeddb.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL

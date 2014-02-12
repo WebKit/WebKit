@@ -44,6 +44,7 @@
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/UserAgent.h>
@@ -571,5 +572,21 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 
     [[NSWorkspace sharedWorkspace] openFile:pdfFilename];
 }
+
+#if ENABLE(SUBTLE_CRYPTO)
+void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, bool& succeeded, Vector<uint8_t>& wrappedKey)
+{
+    Vector<uint8_t> masterKey(16);
+    memset(masterKey.data(), 0, masterKey.size()); // FIXME: Not implemented yet, will be getting a key from client.
+    succeeded = wrapSerializedCryptoKey(masterKey, key, wrappedKey);
+}
+
+void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succeeded, Vector<uint8_t>& key)
+{
+    Vector<uint8_t> masterKey(16);
+    memset(masterKey.data(), 0, masterKey.size()); // FIXME: Not implemented yet, will be getting a key from client.
+    succeeded = unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
+}
+#endif
 
 } // namespace WebKit

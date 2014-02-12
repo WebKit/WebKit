@@ -89,6 +89,7 @@ extern "C" CCRSACryptorRef CCRSACryptorGetPublicKeyFromPrivateKey(CCRSACryptorRe
 extern "C" void CCRSACryptorRelease(CCRSACryptorRef key);
 extern "C" CCCryptorStatus CCRSAGetKeyComponents(CCRSACryptorRef rsaKey, uint8_t *modulus, size_t *modulusLength, uint8_t *exponent, size_t *exponentLength, uint8_t *p, size_t *pLength, uint8_t *q, size_t *qLength);
 extern "C" CCRSAKeyType CCRSAGetKeyType(CCRSACryptorRef key);
+extern "C" CCCryptorStatus CCCryptorGCM(CCOperation op, CCAlgorithm alg, const void* key, size_t keyLength, const void* iv, size_t ivLen, const void* aData, size_t aDataLen, const void* dataIn, size_t dataInLength, void* dataOut, const void* tag, size_t* tagLength);
 
 namespace WebCore {
 

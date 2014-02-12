@@ -1084,6 +1084,7 @@ http/tests/security/cross-origin-indexeddb.html
 http/tests/security/cross-origin-worker-indexeddb-allowed.html
 http/tests/security/cross-origin-worker-indexeddb.html
 http/tests/security/no-indexeddb-from-sandbox.html
+crypto/subtle/rsa-indexeddb.html
 
 # StorageTracker is not enabled.
 storage/domstorage/localstorage/storagetracker
