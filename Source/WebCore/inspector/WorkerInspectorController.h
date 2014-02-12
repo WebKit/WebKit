@@ -51,7 +51,7 @@ namespace WebCore {
 
 class InspectorInstrumentation;
 class InstrumentingAgents;
-class PageInjectedScriptManager;
+class WebInjectedScriptManager;
 class WorkerGlobalScope;
 class WorkerRuntimeAgent;
 
@@ -79,7 +79,7 @@ private:
 
     WorkerGlobalScope& m_workerGlobalScope;
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
-    std::unique_ptr<PageInjectedScriptManager> m_injectedScriptManager;
+    std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
     WorkerRuntimeAgent* m_runtimeAgent;
     Inspector::InspectorAgentRegistry m_agents;
     std::unique_ptr<InspectorFrontendChannel> m_frontendChannel;

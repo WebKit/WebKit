@@ -30,7 +30,7 @@
 
 #include "CommandLineAPIModuleSource.h"
 #include "JSCommandLineAPIHost.h"
-#include "PageInjectedScriptManager.h"
+#include "WebInjectedScriptManager.h"
 #include <inspector/InjectedScript.h>
 
 using namespace JSC;
@@ -56,8 +56,8 @@ String CommandLineAPIModule::source() const
 
 JSC::JSValue CommandLineAPIModule::host(InjectedScriptManager* injectedScriptManager, JSC::ExecState* exec) const
 {
-    // CommandLineAPIModule should only ever be used by a PageInjectedScriptManager.
-    PageInjectedScriptManager* pageInjectedScriptManager = static_cast<PageInjectedScriptManager*>(injectedScriptManager);
+    // CommandLineAPIModule should only ever be used by a WebInjectedScriptManager.
+    WebInjectedScriptManager* pageInjectedScriptManager = static_cast<WebInjectedScriptManager*>(injectedScriptManager);
     ASSERT(pageInjectedScriptManager->commandLineAPIHost());
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     return toJS(exec, globalObject, pageInjectedScriptManager->commandLineAPIHost());

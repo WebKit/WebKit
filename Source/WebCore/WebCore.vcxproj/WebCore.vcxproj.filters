@@ -4839,12 +4839,6 @@
     <ClCompile Include="..\inspector\PageDebuggerAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\PageInjectedScriptHost.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\inspector\PageInjectedScriptManager.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\inspector\PageRuntimeAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -4855,6 +4849,12 @@
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\WebDebuggerAgent.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\WebInjectedScriptHost.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\WebInjectedScriptManager.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\WorkerConsoleAgent.cpp">
@@ -12407,12 +12407,6 @@
     <ClInclude Include="..\inspector\PageDebuggerAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\PageInjectedScriptHost.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\PageInjectedScriptManager.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\inspector\PageRuntimeAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
@@ -12423,6 +12417,12 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\WebDebuggerAgent.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\WebInjectedScriptHost.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\WebInjectedScriptManager.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\WorkerConsoleAgent.h">

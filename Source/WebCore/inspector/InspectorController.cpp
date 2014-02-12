@@ -67,10 +67,10 @@
 #include "Page.h"
 #include "PageConsoleAgent.h"
 #include "PageDebuggerAgent.h"
-#include "PageInjectedScriptHost.h"
-#include "PageInjectedScriptManager.h"
 #include "PageRuntimeAgent.h"
 #include "Settings.h"
+#include "WebInjectedScriptHost.h"
+#include "WebInjectedScriptManager.h"
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorBackendDispatcher.h>
 #include <inspector/agents/InspectorAgent.h>
@@ -83,7 +83,7 @@ namespace WebCore {
 
 InspectorController::InspectorController(Page& page, InspectorClient* inspectorClient)
     : m_instrumentingAgents(InstrumentingAgents::create(*this))
-    , m_injectedScriptManager(std::make_unique<PageInjectedScriptManager>(*this, PageInjectedScriptHost::create()))
+    , m_injectedScriptManager(std::make_unique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_overlay(std::make_unique<InspectorOverlay>(page, inspectorClient))
     , m_inspectorFrontendChannel(nullptr)
     , m_page(page)

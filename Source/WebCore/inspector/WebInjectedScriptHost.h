@@ -23,40 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageInjectedScriptManager_h
-#define PageInjectedScriptManager_h
+#ifndef WebInjectedScriptHost_h
+#define WebInjectedScriptHost_h
 
 #if ENABLE(INSPECTOR)
 
-#include "CommandLineAPIHost.h"
-#include <inspector/InjectedScriptManager.h>
-#include <wtf/RefPtr.h>
+#include <inspector/InjectedScriptHost.h>
 
 namespace WebCore {
 
-class DOMWindow;
-
-// FIXME: Rename to WebInjectedScriptManager.
-class PageInjectedScriptManager final : public Inspector::InjectedScriptManager {
+class WebInjectedScriptHost final : public Inspector::InjectedScriptHost {
 public:
-    PageInjectedScriptManager(Inspector::InspectorEnvironment&, PassRefPtr<Inspector::InjectedScriptHost>);
-    virtual ~PageInjectedScriptManager() { }
+    static PassRefPtr<WebInjectedScriptHost> create() { return adoptRef(new WebInjectedScriptHost); }
 
-    CommandLineAPIHost* commandLineAPIHost() const { return m_commandLineAPIHost.get(); }
-
-    virtual void disconnect() override;
-
-    void discardInjectedScriptsFor(DOMWindow*);
-
-protected:
-    virtual void didCreateInjectedScript(Inspector::InjectedScript) override;
-
-private:
-    RefPtr<CommandLineAPIHost> m_commandLineAPIHost;
+    virtual JSC::JSValue type(JSC::ExecState*, JSC::JSValue) override;
+    virtual bool isHTMLAllCollection(JSC::JSValue) override;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
 
-#endif // !defined(PageInjectedScriptManager_h)
+#endif // !defined(WebInjectedScriptHost_h)

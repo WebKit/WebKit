@@ -43,7 +43,7 @@ class PageConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_NONCOPYABLE(PageConsoleAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageConsoleAgent(PageInjectedScriptManager*, InspectorDOMAgent*);
+    PageConsoleAgent(WebInjectedScriptManager*, InspectorDOMAgent*);
     virtual ~PageConsoleAgent() { }
 
     virtual bool isWorkerAgent() const override { return false; }

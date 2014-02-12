@@ -3630,13 +3630,13 @@
 		A5732B0B136A161D005C8D7C /* DateComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = A5732B09136A161D005C8D7C /* DateComponents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E1C187B74D500843B10 /* InspectorInstrumentationCookie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5840E1A187B74D500843B10 /* InspectorInstrumentationCookie.cpp */; };
 		A5840E1D187B74D500843B10 /* InspectorInstrumentationCookie.h in Headers */ = {isa = PBXBuildFile; fileRef = A5840E1B187B74D500843B10 /* InspectorInstrumentationCookie.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A5840E24187B8AC200843B10 /* PageInjectedScriptHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5840E22187B8AC200843B10 /* PageInjectedScriptHost.cpp */; };
-		A5840E25187B8AC200843B10 /* PageInjectedScriptHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A5840E23187B8AC200843B10 /* PageInjectedScriptHost.h */; };
+		A5840E24187B8AC200843B10 /* WebInjectedScriptHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5840E22187B8AC200843B10 /* WebInjectedScriptHost.cpp */; };
+		A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A5840E23187B8AC200843B10 /* WebInjectedScriptHost.h */; };
 		A584FE2618637DAB00843B10 /* CommandLineAPIModuleSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2518637DAB00843B10 /* CommandLineAPIModuleSource.h */; };
 		A584FE2B1863870F00843B10 /* CommandLineAPIModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE291863870F00843B10 /* CommandLineAPIModule.cpp */; };
 		A584FE2C1863870F00843B10 /* CommandLineAPIModule.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2A1863870F00843B10 /* CommandLineAPIModule.h */; };
-		A584FE2F1864CB8400843B10 /* PageInjectedScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE2D1864CB8400843B10 /* PageInjectedScriptManager.cpp */; };
-		A584FE301864CB8400843B10 /* PageInjectedScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2E1864CB8400843B10 /* PageInjectedScriptManager.h */; };
+		A584FE2F1864CB8400843B10 /* WebInjectedScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE2D1864CB8400843B10 /* WebInjectedScriptManager.cpp */; };
+		A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2E1864CB8400843B10 /* WebInjectedScriptManager.h */; };
 		A584FE341864D5AF00843B10 /* CommandLineAPIHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE311864D5AF00843B10 /* CommandLineAPIHost.cpp */; };
 		A584FE351864D5AF00843B10 /* CommandLineAPIHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE321864D5AF00843B10 /* CommandLineAPIHost.h */; };
 		A584FE381864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */; };
@@ -10594,14 +10594,14 @@
 		A5732B09136A161D005C8D7C /* DateComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateComponents.h; sourceTree = "<group>"; };
 		A5840E1A187B74D500843B10 /* InspectorInstrumentationCookie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentationCookie.cpp; sourceTree = "<group>"; };
 		A5840E1B187B74D500843B10 /* InspectorInstrumentationCookie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationCookie.h; sourceTree = "<group>"; };
-		A5840E22187B8AC200843B10 /* PageInjectedScriptHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageInjectedScriptHost.cpp; sourceTree = "<group>"; };
-		A5840E23187B8AC200843B10 /* PageInjectedScriptHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageInjectedScriptHost.h; sourceTree = "<group>"; };
+		A5840E22187B8AC200843B10 /* WebInjectedScriptHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInjectedScriptHost.cpp; sourceTree = "<group>"; };
+		A5840E23187B8AC200843B10 /* WebInjectedScriptHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInjectedScriptHost.h; sourceTree = "<group>"; };
 		A584FE2518637DAB00843B10 /* CommandLineAPIModuleSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineAPIModuleSource.h; sourceTree = "<group>"; };
 		A584FE2718637DCA00843B10 /* CommandLineAPIModuleSource.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = CommandLineAPIModuleSource.js; sourceTree = "<group>"; };
 		A584FE291863870F00843B10 /* CommandLineAPIModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineAPIModule.cpp; sourceTree = "<group>"; };
 		A584FE2A1863870F00843B10 /* CommandLineAPIModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineAPIModule.h; sourceTree = "<group>"; };
-		A584FE2D1864CB8400843B10 /* PageInjectedScriptManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageInjectedScriptManager.cpp; sourceTree = "<group>"; };
-		A584FE2E1864CB8400843B10 /* PageInjectedScriptManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageInjectedScriptManager.h; sourceTree = "<group>"; };
+		A584FE2D1864CB8400843B10 /* WebInjectedScriptManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInjectedScriptManager.cpp; sourceTree = "<group>"; };
+		A584FE2E1864CB8400843B10 /* WebInjectedScriptManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInjectedScriptManager.h; sourceTree = "<group>"; };
 		A584FE311864D5AF00843B10 /* CommandLineAPIHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineAPIHost.cpp; sourceTree = "<group>"; };
 		A584FE321864D5AF00843B10 /* CommandLineAPIHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineAPIHost.h; sourceTree = "<group>"; };
 		A584FE331864D5AF00843B10 /* CommandLineAPIHost.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CommandLineAPIHost.idl; sourceTree = "<group>"; };
@@ -14875,10 +14875,6 @@
 				F382088B147D35F90010BC06 /* PageConsoleAgent.h */,
 				F34742DA134362F000531BC2 /* PageDebuggerAgent.cpp */,
 				F34742DB134362F000531BC2 /* PageDebuggerAgent.h */,
-				A5840E22187B8AC200843B10 /* PageInjectedScriptHost.cpp */,
-				A5840E23187B8AC200843B10 /* PageInjectedScriptHost.h */,
-				A584FE2D1864CB8400843B10 /* PageInjectedScriptManager.cpp */,
-				A584FE2E1864CB8400843B10 /* PageInjectedScriptManager.h */,
 				F382088C147D35F90010BC06 /* PageRuntimeAgent.cpp */,
 				F382088D147D35F90010BC06 /* PageRuntimeAgent.h */,
 				9FA37EEF1172FD4100C4CD55 /* ScriptProfile.idl */,
@@ -14889,6 +14885,10 @@
 				A56C5B99189F34570082D13C /* WebConsoleAgent.h */,
 				A5E616711894581F009ADF50 /* WebDebuggerAgent.cpp */,
 				A5E616721894581F009ADF50 /* WebDebuggerAgent.h */,
+				A5840E22187B8AC200843B10 /* WebInjectedScriptHost.cpp */,
+				A5840E23187B8AC200843B10 /* WebInjectedScriptHost.h */,
+				A584FE2D1864CB8400843B10 /* WebInjectedScriptManager.cpp */,
+				A584FE2E1864CB8400843B10 /* WebInjectedScriptManager.h */,
 				F382088E147D35F90010BC06 /* WorkerConsoleAgent.cpp */,
 				F382088F147D35F90010BC06 /* WorkerConsoleAgent.h */,
 				F34742DE1343631F00531BC2 /* WorkerDebuggerAgent.cpp */,
@@ -23137,7 +23137,7 @@
 				85909CDD0ACC7A7E00DF01F1 /* DOMCSSFontFaceRuleInternal.h in Headers */,
 				B562DB6117D3CD660010AF96 /* SVGElementTypeHelpers.h in Headers */,
 				85032DDB0AA8C9BE007D3B7D /* DOMCSSImportRule.h in Headers */,
-				A5840E25187B8AC200843B10 /* PageInjectedScriptHost.h in Headers */,
+				A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */,
 				85909CDE0ACC7A7E00DF01F1 /* DOMCSSImportRuleInternal.h in Headers */,
 				85032DDD0AA8C9BE007D3B7D /* DOMCSSMediaRule.h in Headers */,
 				85909CDF0ACC7A7E00DF01F1 /* DOMCSSMediaRuleInternal.h in Headers */,
@@ -25540,7 +25540,7 @@
 				088A0E0B126EF1DB00978F7A /* SVGPropertyTearOff.h in Headers */,
 				088A0E0C126EF1DB00978F7A /* SVGPropertyTraits.h in Headers */,
 				B2227A9A0D00BF220071B782 /* SVGRadialGradientElement.h in Headers */,
-				A584FE301864CB8400843B10 /* PageInjectedScriptManager.h in Headers */,
+				A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */,
 				E43A023B17EB370A004CDD25 /* RenderElement.h in Headers */,
 				08EDE19F12A50B8E00B95797 /* SVGRect.h in Headers */,
 				B2227A9E0D00BF220071B782 /* SVGRectElement.h in Headers */,
@@ -27210,7 +27210,7 @@
 				BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */,
 				977B3879122883E900B81FF8 /* HTMLViewSourceParser.cpp in Sources */,
 				E1C266D818317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp in Sources */,
-				A584FE2F1864CB8400843B10 /* PageInjectedScriptManager.cpp in Sources */,
+				A584FE2F1864CB8400843B10 /* WebInjectedScriptManager.cpp in Sources */,
 				0B8C56D40F28627F000502E1 /* HTTPHeaderMap.cpp in Sources */,
 				514C76720CE923A1007EF3CD /* HTTPParsers.cpp in Sources */,
 				371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */,
@@ -28605,7 +28605,7 @@
 				BCEF447A0E6747D0001C1287 /* StyleCachedImage.cpp in Sources */,
 				9393E604151A9A1800066F06 /* StyleCachedImageSet.cpp in Sources */,
 				31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */,
-				A5840E24187B8AC200843B10 /* PageInjectedScriptHost.cpp in Sources */,
+				A5840E24187B8AC200843B10 /* WebInjectedScriptHost.cpp in Sources */,
 				A8C4A7FE09D563270003AC8D /* StyledElement.cpp in Sources */,
 				A56C5B9A189F34570082D13C /* WebConsoleAgent.cpp in Sources */,
 				BC5EB8B80E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp in Sources */,

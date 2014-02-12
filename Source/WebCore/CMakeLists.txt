@@ -1601,12 +1601,12 @@ set(WebCore_SOURCES
     inspector/NetworkResourcesData.cpp
     inspector/PageConsoleAgent.cpp
     inspector/PageDebuggerAgent.cpp
-    inspector/PageInjectedScriptHost.cpp
-    inspector/PageInjectedScriptManager.cpp
     inspector/PageRuntimeAgent.cpp
     inspector/TimelineRecordFactory.cpp
     inspector/WebConsoleAgent.cpp
     inspector/WebDebuggerAgent.cpp
+    inspector/WebInjectedScriptHost.cpp
+    inspector/WebInjectedScriptManager.cpp
     inspector/WorkerConsoleAgent.cpp
     inspector/WorkerDebuggerAgent.cpp
     inspector/WorkerInspectorController.cpp

@@ -23,37 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PageInjectedScriptHost.h"
+#ifndef WebInjectedScriptManager_h
+#define WebInjectedScriptManager_h
 
 #if ENABLE(INSPECTOR)
 
-#include "JSHTMLAllCollection.h"
-#include "JSHTMLCollection.h"
-#include "JSNode.h"
-#include "JSNodeList.h"
-
-using namespace JSC;
+#include "CommandLineAPIHost.h"
+#include <inspector/InjectedScriptManager.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-JSValue PageInjectedScriptHost::type(JSC::ExecState* exec, JSC::JSValue value)
-{
-    if (value.inherits(JSNode::info()))
-        return jsNontrivialString(exec, ASCIILiteral("node"));
-    if (value.inherits(JSNodeList::info()))
-        return jsNontrivialString(exec, ASCIILiteral("array"));
-    if (value.inherits(JSHTMLCollection::info()))
-        return jsNontrivialString(exec, ASCIILiteral("array"));
+class DOMWindow;
 
-    return jsUndefined();
-}
+class WebInjectedScriptManager final : public Inspector::InjectedScriptManager {
+public:
+    WebInjectedScriptManager(Inspector::InspectorEnvironment&, PassRefPtr<Inspector::InjectedScriptHost>);
+    virtual ~WebInjectedScriptManager() { }
 
-bool PageInjectedScriptHost::isHTMLAllCollection(JSC::JSValue value)
-{
-    return value.inherits(JSHTMLAllCollection::info());
-}
+    CommandLineAPIHost* commandLineAPIHost() const { return m_commandLineAPIHost.get(); }
+
+    virtual void disconnect() override;
+
+    void discardInjectedScriptsFor(DOMWindow*);
+
+protected:
+    virtual void didCreateInjectedScript(Inspector::InjectedScript) override;
+
+private:
+    RefPtr<CommandLineAPIHost> m_commandLineAPIHost;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
+
+#endif // !defined(WebInjectedScriptManager_h)

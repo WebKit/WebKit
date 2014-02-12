@@ -51,9 +51,9 @@ namespace WebCore {
 
 class InstrumentingAgents;
 class Page;
-class PageInjectedScriptManager;
 class ScriptHeapSnapshot;
 class ScriptProfile;
+class WebInjectedScriptManager;
 class WorkerGlobalScope;
 
 typedef String ErrorString;
@@ -61,8 +61,8 @@ typedef String ErrorString;
 class InspectorProfilerAgent : public InspectorAgentBase, public Inspector::InspectorProfilerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<InspectorProfilerAgent> create(InstrumentingAgents*, Inspector::InspectorConsoleAgent*, Page*, PageInjectedScriptManager*);
-    static std::unique_ptr<InspectorProfilerAgent> create(InstrumentingAgents*, Inspector::InspectorConsoleAgent*, WorkerGlobalScope*, PageInjectedScriptManager*);
+    static std::unique_ptr<InspectorProfilerAgent> create(InstrumentingAgents*, Inspector::InspectorConsoleAgent*, Page*, WebInjectedScriptManager*);
+    static std::unique_ptr<InspectorProfilerAgent> create(InstrumentingAgents*, Inspector::InspectorConsoleAgent*, WorkerGlobalScope*, WebInjectedScriptManager*);
 
     virtual ~InspectorProfilerAgent();
 
@@ -101,7 +101,7 @@ public:
     virtual void getHeapObjectId(ErrorString*, const String& objectId, String* heapSnapshotObjectId) override;
 
 protected:
-    InspectorProfilerAgent(InstrumentingAgents*, Inspector::InspectorConsoleAgent*, PageInjectedScriptManager*);
+    InspectorProfilerAgent(InstrumentingAgents*, Inspector::InspectorConsoleAgent*, WebInjectedScriptManager*);
     virtual void startProfiling(const String& title) = 0;
     virtual PassRefPtr<ScriptProfile> stopProfiling(const String& title) = 0;
 
@@ -116,7 +116,7 @@ private:
     PassRefPtr<Inspector::TypeBuilder::Profiler::ProfileHeader> createSnapshotHeader(const ScriptHeapSnapshot&);
 
     Inspector::InspectorConsoleAgent* m_consoleAgent;
-    PageInjectedScriptManager* m_injectedScriptManager;
+    WebInjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<Inspector::InspectorProfilerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorProfilerBackendDispatcher> m_backendDispatcher;
     bool m_enabled;

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PageInjectedScriptManager.h"
+#include "WebInjectedScriptManager.h"
 
 #if ENABLE(INSPECTOR)
 
@@ -35,13 +35,13 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PageInjectedScriptManager::PageInjectedScriptManager(InspectorEnvironment& environment, PassRefPtr<InjectedScriptHost> host)
+WebInjectedScriptManager::WebInjectedScriptManager(InspectorEnvironment& environment, PassRefPtr<InjectedScriptHost> host)
     : InjectedScriptManager(environment, host)
     , m_commandLineAPIHost(CommandLineAPIHost::create())
 {
 }
 
-void PageInjectedScriptManager::disconnect()
+void WebInjectedScriptManager::disconnect()
 {
     InjectedScriptManager::disconnect();
 
@@ -49,12 +49,12 @@ void PageInjectedScriptManager::disconnect()
     m_commandLineAPIHost.clear();
 }
 
-void PageInjectedScriptManager::didCreateInjectedScript(InjectedScript injectedScript)
+void WebInjectedScriptManager::didCreateInjectedScript(InjectedScript injectedScript)
 {
     CommandLineAPIModule::injectIfNeeded(this, injectedScript);
 }
 
-void PageInjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
+void WebInjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
 {
     if (m_scriptStateToId.isEmpty())
         return;

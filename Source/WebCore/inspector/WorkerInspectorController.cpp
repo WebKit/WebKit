@@ -45,8 +45,8 @@
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "JSMainThreadExecState.h"
-#include "PageInjectedScriptHost.h"
-#include "PageInjectedScriptManager.h"
+#include "WebInjectedScriptHost.h"
+#include "WebInjectedScriptManager.h"
 #include "WorkerConsoleAgent.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerGlobalScope.h"
@@ -81,7 +81,7 @@ private:
 WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGlobalScope)
     : m_workerGlobalScope(workerGlobalScope)
     , m_instrumentingAgents(InstrumentingAgents::create(*this))
-    , m_injectedScriptManager(std::make_unique<PageInjectedScriptManager>(*this, PageInjectedScriptHost::create()))
+    , m_injectedScriptManager(std::make_unique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_runtimeAgent(nullptr)
 {
     auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(m_injectedScriptManager.get(), &workerGlobalScope);

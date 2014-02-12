@@ -36,13 +36,13 @@
 #include "CommandLineAPIHost.h"
 #include "InspectorDOMAgent.h"
 #include "Node.h"
-#include "PageInjectedScriptManager.h"
+#include "WebInjectedScriptManager.h"
 
 using namespace Inspector;
 
 namespace WebCore {
 
-PageConsoleAgent::PageConsoleAgent(PageInjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
+PageConsoleAgent::PageConsoleAgent(WebInjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
     : WebConsoleAgent(injectedScriptManager)
     , m_inspectorDOMAgent(domAgent)
 {
@@ -74,7 +74,7 @@ void PageConsoleAgent::addInspectedNode(ErrorString* errorString, int nodeId)
         return;
     }
 
-    if (CommandLineAPIHost* commandLineAPIHost = static_cast<PageInjectedScriptManager*>(m_injectedScriptManager)->commandLineAPIHost())
+    if (CommandLineAPIHost* commandLineAPIHost = static_cast<WebInjectedScriptManager*>(m_injectedScriptManager)->commandLineAPIHost())
         commandLineAPIHost->addInspectedObject(adoptPtr(new InspectableNode(node)));
 }
 

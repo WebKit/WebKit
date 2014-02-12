@@ -32,11 +32,11 @@
 #include "CommandLineAPIHost.h"
 #include "Console.h"
 #include "DOMWindow.h"
-#include "PageInjectedScriptManager.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "ScriptProfiler.h"
 #include "ScriptState.h"
+#include "WebInjectedScriptManager.h"
 #include <inspector/ConsoleMessage.h>
 #include <runtime/JSCInlines.h>
 #include <wtf/text/StringBuilder.h>
@@ -45,7 +45,7 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WebConsoleAgent::WebConsoleAgent(PageInjectedScriptManager* injectedScriptManager)
+WebConsoleAgent::WebConsoleAgent(WebInjectedScriptManager* injectedScriptManager)
     : InspectorConsoleAgent(injectedScriptManager)
     , m_monitoringXHREnabled(false)
 {
@@ -68,7 +68,7 @@ void WebConsoleAgent::frameWindowDiscarded(DOMWindow* window)
         m_consoleMessages[i]->clear();
     }
 
-    static_cast<PageInjectedScriptManager*>(m_injectedScriptManager)->discardInjectedScriptsFor(window);
+    static_cast<WebInjectedScriptManager*>(m_injectedScriptManager)->discardInjectedScriptsFor(window);
 }
 
 void WebConsoleAgent::didFinishXHRLoading(unsigned long requestIdentifier, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber)
@@ -130,7 +130,7 @@ private:
 
 void WebConsoleAgent::addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId)
 {
-    if (CommandLineAPIHost* commandLineAPIHost = static_cast<PageInjectedScriptManager*>(m_injectedScriptManager)->commandLineAPIHost())
+    if (CommandLineAPIHost* commandLineAPIHost = static_cast<WebInjectedScriptManager*>(m_injectedScriptManager)->commandLineAPIHost())
         commandLineAPIHost->addInspectedObject(adoptPtr(new InspectableHeapObject(inspectedHeapObjectId)));
 }
 

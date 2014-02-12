@@ -23,26 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageInjectedScriptHost_h
-#define PageInjectedScriptHost_h
+#include "config.h"
+#include "WebInjectedScriptHost.h"
 
 #if ENABLE(INSPECTOR)
 
-#include <inspector/InjectedScriptHost.h>
+#include "JSHTMLAllCollection.h"
+#include "JSHTMLCollection.h"
+#include "JSNode.h"
+#include "JSNodeList.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
-// FIXME: Rename to WebInjectedScriptHost.
-class PageInjectedScriptHost final : public Inspector::InjectedScriptHost {
-public:
-    static PassRefPtr<PageInjectedScriptHost> create() { return adoptRef(new PageInjectedScriptHost); }
+JSValue WebInjectedScriptHost::type(JSC::ExecState* exec, JSC::JSValue value)
+{
+    if (value.inherits(JSNode::info()))
+        return jsNontrivialString(exec, ASCIILiteral("node"));
+    if (value.inherits(JSNodeList::info()))
+        return jsNontrivialString(exec, ASCIILiteral("array"));
+    if (value.inherits(JSHTMLCollection::info()))
+        return jsNontrivialString(exec, ASCIILiteral("array"));
 
-    virtual JSC::JSValue type(JSC::ExecState*, JSC::JSValue) override;
-    virtual bool isHTMLAllCollection(JSC::JSValue) override;
-};
+    return jsUndefined();
+}
+
+bool WebInjectedScriptHost::isHTMLAllCollection(JSC::JSValue value)
+{
+    return value.inherits(JSHTMLAllCollection::info());
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
-
-#endif // !defined(PageInjectedScriptHost_h)

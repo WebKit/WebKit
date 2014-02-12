@@ -1,3 +1,58 @@
+2014-02-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Rename PageInjectedScript* to WebInjectedScript*
+        https://bugs.webkit.org/show_bug.cgi?id=128660
+
+        Reviewed by Timothy Hatcher.
+
+        Rename the files update build systems and users.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CommandLineAPIModule.cpp:
+        (WebCore::CommandLineAPIModule::host):
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        (WebCore::InspectorHeapProfilerAgent::InspectorHeapProfilerAgent):
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::PageProfilerAgent::PageProfilerAgent):
+        (WebCore::InspectorProfilerAgent::create):
+        (WebCore::WorkerProfilerAgent::WorkerProfilerAgent):
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::PageConsoleAgent):
+        (WebCore::PageConsoleAgent::addInspectedNode):
+        * inspector/PageConsoleAgent.h:
+        * inspector/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::WebConsoleAgent):
+        (WebCore::WebConsoleAgent::frameWindowDiscarded):
+        (WebCore::WebConsoleAgent::addInspectedHeapObject):
+        * inspector/WebConsoleAgent.h:
+        * inspector/WebInjectedScriptHost.cpp: Renamed from Source/WebCore/inspector/PageInjectedScriptHost.cpp.
+        (WebCore::WebInjectedScriptHost::type):
+        (WebCore::WebInjectedScriptHost::isHTMLAllCollection):
+        * inspector/WebInjectedScriptHost.h: Renamed from Source/WebCore/inspector/PageInjectedScriptHost.h.
+        * inspector/WebInjectedScriptManager.cpp: Renamed from Source/WebCore/inspector/PageInjectedScriptManager.cpp.
+        (WebCore::WebInjectedScriptManager::WebInjectedScriptManager):
+        (WebCore::WebInjectedScriptManager::disconnect):
+        (WebCore::WebInjectedScriptManager::didCreateInjectedScript):
+        (WebCore::WebInjectedScriptManager::discardInjectedScriptsFor):
+        * inspector/WebInjectedScriptManager.h: Renamed from Source/WebCore/inspector/PageInjectedScriptManager.h.
+        * inspector/WorkerConsoleAgent.cpp:
+        (WebCore::WorkerConsoleAgent::WorkerConsoleAgent):
+        * inspector/WorkerConsoleAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        * inspector/WorkerInspectorController.h:
+
 2014-02-12  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed iOS Build fix after r163975.

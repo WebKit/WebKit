@@ -44,16 +44,15 @@
 
 namespace WebCore {
 
-class PageInjectedScriptManager;
 class ScriptHeapSnapshot;
-class ScriptProfile;
+class WebInjectedScriptManager;
 
 typedef String ErrorString;
 
 class InspectorHeapProfilerAgent : public InspectorAgentBase, public Inspector::InspectorHeapProfilerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorHeapProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorHeapProfilerAgent(InstrumentingAgents*, PageInjectedScriptManager*);
+    InspectorHeapProfilerAgent(InstrumentingAgents*, WebInjectedScriptManager*);
     virtual ~InspectorHeapProfilerAgent();
 
     virtual void collectGarbage(ErrorString*) override;
@@ -81,7 +80,7 @@ private:
 
     PassRefPtr<Inspector::TypeBuilder::HeapProfiler::ProfileHeader> createSnapshotHeader(const ScriptHeapSnapshot&);
 
-    PageInjectedScriptManager* m_injectedScriptManager;
+    WebInjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<Inspector::InspectorHeapProfilerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorHeapProfilerBackendDispatcher> m_backendDispatcher;
     unsigned m_nextUserInitiatedHeapSnapshotNumber;

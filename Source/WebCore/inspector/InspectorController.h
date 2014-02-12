@@ -55,7 +55,6 @@ namespace WebCore {
 class DOMWrapperWorld;
 class Frame;
 class GraphicsContext;
-class InspectorApplicationCacheAgent;
 class InspectorClient;
 class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;
@@ -66,11 +65,9 @@ class InspectorPageAgent;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
 class InstrumentingAgents;
-class IntSize;
-class Page;
-class PageInjectedScriptManager;
 class Node;
-
+class Page;
+class WebInjectedScriptManager;
 struct Highlight;
 
 class InspectorController final : public Inspector::InspectorEnvironment {
@@ -145,7 +142,7 @@ private:
     friend InstrumentingAgents* instrumentationForPage(Page*);
 
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
-    std::unique_ptr<PageInjectedScriptManager> m_injectedScriptManager;
+    std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
     std::unique_ptr<InspectorOverlay> m_overlay;
 
     Inspector::InspectorAgent* m_inspectorAgent;

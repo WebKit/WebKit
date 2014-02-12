@@ -35,8 +35,8 @@
 
 #include "CommandLineAPIHost.h"
 #include "InstrumentingAgents.h"
-#include "PageInjectedScriptManager.h"
 #include "ScriptProfiler.h"
+#include "WebInjectedScriptManager.h"
 #include <inspector/InjectedScript.h>
 
 using namespace Inspector;
@@ -45,7 +45,7 @@ namespace WebCore {
 
 static const char* const UserInitiatedProfileNameHeap = "org.webkit.profiles.user-initiated";
 
-InspectorHeapProfilerAgent::InspectorHeapProfilerAgent(InstrumentingAgents* instrumentingAgents, PageInjectedScriptManager* injectedScriptManager)
+InspectorHeapProfilerAgent::InspectorHeapProfilerAgent(InstrumentingAgents* instrumentingAgents, WebInjectedScriptManager* injectedScriptManager)
     : InspectorAgentBase(ASCIILiteral("HeapProfiler"), instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
     , m_nextUserInitiatedHeapSnapshotNumber(1)
