@@ -1,3 +1,10 @@
+2014-02-11  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r163262?): transitions/shorthand-border-transitions.html flakily asserts
+        https://bugs.webkit.org/show_bug.cgi?id=128283
+
+        * platform/mac/TestExpectations: Updated the expectation to match failure mode.
+
 2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         More Windows test rebaselines.

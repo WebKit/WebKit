@@ -1265,9 +1265,6 @@ media/track/video
 # SubtleCrypto is disabled on Mountain Lion
 webkit.org/b/124261 [ MountainLion ] crypto/subtle [ Skip ]
 
-# Deserialization of a CryptoKey in a worker fails with a crash.
-crypto/subtle/postMessage-worker.html [ Skip ]
-
 webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Failure ]
@@ -1339,7 +1336,7 @@ webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
 webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failure ]
 # debug assert on empty drawRect
-webkit.org/b/128283 transitions/shorthand-border-transitions.html [ Failure ]
+webkit.org/b/128283 [ Debug ] transitions/shorthand-border-transitions.html [ Skip ]
 # Non-uniform scaling context.
 webkit.org/b/128081 fast/events/page-scaled-mouse-click-iframe.html
 # End of subpixel failures.
