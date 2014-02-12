@@ -55,6 +55,7 @@ WebInspector.StorageManager.Event = {
 
 WebInspector.StorageManager.prototype = {
     constructor: WebInspector.StorageManager,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 
@@ -83,57 +84,32 @@ WebInspector.StorageManager.prototype = {
 
     domStorageWasUpdated: function(id)
     {
-        var domStorageView = this._domStorageViewForId(id);
-        if (!domStorageView)
-            return;
-
-        console.assert(domStorageView instanceof WebInspector.DOMStorageContentView);
-        domStorageView.update();
+        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageWasUpdated, id);
     },
 
-    domStorageItemsCleared: function(id)
+    itemsCleared: function(storageId)
     {
-        var domStorageView = this._domStorageViewForId(id);
-        if (!domStorageView)
-            return;
-
-        console.assert(domStorageView instanceof WebInspector.DOMStorageContentView);
-        domStorageView.itemsCleared();
+        this._domStorageForIdentifier(storageId).itemsCleared(storageId);
     },
 
-    domStorageItemRemoved: function(id, key)
+    itemRemoved: function(storageId, key)
     {
-        var domStorageView = this._domStorageViewForId(id);
-        if (!domStorageView)
-            return;
-
-        console.assert(domStorageView instanceof WebInspector.DOMStorageContentView);
-        domStorageView.itemRemoved(key);
+        this._domStorageForIdentifier(storageId).itemRemoved(storageId, key);
     },
 
-    domStorageItemAdded: function(id, key, value)
+    itemAdded: function(storageId, key, value)
     {
-        var domStorageView = this._domStorageViewForId(id);
-        if (!domStorageView)
-            return;
-
-        console.assert(domStorageView instanceof WebInspector.DOMStorageContentView);
-        domStorageView.itemAdded(key, value);
+        this._domStorageForIdentifier(storageId).itemAdded(storageId, key, value);
     },
 
-    domStorageItemUpdated: function(id, key, oldValue, value)
+    itemUpdated: function(storageId, key, oldValue, value)
     {
-        var domStorageView = this._domStorageViewForId(id);
-        if (!domStorageView)
-            return;
-
-        console.assert(domStorageView instanceof WebInspector.DOMStorageContentView);
-        domStorageView.itemUpdated(key, oldValue, value);
+        this._domStorageForIdentifier(storageId).itemUpdated(storageId, key, oldValue, value);
     },
 
     inspectDatabase: function(id)
     {
-        var database = this._databaseForId(id);
+        var database = this._databaseForIdentifier(id);
         console.assert(database);
         if (!database)
             return;
@@ -142,11 +118,23 @@ WebInspector.StorageManager.prototype = {
 
     inspectDOMStorage: function(id)
     {
-        var domStorage = this._domStorageForId(id);
+        var domStorage = this._domStorageForIdentifier(id);
         console.assert(domStorage);
         if (!domStorage)
             return;
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasInspected, {domStorage: domStorage});
+    },
+
+    _domStorageForIdentifier: function(id)
+    {
+        for (var storageObject of this._domStorageObjects) {
+            // The id is an object, so we need to compare the properties using Object.shallowEqual.
+            // COMPATIBILITY (iOS 6): The id was a string. Object.shallowEqual works for both.
+            if (Object.shallowEqual(storageObject.id, id))
+                return storageObject;
+        }
+
+        return null;
     },
 
     // Private
@@ -184,11 +172,11 @@ WebInspector.StorageManager.prototype = {
         // FIXME: Consider passing the other parts of the origin along to domStorageWasAdded.
 
         var localStorageIdentifier = {securityOrigin: frame.securityOrigin, isLocalStorage: true};
-        if (!this._domStorageForId(localStorageIdentifier))
+        if (!this._domStorageForIdentifier(localStorageIdentifier))
             this.domStorageWasAdded(localStorageIdentifier, frame.mainResource.urlComponents.host, true);
 
         var sessionStorageIdentifier = {securityOrigin: frame.securityOrigin, isLocalStorage: false};
-        if (!this._domStorageForId(sessionStorageIdentifier))
+        if (!this._domStorageForIdentifier(sessionStorageIdentifier))
             this.domStorageWasAdded(sessionStorageIdentifier, frame.mainResource.urlComponents.host, false);
     },
 
@@ -199,7 +187,7 @@ WebInspector.StorageManager.prototype = {
         this._addDOMStorageIfNeeded(event.target);
     },
 
-    _databaseForId: function(id)
+    _databaseForIdentifier: function(id)
     {
         for (var i = 0; i < this._databaseObjects.length; ++i) {
             if (this._databaseObjects[i].id === id)
@@ -207,28 +195,5 @@ WebInspector.StorageManager.prototype = {
         }
 
         return null;
-    },
-
-    _domStorageForId: function(id)
-    {
-        for (var i = 0; i < this._domStorageObjects.length; ++i) {
-            // The id is an object, so we need to compare the properties using Object.shallowEqual.
-            // COMPATIBILITY (iOS 6): The id was a string. Object.shallowEqual works for both.
-            if (Object.shallowEqual(this._domStorageObjects[i].id, id))
-                return this._domStorageObjects[i];
-        }
-
-        return null;
-    },
-
-    _domStorageViewForId: function(id)
-    {
-        var domStorage = this._domStorageForId(id);
-        if (!domStorage)
-            return null;
-
-        return WebInspector.contentBrowser.contentViewContainer.contentViewForRepresentedObject(domStorage, true);
     }
 };
-
-WebInspector.StorageManager.prototype.__proto__ = WebInspector.Object.prototype;

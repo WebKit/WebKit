@@ -31,6 +31,7 @@ WebInspector.DOMStorageObserver = function()
 
 WebInspector.DOMStorageObserver.prototype = {
     constructor: WebInspector.DOMStorageObserver,
+    __proto__: WebInspector.Object.prototype,
 
     // Events defined by the "DOMStorage" domain.
 
@@ -48,23 +49,21 @@ WebInspector.DOMStorageObserver.prototype = {
 
     domStorageItemsCleared: function(storageId)
     {
-        WebInspector.storageManager.domStorageItemsCleared(storageId);
+        WebInspector.storageManager.itemsCleared(storageId);
     },
 
     domStorageItemRemoved: function(storageId, key)
     {
-        WebInspector.storageManager.domStorageItemRemoved(storageId, key);
+        WebInspector.storageManager.itemRemoved(storageId, key);
     },
 
     domStorageItemAdded: function(storageId, key, value)
     {
-        WebInspector.storageManager.domStorageItemAdded(storageId, key, value);
+        WebInspector.storageManager.itemAdded(storageId, key, value);
     },
 
     domStorageItemUpdated: function(storageId, key, oldValue, value)
     {
-        WebInspector.storageManager.domStorageItemUpdated(storageId, key, oldValue, value);
+        WebInspector.storageManager.itemUpdated(storageId, key, oldValue, value);
     }
 };
-
-WebInspector.DOMStorageObserver.prototype.__proto__ = WebInspector.Object.prototype;

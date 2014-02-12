@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,17 +30,23 @@ WebInspector.DOMStorageContentView = function(representedObject)
 
     this.element.classList.add(WebInspector.DOMStorageContentView.StyleClassName);
 
-    this.update();
+    representedObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemsCleared, this.itemsCleared, this);
+    representedObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemAdded, this.itemAdded, this);
+    representedObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemRemoved, this.itemRemoved, this);
+    representedObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemUpdated, this.itemUpdated, this);
+
+    this.reset();
 };
 
 WebInspector.DOMStorageContentView.StyleClassName = "dom-storage";
 
 WebInspector.DOMStorageContentView.prototype = {
     constructor: WebInspector.DOMStorageContentView,
+    __proto__: WebInspector.ContentView.prototype,
 
     // Public
 
-    update: function()
+    reset: function()
     {
         this.representedObject.getEntries(this._showDOMStorageEntries.bind(this));
     },
@@ -52,27 +58,28 @@ WebInspector.DOMStorageContentView.prototype = {
         cookie.host = this.representedObject.host;
     },
 
-    itemsCleared: function()
+    itemsCleared: function(event)
     {
         this._dataGrid.removeChildren();
         this._dataGrid.addCreationNode(false);
     },
 
-    itemRemoved: function(key)
+    itemRemoved: function(event)
     {
-        for (var i = 0; i < this._dataGrid.children.length; ++i) {
-            var childNode = this._dataGrid.children[i];
-            if (childNode.data[0] === key) {
-                this._dataGrid.removeChild(childNode);
-                return;
-            }
+        for (var node of this._dataGrid.children) {
+            if (node.data[0] === event.data.key)
+                return this._dataGrid.removeChild(node);
         }
     },
 
-    itemAdded: function(key, value)
+    itemAdded: function(event)
     {
-        for (var i = 0; i < this._dataGrid.children.length; ++i) {
-            if (this._dataGrid.children[i][0] === key)
+        var key = event.data.key;
+        var value = event.data.value;
+
+        // Enforce key uniqueness.
+        for (var node of this._dataGrid.children) {
+            if (node.data[0] === key)
                 return;
         }
 
@@ -87,15 +94,18 @@ WebInspector.DOMStorageContentView.prototype = {
             this._sortDataGrid();
     },
 
-    itemUpdated: function(key, oldValue, value)
+    itemUpdated: function(event)
     {
+        var key = event.data.key;
+        var value = event.data.value;
+
         var keyFound = false;
-        for (var i = 0; i < this._dataGrid.children.length; ++i) {
-            var childNode = this._dataGrid.children[i];
+        for (var childNode of this._dataGrid.children) {
             if (childNode.data[0] === key) {
+                // Remove any rows that are now duplicates.
                 if (keyFound) {
                     this._dataGrid.removeChild(childNode);
-                    return;
+                    continue;
                 }
 
                 keyFound = true;
@@ -209,7 +219,7 @@ WebInspector.DOMStorageContentView.prototype = {
         if (this.representedObject)
             this.representedObject.removeItem(node.data[0]);
 
-        this.update();
+        this.reset();
     },
 
     _editingCallback: function(editingNode, columnIdentifier, oldText, newText)
@@ -223,8 +233,6 @@ WebInspector.DOMStorageContentView.prototype = {
         } else
             domStorage.setItem(editingNode.data[0], newText);
 
-        this.update();
+        this.reset();
     }
 };
-
-WebInspector.DOMStorageContentView.prototype.__proto__ = WebInspector.ContentView.prototype;

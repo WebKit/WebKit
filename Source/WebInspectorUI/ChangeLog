@@ -1,3 +1,49 @@
+2014-02-11  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: DOMStorageView should listen for events from DOMStorageObject
+        https://bugs.webkit.org/show_bug.cgi?id=128620
+
+        Reviewed by Timothy Hatcher.
+
+        The storage manager used to have a map of DOMStorageViews and delivered events
+        directly to them. Instead, the DOMStorageObserver should use the manager to
+        find the appropriate DOMStorageObject and deliver events to it. DOMStorageView
+        learns about storage updates from DOMStorageObject events.
+
+        * UserInterface/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView): Add event listeners.
+        (WebInspector.DOMStorageContentView.prototype.reset): Renamed from update().
+        (WebInspector.DOMStorageContentView.prototype.itemsCleared): Take an event argument.
+        (WebInspector.DOMStorageContentView.prototype.itemRemoved): Take an event argument.
+        Use for..of when iterating over nodes.
+        (WebInspector.DOMStorageContentView.prototype.itemAdded): Take an event argument.
+        Use for..of when iterating over nodes.
+        (WebInspector.DOMStorageContentView.prototype.itemUpdated): Take an event argument.
+        Use for..of when iterating over nodes.
+        * UserInterface/DOMStorageObject.js:
+        (WebInspector.DOMStorageObject.prototype.removeItem): Moved.
+        (WebInspector.DOMStorageObject.prototype.setItem): Moved.
+        (WebInspector.DOMStorageObject.prototype.itemsCleared): Added.
+        (WebInspector.DOMStorageObject.prototype.itemRemoved): Added.
+        (WebInspector.DOMStorageObject.prototype.itemAdded): Added.
+        (WebInspector.DOMStorageObject.prototype.itemUpdated): Added.
+        * UserInterface/DOMStorageObserver.js: Look up and notify the associated model.
+        (WebInspector.DOMStorageObserver.prototype.domStorageItemsCleared):
+        (WebInspector.DOMStorageObserver.prototype.domStorageItemRemoved):
+        (WebInspector.DOMStorageObserver.prototype.domStorageItemAdded):
+        (WebInspector.DOMStorageObserver.prototype.domStorageItemUpdated):
+        * UserInterface/StorageManager.js: Remove view lookup code. Remove
+        direct calls to DOMStorageViews.
+        (WebInspector.StorageManager.prototype.itemsCleared):
+        (WebInspector.StorageManager.prototype.itemRemoved):
+        (WebInspector.StorageManager.prototype.itemAdded):
+        (WebInspector.StorageManager.prototype.itemUpdated):
+        (WebInspector.StorageManager.prototype.domStorageWasUpdated):
+        (WebInspector.StorageManager.prototype.inspectDOMStorage):
+        (WebInspector.StorageManager.prototype._domStorageForIdentifier):
+        (WebInspector.StorageManager.prototype._addDOMStorageIfNeeded):
+        (WebInspector.StorageManager.prototype._databaseForIdentifier):
+
 2014-02-11  James Craig  <jcraig@apple.com>
 
         Web Inspector: AX: Accessibility Node Inspection

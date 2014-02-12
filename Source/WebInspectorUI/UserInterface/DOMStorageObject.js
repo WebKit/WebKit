@@ -34,9 +34,17 @@ WebInspector.DOMStorageObject.TypeIdentifier = "dom-storage";
 WebInspector.DOMStorageObject.HostCookieKey = "dom-storage-object-host";
 WebInspector.DOMStorageObject.LocalStorageCookieKey = "dom-storage-object-local-storage";
 
+WebInspector.DOMStorageObject.Event = {
+    ItemsCleared: "dom-storage-object-items-cleared",
+    ItemAdded: "dom-storage-object-item-added",
+    ItemRemoved: "dom-storage-object-item-removed",
+    ItemUpdated: "dom-storage-object-updated",
+};
+
 WebInspector.DOMStorageObject.prototype = {
     constructor: WebInspector.DOMStorageObject,
-    
+    __proto__: WebInspector.Object.prototype,
+
     get id()
     {
         return this._id;
@@ -67,13 +75,34 @@ WebInspector.DOMStorageObject.prototype = {
             DOMStorageAgent.getDOMStorageItems(this._id, callback);
     },
 
-    removeItem: function(key, callback)
+    removeItem: function(key)
     {
-        DOMStorageAgent.removeDOMStorageItem(this._id, key, callback);
+        DOMStorageAgent.removeDOMStorageItem(this._id, key);
     },
 
-    setItem: function(key, value, callback)
+    setItem: function(key, value)
     {
-        DOMStorageAgent.setDOMStorageItem(this._id, key, value, callback);
+        DOMStorageAgent.setDOMStorageItem(this._id, key, value);
+    },
+
+    itemsCleared: function(id)
+    {
+        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemsCleared, {id: id});
+    },
+
+    itemRemoved: function(id, key)
+    {
+        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemRemoved, {id: id, key: key});
+    },
+
+    itemAdded: function(id, key, value)
+    {
+        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemAdded, {id: id, key: key, value: value});
+    },
+
+    itemUpdated: function(id, key, oldValue, value)
+    {
+        var data = {id: id, key: key, oldValue: oldValue, value: value};
+        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemUpdated, data);
     }
 };
