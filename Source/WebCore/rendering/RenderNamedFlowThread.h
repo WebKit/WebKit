@@ -45,7 +45,7 @@ typedef ListHashSet<Element*> NamedFlowContentElements;
 
 class RenderNamedFlowThread final : public RenderFlowThread {
 public:
-    RenderNamedFlowThread(Document&, PassRef<RenderStyle>, PassRefPtr<WebKitNamedFlow>);
+    RenderNamedFlowThread(Document&, PassRef<RenderStyle>, PassRef<WebKitNamedFlow>);
     virtual ~RenderNamedFlowThread();
 
     const AtomicString& flowThreadName() const;
@@ -116,7 +116,9 @@ private:
     void clearContentElements();
     void updateWritingMode();
 
-private:
+    WebKitNamedFlow& namedFlow() { return m_namedFlow.get(); }
+    const WebKitNamedFlow& namedFlow() const { return m_namedFlow.get(); }
+
     // Observer flow threads have invalid regions that depend on the state of this thread
     // to re-validate their regions. Keeping a set of observer threads make it easy
     // to notify them when a region was removed from this flow.
@@ -139,7 +141,7 @@ private:
     bool m_hasRegionsWithStyling : 1;
 
     // The DOM Object that represents a named flow.
-    RefPtr<WebKitNamedFlow> m_namedFlow;
+    Ref<WebKitNamedFlow> m_namedFlow;
 
     Timer<RenderNamedFlowThread> m_regionLayoutUpdateEventTimer;
     Timer<RenderNamedFlowThread> m_regionOversetChangeEventTimer;

@@ -49,7 +49,7 @@ public:
 
     Vector<RefPtr<WebKitNamedFlow>> namedFlows();
     WebKitNamedFlow* flowByName(const String&);
-    PassRefPtr<WebKitNamedFlow> ensureFlowWithName(const String&);
+    PassRef<WebKitNamedFlow> ensureFlowWithName(const String&);
 
     void discardNamedFlow(WebKitNamedFlow*);
 

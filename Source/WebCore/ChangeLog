@@ -1,3 +1,33 @@
+2014-02-11  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderNamedFlowThread always has a WebKitNamedFlow.
+        <https://webkit.org/b/128623>
+
+        Codify the fact that RenderNamedFlowThread always has a corresponding
+        WebKitNamedFlow by storing it in a Ref, and adding an accessor that
+        returns a reference to get rid of all the ->'s.
+
+        Also removed some unnecessary assertions exposed by this.
+
+        Reviewed by Antti Koivisto.
+
+        * dom/NamedFlowCollection.cpp:
+        (WebCore::NamedFlowCollection::ensureFlowWithName):
+        * dom/NamedFlowCollection.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::registerNamedFlowContentElement):
+        (WebCore::RenderNamedFlowThread::unregisterNamedFlowContentElement):
+        (WebCore::RenderNamedFlowThread::flowThreadName):
+        (WebCore::RenderNamedFlowThread::dispatchRegionLayoutUpdateEvent):
+        (WebCore::RenderNamedFlowThread::dispatchRegionOversetChangeEvent):
+        (WebCore::RenderNamedFlowThread::regionLayoutUpdateEventTimerFired):
+        (WebCore::RenderNamedFlowThread::regionOversetChangeEventTimerFired):
+        (WebCore::RenderNamedFlowThread::setMarkForDestruction):
+        (WebCore::RenderNamedFlowThread::resetMarkForDestruction):
+        (WebCore::RenderNamedFlowThread::isMarkedForDestruction):
+        * rendering/RenderNamedFlowThread.h:
+
 2014-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Convert position:fixed property to position:absolute upon copy
