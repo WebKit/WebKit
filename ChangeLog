@@ -1,3 +1,14 @@
+2014-02-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GDB] Add .gdbinit to the list of files ignored by Git
+        https://bugs.webkit.org/show_bug.cgi?id=128455
+
+        Reviewed by Anders Carlsson.
+
+        * .gitignore: Ignore the .gdbinit file which can be used to perform WebKit-specific GDB initialization
+        when the debugger is launched in the repository's root directory. Also remove a Chromium-specific comment
+        that covers already removed entries.
+
 2014-02-11  Oliver Hunt  <oliver@apple.com>
 
         Make it possible to implement JS builtins in JS
