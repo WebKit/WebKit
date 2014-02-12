@@ -605,15 +605,10 @@ void Chrome::didReceiveDocType(Frame* frame)
     if (!frame->isMainFrame())
         return;
 
-    DocumentType* documentType = frame->document()->doctype();
-    if (!documentType) {
-        // FIXME: We should notify the client when <!DOCTYPE> is removed so that
-        // it can adjust the viewport accordingly. See <rdar://problem/15417894>.
-        return;
-    }
-
-    if (documentType->publicId().contains("xhtml mobile", false))
-        m_client.didReceiveMobileDocType();
+    bool hasMobileDocType = false;
+    if (DocumentType* documentType = frame->document()->doctype())
+        hasMobileDocType = documentType->publicId().contains("xhtml mobile", false);
+    m_client.didReceiveMobileDocType(hasMobileDocType);
 }
 #endif
 

@@ -226,7 +226,7 @@ public:
 #endif
 
 #if PLATFORM(IOS)
-    virtual void didReceiveMobileDocType() = 0;
+    virtual void didReceiveMobileDocType(bool) = 0;
     virtual void setNeedsScrollNotifications(Frame*, bool) = 0;
     virtual void observedContentChange(Frame*) = 0;
     virtual void clearContentChangeObservers(Frame*) = 0;

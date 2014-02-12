@@ -1,3 +1,24 @@
+2014-02-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2][iOS] Add back the special viewport for the old xhtml mobile doctype
+        https://bugs.webkit.org/show_bug.cgi?id=128639
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::childrenChanged):
+        Document::setDocType() has been removed and the doctype update code with it.
+        Add a call to didReceiveDocType() to ensure the viewport is updated when the doctype is parsed.
+
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::didReceiveDocType):
+        * page/ChromeClient.h:
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::xhtmlMobileParameters):
+        * page/ViewportConfiguration.h:
+
 2014-02-12  Alexey Proskuryakov  <ap@apple.com>
 
         Mountain Lion build fix.

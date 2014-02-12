@@ -131,9 +131,10 @@ void WebChromeClientIOS::didPreventDefaultForEvent()
 }
 #endif
 
-void WebChromeClientIOS::didReceiveMobileDocType()
+void WebChromeClientIOS::didReceiveMobileDocType(bool isMobileDoctype)
 {
-    [[webView() _UIKitDelegateForwarder] webViewDidReceiveMobileDocType:webView() ];
+    if (isMobileDoctype)
+        [[webView() _UIKitDelegateForwarder] webViewDidReceiveMobileDocType:webView()];
 }
 
 void WebChromeClientIOS::setNeedsScrollNotifications(WebCore::Frame* frame, bool flag)

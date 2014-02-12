@@ -797,6 +797,13 @@ void Document::childrenChanged(const ChildChange& change)
 {
     ContainerNode::childrenChanged(change);
 
+#if PLATFORM(IOS)
+    // FIXME: Chrome::didReceiveDocType() used to be called only when the doctype changed. We need to check the
+    // impact of calling this systematically. If the overhead is negligible, we need to rename didReceiveDocType,
+    // otherwise, we need to detect the doc type changes before updating the viewport.
+    page()->chrome().didReceiveDocType(frame());
+#endif
+
     Element* newDocumentElement = childrenOfType<Element>(*this).first();
     if (newDocumentElement == m_documentElement)
         return;

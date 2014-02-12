@@ -51,9 +51,9 @@ void WebChromeClient::elementDidBlur(const WebCore::Node* node)
     m_page->elementDidBlur(const_cast<WebCore::Node*>(node));
 }
 
-void WebChromeClient::didReceiveMobileDocType()
+void WebChromeClient::didReceiveMobileDocType(bool isMobileDoctype)
 {
-    // FIXME: update the ViewportConfiguration accordingly.
+    m_page->didReceiveMobileDocType(isMobileDoctype);
 }
 
 void WebChromeClient::setNeedsScrollNotifications(WebCore::Frame*, bool)

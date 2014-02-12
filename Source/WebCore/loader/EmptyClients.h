@@ -191,7 +191,7 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     virtual void didPreventDefaultForEvent() override { }
 #endif
-    virtual void didReceiveMobileDocType() override { }
+    virtual void didReceiveMobileDocType(bool) override { }
     virtual void setNeedsScrollNotifications(Frame*, bool) override { }
     virtual void observedContentChange(Frame*) override { }
     virtual void clearContentChangeObservers(Frame*) override { }

@@ -85,6 +85,7 @@ public:
     static Parameters webpageParameters();
     static Parameters textDocumentParameters();
     static Parameters imageDocumentParameters();
+    static Parameters xhtmlMobileParameters();
 
 private:
     void updateConfiguration();

@@ -89,6 +89,14 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
     viewportConfigurationChanged();
 }
 
+void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
+{
+    if (isMobileDoctype)
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());
+    else
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
+}
+
 double WebPage::minimumPageScaleFactor() const
 {
     return m_viewportConfiguration.minimumScale();

@@ -180,6 +180,13 @@ ViewportConfiguration::Parameters ViewportConfiguration::imageDocumentParameters
     return parameters;
 }
 
+ViewportConfiguration::Parameters ViewportConfiguration::xhtmlMobileParameters()
+{
+    Parameters parameters = webpageParameters();
+    parameters.width = 320;
+    return parameters;
+}
+
 static inline bool viewportArgumentValueIsValid(float value)
 {
     return value > 0;

@@ -1,3 +1,14 @@
+2014-02-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2][iOS] Add back the special viewport for the old xhtml mobile doctype
+        https://bugs.webkit.org/show_bug.cgi?id=128639
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::didReceiveMobileDocType):
+
 2014-02-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r163739.

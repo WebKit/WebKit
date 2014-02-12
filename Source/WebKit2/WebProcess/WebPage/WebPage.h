@@ -423,6 +423,7 @@ public:
 
 #if PLATFORM(IOS)
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
+    void didReceiveMobileDocType(bool);
 
     double minimumPageScaleFactor() const;
     double maximumPageScaleFactor() const;
