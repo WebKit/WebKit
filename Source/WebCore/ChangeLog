@@ -1,5 +1,12 @@
 2014-02-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Mountain Lion build fix.
+
+        * WebCore.exp.in: Only export WebCrypto symbols on 10.9+, because SUBTLE_CRYPTO
+        is not enabled on 10.8.
+
+2014-02-12  Alexey Proskuryakov  <ap@apple.com>
+
         Wrap WebCrypto keys in SerializedScriptValue
         https://bugs.webkit.org/show_bug.cgi?id=128680
 
