@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+@class WKNavigation;
 @class WKNavigationAction;
 @class WKNavigationResponse;
 @class WKWebView;
