@@ -80,7 +80,7 @@ WindowServerConnection::WindowServerConnection()
         { WKOcclusionNotificationTypeApplicationWindowModificationsStopped, applicationWindowModificationsStopped, "Application Window Modifications Stopped" },
     };
 
-    for (auto occlusionNotificationHandler : occlusionNotificationHandlers) {
+    for (const auto& occlusionNotificationHandler : occlusionNotificationHandlers) {
         bool result = WKRegisterOcclusionNotificationHandler(occlusionNotificationHandler.notificationType, occlusionNotificationHandler.handler);
         UNUSED_PARAM(result);
         ASSERT_WITH_MESSAGE(result, "Registration of \"%s\" notification handler failed.\n", occlusionNotificationHandler.name);

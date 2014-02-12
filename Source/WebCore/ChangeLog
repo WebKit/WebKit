@@ -1,3 +1,14 @@
+2014-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove some unintended copies in ranged for loops
+        https://bugs.webkit.org/show_bug.cgi?id=128644
+
+        Reviewed by Anders Carlsson.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingSVGDocuments): Avoid creating/destroying
+        RefPtrs in loop.
+
 2014-02-12  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Update the HTML Media Capture implementation.

@@ -102,7 +102,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
-        for (auto child : properties.children)
+        for (auto& child : properties.children)
             [children addObject:relatedLayers.get(child)];
         layer.sublayers = children.get();
     }

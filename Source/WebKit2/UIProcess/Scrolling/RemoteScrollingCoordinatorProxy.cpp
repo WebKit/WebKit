@@ -91,7 +91,7 @@ void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingC
 
 void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
-    for (auto it : stateTree.nodeMap()) {
+    for (auto& it : stateTree.nodeMap()) {
         ScrollingStateNode* currNode = it.value;
         switch (currNode->nodeType()) {
         case ScrollingNode: {

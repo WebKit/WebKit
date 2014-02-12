@@ -72,7 +72,7 @@ void InjectedScriptHost::clearWrapper(ExecState* exec, JSGlobalObject* globalObj
 
 void InjectedScriptHost::clearAllWrappers()
 {
-    for (auto wrapper : m_wrappers)
+    for (auto& wrapper : m_wrappers)
         clearWrapperFromValue(wrapper.value.get());
 
     m_wrappers.clear();

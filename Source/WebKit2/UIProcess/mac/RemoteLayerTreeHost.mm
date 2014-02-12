@@ -56,7 +56,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 {
     LOG(RemoteLayerTree, "%s", transaction.description().data());
 
-    for (auto createdLayer : transaction.createdLayers())
+    for (const auto& createdLayer : transaction.createdLayers())
         createLayer(createdLayer);
 
     bool rootLayerChanged = false;
@@ -66,7 +66,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         rootLayerChanged = true;
     }
 
-    for (auto changedLayer : transaction.changedLayers()) {
+    for (auto& changedLayer : transaction.changedLayers()) {
         auto layerID = changedLayer.key;
         const auto& properties = changedLayer.value;
 
@@ -75,7 +75,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 
         RemoteLayerTreePropertyApplier::RelatedLayerMap relatedLayers;
         if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
-            for (auto child : properties.children)
+            for (auto& child : properties.children)
                 relatedLayers.set(child, getLayer(child));
         }
 

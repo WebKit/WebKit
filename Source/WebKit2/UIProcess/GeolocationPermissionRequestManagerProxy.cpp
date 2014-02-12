@@ -39,7 +39,7 @@ GeolocationPermissionRequestManagerProxy::GeolocationPermissionRequestManagerPro
 
 void GeolocationPermissionRequestManagerProxy::invalidateRequests()
 {
-    for (auto request : m_pendingRequests.values())
+    for (auto& request : m_pendingRequests.values())
         request->invalidate();
 
     m_pendingRequests.clear();

@@ -101,7 +101,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
     if (m_properties.changedProperties != RemoteLayerTreeTransaction::NoChange) {
         if (m_properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
             m_properties.children.clear();
-            for (auto layer : m_children)
+            for (const auto& layer : m_children)
                 m_properties.children.append(layer->layerID());
         }
 

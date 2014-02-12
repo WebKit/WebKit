@@ -814,7 +814,7 @@ void WebContext::postMessageToInjectedBundle(const String& messageName, API::Obj
         return;
     }
 
-    for (auto process : m_processes) {
+    for (auto& process : m_processes) {
         // FIXME: Return early if the message body contains any references to WKPageRefs/WKFrameRefs etc. since they're local to a process.
         IPC::ArgumentEncoder messageData;
         messageData.encode(messageName);

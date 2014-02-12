@@ -1,3 +1,17 @@
+2014-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove some unintended copies in ranged for loops
+        https://bugs.webkit.org/show_bug.cgi?id=128644
+
+        Reviewed by Anders Carlsson.
+
+        * inspector/InjectedScriptHost.cpp:
+        (Inspector::InjectedScriptHost::clearAllWrappers): Avoid creating/destroying
+        a std::pair<> and pointer each loop iteration.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser): Avoid copying object containing a string
+        each loop iteration.
+
 2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Debug build fix after r163946.

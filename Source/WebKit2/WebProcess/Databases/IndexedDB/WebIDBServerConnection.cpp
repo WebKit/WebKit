@@ -421,9 +421,9 @@ void WebIDBServerConnection::put(IDBTransactionBackend& transaction, const PutOp
     IPC::DataReference value(reinterpret_cast<const uint8_t*>(operation.value()->data()), operation.value()->size());
 
     Vector<Vector<IDBKeyData>> indexKeys;
-    for (auto keys : operation.indexKeys()) {
+    for (const auto& keys : operation.indexKeys()) {
         indexKeys.append(Vector<IDBKeyData>());
-        for (auto key : keys)
+        for (const auto& key : keys)
             indexKeys.last().append(IDBKeyData(key.get()));
     }
 

@@ -237,7 +237,7 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
                     continue;
                 parameter->collectBoundIdentifiers(boundParameterNames);
             }
-            for (auto boundParameterName : boundParameterNames)
+            for (auto& boundParameterName : boundParameterNames)
                 scope->declareVariable(&boundParameterName);
         }
     }

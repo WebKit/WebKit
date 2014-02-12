@@ -3324,7 +3324,7 @@ void StyleResolver::loadPendingSVGDocuments()
         return;
 
     CachedResourceLoader* cachedResourceLoader = state.document().cachedResourceLoader();
-    for (auto filterOperation : state.filtersWithPendingSVGDocuments())
+    for (auto& filterOperation : state.filtersWithPendingSVGDocuments())
         filterOperation->getOrCreateCachedSVGDocumentReference()->load(cachedResourceLoader);
 
     state.filtersWithPendingSVGDocuments().clear();

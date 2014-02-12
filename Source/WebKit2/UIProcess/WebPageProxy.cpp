@@ -1404,7 +1404,7 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
 bool WebPageProxy::shouldStartTrackingTouchEvents(const WebTouchEvent& touchStartEvent) const
 {
 #if ENABLE(ASYNC_SCROLLING)
-    for (auto touchPoint : touchStartEvent.touchPoints()) {
+    for (auto& touchPoint : touchStartEvent.touchPoints()) {
         if (m_scrollingCoordinatorProxy->isPointInNonFastScrollableRegion(touchPoint.location()))
             return true;
     }

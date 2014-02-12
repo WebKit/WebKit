@@ -1,3 +1,44 @@
+2014-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove some unintended copies in ranged for loops
+        https://bugs.webkit.org/show_bug.cgi?id=128644
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebCrossThreadCopier.cpp:
+        (WebCore::Vector<Vector<IDBKeyData>>>::copy): Each iteration copies a vector of
+        vectors, 
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::enumerateRectsBeingDrawn): Avoid copying a FloatRect
+        on each iteration.
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer): Avoid copying
+        a LayerProperty object each iteration.
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp:
+        (WebKit::GeolocationPermissionRequestManagerProxy::invalidateRequests): Avoid
+        copying a pair<int64_t, pointer> each iteration.
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp:
+        (WebKit::NotificationPermissionRequestManagerProxy::invalidateRequests): Ditto
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers): Ditto
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::postMessageToInjectedBundle): Avoid creating/destroying a
+        RefPtr each loop iteration.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::shouldStartTrackingTouchEvents): Avoid copying a WebPlatformTouchPoint
+        object each cycle.
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree): Avoid copying a pair each iteration.
+        * UIProcess/mac/WindowServerConnection.mm:
+        (WebKit::WindowServerConnection::WindowServerConnection): Avoid copying the struct
+        of occlusionNotificationHandlers each iteration.
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::put): Avoid copying a vector-of-vectors each
+        iteration.
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::recursiveBuildTransaction): Avoid creating/destroying a
+        RefPtr each loop iteration.
+
 2014-02-12  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Update the HTML Media Capture implementation.

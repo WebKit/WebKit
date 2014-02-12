@@ -70,9 +70,9 @@ Vector<Vector<IDBKeyData>> CrossThreadCopierBase<false, false, Vector<Vector<IDB
 {
     Vector<Vector<IDBKeyData>> result;
 
-    for (auto keys : vector) {
+    for (const auto& keys : vector) {
         result.append(Vector<IDBKeyData>());
-        for (auto key : keys)
+        for (const auto& key : keys)
             result.last().append(WebCore::CrossThreadCopier<IDBKeyData>::copy(key));
     }
 
