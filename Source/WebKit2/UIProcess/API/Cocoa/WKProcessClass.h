@@ -30,7 +30,7 @@
 
 @class WKProcessClassConfiguration;
 
-/*! A WKProcessClass defines a distinct type—or category—of Web Content process.
+/*! A WKProcessClass defines a distinct type-or category-of Web Content process.
  A @link WKWebView @/link specifies the WKProcessClass of the Web
  Content process backing it through its @link WKWebViewConfiguration @/link.
  @helperclass @link WKProcessClassConfiguration @/link

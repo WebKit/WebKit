@@ -1,3 +1,9 @@
+2014-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * UIProcess/API/Cocoa/WKProcessClass.h:
+
 2014-02-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2][iOS] Add back the special viewport for the old xhtml mobile doctype
