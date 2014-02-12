@@ -76,6 +76,10 @@
 #include "WebPrintOperationGtk.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "WKGestureTypes.h"
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 #if PLATFORM(IOS)
 #include <WebKitAdditions/PlatformTouchEventIOS.h>
