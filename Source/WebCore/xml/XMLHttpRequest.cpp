@@ -102,6 +102,7 @@ XMLHttpRequestStaticData::XMLHttpRequestStaticData()
         "cookie",
         "cookie2",
         "date",
+        "dnt",
         "expect",
         "host",
         "keep-alive",
