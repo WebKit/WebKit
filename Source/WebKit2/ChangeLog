@@ -1,3 +1,15 @@
+2014-02-11  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/16044438>: WebKit2.framework (with *Process.app) exists at the top level of the simulator
+        https://bugs.webkit.org/show_bug.cgi?id=128650
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/All-iOS.xcconfig: Removed this unused file.
+        * Configurations/All.xcconfig: Set SKIP_INSTALL to YES for this aggregate target, so that
+        its Copy Files build phase, intended only for engineering builds, doesn’t copy into the
+        (wrong) install location.
+
 2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         EFL build fix after r163919.
