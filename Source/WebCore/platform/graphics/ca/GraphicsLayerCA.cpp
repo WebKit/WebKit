@@ -2038,7 +2038,7 @@ void GraphicsLayerCA::updateContentsRects()
         clippingOrigin = m_contentsClippingRect.location();
         clippingBounds.setSize(m_contentsClippingRect.size());
 
-        contentOrigin = toPoint(m_contentsRect.location() - m_contentsClippingRect.location());
+        contentOrigin = toLayoutPoint(m_contentsRect.location() - m_contentsClippingRect.location());
 
         m_contentsClippingLayer->setPosition(clippingOrigin);
         m_contentsClippingLayer->setBounds(clippingBounds);

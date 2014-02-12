@@ -1538,7 +1538,7 @@ LayoutRect FrameView::viewportConstrainedVisibleContentRect() const
         return customFixedPositionLayoutRect();
 #endif
     LayoutRect viewportRect = visibleContentRect();
-    viewportRect.setLocation(toPoint(scrollOffsetForFixedPosition()));
+    viewportRect.setLocation(toLayoutPoint(scrollOffsetForFixedPosition()));
     return viewportRect;
 }
 

@@ -1942,7 +1942,7 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
             RenderBlock* block = toRenderBlock(o);
             LayoutRect columnRect(frameRect());
             block->adjustStartEdgeForWritingModeIncludingColumns(columnRect);
-            offset += toSize(columnRect.location());
+            offset += toLayoutSize(columnRect.location());
             LayoutPoint columnPoint = block->flipForWritingModeIncludingColumns(point + offset);
             offset = toLayoutSize(block->flipForWritingModeIncludingColumns(toLayoutPoint(offset)));
             o->adjustForColumns(offset, columnPoint);

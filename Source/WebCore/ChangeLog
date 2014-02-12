@@ -1,3 +1,41 @@
+2014-02-12  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Clean up LayoutPoint class.
+        https://bugs.webkit.org/show_bug.cgi?id=128515
+
+        Reviewed by Simon Fraser.
+
+        Remove redundant functions (keep the more explicit ones).
+
+        No change in functionality.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportConstrainedVisibleContentRect):
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::toLayoutPoint):
+        (WebCore::toLayoutSize):
+        (WebCore::roundedIntPoint):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addFocusRingRects):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::paintBackgroundForFragments):
+        (WebCore::RenderLayer::paintForegroundForFragmentsWithPhase):
+        (WebCore::RenderLayer::paintOutlineForFragments):
+        (WebCore::RenderLayer::paintMaskForFragments):
+        (WebCore::RenderLayer::paintOverflowControlsForFragments):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+
 2014-02-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] Move CoordinatedGraphicsScene, CoordinatedLayerTreeHostProxy to std::function

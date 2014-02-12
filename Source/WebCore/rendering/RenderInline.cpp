@@ -1485,9 +1485,9 @@ void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& 
 
     if (RenderBoxModelObject* continuation = this->continuation()) {
         if (continuation->isInline())
-            continuation->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + continuation->containingBlock()->location() - containingBlock()->location()), paintContainer);
+            continuation->addFocusRingRects(rects, flooredLayoutPoint(LayoutPoint(additionalOffset + continuation->containingBlock()->location() - containingBlock()->location())), paintContainer);
         else
-            continuation->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + toRenderBox(continuation)->location() - containingBlock()->location()), paintContainer);
+            continuation->addFocusRingRects(rects, flooredLayoutPoint(LayoutPoint(additionalOffset + toRenderBox(continuation)->location() - containingBlock()->location())), paintContainer);
     }
 }
 

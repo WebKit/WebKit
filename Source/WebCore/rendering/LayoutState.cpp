@@ -72,7 +72,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
         m_clipRect = m_next->m_clipRect;
 
     if (renderer->hasOverflowClip()) {
-        LayoutRect clipRect(toPoint(m_paintOffset) + renderer->view().layoutDelta(), renderer->cachedSizeForOverflowClip());
+        LayoutRect clipRect(toLayoutPoint(m_paintOffset) + renderer->view().layoutDelta(), renderer->cachedSizeForOverflowClip());
         if (m_clipped)
             m_clipRect.intersect(clipRect);
         else {
@@ -161,7 +161,7 @@ LayoutState::LayoutState(RenderObject& root)
     if (container->hasOverflowClip()) {
         m_clipped = true;
         RenderBox* containerBox = toRenderBox(container);
-        m_clipRect = LayoutRect(toPoint(m_paintOffset), containerBox->cachedSizeForOverflowClip());
+        m_clipRect = LayoutRect(toLayoutPoint(m_paintOffset), containerBox->cachedSizeForOverflowClip());
         m_paintOffset -= containerBox->scrolledContentOffset();
     }
 }

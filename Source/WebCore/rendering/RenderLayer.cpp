@@ -1198,7 +1198,7 @@ bool RenderLayer::updateLayerPosition()
         RenderInline& inlineFlow = toRenderInline(renderer());
         IntRect lineBox = inlineFlow.linesBoundingBox();
         setSize(lineBox.size());
-        inlineBoundingBoxOffset = toSize(lineBox.location());
+        inlineBoundingBoxOffset = toLayoutSize(lineBox.location());
         localPoint += inlineBoundingBoxOffset;
     } else if (RenderBox* box = renderBox()) {
         // FIXME: Is snapping the size really needed here for the RenderBox case?
@@ -1930,13 +1930,13 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     if (position == FixedPosition && fixedFlowThreadContainer) {
         ASSERT(ancestorLayer);
         if (ancestorLayer->isOutOfFlowRenderFlowThread()) {
-            location += toSize(layer->location());
+            location += toLayoutSize(layer->location());
             return ancestorLayer;
         }
 
         if (ancestorLayer == renderer.view().layer()) {
             // Add location in flow thread coordinates.
-            location += toSize(layer->location());
+            location += toLayoutSize(layer->location());
 
             // Add flow thread offset in view coordinates since the view may be scrolled.
             FloatPoint absPos = renderer.view().localToAbsolute(FloatPoint(), IsFixed);
@@ -1990,7 +1990,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     if (!parentLayer)
         return 0;
 
-    location += toSize(layer->location());
+    location += toLayoutSize(layer->location());
 
     if (adjustForColumns == RenderLayer::AdjustForColumns) {
         if (RenderLayer* parentLayer = layer->parent()) {
@@ -4321,7 +4321,7 @@ void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragmen
         // Paint the background.
         // FIXME: Eventually we will collect the region from the fragment itself instead of just from the paint info.
         PaintInfo paintInfo(context, pixelSnappedIntRect(fragment.backgroundRect.rect()), PaintPhaseBlockBackground, paintBehavior, subtreePaintRootForRenderer, localPaintingInfo.region, 0, 0, &localPaintingInfo.rootLayer->renderer());
-        renderer().paint(paintInfo, toPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
+        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
 
         if (localPaintingInfo.clipToDirtyRect)
             restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.backgroundRect);
@@ -4396,7 +4396,7 @@ void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const L
         PaintInfo paintInfo(context, pixelSnappedIntRect(fragment.foregroundRect.rect()), phase, paintBehavior, subtreePaintRootForRenderer, localPaintingInfo.region, 0, 0, &localPaintingInfo.rootLayer->renderer());
         if (phase == PaintPhaseForeground)
             paintInfo.overlapTestRequests = localPaintingInfo.overlapTestRequests;
-        renderer().paint(paintInfo, toPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
+        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
         
         if (shouldClip)
             restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.foregroundRect);
@@ -4414,7 +4414,7 @@ void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments,
         // Paint our own outline
         PaintInfo paintInfo(context, pixelSnappedIntRect(fragment.outlineRect.rect()), PaintPhaseSelfOutline, paintBehavior, subtreePaintRootForRenderer, localPaintingInfo.region, 0, 0, &localPaintingInfo.rootLayer->renderer());
         clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, fragment.outlineRect, DoNotIncludeSelfForBorderRadius);
-        renderer().paint(paintInfo, toPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
+        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
         restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.outlineRect);
     }
 }
@@ -4433,7 +4433,7 @@ void RenderLayer::paintMaskForFragments(const LayerFragments& layerFragments, Gr
         // Paint the mask.
         // FIXME: Eventually we will collect the region from the fragment itself instead of just from the paint info.
         PaintInfo paintInfo(context, pixelSnappedIntRect(fragment.backgroundRect.rect()), PaintPhaseMask, PaintBehaviorNormal, subtreePaintRootForRenderer, localPaintingInfo.region, 0, 0, &localPaintingInfo.rootLayer->renderer());
-        renderer().paint(paintInfo, toPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
+        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation));
         
         if (localPaintingInfo.clipToDirtyRect)
             restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.backgroundRect);
@@ -4445,7 +4445,7 @@ void RenderLayer::paintOverflowControlsForFragments(const LayerFragments& layerF
     for (size_t i = 0; i < layerFragments.size(); ++i) {
         const LayerFragment& fragment = layerFragments.at(i);
         clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, fragment.backgroundRect);
-        paintOverflowControls(context, roundedIntPoint(toPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation)),
+        paintOverflowControls(context, roundedIntPoint(toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation)),
             pixelSnappedIntRect(fragment.backgroundRect.rect()), true);
         restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.backgroundRect);
     }
