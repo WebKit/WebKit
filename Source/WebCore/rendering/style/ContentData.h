@@ -39,12 +39,20 @@ class RenderStyle;
 class ContentData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    enum Type {
+        CounterDataType,
+        ImageDataType,
+        QuoteDataType,
+        TextDataType
+    };
     virtual ~ContentData() { }
 
-    virtual bool isCounter() const { return false; }
-    virtual bool isImage() const { return false; }
-    virtual bool isQuote() const { return false; }
-    virtual bool isText() const { return false; }
+    Type type() const { return m_type; }
+
+    bool isCounter() const { return type() == CounterDataType; }
+    bool isImage() const { return type() == ImageDataType; }
+    bool isQuote() const { return type() == QuoteDataType; }
+    bool isText() const { return type() == TextDataType; }
 
     virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const = 0;
 
@@ -55,14 +63,19 @@ public:
 
     void setAltText(const String& alt) { m_altText = alt; }
     const String& altText() const { return m_altText; }
-    
-    virtual bool equals(const ContentData&) const = 0;
+
+protected:
+    explicit ContentData(Type type)
+        : m_type(type)
+    {
+    }
 
 private:
     virtual std::unique_ptr<ContentData> cloneInternal() const = 0;
 
     std::unique_ptr<ContentData> m_next;
     String m_altText;
+    Type m_type;
 };
 
 #define CONTENT_DATA_TYPE_CASTS(ToClassName, FromClassName, ContentDataName) \
@@ -71,7 +84,8 @@ private:
 class ImageContentData final : public ContentData {
 public:
     explicit ImageContentData(PassRefPtr<StyleImage> image)
-        : m_image(image)
+        : ContentData(ImageDataType)
+        , m_image(image)
     {
     }
 
@@ -79,10 +93,7 @@ public:
     StyleImage* image() { return m_image.get(); }
     void setImage(PassRefPtr<StyleImage> image) { m_image = image; }
 
-    virtual bool isImage() const override { return true; }
     virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
-
-    virtual bool equals(const ContentData&) const override;
 
 private:
     virtual std::unique_ptr<ContentData> cloneInternal() const override
@@ -97,27 +108,28 @@ private:
 
 CONTENT_DATA_TYPE_CASTS(ImageContentData, ContentData, Image)
 
-inline bool ImageContentData::equals(const ContentData& data) const
+inline bool operator==(const ImageContentData& a, const ImageContentData& b)
 {
-    if (!data.isImage())
-        return false;
-    return *toImageContentData(data).image() == *image();
+    return *a.image() == *b.image();
+}
+
+inline bool operator!=(const ImageContentData& a, const ImageContentData& b)
+{
+    return !(a == b);
 }
 
 class TextContentData final : public ContentData {
 public:
     explicit TextContentData(const String& text)
-        : m_text(text)
+        : ContentData(TextDataType)
+        , m_text(text)
     {
     }
 
     const String& text() const { return m_text; }
     void setText(const String& text) { m_text = text; }
 
-    virtual bool isText() const override { return true; }
     virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
-
-    virtual bool equals(const ContentData&) const override;
 
 private:
     virtual std::unique_ptr<ContentData> cloneInternal() const override { return std::make_unique<TextContentData>(text()); }
@@ -127,24 +139,27 @@ private:
 
 CONTENT_DATA_TYPE_CASTS(TextContentData, ContentData, Text)
 
-inline bool TextContentData::equals(const ContentData& data) const
+inline bool operator==(const TextContentData& a, const TextContentData& b)
 {
-    if (!data.isText())
-        return false;
-    return toTextContentData(data).text() == text();
+    return a.text() == b.text();
+}
+
+inline bool operator!=(const TextContentData& a, const TextContentData& b)
+{
+    return !(a == b);
 }
 
 class CounterContentData final : public ContentData {
 public:
     explicit CounterContentData(std::unique_ptr<CounterContent> counter)
-        : m_counter(std::move(counter))
+        : ContentData(CounterDataType)
+        , m_counter(std::move(counter))
     {
     }
 
     const CounterContent* counter() const { return m_counter.get(); }
     void setCounter(std::unique_ptr<CounterContent> counter) { m_counter = std::move(counter); }
 
-    virtual bool isCounter() const override { return true; }
     virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
 
 private:
@@ -154,34 +169,33 @@ private:
         return std::make_unique<CounterContentData>(std::move(counterData));
     }
 
-    virtual bool equals(const ContentData&) const override;
-
     std::unique_ptr<CounterContent> m_counter;
 };
 
 CONTENT_DATA_TYPE_CASTS(CounterContentData, ContentData, Counter)
 
-inline bool CounterContentData::equals(const ContentData& data) const
+inline bool operator==(const CounterContentData& a, const CounterContentData& b)
 {
-    if (!data.isCounter())
-        return false;
-    return *toCounterContentData(data).counter() == *counter();
+    return *a.counter() == *b.counter();
+}
+
+inline bool operator!=(const CounterContentData& a, const CounterContentData& b)
+{
+    return !(a == b);
 }
 
 class QuoteContentData final : public ContentData {
 public:
     explicit QuoteContentData(QuoteType quote)
-        : m_quote(quote)
+        : ContentData(QuoteDataType)
+        , m_quote(quote)
     {
     }
 
     QuoteType quote() const { return m_quote; }
     void setQuote(QuoteType quote) { m_quote = quote; }
 
-    virtual bool isQuote() const override { return true; }
     virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
-
-    virtual bool equals(const ContentData&) const override;
 
 private:
     virtual std::unique_ptr<ContentData> cloneInternal() const override { return std::make_unique<QuoteContentData>(quote()); }
@@ -191,16 +205,34 @@ private:
 
 CONTENT_DATA_TYPE_CASTS(QuoteContentData, ContentData, Quote)
 
-inline bool QuoteContentData::equals(const ContentData& data) const
+inline bool operator==(const QuoteContentData& a, const QuoteContentData& b)
 {
-    if (!data.isQuote())
-        return false;
-    return toQuoteContentData(data).quote() == quote();
+    return a.quote() == b.quote();
+}
+
+inline bool operator!=(const QuoteContentData& a, const QuoteContentData& b)
+{
+    return !(a == b);
 }
 
 inline bool operator==(const ContentData& a, const ContentData& b)
 {
-    return a.equals(b);
+    if (a.type() != b.type())
+        return false;
+
+    switch (a.type()) {
+    case ContentData::CounterDataType:
+        return toCounterContentData(a) == toCounterContentData(b);
+    case ContentData::ImageDataType:
+        return toImageContentData(a) == toImageContentData(b);
+    case ContentData::QuoteDataType:
+        return toQuoteContentData(a) == toQuoteContentData(b);
+    case ContentData::TextDataType:
+        return toTextContentData(a) == toTextContentData(b);
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 inline bool operator!=(const ContentData& a, const ContentData& b)

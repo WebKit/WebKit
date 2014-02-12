@@ -1,3 +1,27 @@
+2014-02-11  David Kilzer  <ddkilzer@apple.com>
+
+        ContentData equals() methods are not inline-able
+        <http://webkit.org/b/128538>
+
+        Reviewed by Darin Adler.
+
+        Get rid of pure virtual equals() method in favor of
+        ContentData::Type enum for runtime type information.
+        This also lets us devirtualize the isFoo() methods.
+
+        * rendering/style/ContentData.h:
+        (WebCore::ContentData::type): Add.
+        (WebCore::ContentData::isCounter): Devirtualize.
+        (WebCore::ContentData::isImage): Devirtualize.
+        (WebCore::ContentData::isQuote): Devirtualize.
+        (WebCore::ContentData::isText): Devirtualize.
+        (WebCore::ContentData::ContentData): Add.  Include
+        ContentData::Type parameter.
+        (WebCore::operator==): Add overloaded methods for each subclass.
+        Stop using pure virtual equals() method, check type(), and use
+        overloaded subclass operator==() methods.
+        (WebCore::operator!=): Add overloaded methods for each subclass.
+
 2014-02-11  Andreas Kling  <akling@apple.com>
 
         Protect some RenderFlowThread functions.
