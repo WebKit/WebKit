@@ -67,10 +67,13 @@ public:
 
     virtual bool asBoolean(bool* output) const;
     virtual bool asNumber(double* output) const;
-    virtual bool asNumber(long* output) const;
+    virtual bool asNumber(float* output) const;
     virtual bool asNumber(int* output) const;
+    virtual bool asNumber(unsigned* output) const;
+    virtual bool asNumber(long* output) const;
+    virtual bool asNumber(long long* output) const;
     virtual bool asNumber(unsigned long* output) const;
-    virtual bool asNumber(unsigned int* output) const;
+    virtual bool asNumber(unsigned long long* output) const;
     virtual bool asString(String* output) const;
     virtual bool asValue(RefPtr<InspectorValue>* output);
     virtual bool asObject(RefPtr<InspectorObject>* output);
@@ -99,10 +102,13 @@ public:
 
     virtual bool asBoolean(bool* output) const override;
     virtual bool asNumber(double* output) const override;
-    virtual bool asNumber(long* output) const override;
+    virtual bool asNumber(float* output) const override;
     virtual bool asNumber(int* output) const override;
-    virtual bool asNumber(unsigned long* output) const override;
     virtual bool asNumber(unsigned* output) const override;
+    virtual bool asNumber(long* output) const override;
+    virtual bool asNumber(long long* output) const override;
+    virtual bool asNumber(unsigned long* output) const override;
+    virtual bool asNumber(unsigned long long* output) const override;
 
     virtual void writeJSON(StringBuilder* output) const override;
 

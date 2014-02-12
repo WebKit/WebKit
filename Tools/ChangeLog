@@ -1,3 +1,26 @@
+2014-02-11  Brian Burg  <bburg@apple.com>
+
+        Web Replay: upstream replay input code generator and EncodedValue class
+        https://bugs.webkit.org/show_bug.cgi?id=128215
+
+        Reviewed by Joseph Pecoraro.
+
+        Add an executable script to launch the replay input generator tests.
+        Add a test harness for running the code generator tests, mostly taken
+        from the bindings test harness (but simplified).
+
+        * Scripts/run-input-generator-tests: Added.
+        (main):
+        * Scripts/webkitpy/replay/__init__.py: Added.
+        * Scripts/webkitpy/replay/main.py: Added.
+        (InputGeneratorTests):
+        (InputGeneratorTests.__init__):
+        (InputGeneratorTests.generate_from_json):
+        (InputGeneratorTests.write_error_file):
+        (InputGeneratorTests.detect_changes):
+        (InputGeneratorTests.run_tests):
+        (InputGeneratorTests.main):
+
 2014-02-11  James Craig  <jcraig@apple.com>
 
         Web Inspector: AX: Accessibility Node Inspection

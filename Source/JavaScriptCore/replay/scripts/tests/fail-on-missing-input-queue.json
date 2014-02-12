@@ -1,0 +1,20 @@
+{
+    "types": {
+        "Global": [
+            { "name": "double", "mode": "SCALAR" }
+        ]
+    },
+
+    "inputs": [
+        {
+            "name": "GetCurrentTime",
+            "description": "Supplies the system time to Date.now() and new Date().",
+            "members": [
+                {
+                    "name": "currentTime",
+                    "type": "double"
+                }
+            ]
+        }
+    ]
+}

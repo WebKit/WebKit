@@ -1,0 +1,23 @@
+{
+    "types": {
+        "WebCore": [
+            {
+                "name": "MouseButton", "mode": "SCALAR",
+                "flags": ["ENUM"],
+                "values": ["NoButton", "LeftButton", "MiddleButton", "RightButton"],
+                "header": "path/to/MouseButton.h"
+            }
+        ]
+    },
+
+    "inputs": [
+        {
+            "name": "SavedMouseButton",
+            "description": "Supplies a mouse button enum value.",
+            "queue": "SCRIPT_MEMOIZED",
+            "members": [
+                { "name": "button", "type": "MouseButton" }
+            ]
+        }
+    ]
+}

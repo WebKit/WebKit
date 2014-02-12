@@ -1,3 +1,214 @@
+2014-02-11  Brian Burg  <bburg@apple.com>
+
+        Web Replay: upstream replay input code generator and EncodedValue class
+        https://bugs.webkit.org/show_bug.cgi?id=128215
+
+        Reviewed by Joseph Pecoraro.
+
+        Add the replay inputs code generator. Most features of the input generator are
+        exercised by included generator regression tests, which produce useful but
+        non-compilable test replay inputs.
+
+        Add EncodedValue, the main replay input serialization class that encodes and
+        decodes inputs and their data between C++ types and the JSON-based replay recording
+        format. EncodedValue uses EncodingTraits specializations for type-specific encoding.
+        Relative to other WebKit marshalling mechanisms, EncodedValue is key/value based.
+        EncodedValue uses InspectorValue subclasses as its backing data structure.
+
+        Add some missing numerical conversions to InspectorValue.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorValues.cpp:
+        (Inspector::InspectorValue::asNumber):
+        (Inspector::InspectorBasicValue::asNumber):
+        * inspector/InspectorValues.h:
+        * replay/EncodedValue.cpp: Added.
+        (JSC::EncodedValue::asObject):
+        (JSC::EncodedValue::asArray):
+        (JSC::ScalarEncodingTraits<bool>::encodeValue):
+        (JSC::ScalarEncodingTraits<double>::encodeValue):
+        (JSC::ScalarEncodingTraits<float>::encodeValue):
+        (JSC::ScalarEncodingTraits<int32_t>::encodeValue):
+        (JSC::ScalarEncodingTraits<int64_t>::encodeValue):
+        (JSC::ScalarEncodingTraits<uint32_t>::encodeValue):
+        (JSC::ScalarEncodingTraits<uint64_t>::encodeValue):
+        (JSC::long>::encodeValue):
+        (JSC::EncodedValue::convertTo<bool>):
+        (JSC::EncodedValue::convertTo<double>):
+        (JSC::EncodedValue::convertTo<float>):
+        (JSC::EncodedValue::convertTo<int32_t>):
+        (JSC::EncodedValue::convertTo<int64_t>):
+        (JSC::EncodedValue::convertTo<uint32_t>):
+        (JSC::EncodedValue::convertTo<uint64_t>):
+        (JSC::long>):
+        (JSC::EncodedValue::convertTo<String>):
+        (JSC::EncodedValue::put<EncodedValue>):
+        (JSC::EncodedValue::append<EncodedValue>):
+        (JSC::EncodedValue::get<EncodedValue>):
+        * replay/EncodedValue.h: Added.
+        (JSC::EncodedValue::EncodedValue):
+        (JSC::EncodedValue::createObject):
+        (JSC::EncodedValue::createArray):
+        (JSC::EncodedValue::createString):
+        (JSC::EncodedValue::~EncodedValue):
+        (JSC::ScalarEncodingTraits::decodeValue):
+        (JSC::EncodingTraits<String>::encodeValue):
+        (JSC::EncodedValue::put):
+        (JSC::EncodedValue::append):
+        (JSC::EncodedValue::get):
+        * replay/scripts/CodeGeneratorReplayInputs.py: Added.
+        (ParseException):
+        (TypecheckException):
+        (Framework):
+        (Framework.__init__):
+        (Framework.setting):
+        (Framework.fromString):
+        (Frameworks):
+        (InputQueue):
+        (InputQueue.__init__):
+        (InputQueue.setting):
+        (InputQueue.fromString):
+        (InputQueues):
+        (Input):
+        (Input.__init__):
+        (Input.setting):
+        (InputMember):
+        (InputMember.__init__):
+        (InputMember.has_flag):
+        (TypeMode):
+        (TypeMode.__init__):
+        (TypeMode.fromString):
+        (TypeModes):
+        (Type):
+        (Type.__init__):
+        (Type.__eq__):
+        (Type.__hash__):
+        (Type.has_flag):
+        (Type.is_struct):
+        (Type.is_enum):
+        (Type.is_enum_class):
+        (Type.declaration_kind):
+        (Type.qualified_prefix):
+        (Type.qualified_prefix.is):
+        (Type.type_name):
+        (Type.storage_type):
+        (Type.borrow_type):
+        (Type.argument_type):
+        (check_properties):
+        (VectorType):
+        (VectorType.__init__):
+        (VectorType.has_flag):
+        (VectorType.is_struct):
+        (VectorType.is_enum):
+        (VectorType.is_enum_class):
+        (VectorType.qualified_prefix):
+        (VectorType.type_name):
+        (VectorType.argument_type):
+        (InputsModel):
+        (InputsModel.__init__):
+        (InputsModel.enum_types):
+        (InputsModel.get_type_for_member):
+        (InputsModel.parse_toplevel):
+        (InputsModel.parse_type_with_framework_name):
+        (InputsModel.parse_input):
+        (InputsModel.typecheck):
+        (InputsModel.typecheck_type):
+        (InputsModel.typecheck_input):
+        (InputsModel.typecheck_input_member):
+        (IncrementalFileWriter):
+        (IncrementalFileWriter.__init__):
+        (IncrementalFileWriter.write):
+        (IncrementalFileWriter.close):
+        (lcfirst):
+        (wrap_with_guard):
+        (Generator):
+        (Generator.__init__):
+        (Generator.setting):
+        (Generator.output_filename):
+        (Generator.write_output_files):
+        (Generator.generate_header):
+        (Generator.generate_implementation):
+        (Generator.generate_license):
+        (Generator.generate_includes):
+        (Generator.generate_includes.declaration):
+        (Generator.generate_includes.declaration.is):
+        (Generator.generate_type_forward_declarations):
+        (Generator.generate_type_forward_declarations.is):
+        (Generator.generate_class_declaration):
+        (Generator.generate_input_constructor_declaration):
+        (Generator.generate_input_destructor_declaration):
+        (Generator.generate_input_member_getter):
+        (Generator.generate_input_member_declaration):
+        (Generator.generate_input_member_tuples):
+        (Generator.qualified_input_name):
+        (Generator.generate_input_trait_declaration):
+        (Generator.generate_enum_trait_declaration):
+        (Generator.generate_for_each_macro):
+        (Generator.generate_class_implementation):
+        (Generator.generate_enum_trait_implementation):
+        (Generator.generate_enum_trait_implementation.is):
+        (Generator.generate_input_trait_implementation):
+        (Generator.generate_input_encode_implementation):
+        (Generator.generate_input_decode_implementation):
+        (Generator.generate_constructor_initializer_list):
+        (Generator.generate_constructor_formals_list):
+        (Generator.generate_member_borrow_expression):
+        (Generator.generate_member_move_expression):
+        (Generator.generate_constructor_arguments_list):
+        (generate_from_specification):
+        * replay/scripts/CodeGeneratorReplayInputsTemplates.py: Added.
+        (Templates):
+        * replay/scripts/tests/expected/JSInputs.json-TestReplayInputs.cpp: Added.
+        * replay/scripts/tests/expected/JSInputs.json-TestReplayInputs.h: Added.
+        * replay/scripts/tests/expected/fail-on-c-style-enum-no-storage.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-duplicate-input-names.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-duplicate-type-names.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-enum-type-missing-values.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-missing-input-member-name.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-missing-input-name.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-missing-input-queue.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-missing-type-mode.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-missing-type-name.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-no-inputs.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-no-types.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-unknown-input-queue.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-unknown-member-type.json-error: Added.
+        * replay/scripts/tests/expected/fail-on-unknown-type-mode.json-error: Added.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.cpp: Added.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.h: Added.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.cpp: Added.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.h: Added.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-error: Added.
+        * replay/scripts/tests/expected/generate-event-loop-shape-types.json-error: Added.
+        * replay/scripts/tests/expected/generate-input-with-guard.json-TestReplayInputs.cpp: Added.
+        * replay/scripts/tests/expected/generate-input-with-guard.json-TestReplayInputs.h: Added.
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.cpp: Added.
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.h: Added.
+        * replay/scripts/tests/expected/generate-inputs-with-flags.json-error: Added.
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.cpp: Added.
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.h: Added.
+        * replay/scripts/tests/fail-on-c-style-enum-no-storage.json: Added.
+        * replay/scripts/tests/fail-on-duplicate-input-names.json: Added.
+        * replay/scripts/tests/fail-on-duplicate-type-names.json: Added.
+        * replay/scripts/tests/fail-on-enum-type-missing-values.json: Added.
+        * replay/scripts/tests/fail-on-missing-input-member-name.json: Added.
+        * replay/scripts/tests/fail-on-missing-input-name.json: Added.
+        * replay/scripts/tests/fail-on-missing-input-queue.json: Added.
+        * replay/scripts/tests/fail-on-missing-type-mode.json: Added.
+        * replay/scripts/tests/fail-on-missing-type-name.json: Added.
+        * replay/scripts/tests/fail-on-no-inputs.json: Added.
+        * replay/scripts/tests/fail-on-no-types.json: Added.
+        * replay/scripts/tests/fail-on-unknown-input-queue.json: Added.
+        * replay/scripts/tests/fail-on-unknown-member-type.json: Added.
+        * replay/scripts/tests/fail-on-unknown-type-mode.json: Added.
+        * replay/scripts/tests/generate-enum-encoding-helpers-with-guarded-values.json: Added.
+        * replay/scripts/tests/generate-enum-encoding-helpers.json: Added.
+        * replay/scripts/tests/generate-event-loop-shape-types.json: Added.
+        * replay/scripts/tests/generate-input-with-guard.json: Added.
+        * replay/scripts/tests/generate-input-with-vector-members.json: Added.
+        * replay/scripts/tests/generate-inputs-with-flags.json: Added.
+        * replay/scripts/tests/generate-memoized-type-modes.json: Added.
+
 2014-02-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add Availability Macros to new JSC APIs

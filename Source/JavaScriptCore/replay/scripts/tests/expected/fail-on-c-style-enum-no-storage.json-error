@@ -1,0 +1,1 @@
+ERROR: Could not parse enum MouseButton: C-style enums must also specify their storage type so they can be forward declared.

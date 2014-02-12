@@ -492,7 +492,7 @@ bool InspectorValue::asNumber(double*) const
     return false;
 }
 
-bool InspectorValue::asNumber(long*) const
+bool InspectorValue::asNumber(float*) const
 {
     return false;
 }
@@ -502,12 +502,27 @@ bool InspectorValue::asNumber(int*) const
     return false;
 }
 
+bool InspectorValue::asNumber(unsigned*) const
+{
+    return false;
+}
+
+bool InspectorValue::asNumber(long*) const
+{
+    return false;
+}
+
+bool InspectorValue::asNumber(long long*) const
+{
+    return false;
+}
+
 bool InspectorValue::asNumber(unsigned long*) const
 {
     return false;
 }
 
-bool InspectorValue::asNumber(unsigned int*) const
+bool InspectorValue::asNumber(unsigned long long*) const
 {
     return false;
 }
@@ -584,11 +599,11 @@ bool InspectorBasicValue::asNumber(double* output) const
     return true;
 }
 
-bool InspectorBasicValue::asNumber(long* output) const
+bool InspectorBasicValue::asNumber(float* output) const
 {
     if (type() != TypeNumber)
         return false;
-    *output = static_cast<long>(m_doubleValue);
+    *output = static_cast<float>(m_doubleValue);
     return true;
 }
 
@@ -600,6 +615,30 @@ bool InspectorBasicValue::asNumber(int* output) const
     return true;
 }
 
+bool InspectorBasicValue::asNumber(unsigned* output) const
+{
+    if (type() != TypeNumber)
+        return false;
+    *output = static_cast<unsigned>(m_doubleValue);
+    return true;
+}
+
+bool InspectorBasicValue::asNumber(long* output) const
+{
+    if (type() != TypeNumber)
+        return false;
+    *output = static_cast<long>(m_doubleValue);
+    return true;
+}
+
+bool InspectorBasicValue::asNumber(long long* output) const
+{
+    if (type() != TypeNumber)
+        return false;
+    *output = static_cast<long long>(m_doubleValue);
+    return true;
+}
+
 bool InspectorBasicValue::asNumber(unsigned long* output) const
 {
     if (type() != TypeNumber)
@@ -608,11 +647,11 @@ bool InspectorBasicValue::asNumber(unsigned long* output) const
     return true;
 }
 
-bool InspectorBasicValue::asNumber(unsigned int* output) const
+bool InspectorBasicValue::asNumber(unsigned long long* output) const
 {
     if (type() != TypeNumber)
         return false;
-    *output = static_cast<unsigned int>(m_doubleValue);
+    *output = static_cast<unsigned long long>(m_doubleValue);
     return true;
 }
 
