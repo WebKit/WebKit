@@ -1,3 +1,26 @@
+# This file should contain entries for expectations that are specific
+# to the Apple Mac port running WebKit1 (DumpRenderTree)
+
+###### This file has two sections. When adding new tests, make sure to
+###### add to the right section:
+
+### (1) Failures with bug reports
+### (2) Failures without bug reports
+
+########################################
+### START OF (1) Failures with bug reports
+
+# Asserts in WebKit1-debug due to a preexisting issue with overflow rect computation
+webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.html
+
+webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Failure ]
+
+### END OF (1) Failures with bug reports
+########################################
+
+########################################
+### START OF (2) Failures without bug reports
+
 # IndexedDB is not yet enabled in Mac WK1
 storage/indexeddb
 http/tests/security/cross-origin-indexeddb-allowed.html
@@ -6,3 +29,15 @@ http/tests/security/cross-origin-worker-indexeddb-allowed.html
 http/tests/security/cross-origin-worker-indexeddb.html
 http/tests/security/no-indexeddb-from-sandbox.html
 crypto/subtle/rsa-indexeddb.html
+
+# Fails with WebKit1 only.
+editing/secure-input/reset-state-on-navigation.html [ Failure ]
+
+# Plug-in blocking callback doesn't exist in WebKit1.
+plugins/unavailable-plugin-indicator-obscurity.html
+
+# Color input is not yet enabled on Mac WK1.
+fast/forms/color/input-color-onchange-event.html [ Skip ]
+
+### END OF (2) Failures without bug reports
+########################################

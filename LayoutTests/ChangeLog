@@ -1,3 +1,14 @@
+2014-02-12  Brady Eidson  <beidson@apple.com>
+
+        Cleanup mac/mac-wk1/mac-wk2 TestExpectations a little bit
+        https://bugs.webkit.org/show_bug.cgi?id=128679
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac-wk1/TestExpectations: mac-wk1 specific disables should go here.
+        * platform/mac-wk2/TestExpectations: Remove unnecessary re-enabling, and simplify indexeddb/mozilla.
+        * platform/mac/TestExpectations: Move some tests from here to mac-wk1.
+
 2014-02-12  Alexey Proskuryakov  <ap@apple.com>
 
         Wrap WebCrypto keys in SerializedScriptValue

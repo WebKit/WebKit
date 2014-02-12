@@ -1084,9 +1084,6 @@ webkit.org/b/113227 transitions/cross-fade-border-image.html [ Pass Failure ]
 webkit.org/b/113227 transitions/default-timing-function.html [ Pass Failure ]
 webkit.org/b/113227 transitions/svg-text-shadow-transition.html [ Pass Failure ]
 
-# Color input is not yet enabled on Mac WK1.
-fast/forms/color/input-color-onchange-event.html [ Skip ]
-
 # New test failing, needs investigation.
 webkit.org/b/103857 fast/events/mouse-cursor-change.html
 
@@ -1123,22 +1120,13 @@ webkit.org/b/115292 fast/writing-mode/japanese-ruby-vertical-rl.html
 webkit.org/b/115292 fast/writing-mode/vertical-baseline-alignment.html
 webkit.org/b/115292 fast/writing-mode/vertical-font-fallback.html
 
-# Fails with WebKit1 only.
-editing/secure-input/reset-state-on-navigation.html [ Failure ]
-
 webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
 
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
 
-# Asserts in WebKit1-debug due to a preexisting issue with overflow rect computation
-webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.html
-
 webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/118900 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
-
-# Plug-in blocking callback doesn't exist in WebKit1, so skip and re-enable for WebKit2.
-plugins/unavailable-plugin-indicator-obscurity.html
 
 webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html [ Pass Failure ]
 
@@ -1261,8 +1249,6 @@ webkit.org/b/124261 [ MountainLion ] crypto/subtle [ Skip ]
 crypto/subtle/postMessage-worker.html [ Skip ]
 
 webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Failure ]
 
 webkit.org/b/124321 [ Mavericks ] animations/resume-after-page-cache.html [ Pass Failure ]
 
