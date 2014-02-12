@@ -40,8 +40,8 @@ messages -> NetworkProcess LegacyReceiver {
     DownloadRequest(uint64_t downloadID, WebCore::ResourceRequest request)
     CancelDownload(uint64_t downloadID)
 
-#if PLATFORM(MAC)
     SetProcessSuppressionEnabled(bool flag)
+#if PLATFORM(COCOA)
     SetQOS(int latencyQOS, int throughputQOS)
 #endif
 

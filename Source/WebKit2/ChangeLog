@@ -1,3 +1,25 @@
+2014-02-12  Dan Bernstein  <mitz@apple.com>
+
+        Stop using PLATFORM(MAC) in WebKit2/{Database,Network}Process except where it means “OS X but not iOS”
+        https://bugs.webkit.org/show_bug.cgi?id=128659
+
+        Reviewed by Anders Carlsson.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::createDatabaseToWebProcessConnection): Changed PLATFORM(MAC) to
+        OS(DARWIN) around use of Mach-based IPC.
+        Changed PLATFORM(MAC) to PLATFORM(COCOA) elsewhere in this file.
+        * NetworkProcess/NetworkProcess.cpp: Ditto.
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        * NetworkProcess/NetworkProcess.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * NetworkProcess/NetworkProcess.messages.in: Removed PLATFORM(MAC) guard around
+        SetProcessSuppressionEnabled. Changed it to PLATFORM(COCOA) around SetQOS.
+        * NetworkProcess/NetworkResourceLoader.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA)
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        * NetworkProcess/NetworkResourceLoader.h: Ditto.
+        * NetworkProcess/RemoteNetworkingContext.h: Ditto, matching WebCore::NetworkingContext.
+
 2014-02-11  Brent Fulgham  <bfulgham@apple.com>
 
         Remove some unintended copies in ranged for loops

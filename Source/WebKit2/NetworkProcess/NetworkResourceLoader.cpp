@@ -243,7 +243,7 @@ void NetworkResourceLoader::willSendRequestAsync(ResourceHandle* handle, const R
 
 void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRequest)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     m_suggestedRequestForWillSendRequest.updateFromDelegatePreservingOldHTTPBody(newRequest.nsURLRequest(DoNotUpdateHTTPBody));
 #elif USE(SOUP)
     // FIXME: Implement ResourceRequest::updateFromDelegatePreservingOldHTTPBody. See https://bugs.webkit.org/show_bug.cgi?id=126127.

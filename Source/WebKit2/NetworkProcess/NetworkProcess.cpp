@@ -65,7 +65,7 @@ NetworkProcess& NetworkProcess::shared()
 NetworkProcess::NetworkProcess()
     : m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_clearCacheDispatchGroup(0)
 #endif
 {
@@ -190,7 +190,7 @@ void NetworkProcess::initializeConnection(IPC::Connection* connection)
 
 void NetworkProcess::createNetworkConnectionToWebProcess()
 {
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     // Create the listening port.
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
@@ -267,7 +267,7 @@ void NetworkProcess::terminate()
     ChildProcess::terminate();
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {
 }

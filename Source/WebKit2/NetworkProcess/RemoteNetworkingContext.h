@@ -48,7 +48,7 @@ private:
     RemoteNetworkingContext(uint64_t sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
         : m_sessionID(sessionID)
         , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         , m_needsSiteSpecificQuirks(false)
         , m_localFileContentSniffingEnabled(false)
 #endif
@@ -57,7 +57,7 @@ private:
     virtual bool isValid() const override;
     virtual WebCore::NetworkStorageSession& storageSession() const override;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void setNeedsSiteSpecificQuirks(bool value) { m_needsSiteSpecificQuirks = value; }
     virtual bool needsSiteSpecificQuirks() const override;
     void setLocalFileContentSniffingEnabled(bool value) { m_localFileContentSniffingEnabled = value; }
@@ -69,7 +69,7 @@ private:
     uint64_t m_sessionID;
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool m_needsSiteSpecificQuirks;
     bool m_localFileContentSniffingEnabled;
 #endif

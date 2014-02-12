@@ -149,7 +149,7 @@ void DatabaseProcess::performNextDatabaseTask()
 
 void DatabaseProcess::createDatabaseToWebProcessConnection()
 {
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     // Create the listening port.
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
@@ -165,7 +165,7 @@ void DatabaseProcess::createDatabaseToWebProcessConnection()
 #endif
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void DatabaseProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {
 }

@@ -104,7 +104,7 @@ public:
     virtual void didReceiveDataArray(WebCore::ResourceHandle*, CFArrayRef) override;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static size_t fileBackedResourceMinimumSize();
 #if !PLATFORM(IOS)
     virtual void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *) override;
