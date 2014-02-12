@@ -399,12 +399,12 @@ BUILT_SOURCES += $(top_builddir)/stamp-webkit2-forwarding-headers
 $(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2: $(webkit2gtk_h_api)
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/include \
 	&& rm -f $@ \
-	&& ln -n -s -f ${shell pwd}/$(WebKit2)/UIProcess/API/gtk $@
+	&& ln -n -s -f ${shell cd $(WebKit2)/UIProcess/API/gtk && pwd} $@
 
 $(GENSOURCES_WEBKIT2)/webkit2extension/include/webkit2: $(webkit2gtk_h_api)
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2extension/include \
 	&& rm -f $@ \
-	&& ln -n -s -f ${shell pwd}/$(WebKit2)/WebProcess/InjectedBundle/API/gtk $@
+	&& ln -n -s -f ${shell cd $(WebKit2)/WebProcess/InjectedBundle/API/gtk && pwd} $@
 
 BUILT_SOURCES += \
 	$(GENSOURCES_WEBKIT2)/webkit2extension/include/webkit2 \

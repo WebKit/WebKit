@@ -1,3 +1,15 @@
+2014-02-12  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Fails to build if configure is run with its absolute path
+        https://bugs.webkit.org/show_bug.cgi?id=126693
+
+        Reviewed by Gustavo Noronha Silva.
+
+        When creating links to the WebKit2 headers in the source tree
+        don't expect $(WebKit2) to be a relative path.
+
+        * GNUmakefile.am:
+
 2014-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         JIT should be enabled (regression from addition of JIT enabled setting)
