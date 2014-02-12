@@ -58,23 +58,6 @@ ScrollingTree::~ScrollingTree()
 {
 }
 
-static bool shouldConsiderLatching(const PlatformWheelEvent& wheelEvent)
-{
-    return wheelEvent.phase() == PlatformWheelEventPhaseBegan
-        || wheelEvent.phase() == PlatformWheelEventPhaseMayBegin;
-}
-
-static bool eventShouldClearLatchedNode(const PlatformWheelEvent& wheelEvent)
-{
-    if (wheelEvent.phase() == PlatformWheelEventPhaseCancelled)
-        return true;
-    
-    if (wheelEvent.phase() == PlatformWheelEventPhaseNone && wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded)
-        return true;
-    
-    return false;
-}
-
 bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent& wheelEvent)
 {
     // This method is invoked by the event handling thread
@@ -83,7 +66,7 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
     if (m_hasWheelEventHandlers)
         return true;
 
-    bool shouldSetLatch = shouldConsiderLatching(wheelEvent);
+    bool shouldSetLatch = wheelEvent.shouldConsiderLatching();
     
     if (hasLatchedNode() && !shouldSetLatch)
         return false;
@@ -103,9 +86,9 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
 
 void ScrollingTree::setOrClearLatchedNode(const PlatformWheelEvent& wheelEvent, ScrollingNodeID nodeID)
 {
-    if (shouldConsiderLatching(wheelEvent))
+    if (wheelEvent.shouldConsiderLatching())
         setLatchedNode(nodeID);
-    else if (eventShouldClearLatchedNode(wheelEvent))
+    else if (wheelEvent.shouldResetLatching())
         clearLatchedNode();
 }
 

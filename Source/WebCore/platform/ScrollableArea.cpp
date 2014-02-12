@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010, Google Inc. All rights reserved.
- * Copyright (C) 2008, 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2011, 2014 Apple Inc. All Rights Reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -420,6 +420,26 @@ IntPoint ScrollableArea::minimumScrollPosition() const
 IntPoint ScrollableArea::maximumScrollPosition() const
 {
     return IntPoint(totalContentsSize().width() - visibleWidth(), totalContentsSize().height() - visibleHeight());
+}
+
+bool ScrollableArea::scrolledToTop() const
+{
+    return scrollPosition().y() <= minimumScrollPosition().y();
+}
+
+bool ScrollableArea::scrolledToBottom() const
+{
+    return scrollPosition().y() >= maximumScrollPosition().y();
+}
+
+bool ScrollableArea::scrolledToLeft() const
+{
+    return scrollPosition().x() <= minimumScrollPosition().x();
+}
+
+bool ScrollableArea::scrolledToRight() const
+{
+    return scrollPosition().x() >= maximumScrollPosition().x();
 }
 
 IntSize ScrollableArea::totalContentsSize() const

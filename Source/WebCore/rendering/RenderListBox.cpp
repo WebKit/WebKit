@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2011, 2014 Apple Inc. All rights reserved.
  *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -831,4 +831,36 @@ void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
 #endif
 }
 
+bool RenderListBox::scrolledToTop() const
+{
+    Scrollbar* vbar = verticalScrollbar();
+    if (!vbar)
+        return true;
+    
+    return vbar->value() <= 0;
+}
+
+bool RenderListBox::scrolledToBottom() const
+{
+    Scrollbar* vbar = verticalScrollbar();
+    if (!vbar)
+        return true;
+
+    return vbar->value() >= vbar->maximum();
+}
+
+bool RenderListBox::scrolledToLeft() const
+{
+    // We do not scroll horizontally in a select element, so always report
+    // that we are at the full extent of the scroll.
+    return true;
+}
+
+bool RenderListBox::scrolledToRight() const
+{
+    // We do not scroll horizontally in a select element, so always report
+    // that we are at the full extent of the scroll.
+    return true;
+}
+    
 } // namespace WebCore

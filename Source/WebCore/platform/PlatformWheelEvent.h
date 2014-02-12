@@ -167,6 +167,20 @@ namespace WebCore {
             return m_phase == PlatformWheelEventPhaseBegan || m_phase == PlatformWheelEventPhaseChanged
                 || m_momentumPhase == PlatformWheelEventPhaseBegan || m_momentumPhase == PlatformWheelEventPhaseChanged;
         }
+        bool shouldConsiderLatching() const
+        {
+            return m_phase == PlatformWheelEventPhaseBegan || m_phase == PlatformWheelEventPhaseMayBegin;
+        }
+        bool shouldResetLatching() const
+        {
+            if (m_phase == PlatformWheelEventPhaseCancelled || m_phase == PlatformWheelEventPhaseMayBegin)
+                return true;
+            
+            if (m_phase == PlatformWheelEventPhaseNone && m_momentumPhase == PlatformWheelEventPhaseEnded)
+                return true;
+            
+            return false;
+        }
 #else
         bool useLatchedEventElement() const { return false; }
 #endif

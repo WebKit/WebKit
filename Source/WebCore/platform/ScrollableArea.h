@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2011, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,6 +149,10 @@ public:
     virtual IntPoint scrollPosition() const;
     virtual IntPoint minimumScrollPosition() const;
     virtual IntPoint maximumScrollPosition() const;
+    virtual bool scrolledToTop() const;
+    virtual bool scrolledToBottom() const;
+    virtual bool scrolledToLeft() const;
+    virtual bool scrolledToRight() const;
 
     enum VisibleContentRectIncludesScrollbars { ExcludeScrollbars, IncludeScrollbars };
     enum VisibleContentRectBehavior {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,15 +38,20 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "KeyboardEvent.h"
+#include "MainFrame.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "PlatformEventFactoryMac.h"
+#include "RenderLayer.h"
+#include "RenderListBox.h"
 #include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
+#include "ScrollableArea.h"
 #include "Scrollbar.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "WebCoreSystemInterface.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -732,6 +737,123 @@ unsigned EventHandler::accessKeyModifiers()
         return PlatformEvent::CtrlKey;
 
     return PlatformEvent::CtrlKey | PlatformEvent::AltKey;
+}
+
+static ContainerNode* findEnclosingScrollableContainer(ContainerNode& node)
+{
+    // Find the first node with a valid scrollable area starting with the current
+    // node and traversing its parents (or shadow hosts).
+    for (ContainerNode* candidate = &node; candidate; candidate = candidate->parentOrShadowHostNode()) {
+        RenderBox* box = candidate->renderBox();
+        if (box && box->canBeScrolledAndHasScrollableArea())
+            return candidate;
+    }
+    
+    return nullptr;
+}
+
+static bool scrolledToEdgeInDominantDirection(const ScrollableArea& area, DominantScrollGestureDirection direction, float deltaX, float deltaY)
+{
+    if (DominantScrollGestureDirection::Horizontal == direction && deltaX) {
+        if (deltaX < 0)
+            return area.scrolledToRight();
+        
+        return area.scrolledToLeft();
+    }
+    
+    if (deltaY < 0)
+        return area.scrolledToBottom();
+    
+    return area.scrolledToTop();
+}
+
+void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheelEvent, const HitTestResult& result, Element*& wheelEventTarget, ContainerNode*& scrollableContainer, ScrollableArea*& scrollableArea, bool& isOverWidget)
+{
+    FrameView* view = m_frame.view();
+
+    scrollableContainer = nullptr;
+    scrollableArea = nullptr;
+    if (!view || !view->frame().isMainFrame()) {
+        scrollableContainer = wheelEventTarget;
+        scrollableArea = view;
+    } else {
+        scrollableContainer = findEnclosingScrollableContainer(*wheelEventTarget);
+        if (scrollableContainer) {
+            if (RenderBox* box = scrollableContainer->renderBox()) {
+                if (box->isListBox())
+                    scrollableArea = toRenderListBox(box);
+                else
+                    scrollableArea = box->layer();
+            }
+        }
+    }
+    
+    if (wheelEvent.shouldConsiderLatching()) {
+        if (scrollableArea)
+            m_startedGestureAtScrollLimit = scrolledToEdgeInDominantDirection(*scrollableArea, m_recentWheelEventDeltaTracker->dominantScrollGestureDirection(), wheelEvent.deltaX(), wheelEvent.deltaY());
+        else
+            m_startedGestureAtScrollLimit = false;
+        m_latchedWheelEventElement = wheelEventTarget;
+        m_latchedScrollableContainer = scrollableContainer;
+        m_widgetIsLatched = result.isOverWidget();
+        isOverWidget = m_widgetIsLatched;
+        m_recentWheelEventDeltaTracker->beginTrackingDeltas();
+    } else if (wheelEvent.shouldResetLatching()) {
+        m_latchedWheelEventElement = nullptr;
+        m_latchedScrollableContainer = nullptr;
+        m_widgetIsLatched = false;
+        m_previousWheelScrolledElement = nullptr;
+        m_recentWheelEventDeltaTracker->endTrackingDeltas();
+    }
+    
+    if (!wheelEvent.shouldResetLatching() && m_latchedWheelEventElement) {
+        wheelEventTarget = m_latchedWheelEventElement.get();
+        isOverWidget = m_widgetIsLatched;
+    }
+}
+
+void EventHandler::platformRecordWheelEvent(const PlatformWheelEvent& wheelEvent)
+{
+    switch (wheelEvent.phase()) {
+        case PlatformWheelEventPhaseBegan:
+            m_recentWheelEventDeltaTracker->beginTrackingDeltas();
+            break;
+        case PlatformWheelEventPhaseEnded:
+            m_recentWheelEventDeltaTracker->endTrackingDeltas();
+            break;
+        default:
+            break;
+    }
+
+    m_recentWheelEventDeltaTracker->recordWheelEventDelta(wheelEvent);
+}
+
+bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEvent, ContainerNode* scrollableContainer, ScrollableArea* scrollableArea)
+{
+    // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
+    FrameView* view = m_frame.view();
+
+    if (wheelEvent.useLatchedEventElement() && m_latchedScrollableContainer) {
+        if (!view || !view->frame().isMainFrame()) {
+            bool didHandleWheelEvent = view && view->wheelEvent(wheelEvent);
+            if (!didHandleWheelEvent && scrollableContainer == m_latchedScrollableContainer) {
+                // If we are just starting a scroll event, and have nowhere left to scroll, allow
+                // the enclosing frame to handle the scroll.
+                didHandleWheelEvent = !m_startedGestureAtScrollLimit;
+            }
+            m_isHandlingWheelEvent = false;
+            return didHandleWheelEvent;
+        }
+        
+        if (scrollableArea && !m_startedGestureAtScrollLimit && scrollableContainer == m_latchedScrollableContainer) {
+            m_isHandlingWheelEvent = false;
+            return true;
+        }
+    }
+    
+    bool didHandleEvent = view ? view->wheelEvent(wheelEvent) : false;
+    m_isHandlingWheelEvent = false;
+    return didHandleEvent;
 }
 
 }

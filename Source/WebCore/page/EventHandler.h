@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,6 +69,7 @@ namespace WebCore {
 
 class AutoscrollController;
 class Clipboard;
+class ContainerNode;
 class Document;
 class Element;
 class Event;
@@ -90,6 +91,7 @@ class RenderBox;
 class RenderElement;
 class RenderLayer;
 class RenderWidget;
+class ScrollableArea;
 class SVGElementInstance;
 class Scrollbar;
 class TextEvent;
@@ -196,6 +198,10 @@ public:
     bool handleWheelEvent(const PlatformWheelEvent&);
     void defaultWheelEventHandler(Node*, WheelEvent*);
     bool handlePasteGlobalSelection(const PlatformMouseEvent&);
+
+    void platformPrepareForWheelEvents(const PlatformWheelEvent& wheelEvent, const HitTestResult& result, Element*& wheelEventTarget, ContainerNode*& scrollableContainer, ScrollableArea*& scrollableArea, bool& isOverWidget);
+    void platformRecordWheelEvent(const PlatformWheelEvent&);
+    bool platformCompleteWheelEvent(const PlatformWheelEvent&, ContainerNode* scrollableContainer, ScrollableArea* scrollableArea);
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     typedef Vector<RefPtr<Touch>> TouchArray;
@@ -520,7 +526,9 @@ private:
 
 #if PLATFORM(COCOA)
     NSView *m_mouseDownView;
+    RefPtr<ContainerNode> m_latchedScrollableContainer;
     bool m_sendingEventToSubview;
+    bool m_startedGestureAtScrollLimit;
 #if !PLATFORM(IOS)
     int m_activationEventNumber;
 #endif
