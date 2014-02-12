@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "FlowThreadController.h"
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
@@ -967,6 +968,9 @@ void RenderElement::insertedIntoTree()
 {
     RenderObject::insertedIntoTree();
 
+    if (auto* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
+        containerFlowThread->addFlowChild(*this);
+
     // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
     // and don't have a layer attached to ourselves.
     RenderLayer* layer = nullptr;
@@ -1007,6 +1011,9 @@ void RenderElement::willBeRemovedFromTree()
     if (isOutOfFlowPositioned() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(this);
 
+    if (auto* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
+        containerFlowThread->removeFlowChild(*this);
+
     RenderObject::willBeRemovedFromTree();
 }
 
@@ -1017,6 +1024,16 @@ void RenderElement::willBeDestroyed()
     destroyLeftoverChildren();
 
     RenderObject::willBeDestroyed();
+
+#if !ASSERT_DISABLED
+    if (!documentBeingDestroyed() && view().hasRenderNamedFlowThreads()) {
+        // After remove, the object and the associated information should not be in any flow thread.
+        for (auto& flowThread : *view().flowThreadController().renderNamedFlowThreadList()) {
+            ASSERT(!flowThread->hasChild(*this));
+            ASSERT(!flowThread->hasChildInfo(this));
+        }
+    }
+#endif
 }
 
 void RenderElement::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle)

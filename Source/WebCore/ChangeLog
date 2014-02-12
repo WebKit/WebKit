@@ -1,3 +1,30 @@
+2014-02-12  Andreas Kling  <akling@apple.com>
+
+        RenderNamedFlowThread should only support RenderElement children.
+        <https://webkit.org/b/128675>
+
+        Tighten up flow-thread rendering so that it only supports element
+        children directly. This means we don't have to worry about text
+        renderers on this code path.
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertedIntoTree):
+        (WebCore::RenderElement::willBeRemovedFromTree):
+        (WebCore::RenderElement::willBeDestroyed):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::nextRendererForElement):
+        (WebCore::RenderNamedFlowThread::addFlowChild):
+        (WebCore::RenderNamedFlowThread::removeFlowChild):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        (WebCore::RenderObject::insertedIntoTree):
+        (WebCore::RenderObject::willBeRemovedFromTree):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::createRendererIfNeeded):
+
 2014-02-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Modernize missed inspector files

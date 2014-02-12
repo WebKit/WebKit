@@ -97,11 +97,11 @@ void RenderNamedFlowThread::updateWritingMode()
     setStyle(std::move(newStyle));
 }
 
-RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
+RenderElement* RenderNamedFlowThread::nextRendererForElement(Element& element) const
 {
     for (auto& child : m_flowThreadChildList) {
-        ASSERT(child->node());
-        unsigned short position = node->compareDocumentPosition(child->node());
+        ASSERT(!child->isAnonymous());
+        unsigned short position = element.compareDocumentPosition(child->element());
         if (position & Node::DOCUMENT_POSITION_FOLLOWING)
             return child;
     }
@@ -109,29 +109,24 @@ RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
     return 0;
 }
 
-void RenderNamedFlowThread::addFlowChild(RenderObject* newChild)
+void RenderNamedFlowThread::addFlowChild(RenderElement& newChild)
 {
     // The child list is used to sort the flow thread's children render objects 
     // based on their corresponding nodes DOM order. The list is needed to avoid searching the whole DOM.
 
-    Node* childNode = newChild->node();
-
-    // Do not add anonymous objects.
-    if (!childNode)
+    if (newChild.isAnonymous())
         return;
 
-    ASSERT(childNode->isElementNode());
-
-    RenderObject* beforeChild = nextRendererForNode(childNode);
+    auto* beforeChild = nextRendererForElement(*newChild.element());
     if (beforeChild)
-        m_flowThreadChildList.insertBefore(beforeChild, newChild);
+        m_flowThreadChildList.insertBefore(beforeChild, &newChild);
     else
-        m_flowThreadChildList.add(newChild);
+        m_flowThreadChildList.add(&newChild);
 }
 
-void RenderNamedFlowThread::removeFlowChild(RenderObject* child)
+void RenderNamedFlowThread::removeFlowChild(RenderElement& child)
 {
-    m_flowThreadChildList.remove(child);
+    m_flowThreadChildList.remove(&child);
 }
 
 bool RenderNamedFlowThread::dependsOn(RenderNamedFlowThread* otherRenderFlowThread) const

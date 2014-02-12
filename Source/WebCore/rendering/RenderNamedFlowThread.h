@@ -52,13 +52,13 @@ public:
 
     const RenderRegionList& invalidRenderRegionList() const { return m_invalidRegionList; }
 
-    RenderObject* nextRendererForNode(Node*) const;
+    RenderElement* nextRendererForElement(Element&) const;
 
-    void addFlowChild(RenderObject* newChild);
-    void removeFlowChild(RenderObject*);
+    void addFlowChild(RenderElement&);
+    void removeFlowChild(RenderElement&);
     bool hasChildren() const { return !m_flowThreadChildList.isEmpty(); }
 #ifndef NDEBUG
-    bool hasChild(RenderObject* child) const { return m_flowThreadChildList.contains(child); }
+    bool hasChild(RenderElement& child) const { return m_flowThreadChildList.contains(&child); }
 #endif
 
     void pushDependencies(RenderNamedFlowThreadList&);
@@ -129,7 +129,7 @@ private:
     RenderNamedFlowThreadCountedSet m_layoutBeforeThreadsSet;
 
     // Holds the sorted children of a named flow. This is the only way we can get the ordering right.
-    ListHashSet<RenderObject*> m_flowThreadChildList;
+    ListHashSet<RenderElement*> m_flowThreadChildList;
 
     NamedFlowContentElements m_contentElements;
 

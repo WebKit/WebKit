@@ -226,7 +226,7 @@ static void createRendererIfNeeded(Element& element, PassRefPtr<RenderStyle> res
     RenderObject* nextRenderer;
     if (parentFlowRenderer) {
         parentRenderer = parentFlowRenderer;
-        nextRenderer = parentFlowRenderer->nextRendererForNode(&element);
+        nextRenderer = parentFlowRenderer->nextRendererForElement(element);
     } else {
         // FIXME: Make this path Element only, handle the root special case separately.
         parentRenderer = renderingParentNode->renderer();

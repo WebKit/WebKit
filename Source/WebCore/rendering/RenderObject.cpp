@@ -1855,18 +1855,6 @@ void RenderObject::willBeDestroyed()
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->remove(this);
 
-#ifndef NDEBUG
-    if (!documentBeingDestroyed() && view().hasRenderNamedFlowThreads()) {
-        // After remove, the object and the associated information should not be in any flow thread.
-        const RenderNamedFlowThreadList* flowThreadList = view().flowThreadController().renderNamedFlowThreadList();
-        for (RenderNamedFlowThreadList::const_iterator iter = flowThreadList->begin(); iter != flowThreadList->end(); ++iter) {
-            const RenderNamedFlowThread* renderFlowThread = *iter;
-            ASSERT(!renderFlowThread->hasChild(this));
-            ASSERT(!renderFlowThread->hasChildInfo(this));
-        }
-    }
-#endif
-
     // If this renderer had a parent, remove should have destroyed any counters
     // attached to this renderer and marked the affected other counters for
     // reevaluation. This apparently redundant check is here for the case when
@@ -1891,9 +1879,6 @@ void RenderObject::insertedIntoTree()
 
     if (!isFloating() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(this);
-
-    if (RenderNamedFlowThread* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
-        containerFlowThread->addFlowChild(this);
 }
 
 void RenderObject::willBeRemovedFromTree()
@@ -1901,9 +1886,6 @@ void RenderObject::willBeRemovedFromTree()
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
 
     removeFromRenderFlowThread();
-
-    if (RenderNamedFlowThread* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
-        containerFlowThread->removeFlowChild(this);
 
     // Update cached boundaries in SVG renderers, if a child is removed.
     parent()->setNeedsBoundariesUpdate();
