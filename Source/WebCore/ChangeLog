@@ -1,3 +1,26 @@
+2014-02-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Modernize missed inspector files
+        https://bugs.webkit.org/show_bug.cgi?id=128661
+
+        Reviewed by Anders Carlsson.
+
+        Add final, override, and use nullptr where appropriate.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::asCSSStyleRule):
+        (WebCore::InspectorCSSAgent::discardAgent):
+        (WebCore::InspectorCSSAgent::disable):
+        (WebCore::InspectorCSSAgent::getInlineStylesForNode):
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::elementForId):
+        (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::assertStyleSheetForId):
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+        * inspector/InspectorFrontendClientLocal.h:
+
 2014-02-11  Brent Fulgham  <bfulgham@apple.com>
 
         Remove some unintended copies in ranged for loops

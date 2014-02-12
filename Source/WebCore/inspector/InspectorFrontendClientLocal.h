@@ -58,25 +58,25 @@ public:
     InspectorFrontendClientLocal(InspectorController*, Page*, PassOwnPtr<Settings>);
     virtual ~InspectorFrontendClientLocal();
     
-    virtual void windowObjectCleared();
-    virtual void frontendLoaded();
+    virtual void windowObjectCleared() override;
+    virtual void frontendLoaded() override;
 
-    virtual void moveWindowBy(float x, float y);
+    virtual void moveWindowBy(float x, float y) override;
 
-    virtual void requestSetDockSide(DockSide);
-    virtual void changeAttachedWindowHeight(unsigned);
-    virtual void changeAttachedWindowWidth(unsigned);
-    virtual void openInNewTab(const String& url);
-    virtual bool canSave() { return false; }
-    virtual void save(const String&, const String&, bool, bool) { }
-    virtual void append(const String&, const String&) { }
+    virtual void requestSetDockSide(DockSide) override;
+    virtual void changeAttachedWindowHeight(unsigned) override;
+    virtual void changeAttachedWindowWidth(unsigned) override;
+    virtual void openInNewTab(const String& url) override;
+    virtual bool canSave()  override { return false; }
+    virtual void save(const String&, const String&, bool, bool) override { }
+    virtual void append(const String&, const String&) override { }
 
     virtual void attachWindow(DockSide) = 0;
     virtual void detachWindow() = 0;
 
-    virtual void sendMessageToBackend(const String& message);
+    virtual void sendMessageToBackend(const String& message) override;
 
-    virtual bool isUnderTest();
+    virtual bool isUnderTest() override;
 
     bool canAttachWindow();
     void setDockingUnavailable(bool);
