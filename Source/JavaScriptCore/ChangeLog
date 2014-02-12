@@ -1,3 +1,10 @@
+2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Debug build fix after r163946.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::injectLazyOperandSpeculation):
+
 2014-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         Inserting a node with a codeOrigin "like" another node should copy both the codeOrigin and codeOriginForExitTarget

@@ -1,3 +1,9 @@
+2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove one of includes added in r163943 and r163939.
+
+        * WebProcess/WebPage/WebPage.h:
+
 2014-02-11  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/16044438>: WebKit2.framework (with *Process.app) exists at the top level of the simulator

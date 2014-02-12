@@ -105,10 +105,6 @@ OBJC_CLASS WKAccessibilityWebPageObject;
 #define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
 #endif
 
-#if PLATFORM(IOS)
-#include "WKGestureTypes.h"
-#endif
-
 namespace API {
 class Array;
 }
