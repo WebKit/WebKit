@@ -1,3 +1,9 @@
+2014-02-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed iOS Build fix after r163975.
+
+        * page/EventHandler.cpp: Use wheel event stubs if !PLATFORM(MAC) || PLATFORM(IOS).
+
 2014-02-12  Gavin Barraclough  <barraclough@apple.com>
 
         Clean up PageThrottler interface
