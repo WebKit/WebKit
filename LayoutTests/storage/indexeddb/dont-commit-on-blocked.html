@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/shared.js"></script>
 </head>
 <body>
@@ -22,7 +22,7 @@ function holdConnection()
     debug("holdConnection():");
     debug("holding connection until versionchange event");
     debug("");
-    startWorker("resources/dont-commit-on-blocked-worker.js");
+    worker = startWorker("resources/dont-commit-on-blocked-worker.js");
 }
 
 function onVersionChange(e)
@@ -32,6 +32,5 @@ function onVersionChange(e)
 }
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

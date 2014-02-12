@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test-pre.js');
+    importScripts('../../../resources/js-test.js');
     importScripts('shared.js');
 }
 
@@ -32,6 +32,7 @@ function causeException()
     debug("");
     evalAndLog("event.preventDefault()");
     debug("Throwing");
+    expectError();
     throw "this exception is expected";
 }
 

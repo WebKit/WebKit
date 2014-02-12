@@ -110,6 +110,7 @@ Expecting exception from event.target.result.update({id: 100 + counter, number: 
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key.
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
@@ -117,6 +118,7 @@ Expecting exception from event.target.result.update({id: 100 + counter, number: 
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key.
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
@@ -124,6 +126,7 @@ Expecting exception from event.target.result.update({id: 100 + counter, number: 
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key.
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
@@ -131,6 +134,7 @@ Expecting exception from event.target.result.update({id: 100 + counter, number: 
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key.
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
@@ -166,6 +170,7 @@ Expecting exception from event.target.result.update({id: counter, number: counte
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The cursor is a key cursor.
 event.target.result.continue();
 keyCursor()
 PASS event.target.result.key is counter + 100
@@ -174,6 +179,7 @@ Expecting exception from event.target.result.update({id: counter, number: counte
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The cursor is a key cursor.
 event.target.result.continue();
 keyCursor()
 PASS event.target.result.key is counter + 100
@@ -182,6 +188,7 @@ Expecting exception from event.target.result.update({id: counter, number: counte
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The cursor is a key cursor.
 event.target.result.continue();
 keyCursor()
 PASS event.target.result.key is counter + 100
@@ -190,6 +197,7 @@ Expecting exception from event.target.result.update({id: counter, number: counte
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The cursor is a key cursor.
 event.target.result.continue();
 keyCursor()
 PASS counter is 5
@@ -202,24 +210,28 @@ Expecting exception from cursor.update('myUpdatedValue')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The record may not be updated inside a read-only transaction.
 cursor.continue()
 attemptUpdate()
 Expecting exception from cursor.update('myUpdatedValue')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The record may not be updated inside a read-only transaction.
 cursor.continue()
 attemptUpdate()
 Expecting exception from cursor.update('myUpdatedValue')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The record may not be updated inside a read-only transaction.
 cursor.continue()
 attemptUpdate()
 Expecting exception from cursor.update('myUpdatedValue')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
+Exception message: Failed to execute 'update' on 'IDBCursor': The record may not be updated inside a read-only transaction.
 cursor.continue()
 attemptUpdate()
 transactionComplete()

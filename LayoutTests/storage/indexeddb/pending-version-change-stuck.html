@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/shared.js"></script>
 </head>
 <body>
@@ -27,7 +27,7 @@ function test()
 
 function startTheWorker()
 {
-    var worker = startWorker("resources/pending-version-change-stuck.js?" + encodeURI(dbname));
+    worker = startWorker("resources/pending-version-change-stuck.js?" + encodeURI(dbname));
     worker.onerror = function(e) {
         testFailed(e.message);
         finishJSTest();
@@ -44,6 +44,5 @@ function startTheWorker()
 test();
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

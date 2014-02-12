@@ -14,14 +14,15 @@ db.createObjectStore('storeName', null)
 store.createIndex('indexName', 'x')
 store.createIndex('indexName2', 'y', {unique: false})
 store.createIndex('zIndex', 'z', {unique: true})
+PASS store.createIndex('index4', 'path', undefined) did not throw exception.
 PASS indexObject2.unique is false
 PASS indexObject3.unique is true
 Expecting TypeError exception from store.createIndex('failureIndex', 'zzz', true)
 PASS Exception was thrown.
-PASS store.createIndex('failureIndex', 'zzz', true) threw TypeError: Not an object.
+PASS store.createIndex('failureIndex', 'zzz', true) threw TypeError: Failed to execute 'createIndex' on 'IDBObjectStore': No function was found that matched the signature provided.
 Expecting TypeError exception from store.createIndex('failureIndex', 'zzz', 'string')
 PASS Exception was thrown.
-PASS store.createIndex('failureIndex', 'zzz', 'string') threw TypeError: Not an object.
+PASS store.createIndex('failureIndex', 'zzz', 'string') threw TypeError: Failed to execute 'createIndex' on 'IDBObjectStore': No function was found that matched the signature provided.
 PASS 'name' in indexObject is true
 PASS indexObject.name is "indexName"
 PASS 'objectStore' in indexObject is true
@@ -69,7 +70,7 @@ PASS event.target.result is "key2"
 Verify that specifying an invalid direction raises an exception:
 Expecting TypeError exception from indexObject.openKeyCursor(0, 'invalid-direction')
 PASS Exception was thrown.
-PASS indexObject.openKeyCursor(0, 'invalid-direction') threw TypeError: Type error
+PASS indexObject.openKeyCursor(0, 'invalid-direction') threw TypeError: Failed to execute 'openKeyCursor' on 'IDBIndex': The direction provided ('invalid-direction') is not one of 'next', 'nextunique', 'prev', or 'prevunique'.
 
 indexObject.openKeyCursor()
 PASS event.target.source is indexObject
@@ -94,7 +95,7 @@ PASS event.target.result is null
 Verify that specifying an invalid direction raises an exception:
 Expecting TypeError exception from indexObject.openCursor(0, 'invalid-direction')
 PASS Exception was thrown.
-PASS indexObject.openCursor(0, 'invalid-direction') threw TypeError: Type error
+PASS indexObject.openCursor(0, 'invalid-direction') threw TypeError: Failed to execute 'openCursor' on 'IDBIndex': The direction provided ('invalid-direction') is not one of 'next', 'nextunique', 'prev', or 'prevunique'.
 
 indexObject.openCursor()
 PASS event.target.source is indexObject
@@ -130,11 +131,13 @@ Expecting exception from indexObject.get({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'get' on 'IDBIndex': The parameter is not a valid key.
 Passing an invalid key into indexObject.getKey({}).
 Expecting exception from indexObject.getKey({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'getKey' on 'IDBIndex': The parameter is not a valid key.
 PASS successfullyParsed is true
 
 TEST COMPLETE

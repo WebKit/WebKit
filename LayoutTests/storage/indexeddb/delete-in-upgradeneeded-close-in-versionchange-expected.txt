@@ -33,7 +33,7 @@ sawDeleteBlocked = true
 
 deleteSuccessCallback():
 PASS sawVersionChange is true
-FIXME: Blocked events shouldn't fire if connections close in versionchange handler. http://wkbug.com/71130
+FIXME: Blocked events shouldn't fire if connections close in versionchange handler. http://crbug.com/100123
 FAIL sawDeleteBlocked should be false. Was true.
 PASS sawUpgradeNeeded is true
 PASS successfullyParsed is true

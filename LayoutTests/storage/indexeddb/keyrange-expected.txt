@@ -214,51 +214,61 @@ Expecting exception from IDBKeyRange.only({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'only' on 'IDBKeyRange': The parameter is not a valid key.
 Passing an invalid key into upperBound({})
 Expecting exception from IDBKeyRange.upperBound({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'upperBound' on 'IDBKeyRange': The parameter is not a valid key.
 Passing an invalid key into lowerBound({})
 Expecting exception from IDBKeyRange.lowerBound({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'lowerBound' on 'IDBKeyRange': The parameter is not a valid key.
 Passing an invalid key into bound(null, {})
 Expecting exception from IDBKeyRange.bound(null, {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'bound' on 'IDBKeyRange': The parameter is not a valid key.
 Passing an invalid key into bound({},null)
 Expecting exception from IDBKeyRange.bound({}, null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'bound' on 'IDBKeyRange': The parameter is not a valid key.
 Passing an invalid key into bound({}, {})
 Expecting exception from IDBKeyRange.bound({}, {})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'bound' on 'IDBKeyRange': The parameter is not a valid key.
 Lower key greater than higher key, bound(4, 3)
 Expecting exception from IDBKeyRange.bound(4, 3)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'bound' on 'IDBKeyRange': The lower key is greater than the upper key.
 Equal keys, either of the bounds is open, bound(4, 4, true, false)
 Expecting exception from IDBKeyRange.bound(4, 4, true, false)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'bound' on 'IDBKeyRange': The lower key and upper key are equal and one of the bounds is open.
 Equal keys, either of the bounds is open, bound(4, 4, false, true)
 Expecting exception from IDBKeyRange.bound(4, 4, false, true)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'bound' on 'IDBKeyRange': The lower key and upper key are equal and one of the bounds is open.
 Equal keys, either of the bounds is open, bound(4, 4, true, true)
 Expecting exception from IDBKeyRange.bound(4, 4, true, true)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'bound' on 'IDBKeyRange': The lower key and upper key are equal and one of the bounds is open.
 Equal keys, none of the bounds is open, bound(4, 4, false, false)
 PASS successfullyParsed is true
 

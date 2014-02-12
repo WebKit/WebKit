@@ -11,15 +11,13 @@ Expecting exception from request.result
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
-PASS 'webkitErrorMessage' in request is true
-Expecting exception from request.webkitErrorMessage
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
+Exception message: Failed to read the 'result' property from 'IDBRequest': The request has not finished.
+PASS 'error' in request is true
 Expecting exception from request.error
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Exception message: Failed to read the 'error' property from 'IDBRequest': The request has not finished.
 PASS 'source' in request is true
 PASS request.source is null
 PASS 'transaction' in request is true
@@ -32,8 +30,6 @@ PASS 'onerror' in request is true
 PASS request.onerror is null
 PASS 'result' in event.target is true
 PASS !!event.target.result is true
-PASS 'webkitErrorMessage' in event.target is true
-PASS event.target.webkitErrorMessage is undefined.
 PASS 'error' in event.target is true
 PASS event.target.error is null
 PASS 'source' in event.target is true

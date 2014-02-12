@@ -22,14 +22,17 @@ store = transaction.objectStore('storeName')
 Expecting exception from store.put(blob, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'put' on 'IDBObjectStore': The object store currently does not support blob values.
 Expecting exception from store.add(blob, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'add' on 'IDBObjectStore': The object store currently does not support blob values.
 request = store.openCursor()
 cursor = request.result
 Expecting exception from cursor.update(blob)
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'update' on 'IDBCursor': The object store currently does not support blob values.
 
 testFile():
 file = fileInput.files[0]
@@ -40,14 +43,17 @@ store = transaction.objectStore('storeName')
 Expecting exception from store.put(file, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'put' on 'IDBObjectStore': The object store currently does not support blob values.
 Expecting exception from store.add(file, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'add' on 'IDBObjectStore': The object store currently does not support blob values.
 request = store.openCursor()
 cursor = request.result
 Expecting exception from cursor.update(file)
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'update' on 'IDBCursor': The object store currently does not support blob values.
 
 testFileList():
 filelist = fileInput.files
@@ -58,14 +64,17 @@ store = transaction.objectStore('storeName')
 Expecting exception from store.put(filelist, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'put' on 'IDBObjectStore': The object store currently does not support blob values.
 Expecting exception from store.add(filelist, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'add' on 'IDBObjectStore': The object store currently does not support blob values.
 request = store.openCursor()
 cursor = request.result
 Expecting exception from cursor.update(filelist)
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
+Exception message: Failed to execute 'update' on 'IDBCursor': The object store currently does not support blob values.
 PASS successfullyParsed is true
 
 TEST COMPLETE

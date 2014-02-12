@@ -1,12 +1,12 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/shared.js"></script>
 </head>
 <body>
 <script>
 
-var worker = startWorker('resources/transaction-complete-workers.js');
+worker = startWorker('resources/transaction-complete-workers.js');
 
 // FIXME: It should be possible for the worker to set self.onerror to catch the event
 // and call event.preventDefault(), but in the current Worker implementation the raw
@@ -24,6 +24,5 @@ worker.onerror = function (event) {
 
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

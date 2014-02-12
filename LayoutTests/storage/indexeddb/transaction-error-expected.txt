@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 73: Error: This should *NOT* be caught!
+CONSOLE ERROR: line 78: Uncaught Error: This should *NOT* be caught!
 Test IDBTransaction.error cases.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -17,6 +17,9 @@ trans = db.transaction('storeName')
 IDBTransaction.error should be null if transaction is not finished:
 PASS trans.error is null
 
+transaction() should throw if one of the DOMStringList items cannot be converted to a String:
+PASS db.transaction(['storeName', nonConvertibleToString]) threw exception Exception in toString().
+
 If IDBTransaction.abort() is explicitly called, IDBTransaction.error should be null:
 trans.abort()
 PASS trans.error is null
@@ -28,8 +31,8 @@ PASS request.error.name is 'ConstraintError'
 request_error = request.error
 Transaction received abort event.
 PASS trans.error is non-null.
-trans.webkitErrorMessage = Key already exists in the object store.
-PASS trans.webkitErrorMessage is non-null.
+trans.error.message = Key already exists in the object store.
+PASS trans.error.message is non-null.
 PASS trans.error is request_error
 
 If the transaction is aborted due to an exception thrown from event callback, IDBTransaction.error should be AbortError:
@@ -39,8 +42,8 @@ PASS request.error.name is 'ConstraintError'
 Throwing exception...
 Transaction received abort event.
 PASS trans.error is non-null.
-trans.webkitErrorMessage = Uncaught exception in event handler.
-PASS trans.webkitErrorMessage is non-null.
+trans.error.message = Uncaught exception in event handler.
+PASS trans.error.message is non-null.
 PASS trans.error.name is 'AbortError'
 
 If the transaction is aborted due to an error during commit, IDBTransaction.error should reflect that error:
@@ -55,10 +58,10 @@ trans.objectStore('storeName').createIndex(indexName, 'id', {unique: true})
 Transaction received abort event.
 PASS trans.error is non-null.
 PASS trans.error.name is 'ConstraintError'
-trans.webkitErrorMessage = Unable to add key to index 'Also test utf8: æ¼¢': at least one key does not satisfy the uniqueness requirements.
-PASS trans.webkitErrorMessage is non-null.
+trans.error.message = Unable to add key to index 'Also test utf8: 漢': at least one key does not satisfy the uniqueness requirements.
+PASS trans.error.message is non-null.
 Note: This fails because of http://wkb.ug/37327
-FAIL trans.webkitErrorMessage.indexOf(indexName) should not be -1.
+PASS trans.error.message.indexOf(indexName) is not -1
 
 PASS successfullyParsed is true
 

@@ -13,6 +13,7 @@ Expecting exception from db.transaction("doesntExist")
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'transaction' on 'IDBDatabase': A version change transaction is running.
 PASS db.version is 1
 PASS db.name is "database-basics.html"
 PASS db.objectStoreNames is []
@@ -52,6 +53,7 @@ Expecting exception from db.transaction('test123')
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
 Call twice, make sure it's harmless
 db.close()
 PASS successfullyParsed is true

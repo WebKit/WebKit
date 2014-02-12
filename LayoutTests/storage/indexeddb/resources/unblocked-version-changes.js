@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test-pre.js');
+    importScripts('../../../resources/js-test.js');
     importScripts('shared.js');
 }
 
@@ -37,8 +37,6 @@ function onUpgradeNeeded(evt)
     request.onsuccess = onSuccess;
 
     evalAndLog("transaction.abort()");
-    // FIXME: Explicit db.close() call should not be necessary. http://wkbug.com/102298
-    evalAndLog("db.close()");
 }
 
 function onError(evt)

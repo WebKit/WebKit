@@ -54,6 +54,7 @@ PASS cursor.value.x is 0
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 0
 PASS cursor.value.x is 0
 self.continueValue++;
@@ -68,6 +69,7 @@ PASS cursor.value.x is 1
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 1
 PASS cursor.value.x is 1
 self.continueValue++;
@@ -82,6 +84,7 @@ PASS cursor.value.x is 2
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 2
 PASS cursor.value.x is 2
 self.continueValue++;
@@ -96,6 +99,7 @@ PASS cursor.value.x is 3
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 3
 PASS cursor.value.x is 3
 self.continueValue++;
@@ -110,6 +114,7 @@ PASS cursor.value.x is 4
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 4
 PASS cursor.value.x is 4
 self.continueValue++;
@@ -124,6 +129,7 @@ PASS cursor.value.x is 5
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 5
 PASS cursor.value.x is 5
 self.continueValue++;
@@ -138,6 +144,7 @@ PASS cursor.value.x is 6
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 6
 PASS cursor.value.x is 6
 self.continueValue++;
@@ -152,6 +159,7 @@ PASS cursor.value.x is 7
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 7
 PASS cursor.value.x is 7
 self.continueValue++;
@@ -166,6 +174,7 @@ PASS cursor.value.x is 8
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 8
 PASS cursor.value.x is 8
 self.continueValue++;
@@ -180,6 +189,7 @@ PASS cursor.value.x is 9
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 9
 PASS cursor.value.x is 9
 self.continueValue++;
@@ -194,6 +204,7 @@ PASS cursor.value.x is 10
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 10
 PASS cursor.value.x is 10
 self.continueValue++;
@@ -208,6 +219,7 @@ PASS cursor.value.x is 11
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 11
 PASS cursor.value.x is 11
 self.continueValue++;
@@ -222,6 +234,7 @@ PASS cursor.value.x is 12
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 12
 PASS cursor.value.x is 12
 self.continueValue++;
@@ -236,6 +249,7 @@ PASS cursor.value.x is 13
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 13
 PASS cursor.value.x is 13
 self.continueValue++;
@@ -250,6 +264,7 @@ PASS cursor.value.x is 14
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 14
 PASS cursor.value.x is 14
 self.continueValue++;
@@ -264,6 +279,7 @@ PASS cursor.value.x is 15
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 15
 PASS cursor.value.x is 15
 self.continueValue++;
@@ -278,6 +294,7 @@ PASS cursor.value.x is 16
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 16
 PASS cursor.value.x is 16
 self.continueValue++;
@@ -292,6 +309,7 @@ PASS cursor.value.x is 17
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 17
 PASS cursor.value.x is 17
 self.continueValue++;
@@ -306,6 +324,7 @@ PASS cursor.value.x is 18
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 18
 PASS cursor.value.x is 18
 self.continueValue++;
@@ -320,6 +339,7 @@ PASS cursor.value.x is 19
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 19
 PASS cursor.value.x is 19
 self.continueValue++;
@@ -334,6 +354,7 @@ PASS cursor.value.x is 20
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 20
 PASS cursor.value.x is 20
 self.continueValue++;
@@ -348,6 +369,7 @@ PASS cursor.value.x is 21
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 21
 PASS cursor.value.x is 21
 self.continueValue++;
@@ -362,6 +384,7 @@ PASS cursor.value.x is 22
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 22
 PASS cursor.value.x is 22
 self.continueValue++;
@@ -376,6 +399,7 @@ PASS cursor.value.x is 23
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 23
 PASS cursor.value.x is 23
 self.continueValue++;
@@ -390,6 +414,7 @@ PASS cursor.value.x is 24
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 24
 PASS cursor.value.x is 24
 self.continueValue++;
@@ -411,6 +436,7 @@ PASS cursor.value.x is 0
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 0
 PASS cursor.value.x is 0
 self.continueValue++;
@@ -424,6 +450,7 @@ PASS cursor.value.x is 1
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 1
 PASS cursor.value.x is 1
 self.continueValue++;
@@ -437,6 +464,7 @@ PASS cursor.value.x is 2
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 2
 PASS cursor.value.x is 2
 self.continueValue++;
@@ -450,6 +478,7 @@ PASS cursor.value.x is 3
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 3
 PASS cursor.value.x is 3
 self.continueValue++;
@@ -463,6 +492,7 @@ PASS cursor.value.x is 4
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 4
 PASS cursor.value.x is 4
 self.continueValue++;
@@ -476,6 +506,7 @@ PASS cursor.value.x is 5
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 5
 PASS cursor.value.x is 5
 self.continueValue++;
@@ -489,6 +520,7 @@ PASS cursor.value.x is 6
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 6
 PASS cursor.value.x is 6
 self.continueValue++;
@@ -502,6 +534,7 @@ PASS cursor.value.x is 7
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 7
 PASS cursor.value.x is 7
 self.continueValue++;
@@ -515,6 +548,7 @@ PASS cursor.value.x is 8
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 8
 PASS cursor.value.x is 8
 self.continueValue++;
@@ -528,6 +562,7 @@ PASS cursor.value.x is 9
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 9
 PASS cursor.value.x is 9
 self.continueValue++;
@@ -541,6 +576,7 @@ PASS cursor.value.x is 10
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 10
 PASS cursor.value.x is 10
 self.continueValue++;
@@ -554,6 +590,7 @@ PASS cursor.value.x is 11
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 11
 PASS cursor.value.x is 11
 self.continueValue++;
@@ -567,6 +604,7 @@ PASS cursor.value.x is 12
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 12
 PASS cursor.value.x is 12
 self.continueValue++;
@@ -580,6 +618,7 @@ PASS cursor.value.x is 13
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 13
 PASS cursor.value.x is 13
 self.continueValue++;
@@ -593,6 +632,7 @@ PASS cursor.value.x is 14
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 14
 PASS cursor.value.x is 14
 self.continueValue++;
@@ -606,6 +646,7 @@ PASS cursor.value.x is 15
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 15
 PASS cursor.value.x is 15
 self.continueValue++;
@@ -619,6 +660,7 @@ PASS cursor.value.x is 16
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 16
 PASS cursor.value.x is 16
 self.continueValue++;
@@ -632,6 +674,7 @@ PASS cursor.value.x is 17
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 17
 PASS cursor.value.x is 17
 self.continueValue++;
@@ -645,6 +688,7 @@ PASS cursor.value.x is 18
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 18
 PASS cursor.value.x is 18
 self.continueValue++;
@@ -658,6 +702,7 @@ PASS cursor.value.x is 19
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 19
 PASS cursor.value.x is 19
 self.continueValue++;
@@ -671,6 +716,7 @@ PASS cursor.value.x is 20
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 20
 PASS cursor.value.x is 20
 self.continueValue++;
@@ -684,6 +730,7 @@ PASS cursor.value.x is 21
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 21
 PASS cursor.value.x is 21
 self.continueValue++;
@@ -697,6 +744,7 @@ PASS cursor.value.x is 22
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 22
 PASS cursor.value.x is 22
 self.continueValue++;
@@ -710,6 +758,7 @@ PASS cursor.value.x is 23
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 23
 PASS cursor.value.x is 23
 self.continueValue++;
@@ -723,6 +772,7 @@ PASS cursor.value.x is 24
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 PASS cursor.key is 24
 PASS cursor.value.x is 24
 self.continueValue++;
@@ -749,6 +799,7 @@ cursor.continue()
 Expecting exception from cursor.update({ x: 100 + self.continueValue})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'update' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 cursor = event.target.result
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
@@ -757,6 +808,7 @@ cursor.continue()
 Expecting exception from cursor.delete()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'delete' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 cursor = event.target.result
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
@@ -808,6 +860,7 @@ cursor.continue()
 Expecting exception from cursor.update({ x: 100 + self.continueValue})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'update' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 cursor = event.target.result
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
@@ -838,6 +891,7 @@ cursor.continue()
 Expecting exception from cursor.update({ x: 100 + self.continueValue})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'update' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 cursor = event.target.result
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
@@ -878,6 +932,7 @@ cursor.continue()
 Expecting exception from cursor.delete()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
+Exception message: Failed to execute 'delete' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 cursor = event.target.result
 PASS successfullyParsed is true
 

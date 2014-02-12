@@ -88,14 +88,17 @@ Expecting exception from index.count(NaN)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'count' on 'IDBIndex': The parameter is not a valid key.
 Expecting exception from index.count({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'count' on 'IDBIndex': The parameter is not a valid key.
 Expecting exception from index.count(/regex/)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'count' on 'IDBIndex': The parameter is not a valid key.
 
 test = {"key":0,"expected":1}
 request = index.count(test.key)

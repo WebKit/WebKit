@@ -22,6 +22,7 @@ Expecting exception from event.target.result.continue({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'continue' on 'IDBCursor': The parameter is not a valid key.
 
 Opening an empty cursor.
 objectStore.openCursor(keyRange)
@@ -39,6 +40,7 @@ Expecting exception from cursor.continue({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
+Exception message: Failed to execute 'continue' on 'IDBCursor': The parameter is not a valid key.
 
 Opening an empty cursor.
 objectStore.openCursor("InexistentKey")

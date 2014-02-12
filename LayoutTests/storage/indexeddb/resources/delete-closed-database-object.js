@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test-pre.js');
+    importScripts('../../../resources/js-test.js');
     importScripts('shared.js');
 }
 
@@ -15,8 +15,7 @@ function openSuccess()
     db = event.target.result;
     evalAndLog("db.close()");
 
-    debug("We can't specify a version here due to http://wkbug.com/102716");
-    var openRequest = evalAndLog("indexedDB.open(dbname)"); // NOTE: No version specified.
+    var openRequest = evalAndLog("indexedDB.open(dbname)");
     openRequest.onblocked = unexpectedBlockedCallback;
     openRequest.onupgradeneeded = unexpectedUpgradeNeededCallback;
     openRequest.onerror = unexpectedErrorCallback;

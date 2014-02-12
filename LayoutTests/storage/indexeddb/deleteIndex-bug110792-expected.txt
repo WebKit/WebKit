@@ -27,6 +27,7 @@ Expecting exception from store.index('index')
 PASS Exception was thrown.
 PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
+Exception message: Failed to execute 'index' on 'IDBObjectStore': The specified index was not found.
 PASS successfullyParsed is true
 
 TEST COMPLETE

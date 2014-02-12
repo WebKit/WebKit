@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/shared.js"></script>
 </head>
 <body>
@@ -27,7 +27,7 @@ function prepareDatabase()
 
 function startTheWorker()
 {
-  var worker = startWorker("resources/pending-version-change-on-exit.js?" + encodeURIComponent(dbname));
+  worker = startWorker("resources/pending-version-change-on-exit.js?" + encodeURIComponent(dbname));
   realFinishJSTest = finishJSTest;
   worker.onerror = function(e) {
     testFailed(e.message);
@@ -52,6 +52,5 @@ function maybeReload()
 };
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

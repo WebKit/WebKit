@@ -12,15 +12,13 @@ PASS [Worker] 'result' in request is true
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is DOMException.INVALID_STATE_ERR
 PASS [Worker] ename is 'InvalidStateError'
-PASS [Worker] 'webkitErrorMessage' in request is true
-[Worker] Expecting exception from request.webkitErrorMessage
-PASS [Worker] Exception was thrown.
-PASS [Worker] code is DOMException.INVALID_STATE_ERR
-PASS [Worker] ename is 'InvalidStateError'
+[Worker] Exception message: Failed to read the 'result' property from 'IDBRequest': The request has not finished.
+PASS [Worker] 'error' in request is true
 [Worker] Expecting exception from request.error
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is DOMException.INVALID_STATE_ERR
 PASS [Worker] ename is 'InvalidStateError'
+[Worker] Exception message: Failed to read the 'error' property from 'IDBRequest': The request has not finished.
 PASS [Worker] 'source' in request is true
 PASS [Worker] request.source is null
 PASS [Worker] 'transaction' in request is true
@@ -33,8 +31,6 @@ PASS [Worker] 'onerror' in request is true
 PASS [Worker] request.onerror is null
 PASS [Worker] 'result' in event.target is true
 PASS [Worker] !!event.target.result is true
-PASS [Worker] 'webkitErrorMessage' in event.target is true
-PASS [Worker] event.target.webkitErrorMessage is undefined.
 PASS [Worker] 'error' in event.target is true
 PASS [Worker] event.target.error is null
 PASS [Worker] 'source' in event.target is true
