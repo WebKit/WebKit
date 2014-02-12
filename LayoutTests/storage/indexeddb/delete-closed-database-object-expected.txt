@@ -9,6 +9,7 @@ dbname = "delete-closed-database-object.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 db.close()
+We can't specify a version here due to http://wkbug.com/102716
 indexedDB.open(dbname)
 Dropping references to new connection.
 gc()

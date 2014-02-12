@@ -20,7 +20,6 @@ Expecting exception from connection.transaction('store')
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
 "2. Wait for all transactions created using connection to complete. Once they are complete, connection is closed."
 transaction.oncomplete = testIDBDatabaseName
 
@@ -43,7 +42,6 @@ Expecting exception from connection.transaction('store')
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
 
 "versionchange" transaction steps:
 "Fire a versionchange event at each object in openDatabases that is open. The event must not be fired on objects which has the closePending flag set."

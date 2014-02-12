@@ -14,7 +14,6 @@ Expecting exception from objectStore.deleteIndex('index')
 PASS Exception was thrown.
 PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
-Exception message: Failed to execute 'deleteIndex' on 'IDBObjectStore': The specified index was not found.
 Now requesting object2
 now we wait.
 deleteIndexAfterGet()
@@ -22,12 +21,10 @@ Expecting exception from objectStore.deleteIndex('index')
 PASS Exception was thrown.
 PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
-Exception message: Failed to execute 'deleteIndex' on 'IDBObjectStore': The specified index was not found.
 Expecting exception from objectStore.deleteIndex('index')
 PASS Exception was thrown.
 PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
-Exception message: Failed to execute 'deleteIndex' on 'IDBObjectStore': The specified index was not found.
 PASS successfullyParsed is true
 
 TEST COMPLETE

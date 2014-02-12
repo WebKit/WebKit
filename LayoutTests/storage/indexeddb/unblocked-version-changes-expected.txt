@@ -17,6 +17,7 @@ PASS db.version is 2
 transaction = request.transaction
 request = indexedDB.open(dbname, 3)
 transaction.abort()
+db.close()
 
 onError():
 PASS db.version is 0

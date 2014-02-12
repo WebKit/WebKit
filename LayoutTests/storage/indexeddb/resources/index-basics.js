@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test.js');
+    importScripts('../../../resources/js-test-pre.js');
     importScripts('shared.js');
 }
 
@@ -15,7 +15,6 @@ function prepareDatabase(evt)
     self.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
     self.indexObject2 = evalAndLog("store.createIndex('indexName2', 'y', {unique: false})");
     self.indexObject3 = evalAndLog("store.createIndex('zIndex', 'z', {unique: true})");
-    shouldNotThrow("store.createIndex('index4', 'path', undefined)");
     shouldBeFalse("indexObject2.unique");
     shouldBeTrue("indexObject3.unique");
     evalAndExpectExceptionClass("store.createIndex('failureIndex', 'zzz', true)", "TypeError");

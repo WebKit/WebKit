@@ -179,16 +179,16 @@ PASS [Worker] expected is "{\"key\":\"237-23-7744\",\"value\":{\"name\":\"Pug\",
 [Worker] advanceBadly():
 [Worker] Expecting TypeError exception from cursor.advance(0)
 PASS [Worker] Exception was thrown.
-PASS [Worker] cursor.advance(0) threw TypeError: Failed to execute 'advance' on 'IDBCursor': A count argument with value 0 (zero) was supplied, must be greater than 0.
+PASS [Worker] cursor.advance(0) threw TypeError: Type error
 [Worker] Expecting TypeError exception from cursor.advance(-1)
 PASS [Worker] Exception was thrown.
-PASS [Worker] cursor.advance(-1) threw TypeError: Failed to execute 'advance' on 'IDBCursor': Value is outside the 'unsigned long' value range.
+PASS [Worker] cursor.advance(-1) threw TypeError: Type error
 [Worker] Expecting TypeError exception from cursor.advance(0x100000000)
 PASS [Worker] Exception was thrown.
-PASS [Worker] cursor.advance(0x100000000) threw TypeError: Failed to execute 'advance' on 'IDBCursor': Value is outside the 'unsigned long' value range.
+PASS [Worker] cursor.advance(0x100000000) threw TypeError: Type error
 [Worker] Expecting TypeError exception from cursor.advance(0x20000000000000)
 PASS [Worker] Exception was thrown.
-PASS [Worker] cursor.advance(0x20000000000000) threw TypeError: Failed to execute 'advance' on 'IDBCursor': Value is outside the 'unsigned long' value range.
+PASS [Worker] cursor.advance(0x20000000000000) threw TypeError: Type error
 [Worker] 
 [Worker] testEdges():
 [Worker] trans = db.transaction(objectStoreName, 'readonly')

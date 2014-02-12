@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test.js');
+    importScripts('../../../resources/js-test-pre.js');
     importScripts('shared.js');
 }
 
@@ -196,16 +196,6 @@ function testObjectStore()
     evalAndExpectException("storeFromInactiveTransaction.openCursor()", "0", "'TransactionInactiveError'");
     debug("The value for the direction parameter is invalid.");
     evalAndExpectExceptionClass("store.openCursor(0, 'invalid-direction')", "TypeError");
-    // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
-
-    debug("");
-    debug("IDBObjectStore.openKeyCursor()");
-    debug("If the range parameter is specified but is not a valid key or a key range, this method throws a DOMException of type DataError.");
-    evalAndExpectException("store.openKeyCursor({})", "0", "'DataError'");
-    debug("The transaction this IDBObjectStore belongs to is not active.");
-    evalAndExpectException("storeFromInactiveTransaction.openKeyCursor()", "0", "'TransactionInactiveError'");
-    debug("The value for the direction parameter is invalid.");
-    evalAndExpectExceptionClass("store.openKeyCursor(0, 'invalid-direction')", "TypeError");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
 
     debug("");

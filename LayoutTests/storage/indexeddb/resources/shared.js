@@ -47,13 +47,13 @@ function unexpectedSuccessCallback()
 
 function unexpectedErrorCallback(event)
 {
-    testFailed("Error function called unexpectedly: (" + event.target.error.name + ") " + event.target.error.message);
+    testFailed("Error function called unexpectedly: (" + event.target.error.name + ") " + event.target.webkitErrorMessage);
     finishJSTest();
 }
 
 function unexpectedAbortCallback(e)
 {
-    testFailed("Abort function called unexpectedly! Message: [" + e.target.error.message + "]");
+    testFailed("Abort function called unexpectedly! Message: [" + e.target.webkitErrorMessage + "]");
     finishJSTest();
 }
 
@@ -97,8 +97,6 @@ function evalAndExpectException(cmd, exceptionCode, exceptionName, _quiet)
             ename = e.name;
             shouldBe("ename", exceptionName, _quiet);
         }
-        if (!_quiet)
-            debug("Exception message: " + e.message);
     }
 }
 

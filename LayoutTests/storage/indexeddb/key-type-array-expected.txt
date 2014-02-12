@@ -170,112 +170,96 @@ Expecting exception from store.put('value', [ void 0 ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: [ true ]
 Expecting exception from store.put('value', [ true ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: [ false ]
 Expecting exception from store.put('value', [ false ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: [ NaN ]
 Expecting exception from store.put('value', [ NaN ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: [ null ]
 Expecting exception from store.put('value', [ null ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: [ {} ]
 Expecting exception from store.put('value', [ {} ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: [ function () {} ]
 Expecting exception from store.put('value', [ function () {} ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: [ /regex/ ]
 Expecting exception from store.put('value', [ /regex/ ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: [ self ]
 Expecting exception from store.put('value', [ self ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: [ self.document ]
 Expecting exception from store.put('value', [ self.document ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: [ self.document.body ]
 Expecting exception from store.put('value', [ self.document.body ]);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: cyclic_array
 Expecting exception from store.put('value', cyclic_array);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: cyclic_array2
 Expecting exception from store.put('value', cyclic_array2);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: cyclic_array3
 Expecting exception from store.put('value', cyclic_array3);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: cyclic_array4
 Expecting exception from store.put('value', cyclic_array4);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 testing invalid array key: Array(1000)
 Expecting exception from store.put('value', Array(1000));
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
 
 PASS indexedDB.cmp(makeArrayOfDepth(25), 0) is 1
 PASS indexedDB.cmp(makeArrayOfDepth(250), 0) is 1
@@ -283,7 +267,6 @@ Expecting exception from indexedDB.cmp(makeArrayOfDepth(2500), 0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
 
 PASS successfullyParsed is true
 

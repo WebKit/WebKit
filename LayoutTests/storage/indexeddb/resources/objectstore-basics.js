@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test.js');
+    importScripts('../../../resources/js-test-pre.js');
     importScripts('shared.js');
 }
 
@@ -31,8 +31,6 @@ function prepareDatabase(evt)
     shouldBeEqualToString("typeof store.clear", "function");
     shouldBeTrue("'openCursor' in store");
     shouldBeEqualToString("typeof store.openCursor", "function");
-    shouldBeTrue("'openKeyCursor' in store");
-    shouldBeEqualToString("typeof store.openKeyCursor", "function");
     shouldBeTrue("'createIndex' in store");
     shouldBeEqualToString("typeof store.createIndex", "function");
     shouldBeTrue("'index' in store");

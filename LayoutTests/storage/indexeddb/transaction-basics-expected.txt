@@ -23,7 +23,6 @@ Expecting exception from store.deleteIndex('indexFail')
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'deleteIndex' on 'IDBObjectStore': The object store has been deleted.
 
 testSetVersionAbort2():
 PASS self.db.objectStoreNames is []
@@ -41,7 +40,6 @@ Expecting exception from store.deleteIndex('indexFail')
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'deleteIndex' on 'IDBObjectStore': The object store has been deleted.
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x')
 
@@ -64,57 +62,46 @@ Expecting exception from index.openCursor()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'openCursor' on 'IDBIndex': The transaction has finished.
 Expecting exception from index.openKeyCursor()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'openKeyCursor' on 'IDBIndex': The transaction has finished.
 Expecting exception from index.get(0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'get' on 'IDBIndex': The transaction has finished.
 Expecting exception from index.getKey(0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'getKey' on 'IDBIndex': The transaction has finished.
 Expecting exception from index.count()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'count' on 'IDBIndex': The transaction has finished.
 Expecting exception from store.put(0, 0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from store.add(0, 0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'add' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from store.delete(0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'delete' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from store.clear()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'clear' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from store.get(0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from store.openCursor()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'openCursor' on 'IDBObjectStore': The transaction has finished.
 
 testSetVersionAbort4():
 PASS self.db.objectStoreNames is []
@@ -133,57 +120,46 @@ Expecting exception from index.openCursor()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'openCursor' on 'IDBIndex': The transaction has finished.
 Expecting exception from index.openKeyCursor()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'openKeyCursor' on 'IDBIndex': The transaction has finished.
 Expecting exception from index.get(0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'get' on 'IDBIndex': The transaction has finished.
 Expecting exception from index.getKey(0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'getKey' on 'IDBIndex': The transaction has finished.
 Expecting exception from index.count()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'count' on 'IDBIndex': The transaction has finished.
 Expecting exception from store.put(0, 0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from store.add(0, 0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'add' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from store.delete(0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'delete' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from store.clear()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'clear' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from store.get(0)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction has finished.
 Expecting exception from store.openCursor()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'openCursor' on 'IDBObjectStore': The transaction has finished.
 
 testSetVersionAbort5():
 PASS db.objectStoreNames is ['storeFail']
@@ -230,19 +206,17 @@ PASS all stores present in transaction
 Verify that specifying an invalid mode raises an exception
 Expecting TypeError exception from db.transaction(['storeName'], 'lsakjdf')
 PASS Exception was thrown.
-PASS db.transaction(['storeName'], 'lsakjdf') threw TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('lsakjdf') is not one of 'readonly' or 'readwrite'.
+PASS db.transaction(['storeName'], 'lsakjdf') threw TypeError: Type error
 
 Test that null and undefined are treated as strings
 Expecting exception from db.transaction(null)
 PASS Exception was thrown.
 PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
-Exception message: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
 Expecting exception from db.transaction(undefined)
 PASS Exception was thrown.
 PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
-Exception message: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
 request = newConnection()
 indexedDB.open(dbname, 8)
 db.createObjectStore('null')

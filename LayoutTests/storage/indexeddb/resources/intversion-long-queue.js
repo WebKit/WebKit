@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test.js');
+    importScripts('../../../resources/js-test-pre.js');
     importScripts('shared.js');
 }
 
@@ -65,7 +65,7 @@ function deleteDatabaseSuccessCallback(evt)
 function connection2UpgradeNeeded(evt)
 {
     preamble(evt);
-    shouldBe("event.oldVersion", "1");
+    shouldBe("event.oldVersion", "0");
     shouldBe("event.newVersion", "2");
     evalAndLog("db = event.target.result");
     shouldBe("db.objectStoreNames.length", "0");
@@ -78,8 +78,7 @@ function connection2Success(evt)
 {
     preamble(evt);
     evalAndLog("connection2 = event.target.result");
-    connection2.onversionchange = unexpectedVersionChangeCallback;
-    evalAndLog("connection2.close()");
+    evalAndLog("connection2.onversionchange = connection2VersionChangeEvent");
 }
 
 function connection2TransactionComplete(evt)
@@ -88,19 +87,28 @@ function connection2TransactionComplete(evt)
     shouldBe("db.version", "2");
 }
 
+function connection2VersionChangeEvent(evt)
+{
+    preamble(evt);
+    shouldBeEqualToString("event.type", "versionchange");
+    shouldBe("event.oldVersion", "2");
+    shouldBe("event.newVersion", "3");
+    evalAndLog("connection2.close()");
+}
+
 var gotUpgradeNeededEvent = false;
 function connection3UpgradeNeeded(evt)
 {
     preamble(evt);
     evalAndLog("gotUpgradeNeededEvent = true");
     shouldBe("event.newVersion", "3");
-    shouldBe("event.oldVersion", "0");
+    shouldBe("event.oldVersion", "2");
 }
 
 function connection3Success(evt)
 {
     preamble(evt);
     shouldBeTrue("gotUpgradeNeededEvent");
-    shouldBe("event.target.result.objectStoreNames.length", "0");
+    shouldBe("event.target.result.objectStoreNames.length", "1");
     finishJSTest();
 }

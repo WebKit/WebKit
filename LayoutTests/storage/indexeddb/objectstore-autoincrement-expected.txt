@@ -58,7 +58,6 @@ Expecting exception from store.add({name: 'Adam'})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'add' on 'IDBObjectStore': The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 store.add({name: 'Adam'}, 1)
 addAdamSuccess():
 PASS event.target.result is 1

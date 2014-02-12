@@ -48,16 +48,15 @@ deleteDatabaseOnBlocked():
 deleteDatabaseBlockedEventFired = true
 h1.close()
 
+deleteDatabaseOnSuccess():
+deleteDatabaseComplete = true
+
 h3OnUpgradeneeded():
 
 transactionOnComplete():
 versionChangeComplete = true
 
 h3OpenSuccess():
-h3.close()
-
-deleteDatabaseOnSuccess():
-deleteDatabaseComplete = true
 
 h4OpenSuccess():
 PASS setVersionBlockedEventFired is true

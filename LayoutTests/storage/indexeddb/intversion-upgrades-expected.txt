@@ -24,7 +24,7 @@ connection1VersionChangeCallback():
 connection1.close()
 
 connection2BlockedCallback():
-This should not be called: http://crbug.com/100123
+This should not be called: http://wkbug.com/71130
 
 connection2UpgradeNeeded():
 connection2 = event.target.result
@@ -58,7 +58,7 @@ request = indexedDB.open(dbname, 1)
 request.onerror = errorWhenTryingLowVersion
 
 errorWhenTryingLowVersion():
-request.error.message = The requested version (1) is less than the existing version (2).
+request.webkitErrorMessage = The requested version (1) is less than the existing version (2).
 request = indexedDB.open(dbname, 4)
 request.onupgradeneeded = connection4UpgradeNeeded
 request.onsuccess = connection4Success

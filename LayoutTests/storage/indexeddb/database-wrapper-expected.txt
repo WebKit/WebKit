@@ -28,7 +28,7 @@ event.target.close()
 sawVersionChangeEvent = true
 
 onBlocked():
-FIXME: Blocked event shouldn't fire. http://crbug.com/100123
+FIXME: Blocked event shouldn't fire. http://wkbug.com/71130
 
 openAgainSuccess():
 PASS sawVersionChangeEvent is true

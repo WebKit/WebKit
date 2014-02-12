@@ -61,6 +61,8 @@ PASS ++state is 3
 PASS trans.error.name is 'ConstraintError'
 
 Verify that uniqueness constraints are enforced when index is created between puts:
+FIXME: Script shouldn't have to explicitly close connection after it failed to open. http://wkbug.com/102298
+connection.close()
 indexedDB.open(dbname, 4)
 deleteAllObjectStores(connection)
 Deleted all object stores.

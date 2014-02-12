@@ -11,20 +11,17 @@ PASS [Worker] typeof indexedDB.cmp is "function"
 PASS [Worker] typeof indexedDB.deleteDatabase is "function"
 PASS [Worker] typeof indexedDB.webkitGetDatabaseNames is "function"
 PASS [Worker] typeof indexedDB.getDatabaseNames is "undefined"
-[Worker] request = indexedDB.webkitGetDatabaseNames()
-PASS [Worker] request.source is null
+[Worker] indexedDB.webkitGetDatabaseNames()
 [Worker] databaseNames = event.target.result
 PASS [Worker] databaseNames.contains('storage/indexeddb/factory-basics') is false
 PASS [Worker] databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
-[Worker] request = indexedDB.open(name)
-PASS [Worker] request.source is null
+[Worker] indexedDB.open(name)
 [Worker] event.target.result.close()
 [Worker] indexedDB.webkitGetDatabaseNames()
 [Worker] databaseNames = event.target.result
 PASS [Worker] databaseNames.contains('storage/indexeddb/factory-basics') is true
 PASS [Worker] databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
-[Worker] request = indexedDB.deleteDatabase('storage/indexeddb/factory-basics')
-PASS [Worker] request.source is null
+[Worker] indexedDB.deleteDatabase('storage/indexeddb/factory-basics')
 [Worker] indexedDB.webkitGetDatabaseNames()
 [Worker] databaseNames = event.target.result
 PASS [Worker] databaseNames.contains('storage/indexeddb/factory-basics') is false

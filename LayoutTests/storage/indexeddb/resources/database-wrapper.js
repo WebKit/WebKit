@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test.js');
+    importScripts('../../../resources/js-test-pre.js');
     importScripts('shared.js');
 }
 
@@ -79,7 +79,7 @@ function openAgain()
 function onBlocked()
 {
     preamble();
-    debug("FIXME: Blocked event shouldn't fire. http://crbug.com/100123");
+    debug("FIXME: Blocked event shouldn't fire. http://wkbug.com/71130");
 }
 
 function openAgainSuccess(evt)

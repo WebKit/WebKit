@@ -81,7 +81,6 @@ Expecting exception from event.target.result.continue(1)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'continue' on 'IDBCursor': The parameter is less than or equal to this cursor's position.
 
 indexObject.openKeyCursor(null, 'next')
 PASS event.target.result.primaryKey is 0
@@ -91,7 +90,6 @@ Expecting exception from event.target.result.continue(3.14159)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'continue' on 'IDBCursor': The parameter is less than or equal to this cursor's position.
 
 indexObject.openKeyCursor(null, 'prev')
 PASS event.target.result.primaryKey is 17
@@ -101,7 +99,6 @@ Expecting exception from event.target.result.continue('A bit3')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'continue' on 'IDBCursor': The parameter is greater than or equal to this cursor's position.
 
 indexObject.openKeyCursor(null, 'prev')
 PASS event.target.result.primaryKey is 17
@@ -112,12 +109,10 @@ Expecting exception from event.target.result.continue('A bit2')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'continue' on 'IDBCursor': The parameter is greater than or equal to this cursor's position.
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'continue' on 'IDBCursor': The transaction has finished.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -154,514 +154,401 @@ Object store key path may not be empty or an array if autoIncrement is true
 Expecting exception from store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: ''})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_ACCESS_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The autoIncrement option was set but the keyPath option was empty or an array.
 Deleted all object stores.
 Expecting exception from store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: ['a']})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_ACCESS_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The autoIncrement option was set but the keyPath option was empty or an array.
 Deleted all object stores.
 Expecting exception from store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: ['']})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_ACCESS_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The autoIncrement option was set but the keyPath option was empty or an array.
 Deleted all object stores.
 
 Key paths which are never valid:
 Expecting exception from db.createObjectStore('name', {keyPath: ' '})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', ' ')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: 'foo '})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', 'foo ')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: 'foo bar'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', 'foo bar')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: 'foo. bar'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', 'foo. bar')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: 'foo .bar'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', 'foo .bar')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: 'foo..bar'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', 'foo..bar')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '+foo'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '+foo')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: 'foo%'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', 'foo%')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '1'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '1')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '1.0'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '1.0')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: []})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', [])
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u0300'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u0300')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u0903'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u0903')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u0300'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u0300')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u203F'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u203F')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u200C'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u200C')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u200D'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u200D')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u002D'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u002D')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u0028'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u0028')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u0029'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u0029')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u00AB'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u00AB')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u00BB'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u00BB')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u0021'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u0021')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u002B'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u002B')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u00A2'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u00A2')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u005E'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u005E')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u00A6'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u00A6')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u00A0'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u00A0')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u2028'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u2028')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u2029'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u2029')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u0000'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u0000')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\u00AD'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\u00AD')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\uD800'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\uD800')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\uE000'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\uE000')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\uFFFE'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\uFFFE')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '\uFFFF'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '\uFFFF')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u002D'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u002D')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u0028'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u0028')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u0029'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u0029')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u00AB'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u00AB')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u00BB'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u00BB')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u0021'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u0021')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u002B'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u002B')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u00A2'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u00A2')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u005E'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u005E')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u00A6'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u00A6')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u00A0'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u00A0')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u2028'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u2028')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u2029'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u2029')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u0000'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u0000')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\u00AD'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\u00AD')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\uD800'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\uD800')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\uE000'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\uE000')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\uFFFE'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\uFFFE')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: '_\uFFFF'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 Expecting exception from db.createObjectStore('name').createIndex('name', '_\uFFFF')
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
 Deleted all object stores.
 PASS successfullyParsed is true
 

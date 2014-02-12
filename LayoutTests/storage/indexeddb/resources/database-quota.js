@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../resources/js-test.js');
+    importScripts('../../../resources/js-test-pre.js');
     importScripts('shared.js');
 }
 
@@ -84,7 +84,7 @@ function addData()
 
 function logError()
 {
-    debug("Error function called: (" + event.target.error.name + ") " + event.target.error.message);
+    debug("Error function called: (" + event.target.error.name + ") " + event.target.webkitErrorMessage);
     evalAndLog("event.preventDefault()");
 }
 

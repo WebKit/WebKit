@@ -15,13 +15,11 @@ Expecting exception from trans.objectStore('store').put('a', 'b')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The transaction is read-only.
 trans = db.transaction('store')
 Expecting exception from trans.objectStore('store').delete('x')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
-Exception message: Failed to execute 'delete' on 'IDBObjectStore': The transaction is read-only.
 trans = db.transaction('store')
 cur = trans.objectStore('store').openCursor()
 PASS !event.target.result is false
@@ -29,7 +27,6 @@ Expecting exception from event.target.result.delete()
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'ReadOnlyError'
-Exception message: Failed to execute 'delete' on 'IDBCursor': The record may not be deleted inside a read-only transaction.
 PASS successfullyParsed is true
 
 TEST COMPLETE
