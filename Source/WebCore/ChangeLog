@@ -1,3 +1,19 @@
+2014-02-11  Andreas Kling  <akling@apple.com>
+
+        Move renderNamedFlowThreadWrapper() to RenderElement.
+        <https://webkit.org/b/128634>
+
+        This function is only ever called on RenderElements so move it there
+        from RenderObject.
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::renderNamedFlowThreadWrapper):
+        * rendering/RenderElement.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+
 2014-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Position and thickness of underline as text size changes

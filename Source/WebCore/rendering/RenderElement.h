@@ -141,6 +141,8 @@ public:
     bool hasBlendMode() const { return false; }
 #endif
 
+    RenderNamedFlowThread* renderNamedFlowThreadWrapper();
+
 protected:
     enum BaseTypeFlags {
         RenderLayerModelObjectFlag = 1 << 0,

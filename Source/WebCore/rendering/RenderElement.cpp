@@ -44,6 +44,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderRuby.h"
 #include "RenderRubyText.h"
@@ -1272,6 +1273,14 @@ bool RenderElement::borderImageIsLoadedAndCanBeRendered() const
 
     StyleImage* borderImage = style().borderImage().image();
     return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded();
+}
+
+RenderNamedFlowThread* RenderElement::renderNamedFlowThreadWrapper()
+{
+    auto renderer = this;
+    while (renderer && renderer->isAnonymousBlock() && !renderer->isRenderNamedFlowThread())
+        renderer = renderer->parent();
+    return renderer && renderer->isRenderNamedFlowThread() ? toRenderNamedFlowThread(renderer) : nullptr;
 }
 
 }

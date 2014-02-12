@@ -538,15 +538,6 @@ RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
     return 0;
 }
 
-RenderNamedFlowThread* RenderObject::renderNamedFlowThreadWrapper() const
-{
-    RenderObject* object = const_cast<RenderObject*>(this);
-    while (object && object->isAnonymousBlock() && !object->isRenderNamedFlowThread())
-        object = object->parent();
-
-    return object && object->isRenderNamedFlowThread() ? toRenderNamedFlowThread(object) : 0;
-}
-
 RenderBlock* RenderObject::firstLineBlock() const
 {
     return 0;
