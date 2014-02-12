@@ -1,3 +1,13 @@
+2014-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT should be enabled (regression from addition of JIT enabled setting)
+        https://bugs.webkit.org/show_bug.cgi?id=128653
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+
 2014-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove one of includes added in r163943 and r163939.
