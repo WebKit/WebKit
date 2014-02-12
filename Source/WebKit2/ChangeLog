@@ -1,5 +1,14 @@
 2014-02-12  Anders Carlsson  <andersca@apple.com>
 
+        Expose scrollView on the WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=128697
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+
+2014-02-12  Anders Carlsson  <andersca@apple.com>
+
         Better iOS build fix.
 
         * UIProcess/WebPageProxy.cpp:

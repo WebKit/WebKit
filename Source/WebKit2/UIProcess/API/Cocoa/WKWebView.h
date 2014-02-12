@@ -85,11 +85,15 @@ WK_API_CLASS
 
 @property (nonatomic, readonly) BOOL hasOnlySecureContent;
 
-@property(readonly) BOOL canGoBack;
-@property(readonly) BOOL canGoForward;
+@property (readonly) BOOL canGoBack;
+@property (readonly) BOOL canGoForward;
 
 - (void)goBack;
 - (void)goForward;
+
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly) UIScrollView *scrollView;
+#endif
 
 @end
 
