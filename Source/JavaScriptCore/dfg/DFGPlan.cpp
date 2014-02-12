@@ -255,7 +255,6 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     dfg.m_fixpointState = FixpointConverged;
 
     performStoreBarrierElision(dfg);
-    performStoreElimination(dfg);
     
     // If we're doing validation, then run some analyses, to give them an opportunity
     // to self-validate. Now is as good a time as any to do this.
@@ -268,6 +267,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     case DFGMode: {
         performTierUpCheckInjection(dfg);
 
+        performStoreElimination(dfg);
         performCPSRethreading(dfg);
         performDCE(dfg);
         performStackLayout(dfg);

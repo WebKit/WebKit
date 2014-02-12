@@ -486,6 +486,7 @@ void compile(State& state)
             llvm->AddTypeBasedAliasAnalysisPass(modulePasses);
             llvm->AddGVNPass(modulePasses);
             llvm->AddCFGSimplificationPass(modulePasses);
+            llvm->AddDeadStoreEliminationPass(modulePasses);
             llvm->RunPassManager(modulePasses, state.module);
         } else {
             LLVMPassManagerBuilderRef passBuilder = llvm->PassManagerBuilderCreate();

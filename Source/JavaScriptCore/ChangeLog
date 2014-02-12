@@ -1,3 +1,22 @@
+2014-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Use LLVM's dead store elimination
+        https://bugs.webkit.org/show_bug.cgi?id=128638
+
+        Reviewed by Mark Hahnenberg.
+        
+        DFG's store elimination was being run too soon for comfort on the FTL path. It's
+        really only sound when run after all other optimizations. Remove it from the FTL
+        path.
+        
+        Enable LLVM store elimination. It's both easier to reason about and more
+        comprehensive.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+
 2014-02-11  Brian Burg  <bburg@apple.com>
 
         Web Replay: upstream replay input code generator and EncodedValue class
