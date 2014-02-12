@@ -415,18 +415,18 @@ private:
                 continue;
             
             unsigned nodeIndex = 0;
-            for (; nodeIndex < block->size() && !block->at(nodeIndex)->codeOrigin.isSet(); nodeIndex++) { }
+            for (; nodeIndex < block->size() && !block->at(nodeIndex)->origin.isSet(); nodeIndex++) { }
             
             VALIDATE((block), nodeIndex < block->size());
             
             for (; nodeIndex < block->size(); nodeIndex++)
-                VALIDATE((block->at(nodeIndex)), block->at(nodeIndex)->codeOrigin.isSet());
+                VALIDATE((block->at(nodeIndex)), block->at(nodeIndex)->origin.isSet());
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
                 switch (node->op()) {
                 case Phi:
-                    VALIDATE((node), !node->codeOrigin.isSet());
+                    VALIDATE((node), !node->origin.isSet());
                     break;
                     
                 default:

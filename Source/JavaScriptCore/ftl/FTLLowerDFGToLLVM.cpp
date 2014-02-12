@@ -260,8 +260,8 @@ private:
         }
         
         m_node = m_highBlock->at(nodeIndex);
-        m_codeOriginForExitProfile = m_node->codeOrigin;
-        m_codeOriginForExitTarget = m_node->codeOriginForExitTarget;
+        m_codeOriginForExitProfile = m_node->origin.semantic;
+        m_codeOriginForExitTarget = m_node->origin.forExit;
         
         if (verboseCompilationEnabled())
             dataLog("Lowering ", m_node, "\n");
@@ -908,7 +908,7 @@ private:
         
         m_out.appendTo(slowCase, continuation);
         J_JITOperation_EJ function;
-        if (m_graph.isStrictModeFor(m_node->codeOrigin))
+        if (m_graph.isStrictModeFor(m_node->origin.semantic))
             function = operationToThisStrict;
         else
             function = operationToThis;
@@ -1706,8 +1706,8 @@ private:
         setInstructionCallingConvention(call, LLVMAnyRegCallConv);
         
         m_ftlState.putByIds.append(PutByIdDescriptor(
-            stackmapID, m_node->codeOrigin, uid,
-            m_graph.executableFor(m_node->codeOrigin)->ecmaMode(),
+            stackmapID, m_node->origin.semantic, uid,
+            m_graph.executableFor(m_node->origin.semantic)->ecmaMode(),
             m_node->op() == PutByIdDirect ? Direct : NotDirect));
     }
     
@@ -2034,12 +2034,12 @@ private:
         case Array::Generic: {
             V_JITOperation_EJJJ operation;
             if (m_node->op() == PutByValDirect) {
-                if (m_graph.isStrictModeFor(m_node->codeOrigin))
+                if (m_graph.isStrictModeFor(m_node->origin.semantic))
                     operation = operationPutByValDirectStrict;
                 else
                     operation = operationPutByValDirectNonStrict;
             } else {
-                if (m_graph.isStrictModeFor(m_node->codeOrigin))
+                if (m_graph.isStrictModeFor(m_node->origin.semantic))
                     operation = operationPutByValStrict;
                 else
                     operation = operationPutByValNonStrict;
@@ -2438,7 +2438,7 @@ private:
         for (unsigned operandIndex = 0; operandIndex < m_node->numChildren(); ++operandIndex)
             speculate(m_graph.varArgChild(m_node, operandIndex));
         
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->codeOrigin);
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(
             m_node->indexingType());
         
@@ -2515,7 +2515,7 @@ private:
     
     void compileNewArrayBuffer()
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->codeOrigin);
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(
             m_node->indexingType());
         
@@ -2554,7 +2554,7 @@ private:
     {
         LValue publicLength = lowInt32(m_node->child1());
         
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->codeOrigin);
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(
             m_node->indexingType());
         
@@ -2984,7 +2984,7 @@ private:
             speculate(OutOfBounds, noValue(), 0, m_out.booleanTrue);
             results.append(m_out.anchor(m_out.intPtrZero));
         } else {
-            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->codeOrigin);
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
                 
             if (globalObject->stringPrototypeChainIsSane()) {
                 LBasicBlock negativeIndex = FTL_NEW_BLOCK(m_out, ("GetByVal String negative index"));
@@ -3166,7 +3166,7 @@ private:
     void compileGetMyScope()
     {
         setJSValue(m_out.loadPtr(addressFor(
-            m_node->codeOrigin.stackOffset() + JSStack::ScopeChain)));
+            m_node->origin.semantic.stackOffset() + JSStack::ScopeChain)));
     }
     
     void compileSkipScope()
@@ -3544,9 +3544,9 @@ private:
     {
         ASSERT(!isEmptySpeculation(
             m_state.variables().operand(
-                m_graph.argumentsRegisterFor(m_node->codeOrigin)).m_type));
+                m_graph.argumentsRegisterFor(m_node->origin.semantic)).m_type));
         
-        VirtualRegister reg = m_graph.machineArgumentsRegisterFor(m_node->codeOrigin);
+        VirtualRegister reg = m_graph.machineArgumentsRegisterFor(m_node->origin.semantic);
         speculate(ArgumentsEscaped, noValue(), 0, m_out.notZero64(m_out.load64(addressFor(reg))));
     }
     
@@ -3572,7 +3572,7 @@ private:
             constNull(m_out.ref8), m_out.constInt32(1), base);
         setInstructionCallingConvention(call, LLVMAnyRegCallConv);
         
-        m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, m_node->codeOrigin, uid));
+        m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, m_node->origin.semantic, uid));
         
         return call;
     }
@@ -3954,7 +3954,7 @@ private:
             
             results.append(m_out.anchor(
                 m_out.equal(
-                    m_out.constIntPtr(m_graph.globalObjectFor(m_node->codeOrigin)),
+                    m_out.constIntPtr(m_graph.globalObjectFor(m_node->origin.semantic)),
                     m_out.loadPtr(structure, m_heaps.Structure_globalObject))));
             m_out.jump(continuation);
         }
@@ -4894,7 +4894,7 @@ private:
     void speculateStringObjectForStructure(Edge edge, LValue structure)
     {
         Structure* stringObjectStructure =
-            m_graph.globalObjectFor(m_node->codeOrigin)->stringObjectStructure();
+            m_graph.globalObjectFor(m_node->origin.semantic)->stringObjectStructure();
         
         if (m_state.forNode(edge).m_currentKnownStructure.isSubsetOf(StructureSet(stringObjectStructure)))
             return;
@@ -4966,7 +4966,7 @@ private:
     
     bool masqueradesAsUndefinedWatchpointIsStillValid()
     {
-        return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_node->codeOrigin);
+        return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_node->origin.semantic);
     }
     
     LValue loadMarkByte(LValue base)
@@ -5083,7 +5083,7 @@ private:
     }
     void callPreflight()
     {
-        callPreflight(m_node->codeOrigin);
+        callPreflight(m_node->origin.semantic);
     }
     
     void callCheck(ExceptionCheckMode mode = CheckExceptions)

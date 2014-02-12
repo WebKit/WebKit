@@ -953,6 +953,7 @@
     <ClInclude Include="..\dfg\DFGNode.h" />
     <ClInclude Include="..\dfg\DFGNodeAllocator.h" />
     <ClInclude Include="..\dfg\DFGNodeFlags.h" />
+    <ClInclude Include="..\dfg\DFGNodeOrigin.h" />
     <ClInclude Include="..\dfg\DFGNodeType.h" />
     <ClInclude Include="..\dfg\DFGOperations.h" />
     <ClInclude Include="..\dfg\DFGOSRAvailabilityAnalysisPhase.h" />

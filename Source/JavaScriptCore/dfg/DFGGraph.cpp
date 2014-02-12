@@ -98,11 +98,11 @@ bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, Node* previousN
     if (!previousNode)
         return false;
     
-    if (previousNode->codeOrigin.inlineCallFrame == currentNode->codeOrigin.inlineCallFrame)
+    if (previousNode->origin.semantic.inlineCallFrame == currentNode->origin.semantic.inlineCallFrame)
         return false;
     
-    Vector<CodeOrigin> previousInlineStack = previousNode->codeOrigin.inlineStack();
-    Vector<CodeOrigin> currentInlineStack = currentNode->codeOrigin.inlineStack();
+    Vector<CodeOrigin> previousInlineStack = previousNode->origin.semantic.inlineStack();
+    Vector<CodeOrigin> currentInlineStack = currentNode->origin.semantic.inlineStack();
     unsigned commonSize = std::min(previousInlineStack.size(), currentInlineStack.size());
     unsigned indexOfDivergence = commonSize;
     for (unsigned i = 0; i < commonSize; ++i) {
@@ -135,7 +135,7 @@ bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, Node* previousN
 
 int Graph::amountOfNodeWhiteSpace(Node* node)
 {
-    return (node->codeOrigin.inlineDepth() - 1) * 2;
+    return (node->origin.semantic.inlineDepth() - 1) * 2;
 }
 
 void Graph::printNodeWhiteSpace(PrintStream& out, Node* node)
@@ -206,7 +206,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     if (node->hasVarNumber())
         out.print(comma, node->varNumber());
     if (node->hasRegisterPointer())
-        out.print(comma, "global", globalObjectFor(node->codeOrigin)->findRegisterIndex(node->registerPointer()), "(", RawPointer(node->registerPointer()), ")");
+        out.print(comma, "global", globalObjectFor(node->origin.semantic)->findRegisterIndex(node->registerPointer()), "(", RawPointer(node->registerPointer()), ")");
     if (node->hasIdentifier())
         out.print(comma, "id", node->identifierNumber(), "{", identifiers()[node->identifierNumber()], "}");
     if (node->hasStructureSet())
@@ -328,7 +328,9 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "R:", sortedListDump(reads.direct(), ","));
     if (!writes.isEmpty())
         out.print(comma, "W:", sortedListDump(writes.direct(), ","));
-    out.print(comma, "bc#", node->codeOrigin.bytecodeIndex);
+    out.print(comma, "bc#", node->origin.semantic.bytecodeIndex);
+    if (node->origin.semantic != node->origin.forExit)
+        out.print(comma, "exit: ", node->origin.forExit);
     
     out.print(")");
 
@@ -344,7 +346,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
 
 void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* block, PhiNodeDumpMode phiNodeDumpMode, DumpContext* context)
 {
-    out.print(prefix, "Block ", *block, " (", inContext(block->at(0)->codeOrigin, context), "): ", block->isReachable ? "" : "(skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
+    out.print(prefix, "Block ", *block, " (", inContext(block->at(0)->origin.semantic, context), "): ", block->isReachable ? "" : "(skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
     out.print(prefix, "  Predecessors:");
     for (size_t i = 0; i < block->predecessors.size(); ++i)
         out.print(" ", *block->predecessors[i]);

@@ -604,7 +604,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         return;
         
     case GetMyArgumentsLength:
-        read(AbstractHeap(Variables, graph.argumentsRegisterFor(node->codeOrigin)));
+        read(AbstractHeap(Variables, graph.argumentsRegisterFor(node->origin.semantic)));
         read(AbstractHeap(Variables, JSStack::ArgumentCount));
         return;
         
@@ -613,7 +613,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         return;
         
     case CheckArgumentsNotCreated:
-        read(AbstractHeap(Variables, graph.argumentsRegisterFor(node->codeOrigin)));
+        read(AbstractHeap(Variables, graph.argumentsRegisterFor(node->origin.semantic)));
         return;
 
     case ThrowReferenceError:

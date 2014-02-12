@@ -176,7 +176,7 @@ public:
                         NodeFlags result = resultFor(format);
                         UseKind useKind = useKindFor(format);
                         
-                        node = m_insertionSet.insertNode(0, SpecNone, Phi, CodeOrigin());
+                        node = m_insertionSet.insertNode(0, SpecNone, Phi, NodeOrigin());
                         if (verbose)
                             dataLog("    Inserted new node: ", node, "\n");
                         node->mergeFlags(result);
@@ -185,7 +185,7 @@ public:
                         for (unsigned j = block->predecessors.size(); j--;) {
                             BasicBlock* predecessor = block->predecessors[j];
                             predecessor->appendNonTerminal(
-                                m_graph, SpecNone, Upsilon, predecessor->last()->codeOrigin,
+                                m_graph, SpecNone, Upsilon, predecessor->last()->origin,
                                 OpInfo(node), Edge(predecessor->variablesAtTail[i], useKind));
                         }
                         
@@ -211,7 +211,7 @@ public:
                             // the value was already on the stack.
                         } else {
                             m_insertionSet.insertNode(
-                                0, SpecNone, MovHint, CodeOrigin(),
+                                0, SpecNone, MovHint, NodeOrigin(),
                                 OpInfo(variable->local().offset()), Edge(node));
                         }
                     }

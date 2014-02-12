@@ -129,10 +129,10 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
             }
             dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, currentLabel, lastNodeForDisassembly);
             append(result, out, previousOrigin);
-            previousOrigin = block->at(i)->codeOrigin;
+            previousOrigin = block->at(i)->origin.semantic;
             if (m_graph.dumpCodeOrigin(out, prefix, lastNode, block->at(i), &m_dumpContext)) {
                 append(result, out, previousOrigin);
-                previousOrigin = block->at(i)->codeOrigin;
+                previousOrigin = block->at(i)->origin.semantic;
             }
             m_graph.dump(out, prefix, block->at(i), &m_dumpContext);
             lastNode = block->at(i);

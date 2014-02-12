@@ -246,7 +246,8 @@ private:
         
         data.preHeader->insertBeforeLast(node);
         node->misc.owner = data.preHeader;
-        node->codeOriginForExitTarget = data.preHeader->last()->codeOriginForExitTarget;
+        NodeOrigin originalOrigin = node->origin;
+        node->origin.forExit = data.preHeader->last()->origin.forExit;
         
         // Modify the states at the end of the preHeader of the loop we hoisted to,
         // and all pre-headers inside the loop.
@@ -269,7 +270,7 @@ private:
         // code. But for now we just assert that's the case.
         RELEASE_ASSERT(!(node->flags() & NodeHasVarArgs));
         
-        nodeRef = m_graph.addNode(SpecNone, Phantom, node->codeOrigin, node->children);
+        nodeRef = m_graph.addNode(SpecNone, Phantom, originalOrigin, node->children);
         
         return true;
     }

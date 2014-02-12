@@ -190,7 +190,7 @@ public:
                     Node* source = node->child1().node();
                     VariableAccessData* variableAccessData = node->variableAccessData();
                     VirtualRegister argumentsRegister =
-                        m_graph.uncheckedArgumentsRegisterFor(node->codeOrigin);
+                        m_graph.uncheckedArgumentsRegisterFor(node->origin.semantic);
                     if (source->op() != CreateArguments && source->op() != PhantomArguments) {
                         // Make sure that the source of the SetLocal knows that if it's
                         // a variable that we think is aliased to the arguments, then it
@@ -220,7 +220,7 @@ public:
                         if (argumentsRegister.isValid()
                             && (variableAccessData->local() == argumentsRegister
                                 || variableAccessData->local() == unmodifiedArgumentsRegister(argumentsRegister))) {
-                            m_createsArguments.add(node->codeOrigin.inlineCallFrame);
+                            m_createsArguments.add(node->origin.semantic.inlineCallFrame);
                             break;
                         }
 
@@ -232,19 +232,19 @@ public:
                         ArgumentsAliasingData& data =
                             m_argumentsAliasing.find(variableAccessData)->value;
                         data.mergeNonArgumentsAssignment();
-                        data.mergeCallContext(node->codeOrigin.inlineCallFrame);
+                        data.mergeCallContext(node->origin.semantic.inlineCallFrame);
                         break;
                     }
                     if (argumentsRegister.isValid()
                         && (variableAccessData->local() == argumentsRegister
                             || variableAccessData->local() == unmodifiedArgumentsRegister(argumentsRegister))) {
-                        if (node->codeOrigin.inlineCallFrame == source->codeOrigin.inlineCallFrame)
+                        if (node->origin.semantic.inlineCallFrame == source->origin.semantic.inlineCallFrame)
                             break;
-                        m_createsArguments.add(source->codeOrigin.inlineCallFrame);
+                        m_createsArguments.add(source->origin.semantic.inlineCallFrame);
                         break;
                     }
                     if (variableAccessData->isCaptured()) {
-                        m_createsArguments.add(source->codeOrigin.inlineCallFrame);
+                        m_createsArguments.add(source->origin.semantic.inlineCallFrame);
                         break;
                     }
                     ArgumentsAliasingData& data =
@@ -252,8 +252,8 @@ public:
                     data.mergeArgumentsAssignment();
                     // This ensures that the variable's uses are in the same context as
                     // the arguments it is aliasing.
-                    data.mergeCallContext(node->codeOrigin.inlineCallFrame);
-                    data.mergeCallContext(source->codeOrigin.inlineCallFrame);
+                    data.mergeCallContext(node->origin.semantic.inlineCallFrame);
+                    data.mergeCallContext(source->origin.semantic.inlineCallFrame);
                     break;
                 }
                     
@@ -264,7 +264,7 @@ public:
                         break;
                     ArgumentsAliasingData& data =
                         m_argumentsAliasing.find(variableAccessData)->value;
-                    data.mergeCallContext(node->codeOrigin.inlineCallFrame);
+                    data.mergeCallContext(node->origin.semantic.inlineCallFrame);
                     break;
                 }
                     
@@ -274,7 +274,7 @@ public:
                         break;
                     ArgumentsAliasingData& data =
                         m_argumentsAliasing.find(variableAccessData)->value;
-                    data.mergeCallContext(node->codeOrigin.inlineCallFrame);
+                    data.mergeCallContext(node->origin.semantic.inlineCallFrame);
                     
                     // If a variable is used in a flush then by definition it escapes.
                     data.escapes = true;
@@ -288,7 +288,7 @@ public:
                     ArgumentsAliasingData& data =
                         m_argumentsAliasing.find(variableAccessData)->value;
                     data.mergeNonArgumentsAssignment();
-                    data.mergeCallContext(node->codeOrigin.inlineCallFrame);
+                    data.mergeCallContext(node->origin.semantic.inlineCallFrame);
                     break;
                 }
                     
@@ -374,7 +374,7 @@ public:
                 if (data.isValid())
                     continue;
                 
-                m_createsArguments.add(source->codeOrigin.inlineCallFrame);
+                m_createsArguments.add(source->origin.semantic.inlineCallFrame);
             }
         }
         
@@ -392,13 +392,13 @@ public:
                     if (source->op() != CreateArguments)
                         break;
                     
-                    if (m_createsArguments.contains(source->codeOrigin.inlineCallFrame))
+                    if (m_createsArguments.contains(source->origin.semantic.inlineCallFrame))
                         break;
                     
                     VariableAccessData* variableAccessData = node->variableAccessData();
                     
-                    if (m_graph.argumentsRegisterFor(node->codeOrigin) == variableAccessData->local()
-                        || unmodifiedArgumentsRegister(m_graph.argumentsRegisterFor(node->codeOrigin)) == variableAccessData->local())
+                    if (m_graph.argumentsRegisterFor(node->origin.semantic) == variableAccessData->local()
+                        || unmodifiedArgumentsRegister(m_graph.argumentsRegisterFor(node->origin.semantic)) == variableAccessData->local())
                         break;
 
                     if (variableAccessData->mergeIsArgumentsAlias(true)) {
@@ -421,7 +421,7 @@ public:
                     
                     if (variableAccessData->isCaptured()
                         || !m_argumentsAliasing.find(variableAccessData)->value.isValid()
-                        || m_createsArguments.contains(node->codeOrigin.inlineCallFrame))
+                        || m_createsArguments.contains(node->origin.semantic.inlineCallFrame))
                         break;
                     
                     RELEASE_ASSERT_NOT_REACHED();
@@ -468,7 +468,7 @@ public:
                         break;
                     
                     insertionSet.insertNode(
-                        indexInBlock, SpecNone, Phantom, node->codeOrigin, node->child1());
+                        indexInBlock, SpecNone, Phantom, node->origin, node->child1());
                     
                     node->child1() = node->child2();
                     node->child2() = Edge();
@@ -486,7 +486,7 @@ public:
                         break;
                     
                     insertionSet.insertNode(
-                        indexInBlock, SpecNone, Phantom, node->codeOrigin, node->child1());
+                        indexInBlock, SpecNone, Phantom, node->origin, node->child1());
                     
                     node->child1() = Edge();
                     node->setOpAndDefaultFlags(GetMyArgumentsLength);
@@ -497,7 +497,7 @@ public:
                     
                 case GetMyArgumentsLength:
                 case GetMyArgumentsLengthSafe: {
-                    if (m_createsArguments.contains(node->codeOrigin.inlineCallFrame)) {
+                    if (m_createsArguments.contains(node->origin.semantic.inlineCallFrame)) {
                         ASSERT(node->op() == GetMyArgumentsLengthSafe);
                         break;
                     }
@@ -506,24 +506,24 @@ public:
                         changed = true;
                     }
                     
-                    CodeOrigin codeOrigin = node->codeOrigin;
-                    if (!codeOrigin.inlineCallFrame)
+                    NodeOrigin origin = node->origin;
+                    if (!origin.semantic.inlineCallFrame)
                         break;
                     
                     // We know exactly what this will return. But only after we have checked
                     // that nobody has escaped our arguments.
                     insertionSet.insertNode(
-                        indexInBlock, SpecNone, CheckArgumentsNotCreated, codeOrigin);
+                        indexInBlock, SpecNone, CheckArgumentsNotCreated, origin);
                     
                     m_graph.convertToConstant(
-                        node, jsNumber(codeOrigin.inlineCallFrame->arguments.size() - 1));
+                        node, jsNumber(origin.semantic.inlineCallFrame->arguments.size() - 1));
                     changed = true;
                     break;
                 }
                     
                 case GetMyArgumentByVal:
                 case GetMyArgumentByValSafe: {
-                    if (m_createsArguments.contains(node->codeOrigin.inlineCallFrame)) {
+                    if (m_createsArguments.contains(node->origin.semantic.inlineCallFrame)) {
                         ASSERT(node->op() == GetMyArgumentByValSafe);
                         break;
                     }
@@ -531,7 +531,7 @@ public:
                         node->setOp(GetMyArgumentByVal);
                         changed = true;
                     }
-                    if (!node->codeOrigin.inlineCallFrame)
+                    if (!node->origin.semantic.inlineCallFrame)
                         break;
                     if (!node->child1()->hasConstant())
                         break;
@@ -541,7 +541,7 @@ public:
                     int32_t index = value.asInt32();
                     if (index < 0
                         || static_cast<size_t>(index + 1) >=
-                            node->codeOrigin.inlineCallFrame->arguments.size())
+                            node->origin.semantic.inlineCallFrame->arguments.size())
                         break;
                     
                     // We know which argument this is accessing. But only after we have checked
@@ -553,26 +553,25 @@ public:
                     // has run - therefore it makes little sense to link the GetLocal operation
                     // into the VariableAccessData and Phi graphs.
 
-                    CodeOrigin codeOrigin = node->codeOrigin;
+                    NodeOrigin origin = node->origin;
                     AdjacencyList children = node->children;
                     
                     node->convertToGetLocalUnlinked(
                         VirtualRegister(
-                            node->codeOrigin.inlineCallFrame->stackOffset +
-                            m_graph.baselineCodeBlockFor(node->codeOrigin)->argumentIndexAfterCapture(index)));
+                            origin.semantic.inlineCallFrame->stackOffset +
+                            m_graph.baselineCodeBlockFor(origin.semantic)->argumentIndexAfterCapture(index)));
 
                     insertionSet.insertNode(
-                        indexInBlock, SpecNone, CheckArgumentsNotCreated,
-                        codeOrigin);
+                        indexInBlock, SpecNone, CheckArgumentsNotCreated, origin);
                     insertionSet.insertNode(
-                        indexInBlock, SpecNone, Phantom, codeOrigin, children);
+                        indexInBlock, SpecNone, Phantom, origin, children);
                     
                     changed = true;
                     break;
                 }
                     
                 case TearOffArguments: {
-                    if (m_createsArguments.contains(node->codeOrigin.inlineCallFrame))
+                    if (m_createsArguments.contains(node->origin.semantic.inlineCallFrame))
                         continue;
                     
                     node->convertToPhantom();
@@ -599,10 +598,10 @@ public:
                 // PhantomArguments is a non-executing node that just indicates
                 // that the node should be reified as an arguments object on OSR
                 // exit.
-                if (m_createsArguments.contains(node->codeOrigin.inlineCallFrame))
+                if (m_createsArguments.contains(node->origin.semantic.inlineCallFrame))
                     continue;
                 insertionSet.insertNode(
-                    indexInBlock, SpecNone, Phantom, node->codeOrigin, node->children);
+                    indexInBlock, SpecNone, Phantom, node->origin, node->children);
                 node->setOpAndDefaultFlags(PhantomArguments);
                 node->children.reset();
                 changed = true;
@@ -655,16 +654,17 @@ private:
         
         switch (node->op()) {
         case CreateArguments: {
-            m_createsArguments.add(node->codeOrigin.inlineCallFrame);
+            m_createsArguments.add(node->origin.semantic.inlineCallFrame);
             break;
         }
             
         case GetLocal: {
-            VirtualRegister argumentsRegister = m_graph.uncheckedArgumentsRegisterFor(node->codeOrigin);
+            VirtualRegister argumentsRegister =
+                m_graph.uncheckedArgumentsRegisterFor(node->origin.semantic);
             if (argumentsRegister.isValid()
                 && (node->local() == argumentsRegister
                     || node->local() == unmodifiedArgumentsRegister(argumentsRegister))) {
-                m_createsArguments.add(node->codeOrigin.inlineCallFrame);
+                m_createsArguments.add(node->origin.semantic.inlineCallFrame);
                 break;
             }
             
@@ -703,17 +703,17 @@ private:
             // 2) If we're accessing arguments we got from the heap!
                             
             if (edge->op() == CreateArguments
-                && node->codeOrigin.inlineCallFrame
-                    != edge->codeOrigin.inlineCallFrame)
-                m_createsArguments.add(edge->codeOrigin.inlineCallFrame);
+                && node->origin.semantic.inlineCallFrame
+                    != edge->origin.semantic.inlineCallFrame)
+                m_createsArguments.add(edge->origin.semantic.inlineCallFrame);
             
             return;
         }
                         
         VariableAccessData* variableAccessData = edge->variableAccessData();
-        if (edge->local() == m_graph.uncheckedArgumentsRegisterFor(edge->codeOrigin)
-            && node->codeOrigin.inlineCallFrame != edge->codeOrigin.inlineCallFrame) {
-            m_createsArguments.add(edge->codeOrigin.inlineCallFrame);
+        if (edge->local() == m_graph.uncheckedArgumentsRegisterFor(edge->origin.semantic)
+            && node->origin.semantic.inlineCallFrame != edge->origin.semantic.inlineCallFrame) {
+            m_createsArguments.add(edge->origin.semantic.inlineCallFrame);
             return;
         }
 
@@ -721,18 +721,19 @@ private:
             return;
         
         ArgumentsAliasingData& data = m_argumentsAliasing.find(variableAccessData)->value;
-        data.mergeCallContext(node->codeOrigin.inlineCallFrame);
+        data.mergeCallContext(node->origin.semantic.inlineCallFrame);
     }
     
     bool isOKToOptimize(Node* source)
     {
-        if (m_createsArguments.contains(source->codeOrigin.inlineCallFrame))
+        if (m_createsArguments.contains(source->origin.semantic.inlineCallFrame))
             return false;
         
         switch (source->op()) {
         case GetLocal: {
             VariableAccessData* variableAccessData = source->variableAccessData();
-            VirtualRegister argumentsRegister = m_graph.uncheckedArgumentsRegisterFor(source->codeOrigin);
+            VirtualRegister argumentsRegister =
+                m_graph.uncheckedArgumentsRegisterFor(source->origin.semantic);
             if (!argumentsRegister.isValid())
                 break;
             if (argumentsRegister == variableAccessData->local())

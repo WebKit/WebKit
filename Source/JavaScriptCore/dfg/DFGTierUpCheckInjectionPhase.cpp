@@ -77,11 +77,11 @@ public:
                 // more than one LoopHint could happen in cases where we did a lot of CFG
                 // simplification in the bytecode parser, but it should be very rare.
                 
-                CodeOrigin codeOrigin = node->codeOrigin;
+                NodeOrigin origin = node->origin;
                 
-                if (level != FTL::CanCompileAndOSREnter || codeOrigin.inlineCallFrame) {
+                if (level != FTL::CanCompileAndOSREnter || origin.semantic.inlineCallFrame) {
                     insertionSet.insertNode(
-                        nodeIndex + 1, SpecNone, CheckTierUpInLoop, codeOrigin);
+                        nodeIndex + 1, SpecNone, CheckTierUpInLoop, origin);
                     break;
                 }
                 
@@ -95,18 +95,18 @@ public:
                 
                 if (!isAtTop) {
                     insertionSet.insertNode(
-                        nodeIndex + 1, SpecNone, CheckTierUpInLoop, codeOrigin);
+                        nodeIndex + 1, SpecNone, CheckTierUpInLoop, origin);
                     break;
                 }
                 
                 insertionSet.insertNode(
-                    nodeIndex + 1, SpecNone, CheckTierUpAndOSREnter, codeOrigin);
+                    nodeIndex + 1, SpecNone, CheckTierUpAndOSREnter, origin);
                 break;
             }
             
             if (block->last()->op() == Return) {
                 insertionSet.insertNode(
-                    block->size() - 1, SpecNone, CheckTierUpAtReturn, block->last()->codeOrigin);
+                    block->size() - 1, SpecNone, CheckTierUpAtReturn, block->last()->origin);
             }
             
             insertionSet.execute(block);

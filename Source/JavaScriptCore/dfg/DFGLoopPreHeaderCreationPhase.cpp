@@ -42,7 +42,7 @@ BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, Basic
 {
     BasicBlock* preHeader = insertionSet.insertBefore(block);
     preHeader->appendNode(
-        graph, SpecNone, Jump, block->at(0)->codeOrigin, OpInfo(block));
+        graph, SpecNone, Jump, block->at(0)->origin, OpInfo(block));
     
     for (unsigned predecessorIndex = 0; predecessorIndex < block->predecessors.size(); predecessorIndex++) {
         BasicBlock* predecessor = block->predecessors[predecessorIndex];

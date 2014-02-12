@@ -128,20 +128,20 @@ public:
                     if (!iter->value.m_structure && !iter->value.m_arrayModeIsValid)
                         break;
 
-                    CodeOrigin codeOrigin = node->codeOrigin;
+                    NodeOrigin origin = node->origin;
                     
                     Node* getLocal = insertionSet.insertNode(
-                        indexInBlock + 1, variable->prediction(), GetLocal, codeOrigin,
+                        indexInBlock + 1, variable->prediction(), GetLocal, origin,
                         OpInfo(variable), Edge(node));
                     if (iter->value.m_structure) {
                         insertionSet.insertNode(
-                            indexInBlock + 1, SpecNone, CheckStructure, codeOrigin,
+                            indexInBlock + 1, SpecNone, CheckStructure, origin,
                             OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
                             Edge(getLocal, CellUse));
                     } else if (iter->value.m_arrayModeIsValid) {
                         ASSERT(iter->value.m_arrayModeHoistingOkay);
                         insertionSet.insertNode(
-                            indexInBlock + 1, SpecNone, CheckArray, codeOrigin,
+                            indexInBlock + 1, SpecNone, CheckArray, origin,
                             OpInfo(iter->value.m_arrayMode.asWord()),
                             Edge(getLocal, CellUse));
                     } else
@@ -164,18 +164,18 @@ public:
                     if (!iter->value.m_structure && !iter->value.m_arrayModeIsValid)
                         break;
 
-                    CodeOrigin codeOrigin = node->codeOrigin;
+                    NodeOrigin origin = node->origin;
                     Edge child1 = node->child1();
                     
                     if (iter->value.m_structure) {
                         insertionSet.insertNode(
-                            indexInBlock, SpecNone, CheckStructure, codeOrigin,
+                            indexInBlock, SpecNone, CheckStructure, origin,
                             OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
                             Edge(child1.node(), CellUse));
                     } else if (iter->value.m_arrayModeIsValid) {
                         ASSERT(iter->value.m_arrayModeHoistingOkay);
                         insertionSet.insertNode(
-                            indexInBlock, SpecNone, CheckArray, codeOrigin,
+                            indexInBlock, SpecNone, CheckArray, origin,
                             OpInfo(iter->value.m_arrayMode.asWord()),
                             Edge(child1.node(), CellUse));
                     } else

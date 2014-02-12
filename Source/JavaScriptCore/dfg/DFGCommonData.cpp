@@ -41,7 +41,7 @@ void CommonData::notifyCompilingStructureTransition(Plan& plan, CodeBlock* codeB
 {
     plan.transitions.addLazily(
         codeBlock,
-        node->codeOrigin.codeOriginOwner(),
+        node->origin.semantic.codeOriginOwner(),
         node->structureTransitionData().previousStructure,
         node->structureTransitionData().newStructure);
 }

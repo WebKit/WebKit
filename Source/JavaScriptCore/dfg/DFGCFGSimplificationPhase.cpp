@@ -102,14 +102,14 @@ public:
                             m_graph.dethread();
                         
                             ASSERT(block->last()->isTerminal());
-                            CodeOrigin boundaryCodeOrigin = block->last()->codeOrigin;
+                            NodeOrigin boundaryNodeOrigin = block->last()->origin;
                             block->last()->convertToPhantom();
                             ASSERT(block->last()->refCount() == 1);
                         
-                            jettisonBlock(block, jettisonedBlock, boundaryCodeOrigin);
+                            jettisonBlock(block, jettisonedBlock, boundaryNodeOrigin);
                         
                             block->appendNode(
-                                m_graph, SpecNone, Jump, boundaryCodeOrigin,
+                                m_graph, SpecNone, Jump, boundaryNodeOrigin,
                                 OpInfo(targetBlock));
                         }
                         innerChanged = outerChanged = true;
@@ -181,12 +181,12 @@ public:
                                 m_graph.dump();
                             m_graph.dethread();
                             
-                            CodeOrigin boundaryCodeOrigin = block->last()->codeOrigin;
+                            NodeOrigin boundaryNodeOrigin = block->last()->origin;
                             block->last()->convertToPhantom();
                             for (unsigned i = jettisonedBlocks.size(); i--;)
-                                jettisonBlock(block, jettisonedBlocks[i], boundaryCodeOrigin);
+                                jettisonBlock(block, jettisonedBlocks[i], boundaryNodeOrigin);
                             block->appendNode(
-                                m_graph, SpecNone, Jump, boundaryCodeOrigin, OpInfo(targetBlock));
+                                m_graph, SpecNone, Jump, boundaryNodeOrigin, OpInfo(targetBlock));
                         }
                         innerChanged = outerChanged = true;
                         break;
@@ -258,12 +258,11 @@ private:
             ASSERT(branch->refCount() == 1);
             
             block->appendNode(
-                m_graph, SpecNone, Jump, branch->codeOrigin,
-                OpInfo(targetBlock));
+                m_graph, SpecNone, Jump, branch->origin, OpInfo(targetBlock));
         }
     }
 
-    void keepOperandAlive(BasicBlock* block, BasicBlock* jettisonedBlock, CodeOrigin codeOrigin, VirtualRegister operand)
+    void keepOperandAlive(BasicBlock* block, BasicBlock* jettisonedBlock, NodeOrigin nodeOrigin, VirtualRegister operand)
     {
         Node* livenessNode = jettisonedBlock->variablesAtHead.operand(operand);
         if (!livenessNode)
@@ -271,16 +270,16 @@ private:
         if (livenessNode->variableAccessData()->isCaptured())
             return;
         block->appendNode(
-            m_graph, SpecNone, PhantomLocal, codeOrigin, 
+            m_graph, SpecNone, PhantomLocal, nodeOrigin, 
             OpInfo(livenessNode->variableAccessData()));
     }
     
-    void jettisonBlock(BasicBlock* block, BasicBlock* jettisonedBlock, CodeOrigin boundaryCodeOrigin)
+    void jettisonBlock(BasicBlock* block, BasicBlock* jettisonedBlock, NodeOrigin boundaryNodeOrigin)
     {
         for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
-            keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, virtualRegisterForArgument(i));
+            keepOperandAlive(block, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForArgument(i));
         for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
-            keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, virtualRegisterForLocal(i));
+            keepOperandAlive(block, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForLocal(i));
         
         fixJettisonedPredecessors(block, jettisonedBlock);
     }
@@ -315,7 +314,7 @@ private:
         // Remove the terminal of firstBlock since we don't need it anymore. Well, we don't
         // really remove it; we actually turn it into a Phantom.
         ASSERT(firstBlock->last()->isTerminal());
-        CodeOrigin boundaryCodeOrigin = firstBlock->last()->codeOrigin;
+        NodeOrigin boundaryNodeOrigin = firstBlock->last()->origin;
         firstBlock->last()->convertToPhantom();
         ASSERT(firstBlock->last()->refCount() == 1);
         
@@ -327,9 +326,9 @@ private:
             // different path than secondBlock.
             
             for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
-                keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, virtualRegisterForArgument(i));
+                keepOperandAlive(firstBlock, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForArgument(i));
             for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
-                keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, virtualRegisterForLocal(i));
+                keepOperandAlive(firstBlock, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForLocal(i));
         }
         
         for (size_t i = 0; i < secondBlock->phis.size(); ++i)

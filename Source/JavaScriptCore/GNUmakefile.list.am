@@ -343,6 +343,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGNodeAllocator.h \
 	Source/JavaScriptCore/dfg/DFGNodeFlags.cpp \
 	Source/JavaScriptCore/dfg/DFGNodeFlags.h \
+	Source/JavaScriptCore/dfg/DFGNodeOrigin.h \
 	Source/JavaScriptCore/dfg/DFGNodeType.h \
 	Source/JavaScriptCore/dfg/DFGOperations.cpp \
 	Source/JavaScriptCore/dfg/DFGOperations.h \

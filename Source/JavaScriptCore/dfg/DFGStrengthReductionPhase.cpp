@@ -147,7 +147,7 @@ private:
     void convertToIdentityOverChild(unsigned childIndex)
     {
         m_insertionSet.insertNode(
-            m_nodeIndex, SpecNone, Phantom, m_node->codeOrigin, m_node->children);
+            m_nodeIndex, SpecNone, Phantom, m_node->origin, m_node->children);
         m_node->children.removeEdge(childIndex ^ 1);
         m_node->convertToIdentity();
         m_changed = true;
@@ -173,10 +173,10 @@ private:
     void prepareToFoldTypedArray(JSArrayBufferView* view)
     {
         m_insertionSet.insertNode(
-            m_nodeIndex, SpecNone, TypedArrayWatchpoint, m_node->codeOrigin,
+            m_nodeIndex, SpecNone, TypedArrayWatchpoint, m_node->origin,
             OpInfo(view));
         m_insertionSet.insertNode(
-            m_nodeIndex, SpecNone, Phantom, m_node->codeOrigin, m_node->children);
+            m_nodeIndex, SpecNone, Phantom, m_node->origin, m_node->children);
     }
     
     InsertionSet m_insertionSet;

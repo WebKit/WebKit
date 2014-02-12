@@ -81,7 +81,7 @@ void JSCall::link(VM& vm, LinkBuffer& linkBuffer, CallLinkInfo& callInfo)
     
     callInfo.isFTL = true;
     callInfo.callType = m_node->op() == DFG::Construct ? CallLinkInfo::Construct : CallLinkInfo::Call;
-    callInfo.codeOrigin = m_node->codeOrigin;
+    callInfo.codeOrigin = m_node->origin.semantic;
     callInfo.callReturnLocation = linkBuffer.locationOfNearCall(m_slowCall);
     callInfo.hotPathBegin = linkBuffer.locationOf(m_targetToCheck);
     callInfo.hotPathOther = linkBuffer.locationOfNearCall(m_fastCall);

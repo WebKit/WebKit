@@ -459,7 +459,7 @@ public:
     
     bool hasExitSite(Node* node, ExitKind exitKind)
     {
-        return hasExitSite(node->codeOrigin, exitKind);
+        return hasExitSite(node->origin.semantic, exitKind);
     }
     
     VirtualRegister argumentsRegisterFor(InlineCallFrame* inlineCallFrame)
@@ -533,7 +533,7 @@ public:
         if (!node)
             return 0;
         
-        CodeBlock* profiledBlock = baselineCodeBlockFor(node->codeOrigin);
+        CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
         
         if (node->op() == GetArgument)
             return profiledBlock->valueProfileForArgument(node->local().toArgument());
@@ -550,7 +550,7 @@ public:
         }
         
         if (node->hasHeapPrediction())
-            return profiledBlock->valueProfileForBytecodeOffset(node->codeOrigin.bytecodeIndex);
+            return profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
         
         return 0;
     }
@@ -560,13 +560,13 @@ public:
         if (!node)
             return MethodOfGettingAValueProfile();
         
-        CodeBlock* profiledBlock = baselineCodeBlockFor(node->codeOrigin);
+        CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
         
         if (node->op() == GetLocal) {
             return MethodOfGettingAValueProfile::fromLazyOperand(
                 profiledBlock,
                 LazyOperandValueProfileKey(
-                    node->codeOrigin.bytecodeIndex, node->local()));
+                    node->origin.semantic.bytecodeIndex, node->local()));
         }
         
         return MethodOfGettingAValueProfile(valueProfileFor(node));

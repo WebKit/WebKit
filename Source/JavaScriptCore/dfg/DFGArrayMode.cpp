@@ -276,7 +276,7 @@ Structure* ArrayMode::originalArrayStructure(Graph& graph, const CodeOrigin& cod
 
 Structure* ArrayMode::originalArrayStructure(Graph& graph, Node* node) const
 {
-    return originalArrayStructure(graph, node->codeOrigin);
+    return originalArrayStructure(graph, node->origin.semantic);
 }
 
 bool ArrayMode::alreadyChecked(Graph& graph, Node* node, AbstractValue& value, IndexingType shape) const
@@ -286,7 +286,7 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, AbstractValue& value, I
         return value.m_currentKnownStructure.hasSingleton()
             && (value.m_currentKnownStructure.singleton()->indexingType() & IndexingShapeMask) == shape
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray)
-            && graph.globalObjectFor(node->codeOrigin)->isOriginalArrayStructure(value.m_currentKnownStructure.singleton());
+            && graph.globalObjectFor(node->origin.semantic)->isOriginalArrayStructure(value.m_currentKnownStructure.singleton());
         
     case Array::Array:
         if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(shape | IsArray)))

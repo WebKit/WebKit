@@ -85,18 +85,18 @@ public:
 private:
     void handle(unsigned nodeIndex, Node* node)
     {
-        if (m_originThatHadFire.isSet() && m_originThatHadFire != node->codeOrigin) {
+        if (m_originThatHadFire.isSet() && m_originThatHadFire != node->origin.forExit) {
             insertInvalidationCheck(nodeIndex, node);
             m_originThatHadFire = CodeOrigin();
         }
         
         if (writesOverlap(m_graph, node, Watchpoint_fire))
-            m_originThatHadFire = node->codeOrigin;
+            m_originThatHadFire = node->origin.forExit;
     }
     
     void insertInvalidationCheck(unsigned nodeIndex, Node* node)
     {
-        m_insertionSet.insertNode(nodeIndex, SpecNone, InvalidationPoint, node->codeOrigin);
+        m_insertionSet.insertNode(nodeIndex, SpecNone, InvalidationPoint, node->origin);
     }
     
     CodeOrigin m_originThatHadFire;

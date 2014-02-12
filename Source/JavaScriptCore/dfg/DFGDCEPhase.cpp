@@ -219,7 +219,7 @@ private:
                         if (!edge || edge.willNotHaveCheck())
                             continue;
 
-                        m_insertionSet.insertNode(indexInBlock, SpecNone, Phantom, node->codeOrigin, edge);
+                        m_insertionSet.insertNode(indexInBlock, SpecNone, Phantom, node->origin, edge);
                     }
 
                     node->convertToPhantomUnchecked();

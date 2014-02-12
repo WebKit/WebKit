@@ -963,7 +963,7 @@ private:
                 
             case GetMyScope:
             case SkipTopScope:
-                if (node->codeOrigin.inlineCallFrame)
+                if (node->origin.semantic.inlineCallFrame)
                     break;
                 if (m_graph.uncheckedActivationRegister() == local)
                     result.mayBeAccessed = true;
@@ -972,7 +972,7 @@ private:
             case CheckArgumentsNotCreated:
             case GetMyArgumentsLength:
             case GetMyArgumentsLengthSafe:
-                if (m_graph.uncheckedArgumentsRegisterFor(node->codeOrigin) == local)
+                if (m_graph.uncheckedArgumentsRegisterFor(node->origin.semantic) == local)
                     result.mayBeAccessed = true;
                 break;
                 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,58 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef DFGNodeOrigin_h
+#define DFGNodeOrigin_h
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGResurrectionForValidationPhase.h"
-
-#include "DFGBasicBlockInlines.h"
-#include "DFGGraph.h"
-#include "DFGInsertionSet.h"
-#include "DFGPhase.h"
-#include "JSCInlines.h"
+#include "CodeOrigin.h"
 
 namespace JSC { namespace DFG {
 
-class ResurrectionForValidationPhase : public Phase {
-public:
-    ResurrectionForValidationPhase(Graph& graph)
-        : Phase(graph, "resurrection for validation")
+struct NodeOrigin {
+    NodeOrigin() { }
+    
+    explicit NodeOrigin(CodeOrigin codeOrigin)
+        : semantic(codeOrigin)
+        , forExit(codeOrigin)
     {
     }
     
-    bool run()
+    NodeOrigin(CodeOrigin semantic, CodeOrigin forExit)
+        : semantic(semantic)
+        , forExit(forExit)
     {
-        InsertionSet insertionSet(m_graph);
-        
-        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-
-            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-                Node* node = block->at(nodeIndex);
-                if (!node->hasResult())
-                    continue;
-                insertionSet.insertNode(
-                    nodeIndex + 1, SpecNone, Phantom, node->origin, Edge(node));
-            }
-            
-            insertionSet.execute(block);
-        }
-        
-        return true;
     }
+    
+    bool isSet() const
+    {
+        return semantic.isSet();
+    }
+    
+    // Used for determining what bytecode this came from. This is important for
+    // debugging, exceptions, and even basic execution semantics.
+    CodeOrigin semantic;
+    // Code origin for where the node exits to.
+    CodeOrigin forExit;
 };
-
-bool performResurrectionForValidation(Graph& graph)
-{
-    SamplingRegion samplingRegion("DFG Resurrection For Validation Phase");
-    return runPhase<ResurrectionForValidationPhase>(graph);
-}
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGNodeOrigin_h
 

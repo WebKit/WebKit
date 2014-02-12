@@ -127,25 +127,25 @@ private:
         }
     }
     
-    ALWAYS_INLINE Node* addPhiSilently(BasicBlock* block, const CodeOrigin& codeOrigin, VariableAccessData* variable)
+    ALWAYS_INLINE Node* addPhiSilently(BasicBlock* block, const NodeOrigin& origin, VariableAccessData* variable)
     {
-        Node* result = m_graph.addNode(SpecNone, Phi, codeOrigin, OpInfo(variable));
+        Node* result = m_graph.addNode(SpecNone, Phi, origin, OpInfo(variable));
         block->phis.append(result);
         return result;
     }
     
     template<OperandKind operandKind>
-    ALWAYS_INLINE Node* addPhi(BasicBlock* block, const CodeOrigin& codeOrigin, VariableAccessData* variable, size_t index)
+    ALWAYS_INLINE Node* addPhi(BasicBlock* block, const NodeOrigin& origin, VariableAccessData* variable, size_t index)
     {
-        Node* result = addPhiSilently(block, codeOrigin, variable);
+        Node* result = addPhiSilently(block, origin, variable);
         phiStackFor<operandKind>().append(PhiStackEntry(block, index, result));
         return result;
     }
     
     template<OperandKind operandKind>
-    ALWAYS_INLINE Node* addPhi(const CodeOrigin& codeOrigin, VariableAccessData* variable, size_t index)
+    ALWAYS_INLINE Node* addPhi(const NodeOrigin& origin, VariableAccessData* variable, size_t index)
     {
-        return addPhi<operandKind>(m_block, codeOrigin, variable, index);
+        return addPhi<operandKind>(m_block, origin, variable, index);
     }
     
     template<OperandKind operandKind>
@@ -209,7 +209,7 @@ private:
         }
         
         variable->setIsLoadedFrom(true);
-        Node* phi = addPhi<operandKind>(node->codeOrigin, variable, idx);
+        Node* phi = addPhi<operandKind>(node->origin, variable, idx);
         node->children.setChild1(Edge(phi));
         m_block->variablesAtHead.atFor<operandKind>(idx) = phi;
         m_block->variablesAtTail.atFor<operandKind>(idx) = node;
@@ -277,7 +277,7 @@ private:
         }
         
         variable->setIsLoadedFrom(true);
-        node->children.setChild1(Edge(addPhi<operandKind>(node->codeOrigin, variable, idx)));
+        node->children.setChild1(Edge(addPhi<operandKind>(node->origin, variable, idx)));
         m_block->variablesAtHead.atFor<operandKind>(idx) = node;
         m_block->variablesAtTail.atFor<operandKind>(idx) = node;
     }
@@ -419,7 +419,7 @@ private:
                 
                 Node* variableInPrevious = predecessorBlock->variablesAtTail.atFor<operandKind>(index);
                 if (!variableInPrevious) {
-                    variableInPrevious = addPhi<operandKind>(predecessorBlock, currentPhi->codeOrigin, variable, index);
+                    variableInPrevious = addPhi<operandKind>(predecessorBlock, currentPhi->origin, variable, index);
                     predecessorBlock->variablesAtTail.atFor<operandKind>(index) = variableInPrevious;
                     predecessorBlock->variablesAtHead.atFor<operandKind>(index) = variableInPrevious;
                 } else {
@@ -453,7 +453,7 @@ private:
                     continue;
                 }
                 
-                Node* newPhi = addPhiSilently(block, currentPhi->codeOrigin, variable);
+                Node* newPhi = addPhiSilently(block, currentPhi->origin, variable);
                 newPhi->children = currentPhi->children;
                 currentPhi->children.initialize(newPhi, variableInPrevious, 0);
             }

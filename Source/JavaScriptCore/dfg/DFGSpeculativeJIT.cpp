@@ -871,7 +871,7 @@ void SpeculativeJIT::compileIn(Node* node)
                 JSValueRegs::payloadOnly(resultGPR), stubInfo, baseGPR,
                 string->tryGetValueImpl());
             
-            stubInfo->codeOrigin = node->codeOrigin;
+            stubInfo->codeOrigin = node->origin.semantic;
             stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
             stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
             stubInfo->patch.usedRegisters = usedRegisters();
@@ -1390,8 +1390,8 @@ void SpeculativeJIT::compileCurrentBlock()
         m_canExit = m_currentNode->canExit();
         bool shouldExecuteEffects = m_interpreter.startExecuting(m_currentNode);
         m_jit.setForNode(m_currentNode);
-        m_codeOriginForExitTarget = m_currentNode->codeOriginForExitTarget;
-        m_codeOriginForExitProfile = m_currentNode->codeOrigin;
+        m_codeOriginForExitTarget = m_currentNode->origin.forExit;
+        m_codeOriginForExitProfile = m_currentNode->origin.semantic;
         if (!m_currentNode->shouldGenerate()) {
             switch (m_currentNode->op()) {
             case JSConstant:
@@ -1427,7 +1427,7 @@ void SpeculativeJIT::compileCurrentBlock()
                 dataLogF(
                     "SpeculativeJIT generating Node @%d (bc#%u) at JIT offset 0x%x",
                     (int)m_currentNode->index(),
-                    m_currentNode->codeOrigin.bytecodeIndex, m_jit.debugOffset());
+                    m_currentNode->origin.semantic.bytecodeIndex, m_jit.debugOffset());
                 dataLog("\n");
             }
             
@@ -1780,7 +1780,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
         m_jit.move(TrustedImm32(JSValue::CellTag), resultTagReg);
 #endif
 
-        JSGlobalObject* globalObject = m_jit.globalObjectFor(node->codeOrigin);
+        JSGlobalObject* globalObject = m_jit.globalObjectFor(node->origin.semantic);
         if (globalObject->stringPrototypeChainIsSane()) {
 #if USE(JSVALUE64)
             addSlowPathGenerator(adoptPtr(new SaneStringGetByValSlowPathGenerator(
@@ -4455,7 +4455,7 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
 
 void SpeculativeJIT::compileNewTypedArray(Node* node)
 {
-    JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->codeOrigin);
+    JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
     TypedArrayType type = node->typedArrayType();
     Structure* structure = globalObject->typedArrayStructure(type);
     

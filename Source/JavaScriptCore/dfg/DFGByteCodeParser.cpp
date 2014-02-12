@@ -726,7 +726,8 @@ private:
     Node* addToGraph(NodeType op, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            SpecNone, op, currentCodeOrigin(), Edge(child1), Edge(child2), Edge(child3));
+            SpecNone, op, NodeOrigin(currentCodeOrigin()), Edge(child1), Edge(child2),
+            Edge(child3));
         ASSERT(op != Phi);
         m_currentBlock->append(result);
         return result;
@@ -734,7 +735,7 @@ private:
     Node* addToGraph(NodeType op, Edge child1, Edge child2 = Edge(), Edge child3 = Edge())
     {
         Node* result = m_graph.addNode(
-            SpecNone, op, currentCodeOrigin(), child1, child2, child3);
+            SpecNone, op, NodeOrigin(currentCodeOrigin()), child1, child2, child3);
         ASSERT(op != Phi);
         m_currentBlock->append(result);
         return result;
@@ -742,7 +743,8 @@ private:
     Node* addToGraph(NodeType op, OpInfo info, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            SpecNone, op, currentCodeOrigin(), info, Edge(child1), Edge(child2), Edge(child3));
+            SpecNone, op, NodeOrigin(currentCodeOrigin()), info, Edge(child1), Edge(child2),
+            Edge(child3));
         ASSERT(op != Phi);
         m_currentBlock->append(result);
         return result;
@@ -750,7 +752,7 @@ private:
     Node* addToGraph(NodeType op, OpInfo info1, OpInfo info2, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            SpecNone, op, currentCodeOrigin(), info1, info2,
+            SpecNone, op, NodeOrigin(currentCodeOrigin()), info1, info2,
             Edge(child1), Edge(child2), Edge(child3));
         ASSERT(op != Phi);
         m_currentBlock->append(result);
@@ -760,7 +762,7 @@ private:
     Node* addToGraph(Node::VarArgTag, NodeType op, OpInfo info1, OpInfo info2)
     {
         Node* result = m_graph.addNode(
-            SpecNone, Node::VarArg, op, currentCodeOrigin(), info1, info2,
+            SpecNone, Node::VarArg, op, NodeOrigin(currentCodeOrigin()), info1, info2,
             m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs);
         ASSERT(op != Phi);
         m_currentBlock->append(result);
