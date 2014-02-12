@@ -1,3 +1,14 @@
+2014-02-12  Ryan Lortie  <desrt@desrt.ca>
+
+        'ar T' is not portable and breaks the build on FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=128596
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Create thin archives only if we are using GNU ar.
+
+        * Source/autotools/SetupLibtool.m4:
+
 2014-02-10  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         Add the CSS_SHAPE_INSIDE to CMake feature list
