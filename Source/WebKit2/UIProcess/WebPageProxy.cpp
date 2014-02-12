@@ -94,6 +94,7 @@
 #include <WebCore/FocusDirection.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/RenderEmbeddedObject.h>
+#include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
@@ -4479,17 +4480,19 @@ void WebPageProxy::setScrollPinningBehavior(ScrollPinningBehavior pinning)
         m_process->send(Messages::WebPage::SetScrollPinningBehavior(pinning), m_pageID);
 }
 
-#if ENABLE(SUBTLE_CRYPTO) && !PLATFORM(COCOA)
+#if ENABLE(SUBTLE_CRYPTO)
 void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, bool& succeeded, Vector<uint8_t>& wrappedKey)
 {
-    notImplemented();
-    succeeded = false;
+    Vector<uint8_t> masterKey(16);
+    memset(masterKey.data(), 0, masterKey.size()); // FIXME: Not implemented yet, will be getting a key from client.
+    succeeded = wrapSerializedCryptoKey(masterKey, key, wrappedKey);
 }
 
 void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succeeded, Vector<uint8_t>& key)
 {
-    notImplemented();
-    succeeded = false;
+    Vector<uint8_t> masterKey(16);
+    memset(masterKey.data(), 0, masterKey.size()); // FIXME: Not implemented yet, will be getting a key from client.
+    succeeded = unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
 }
 #endif
 

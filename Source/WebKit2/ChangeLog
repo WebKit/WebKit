@@ -1,3 +1,14 @@
+2014-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Better iOS build fix.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::wrapCryptoKey):
+        (WebKit::WebPageProxy::unwrapCryptoKey):
+        Make these functions cross platform.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+
 2014-02-12  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build after r163976
