@@ -89,7 +89,7 @@ class TestRebaselineTest(_BaseTestCase):
         self.assertMultiLineEqual(command._baseline_directory("Apple Lion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
         self.assertMultiLineEqual(command._baseline_directory("Apple MountainLion Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-mountainlion")
         self.assertMultiLineEqual(command._baseline_directory("Apple MountainLion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
-        self.assertMultiLineEqual(command._baseline_directory("Apple Mavericks Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Mavericks Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk1")
         self.assertMultiLineEqual(command._baseline_directory("Apple Mavericks Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Debug WK1"), "/mock-checkout/LayoutTests/platform/gtk-wk1")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/gtk-wk1")

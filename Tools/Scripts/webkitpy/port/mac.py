@@ -78,14 +78,14 @@ class MacPort(ApplePort):
 
     def default_baseline_search_path(self):
         name = self._name.replace('-wk2', '')
+        wk_version = [] if self.get_option('webkit_test_runner') else ['mac-wk1']
         if name.endswith(self.FUTURE_VERSION):
-            fallback_names = [self.port_name]
+            fallback_names = wk_version + [self.port_name]
         else:
-            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):-1] + [self.port_name]
+            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):-1] + wk_version + [self.port_name]
+        # FIXME: mac-wk2 should appear at the same place as mac-wk1.
         if self.get_option('webkit_test_runner'):
             fallback_names = [self._wk2_port_name(), 'wk2'] + fallback_names
-        else:
-            fallback_names = ['mac-wk1'] + fallback_names
         return map(self._webkit_baseline_path, fallback_names)
 
     def _port_specific_expectations_files(self):

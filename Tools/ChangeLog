@@ -1,3 +1,15 @@
+2014-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a mac-wk1 platform directory and TestExpectations file
+        https://bugs.webkit.org/show_bug.cgi?id=128676
+
+        Build fix. Put mac-wk1 between mac-mountainlion and mac.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.default_baseline_search_path):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory):
+
 2014-02-12  Brady Eidson  <beidson@apple.com>
 
         Add a mac-wk1 platform directory and TestExpectations file
