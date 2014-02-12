@@ -309,7 +309,7 @@
     <ClCompile Include="..\bindings\ScriptFunctionCall.cpp" />
     <ClCompile Include="..\bindings\ScriptObject.cpp" />
     <ClCompile Include="..\bindings\ScriptValue.cpp" />
-    <ClInclude Include="..\builtins\BuiltinExecutables.cpp" />
+    <ClCompile Include="..\builtins\BuiltinExecutables.cpp" />
     <ClCompile Include="..\bytecode\ArrayAllocationProfile.cpp" />
     <ClCompile Include="..\bytecode\ArrayProfile.cpp" />
     <ClCompile Include="..\bytecode\BytecodeBasicBlock.cpp" />

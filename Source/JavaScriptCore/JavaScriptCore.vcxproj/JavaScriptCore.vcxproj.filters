@@ -1463,9 +1463,9 @@
     <ClInclude Include="..\assembler\X86Assembler.h">
       <Filter>assembler</Filter>
     </ClInclude>
-    <ClCompile Include="..\builtins\BuiltinExecutables.h">
+    <ClInclude Include="..\builtins\BuiltinExecutables.h">
       <Filter>builtins</Filter>
-    </ClCompile>
+    </ClInclude>
     <ClInclude Include="..\bytecode\ArrayAllocationProfile.h">
       <Filter>bytecode</Filter>
     </ClInclude>

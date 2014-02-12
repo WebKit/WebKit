@@ -1,3 +1,10 @@
+2014-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix attempt after r163960.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
 2014-02-12  Michael Saboff  <msaboff@apple.com>
 
         Adjust VM::stackLimit based on the size of the largest FTL stack produced
