@@ -1,3 +1,39 @@
+2014-02-11  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make GraphicsLayerClient::paintContents's clip rect subpixel based.
+        https://bugs.webkit.org/show_bug.cgi?id=128460
+
+        Reviewed by Simon Fraser.
+
+        GraphicsClient::paintContents takes clipRect as FloatRect now so that we can paint on
+        subpixel position.
+
+        No change in functionality.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::paintContents):
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::cornerRect):
+        (WebCore::RenderLayer::scrollCornerRect):
+        (WebCore::resizerCornerRect):
+        (WebCore::RenderLayer::scrollCornerAndResizerRect):
+        (WebCore::RenderLayer::verticalScrollbarStart):
+        (WebCore::RenderLayer::horizontalScrollbarStart):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::paintContents):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2014-02-11  Antti Koivisto  <antti@apple.com>
 
         GIF animations should be suspended when outside of viewport

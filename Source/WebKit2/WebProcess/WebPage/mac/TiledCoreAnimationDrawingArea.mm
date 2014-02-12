@@ -356,11 +356,11 @@ void TiledCoreAnimationDrawingArea::notifyFlushRequired(const GraphicsLayer*)
 {
 }
 
-void TiledCoreAnimationDrawingArea::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
+void TiledCoreAnimationDrawingArea::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect)
 {
     for (auto it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it) {
         if (it->value.get() == graphicsLayer) {
-            m_webPage->drawPageOverlay(it->key, graphicsContext, clipRect);
+            m_webPage->drawPageOverlay(it->key, graphicsContext, enclosingIntRect(clipRect));
             break;
         }
     }

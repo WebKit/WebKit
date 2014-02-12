@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class FloatPoint;
+class FloatRect;
 class GraphicsContext;
 class GraphicsLayer;
 class IntPoint;
@@ -70,7 +71,7 @@ public:
     // Notification that this layer requires a flush before the next display refresh.
     virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) { }
 
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) = 0;
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& inClip) = 0;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const { }
 
     // Provides current transform (taking transform-origin and animations into account). Input matrix has been

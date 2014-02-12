@@ -19,6 +19,7 @@
 #ifndef AcceleratedCompositingContext_h
 #define AcceleratedCompositingContext_h
 
+#include "FloatRect.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "IntRect.h"
@@ -58,7 +59,7 @@ public:
     // GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*);
-    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& rectToPaint);
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& rectToPaint);
 
     void initialize();
 

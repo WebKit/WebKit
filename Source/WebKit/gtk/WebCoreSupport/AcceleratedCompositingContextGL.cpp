@@ -396,11 +396,11 @@ void AcceleratedCompositingContext::notifyFlushRequired(const GraphicsLayer*)
 
 }
 
-void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& rectToPaint)
+void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& rectToPaint)
 {
     context.save();
     context.clip(rectToPaint);
-    core(m_webView)->mainFrame().view()->paint(&context, rectToPaint);
+    core(m_webView)->mainFrame().view()->paint(&context, enclosingIntRect(rectToPaint));
     context.restore();
 }
 

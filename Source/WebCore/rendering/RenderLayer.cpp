@@ -2699,7 +2699,7 @@ LayoutRect RenderLayer::scrollCornerAndResizerRect() const
 {
     RenderBox* box = renderBox();
     if (!box)
-        return IntRect();
+        return LayoutRect();
     LayoutRect scrollCornerAndResizer = scrollCornerRect();
     if (scrollCornerAndResizer.isEmpty())
         scrollCornerAndResizer = resizerCornerRect(this, box->borderBoxRect());

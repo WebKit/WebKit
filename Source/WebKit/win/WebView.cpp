@@ -6730,7 +6730,7 @@ void WebView::notifyFlushRequired(const GraphicsLayer*)
     flushPendingGraphicsLayerChangesSoon();
 }
 
-void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& inClip)
+void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& inClip)
 {
     Frame* frame = core(m_mainFrame);
     if (!frame)
@@ -6738,7 +6738,7 @@ void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, Grap
 
     context.save();
     context.clip(inClip);
-    frame->view()->paint(&context, inClip);
+    frame->view()->paint(&context, enclosingIntRect(inClip));
     context.restore();
 }
 

@@ -2127,8 +2127,8 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r, Graphics
 }
 
 void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext* context,
-                    const IntRect& paintDirtyRect, // In the coords of rootLayer.
-                    PaintBehavior paintBehavior, GraphicsLayerPaintingPhase paintingPhase)
+    const LayoutRect& paintDirtyRect, // In the coords of rootLayer.
+    PaintBehavior paintBehavior, GraphicsLayerPaintingPhase paintingPhase)
 {
     if (paintsIntoWindow() || paintsIntoCompositedAncestor()) {
 #if !PLATFORM(IOS)
@@ -2186,12 +2186,16 @@ static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const
 }
 
 // Up-call from compositing layer drawing callback.
-void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const IntRect& clip)
+void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const FloatRect& clip)
 {
 #ifndef NDEBUG
     if (Page* page = renderer().frame().page())
         page->setIsPainting(true);
 #endif
+
+    // The dirtyRect is in the coords of the painting root.
+    LayoutRect dirtyRect(clip);
+    IntRect pixelSnappedRectForIntegralPositionedItems = pixelSnappedIntRect(dirtyRect);
 
     if (graphicsLayer == m_graphicsLayer.get()
         || graphicsLayer == m_foregroundLayer.get()
@@ -2200,24 +2204,22 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         || graphicsLayer == m_scrollingContentsLayer.get()) {
         InspectorInstrumentation::willPaint(&renderer());
 
-        // The dirtyRect is in the coords of the painting root.
-        IntRect dirtyRect = clip;
         if (!(paintingPhase & GraphicsLayerPaintOverflowContents))
             dirtyRect.intersect(enclosingIntRect(compositedBoundsIncludingMargin()));
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         paintIntoLayer(graphicsLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase);
 
-        InspectorInstrumentation::didPaint(&renderer(), &context, clip);
+        InspectorInstrumentation::didPaint(&renderer(), &context, dirtyRect);
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {
-        paintScrollbar(m_owningLayer.horizontalScrollbar(), context, clip);
+        paintScrollbar(m_owningLayer.horizontalScrollbar(), context, pixelSnappedRectForIntegralPositionedItems);
     } else if (graphicsLayer == layerForVerticalScrollbar()) {
-        paintScrollbar(m_owningLayer.verticalScrollbar(), context, clip);
+        paintScrollbar(m_owningLayer.verticalScrollbar(), context, pixelSnappedRectForIntegralPositionedItems);
     } else if (graphicsLayer == layerForScrollCorner()) {
         const LayoutRect& scrollCornerAndResizer = m_owningLayer.scrollCornerAndResizerRect();
         context.save();
         context.translate(-scrollCornerAndResizer.x(), -scrollCornerAndResizer.y());
-        LayoutRect transformedClip = clip;
+        LayoutRect transformedClip = LayoutRect(clip);
         transformedClip.moveBy(scrollCornerAndResizer.location());
         m_owningLayer.paintScrollCorner(&context, IntPoint(), pixelSnappedIntRect(transformedClip));
         m_owningLayer.paintResizer(&context, IntPoint(), transformedClip);

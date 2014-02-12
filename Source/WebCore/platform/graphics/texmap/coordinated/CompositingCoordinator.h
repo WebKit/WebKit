@@ -91,7 +91,7 @@ private:
     // GraphicsLayerClient
     virtual void notifyAnimationStarted(const GraphicsLayer*, double time) override;
     virtual void notifyFlushRequired(const GraphicsLayer*) override;
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& clipRect) override;
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clipRect) override;
     virtual float deviceScaleFactor() const override;
     virtual float pageScaleFactor() const override;
 

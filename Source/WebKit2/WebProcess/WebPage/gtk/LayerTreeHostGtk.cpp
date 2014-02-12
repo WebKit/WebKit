@@ -272,16 +272,16 @@ void LayerTreeHostGtk::notifyFlushRequired(const WebCore::GraphicsLayer*)
 {
 }
 
-void LayerTreeHostGtk::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
+void LayerTreeHostGtk::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect)
 {
     if (graphicsLayer == m_nonCompositedContentLayer.get()) {
-        m_webPage->drawRect(graphicsContext, clipRect);
+        m_webPage->drawRect(graphicsContext, enclosingIntRect(clipRect));
         return;
     }
 
     for (auto& pageOverlayLayer : m_pageOverlayLayers) {
         if (pageOverlayLayer.value.get() == graphicsLayer) {
-            m_webPage->drawPageOverlay(pageOverlayLayer.key, graphicsContext, clipRect);
+            m_webPage->drawPageOverlay(pageOverlayLayer.key, graphicsContext, enclosingIntRect(clipRect));
             break;
         }
     }

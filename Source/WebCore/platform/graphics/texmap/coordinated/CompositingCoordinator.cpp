@@ -253,9 +253,9 @@ void CompositingCoordinator::notifyFlushRequired(const GraphicsLayer*)
 }
 
 
-void CompositingCoordinator::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
+void CompositingCoordinator::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect)
 {
-    m_client->paintLayerContents(graphicsLayer, graphicsContext, clipRect);
+    m_client->paintLayerContents(graphicsLayer, graphicsContext, enclosingIntRect(clipRect));
 }
 
 std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayerClient* client)
