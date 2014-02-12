@@ -1,5 +1,15 @@
 2014-02-11  Andreas Kling  <akling@apple.com>
 
+        Remove unused RenderNamedFlowThread::previousRendererForNode().
+        <https://webkit.org/b/128637>
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderNamedFlowThread.cpp:
+        * rendering/RenderNamedFlowThread.h:
+
+2014-02-11  Andreas Kling  <akling@apple.com>
+
         Move renderNamedFlowThreadWrapper() to RenderElement.
         <https://webkit.org/b/128634>
 

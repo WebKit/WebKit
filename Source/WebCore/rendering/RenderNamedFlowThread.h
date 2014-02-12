@@ -53,7 +53,6 @@ public:
     const RenderRegionList& invalidRenderRegionList() const { return m_invalidRegionList; }
 
     RenderObject* nextRendererForNode(Node*) const;
-    RenderObject* previousRendererForNode(Node*) const;
 
     void addFlowChild(RenderObject* newChild);
     void removeFlowChild(RenderObject*);

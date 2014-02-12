@@ -111,27 +111,6 @@ RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
     return 0;
 }
 
-RenderObject* RenderNamedFlowThread::previousRendererForNode(Node* node) const
-{
-    if (m_flowThreadChildList->isEmpty())
-        return 0;
-
-    auto begin = m_flowThreadChildList->begin();
-    auto end = m_flowThreadChildList->end();
-    auto it = end;
-
-    do {
-        --it;
-        RenderObject* child = *it;
-        ASSERT(child->node());
-        unsigned short position = node->compareDocumentPosition(child->node());
-        if (position & Node::DOCUMENT_POSITION_PRECEDING)
-            return child;
-    } while (it != begin);
-
-    return 0;
-}
-
 void RenderNamedFlowThread::addFlowChild(RenderObject* newChild)
 {
     // The child list is used to sort the flow thread's children render objects 
