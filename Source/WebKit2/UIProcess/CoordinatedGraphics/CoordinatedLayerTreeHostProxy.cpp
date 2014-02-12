@@ -52,14 +52,18 @@ void CoordinatedLayerTreeHostProxy::updateViewport()
     m_drawingAreaProxy->updateViewport();
 }
 
-void CoordinatedLayerTreeHostProxy::dispatchUpdate(const Function<void()>& function)
+void CoordinatedLayerTreeHostProxy::dispatchUpdate(std::function<void()> function)
 {
-    m_scene->appendUpdate(function);
+    m_scene->appendUpdate(std::move(function));
 }
 
 void CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState(const CoordinatedGraphicsState& graphicsState)
 {
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::commitSceneState, m_scene.get(), graphicsState));
+    RefPtr<CoordinatedGraphicsScene> sceneProtector(m_scene);
+    dispatchUpdate([=] {
+        sceneProtector->commitSceneState(graphicsState);
+    });
+
     updateViewport();
 #if USE(TILED_BACKING_STORE)
     m_drawingAreaProxy->page()->didRenderFrame(graphicsState.contentsSize, graphicsState.coveredRect);
@@ -69,7 +73,11 @@ void CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState(const Coordin
 void CoordinatedLayerTreeHostProxy::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector)
 {
     // Inform the renderer to adjust viewport-fixed layers.
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setScrollPosition, m_scene.get(), rect.location()));
+    RefPtr<CoordinatedGraphicsScene> sceneProtector(m_scene);
+    const FloatPoint& scrollPosition = rect.location();
+    dispatchUpdate([=] {
+        sceneProtector->setScrollPosition(scrollPosition);
+    });
 
     if (rect == m_lastSentVisibleRect && trajectoryVector == m_lastSentTrajectoryVector)
         return;
@@ -91,7 +99,10 @@ void CoordinatedLayerTreeHostProxy::purgeBackingStores()
 
 void CoordinatedLayerTreeHostProxy::setBackgroundColor(const Color& color)
 {
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setBackgroundColor, m_scene.get(), color));
+    RefPtr<CoordinatedGraphicsScene> sceneProtector(m_scene);
+    dispatchUpdate([=] {
+        sceneProtector->setBackgroundColor(color);
+    });
 }
 
 void CoordinatedLayerTreeHostProxy::commitScrollOffset(uint32_t layerID, const IntSize& offset)

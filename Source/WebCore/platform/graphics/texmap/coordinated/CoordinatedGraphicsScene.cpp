@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-void CoordinatedGraphicsScene::dispatchOnMainThread(const Function<void()>& function)
+void CoordinatedGraphicsScene::dispatchOnMainThread(std::function<void()> function)
 {
     if (isMainThread())
         function();
     else
-        callOnMainThread(function);
+        callOnMainThread(std::move(function));
 }
 
 static bool layerShouldHaveBackingStore(TextureMapperLayer* layer)
@@ -98,8 +98,12 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
 
-    if (currentRootLayer->descendantsOrSelfHaveRunningAnimations())
-        dispatchOnMainThread(bind(&CoordinatedGraphicsScene::updateViewport, this));
+    if (currentRootLayer->descendantsOrSelfHaveRunningAnimations()) {
+        RefPtr<CoordinatedGraphicsScene> protector(this);
+        dispatchOnMainThread([=] {
+            protector->updateViewport();
+        });
+    }
 }
 
 void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* platformContext)
@@ -576,7 +580,10 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
     removeReleasedImageBackingsIfNeeded();
 
     // The pending tiles state is on its way for the screen, tell the web process to render the next one.
-    dispatchOnMainThread(bind(&CoordinatedGraphicsScene::renderNextFrame, this));
+    RefPtr<CoordinatedGraphicsScene> protector(this);
+    dispatchOnMainThread([=] {
+        protector->renderNextFrame();
+    });
 }
 
 void CoordinatedGraphicsScene::renderNextFrame()
@@ -607,16 +614,16 @@ void CoordinatedGraphicsScene::syncRemoteContent()
     // We enqueue messages and execute them during paint, as they require an active GL context.
     ensureRootLayer();
 
-    Vector<Function<void()> > renderQueue;
+    Vector<std::function<void()>> renderQueue;
     bool calledOnMainThread = WTF::isMainThread();
     if (!calledOnMainThread)
         m_renderQueueMutex.lock();
-    renderQueue.swap(m_renderQueue);
+    renderQueue = std::move(m_renderQueue);
     if (!calledOnMainThread)
         m_renderQueueMutex.unlock();
 
-    for (size_t i = 0; i < renderQueue.size(); ++i)
-        renderQueue[i]();
+    for (auto& function : renderQueue)
+        function();
 }
 
 void CoordinatedGraphicsScene::purgeGLResources()
@@ -637,7 +644,11 @@ void CoordinatedGraphicsScene::purgeGLResources()
     m_backingStoresWithPendingBuffers.clear();
 
     setActive(false);
-    dispatchOnMainThread(bind(&CoordinatedGraphicsScene::purgeBackingStores, this));
+
+    RefPtr<CoordinatedGraphicsScene> protector(this);
+    dispatchOnMainThread([=] {
+        protector->purgeBackingStores();
+    });
 }
 
 void CoordinatedGraphicsScene::dispatchCommitScrollOffset(uint32_t layerID, const IntSize& offset)
@@ -647,7 +658,10 @@ void CoordinatedGraphicsScene::dispatchCommitScrollOffset(uint32_t layerID, cons
 
 void CoordinatedGraphicsScene::commitScrollOffset(uint32_t layerID, const IntSize& offset)
 {
-    dispatchOnMainThread(bind(&CoordinatedGraphicsScene::dispatchCommitScrollOffset, this, layerID, offset));
+    RefPtr<CoordinatedGraphicsScene> protector(this);
+    dispatchOnMainThread([=] {
+        protector->dispatchCommitScrollOffset(layerID, offset);
+    });
 }
 
 void CoordinatedGraphicsScene::purgeBackingStores()
@@ -671,14 +685,14 @@ void CoordinatedGraphicsScene::detach()
     m_client = 0;
 }
 
-void CoordinatedGraphicsScene::appendUpdate(const Function<void()>& function)
+void CoordinatedGraphicsScene::appendUpdate(std::function<void()> function)
 {
     if (!m_isActive)
         return;
 
     ASSERT(isMainThread());
     MutexLocker locker(m_renderQueueMutex);
-    m_renderQueue.append(function);
+    m_renderQueue.append(std::move(function));
 }
 
 void CoordinatedGraphicsScene::setActive(bool active)
@@ -691,8 +705,12 @@ void CoordinatedGraphicsScene::setActive(bool active)
     // and cannot be applied to the newly created instance.
     m_renderQueue.clear();
     m_isActive = active;
-    if (m_isActive)
-        dispatchOnMainThread(bind(&CoordinatedGraphicsScene::renderNextFrame, this));
+    if (m_isActive) {
+        RefPtr<CoordinatedGraphicsScene> protector(this);
+        dispatchOnMainThread([=] {
+            protector->renderNextFrame();
+        });
+    }
 }
 
 void CoordinatedGraphicsScene::setBackgroundColor(const Color& color)

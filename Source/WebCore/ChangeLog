@@ -1,3 +1,27 @@
+2014-02-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordinatedGraphics] Move CoordinatedGraphicsScene, CoordinatedLayerTreeHostProxy to std::function
+        https://bugs.webkit.org/show_bug.cgi?id=128473
+
+        Reviewed by Anders Carlsson.
+
+
+        Move the CoordinatedGraphicsScene class to using std::function instead of WTF::Functional and std::bind
+        instead of WTF::bind. The function wrapper is now moved through function calls and not passed by reference,
+        and lambda functions are inlined into the dispatchOnMainThread() calls, with the CoordinatedGraphicsScene
+        refcount-protected.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        (WebCore::CoordinatedGraphicsScene::dispatchOnMainThread):
+        (WebCore::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        (WebCore::CoordinatedGraphicsScene::commitSceneState):
+        (WebCore::CoordinatedGraphicsScene::syncRemoteContent):
+        (WebCore::CoordinatedGraphicsScene::purgeGLResources):
+        (WebCore::CoordinatedGraphicsScene::commitScrollOffset):
+        (WebCore::CoordinatedGraphicsScene::appendUpdate):
+        (WebCore::CoordinatedGraphicsScene::setActive):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.h:
+
 2014-02-12  Eric Carlson  <eric.carlson@apple.com>
 
         Cleanup the code added for https://bugs.webkit.org/show_bug.cgi?id=128125.

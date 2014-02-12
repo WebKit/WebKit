@@ -1,3 +1,21 @@
+2014-02-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordinatedGraphics] Move CoordinatedGraphicsScene, CoordinatedLayerTreeHostProxy to std::function
+        https://bugs.webkit.org/show_bug.cgi?id=128473
+
+        Reviewed by Anders Carlsson.
+
+        Move the CoordinatedLayerTreeHostProxy class to using std::function instead of WTF::Functional. C++11
+        lambdas are used to construct the update functions, with the CoordinatedGraphicsScene refcount-protected
+        throughout the lifetime of the function wrapper.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::dispatchUpdate):
+        (WebKit::CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState):
+        (WebKit::CoordinatedLayerTreeHostProxy::setVisibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHostProxy::setBackgroundColor):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+
 2014-02-12  Dan Bernstein  <mitz@apple.com>
 
         Stop using PLATFORM(MAC) in WebKit2/{Database,Network}Process except where it means “OS X but not iOS”

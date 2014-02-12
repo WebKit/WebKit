@@ -26,7 +26,7 @@
 #include "CoordinatedGraphicsArgumentCoders.h"
 #include "MessageReceiver.h"
 #include <WebCore/CoordinatedGraphicsScene.h>
-#include <wtf/Functional.h>
+#include <functional>
 
 namespace WebCore {
 class CoordinatedGraphicsState;
@@ -57,7 +57,7 @@ public:
     virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
 protected:
-    void dispatchUpdate(const Function<void()>&);
+    void dispatchUpdate(std::function<void()>);
 
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
