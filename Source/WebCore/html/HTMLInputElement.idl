@@ -126,5 +126,5 @@ interface HTMLInputElement : HTMLElement {
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=NullString] attribute DOMString autocapitalize;
 
     // See http://www.w3.org/TR/html-media-capture/
-    [Conditional=MEDIA_CAPTURE] attribute DOMString capture;
+    [Conditional=MEDIA_CAPTURE, Reflect] attribute boolean capture;
 };

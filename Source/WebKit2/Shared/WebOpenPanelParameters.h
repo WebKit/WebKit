@@ -47,7 +47,7 @@ public:
     PassRefPtr<API::Array> acceptMIMETypes() const;
     PassRefPtr<API::Array> selectedFileNames() const;
 #if ENABLE(MEDIA_CAPTURE)
-    String capture() const;
+    bool capture() const;
 #endif
 
 private:

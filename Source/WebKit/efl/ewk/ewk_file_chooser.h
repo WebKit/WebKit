@@ -43,19 +43,6 @@ extern "C" {
 typedef struct _Ewk_File_Chooser Ewk_File_Chooser;
 
 /**
- * \enum    _Ewk_File_Chooser_Capture_Type
- * @brief   Types of capture attribute of file chooser to support the HTML media capture.
- */
-enum _Ewk_File_Chooser_Capture_Type {
-    EWK_FILE_CHOOSER_CAPTURE_TYPE_INVALID,
-    EWK_FILE_CHOOSER_CAPTURE_TYPE_FILESYSTEM,
-    EWK_FILE_CHOOSER_CAPTURE_TYPE_CAMERA,
-    EWK_FILE_CHOOSER_CAPTURE_TYPE_CAMCORDER,
-    EWK_FILE_CHOOSER_CAPTURE_TYPE_MICROPHONE
-};
-typedef enum _Ewk_File_Chooser_Capture_Type Ewk_File_Chooser_Capture_Type;
-
-/**
  * Query if multiple files are supported by file chooser.
  *
  * @param f file chooser object.
@@ -114,16 +101,15 @@ EAPI Eina_List *ewk_file_chooser_accept_file_extentions_get(const Ewk_File_Choos
 EAPI Eina_List *ewk_file_chooser_selected_files_get(const Ewk_File_Chooser *f);
 
 /**
- * Returns the capture attribute of the file chooser to support HTML media capture.
+ * Returns whether the device's media capture capabilities should be used in the file chooser.
  *
  * @see http://www.w3.org/TR/html-media-capture/ for the semantics of the capture attribute.
  *
  * @param f file chooser object.
  *
- * @return @c Ewk_File_Chooser_Capture_Type on supporting HTML media capture or
- *         @c EWK_FILE_CHOOSER_CAPTURE_TYPE_INVALID on failure.
+ * @return @c EINA_TRUE if the device's capabilities should be used, @c EINA_FALSE otherwise.
  */
-EAPI Ewk_File_Chooser_Capture_Type ewk_file_chooser_capture_get(const Ewk_File_Chooser *f);
+EAPI Eina_Bool ewk_file_chooser_capture_get(const Ewk_File_Chooser *f);
 
 #ifdef __cplusplus
 }

@@ -1,3 +1,18 @@
+2014-02-12  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Update the HTML Media Capture implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=118465
+
+        Reviewed by Darin Adler.
+
+        Make the implementation in WebKit compatible with the 2013-05-09
+        version of the spec, which makes the "capture" attribute a boolean
+        instead of an enum.
+
+        * ewk/ewk_file_chooser.cpp:
+        (ewk_file_chooser_capture_get): Return an Eina_Bool now.
+        * ewk/ewk_file_chooser.h: Get rid of Ewk_File_Chooser_Capture_Type.
+
 2014-02-09  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove PageClientEfl

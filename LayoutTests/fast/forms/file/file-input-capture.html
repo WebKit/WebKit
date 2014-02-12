@@ -7,28 +7,33 @@ description("Tests the capture attribute of &lt;input type='file'&gt;");
 var input = document.createElement("input");
 
 shouldBeTrue("'capture' in input");
-shouldBe("input.capture", "''");
+shouldBe("input.capture", "false");
+shouldBe("input.hasAttribute('capture')", "false");
 
 input.setAttribute("type", "file");
 
-shouldBe("input.capture", "'filesystem'");
+shouldBe("input.capture", "false");
+shouldBe("input.hasAttribute('capture')", "false");
 
-input.setAttribute("capture", "CaMerA");
-shouldBe("input.capture", "'camera'");
+input.setAttribute("capture", true);
+shouldBe("input.capture", "true");
+shouldBe("input.hasAttribute('capture')", "true");
 
-input.setAttribute("capture", "camcorder");
-shouldBe("input.capture", "'camcorder'");
+input.removeAttribute("capture");
+shouldBe("input.capture", "false");
+shouldBe("input.hasAttribute('capture')", "false");
 
-input.setAttribute("capture", "MiCroPhonE");
-shouldBe("input.capture", "'microphone'");
+input.setAttribute("capture", "'x'");
+shouldBe("input.capture", "true");
+shouldBe("input.hasAttribute('capture')", "true");
 
-input.setAttribute("capture", "xyzzy");
-shouldBe("input.capture", "'filesystem'");
+input.capture = false;
+shouldBe("input.capture", "false");
+shouldBe("input.hasAttribute('capture')", "false");
 
-input.capture = "CamCorder";
-shouldBe("input.capture", "'camcorder'");
-shouldBe("input.getAttribute('capture')", "'CamCorder'");
-
+input.capture = true;
+shouldBe("input.capture", "true");
+shouldBe("input.hasAttribute('capture')", "true");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </html>

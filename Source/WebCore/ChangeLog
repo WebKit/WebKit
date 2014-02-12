@@ -1,3 +1,26 @@
+2014-02-12  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Update the HTML Media Capture implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=118465
+
+        Reviewed by Darin Adler.
+
+        Make the implementation in WebKit compatible with the 2013-05-09
+        version of the spec, which makes the "capture" attribute a boolean
+        instead of an enum.
+
+        Covered by fast/forms/file/file-input-capture.html.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::capture): Renamed to shouldUseMediaCapture().
+        (WebCore::HTMLInputElement::shouldUseMediaCapture): Return a bool.
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl: Turn the `capture' attribute into a
+        reflective boolean instead of a DOMString.
+        * platform/FileChooser.h:
+
 2014-02-12  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Remove unused method in RenderFlowThread

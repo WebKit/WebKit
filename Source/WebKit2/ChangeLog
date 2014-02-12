@@ -1,3 +1,23 @@
+2014-02-12  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Update the HTML Media Capture implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=118465
+
+        Reviewed by Darin Adler.
+
+        Make the implementation in WebKit compatible with the 2013-05-09
+        version of the spec, which makes the "capture" attribute a boolean
+        instead of an enum.
+
+        * Shared/WebOpenPanelParameters.cpp:
+        (WebKit::WebOpenPanelParameters::capture): Return a bool.
+        * Shared/WebOpenPanelParameters.h: Ditto.
+        * UIProcess/API/C/WKOpenPanelParameters.cpp:
+        (WKOpenPanelParametersCopyCapture): Deprecate, the implementation is
+        incompatible with the current version of the spec.
+        (WKOpenPanelParametersGetCaptureEnabled): Add and return a bool.
+        * UIProcess/API/C/WKOpenPanelParameters.h:
+
 2014-02-12  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Fails to build if configure is run with its absolute path

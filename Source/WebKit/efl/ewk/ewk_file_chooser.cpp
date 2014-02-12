@@ -76,26 +76,14 @@ Eina_List* ewk_file_chooser_selected_files_get(const Ewk_File_Chooser* chooser)
     return files;
 }
 
-Ewk_File_Chooser_Capture_Type ewk_file_chooser_capture_get(const Ewk_File_Chooser* chooser)
+Eina_Bool ewk_file_chooser_capture_get(const Ewk_File_Chooser* chooser)
 {
 #if ENABLE(MEDIA_CAPTURE)
-    EINA_SAFETY_ON_NULL_RETURN_VAL(chooser, EWK_FILE_CHOOSER_CAPTURE_TYPE_INVALID);
-
-    String capture = chooser->fileChooser->settings().capture;
-
-    if (capture == "camera")
-        return EWK_FILE_CHOOSER_CAPTURE_TYPE_CAMERA;
-
-    if (capture == "camcorder")
-        return EWK_FILE_CHOOSER_CAPTURE_TYPE_CAMCORDER;
-
-    if (capture == "microphone")
-        return EWK_FILE_CHOOSER_CAPTURE_TYPE_MICROPHONE;
-
-    return EWK_FILE_CHOOSER_CAPTURE_TYPE_FILESYSTEM;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(chooser, false);
+    return chooser->fileChooser->settings().capture;
 #else
     UNUSED_PARAM(chooser);
-    return EWK_FILE_CHOOSER_CAPTURE_TYPE_INVALID;
+    return false;
 #endif
 }
 
