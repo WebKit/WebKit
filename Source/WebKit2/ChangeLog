@@ -1,3 +1,25 @@
+2014-02-11  Enrica Casucci  <enrica@apple.com>
+
+        Support WebSelections in WK2 on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=127015
+        <rdar://problem/15211964>
+
+        Reviewed by Benjamin Poulain.
+
+        First step towards implementing block selections on iOS.
+        The main logic is in rangeForWebSelectionAtPosition that
+        decides whether we create a text or a block selection.
+
+        * Shared/ios/WKGestureTypes.h:
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (toUIWKSelectionFlags):
+        (selectionChangedWithGesture):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::getPositionInformation):
+
 2014-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Convert position:sticky and position:fixed properties to position:static and position:absolute upon copy

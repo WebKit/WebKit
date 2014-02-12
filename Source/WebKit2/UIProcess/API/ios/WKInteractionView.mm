@@ -1071,6 +1071,18 @@ static inline UIGestureRecognizerState toUIGestureRecognizerState(WKGestureRecog
     }
 }
 
+static inline UIWKSelectionFlags toUIWKSelectionFlags(WKSelectionFlags flag)
+{
+    switch (flag) {
+    case WKNone:
+        return UIWKNone;
+    case WKWordIsNearTap:
+        return UIWKWordIsNearTap;
+    case WKIsBlockSelection:
+        return UIWKIsBlockSelection;
+    }
+}
+
 static void selectionChangedWithGesture(const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, WKErrorRef error, void* context)
 {
     if (error) {
@@ -1079,11 +1091,10 @@ static void selectionChangedWithGesture(const WebCore::IntPoint& point, uint32_t
     }
     WKInteractionView *view = static_cast<WKInteractionView*>(context);
     ASSERT(view);
-    // FIXME: need to pass flags to selectionChangedWithGestureAt.
     if ([view webSelectionAssistant])
-        [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState))];
+        [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((WKSelectionFlags)flags))];
     else
-        [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState))];
+        [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((WKSelectionFlags)flags))];
 }
 
 static void selectionChangedWithTouch(const WebCore::IntPoint& point, uint32_t touch, WKErrorRef error, void* context)

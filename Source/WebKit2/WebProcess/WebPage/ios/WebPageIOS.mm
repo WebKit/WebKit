@@ -52,6 +52,7 @@
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformMouseEvent.h>
+#import <WebCore/RenderBlock.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/ResourceBuffer.h>
 #import <WebCore/SharedBuffer.h>
@@ -62,6 +63,9 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+const int blockSelectionStartWidth = 100;
+const int blockSelectionStartHeight = 100;
 
 void WebPage::platformInitialize()
 {
@@ -412,6 +416,66 @@ static IntPoint constrainPoint(const IntPoint& point, Frame* frame, Node* assist
     return constrainedPoint;
 }
 
+PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point, const VisiblePosition& position, WKSelectionFlags& flags)
+{
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent | HitTestRequest::AllowChildFrameContent);
+
+    Node* currentNode = result.innerNode();
+    RefPtr<Range> range;
+    IntRect boundingRect;
+    ExceptionCode ec;
+
+    if (currentNode->isTextNode()) {
+        range = enclosingTextUnitOfGranularity(position, ParagraphGranularity, DirectionForward);
+        if (!range || range->collapsed(ec))
+            range = Range::create(currentNode->document(), position, position);
+        if (!range)
+            return nullptr;
+
+        Vector<SelectionRect> selectionRects;
+        range->collectSelectionRects(selectionRects);
+        unsigned size = selectionRects.size();
+
+        for (unsigned i = 0; i < size; i++) {
+            const IntRect &coreRect = selectionRects[i].rect();
+            if (i == 0)
+                boundingRect = coreRect;
+            else
+                boundingRect.unite(coreRect);
+        }
+        if (boundingRect.width() > m_blockSelectionDesiredSize.width() && boundingRect.height() > m_blockSelectionDesiredSize.height())
+            return wordRangeFromPosition(position);
+
+        currentNode = range->commonAncestorContainer(ec);
+    }
+
+    if (!currentNode->isElementNode())
+        currentNode = currentNode->parentElement();
+
+    Node* bestChoice = currentNode;
+    while (currentNode) {
+        boundingRect = currentNode->renderer()->absoluteBoundingBoxRect(true);
+        if (boundingRect.width() > m_blockSelectionDesiredSize.width() && boundingRect.height() > m_blockSelectionDesiredSize.height())
+            break;
+        bestChoice = currentNode;
+        currentNode = currentNode->parentElement();
+    }
+
+    if (!bestChoice)
+        return nullptr;
+
+    RenderObject* renderer = bestChoice->renderer();
+    if (renderer && renderer->childrenInline() && (renderer->isRenderBlock() && toRenderBlock(renderer)->inlineElementContinuation() == nil) && !renderer->isTable()) {
+        range = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionBackward);
+        if (range && !range->collapsed(ec))
+            return range;
+    }
+    flags = WKIsBlockSelection;
+    range = Range::create(bestChoice->document());
+    range->selectNode(bestChoice, ec);
+    return range;
+}
+
 void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
@@ -424,6 +488,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         return;
     }
     RefPtr<Range> range;
+    WKSelectionFlags flags = WKNone;
     switch (static_cast<WKGestureType>(gestureType)) {
     case WKGestureOneFingerTap:
     {
@@ -514,8 +579,11 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         break;
 
     case WKGestureMakeWebSelection:
-        // FIXME: Here we should implement the logic for block selections.
-        range = wordRangeFromPosition(position);
+        if (static_cast<WKGestureRecognizerState>(gestureState) == WKGestureRecognizerStateBegan) {
+            m_blockSelectionDesiredSize.setWidth(blockSelectionStartWidth);
+            m_blockSelectionDesiredSize.setHeight(blockSelectionStartHeight);
+        }
+        range = rangeForWebSelectionAtPosition(point, position, flags);
         break;
 
     default:
@@ -524,7 +592,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
     if (range)
         frame.selection().setSelectedRange(range.get(), position.affinity(), true);
 
-    send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, 0, callbackID));
+    send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, flags, callbackID));
     m_shouldReturnWordAtSelection = false;
 }
 
@@ -894,18 +962,10 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
     if (!elementIsLinkOrImage) {
         HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent | HitTestRequest::AllowChildFrameContent);
         hitNode = result.innerNode();
-        if (hitNode && hitNode->isTextNode()) {
+        if (hitNode) {
             m_page->focusController().setFocusedFrame(result.innerNodeFrame());
-            FrameView* view = result.innerNodeFrame()->view();
-            VisiblePosition position = result.innerNodeFrame()->visiblePositionForPoint(view->rootViewToContents(point));
-            RefPtr<Range> range = wordRangeFromPosition(position);
-            if (range)
-                range->collectSelectionRects(info.selectionRects);
-            convertSelectionRectsToRootView(view, info.selectionRects);
-        } else {
-            // FIXME: implement the logic for the block selection.
+            info.selectionRects.append(SelectionRect(hitNode->renderer()->absoluteBoundingBoxRect(true), true, 0));
         }
-
     }
 }
 

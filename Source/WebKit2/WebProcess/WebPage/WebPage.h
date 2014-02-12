@@ -45,6 +45,7 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
+#include "WKGestureTypes.h"
 #include "WebUndoStep.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
@@ -724,6 +725,7 @@ private:
 
 #if PLATFORM(IOS)
     static void convertSelectionRectsToRootView(WebCore::FrameView*, Vector<WebCore::SelectionRect>&);
+    PassRefPtr<WebCore::Range> rangeForWebSelectionAtPosition(const WebCore::IntPoint&, const WebCore::VisiblePosition&, WKSelectionFlags&);
 #endif
 #if !PLATFORM(MAC)
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
@@ -1068,6 +1070,7 @@ private:
 
     WebCore::ViewportConfiguration m_viewportConfiguration;
     bool m_userHasChangedPageScaleFactor;
+    WebCore::IntSize m_blockSelectionDesiredSize;
 #endif
 
     WebInspectorClient* m_inspectorClient;

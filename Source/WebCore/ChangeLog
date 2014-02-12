@@ -1,3 +1,15 @@
+2014-02-11  Enrica Casucci  <enrica@apple.com>
+
+        Support WebSelections in WK2 on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=127015
+        <rdar://problem/15211964>
+
+        Reviewed by Benjamin Poulain.
+
+        Adding few exports.
+
+        * WebCore.exp.in:
+
 2014-02-11  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderNamedFlowThread always has a WebKitNamedFlow.
