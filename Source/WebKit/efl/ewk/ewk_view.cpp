@@ -87,7 +87,6 @@
 #include <Evas.h>
 #include <eina_safety_checks.h>
 #include <inttypes.h>
-#include <libsoup/soup.h>
 #include <limits>
 #include <math.h>
 #include <sys/time.h>
@@ -4484,25 +4483,6 @@ Ewk_Page_Visibility_State ewk_view_visibility_state_get(const Evas_Object* ewkVi
 #endif
 
     return EWK_PAGE_VISIBILITY_STATE_VISIBLE;
-}
-
-SoupSession* ewk_view_soup_session_get(const Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-    return WebCore::NetworkStorageSession::defaultStorageSession().soupNetworkSession().soupSession();
-}
-
-void ewk_view_soup_session_set(Evas_Object* ewkView, SoupSession* session)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-    if (!SOUP_IS_SESSION_ASYNC(session)) {
-        ERR("WebKit requires an SoupSessionAsync to work properly, but "
-            "a SoupSessionSync was provided.");
-        return;
-    }
-    WebCore::NetworkStorageSession::defaultStorageSession().setSoupNetworkSession(WebCore::SoupNetworkSession::createForSoupSession(session));
 }
 
 Eina_Bool ewk_view_setting_enable_xss_auditor_get(const Evas_Object* ewkView)

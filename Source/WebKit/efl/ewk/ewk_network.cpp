@@ -74,8 +74,3 @@ void ewk_network_tls_ca_certificates_path_set(const char* bundlePath)
     SoupSession* defaultSession = WebCore::SoupNetworkSession::defaultSession().soupSession();
     g_object_set(defaultSession, "ssl-ca-file", bundlePath, NULL);
 }
-
-SoupSession* ewk_network_default_soup_session_get()
-{
-    return WebCore::SoupNetworkSession::defaultSession().soupSession();
-}

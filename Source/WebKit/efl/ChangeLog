@@ -1,3 +1,21 @@
+2014-02-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Do not include libsoup header in the public headers
+        https://bugs.webkit.org/show_bug.cgi?id=128701
+
+        Reviewed by Gyuyoung Kim.
+
+        Although ewebkit used libsoup internally, it's not good for EFL developers
+        to use it.
+        Instead, we should provide some wrapper APIs like ewk_network_proxy_uri_set
+        for future changes.
+
+        * ewk/ewk_network.cpp: Removed soup related header,APIs and comments.
+        (ewk_network_tls_ca_certificates_path_set):
+        * ewk/ewk_network.h: Ditto.
+        * ewk/ewk_view.cpp: Ditto.
+        * ewk/ewk_view.h: Ditto.
+
 2014-02-12  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Update the HTML Media Capture implementation.
