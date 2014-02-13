@@ -1,3 +1,12 @@
+2014-02-13  Daniel Bates  <dabates@apple.com>
+
+        Fix the ARM build when HAVE_ARM_NEON_INTRINSICS is enabled
+
+        Add !HAVE(ARM_NEON_INTRINSICS)-guard around file-level inline function arithmeticSoftware to
+        avoid an unused function compiler warning when building with ARM Neon intrinsics.
+
+        * platform/graphics/filters/FEComposite.cpp:
+
 2014-02-13  Brady Eidson  <beidson@apple.com>
 
         IDB: Three tests crash the DatabaseProcess under ~KeyedDecoder
