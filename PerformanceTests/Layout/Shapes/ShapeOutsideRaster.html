@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="resources/shapes.css" type="text/css"></link>
+        <script src="../../resources/runner.js"></script>
+        <script src="resources/shapes.js"></script>
+    </head>
+    <body>
+        <pre id="log"></pre>
+        <script>
+            var shape = "url(resources/shape.gif)";
+            PerfTestRunner.measureTime(createShapeOutsideTest("200px", "200px", shape, 1000));
+        </script>
+    </body>
+</html>

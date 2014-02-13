@@ -1,3 +1,16 @@
+2014-02-13  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Add performance test for raster shape
+        https://bugs.webkit.org/show_bug.cgi?id=128746
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds performance testing for image valued shape-outside.
+        The test is skipped by default for now.
+
+        * Layout/Shapes/ShapeOutsideRaster.html: Added.
+        * Layout/Shapes/resources/shape.gif: Added.
+
 2014-02-10  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add initial performance tests for polygon shape 
