@@ -74,6 +74,7 @@ public:
     //   GL_CHROMIUM_copy_texture
     //   GL_CHROMIUM_flipy
     //   GL_ARB_draw_buffers / GL_EXT_draw_buffers
+    //   GL_ANGLE_instanced_arrays
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
@@ -237,6 +238,11 @@ public:
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     virtual void drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs) = 0;
+
+    // GL_ANGLE_instanced_arrays
+    virtual void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount) = 0;
+    virtual void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount) = 0;
+    virtual void vertexAttribDivisor(GC3Duint index, GC3Duint divisor) = 0;
 
     virtual bool isNVIDIA() = 0;
     virtual bool isAMD() = 0;

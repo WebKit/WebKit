@@ -236,6 +236,44 @@ void Extensions3DOpenGL::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
 #endif
 }
 
+void Extensions3DOpenGL::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
+{
+#if ENABLE(GTK)
+    m_context->makeContextCurrent();
+    ::glDrawArraysInstanced(mode, first, count, primcount);
+#else
+    UNUSED_PARAM(mode);
+    UNUSED_PARAM(first);
+    UNUSED_PARAM(count);
+    UNUSED_PARAM(primcount);
+#endif
+}
+
+void Extensions3DOpenGL::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
+{
+#if ENABLE(GTK)
+    m_context->makeContextCurrent();
+    ::glDrawElementsInstanced(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
+#else
+    UNUSED_PARAM(mode);
+    UNUSED_PARAM(count);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(primcount);
+#endif
+}
+
+void Extensions3DOpenGL::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
+{
+#if ENABLE(GTK)
+    m_context->makeContextCurrent();
+    ::glVertexAttribDivisor(index, divisor);
+#else
+    UNUSED_PARAM(index);
+    UNUSED_PARAM(divisor);
+#endif
+}
+
 String Extensions3DOpenGL::getExtensions()
 {
     return String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));

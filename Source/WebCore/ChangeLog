@@ -1,3 +1,37 @@
+2014-02-13  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Support ANGLE_instanced_arrays for GLES backend.
+        https://bugs.webkit.org/show_bug.cgi?id=128579
+
+        Reviewed by Dean Jackson.
+
+        Add some APIs to Extensions3D to support ANGLE_instanced_arrays for GLES backend.
+        At the same time, drawArraysInstanced, drawElementsInstanced and vertexAttribDivisor
+        are moved from GC3DOpenGL.cpp to GC3DOpenGLCommon.cpp since they could be shareable
+        through Extensions3D.
+
+        Covered by fast/canvas/webgl/angle-instanced-arrays.html
+
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::drawArraysInstanced):
+        (WebCore::Extensions3DOpenGL::drawElementsInstanced):
+        (WebCore::Extensions3DOpenGL::vertexAttribDivisor):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        (WebCore::Extensions3DOpenGLES::Extensions3DOpenGLES):
+        (WebCore::Extensions3DOpenGLES::drawArraysInstanced):
+        (WebCore::Extensions3DOpenGLES::drawElementsInstanced):
+        (WebCore::Extensions3DOpenGLES::vertexAttribDivisor):
+        (WebCore::Extensions3DOpenGLES::supportsExtension):
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::drawArraysInstanced):
+        (WebCore::GraphicsContext3D::drawElementsInstanced):
+        (WebCore::GraphicsContext3D::vertexAttribDivisor):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+
 2014-02-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] MEDIA_CONTROLS_SCRIPT support
