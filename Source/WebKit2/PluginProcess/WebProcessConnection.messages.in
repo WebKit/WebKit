@@ -30,7 +30,7 @@ messages -> WebProcessConnection LegacyReceiver {
     CreatePluginAsynchronously(WebKit::PluginCreationParameters pluginCreationParameters)
 
     # Destroys the plug-in instance with the given instance ID.
-    DestroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete) -> ()
+    DestroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete) -> () Delayed
 }
 
 #endif

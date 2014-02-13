@@ -1,3 +1,20 @@
+2014-02-12  Antti Koivisto  <antti@apple.com>
+
+        Return immediately from DestroyPlugin IPC call
+        https://bugs.webkit.org/show_bug.cgi?id=128712
+
+        Reviewed by Anders Carlsson.
+        
+        In some cases we spend a lot of time waiting for synchronous IPC for plugin termination to complete. Reduce
+        the delay by returning from IPC immediately when the plugin process receives it. Just using asynchrounous
+        IPC might introduce undesirable arbitrary delay between the IPC call returning and the destruction actually
+        starting.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::destroyPlugin):
+        * PluginProcess/WebProcessConnection.h:
+        * PluginProcess/WebProcessConnection.messages.in:
+
 2014-02-12  Anders Carlsson  <andersca@apple.com>
 
         Pass the related page in the WebPageConfiguration struct

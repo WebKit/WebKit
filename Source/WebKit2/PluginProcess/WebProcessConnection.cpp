@@ -178,8 +178,12 @@ void WebProcessConnection::didClose(IPC::Connection*)
         destroyPluginControllerProxy(pluginControllers[i]);
 }
 
-void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete)
+void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete, PassRefPtr<Messages::WebProcessConnection::DestroyPlugin::DelayedReply> reply)
 {
+    // We return immediately from this synchronous IPC. We want to make sure the plugin destruction is just about to start so audio playback
+    // will finish soon after returning. However we don't want to wait for destruction to complete fully as that may take a while.
+    reply->send();
+
     // Ensure we don't clamp any timers during destruction
     ActivityAssertion activityAssertion(PluginProcess::shared().connectionActivity());
 

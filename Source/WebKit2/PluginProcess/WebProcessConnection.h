@@ -72,7 +72,7 @@ private:
     void didReceiveSyncWebProcessConnectionMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
     void createPlugin(const PluginCreationParameters&, PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply>);
     void createPluginAsynchronously(const PluginCreationParameters&);
-    void destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete);
+    void destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete, PassRefPtr<Messages::WebProcessConnection::DestroyPlugin::DelayedReply>);
     
     void createPluginInternal(const PluginCreationParameters&, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID);
 
