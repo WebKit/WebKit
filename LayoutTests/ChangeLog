@@ -1,3 +1,15 @@
+2014-02-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't crash when SerializedScriptValue deserialization fails
+        https://bugs.webkit.org/show_bug.cgi?id=128657
+
+        Reviewed by Oliver Hunt.
+
+        * crypto/subtle/postMessage-worker-expected.txt:
+        * crypto/subtle/resources/postMessage-worker.js:
+        * platform/mac/TestExpectations:
+        Unskip the test, and land (unimportant) failure results.
+
 2014-02-12  Brady Eidson  <beidson@apple.com>
 
         IDB: TestExpectations batch - "aborted-versionchange-closes.html to createObjectStore-null-name.html"

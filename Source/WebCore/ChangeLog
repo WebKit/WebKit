@@ -1,3 +1,19 @@
+2014-02-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't crash when SerializedScriptValue deserialization fails
+        https://bugs.webkit.org/show_bug.cgi?id=128657
+
+        Reviewed by Oliver Hunt.
+
+        Test: crypto/subtle/postMessage-worker.html
+
+        * bindings/js/JSMessageEventCustom.cpp: (WebCore::JSMessageEvent::data): Added a FIXME.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneBase::fail): Don't assert on failure.
+        (WebCore::SerializedScriptValue::deserialize): Never return a null JSValue, these
+        are not allowed.
+
 2014-02-12  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Rename shapeSize and others to make ShapeInfo and friends easier to understand

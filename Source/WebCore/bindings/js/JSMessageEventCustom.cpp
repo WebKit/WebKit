@@ -64,9 +64,9 @@ JSValue JSMessageEvent::data(ExecState* exec) const
     case MessageEvent::DataTypeSerializedScriptValue:
         if (RefPtr<SerializedScriptValue> serializedValue = event.dataAsSerializedScriptValue()) {
             MessagePortArray ports = impl().ports();
+            // FIXME: Why does this suppress exceptions?
             result = serializedValue->deserialize(exec, globalObject(), &ports, NonThrowing);
-        }
-        else
+        } else
             result = jsNull();
         break;
 

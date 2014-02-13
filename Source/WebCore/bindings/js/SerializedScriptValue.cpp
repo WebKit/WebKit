@@ -381,10 +381,8 @@ protected:
         m_exec->vm().throwException(m_exec, createStackOverflowError(m_exec));
     }
 
-    NO_RETURN_DUE_TO_ASSERT
     void fail()
     {
-        ASSERT_NOT_REACHED();
         m_failed = true;
     }
 
@@ -2641,7 +2639,7 @@ JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* glob
                                                                   m_arrayBufferContentsArray.get(), m_data);
     if (throwExceptions == Throwing)
         maybeThrowExceptionIfSerializationFailed(exec, result.second);
-    return result.first;
+    return result.first ? result.first : jsNull();
 }
 
 JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception)
@@ -2653,7 +2651,7 @@ JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, J
         if (exception)
             *exception = toRef(exec, exec->exception());
         exec->clearException();
-        return 0;
+        return nullptr;
     }
     ASSERT(value);
     return toRef(exec, value);

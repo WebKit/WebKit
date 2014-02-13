@@ -1,6 +1,8 @@
 onmessage = function(evt)
 {
     var key = evt.data;
+    if (!key)
+        postMessage({ result:false, message:'key is ' + key });
     if (key.type != 'secret')
         postMessage({ result:false, message:'key.type should be "secret"' });
     else if (!key.extractable)
