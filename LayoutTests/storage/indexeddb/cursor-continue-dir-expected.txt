@@ -30,7 +30,7 @@ Expecting exception from cursor.continue(-1)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'continue' on 'IDBCursor': The parameter is less than or equal to this cursor's position.
+Exception message: DataError: DOM IDBDatabase Exception 0
 request = store.openCursor(IDBKeyRange.bound(-Infinity, Infinity), 'prev')
 cursor = request.result
 PASS cursor is non-null.
@@ -40,7 +40,7 @@ Expecting exception from cursor.continue(11)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'continue' on 'IDBCursor': The parameter is greater than or equal to this cursor's position.
+Exception message: DataError: DOM IDBDatabase Exception 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

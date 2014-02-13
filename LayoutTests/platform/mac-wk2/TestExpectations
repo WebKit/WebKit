@@ -474,12 +474,36 @@ storage/indexeddb/closed-cursor.html [ Pass ]
 storage/indexeddb/create-and-remove-object-store.html [ Pass ]
 storage/indexeddb/createObjectStore-name-argument-required.html [ Pass ]
 storage/indexeddb/createObjectStore-null-name.html [ Pass ]
+storage/indexeddb/cursor-added-bug.html [ Pass ]
+storage/indexeddb/cursor-continue-dir.html [ Pass ]
+storage/indexeddb/cursor-continue.html [ Pass ]
+storage/indexeddb/cursor-delete.html [ Pass ]
+storage/indexeddb/cursor-finished.html [ Pass ]
+storage/indexeddb/cursor-inconsistency.html [ Pass ]
+storage/indexeddb/cursor-prev-no-duplicate.html [ Pass ]
+storage/indexeddb/cursor-properties.html [ Pass ]
+storage/indexeddb/cursor-reverse-bug.html [ Pass ]
+storage/indexeddb/cursor-skip-deleted.html [ Pass ]
+storage/indexeddb/cursor-update-value-argument-required.html [ Pass ]
+storage/indexeddb/cursor-value.html [ Pass ]
 
 # Blink tests with complicated text failures.
 storage/indexeddb/create-object-store-options.html
+storage/indexeddb/cursor-advance.html
+storage/indexeddb/cursor-basics.html
+storage/indexeddb/cursor-continue-validity.html
+storage/indexeddb/cursor-continueprimarykey.html
+storage/indexeddb/cursor-index-delete.html
+storage/indexeddb/cursor-leak.html # Missing needed WKTR feature?
+storage/indexeddb/cursor-overloads.html
+storage/indexeddb/cursor-primary-key-order.html
+storage/indexeddb/cursor-request-cycle.html # Missing needed WKTR feature?
+storage/indexeddb/cursor-update.html
 
 # Blink tests with crashing failures.
 storage/indexeddb/createIndex-after-failure.html  # Crashes the database process
+storage/indexeddb/cursor-cast.html # Crashes the WebProcess
+storage/indexeddb/cursor-key-order.html # Crashes the database process in WebKit::KeyedDecoder::~KeyedDecoder()
 
 # Blink tests that pass once, but are known to cause trouble downstream.
 storage/indexeddb/clone-exception.html
