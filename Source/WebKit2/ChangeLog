@@ -1,3 +1,20 @@
+2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        During a copy, position:fixed gets converted to position:absolute even if only part of the document is selected
+        https://bugs.webkit.org/show_bug.cgi?id=128688
+
+        Reviewed by Ryosuke Niwa.
+
+        Renames the ConvertPositionStyleOnCopy setting to ShouldConvertPositionStyleOnCopy
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetShouldConvertPositionStyleOnCopy):
+        (WKPreferencesGetShouldConvertPositionStyleOnCopy):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-02-12  Timothy Hatcher  <timothy@apple.com>
 
         Enable inspection of recently used IndexedDB databases.

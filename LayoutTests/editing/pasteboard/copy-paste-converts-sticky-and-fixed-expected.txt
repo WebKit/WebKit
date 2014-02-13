@@ -37,7 +37,7 @@ Markup.description('These tests to see if position:sticky and position:fixed get
 document.designMode = 'on';
 
 if (window.internals)
-    window.internals.settings.setConvertPositionStyleOnCopy(true);
+    window.internals.settings.setShouldConvertPositionStyleOnCopy(true);
 
 var s = window.getSelection();
 
@@ -85,7 +85,7 @@ Markup.description('These tests to see if position:sticky and position:fixed get
 document.designMode = 'on';
 
 if (window.internals)
-    window.internals.settings.setConvertPositionStyleOnCopy(true);
+    window.internals.settings.setShouldConvertPositionStyleOnCopy(true);
 
 var s = window.getSelection();
 

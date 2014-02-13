@@ -1,3 +1,28 @@
+2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        During a copy, position:fixed gets converted to position:absolute even if only part of the document is selected
+        https://bugs.webkit.org/show_bug.cgi?id=128688
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a field, m_needsPositionStyleConversion, to StyledMarkupAccumulator.
+
+        Also, renames the ConvertPositionStyleOnCopy setting to ShouldConvertPositionStyleOnCopy
+
+        Test: editing/pasteboard/copy-paste-doesnt-convert-sticky-and-fixed-during-partial-copy.html
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::StyledMarkupAccumulator):
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        (WebCore::createMarkupInternal):
+        * page/Settings.in:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setShouldConvertPositionStyleOnCopy):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2014-02-12  Timothy Hatcher  <timothy@apple.com>
 
         Enable inspection of recently used IndexedDB databases.

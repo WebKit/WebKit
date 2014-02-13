@@ -2535,14 +2535,14 @@ static bool needsScreenFontsEnabledQuirk()
     [self _setBoolValue:enabled forKey:WebKitMediaSourceEnabledPreferenceKey];
 }
 
-- (BOOL)convertPositionStyleOnCopy
+- (BOOL)shouldConvertPositionStyleOnCopy
 {
-    return [self _boolValueForKey:WebKitConvertPositionStyleOnCopyPreferenceKey];
+    return [self _boolValueForKey:WebKitShouldConvertPositionStyleOnCopyPreferenceKey];
 }
 
-- (void)setConvertPositionStyleOnCopy:(BOOL)enabled
+- (void)setShouldConvertPositionStyleOnCopy:(BOOL)enabled
 {
-    [self _setBoolValue:enabled forKey:WebKitConvertPositionStyleOnCopyPreferenceKey];
+    [self _setBoolValue:enabled forKey:WebKitShouldConvertPositionStyleOnCopyPreferenceKey];
 }
 
 @end

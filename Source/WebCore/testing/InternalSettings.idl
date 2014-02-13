@@ -60,5 +60,5 @@
     [RaisesException] void setFontFallbackPrefersPictographs(boolean preferPictographs);
     void setPluginReplacementEnabled(boolean enabled);
     [RaisesException] void setBackgroundShouldExtendBeyondPage(boolean hasExtendedBackground);
-    [RaisesException] void setConvertPositionStyleOnCopy(boolean convert);
+    [RaisesException] void setShouldConvertPositionStyleOnCopy(boolean convert);
 };

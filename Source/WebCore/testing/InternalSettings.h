@@ -91,7 +91,7 @@ public:
         bool m_useLegacyBackgroundSizeShorthandBehavior;
         bool m_autoscrollForDragAndDropEnabled;
         bool m_pluginReplacementEnabled;
-        bool m_convertPositionStyleOnCopy;
+        bool m_shouldConvertPositionStyleOnCopy;
     };
 
     static PassRefPtr<InternalSettings> create(Page* page)
@@ -137,7 +137,7 @@ public:
     void setFontFallbackPrefersPictographs(bool preferPictographs, ExceptionCode&);
     void setPluginReplacementEnabled(bool);
     void setBackgroundShouldExtendBeyondPage(bool hasExtendedBackground, ExceptionCode&);
-    void setConvertPositionStyleOnCopy(bool convert, ExceptionCode&);
+    void setShouldConvertPositionStyleOnCopy(bool convert, ExceptionCode&);
 
 
 private:

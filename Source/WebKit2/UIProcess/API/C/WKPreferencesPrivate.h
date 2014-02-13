@@ -315,8 +315,8 @@ WK_EXPORT void WKPreferencesSetViewGestureDebuggingEnabled(WKPreferencesRef pref
 WK_EXPORT bool WKPreferencesGetViewGestureDebuggingEnabled(WKPreferencesRef preferencesRef);
 
 // Default to false.
-WK_EXPORT void WKPreferencesSetConvertPositionStyleOnCopy(WKPreferencesRef preferencesRef, bool convert);
-WK_EXPORT bool WKPreferencesGetConvertPositionStyleOnCopy(WKPreferencesRef preferencesRef);
+WK_EXPORT void WKPreferencesSetShouldConvertPositionStyleOnCopy(WKPreferencesRef preferencesRef, bool convert);
+WK_EXPORT bool WKPreferencesGetShouldConvertPositionStyleOnCopy(WKPreferencesRef preferencesRef);
 
 #ifdef __cplusplus
 }

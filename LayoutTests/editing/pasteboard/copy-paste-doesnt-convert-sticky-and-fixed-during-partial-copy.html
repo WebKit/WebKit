@@ -4,25 +4,26 @@
 <script type="text/javascript" src="../../resources/dump-as-markup.js"></script>
 </head>
 <body>
+<div contenteditable="true" id="test">
 abc<div style="position: fixed; left: 0px; top: 0px;">def</div>ghi
-<br/>
+</div>
 
 <script>
 
-Markup.description('These tests to see if position:sticky and position:fixed get converted to position:static and position:absolute upon copy/paste');
-
-document.designMode = 'on';
+Markup.description('This tests to see if position:sticky and position:fixed don\'t get converted to position:static and position:absolute upon copy/paste when there is only a partial selection (not the entire body is selected)');
 
 if (window.internals)
     window.internals.settings.setShouldConvertPositionStyleOnCopy(true);
 
+var e = document.getElementById("test");
 var s = window.getSelection();
 
-Markup.dump('test1', 'first test - before');
+Markup.dump('test', 'Before');
+s.setPosition(e, 0);
 document.execCommand("SelectAll");
 document.execCommand("Cut");
 document.execCommand("Paste");
-Markup.dump('test1', 'first test - after');
+Markup.dump('test', 'After');
 
 </script>
 </body>

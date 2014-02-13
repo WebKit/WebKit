@@ -1,3 +1,18 @@
+2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        During a copy, position:fixed gets converted to position:absolute even if only part of the document is selected
+        https://bugs.webkit.org/show_bug.cgi?id=128688
+
+        Reviewed by Ryosuke Niwa.
+
+        Performs a copy of the contents of a particular div, rather than the entire body. Makes sure that
+        no position:fixed -> position:absolute conversion occurs.
+
+        * editing/pasteboard/copy-paste-converts-sticky-and-fixed-expected.txt:
+        * editing/pasteboard/copy-paste-converts-sticky-and-fixed.html:
+        * editing/pasteboard/copy-paste-doesnt-convert-sticky-and-fixed-during-partial-copy-expected.txt: Added.
+        * editing/pasteboard/copy-paste-doesnt-convert-sticky-and-fixed-during-partial-copy.html: Added.
+
 2014-02-13  Chang Shu  <cshu@webkit.org>
 
         Copying (createMarkup) wrapping text results in space between wrapped lines stripped.

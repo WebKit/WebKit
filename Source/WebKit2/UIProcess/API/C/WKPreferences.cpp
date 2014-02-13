@@ -1236,12 +1236,12 @@ bool WKPreferencesGetViewGestureDebuggingEnabled(WKPreferencesRef preferencesRef
     return toImpl(preferencesRef)->viewGestureDebuggingEnabled();
 }
 
-void WKPreferencesSetConvertPositionStyleOnCopy(WKPreferencesRef preferencesRef, bool convert)
+void WKPreferencesSetShouldConvertPositionStyleOnCopy(WKPreferencesRef preferencesRef, bool convert)
 {
-    toImpl(preferencesRef)->setConvertPositionStyleOnCopy(convert);
+    toImpl(preferencesRef)->setShouldConvertPositionStyleOnCopy(convert);
 }
 
-bool WKPreferencesGetConvertPositionStyleOnCopy(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetShouldConvertPositionStyleOnCopy(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->convertPositionStyleOnCopy();
+    return toImpl(preferencesRef)->shouldConvertPositionStyleOnCopy();
 }

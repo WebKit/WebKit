@@ -1,0 +1,17 @@
+This tests to see if position:sticky and position:fixed don't get converted to position:static and position:absolute upon copy/paste when there is only a partial selection (not the entire body is selected)
+
+Before:
+| "
+abc"
+| <div>
+|   style="position: fixed; left: 0px; top: 0px;"
+|   "def"
+| "ghi
+"
+
+After:
+| "abc"
+| <div>
+|   style="position: fixed; left: 0px; top: 0px;"
+|   "def"
+| "ghi<#selection-caret>"

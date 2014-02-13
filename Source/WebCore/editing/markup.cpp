@@ -117,17 +117,14 @@ class StyledMarkupAccumulator final : public MarkupAccumulator {
 public:
     enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
 
-    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs, EAnnotateForInterchange, const Range*, Node* highestNodeToBeSerialized = 0);
+    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs, EAnnotateForInterchange, const Range*, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized = 0);
 
     Node* serializeNodes(Node* startNode, Node* pastEnd);
     void wrapWithNode(Node&, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
     void wrapWithStyleNode(StyleProperties*, Document&, bool isBlock = false);
     String takeResults();
     
-    bool needRelativeStyleWrapper() const
-    {
-        return m_needRelativeStyleWrapper;
-    }
+    bool needRelativeStyleWrapper() const { return m_needRelativeStyleWrapper; }
 
     using MarkupAccumulator::appendString;
 
@@ -164,13 +161,15 @@ private:
     Node* m_highestNodeToBeSerialized;
     RefPtr<EditingStyle> m_wrappingStyle;
     bool m_needRelativeStyleWrapper;
+    bool m_needsPositionStyleConversion;
 };
 
-inline StyledMarkupAccumulator::StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate, const Range* range, Node* highestNodeToBeSerialized)
+inline StyledMarkupAccumulator::StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate, const Range* range, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized)
     : MarkupAccumulator(nodes, shouldResolveURLs, range)
     , m_shouldAnnotate(shouldAnnotate)
     , m_highestNodeToBeSerialized(highestNodeToBeSerialized)
     , m_needRelativeStyleWrapper(false)
+    , m_needsPositionStyleConversion(needsPositionStyleConversion)
 {
 }
 
@@ -328,7 +327,7 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
             if (addDisplayInline)
                 newInlineStyle->forceInline();
             
-            if (element.document().settings() && element.document().settings()->convertPositionStyleOnCopy())
+            if (m_needsPositionStyleConversion)
                 m_needRelativeStyleWrapper |= newInlineStyle->convertFixedAndStickyPosition();
 
             // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
@@ -571,7 +570,9 @@ static String createMarkupInternal(Document& document, const Range& range, const
         fullySelectedRoot = body;
     Node* specialCommonAncestor = highestAncestorToWrapMarkup(&updatedRange, shouldAnnotate);
 
-    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, &updatedRange, specialCommonAncestor);
+    bool needsPositionStyleConversion = body && fullySelectedRoot == body
+        && document.settings() && document.settings()->shouldConvertPositionStyleOnCopy();
+    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, &updatedRange, needsPositionStyleConversion, specialCommonAncestor);
     Node* pastEnd = updatedRange.pastLastNode();
 
     Node* startNode = updatedRange.firstNode();
@@ -627,7 +628,7 @@ static String createMarkupInternal(Document& document, const Range& range, const
         }
     }
     
-    if (accumulator.needRelativeStyleWrapper() && body && fullySelectedRoot == body) {
+    if (accumulator.needRelativeStyleWrapper() && needsPositionStyleConversion) {
         RefPtr<EditingStyle> positionRelativeStyle = styleFromMatchedRulesAndInlineDecl(body);
         positionRelativeStyle->style()->setProperty(CSSPropertyPosition, CSSValueRelative);
         accumulator.wrapWithStyleNode(positionRelativeStyle->style(), document, true);

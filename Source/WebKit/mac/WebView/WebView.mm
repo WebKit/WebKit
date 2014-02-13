@@ -2382,7 +2382,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setMediaSourceEnabled([preferences mediaSourceEnabled]);
 #endif
 
-    settings.setConvertPositionStyleOnCopy([preferences convertPositionStyleOnCopy]);
+    settings.setShouldConvertPositionStyleOnCopy([preferences shouldConvertPositionStyleOnCopy]);
 
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:

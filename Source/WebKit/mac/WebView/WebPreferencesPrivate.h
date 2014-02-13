@@ -432,7 +432,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMediaSourceEnabled:(BOOL)flag;
 - (BOOL)mediaSourceEnabled;
 
-- (void)setConvertPositionStyleOnCopy:(BOOL)flag;
-- (BOOL)convertPositionStyleOnCopy;
+- (void)setShouldConvertPositionStyleOnCopy:(BOOL)flag;
+- (BOOL)shouldConvertPositionStyleOnCopy;
 
 @end
