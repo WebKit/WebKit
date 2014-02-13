@@ -267,4 +267,6 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (BOOL)webViewCanCheckGeolocationAuthorizationStatus:(WebView *)sender;
 #endif
 
+- (NSData *)webCryptoMasterKeyForWebView:(WebView *)sender;
+
 @end

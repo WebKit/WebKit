@@ -1,3 +1,13 @@
+2014-02-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Add a WebKit1 SPI to get WebCrypto master key from a client
+        https://bugs.webkit.org/show_bug.cgi?id=128725
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/mac/UIDelegate.mm: (-[UIDelegate webCryptoMasterKeyForWebView:]):
+        Use the SPI to specify a key.
+
 2014-02-13  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed. Moved myself to the list of reviewers.

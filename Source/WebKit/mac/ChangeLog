@@ -1,3 +1,16 @@
+2014-02-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Add a WebKit1 SPI to get WebCrypto master key from a client
+        https://bugs.webkit.org/show_bug.cgi?id=128725
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::wrapCryptoKey):
+        (WebChromeClient::unwrapCryptoKey):
+        * WebView/WebUIDelegatePrivate.h:
+        Looks like UIDelegate is the closest we have to a reasonable place.
+
 2014-02-13  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix.
