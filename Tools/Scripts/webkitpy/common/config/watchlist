@@ -348,7 +348,7 @@
         "WTF": [ "benjamin@webkit.org", "cmarcelo@webkit.org" ],
         "WebGL": [ "dino@apple.com", "kondapallykalyan@gmail.com" , "roger_fong@apple.com" ],
         "WebIDL": [ "esprehn+autocc@chromium.org", "dchris@gmail.com", "kondapallykalyan@gmail.com" ],
-        "WebInspectorAPI": [ "timothy@apple.com", "joepeck@webkit.org", "graouts@apple.com" ],
+        "WebInspectorAPI": [ "timothy@apple.com", "joepeck@webkit.org", "graouts@webkit.org" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
         "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],
         "XSS": [ "dbates@webkit.org" ],

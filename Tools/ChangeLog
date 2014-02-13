@@ -1,3 +1,10 @@
+2014-02-13  Antoine Quint  <graouts@webkit.org>
+
+        Unreviewed. changing my email address.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-02-13  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Add a WebKit1 SPI to get WebCrypto master key from a client

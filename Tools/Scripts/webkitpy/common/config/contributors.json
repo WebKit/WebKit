@@ -3343,7 +3343,8 @@
       },
       "Antoine Quint" : {
          "emails" : [
-            "graouts@apple.com"
+            "graouts@apple.com",
+            "graouts@webkit.org"
          ],
          "nicks" : [
             "graouts"
