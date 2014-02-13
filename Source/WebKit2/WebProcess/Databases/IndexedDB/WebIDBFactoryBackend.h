@@ -39,7 +39,7 @@ public:
 
     virtual ~WebIDBFactoryBackend();
 
-    virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::ScriptExecutionContext*, const String& dataDir) override;
+    virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin, WebCore::ScriptExecutionContext*, const String& dataDir) override;
     virtual void open(const String& name, uint64_t version, int64_t transactionId, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin) override;
     virtual void deleteDatabase(const String& name, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ScriptExecutionContext*, const String& dataDir) override;
 

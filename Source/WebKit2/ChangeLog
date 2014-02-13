@@ -1,3 +1,24 @@
+2014-02-12  Timothy Hatcher  <timothy@apple.com>
+
+        Enable inspection of recently used IndexedDB databases.
+
+        https://bugs.webkit.org/show_bug.cgi?id=128687
+
+        Reviewed by Brady Eidson & Joseph Pecoraro.
+
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        (WebKit::sharedRecentDatabaseNameMap):
+        (WebKit::combinedSecurityOriginIdentifier):
+        (WebKit::WebIDBFactoryBackend::WebIDBFactoryBackend):
+        (WebKit::WebIDBFactoryBackend::getDatabaseNames):
+        (WebKit::WebIDBFactoryBackend::open):
+        (WebKit::WebIDBFactoryBackend::deleteDatabase):
+        Keep track of recently used database names per security-origin pair.
+        Implement getDatabaseNames to return the recently used names.
+
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.h:
+        Fix up the arguments passed to getDatabaseNames.
+
 2014-02-13  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

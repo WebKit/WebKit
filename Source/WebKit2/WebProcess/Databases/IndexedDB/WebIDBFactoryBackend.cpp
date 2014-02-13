@@ -32,6 +32,7 @@
 #include "WebIDBServerConnection.h"
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
+#include <WebCore/DOMStringList.h>
 #include <WebCore/IDBCallbacks.h>
 #include <WebCore/IDBCursorBackend.h>
 #include <WebCore/IDBDatabaseCallbacks.h>
@@ -56,19 +57,59 @@ static IDBDatabaseBackendMap& sharedDatabaseBackendMap()
     return databaseBackendMap;
 }
 
+static HashMap<String, HashSet<String>>& sharedRecentDatabaseNameMap()
+{
+    static NeverDestroyed<HashMap<String, HashSet<String>>> recentDatabaseNameMap;
+    return recentDatabaseNameMap;
+}
+
+static String combinedSecurityOriginIdentifier(const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin)
+{
+    StringBuilder stringBuilder;
+
+    String originString = openingOrigin.toString();
+    if (originString == "null")
+        return String();
+    stringBuilder.append(originString);
+    stringBuilder.append("_");
+
+    originString = mainFrameOrigin.toString();
+    if (originString == "null")
+        return String();
+    stringBuilder.append(originString);
+
+    return stringBuilder.toString();
+}
+
 WebIDBFactoryBackend::WebIDBFactoryBackend(const String&)
 {
 }
-
 
 WebIDBFactoryBackend::~WebIDBFactoryBackend()
 {
 }
 
-void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)
+void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin, ScriptExecutionContext* context, const String&)
 {
-    LOG_ERROR("IDBFactory::getDatabaseNames is no longer exposed to the web as javascript API and should be removed. It will be once we move the Web Inspector away of of it.");
-    notImplemented();
+    LOG(IDB, "WebIDBFactoryBackend::getDatabaseNames");
+
+    String securityOriginIdentifier = combinedSecurityOriginIdentifier(openingOrigin, mainFrameOrigin);
+    if (securityOriginIdentifier.isEmpty()) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::InvalidAccessError, ASCIILiteral("Document is not allowed to use Indexed Databases")));
+        return;
+    }
+
+    auto recentNameIterator = sharedRecentDatabaseNameMap().find(securityOriginIdentifier);
+    if (recentNameIterator == sharedRecentDatabaseNameMap().end())
+        return;
+
+    RefPtr<DOMStringList> databaseNames = DOMStringList::create();
+
+    HashSet<String>& foundNames = recentNameIterator->value;
+    for (const String& name : foundNames)
+        databaseNames->append(name);
+
+    callbacks->onSuccess(databaseNames.release());
 }
 
 void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin)
@@ -81,6 +122,17 @@ void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, in
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::InvalidAccessError, "Document is not allowed to use Indexed Databases"));
         return;
     }
+
+    String securityOriginIdentifier = combinedSecurityOriginIdentifier(openingOrigin, mainFrameOrigin);
+    ASSERT(!securityOriginIdentifier.isEmpty());
+
+    auto recentNameIterator = sharedRecentDatabaseNameMap().find(securityOriginIdentifier);
+    if (recentNameIterator == sharedRecentDatabaseNameMap().end()) {
+        HashSet<String> names;
+        names.add(databaseName);
+        sharedRecentDatabaseNameMap().set(securityOriginIdentifier, names);
+    } else
+        recentNameIterator->value.add(databaseName);
 
     IDBDatabaseBackendMap::iterator it = sharedDatabaseBackendMap().find(databaseIdentifier);
 
@@ -104,6 +156,16 @@ void WebIDBFactoryBackend::deleteDatabase(const String& databaseName, const Secu
     if (databaseIdentifier.isNull()) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::InvalidAccessError, "Document is not allowed to use Indexed Databases"));
         return;
+    }
+
+    String securityOriginIdentifier = combinedSecurityOriginIdentifier(openingOrigin, mainFrameOrigin);
+    ASSERT(!securityOriginIdentifier.isEmpty());
+
+    auto recentNameIterator = sharedRecentDatabaseNameMap().find(securityOriginIdentifier);
+    if (recentNameIterator != sharedRecentDatabaseNameMap().end()) {
+        recentNameIterator->value.remove(databaseName);
+        if (recentNameIterator->value.isEmpty())
+            sharedRecentDatabaseNameMap().remove(recentNameIterator);
     }
 
     // If there's already a connection to the database, delete it directly.

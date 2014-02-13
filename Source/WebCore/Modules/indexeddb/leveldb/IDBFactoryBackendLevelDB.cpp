@@ -84,11 +84,10 @@ void IDBFactoryBackendLevelDB::removeIDBDatabaseBackend(const String& uniqueIden
     m_databaseBackendMap.remove(uniqueIdentifier);
 }
 
-void IDBFactoryBackendLevelDB::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext*, const String& dataDirectory)
+void IDBFactoryBackendLevelDB::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, const SecurityOrigin& openingOrigin, const SecurityOrigin&, ScriptExecutionContext*, const String& dataDirectory)
 {
-    ASSERT(securityOrigin);
     LOG(StorageAPI, "IDBFactoryBackendLevelDB::getDatabaseNames");
-    RefPtr<IDBBackingStoreLevelDB> backingStore = openBackingStore(*securityOrigin, dataDirectory);
+    RefPtr<IDBBackingStoreLevelDB> backingStore = openBackingStore(*openingOrigin, dataDirectory);
     if (!backingStore) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error opening backing store for indexedDB.webkitGetDatabaseNames."));
         return;

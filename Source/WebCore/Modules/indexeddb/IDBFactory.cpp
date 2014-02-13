@@ -103,7 +103,7 @@ PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* cont
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
-    m_backend->getDatabaseNames(request, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
+    m_backend->getDatabaseNames(request, *(context->securityOrigin()), *(context->topOrigin()), context, getIndexedDBDatabasePath(context));
     return request;
 }
 

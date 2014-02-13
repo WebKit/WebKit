@@ -1,3 +1,29 @@
+2014-02-12  Timothy Hatcher  <timothy@apple.com>
+
+        Enable inspection of recently used IndexedDB databases.
+
+        https://bugs.webkit.org/show_bug.cgi?id=128687
+
+        Reviewed by Brady Eidson & Joseph Pecoraro.
+
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::getDatabaseNames):
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::IDBFactoryBackendLevelDB::getDatabaseNames):
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h:
+        Fix up the arguments passed to getDatabaseNames.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make DOMStringList.h private so WebKit2 can use it.
+
+        * inspector/InspectorIndexedDBAgent.cpp:
+        Modernize the loops and remove some PLATFORM(COCOA) ifdefs to
+        compile the code. 
+
+        * inspector/protocol/IndexedDB.json: Use number for version to
+        allow larger values instead of clamping to int.
+
 2014-02-13  Chang Shu  <cshu@webkit.org>
 
         Copying (createMarkup) wrapping text results in space between wrapped lines stripped.
