@@ -8,7 +8,7 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 dbname = "transaction-storeNames-required.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
-PASS db.transaction(); threw exception TypeError: Failed to execute 'transaction' on 'IDBDatabase': 1 argument required, but only 0 present..
+PASS db.transaction(); threw exception TypeError: Not enough arguments.
 PASS successfullyParsed is true
 
 TEST COMPLETE

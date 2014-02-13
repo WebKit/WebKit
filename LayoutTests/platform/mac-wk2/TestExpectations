@@ -537,11 +537,33 @@ storage/indexeddb/removed.html [ Pass ]
 storage/indexeddb/request-continue-abort.html [ Pass ]
 storage/indexeddb/request-event-propagation.html [ Pass ]
 storage/indexeddb/request-result-cache.html [ Pass ]
+storage/indexeddb/transaction-active-flag.html [ Pass ]
+storage/indexeddb/transaction-after-close.html [ Pass ]
+storage/indexeddb/transaction-complete-with-js-recursion-cross-frame.html [ Pass ]
+storage/indexeddb/transaction-complete-with-js-recursion.html [ Pass ]
+storage/indexeddb/transaction-coordination-across-databases.html [ Pass ]
+storage/indexeddb/transaction-crash-in-tasks.html [ Pass ]
+storage/indexeddb/transaction-crash-on-abort.html [ Pass ]
+storage/indexeddb/transaction-event-propagation.html [ Pass ]
+storage/indexeddb/transaction-ordering.html [ Pass ]
+storage/indexeddb/transaction-read-only.html [ Pass ]
+storage/indexeddb/transaction-readwrite-exclusive.html [ Pass ]
+storage/indexeddb/transaction-rollback.html [ Pass ]
+storage/indexeddb/transaction-starvation.html [ Pass ]
+storage/indexeddb/transaction-storeNames-required.html [ Pass ]
+storage/indexeddb/unblocked-version-changes.html [ Pass ]
+storage/indexeddb/unprefix.html [ Pass ]
+storage/indexeddb/value-undefined.html [ Pass ]
+storage/indexeddb/values-odd-types.html [ Pass ]
+storage/indexeddb/version-change-abort.html [ Pass ]
+storage/indexeddb/version-change-exclusive.html [ Pass ]
+storage/indexeddb/versionchangerequest-activedomobject.html [ Pass ]
 
 # Blink tests with unexplained timeouts
 storage/indexeddb/exceptions.html [ Skip ]
+storage/indexeddb/transaction-basics.html [ Skip ]
 
-# Blink tests with complicated text failures.
+# Blink tests with non-trivial text failures.
 storage/indexeddb/create-object-store-options.html [ Skip ]
 storage/indexeddb/cursor-advance.html [ Skip ]
 storage/indexeddb/cursor-basics.html [ Skip ]
@@ -579,12 +601,16 @@ storage/indexeddb/optional-arguments.html [ Skip ]
 storage/indexeddb/request-leak.html [ Skip ] # Missing WKTR support? GC?
 storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Skip ]
 storage/indexeddb/structured-clone.html [ Skip ] # Missing DRT file/blob support
+storage/indexeddb/transaction-and-objectstore-calls.html [ Skip ]
+storage/indexeddb/transaction-error.html [ Skip ]
+storage/indexeddb/transaction-scope-sequencing.html [ Skip ]
 
 # Blink tests that crash the WebProcess.
 storage/indexeddb/cursor-cast.html [ Skip ]
 storage/indexeddb/deleted-objects.html [ Skip ] # Crashes under WebCore::GetOperation::GetOperation
 storage/indexeddb/metadata.html [ Skip ] # Crashes under IDBDatabaseBackend::createIndex
 storage/indexeddb/persistence.html [ Skip ] # Crash under IDBDatabaseBackend::createObjectStore
+storage/indexeddb/transaction-abort.html [ Skip ] # IDBTransactionBackend::start()
 
 # Blink tests that crash the WebProcess under IDBDatabase::dispatchEvent or IDBRequest::dispatchEvent (possibly all related).
 storage/indexeddb/database-deletepending-flag.html [ Skip ]	  
@@ -614,6 +640,7 @@ storage/indexeddb/database-odd-names.html [ Skip ] # Crashes under WebKit::Datab
 storage/indexeddb/deleteIndex.html [ Skip ] # Crashes under WebKit::UniqueIDBDatabase::deleteIndex
 storage/indexeddb/index-cursor.html [ Skip ] # Flaky crash under UniqueIDBDatabase::unregisterConnection
 storage/indexeddb/open-ordering.html [ Skip ] # DatabaseProcessIDBConnection::GetOrEstablishIDBDatabaseMetadata
+storage/indexeddb/transaction-coordination-within-database.html [ Skip ] # SQLiteTransaction::begin
 
 # Blink tests that crash the DatabaseProcess under DatabaseProcessIDBConnection::deleteDatabase.
 storage/indexeddb/database-closepending-flag.html [ Skip ]

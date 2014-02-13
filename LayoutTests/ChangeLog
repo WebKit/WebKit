@@ -1,3 +1,17 @@
+2014-02-13  Brady Eidson  <beidson@apple.com>
+
+        IDB: TestExpectations batch - "transaction-abort.html to versionchangerequest-activedomobject.html”
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations:
+        * storage/indexeddb/transaction-active-flag-expected.txt:
+        * storage/indexeddb/transaction-after-close-expected.txt:
+        * storage/indexeddb/transaction-read-only-expected.txt:
+        * storage/indexeddb/transaction-storeNames-required-expected.txt:
+        * storage/indexeddb/version-change-abort-expected.txt:
+        * storage/indexeddb/version-change-exclusive-expected.txt:
+
 2014-02-13  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: fast/workers/use-machine-stack.html hits Heap::isMarked(cell) assertion
