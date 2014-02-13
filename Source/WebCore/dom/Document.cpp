@@ -559,6 +559,13 @@ static bool isAttributeOnAllOwners(const WebCore::QualifiedName& attribute, cons
 }
 #endif
 
+PassRefPtr<Document> Document::create(ScriptExecutionContext& context)
+{
+    RefPtr<Document> document = adoptRef(new Document(nullptr, URL()));
+    document->setSecurityOrigin(context.securityOrigin());
+    return document;
+}
+
 Document::~Document()
 {
     ASSERT(!renderView());
@@ -3755,6 +3762,11 @@ String Document::referrer() const
     if (frame())
         return frame()->loader().referrer();
     return String();
+}
+
+String Document::origin() const
+{
+    return securityOrigin()->databaseIdentifier();
 }
 
 String Document::domain() const

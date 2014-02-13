@@ -1,3 +1,15 @@
+2014-02-13  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Document should be constructable
+        https://bugs.webkit.org/show_bug.cgi?id=115643
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Document/document-constructor-expected.txt: Added.
+        * fast/dom/Document/document-constructor.html: Added.
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+
 2014-02-13  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Rename named areas property

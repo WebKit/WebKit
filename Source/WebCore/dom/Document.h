@@ -259,6 +259,8 @@ public:
     {
         return adoptRef(new Document(frame, url, DefaultDocumentClass, NonRenderedPlaceholder));
     }
+    static PassRefPtr<Document> create(ScriptExecutionContext&);
+
     virtual ~Document();
 
     MediaQueryMatcher& mediaQueryMatcher();
@@ -840,6 +842,8 @@ public:
     void setCookie(const String&, ExceptionCode&);
 
     String referrer() const;
+
+    String origin() const;
 
     String domain() const;
     void setDomain(const String& newDomain, ExceptionCode&);

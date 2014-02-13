@@ -1,0 +1,14 @@
+This tests that Document is constructable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof new Document is "object"
+PASS Object.prototype.toString.call(new Document) is "[object Document]"
+PASS new Document instanceof Document is true
+PASS Object.getPrototypeOf(new Document) is Document.prototype
+PASS document.origin is new Document().origin
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

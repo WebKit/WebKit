@@ -19,6 +19,8 @@
  */
 
 [
+    Constructor,
+    ConstructorCallWith=ScriptExecutionContext,
     CustomToJSObject,
     JSGenerateToNativeObject,
 ] interface Document : Node {
@@ -351,5 +353,8 @@
 
     // currentscript API: http://www.whatwg.org/specs/web-apps/current-work/multipage/dom.html#dom-document-currentscript
     readonly attribute HTMLScriptElement currentScript;
+
+    // http://www.w3.org/TR/2014/WD-dom-20140204/#dom-document-origin
+    readonly attribute DOMString origin;
 };
 

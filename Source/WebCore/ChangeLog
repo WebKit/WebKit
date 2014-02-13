@@ -1,3 +1,22 @@
+2014-02-13  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Document should be constructable
+        https://bugs.webkit.org/show_bug.cgi?id=115643
+
+        Reviewed by Darin Adler.
+
+        http://www.w3.org/TR/2014/WD-dom-20140204/#interface-document
+        Make Document constructable so that one can do "new Document"
+        instead of "document.implementation.createHTMLDocument('')".
+
+        Test: fast/dom/Document/document-constructor.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::create):
+        (WebCore::Document::origin):
+        * dom/Document.h:
+        * dom/Document.idl:
+
 2014-02-13  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Rename named areas property
