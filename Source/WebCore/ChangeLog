@@ -1,3 +1,16 @@
+2014-02-13  Andreas Kling  <akling@apple.com>
+
+        InsertIntoTextNodeCommand should get Settings from the Frame.
+        <https://webkit.org/b/128678>
+
+        EditCommands have a frame() accessor that returns a reference,
+        so there's no need to go through Document.
+
+        Reviewed by Anders Carlsson.
+
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply):
+
 2014-02-13  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Document should be constructable

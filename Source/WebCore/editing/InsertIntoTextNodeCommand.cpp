@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "ExceptionCodePlaceholder.h"
+#include "Frame.h"
 #include "RenderText.h"
 #include "Settings.h"
 #include "Text.h"
@@ -51,8 +52,7 @@ InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(PassRefPtr<Text> node, unsi
 
 void InsertIntoTextNodeCommand::doApply()
 {
-    // FIXME: EditCommand should always have a Frame, so going through Document for Settings shouldn't be necessary.
-    bool passwordEchoEnabled = document().settings() && document().settings()->passwordEchoEnabled();
+    bool passwordEchoEnabled = frame().settings().passwordEchoEnabled();
     if (passwordEchoEnabled)
         document().updateLayoutIgnorePendingStylesheets();
 
