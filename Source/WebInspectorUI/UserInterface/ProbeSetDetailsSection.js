@@ -32,9 +32,6 @@ WebInspector.ProbeSetDetailsSection = function(probeSet)
 
     var optionsElement = document.createElement("div");
     optionsElement.classList.add(WebInspector.ProbeSetDetailsSection.SectionOptionsStyleClassName);
-    var titleElement = this._probeSetPositionTextOrLink();
-    titleElement.classList.add(WebInspector.ProbeSetDetailsSection.DontFloatLinkStyleClassName);
-    optionsElement.appendChild(titleElement);
 
     var removeProbeButton = optionsElement.createChild("img");
     removeProbeButton.classList.add(WebInspector.ProbeSetDetailsSection.ProbeRemoveStyleClassName);
@@ -49,6 +46,10 @@ WebInspector.ProbeSetDetailsSection = function(probeSet)
     var addProbeButton = optionsElement.createChild("img");
     addProbeButton.classList.add(WebInspector.ProbeSetDetailsSection.AddProbeValueStyleClassName);
     this._listeners.register(addProbeButton, "click", this._addProbeButtonClicked);
+
+    var titleElement = this._probeSetPositionTextOrLink();
+    titleElement.classList.add(WebInspector.ProbeSetDetailsSection.DontFloatLinkStyleClassName);
+    optionsElement.appendChild(titleElement);
 
     this._dataGrid = new WebInspector.ProbeSetDataGrid(probeSet);
     this._dataGrid.element.classList.add("inline");

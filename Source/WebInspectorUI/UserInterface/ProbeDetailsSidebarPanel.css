@@ -64,6 +64,12 @@
     font-size: 10px;
 }
 
+.details-section.probe-set .options > a.go-to-link {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: block;
+}
+
 .panel.probes ::-webkit-scrollbar {
     height: 5px;
     width: 5px;
