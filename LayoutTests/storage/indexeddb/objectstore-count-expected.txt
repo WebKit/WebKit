@@ -80,17 +80,17 @@ Expecting exception from store.count(NaN)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'count' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: DataError: DOM IDBDatabase Exception 0
 Expecting exception from store.count({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'count' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: DataError: DOM IDBDatabase Exception 0
 Expecting exception from store.count(/regex/)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'count' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: DataError: DOM IDBDatabase Exception 0
 
 test = {"key":0,"expected":1}
 request = store.count(test.key)

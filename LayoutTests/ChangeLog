@@ -1,3 +1,20 @@
+2014-02-12  Brady Eidson  <beidson@apple.com>
+
+        IDB: TestExpectations batch - "key-generator.html to objectStore-required-arguments.html"
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations:
+        * storage/indexeddb/keypath-arrays-expected.txt:
+        * storage/indexeddb/keypath-basics-expected.txt:
+        * storage/indexeddb/keypath-edges-expected.txt:
+        * storage/indexeddb/keyrange-expected.txt:
+        * storage/indexeddb/keyrange-required-arguments-expected.txt:
+        * storage/indexeddb/object-lookups-in-versionchange-expected.txt:
+        * storage/indexeddb/objectStore-required-arguments-expected.txt:
+        * storage/indexeddb/objectstore-count-expected.txt:
+        * storage/indexeddb/objectstore-cursor-expected.txt:
+
 2014-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update test expectations for Windows.

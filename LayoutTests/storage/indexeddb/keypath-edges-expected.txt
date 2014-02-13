@@ -20,21 +20,21 @@ Expecting exception from store.put(null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': Evaluating the object store's key path did not yield a value.
+Exception message: DataError: DOM IDBDatabase Exception 0
 
 Key path doesn't resolve to a value; should yield null, should throw DATA_ERR
 Expecting exception from store.put({})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': Evaluating the object store's key path did not yield a value.
+Exception message: DataError: DOM IDBDatabase Exception 0
 
 Key path resolves to a value that is invalid key; should yield 'invalid' key, should throw DATA_ERR
 Expecting exception from store.put({foo: null})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': Evaluating the object store's key path yielded a value that is not a valid key.
+Exception message: DataError: DOM IDBDatabase Exception 0
 
 Key path resolves to a value that is valid key; should yield 'string' key, should succeed
 store.put({foo: 'zoo'})
@@ -49,14 +49,14 @@ Expecting exception from store.put(null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': A generated key could not be inserted into the value.
+Exception message: DataError: DOM IDBDatabase Exception 0
 
 Key path doesn't resolve to a value; should yield null but insertion would fail, so put request should raise exception
 Expecting exception from store.put('string')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': A generated key could not be inserted into the value.
+Exception message: DataError: DOM IDBDatabase Exception 0
 
 Key path doesn't resolve to a value; should yield null, key should be generated, put request should succeed
 store.put({})
@@ -67,7 +67,7 @@ Expecting exception from store.put({foo: null})
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': Evaluating the object store's key path yielded a value that is not a valid key.
+Exception message: DataError: DOM IDBDatabase Exception 0
 
 Key path resolves to a value that is valid key; should yield 'string' key, should succeed
 store.put({foo: 'zoo'})

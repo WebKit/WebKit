@@ -508,6 +508,22 @@ storage/indexeddb/intversion-omit-parameter.html [ Pass ]
 storage/indexeddb/intversion-persistence.html [ Pass ]
 storage/indexeddb/intversion-revert-on-abort.html [ Pass ]
 storage/indexeddb/invalid-keys.html [ Pass ]
+storage/indexeddb/keypath-arrays.html [ Pass ]
+storage/indexeddb/keypath-basics.html [ Pass ]
+storage/indexeddb/keypath-edges.html [ Pass ]
+storage/indexeddb/keypath-intrinsic-properties.html [ Pass ]
+storage/indexeddb/keyrange-required-arguments.html [ Pass ]
+storage/indexeddb/keyrange.html [ Pass ]
+storage/indexeddb/legacy-constants.html [ Pass ]
+storage/indexeddb/list-ordering.html [ Pass ]
+storage/indexeddb/metadata-race.html [ Pass ]
+storage/indexeddb/mutating-cursor.html [ Pass ]
+storage/indexeddb/object-lookups-in-versionchange.html [ Pass ]
+storage/indexeddb/objectstore-clear.html [ Pass ]
+storage/indexeddb/objectstore-count.html [ Pass ]
+storage/indexeddb/objectstore-cursor.html [ Pass ]
+storage/indexeddb/objectstore-removeobjectstore.html [ Pass ]
+storage/indexeddb/objectStore-required-arguments.html [ Pass ]
 
 # Blink tests with unexplained timeouts
 storage/indexeddb/exceptions.html [ Skip ]
@@ -540,10 +556,17 @@ storage/indexeddb/index-unique.html [ Skip ]
 storage/indexeddb/intversion-close-between-events.html [ Skip ]
 storage/indexeddb/intversion-open-with-version.html [ Skip ] # INTMAX exposed to script as database version
 storage/indexeddb/intversion-two-opens-no-versions.html [ Skip ] # INTMAX exposed to script as database version
+storage/indexeddb/key-generator.html [ Skip ]
+storage/indexeddb/key-type-binary.html [ Skip ]
+storage/indexeddb/lazy-index-population.html [ Skip ]
+storage/indexeddb/noblobs.html [ Skip ] # Missing DRT file/blob support
+storage/indexeddb/objectstore-autoincrement.html [ Skip ]
+storage/indexeddb/objectstore-keycursor.html [ Skip ]
 
 # Blink tests that crash the WebProcess.
 storage/indexeddb/cursor-cast.html [ Skip ]
 storage/indexeddb/deleted-objects.html [ Skip ] # Crashes under WebCore::GetOperation::GetOperation
+storage/indexeddb/metadata.html [ Skip ] # Crashes under IDBDatabaseBackend::createIndex
 
 # Blink tests that crash the WebProcess under IDBDatabase::dispatchEvent or IDBRequest::dispatchEvent (possibly all related).
 storage/indexeddb/database-deletepending-flag.html [ Skip ]	  
@@ -563,19 +586,29 @@ storage/indexeddb/intversion-pending-version-changes-ascending.html [ Skip ]
 storage/indexeddb/intversion-pending-version-changes-descending.html [ Skip ]
 storage/indexeddb/intversion-pending-version-changes-same.html [ Skip ]
 storage/indexeddb/intversion-upgrades.html [ Skip ]
+storage/indexeddb/objectstore-basics.html [ Skip ]
 
 # Blink tests that crash the DatabaseProcess.
 storage/indexeddb/createIndex-after-failure.html [ Skip ]
-storage/indexeddb/cursor-key-order.html [ Skip ] # Crashes in WebKit::KeyedDecoder::~KeyedDecoder()
 storage/indexeddb/database-closepending-flag.html [ Skip ] # Crashes under DatabaseProcessIDBConnection::deleteDatabase
 storage/indexeddb/database-odd-names.html [ Skip ] # Crashes under WebKit::DatabaseProcess::ensurePathExists
 storage/indexeddb/deleteIndex.html [ Skip ] # Crashes under WebKit::UniqueIDBDatabase::deleteIndex
 storage/indexeddb/index-cursor.html [ Skip ] # Flaky crash under UniqueIDBDatabase::unregisterConnection
+storage/indexeddb/key-sort-order-across-types.html [ Skip ] # Flaky crash in DatabaseProcessIDBConnection::deleteDatabase
+storage/indexeddb/key-sort-order-date.html [ Skip ] # Flaky crash in DatabaseProcessIDBConnection::deleteDatabase
+storage/indexeddb/key-type-infinity.html [ Skip ] # Flaky crash in DatabaseProcessIDBConnection::deleteDatabase
+storage/indexeddb/keypath-fetch-key.html [ Skip ] # Flaky crash in DatabaseProcessIDBConnection::deleteDatabase
+
+# Blink tests that crash the DatabaseProcess under KeyedDecoder::~KeyedDecoder.
+storage/indexeddb/cursor-key-order.html [ Skip ]
+storage/indexeddb/key-type-array.html [ Skip ]
+storage/indexeddb/lazy-index-types.html [ Skip ]
 
 # Blink tests that pass once, but are known to cause trouble downstream.
 storage/indexeddb/clone-exception.html [ Skip ]
 storage/indexeddb/connection-leak.html [ Skip ]
 storage/indexeddb/dont-wedge.html [ Skip ]
+storage/indexeddb/key-sort-order-across-types.html [ Skip ]
 
 # We don't currently support indexeddb in workers
 storage/indexeddb/basics-shared-workers.html [ Skip ]

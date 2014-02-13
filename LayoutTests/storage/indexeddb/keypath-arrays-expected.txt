@@ -13,21 +13,21 @@ store.createIndex('index', ['c', 'd'])
 Expecting exception from db.createObjectStore('store-with-generator', {keyPath: ['a', 'b'], autoIncrement: true})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_ACCESS_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The autoIncrement option was set but the keyPath option was empty or an array.
+Exception message: InvalidAccessError: DOM IDBDatabase Exception 15
 Expecting exception from store.createIndex('index-multientry', ['e', 'f'], {multiEntry: true})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_ACCESS_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument was an array and the multiEntry option is true.
+Exception message: InvalidAccessError: DOM IDBDatabase Exception 15
 
 Empty arrays are not valid key paths:
 Expecting exception from db.createObjectStore('store-keypath-empty-array', {keyPath: []})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
+Exception message: SyntaxError: DOM IDBDatabase Exception 12
 Expecting exception from store.createIndex('index-keypath-empty-array', [])
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
+Exception message: SyntaxError: DOM IDBDatabase Exception 12
 
 testKeyPaths():
 transaction = db.transaction(['store'], 'readwrite')
