@@ -243,6 +243,7 @@
 		1A9E329F1822FEDD00F5D04C /* WKRemoteObjectCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E329D1822FEDD00F5D04C /* WKRemoteObjectCoder.h */; };
 		1A9E32A11823018900F5D04C /* WKRemoteObjectRegistryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E32A01823018900F5D04C /* WKRemoteObjectRegistryInternal.h */; };
 		1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */; };
+		1AA20D5118AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA20D5018AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
 		1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */; };
 		1AA3D75B1651B44F008713D0 /* RemoteLayerTreeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA3D7591651B44F008713D0 /* RemoteLayerTreeHost.mm */; };
@@ -1920,6 +1921,7 @@
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		1AA1CD06100FA1BA0078DEBC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		1AA20D5018AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationDelegatePrivate.h; sourceTree = "<group>"; };
 		1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGUtilities.h; sourceTree = "<group>"; };
 		1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGUtilities.cpp; sourceTree = "<group>"; };
 		1AA3D7591651B44F008713D0 /* RemoteLayerTreeHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeHost.mm; sourceTree = "<group>"; };
@@ -4373,6 +4375,7 @@
 				1A256E3518A1A788006FB922 /* WKNavigationAction.mm */,
 				1A256E3918A1A7DF006FB922 /* WKNavigationActionInternal.h */,
 				1ABC3DFB1899F51C004F0626 /* WKNavigationDelegate.h */,
+				1AA20D5018AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h */,
 				1ABC3DF01899C6B6004F0626 /* WKNavigationInternal.h */,
 				1A1B0EB418A424950038481A /* WKNavigationResponse.h */,
 				1A1B0EB318A424950038481A /* WKNavigationResponse.mm */,
@@ -6511,6 +6514,7 @@
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				33152976130D0CB200ED2483 /* SecurityOriginData.h in Headers */,
 				518D2CCB12D51DFB003BB93B /* SessionState.h in Headers */,
+				1AA20D5118AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h in Headers */,
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
 				1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */,

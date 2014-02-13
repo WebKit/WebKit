@@ -23,31 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKWebView.h>
+#import <WebKit2/WKNavigationDelegate.h>
+#import <WebKit2/WKWebViewPrivate.h>
 
 #if WK_API_ENABLED
 
-typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
-    _WKRenderingProgressEventFirstLayout = 1 << 0,
-    _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
-};
+@protocol WKNavigationDelegatePrivate <WKNavigationDelegate>
 
-@class WKRemoteObjectRegistry;
+@optional
 
-@interface WKWebView (WKPrivate)
-
-@property (nonatomic, readonly) WKRemoteObjectRegistry *_remoteObjectRegistry;
-@property (nonatomic, setter=_setObservedRenderingProgressEvents:) _WKRenderingProgressEvents _observedRenderingProgressEvents;
-
-#if TARGET_OS_IPHONE
-@property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
-
-// Define the inset of the scrollview unusable by the web page.
-@property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
-
-- (void)_beginInteractiveObscuredInsetsChange;
-- (void)_endInteractiveObscuredInsetsChange;
-#endif
+- (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents;
 
 @end
 

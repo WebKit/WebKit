@@ -32,7 +32,7 @@
 #import "PageLoadState.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNavigationActionInternal.h"
-#import "WKNavigationDelegate.h"
+#import "WKNavigationDelegatePrivate.h"
 #import "WKNavigationInternal.h"
 #import "WKNavigationResponseInternal.h"
 #import "WKWebViewInternal.h"
@@ -83,6 +83,8 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidCommitNavigation = [delegate respondsToSelector:@selector(webView:didCommitNavigation:)];
     m_navigationDelegateMethods.webViewDidFinishLoadingNavigation = [delegate respondsToSelector:@selector(webView:didFinishLoadingNavigation:)];
     m_navigationDelegateMethods.webViewDidFailNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailNavigation:withError:)];
+
+    m_navigationDelegateMethods.webViewRenderingProgressDidChange = [delegate respondsToSelector:@selector(_webView:renderingProgressDidChange:)];
 }
 
 RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *request)
@@ -343,6 +345,31 @@ void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy*, 
         navigation = m_navigationState.m_navigations.get(navigationID).get();
 
     [navigationDelegate webView:m_navigationState.m_webView didFailNavigation:navigation withError:error];
+}
+
+static _WKRenderingProgressEvents renderingProgressEvents(WebCore::LayoutMilestones milestones)
+{
+    _WKRenderingProgressEvents events = 0;
+
+    if (milestones & WebCore::DidFirstLayout)
+        events |= _WKRenderingProgressEventFirstLayout;
+
+    if (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold)
+        events |= _WKRenderingProgressEventFirstPaintWithSignificantArea;
+
+    return events;
+}
+
+void NavigationState::LoaderClient::didLayout(WebKit::WebPageProxy*, WebCore::LayoutMilestones layoutMilestones, API::Object*)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewRenderingProgressDidChange)
+        return;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView renderingProgressDidChange:renderingProgressEvents(layoutMilestones)];
 }
 
 void NavigationState::willChangeIsLoading()

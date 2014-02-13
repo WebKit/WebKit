@@ -1,5 +1,26 @@
 2014-02-13  Anders Carlsson  <andersca@apple.com>
 
+        Add rendering progress events SPI
+        https://bugs.webkit.org/show_bug.cgi?id=128752
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKWebViewPrivate.h.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _observedRenderingProgressEvents]):
+        (layoutMilestones):
+        (-[WKWebView _setObservedRenderingProgressEvents:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        (NS_OPTIONS):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::renderingProgressEvents):
+        (WebKit::NavigationState::LoaderClient::didLayout):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-02-13  Anders Carlsson  <andersca@apple.com>
+
         Disable XPC for plug-ins that need executable heap
         https://bugs.webkit.org/show_bug.cgi?id=128744
         <rdar://problem/15962958>

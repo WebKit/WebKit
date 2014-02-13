@@ -58,6 +58,7 @@
     std::unique_ptr<WebKit::NavigationState> _navigationState;
 
     RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
+    _WKRenderingProgressEvents _observedRenderingProgressEvents;
 
 #if PLATFORM(IOS)
     RetainPtr<WKScrollView> _scrollView;
@@ -370,6 +371,30 @@
     }
 
     return _remoteObjectRegistry.get();
+}
+
+- (_WKRenderingProgressEvents)_observedRenderingProgressEvents
+{
+    return _observedRenderingProgressEvents;
+}
+
+static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)
+{
+    WebCore::LayoutMilestones milestones = 0;
+
+    if (events & _WKRenderingProgressEventFirstLayout)
+        milestones |= WebCore::DidFirstLayout;
+
+    if (events & WKRenderingProgressEventFirstPaintWithSignificantArea)
+        milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
+
+    return milestones;
+}
+
+- (void)_setObservedRenderingProgressEvents:(_WKRenderingProgressEvents)observedRenderingProgressEvents
+{
+    _observedRenderingProgressEvents = observedRenderingProgressEvents;
+    _page->listenForLayoutMilestones(layoutMilestones(observedRenderingProgressEvents));
 }
 
 #pragma mark iOS-specific methods

@@ -82,7 +82,8 @@ private:
         virtual void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object*) override;
         virtual void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, API::Object*) override;
         virtual void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, API::Object*) override;
-        virtual void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object* userData) override;
+        virtual void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object*) override;
+        virtual void didLayout(WebKit::WebPageProxy*, WebCore::LayoutMilestones, API::Object*) override;
 
         NavigationState& m_navigationState;
     };
@@ -112,6 +113,8 @@ private:
         bool webViewDidCommitNavigation : 1;
         bool webViewDidFinishLoadingNavigation : 1;
         bool webViewDidFailNavigationWithError : 1;
+
+        bool webViewRenderingProgressDidChange : 1;
     } m_navigationDelegateMethods;
 
     HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;
