@@ -1,3 +1,12 @@
+2014-02-13  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed GTK gardening.
+
+        Removed unexpected pass tests from TextExpections
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2014-02-13  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening

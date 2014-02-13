@@ -355,10 +355,6 @@ Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure Pass ]
 # tables/ failures
 Bug(WK2) tables/mozilla_expected_failures/bugs/bug8499.html [ Failure ]
 
-# Assertion failure in replaySavedEvents
-# http://webkit.org/b/21796
-webkit.org/b/21796 fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html [ Failure ]
-
 # [Qt][WK2] New http/tests/security/cross-origin-plugin* tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=95935
 webkit.org/b/95935 http/tests/security/cross-origin-plugin.html [ Failure ]
@@ -388,8 +384,6 @@ Bug(GTK) fast/events/keydown-numpad-keys.html [ Failure ]
 Bug(GTK) fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 Bug(GTK) fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 Bug(GTK) fast/events/selectionchange-iframe.html [ Failure ]
-Bug(GTK) fast/forms/listbox-deselect-scroll.html [ Failure ]
-Bug(GTK) fast/forms/listbox-selection.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-cyrillic.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-greek.html [ Failure ]
 Bug(GTK) fast/forms/mailto/formenctype-attribute-button-html.html [ Failure ]

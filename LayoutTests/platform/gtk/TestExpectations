@@ -1519,8 +1519,6 @@ webkit.org/b/126619 http/tests/media/video-auth.html [ Failure ]
 
 webkit.org/b/126879 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-tall-underlines.html [ ImageOnlyFailure ]
 
-webkit.org/b/127740 accessibility/range-alter-by-percent.html [ Failure ]
-
 # Subpixel rendering: borders are reporting float values.
 webkit.org/b/128061 css1/units/length_units.html [ Failure ]
 webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
