@@ -115,7 +115,7 @@ void PseudoElement::didRecalcStyle(StyleChange)
     RenderObject* renderer = this->renderer();
     for (RenderObject* child = renderer->nextInPreOrder(renderer); child; child = child->nextInPreOrder(renderer)) {
         // We only manage the style for the generated content which must be images or text.
-        if (!child->isText() && !child->isImage())
+        if (!child->isText() && !child->isRenderImage())
             continue;
 
         // The style for the RenderTextFragment for first letter is managed by an enclosing block, not by us.

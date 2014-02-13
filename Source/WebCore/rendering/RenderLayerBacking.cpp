@@ -1675,7 +1675,7 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
 {
     RenderObject* renderObject = renderer();
 
-    if (!renderObject->isImage() || m_owningLayer->hasBoxDecorationsOrBackground() || renderObject->hasClip())
+    if (!renderObject->isRenderImage() || m_owningLayer->hasBoxDecorationsOrBackground() || renderObject->hasClip())
         return false;
 
     RenderImage* imageRenderer = toRenderImage(renderObject);
@@ -1719,7 +1719,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
 
 void RenderLayerBacking::updateImageContents()
 {
-    ASSERT(renderer()->isImage());
+    ASSERT(renderer()->isRenderImage());
     RenderImage* imageRenderer = toRenderImage(renderer());
 
     CachedImage* cachedImage = imageRenderer->cachedImage();

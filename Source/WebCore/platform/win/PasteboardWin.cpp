@@ -734,7 +734,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
 {
     ASSERT(node);
 
-    if (!(node->renderer() && node->renderer()->isImage()))
+    if (!(node->renderer() && node->renderer()->isRenderImage()))
         return;
 
     RenderImage* renderer = toRenderImage(node->renderer());
@@ -885,7 +885,7 @@ static CachedImage* getCachedImage(Element* element)
     // Attempt to pull CachedImage from element
     ASSERT(element);
     RenderObject* renderer = element->renderer();
-    if (!renderer || !renderer->isImage()) 
+    if (!renderer || !renderer->isRenderImage())
         return 0;
 
     RenderImage* image = toRenderImage(renderer);

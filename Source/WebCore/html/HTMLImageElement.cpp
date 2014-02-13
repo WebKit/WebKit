@@ -111,7 +111,7 @@ void HTMLImageElement::collectStyleForPresentationAttribute(const QualifiedName&
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == altAttr) {
-        if (renderer() && renderer()->isImage())
+        if (renderer() && renderer()->isRenderImage())
             toRenderImage(renderer())->updateAltText();
     } else if (name == srcAttr)
         m_imageLoader.updateFromElementIgnoringPreviousError();
@@ -176,7 +176,7 @@ void HTMLImageElement::attach(const AttachContext& context)
 {
     HTMLElement::attach(context);
 
-    if (renderer() && renderer()->isImage() && !m_imageLoader.hasPendingBeforeLoadEvent()) {
+    if (renderer() && renderer()->isRenderImage() && !m_imageLoader.hasPendingBeforeLoadEvent()) {
         RenderImage* renderImage = toRenderImage(renderer());
         RenderImageResource* renderImageResource = renderImage->imageResource();
         if (renderImageResource->hasImage())

@@ -1,3 +1,75 @@
+2014-02-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r162820.
+
+    2014-01-26  David Kilzer  <ddkilzer@apple.com>
+
+            Part 2: Assertion failure in WebCore::PseudoElement::didRecalcStyle()
+            <https://bugs.webkit.org/show_bug.cgi?id=126761>
+            <rdar://problem/15793540>
+
+            Reviewed by Simon Fraser.
+
+            * bindings/objc/DOM.mm:
+            (-[DOMElement image]):
+            (-[DOMElement _imageTIFFRepresentation]):
+            * platform/gtk/PasteboardGtk.cpp:
+            (WebCore::Pasteboard::writeImage):
+            * platform/win/PasteboardWin.cpp:
+            (WebCore::Pasteboard::writeImage):
+            (WebCore::getCachedImage):
+            * rendering/HitTestResult.cpp:
+            (WebCore::HitTestResult::image):
+            - More places where toRenderImage() should be used instead of
+              toImage().
+            - Fixed last two places where static_cast<WebCore::RenderImage*>
+              was being used instead of toRenderImage().
+
+2014-02-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r162679.
+
+    2014-01-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+            Assertion failure in WebCore::PseudoElement::didRecalcStyle()
+            <https://bugs.webkit.org/show_bug.cgi?id=126761>
+            <rdar://problem/15793540>
+
+            Reviewed by Andy Estes.
+
+            Test: fast/images/animate-list-item-image-assertion.html
+
+            * dom/PseudoElement.cpp:
+            (WebCore::PseudoElement::didRecalcStyle):
+            Check isRenderImage() rather than isImage() before casting to
+            RenderImage.
+
+            * editing/ios/EditorIOS.mm:
+            (WebCore::getImage):
+            Ditto.
+
+            * editing/mac/EditorMac.mm:
+            (WebCore::getImage):
+            Ditto.
+
+            * html/HTMLImageElement.cpp:
+            (WebCore::HTMLImageElement::parseAttribute):
+            (WebCore::HTMLImageElement::didAttachRenderers):
+            Ditto.
+
+            * loader/ImageLoader.cpp:
+            (WebCore::ImageLoader::renderImageResource):
+            Ditto.
+
+            * page/DragController.cpp:
+            (WebCore::getCachedImage):
+            Ditto.
+
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+            (WebCore::RenderLayerBacking::updateImageContents):
+            Ditto.
+
 2014-02-11  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r161925.

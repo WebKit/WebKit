@@ -270,7 +270,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
 
     NSString *extension = @"";
     if (RenderObject* renderer = core(element)->renderer()) {
-        if (renderer->isImage()) {
+        if (renderer->isRenderImage()) {
             if (CachedImage* image = toRenderImage(renderer)->cachedImage()) {
                 extension = image->image()->filenameExtension();
                 if (![extension length])
