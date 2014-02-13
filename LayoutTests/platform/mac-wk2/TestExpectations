@@ -456,16 +456,16 @@ plugins/snapshotting [ Skip ]
 # Right now, more IndexedDB tests fail than pass.
 # Eventually we list only the failing tests here.
 # But for now we'll disable the entire directory then re-enable known passing tests.
-storage/indexeddb
-http/tests/security/cross-origin-indexeddb-allowed.html
-http/tests/security/cross-origin-indexeddb.html
-http/tests/security/cross-origin-worker-indexeddb-allowed.html
-http/tests/security/cross-origin-worker-indexeddb.html
-http/tests/security/no-indexeddb-from-sandbox.html
+storage/indexeddb [ Skip ]
+http/tests/security/cross-origin-indexeddb-allowed.html [ Skip ]
+http/tests/security/cross-origin-indexeddb.html [ Skip ]
+http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
+http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
+http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
 
 # All mozilla tests except for 1 pass.
 storage/indexeddb/mozilla [ Pass ]
-storage/indexeddb/mozilla/global-data.html
+storage/indexeddb/mozilla/global-data.html [ Skip ]
 
 # Blink tests known to pass.
 storage/indexeddb/aborted-versionchange-closes.html [ Pass ]
@@ -494,63 +494,102 @@ storage/indexeddb/deletedatabase-transaction.html [ Pass ]
 storage/indexeddb/deleteIndex-bug110792.html [ Pass ]
 storage/indexeddb/deleteObjectStore-name-argument-required.html [ Pass ]
 storage/indexeddb/deleteObjectStore-null-name.html [ Pass ]
+storage/indexeddb/error-causes-abort-by-default.html [ Pass ]
+storage/indexeddb/exception-in-event-aborts.html [ Pass ]
+storage/indexeddb/index-count.html [ Pass ]
+storage/indexeddb/index-get-key-argument-required.html [ Pass ]
+storage/indexeddb/interfaces.html [ Pass ]
+storage/indexeddb/intversion-abort-in-initial-upgradeneeded.html [ Pass ]
+storage/indexeddb/intversion-bad-parameters.html [ Pass ]
+storage/indexeddb/intversion-close-in-oncomplete.html [ Pass ]
+storage/indexeddb/intversion-close-in-upgradeneeded.html [ Pass ]
+storage/indexeddb/intversion-encoding.html [ Pass ]
+storage/indexeddb/intversion-omit-parameter.html [ Pass ]
+storage/indexeddb/intversion-persistence.html [ Pass ]
+storage/indexeddb/intversion-revert-on-abort.html [ Pass ]
+storage/indexeddb/invalid-keys.html [ Pass ]
+
+# Blink tests with unexplained timeouts
+storage/indexeddb/exceptions.html [ Skip ]
 
 # Blink tests with complicated text failures.
-storage/indexeddb/create-object-store-options.html
-storage/indexeddb/cursor-advance.html
-storage/indexeddb/cursor-basics.html
-storage/indexeddb/cursor-continue-validity.html
-storage/indexeddb/cursor-continueprimarykey.html
-storage/indexeddb/cursor-index-delete.html
-storage/indexeddb/cursor-leak.html # Missing needed WKTR feature?
-storage/indexeddb/cursor-overloads.html
-storage/indexeddb/cursor-primary-key-order.html
-storage/indexeddb/cursor-request-cycle.html # Missing needed WKTR feature?
-storage/indexeddb/cursor-update.html
-storage/indexeddb/data-corruption.html
-storage/indexeddb/database-close.html
-storage/indexeddb/database-quota.html
-storage/indexeddb/duplicates.html # Difference between null + undefined
+storage/indexeddb/create-object-store-options.html [ Skip ]
+storage/indexeddb/cursor-advance.html [ Skip ]
+storage/indexeddb/cursor-basics.html [ Skip ]
+storage/indexeddb/cursor-continue-validity.html [ Skip ]
+storage/indexeddb/cursor-continueprimarykey.html [ Skip ]
+storage/indexeddb/cursor-index-delete.html [ Skip ]
+storage/indexeddb/cursor-leak.html [ Skip ] # Missing needed WKTR feature?
+storage/indexeddb/cursor-overloads.html [ Skip ]
+storage/indexeddb/cursor-primary-key-order.html [ Skip ]
+storage/indexeddb/cursor-request-cycle.html [ Skip ] # Missing needed WKTR feature?
+storage/indexeddb/cursor-update.html [ Skip ]
+storage/indexeddb/data-corruption.html [ Skip ]
+storage/indexeddb/database-close.html [ Skip ]
+storage/indexeddb/database-quota.html [ Skip ]
+storage/indexeddb/duplicates.html [ Skip ] # Difference between null + undefined
+storage/indexeddb/events.html [ Skip ]
+storage/indexeddb/factory-basics.html [ Skip ] # indexedDB.webkitGetDatabaseNames is missing)
+storage/indexeddb/factory-cmp.html [ Skip ]
+storage/indexeddb/get-keyrange.html [ Skip ]
+storage/indexeddb/index-basics.html [ Skip ] # Difference between null + undefined
+storage/indexeddb/index-duplicate-keypaths.html [ Skip ]
+storage/indexeddb/index-multientry.html [ Skip ]
+storage/indexeddb/index-population.html [ Skip ]
+storage/indexeddb/index-unique.html [ Skip ]
+storage/indexeddb/intversion-close-between-events.html [ Skip ]
+storage/indexeddb/intversion-open-with-version.html [ Skip ] # INTMAX exposed to script as database version
+storage/indexeddb/intversion-two-opens-no-versions.html [ Skip ] # INTMAX exposed to script as database version
 
 # Blink tests that crash the WebProcess.
-storage/indexeddb/cursor-cast.html
-storage/indexeddb/deleted-objects.html # Crashes under WebCore::GetOperation::GetOperation
+storage/indexeddb/cursor-cast.html [ Skip ]
+storage/indexeddb/deleted-objects.html [ Skip ] # Crashes under WebCore::GetOperation::GetOperation
 
-# Blink tests that crash the WebProcess under IDBDatabase::dispatchEvent (possibly all related).
-storage/indexeddb/database-deletepending-flag.html 					  
-storage/indexeddb/database-wrapper.html								  
-storage/indexeddb/delete-in-upgradeneeded-close-in-open-success.html 	  
-storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html   
-storage/indexeddb/deletedatabase-blocked.html 						  
-storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange.html 
-storage/indexeddb/deletedatabase-delayed-by-versionchange.html 		  
-storage/indexeddb/deletedatabase-not-blocked.html 
+# Blink tests that crash the WebProcess under IDBDatabase::dispatchEvent or IDBRequest::dispatchEvent (possibly all related).
+storage/indexeddb/database-deletepending-flag.html [ Skip ]	  
+storage/indexeddb/database-wrapper.html [ Skip ]
+storage/indexeddb/delete-in-upgradeneeded-close-in-open-success.html [ Skip ]
+storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html [ Skip ]
+storage/indexeddb/deletedatabase-blocked.html [ Skip ]
+storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange.html [ Skip ]
+storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
+storage/indexeddb/deletedatabase-not-blocked.html [ Skip ]
+storage/indexeddb/factory-deletedatabase.html [ Skip ]
+storage/indexeddb/intversion-blocked.html [ Skip ]
+storage/indexeddb/intversion-gated-on-delete.html [ Skip ]
+storage/indexeddb/intversion-long-queue.html [ Skip ]
+storage/indexeddb/intversion-open-in-upgradeneeded.html [ Skip ]
+storage/indexeddb/intversion-pending-version-changes-ascending.html [ Skip ]
+storage/indexeddb/intversion-pending-version-changes-descending.html [ Skip ]
+storage/indexeddb/intversion-pending-version-changes-same.html [ Skip ]
+storage/indexeddb/intversion-upgrades.html [ Skip ]
 
 # Blink tests that crash the DatabaseProcess.
-storage/indexeddb/createIndex-after-failure.html
-storage/indexeddb/cursor-key-order.html # Crashes in WebKit::KeyedDecoder::~KeyedDecoder()
-storage/indexeddb/database-closepending-flag.html # Crashes under DatabaseProcessIDBConnection::deleteDatabase
-storage/indexeddb/database-odd-names.html # Crashes under WebKit::DatabaseProcess::ensurePathExists
-storage/indexeddb/deleteIndex.html # Crashes under WebKit::UniqueIDBDatabase::deleteIndex
+storage/indexeddb/createIndex-after-failure.html [ Skip ]
+storage/indexeddb/cursor-key-order.html [ Skip ] # Crashes in WebKit::KeyedDecoder::~KeyedDecoder()
+storage/indexeddb/database-closepending-flag.html [ Skip ] # Crashes under DatabaseProcessIDBConnection::deleteDatabase
+storage/indexeddb/database-odd-names.html [ Skip ] # Crashes under WebKit::DatabaseProcess::ensurePathExists
+storage/indexeddb/deleteIndex.html [ Skip ] # Crashes under WebKit::UniqueIDBDatabase::deleteIndex
+storage/indexeddb/index-cursor.html [ Skip ] # Flaky crash under UniqueIDBDatabase::unregisterConnection
 
 # Blink tests that pass once, but are known to cause trouble downstream.
-storage/indexeddb/clone-exception.html
-storage/indexeddb/connection-leak.html
-storage/indexeddb/dont-wedge.html
+storage/indexeddb/clone-exception.html [ Skip ]
+storage/indexeddb/connection-leak.html [ Skip ]
+storage/indexeddb/dont-wedge.html [ Skip ]
 
 # We don't currently support indexeddb in workers
-storage/indexeddb/basics-shared-workers.html
-storage/indexeddb/basics-workers.html
-storage/indexeddb/cursor-advance-workers.html
-storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html
-storage/indexeddb/dont-commit-on-blocked.html
-storage/indexeddb/factory-basics-workers.html
-storage/indexeddb/index-basics-workers.html
-storage/indexeddb/objectstore-basics-workers.html
-storage/indexeddb/open-twice-workers.html
-storage/indexeddb/pending-activity-workers.html
-storage/indexeddb/transaction-complete-workers.html
-storage/indexeddb/unprefix-workers.html
+storage/indexeddb/basics-shared-workers.html [ Skip ]
+storage/indexeddb/basics-workers.html [ Skip ]
+storage/indexeddb/cursor-advance-workers.html [ Skip ]
+storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html [ Skip ]
+storage/indexeddb/dont-commit-on-blocked.html [ Skip ]
+storage/indexeddb/factory-basics-workers.html [ Skip ]
+storage/indexeddb/index-basics-workers.html [ Skip ]
+storage/indexeddb/objectstore-basics-workers.html [ Skip ]
+storage/indexeddb/open-twice-workers.html [ Skip ]
+storage/indexeddb/pending-activity-workers.html [ Skip ]
+storage/indexeddb/transaction-complete-workers.html [ Skip ]
+storage/indexeddb/unprefix-workers.html [ Skip ]
 
 ### END OF (5) IndexedDB related failures
 ########################################

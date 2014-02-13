@@ -10,8 +10,8 @@ indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 objectStore = db.createObjectStore('foo', { keyPath: 'id', autoIncrement: true });
 index = objectStore.createIndex('first', 'first');
-PASS index.get(); threw exception TypeError: Failed to execute 'get' on 'IDBIndex': 1 argument required, but only 0 present..
-PASS index.getKey(); threw exception TypeError: Failed to execute 'getKey' on 'IDBIndex': 1 argument required, but only 0 present..
+PASS index.get(); threw exception TypeError: Not enough arguments.
+PASS index.getKey(); threw exception TypeError: Not enough arguments.
 PASS successfullyParsed is true
 
 TEST COMPLETE

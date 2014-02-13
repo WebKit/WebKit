@@ -9,6 +9,21 @@
 
 2014-02-12  Brady Eidson  <beidson@apple.com>
 
+        IDB: TestExpectations batch - "error-causes-abort-by-default.html to invalid-keys.html"
+        
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations:
+        * storage/indexeddb/exception-in-event-aborts-expected.txt:
+        * storage/indexeddb/index-count-expected.txt:
+        * storage/indexeddb/index-get-key-argument-required-expected.txt:
+        * storage/indexeddb/intversion-bad-parameters-expected.txt:
+        * storage/indexeddb/intversion-close-in-oncomplete-expected.txt:
+        * storage/indexeddb/intversion-close-in-upgradeneeded-expected.txt:
+        * storage/indexeddb/invalid-keys-expected.txt:
+
+2014-02-12  Brady Eidson  <beidson@apple.com>
+
         IDB: TestExpectations batch - "data-corruption.html to duplicates.html"
         https://bugs.webkit.org/show_bug.cgi?id=128711
 
