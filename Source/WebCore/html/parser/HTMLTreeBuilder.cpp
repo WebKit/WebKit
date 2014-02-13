@@ -1595,49 +1595,18 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
             if (lastNode == furthestBlock)
                 bookmark.moveToAfter(nodeEntry);
             // 9.9
-            if (ContainerNode* parent = lastNode->element()->parentNode())
-                parent->parserRemoveChild(lastNode->element());
-            node->element()->parserAppendChild(lastNode->element());
-            if (lastNode->element()->parentElement()->attached() && !lastNode->element()->attached())
-                lastNode->element()->lazyAttach();
+            m_tree.reparent(*node, *lastNode);
             // 9.10
             lastNode = node;
         }
         // 10.
-        if (ContainerNode* parent = lastNode->element()->parentNode())
-            parent->parserRemoveChild(lastNode->element());
-        if (commonAncestor->causesFosterParenting())
-            m_tree.fosterParent(lastNode->element());
-        else {
-#if ENABLE(TEMPLATE_ELEMENT)
-            if (commonAncestor->hasTagName(templateTag))
-                toHTMLTemplateElement(commonAncestor->node())->content()->parserAppendChild(lastNode->element());
-            else
-                commonAncestor->node()->parserAppendChild(lastNode->element());
-#else
-            commonAncestor->node()->parserAppendChild(lastNode->element());
-#endif
-            ASSERT(lastNode->stackItem()->isElementNode());
-            ASSERT(lastNode->element()->parentNode());
-            if (lastNode->element()->parentNode()->attached() && !lastNode->element()->attached())
-                lastNode->element()->lazyAttach();
-        }
+        m_tree.insertAlreadyParsedChild(*commonAncestor, *lastNode);
         // 11.
         RefPtr<HTMLStackItem> newItem = m_tree.createElementFromSavedToken(formattingElementRecord->stackItem().get());
         // 12.
-        newItem->element()->takeAllChildrenFrom(furthestBlock->element());
+        m_tree.takeAllChildren(*newItem, *furthestBlock);
         // 13.
-        Element* furthestBlockElement = furthestBlock->element();
-        // FIXME: All this creation / parserAppendChild / attach business should
-        //        be in HTMLConstructionSite. My guess is that steps 11--15
-        //        should all be in some HTMLConstructionSite function.
-        furthestBlockElement->parserAppendChild(newItem->element());
-        // FIXME: Why is this attach logic necessary? Style resolve should attach us if needed.
-        if (furthestBlockElement->attached() && !newItem->element()->attached()) {
-            // Notice that newItem->element() might already be attached if, for example, one of the reparented
-            // children is a style element, which attaches itself automatically.
-            newItem->element()->attach();
-        }
+        m_tree.reparent(*furthestBlock, *newItem);
         // 14.
         m_tree.activeFormattingElements()->swapTo(formattingElement, newItem, bookmark);
         // 15.
