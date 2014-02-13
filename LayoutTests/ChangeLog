@@ -1,3 +1,17 @@
+2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Gaps for text-decoration-skip: ink are calculated assuming the glyph orientation is the same as the run orientation
+        https://bugs.webkit.org/show_bug.cgi?id=128718
+
+        Reviewed by Darin Adler.
+
+        This test draws text that has descenders that would be skipped over if the glyph orientation was the same
+        as the run orientation. However, it uses text-orientation: upright to make those two orientations not equal.
+        It then compares this to no skipping at all.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-orientation-upright-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-orientation-upright.html: Added.
+
 2014-02-13  Brady Eidson  <beidson@apple.com>
 
         IDB: TestExpectations cleanup
