@@ -1,3 +1,16 @@
+2014-02-13  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Code cleanup: remove gcc<4.7 guards.
+        https://bugs.webkit.org/show_bug.cgi?id=128729
+
+        Reviewed by Anders Carlsson.
+
+        Remove GCC_VERSION_AT_LEAST guards when it checks for pre-4.7 versions,
+        as WK does not compile with earlier gcc versions.
+
+        * wtf/Assertions.cpp:
+        * wtf/Platform.h:
+
 2014-02-12  Mark Lam  <mark.lam@apple.com>
 
         No need to save reservedZoneSize when dropping the JSLock.

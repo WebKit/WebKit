@@ -870,28 +870,8 @@ public:
 
     static void cacheFlush(void* code, size_t size)
     {
-#if GCC_VERSION_AT_LEAST(4, 3, 0)
-#if WTF_MIPS_ISA_REV(2) && !GCC_VERSION_AT_LEAST(4, 4, 3)
-        int lineSize;
-        asm("rdhwr %0, $1" : "=r" (lineSize));
-        //
-        // Modify "start" and "end" to avoid GCC 4.3.0-4.4.2 bug in
-        // mips_expand_synci_loop that may execute synci one more time.
-        // "start" points to the fisrt byte of the cache line.
-        // "end" points to the last byte of the line before the last cache line.
-        // Because size is always a multiple of 4, this is safe to set
-        // "end" to the last byte.
-        //
-        intptr_t start = reinterpret_cast<intptr_t>(code) & (-lineSize);
-        intptr_t end = ((reinterpret_cast<intptr_t>(code) + size - 1) & (-lineSize)) - 1;
-        __builtin___clear_cache(reinterpret_cast<char*>(start), reinterpret_cast<char*>(end));
-#else
         intptr_t end = reinterpret_cast<intptr_t>(code) + size;
         __builtin___clear_cache(reinterpret_cast<char*>(code), reinterpret_cast<char*>(end));
-#endif
-#else
-        _flush_cache(reinterpret_cast<char*>(code), size, BCACHE);
-#endif
     }
 
     static ptrdiff_t maxJumpReplacementSize()

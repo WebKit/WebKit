@@ -298,7 +298,7 @@
 #define WTF_CPU_ARM_NEON 1
 #endif
 
-#if CPU(ARM_NEON) && (!COMPILER(GCC) || GCC_VERSION_AT_LEAST(4, 7, 0))
+#if CPU(ARM_NEON)
 // All NEON intrinsics usage can be disabled by this macro.
 #define HAVE_ARM_NEON_INTRINSICS 1
 #endif
@@ -642,15 +642,9 @@
 #define ENABLE_FTL_JIT 0
 #endif
 
-/* Disable the JIT on versions of GCC prior to 4.1 */
-#if !defined(ENABLE_JIT) && COMPILER(GCC) && !GCC_VERSION_AT_LEAST(4, 1, 0)
-#define ENABLE_JIT 0
-#endif
-
 /* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except Windows. */
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
-    && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4, 1, 0)) \
     && !OS(WINCE) \
     && !OS(WINDOWS)
 #define ENABLE_JIT 1
