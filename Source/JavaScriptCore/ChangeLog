@@ -1,3 +1,14 @@
+2014-02-13  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should be OK with __compact_unwind in a data section
+        https://bugs.webkit.org/show_bug.cgi?id=128756
+
+        Reviewed by Mark Hahnenberg.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateCodeSection):
+        (JSC::FTL::mmAllocateDataSection):
+
 2014-02-13  Michael Saboff  <msaboff@apple.com>
 
         CStack Branch: VM::currentReturnThunkPC appears to be unused and should be removed

@@ -59,6 +59,8 @@ static uint8_t* mmAllocateCodeSection(
         state.graph.m_vm.executableAllocator.allocate(
             state.graph.m_vm, size, state.graph.m_codeBlock, JITCompilationMustSucceed);
     
+    // LLVM used to put __compact_unwind in a code section. We keep this here defensively,
+    // for clients that use older LLVMs.
     if (!strcmp(sectionName, "__compact_unwind")) {
         state.compactUnwind = result->start();
         state.compactUnwindSize = result->sizeInBytes();
@@ -89,6 +91,10 @@ static uint8_t* mmAllocateDataSection(
     else {
         state.jitCode->addDataSection(section);
         state.dataSectionNames.append(sectionName);
+        if (!strcmp(sectionName, "__compact_unwind")) {
+            state.compactUnwind = section.data();
+            state.compactUnwindSize = size;
+        }
     }
     
     return bitwise_cast<uint8_t*>(section.data());
