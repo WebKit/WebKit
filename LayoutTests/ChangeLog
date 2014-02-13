@@ -1,3 +1,12 @@
+2014-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update test expectations for Windows.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2014-02-12  Brady Eidson  <beidson@apple.com>
 
         IDB: TestExpectations batch - "data-corruption.html to duplicates.html"

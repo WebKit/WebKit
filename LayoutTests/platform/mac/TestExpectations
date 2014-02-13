@@ -500,8 +500,6 @@ webkit.org/b/82981 http/tests/misc/favicon-loads-with-icon-loading-override.html
 
 webkit.org/b/82982 fast/dom/jsDevicePixelRatio.html [ Pass Failure ]
 
-webkit.org/b/83618 fast/dom/inline-event-attributes-release.html [ Pass Failure ]
-
 # Failing subpixel reference tests
 webkit.org/b/85532 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
 webkit.org/b/85532 fast/sub-pixel/zoomed-image-tiles.html [ ImageOnlyFailure ]

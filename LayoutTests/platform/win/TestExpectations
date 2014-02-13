@@ -289,6 +289,7 @@ editing/pasteboard/file-input-files-access.html
 fast/files
 http/tests/fileapi
 fast/dom/DOMURL/check-instanceof-domurl-functions.html
+fast/dom/window-domurl-crash.html
 fast/forms/file/recover-file-input-in-unposted-form.html
 http/tests/security/contentSecurityPolicy/blob-urls-match-self.html
 fast/workers/worker-domurl.html
@@ -2909,3 +2910,8 @@ webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
 webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failure ]
 # End of subpixel failures.
+
+webkit.org/b/128722 svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html [ Crash Pass ]
+
+# isProtocolHandlerRegistered() isn't supported yet.
+webkit.org/b/92749 fast/dom/is-protocol-handler-registered.html [ Skip ] 
