@@ -1,3 +1,55 @@
+2014-02-12  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Rename shapeSize and others to make ShapeInfo and friends easier to understand
+        https://bugs.webkit.org/show_bug.cgi?id=128685
+
+        Reviewed by Alexandru Chiculita.
+
+        The ShapeInfo hierarchy has grown organically as the spec has changed,
+        and the naming has become very stale and confusing. The spec is now in
+        Last Call, so it seems like a good time to take a stab towards better
+        naming that matches the spec terminology and is also more consistent
+        in general.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::imageChanged): Use new names.
+        (WebCore::RenderBlock::updateShapeInsideInfoAfterStyleChange): Ditto.
+        (WebCore::shapeInfoRequiresRelayout): Ditto.
+        (WebCore::RenderBlock::computeShapeSize): Ditto.
+        (WebCore::RenderBlock::updateShapesAfterBlockLayout): Ditto.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalSizeForChild): This method makes it much
+            cleaner to set the reference box size.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionNewFloats): Use new names.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateShapeOutsideInfoAfterStyleChange): Ditto.
+        (WebCore::RenderBox::imageChanged): Ditto.
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::getShapeImageMarginRect): Rename variables.
+        (WebCore::ShapeInfo<RenderType>::computedShape): More renames.
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::setReferenceBoxLogicalSize): Renamed from
+            setShapeSize.
+        (WebCore::ShapeInfo::logicalLineTop): Use new names.
+        (WebCore::ShapeInfo::logicalLineBottom): Ditto.
+        (WebCore::ShapeInfo::shapeContainingBlockLogicalHeight): Ditto.
+        (WebCore::ShapeInfo::markShapeAsDirty): Renamed from dirtyShapeSize.
+        (WebCore::ShapeInfo::isShapeDirty): Renamed from shapeSizeDirty.
+        (WebCore::ShapeInfo::referenceBoxLogicalSize): Renamed from shapeSize.
+        (WebCore::ShapeInfo::logicalTopOffset): Use new names.
+        (WebCore::ShapeInfo::logicalLeftOffset): Ditto.
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::updateSegmentsForLine): Ditto.
+        (WebCore::ShapeInsideInfo::adjustLogicalLineTop): Ditto.
+        (WebCore::ShapeInsideInfo::computeFirstFitPositionForFloat): Ditto.
+        * rendering/shapes/ShapeInsideInfo.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine): Ditto.
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2014-02-12  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION: Crashing/Broken Tests Due To Unexpected 8-bit Character Data

@@ -404,7 +404,7 @@ void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style,
     if (!shapeOutside)
         ShapeOutsideInfo::removeInfo(*this);
     else
-        ShapeOutsideInfo::ensureInfo(*this).dirtyShapeSize();
+        ShapeOutsideInfo::ensureInfo(*this).markShapeAsDirty();
 
     if (shapeOutside || shapeOutside != oldShapeOutside)
         markShapeOutsideDependentsForLayout();
@@ -1542,7 +1542,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 #if ENABLE(CSS_SHAPES)
     ShapeValue* shapeOutsideValue = style().shapeOutside();
     if (!view().frameView().isInLayout() && isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image) {
-        ShapeOutsideInfo::ensureInfo(*this).dirtyShapeSize();
+        ShapeOutsideInfo::ensureInfo(*this).markShapeAsDirty();
         markShapeOutsideDependentsForLayout();
     }
 #endif

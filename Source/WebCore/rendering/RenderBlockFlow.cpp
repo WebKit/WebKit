@@ -2342,7 +2342,7 @@ bool RenderBlockFlow::positionNewFloats()
 
 #if ENABLE(CSS_SHAPES)
         if (ShapeOutsideInfo* shapeOutside = childBox.shapeOutsideInfo())
-            shapeOutside->setShapeSize(logicalWidthForChild(childBox), logicalHeightForChild(childBox));
+            shapeOutside->setReferenceBoxLogicalSize(logicalSizeForChild(childBox));
 #endif
         // If the child moved, we have to repaint it.
         if (childBox.checkForRepaintDuringLayout())

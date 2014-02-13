@@ -59,11 +59,11 @@ public:
 
     virtual bool lineOverlapsShapeBounds() const override
     {
-        return computedShape().lineOverlapsShapeMarginBounds(m_shapeLineTop, m_lineHeight);
+        return computedShape().lineOverlapsShapeMarginBounds(m_referenceBoxLineTop, m_lineHeight);
     }
 
 protected:
-    virtual LayoutBox resolvedLayoutBox() const override
+    virtual LayoutBox referenceBox() const override
     {
         if (shapeValue()->layoutBox() == BoxMissing) {
             if (shapeValue()->type() == ShapeValue::Image)
@@ -85,7 +85,7 @@ private:
 
     LayoutUnit m_leftMarginBoxDelta;
     LayoutUnit m_rightMarginBoxDelta;
-    LayoutUnit m_lineTop;
+    LayoutUnit m_borderBoxLineTop;
     bool m_lineOverlapsShape;
 };
 

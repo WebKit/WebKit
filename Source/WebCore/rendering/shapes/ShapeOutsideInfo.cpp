@@ -61,18 +61,18 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox& box)
 
 void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlockFlow& containingBlock, const FloatingObject& floatingObject, LayoutUnit lineTop, LayoutUnit lineHeight)
 {
-    LayoutUnit shapeTop = containingBlock.logicalTopForFloat(&floatingObject) + std::max(LayoutUnit(), containingBlock.marginBeforeForChild(m_renderer));
-    LayoutUnit floatRelativeLineTop = lineTop - shapeTop;
+    LayoutUnit borderBoxTop = containingBlock.logicalTopForFloat(&floatingObject) + std::max(LayoutUnit(), containingBlock.marginBeforeForChild(m_renderer));
+    LayoutUnit borderBoxLineTop = lineTop - borderBoxTop;
 
-    if (shapeSizeDirty() || m_lineTop != floatRelativeLineTop || m_lineHeight != lineHeight) {
-        m_lineTop = floatRelativeLineTop;
-        m_shapeLineTop = floatRelativeLineTop - logicalTopOffset();
+    if (isShapeDirty() || m_borderBoxLineTop != borderBoxLineTop || m_lineHeight != lineHeight) {
+        m_borderBoxLineTop = borderBoxLineTop;
+        m_referenceBoxLineTop = borderBoxLineTop - logicalTopOffset();
         m_lineHeight = lineHeight;
 
         LayoutUnit floatMarginBoxWidth = containingBlock.logicalWidthForFloat(&floatingObject);
 
         if (lineOverlapsShapeBounds()) {
-            SegmentList segments = computeSegmentsForLine(floatRelativeLineTop, lineHeight);
+            SegmentList segments = computeSegmentsForLine(borderBoxLineTop, lineHeight);
             if (segments.size()) {
                 LayoutUnit rawLeftMarginBoxDelta = segments.first().logicalLeft + containingBlock.marginStartForChild(m_renderer);
                 m_leftMarginBoxDelta = clampTo<LayoutUnit>(rawLeftMarginBoxDelta, LayoutUnit(), floatMarginBoxWidth);

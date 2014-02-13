@@ -42,7 +42,6 @@
 
 namespace WebCore {
 
-
 bool checkShapeImageOrigin(Document& document, CachedImage& cachedImage)
 {
     if (cachedImage.isOriginClean(document.securityOrigin()))
@@ -67,11 +66,11 @@ static LayoutRect getShapeImageReplacedRect(const RenderBox& renderBox, const St
     return LayoutRect(LayoutPoint(), styleImage.cachedImage()->image()->size());
 }
 
-static LayoutRect getShapeImageMarginRect(const RenderBox& renderBox, const LayoutSize& shapeSize)
+static LayoutRect getShapeImageMarginRect(const RenderBox& renderBox, const LayoutSize& referenceBoxLogicalSize)
 {
     LayoutPoint marginBoxOrigin(-renderBox.marginLogicalLeft() - renderBox.borderAndPaddingLogicalLeft(), -renderBox.marginBefore() - renderBox.borderBefore() - renderBox.paddingBefore());
     LayoutSize marginBoxSizeDelta(renderBox.marginLogicalWidth() + renderBox.borderAndPaddingLogicalWidth(), renderBox.marginLogicalHeight() + renderBox.borderAndPaddingLogicalHeight());
-    return LayoutRect(marginBoxOrigin, shapeSize + marginBoxSizeDelta);
+    return LayoutRect(marginBoxOrigin, referenceBoxLogicalSize + marginBoxSizeDelta);
 }
 
 template<class RenderType>
@@ -90,20 +89,20 @@ const Shape& ShapeInfo<RenderType>::computedShape() const
     switch (shapeValue->type()) {
     case ShapeValue::Shape:
         ASSERT(shapeValue->shape());
-        m_shape = Shape::createShape(shapeValue->shape(), m_shapeLogicalSize, writingMode, margin, padding);
+        m_shape = Shape::createShape(shapeValue->shape(), m_referenceBoxLogicalSize, writingMode, margin, padding);
         break;
     case ShapeValue::Image: {
         ASSERT(shapeValue->image());
         const StyleImage& styleImage = *(shapeValue->image());
         const LayoutRect& imageRect = getShapeImageReplacedRect(m_renderer, styleImage);
-        const LayoutRect& marginRect = getShapeImageMarginRect(m_renderer, m_shapeLogicalSize);
+        const LayoutRect& marginRect = getShapeImageMarginRect(m_renderer, m_referenceBoxLogicalSize);
         m_shape = Shape::createRasterShape(styleImage, shapeImageThreshold, imageRect, marginRect, writingMode, margin, padding);
         break;
     }
     case ShapeValue::Box: {
         // FIXME This does not properly compute the rounded corners as specified in all conditions.
         // https://bugs.webkit.org/show_bug.cgi?id=127982
-        const RoundedRect& shapeRect = m_renderer.style().getRoundedBorderFor(LayoutRect(LayoutPoint(), m_shapeLogicalSize), &(m_renderer.view()));
+        const RoundedRect& shapeRect = m_renderer.style().getRoundedBorderFor(LayoutRect(LayoutPoint(), m_referenceBoxLogicalSize), &(m_renderer.view()));
         m_shape = Shape::createLayoutBoxShape(shapeRect, writingMode, margin, padding);
         break;
     }
