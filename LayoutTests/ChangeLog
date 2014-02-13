@@ -1,3 +1,17 @@
+2014-02-12  Brady Eidson  <beidson@apple.com>
+
+        IDB: TestExpectations batch - "aborted-versionchange-closes.html to createObjectStore-null-name.html"
+        https://bugs.webkit.org/show_bug.cgi?id=128703
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac-wk2/TestExpectations:
+        * storage/indexeddb/aborted-versionchange-closes-expected.txt:
+        * storage/indexeddb/basics-expected.txt:
+        * storage/indexeddb/clone-exception-expected.txt:
+        * storage/indexeddb/create-and-remove-object-store-expected.txt:
+        * storage/indexeddb/createObjectStore-name-argument-required-expected.txt:
+
 2014-02-12  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Fix layout of floated nested region

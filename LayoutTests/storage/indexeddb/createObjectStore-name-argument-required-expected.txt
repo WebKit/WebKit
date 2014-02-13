@@ -9,7 +9,7 @@ dbname = "createObjectStore-name-argument-required.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 db = event.target.result
-PASS db.createObjectStore(); threw exception TypeError: Failed to execute 'createObjectStore' on 'IDBDatabase': 1 argument required, but only 0 present..
+PASS db.createObjectStore(); threw exception TypeError: Not enough arguments.
 PASS successfullyParsed is true
 
 TEST COMPLETE

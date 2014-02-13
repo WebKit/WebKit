@@ -1,14 +1,15 @@
 # This file should contain entries for expectations that are specific
 # to the Apple Mac port running the WebKit2 variant (--webkit-test-runner)
 
-###### This file has five sections. When adding new tests, make sure to
+###### This file has six sections. When adding new tests, make sure to
 ###### add to the right section:
 
 ### (1) Classified failures with bug reports
 ### (2) Classified failures without bug reports (yet)
 ### (3) Unclassified failures
 ### (4) Features that are not supported in WebKit2 and likely never will be
-### (5) Features that are not supported in WebKit2, on Mavericks
+### (5) IndexedDB related failures
+### (6) Features that are not supported in WebKit2, on Mavericks
 
 ########################################
 ### START OF (1) Classified failures with bug reports
@@ -440,21 +441,6 @@ webkit.org/b/128315 editing/caret/caret-color.html [ Pass Failure ]
 # Temporarily disabled while working out compositing failures
 plugins/snapshotting [ Skip ]
 
-# Right now, more IndexedDB tests fail than pass.
-# So we'll disable the entire directory...
-storage/indexeddb
-http/tests/security/cross-origin-indexeddb-allowed.html
-http/tests/security/cross-origin-indexeddb.html
-http/tests/security/cross-origin-worker-indexeddb-allowed.html
-http/tests/security/cross-origin-worker-indexeddb.html
-http/tests/security/no-indexeddb-from-sandbox.html
-
-# ...and then re-enable known-passing tests.
-# Eventually we can show only failing tests, and hopefully get rid of this section altogether.
-# All mozilla tests except for 1 pass.
-storage/indexeddb/mozilla [ Pass ]
-storage/indexeddb/mozilla/global-data.html
-
 ### END OF (3) Unclassified failures
 ########################################
 
@@ -465,7 +451,58 @@ storage/indexeddb/mozilla/global-data.html
 ########################################
 
 ########################################
-### START OF (5) Features that are not supported in WebKit2, on Mavericks
+### START OF (5) IndexedDB related failures
+
+# Right now, more IndexedDB tests fail than pass.
+# Eventually we list only the failing tests here.
+# But for now we'll disable the entire directory then re-enable known passing tests.
+storage/indexeddb
+http/tests/security/cross-origin-indexeddb-allowed.html
+http/tests/security/cross-origin-indexeddb.html
+http/tests/security/cross-origin-worker-indexeddb-allowed.html
+http/tests/security/cross-origin-worker-indexeddb.html
+http/tests/security/no-indexeddb-from-sandbox.html
+
+# All mozilla tests except for 1 pass.
+storage/indexeddb/mozilla [ Pass ]
+storage/indexeddb/mozilla/global-data.html
+
+# Blink tests known to pass.
+storage/indexeddb/aborted-versionchange-closes.html [ Pass ]
+storage/indexeddb/basics.html [ Pass ]
+storage/indexeddb/closed-cursor.html [ Pass ]
+storage/indexeddb/create-and-remove-object-store.html [ Pass ]
+storage/indexeddb/createObjectStore-name-argument-required.html [ Pass ]
+storage/indexeddb/createObjectStore-null-name.html [ Pass ]
+
+# Blink tests with complicated text failures.
+storage/indexeddb/create-object-store-options.html
+
+# Blink tests with crashing failures.
+storage/indexeddb/createIndex-after-failure.html  # Crashes the database process
+
+# Blink tests that pass once, but are known to cause trouble downstream.
+storage/indexeddb/clone-exception.html
+storage/indexeddb/connection-leak.html
+
+# We don't currently support indexeddb in workers
+storage/indexeddb/basics-shared-workers.html
+storage/indexeddb/basics-workers.html
+storage/indexeddb/cursor-advance-workers.html
+storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html
+storage/indexeddb/factory-basics-workers.html
+storage/indexeddb/index-basics-workers.html
+storage/indexeddb/objectstore-basics-workers.html
+storage/indexeddb/open-twice-workers.html
+storage/indexeddb/pending-activity-workers.html
+storage/indexeddb/transaction-complete-workers.html
+storage/indexeddb/unprefix-workers.html
+
+### END OF (5) IndexedDB related failures
+########################################
+
+########################################
+### START OF (6) Features that are not supported in WebKit2, on Mavericks
 
 # Shared workers disabled with the Network Process
 [ Mavericks ] fast/workers/shared-worker-constructor.html [ Skip ]
@@ -560,5 +597,5 @@ storage/indexeddb/mozilla/global-data.html
 [ Mavericks ] http/tests/xmlhttprequest/web-apps/012.html [ Failure ]
 [ Mavericks ] http/tests/xmlhttprequest/web-apps/013.html [ Failure ]
 
-### END OF (5) Features that are not supported in WebKit2, on Mavericks
+### END OF (6) Features that are not supported in WebKit2, on Mavericks
 ########################################
