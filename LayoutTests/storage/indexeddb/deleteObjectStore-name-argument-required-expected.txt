@@ -8,7 +8,7 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 dbname = "deleteObjectStore-name-argument-required.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
-PASS db.deleteObjectStore(); threw exception TypeError: Failed to execute 'deleteObjectStore' on 'IDBDatabase': 1 argument required, but only 0 present..
+PASS db.deleteObjectStore(); threw exception TypeError: Not enough arguments.
 PASS successfullyParsed is true
 
 TEST COMPLETE

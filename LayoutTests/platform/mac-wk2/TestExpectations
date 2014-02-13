@@ -486,6 +486,14 @@ storage/indexeddb/cursor-reverse-bug.html [ Pass ]
 storage/indexeddb/cursor-skip-deleted.html [ Pass ]
 storage/indexeddb/cursor-update-value-argument-required.html [ Pass ]
 storage/indexeddb/cursor-value.html [ Pass ]
+storage/indexeddb/database-basics.html [ Pass ]
+storage/indexeddb/database-name-undefined.html [ Pass ]
+storage/indexeddb/delete-closed-database-object.html [ Pass ]
+storage/indexeddb/delete-range.html [ Pass ]
+storage/indexeddb/deletedatabase-transaction.html [ Pass ]
+storage/indexeddb/deleteIndex-bug110792.html [ Pass ]
+storage/indexeddb/deleteObjectStore-name-argument-required.html [ Pass ]
+storage/indexeddb/deleteObjectStore-null-name.html [ Pass ]
 
 # Blink tests with complicated text failures.
 storage/indexeddb/create-object-store-options.html
@@ -499,21 +507,43 @@ storage/indexeddb/cursor-overloads.html
 storage/indexeddb/cursor-primary-key-order.html
 storage/indexeddb/cursor-request-cycle.html # Missing needed WKTR feature?
 storage/indexeddb/cursor-update.html
+storage/indexeddb/data-corruption.html
+storage/indexeddb/database-close.html
+storage/indexeddb/database-quota.html
+storage/indexeddb/duplicates.html # Difference between null + undefined
 
-# Blink tests with crashing failures.
-storage/indexeddb/createIndex-after-failure.html  # Crashes the database process
-storage/indexeddb/cursor-cast.html # Crashes the WebProcess
-storage/indexeddb/cursor-key-order.html # Crashes the database process in WebKit::KeyedDecoder::~KeyedDecoder()
+# Blink tests that crash the WebProcess.
+storage/indexeddb/cursor-cast.html
+storage/indexeddb/deleted-objects.html # Crashes under WebCore::GetOperation::GetOperation
+
+# Blink tests that crash the WebProcess under IDBDatabase::dispatchEvent (possibly all related).
+storage/indexeddb/database-deletepending-flag.html 					  
+storage/indexeddb/database-wrapper.html								  
+storage/indexeddb/delete-in-upgradeneeded-close-in-open-success.html 	  
+storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html   
+storage/indexeddb/deletedatabase-blocked.html 						  
+storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange.html 
+storage/indexeddb/deletedatabase-delayed-by-versionchange.html 		  
+storage/indexeddb/deletedatabase-not-blocked.html 
+
+# Blink tests that crash the DatabaseProcess.
+storage/indexeddb/createIndex-after-failure.html
+storage/indexeddb/cursor-key-order.html # Crashes in WebKit::KeyedDecoder::~KeyedDecoder()
+storage/indexeddb/database-closepending-flag.html # Crashes under DatabaseProcessIDBConnection::deleteDatabase
+storage/indexeddb/database-odd-names.html # Crashes under WebKit::DatabaseProcess::ensurePathExists
+storage/indexeddb/deleteIndex.html # Crashes under WebKit::UniqueIDBDatabase::deleteIndex
 
 # Blink tests that pass once, but are known to cause trouble downstream.
 storage/indexeddb/clone-exception.html
 storage/indexeddb/connection-leak.html
+storage/indexeddb/dont-wedge.html
 
 # We don't currently support indexeddb in workers
 storage/indexeddb/basics-shared-workers.html
 storage/indexeddb/basics-workers.html
 storage/indexeddb/cursor-advance-workers.html
 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html
+storage/indexeddb/dont-commit-on-blocked.html
 storage/indexeddb/factory-basics-workers.html
 storage/indexeddb/index-basics-workers.html
 storage/indexeddb/objectstore-basics-workers.html
