@@ -1,3 +1,12 @@
+2014-02-13  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Disable HAVE_ARM_NEON_INTRINSICS
+
+        For now, disable HAVE_ARM_NEON_INTRINSICS when building for iOS. We want
+        to audit the applicable code before we enable this define.
+
+        * wtf/Platform.h:
+
 2014-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         Hoist and combine array bounds checks

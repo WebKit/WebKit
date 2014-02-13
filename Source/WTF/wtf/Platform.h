@@ -505,6 +505,10 @@
 #define ENABLE_JIT_CONSTANT_BLINDING 0
 #endif
 
+#if CPU(ARM_NEON)
+#define HAVE_ARM_NEON_INTRINSICS 0
+#endif
+
 #endif /* PLATFORM(IOS) */
 
 #if PLATFORM(WIN) && !USE(WINGDI)
