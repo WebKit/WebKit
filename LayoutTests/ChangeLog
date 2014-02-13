@@ -6,6 +6,17 @@
 
 2014-02-12  Brady Eidson  <beidson@apple.com>
 
+        IDB: TestExpectations batch - "odd-strings.html to structured-clone.html”
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations:
+        * storage/indexeddb/open-cursor-expected.txt:
+        * storage/indexeddb/removed-expected.txt:
+        * storage/indexeddb/request-result-cache-expected.txt:
+
+2014-02-12  Brady Eidson  <beidson@apple.com>
+
         IDB: TestExpectations batch - "key-generator.html to objectStore-required-arguments.html"
 
         Unreviewed.

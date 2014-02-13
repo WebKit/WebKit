@@ -524,6 +524,19 @@ storage/indexeddb/objectstore-count.html [ Pass ]
 storage/indexeddb/objectstore-cursor.html [ Pass ]
 storage/indexeddb/objectstore-removeobjectstore.html [ Pass ]
 storage/indexeddb/objectStore-required-arguments.html [ Pass ]
+storage/indexeddb/open-bad-versions.html [ Pass ]
+storage/indexeddb/open-cursor.html [ Pass ]
+storage/indexeddb/open-during-transaction.html [ Pass ]
+storage/indexeddb/opencursor-key.html [ Pass ]
+storage/indexeddb/pending-activity.html [ Pass ]
+storage/indexeddb/prefetch-bugfix-108071.html [ Pass ]
+storage/indexeddb/prefetch-race.html [ Pass ]
+storage/indexeddb/readonly-properties.html [ Pass ]
+storage/indexeddb/readonly.html [ Pass ]
+storage/indexeddb/removed.html [ Pass ]
+storage/indexeddb/request-continue-abort.html [ Pass ]
+storage/indexeddb/request-event-propagation.html [ Pass ]
+storage/indexeddb/request-result-cache.html [ Pass ]
 
 # Blink tests with unexplained timeouts
 storage/indexeddb/exceptions.html [ Skip ]
@@ -562,11 +575,16 @@ storage/indexeddb/lazy-index-population.html [ Skip ]
 storage/indexeddb/noblobs.html [ Skip ] # Missing DRT file/blob support
 storage/indexeddb/objectstore-autoincrement.html [ Skip ]
 storage/indexeddb/objectstore-keycursor.html [ Skip ]
+storage/indexeddb/optional-arguments.html [ Skip ]
+storage/indexeddb/request-leak.html [ Skip ] # Missing WKTR support? GC?
+storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Skip ]
+storage/indexeddb/structured-clone.html [ Skip ] # Missing DRT file/blob support
 
 # Blink tests that crash the WebProcess.
 storage/indexeddb/cursor-cast.html [ Skip ]
 storage/indexeddb/deleted-objects.html [ Skip ] # Crashes under WebCore::GetOperation::GetOperation
 storage/indexeddb/metadata.html [ Skip ] # Crashes under IDBDatabaseBackend::createIndex
+storage/indexeddb/persistence.html [ Skip ] # Crash under IDBDatabaseBackend::createObjectStore
 
 # Blink tests that crash the WebProcess under IDBDatabase::dispatchEvent or IDBRequest::dispatchEvent (possibly all related).
 storage/indexeddb/database-deletepending-flag.html [ Skip ]	  
@@ -587,17 +605,25 @@ storage/indexeddb/intversion-pending-version-changes-descending.html [ Skip ]
 storage/indexeddb/intversion-pending-version-changes-same.html [ Skip ]
 storage/indexeddb/intversion-upgrades.html [ Skip ]
 storage/indexeddb/objectstore-basics.html [ Skip ]
+storage/indexeddb/set_version_blocked.html [ Skip ]
+storage/indexeddb/setversion-not-blocked.html [ Skip ]
 
 # Blink tests that crash the DatabaseProcess.
 storage/indexeddb/createIndex-after-failure.html [ Skip ]
-storage/indexeddb/database-closepending-flag.html [ Skip ] # Crashes under DatabaseProcessIDBConnection::deleteDatabase
 storage/indexeddb/database-odd-names.html [ Skip ] # Crashes under WebKit::DatabaseProcess::ensurePathExists
 storage/indexeddb/deleteIndex.html [ Skip ] # Crashes under WebKit::UniqueIDBDatabase::deleteIndex
 storage/indexeddb/index-cursor.html [ Skip ] # Flaky crash under UniqueIDBDatabase::unregisterConnection
-storage/indexeddb/key-sort-order-across-types.html [ Skip ] # Flaky crash in DatabaseProcessIDBConnection::deleteDatabase
-storage/indexeddb/key-sort-order-date.html [ Skip ] # Flaky crash in DatabaseProcessIDBConnection::deleteDatabase
-storage/indexeddb/key-type-infinity.html [ Skip ] # Flaky crash in DatabaseProcessIDBConnection::deleteDatabase
-storage/indexeddb/keypath-fetch-key.html [ Skip ] # Flaky crash in DatabaseProcessIDBConnection::deleteDatabase
+storage/indexeddb/open-ordering.html [ Skip ] # DatabaseProcessIDBConnection::GetOrEstablishIDBDatabaseMetadata
+
+# Blink tests that crash the DatabaseProcess under DatabaseProcessIDBConnection::deleteDatabase.
+storage/indexeddb/database-closepending-flag.html [ Skip ]
+storage/indexeddb/key-sort-order-across-types.html [ Skip ]
+storage/indexeddb/key-sort-order-date.html [ Skip ]
+storage/indexeddb/key-type-infinity.html [ Skip ]
+storage/indexeddb/keypath-fetch-key.html [ Skip ]
+storage/indexeddb/odd-strings.html [ Skip ]
+storage/indexeddb/prefetch-invalidation.html [ Skip ]
+storage/indexeddb/queued-commands.html [ Skip ]
 
 # Blink tests that crash the DatabaseProcess under KeyedDecoder::~KeyedDecoder.
 storage/indexeddb/cursor-key-order.html [ Skip ]
@@ -621,6 +647,9 @@ storage/indexeddb/index-basics-workers.html [ Skip ]
 storage/indexeddb/objectstore-basics-workers.html [ Skip ]
 storage/indexeddb/open-twice-workers.html [ Skip ]
 storage/indexeddb/pending-activity-workers.html [ Skip ]
+storage/indexeddb/pending-version-change-on-exit.html [ Skip ]
+storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Skip ]
+storage/indexeddb/pending-version-change-stuck.html [ Skip ]
 storage/indexeddb/transaction-complete-workers.html [ Skip ]
 storage/indexeddb/unprefix-workers.html [ Skip ]
 
