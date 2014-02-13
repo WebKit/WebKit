@@ -86,4 +86,8 @@ all:
 
 clean:
 
+installhdrs:
+
+installsrc:
+
 endif
