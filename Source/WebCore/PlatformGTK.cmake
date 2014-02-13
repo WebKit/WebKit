@@ -295,6 +295,13 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/mediaControlsGtk.css
 )
 
+set(WebCore_USER_AGENT_SCRIPTS
+    ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.js
+    ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsGtk.js
+)
+
+set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/gtk/RenderThemeGtk.cpp)
+
 list(APPEND WebCore_LIBRARIES
     ${ATK_LIBRARIES}
     ${CAIRO_LIBRARIES}
@@ -455,6 +462,7 @@ set_property(
         ${GDK_INCLUDE_DIRS}
 )
 target_link_libraries(WebCorePlatformGTK
+    WebCore
     ${WebCore_LIBRARIES}
     ${GTK_LIBRARIES}
     ${GDK_LIBRARIES}

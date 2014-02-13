@@ -76,6 +76,7 @@ Controller.prototype = {
         thumbnailTrack: 'thumbnail-track',
         volumeBox: 'volume-box',
         noVideo: 'no-video',
+        down: 'down',
     },
     KeyCodes: {
         enter: 13,
@@ -572,9 +573,7 @@ Controller.prototype = {
     handleWrapperMouseMove: function(event)
     {
         this.showControls();
-        if (this.hideTimer)
-            clearTimeout(this.hideTimer);
-        this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideControlsDelay);
+        this.resetHideControlsTimer();
 
         if (!this.isDragging)
             return;
@@ -587,8 +586,7 @@ Controller.prototype = {
     handleWrapperMouseOut: function(event)
     {
         this.hideControls();
-        if (this.hideTimer)
-            clearTimeout(this.hideTimer);
+        this.clearHideControlsTimer();
     },
 
     handleWrapperMouseUp: function(event)
@@ -864,9 +862,7 @@ Controller.prototype = {
             this.controls.playButton.setAttribute('aria-label', this.UIString('Pause'));
 
             this.hideControls();
-            if (this.hideTimer)
-                clearTimeout(this.hideTimer);
-            this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideControlsDelay);
+            this.resetHideControlsTimer();
         }
     },
 
@@ -1152,4 +1148,17 @@ Controller.prototype = {
         return this.video instanceof HTMLAudioElement;
     },
 
+    clearHideControlsTimer: function()
+    {
+        if (this.hideTimer)
+            clearTimeout(this.hideTimer);
+        this.hideTimer = null;
+    },
+
+    resetHideControlsTimer: function()
+    {
+        if (this.hideTimer)
+            clearTimeout(this.hideTimer);
+        this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideControlsDelay);
+    },
 };

@@ -441,9 +441,7 @@ webkit.org/b/103771 media/track/track-in-band-mode.html [ Skip ]
 webkit.org/b/107818 media/controls-styling.html [ Failure ]
 
 # New chromium based controls
-webkit.org/b/107825 fullscreen/video-controls-drag.html [ Failure ]
 webkit.org/b/107825 media/audio-delete-while-step-button-clicked.html [ Failure ]
-webkit.org/b/107825 media/media-volume-slider-rendered-below.html [ Failure ]
 webkit.org/b/107825 media/nodesFromRect-shadowContent.html [ Failure ]
 webkit.org/b/107825 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/107825 media/media-controls-clone.html [ Failure ]
@@ -993,7 +991,7 @@ webkit.org/b/44478 fast/text/hyphenate-locale.html [ Skip ]
 webkit.org/b/44478 fast/text/hyphen-min-preferred-width.html [ Skip ]
 
 # GTK is moving from toggle button to a menu of tracks.
-webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Failure ]
+webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Timeout Failure ]
 webkit.org/b/101670 media/track/track-user-preferences.html [ Failure ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure ]
 
@@ -1484,7 +1482,7 @@ webkit.org/b/124504 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Failure ]
-webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
+webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [ Timeout Failure ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 
@@ -1515,8 +1513,6 @@ webkit.org/b/126425 scrollbars/scrollbar-large-overflow-rectangle.html [ Failure
 
 webkit.org/b/126519 inspector-protocol/model/highlight-shape-outside-margin.html [ Failure ]
 
-webkit.org/b/126520 media/click-volume-bar-not-pausing.html [ Failure ]
-
 webkit.org/b/126521 accessibility/menu-list-sends-change-notification.html [ Failure ]
 
 webkit.org/b/126619 http/tests/media/video-auth.html [ Failure ]
@@ -1546,6 +1542,11 @@ webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
 webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failure ]
 # End of subpixel failures.
+
+# After webkit.org/b/123097 we flag these tests that also fail in mac
+webkit.org/b/123097 media/track/track-cue-mutable-text.html [ Failure ]
+webkit.org/b/123097 media/video-controls-captions-trackmenu-sorted.html [ Failure ]
+webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

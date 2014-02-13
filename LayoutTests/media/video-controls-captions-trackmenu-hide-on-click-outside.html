@@ -44,6 +44,8 @@
                 findMediaElement();
                 video.src = findMediaFile('video', 'content/test');
                 waitForEvent('canplaythrough', function () { startTrackMenuTest(startTest); });
+
+                internals.suspendAnimations(); // Captions menu can be animated and allowing the animation can create flakyness.
             }
         </script>
     </head>

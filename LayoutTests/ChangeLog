@@ -1,3 +1,47 @@
+2014-02-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] MEDIA_CONTROLS_SCRIPT support
+        https://bugs.webkit.org/show_bug.cgi?id=123097
+
+        Reviewed by Jer Noble.
+
+        Tests infrastructure for the media controls script.
+
+        * media/click-volume-bar-not-pausing.html:
+        * media/media-volume-slider-rendered-normal.html:
+        * media/video-controls-captions-trackmenu-hide-on-click-outside.html:
+        * media/video-volume-slider.html: Fixed.
+        * platform/gtk-wk2/TestExpectations: Tests flagged.
+        * platform/gtk/TestExpectations: Changed tests flags.
+        * platform/gtk/accessibility/media-element-expected.txt:
+        * platform/gtk/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/gtk/fast/layers/video-layer-expected.txt: Rebaseline.
+        * platform/gtk/fullscreen/video-controls-override-expected.txt: Added.
+        * platform/gtk/http/tests/media/video-buffered-range-contains-currentTime-expected.png:
+        * platform/gtk/media/audio-controls-rendering-expected.png:
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/audio-repaint-expected.txt:
+        * platform/gtk/media/controls-after-reload-expected.png:
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-strict-expected.png:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-strict-expected.png:
+        * platform/gtk/media/controls-styling-strict-expected.txt:
+        * platform/gtk/media/controls-without-preload-expected.png:
+        * platform/gtk/media/controls-without-preload-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.png:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        * platform/gtk/media/video-display-toggle-expected.png:
+        * platform/gtk/media/video-display-toggle-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.png:
+        * platform/gtk/media/video-no-audio-expected.txt:
+        * platform/gtk/media/video-volume-slider-expected.png:
+        * platform/gtk/media/video-volume-slider-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.png:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+        Rebaseline.
+
 2014-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another Windows test expectations update.

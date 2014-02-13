@@ -70,6 +70,10 @@
                     return;
                 }
 
+                internals.suspendAnimations(); // Volumebar can be animated and we would need a timeout to have it shown.
+
+                mediaElement.volume = 1;
+
                 waitForEventAndFail("error");
                 waitForEventOnce('playing', playing);
 

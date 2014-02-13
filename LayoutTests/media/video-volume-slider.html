@@ -11,6 +11,8 @@
             if (window.testRunner)
                 testRunner.waitUntilDone();
 
+            internals.suspendAnimations(); // Volumebar can be animated and we would need a timeout to have it shown.
+
             video = document.getElementsByTagName("video")[0];
             video.src = findMediaFile("video", "content/test");
         }

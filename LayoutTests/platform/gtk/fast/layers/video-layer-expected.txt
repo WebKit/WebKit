@@ -20,7 +20,7 @@ layer at (59,109) size 300x150
     RenderBlock {DIV} at (0,110) size 300x40
 layer at (64,224) size 290x30
   RenderFlexibleBox {DIV} at (5,5) size 290x30 [bgcolor=#141414CC]
-    RenderButton {INPUT} at (9,0) size 30x30
+    RenderButton {BUTTON} at (9,0) size 30x30
     RenderSlider {INPUT} at (49,11) size 179x8 [color=#E6E6E659]
       RenderFlexibleBox {DIV} at (0,0) size 179x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 191x12

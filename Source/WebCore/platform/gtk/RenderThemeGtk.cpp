@@ -36,12 +36,14 @@
 #include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
 #include "MediaControlElements.h"
+#include "NamedNodeMap.h"
 #include "PaintInfo.h"
 #include "PlatformContextCairo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "StringTruncator.h"
 #include "TimeRanges.h"
+#include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
 #include <cmath>
 #include <gdk/gdk.h>
@@ -49,6 +51,7 @@
 #include <gtk/gtk.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(PROGRESS_ELEMENT)
 #include "RenderProgress.h"
@@ -101,6 +104,18 @@ void RenderThemeGtk::initMediaButtons()
 }
 #endif
 
+static bool nodeHasPseudo(Node* node, const char* pseudo)
+{
+    RefPtr<Node> attributeNode = node->attributes()->getNamedItem("pseudo");
+
+    return attributeNode ? attributeNode->nodeValue() == pseudo : false;
+}
+
+static bool nodeHasClass(Node* node, const char* className)
+{
+    return node->isElementNode() ? toElement(node)->classNames().contains(className) : false;
+}
+
 PassRefPtr<RenderTheme> RenderThemeGtk::create()
 {
     return adoptRef(new RenderThemeGtk());
@@ -139,11 +154,6 @@ static bool supportsFocus(ControlPart appearance)
     case CheckboxPart:
     case SliderHorizontalPart:
     case SliderVerticalPart:
-    case MediaPlayButtonPart:
-    case MediaVolumeSliderPart:
-    case MediaMuteButtonPart:
-    case MediaEnterFullscreenButtonPart:
-    case MediaSliderPart:
         return true;
     default:
         return false;
@@ -525,13 +535,14 @@ bool RenderThemeGtk::paintMediaPlayButton(RenderObject* renderObject, const Pain
     Node* node = renderObject->node();
     if (!node)
         return false;
-    if (!node->isMediaControlElement())
-        return false;
 
-    bool play = mediaControlElementType(node) == MediaPlayButton;
+    if (!nodeHasPseudo(node, "-webkit-media-controls-play-button"))
+        return false;
+    bool showPlayButton = nodeHasClass(node, "paused");
+
     return paintMediaButton(renderObject, paintInfo.context, rect,
-        play ? "media-playback-start-symbolic" : "media-playback-pause-symbolic",
-        play ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
+        showPlayButton ? "media-playback-start-symbolic" : "media-playback-pause-symbolic",
+        showPlayButton ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
 }
 
 bool RenderThemeGtk::paintMediaSeekBackButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
@@ -543,6 +554,13 @@ bool RenderThemeGtk::paintMediaSeekForwardButton(RenderObject* renderObject, con
 {
     return paintMediaButton(renderObject, paintInfo.context, rect, "media-seek-forward-symbolic", GTK_STOCK_MEDIA_FORWARD);
 }
+
+#if ENABLE(VIDEO_TRACK)
+bool RenderThemeGtk::paintMediaToggleClosedCaptionsButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return paintMediaButton(renderObject, paintInfo.context, rect, "user-invisible-symbolic", GTK_STOCK_JUSTIFY_FILL);
+}
+#endif
 
 static RoundedRect::Radii borderRadiiFromStyle(RenderStyle* style)
 {
@@ -726,4 +744,11 @@ int RenderThemeGtk::sliderTickOffsetFromTrackCenter() const
 }
 #endif
 
+String RenderThemeGtk::mediaControlsScript()
+{
+    StringBuilder scriptBuilder;
+    scriptBuilder.append(mediaControlsAppleJavaScript, sizeof(mediaControlsAppleJavaScript));
+    scriptBuilder.append(mediaControlsGtkJavaScript, sizeof(mediaControlsGtkJavaScript));
+    return scriptBuilder.toString();
+}
 }

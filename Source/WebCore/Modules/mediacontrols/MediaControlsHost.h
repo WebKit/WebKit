@@ -59,6 +59,7 @@ public:
     Element* textTrackContainer();
     void updateTextTrackContainer();
     bool mediaPlaybackAllowsInline() const;
+    bool supportsFullscreen();
 
 private:
     MediaControlsHost(HTMLMediaElement*);

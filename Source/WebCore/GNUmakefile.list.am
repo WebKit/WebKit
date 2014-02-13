@@ -463,6 +463,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSLocation.h \
 	DerivedSources/WebCore/JSMediaController.cpp \
 	DerivedSources/WebCore/JSMediaController.h \
+	DerivedSources/WebCore/JSMediaControlsHost.cpp \
+	DerivedSources/WebCore/JSMediaControlsHost.h \
 	DerivedSources/WebCore/JSMediaElementAudioSourceNode.cpp \
 	DerivedSources/WebCore/JSMediaElementAudioSourceNode.h \
 	DerivedSources/WebCore/JSMediaError.cpp \
@@ -854,6 +856,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/PlugInsResourcesData.cpp \
 	DerivedSources/WebCore/PlugInsResources.h \
 	DerivedSources/WebCore/SettingsMacros.h \
+	DerivedSources/WebCore/UserAgentScriptsData.cpp \
+	DerivedSources/WebCore/UserAgentScripts.h \
 	DerivedSources/WebCore/UserAgentStyleSheetsData.cpp \
 	DerivedSources/WebCore/UserAgentStyleSheets.h \
 	DerivedSources/WebCore/XLinkNames.cpp \
@@ -1200,6 +1204,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/indexeddb/IDBTransaction.idl \
 	$(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
 	$(WebCore)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
+	$(WebCore)/Modules/mediacontrols/MediaControlsHost.idl \
 	$(WebCore)/Modules/mediasource/DOMURLMediaSource.idl \
 	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
@@ -1879,6 +1884,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.h \
 	Source/WebCore/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp \
 	Source/WebCore/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.h \
+	Source/WebCore/Modules/mediacontrols/MediaControlsHost.cpp \
+	Source/WebCore/Modules/mediacontrols/MediaControlsHost.h \
 	Source/WebCore/Modules/mediasource/MediaSource.cpp \
 	Source/WebCore/Modules/mediasource/MediaSource.h \
 	Source/WebCore/Modules/mediasource/MediaSourceRegistry.cpp \

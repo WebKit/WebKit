@@ -9,28 +9,32 @@ State at 'canplaythrough' event:
     role: AXRole: AXEmbedded
 
 
-        description: AXDescription: video playback
+        description: AXDescription: Video Playback
         role: AXRole: AXToolbar
 
 
-            description: AXDescription: video playback
-            role: AXRole: AXToolbar
+            description: AXDescription: Play
+            role: AXRole: AXButton
 
 
-                description: AXDescription: play
-                role: AXRole: AXButton
+            description: AXDescription: Duration
+            role: AXRole: AXSlider
 
 
-                description: AXDescription: 
-                role: AXRole: AXSlider
+            description: AXDescription: Remaining
+            role: AXRole: AXTimer
 
 
-                description: AXDescription: enter fullscreen
-                role: AXRole: AXButton
+            description: AXDescription: Display Full Screen
+            role: AXRole: AXButton
 
 
-                description: AXDescription: mute
-                role: AXRole: AXButton
+            description: AXDescription: Mute
+            role: AXRole: AXButton
+
+
+            description: AXDescription: Volume
+            role: AXRole: AXSlider
 
 
 

@@ -141,7 +141,6 @@
 #include "JSMediaControlsHost.h"
 #include "MediaControlsHost.h"
 #include "ScriptGlobalObject.h"
-#include "UserAgentScripts.h"
 #include <bindings/ScriptObject.h>
 #endif
 

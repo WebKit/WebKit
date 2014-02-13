@@ -1,3 +1,166 @@
+2014-02-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] MEDIA_CONTROLS_SCRIPT support
+        https://bugs.webkit.org/show_bug.cgi?id=123097
+
+        Reviewed by Jer Noble.
+
+        WebKitGTK+ multimedia controls are now managed from Javascript
+        code. Apple controls are kept as common code and GTK+ ones are
+        subclassed for the specific behavior.
+
+        Both CMake and Autotools build support is provided.
+
+        * CMakeLists.txt: Added support to build the media controls
+        script and their associated files.
+        * GNUmakefile.am: Added support to generate the C++ code from the
+        Javascript.
+        * GNUmakefile.list.am: Added the media controls script associated
+        files.
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        (WebCore::MediaControlsHost::supportsFullscreen): Added attribute
+        to know if the element supports fullscreen.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handleWrapperMouseMove):
+        (Controller.prototype.handleWrapperMouseOut):
+        (Controller.prototype.updatePlaying): Use clear and
+        resetHideControlsTimer.
+        (Controller.prototype.clearHideControlsTimer): Added.
+        (Controller.prototype.resetHideControlsTimer): Added.
+        * Modules/mediacontrols/mediaControlsGtk.js: Added.
+        (createControls): Calls ControllerGtk.
+        (ControllerGtk): Calls the superclass.
+        (contains): Defines a function to know if an object is contained
+        in an array.
+        (ControllerGtk.prototype.inheritFrom): Copies the method of the
+        superclass that are not reimplemented in the subclass.
+        (ControllerGtk.prototype.createControls): Calls the superclass and
+        create the remaining needed elements.
+        (ControllerGtk.prototype.configureInlineControls): Configures the
+        controls.
+        (ControllerGtk.prototype.setStatusHidden): Redefined empty.
+        (ControllerGtk.prototype.updateTime): Writes the duration and
+        current position. As it was so far, current time also includes
+        duration. If current time is bigger than 0 we show that.
+        (ControllerGtk.prototype.showCurrentTime): Shows current time and
+        hides duration label (that is included in current time).
+        (ControllerGtk.prototype.handlePlay): Calls the superclass and
+        force showing the current time.
+        (ControllerGtk.prototype.handleTimeUpdate): Always update the
+        time.
+        (ControllerGtk.prototype.handleMuteButtonMouseOver): Shows the
+        volume slider.
+        (ControllerGtk.prototype.handleVolumeBoxMouseOut): Hides the
+        volume slider.
+        (ControllerGtk.prototype.addControls): Adds the enclosure instead
+        of the panel directly. Panel is, of course, part of the enclosure.
+        (ControllerGtk.prototype.updateReadyState): Shows the fullscreen
+        button only if fullscreen is supported. Sets the volume in up or
+        down mode depending on its position in the document. Updates the
+        volume.
+        (ControllerGtk.prototype.setControlsType): Creates the controls it
+        they were not created before. Unlike Apple ones, WebKitGTK+
+        fullscreen and inline controls are the same.
+        (ControllerGtk.prototype.updatePlaying): Calls the superclass and
+        shows the controls if not playing.
+        (ControllerGtk.prototype.handleCaptionButtonClicked): Redefined
+        empty. To be coherent with volume, that also shows a popup, this
+        is handled with mouseover instead of click.
+        (ControllerGtk.prototype.buildCaptionMenu): Calls the superclass
+        to build the menu, sets some listeners, centers the popup with the
+        captions button, keeps the current height and sets the style to 0,
+        which is needed to animate it.
+        (ControllerGtk.prototype.destroyCaptionMenu): Hides the caption menu.
+        (ControllerGtk.prototype.showCaptionMenu): Resets the height to
+        its original. We don't animate it with CSS because we would need
+        to specify a height in the style and we don't know it in advance.
+        (ControllerGtk.prototype.hideCaptionMenu): Sets height to 0.
+        (ControllerGtk.prototype.captionMenuTransitionEnd): When the
+        captions menu transtition ends, it is destroyed.
+        (ControllerGtk.prototype.handleCaptionButtonMouseOver): Creates
+        the caption menu and shows it.
+        (ControllerGtk.prototype.handleCaptionButtonMouseOut): Hides the
+        captions menu.
+        (ControllerGtk.prototype.handleCaptionMouseOut): Hides the
+        captions menu.
+        * PlatformGTK.cmake: Added WebCore to the target link libraries
+        and initialized the variables needed at CMakelists.txt
+        * css/mediaControlsGtk.css:
+        (audio::-webkit-media-controls-panel)
+        (video::-webkit-media-controls-panel): Added transtion based on opacity.
+        (video::-webkit-media-controls-panel): Set video opacity to 0.
+        (video::-webkit-media-controls-panel.paused): Set video opacity to 1.
+        (audio::-webkit-media-controls-panel div.mute-box): Set the same
+        style as the mute button to preserve the layout.
+        (audio::-webkit-media-controls-panel div.mute-box.hidden): Sets
+        the display to none.
+        (audio::-webkit-media-controls-mute-button)
+        (video::-webkit-media-controls-mute-button): Removed the outline
+        and the margin that is managed by the mute box now.
+        (audio::-webkit-media-controls-play-button)
+        (video::-webkit-media-controls-play-button): Removed the outline.
+        (audio::-webkit-media-controls-time-remaining-display)
+        (video::-webkit-media-controls-time-remaining-display): Removed
+        the display.
+        (audio::-webkit-media-controls-current-time-display)
+        (video::-webkit-media-controls-current-time-display): Added the
+        display block.
+        (video::-webkit-media-controls-time-remaining-display): Set
+        display none.
+        (video::-webkit-media-controls-time-remaining-display.show): Set
+        display block.
+        (video::-webkit-media-controls-time-remaining-display.hidden): Set
+        display none.
+        (audio::-webkit-media-controls-timeline)
+        (video::-webkit-media-controls-timeline): Removed outline.
+        (audio::-webkit-media-controls-volume-slider-container)
+        (video::-webkit-media-controls-volume-slider-container): Set
+        overflow hidden and set a transition by height.
+        (video::-webkit-media-controls-volume-slider-container.hidden):
+        Set height 0.
+        (video::-webkit-media-controls-volume-slider-container.down): Set
+        bottom to be below the panel. Changed the border radius and
+        transition accordingly.
+        (video::-webkit-media-controls-panel .hidden.down): Sets default
+        bottom as 0.
+        (audio::-webkit-media-controls-volume-slider)
+        (video::-webkit-media-controls-volume-slider): Removed the outline.
+        (audio::-webkit-media-controls-toggle-closed-captions-button)
+        (video::-webkit-media-controls-toggle-closed-captions-button):
+        Removed the background that is painted from C++ and removed the
+        outline.
+        (video::-webkit-media-controls-closed-captions-container):
+        (video::-webkit-media-controls-closed-captions-container h3):
+        (video::-webkit-media-controls-closed-captions-container ul):
+        (video::-webkit-media-controls-closed-captions-container li):
+        (video::-webkit-media-controls-closed-captions-container li.selected): Changed
+        the style to make it more coherent with the rest of the controls.
+        (audio::-webkit-media-controls-fullscreen-button)
+        (video::-webkit-media-controls-fullscreen-button): Removed the outline.
+        (audio::-webkit-media-controls-panel button.hidden): Sets the
+        display to none.
+        * html/HTMLMediaElement.cpp: UserAgentScripts.h is not needed here
+        and build cmake build would need for changes to get this compiled.
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::nodeHasPseudo): Added. Checks if a node has a certain
+        pseudo.
+        (WebCore::nodeHasClass): Added. Checks if a node has a certain
+        class.
+        (WebCore::supportsFocus): Removed some element types as outline is
+        now handled in CSS.
+        (WebCore::RenderThemeGtk::paintMediaPlayButton): Checks if the
+        play button has the class paused to show the play icon instead of
+        the pause one.
+        (WebCore::RenderThemeGtk::paintMediaToggleClosedCaptionsButton):
+        Added. Paints the captions icon.
+        (WebCore::RenderThemeGtk::mediaControlsScript): Added. Loads the
+        bundled scripts.
+        * platform/gtk/RenderThemeGtk.h: Added the mediaControlsScript
+        method and declared the redefinition of the method to play the
+        captions icon.
+
 2014-02-11  Alexey Proskuryakov  <ap@apple.com>
 
         Don't crash when SerializedScriptValue deserialization fails

@@ -88,6 +88,7 @@ public:
     virtual String extraMediaControlsStyleSheet();
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
     virtual bool supportsClosedCaptioning() const override { return true; }
+    virtual String mediaControlsScript();
 
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet();
@@ -174,6 +175,9 @@ protected:
     virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
+#if ENABLE(VIDEO_TRACK)
+    virtual bool paintMediaToggleClosedCaptionsButton(RenderObject*, const PaintInfo&, const IntRect&);
+#endif
 #endif
 
 #if ENABLE(PROGRESS_ELEMENT)

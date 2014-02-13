@@ -1,3 +1,22 @@
+2014-02-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] MEDIA_CONTROLS_SCRIPT support
+        https://bugs.webkit.org/show_bug.cgi?id=123097
+
+        Reviewed by Jer Noble.
+
+        Part of the Autotools and CMake structure to build the media
+        controls script.
+
+        * Source/autotools/SetupWebKitFeatures.m4: Activated the media
+        controls script by default.
+        * Source/cmake/OptionsGTK.cmake: Activated the media controls
+        script by default.
+        * Source/cmake/WebKitFeatures.cmake: Created the option to
+        activate the controls script.
+        * Source/cmakeconfig.h.cmake: Created the define template the the
+        media controls script.
+
 2014-02-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GDB] Add .gdbinit to the list of files ignored by Git

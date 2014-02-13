@@ -15,6 +15,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/Modules/indexeddb \
 	-I$(srcdir)/Source/WebCore/Modules/indexeddb/leveldb \
 	-I$(srcdir)/Source/WebCore/Modules/indieui \
+	-I$(srcdir)/Source/WebCore/Modules/mediacontrols \
 	-I$(srcdir)/Source/WebCore/Modules/mediasource \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
 	-I$(srcdir)/Source/WebCore/Modules/navigatorcontentutils \
@@ -264,6 +265,12 @@ DerivedSources/WebCore/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y.in
 	$(AM_V_GEN)
 	$(AM_V_at)perl -I $(WebCore)/bindings/scripts $(WebCore)/css/makegrammar.pl --extraDefines "$(feature_defines)" --outputDir $(GENSOURCES_WEBCORE) --bison "$(BISON)" --symbolsPrefix cssyy $<
 
+USER_AGENT_SCRIPT_FILES = $(WebCore)/Modules/mediacontrols/mediaControlsApple.js $(WebCore)/Modules/mediacontrols/mediaControlsGtk.js
+DerivedSources/WebCore/UserAgentScriptsData.cpp: DerivedSources/WebCore/UserAgentScripts.h
+DerivedSources/WebCore/UserAgentScripts.h: PYTHONPATH=$(INSPECTOR_SCRIPTS_DIR)
+DerivedSources/WebCore/UserAgentScripts.h: $(WebCore)/Scripts/make-js-file-arrays.py $(USER_AGENT_SCRIPT_FILES)
+	$(AM_V_GEN)$(PYTHON) $< $@ DerivedSources/WebCore/UserAgentScriptsData.cpp $(USER_AGENT_SCRIPT_FILES)
+
 # user agent style sheets
 USER_AGENT_STYLE_SHEETS = \
 	$(WebCore)/css/html.css \
@@ -398,6 +405,7 @@ IDL_PATH := \
     $(WebCore)/Modules/gamepad \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
+    $(WebCore)/Modules/mediacontrols \
     $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/mediastream \
     $(WebCore)/Modules/notifications \
