@@ -175,7 +175,7 @@ public:
         
         m_changed = false;
         
-        for (BlockIndex blockIndex = blockIndex = m_graph.numBlocks(); blockIndex--;)
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;)
             handleBlock(blockIndex);
         
         return m_changed;

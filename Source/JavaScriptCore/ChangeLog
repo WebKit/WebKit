@@ -1,3 +1,12 @@
+2014-02-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix.
+
+        Fixed typo.
+
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::run):
+
 2014-02-13  Michael Saboff  <msaboff@apple.com>
 
         Change FTL stack check to use VM's stackLimit
