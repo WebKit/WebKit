@@ -1,3 +1,35 @@
+2014-02-12  David Farler  <dfarler@apple.com>
+
+        Upstream iOS old-run-webkit-tests for use with DumpRenderTree in the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=127694
+
+        Reviewed by Simon Fraser.
+
+        This is a short-term effort to get layout tests working in the iOS simulator again.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Pass PLATFORM_NAME to the makefile.
+        * DumpRenderTree/ios/PerlSupport/Makefile:
+        Cleanup.
+        * Scripts/old-run-webkit-tests:
+        Added functions and some exceptions for the simulator.
+        (installAndLaunchDumpRenderTreeAppUsingNotification):
+        (openIPhoneSimulator):
+        (quitDumpRenderTreeAppUsingNotification):
+        (quitIPhoneSimulator):
+        (simulatorSessionUUID):
+        (openDiffTool):
+        (buildDumpTool):
+        (openDumpTool):
+        (closeDumpTool):
+        (dumpToolDidCrash):
+        (expectedDirectoryForTest):
+        (buildPlatformResultHierarchy):
+        * Scripts/webkitdirs.pm:
+        Support functions for old-run-webkit-tests.
+        (determineIPhoneSimulatorVersion):
+        (iPhoneSimulatorVersion):
+
 2014-02-12  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Basic framework for a modern jsc CLI

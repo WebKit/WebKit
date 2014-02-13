@@ -87,6 +87,7 @@ my $configurationProductDir;
 my $sourceDir;
 my $currentSVNRevision;
 my $debugger;
+my $iPhoneSimulatorVersion;
 my $nmPath;
 my $osXVersion;
 my $generateDsym;
@@ -1152,6 +1153,31 @@ sub isPerianInstalled()
     }
 
     return 0;
+}
+
+sub determineIPhoneSimulatorVersion()
+{
+    return if $iPhoneSimulatorVersion;
+
+    if (!isIOSWebKit()) {
+        $iPhoneSimulatorVersion = -1;
+        return;
+    }
+
+    my $version = `/usr/local/bin/psw_vers -productVersion`;
+    my @splitVersion = split(/\./, $version);
+    @splitVersion >= 2 or die "Invalid version $version";
+    $iPhoneSimulatorVersion = {
+            "major" => $splitVersion[0],
+            "minor" => $splitVersion[1],
+            "subminor" => defined($splitVersion[2] ? $splitVersion[2] : 0),
+    };
+}
+
+sub iPhoneSimulatorVersion()
+{
+    determineIPhoneSimulatorVersion();
+    return $iPhoneSimulatorVersion;
 }
 
 sub determineNmPath()

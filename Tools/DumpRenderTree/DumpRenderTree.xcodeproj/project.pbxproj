@@ -800,7 +800,7 @@
 /* Begin PBXLegacyTarget section */
 		A1158D6218927AF00088C17B /* Perl Support */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(ACTION)";
+			buildArgumentsString = "$(ACTION) PLATFORM_NAME=$(PLATFORM_NAME)";
 			buildConfigurationList = A1158D6318927AF00088C17B /* Build configuration list for PBXLegacyTarget "Perl Support" */;
 			buildPhases = (
 			);

@@ -21,10 +21,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-ifneq ($(filter iphoneos iphonesimulator, $(PLATFORM_NAME)), )
+ifneq (,$(filter iphonesimulator, $(PLATFORM_NAME)))
 
-CONFIGURATION_BUILD_DIR ?= .
-OUTPUT_DIR=$(CONFIGURATION_BUILD_DIR)
+TARGET_BUILD_DIR ?= .
+OUTPUT_DIR=$(TARGET_BUILD_DIR)
 
 WRAPPER_DIR=$(OUTPUT_DIR)/DerivedSources/DumpRenderTree
 ifneq ($(PLATFORM_NAME),iphoneos)
@@ -40,27 +40,6 @@ DUMPRENDERTREE=$(OUTPUT_DIR)/DumpRenderTree.app/DumpRenderTree
 # FIXME: We shouldn't hard code these architectures. See <rdar://problem/9047171> for more discussion on why we have to.
 ARCHS=i386 x86_64
 
-OSX_VERSION = $(shell sw_vers -productVersion | cut -d. -f 2)
-ifeq "$(OSX_VERSION)" "5"
-GENERATE_WRAPPER = YES
-endif
-ifeq "$(OSX_VERSION)" "6"
-GENERATE_WRAPPER = NO
-endif
-
-ifeq "$(GENERATE_WRAPPER)" "YES"
-
-SWIG=/usr/bin/swig
-
-all: $(DYLIB) $(PERL_MODULE)
-
-$(WRAPPER) $(PERL_MODULE): DumpRenderTreeSupport.c $(DUMPRENDERTREE)
-	mkdir -p $(WRAPPER_DIR)
-	$(SWIG) -o $(WRAPPER) -outdir $(OUTPUT_DIR) -perl -module DumpRenderTreeSupport $<
-
-
-else
-
 
 all: $(DYLIB) $(PERL_MODULE)
 
@@ -71,13 +50,8 @@ $(WRAPPER): DumpRenderTreeSupport_wrapPregenerated.c $(DUMPRENDERTREE)
 $(PERL_MODULE): DumpRenderTreeSupportPregenerated.pm $(DUMPRENDERTREE)
 	cp DumpRenderTreeSupportPregenerated.pm $(PERL_MODULE)
 
-
-endif
-
-OS_X_SDK = $(if $(shell xcrun --show-sdk-path -sdk "macosx" 2> /dev/null),macosx, /)
-
 $(DYLIB): DumpRenderTreeSupport.c $(WRAPPER)
-	TOOLCHAINS= xcrun -sdk $(OS_X_SDK) cc -g -dynamiclib -o $(DYLIB) `$(PERL) -MExtUtils::Embed -eperl_inc` `$(PERL) -MExtUtils::Embed -e'my $$opts = ldopts(0); $$opts =~ s/-arch [^ ]*( |$$)//g; print $$opts, " -arch ", join(" -arch ", split(" ",$$ENV{ARCHS}))'` $^
+	xcrun -sdk macosx clang -g -dynamiclib -o $(DYLIB) `$(PERL) -MExtUtils::Embed -eperl_inc` `$(PERL) -MExtUtils::Embed -e'my $$opts = ldopts(0); $$opts =~ s/-arch [^ ]*( |$$)//g; print $$opts, " -arch ", join(" -arch ", split(" ",$$ENV{ARCHS}))'` $^
 
 IPHONE_SIMULATOR_NOTIFCATION_BUNDLE=$(OUTPUT_DIR)/lib/perl5/darwin-thread-multi-2level/auto/IPhoneSimulatorNotification/IPhoneSimulatorNotification.bundle
 IPHONE_SIMULATOR_NOTIFCATION_MODULE=$(OUTPUT_DIR)/lib/perl5/darwin-thread-multi-2level/IPhoneSimulatorNotification.pm
@@ -85,12 +59,10 @@ IPHONE_SIMULATOR_NOTIFCATION_MODULE=$(OUTPUT_DIR)/lib/perl5/darwin-thread-multi-
 all: $(IPHONE_SIMULATOR_NOTIFCATION_BUNDLE) $(IPHONE_SIMULATOR_NOTIFCATION_MODULE)
 
 $(IPHONE_SIMULATOR_NOTIFCATION_BUNDLE) $(IPHONE_SIMULATOR_NOTIFCATION_MODULE): IPhoneSimulatorNotification/IPhoneSimulatorNotification.xs IPhoneSimulatorNotification/Makefile.PL IPhoneSimulatorNotification/lib/IPhoneSimulatorNotification.pm IPhoneSimulatorNotification/ppport.h IPhoneSimulatorNotification/t/IPhoneSimulatorNotification.t
-	(cd IPhoneSimulatorNotification && \
-		SDKROOT=$(OS_X_SDK) TOOLCHAINS= $(PERL) Makefile.PL INSTALL_BASE=$(OUTPUT_DIR) && \
-		make SDKROOT=$(OS_X_SDK) TOOLCHAINS= && \
-		make test && \
-		make install && \
-		make realclean)
+	cd IPhoneSimulatorNotification && SDKROOT=iphonesimulator perl Makefile.PL INSTALL_BASE=$(OUTPUT_DIR) 
+	make -C IPhoneSimulatorNotification test
+	make -C IPhoneSimulatorNotification install
+	make -C IPhoneSimulatorNotification realclean
 	# Touch the built perl module and its bundle since IPhoneSimulatorNotification.xs and Makefile.PL always have newer dates after building.
 	touch $(IPHONE_SIMULATOR_NOTIFCATION_BUNDLE) $(IPHONE_SIMULATOR_NOTIFCATION_MODULE)
 
@@ -108,6 +80,10 @@ install: all
 
 else
 
-all clean install installhdrs installsrc:
+install:
+
+all:
+
+clean:
 
 endif
