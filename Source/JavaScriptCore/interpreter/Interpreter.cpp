@@ -760,6 +760,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
 
     ASSERT(!vm.exception());
     ASSERT(!vm.isCollectorBusy());
+    RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (vm.isCollectorBusy())
         return jsNull();
 
@@ -1075,6 +1076,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     SamplingScope samplingScope(this);
     
     ASSERT(!vm.isCollectorBusy());
+    RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (vm.isCollectorBusy())
         return jsNull();
 
@@ -1110,6 +1112,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     ASSERT(scope->vm() == &callFrame->vm());
     ASSERT(!vm.exception());
     ASSERT(!vm.isCollectorBusy());
+    RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (vm.isCollectorBusy())
         return jsNull();
 

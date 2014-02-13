@@ -221,6 +221,7 @@ JSLock::DropAllLocks::DropAllLocks(ExecState* exec)
 {
     if (!m_vm)
         return;
+    RELEASE_ASSERT(!m_vm->isCollectorBusy());
     m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
 }
 
@@ -230,6 +231,7 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm)
 {
     if (!m_vm)
         return;
+    RELEASE_ASSERT(!m_vm->isCollectorBusy());
     m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
 }
 

@@ -1,3 +1,15 @@
+2014-02-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add some RELEASE_ASSERTs to catch JSLock bugs earlier
+        https://bugs.webkit.org/show_bug.cgi?id=128762
+
+        Reviewed by Mark Lam.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+
 2014-02-12  Filip Pizlo  <fpizlo@apple.com>
 
         Hoist and combine array bounds checks
