@@ -1848,7 +1848,13 @@ webkit.org/b/128668 fast/sub-pixel/sub-pixel-root-layer.html [ ImageOnlyFailure 
 webkit.org/b/128669 fast/sub-pixel/zoomed-em-border.html [ ImageOnlyFailure ]
 
 # Failing after r163562
+webkit.org/b/128670 batterystatus/window-property.html [ Failure ]
 webkit.org/b/128670 fast/dom/webtiming-document-open.html [ Failure ]
 webkit.org/b/128670 fast/dom/webtiming-navigate-within-document.html [ Failure ]
 webkit.org/b/128670 fast/forms/form-hides-table.html [ Failure ]
 webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
+webkit.org/b/128670 networkinformation/window-property.html [ Failure ]
+
+webkit.org/b/128735 fast/regions/nested-floated-region.html [ ImageOnlyFailure ]
+
+webkit.org/b/128736 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure ]

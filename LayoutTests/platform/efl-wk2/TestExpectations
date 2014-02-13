@@ -536,3 +536,15 @@ webkit.org/b/109941 webgl/conformance/textures/origin-clean-conformance.html [ F
 webkit.org/b/109941 webgl/1.0.1/conformance/textures/origin-clean-conformance.html [ Failure ]
 
 webkit.org/b/127780 compositing/regions/position-layers-inside-regions-overflow-hidden.html [ ImageOnlyFailure ]
+
+webkit.org/b/128732 fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html [ ImageOnlyFailure ]
+
+# Failing since added in r162960
+webkit.org/b/128733 fast/css/sticky/sticky-table-row-top.html [ ImageOnlyFailure ]
+webkit.org/b/128733 fast/css/sticky/sticky-table-thead-top.html [ ImageOnlyFailure ]
+
+# Failing since r164015
+webkit.org/b/128734 plugins/nested-plugin-objects.html [ Failure ]
+webkit.org/b/128734 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
+
+webkit.org/b/128737 fast/events/touch/basic-multi-touch-events.html [ Failure ]

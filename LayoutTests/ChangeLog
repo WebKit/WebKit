@@ -1,3 +1,13 @@
+2014-02-13  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add test expectations for failing tests.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/mathml/presentation/mspace-children-expected.txt: Added EFL expectation after r163626.
+
 2014-02-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] MEDIA_CONTROLS_SCRIPT support
