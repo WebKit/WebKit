@@ -1,3 +1,15 @@
+2014-02-12  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION: Crashing/Broken Tests Due To Unexpected 8-bit Character Data
+        https://bugs.webkit.org/show_bug.cgi?id=128698
+
+        Reviewed by Tim Horton.
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::advance): Make 16-bit copy when needed.
+        (WebCore::UniscribeController::shapeAndPlaceItem): Handle 8-bit case when checking
+        for word boundaries.
+
 2014-02-12  Benjamin Poulain  <bpoulain@apple.com>
 
         Document::childrenChanged does not necessarily have a page

@@ -108,8 +108,17 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     if (length <= 0)
         return;
 
+    String bufferFor16BitData;
+
     // Itemize the string.
-    const UChar* cp = m_run.data16(m_currentCharacter);
+    const UChar* cp = nullptr;
+    if (m_run.is8Bit()) {
+        // Uniscribe only deals with 16-bit characters. Must generate them now.
+        bufferFor16BitData = String::make16BitFrom8BitSource(m_run.data8(m_currentCharacter), length);
+        cp = bufferFor16BitData.characters16();
+    } else
+        cp = m_run.data16(m_currentCharacter);
+
     unsigned baseCharacter = m_currentCharacter;
 
     // We break up itemization of the string by fontData and (if needed) the use of small caps.
@@ -330,8 +339,16 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
                 }
 
                 // Account for word-spacing.
-                if (characterIndex > 0 && !Font::treatAsSpace(*m_run.data16(characterIndex - 1)) && m_font.wordSpacing())
-                    advance += m_font.wordSpacing();
+                if (characterIndex > 0 && m_font.wordSpacing()) {
+                    UChar candidateSpace;
+                    if (m_run.is8Bit())
+                        candidateSpace = *(m_run.data8(characterIndex - 1));
+                    else
+                        candidateSpace = *(m_run.data16(characterIndex - 1));
+
+                    if (!Font::treatAsSpace(candidateSpace))
+                        advance += m_font.wordSpacing();
+                }
             }
         }
 
