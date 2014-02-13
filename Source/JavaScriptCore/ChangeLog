@@ -1,3 +1,39 @@
+2014-02-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        DelayedReleaseScope in MarkedAllocator::tryAllocateHelper is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=128641
+
+        Reviewed by Michael Saboff.
+
+        We were improperly handling the case where the DelayedReleaseScope 
+        in tryAllocateHelper would cause us to drop the API lock, allowing 
+        another thread to sneak in and allocate a new block after we had already 
+        concluded that there were no more blocks to allocate out of.
+
+        The fix is to call tryAllocateHelper in a loop until we know for sure 
+        that this did not happen.
+
+        There was also a race condition with the DelayedReleaseScope in addBlock.
+        We would add the block to the MarkedBlock's list, sweep it, and then return,
+        causing us to drop the API lock momentarily. Another thread could then 
+        grab the lock, and allocate out of the new block to the point where the 
+        free list was empty. Then we would return to the original thread, who thinks 
+        it's impossible to not allocate successfully at this point. 
+        Instead we should just let tryAllocate do all the hard work with correctly 
+        sweeping and getting a valid result.
+
+        There was another race condition in didFinishIterating. We would call resumeAllocating,
+        which would create a DelayedReleaseScope. The DelayedReleaseScope would then release 
+        API lock before we set m_isIterating back to false, which would potentially confuse 
+        other threads.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::tryPopFreeList):
+        (JSC::MarkedAllocator::tryAllocate):
+        (JSC::MarkedAllocator::addBlock):
+        * heap/MarkedAllocator.h:
+
 2014-02-12  Brian Burg  <bburg@apple.com>
 
         Web Replay: capture and replay nondeterminism of Date.now() and Math.random()

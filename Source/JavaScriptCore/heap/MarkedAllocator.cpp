@@ -105,19 +105,42 @@ inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
     }
 
     ASSERT(m_freeList.head);
-    MarkedBlock::FreeCell* head = m_freeList.head;
-    m_freeList.head = head->next;
+    void* head = tryPopFreeList(bytes);
     ASSERT(head);
     m_markedSpace->didAllocateInBlock(m_currentBlock);
     return head;
 }
-    
+
+inline void* MarkedAllocator::tryPopFreeList(size_t bytes)
+{
+    ASSERT(m_currentBlock);
+    if (bytes > m_currentBlock->cellSize())
+        return 0;
+
+    MarkedBlock::FreeCell* head = m_freeList.head;
+    m_freeList.head = head->next;
+    return head;
+}
+
 inline void* MarkedAllocator::tryAllocate(size_t bytes)
 {
     ASSERT(!m_heap->isBusy());
     m_heap->m_operationInProgress = Allocation;
     void* result = tryAllocateHelper(bytes);
+
+    // Due to the DelayedReleaseScope in tryAllocateHelper, some other thread might have
+    // created a new block after we thought we didn't find any free cells. 
+    while (!result && m_currentBlock) {
+        // A new block was added by another thread so try popping the free list.
+        result = tryPopFreeList(bytes);
+        if (result)
+            break;
+        // The free list was empty, so call tryAllocateHelper to do the normal sweeping stuff.
+        result = tryAllocateHelper(bytes);
+    }
+
     m_heap->m_operationInProgress = NoOperation;
+    ASSERT(result || !m_currentBlock);
     return result;
 }
     
@@ -171,14 +194,11 @@ MarkedBlock* MarkedAllocator::allocateBlock(size_t bytes)
 
 void MarkedAllocator::addBlock(MarkedBlock* block)
 {
-    // Satisfy the ASSERT in MarkedBlock::sweep.
-    DelayedReleaseScope delayedReleaseScope(*m_markedSpace);
     ASSERT(!m_currentBlock);
     ASSERT(!m_freeList.head);
     
     m_blockList.append(block);
-    m_nextBlockToSweep = m_currentBlock = block;
-    m_freeList = block->sweep(MarkedBlock::SweepToFreeList);
+    m_nextBlockToSweep = block;
     m_markedSpace->didAddBlock(block);
 }
 
