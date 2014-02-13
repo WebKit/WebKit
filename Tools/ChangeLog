@@ -1,3 +1,15 @@
+2014-02-12  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Add a C API to get WebCrypto master key from a client
+        https://bugs.webkit.org/show_bug.cgi?id=128702
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::copyWebCryptoMasterKey):
+        (WTR::TestController::initialize):
+        Return a hardcoded key.
+
 2014-02-12  David Farler  <dfarler@apple.com>
 
         Upstream iOS old-run-webkit-tests for use with DumpRenderTree in the iOS Simulator

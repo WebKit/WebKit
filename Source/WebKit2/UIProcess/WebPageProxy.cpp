@@ -4483,15 +4483,25 @@ void WebPageProxy::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 #if ENABLE(SUBTLE_CRYPTO)
 void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, bool& succeeded, Vector<uint8_t>& wrappedKey)
 {
-    Vector<uint8_t> masterKey(16);
-    memset(masterKey.data(), 0, masterKey.size()); // FIXME: Not implemented yet, will be getting a key from client.
+    RefPtr<API::Data> keyData = m_process->context().client().copyWebCryptoMasterKey(&m_process->context());
+    if (!keyData) {
+        succeeded = false;
+        return;
+    }
+
+    Vector<uint8_t> masterKey = keyData->dataReference().vector();
     succeeded = wrapSerializedCryptoKey(masterKey, key, wrappedKey);
 }
 
 void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succeeded, Vector<uint8_t>& key)
 {
-    Vector<uint8_t> masterKey(16);
-    memset(masterKey.data(), 0, masterKey.size()); // FIXME: Not implemented yet, will be getting a key from client.
+    RefPtr<API::Data> keyData = m_process->context().client().copyWebCryptoMasterKey(&m_process->context());
+    if (!keyData) {
+        succeeded = false;
+        return;
+    }
+
+    Vector<uint8_t> masterKey = keyData->dataReference().vector();
     succeeded = unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
 }
 #endif

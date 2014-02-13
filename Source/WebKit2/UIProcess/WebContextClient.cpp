@@ -58,4 +58,12 @@ void WebContextClient::plugInInformationBecameAvailable(WebContext* context, API
     m_client.plugInInformationBecameAvailable(toAPI(context), toAPI(plugInInfo), m_client.base.clientInfo);
 }
 
+PassRefPtr<API::Data> WebContextClient::copyWebCryptoMasterKey(WebContext* context)
+{
+    if (!m_client.copyWebCryptoMasterKey)
+        return nullptr;
+
+    return adoptRef(toImpl(m_client.copyWebCryptoMasterKey(toAPI(context), m_client.base.clientInfo)));
+}
+
 } // namespace WebKit

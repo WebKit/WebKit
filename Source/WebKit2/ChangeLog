@@ -1,3 +1,21 @@
+2014-02-12  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Add a C API to get WebCrypto master key from a client
+        https://bugs.webkit.org/show_bug.cgi?id=128702
+
+        Reviewed by Anders Carlsson.
+
+        Added a new version of WKContextClient, with a function that returns the key.
+
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::copyWebCryptoMasterKey):
+        * UIProcess/WebContextClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::wrapCryptoKey):
+        (WebKit::WebPageProxy::unwrapCryptoKey):
+        * UIProcess/mac/WebPageProxyMac.mm:
+
 2014-02-12  Anders Carlsson  <andersca@apple.com>
 
         Add destinationFrame property to WKNavigationAction

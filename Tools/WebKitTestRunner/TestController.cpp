@@ -81,6 +81,12 @@ static WKURLRef blankURL()
     return staticBlankURL;
 }
 
+static WKDataRef copyWebCryptoMasterKey(WKContextRef, const void*)
+{
+    // Any 128 bit key would do, all we need for testing is to implement the callback.
+    return WKDataCreate((const uint8_t*)"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f", 16);
+}
+
 static TestController* controller;
 
 TestController& TestController::shared()
@@ -335,6 +341,15 @@ void TestController::initialize(int argc, const char* argv[])
     WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
 
     platformInitializeContext();
+
+    WKContextClientV1 contextClient = {
+        { 1, this },
+        nullptr, // plugInAutoStartOriginHashesChanged
+        nullptr, // networkProcessDidCrash,
+        nullptr, // plugInInformationBecameAvailable,
+        copyWebCryptoMasterKey
+    };
+    WKContextSetClient(m_context.get(), &contextClient.base);
 
     WKContextInjectedBundleClientV1 injectedBundleClient = {
         { 1, this },
