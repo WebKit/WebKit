@@ -89,4 +89,6 @@ messages -> WebProcess LegacyReceiver {
 #if PLATFORM(MAC)
     SetProcessSuppressionEnabled(bool flag);
 #endif
+
+    SetMemoryCacheDisabled(bool disabled);
 }

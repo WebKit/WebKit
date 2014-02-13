@@ -236,6 +236,7 @@ private:
     void setIgnoreTLSErrors(bool);
 #endif
 
+    void setMemoryCacheDisabled(bool);
     void postInjectedBundleMessage(const CoreIPC::DataReference& messageData);
 
     // ChildProcess

@@ -44,6 +44,7 @@ WebProcessCreationParameters::WebProcessCreationParameters()
 #if ENABLE(NETWORK_PROCESS)
     , usesNetworkProcess(false)
 #endif
+    , memoryCacheDisabled(false)
 {
 }
 
@@ -113,6 +114,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
 
     encoder << plugInAutoStartOriginHashes;
     encoder << plugInAutoStartOrigins;
+    encoder << memoryCacheDisabled;
 }
 
 bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, WebProcessCreationParameters& parameters)
@@ -230,6 +232,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, Web
     if (!decoder.decode(parameters.plugInAutoStartOriginHashes))
         return false;
     if (!decoder.decode(parameters.plugInAutoStartOrigins))
+        return false;
+    if (!decoder.decode(parameters.memoryCacheDisabled))
         return false;
 
     return true;

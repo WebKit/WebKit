@@ -300,6 +300,8 @@ public:
     bool isURLKnownHSTSHost(const String& urlString, bool privateBrowsingEnabled) const;
     void resetHSTSHosts();
 
+    void setMemoryCacheDisabled(bool);
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
     void platformInitialize();
@@ -484,6 +486,8 @@ private:
 #if USE(SOUP)
     bool m_ignoreTLSErrors;
 #endif
+
+    bool m_memoryCacheDisabled;
 };
 
 template<typename U> inline void WebContext::sendToNetworkingProcess(const U& message)

@@ -81,6 +81,8 @@ WK_EXPORT void WKContextSetUsesNetworkProcess(WKContextRef context, bool usesNet
 
 typedef void (*WKContextInvalidMessageFunction)(WKStringRef messageName);
 WK_EXPORT void WKContextSetInvalidMessageFunction(WKContextInvalidMessageFunction invalidMessageFunction);
+    
+WK_EXPORT void WKContextSetMemoryCacheDisabled(WKContextRef, bool disabled);
 
 #ifdef __cplusplus
 }
