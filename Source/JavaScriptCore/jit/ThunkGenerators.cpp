@@ -428,7 +428,7 @@ MacroAssemblerCodeRef arityFixup(VM* vm)
     JSInterfaceJIT jit(vm);
 
     // We enter with fixup count, in aligned stack units, in regT0 and the return thunk in
-    // regT5. We use VM::currentReturnThunkPC instead of regT5 on X86-32.
+    // regT5.
 #if USE(JSVALUE64)
 #  if CPU(X86_64)
     jit.pop(JSInterfaceJIT::regT4);
@@ -514,13 +514,7 @@ MacroAssemblerCodeRef arityFixup(VM* vm)
     jit.storePtr(GPRInfo::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
     
     // Install the new return PC.
-    // FIXME: I don't think currentReturnThunkPC is used and should be deleted.
-#  if 0
-    jit.loadPtr(&vm->currentReturnThunkPC, GPRInfo::regT2);
-    jit.storePtr(GPRInfo::regT2, JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()));
-#   else
     jit.storePtr(GPRInfo::regT5, JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()));
-#   endif
     
 #  if CPU(X86)
     jit.push(JSInterfaceJIT::regT4);

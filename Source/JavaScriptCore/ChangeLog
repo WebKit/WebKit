@@ -1,3 +1,16 @@
+2014-02-13  Michael Saboff  <msaboff@apple.com>
+
+        CStack Branch: VM::currentReturnThunkPC appears to be unused and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=127205
+
+        Reviewed by Geoffrey Garen.
+
+        Removed ununsed references to VM::currentReturnThunkPC.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::arityFixup):
+        * runtime/VM.h:
+
 2014-02-13  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Code cleanup: remove gcc<4.7 guards.

@@ -342,9 +342,6 @@ namespace JSC {
         NativeExecutable* getHostFunction(NativeFunction, Intrinsic);
         
         std::unique_ptr<ArityCheckFailReturnThunks> arityCheckFailReturnThunks;
-#if CPU(X86)
-        void* currentReturnThunkPC;
-#endif // CPU(X86)
 #endif // ENABLE(JIT)
         std::unique_ptr<CommonSlowPaths::ArityCheckData> arityCheckData;
 #if ENABLE(FTL_JIT)
