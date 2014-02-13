@@ -1,5 +1,91 @@
 2014-02-13  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: DataGrid should support editing tables with arbitrary columns
+        https://bugs.webkit.org/show_bug.cgi?id=128619
+
+        Reviewed by Timothy Hatcher.
+
+        The data grid editing code should work with any columns, but was previously
+        hardcoded with the column identifiers used by DOMStorageView. This patch
+        makes the editing code work with any column identifiers. It also fixes some
+        bugs in previous/next navigation during data entry.
+
+        * UserInterface/DOMStorageContentView.css: Highlight missing keys and values.
+        (.content-view.dom-storage > .data-grid tr.missing-value td.value-column):
+        (.content-view.dom-storage > .data-grid:focus tr.selected.missing-value td.value-column):
+
+        * UserInterface/DOMStorageContentView.js: Don't blow away the entire table
+        whenever the backend notifies us of an update to the storage object. This
+        caused the editing state to be destroyed when values were entered interactively.
+
+        (WebInspector.DOMStorageContentView.prototype.reset): Inline the callback
+        passed to DOMStorageObject.getEntries().
+        (WebInspector.DOMStorageContentView.prototype.itemsCleared):
+        (WebInspector.DOMStorageContentView.prototype.itemAdded): Request a sort
+        of the table rows after backend tells us about item additions or updates.
+
+        (WebInspector.DOMStorageContentView.prototype.itemUpdated): Request a sort
+        of the table rows after backend tells us about item additions or updates.
+
+        (WebInspector.DOMStorageContentView.prototype._sortDataGrid): Use DataGrid's
+        built-in sorting function.
+
+        (WebInspector.DOMStorageContentView.prototype._deleteCallback):
+        (WebInspector.DOMStorageContentView.prototype._editingCallback): Don't force
+        recreation of the entire table whenever editing finishes. Perform most
+        of the error checking and editing logic here, including when to insert a
+        new placeholder row, and when to commit the entered values to DOM storage.
+
+        * UserInterface/DOMStorageObject.js: Keep track of the DOM storage entries
+        in the model so we can detect duplicate entries. Remove unused `id` arguments.
+
+        (WebInspector.DOMStorageObject):
+        (WebInspector.DOMStorageObject.prototype.get entries):
+        (WebInspector.DOMStorageObject.prototype.itemsCleared):
+        (WebInspector.DOMStorageObject.prototype.itemRemoved):
+        (WebInspector.DOMStorageObject.prototype.set this):
+        (WebInspector.DOMStorageObject.prototype.itemAdded):
+        (WebInspector.DOMStorageObject.prototype.set var):
+        (WebInspector.DOMStorageObject.prototype.itemUpdated):
+
+        * UserInterface/DataGrid.js:
+        (.sortDataGrid):
+        (WebInspector.DataGrid.createSortableDataGrid): Use the built-in DataGrid
+        sortNodes() implementation.
+        (WebInspector.DataGrid.prototype._startEditingNodeAtColumnIndex): Renamed
+        from _startEditingColumnOfDataGridNode. It's easier to understand the navigation
+        code when presented in terms of adjusting column indexes rather than identifiers.
+
+        (WebInspector.DataGrid.prototype._startEditing):
+        (WebInspector.DataGrid.prototype.determineNextCell): Added. Decides which
+        column and row to edit next and whether the table can be sorted before the
+        next cell edit begins.
+
+        (WebInspector.DataGrid.prototype.moveToNextCell): Added. Wrapper method for
+        the above which handles sorting and beginning the next cell edit.
+
+        (WebInspector.DataGrid.prototype._editingCommitted): Use better helper methods.
+        (WebInspector.DataGrid.prototype._editingCancelled): Add an assert.
+        (WebInspector.DataGrid.prototype.get sortColumnIdentifier): Shorten.
+        (WebInspector.DataGrid.prototype.addPlaceholderNode):
+        (WebInspector.DataGrid.prototype.removeChild):
+        (WebInspector.DataGrid.prototype.):
+        (WebInspector.DataGrid.prototype.sortNodes): Remove unecessary copying
+        of all nodes into a separate array. Defer sorting if the user is in the
+        middle of editing a cell. Make placeholder nodes always sort to the bottom
+        regardless of the sort column identifier and sort direction.
+
+        (WebInspector.DataGridNode.prototype._attach):
+        (WebInspector.PlaceholderDataGridNode): Renamed from CreationDataGridNode.
+        (WebInspector.PlaceholderDataGridNode.prototype.makeNormal):
+
+        * UserInterface/StorageManager.js: Don't pass unused id argument.
+        (WebInspector.StorageManager.prototype.itemRemoved):
+        (WebInspector.StorageManager.prototype.itemAdded):
+        (WebInspector.StorageManager.prototype.itemUpdated):
+
+2014-02-13  Brian Burg  <bburg@apple.com>
+
         Web Inspector: long script names should be have text-overflow:ellipsis in probe details sidebar
         https://bugs.webkit.org/show_bug.cgi?id=128550
 

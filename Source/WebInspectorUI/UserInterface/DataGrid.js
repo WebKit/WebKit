@@ -119,7 +119,7 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
         columnsData[columnName] = column;
     }
 
-    var nodes = [];
+    var dataGrid = new WebInspector.DataGrid(columnsData);
     for (var i = 0; i < values.length / numColumns; ++i) {
         var data = {};
         for (var j = 0; j < columnNames.length; ++j)
@@ -127,23 +127,15 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
 
         var node = new WebInspector.DataGridNode(data, false);
         node.selectable = false;
-        nodes.push(node);
-    }
-
-    var dataGrid = new WebInspector.DataGrid(columnsData);
-    for (var node of nodes)
         dataGrid.appendChild(node);
-
-    dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, sortDataGrid, this);
+    }
 
     function sortDataGrid()
     {
-        var nodes = dataGrid.children.slice();
         var sortColumnIdentifier = dataGrid.sortColumnIdentifier;
-        var sortDirection = dataGrid.sortOrder === "ascending" ? 1 : -1;
-        var columnIsNumeric = true;
+        var sortAscending = dataGrid.sortOrder === "ascending" ? 1 : -1;
 
-        for (var node of nodes) {
+        for (var node of dataGrid.children) {
             if (isNaN(Number(node.data[sortColumnIdentifier] || "")))
                 columnIsNumeric = false;
         }
@@ -165,11 +157,10 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
             return sortDirection * comparison;
         }
 
-        nodes.sort(comparator);
-        dataGrid.removeChildren();
-        for (var node of nodes)
-            dataGrid.appendChild(node);
+        dataGrid.sortNodes(comparator);
     }
+
+    dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, sortDataGrid, this);
     return dataGrid;
 }
 
@@ -192,13 +183,15 @@ WebInspector.DataGrid.prototype = {
         this._startEditing(event.target);
     },
 
-    _startEditingColumnOfDataGridNode: function(node, column)
+    _startEditingNodeAtColumnIndex: function(node, columnIndex)
     {
+        console.assert(node, "Invalid argument: must provide DataGridNode to edit.");
+
         this._editing = true;
         this._editingNode = node;
         this._editingNode.select();
 
-        var element = this._editingNode._element.children[column];
+        var element = this._editingNode._element.children[columnIndex];
         WebInspector.startEditing(element, this._startEditingConfig(element));
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
@@ -211,14 +204,14 @@ WebInspector.DataGrid.prototype = {
 
         this._editingNode = this.dataGridNodeFromNode(target);
         if (!this._editingNode) {
-            if (!this.creationNode)
+            if (!this.placeholderNode)
                 return;
-            this._editingNode = this.creationNode;
+            this._editingNode = this.placeholderNode;
         }
 
-        // Force editing the 1st column when editing the creation node
-        if (this._editingNode.isCreationNode)
-            return this._startEditingColumnOfDataGridNode(this._editingNode, 0);
+        // Force editing the 1st column when editing the placeholder node
+        if (this._editingNode.isPlaceholderNode)
+            return this._startEditingNodeAtColumnIndex(this._editingNode, 0);
 
         this._editing = true;
         WebInspector.startEditing(element, this._startEditingConfig(element));
@@ -233,77 +226,66 @@ WebInspector.DataGrid.prototype = {
 
     _editingCommitted: function(element, newText, oldText, context, moveDirection)
     {
-        // FIXME: We need more column identifiers here throughout this function.
-        // Not needed yet since only editable DataGrid is DOM Storage, which is Key - Value.
-
         var columnIdentifier = element.__columnIdentifier;
+        var columnIndex = this.orderedColumns.indexOf(columnIdentifier);
 
         var textBeforeEditing = this._editingNode.data[columnIdentifier] || "";
         var currentEditingNode = this._editingNode;
 
-        function moveToNextIfNeeded(wasChange) {
-            if (!moveDirection)
-                return;
-
+        // Returns an object with the next node and column index to edit, and whether it
+        // is an appropriate time to re-sort the table rows. When editing, we want to
+        // postpone sorting until we switch rows or wrap around a row.
+        function determineNextCell(valueDidChange) {
             if (moveDirection === "forward") {
-                if (currentEditingNode.isCreationNode && columnIdentifier === "0" && !wasChange)
-                    return;
+                if (columnIndex < this.orderedColumns.length - 1)
+                    return {shouldSort: false, editingNode: currentEditingNode, columnIndex: columnIndex + 1};
 
-                if (columnIdentifier === "0")
-                    return this._startEditingColumnOfDataGridNode(currentEditingNode, "1");
-
+                // Continue by editing the first column of the next row if it exists.
                 var nextDataGridNode = currentEditingNode.traverseNextNode(true, null, true);
-                if (nextDataGridNode)
-                    return this._startEditingColumnOfDataGridNode(nextDataGridNode, "0");
-                if (currentEditingNode.isCreationNode && wasChange) {
-                    this.addCreationNode(false);
-                    return this._startEditingColumnOfDataGridNode(this.creationNode, "0");
-                }
-                return;
+                return {shouldSort: true, editingNode: nextDataGridNode || currentEditingNode, columnIndex: 0};
             }
 
             if (moveDirection === "backward") {
-                if (columnIdentifier === "1")
-                    return this._startEditingColumnOfDataGridNode(currentEditingNode, "0");
-                    var nextDataGridNode = currentEditingNode.traversePreviousNode(true, null, true);
+                if (columnIndex > 0)
+                    return {shouldSort: false, editingNode: currentEditingNode, columnIndex: columnIndex - 1};
 
-                if (nextDataGridNode)
-                    return this._startEditingColumnOfDataGridNode(nextDataGridNode, "1");
-                return;
+                var previousDataGridNode = currentEditingNode.traversePreviousNode(true, null, true);
+                return {shouldSort: true, editingNode: previousDataGridNode || currentEditingNode, columnIndex: this.orderedColumns.length - 1};
             }
+
+            // If we are not moving in any direction, then sort but don't move.
+            return {shouldSort: true, editingNode: currentEditingNode, columnIndex: columnIndex};
         }
 
-        if (textBeforeEditing == newText) {
-            this._editingCancelled(element);
-            moveToNextIfNeeded.call(this, false);
-            return;
+        function moveToNextCell(valueDidChange) {
+            var moveCommand = determineNextCell.call(this, valueDidChange);
+            if (moveCommand.shouldSort && this._sortAfterEditingCallback) {
+                this._sortAfterEditingCallback();
+                delete this._sortAfterEditingCallback;
+            }
+            this._startEditingNodeAtColumnIndex(moveCommand.editingNode, moveCommand.columnIndex);
         }
-
-        // Update the text in the datagrid that we typed
-        this._editingNode.data[columnIdentifier] = newText;
-
-        // Make the callback - expects an editing node (table row), the column number that is being edited,
-        // the text that used to be there, and the new text.
-        this._editCallback(this._editingNode, columnIdentifier, textBeforeEditing, newText);
-
-        if (this._editingNode.isCreationNode)
-            this.addCreationNode(false);
 
         this._editingCancelled(element);
-        moveToNextIfNeeded.call(this, true);
+
+        // Update table's data model, and delegate to the callback to update other models.
+        currentEditingNode.data[columnIdentifier] = newText.trim();
+        this._editCallback(currentEditingNode, columnIdentifier, textBeforeEditing, newText, moveDirection);
+
+        var textDidChange = textBeforeEditing.trim() !== newText.trim();
+        moveToNextCell.call(this, textDidChange);
     },
 
     _editingCancelled: function(element)
     {
+        console.assert(this._editingNode.element === element.enclosingNodeOrSelfWithNodeName("tr"));
         delete this._editing;
         this._editingNode = null;
     },
 
     get sortColumnIdentifier()
     {
-        if (!this._sortColumnCell)
-            return null;
-        return this._sortColumnCell.columnIdentifier;
+        return this._sortColumnCell ? this._sortColumnCell.columnIdentifier : null;
     },
 
     get sortOrder()
@@ -668,16 +650,16 @@ WebInspector.DataGrid.prototype = {
             previousResizerElement.rightNeighboringColumnID = this.orderedColumns.length - 1;
     },
 
-    addCreationNode: function(hasChildren)
+    addPlaceholderNode: function()
     {
-        if (this.creationNode)
-            this.creationNode.makeNormal();
+        if (this.placeholderNode)
+            this.placeholderNode.makeNormal();
 
         var emptyData = {};
         for (var identifier of this.columns.keys())
             emptyData[identifier] = '';
-        this.creationNode = new WebInspector.CreationDataGridNode(emptyData, hasChildren);
-        this.appendChild(this.creationNode);
+        this.placeholderNode = new WebInspector.PlaceholderDataGridNode(emptyData);
+        this.appendChild(this.placeholderNode);
     },
 
     appendChild: function(child)
@@ -746,8 +728,7 @@ WebInspector.DataGrid.prototype = {
         if (this.children.length <= 0)
             this.hasChildren = false;
 
-        if (this.creationNode === child)
-            delete this.creationNode;
+        console.assert(!child.isPlaceholderNode, "Shouldn't delete the placeholder node.")
     },
 
     removeChildren: function()
@@ -793,47 +774,49 @@ WebInspector.DataGrid.prototype = {
         this.children = [];
     },
 
-    sortNodes: function(comparator, reverseMode)
+    sortNodes: function(comparator)
     {
-        function comparatorWrapper(a, b)
+        function comparatorWrapper(aRow, bRow)
         {
-            if (a._dataGridNode._data.summaryRow)
+            var reverseFactor = this.sortOrder !== "asceding" ? -1 : 1;
+            var aNode = aRow._dataGridNode;
+            var bNode = bRow._dataGridNode;
+            if (aNode._data.summaryRow || aNode.isPlaceholderNode)
                 return 1;
-            if (b._dataGridNode._data.summaryRow)
+            if (bNode._data.summaryRow || bNode.isPlaceholderNode)
                 return -1;
 
-            var aDataGridNode = a._dataGridNode;
-            var bDataGridNode = b._dataGridNode;
-            return reverseMode ? comparator(bDataGridNode, aDataGridNode) : comparator(aDataGridNode, bDataGridNode);
+            return reverseFactor * comparator(aNode, bNode);
+        }
+
+        if (this._editing) {
+            this._sortAfterEditingCallback = this.sortNodes.bind(this, comparator);
+            return;
         }
 
         var tbody = this.dataTableBodyElement;
-        var tbodyParent = tbody.parentElement;
-        tbodyParent.removeChild(tbody);
-
         var childNodes = tbody.childNodes;
-        var fillerRow = childNodes.lastValue;
+        var fillerRowElement = tbody.lastChild;
 
-        var sortedRows = Array.prototype.slice.call(childNodes, 0, childNodes.length - 1);
-        sortedRows.sort(comparatorWrapper);
-        var sortedRowsLength = sortedRows.length;
+        var sortedRowElements = Array.prototype.slice.call(childNodes, 0, childNodes.length - 1);
+        sortedRowElements.sort(comparatorWrapper);
 
         tbody.removeChildren();
+
         var previousSiblingNode = null;
-        for (var i = 0; i < sortedRowsLength; ++i) {
-            var row = sortedRows[i];
-            var node = row._dataGridNode;
+        for (var rowElement of sortedRowElements) {
+            var node = rowElement._dataGridNode;
             node.previousSibling = previousSiblingNode;
             if (previousSiblingNode)
                 previousSiblingNode.nextSibling = node;
-            tbody.appendChild(row);
+            tbody.appendChild(rowElement);
             previousSiblingNode = node;
         }
+
         if (previousSiblingNode)
             previousSiblingNode.nextSibling = null;
 
-        tbody.appendChild(fillerRow);
-        tbodyParent.appendChild(tbody);
+        tbody.appendChild(fillerRowElement); // We expect to find a filler row when attaching nodes.
     },
 
     _keyDown: function(event)
@@ -1113,23 +1096,23 @@ WebInspector.DataGrid.prototype = {
         var contextMenu = new WebInspector.ContextMenu(event);
 
         var gridNode = this.dataGridNodeFromNode(event.target);
-        if (this.dataGrid._refreshCallback && (!gridNode || gridNode !== this.creationNode))
+        if (this.dataGrid._refreshCallback && (!gridNode || gridNode !== this.placeholderNode))
             contextMenu.appendItem(WebInspector.UIString("Refresh"), this._refreshCallback.bind(this));
 
         if (gridNode && gridNode.selectable && !gridNode.isEventWithinDisclosureTriangle(event)) {
             contextMenu.appendItem(WebInspector.UIString("Copy Row"), this._copyRow.bind(this, event.target));
 
             if (this.dataGrid._editCallback) {
-                if (gridNode === this.creationNode)
+                if (gridNode === this.placeholderNode)
                     contextMenu.appendItem(WebInspector.UIString("Add New"), this._startEditing.bind(this, event.target));
                 else {
                     var element = event.target.enclosingNodeOrSelfWithNodeName("td");
                     var columnIdentifier = element.__columnIdentifier;
-                    var columnTitle = this.dataGrid.columns[columnIdentifier].title;
+                    var columnTitle = this.dataGrid.columns.get(columnIdentifier).get('title');
                     contextMenu.appendItem(WebInspector.UIString("Edit “%s”").format(columnTitle), this._startEditing.bind(this, event.target));
                 }
             }
-            if (this.dataGrid._deleteCallback && gridNode !== this.creationNode)
+            if (this.dataGrid._deleteCallback && gridNode !== this.placeholderNode)
                 contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
         }
 
@@ -1818,6 +1801,7 @@ WebInspector.DataGridNode.prototype = {
 
         // If there is no next grid node, then append before the last child since the last child is the filler row.
         console.assert(this.dataGrid.dataTableBodyElement.lastChild.classList.contains("filler"));
+
         if (!nextElement)
             nextElement = this.dataGrid.dataTableBodyElement.lastChild;
 
@@ -1869,22 +1853,20 @@ WebInspector.DataGridNode.prototype = {
 
 WebInspector.DataGridNode.prototype.__proto__ = WebInspector.Object.prototype;
 
-/**
- * @constructor
- * @extends {WebInspector.DataGridNode}
- */
-WebInspector.CreationDataGridNode = function(data, hasChildren)
+// Used to create a new table row when entering new data by editing cells.
+WebInspector.PlaceholderDataGridNode = function(data)
 {
-    WebInspector.DataGridNode.call(this, data, hasChildren);
-    this.isCreationNode = true;
+    WebInspector.DataGridNode.call(this, data, false);
+    this.isPlaceholderNode = true;
 }
 
-WebInspector.CreationDataGridNode.prototype = {
+WebInspector.PlaceholderDataGridNode.prototype = {
+    constructor: WebInspector.PlaceholderDataGridNode,
+    __proto__: WebInspector.DataGridNode.prototype,
+
     makeNormal: function()
     {
-        delete this.isCreationNode;
+        delete this.isPlaceholderNode;
         delete this.makeNormal;
     }
 }
-
-WebInspector.CreationDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;

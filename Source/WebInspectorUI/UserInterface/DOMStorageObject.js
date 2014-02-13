@@ -28,6 +28,7 @@ WebInspector.DOMStorageObject = function(id, host, isLocalStorage)
     this._id = id;
     this._host = host;
     this._isLocalStorage = isLocalStorage;
+    this._entries = new Map;
 };
 
 WebInspector.DOMStorageObject.TypeIdentifier = "dom-storage";
@@ -53,6 +54,11 @@ WebInspector.DOMStorageObject.prototype = {
     get host()
     {
         return this._host;
+    },
+
+    get entries()
+    {
+        return this._entries;
     },
 
     saveIdentityToCookie: function(cookie)
@@ -85,24 +91,28 @@ WebInspector.DOMStorageObject.prototype = {
         DOMStorageAgent.setDOMStorageItem(this._id, key, value);
     },
 
-    itemsCleared: function(id)
+    itemsCleared: function()
     {
-        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemsCleared, {id: id});
+        this._entries.clear();
+        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemsCleared);
     },
 
-    itemRemoved: function(id, key)
+    itemRemoved: function(key)
     {
-        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemRemoved, {id: id, key: key});
+        this._entries.delete(key);
+        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemRemoved, {key: key});
     },
 
-    itemAdded: function(id, key, value)
+    itemAdded: function(key, value)
     {
-        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemAdded, {id: id, key: key, value: value});
+        this._entries.set(key, value);
+        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemAdded, {key: key, value: value});
     },
 
-    itemUpdated: function(id, key, oldValue, value)
+    itemUpdated: function(key, oldValue, value)
     {
-        var data = {id: id, key: key, oldValue: oldValue, value: value};
+        this._entries.set(key, value);
+        var data = {key: key, oldValue: oldValue, value: value};
         this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemUpdated, data);
     }
 };

@@ -32,3 +32,15 @@
     outline: none;
     border: none;
 }
+
+.content-view.dom-storage > .data-grid tr.duplicate-key td.key-column,
+.content-view.dom-storage > .data-grid tr.missing-key td.key-column,
+.content-view.dom-storage > .data-grid tr.missing-value td.value-column {
+    background-color: #fee;
+}
+
+.content-view.dom-storage > .data-grid:focus tr.selected.duplicate-key td.key-column,
+.content-view.dom-storage > .data-grid:focus tr.selected.missing-key td.key-column,
+.content-view.dom-storage > .data-grid:focus tr.selected.missing-value td.value-column {
+    background-color: #daa;
+}

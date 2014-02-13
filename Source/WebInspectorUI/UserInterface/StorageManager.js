@@ -94,17 +94,17 @@ WebInspector.StorageManager.prototype = {
 
     itemRemoved: function(storageId, key)
     {
-        this._domStorageForIdentifier(storageId).itemRemoved(storageId, key);
+        this._domStorageForIdentifier(storageId).itemRemoved(key);
     },
 
     itemAdded: function(storageId, key, value)
     {
-        this._domStorageForIdentifier(storageId).itemAdded(storageId, key, value);
+        this._domStorageForIdentifier(storageId).itemAdded(key, value);
     },
 
     itemUpdated: function(storageId, key, oldValue, value)
     {
-        this._domStorageForIdentifier(storageId).itemUpdated(storageId, key, oldValue, value);
+        this._domStorageForIdentifier(storageId).itemUpdated(key, oldValue, value);
     },
 
     inspectDatabase: function(id)
