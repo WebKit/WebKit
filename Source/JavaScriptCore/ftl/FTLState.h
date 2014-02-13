@@ -58,6 +58,7 @@ public:
     RefPtr<JITCode> jitCode;
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;
+    unsigned handleStackOverflowExceptionStackmapID;
     unsigned handleExceptionStackmapID;
     unsigned capturedStackmapID;
     SegmentedVector<GetByIdDescriptor> getByIds;

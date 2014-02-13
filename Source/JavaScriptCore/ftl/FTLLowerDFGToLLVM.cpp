@@ -52,10 +52,6 @@ using namespace DFG;
 
 static std::atomic<int> compileCounter;
 
-// FIXME: Get rid of this and introduce a real stack check.
-// https://bugs.webkit.org/show_bug.cgi?id=125650
-static uintptr_t stackLimit;
-
 // Using this instead of typeCheck() helps to reduce the load on LLVM, by creating
 // significantly less dead code.
 #define FTL_TYPE_CHECK(lowValue, highValue, typesPassedThrough, failCondition) do { \
@@ -140,13 +136,16 @@ public:
         
         m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(JSStack::CodeBlock));
         m_out.branch(
-            m_out.below(m_callFrame, m_out.loadPtr(m_out.absolute(&stackLimit))),
+            m_out.below(m_callFrame, m_out.loadPtr(m_out.absolute(vm().addressOfFTLStackLimit()))),
             stackOverflow, lowBlock(m_graph.block(0)));
         
         m_out.appendTo(stackOverflow, m_handleExceptions);
-        // FIXME: Do a real stack check and throw the exception appropriately.
-        // https://bugs.webkit.org/show_bug.cgi?id=125650
-        m_out.crash();
+        vmCall(m_out.operation(operationThrowStackOverflowError), m_callFrame, m_out.constIntPtr(codeBlock()), NoExceptions);
+        m_ftlState.handleStackOverflowExceptionStackmapID = m_stackmapIDs++;
+        m_out.call(
+            m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.handleStackOverflowExceptionStackmapID),
+            m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
+        m_out.unreachable();
         
         m_out.appendTo(m_handleExceptions, lowBlock(m_graph.block(0)));
         m_ftlState.handleExceptionStackmapID = m_stackmapIDs++;

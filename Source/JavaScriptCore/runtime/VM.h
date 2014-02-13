@@ -383,6 +383,7 @@ namespace JSC {
 
 #if ENABLE(FTL_JIT)
         void updateFTLLargestStackSize(size_t);
+        void** addressOfFTLStackLimit() { return &m_ftlStackLimit; }
 #endif
 
         void** addressOfJSStackLimit() { return &m_jsStackLimit; }

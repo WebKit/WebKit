@@ -207,19 +207,27 @@ static void fixFunctionBasedOnStackMaps(
             VirtualRegister(codeBlock->argumentsRegister().offset() + localsOffset));
     }
 
+    MacroAssembler::Label stackOverflowException;
+
     {
         CCallHelpers checkJIT(&vm, codeBlock);
         
         // At this point it's perfectly fair to just blow away all state and restore the
         // JS JIT view of the universe.
+        checkJIT.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+
+        MacroAssembler::Label exceptionContinueArg1Set = checkJIT.label();
         checkJIT.move(MacroAssembler::TrustedImm64(TagTypeNumber), GPRInfo::tagTypeNumberRegister);
         checkJIT.move(MacroAssembler::TrustedImm64(TagMask), GPRInfo::tagMaskRegister);
-        
+
         checkJIT.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
-        checkJIT.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
         MacroAssembler::Call call = checkJIT.call();
         checkJIT.jumpToExceptionHandler();
-        
+
+        stackOverflowException = checkJIT.label();
+        checkJIT.emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::argumentGPR1);
+        checkJIT.jump(exceptionContinueArg1Set);
+
         OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(
             vm, &checkJIT, codeBlock, JITCompilationMustSucceed));
         linkBuffer->link(call, FunctionPtr(lookupExceptionHandler));
@@ -412,6 +420,22 @@ static void fixFunctionBasedOnStackMaps(
     }
     
     RepatchBuffer repatchBuffer(codeBlock);
+
+    iter = recordMap.find(state.handleStackOverflowExceptionStackmapID);
+    // It's sort of remotely possible that we won't have an in-band exception handling
+    // path, for some kinds of functions.
+    if (iter != recordMap.end()) {
+        for (unsigned i = iter->value.size(); i--;) {
+            StackMaps::Record& record = iter->value[i];
+            
+            CodeLocationLabel source = CodeLocationLabel(
+                bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
+
+            RELEASE_ASSERT(stackOverflowException.isSet());
+
+            repatchBuffer.replaceWithJump(source, state.finalizer->handleExceptionsLinkBuffer->locationOf(stackOverflowException));
+        }
+    }
     
     iter = recordMap.find(state.handleExceptionStackmapID);
     // It's sort of remotely possible that we won't have an in-band exception handling
