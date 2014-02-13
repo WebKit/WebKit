@@ -47,6 +47,7 @@ enum TextIteratorBehavior {
     TextIteratorEmitsOriginalText = 1 << 5,
     TextIteratorStopsOnFormControls = 1 << 6,
     TextIteratorEmitsImageAltText = 1 << 7,
+    TextIteratorBehavesAsIfNodesFollowing = 1 << 8,
 };
     
 // FIXME: Can't really answer this question correctly without knowing the white-space mode.
@@ -198,6 +199,7 @@ private:
     bool m_shouldStop;
 
     bool m_emitsImageAltText;
+    bool m_hasNodesFollowing;
 };
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries

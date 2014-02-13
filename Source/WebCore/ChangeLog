@@ -1,3 +1,25 @@
+2014-02-13  Chang Shu  <cshu@webkit.org>
+
+        Copying (createMarkup) wrapping text results in space between wrapped lines stripped.
+        https://bugs.webkit.org/show_bug.cgi?id=63233
+
+        The problem is StyledMarkupAccumulator uses renderedText and the space at
+        the end of the text has been stripped when the tag after the text was wrapped.
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: editing/pasteboard/copy-text-with-wrapped-tag.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::TextIterator::handleTextBox):
+        * editing/TextIterator.h:
+        Check the special case when the iterator runs over a range that is followed by a non-text box.
+        In this case, the possible last space has been collapsed and needs to be restored.
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::renderedText):
+        Check if the range is followed by more nodes and pass this information to the constructed TextIterator.
+
 2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Gaps for text-decoration-skip: ink are calculated assuming the glyph orientation is the same as the run orientation

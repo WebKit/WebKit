@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="description">This tests to make sure that copying and pasting a text followed by an anchor tag wrapped into 2nd line do not lose the space between text and tag in the destination.</div>
+<div id="copy" style="width: 10em; border: thin solid green;">Copy this text <a href="http://www.google.com">AVeryLongWordThatWillWrap</a></div>
+<div id="paste" contentEditable="true" style="border: thin solid blue;"></div>
+
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description(document.getElementById('description').textContent);
+Markup.dump('copy', 'Original');
+
+copy = document.getElementById("copy");
+window.getSelection().setBaseAndExtent(copy, 0, copy, copy.childNodes.length);
+document.execCommand("Copy");
+
+if (window.testRunner) {
+    paste = document.getElementById("paste");
+    window.getSelection().setPosition(paste, 0);
+    document.execCommand("Paste");
+
+    Markup.dump('paste', 'Pasted');
+}
+
+</script>
+</body>
+</html>

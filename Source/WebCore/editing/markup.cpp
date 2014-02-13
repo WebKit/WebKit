@@ -266,14 +266,17 @@ String StyledMarkupAccumulator::renderedText(const Node& node, const Range* rang
     unsigned startOffset = 0;
     unsigned endOffset = textNode.length();
 
+    TextIteratorBehavior behavior = TextIteratorDefaultBehavior;
     if (range && &node == range->startContainer())
         startOffset = range->startOffset();
     if (range && &node == range->endContainer())
         endOffset = range->endOffset();
+    else if (range)
+        behavior = TextIteratorBehavesAsIfNodesFollowing;
 
     Position start = createLegacyEditingPosition(const_cast<Node*>(&node), startOffset);
     Position end = createLegacyEditingPosition(const_cast<Node*>(&node), endOffset);
-    return plainText(Range::create(node.document(), start, end).get());
+    return plainText(Range::create(node.document(), start, end).get(), behavior);
 }
 
 String StyledMarkupAccumulator::stringValueForRange(const Node& node, const Range* range)

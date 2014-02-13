@@ -302,6 +302,7 @@ TextIterator::TextIterator(const Range* r, TextIteratorBehavior behavior)
     , m_stopsOnFormControls(behavior & TextIteratorStopsOnFormControls)
     , m_shouldStop(false)
     , m_emitsImageAltText(behavior & TextIteratorEmitsImageAltText)
+    , m_hasNodesFollowing(behavior & TextIteratorBehavesAsIfNodesFollowing)
 {
     if (!r)
         return;
@@ -644,9 +645,12 @@ void TextIterator::handleTextBox()
                 m_offset = runStart + 1;
             } else {
                 size_t subrunEnd = str.find('\n', runStart);
-                if (subrunEnd == notFound || subrunEnd > runEnd)
+                if (subrunEnd == notFound || subrunEnd > runEnd) {
                     subrunEnd = runEnd;
-    
+                    bool lastSpaceCollapsedByNextNonTextBox = !nextTextBox && m_hasNodesFollowing && (str.length() == runEnd + 1);
+                    if (lastSpaceCollapsedByNextNonTextBox)
+                        subrunEnd++; // runEnd stopped before last space. Increment by one to restore the space.
+                }
                 m_offset = subrunEnd;
                 emitText(m_node, renderer, runStart, subrunEnd);
             }

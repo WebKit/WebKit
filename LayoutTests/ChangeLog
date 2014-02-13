@@ -1,3 +1,16 @@
+2014-02-13  Chang Shu  <cshu@webkit.org>
+
+        Copying (createMarkup) wrapping text results in space between wrapped lines stripped.
+        https://bugs.webkit.org/show_bug.cgi?id=63233
+
+        Reviewed by Ryosuke Niwa.
+
+        The problem is StyledMarkupAccumulator uses renderedText and the space at
+        the end of the text has been stripped when the tag after the text was wrapped.
+
+        * editing/pasteboard/copy-text-with-wrapped-tag-expected.txt: Added.
+        * editing/pasteboard/copy-text-with-wrapped-tag.html: Added.
+
 2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Gaps for text-decoration-skip: ink are calculated assuming the glyph orientation is the same as the run orientation

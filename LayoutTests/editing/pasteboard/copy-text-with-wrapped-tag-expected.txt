@@ -1,0 +1,13 @@
+This tests to make sure that copying and pasting a text followed by an anchor tag wrapped into 2nd line do not lose the space between text and tag in the destination.
+
+Original:
+| "Copy this text "
+| <a>
+|   href="http://www.google.com"
+|   "AVeryLongWordThatWillWrap"
+
+Pasted:
+| "Copy this text "
+| <a>
+|   href="http://www.google.com"
+|   "AVeryLongWordThatWillWrap<#selection-caret>"
