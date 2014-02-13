@@ -1238,7 +1238,11 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
         [WebView _handleMemoryWarning];
     }, shouldAutoClearPressureOnMemoryRelease);
 
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    static dispatch_source_t memoryNotificationEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYSTATUS, 0, DISPATCH_MEMORYSTATUS_PRESSURE_WARN, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+#else
     static dispatch_source_t memoryNotificationEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_VM, 0, DISPATCH_VM_PRESSURE, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+#endif
     dispatch_source_set_event_handler(memoryNotificationEventSource, ^{
         // Set memory pressure flag and schedule releasing memory in web thread runloop exit.
         memoryPressureHandler().setReceivedMemoryPressure(WebCore::MemoryPressureReasonVMPressure);

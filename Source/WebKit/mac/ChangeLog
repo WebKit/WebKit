@@ -1,3 +1,10 @@
+2014-02-13  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix.
+
+        * WebView/WebView.mm:
+        (+[WebView registerForMemoryNotifications]):
+
 2014-02-12  Alexey Proskuryakov  <ap@apple.com>
 
         Wrap WebCrypto keys in SerializedScriptValue
