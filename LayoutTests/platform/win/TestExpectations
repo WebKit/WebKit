@@ -88,7 +88,7 @@ http/tests/inspector-enabled [ Skip ]
 # Disable all media tests while QTSDK issues are worked out
 webkit.org/b/125754 media [ Skip ]
 webkit.org/b/125754 fast/canvas/canvas-drawImage-incomplete.html [ Failure ]
-webkit.org/b/125754 fast/css/object-fit/object-fit-video-poster.html [ Failure ]
+webkit.org/b/125754 fast/css/object-fit/object-fit-video-poster.html [ ImageOnlyFailure ]
 webkit.org/b/125754 fast/dom/Window/custom-constructors.html [ Failure ]
 webkit.org/b/125754 fast/dom/beforeload/clear-video-poster-in-beforeload-listener.html [ Failure ]
 webkit.org/b/125754 fast/dom/beforeload/remove-video-in-beforeload-listener.html [ Failure ]
@@ -2915,3 +2915,5 @@ webkit.org/b/128722 svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.ht
 
 # isProtocolHandlerRegistered() isn't supported yet.
 webkit.org/b/92749 fast/dom/is-protocol-handler-registered.html [ Skip ] 
+
+webkit.org/b/128726 [ Release ] js/regress/emscripten-memops.html [ Failure ]

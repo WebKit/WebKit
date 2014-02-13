@@ -1,3 +1,9 @@
+2014-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another Windows test expectations update.
+
+        * platform/win/TestExpectations:
+
 2014-02-12  Brady Eidson  <beidson@apple.com>
 
         IDB: TestExpectations batch - "key-generator.html to objectStore-required-arguments.html"
