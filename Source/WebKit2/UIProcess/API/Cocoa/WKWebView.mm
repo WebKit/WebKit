@@ -37,7 +37,7 @@
 #import "WKPreferencesInternal.h"
 #import "WKProcessClassInternal.h"
 #import "WKRemoteObjectRegistryInternal.h"
-#import "WKWebViewConfiguration.h"
+#import "WKWebViewConfigurationPrivate.h"
 #import "WebContext.h"
 #import "WebBackForwardList.h"
 #import "WebPageProxy.h"
@@ -86,6 +86,15 @@
         return nil;
 
     _configuration = adoptNS([configuration copy]);
+
+    if (WKWebView *relatedWebView = [_configuration _relatedWebView]) {
+        WKProcessClass *processClass = [_configuration processClass];
+        WKProcessClass *relatedWebViewProcessClass = [relatedWebView->_configuration processClass];
+        if (processClass && processClass != relatedWebViewProcessClass)
+            [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has process class %@ but configuration specifies a different process class %@", relatedWebView, relatedWebViewProcessClass, configuration.processClass];
+
+        [_configuration setProcessClass:relatedWebViewProcessClass];
+    }
 
     if (![_configuration processClass])
         [_configuration setProcessClass:adoptNS([[WKProcessClass alloc] init]).get()];

@@ -1,3 +1,19 @@
+2014-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Add relatedWebView property to WKWebViewConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=128707
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration relatedWebView]):
+        (-[WKWebViewConfiguration setRelatedWebView:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKWebViewConfiguration.mm.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-12  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Add a C API to get WebCrypto master key from a client

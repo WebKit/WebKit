@@ -23,61 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKWebViewConfigurationPrivate.h"
+#import <WebKit2/WKWebViewConfiguration.h>
 
 #if WK_API_ENABLED
 
-#import "WeakObjCPtr.h"
-#import <wtf/RetainPtr.h>
+@class WKWebView;
 
-@implementation WKWebViewConfiguration {
-    RetainPtr<WKProcessClass> _processClass;
-    RetainPtr<WKPreferences> _preferences;
-    WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
-}
+@interface WKWebViewConfiguration (WKPrivate)
 
-- (id)copyWithZone:(NSZone *)zone
-{
-    WKWebViewConfiguration *configuration = [[[self class] allocWithZone:zone] init];
-
-    configuration.processClass = _processClass.get();
-    configuration.preferences = _preferences.get();
-    configuration._relatedWebView = _relatedWebView.get().get();
-
-    return configuration;
-}
-
-- (WKProcessClass *)processClass
-{
-    return _processClass.get();
-}
-
-- (void)setProcessClass:(WKProcessClass *)processClass
-{
-    _processClass = processClass;
-}
-
-- (WKPreferences *)preferences
-{
-    return _preferences.get();
-}
-
-- (void)setPreferences:(WKPreferences *)preferences
-{
-    _preferences = preferences;
-}
-
-- (WKWebView *)_relatedWebView
-{
-    return _relatedWebView.getAutoreleased();
-}
-
-- (void)_setRelatedWebView:(WKWebView *)relatedWebView
-{
-    _relatedWebView = relatedWebView;
-}
+@property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView;
 
 @end
 
-#endif // WK_API_ENABLED
+#endif
