@@ -1,5 +1,13 @@
 2014-02-13  Brady Eidson  <beidson@apple.com>
 
+        IDB: TestExpectations cleanup
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations: More tests pass than fail, so only list failures.
+
+2014-02-13  Brady Eidson  <beidson@apple.com>
+
         IDB: TestExpectations batch - HTTP tests
 
         Unreviewed.
