@@ -35,6 +35,7 @@
 #endif
 
 @class WKBackForwardList;
+@class WKBackForwardListItem;
 @class WKNavigation;
 @class WKWebViewConfiguration;
 
@@ -76,6 +77,14 @@ WK_API_CLASS
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request;
+
+/*! @abstract Navigates to an item from the back-forward list and sets it as the current item.
+ @param item The item to navigate to. Must be one of the items in the receiver's back-forward
+ list.
+ @result A new navigation to requested item, or nil if it is the current item.
+ @seealso backForwardList
+ */
+- (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item;
 
 @property (nonatomic, readonly) NSString *title;
 

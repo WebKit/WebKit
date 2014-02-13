@@ -32,6 +32,7 @@
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "WKBackForwardListInternal.h"
+#import "WKBackForwardListItemInternal.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKPreferencesInternal.h"
@@ -175,6 +176,14 @@
     auto navigation = _navigationState->createLoadRequestNavigation(navigationID, request);
 
     return [navigation.leakRef() autorelease];
+}
+
+- (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
+{
+    _page->goToBackForwardItem(&item._item);
+
+    // FIXME: return a WKNavigation object.
+    return nil;
 }
 
 - (NSString *)title
