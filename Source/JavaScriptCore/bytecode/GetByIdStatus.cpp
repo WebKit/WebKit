@@ -59,6 +59,9 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     if (!structure)
         return GetByIdStatus(NoInformation, false);
 
+    if (structure->takesSlowPathInDFGForImpureProperty())
+        return GetByIdStatus(NoInformation, false);
+
     unsigned attributesIgnored;
     JSCell* specificValue;
     PropertyOffset offset = structure->getConcurrently(
@@ -188,6 +191,8 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
         
     case access_get_by_id_self: {
         Structure* structure = stubInfo->u.getByIdSelf.baseObjectStructure.get();
+        if (structure->takesSlowPathInDFGForImpureProperty())
+            return GetByIdStatus(TakesSlowPath, true);
         unsigned attributesIgnored;
         JSCell* specificValue;
         result.m_offset = structure->getConcurrently(
@@ -210,6 +215,9 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
             ASSERT(list->list[i].isDirect);
             
             Structure* structure = list->list[i].base.get();
+            if (structure->takesSlowPathInDFGForImpureProperty())
+                return GetByIdStatus(TakesSlowPath, true);
+
             if (result.m_structureSet.contains(structure))
                 continue;
             

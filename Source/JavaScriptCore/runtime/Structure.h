@@ -139,6 +139,7 @@ public:
     // DFG from inlining property accesses since structures don't transition when a new impure property appears.
     bool takesSlowPathInDFGForImpureProperty()
     {
+        ASSERT(!typeInfo().hasImpureGetOwnPropertySlot() || typeInfo().newImpurePropertyFiresWatchpoints());
         return typeInfo().hasImpureGetOwnPropertySlot();
     }
 

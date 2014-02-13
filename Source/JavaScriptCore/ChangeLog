@@ -1,3 +1,15 @@
+2014-02-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out http://trac.webkit.org/changeset/164066.
+        
+        It broke tests and it was just plain wrong.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * runtime/Structure.h:
+        (JSC::Structure::takesSlowPathInDFGForImpureProperty):
+
 2014-02-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix.
