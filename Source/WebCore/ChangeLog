@@ -1,5 +1,14 @@
 2014-02-13  Daniel Bates  <dabates@apple.com>
 
+        Fix ARM NEON build following <http://trac.webkit.org/changeset/164058>
+        (https://bugs.webkit.org/show_bug.cgi?id=128767)
+
+        I inadvertently didn't include header NEONHelpers.h, which defines WebCore::loadRGBA8AsFloat().
+
+        * platform/graphics/cpu/arm/filters/FECompositeArithmeticNEON.h:
+
+2014-02-13  Daniel Bates  <dabates@apple.com>
+
         Write FEComposite::computeArithmeticPixelsNeon() in terms of loadRGBA8AsFloat()
         https://bugs.webkit.org/show_bug.cgi?id=128767
 

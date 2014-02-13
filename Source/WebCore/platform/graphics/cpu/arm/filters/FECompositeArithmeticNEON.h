@@ -30,6 +30,7 @@
 #if ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
 
 #include "FEComposite.h"
+#include "NEONHelpers.h"
 #include <arm_neon.h>
 
 namespace WebCore {
