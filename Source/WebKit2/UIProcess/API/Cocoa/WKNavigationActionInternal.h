@@ -30,6 +30,7 @@
 @interface WKNavigationAction ()
 
 @property (nonatomic, readwrite, strong) WKFrameInfo *sourceFrame;
+@property (nonatomic, readwrite, strong) WKFrameInfo *destinationFrame;
 
 @property (nonatomic, readwrite) WKNavigationType navigationType;
 @property (nonatomic, readwrite, copy) NSURLRequest *request;

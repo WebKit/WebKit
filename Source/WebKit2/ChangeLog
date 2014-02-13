@@ -1,5 +1,20 @@
 2014-02-12  Anders Carlsson  <andersca@apple.com>
 
+        Add destinationFrame property to WKNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=128700
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction destinationFrame]):
+        (-[WKNavigationAction setDestinationFrame:]):
+        * UIProcess/API/Cocoa/WKNavigationActionInternal.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+
+2014-02-12  Anders Carlsson  <andersca@apple.com>
+
         Forward declare WKNavigation in WKNavigationDelegate.h
         https://bugs.webkit.org/show_bug.cgi?id=128699
 

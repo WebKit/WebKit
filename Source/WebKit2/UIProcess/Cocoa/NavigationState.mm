@@ -143,9 +143,14 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     // FIXME: Set up the navigation action object.
     auto navigationAction = adoptNS([[WKNavigationAction alloc] init]);
 
+    if (destinationFrame)
+        [navigationAction setDestinationFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*destinationFrame]).get()];
+
     if (sourceFrame) {
-        auto frameInfo = adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*sourceFrame]);
-        [navigationAction setSourceFrame:frameInfo.get()];
+        if (sourceFrame == destinationFrame)
+            [navigationAction setSourceFrame:[navigationAction destinationFrame]];
+        else
+            [navigationAction setDestinationFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*sourceFrame]).get()];
     }
 
     [navigationAction setNavigationType:toWKNavigationType(navigationActionData.navigationType)];
