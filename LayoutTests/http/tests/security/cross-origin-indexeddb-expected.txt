@@ -5,15 +5,13 @@ The first iframe below should return a security error, and the second should suc
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-window.webkitIndexedDB.deleteDatabase() threw an exception: SecurityError
-window.webkitIndexedDB.open() threw an exception: SecurityError
-window.webkitIndexedDB.webkitGetDatabaseNames() threw an exception: SecurityError
+window.indexedDB.deleteDatabase() threw an exception: SecurityError
+window.indexedDB.open() threw an exception: SecurityError
 
 
 --------
 Frame: '<!--framePath //<!--frame1-->-->'
 --------
-Successfully called window.webkitIndexedDB.deleteDatabase().
-Successfully called window.webkitIndexedDB.open().
-Successfully called window.webkitIndexedDB.webkitGetDatabaseNames().
+Successfully called window.indexedDB.deleteDatabase().
+Successfully called window.indexedDB.open().
 

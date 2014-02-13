@@ -1,3 +1,16 @@
+2014-02-13  Brady Eidson  <beidson@apple.com>
+
+        IDB: TestExpectations batch - HTTP tests
+
+        Unreviewed.
+
+        * http/tests/security/cross-origin-indexeddb-allowed-expected.txt:
+        * http/tests/security/cross-origin-indexeddb-expected.txt:
+        * http/tests/security/resources/cross-origin-iframe-for-indexeddb.html:
+
+        * platform/mac-wk2/TestExpectations: Two of the http tests are worker tests. They remain skipped.
+          The other three pass with test updates.
+
 2014-02-13  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Document should be constructable

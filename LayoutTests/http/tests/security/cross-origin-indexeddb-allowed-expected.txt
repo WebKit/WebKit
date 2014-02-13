@@ -5,15 +5,13 @@ Both of these frames should successfully open the database:
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-Successfully called window.webkitIndexedDB.deleteDatabase().
-Successfully called window.webkitIndexedDB.open().
-Successfully called window.webkitIndexedDB.webkitGetDatabaseNames().
+Successfully called window.indexedDB.deleteDatabase().
+Successfully called window.indexedDB.open().
 
 
 --------
 Frame: '<!--framePath //<!--frame1-->-->'
 --------
-Successfully called window.webkitIndexedDB.deleteDatabase().
-Successfully called window.webkitIndexedDB.open().
-Successfully called window.webkitIndexedDB.webkitGetDatabaseNames().
+Successfully called window.indexedDB.deleteDatabase().
+Successfully called window.indexedDB.open().
 

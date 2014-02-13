@@ -457,11 +457,6 @@ plugins/snapshotting [ Skip ]
 # Eventually we list only the failing tests here.
 # But for now we'll disable the entire directory then re-enable known passing tests.
 storage/indexeddb [ Skip ]
-http/tests/security/cross-origin-indexeddb-allowed.html [ Skip ]
-http/tests/security/cross-origin-indexeddb.html [ Skip ]
-http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
-http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
-http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
 
 # All mozilla tests except for 1 pass.
 storage/indexeddb/mozilla [ Pass ]
@@ -679,6 +674,8 @@ storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Skip 
 storage/indexeddb/pending-version-change-stuck.html [ Skip ]
 storage/indexeddb/transaction-complete-workers.html [ Skip ]
 storage/indexeddb/unprefix-workers.html [ Skip ]
+http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
+http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 
 ### END OF (5) IndexedDB related failures
 ########################################

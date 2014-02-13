@@ -6,15 +6,14 @@
     <script>
         function test(method, args) {
             try {
-                var request = window.webkitIndexedDB[method].call(window.webkitIndexedDB, args);
-                document.write('Successfully called window.webkitIndexedDB.' + method + '().<br>');
+                var request = window.indexedDB[method].call(window.indexedDB, args);
+                document.write('Successfully called window.indexedDB.' + method + '().<br>');
             } catch (exception) {
-                document.write('window.webkitIndexedDB.' + method + '() threw an exception: ' + exception.name + '<br>');
+                document.write('window.indexedDB.' + method + '() threw an exception: ' + exception.name + '<br>');
             }
         }
         test('deleteDatabase', 'testDBName');
         test('open', 'testDBName');
-        test('webkitGetDatabaseNames');
     </script>
 </body>
 </head>
