@@ -467,6 +467,7 @@ storage/indexeddb/cursor-basics.html [ Skip ]
 storage/indexeddb/cursor-continue-validity.html [ Skip ]
 storage/indexeddb/cursor-continueprimarykey.html [ Skip ]
 storage/indexeddb/cursor-index-delete.html [ Skip ]
+storage/indexeddb/cursor-key-order.html [ Skip ]
 storage/indexeddb/cursor-leak.html [ Skip ] # Missing needed WKTR feature?
 storage/indexeddb/cursor-overloads.html [ Skip ]
 storage/indexeddb/cursor-primary-key-order.html [ Skip ]
@@ -548,11 +549,6 @@ storage/indexeddb/keypath-fetch-key.html [ Skip ]
 storage/indexeddb/odd-strings.html [ Skip ]
 storage/indexeddb/prefetch-invalidation.html [ Skip ]
 storage/indexeddb/queued-commands.html [ Skip ]
-
-# Blink tests that crash the DatabaseProcess under KeyedDecoder::~KeyedDecoder.
-storage/indexeddb/cursor-key-order.html [ Skip ]
-storage/indexeddb/key-type-array.html [ Skip ]
-storage/indexeddb/lazy-index-types.html [ Skip ]
 
 # Blink tests that pass once, but are known to cause trouble downstream.
 storage/indexeddb/clone-exception.html [ Skip ]

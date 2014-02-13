@@ -1,3 +1,15 @@
+2014-02-13  Brady Eidson  <beidson@apple.com>
+
+        IDB: Three tests crash the DatabaseProcess under ~KeyedDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=128763
+
+        Reviewed by Anders Carlsson.
+
+        No new tests (Covered by three existing tests)
+
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedEncoder::encodeObjects): If the array is empty we still have to begin() and end() it.
+
 2014-02-13  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
 
         [css3-text] Support -webkit-text-decoration-skip: objects

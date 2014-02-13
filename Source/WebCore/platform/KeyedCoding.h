@@ -146,9 +146,6 @@ public:
     template<typename T, typename F>
     void encodeObjects(const String& key, T begin, T end, F&& function)
     {
-        if (begin == end)
-            return;
-
         beginArray(key);
         for (T it = begin; it != end; ++it) {
             beginArrayElement();
