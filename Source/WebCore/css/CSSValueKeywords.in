@@ -485,6 +485,7 @@ thin
 underline
 wavy
 ink
+objects
 -webkit-nowrap
 
 // CSS3 Values

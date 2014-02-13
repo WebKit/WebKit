@@ -1,3 +1,34 @@
+2014-02-13  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
+
+        [css3-text] Support -webkit-text-decoration-skip: objects
+        https://bugs.webkit.org/show_bug.cgi?id=128723
+
+        Reviewed by Dean Jackson.
+
+        Implemented 'objects' value of text-decoration-skip.
+        http://www.w3.org/TR/2013/CR-css-text-decor-3-20130801/#text-decoration-skip
+
+        This is initial value and same behavior without
+        ENABLE_CSS3_TEXT_DECORATION_SKIP_INK flag. Threfore, this patch only
+        added parser code and constant for 'objects'.
+
+        Changed the initial value of text-decoration-skip.
+
+        The current implementation parses 'none', but the rendering code is
+        not match the spec, so this patch added FIXME to the rendering code.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationSkipFlagsToCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTextDecorationSkip):
+        * css/CSSValueKeywords.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::valueToDecorationSkip):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2014-02-13  Daniel Bates  <dabates@apple.com>
 
         Fix ARM NEON build following <http://trac.webkit.org/changeset/164058>

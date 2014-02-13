@@ -1,3 +1,16 @@
+2014-02-13  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
+
+        [css3-text] Support -webkit-text-decoration-skip: objects
+        https://bugs.webkit.org/show_bug.cgi?id=128723
+
+        Reviewed by Dean Jackson.
+
+        Added 'objects' value to the current test case.
+        Added getComputedStyle() test to test renderTextDecorationSkipFlagsToCSSValue() code.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip-expected.txt:
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip.html:
+
 2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         During a copy, position:fixed gets converted to position:absolute even if only part of the document is selected

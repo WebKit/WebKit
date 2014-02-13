@@ -389,7 +389,8 @@ enum TextJustify {
 
 enum TextDecorationSkipItems {
     TextDecorationSkipNone = 0,
-    TextDecorationSkipInk = 1 << 0
+    TextDecorationSkipInk = 1 << 0,
+    TextDecorationSkipObjects = 1 << 1
 };
 typedef unsigned TextDecorationSkip;
 

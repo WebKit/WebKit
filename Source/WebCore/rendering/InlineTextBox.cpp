@@ -1170,6 +1170,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
                             drawSkipInkUnderline(textPainter, context, localOrigin, underlineOffset + doubleOffset, width, isPrinting);
                     }
                 } else {
+                    // FIXME: Need to support text-decoration-skip: none.
 #endif // CSS3_TEXT_DECORATION_SKIP_INK
                     context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + underlineOffset), width, isPrinting);
 
@@ -1199,6 +1200,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
                             drawSkipInkUnderline(textPainter, context, localOrigin, -doubleOffset, width, isPrinting);
                     }
                 } else {
+                    // FIXME: Need to support text-decoration-skip: none.
 #endif // CSS3_TEXT_DECORATION_SKIP_INK
                     context.drawLineForText(localOrigin, width, isPrinting);
                     if (decorationStyle == TextDecorationStyleDouble)

@@ -1291,6 +1291,8 @@ static TextDecorationSkip valueToDecorationSkip(CSSPrimitiveValue& primitiveValu
         return TextDecorationSkipNone;
     case CSSValueInk:
         return TextDecorationSkipInk;
+    case CSSValueObjects:
+        return TextDecorationSkipObjects;
     default:
         break;
     }

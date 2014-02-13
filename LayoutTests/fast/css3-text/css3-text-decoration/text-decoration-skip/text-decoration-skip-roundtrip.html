@@ -4,63 +4,128 @@
 <script src="../../../../resources/js-test-pre.js"></script>
 </head>
 <body>
+  <div class="p"></div>
   <script type="text/javascript">
-    function testInkIsValid(stylesheet) {
+    function testInkIsValid(stylesheet, target) {
       cssRule = stylesheet.cssRules.item(0);
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "1");
       shouldBe("declaration.getPropertyValue('-webkit-text-decoration-skip')", "\"ink\"");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBe("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "\"ink\"");
       stylesheet.deleteRule(0);
     }
 
-    function testInvalidRule(stylesheet) {
+    function testObjectsIsValid(stylesheet, target) {
+      cssRule = stylesheet.cssRules.item(0);
+      shouldBe("cssRule.type", "cssRule.STYLE_RULE");
+      declaration = cssRule.style;
+      shouldBe("declaration.length", "1");
+      shouldBe("declaration.getPropertyValue('-webkit-text-decoration-skip')", "\"objects\"");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBe("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "\"objects\"");
+      stylesheet.deleteRule(0);
+    }
+
+    function testEmptyIsObjects(stylesheet, target) {
       cssRule = stylesheet.cssRules.item(0);
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "0");
+      shouldBe("declaration.getPropertyValue('-webkit-text-decoration-skip')", "null");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBe("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "\"objects\"");
       stylesheet.deleteRule(0);
     }
 
-    function testNoneIsValid(stylesheet) {
+    function testInitialIsObjects(stylesheet, target) {
+      cssRule = stylesheet.cssRules.item(0);
+      shouldBe("cssRule.type", "cssRule.STYLE_RULE");
+      declaration = cssRule.style;
+      shouldBe("declaration.length", "1");
+      shouldBe("declaration.getPropertyValue('-webkit-text-decoration-skip')",  "\"initial\"");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBe("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "\"objects\"");
+      stylesheet.deleteRule(0);
+    }
+
+    function testInvalidRule(stylesheet, target) {
+      cssRule = stylesheet.cssRules.item(0);
+      shouldBe("cssRule.type", "cssRule.STYLE_RULE");
+      declaration = cssRule.style;
+      shouldBe("declaration.length", "0");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBe("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "\"objects\"");
+      stylesheet.deleteRule(0);
+    }
+
+    function testNoneIsValid(stylesheet, target) {
       cssRule = stylesheet.cssRules.item(0);
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "1");
       shouldBe("declaration.getPropertyValue('-webkit-text-decoration-skip')", "\"none\"");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBe("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "\"none\"");
       stylesheet.deleteRule(0);
     }
 
     var styleElement = document.createElement("style");
     document.head.appendChild(styleElement);
     stylesheet = styleElement.sheet;
+    var target = document.getElementsByClassName("p")[0];
+
+    stylesheet.insertRule(".p { }", 0);
+    testEmptyIsObjects(stylesheet, target);
+
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: initial; }", 0);
+    testInitialIsObjects(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink; }", 0);
-    testInkIsValid(stylesheet);
+    testInkIsValid(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink ink ink ink ink; }", 0);
-    testInkIsValid(stylesheet);
+    testInkIsValid(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage; }", 0);
-    testInvalidRule(stylesheet);
+    testInvalidRule(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage ink; }", 0);
-    testInkIsValid(stylesheet);
+    testInkIsValid(stylesheet, target);
 
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink garbage; }", 0);
-    testInkIsValid(stylesheet);
+    testInkIsValid(stylesheet, target);
     
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage ink garbage; }", 0);
-    testInkIsValid(stylesheet);
+    testInkIsValid(stylesheet, target);
     
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: ink garbage ink; }", 0);
-    testInkIsValid(stylesheet);
+    testInkIsValid(stylesheet, target);
     
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: objects; }", 0);
+    testObjectsIsValid(stylesheet, target);
+
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: objects objects objects objects objects; }", 0);
+    testObjectsIsValid(stylesheet, target);
+
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage objects; }", 0);
+    testObjectsIsValid(stylesheet, target);
+
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: objects garbage; }", 0);
+    testObjectsIsValid(stylesheet, target);
+
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: garbage objects garbage; }", 0);
+    testObjectsIsValid(stylesheet, target);
+
+    stylesheet.insertRule(".p { -webkit-text-decoration-skip: objects garbage objects; }", 0);
+    testObjectsIsValid(stylesheet, target);
+
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: none; }", 0);
-    testNoneIsValid(stylesheet);
+    testNoneIsValid(stylesheet, target);
     
     stylesheet.insertRule(".p { -webkit-text-decoration-skip: ; }", 0);
-    testInvalidRule(stylesheet);
+    testInvalidRule(stylesheet, target);
   </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
