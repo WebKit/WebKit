@@ -1,3 +1,10 @@
+2014-02-13  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: fast/workers/use-machine-stack.html hits Heap::isMarked(cell) assertion
+        https://bugs.webkit.org/show_bug.cgi?id=128745
+
+        * TestExpectations: Marked as flakily asserting.
+
 2014-02-13  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Add or remove expectations for some media layout tests
