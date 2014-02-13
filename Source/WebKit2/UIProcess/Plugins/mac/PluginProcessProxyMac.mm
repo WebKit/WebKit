@@ -67,8 +67,12 @@ bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginModuleInfo& plugi
     
     if (pluginInfo.bundleIdentifier == "com.apple.QuickTime Plugin.plugin")
         return false;
-    
-    return true;
+
+    // We only allow 32-bit plug-ins to have the heap marked executable.
+    if (pluginInfo.pluginArchitecture == CPU_TYPE_X86)
+        return true;
+
+    return false;
 }
 
 bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
@@ -143,7 +147,8 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
     if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicyUnsandboxed)
         launchOptions.extraInitializationData.add("disable-sandbox", "1");
 
-    launchOptions.useXPC = shouldUseXPC();
+    // FIXME: We should still use XPC for plug-ins that want the heap to be executable, see <rdar://problem/16059483>.
+    launchOptions.useXPC = shouldUseXPC() && !launchOptions.executableHeap;
 }
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)

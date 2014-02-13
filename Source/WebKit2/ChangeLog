@@ -1,3 +1,25 @@
+2014-02-13  Anders Carlsson  <andersca@apple.com>
+
+        Disable XPC for plug-ins that need executable heap
+        https://bugs.webkit.org/show_bug.cgi?id=128744
+        <rdar://problem/15962958>
+
+        Reviewed by Dan Bernstein.
+
+        When switching to XPC for plug-ins, we accidentally broke the "feature"
+        where plug-ins can ask for the heap to be executable. 
+        
+        This breaks Silverlight, so just disable XPC for any plug-ins that need this.
+        <rdar://problem/16059483> tracks fixing this in the XPC service.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::pluginNeedsExecutableHeap):
+        Only return true for 32-bit plug-ins, since we don't know any 64-bit plug-ins
+        that require this feature.
+
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+        Set launchOptions.useXPC to false if launchOptions.executableHeap is true.
+
 2014-02-12  Antti Koivisto  <antti@apple.com>
 
         Return immediately from DestroyPlugin IPC call
