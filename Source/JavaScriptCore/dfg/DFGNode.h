@@ -1198,6 +1198,7 @@ struct Node {
         case PhantomArguments:
             return true;
         case Phantom:
+        case HardPhantom:
             return child1().useKindUnchecked() != UntypedUse || child2().useKindUnchecked() != UntypedUse || child3().useKindUnchecked() != UntypedUse;
         default:
             return shouldGenerate();

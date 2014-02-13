@@ -203,6 +203,7 @@
     <ClInclude Include="..\wtf\HashFunctions.h" />
     <ClInclude Include="..\wtf\HashIterators.h" />
     <ClInclude Include="..\wtf\HashMap.h" />
+    <ClInclude Include="..\wtf\HashMethod.h" />
     <ClInclude Include="..\wtf\HashSet.h" />
     <ClInclude Include="..\wtf\HashTable.h" />
     <ClInclude Include="..\wtf\HashTraits.h" />

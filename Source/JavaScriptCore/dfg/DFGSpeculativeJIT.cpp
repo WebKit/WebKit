@@ -2630,7 +2630,7 @@ void SpeculativeJIT::compileAdd(Node* node)
     case Int32Use: {
         ASSERT(!shouldCheckNegativeZero(node->arithMode()));
         
-        if (isNumberConstant(node->child1().node())) {
+        if (isInt32Constant(node->child1().node())) {
             int32_t imm1 = valueOfInt32Constant(node->child1().node());
             SpeculateInt32Operand op2(this, node->child2());
             GPRTemporary result(this);
@@ -2645,7 +2645,7 @@ void SpeculativeJIT::compileAdd(Node* node)
             return;
         }
         
-        if (isNumberConstant(node->child2().node())) {
+        if (isInt32Constant(node->child2().node())) {
             SpeculateInt32Operand op1(this, node->child1());
             int32_t imm2 = valueOfInt32Constant(node->child2().node());
             GPRTemporary result(this);

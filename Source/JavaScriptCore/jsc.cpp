@@ -237,6 +237,7 @@ static EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState*);
 static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -369,6 +370,8 @@ protected:
         addConstructableFunction(vm, "Element", functionCreateElement, 1);
         addFunction(vm, "getElement", functionGetElement, 1);
         addFunction(vm, "setElementRoot", functionSetElementRoot, 2);
+        
+        putDirectNativeFunction(vm, this, Identifier(&vm, "DFGTrue"), 0, functionFalse, DFGTrue, DontEnum | JSC::Function);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -717,6 +720,11 @@ EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)
     // Without this, Visual Studio will complain that this method does not return a value.
     return JSValue::encode(jsUndefined());
 #endif
+}
+
+EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*)
+{
+    return JSValue::encode(jsBoolean(false));
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog

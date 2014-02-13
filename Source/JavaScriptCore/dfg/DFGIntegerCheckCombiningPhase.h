@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef DFGIntegerCheckCombiningPhase_h
+#define DFGIntegerCheckCombiningPhase_h
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGEdge.h"
-
-#include "DFGNode.h"
-#include "JSCInlines.h"
-
 namespace JSC { namespace DFG {
 
-void Edge::dump(PrintStream& out) const
-{
-    if (useKindUnchecked() != UntypedUse) {
-        if (needsCheck())
-            out.print("Check:");
-        out.print(useKind(), ":");
-    }
-    if (DFG::doesKill(killStatusUnchecked()))
-        out.print("Kill:");
-    out.print(node());
-}
+class Graph;
+
+// Removes overflow checks and out-of-bounds checks by hoisting them.
+
+bool performIntegerCheckCombining(Graph&);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGIntegerCheckCombiningPhase_h
 

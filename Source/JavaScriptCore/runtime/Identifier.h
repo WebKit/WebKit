@@ -95,7 +95,7 @@ namespace JSC {
         static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
 
         // Only to be used with string literals.
-        static PassRef<StringImpl> add(VM*, const char*);
+        JS_EXPORT_PRIVATE static PassRef<StringImpl> add(VM*, const char*);
         JS_EXPORT_PRIVATE static PassRef<StringImpl> add(ExecState*, const char*);
 
     private:

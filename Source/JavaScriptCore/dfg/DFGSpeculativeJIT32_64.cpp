@@ -4659,6 +4659,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case Phantom:
+    case HardPhantom:
         DFG_NODE_DO_TO_CHILDREN(m_jit.graph(), node, speculate);
         noResult(node);
         break;

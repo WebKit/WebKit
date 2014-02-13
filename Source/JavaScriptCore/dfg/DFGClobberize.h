@@ -88,6 +88,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case WeakJSConstant:
     case Identity:
     case Phantom:
+    case HardPhantom:
     case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:

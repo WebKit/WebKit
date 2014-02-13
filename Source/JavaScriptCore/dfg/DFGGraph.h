@@ -361,7 +361,13 @@ public:
     }
     int32_t valueOfInt32Constant(Node* node)
     {
-        return valueOfJSConstant(node).asInt32();
+        JSValue value = valueOfJSConstant(node);
+        if (!value.isInt32()) {
+            dataLog("Value isn't int32: ", value, "\n");
+            dump();
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        return value.asInt32();
     }
     double valueOfNumberConstant(Node* node)
     {

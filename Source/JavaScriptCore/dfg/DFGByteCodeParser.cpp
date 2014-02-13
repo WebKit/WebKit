@@ -1668,6 +1668,11 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         return true;
     }
         
+    case DFGTrue: {
+        set(VirtualRegister(resultOperand), getJSConstantForValue(jsBoolean(true), 0));
+        return true;
+    }
+        
     default:
         return false;
     }

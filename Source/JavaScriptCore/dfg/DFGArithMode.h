@@ -97,6 +97,31 @@ inline bool shouldCheckNegativeZero(Arith::Mode mode)
     return true;
 }
 
+inline bool subsumes(Arith::Mode earlier, Arith::Mode later)
+{
+    switch (earlier) {
+    case Arith::CheckOverflow:
+        switch (later) {
+        case Arith::Unchecked:
+        case Arith::CheckOverflow:
+            return true;
+        default:
+            return false;
+        }
+    case Arith::CheckOverflowAndNegativeZero:
+        switch (later) {
+        case Arith::Unchecked:
+        case Arith::CheckOverflow:
+        case Arith::CheckOverflowAndNegativeZero:
+            return true;
+        default:
+            return false;
+        }
+    default:
+        return earlier == later;
+    }
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {

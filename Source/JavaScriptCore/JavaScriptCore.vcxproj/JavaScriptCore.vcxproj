@@ -395,6 +395,7 @@
     <ClCompile Include="..\dfg\DFGGraph.cpp" />
     <ClCompile Include="..\dfg\DFGGraphSafepoint.cpp" />
     <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp" />
+    <ClCompile Include="..\dfg\DFGIntegerCheckCombiningPhase.cpp" />
     <ClCompile Include="..\dfg\DFGInvalidationPointInjectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGJITCode.cpp" />
     <ClCompile Include="..\dfg\DFGJITCompiler.cpp" />
@@ -939,6 +940,7 @@
     <ClInclude Include="..\dfg\DFGGraphSafepoint.h" />
     <ClInclude Include="..\dfg\DFGInPlaceAbstractState.h" />
     <ClInclude Include="..\dfg\DFGInsertionSet.h" />
+    <ClInclude Include="..\dfg\DFGIntegerCheckCombiningPhase.h" />
     <ClInclude Include="..\dfg\DFGInvalidationPointInjectionPhase.h" />
     <ClInclude Include="..\dfg\DFGJITCode.h" />
     <ClInclude Include="..\dfg\DFGJITCompiler.h" />

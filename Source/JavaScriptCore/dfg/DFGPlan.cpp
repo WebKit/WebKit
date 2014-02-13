@@ -43,6 +43,7 @@
 #include "DFGFlushLivenessAnalysisPhase.h"
 #include "DFGFixupPhase.h"
 #include "DFGGraphSafepoint.h"
+#include "DFGIntegerCheckCombiningPhase.h"
 #include "DFGInvalidationPointInjectionPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGLICMPhase.h"
@@ -300,9 +301,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performCPSRethreading(dfg);
         performSSAConversion(dfg);
         performSSALowering(dfg);
+        performCSE(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performLICM(dfg);
+        performIntegerCheckCombining(dfg);
         performCSE(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);

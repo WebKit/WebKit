@@ -127,9 +127,9 @@ private:
 
     Node* pureCSE(Node* node)
     {
-        Edge child1 = node->child1();
-        Edge child2 = node->child2();
-        Edge child3 = node->child3();
+        Edge child1 = node->child1().sanitized();
+        Edge child2 = node->child2().sanitized();
+        Edge child3 = node->child3().sanitized();
         
         for (unsigned i = endIndexForPureCSE(); i--;) {
             Node* otherNode = m_currentBlock->at(i);
@@ -139,24 +139,19 @@ private:
             if (node->op() != otherNode->op())
                 continue;
             
-            if (node->hasArithMode()) {
-                if (node->arithMode() != otherNode->arithMode())
-                    continue;
-            }
-            
-            Edge otherChild = otherNode->child1();
+            Edge otherChild = otherNode->child1().sanitized();
             if (!otherChild)
                 return otherNode;
             if (otherChild != child1)
                 continue;
             
-            otherChild = otherNode->child2();
+            otherChild = otherNode->child2().sanitized();
             if (!otherChild)
                 return otherNode;
             if (otherChild != child2)
                 continue;
             
-            otherChild = otherNode->child3();
+            otherChild = otherNode->child3().sanitized();
             if (!otherChild)
                 return otherNode;
             if (otherChild != child3)
@@ -175,7 +170,7 @@ private:
                 return 0;
             switch (otherNode->op()) {
             case Int32ToDouble:
-                if (otherNode->child1() == node->child1())
+                if (otherNode->child1().sanitized() == node->child1().sanitized())
                     return otherNode;
                 break;
             default:
@@ -1095,12 +1090,6 @@ private:
         case BitRShift:
         case BitLShift:
         case BitURShift:
-        case ArithAdd:
-        case ArithSub:
-        case ArithNegate:
-        case ArithMul:
-        case ArithMod:
-        case ArithDiv:
         case ArithAbs:
         case ArithMin:
         case ArithMax:
@@ -1115,7 +1104,6 @@ private:
         case IsString:
         case IsObject:
         case IsFunction:
-        case DoubleAsInt32:
         case LogicalNot:
         case SkipTopScope:
         case SkipScope:
@@ -1131,6 +1119,28 @@ private:
                 break;
             setReplacement(pureCSE(node));
             break;
+            
+        case ArithAdd:
+        case ArithSub:
+        case ArithNegate:
+        case ArithMul:
+        case ArithDiv:
+        case ArithMod:
+        case UInt32ToNumber:
+        case DoubleAsInt32: {
+            if (cseMode == StoreElimination)
+                break;
+            Node* candidate = pureCSE(node);
+            if (!candidate)
+                break;
+            if (!subsumes(candidate->arithMode(), node->arithMode())) {
+                if (!subsumes(node->arithMode(), candidate->arithMode()))
+                    break;
+                candidate->setArithMode(node->arithMode());
+            }
+            setReplacement(candidate);
+            break;
+        }
             
         case Int32ToDouble:
             if (cseMode == StoreElimination)
@@ -1407,6 +1417,9 @@ private:
             
         case Phantom:
             // FIXME: we ought to remove Phantom's that have no children.
+            // NB. It would be incorrect to do this for HardPhantom. In fact, the whole point
+            // of HardPhantom is that we *don't* do this for HardPhantoms, since they signify
+            // a more strict kind of liveness than the Phantom bytecode liveness.
             eliminateIrrelevantPhantomChildren(node);
             break;
             

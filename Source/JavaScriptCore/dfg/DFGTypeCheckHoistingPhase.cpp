@@ -244,6 +244,7 @@ private:
                 case GetIndexedPropertyStorage:
                 case GetTypedArrayByteOffset:
                 case Phantom:
+                case HardPhantom:
                 case MovHint:
                     // Don't count these uses.
                     break;
@@ -342,6 +343,7 @@ private:
                 case GetArrayLength:
                 case GetIndexedPropertyStorage:
                 case Phantom:
+                case HardPhantom:
                 case MovHint:
                     // Don't count these uses.
                     break;

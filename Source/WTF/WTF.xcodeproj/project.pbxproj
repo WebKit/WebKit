@@ -291,6 +291,7 @@
 		0F0D85B317234CB100338210 /* NoLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoLock.h; sourceTree = "<group>"; };
 		0F2B66A417B6B4F700A7AE3F /* DeferrableRefCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferrableRefCounted.h; sourceTree = "<group>"; };
 		0F2B66A517B6B4F700A7AE3F /* FlipBytes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlipBytes.h; sourceTree = "<group>"; };
+		0F300B7D18AB48B400A6D72E /* HashMethod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HashMethod.h; sourceTree = "<group>"; };
 		0F87105916643F190090B0AD /* RawPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawPointer.h; sourceTree = "<group>"; };
 		0F885E0E1845AE9F00F1E3FA /* FastBitVector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FastBitVector.cpp; sourceTree = "<group>"; };
 		0F8F2B8F172E00F0007DBDA5 /* CompilationThread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationThread.cpp; sourceTree = "<group>"; };
@@ -720,6 +721,7 @@
 				A8A472B4151A825A004123FF /* HashFunctions.h */,
 				A8A472B5151A825A004123FF /* HashIterators.h */,
 				A8A472B6151A825A004123FF /* HashMap.h */,
+				0F300B7D18AB48B400A6D72E /* HashMethod.h */,
 				A8A472B7151A825A004123FF /* HashSet.h */,
 				A8A472B8151A825A004123FF /* HashTable.cpp */,
 				A8A472B9151A825A004123FF /* HashTable.h */,

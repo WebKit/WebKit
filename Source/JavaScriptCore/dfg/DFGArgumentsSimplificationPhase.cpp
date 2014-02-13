@@ -317,6 +317,7 @@ public:
                 }
                     
                 case Phantom:
+                case HardPhantom:
                     // We don't care about phantom uses, since phantom uses are all about
                     // just keeping things alive for OSR exit. If something - like the
                     // CreateArguments - is just being kept alive, then this transformation
@@ -428,7 +429,8 @@ public:
                     break;
                 }
                     
-                case Phantom: {
+                case Phantom:
+                case HardPhantom: {
                     // It's highly likely that we will have a Phantom referencing either
                     // CreateArguments, or a local op for the arguments register, or a
                     // local op for an arguments-aliased variable. In any of those cases,

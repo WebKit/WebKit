@@ -507,7 +507,8 @@ private:
         case Int52ToValue:
         case Int52ToDouble:
         case CheckInBounds:
-        case ValueToInt32: {
+        case ValueToInt32:
+        case HardPhantom: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             RELEASE_ASSERT_NOT_REACHED();

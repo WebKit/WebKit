@@ -66,12 +66,12 @@ void AbstractValue::set(Graph& graph, JSValue value)
         m_futurePossibleStructure.clear();
         m_arrayModes = 0;
     }
-        
+    
     m_type = speculationFromValue(value);
     if (m_type == SpecInt52AsDouble)
         m_type = SpecInt52;
     m_value = value;
-        
+    
     checkConsistency();
 }
 

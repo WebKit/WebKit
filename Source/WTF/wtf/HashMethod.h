@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef HashMethod_h
+#define HashMethod_h
 
-#if ENABLE(DFG_JIT)
+#include <wtf/StdLibExtras.h>
 
-#include "DFGEdge.h"
+namespace WTF {
 
-#include "DFGNode.h"
-#include "JSCInlines.h"
-
-namespace JSC { namespace DFG {
-
-void Edge::dump(PrintStream& out) const
-{
-    if (useKindUnchecked() != UntypedUse) {
-        if (needsCheck())
-            out.print("Check:");
-        out.print(useKind(), ":");
+template<typename T>
+struct HashMethod {
+    size_t operator()(const T& value) const
+    {
+        return value.hash();
     }
-    if (DFG::doesKill(killStatusUnchecked()))
-        out.print("Kill:");
-    out.print(node());
-}
+};
 
-} } // namespace JSC::DFG
+} // namespace WTF
 
-#endif // ENABLE(DFG_JIT)
+using WTF::HashMethod;
 
+#endif // HashMethod_h

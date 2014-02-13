@@ -143,6 +143,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGGraph.cpp
     dfg/DFGGraphSafepoint.cpp
     dfg/DFGInPlaceAbstractState.cpp
+    dfg/DFGIntegerCheckCombiningPhase.cpp
     dfg/DFGInvalidationPointInjectionPhase.cpp
     dfg/DFGJITCode.cpp
     dfg/DFGJITCompiler.cpp

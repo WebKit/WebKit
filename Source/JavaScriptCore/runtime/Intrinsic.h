@@ -53,7 +53,10 @@ enum Intrinsic {
     IMulIntrinsic,
     ArrayIteratorNextValueIntrinsic,
     ArrayIteratorNextKeyIntrinsic,
-    ArrayIteratorNextGenericIntrinsic
+    ArrayIteratorNextGenericIntrinsic,
+    
+    // Debugging intrinsics
+    DFGTrue
 };
 
 } // namespace JSC

@@ -1762,6 +1762,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ProfileWillCall:
     case ProfileDidCall:
     case Phantom:
+    case HardPhantom:
     case Check:
     case CountExecution:
     case CheckTierUpInLoop:

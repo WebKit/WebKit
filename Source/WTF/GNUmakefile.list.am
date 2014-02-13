@@ -67,6 +67,7 @@ wtf_sources += \
     Source/WTF/wtf/HashFunctions.h \
     Source/WTF/wtf/HashIterators.h \
     Source/WTF/wtf/HashMap.h \
+    Source/WTF/wtf/HashMethod.h \
     Source/WTF/wtf/HashSet.h \
     Source/WTF/wtf/HashTable.cpp \
     Source/WTF/wtf/HashTable.h \

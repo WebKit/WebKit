@@ -39,6 +39,7 @@ set(WTF_HEADERS
     HashFunctions.h
     HashIterators.h
     HashMap.h
+    HashMethod.h
     HashSet.h
     HashTable.h
     HashTraits.h

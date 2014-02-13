@@ -301,6 +301,7 @@ private:
             compileZombieHint();
             break;
         case Phantom:
+        case HardPhantom:
             compilePhantom();
             break;
         case ToThis:

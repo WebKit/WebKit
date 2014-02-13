@@ -1,3 +1,113 @@
+2014-02-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Hoist and combine array bounds checks
+        https://bugs.webkit.org/show_bug.cgi?id=125433
+
+        Reviewed by Mark Hahnenberg.
+        
+        This adds a phase for reasoning about overflow checks and array bounds checks. It's
+        block-local, and removes both overflow checks and bounds checks in one go.
+        
+        This also improves reasoning about commutative operations, and CSE between
+        CheckOverflow and Unchecked arithmetic.
+        
+        This strangely uncovered a DFG backend bug where we were trying to extract an int32
+        from a constant even when that constant was just simply a number. I fixed that bug.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::set):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGArithMode.h:
+        (JSC::DFG::subsumes):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::pureCSE):
+        (JSC::DFG::CSEPhase::int32ToDoubleCSE):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGEdge.cpp:
+        (JSC::DFG::Edge::dump):
+        * dfg/DFGEdge.h:
+        (JSC::DFG::Edge::sanitized):
+        (JSC::DFG::Edge::hash):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueOfInt32Constant):
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertConstant):
+        * dfg/DFGIntegerCheckCombiningPhase.cpp: Added.
+        (JSC::DFG::IntegerCheckCombiningPhase::IntegerCheckCombiningPhase):
+        (JSC::DFG::IntegerCheckCombiningPhase::run):
+        (JSC::DFG::IntegerCheckCombiningPhase::handleBlock):
+        (JSC::DFG::IntegerCheckCombiningPhase::rangeKeyAndAddend):
+        (JSC::DFG::IntegerCheckCombiningPhase::isValid):
+        (JSC::DFG::IntegerCheckCombiningPhase::insertAdd):
+        (JSC::DFG::IntegerCheckCombiningPhase::insertMustAdd):
+        (JSC::DFG::performIntegerCheckCombining):
+        * dfg/DFGIntegerCheckCombiningPhase.h: Added.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        (JSC::DFG::StrengthReductionPhase::handleCommutativity):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionFalse):
+        * runtime/Identifier.h:
+        * runtime/Intrinsic.h:
+        * runtime/JSObject.h:
+        * tests/stress/get-by-id-untyped.js: Added.
+        (foo):
+        * tests/stress/inverted-additive-subsumption.js: Added.
+        (foo):
+        * tests/stress/redundant-add-overflow-checks.js: Added.
+        (foo):
+        * tests/stress/redundant-array-bounds-checks-addition-skip-first.js: Added.
+        (foo):
+        (arraycmp):
+        * tests/stress/redundant-array-bounds-checks-addition.js: Added.
+        (foo):
+        (arraycmp):
+        * tests/stress/redundant-array-bounds-checks-unchecked-addition.js: Added.
+        (foo):
+        (arraycmp):
+        * tests/stress/redundant-array-bounds-checks.js: Added.
+        (foo):
+        (arraycmp):
+        * tests/stress/tricky-array-bounds-checks.js: Added.
+        (foo):
+        (arraycmp):
+
 2014-02-13  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should be OK with __compact_unwind in a data section

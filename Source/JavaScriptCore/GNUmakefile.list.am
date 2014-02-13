@@ -317,9 +317,11 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGInPlaceAbstractState.h \
 	Source/JavaScriptCore/dfg/DFGInlineCacheWrapper.h \
 	Source/JavaScriptCore/dfg/DFGInlineCacheWrapperInlines.h \
+	Source/JavaScriptCore/dfg/DFGInsertionSet.h \
+	Source/JavaScriptCore/dfg/DFGIntegerCheckCombiningPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGIntegerCheckCombiningPhase.h \
 	Source/JavaScriptCore/dfg/DFGInvalidationPointInjectionPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGInvalidationPointInjectionPhase.h \
-	Source/JavaScriptCore/dfg/DFGInsertionSet.h \
 	Source/JavaScriptCore/dfg/DFGJITCode.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCode.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
