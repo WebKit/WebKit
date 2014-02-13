@@ -104,6 +104,13 @@
 
     CGRect bounds = self.bounds;
 
+    WebKit::WebContext& context = *[_configuration processClass]->_context;
+
+    WebKit::WebPageConfiguration webPageConfiguration;
+    webPageConfiguration.preferences = [_configuration preferences]->_preferences.get();
+    if (WKWebView *relatedWebView = [_configuration _relatedWebView])
+        webPageConfiguration.relatedPage = relatedWebView->_page.get();
+
 #if PLATFORM(IOS)
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
@@ -111,7 +118,7 @@
 
     [self addSubview:_scrollView.get()];
 
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds configuration:_configuration.get()]);
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration)]);
     _page = _contentView->_page;
     [_contentView setDelegate:self];
     [_contentView layer].anchorPoint = CGPointZero;
@@ -122,10 +129,7 @@
 #endif
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-    WebKit::WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.preferences = [_configuration preferences]->_preferences.get();
-
-    _wkView = [[WKView alloc] initWithFrame:bounds context:*[_configuration.get() processClass]->_context configuration:std::move(webPageConfiguration)];
+    _wkView = [[WKView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration)];
     [self addSubview:_wkView.get()];
     _page = WebKit::toImpl([_wkView pageRef]);
 #endif

@@ -35,6 +35,8 @@
 
 namespace WebKit {
 class RemoteLayerTreeTransaction;
+class WebContext;
+struct WebPageConfiguration;
 }
 
 @protocol WKContentViewDelegate <NSObject>
@@ -55,7 +57,7 @@ WK_API_CLASS
 
 @property (readonly) WKPageRef _pageRef;
 
-- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
+- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration;
 
 - (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 - (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage;

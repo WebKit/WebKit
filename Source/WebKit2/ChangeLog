@@ -1,5 +1,18 @@
 2014-02-12  Anders Carlsson  <andersca@apple.com>
 
+        Pass the related page in the WebPageConfiguration struct
+        https://bugs.webkit.org/show_bug.cgi?id=128714
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:context:WebKit::configuration:WebKit::]):
+
+2014-02-12  Anders Carlsson  <andersca@apple.com>
+
         Add relatedWebView property to WKWebViewConfiguration
         https://bugs.webkit.org/show_bug.cgi?id=128707
 

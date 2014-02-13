@@ -95,7 +95,7 @@ using namespace WebKit;
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
@@ -104,10 +104,7 @@ using namespace WebKit;
 
     _pageClient = std::make_unique<PageClientImpl>(self);
 
-    WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.preferences = configuration.preferences->_preferences.get();
-
-    _page = configuration.processClass->_context->createWebPage(*_pageClient, std::move(webPageConfiguration));
+    _page = context.createWebPage(*_pageClient, std::move(webPageConfiguration));
     _page->initializeWebPage();
     _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
     _page->setUseFixedLayout(true);
