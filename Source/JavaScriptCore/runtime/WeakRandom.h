@@ -56,11 +56,11 @@
 namespace JSC {
 
 class WeakRandom {
+friend class JSGlobalObject; // For access to initializeSeed() during replay.
 public:
     WeakRandom(unsigned seed)
-        : m_low(seed ^ 0x49616E42)
-        , m_high(seed)
     {
+        initializeSeed(seed);
     }
     
     // Returns the seed provided that you've never called get() or getUint32().
@@ -83,6 +83,12 @@ private:
         m_high += m_low;
         m_low += m_high;
         return m_high;
+    }
+
+    void initializeSeed(unsigned seed)
+    {
+        m_low = seed ^ 0x49616E42;
+        m_high = seed;
     }
 
     unsigned m_low;

@@ -101,15 +101,25 @@ INSPECTOR_DOMAINS = \
     $(JavaScriptCore)/inspector/protocol/Runtime.json \
 #
 
+INPUT_GENERATOR_SCRIPTS = \
+    $(JavaScriptCore)/replay/scripts/CodeGeneratorReplayInputs.py \
+    $(JavaScriptCore)/replay/scripts/CodeGeneratorReplayInputsTemplates.py \
+#
+
 INSPECTOR_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore)/inspector/scripts/CodeGeneratorInspector.py \
 	$(JavaScriptCore)/inspector/scripts/CodeGeneratorInspectorStrings.py \
+#
+
+INPUT_GENERATOR_SPECIFICATIONS = \
+    $(JavaScriptCore)/replay/JSInputs.json \
 #
 
 all : \
     InspectorJS.json \
     InspectorJSFrontendDispatchers.h \
     InjectedScriptSource.h \
+	JSReplayInputs.h \
 #
 
 InspectorJS.json : inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS)
@@ -123,3 +133,9 @@ InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore)/ins
 	python $(JavaScriptCore)/inspector/scripts/jsmin.py < $(JavaScriptCore)/inspector/InjectedScriptSource.js > ./InjectedScriptSource.min.js
 	perl $(JavaScriptCore)/inspector/scripts/xxd.pl InjectedScriptSource_js ./InjectedScriptSource.min.js InjectedScriptSource.h
 	rm -f ./InjectedScriptSource.min.js
+
+# Web Replay inputs generator
+
+JSReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
+	python $(JavaScriptCore)/replay/scripts/CodeGeneratorReplayInputs.py --outputDir . --framework JavaScriptCore $(INPUT_GENERATOR_SPECIFICATIONS)
+

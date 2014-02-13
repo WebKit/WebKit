@@ -64,7 +64,7 @@ public:
 };
 
 template<typename InputType>
-class NondeterministicInput final : public NondeterministicInputBase {
+class NondeterministicInput : public NondeterministicInputBase {
     virtual const AtomicString& type() const override
     {
         return InputTraits<InputType>::type();

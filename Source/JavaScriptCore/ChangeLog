@@ -1,3 +1,48 @@
+2014-02-12  Brian Burg  <bburg@apple.com>
+
+        Web Replay: capture and replay nondeterminism of Date.now() and Math.random()
+        https://bugs.webkit.org/show_bug.cgi?id=128633
+
+        Reviewed by Filip Pizlo.
+
+        Upstream the only two sources of script-visible nondeterminism in JavaScriptCore.
+
+        The random seed for WeakRandom is memoized when the owning JSGlobalObject is
+        constructed. It is deterministically initialized during replay before any
+        scripts execute with the global object.
+
+        The implementations of `Date.now()` and `new Date()` eventually obtain the
+        current time from jsCurrentTime(). When capturing, we save return values of
+        jsCurrentTime() into the recording. When replaying, we use memoized values from
+        the recording instead of obtaining values from the platform-specific currentTime()
+        implementation. No other code calls jsCurrentTime().
+
+        * DerivedSources.make: Add rules to make JSReplayInputs.h from JSInputs.json.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * replay/JSInputs.json: Added. Includes specifications for replay inputs
+        "GetCurrentTime" and "SetRandomSeed". Tests will be added for both input
+        cases once sufficient replay machinery has been added.
+
+        * replay/NondeterministicInput.h: NondeterministicInput should not have
+        been marked 'final'.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::deterministicCurrentTime): Added. Load or store the current time depending
+        on what kind of InputCursor is attached to the JSGlobalObject.
+
+        (JSC::constructDate): Use deterministicCurrentTime().
+        (JSC::dateNow): Use deterministicCurrentTime().
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::setInputCursor): When setting a non-empty input cursor,
+        immediately store or load the "SetRandomSeed" input and initialize WeakRandom's
+        random seed with it. The input cursor (and thus random seed) must be set before
+        any scripts are evaluated with this JSGlobalObject.
+
+        * runtime/WeakRandom.h:
+        (JSC::WeakRandom::WeakRandom): Add JSGlobalObject as a friend class.
+        (JSC::WeakRandom::initializeSeed): Extract the seed initialization into a
+        separate method so it can be called outside of the JSGlobalObject constructor.
+
 2014-02-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cleanup JavaScriptCore/inspector

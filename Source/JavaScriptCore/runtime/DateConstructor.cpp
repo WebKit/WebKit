@@ -36,6 +36,11 @@
 #include <time.h>
 #include <wtf/MathExtras.h>
 
+#if ENABLE(WEB_REPLAY)
+#include "InputCursor.h"
+#include "JSReplayInputs.h"
+#endif
+
 #if OS(WINCE)
 extern "C" time_t time(time_t* timer); // Provided by libce.
 #endif
@@ -72,6 +77,28 @@ const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_inf
 @end
 */
 
+#if ENABLE(WEB_REPLAY)
+static double deterministicCurrentTime(JSGlobalObject* globalObject)
+{
+    double currentTime = jsCurrentTime();
+    InputCursor& cursor = globalObject->inputCursor();
+    if (cursor.isCapturing())
+        cursor.appendInput<GetCurrentTime>(currentTime);
+
+    if (cursor.isReplaying()) {
+        if (GetCurrentTime* input = cursor.fetchInput<GetCurrentTime>())
+            currentTime = input->currentTime();
+    }
+    return currentTime;
+}
+#endif
+
+#if ENABLE(WEB_REPLAY)
+#define NORMAL_OR_DETERMINISTIC_FUNCTION(a, b) (b)
+#else
+#define NORMAL_OR_DETERMINISTIC_FUNCTION(a, b) (a)
+#endif
+
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DateConstructor);
 
 DateConstructor::DateConstructor(VM& vm, Structure* structure)
@@ -100,7 +127,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
     double value;
 
     if (numArgs == 0) // new Date() ECMA 15.9.3.3
-        value = jsCurrentTime();
+        value = NORMAL_OR_DETERMINISTIC_FUNCTION(jsCurrentTime(), deterministicCurrentTime(globalObject));
     else if (numArgs == 1) {
         if (args.at(0).inherits(DateInstance::info()))
             value = asDateInstance(args.at(0))->internalNumber();
@@ -179,9 +206,13 @@ static EncodedJSValue JSC_HOST_CALL dateParse(ExecState* exec)
     return JSValue::encode(jsNumber(parseDate(exec->vm(), exec->argument(0).toString(exec)->value(exec))));
 }
 
-static EncodedJSValue JSC_HOST_CALL dateNow(ExecState*)
+static EncodedJSValue JSC_HOST_CALL dateNow(ExecState* exec)
 {
-    return JSValue::encode(jsNumber(jsCurrentTime()));
+#if !ENABLE(WEB_REPLAY)
+    UNUSED_PARAM(exec);
+#endif
+
+    return JSValue::encode(jsNumber(NORMAL_OR_DETERMINISTIC_FUNCTION(jsCurrentTime(), deterministicCurrentTime(exec->lexicalGlobalObject()))));
 }
 
 static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec) 

@@ -129,6 +129,7 @@
 
 #if ENABLE(WEB_REPLAY)
 #include "EmptyInputCursor.h"
+#include "JSReplayInputs.h"
 #endif
 
 #include "JSGlobalObject.lut.h"
@@ -786,6 +787,17 @@ bool JSGlobalObject::remoteDebuggingEnabled() const
 void JSGlobalObject::setInputCursor(PassRefPtr<InputCursor> prpCursor)
 {
     m_inputCursor = prpCursor;
+    ASSERT(m_inputCursor);
+
+    InputCursor& cursor = inputCursor();
+    // Save or set the random seed. This performed here rather than the constructor
+    // to avoid threading the input cursor through all the abstraction layers.
+    if (cursor.isCapturing())
+        cursor.appendInput<SetRandomSeed>(m_weakRandom.seedUnsafe());
+    else if (cursor.isReplaying()) {
+        if (SetRandomSeed* input = cursor.fetchInput<SetRandomSeed>())
+            m_weakRandom.initializeSeed(input->randomSeed());
+    }
 }
 #endif
 
