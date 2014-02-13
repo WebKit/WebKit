@@ -40,7 +40,7 @@
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
-#include "CSSGridTemplateValue.h"
+#include "CSSGridTemplateAreasValue.h"
 #include "CSSImageValue.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
@@ -2597,11 +2597,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             return false;
         return parseGridAreaShorthand(important);
 
-    case CSSPropertyWebkitGridTemplate:
+    case CSSPropertyWebkitGridTemplateAreas:
         if (!cssGridLayoutEnabled())
             return false;
 
-        parsedValue = parseGridTemplate();
+        parsedValue = parseGridTemplateAreas();
         break;
 
     case CSSPropertyWebkitMarginCollapse: {
@@ -5130,7 +5130,7 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
 
 #endif /* ENABLE(DASHBOARD_SUPPORT) */
 
-PassRefPtr<CSSValue> CSSParser::parseGridTemplate()
+PassRefPtr<CSSValue> CSSParser::parseGridTemplateAreas()
 {
     NamedGridAreaMap gridAreaMap;
     size_t rowCount = 0;
@@ -5202,7 +5202,7 @@ PassRefPtr<CSSValue> CSSParser::parseGridTemplate()
     if (!rowCount || !columnCount)
         return 0;
 
-    return CSSGridTemplateValue::create(gridAreaMap, rowCount, columnCount);
+    return CSSGridTemplateAreasValue::create(gridAreaMap, rowCount, columnCount);
 }
 
 PassRefPtr<CSSValue> CSSParser::parseCounterContent(CSSParserValueList* args, bool counters)

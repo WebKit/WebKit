@@ -377,7 +377,7 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     "font-weight", "grid-cell", "grid-column", "grid-column-align",
     "grid-column-sizing", "grid-column-span", "grid-columns", "grid-flow",
     "grid-row", "grid-row-align", "grid-row-sizing", "grid-row-span",
-    "grid-rows", "grid-template", "hanging-punctuation", "height", "hyphens",
+    "grid-rows", "grid-template-areas", "hanging-punctuation", "height", "hyphens",
     "icon", "image-orientation", "image-rendering", "image-resolution",
     "inline-box-align", "justify-content", "left", "letter-spacing",
     "line-break", "line-height", "line-stacking", "line-stacking-ruby",

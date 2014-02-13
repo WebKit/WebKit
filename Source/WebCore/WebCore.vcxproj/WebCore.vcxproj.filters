@@ -6967,7 +6967,7 @@
     <ClCompile Include="..\rendering\SimpleLineLayoutFunctions.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\CSSGridTemplateValue.cpp">
+    <ClCompile Include="..\css\CSSGridTemplateAreasValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\IDBCursorBackend.cpp">
@@ -14779,7 +14779,7 @@
     <ClInclude Include="..\rendering\SimpleLineLayoutFunctions.h">
       <Filter>rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\css\CSSGridTemplateValue.h">
+    <ClInclude Include="..\css\CSSGridTemplateAreasValue.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\indexeddb\IDBDatabaseBackend.h">

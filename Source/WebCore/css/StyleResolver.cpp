@@ -40,7 +40,7 @@
 #include "CSSFontSelector.h"
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
-#include "CSSGridTemplateValue.h"
+#include "CSSGridTemplateAreasValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSPageRule.h"
 #include "CSSParser.h"
@@ -2727,7 +2727,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.style()->setGridItemRowEnd(rowEndPosition);
         return;
     }
-    case CSSPropertyWebkitGridTemplate: {
+    case CSSPropertyWebkitGridTemplateAreas: {
         if (isInherit) {
             state.style()->setNamedGridArea(state.parentStyle()->namedGridArea());
             state.style()->setNamedGridAreaRowCount(state.parentStyle()->namedGridAreaRowCount());
@@ -2746,7 +2746,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             return;
         }
 
-        CSSGridTemplateValue* gridTemplateValue = toCSSGridTemplateValue(value);
+        CSSGridTemplateAreasValue* gridTemplateValue = toCSSGridTemplateAreasValue(value);
         state.style()->setNamedGridArea(gridTemplateValue->gridAreaMap());
         state.style()->setNamedGridAreaRowCount(gridTemplateValue->rowCount());
         state.style()->setNamedGridAreaColumnCount(gridTemplateValue->columnCount());

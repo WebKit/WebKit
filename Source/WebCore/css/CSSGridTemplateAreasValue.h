@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013 Igalia S.L.
+ * Copyright (C) 2013, 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,58 +29,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSGridTemplateValue.h"
+#ifndef CSSGridTemplateAreasValue_h
+#define CSSGridTemplateAreasValue_h
 
+#include "CSSValue.h"
 #include "GridCoordinate.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSGridTemplateValue::CSSGridTemplateValue(const NamedGridAreaMap& gridAreaMap, size_t rowCount, size_t columnCount)
-    : CSSValue(GridTemplateClass)
-    , m_gridAreaMap(gridAreaMap)
-    , m_rowCount(rowCount)
-    , m_columnCount(columnCount)
-{
-    ASSERT(m_rowCount);
-    ASSERT(m_columnCount);
-}
-
-static String stringForPosition(const NamedGridAreaMap& gridAreaMap, size_t row, size_t column)
-{
-    Vector<String> candidates;
-
-    for (const auto& it : gridAreaMap) {
-        const GridCoordinate& coordinate = it.value;
-        if (row >= coordinate.rows.initialPositionIndex && row <= coordinate.rows.finalPositionIndex)
-            candidates.append(it.key);
+class CSSGridTemplateAreasValue : public CSSValue {
+public:
+    static PassRef<CSSGridTemplateAreasValue> create(const NamedGridAreaMap& gridAreaMap, size_t rowCount, size_t columnCount)
+    {
+        return adoptRef(*new CSSGridTemplateAreasValue(gridAreaMap, rowCount, columnCount));
     }
 
-    for (const auto& it : gridAreaMap) {
-        const GridCoordinate& coordinate = it.value;
-        if (column >= coordinate.columns.initialPositionIndex && column <= coordinate.columns.finalPositionIndex && candidates.contains(it.key))
-            return it.key;
-    }
+    ~CSSGridTemplateAreasValue() { }
 
-    return ".";
-}
+    String customCSSText() const;
 
-String CSSGridTemplateValue::customCSSText() const
-{
-    StringBuilder builder;
-    for (size_t row = 0; row < m_rowCount; ++row) {
-        builder.append('\"');
-        for (size_t column = 0; column < m_columnCount; ++column) {
-            builder.append(stringForPosition(m_gridAreaMap, row, column));
-            if (column != m_columnCount - 1)
-                builder.append(' ');
-        }
-        builder.append('\"');
-        if (row != m_rowCount - 1)
-            builder.append(' ');
-    }
-    return builder.toString();
-}
+    const NamedGridAreaMap& gridAreaMap() const { return m_gridAreaMap; }
+    size_t rowCount() const { return m_rowCount; }
+    size_t columnCount() const { return m_columnCount; }
+
+private:
+    CSSGridTemplateAreasValue(const NamedGridAreaMap&, size_t rowCount, size_t columnCount);
+
+    NamedGridAreaMap m_gridAreaMap;
+    size_t m_rowCount;
+    size_t m_columnCount;
+};
+
+CSS_VALUE_TYPE_CASTS(CSSGridTemplateAreasValue, isGridTemplateAreasValue())
 
 } // namespace WebCore
+
+#endif // CSSGridTemplateAreasValue_h

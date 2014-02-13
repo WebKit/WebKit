@@ -9003,7 +9003,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\css\CSSGridTemplateValue.cpp" />
+    <ClCompile Include="..\css\CSSGridTemplateAreasValue.cpp" />
     <ClCompile Include="..\css\CSSGroupingRule.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -19609,7 +19609,7 @@
     <ClInclude Include="..\css\CSSFontValue.h" />
     <ClInclude Include="..\css\CSSFunctionValue.h" />
     <ClInclude Include="..\css\CSSGradientValue.h" />
-    <ClInclude Include="..\css\CSSGridTemplateValue.h" />
+    <ClInclude Include="..\css\CSSGridTemplateAreasValue.h" />
     <ClInclude Include="..\css\CSSGroupingRule.h" />
     <ClInclude Include="..\css\CSSHelper.h" />
     <ClInclude Include="..\css\CSSImageGeneratorValue.h" />

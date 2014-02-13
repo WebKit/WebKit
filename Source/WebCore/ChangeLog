@@ -1,3 +1,46 @@
+2014-02-13  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Rename named areas property
+        https://bugs.webkit.org/show_bug.cgi?id=127990
+
+        Reviewed by Sergio Villar Senin.
+
+        From Blink r165891 by <rego@igalia.com>
+
+        The property 'grid-template' has been renamed to 'grid-template-areas'
+        in the last two versions of the spec.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSGridTemplateAreasValue.cpp: Renamed from Source/WebCore/css/CSSGridTemplateValue.cpp.
+        (WebCore::CSSGridTemplateAreasValue::CSSGridTemplateAreasValue):
+        (WebCore::stringForPosition):
+        (WebCore::CSSGridTemplateAreasValue::customCSSText):
+        * css/CSSGridTemplateAreasValue.h: Renamed from Source/WebCore/css/CSSGridTemplateValue.h.
+        (WebCore::CSSGridTemplateAreasValue::create):
+        (WebCore::CSSGridTemplateAreasValue::~CSSGridTemplateAreasValue):
+        (WebCore::CSSGridTemplateAreasValue::gridAreaMap):
+        (WebCore::CSSGridTemplateAreasValue::rowCount):
+        (WebCore::CSSGridTemplateAreasValue::columnCount):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseGridTemplateAreas):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isGridTemplateAreasValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2014-02-13  Adrian Bunk  <bunk@stusta.de>
 
         Remove the last remnants of Maemo support

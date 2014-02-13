@@ -1,3 +1,23 @@
+2014-02-13  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Rename named areas property
+        https://bugs.webkit.org/show_bug.cgi?id=127990
+
+        Reviewed by Sergio Villar Senin.
+
+        From Blink r165891 by <rego@igalia.com>
+
+        The property 'grid-template' has been renamed to 'grid-template-areas'
+        in the last two versions of the spec.
+
+        * fast/css-grid-layout/grid-item-area-get-set.html:
+        * fast/css-grid-layout/grid-item-column-row-get-set.html:
+        * fast/css-grid-layout/grid-item-end-after-get-set.html:
+        * fast/css-grid-layout/grid-item-named-grid-area-resolution.html:
+        * fast/css-grid-layout/grid-item-start-before-get-set.html:
+        * fast/css-grid-layout/grid-template-get-set-expected.txt:
+        * fast/css-grid-layout/grid-template-get-set.html:
+
 2014-02-13  Brady Eidson  <beidson@apple.com>
 
         IDB: TestExpectations batch - "transaction-abort.html to versionchangerequest-activedomobject.html”
