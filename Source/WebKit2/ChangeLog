@@ -1,3 +1,12 @@
+2014-02-13  Anders Carlsson  <andersca@apple.com>
+
+        Make WKWebViewConfigurationPrivate.h private
+        https://bugs.webkit.org/show_bug.cgi?id=128761
+
+        Reviewed by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         During a copy, position:fixed gets converted to position:absolute even if only part of the document is selected
