@@ -1,3 +1,9 @@
+2014-02-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed. Moved myself to the list of reviewers.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-02-13  Tim Horton  <timothy_horton@apple.com>
 
         Speculative build fix after r163998.

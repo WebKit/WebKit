@@ -2201,16 +2201,6 @@
             "qrwteyrutiyoup"
          ]
       },
-      "Sergio Villar Senin" : {
-         "emails" : [
-            "svillar@igalia.com",
-            "sergio@webkit.org"
-         ],
-         "expertise" : "WebKitGTK+ port, WebKit2",
-         "nicks" : [
-            "svillar"
-         ]
-      },
       "Shawn Singh" : {
          "emails" : [
             "shawnsingh@chromium.org"
@@ -4263,6 +4253,16 @@
          "expertise" : "HTML DOM, Core DOM, DOM Bindings (JavaScript, Objective-C and COM), Security, DumpRenderTree",
          "nicks" : [
             "weinig"
+         ]
+      },
+      "Sergio Villar Senin" : {
+         "emails" : [
+            "svillar@igalia.com",
+            "sergio@webkit.org"
+         ],
+         "expertise" : "WebKitGTK+ port, WebKit2, CSS Grid Layout, libsoup",
+         "nicks" : [
+            "svillar"
          ]
       },
       "Shinichiro Hamaji" : {
