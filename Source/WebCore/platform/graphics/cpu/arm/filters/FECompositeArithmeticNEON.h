@@ -49,13 +49,8 @@ inline void FEComposite::computeArithmeticPixelsNeon(unsigned char* source, unsi
     uint32_t* destinationEndPixel = destinationPixel + (pixelArrayLength >> 2);
 
     while (destinationPixel < destinationEndPixel) {
-        uint32x2_t temporary1 = vset_lane_u32(*sourcePixel, temporary1, 0);
-        uint16x4_t temporary2 = vget_low_u16(vmovl_u8(vreinterpret_u8_u32(temporary1)));
-        float32x4_t sourcePixelAsFloat = vcvtq_f32_u32(vmovl_u16(temporary2));
-
-        temporary1 = vset_lane_u32(*destinationPixel, temporary1, 0);
-        temporary2 = vget_low_u16(vmovl_u8(vreinterpret_u8_u32(temporary1)));
-        float32x4_t destinationPixelAsFloat = vcvtq_f32_u32(vmovl_u16(temporary2));
+        float32x4_t sourcePixelAsFloat = loadRGBA8AsFloat(sourcePixel);
+        float32x4_t destinationPixelAsFloat = loadRGBA8AsFloat(destinationPixel);
 
         float32x4_t result = vmulq_f32(sourcePixelAsFloat, k2x4);
         result = vmlaq_f32(result, destinationPixelAsFloat, k3x4);

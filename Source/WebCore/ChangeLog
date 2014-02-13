@@ -1,3 +1,19 @@
+2014-02-13  Daniel Bates  <dabates@apple.com>
+
+        Write FEComposite::computeArithmeticPixelsNeon() in terms of loadRGBA8AsFloat()
+        https://bugs.webkit.org/show_bug.cgi?id=128767
+
+        Reviewed by Dean Jackson.
+
+        This patch was inspired by Gabor Rapcsanyi's work in <https://bugs.webkit.org/show_bug.cgi?id=90669>.
+
+        Currently we duplicate code in FEComposite::computeArithmeticPixelsNeon() to read pixel data.
+        Instead we should use the convenience function WebCore::loadRGBA8AsFloat. This also resolves
+        an uninitialized variable compiler warning in the existing code.
+
+        * platform/graphics/cpu/arm/filters/FECompositeArithmeticNEON.h:
+        (WebCore::FEComposite::computeArithmeticPixelsNeon):
+
 2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         During a copy, position:fixed gets converted to position:absolute even if only part of the document is selected
