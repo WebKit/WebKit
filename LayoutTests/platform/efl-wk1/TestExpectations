@@ -181,9 +181,6 @@ webkit.org/b/84589 http/tests/security/cross-frame-access-call.html [ Failure ]
 webkit.org/b/87972 fast/forms/mailto/formenctype-attribute-button-html.html [ Failure ]
 webkit.org/b/87972 fast/forms/mailto/formenctype-attribute-input-html.html [ Failure ]
 
-# New test introduced in r116694 fails
-webkit.org/b/86182 fast/frames/seamless/seamless-inherited-document-style.html [ Failure ]
-
 # Passes in some machines and fails on other (such as the bots).
 webkit.org/b/97021 fast/events/dont-loose-last-event.html [ Failure ]
 

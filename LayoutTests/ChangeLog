@@ -1,3 +1,13 @@
+2014-02-13  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Add or remove expectations for some media layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=128535
+
+        Unreviewed EFL layout tests gardening
+
+        * platform/efl/TestExpectations:
+        * platform/efl-wk1/TestExpectations:
+
 2014-02-13  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unreviewed GTK gardening.

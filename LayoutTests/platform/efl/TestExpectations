@@ -481,7 +481,6 @@ webkit.org/b/99200 css3/compositing/blend-mode-layers.html [ Skip ]
 webkit.org/b/99200 css3/compositing/blend-mode-overflow.html [ Skip ]
 webkit.org/b/99200 css3/compositing/blend-mode-reflection.html [ Skip ]
 webkit.org/b/99200 css3/compositing/blend-mode-simple.html [ Skip ]
-webkit.org/b/99200 css3/compositing/blend-mode-should-not-have-compositing-layer.html [ Skip ]
 webkit.org/b/118894 css3/compositing/background-blend-mode-data-uri-svg-image.html [ Skip ]
 webkit.org/b/126888 css3/compositing/background-blend-mode-tiled-layers.html [ Skip ]
 
@@ -581,11 +580,11 @@ webkit.org/b/122507 media/track/track-cue-rendering.html [ Failure Pass ]
 webkit.org/b/76280  media/W3C/video/networkState/networkState_during_progress.html [ Failure Pass ]
 webkit.org/b/128101 media/video-loop.html [ Pass Failure ]
 webkit.org/b/128103 media/media-element-play-after-eos.html [ Pass Failure ]
-webkit.org/b/116704 media/video-zoom.html [ Pass Failure ]
 webkit.org/b/122039 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Pass Failure ]
 webkit.org/b/128179 media/video-timeupdate-reverse-play.html [ Pass Failure ]
 webkit.org/b/128251 media/video-preload.html [ Pass Failure ]
 webkit.org/b/128252 media/track/track-kind.html [ Pass Failure ]
+webkit.org/b/128528 media/media-ended.html [ Pass Failure ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
@@ -1745,7 +1744,6 @@ webkit.org/b/125355 fast/events/updateLayoutForHitTest.html [ Failure ]
 
 webkit.org/b/125458 fast/repaint/line-flow-with-floats-9.html [ Failure ]
 
-webkit.org/b/125459 fast/text/partial-textruns.html [ ImageOnlyFailure ]
 
 # Started failing after r154906
 webkit.org/b/125496 animations/cross-fade-border-image-source.html [ Failure ]
