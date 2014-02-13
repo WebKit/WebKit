@@ -173,7 +173,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , vmType(vmType)
     , clientData(0)
     , topCallFrame(CallFrame::noCaller())
-    , stackPointerAtVMEntry(0)
     , arrayConstructorTable(adoptPtr(new HashTable(JSC::arrayConstructorTable)))
     , arrayPrototypeTable(adoptPtr(new HashTable(JSC::arrayPrototypeTable)))
     , booleanPrototypeTable(adoptPtr(new HashTable(JSC::booleanPrototypeTable)))
@@ -223,6 +222,7 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(GC_VALIDATION)
     , m_initializingObjectClass(0)
 #endif
+    , m_stackPointerAtVMEntry(0)
     , m_stackLimit(0)
 #if ENABLE(LLINT_C_LOOP)
     , m_jsStackLimit(0)
@@ -732,6 +732,12 @@ void VM:: clearExceptionStack()
     m_exceptionStack = RefCountedArray<StackFrame>();
 }
 
+void VM::setStackPointerAtVMEntry(void* sp)
+{
+    m_stackPointerAtVMEntry = sp;
+    updateStackLimit();
+}
+
 size_t VM::updateReservedZoneSize(size_t reservedZoneSize)
 {
     size_t oldReservedZoneSize = m_reservedZoneSize;
@@ -744,9 +750,9 @@ size_t VM::updateReservedZoneSize(size_t reservedZoneSize)
 
 inline void VM::updateStackLimit()
 {
-    if (stackPointerAtVMEntry) {
+    if (m_stackPointerAtVMEntry) {
         ASSERT(wtfThreadData().stack().isGrowingDownward());
-        char* startOfStack = reinterpret_cast<char*>(stackPointerAtVMEntry);
+        char* startOfStack = reinterpret_cast<char*>(m_stackPointerAtVMEntry);
 #if ENABLE(FTL_JIT)
         m_stackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize + m_largestFTLStackSize);
         m_ftlStackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_reservedZoneSize + 2 * m_largestFTLStackSize);

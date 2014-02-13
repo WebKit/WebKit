@@ -230,7 +230,6 @@ namespace JSC {
         VMType vmType;
         ClientData* clientData;
         ExecState* topCallFrame;
-        void* stackPointerAtVMEntry;
         Watchdog watchdog;
 
         const OwnPtr<const HashTable> arrayConstructorTable;
@@ -379,6 +378,9 @@ namespace JSC {
         JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
         JS_EXPORT_PRIVATE JSObject* throwException(ExecState*, JSObject*);
         
+        void* stackPointerAtVMEntry() const { return m_stackPointerAtVMEntry; }
+        void setStackPointerAtVMEntry(void*);
+
         size_t reservedZoneSize() const { return m_reservedZoneSize; }
         size_t updateReservedZoneSize(size_t reservedZoneSize);
 
@@ -529,6 +531,7 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
         const ClassInfo* m_initializingObjectClass;
 #endif
+        void* m_stackPointerAtVMEntry;
         size_t m_reservedZoneSize;
 #if ENABLE(LLINT_C_LOOP)
         struct {

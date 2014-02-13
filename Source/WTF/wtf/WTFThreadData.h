@@ -126,16 +126,6 @@ public:
         m_savedLastStackTop = lastStackTop;
     }
 
-    size_t savedReservedZoneSize()
-    {
-        return m_savedReservedZoneSize;
-    }
-
-    void setSavedReservedZoneSize(size_t reservedZoneSize)
-    {
-        m_savedReservedZoneSize = reservedZoneSize;
-    }
-
     void* m_apiData;
 
 private:
@@ -150,7 +140,6 @@ private:
 #endif
     void* m_savedStackPointerAtVMEntry;
     void* m_savedLastStackTop;
-    size_t m_savedReservedZoneSize;
 
     static WTF_EXPORTDATA ThreadSpecific<WTFThreadData>* staticData;
     friend WTFThreadData& wtfThreadData();

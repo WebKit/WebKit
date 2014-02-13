@@ -1,3 +1,88 @@
+2014-02-12  Mark Lam  <mark.lam@apple.com>
+
+        No need to save reservedZoneSize when dropping the JSLock.
+        <https://webkit.org/b/128719>
+
+        Reviewed by Geoffrey Garen.
+
+        The reservedZoneSize does not change due to the VM being run on a different
+        thread. Hence, there is no need to save and restore its value. Instead of
+        calling updateReservedZoneSize() to update the stack limit, we now call
+        setStackPointerAtVMEntry() to do the job. setStackPointerAtVMEntry()
+        will update the stackPointerAtVMEntry and delegate to updateStackLimit() to
+        update the stack limit based on the new stackPointerAtVMEntry.
+
+        * runtime/ErrorHandlingScope.cpp:
+        (JSC::ErrorHandlingScope::ErrorHandlingScope):
+        (JSC::ErrorHandlingScope::~ErrorHandlingScope):
+        - Previously, we initialize stackPointerAtVMEntry in VMEntryScope. This
+          means that the stackPointerAtVMEntry may not be initialize when we
+          instantiate the ErrorHandlingScope. And so, we needed to initialize the
+          stackPointerAtVMEntry in the ErrorHandlingScope constructor if it's not
+          already initialized.
+
+          Now that we initialize the stackPointerAtVMEntry when we lock the VM JSLock,
+          we are guaranteed that it will be initialized by the time we instantiate
+          the ErrorHandlingScope. Hence, we can change the ErrorHandlingScope code
+          to just assert that the stackPointerAtVMEntry is initialized instead.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        - We no longer need to save the reservedZoneSize. Remove the related code.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::lock):
+        - When we grab the JSLock mutex for the first time, there is no reason why
+          the stackPointerAtVMEntry should be initialized. By definition, grabbing
+          the lock for the first time equates to entering the VM for the first time.
+          Hence, we can just assert that stackPointerAtVMEntry is uninitialized,
+          and initialize it unconditionally.
+
+          The only exception to this is if we're locking to regrab the JSLock in
+          grabAllLocks(), but grabAllLocks() will take care of restoring the
+          stackPointerAtVMEntry in that case after lock() returns. stackPointerAtVMEntry
+          should still be 0 when we've just locked the JSLock. So, the above assertion
+          always holds true.
+
+          Note: VM::setStackPointerAtVMEntry() will take care of calling
+          VM::updateStackLimit() based on the new stackPointerAtVMEntry.
+
+        - There is no need to save the reservedZoneSize. The reservedZoneSize is
+          set to Options::reservedZoneSize() when the VM is initialized. Thereafter,
+          the ErrorHandlingScope will change it to Options::errorModeReservedZoneSize()
+          when we're handling an error, and it will restore it afterwards. There is
+          no other reason we should be changing the reservedZoneSize. Hence, we can
+          remove the unnecessary code to save it here.
+
+        (JSC::JSLock::unlock):
+        - Similarly, when the lockCount reaches 0 in unlock(), it is synonymous with
+          exiting the VM. Hence, we should just clear the stackPointerAtVMEntry and
+          update the stackLimit. Exiting the VM should have no effect on the VM
+          reservedZoneSize. Hence, we can remove the unnecessary code to "restore" it.
+
+        (JSC::JSLock::dropAllLocks):
+        - When dropping locks, we do not need to save the reservedZoneSize because
+          the reservedZoneSize should remain the same regardless of which thread
+          we are executing JS on. Hence, we can remove the unnecessary code to save
+          the reservedZoneSize here.
+
+        (JSC::JSLock::grabAllLocks):
+        - When re-grabbing locks, restoring the stackPointerAtVMEntry via
+          VM::setStackPointerAtVMEntry() will take care of updating the stack limit.
+          As explained above, there's no need to save the reservedZoneSize. Hence,
+          there's no need to "restore" it here.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::setStackPointerAtVMEntry):
+        - Sets the stackPointerAtVMEntry and delegates to updateStackLimit() to update
+          the stack limit based on the new stackPointerAtVMEntry.
+        (JSC::VM::updateStackLimit):
+        * runtime/VM.h:
+        (JSC::VM::stackPointerAtVMEntry):
+        - Renamed stackPointerAtVMEntry to m_stackPointerAtVMEntry and made it private.
+          Added a stackPointerAtVMEntry() function to read the value.
+
 2014-02-12  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         DelayedReleaseScope in MarkedAllocator::tryAllocateHelper is wrong

@@ -35,8 +35,7 @@ namespace JSC {
 ErrorHandlingScope::ErrorHandlingScope(VM& vm)
     : m_vm(vm)
 {
-    if (!m_vm.stackPointerAtVMEntry)
-        m_vm.stackPointerAtVMEntry = this;
+    RELEASE_ASSERT(m_vm.stackPointerAtVMEntry());
     size_t newReservedZoneSize = Options::errorModeReservedZoneSize();
     m_savedReservedZoneSize = m_vm.updateReservedZoneSize(newReservedZoneSize);
 #if ENABLE(LLINT_C_LOOP)
@@ -46,8 +45,7 @@ ErrorHandlingScope::ErrorHandlingScope(VM& vm)
 
 ErrorHandlingScope::~ErrorHandlingScope()
 {
-    if (m_vm.stackPointerAtVMEntry == this)
-        m_vm.stackPointerAtVMEntry = nullptr;
+    RELEASE_ASSERT(m_vm.stackPointerAtVMEntry());
     m_vm.updateReservedZoneSize(m_savedReservedZoneSize);
 #if ENABLE(LLINT_C_LOOP)
     m_vm.interpreter->stack().setReservedZoneSize(m_savedReservedZoneSize);

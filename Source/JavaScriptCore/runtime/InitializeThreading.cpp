@@ -73,9 +73,7 @@ void initializeThreading()
         DisallowGC::initialize();
 #endif
         WTFThreadData& threadData = wtfThreadData();
-        
         threadData.setSavedLastStackTop(threadData.stack().origin());
-        threadData.setSavedReservedZoneSize(Options::reservedZoneSize());
     });
 }
 

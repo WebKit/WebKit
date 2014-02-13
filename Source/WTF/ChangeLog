@@ -1,3 +1,15 @@
+2014-02-12  Mark Lam  <mark.lam@apple.com>
+
+        No need to save reservedZoneSize when dropping the JSLock.
+        <https://webkit.org/b/128719>
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/WTFThreadData.h:
+        - removed unnneeded m_savedReservedZoneSize.
+
 2014-02-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         32-bit LLInt writeBarrierOnGlobalObject is wrong
