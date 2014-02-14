@@ -1,3 +1,11 @@
+2014-02-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix for Mountain Lion.
+
+        * DumpRenderTree/mac/EventSendingController.mm: Provide definition
+        for kCGScrollWheelEventScrollPhase if it isn't found in the
+        system headers.
+
 2014-02-04  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK][CMake] Generate GObject DOM bindings .symbols files
