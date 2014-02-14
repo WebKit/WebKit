@@ -1,3 +1,34 @@
+2014-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        setSelection should not synchronously trigger layout
+        https://bugs.webkit.org/show_bug.cgi?id=128797
+
+        Reviewed by Antti Koivisto.
+
+        Only update the appearance and reveal selection when the style and the layout is already up to date.
+        Otherwise, do so in performPostLayoutTasks.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::setSelection): Set m_pendingSelectionUpdate and synchronously update caret rect
+        if we don't need to update style or layout.
+        (WebCore::updateSelectionByUpdatingLayoutOrStyle): Added. Used by FrameSelection member functions to
+        trigger layout or style recalc whichever is needed.
+        (WebCore::FrameSelection::updateAndRevealSelection): Extracted from setSelection.
+        (WebCore::FrameSelection::absoluteCaretBounds): Call updateSelectionByUpdatingLayoutOrStyle since caret rect
+        is no longer updated synchronously in setSelection.
+        (WebCore::FrameSelection::recomputeCaretRect): Don't assert that visibleStart().absoluteCaretBounds() is
+        equal to m_absCaretBounds since selection may no longer be caret at this point.
+        (WebCore::FrameSelection::setCaretVisibility): Call updateSelectionByUpdatingLayoutOrStyle since we're
+        synchronously calling into updateAppearance here. In the future, we should make this asynchronous as well.
+        (WebCore::FrameSelection::selectionBounds): Call updateSelectionByUpdatingLayoutOrStyle since selection bounds
+        could be outdated. This code only triggering style recalc was presumably a bug.
+        * editing/FrameSelection.h:
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks): Update selection's appearance and scroll to reveal selection
+        as needed.
+
 2014-02-14  Andreas Kling  <akling@apple.com>
 
         Purge remaining ENABLE(SHADOW_DOM) cruft.

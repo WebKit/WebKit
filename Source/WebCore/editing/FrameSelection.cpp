@@ -116,6 +116,9 @@ FrameSelection::FrameSelection(Frame* frame)
     , m_isCaretBlinkingSuspended(false)
     , m_focused(frame && frame->page() && frame->page()->focusController().focusedFrame() == frame)
     , m_shouldShowBlockCursor(false)
+    , m_pendingSelectionUpdate(false)
+    , m_shouldRevealSelection(false)
+    , m_alwaysAlignCursorOnScrollWhenRevealingSelection(false)
 #if PLATFORM(IOS)
     , m_updateAppearanceEnabled(false)
     , m_caretBlinks(true)
@@ -313,20 +316,50 @@ void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectio
     if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity))
         return;
 
+    Document* document = m_frame->document();
+    if (!document)
+        return;
+
+    m_shouldRevealSelection = options & RevealSelection;
+    m_alwaysAlignCursorOnScrollWhenRevealingSelection = align == AlignCursorOnScrollAlways;
+
+    m_pendingSelectionUpdate = true;
+
+    if (document->hasPendingStyleRecalc())
+        return;
+
+    FrameView* frameView = document->view();
+    if (frameView && frameView->layoutPending())
+        return;
+
+    updateAndRevealSelection();
+}
+
+static void updateSelectionByUpdatingLayoutOrStyle(Frame& frame)
+{
 #if ENABLE(TEXT_CARET)
-    m_frame->document()->updateLayoutIgnorePendingStylesheets();
+    frame.document()->updateLayoutIgnorePendingStylesheets();
 #else
-    m_frame->document()->updateStyleIfNeeded();
+    frame.document()->updateStyleIfNeeded();
 #endif
+}
+
+void FrameSelection::updateAndRevealSelection()
+{
+    if (!m_pendingSelectionUpdate)
+        return;
+
+    m_pendingSelectionUpdate = false;
+
     updateAppearance();
 
-    if (options & RevealSelection) {
+    if (m_shouldRevealSelection) {
         ScrollAlignment alignment;
 
         if (m_frame->editor().behavior().shouldCenterAlignWhenSelectionIsRevealed())
-            alignment = (align == AlignCursorOnScrollAlways) ? ScrollAlignment::alignCenterAlways : ScrollAlignment::alignCenterIfNeeded;
+            alignment = m_alwaysAlignCursorOnScrollWhenRevealingSelection ? ScrollAlignment::alignCenterAlways : ScrollAlignment::alignCenterIfNeeded;
         else
-            alignment = (align == AlignCursorOnScrollAlways) ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignToEdgeIfNeeded;
+            alignment = m_alwaysAlignCursorOnScrollWhenRevealingSelection ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignToEdgeIfNeeded;
 
         revealSelection(alignment, RevealExtent);
     }
@@ -1308,6 +1341,9 @@ static bool isNonOrphanedCaret(const VisibleSelection& selection)
 
 IntRect FrameSelection::absoluteCaretBounds()
 {
+    if (!m_frame)
+        return IntRect();
+    updateSelectionByUpdatingLayoutOrStyle(*m_frame);
     recomputeCaretRect();
     return m_absCaretBounds;
 }
@@ -1355,7 +1391,7 @@ bool FrameSelection::recomputeCaretRect()
     IntRect oldAbsCaretBounds = m_absCaretBounds;
     m_absCaretBounds = absoluteBoundsForLocalCaretRect(rendererForCaretPainting(caretNode.get()), newRect);
 
-    if (m_absCaretBoundsDirty) // We should be able to always assert this condition.
+    if (m_absCaretBoundsDirty && m_selection.isCaret()) // We should be able to always assert this condition.
         ASSERT(m_absCaretBounds == m_selection.visibleStart().absoluteCaretBounds());
 
     m_absCaretBoundsDirty = false;
@@ -1814,15 +1850,16 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility)
     if (caretVisibility() == visibility)
         return;
 
+    // FIXME: We shouldn't trigger a synchrnously layout here.
+    if (m_frame)
+        updateSelectionByUpdatingLayoutOrStyle(*m_frame);
+
 #if ENABLE(TEXT_CARET)
-    m_frame->document()->updateLayoutIgnorePendingStylesheets();
     if (m_caretPaint) {
         m_caretPaint = false;
         invalidateCaretRect();
     }
     CaretBase::setCaretVisibility(visibility);
-#else
-    m_frame->document()->updateStyleIfNeeded();
 #endif
 
     updateAppearance();
@@ -1920,7 +1957,7 @@ FloatRect FrameSelection::selectionBounds(bool clipToVisibleContent) const
     if (!m_frame->document())
         return LayoutRect();
 
-    m_frame->document()->updateStyleIfNeeded();
+    updateSelectionByUpdatingLayoutOrStyle(*m_frame);
     RenderView* root = m_frame->contentRenderer();
     FrameView* view = m_frame->view();
     if (!root || !view)

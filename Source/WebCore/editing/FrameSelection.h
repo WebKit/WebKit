@@ -143,6 +143,7 @@ public:
 
     const VisibleSelection& selection() const { return m_selection; }
     void setSelection(const VisibleSelection&, SetSelectionOptions = defaultSetSelectionOptions(), CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
+    void updateAndRevealSelection();
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
     void clear();
@@ -331,6 +332,9 @@ private:
     bool m_isCaretBlinkingSuspended : 1;
     bool m_focused : 1;
     bool m_shouldShowBlockCursor : 1;
+    bool m_pendingSelectionUpdate : 1;
+    bool m_shouldRevealSelection : 1;
+    bool m_alwaysAlignCursorOnScrollWhenRevealingSelection : 1;
 
 #if PLATFORM(IOS)
     bool m_updateAppearanceEnabled : 1;

@@ -2627,7 +2627,7 @@ void FrameView::performPostLayoutTasks()
     m_postLayoutTasksTimer.stop();
 
     frame().selection().setCaretRectNeedsUpdate();
-    frame().selection().updateAppearance();
+    frame().selection().updateAndRevealSelection();
 
     LayoutMilestones requestedMilestones = 0;
     LayoutMilestones milestonesAchieved = 0;
