@@ -160,19 +160,19 @@ void AudioTrack::enabledChanged(AudioTrackPrivate* trackPrivate, bool enabled)
     setEnabled(enabled);
 }
 
-void AudioTrack::idChanged(TrackPrivateBase* trackPrivate, const String& id)
+void AudioTrack::idChanged(TrackPrivateBase* trackPrivate, const AtomicString& id)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setId(id);
 }
 
-void AudioTrack::labelChanged(TrackPrivateBase* trackPrivate, const String& label)
+void AudioTrack::labelChanged(TrackPrivateBase* trackPrivate, const AtomicString& label)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setLabel(label);
 }
 
-void AudioTrack::languageChanged(TrackPrivateBase* trackPrivate, const String& language)
+void AudioTrack::languageChanged(TrackPrivateBase* trackPrivate, const AtomicString& language)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setLanguage(language);

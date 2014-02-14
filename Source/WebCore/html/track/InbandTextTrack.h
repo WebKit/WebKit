@@ -55,9 +55,9 @@ protected:
 
 private:
 
-    virtual void idChanged(TrackPrivateBase*, const String&) override;
-    virtual void labelChanged(TrackPrivateBase*, const String&) override;
-    virtual void languageChanged(TrackPrivateBase*, const String&) override;
+    virtual void idChanged(TrackPrivateBase*, const AtomicString&) override;
+    virtual void labelChanged(TrackPrivateBase*, const AtomicString&) override;
+    virtual void languageChanged(TrackPrivateBase*, const AtomicString&) override;
     virtual void willRemove(TrackPrivateBase*) override;
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)

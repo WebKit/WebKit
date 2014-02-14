@@ -58,7 +58,7 @@ PassRefPtr<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext* cont
 }
 
 InbandTextTrack::InbandTextTrack(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> trackPrivate)
-    : TextTrack(context, client, emptyString(), trackPrivate->id(), trackPrivate->label(), trackPrivate->language(), InBand)
+    : TextTrack(context, client, emptyAtom, trackPrivate->id(), trackPrivate->label(), trackPrivate->language(), InBand)
     , m_private(trackPrivate)
 {
     m_private->setClient(this);
@@ -154,19 +154,19 @@ size_t InbandTextTrack::inbandTrackIndex()
     return m_private->trackIndex();
 }
 
-void InbandTextTrack::idChanged(TrackPrivateBase* trackPrivate, const String& id)
+void InbandTextTrack::idChanged(TrackPrivateBase* trackPrivate, const AtomicString& id)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setId(id);
 }
 
-void InbandTextTrack::labelChanged(TrackPrivateBase* trackPrivate, const String& label)
+void InbandTextTrack::labelChanged(TrackPrivateBase* trackPrivate, const AtomicString& label)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setLabel(label);
 }
 
-void InbandTextTrack::languageChanged(TrackPrivateBase* trackPrivate, const String& language)
+void InbandTextTrack::languageChanged(TrackPrivateBase* trackPrivate, const AtomicString& language)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setLanguage(language);

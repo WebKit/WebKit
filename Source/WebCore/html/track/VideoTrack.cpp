@@ -164,19 +164,19 @@ void VideoTrack::selectedChanged(VideoTrackPrivate* trackPrivate, bool selected)
     setSelected(selected);
 }
 
-void VideoTrack::idChanged(TrackPrivateBase* trackPrivate, const String& id)
+void VideoTrack::idChanged(TrackPrivateBase* trackPrivate, const AtomicString& id)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setId(id);
 }
 
-void VideoTrack::labelChanged(TrackPrivateBase* trackPrivate, const String& label)
+void VideoTrack::labelChanged(TrackPrivateBase* trackPrivate, const AtomicString& label)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setLabel(label);
 }
 
-void VideoTrack::languageChanged(TrackPrivateBase* trackPrivate, const String& language)
+void VideoTrack::languageChanged(TrackPrivateBase* trackPrivate, const AtomicString& language)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setLanguage(language);
