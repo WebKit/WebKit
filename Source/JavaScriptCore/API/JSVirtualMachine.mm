@@ -148,6 +148,9 @@ static id getInternalObjcObject(id object)
 
 - (void)addManagedReference:(id)object withOwner:(id)owner
 {    
+    if ([object isKindOfClass:[JSManagedValue class]])
+        [object didAddOwner:owner];
+        
     object = getInternalObjcObject(object);
     owner = getInternalObjcObject(owner);
     
@@ -166,15 +169,15 @@ static id getInternalObjcObject(id object)
         [ownedObjects release];
     }
 
-    if ([object isKindOfClass:[JSManagedValue class]])
-        [object didAddOwner:owner];
-        
     size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects, object));
     NSMapInsert(ownedObjects, object, reinterpret_cast<void*>(count + 1));
 }
 
 - (void)removeManagedReference:(id)object withOwner:(id)owner
 {
+    if ([object isKindOfClass:[JSManagedValue class]])
+        [object didRemoveOwner:owner];
+
     object = getInternalObjcObject(object);
     owner = getInternalObjcObject(owner);
     
@@ -195,9 +198,6 @@ static id getInternalObjcObject(id object)
     
     if (count == 1)
         NSMapRemove(ownedObjects, object);
-
-    if ([object isKindOfClass:[JSManagedValue class]])
-        [object didRemoveOwner:owner];
 
     if (![ownedObjects count])
         [m_externalObjectGraph removeObjectForKey:owner];

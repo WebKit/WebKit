@@ -221,11 +221,13 @@ private:
 {
     JSVirtualMachine *virtualMachine = [[[self value] context] virtualMachine];
     if (virtualMachine) {
-        for (id owner in [m_owners keyEnumerator]) {
+        NSMapTable *copy = [m_owners copy];
+        for (id owner in [copy keyEnumerator]) {
             size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners, owner));
             while (count--)
                 [virtualMachine removeManagedReference:self withOwner:owner];
         }
+        [copy release];
     }
 
     [self disconnectValue];

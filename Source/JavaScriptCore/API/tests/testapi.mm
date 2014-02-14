@@ -539,6 +539,20 @@ void testObjectiveCAPI()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
+        JSValue *message = [JSValue valueWithObject:@"hello" inContext:context];
+        TestObject *rootObject = [TestObject testObject];
+        JSCollection *collection = [[JSCollection alloc] init];
+        context[@"root"] = rootObject;
+        @autoreleasepool {
+            JSValue *jsCollection = [JSValue valueWithObject:collection inContext:context];
+            JSManagedValue *weakCollection = [JSManagedValue managedValueWithValue:jsCollection andOwner:rootObject];
+            [context.virtualMachine addManagedReference:weakCollection withOwner:message];
+            JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        }
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
         __block int result;
         context[@"blockCallback"] = ^(int value){
             result = value;

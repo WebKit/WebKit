@@ -1,3 +1,21 @@
+2014-02-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSManagedValue::dealloc modifies NSMapTable while iterating it
+        https://bugs.webkit.org/show_bug.cgi?id=128713
+
+        Reviewed by Geoffrey Garen.
+
+        Having to write a test for this revealed a bug in how addManagedReference:withOwner:
+        actually notifies JSManagedValues of new owners.
+
+        * API/JSManagedValue.mm:
+        (-[JSManagedValue dealloc]):
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine addManagedReference:withOwner:]):
+        (-[JSVirtualMachine removeManagedReference:withOwner:]):
+        * API/tests/testapi.mm:
+        (testObjectiveCAPI):
+
 2014-02-13  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix build.
