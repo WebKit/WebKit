@@ -58,6 +58,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
+#import <WebCore/WKContentObservation.h>
 #import <WebCore/WebEvent.h>
 
 using namespace WebCore;
@@ -331,7 +332,13 @@ void WebPage::handleTap(const IntPoint& point)
     mainframe.nodeRespondingToClickEvents(point, adjustedPoint);
     IntPoint roundedAdjustedPoint = roundedIntPoint(adjustedPoint);
 
+    WKBeginObservingContentChanges(true);
     mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, 0));
+    mainframe.document()->updateStyleIfNeeded();
+    WKStopObservingContentChanges();
+    if (WKObservedContentChange() != WKContentNoChange)
+        return;
+
     mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, 0));
     mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, 0));
 }
