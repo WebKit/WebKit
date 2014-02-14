@@ -1,3 +1,18 @@
+2014-02-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't optimize variadic closure calls
+        https://bugs.webkit.org/show_bug.cgi?id=128835
+
+        Reviewed by Gavin Barraclough.
+        
+        Add a test that covers both the performance and correctness of this case.
+
+        * js/regress/script-tests/variadic-closure-call.js: Added.
+        (foo.bar):
+        (foo):
+        * js/regress/variadic-closure-call-expected.txt: Added.
+        * js/regress/variadic-closure-call.html: Added.
+
 2014-02-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement text-decoration-skip: auto

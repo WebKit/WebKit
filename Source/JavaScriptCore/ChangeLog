@@ -1,3 +1,15 @@
+2014-02-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't optimize variadic closure calls
+        https://bugs.webkit.org/show_bug.cgi?id=128835
+
+        Reviewed by Gavin Barraclough.
+        
+        Read the check that had been in JITStubs.cpp, back in the day. This code came
+        from the DFG and the DFG didn't need these checks.
+
+        * jit/JITOperations.cpp:
+
 2014-02-14  David Kilzer  <ddkilzer@apple.com>
 
         [ASan] Disable JSStack::sanitizeStack() to avoid false-positive stack-buffer-overflow errors

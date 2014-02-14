@@ -797,7 +797,7 @@ static bool attemptToOptimizeClosureCall(
         codeBlock = 0;
     else {
         codeBlock = jsCast<FunctionExecutable*>(callee->executable())->codeBlockForCall();
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.callType == CallLinkInfo::CallVarargs)
             return false;
     }
     
