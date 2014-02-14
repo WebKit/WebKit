@@ -433,6 +433,13 @@ void EventSenderProxy::continuousMouseScrollBy(int horizontal, int vertical, boo
     sendOrQueueEvent(event);
 }
 
+void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int /*phase*/, int /*momentum*/)
+{
+    // Gtk+ does not have the concept of wheel gesture phases or momentum. Just relay to
+    // the mouse wheel handler.
+    mouseScrollBy(x, y);
+}
+
 void EventSenderProxy::leapForward(int milliseconds)
 {
     if (m_eventQueue.isEmpty())

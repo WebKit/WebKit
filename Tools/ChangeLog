@@ -1,3 +1,39 @@
+2014-02-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Create some latched scrolling tests.
+        https://bugs.webkit.org/show_bug.cgi?id=127606
+        <rdar://problem/15911348>
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]): Update to recognize
+        the new "mouseScrollByX:andY:withWheel:andMomentumPhases:" selector.
+        (+[EventSendingController webScriptNameForSelector:]): Ditto.
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]): Implement
+        the new wheel event sender.
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl: Add declaration
+        of new mouseScrollByWithWheelAndMomentumPhases method.
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::mouseScrollByWithWheelAndMomentumPhases): Added
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/InjectedBundle/ios/EventSenderProxyIOS.mm:
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases): Add stub for iOS.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveMessageFromInjectedBundle): Handle the new
+        mouseScrollByWithWheelAndMomentumPhases message.
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle): Handle the
+        new mouseScrollByWithWheelAndMomentumPhases.
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases): Provide stub that
+        relays to the standard mouse wheel handler.
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases): Ditto.
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases): Provide implementation
+        of mouse wheel gesture method.
+
 2014-02-13  Antoine Quint  <graouts@webkit.org>
 
         Unreviewed. changing my email address.

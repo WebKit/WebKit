@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,7 @@ public:
     void mouseUp(unsigned button, WKEventModifiers);
     void mouseMoveTo(double x, double y);
     void mouseScrollBy(int x, int y);
+    void mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum);
     void continuousMouseScrollBy(int x, int y, bool paged);
 
     void leapForward(int milliseconds);
