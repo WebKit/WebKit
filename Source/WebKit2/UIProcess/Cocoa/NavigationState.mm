@@ -414,10 +414,12 @@ void NavigationState::didChangeHasOnlySecureContent()
 
 void NavigationState::willChangeEstimatedProgress()
 {
+    [m_webView willChangeValueForKey:@"estimatedProgress"];
 }
 
 void NavigationState::didChangeEstimatedProgress()
 {
+    [m_webView didChangeValueForKey:@"estimatedProgress"];
 }
 
 } // namespace WebKit

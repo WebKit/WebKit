@@ -99,6 +99,16 @@ WK_API_CLASS
  property. */
 @property (nonatomic, readonly, getter=isLoading) BOOL loading;
 
+/*!
+ @abstract An estimate of the fraction complete for a document load. @link WKWebView @/link is
+ KVO-compliant for this property.
+ @discussion This value will range from 0 to 1 and, once a load completes, will remain at 1.0
+ until a new load starts, at which point it will be reset to 0. The value is an estimate based
+ on the total number of bytes expected to be received for a document,
+ including all its possible subresources.
+ */
+@property (nonatomic, readonly) double estimatedProgress;
+
 @property (nonatomic, readonly) BOOL hasOnlySecureContent;
 
 @property (readonly) BOOL canGoBack;

@@ -208,6 +208,11 @@
     return _page->pageLoadState().isLoading();
 }
 
+- (double)estimatedProgress
+{
+    return _page->pageLoadState().estimatedProgress();
+}
+
 - (BOOL)hasOnlySecureContent
 {
     return _page->pageLoadState().hasOnlySecureContent();

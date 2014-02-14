@@ -1,3 +1,17 @@
+2014-02-14  Anders Carlsson  <andersca@apple.com>
+
+        Add -[WKWebView estimatedProgress]
+        https://bugs.webkit.org/show_bug.cgi?id=128830
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView estimatedProgress]):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::willChangeEstimatedProgress):
+        (WebKit::NavigationState::didChangeEstimatedProgress):
+
 2014-02-13  Simon Fraser  <simon.fraser@apple.com>
 
         Give ScrollingTree(State)Nodes a reference to another layer, which is used for moving overflow:scroll contents around
