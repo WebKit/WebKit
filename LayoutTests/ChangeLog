@@ -1,3 +1,30 @@
+2014-02-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Use asynchronous spellchecking in spelling-hasspellingmarker.js
+        https://bugs.webkit.org/show_bug.cgi?id=128526
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactoring spelling-hasspellingmarker.js to use asynchronous spellchecking.
+        In addition, adds some bits for non-DumpRenderTree users.
+
+        * editing/spelling/script-tests/spelling-hasspellingmarker.js:
+        (addContainer): creates a new div element based on given markup.
+        (typeMisspelling): types 'zz' to the element.
+        (verifySpellingMarkers): calls shouldBecomeEqual to verify spelling markers.
+        (tests): contains test cases.
+        (done): invokes next test cases if any, otherwise calls finishJSTest().
+
+        * editing/spelling/spelling-hasspellingmarker-expected.txt:
+        Update baseline.
+
+        * editing/spelling/spelling-hasspellingmarker.html:
+        Include editing.js due to the test started using typeCharacterCommand().
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+        Skip spelling-hasspellingmarker.html for GTK (wk1 and wk2).
+
 2014-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update Windows test expectations.

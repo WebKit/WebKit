@@ -1144,6 +1144,9 @@ Bug(GTK) editing/spelling/grammar-markers-hidpi.html [ Skip ]
 Bug(GTK) editing/spelling/grammar-paste.html [ Skip ]
 Bug(GTK) editing/spelling/markers.html [ Skip ]
 
+# Missing asynchronous spellchecking implementation.
+Bug(GTK) editing/spelling/spelling-hasspellingmarker.html [ Skip ]
+
 # testRunner.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
 webkit.org/b/57160 fast/harness/override-preferences-2.html [ Failure ]
 

@@ -1,12 +1,12 @@
-This tests internals.hasSpellingMarker works for differnt type of elements.
+This tests if internals.hasSpellingMarker works for differnt type of elements. This test succeds when there are four elements having "zz ". However, only the last one should not contatin spelling marker.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS hasMarked("<textarea id='test' cols='80' rows='10'></textarea>"); is true
-PASS hasMarked("<input id='test' type='text'>"); is true
-PASS hasMarked("<div id='test' contenteditable='true'></div>"); is true
-PASS hasMarked("<div id='test' contentEditable='true' spellcheck='false'></div>"); is false
+PASS internals.hasSpellingMarker(0, 2) became true
+PASS internals.hasSpellingMarker(0, 2) became true
+PASS internals.hasSpellingMarker(0, 2) became true
+PASS internals.hasSpellingMarker(0, 2) became false
 PASS successfullyParsed is true
 
 TEST COMPLETE
