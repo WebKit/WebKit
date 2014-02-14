@@ -137,6 +137,10 @@ ControllerIOS.prototype = {
 
     },
 
+    progressFillStyle: function() {
+        return 'rgb(0, 0, 0)';
+    },
+
     handlePlayButtonTouchStart: function() {
         this.controls.playButton.classList.add('active');
     },

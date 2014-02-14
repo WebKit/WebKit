@@ -17,6 +17,7 @@ function Controller(root, video, host)
     this.updateBase();
     this.updateControls();
     this.updateDuration();
+    this.updateProgress();
     this.updateTime();
     this.updateReadyState();
     this.updatePlaying();
@@ -34,6 +35,9 @@ Controller.FullScreenControls = 1;
 
 Controller.PlayAfterSeeking = 0;
 Controller.PauseAfterSeeking = 1;
+
+/* Globals */
+Controller.gLastTimelineId = 0;
 
 Controller.prototype = {
 
@@ -54,6 +58,7 @@ Controller.prototype = {
         durationchange: 'handleDurationChange',
         play: 'handlePlay',
         pause: 'handlePause',
+        progress: 'handleProgress',
         volumechange: 'handleVolumeChange',
         webkitfullscreenchange: 'handleFullscreenChange',
     },
@@ -307,8 +312,10 @@ Controller.prototype = {
         currentTime.setAttribute('role', 'timer');
 
         var timeline = this.controls.timeline = document.createElement('input');
+        this.timelineID = ++Controller.gLastTimelineId;
         timeline.setAttribute('pseudo', '-webkit-media-controls-timeline');
         timeline.setAttribute('aria-label', this.UIString('Duration'));
+        timeline.style.backgroundImage = '-webkit-canvas(timeline-' + this.timelineID + ')';
         timeline.type = 'range';
         this.listenFor(timeline, 'change', this.handleTimelineChange);
         this.listenFor(timeline, 'mouseover', this.handleTimelineMouseOver);
@@ -458,6 +465,7 @@ Controller.prototype = {
     handleLoadStart: function(event)
     {
         this.controls.statusDisplay.innerText = this.UIString('Loading');
+        this.updateProgress();
     },
 
     handleError: function(event)
@@ -478,6 +486,7 @@ Controller.prototype = {
     handleStalled: function(event)
     {
         this.controls.statusDisplay.innerText = this.UIString('Stalled');
+        this.updateProgress();
     },
 
     handleWaiting: function(event)
@@ -490,6 +499,7 @@ Controller.prototype = {
         this.updateReadyState();
         this.updateCaptionButton();
         this.updateCaptionContainer();
+        this.updateProgress();
     },
 
     handleTimeUpdate: function(event)
@@ -502,6 +512,7 @@ Controller.prototype = {
     {
         this.updateDuration();
         this.updateTime();
+        this.updateProgress();
     },
 
     handlePlay: function(event)
@@ -512,6 +523,11 @@ Controller.prototype = {
     handlePause: function(event)
     {
         this.updatePlaying();
+    },
+
+    handleProgress: function(event)
+    {
+        this.updateProgress();
     },
 
     handleVolumeChange: function(event)
@@ -838,6 +854,36 @@ Controller.prototype = {
     {
         this.controls.timeline.min = 0;
         this.controls.timeline.max = this.video.duration;
+    },
+
+    progressFillStyle: function(context)
+    {
+        var height = this.controls.timeline.offsetHeight;
+        var gradient = context.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, 'rgb(2, 2, 2)');
+        gradient.addColorStop(1, 'rgb(23, 23, 23)');
+        return gradient;
+    },
+
+    updateProgress: function()
+    {
+        var width = this.controls.timeline.offsetWidth;
+        var height = this.controls.timeline.offsetHeight;
+        var context = document.getCSSCanvasContext('2d', 'timeline-' + this.timelineID, width, height);
+        context.clearRect(0, 0, width, height);
+
+        context.fillStyle = this.progressFillStyle(context);
+
+        var duration = this.video.duration;
+        var buffered = this.video.buffered;
+        for (var i = 0, end = buffered.length; i < end; ++i) {
+            var startTime = buffered.start(i);
+            var endTime = buffered.end(i);
+
+            var startX = width * startTime / duration;
+            var endX = width * endTime / duration;
+            context.fillRect(startX, 0, endX - startX, height);
+        }
     },
 
     formatTime: function(time)

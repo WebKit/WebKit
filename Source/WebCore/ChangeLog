@@ -1,3 +1,33 @@
+2014-02-13  Jer Noble  <jer.noble@apple.com>
+
+        [MediaControls] Add support for a loading progress meter
+        https://bugs.webkit.org/show_bug.cgi?id=128651
+
+        Reviewed by Eric Carlson.
+
+        Draw the loaded ranges underneath the timeline slider. Use a -webkit-canvas()
+        CSS function to allow the track of the slider to reflect the current state of
+        the video's loadedTimeRanges property.
+
+        Since -webkit-canvas() will share a backing store with all other CSS images using
+        the same identifier, use a monotonically increasing identifier to uniquely identify the timeline on a per-document basis.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-timeline):
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller): Call updateProgress().
+        (Controller.prototype.createControls): Set up the canvas style and identifier.
+        (Controller.prototype.handleLoadStart): Call updateProgress().
+        (Controller.prototype.handleStalled): Ditto.
+        (Controller.prototype.handleReadyStateChange): Ditto.
+        (Controller.prototype.handleDurationChange): Ditto.
+        (Controller.prototype.handleProgress): Ditto.
+        (Controller.prototype.progressFillStyle): Added an easily overridable method
+            to determine the fill color of the progress bar.
+        (Controller.prototype.updateProgress): Draw the loadedTimeRanges into the timeline slider.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.progressFillStyle): Override.
+
 2014-02-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Clean up JSDOMStringMap::deleteProperty
