@@ -1,3 +1,27 @@
+2014-02-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r164073 and r164080.
+        http://trac.webkit.org/changeset/164073
+        http://trac.webkit.org/changeset/164080
+        https://bugs.webkit.org/show_bug.cgi?id=128781
+
+        Broke Mac builds (Requested by rniwa on #webkit).
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/InjectedBundle/ios/EventSenderProxyIOS.mm:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+
 2014-02-13  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix for Mountain Lion.

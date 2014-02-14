@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -459,27 +459,6 @@ void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
 {
     // FIXME: Implement this.
     return;
-}
-
-void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum)
-{
-    RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(0, kCGScrollEventUnitLine, 2, y, x));
-
-    // CGEvent locations are in global display coordinates.
-    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[NSScreen mainScreen] frame].size.height - m_position.y);
-    CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
-
-    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, phase);
-    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, momentum);
-
-    NSEvent* event = [NSEvent eventWithCGEvent: cgScrollEvent.get()];
-
-    // Our event should have the correct settings:
-    if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest: [event locationInWindow]]) {
-        [NSApp _setCurrentEvent: event];
-        [targetView scrollWheel: event];
-        [NSApp _setCurrentEvent: nil];
-    }
 }
 
 } // namespace WTR

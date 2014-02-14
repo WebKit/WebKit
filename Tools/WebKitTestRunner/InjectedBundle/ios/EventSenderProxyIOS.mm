@@ -98,11 +98,6 @@ void EventSenderProxy::mouseScrollBy(int x, int y)
     // Write me.
 }
 
-void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum)
-{
-    // Write me.
-}
-
 void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
 {
     // Write me.
