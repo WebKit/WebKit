@@ -224,7 +224,7 @@ void WebProcessConnection::createPluginInternal(const PluginCreationParameters& 
         return;
 
     wantsWheelEvents = pluginControllerProxyPtr->wantsWheelEvents();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     remoteLayerClientID = pluginControllerProxyPtr->remoteLayerClientID();
 #else
     UNUSED_PARAM(remoteLayerClientID);
@@ -247,7 +247,7 @@ void WebProcessConnection::createPlugin(const PluginCreationParameters& creation
         }
         
         // If its initialization is complete then we need to respond to this message with the correct information about its creation.
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         reply->send(true, pluginControllerProxy->wantsWheelEvents(), pluginControllerProxy->remoteLayerClientID());
 #else
         reply->send(true, pluginControllerProxy->wantsWheelEvents(), 0);

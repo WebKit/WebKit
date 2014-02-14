@@ -39,8 +39,8 @@ messages -> PluginProcess LegacyReceiver {
     # a DidClearSiteData message when done.
     ClearSiteData(Vector<String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 
-#if PLATFORM(MAC)
     SetProcessSuppressionEnabled(bool flag)
+#if PLATFORM(COCOA)
     SetQOS(int latencyQOS, int throughputQOS)
 #endif
 }

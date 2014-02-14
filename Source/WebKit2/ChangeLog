@@ -1,3 +1,29 @@
+2014-02-14  Dan Bernstein  <mitz@apple.com>
+
+        Stop using PLATFORM(MAC) in WebKit2/PluginProcess except where it means “OS X but not iOS”
+        https://bugs.webkit.org/show_bug.cgi?id=128802
+
+        Reviewed by Darin Adler.
+
+        * PluginProcess/PluginControllerProxy.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        (WebKit::PluginControllerProxy::paint):
+        * PluginProcess/PluginControllerProxy.h: Ditto.
+        * PluginProcess/PluginControllerProxy.messages.in: Ditto.
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::PluginProcess): Ditto.
+        (WebKit::PluginProcess::netscapePluginModule): Added && !PLATFORM(IOS) around Mac-specific
+        quirk.
+        (WebKit::PluginProcess::createWebProcessConnection): Changed PLATFORM(MAC) to OS(DARWIN)
+        around use of Mach-based IPC.
+        * PluginProcess/PluginProcess.h: Changed PLATFORM(MAC) to PLATFORM(COCOA), and to
+        USE(APPKIT) around override of stopRunLoop, which is implemented using AppKit.
+        * PluginProcess/PluginProcess.messages.in: Removed PLATFORM(MAC) guard around
+        SetProcessSuppressionEnabled. Changed it to PLATFORM(COCOA) around SetQOS.
+        * PluginProcess/WebProcessConnection.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::WebProcessConnection::createPluginInternal):
+        (WebKit::WebProcessConnection::createPlugin):
+
 2014-02-14  Anders Carlsson  <andersca@apple.com>
 
         Add -[WKWebView estimatedProgress]

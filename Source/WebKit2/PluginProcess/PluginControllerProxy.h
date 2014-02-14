@@ -66,7 +66,7 @@ public:
 
     bool wantsWheelEvents() const;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     uint32_t remoteLayerClientID() const;
 #endif
 
@@ -98,7 +98,7 @@ private:
     virtual void didInitializePlugin() override;
     virtual void didFailToInitializePlugin() override;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void pluginFocusOrWindowFocusChanged(bool) override;
     virtual void setComplexTextInputState(PluginComplexTextInputState) override;
     virtual mach_port_t compositingRenderServerPort() override;
@@ -146,7 +146,7 @@ private:
     void didUpdate();
     void getPluginScriptableNPObject(uint64_t& pluginScriptableNPObjectID);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void windowFocusChanged(bool);
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     void windowVisibilityChanged(bool);
@@ -199,7 +199,7 @@ private:
     // Whether the plug-in has canceled the manual stream load.
     bool m_pluginCanceledManualStreamLoad;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Whether complex text input is enabled for this plug-in.
     bool m_isComplexTextInputEnabled;
 

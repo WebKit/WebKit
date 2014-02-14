@@ -95,7 +95,7 @@ messages -> PluginControllerProxy LegacyReceiver {
     # Get a reference to the plug-in's scriptable NPObject.
     GetPluginScriptableNPObject() -> (uint64_t pluginScriptableNPObjectID)
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     # Send the complex text input to the plug-in.
     SendComplexTextInput(String textInput)
 
