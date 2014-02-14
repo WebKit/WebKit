@@ -1,3 +1,21 @@
+2014-02-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make code generation of the unoptimized pseudo classes separate
+        https://bugs.webkit.org/show_bug.cgi?id=128704
+
+        Reviewed by Andreas Kling.
+
+        Mapping the unoptimized selectors when generating the code was useful for debugging
+        but those cases are so common that looping over unoptimizedPseudoCheckers was more
+        costly than anticipated.
+
+        This patch moves the unoptimized pseudo selector in their own array to simplify code generation.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+
 2014-02-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement text-decoration-skip: auto

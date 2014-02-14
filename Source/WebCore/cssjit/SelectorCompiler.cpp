@@ -109,6 +109,7 @@ struct SelectorFragment {
     const AtomicString* id;
     Vector<const AtomicStringImpl*, 1> classNames;
     HashSet<unsigned> pseudoClasses;
+    Vector<JSC::FunctionPtr> unoptimizedPseudoClasses;
     Vector<const CSSSelector*> attributes;
 };
 
@@ -214,34 +215,70 @@ static inline FunctionType mostRestrictiveFunctionType(FunctionType a, FunctionT
     return std::max(a, b);
 }
 
-static inline FunctionType addPseudoType(CSSSelector::PseudoType type, HashSet<unsigned>& pseudoClasses)
+static inline FunctionType addPseudoType(CSSSelector::PseudoType type, SelectorFragment& pseudoClasses)
 {
     switch (type) {
-    case CSSSelector::PseudoAnyLink:
-        pseudoClasses.add(CSSSelector::PseudoLink);
-        return FunctionType::SimpleSelectorChecker;
+    // Unoptimized pseudo selector. They are just function call to a simple testing function.
     case CSSSelector::PseudoAutofill:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isAutofilled));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoChecked:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isChecked));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoDefault:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDefaultButtonForForm));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoDisabled:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDisabled));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoEnabled:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isEnabled));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoFocus:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(SelectorChecker::matchesFocusPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoIndeterminate:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(shouldAppearIndeterminate));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoInvalid:
-    case CSSSelector::PseudoLink:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isInvalid));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoOptional:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isOptionalFormControl));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoReadOnly:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesReadOnlyPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoReadWrite:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesReadWritePseudoClass));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoRequired:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isRequiredFormControl));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoValid:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isValid));
+        return FunctionType::SimpleSelectorChecker;
 #if ENABLE(FULLSCREEN_API)
     case CSSSelector::PseudoFullScreen:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFullScreenPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
 #endif
 #if ENABLE(VIDEO_TRACK)
     case CSSSelector::PseudoFutureCue:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFutureCuePseudoClass));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoPastCue:
+        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesPastCuePseudoClass));
+        return FunctionType::SimpleSelectorChecker;
 #endif
-        pseudoClasses.add(type);
+
+    // Optimized pseudo selectors.
+    case CSSSelector::PseudoAnyLink:
+        pseudoClasses.pseudoClasses.add(CSSSelector::PseudoLink);
+        return FunctionType::SimpleSelectorChecker;
+
+    case CSSSelector::PseudoLink:
+        pseudoClasses.pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
 
     default:
@@ -283,7 +320,7 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
             fragment.classNames.append(selector->value().impl());
             break;
         case CSSSelector::PseudoClass:
-            m_functionType = mostRestrictiveFunctionType(m_functionType, addPseudoType(selector->pseudoType(), fragment.pseudoClasses));
+            m_functionType = mostRestrictiveFunctionType(m_functionType, addPseudoType(selector->pseudoType(), fragment));
             if (m_functionType == FunctionType::CannotCompile)
                 goto CannotHandleSelector;
             break;
@@ -860,40 +897,6 @@ void SelectorCodeGenerator::generateBacktrackingTailsIfNeeded(const SelectorFrag
     }
 }
 
-struct UnoptimizedPseudoChecker {
-    CSSSelector::PseudoType pseudoId;
-    bool (*testFunction)(const Element*);
-};
-
-template<bool (*testFunction)(Element*)>
-inline bool nonConstTestFunctionWrapper(const Element* element)
-{
-    return testFunction(const_cast<Element*>(element));
-}
-
-static const UnoptimizedPseudoChecker unoptimizedPseudoCheckers[] = {
-    { CSSSelector::PseudoAutofill, isAutofilled },
-    { CSSSelector::PseudoChecked, nonConstTestFunctionWrapper<isChecked> },
-    { CSSSelector::PseudoDefault, isDefaultButtonForForm },
-    { CSSSelector::PseudoDisabled, isDisabled },
-    { CSSSelector::PseudoEnabled, isEnabled },
-    { CSSSelector::PseudoIndeterminate, shouldAppearIndeterminate },
-    { CSSSelector::PseudoInvalid, isInvalid },
-    { CSSSelector::PseudoFocus, SelectorChecker::matchesFocusPseudoClass },
-    { CSSSelector::PseudoOptional, isOptionalFormControl },
-    { CSSSelector::PseudoReadOnly, matchesReadOnlyPseudoClass },
-    { CSSSelector::PseudoReadWrite, matchesReadWritePseudoClass },
-    { CSSSelector::PseudoRequired, isRequiredFormControl },
-    { CSSSelector::PseudoValid, isValid },
-#if ENABLE(FULLSCREEN_API)
-    { CSSSelector::PseudoFullScreen, matchesFullScreenPseudoClass },
-#endif
-#if ENABLE(VIDEO_TRACK)
-    { CSSSelector::PseudoFutureCue, matchesFutureCuePseudoClass },
-    { CSSSelector::PseudoPastCue, matchesPastCuePseudoClass },
-#endif
-};
-
 void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoLink))
@@ -902,12 +905,8 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
     if (fragment.tagName)
         generateElementHasTagName(failureCases, *(fragment.tagName));
 
-    if (!fragment.pseudoClasses.isEmpty()) {
-        for (unsigned i = 0; i < WTF_ARRAY_LENGTH(unoptimizedPseudoCheckers); ++i) {
-            if (fragment.pseudoClasses.contains(unoptimizedPseudoCheckers[i].pseudoId))
-                generateElementFunctionCallTest(failureCases, unoptimizedPseudoCheckers[i].testFunction);
-        }
-    }
+    for (unsigned i = 0; i < fragment.unoptimizedPseudoClasses.size(); ++i)
+        generateElementFunctionCallTest(failureCases, fragment.unoptimizedPseudoClasses[i]);
 
     generateElementDataMatching(failureCases, fragment);
 }
