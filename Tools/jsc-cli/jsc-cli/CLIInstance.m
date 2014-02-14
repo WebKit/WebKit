@@ -72,9 +72,10 @@
 
 - (void)didReceiveArguments:(const char **)args atOffset:(int)offset withLength:(int)length
 {
-    [_context[@"ARGV"] setValue:(_baseFile ? _baseFile : @"") atIndex:0];
+    JSValue *argv = _context[@"ARGV"];
+    [argv setValue:(_baseFile ? _baseFile : @"") atIndex:0];
     for (int i = offset; i < length; ++i)
-        [_context[@"ARGV"] setValue:@(args[i]) atIndex:(offset - i + 1)];
+        [argv setValue:@(args[i]) atIndex:(offset - i + 1)];
 }
 
 - (void)run

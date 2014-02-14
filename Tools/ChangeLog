@@ -1,5 +1,14 @@
 2014-02-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Save ARGV in a local to avoid repeated lookups
+
+        Rubber stamped by Joseph Pecoraro.
+
+        * jsc-cli/jsc-cli/CLIInstance.m:
+        (-[CLIInstance didReceiveArguments:atOffset:withLength:]):
+
+2014-02-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         jsc-cli should allow scripts to access argv
         https://bugs.webkit.org/show_bug.cgi?id=127486
 
