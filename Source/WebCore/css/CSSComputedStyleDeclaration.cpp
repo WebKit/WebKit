@@ -1318,6 +1318,8 @@ static PassRef<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecoration
 static PassRef<CSSValue> renderTextDecorationSkipFlagsToCSSValue(TextDecorationSkip textDecorationSkip)
 {
     switch (textDecorationSkip) {
+    case TextDecorationSkipAuto:
+        return cssValuePool().createIdentifierValue(CSSValueAuto);
     case TextDecorationSkipNone:
         return cssValuePool().createIdentifierValue(CSSValueNone);
     case TextDecorationSkipInk:

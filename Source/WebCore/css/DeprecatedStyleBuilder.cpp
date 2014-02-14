@@ -1287,6 +1287,8 @@ static TextDecorationSkip valueToDecorationSkip(CSSPrimitiveValue& primitiveValu
     ASSERT(primitiveValue.isValueID());
 
     switch (primitiveValue.getValueID()) {
+    case CSSValueAuto:
+        return TextDecorationSkipAuto;
     case CSSValueNone:
         return TextDecorationSkipNone;
     case CSSValueInk:

@@ -1162,7 +1162,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
             }
             default:
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
-                if (lineStyle.textDecorationSkip() == TextDecorationSkipInk && isHorizontal()) {
+                if ((lineStyle.textDecorationSkip() == TextDecorationSkipInk || lineStyle.textDecorationSkip() == TextDecorationSkipAuto) && isHorizontal()) {
                     if (!context.paintingDisabled()) {
                         drawSkipInkUnderline(textPainter, context, localOrigin, underlineOffset, width, isPrinting);
 
@@ -1192,7 +1192,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
             }
             default:
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
-                if (lineStyle.textDecorationSkip() == TextDecorationSkipInk) {
+                if ((lineStyle.textDecorationSkip() == TextDecorationSkipInk || lineStyle.textDecorationSkip() == TextDecorationSkipAuto) && isHorizontal()) {
                     if (!context.paintingDisabled()) {
                         drawSkipInkUnderline(textPainter, context, localOrigin, 0, width, isPrinting);
 

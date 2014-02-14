@@ -9456,6 +9456,7 @@ bool CSSParser::parseTextDecorationSkip(bool important)
     do {
         switch (value->id) {
         case CSSValueNone:
+        case CSSValueAuto:
         case CSSValueInk:
         case CSSValueObjects:
             addProperty(CSSPropertyWebkitTextDecorationSkip, cssValuePool().createIdentifierValue(value->id), important);

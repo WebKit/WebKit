@@ -1,11 +1,11 @@
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-text-decoration-skip') is null
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "objects"
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "auto"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('-webkit-text-decoration-skip') is "initial"
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "objects"
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "auto"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('-webkit-text-decoration-skip') is "ink"
@@ -16,7 +16,7 @@ PASS declaration.getPropertyValue('-webkit-text-decoration-skip') is "ink"
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "ink"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "objects"
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "auto"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('-webkit-text-decoration-skip') is "ink"
@@ -63,5 +63,5 @@ PASS declaration.getPropertyValue('-webkit-text-decoration-skip') is "none"
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "none"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "objects"
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "auto"
 

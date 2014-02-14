@@ -1,3 +1,19 @@
+2014-02-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement text-decoration-skip: auto
+        https://bugs.webkit.org/show_bug.cgi?id=128786
+
+        Reviewed by Dean Jackson.
+
+        http://lists.w3.org/Archives/Public/www-style/2014Feb/0485.html
+        We are updating the initial value of text-decoration-skip to a new value, "auto".
+        On Mac + iOS, this will have the same behavior as "skip".
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-default-expected.txt: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-default.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip-expected.txt:
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip.html:
+
 2014-02-14  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test correction to get bots green.
