@@ -1,3 +1,16 @@
+2014-02-14  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] visibility: hidden on a region should hide its content
+        https://bugs.webkit.org/show_bug.cgi?id=128814
+
+        Reviewed by Mihnea Ovidenie.
+
+        Add a test that verifies visibility: hidden on a region hides the content of
+        the flow thread.
+
+        * fast/regions/visibility-hidden-expected.html: Added.
+        * fast/regions/visibility-hidden.html: Added.
+
 2014-02-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Refactoring design-mode-spellcheck-off.html to use asynchronous spellchecking

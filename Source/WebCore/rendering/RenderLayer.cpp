@@ -4098,7 +4098,8 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         paintFixedLayersInNamedFlows(context, localPaintingInfo, localPaintFlags);
         
         // If this is a region, paint its contents via the flow thread's layer.
-        paintFlowThreadIfRegion(context, localPaintingInfo, localPaintFlags, offsetFromRoot, paintDirtyRect, isPaintingOverflowContents);
+        if (shouldPaintContent)
+            paintFlowThreadIfRegion(context, localPaintingInfo, localPaintFlags, offsetFromRoot, paintDirtyRect, isPaintingOverflowContents);
     }
 
     if (isPaintingOverlayScrollbars)
