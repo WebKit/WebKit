@@ -1,3 +1,16 @@
+2014-02-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Baseline JIT should have a fast path to bypass the write barrier on op_enter
+        https://bugs.webkit.org/show_bug.cgi?id=128832
+
+        Reviewed by Filip Pizlo.
+
+        * jit/JIT.h: Removed some random commented out functions.h
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_enter):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier):
+
 2014-02-14  Filip Pizlo  <fpizlo@apple.com>
 
         Don't optimize variadic closure calls

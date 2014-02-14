@@ -318,10 +318,7 @@ namespace JSC {
         Jump checkMarkWord(JSCell* owner);
         void emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode);
         void emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode);
-/*
-        void emitWriteBarrier(RegisterID owner, RegisterID valueTag, RegisterID scratch1, RegisterID scratch2, WriteBarrierMode);
-        void emitWriteBarrier(JSCell* owner, RegisterID value, WriteBarrierMode);
-*/
+        void emitWriteBarrier(JSCell* owner);
 
         template<typename StructureType> // StructureType can be RegisterID or ImmPtr.
         void emitAllocateJSObject(RegisterID allocator, StructureType, RegisterID result, RegisterID scratch);

@@ -931,12 +931,7 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
     if (mode == ShouldFilterValue)
         valueNotCell = branchTest64(NonZero, regT0, tagMaskRegister);
 
-    if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
-        Jump ownerNotMarked = checkMarkWord(owner);
-        callOperation(operationUnconditionalWriteBarrier, owner);
-        ownerNotMarked.link(this);
-    } else
-        callOperation(operationUnconditionalWriteBarrier, owner);
+    emitWriteBarrier(owner);
 
     if (mode == ShouldFilterValue) 
         valueNotCell.link(this);
@@ -985,12 +980,7 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
     if (mode == ShouldFilterValue)
         valueNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
 
-    if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
-        Jump ownerNotMarked = checkMarkWord(owner);
-        callOperation(operationUnconditionalWriteBarrier, owner);
-        ownerNotMarked.link(this);
-    } else
-        callOperation(operationUnconditionalWriteBarrier, owner);
+    emitWriteBarrier(owner);
 
     if (mode == ShouldFilterValue) 
         valueNotCell.link(this);
@@ -1002,6 +992,20 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 }
 
 #endif // USE(JSVALUE64)
+
+void JIT::emitWriteBarrier(JSCell* owner)
+{
+#if ENABLE(GGC)
+    if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
+        Jump ownerNotMarked = checkMarkWord(owner);
+        callOperation(operationUnconditionalWriteBarrier, owner);
+        ownerNotMarked.link(this);
+    } else
+        callOperation(operationUnconditionalWriteBarrier, owner);
+#else
+    UNUSED_PARAM(owner);
+#endif // ENABLE(GGC)
+}
 
 JIT::Jump JIT::addStructureTransitionCheck(JSCell* object, Structure* structure, StructureStubInfo* stubInfo, RegisterID scratch)
 {

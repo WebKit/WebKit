@@ -765,7 +765,7 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
-void JIT::emit_op_enter(Instruction* currentInstruction)
+void JIT::emit_op_enter(Instruction*)
 {
     emitEnterOptimizationCheck();
     
@@ -776,8 +776,7 @@ void JIT::emit_op_enter(Instruction* currentInstruction)
     for (size_t j = 0; j < count; ++j)
         emitInitRegister(virtualRegisterForLocal(j).offset());
 
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_enter);
-    slowPathCall.call();
+    emitWriteBarrier(m_codeBlock->ownerExecutable());
 }
 
 void JIT::emit_op_create_activation(Instruction* currentInstruction)
