@@ -1,3 +1,20 @@
+2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        text-decoration-skip: ink skips randomly when using SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=128709
+
+        Reviewed by Simon Fraser.
+
+        This patch simply disables skipping underlines being used with SVG fonts.
+        It's a stopgap until we can support skipping properly with SVG fonts.
+
+        Test: svg/custom/svg-fonts-skip-ink.html
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::ctFont):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::dashesForIntersectionsWithRect):
+
 2014-02-13  Daniel Bates  <dabates@apple.com>
 
         Fix the ARM build when HAVE_ARM_NEON_INTRINSICS is enabled

@@ -438,6 +438,9 @@ static void findPathIntersections(void* stateAsVoidPointer, const CGPathElement*
 
 DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
 {
+    if (loadingCustomFonts())
+        return DashArray();
+
     float deltaX;
     GlyphBuffer glyphBuffer;
     if (codePath(run) != Complex)
@@ -449,7 +452,10 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
     DashArray result;
     for (int i = 0; i < glyphBuffer.size(); ++i) {
         GlyphIterationState info = GlyphIterationState(CGPointMake(0, 0), CGPointMake(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x());
-        RetainPtr<CGPathRef> path = adoptCF(CTFontCreatePathForGlyph(glyphBuffer.fontDataAt(i)->platformData().ctFont(), glyphBuffer.glyphAt(i), &translation));
+        const SimpleFontData* fontData = glyphBuffer.fontDataAt(i);
+        if (fontData->isSVGFont())
+            continue;
+        RetainPtr<CGPathRef> path = adoptCF(CTFontCreatePathForGlyph(fontData->platformData().ctFont(), glyphBuffer.glyphAt(i), &translation));
         CGPathApply(path.get(), &info, &findPathIntersections);
         if (info.minX < info.maxX) {
             result.append(info.minX - lineExtents.x());
