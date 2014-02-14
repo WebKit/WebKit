@@ -36,7 +36,7 @@ function every(callback /*, thisArg */) {
     
     if (typeof callback !== "function")
         throw new @TypeError("Array.prototype.every callback must be a function");
-
+    
     var thisArg = arguments.length > 1 ? arguments[1] : undefined;
     
     for (var i = 0; i < length; i++) {
@@ -49,3 +49,101 @@ function every(callback /*, thisArg */) {
     return true;
 }
 
+function forEach(callback /*, thisArg */) {
+    "use strict";
+    if (this === null)
+        throw new @TypeError("Array.prototype.forEach requires that |this| not be null");
+    
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.forEach requires that |this| not be undefined");
+    
+    var array = @Object(this);
+    var length = array.length >>> 0;
+    
+    if (typeof callback !== "function")
+        throw new @TypeError("Array.prototype.forEach callback must be a function");
+    
+    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    
+    for (var i = 0; i < length; i++) {
+        if (i in array)
+            callback.@call(thisArg, array[i], i, array);
+    }
+}
+
+function filter(callback /*, thisArg */) {
+    "use strict";
+    if (this === null)
+        throw new @TypeError("Array.prototype.filter requires that |this| not be null");
+    
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.filter requires that |this| not be undefined");
+    
+    var array = @Object(this);
+    var length = array.length >>> 0;
+    
+    if (typeof callback !== "function")
+        throw new @TypeError("Array.prototype.filter callback must be a function");
+    
+    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var result = [];
+    var nextIndex = 0;
+    for (var i = 0; i < length; i++) {
+        if (!(i in array))
+            continue;
+        var current = array[i]
+        if (callback.@call(thisArg, current, i, array))
+            result[nextIndex++] = current;
+    }
+    return result;
+}
+
+function map(callback /*, thisArg */) {
+    "use strict";
+    if (this === null)
+        throw new @TypeError("Array.prototype.map requires that |this| not be null");
+    
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.map requires that |this| not be undefined");
+    
+    var array = @Object(this);
+    var length = array.length >>> 0;
+    
+    if (typeof callback !== "function")
+        throw new @TypeError("Array.prototype.map callback must be a function");
+    
+    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var result = [];
+    result.length = length;
+    var nextIndex = 0;
+    for (var i = 0; i < length; i++) {
+        if (!(i in array))
+            continue;
+        result[i] = callback.@call(thisArg, array[i], i, array)
+    }
+    return result;
+}
+
+function some(callback /*, thisArg */) {
+    "use strict";
+    if (this === null)
+        throw new @TypeError("Array.prototype.some requires that |this| not be null");
+    
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.some requires that |this| not be undefined");
+    
+    var array = @Object(this);
+    var length = array.length >>> 0;
+    
+    if (typeof callback !== "function")
+        throw new @TypeError("Array.prototype.some callback must be a function");
+    
+    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    for (var i = 0; i < length; i++) {
+        if (!(i in array))
+            continue;
+        if (callback.@call(thisArg, array[i], i, array))
+            return true;
+    }
+    return false;
+}

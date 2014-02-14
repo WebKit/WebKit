@@ -34,9 +34,8 @@ function test()
         "throwParam(new Error('error message'));"
     ];
 
-    // FIXME: <https://webkit.org/b/121108> Web Inspector gets paused twice when there is an exception in host function
-    var extraCaughtExceptionPauses = 1;
-    var extraUncaughtExceptionPauses = 1;
+    var extraCaughtExceptionPauses = 0;
+    var extraUncaughtExceptionPauses = 0;
 
     function evaluateStatements(list, callback)
     {

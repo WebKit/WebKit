@@ -527,7 +527,7 @@ public:
     {
         VM& vm = m_vm;
         if (m_remainingCapacityForFrameCapture) {
-            if (visitor->isJSFrame()) {
+            if (visitor->isJSFrame() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
                 CodeBlock* codeBlock = visitor->codeBlock();
                 StackFrame s = {
                     Strong<JSObject>(vm, visitor->callee()),

@@ -1540,6 +1540,7 @@ namespace JSC {
         void finishParsing(const SourceCode&, ParameterNode*, const Identifier&, FunctionMode);
         void finishParsing(PassRefPtr<FunctionParameters>, const Identifier&, FunctionMode);
         
+        void overrideName(const Identifier& ident) { m_ident = ident; }
         const Identifier& ident() { return m_ident; }
         void setInferredName(const Identifier& inferredName) { ASSERT(!inferredName.isNull()); m_inferredName = inferredName; }
         const Identifier& inferredName() { return m_inferredName.isEmpty() ? m_ident : m_inferredName; }

@@ -27,11 +27,7 @@ Paused!
 Resumed
 Paused!
 Resumed
-Paused!
-Resumed
 PASS - paused for each caught exception
-Paused!
-Resumed
 Paused!
 Resumed
 Paused!

@@ -36,7 +36,7 @@ namespace JSC {
 
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
-#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, length) , m_##name##Source(makeSource(StringImpl::createFromLiteral(s_##name, length), StringImpl::createFromLiteral("<builtin>")))
+#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, length) , m_##name##Source(makeSource(StringImpl::createFromLiteral(s_##name, length)))
     JSC_FOREACH_BUILTIN(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
 #undef EXPOSE_BUILTIN_STRINGS
 {
@@ -77,6 +77,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const So
             continue;
         RELEASE_ASSERT(closedVariable->isEmptyUnique());
     }
+    body->overrideName(name);
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&m_vm, source, body, true, UnlinkedBuiltinFunction);
     functionExecutable->m_nameValue.set(m_vm, functionExecutable, jsString(&m_vm, name.string()));
     return functionExecutable;

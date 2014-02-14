@@ -1,3 +1,22 @@
+2014-02-14  Oliver Hunt  <oliver@apple.com>
+
+        Implement a few more Array prototype functions in JS
+        https://bugs.webkit.org/show_bug.cgi?id=128788
+
+        Reviewed by Gavin Barraclough.
+
+        Minor change to ensure that the inspector is treating builtins
+        as host functions.
+
+        Tests: js/regress/array-prototype-filter.html
+               js/regress/array-prototype-forEach.html
+               js/regress/array-prototype-map.html
+               js/regress/array-prototype-some.html
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+          Make sure we treat builtins as regular host functions
+
 2014-02-14  Beth Dakin  <bdakin@apple.com>
 
         Margin tiles are not created for the top and left sides when there is a < 1.0 

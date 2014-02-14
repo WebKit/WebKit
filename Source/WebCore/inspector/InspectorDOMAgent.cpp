@@ -1373,7 +1373,7 @@ PassRefPtr<Inspector::TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildO
         if (handler) {
             body = handler->toString(state)->value(state);
             if (auto function = JSC::jsDynamicCast<JSC::JSFunction*>(handler)) {
-                if (!function->isHostFunction()) {
+                if (!function->isHostOrBuiltinFunction()) {
                     if (auto executable = function->jsExecutable()) {
                         lineNumber = executable->lineNo() - 1;
                         scriptID = executable->sourceID() == JSC::SourceProvider::nullID ? emptyString() : String::number(executable->sourceID());

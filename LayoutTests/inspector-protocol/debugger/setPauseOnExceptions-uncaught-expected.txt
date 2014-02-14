@@ -35,8 +35,6 @@ Paused!
 Resumed
 Paused!
 Resumed
-Paused!
-Resumed
 PASS - paused for each uncaught exception
 PASS - did not pause on non-exception statements or caught exception statements
 PASS

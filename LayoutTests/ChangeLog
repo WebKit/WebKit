@@ -1,3 +1,43 @@
+2014-02-14  Oliver Hunt  <oliver@apple.com>
+
+        Implement a few more Array prototype functions in JS
+        https://bugs.webkit.org/show_bug.cgi?id=128788
+
+        Reviewed by Gavin Barraclough.
+
+        Add performance tests, and update a couple of profiler tests as
+        we unavoidably show the call out to some of the builtin methods.
+
+        * fast/profiler/built-in-function-calls-anonymous-expected.txt:
+        * fast/profiler/built-in-function-calls-user-defined-function-expected.txt:
+        * js/dom/array-foreach-expected.txt:
+        * js/dom/array-prototype-properties-expected.txt:
+        * js/dom/array-some-expected.txt:
+        * js/regress/array-prototype-filter-expected.txt: Added.
+        * js/regress/array-prototype-filter.html: Added.
+        * js/regress/array-prototype-forEach-expected.txt: Added.
+        * js/regress/array-prototype-forEach.html: Added.
+        * js/regress/array-prototype-map-expected.txt: Added.
+        * js/regress/array-prototype-map.html: Added.
+        * js/regress/array-prototype-some-expected.txt: Added.
+        * js/regress/array-prototype-some.html: Added.
+        * js/regress/script-tests/array-prototype-filter.js: Added.
+        (test1):
+        (test2):
+        (test3):
+        * js/regress/script-tests/array-prototype-forEach.js: Added.
+        (test1):
+        (test2):
+        (test3):
+        * js/regress/script-tests/array-prototype-map.js: Added.
+        (test1):
+        (test2):
+        (test3):
+        * js/regress/script-tests/array-prototype-some.js: Added.
+        (test1):
+        (test2):
+        (test3):
+
 2014-02-14  Filip Pizlo  <fpizlo@apple.com>
 
         Don't optimize variadic closure calls

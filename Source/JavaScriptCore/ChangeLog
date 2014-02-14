@@ -1,3 +1,40 @@
+2014-02-14  Oliver Hunt  <oliver@apple.com>
+
+        Implement a few more Array prototype functions in JS
+        https://bugs.webkit.org/show_bug.cgi?id=128788
+
+        Reviewed by Gavin Barraclough.
+
+        Remove a pile of awful C++, and rewrite in simple JS.
+
+        Needed to make a few other changes to get fully builtins
+        behavior to more accurately match a host function's.
+
+        * builtins/Array.prototype.js:
+        (every):
+        (forEach):
+        (filter):
+        (map):
+        (some):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::BuiltinExecutables):
+        (JSC::BuiltinExecutables::createBuiltinExecutable):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitPutByVal):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitExpressionInfo):
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::operator()):
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::overrideName):
+        * profiler/LegacyProfiler.cpp:
+        (JSC::createCallIdentifierFromFunctionImp):
+        * runtime/ArrayPrototype.cpp:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::deleteProperty):
+        * runtime/JSFunction.h:
+
 2014-02-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         ASSERT(isValidAllocation(bytes)) when ObjC API creates custom errors

@@ -228,10 +228,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(codeBlock->isBuiltinFunction())
 {
-    if (m_isBuiltinFunction) {
-        m_shouldEmitProfileHooks = false;
+    if (m_isBuiltinFunction)
         m_shouldEmitDebugHooks = false;
-    }
 
     m_symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());
     Vector<Identifier> boundParameterProperties;
@@ -1418,7 +1416,10 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
 RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
     UnlinkedArrayProfile arrayProfile = newArrayProfile();
-    emitOpcode(op_put_by_val);
+    if (m_isBuiltinFunction)
+        emitOpcode(op_put_by_val_direct);
+    else
+        emitOpcode(op_put_by_val);
     instructions().append(base->index());
     instructions().append(property->index());
     instructions().append(value->index());

@@ -40,12 +40,12 @@ Exception thrown, execution halted!
 5.0 Wrong Type for Callback Test
 This test sends in incorrect types for the callback parameter of every. An exception should be thrown in each case. There should be 6 type errors (and no crashes!):
 
-TypeError: Type error
-TypeError: Type error
-TypeError: Type error
-TypeError: Type error
-TypeError: Type error
-TypeError: Type error
+TypeError: Array.prototype.some callback must be a function
+TypeError: Array.prototype.some callback must be a function
+TypeError: Array.prototype.some callback must be a function
+TypeError: Array.prototype.some callback must be a function
+TypeError: Array.prototype.some callback must be a function
+TypeError: Array.prototype.some callback must be a function
 
 6.0 Early Abortion ("Short Circuiting") This test is nearly identical to 1.0, except that it prints upon every call to the designated callback function. Since some aborts as soon as it finds one qualifying element, the first array should print 5 times, and the second only once.
 

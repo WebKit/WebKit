@@ -312,7 +312,8 @@ namespace JSC {
             unsigned column = divotOffset - lineStart;
 
             unsigned instructionOffset = instructions().size();
-            m_codeBlock->addExpressionInfo(instructionOffset, divotOffset, startOffset, endOffset, line, column);
+            if (!m_isBuiltinFunction)
+                m_codeBlock->addExpressionInfo(instructionOffset, divotOffset, startOffset, endOffset, line, column);
         }
 
         ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsPure)
