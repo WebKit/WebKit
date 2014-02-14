@@ -1,3 +1,15 @@
+2014-02-13  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add a way to get the page from a frame in the injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=128791
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame _browserContextController]): Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h: Declared
+        _browserContextController property.
+
 2014-02-13  Anders Carlsson  <andersca@apple.com>
 
         Add -[WKWebView stopLoading:]

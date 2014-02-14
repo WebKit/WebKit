@@ -27,9 +27,13 @@
 
 #if WK_API_ENABLED
 
+@class WKWebProcessPlugInBrowserContextController;
+
 @interface WKWebProcessPlugInFrame (WKPrivate)
 
 + (instancetype)lookUpFrameFromHandle:(WKFrameHandle *)handle;
+
+@property (nonatomic, readonly) WKWebProcessPlugInBrowserContextController *_browserContextController;
 
 @end
 

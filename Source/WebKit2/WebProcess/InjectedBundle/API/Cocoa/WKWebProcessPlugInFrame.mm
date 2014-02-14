@@ -31,6 +31,7 @@
 #import "WKFrameHandleInternal.h"
 #import "WKNSArray.h"
 #import "WKNSURLExtras.h"
+#import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import "WKWebProcessPlugInHitTestResultInternal.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
@@ -74,6 +75,11 @@ using namespace WebKit;
 {
     JSValueRef valueRef = _frame->jsWrapperForWorld(&[nodeHandle _nodeHandle], &[world _scriptWorld]);
     return [JSValue valueWithJSValueRef:valueRef inContext:[self jsContextForWorld:world]];
+}
+
+- (WKWebProcessPlugInBrowserContextController *)_browserContextController
+{
+    return wrapper(*_frame->page());
 }
 
 - (NSURL *)URL
