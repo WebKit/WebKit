@@ -1,5 +1,19 @@
 2014-02-14  Anders Carlsson  <andersca@apple.com>
 
+        Add SPI for authentication 
+        https://bugs.webkit.org/show_bug.cgi?id=128847
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame):
+        (WebKit::NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame):
+
+2014-02-14  Anders Carlsson  <andersca@apple.com>
+
         Add WKBackForwardListDidChangeNotification 
         https://bugs.webkit.org/show_bug.cgi?id=128839
 
