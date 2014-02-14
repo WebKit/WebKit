@@ -19,12 +19,6 @@ else ()
     set(CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS "${CMAKE_CXX_COMPILER} -E -x c++")
 endif ()
 
-# Push of rbp is needed after JSC JIT uses CStack. See http://wkbug.com/127777.
-if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS_RELEASE "-fno-omit-frame-pointer -fno-tree-dce ${CMAKE_C_FLAGS_RELEASE}")
-    set(CMAKE_CXX_FLAGS_RELEASE "-fno-omit-frame-pointer -fno-tree-dce ${CMAKE_CXX_FLAGS_RELEASE}")
-endif ()
-
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 if (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

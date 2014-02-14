@@ -262,6 +262,13 @@ if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-Wl,--gc-sections ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
 endif ()
 
+# push of rbp is needed after JSC JIT uses CStack
+if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
+    set(CMAKE_C_FLAGS_RELEASE "-fno-omit-frame-pointer ${CMAKE_C_FLAGS_RELEASE}")
+    set(CMAKE_CXX_FLAGS_RELEASE "-fno-omit-frame-pointer ${CMAKE_CXX_FLAGS_RELEASE}")
+endif ()
+
+
 if (ENABLE_SPELLCHECK)
     find_package(Enchant REQUIRED)
 endif ()
