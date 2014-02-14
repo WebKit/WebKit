@@ -19,7 +19,7 @@ function checkForScroll() {
     var iFrameScrollPositionAfter = window.frames['target'].document.body.scrollTop;
 
     debug("Page before: " + pageScrollPositionBefore + ", IFrame before: " + iFrameScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", IFrame after: " + iFrameScrollPositionAfter);
+    //debug("Page after:  " + pageScrollPositionAfter + ", IFrame after: " + iFrameScrollPositionAfter);
 
     if (pageScrollPositionBefore != pageScrollPositionAfter)
         testFailed("Page received wheel events.");

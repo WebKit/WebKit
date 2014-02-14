@@ -11,6 +11,5 @@ TEST COMPLETE
 IFrame display height = 500
 Mouse moved to (28, 566)
 Page before: 0, IFrame before: 416
-Page after:  0, IFrame after: 416
 PASS Page did not receive wheel events.
 

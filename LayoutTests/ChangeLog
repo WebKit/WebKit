@@ -1,3 +1,12 @@
+2014-02-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test correction to get bots green.
+
+        * platform/mac/fast/scrolling/scroll-iframe-latched-iframe-expected.txt: Don't
+        snapshot final pixel location, since these seems to be somewhat dependent
+        on the test machine.
+        * platform/mac/fast/scrolling/scroll-iframe-latched-iframe.html: Ditto
+
 2014-02-14  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit needs heuristics to differentiate lists used for layout from semantic data lists, similar to the heuristics for layout tables versus data tables.
