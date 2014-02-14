@@ -1,5 +1,21 @@
 2014-02-13  Jer Noble  <jer.noble@apple.com>
 
+        [MediaControls][iOS] Embedded YouTube does not show a 'paused' button state after starting
+        https://bugs.webkit.org/show_bug.cgi?id=128755
+
+        Reviewed by Eric Carlson.
+
+        Don't rely on "canPlay()", instead, take the information directly from the event itself. I.e., when
+        handling the 'play' event, switch mode to playing, and vice versa for the 'pause' event.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handlePlay):
+        (Controller.prototype.handlePause):
+        (Controller.prototype.updatePlaying):
+        (Controller.prototype.setPlaying):
+
+2014-02-13  Jer Noble  <jer.noble@apple.com>
+
         [MediaControls][iOS] Start playback button is visible when playing embedded YouTube
         https://bugs.webkit.org/show_bug.cgi?id=128754
 

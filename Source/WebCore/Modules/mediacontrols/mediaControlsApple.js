@@ -517,12 +517,12 @@ Controller.prototype = {
 
     handlePlay: function(event)
     {
-        this.updatePlaying();
+        this.setPlaying(true);
     },
 
     handlePause: function(event)
     {
-        this.updatePlaying();
+        this.setPlaying(false);
     },
 
     handleProgress: function(event)
@@ -898,7 +898,16 @@ Controller.prototype = {
 
     updatePlaying: function()
     {
-        if (this.canPlay()) {
+        this.setPlaying(!this.canPlay());
+    },
+
+    setPlaying: function(isPlaying)
+    {
+        if (this.isPlaying === isPlaying)
+            return;
+        this.isPlaying = isPlaying;
+
+        if (!isPlaying) {
             this.controls.panel.classList.add(this.ClassNames.paused);
             this.controls.playButton.classList.add(this.ClassNames.paused);
             this.controls.playButton.setAttribute('aria-label', this.UIString('Play'));
