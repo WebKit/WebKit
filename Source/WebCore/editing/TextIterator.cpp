@@ -2450,6 +2450,17 @@ PassRefPtr<Range> TextIterator::subrange(Range* entireRange, int characterOffset
     return characterSubrange(entireRangeIterator, characterOffset, characterCount);
 }
 
+static inline bool isInsideReplacedElement(TextIterator& iterator)
+{
+    ASSERT(!iterator.atEnd());
+    ASSERT(iterator.length() == 1);
+    Node* node = iterator.node();
+    if (!node)
+        return false;
+    auto* renderer = node->renderer();
+    return renderer && isRendererReplacedElement(renderer);
+}
+
 PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool forSelectionPreservation)
 {
     RefPtr<Range> resultRange = scope->document().createRange();
@@ -2483,8 +2494,8 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope,
         // in those cases that textRunRange is used.
         if (foundEnd) {
             // FIXME: This is a workaround for the fact that the end of a run is often at the wrong
-            // position for emitted '\n's.
-            if (len == 1 && it.characterAt(0) == '\n') {
+            // position for emitted '\n's or if the renderer of the current node is a replaced element.
+            if (len == 1 && (it.characterAt(0) == '\n' || isInsideReplacedElement(it))) {
                 it.advance();
                 if (!it.atEnd()) {
                     RefPtr<Range> range = it.range();

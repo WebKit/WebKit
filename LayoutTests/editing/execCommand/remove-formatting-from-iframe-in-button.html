@@ -1,0 +1,19 @@
+<head>
+	<script type="text/javascript">
+		function runTest() {
+		    if (window.testRunner)
+		        window.testRunner.dumpAsText();
+
+	    	 document.designMode="on";
+            document.execCommand("selectall");
+            document.execCommand("RemoveFormat");
+            document.execCommand("inserthtml", false, "PASSED - this test didn't fire ASSERT, bug 121791.");
+        }
+	</script>
+</head>
+<body onload="runTest()">	
+	<button>
+	    <iframe/>
+	</button>
+</body>
+

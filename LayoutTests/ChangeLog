@@ -1,3 +1,13 @@
+2014-02-14  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
+
+        ASSERTION FAILED: comparePositions(newEnd, newStart) >= 0 in WebCore::ApplyStyleCommand::updateStartEnd
+        https://bugs.webkit.org/show_bug.cgi?id=121791
+
+        Reviewed by Darin Adler.
+
+        * editing/execCommand/remove-formatting-from-iframe-in-button-expected.txt: Added.
+        * editing/execCommand/remove-formatting-from-iframe-in-button.html: Added.
+
 2014-02-14  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] visibility: hidden on a region should hide its content
