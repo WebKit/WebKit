@@ -780,8 +780,9 @@ id valueToArray(JSGlobalContextRef context, JSValueRef value, JSValueRef* except
     if (JSValueIsObject(context, value))
         return containerValueToObject(context, (JSContainerConvertor::Task){ value, [NSMutableArray array], ContainerArray});
 
+    JSC::APIEntryShim shim(toJS(context));
     if (!(JSValueIsNull(context, value) || JSValueIsUndefined(context, value)))
-        *exception = toRef(JSC::createTypeError(toJS(context), "Cannot convert primitive to NSArray"));
+        *exception = toRef(JSC::createTypeError(toJS(context), ASCIILiteral("Cannot convert primitive to NSArray")));
     return nil;
 }
 
@@ -796,8 +797,9 @@ id valueToDictionary(JSGlobalContextRef context, JSValueRef value, JSValueRef* e
     if (JSValueIsObject(context, value))
         return containerValueToObject(context, (JSContainerConvertor::Task){ value, [NSMutableDictionary dictionary], ContainerDictionary});
 
+    JSC::APIEntryShim shim(toJS(context));
     if (!(JSValueIsNull(context, value) || JSValueIsUndefined(context, value)))
-        *exception = toRef(JSC::createTypeError(toJS(context), "Cannot convert primitive to NSDictionary"));
+        *exception = toRef(JSC::createTypeError(toJS(context), ASCIILiteral("Cannot convert primitive to NSDictionary")));
     return nil;
 }
 

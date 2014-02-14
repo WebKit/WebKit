@@ -1272,6 +1272,12 @@ void testObjectiveCAPI()
         checkResult(@"makeObject() instanceof UnexportedObject", [result isBoolean] && [result toBool]);
     }
 
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        [[JSValue valueWithInt32:42 inContext:context] toDictionary];
+        [[JSValue valueWithInt32:42 inContext:context] toArray];
+    }
+
     currentThisInsideBlockGetterTest();
     runDateTests();
     runJSExportTests();

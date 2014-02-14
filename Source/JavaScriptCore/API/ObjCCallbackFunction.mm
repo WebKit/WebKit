@@ -129,7 +129,7 @@ private:
             return;
         }
 
-        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Argument does not match Objective-C Class"));
+        *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("Argument does not match Objective-C Class")));
     }
 
     Class m_class;
@@ -496,7 +496,7 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
         return 0;
 
     if (!JSValueIsObject(contextRef, result)) {
-        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Objective-C blocks called as constructors must return an object."));
+        *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("Objective-C blocks called as constructors must return an object.")));
         return 0;
     }
     return (JSObjectRef)result;
@@ -562,7 +562,7 @@ JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisOb
         RELEASE_ASSERT(!thisObject);
         target = [m_instanceClass alloc];
         if (!target || ![target isKindOfClass:m_instanceClass]) {
-            *exception = toRef(JSC::createTypeError(toJS(contextRef), "self type check failed for Objective-C instance method"));
+            *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("self type check failed for Objective-C instance method")));
             return JSValueMakeUndefined(contextRef);
         }
         [m_invocation setTarget:target];
@@ -572,7 +572,7 @@ JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisOb
     case CallbackInstanceMethod: {
         target = tryUnwrapObjcObject(contextRef, thisObject);
         if (!target || ![target isKindOfClass:m_instanceClass]) {
-            *exception = toRef(JSC::createTypeError(toJS(contextRef), "self type check failed for Objective-C instance method"));
+            *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("self type check failed for Objective-C instance method")));
             return JSValueMakeUndefined(contextRef);
         }
         [m_invocation setTarget:target];
