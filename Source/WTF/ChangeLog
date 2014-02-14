@@ -1,5 +1,11 @@
 2014-02-13  Daniel Bates  <dabates@apple.com>
 
+        Fix the iOS build after <http://trac.webkit.org/changeset/164064
+
+        * wtf/Platform.h:
+
+2014-02-13  Daniel Bates  <dabates@apple.com>
+
         [iOS] Disable HAVE_ARM_NEON_INTRINSICS
 
         For now, disable HAVE_ARM_NEON_INTRINSICS when building for iOS. We want

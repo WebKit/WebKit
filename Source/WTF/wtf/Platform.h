@@ -506,6 +506,7 @@
 #endif
 
 #if CPU(ARM_NEON)
+#undef HAVE_ARM_NEON_INTRINSICS
 #define HAVE_ARM_NEON_INTRINSICS 0
 #endif
 
