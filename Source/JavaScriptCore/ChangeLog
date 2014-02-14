@@ -1,3 +1,10 @@
+2014-02-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix build.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentsLength):
+
 2014-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Speculative Release build fix after r164077.

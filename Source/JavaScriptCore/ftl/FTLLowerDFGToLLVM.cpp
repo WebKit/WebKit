@@ -1803,7 +1803,7 @@ private:
     
     void compileGetMyArgumentsLength() 
     {
-        TypedPointer reg = addressFor(m_node->codeOrigin.stackOffset() + JSStack::ArgumentCount);
+        TypedPointer reg = addressFor(m_node->origin.semantic.stackOffset() + JSStack::ArgumentCount);
         setInt32(m_out.add(m_out.load32NonNegative(reg), m_out.constInt32(-1)));
     }
 
