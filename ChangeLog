@@ -1,3 +1,17 @@
+2014-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] JavaScriptCore crashes in JSC::eval
+        https://bugs.webkit.org/show_bug.cgi?id=128434
+
+        Extend a fix for EFL to all ports that use GCC. Also include further fixes
+        that were applied only to the autotools build.
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsCommon.cmake: Add -fno-omit-frame-pointer to all ports as well
+        as -fno-tree-dce, which is necessary for GTK+.
+        * Source/cmake/OptionsEfl.cmake: The GCC flag additions are now in the common options file.
+
 2014-02-04  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK][CMake] Generate GObject DOM bindings .symbols files
