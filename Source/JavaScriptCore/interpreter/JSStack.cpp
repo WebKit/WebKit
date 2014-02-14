@@ -118,6 +118,7 @@ void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITS
 
 void JSStack::sanitizeStack()
 {
+#if !defined(ADDRESS_SANITIZER)
     ASSERT(topOfStack() <= baseOfStack());
     
     if (m_lastStackTop < topOfStack()) {
@@ -127,6 +128,7 @@ void JSStack::sanitizeStack()
     }
     
     m_lastStackTop = topOfStack();
+#endif
 }
 
 void JSStack::releaseExcessCapacity()

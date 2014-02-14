@@ -1,3 +1,17 @@
+2014-02-14  David Kilzer  <ddkilzer@apple.com>
+
+        [ASan] Disable JSStack::sanitizeStack() to avoid false-positive stack-buffer-overflow errors
+        <http://webkit.org/b/128819>
+
+        Reviewed by Filip Pizlo.
+
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::sanitizeStack): When building with the clang
+        address sanitizer, don't sanitize the stack since it will
+        trigger false-positive stack-buffer-overflow errors.  Disabling
+        this only results in a performance penalty, not a correctness
+        penalty.
+
 2014-02-14  Andres Gomez  <agomez@igalia.com>
 
         Cleaning the JSStaticScopeObject files left behind after renaming their objects to JSNameScope
