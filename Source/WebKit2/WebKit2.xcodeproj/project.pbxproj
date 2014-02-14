@@ -598,6 +598,7 @@
 		37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 37948402150C350600E52CE9 /* WebRenderLayer.h */; };
 		37948408150C4B9700E52CE9 /* WKRenderLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37948406150C4B9600E52CE9 /* WKRenderLayer.cpp */; };
 		37948409150C4B9700E52CE9 /* WKRenderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 37948407150C4B9600E52CE9 /* WKRenderLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3795789C18AD4F1900B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3795789B18AD4F1100B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37C4C08618149C5B003688B9 /* WKBackForwardListItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C08418149C5B003688B9 /* WKBackForwardListItem.mm */; };
 		37C4C08718149C5B003688B9 /* WKBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C4C08518149C5B003688B9 /* WKBackForwardListItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37C4C08918149F23003688B9 /* WKBackForwardListItemInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C4C08818149F23003688B9 /* WKBackForwardListItemInternal.h */; };
@@ -2308,6 +2309,7 @@
 		37948402150C350600E52CE9 /* WebRenderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRenderLayer.h; sourceTree = "<group>"; };
 		37948406150C4B9600E52CE9 /* WKRenderLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRenderLayer.cpp; sourceTree = "<group>"; };
 		37948407150C4B9600E52CE9 /* WKRenderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRenderLayer.h; sourceTree = "<group>"; };
+		3795789B18AD4F1100B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInFormDelegatePrivate.h; sourceTree = "<group>"; };
 		37C4C08418149C5B003688B9 /* WKBackForwardListItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBackForwardListItem.mm; sourceTree = "<group>"; };
 		37C4C08518149C5B003688B9 /* WKBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardListItem.h; sourceTree = "<group>"; };
 		37C4C08818149F23003688B9 /* WKBackForwardListItemInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardListItemInternal.h; sourceTree = "<group>"; };
@@ -4108,6 +4110,7 @@
 		1F0181681858DC1500F92884 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				3795789B18AD4F1100B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h */,
 				1F0181691858DC1500F92884 /* WKWebProcessPlugInFrame.h */,
 				1F01816A1858DC1500F92884 /* WKWebProcessPlugInFrame.mm */,
 				1F01816B1858DC1500F92884 /* WKWebProcessPlugInFrameInternal.h */,
@@ -6795,6 +6798,7 @@
 				BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */,
 				BC4A6297147313A0006C681A /* WKConnectionRef.h in Headers */,
 				BCB9E24B1120E15C00A137E0 /* WKContext.h in Headers */,
+				3795789C18AD4F1900B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h in Headers */,
 				51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */,
 				51A55601128C6D92009ABCEC /* WKContextMenuItemTypes.h in Headers */,
 				1A15841A189044F50017616C /* WKProcessClass.h in Headers */,

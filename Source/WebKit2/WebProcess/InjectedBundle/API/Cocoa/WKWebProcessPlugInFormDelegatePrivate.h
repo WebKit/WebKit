@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKWebProcessPlugInBrowserContextController.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKBase.h>
+#import <WebKit2/WKWebProcessPlugInBrowserContextController.h>
+#import <WebKit2/WKWebProcessPlugInFrame.h>
+#import <WebKit2/WKWebProcessPlugInNodeHandle.h>
 
-@class WKBrowsingContextHandle;
-@class WKRemoteObjectRegistry;
-@protocol WKWebProcessPlugInFormDelegatePrivate;
+@protocol WKWebProcessPlugInFormDelegatePrivate <NSObject>
 
-@interface WKWebProcessPlugInBrowserContextController (Private)
+@optional
 
-@property (nonatomic, readonly) WKBundlePageRef _bundlePageRef;
-
-@property (nonatomic, readonly) WKBrowsingContextHandle *handle;
-
-@property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
-
-@property (weak, setter=_setFormDelegate:) id <WKWebProcessPlugInFormDelegatePrivate> _formDelegate;
-
-+ (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle;
+- (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didFocusTextField:(WKWebProcessPlugInNodeHandle *)textField inFrame:(WKWebProcessPlugInFrame *)frame;
 
 @end
 

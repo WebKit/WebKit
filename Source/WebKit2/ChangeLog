@@ -1,5 +1,24 @@
 2014-02-13  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Expose the bundle form client
+        https://bugs.webkit.org/show_bug.cgi?id=128792
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added new file.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h: Added.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didFocusTextField): Implemented this WKBundlePageFormClient callback by calling the form
+        delegate.
+        (setUpFormClient): Added. Initializes the form client with the above function.
+        (-[WKWebProcessPlugInBrowserContextController _formDelegate]): Added this getter.
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]): Added. Initializes or
+        clears the form client.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+        Declared _formDelegate property.
+
+2014-02-13  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Add a way to get the page from a frame in the injected bundle
         https://bugs.webkit.org/show_bug.cgi?id=128791
 
