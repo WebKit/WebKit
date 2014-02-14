@@ -409,7 +409,6 @@ set(JavaScriptCore_SOURCES
     runtime/JSSegmentedVariableObject.cpp
     runtime/JSSet.cpp
     runtime/JSSetIterator.cpp
-    runtime/JSStaticScopeObject.cpp
     runtime/JSString.cpp
     runtime/JSStringJoiner.cpp
     runtime/JSSymbolTableObject.cpp
