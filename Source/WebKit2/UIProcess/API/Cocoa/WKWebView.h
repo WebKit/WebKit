@@ -88,6 +88,11 @@ WK_API_CLASS
 
 @property (nonatomic, readonly) NSString *title;
 
+/*! @abstract The active URL. @link WKWebView @/link is KVO-compliant for this property.
+ @discussion This is the URL that should be reflected in the user interface.
+ */
+@property (nonatomic, readonly) NSURL *activeURL;
+
 /*! @abstract Whether the view is loading content. @link WKWebView @/link is KVO-compliant for this
  property. */
 @property (nonatomic, readonly, getter=isLoading) BOOL loading;

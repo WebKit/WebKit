@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "NavigationState.h"
+#import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "WKBackForwardListInternal.h"
@@ -43,7 +44,7 @@
 #import "WebBackForwardList.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import <WebKit2/RemoteLayerTreeTransaction.h>
+#import "WKNSURLExtras.h"
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -189,6 +190,11 @@
 - (NSString *)title
 {
     return _page->pageLoadState().title();
+}
+
+- (NSURL *)activeURL
+{
+    return [NSURL _web_URLWithWTFString:_page->pageLoadState().activeURL()];
 }
 
 - (BOOL)isLoading

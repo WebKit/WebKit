@@ -394,10 +394,12 @@ void NavigationState::didChangeTitle()
 
 void NavigationState::willChangeActiveURL()
 {
+    [m_webView willChangeValueForKey:@"activeURL"];
 }
 
 void NavigationState::didChangeActiveURL()
 {
+    [m_webView didChangeValueForKey:@"activeURL"];
 }
 
 void NavigationState::willChangeHasOnlySecureContent()
