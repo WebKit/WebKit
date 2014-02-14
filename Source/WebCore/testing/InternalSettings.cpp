@@ -68,10 +68,6 @@ namespace WebCore {
 InternalSettings::Backup::Backup(Settings& settings)
     : m_originalCSSExclusionsEnabled(RuntimeEnabledFeatures::sharedFeatures().cssExclusionsEnabled())
     , m_originalCSSShapesEnabled(RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled())
-#if ENABLE(SHADOW_DOM)
-    , m_originalShadowDOMEnabled(RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled())
-    , m_originalAuthorShadowDOMForAnyElementEnabled(RuntimeEnabledFeatures::sharedFeatures().authorShadowDOMForAnyElementEnabled())
-#endif
     , m_originalEditingBehavior(settings.editingBehaviorType())
 #if ENABLE(TEXT_AUTOSIZING)
     , m_originalTextAutosizingEnabled(settings.textAutosizingEnabled())
@@ -102,10 +98,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 {
     RuntimeEnabledFeatures::sharedFeatures().setCSSExclusionsEnabled(m_originalCSSExclusionsEnabled);
     RuntimeEnabledFeatures::sharedFeatures().setCSSShapesEnabled(m_originalCSSShapesEnabled);
-#if ENABLE(SHADOW_DOM)
-    RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(m_originalShadowDOMEnabled);
-    RuntimeEnabledFeatures::sharedFeatures().setAuthorShadowDOMForAnyElementEnabled(m_originalAuthorShadowDOMForAnyElementEnabled);
-#endif
     settings.setEditingBehaviorType(m_originalEditingBehavior);
 
     for (const auto& standardFont : m_standardFontFamilies)
@@ -222,40 +214,6 @@ void InternalSettings::setMockScrollbarsEnabled(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
     settings()->setMockScrollbarsEnabled(enabled);
-}
-
-static bool urlIsWhitelistedForSetShadowDOMEnabled(const String& url)
-{
-    // This check is just for preventing fuzzers from crashing because of unintended API calls.
-    // You can list your test if needed.
-    return notFound != url.find("fast/dom/shadow/content-shadow-unknown.html")
-        || notFound != url.find("fast/dom/shadow/insertion-points-with-shadow-disabled.html");
-}
-
-void InternalSettings::setShadowDOMEnabled(bool enabled, ExceptionCode& ec)
-{
-    if (!urlIsWhitelistedForSetShadowDOMEnabled(page()->mainFrame().document()->url().string())) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-#if ENABLE(SHADOW_DOM)
-    RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
-#else
-    // Even SHADOW_DOM is off, InternalSettings allows setShadowDOMEnabled(false) to
-    // have broader test coverage. But it cannot be setShadowDOMEnabled(true).
-    if (enabled)
-        ec = INVALID_ACCESS_ERR;
-#endif
-}
-
-void InternalSettings::setAuthorShadowDOMForAnyElementEnabled(bool isEnabled)
-{
-#if ENABLE(SHADOW_DOM)
-    RuntimeEnabledFeatures::sharedFeatures().setAuthorShadowDOMForAnyElementEnabled(isEnabled);
-#else
-    UNUSED_PARAM(isEnabled);
-#endif
 }
 
 void InternalSettings::setTouchEventEmulationEnabled(bool enabled, ExceptionCode& ec)

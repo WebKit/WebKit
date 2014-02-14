@@ -641,8 +641,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSScriptProfileNode.h \
 	DerivedSources/WebCore/JSSecurityPolicyViolationEvent.cpp \
 	DerivedSources/WebCore/JSSecurityPolicyViolationEvent.h \
-	DerivedSources/WebCore/JSShadowRoot.cpp \
-	DerivedSources/WebCore/JSShadowRoot.h \
 	DerivedSources/WebCore/JSSharedWorkerGlobalScope.cpp \
 	DerivedSources/WebCore/JSSharedWorkerGlobalScope.h \
 	DerivedSources/WebCore/JSSharedWorker.cpp \
@@ -1397,7 +1395,6 @@ dom_binding_idls += \
 	$(WebCore)/dom/RangeException.idl \
 	$(WebCore)/dom/RequestAnimationFrameCallback.idl \
 	$(WebCore)/dom/SecurityPolicyViolationEvent.idl \
-	$(WebCore)/dom/ShadowRoot.idl \
 	$(WebCore)/dom/StringCallback.idl \
 	$(WebCore)/dom/Text.idl \
 	$(WebCore)/dom/TextEvent.idl \

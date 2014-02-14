@@ -586,13 +586,6 @@ void DumpRenderTreeSupportGtk::setExperimentalContentSecurityPolicyFeaturesEnabl
 #endif
 }
 
-void DumpRenderTreeSupportGtk::setShadowDOMEnabled(bool enabled)
-{
-#if ENABLE(SHADOW_DOM)
-    RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
-#endif
-}
-
 void DumpRenderTreeSupportGtk::deliverAllMutationsIfNecessary()
 {
     MutationObserver::deliverAllMutations();

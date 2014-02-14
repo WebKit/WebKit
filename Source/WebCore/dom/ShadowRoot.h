@@ -39,13 +39,8 @@ namespace WebCore {
 
 class ShadowRoot final : public DocumentFragment, public TreeScope {
 public:
-    // FIXME: We will support multiple shadow subtrees, however current implementation does not work well
-    // if a shadow root is dynamically created. So we prohibit multiple shadow subtrees
-    // in several elements for a while.
-    // See https://bugs.webkit.org/show_bug.cgi?id=77503 and related bugs.
     enum ShadowRootType {
         UserAgentShadowRoot = 0,
-        AuthorShadowRoot
     };
 
     static PassRefPtr<ShadowRoot> create(Document& document, ShadowRootType type)

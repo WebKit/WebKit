@@ -66,7 +66,6 @@ private:
     HTMLMeterElement(const QualifiedName&, Document&);
     virtual ~HTMLMeterElement();
 
-    virtual bool areAuthorShadowsAllowed() const override { return false; }
     RenderMeter* renderMeter() const;
 
     virtual bool supportLabels() const override { return true; }

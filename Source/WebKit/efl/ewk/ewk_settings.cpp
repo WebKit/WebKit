@@ -256,23 +256,13 @@ void ewk_settings_object_cache_enable_set(Eina_Bool enable)
 
 Eina_Bool ewk_settings_shadow_dom_enable_get()
 {
-#if ENABLE(SHADOW_DOM)
-    return WebCore::RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled();
-#else
     return false;
-#endif
 }
 
 Eina_Bool ewk_settings_shadow_dom_enable_set(Eina_Bool enable)
 {
-#if ENABLE(SHADOW_DOM)
-    enable = !!enable;
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enable);
-    return true;
-#else
     UNUSED_PARAM(enable);
     return false;
-#endif
 }
 
 unsigned ewk_settings_page_cache_capacity_get()

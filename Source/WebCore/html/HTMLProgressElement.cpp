@@ -60,7 +60,7 @@ PassRefPtr<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName&
 
 RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    if (!style.get().hasAppearance() || hasAuthorShadowRoot())
+    if (!style.get().hasAppearance())
         return RenderElement::createFor(*this, std::move(style));
 
     return createRenderer<RenderProgress>(*this, std::move(style));

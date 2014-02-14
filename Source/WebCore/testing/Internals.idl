@@ -35,15 +35,10 @@
 
     [RaisesException] CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node);
 
-#if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
-    [RaisesException] ShadowRoot ensureShadowRoot(Element host);
-    [RaisesException] ShadowRoot createShadowRoot(Element host);
-    [RaisesException] ShadowRoot shadowRoot(Element host);
-#else
     [RaisesException] Node ensureShadowRoot(Element host);
     [RaisesException] Node createShadowRoot(Element host);
     [RaisesException] Node shadowRoot(Element host);
-#endif
+
     [RaisesException] DOMString shadowRootType(Node root);
     [RaisesException] Element includerFor(Node node);
     [RaisesException] DOMString shadowPseudoId(Element element);

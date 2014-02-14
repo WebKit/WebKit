@@ -28,10 +28,5 @@
     // Introduced in DOM Level 3:
     readonly attribute DOMString       wholeText;
     [RaisesException] Text               replaceWholeText([Default=Undefined] optional DOMString content);
-    // ShadowAware API
-#if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM && defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [ImplementedAs=insertionParentForBinding] readonly attribute Node webkitInsertionParent;
-#endif
-
 };
 

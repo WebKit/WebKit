@@ -94,11 +94,7 @@ Position::Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset offset)
     , m_anchorType(anchorTypeForLegacyEditingPosition(m_anchorNode.get(), m_offset))
     , m_isLegacyEditingPosition(true)
 {
-#if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled()) || !m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
-#else
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
-#endif
     ASSERT(!m_anchorNode || !m_anchorNode->isPseudoElement());
 }
 
@@ -108,14 +104,8 @@ Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
     , m_anchorType(anchorType)
     , m_isLegacyEditingPosition(false)
 {
-#if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled()) || !m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
-#else
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
-#endif
-
     ASSERT(!m_anchorNode || !m_anchorNode->isPseudoElement());
-
     ASSERT(anchorType != PositionIsOffsetInAnchor);
     ASSERT(!((anchorType == PositionIsBeforeChildren || anchorType == PositionIsAfterChildren)
         && (m_anchorNode->isTextNode() || editingIgnoresContent(m_anchorNode.get()))));
@@ -127,15 +117,8 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorTyp
     , m_anchorType(anchorType)
     , m_isLegacyEditingPosition(false)
 {
-#if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled())
-           || !m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowRoot());
-#else
     ASSERT(!m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowRoot());
-#endif
-
     ASSERT(!m_anchorNode || !m_anchorNode->isPseudoElement());
-
     ASSERT(anchorType == PositionIsOffsetInAnchor);
 }
 
@@ -895,13 +878,6 @@ bool Position::nodeIsUserSelectNone(Node* node)
 
 ContainerNode* Position::findParent(const Node* node)
 {
-    // FIXME: See http://web.ug/82697
-
-#if ENABLE(SHADOW_DOM)
-    if (RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled())
-        return node->parentNode();
-#endif
-
     return node->nonShadowBoundaryParentNode();
 }
 

@@ -68,7 +68,6 @@ private:
     enum WrapMethod { NoWrap, SoftWrap, HardWrap };
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
-    virtual bool areAuthorShadowsAllowed() const override { return false; }
 
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) const;
     static String sanitizeUserInputValue(const String&, unsigned maxLength);

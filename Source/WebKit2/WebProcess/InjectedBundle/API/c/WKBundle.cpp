@@ -324,11 +324,6 @@ void WKBundleSetSerialLoadingEnabled(WKBundleRef bundleRef, bool enabled)
     toImpl(bundleRef)->setSerialLoadingEnabled(enabled);
 }
 
-void WKBundleSetShadowDOMEnabled(WKBundleRef bundleRef, bool enabled)
-{
-    toImpl(bundleRef)->setShadowDOMEnabled(enabled);
-}
-
 void WKBundleDispatchPendingLoadRequests(WKBundleRef bundleRef)
 {
     toImpl(bundleRef)->dispatchPendingLoadRequests();

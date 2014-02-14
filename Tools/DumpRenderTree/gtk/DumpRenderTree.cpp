@@ -545,7 +545,6 @@ static void resetDefaultsToConsistentValues()
     DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(webView, false);
     DumpRenderTreeSupportGtk::setCSSRegionsEnabled(webView, true);
     DumpRenderTreeSupportGtk::setExperimentalContentSecurityPolicyFeaturesEnabled(true);
-    DumpRenderTreeSupportGtk::setShadowDOMEnabled(true);
 
     if (gTestRunner) {
         gTestRunner->setAuthenticationPassword("");

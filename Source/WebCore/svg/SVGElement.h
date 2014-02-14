@@ -168,10 +168,6 @@ protected:
 private:
     friend class SVGElementInstance;
 
-    // FIXME: Author shadows should be allowed
-    // https://bugs.webkit.org/show_bug.cgi?id=77938
-    virtual bool areAuthorShadowsAllowed() const override { return false; }
-
     virtual RenderStyle* computedStyle(PseudoId = NOPSEUDO) override final;
     virtual bool willRecalcStyle(Style::Change) override;
 

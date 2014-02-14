@@ -59,7 +59,7 @@ PassRefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagNa
 
 RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    if (hasAuthorShadowRoot() || !document().page()->theme().supportsMeter(style.get().appearance()))
+    if (!document().page()->theme().supportsMeter(style.get().appearance()))
         return RenderElement::createFor(*this, std::move(style));
 
     return createRenderer<RenderMeter>(*this, std::move(style));

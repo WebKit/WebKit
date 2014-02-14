@@ -1,3 +1,16 @@
+2014-02-14  Andreas Kling  <akling@apple.com>
+
+        Purge remaining ENABLE(SHADOW_DOM) cruft.
+        <https://webkit.org/b/128827>
+
+        Reviewed by Antti Koivisto.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * Scripts/webkitperl/FeatureList.pm:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+
 2014-02-13  Brent Fulgham  <bfulgham@apple.com>
 
         Create some latched scrolling tests.

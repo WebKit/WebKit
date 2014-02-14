@@ -50,7 +50,6 @@ private:
     HTMLProgressElement(const QualifiedName&, Document&);
     virtual ~HTMLProgressElement();
 
-    virtual bool areAuthorShadowsAllowed() const override { return false; }
     virtual bool shouldAppearIndeterminate() const override;
     virtual bool supportLabels() const override { return true; }
 

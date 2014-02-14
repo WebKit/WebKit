@@ -176,14 +176,6 @@ public:
     void setWebkitVideoTrackEnabled(bool isEnabled) { m_isVideoTrackEnabled = isEnabled; }
 #endif
 
-#if ENABLE(SHADOW_DOM)
-    bool shadowDOMEnabled() const { return m_isShadowDOMEnabled; }
-    void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
-
-    bool authorShadowDOMForAnyElementEnabled() const { return m_isAuthorShadowDOMForAnyElementEnabled; }
-    void setAuthorShadowDOMForAnyElementEnabled(bool isEnabled) { m_isAuthorShadowDOMForAnyElementEnabled = isEnabled; }
-#endif
-
 #if ENABLE(INPUT_TYPE_DATE)
     bool inputTypeDateEnabled() const { return m_isInputTypeDateEnabled; }
     void setInputTypeDateEnabled(bool isEnabled) { m_isInputTypeDateEnabled = isEnabled; }
@@ -269,11 +261,6 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
     bool m_isVideoTrackEnabled;
-#endif
-
-#if ENABLE(SHADOW_DOM)
-    bool m_isShadowDOMEnabled;
-    bool m_isAuthorShadowDOMForAnyElementEnabled;
 #endif
 
 #if ENABLE(INPUT_TYPE_DATE)

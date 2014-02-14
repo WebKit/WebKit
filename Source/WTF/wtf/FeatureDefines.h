@@ -700,10 +700,6 @@
 #define ENABLE_SCRIPTED_SPEECH 0
 #endif
 
-#if !defined(ENABLE_SHADOW_DOM)
-#define ENABLE_SHADOW_DOM 0
-#endif
-
 #if !defined(ENABLE_SHARED_WORKERS)
 #define ENABLE_SHARED_WORKERS 0
 #endif

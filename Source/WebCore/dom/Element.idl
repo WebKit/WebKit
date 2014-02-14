@@ -116,14 +116,6 @@
     readonly attribute Element nextElementSibling;
     readonly attribute unsigned long childElementCount;
 
-    // ShadowAware API
-#if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM && defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [Reflect=pseudo, ImplementedAs=pseudo] attribute DOMString webkitPseudo;
-    [ImplementedAs=createShadowRoot, RaisesException] ShadowRoot webkitCreateShadowRoot();
-    [ImplementedAs=authorShadowRoot] readonly attribute ShadowRoot webkitShadowRoot;
-    [ImplementedAs=insertionParentForBinding] readonly attribute Node webkitInsertionParent;
-#endif
-
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // CSSOM View Module API
     ClientRectList getClientRects();

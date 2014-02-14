@@ -73,10 +73,6 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 #if ENABLE(VIDEO_TRACK)
     , m_isVideoTrackEnabled(true)
 #endif
-#if ENABLE(SHADOW_DOM)
-    , m_isShadowDOMEnabled(false)
-    , m_isAuthorShadowDOMForAnyElementEnabled(false)
-#endif
 #if ENABLE(INPUT_TYPE_DATE)
     , m_isInputTypeDateEnabled(true)
 #endif

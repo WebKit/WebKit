@@ -54,10 +54,6 @@ public:
 
         bool m_originalCSSExclusionsEnabled;
         bool m_originalCSSShapesEnabled;
-#if ENABLE(SHADOW_DOM)
-        bool m_originalShadowDOMEnabled;
-        bool m_originalAuthorShadowDOMForAnyElementEnabled;
-#endif
         EditingBehaviorType m_originalEditingBehavior;
 
         // Initially empty, only used if changed by a test.
@@ -107,8 +103,6 @@ public:
     void setMockScrollbarsEnabled(bool enabled, ExceptionCode&);
     void setUsesOverlayScrollbars(bool enabled, ExceptionCode&);
     void setTouchEventEmulationEnabled(bool enabled, ExceptionCode&);
-    void setShadowDOMEnabled(bool enabled, ExceptionCode&);
-    void setAuthorShadowDOMForAnyElementEnabled(bool);
     void setStandardFontFamily(const String& family, const String& script, ExceptionCode&);
     void setSerifFontFamily(const String& family, const String& script, ExceptionCode&);
     void setSansSerifFontFamily(const String& family, const String& script, ExceptionCode&);

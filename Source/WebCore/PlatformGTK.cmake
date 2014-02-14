@@ -534,7 +534,6 @@ if (ENABLE_WEBKIT2)
         dom/NodeList.idl
         dom/ProcessingInstruction.idl
         dom/Range.idl
-        dom/ShadowRoot.idl
         dom/Text.idl
         dom/Touch.idl
         dom/TreeWalker.idl

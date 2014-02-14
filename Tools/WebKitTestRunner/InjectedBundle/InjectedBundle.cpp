@@ -252,7 +252,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSetPopupBlockingEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetAlwaysAcceptCookies(m_bundle, false);
     WKBundleSetSerialLoadingEnabled(m_bundle, false);
-    WKBundleSetShadowDOMEnabled(m_bundle, true);
     WKBundleSetCacheModel(m_bundle, 1 /*CacheModelDocumentBrowser*/);
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);

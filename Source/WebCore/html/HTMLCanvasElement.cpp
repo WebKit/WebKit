@@ -132,11 +132,6 @@ void HTMLCanvasElement::willAttachRenderers()
     setIsInCanvasSubtree(true);
 }
 
-bool HTMLCanvasElement::areAuthorShadowsAllowed() const
-{
-    return false;
-}
-
 bool HTMLCanvasElement::canContainRangeEndPoint() const
 {
     return false;

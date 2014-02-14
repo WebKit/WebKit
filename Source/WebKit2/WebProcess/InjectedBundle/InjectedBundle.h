@@ -164,7 +164,6 @@ public:
 
     void setTabKeyCyclesThroughElements(WebPage*, bool enabled);
     void setSerialLoadingEnabled(bool);
-    void setShadowDOMEnabled(bool);
     void setCSSRegionsEnabled(bool);
     void setCSSCompositingEnabled(bool);
     void dispatchPendingLoadRequests();

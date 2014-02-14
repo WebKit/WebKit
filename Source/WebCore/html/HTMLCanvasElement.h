@@ -152,7 +152,6 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual void willAttachRenderers() override;
-    virtual bool areAuthorShadowsAllowed() const override;
 
     virtual bool canContainRangeEndPoint() const override;
     virtual bool canStartSelection() const override;

@@ -246,8 +246,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMRangePrivate.h \
 	DerivedSources/webkitdom/WebKitDOMScreen.cpp \
 	DerivedSources/webkitdom/WebKitDOMScreenPrivate.h \
-	DerivedSources/webkitdom/WebKitDOMShadowRoot.cpp \
-	DerivedSources/webkitdom/WebKitDOMShadowRootPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMStorage.cpp \
 	DerivedSources/webkitdom/WebKitDOMStorageInfo.cpp \
 	DerivedSources/webkitdom/WebKitDOMStorageInfoPrivate.h \
@@ -412,7 +410,6 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMObject.h \
 	DerivedSources/webkitdom/WebKitDOMNavigator.h \
 	DerivedSources/webkitdom/WebKitDOMScreen.h \
-	DerivedSources/webkitdom/WebKitDOMShadowRoot.h \
 	DerivedSources/webkitdom/WebKitDOMWebKitPoint.h \
 	DerivedSources/webkitdom/WebKitDOMWebKitNamedFlow.h \
 	DerivedSources/webkitdom/WebKitDOMDOMMimeType.h \

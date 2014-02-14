@@ -1512,31 +1512,8 @@ PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
     if (alwaysCreateUserAgentShadowRoot())
         ensureUserAgentShadowRoot();
 
-#if ENABLE(SHADOW_DOM)
-    if (RuntimeEnabledFeatures::sharedFeatures().authorShadowDOMForAnyElementEnabled()) {
-        addShadowRoot(ShadowRoot::create(document(), ShadowRoot::AuthorShadowRoot));
-        return shadowRoot();
-    }
-#endif
-
-    // Since some elements recreates shadow root dynamically, multiple shadow
-    // subtrees won't work well in that element. Until they are fixed, we disable
-    // adding author shadow root for them.
-    if (!areAuthorShadowsAllowed()) {
-        ec = HIERARCHY_REQUEST_ERR;
-        return 0;
-    }
-    addShadowRoot(ShadowRoot::create(document(), ShadowRoot::AuthorShadowRoot));
-
-    return shadowRoot();
-}
-
-ShadowRoot* Element::authorShadowRoot() const
-{
-    ShadowRoot* shadowRoot = this->shadowRoot();
-    if (shadowRoot->type() == ShadowRoot::AuthorShadowRoot)
-        return shadowRoot;
-    return 0;
+    ec = HIERARCHY_REQUEST_ERR;
+    return nullptr;
 }
 
 ShadowRoot* Element::userAgentShadowRoot() const
@@ -1545,7 +1522,7 @@ ShadowRoot* Element::userAgentShadowRoot() const
         ASSERT(shadowRoot->type() == ShadowRoot::UserAgentShadowRoot);
         return shadowRoot;
     }
-    return 0;
+    return nullptr;
 }
 
 ShadowRoot& Element::ensureUserAgentShadowRoot()

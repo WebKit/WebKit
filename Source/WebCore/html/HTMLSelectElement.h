@@ -190,7 +190,6 @@ private:
     int nextSelectableListIndexPageAway(int startIndex, SkipDirection) const;
 
     virtual void childrenChanged(const ChildChange&) override;
-    virtual bool areAuthorShadowsAllowed() const override { return false; }
 
     // TypeAheadDataSource functions.
     virtual int indexOfSelectedOption() const override;

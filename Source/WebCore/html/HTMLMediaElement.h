@@ -461,7 +461,6 @@ private:
     void createMediaPlayer();
 
     virtual bool alwaysCreateUserAgentShadowRoot() const override { return true; }
-    virtual bool areAuthorShadowsAllowed() const override { return false; }
 
     virtual bool hasCustomFocusLogic() const override;
     virtual bool supportsFocus() const override;

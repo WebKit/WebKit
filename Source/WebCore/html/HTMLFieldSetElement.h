@@ -53,7 +53,6 @@ private:
     virtual const AtomicString& formControlType() const override;
     virtual bool recalcWillValidate() const override { return false; }
     virtual void childrenChanged(const ChildChange&) override;
-    virtual bool areAuthorShadowsAllowed() const override { return false; }
 
     static void invalidateDisabledStateUnder(Element*);
     void refreshElementsIfNeeded() const;

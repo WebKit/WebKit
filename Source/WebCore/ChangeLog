@@ -1,3 +1,13 @@
+2014-02-14  Andreas Kling  <akling@apple.com>
+
+        Purge remaining ENABLE(SHADOW_DOM) cruft.
+        <https://webkit.org/b/128827>
+
+        Remove the remaining 8.8 million lines of Shadow DOM code to align
+        with goals for intent to ship 60fps on mobile in 2014.
+
+        Reviewed by Antti Koivisto.
+
 2014-02-13  Jer Noble  <jer.noble@apple.com>
 
         [MediaControls][iOS] Embedded YouTube does not show a 'paused' button state after starting

@@ -63,8 +63,6 @@ private:
 
     virtual bool isFrameElementBase() const override { return true; }
 
-    virtual bool areAuthorShadowsAllowed() const override { return false; }
-
     bool viewSourceMode() const { return m_viewSource; }
 
     void setNameAndOpenURL();

@@ -69,9 +69,6 @@ MeterInnerElement::MeterInnerElement(Document& document)
 
 bool MeterInnerElement::rendererIsNeeded(const RenderStyle& style)
 {
-    if (meterElement()->hasAuthorShadowRoot())
-        return HTMLDivElement::rendererIsNeeded(style);
-
     auto render = meterElement()->renderer();
     return render && !render->theme().supportsMeter(render->style().appearance()) && HTMLDivElement::rendererIsNeeded(style);
 }

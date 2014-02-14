@@ -114,8 +114,6 @@ private:
 
     bool dispatchBeforeLoadEvent(const String& sourceURL); // Not implemented, generates a compile error if subclasses call this by mistake.
 
-    virtual bool areAuthorShadowsAllowed() const override { return false; }
-
     virtual RenderWidget* renderWidgetForJSBindings() const = 0;
 
     virtual bool supportsFocus() const override;

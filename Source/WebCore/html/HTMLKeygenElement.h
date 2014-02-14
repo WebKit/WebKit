@@ -39,8 +39,6 @@ public:
 private:
     HTMLKeygenElement(const QualifiedName&, Document&, HTMLFormElement*);
 
-    virtual bool areAuthorShadowsAllowed() const override { return false; }
-
     virtual bool canStartSelection() const override { return false; }
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
