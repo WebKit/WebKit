@@ -2449,6 +2449,7 @@ jquery/attributes.html
 media/W3C/video/events/event_canplaythrough.html
 
 # Spellchecker behavior tests.
+webkit.org/b/108370 editing/spelling/design-mode-spellcheck-off.html [ Failure ]
 webkit.org/b/108370 editing/spelling/context-menu-suggestions-multiword-selection.html [ Failure ]
 webkit.org/b/108370 editing/spelling/context-menu-suggestions-subword-selection.html [ Failure ]
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Failure ]

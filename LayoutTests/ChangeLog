@@ -1,5 +1,33 @@
 2014-02-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
+        Refactoring design-mode-spellcheck-off.html to use asynchronous spellchecking
+        https://bugs.webkit.org/show_bug.cgi?id=127770
+
+        Reviewed by Ryosuke Niwa.
+
+        Enable asynchronous spellchecking in design-mode-spellcheck-off.html.
+
+        Due to js-test-pre.js adds some HTML elements inside the BODY, the misspelled
+        phrase was moved into separated div element. It allows to check spelling marker
+        on desired element instead of whole body.
+
+        It turned out that the test does not underline "asdf" as misspelled although
+        spellcheck attribute is on. To force spellchecking, the caret needs to be moved
+        out of the misspelled word. To be more reliable, the test now contains two test
+        cases in 'desingMode=on' when spellcheck attribute is off and on.
+
+        * editing/spelling/design-mode-spellcheck-off-expected.txt:
+        * editing/spelling/design-mode-spellcheck-off.html:
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+        Skip the test for GTK.
+
+        * platform/win/TestExpectations:
+        Add failing test expectation.
+
+2014-02-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
         Use asynchronous spellchecking in spelling-hasspellingmarker.js
         https://bugs.webkit.org/show_bug.cgi?id=128526
 

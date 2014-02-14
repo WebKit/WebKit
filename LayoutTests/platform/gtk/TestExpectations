@@ -1145,6 +1145,7 @@ Bug(GTK) editing/spelling/grammar-paste.html [ Skip ]
 Bug(GTK) editing/spelling/markers.html [ Skip ]
 
 # Missing asynchronous spellchecking implementation.
+Bug(GTK) editing/spelling/design-mode-spellcheck-off.html [ Skip ]
 Bug(GTK) editing/spelling/spelling-hasspellingmarker.html [ Skip ]
 
 # testRunner.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI

@@ -1,39 +1,49 @@
 <!DOCTYPE html>
 <html>
-<body spellcheck="false"> 
-asdf is misspelled.
-<p>To test this manually, click "asdf" above. There should be no spelling marker for "asdf" after the click.</p>
+<body spellcheck="false">
+<script src="../editing.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="misspelled" onmouseup="checkSpellingMarker()">asdf is misspelled.</div>
 <script>
+description("This tests whether WebKit does not spell check in 'designMode' "
+    + "when spellcheck='false'. To test manually, click arround 'asdf'. "
+    + "There should be no spelling marker for 'asdf' after the click.");
 
-if (window.testRunner)
-    testRunner.dumpAsText();
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
 
 document.designMode = "on";
 
-if (document.activeElement != document.body)
-    document.body.appendChild(document.createTextNode('FAIL: active element before click is not body element'));
-else if (window.testRunner && window.eventSender) {
-    testRunner.waitUntilDone();
+function checkSpellingMarker()
+{
+    // First, verify spelling with spellcheck attribute off.
+    // Move selection to the next word to notify WebKit that "asdf" has been typed/changed
+    // to give a chance to spellcheck.
+    moveSelectionForwardByWordCommand();
 
-    document.body.addEventListener('mousedown', function() {
-        if (document.activeElement != document.body)
-            document.body.appendChild(document.createTextNode('FAIL: active element after click is not body element'));
-        else if (internals.hasSpellingMarker(0, 4))
-            document.body.appendChild(document.createTextNode('FAIL: spell check was invoked'));
-        else
-            document.body.appendChild(document.createTextNode('PASS'));
-        testRunner.notifyDone();
-    });
+    if (window.internals) {
+        shouldBecomeEqual('internals.hasSpellingMarker(0, 4)', 'false', function() {
+            evalAndLog('document.body.setAttribute("spellcheck", "true")');
+            // Do any selection change to force spellchecking after attribute change.
+            moveSelectionForwardByLineCommand();
+            shouldBecomeDifferent('internals.hasSpellingMarker(0, 4)', 'false', finishJSTest);
+        });
+    }
+}
 
-    var x = document.body.offsetLeft + 10;
-    var y = document.body.offsetTop + 10;
+if (window.eventSender) {
+    var misspelledDiv = document.getElementById("misspelled");
+    var x = misspelledDiv.offsetLeft;
+    var y = misspelledDiv.offsetTop;
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();
     eventSender.mouseUp();
-    setTimeout("testRunner.notifyDone();document.body.appendChild(document.createTextNode('FAIL: timeout'));", 500);
-} else
-    document.body.appendChild(document.createTextNode('PASS'));
-
+}
 </script> 
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

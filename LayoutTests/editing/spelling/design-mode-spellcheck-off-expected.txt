@@ -1,4 +1,12 @@
-asdf is misspelled.
-To test this manually, click "asdf" above. There should be no spelling marker for "asdf" after the click.
+This tests whether WebKit does not spell check in 'designMode' when spellcheck='false'. To test manually, click arround 'asdf'. There should be no spelling marker for 'asdf' after the click.
 
-PASS
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.hasSpellingMarker(0, 4) became false
+document.body.setAttribute("spellcheck", "true")
+PASS internals.hasSpellingMarker(0, 4) became different from false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+asdf is misspelled.
