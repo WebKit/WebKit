@@ -2917,3 +2917,15 @@ webkit.org/b/128722 svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.ht
 webkit.org/b/92749 fast/dom/is-protocol-handler-registered.html [ Skip ] 
 
 webkit.org/b/128726 [ Release ] js/regress/emscripten-memops.html [ Failure ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=128789
+js/regress/Int16Array-bubble-sort-with-byteLength.html
+js/regress/Int16Array-bubble-sort.html
+js/regress/chain-custom-getter.html
+js/regress/chain-getter-access.html
+js/regress/marsaglia.html
+js/regress/proto-custom-getter.html
+js/regress/proto-getter-access.html
+js/regress/simple-custom-getter.html
+js/regress/simple-getter-access.html
+
