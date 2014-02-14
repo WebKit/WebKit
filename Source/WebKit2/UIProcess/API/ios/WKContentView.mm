@@ -168,6 +168,11 @@ using namespace WebKit;
     return toAPI(_page.get());
 }
 
+- (BOOL)isAssistingNode
+{
+    return [_interactionView isEditable];
+}
+
 - (void)setMinimumSize:(CGSize)size
 {
     _page->drawingArea()->setSize(IntSize(size), IntSize(), IntSize());

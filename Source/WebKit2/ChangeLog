@@ -1,3 +1,33 @@
+2014-02-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        <rdar://problem/15994340> WK2: Cannot scroll to the bottom of the page when the keyboard is on the screen
+        https://bugs.webkit.org/show_bug.cgi?id=128710
+
+        Reviewed by Enrica Casucci.
+
+        WKView/WKWebView needs to adapt the UIScrollView insets to leave some space for the keyboard.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView dealloc]):
+        (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+        (-[WKWebView _keyboardWillChangeFrame:]):
+        (-[WKWebView _keyboardDidChangeFrame:]):
+        (-[WKWebView _keyboardWillShow:]):
+        (-[WKWebView _keyboardWillHide:]):
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView isAssistingNode]):
+        * UIProcess/API/ios/WKInteractionView.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView dealloc]):
+        (-[WKView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        (-[WKView _keyboardChangedWithInfo:adjustScrollView:]):
+        (-[WKView _keyboardWillChangeFrame:]):
+        (-[WKView _keyboardDidChangeFrame:]):
+        (-[WKView _keyboardWillShow:]):
+        (-[WKView _keyboardWillHide:]):
+
 2014-02-14  Dan Bernstein  <mitz@apple.com>
 
         Stop using PLATFORM(MAC) in WebKit2/PluginProcess except where it means “OS X but not iOS”

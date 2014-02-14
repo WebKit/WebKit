@@ -51,11 +51,12 @@ struct WebPageConfiguration;
 WK_API_CLASS
 @interface WKContentView : UIView
 
-@property (readonly, nonatomic) WKBrowsingContextController *browsingContextController;
+@property (nonatomic, readonly) WKBrowsingContextController *browsingContextController;
 
 @property (nonatomic, assign) id <WKContentViewDelegate> delegate;
 
-@property (readonly) WKPageRef _pageRef;
+@property (nonatomic, readonly) WKPageRef _pageRef;
+@property (nonatomic, readonly) BOOL isAssistingNode;
 
 - (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration;
 
