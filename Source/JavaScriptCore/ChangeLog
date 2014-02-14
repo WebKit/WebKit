@@ -1,3 +1,20 @@
+2014-02-13  Mark Lam  <mark.lam@apple.com>
+
+        The JSContainerConvertor and ObjcContainerConvertor need to protect JSValueRefs. Part 2.
+        <https://webkit.org/b/128764>
+
+        Reviewed by Mark Hahnenberg.
+
+        toJS() is the wrong cast function to use. We need to use toJSForGC() instead.
+        Also we need to acquire the JSLock to prevent concurrent accesses to the
+        Strong handle list.
+
+        * API/JSValue.mm:
+        (JSContainerConvertor::add):
+        (containerValueToObject):
+        (ObjcContainerConvertor::add):
+        (objectToValue):
+
 2014-02-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSManagedValue::dealloc modifies NSMapTable while iterating it
