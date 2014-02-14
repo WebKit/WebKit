@@ -1,3 +1,18 @@
+2014-02-14  Wojciech Bielawski  <w.bielawski@samsung.com>
+
+        (try)append and insert operations don't need new operator for PODs
+        https://bugs.webkit.org/show_bug.cgi?id=128185
+
+        Reviewed by Darin Adler.
+
+        Vector's methods use VectorCopier to copy data.
+        VectorCopier for PODs exteded to be used with different types. For different types placement new copy approach is applied. For the same types memcpy is applied.
+
+        * wtf/Vector.h:
+        (WTF::OverflowHandler>::append): use VectorCopier to copy data.
+        (WTF::OverflowHandler>::tryAppend): use VectorCopier to copy data.
+        (WTF::OverflowHandler>::insert): use VectorCopier to copy data.
+
 2014-02-13  Daniel Bates  <dabates@apple.com>
 
         Fix the iOS build after <http://trac.webkit.org/changeset/164064

@@ -136,10 +136,11 @@ struct VectorCopier;
 template<typename T>
 struct VectorCopier<false, T>
 {
-    static void uninitializedCopy(const T* src, const T* srcEnd, T* dst) 
+    template<typename U>
+    static void uninitializedCopy(const T* src, const T* srcEnd, U* dst)
     {
         while (src != srcEnd) {
-            new (NotNull, dst) T(*src);
+            new (NotNull, dst) U(*src);
             ++dst;
             ++src;
         }
@@ -149,9 +150,14 @@ struct VectorCopier<false, T>
 template<typename T>
 struct VectorCopier<true, T>
 {
-    static void uninitializedCopy(const T* src, const T* srcEnd, T* dst) 
+    static void uninitializedCopy(const T* src, const T* srcEnd, T* dst)
     {
         memcpy(dst, src, reinterpret_cast<const char*>(srcEnd) - reinterpret_cast<const char*>(src));
+    }
+    template<typename U>
+    static void uninitializedCopy(const T* src, const T* srcEnd, U* dst)
+    {
+        VectorCopier<false, T>::uninitializedCopy(src, srcEnd, dst);
     }
 };
 
@@ -1004,7 +1010,6 @@ void Vector<T, inlineCapacity, OverflowHandler>::shrinkCapacity(size_t newCapaci
 // Templatizing these is better than just letting the conversion happen implicitly,
 // because for instance it allows a PassRefPtr to be appended to a RefPtr vector
 // without refcount thrash.
-
 template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
 void Vector<T, inlineCapacity, OverflowHandler>::append(const U* data, size_t dataSize)
 {
@@ -1016,8 +1021,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::append(const U* data, size_t da
     if (newSize < m_size)
         CRASH();
     T* dest = end();
-    for (size_t i = 0; i < dataSize; ++i)
-        new (NotNull, &dest[i]) T(data[i]);
+    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], dest);
     m_size = newSize;
 }
 
@@ -1034,8 +1038,7 @@ bool Vector<T, inlineCapacity, OverflowHandler>::tryAppend(const U* data, size_t
     if (newSize < m_size)
         return false;
     T* dest = end();
-    for (size_t i = 0; i < dataSize; ++i)
-        new (NotNull, &dest[i]) T(data[i]);
+    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], dest);
     m_size = newSize;
     return true;
 }
@@ -1097,8 +1100,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, const U
         CRASH();
     T* spot = begin() + position;
     TypeOperations::moveOverlapping(spot, end(), spot + dataSize);
-    for (size_t i = 0; i < dataSize; ++i)
-        new (NotNull, &spot[i]) T(data[i]);
+    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], spot);
     m_size = newSize;
 }
  
