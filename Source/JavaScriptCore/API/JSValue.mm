@@ -37,6 +37,7 @@
 #import "ObjcRuntimeExtras.h"
 #import "JSCInlines.h"
 #import "JSCJSValue.h"
+#import "Strong.h"
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/ObjcRuntimeExtras.h>
@@ -595,6 +596,7 @@ private:
     JSGlobalContextRef m_context;
     HashMap<JSValueRef, id> m_objectMap;
     Vector<Task> m_worklist;
+    Vector<JSC::Strong<JSC::Unknown>> m_jsValues;
 };
 
 inline id JSContainerConvertor::convert(JSValueRef value)
@@ -611,6 +613,8 @@ inline id JSContainerConvertor::convert(JSValueRef value)
 
 void JSContainerConvertor::add(Task task)
 {
+    JSC::ExecState* exec = toJS(m_context);
+    m_jsValues.append(JSC::Strong<JSC::Unknown>(exec->vm(), toJS(exec, task.js)));
     m_objectMap.add(task.js, task.objc);
     if (task.type != ContainerNone)
         m_worklist.append(task);
@@ -817,6 +821,7 @@ private:
     JSContext *m_context;
     HashMap<id, JSValueRef> m_objectMap;
     Vector<Task> m_worklist;
+    Vector<JSC::Strong<JSC::Unknown>> m_jsValues;
 };
 
 JSValueRef ObjcContainerConvertor::convert(id object)
@@ -834,6 +839,8 @@ JSValueRef ObjcContainerConvertor::convert(id object)
 
 void ObjcContainerConvertor::add(ObjcContainerConvertor::Task task)
 {
+    JSC::ExecState* exec = toJS(m_context.JSGlobalContextRef);
+    m_jsValues.append(JSC::Strong<JSC::Unknown>(exec->vm(), toJS(exec, task.js)));
     m_objectMap.add(task.objc, task.js);
     if (task.type != ContainerNone)
         m_worklist.append(task);

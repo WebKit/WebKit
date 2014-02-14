@@ -1,3 +1,18 @@
+2014-02-13  Mark Lam  <mark.lam@apple.com>
+
+        The JSContainerConvertor and ObjcContainerConvertor need to protect JSValueRefs.
+        <https://webkit.org/b/128764>
+
+        Reviewed by Mark Hahnenberg.
+
+        Added a vector of Strong<Unknown> references in the 2 containers, and append
+        the newly created JSValues to those vectors. This will keep all those JS objects
+        alive for the duration of the conversion.
+
+        * API/JSValue.mm:
+        (JSContainerConvertor::add):
+        (ObjcContainerConvertor::add):
+
 2014-02-13  Matthew Mirman  <mmirman@apple.com>
 
         Added GetMyArgumentsLength to FTL
