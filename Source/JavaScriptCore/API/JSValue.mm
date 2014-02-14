@@ -38,6 +38,7 @@
 #import "JSCInlines.h"
 #import "JSCJSValue.h"
 #import "Strong.h"
+#import "StrongInlines.h"
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/ObjcRuntimeExtras.h>

@@ -1,3 +1,9 @@
+2014-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speculative Release build fix after r164077.
+
+        * API/JSValue.mm:
+
 2014-02-13  Mark Lam  <mark.lam@apple.com>
 
         The JSContainerConvertor and ObjcContainerConvertor need to protect JSValueRefs.
