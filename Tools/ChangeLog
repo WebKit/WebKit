@@ -1,3 +1,14 @@
+2014-02-13  David Farler  <dfarler@apple.com>
+
+        DumpRenderTree fails to build: Perl support module building for OS X but linking for the simulator
+        https://bugs.webkit.org/show_bug.cgi?id=128780
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/Makefile.PL:
+        Use `xcrun -find clang` instead of `xcrun --sdk $ENV{SDKROOT} -find clang,
+        which will pick up SDKROOT=iphonesimulator from building the Xcode aggregate target.
+
 2014-02-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r164073 and r164080.

@@ -28,7 +28,7 @@ use 5.008000;
 use Config;
 use ExtUtils::MakeMaker;
 
-chomp(my $cc = my $ld = `xcrun -sdk $ENV{SDKROOT} -find clang`);
+chomp(my $cc = my $ld = `xcrun -find clang`);
 
 # Remove -arch flags (especially "-arch ppc") from linker flags.
 my $archflags = join(" ", map { ("-arch", $_) } split(" ", $ENV{ARCHS})) . " ";
