@@ -31,6 +31,10 @@
 #import "WKBackForwardListItemInternal.h"
 #import "WKNSArray.h"
 
+WK_EXPORT NSString * const WKBackForwardListDidChangeNotification = @"WKBackForwardListDidChangeNotification";
+WK_EXPORT NSString * const WKBackForwardListAddedItemKey = @"WKBackForwardListAddedItemKey";
+WK_EXPORT NSString * const WKBackForwardListRemovedItemsKey = @"WKBackForwardListRemovedItemsKey";
+
 using namespace WebKit;
 
 @implementation WKBackForwardList {

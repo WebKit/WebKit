@@ -87,7 +87,7 @@ public:
     virtual void processDidBecomeResponsive(WebKit::WebPageProxy*) { }
     virtual void processDidCrash(WebKit::WebPageProxy*) { }
 
-    virtual void didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem* addedItem, Vector<RefPtr<API::Object>>* removedItems) { }
+    virtual void didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem* addedItem, Vector<RefPtr<WebKit::WebBackForwardListItem>> removedItems) { }
     virtual void willGoToBackForwardListItem(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem*, API::Object*) { }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

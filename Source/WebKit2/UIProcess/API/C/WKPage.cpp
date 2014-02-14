@@ -895,14 +895,20 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.processDidCrash(toAPI(page), m_client.base.clientInfo);
         }
 
-        virtual void didChangeBackForwardList(WebPageProxy* page, WebBackForwardListItem* addedItem, Vector<RefPtr<API::Object>>* removedItems) override
+        virtual void didChangeBackForwardList(WebPageProxy* page, WebBackForwardListItem* addedItem, Vector<RefPtr<WebBackForwardListItem>> removedItems) override
         {
             if (!m_client.didChangeBackForwardList)
                 return;
 
             RefPtr<API::Array> removedItemsArray;
-            if (removedItems && !removedItems->isEmpty())
-                removedItemsArray = API::Array::create(std::move(*removedItems));
+            if (!removedItems.isEmpty()) {
+                Vector<RefPtr<API::Object>> removedItemsVector;
+                removedItemsVector.reserveInitialCapacity(removedItems.size());
+                for (auto& removedItem : removedItems)
+                    removedItemsVector.append(std::move(removedItem));
+
+                removedItemsArray = API::Array::create(std::move(removedItemsVector));
+            }
 
             m_client.didChangeBackForwardList(toAPI(page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.base.clientInfo);
         }

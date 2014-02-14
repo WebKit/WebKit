@@ -35,4 +35,10 @@
 #endif
 #endif
 
+#ifdef __cplusplus
+#define WK_EXTERN extern "C" __attribute__((visibility ("default")))
+#else
+#define WK_EXTERN extern __attribute__((visibility ("default")))
+#endif
+
 #define WK_DESIGNATED_INITIALIZER

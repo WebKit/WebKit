@@ -855,9 +855,9 @@ void WebPageProxy::tryRestoreScrollPosition()
     m_process->send(Messages::WebPage::TryRestoreScrollPosition(), m_pageID);
 }
 
-void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<RefPtr<API::Object>>* removed)
+void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<RefPtr<WebBackForwardListItem>> removed)
 {
-    m_loaderClient->didChangeBackForwardList(this, added, removed);
+    m_loaderClient->didChangeBackForwardList(this, added, std::move(removed));
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     m_pageClient.clearCustomSwipeViews();

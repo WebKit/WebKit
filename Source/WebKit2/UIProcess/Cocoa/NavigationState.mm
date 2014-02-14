@@ -30,6 +30,8 @@
 
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
+#import "WKBackForwardListInternal.h"
+#import "WKBackForwardListItemInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNavigationActionInternal.h"
 #import "WKNavigationDelegatePrivate.h"
@@ -370,6 +372,26 @@ void NavigationState::LoaderClient::didLayout(WebKit::WebPageProxy*, WebCore::La
         return;
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView renderingProgressDidChange:renderingProgressEvents(layoutMilestones)];
+}
+
+void NavigationState::LoaderClient::didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem* addedItem, Vector<RefPtr<WebKit::WebBackForwardListItem>> removedItems)
+{
+    auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
+
+    if (addedItem)
+        [userInfo setObject:wrapper(*addedItem) forKey:WKBackForwardListAddedItemKey];
+
+    if (!removedItems.isEmpty()) {
+        Vector<id> removed;
+        removed.reserveInitialCapacity(removedItems.size());
+
+        for (const auto& removedItem : removedItems)
+            removed.uncheckedAppend(wrapper(*removedItem));
+
+        [userInfo setObject:adoptNS([[NSArray alloc] initWithObjects:removed.data() count:removed.size()]).get() forKey:WKBackForwardListRemovedItemsKey];
+    }
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:WKBackForwardListDidChangeNotification object:wrapper(m_navigationState.m_webView->_page->backForwardList()) userInfo:userInfo.get()];
 }
 
 void NavigationState::willChangeIsLoading()

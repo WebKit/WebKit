@@ -1,3 +1,31 @@
+2014-02-14  Anders Carlsson  <andersca@apple.com>
+
+        Add WKBackForwardListDidChangeNotification 
+        https://bugs.webkit.org/show_bug.cgi?id=128839
+
+        Reviewed by Dan Bernstein.
+
+        Also, make LoaderClient::didChangeBackForwardList take a Vector of WebBackForwardListItems
+        instead of a pointer to a Vector of API::Objects.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didChangeBackForwardList):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::LoaderClient::didChangeBackForwardList):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        (WebKit::WebBackForwardList::clear):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+        * UIProcess/WebPageProxy.h:
+
 2014-02-12  Jer Noble  <jer.noble@apple.com>
 
         [iOS][WK2] Always enable AVKit in WK2

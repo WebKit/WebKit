@@ -74,7 +74,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
     if (!m_capacity || !newItem || !m_page)
         return;
 
-    Vector<RefPtr<API::Object>> removedItems;
+    Vector<RefPtr<WebBackForwardListItem>> removedItems;
     
     if (m_hasCurrentIndex) {
         // Toss everything in the forward list.
@@ -127,7 +127,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
     if (m_currentIndex <= m_entries.size())
         m_entries.insert(m_currentIndex, newItem);
 
-    m_page->didChangeBackForwardList(newItem, &removedItems);
+    m_page->didChangeBackForwardList(newItem, std::move(removedItems));
 }
 
 void WebBackForwardList::goToItem(WebBackForwardListItem* item)
@@ -144,7 +144,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
     }
     if (index < m_entries.size()) {
         m_currentIndex = index;
-        m_page->didChangeBackForwardList(0, 0);
+        m_page->didChangeBackForwardList(nullptr, { });
     }
 }
 
@@ -257,7 +257,7 @@ void WebBackForwardList::clear()
         return;
 
     RefPtr<WebBackForwardListItem> currentItem = this->currentItem();
-    Vector<RefPtr<API::Object>> removedItems;
+    Vector<RefPtr<WebBackForwardListItem>> removedItems;
 
     if (!currentItem) {
         // We should only ever have no current item if we also have no current item index.
@@ -275,7 +275,7 @@ void WebBackForwardList::clear()
 
         m_entries.clear();
         m_hasCurrentIndex = false;
-        m_page->didChangeBackForwardList(0, &removedItems);
+        m_page->didChangeBackForwardList(nullptr, std::move(removedItems));
 
         return;
     }
@@ -302,7 +302,7 @@ void WebBackForwardList::clear()
         m_hasCurrentIndex = false;
     }
 
-    m_page->didChangeBackForwardList(0, &removedItems);
+    m_page->didChangeBackForwardList(nullptr, std::move(removedItems));
 }
 
 } // namespace WebKit
