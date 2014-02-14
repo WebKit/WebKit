@@ -1,5 +1,24 @@
 2014-02-13  Jer Noble  <jer.noble@apple.com>
 
+        [MediaControls][iOS] Start playback button is visible when playing embedded YouTube
+        https://bugs.webkit.org/show_bug.cgi?id=128754
+
+        Reviewed by Eric Carlson.
+
+        Update shouldHaveStartPlaybackButton to match the behavior of the plugin proxy.
+
+        Add a accessor to determine whether playback has been requested:
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::userGestureRequired):
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+
+        Update the logic of shouldHaveStartPlaybackButton.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.shouldHaveStartPlaybackButton):
+
+2014-02-13  Jer Noble  <jer.noble@apple.com>
+
         [MediaControls] Add support for a loading progress meter
         https://bugs.webkit.org/show_bug.cgi?id=128651
 

@@ -38,4 +38,5 @@
     void updateTextTrackContainer();
     readonly attribute boolean mediaPlaybackAllowsInline;
     readonly attribute boolean supportsFullscreen;
+    readonly attribute boolean userGestureRequired;
 };

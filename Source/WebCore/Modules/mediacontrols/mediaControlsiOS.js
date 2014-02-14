@@ -47,19 +47,24 @@ ControllerIOS.prototype = {
     },
 
     shouldHaveStartPlaybackButton: function() {
-        if (this.video.error)
-            return true;
+        var allowsInline = this.host.mediaPlaybackAllowsInline;
+
+        if (this.isAudio() && allowsInline)
+            return false;
 
         if (this.isFullScreen())
             return false;
 
-        if (!this.host.mediaPlaybackAllowsInline)
-            return true;
+        if (!this.video.currentSrc && this.video.error)
+            return false;
 
-        if (this.video.readyState <= HTMLMediaElement.HAVE_METADATA)
-            return true;
+        if (!this.video.controls && allowsInline)
+            return false;
 
-        return false;
+        if (!this.host.userGestureRequired && allowsInline)
+            return false;
+
+        return true;
     },
 
     shouldHaveControls: function() {
