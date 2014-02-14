@@ -76,6 +76,9 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
 {
+    if (hasChangedProperty(ScrolledContentsLayer))
+        setScrolledContentsLayer(stateNode.scrolledContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
+
     if (hasChangedProperty(CounterScrollingLayer))
         setCounterScrollingLayer(stateNode.counterScrollingLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
@@ -211,13 +214,21 @@ void ScrollingStateScrollingNode::setFooterHeight(int footerHeight)
     setPropertyChanged(FooterHeight);
 }
 
+void ScrollingStateScrollingNode::setScrolledContentsLayer(const LayerRepresentation& layerRepresentation)
+{
+    if (layerRepresentation == m_scrolledContentsLayer)
+        return;
+    
+    m_scrolledContentsLayer = layerRepresentation;
+    setPropertyChanged(ScrolledContentsLayer);
+}
+
 void ScrollingStateScrollingNode::setCounterScrollingLayer(const LayerRepresentation& layerRepresentation)
 {
     if (layerRepresentation == m_counterScrollingLayer)
         return;
     
     m_counterScrollingLayer = layerRepresentation;
-
     setPropertyChanged(CounterScrollingLayer);
 }
 
@@ -227,7 +238,6 @@ void ScrollingStateScrollingNode::setHeaderLayer(const LayerRepresentation& laye
         return;
     
     m_headerLayer = layerRepresentation;
-
     setPropertyChanged(HeaderLayer);
 }
 
@@ -238,7 +248,6 @@ void ScrollingStateScrollingNode::setFooterLayer(const LayerRepresentation& laye
         return;
     
     m_footerLayer = layerRepresentation;
-
     setPropertyChanged(FooterLayer);
 }
 

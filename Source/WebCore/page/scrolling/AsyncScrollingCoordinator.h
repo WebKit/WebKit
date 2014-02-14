@@ -87,7 +87,7 @@ private:
     virtual void clearStateTree() override;
 
     virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) override;
-    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer* scrollLayer, GraphicsLayer* counterScrollingLayer) override;
+    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer*, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer) override;
     virtual String scrollingStateTreeAsText() const override;
     virtual bool isRubberBandInProgress() const override;
     virtual void setScrollPinningBehavior(ScrollPinningBehavior) override;
@@ -103,13 +103,6 @@ private:
     void ensureRootStateNodeForFrameView(FrameView*);
     void updateMainFrameScrollLayerPosition();
 
-    void setScrollLayerForNode(GraphicsLayer*, ScrollingStateNode*);
-    void setCounterScrollingLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
-    void setHeaderLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
-    void setFooterLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
-    void setNonFastScrollableRegionForNode(const Region&, ScrollingStateScrollingNode*);
-    void setWheelEventHandlerCountForNode(unsigned, ScrollingStateScrollingNode*);
-    void setScrollBehaviorForFixedElementsForNode(ScrollBehaviorForFixedElements, ScrollingStateScrollingNode*);
     // FIXME: move somewhere else?
     void setScrollbarPaintersFromScrollbarsForNode(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar, ScrollingStateScrollingNode*);
 

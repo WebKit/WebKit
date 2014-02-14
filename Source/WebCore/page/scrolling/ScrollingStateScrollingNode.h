@@ -60,6 +60,7 @@ public:
         WheelEventHandlerCount,
         ReasonsForSynchronousScrolling,
         RequestedScrollPosition,
+        ScrolledContentsLayer,
         CounterScrollingLayer,
         HeaderHeight,
         FooterHeight,
@@ -109,6 +110,10 @@ public:
     int footerHeight() const { return m_footerHeight; }
     void setFooterHeight(int);
 
+    // This is a layer with the contents that move (only used for overflow:scroll).
+    const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
+    void setScrolledContentsLayer(const LayerRepresentation&);
+
     // This is a layer moved in the opposite direction to scrolling, for example for background-attachment:fixed
     const LayerRepresentation& counterScrollingLayer() const { return m_counterScrollingLayer; }
     void setCounterScrollingLayer(const LayerRepresentation&);
@@ -133,6 +138,7 @@ private:
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&, ScrollingStateTree&);
 
+    LayerRepresentation m_scrolledContentsLayer;
     LayerRepresentation m_counterScrollingLayer;
     LayerRepresentation m_headerLayer;
     LayerRepresentation m_footerLayer;

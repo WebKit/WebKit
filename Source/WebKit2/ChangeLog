@@ -1,3 +1,23 @@
+2014-02-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Give ScrollingTree(State)Nodes a reference to another layer, which is used for moving overflow:scroll contents around
+        https://bugs.webkit.org/show_bug.cgi?id=128790
+
+        Reviewed by Beth Dakin.
+
+        Have scrolling tree nodes and state nodes track another layer, the
+        "scrolled contents layer", for accelerated overflow:scroll.
+        
+        When making ScrollingTreeScrollingNodes for overflow:scroll, the node's
+        layer will point to the composited element's primary layer, and its
+        scrolledContentsLayer to the layer that gets moved around by scrolling.
+        
+        Do some other cleanup on AsyncScrollingCoordinator, removing
+        functions that just called through to nodes.
+
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+
 2014-02-14  Anders Carlsson  <andersca@apple.com>
 
         Add -[WKWebView _handle]

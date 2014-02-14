@@ -100,6 +100,9 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
                 scrollingStateNode->setLayer(layerTreeHost.getLayer(scrollingStateNode->layer()));
 
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
+                scrollingStateNode->setScrolledContentsLayer(layerTreeHost.getLayer(scrollingStateNode->scrolledContentsLayer()));
+
             if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
                 scrollingStateNode->setCounterScrollingLayer(layerTreeHost.getLayer(scrollingStateNode->counterScrollingLayer()));
 

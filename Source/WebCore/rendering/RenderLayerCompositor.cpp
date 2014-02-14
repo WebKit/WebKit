@@ -1566,7 +1566,7 @@ void RenderLayerCompositor::fixedRootBackgroundLayerChanged()
         if (!renderViewBacking)
             return;
 
-        scrollingCoordinator->updateScrollingNode(renderViewBacking->scrollLayerID(), scrollLayer(), fixedRootBackgroundLayer());
+        scrollingCoordinator->updateScrollingNode(renderViewBacking->scrollLayerID(), scrollLayer(), nullptr, fixedRootBackgroundLayer());
     }
 }
 

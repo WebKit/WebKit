@@ -1,3 +1,47 @@
+2014-02-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Give ScrollingTree(State)Nodes a reference to another layer, which is used for moving overflow:scroll contents around
+        https://bugs.webkit.org/show_bug.cgi?id=128790
+
+        Reviewed by Beth Dakin.
+
+        Have scrolling tree nodes and state nodes track another layer, the
+        "scrolled contents layer", for accelerated overflow:scroll.
+        
+        When making ScrollingTreeScrollingNodes for overflow:scroll, the node's
+        layer will point to the composited element's primary layer, and its
+        scrolledContentsLayer to the layer that gets moved around by scrolling.
+        
+        Do some other cleanup on AsyncScrollingCoordinator, removing
+        functions that just called through to nodes.
+
+        * WebCore.exp.in:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged):
+        (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::updateScrollingNode):
+        (WebCore::AsyncScrollingCoordinator::updateViewportConstrainedNode):
+        (WebCore::AsyncScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::updateScrollingNode):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setScrolledContentsLayer):
+        (WebCore::ScrollingStateScrollingNode::setCounterScrollingLayer):
+        (WebCore::ScrollingStateScrollingNode::setHeaderLayer):
+        (WebCore::ScrollingStateScrollingNode::setFooterLayer):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::updateBeforeChildren):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateBeforeChildren):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::fixedRootBackgroundLayerChanged):
+
 2014-02-14  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit needs heuristics to differentiate lists used for layout from semantic data lists, similar to the heuristics for layout tables versus data tables.
