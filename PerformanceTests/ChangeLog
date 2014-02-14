@@ -1,5 +1,24 @@
 2014-02-13  Zoltan Horvath  <zoltan@webkit.org>
 
+        [CSS Shapes] Add performance test for complex polygon with shape-margin
+        https://bugs.webkit.org/show_bug.cgi?id=128769
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch modifies the logic of createShapeOutsideTest to accept multiple
+        CSS properties from the test. The patch adds performance test for complex
+        polygon shape (self intersecting at multiple places) case, moreover we
+        apply shape-margin on the polygon also.
+
+        * Layout/Shapes/ShapeOutsideContentBox.html:
+        * Layout/Shapes/ShapeOutsideInset.html:
+        * Layout/Shapes/ShapeOutsidePolygonWithMargin.html: Added.
+        * Layout/Shapes/ShapeOutsideRaster.html:
+        * Layout/Shapes/ShapeOutsideSimplePolygon.html:
+        * Layout/Shapes/resources/shapes.js:
+
+2014-02-13  Zoltan Horvath  <zoltan@webkit.org>
+
         [CSS Shapes] Add performance test for raster shape
         https://bugs.webkit.org/show_bug.cgi?id=128746
 

@@ -22,16 +22,16 @@
         return paragraph;
     }
 
-    function createFloatingNode(width, height, shape) {
+    function createFloatingNode(properties) {
         if (!templateFloatingNode) {
             templateFloatingNode = document.createElement("div");
             templateFloatingNode.className = "floatingObject";
         }
 
         var float = templateFloatingNode.cloneNode(false);
-        float.style.width = width;
-        float.style.height = height;
-        float.style.webkitShapeOutside = shape;
+        for (prop in properties) {
+            float.style[prop] = properties[prop];
+        }
         return float;
     }
 
@@ -41,10 +41,10 @@
         }
     }
 
-    function createFloatingObjects(width, height, shape, floatingObjectCount) {
+    function createFloatingObjects(properties, floatingObjectCount) {
         var testBox = document.createElement("div");
         for (var i = 0; i < floatingObjectCount; ++i) {
-            testBox.appendChild(createFloatingNode(width, height, shape));
+            testBox.appendChild(createFloatingNode(properties));
             testBox.appendChild(createParagraphNode())
         }
         testBox.className = "testBox";
@@ -58,13 +58,13 @@
         }
     }
 
-    function createShapeOutsideTest(width, height, shape, shapeObjectCount) {
+    function createShapeOutsideTest(properties, shapeObjectCount) {
         shapeObjectCount = shapeObjectCount || DEFAULT_SHAPE_OBJECT_COUNT;
 
-        var floatingObjects = createFloatingObjects(width, height, shape, shapeObjectCount);
+        var floatingObjects = createFloatingObjects(properties, shapeObjectCount);
         document.body.appendChild(floatingObjects);
         return {
-            description: "Testing shapes with " + shape +" using " + shapeObjectCount + " shapes.",
+            description: "Testing shapes with " + properties['webkitShapeOutside'] +" using " + shapeObjectCount + " shapes.",
             run: function() {
                 applyFloating();
                 document.body.offsetTop;
