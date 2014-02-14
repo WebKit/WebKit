@@ -1,3 +1,24 @@
+2014-02-14  Antoine Quint  <graouts@webkit.org>
+
+        Web Inspector: color wheel should support Retina displays
+        https://bugs.webkit.org/show_bug.cgi?id=124355
+
+        Reviewed by Timothy Hatcher.
+
+        Take into account the devicePixelRatio in order to draw the color wheel
+        with as many colors as we can draw with the current DPI and to correctly
+        convert from page coordinates to canvas coordinates when dealing with
+        mouse events.
+
+        * UserInterface/ColorWheel.js:
+        (WebInspector.ColorWheel.prototype.set dimension):
+        (WebInspector.ColorWheel.prototype.get tintedColor):
+        (WebInspector.ColorWheel.prototype.get rawColor):
+        (WebInspector.ColorWheel.prototype._drawRawCanvas):
+        (WebInspector.ColorWheel.prototype._colorAtPointWithBrightness):
+        (WebInspector.ColorWheel.prototype._drawTintedCanvas):
+        (WebInspector.ColorWheel.prototype._draw):
+
 2014-02-13  Brian Burg  <bburg@apple.com>
 
         Web Inspector: DataGrid should support editing tables with arbitrary columns

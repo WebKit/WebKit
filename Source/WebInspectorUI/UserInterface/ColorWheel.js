@@ -51,8 +51,10 @@ WebInspector.ColorWheel.prototype = {
 
     set dimension(dimension)
     {
-        this._finalCanvas.width = this._tintedCanvas.width = this._rawCanvas.width = dimension;
-        this._finalCanvas.height = this._tintedCanvas.height = this._rawCanvas.height = dimension;
+        this._finalCanvas.width = this._tintedCanvas.width = this._rawCanvas.width = dimension * window.devicePixelRatio;
+        this._finalCanvas.height = this._tintedCanvas.height = this._rawCanvas.height = dimension * window.devicePixelRatio;
+
+        this._finalCanvas.style.width = this._finalCanvas.style.height = dimension + "px";
 
         this._dimension = dimension;
         // We shrink the radius a bit for better anti-aliasing.
@@ -83,7 +85,7 @@ WebInspector.ColorWheel.prototype = {
     get tintedColor()
     {
         if (this._crosshairPosition)
-            return this._colorAtPointWithBrightness(this._crosshairPosition.x, this._crosshairPosition.y, this._brightness);
+            return this._colorAtPointWithBrightness(this._crosshairPosition.x * window.devicePixelRatio, this._crosshairPosition.y * window.devicePixelRatio, this._brightness);
 
         return new WebInspector.Color(WebInspector.Color.Format.RGBA, [0, 0, 0, 0]);
     },
@@ -98,7 +100,7 @@ WebInspector.ColorWheel.prototype = {
     get rawColor()
     {
         if (this._crosshairPosition)
-            return this._colorAtPointWithBrightness(this._crosshairPosition.x, this._crosshairPosition.y, 1);
+            return this._colorAtPointWithBrightness(this._crosshairPosition.x * window.devicePixelRatio, this._crosshairPosition.y * window.devicePixelRatio, 1);
 
         return new WebInspector.Color(WebInspector.Color.Format.RGBA, [0, 0, 0, 0]);
     },
@@ -202,7 +204,7 @@ WebInspector.ColorWheel.prototype = {
     _drawRawCanvas: function() {
         var ctx = this._rawCanvas.getContext("2d");
 
-        var dimension = this._dimension;
+        var dimension = this._dimension * window.devicePixelRatio;
         var center = dimension / 2;
 
         ctx.fillStyle = "white";
@@ -226,7 +228,7 @@ WebInspector.ColorWheel.prototype = {
 
     _colorAtPointWithBrightness: function(x, y, brightness)
     {
-        var center = this._dimension / 2;
+        var center = this._dimension / 2 * window.devicePixelRatio;
         var xDis = x - center;
         var yDis = y - center;
         var distance = Math.sqrt(xDis * xDis + yDis * yDis);
@@ -251,7 +253,7 @@ WebInspector.ColorWheel.prototype = {
     _drawTintedCanvas: function()
     {
         var ctx = this._tintedCanvas.getContext("2d");
-        var dimension = this._dimension;
+        var dimension = this._dimension * window.devicePixelRatio;
 
         ctx.save();
         ctx.drawImage(this._rawCanvas, 0, 0, dimension, dimension);
@@ -268,12 +270,13 @@ WebInspector.ColorWheel.prototype = {
         this._drawTintedCanvas();
 
         var ctx = this._finalCanvas.getContext("2d");
-        var dimension = this._dimension;
+        var dimension = this._dimension * window.devicePixelRatio;
+        var radius = this._radius * window.devicePixelRatio;
 
         ctx.save();
         ctx.clearRect(0, 0, dimension, dimension);
         ctx.beginPath();
-        ctx.arc(dimension / 2, dimension / 2, this._radius + 1, 0, Math.PI * 2, true); 
+        ctx.arc(dimension / 2, dimension / 2, radius + 1, 0, Math.PI * 2, true); 
         ctx.closePath();
         ctx.clip();
         ctx.drawImage(this._tintedCanvas, 0, 0, dimension, dimension);
