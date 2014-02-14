@@ -563,7 +563,7 @@ PassRefPtr<Document> Document::create(ScriptExecutionContext& context)
 {
     RefPtr<Document> document = adoptRef(new Document(nullptr, URL()));
     document->setSecurityOrigin(context.securityOrigin());
-    return document;
+    return document.release();
 }
 
 Document::~Document()
