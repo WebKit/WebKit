@@ -187,6 +187,11 @@
     return nil;
 }
 
+- (IBAction)stopLoading:(id)sender
+{
+    _page->stopLoading();
+}
+
 - (NSString *)title
 {
     return _page->pageLoadState().title();

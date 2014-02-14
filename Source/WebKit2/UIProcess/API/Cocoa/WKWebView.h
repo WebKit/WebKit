@@ -86,6 +86,8 @@ WK_API_CLASS
  */
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item;
 
+- (IBAction)stopLoading:(id)sender;
+
 @property (nonatomic, readonly) NSString *title;
 
 /*! @abstract The active URL. @link WKWebView @/link is KVO-compliant for this property.
