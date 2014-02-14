@@ -102,28 +102,14 @@ namespace JSC {
     macro(op_init_global_const, 5) \
     macro(op_get_by_id, 9) /* has value profiling */ \
     macro(op_get_by_id_out_of_line, 9) /* has value profiling */ \
-    macro(op_get_by_id_self, 9) /* has value profiling */ \
-    macro(op_get_by_id_proto, 9) /* has value profiling */ \
-    macro(op_get_by_id_chain, 9) /* has value profiling */ \
-    macro(op_get_by_id_getter_self, 9) /* has value profiling */ \
-    macro(op_get_by_id_getter_proto, 9) /* has value profiling */ \
-    macro(op_get_by_id_getter_chain, 9) /* has value profiling */ \
-    macro(op_get_by_id_custom_self, 9) /* has value profiling */ \
-    macro(op_get_by_id_custom_proto, 9) /* has value profiling */ \
-    macro(op_get_by_id_custom_chain, 9) /* has value profiling */ \
-    macro(op_get_by_id_generic, 9) /* has value profiling */ \
     macro(op_get_array_length, 9) /* has value profiling */ \
-    macro(op_get_string_length, 9) /* has value profiling */ \
     macro(op_get_arguments_length, 4) \
     macro(op_put_by_id, 9) \
     macro(op_put_by_id_out_of_line, 9) \
-    macro(op_put_by_id_transition, 9) \
     macro(op_put_by_id_transition_direct, 9) \
     macro(op_put_by_id_transition_direct_out_of_line, 9) \
     macro(op_put_by_id_transition_normal, 9) \
     macro(op_put_by_id_transition_normal_out_of_line, 9) \
-    macro(op_put_by_id_replace, 9) \
-    macro(op_put_by_id_generic, 9) \
     macro(op_del_by_id, 4) \
     macro(op_get_by_val, 6) /* has value profiling */ \
     macro(op_get_argument_by_val, 6) /* must be the same size as op_get_by_val */ \

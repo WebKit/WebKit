@@ -501,7 +501,7 @@ static bool getPolymorphicStructureList(
     } else if (stubInfo.accessType == access_get_by_id_chain) {
         RELEASE_ASSERT(!!stubInfo.stubRoutine);
         slowCase = CodeLocationLabel(stubInfo.stubRoutine->code().code());
-        polymorphicStructureList = new PolymorphicAccessStructureList(*vm, codeBlock->ownerExecutable(), stubInfo.stubRoutine, stubInfo.u.getByIdChain.baseObjectStructure.get(), stubInfo.u.getByIdChain.chain.get(), true);
+        polymorphicStructureList = new PolymorphicAccessStructureList(*vm, codeBlock->ownerExecutable(), stubInfo.stubRoutine, stubInfo.u.getByIdChain.baseObjectStructure.get(), stubInfo.u.getByIdChain.chain.get(), stubInfo.u.getByIdChain.isDirect, stubInfo.u.getByIdChain.count);
         stubInfo.stubRoutine.clear();
         stubInfo.initGetByIdSelfList(polymorphicStructureList, 1, false);
         listIndex = 1;
@@ -726,7 +726,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         slowCase, stubRoutine) == ProtoChainGenerationFailed)
         return false;
     
-    polymorphicStructureList->list[listIndex].set(*vm, codeBlock->ownerExecutable(), stubRoutine, structure, slot.isCacheableValue());
+    polymorphicStructureList->list[listIndex].set(*vm, codeBlock->ownerExecutable(), stubRoutine, structure, prototypeChain, slot.isCacheableValue(), count);
     
     patchJumpToGetByIdStub(codeBlock, stubInfo, stubRoutine.get());
     

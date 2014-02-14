@@ -1,3 +1,39 @@
+2014-02-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Kill some of the last vestiges of the C++ interpreter's PICs
+        https://bugs.webkit.org/show_bug.cgi?id=128796
+
+        Reviewed by Michael Saboff.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecode/PolymorphicAccessStructureList.h:
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::PolymorphicStubInfo):
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        (JSC::PolymorphicAccessStructureList::PolymorphicAccessStructureList):
+        (JSC::PolymorphicAccessStructureList::visitWeak):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::isGetByIdAccess):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/Repatch.cpp:
+        (JSC::getPolymorphicStructureList):
+        (JSC::tryBuildGetByIDList):
+        * llint/LowLevelInterpreter.asm:
+
 2014-02-13  Mark Lam  <mark.lam@apple.com>
 
         The JSContainerConvertor and ObjcContainerConvertor need to protect JSValueRefs. Part 2.

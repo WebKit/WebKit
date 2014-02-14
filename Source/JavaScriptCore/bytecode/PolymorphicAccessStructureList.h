@@ -46,45 +46,31 @@ struct PolymorphicAccessStructureList {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct PolymorphicStubInfo {
-        bool isChain;
-        bool isDirect;
+        bool isDirect : 1;
+        unsigned count : 31;
         RefPtr<JITStubRoutine> stubRoutine;
         WriteBarrier<Structure> base;
-        union {
-            WriteBarrierBase<Structure> proto;
-            WriteBarrierBase<StructureChain> chain;
-        } u;
+        WriteBarrier<StructureChain> chain;
 
         PolymorphicStubInfo()
         {
-            u.proto.clear();
         }
 
         void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, bool _isDirect)
         {
             stubRoutine = _stubRoutine;
             base.set(vm, owner, _base);
-            u.proto.clear();
-            isChain = false;
             isDirect = _isDirect;
+            count = 0;
         }
             
-        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, Structure* _proto, bool _isDirect)
+        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, StructureChain* _chain, bool _isDirect, unsigned _count)
         {
             stubRoutine = _stubRoutine;
             base.set(vm, owner, _base);
-            u.proto.set(vm, owner, _proto);
-            isChain = false;
+            chain.set(vm, owner, _chain);
             isDirect = _isDirect;
-        }
-            
-        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, StructureChain* _chain, bool _isDirect)
-        {
-            stubRoutine = _stubRoutine;
-            base.set(vm, owner, _base);
-            u.chain.set(vm, owner, _chain);
-            isChain = true;
-            isDirect = _isDirect;
+            count = _count;
         }
     } list[POLYMORPHIC_LIST_CACHE_SIZE];
         
@@ -97,33 +83,21 @@ public:
         list[0].set(vm, owner, stubRoutine, firstBase, isDirect);
     }
 
-    PolymorphicAccessStructureList(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, Structure* firstProto, bool isDirect)
+    PolymorphicAccessStructureList(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, StructureChain* firstChain, bool isDirect, unsigned count)
     {
-        list[0].set(vm, owner, stubRoutine, firstBase, firstProto, isDirect);
-    }
-
-    PolymorphicAccessStructureList(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, StructureChain* firstChain, bool isDirect)
-    {
-        list[0].set(vm, owner, stubRoutine, firstBase, firstChain, isDirect);
+        list[0].set(vm, owner, stubRoutine, firstBase, firstChain, isDirect, count);
     }
 
     bool visitWeak(int count)
     {
         for (int i = 0; i < count; ++i) {
             PolymorphicStubInfo& info = list[i];
-            if (!info.base) {
-                // We're being marked during initialisation of an entry
-                ASSERT(!info.u.proto);
+            if (!info.base)
                 continue;
-            }
                 
             if (!Heap::isMarked(info.base.get()))
                 return false;
-            if (info.u.proto && !info.isChain
-                && !Heap::isMarked(info.u.proto.get()))
-                return false;
-            if (info.u.chain && info.isChain
-                && !Heap::isMarked(info.u.chain.get()))
+            if (info.chain && !Heap::isMarked(info.chain.get()))
                 return false;
         }
             

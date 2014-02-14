@@ -41,11 +41,6 @@ void StructureStubInfo::deref()
         delete polymorphicStructures;
         return;
     }
-    case access_get_by_id_proto_list: {
-        PolymorphicAccessStructureList* polymorphicStructures = u.getByIdProtoList.structureList;
-        delete polymorphicStructures;
-        return;
-    }
     case access_put_by_id_list:
         delete u.putByIdList.list;
         return;
@@ -55,7 +50,6 @@ void StructureStubInfo::deref()
         return;
     }
     case access_get_by_id_self:
-    case access_get_by_id_proto:
     case access_get_by_id_chain:
     case access_put_by_id_transition_normal:
     case access_put_by_id_transition_direct:
@@ -79,11 +73,6 @@ bool StructureStubInfo::visitWeakReferences()
         if (!Heap::isMarked(u.getByIdSelf.baseObjectStructure.get()))
             return false;
         break;
-    case access_get_by_id_proto:
-        if (!Heap::isMarked(u.getByIdProto.baseObjectStructure.get())
-            || !Heap::isMarked(u.getByIdProto.prototypeStructure.get()))
-            return false;
-        break;
     case access_get_by_id_chain:
         if (!Heap::isMarked(u.getByIdChain.baseObjectStructure.get())
             || !Heap::isMarked(u.getByIdChain.chain.get()))
@@ -92,12 +81,6 @@ bool StructureStubInfo::visitWeakReferences()
     case access_get_by_id_self_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.getByIdSelfList.structureList;
         if (!polymorphicStructures->visitWeak(u.getByIdSelfList.listSize))
-            return false;
-        break;
-    }
-    case access_get_by_id_proto_list: {
-        PolymorphicAccessStructureList* polymorphicStructures = u.getByIdProtoList.structureList;
-        if (!polymorphicStructures->visitWeak(u.getByIdProtoList.listSize))
             return false;
         break;
     }

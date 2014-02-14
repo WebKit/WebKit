@@ -1125,48 +1125,6 @@ macro notSupported()
     end
 end
 
-_llint_op_get_by_id_chain:
-    notSupported()
-
-_llint_op_get_by_id_custom_chain:
-    notSupported()
-
-_llint_op_get_by_id_custom_proto:
-    notSupported()
-
-_llint_op_get_by_id_custom_self:
-    notSupported()
-
-_llint_op_get_by_id_generic:
-    notSupported()
-
-_llint_op_get_by_id_getter_chain:
-    notSupported()
-
-_llint_op_get_by_id_getter_proto:
-    notSupported()
-
-_llint_op_get_by_id_getter_self:
-    notSupported()
-
-_llint_op_get_by_id_proto:
-    notSupported()
-
-_llint_op_get_by_id_self:
-    notSupported()
-
-_llint_op_get_string_length:
-    notSupported()
-
-_llint_op_put_by_id_generic:
-    notSupported()
-
-_llint_op_put_by_id_replace:
-    notSupported()
-
-_llint_op_put_by_id_transition:
-    notSupported()
-
 _llint_op_init_global_const_nop:
     dispatch(5)
 

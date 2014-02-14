@@ -47,10 +47,8 @@ class PolymorphicPutByIdList;
 
 enum AccessType {
     access_get_by_id_self,
-    access_get_by_id_proto,
     access_get_by_id_chain,
     access_get_by_id_self_list,
-    access_get_by_id_proto_list,
     access_put_by_id_transition_normal,
     access_put_by_id_transition_direct,
     access_put_by_id_replace,
@@ -67,10 +65,8 @@ inline bool isGetByIdAccess(AccessType accessType)
 {
     switch (accessType) {
     case access_get_by_id_self:
-    case access_get_by_id_proto:
     case access_get_by_id_chain:
     case access_get_by_id_self_list:
-    case access_get_by_id_proto_list:
     case access_get_by_id_generic:
     case access_get_array_length:
     case access_get_string_length:
@@ -136,14 +132,6 @@ struct StructureStubInfo {
         u.getByIdSelfList.structureList = structureList;
         u.getByIdSelfList.listSize = listSize;
         u.getByIdSelfList.didSelfPatching = didSelfPatching;
-    }
-
-    void initGetByIdProtoList(PolymorphicAccessStructureList* structureList, int listSize)
-    {
-        accessType = access_get_by_id_proto_list;
-
-        u.getByIdProtoList.structureList = structureList;
-        u.getByIdProtoList.listSize = listSize;
     }
 
     // PutById*

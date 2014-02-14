@@ -161,25 +161,15 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
     if (stubInfo->resetByGC)
         return GetByIdStatus(TakesSlowPath, true);
 
-    PolymorphicAccessStructureList* list;
-    int listSize;
-    switch (stubInfo->accessType) {
-    case access_get_by_id_self_list:
+    PolymorphicAccessStructureList* list = 0;
+    int listSize = 0;
+    if (stubInfo->accessType == access_get_by_id_self_list) {
         list = stubInfo->u.getByIdSelfList.structureList;
         listSize = stubInfo->u.getByIdSelfList.listSize;
-        break;
-    case access_get_by_id_proto_list:
-        list = stubInfo->u.getByIdProtoList.structureList;
-        listSize = stubInfo->u.getByIdProtoList.listSize;
-        break;
-    default:
-        list = 0;
-        listSize = 0;
-        break;
-    }
-    for (int i = 0; i < listSize; ++i) {
-        if (!list->list[i].isDirect)
-            return GetByIdStatus(MakesCalls, true);
+        for (int i = 0; i < listSize; ++i) {
+            if (!list->list[i].isDirect)
+                return GetByIdStatus(MakesCalls, true);
+        }
     }
     
     // Finally figure out if we can derive an access strategy.
@@ -247,17 +237,6 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
                     
         if (isValidOffset(result.m_offset))
             ASSERT(result.m_structureSet.size());
-        break;
-    }
-        
-    case access_get_by_id_proto: {
-        if (!stubInfo->u.getByIdProto.isDirect)
-            return GetByIdStatus(MakesCalls, true);
-        result.m_chain = adoptRef(new IntendedStructureChain(
-            profiledBlock,
-            stubInfo->u.getByIdProto.baseObjectStructure.get(),
-            stubInfo->u.getByIdProto.prototypeStructure.get()));
-        computeForChain(result, profiledBlock, uid);
         break;
     }
         
