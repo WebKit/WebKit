@@ -1,3 +1,25 @@
+2014-02-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        jsc-cli should allow scripts to access argv
+        https://bugs.webkit.org/show_bug.cgi?id=127486
+
+        Reviewed by Oliver Hunt.
+
+        * jsc-cli/jsc-cli.xcodeproj/project.pbxproj:
+        * jsc-cli/jsc-cli/CLIInstance.h:
+        * jsc-cli/jsc-cli/CLIInstance.m:
+        (-[CLIInstance init]):
+        (-[CLIInstance loadFile:]):
+        (-[CLIInstance didReceiveArguments:atOffset:withLength:]):
+        * jsc-cli/jsc-cli/JSRunLoopThread.h:
+        * jsc-cli/jsc-cli/JSRunLoopThread.m:
+        (-[JSRunLoopThread initWithContext:]):
+        (-[JSRunLoopThread loadFile:]):
+        (-[JSRunLoopThread start]):
+        * jsc-cli/jsc-cli/main.m:
+        (printUsage):
+        (main):
+
 2014-02-14  Andreas Kling  <akling@apple.com>
 
         Purge remaining ENABLE(SHADOW_DOM) cruft.

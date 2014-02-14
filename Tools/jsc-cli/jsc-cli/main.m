@@ -27,15 +27,40 @@
 
 #import "CLIInstance.h"
 
+static void printUsage()
+{
+    fprintf(stderr, "Usage: jsc-cli file [program-args]\n");
+    fprintf(stderr, "    jsc-cli is a command line interface for executing JavaScript code.\n");
+    fprintf(stderr, "    file should be a JavaScript source file. Any arguments following the\n");
+    fprintf(stderr, "    source file are the arguments to the program itself.\n");
+}
+
 int main(int argc, const char * argv[])
 {
     @autoreleasepool {
         CLIInstance *instance = [[CLIInstance alloc] init];
         
-        // TODO: Add real arguments handling.
-        if (argc > 1)
-            [instance loadFile:[NSString stringWithCString:argv[1] encoding:NSUTF8StringEncoding]];
+        int offset = 1;
+        if (argc > 1) {
+            NSString *filename = [NSString stringWithCString:argv[1] encoding:NSUTF8StringEncoding];
+            BOOL directory;
+            if (![[NSFileManager defaultManager] fileExistsAtPath:filename isDirectory:&directory]) {
+                fprintf(stderr, "Error: %s does not exist.\n", argv[1]);
+                printUsage();
+                exit(-1);
+            }
             
+            if (directory) {
+                fprintf(stderr, "Error: %s is a directory.\n", argv[1]);
+                printUsage();
+                exit(-1);
+            }
+            
+            [instance loadFile:filename];
+            offset = 2;
+        }
+        [instance didReceiveArguments:argv atOffset:offset withLength:argc];
+
         [instance run];
     }
     return 0;

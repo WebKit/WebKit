@@ -29,7 +29,7 @@
 #import <pthread.h>
 
 @implementation JSRunLoopThread {
-    NSArray *m_filesToRun;
+    NSString *m_fileToRun;
     CFRunLoopRef m_runLoop;
     ScriptInputSource *m_scriptSource;
     JSContext *m_context;
@@ -48,18 +48,22 @@ static void* jsThreadMain(void* context)
     return jsThreadMain;
 }
 
-- (id)initWithFiles:(NSArray *)files andContext:(JSContext *)context
+- (id)initWithContext:(JSContext *)context
 {
     self = [super init];
     if (!self)
         return nil;
     
-    m_filesToRun = files;
     m_context = context;
     m_scriptSource = [[ScriptInputSource alloc] initWithContext:context];
     m_asyncQueue = dispatch_queue_create("node.jsc async queue", DISPATCH_QUEUE_CONCURRENT);
     
     return self;
+}
+
+- (void)loadFile:(NSString *)file
+{
+    m_fileToRun = file;
 }
 
 - (void)startRunLoop
@@ -76,11 +80,8 @@ static void* jsThreadMain(void* context)
 {
     [super start];
     
-    if (![m_filesToRun count])
-        return;
-    
-    for (NSString *file in m_filesToRun) {
-        NSString *script = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
+    if (m_fileToRun) {
+        NSString *script = [NSString stringWithContentsOfFile:m_fileToRun encoding:NSUTF8StringEncoding error:nil];
         [m_scriptSource runScriptRemotely:script];
     }
 }

@@ -31,6 +31,7 @@
 @interface CLIInstance : NSObject
 
 -(void)loadFile:(NSString *)path;
+-(void)didReceiveArguments:(const char**)args atOffset:(int)offset withLength:(int)length;
 -(void)run;
 
 @end

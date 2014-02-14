@@ -38,7 +38,8 @@
 
 @property dispatch_queue_t asyncQueue;
 
-- (id)initWithFiles:(NSArray *)files andContext:(JSContext *)context;
+- (id)initWithContext:(JSContext *)context;
+- (void)loadFile:(NSString *)file;
 - (void)start;
 - (void)join;
 - (JSValue *)didReceiveInput:(NSString *)input;

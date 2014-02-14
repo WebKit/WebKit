@@ -59,14 +59,22 @@
         return module.exports;
     };
     
-    _jsThread = [[JSRunLoopThread alloc] initWithFiles:@[] andContext:_context];
+    _context[@"ARGV"] = [JSValue valueWithNewArrayInContext:_context];
+    _jsThread = [[JSRunLoopThread alloc] initWithContext:_context];
     
     return self;
 }
 
 - (void)loadFile:(NSString *)path
 {
-    _baseFile = path;
+    [_jsThread loadFile:path];
+}
+
+- (void)didReceiveArguments:(const char **)args atOffset:(int)offset withLength:(int)length
+{
+    [_context[@"ARGV"] setValue:(_baseFile ? _baseFile : @"") atIndex:0];
+    for (int i = offset; i < length; ++i)
+        [_context[@"ARGV"] setValue:@(args[i]) atIndex:(offset - i + 1)];
 }
 
 - (void)run
