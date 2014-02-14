@@ -942,8 +942,12 @@ static inline bool canMatchStyleAttribute(const SelectorFragment& fragment)
     for (unsigned i = 0; i < fragment.attributes.size(); ++i) {
         const CSSSelector* attributeSelector = fragment.attributes[i];
         const QualifiedName& attributeName = attributeSelector->attribute();
-        if (Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeName.localName(), attributeName.namespaceURI())
-            || Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeSelector->attributeCanonicalLocalName(), attributeName.namespaceURI())) {
+        if (Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeName.localName(), attributeName.namespaceURI()))
+            return true;
+
+        const AtomicString& canonicalLocalName = attributeSelector->attributeCanonicalLocalName();
+        if (attributeName.localName() != canonicalLocalName
+            && Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeSelector->attributeCanonicalLocalName(), attributeName.namespaceURI())) {
             return true;
         }
     }
@@ -962,6 +966,26 @@ void SelectorCodeGenerator::generateSynchronizeStyleAttribute(Assembler::Registe
     functionCall.call();
 
     styleAttributeNotDirty.link(&m_assembler);
+}
+
+static inline bool canMatchAnimatableSVGAttribute(const SelectorFragment& fragment)
+{
+    for (unsigned i = 0; i < fragment.attributes.size(); ++i) {
+        const CSSSelector* attributeSelector = fragment.attributes[i];
+        const QualifiedName& selectorAttributeName = attributeSelector->attribute();
+
+        const QualifiedName& candidateForLocalName = SVGElement::animatableAttributeForName(selectorAttributeName.localName());
+        if (Attribute::nameMatchesFilter(candidateForLocalName, selectorAttributeName.prefix(), selectorAttributeName.localName(), selectorAttributeName.namespaceURI()))
+            return true;
+
+        const AtomicString& canonicalLocalName = attributeSelector->attributeCanonicalLocalName();
+        if (selectorAttributeName.localName() != canonicalLocalName) {
+            const QualifiedName& candidateForCanonicalLocalName = SVGElement::animatableAttributeForName(selectorAttributeName.localName());
+            if (Attribute::nameMatchesFilter(candidateForCanonicalLocalName, selectorAttributeName.prefix(), selectorAttributeName.localName(), selectorAttributeName.namespaceURI()))
+                return true;
+        }
+    }
+    return false;
 }
 
 void SelectorCodeGenerator::generateSynchronizeAllAnimatedSVGAttribute(Assembler::RegisterID elementDataArraySizeAndFlags)
@@ -990,9 +1014,8 @@ void SelectorCodeGenerator::generateElementAttributesMatching(Assembler::JumpLis
     if (canMatchStyleAttribute(fragment))
         generateSynchronizeStyleAttribute(elementDataArraySizeAndFlags);
 
-    // FIXME: Systematically generating the function call for animatable SVG attributes causes a runtime penaltly. We should instead
-    // filter from the list of SVGElement::isAnimatableAttribute at runtime when compiling.
-    generateSynchronizeAllAnimatedSVGAttribute(elementDataArraySizeAndFlags);
+    if (canMatchAnimatableSVGAttribute(fragment))
+        generateSynchronizeAllAnimatedSVGAttribute(elementDataArraySizeAndFlags);
 
     // Attributes can be stored either in a separate vector for UniqueElementData, or after the elementData itself
     // for ShareableElementData.

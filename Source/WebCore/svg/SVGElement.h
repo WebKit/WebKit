@@ -122,8 +122,9 @@ public:
     virtual void synchronizeRequiredExtensions() { }
     virtual void synchronizeSystemLanguage() { }
 
+    static QualifiedName animatableAttributeForName(const AtomicString&);
 #ifndef NDEBUG
-    virtual bool isAnimatableAttribute(const QualifiedName&) const;
+    bool isAnimatableAttribute(const QualifiedName&) const;
 #endif
 
     MutableStyleProperties* animatedSMILStyleProperties() const;
@@ -183,6 +184,10 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
     virtual bool isMouseFocusable() const override;
     virtual void accessKeyAction(bool sendMouseEvents) override;
+
+#ifndef NDEBUG
+    virtual bool filterOutAnimatableAttribute(const QualifiedName&) const;
+#endif
 
     std::unique_ptr<SVGElementRareData> m_svgRareData;
 

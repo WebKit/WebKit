@@ -197,12 +197,9 @@ PassRefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren()
 }
 
 #ifndef NDEBUG
-bool SVGScriptElement::isAnimatableAttribute(const QualifiedName& name) const
+bool SVGScriptElement::filterOutAnimatableAttribute(const QualifiedName& name) const
 {
-    if (name == SVGNames::typeAttr)
-        return false;
-
-    return SVGElement::isAnimatableAttribute(name);
+    return name == SVGNames::typeAttr;
 }
 #endif
 

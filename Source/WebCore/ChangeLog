@@ -1,5 +1,44 @@
 2014-02-14  Benjamin Poulain  <benjamin@webkit.org>
 
+        Do not attempt to synchronize attributes when no Simple Selector could match an animatable attribute
+        https://bugs.webkit.org/show_bug.cgi?id=128728
+
+        Reviewed by Andreas Kling.
+
+        In most cases, we don't even need to test for the flag animatedSVGAttributesNotDirty.
+        If the selector filter could never match an animatable attribute, there is no point in testing for one.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::canMatchStyleAttribute):
+        Skip the second test when the local name is equal to canonicalLocalName. That is the common case.
+
+        (WebCore::SelectorCompiler::canMatchAnimatableSVGAttribute):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributesMatching):
+
+        * svg/SVGElement.cpp:
+        (WebCore::addQualifiedName):
+        (WebCore::SVGElement::animatableAttributeForName):
+        (WebCore::SVGElement::isAnimatableAttribute):
+        (WebCore::SVGElement::filterOutAnimatableAttribute):
+        * svg/SVGElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::filterOutAnimatableAttribute):
+        * svg/SVGScriptElement.h:
+        Move the list of animatable attribute to a static function available in Release.
+        Selector matching is a lot more flexible than normal name matching. Since the local name must
+        always match, it is used as a key to get the full QualifiedName to compare to the selector.
+
+        Separating the list of animatable attributes between Selectors and SVGElement::isAnimatableAttribute
+        would be error prone. Instead, SVGElement::isAnimatableAttribute() is modified to use
+        SVGElement::animatableAttributeForName so that the two never get out of sync.
+
+        Since SVGScriptElement has one additional restriction to isAnimatableAttribute(), the function
+        filterOutAnimatableAttribute() is added to remove a qualified name from the complete list of animatable attributes.
+        This ensure SVGElement::animatableAttributeForName() always has the complete list, and subclasses of SVGElement
+        can only remove QualifiedNames, not add them.
+
+2014-02-14  Benjamin Poulain  <benjamin@webkit.org>
+
         Make code generation of the unoptimized pseudo classes separate
         https://bugs.webkit.org/show_bug.cgi?id=128704
 

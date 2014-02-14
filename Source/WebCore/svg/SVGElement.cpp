@@ -814,110 +814,127 @@ RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
     return m_svgRareData->overrideComputedStyle(this, parentStyle);
 }
 
+static void addQualifiedName(HashMap<AtomicString, QualifiedName>& map, const QualifiedName& name)
+{
+    HashMap<AtomicString, QualifiedName>::AddResult addResult = map.add(name.localName(), name);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+QualifiedName SVGElement::animatableAttributeForName(const AtomicString& localName)
+{
+    static NeverDestroyed<HashMap<AtomicString, QualifiedName>> neverDestroyedAnimatableAttributes;
+    HashMap<AtomicString, QualifiedName>& animatableAttributes = neverDestroyedAnimatableAttributes;
+
+    if (animatableAttributes.isEmpty()) {
+        addQualifiedName(animatableAttributes, HTMLNames::classAttr);
+        addQualifiedName(animatableAttributes, SVGNames::amplitudeAttr);
+        addQualifiedName(animatableAttributes, SVGNames::azimuthAttr);
+        addQualifiedName(animatableAttributes, SVGNames::baseFrequencyAttr);
+        addQualifiedName(animatableAttributes, SVGNames::biasAttr);
+        addQualifiedName(animatableAttributes, SVGNames::clipPathUnitsAttr);
+        addQualifiedName(animatableAttributes, SVGNames::cxAttr);
+        addQualifiedName(animatableAttributes, SVGNames::cyAttr);
+        addQualifiedName(animatableAttributes, SVGNames::diffuseConstantAttr);
+        addQualifiedName(animatableAttributes, SVGNames::divisorAttr);
+        addQualifiedName(animatableAttributes, SVGNames::dxAttr);
+        addQualifiedName(animatableAttributes, SVGNames::dyAttr);
+        addQualifiedName(animatableAttributes, SVGNames::edgeModeAttr);
+        addQualifiedName(animatableAttributes, SVGNames::elevationAttr);
+        addQualifiedName(animatableAttributes, SVGNames::exponentAttr);
+        addQualifiedName(animatableAttributes, SVGNames::externalResourcesRequiredAttr);
+        addQualifiedName(animatableAttributes, SVGNames::filterResAttr);
+        addQualifiedName(animatableAttributes, SVGNames::filterUnitsAttr);
+        addQualifiedName(animatableAttributes, SVGNames::fxAttr);
+        addQualifiedName(animatableAttributes, SVGNames::fyAttr);
+        addQualifiedName(animatableAttributes, SVGNames::gradientTransformAttr);
+        addQualifiedName(animatableAttributes, SVGNames::gradientUnitsAttr);
+        addQualifiedName(animatableAttributes, SVGNames::heightAttr);
+        addQualifiedName(animatableAttributes, SVGNames::in2Attr);
+        addQualifiedName(animatableAttributes, SVGNames::inAttr);
+        addQualifiedName(animatableAttributes, SVGNames::interceptAttr);
+        addQualifiedName(animatableAttributes, SVGNames::k1Attr);
+        addQualifiedName(animatableAttributes, SVGNames::k2Attr);
+        addQualifiedName(animatableAttributes, SVGNames::k3Attr);
+        addQualifiedName(animatableAttributes, SVGNames::k4Attr);
+        addQualifiedName(animatableAttributes, SVGNames::kernelMatrixAttr);
+        addQualifiedName(animatableAttributes, SVGNames::kernelUnitLengthAttr);
+        addQualifiedName(animatableAttributes, SVGNames::lengthAdjustAttr);
+        addQualifiedName(animatableAttributes, SVGNames::limitingConeAngleAttr);
+        addQualifiedName(animatableAttributes, SVGNames::markerHeightAttr);
+        addQualifiedName(animatableAttributes, SVGNames::markerUnitsAttr);
+        addQualifiedName(animatableAttributes, SVGNames::markerWidthAttr);
+        addQualifiedName(animatableAttributes, SVGNames::maskContentUnitsAttr);
+        addQualifiedName(animatableAttributes, SVGNames::maskUnitsAttr);
+        addQualifiedName(animatableAttributes, SVGNames::methodAttr);
+        addQualifiedName(animatableAttributes, SVGNames::modeAttr);
+        addQualifiedName(animatableAttributes, SVGNames::numOctavesAttr);
+        addQualifiedName(animatableAttributes, SVGNames::offsetAttr);
+        addQualifiedName(animatableAttributes, SVGNames::operatorAttr);
+        addQualifiedName(animatableAttributes, SVGNames::orderAttr);
+        addQualifiedName(animatableAttributes, SVGNames::orientAttr);
+        addQualifiedName(animatableAttributes, SVGNames::pathLengthAttr);
+        addQualifiedName(animatableAttributes, SVGNames::patternContentUnitsAttr);
+        addQualifiedName(animatableAttributes, SVGNames::patternTransformAttr);
+        addQualifiedName(animatableAttributes, SVGNames::patternUnitsAttr);
+        addQualifiedName(animatableAttributes, SVGNames::pointsAtXAttr);
+        addQualifiedName(animatableAttributes, SVGNames::pointsAtYAttr);
+        addQualifiedName(animatableAttributes, SVGNames::pointsAtZAttr);
+        addQualifiedName(animatableAttributes, SVGNames::preserveAlphaAttr);
+        addQualifiedName(animatableAttributes, SVGNames::preserveAspectRatioAttr);
+        addQualifiedName(animatableAttributes, SVGNames::primitiveUnitsAttr);
+        addQualifiedName(animatableAttributes, SVGNames::radiusAttr);
+        addQualifiedName(animatableAttributes, SVGNames::rAttr);
+        addQualifiedName(animatableAttributes, SVGNames::refXAttr);
+        addQualifiedName(animatableAttributes, SVGNames::refYAttr);
+        addQualifiedName(animatableAttributes, SVGNames::resultAttr);
+        addQualifiedName(animatableAttributes, SVGNames::rotateAttr);
+        addQualifiedName(animatableAttributes, SVGNames::rxAttr);
+        addQualifiedName(animatableAttributes, SVGNames::ryAttr);
+        addQualifiedName(animatableAttributes, SVGNames::scaleAttr);
+        addQualifiedName(animatableAttributes, SVGNames::seedAttr);
+        addQualifiedName(animatableAttributes, SVGNames::slopeAttr);
+        addQualifiedName(animatableAttributes, SVGNames::spacingAttr);
+        addQualifiedName(animatableAttributes, SVGNames::specularConstantAttr);
+        addQualifiedName(animatableAttributes, SVGNames::specularExponentAttr);
+        addQualifiedName(animatableAttributes, SVGNames::spreadMethodAttr);
+        addQualifiedName(animatableAttributes, SVGNames::startOffsetAttr);
+        addQualifiedName(animatableAttributes, SVGNames::stdDeviationAttr);
+        addQualifiedName(animatableAttributes, SVGNames::stitchTilesAttr);
+        addQualifiedName(animatableAttributes, SVGNames::surfaceScaleAttr);
+        addQualifiedName(animatableAttributes, SVGNames::tableValuesAttr);
+        addQualifiedName(animatableAttributes, SVGNames::targetAttr);
+        addQualifiedName(animatableAttributes, SVGNames::targetXAttr);
+        addQualifiedName(animatableAttributes, SVGNames::targetYAttr);
+        addQualifiedName(animatableAttributes, SVGNames::transformAttr);
+        addQualifiedName(animatableAttributes, SVGNames::typeAttr);
+        addQualifiedName(animatableAttributes, SVGNames::valuesAttr);
+        addQualifiedName(animatableAttributes, SVGNames::viewBoxAttr);
+        addQualifiedName(animatableAttributes, SVGNames::widthAttr);
+        addQualifiedName(animatableAttributes, SVGNames::x1Attr);
+        addQualifiedName(animatableAttributes, SVGNames::x2Attr);
+        addQualifiedName(animatableAttributes, SVGNames::xAttr);
+        addQualifiedName(animatableAttributes, SVGNames::xChannelSelectorAttr);
+        addQualifiedName(animatableAttributes, SVGNames::y1Attr);
+        addQualifiedName(animatableAttributes, SVGNames::y2Attr);
+        addQualifiedName(animatableAttributes, SVGNames::yAttr);
+        addQualifiedName(animatableAttributes, SVGNames::yChannelSelectorAttr);
+        addQualifiedName(animatableAttributes, SVGNames::zAttr);
+        addQualifiedName(animatableAttributes, XLinkNames::hrefAttr);
+    }
+    return animatableAttributes.get(localName);
+}
+
 #ifndef NDEBUG
 bool SVGElement::isAnimatableAttribute(const QualifiedName& name) const
 {
-    static NeverDestroyed<HashSet<QualifiedName>> neverDestroyedAnimatableAttributes;
-    HashSet<QualifiedName>& animatableAttributes = neverDestroyedAnimatableAttributes;
+    if (SVGElement::animatableAttributeForName(name.localName()) == name)
+        return !filterOutAnimatableAttribute(name);
+    return false;
+}
 
-    if (animatableAttributes.isEmpty()) {
-        animatableAttributes.add(HTMLNames::classAttr);
-        animatableAttributes.add(SVGNames::amplitudeAttr);
-        animatableAttributes.add(SVGNames::azimuthAttr);
-        animatableAttributes.add(SVGNames::baseFrequencyAttr);
-        animatableAttributes.add(SVGNames::biasAttr);
-        animatableAttributes.add(SVGNames::clipPathUnitsAttr);
-        animatableAttributes.add(SVGNames::cxAttr);
-        animatableAttributes.add(SVGNames::cyAttr);
-        animatableAttributes.add(SVGNames::diffuseConstantAttr);
-        animatableAttributes.add(SVGNames::divisorAttr);
-        animatableAttributes.add(SVGNames::dxAttr);
-        animatableAttributes.add(SVGNames::dyAttr);
-        animatableAttributes.add(SVGNames::edgeModeAttr);
-        animatableAttributes.add(SVGNames::elevationAttr);
-        animatableAttributes.add(SVGNames::exponentAttr);
-        animatableAttributes.add(SVGNames::externalResourcesRequiredAttr);
-        animatableAttributes.add(SVGNames::filterResAttr);
-        animatableAttributes.add(SVGNames::filterUnitsAttr);
-        animatableAttributes.add(SVGNames::fxAttr);
-        animatableAttributes.add(SVGNames::fyAttr);
-        animatableAttributes.add(SVGNames::gradientTransformAttr);
-        animatableAttributes.add(SVGNames::gradientUnitsAttr);
-        animatableAttributes.add(SVGNames::heightAttr);
-        animatableAttributes.add(SVGNames::in2Attr);
-        animatableAttributes.add(SVGNames::inAttr);
-        animatableAttributes.add(SVGNames::interceptAttr);
-        animatableAttributes.add(SVGNames::k1Attr);
-        animatableAttributes.add(SVGNames::k2Attr);
-        animatableAttributes.add(SVGNames::k3Attr);
-        animatableAttributes.add(SVGNames::k4Attr);
-        animatableAttributes.add(SVGNames::kernelMatrixAttr);
-        animatableAttributes.add(SVGNames::kernelUnitLengthAttr);
-        animatableAttributes.add(SVGNames::lengthAdjustAttr);
-        animatableAttributes.add(SVGNames::limitingConeAngleAttr);
-        animatableAttributes.add(SVGNames::markerHeightAttr);
-        animatableAttributes.add(SVGNames::markerUnitsAttr);
-        animatableAttributes.add(SVGNames::markerWidthAttr);
-        animatableAttributes.add(SVGNames::maskContentUnitsAttr);
-        animatableAttributes.add(SVGNames::maskUnitsAttr);
-        animatableAttributes.add(SVGNames::methodAttr);
-        animatableAttributes.add(SVGNames::modeAttr);
-        animatableAttributes.add(SVGNames::numOctavesAttr);
-        animatableAttributes.add(SVGNames::offsetAttr);
-        animatableAttributes.add(SVGNames::operatorAttr);
-        animatableAttributes.add(SVGNames::orderAttr);
-        animatableAttributes.add(SVGNames::orientAttr);
-        animatableAttributes.add(SVGNames::pathLengthAttr);
-        animatableAttributes.add(SVGNames::patternContentUnitsAttr);
-        animatableAttributes.add(SVGNames::patternTransformAttr);
-        animatableAttributes.add(SVGNames::patternUnitsAttr);
-        animatableAttributes.add(SVGNames::pointsAtXAttr);
-        animatableAttributes.add(SVGNames::pointsAtYAttr);
-        animatableAttributes.add(SVGNames::pointsAtZAttr);
-        animatableAttributes.add(SVGNames::preserveAlphaAttr);
-        animatableAttributes.add(SVGNames::preserveAspectRatioAttr);
-        animatableAttributes.add(SVGNames::primitiveUnitsAttr);
-        animatableAttributes.add(SVGNames::radiusAttr);
-        animatableAttributes.add(SVGNames::rAttr);
-        animatableAttributes.add(SVGNames::refXAttr);
-        animatableAttributes.add(SVGNames::refYAttr);
-        animatableAttributes.add(SVGNames::resultAttr);
-        animatableAttributes.add(SVGNames::rotateAttr);
-        animatableAttributes.add(SVGNames::rxAttr);
-        animatableAttributes.add(SVGNames::ryAttr);
-        animatableAttributes.add(SVGNames::scaleAttr);
-        animatableAttributes.add(SVGNames::seedAttr);
-        animatableAttributes.add(SVGNames::slopeAttr);
-        animatableAttributes.add(SVGNames::spacingAttr);
-        animatableAttributes.add(SVGNames::specularConstantAttr);
-        animatableAttributes.add(SVGNames::specularExponentAttr);
-        animatableAttributes.add(SVGNames::spreadMethodAttr);
-        animatableAttributes.add(SVGNames::startOffsetAttr);
-        animatableAttributes.add(SVGNames::stdDeviationAttr);
-        animatableAttributes.add(SVGNames::stitchTilesAttr);
-        animatableAttributes.add(SVGNames::surfaceScaleAttr);
-        animatableAttributes.add(SVGNames::tableValuesAttr);
-        animatableAttributes.add(SVGNames::targetAttr);
-        animatableAttributes.add(SVGNames::targetXAttr);
-        animatableAttributes.add(SVGNames::targetYAttr);
-        animatableAttributes.add(SVGNames::transformAttr);
-        animatableAttributes.add(SVGNames::typeAttr);
-        animatableAttributes.add(SVGNames::valuesAttr);
-        animatableAttributes.add(SVGNames::viewBoxAttr);
-        animatableAttributes.add(SVGNames::widthAttr);
-        animatableAttributes.add(SVGNames::x1Attr);
-        animatableAttributes.add(SVGNames::x2Attr);
-        animatableAttributes.add(SVGNames::xAttr);
-        animatableAttributes.add(SVGNames::xChannelSelectorAttr);
-        animatableAttributes.add(SVGNames::y1Attr);
-        animatableAttributes.add(SVGNames::y2Attr);
-        animatableAttributes.add(SVGNames::yAttr);
-        animatableAttributes.add(SVGNames::yChannelSelectorAttr);
-        animatableAttributes.add(SVGNames::zAttr);
-        animatableAttributes.add(XLinkNames::hrefAttr);
-    }
-
-    return animatableAttributes.contains(name);
+bool SVGElement::filterOutAnimatableAttribute(const QualifiedName&) const
+{
+    return false;
 }
 #endif
 
