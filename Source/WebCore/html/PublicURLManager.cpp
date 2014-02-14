@@ -35,8 +35,24 @@
 
 namespace WebCore {
 
+PassOwnPtr<PublicURLManager> PublicURLManager::create(ScriptExecutionContext* context)
+{
+    OwnPtr<PublicURLManager> publicURLManager(adoptPtr(new PublicURLManager(context)));
+    publicURLManager->suspendIfNeeded();
+    return publicURLManager.release();
+}
+
+PublicURLManager::PublicURLManager(ScriptExecutionContext* context)
+    : ActiveDOMObject(context)
+    , m_isStopped(false)
+{
+}
+
 void PublicURLManager::registerURL(SecurityOrigin* origin, const URL& url, URLRegistrable* registrable)
 {
+    if (m_isStopped)
+        return;
+
     RegistryURLMap::iterator found = m_registryToURL.add(&registrable->registry(), URLSet()).iterator;
     found->key->registerURL(origin, url, registrable);
     found->value.add(url.string());
@@ -53,8 +69,12 @@ void PublicURLManager::revoke(const URL& url)
     }
 }
 
-void PublicURLManager::contextDestroyed()
+void PublicURLManager::stop()
 {
+    if (m_isStopped)
+        return;
+
+    m_isStopped = true;
     for (RegistryURLMap::iterator i = m_registryToURL.begin(); i != m_registryToURL.end(); ++i) {
         for (URLSet::iterator j = i->value.begin(); j != i->value.end(); ++j)
             i->key->unregisterURL(URL(ParsedURLString, *j));

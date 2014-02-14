@@ -1,3 +1,30 @@
+2014-02-13  Byungseon Shin  <sun.shin@lge.com>
+
+        [MSE] Move PublicURLManager shutdown logic so ActiveDOMObjects associated with public URLs won't leak.
+        https://bugs.webkit.org/show_bug.cgi?id=128532
+
+        Reviewed by Jer Noble.
+
+        This fixes a leak of DOM objects by breaking the circular reference 
+        between Document, PublicURLManager, and MediaSource. 
+        Instead of clearing PublicURLManager at destruction-time, 
+        which is delayed indefinitely because of the circular reference, 
+        clear the PublicURLManager during ActiveDOMObject::stop().
+
+        Frome Blink r151890 by <acolwell@chromium.org>
+        <https://src.chromium.org/viewvc/blink?view=rev&revision=151890>
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::publicURLManager):
+        * html/DOMURL.h:
+        * html/PublicURLManager.cpp:
+        (WebCore::PublicURLManager::create):
+        (WebCore::PublicURLManager::PublicURLManager):
+        (WebCore::PublicURLManager::registerURL):
+        (WebCore::PublicURLManager::stop):
+        * html/PublicURLManager.h:
+
 2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove position:sticky runtime flag

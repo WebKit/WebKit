@@ -53,8 +53,6 @@ public:
     void setHref(const String&, ExceptionCode&);
 
 #if ENABLE(BLOB)
-    static void contextDestroyed(ScriptExecutionContext*);
-
     static String createObjectURL(ScriptExecutionContext*, Blob*);
     static void revokeObjectURL(ScriptExecutionContext*, const String&);
 

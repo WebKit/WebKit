@@ -27,6 +27,7 @@
 #define PublicURLManager_h
 
 #if ENABLE(BLOB)
+#include "ActiveDOMObject.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
@@ -41,19 +42,23 @@ class SecurityOrigin;
 class URLRegistry;
 class URLRegistrable;
 
-class PublicURLManager {
+class PublicURLManager : public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static OwnPtr<PublicURLManager> create() { return adoptPtr(new PublicURLManager); }
+    static PassOwnPtr<PublicURLManager> create(ScriptExecutionContext*);
 
     void registerURL(SecurityOrigin*, const URL&, URLRegistrable*);
     void revoke(const URL&);
-    void contextDestroyed();
 
+    // ActiveDOMObject interface.
+    virtual void stop() override;
 private:
+    PublicURLManager(ScriptExecutionContext*);
+    
     typedef HashSet<String> URLSet;
     typedef HashMap<URLRegistry*, URLSet > RegistryURLMap;
     RegistryURLMap m_registryToURL;
+    bool m_isStopped;
 };
 
 } // namespace WebCore
