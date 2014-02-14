@@ -1,3 +1,15 @@
+2014-02-12  Jer Noble  <jer.noble@apple.com>
+
+        [iOS][WK2] Always enable AVKit in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=128686
+
+        Reviewed by Simon Fraser.
+
+        Enable AVKit in iOS WK2 by default. This enables <video> element full screen in WK2.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-02-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2][iOS] Add WKContentObservation support when dispatching synthetic mouse events

@@ -2508,6 +2508,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setVideoPluginProxyEnabled(false);
 #endif
 
+#if PLATFORM(IOS)
+    settings.setAVKitEnabled(true);
+#endif
+
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled(store.getBoolValueForKey(WebPreferencesKey::webAudioEnabledKey()));
 #endif
