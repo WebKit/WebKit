@@ -1,3 +1,19 @@
+2014-02-04  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK][CMake] Generate GObject DOM bindings .symbols files
+        https://bugs.webkit.org/show_bug.cgi?id=126210
+
+        Reviewed by Martin Robinson.
+
+        No new tests. Build change only.
+
+        * CMakeLists.txt: list Quota module files and IDLs even if the feature
+        is disabled, for GTK, since we rely on that for our DOM bindings.
+        * PlatformGTK.cmake: add a new target to check for DOM symbols API by
+        running the new python script.
+        * bindings/gobject/GNUmakefile.am: call the new python script instead
+        of using a custom rule.
+
 2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         text-decoration-skip: ink skips randomly when using SVG fonts

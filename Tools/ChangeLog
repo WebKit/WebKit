@@ -1,3 +1,13 @@
+2014-02-04  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK][CMake] Generate GObject DOM bindings .symbols files
+        https://bugs.webkit.org/show_bug.cgi?id=126210
+
+        Reviewed by Martin Robinson.
+
+        * gtk/check-gdom-symbols: Added. Checks symbols compatibility.
+        (should_update_symbols_file):
+
 2014-02-13  Brent Fulgham  <bfulgham@apple.com>
 
         Create some latched scrolling tests.

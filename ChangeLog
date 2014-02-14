@@ -1,3 +1,13 @@
+2014-02-04  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK][CMake] Generate GObject DOM bindings .symbols files
+        https://bugs.webkit.org/show_bug.cgi?id=126210
+
+        Reviewed by Martin Robinson.
+
+        * Source/PlatformGTK.cmake: add checking DOM bindings API as a dependency
+        for documentation generation.
+
 2014-02-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] MEDIA_CONTROLS_SCRIPT support
