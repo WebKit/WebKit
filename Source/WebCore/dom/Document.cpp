@@ -1082,11 +1082,6 @@ bool Document::regionBasedColumnsEnabled() const
     return settings() && settings()->regionBasedColumnsEnabled(); 
 }
 
-bool Document::cssStickyPositionEnabled() const
-{
-    return settings() && settings()->cssStickyPositionEnabled(); 
-}
-
 bool Document::cssRegionsEnabled() const
 {
     return RuntimeEnabledFeatures::sharedFeatures().cssRegionsEnabled(); 

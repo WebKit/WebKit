@@ -212,14 +212,6 @@ public:
     void setFontRenderingMode(FontRenderingMode mode);
     FontRenderingMode fontRenderingMode() const;
 
-#if ENABLE(CSS_STICKY_POSITION)
-    void setCSSStickyPositionEnabled(bool enabled) { m_cssStickyPositionEnabled = enabled; }
-    bool cssStickyPositionEnabled() const { return m_cssStickyPositionEnabled; }
-#else
-    void setCSSStickyPositionEnabled(bool) { }
-    bool cssStickyPositionEnabled() const { return false; }
-#endif
-
     void setShowTiledScrollingIndicator(bool);
     bool showTiledScrollingIndicator() const { return m_showTiledScrollingIndicator; }
 
@@ -352,9 +344,6 @@ private:
     bool m_alwaysUseBaselineOfPrimaryFont : 1;
     bool m_allowMultiElementImplicitFormSubmission : 1;
     bool m_alwaysUseAcceleratedOverflowScroll : 1;
-#endif
-#if ENABLE(CSS_STICKY_POSITION)
-    bool m_cssStickyPositionEnabled : 1;
 #endif
     bool m_showTiledScrollingIndicator : 1;
     bool m_tiledBackingStoreEnabled : 1;

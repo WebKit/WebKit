@@ -245,7 +245,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     : baseURL(baseURL)
     , mode(mode)
     , isHTMLDocument(false)
-    , isCSSStickyPositionEnabled(false)
     , isCSSRegionsEnabled(false)
     , isCSSCompositingEnabled(false)
     , isCSSGridLayoutEnabled(false)
@@ -266,7 +265,6 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
     , charset(charset)
     , mode(document.inQuirksMode() ? CSSQuirksMode : CSSStrictMode)
     , isHTMLDocument(document.isHTMLDocument())
-    , isCSSStickyPositionEnabled(document.cssStickyPositionEnabled())
     , isCSSRegionsEnabled(document.cssRegionsEnabled())
     , isCSSCompositingEnabled(document.cssCompositingEnabled())
     , isCSSGridLayoutEnabled(document.cssGridLayoutEnabled())
@@ -288,7 +286,6 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.charset == b.charset
         && a.mode == b.mode
         && a.isHTMLDocument == b.isHTMLDocument
-        && a.isCSSStickyPositionEnabled == b.isCSSStickyPositionEnabled
         && a.isCSSRegionsEnabled == b.isCSSRegionsEnabled
         && a.isCSSCompositingEnabled == b.isCSSCompositingEnabled
         && a.isCSSGridLayoutEnabled == b.isCSSGridLayoutEnabled
@@ -751,7 +748,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
     case CSSPropertyPosition: // static | relative | absolute | fixed | sticky | inherit
         if (valueID == CSSValueStatic || valueID == CSSValueRelative || valueID == CSSValueAbsolute || valueID == CSSValueFixed
 #if ENABLE(CSS_STICKY_POSITION)
-            || (parserContext.isCSSStickyPositionEnabled && valueID == CSSValueWebkitSticky)
+            || valueID == CSSValueWebkitSticky
 #endif
             )
             return true;

@@ -1,3 +1,25 @@
+2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove position:sticky runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=128774
+
+        Reviewed by Simon Fraser.
+
+        Rollout of r128663
+
+        No new tests are necessary because there is no behavior change.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSParserMode.h:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+
 2014-02-04  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK][CMake] Generate GObject DOM bindings .symbols files

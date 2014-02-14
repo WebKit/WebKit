@@ -189,9 +189,6 @@ Settings::Settings(Page* page)
     , m_alwaysUseBaselineOfPrimaryFont(false)
     , m_alwaysUseAcceleratedOverflowScroll(false)
 #endif
-#if ENABLE(CSS_STICKY_POSITION)
-    , m_cssStickyPositionEnabled(true)
-#endif
     , m_showTiledScrollingIndicator(false)
     , m_tiledBackingStoreEnabled(false)
     , m_backgroundShouldExtendBeyondPage(false)

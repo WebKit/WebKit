@@ -394,7 +394,6 @@ public:
     PassRefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
     PassRefPtr<Element> createElement(const QualifiedName&, bool createdByParser);
 
-    bool cssStickyPositionEnabled() const;
     bool cssRegionsEnabled() const;
     bool cssCompositingEnabled() const;
 #if ENABLE(CSS_REGIONS)
