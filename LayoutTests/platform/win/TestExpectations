@@ -2916,7 +2916,7 @@ webkit.org/b/128722 svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.ht
 # isProtocolHandlerRegistered() isn't supported yet.
 webkit.org/b/92749 fast/dom/is-protocol-handler-registered.html [ Skip ] 
 
-webkit.org/b/128726 [ Release ] js/regress/emscripten-memops.html [ Failure ]
+webkit.org/b/128726 [ Release ] js/regress/emscripten-memops.html [ Timeout ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=128789
 js/regress/Int16Array-bubble-sort-with-byteLength.html

@@ -1,3 +1,11 @@
+2014-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update Windows test expectations.
+
+        js/regress/emscripten-memops.html is timing out, not failing.
+
+        * platform/win/TestExpectations:
+
 2014-02-13  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Unreviewed gardening of some timing out tests.
