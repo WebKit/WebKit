@@ -191,19 +191,6 @@ const AtomicString& DatasetDOMStringMap::item(const String& propertyName, bool& 
     return nullAtom;
 }
 
-bool DatasetDOMStringMap::contains(const String& name)
-{
-    if (!m_element.hasAttributes())
-        return false;
-
-    for (const Attribute& attribute : m_element.attributesIterator()) {
-        if (propertyNameMatchesAttributeName(name, attribute.localName()))
-            return true;
-    }
-
-    return false;
-}
-
 void DatasetDOMStringMap::setItem(const String& name, const String& value, ExceptionCode& ec)
 {
     if (!isValidPropertyName(name)) {
@@ -214,14 +201,14 @@ void DatasetDOMStringMap::setItem(const String& name, const String& value, Excep
     m_element.setAttribute(convertPropertyNameToAttributeName(name), value, ec);
 }
 
-void DatasetDOMStringMap::deleteItem(const String& name, ExceptionCode& ec)
+bool DatasetDOMStringMap::deleteItem(const String& name)
 {
-    if (!isValidPropertyName(name)) {
-        ec = SYNTAX_ERR;
-        return;
-    }
+    AtomicString attributeName = convertPropertyNameToAttributeName(name);
+    if (!m_element.hasAttribute(attributeName))
+        return false;
 
-    m_element.removeAttribute(convertPropertyNameToAttributeName(name));
+    m_element.removeAttribute(attributeName);
+    return true;
 }
 
 } // namespace WebCore

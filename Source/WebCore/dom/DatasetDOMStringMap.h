@@ -49,9 +49,8 @@ public:
 
     void getNames(Vector<String>&);
     const AtomicString& item(const String& name, bool& isValid);
-    bool contains(const String& name);
     void setItem(const String& name, const String& value, ExceptionCode&);
-    void deleteItem(const String& name, ExceptionCode&);
+    bool deleteItem(const String& name);
 
     Element* element() { return &m_element; }
 

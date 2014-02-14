@@ -27,7 +27,6 @@
 #include "JSDOMStringMap.h"
 
 #include "DOMStringMap.h"
-#include "Element.h"
 #include "JSNode.h"
 #include <wtf/text/AtomicString.h>
 
@@ -58,16 +57,10 @@ void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, Prop
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
+bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState*, PropertyName propertyName)
 {
     JSDOMStringMap* thisObject = jsCast<JSDOMStringMap*>(cell);
-    AtomicString stringName = propertyNameToAtomicString(propertyName);
-    if (!thisObject->m_impl->contains(stringName))
-        return false;
-    ExceptionCode ec = 0;
-    thisObject->m_impl->deleteItem(stringName, ec);
-    setDOMException(exec, ec);
-    return !ec;
+    return thisObject->m_impl->deleteItem(propertyNameToString(propertyName));
 }
 
 bool JSDOMStringMap::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned index)
