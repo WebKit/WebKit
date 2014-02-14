@@ -1,3 +1,14 @@
+2014-02-14  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit needs heuristics to differentiate lists used for layout from semantic data lists, similar to the heuristics for layout tables versus data tables.
+        https://bugs.webkit.org/show_bug.cgi?id=122320
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/aria-roles.html:
+        * accessibility/list-detection-expected.txt: Added.
+        * accessibility/list-detection.html: Added.
+
 2014-02-13  Brent Fulgham  <bfulgham@apple.com>
 
         Create some latched scrolling tests.

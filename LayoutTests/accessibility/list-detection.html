@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<ol id="list1" test-description="Ordered list is a list." is-list="true">
+<li>item</li>
+<li>item</li>
+</ol>
+
+<ol id="list2" test-description="Empty ordered list is not a list." is-list="false">
+</ol>
+
+<dl id="list3" test-description="Empty description list is not a list." is-list="false">
+</dl>
+
+<dl id="list4" test-description="Description list is a list." is-list="true">
+<li>item</li>
+<li>item</li>
+</dl>
+
+<div id="list5" role="list" test-description="ARIA role=list is a list." is-list="true">
+<div role="listitem">item</div>
+<div role="listitem">item</div>
+</div>
+
+<div id="list6" role="list" test-description="Empty ARIA list is not a list." is-list="false">
+</div>
+
+<div id="list7" role="list" test-description="ARIA list with one item is a list." is-list="true">
+<div role="listitem">item</div>
+</div>
+
+<ul id="list8" test-description="Default styled Unordered list is a list, because it shows markers." is-list="true">
+<li>item</li>
+<li>item</li>
+</ul>
+
+<ul id="list9" style="list-style-type: none;" test-description="Unordered list with more than 1 item and no style is a list." is-list="true">
+<li>item</li>
+<li>item</li>
+</ul>
+
+<ul id="list10" style="list-style-type: none;" test-description="Unordered list with 1 item and no style is not list." is-list="false">
+<li>item</li>
+</ul>
+
+<ul id="list11" test-description="List with non list item children is not a list" is-list="false">
+<div>item</div>
+</ul>
+
+<ul id="list12" style="list-style-image: url('test.gif');" test-description="Unordered list with image for markers is a list - even if image fails to load." is-list="true">
+<li>item</li>
+<li>item</li>
+</ul>
+
+<ul id="list13" role="list" test-description="Unordered list with aria role and at least one aria list items is a list." is-list="true">
+<div role="listitem">item</div>
+<div>item</div>
+</ul>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests the heuristic to determine if a 'list' is really a list, or just being used for layout.");
+
+    if (window.accessibilityController) {
+
+        var k = 1;
+        while (document.getElementById("list" + k)) {
+            var element = document.getElementById("list" + k);
+            var axElement =  accessibilityController.accessibleElementById("list" + k);
+            debug(element.getAttribute("test-description"));
+            if (element.getAttribute("is-list") === "true") {
+                shouldBeTrue("axElement.role == 'AXRole: AXList'");
+            } else {
+                shouldBeFalse("axElement.role == 'AXRole: AXList'");
+            }
+            debug("\n");
+            k++;
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

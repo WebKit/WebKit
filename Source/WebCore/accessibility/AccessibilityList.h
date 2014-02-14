@@ -49,6 +49,7 @@ public:
     virtual AccessibilityRole roleValue() const override final;
 private:
     virtual bool computeAccessibilityIsIgnored() const override;
+    virtual AccessibilityRole determineAccessibilityRole() override;
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityList, isList())

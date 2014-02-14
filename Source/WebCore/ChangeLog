@@ -1,3 +1,28 @@
+2014-02-14  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit needs heuristics to differentiate lists used for layout from semantic data lists, similar to the heuristics for layout tables versus data tables.
+        https://bugs.webkit.org/show_bug.cgi?id=122320
+
+        Reviewed by Mario Sanchez Prada.
+
+        Many authors use lists for layout, rather than presenting data. Exposing these kinds of lists to accessibility users
+        makes the web harder to process and listen, while degrading the importance of real lists.
+
+        This introduces heuristics to filter out layout lists with the following:
+           1. If it's a named list, like ol or aria=list, then it's a list.
+             1a. Unless the list has no children, then it's not a list.
+           2. If it displays visible list markers, it's a list.
+           3. If it does not display list markers and has only one child, it's not a list.
+           4. If it does not have any listitem children, it's not a list.
+           5. Otherwise it's a list (for now).
+
+        Test: accessibility/list-detection.html
+
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::determineAccessibilityRole):
+        (WebCore::AccessibilityList::roleValue):
+        * accessibility/AccessibilityList.h:
+
 2014-02-14  Brendan Long  <b.long@cablelabs.com>
 
         Use AtomicString arguments in TrackPrivateBaseClient callbacks

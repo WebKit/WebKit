@@ -31,7 +31,9 @@
 
 #include "AXObjectCache.h"
 #include "HTMLNames.h"
+#include "RenderListItem.h"
 #include "RenderObject.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
     
@@ -91,15 +93,67 @@ bool AccessibilityList::isDescriptionList() const
         return false;
     
     Node* node = m_renderer->node();
-    return node && node->hasTagName(dlTag);    
+    return node && node->hasTagName(dlTag);
 }
 
+AccessibilityRole AccessibilityList::determineAccessibilityRole()
+{
+    m_ariaRole = determineAriaRoleAttribute();
+    
+    // Directory is mapped to list for now, but does not adhere to the same heuristics.
+    if (ariaRoleAttribute() == DirectoryRole)
+        return ListRole;
+    
+    // Heuristic to determine if this list is being used for layout or for content.
+    //   1. If it's a named list, like ol or aria=list, then it's a list.
+    //      1a. Unless the list has no children, then it's not a list.
+    //   2. If it displays visible list markers, it's a list.
+    //   3. If it does not display list markers and has only one child, it's not a list.
+    //   4. If it does not have any listitem children, it's not a list.
+    //   5. Otherwise it's a list (for now).
+    
+    AccessibilityRole role = ListRole;
+    
+    // Temporarily set role so that we can query children (otherwise canHaveChildren returns false).
+    m_role = role;
+    
+    unsigned listItemCount = 0;
+    bool hasVisibleMarkers = false;
+
+    const auto& children = this->children();
+    // DescriptionLists are always semantically a description list, so do not apply heuristics.
+    if (isDescriptionList() && children.size())
+        return DescriptionListRole;
+
+    for (const auto& child : children) {
+        if (child->ariaRoleAttribute() == ListItemRole)
+            listItemCount++;
+        else if (child->roleValue() == ListItemRole) {
+            RenderObject* listItem = child->renderer();
+            if (listItem && listItem->isListItem()) {
+                if (listItem->style().listStyleType() != NoneListStyle || listItem->style().listStyleImage())
+                    hasVisibleMarkers = true;
+                listItemCount++;
+            }
+        }
+    }
+    
+    bool unorderedList = isUnorderedList();
+    // Non <ul> lists and ARIA lists only need to have one child.
+    // <ul> lists need to have 1 child, or visible markers.
+    if (!unorderedList || ariaRoleAttribute() != UnknownRole) {
+        if (!listItemCount)
+            role = GroupRole;
+    } else if (unorderedList && listItemCount <= 1 && !hasVisibleMarkers)
+        role = GroupRole;
+
+    return role;
+}
+    
 AccessibilityRole AccessibilityList::roleValue() const
 {
-    if (isDescriptionList())
-        return DescriptionListRole;
-    
-    return ListRole;
+    ASSERT(m_role != UnknownRole);
+    return m_role;
 }
     
 } // namespace WebCore
