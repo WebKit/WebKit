@@ -1,0 +1,16 @@
+Put mouse here and flick downwards
+
+Tests that iframe doesn't pass wheel events to main frame when scrolling at bottom
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+IFrame display height = 500
+Mouse moved to (28, 566)
+Page before: 0, IFrame before: 416
+Page after:  0, IFrame after: 416
+PASS Page did not receive wheel events.
+

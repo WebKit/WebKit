@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -345,6 +345,61 @@ void EventSendingController::mouseScrollBy(int x, int y)
     WKDictionarySetItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
+}
+
+void EventSendingController::mouseScrollByWithWheelAndMomentumPhases(int x, int y, JSStringRef phaseStr, JSStringRef momentumStr, bool asyncScrolling)
+{
+    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
+    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
+    
+    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
+    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("MouseScrollByWithWheelAndMomentumPhases"));
+    WKDictionarySetItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
+    
+    WKRetainPtr<WKStringRef> xKey(AdoptWK, WKStringCreateWithUTF8CString("X"));
+    WKRetainPtr<WKDoubleRef> xRef(AdoptWK, WKDoubleCreate(x));
+    WKDictionarySetItem(EventSenderMessageBody.get(), xKey.get(), xRef.get());
+    
+    WKRetainPtr<WKStringRef> yKey(AdoptWK, WKStringCreateWithUTF8CString("Y"));
+    WKRetainPtr<WKDoubleRef> yRef(AdoptWK, WKDoubleCreate(y));
+    WKDictionarySetItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
+
+    uint64_t phase = 0;
+    if (JSStringIsEqualToUTF8CString(phaseStr, "none"))
+        phase = 0;
+    else if (JSStringIsEqualToUTF8CString(phaseStr, "began"))
+        phase = 1; // kCGScrollPhaseBegan
+    else if (JSStringIsEqualToUTF8CString(phaseStr, "changed"))
+        phase = 2; // kCGScrollPhaseChanged
+    else if (JSStringIsEqualToUTF8CString(phaseStr, "ended"))
+        phase = 4; // kCGScrollPhaseEnded
+    else if (JSStringIsEqualToUTF8CString(phaseStr, "cancelled"))
+        phase = 8; // kCGScrollPhaseCancelled
+    else if (JSStringIsEqualToUTF8CString(phaseStr, "maybegin"))
+        phase = 128; // kCGScrollPhaseMayBegin
+
+    WKRetainPtr<WKStringRef> phaseKey(AdoptWK, WKStringCreateWithUTF8CString("Phase"));
+    WKRetainPtr<WKUInt64Ref> phaseRef(AdoptWK, WKUInt64Create(phase));
+    WKDictionarySetItem(EventSenderMessageBody.get(), phaseKey.get(), phaseRef.get());
+
+    uint64_t momentum = 0;
+    if (JSStringIsEqualToUTF8CString(momentumStr, "none"))
+        momentum = 0; // kCGMomentumScrollPhaseNone
+    else if (JSStringIsEqualToUTF8CString(momentumStr, "begin"))
+        momentum = 1; // kCGMomentumScrollPhaseBegin
+    else if (JSStringIsEqualToUTF8CString(momentumStr, "continue"))
+        momentum = 2; // kCGMomentumScrollPhaseContinue
+    else if (JSStringIsEqualToUTF8CString(momentumStr, "end"))
+        momentum = 3; // kCGMomentumScrollPhaseEnd
+
+    WKRetainPtr<WKStringRef> momentumKey(AdoptWK, WKStringCreateWithUTF8CString("Momentum"));
+    WKRetainPtr<WKUInt64Ref> momentumRef(AdoptWK, WKUInt64Create(momentum));
+    WKDictionarySetItem(EventSenderMessageBody.get(), momentumKey.get(), momentumRef.get());
+
+    if (asyncScrolling)
+        WKBundlePostMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get());
+    else
+        WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
 }
 
 void EventSendingController::continuousMouseScrollBy(int x, int y, bool paged)

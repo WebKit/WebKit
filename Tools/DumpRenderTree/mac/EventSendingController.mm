@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
@@ -202,6 +202,7 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(zoomPageOut)
             || aSelector == @selector(scalePageBy:atX:andY:)
             || aSelector == @selector(mouseScrollByX:andY:)
+            || aSelector == @selector(mouseScrollByX:andY:withWheel:andMomentumPhases:)
             || aSelector == @selector(continuousMouseScrollByX:andY:)
 #if PLATFORM(IOS)
             || aSelector == @selector(addTouchAtX:y:)
@@ -254,6 +255,8 @@ BOOL replayingSavedEvents;
         return @"setDragMode";
     if (aSelector == @selector(mouseScrollByX:andY:))
         return @"mouseScrollBy";
+    if (aSelector == @selector(mouseScrollByX:andY:withWheel:andMomentumPhases:))
+        return @"mouseScrollByWithWheelAndMomentumPhases";
     if (aSelector == @selector(continuousMouseScrollByX:andY:))
         return @"continuousMouseScrollBy";
     if (aSelector == @selector(scalePageBy:atX:andY:))
@@ -697,6 +700,56 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 - (void)mouseScrollByX:(int)x andY:(int)y
 {
     [self mouseScrollByX:x andY:y continuously:NO];
+}
+
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+const uint32_t kCGScrollWheelEventMomentumPhase = 123;
+#endif
+
+- (void)mouseScrollByX:(int)x andY:(int)y withWheel:(NSString*)phaseName andMomentumPhases:(NSString*)momentumName
+{
+#if !PLATFORM(IOS)
+    uint32_t phase = 0;
+    if ([phaseName isEqualToString: @"none"])
+        phase = 0;
+    else if ([phaseName isEqualToString: @"began"])
+        phase = 1; // kCGScrollPhaseBegan
+    else if ([phaseName isEqualToString: @"changd"])
+        phase = 2; // kCGScrollPhaseChanged;
+    else if ([phaseName isEqualToString: @"ended"])
+        phase = 4; // kCGScrollPhaseEnded
+    else if ([phaseName isEqualToString: @"cancelled"])
+        phase = 8; // kCGScrollPhaseCancelled
+    else if ([phaseName isEqualToString: @"maybegin"])
+        phase = 128; // kCGScrollPhaseMayBegin
+
+    uint32_t momentum = 0;
+    if ([momentumName isEqualToString: @"none"])
+        momentum = 0; //kCGMomentumScrollPhaseNone;
+    else if ([momentumName isEqualToString:@"begin"])
+        momentum = 1; // kCGMomentumScrollPhaseBegin;
+    else if ([momentumName isEqualToString:@"continue"])
+        momentum = 2; // kCGMomentumScrollPhaseContinue;
+    else if ([momentumName isEqualToString:@"end"])
+        momentum = 3; // kCGMomentumScrollPhaseEnd;
+
+    CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitLine, 2, y, x);
+
+    // CGEvent locations are in global display coordinates.
+    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[NSScreen mainScreen] frame].size.height - lastMousePosition.y);
+    CGEventSetLocation(cgScrollEvent, lastGlobalMousePosition);
+    CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventScrollPhase, phase);
+    CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventMomentumPhase, momentum);
+    
+    NSEvent* scrollEvent = [NSEvent eventWithCGEvent:cgScrollEvent];
+    CFRelease(cgScrollEvent);
+
+    if (NSView* targetView = [[mainFrame webView] hitTest:[scrollEvent locationInWindow]]) {
+        [NSApp _setCurrentEvent:scrollEvent];
+        [targetView scrollWheel:scrollEvent];
+        [NSApp _setCurrentEvent:nil];
+    }
+#endif
 }
 
 - (NSArray *)contextClick

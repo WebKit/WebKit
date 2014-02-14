@@ -1,3 +1,53 @@
+2014-02-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Create some latched scrolling tests.
+        https://bugs.webkit.org/show_bug.cgi?id=127606
+        <rdar://problem/15911348>
+
+        Reviewed by Simon Fraser.
+
+        Add a series of tests to cover desired behavior with wheel events (including momentum).
+        This behavior is specific to the Mac platform, so is limited to the platform/mac and
+        platform/mac-wk2 directories.
+
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-div-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-div-with-handler-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-div-with-handler.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-div.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-mainframe-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-mainframe-with-handler-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-mainframe-with-handler.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-div-latched-mainframe.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-iframe-latched-iframe-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-iframe-latched-iframe-with-handler-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-iframe-latched-iframe-with-handler.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-iframe-latched-iframe.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-iframe-latched-mainframe-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-iframe-latched-mainframe-with-handler-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-iframe-latched-mainframe-with-handler.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-iframe-latched-mainframe.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-mainframe-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-mainframe-with-handler-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-mainframe-with-handler.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-mainframe.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-select-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-select-with-handler-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-select-with-handler.html: Added.
+        * platform/mac-wk2/tiled-drawing/fast-scroll-select-latched-select.html: Added.
+        * platform/mac/fast/scrolling: Added.
+        * platform/mac/fast/scrolling/scroll-div-latched-div-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-div-latched-div.html: Added.
+        * platform/mac/fast/scrolling/scroll-div-latched-mainframe-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-div-latched-mainframe.html: Added.
+        * platform/mac/fast/scrolling/scroll-iframe-latched-iframe-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-iframe-latched-iframe.html: Added.
+        * platform/mac/fast/scrolling/scroll-iframe-latched-mainframe-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-iframe-latched-mainframe.html: Added.
+        * platform/mac/fast/scrolling/scroll-select-latched-mainframe-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-select-latched-mainframe.html: Added.
+        * platform/mac/fast/scrolling/scroll-select-latched-select-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-select-latched-select.html: Added.
+
 2014-02-14  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
 
         ASSERTION FAILED: comparePositions(newEnd, newStart) >= 0 in WebCore::ApplyStyleCommand::updateStartEnd

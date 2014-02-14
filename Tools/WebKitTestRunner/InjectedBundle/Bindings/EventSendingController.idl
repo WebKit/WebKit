@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@ interface EventSendingController {
     void mouseUp(long buttonNumber, object modifierArray);
     void mouseMoveTo(long x, long y);
     void mouseScrollBy(long x, long y);
+    void mouseScrollByWithWheelAndMomentumPhases(long x, long y, DOMString phase, DOMString momentum, optional boolean asyncScrolling);
     void continuousMouseScrollBy(long x, long y, optional boolean paged);
     object contextClick();
     void scheduleAsynchronousClick();
