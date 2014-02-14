@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -107,41 +107,41 @@ FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument& document)
 void FTPDirectoryDocumentParser::appendEntry(const String& filename, const String& size, const String& date, bool isDirectory)
 {
     RefPtr<Element> rowElement = m_tableElement->insertRow(-1, IGNORE_EXCEPTION);
-    rowElement->setAttribute("class", "ftpDirectoryEntryRow", IGNORE_EXCEPTION);
+    rowElement->setAttribute(HTMLNames::classAttr, "ftpDirectoryEntryRow");
 
     RefPtr<Element> element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(*document(), String(&noBreakSpace, 1)), IGNORE_EXCEPTION);
     if (isDirectory)
-        element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeDirectory", IGNORE_EXCEPTION);
+        element->setAttribute(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeDirectory");
     else
-        element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeFile", IGNORE_EXCEPTION);
+        element->setAttribute(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeFile");
     rowElement->appendChild(element, IGNORE_EXCEPTION);
 
     element = createTDForFilename(filename);
-    element->setAttribute("class", "ftpDirectoryFileName", IGNORE_EXCEPTION);
+    element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileName");
     rowElement->appendChild(element, IGNORE_EXCEPTION);
 
     element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(*document(), date), IGNORE_EXCEPTION);
-    element->setAttribute("class", "ftpDirectoryFileDate", IGNORE_EXCEPTION);
+    element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileDate");
     rowElement->appendChild(element, IGNORE_EXCEPTION);
 
     element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(*document(), size), IGNORE_EXCEPTION);
-    element->setAttribute("class", "ftpDirectoryFileSize", IGNORE_EXCEPTION);
+    element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileSize");
     rowElement->appendChild(element, IGNORE_EXCEPTION);
 }
 
 PassRefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
 {
     String fullURL = document()->baseURL().string();
-    if (fullURL[fullURL.length() - 1] == '/')
+    if (fullURL.endsWith('/'))
         fullURL.append(filename);
     else
-        fullURL.append("/" + filename);
+        fullURL.append(makeString('/', filename));
 
     RefPtr<Element> anchorElement = document()->createElement(aTag, false);
-    anchorElement->setAttribute("href", fullURL, IGNORE_EXCEPTION);
+    anchorElement->setAttribute(HTMLNames::hrefAttr, fullURL);
     anchorElement->appendChild(Text::create(*document(), filename), IGNORE_EXCEPTION);
 
     RefPtr<Element> tdElement = document()->createElement(tdTag, false);
@@ -153,7 +153,7 @@ PassRefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String
 static String processFilesizeString(const String& size, bool isDirectory)
 {
     if (isDirectory)
-        return "--";
+        return ASCIILiteral("--");
 
     bool valid;
     int64_t bytes = size.toUInt64(&valid);
@@ -171,7 +171,7 @@ static String processFilesizeString(const String& size, bool isDirectory)
 
 static bool wasLastDayOfMonth(int year, int month, int day)
 {
-    static int lastDays[] = { 31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    static const int lastDays[] = { 31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     if (month < 0 || month > 11)
         return false;
 
@@ -241,9 +241,9 @@ static String processFileDateString(const FTPTime& fileTime)
     String dateString;
 
     if (fileTime.tm_year > -1)
-        dateString = String(months[month]) + " " + String::number(fileTime.tm_mday) + ", " + String::number(fileTime.tm_year);
+        dateString = makeString(months[month], ' ', String::number(fileTime.tm_mday), ", ", String::number(fileTime.tm_year));
     else
-        dateString = String(months[month]) + " " + String::number(fileTime.tm_mday) + ", " + String::number(now.year());
+        dateString = makeString(months[month], ' ', String::number(fileTime.tm_mday), ", ", String::number(now.year()));
 
     return dateString + timeOfDay;
 }
@@ -261,7 +261,7 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
 
     String filename(result.filename, result.filenameLength);
     if (result.type == FTPDirectoryEntry) {
-        filename.append("/");
+        filename.append('/');
 
         // We have no interest in linking to "current directory"
         if (filename == "./")
@@ -312,7 +312,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     // Otherwise create one manually
     tableElement = document()->createElement(tableTag, false);
     m_tableElement = toHTMLTableElement(tableElement.get());
-    m_tableElement->setAttribute("id", "ftpDirectoryTable", IGNORE_EXCEPTION);
+    m_tableElement->setAttribute(HTMLNames::idAttr, "ftpDirectoryTable");
 
     // If we didn't find the table element, lets try to append our own to the body
     // If that fails for some reason, cram it on the end of the document as a last
@@ -337,7 +337,7 @@ void FTPDirectoryDocumentParser::createBasicDocument()
 
     RefPtr<Element> tableElement = document()->createElement(tableTag, false);
     m_tableElement = toHTMLTableElement(tableElement.get());
-    m_tableElement->setAttribute("id", "ftpDirectoryTable", IGNORE_EXCEPTION);
+    m_tableElement->setAttribute(HTMLNames::idAttr, "ftpDirectoryTable");
 
     bodyElement->appendChild(m_tableElement, IGNORE_EXCEPTION);
 }

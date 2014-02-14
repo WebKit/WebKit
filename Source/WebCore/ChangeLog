@@ -1,3 +1,22 @@
+2014-02-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        Improve the performance on mobile of FTPDirectoryDocument
+        https://bugs.webkit.org/show_bug.cgi?id=128778
+
+        Reviewed by Antti Koivisto.
+
+        Little cleanup.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::appendEntry):
+        (WebCore::FTPDirectoryDocumentParser::createTDForFilename):
+        (WebCore::processFilesizeString):
+        (WebCore::wasLastDayOfMonth):
+        (WebCore::processFileDateString):
+        (WebCore::FTPDirectoryDocumentParser::parseAndAppendOneLine):
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate):
+        (WebCore::FTPDirectoryDocumentParser::createBasicDocument):
+
 2014-02-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Do not attempt to synchronize attributes when no Simple Selector could match an animatable attribute

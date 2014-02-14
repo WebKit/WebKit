@@ -1,3 +1,13 @@
+2014-02-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        Improve the performance on mobile of FTPDirectoryDocument
+        https://bugs.webkit.org/show_bug.cgi?id=128778
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::endsWith): add a missing overload.
+
 2014-02-14  Wojciech Bielawski  <w.bielawski@samsung.com>
 
         (try)append and insert operations don't need new operator for PODs
