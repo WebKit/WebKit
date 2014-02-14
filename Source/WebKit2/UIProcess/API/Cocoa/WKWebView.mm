@@ -34,6 +34,7 @@
 #import "RemoteObjectRegistryMessages.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
+#import "WKBrowsingContextHandleInternal.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKPreferencesInternal.h"
@@ -391,6 +392,11 @@
     }
 
     return _remoteObjectRegistry.get();
+}
+
+- (WKBrowsingContextHandle *)_handle
+{
+    return [[[WKBrowsingContextHandle alloc] _initWithPageID:_page->pageID()] autorelease];
 }
 
 - (_WKRenderingProgressEvents)_observedRenderingProgressEvents

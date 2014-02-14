@@ -32,11 +32,14 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
     _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
 };
 
+@class WKBrowsingContextHandle;
 @class WKRemoteObjectRegistry;
 
 @interface WKWebView (WKPrivate)
 
 @property (nonatomic, readonly) WKRemoteObjectRegistry *_remoteObjectRegistry;
+@property (nonatomic, readonly) WKBrowsingContextHandle *_handle;
+
 @property (nonatomic, setter=_setObservedRenderingProgressEvents:) _WKRenderingProgressEvents _observedRenderingProgressEvents;
 
 #if TARGET_OS_IPHONE

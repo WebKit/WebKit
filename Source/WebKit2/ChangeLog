@@ -1,3 +1,14 @@
+2014-02-14  Anders Carlsson  <andersca@apple.com>
+
+        Add -[WKWebView _handle]
+        https://bugs.webkit.org/show_bug.cgi?id=128828
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _handle]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-02-13  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose the bundle form client
