@@ -45,6 +45,7 @@ inline CapabilityLevel canCompile(Node* node)
     switch (node->op()) {
     case JSConstant:
     case WeakJSConstant:
+    case GetMyArgumentsLength:
     case GetLocal:
     case SetLocal:
     case MovHint:

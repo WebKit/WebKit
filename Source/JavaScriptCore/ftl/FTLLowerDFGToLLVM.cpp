@@ -296,6 +296,9 @@ private:
         case MovHint:
             compileMovHint();
             break;
+        case GetMyArgumentsLength:
+            compileGetMyArgumentsLength();
+            break;
         case ZombieHint:
             compileZombieHint();
             break;
@@ -1798,6 +1801,12 @@ private:
         setInt32(m_out.castToInt32(m_out.phi(m_out.intPtr, simpleOut, wastefulOut)));
     }
     
+    void compileGetMyArgumentsLength() 
+    {
+        TypedPointer reg = addressFor(m_node->codeOrigin.stackOffset() + JSStack::ArgumentCount);
+        setInt32(m_out.add(m_out.load32NonNegative(reg), m_out.constInt32(-1)));
+    }
+
     void compileGetArrayLength()
     {
         switch (m_node->arrayMode().type()) {
