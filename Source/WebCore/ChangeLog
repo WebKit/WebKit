@@ -1,3 +1,16 @@
+2014-02-14  Beth Dakin  <bdakin@apple.com>
+
+        Margin tiles are not created for the top and left sides when there is a < 1.0 
+        scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=128842
+
+        Reviewed by Simon Fraser.
+
+        floor the result of the computation whenever we have a negative origin, to ensure 
+        that we are rounding 'up' to a larger number of tiles. 
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::getTileIndexRangeForRect):
+
 2014-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         setSelection should not synchronously trigger layout

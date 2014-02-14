@@ -471,12 +471,12 @@ void TileController::getTileIndexRangeForRect(const IntRect& rect, TileIndex& to
     if (clampedRect.x() >= 0)
         topLeft.setX(clampedRect.x() / m_tileSize.width());
     else
-        topLeft.setX(clampedRect.x() / leftMarginWidth());
+        topLeft.setX(floorf((float)clampedRect.x() / leftMarginWidth()));
 
     if (clampedRect.y() >= 0)
         topLeft.setY(clampedRect.y() / m_tileSize.height());
     else
-        topLeft.setY(clampedRect.y() / topMarginHeight());
+        topLeft.setY(floorf((float)clampedRect.y() / topMarginHeight()));
 
     int bottomXRatio = ceil((float)clampedRect.maxX() / m_tileSize.width());
     bottomRight.setX(std::max(bottomXRatio - 1, 0));
