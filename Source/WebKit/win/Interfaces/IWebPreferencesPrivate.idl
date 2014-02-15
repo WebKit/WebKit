@@ -142,4 +142,10 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setRequestAnimationFrameEnabled([in] BOOL);
     HRESULT requestAnimationFrameEnabled([out, retval] BOOL*);
+
+    HRESULT mockScrollbarsEnabled([out, retval] BOOL* enabled);
+    HRESULT setMockScrollbarsEnabled([in] BOOL enabled);
+
+    HRESULT screenFontSubstitutionEnabled([out, retval] BOOL* enabled);
+    HRESULT setScreenFontSubstitutionEnabled([in] BOOL enabled);
 }

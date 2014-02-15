@@ -477,6 +477,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE requestAnimationFrameEnabled(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setRequestAnimationFrameEnabled(BOOL);
 
+    virtual HRESULT STDMETHODCALLTYPE mockScrollbarsEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setMockScrollbarsEnabled(BOOL);
+
+    virtual HRESULT STDMETHODCALLTYPE screenFontSubstitutionEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setScreenFontSubstitutionEnabled(BOOL);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

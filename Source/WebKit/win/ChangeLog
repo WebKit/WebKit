@@ -1,3 +1,22 @@
+2014-02-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Make tests more consistent with Mac platform
+        https://bugs.webkit.org/show_bug.cgi?id=128848
+
+        Reviewed by Simon Fraser.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Add access to the
+        mock scrollbar and screen font substitution features.
+        * WebPreferenceKeysPrivate.h: Ditto
+        * WebPreferences.cpp: Ditto
+        (WebPreferences::mockScrollbarsEnabled):
+        (WebPreferences::setMockScrollbarsEnabled):
+        (WebPreferences::screenFontSubstitutionEnabled):
+        (WebPreferences::setScreenFontSubstitutionEnabled):
+        * WebPreferences.h: Ditto
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Ditto
+
 2014-02-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make GraphicsLayerClient::paintContents's clip rect subpixel based.

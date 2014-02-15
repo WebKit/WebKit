@@ -1,3 +1,15 @@
+2014-02-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Make tests more consistent with Mac platform
+        https://bugs.webkit.org/show_bug.cgi?id=128848
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): Turn CSS regions on,
+        turn mock scrollbars on, and allow screen font
+        substitution.
+
 2014-02-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Save ARGV in a local to avoid repeated lookups

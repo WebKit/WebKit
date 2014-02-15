@@ -5047,6 +5047,16 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setRequestAnimationFrameEnabled(enabled);
 
+    hr = prefsPrivate->mockScrollbarsEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setMockScrollbarsEnabled(enabled);
+
+    hr = prefsPrivate->screenFontSubstitutionEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setScreenFontSubstitutionEnabled(enabled);
+
     return S_OK;
 }
 

@@ -1489,7 +1489,7 @@ imported/w3c/html-templates
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
-fast/regions
+#fast/regions
 
 # CSS Exclusions support not yet enabled. http://webkit.org/b/57311
 fast/exclusions
@@ -1883,11 +1883,11 @@ fast/loader/javascript-url-iframe-remove-on-navigate.html
 fast/dom/MutationObserver/inline-event-listener.html
 fast/profiler/dead-time.html
 fast/profiler/stop-profiling-after-setTimeout.html
-fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html
-fast/regions/repaint/line-flow-with-floats-in-regions.html
-fast/regions/repaint/overflow-flipped-writing-mode-block-in-regions.html
-fast/regions/repaint/region-painting-invalidation.html
-fast/regions/repaint/region-painting-via-layout.html
+#fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html
+#fast/regions/repaint/line-flow-with-floats-in-regions.html
+#fast/regions/repaint/overflow-flipped-writing-mode-block-in-regions.html
+#fast/regions/repaint/region-painting-invalidation.html
+#fast/regions/repaint/region-painting-via-layout.html
 fast/repaint/canvas-putImageData.html
 fast/repaint/fixed-in-page-scale.html
 fast/repaint/fixed-right-bottom-in-page-scale.html

@@ -1254,6 +1254,30 @@ HRESULT WebPreferences::unused6()
     return E_FAIL;
 }
 
+HRESULT WebPreferences::mockScrollbarsEnabled(BOOL* enabled)
+{
+    *enabled = boolValueForKey(WebKitMockScrollbarsEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setMockScrollbarsEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitMockScrollbarsEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::screenFontSubstitutionEnabled(BOOL* enabled)
+{
+    *enabled = boolValueForKey(WebKitScreenFontSubstitutionEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setScreenFontSubstitutionEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitScreenFontSubstitutionEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebPreferences::hyperlinkAuditingEnabled(
     /* [in] */ BOOL* enabled)
 {

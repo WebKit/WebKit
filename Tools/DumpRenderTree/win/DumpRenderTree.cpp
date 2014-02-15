@@ -873,6 +873,7 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
     preferences->setCacheModel(WebCacheModelDocumentBrowser);
     preferences->setLoadsImagesAutomatically(TRUE);
     preferences->setTextAreasAreResizable(TRUE);
+    preferences->setCSSRegionsEnabled(TRUE);
 
     if (persistentUserStyleSheetLocation) {
         Vector<wchar_t> urlCharacters(CFStringGetLength(persistentUserStyleSheetLocation.get()));
@@ -901,6 +902,8 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
 #if USE(CG)
         prefsPrivate->setAcceleratedCompositingEnabled(TRUE);
 #endif
+        prefsPrivate->setMockScrollbarsEnabled(TRUE);
+        prefsPrivate->setScreenFontSubstitutionEnabled(TRUE);
     }
     setAlwaysAcceptCookies(false);
 
