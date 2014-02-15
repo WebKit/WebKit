@@ -1,5 +1,16 @@
 2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Windows rebaselines after dependency updates.
+
+        * platform/win/fast/css/first-letter-block-form-controls-crash-expected.txt:
+        * platform/win/fast/css/relative-position-replaced-in-table-display-crash-expected.txt:
+        * platform/win/fast/forms/access-key-for-all-elements-expected.txt:
+        * platform/win/fast/forms/form-associated-element-crash3-expected.txt:
+        * platform/win/fast/forms/search-styled-expected.txt:
+        * platform/win/fast/multicol/renderer-positioned-assert-crash-expected.txt:
+
+2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r164148.
 
         * http/conf/apache2-httpd.conf: Removed.
