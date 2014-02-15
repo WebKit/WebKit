@@ -214,19 +214,30 @@ WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit()
     initAVValueTiming();
     initUIViewController();
     initAVPlayerLayer();
-    
-    m_playerController = adoptNS([[WebAVPlayerController alloc] init]);
 }
+
+WebAVPlayerController *WebVideoFullscreenInterfaceAVKit::playerController()
+{
+    if (!m_playerController)
+    {
+        m_playerController = adoptNS([[WebAVPlayerController alloc] init]);
+        if (m_videoFullscreenModel)
+            m_playerController.get().delegate = m_videoFullscreenModel;
+    }
+    
+    return m_playerController.get();
+}
+
 
 void WebVideoFullscreenInterfaceAVKit::setWebVideoFullscreenModel(WebVideoFullscreenModel* model)
 {
     m_videoFullscreenModel = model;
-    m_playerController.get().delegate = m_videoFullscreenModel;
+    playerController().delegate = m_videoFullscreenModel;
 }
 
 void WebVideoFullscreenInterfaceAVKit::setDuration(double duration)
 {
-    WebAVPlayerController* playerController = m_playerController.get();
+    WebAVPlayerController* playerController = this->playerController();
     
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=127017 use correct values instead of duration for all these
     playerController.contentDuration = duration;
@@ -246,31 +257,31 @@ void WebVideoFullscreenInterfaceAVKit::setDuration(double duration)
 
 void WebVideoFullscreenInterfaceAVKit::setCurrentTime(double currentTime, double anchorTime)
 {
-    NSTimeInterval anchorTimeStamp = ![m_playerController rate] ? NAN : anchorTime;
+    NSTimeInterval anchorTimeStamp = ![playerController() rate] ? NAN : anchorTime;
     AVValueTiming *timing = [classAVValueTiming valueTimingWithAnchorValue:currentTime
         anchorTimeStamp:anchorTimeStamp rate:0];
-    m_playerController.get().timing = timing;
+    playerController().timing = timing;
 }
 
 void WebVideoFullscreenInterfaceAVKit::setRate(bool isPlaying, float playbackRate)
 {
-    m_playerController.get().rate = isPlaying ? playbackRate : 0.;
+    playerController().rate = isPlaying ? playbackRate : 0.;
 }
 
 void WebVideoFullscreenInterfaceAVKit::setVideoDimensions(bool hasVideo, float width, float height)
 {
-    m_playerController.get().hasEnabledVideo = hasVideo;
-    m_playerController.get().contentDimensions = CGSizeMake(width, height);
+    playerController().hasEnabledVideo = hasVideo;
+    playerController().contentDimensions = CGSizeMake(width, height);
 }
 
 void WebVideoFullscreenInterfaceAVKit::setVideoLayer(PlatformLayer* videoLayer)
 {
-    [m_playerController.get().playerLayer removeFromSuperlayer];
+    [playerController().playerLayer removeFromSuperlayer];
     [videoLayer removeFromSuperlayer];
     ASSERT(!videoLayer
         || [videoLayer isKindOfClass:[classAVPlayerLayer class]]
         || ([videoLayer isKindOfClass:[CALayer class]] && [videoLayer conformsToProtocol:@protocol(AVPlayerLayer)]));
-    m_playerController.get().playerLayer = (CALayer<AVPlayerLayer>*)videoLayer;
+    playerController().playerLayer = (CALayer<AVPlayerLayer>*)videoLayer;
 }
 
 void WebVideoFullscreenInterfaceAVKit::enterFullscreenWithCompletionHandler(std::function<void()> completion)
@@ -279,10 +290,10 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreenWithCompletionHandler(std:
     
     dispatch_async(dispatch_get_main_queue(), [strongThis, completion]{
         strongThis->m_playerViewController = [[[classAVPlayerViewController alloc] init] autorelease];
-        strongThis->m_playerViewController.get().playerController = (AVPlayerController *)strongThis->m_playerController.get();
+        strongThis->m_playerViewController.get().playerController = (AVPlayerController *)strongThis->playerController();
         
         if ([strongThis->m_playerViewController respondsToSelector:@selector(setDelegate:)])
-            strongThis->m_playerViewController.get().delegate = strongThis->m_playerController.get();
+            strongThis->m_playerViewController.get().delegate = strongThis->playerController();
         
         strongThis->m_viewController = adoptNS([[classUIViewController alloc] init]);
         

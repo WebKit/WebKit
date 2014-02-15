@@ -1,3 +1,27 @@
+2014-02-15  Jeremy Jones  <jeremyj@apple.com>
+
+        WK2 AVKit enter fullscreen doesn't work a second time.
+        https://bugs.webkit.org/show_bug.cgi?id=128558
+
+        Reviewed by Jer Noble.
+
+        Lazily create WebAVPlayerController when needed.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit):
+        (WebVideoFullscreenInterfaceAVKit::getPlayerController):
+        Add getPlayerController()
+
+        (WebVideoFullscreenInterfaceAVKit::setWebVideoFullscreenModel):
+        (WebVideoFullscreenInterfaceAVKit::setDuration):
+        (WebVideoFullscreenInterfaceAVKit::setCurrentTime):
+        (WebVideoFullscreenInterfaceAVKit::setRate):
+        (WebVideoFullscreenInterfaceAVKit::setVideoDimensions):
+        (WebVideoFullscreenInterfaceAVKit::setVideoLayer):
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreenWithCompletionHandler):
+        use getPlayerController();
+
 2014-02-15  Jer Noble  <jer.noble@apple.com>
 
         [Mac] 10X slower than Chrome when drawing a video into a canvas

@@ -53,6 +53,8 @@ class WebVideoFullscreenInterfaceAVKit
     RetainPtr<UIViewController> m_viewController;
     RetainPtr<UIWindow> m_window;
     WebVideoFullscreenModel* m_videoFullscreenModel;
+        
+    WebAVPlayerController *playerController();
     
 public:
     WebVideoFullscreenInterfaceAVKit();
