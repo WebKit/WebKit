@@ -1,3 +1,14 @@
+2014-02-14  Anders Carlsson  <andersca@apple.com>
+
+        Control tints don't update inside WebViews
+        https://bugs.webkit.org/show_bug.cgi?id=128862
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView/WebView.mm:
+        (-[WebView _windowChangedKeyState]):
+        Call [super _windowChangedKeyState].
+
 2014-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         During a copy, position:fixed gets converted to position:absolute even if only part of the document is selected
