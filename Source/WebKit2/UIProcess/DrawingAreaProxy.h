@@ -73,7 +73,7 @@ public:
     virtual void adjustTransientZoom(double, WebCore::FloatPoint) { }
     virtual void commitTransientZoom(double, WebCore::FloatPoint) { }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void setExposedRect(const WebCore::FloatRect&);
     WebCore::FloatRect exposedRect() const { return m_exposedRect; }
     void exposedRectChangedTimerFired(WebCore::Timer<DrawingAreaProxy>*);
@@ -107,7 +107,7 @@ private:
     virtual void enterAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
     virtual void exitAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
     virtual void updateAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void didUpdateGeometry() { }
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) { }
 

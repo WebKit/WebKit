@@ -37,7 +37,7 @@
 #include "WebProcessProxyMessages.h"
 #include <wtf/Deque.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSObject;
 OBJC_CLASS WKPlaceholderModalWindow;
@@ -63,7 +63,7 @@ struct RawPluginMetaData {
 };
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 int pluginProcessLatencyQOS();
 int pluginProcessThroughputQOS();
 #endif
@@ -88,7 +88,7 @@ public:
 
     bool isValid() const { return m_connection; }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void setProcessSuppressionEnabled(bool);
 
     // Returns whether the plug-in needs the heap to be marked executable.
@@ -125,7 +125,7 @@ private:
     void didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID);
     void didClearSiteData(uint64_t callbackID);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool getPluginProcessSerialNumber(ProcessSerialNumber&);
     void makePluginProcessTheFrontProcess();
     void makeUIProcessTheFrontProcess();
@@ -175,7 +175,7 @@ private:
     // when the process finishes launching.
     unsigned m_numPendingConnectionRequests;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<NSObject> m_activationObserver;
     RetainPtr<WKPlaceholderModalWindow *> m_placeholderWindow;
     bool m_modalWindowIsShowing;

@@ -39,7 +39,7 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy* webPagePr
     : m_type(type)
     , m_webPageProxy(webPageProxy)
     , m_size(webPageProxy->viewSize())
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_exposedRectChangedTimer(this, &DrawingAreaProxy::exposedRectChangedTimerFired)
 #endif
 {
@@ -62,7 +62,7 @@ void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition
     sizeDidChange();
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 void DrawingAreaProxy::setExposedRect(const FloatRect& exposedRect)
 {
     if (!m_webPageProxy->isValid())

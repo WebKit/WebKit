@@ -37,7 +37,7 @@ messages -> WebContext LegacyReceiver {
     GetPasteboardItemsCount() -> (uint64_t itemsCount)
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     # Pasteboard messages.
     GetPasteboardTypes(String pasteboardName) -> (Vector<String> types)
     GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType) -> (Vector<String> pathnames)
@@ -55,7 +55,7 @@ messages -> WebContext LegacyReceiver {
     SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (uint64_t changeCount)
 #endif
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
     // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
     Dummy() -> (bool dummyReturn)

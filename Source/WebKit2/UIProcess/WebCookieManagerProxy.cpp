@@ -146,7 +146,7 @@ void WebCookieManagerProxy::cookiesDidChange()
 
 void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     persistHTTPCookieAcceptPolicy(policy);
 #endif
 #if USE(SOUP)

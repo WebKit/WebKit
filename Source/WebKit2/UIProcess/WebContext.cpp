@@ -211,7 +211,7 @@ WebContext::WebContext(const String& injectedBundlePath)
     m_storageManager->setLocalStorageDirectory(localStorageDirectory());
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void WebContext::platformInitialize()
 {
 }
@@ -393,7 +393,7 @@ void WebContext::ensureNetworkProcess()
     // Initialize the network process.
     m_networkProcess->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     m_networkProcess->send(Messages::NetworkProcess::SetQOS(networkProcessLatencyQOS(), networkProcessThroughputQOS()), 0);
 #endif
 }
@@ -615,7 +615,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
         injectedBundleInitializationUserData = m_injectedBundleInitializationUserData;
     process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get(), *process)), 0);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     process->send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
 #endif
 
@@ -1207,7 +1207,7 @@ void WebContext::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* 
 
 void WebContext::setHTTPPipeliningEnabled(bool enabled)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     ResourceRequest::setHTTPPipeliningEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
@@ -1216,7 +1216,7 @@ void WebContext::setHTTPPipeliningEnabled(bool enabled)
 
 bool WebContext::httpPipeliningEnabled() const
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     return ResourceRequest::httpPipeliningEnabled();
 #else
     return false;
@@ -1277,7 +1277,7 @@ void WebContext::requestNetworkingStatistics(StatisticsRequest* request)
 #endif
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void WebContext::dummy(bool&)
 {
 }
@@ -1372,7 +1372,7 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
             mimeTypes.uncheckedAppend(API::String::create(mimeClassInfo.type));
         map.set(ASCIILiteral("mimes"), API::Array::create(std::move(mimeTypes)));
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         map.set(ASCIILiteral("bundleId"), API::String::create(pluginModule.bundleIdentifier));
         map.set(ASCIILiteral("version"), API::String::create(pluginModule.versionString));
 #endif

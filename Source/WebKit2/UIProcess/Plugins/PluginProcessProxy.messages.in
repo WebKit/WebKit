@@ -28,7 +28,7 @@ messages -> PluginProcessProxy {
     DidGetSitesWithData(Vector<String> sites, uint64_t callbackID)
     DidClearSiteData(uint64_t callbackID)
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     SetModalWindowIsShowing(bool modalWindowIsShowing)
     SetFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
     

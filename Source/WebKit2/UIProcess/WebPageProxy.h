@@ -93,7 +93,7 @@
 #include <Evas.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <WebCore/PlatformLayer.h>
 #endif
 
@@ -496,7 +496,7 @@ public:
     void setInputMethodState(bool enabled);
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
     void setMainFrameIsScrollable(bool);
 
@@ -523,7 +523,7 @@ public:
     WKView* wkView() const;
     void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize);
 #endif
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
 #if PLATFORM(EFL)
     void handleInputMethodKeydown(bool& handled);
     void confirmComposition(const String&);
@@ -632,7 +632,7 @@ public:
     double gapBetweenPages() const { return m_gapBetweenPages; }
     unsigned pageCount() const { return m_pageCount; }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Called by the web process through a message.
     void registerWebProcessAccessibilityToken(const IPC::DataReference&);
     // Called by the UI process when it is ready to send its tokens to the web process.
@@ -683,7 +683,7 @@ public:
     void drawHeader(WebFrameProxy*, const WebCore::FloatRect&);
     void drawFooter(WebFrameProxy*, const WebCore::FloatRect&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Dictionary.
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
 #endif
@@ -701,7 +701,7 @@ public:
 
     void didPerformDragControllerAction(WebCore::DragSession);
     void dragEnded(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t operation);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, bool isLinkDrag);
     void setPromisedData(const String& pasteboardName, const SharedMemory::Handle& imageHandle, uint64_t imageSize, const String& filename, const String& extension,
                          const String& title, const String& url, const String& visibleURL, const SharedMemory::Handle& archiveHandle, uint64_t archiveSize);
@@ -728,7 +728,7 @@ public:
     bool isValidEditCommand(WebEditCommandProxy*);
     void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void registerKeypressCommandName(const String& name) { m_knownKeypressCommandNames.add(name); }
     bool isValidKeypressCommandName(const String& name) const { return m_knownKeypressCommandNames.contains(name); }
 #endif
@@ -782,7 +782,7 @@ public:
     void capitalizeWord();
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool isSmartInsertDeleteEnabled() const { return m_isSmartInsertDeleteEnabled; }
     void setSmartInsertDeleteEnabled(bool);
 #endif
@@ -797,7 +797,7 @@ public:
     void beginPrinting(WebFrameProxy*, const PrintInfo&);
     void endPrinting();
     void computePagesForPrinting(WebFrameProxy*, const PrintInfo&, PassRefPtr<ComputedPagesCallback>);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, PassRefPtr<ImageCallback>);
     void drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, PassRefPtr<DataCallback>);
 #elif PLATFORM(GTK)
@@ -806,13 +806,13 @@ public:
 
     PageLoadState& pageLoadState() { return m_pageLoadState; }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void handleAlternativeTextUIResult(const String& result);
 #endif
 
     void saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, API::Data*);
     void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference&);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID);
     void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference&, const String& pdfUUID);
     void openPDFFromTemporaryFolderWithNativeApplication(const String& pdfUUID);
@@ -883,7 +883,7 @@ public:
     void setShouldRecordNavigationSnapshots(bool shouldRecordSnapshots) { m_shouldRecordNavigationSnapshots = shouldRecordSnapshots; }
     void recordNavigationSnapshot();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<CGImageRef> takeViewSnapshot();
 #endif
 
@@ -1045,7 +1045,7 @@ private:
     void executeUndoRedo(uint32_t action, bool& result);
 
     // Keyboard handling
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void interpretQueuedKeyEvent(const EditorState&, bool& handled, Vector<WebCore::KeypressCommand>&);
     void executeSavedCommandBySelector(const String& selector, bool& handled);
 #endif
@@ -1072,7 +1072,7 @@ private:
     void saveRecentSearches(const String&, const Vector<String>&);
     void loadRecentSearches(const String&, Vector<String>&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Speech.
     void getIsSpeaking(bool&);
     void speak(const String&);
@@ -1134,7 +1134,7 @@ private:
     void canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, const WebCore::ProtectionSpace&, bool& canAuthenticate);
     void didReceiveAuthenticationChallenge(uint64_t frameID, const WebCore::AuthenticationChallenge&, uint64_t challengeID);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus);
     void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t complexTextInputState);
 #endif
@@ -1260,7 +1260,7 @@ private:
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     HashSet<String> m_knownKeypressCommandNames;
 #endif
 
@@ -1357,7 +1357,7 @@ private:
 
     bool m_isPageSuspended;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool m_isSmartInsertDeleteEnabled;
 #endif
 
@@ -1417,7 +1417,7 @@ private:
 
     bool m_waitingForDidUpdateViewState;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     HashMap<String, String> m_temporaryPDFFiles;
 #endif
         

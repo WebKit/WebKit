@@ -27,7 +27,7 @@ messages -> DrawingAreaProxy {
     ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo)
     UpdateAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingAreaProxy.
     DidUpdateGeometry()
     IntrinsicContentSizeDidChange(WebCore::IntSize newIntrinsicContentSize)

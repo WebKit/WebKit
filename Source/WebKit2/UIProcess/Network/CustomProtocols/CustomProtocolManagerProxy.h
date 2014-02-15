@@ -30,7 +30,7 @@
 
 #include "MessageReceiver.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 OBJC_CLASS WKCustomProtocolLoader;
@@ -59,7 +59,7 @@ private:
     ChildProcessProxy* m_childProcessProxy;
     WebContext& m_webContext;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     typedef HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader>> LoaderMap;
     LoaderMap m_loaderMap;
 #endif

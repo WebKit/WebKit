@@ -1586,7 +1586,7 @@ void WKPageExecuteCommand(WKPageRef pageRef, WKStringRef command)
     toImpl(pageRef)->executeEditCommand(toImpl(command)->string());
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 struct ComputedPagesContext {
     ComputedPagesContext(WKPageComputePagesForPrintingFunction callback, void* context)
         : callback(callback)

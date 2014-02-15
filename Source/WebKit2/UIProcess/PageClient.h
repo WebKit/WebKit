@@ -34,7 +34,7 @@
 #include <WebCore/EditorClient.h>
 #include <wtf/Forward.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "PluginComplexTextInputState.h"
 
 OBJC_CLASS CALayer;
@@ -72,7 +72,7 @@ class WebColorPicker;
 class WebFullScreenManagerProxyClient;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 struct ColorSpaceData;
 #endif
 
@@ -166,7 +166,7 @@ public:
     virtual void clearAllEditCommands() = 0;
     virtual bool canUndoRedo(WebPageProxy::UndoOrRedo) = 0;
     virtual void executeUndoRedo(WebPageProxy::UndoOrRedo) = 0;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&) = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, Vector<WebCore::KeypressCommand>&) = 0;
     virtual bool executeSavedCommandBySelector(const String& selector) = 0;
@@ -236,7 +236,7 @@ public:
     virtual Vector<String> dictationAlternatives(uint64_t dictationContext) = 0;
 #endif // USE(DICTATION_ALTERNATIVES)
 #endif // USE(APPKIT)
-#endif // PLATFORM(MAC)
+#endif // !PLATFORM(IOS) && PLATFORM(MAC)
 
 #if PLATFORM(IOS)
     virtual void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius) = 0;

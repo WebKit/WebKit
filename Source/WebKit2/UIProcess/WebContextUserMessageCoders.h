@@ -30,7 +30,7 @@
 #include "WebPageGroupData.h"
 #include "WebPageProxy.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "ObjCObjectGraphCoders.h"
 #endif
 
@@ -79,7 +79,7 @@ public:
             encoder << pageGroup->data();
             break;
         }
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         case API::Object::Type::ObjCObjectGraph: {
             ObjCObjectGraph* objectGraph = static_cast<ObjCObjectGraph*>(m_root);
             encoder << WebContextObjCObjectGraphEncoder(objectGraph, m_process);
@@ -148,7 +148,7 @@ public:
             coder.m_root = WebPageGroup::get(pageGroupID);
             break;
         }
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         case API::Object::Type::ObjCObjectGraph: {
             RefPtr<ObjCObjectGraph> objectGraph;
             WebContextObjCObjectGraphDecoder objectGraphDecoder(objectGraph, coder.m_process);

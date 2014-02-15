@@ -32,16 +32,6 @@
 
 namespace WebKit {
 
-void WebInspectorProxy::createInspectorWindow()
-{
-    notImplemented();
-}
-
-void WebInspectorProxy::updateInspectorWindowTitle() const
-{
-    notImplemented();
-}
-
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 {
     notImplemented();
@@ -80,11 +70,6 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
 }
 
 void WebInspectorProxy::platformAppend(const String& suggestedURL, const String& content)
-{
-    notImplemented();
-}
-
-void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat)
 {
     notImplemented();
 }

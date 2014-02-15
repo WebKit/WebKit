@@ -28,11 +28,11 @@
 
 #include "WebFrameListenerProxy.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WKFoundation.h"
 #endif
 
-#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(MAC) && WK_API_ENABLED)
+#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(COCOA) && WK_API_ENABLED)
 
 namespace WebKit {
 

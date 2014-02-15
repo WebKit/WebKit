@@ -113,7 +113,7 @@ public:
     void didSaveToPageCache();
     void releasePageCache();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool allPagesAreProcessSuppressible() const;
     void updateProcessSuppressionState();
 #endif
@@ -205,7 +205,7 @@ private:
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     HashSet<uint64_t> m_processSuppressiblePages;
     bool m_processSuppressionEnabled;
 #endif

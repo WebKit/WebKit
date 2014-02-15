@@ -43,7 +43,7 @@ public:
     static void setContinuousSpellCheckingEnabled(bool);
     static void setGrammarCheckingEnabled(bool);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     static void setAutomaticSpellingCorrectionEnabled(bool);
     static void setAutomaticQuoteSubstitutionEnabled(bool);
     static void setAutomaticDashSubstitutionEnabled(bool);

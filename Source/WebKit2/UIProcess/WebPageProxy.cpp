@@ -128,7 +128,7 @@
 #include "NetworkProcessMessages.h"
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "ViewSnapshotStore.h"
 #endif
 
@@ -304,7 +304,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_pageID(pageID)
     , m_session(*configuration.session)
     , m_isPageSuspended(false)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())
 #endif
     , m_spellDocumentTag(0)
@@ -573,7 +573,7 @@ void WebPageProxy::initializeWebPage()
 
     process().send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters()), 0);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     send(Messages::WebPage::SetSmartInsertDeleteEnabled(m_isSmartInsertDeleteEnabled));
 #endif
 }
@@ -783,7 +783,7 @@ void WebPageProxy::recordNavigationSnapshot()
     if (!m_shouldRecordNavigationSnapshots)
         return;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     ViewSnapshotStore::shared().recordSnapshot(*this);
 #endif
 }
@@ -887,11 +887,11 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType)
         return true;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // On Mac, we can show PDFs.
     if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(mimeType) && !WebContext::omitPDFSupport())
         return true;
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
 
     return false;
 }
@@ -1221,7 +1221,7 @@ static bool canCoalesce(const WebWheelEvent& a, const WebWheelEvent& b)
         return false;
     if (a.granularity() != b.granularity())
         return false;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (a.phase() != b.phase())
         return false;
     if (a.momentumPhase() != b.momentumPhase())
@@ -1240,7 +1240,7 @@ static WebWheelEvent coalesce(const WebWheelEvent& a, const WebWheelEvent& b)
     FloatSize mergedDelta = a.delta() + b.delta();
     FloatSize mergedWheelTicks = a.wheelTicks() + b.wheelTicks();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     FloatSize mergedUnacceleratedScrollingDelta = a.unacceleratedScrollingDelta() + b.unacceleratedScrollingDelta();
 
     return WebWheelEvent(WebEvent::Wheel, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.directionInvertedFromDevice(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas(), b.scrollCount(), mergedUnacceleratedScrollingDelta, b.modifiers(), b.timestamp());
@@ -1372,7 +1372,7 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
 
     pluginLoadPolicy = PluginInfoStore::defaultLoadPolicyForPlugin(plugin);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RefPtr<ImmutableDictionary> pluginInformation = createPluginInformationDictionary(plugin, frameURLString, String(), pageURLString, String(), String());
     pluginLoadPolicy = m_loaderClient->pluginLoadPolicy(this, static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy), pluginInformation.get(), unavailabilityDescription);
 #else
@@ -3040,7 +3040,7 @@ void WebPageProxy::backForwardForwardListCount(int32_t& count)
 
 void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
     bool closedComposition = !editorState.shouldIgnoreCompositionSelectionChange && !editorState.hasComposition && (m_editorState.hasComposition || m_temporarilyClosedComposition);
     m_temporarilyClosedComposition = editorState.shouldIgnoreCompositionSelectionChange && (m_temporarilyClosedComposition || m_editorState.hasComposition) && !editorState.hasComposition;
@@ -3048,7 +3048,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 
     m_editorState = editorState;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Selection being none is a temporary state when editing. Flipping secure input state too quickly was causing trouble (not fully understood).
     if (couldChangeSecureInputState && !editorState.selectionIsNone)
         m_pageClient.updateSecureInputState();
@@ -3282,7 +3282,7 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         return;
     }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (item.action() == ContextMenuItemTagSmartCopyPaste) {
         setSmartInsertDeleteEnabled(!isSmartInsertDeleteEnabled());
         return;
@@ -3584,7 +3584,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         if (!handled) {
             if (m_uiClient->implementsDidNotHandleWheelEvent())
                 m_uiClient->didNotHandleWheelEvent(this, oldestCoalescedEvent->last());
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
             m_pageClient.wheelEventWasNotHandledByWebCore(oldestCoalescedEvent->last());
 #endif
         }
@@ -4182,7 +4182,7 @@ void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const S
 {
     RefPtr<ImmutableDictionary> pluginInformation;
 
-#if PLATFORM(MAC) && ENABLE(NETSCAPE_PLUGIN_API)
+#if PLATFORM(COCOA) && ENABLE(NETSCAPE_PLUGIN_API)
     String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->context().pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
     pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, String(), String(), replacementObscured);
@@ -4257,7 +4257,7 @@ void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo
     m_process->send(Messages::WebPage::ComputePagesForPrinting(frame->frameID(), printInfo, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? IPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 void WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, PassRefPtr<ImageCallback> prpCallback)
 {
     RefPtr<ImageCallback> callback = prpCallback;
@@ -4412,7 +4412,7 @@ void WebPageProxy::dictationAlternatives(uint64_t dictationContext, Vector<Strin
 
 #endif // !PLATFORM(IOS) && PLATFORM(MAC)
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 RetainPtr<CGImageRef> WebPageProxy::takeViewSnapshot()
 {
     return m_pageClient.takeViewSnapshot();

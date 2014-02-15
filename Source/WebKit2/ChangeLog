@@ -1,3 +1,93 @@
+2014-02-15  Dan Bernstein  <mitz@apple.com>
+
+        Stop using PLATFORM(MAC) in WebKit2/UIProcess except where it means “OS X but not iOS”
+        https://bugs.webkit.org/show_bug.cgi?id=128868
+
+        Reviewed by Anders Carlsoon.
+
+        * UIProcess/API/C/WKPage.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::didCreateDatabaseToWebProcessConnection): Changed
+        PLATFORM(MAC) to OS(DARWIN) around use of Mach-based IPC.
+        * UIProcess/DrawingAreaProxy.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA)
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        * UIProcess/DrawingAreaProxy.h: Ditto.
+        * UIProcess/DrawingAreaProxy.messages.in: Ditto.
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::didFinishLaunchingProcess): Changed PLATFORM(MAC) to OS(DARWIN)
+        around use of Mach API.
+        * UIProcess/Launcher/ProcessLauncher.h: Ditto.
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h: Changed PLATFORM(MAC) to
+        PLATFORM(COCOA)
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch): Changed PLATFORM(MAC)
+        to OS(DARWIN).
+        (WebKit::NetworkProcessProxy::didCreateNetworkConnectionToWebProcess): Ditto.
+        (WebKit::NetworkProcessProxy::didFinishLaunching): Changed PLATFORM(MAC) to PLATFORM(COCOA)
+        around process suppression call.
+        * UIProcess/Network/NetworkProcessProxy.h: Ditto.
+        * UIProcess/PageClient.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * UIProcess/Plugins/PluginInfoStore.cpp: Ditto.
+        * UIProcess/Plugins/PluginProcessManager.h: Ditto.
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::PluginProcessProxy): Ditto.
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch): Changed PLATFORM(MAC)
+        to OS(DARWIN).
+        (WebKit::PluginProcessProxy::didClose): Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::PluginProcessProxy::didFinishLaunching): Changed PLATFORM(MAC) to OS(DARWIN) around
+        use of Mach-based IPC, and to PLATFORM(COCOA) around SetQOS.
+        (WebKit::PluginProcessProxy::didCreateWebProcessConnection): Changed PLATFORM(MAC) to
+        OS(DARWIN).
+        * UIProcess/Plugins/PluginProcessProxy.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * UIProcess/Plugins/PluginProcessProxy.messages.in: Ditto.
+        * UIProcess/TextChecker.h: Ditto.
+        * UIProcess/WebContext.cpp: Ditto.
+        (WebKit::WebContext::ensureNetworkProcess):
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::setHTTPPipeliningEnabled):
+        (WebKit::WebContext::httpPipeliningEnabled):
+        (WebKit::WebContext::pluginInfoStoreDidLoadPlugins):
+        * UIProcess/WebContext.h: Ditto.
+        * UIProcess/WebContext.messages.in: Ditto.
+        * UIProcess/WebContextUserMessageCoders.h: Ditto.
+        (WebKit::WebContextUserMessageEncoder::encode):
+        (WebKit::WebContextUserMessageDecoder::decode):
+        * UIProcess/WebCookieManagerProxy.cpp: Ditto.
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        * UIProcess/WebCookieManagerProxy.h: Ditto.
+        * UIProcess/WebFormSubmissionListenerProxy.h: Ditto.
+        * UIProcess/WebFramePolicyListenerProxy.h: Ditto.
+        * UIProcess/WebInspectorProxy.h: Added !PLATFORM(IOS) around members reltated to managing
+        the inspector window and its view.
+        * UIProcess/WebPageProxy.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::recordNavigationSnapshot):
+        (WebKit::WebPageProxy::canShowMIMEType):
+        (WebKit::canCoalesce):
+        (WebKit::coalesce):
+        (WebKit::WebPageProxy::findPlugin):
+        (WebKit::WebPageProxy::editorStateChanged):
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+        * UIProcess/WebProcessProxy.cpp: Ditto.
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::createWebPage):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::removeWebPage):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        (WebKit::WebProcessProxy::pageSuppressibilityChanged):
+        (WebKit::WebProcessProxy::pagePreferencesChanged):
+        * UIProcess/WebProcessProxy.h: Ditto.
+        * UIProcess/cf/WebPreferencesCF.cpp: Removed this file which was not used in any
+        configuration.
+        * UIProcess/ios/WebInspectorProxyIOS.mm: Removed functions that no longer need to be
+        implemented for iOS.
+        * WebKit2.xcodeproj/project.pbxproj: Removed reference to WebPreferencesCF.cpp.
+
 2014-02-15  Jeremy Jones  <jeremyj@apple.com>
 
         messages.py doesn't handle parameters with more than one level of scope.

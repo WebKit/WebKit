@@ -171,7 +171,7 @@ static inline String pathExtension(const URL& url)
     return extension;
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 PluginModuleLoadPolicy PluginInfoStore::defaultLoadPolicyForPlugin(const PluginModuleInfo&)
 {
     return PluginModuleLoadNormally;

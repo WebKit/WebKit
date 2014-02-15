@@ -57,7 +57,7 @@ public:
 
     DownloadProxy* createDownloadProxy();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void setProcessSuppressionEnabled(bool);
 #endif
 

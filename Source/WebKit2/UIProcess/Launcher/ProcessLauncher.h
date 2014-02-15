@@ -61,7 +61,7 @@ public:
     struct LaunchOptions {
         ProcessType processType;
         HashMap<String, String> extraInitializationData;
-#if PLATFORM(MAC)
+#if OS(DARWIN)
         static const cpu_type_t MatchCurrentArchitecture = 0;
         cpu_type_t architecture;
         bool executableHeap;

@@ -109,7 +109,7 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
     while (!m_pendingConnectionReplies.isEmpty()) {
         RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
         reply->send(IPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND));
 #elif USE(UNIX_DOMAIN_SOCKETS)
         reply->send(IPC::Attachment());
@@ -161,7 +161,7 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const IPC::Atta
     // Grab the first pending connection reply.
     RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     reply->send(IPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
 #elif USE(UNIX_DOMAIN_SOCKETS)
     reply->send(connectionIdentifier);
@@ -193,7 +193,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     
     m_numPendingConnectionRequests = 0;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (m_webContext.processSuppressionEnabled())
         setProcessSuppressionEnabled(true);
 #endif

@@ -39,7 +39,7 @@
 #include <WebCore/NotImplemented.h>
 #include <wtf/RunLoop.h>
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
 #include "MachPort.h"
 #endif
 
@@ -63,7 +63,7 @@ PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManage
     , m_pluginProcessAttributes(pluginProcessAttributes)
     , m_pluginProcessToken(pluginProcessToken)
     , m_numPendingConnectionRequests(0)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_modalWindowIsShowing(false)
     , m_fullscreenWindowIsShowing(false)
     , m_preFullscreenAppPresentationOptions(0)
@@ -137,7 +137,7 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
     while (!m_pendingConnectionReplies.isEmpty()) {
         RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
         reply->send(IPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND), false);
 #elif USE(UNIX_DOMAIN_SOCKETS)
         reply->send(IPC::Attachment(), false);
@@ -158,7 +158,7 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
 
 void PluginProcessProxy::didClose(IPC::Connection*)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (m_modalWindowIsShowing)
         endModal();
 
@@ -188,7 +188,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
     }
 
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     m_connection->setShouldCloseConnectionOnMachExceptions();
 #endif
 
@@ -208,7 +208,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
     // Initialize the plug-in host process.
     m_connection->send(Messages::PluginProcess::InitializePluginProcess(parameters), 0);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     m_connection->send(Messages::PluginProcess::SetQOS(pluginProcessLatencyQOS(), pluginProcessThroughputQOS()), 0);
 #endif
 
@@ -228,7 +228,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
     
     m_numPendingConnectionRequests = 0;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (WebContext::processSuppressionIsEnabledForAllContexts())
         setProcessSuppressionEnabled(true);
 #endif
@@ -241,7 +241,7 @@ void PluginProcessProxy::didCreateWebProcessConnection(const IPC::Attachment& co
     // Grab the first pending connection reply.
     RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     reply->send(IPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND), supportsAsynchronousPluginInitialization);
 #elif USE(UNIX_DOMAIN_SOCKETS)
     reply->send(connectionIdentifier, supportsAsynchronousPluginInitialization);

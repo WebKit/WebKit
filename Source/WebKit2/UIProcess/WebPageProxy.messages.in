@@ -242,7 +242,7 @@ messages -> WebPageProxy {
 #if ENABLE(DRAG_SUPPORT)
     DidPerformDragControllerAction(WebCore::DragSession dragSession)
 #endif
-#if PLATFORM(MAC) && ENABLE(DRAG_SUPPORT)
+#if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
     SetDragImage(WebCore::IntPoint clientPosition, WebKit::ShareableBitmap::Handle dragImage, bool linkDrag)
     SetPromisedData(String pasteboardName, WebKit::SharedMemory::Handle imageHandle, uint64_t imageSize, String filename, String extension, String title, String url, String visibleURL, WebKit::SharedMemory::Handle archiveHandle, uint64_t archiveSize)
 #endif
@@ -250,7 +250,7 @@ messages -> WebPageProxy {
     StartDrag(WebCore::DragData dragData, WebKit::ShareableBitmap::Handle dragImage)
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     # Dictionary support.
     DidPerformDictionaryLookup(WebKit::AttributedString text, WebKit::DictionaryPopupInfo dictionaryPopupInfo)
 
@@ -322,7 +322,7 @@ messages -> WebPageProxy {
 
     SavePDFToFileInDownloadsFolder(String suggestedFilename, String originatingURLString, IPC::DataReference data)
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     SavePDFToTemporaryFolderAndOpenWithNativeApplication(String suggestedFilename, String originatingURLString, IPC::DataReference data, String pdfUUID)
     OpenPDFFromTemporaryFolderWithNativeApplication(String pdfUUID)
 #endif
