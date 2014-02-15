@@ -1,4 +1,0 @@
-PASS getComputedStyle(test, null).getPropertyValue('background-color') is color
-The following search field should have red background.
-
-

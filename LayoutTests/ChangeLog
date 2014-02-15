@@ -1,3 +1,20 @@
+2014-02-14  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r157443): Search fields with a non-white background don’t have a round bezel
+        https://bugs.webkit.org/show_bug.cgi?id=126295
+
+        Reviewed by Ryosuke Niwa.
+
+        Reverted r157443.
+
+        * fast/forms/search/search-field-background-color-expected.txt: Removed.
+        * fast/forms/search/search-field-background-color.html: Removed.
+        * platform/efl/fast/forms/search: Removed.
+        * platform/efl/fast/forms/search/search-field-background-color-expected.png: Removed.
+        * platform/efl/fast/forms/search/search-size-with-decorations-expected.png: Removed.
+        * platform/efl/fast/forms/search/search-size-with-decorations-expected.txt: Removed.
+        * platform/mac/fast/forms/search-styled-expected.txt:
+
 2014-02-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Activate CSS Region Tests on Windows

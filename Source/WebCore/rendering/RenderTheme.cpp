@@ -684,7 +684,7 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
     case ContinuousCapacityLevelIndicatorPart:
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
-    case SearchFieldPart:
+    // FIXME: SearchFieldPart should be included here when making search fields style-able.
     case TextFieldPart:
     case TextAreaPart:
         // Test the style to see if the UA border and background match.

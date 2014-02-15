@@ -1,3 +1,15 @@
+2014-02-14  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r157443): Search fields with a non-white background don’t have a round bezel
+        https://bugs.webkit.org/show_bug.cgi?id=126295
+
+        Reviewed by Ryosuke Niwa.
+
+        Reverted r157443 and improved comment.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isControlStyled):
+
 2014-02-14  Brian Burg  <bburg@apple.com>
 
         Web Replay: AtomicString replay input names should be stored in a thread-local table
