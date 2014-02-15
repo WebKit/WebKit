@@ -461,7 +461,7 @@ void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
     return;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1090
 const uint32_t kCGScrollWheelEventMomentumPhase = 123;
 #endif
 

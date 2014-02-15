@@ -1,3 +1,10 @@
+2014-02-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        CQ fix after r164105.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+
 2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix after r164149.

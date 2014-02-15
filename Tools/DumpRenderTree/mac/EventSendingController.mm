@@ -702,7 +702,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     [self mouseScrollByX:x andY:y continuously:NO];
 }
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+#if !PLATFORM(IOS) && MAC_OS_X_VERSION_MAX_ALLOWED < 1090
 const uint32_t kCGScrollWheelEventMomentumPhase = 123;
 #endif
 
