@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+bool getDefaultWebCryptoMasterKey(Vector<uint8_t>&);
+
 bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result);
 bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key);
 

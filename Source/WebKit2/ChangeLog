@@ -1,3 +1,15 @@
+2014-02-15  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] All WebKit clients should encrypt WebCrypto keys automatically
+        https://bugs.webkit.org/show_bug.cgi?id=128852
+
+        Reviewed by Oliver Hunt.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::wrapCryptoKey):
+        (WebKit::WebPageProxy::unwrapCryptoKey):
+        Call the default implementation if key is not provided by a client.
+
 2014-02-15  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][WK2] Stop calling mktemp(3).

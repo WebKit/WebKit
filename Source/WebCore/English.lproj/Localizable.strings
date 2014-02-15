@@ -40,6 +40,9 @@
 /* Visible name of the web process. The argument is the application name. */
 "%@ Web Content" = "%@ Web Content";
 
+/* Name of application's single WebCrypto master key in Keychain */
+"%@ WebCrypto Master Key" = "%@ WebCrypto Master Key";
+
 /* Label to describe the number of files selected in a file upload control that allows multiple files */
 "%d files" = "%d files";
 
@@ -594,6 +597,9 @@
 
 /* Undo action name */
 "Use Standard Ligatures (Undo action name)" = "Use Standard Ligatures";
+
+/* Description of WebCrypto master keys in Keychain */
+"Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB" = "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB";
 
 /* Web Inspector window title */
 "Web Inspector — %@" = "Web Inspector — %@";

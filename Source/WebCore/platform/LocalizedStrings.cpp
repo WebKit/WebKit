@@ -1118,4 +1118,16 @@ String useBlockedPlugInContextMenuTitle()
     return formatLocalizedString(WEB_UI_STRING("Show in blocked plug-in", "Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin"));
 }
 
+#if ENABLE(SUBTLE_CRYPTO)
+String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName)
+{
+    return formatLocalizedString(WEB_UI_STRING("%@ WebCrypto Master Key", "Name of application's single WebCrypto master key in Keychain"), localizedApplicationName.createCFString().get());
+}
+
+String webCryptoMasterKeyKeychainComment()
+{
+    return WEB_UI_STRING("Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB", "Description of WebCrypto master keys in Keychain");
+}
+#endif
+
 } // namespace WebCore

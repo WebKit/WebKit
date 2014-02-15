@@ -1,3 +1,26 @@
+2014-02-15  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] All WebKit clients should encrypt WebCrypto keys automatically
+        https://bugs.webkit.org/show_bug.cgi?id=128852
+
+        Reviewed by Oliver Hunt.
+
+        Install a persistent master key in Keychain on first use of WebCrypto key serialization.
+        The key is per application, protected with ACL.
+
+        * English.lproj/Localizable.strings:
+        * WebCore.exp.in:
+        * crypto/SerializedCryptoKeyWrap.h:
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::masterKeyAccountNameForCurrentApplication):
+        (WebCore::getDefaultWebCryptoMasterKey):
+        (WebCore::createAndStoreMasterKey):
+        (WebCore::findMasterKey):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::webCryptoMasterKeyKeychainLabel):
+        (WebCore::webCryptoMasterKeyKeychainComment):
+        * platform/LocalizedStrings.h:
+
 2014-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         computeSelectionStart and computeSelectionEnd shouldn't trigger synchronous layout

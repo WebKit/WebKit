@@ -263,6 +263,11 @@ namespace WebCore {
 
     String useBlockedPlugInContextMenuTitle();
 
+#if ENABLE(SUBTLE_CRYPTO)
+    String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName);
+    String webCryptoMasterKeyKeychainComment();
+#endif
+
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
 

@@ -1,3 +1,15 @@
+2014-02-15  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] All WebKit clients should encrypt WebCrypto keys automatically
+        https://bugs.webkit.org/show_bug.cgi?id=128852
+
+        Reviewed by Oliver Hunt.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::wrapCryptoKey):
+        (WebChromeClient::unwrapCryptoKey):
+        Call the default implementation if key is not provided by a client.
+
 2014-02-14  Anders Carlsson  <andersca@apple.com>
 
         Control tints don't update inside WebViews
