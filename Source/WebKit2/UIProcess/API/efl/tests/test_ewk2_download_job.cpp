@@ -29,6 +29,8 @@
 #include "UnitTestUtils/EWK2UnitTestServer.h"
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 using namespace EWK2UnitTest;
@@ -152,11 +154,12 @@ TEST_F(EWK2DownloadJobTest, ewk_download)
     std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
 
-    // Generate unique name for destination file.
-    char destinationPath[] = "/tmp/pdf-file.XXXXXX";
-    ASSERT_TRUE(mktemp(destinationPath));
-
     CString fileUrl = httpServer->getURLForPath(testFilePath);
+
+    char destinationDirectory[] = "/tmp/ewk2_download_job-XXXXXX";
+    ASSERT_TRUE(mkdtemp(destinationDirectory));
+    char destinationPath[64];
+    snprintf(destinationPath, sizeof(destinationPath), "%s/pdf-file", destinationDirectory);
 
     DownloadTestData userData = { fileUrl.data(), destinationPath };
     ASSERT_FALSE(fileExists(destinationPath));
@@ -172,4 +175,5 @@ TEST_F(EWK2DownloadJobTest, ewk_download)
 
     // Clean up
     unlink(destinationPath);
+    rmdir(destinationDirectory);
 }

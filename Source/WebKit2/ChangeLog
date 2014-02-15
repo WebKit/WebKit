@@ -1,3 +1,21 @@
+2014-02-15  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][WK2] Stop calling mktemp(3).
+        https://bugs.webkit.org/show_bug.cgi?id=128826
+
+        Reviewed by Gyuyoung Kim.
+
+        mktemp(3) is an insecure function and should be avoided at all costs.
+        Replace its usage with mkdtemp(3): instead of just getting a file name
+        that is supposed to be random and unused, we now create a directory
+        with a random name and then put whatever files we need there with fixed
+        names.
+
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_download_job.cpp:
+        (TEST_F):
+
 2014-02-15  Dan Bernstein  <mitz@apple.com>
 
         Stop using PLATFORM(MAC) in WebKit2/UIProcess except where it means “OS X but not iOS”

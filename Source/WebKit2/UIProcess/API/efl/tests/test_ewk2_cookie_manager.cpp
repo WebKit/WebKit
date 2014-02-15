@@ -22,6 +22,7 @@
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
 #include "UnitTestUtils/EWK2UnitTestServer.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -199,10 +200,12 @@ TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_changes_watch)
     ewk_cookie_manager_changes_watch(cookieManager, onCookiesChanged, &cookiesChanged);
 
     // Make sure we don't get notifications when loading setting an existing persistent storage
-    char textStorage1[] = "/tmp/txt-cookie.XXXXXX";
-    ASSERT_TRUE(mktemp(textStorage1));
-    char textStorage2[] = "/tmp/txt-cookie.XXXXXX";
-    ASSERT_TRUE(mktemp(textStorage2));
+    char storageDirectory[] = "/tmp/ewk2_cookie_manager-XXXXXX";
+    ASSERT_TRUE(mkdtemp(storageDirectory));
+    char textStorage1[64];
+    snprintf(textStorage1, sizeof(textStorage1), "%s/txt-cookie1", storageDirectory);
+    char textStorage2[64];
+    snprintf(textStorage2, sizeof(textStorage2), "%s/txt-cookie2", storageDirectory);
 
     ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage1, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
     ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/index.html").data()));
@@ -221,6 +224,7 @@ TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_changes_watch)
     ewk_cookie_manager_changes_watch(cookieManager, 0, 0);
     unlink(textStorage1);
     unlink(textStorage2);
+    rmdir(storageDirectory);
 }
 
 TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_cookies_delete)
@@ -265,10 +269,12 @@ TEST_F(EWK2CookieManagerTest, DISABLED_ewk_cookie_manager_permanent_storage)
     httpServer->run(serverCallback);
 
     // Generate unique names for cookie storages.
-    char textStorage[] = "/tmp/txt-cookie.XXXXXX";
-    ASSERT_TRUE(mktemp(textStorage));
-    char sqliteStorage[] = "/tmp/sqlite-cookie.XXXXXX";
-    ASSERT_TRUE(mktemp(sqliteStorage));
+    char storageDirectory[] = "/tmp/ewk2_cookie_manager-XXXXXX";
+    ASSERT_TRUE(mkdtemp(storageDirectory));
+    char textStorage[64];
+    snprintf(textStorage, sizeof(textStorage), "%s/txt-cookie", storageDirectory);
+    char sqliteStorage[64];
+    snprintf(sqliteStorage, sizeof(sqliteStorage), "%s/sqlite-cookie", storageDirectory);
 
     Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
     ASSERT_TRUE(cookieManager);
@@ -305,4 +311,5 @@ TEST_F(EWK2CookieManagerTest, DISABLED_ewk_cookie_manager_permanent_storage)
     // Final clean up.
     unlink(textStorage);
     unlink(sqliteStorage);
+    rmdir(storageDirectory);
 }
