@@ -1,3 +1,15 @@
+2014-02-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Avoid unnecessary asserts if "prepareToPlay" is called multiple times.
+        https://bugs.webkit.org/show_bug.cgi?id=128859
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::createPlayer): Don't assert if player exists; just return the
+        existing copy.
+        (WebCore::AVFWrapper::createPlayerItem): Ditto (but with Player Items).
+
 2014-02-15  Darin Adler  <darin@apple.com>
 
         Remove double hashing from DatasetDOMStringMap::deleteItem

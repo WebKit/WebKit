@@ -1312,7 +1312,10 @@ void AVFWrapper::createPlayer(IDirect3DDevice9* d3dDevice)
 {
     ASSERT(isMainThread());
     ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
-    ASSERT(!avPlayer() && avPlayerItem());
+    ASSERT(avPlayerItem());
+
+    if (avPlayer())
+        return;
 
     RetainPtr<CFMutableDictionaryRef> optionsRef = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
@@ -1355,7 +1358,10 @@ void AVFWrapper::createPlayerItem()
 {
     ASSERT(isMainThread());
     ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
-    ASSERT(!avPlayerItem() && avAsset());
+    ASSERT(avAsset());
+
+    if (avPlayerItem())
+        return;
 
     // Create the player item so we begin loading media data.
     AVCFPlayerItemRef itemRef = AVCFPlayerItemCreateWithAsset(kCFAllocatorDefault, avAsset(), m_notificationQueue);
