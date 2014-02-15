@@ -86,6 +86,7 @@ private:
         virtual void didLayout(WebKit::WebPageProxy*, WebCore::LayoutMilestones, API::Object*) override;
         virtual bool canAuthenticateAgainstProtectionSpaceInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebProtectionSpace*) override;
         virtual void didReceiveAuthenticationChallengeInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::AuthenticationChallengeProxy*) override;
+        virtual void processDidCrash(WebKit::WebPageProxy*) override;
         virtual void didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem* addedItem, Vector<RefPtr<WebKit::WebBackForwardListItem>> removedItems) override;
 
         NavigationState& m_navigationState;
@@ -120,6 +121,7 @@ private:
         bool webViewRenderingProgressDidChange : 1;
         bool webViewCanAuthenticateAgainstProtectionSpace : 1;
         bool webViewDidReceiveAuthenticationChallenge : 1;
+        bool webViewWebProcessDidCrash : 1;
     } m_navigationDelegateMethods;
 
     HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;

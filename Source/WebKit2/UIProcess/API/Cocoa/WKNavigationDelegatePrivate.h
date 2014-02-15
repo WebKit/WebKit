@@ -37,6 +37,8 @@
 - (BOOL)_webView:(WKWebView *)webView canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
 - (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 
+- (void)_webViewWebProcessDidCrash:(WKWebView *)webView;
+
 @end
 
 #endif
