@@ -338,16 +338,17 @@ PassRefPtr<Attr> Element::detachAttribute(unsigned index)
     return attrNode.release();
 }
 
-void Element::removeAttribute(const QualifiedName& name)
+bool Element::removeAttribute(const QualifiedName& name)
 {
     if (!elementData())
-        return;
+        return false;
 
     unsigned index = elementData()->findAttributeIndexByName(name);
     if (index == ElementData::attributeNotFound)
-        return;
+        return false;
 
     removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
+    return true;
 }
 
 void Element::setBooleanAttribute(const QualifiedName& name, bool value)
@@ -1828,25 +1829,26 @@ void Element::addAttributeInternal(const QualifiedName& name, const AtomicString
         didAddAttribute(name, value);
 }
 
-void Element::removeAttribute(const AtomicString& name)
+bool Element::removeAttribute(const AtomicString& name)
 {
     if (!elementData())
-        return;
+        return false;
 
     AtomicString localName = shouldIgnoreAttributeCase(*this) ? name.lower() : name;
     unsigned index = elementData()->findAttributeIndexByName(localName, false);
     if (index == ElementData::attributeNotFound) {
         if (UNLIKELY(localName == styleAttr) && elementData()->styleAttributeIsDirty() && isStyledElement())
             toStyledElement(this)->removeAllInlineStyleProperties();
-        return;
+        return false;
     }
 
     removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
+    return true;
 }
 
-void Element::removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName)
+bool Element::removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
-    removeAttribute(QualifiedName(nullAtom, localName, namespaceURI));
+    return removeAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }
 
 PassRefPtr<Attr> Element::getAttributeNode(const AtomicString& localName)

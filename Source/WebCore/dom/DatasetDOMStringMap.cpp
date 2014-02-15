@@ -203,12 +203,7 @@ void DatasetDOMStringMap::setItem(const String& name, const String& value, Excep
 
 bool DatasetDOMStringMap::deleteItem(const String& name)
 {
-    AtomicString attributeName = convertPropertyNameToAttributeName(name);
-    if (!m_element.hasAttribute(attributeName))
-        return false;
-
-    m_element.removeAttribute(attributeName);
-    return true;
+    return m_element.removeAttribute(convertPropertyNameToAttributeName(name));
 }
 
 } // namespace WebCore

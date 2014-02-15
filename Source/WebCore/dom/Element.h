@@ -145,7 +145,7 @@ public:
     const AtomicString& getAttribute(const QualifiedName&) const;
     void setAttribute(const QualifiedName&, const AtomicString& value);
     void setSynchronizedLazyAttribute(const QualifiedName&, const AtomicString& value);
-    void removeAttribute(const QualifiedName&);
+    bool removeAttribute(const QualifiedName&);
 
     // Typed getters and setters for language bindings.
     int getIntegralAttribute(const QualifiedName& attributeName) const;
@@ -236,8 +236,8 @@ public:
     // Returns the absolute bounding box translated into screen coordinates.
     IntRect screenRect() const;
 
-    void removeAttribute(const AtomicString& name);
-    void removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName);
+    bool removeAttribute(const AtomicString& name);
+    bool removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName);
 
     PassRefPtr<Attr> detachAttribute(unsigned index);
 

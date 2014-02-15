@@ -1,3 +1,20 @@
+2014-02-15  Darin Adler  <darin@apple.com>
+
+        Remove double hashing from DatasetDOMStringMap::deleteItem
+        https://bugs.webkit.org/show_bug.cgi?id=128865
+
+        Reviewed by Benjamin Poulain.
+
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::deleteItem): Removed call to hasAttribute, using the
+        result from removeAttribute instead.
+
+        * dom/Element.cpp:
+        (WebCore::Element::removeAttribute): Add a return value, false if nothing is removed,
+        and true if something is removed.
+        (WebCore::Element::removeAttributeNS): Ditto.
+        * dom/Element.h: Ditto.
+
 2014-02-15  Piotr Grad  <p.grad@samsung.com>
 
         Setting currentTime on HTMLMediaElement with media controller should throw exception.
