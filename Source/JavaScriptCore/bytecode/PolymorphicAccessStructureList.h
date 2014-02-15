@@ -63,7 +63,7 @@ public:
             isDirect = _isDirect;
             count = 0;
         }
-            
+        
         void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, StructureChain* _chain, bool _isDirect, unsigned _count)
         {
             stubRoutine = _stubRoutine;
@@ -73,11 +73,11 @@ public:
             count = _count;
         }
     } list[POLYMORPHIC_LIST_CACHE_SIZE];
-        
+    
     PolymorphicAccessStructureList()
     {
     }
-        
+    
     PolymorphicAccessStructureList(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, bool isDirect)
     {
         list[0].set(vm, owner, stubRoutine, firstBase, isDirect);

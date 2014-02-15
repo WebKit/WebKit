@@ -299,9 +299,6 @@ private:
         case GetMyArgumentsLength:
             compileGetMyArgumentsLength();
             break;
-        case GetMyArgumentByVal:
-            compileGetMyArgumentByVal();
-            break;
         case ZombieHint:
             compileZombieHint();
             break;
@@ -2033,28 +2030,7 @@ private:
             return;
         } }
     }
-
-    void compileGetMyArgumentByVal()
-    {
-        LValue property = lowInt32(m_node->child1());
-        TypedPointer argsPtr = addressFor(m_node->origin.semantic.stackOffset());
-        LValue args = argsPtr.value();
-        LValue propPtr = m_out.signExt(property, m_out.intPtr);
-
-        speculate(Uncountable, noValue(), 0, 
-            m_out.aboveOrEqual(propPtr, 
-                addressFor(m_node->origin.semantic.stackOffset() + JSStack::ArgumentCount).value()));
-
-        speculate(Uncountable, noValue(), 0, 
-            m_out.notNull(
-                addressFor(m_node->origin.semantic.stackOffset()).value())); // Where is SlowArgumentData?
-
-        setJSValue(m_out.load64(m_out.baseIndex(
-            argsPtr.heap(),
-            args, propPtr, ScaleEight, 
-            JSStack::ThisArgument * sizeof(Register) + sizeof(Register))));
-    }
-
+    
     void compilePutByVal()
     {
         Edge child1 = m_graph.varArgChild(m_node, 0);

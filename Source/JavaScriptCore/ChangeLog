@@ -1,3 +1,27 @@
+2014-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r164166.
+
+        This broke three unique tests:
+
+        ** The following JSC stress test failures have been introduced:
+            regress/script-tests/variadic-closure-call.js.default-ftl
+            regress/script-tests/variadic-closure-call.js.ftl-no-cjit-validate
+            regress/script-tests/variadic-closure-call.js.ftl-no-cjit-osr-validation
+            regress/script-tests/variadic-closure-call.js.ftl-eager
+            regress/script-tests/variadic-closure-call.js.ftl-eager-no-cjit
+            regress/script-tests/variadic-closure-call.js.ftl-eager-no-cjit-osr-validation
+            jsc-layout-tests.yaml/js/script-tests/unmatching-argument-count.js.layout-ftl-eager-no-cjit
+            regress/script-tests/direct-arguments-getbyval.js.ftl-eager-no-cjit
+            regress/script-tests/direct-arguments-getbyval.js.ftl-eager-no-cjit-osr-validation
+
+        * bytecode/PolymorphicAccessStructureList.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        * tests/stress/ftl-getbyval-arguments.js:
+
 2014-02-15  Matthew Mirman  <mmirman@apple.com>
 
         Added GetMyArgumentByVal to FTL
