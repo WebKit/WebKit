@@ -32,6 +32,7 @@
 #include "MessageEncoder.h"
 #include "Plugin.h"
 #include "StringReference.h"
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
 #include <utility>
@@ -460,6 +461,28 @@ public:
 
 private:
     std::tuple<const HashMap<String, std::pair<String, uint64_t>>&> m_arguments;
+};
+
+class SetVideoLayerID {
+public:
+    typedef std::tuple<WebCore::GraphicsLayer::PlatformLayerID> DecodeType;
+
+    static IPC::StringReference receiverName() { return messageReceiverName(); }
+    static IPC::StringReference name() { return IPC::StringReference("SetVideoLayerID"); }
+    static const bool isSync = false;
+
+    explicit SetVideoLayerID(const WebCore::GraphicsLayer::PlatformLayerID& videoLayerID)
+        : m_arguments(videoLayerID)
+    {
+    }
+
+    const std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&> m_arguments;
 };
 
 #if PLATFORM(MAC)

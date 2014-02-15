@@ -201,6 +201,13 @@ _expected_results = {
             'conditions': (None),
         },
         {
+            'name': 'SetVideoLayerID',
+            'parameters': (
+                ('WebCore::GraphicsLayer::PlatformLayerID', 'videoLayerID'),
+            ),
+            'conditions': (None),
+        },
+        {
             'name': 'DidCreateWebProcessConnection',
             'parameters': (
                 ('IPC::MachPort', 'connectionIdentifier'),

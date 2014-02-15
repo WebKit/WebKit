@@ -53,6 +53,8 @@ messages -> WebPage {
 
     TemplateTest(HashMap<String, std::pair<String, uint64_t>> a)
 
+    SetVideoLayerID(WebCore::GraphicsLayer::PlatformLayerID videoLayerID)
+
 #if PLATFORM(MAC)
     DidCreateWebProcessConnection(IPC::MachPort connectionIdentifier)
 #endif

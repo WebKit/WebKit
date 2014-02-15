@@ -45,6 +45,7 @@
 #endif
 #include "WebPageMessages.h"
 #include "WebPreferencesStore.h"
+#include <WebCore/GraphicsLayer.h>
 #if PLATFORM(MAC)
 #include <WebCore/KeyboardEvent.h>
 #endif
@@ -159,6 +160,10 @@ void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder
     }
     if (decoder.messageName() == Messages::WebPage::TemplateTest::name()) {
         IPC::handleMessage<Messages::WebPage::TemplateTest>(decoder, this, &WebPage::templateTest);
+        return;
+    }
+    if (decoder.messageName() == Messages::WebPage::SetVideoLayerID::name()) {
+        IPC::handleMessage<Messages::WebPage::SetVideoLayerID>(decoder, this, &WebPage::setVideoLayerID);
         return;
     }
 #if PLATFORM(MAC)
