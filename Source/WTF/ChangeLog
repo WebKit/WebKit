@@ -1,3 +1,22 @@
+2014-02-15  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Remove 'static' specifier from free inline functions in StringImpl.h
+        https://bugs.webkit.org/show_bug.cgi?id=118554
+
+        Reviewed by Darin Adler.
+
+        At first 'static' does not bring any use here, secondly static free
+        inline functions in headers is a bad practice in general as each instance
+        of function defined as inline is treated as a separate function and each
+        instance has its own copy of static locals and string literals.
+
+        * wtf/text/StringImpl.h:
+        (WTF::codePointCompare):
+        (WTF::codePointCompare8):
+        (WTF::codePointCompare16):
+        (WTF::codePointCompare8To16):
+        (WTF::isSpaceOrNewline):
+
 2014-02-14  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve the performance on mobile of FTPDirectoryDocument

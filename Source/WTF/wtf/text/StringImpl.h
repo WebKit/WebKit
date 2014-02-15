@@ -1297,7 +1297,7 @@ bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, StringImpl* b)
 }
 
 template<typename CharacterType1, typename CharacterType2>
-static inline int codePointCompare(unsigned l1, unsigned l2, const CharacterType1* c1, const CharacterType2* c2)
+inline int codePointCompare(unsigned l1, unsigned l2, const CharacterType1* c1, const CharacterType2* c2)
 {
     const unsigned lmin = l1 < l2 ? l1 : l2;
     unsigned pos = 0;
@@ -1316,22 +1316,22 @@ static inline int codePointCompare(unsigned l1, unsigned l2, const CharacterType
     return (l1 > l2) ? 1 : -1;
 }
 
-static inline int codePointCompare8(const StringImpl* string1, const StringImpl* string2)
+inline int codePointCompare8(const StringImpl* string1, const StringImpl* string2)
 {
     return codePointCompare(string1->length(), string2->length(), string1->characters8(), string2->characters8());
 }
 
-static inline int codePointCompare16(const StringImpl* string1, const StringImpl* string2)
+inline int codePointCompare16(const StringImpl* string1, const StringImpl* string2)
 {
     return codePointCompare(string1->length(), string2->length(), string1->characters16(), string2->characters16());
 }
 
-static inline int codePointCompare8To16(const StringImpl* string1, const StringImpl* string2)
+inline int codePointCompare8To16(const StringImpl* string1, const StringImpl* string2)
 {
     return codePointCompare(string1->length(), string2->length(), string1->characters8(), string2->characters16());
 }
 
-static inline int codePointCompare(const StringImpl* string1, const StringImpl* string2)
+inline int codePointCompare(const StringImpl* string1, const StringImpl* string2)
 {
     if (!string1)
         return (string2 && string2->length()) ? -1 : 0;
@@ -1351,7 +1351,7 @@ static inline int codePointCompare(const StringImpl* string1, const StringImpl* 
     return codePointCompare16(string1, string2);
 }
 
-static inline bool isSpaceOrNewline(UChar c)
+inline bool isSpaceOrNewline(UChar c)
 {
     // Use isASCIISpace() for basic Latin-1.
     // This will include newlines, which aren't included in Unicode DirWS.
