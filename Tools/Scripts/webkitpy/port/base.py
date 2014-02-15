@@ -1088,7 +1088,7 @@ class Port(object):
             if self._is_arch_based():
                 return 'archlinux-httpd.conf'
         # All platforms use apache2 except for CYGWIN (and Mac OS X Tiger and prior, which we no longer support).
-        return "apache2-httpd.conf"
+        return 'httpd-' + self._apache_version() + '.conf'
 
     def _path_to_apache_config_file(self):
         """Returns the full path to the apache configuration file.

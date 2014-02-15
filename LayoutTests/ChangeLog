@@ -1,3 +1,12 @@
+2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-webkit-tests doesn't work with Apache 2.4
+        https://bugs.webkit.org/show_bug.cgi?id=128861
+
+        Reviewed by Andreas Kling.
+
+        * http/conf/apache2.4-httpd.conf: Added.
+
 2014-02-14  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r157443): Search fields with a non-white background don’t have a round bezel
