@@ -72,11 +72,11 @@ BenchmarkRunner.prototype._appendFrame = function (src) {
     frame.style.border = '0px none';
     frame.style.position = 'absolute';
 
-    var marginTop = document.body.style.marginTop;
-    var marginBottom = document.body.style.marginBottom;
-    if (window.innerWidth > 800 + marginTop && window.innerHeight > 600 + marginBottom) {
-        frame.style.left = marginTop + 'px';
-        frame.style.top = marginBottom + 'px';
+    var marginLeft = parseInt(getComputedStyle(document.body).marginLeft);
+    var marginTop = parseInt(getComputedStyle(document.body).marginTop);
+    if (window.innerWidth > 800 + marginLeft && window.innerHeight > 600 + marginTop) {
+        frame.style.left = marginLeft + 'px';
+        frame.style.top = marginTop + 'px';
     } else {
         frame.style.left = '0px';
         frame.style.top = '0px';
@@ -243,7 +243,7 @@ BenchmarkRunner.prototype._runTestAndRecordResults = function (state) {
             suiteResults.total += total;
             self._measuredValues.total += total;
 
-            if (self._client && self._client.willRunTest)
+            if (self._client && self._client.didRunTest)
                 self._client.didRunTest(suite, test);
 
             state.next();

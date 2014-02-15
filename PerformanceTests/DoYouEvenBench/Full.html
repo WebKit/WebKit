@@ -1,36 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>DoYouEvenBench</title>
+<title>DoYouEvenBench v0.9</title>
+<style type="text/css">
+caption { margin: 0; padding: 0; font-family: sans-serif; font-size: 1em; font-weight: bold; white-space: nowrap; }
+#progressContainer { padding: 605px 0 10px 0; width: 800px; }
+#progressContainer div { background-color: #ccc; width: 0; height: 5px; overflow: hidden; }
+table { font-family: sans-serif; }
+table, td, th { border: solid 1px #ccc; border-collapse: collapse; padding: 5px; }
+th { text-align: right; }
+td { text-align: left; }
+</style>
 <script>
 
 (function () {
     var values = [];
-    var pre = null;
+    var resultContainer = null;
+    var title;
+    var progressContainer;
+    var progress;
     var iterationNumber = 0;
+    var finishedTestCount = 0;
+
+    function addResult(title, value) {
+        if (!resultContainer) {
+            resultContainer = document.createElement('table');
+            var caption = document.createElement('caption');
+            caption.textContent = document.title;
+            resultContainer.appendChild(caption);
+            document.body.appendChild(resultContainer);
+        }
+        if (!title)
+            return;
+        var row = document.createElement('tr');
+        var th = document.createElement('th');
+        th.textContent = title;
+        var td = document.createElement('td');
+        td.textContent = value;
+        row.appendChild(th);
+        row.appendChild(td);
+        resultContainer.appendChild(row);
+    }
+
     window.benchmarkClient = {
-        didRunSuites: function (measuredValues) {
-            if (!pre) {
-                pre = document.createElement('pre');
-                pre.style.paddingTop = '600px';
-                document.body.appendChild(pre);
+        willRunTest: function () {
+            if (!progress) {
+                // We don't use the real progress element as some implementations animate it.
+                progressContainer = document.createElement('div');
+                progressContainer.appendChild(document.createElement('div'));
+                progressContainer.id = 'progressContainer';
+                document.body.appendChild(progressContainer);
+                progress = progressContainer.firstChild;
             }
+            addResult();
+        },
+        didRunTest: function () {
+            finishedTestCount++;
+            progress.style.width = (finishedTestCount * 100 / this.testsCount) + '%';
+        },
+        didRunSuites: function (measuredValues) {
             values.push(measuredValues.total);
             iterationNumber++;
-            pre.appendChild(document.createTextNode('Iteration ' + iterationNumber + ': ' + measuredValues.total + ' ms\n'));
+            addResult('Iteration ' + iterationNumber, measuredValues.total.toFixed(2) + ' ms');
         },
         didFinishLastIteration: function () {
-            var sum = 0;
-            for (var i = 0; i < values.length; i++)
-                sum += values[i];
-            pre.appendChild(document.createTextNode('Average: ' + (sum / iterationNumber)  + ' ms\n'));
-            pre.style.paddingTop = 0;
+            var sum = values.reduce(function (a, b) { return a + b; }, 0);
+            var arithmeticMean = sum / values.length;
+            addResult('Arithmetic Mean', arithmeticMean.toFixed(2) + 'ms');
+            if (window.Statistics) {
+                var delta = Statistics.confidenceIntervalDelta(0.95, values.length, sum, Statistics.squareSum(values));
+                var precentDelta = delta * 100 / arithmeticMean;
+                addResult('95th Percentile', delta.toFixed(2) + ' ms (' + precentDelta.toFixed(2) + '%)');
+            }
+            progressContainer.parentNode.removeChild(progressContainer);
         }
     }
 })();
 
 function startTest() {
     var iterationCount = 5;
+    benchmarkClient.testsCount = iterationCount * Suites.reduce(function (testsCount, suite) { return testsCount + suite.tests.length; }, 0);
     var runner = new BenchmarkRunner(Suites, benchmarkClient);
     runner.runMultipleIterations(iterationCount);
 }
@@ -38,6 +87,7 @@ function startTest() {
 </script>
 <script src="resources/benchmark-runner.js"></script>
 <script src="resources/benchmark-report.js"></script>
+<script src="../resources/statistics.js"></script>
 <script src="resources/tests.js"></script>
 </head>
 <body onload="startTest()">

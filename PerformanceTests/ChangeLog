@@ -1,3 +1,25 @@
+2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Improve the appearance of DYEBench
+        https://bugs.webkit.org/show_bug.cgi?id=128866
+
+        Reviewed by Antti Koivisto.
+
+        Add a div that shows progress during the test. Also show 95th percentile,
+        and use a table instead of pre to show results.
+
+        * DoYouEvenBench/Full.html:
+        (.addResult): Added. Shows results in a table.
+        (benchmarkClient.willRunTest): Added to show the progress bar.
+        (benchmarkClient.didRunTest):
+        (benchmarkClient.didRunSuites):
+        (benchmarkClient.didFinishLastIteration): Compute 95th percentile using Statistics.js
+
+        * DoYouEvenBench/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._appendFrame): Fix the bug where marginLeft and marginTop
+        weren't correctly parsed. We were treating top as left and bottom as top somehow.
+        (BenchmarkRunner.prototype._runTestAndRecordResults): Fixed a typo.
+
 2014-02-13  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add performance test for complex polygon with shape-margin
