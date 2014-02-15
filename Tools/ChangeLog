@@ -1,5 +1,12 @@
 2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r164148.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._apache_config_file_name_for_platform):
+
+2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         run-webkit-tests doesn't work with Apache 2.4
         https://bugs.webkit.org/show_bug.cgi?id=128861
 
