@@ -46,6 +46,7 @@ inline CapabilityLevel canCompile(Node* node)
     case JSConstant:
     case WeakJSConstant:
     case GetMyArgumentsLength:
+    case GetMyArgumentByVal:
     case GetLocal:
     case SetLocal:
     case MovHint:

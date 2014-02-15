@@ -1,3 +1,18 @@
+2014-02-15  Matthew Mirman  <mmirman@apple.com>
+
+        Added GetMyArgumentByVal to FTL
+        https://bugs.webkit.org/show_bug.cgi?id=128850
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentByVal):
+        * tests/stress/ftl-getbyval-arguments.js: Added.
+        (foo):
+
 2014-02-15  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] LLINT is not working.
