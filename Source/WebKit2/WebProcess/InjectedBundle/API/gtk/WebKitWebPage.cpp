@@ -270,7 +270,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         G_TYPE_FROM_CLASS(klass),
         G_SIGNAL_RUN_LAST,
         0, 0, 0,
-        g_cclosure_marshal_VOID__OBJECT,
+        g_cclosure_marshal_VOID__VOID,
         G_TYPE_NONE, 0);
 
     /**
