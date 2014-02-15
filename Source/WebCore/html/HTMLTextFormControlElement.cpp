@@ -213,11 +213,6 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
     setChangedSinceLastFormControlChangeEvent(false);
 }
 
-static inline bool hasVisibleTextArea(RenderElement& textControl, TextControlInnerTextElement* innerText)
-{
-    return textControl.style().visibility() != HIDDEN && innerText && innerText->renderer() && innerText->renderBox()->height();
-}
-
 void HTMLTextFormControlElement::setRangeText(const String& replacement, ExceptionCode& ec)
 {
     setRangeText(replacement, selectionStart(), selectionEnd(), String(), ec);
@@ -290,19 +285,25 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, const Str
 
 void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextFieldSelectionDirection direction)
 {
-    document().updateLayoutIgnorePendingStylesheets();
-
-    if (!renderer() || !renderer()->isTextControl())
+    if (!isTextFormControl())
         return;
 
     end = std::max(end, 0);
     start = std::min(std::max(start, 0), end);
 
     TextControlInnerTextElement* innerText = innerTextElement();
-    if (!hasVisibleTextArea(*renderer(), innerText)) {
-        cacheSelection(start, end, direction);
-        return;
+    bool hasFocus = document().focusedElement() == this;
+    if (!hasFocus && innerText) {
+        // FIXME: Removing this synchronous layout requires fixing <https://webkit.org/b/128797>
+        document().updateLayoutIgnorePendingStylesheets();
+        if (RenderElement* rendererTextControl = renderer()) {
+            if (rendererTextControl->style().visibility() == HIDDEN || !innerText->renderBox()->height()) {
+                cacheSelection(start, end, direction);
+                return;
+            }
+        }
     }
+
     Position startPosition = positionForIndex(innerText, start);
     Position endPosition;
     if (start == end)
@@ -317,8 +318,11 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
         newSelection = VisibleSelection(startPosition, endPosition);
     newSelection.setIsDirectional(direction != SelectionHasNoDirection);
 
+    FrameSelection::SetSelectionOptions options = FrameSelection::defaultSetSelectionOptions();
+    if (hasFocus)
+        options |= FrameSelection::DoNotSetFocus;
     if (Frame* frame = document().frame())
-        frame->selection().setSelection(newSelection);
+        frame->selection().setSelection(newSelection, options);
 }
 
 int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& position) const

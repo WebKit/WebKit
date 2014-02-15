@@ -1,3 +1,23 @@
+2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        setSelectionRange shouldn't trigger a synchronous layout to check focusability when text field is already focused
+        https://bugs.webkit.org/show_bug.cgi?id=128804
+
+        Reviewed by Enrica Casucci.
+
+        Don't trigger a synchronous layout at the beginning of setSelectionRange if the element is already focused
+        since we don't have to check the size of render box in that case.
+
+        We should be able to get rid of this synchronous layout entirely once we fix https://webkit.org/b/128797
+        but that's somewhat risky behavioral change so we'll do that in a separate patch.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectAll): Fixed the bug where selectAll selects the entire document even if the text
+        form contol is focused if the selection is none (i.e. not anchored to any node).
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setSelectionRange): Only update the layout if the element is not focused
+        already. Also pass in DoNotSetFocus option to setSelection since we already have the focus in that case.
+
 2014-02-14  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r157443): Search fields with a non-white background don’t have a round bezel

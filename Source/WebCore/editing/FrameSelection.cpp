@@ -1640,7 +1640,8 @@ void FrameSelection::selectAll()
 {
     Document* document = m_frame->document();
 
-    if (document->focusedElement() && document->focusedElement()->hasTagName(selectTag)) {
+    Element* focusedElement = document->focusedElement();
+    if (focusedElement && focusedElement->hasTagName(selectTag)) {
         HTMLSelectElement* selectElement = toHTMLSelectElement(document->focusedElement());
         if (selectElement->canSelectAll()) {
             selectElement->selectAll();
@@ -1657,7 +1658,15 @@ void FrameSelection::selectAll()
         else
             selectStartTarget = root.get();
     } else {
-        root = m_selection.nonBoundaryShadowTreeRootNode();
+        if (m_selection.isNone() && focusedElement) {
+            if (focusedElement->isTextFormControl()) {
+                toHTMLTextFormControlElement(focusedElement)->select();
+                return;
+            }
+            root = focusedElement->nonBoundaryShadowTreeRootNode();
+        } else
+            root = m_selection.nonBoundaryShadowTreeRootNode();
+
         if (root)
             selectStartTarget = root->shadowHost();
         else {
