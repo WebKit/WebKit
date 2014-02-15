@@ -27,6 +27,9 @@ WebInspector.ScopeChainDetailsSidebarPanel = function() {
     WebInspector.DetailsSidebarPanel.call(this, "scope-chain", WebInspector.UIString("Scope Chain"), WebInspector.UIString("Scope Chain"), "Images/NavigationItemVariable.svg", "5");
 
     this._callFrame = null;
+    
+    // Update on console prompt eval as objects in the scope chain may have changed.
+    WebInspector.runtimeManager.addEventListener(WebInspector.RuntimeManager.Event.DidEvaluate, this.needsRefresh, this);
 };
 
 WebInspector.ScopeChainDetailsSidebarPanel.prototype = {

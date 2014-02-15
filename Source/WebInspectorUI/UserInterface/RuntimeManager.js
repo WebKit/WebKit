@@ -32,6 +32,10 @@ WebInspector.RuntimeManager = function()
         RuntimeAgent.enable();
 };
 
+WebInspector.RuntimeManager.Event = {
+    DidEvaluate: "runtime-manager-did-evaluate"
+};
+
 WebInspector.RuntimeManager.prototype = {
     constructor: WebInspector.RuntimeManager,
 
@@ -46,6 +50,8 @@ WebInspector.RuntimeManager.prototype = {
 
         function evalCallback(error, result, wasThrown)
         {
+            this.dispatchEventToListeners(WebInspector.RuntimeManager.Event.DidEvaluate);
+            
             if (error) {
                 console.error(error);
                 callback(null, false);
@@ -59,14 +65,14 @@ WebInspector.RuntimeManager.prototype = {
         }
 
         if (WebInspector.debuggerManager.activeCallFrame) {
-            DebuggerAgent.evaluateOnCallFrame(WebInspector.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, evalCallback);
+            DebuggerAgent.evaluateOnCallFrame(WebInspector.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, evalCallback.bind(this));
             return;
         }
 
         // COMPATIBILITY (iOS 6): Execution context identifiers (contextId) did not exist
         // in iOS 6. Fallback to including the frame identifier (frameId).
         var contextId = WebInspector.quickConsole.executionContextIdentifier;
-        RuntimeAgent.evaluate.invoke({expression: expression, objectGroup: objectGroup, includeCommandLineAPI: includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole: doNotPauseOnExceptionsAndMuteConsole, contextId: contextId, frameId: contextId, returnByValue: returnByValue}, evalCallback);
+        RuntimeAgent.evaluate.invoke({expression: expression, objectGroup: objectGroup, includeCommandLineAPI: includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole: doNotPauseOnExceptionsAndMuteConsole, contextId: contextId, frameId: contextId, returnByValue: returnByValue}, evalCallback.bind(this));
     },
 
     getPropertiesForRemoteObject: function(objectId, callback)

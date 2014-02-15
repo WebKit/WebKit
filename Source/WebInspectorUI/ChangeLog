@@ -1,3 +1,22 @@
+2014-02-15  Chris J. Shull  <chrisjshull@gmail.com>
+
+        Web Inspector: scope chain details sidebar doesn't update values modified via console
+        https://bugs.webkit.org/show_bug.cgi?id=126855
+
+        Reviewed by Timothy Hatcher.
+
+        Add a RuntimeManager event that the scope chain details sidebar can 
+        listen to to trigger refresh.
+
+        Testing on this is blocked by http://webkit.org/b/128724
+        (Web Inspector: Issue testing breakpoints).
+
+        * UserInterface/RuntimeManager.js:
+        (WebInspector.RuntimeManager.prototype.evalCallback):
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        * UserInterface/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel):
+
 2014-02-14  Antoine Quint  <graouts@webkit.org>
 
         Web Inspector: color wheel should support Retina displays
