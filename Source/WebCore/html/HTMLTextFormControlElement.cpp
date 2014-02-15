@@ -330,8 +330,7 @@ int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& p
     TextControlInnerTextElement* innerText = innerTextElement();
     if (!innerText || !innerText->contains(position.deepEquivalent().anchorNode()))
         return 0;
-    bool forSelectionPreservation = false;
-    unsigned index = WebCore::indexForVisiblePosition(innerTextElement(), position, forSelectionPreservation);
+    unsigned index = indexForPosition(position.deepEquivalent());
     ASSERT(VisiblePosition(positionForIndex(innerTextElement(), index)) == position);
     return index;
 }
@@ -360,7 +359,7 @@ int HTMLTextFormControlElement::computeSelectionStart() const
     if (!frame)
         return 0;
 
-    return indexForVisiblePosition(frame->selection().selection().start());
+    return indexForPosition(frame->selection().selection().start());
 }
 
 int HTMLTextFormControlElement::selectionEnd() const
@@ -379,7 +378,7 @@ int HTMLTextFormControlElement::computeSelectionEnd() const
     if (!frame)
         return 0;
 
-    return indexForVisiblePosition(frame->selection().selection().end());
+    return indexForPosition(frame->selection().selection().end());
 }
 
 static const AtomicString& directionString(TextFieldSelectionDirection direction)
@@ -537,7 +536,7 @@ static String finishText(StringBuilder& result)
 {
     // Remove one trailing newline; there's always one that's collapsed out by rendering.
     size_t size = result.length();
-    if (size && result[size - 1] == '\n')
+    if (size && result[size - 1] == newlineCharacter)
         result.resize(--size);
     return result.toString();
 }
@@ -577,6 +576,45 @@ static Position positionForIndex(TextControlInnerTextElement* innerText, unsigne
         }
     }
     return lastPositionInNode(innerText);
+}
+
+unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosition) const
+{
+    TextControlInnerTextElement* innerText = innerTextElement();
+    if (!innerText || !innerText->contains(passedPosition.anchorNode()) || passedPosition.isNull())
+        return 0;
+
+    if (positionBeforeNode(innerText) == passedPosition)
+        return 0;
+
+    unsigned index = 0;
+    Node* startNode = passedPosition.computeNodeBeforePosition();
+    if (!startNode)
+        startNode = passedPosition.containerNode();
+    ASSERT(startNode);
+    ASSERT(innerText->contains(startNode));
+
+    for (Node* node = startNode; node; node = NodeTraversal::previous(node, innerText)) {
+        if (node->isTextNode()) {
+            unsigned length = toText(*node).length();
+            if (node == passedPosition.containerNode())
+                index += std::min<unsigned>(length, passedPosition.offsetInContainerNode());
+            else
+                index += length;
+        } else if (node->hasTagName(brTag))
+            index++;
+    }
+
+    unsigned length = innerTextValue().length();
+    index = std::min(index, length); // FIXME: We shouldn't have to call innerTextValue() just to ignore the last LF. See finishText.
+#ifndef ASSERT_DISABLED
+    VisiblePosition visiblePosition = passedPosition;
+    unsigned indexComputedByVisiblePosition = 0;
+    if (visiblePosition.isNotNull())
+        indexComputedByVisiblePosition = WebCore::indexForVisiblePosition(innerText, visiblePosition, false /* forSelectionPreservation */);
+    ASSERT(index == indexComputedByVisiblePosition);
+#endif
+    return index;
 }
 
 #if PLATFORM(IOS)

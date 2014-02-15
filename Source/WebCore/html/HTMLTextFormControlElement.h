@@ -124,6 +124,8 @@ private:
     virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) override final;
     virtual bool childShouldCreateRenderer(const Node&) const override;
 
+    unsigned indexForPosition(const Position&) const;
+
     // Returns true if user-editable value is empty. Used to check placeholder visibility.
     virtual bool isEmptyValue() const = 0;
     // Returns true if suggested value is empty. Used to check placeholder visibility.

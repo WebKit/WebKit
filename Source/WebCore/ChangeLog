@@ -1,3 +1,29 @@
+2014-02-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        computeSelectionStart and computeSelectionEnd shouldn't trigger synchronous layout
+        https://bugs.webkit.org/show_bug.cgi?id=128806
+
+        Reviewed by Darin Adler.
+
+        Added indexForPosition to HTMLTextFormControlElement. Like r163825, this patch traverses the DOM tree
+        instead of the render tree to compute the index for a given position.
+
+        We traverse the DOM Tree backwards starting at the specified Position all the way back to the beginning
+        of the inner text element. The index is computed as the number of characters we encountered during
+        this backwards DOM traversal.
+
+        It's worth noting that passedPosition.computeNodeBeforePosition() returns and only returns 0 when the
+        position is before the first node of its parent or inside a text node. In such cases, we call
+        passedPosition.containerNode() to find the parent or the text node.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::indexForVisiblePosition): Use indexForPosition.
+        (WebCore::HTMLTextFormControlElement::computeSelectionStart): Ditto.
+        (WebCore::HTMLTextFormControlElement::computeSelectionEnd): Dotto.
+        (WebCore::finishText): Cleanup. Use newlineCharacter instead of hard-coding '\n'.
+        (WebCore::HTMLTextFormControlElement::indexForPosition): Added. See above for the description.
+        * html/HTMLTextFormControlElement.h:
+
 2014-02-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Avoid unnecessary asserts if "prepareToPlay" is called multiple times.
