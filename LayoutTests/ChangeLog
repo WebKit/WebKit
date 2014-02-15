@@ -1,5 +1,12 @@
 2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Mac rebaseline after r164145.
+
+        * platform/mac/fast/forms/search-styled-expected.png:
+        * platform/mac/fast/forms/search-styled-expected.txt:
+
+2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Windows rebaselines after dependency updates.
 
         * platform/win/fast/css/first-letter-block-form-controls-crash-expected.txt:
