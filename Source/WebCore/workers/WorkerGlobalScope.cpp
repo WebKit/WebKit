@@ -76,13 +76,13 @@ public:
         ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
         WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
         // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
-        workerGlobalScope->thread()->workerReportingProxy().workerGlobalScopeClosed();
+        workerGlobalScope->thread().workerReportingProxy().workerGlobalScopeClosed();
     }
 
     virtual bool isCleanupTask() const { return true; }
 };
 
-WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, WorkerThread* thread, PassRefPtr<SecurityOrigin> topOrigin)
+WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, WorkerThread& thread, PassRefPtr<SecurityOrigin> topOrigin)
     : m_url(url)
     , m_userAgent(userAgent)
     , m_groupSettings(std::move(settings))
@@ -100,13 +100,13 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, st
 
 WorkerGlobalScope::~WorkerGlobalScope()
 {
-    ASSERT(currentThread() == thread()->threadID());
+    ASSERT(currentThread() == thread().threadID());
 
     // Make sure we have no observers.
     notifyObserversOfStop();
 
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
-    thread()->workerReportingProxy().workerGlobalScopeDestroyed();
+    thread().workerReportingProxy().workerGlobalScopeDestroyed();
 }
 
 void WorkerGlobalScope::applyContentSecurityPolicyFromString(const String& policy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
@@ -180,7 +180,7 @@ bool WorkerGlobalScope::hasPendingActivity() const
 
 void WorkerGlobalScope::postTask(PassOwnPtr<Task> task)
 {
-    thread()->runLoop().postTask(task);
+    thread().runLoop().postTask(task);
 }
 
 int WorkerGlobalScope::setTimeout(PassOwnPtr<ScheduledAction> action, int timeout)
@@ -247,7 +247,7 @@ EventTarget* WorkerGlobalScope::errorEventTarget()
 
 void WorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<ScriptCallStack>)
 {
-    thread()->workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, columnNumber, sourceURL);
+    thread().workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, columnNumber, sourceURL);
 }
 
 void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
@@ -257,7 +257,7 @@ void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel lev
         return;
     }
 
-    thread()->workerReportingProxy().postConsoleMessageToWorkerObject(source, level, message, 0, 0, String());
+    thread().workerReportingProxy().postConsoleMessageToWorkerObject(source, level, message, 0, 0, String());
     addMessageToWorkerConsole(source, level, message, String(), 0, 0, 0, 0, requestIdentifier);
 }
 
@@ -268,7 +268,7 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
         return;
     }
 
-    thread()->workerReportingProxy().postConsoleMessageToWorkerObject(source, level, message, lineNumber, columnNumber, sourceURL);
+    thread().workerReportingProxy().postConsoleMessageToWorkerObject(source, level, message, lineNumber, columnNumber, sourceURL);
     addMessageToWorkerConsole(source, level, message, sourceURL, lineNumber, columnNumber, callStack, state, requestIdentifier);
 }
 
@@ -283,7 +283,7 @@ void WorkerGlobalScope::addMessageToWorkerConsole(MessageSource source, MessageL
 
 bool WorkerGlobalScope::isContextThread() const
 {
-    return currentThread() == thread()->threadID();
+    return currentThread() == thread().threadID();
 }
 
 bool WorkerGlobalScope::isJSExecutionForbidden() const

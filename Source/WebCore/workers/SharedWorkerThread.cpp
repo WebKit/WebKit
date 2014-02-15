@@ -55,7 +55,7 @@ SharedWorkerThread::~SharedWorkerThread()
 
 PassRefPtr<WorkerGlobalScope> SharedWorkerThread::createWorkerGlobalScope(const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType, PassRefPtr<SecurityOrigin>)
 {
-    return SharedWorkerGlobalScope::create(m_name, url, userAgent, std::move(settings), this, contentSecurityPolicy, contentSecurityPolicyType);
+    return SharedWorkerGlobalScope::create(m_name, url, userAgent, std::move(settings), *this, contentSecurityPolicy, contentSecurityPolicyType);
 }
 
 } // namespace WebCore

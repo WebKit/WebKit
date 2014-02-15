@@ -55,7 +55,7 @@ DedicatedWorkerThread::~DedicatedWorkerThread()
 
 PassRefPtr<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType, PassRefPtr<SecurityOrigin> topOrigin)
 {
-    return DedicatedWorkerGlobalScope::create(url, userAgent, std::move(settings), this, contentSecurityPolicy, contentSecurityPolicyType, topOrigin);
+    return DedicatedWorkerGlobalScope::create(url, userAgent, std::move(settings), *this, contentSecurityPolicy, contentSecurityPolicyType, topOrigin);
 }
 
 void DedicatedWorkerThread::runEventLoop()

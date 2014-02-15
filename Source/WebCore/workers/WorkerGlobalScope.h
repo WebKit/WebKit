@@ -74,7 +74,7 @@ namespace WebCore {
         WorkerScriptController* script() { return m_script.get(); }
         void clearScript() { m_script.clear(); }
 
-        WorkerThread* thread() const { return m_thread; }
+        WorkerThread& thread() const { return m_thread; }
 
         bool hasPendingActivity() const;
 
@@ -141,7 +141,7 @@ namespace WebCore {
 #endif
 
     protected:
-        WorkerGlobalScope(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, WorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
+        WorkerGlobalScope(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, WorkerThread&, PassRefPtr<SecurityOrigin> topOrigin);
         void applyContentSecurityPolicyFromString(const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 
         virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<Inspector::ScriptCallStack>) override;
@@ -168,7 +168,7 @@ namespace WebCore {
         mutable RefPtr<WorkerNavigator> m_navigator;
 
         OwnPtr<WorkerScriptController> m_script;
-        WorkerThread* m_thread;
+        WorkerThread& m_thread;
 
 #if ENABLE(INSPECTOR)
         const std::unique_ptr<WorkerInspectorController> m_workerInspectorController;

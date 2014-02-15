@@ -817,7 +817,7 @@ void MemoryCache::removeRequestFromCache(ScriptExecutionContext* context, const 
 {
     if (context->isWorkerGlobalScope()) {
         WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
-        workerGlobalScope->thread()->workerLoaderProxy().postTaskToLoader(createCallbackTask(&crossThreadRemoveRequestFromCache, request));
+        workerGlobalScope->thread().workerLoaderProxy().postTaskToLoader(createCallbackTask(&crossThreadRemoveRequestFromCache, request));
         return;
     }
 

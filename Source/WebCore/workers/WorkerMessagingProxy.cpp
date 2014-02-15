@@ -73,7 +73,7 @@ private:
         DedicatedWorkerGlobalScope* context = static_cast<DedicatedWorkerGlobalScope*>(scriptContext);
         std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(*scriptContext, std::move(m_channels));
         context->dispatchEvent(MessageEvent::create(std::move(ports), m_message));
-        context->thread()->workerObjectProxy().confirmMessageFromWorkerObject(context->hasPendingActivity());
+        context->thread().workerObjectProxy().confirmMessageFromWorkerObject(context->hasPendingActivity());
     }
 
 private:
@@ -285,14 +285,14 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
 {
     ASSERT(m_workerObject);
     ASSERT((m_scriptExecutionContext->isDocument() && isMainThread())
-           || (m_scriptExecutionContext->isWorkerGlobalScope() && currentThread() == static_cast<WorkerGlobalScope*>(m_scriptExecutionContext.get())->thread()->threadID()));
+           || (m_scriptExecutionContext->isWorkerGlobalScope() && currentThread() == static_cast<WorkerGlobalScope*>(m_scriptExecutionContext.get())->thread().threadID()));
 }
 
 WorkerMessagingProxy::~WorkerMessagingProxy()
 {
     ASSERT(!m_workerObject);
     ASSERT((m_scriptExecutionContext->isDocument() && isMainThread())
-           || (m_scriptExecutionContext->isWorkerGlobalScope() && currentThread() == static_cast<WorkerGlobalScope*>(m_scriptExecutionContext.get())->thread()->threadID()));
+           || (m_scriptExecutionContext->isWorkerGlobalScope() && currentThread() == static_cast<WorkerGlobalScope*>(m_scriptExecutionContext.get())->thread().threadID()));
 }
 
 void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode)

@@ -146,8 +146,7 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
 MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, const ModePredicate& predicate, WaitMode waitMode)
 {
     ASSERT(context);
-    ASSERT(context->thread());
-    ASSERT(context->thread()->threadID() == currentThread());
+    ASSERT(context->thread().threadID() == currentThread());
 
     double absoluteTime = 0.0;
     if (waitMode == WaitForMessage)
@@ -177,8 +176,7 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
 void WorkerRunLoop::runCleanupTasks(WorkerGlobalScope* context)
 {
     ASSERT(context);
-    ASSERT(context->thread());
-    ASSERT(context->thread()->threadID() == currentThread());
+    ASSERT(context->thread().threadID() == currentThread());
     ASSERT(m_messageQueue.killed());
 
     while (true) {

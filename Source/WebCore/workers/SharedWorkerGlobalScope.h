@@ -44,7 +44,7 @@ namespace WebCore {
     class SharedWorkerGlobalScope : public WorkerGlobalScope {
     public:
         typedef WorkerGlobalScope Base;
-        static PassRefPtr<SharedWorkerGlobalScope> create(const String& name, const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, SharedWorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType);
+        static PassRefPtr<SharedWorkerGlobalScope> create(const String& name, const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, SharedWorkerThread&, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType);
         virtual ~SharedWorkerGlobalScope();
 
         virtual bool isSharedWorkerGlobalScope() const override { return true; }
@@ -56,10 +56,10 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(connect);
         String name() const { return m_name; }
 
-        SharedWorkerThread* thread();
+        SharedWorkerThread& thread();
 
     private:
-        SharedWorkerGlobalScope(const String& name, const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, SharedWorkerThread*);
+        SharedWorkerGlobalScope(const String& name, const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, SharedWorkerThread&);
         virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<Inspector::ScriptCallStack>) override;
 
         String m_name;

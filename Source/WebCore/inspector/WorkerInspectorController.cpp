@@ -70,7 +70,7 @@ public:
 private:
     virtual bool sendMessageToFrontend(const String& message) override
     {
-        m_workerGlobalScope.thread()->workerReportingProxy().postMessageToPageInspector(message);
+        m_workerGlobalScope.thread().workerReportingProxy().postMessageToPageInspector(message);
         return true;
     }
     WorkerGlobalScope& m_workerGlobalScope;

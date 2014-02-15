@@ -347,7 +347,7 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError()
 WorkerThreadableWebSocketChannel::Bridge::Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerGlobalScope> workerGlobalScope, const String& taskMode)
     : m_workerClientWrapper(workerClientWrapper)
     , m_workerGlobalScope(workerGlobalScope)
-    , m_loaderProxy(m_workerGlobalScope->thread()->workerLoaderProxy())
+    , m_loaderProxy(m_workerGlobalScope->thread().workerLoaderProxy())
     , m_taskMode(taskMode)
     , m_peer(0)
 {
@@ -645,7 +645,7 @@ void WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion()
 {
     if (!m_workerGlobalScope)
         return;
-    WorkerRunLoop& runLoop = m_workerGlobalScope->thread()->runLoop();
+    WorkerRunLoop& runLoop = m_workerGlobalScope->thread().runLoop();
     MessageQueueWaitResult result = MessageQueueMessageReceived;
     ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
     while (m_workerGlobalScope && clientWrapper && !clientWrapper->syncMethodDone() && result != MessageQueueTerminated) {

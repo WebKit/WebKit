@@ -98,15 +98,15 @@ WorkerDebuggerAgent::WorkerDebuggerAgent(InjectedScriptManager* injectedScriptMa
     , m_inspectedWorkerGlobalScope(inspectedWorkerGlobalScope)
 {
     std::lock_guard<std::mutex> lock(workerDebuggerAgentsMutex());
-    workerDebuggerAgents().set(inspectedWorkerGlobalScope->thread(), this);
+    workerDebuggerAgents().set(&inspectedWorkerGlobalScope->thread(), this);
 }
 
 WorkerDebuggerAgent::~WorkerDebuggerAgent()
 {
     std::lock_guard<std::mutex> lock(workerDebuggerAgentsMutex());
 
-    ASSERT(workerDebuggerAgents().contains(m_inspectedWorkerGlobalScope->thread()));
-    workerDebuggerAgents().remove(m_inspectedWorkerGlobalScope->thread());
+    ASSERT(workerDebuggerAgents().contains(&m_inspectedWorkerGlobalScope->thread()));
+    workerDebuggerAgents().remove(&m_inspectedWorkerGlobalScope->thread());
 }
 
 void WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(WorkerThread* thread)

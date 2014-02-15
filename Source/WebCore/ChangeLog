@@ -1,3 +1,75 @@
+2014-02-14  Andreas Kling  <akling@apple.com>
+
+        CTTE: WorkerGlobalScope is always owned by a WorkerThread.
+        <https://webkit.org/b/128834>
+
+        Codify this by storing the owner thread as a WorkerThread& and making
+        thread() return a reference.
+
+        This exposed a couple of unnecessary assertions.
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/notifications/WorkerGlobalScopeNotifications.cpp:
+        (WebCore::WorkerGlobalScopeNotifications::webkitNotifications):
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::create):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::Bridge):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::runEventLoopWhilePaused):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::createdMessagePort):
+        (WebCore::ScriptExecutionContext::destroyedMessagePort):
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::~WorkerDebuggerAgent):
+        * inspector/WorkerInspectorController.cpp:
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::pauseWorkerGlobalScope):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::removeRequestFromCache):
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        (WebCore::DedicatedWorkerGlobalScope::postMessage):
+        (WebCore::DedicatedWorkerGlobalScope::importScripts):
+        (WebCore::DedicatedWorkerGlobalScope::thread):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/SharedWorkerGlobalScope.cpp:
+        (WebCore::SharedWorkerGlobalScope::create):
+        (WebCore::SharedWorkerGlobalScope::SharedWorkerGlobalScope):
+        (WebCore::SharedWorkerGlobalScope::thread):
+        * workers/SharedWorkerGlobalScope.h:
+        * workers/SharedWorkerThread.cpp:
+        (WebCore::SharedWorkerThread::createWorkerGlobalScope):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::CloseWorkerGlobalScopeTask::performTask):
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::postTask):
+        (WebCore::WorkerGlobalScope::logExceptionToConsole):
+        (WebCore::WorkerGlobalScope::addConsoleMessage):
+        (WebCore::WorkerGlobalScope::addMessage):
+        (WebCore::WorkerGlobalScope::isContextThread):
+        * workers/WorkerGlobalScope.h:
+        (WebCore::WorkerGlobalScope::thread):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerGlobalScopeTask::performTask):
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+        (WebCore::WorkerMessagingProxy::~WorkerMessagingProxy):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::runInMode):
+        (WebCore::WorkerRunLoop::runCleanupTasks):
+
 2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         setSelectionRange shouldn't trigger a synchronous layout to check focusability when text field is already focused

@@ -68,7 +68,7 @@ NotificationCenter* WorkerGlobalScopeNotifications::webkitNotifications(WorkerGl
 NotificationCenter* WorkerGlobalScopeNotifications::webkitNotifications()
 {
     if (!m_notificationCenter)
-        m_notificationCenter = NotificationCenter::create(m_context, m_context->thread()->getNotificationClient());
+        m_notificationCenter = NotificationCenter::create(m_context, m_context->thread().getNotificationClient());
     return m_notificationCenter.get();
 }
 

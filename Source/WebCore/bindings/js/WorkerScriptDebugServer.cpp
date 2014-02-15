@@ -96,7 +96,7 @@ void WorkerScriptDebugServer::runEventLoopWhilePaused()
 
     MessageQueueWaitResult result;
     do {
-        result = m_workerGlobalScope->thread()->runLoop().runInMode(m_workerGlobalScope, m_debuggerTaskMode);
+        result = m_workerGlobalScope->thread().runLoop().runInMode(m_workerGlobalScope, m_debuggerTaskMode);
     // Keep waiting until execution is resumed.
     } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
 }
