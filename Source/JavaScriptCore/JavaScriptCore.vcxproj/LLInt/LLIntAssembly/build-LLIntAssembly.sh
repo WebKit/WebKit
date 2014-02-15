@@ -23,4 +23,10 @@ cd "${BUILT_PRODUCTS_DIR}/JavaScriptCore/DerivedSources"
 ##############################################################################
 # Step 3: Build LLIntOffsetsExtractor
 
+# Create a dummy asm file in case we are using the C backend
+# This is needed since LowLevelInterpreterWin.asm is part of the project.
+printf "END" > LowLevelInterpreterWin.asm
+
+# When enabling LLINT and switching to the x86 backend, use "LowLevelInterpreterWin.asm" as output file when running asm.rb.
+
 /usr/bin/env ruby "${SRCROOT}/offlineasm/asm.rb" "${SRCROOT}/llint/LowLevelInterpreter.asm" "${BUILT_PRODUCTS_DIR}/LLIntOffsetsExtractor/LLIntOffsetsExtractor${3}.exe" "LLIntAssembly.h" || exit 1

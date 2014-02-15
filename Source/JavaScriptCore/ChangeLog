@@ -1,3 +1,38 @@
+2014-02-15  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] LLINT is not working.
+        https://bugs.webkit.org/show_bug.cgi?id=128115
+
+        Reviewed by Mark Lam.
+
+        This patch will generate assembly code with Intel syntax, which can be processed by the Microsoft assembler (MASM).
+        By creating an asm file instead of a header file with inline assembly, we can support 64-bit.
+        Only 32-bit compilation has been tested, not 64-bit.
+        The aim of this patch is to get LLINT up and running on Windows.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Added new files, and generated asm file.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
+        * LLIntAssembly/build-LLIntAssembly.sh: Generate dummy asm file in case we're using C backend.
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor): Compile fix when DFG is disabled.
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor): Ditto.
+        * bytecode/GetByIdStatus.h: Ditto.
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor): Ditto.
+        * bytecode/PutByIdStatus.h: Ditto.
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize): Compile fix.
+        * llint/LLIntSlowPaths.h: Added llint_crash function.
+        * llint/LLIntSlowPaths.cpp: Ditto.        
+        * llint/LowLevelInterpreter.cpp: Disable code for Windows.
+        * llint/LowLevelInterpreter.asm: Remove instruction which generates incorrect assembly code on Windows (MOV 0xbbadbeef, register), call llint_crash instead.
+        Make local labels visible to MASM on Windows.
+        * llint/LowLevelInterpreter32_64.asm: Make local labels visible to MASM on Windows.
+        * offlineasm/asm.rb: Generate asm file with Intel assembly syntax.
+        * offlineasm/settings.rb: Ditto.
+        * offlineasm/x86.rb: Ditto.
+
 2014-02-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CRASH when debugger closes while paused and remote inspecting a JSContext

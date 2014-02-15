@@ -95,8 +95,10 @@ public:
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }
     
 private:
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
     static bool hasExitSite(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex, ExitingJITType = ExitFromAnything);
+#endif
+#if ENABLE(JIT)
     static GetByIdStatus computeForStubInfo(const ConcurrentJITLocker&, CodeBlock*, StructureStubInfo*, StringImpl* uid);
 #endif
     static void computeForChain(GetByIdStatus& result, CodeBlock*, StringImpl* uid);

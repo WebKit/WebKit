@@ -1459,14 +1459,14 @@ macro putById(getPropertyStorage)
             storei t2, PayloadOffset[propertyStorage, t1]
             dispatch(9)
         end)
+
+    .opPutByIdSlow:
+        callSlowPath(_llint_slow_path_put_by_id)
+        dispatch(9)
 end
 
 _llint_op_put_by_id:
     putById(withInlineStorage)
-
-.opPutByIdSlow:
-    callSlowPath(_llint_slow_path_put_by_id)
-    dispatch(9)
 
 
 _llint_op_put_by_id_out_of_line:
@@ -1481,7 +1481,7 @@ macro putByIdTransition(additionalChecks, getPropertyStorage)
     loadConstantOrVariablePayload(t3, CellTag, t0, .opPutByIdSlow)
     loadi 12[PC], t2
     bpneq JSCell::m_structure[t0], t1, .opPutByIdSlow
-    additionalChecks(t1, t3)
+    additionalChecks(t1, t3, .opPutByIdSlow)
     loadi 20[PC], t1
     getPropertyStorage(
         t0,
@@ -1495,12 +1495,16 @@ macro putByIdTransition(additionalChecks, getPropertyStorage)
             storep t1, JSCell::m_structure[t0]
             dispatch(9)
         end)
+
+    .opPutByIdSlow:
+        callSlowPath(_llint_slow_path_put_by_id)
+        dispatch(9)
 end
 
-macro noAdditionalChecks(oldStructure, scratch)
+macro noAdditionalChecks(oldStructure, scratch, slowPath)
 end
 
-macro structureChainChecks(oldStructure, scratch)
+macro structureChainChecks(oldStructure, scratch, slowPath)
     const protoCell = oldStructure   # Reusing the oldStructure register for the proto
 
     loadp 28[PC], scratch
@@ -1511,7 +1515,7 @@ macro structureChainChecks(oldStructure, scratch)
 .loop:
     loadi Structure::m_prototype + PayloadOffset[oldStructure], protoCell
     loadp JSCell::m_structure[protoCell], oldStructure
-    bpneq oldStructure, [scratch], .opPutByIdSlow
+    bpneq oldStructure, [scratch], slowPath
     addp 4, scratch
     bineq Structure::m_prototype + TagOffset[oldStructure], NullTag, .loop
 .done:

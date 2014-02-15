@@ -172,7 +172,13 @@ end
 #
 
 def emitCodeInConfiguration(concreteSettings, ast, backend)
-    $output.puts cppSettingsTest(concreteSettings)
+    if !$emitWinAsm
+        $output.puts cppSettingsTest(concreteSettings)
+    else
+        $output.puts ".MODEL FLAT, C"
+        $output.puts "INCLUDE #{File.basename($output.path)}.sym"
+        $output.puts "_TEXT SEGMENT"
+    end
     
     if isASTErroneous(ast)
         $output.puts "#error \"Invalid configuration.\""
@@ -182,7 +188,12 @@ def emitCodeInConfiguration(concreteSettings, ast, backend)
         yield concreteSettings, ast, backend
     end
     
-    $output.puts "#endif"
+    if !$emitWinAsm
+        $output.puts "#endif"
+    else
+        $output.puts "_TEXT ENDS"
+        $output.puts "END"
+    end
 end
 
 #

@@ -47,16 +47,18 @@ class Assembler
         @numGlobalLabels = 0
 
         @newlineSpacerState = :none
+        @lastlabel = ""
     end
-    
+
     def enterAsm
-        @outp.puts "OFFLINE_ASM_BEGIN"
+        @outp.puts "OFFLINE_ASM_BEGIN" if !$emitWinAsm
         @state = :asm
     end
     
     def leaveAsm
+        putsProcEndIfNeeded if $emitWinAsm
         putsLastComment
-        @outp.puts "OFFLINE_ASM_END"
+        @outp.puts "OFFLINE_ASM_END" if !$emitWinAsm
         @state = :cpp
     end
     
@@ -84,7 +86,7 @@ class Assembler
             result += "#{@codeOrigin}"
         end
         if result != ""
-            result = "// " + result
+            result = $commentPrefix + " " + result
         end
 
         # Reset all the components that we've just sent to be dumped.
@@ -137,7 +139,11 @@ class Assembler
     
     def puts(*line)
         raise unless @state == :asm
-        @outp.puts(formatDump("    \"\\t" + line.join('') + "\\n\"", lastComment))
+        if !$emitWinAsm
+            @outp.puts(formatDump("    \"\\t" + line.join('') + "\\n\"", lastComment))
+        else
+            @outp.puts(formatDump("    " + line.join(''), lastComment))
+        end
     end
     
     def print(line)
@@ -152,15 +158,39 @@ class Assembler
         end
     end
 
+    def putsProc(label, comment)
+        raise unless $emitWinAsm
+        @outp.puts(formatDump("#{label} PROC PUBLIC", comment))
+        @lastlabel = label
+    end
+
+    def putsProcEndIfNeeded
+        raise unless $emitWinAsm
+        if @lastlabel != ""
+            @outp.puts("#{@lastlabel} ENDP")
+        end
+        @lastlabel = ""
+    end
+
     def putsLabel(labelName)
         raise unless @state == :asm
         @numGlobalLabels += 1
+        putsProcEndIfNeeded if $emitWinAsm
         putsNewlineSpacerIfAppropriate(:global)
         @internalComment = $enableLabelCountComments ? "Global Label #{@numGlobalLabels}" : nil
         if /\Allint_op_/.match(labelName)
-            @outp.puts(formatDump("OFFLINE_ASM_OPCODE_LABEL(op_#{$~.post_match})", lastComment))
+            if !$emitWinAsm
+                @outp.puts(formatDump("OFFLINE_ASM_OPCODE_LABEL(op_#{$~.post_match})", lastComment))
+            else
+                label = "llint_" + "op_#{$~.post_match}"
+                putsProc(label, lastComment)
+            end
         else
-            @outp.puts(formatDump("OFFLINE_ASM_GLUE_LABEL(#{labelName})", lastComment))
+            if !$emitWinAsm
+                @outp.puts(formatDump("OFFLINE_ASM_GLUE_LABEL(#{labelName})", lastComment))
+            else
+                putsProc(labelName, lastComment)
+            end
         end
         @newlineSpacerState = :none # After a global label, we can use another spacer.
     end
@@ -170,15 +200,27 @@ class Assembler
         @numLocalLabels += 1
         @outp.puts("\n")
         @internalComment = $enableLabelCountComments ? "Local Label #{@numLocalLabels}" : nil
-        @outp.puts(formatDump("  OFFLINE_ASM_LOCAL_LABEL(#{labelName})", lastComment))
+        if !$emitWinAsm
+            @outp.puts(formatDump("  OFFLINE_ASM_LOCAL_LABEL(#{labelName})", lastComment))
+        else
+            @outp.puts(formatDump("  #{labelName}:", lastComment))
+        end
     end
     
     def self.labelReference(labelName)
-        "\" LOCAL_REFERENCE(#{labelName}) \""
+        if !$emitWinAsm
+            "\" LOCAL_REFERENCE(#{labelName}) \""
+        else
+            "#{labelName}"
+        end
     end
     
     def self.localLabelReference(labelName)
-        "\" LOCAL_LABEL_STRING(#{labelName}) \""
+        if !$emitWinAsm
+            "\" LOCAL_LABEL_STRING(#{labelName}) \""
+        else
+            "#{labelName}"
+        end
     end
     
     def self.cLabelReference(labelName)
@@ -200,8 +242,8 @@ class Assembler
             @commentState = :one
         when :one
             if $enableCodeOriginComments
-                @outp.puts "    // #{@codeOrigin}"
-                @outp.puts "    // #{text}"
+                @outp.puts "    " + $commentPrefix + " #{@codeOrigin}"
+                @outp.puts "    " + $commentPrefix + " #{text}"
             end
             @codeOrigin = nil
             @commentState = :many
@@ -233,8 +275,11 @@ rescue MissingMagicValuesException
     exit 0
 end
 
+$emitWinAsm = isMSVC ? outputFlnm.index(".asm") != nil : false
+$commentPrefix = $emitWinAsm ? ";" : "//"
+
 inputHash =
-    "// offlineasm input hash: " + parseHash(asmFile) +
+    $commentPrefix + " offlineasm input hash: " + parseHash(asmFile) +
     " " + Digest::SHA1.hexdigest(configurationList.map{|v| (v[0] + [v[1]]).join(' ')}.join(' ')) +
     " " + selfHash
 
@@ -253,11 +298,11 @@ File.open(outputFlnm, "w") {
     | outp |
     $output = outp
     $output.puts inputHash
-    
+
     $asm = Assembler.new($output)
     
     ast = parse(asmFile)
-    
+
     configurationList.each {
         | configuration |
         offsetsList = configuration[0]

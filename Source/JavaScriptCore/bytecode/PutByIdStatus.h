@@ -111,8 +111,10 @@ public:
     PropertyOffset offset() const { return m_offset; }
     
 private:
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
     static bool hasExitSite(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex, ExitingJITType = ExitFromAnything);
+#endif
+#if ENABLE(JIT)
     static PutByIdStatus computeForStubInfo(const ConcurrentJITLocker&, CodeBlock*, StructureStubInfo*, StringImpl* uid);
 #endif
     static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);

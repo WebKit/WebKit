@@ -55,7 +55,7 @@ void initialize()
         Data::s_exceptionInstructions[i].u.pointer =
             LLInt::getCodePtr(llint_throw_from_slow_path_trampoline);
     #define OPCODE_ENTRY(opcode, length) \
-        Data::s_opcodeMap[opcode] = LLInt::getCodePtr(llint_##opcode);
+        Data::s_opcodeMap[opcode] = static_cast<Opcode>(LLInt::getCodePtr(llint_##opcode));
     FOR_EACH_OPCODE_ID(OPCODE_ENTRY);
     #undef OPCODE_ENTRY
     #endif // !ENABLE(LLINT_C_LOOP)

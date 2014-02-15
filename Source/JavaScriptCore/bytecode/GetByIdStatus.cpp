@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
 bool GetByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex, ExitingJITType jitType)
 {
     return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache, jitType))
@@ -132,7 +132,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
 
     GetByIdStatus result;
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
     result = computeForStubInfo(
         locker, profiledBlock, map.get(CodeOrigin(bytecodeIndex)), uid);
     

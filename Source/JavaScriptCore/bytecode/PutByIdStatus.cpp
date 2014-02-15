@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
 bool PutByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex, ExitingJITType exitType)
 {
     return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache, exitType))
@@ -99,7 +99,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
     if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex)
         || hasExitSite(locker, profiledBlock, bytecodeIndex))
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
@@ -173,7 +173,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, Code
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin codeOrigin, StringImpl* uid)
 {
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
     if (dfgBlock) {
         {
             ConcurrentJITLocker locker(baselineBlock->m_lock);

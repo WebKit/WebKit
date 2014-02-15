@@ -485,7 +485,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 
 } // namespace JSC
 
-#else // !ENABLE(LLINT_C_LOOP)
+#elif !OS(WINDOWS)
 
 //============================================================================
 // Define the opcode dispatch mechanism when using an ASM loop:

@@ -209,9 +209,7 @@ macro crash()
     if C_LOOP
         cloopCrash
     else
-        storei t0, 0xbbadbeef[]
-        move 0, t0
-        call t0
+        call _llint_crash
     end
 end
 
@@ -694,14 +692,12 @@ _llint_eval_prologue:
 
 _llint_function_for_call_prologue:
     prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call, _llint_trace_prologue_function_for_call)
-.functionForCallBegin:
     functionInitialization(0)
     dispatch(0)
     
 
 _llint_function_for_construct_prologue:
     prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct, _llint_trace_prologue_function_for_construct)
-.functionForConstructBegin:
     functionInitialization(1)
     dispatch(0)
     
@@ -709,11 +705,17 @@ _llint_function_for_construct_prologue:
 _llint_function_for_call_arity_check:
     prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call_arityCheck, _llint_trace_arityCheck_for_call)
     functionArityCheck(.functionForCallBegin, _slow_path_call_arityCheck)
+.functionForCallBegin:
+    functionInitialization(0)
+    dispatch(0)
 
 
 _llint_function_for_construct_arity_check:
     prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct_arityCheck, _llint_trace_arityCheck_for_construct)
     functionArityCheck(.functionForConstructBegin, _slow_path_construct_arityCheck)
+.functionForConstructBegin:
+    functionInitialization(1)
+    dispatch(0)
 
 
 # Value-representation-specific code.

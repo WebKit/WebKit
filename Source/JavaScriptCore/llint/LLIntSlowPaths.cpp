@@ -1443,6 +1443,11 @@ extern "C" void llint_write_barrier_slow(ExecState* exec, JSCell* cell)
     vm.heap.writeBarrier(cell);
 }
 
+extern "C" NO_RETURN_DUE_TO_CRASH void llint_crash()
+{
+    CRASH();
+}
+
 } } // namespace JSC::LLInt
 
 #endif // ENABLE(LLINT)
