@@ -1,3 +1,13 @@
+2014-02-15  Piotr Grad  <p.grad@samsung.com>
+
+        Setting currentTime on HTMLMediaElement with media controller should throw exception.
+        https://bugs.webkit.org/show_bug.cgi?id=128867.
+
+        Reviewed by Eric Carlson.
+
+        * media/video-controller-currentTime-expected.txt: Added.
+        * media/video-controller-currentTime.html: Added.
+
 2014-02-15  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
 
         ASSERT_WITH_SECURITY_IMPLICATION in WebCore::toElement

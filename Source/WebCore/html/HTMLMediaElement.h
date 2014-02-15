@@ -180,6 +180,7 @@ public:
 // playback state
     virtual double currentTime() const override;
     virtual void setCurrentTime(double) override;
+    virtual void setCurrentTime(double, ExceptionCode&);
     virtual double duration() const override;
     virtual bool paused() const override;
     virtual double defaultPlaybackRate() const override;

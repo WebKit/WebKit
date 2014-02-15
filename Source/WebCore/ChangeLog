@@ -1,3 +1,20 @@
+2014-02-15  Piotr Grad  <p.grad@samsung.com>
+
+        Setting currentTime on HTMLMediaElement with media controller should throw exception.
+        https://bugs.webkit.org/show_bug.cgi?id=128867.
+
+        Reviewed by Eric Carlson.
+
+        Added implementation for setting currentTime in HTMLMediaElement. Old implementation
+        was left to be used internally.
+
+        Test: media/video-controller-currentTime.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
 2014-02-15  Anders Carlsson  <andersca@apple.com>
 
         Form controls are always painted in the active state

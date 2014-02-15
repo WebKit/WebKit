@@ -2520,6 +2520,18 @@ void HTMLMediaElement::setCurrentTime(double time)
     seek(time);
 }
 
+void HTMLMediaElement::setCurrentTime(double time, ExceptionCode& ec)
+{
+    // On setting, if the media element has a current media controller, then the user agent must
+    // throw an InvalidStateError exception
+    if (m_mediaController) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    seek(time);
+}
+
 double HTMLMediaElement::duration() const
 {
     if (m_player && m_readyState >= HAVE_METADATA)
