@@ -1,3 +1,16 @@
+2014-02-15  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Add performance test for raster shape with shape-margin
+        https://bugs.webkit.org/show_bug.cgi?id=128770
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch introduces a new performance test for image valued shapes,
+        where shape-margin is applied on the shape.
+        The test is skipped by default.
+
+        * Layout/Shapes/ShapeOutsideRasterWithMargin.html: Added.
+
 2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Improve the appearance of DYEBench
