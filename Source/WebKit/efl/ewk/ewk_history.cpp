@@ -326,17 +326,6 @@ const char* ewk_history_item_uri_original_get(const Ewk_History_Item* item)
     return historyItem->originalUri;
 }
 
-cairo_surface_t* ewk_history_item_icon_surface_get(const Ewk_History_Item* item)
-{
-    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
-
-    RefPtr<cairo_surface_t> icon = WebCore::iconDatabase().synchronousNativeIconForPageURL(core->url(), WebCore::IntSize(16, 16));
-    if (!icon)
-        ERR("icon is NULL.");
-
-    return icon.get();
-}
-
 Evas_Object* ewk_history_item_icon_object_add(const Ewk_History_Item* item, Evas* canvas)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);

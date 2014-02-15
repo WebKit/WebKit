@@ -1,3 +1,30 @@
+2014-02-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Do not include cairo header in the public headers
+        https://bugs.webkit.org/show_bug.cgi?id=128779
+
+        Reviewed by Gyuyoung Kim.
+
+        Although ewebkit used cairo internally, it's not good for EFL developers
+        to use it.
+        Indeed, almost APIs which returns cairo_surface are duplicated with other APIs
+        which returns evas_object.
+
+        * ewk/ewk_history.cpp:
+        Removed ewk_history_item_icon_surface_get.
+        ewk_history_item_icon_object_add will be used instead.
+        * ewk/ewk_history.h:
+        * ewk/ewk_settings.cpp:
+        Removed ewk_settings_icon_database_icon_surface_get.
+        ewk_settings_icon_database_icon_object_get will be used instead.
+        * ewk/ewk_settings.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_screenshot_contents_get):
+        Implemented to replace ewk_view_paint and ewk_view_paint_contents.
+        * ewk/ewk_view.h:
+        * tests/test_ewk_view.cpp:
+        (TEST_F): Added test case for ewk_view_screenshot_contents_get
+
 2014-02-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK1] Do not include libsoup header in the public headers

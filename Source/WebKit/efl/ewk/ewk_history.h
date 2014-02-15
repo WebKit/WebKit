@@ -23,7 +23,6 @@
 
 #include <Eina.h>
 #include <Evas.h>
-#include <cairo.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -350,19 +349,6 @@ EAPI const char       *ewk_history_item_uri_get(const Ewk_History_Item *item);
  *         strdup().
  */
 EAPI const char       *ewk_history_item_uri_original_get(const Ewk_History_Item *item);
-
-/**
- * Get the icon (aka favicon) associated with this history item.
- *
- * @note in order to have this working, one must open icon database
- *       with ewk_settings_icon_database_path_set().
- *
- * @param item history item to query.
- *
- * @return the surface reference or @c NULL on errors. Note that the
- *         reference may be to a standard fallback icon.
- */
-EAPI cairo_surface_t  *ewk_history_item_icon_surface_get(const Ewk_History_Item *item);
 
 /**
  * Add an Evas_Object of type 'image' to given canvas with history item icon.

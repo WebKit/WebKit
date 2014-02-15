@@ -211,18 +211,6 @@ Eina_Bool ewk_settings_icon_database_clear(void)
     return true;
 }
 
-cairo_surface_t* ewk_settings_icon_database_icon_surface_get(const char* url)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(url, 0);
-
-    WebCore::URL kurl(WebCore::URL(), WTF::String::fromUTF8(url));
-    RefPtr<cairo_surface_t> icon = WebCore::iconDatabase().synchronousNativeIconForPageURL(kurl.string(), WebCore::IntSize(16, 16));
-    if (!icon)
-        ERR("no icon for url %s", url);
-
-    return icon.get();
-}
-
 Evas_Object* ewk_settings_icon_database_icon_object_get(const char* url, Evas* canvas)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(url, 0);

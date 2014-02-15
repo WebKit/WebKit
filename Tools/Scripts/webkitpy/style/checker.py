@@ -204,6 +204,7 @@ _PATH_RULES_SPECIFIER = [
       "Tools/MiniBrowser/efl/"],
      ["-readability/naming",
       "-readability/parameter_name",
+      "-runtime/ctype_function",
       "-whitespace/declaration",
       "-build/include_order"]),
 

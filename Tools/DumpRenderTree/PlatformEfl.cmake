@@ -46,6 +46,7 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     ${WEBKIT_DIR}/efl/WebCoreSupport
     ${WEBCORE_DIR}/platform/graphics/cairo
     ${WEBCORE_DIR}/platform/network/soup
+    ${WTF_DIR}/wtf/efl
     ${TOOLS_DIR}/DumpRenderTree/atk
     ${TOOLS_DIR}/DumpRenderTree/cairo
     ${TOOLS_DIR}/DumpRenderTree/efl

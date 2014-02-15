@@ -2930,35 +2930,6 @@ void ewk_view_scrolls_process(Ewk_View_Smart_Data* smartData)
     _ewk_view_scrolls_flush(priv);
 }
 
-Eina_Bool ewk_view_paint(Ewk_View_Private_Data* priv, cairo_t* cr, const Eina_Rectangle* area)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(cr, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(area, false);
-
-    WebCore::FrameView* view = priv->page->mainFrame().view();
-    EINA_SAFETY_ON_NULL_RETURN_VAL(view, false);
-
-    view->updateLayoutAndStyleIfNeededRecursive();
-
-    Ewk_Paint_Context* context = ewk_paint_context_new(cr);
-    bool result = ewk_view_paint(priv, context, area);
-    ewk_paint_context_free(context);
-
-    return result;
-}
-
-Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data* priv, cairo_t* cr, const Eina_Rectangle* area)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(cr, false);
-
-    Ewk_Paint_Context* context = ewk_paint_context_new(cr);
-    bool result = ewk_view_paint_contents(priv, context, area);
-    ewk_paint_context_free(context);
-
-    return result;
-}
-
 /* internal methods ****************************************************/
 /**
  * @internal
@@ -4847,6 +4818,46 @@ Ewk_Context_Menu* ewk_view_context_menu_get(const Evas_Object* ewkView)
     UNUSED_PARAM(ewkView);
     return 0;
 #endif
+}
+
+Evas_Object* ewk_view_screenshot_contents_get(const Evas_Object* ewkView, const Eina_Rectangle* area, float scale)
+{
+    if (!area || !area->w || !area->h) {
+        ERR("empty area is not allowed");
+        return 0;
+    }
+
+    if (scale < std::numeric_limits<float>::epsilon()) {
+        ERR("scale factor should be bigger than zero");
+        return 0;
+    }
+
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    Evas* canvas = evas_object_evas_get(ewkView);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
+
+    Evas_Object* screenshotImage = evas_object_image_add(canvas);
+    int surfaceWidth = area->w * scale;
+    int surfaceHeight = area->h * scale;
+    evas_object_image_size_set(screenshotImage, surfaceWidth, surfaceHeight);
+    evas_object_image_fill_set(screenshotImage, 0, 0, surfaceWidth, surfaceHeight);
+    evas_object_resize(screenshotImage, surfaceWidth, surfaceHeight);
+    evas_object_image_colorspace_set(screenshotImage, EVAS_COLORSPACE_ARGB8888);
+    evas_object_image_smooth_scale_set(screenshotImage, true);
+
+    Ewk_Paint_Context* context = ewk_paint_context_from_image_new(screenshotImage);
+    ewk_paint_context_save(context);
+    ewk_paint_context_scale(context, scale, scale);
+    ewk_paint_context_translate(context, -1 * area->x, -1 * area->y);
+
+    ewk_view_paint(priv, context, area);
+
+    ewk_paint_context_restore(context);
+    ewk_paint_context_free(context);
+
+    return screenshotImage;
 }
 
 Eina_Bool ewk_view_setting_tiled_backing_store_enabled_set(Evas_Object* ewkView, Eina_Bool enable)

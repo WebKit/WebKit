@@ -1,3 +1,21 @@
+2014-02-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Do not include cairo header in the public headers
+        https://bugs.webkit.org/show_bug.cgi?id=128779
+
+        Reviewed by Gyuyoung Kim.
+
+        * DumpRenderTree/PlatformEfl.cmake:
+        * DumpRenderTree/efl/PixelDumpSupportEfl.cpp:
+        (createBitmapContextFromWebView):
+        Used ewk_view_screenshot_contents_get instead of ewk_view_paint.
+        * EWebLauncher/main.c:
+        (print_history): Replaced ewk_history_item_icon_surface_get to ewk_history_item_icon_object_add
+        (on_key_down):
+        * Scripts/webkitpy/style/checker.py:
+        Added -runtime/ctype_function for EWebLauncher because EWebLauncher is sample
+        and it does not use WTF.
+
 2014-02-15  Samuel White  <samuel_white@apple.com>
 
         AX: Add ability to specify descendant type when using AXUIElementsForSearchPredicate.

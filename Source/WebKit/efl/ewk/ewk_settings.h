@@ -24,7 +24,6 @@
 
 #include <Eina.h>
 #include <Evas.h>
-#include <cairo.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -159,18 +158,6 @@ EAPI const char      *ewk_settings_icon_database_path_get(void);
  *         closed database.
  */
 EAPI Eina_Bool        ewk_settings_icon_database_clear(void);
-
-/**
- * Queries icon for given URL, returning associated cairo surface.
- *
- * @note In order to have this working, one must open icon database
- *       with ewk_settings_icon_database_path_set().
- *
- * @param url which url to query icon
- *
- * @return cairo surface if any, or @c NULL on failure
- */
-EAPI cairo_surface_t *ewk_settings_icon_database_icon_surface_get(const char *url);
 
 /**
  * Gets image representing the given URL.
