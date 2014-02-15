@@ -1,3 +1,13 @@
+2014-02-15  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
+
+        ASSERT_WITH_SECURITY_IMPLICATION in WebCore::toElement
+        https://bugs.webkit.org/show_bug.cgi?id=128810
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/execCommand/indent-with-uneditable-crash-expected.txt: Added.
+        * editing/execCommand/indent-with-uneditable-crash.html: Added.
+
 2014-02-15  Samuel White  <samuel_white@apple.com>
 
         AX: Add ability to specify descendant type when using AXUIElementsForSearchPredicate.

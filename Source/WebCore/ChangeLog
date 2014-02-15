@@ -1,3 +1,25 @@
+2014-02-15  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
+
+        ASSERT_WITH_SECURITY_IMPLICATION in WebCore::toElement
+        https://bugs.webkit.org/show_bug.cgi?id=128810
+
+        Reviewed by Ryosuke Niwa.
+
+        Make CompositeEditCommand::cloneParagraphUnderNewElement() to work when |outerNode|
+        doesn't contain |start|.
+
+        Before this patch, CompositeEditCommand::cloneParagraphUnderNewElement() tried to copy
+        ancestry nodes from |start| to Document node when |start| position isn't in |outerNode|. This
+        patch changes CompositeEditCommand::cloneParagraphUnderNewElement() to copy |start| to
+        |outerNode| only if |outerNode| contains |start| position.
+
+        Merged from Blink https://src.chromium.org/viewvc/blink?revision=161762&view=revision by yosin@chromium.org.
+
+        Test: editing/execCommand/indent-with-uneditable-crash.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+
 2014-02-15  Samuel White  <samuel_white@apple.com>
 
         AX: Add ability to specify descendant type when using AXUIElementsForSearchPredicate.
