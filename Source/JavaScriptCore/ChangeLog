@@ -1,3 +1,20 @@
+2014-02-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        -[JSManagedValue value] needs to be protected by the API lock
+        https://bugs.webkit.org/show_bug.cgi?id=128857
+
+        Reviewed by Mark Lam.
+
+        * API/APICast.h:
+        (toRef): Added an ASSERT so that we can detect these sorts of errors earlier. On 32-bit, toRef
+        can allocate objects so we need to be holding the lock.
+        * API/APIShims.h: Removed outdated comments.
+        * API/JSManagedValue.mm: Added RefPtr<JSLock> to JSManagedValue.
+        (-[JSManagedValue initWithValue:]): Initialize the m_lock field.
+        (-[JSManagedValue value]): Lock the JSLock, check the VM*, return nil if invalid, take the APIEntryShim otherwise.
+        * runtime/JSLock.cpp: Bug fix in JSLock. We were assuming that the VM was always non-null in JSLock::lock.
+        (JSC::JSLock::lock):
+
 2014-02-14  Oliver Hunt  <oliver@apple.com>
 
         Implement a few more Array prototype functions in JS

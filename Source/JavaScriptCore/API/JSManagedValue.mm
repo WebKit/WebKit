@@ -30,6 +30,7 @@
 #if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
+#import "APIShims.h"
 #import "Heap.h"
 #import "JSContextInternal.h"
 #import "JSValueInternal.h"
@@ -168,6 +169,7 @@ private:
 
 @implementation JSManagedValue {
     JSC::Weak<JSC::JSGlobalObject> m_globalObject;
+    RefPtr<JSC::JSLock> m_lock;
     WeakValueRef m_weakValue;
     NSMapTable *m_owners;
 }
@@ -202,6 +204,8 @@ private:
     JSC::JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     JSC::Weak<JSC::JSGlobalObject> weak(globalObject, managedValueHandleOwner(), self);
     m_globalObject.swap(weak);
+
+    m_lock = &exec->vm().apiLock();
 
     NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
     NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
@@ -258,6 +262,11 @@ private:
 
 - (JSValue *)value
 {
+    WTF::Locker<JSC::JSLock> locker(m_lock.get());
+    if (!m_lock->vm())
+        return nil;
+
+    JSC::APIEntryShim shim(m_lock->vm());
     if (!m_globalObject)
         return nil;
     if (m_weakValue.isClear())

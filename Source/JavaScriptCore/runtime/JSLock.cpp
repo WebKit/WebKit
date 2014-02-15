@@ -121,6 +121,9 @@ void JSLock::lock(intptr_t lockCount)
     ASSERT(!m_lockCount);
     m_lockCount = lockCount;
 
+    if (!m_vm)
+        return;
+
     WTFThreadData& threadData = wtfThreadData();
 
     RELEASE_ASSERT(!m_vm->stackPointerAtVMEntry());

@@ -56,14 +56,12 @@ protected:
 
 class APIEntryShim : public APIEntryShimWithoutLock {
 public:
-    // Normal API entry
     APIEntryShim(ExecState* exec, bool registerThread = true)
         : APIEntryShimWithoutLock(&exec->vm(), registerThread)
         , m_lockHolder(exec->vm().exclusiveThread ? 0 : exec)
     {
     }
 
-    // JSPropertyNameAccumulator only has a vm.
     APIEntryShim(VM* vm, bool registerThread = true)
         : APIEntryShimWithoutLock(vm, registerThread)
         , m_lockHolder(vm->exclusiveThread ? 0 : vm)

@@ -124,6 +124,7 @@ inline JSC::VM* toJS(JSContextGroupRef g)
 
 inline JSValueRef toRef(JSC::ExecState* exec, JSC::JSValue v)
 {
+    ASSERT(exec->vm().currentThreadIsHoldingAPILock());
 #if USE(JSVALUE32_64)
     if (!v)
         return 0;
