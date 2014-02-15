@@ -1,3 +1,13 @@
+2014-02-14  Jer Noble  <jer.noble@apple.com>
+
+        Add support for specced event handlers to HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=128292
+
+        Reviewed by Andreas Kling.
+
+        * media/media-event-listeners-expected.txt: Added.
+        * media/media-event-listeners.html: Added.
+
 2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaseline after r164127.

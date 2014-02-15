@@ -83,6 +83,21 @@
     attribute boolean muted;
     [Reflect=muted] attribute boolean defaultMuted;
 
+    attribute EventListener onemptied;
+    attribute EventListener onloadedmetadata;
+    attribute EventListener onloadeddata;
+    attribute EventListener oncanplay;
+    attribute EventListener oncanplaythrough;
+    attribute EventListener onplaying;
+    attribute EventListener onended;
+    attribute EventListener onwaiting;
+    attribute EventListener ondurationchange;
+    attribute EventListener ontimeupdate;
+    attribute EventListener onplay;
+    attribute EventListener onpause;
+    attribute EventListener onratechange;
+    attribute EventListener onvolumechange;
+
     // WebKit extensions
     attribute boolean webkitPreservesPitch;
 
