@@ -56,6 +56,8 @@ public:
     void disconnectFrontend(InspectorDisconnectReason reason);
     void dispatchMessageFromFrontend(const String&);
 
+    void globalObjectDestroyed();
+
     virtual bool developerExtrasEnabled() const override { return true; }
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override { return true; }
     virtual InspectorFunctionCallHandler functionCallHandler() const override;

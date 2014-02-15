@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -60,6 +60,7 @@
 #include "JSArrayBufferPrototype.h"
 #include "JSArrayIterator.h"
 #include "JSBoundFunction.h"
+#include "JSCInlines.h"
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
@@ -100,7 +101,6 @@
 #include "ObjCCallbackFunction.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
-#include "JSCInlines.h"
 #include "ParserError.h"
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"
@@ -124,7 +124,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectDebuggable.h"
-#include "RemoteInspector.h"
+#include "JSGlobalObjectInspectorController.h"
 #endif
 
 #if ENABLE(WEB_REPLAY)
@@ -171,6 +171,10 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
 
 JSGlobalObject::~JSGlobalObject()
 {
+#if ENABLE(REMOTE_INSPECTOR)
+    m_inspectorController->globalObjectDestroyed();
+#endif
+
     if (m_debugger)
         m_debugger->detach(this, Debugger::GlobalObjectIsDestructing);
 
@@ -184,7 +188,7 @@ void JSGlobalObject::destroy(JSCell* cell)
 }
 
 void JSGlobalObject::setGlobalThis(VM& vm, JSObject* globalThis)
-{ 
+{
     m_globalThis.set(vm, this, globalThis);
 }
 
@@ -198,6 +202,7 @@ void JSGlobalObject::init(JSObject* thisValue)
     m_debugger = 0;
 
 #if ENABLE(REMOTE_INSPECTOR)
+    m_inspectorController = std::make_unique<Inspector::JSGlobalObjectInspectorController>(*this);
     m_inspectorDebuggable = std::make_unique<JSGlobalObjectDebuggable>(*this);
     m_inspectorDebuggable->init();
     m_inspectorDebuggable->setRemoteDebuggingAllowed(true);

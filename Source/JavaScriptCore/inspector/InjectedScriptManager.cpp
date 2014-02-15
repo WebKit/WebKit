@@ -60,7 +60,6 @@ InjectedScriptManager::~InjectedScriptManager()
 void InjectedScriptManager::disconnect()
 {
     discardInjectedScripts();
-    m_injectedScriptHost = nullptr;
 }
 
 InjectedScriptHost* InjectedScriptManager::injectedScriptHost()

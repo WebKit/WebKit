@@ -46,6 +46,10 @@
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
 
+namespace Inspector {
+class JSGlobalObjectInspectorController;
+}
+
 namespace JSC {
 
 class ArrayPrototype;
@@ -233,6 +237,7 @@ protected:
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
+    std::unique_ptr<Inspector::JSGlobalObjectInspectorController> m_inspectorController;
     std::unique_ptr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
 #endif
 
@@ -428,6 +433,10 @@ public:
 #if ENABLE(WEB_REPLAY)
     JS_EXPORT_PRIVATE void setInputCursor(PassRefPtr<InputCursor>);
     InputCursor& inputCursor() const { return *m_inputCursor; }
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR)
+    Inspector::JSGlobalObjectInspectorController& inspectorController() const { return *m_inspectorController.get(); }
 #endif
 
     void setName(const String&);

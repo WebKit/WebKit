@@ -1,3 +1,69 @@
+2014-02-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CRASH when debugger closes while paused and remote inspecting a JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=127757
+
+        Reviewed by Timothy Hatcher.
+
+        The problem was that the lifetime of the InspectorController and all agents
+        was tied to the remote inspector session. So, if a remote inspector was
+        disconnected while in the nested run loop, everything would get torn
+        down and when execution continued out of the nested runloop we would be
+        back in the original call stack of destroyed objects.
+
+        This patch changes the lifetime of the InspectorController and agents to
+        the JSGlobalObject. This way the agents are always alive, just the
+        frontend and backend channels are destroyed and recreated each remote
+        inspector session. This matches the agent lifetime for WebCore agents.
+        We can also later take advantage of the agents being alive before
+        and between inspector debug sessions to stash exception messages to
+        pass on to a debugger if a debugger is connected later.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        Cleaner initialization of agents. Easier to follow.
+
+        (Inspector::JSGlobalObjectInspectorController::disconnectFrontend):
+        Move InjectedScript disconnection only once the global object is destroyed.
+        This way if a developer has attached once and included an injected script,
+        we will keep it around with any state it might want to remember until
+        the global object is destroyed.
+
+        (Inspector::JSGlobalObjectInspectorController::globalObjectDestroyed):
+        Disconnect agents and injected scripts when the global object is destroyed.
+
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::disconnect):
+        Now that the injected script manager is reused between remote
+        inspector sessions, don't clear the pointer on disconnect calls.
+        We now only call this once when the global object is getting
+        destroyed anyways so it doesn't matter. But if we wanted to call
+        disconnect multiple times, e.g. once per session, we could.
+
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::dispatchFunctionToListeners):
+        If the only listener was removed during the nested runloop, then when
+        we dispatch an event after the nested runloop the listener list will
+        be empty. Instead of asserting, just pass by an empty list.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::inspectorController):
+        Tie the inspector controller lifetime to the JSGlobalObject.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        Create the inspector controller, and eagerly signal teardown
+        in destruction.
+
+        * runtime/JSGlobalObjectDebuggable.h:
+        * runtime/JSGlobalObjectDebuggable.cpp:
+        (JSC::JSGlobalObjectDebuggable::connect):
+        (JSC::JSGlobalObjectDebuggable::disconnect):
+        (JSC::JSGlobalObjectDebuggable::dispatchMessageFromRemoteFrontend):
+        Simplify by using the inspector controller on JSGlobalObject.
+
 2014-02-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         -[JSManagedValue value] needs to be protected by the API lock

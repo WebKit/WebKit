@@ -279,8 +279,8 @@ void ScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback 
     TemporaryChange<bool> change(m_callingListeners, true);
 
     if (ListenerSet* listeners = getListenersForGlobalObject(globalObject)) {
-        ASSERT(!listeners->isEmpty());
-        dispatchFunctionToListeners(*listeners, callback);
+        if (!listeners->isEmpty())
+            dispatchFunctionToListeners(*listeners, callback);
     }
 }
 

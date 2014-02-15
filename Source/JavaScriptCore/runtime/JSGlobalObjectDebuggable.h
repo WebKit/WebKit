@@ -44,7 +44,7 @@ class JSGlobalObjectDebuggable final : public Inspector::RemoteInspectorDebuggab
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggable);
 public:
     JSGlobalObjectDebuggable(JSGlobalObject&);
-    ~JSGlobalObjectDebuggable();
+    ~JSGlobalObjectDebuggable() { }
 
     virtual Inspector::RemoteInspectorDebuggable::DebuggableType type() const override { return Inspector::RemoteInspectorDebuggable::JavaScript; }
 
@@ -56,10 +56,7 @@ public:
     virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
 
 private:
-    void disconnectInternal(Inspector::InspectorDisconnectReason reason);
-
     JSGlobalObject& m_globalObject;
-    std::unique_ptr<Inspector::JSGlobalObjectInspectorController> m_inspectorController;
 };
 
 } // namespace JSC
