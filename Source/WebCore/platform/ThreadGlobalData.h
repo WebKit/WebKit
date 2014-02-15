@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ using WTF::ThreadSpecific;
 namespace WebCore {
 
     class EventNames;
+    class ReplayInputTypes;
     class ThreadLocalInspectorCounters;
     class ThreadTimers;
 
@@ -57,6 +58,9 @@ namespace WebCore {
         const CachedResourceRequestInitiators& cachedResourceRequestInitiators() { return *m_cachedResourceRequestInitiators; }
         EventNames& eventNames() { return *m_eventNames; }
         ThreadTimers& threadTimers() { return *m_threadTimers; }
+#if ENABLE(WEB_REPLAY)
+        ReplayInputTypes& inputTypes() { return *m_inputTypes; }
+#endif
 
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
 
@@ -76,6 +80,10 @@ namespace WebCore {
         OwnPtr<CachedResourceRequestInitiators> m_cachedResourceRequestInitiators;
         OwnPtr<EventNames> m_eventNames;
         OwnPtr<ThreadTimers> m_threadTimers;
+
+#if ENABLE(WEB_REPLAY)
+        std::unique_ptr<ReplayInputTypes> m_inputTypes;
+#endif
 
 #ifndef NDEBUG
         bool m_isMainThread;

@@ -3482,6 +3482,8 @@
 		98CE4326129E00BD005821DC /* LinkLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98CE4325129E00BD005821DC /* LinkLoader.cpp */; };
 		98CE432A129E00E5005821DC /* LinkLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 98CE4329129E00E5005821DC /* LinkLoader.h */; };
 		98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */ = {isa = PBXBuildFile; fileRef = 98EB1F941313FE0500D0E1EA /* NotImplemented.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		990A1A0418ADA48400183FD1 /* ReplayInputTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 990A19F418ADA48400183FD1 /* ReplayInputTypes.cpp */; };
+		990A1A0518ADA48400183FD1 /* ReplayInputTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 990A19F518ADA48400183FD1 /* ReplayInputTypes.h */; };
 		99E45A1718A063BE0026D88F /* EventLoopInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1618A063BE0026D88F /* EventLoopInput.h */; };
 		9A1142041832D135000BB8AD /* ValueToString.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A1142031832D134000BB8AD /* ValueToString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A1B6F97158869C80011A8C4 /* JSDOMStringListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */; };
@@ -10436,6 +10438,8 @@
 		98CE4325129E00BD005821DC /* LinkLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkLoader.cpp; sourceTree = "<group>"; };
 		98CE4329129E00E5005821DC /* LinkLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkLoader.h; sourceTree = "<group>"; };
 		98EB1F941313FE0500D0E1EA /* NotImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotImplemented.h; sourceTree = "<group>"; };
+		990A19F418ADA48400183FD1 /* ReplayInputTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplayInputTypes.cpp; sourceTree = "<group>"; };
+		990A19F518ADA48400183FD1 /* ReplayInputTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayInputTypes.h; sourceTree = "<group>"; };
 		99E45A1618A063BE0026D88F /* EventLoopInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventLoopInput.h; sourceTree = "<group>"; };
 		9A1142031832D134000BB8AD /* ValueToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueToString.h; sourceTree = "<group>"; };
 		9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringListCustom.cpp; sourceTree = "<group>"; };
@@ -17835,6 +17839,8 @@
 			isa = PBXGroup;
 			children = (
 				99E45A1618A063BE0026D88F /* EventLoopInput.h */,
+				990A19F418ADA48400183FD1 /* ReplayInputTypes.cpp */,
+				990A19F518ADA48400183FD1 /* ReplayInputTypes.h */,
 			);
 			path = replay;
 			sourceTree = "<group>";
@@ -25414,6 +25420,7 @@
 				B22279DD0D00BF220071B782 /* SVGFEFloodElement.h in Headers */,
 				B22279E00D00BF220071B782 /* SVGFEFuncAElement.h in Headers */,
 				B22279E30D00BF220071B782 /* SVGFEFuncBElement.h in Headers */,
+				990A1A0518ADA48400183FD1 /* ReplayInputTypes.h in Headers */,
 				B22279E60D00BF220071B782 /* SVGFEFuncGElement.h in Headers */,
 				B22279E90D00BF220071B782 /* SVGFEFuncRElement.h in Headers */,
 				B22279EC0D00BF220071B782 /* SVGFEGaussianBlurElement.h in Headers */,
@@ -26437,6 +26444,7 @@
 				078E090917D14CEE00420AA1 /* RTCIceCandidate.cpp in Sources */,
 				CDA98E0B1603CD6000FEA3B1 /* CDM.cpp in Sources */,
 				CD47B3FC16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm in Sources */,
+				990A1A0418ADA48400183FD1 /* ReplayInputTypes.cpp in Sources */,
 				E1A8E56617552B2A007488E7 /* CFURLExtras.cpp in Sources */,
 				97BC69DC1505F076001B74AC /* ChangeVersionWrapper.cpp in Sources */,
 				FD315FFE12B0267600C1A359 /* ChannelMergerNode.cpp in Sources */,
