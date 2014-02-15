@@ -35,13 +35,34 @@
 #import <Carbon/Carbon.h>
 #include <wtf/StdLibExtras.h>
 
-NSRect focusRingClipRect;
+static NSRect focusRingClipRect;
+static BOOL themeWindowHasKeyAppearance;
 
-// This is a view whose sole purpose is to tell AppKit that it's flipped.
-@interface WebCoreFlippedView : NSControl
+@interface WebCoreThemeWindow : NSWindow {
+}
+
 @end
 
-@implementation WebCoreFlippedView
+@implementation WebCoreThemeWindow
+
+- (BOOL)hasKeyAppearance
+{
+    return themeWindowHasKeyAppearance;
+}
+
+@end
+
+@interface WebCoreThemeView : NSControl
+@end
+
+@implementation WebCoreThemeView
+
+- (NSWindow *)window
+{
+    static WebCoreThemeWindow *window = [[WebCoreThemeWindow alloc] init];
+
+    return window;
+}
 
 - (BOOL)isFlipped
 {
@@ -290,7 +311,7 @@ static void paintCheckbox(ControlStates states, GraphicsContext* context, const 
     }
 
     LocalCurrentGraphicsContext localContext(context);
-    NSView *view = ThemeMac::ensuredView(scrollView);
+    NSView *view = ThemeMac::ensuredView(scrollView, states);
     [checkboxCell drawWithFrame:NSRect(inflatedRect) inView:view];
     if (states & FocusState)
         [checkboxCell _web_drawFocusRingWithFrame:NSRect(inflatedRect) inView:view];
@@ -369,7 +390,7 @@ static void paintRadio(ControlStates states, GraphicsContext* context, const Int
 
     LocalCurrentGraphicsContext localContext(context);
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    NSView *view = ThemeMac::ensuredView(scrollView);
+    NSView *view = ThemeMac::ensuredView(scrollView, states);
     [radioCell drawWithFrame:NSRect(inflatedRect) inView:view];
     if (states & FocusState)
         [radioCell _web_drawFocusRingWithFrame:NSRect(inflatedRect) inView:view];
@@ -473,7 +494,7 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
     } 
 
     LocalCurrentGraphicsContext localContext(context);
-    NSView *view = ThemeMac::ensuredView(scrollView);
+    NSView *view = ThemeMac::ensuredView(scrollView, states);
     NSWindow *window = [view window];
     NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
 
@@ -555,17 +576,19 @@ static void paintStepper(ControlStates states, GraphicsContext* context, const I
 }
 
 // This will ensure that we always return a valid NSView, even if ScrollView doesn't have an associated document NSView.
-// If the ScrollView doesn't have an NSView, we will return a fake NSView whose sole purpose is to tell AppKit that it's flipped.
-NSView *ThemeMac::ensuredView(ScrollView* scrollView)
+// If the ScrollView doesn't have an NSView, we will return a fake NSView set up in the way AppKit expects.
+NSView *ThemeMac::ensuredView(ScrollView* scrollView, ControlStates states)
 {
     if (NSView *documentView = scrollView->documentView())
         return documentView;
 
-    // Use a fake flipped view.
-    static NSView *flippedView = [[WebCoreFlippedView alloc] init];
-    [flippedView setFrameSize:NSSizeFromCGSize(scrollView->totalContentsSize())];
+    // Use a fake view.
+    static WebCoreThemeView *themeView = [[WebCoreThemeView alloc] init];
+    [themeView setFrameSize:NSSizeFromCGSize(scrollView->totalContentsSize())];
 
-    return flippedView;
+    themeWindowHasKeyAppearance = !(states & WindowInactiveState);
+
+    return themeView;
 }
 
 void ThemeMac::setFocusRingClipRect(const FloatRect& rect)

@@ -55,7 +55,7 @@ public:
     virtual void inflateControlPaintRect(ControlPart, ControlStates, IntRect&, float zoomFactor) const;
 
     // FIXME: Once RenderThemeMac is converted over to use Theme then this can be internal to ThemeMac.
-    static NSView* ensuredView(ScrollView*);
+    static NSView* ensuredView(ScrollView*, ControlStates);
     static void setFocusRingClipRect(const FloatRect&);
 };
 

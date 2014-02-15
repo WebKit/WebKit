@@ -1,3 +1,36 @@
+2014-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Form controls are always painted in the active state
+        https://bugs.webkit.org/show_bug.cgi?id=128872
+        <rdar://problem/9422677>
+
+        Reviewed by Dan Bernstein.
+
+        AppKit will always paint form controls in the active state if the view doesn't have a
+        window. Fix this by adding a fake window whose key appearance we'll update based on the 
+        control state. Also, rename WebCoreFlippedView to WebCoreThemeView since it stopped being
+        just about the flippedness a long time ago.
+
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreThemeWindow hasKeyAppearance]):
+        Return themeWindowHasKeyAppearance.
+
+        (-[WebCoreThemeView window]):
+        Create a WebCoreThemeWindow object lazily and return it.
+
+        (WebCore::paintCheckbox):
+        (WebCore::paintRadio):
+        (WebCore::paintButton):
+        Pass the control states to ThemeMac::ensuredView.
+
+        (WebCore::ThemeMac::ensuredView):
+        Set themeWindowHasKeyAppearance based on the control state.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::documentViewFor):
+        Pass the control states to ThemeMac::ensuredView.
+
 2014-02-15  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
 
         ASSERT_WITH_SECURITY_IMPLICATION in WebCore::toElement
