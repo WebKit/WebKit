@@ -1488,9 +1488,6 @@ imported/w3c/html-templates
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
-# CSS Regions support not yet enabled. http://webkit.org/b/57312
-#fast/regions
-
 # CSS Exclusions support not yet enabled. http://webkit.org/b/57311
 fast/exclusions
 
@@ -1883,11 +1880,6 @@ fast/loader/javascript-url-iframe-remove-on-navigate.html
 fast/dom/MutationObserver/inline-event-listener.html
 fast/profiler/dead-time.html
 fast/profiler/stop-profiling-after-setTimeout.html
-#fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html
-#fast/regions/repaint/line-flow-with-floats-in-regions.html
-#fast/regions/repaint/overflow-flipped-writing-mode-block-in-regions.html
-#fast/regions/repaint/region-painting-invalidation.html
-#fast/regions/repaint/region-painting-via-layout.html
 fast/repaint/canvas-putImageData.html
 fast/repaint/fixed-in-page-scale.html
 fast/repaint/fixed-right-bottom-in-page-scale.html
@@ -2930,3 +2922,33 @@ js/regress/proto-getter-access.html
 js/regress/simple-custom-getter.html
 js/regress/simple-getter-access.html
 
+# Some very small image differences (~0.01-0.05%)
+webkit.org/b/128855 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html [ ImageOnlyFailure ] 
+webkit.org/b/128855 fast/regions/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ] 
+webkit.org/b/128855 fast/regions/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ] 
+webkit.org/b/128855 fast/regions/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ] 
+webkit.org/b/128855 fast/regions/overflow-region-transform.html [ ImageOnlyFailure ] 
+
+# Some region tests fail:
+webkit.org/b/128855 fast/regions/subtree-with-vert-rl.html [ Crash ] 
+webkit.org/b/128855 fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-lr.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-rl.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point-1.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point-vert-lr.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point-vert-rl.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point.html [ Failure ]
+
+# A few are flaky:
+webkit.org/b/128855 fast/regions/absolute-pos-elem-in-region.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/flows-dependency-dynamic-remove.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/clip-to-padding-box-vertical-lr.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/shape-inside/shape-inside-on-regions-block-content-basic-overflow-shape-top-offset.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/hover-and-js-in-visual-overflow.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/region-styling/region-style-inline-background-color.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/region-styling/region-style-not-supported-properties.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/region-styling/region-style-in-columns.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/auto-size/autoheight-firstregion-breakalways.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/auto-size/autoheight-abspos-region.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/auto-size/autoheight-flexbox.html [ Pass Failure ] 
+webkit.org/b/128855 fast/regions/counters/extract-list-items-014.html [ Pass Failure ] 

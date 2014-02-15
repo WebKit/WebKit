@@ -1,3 +1,13 @@
+2014-02-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Activate CSS Region Tests on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=128854
+
+        Reviewed by Simon Fraser.
+
+        * platform/win/TestExpectations: Activate CSS Region tests, turning off a
+        few failures.
+
 2014-02-14  Jer Noble  <jer.noble@apple.com>
 
         Add support for specced event handlers to HTMLMediaElement
