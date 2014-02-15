@@ -32,7 +32,7 @@ layer at (229,273) size 45x11
         text run at (0,0) width 31: "-00:06"
 layer at (104,274) size 123x9
   RenderFlexibleBox {DIV} at (47,1) size 123x9
-    RenderSlider {INPUT} at (0,0) size 123x9 [color=#909090] [bgcolor=#000000]
+    RenderSlider {INPUT} at (0,0) size 123x9 [color=#909090] [bgcolor=#4A4A4A]
       RenderFlexibleBox {DIV} at (0,0) size 123x9
         RenderBlock {DIV} at (0,1) size 123x7
 layer at (104,275) size 6x6

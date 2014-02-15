@@ -36,7 +36,7 @@ layer at (139,50) size 45x11
         text run at (0,0) width 31: "-00:07"
 layer at (104,51) size 33x9
   RenderFlexibleBox {DIV} at (47,1) size 33x9
-    RenderSlider {INPUT} at (0,0) size 33x9 [color=#909090] [bgcolor=#000000]
+    RenderSlider {INPUT} at (0,0) size 33x9 [color=#909090] [bgcolor=#4A4A4A]
       RenderFlexibleBox {DIV} at (0,0) size 33x9
         RenderBlock {DIV} at (0,1) size 33x7
 layer at (104,52) size 6x6
@@ -74,7 +74,7 @@ layer at (259,93) size 45x11
         text run at (0,0) width 31: "-00:07"
 layer at (104,94) size 153x9
   RenderFlexibleBox {DIV} at (47,1) size 153x9
-    RenderSlider {INPUT} at (0,0) size 153x9 [color=#909090] [bgcolor=#000000]
+    RenderSlider {INPUT} at (0,0) size 153x9 [color=#909090] [bgcolor=#4A4A4A]
       RenderFlexibleBox {DIV} at (0,0) size 153x9
         RenderBlock {DIV} at (0,1) size 153x7
 layer at (104,95) size 6x6
@@ -114,7 +114,7 @@ layer at (259,211) size 45x11
         text run at (0,0) width 31: "-00:07"
 layer at (104,212) size 153x9
   RenderFlexibleBox {DIV} at (47,1) size 153x9
-    RenderSlider {INPUT} at (0,0) size 153x9 [color=#909090] [bgcolor=#000000]
+    RenderSlider {INPUT} at (0,0) size 153x9 [color=#909090] [bgcolor=#4A4A4A]
       RenderFlexibleBox {DIV} at (0,0) size 153x9
         RenderBlock {DIV} at (0,1) size 153x7
 layer at (104,213) size 6x6
