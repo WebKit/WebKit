@@ -499,7 +499,8 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
             if (objectMatchesSearchCriteriaWithResultLimit(searchObject, criteria, results))
                 break;
             
-            appendChildrenToArray(searchObject, isForward, 0, searchStack);
+            if (!criteria->immediateDescendantsOnly)
+                appendChildrenToArray(searchObject, isForward, 0, searchStack);
         }
         
         if (results.size() >= criteria->resultsLimit)

@@ -201,21 +201,16 @@ using namespace HTMLNames;
 #define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
 
 // Search
+#ifndef NSAccessibilityImmediateDescendantsOnly
+#define NSAccessibilityImmediateDescendantsOnly @"AXImmediateDescendantsOnly"
+#endif
+
 #ifndef NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute
 #define NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute @"AXUIElementCountForSearchPredicate"
 #endif
 
 #ifndef NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute
 #define NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute @"AXUIElementsForSearchPredicate"
-#endif
-
-// Text
-#ifndef NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute
-#define NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute @"AXEndTextMarkerForBounds"
-#endif
-
-#ifndef NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute
-#define NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute @"AXStartTextMarkerForBounds"
 #endif
 
 // Search Keys
@@ -369,6 +364,15 @@ using namespace HTMLNames;
 
 #ifndef NSAccessibilityVisitedLinkSearchKey
 #define NSAccessibilityVisitedLinkSearchKey @"AXVisitedLinkSearchKey"
+#endif
+
+// Text markers
+#ifndef NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute
+#define NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute @"AXEndTextMarkerForBounds"
+#endif
+
+#ifndef NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute
+#define NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute @"AXStartTextMarkerForBounds"
 #endif
 
 // Text selection
@@ -580,6 +584,7 @@ static AccessibilitySearchKey accessibilitySearchKeyForString(const String& valu
 static AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(const NSDictionary *parameterizedAttribute)
 {
     NSString *directionParameter = [parameterizedAttribute objectForKey:@"AXDirection"];
+    NSNumber *immediateDescendantsOnlyParameter = [parameterizedAttribute objectForKey:NSAccessibilityImmediateDescendantsOnly];
     NSNumber *resultsLimitParameter = [parameterizedAttribute objectForKey:@"AXResultsLimit"];
     NSString *searchTextParameter = [parameterizedAttribute objectForKey:@"AXSearchText"];
     WebAccessibilityObjectWrapper *startElementParameter = [parameterizedAttribute objectForKey:@"AXStartElement"];
@@ -589,6 +594,10 @@ static AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate
     AccessibilitySearchDirection direction = SearchDirectionNext;
     if ([directionParameter isKindOfClass:[NSString class]])
         direction = [directionParameter isEqualToString:@"AXDirectionNext"] ? SearchDirectionNext : SearchDirectionPrevious;
+    
+    bool immediateDescendantsOnly = false;
+    if ([immediateDescendantsOnlyParameter isKindOfClass:[NSNumber class]])
+        immediateDescendantsOnly = [immediateDescendantsOnlyParameter boolValue];
     
     unsigned resultsLimit = 0;
     if ([resultsLimitParameter isKindOfClass:[NSNumber class]])
@@ -602,11 +611,11 @@ static AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate
     if ([startElementParameter isKindOfClass:[WebAccessibilityObjectWrapper class]])
         startElement = [startElementParameter accessibilityObject];
     
-    BOOL visibleOnly = NO;
+    bool visibleOnly = false;
     if ([visibleOnlyParameter isKindOfClass:[NSNumber class]])
         visibleOnly = [visibleOnlyParameter boolValue];
     
-    AccessibilitySearchCriteria criteria = AccessibilitySearchCriteria(startElement, direction, searchText, resultsLimit, visibleOnly);
+    AccessibilitySearchCriteria criteria = AccessibilitySearchCriteria(startElement, direction, searchText, resultsLimit, visibleOnly, immediateDescendantsOnly);
     
     if ([searchKeyParameter isKindOfClass:[NSString class]])
         criteria.searchKeys.append(accessibilitySearchKeyForString(searchKeyParameter));

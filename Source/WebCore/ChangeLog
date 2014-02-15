@@ -1,3 +1,22 @@
+2014-02-15  Samuel White  <samuel_white@apple.com>
+
+        AX: Add ability to specify descendant type when using AXUIElementsForSearchPredicate.
+        https://bugs.webkit.org/show_bug.cgi?id=128747
+
+        Reviewed by Chris Fleizach.
+
+        Added support for 'immediate descendant only' to existing predicate based searching. This
+        addition allows VoiceOver to fetch each child element lazily (rather than all at once via AXChildren).
+
+        Test: platform/mac/accessibility/search-predicate-immediate-descendants-only.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::findMatchingObjects):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilitySearchCriteria::AccessibilitySearchCriteria):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute):
+
 2014-02-15  Jeremy Jones  <jeremyj@apple.com>
 
         WK2 AVKit enter fullscreen doesn't work a second time.

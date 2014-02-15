@@ -1,3 +1,15 @@
+2014-02-15  Samuel White  <samuel_white@apple.com>
+
+        AX: Add ability to specify descendant type when using AXUIElementsForSearchPredicate.
+        https://bugs.webkit.org/show_bug.cgi?id=128747
+
+        Reviewed by Chris Fleizach.
+
+        Added test to verify that 'immediate descendant only' predicate based searching works as expected.
+
+        * platform/mac/accessibility/search-predicate-immediate-descendants-only-expected.txt: Added.
+        * platform/mac/accessibility/search-predicate-immediate-descendants-only.html: Added.
+
 2014-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add back pre-r164154 results to platform/mac-mountainlion.

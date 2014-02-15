@@ -1,0 +1,11 @@
+This tests that search predicate immediate descendant only results are accurate.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS allDescendantsCount is 6
+PASS immediateDescendantsCount is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

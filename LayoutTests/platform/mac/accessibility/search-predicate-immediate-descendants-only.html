@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<title>Search Predicate Immediate Descendants Only</title>
+</head>
+<body>
+
+<div id="container">
+<ul><li>immediate descendant</li><li><ul><li>distant descendant</li></ul></li></ul>
+<ul><li>immediate descendant</li><li><ul><li>distant descendant</li></ul></li></ul>
+<ul><li>immediate descendant</li><li><ul><li>distant descendant</li></ul></li></ul>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that search predicate immediate descendant only results are accurate.");
+    
+    if (window.accessibilityController) {
+        document.getElementById("container").focus();
+        var containerElement = accessibilityController.focusedElement;
+        
+        // All descendants.
+        var allDescendantsCount = containerElement.uiElementCountForSearchPredicate(null, true, "AXListSearchKey", "", false, false);
+        shouldBe("allDescendantsCount", "6");
+        
+        // Immediate descendants.
+        var immediateDescendantsCount = containerElement.uiElementCountForSearchPredicate(null, true, "AXListSearchKey", "", false, true);
+        shouldBe("immediateDescendantsCount", "3");
+        
+        // Hide superfluous text.
+        document.getElementById("container").style.display = "none";
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

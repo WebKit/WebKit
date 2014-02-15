@@ -209,7 +209,8 @@ static JSValueRef uiElementCountForSearchPredicateCallback(JSContextRef context,
     JSValueRef searchKey = nullptr;
     JSRetainPtr<JSStringRef> searchText = nullptr;
     bool visibleOnly = false;
-    if (argumentCount == 5) {
+    bool immediateDescendantsOnly = false;
+    if (argumentCount >= 5 && argumentCount <= 6) {
         if (JSValueIsObject(context, arguments[0]))
             startElement = toAXElement(JSValueToObject(context, arguments[0], exception));
         
@@ -221,9 +222,12 @@ static JSValueRef uiElementCountForSearchPredicateCallback(JSContextRef context,
             searchText.adopt(JSValueToStringCopy(context, arguments[3], exception));
         
         visibleOnly = JSValueToBoolean(context, arguments[4]);
+        
+        if (argumentCount == 6)
+            immediateDescendantsOnly = JSValueToBoolean(context, arguments[5]);
     }
     
-    return JSValueMakeNumber(context, toAXElement(thisObject)->uiElementCountForSearchPredicate(context, startElement, isDirectionNext, searchKey, searchText.get(), visibleOnly));
+    return JSValueMakeNumber(context, toAXElement(thisObject)->uiElementCountForSearchPredicate(context, startElement, isDirectionNext, searchKey, searchText.get(), visibleOnly, immediateDescendantsOnly));
 }
 
 static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -233,7 +237,8 @@ static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSOb
     JSValueRef searchKey = nullptr;
     JSRetainPtr<JSStringRef> searchText = nullptr;
     bool visibleOnly = false;
-    if (argumentCount == 5) {
+    bool immediateDescendantsOnly = false;
+    if (argumentCount >= 5 && argumentCount <= 6) {
         if (JSValueIsObject(context, arguments[0]))
             startElement = toAXElement(JSValueToObject(context, arguments[0], exception));
         
@@ -245,9 +250,12 @@ static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSOb
             searchText.adopt(JSValueToStringCopy(context, arguments[3], exception));
         
         visibleOnly = JSValueToBoolean(context, arguments[4]);
+        
+        if (argumentCount == 6)
+            immediateDescendantsOnly = JSValueToBoolean(context, arguments[5]);
     }
     
-    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementForSearchPredicate(context, startElement, isDirectionNext, searchKey, searchText.get(), visibleOnly));
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementForSearchPredicate(context, startElement, isDirectionNext, searchKey, searchText.get(), visibleOnly, immediateDescendantsOnly));
 }
 
 static JSValueRef selectTextWithCriteriaCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

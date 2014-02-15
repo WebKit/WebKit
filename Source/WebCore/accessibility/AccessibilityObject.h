@@ -341,13 +341,15 @@ struct AccessibilitySearchCriteria {
     String searchText;
     unsigned resultsLimit;
     bool visibleOnly;
+    bool immediateDescendantsOnly;
     
-    AccessibilitySearchCriteria(AccessibilityObject* startObject, AccessibilitySearchDirection searchDirection, String searchText, unsigned resultsLimit, bool visibleOnly)
-    : startObject(startObject)
-    , searchDirection(searchDirection)
-    , searchText(searchText)
-    , resultsLimit(resultsLimit)
-    , visibleOnly(visibleOnly)
+    AccessibilitySearchCriteria(AccessibilityObject* startObject, AccessibilitySearchDirection searchDirection, String searchText, unsigned resultsLimit, bool visibleOnly, bool immediateDescendantsOnly)
+        : startObject(startObject)
+        , searchDirection(searchDirection)
+        , searchText(searchText)
+        , resultsLimit(resultsLimit)
+        , visibleOnly(visibleOnly)
+        , immediateDescendantsOnly(immediateDescendantsOnly)
     { }
 };
     
