@@ -207,10 +207,11 @@ enum MediaPlayerAVFoundationObservationContext {
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
 @interface WebCoreAVFPullDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
-    MediaPlayerPrivateAVFoundationObjC* m_callback;
+    MediaPlayerPrivateAVFoundationObjC *m_callback;
     dispatch_semaphore_t m_semaphore;
 }
-- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC *)callback;
+- (void)setCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender;
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput *)output;
 @end
@@ -280,7 +281,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_haveCheckedPlayability(false)
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     , m_videoOutputDelegate(adoptNS([[WebCoreAVFPullDelegate alloc] initWithCallback:this]))
-    , m_videoOutputSemaphore(0)
+    , m_videoOutputSemaphore(nullptr)
 #endif
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithCallback:this]))
@@ -308,6 +309,10 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     [m_loaderDelegate.get() setCallback:0];
     [[m_avAsset.get() resourceLoader] setDelegate:nil queue:0];
+#endif
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
+    [m_videoOutputDelegate setCallback:0];
+    [m_videoOutput setDelegate:nil queue:0];
 #endif
     cancelLoad();
 }
@@ -1377,20 +1382,20 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
 
 static const void* CVPixelBufferGetBytePointerCallback(void* info)
 {
-    CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)info;
+    CVPixelBufferRef pixelBuffer = static_cast<CVPixelBufferRef>(info);
     CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
     return CVPixelBufferGetBaseAddress(pixelBuffer);
 }
 
-static void CVPixelBufferReleaseBytePointerCallback(void *info, const void *)
+static void CVPixelBufferReleaseBytePointerCallback(void* info, const void*)
 {
-    CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)info;
+    CVPixelBufferRef pixelBuffer = static_cast<CVPixelBufferRef>(info);
     CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
 }
 
-static void CVPixelBufferReleaseInfoCallback(void *info)
+static void CVPixelBufferReleaseInfoCallback(void* info)
 {
-    CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)info;
+    CVPixelBufferRef pixelBuffer = static_cast<CVPixelBufferRef>(info);
     CFRelease(pixelBuffer);
 }
 
@@ -2199,7 +2204,7 @@ NSArray* itemKVOProperties()
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
 @implementation WebCoreAVFPullDelegate
-- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC *)callback
 {
     self = [super init];
     if (self)
@@ -2207,9 +2212,15 @@ NSArray* itemKVOProperties()
     return self;
 }
 
+- (void)setCallback:(MediaPlayerPrivateAVFoundationObjC *)callback
+{
+    m_callback = callback;
+}
+
 - (void)outputMediaDataWillChange:(AVPlayerItemVideoOutput *)output
 {
-    m_callback->outputMediaDataWillChange(output);
+    if (m_callback)
+        m_callback->outputMediaDataWillChange(output);
 }
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemVideoOutput *)output

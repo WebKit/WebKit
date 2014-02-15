@@ -1,3 +1,27 @@
+2014-02-15  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] 10X slower than Chrome when drawing a video into a canvas
+        https://bugs.webkit.org/show_bug.cgi?id=124599
+
+        Reviewed by Darin Adler.
+
+        Follow up patch to r159518 to address Darin's post-commit review.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::nativeImageForCurrentTime): Use nullptr.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::nativeImageForCurrentTime): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC): Clear the
+                AVPlayerItemVideoOutput's delegate callback.
+        (WebCore::CVPixelBufferGetBytePointerCallback): Use static_cast.
+        (WebCore::CVPixelBufferReleaseBytePointerCallback): Ditto.
+        (WebCore::CVPixelBufferReleaseInfoCallback): Ditto.
+        (-[WebCoreAVFPullDelegate initWithCallback:]): Space changes.
+        (-[WebCoreAVFPullDelegate setCallback:]): Added.
+        (-[WebCoreAVFPullDelegate outputMediaDataWillChange:]): Check the value of m_callback.
+
 2014-02-14  Andreas Kling  <akling@apple.com>
 
         CTTE: WorkerGlobalScope is always owned by a WorkerThread.
