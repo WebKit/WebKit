@@ -2,6 +2,12 @@
 
         Speculative iOS build fix.
 
+        * WebProcess/WebPage/mac/PageBannerMac.mm:
+
+2014-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Speculative iOS build fix.
+
         * WebProcess/WebPage/PageBanner.h:
 
 2014-02-16  Dan Bernstein  <mitz@apple.com>

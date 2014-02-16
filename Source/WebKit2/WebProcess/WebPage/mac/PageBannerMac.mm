@@ -168,6 +168,6 @@ CALayer *PageBanner::layer()
     return m_layer.get();
 }
 
-#endif // !PLATFORM(IOS)
-
 } // namespace WebKit
+
+#endif // !PLATFORM(IOS)
