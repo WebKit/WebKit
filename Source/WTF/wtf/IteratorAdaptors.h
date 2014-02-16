@@ -26,6 +26,8 @@
 #ifndef WTF_IteratorAdaptors_h
 #define WTF_IteratorAdaptors_h
 
+#include <type_traits>
+
 namespace WTF {
 
 template<typename Predicate, typename Iterator>
@@ -50,7 +52,7 @@ public:
         return *this;
     }
 
-    decltype(*std::declval<Iterator>()) operator*() const
+    const typename std::remove_const<decltype(*std::declval<Iterator>())>::type operator*() const
     {
         ASSERT(m_iter != m_end);
         ASSERT(m_pred(*m_iter));
@@ -87,7 +89,7 @@ public:
         return *this;
     }
 
-    decltype(std::declval<Transform>()(*std::declval<Iterator>())) operator*() const
+    const typename std::remove_const<decltype(std::declval<Transform>()(*std::declval<Iterator>()))>::type operator*() const
     {
         return m_transform(*m_iter);
     }

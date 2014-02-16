@@ -1,3 +1,17 @@
+2014-02-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Reintroduce const qualifiers for return types of (Filter|Transform)Iterator::operator*()
+        https://bugs.webkit.org/show_bug.cgi?id=126875
+
+        The const qualifiers for the return types of FilterIterator::operator*() and TransformIterator::operator*()
+        were removed in r161797 and r161802 because of compilation failures when using GCC and having an Iterator
+        type that already had the const qualifier. std::remove_const is now used to appease GCC and enforce the const
+        qualifier on the return type, regardless of the Iterator type and its qualifiers.
+
+        * wtf/IteratorAdaptors.h:
+        (WTF::FilterIterator::operator*):
+        (WTF::TransformIterator::operator*):
+
 2014-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         Vector with inline capacity should work with non-PODs
