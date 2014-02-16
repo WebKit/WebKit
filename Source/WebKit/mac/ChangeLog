@@ -1,5 +1,17 @@
 2014-02-15  Alexey Proskuryakov  <ap@apple.com>
 
+        [Mac] Remove WebSerializedJSValue SPI
+        https://bugs.webkit.org/show_bug.cgi?id=128720
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.exp:
+        * WebView/WebSerializedJSValue.h: Removed.
+        * WebView/WebSerializedJSValue.mm: Removed.
+        * WebView/WebSerializedJSValuePrivate.h: Removed.
+
+2014-02-15  Alexey Proskuryakov  <ap@apple.com>
+
         [Mac] All WebKit clients should encrypt WebCrypto keys automatically
         https://bugs.webkit.org/show_bug.cgi?id=128852
 
