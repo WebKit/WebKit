@@ -32,27 +32,28 @@
 
 namespace WebCore {
 
+// FIXME: Do we ever change tree scopes except between documents?
 void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
 {
     ASSERT(needsScopeChange());
-
-    m_oldScope.selfOnlyRef();
 
     // If an element is moved from a document and then eventually back again the collection cache for
     // that element may contain stale data as changes made to it will have updated the DOMTreeVersion
     // of the document it was moved to. By increasing the DOMTreeVersion of the donating document here
     // we ensure that the collection cache will be invalidated as needed when the element is moved back.
-    Document* oldDocument = m_oldScope.documentScope();
-    Document* newDocument = m_newScope.documentScope();
-    bool willMoveToNewDocument = oldDocument != newDocument;
-    if (oldDocument && willMoveToNewDocument)
-        oldDocument->incDOMTreeVersion();
+    Document& oldDocument = m_oldScope.documentScope();
+    Document& newDocument = m_newScope.documentScope();
+    bool willMoveToNewDocument = &oldDocument != &newDocument;
+    if (willMoveToNewDocument) {
+        oldDocument.selfOnlyRef();
+        oldDocument.incDOMTreeVersion();
+    }
 
     for (Node* node = root; node; node = NodeTraversal::next(node, root)) {
         updateTreeScope(node);
 
         if (willMoveToNewDocument)
-            moveNodeToNewDocument(node, oldDocument, newDocument);
+            moveNodeToNewDocument(node, &oldDocument, &newDocument);
         else if (node->hasRareData()) {
             NodeRareData* rareData = node->rareData();
             if (rareData->nodeLists())
@@ -71,19 +72,20 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
         if (ShadowRoot* shadow = node->shadowRoot()) {
             shadow->setParentTreeScope(&m_newScope);
             if (willMoveToNewDocument)
-                moveTreeToNewDocument(shadow, oldDocument, newDocument);
+                moveShadowTreeToNewDocument(shadow, &oldDocument, &newDocument);
         }
     }
 
-    m_oldScope.selfOnlyDeref();
+    if (willMoveToNewDocument)
+        oldDocument.selfOnlyDeref();
 }
 
-void TreeScopeAdopter::moveTreeToNewDocument(Node* root, Document* oldDocument, Document* newDocument) const
+void TreeScopeAdopter::moveShadowTreeToNewDocument(ShadowRoot* shadowRoot, Document* oldDocument, Document* newDocument) const
 {
-    for (Node* node = root; node; node = NodeTraversal::next(node, root)) {
+    for (Node* node = shadowRoot; node; node = NodeTraversal::next(node, shadowRoot)) {
         moveNodeToNewDocument(node, oldDocument, newDocument);
         if (ShadowRoot* shadow = node->shadowRoot())
-            moveTreeToNewDocument(shadow, oldDocument, newDocument);
+            moveShadowTreeToNewDocument(shadow, oldDocument, newDocument);
     }
 }
 
@@ -103,14 +105,15 @@ inline void TreeScopeAdopter::updateTreeScope(Node* node) const
 {
     ASSERT(!node->isTreeScope());
     ASSERT(&node->treeScope() == &m_oldScope);
-    m_newScope.selfOnlyRef();
-    m_oldScope.selfOnlyDeref();
     node->setTreeScope(m_newScope);
 }
 
 inline void TreeScopeAdopter::moveNodeToNewDocument(Node* node, Document* oldDocument, Document* newDocument) const
 {
     ASSERT(!node->inDocument() || oldDocument != newDocument);
+
+    newDocument->selfOnlyRef();
+    oldDocument->selfOnlyDeref();
 
     if (node->hasRareData()) {
         NodeRareData* rareData = node->rareData();

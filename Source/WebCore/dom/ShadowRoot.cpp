@@ -52,9 +52,8 @@ enum ShadowRootUsageOriginType {
 };
 
 ShadowRoot::ShadowRoot(Document& document, ShadowRootType type)
-    : DocumentFragment(0, CreateShadowRoot)
-    , TreeScope(this, &document)
-    , m_applyAuthorStyles(false)
+    : DocumentFragment(&document, CreateShadowRoot)
+    , TreeScope(*this, document)
     , m_resetStyleInheritance(false)
     , m_type(type)
     , m_hostElement(0)
@@ -67,21 +66,11 @@ ShadowRoot::~ShadowRoot()
     // for this ShadowRoot instance because TreeScope destructor
     // clears Node::m_treeScope thus ContainerNode is no longer able
     // to access it Document reference after that.
-    willBeDeletedFrom(documentInternal());
+    willBeDeletedFrom(&document());
 
     // We must remove all of our children first before the TreeScope destructor
     // runs so we don't go through TreeScopeAdopter for each child with a
     // destructed tree scope in each descendant.
-    removeDetachedChildren();
-
-    // We must call clearRareData() here since a ShadowRoot class inherits TreeScope
-    // as well as Node. See a comment on TreeScope.h for the reason.
-    if (hasRareData())
-        clearRareData();
-}
-
-void ShadowRoot::dropChildren()
-{
     removeDetachedChildren();
 }
 
@@ -119,17 +108,6 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
         return true;
     default:
         return false;
-    }
-}
-
-void ShadowRoot::setApplyAuthorStyles(bool value)
-{
-    if (isOrphan())
-        return;
-
-    if (m_applyAuthorStyles != value) {
-        m_applyAuthorStyles = value;
-        hostElement()->setNeedsStyleRecalc();
     }
 }
 

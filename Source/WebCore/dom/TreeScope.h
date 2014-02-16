@@ -43,10 +43,8 @@ class HTMLMapElement;
 class LayoutPoint;
 class IdTargetObserverRegistry;
 class Node;
+class ShadowRoot;
 
-// A class which inherits both Node and TreeScope must call clearRareData() in its destructor
-// so that the Node destructor no longer does problematic NodeList cache manipulation in
-// the destructor.
 class TreeScope {
     friend class Document;
     friend class TreeScopeAdopter;
@@ -69,7 +67,7 @@ public:
     void addElementByName(const AtomicStringImpl&, Element&);
     void removeElementByName(const AtomicStringImpl&, Element&);
 
-    Document* documentScope() const { return m_documentScope; }
+    Document& documentScope() const { return *m_documentScope; }
 
     Node* ancestorInThisScope(Node*) const;
 
@@ -94,76 +92,29 @@ public:
     // quirks mode for historical compatibility reasons.
     Element* findAnchor(const String& name);
 
-    virtual bool applyAuthorStyles() const;
-
     // Used by the basic DOM mutation methods (e.g., appendChild()).
     void adoptIfNeeded(Node*);
 
-    ContainerNode* rootNode() const { return m_rootNode; }
+    ContainerNode* rootNode() const { return &m_rootNode; }
 
     IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
 
-    static TreeScope& noDocumentInstance()
-    {
-        DEFINE_STATIC_LOCAL(TreeScope, instance, ());
-        return instance;
-    }
-
-    // Nodes belonging to this scope hold self-only references -
-    // these are enough to keep the scope from being destroyed, but
-    // not enough to keep it from removing its children. This allows a
-    // node that outlives its scope to still have a valid document
-    // pointer without introducing reference cycles.
-    void selfOnlyRef()
-    {
-        ASSERT(!deletionHasBegun());
-        ++m_selfOnlyRefCount;
-    }
-
-    void selfOnlyDeref()
-    {
-        ASSERT(!deletionHasBegun());
-        --m_selfOnlyRefCount;
-        if (!m_selfOnlyRefCount && !refCount() && this != &noDocumentInstance()) {
-            beginDeletion();
-            delete this;
-        }
-    }
-
-    void removedLastRefToScope();
-
 protected:
-    TreeScope(ContainerNode*, Document*);
-    explicit TreeScope(Document*);
-    virtual ~TreeScope();
+    TreeScope(ShadowRoot&, Document&);
+    explicit TreeScope(Document&);
+    ~TreeScope();
 
     void destroyTreeScopeData();
-    void clearDocumentScope();
     void setDocumentScope(Document* document)
     {
         ASSERT(document);
-        ASSERT(this != &noDocumentInstance());
         m_documentScope = document;
     }
 
 private:
-    TreeScope();
-
-    virtual void dropChildren() { }
-
-    int refCount() const;
-#ifndef NDEBUG
-    bool deletionHasBegun();
-    void beginDeletion();
-#else
-    bool deletionHasBegun() { return false; }
-    void beginDeletion() { }
-#endif
-
-    ContainerNode* m_rootNode;
+    ContainerNode& m_rootNode;
     Document* m_documentScope;
     TreeScope* m_parentTreeScope;
-    unsigned m_selfOnlyRefCount;
 
     std::unique_ptr<DocumentOrderedMap> m_elementsById;
     std::unique_ptr<DocumentOrderedMap> m_elementsByName;

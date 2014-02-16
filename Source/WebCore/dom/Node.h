@@ -382,8 +382,7 @@ public:
     Document& document() const
     {
         ASSERT(this);
-        ASSERT(documentInternal());
-        return *documentInternal();
+        return treeScope().documentScope();
     }
 
     TreeScope& treeScope() const
@@ -396,7 +395,6 @@ public:
     // node tree, false otherwise.
     bool inDocument() const 
     { 
-        ASSERT(documentInternal() || !getFlag(InDocumentFlag));
         return getFlag(InDocumentFlag);
     }
     bool isInShadowTree() const { return getFlag(IsInShadowTreeFlag); }
@@ -644,7 +642,6 @@ protected:
 
     void setNeedsNodeRenderingTraversalSlowPath(bool flag) { setFlag(flag, NeedsNodeRenderingTraversalSlowPathFlag); }
 
-    Document* documentInternal() const { return treeScope().documentScope(); }
     void setTreeScope(TreeScope& scope) { m_treeScope = &scope; }
 
     void setStyleChange(StyleChangeType changeType) { m_nodeFlags = (m_nodeFlags & ~StyleChangeMask) | changeType; }

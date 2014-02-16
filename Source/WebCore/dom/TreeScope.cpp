@@ -49,60 +49,37 @@
 namespace WebCore {
 
 struct SameSizeAsTreeScope {
-    virtual ~SameSizeAsTreeScope();
     void* pointers[9];
-    int ints[1];
 };
 
 COMPILE_ASSERT(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), treescope_should_stay_small);
 
 using namespace HTMLNames;
 
-TreeScope::TreeScope(ContainerNode* rootNode, Document* document)
-    : m_rootNode(rootNode)
-    , m_documentScope(document)
-    , m_parentTreeScope(document)
-    , m_selfOnlyRefCount(0)
+TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
+    : m_rootNode(shadowRoot)
+    , m_documentScope(&document)
+    , m_parentTreeScope(&document)
     , m_idTargetObserverRegistry(std::make_unique<IdTargetObserverRegistry>())
 {
-    ASSERT(rootNode);
-    ASSERT(document);
-    ASSERT(rootNode != document);
-    m_parentTreeScope->selfOnlyRef();
-    m_rootNode->setTreeScope(*this);
+    shadowRoot.setTreeScope(*this);
 }
 
-TreeScope::TreeScope(Document* document)
+TreeScope::TreeScope(Document& document)
     : m_rootNode(document)
-    , m_documentScope(document)
+    , m_documentScope(&document)
     , m_parentTreeScope(nullptr)
-    , m_selfOnlyRefCount(0)
     , m_idTargetObserverRegistry(std::make_unique<IdTargetObserverRegistry>())
 {
-    ASSERT(document);
-    m_rootNode->setTreeScope(*this);
-}
-
-TreeScope::TreeScope()
-    : m_rootNode(nullptr)
-    , m_documentScope(nullptr)
-    , m_parentTreeScope(nullptr)
-    , m_selfOnlyRefCount(0)
-{
+    document.setTreeScope(*this);
 }
 
 TreeScope::~TreeScope()
 {
-    ASSERT(!m_selfOnlyRefCount);
-    m_rootNode->setTreeScope(noDocumentInstance());
-
     if (m_selection) {
         m_selection->clearTreeScope();
         m_selection = nullptr;
     }
-
-    if (m_parentTreeScope)
-        m_parentTreeScope->selfOnlyDeref();
 }
 
 void TreeScope::destroyTreeScopeData()
@@ -112,12 +89,6 @@ void TreeScope::destroyTreeScopeData()
     m_labelsByForAttribute = nullptr;
 }
 
-void TreeScope::clearDocumentScope()
-{
-    ASSERT(rootNode()->isDocumentNode());
-    m_documentScope = nullptr;
-}
-
 void TreeScope::setParentTreeScope(TreeScope* newParentScope)
 {
     // A document node cannot be re-parented.
@@ -125,11 +96,8 @@ void TreeScope::setParentTreeScope(TreeScope* newParentScope)
     // Every scope other than document needs a parent scope.
     ASSERT(newParentScope);
 
-    newParentScope->selfOnlyRef();
-    if (m_parentTreeScope)
-        m_parentTreeScope->selfOnlyDeref();
     m_parentTreeScope = newParentScope;
-    setDocumentScope(newParentScope->documentScope());
+    setDocumentScope(&newParentScope->documentScope());
 }
 
 Element* TreeScope::getElementById(const AtomicString& elementId) const
@@ -345,11 +313,6 @@ Element* TreeScope::findAnchor(const String& name)
     return nullptr;
 }
 
-bool TreeScope::applyAuthorStyles() const
-{
-    return true;
-}
-
 void TreeScope::adoptIfNeeded(Node* node)
 {
     ASSERT(this);
@@ -424,26 +387,6 @@ TreeScope* commonTreeScope(Node* nodeA, Node* nodeB)
         return nullptr;
     
     return treeScopesA[indexA] == treeScopesB[indexB] ? treeScopesA[indexA] : nullptr;
-}
-
-#ifndef NDEBUG
-bool TreeScope::deletionHasBegun()
-{
-    return rootNode() && rootNode()->m_deletionHasBegun;
-}
-
-void TreeScope::beginDeletion()
-{
-    ASSERT(this != &noDocumentInstance());
-    rootNode()->m_deletionHasBegun = true;
-}
-#endif
-
-int TreeScope::refCount() const
-{
-    if (Node* root = rootNode())
-        return root->refCount();
-    return 0;
 }
 
 } // namespace WebCore

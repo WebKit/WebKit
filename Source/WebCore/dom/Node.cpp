@@ -305,12 +305,10 @@ Node::~Node()
     if (hasRareData())
         clearRareData();
 
-    if (!isContainerNode()) {
-        if (Document* document = documentInternal())
-            willBeDeletedFrom(document);
-    }
+    if (!isContainerNode())
+        willBeDeletedFrom(&document());
 
-    m_treeScope->selfOnlyDeref();
+    document().selfOnlyDeref();
 
     InspectorCounters::decrementCounter(InspectorCounters::NodeCounter);
 }
@@ -2190,31 +2188,6 @@ bool Node::willRespondToMouseWheelEvents()
     return hasEventListeners(eventNames().mousewheelEvent);
 }
 
-// This is here so it can be inlined into Node::removedLastRef.
-// FIXME: Really? Seems like this could be inlined into Node::removedLastRef if it was in TreeScope.h.
-// FIXME: It also not seem important to inline this. Is this really hot?
-inline void TreeScope::removedLastRefToScope()
-{
-    ASSERT(!deletionHasBegun());
-    if (m_selfOnlyRefCount) {
-        // If removing a child removes the last self-only ref, we don't want the scope to be destroyed
-        // until after removeDetachedChildren returns, so we protect ourselves with an extra self-only ref.
-        selfOnlyRef();
-        dropChildren();
-#ifndef NDEBUG
-        // We need to do this right now since selfOnlyDeref() can delete this.
-        rootNode()->m_inRemovedLastRefFunction = false;
-#endif
-        selfOnlyDeref();
-    } else {
-#ifndef NDEBUG
-        rootNode()->m_inRemovedLastRefFunction = false;
-        beginDeletion();
-#endif
-        delete this;
-    }
-}
-
 // It's important not to inline removedLastRef, because we don't want to inline the code to
 // delete a Node at each deref call site.
 void Node::removedLastRef()
@@ -2222,8 +2195,8 @@ void Node::removedLastRef()
     // An explicit check for Document here is better than a virtual function since it is
     // faster for non-Document nodes, and because the call to removedLastRef that is inlined
     // at all deref call sites is smaller if it's a non-virtual function.
-    if (isTreeScope()) {
-        treeScope().removedLastRefToScope();
+    if (isDocumentNode()) {
+        toDocument(*this).removedLastRef();
         return;
     }
 

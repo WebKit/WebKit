@@ -1,3 +1,73 @@
+2014-02-15  Antti Koivisto  <antti@apple.com>
+
+        Move document life time management from TreeScope to Document
+        https://bugs.webkit.org/show_bug.cgi?id=128877
+
+        Reviewed by Andreas Kling.
+
+        Document life time is managed in confusing manner by TreeScopes which are also inherited to ShadowRoots.
+        
+        This patches moves the life time management to Document. Nodes in shadow trees selfOnlyRef the Document instead
+        of the ShadowRoot. ShadowRoot is treated like any other node and selfOnlyRefs the Document as well (which it
+        also did earlier, indirectly).
+        
+        TreeScope is devirtualized.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        
+            Author stylesheets never match in UA shadow trees.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::~ContainerNode):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::removedLastRef):
+        * dom/Document.h:
+        (WebCore::Document::selfOnlyRef):
+        (WebCore::Document::selfOnlyDeref):
+
+            To avoid branches Document self-refs itself like all other Nodes. This is why deletion will now happen on ref count of 1.
+
+        (WebCore::Node::isDocumentNode):
+        (WebCore::Node::Node):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::add):
+        * dom/Element.cpp:
+        (WebCore::Element::insertedInto):
+        (WebCore::Element::removedFrom):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::removedLastRef):
+        * dom/Node.h:
+        (WebCore::Node::document):
+        (WebCore::Node::inDocument):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::~ShadowRoot):
+        * dom/ShadowRoot.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::~TreeScope):
+        (WebCore::TreeScope::setParentTreeScope):
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::documentScope):
+        
+            Document can no longer ever be null.
+
+        (WebCore::TreeScope::rootNode):
+        (WebCore::TreeScope::setDocumentScope):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        (WebCore::TreeScopeAdopter::moveShadowTreeToNewDocument):
+        
+            Manage Document selfOnlyRefs for nodes in shadow trees too.
+
+        (WebCore::TreeScopeAdopter::updateTreeScope):
+        (WebCore::TreeScopeAdopter::moveNodeToNewDocument):
+        * dom/TreeScopeAdopter.h:
+
 2014-02-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         setSelectionRange shouldn't directly instantiate VisibleSelection

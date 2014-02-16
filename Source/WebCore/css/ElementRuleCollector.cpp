@@ -154,11 +154,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     if (m_element.isWebVTTElement())
         collectMatchingRulesForList(matchRequest.ruleSet->cuePseudoRules(), matchRequest, ruleRange);
 #endif
-    // Check whether other types of rules are applicable in the current tree scope. Criteria for this:
-    // a) it's a UA rule
-    // b) the tree scope allows author rules
-    if (!MatchingUARulesScope::isMatchingUARules()
-        && !m_element.treeScope().applyAuthorStyles())
+    // Only match UA rules in shadow tree.
+    if (!MatchingUARulesScope::isMatchingUARules() && m_element.treeScope().rootNode()->isShadowRoot())
         return;
 
     // We need to collect the rules for id, class, tag, and everything else into a buffer and

@@ -50,8 +50,6 @@ public:
 
     virtual ~ShadowRoot();
 
-    virtual bool applyAuthorStyles() const override { return m_applyAuthorStyles; }
-    void setApplyAuthorStyles(bool);
     bool resetStyleInheritance() const { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
 
@@ -75,7 +73,6 @@ public:
 private:
     ShadowRoot(Document&, ShadowRootType);
 
-    virtual void dropChildren() override;
     virtual bool childTypeAllowed(NodeType) const override;
     virtual void childrenChanged(const ChildChange&) override;
 
@@ -85,7 +82,6 @@ private:
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
     bool isOrphan() const { return !hostElement(); }
 
-    unsigned m_applyAuthorStyles : 1;
     unsigned m_resetStyleInheritance : 1;
     unsigned m_type : 1;
 

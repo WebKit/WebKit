@@ -263,6 +263,31 @@ public:
 
     virtual ~Document();
 
+    // Nodes belonging to this document hold self-only references -
+    // these are enough to keep the document from being destroyed, but
+    // not enough to keep it from removing its children. This allows a
+    // node that outlives its scope to still have a valid document
+    // pointer without introducing reference cycles.
+    void selfOnlyRef()
+    {
+        ASSERT(!m_deletionHasBegun);
+        ++m_selfOnlyRefCount;
+    }
+
+    void selfOnlyDeref()
+    {
+        ASSERT(!m_deletionHasBegun || m_selfOnlyRefCount == 1);
+        --m_selfOnlyRefCount;
+        if (m_selfOnlyRefCount == 1 && !refCount()) {
+#if !ASSERT_DISABLED
+            m_deletionHasBegun = true;
+#endif
+            delete this;
+        }
+    }
+
+    void removedLastRef();
+
     MediaQueryMatcher& mediaQueryMatcher();
 
     using ContainerNode::ref;
@@ -1254,8 +1279,6 @@ private:
     void createRenderTree();
     void detachParser();
 
-    virtual void dropChildren() override;
-
     typedef void (*ArgumentsCallback)(const String& keyString, const String& valueString, Document*, void* data);
     void processArguments(const String& features, void* data, ArgumentsCallback);
 
@@ -1320,6 +1343,9 @@ private:
     void didAssociateFormControlsTimerFired(Timer<Document>&);
 
     void styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>&);
+
+    unsigned m_selfOnlyRefCount;
+
     DeferrableOneShotTimer<Document> m_styleResolverThrowawayTimer;
 
     OwnPtr<StyleResolver> m_styleResolver;
@@ -1679,17 +1705,17 @@ inline const Document* Document::templateDocument() const
 
 inline bool Node::isDocumentNode() const
 {
-    return this == documentInternal();
+    return this == &document();
 }
 
 inline Node::Node(Document* document, ConstructionType type)
     : m_nodeFlags(type)
     , m_parentNode(0)
-    , m_treeScope(document ? document : &TreeScope::noDocumentInstance())
+    , m_treeScope(document)
     , m_previous(0)
     , m_next(0)
 {
-    m_treeScope->selfOnlyRef();
+    document->selfOnlyRef();
 
 #if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
     trackForDebugging();

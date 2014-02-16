@@ -393,8 +393,9 @@ bool TextAutoSizingTraits::isDeletedValue(const TextAutoSizingKey& value)
 #endif
 
 Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
-    : ContainerNode(nullptr, CreateDocument)
-    , TreeScope(this)
+    : ContainerNode(this, CreateDocument)
+    , TreeScope(*this)
+    , m_selfOnlyRefCount(1)
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
     , m_handlingTouchEvent(false)
     , m_touchEventRegionsDirty(false)
@@ -633,43 +634,59 @@ Document::~Document()
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListAndCollectionCounts); ++i)
         ASSERT(!m_nodeListAndCollectionCounts[i]);
 
-    clearDocumentScope();
-
     InspectorCounters::decrementCounter(InspectorCounters::DocumentCounter);
 }
 
-void Document::dropChildren()
+void Document::removedLastRef()
 {
     ASSERT(!m_deletionHasBegun);
+    ASSERT(m_selfOnlyRefCount);
+    if (m_selfOnlyRefCount > 1) {
+        // If removing a child removes the last self-only ref, we don't want the scope to be destroyed
+        // until after removeDetachedChildren returns, so we protect ourselves with an extra self-only ref.
+        selfOnlyRef();
 
-    // We must make sure not to be retaining any of our children through
-    // these extra pointers or we will create a reference cycle.
-    m_focusedElement = nullptr;
-    m_hoveredElement = nullptr;
-    m_activeElement = nullptr;
-    m_titleElement = nullptr;
-    m_documentElement = nullptr;
-    m_userActionElements.documentDidRemoveLastRef();
+        // We must make sure not to be retaining any of our children through
+        // these extra pointers or we will create a reference cycle.
+        m_focusedElement = nullptr;
+        m_hoveredElement = nullptr;
+        m_activeElement = nullptr;
+        m_titleElement = nullptr;
+        m_documentElement = nullptr;
+        m_userActionElements.documentDidRemoveLastRef();
 #if ENABLE(FULLSCREEN_API)
-    m_fullScreenElement = nullptr;
-    m_fullScreenElementStack.clear();
+        m_fullScreenElement = nullptr;
+        m_fullScreenElementStack.clear();
 #endif
 
-    detachParser();
+        detachParser();
 
-    // removeDetachedChildren() doesn't always unregister IDs,
-    // so tear down scope information up front to avoid having
-    // stale references in the map.
+        // removeDetachedChildren() doesn't always unregister IDs,
+        // so tear down scope information up front to avoid having
+        // stale references in the map.
 
-    destroyTreeScopeData();
-    removeDetachedChildren();
-    m_formController.clear();
+        destroyTreeScopeData();
+        removeDetachedChildren();
+        m_formController.clear();
+        
+        m_markers->detach();
+        
+        m_cssCanvasElements.clear();
+        
+        commonTeardown();
 
-    m_markers->detach();
-
-    m_cssCanvasElements.clear();
-
-    commonTeardown();
+#ifndef NDEBUG
+        // We need to do this right now since selfOnlyDeref() can delete this.
+        m_inRemovedLastRefFunction = false;
+#endif
+        selfOnlyDeref();
+    } else {
+#ifndef NDEBUG
+        m_inRemovedLastRefFunction = false;
+        m_deletionHasBegun = true;
+#endif
+        delete this;
+    }
 }
 
 void Document::commonTeardown()

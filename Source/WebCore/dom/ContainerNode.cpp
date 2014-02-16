@@ -150,8 +150,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
 ContainerNode::~ContainerNode()
 {
-    if (Document* document = documentInternal())
-        willBeDeletedFrom(document);
+    willBeDeletedFrom(&document());
     removeDetachedChildren();
 }
 
