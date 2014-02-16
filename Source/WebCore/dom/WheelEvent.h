@@ -102,6 +102,8 @@ private:
         unsigned, PassRefPtr<AbstractView>, const IntPoint& screenLocation, const IntPoint& pageLocation,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool directionInvertedFromDevice, double timestamp);
 
+    virtual bool isWheelEvent() const override;
+
     IntPoint m_wheelDelta;
     double m_deltaX;
     double m_deltaY;
@@ -109,6 +111,8 @@ private:
     unsigned m_deltaMode;
     bool m_directionInvertedFromDevice;
 };
+
+EVENT_TYPE_CASTS(WheelEvent)
 
 } // namespace WebCore
 

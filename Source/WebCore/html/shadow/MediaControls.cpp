@@ -373,7 +373,7 @@ bool MediaControls::containsRelatedTarget(Event* event)
 {
     if (!event->isMouseEvent())
         return false;
-    EventTarget* relatedTarget = static_cast<MouseEvent*>(event)->relatedTarget();
+    EventTarget* relatedTarget = toMouseEvent(event)->relatedTarget();
     if (!relatedTarget)
         return false;
     return contains(relatedTarget->toNode());

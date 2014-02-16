@@ -124,6 +124,8 @@ private:
 #endif
 };
 
+EVENT_TYPE_CASTS(KeyboardEvent)
+
 KeyboardEvent* findKeyboardEvent(Event*);
 
 } // namespace WebCore

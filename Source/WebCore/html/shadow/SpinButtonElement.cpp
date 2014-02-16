@@ -91,7 +91,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
         return;
     }
 
-    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
+    MouseEvent* mouseEvent = toMouseEvent(event);
     IntPoint local = roundedIntPoint(box->absoluteToLocal(mouseEvent->absoluteLocation(), UseTransforms));
     if (mouseEvent->type() == eventNames().mousedownEvent && mouseEvent->button() == LeftButton) {
         if (box->pixelSnappedBorderBoxRect().contains(local)) {
@@ -160,7 +160,7 @@ void SpinButtonElement::forwardEvent(Event* event)
     if (!m_spinButtonOwner->shouldSpinButtonRespondToWheelEvents())
         return;
 
-    doStepAction(static_cast<WheelEvent*>(event)->wheelDeltaY());
+    doStepAction(toWheelEvent(event)->wheelDeltaY());
     event->setDefaultHandled();
 }
 

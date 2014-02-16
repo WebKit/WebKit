@@ -73,11 +73,15 @@ private:
     ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber);
     ErrorEvent(const AtomicString&, const ErrorEventInit&);
 
+    virtual bool isErrorEvent() const override;
+
     String m_message;
     String m_fileName;
     unsigned m_lineNumber;
     unsigned m_columnNumber;
 };
+
+EVENT_TYPE_CASTS(ErrorEvent)
 
 } // namespace WebCore
 

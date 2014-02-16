@@ -66,7 +66,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
     if (!scriptExecutionContext)
         return;
 
-    ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
+    ErrorEvent* errorEvent = toErrorEvent(event);
 
     JSLockHolder lock(scriptExecutionContext->vm());
 

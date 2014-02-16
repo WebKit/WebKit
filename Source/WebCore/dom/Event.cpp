@@ -168,6 +168,21 @@ bool Event::isBeforeUnloadEvent() const
     return false;
 }
 
+bool Event::isErrorEvent() const
+{
+    return false;
+}
+
+bool Event::isTextEvent() const
+{
+    return false;
+}
+
+bool Event::isWheelEvent() const
+{
+    return false;
+}
+
 PassRefPtr<Event> Event::cloneFor(HTMLIFrameElement*) const
 {
     return Event::create(type(), bubbles(), cancelable());

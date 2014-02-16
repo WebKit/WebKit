@@ -131,17 +131,7 @@ private:
     SimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<AbstractView>, PassRefPtr<Event> underlyingEvent, Element* target);
 };
 
-inline MouseEvent* toMouseEvent(Event* event)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(event && event->isMouseEvent());
-    return static_cast<MouseEvent*>(event);
-}
-
-inline MouseEvent& toMouseEvent(Event& event)
-{
-    ASSERT(event.isMouseEvent());
-    return static_cast<MouseEvent&>(event);
-}
+EVENT_TYPE_CASTS(MouseEvent)
 
 } // namespace WebCore
 

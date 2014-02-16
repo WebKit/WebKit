@@ -269,7 +269,7 @@ void HTMLTextAreaElement::defaultEventHandler(Event* event)
     if (renderer() && (event->isMouseEvent() || event->isDragEvent() || event->eventInterface() == WheelEventInterfaceType || event->type() == eventNames().blurEvent))
         forwardEvent(event);
     else if (renderer() && event->isBeforeTextInsertedEvent())
-        handleBeforeTextInsertedEvent(static_cast<BeforeTextInsertedEvent*>(event));
+        handleBeforeTextInsertedEvent(toBeforeTextInsertedEvent(event));
 
     HTMLTextFormControlElement::defaultEventHandler(event);
 }

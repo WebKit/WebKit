@@ -85,6 +85,8 @@ private:
     int m_detail;
 };
 
+EVENT_TYPE_CASTS(UIEvent)
+
 } // namespace WebCore
 
 #endif // UIEvent_h

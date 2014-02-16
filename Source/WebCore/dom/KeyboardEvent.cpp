@@ -207,7 +207,7 @@ KeyboardEvent* findKeyboardEvent(Event* event)
 {
     for (Event* e = event; e; e = e->underlyingEvent())
         if (e->isKeyboardEvent())
-            return static_cast<KeyboardEvent*>(e);
+            return toKeyboardEvent(e);
     return 0;
 }
 

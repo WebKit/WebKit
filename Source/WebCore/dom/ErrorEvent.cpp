@@ -74,4 +74,9 @@ EventInterface ErrorEvent::eventInterface() const
     return ErrorEventInterfaceType;
 }
 
+bool ErrorEvent::isErrorEvent() const
+{
+    return true;
+}
+
 } // namespace WebCore

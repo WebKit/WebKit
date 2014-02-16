@@ -118,4 +118,9 @@ EventInterface TextEvent::eventInterface() const
     return TextEventInterfaceType;
 }
 
+bool TextEvent::isTextEvent() const
+{
+    return true;
+}
+
 } // namespace WebCore

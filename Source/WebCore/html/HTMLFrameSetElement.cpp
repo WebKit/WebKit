@@ -190,7 +190,7 @@ void HTMLFrameSetElement::willAttachRenderers()
 void HTMLFrameSetElement::defaultEventHandler(Event* evt)
 {
     if (evt->isMouseEvent() && !m_noresize && renderer() && renderer()->isFrameSet()) {
-        if (toRenderFrameSet(renderer())->userResize(static_cast<MouseEvent*>(evt))) {
+        if (toRenderFrameSet(renderer())->userResize(toMouseEvent(evt))) {
             evt->setDefaultHandled();
             return;
         }

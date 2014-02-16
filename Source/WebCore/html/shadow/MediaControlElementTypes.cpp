@@ -255,7 +255,7 @@ MediaControlVolumeSliderElement::MediaControlVolumeSliderElement(Document& docum
 void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
 {
     // Left button is 0. Rejects mouse events not from left button.
-    if (event->isMouseEvent() && static_cast<MouseEvent*>(event)->button())
+    if (event->isMouseEvent() && toMouseEvent(event)->button())
         return;
 
     if (!renderer())

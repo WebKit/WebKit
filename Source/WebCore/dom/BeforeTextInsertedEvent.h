@@ -51,6 +51,8 @@ private:
     String m_text;
 };
 
+EVENT_TYPE_CASTS(BeforeTextInsertedEvent)
+
 } // namespace
 
 #endif

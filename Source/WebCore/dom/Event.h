@@ -145,6 +145,10 @@ public:
 
     virtual bool isBeforeUnloadEvent() const;
 
+    virtual bool isErrorEvent() const;
+    virtual bool isTextEvent() const;
+    virtual bool isWheelEvent() const;
+
     bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
     bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
 
@@ -200,6 +204,10 @@ private:
 
     RefPtr<Event> m_underlyingEvent;
 };
+
+#define EVENT_TYPE_CASTS(ToValueTypeName) \
+    TYPE_CASTS_BASE(ToValueTypeName, Event, event, event->is##ToValueTypeName(), event.is##ToValueTypeName())
+
 
 } // namespace WebCore
 

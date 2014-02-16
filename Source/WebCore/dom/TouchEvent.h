@@ -86,17 +86,7 @@ private:
     RefPtr<TouchList> m_changedTouches;
 };
 
-inline TouchEvent* toTouchEvent(Event* event)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(event && event->isTouchEvent());
-    return static_cast<TouchEvent*>(event);
-}
-
-inline TouchEvent& toTouchEvent(Event& event)
-{
-    ASSERT(event.isTouchEvent());
-    return static_cast<TouchEvent&>(event);
-}
+EVENT_TYPE_CASTS(TouchEvent)
 
 } // namespace WebCore
 

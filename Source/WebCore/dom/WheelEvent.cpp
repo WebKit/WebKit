@@ -124,4 +124,9 @@ bool WheelEvent::isMouseEvent() const
     return false;
 }
 
+bool WheelEvent::isWheelEvent() const
+{
+    return true;
+}
+
 } // namespace WebCore

@@ -156,7 +156,7 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
     if (!event->isMouseEvent())
         return;
 
-    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
+    MouseEvent* mouseEvent = toMouseEvent(event);
 
     // If we're a snapshotted plugin, we want to make sure we activate on
     // clicks even if the page is preventing our default behaviour. Otherwise

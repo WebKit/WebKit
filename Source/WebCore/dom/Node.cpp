@@ -2101,9 +2101,9 @@ void Node::defaultEventHandler(Event* event)
     if (eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent) {
         if (event->isKeyboardEvent())
             if (Frame* frame = document().frame())
-                frame->eventHandler().defaultKeyboardEventHandler(static_cast<KeyboardEvent*>(event));
+                frame->eventHandler().defaultKeyboardEventHandler(toKeyboardEvent(event));
     } else if (eventType == eventNames().clickEvent) {
-        int detail = event->isUIEvent() ? static_cast<UIEvent*>(event)->detail() : 0;
+        int detail = event->isUIEvent() ? toUIEvent(event)->detail() : 0;
         if (dispatchDOMActivateEvent(detail, event))
             event->setDefaultHandled();
 #if ENABLE(CONTEXT_MENUS)
@@ -2115,11 +2115,10 @@ void Node::defaultEventHandler(Event* event)
     } else if (eventType == eventNames().textInputEvent) {
         if (event->eventInterface() == TextEventInterfaceType)
             if (Frame* frame = document().frame())
-                frame->eventHandler().defaultTextInputEventHandler(static_cast<TextEvent*>(event));
+                frame->eventHandler().defaultTextInputEventHandler(toTextEvent(event));
 #if ENABLE(PAN_SCROLLING)
     } else if (eventType == eventNames().mousedownEvent && event->isMouseEvent()) {
-        MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-        if (mouseEvent->button() == MiddleButton) {
+        if (toMouseEvent(event)->button() == MiddleButton) {
             if (enclosingLinkEventParentOrSelf())
                 return;
 
@@ -2134,8 +2133,7 @@ void Node::defaultEventHandler(Event* event)
         }
 #endif
     } else if ((eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent) && event->eventInterface() == WheelEventInterfaceType) {
-        WheelEvent* wheelEvent = static_cast<WheelEvent*>(event);
-        
+
         // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
         // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
         Node* startNode = this;
@@ -2144,18 +2142,16 @@ void Node::defaultEventHandler(Event* event)
         
         if (startNode && startNode->renderer())
             if (Frame* frame = document().frame())
-                frame->eventHandler().defaultWheelEventHandler(startNode, wheelEvent);
+                frame->eventHandler().defaultWheelEventHandler(startNode, toWheelEvent(event));
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
     } else if (event->eventInterface() == TouchEventInterfaceType && eventNames().isTouchEventType(eventType)) {
-        TouchEvent* touchEvent = static_cast<TouchEvent*>(event);
-
         RenderObject* renderer = this->renderer();
         while (renderer && (!renderer->isBox() || !toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()))
             renderer = renderer->parent();
 
         if (renderer && renderer->node()) {
             if (Frame* frame = document().frame())
-                frame->eventHandler().defaultTouchEventHandler(renderer->node(), touchEvent);
+                frame->eventHandler().defaultTouchEventHandler(renderer->node(), toTouchEvent(touchEvent));
         }
 #endif
     } else if (event->type() == eventNames().webkitEditableContentChangedEvent) {

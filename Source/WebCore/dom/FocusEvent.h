@@ -70,17 +70,7 @@ private:
     RefPtr<EventTarget> m_relatedTarget;
 };
 
-inline FocusEvent* toFocusEvent(Event* event)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(event && event->isFocusEvent());
-    return static_cast<FocusEvent*>(event);
-}
-
-inline FocusEvent& toFocusEvent(Event& event)
-{
-    ASSERT(event.isFocusEvent());
-    return static_cast<FocusEvent&>(event);
-}
+EVENT_TYPE_CASTS(FocusEvent)
 
 } // namespace WebCore
 

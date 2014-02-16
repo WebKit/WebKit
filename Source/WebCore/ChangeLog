@@ -1,3 +1,13 @@
+2014-02-15  Andreas Kling  <akling@apple.com>
+
+        Add checked casts for Event.
+        <https://webkit.org/b/128875>
+
+        Generate casting helpers for casting from Event to various subclasses
+        and go on static_cast replacement spree.
+
+        Reviewed by Sam Weinig.
+
 2014-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLTextFormControlElement::subtreeHasChanged should be called before updating selection
