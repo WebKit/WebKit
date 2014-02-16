@@ -1,3 +1,10 @@
+2014-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Speculative iOS build fix.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+
 2014-02-15  Antti Koivisto  <antti@apple.com>
 
         Move document life time management from TreeScope to Document
