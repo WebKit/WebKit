@@ -154,12 +154,15 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::rowIndexRange() { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::columnIndexRange() { return 0; }
 int AccessibilityUIElement::rowCount() { return 0; }
 int AccessibilityUIElement::columnCount() { return 0; }
+JSValueRef AccessibilityUIElement::rowHeaders() const { return nullptr; }
+JSValueRef AccessibilityUIElement::columnHeaders() const { return nullptr; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(unsigned) { return 0; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedByRow() { return 0; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned) { return 0; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned) { return 0; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned) { return 0; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned) { return 0; }
+PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned) { return nullptr; }
 bool AccessibilityUIElement::ariaIsGrabbed() const { return false; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::ariaDropEffects() const { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::classList() const { return 0; }

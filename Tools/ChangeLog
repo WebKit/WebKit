@@ -1,3 +1,16 @@
+2014-02-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Build break when disabled ACCESSIBILITY since r162986
+        https://bugs.webkit.org/show_bug.cgi?id=128880
+
+        Unreviewed build fix.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        Added dummy implementations for newly added methods.
+        (WTR::AccessibilityUIElement::rowHeaders):
+        (WTR::AccessibilityUIElement::columnHeaders):
+        (WTR::AccessibilityUIElement::ariaControlsElementAtIndex):
+
 2014-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         Vector with inline capacity should work with non-PODs
