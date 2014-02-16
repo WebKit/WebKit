@@ -84,8 +84,7 @@ static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
         Document* document = toDocument(context);
         return document->page()->group().groupSettings().indexedDBDatabasePath();
     }
-    WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
-    const GroupSettings* groupSettings = workerGlobalScope->groupSettings();
+    const GroupSettings* groupSettings = toWorkerGlobalScope(context)->groupSettings();
     if (groupSettings)
         return groupSettings->indexedDBDatabasePath();
     return String();

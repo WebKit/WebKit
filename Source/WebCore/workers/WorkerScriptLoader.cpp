@@ -70,7 +70,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     options.crossOriginRequestPolicy = crossOriginRequestPolicy;
     options.sendLoadCallbacks = SendCallbacks;
 
-    WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerGlobalScope*>(scriptExecutionContext), *request, *this, options);
+    WorkerThreadableLoader::loadResourceSynchronously(toWorkerGlobalScope(scriptExecutionContext), *request, *this, options);
 }
     
 void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, CrossOriginRequestPolicy crossOriginRequestPolicy, WorkerScriptLoaderClient* client)

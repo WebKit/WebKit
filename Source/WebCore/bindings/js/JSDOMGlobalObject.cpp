@@ -120,7 +120,7 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionCo
         return toJSDOMGlobalObject(toDocument(scriptExecutionContext), exec);
 
     if (scriptExecutionContext->isWorkerGlobalScope())
-        return static_cast<WorkerGlobalScope*>(scriptExecutionContext)->script()->workerGlobalScopeWrapper();
+        return toWorkerGlobalScope(scriptExecutionContext)->script()->workerGlobalScopeWrapper();
 
     ASSERT_NOT_REACHED();
     return 0;
@@ -137,7 +137,7 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionCo
         return toJSDOMGlobalObject(toDocument(scriptExecutionContext), world);
 
     if (scriptExecutionContext->isWorkerGlobalScope())
-        return static_cast<WorkerGlobalScope*>(scriptExecutionContext)->script()->workerGlobalScopeWrapper();
+        return toWorkerGlobalScope(scriptExecutionContext)->script()->workerGlobalScopeWrapper();
 
     ASSERT_NOT_REACHED();
     return 0;

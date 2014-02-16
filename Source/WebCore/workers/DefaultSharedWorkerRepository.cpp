@@ -270,7 +270,7 @@ private:
         RefPtr<MessagePort> port = MessagePort::create(*scriptContext);
         port->entangle(std::move(m_channel));
         ASSERT_WITH_SECURITY_IMPLICATION(scriptContext->isWorkerGlobalScope());
-        WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(scriptContext);
+        WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(scriptContext);
         // Since close() stops the thread event loop, this should not ever get called while closing.
         ASSERT(!workerGlobalScope->isClosing());
         ASSERT_WITH_SECURITY_IMPLICATION(workerGlobalScope->isSharedWorkerGlobalScope());

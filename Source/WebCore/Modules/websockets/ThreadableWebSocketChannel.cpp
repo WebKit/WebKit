@@ -56,7 +56,7 @@ PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Script
     ASSERT(client);
 
     if (context->isWorkerGlobalScope()) {
-        WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
+        WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
         WorkerRunLoop& runLoop = workerGlobalScope->thread().runLoop();
         String mode = webSocketChannelMode;
         mode.append(String::number(runLoop.createUniqueId()));

@@ -57,8 +57,7 @@ WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(ScriptE
     WorkerGlobalScopeIndexedDatabase* supplement = static_cast<WorkerGlobalScopeIndexedDatabase*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
     if (!supplement) {
         String databaseDirectoryIdentifier;
-        WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
-        const GroupSettings* groupSettings = workerGlobalScope->groupSettings();
+        const GroupSettings* groupSettings = toWorkerGlobalScope(context)->groupSettings();
         if (groupSettings)
             databaseDirectoryIdentifier = groupSettings->indexedDBDatabasePath();
 

@@ -76,10 +76,8 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
 {
     if (context->isDocument())
         execute(toDocument(context));
-    else {
-        ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
-        execute(static_cast<WorkerGlobalScope*>(context));
-    }
+    else
+        execute(toWorkerGlobalScope(context));
 }
 
 void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSValue thisValue, ScriptExecutionContext* context)

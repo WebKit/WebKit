@@ -1705,29 +1705,7 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
 
 Element* eventTargetElementForDocument(Document*);
 
-inline Document& toDocument(ScriptExecutionContext& scriptExecutionContext)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext.isDocument());
-    return static_cast<Document&>(scriptExecutionContext);
-}
-
-inline const Document& toDocument(const ScriptExecutionContext& scriptExecutionContext)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext.isDocument());
-    return static_cast<const Document&>(scriptExecutionContext);
-}
-
-inline Document* toDocument(ScriptExecutionContext* scriptExecutionContext)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!scriptExecutionContext || scriptExecutionContext->isDocument());
-    return static_cast<Document*>(scriptExecutionContext);
-}
-
-inline const Document* toDocument(const ScriptExecutionContext* scriptExecutionContext)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!scriptExecutionContext || scriptExecutionContext->isDocument());
-    return static_cast<const Document*>(scriptExecutionContext);
-}
+SCRIPT_EXECUTION_CONTEXT_TYPE_CASTS(Document)
 
 inline bool isDocument(const Node& node) { return node.isDocumentNode(); }
 void isDocument(const Document&); // Catch unnecessary runtime check of type known at compile time.

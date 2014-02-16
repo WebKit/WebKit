@@ -1177,7 +1177,7 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWorkerGloba
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForNonDocumentContext(ScriptExecutionContext* context)
 {
     if (context->isWorkerGlobalScope())
-        return instrumentationForWorkerGlobalScope(static_cast<WorkerGlobalScope*>(context));
+        return instrumentationForWorkerGlobalScope(toWorkerGlobalScope(context));
     return nullptr;
 }
 

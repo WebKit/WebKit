@@ -1,3 +1,13 @@
+2014-02-15  Andreas Kling  <akling@apple.com>
+
+        Add checked casts for ScriptExecutionContext.
+        <https://webkit.org/b/128874>
+
+        Generate casting helpers for casting from ScriptExecutionContext to
+        Document and WorkerGlobalScope. Apply heartily.
+
+        Reviewed by Antti Koivisto.
+
 2014-02-15  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] All WebKit clients should encrypt WebCrypto keys automatically

@@ -182,6 +182,8 @@ namespace WebCore {
         RefPtr<SecurityOrigin> m_topOrigin;
     };
 
+SCRIPT_EXECUTION_CONTEXT_TYPE_CASTS(WorkerGlobalScope)
+
 } // namespace WebCore
 
 #endif // WorkerGlobalScope_h

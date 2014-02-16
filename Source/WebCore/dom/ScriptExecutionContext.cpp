@@ -146,7 +146,7 @@ void ScriptExecutionContext::createdMessagePort(MessagePort* port)
 {
     ASSERT(port);
     ASSERT((isDocument() && isMainThread())
-        || (isWorkerGlobalScope() && currentThread() == static_cast<WorkerGlobalScope*>(this)->thread().threadID()));
+        || (isWorkerGlobalScope() && currentThread() == toWorkerGlobalScope(this)->thread().threadID()));
 
     m_messagePorts.add(port);
 }
@@ -155,7 +155,7 @@ void ScriptExecutionContext::destroyedMessagePort(MessagePort* port)
 {
     ASSERT(port);
     ASSERT((isDocument() && isMainThread())
-        || (isWorkerGlobalScope() && currentThread() == static_cast<WorkerGlobalScope*>(this)->thread().threadID()));
+        || (isWorkerGlobalScope() && currentThread() == toWorkerGlobalScope(this)->thread().threadID()));
 
     m_messagePorts.remove(port);
 }
@@ -411,7 +411,7 @@ JSC::VM* ScriptExecutionContext::vm()
         return JSDOMWindow::commonVM();
 
     if (isWorkerGlobalScope())
-        return static_cast<WorkerGlobalScope*>(this)->script()->vm();
+        return toWorkerGlobalScope(this)->script()->vm();
 
     ASSERT_NOT_REACHED();
     return 0;
