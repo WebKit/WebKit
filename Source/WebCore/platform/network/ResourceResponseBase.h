@@ -141,11 +141,11 @@ protected:
     static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }
 
     URL m_url;
-    String m_mimeType;
+    AtomicString m_mimeType;
     long long m_expectedContentLength;
-    String m_textEncodingName;
+    AtomicString m_textEncodingName;
     String m_suggestedFilename;
-    String m_httpStatusText;
+    AtomicString m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
     RefPtr<ResourceLoadTiming> m_resourceLoadTiming;
 

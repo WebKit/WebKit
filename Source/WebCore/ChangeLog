@@ -1,3 +1,21 @@
+2014-02-16  Andreas Kling  <akling@apple.com>
+
+        Atomicize frequently identical ResourceResponse string members.
+        <https://webkit.org/b/128887>
+
+        Store the mime type, text encoding and HTTP response status text in
+        AtomicStrings instead of Strings to deduplicate frequently occurring
+        values (e.g "text/html", "utf-8" and "OK".)
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::cfURLResponse):
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+
 2014-02-16  Dan Bernstein  <mitz@apple.com>
 
         Speculative iOS build fix.
