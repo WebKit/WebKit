@@ -102,15 +102,13 @@ void HTMLTextFormControlElement::dispatchBlurEvent(PassRefPtr<Element> newFocuse
     HTMLFormControlElementWithState::dispatchBlurEvent(newFocusedElement);
 }
 
-void HTMLTextFormControlElement::defaultEventHandler(Event* event)
+void HTMLTextFormControlElement::didEditInnerTextValue()
 {
-    if (event->type() == eventNames().webkitEditableContentChangedEvent && renderer() && renderer()->isTextControl()) {
-        m_lastChangeWasUserEdit = true;
-        subtreeHasChanged();
+    if (!isTextFormControl())
         return;
-    }
 
-    HTMLFormControlElementWithState::defaultEventHandler(event);
+    m_lastChangeWasUserEdit = true;
+    subtreeHasChanged();
 }
 
 void HTMLTextFormControlElement::forwardEvent(Event* event)

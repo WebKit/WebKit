@@ -44,6 +44,7 @@ public:
 
     virtual ~HTMLTextFormControlElement();
 
+    void didEditInnerTextValue();
     void forwardEvent(Event*);
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
@@ -108,7 +109,6 @@ protected:
     void restoreCachedSelection();
     bool hasCachedSelection() const { return m_cachedSelectionStart >= 0; }
 
-    virtual void defaultEventHandler(Event*) override;
     virtual void subtreeHasChanged() = 0;
 
     void setLastChangeWasNotUserEdit() { m_lastChangeWasUserEdit = false; }

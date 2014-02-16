@@ -1055,6 +1055,16 @@ void Editor::outdent()
     applyCommand(IndentOutdentCommand::create(document(), IndentOutdentCommand::Outdent));
 }
 
+static void notifyTextFromControls(Element* startRoot, Element* endRoot)
+{
+    HTMLTextFormControlElement* startingTextControl = enclosingTextFormControl(firstPositionInOrBeforeNode(startRoot));
+    HTMLTextFormControlElement* endingTextControl = enclosingTextFormControl(firstPositionInOrBeforeNode(endRoot));
+    if (startingTextControl)
+        startingTextControl->didEditInnerTextValue();
+    if (endingTextControl && startingTextControl != endingTextControl)
+        endingTextControl->didEditInnerTextValue();
+}
+
 static void dispatchEditableContentChangedEvents(PassRefPtr<Element> prpStartRoot, PassRefPtr<Element> prpEndRoot)
 {
     RefPtr<Element> startRoot = prpStartRoot;
@@ -1074,6 +1084,8 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
     VisibleSelection newSelection(cmd->endingSelection());
 
     m_alternativeTextController->respondToAppliedEditing(cmd.get());
+
+    notifyTextFromControls(composition->startingRootEditableElement(), composition->endingRootEditableElement());
 
     // Don't clear the typing style with this selection change.  We do those things elsewhere if necessary.
     FrameSelection::SetSelectionOptions options = cmd->isDictationCommand() ? FrameSelection::DictationTriggered : 0;
@@ -1101,6 +1113,8 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 {
     document().updateLayout();
 
+    notifyTextFromControls(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
+
     VisibleSelection newSelection(cmd->startingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
     dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
@@ -1116,6 +1130,8 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 {
     document().updateLayout();
+
+    notifyTextFromControls(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
 
     VisibleSelection newSelection(cmd->endingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
