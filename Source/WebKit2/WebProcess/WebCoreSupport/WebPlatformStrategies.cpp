@@ -385,7 +385,7 @@ void WebPlatformStrategies::addVisitedLink(Page*, LinkHash linkHash)
     WebProcess::shared().addVisitedLink(linkHash);
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 // PasteboardStrategy
 
 void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName)

@@ -36,7 +36,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
 #include "MachPort.h"
 #endif
 
@@ -74,7 +74,7 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
                                                      Messages::WebProcessProxy::GetPluginProcessConnection::Reply(encodedConnectionIdentifier, supportsAsynchronousInitialization), 0))
         return 0;
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
     if (IPC::Connection::identifierIsNull(connectionIdentifier))
         return 0;

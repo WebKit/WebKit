@@ -1202,7 +1202,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     m_frame->coreFrame()->view()->setProhibitsScrolling(shouldDisableScrolling);
     m_frame->coreFrame()->view()->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     m_frame->coreFrame()->view()->setExposedRect(webPage->drawingArea()->exposedRect());
 #endif
 #if PLATFORM(IOS)
@@ -1288,7 +1288,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
     parameters.mimeType = mimeType;
     parameters.isFullFramePlugin = loadManually;
     parameters.shouldUseManualLoader = parameters.isFullFramePlugin && !m_frameCameFromPageCache;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     parameters.layerHostingMode = m_frame->page()->layerHostingMode();
 #endif
 
@@ -1511,7 +1511,7 @@ void WebFrameLoaderClient::registerForIconNotification(bool /*listen*/)
     notImplemented();
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     
 RemoteAXObjectRef WebFrameLoaderClient::accessibilityRemoteObject() 
 {
@@ -1531,7 +1531,7 @@ NSCachedURLResponse* WebFrameLoaderClient::willCacheResponse(DocumentLoader*, un
     return webPage->injectedBundleResourceLoadClient().shouldCacheResponse(webPage, m_frame, identifier) ? response : nil;
 }
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
 
 bool WebFrameLoaderClient::shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const
 {

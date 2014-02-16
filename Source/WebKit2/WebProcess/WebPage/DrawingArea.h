@@ -88,7 +88,7 @@ public:
     virtual void updatePreferences(const WebPreferencesStore&) { }
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void setExposedRect(const WebCore::FloatRect&) = 0;
     virtual WebCore::FloatRect exposedRect() const = 0;
     virtual void setCustomFixedPositionRect(const WebCore::FloatRect&) = 0;
@@ -127,7 +127,7 @@ private:
                                          const WebCore::IntSize& /*scrollOffset*/) { }
     virtual void didUpdate() { }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.
     virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition) { }
     virtual void setDeviceScaleFactor(float) { }

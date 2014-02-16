@@ -91,7 +91,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 {
     PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     switch (wheelEvent.phase()) {
     case PlatformWheelEventPhaseBegan:
         m_recentWheelEventDeltaTracker->beginTrackingDeltas();

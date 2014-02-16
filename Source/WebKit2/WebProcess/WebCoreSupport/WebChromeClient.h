@@ -242,7 +242,7 @@ private:
     virtual void exitFullScreenForElement(WebCore::Element*) override;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void makeFirstResponder() override;
 #endif
 

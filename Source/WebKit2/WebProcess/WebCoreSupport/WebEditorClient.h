@@ -91,7 +91,7 @@ private:
     virtual void textWillBeDeletedInTextField(WebCore::Element*) override;
     virtual void textDidChangeInTextArea(WebCore::Element*) override;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual NSString *userVisibleString(NSURL *) override;
     virtual WebCore::DocumentFragment* documentFragmentFromAttributedString(NSAttributedString *, Vector< RefPtr<WebCore::ArchiveResource>>&) override;
     virtual void setInsertionPasteboard(const String& pasteboardName) override;

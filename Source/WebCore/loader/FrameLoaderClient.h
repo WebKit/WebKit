@@ -38,7 +38,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #ifdef __OBJC__ 
 #import <Foundation/Foundation.h>
 typedef id RemoteAXObjectRef;
@@ -49,9 +49,9 @@ typedef void* RemoteAXObjectRef;
 
 typedef class _jobject* jobject;
 
-#if PLATFORM(MAC) && !defined(__OBJC__)
-class NSCachedURLResponse;
-class NSView;
+#if PLATFORM(COCOA)
+OBJC_CLASS NSCachedURLResponse;
+OBJC_CLASS NSView;
 #endif
 
 namespace WebCore {
@@ -282,7 +282,7 @@ namespace WebCore {
 
         virtual void registerForIconNotification(bool listen = true) = 0;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
         virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;
         virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const = 0;

@@ -82,8 +82,8 @@ messages -> WebProcess LegacyReceiver {
 
     ReleasePageCache()
 
-#if PLATFORM(MAC)
     SetProcessSuppressionEnabled(bool flag)
+#if PLATFORM(COCOA)
     SetQOS(int latencyQOS, int throughputQOS)
 #endif
 

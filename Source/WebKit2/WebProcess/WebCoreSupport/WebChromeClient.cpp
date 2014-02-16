@@ -126,7 +126,7 @@ void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
 
 FloatRect WebChromeClient::windowRect()
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (m_page->hasCachedWindowFrame())
         return m_page->windowFrameInUnflippedScreenCoordinates();
 #endif
@@ -154,7 +154,7 @@ void WebChromeClient::unfocus()
     m_page->send(Messages::WebPageProxy::SetFocus(false));
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 void WebChromeClient::makeFirstResponder()
 {
     m_page->send(Messages::WebPageProxy::MakeFirstResponder());

@@ -209,7 +209,7 @@ private:
 
     virtual void registerForIconNotification(bool listen = true) override;
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual RemoteAXObjectRef accessibilityRemoteObject() override;
     
     virtual NSCachedURLResponse* willCacheResponse(WebCore::DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const override;

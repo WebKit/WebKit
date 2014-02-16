@@ -1,3 +1,113 @@
+2014-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Stop using PLATFORM(MAC) in Source except where it means “OS X but not iOS”
+        https://bugs.webkit.org/show_bug.cgi?id=128885
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebKit2.xcconfig: Removed PageBannerMac.mm and WKBundlePageBannerMac.mm
+        from EXCLUDED_SOURCE_FILE_NAMES_iphoneos, now that these files are guarded with
+        !PLATFORM(IOS).
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp: Changed PLATFORM(MAC) to
+        PLATFORM(COCOA).
+        (WKBundleFrameCopyWebArchiveFilteringSubframes):
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm: Guarded with !PLATFORM(IOS).
+        * WebProcess/InjectedBundle/InjectedBundle.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/InjectedBundle/InjectedBundle.h: Changed PLATFORM(MAC) to USE(FOUNDATION)
+        around use of NSBundle.
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h: Changed PLATFORM(MAC) to
+        PLATFORM(COCOA).
+        (WebKit::InjectedBundleUserMessageEncoder::encode):
+        (WebKit::InjectedBundleUserMessageDecoder::decode):
+        * WebProcess/Network/WebResourceLoader.cpp: Ditto.
+        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp: Ditto.
+        (WebKit::NPN_GetValue):
+        (WebKit::NPN_SetValue):
+        (WebKit::initializeBrowserFuncs):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp: Ditto.
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        (WebKit::NetscapePlugin::supportsSnapshotting):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Ditto.
+        * WebProcess/Plugins/Plugin.cpp: Ditto.
+        (WebKit::Plugin::Parameters::encode):
+        (WebKit::Plugin::Parameters::decode):
+        * WebProcess/Plugins/Plugin.h: Ditto.
+        * WebProcess/Plugins/PluginController.h: Ditto.
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp: Changed PLATFORM(MAC) to
+        USE(DARWIN) around use of Mach-based IPC.
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        * WebProcess/Plugins/PluginProxy.cpp: Chanegd PLATFORM(MAC) to PLATFORM(COCOA).
+        * WebProcess/Plugins/PluginProxy.h: Ditto.
+        * WebProcess/Plugins/PluginProxy.messages.in: Ditto.
+        * WebProcess/Plugins/PluginView.cpp: Ditto.
+        (WebKit::PluginView::destroyPluginAndReset):
+        (WebKit::PluginView::viewStateDidChange):
+        (WebKit::PluginView::didInitializePlugin):
+        (WebKit::PluginView::invalidateRect):
+        (WebKit::PluginView::pluginSnapshotTimerFired):
+        * WebProcess/Plugins/PluginView.h: Ditto.
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.cpp: Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Ditto.
+        (WebKit::WebChromeClient::windowRect):
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Ditto.
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp: Ditto.
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h: Ditto.
+        * WebProcess/WebCoreSupport/WebDragClient.cpp: Ditto.
+        * WebProcess/WebCoreSupport/WebDragClient.h: Ditto.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp: Ditto.
+        (WebKit::WebEditorClient::shouldEraseMarkersAfterChangeSelection):
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Ditto.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp: Ditto.
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h: Ditto.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp: Ditto.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h: Ditto.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm: Removed PLATFORM(MAC).
+        (InitWebCoreSystemInterface):
+        * WebProcess/WebPage/DrawingArea.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h: Ditto.
+        * WebProcess/WebPage/DrawingArea.messages.in: Ditto.
+        * WebProcess/WebPage/EventDispatcher.cpp: Ditto.
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/LayerTreeHost.h: Ditto.
+        * WebProcess/WebPage/PageBanner.cpp: Added !PLATFORM(IOS)
+        * WebProcess/WebPage/PageBanner.h: Ditto.
+        * WebProcess/WebPage/WebFrame.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * WebProcess/WebPage/WebFrame.h: Ditto.
+        * WebProcess/WebPage/WebInspector.cpp: Ditto.
+        (WebKit::WebInspector::WebInspector):
+        * WebProcess/WebPage/WebInspector.h: Ditto.
+        * WebProcess/WebPage/WebPage.cpp: Ditto.
+        (WebKit::WebPage::WebPage):
+        (WebKit::isContextClick):
+        (WebKit::WebPage::getSelectionAsWebArchiveData):
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::sendSetWindowFrame):
+        (WebKit::WebPage::beginPrinting):
+        (WebKit::WebPage::computePagesForPrinting):
+        * WebProcess/WebPage/WebPage.h: Ditto.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+        * WebProcess/WebPage/mac/PageBannerMac.mm: Guarded with !PLATFORM(IOS).
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        (WebKit::WebProcess::initializeWebProcess): Ditto.
+        (WebKit::WebProcess::ensureNetworkProcessConnection): Changed PLATFORM(MAC) to OS(DARWIN).
+        (WebKit::WebProcess::ensurePrivateBrowsingSession): Changed PLATFORM(MAC) to
+        PLATFORM(COCOA).
+        (WebKit::WebProcess::destroyPrivateBrowsingSession): Ditto.
+        (WebKit::WebProcess::ensureWebToDatabaseProcessConnection): Changed PLATFORM(MAC) to
+        OS(DARWIN).
+        (WebKit::WebProcess::nonVisibleProcessCleanupTimerFired): Changed PLATFORM(MAC) to
+        PLATFORM(COCOA)
+        * WebProcess/WebProcess.h: Ditto.
+        * WebProcess/WebProcess.messages.in: Removed PLATFORM(MAC) guard around
+        SetProcessSuppressionEnabled. Changed it to PLATFORM(COCOA) around SetQOS.
+
 2014-02-15  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] All WebKit clients should encrypt WebCrypto keys automatically

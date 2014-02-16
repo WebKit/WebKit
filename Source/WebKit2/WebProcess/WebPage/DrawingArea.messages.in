@@ -24,7 +24,7 @@ messages -> DrawingArea LegacyReceiver {
     UpdateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, WebCore::IntSize size, WebCore::IntSize scrollOffset)
     DidUpdate()
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.
     UpdateGeometry(WebCore::IntSize viewSize, WebCore::IntSize layerPosition)
     SetDeviceScaleFactor(float deviceScaleFactor)

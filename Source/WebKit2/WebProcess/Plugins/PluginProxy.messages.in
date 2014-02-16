@@ -56,7 +56,7 @@ messages -> PluginProxy LegacyReceiver {
     # Set the status bar text.
     SetStatusbarText(String statusbarText)
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     # Called when the plug-in's focus or its containing window focus changes.
     PluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus)
 

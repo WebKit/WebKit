@@ -123,7 +123,7 @@ messages -> WebPage LegacyReceiver {
     RunJavaScriptInMainFrame(String script, uint64_t callbackID)
     ForceRepaint(uint64_t callbackID)
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     # Dictionary support.
     PerformDictionaryLookupAtLocation(WebCore::FloatPoint point)
 #endif
@@ -215,7 +215,7 @@ messages -> WebPage LegacyReceiver {
     LowercaseWord()
     CapitalizeWord()
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
 #endif
 
@@ -233,7 +233,7 @@ messages -> WebPage LegacyReceiver {
     BeginPrinting(uint64_t frameID, WebKit::PrintInfo printInfo)
     EndPrinting()
     ComputePagesForPrinting(uint64_t frameID, WebKit::PrintInfo printInfo, uint64_t callbackID)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     DrawRectToImage(uint64_t frameID, WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize, uint64_t callbackID)
     DrawPagesToPDF(uint64_t frameID, WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, uint64_t callbackID)
 #endif
@@ -268,7 +268,7 @@ messages -> WebPage LegacyReceiver {
     CancelComposition()
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     # Complex text input support for plug-ins.
     SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)
 
@@ -308,7 +308,7 @@ messages -> WebPage LegacyReceiver {
     FindZoomableAreaForPoint(WebCore::IntPoint point, WebCore::IntSize area)
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     HandleAlternativeTextUIResult(String result)
 #endif
 

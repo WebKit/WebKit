@@ -28,7 +28,7 @@
 #include <wtf/Functional.h>
 
 // Subclasses
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "RemoteLayerTreeDrawingArea.h"
 #include "TiledCoreAnimationDrawingArea.h"
 #else
@@ -46,7 +46,7 @@ namespace WebKit {
 std::unique_ptr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
 {
     switch (parameters.drawingAreaType) {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #if !PLATFORM(IOS)
     case DrawingAreaTypeTiledCoreAnimation:
         return std::make_unique<TiledCoreAnimationDrawingArea>(webPage, parameters);

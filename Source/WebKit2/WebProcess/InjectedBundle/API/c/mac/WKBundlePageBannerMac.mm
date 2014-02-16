@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WKBundlePageBannerMac.h"
 
+#if !PLATFORM(IOS)
+
 #include "APIClient.h"
 #include "PageBanner.h"
 #include "WKAPICast.h"
@@ -108,3 +110,5 @@ CALayer * WKBundlePageBannerGetLayer(WKBundlePageBannerRef pageBanner)
 {
     return toImpl(pageBanner)->layer();
 }
+
+#endif // !PLATFORM(IOS)

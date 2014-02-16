@@ -1,5 +1,21 @@
 2014-02-16  Dan Bernstein  <mitz@apple.com>
 
+        Stop using PLATFORM(MAC) in Source except where it means “OS X but not iOS”
+        https://bugs.webkit.org/show_bug.cgi?id=128885
+
+        Reviewed by Anders Carlsson.
+
+        * loader/FrameLoaderClient.h: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * platform/Cursor.h: Changed PLATFORM(MAC) to USE(APPKIT) around uses of NSCursor.
+        * platform/LocalizedStrings.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA).
+        * platform/graphics/PlatformLayer.h: Ditto.
+        * platform/graphics/cg/PDFDocumentImage.cpp: Ditto.
+        * rendering/RenderLayerCompositor.cpp: Ditto.
+        (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+
+2014-02-16  Dan Bernstein  <mitz@apple.com>
+
         Speculative iOS build fix after r164184.
 
         * dom/Node.cpp:

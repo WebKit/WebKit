@@ -30,7 +30,7 @@
 #include "WebEvent.h"
 #include <wtf/PassRefPtr.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 OBJC_CLASS CALayer;
 #include <wtf/RetainPtr.h>
 #endif
@@ -60,7 +60,7 @@ public:
         virtual bool mouseEvent(PageBanner*, WebEvent::Type, WebMouseEvent::Button, const WebCore::IntPoint&) = 0;
     };
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     static PassRefPtr<PageBanner> create(CALayer *, int height, Client*);
     CALayer *layer();
 #endif
@@ -79,7 +79,7 @@ public:
     void didAddParentLayer(WebCore::GraphicsLayer*);
 
 private:
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     explicit PageBanner(CALayer *, int height, Client*);
 #endif
 
@@ -90,7 +90,7 @@ private:
     bool m_mouseDownInBanner;
     bool m_isHidden;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     RetainPtr<CALayer> m_layer;
     int m_height;
 #endif

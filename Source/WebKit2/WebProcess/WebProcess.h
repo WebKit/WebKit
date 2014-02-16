@@ -44,7 +44,7 @@
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <dispatch/dispatch.h>
 #endif
 
@@ -110,7 +110,7 @@ public:
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }
 #endif
     
@@ -132,7 +132,7 @@ public:
     WebPageGroupProxy* webPageGroup(uint64_t pageGroupID);
     WebPageGroupProxy* webPageGroup(const WebPageGroupData&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     pid_t presenterApplicationPid() const { return m_presenterApplicationPid; }
     bool shouldForceScreenFontSubstitution() const { return m_shouldForceScreenFontSubstitution; }
 #endif
@@ -292,7 +292,7 @@ private:
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     mach_port_t m_compositingRenderServerPort;
     pid_t m_presenterApplicationPid;
     dispatch_group_t m_clearResourceCachesDispatchGroup;

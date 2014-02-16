@@ -33,7 +33,7 @@
 #include <wtf/text/CString.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "WebKitSystemInterface.h"
 #endif
 

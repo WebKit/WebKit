@@ -46,7 +46,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 #include "ImageSourceCG.h"
 #endif
 

@@ -58,7 +58,7 @@ private:
     virtual void speak(const String&) override;
     virtual void stopSpeaking() override;
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void searchWithSpotlight() override;
 #endif
 

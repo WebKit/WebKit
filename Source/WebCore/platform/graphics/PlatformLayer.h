@@ -26,7 +26,7 @@
 #ifndef PlatformLayer_h
 #define PlatformLayer_h
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 OBJC_CLASS CALayer;
 typedef CALayer PlatformLayer;
 #elif PLATFORM(WIN) && USE(CA)

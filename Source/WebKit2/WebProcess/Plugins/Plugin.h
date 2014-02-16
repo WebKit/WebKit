@@ -35,7 +35,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "LayerHostingContext.h"
 
 OBJC_CLASS NSObject;
@@ -79,7 +79,7 @@ public:
         String mimeType;
         bool isFullFramePlugin;
         bool shouldUseManualLoader;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         LayerHostingMode layerHostingMode;
 #endif
 
@@ -125,7 +125,7 @@ public:
     // Tells the plug-in to draw itself into a bitmap, and return that.
     virtual PassRefPtr<ShareableBitmap> snapshot() = 0;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // If a plug-in is using the Core Animation drawing model, this returns its plug-in layer.
     virtual PlatformLayer* pluginLayer() = 0;
 #endif
@@ -218,7 +218,7 @@ public:
     // Get the NPObject that corresponds to the plug-in's scriptable object. Returns a retained object.
     virtual NPObject* pluginScriptableNPObject() = 0;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Tells the plug-in about window focus changes.
     virtual void windowFocusChanged(bool) = 0;
 
@@ -258,7 +258,7 @@ public:
     virtual WebCore::Scrollbar* horizontalScrollbar() = 0;
     virtual WebCore::Scrollbar* verticalScrollbar() = 0;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return 0; }
     virtual NSObject *accessibilityObject() const { return 0; }
 #endif

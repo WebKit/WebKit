@@ -73,7 +73,7 @@ public:
     void viewStateDidChange(WebCore::ViewState::Flags changed);
     void setLayerHostingMode(LayerHostingMode);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void platformViewStateDidChange(WebCore::ViewState::Flags changed);
     void setDeviceScaleFactor(float);
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates);
@@ -142,7 +142,7 @@ private:
     bool shouldCreateTransientPaintingSnapshot() const;
 
     // WebCore::PluginViewBase
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual PlatformLayer* platformLayer() const;
 #endif
     virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*);
@@ -192,7 +192,7 @@ private:
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
     virtual void willSendEventToPlugin();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus);
     virtual void setComplexTextInputState(PluginComplexTextInputState);
     virtual mach_port_t compositingRenderServerPort();

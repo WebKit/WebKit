@@ -2774,7 +2774,7 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
     if (m_renderView.document().ownerElement())
         return false;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (viewHasTransparentBackground())
         return false;
 
@@ -3005,7 +3005,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForHorizontalScrollbar->setName("horizontal scrollbar container");
 
 #endif
-#if PLATFORM(MAC) && USE(CA)
+#if PLATFORM(COCOA) && USE(CA)
             m_layerForHorizontalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
             m_overflowControlsHostLayer->addChild(m_layerForHorizontalScrollbar.get());
@@ -3028,7 +3028,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #ifndef NDEBUG
             m_layerForVerticalScrollbar->setName("vertical scrollbar container");
 #endif
-#if PLATFORM(MAC) && USE(CA)
+#if PLATFORM(COCOA) && USE(CA)
             m_layerForVerticalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
             m_overflowControlsHostLayer->addChild(m_layerForVerticalScrollbar.get());
@@ -3051,7 +3051,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #ifndef NDEBUG
             m_layerForScrollCorner->setName("scroll corner");
 #endif
-#if PLATFORM(MAC) && USE(CA)
+#if PLATFORM(COCOA) && USE(CA)
             m_layerForScrollCorner->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
             m_overflowControlsHostLayer->addChild(m_layerForScrollCorner.get());

@@ -41,7 +41,7 @@ void Plugin::Parameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << mimeType;
     encoder << isFullFramePlugin;
     encoder << shouldUseManualLoader;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     encoder.encodeEnum(layerHostingMode);
 #endif
 }
@@ -64,7 +64,7 @@ bool Plugin::Parameters::decode(IPC::ArgumentDecoder& decoder, Parameters& param
         return false;
     if (!decoder.decode(parameters.shouldUseManualLoader))
         return false;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (!decoder.decodeEnum(parameters.layerHostingMode))
         return false;
 #endif

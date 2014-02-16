@@ -92,7 +92,7 @@
 #include "InjectedBundlePageContextMenuClient.h"
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "DictionaryPopupInfo.h"
 #include "LayerHostingContext.h"
 #include "ViewGestureGeometryCollector.h"
@@ -227,7 +227,7 @@ public:
     void layoutIfNeeded();
 
     // -- Called from WebCore clients.
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*, bool saveCommands);
 #elif !PLATFORM(GTK)
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
@@ -375,7 +375,7 @@ public:
     LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
     void setLayerHostingMode(unsigned);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void updatePluginsActiveAndFocusedState();
     const WebCore::FloatRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
     const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates() const { return m_windowFrameInUnflippedScreenCoordinates; }
@@ -389,7 +389,7 @@ public:
 #endif // !PLATFORM(IOS)
 
     void updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor);
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
 
     bool windowIsFocused() const;
     bool windowAndWebPageAreFocused() const;
@@ -512,7 +512,7 @@ public:
 
     void didChangeSelection();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
     WKAccessibilityWebPageObject* accessibilityRemoteObject();
     NSObject *accessibilityObjectForMainFramePlugin();
@@ -561,7 +561,7 @@ public:
     // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
     void dummy(bool&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void performDictionaryLookupForSelection(WebCore::Frame*, const WebCore::VisibleSelection&);
 
     bool isSpeaking();
@@ -594,7 +594,7 @@ public:
     void beginPrinting(uint64_t frameID, const PrintInfo&);
     void endPrinting();
     void computePagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void drawRectToImage(uint64_t frameID, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, uint64_t callbackID);
     void drawPagesToPDF(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, uint64_t callbackID);
 #elif PLATFORM(GTK)
@@ -625,7 +625,7 @@ public:
 
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void handleAlternativeTextUIResult(const String&);
 #endif
 
@@ -671,14 +671,14 @@ public:
     bool scrollingPerformanceLoggingEnabled() const { return m_scrollingPerformanceLoggingEnabled; }
     void setScrollingPerformanceLoggingEnabled(bool);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool shouldUsePDFPlugin() const;
     bool pdfPluginEnabled() const { return m_pdfPluginEnabled; }
     void setPDFPluginEnabled(bool enabled) { m_pdfPluginEnabled = enabled; }
 #endif
 
     void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID);
 #endif
 
@@ -731,12 +731,12 @@ private:
     static void convertSelectionRectsToRootView(WebCore::FrameView*, Vector<WebCore::SelectionRect>&);
     PassRefPtr<WebCore::Range> rangeForWebSelectionAtPosition(const WebCore::IntPoint&, const WebCore::VisiblePosition&, WKSelectionFlags&);
 #endif
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
 #endif
     bool performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, WebCore::KeyboardEvent*);
 #endif
 
@@ -823,7 +823,7 @@ private:
     void suspendActiveDOMObjectsAndAnimations();
     void resumeActiveDOMObjectsAndAnimations();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
     void performDictionaryLookupForRange(WebCore::Frame*, WebCore::Range*, NSDictionary *options);
 
@@ -948,7 +948,7 @@ private:
     // The layer hosting mode.
     LayerHostingMode m_layerHostingMode;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool m_pdfPluginEnabled;
 
     bool m_hasCachedWindowFrame;

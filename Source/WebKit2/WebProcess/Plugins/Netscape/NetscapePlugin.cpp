@@ -62,7 +62,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     , m_pluginModule(pluginModule)
     , m_npWindow()
     , m_isStarted(false)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_isWindowed(false)
 #else
     , m_isWindowed(true)
@@ -72,7 +72,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     , m_shouldUseManualLoader(false)
     , m_hasCalledSetWindow(false)
     , m_nextTimerID(0)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_drawingModel(static_cast<NPDrawingModel>(-1))
     , m_eventModel(static_cast<NPEventModel>(-1))
     , m_pluginReturnsNonretainedLayer(!m_pluginModule->pluginQuirks().contains(PluginQuirks::ReturnsRetainedCoreAnimationLayer))
@@ -1025,7 +1025,7 @@ Scrollbar* NetscapePlugin::verticalScrollbar()
 
 bool NetscapePlugin::supportsSnapshotting() const
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     return m_pluginModule && m_pluginModule->pluginQuirks().contains(PluginQuirks::SupportsSnapshotting);
 #endif
     return false;

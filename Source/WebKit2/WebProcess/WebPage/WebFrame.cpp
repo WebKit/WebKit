@@ -71,7 +71,7 @@
 #include <WebCore/TextResourceDecoder.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <WebCore/LegacyWebArchive.h>
 #endif
 
@@ -734,7 +734,7 @@ void WebFrame::setTextDirection(const String& direction)
         m_coreFrame->editor().setBaseWritingDirection(RightToLeftWritingDirection);
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context)
 {
     RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(coreFrame()->document(), [this, callback, context](Frame& frame) -> bool {

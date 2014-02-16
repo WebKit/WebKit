@@ -400,7 +400,7 @@ static NPError NPN_PostURLNotify(NPP npp, const char* url, const char* target, u
     return NPERR_NO_ERROR;
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 // Whether the browser supports compositing of Core Animation plug-ins.
 static const unsigned WKNVSupportsCompositingCoreAnimationPluginsBool = 74656;
 
@@ -441,7 +441,7 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = plugin->isPrivateBrowsingEnabled();
             break;
         }
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         case NPNVsupportsCoreGraphicsBool:
             // Always claim to support the Core Graphics drawing model.
             *(NPBool*)value = true;
@@ -546,7 +546,7 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
 static NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
 {
     switch (variable) {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         case NPPVpluginDrawingModel: {
             RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
             
@@ -940,7 +940,7 @@ static void NPN_UnscheduleTimer(NPP npp, uint32_t timerID)
     plugin->unscheduleTimer(timerID);
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 static NPError NPN_PopUpContextMenu(NPP npp, NPMenu* menu)
 {
     RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
@@ -1022,7 +1022,7 @@ static void initializeBrowserFuncs(NPNetscapeFuncs &netscapeFuncs)
     netscapeFuncs.getauthenticationinfo = NPN_GetAuthenticationInfo;
     netscapeFuncs.scheduletimer = NPN_ScheduleTimer;
     netscapeFuncs.unscheduletimer = NPN_UnscheduleTimer;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     netscapeFuncs.popupcontextmenu = NPN_PopUpContextMenu;
     netscapeFuncs.convertpoint = NPN_ConvertPoint;
 #else

@@ -109,7 +109,7 @@ private:
     virtual WebCore::URL readURLFromPasteboard(int index, const String& pasteboardType) override;
     virtual long changeCount() override;
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void getTypes(Vector<String>& types, const String& pasteboardName) override;
     virtual PassRefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) override;
     virtual void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) override;

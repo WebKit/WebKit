@@ -36,7 +36,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/SecurityOrigin.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
 #endif
@@ -78,7 +78,7 @@ private:
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual bool supportsSnapshotting() const;
     virtual PassRefPtr<ShareableBitmap> snapshot();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual PlatformLayer* pluginLayer();
 #endif
     virtual bool isTransparent();
@@ -112,7 +112,7 @@ private:
     virtual bool handlesPageScaleFactor();
     
     virtual NPObject* pluginScriptableNPObject();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void windowFocusChanged(bool);
     virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     virtual void windowVisibilityChanged(bool);
@@ -159,7 +159,7 @@ private:
     void cancelStreamLoad(uint64_t streamID);
     void cancelManualStreamLoad();
     void setStatusbarText(const String& statusbarText);
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void pluginFocusOrWindowFocusChanged(bool);
     void setComplexTextInputState(uint64_t);
     void setLayerHostingContextID(uint32_t);
@@ -214,7 +214,7 @@ private:
     OwnPtr<PluginCreationParameters> m_pendingPluginCreationParameters;
     bool m_waitingOnAsynchronousInitialization;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<CALayer> m_pluginLayer;
 #endif
 

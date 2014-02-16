@@ -94,7 +94,7 @@
 #endif
 
 #if ENABLE(NETWORK_PROCESS)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "CookieStorageShim.h"
 #endif
 #include "NetworkProcessConnection.h"
@@ -155,10 +155,8 @@ WebProcess::WebProcess()
     , m_shouldTrackVisitedLinks(true)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     , m_compositingRenderServerPort(MACH_PORT_NULL)
-#endif
-#if PLATFORM(MAC)
     , m_clearResourceCachesDispatchGroup(0)
 #endif
     , m_fullKeyboardAccessEnabled(false)
@@ -340,7 +338,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     if (parameters.shouldUseFontSmoothing)
         setShouldUseFontSmoothing(true);
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFNETWORK)
     SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
 #endif
 
@@ -351,7 +349,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     m_usesNetworkProcess = parameters.usesNetworkProcess;
     ensureNetworkProcessConnection();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (usesNetworkProcess())
         CookieStorageShim::shared().initialize();
 #endif
@@ -380,7 +378,7 @@ void WebProcess::ensureNetworkProcessConnection()
         Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0))
         return;
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
 #elif USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
@@ -469,14 +467,14 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
 void WebProcess::ensurePrivateBrowsingSession(uint64_t sessionID)
 {
-#if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)
+#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     WebFrameNetworkingContext::ensurePrivateBrowsingSession(sessionID);
 #endif
 }
 
 void WebProcess::destroyPrivateBrowsingSession(uint64_t sessionID)
 {
-#if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)
+#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     SessionTracker::destroySession(sessionID);
 #endif
 }
@@ -1058,7 +1056,7 @@ void WebProcess::ensureWebToDatabaseProcessConnection()
         Messages::WebProcessProxy::GetDatabaseProcessConnection::Reply(encodedConnectionIdentifier), 0))
         return;
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
     if (IPC::Connection::identifierIsNull(connectionIdentifier))
         return;
@@ -1136,7 +1134,7 @@ void WebProcess::releasePageCache()
     pageCache()->setCapacity(savedPageCacheCapacity);
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void WebProcess::initializeProcessName(const ChildProcessInitializationParameters&)
 {
 }
@@ -1186,7 +1184,7 @@ void WebProcess::nonVisibleProcessCleanupTimerFired(Timer<WebProcess>*)
     if (!m_pagesInWindows.isEmpty())
         return;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     wkDestroyRenderingResources();
 #endif
 }

@@ -49,7 +49,7 @@ private:
 
     virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::Clipboard&, WebCore::Frame&, bool linkDrag = false) override;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String&, WebCore::Frame*) override;
 #endif
 

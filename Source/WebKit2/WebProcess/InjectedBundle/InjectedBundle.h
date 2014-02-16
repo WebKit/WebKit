@@ -43,7 +43,7 @@ typedef struct _GModule GModule;
 #include <Eina.h>
 #endif
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
 OBJC_CLASS NSBundle;
 #endif
 
@@ -59,7 +59,7 @@ class Connection;
 
 namespace WebKit {
 
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
 typedef NSBundle *PlatformBundle;
 #elif PLATFORM(GTK)
 typedef ::GModule* PlatformBundle;

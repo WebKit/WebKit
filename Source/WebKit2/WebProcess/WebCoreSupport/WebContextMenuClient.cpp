@@ -74,7 +74,7 @@ void WebContextMenuClient::downloadURL(const URL&)
     ASSERT_NOT_REACHED();
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void WebContextMenuClient::searchWithGoogle(const Frame* frame)
 {
     String searchString = frame->editor().selectedText();

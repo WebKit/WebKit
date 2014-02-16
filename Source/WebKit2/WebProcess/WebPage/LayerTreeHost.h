@@ -89,7 +89,7 @@ public:
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection*, IPC::MessageDecoder&) = 0;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void setLayerHostingMode(LayerHostingMode) { }
 #endif
 

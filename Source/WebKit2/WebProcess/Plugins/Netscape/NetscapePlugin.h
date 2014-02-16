@@ -60,7 +60,7 @@ public:
     // In-process NetscapePlugins don't support asynchronous initialization.
     virtual bool isBeingAsynchronouslyInitialized() const { return false; }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     NPError setDrawingModel(NPDrawingModel);
     NPError setEventModel(NPEventModel);
     NPBool convertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double& destX, double& destY, NPCoordinateSpace destSpace);
@@ -180,7 +180,7 @@ private:
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual PassRefPtr<ShareableBitmap> snapshot();
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual PlatformLayer* pluginLayer();
 #endif
     virtual bool isTransparent();
@@ -222,7 +222,7 @@ private:
     virtual unsigned countFindMatches(const String&, WebCore::FindOptions, unsigned maxMatchCount) override;
     virtual bool findString(const String&, WebCore::FindOptions, unsigned maxMatchCount) override;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     virtual void windowFocusChanged(bool);
     virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     virtual void windowVisibilityChanged(bool);

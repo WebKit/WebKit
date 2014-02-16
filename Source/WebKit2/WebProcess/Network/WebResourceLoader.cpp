@@ -107,7 +107,7 @@ void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResp
 
     ResourceResponse responseCopy(response);
     // FIXME: This should use CertificateInfo to avoid the platform ifdefs. See https://bugs.webkit.org/show_bug.cgi?id=124724.
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     responseCopy.setCertificateChain(certificateInfo.certificateChain());
 #elif USE(SOUP)
     responseCopy.setSoupMessageCertificate(certificateInfo.certificate());

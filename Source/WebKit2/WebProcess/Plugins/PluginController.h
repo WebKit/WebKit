@@ -28,7 +28,7 @@
 
 #include <wtf/Forward.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "PluginComplexTextInputState.h"
 #endif
 
@@ -95,7 +95,7 @@ public:
     // Tells the controller that we're about to dispatch an event to the plug-in.
     virtual void willSendEventToPlugin() = 0;
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // Tells the controller that the plug-in focus or window focus did change.
     virtual void pluginFocusOrWindowFocusChanged(bool) = 0;
 
