@@ -164,6 +164,12 @@ void FrameSelection::moveTo(const Position &base, const Position &extent, EAffin
     setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
+void FrameSelection::moveTo(const Position& base, const Position& extent, bool selectionHasDirection, bool shouldSetFocus)
+{
+    setSelection(VisibleSelection(base, extent, DOWNSTREAM, selectionHasDirection),
+        defaultSetSelectionOptions() | (shouldSetFocus ? 0 : DoNotSetFocus));
+}
+
 void DragCaretController::setCaretPosition(const VisiblePosition& position)
 {
     if (Node* node = m_position.deepEquivalent().deprecatedNode())

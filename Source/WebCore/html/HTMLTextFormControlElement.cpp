@@ -306,21 +306,16 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     Position endPosition;
     if (start == end)
         endPosition = startPosition;
-    else
-        endPosition = positionForIndex(innerText, end);
+    else {
+        if (direction == SelectionHasBackwardDirection) {
+            endPosition = startPosition;
+            startPosition = positionForIndex(innerText, end);
+        } else
+            endPosition = positionForIndex(innerText, end);
+    }
 
-    VisibleSelection newSelection;
-    if (direction == SelectionHasBackwardDirection)
-        newSelection = VisibleSelection(endPosition, startPosition);
-    else
-        newSelection = VisibleSelection(startPosition, endPosition);
-    newSelection.setIsDirectional(direction != SelectionHasNoDirection);
-
-    FrameSelection::SetSelectionOptions options = FrameSelection::defaultSetSelectionOptions();
-    if (hasFocus)
-        options |= FrameSelection::DoNotSetFocus;
     if (Frame* frame = document().frame())
-        frame->selection().setSelection(newSelection, options);
+        frame->selection().moveTo(startPosition, endPosition, direction != SelectionHasNoDirection, !hasFocus);
 }
 
 int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& position) const

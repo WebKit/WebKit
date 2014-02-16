@@ -1,3 +1,19 @@
+2014-02-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        setSelectionRange shouldn't directly instantiate VisibleSelection
+        https://bugs.webkit.org/show_bug.cgi?id=128881
+
+        Reviewed by Andreas Kling.
+
+        Added a new version of moveTo for setSelectionRange.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::moveTo): Added.
+        * editing/FrameSelection.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setSelectionRange): Use the newly added FrameSelection::moveTo
+        instead of manually instantiating VisibleSelection here.
+
 2014-02-16  Dan Bernstein  <mitz@apple.com>
 
         Stop using PLATFORM(MAC) in Source except where it means “OS X but not iOS”
