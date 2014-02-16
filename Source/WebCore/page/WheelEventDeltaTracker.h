@@ -56,7 +56,7 @@ public:
     DominantScrollGestureDirection dominantScrollGestureDirection() const;
 
 private:
-    Deque<FloatSize, recentEventCount> m_recentWheelEventDeltas;
+    Deque<FloatSize> m_recentWheelEventDeltas;
     bool m_isTrackingDeltas;
 
 };

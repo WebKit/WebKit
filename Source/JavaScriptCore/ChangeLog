@@ -1,5 +1,17 @@
 2014-02-15  Filip Pizlo  <fpizlo@apple.com>
 
+        Vector with inline capacity should work with non-PODs
+        https://bugs.webkit.org/show_bug.cgi?id=128864
+
+        Reviewed by Michael Saboff.
+        
+        Deques no longer have inline capacity because it was broken, and we didn't need it
+        here anyway.
+
+        * dfg/DFGWorklist.h:
+
+2014-02-15  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, roll out r164166.
 
         This broke three unique tests:

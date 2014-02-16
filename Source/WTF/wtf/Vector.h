@@ -374,7 +374,7 @@ public:
         deallocateBuffer(buffer());
     }
     
-    void swap(VectorBuffer<T, 0>& other)
+    void swap(VectorBuffer<T, 0>& other, size_t, size_t)
     {
         std::swap(m_buffer, other.m_buffer);
         std::swap(m_capacity, other.m_capacity);
@@ -464,20 +464,20 @@ public:
         Base::reallocateBuffer(newCapacity);
     }
 
-    void swap(VectorBuffer& other)
+    void swap(VectorBuffer& other, size_t mySize, size_t otherSize)
     {
         if (buffer() == inlineBuffer() && other.buffer() == other.inlineBuffer()) {
-            std::swap(m_inlineBuffer, other.m_inlineBuffer);
+            swapInlineBuffer(other, mySize, otherSize);
             std::swap(m_capacity, other.m_capacity);
         } else if (buffer() == inlineBuffer()) {
             m_buffer = other.m_buffer;
             other.m_buffer = other.inlineBuffer();
-            std::swap(m_inlineBuffer, other.m_inlineBuffer);
+            swapInlineBuffer(other, mySize, 0);
             std::swap(m_capacity, other.m_capacity);
         } else if (other.buffer() == other.inlineBuffer()) {
             other.m_buffer = m_buffer;
             m_buffer = inlineBuffer();
-            std::swap(m_inlineBuffer, other.m_inlineBuffer);
+            swapInlineBuffer(other, 0, otherSize);
             std::swap(m_capacity, other.m_capacity);
         } else {
             std::swap(m_buffer, other.m_buffer);
@@ -510,6 +510,32 @@ protected:
 private:
     using Base::m_buffer;
     using Base::m_capacity;
+    
+    void swapInlineBuffer(VectorBuffer& other, size_t mySize, size_t otherSize)
+    {
+        // FIXME: We could make swap part of VectorTypeOperations
+        // https://bugs.webkit.org/show_bug.cgi?id=128863
+        
+        if (std::is_pod<T>::value)
+            std::swap(m_inlineBuffer, other.m_inlineBuffer);
+        else
+            swapInlineBuffers(inlineBuffer(), other.inlineBuffer(), mySize, otherSize);
+    }
+    
+    static void swapInlineBuffers(T* left, T* right, size_t leftSize, size_t rightSize)
+    {
+        if (left == right)
+            return;
+        
+        ASSERT(leftSize <= inlineCapacity);
+        ASSERT(rightSize <= inlineCapacity);
+        
+        size_t swapBound = std::min(leftSize, rightSize);
+        for (unsigned i = 0; i < swapBound; ++i)
+            std::swap(left[i], right[i]);
+        VectorTypeOperations<T>::move(left + swapBound, left + leftSize, right + swapBound);
+        VectorTypeOperations<T>::move(right + swapBound, right + rightSize, left + swapBound);
+    }
 
     T* inlineBuffer() { return reinterpret_cast_ptr<T*>(m_inlineBuffer); }
     const T* inlineBuffer() const { return reinterpret_cast_ptr<const T*>(m_inlineBuffer); }
@@ -686,8 +712,8 @@ public:
 
     void swap(Vector<T, inlineCapacity, OverflowHandler>& other)
     {
+        Base::swap(other, m_size, other.m_size);
         std::swap(m_size, other.m_size);
-        Base::swap(other);
     }
 
     void reverse();

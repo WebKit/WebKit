@@ -1,3 +1,17 @@
+2014-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Vector with inline capacity should work with non-PODs
+        https://bugs.webkit.org/show_bug.cgi?id=128864
+
+        Reviewed by Michael Saboff.
+        
+        This test experiences really bizarre behavior on trunk without the rest of
+        this fix. On my machine, it usually times out because it gets itself into an
+        infinite loop of some kind. With the fix, it passes.
+
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+
 2014-02-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK1] Do not include cairo header in the public headers

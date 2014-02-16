@@ -1,3 +1,59 @@
+2014-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Vector with inline capacity should work with non-PODs
+        https://bugs.webkit.org/show_bug.cgi?id=128864
+
+        Reviewed by Michael Saboff.
+        
+        Previously, we would copy the inline storage of a vector as if it was a bag of bits.
+        This presumed that the element type was relocatable. In general this is only true for
+        PODs.
+        
+        This patch changes this by introducing a swap operation over inline storage. This swap
+        operation requires being told about the size that is in use.
+        
+        Deques would have required some cleverness to make this work, because the swap
+        operation needs to know which subset of elements are in-use and assumes that a size is
+        sufficient for this. That's not true for deques. Instead of trying to do very clever
+        things, I just removed the inline capacity option from Deque. I believe that this is
+        fine since there are only two users of Deque with inline capacity, and both of them
+        appear to be allocated rarely enough that inline capacity probably doesn't help much.
+
+        * wtf/Deque.h:
+        (WTF::DequeIterator::DequeIterator):
+        (WTF::DequeConstIterator::DequeConstIterator):
+        (WTF::Deque<T>::checkValidity):
+        (WTF::Deque<T>::checkIndexValidity):
+        (WTF::Deque<T>::invalidateIterators):
+        (WTF::Deque<T>::Deque):
+        (WTF::=):
+        (WTF::Deque<T>::destroyAll):
+        (WTF::Deque<T>::~Deque):
+        (WTF::Deque<T>::swap):
+        (WTF::Deque<T>::clear):
+        (WTF::Deque<T>::expandCapacityIfNeeded):
+        (WTF::Deque<T>::expandCapacity):
+        (WTF::Deque<T>::append):
+        (WTF::Deque<T>::prepend):
+        (WTF::Deque<T>::removeFirst):
+        (WTF::Deque<T>::removeLast):
+        (WTF::Deque<T>::remove):
+        (WTF::DequeIteratorBase<T>::checkValidity):
+        (WTF::DequeIteratorBase<T>::addToIteratorsList):
+        (WTF::DequeIteratorBase<T>::removeFromIteratorsList):
+        (WTF::DequeIteratorBase<T>::DequeIteratorBase):
+        (WTF::DequeIteratorBase<T>::~DequeIteratorBase):
+        (WTF::DequeIteratorBase<T>::isEqual):
+        (WTF::DequeIteratorBase<T>::increment):
+        (WTF::DequeIteratorBase<T>::decrement):
+        (WTF::DequeIteratorBase<T>::after):
+        (WTF::DequeIteratorBase<T>::before):
+        * wtf/Vector.h:
+        (WTF::VectorBuffer::swap):
+        (WTF::VectorBuffer::swapInlineBuffer):
+        (WTF::VectorBuffer::swapInlineBuffers):
+        (WTF::Vector::swap):
+
 2014-02-15  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Remove 'static' specifier from free inline functions in StringImpl.h

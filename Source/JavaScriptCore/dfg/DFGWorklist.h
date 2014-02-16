@@ -89,7 +89,7 @@ private:
     void dump(const MutexLocker&, PrintStream&) const;
 
     // Used to inform the thread about what work there is left to do.
-    Deque<RefPtr<Plan>, 16> m_queue;
+    Deque<RefPtr<Plan>> m_queue;
     
     // Used to answer questions about the current state of a code block. This
     // is particularly great for the cti_optimize OSR slow path, which wants
