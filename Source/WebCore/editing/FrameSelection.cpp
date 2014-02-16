@@ -152,10 +152,10 @@ void FrameSelection::moveTo(const Position &pos, EAffinity affinity, EUserTrigge
     setSelection(VisibleSelection(pos, affinity, m_selection.isDirectional()), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveTo(const Range *r, EAffinity affinity, EUserTriggered userTriggered)
+void FrameSelection::moveTo(const Range* range)
 {
-    VisibleSelection selection = r ? VisibleSelection(r->startPosition(), r->endPosition(), affinity) : VisibleSelection(Position(), Position(), affinity);
-    setSelection(selection, defaultSetSelectionOptions(userTriggered));
+    VisibleSelection selection = range ? VisibleSelection(range->startPosition(), range->endPosition()) : VisibleSelection();
+    setSelection(selection);
 }
 
 void FrameSelection::moveTo(const Position &base, const Position &extent, EAffinity affinity, EUserTriggered userTriggered)

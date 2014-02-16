@@ -94,7 +94,7 @@ using WebCore::VisiblePosition;
 {
     Range *range = core(self);
     FrameSelection frameSelection;
-    frameSelection.moveTo(range, DOWNSTREAM);
+    frameSelection.moveTo(range);
     
     TextGranularity granularity = CharacterGranularity;
     // Until WebKit supports vertical layout, "down" is equivalent to "forward by a line" and
@@ -121,7 +121,7 @@ using WebCore::VisiblePosition;
 {
     Range *range = core(self);
     FrameSelection frameSelection;
-    frameSelection.moveTo(range, DOWNSTREAM);
+    frameSelection.moveTo(range);
     
     for (UInt32 i = 0; i < amount; i++)
         frameSelection.modify(FrameSelection::AlterationExtend, (SelectionDirection)direction, CharacterGranularity);    
