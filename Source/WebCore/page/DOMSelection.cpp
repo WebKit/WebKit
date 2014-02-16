@@ -204,7 +204,7 @@ void DOMSelection::collapse(Node* node, int offset, ExceptionCode& ec)
         return;
 
     // FIXME: Eliminate legacy editing positions
-    m_frame->selection().moveTo(VisiblePosition(createLegacyEditingPosition(node, offset), DOWNSTREAM));
+    m_frame->selection().moveTo(createLegacyEditingPosition(node, offset), DOWNSTREAM);
 }
 
 void DOMSelection::collapseToEnd(ExceptionCode& ec)
@@ -219,7 +219,7 @@ void DOMSelection::collapseToEnd(ExceptionCode& ec)
         return;
     }
 
-    m_frame->selection().moveTo(VisiblePosition(selection.end(), DOWNSTREAM));
+    m_frame->selection().moveTo(selection.end(), DOWNSTREAM);
 }
 
 void DOMSelection::collapseToStart(ExceptionCode& ec)
@@ -234,7 +234,7 @@ void DOMSelection::collapseToStart(ExceptionCode& ec)
         return;
     }
 
-    m_frame->selection().moveTo(VisiblePosition(selection.start(), DOWNSTREAM));
+    m_frame->selection().moveTo(selection.start(), DOWNSTREAM);
 }
 
 void DOMSelection::empty()
@@ -258,10 +258,7 @@ void DOMSelection::setBaseAndExtent(Node* baseNode, int baseOffset, Node* extent
         return;
 
     // FIXME: Eliminate legacy editing positions
-    VisiblePosition visibleBase = VisiblePosition(createLegacyEditingPosition(baseNode, baseOffset), DOWNSTREAM);
-    VisiblePosition visibleExtent = VisiblePosition(createLegacyEditingPosition(extentNode, extentOffset), DOWNSTREAM);
-
-    m_frame->selection().moveTo(visibleBase, visibleExtent);
+    m_frame->selection().moveTo(createLegacyEditingPosition(baseNode, baseOffset), createLegacyEditingPosition(extentNode, extentOffset), DOWNSTREAM);
 }
 
 void DOMSelection::setPosition(Node* node, int offset, ExceptionCode& ec)
@@ -277,7 +274,7 @@ void DOMSelection::setPosition(Node* node, int offset, ExceptionCode& ec)
         return;
 
     // FIXME: Eliminate legacy editing positions
-    m_frame->selection().moveTo(VisiblePosition(createLegacyEditingPosition(node, offset), DOWNSTREAM));
+    m_frame->selection().moveTo(createLegacyEditingPosition(node, offset), DOWNSTREAM);
 }
 
 void DOMSelection::modify(const String& alterString, const String& directionString, const String& granularityString)
@@ -349,7 +346,7 @@ void DOMSelection::extend(Node* node, int offset, ExceptionCode& ec)
         return;
 
     // FIXME: Eliminate legacy editing positions
-    m_frame->selection().setExtent(VisiblePosition(createLegacyEditingPosition(node, offset), DOWNSTREAM));
+    m_frame->selection().setExtent(createLegacyEditingPosition(node, offset), DOWNSTREAM);
 }
 
 PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
@@ -371,8 +368,7 @@ PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
         return Range::create(shadowAncestor->document(), container, offset, container, offset);
     }
 
-    const VisibleSelection& selection = m_frame->selection().selection();
-    return selection.firstRange();
+    return m_frame->selection().selection().firstRange();
 }
 
 void DOMSelection::removeAllRanges()
@@ -392,7 +388,7 @@ void DOMSelection::addRange(Range* r)
     FrameSelection& selection = m_frame->selection();
 
     if (selection.isNone()) {
-        selection.setSelection(VisibleSelection(r));
+        selection.moveTo(r);
         return;
     }
 
@@ -400,23 +396,25 @@ void DOMSelection::addRange(Range* r)
     if (r->compareBoundaryPoints(Range::START_TO_START, range.get(), IGNORE_EXCEPTION) == -1) {
         // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
         if (r->compareBoundaryPoints(Range::START_TO_END, range.get(), IGNORE_EXCEPTION) > -1) {
-            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), IGNORE_EXCEPTION) == -1)
+            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), IGNORE_EXCEPTION) == -1) {
                 // The original range and r intersect.
-                selection.setSelection(VisibleSelection(r->startPosition(), range->endPosition(), DOWNSTREAM));
-            else
+                selection.moveTo(r->startPosition(), range->endPosition(), DOWNSTREAM);
+            } else {
                 // r contains the original range.
-                selection.setSelection(VisibleSelection(r));
+                selection.moveTo(r);
+            }
         }
     } else {
         // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
         ExceptionCode ec = 0;
         if (r->compareBoundaryPoints(Range::END_TO_START, range.get(), ec) < 1 && !ec) {
-            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), IGNORE_EXCEPTION) == -1)
+            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), IGNORE_EXCEPTION) == -1) {
                 // The original range contains r.
-                selection.setSelection(VisibleSelection(range.get()));
-            else
+                selection.moveTo(range.get());
+            } else {
                 // The original range and r intersect.
-                selection.setSelection(VisibleSelection(range->startPosition(), r->endPosition(), DOWNSTREAM));
+                selection.moveTo(range->startPosition(), r->endPosition(), DOWNSTREAM);
+            }
         }
     }
 }
