@@ -1,3 +1,10 @@
+2014-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Speculative iOS build fix after r164184.
+
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler):
+
 2014-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         DOMSelection shouldn't instantiate VisibleSelection everywhere
