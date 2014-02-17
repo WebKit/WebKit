@@ -399,6 +399,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/MutableDictionary.h \
 	Source/WebKit2/Shared/NativeWebKeyboardEvent.h \
 	Source/WebKit2/Shared/NativeWebMouseEvent.h \
+	Source/WebKit2/Shared/NativeWebTouchEvent.h \
 	Source/WebKit2/Shared/NativeWebWheelEvent.h \
 	Source/WebKit2/Shared/NavigationActionData.cpp \
 	Source/WebKit2/Shared/NavigationActionData.h \

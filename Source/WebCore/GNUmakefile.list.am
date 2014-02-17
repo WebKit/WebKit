@@ -6043,6 +6043,8 @@ platform_sources += \
 	Source/WebCore/platform/PlatformScreen.h \
 	Source/WebCore/platform/PlatformStrategies.cpp \
 	Source/WebCore/platform/PlatformStrategies.h \
+	Source/WebCore/platform/PlatformTouchEvent.h \
+	Source/WebCore/platform/PlatformTouchPoint.h \
 	Source/WebCore/platform/PlatformWheelEvent.h \
 	Source/WebCore/platform/PopupMenuClient.h \
 	Source/WebCore/platform/PopupMenu.h \

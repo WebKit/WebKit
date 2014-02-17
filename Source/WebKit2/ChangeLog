@@ -1,3 +1,9 @@
+2014-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header files.
+
 2014-02-11  Alberto Garcia  <berto@igalia.com>
 
         O_CLOEXEC in shm_open does not work on FreeBSD
