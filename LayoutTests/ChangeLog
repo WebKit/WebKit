@@ -1,3 +1,9 @@
+2014-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, add a useful comment for this test.
+
+        * js/regress/script-tests/marsaglia-osr-entry.js:
+
 2014-02-16  Andreas Kling  <akling@apple.com>
 
         Ensure that removing an iframe from the DOM tree disconnects its Frame.

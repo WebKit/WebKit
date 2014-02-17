@@ -1,3 +1,6 @@
+// This is a great test for checking if OSR entry works at all. It's great for debugging
+// fundamental OSR entry bugs.
+
 function marsaglia(m_z, m_w, n) {
     var result;
     for (var i = 0; i < n; ++i) {
