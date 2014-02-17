@@ -1,3 +1,29 @@
+2014-02-17  Jer Noble  <jer.noble@apple.com>
+
+        [MediaControls][iOS] Make mediacontrols match the system inline controls
+        https://bugs.webkit.org/show_bug.cgi?id=128833
+
+        Reviewed by Eric Carlson.
+
+        Move items slightly, fix button sizes, font sizes, and colors to match the
+        inline controls from MoviePlayer.framework.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-panel):
+        (audio::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-play-button.paused):
+        (audio::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-timeline::-webkit-slider-thumb):
+        (audio::-webkit-media-controls-time-remaining-display):
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.configureInlineControls): Do not add the status text.
+        (ControllerIOS.prototype.updateTime): Call updateProgress().
+        (ControllerIOS.prototype.progressFillStyle): Draw a slightly different color.
+        (ControllerIOS.prototype.updateProgress): Draw white to the left of the currentTime.
+        (ControllerIOS.prototype.formatTime): Single leading zero in the time display fields.
+        (ControllerIOS.prototype.handleTimelineChange): Call updateProgress().
+
 2014-02-17  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Fix missing layout in flexible and content sized columns

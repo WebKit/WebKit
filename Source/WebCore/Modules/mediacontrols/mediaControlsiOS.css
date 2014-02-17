@@ -67,11 +67,11 @@ audio::-webkit-media-controls-panel {
     position: relative;
     bottom: 0;
     width: 100%;
-    padding-top: 1px;
+    padding-bottom: 1px;
     height: 44px;
     line-height: 44px;
     -webkit-user-select: none;
-    background-color: rgba(255, 255, 255, .5);
+    background-color: rgba(245, 245, 245, .75);
 
     display: -webkit-flex;
     -webkit-flex-direction: row;
@@ -136,7 +136,7 @@ audio::-webkit-media-controls-fullscreen-button {
     display: block;
     padding: 0;
     border: 0;
-    background-color: black;
+    background-color: rgba(0, 0, 0, .5);
     -webkit-mask-origin: content-box;
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-size: contain;
@@ -153,24 +153,25 @@ audio::-webkit-media-controls-fullscreen-button:active {
 video::-webkit-media-controls-play-button,
 audio::-webkit-media-controls-play-button {
     margin-left: 34px;
-    margin-right: 13px;
-    width: 19px;
-    height: 17px;
-    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16"><rect x="1" y="0" width="5" height="16" fill="white"/><rect x="12" y="0" width="5" height="16" fill="white"/></svg>');
+    margin-right: 15px;
+    margin-top: 1px;
+    width: 21px;
+    height: 23px;
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="21" height="22"><rect x="1" y="0" width="6" height="22" fill="white"/><rect x="13" y="0" width="6" height="22" fill="white"/></svg>');
 }
 
 video::-webkit-media-controls-play-button.paused,
 audio::-webkit-media-controls-play-button.paused {
-    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16"><path d="M 0,0 18,8 0,16 z" fill="white"/></svg>');
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="21" height="23"><path d="M 0,0.25 21,10.5 0,21.75 z" fill="white"/></svg>');
 }
 
 video::-webkit-media-controls-fullscreen-button,
 audio::-webkit-media-controls-fullscreen-button {
     margin-right: 34px;
     margin-left: 13px;
-    width: 17px;
-    height: 17px;
-    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16px" height="16px"><g stroke="white" fill="transparent"><path d="M .5,5 v -4.5 h 4.5M .5,.5 l 5.5,5.5" /> <path d="M 15.5,11 v 4.5 h -4.5 M 15.5,15.5 l -5.5,-5.5" /></g></svg>')
+    width: 15px;
+    height: 15px;
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="15px" height="15px"><g stroke="white" fill="transparent"><path d="M .5,5 v -4.5 h 4.5M .5,.5 l 5.5,5.5" /> <path d="M 14.5,10 v 4.5 h -4.5 M 14.5,14.5 l -5.5,-5.5" /></g></svg>');
 }
 
 /* Retina images */
@@ -189,19 +190,18 @@ audio::-webkit-media-controls-timeline {
     margin: 0;
 
     border-radius: 1.5px;
-    background-color: black;
 }
 
 video::-webkit-media-controls-timeline::-webkit-slider-thumb,
 audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     border: 0;
-    border-radius: 7.5px;
-    background-color: white !important;
-    color: white;
-    box-shadow: 0 0 1px rgba(0, 0, 0, .5);
+    border-radius: 8px;
+    background-image: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><circle r="7.75" cy="8" cx="8" fill="white" stroke="rgba(0, 0, 0, .25)" stroke-width=".5"/></svg>');
+    background-color: transparent !important;
+    box-shadow: 0 3px 1px -1px rgba(0, 0, 0, .15);
 
     /* rotateZ() forces the layer into compositing mode. Slider 
        thumbs are small, so forcing a compositing layer is inexpensive,
@@ -219,12 +219,12 @@ audio::-webkit-media-controls-time-remaining-display {
     -webkit-justify-content: center;
     -webkit-align-items: center;
     cursor: default;
-    font-size: 10px;
+    font-size: 13px;
     overflow-y: hidden;
     overflow-x: hidden;
-    width: 45px;
-    min-width: 45px;
-    color: black;
+    width: 44px;
+    min-width: 44px;
+    color: rgba(0, 0, 0, .5);
     letter-spacing: normal;
     word-spacing: normal;
     line-height: normal;

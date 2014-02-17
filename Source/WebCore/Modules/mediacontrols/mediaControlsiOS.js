@@ -119,7 +119,6 @@ ControllerIOS.prototype = {
 
     configureInlineControls: function() {
         this.controls.panel.appendChild(this.controls.playButton);
-        this.controls.panel.appendChild(this.controls.statusDisplay);
         this.controls.panel.appendChild(this.controls.timelineBox);
         this.controls.timelineBox.appendChild(this.controls.currentTime);
         this.controls.timelineBox.appendChild(this.controls.timeline);
@@ -142,8 +141,45 @@ ControllerIOS.prototype = {
 
     },
 
+    updateTime: function() {
+        Controller.prototype.updateTime.call(this);
+        this.updateProgress();
+    },
+
     progressFillStyle: function() {
-        return 'rgb(0, 0, 0)';
+        return 'rgba(0, 0, 0, 0.5)';
+    },
+
+    updateProgress: function()
+    {
+        Controller.prototype.updateProgress.call(this);
+
+        var width = this.controls.timeline.offsetWidth;
+        var height = this.controls.timeline.offsetHeight;
+
+        // Magic number, matching the value for ::-webkit-media-controls-timeline::-webkit-slider-thumb
+        // in mediaControlsiOS.css. Since we cannot ask the thumb for its offsetWidth as it's in its own
+        // shadow dom, just hard-code the value.
+        var thumbWidth = 16;
+        var endX = thumbWidth / 2 + (width - thumbWidth) * this.video.currentTime / this.video.duration;
+
+        var context = document.getCSSCanvasContext('2d', 'timeline-' + this.timelineID, width, height);
+        context.fillStyle = 'white';
+        context.fillRect(0, 0, endX, height);
+    },
+
+    formatTime: function(time) {
+        if (isNaN(time))
+            time = 0;
+        var absTime = Math.abs(time);
+        var intSeconds = Math.floor(absTime % 60).toFixed(0);
+        var intMinutes = Math.floor(absTime / 60).toFixed(0);
+        return (time < 0 ? '-' : String()) + String('0' + intMinutes).slice(-1) + ":" + String('00' + intSeconds).slice(-2)
+    },
+
+    handleTimelineChange: function(event) {
+        Controller.prototype.handleTimelineChange.call(this);
+        this.updateProgress();
     },
 
     handlePlayButtonTouchStart: function() {
