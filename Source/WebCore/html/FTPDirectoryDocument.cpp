@@ -338,8 +338,11 @@ void FTPDirectoryDocumentParser::createBasicDocument()
     RefPtr<Element> tableElement = document()->createElement(tableTag, false);
     m_tableElement = toHTMLTableElement(tableElement.get());
     m_tableElement->setAttribute(HTMLNames::idAttr, "ftpDirectoryTable");
+    m_tableElement->setAttribute(HTMLNames::styleAttr, "width:100%");
 
     bodyElement->appendChild(m_tableElement, IGNORE_EXCEPTION);
+
+    document()->processViewport("width=device-width", ViewportArguments::ViewportMeta);
 }
 
 void FTPDirectoryDocumentParser::append(PassRefPtr<StringImpl> inputSource)
