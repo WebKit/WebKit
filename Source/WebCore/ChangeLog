@@ -1,3 +1,46 @@
+2014-02-16  Benjamin Poulain  <benjamin@webkit.org>
+
+        Split compilation state between querySelector and CSS matching
+        https://bugs.webkit.org/show_bug.cgi?id=128869
+
+        Reviewed by Antti Koivisto.
+
+        Cleanup after recent changes:
+        -SelectorCompiler now has a SelectorContext defining if the code is compiled for QuerySelector
+         or for ElementRuleCollector.
+        -Generalize m_selectorCannotMatchAnything by making it part of the FunctionType. FunctionType now
+         fully represent the type of code generation and we don't rely implicitly on m_selectorFragments being
+         empty.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::compileSelector):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        There is no tree marking for QuerySelector, so we can generate a simple selector
+        for the sibling selectors.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::compile):
+        The code is split to make it simpler. The classic code generation has been moved
+        to generateSelectorChecker().
+        The decision on what to generate is reduced to a simple switch-case.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        The code that was previously in compile().
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::markParentElementIfResolvingStyle):
+        We should not generate tree marking on querySelector traversal. Since the constructor
+        now generate a SimpleChecker, it would also be incorrect to attempt to access the checkingContext
+        on the stack.
+        We can just skip the marking entierly.
+
+        * cssjit/SelectorCompiler.h:
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::execute):
+        With the changes of SelectorContext, we can no longer generate a complex checker for querySelector.
+        This code may come back in the future but at the moment it is useless.
+
 2014-02-16  Benjamin Poulain  <bpoulain@apple.com>
 
         The FTP view is squished to the left

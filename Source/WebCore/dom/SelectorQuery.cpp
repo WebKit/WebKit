@@ -308,23 +308,14 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
             void* compiledSelectorChecker = selectorData.compiledSelectorCodeRef.code().executableAddress();
             if (!compiledSelectorChecker && selectorData.compilationStatus == SelectorCompilationStatus::NotCompiled) {
                 JSC::VM* vm = rootNode.document().scriptExecutionContext()->vm();
-                selectorData.compilationStatus = SelectorCompiler::compileSelector(selectorData.selector, vm, selectorData.compiledSelectorCodeRef);
+                selectorData.compilationStatus = SelectorCompiler::compileSelector(selectorData.selector, vm, SelectorCompiler::SelectorContext::QuerySelector, selectorData.compiledSelectorCodeRef);
+                RELEASE_ASSERT(selectorData.compilationStatus != SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
                 compiledSelectorChecker = selectorData.compiledSelectorCodeRef.code().executableAddress();
             }
 
             if (compiledSelectorChecker) {
-                if (selectorData.compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker) {
-                    SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, selectorData.compilationStatus);
-                    executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(rootNode, selectorChecker, output);
-                } else {
-                    ASSERT(selectorData.compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-                    SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::selectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, selectorData.compilationStatus);
-
-                    SelectorCompiler::CheckingContext context;
-                    context.elementStyle = nullptr;
-                    context.resolvingMode = SelectorChecker::QueryingRules;
-                    executeCompiledSelectorCheckerWithContext<SelectorQueryTrait>(rootNode, selectorChecker, context, output);
-                }
+                SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, selectorData.compilationStatus);
+                executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(rootNode, selectorChecker, output);
                 return;
             }
 #endif // ENABLE(CSS_SELECTOR_JIT)

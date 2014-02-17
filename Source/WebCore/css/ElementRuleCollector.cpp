@@ -295,7 +295,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, PseudoId
         JSC::VM* vm = m_element.document().scriptExecutionContext()->vm();
         SelectorCompilationStatus compilationStatus;
         JSC::MacroAssemblerCodeRef compiledSelectorCodeRef;
-        compilationStatus = SelectorCompiler::compileSelector(ruleData.selector(), vm, compiledSelectorCodeRef);
+        compilationStatus = SelectorCompiler::compileSelector(ruleData.selector(), vm, SelectorCompiler::SelectorContext::RuleCollector, compiledSelectorCodeRef);
 
         ruleData.setCompiledSelector(compilationStatus, compiledSelectorCodeRef);
         compiledSelectorChecker = ruleData.compiledSelectorCodeRef().code().executableAddress();

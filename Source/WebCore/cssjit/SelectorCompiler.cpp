@@ -86,6 +86,7 @@ enum class FragmentRelation {
 enum class FunctionType {
     SimpleSelectorChecker,
     SelectorCheckerWithCheckingContext,
+    CannotMatchAnything,
     CannotCompile
 };
 
@@ -118,7 +119,7 @@ typedef Vector<SelectorFragment, 8> SelectorFragmentList;
 
 class SelectorCodeGenerator {
 public:
-    SelectorCodeGenerator(const CSSSelector*);
+    SelectorCodeGenerator(const CSSSelector*, SelectorContext);
     SelectorCompilationStatus compile(JSC::VM*, JSC::MacroAssemblerCodeRef&);
 
 private:
@@ -129,6 +130,7 @@ private:
 #endif
 
     void computeBacktrackingInformation();
+    void generateSelectorChecker();
 
     // Element relations tree walker.
     void generateWalkToParentElement(Assembler::JumpList& failureCases, Assembler::RegisterID targetRegister);
@@ -163,9 +165,9 @@ private:
     StackAllocator m_stackAllocator;
     Vector<std::pair<Assembler::Call, JSC::FunctionPtr>> m_functionCalls;
 
+    SelectorContext m_selectorContext;
     FunctionType m_functionType;
     SelectorFragmentList m_selectorFragments;
-    bool m_selectorCannotMatchAnything;
 
     StackAllocator::StackReference m_checkingContextStackReference;
 
@@ -183,11 +185,11 @@ private:
 #endif
 };
 
-SelectorCompilationStatus compileSelector(const CSSSelector* lastSelector, JSC::VM* vm, JSC::MacroAssemblerCodeRef& codeRef)
+SelectorCompilationStatus compileSelector(const CSSSelector* lastSelector, JSC::VM* vm, SelectorContext selectorContext, JSC::MacroAssemblerCodeRef& codeRef)
 {
     if (!vm->canUseJIT())
         return SelectorCompilationStatus::CannotCompile;
-    SelectorCodeGenerator codeGenerator(lastSelector);
+    SelectorCodeGenerator codeGenerator(lastSelector, selectorContext);
     return codeGenerator.compile(vm, codeRef);
 }
 
@@ -287,10 +289,10 @@ static inline FunctionType addPseudoType(CSSSelector::PseudoType type, SelectorF
     return FunctionType::CannotCompile;
 }
 
-inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelector)
+inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelector, SelectorContext selectorContext)
     : m_stackAllocator(m_assembler)
+    , m_selectorContext(selectorContext)
     , m_functionType(FunctionType::SimpleSelectorChecker)
-    , m_selectorCannotMatchAnything(false)
 #if CSS_SELECTOR_JIT_DEBUGGING
     , m_originalSelector(rootSelector)
 #endif
@@ -310,8 +312,10 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
         case CSSSelector::Id: {
             const AtomicString& id = selector->value();
             if (fragment.id) {
-                if (id != *fragment.id)
-                    goto InconsistentSelector;
+                if (id != *fragment.id) {
+                    m_functionType = FunctionType::CannotMatchAnything;
+                    return;
+                }
             } else
                 fragment.id = &(selector->value());
             break;
@@ -321,8 +325,8 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
             break;
         case CSSSelector::PseudoClass:
             m_functionType = mostRestrictiveFunctionType(m_functionType, addPseudoType(selector->pseudoType(), fragment));
-            if (m_functionType == FunctionType::CannotCompile)
-                goto CannotHandleSelector;
+            if (m_functionType == FunctionType::CannotCompile || m_functionType == FunctionType::CannotMatchAnything)
+                return;
             break;
         case CSSSelector::Set:
             fragment.attributes.append(selector);
@@ -346,8 +350,12 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
         if (relation == CSSSelector::ShadowDescendant && !selector->isLastInTagHistory())
             goto CannotHandleSelector;
 
-        if (relation == CSSSelector::DirectAdjacent || relation == CSSSelector::IndirectAdjacent)
-            m_functionType = std::max(m_functionType, FunctionType::SelectorCheckerWithCheckingContext);
+        if (relation == CSSSelector::DirectAdjacent || relation == CSSSelector::IndirectAdjacent) {
+            FunctionType relationFunctionType = FunctionType::SelectorCheckerWithCheckingContext;
+            if (m_selectorContext == SelectorContext::QuerySelector)
+                relationFunctionType = FunctionType::SimpleSelectorChecker;
+            m_functionType = std::max(m_functionType, relationFunctionType);
+        }
 
         fragment.relationToLeftFragment = fragmentRelationForSelectorRelation(relation);
         fragment.relationToRightFragment = relationToPreviousFragment;
@@ -360,11 +368,8 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
     computeBacktrackingInformation();
 
     return;
-InconsistentSelector:
-    m_functionType = FunctionType::SimpleSelectorChecker;
-    m_selectorCannotMatchAnything = true;
 CannotHandleSelector:
-    m_selectorFragments.clear();
+    m_functionType = FunctionType::CannotCompile;
 }
 
 static inline unsigned minimumRegisterRequirements(const SelectorFragmentList& selectorFragments)
@@ -401,102 +406,17 @@ static inline unsigned minimumRegisterRequirements(const SelectorFragmentList& s
 
 inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC::MacroAssemblerCodeRef& codeRef)
 {
-    if (m_selectorFragments.isEmpty() && !m_selectorCannotMatchAnything)
-        return SelectorCompilationStatus::CannotCompile;
-
-    bool reservedCalleeSavedRegisters = false;
-    unsigned availableRegisterCount = m_registerAllocator.availableRegisterCount();
-    unsigned minimumRegisterCountForAttributes = minimumRegisterRequirements(m_selectorFragments);
-    if (availableRegisterCount < minimumRegisterCountForAttributes) {
-        reservedCalleeSavedRegisters = true;
-        m_registerAllocator.reserveCalleeSavedRegisters(m_stackAllocator, minimumRegisterCountForAttributes - availableRegisterCount);
-    }
-
-    m_registerAllocator.allocateRegister(elementAddressRegister);
-
-    if (m_functionType == FunctionType::SelectorCheckerWithCheckingContext)
-        m_checkingContextStackReference = m_stackAllocator.push(checkingContextRegister);
-
-    Assembler::JumpList failureCases;
-
-    for (unsigned i = 0; i < m_selectorFragments.size(); ++i) {
-        const SelectorFragment& fragment = m_selectorFragments[i];
-        switch (fragment.relationToRightFragment) {
-        case FragmentRelation::Rightmost:
-            generateElementMatching(failureCases, fragment);
-            break;
-        case FragmentRelation::Descendant:
-            generateAncestorTreeWalker(failureCases, fragment);
-            break;
-        case FragmentRelation::Child:
-            generateParentElementTreeWalker(failureCases, fragment);
-            break;
-        case FragmentRelation::DirectAdjacent:
-            generateDirectAdjacentTreeWalker(failureCases, fragment);
-            break;
-        case FragmentRelation::IndirectAdjacent:
-            generateIndirectAdjacentTreeWalker(failureCases, fragment);
-            break;
-        }
-        generateBacktrackingTailsIfNeeded(fragment);
-    }
-
-    m_registerAllocator.deallocateRegister(elementAddressRegister);
-
-    if (m_functionType == FunctionType::SimpleSelectorChecker && m_selectorCannotMatchAnything) {
+    switch (m_functionType) {
+    case FunctionType::SimpleSelectorChecker:
+    case FunctionType::SelectorCheckerWithCheckingContext:
+        generateSelectorChecker();
+        break;
+    case FunctionType::CannotMatchAnything:
         m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
         m_assembler.ret();
-    } else if (m_functionType == FunctionType::SimpleSelectorChecker) {
-        // Success.
-        m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
-        if (!reservedCalleeSavedRegisters)
-            m_assembler.ret();
-
-        // Failure.
-        if (!failureCases.empty()) {
-            Assembler::Jump skipFailureCase;
-            if (reservedCalleeSavedRegisters)
-                skipFailureCase = m_assembler.jump();
-
-            failureCases.link(&m_assembler);
-            m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
-
-            if (!reservedCalleeSavedRegisters)
-                m_assembler.ret();
-            else
-                skipFailureCase.link(&m_assembler);
-        }
-        if (reservedCalleeSavedRegisters) {
-            m_registerAllocator.restoreCalleeSavedRegisters(m_stackAllocator);
-            m_assembler.ret();
-        }
-    } else {
-        ASSERT(m_functionType == FunctionType::SelectorCheckerWithCheckingContext);
-        ASSERT(!m_selectorCannotMatchAnything);
-
-        // Success.
-        m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
-
-        StackAllocator successStack = m_stackAllocator;
-        StackAllocator failureStack = m_stackAllocator;
-
-        LocalRegister checkingContextRegister(m_registerAllocator);
-        successStack.pop(m_checkingContextStackReference, checkingContextRegister);
-
-        // Failure.
-        if (!failureCases.empty()) {
-            Assembler::Jump skipFailureCase = m_assembler.jump();
-
-            failureCases.link(&m_assembler);
-            failureStack.discard();
-            m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
-
-            skipFailureCase.link(&m_assembler);
-        }
-
-        m_stackAllocator.merge(std::move(successStack), std::move(failureStack));
-        m_registerAllocator.restoreCalleeSavedRegisters(m_stackAllocator);
-        m_assembler.ret();
+        break;
+    case FunctionType::CannotCompile:
+        return SelectorCompilationStatus::CannotCompile;
     }
 
     JSC::LinkBuffer linkBuffer(*vm, &m_assembler, CSS_CODE_ID);
@@ -509,7 +429,7 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC
     codeRef = FINALIZE_CODE(linkBuffer, ("CSS Selector JIT"));
 #endif
 
-    if (m_functionType == FunctionType::SimpleSelectorChecker)
+    if (m_functionType == FunctionType::SimpleSelectorChecker || m_functionType == FunctionType::CannotMatchAnything)
         return SelectorCompilationStatus::SimpleSelectorChecker;
     return SelectorCompilationStatus::SelectorCheckerWithCheckingContext;
 }
@@ -662,6 +582,100 @@ void SelectorCodeGenerator::computeBacktrackingInformation()
     }
 }
 
+void SelectorCodeGenerator::generateSelectorChecker()
+{
+    bool reservedCalleeSavedRegisters = false;
+    unsigned availableRegisterCount = m_registerAllocator.availableRegisterCount();
+    unsigned minimumRegisterCountForAttributes = minimumRegisterRequirements(m_selectorFragments);
+    if (availableRegisterCount < minimumRegisterCountForAttributes) {
+        reservedCalleeSavedRegisters = true;
+        m_registerAllocator.reserveCalleeSavedRegisters(m_stackAllocator, minimumRegisterCountForAttributes - availableRegisterCount);
+    }
+
+    m_registerAllocator.allocateRegister(elementAddressRegister);
+
+    if (m_functionType == FunctionType::SelectorCheckerWithCheckingContext)
+        m_checkingContextStackReference = m_stackAllocator.push(checkingContextRegister);
+
+    Assembler::JumpList failureCases;
+
+    for (unsigned i = 0; i < m_selectorFragments.size(); ++i) {
+        const SelectorFragment& fragment = m_selectorFragments[i];
+        switch (fragment.relationToRightFragment) {
+        case FragmentRelation::Rightmost:
+            generateElementMatching(failureCases, fragment);
+            break;
+        case FragmentRelation::Descendant:
+            generateAncestorTreeWalker(failureCases, fragment);
+            break;
+        case FragmentRelation::Child:
+            generateParentElementTreeWalker(failureCases, fragment);
+            break;
+        case FragmentRelation::DirectAdjacent:
+            generateDirectAdjacentTreeWalker(failureCases, fragment);
+            break;
+        case FragmentRelation::IndirectAdjacent:
+            generateIndirectAdjacentTreeWalker(failureCases, fragment);
+            break;
+        }
+        generateBacktrackingTailsIfNeeded(fragment);
+    }
+
+    m_registerAllocator.deallocateRegister(elementAddressRegister);
+
+    if (m_functionType == FunctionType::SimpleSelectorChecker) {
+        // Success.
+        m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
+        if (!reservedCalleeSavedRegisters)
+            m_assembler.ret();
+
+        // Failure.
+        if (!failureCases.empty()) {
+            Assembler::Jump skipFailureCase;
+            if (reservedCalleeSavedRegisters)
+                skipFailureCase = m_assembler.jump();
+
+            failureCases.link(&m_assembler);
+            m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
+
+            if (!reservedCalleeSavedRegisters)
+                m_assembler.ret();
+            else
+                skipFailureCase.link(&m_assembler);
+        }
+        if (reservedCalleeSavedRegisters) {
+            m_registerAllocator.restoreCalleeSavedRegisters(m_stackAllocator);
+            m_assembler.ret();
+        }
+    } else {
+        ASSERT(m_functionType == FunctionType::SelectorCheckerWithCheckingContext);
+
+        // Success.
+        m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
+
+        StackAllocator successStack = m_stackAllocator;
+        StackAllocator failureStack = m_stackAllocator;
+
+        LocalRegister checkingContextRegister(m_registerAllocator);
+        successStack.pop(m_checkingContextStackReference, checkingContextRegister);
+
+        // Failure.
+        if (!failureCases.empty()) {
+            Assembler::Jump skipFailureCase = m_assembler.jump();
+
+            failureCases.link(&m_assembler);
+            failureStack.discard();
+            m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
+
+            skipFailureCase.link(&m_assembler);
+        }
+
+        m_stackAllocator.merge(std::move(successStack), std::move(failureStack));
+        m_registerAllocator.restoreCalleeSavedRegisters(m_stackAllocator);
+        m_assembler.ret();
+    }
+}
+
 static inline Assembler::Jump testIsElementFlagOnNode(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID nodeAddress)
 {
     return assembler.branchTest32(condition, Assembler::Address(nodeAddress, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsElement()));
@@ -778,6 +792,9 @@ void SelectorCodeGenerator::generateIndirectAdjacentTreeWalker(Assembler::JumpLi
 
 void SelectorCodeGenerator::markParentElementIfResolvingStyle(JSC::FunctionPtr markingFunction)
 {
+    if (m_selectorContext == SelectorContext::QuerySelector)
+        return;
+
     //     if (checkingContext.resolvingMode == ResolvingStyle) {
     //         Element* parent = element->parentNode();
     //         markingFunction(parent);
