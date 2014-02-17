@@ -1,3 +1,9 @@
+2014-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.3.90 release.
+
+        * Source/autotools/Versions.m4: Bump version numbers.
+
 2014-02-12  Ryan Lortie  <desrt@desrt.ca>
 
         'ar T' is not portable and breaks the build on FreeBSD

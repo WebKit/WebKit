@@ -1,4 +1,20 @@
 =================
+WebKitGTK+ 2.3.90
+=================
+
+What's new in WebKitGTK+ 2.3.90?
+
+  - Add initial touch support to WebKit2.
+  - Add API to create a WebKitWebView related to another one to share
+    the same Web Process.
+  - Create the inspector view using the same web process as the
+    inspected page.
+  - Fix wrong mix of fcntl commands and flags in WebKit2.
+  - Fix marshaller used in WebKitWebPage::document-loaded signal.
+  - Fix a crash in GStreamer media backend when playback rate is too high.
+  - Fix the build on FreeBSD.
+
+=================
 WebKitGTK+  2.3.5
 =================
 
