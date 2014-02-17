@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+	<head>
+		<style>
+			html {
+				-webkit-writing-mode: vertical-rl;
+			}
+			.region {
+				margin-top: 30px;
+				width: 300px;
+				height: 180px;
+				border: 2px solid blue;
+				padding: 22px 50px 40px 30px;
+				overflow: hidden;
+			}
+			#innerDiv {
+				-webkit-font-smoothing: none;
+				margin-top: -15px;
+				margin-right: -15px;
+				border: solid 2px red;
+				color: red;
+				width: 340px;
+				height: 220px;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="https://bugs.webkit.org/show_bug.cgi?id=128815">Bug 128815</a>
+		<p>All borders of the <span style="color:red">content</span> are over the padding area of the <span style="color:blue">region</span>.<br/>All 4 borders should be visible.</p>
+
+		<div class="region" id="region1">
+			<div id="innerDiv">
+				Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+			</div>
+		</div>
+	</body>
+</html>

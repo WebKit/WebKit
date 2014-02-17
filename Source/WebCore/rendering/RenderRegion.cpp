@@ -521,8 +521,15 @@ LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const Layou
     }
 
     bool isLastRegionWithRegionFragmentBreak = (isLastRegion() && (style().regionFragment() == BreakRegionFragment));
-    if (hasOverflowClip() || isLastRegionWithRegionFragmentBreak)
-        mappedRect.intersect(flowThreadPortionRect());
+    if (hasOverflowClip() || isLastRegionWithRegionFragmentBreak) {
+        LayoutRect portionRect;
+        if (isRenderNamedFlowFragment())
+            portionRect = toRenderNamedFlowFragment(this)->flowThreadPortionRectForClipping(this == startRegion, this == endRegion);
+        else
+            portionRect = flowThreadPortionRect();
+        
+        mappedRect.intersect(portionRect);
+    }
 
     return mappedRect.isEmpty() ? mappedRect : m_flowThread->mapFromFlowThreadToLocal(box, mappedRect);
 }

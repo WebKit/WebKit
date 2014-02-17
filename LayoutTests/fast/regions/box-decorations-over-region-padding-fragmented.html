@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+	<head>
+		<style>
+			.region {
+				-webkit-flow-from: flow;
+				width: 250px;
+				height: 182px;
+				margin: 5px;
+				border: 2px solid blue;
+				padding: 22px 50px 40px 30px;
+				overflow: hidden;
+			}
+			#region1 {
+				float: left;
+			}
+			#region2 {
+				float: right;
+			}
+			#innerDiv {
+				-webkit-flow-into: flow;
+				font-family: Ahem;
+				border: solid 2px red;
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="https://bugs.webkit.org/show_bug.cgi?id=128815">Bug 128815</a>
+		<p>The borders of the <span style="color:red">content</span> are over the padding area of the <span style="color:blue">region</span>.<br/>All 4 borders should be visible.</p>
+
+		<div id="innerDiv">
+			Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+		</div>
+
+		<div class="region" id="region1"></div>
+		<div class="region" id="region2"></div>
+	</body>
+</html>

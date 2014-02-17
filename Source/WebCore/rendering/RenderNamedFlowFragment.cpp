@@ -188,6 +188,45 @@ LayoutUnit RenderNamedFlowFragment::maxPageLogicalHeight() const
     return styleToUse.logicalMaxHeight().isUndefined() ? RenderFlowThread::maxLogicalHeight() : toRenderBlock(parent())->computeReplacedLogicalHeightUsing(styleToUse.logicalMaxHeight());
 }
 
+LayoutRect RenderNamedFlowFragment::flowThreadPortionRectForClipping(bool isFirstRegionInRange, bool isLastRegionInRange) const
+{
+    // Elements flowed into a region should not be painted past the region's content box
+    // if they continue to flow into another region in that direction.
+    // If they do not continue into another region in that direction, they should be
+    // painted all the way to the region's border box.
+    // Regions with overflow:hidden will apply clip at the border box, not the content box.
+    
+    LayoutRect clippingRect = flowThreadPortionRect();
+    if (regionContainer()->style().hasPadding()) {
+        if (isFirstRegionInRange) {
+            if (flowThread()->isHorizontalWritingMode()) {
+                clippingRect.move(0, -regionContainer()->paddingBefore());
+                clippingRect.expand(0, regionContainer()->paddingBefore());
+            } else {
+                clippingRect.move(-regionContainer()->paddingBefore(), 0);
+                clippingRect.expand(regionContainer()->paddingBefore(), 0);
+            }
+        }
+        
+        if (isLastRegionInRange) {
+            if (flowThread()->isHorizontalWritingMode())
+                clippingRect.expand(0, regionContainer()->paddingAfter());
+            else
+                clippingRect.expand(regionContainer()->paddingAfter(), 0);
+        }
+        
+        if (flowThread()->isHorizontalWritingMode()) {
+            clippingRect.move(-regionContainer()->paddingStart(), 0);
+            clippingRect.expand(regionContainer()->paddingStart() + regionContainer()->paddingEnd(), 0);
+        } else {
+            clippingRect.move(0, -regionContainer()->paddingStart());
+            clippingRect.expand(0, regionContainer()->paddingStart() + regionContainer()->paddingEnd());
+        }
+    }
+    
+    return clippingRect;
+}
+
 void RenderNamedFlowFragment::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
