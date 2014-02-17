@@ -1,3 +1,19 @@
+2014-02-17  Brendan Long  <b.long@cablelabs.com>
+
+        DataCue.data should be a copy of the input ArrayBuffer, not a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=128886
+
+        Reviewed by Eric Carlson.
+
+        No new tests, just updated existing track-datacue.html test.
+
+        * html/track/DataCue.cpp:
+        (WebCore::DataCue::DataCue): Add ExceptionCode and pass through to setData().
+        (WebCore::DataCue::data): Return a copy of m_data instead of a pointer.
+        (WebCore::DataCue::setData): Create a copy of the input data, or throw an exception if it's null.
+        * html/track/DataCue.h: Add ExceptionCode parameters to constructor and data setter.
+        * html/track/DataCue.idl: Same.
+
 2014-02-17  David Kilzer  <ddkilzer@apple.com>
 
         CounterContentData::counter() and ImageContentData::image() should return references

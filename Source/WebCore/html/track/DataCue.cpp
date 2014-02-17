@@ -34,14 +34,28 @@
 
 namespace WebCore {
 
-DataCue::DataCue(ScriptExecutionContext& context, double start, double end, PassRefPtr<ArrayBuffer> data)
+DataCue::DataCue(ScriptExecutionContext& context, double start, double end, ArrayBuffer* data, ExceptionCode& ec)
     : TextTrackCue(context, start, end)
-    , m_data(data)
 {
+    setData(data, ec);
 }
 
 DataCue::~DataCue()
 {
+}
+
+RefPtr<ArrayBuffer> DataCue::data() const
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(m_data);
+    return ArrayBuffer::create(m_data.get());
+}
+
+void DataCue::setData(ArrayBuffer* data, ExceptionCode& ec)
+{
+    if (!data)
+        ec = TypeError;
+    else
+        m_data = ArrayBuffer::create(data);
 }
 
 String DataCue::text(bool& isNull) const

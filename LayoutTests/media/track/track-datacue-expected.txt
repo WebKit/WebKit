@@ -19,6 +19,24 @@ EXPECTED (new Uint8Array(cue.data)[3] == '1') OK
 EXPECTED (new Uint8Array(cue.data)[4] == '9') OK
 EXPECTED (cue.text == 'null') OK
 
+*** Changing the original buffer data should not effect DataCue.data.
+RUN(expectedData[0] = 7)
+EXPECTED (new Uint8Array(cue.data)[0] == '4') OK
+RUN(cue.data = expectedData.buffer)
+EXPECTED (new Uint8Array(cue.data)[0] == '7') OK
+RUN(expectedData[0] = 11)
+EXPECTED (new Uint8Array(cue.data)[0] == '7') OK
+RUN(new Uint8Array(cue.data)[0] = 8)
+EXPECTED ((new Uint8Array(cue.data))[0] == '7') OK
+
+*** Throw exception if data is not an ArrayBuffer.
+TEST(cue.data = null) THROWS('TypeError: Type error') OK
+TEST(cue.data = 'test') THROWS('TypeError: Type error') OK
+TEST(cue.data = [5]) THROWS('TypeError: Type error') OK
+TEST(badCue = new DataCue(1, 2, null)) THROWS('TypeError: Type error') OK
+TEST(badCue = new DataCue(1, 2, 'test')) THROWS('TypeError: Type error') OK
+TEST(badCue = new DataCue(1, 2, [5])) THROWS('TypeError: Type error') OK
+
 *** Test adding DataCue to track with kind = 'metadata'.
 EXPECTED (cue.track == '[object TextTrack]') OK
 EXPECTED (metadataTrack.cues[0] == '[object DataCue]') OK

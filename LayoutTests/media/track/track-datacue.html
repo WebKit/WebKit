@@ -8,14 +8,8 @@
         <script>
             function loaded()
             {
-                var buf = new ArrayBuffer(5);
-                var bufView = new Uint8Array(buf);
-                bufView[0] = 4;
-                bufView[1] = 5;
-                bufView[2] = 2;
-                bufView[3] = 1;
-                bufView[4] = 9;
-                cue = new DataCue(3, 10, buf);
+                expectedData = new Uint8Array([4, 5, 2, 1, 9]);
+                cue = new DataCue(3, 10, expectedData.buffer);
 
                 consoleWrite("<br>*** Test DataCue's TextTrackCue interface.");
                 testExpected("cue", TextTrackCue, "instanceof");
@@ -27,8 +21,34 @@
 
                 consoleWrite("<br>*** Test DataCue interface.");
                 testExpected("cue", DataCue, "instanceof");
-                testArraysEqual("new Uint8Array(cue.data)", new Uint8Array(buf));
+                testArraysEqual("new Uint8Array(cue.data)", expectedData);
                 testExpected("cue.text", null);
+
+                // https://www.w3.org/Bugs/Public/show_bug.cgi?id=24687
+                consoleWrite("<br>*** Changing the original buffer data should not effect DataCue.data.");
+
+                // Passing data to constructor then changing the original buffer
+                run("expectedData[0] = 7");
+                testExpected("new Uint8Array(cue.data)[0]", 4);
+
+                // Setting .data then changing the original buffer
+                run("cue.data = expectedData.buffer");
+                testExpected("new Uint8Array(cue.data)[0]", 7);
+                run("expectedData[0] = 11");
+                testExpected("new Uint8Array(cue.data)[0]", 7);
+
+                // Getting .data then changing the original buffer
+                run("new Uint8Array(cue.data)[0] = 8");
+                testExpected("(new Uint8Array(cue.data))[0]", 7);
+
+                consoleWrite("<br>*** Throw exception if data is not an ArrayBuffer.");
+                var error = "'TypeError: Type error'";
+                testException("cue.data = null", error);
+                testException("cue.data = 'test'", error);
+                testException("cue.data = [5]", error);
+                testException("badCue = new DataCue(1, 2, null)", error);
+                testException("badCue = new DataCue(1, 2, 'test')", error);
+                testException("badCue = new DataCue(1, 2, [5])", error);
 
                 consoleWrite("<br>*** Test adding DataCue to track with kind = 'metadata'.");
                 var video = document.createElement("video");
