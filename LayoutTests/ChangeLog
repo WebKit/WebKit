@@ -1,3 +1,15 @@
+2014-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should inline polymorphic heap accesses
+        https://bugs.webkit.org/show_bug.cgi?id=128795
+
+        Reviewed by Oliver Hunt.
+
+        * js/regress/polymorphic-get-by-id-expected.txt: Added.
+        * js/regress/polymorphic-get-by-id.html: Added.
+        * js/regress/script-tests/polymorphic-get-by-id.js: Added.
+        (foo):
+
 2014-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, add a useful comment for this test.

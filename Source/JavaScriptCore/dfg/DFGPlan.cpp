@@ -85,7 +85,7 @@ namespace JSC { namespace DFG {
 static void dumpAndVerifyGraph(Graph& graph, const char* text)
 {
     GraphDumpMode modeForFinalValidate = DumpGraph;
-    if (verboseCompilationEnabled()) {
+    if (verboseCompilationEnabled(graph.m_plan.mode)) {
         dataLog(text, "\n");
         graph.dump();
         modeForFinalValidate = DontDumpGraph;
@@ -149,7 +149,7 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
     SamplingRegion samplingRegion("DFG Compilation (Plan)");
     CompilationScope compilationScope;
 
-    if (logCompilationChanges())
+    if (logCompilationChanges(mode))
         dataLog("DFG(Plan) compiling ", *codeBlock, " with ", mode, ", number of instructions = ", codeBlock->instructionCount(), "\n");
 
     CompilationPath path = compileInThreadImpl(longLivedState);
@@ -183,7 +183,7 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
 
 Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
 {
-    if (verboseCompilationEnabled() && osrEntryBytecodeIndex != UINT_MAX) {
+    if (verboseCompilationEnabled(mode) && osrEntryBytecodeIndex != UINT_MAX) {
         dataLog("\n");
         dataLog("Compiler must handle OSR entry from bc#", osrEntryBytecodeIndex, " with values: ", mustHandleValues, "\n");
         dataLog("\n");
@@ -230,7 +230,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     unsigned count = 1;
     dfg.m_fixpointState = FixpointNotConverged;
     for (;; ++count) {
-        if (logCompilationChanges())
+        if (logCompilationChanges(mode))
             dataLogF("DFG beginning optimization fixpoint iteration #%u.\n", count);
         bool changed = false;
         
@@ -250,7 +250,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performCPSRethreading(dfg);
     }
     
-    if (logCompilationChanges())
+    if (logCompilationChanges(mode))
         dataLogF("DFG optimization fixpoint converged in %u iterations.\n", count);
 
     dfg.m_fixpointState = FixpointConverged;

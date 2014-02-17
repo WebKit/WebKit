@@ -1451,17 +1451,17 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 GetByIdStatus status = GetByIdStatus::computeFor(
                     m_graph.m_vm, structure,
                     m_graph.identifiers()[node->identifierNumber()]);
-                if (status.isSimple()) {
+                if (status.isSimple() && status.numVariants() == 1) {
                     // Assert things that we can't handle and that the computeFor() method
                     // above won't be able to return.
-                    ASSERT(status.structureSet().size() == 1);
-                    ASSERT(!status.chain());
+                    ASSERT(status[0].structureSet().size() == 1);
+                    ASSERT(!status[0].chain());
                     
-                    if (status.specificValue())
-                        setConstant(node, status.specificValue());
+                    if (status[0].specificValue())
+                        setConstant(node, status[0].specificValue());
                     else
                         forNode(node).makeHeapTop();
-                    filter(node->child1(), status.structureSet());
+                    filter(node->child1(), status[0].structureSet());
                     
                     m_state.setFoundConstants(true);
                     m_state.setHaveStructures(true);
@@ -1629,6 +1629,39 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case GetByOffset: {
+        forNode(node).makeHeapTop();
+        break;
+    }
+        
+    case MultiGetByOffset: {
+        AbstractValue& value = forNode(node->child1());
+        ASSERT(!(value.m_type & ~SpecCell)); // Edge filtering should have already ensured this.
+
+        if (Structure* structure = value.bestProvenStructure()) {
+            bool done = false;
+            for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;) {
+                const GetByIdVariant& variant = node->multiGetByOffsetData().variants[i];
+                if (!variant.structureSet().contains(structure))
+                    continue;
+                
+                if (variant.chain())
+                    break;
+                
+                filter(value, structure);
+                forNode(node).makeHeapTop();
+                m_state.setFoundConstants(true);
+                done = true;
+                break;
+            }
+            if (done)
+                break;
+        }
+        
+        StructureSet set;
+        for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;)
+            set.addAll(node->multiGetByOffsetData().variants[i].structureSet());
+        
+        filter(value, set);
         forNode(node).makeHeapTop();
         break;
     }

@@ -365,6 +365,34 @@ ValueInContext<T, U> inContext(const T& value, U* context)
 }
 
 template<typename T, typename U>
+class PointerDumpInContext {
+public:
+    PointerDumpInContext(const T* ptr, U* context)
+        : m_ptr(ptr)
+        , m_context(context)
+    {
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        if (m_ptr)
+            m_ptr->dumpInContext(out, m_context);
+        else
+            out.print("(null)");
+    }
+
+private:
+    const T* m_ptr;
+    U* m_context;
+};
+
+template<typename T, typename U>
+PointerDumpInContext<T, U> pointerDumpInContext(const T* ptr, U* context)
+{
+    return PointerDumpInContext<T, U>(ptr, context);
+}
+
+template<typename T, typename U>
 class ValueIgnoringContext {
 public:
     ValueIgnoringContext(const U& value)
@@ -396,6 +424,7 @@ using WTF::PrintStream;
 using WTF::ignoringContext;
 using WTF::inContext;
 using WTF::pointerDump;
+using WTF::pointerDumpInContext;
 
 #endif // PrintStream_h
 

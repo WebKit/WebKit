@@ -29,9 +29,7 @@
 #include "CodeOrigin.h"
 #include "ConcurrentJITLock.h"
 #include "ExitingJITType.h"
-#include "IntendedStructureChain.h"
-#include "PropertyOffset.h"
-#include "StructureSet.h"
+#include "GetByIdVariant.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {
@@ -50,28 +48,22 @@ public:
 
     GetByIdStatus()
         : m_state(NoInformation)
-        , m_offset(invalidOffset)
     {
     }
     
     explicit GetByIdStatus(State state)
         : m_state(state)
-        , m_offset(invalidOffset)
     {
         ASSERT(state == NoInformation || state == TakesSlowPath || state == MakesCalls);
     }
     
     GetByIdStatus(
-        State state, bool wasSeenInJIT, const StructureSet& structureSet = StructureSet(),
-        PropertyOffset offset = invalidOffset, JSValue specificValue = JSValue(), PassRefPtr<IntendedStructureChain> chain = nullptr)
+        State state, bool wasSeenInJIT, const GetByIdVariant& variant = GetByIdVariant())
         : m_state(state)
-        , m_structureSet(structureSet)
-        , m_chain(chain)
-        , m_specificValue(specificValue)
-        , m_offset(offset)
         , m_wasSeenInJIT(wasSeenInJIT)
     {
-        ASSERT((state == Simple) == (offset != invalidOffset));
+        ASSERT((state == Simple) == variant.isSet());
+        m_variants.append(variant);
     }
     
     static GetByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, StringImpl* uid);
@@ -84,15 +76,18 @@ public:
     bool isSet() const { return m_state != NoInformation; }
     bool operator!() const { return !isSet(); }
     bool isSimple() const { return m_state == Simple; }
+
+    size_t numVariants() const { return m_variants.size(); }
+    const Vector<GetByIdVariant, 1>& variants() const { return m_variants; }
+    const GetByIdVariant& at(size_t index) const { return m_variants[index]; }
+    const GetByIdVariant& operator[](size_t index) const { return at(index); }
+
     bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls; }
     bool makesCalls() const { return m_state == MakesCalls; }
     
-    const StructureSet& structureSet() const { return m_structureSet; }
-    IntendedStructureChain* chain() const { return const_cast<IntendedStructureChain*>(m_chain.get()); } // Returns null if this is a direct access.
-    JSValue specificValue() const { return m_specificValue; } // Returns JSValue() if there is no specific value.
-    PropertyOffset offset() const { return m_offset; }
-    
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }
+    
+    void dump(PrintStream&) const;
     
 private:
 #if ENABLE(DFG_JIT)
@@ -101,14 +96,11 @@ private:
 #if ENABLE(JIT)
     static GetByIdStatus computeForStubInfo(const ConcurrentJITLocker&, CodeBlock*, StructureStubInfo*, StringImpl* uid);
 #endif
-    static void computeForChain(GetByIdStatus& result, CodeBlock*, StringImpl* uid);
+    bool computeForChain(CodeBlock*, StringImpl* uid, PassRefPtr<IntendedStructureChain>);
     static GetByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);
     
     State m_state;
-    StructureSet m_structureSet;
-    RefPtr<IntendedStructureChain> m_chain;
-    JSValue m_specificValue;
-    PropertyOffset m_offset;
+    Vector<GetByIdVariant, 1> m_variants;
     bool m_wasSeenInJIT;
 };
 

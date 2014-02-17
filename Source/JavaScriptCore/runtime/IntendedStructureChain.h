@@ -35,6 +35,7 @@ class CodeBlock;
 class JSGlobalObject;
 class StructureChain;
 class VM;
+struct DumpContext;
 
 class IntendedStructureChain : public RefCounted<IntendedStructureChain> {
 public:
@@ -61,6 +62,8 @@ public:
     Structure* last() const { return m_vector.last(); }
     
     void visitChildren(SlotVisitor&);
+    void dump(PrintStream&) const;
+    void dumpInContext(PrintStream&, DumpContext*) const;
     
 private:
     JSGlobalObject* m_globalObject;

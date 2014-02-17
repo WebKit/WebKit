@@ -151,10 +151,33 @@ private:
                 
                 break;
             }
+                
+            case MultiGetByOffset: {
+                Edge childEdge = node->child1();
+                Node* child = childEdge.node();
+                MultiGetByOffsetData& data = node->multiGetByOffsetData();
+
+                Structure* structure = m_state.forNode(child).bestProvenStructure();
+                if (!structure)
+                    break;
+                
+                for (unsigned i = data.variants.size(); i--;) {
+                    const GetByIdVariant& variant = data.variants[i];
+                    if (!variant.structureSet().contains(structure))
+                        continue;
+                    
+                    if (variant.chain())
+                        break;
+                    
+                    emitGetByOffset(indexInBlock, node, structure, variant, data.identifierNumber);
+                    eliminated = true;
+                    break;
+                }
+                break;
+            }
         
             case GetById:
             case GetByIdFlush: {
-                NodeOrigin origin = node->origin;
                 Edge childEdge = node->child1();
                 Node* child = childEdge.node();
                 unsigned identifierNumber = node->identifierNumber();
@@ -166,54 +189,17 @@ private:
                 if (!structure)
                     break;
                 
-                bool needsWatchpoint = !m_state.forNode(child).m_currentKnownStructure.hasSingleton();
-                bool needsCellCheck = m_state.forNode(child).m_type & ~SpecCell;
-                
                 GetByIdStatus status = GetByIdStatus::computeFor(
                     vm(), structure, m_graph.identifiers()[identifierNumber]);
                 
-                if (!status.isSimple()) {
+                if (!status.isSimple() || status.numVariants() != 1) {
                     // FIXME: We could handle prototype cases.
                     // https://bugs.webkit.org/show_bug.cgi?id=110386
                     break;
                 }
                 
-                ASSERT(status.structureSet().size() == 1);
-                ASSERT(!status.chain());
-                ASSERT(status.structureSet().singletonStructure() == structure);
-                
-                // Now before we do anything else, push the CFA forward over the GetById
-                // and make sure we signal to the loop that it should continue and not
-                // do any eliminations.
-                m_interpreter.execute(indexInBlock);
+                emitGetByOffset(indexInBlock, node, structure, status[0], identifierNumber);
                 eliminated = true;
-                
-                if (needsWatchpoint) {
-                    m_insertionSet.insertNode(
-                        indexInBlock, SpecNone, StructureTransitionWatchpoint, origin,
-                        OpInfo(structure), childEdge);
-                } else if (needsCellCheck) {
-                    m_insertionSet.insertNode(
-                        indexInBlock, SpecNone, Phantom, origin, childEdge);
-                }
-                
-                childEdge.setUseKind(KnownCellUse);
-                
-                Edge propertyStorage;
-                
-                if (isInlineOffset(status.offset()))
-                    propertyStorage = childEdge;
-                else {
-                    propertyStorage = Edge(m_insertionSet.insertNode(
-                        indexInBlock, SpecNone, GetButterfly, origin, childEdge));
-                }
-                
-                node->convertToGetByOffset(m_graph.m_storageAccessData.size(), propertyStorage);
-                
-                StorageAccessData storageAccessData;
-                storageAccessData.offset = status.offset();
-                storageAccessData.identifierNumber = identifierNumber;
-                m_graph.m_storageAccessData.append(storageAccessData);
                 break;
             }
                 
@@ -405,6 +391,56 @@ private:
         m_insertionSet.execute(block);
         
         return changed;
+    }
+        
+    void emitGetByOffset(unsigned indexInBlock, Node* node, Structure* structure, const GetByIdVariant& variant, unsigned identifierNumber)
+    {
+        NodeOrigin origin = node->origin;
+        Edge childEdge = node->child1();
+        Node* child = childEdge.node();
+
+        bool needsWatchpoint = !m_state.forNode(child).m_currentKnownStructure.hasSingleton();
+        bool needsCellCheck = m_state.forNode(child).m_type & ~SpecCell;
+        
+        ASSERT(!variant.chain());
+        ASSERT(variant.structureSet().contains(structure));
+        
+        // Now before we do anything else, push the CFA forward over the GetById
+        // and make sure we signal to the loop that it should continue and not
+        // do any eliminations.
+        m_interpreter.execute(indexInBlock);
+        
+        if (needsWatchpoint) {
+            m_insertionSet.insertNode(
+                indexInBlock, SpecNone, StructureTransitionWatchpoint, origin,
+                OpInfo(structure), childEdge);
+        } else if (needsCellCheck) {
+            m_insertionSet.insertNode(
+                indexInBlock, SpecNone, Phantom, origin, childEdge);
+        }
+        
+        if (variant.specificValue()) {
+            m_graph.convertToConstant(node, variant.specificValue());
+            return;
+        }
+        
+        childEdge.setUseKind(KnownCellUse);
+        
+        Edge propertyStorage;
+        
+        if (isInlineOffset(variant.offset()))
+            propertyStorage = childEdge;
+        else {
+            propertyStorage = Edge(m_insertionSet.insertNode(
+                indexInBlock, SpecNone, GetButterfly, origin, childEdge));
+        }
+        
+        node->convertToGetByOffset(m_graph.m_storageAccessData.size(), propertyStorage);
+        
+        StorageAccessData storageAccessData;
+        storageAccessData.offset = variant.offset();
+        storageAccessData.identifierNumber = identifierNumber;
+        m_graph.m_storageAccessData.append(storageAccessData);
     }
 
     void addStructureTransitionCheck(NodeOrigin origin, unsigned indexInBlock, JSCell* cell)

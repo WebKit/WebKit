@@ -137,6 +137,7 @@ inline CapabilityLevel canCompile(Node* node)
     case NewArrayWithSize:
     case GetById:
     case ToThis:
+    case MultiGetByOffset:
         // These are OK.
         break;
     case PutByIdDirect:

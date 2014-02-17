@@ -23,40 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ExitingJITType_h
-#define ExitingJITType_h
+#include "config.h"
+#include "ExitingJITType.h"
 
-#include "JITCode.h"
-
-namespace JSC {
-
-enum ExitingJITType : uint8_t {
-    ExitFromAnything,
-    ExitFromDFG,
-    ExitFromFTL
-};
-
-inline ExitingJITType exitingJITTypeFor(JITCode::JITType type)
-{
-    switch (type) {
-    case JITCode::DFGJIT:
-        return ExitFromDFG;
-    case JITCode::FTLJIT:
-        return ExitFromFTL;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return ExitFromAnything;
-    }
-}
-
-} // namespace JSC
+#include <wtf/PrintStream.h>
 
 namespace WTF {
 
-class PrintStream;
-void printInternal(PrintStream&, JSC::ExitingJITType);
+using namespace JSC;
+
+void printInternal(PrintStream& out, ExitingJITType type)
+{
+    switch (type) {
+    case ExitFromAnything:
+        out.print("FromAnything");
+        return;
+    case ExitFromDFG:
+        out.print("FromDFG");
+        return;
+    case ExitFromFTL:
+        out.print("FromFTL");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace WTF
-
-#endif // ExitingJITType_h
 

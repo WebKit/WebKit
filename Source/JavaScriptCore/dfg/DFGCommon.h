@@ -28,6 +28,8 @@
 
 #include <wtf/Platform.h>
 
+#include "DFGCompilationMode.h"
+
 #if ENABLE(DFG_JIT)
 
 #include "CodeOrigin.h"
@@ -63,14 +65,14 @@ enum RefNodeMode {
     DontRefNode
 };
 
-inline bool verboseCompilationEnabled()
+inline bool verboseCompilationEnabled(CompilationMode mode = DFGMode)
 {
-    return Options::verboseCompilation() || Options::dumpGraphAtEachPhase();
+    return Options::verboseCompilation() || Options::dumpGraphAtEachPhase() || (isFTL(mode) && Options::verboseFTLCompilation());
 }
 
-inline bool logCompilationChanges()
+inline bool logCompilationChanges(CompilationMode mode = DFGMode)
 {
-    return verboseCompilationEnabled() || Options::logCompilationChanges();
+    return verboseCompilationEnabled(mode) || Options::logCompilationChanges();
 }
 
 inline bool shouldDumpGraphAtEachPhase()
@@ -288,10 +290,10 @@ inline CapabilityLevel leastUpperBound(CapabilityLevel a, CapabilityLevel b)
 }
 
 // Unconditionally disable DFG disassembly support if the DFG is not compiled in.
-inline bool shouldShowDisassembly()
+inline bool shouldShowDisassembly(CompilationMode mode = DFGMode)
 {
 #if ENABLE(DFG_JIT)
-    return Options::showDisassembly() || Options::showDFGDisassembly();
+    return Options::showDisassembly() || Options::showDFGDisassembly() || (isFTL(mode) && Options::showFTLDisassembly());
 #else
     return false;
 #endif

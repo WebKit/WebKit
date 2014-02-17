@@ -246,6 +246,12 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "id", storageAccessData.identifierNumber, "{", identifiers()[storageAccessData.identifierNumber], "}");
         out.print(", ", static_cast<ptrdiff_t>(storageAccessData.offset));
     }
+    if (node->hasMultiGetByOffsetData()) {
+        MultiGetByOffsetData& data = node->multiGetByOffsetData();
+        out.print(comma, "id", data.identifierNumber, "{", identifiers()[data.identifierNumber], "}");
+        for (unsigned i = 0; i < data.variants.size(); ++i)
+            out.print(comma, inContext(data.variants[i], context));
+    }
     ASSERT(node->hasVariableAccessData(*this) == node->hasLocal(*this));
     if (node->hasVariableAccessData(*this)) {
         VariableAccessData* variableAccessData = node->tryGetVariableAccessData();

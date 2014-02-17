@@ -112,11 +112,13 @@ typedef OptionRange optionRange;
     /* showDisassembly implies showDFGDisassembly. */ \
     v(bool, showDisassembly, false) \
     v(bool, showDFGDisassembly, false) \
+    v(bool, showFTLDisassembly, false) \
     v(bool, showAllDFGNodes, false) \
     v(optionRange, bytecodeRangeToDFGCompile, 0) \
     v(bool, dumpBytecodeAtDFGTime, false) \
     v(bool, dumpGraphAtEachPhase, false) \
     v(bool, verboseCompilation, false) \
+    v(bool, verboseFTLCompilation, false) \
     v(bool, logCompilationChanges, false) \
     v(bool, printEachOSRExit, false) \
     v(bool, validateGraph, false) \

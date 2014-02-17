@@ -1,3 +1,129 @@
+2014-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should inline polymorphic heap accesses
+        https://bugs.webkit.org/show_bug.cgi?id=128795
+
+        Reviewed by Oliver Hunt.
+        
+        We now inline GetByIds that we know are pure but polymorphic. They manifest in DFG IR
+        as MultiGetByOffset, and in LLVM IR as a switch with a basic block for each kind of
+        read.
+        
+        2% speed-up on Octane mostly due to a 18% speed-up on deltablue.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/ExitingJITType.cpp: Added.
+        (WTF::printInternal):
+        * bytecode/ExitingJITType.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeForChain):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        (JSC::GetByIdStatus::computeFor):
+        (JSC::GetByIdStatus::dump):
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::GetByIdStatus):
+        (JSC::GetByIdStatus::numVariants):
+        (JSC::GetByIdStatus::variants):
+        (JSC::GetByIdStatus::at):
+        (JSC::GetByIdStatus::operator[]):
+        * bytecode/GetByIdVariant.cpp: Added.
+        (JSC::GetByIdVariant::dump):
+        (JSC::GetByIdVariant::dumpInContext):
+        * bytecode/GetByIdVariant.h: Added.
+        (JSC::GetByIdVariant::GetByIdVariant):
+        (JSC::GetByIdVariant::isSet):
+        (JSC::GetByIdVariant::operator!):
+        (JSC::GetByIdVariant::structureSet):
+        (JSC::GetByIdVariant::chain):
+        (JSC::GetByIdVariant::specificValue):
+        (JSC::GetByIdVariant::offset):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::emitPrototypeChecks):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getByOffsetLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::verboseCompilationEnabled):
+        (JSC::DFG::logCompilationChanges):
+        (JSC::DFG::shouldShowDisassembly):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::convertToConstant):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToGetByOffset):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasMultiGetByOffsetData):
+        (JSC::DFG::Node::multiGetByOffsetData):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPhase.h:
+        (JSC::DFG::Phase::graph):
+        (JSC::DFG::runAndLog):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::dumpAndVerifyGraph):
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+        * ftl/FTLState.h:
+        (JSC::FTL::verboseCompilationEnabled):
+        (JSC::FTL::showDisassembly):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionEffectful42):
+        * runtime/IntendedStructureChain.cpp:
+        (JSC::IntendedStructureChain::dump):
+        (JSC::IntendedStructureChain::dumpInContext):
+        * runtime/IntendedStructureChain.h:
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+        * tests/stress/fold-multi-get-by-offset-to-get-by-offset-with-watchpoint.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/fold-multi-get-by-offset-to-get-by-offset.js: Added.
+        (foo):
+        (bar):
+        * tests/stress/multi-get-by-offset-proto-and-self.js: Added.
+        (foo):
+        (Foo):
+
 2014-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::prepareOSREntry should be nice to the stack

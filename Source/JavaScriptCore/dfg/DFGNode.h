@@ -41,6 +41,7 @@
 #include "DFGNodeOrigin.h"
 #include "DFGNodeType.h"
 #include "DFGVariableAccessData.h"
+#include "GetByIdVariant.h"
 #include "JSCJSValue.h"
 #include "Operands.h"
 #include "SpeculatedType.h"
@@ -52,6 +53,11 @@ namespace JSC { namespace DFG {
 
 class Graph;
 struct BasicBlock;
+
+struct MultiGetByOffsetData {
+    unsigned identifierNumber;
+    Vector<GetByIdVariant, 2> variants;
+};
 
 struct StructureTransitionData {
     Structure* previousStructure;
@@ -406,7 +412,7 @@ struct Node {
     
     void convertToGetByOffset(unsigned storageAccessDataIndex, Edge storage)
     {
-        ASSERT(m_op == GetById || m_op == GetByIdFlush);
+        ASSERT(m_op == GetById || m_op == GetByIdFlush || m_op == MultiGetByOffset);
         m_opInfo = storageAccessDataIndex;
         children.setChild2(children.child1());
         children.child2().setUseKind(KnownCellUse);
@@ -905,6 +911,7 @@ struct Node {
         case Call:
         case Construct:
         case GetByOffset:
+        case MultiGetByOffset:
         case GetClosureVar:
         case ArrayPop:
         case ArrayPush:
@@ -1052,6 +1059,16 @@ struct Node {
     {
         ASSERT(hasStorageAccessData());
         return m_opInfo;
+    }
+    
+    bool hasMultiGetByOffsetData()
+    {
+        return op() == MultiGetByOffset;
+    }
+    
+    MultiGetByOffsetData& multiGetByOffsetData()
+    {
+        return *reinterpret_cast<MultiGetByOffsetData*>(m_opInfo);
     }
     
     bool hasFunctionDeclIndex()

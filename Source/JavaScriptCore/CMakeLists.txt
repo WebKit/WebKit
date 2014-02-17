@@ -70,7 +70,9 @@ set(JavaScriptCore_SOURCES
     bytecode/DeferredCompilationCallback.cpp
     bytecode/ExecutionCounter.cpp
     bytecode/ExitKind.cpp
+    bytecode/ExitingJITType.cpp
     bytecode/GetByIdStatus.cpp
+    bytecode/GetByIdVariant.cpp
     bytecode/InlineCallFrameSet.cpp
     bytecode/JumpTable.cpp
     bytecode/LazyOperandValueProfile.cpp

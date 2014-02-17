@@ -247,7 +247,7 @@ static void fixFunctionBasedOnStackMaps(
             OSRExitCompilationInfo& info = state.finalizer->osrExit[i];
             OSRExit& exit = jitCode->osrExit[i];
             
-            if (Options::verboseCompilation())
+            if (verboseCompilationEnabled())
                 dataLog("Handling OSR stackmap #", exit.m_stackmapID, " for ", exit.m_codeOrigin, "\n");
 
             iter = recordMap.find(exit.m_stackmapID);
@@ -269,7 +269,7 @@ static void fixFunctionBasedOnStackMaps(
                     VirtualRegister(value.virtualRegister().offset() + localsOffset));
             }
             
-            if (Options::verboseCompilation()) {
+            if (verboseCompilationEnabled()) {
                 DumpContext context;
                 dataLog("    Exit values: ", inContext(exit.m_values, &context), "\n");
             }
@@ -286,7 +286,7 @@ static void fixFunctionBasedOnStackMaps(
         for (unsigned i = state.getByIds.size(); i--;) {
             GetByIdDescriptor& getById = state.getByIds[i];
             
-            if (Options::verboseCompilation())
+            if (verboseCompilationEnabled())
                 dataLog("Handling GetById stackmap #", getById.stackmapID(), "\n");
             
             iter = recordMap.find(getById.stackmapID());
@@ -324,7 +324,7 @@ static void fixFunctionBasedOnStackMaps(
         for (unsigned i = state.putByIds.size(); i--;) {
             PutByIdDescriptor& putById = state.putByIds[i];
             
-            if (Options::verboseCompilation())
+            if (verboseCompilationEnabled())
                 dataLog("Handling PutById stackmap #", putById.stackmapID(), "\n");
             
             iter = recordMap.find(putById.stackmapID());
@@ -541,7 +541,7 @@ void compile(State& state)
             llvm->RunPassManager(modulePasses, state.module);
         }
 
-        if (DFG::shouldShowDisassembly() || DFG::verboseCompilationEnabled())
+        if (shouldShowDisassembly() || verboseCompilationEnabled())
             state.dumpState("after optimization");
     
         // FIXME: Need to add support for the case where JIT memory allocation failed.
@@ -577,7 +577,7 @@ void compile(State& state)
     
     state.jitCode->unwindInfo.parse(
         state.compactUnwind, state.compactUnwindSize, state.generatedFunction);
-    if (DFG::shouldShowDisassembly())
+    if (shouldShowDisassembly())
         dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n    ", state.jitCode->unwindInfo, "\n");
     
     if (state.stackmapsSection.size()) {

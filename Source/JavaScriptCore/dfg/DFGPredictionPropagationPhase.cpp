@@ -177,6 +177,7 @@ private:
         case GetByIdFlush:
         case GetMyArgumentByValSafe:
         case GetByOffset:
+        case MultiGetByOffset:
         case Call:
         case Construct:
         case GetGlobalVar:

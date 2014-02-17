@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "JSCInlines.h"
 #include "StructureChain.h"
+#include <wtf/CommaPrinter.h>
 
 namespace JSC {
 
@@ -143,6 +144,22 @@ void IntendedStructureChain::visitChildren(SlotVisitor& visitor)
     visitor.appendUnbarrieredPointer(&m_head);
     for (unsigned i = m_vector.size(); i--;)
         visitor.appendUnbarrieredPointer(&m_vector[i]);
+}
+
+void IntendedStructureChain::dump(PrintStream& out) const
+{
+    dumpInContext(out, 0);
+}
+
+void IntendedStructureChain::dumpInContext(PrintStream& out, DumpContext* context) const
+{
+    out.print(
+        "(global = ", RawPointer(m_globalObject), ", head = ",
+        pointerDumpInContext(m_head, context), ", vector = [");
+    CommaPrinter comma;
+    for (unsigned i = 0; i < m_vector.size(); ++i)
+        out.print(comma, pointerDumpInContext(m_vector[i], context));
+    out.print("])");
 }
 
 } // namespace JSC

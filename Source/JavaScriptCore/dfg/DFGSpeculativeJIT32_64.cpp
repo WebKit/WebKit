@@ -4689,6 +4689,7 @@ void SpeculativeJIT::compile(Node* node)
     case Int52ToValue:
     case CheckInBounds:
     case ArithIMul:
+    case MultiGetByOffset:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

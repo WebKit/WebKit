@@ -177,7 +177,10 @@ public:
     
     void convertToConstant(Node* node, JSValue value)
     {
-        convertToConstant(node, constantRegisterForConstant(value));
+        if (value.isObject())
+            node->convertToWeakConstant(value.asCell());
+        else
+            convertToConstant(node, constantRegisterForConstant(value));
     }
 
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
@@ -827,6 +830,7 @@ public:
     SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
     SegmentedVector<NewArrayBufferData, 4> m_newArrayBufferData;
     SegmentedVector<SwitchData, 4> m_switchData;
+    Bag<MultiGetByOffsetData> m_multiGetByOffsetData;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     OwnPtr<InlineCallFrameSet> m_inlineCallFrames;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;

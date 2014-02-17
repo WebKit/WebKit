@@ -470,6 +470,10 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         read(AbstractHeap(NamedProperties, graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber));
         return;
         
+    case MultiGetByOffset:
+        read(AbstractHeap(NamedProperties, node->multiGetByOffsetData().identifierNumber));
+        return;
+        
     case PutByOffset:
         write(AbstractHeap(NamedProperties, graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber));
         return;

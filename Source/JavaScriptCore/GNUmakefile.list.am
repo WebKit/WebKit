@@ -147,10 +147,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/ExecutionCounter.h \
 	Source/JavaScriptCore/bytecode/ExitKind.cpp \
 	Source/JavaScriptCore/bytecode/ExitKind.h \
+	Source/JavaScriptCore/bytecode/ExitingJITType.cpp \
+	Source/JavaScriptCore/bytecode/ExitingJITType.h \
 	Source/JavaScriptCore/bytecode/ExpressionRangeInfo.h \
 	Source/JavaScriptCore/bytecode/FullBytecodeLiveness.h \
 	Source/JavaScriptCore/bytecode/GetByIdStatus.cpp \
 	Source/JavaScriptCore/bytecode/GetByIdStatus.h \
+	Source/JavaScriptCore/bytecode/GetByIdVariant.cpp \
+	Source/JavaScriptCore/bytecode/GetByIdVariant.h \
 	Source/JavaScriptCore/bytecode/HandlerInfo.h \
 	Source/JavaScriptCore/bytecode/InlineCallFrameSet.cpp \
 	Source/JavaScriptCore/bytecode/InlineCallFrameSet.h \

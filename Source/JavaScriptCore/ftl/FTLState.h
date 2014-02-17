@@ -30,6 +30,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "DFGCommon.h"
 #include "DFGGraph.h"
 #include "FTLAbbreviations.h"
 #include "FTLGeneratedFunction.h"
@@ -41,6 +42,16 @@
 #include <wtf/Noncopyable.h>
 
 namespace JSC { namespace FTL {
+
+inline bool verboseCompilationEnabled()
+{
+    return DFG::verboseCompilationEnabled(DFG::FTLMode);
+}
+
+inline bool showDisassembly()
+{
+    return DFG::shouldShowDisassembly(DFG::FTLMode);
+}
 
 class State {
     WTF_MAKE_NONCOPYABLE(State);

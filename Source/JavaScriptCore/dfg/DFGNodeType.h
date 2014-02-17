@@ -175,6 +175,7 @@ namespace JSC { namespace DFG {
     macro(ConstantStoragePointer, NodeResultStorage) \
     macro(TypedArrayWatchpoint, NodeMustGenerate) \
     macro(GetByOffset, NodeResultJS) \
+    macro(MultiGetByOffset, NodeResultJS) \
     macro(PutByOffset, NodeMustGenerate) \
     macro(GetArrayLength, NodeResultInt32) \
     macro(GetTypedArrayByteOffset, NodeResultInt32) \

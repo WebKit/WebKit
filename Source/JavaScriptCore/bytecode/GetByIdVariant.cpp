@@ -23,40 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ExitingJITType_h
-#define ExitingJITType_h
+#include "config.h"
+#include "GetByIdVariant.h"
 
-#include "JITCode.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
-enum ExitingJITType : uint8_t {
-    ExitFromAnything,
-    ExitFromDFG,
-    ExitFromFTL
-};
-
-inline ExitingJITType exitingJITTypeFor(JITCode::JITType type)
+void GetByIdVariant::dump(PrintStream& out) const
 {
-    switch (type) {
-    case JITCode::DFGJIT:
-        return ExitFromDFG;
-    case JITCode::FTLJIT:
-        return ExitFromFTL;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return ExitFromAnything;
+    dumpInContext(out, 0);
+}
+
+void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
+{
+    if (!isSet()) {
+        out.print("<empty>");
+        return;
     }
+    
+    out.print(
+        "<", inContext(structureSet(), context), ", ",
+        pointerDumpInContext(chain(), context), ", ",
+        inContext(specificValue(), context), ", ", offset(), ">");
 }
 
 } // namespace JSC
-
-namespace WTF {
-
-class PrintStream;
-void printInternal(PrintStream&, JSC::ExitingJITType);
-
-} // namespace WTF
-
-#endif // ExitingJITType_h
 

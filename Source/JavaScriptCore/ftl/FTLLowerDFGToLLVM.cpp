@@ -464,6 +464,9 @@ private:
         case GetByOffset:
             compileGetByOffset();
             break;
+        case MultiGetByOffset:
+            compileMultiGetByOffset();
+            break;
         case PutByOffset:
             compilePutByOffset();
             break;
@@ -3073,6 +3076,63 @@ private:
                     m_heaps.properties[data.identifierNumber],
                     lowStorage(m_node->child1()),
                     offsetRelativeToBase(data.offset))));
+    }
+    
+    void compileMultiGetByOffset()
+    {
+        LValue base = lowCell(m_node->child1());
+        
+        MultiGetByOffsetData& data = m_node->multiGetByOffsetData();
+        
+        Vector<LBasicBlock, 2> blocks(data.variants.size());
+        for (unsigned i = data.variants.size(); i--;)
+            blocks[i] = FTL_NEW_BLOCK(m_out, ("MultiGetByOffset case ", i));
+        LBasicBlock exit = FTL_NEW_BLOCK(m_out, ("MultiGetByOffset fail"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("MultiGetByOffset continuation"));
+        
+        Vector<SwitchCase, 2> cases;
+        for (unsigned i = data.variants.size(); i--;) {
+            GetByIdVariant variant = data.variants[i];
+            for (unsigned j = variant.structureSet().size(); j--;)
+                cases.append(SwitchCase(weakPointer(variant.structureSet()[j]), blocks[i]));
+        }
+        m_out.switchInstruction(m_out.loadPtr(base, m_heaps.JSCell_structure), cases, exit);
+        
+        LBasicBlock lastNext = m_out.m_nextBlock;
+        
+        Vector<ValueFromBlock, 2> results;
+        for (unsigned i = data.variants.size(); i--;) {
+            m_out.appendTo(blocks[i], i + 1 < data.variants.size() ? blocks[i + 1] : exit);
+            
+            GetByIdVariant variant = data.variants[i];
+            LValue result;
+            if (variant.specificValue())
+                result = m_out.constInt64(JSValue::encode(variant.specificValue()));
+            else {
+                LValue propertyBase;
+                if (variant.chain())
+                    propertyBase = weakPointer(variant.chain()->terminalPrototype());
+                else
+                    propertyBase = base;
+                if (!isInlineOffset(variant.offset()))
+                    propertyBase = m_out.loadPtr(propertyBase, m_heaps.JSObject_butterfly);
+                result = m_out.load64(
+                    m_out.address(
+                        m_heaps.properties[data.identifierNumber],
+                        propertyBase,
+                        offsetRelativeToBase(variant.offset())));
+            }
+            
+            results.append(m_out.anchor(result));
+            m_out.jump(continuation);
+        }
+        
+        m_out.appendTo(exit, continuation);
+        terminate(BadCache);
+        m_out.unreachable();
+        
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(m_out.int64, results));
     }
     
     void compilePutByOffset()

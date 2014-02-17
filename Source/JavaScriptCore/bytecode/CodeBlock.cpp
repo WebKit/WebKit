@@ -1377,7 +1377,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         out.print(" !! frequent exits: ");
         CommaPrinter comma;
         for (unsigned i = 0; i < exitSites.size(); ++i)
-            out.print(comma, exitSites[i].kind());
+            out.print(comma, exitSites[i].kind(), " ", exitSites[i].jitType());
     }
 #else // ENABLE(DFG_JIT)
     UNUSED_PARAM(location);

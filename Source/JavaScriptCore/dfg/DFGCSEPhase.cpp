@@ -642,23 +642,29 @@ private:
         return 0;
     }
     
-    Node* getByOffsetLoadElimination(unsigned identifierNumber, Node* child1)
+    Node* getByOffsetLoadElimination(unsigned identifierNumber, Node* base)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (node == child1)
+            if (node == base)
                 break;
 
             switch (node->op()) {
             case GetByOffset:
-                if (node->child1() == child1
+                if (node->child2() == base
                     && m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber == identifierNumber)
+                    return node;
+                break;
+                
+            case MultiGetByOffset:
+                if (node->child1() == base
+                    && node->multiGetByOffsetData().identifierNumber == identifierNumber)
                     return node;
                 break;
                 
             case PutByOffset:
                 if (m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber == identifierNumber) {
-                    if (node->child1() == child1) // Must be same property storage.
+                    if (node->child2() == base) // Must be same property storage.
                         return node->child3().node();
                     return 0;
                 }
@@ -1401,7 +1407,13 @@ private:
         case GetByOffset:
             if (cseMode == StoreElimination)
                 break;
-            setReplacement(getByOffsetLoadElimination(m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber, node->child1().node()));
+            setReplacement(getByOffsetLoadElimination(m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber, node->child2().node()));
+            break;
+            
+        case MultiGetByOffset:
+            if (cseMode == StoreElimination)
+                break;
+            setReplacement(getByOffsetLoadElimination(node->multiGetByOffsetData().identifierNumber, node->child1().node()));
             break;
             
         case PutByOffset:

@@ -238,6 +238,7 @@ static EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState*)
 static EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState*);
 static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -372,6 +373,8 @@ protected:
         addFunction(vm, "setElementRoot", functionSetElementRoot, 2);
         
         putDirectNativeFunction(vm, this, Identifier(&vm, "DFGTrue"), 0, functionFalse, DFGTrue, DontEnum | JSC::Function);
+        
+        addFunction(vm, "effectful42", functionEffectful42, 0);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -725,6 +728,11 @@ EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)
 EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*)
 {
     return JSValue::encode(jsBoolean(false));
+}
+
+EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*)
+{
+    return JSValue::encode(jsNumber(42));
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog

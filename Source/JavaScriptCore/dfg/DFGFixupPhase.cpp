@@ -881,6 +881,11 @@ private:
             break;
         }
             
+        case MultiGetByOffset: {
+            fixEdge<CellUse>(node->child1());
+            break;
+        }
+            
         case PutByOffset: {
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());

@@ -5010,6 +5010,7 @@ void SpeculativeJIT::compile(Node* node)
     case ExtractOSREntryLocal:
     case CheckInBounds:
     case ArithIMul:
+    case MultiGetByOffset:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
