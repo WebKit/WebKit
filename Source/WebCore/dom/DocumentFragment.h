@@ -43,7 +43,7 @@ public:
     virtual bool isTemplateContent() const { return false; }
 
 protected:
-    DocumentFragment(Document*, ConstructionType = CreateContainer);
+    DocumentFragment(Document&, ConstructionType = CreateContainer);
     virtual String nodeName() const override;
 
 private:

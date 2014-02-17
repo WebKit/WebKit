@@ -29,7 +29,7 @@
 namespace WebCore {
 
 DocumentType::DocumentType(Document& document, const String& name, const String& publicId, const String& systemId)
-    : Node(&document, CreateOther)
+    : Node(document, CreateOther)
     , m_name(name)
     , m_publicId(publicId)
     , m_systemId(systemId)

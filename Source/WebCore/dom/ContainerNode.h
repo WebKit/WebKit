@@ -138,7 +138,7 @@ public:
     PassRefPtr<RadioNodeList> radioNodeList(const AtomicString&);
 
 protected:
-    explicit ContainerNode(Document*, ConstructionType = CreateContainer);
+    explicit ContainerNode(Document&, ConstructionType = CreateContainer);
 
     static void queuePostAttachCallback(NodeCallback, Node&, unsigned = 0);
     static bool postAttachCallbacksAreSuspended();
@@ -182,7 +182,7 @@ void isContainerNode(const ContainerNode&); // Catch unnecessary runtime check o
 
 NODE_TYPE_CASTS(ContainerNode)
 
-inline ContainerNode::ContainerNode(Document* document, ConstructionType type)
+inline ContainerNode::ContainerNode(Document& document, ConstructionType type)
     : Node(document, type)
     , m_firstChild(0)
     , m_lastChild(0)

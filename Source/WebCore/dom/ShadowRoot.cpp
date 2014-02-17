@@ -52,7 +52,7 @@ enum ShadowRootUsageOriginType {
 };
 
 ShadowRoot::ShadowRoot(Document& document, ShadowRootType type)
-    : DocumentFragment(&document, CreateShadowRoot)
+    : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
     , m_resetStyleInheritance(false)
     , m_type(type)
@@ -66,7 +66,7 @@ ShadowRoot::~ShadowRoot()
     // for this ShadowRoot instance because TreeScope destructor
     // clears Node::m_treeScope thus ContainerNode is no longer able
     // to access it Document reference after that.
-    willBeDeletedFrom(&document());
+    willBeDeletedFrom(document());
 
     // We must remove all of our children first before the TreeScope destructor
     // runs so we don't go through TreeScopeAdopter for each child with a

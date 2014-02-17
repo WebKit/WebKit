@@ -306,27 +306,24 @@ Node::~Node()
         clearRareData();
 
     if (!isContainerNode())
-        willBeDeletedFrom(&document());
+        willBeDeletedFrom(document());
 
     document().decrementReferencingNodeCount();
 
     InspectorCounters::decrementCounter(InspectorCounters::NodeCounter);
 }
 
-void Node::willBeDeletedFrom(Document* document)
+void Node::willBeDeletedFrom(Document& document)
 {
     if (hasEventTargetData()) {
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
-        if (document)
-            document->removeTouchEventListener(this, true);
+        document.removeTouchEventListener(this, true);
 #endif
         clearEventTargetData();
     }
 
-    if (document) {
-        if (AXObjectCache* cache = document->existingAXObjectCache())
-            cache->remove(this);
-    }
+    if (AXObjectCache* cache = document.existingAXObjectCache())
+        cache->remove(this);
 }
 
 NodeRareData* Node::rareData() const

@@ -153,7 +153,7 @@ public:
     static void dumpStatistics();
 
     virtual ~Node();
-    void willBeDeletedFrom(Document*);
+    void willBeDeletedFrom(Document&);
 
     // DOM methods & attributes for Node
 
@@ -624,7 +624,7 @@ protected:
         CreateEditingText = CreateText | IsEditingTextFlag,
         CreateMathMLElement = CreateStyledElement | IsMathMLFlag,
     };
-    Node(Document*, ConstructionType);
+    Node(Document&, ConstructionType);
 
     virtual void didMoveToNewDocument(Document* oldDocument);
     

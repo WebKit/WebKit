@@ -28,22 +28,15 @@ namespace WebCore {
 
 // FIXME: This class is never instantiated. Maybe it should be removed.
 
-class Notation final : public ContainerNode {
+class Notation : public ContainerNode {
 public:
-    const String& publicId() const { return m_publicId; }
-    const String& systemId() const { return m_systemId; }
+    String publicId() const { ASSERT_NOT_REACHED(); return String(); }
+    String systemId() const { ASSERT_NOT_REACHED(); return String(); }
 
 private:
-    Notation(Document&, const String& name, const String& publicId, const String& systemId);
-
-    virtual String nodeName() const override;
-    virtual NodeType nodeType() const override;
-    virtual PassRefPtr<Node> cloneNode(bool deep) override;
-    virtual bool childTypeAllowed(NodeType) const override;
-
-    String m_name;
-    String m_publicId;
-    String m_systemId;
+    Notation(Document& document)
+        : ContainerNode(document)
+    { }
 };
 
 } //namespace

@@ -35,7 +35,9 @@ public:
     String notationName() const { ASSERT_NOT_REACHED(); return String(); }
 
 private:
-    Entity() : ContainerNode(0) {}
+    Entity(Document& document)
+        : ContainerNode(document)
+    { }
 };
 
 } //namespace

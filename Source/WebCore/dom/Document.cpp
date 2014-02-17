@@ -393,7 +393,7 @@ bool TextAutoSizingTraits::isDeletedValue(const TextAutoSizingKey& value)
 #endif
 
 Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
-    : ContainerNode(this, CreateDocument)
+    : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
     , m_handlingTouchEvent(false)

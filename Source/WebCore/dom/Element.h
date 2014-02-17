@@ -569,7 +569,7 @@ public:
 
 protected:
     Element(const QualifiedName& tagName, Document& document, ConstructionType type)
-        : ContainerNode(&document, type)
+        : ContainerNode(document, type)
         , m_tagName(tagName)
     {
     }

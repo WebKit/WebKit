@@ -31,19 +31,19 @@
 
 namespace WebCore {
 
-DocumentFragment::DocumentFragment(Document* document, ConstructionType constructionType)
+DocumentFragment::DocumentFragment(Document& document, ConstructionType constructionType)
     : ContainerNode(document, constructionType)
 {
 }
 
 PassRefPtr<DocumentFragment> DocumentFragment::create(Document& document)
 {
-    return adoptRef(new DocumentFragment(&document, Node::CreateDocumentFragment));
+    return adoptRef(new DocumentFragment(document, Node::CreateDocumentFragment));
 }
 
 PassRefPtr<DocumentFragment> DocumentFragment::create(ScriptExecutionContext& context)
 {
-    return adoptRef(new DocumentFragment(&toDocument(context), Node::CreateDocumentFragment));
+    return adoptRef(new DocumentFragment(toDocument(context), Node::CreateDocumentFragment));
 }
 
 String DocumentFragment::nodeName() const

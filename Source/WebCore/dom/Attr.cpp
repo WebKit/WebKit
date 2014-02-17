@@ -37,7 +37,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 Attr::Attr(Element* element, const QualifiedName& name)
-    : ContainerNode(&element->document())
+    : ContainerNode(element->document())
     , m_element(element)
     , m_name(name)
     , m_ignoreChildrenChanged(0)
@@ -45,7 +45,7 @@ Attr::Attr(Element* element, const QualifiedName& name)
 }
 
 Attr::Attr(Document& document, const QualifiedName& name, const AtomicString& standaloneValue)
-    : ContainerNode(&document)
+    : ContainerNode(document)
     , m_element(0)
     , m_name(name)
     , m_standaloneValue(standaloneValue)

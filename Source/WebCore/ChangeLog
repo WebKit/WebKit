@@ -1,3 +1,51 @@
+2014-02-17  Antti Koivisto  <antti@apple.com>
+
+        Node constructor should take Document reference
+        https://bugs.webkit.org/show_bug.cgi?id=128931
+
+        Reviewed by Geoff Garen.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::Attr):
+        * dom/CharacterData.h:
+        (WebCore::CharacterData::CharacterData):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::~ContainerNode):
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::ContainerNode):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Node::Node):
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::DocumentFragment):
+        (WebCore::DocumentFragment::create):
+        * dom/DocumentFragment.h:
+        * dom/DocumentType.cpp:
+        (WebCore::DocumentType::DocumentType):
+        * dom/Element.h:
+        (WebCore::Element::Element):
+        * dom/Entity.h:
+        (WebCore::Entity::Entity):
+        * dom/EntityReference.cpp:
+        (WebCore::EntityReference::EntityReference):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::willBeDeletedFrom):
+        * dom/Node.h:
+        * dom/Notation.cpp:
+        * dom/Notation.h:
+        (WebCore::Notation::publicId):
+        (WebCore::Notation::systemId):
+        (WebCore::Notation::Notation):
+        
+            Remove cruft from this non-instantiated class.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::~ShadowRoot):
+        * dom/TemplateContentDocumentFragment.h:
+
 2014-02-17  Sergio Correia  <sergio.correia@openbossa.org>
 
         Replace uses of PassOwnPtr/OwnPtr with std::unique_ptr in WebCore/inspector

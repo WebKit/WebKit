@@ -150,7 +150,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
 ContainerNode::~ContainerNode()
 {
-    willBeDeletedFrom(&document());
+    willBeDeletedFrom(document());
     removeDetachedChildren();
 }
 

@@ -26,7 +26,7 @@
 namespace WebCore {
 
 inline EntityReference::EntityReference(Document& document, const String& entityName)
-    : ContainerNode(&document)
+    : ContainerNode(document)
     , m_entityName(entityName)
 {
 }
