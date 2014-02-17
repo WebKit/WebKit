@@ -372,7 +372,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             return false;
 
         const QualifiedName& attr = selector->attribute();
-        bool caseSensitive = !m_documentIsHTML || HTMLDocument::isCaseSensitiveAttribute(attr);
+        bool caseSensitive = !(m_documentIsHTML && element->isHTMLElement()) || HTMLDocument::isCaseSensitiveAttribute(attr);
 
         if (!anyAttributeMatches(element, selector, attr, caseSensitive))
             return false;
