@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGWatchpointCollectionPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGWatchpointCollectionPhase.h"
 
 #include "ArrayPrototype.h"
 #include "DFGClobberize.h"

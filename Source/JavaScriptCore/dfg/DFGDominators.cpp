@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGDominators.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGDominators.h"
 
 #include "DFGGraph.h"
 #include "JSCInlines.h"

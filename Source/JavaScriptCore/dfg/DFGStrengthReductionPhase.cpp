@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGStrengthReductionPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGStrengthReductionPhase.h"
 
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"

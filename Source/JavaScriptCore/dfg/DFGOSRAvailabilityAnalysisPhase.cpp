@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGOSRAvailabilityAnalysisPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGOSRAvailabilityAnalysisPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"

@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGDisassembler.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGDisassembler.h"
 
 #include "CodeBlockWithJITType.h"
 #include "DFGGraph.h"

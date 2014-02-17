@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGGraphSafepoint.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGGraphSafepoint.h"
 
 #include "DFGGraph.h"
 #include "JSCInlines.h"

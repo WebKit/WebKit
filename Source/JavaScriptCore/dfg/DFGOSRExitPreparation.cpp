@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGOSRExitPreparation.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGOSRExitPreparation.h"
 
 #include "CodeBlock.h"
 #include "Executable.h"

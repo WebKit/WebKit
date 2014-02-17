@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGPredictionInjectionPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGPredictionInjectionPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"

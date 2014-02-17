@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGValueSource.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGValueSource.h"
 
 #include "JSCInlines.h"
 

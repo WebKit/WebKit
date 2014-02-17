@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGDesiredTransitions.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGDesiredTransitions.h"
 
 #include "CodeBlock.h"
 #include "DFGCommonData.h"

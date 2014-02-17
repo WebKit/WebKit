@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGDesiredWatchpoints.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGDesiredWatchpoints.h"
 
 #include "ArrayBufferNeuteringWatchpoint.h"
 #include "CodeBlock.h"

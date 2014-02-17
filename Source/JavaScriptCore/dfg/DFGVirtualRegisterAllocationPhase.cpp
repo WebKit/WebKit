@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGVirtualRegisterAllocationPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGVirtualRegisterAllocationPhase.h"
 
 #include "DFGGraph.h"
 #include "DFGScoreBoard.h"

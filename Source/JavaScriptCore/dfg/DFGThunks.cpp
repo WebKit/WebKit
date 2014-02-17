@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGThunks.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGThunks.h"
 
 #include "CCallHelpers.h"
 #include "DFGOSRExitCompiler.h"

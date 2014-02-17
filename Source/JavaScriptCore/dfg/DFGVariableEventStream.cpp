@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGVariableEventStream.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGVariableEventStream.h"
 
 #include "CodeBlock.h"
 #include "DFGJITCode.h"

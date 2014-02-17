@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGVariableEvent.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGVariableEvent.h"
 
 #include "FPRInfo.h"
 #include "GPRInfo.h"

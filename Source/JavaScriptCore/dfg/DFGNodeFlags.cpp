@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGNodeFlags.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGNodeFlags.h"
 
 #include "JSCInlines.h"
 #include <wtf/CommaPrinter.h>

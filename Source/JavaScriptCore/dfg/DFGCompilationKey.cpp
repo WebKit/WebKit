@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGCompilationKey.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGCompilationKey.h"
 
 #include "CodeBlock.h"
 #include "CodeBlockSet.h"

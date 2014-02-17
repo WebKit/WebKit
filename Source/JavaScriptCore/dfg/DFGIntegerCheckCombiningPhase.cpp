@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGIntegerCheckCombiningPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGIntegerCheckCombiningPhase.h"
 
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"

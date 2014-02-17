@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGCPSRethreadingPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGCPSRethreadingPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"

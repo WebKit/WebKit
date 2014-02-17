@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGLongLivedState.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGLongLivedState.h"
 
 #include "JSCInlines.h"
 

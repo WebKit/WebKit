@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGBlockInsertionSet.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGBlockInsertionSet.h"
 
 #include "JSCInlines.h"
 

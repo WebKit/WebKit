@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGUseKind.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGUseKind.h"
 
 #include "JSCInlines.h"
 

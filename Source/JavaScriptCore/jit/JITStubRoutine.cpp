@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "JITStubRoutine.h"
 
 #if ENABLE(JIT)
-
-#include "JITStubRoutine.h"
 
 #include "JSObject.h"
 #include "JSCInlines.h"

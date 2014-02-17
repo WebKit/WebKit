@@ -26,6 +26,7 @@
 #include "config.h"
 
 #if ENABLE(JIT)
+
 #include "JIT.h"
 
 // This probably does not belong here; adding here for now as a quick Windows build fix.

@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGJITCompiler.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGJITCompiler.h"
 
 #include "ArityCheckFailReturnThunks.h"
 #include "CodeBlock.h"

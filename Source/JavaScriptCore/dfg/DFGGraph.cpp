@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGGraph.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGGraph.h"
 
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "CodeBlock.h"

@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGCSEPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGCSEPhase.h"
 
 #include "DFGAbstractHeap.h"
 #include "DFGClobberize.h"

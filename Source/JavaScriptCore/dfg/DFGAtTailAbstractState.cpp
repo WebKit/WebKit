@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGAtTailAbstractState.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGAtTailAbstractState.h"
 
 #include "JSCInlines.h"
 

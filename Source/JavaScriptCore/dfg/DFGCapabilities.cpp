@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGCapabilities.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGCapabilities.h"
 
 #include "CodeBlock.h"
 #include "DFGCommon.h"
@@ -36,7 +35,6 @@
 
 namespace JSC { namespace DFG {
 
-#if ENABLE(DFG_JIT)
 bool mightCompileEval(CodeBlock* codeBlock)
 {
     return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
@@ -247,8 +245,6 @@ CapabilityLevel capabilityLevel(CodeBlock* codeBlock)
     
     return result;
 }
-
-#endif
 
 } } // namespace JSC::DFG
 

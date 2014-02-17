@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGResurrectionForValidationPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGResurrectionForValidationPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"

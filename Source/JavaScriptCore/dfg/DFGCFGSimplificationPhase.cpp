@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGCFGSimplificationPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGCFGSimplificationPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"

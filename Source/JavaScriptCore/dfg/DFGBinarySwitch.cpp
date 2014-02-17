@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGBinarySwitch.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGBinarySwitch.h"
 
 #include "JSCInlines.h"
 

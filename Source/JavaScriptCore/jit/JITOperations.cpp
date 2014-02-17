@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
-#if ENABLE(JIT)
 #include "JITOperations.h"
+
+#if ENABLE(JIT)
 
 #include "Arguments.h"
 #include "ArrayConstructor.h"

@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "JITStubRoutineSet.h"
 
 #if ENABLE(JIT)
-
-#include "JITStubRoutineSet.h"
 
 #include "GCAwareJITStubRoutine.h"
 #include "JSCInlines.h"

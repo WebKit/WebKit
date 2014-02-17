@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "JITDisassembler.h"
 
 #if ENABLE(JIT)
-
-#include "JITDisassembler.h"
 
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"

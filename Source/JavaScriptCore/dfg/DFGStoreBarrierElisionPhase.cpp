@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGStoreBarrierElisionPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGStoreBarrierElisionPhase.h"
 
 #include "DFGBasicBlock.h"
 #include "DFGClobberSet.h"

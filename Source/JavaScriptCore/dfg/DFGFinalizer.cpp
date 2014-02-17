@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGFinalizer.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGFinalizer.h"
 
 #include "DFGPlan.h"
 #include "JSCInlines.h"

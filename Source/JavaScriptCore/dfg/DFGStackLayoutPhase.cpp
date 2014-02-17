@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGStackLayoutPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGStackLayoutPhase.h"
 
 #include "DFGGraph.h"
 #include "DFGPhase.h"

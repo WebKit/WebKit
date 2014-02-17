@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGSSAConversionPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGSSAConversionPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"

@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGValidate.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGValidate.h"
 
 #include "CodeBlockWithJITType.h"
 #include "JSCInlines.h"

@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGJumpReplacement.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGJumpReplacement.h"
 
 #include "MacroAssembler.h"
 #include "JSCInlines.h"

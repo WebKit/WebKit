@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGSafepoint.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGSafepoint.h"
 
 #include "DFGPlan.h"
 #include "DFGScannable.h"

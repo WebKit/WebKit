@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
+#include "JITStubs.h"
 
 #if ENABLE(JIT)
-#include "JITStubs.h"
 
 #include "JSCInlines.h"
 

@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGDesiredWeakReferences.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGDesiredWeakReferences.h"
 
 #include "CodeBlock.h"
 #include "DFGCommonData.h"

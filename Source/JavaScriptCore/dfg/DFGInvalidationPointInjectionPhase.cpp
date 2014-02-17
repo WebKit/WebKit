@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGInvalidationPointInjectionPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGInvalidationPointInjectionPhase.h"
 
 #include "DFGClobberize.h"
 #include "DFGGraph.h"

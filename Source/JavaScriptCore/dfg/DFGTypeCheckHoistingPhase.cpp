@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGTypeCheckHoistingPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGTypeCheckHoistingPhase.h"
 
 #include "DFGBasicBlock.h"
 #include "DFGGraph.h"

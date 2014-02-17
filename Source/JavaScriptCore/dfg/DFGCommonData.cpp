@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGCommonData.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGCommonData.h"
 
 #include "CodeBlock.h"
 #include "DFGNode.h"

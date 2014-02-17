@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGNode.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGNode.h"
 
 #include "DFGGraph.h"
 #include "DFGNodeAllocator.h"

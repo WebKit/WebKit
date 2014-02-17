@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGCriticalEdgeBreakingPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGCriticalEdgeBreakingPhase.h"
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGBlockInsertionSet.h"

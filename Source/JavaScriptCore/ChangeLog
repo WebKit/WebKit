@@ -1,3 +1,119 @@
+2014-02-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Move back primary header includes next to config.h
+        https://bugs.webkit.org/show_bug.cgi?id=128912
+
+        Reviewed by Alexey Proskuryakov.
+
+        * dfg/DFGAbstractHeap.cpp:
+        * dfg/DFGAbstractValue.cpp:
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        * dfg/DFGArithMode.cpp:
+        * dfg/DFGArrayMode.cpp:
+        * dfg/DFGAtTailAbstractState.cpp:
+        * dfg/DFGAvailability.cpp:
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        * dfg/DFGBasicBlock.cpp:
+        * dfg/DFGBinarySwitch.cpp:
+        * dfg/DFGBlockInsertionSet.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGCFAPhase.cpp:
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGCapabilities.cpp:
+        * dfg/DFGClobberSet.cpp:
+        * dfg/DFGClobberize.cpp:
+        * dfg/DFGCommon.cpp:
+        * dfg/DFGCommonData.cpp:
+        * dfg/DFGCompilationKey.cpp:
+        * dfg/DFGCompilationMode.cpp:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp:
+        * dfg/DFGDCEPhase.cpp:
+        * dfg/DFGDesiredIdentifiers.cpp:
+        * dfg/DFGDesiredStructureChains.cpp:
+        * dfg/DFGDesiredTransitions.cpp:
+        * dfg/DFGDesiredWatchpoints.cpp:
+        * dfg/DFGDesiredWeakReferences.cpp:
+        * dfg/DFGDesiredWriteBarriers.cpp:
+        * dfg/DFGDisassembler.cpp:
+        * dfg/DFGDominators.cpp:
+        * dfg/DFGEdge.cpp:
+        * dfg/DFGFailedFinalizer.cpp:
+        * dfg/DFGFinalizer.cpp:
+        * dfg/DFGFixupPhase.cpp:
+        * dfg/DFGFlushFormat.cpp:
+        * dfg/DFGFlushLivenessAnalysisPhase.cpp:
+        * dfg/DFGFlushedAt.cpp:
+        * dfg/DFGGraph.cpp:
+        * dfg/DFGGraphSafepoint.cpp:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        * dfg/DFGInvalidationPointInjectionPhase.cpp:
+        * dfg/DFGJITCode.cpp:
+        * dfg/DFGJITCompiler.cpp:
+        * dfg/DFGJITFinalizer.cpp:
+        * dfg/DFGJumpReplacement.cpp:
+        * dfg/DFGLICMPhase.cpp:
+        * dfg/DFGLazyJSValue.cpp:
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        * dfg/DFGLongLivedState.cpp:
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        * dfg/DFGMinifiedNode.cpp:
+        * dfg/DFGNaturalLoops.cpp:
+        * dfg/DFGNode.cpp:
+        * dfg/DFGNodeFlags.cpp:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        * dfg/DFGOSREntry.cpp:
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        * dfg/DFGOSRExit.cpp:
+        * dfg/DFGOSRExitBase.cpp:
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        * dfg/DFGOSRExitCompiler64.cpp:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        * dfg/DFGOSRExitJumpPlaceholder.cpp:
+        * dfg/DFGOSRExitPreparation.cpp:
+        * dfg/DFGPhase.cpp:
+        * dfg/DFGPlan.cpp:
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGResurrectionForValidationPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        * dfg/DFGSSALoweringPhase.cpp:
+        * dfg/DFGSafepoint.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * dfg/DFGStackLayoutPhase.cpp:
+        * dfg/DFGStoreBarrierElisionPhase.cpp:
+        * dfg/DFGStrengthReductionPhase.cpp:
+        * dfg/DFGThreadData.cpp:
+        * dfg/DFGThunks.cpp:
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp:
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        * dfg/DFGUnificationPhase.cpp:
+        * dfg/DFGUseKind.cpp:
+        * dfg/DFGValidate.cpp:
+        * dfg/DFGValueSource.cpp:
+        * dfg/DFGVariableAccessDataDump.cpp:
+        * dfg/DFGVariableEvent.cpp:
+        * dfg/DFGVariableEventStream.cpp:
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        * dfg/DFGWorklist.cpp:
+        * heap/JITStubRoutineSet.cpp:
+        * jit/GCAwareJITStubRoutine.cpp:
+        * jit/JIT.cpp:
+        * jit/JITDisassembler.cpp:
+        * jit/JITOperations.cpp:
+        * jit/JITStubRoutine.cpp:
+        * jit/JITStubs.cpp:
+        * jit/TempRegisterSet.cpp:
+
 2014-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         FTL OSR exit shouldn't make X86-specific assumptions

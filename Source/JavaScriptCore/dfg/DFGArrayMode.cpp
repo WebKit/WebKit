@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGArrayMode.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGArrayMode.h"
 
 #include "DFGAbstractValue.h"
 #include "DFGGraph.h"

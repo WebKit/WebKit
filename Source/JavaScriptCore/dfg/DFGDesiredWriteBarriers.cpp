@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGDesiredWriteBarriers.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGDesiredWriteBarriers.h"
 
 #include "CodeBlock.h"
 #include "JSCInlines.h"

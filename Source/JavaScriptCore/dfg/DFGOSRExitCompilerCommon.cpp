@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGOSRExitCompilerCommon.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGOSRExitCompilerCommon.h"
 
 #include "Arguments.h"
 #include "DFGJITCode.h"

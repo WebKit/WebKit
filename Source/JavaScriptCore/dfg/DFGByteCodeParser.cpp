@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGByteCodeParser.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGByteCodeParser.h"
 
 #include "ArrayConstructor.h"
 #include "CallLinkStatus.h"

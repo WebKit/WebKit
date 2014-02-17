@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGAvailability.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGAvailability.h"
 
 #include "DFGNode.h"
 #include "JSCInlines.h"

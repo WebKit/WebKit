@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGClobberize.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGClobberize.h"
 
 #include "JSCInlines.h"
 

@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGPredictionPropagationPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGPredictionPropagationPhase.h"
 
 #include "DFGGraph.h"
 #include "DFGPhase.h"

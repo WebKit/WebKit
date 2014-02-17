@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGMinifiedNode.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGMinifiedNode.h"
 
 #include "DFGNode.h"
 #include "JSCInlines.h"

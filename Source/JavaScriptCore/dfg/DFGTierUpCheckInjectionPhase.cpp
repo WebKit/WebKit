@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGTierUpCheckInjectionPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGTierUpCheckInjectionPhase.h"
 
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"

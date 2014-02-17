@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "DFGCFAPhase.h"
 
 #if ENABLE(DFG_JIT)
-
-#include "DFGCFAPhase.h"
 
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGGraph.h"
