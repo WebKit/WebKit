@@ -1,3 +1,12 @@
+2014-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix layout test added in r164232 to avoid bug 128929
+        and use rects which don't have minor rendering differences when
+        drawn into compositing layers.
+
+        * compositing/contents-opaque/opaque-with-clip-path-expected.html:
+        * compositing/contents-opaque/opaque-with-clip-path.html:
+
 2014-02-17  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Make regions unsplittable
