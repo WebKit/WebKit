@@ -140,7 +140,9 @@ class WinPort(ApplePort):
     def _ntsd_location(self):
         if 'PROGRAMFILES' not in os.environ:
             return None
-        possible_paths = [self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x86", "ntsd.exe"),
+        possible_paths = [self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.1", "Debuggers", "x86", "ntsd.exe"),
+            self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.1", "Debuggers", "x64", "ntsd.exe"),
+            self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x86", "ntsd.exe"),
             self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x64", "ntsd.exe"),
             self._filesystem.join(os.environ['PROGRAMFILES'], "Debugging Tools for Windows (x86)", "ntsd.exe"),
             self._filesystem.join(os.environ['ProgramW6432'], "Debugging Tools for Windows (x64)", "ntsd.exe"),

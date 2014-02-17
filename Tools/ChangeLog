@@ -1,3 +1,13 @@
+2014-02-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] There's another Windows SDK. Make sure we recognize it.
+        https://bugs.webkit.org/show_bug.cgi?id=128932
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._ntsd_location):
+
 2014-02-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         webkitpy test fix on Mac after r164244.
