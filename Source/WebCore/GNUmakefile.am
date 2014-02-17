@@ -267,9 +267,8 @@ DerivedSources/WebCore/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y.in
 
 USER_AGENT_SCRIPT_FILES = $(WebCore)/Modules/mediacontrols/mediaControlsApple.js $(WebCore)/Modules/mediacontrols/mediaControlsGtk.js
 DerivedSources/WebCore/UserAgentScriptsData.cpp: DerivedSources/WebCore/UserAgentScripts.h
-DerivedSources/WebCore/UserAgentScripts.h: PYTHONPATH=$(INSPECTOR_SCRIPTS_DIR)
 DerivedSources/WebCore/UserAgentScripts.h: $(WebCore)/Scripts/make-js-file-arrays.py $(USER_AGENT_SCRIPT_FILES)
-	$(AM_V_GEN)$(PYTHON) $< $@ DerivedSources/WebCore/UserAgentScriptsData.cpp $(USER_AGENT_SCRIPT_FILES)
+	$(AM_V_GEN) PYTHONPATH=$(INSPECTOR_SCRIPTS_DIR) $(PYTHON) $< $@ DerivedSources/WebCore/UserAgentScriptsData.cpp $(USER_AGENT_SCRIPT_FILES)
 
 # user agent style sheets
 USER_AGENT_STYLE_SHEETS = \
