@@ -114,7 +114,7 @@ public:
         m_type = EndOfFile;
     }
 
-    /* Range and offset methods exposed for HTMLSourceTracker and HTMLViewSourceParser */
+    /* Range and offset methods exposed for HTMLSourceTracker */
     int startIndex() const { return m_range.start; }
     int endIndex() const { return m_range.end; }
 

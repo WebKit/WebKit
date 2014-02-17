@@ -47,7 +47,6 @@ using namespace HTMLNames;
 RuleSet* CSSDefaultStyleSheets::defaultStyle;
 RuleSet* CSSDefaultStyleSheets::defaultQuirksStyle;
 RuleSet* CSSDefaultStyleSheets::defaultPrintStyle;
-RuleSet* CSSDefaultStyleSheets::defaultViewSourceStyle;
 
 StyleSheetContents* CSSDefaultStyleSheets::simpleDefaultStyleSheet;
 StyleSheetContents* CSSDefaultStyleSheets::defaultStyleSheet;
@@ -144,17 +143,6 @@ void CSSDefaultStyleSheets::loadSimpleDefaultStyle()
 
     // No need to initialize quirks sheet yet as there are no quirk rules for elements allowed in simple default style.
 }
-
-RuleSet* CSSDefaultStyleSheets::viewSourceStyle()
-{
-    if (!defaultViewSourceStyle) {
-        static StyleSheetContents* viewSourceStyleSheet = parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet));
-        defaultViewSourceStyle = std::make_unique<RuleSet>().release();
-        defaultViewSourceStyle->addRulesFromSheet(viewSourceStyleSheet, screenEval());
-    }
-    return defaultViewSourceStyle;
-}
-
 
 void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element, bool& changedDefaultStyle)
 {

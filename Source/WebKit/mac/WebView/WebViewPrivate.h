@@ -697,18 +697,6 @@ Could be worth adding to the API.
 #endif /* TARGET_OS_IPHONE */
 
 /*!
-    @method _setInViewSourceMode:
-    @abstract Used to place a WebView into a special source-viewing mode.
-  */
-- (void)_setInViewSourceMode:(BOOL)flag;
-
-/*!
-    @method _inViewSourceMode;
-    @abstract Whether or not the WebView is in source-view mode for HTML.
-  */
-- (BOOL)_inViewSourceMode;
-
-/*!
     @method _attachScriptDebuggerToAllFrames
     @abstract Attaches a script debugger to all frames belonging to the receiver.
  */

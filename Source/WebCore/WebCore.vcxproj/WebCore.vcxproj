@@ -15578,7 +15578,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\html\HTMLViewSourceDocument.cpp" />
     <ClCompile Include="..\html\ImageData.cpp" />
     <ClCompile Include="..\html\ImageDocument.cpp" />
     <ClCompile Include="..\html\ImageInputType.cpp" />
@@ -15630,9 +15629,7 @@
     <ClCompile Include="..\html\parser\HTMLSourceTracker.cpp" />
     <ClCompile Include="..\html\parser\HTMLTokenizer.cpp" />
     <ClCompile Include="..\html\parser\HTMLTreeBuilder.cpp" />
-    <ClCompile Include="..\html\parser\HTMLViewSourceParser.cpp" />
     <ClCompile Include="..\html\parser\TextDocumentParser.cpp" />
-    <ClCompile Include="..\html\parser\TextViewSourceParser.cpp" />
     <ClCompile Include="..\html\parser\XSSAuditor.cpp" />
     <ClCompile Include="..\html\parser\XSSAuditorDelegate.cpp" />
     <ClCompile Include="..\html\shadow\ContentDistributor.cpp" />
@@ -20324,7 +20321,6 @@
     <ClInclude Include="..\html\HTMLTrackElement.h" />
     <ClInclude Include="..\html\HTMLUListElement.h" />
     <ClInclude Include="..\html\HTMLVideoElement.h" />
-    <ClInclude Include="..\html\HTMLViewSourceDocument.h" />
     <ClInclude Include="..\html\ImageData.h" />
     <ClInclude Include="..\html\ImageDocument.h" />
     <ClInclude Include="..\html\ImageInputType.h" />
@@ -20385,11 +20381,9 @@
     <ClInclude Include="..\html\parser\HTMLToken.h" />
     <ClInclude Include="..\html\parser\HTMLTokenizer.h" />
     <ClInclude Include="..\html\parser\HTMLTreeBuilder.h" />
-    <ClInclude Include="..\html\parser\HTMLViewSourceParser.h" />
     <ClInclude Include="..\html\parser\InputStreamPreprocessor.h" />
     <ClInclude Include="..\html\parser\NestingLevelIncrementer.h" />
     <ClInclude Include="..\html\parser\TextDocumentParser.h" />
-    <ClInclude Include="..\html\parser\TextViewSourceParser.h" />
     <ClInclude Include="..\html\parser\XSSAuditor.h" />
     <ClInclude Include="..\html\parser\XSSAuditorDelegate.h" />
     <ClInclude Include="..\html\shadow\ContentDistributor.h" />
@@ -20840,7 +20834,6 @@
     <None Include="..\css\svg.css" />
     <None Include="..\css\themeWin.css" />
     <None Include="..\css\themeWinQuirks.css" />
-    <None Include="..\css\view-source.css" />
     <None Include="..\Modules\mediacontrols\mediaControlsApple.css" />
     <None Include="..\Modules\mediacontrols\mediaControlsApple.js" />
     <None Include="..\xml\XPathGrammar.y" />

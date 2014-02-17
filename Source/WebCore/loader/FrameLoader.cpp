@@ -663,8 +663,6 @@ void FrameLoader::receivedFirstData()
 
     if (!m_documentLoader)
         return;
-    if (m_frame.document()->isViewSource())
-        return;
 
     double delay;
     String url;

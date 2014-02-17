@@ -3841,11 +3841,6 @@ void WebPage::didChangeSelection()
     send(Messages::WebPageProxy::EditorStateChanged(editorState()));
 }
 
-void WebPage::setMainFrameInViewSourceMode(bool inViewSourceMode)
-{
-    m_mainFrame->coreFrame()->setInViewSourceMode(inViewSourceMode);
-}
-
 void WebPage::setMinimumLayoutSize(const IntSize& minimumLayoutSize)
 {
     if (m_minimumLayoutSize == minimumLayoutSize)

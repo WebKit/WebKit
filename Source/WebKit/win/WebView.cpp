@@ -5114,19 +5114,13 @@ HRESULT STDMETHODCALLTYPE WebView::removeCustomDropTarget()
 HRESULT STDMETHODCALLTYPE WebView::setInViewSourceMode( 
         /* [in] */ BOOL flag)
 {
-    if (!m_mainFrame)
-        return E_FAIL;
-
-    return m_mainFrame->setInViewSourceMode(flag);
+    return E_NOTIMPL;
 }
     
 HRESULT STDMETHODCALLTYPE WebView::inViewSourceMode( 
         /* [retval][out] */ BOOL* flag)
 {
-    if (!m_mainFrame)
-        return E_FAIL;
-
-    return m_mainFrame->inViewSourceMode(flag);
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::viewWindow( 

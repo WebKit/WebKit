@@ -486,11 +486,6 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
         return false;
     }
 
-    if (m_frame.document() && m_frame.document()->isViewSource()) {
-        ASSERT(m_frame.document()->securityOrigin()->isUnique());
-        return true;
-    }
-
     if (!m_frame.page())
         return false;
 

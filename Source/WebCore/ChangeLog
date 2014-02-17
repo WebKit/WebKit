@@ -1,3 +1,67 @@
+2014-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove view source code
+        https://bugs.webkit.org/show_bug.cgi?id=127233
+
+        Reviewed by Antti Koivisto.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::canExecuteScripts):
+        * css/CSSDefaultStyleSheets.cpp:
+        * css/CSSDefaultStyleSheets.h:
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::appendAuthorStyleSheets):
+        (WebCore::DocumentRuleSets::collectFeatures):
+        * css/DocumentRuleSets.h:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchUARules):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+        (WebCore::StyleResolver::styleForElement):
+        * css/view-source.css: Removed.
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * dom/DOMImplementation.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase):
+        (WebCore::HTMLFrameElementBase::openURL):
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLViewSourceDocument.cpp: Removed.
+        * html/HTMLViewSourceDocument.h: Removed.
+        * html/parser/HTMLToken.h:
+        * html/parser/HTMLViewSourceParser.cpp: Removed.
+        * html/parser/HTMLViewSourceParser.h: Removed.
+        * html/parser/TextViewSourceParser.cpp: Removed.
+        * html/parser/TextViewSourceParser.h: Removed.
+        * inspector/InspectorOverlayPage.css:
+        (.tag-name):
+        (.node-id):
+        (.class-name):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/Frame.h:
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString):
+        * xml/XMLViewer.css:
+        (.tag):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2014-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         box-shadows get truncated with a combination of transforms and clip: (affects Google Maps)

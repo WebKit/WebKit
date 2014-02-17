@@ -275,7 +275,6 @@ USER_AGENT_STYLE_SHEETS = \
 	$(WebCore)/css/html.css \
 	$(WebCore)/css/mathml.css \
 	$(WebCore)/css/quirks.css \
-	$(WebCore)/css/view-source.css \
 	$(WebCore)/css/svg.css \
 	$(WebCore)/css/mediaControls.css \
 	$(WebCore)/css/mediaControlsGtk.css \
@@ -701,7 +700,6 @@ EXTRA_DIST += \
 	Source/WebCore/css/svg.css \
 	Source/WebCore/css/SVGCSSPropertyNames.in \
 	Source/WebCore/css/SVGCSSValueKeywords.in \
-	Source/WebCore/css/view-source.css \
 	Source/WebCore/css/WebKitFontFamilyNames.in \
 	Source/WebCore/dom/EventNames.in \
 	Source/WebCore/dom/EventTargetFactory.in \

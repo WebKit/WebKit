@@ -516,9 +516,6 @@ public:
 
     StyleResolver* styleResolverIfExists() const { return m_styleResolver.get(); }
 
-    bool isViewSource() const { return m_isViewSource; }
-    void setIsViewSource(bool);
-
     bool sawElementsInKnownNamespaces() const { return m_sawElementsInKnownNamespaces; }
 
     StyleResolver& ensureStyleResolver()
@@ -1537,7 +1534,6 @@ private:
     bool m_isSynthesized;
     bool m_isNonRenderedPlaceholder;
 
-    bool m_isViewSource;
     bool m_sawElementsInKnownNamespaces;
     bool m_isSrcdocDocument;
 

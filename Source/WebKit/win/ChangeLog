@@ -1,3 +1,17 @@
+2014-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove view source code
+        https://bugs.webkit.org/show_bug.cgi?id=127233
+
+        Reviewed by Antti Koivisto.
+
+        * WebFrame.cpp:
+        (WebFrame::inViewSourceMode):
+        (WebFrame::setInViewSourceMode):
+        * WebView.cpp:
+        (WebView::setInViewSourceMode):
+        (WebView::inViewSourceMode):
+
 2014-02-17  Sergio Correia  <sergio.correia@openbossa.org>
 
         Replace uses of PassOwnPtr/OwnPtr with std::unique_ptr in WebCore/inspector

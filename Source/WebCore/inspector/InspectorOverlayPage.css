@@ -56,17 +56,17 @@ body.platform-linux {
 }
 
 .tag-name {
-    /* Keep this in sync with view-source.css (.webkit-html-tag-name) */
+    /* Keep this in sync with XMLViewer.css (.tag) */
     color: rgb(136, 18, 128);
 }
 
 .node-id {
-    /* Keep this in sync with view-source.css (.webkit-html-attribute-value) */
+    /* Keep this in sync with XMLViewer.css (.attribute-value) */
     color: rgb(26, 26, 166);
 }
 
 .class-name {
-    /* Keep this in sync with view-source.css (.webkit-html-attribute-name) */
+    /* Keep this in sync with XMLViewer.css (.attribute-name) */
     color: rgb(153, 69, 0);
 }
 

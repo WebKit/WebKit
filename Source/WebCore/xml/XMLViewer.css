@@ -59,7 +59,7 @@ div.collapsible > div.hidden {
 }
 
 .tag {
-    /* Keep this in sync with inspector.css (.webkit-html-tag) */
+    /* Keep this in sync with inspector.css (.tag-name) */
     color: rgb(136, 18, 128);
 }
 

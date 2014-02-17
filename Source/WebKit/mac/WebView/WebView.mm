@@ -3331,18 +3331,6 @@ static inline IMP getMethod(id o, SEL s)
 }
 #endif // !PLATFORM(IOS)
 
-- (void)_setInViewSourceMode:(BOOL)flag
-{
-    if (Frame* mainFrame = [self _mainCoreFrame])
-        mainFrame->setInViewSourceMode(flag);
-}
-
-- (BOOL)_inViewSourceMode
-{
-    Frame* mainFrame = [self _mainCoreFrame];
-    return mainFrame && mainFrame->inViewSourceMode();
-}
-
 - (void)_setUseFastImageScalingMode:(BOOL)flag
 {
     if (_private->page && _private->page->inLowQualityImageInterpolationMode() != flag) {

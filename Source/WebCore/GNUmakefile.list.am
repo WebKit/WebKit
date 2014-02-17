@@ -3526,8 +3526,6 @@ webcore_sources += \
 	Source/WebCore/html/HTMLUListElement.h \
 	Source/WebCore/html/HTMLVideoElement.cpp \
 	Source/WebCore/html/HTMLVideoElement.h \
-	Source/WebCore/html/HTMLViewSourceDocument.cpp \
-	Source/WebCore/html/HTMLViewSourceDocument.h \
 	Source/WebCore/html/HiddenInputType.cpp \
 	Source/WebCore/html/HiddenInputType.h \
 	Source/WebCore/html/ImageData.cpp \
@@ -3601,14 +3599,10 @@ webcore_sources += \
 	Source/WebCore/html/parser/HTMLTokenizer.h \
 	Source/WebCore/html/parser/HTMLTreeBuilder.cpp \
 	Source/WebCore/html/parser/HTMLTreeBuilder.h \
-	Source/WebCore/html/parser/HTMLViewSourceParser.cpp \
-	Source/WebCore/html/parser/HTMLViewSourceParser.h \
 	Source/WebCore/html/parser/InputStreamPreprocessor.h \
 	Source/WebCore/html/parser/NestingLevelIncrementer.h \
 	Source/WebCore/html/parser/TextDocumentParser.cpp \
 	Source/WebCore/html/parser/TextDocumentParser.h \
-	Source/WebCore/html/parser/TextViewSourceParser.cpp \
-	Source/WebCore/html/parser/TextViewSourceParser.h \
 	Source/WebCore/html/parser/XSSAuditor.cpp \
 	Source/WebCore/html/parser/XSSAuditor.h \
 	Source/WebCore/html/parser/XSSAuditorDelegate.cpp \

@@ -49,7 +49,6 @@ HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Documen
     , m_scrolling(ScrollbarAuto)
     , m_marginWidth(-1)
     , m_marginHeight(-1)
-    , m_viewSource(false)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -87,8 +86,6 @@ void HTMLFrameElementBase::openURL(bool lockHistory, bool lockBackForwardList)
         return;
 
     parentFrame->loader().subframeLoader().requestFrame(*this, m_URL, m_frameName, lockHistory, lockBackForwardList);
-    if (contentFrame())
-        contentFrame()->setInViewSourceMode(viewSourceMode());
 }
 
 void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const AtomicString& value)

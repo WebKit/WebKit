@@ -3963,9 +3963,6 @@
     <ClCompile Include="..\html\HTMLVideoElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\HTMLViewSourceDocument.cpp">
-      <Filter>html</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\ImageData.cpp">
       <Filter>html</Filter>
     </ClCompile>
@@ -4119,13 +4116,7 @@
     <ClCompile Include="..\html\parser\HTMLTreeBuilder.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\parser\HTMLViewSourceParser.cpp">
-      <Filter>html\parser</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\parser\TextDocumentParser.cpp">
-      <Filter>html\parser</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\parser\TextViewSourceParser.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>
     <ClCompile Include="..\html\parser\XSSAuditor.cpp">
@@ -10958,9 +10949,6 @@
     <ClInclude Include="..\html\HTMLVideoElement.h">
       <Filter>html</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\HTMLViewSourceDocument.h">
-      <Filter>html</Filter>
-    </ClInclude>
     <ClInclude Include="..\html\ImageData.h">
       <Filter>html</Filter>
     </ClInclude>
@@ -11141,9 +11129,6 @@
     <ClInclude Include="..\html\parser\HTMLTreeBuilder.h">
       <Filter>html\parser</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\parser\HTMLViewSourceParser.h">
-      <Filter>html\parser</Filter>
-    </ClInclude>
     <ClInclude Include="..\html\parser\InputStreamPreprocessor.h">
       <Filter>html\parser</Filter>
     </ClInclude>
@@ -11151,9 +11136,6 @@
       <Filter>html\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\TextDocumentParser.h">
-      <Filter>html\parser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\parser\TextViewSourceParser.h">
       <Filter>html\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\XSSAuditor.h">
@@ -14911,9 +14893,6 @@
     <None Include="WebCorePostBuild.cmd" />
     <None Include="WebCorePreBuild.cmd" />
     <None Include="..\css\mathml.css">
-      <Filter>css</Filter>
-    </None>
-    <None Include="..\css\view-source.css">
       <Filter>css</Filter>
     </None>
     <None Include="..\css\svg.css">

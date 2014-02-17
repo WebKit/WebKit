@@ -1113,29 +1113,12 @@ void WebFrame::invalidate()
 
 HRESULT WebFrame::inViewSourceMode(BOOL* flag)
 {
-    if (!flag) {
-        ASSERT_NOT_REACHED();
-        return E_POINTER;
-    }
-
-    *flag = FALSE;
-
-    Frame* coreFrame = core(this);
-    if (!coreFrame)
-        return E_FAIL;
-
-    *flag = coreFrame->inViewSourceMode() ? TRUE : FALSE;
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT WebFrame::setInViewSourceMode(BOOL flag)
 {
-    Frame* coreFrame = core(this);
-    if (!coreFrame)
-        return E_FAIL;
-
-    coreFrame->setInViewSourceMode(!!flag);
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** element)

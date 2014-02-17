@@ -887,8 +887,6 @@ private:
 
     bool canHandleUserEvents() const;
 
-    void setMainFrameInViewSourceMode(bool);
-
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
 
     static PluginView* focusedPluginViewForFrame(WebCore::Frame&);
