@@ -1,3 +1,12 @@
+2014-02-17  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Fix typos in Tools/efl/jhbuild.modules.
+        https://bugs.webkit.org/show_bug.cgi?id=128908
+
+        Reviewed by Csaba Osztrogonác.
+
+        * efl/jhbuild.modules: 's/<deb /<dep /g'
+
 2014-02-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Build break when disabled ACCESSIBILITY since r162986

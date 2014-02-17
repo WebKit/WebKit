@@ -250,9 +250,9 @@
             md5sum="d21e59631022d6fbdfa0e19b6b2ff93a">
     </branch>
     <dependencies>
-        <deb package="ecore"/>
-        <deb package="eina"/>
-        <deb package="eet"/>
+        <dep package="ecore"/>
+        <dep package="eina"/>
+        <dep package="eet"/>
     </dependencies>
   </autotools>
 
@@ -265,10 +265,10 @@
             md5sum="7f2cbea027fba8b58c41aaacfe68c155">
     </branch>
     <dependencies>
-        <deb package="edje"/>
-        <deb package="eina"/>
-        <deb package="eet"/>
-        <deb package="ecore"/>
+        <dep package="edje"/>
+        <dep package="eina"/>
+        <dep package="eet"/>
+        <dep package="ecore"/>
     </dependencies>
   </autotools>
 
