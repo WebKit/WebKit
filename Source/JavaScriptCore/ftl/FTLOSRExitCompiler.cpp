@@ -70,14 +70,14 @@ static void compileStub(
     char* registerScratch = bitwise_cast<char*>(scratch + exit.m_values.size());
     uint64_t* unwindScratch = bitwise_cast<uint64_t*>(registerScratch + requiredScratchMemorySizeInBytes());
     
-    // Make sure that saveAllRegisters() has a place on top of the stack to spill things. That
-    // function expects to be able to use top of stack for scratch memory.
-    jit.push(GPRInfo::regT0);
+    // Note that we come in here, the stack used to be as LLVM left it except that someone called pushToSave().
+    // We don't care about the value they saved. But, we do appreciate the fact that they did it, because we use
+    // that slot for saveAllRegisters().
+
     saveAllRegisters(jit, registerScratch);
     
     // Bring the stack back into a sane form.
-    jit.pop(GPRInfo::regT0);
-    jit.pop(GPRInfo::regT0);
+    jit.popToRestore(GPRInfo::regT0);
     
     if (vm->m_perBytecodeProfiler && codeBlock->jitCode()->dfgCommon()->compilation) {
         Profiler::Database& database = *vm->m_perBytecodeProfiler;

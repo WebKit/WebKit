@@ -51,7 +51,7 @@ void ExitThunkGenerator::emitThunk(unsigned index)
     OSRExitCompilationInfo& info = m_state.finalizer->osrExit[index];
     
     info.m_thunkLabel = label();
-    push(TrustedImm32(index));
+    pushToSaveImmediateWithoutTouchingRegisters(TrustedImm32(index));
     info.m_thunkJump = patchableJump();
     
     m_didThings = true;

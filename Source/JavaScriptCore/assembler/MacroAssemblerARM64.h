@@ -1459,6 +1459,15 @@ public:
     {
         m_assembler.str<64>(src, ARM64Registers::sp, PreIndex(-16));
     }
+    
+    void pushToSaveImmediateWithoutTouchingRegisters(TrustedImm32 imm)
+    {
+        RegisterID reg = dataTempRegister;
+        pushPair(reg, reg);
+        move(imm, reg);
+        store64(reg, stackPointerRegister);
+        load64(Address(stackPointerRegister, 8), reg);
+    }
 
     void pushToSave(Address address)
     {
@@ -1484,6 +1493,7 @@ public:
         storeDouble(src, stackPointerRegister);
     }
 
+    static ptrdiff_t pushToSaveByteOffset() { return 16; }
 
     // Register move operations:
 

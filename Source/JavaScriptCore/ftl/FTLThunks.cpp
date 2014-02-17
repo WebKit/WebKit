@@ -45,11 +45,20 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     
     // Note that the "return address" will be the OSR exit ID.
     
+    ptrdiff_t stackMisalignment = MacroAssembler::pushToSaveByteOffset();
+    
     // Pretend that we're a C call frame.
-    jit.push(MacroAssembler::framePointerRegister);
+    jit.pushToSave(MacroAssembler::framePointerRegister);
     jit.move(MacroAssembler::stackPointerRegister, MacroAssembler::framePointerRegister);
-    jit.push(GPRInfo::regT0);
-    jit.push(GPRInfo::regT0);
+    stackMisalignment += MacroAssembler::pushToSaveByteOffset();
+    
+    // Now create ourselves enough stack space to give saveAllRegisters() a scratch slot.
+    unsigned numberOfRequiredPops = 0;
+    do {
+        jit.pushToSave(GPRInfo::regT0);
+        stackMisalignment += MacroAssembler::pushToSaveByteOffset();
+        numberOfRequiredPops++;
+    } while (stackMisalignment % stackAlignmentBytes());
     
     ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(requiredScratchMemorySizeInBytes());
     char* buffer = static_cast<char*>(scratchBuffer->dataBuffer());
@@ -61,7 +70,7 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     jit.storePtr(MacroAssembler::TrustedImmPtr(requiredScratchMemorySizeInBytes()), GPRInfo::nonArgGPR1);
 
     jit.loadPtr(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    jit.peek(GPRInfo::argumentGPR1, 3);
+    jit.peek(GPRInfo::argumentGPR1, (stackMisalignment / sizeof(void*)) - 1);
     MacroAssembler::Call functionCall = jit.call();
     
     // At this point we want to make a tail call to what was returned to us in the
@@ -76,9 +85,9 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     jit.storePtr(MacroAssembler::TrustedImmPtr(0), GPRInfo::regT1);
     
     // Prepare for tail call.
-    jit.pop(GPRInfo::regT1);
-    jit.pop(GPRInfo::regT1);
-    jit.pop(MacroAssembler::framePointerRegister);
+    while (numberOfRequiredPops--)
+        jit.popToRestore(GPRInfo::regT1);
+    jit.popToRestore(MacroAssembler::framePointerRegister);
     
     // At this point we're sitting on the return address - so if we did a jump right now, the
     // tail-callee would be happy. Instead we'll stash the callee in the return address and then

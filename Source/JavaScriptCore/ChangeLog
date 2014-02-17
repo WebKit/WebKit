@@ -1,3 +1,25 @@
+2014-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL OSR exit shouldn't make X86-specific assumptions
+        https://bugs.webkit.org/show_bug.cgi?id=128890
+
+        Reviewed by Mark Hahnenberg.
+
+        Mostly this is about not using push/pop, but instead using the more abstract pushToSave() and popToRestore() while reflecting on the stack alignment.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::pushToSaveImmediateWithoutTouchingRegisters):
+        (JSC::MacroAssembler::pushToSaveByteOffset):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::pushToSaveImmediateWithoutTouchingRegisters):
+        (JSC::MacroAssemblerARM64::pushToSaveByteOffset):
+        * ftl/FTLExitThunkGenerator.cpp:
+        (JSC::FTL::ExitThunkGenerator::emitThunk):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+
 2014-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, make this test pass without DFG. It was assuming that you always have DFG
