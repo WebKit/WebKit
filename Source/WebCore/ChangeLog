@@ -1,3 +1,22 @@
+2014-02-16  Andreas Kling  <akling@apple.com>
+
+        Ensure that removing an iframe from the DOM tree disconnects its Frame.
+        <https://webkit.org/b/128889>
+        <rdar://problem/15671221>
+
+        Merged from Blink (patch by Adam Klein):
+        https://src.chromium.org/viewvc/blink?revision=156174&view=revision
+
+        SubframeLoadingDisabler wasn't catching the case when an <iframe> was,
+        in its unload handler, removed and re-added to the same parent.
+        Fix this by using a count of SubframeLoadingDisablers that are on the
+        stack for a given root, rather than a simple boolean.
+
+        Test: fast/frames/reattach-in-unload.html
+
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::SubframeLoadingDisabler::disabledSubtreeRoots):
+
 2014-02-16  Benjamin Poulain  <benjamin@webkit.org>
 
         When applying style, attribute value matching should be case sensitive for SVG
