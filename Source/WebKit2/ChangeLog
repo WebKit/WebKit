@@ -1,3 +1,10 @@
+2014-02-17  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix iOS Debug builds without breaking Release builds.
+
+        * WebProcess/WebPage/PageBanner.cpp:
+        * WebProcess/WebPage/PageBanner.h:
+
 2014-02-16  Dan Bernstein  <mitz@apple.com>
 
         Speculative iOS build fix.
