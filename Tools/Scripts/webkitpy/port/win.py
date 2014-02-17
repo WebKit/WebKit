@@ -138,6 +138,8 @@ class WinPort(ApplePort):
         return map(self._webkit_baseline_path, test_fallback_names)
 
     def _ntsd_location(self):
+        if 'PROGRAMFILES' not in os.environ:
+            return None
         possible_paths = [self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x86", "ntsd.exe"),
             self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x64", "ntsd.exe"),
             self._filesystem.join(os.environ['PROGRAMFILES'], "Debugging Tools for Windows (x86)", "ntsd.exe"),

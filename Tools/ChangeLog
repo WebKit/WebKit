@@ -1,3 +1,12 @@
+2014-02-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkitpy test fix on Mac after r164244.
+
+        It's somewhat crazy that we're trying to run unittests for Windows on Mac but whatever.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._ntsd_location):
+
 2014-02-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Fall back to Windows symbol servers when necessary
