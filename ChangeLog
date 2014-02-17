@@ -1,3 +1,16 @@
+2014-02-17  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] MEDIA_CONTROLS_SCRIPT depends on VIDEO_TRACK
+        https://bugs.webkit.org/show_bug.cgi?id=128799
+
+        Reviewed by Philippe Normand.
+
+        MEDIA_CONTROLS_SCRIPT has a dependency on VIDEO_TRACK. So it causes a build break
+        if building with autotools. cmake system has enabled it as default. So I propose
+        enabling VIDEO_TRACK as well.
+
+        * Source/autotools/SetupWebKitFeatures.m4:
+
 2014-02-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r164090.
