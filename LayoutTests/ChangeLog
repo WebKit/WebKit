@@ -1,3 +1,12 @@
+2014-02-17  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add test expectations for crashing and failing tests.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2014-02-17  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Fix missing layout in flexible and content sized columns

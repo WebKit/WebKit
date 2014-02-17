@@ -662,7 +662,8 @@ webkit.org/b/114918 http/tests/xmlhttprequest/range-test.html [ Failure Pass ]
 
 webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass ]
+# Started to crash after r162947
+webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass Crash ]
 
 webkit.org/b/124655 css3/masking/clip-path-animation.html [ Failure Pass ]
 
@@ -689,6 +690,10 @@ webkit.org/b/124934 svg/animations/svglengthlist-animation-3.html [ Failure Pass
 
 webkit.org/b/124935 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure Pass ]
 webkit.org/b/124935 webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Failure Pass ]
+
+# Started to crash after r163871
+webkit.org/b/128905 media/video-fast-seek.html [ Crash Pass ]
+webkit.org/b/128905 media/video-extreme-playbackrate-crash.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
@@ -814,12 +819,14 @@ webkit.org/b/84338 editing/pasteboard/copy-in-password-field.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-null-characters.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-bidi.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-converts-sticky-and-fixed.html [ Failure ]
+webkit.org/b/84338 editing/pasteboard/copy-paste-doesnt-convert-sticky-and-fixed-during-partial-copy.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-first-line-in-textarea.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-float.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-pre-line-content.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-ruby-text-with-block.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-resolves-urls.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-text-with-backgroundcolor.html [ Failure ]
+webkit.org/b/84338 editing/pasteboard/copy-text-with-wrapped-tag.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/data-transfer-items.html [ Failure ]
 webkit.org/b/86623 editing/pasteboard/data-transfer-items-image-png.html [ ImageOnlyFailure ]
@@ -1856,3 +1863,7 @@ webkit.org/b/128670 networkinformation/window-property.html [ Failure ]
 webkit.org/b/128735 fast/regions/nested-floated-region.html [ ImageOnlyFailure ]
 
 webkit.org/b/128736 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure ]
+
+webkit.org/b/128901 accessibility/list-detection.html [ Failure ]
+
+webkit.org/b/128902 media/media-event-listeners.html [ Failure ]
