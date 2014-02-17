@@ -85,8 +85,6 @@ inspector [ Skip ]
 http/tests/inspector [ Skip ]
 http/tests/inspector-enabled [ Skip ]
 
-# Disable all media tests while QTSDK issues are worked out
-webkit.org/b/125754 media [ Skip ]
 webkit.org/b/125754 fast/canvas/canvas-drawImage-incomplete.html [ Failure ]
 webkit.org/b/125754 fast/css/object-fit/object-fit-video-poster.html [ ImageOnlyFailure ]
 webkit.org/b/125754 fast/dom/Window/custom-constructors.html [ Failure ]
@@ -107,7 +105,6 @@ webkit.org/b/125754 fast/replaced/outline-replaced-elements.html [ Failure ]
 webkit.org/b/125754 js/dom/custom-constructors.html [ Failure ]
 webkit.org/b/125754 js/dom/global-constructors-attributes.html [ Failure ]
 webkit.org/b/125754 js/dom/instanceof-XMLHttpRequest.html [ Failure ]
-webkit.org/b/125754 media/video-volume.html [ Failure ]
 #end temporarily excluded media tests
 
 # Fails <rdar://problem/5674289>
@@ -1813,7 +1810,6 @@ media/media-volume-slider-rendered-below.html
 # https://bugs.webkit.org/show_bug.cgi?id=88005
 media/crash-closing-page-with-media-as-plugin-fallback.html
 media/media-continues-playing-after-replace-source.html
-media/video-zoom.html
 
 # Asserts in Interpreter::addStackTraceIfNecessary
 # https://bugs.webkit.org/show_bug.cgi?id=84073
@@ -2771,7 +2767,6 @@ webkit.org/b/121510 media/track/track-remove-crash.html	[ Skip ]
 webkit.org/b/121510 media/track/track-cue-nothing-to-render.html	[ Skip ]
 webkit.org/b/121510 media/track/track-delete-during-setup.html	[ Skip ]
 webkit.org/b/121510 svg/W3C-SVG-1.1/animate-elem-02-t.svg	[ Skip ] 
-webkit.org/b/121510 fast/frames/seamless/seamless-nested-crash.html [ Skip ]
 webkit.org/b/121510 js/dom/function-constructor-this-value.html [ Skip ]
 
 

@@ -1,3 +1,10 @@
+2014-02-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        * platform/win/TestExpectations: Remove a few duplicate test statements, as well as
+        some removed test cases.
+
 2014-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         box-shadows get truncated with a combination of transforms and clip: (affects Google Maps)
