@@ -47,6 +47,7 @@ inline IntSize nextPowerOfTwo(const IntSize& size)
 }
 
 class AreaAllocator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AreaAllocator(const IntSize&);
     virtual ~AreaAllocator();
@@ -76,6 +77,7 @@ protected:
 };
 
 class GeneralAreaAllocator : public AreaAllocator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit GeneralAreaAllocator(const IntSize&);
     virtual ~GeneralAreaAllocator();

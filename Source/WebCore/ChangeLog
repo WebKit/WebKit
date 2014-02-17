@@ -1,3 +1,16 @@
+2014-02-16  Jae Hyun Park  <jae.park@company100.net>
+
+        [Coordinated Graphics] Make AreaAllocator fast allocated
+        https://bugs.webkit.org/show_bug.cgi?id=124995
+
+        Reviewed by Anders Carlsson.
+
+        AreaAllocator can be created and destroyed frequently (at least once per
+        frame) in case of animation with changing width or height. So, it's
+        better to make AreaAllocator fast allocated.
+
+        * platform/graphics/texmap/coordinated/AreaAllocator.h:
+
 2014-02-16  Pratik Solanki  <psolanki@apple.com>
 
         [iOS] WebKit crashes if text is copied to pasteboard with style containing text-shadow
