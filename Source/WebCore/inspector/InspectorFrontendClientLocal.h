@@ -55,9 +55,9 @@ public:
         virtual void setProperty(const String& name, const String& value);
     };
 
-    InspectorFrontendClientLocal(InspectorController*, Page*, PassOwnPtr<Settings>);
+    InspectorFrontendClientLocal(InspectorController*, Page*, std::unique_ptr<Settings>);
     virtual ~InspectorFrontendClientLocal();
-    
+
     virtual void windowObjectCleared() override;
     virtual void frontendLoaded() override;
 
@@ -98,7 +98,7 @@ public:
     void showConsole();
 
     void showMainResourceForFrame(Frame*);
-    
+
     void showResources();
 
     void setAttachedWindow(DockSide);
@@ -117,11 +117,11 @@ private:
     Page* m_frontendPage;
     // TODO(yurys): this ref shouldn't be needed.
     RefPtr<InspectorFrontendHost> m_frontendHost;
-    OwnPtr<InspectorFrontendClientLocal::Settings> m_settings;
+    std::unique_ptr<InspectorFrontendClientLocal::Settings> m_settings;
     bool m_frontendLoaded;
     DockSide m_dockSide;
     Vector<String> m_evaluateOnLoad;
-    OwnPtr<InspectorBackendDispatchTask> m_dispatchTask;
+    std::unique_ptr<InspectorBackendDispatchTask> m_dispatchTask;
 };
 
 } // namespace WebCore

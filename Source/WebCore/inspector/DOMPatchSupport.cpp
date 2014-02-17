@@ -66,7 +66,7 @@ struct DOMPatchSupport::Digest {
     String m_sha1;
     String m_attrsSHA1;
     Node* m_node;
-    Vector<OwnPtr<Digest>> m_children;
+    Vector<std::unique_ptr<Digest>> m_children;
 };
 
 void DOMPatchSupport::patchDocument(Document* document, const String& markup)
@@ -105,8 +105,8 @@ void DOMPatchSupport::patchDocument(const String& markup)
     parser->finish();
     parser->detach();
 
-    OwnPtr<Digest> oldInfo = createDigest(m_document->documentElement(), nullptr);
-    OwnPtr<Digest> newInfo = createDigest(newDocument->documentElement(), &m_unusedNodesMap);
+    std::unique_ptr<Digest> oldInfo = createDigest(m_document->documentElement(), nullptr);
+    std::unique_ptr<Digest> newInfo = createDigest(newDocument->documentElement(), &m_unusedNodesMap);
 
     if (!innerPatchNode(oldInfo.get(), newInfo.get(), IGNORE_EXCEPTION)) {
         // Fall back to rewrite.
@@ -133,13 +133,13 @@ Node* DOMPatchSupport::patchNode(Node& node, const String& markup, ExceptionCode
 
     // Compose the old list.
     ContainerNode* parentNode = node.parentNode();
-    Vector<OwnPtr<Digest>> oldList;
+    Vector<std::unique_ptr<Digest>> oldList;
     for (Node* child = parentNode->firstChild(); child; child = child->nextSibling())
         oldList.append(createDigest(child, nullptr));
 
     // Compose the new list.
     String markupCopy = markup.lower();
-    Vector<OwnPtr<Digest>> newList;
+    Vector<std::unique_ptr<Digest>> newList;
     for (Node* child = parentNode->firstChild(); child != &node; child = child->nextSibling())
         newList.append(createDigest(child, nullptr));
     for (Node* child = fragment->firstChild(); child; child = child->nextSibling()) {
@@ -208,7 +208,7 @@ bool DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
 }
 
 std::pair<DOMPatchSupport::ResultMap, DOMPatchSupport::ResultMap>
-DOMPatchSupport::diff(const Vector<OwnPtr<Digest>>& oldList, const Vector<OwnPtr<Digest>>& newList)
+DOMPatchSupport::diff(const Vector<std::unique_ptr<Digest>>& oldList, const Vector<std::unique_ptr<Digest>>& newList)
 {
     ResultMap newMap(newList.size());
     ResultMap oldMap(oldList.size());
@@ -295,7 +295,7 @@ DOMPatchSupport::diff(const Vector<OwnPtr<Digest>>& oldList, const Vector<OwnPtr
     return std::make_pair(oldMap, newMap);
 }
 
-bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector<OwnPtr<Digest>>& oldList, const Vector<OwnPtr<Digest>>& newList, ExceptionCode& ec)
+bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector<std::unique_ptr<Digest>>& oldList, const Vector<std::unique_ptr<Digest>>& newList, ExceptionCode& ec)
 {
     std::pair<ResultMap, ResultMap> resultMaps = diff(oldList, newList);
     ResultMap& oldMap = resultMaps.first;
@@ -407,10 +407,9 @@ static void addStringToSHA1(SHA1& sha1, const String& string)
     sha1.addBytes(reinterpret_cast<const uint8_t*>(cString.data()), cString.length());
 }
 
-PassOwnPtr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* node, UnusedNodesMap* unusedNodesMap)
+std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* node, UnusedNodesMap* unusedNodesMap)
 {
-    Digest* digest = new Digest(node);
-
+    auto digest = std::make_unique<Digest>(node);
     SHA1 sha1;
 
     Node::NodeType nodeType = node->nodeType();
@@ -421,10 +420,10 @@ PassOwnPtr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* node, Un
     if (node->nodeType() == Node::ELEMENT_NODE) {
         Node* child = node->firstChild();
         while (child) {
-            OwnPtr<Digest> childInfo = createDigest(child, unusedNodesMap);
+            std::unique_ptr<Digest> childInfo = createDigest(child, unusedNodesMap);
             addStringToSHA1(sha1, childInfo->m_sha1);
             child = child->nextSibling();
-            digest->m_children.append(childInfo.release());
+            digest->m_children.append(std::move(childInfo));
         }
         Element* element = toElement(node);
 
@@ -445,8 +444,9 @@ PassOwnPtr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* node, Un
     sha1.computeHash(hash);
     digest->m_sha1 = base64Encode(hash.data(), 10);
     if (unusedNodesMap)
-        unusedNodesMap->add(digest->m_sha1, digest);
-    return adoptPtr(digest);
+        unusedNodesMap->add(digest->m_sha1, digest.get());
+
+    return digest;
 }
 
 bool DOMPatchSupport::insertBeforeAndMarkAsUsed(ContainerNode* parentNode, Digest* digest, Node* anchor, ExceptionCode& ec)

@@ -36,7 +36,6 @@
 #include "InspectorWebFrontendDispatchers.h"
 #include "InspectorWebTypeBuilders.h"
 #include "RenderLayer.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

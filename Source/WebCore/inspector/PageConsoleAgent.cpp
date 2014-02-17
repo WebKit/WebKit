@@ -75,7 +75,7 @@ void PageConsoleAgent::addInspectedNode(ErrorString* errorString, int nodeId)
     }
 
     if (CommandLineAPIHost* commandLineAPIHost = static_cast<WebInjectedScriptManager*>(m_injectedScriptManager)->commandLineAPIHost())
-        commandLineAPIHost->addInspectedObject(adoptPtr(new InspectableNode(node)));
+        commandLineAPIHost->addInspectedObject(std::make_unique<InspectableNode>(node));
 }
 
 } // namespace WebCore

@@ -165,7 +165,7 @@ void UpdateRegionLayoutTask::timerFired(Timer<UpdateRegionLayoutTask>&)
     if (!m_namedFlows.isEmpty() && !m_timer.isActive())
         m_timer.startOneShot(0);
 }
-    
+
 class ChangeRegionOversetTask {
 public:
     ChangeRegionOversetTask(InspectorCSSAgent*);
@@ -173,7 +173,7 @@ public:
     void unschedule(WebKitNamedFlow*);
     void reset();
     void timerFired(Timer<ChangeRegionOversetTask>&);
-    
+
 private:
     InspectorCSSAgent* m_cssAgent;
     Timer<ChangeRegionOversetTask> m_timer;
@@ -189,7 +189,7 @@ ChangeRegionOversetTask::ChangeRegionOversetTask(InspectorCSSAgent* cssAgent)
 void ChangeRegionOversetTask::scheduleFor(WebKitNamedFlow* namedFlow, int documentNodeId)
 {
     m_namedFlows.add(namedFlow, documentNodeId);
-    
+
     if (!m_timer.isActive())
         m_timer.startOneShot(0);
 }
@@ -266,7 +266,7 @@ public:
         return String::format("SetStyleSheetText %s", m_styleSheet->id().utf8().data());
     }
 
-    virtual void merge(PassOwnPtr<Action> action) override
+    virtual void merge(std::unique_ptr<Action> action) override
     {
         ASSERT(action->mergeId() == mergeId());
 
@@ -310,7 +310,7 @@ public:
         return String::format("SetStyleText %s:%u", m_styleSheet->id().utf8().data(), m_cssId.ordinal());
     }
 
-    virtual void merge(PassOwnPtr<Action> action) override
+    virtual void merge(std::unique_ptr<Action> action) override
     {
         ASSERT(action->mergeId() == mergeId());
 
@@ -369,7 +369,7 @@ public:
         return String::format("SetPropertyText %s:%u:%s", m_styleSheet->id().utf8().data(), m_propertyIndex, m_overwrite ? "true" : "false");
     }
 
-    virtual void merge(PassOwnPtr<Action> action) override
+    virtual void merge(std::unique_ptr<Action> action) override
     {
         ASSERT(action->mergeId() == mergeId());
 
@@ -582,7 +582,7 @@ void InspectorCSSAgent::willRemoveNamedFlow(Document* document, WebKitNamedFlow*
 
     if (m_updateRegionLayoutTask)
         m_updateRegionLayoutTask->unschedule(namedFlow);
-    
+
     if (m_changeRegionOversetTask)
         m_changeRegionOversetTask->unschedule(namedFlow);
 
@@ -596,7 +596,7 @@ void InspectorCSSAgent::didUpdateRegionLayout(Document* document, WebKitNamedFlo
         return;
 
     if (!m_updateRegionLayoutTask)
-        m_updateRegionLayoutTask = adoptPtr(new UpdateRegionLayoutTask(this));
+        m_updateRegionLayoutTask = std::make_unique<UpdateRegionLayoutTask>(this);
     m_updateRegionLayoutTask->scheduleFor(namedFlow, documentNodeId);
 }
 
@@ -616,9 +616,9 @@ void InspectorCSSAgent::didChangeRegionOverset(Document* document, WebKitNamedFl
     int documentNodeId = documentNodeWithRequestedFlowsId(document);
     if (!documentNodeId)
         return;
-    
+
     if (!m_changeRegionOversetTask)
-        m_changeRegionOversetTask = adoptPtr(new ChangeRegionOversetTask(this));
+        m_changeRegionOversetTask = std::make_unique<ChangeRegionOversetTask>(this);
     m_changeRegionOversetTask->scheduleFor(namedFlow, documentNodeId);
 }
 
@@ -626,10 +626,10 @@ void InspectorCSSAgent::regionOversetChanged(WebKitNamedFlow* namedFlow, int doc
 {
     if (namedFlow->flowState() == WebKitNamedFlow::FlowStateNull)
         return;
-    
+
     ErrorString errorString;
     Ref<WebKitNamedFlow> protect(*namedFlow);
-    
+
     m_frontendDispatcher->regionOversetChanged(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
 }
 
@@ -803,7 +803,7 @@ void InspectorCSSAgent::setStyleSheetText(ErrorString* errorString, const String
         return;
 
     ExceptionCode ec = 0;
-    m_domAgent->history()->perform(adoptPtr(new SetStyleSheetTextAction(inspectorStyleSheet, text)), ec);
+    m_domAgent->history()->perform(std::make_unique<SetStyleSheetTextAction>(inspectorStyleSheet, text), ec);
     *errorString = InspectorDOMAgent::toErrorString(ec);
 }
 
@@ -817,7 +817,7 @@ void InspectorCSSAgent::setStyleText(ErrorString* errorString, const RefPtr<Insp
         return;
 
     ExceptionCode ec = 0;
-    bool success = m_domAgent->history()->perform(adoptPtr(new SetStyleTextAction(inspectorStyleSheet, compoundId, text)), ec);
+    bool success = m_domAgent->history()->perform(std::make_unique<SetStyleTextAction>(inspectorStyleSheet, compoundId, text), ec);
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
     *errorString = InspectorDOMAgent::toErrorString(ec);
@@ -833,7 +833,7 @@ void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<I
         return;
 
     ExceptionCode ec = 0;
-    bool success = m_domAgent->history()->perform(adoptPtr(new SetPropertyTextAction(inspectorStyleSheet, compoundId, propertyIndex, text, overwrite)), ec);
+    bool success = m_domAgent->history()->perform(std::make_unique<SetPropertyTextAction>(inspectorStyleSheet, compoundId, propertyIndex, text, overwrite), ec);
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
     *errorString = InspectorDOMAgent::toErrorString(ec);
@@ -849,7 +849,7 @@ void InspectorCSSAgent::toggleProperty(ErrorString* errorString, const RefPtr<In
         return;
 
     ExceptionCode ec = 0;
-    bool success = m_domAgent->history()->perform(adoptPtr(new TogglePropertyAction(inspectorStyleSheet, compoundId, propertyIndex, disable)), ec);
+    bool success = m_domAgent->history()->perform(std::make_unique<TogglePropertyAction>(inspectorStyleSheet, compoundId, propertyIndex, disable), ec);
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
     *errorString = InspectorDOMAgent::toErrorString(ec);
@@ -865,7 +865,7 @@ void InspectorCSSAgent::setRuleSelector(ErrorString* errorString, const RefPtr<I
         return;
 
     ExceptionCode ec = 0;
-    bool success = m_domAgent->history()->perform(adoptPtr(new SetRuleSelectorAction(inspectorStyleSheet, compoundId, selector)), ec);
+    bool success = m_domAgent->history()->perform(std::make_unique<SetRuleSelectorAction>(inspectorStyleSheet, compoundId, selector), ec);
 
     if (success)
         result = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
@@ -885,9 +885,9 @@ void InspectorCSSAgent::addRule(ErrorString* errorString, const int contextNodeI
     }
 
     ExceptionCode ec = 0;
-    OwnPtr<AddRuleAction> action = adoptPtr(new AddRuleAction(inspectorStyleSheet, selector));
+    auto action = std::make_unique<AddRuleAction>(inspectorStyleSheet, selector);
     AddRuleAction* rawAction = action.get();
-    bool success = m_domAgent->history()->perform(action.release(), ec);
+    bool success = m_domAgent->history()->perform(std::move(action), ec);
     if (!success) {
         *errorString = InspectorDOMAgent::toErrorString(ec);
         return;

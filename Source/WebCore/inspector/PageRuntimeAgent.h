@@ -35,7 +35,6 @@
 
 #include <inspector/InspectorJSFrontendDispatchers.h>
 #include <inspector/agents/InspectorRuntimeAgent.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 class ExecState;

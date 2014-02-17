@@ -35,7 +35,6 @@
 
 #include "InspectorWebAgentBase.h"
 #include "InspectorWebBackendDispatchers.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

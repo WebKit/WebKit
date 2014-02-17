@@ -83,13 +83,13 @@ public:
     void count(JSC::ExecState*, PassRefPtr<ScriptArguments>);
 
 protected:
-    void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
+    void addConsoleMessage(std::unique_ptr<ConsoleMessage>);
 
     InjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<InspectorConsoleFrontendDispatcher> m_frontendDispatcher;
     RefPtr<InspectorConsoleBackendDispatcher> m_backendDispatcher;
     ConsoleMessage* m_previousMessage;
-    Vector<OwnPtr<ConsoleMessage>> m_consoleMessages;
+    Vector<std::unique_ptr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount;
     HashMap<String, unsigned> m_counts;
     HashMap<String, double> m_times;

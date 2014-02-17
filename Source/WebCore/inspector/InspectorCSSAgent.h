@@ -181,8 +181,8 @@ private:
     DocumentToViaInspectorStyleSheet m_documentToInspectorStyleSheet;
     NodeIdToForcedPseudoState m_nodeIdToForcedPseudoState;
     HashSet<int> m_namedFlowCollectionsRequested;
-    OwnPtr<UpdateRegionLayoutTask> m_updateRegionLayoutTask;
-    OwnPtr<ChangeRegionOversetTask> m_changeRegionOversetTask;
+    std::unique_ptr<UpdateRegionLayoutTask> m_updateRegionLayoutTask;
+    std::unique_ptr<ChangeRegionOversetTask> m_changeRegionOversetTask;
 
     int m_lastStyleSheetId;
 };

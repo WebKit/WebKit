@@ -38,7 +38,6 @@
 #include "InspectorWebFrontendDispatchers.h"
 #include "LayoutRect.h"
 #include <inspector/InspectorValues.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 

@@ -82,7 +82,7 @@ static Vector<std::pair<int, String>> getRegularExpressionMatchesByLines(const J
     if (text.isEmpty())
         return result;
 
-    OwnPtr<Vector<size_t>> endings(lineEndings(text));
+    std::unique_ptr<Vector<size_t>> endings(lineEndings(text));
     size_t size = endings->size();
     unsigned start = 0;
     for (size_t lineNumber = 0; lineNumber < size; ++lineNumber) {
@@ -100,9 +100,9 @@ static Vector<std::pair<int, String>> getRegularExpressionMatchesByLines(const J
     return result;
 }
 
-PassOwnPtr<Vector<size_t>> lineEndings(const String& text)
+std::unique_ptr<Vector<size_t>> lineEndings(const String& text)
 {
-    OwnPtr<Vector<size_t>> result(adoptPtr(new Vector<size_t>()));
+    auto result = std::make_unique<Vector<size_t>>();
 
     unsigned start = 0;
     while (start < text.length()) {
@@ -115,7 +115,7 @@ PassOwnPtr<Vector<size_t>> lineEndings(const String& text)
     }
     result->append(text.length());
 
-    return result.release();
+    return result;
 }
 
 static PassRefPtr<Inspector::TypeBuilder::GenericTypes::SearchMatch> buildObjectForSearchMatch(int lineNumber, const String& lineContent)

@@ -40,7 +40,6 @@
 #include "URL.h"
 #include "WorkerGlobalScopeProxy.h"
 #include <inspector/InspectorValues.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 using namespace Inspector;

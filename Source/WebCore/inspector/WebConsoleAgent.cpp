@@ -131,7 +131,7 @@ private:
 void WebConsoleAgent::addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId)
 {
     if (CommandLineAPIHost* commandLineAPIHost = static_cast<WebInjectedScriptManager*>(m_injectedScriptManager)->commandLineAPIHost())
-        commandLineAPIHost->addInspectedObject(adoptPtr(new InspectableHeapObject(inspectedHeapObjectId)));
+        commandLineAPIHost->addInspectedObject(std::make_unique<InspectableHeapObject>(inspectedHeapObjectId));
 }
 
 } // namespace WebCore

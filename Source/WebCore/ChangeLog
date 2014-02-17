@@ -1,3 +1,58 @@
+2014-02-17  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Replace uses of PassOwnPtr/OwnPtr with std::unique_ptr in WebCore/inspector
+        https://bugs.webkit.org/show_bug.cgi?id=128681
+
+        Reviewed by Timothy Hatcher.
+
+        Another step towards getting rid of PassOwnPtr/OwnPtr, now targeting
+        WebCore/inspector/*. Besides files in there, a few other files in
+        JavaScriptCore/inspector, WebKit/, WebKit2/WebProcess/WebCoreSupport/
+        and WebCore/testing were touched.
+
+        No new tests; no new behavior.
+
+        * WebCore.exp.in:
+        * inspector/CommandLineAPIHost.cpp:
+        * inspector/CommandLineAPIHost.h:
+        * inspector/DOMEditor.cpp:
+        * inspector/DOMPatchSupport.cpp:
+        * inspector/DOMPatchSupport.h:
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorHistory.cpp:
+        * inspector/InspectorHistory.h:
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorInputAgent.h:
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorMemoryAgent.cpp:
+        * inspector/InspectorMemoryAgent.h:
+        * inspector/InspectorOverlay.cpp:
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        * inspector/PageConsoleAgent.cpp:
+        * inspector/PageRuntimeAgent.h:
+        * inspector/WebConsoleAgent.cpp:
+        * inspector/WorkerRuntimeAgent.h:
+        * testing/Internals.cpp:
+
 2014-02-17  Antti Koivisto  <antti@apple.com>
 
         Rename Document::m_selfOnlyRefCount to m_referencingNodeCount

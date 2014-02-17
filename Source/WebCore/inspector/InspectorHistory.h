@@ -33,7 +33,6 @@
 
 #include "ExceptionCode.h"
 
-#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -56,7 +55,7 @@ public:
         virtual String toString();
 
         virtual String mergeId();
-        virtual void merge(PassOwnPtr<Action>);
+        virtual void merge(std::unique_ptr<Action>);
 
         virtual bool perform(ExceptionCode&) = 0;
 
@@ -71,7 +70,7 @@ public:
     InspectorHistory();
     virtual ~InspectorHistory();
 
-    bool perform(PassOwnPtr<Action>, ExceptionCode&);
+    bool perform(std::unique_ptr<Action>, ExceptionCode&);
     void markUndoableState();
 
     bool undo(ExceptionCode&);
@@ -79,7 +78,7 @@ public:
     void reset();
 
 private:
-    Vector<OwnPtr<Action>> m_history;
+    Vector<std::unique_ptr<Action>> m_history;
     size_t m_afterLastActionIndex;
 };
 

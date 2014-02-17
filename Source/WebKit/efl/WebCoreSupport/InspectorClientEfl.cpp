@@ -148,7 +148,7 @@ String InspectorClientEfl::inspectorFilesPath()
 }
 
 InspectorFrontendClientEfl::InspectorFrontendClientEfl(Evas_Object* inspectedView, Evas_Object* inspectorView, InspectorClientEfl* inspectorClient)
-    : InspectorFrontendClientLocal(&EWKPrivate::corePage(inspectedView)->inspectorController(), EWKPrivate::corePage(inspectorView), adoptPtr(new InspectorFrontendSettingsEfl()))
+    : InspectorFrontendClientLocal(&EWKPrivate::corePage(inspectedView)->inspectorController(), EWKPrivate::corePage(inspectorView), std::make_unique<InspectorFrontendSettingsEfl>())
     , m_inspectedView(inspectedView)
     , m_inspectorView(inspectorView)
     , m_inspectorClient(inspectorClient)

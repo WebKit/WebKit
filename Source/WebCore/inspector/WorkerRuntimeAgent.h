@@ -34,7 +34,6 @@
 #if ENABLE(INSPECTOR)
 
 #include <inspector/agents/InspectorRuntimeAgent.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

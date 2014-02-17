@@ -36,7 +36,6 @@
 #include "InspectorWebAgentBase.h"
 #include "InspectorWebBackendDispatchers.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

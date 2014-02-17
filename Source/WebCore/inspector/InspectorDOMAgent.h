@@ -41,8 +41,6 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
@@ -213,7 +211,7 @@ public:
 
 private:
     void setSearchingForNode(ErrorString*, bool enabled, Inspector::InspectorObject* highlightConfig);
-    PassOwnPtr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString*, Inspector::InspectorObject* highlightInspectorObject);
+    std::unique_ptr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString*, Inspector::InspectorObject* highlightInspectorObject);
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
@@ -241,7 +239,7 @@ private:
 
     void discardBindings();
 
-    void innerHighlightQuad(PassOwnPtr<FloatQuad>, const RefPtr<Inspector::InspectorObject>* color, const RefPtr<Inspector::InspectorObject>* outlineColor, const bool* usePageCoordinates);
+    void innerHighlightQuad(std::unique_ptr<FloatQuad>, const RefPtr<Inspector::InspectorObject>* color, const RefPtr<Inspector::InspectorObject>* outlineColor, const bool* usePageCoordinates);
 
     InspectorPageAgent* m_pageAgent;
     Inspector::InjectedScriptManager* m_injectedScriptManager;
@@ -253,7 +251,7 @@ private:
     typedef HashMap<RefPtr<Node>, BackendNodeId> NodeToBackendIdMap;
     HashMap<String, NodeToBackendIdMap> m_nodeGroupToBackendIdMap;
     // Owns node mappings for dangling nodes.
-    Vector<OwnPtr<NodeToIdMap>> m_danglingNodeToIdMaps;
+    Vector<std::unique_ptr<NodeToIdMap>> m_danglingNodeToIdMaps;
     HashMap<int, Node*> m_idToNode;
     HashMap<int, NodeToIdMap*> m_idToNodesMap;
     HashSet<int> m_childrenRequested;
@@ -263,12 +261,12 @@ private:
     RefPtr<Document> m_document;
     typedef HashMap<String, Vector<RefPtr<Node>>> SearchResults;
     SearchResults m_searchResults;
-    OwnPtr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
+    std::unique_ptr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
     RefPtr<Node> m_nodeToFocus;
     bool m_searchingForNode;
-    OwnPtr<HighlightConfig> m_inspectModeHighlightConfig;
-    OwnPtr<InspectorHistory> m_history;
-    OwnPtr<DOMEditor> m_domEditor;
+    std::unique_ptr<HighlightConfig> m_inspectModeHighlightConfig;
+    std::unique_ptr<InspectorHistory> m_history;
+    std::unique_ptr<DOMEditor> m_domEditor;
     bool m_suppressAttributeModifiedEvent;
     bool m_documentRequested;
 };

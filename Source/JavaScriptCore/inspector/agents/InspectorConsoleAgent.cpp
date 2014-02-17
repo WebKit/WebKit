@@ -36,8 +36,6 @@
 #include "ScriptCallStackFactory.h"
 #include "ScriptObject.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -130,7 +128,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
-    addConsoleMessage(adoptPtr(new ConsoleMessage(!isWorkerAgent(), source, type, level, message, callStack, requestIdentifier)));
+    addConsoleMessage(std::make_unique<ConsoleMessage>(!isWorkerAgent(), source, type, level, message, callStack, requestIdentifier));
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
@@ -143,7 +141,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
-    addConsoleMessage(adoptPtr(new ConsoleMessage(!isWorkerAgent(), source, type, level, message, arguments, state, requestIdentifier)));
+    addConsoleMessage(std::make_unique<ConsoleMessage>(!isWorkerAgent(), source, type, level, message, arguments, state, requestIdentifier));
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
@@ -157,7 +155,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
     }
 
     bool canGenerateCallStack = !isWorkerAgent() && m_frontendDispatcher;
-    addConsoleMessage(adoptPtr(new ConsoleMessage(canGenerateCallStack, source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier)));
+    addConsoleMessage(std::make_unique<ConsoleMessage>(canGenerateCallStack, source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier));
 }
 
 Vector<unsigned> InspectorConsoleAgent::consoleMessageArgumentCounts() const
@@ -229,7 +227,7 @@ static bool isGroupMessage(MessageType type)
         || type == MessageType::EndGroup;
 }
 
-void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> consoleMessage)
+void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> consoleMessage)
 {
     ASSERT(m_injectedScriptManager->inspectorEnvironment().developerExtrasEnabled());
     ASSERT_ARG(consoleMessage, consoleMessage);
@@ -240,7 +238,7 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
             m_previousMessage->updateRepeatCountInConsole(m_frontendDispatcher.get());
     } else {
         m_previousMessage = consoleMessage.get();
-        m_consoleMessages.append(consoleMessage);
+        m_consoleMessages.append(std::move(consoleMessage));
         if (m_frontendDispatcher && m_enabled)
             m_previousMessage->addToFrontend(m_frontendDispatcher.get(), m_injectedScriptManager, true);
     }

@@ -92,7 +92,7 @@ public:
     virtual bool perform(ExceptionCode& ec) override
     {
         if (m_node->parentNode()) {
-            m_removeChildAction = adoptPtr(new RemoveChildAction(m_node->parentNode(), m_node.get()));
+            m_removeChildAction = std::make_unique<RemoveChildAction>(m_node->parentNode(), m_node.get());
             if (!m_removeChildAction->perform(ec))
                 return false;
         }
@@ -119,7 +119,7 @@ private:
     RefPtr<Node> m_parentNode;
     RefPtr<Node> m_node;
     RefPtr<Node> m_anchorNode;
-    OwnPtr<RemoveChildAction> m_removeChildAction;
+    std::unique_ptr<RemoveChildAction> m_removeChildAction;
 };
 
 class DOMEditor::RemoveAttributeAction : public InspectorHistory::Action {
@@ -208,8 +208,8 @@ public:
         , m_nextSibling(node.nextSibling())
         , m_html(html)
         , m_newNode(nullptr)
-        , m_history(adoptPtr(new InspectorHistory()))
-        , m_domEditor(adoptPtr(new DOMEditor(m_history.get())))
+        , m_history(std::make_unique<InspectorHistory>())
+        , m_domEditor(std::make_unique<DOMEditor>(m_history.get()))
     {
     }
 
@@ -242,8 +242,8 @@ private:
     String m_html;
     String m_oldHTML;
     Node* m_newNode;
-    OwnPtr<InspectorHistory> m_history;
-    OwnPtr<DOMEditor> m_domEditor;
+    std::unique_ptr<InspectorHistory> m_history;
+    std::unique_ptr<DOMEditor> m_domEditor;
 };
 
 class DOMEditor::ReplaceWholeTextAction : public InspectorHistory::Action {
@@ -352,29 +352,29 @@ DOMEditor::~DOMEditor() { }
 
 bool DOMEditor::insertBefore(Node* parentNode, PassRefPtr<Node> node, Node* anchorNode, ExceptionCode& ec)
 {
-    return m_history->perform(adoptPtr(new InsertBeforeAction(parentNode, node, anchorNode)), ec);
+    return m_history->perform(std::make_unique<InsertBeforeAction>(parentNode, node, anchorNode), ec);
 }
 
 bool DOMEditor::removeChild(Node* parentNode, Node* node, ExceptionCode& ec)
 {
-    return m_history->perform(adoptPtr(new RemoveChildAction(parentNode, node)), ec);
+    return m_history->perform(std::make_unique<RemoveChildAction>(parentNode, node), ec);
 }
 
 bool DOMEditor::setAttribute(Element* element, const String& name, const String& value, ExceptionCode& ec)
 {
-    return m_history->perform(adoptPtr(new SetAttributeAction(element, name, value)), ec);
+    return m_history->perform(std::make_unique<SetAttributeAction>(element, name, value), ec);
 }
 
 bool DOMEditor::removeAttribute(Element* element, const String& name, ExceptionCode& ec)
 {
-    return m_history->perform(adoptPtr(new RemoveAttributeAction(element, name)), ec);
+    return m_history->perform(std::make_unique<RemoveAttributeAction>(element, name), ec);
 }
 
 bool DOMEditor::setOuterHTML(Node& node, const String& html, Node** newNode, ExceptionCode& ec)
 {
-    OwnPtr<SetOuterHTMLAction> action = adoptPtr(new SetOuterHTMLAction(node, html));
+    auto action = std::make_unique<SetOuterHTMLAction>(node, html);
     SetOuterHTMLAction* rawAction = action.get();
-    bool result = m_history->perform(action.release(), ec);
+    bool result = m_history->perform(std::move(action), ec);
     if (result)
         *newNode = rawAction->newNode();
     return result;
@@ -382,17 +382,17 @@ bool DOMEditor::setOuterHTML(Node& node, const String& html, Node** newNode, Exc
 
 bool DOMEditor::replaceWholeText(Text* textNode, const String& text, ExceptionCode& ec)
 {
-    return m_history->perform(adoptPtr(new ReplaceWholeTextAction(textNode, text)), ec);
+    return m_history->perform(std::make_unique<ReplaceWholeTextAction>(textNode, text), ec);
 }
 
 bool DOMEditor::replaceChild(Node* parentNode, PassRefPtr<Node> newNode, Node* oldNode, ExceptionCode& ec)
 {
-    return m_history->perform(adoptPtr(new ReplaceChildNodeAction(parentNode, newNode, oldNode)), ec);
+    return m_history->perform(std::make_unique<ReplaceChildNodeAction>(parentNode, newNode, oldNode), ec);
 }
 
 bool DOMEditor::setNodeValue(Node* node, const String& value, ExceptionCode& ec)
 {
-    return m_history->perform(adoptPtr(new SetNodeValueAction(node, value)), ec);
+    return m_history->perform(std::make_unique<SetNodeValueAction>(node, value), ec);
 }
 
 static void populateErrorString(const ExceptionCode& ec, ErrorString* errorString)

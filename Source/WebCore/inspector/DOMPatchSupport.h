@@ -34,8 +34,6 @@
 #include "ExceptionCode.h"
 
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -65,9 +63,9 @@ private:
     typedef HashMap<String, Digest*> UnusedNodesMap;
 
     bool innerPatchNode(Digest* oldNode, Digest* newNode, ExceptionCode&);
-    std::pair<ResultMap, ResultMap> diff(const Vector<OwnPtr<Digest>>& oldChildren, const Vector<OwnPtr<Digest>>& newChildren);
-    bool innerPatchChildren(ContainerNode*, const Vector<OwnPtr<Digest>>& oldChildren, const Vector<OwnPtr<Digest>>& newChildren, ExceptionCode&);
-    PassOwnPtr<Digest> createDigest(Node*, UnusedNodesMap*);
+    std::pair<ResultMap, ResultMap> diff(const Vector<std::unique_ptr<Digest>>& oldChildren, const Vector<std::unique_ptr<Digest>>& newChildren);
+    bool innerPatchChildren(ContainerNode*, const Vector<std::unique_ptr<Digest>>& oldChildren, const Vector<std::unique_ptr<Digest>>& newChildren, ExceptionCode&);
+    std::unique_ptr<Digest> createDigest(Node*, UnusedNodesMap*);
     bool insertBeforeAndMarkAsUsed(ContainerNode*, Digest*, Node* anchor, ExceptionCode&);
     bool removeChildAndMoveToNew(Digest*, ExceptionCode&);
     void markNodeAsUsed(Digest*);

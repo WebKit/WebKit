@@ -216,7 +216,7 @@ EXPORTS
         symbolWithPointer(?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z, ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPEAVInstrumentingAgents@2@PEAVPage@2@@Z)
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
         symbolWithPointer(?isUnderTest@InspectorFrontendClientLocal@WebCore@@UAE_NXZ, ?isUnderTest@InspectorFrontendClientLocal@WebCore@@UEAA_NXZ)
-        symbolWithPointer(??0InspectorFrontendClientLocal@WebCore@@QAE@PAVInspectorController@1@PAVPage@1@V?$PassOwnPtr@VSettings@InspectorFrontendClientLocal@WebCore@@@WTF@@@Z, ??0InspectorFrontendClientLocal@WebCore@@QEAA@PEAVInspectorController@1@PEAVPage@1@V?$PassOwnPtr@VSettings@InspectorFrontendClientLocal@WebCore@@@WTF@@@Z)
+        symbolWithPointer(??0InspectorFrontendClientLocal@WebCore@@QAE@PAVInspectorController@1@PAVPage@1@V?$unique_ptr@VSettings@InspectorFrontendClientLocal@WebCore@@U?$default_delete@VSettings@InspectorFrontendClientLocal@WebCore@@@std@@@std@@@Z, ??0InspectorFrontendClientLocal@WebCore@@QEAA@PEAVInspectorController@1@PEAVPage@1@V?$unique_ptr@VSettings@InspectorFrontendClientLocal@WebCore@@U?$default_delete@VSettings@InspectorFrontendClientLocal@WebCore@@@std@@@std@@@Z)
         symbolWithPointer(??1InspectorFrontendClientLocal@WebCore@@UAE@XZ, ??1InspectorFrontendClientLocal@WebCore@@UEAA@XZ)
         symbolWithPointer(?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UAEXI@Z, ?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UEAAXI@Z)
         symbolWithPointer(?changeAttachedWindowWidth@InspectorFrontendClientLocal@WebCore@@UAEXI@Z, ?changeAttachedWindowWidth@InspectorFrontendClientLocal@WebCore@@UEAAXI@Z)

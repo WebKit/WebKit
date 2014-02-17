@@ -34,7 +34,6 @@
 #include "InspectorWebAgentBase.h"
 #include "InspectorWebBackendDispatchers.h"
 #include "InspectorWebFrontendDispatchers.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -145,7 +144,7 @@ private:
     InspectorClient* m_client;
     std::unique_ptr<Inspector::InspectorNetworkFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorNetworkBackendDispatcher> m_backendDispatcher;
-    OwnPtr<NetworkResourcesData> m_resourcesData;
+    std::unique_ptr<NetworkResourcesData> m_resourcesData;
     bool m_enabled;
     bool m_cacheDisabled;
     bool m_loadingXHRSynchronously;

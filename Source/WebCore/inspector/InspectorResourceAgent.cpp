@@ -643,7 +643,7 @@ InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentin
     : InspectorAgentBase(ASCIILiteral("Network"), instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_client(client)
-    , m_resourcesData(adoptPtr(new NetworkResourcesData()))
+    , m_resourcesData(std::make_unique<NetworkResourcesData>())
     , m_enabled(false)
     , m_cacheDisabled(false)
     , m_loadingXHRSynchronously(false)

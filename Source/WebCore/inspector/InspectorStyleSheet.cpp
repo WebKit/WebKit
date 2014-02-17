@@ -58,8 +58,6 @@
 #include "WebKitCSSKeyframesRule.h"
 #include <inspector/ContentSearchUtilities.h>
 #include <inspector/InspectorValues.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 #include <yarr/RegularExpression.h>
@@ -77,15 +75,15 @@ public:
     void setText(const String& text);
     bool hasText() const { return m_hasText; }
     RuleSourceDataList* sourceData() const { return m_sourceData.get(); }
-    void setSourceData(PassOwnPtr<RuleSourceDataList>);
-    bool hasSourceData() const { return m_sourceData; }
+    void setSourceData(std::unique_ptr<RuleSourceDataList>);
+    bool hasSourceData() const { return m_sourceData != nullptr; }
     PassRefPtr<WebCore::CSSRuleSourceData> ruleSourceDataAt(unsigned) const;
 
 private:
 
     String m_text;
     bool m_hasText;
-    OwnPtr<RuleSourceDataList> m_sourceData;
+    std::unique_ptr<RuleSourceDataList> m_sourceData;
 };
 
 ParsedStyleSheet::ParsedStyleSheet()
@@ -115,14 +113,14 @@ static void flattenSourceData(RuleSourceDataList* dataList, RuleSourceDataList* 
     }
 }
 
-void ParsedStyleSheet::setSourceData(PassOwnPtr<RuleSourceDataList> sourceData)
+void ParsedStyleSheet::setSourceData(std::unique_ptr<RuleSourceDataList> sourceData)
 {
     if (!sourceData) {
-        m_sourceData.clear();
+        m_sourceData.reset();
         return;
     }
 
-    m_sourceData = adoptPtr(new RuleSourceDataList());
+    m_sourceData = std::make_unique<RuleSourceDataList>();
 
     // FIXME: This is a temporary solution to retain the original flat sourceData structure
     // containing only style rules, even though CSSParser now provides the full rule source data tree.
@@ -284,9 +282,9 @@ static void fillMediaListChain(CSSRule* rule, Array<Inspector::TypeBuilder::CSS:
     }
 }
 
-static PassOwnPtr<CSSParser> createCSSParser(Document* document)
+static std::unique_ptr<CSSParser> createCSSParser(Document* document)
 {
-    return adoptPtr(new CSSParser(document ? CSSParserContext(*document) : strictCSSParserContext()));
+    return std::make_unique<CSSParser>(document ? CSSParserContext(*document) : strictCSSParserContext());
 }
 
 PassRefPtr<InspectorStyle> InspectorStyle::create(const InspectorCSSId& styleId, PassRefPtr<CSSStyleDeclaration> style, InspectorStyleSheet* parentStyleSheet)
@@ -521,7 +519,7 @@ PassRefPtr<Inspector::TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithPrope
     HashSet<String> foundShorthands;
     String previousPriority;
     String previousStatus;
-    OwnPtr<Vector<size_t>> lineEndings(m_parentStyleSheet ? m_parentStyleSheet->lineEndings() : PassOwnPtr<Vector<size_t>>());
+    std::unique_ptr<Vector<size_t>> lineEndings(m_parentStyleSheet ? m_parentStyleSheet->lineEndings() : nullptr);
     RefPtr<CSSRuleSourceData> sourceData = extractSourceData();
     unsigned ruleBodyRangeStart = sourceData ? sourceData->ruleBodyRange.start : 0;
 
@@ -1211,10 +1209,10 @@ RefPtr<CSSRuleSourceData> InspectorStyleSheet::ruleSourceDataFor(CSSStyleDeclara
     return m_parsedStyleSheet->ruleSourceDataAt(ruleIndexByStyle(style));
 }
 
-PassOwnPtr<Vector<size_t>> InspectorStyleSheet::lineEndings() const
+std::unique_ptr<Vector<size_t>> InspectorStyleSheet::lineEndings() const
 {
     if (!m_parsedStyleSheet->hasText())
-        return PassOwnPtr<Vector<size_t>>();
+        return nullptr;
     return ContentSearchUtilities::lineEndings(m_parsedStyleSheet->text());
 }
 
@@ -1270,9 +1268,9 @@ bool InspectorStyleSheet::ensureSourceData()
         return false;
 
     RefPtr<StyleSheetContents> newStyleSheet = StyleSheetContents::create();
-    OwnPtr<RuleSourceDataList> ruleSourceDataResult = adoptPtr(new RuleSourceDataList());
+    auto ruleSourceDataResult = std::make_unique<RuleSourceDataList>();
     createCSSParser(m_pageStyleSheet->ownerDocument())->parseSheet(newStyleSheet.get(), m_parsedStyleSheet->text(), 0, ruleSourceDataResult.get());
-    m_parsedStyleSheet->setSourceData(ruleSourceDataResult.release());
+    m_parsedStyleSheet->setSourceData(std::move(ruleSourceDataResult));
     return m_parsedStyleSheet->hasSourceData();
 }
 
@@ -1476,7 +1474,7 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
     return !ec;
 }
 
-PassOwnPtr<Vector<size_t>> InspectorStyleSheetForInlineStyle::lineEndings() const
+std::unique_ptr<Vector<size_t>> InspectorStyleSheetForInlineStyle::lineEndings() const
 {
     return ContentSearchUtilities::lineEndings(elementStyleText());
 }

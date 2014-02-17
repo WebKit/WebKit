@@ -50,7 +50,6 @@
 #include <inspector/InspectorValues.h>
 #include <inspector/agents/InspectorConsoleAgent.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/StringConcatenate.h>
 
 using namespace Inspector;

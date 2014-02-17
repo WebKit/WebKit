@@ -92,7 +92,7 @@ public:
         virtual Deprecated::ScriptValue get(JSC::ExecState*);
         virtual ~InspectableObject() { }
     };
-    void addInspectedObject(PassOwnPtr<InspectableObject>);
+    void addInspectedObject(std::unique_ptr<InspectableObject>);
     void clearInspectedObjects();
     InspectableObject* inspectedObject(unsigned index);
     void inspectImpl(PassRefPtr<Inspector::InspectorValue> objectToInspect, PassRefPtr<Inspector::InspectorValue> hints);
@@ -115,8 +115,8 @@ private:
     InspectorDatabaseAgent* m_databaseAgent;
 #endif
 
-    Vector<OwnPtr<InspectableObject>> m_inspectedObjects;
-    OwnPtr<InspectableObject> m_defaultInspectableObject;
+    Vector<std::unique_ptr<InspectableObject>> m_inspectedObjects;
+    std::unique_ptr<InspectableObject> m_defaultInspectableObject;
 };
 
 } // namespace WebCore

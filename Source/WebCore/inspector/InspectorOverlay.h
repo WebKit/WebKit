@@ -32,8 +32,6 @@
 #include "Color.h"
 #include "FloatQuad.h"
 #include "LayoutRect.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -117,7 +115,7 @@ public:
 
     void hideHighlight();
     void highlightNode(Node*, const HighlightConfig&);
-    void highlightQuad(PassOwnPtr<FloatQuad>, const HighlightConfig&);
+    void highlightQuad(std::unique_ptr<FloatQuad>, const HighlightConfig&);
 
     Node* highlightedNode() const;
 
@@ -141,8 +139,8 @@ private:
     String m_pausedInDebuggerMessage;
     RefPtr<Node> m_highlightNode;
     HighlightConfig m_nodeHighlightConfig;
-    OwnPtr<FloatQuad> m_highlightQuad;
-    OwnPtr<Page> m_overlayPage;
+    std::unique_ptr<FloatQuad> m_highlightQuad;
+    std::unique_ptr<Page> m_overlayPage;
     HighlightConfig m_quadHighlightConfig;
     IntSize m_size;
 };

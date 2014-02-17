@@ -280,7 +280,7 @@ void InspectorOverlay::setPausedInDebuggerMessage(const String* message)
 void InspectorOverlay::hideHighlight()
 {
     m_highlightNode.clear();
-    m_highlightQuad.clear();
+    m_highlightQuad.reset();
     update();
 }
 
@@ -291,13 +291,13 @@ void InspectorOverlay::highlightNode(Node* node, const HighlightConfig& highligh
     update();
 }
 
-void InspectorOverlay::highlightQuad(PassOwnPtr<FloatQuad> quad, const HighlightConfig& highlightConfig)
+void InspectorOverlay::highlightQuad(std::unique_ptr<FloatQuad> quad, const HighlightConfig& highlightConfig)
 {
     if (m_quadHighlightConfig.usePageCoordinates)
         *quad -= m_page.mainFrame().view()->scrollOffset();
 
     m_quadHighlightConfig = highlightConfig;
-    m_highlightQuad = quad;
+    m_highlightQuad = std::move(quad);
     update();
 }
 
@@ -748,7 +748,7 @@ Page* InspectorOverlay::overlayPage()
 
     Page::PageClients pageClients;
     fillWithEmptyClients(pageClients);
-    m_overlayPage = adoptPtr(new Page(pageClients));
+    m_overlayPage = std::make_unique<Page>(pageClients);
 
     Settings& settings = m_page.settings();
     Settings& overlaySettings = m_overlayPage->settings();
@@ -815,7 +815,7 @@ void InspectorOverlay::evaluateInOverlay(const String& method, PassRefPtr<Inspec
 
 void InspectorOverlay::freePage()
 {
-    m_overlayPage.clear();
+    m_overlayPage.reset();
 }
 
 } // namespace WebCore

@@ -25,8 +25,8 @@
 
 // FIXME: On Windows, we require all WebKit source files to include config.h
 // before including any other files. Failing to include config.h will leave
-// WTF_USE_CF undefined, causing build failures in this 
-// file. But Mac doesn't have a config.h for WebKit, so we can't include the 
+// WTF_USE_CF undefined, causing build failures in this
+// file. But Mac doesn't have a config.h for WebKit, so we can't include the
 // Windows one here. For now we can just define WTF_USE_CF and
 // WTF_USE_CFNETWORK manually, but we need a better long-term solution.
 #ifndef WTF_USE_CF
@@ -124,7 +124,7 @@ void WebInspectorClient::setInspectorStartsAttached(bool attached)
     storeSetting(inspectorStartsAttachedSetting, attached ? "true" : "false");
 }
 
-PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
+std::unique_ptr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
 {
     class InspectorFrontendSettingsCF : public WebCore::InspectorFrontendClientLocal::Settings {
     public:
@@ -141,5 +141,5 @@ PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::
             storeSetting(name, value);
         }
     };
-    return adoptPtr<WebCore::InspectorFrontendClientLocal::Settings>(new InspectorFrontendSettingsCF());
+    return std::make_unique<InspectorFrontendSettingsCF>();
 }

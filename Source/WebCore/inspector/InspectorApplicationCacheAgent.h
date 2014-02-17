@@ -32,7 +32,6 @@
 #include "InspectorWebBackendDispatchers.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace Inspector {
 class InspectorApplicationCacheFrontendDispatcher;

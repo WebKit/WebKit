@@ -74,7 +74,7 @@ CommandLineAPIHost::CommandLineAPIHost()
     , m_databaseAgent(nullptr)
 #endif
 {
-    m_defaultInspectableObject = adoptPtr(new InspectableObject);
+    m_defaultInspectableObject = std::make_unique<InspectableObject>();
 }
 
 CommandLineAPIHost::~CommandLineAPIHost()
@@ -124,9 +124,9 @@ Deprecated::ScriptValue CommandLineAPIHost::InspectableObject::get(JSC::ExecStat
     return Deprecated::ScriptValue();
 };
 
-void CommandLineAPIHost::addInspectedObject(PassOwnPtr<CommandLineAPIHost::InspectableObject> object)
+void CommandLineAPIHost::addInspectedObject(std::unique_ptr<CommandLineAPIHost::InspectableObject> object)
 {
-    m_inspectedObjects.insert(0, object);
+    m_inspectedObjects.insert(0, std::move(object));
     while (m_inspectedObjects.size() > 5)
         m_inspectedObjects.removeLast();
 }
