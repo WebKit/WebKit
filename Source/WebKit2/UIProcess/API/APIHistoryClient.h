@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebHistoryClient_h
-#define WebHistoryClient_h
+#ifndef APIHistoryClient_h
+#define APIHistoryClient_h
 
-#include "APIClient.h"
-#include "WKContext.h"
 #include <wtf/Forward.h>
 
-namespace API {
-template<> struct ClientTraits<WKContextHistoryClientBase> {
-    typedef std::tuple<WKContextHistoryClientV0> Versions;
-};
-}
-
 namespace WebKit {
-
 class WebContext;
 class WebFrameProxy;
 class WebPageProxy;
 struct WebNavigationDataStore;
+}
 
-class WebHistoryClient : public API::Client<WKContextHistoryClientBase> {
+namespace API {
+
+class HistoryClient {
 public:
-    void didNavigateWithNavigationData(WebContext*, WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*);
-    void didPerformClientRedirect(WebContext*, WebPageProxy*, const String& sourceURL, const String& destinationURL, WebFrameProxy*);
-    void didPerformServerRedirect(WebContext*, WebPageProxy*, const String& sourceURL, const String& destinationURL, WebFrameProxy*);
-    void didUpdateHistoryTitle(WebContext*, WebPageProxy*, const String& title, const String& url, WebFrameProxy*);
-    void populateVisitedLinks(WebContext*);
+    virtual ~HistoryClient() { }
 
-    bool shouldTrackVisitedLinks() const { return m_client.populateVisitedLinks; }
+    virtual void didNavigateWithNavigationData(WebKit::WebContext*, WebKit::WebPageProxy*, const WebKit::WebNavigationDataStore&, WebKit::WebFrameProxy*) { }
+    virtual void didPerformClientRedirect(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebKit::WebFrameProxy*) { }
+    virtual void didPerformServerRedirect(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebKit::WebFrameProxy*) { }
+    virtual void didUpdateHistoryTitle(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String& title, const WTF::String& url, WebKit::WebFrameProxy*) { }
+    virtual void populateVisitedLinks(WebKit::WebContext*) { }
+    virtual bool shouldTrackVisitedLinks() const { return false; }
 };
 
-} // namespace WebKit
+} // namespace API
 
-#endif // WebHistoryClient_h
+#endif // APIHistoryClient_h

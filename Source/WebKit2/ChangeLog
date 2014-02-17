@@ -1,3 +1,32 @@
+2014-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Turn the history client into a fancy API::HistoryClient abstract base class
+        https://bugs.webkit.org/show_bug.cgi?id=128917
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/APIHistoryClient.h: Renamed from Source/WebKit2/UIProcess/WebHistoryClient.h.
+        (API::HistoryClient::~HistoryClient):
+        (API::HistoryClient::didNavigateWithNavigationData):
+        (API::HistoryClient::didPerformClientRedirect):
+        (API::HistoryClient::didPerformServerRedirect):
+        (API::HistoryClient::didUpdateHistoryTitle):
+        (API::HistoryClient::populateVisitedLinks):
+        (API::HistoryClient::shouldTrackVisitedLinks):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetHistoryClient):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::setHistoryClient):
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::populateVisitedLinks):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::historyClient):
+        * UIProcess/WebHistoryClient.cpp: Removed.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-17  Dan Bernstein  <mitz@apple.com>
 
         Try to fix iOS Debug builds without breaking Release builds.

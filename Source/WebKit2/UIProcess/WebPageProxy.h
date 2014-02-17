@@ -50,7 +50,6 @@
 #include "WebFindClient.h"
 #include "WebFormClient.h"
 #include "WebFrameProxy.h"
-#include "WebHistoryClient.h"
 #include "WebHitTestResult.h"
 #include "WebPageContextMenuClient.h"
 #include "WebPageCreationParameters.h"

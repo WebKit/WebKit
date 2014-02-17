@@ -24,9 +24,11 @@
  */
 
 #include "config.h"
-#include "WKContext.h"
 #include "WKContextPrivate.h"
 
+#include "APIClient.h"
+#include "APIHistoryClient.h"
+#include "APINavigationData.h"
 #include "APIURLRequest.h"
 #include "WKAPICast.h"
 #include "WebContext.h"
@@ -52,6 +54,12 @@
 #if ENABLE(NETWORK_INFO)
 #include "WebNetworkInfoManagerProxy.h"
 #endif
+
+namespace API {
+template<> struct ClientTraits<WKContextHistoryClientBase> {
+    typedef std::tuple<WKContextHistoryClientV0> Versions;
+};
+}
 
 using namespace WebKit;
 
@@ -84,7 +92,62 @@ void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextIn
 
 void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClientBase* wkClient)
 {
-    toImpl(contextRef)->initializeHistoryClient(wkClient);
+    class HistoryClient final : public API::Client<WKContextHistoryClientBase>, public API::HistoryClient {
+    public:
+        explicit HistoryClient(const WKContextHistoryClientBase* client)
+        {
+            initialize(client);
+        }
+
+    private:
+        virtual void didNavigateWithNavigationData(WebContext* context, WebPageProxy* page, const WebNavigationDataStore& navigationDataStore, WebFrameProxy* frame) override
+        {
+            if (!m_client.didNavigateWithNavigationData)
+                return;
+
+            RefPtr<API::NavigationData> navigationData = API::NavigationData::create(navigationDataStore);
+            m_client.didNavigateWithNavigationData(toAPI(context), toAPI(page), toAPI(navigationData.get()), toAPI(frame), m_client.base.clientInfo);
+        }
+
+        virtual void didPerformClientRedirect(WebContext* context, WebPageProxy* page, const String& sourceURL, const String& destinationURL, WebFrameProxy* frame) override
+        {
+            if (!m_client.didPerformClientRedirect)
+                return;
+
+            m_client.didPerformClientRedirect(toAPI(context), toAPI(page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(frame), m_client.base.clientInfo);
+        }
+
+        virtual void didPerformServerRedirect(WebContext* context, WebPageProxy* page, const String& sourceURL, const String& destinationURL, WebFrameProxy* frame) override
+        {
+            if (!m_client.didPerformServerRedirect)
+                return;
+
+            m_client.didPerformServerRedirect(toAPI(context), toAPI(page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(frame), m_client.base.clientInfo);
+        }
+
+        virtual void didUpdateHistoryTitle(WebContext* context, WebPageProxy* page, const String& title, const String& url, WebFrameProxy* frame) override
+        {
+            if (!m_client.didUpdateHistoryTitle)
+                return;
+
+            m_client.didUpdateHistoryTitle(toAPI(context), toAPI(page), toAPI(title.impl()), toURLRef(url.impl()), toAPI(frame), m_client.base.clientInfo);
+        }
+
+        virtual void populateVisitedLinks(WebContext* context) override
+        {
+            if (!m_client.populateVisitedLinks)
+                return;
+
+            m_client.populateVisitedLinks(toAPI(context), m_client.base.clientInfo);
+        }
+
+        virtual bool shouldTrackVisitedLinks() const
+        {
+            return m_client.populateVisitedLinks;
+        }
+    };
+    
+    toImpl(contextRef)->setHistoryClient(std::make_unique<HistoryClient>(wkClient));
 }
 
 void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownloadClientBase* wkClient)

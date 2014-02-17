@@ -27,6 +27,7 @@
 #include "WebContext.h"
 
 #include "APIArray.h"
+#include "APIHistoryClient.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "Logging.h"
@@ -135,6 +136,7 @@ WebContext::WebContext(const String& injectedBundlePath)
     , m_processWithPageCache(0)
     , m_defaultPageGroup(WebPageGroup::createNonNull())
     , m_injectedBundlePath(injectedBundlePath)
+    , m_historyClient(std::make_unique<API::HistoryClient>())
     , m_visitedLinkProvider(this)
     , m_plugInAutoStartProvider(this)
     , m_alwaysUsesComplexTextCodePath(false)
@@ -269,11 +271,14 @@ void WebContext::initializeConnectionClient(const WKContextConnectionClientBase*
     m_connectionClient.initialize(client);
 }
 
-void WebContext::initializeHistoryClient(const WKContextHistoryClientBase* client)
+void WebContext::setHistoryClient(std::unique_ptr<API::HistoryClient> historyClient)
 {
-    m_historyClient.initialize(client);
+    if (!historyClient)
+        m_historyClient = std::make_unique<API::HistoryClient>();
+    else
+        m_historyClient = std::move(historyClient);
 
-    sendToAllProcesses(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient.shouldTrackVisitedLinks()));
+    sendToAllProcesses(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient->shouldTrackVisitedLinks()));
 }
 
 void WebContext::initializeDownloadClient(const WKContextDownloadClientBase* client)
@@ -565,7 +570,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
-    parameters.shouldTrackVisitedLinks = m_historyClient.shouldTrackVisitedLinks();
+    parameters.shouldTrackVisitedLinks = m_historyClient->shouldTrackVisitedLinks();
     parameters.cacheModel = m_cacheModel;
     parameters.languages = userPreferredLanguages();
 
@@ -838,7 +843,7 @@ void WebContext::didReceiveSynchronousMessageFromInjectedBundle(const String& me
 
 void WebContext::populateVisitedLinks()
 {
-    m_historyClient.populateVisitedLinks(this);
+    m_historyClient->populateVisitedLinks(this);
 }
 
 WebContext::Statistics& WebContext::statistics()

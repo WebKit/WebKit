@@ -27,6 +27,7 @@
 #include "WebProcessProxy.h"
 
 #include "APIFrameHandle.h"
+#include "APIHistoryClient.h"
 #include "CustomProtocolManagerProxyMessages.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"

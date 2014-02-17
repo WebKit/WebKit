@@ -42,7 +42,6 @@
 #include "WebContextConnectionClient.h"
 #include "WebContextInjectedBundleClient.h"
 #include "WebDownloadClient.h"
-#include "WebHistoryClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
@@ -65,6 +64,10 @@
 OBJC_CLASS NSObject;
 OBJC_CLASS NSString;
 #endif
+
+namespace API {
+class HistoryClient;
+}
 
 namespace WebKit {
 
@@ -128,7 +131,7 @@ public:
     void initializeClient(const WKContextClientBase*);
     void initializeInjectedBundleClient(const WKContextInjectedBundleClientBase*);
     void initializeConnectionClient(const WKContextConnectionClientBase*);
-    void initializeHistoryClient(const WKContextHistoryClientBase*);
+    void setHistoryClient(std::unique_ptr<API::HistoryClient>);
     void initializeDownloadClient(const WKContextDownloadClientBase*);
 
     void setProcessModel(ProcessModel); // Can only be called when there are no processes running.
@@ -217,7 +220,7 @@ public:
     DownloadProxy* createDownloadProxy();
     WebDownloadClient& downloadClient() { return m_downloadClient; }
 
-    WebHistoryClient& historyClient() { return m_historyClient; }
+    API::HistoryClient& historyClient() { return *m_historyClient; }
     WebContextClient& client() { return m_client; }
 
     WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
@@ -440,7 +443,7 @@ private:
     WebContextClient m_client;
     WebContextConnectionClient m_connectionClient;
     WebDownloadClient m_downloadClient;
-    WebHistoryClient m_historyClient;
+    std::unique_ptr<API::HistoryClient> m_historyClient;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     PluginInfoStore m_pluginInfoStore;
