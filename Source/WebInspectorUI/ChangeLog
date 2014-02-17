@@ -1,3 +1,14 @@
+2014-02-17  Antoine Quint  <graouts@webkit.org>
+
+        Web Inspector: CSS selectors containing a color name shouldn't be considered for color editing
+        https://bugs.webkit.org/show_bug.cgi?id=128909
+
+        Reviewed by Joseph Pecoraro.
+
+        Disregard any text that might be contained within a CSS selector.
+
+        * UserInterface/CodeMirrorAdditions.js:
+
 2014-02-15  Chris J. Shull  <chrisjshull@gmail.com>
 
         Web Inspector: scope chain details sidebar doesn't update values modified via console

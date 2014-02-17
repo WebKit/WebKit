@@ -461,6 +461,13 @@
                     continue;
                 }
 
+                // We're not interested in text within a CSS selector.
+                var tokenType = this.getTokenTypeAt(from);
+                if (tokenType && (tokenType.indexOf("builtin") !== -1 || tokenType.indexOf("tag") !== -1)) {
+                    match = colorRegex.exec(lineContent);
+                    continue;
+                }
+
                 var colorString = match[0];
                 var color = WebInspector.Color.fromString(colorString);
                 if (!color) {
