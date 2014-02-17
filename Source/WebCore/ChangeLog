@@ -1,3 +1,38 @@
+2014-02-17  David Kilzer  <ddkilzer@apple.com>
+
+        CounterContentData::counter() and ImageContentData::image() should return references
+        <http://webkit.org/b/128671>
+
+        Reviewed by Darin Adler.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::contentToCSSValue):
+        - Update to use references.  Remove useless ASSERTs.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingImages):
+        - Update to use references.  StyleResolver::loadPendingImage()
+          will be changed to take a reference in the near future.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        - Update to use references.  The auto keyword wanted to
+          instantiate a StyleImage instead a reference, so it was
+          replaced.
+
+        * rendering/style/ContentData.h:
+        (WebCore::ImageContentData::ImageContentData): Add ASSERT that
+        m_image is not NULL.
+        (WebCore::ImageContentData::image): Return a reference.  Remove
+        useless overload with identical name.
+        (WebCore::ImageContentData::cloneInternal): Simplify by using
+        implicit PassRefPtr constructor.
+        (WebCore::operator==): Remove unneeded deref operators.
+        (WebCore::CounterContentData::counter): Return a reference.
+        (WebCore::CounterContentData::cloneInternal): Remove unneeded
+        deref operator.
+        (WebCore::operator==): Remove unneeded deref operators.
+
 2014-02-17  Jer Noble  <jer.noble@apple.com>
 
         [MediaControls][iOS] Make mediacontrols match the system inline controls

@@ -1407,15 +1407,11 @@ static PassRef<CSSValueList> contentToCSSValue(const RenderStyle* style)
 {
     auto list = CSSValueList::createSpaceSeparated();
     for (const ContentData* contentData = style->contentData(); contentData; contentData = contentData->next()) {
-        if (contentData->isCounter()) {
-            const CounterContent* counter = toCounterContentData(contentData)->counter();
-            ASSERT(counter);
-            list.get().append(cssValuePool().createValue(counter->identifier(), CSSPrimitiveValue::CSS_COUNTER_NAME));
-        } else if (contentData->isImage()) {
-            const StyleImage* image = toImageContentData(contentData)->image();
-            ASSERT(image);
-            list.get().append(image->cssValue());
-        } else if (contentData->isText())
+        if (contentData->isCounter())
+            list.get().append(cssValuePool().createValue(toCounterContentData(contentData)->counter().identifier(), CSSPrimitiveValue::CSS_COUNTER_NAME));
+        else if (contentData->isImage())
+            list.get().append(toImageContentData(contentData)->image().cssValue());
+        else if (contentData->isText())
             list.get().append(cssValuePool().createValue(toTextContentData(contentData)->text(), CSSPrimitiveValue::CSS_STRING));
     }
     if (style->hasFlowFrom())

@@ -87,20 +87,22 @@ public:
         : ContentData(ImageDataType)
         , m_image(image)
     {
+        ASSERT(m_image);
     }
 
-    const StyleImage* image() const { return m_image.get(); }
-    StyleImage* image() { return m_image.get(); }
-    void setImage(PassRefPtr<StyleImage> image) { m_image = image; }
+    const StyleImage& image() const { return *m_image; }
+    void setImage(PassRefPtr<StyleImage> image)
+    {
+        ASSERT(image);
+        m_image = image;
+    }
 
     virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
 
 private:
     virtual std::unique_ptr<ContentData> cloneInternal() const override
     {
-        RefPtr<StyleImage> image = const_cast<StyleImage*>(this->image());
-
-        return std::make_unique<ImageContentData>(image.release());
+        return std::make_unique<ImageContentData>(m_image.get());
     }
 
     RefPtr<StyleImage> m_image;
@@ -110,7 +112,7 @@ CONTENT_DATA_TYPE_CASTS(ImageContentData, ContentData, Image)
 
 inline bool operator==(const ImageContentData& a, const ImageContentData& b)
 {
-    return *a.image() == *b.image();
+    return a.image() == b.image();
 }
 
 inline bool operator!=(const ImageContentData& a, const ImageContentData& b)
@@ -155,17 +157,22 @@ public:
         : ContentData(CounterDataType)
         , m_counter(std::move(counter))
     {
+        ASSERT(m_counter);
     }
 
-    const CounterContent* counter() const { return m_counter.get(); }
-    void setCounter(std::unique_ptr<CounterContent> counter) { m_counter = std::move(counter); }
+    const CounterContent& counter() const { return *m_counter; }
+    void setCounter(std::unique_ptr<CounterContent> counter)
+    {
+        ASSERT(counter);
+        m_counter = std::move(counter);
+    }
 
     virtual RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const override;
 
 private:
     virtual std::unique_ptr<ContentData> cloneInternal() const override
     {
-        auto counterData = std::make_unique<CounterContent>(*counter());
+        auto counterData = std::make_unique<CounterContent>(counter());
         return std::make_unique<CounterContentData>(std::move(counterData));
     }
 
@@ -176,7 +183,7 @@ CONTENT_DATA_TYPE_CASTS(CounterContentData, ContentData, Counter)
 
 inline bool operator==(const CounterContentData& a, const CounterContentData& b)
 {
-    return *a.counter() == *b.counter();
+    return a.counter() == b.counter();
 }
 
 inline bool operator!=(const CounterContentData& a, const CounterContentData& b)
