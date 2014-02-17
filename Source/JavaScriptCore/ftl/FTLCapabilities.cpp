@@ -138,6 +138,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetById:
     case ToThis:
     case MultiGetByOffset:
+    case ToPrimitive:
         // These are OK.
         break;
     case PutByIdDirect:

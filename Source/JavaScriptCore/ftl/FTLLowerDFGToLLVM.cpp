@@ -452,6 +452,9 @@ private:
         case ToString:
             compileToString();
             break;
+        case ToPrimitive:
+            compileToPrimitive();
+            break;
         case MakeRope:
             compileMakeRope();
             break;
@@ -2852,6 +2855,32 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+    }
+    
+    void compileToPrimitive()
+    {
+        LValue value = lowJSValue(m_node->child1());
+        
+        LBasicBlock isCellCase = FTL_NEW_BLOCK(m_out, ("ToPrimitive cell case"));
+        LBasicBlock isObjectCase = FTL_NEW_BLOCK(m_out, ("ToPrimitive object case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ToPrimitive continuation"));
+        
+        Vector<ValueFromBlock, 3> results;
+        
+        results.append(m_out.anchor(value));
+        m_out.branch(isCell(value), isCellCase, continuation);
+        
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, isObjectCase);
+        results.append(m_out.anchor(value));
+        m_out.branch(isObject(value), isObjectCase, continuation);
+        
+        m_out.appendTo(isObjectCase, continuation);
+        results.append(m_out.anchor(vmCall(
+            m_out.operation(operationToPrimitive), m_callFrame, value)));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(m_out.int64, results));
     }
     
     void compileMakeRope()

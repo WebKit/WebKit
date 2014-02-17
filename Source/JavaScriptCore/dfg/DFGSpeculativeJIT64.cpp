@@ -3416,18 +3416,14 @@ void SpeculativeJIT::compile(Node* node)
         
         op1.use();
         
-        if (!(m_state.forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean)))
-            m_jit.move(op1GPR, resultGPR);
-        else {
-            MacroAssembler::Jump alreadyPrimitive = m_jit.branchTest64(MacroAssembler::NonZero, op1GPR, GPRInfo::tagMaskRegister);
-            MacroAssembler::Jump notPrimitive = m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op1GPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get()));
-            
-            alreadyPrimitive.link(&m_jit);
-            m_jit.move(op1GPR, resultGPR);
-            
-            addSlowPathGenerator(
-                slowPathCall(notPrimitive, this, operationToPrimitive, resultGPR, op1GPR));
-        }
+        MacroAssembler::Jump alreadyPrimitive = m_jit.branchTest64(MacroAssembler::NonZero, op1GPR, GPRInfo::tagMaskRegister);
+        MacroAssembler::Jump notPrimitive = m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op1GPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get()));
+        
+        alreadyPrimitive.link(&m_jit);
+        m_jit.move(op1GPR, resultGPR);
+        
+        addSlowPathGenerator(
+            slowPathCall(notPrimitive, this, operationToPrimitive, resultGPR, op1GPR));
         
         jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
         break;

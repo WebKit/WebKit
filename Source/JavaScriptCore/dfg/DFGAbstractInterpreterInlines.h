@@ -1176,39 +1176,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         ASSERT(node->child1().useKind() == UntypedUse);
         
-        AbstractValue& source = forNode(node->child1());
-        AbstractValue& destination = forNode(node);
+        if (!forNode(node->child1()).m_type) {
+            m_state.setIsValid(false);
+            break;
+        }
         
-        // NB. The more canonical way of writing this would have been:
-        //
-        // destination = source;
-        // if (destination.m_type & !(SpecFullNumber | SpecString | SpecBoolean)) {
-        //     destination.filter(SpecFullNumber | SpecString | SpecBoolean);
-        //     AbstractValue string;
-        //     string.set(vm->stringStructure);
-        //     destination.merge(string);
-        // }
-        //
-        // The reason why this would, in most other cases, have been better is that
-        // then destination would preserve any non-SpeculatedType knowledge of source.
-        // As it stands, the code below forgets any non-SpeculatedType knowledge that
-        // source would have had. Fortunately, though, for things like strings and
-        // numbers and booleans, we don't care about the non-SpeculatedType knowedge:
-        // the structure won't tell us anything we don't already know, and neither
-        // will ArrayModes. And if the source was a meaningful constant then we
-        // would have handled that above. Unfortunately, this does mean that
-        // ToPrimitive will currently forget string constants. But that's not a big
-        // deal since we don't do any optimization on those currently.
+        if (!(forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString))) {
+            m_state.setFoundConstants(true);
+            forNode(node) = forNode(node->child1());
+            break;
+        }
         
         clobberWorld(node->origin.semantic, clobberLimit);
         
-        SpeculatedType type = source.m_type;
-        if (type & ~(SpecFullNumber | SpecString | SpecBoolean))
-            type = (SpecHeapTop & ~SpecCell) | SpecString;
-
-        destination.setType(type);
-        if (destination.isClear())
-            m_state.setIsValid(false);
+        forNode(node).setType((SpecHeapTop & ~SpecCell) | SpecString);
         break;
     }
         

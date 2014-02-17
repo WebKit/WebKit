@@ -326,8 +326,11 @@ private:
                 break;
             }
 
-            case StoreBarrier:
-            case StoreBarrierWithNullCheck: {
+            case ToPrimitive: {
+                if (m_state.forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString))
+                    break;
+                
+                node->convertToIdentity();
                 break;
             }
 

@@ -1,5 +1,30 @@
 2014-02-17  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support ToPrimitive and the DFG should fold it correctly
+        https://bugs.webkit.org/show_bug.cgi?id=128892
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileToPrimitive):
+        * tests/stress/fold-to-primitive-in-cfa.js: Added.
+        (foo):
+        (.result.foo):
+        * tests/stress/fold-to-primitive-to-identity-in-cfa.js: Added.
+        (foo):
+        (.result.foo):
+
+2014-02-17  Filip Pizlo  <fpizlo@apple.com>
+
         Register preservation wrapper should know about the possibility of callee-saved FPRs
         https://bugs.webkit.org/show_bug.cgi?id=128923
 
