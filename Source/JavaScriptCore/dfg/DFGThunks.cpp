@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,6 +94,46 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     patchBuffer.link(functionCall, compileOSRExit);
     
     return FINALIZE_CODE(patchBuffer, ("DFG OSR exit generation thunk"));
+}
+
+MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
+{
+    MacroAssembler jit;
+    
+    // We get passed the address of a scratch buffer. The first 8-byte slot of the buffer
+    // is the frame size. The second 8-byte slot is the pointer to where we are supposed to
+    // jump. The remaining bytes are the new call frame header followed by the locals.
+    
+    ptrdiff_t offsetOfFrameSize = 0; // This is the DFG frame count.
+    ptrdiff_t offsetOfTargetPC = offsetOfFrameSize + sizeof(EncodedJSValue);
+    ptrdiff_t offsetOfPayload = offsetOfTargetPC + sizeof(EncodedJSValue);
+    ptrdiff_t offsetOfLocals = offsetOfPayload + sizeof(Register) * JSStack::CallFrameHeaderSize;
+    
+    jit.move(GPRInfo::returnValueGPR2, GPRInfo::regT0);
+    jit.loadPtr(MacroAssembler::Address(GPRInfo::regT0, offsetOfFrameSize), GPRInfo::regT1); // Load the frame size.
+    jit.move(GPRInfo::regT1, GPRInfo::regT2);
+    jit.lshiftPtr(MacroAssembler::Imm32(3), GPRInfo::regT2);
+    jit.move(GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
+    jit.subPtr(GPRInfo::regT2, MacroAssembler::stackPointerRegister);
+    
+    MacroAssembler::Label loop = jit.label();
+    jit.subPtr(MacroAssembler::TrustedImm32(1), GPRInfo::regT1);
+    jit.move(GPRInfo::regT1, GPRInfo::regT4);
+    jit.negPtr(GPRInfo::regT4);
+    jit.load32(MacroAssembler::BaseIndex(GPRInfo::regT0, GPRInfo::regT1, MacroAssembler::TimesEight, offsetOfLocals), GPRInfo::regT2);
+    jit.load32(MacroAssembler::BaseIndex(GPRInfo::regT0, GPRInfo::regT1, MacroAssembler::TimesEight, offsetOfLocals + sizeof(int32_t)), GPRInfo::regT3);
+    jit.store32(GPRInfo::regT2, MacroAssembler::BaseIndex(GPRInfo::callFrameRegister, GPRInfo::regT4, MacroAssembler::TimesEight, -static_cast<intptr_t>(sizeof(Register))));
+    jit.store32(GPRInfo::regT3, MacroAssembler::BaseIndex(GPRInfo::callFrameRegister, GPRInfo::regT4, MacroAssembler::TimesEight, -static_cast<intptr_t>(sizeof(Register)) + static_cast<intptr_t>(sizeof(int32_t))));
+    jit.branchPtr(MacroAssembler::NotEqual, GPRInfo::regT1, MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(-static_cast<intptr_t>(JSStack::CallFrameHeaderSize)))).linkTo(loop, &jit);
+    
+    jit.loadPtr(MacroAssembler::Address(GPRInfo::regT0, offsetOfTargetPC), GPRInfo::regT1);
+    MacroAssembler::Jump ok = jit.branchPtr(MacroAssembler::Above, GPRInfo::regT1, MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(static_cast<intptr_t>(1000))));
+    jit.breakpoint();
+    ok.link(&jit);
+    jit.jump(GPRInfo::regT1);
+    
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
+    return FINALIZE_CODE(patchBuffer, ("DFG OSR entry thunk"));
 }
 
 } } // namespace JSC::DFG

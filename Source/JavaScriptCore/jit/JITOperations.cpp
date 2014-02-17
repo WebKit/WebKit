@@ -32,6 +32,7 @@
 #include "DFGCompilationMode.h"
 #include "DFGDriver.h"
 #include "DFGOSREntry.h"
+#include "DFGThunks.h"
 #include "DFGWorklist.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
@@ -1189,16 +1190,14 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t byte
     CodeBlock* optimizedCodeBlock = codeBlock->replacement();
     ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
     
-    if (void* address = DFG::prepareOSREntry(exec, optimizedCodeBlock, bytecodeIndex)) {
+    if (void* dataBuffer = DFG::prepareOSREntry(exec, optimizedCodeBlock, bytecodeIndex)) {
         if (Options::verboseOSR()) {
             dataLog(
-                "Performing OSR ", *codeBlock, " -> ", *optimizedCodeBlock, ", address ",
-                RawPointer(OUR_RETURN_ADDRESS), " -> ", RawPointer(address), ".\n");
+                "Performing OSR ", *codeBlock, " -> ", *optimizedCodeBlock, ".\n");
         }
 
         codeBlock->optimizeSoon();
-        ASSERT(exec->codeBlock() == optimizedCodeBlock);
-        return encodeResult(address, exec->topOfFrame());
+        return encodeResult(vm.getCTIStub(DFG::osrEntryThunkGenerator).code().executableAddress(), dataBuffer);
     }
 
     if (Options::verboseOSR()) {

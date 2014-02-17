@@ -1,3 +1,31 @@
+2014-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::prepareOSREntry should be nice to the stack
+        https://bugs.webkit.org/show_bug.cgi?id=128883
+
+        Reviewed by Oliver Hunt.
+        
+        Previously OSR entry had some FIXME's and some really badly commented-out code for
+        clearing stack entries to help GC. It also did some permutations on a stack frame
+        above us, in such a way that it wasn't obviously that we wouldn't clobber our own
+        stack frame. This function also crashed in ASan.
+        
+        It just seems like there was too much badness to the whole idea of prepareOSREntry
+        directly editing the stack. So, I changed it to create a stack frame in a scratch
+        buffer on the side and then have some assembly code just copy it into place. This
+        works fine, fixes a FIXME, possibly fixes some stack clobbering, and might help us
+        make more progress with ASan.
+
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * dfg/DFGThunks.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOperations.cpp:
+
 2014-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         Vector with inline capacity should work with non-PODs
