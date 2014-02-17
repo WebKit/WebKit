@@ -1,3 +1,15 @@
+2014-02-17  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Fix missing layout in flexible and content sized columns
+        https://bugs.webkit.org/show_bug.cgi?id=128672
+
+        Reviewed by Sergio Villar Senin.
+
+        Add test that reproduce the issue for both cases flexible and content sized columns.
+
+        * fast/css-grid-layout/flex-content-sized-column-use-available-width-expected.html: Added.
+        * fast/css-grid-layout/flex-content-sized-column-use-available-width.html: Added.
+
 2014-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should inline polymorphic heap accesses

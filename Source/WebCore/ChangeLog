@@ -1,3 +1,28 @@
+2014-02-17  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Fix missing layout in flexible and content sized columns
+        https://bugs.webkit.org/show_bug.cgi?id=128672
+
+        Reviewed by Sergio Villar Senin.
+
+        RenderGrid::logicalContentHeightForChild() is called for some items at the beginning of RenderGrid::layoutGridItems()
+        from RenderGrid::computeUsedBreadthOfGridTracks(). This causes that the comparison inside the for loop in
+        RenderGrid::layoutGridItems() does not detect width changes, so elements won't be marked as needsLayout.
+
+        So the comparison is done in RenderGrid::logicalContentHeightForChild() and the element is marked to perform a layout if
+        the width has changed.
+
+        The issue can be reproduced easily with a simple grid with one flexible or content sized column, all the available width
+        is not used. On top of that, when you resize the window the flexible or content sized columns are not updating their
+        size properly.
+
+        CSS Grid Layout perftest results are around 4% worse, which is expected as we're adding a missing layout.
+
+        Test: fast/css-grid-layout/flex-content-sized-column-use-available-width.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::logicalContentHeightForChild): Check width changes and mark element as needed layout if required.
+
 2014-02-16  Andreas Kling  <akling@apple.com>
 
         Ensure that removing an iframe from the DOM tree disconnects its Frame.
