@@ -1,3 +1,21 @@
+2014-02-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Invalid cast in WebCore::AccessibilityTable::isDataTable (CRBug 280352)
+        <https://webkit.org/b/128925>
+        <rdar://problem/16087351>
+
+        Merged from Blink (patch by Dominic Mazzoni):
+        https://src.chromium.org/viewvc/blink?revision=159711&view=revision
+
+        Reviewed by Oliver Hunt.
+
+        Don't cast to a table cell element unless we are sure it is one.
+
+        Test: accessibility/display-table-cell-causes-crash.html
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+
 2014-02-17  Antti Koivisto  <antti@apple.com>
 
         Node constructor should take Document reference

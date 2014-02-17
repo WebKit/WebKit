@@ -175,15 +175,15 @@ bool AccessibilityTable::isDataTable() const
             RenderTableCell* cell = firstBody->primaryCellAt(row, col);
             if (!cell)
                 continue;
-            if (!cell->element())
+
+            Element* cellElement = cell->element();
+            if (!cellElement)
                 continue;
             
             if (cell->width() < 1 || cell->height() < 1)
                 continue;
             
             validCellCount++;
-            
-            HTMLTableCellElement* cellElement = toHTMLTableCellElement(cell->element());
             
             bool isTHCell = cellElement->hasTagName(thTag);
             // If the first row is comprised of all <th> tags, assume it is a data table.
@@ -194,11 +194,13 @@ bool AccessibilityTable::isDataTable() const
             if (!col && isTHCell)
                 headersInFirstColumnCount++;
             
-            // in this case, the developer explicitly assigned a "data" table attribute
-            if (!cellElement->headers().isEmpty() || !cellElement->abbr().isEmpty()
-                || !cellElement->axis().isEmpty() || !cellElement->scope().isEmpty())
-                return true;
-            
+            // In this case, the developer explicitly assigned a "data" table attribute.
+            if (cellElement->hasTagName(tdTag) || cellElement->hasTagName(thTag)) {
+                HTMLTableCellElement* tableCellElement = toHTMLTableCellElement(cellElement);
+                if (!tableCellElement->headers().isEmpty() || !tableCellElement->abbr().isEmpty()
+                    || !tableCellElement->axis().isEmpty() || !tableCellElement->scope().isEmpty())
+                    return true;
+            }
             const RenderStyle& renderStyle = cell->style();
 
             // If the empty-cells style is set, we'll call it a data table.

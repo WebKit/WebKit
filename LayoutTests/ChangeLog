@@ -1,3 +1,17 @@
+2014-02-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Invalid cast in WebCore::AccessibilityTable::isDataTable (CRBug 280352)
+        <https://webkit.org/b/128925>
+        <rdar://problem/16087351>
+
+        Merged from Blink (patch by Dominic Mazzoni):
+        https://src.chromium.org/viewvc/blink?revision=159711&view=revision
+
+        Reviewed by Oliver Hunt.
+
+        * accessibility/display-table-cell-causes-crash-expected.txt: Added.
+        * accessibility/display-table-cell-causes-crash.html: Added.
+
 2014-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fix layout test added in r164232 to avoid bug 128929
