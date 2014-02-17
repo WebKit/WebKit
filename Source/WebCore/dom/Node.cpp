@@ -308,7 +308,7 @@ Node::~Node()
     if (!isContainerNode())
         willBeDeletedFrom(&document());
 
-    document().selfOnlyDeref();
+    document().decrementReferencingNodeCount();
 
     InspectorCounters::decrementCounter(InspectorCounters::NodeCounter);
 }

@@ -263,22 +263,22 @@ public:
 
     virtual ~Document();
 
-    // Nodes belonging to this document hold self-only references -
+    // Nodes belonging to this document increase referencingNodeCount -
     // these are enough to keep the document from being destroyed, but
     // not enough to keep it from removing its children. This allows a
-    // node that outlives its scope to still have a valid document
+    // node that outlives its document to still have a valid document
     // pointer without introducing reference cycles.
-    void selfOnlyRef()
+    void incrementReferencingNodeCount()
     {
         ASSERT(!m_deletionHasBegun);
-        ++m_selfOnlyRefCount;
+        ++m_referencingNodeCount;
     }
 
-    void selfOnlyDeref()
+    void decrementReferencingNodeCount()
     {
-        ASSERT(!m_deletionHasBegun || m_selfOnlyRefCount == 1);
-        --m_selfOnlyRefCount;
-        if (m_selfOnlyRefCount == 1 && !refCount()) {
+        ASSERT(!m_deletionHasBegun || !m_referencingNodeCount);
+        --m_referencingNodeCount;
+        if (!m_referencingNodeCount && !refCount()) {
 #if !ASSERT_DISABLED
             m_deletionHasBegun = true;
 #endif
@@ -1344,7 +1344,7 @@ private:
 
     void styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>&);
 
-    unsigned m_selfOnlyRefCount;
+    unsigned m_referencingNodeCount;
 
     DeferrableOneShotTimer<Document> m_styleResolverThrowawayTimer;
 
@@ -1715,7 +1715,7 @@ inline Node::Node(Document* document, ConstructionType type)
     , m_previous(0)
     , m_next(0)
 {
-    document->selfOnlyRef();
+    document->incrementReferencingNodeCount();
 
 #if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
     trackForDebugging();

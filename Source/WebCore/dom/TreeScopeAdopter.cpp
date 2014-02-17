@@ -45,7 +45,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
     Document& newDocument = m_newScope.documentScope();
     bool willMoveToNewDocument = &oldDocument != &newDocument;
     if (willMoveToNewDocument) {
-        oldDocument.selfOnlyRef();
+        oldDocument.incrementReferencingNodeCount();
         oldDocument.incDOMTreeVersion();
     }
 
@@ -77,7 +77,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
     }
 
     if (willMoveToNewDocument)
-        oldDocument.selfOnlyDeref();
+        oldDocument.decrementReferencingNodeCount();
 }
 
 void TreeScopeAdopter::moveShadowTreeToNewDocument(ShadowRoot* shadowRoot, Document* oldDocument, Document* newDocument) const
@@ -112,8 +112,8 @@ inline void TreeScopeAdopter::moveNodeToNewDocument(Node* node, Document* oldDoc
 {
     ASSERT(!node->inDocument() || oldDocument != newDocument);
 
-    newDocument->selfOnlyRef();
-    oldDocument->selfOnlyDeref();
+    newDocument->incrementReferencingNodeCount();
+    oldDocument->decrementReferencingNodeCount();
 
     if (node->hasRareData()) {
         NodeRareData* rareData = node->rareData();

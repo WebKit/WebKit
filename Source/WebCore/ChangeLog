@@ -1,3 +1,25 @@
+2014-02-17  Antti Koivisto  <antti@apple.com>
+
+        Rename Document::m_selfOnlyRefCount to m_referencingNodeCount
+        https://bugs.webkit.org/show_bug.cgi?id=128916
+
+        Reviewed by Andreas Kling.
+
+        Make the name more informative. Also make it zero based (document is not considered to reference itself).
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::removedLastRef):
+        * dom/Document.h:
+        (WebCore::Document::increaseReferencingNodeCount):
+        (WebCore::Document::decreaseReferencingNodeCount):
+        (WebCore::Node::Node):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        (WebCore::TreeScopeAdopter::moveNodeToNewDocument):
+
 2014-02-17  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Build failure caused by missing jsmin module

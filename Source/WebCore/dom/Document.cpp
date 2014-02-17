@@ -400,7 +400,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_touchEventRegionsDirty(false)
     , m_touchEventsChangedTimer(this, &Document::touchEventsChangedTimerFired)
 #endif
-    , m_selfOnlyRefCount(1)
+    , m_referencingNodeCount(0)
     , m_styleResolverThrowawayTimer(this, &Document::styleResolverThrowawayTimerFired, timeBeforeThrowingAwayStyleResolverAfterLastUseInSeconds)
     , m_didCalculateStyleResolver(false)
     , m_hasNodesWithPlaceholderStyle(false)
@@ -640,11 +640,10 @@ Document::~Document()
 void Document::removedLastRef()
 {
     ASSERT(!m_deletionHasBegun);
-    ASSERT(m_selfOnlyRefCount);
-    if (m_selfOnlyRefCount > 1) {
-        // If removing a child removes the last self-only ref, we don't want the scope to be destroyed
-        // until after removeDetachedChildren returns, so we protect ourselves with an extra self-only ref.
-        selfOnlyRef();
+    if (m_referencingNodeCount) {
+        // If removing a child removes the last node reference, we don't want the scope to be destroyed
+        // until after removeDetachedChildren returns, so we protect ourselves.
+        incrementReferencingNodeCount();
 
         // We must make sure not to be retaining any of our children through
         // these extra pointers or we will create a reference cycle.
@@ -679,7 +678,7 @@ void Document::removedLastRef()
         // We need to do this right now since selfOnlyDeref() can delete this.
         m_inRemovedLastRefFunction = false;
 #endif
-        selfOnlyDeref();
+        decrementReferencingNodeCount();
     } else {
 #ifndef NDEBUG
         m_inRemovedLastRefFunction = false;
