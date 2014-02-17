@@ -334,7 +334,6 @@ set(WebKit2_SOURCES
     UIProcess/WebGeolocationManagerProxy.cpp
     UIProcess/WebGeolocationProvider.cpp
     UIProcess/WebGrammarDetail.cpp
-    UIProcess/WebHistoryClient.cpp
     UIProcess/WebIconDatabase.cpp
     UIProcess/WebIconDatabaseClient.cpp
     UIProcess/WebInspectorProxy.cpp

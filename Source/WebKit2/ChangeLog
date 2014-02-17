@@ -1,3 +1,9 @@
+2014-02-17  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL build fix attempt
+
+        * CMakeLists.txt: Remove WebHistoryClient.cpp after r164230.
+
 2014-02-17  Anders Carlsson  <andersca@apple.com>
 
         WebKitGTK+ should stop calling functions to set the view source mode
