@@ -1,3 +1,19 @@
+2014-02-17  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Make regions unsplittable
+        https://bugs.webkit.org/show_bug.cgi?id=128811
+
+        Reviewed by David Hyatt.
+
+        At the moment, nested regions are not properly fragmented across regions. For the moment, 
+        the regions will become unsplittable elements to avoid slicing. At a later time a proper
+        fragmentation algorithm should be written, also taking into consideration pagination strut.
+
+        Test: fast/regions/unsplittable-nested-region.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::isUnsplittableForPagination):
+
 2014-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Graphics buffer issue with clip-path and fixed positioned element

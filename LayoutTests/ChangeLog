@@ -1,3 +1,15 @@
+2014-02-17  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Make regions unsplittable
+        https://bugs.webkit.org/show_bug.cgi?id=128811
+
+        Reviewed by David Hyatt.
+
+        Added test for checking that nested regions are unsplittable.
+
+        * fast/regions/unsplittable-nested-region-expected.html: Added.
+        * fast/regions/unsplittable-nested-region.html: Added.
+
 2014-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Graphics buffer issue with clip-path and fixed positioned element
