@@ -1,5 +1,21 @@
 2014-02-17  Anders Carlsson  <andersca@apple.com>
 
+        WebKitGTK+ should stop calling functions to set the view source mode
+        https://bugs.webkit.org/show_bug.cgi?id=128919
+
+        Reviewed by Carlos Garcia Campos.
+
+        This is a first step towards getting rid of the view source mode from WebCore. 
+        View source shouldn't be a mode on the web page and can be implemented in other ways by
+        embedding apps. Furthermore, the inspector has an excellent view source mode.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_set_view_mode):
+        (webkit_web_view_get_view_mode):
+        Turn these into no-ops.
+
+2014-02-17  Anders Carlsson  <andersca@apple.com>
+
         Turn the history client into a fancy API::HistoryClient abstract base class
         https://bugs.webkit.org/show_bug.cgi?id=128917
 

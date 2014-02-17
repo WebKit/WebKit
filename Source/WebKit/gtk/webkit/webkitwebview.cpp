@@ -5191,7 +5191,7 @@ void webkit_web_view_set_view_source_mode (WebKitWebView* webView, gboolean mode
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    core(webView)->mainFrame().setInViewSourceMode(mode);
+    g_warning("webkit_web_view_set_view_source_mode has been deprecated and is a no-op.");
 }
 
 /**
@@ -5206,7 +5206,8 @@ gboolean webkit_web_view_get_view_source_mode (WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    return core(webView)->mainFrame().inViewSourceMode();
+    g_warning("webkit_web_view_get_view_source_mode has been deprecated and always returns FALSE.");
+    return FALSE;
 }
 
 // Internal subresource management
