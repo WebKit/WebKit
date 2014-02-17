@@ -485,7 +485,7 @@ static Position adjustPositionForEnd(const Position& currentPosition, Node* star
         return positionBeforeNode(ancestor);
     }
 
-    if (Node* lastChild = treeScope.rootNode()->lastChild())
+    if (Node* lastChild = treeScope.rootNode().lastChild())
         return positionAfterNode(lastChild);
 
     return Position();
@@ -503,7 +503,7 @@ static Position adjustPositionForStart(const Position& currentPosition, Node* en
         return positionAfterNode(ancestor);
     }
 
-    if (Node* firstChild = treeScope.rootNode()->firstChild())
+    if (Node* firstChild = treeScope.rootNode().firstChild())
         return positionBeforeNode(firstChild);
 
     return Position();

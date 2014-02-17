@@ -1,3 +1,40 @@
+2014-02-17  Antti Koivisto  <antti@apple.com>
+
+        Make TreeScope::rootNode return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=128934
+
+        Reviewed by Andreas Kling.
+
+        It is never null.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        * dom/ContainerNode.h:
+        (WebCore::Node::isTreeScope):
+        * dom/Document.cpp:
+        (WebCore::Document::buildAccessKeyMap):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::add):
+        (WebCore::DocumentOrderedMap::get):
+        (WebCore::DocumentOrderedMap::getAllElementsById):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedNodeResolver::moveToParentOrShadowHost):
+        (WebCore::eventTargetRespectingTargetRules):
+        (WebCore::shouldEventCrossShadowBoundary):
+        * dom/Node.cpp:
+        (WebCore::Node::containingShadowRoot):
+        (WebCore::Node::removedFrom):
+        * dom/ShadowRoot.h:
+        (WebCore::isShadowRoot):
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::rootNode):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::DOMSelection):
+        * page/DragController.cpp:
+        (WebCore::asFileInput):
+        * page/FocusController.cpp:
+        (WebCore::FocusNavigationScope::rootNode):
+
 2014-02-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Invalid cast in WebCore::AccessibilityTable::isDataTable (CRBug 280352)

@@ -365,20 +365,20 @@ Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)
 {
     if (!node) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
-    return node->treeScope().rootNode();
+    return &node->treeScope().rootNode();
 }
 
 Node* Internals::parentTreeScope(Node* node, ExceptionCode& ec)
 {
     if (!node) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
     const TreeScope* parentTreeScope = node->treeScope().parentTreeScope();
-    return parentTreeScope ? parentTreeScope->rootNode() : 0;
+    return parentTreeScope ? &parentTreeScope->rootNode() : nullptr;
 }
 
 unsigned Internals::lastSpatialNavigationCandidateCount(ExceptionCode& ec) const

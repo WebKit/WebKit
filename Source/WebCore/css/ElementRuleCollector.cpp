@@ -155,7 +155,7 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
         collectMatchingRulesForList(matchRequest.ruleSet->cuePseudoRules(), matchRequest, ruleRange);
 #endif
     // Only match UA rules in shadow tree.
-    if (!MatchingUARulesScope::isMatchingUARules() && m_element.treeScope().rootNode()->isShadowRoot())
+    if (!MatchingUARulesScope::isMatchingUARules() && m_element.treeScope().rootNode().isShadowRoot())
         return;
 
     // We need to collect the rules for id, class, tag, and everything else into a buffer and

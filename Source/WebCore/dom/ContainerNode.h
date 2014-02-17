@@ -236,7 +236,7 @@ inline bool Node::needsNodeRenderingTraversalSlowPath() const
 
 inline bool Node::isTreeScope() const
 {
-    return treeScope().rootNode() == this;
+    return &treeScope().rootNode() == this;
 }
 
 // This constant controls how much buffer is initially allocated

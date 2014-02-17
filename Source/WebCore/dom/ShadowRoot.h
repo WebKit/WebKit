@@ -95,16 +95,9 @@ inline Element* ShadowRoot::activeElement() const
     return treeScope().focusedElement();
 }
 
-inline const ShadowRoot* toShadowRoot(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isShadowRoot());
-    return static_cast<const ShadowRoot*>(node);
-}
+inline bool isShadowRoot(const Node& node) { return node.isShadowRoot(); }
 
-inline ShadowRoot* toShadowRoot(Node* node)
-{
-    return const_cast<ShadowRoot*>(toShadowRoot(static_cast<const Node*>(node)));
-}
+NODE_TYPE_CASTS(ShadowRoot)
 
 inline ShadowRoot* Node::shadowRoot() const
 {

@@ -947,7 +947,7 @@ String SVGElement::title() const
 
     // Walk up the tree, to find out whether we're inside a <use> shadow tree, to find the right title.
     if (isInShadowTree()) {
-        Element* shadowHostElement = toShadowRoot(treeScope().rootNode())->hostElement();
+        Element* shadowHostElement = toShadowRoot(treeScope().rootNode()).hostElement();
         // At this time, SVG nodes are not allowed in non-<use> shadow trees, so any shadow root we do
         // have should be a use. The assert and following test is here to catch future shadow DOM changes
         // that do enable SVG in a shadow tree.

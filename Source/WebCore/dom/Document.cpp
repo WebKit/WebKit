@@ -712,8 +712,7 @@ Element* Document::getElementByAccessKey(const String& key)
 void Document::buildAccessKeyMap(TreeScope* scope)
 {
     ASSERT(scope);
-    ContainerNode* rootNode = scope->rootNode();
-    for (auto& element : descendantsOfType<Element>(*rootNode)) {
+    for (auto& element : descendantsOfType<Element>(scope->rootNode())) {
         const AtomicString& accessKey = element.fastGetAttribute(accesskeyAttr);
         if (!accessKey.isEmpty())
             m_elementsByAccessKey.set(accessKey.impl(), &element);

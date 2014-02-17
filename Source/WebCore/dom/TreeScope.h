@@ -95,7 +95,7 @@ public:
     // Used by the basic DOM mutation methods (e.g., appendChild()).
     void adoptIfNeeded(Node*);
 
-    ContainerNode* rootNode() const { return &m_rootNode; }
+    ContainerNode& rootNode() const { return m_rootNode; }
 
     IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
 

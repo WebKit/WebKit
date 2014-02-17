@@ -951,8 +951,8 @@ Node* Node::deprecatedShadowAncestorNode() const
 
 ShadowRoot* Node::containingShadowRoot() const
 {
-    ContainerNode* root = treeScope().rootNode();
-    return root && root->isShadowRoot() ? toShadowRoot(root) : 0;
+    ContainerNode& root = treeScope().rootNode();
+    return root.isShadowRoot() ? toShadowRoot(&root) : nullptr;
 }
 
 Node* Node::nonBoundaryShadowTreeRootNode()
@@ -1011,7 +1011,7 @@ void Node::removedFrom(ContainerNode& insertionPoint)
     ASSERT(insertionPoint.inDocument() || isContainerNode());
     if (insertionPoint.inDocument())
         clearFlag(InDocumentFlag);
-    if (isInShadowTree() && !treeScope().rootNode()->isShadowRoot())
+    if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
         clearFlag(IsInShadowTreeFlag);
 }
 

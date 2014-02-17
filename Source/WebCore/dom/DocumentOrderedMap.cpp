@@ -91,7 +91,7 @@ void DocumentOrderedMap::add(const AtomicStringImpl& key, Element& element, cons
 {
     UNUSED_PARAM(treeScope);
     ASSERT_WITH_SECURITY_IMPLICATION(element.isInTreeScope());
-    ASSERT_WITH_SECURITY_IMPLICATION(treeScope.rootNode()->containsIncludingShadowDOM(&element));
+    ASSERT_WITH_SECURITY_IMPLICATION(treeScope.rootNode().containsIncludingShadowDOM(&element));
     if (!element.isInTreeScope())
         return;
     Map::AddResult addResult = m_map.add(&key, MapEntry(&element));
@@ -144,7 +144,7 @@ inline Element* DocumentOrderedMap::get(const AtomicStringImpl& key, const TreeS
     }
 
     // We know there's at least one node that matches; iterate to find the first one.
-    for (auto& element : descendantsOfType<Element>(*scope.rootNode())) {
+    for (auto& element : descendantsOfType<Element>(scope.rootNode())) {
         if (!keyMatches(key, element))
             continue;
         entry.element = &element;
@@ -211,7 +211,7 @@ const Vector<Element*>* DocumentOrderedMap::getAllElementsById(const AtomicStrin
 
     if (entry.orderedList.isEmpty()) {
         entry.orderedList.reserveCapacity(entry.count);
-        auto elementDescandents = descendantsOfType<Element>(*scope.rootNode());
+        auto elementDescandents = descendantsOfType<Element>(scope.rootNode());
         auto it = entry.element ? elementDescandents.beginAt(*entry.element) : elementDescandents.begin();
         auto end = elementDescandents.end();
         for (; it != end; ++it) {

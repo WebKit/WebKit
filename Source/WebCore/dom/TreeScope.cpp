@@ -92,7 +92,7 @@ void TreeScope::destroyTreeScopeData()
 void TreeScope::setParentTreeScope(TreeScope* newParentScope)
 {
     // A document node cannot be re-parented.
-    ASSERT(!rootNode()->isDocumentNode());
+    ASSERT(!m_rootNode.isDocumentNode());
     // Every scope other than document needs a parent scope.
     ASSERT(newParentScope);
 
@@ -198,7 +198,7 @@ HTMLMapElement* TreeScope::getImageMap(const String& url) const
     String name = (hashPos == notFound ? url : url.substring(hashPos + 1)).impl();
     if (name.isEmpty())
         return nullptr;
-    if (rootNode()->document().isHTMLDocument()) {
+    if (m_rootNode.document().isHTMLDocument()) {
         AtomicString lowercasedName = name.lower();
         return m_imageMapsByName->getElementByLowercasedMapName(*lowercasedName.impl(), *this);
     }
@@ -239,7 +239,7 @@ Node* nodeFromPoint(Document* document, int x, int y, LayoutPoint* localPoint)
 
 Element* TreeScope::elementFromPoint(int x, int y) const
 {
-    Node* node = nodeFromPoint(&rootNode()->document(), x, y);
+    Node* node = nodeFromPoint(&m_rootNode.document(), x, y);
     while (node && !node->isElementNode())
         node = node->parentNode();
     if (node)
@@ -268,7 +268,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
         // Populate the map on first access.
         m_labelsByForAttribute = std::make_unique<DocumentOrderedMap>();
 
-        for (auto& label : descendantsOfType<HTMLLabelElement>(*rootNode())) {
+        for (auto& label : descendantsOfType<HTMLLabelElement>(m_rootNode)) {
             const AtomicString& forValue = label.fastGetAttribute(forAttr);
             if (!forValue.isEmpty())
                 addLabel(*forValue.impl(), label);
@@ -280,16 +280,16 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
 
 DOMSelection* TreeScope::getSelection() const
 {
-    if (!rootNode()->document().frame())
+    if (!m_rootNode.document().frame())
         return nullptr;
 
     if (m_selection)
         return m_selection.get();
 
-    if (this != &rootNode()->document())
-        return rootNode()->document().getSelection();
+    if (this != &m_rootNode.document())
+        return m_rootNode.document().getSelection();
 
-    m_selection = DOMSelection::create(&rootNode()->document());
+    m_selection = DOMSelection::create(&m_rootNode.document());
     return m_selection.get();
 }
 
@@ -299,8 +299,8 @@ Element* TreeScope::findAnchor(const String& name)
         return nullptr;
     if (Element* element = getElementById(name))
         return element;
-    for (auto& anchor : descendantsOfType<HTMLAnchorElement>(*rootNode())) {
-        if (rootNode()->document().inQuirksMode()) {
+    for (auto& anchor : descendantsOfType<HTMLAnchorElement>(m_rootNode)) {
+        if (m_rootNode.document().inQuirksMode()) {
             // Quirks mode, case insensitive comparison of names.
             if (equalIgnoringCase(anchor.name(), name))
                 return &anchor;
@@ -335,7 +335,7 @@ static Element* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFram
 
 Element* TreeScope::focusedElement()
 {
-    Document& document = rootNode()->document();
+    Document& document = m_rootNode.document();
     Element* element = document.focusedElement();
 
     if (!element && document.page())
@@ -344,7 +344,7 @@ Element* TreeScope::focusedElement()
         return nullptr;
     TreeScope* treeScope = &element->treeScope();
     while (treeScope != this && treeScope != &document) {
-        element = toShadowRoot(treeScope->rootNode())->hostElement();
+        element = toShadowRoot(treeScope->rootNode()).hostElement();
         treeScope = &element->treeScope();
     }
     if (this != treeScope)
