@@ -1,5 +1,15 @@
 2014-02-17  Filip Pizlo  <fpizlo@apple.com>
 
+        lr is a special register on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=128922
+
+        Reviewed by Mark Hahnenberg.
+
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::specialRegisters):
+
+2014-02-17  Filip Pizlo  <fpizlo@apple.com>
+
         Fix RegisterSet::calleeSaveRegisters() by making it correct on ARM64
         https://bugs.webkit.org/show_bug.cgi?id=128921
 

@@ -51,6 +51,9 @@ RegisterSet RegisterSet::specialRegisters()
     result.set(GPRInfo::tagTypeNumberRegister);
     result.set(GPRInfo::tagMaskRegister);
 #endif
+#if CPU(ARM64)
+    result.set(ARM64Registers::lr);
+#endif
     return result;
 }
 
