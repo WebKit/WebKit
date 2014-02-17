@@ -1,3 +1,13 @@
+2014-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Graphics buffer issue with clip-path and fixed positioned element
+        https://bugs.webkit.org/show_bug.cgi?id=126262
+
+        Reviewed by Tim Horton.
+
+        * compositing/contents-opaque/opaque-with-clip-path-expected.html: Added.
+        * compositing/contents-opaque/opaque-with-clip-path.html: Added.
+
 2014-02-17  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] The box decorations of an element overflowing a region should be clipped at the border box, not the content box

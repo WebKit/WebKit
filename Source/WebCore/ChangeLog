@@ -1,3 +1,18 @@
+2014-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Graphics buffer issue with clip-path and fixed positioned element
+        https://bugs.webkit.org/show_bug.cgi?id=126262
+
+        Reviewed by Tim Horton.
+        
+        If an element has a clip-path, backgroundIsKnownToBeOpaqueInRect() needs
+        to return false so that we don't try to make opaque compositing layers.
+
+        Test: compositing/contents-opaque/opaque-with-clip-path.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::backgroundIsKnownToBeOpaqueInRect):
+
 2014-02-17  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] The box decorations of an element overflowing a region should be clipped at the border box, not the content box

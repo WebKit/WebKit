@@ -1,0 +1,15 @@
+<style>
+#parent {
+	height: 200px;
+	margin: 20px;
+	background: blue;
+	border: solid red 20px;
+	-webkit-clip-path: circle(50%, 50%, 50%);
+	outline: 1px solid transparent;
+}
+
+.composited {
+  -webkit-transform: translateZ(0);
+}
+</style>
+<div id="parent" class="composited"></div>
