@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,6 +104,12 @@ MacroAssemblerCodeRef generateRegisterPreservationWrapper(VM& vm, ExecutableBase
         currentOffset += sizeof(Register);
         jit.store64(gpr, AssemblyHelpers::Address(GPRInfo::regT4, currentOffset));
     }
+    for (FPRReg fpr = AssemblyHelpers::firstFPRegister(); fpr <= AssemblyHelpers::lastFPRegister(); fpr = static_cast<FPRReg>(fpr + 1)) {
+        if (!toSave.get(fpr))
+            continue;
+        currentOffset += sizeof(Register);
+        jit.storeDouble(fpr, AssemblyHelpers::Address(GPRInfo::regT4, currentOffset));
+    }
     
     // Assume that there aren't any saved FP registers.
     
@@ -187,6 +193,12 @@ static void generateRegisterRestoration(AssemblyHelpers& jit)
             continue;
         currentOffset += sizeof(Register);
         jit.load64(AssemblyHelpers::Address(GPRInfo::regT2, currentOffset), gpr);
+    }
+    for (FPRReg fpr = AssemblyHelpers::firstFPRegister(); fpr <= AssemblyHelpers::lastFPRegister(); fpr = static_cast<FPRReg>(fpr + 1)) {
+        if (!toSave.get(fpr))
+            continue;
+        currentOffset += sizeof(Register);
+        jit.loadDouble(AssemblyHelpers::Address(GPRInfo::regT2, currentOffset), fpr);
     }
     
     // Thunks like this rely on the ArgumentCount being intact. Pay it forward.

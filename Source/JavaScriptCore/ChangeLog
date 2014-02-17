@@ -1,5 +1,17 @@
 2014-02-17  Filip Pizlo  <fpizlo@apple.com>
 
+        Register preservation wrapper should know about the possibility of callee-saved FPRs
+        https://bugs.webkit.org/show_bug.cgi?id=128923
+
+        Reviewed by Mark Hahnenberg.
+
+        * jit/RegisterPreservationWrapperGenerator.cpp:
+        (JSC::generateRegisterPreservationWrapper):
+        (JSC::generateRegisterRestoration):
+        * jit/RegisterSet.cpp:
+
+2014-02-17  Filip Pizlo  <fpizlo@apple.com>
+
         lr is a special register on ARM64
         https://bugs.webkit.org/show_bug.cgi?id=128922
 
