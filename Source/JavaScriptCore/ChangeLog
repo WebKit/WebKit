@@ -1,3 +1,13 @@
+2014-02-17  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        CLoop buildfix after r164207
+        https://bugs.webkit.org/show_bug.cgi?id=128899
+
+        Reviewed by Csaba Osztrogonác.
+
+        * dfg/DFGCommon.h:
+        (JSC::DFG::shouldShowDisassembly):
+
 2014-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, 32-bit build fix.

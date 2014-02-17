@@ -295,6 +295,7 @@ inline bool shouldShowDisassembly(CompilationMode mode = DFGMode)
 #if ENABLE(DFG_JIT)
     return Options::showDisassembly() || Options::showDFGDisassembly() || (isFTL(mode) && Options::showFTLDisassembly());
 #else
+    UNUSED_PARAM(mode);
     return false;
 #endif
 }
