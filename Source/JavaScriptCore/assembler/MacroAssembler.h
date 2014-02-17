@@ -474,6 +474,11 @@ public:
         and32(TrustedImm32(imm), srcDest);
     }
 
+    void lshiftPtr(Imm32 imm, RegisterID srcDest)
+    {
+        lshift32(trustedImm32ForShift(imm), srcDest);
+    }
+
     void negPtr(RegisterID dest)
     {
         neg32(dest);

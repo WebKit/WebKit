@@ -1,3 +1,10 @@
+2014-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, 32-bit build fix.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::lshiftPtr):
+
 2014-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should inline polymorphic heap accesses
