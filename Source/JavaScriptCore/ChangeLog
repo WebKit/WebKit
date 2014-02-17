@@ -1,3 +1,13 @@
+2014-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+        RegisterSet::calleeSaveRegisters() should know about ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=128918
+
+        Reviewed by Mark Hahnenberg.
+
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::calleeSaveRegisters):
+
 2014-02-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Move back primary header includes next to config.h

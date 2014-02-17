@@ -64,6 +64,12 @@ RegisterSet RegisterSet::calleeSaveRegisters()
     result.set(X86Registers::r13);
     result.set(X86Registers::r14);
     result.set(X86Registers::r15);
+#elif CPU(ARM64)
+    for (
+        ARM64Registers::RegisterID reg = ARM64Registers::x19;
+        reg <= ARM64Registers::x28;
+        reg = static_cast<ARM64Registers::RegisterID>(reg + 1))
+        result.set(reg);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
