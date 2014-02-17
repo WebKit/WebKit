@@ -5526,19 +5526,31 @@ LayoutRect RenderLayer::selfClipRect() const
     return clippingRootLayer->renderer().localToAbsoluteQuad(FloatQuad(backgroundRect.rect())).enclosingBoundingBox();
 }
 
-LayoutRect RenderLayer::localClipRect() const
+LayoutRect RenderLayer::localClipRect(bool& clipExceedsBounds) const
 {
+    clipExceedsBounds = false;
+    
     // FIXME: border-radius not accounted for.
     // FIXME: Regions not accounted for.
     RenderLayer* clippingRootLayer = clippingRootForPainting();
+
+    LayoutPoint offsetFromRoot;
+    convertToLayerCoords(clippingRootLayer, offsetFromRoot);
+
     LayoutRect layerBounds;
     ClipRect backgroundRect, foregroundRect, outlineRect;
     ClipRectsContext clipRectsContext(clippingRootLayer, 0, PaintingClipRects);
-    calculateRects(clipRectsContext, LayoutRect::infiniteRect(), layerBounds, backgroundRect, foregroundRect, outlineRect);
+    calculateRects(clipRectsContext, LayoutRect::infiniteRect(), layerBounds, backgroundRect, foregroundRect, outlineRect, &offsetFromRoot);
 
     LayoutRect clipRect = backgroundRect.rect();
     if (clipRect == LayoutRect::infiniteRect())
         return clipRect;
+
+    if (renderer().hasClip()) {
+        // CSS clip may be larger than our border box.
+        LayoutRect cssClipRect = toRenderBox(renderer()).clipRect(offsetFromRoot, clipRectsContext.region);
+        clipExceedsBounds = !clipRect.contains(cssClipRect);
+    }
 
     LayoutPoint clippingRootOffset;
     convertToLayerCoords(clippingRootLayer, clippingRootOffset);
@@ -5729,8 +5741,9 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     LayoutRect unionBounds = boundingBoxRect;
 
     if (flags & UseLocalClipRectIfPossible) {
-        LayoutRect localClipRect = this->localClipRect();
-        if (localClipRect != LayoutRect::infiniteRect()) {
+        bool clipExceedsBounds = false;
+        LayoutRect localClipRect = this->localClipRect(clipExceedsBounds);
+        if (localClipRect != LayoutRect::infiniteRect() && !clipExceedsBounds) {
             if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehaviorNormal))
                 localClipRect = transform()->mapRect(localClipRect);
 

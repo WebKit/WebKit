@@ -1,3 +1,16 @@
+2014-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        box-shadows get truncated with a combination of transforms and clip: (affects Google Maps)
+        https://bugs.webkit.org/show_bug.cgi?id=128937
+
+        Reviewed by Dean Jackson.
+        
+        Test with CSS clip() with a rect larger than the border box, and compositing.
+
+        * compositing/geometry/clip-expected.txt: New expectation. This is a progression.
+        * compositing/geometry/css-clip-oversize-expected.html: Added.
+        * compositing/geometry/css-clip-oversize.html: Added.
+
 2014-02-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Invalid cast in WebCore::AccessibilityTable::isDataTable (CRBug 280352)

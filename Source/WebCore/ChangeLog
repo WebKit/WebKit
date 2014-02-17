@@ -1,3 +1,31 @@
+2014-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        box-shadows get truncated with a combination of transforms and clip: (affects Google Maps)
+        https://bugs.webkit.org/show_bug.cgi?id=128937
+
+        Reviewed by Dean Jackson.
+        
+        RenderLayer::calculateLayerBounds() incorrectly assumed that if localClipRect() returns
+        a non-infinite rect, that rect is OK to use as the compositing bounds.
+        
+        That is not a valid assumption when clip() has a larger rect than the element (e.g.
+        with negative top/left in the rect). In that case, localClipRect() still just
+        returns the background rect, but we actually need a larger compositing layer
+        to show the unclipped parts of descendants.
+        
+        Fix by detecting clip() that exceeds the renderer bounds, and when it does,
+        not early returning in the UseLocalClipRectIfPossible clause.
+
+        Test: compositing/geometry/css-clip-oversize.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::localClipRect): Do a convertToLayerCoords()
+        because we need offsetFromRoot later, and we can pass our value down to
+        calculateRects(). Compute clipExceedsBounds based on the CSS clip rect.
+        (WebCore::RenderLayer::calculateClipRects): Don't early return if clipExceedsBounds
+        is true.
+        * rendering/RenderLayer.h:
+
 2014-02-17  Antti Koivisto  <antti@apple.com>
 
         Make TreeScope::rootNode return a reference
