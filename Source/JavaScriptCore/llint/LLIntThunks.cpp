@@ -29,6 +29,7 @@
 #include "CallData.h"
 #include "ExceptionHelpers.h"
 #include "Interpreter.h"
+#include "JSCJSValueInlines.h"
 #include "JSInterfaceJIT.h"
 #include "JSObject.h"
 #include "JSStackInlines.h"
