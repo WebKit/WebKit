@@ -364,6 +364,7 @@ public:
     bool hasVisibleStroke() const { return hasStroke() && !strokeWidth().isZero(); }
     bool hasFill() const { return fillPaintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
     bool isVerticalWritingMode() const { return writingMode() == WM_TBRL || writingMode() == WM_TB; }
+    bool isolatesBlending() const { return hasMasker() || hasFilter() || shadow(); }
 
 protected:
     // inherit

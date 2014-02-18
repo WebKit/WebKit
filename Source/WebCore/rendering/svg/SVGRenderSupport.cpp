@@ -440,10 +440,40 @@ void SVGRenderSupport::childAdded(RenderElement& parent, RenderObject& child)
     SVGRenderSupport::setRendererHasSVGShadow(child, SVGRenderSupport::rendererHasSVGShadow(parent) || SVGRenderSupport::rendererHasSVGShadow(child));
 }
 
-void SVGRenderSupport::styleChanged(RenderElement& renderer)
+void SVGRenderSupport::styleChanged(RenderElement& renderer, const RenderStyle* oldStyle)
 {
     auto parent = renderer.parent();
     SVGRenderSupport::setRendererHasSVGShadow(renderer, (parent && SVGRenderSupport::rendererHasSVGShadow(*parent)) || renderer.style().svgStyle().shadow());
+
+#if ENABLE(CSS_COMPOSITING)
+    if (renderer.element() && renderer.element()->isSVGElement() && (!oldStyle || renderer.style().hasBlendMode() != oldStyle->hasBlendMode()))
+        SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(renderer);
+#else
+    UNUSED_PARAM(oldStyle);
+#endif
 }
 
+#if ENABLE(CSS_COMPOSITING)
+bool SVGRenderSupport::isolatesBlending(const RenderStyle& style)
+{
+    return style.svgStyle().isolatesBlending() || style.hasBlendMode() || style.opacity() < 1.0f;
+}
+
+void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderElement& renderer)
+{
+    ASSERT(renderer.element());
+    ASSERT(renderer.element()->isSVGElement());
+
+    bool maskedAncestorShouldIsolateBlending = renderer.style().hasBlendMode();
+    for (auto ancestor = renderer.element()->parentElement(); ancestor && ancestor->isSVGElement(); ancestor = ancestor->parentElement()) {
+        if (!toSVGElement(ancestor)->isSVGGraphicsElement() || !isolatesBlending(*ancestor->computedStyle()))
+            continue;
+
+        if (ancestor->computedStyle()->svgStyle().hasMasker())
+            toSVGGraphicsElement(ancestor)->setShouldIsolateBlending(maskedAncestorShouldIsolateBlending);
+
+        return;
+    }
+}
+#endif
 }

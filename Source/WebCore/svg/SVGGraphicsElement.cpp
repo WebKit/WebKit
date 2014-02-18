@@ -42,6 +42,7 @@ END_REGISTER_ANIMATED_PROPERTIES
 
 SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
+    , m_shouldIsolateBlending(false)
 {
     registerAnimatedPropertiesForSVGGraphicsElement();
 }

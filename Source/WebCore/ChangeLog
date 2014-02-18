@@ -1,3 +1,58 @@
+2014-02-18  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Blending] Add -webkit-blend-mode support for SVG.
+
+        https://bugs.webkit.org/show_bug.cgi?id=110427
+        Reviewed by Dirk Schulze.
+
+        Add support for blend modes to SVG. This includes adding and validating isolation for blending.
+        Make masked elements isolate blending by creating a transparency layer.
+
+        Tests: css3/compositing/svg-blend-color-burn.html
+               css3/compositing/svg-blend-color-dodge.html
+               css3/compositing/svg-blend-color.html
+               css3/compositing/svg-blend-darken.html
+               css3/compositing/svg-blend-difference.html
+               css3/compositing/svg-blend-exclusion.html
+               css3/compositing/svg-blend-hard-light.html
+               css3/compositing/svg-blend-hue.html
+               css3/compositing/svg-blend-layer-blend.html
+               css3/compositing/svg-blend-layer-clip-path.html
+               css3/compositing/svg-blend-layer-filter.html
+               css3/compositing/svg-blend-layer-mask.html
+               css3/compositing/svg-blend-layer-opacity.html
+               css3/compositing/svg-blend-layer-shadow.html
+               css3/compositing/svg-blend-lighten.html
+               css3/compositing/svg-blend-luminosity.html
+               css3/compositing/svg-blend-multiply-alpha.html
+               css3/compositing/svg-blend-multiply.html
+               css3/compositing/svg-blend-normal.html
+               css3/compositing/svg-blend-overlay.html
+               css3/compositing/svg-blend-saturation.html
+               css3/compositing/svg-blend-screen.html
+               css3/compositing/svg-blend-soft-light.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleDidChange): Also pass a pointer to the old style when calling SVGRenderSupport::styleChanged.
+        * rendering/style/RenderStyle.h:  Add blendMode default getter when CSS_COMPOSITING is disabled.
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::isolatesBlending): Add method.
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::styleChanged): Call updateMaskedAncestorShouldIsolateBlending only when a blend mode is set/unset.
+        (WebCore::SVGRenderSupport::isolatesBlending): Implement method that decides whether an SVGElement isolates or not blending.
+        (WebCore::SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending): Traverse to the nearest ancestor having a mask.
+        - Set a flag causing the creation of a transparency layer when rendering the masked element.
+        * rendering/svg/SVGRenderSupport.h:
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent): Call GraphicsContext::setCompositeOperation.
+        - Isolate blending by creating a transparency layer.
+        - Isolate group when rendering a masked element having a blended child node.
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::SVGGraphicsElement): Set default m_shouldIsolateBlending to false.
+        * svg/SVGGraphicsElement.h: Add m_shouldIsolateBlending member, getter and setter.
+        (WebCore::SVGGraphicsElement::shouldIsolateBlending):
+        (WebCore::SVGGraphicsElement::setShouldIsolateBlending):
+
 2014-02-18  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Unreviewed fix. Correct wrong flags, ENABLE(GTK)->PLATFORM(GTK).

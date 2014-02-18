@@ -970,6 +970,7 @@ public:
     void setBlendMode(BlendMode v) { rareNonInheritedData.access()->m_effectiveBlendMode = v; }
     bool hasBlendMode() const { return static_cast<BlendMode>(rareNonInheritedData->m_effectiveBlendMode) != BlendModeNormal; }
 #else
+    BlendMode blendMode() const { return BlendModeNormal; }
     bool hasBlendMode() const { return false; }
 #endif
  

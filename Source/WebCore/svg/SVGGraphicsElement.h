@@ -46,6 +46,9 @@ public:
 
     virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) override;
 
+    bool shouldIsolateBlending() const { return m_shouldIsolateBlending; }
+    void setShouldIsolateBlending(bool isolate) { m_shouldIsolateBlending = isolate; }
+
     // "base class" methods for all the elements which render as paths
     virtual void toClipPath(Path&);
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
@@ -71,6 +74,9 @@ private:
 
     // Used by <animateMotion>
     std::unique_ptr<AffineTransform> m_supplementalTransform;
+
+    // Used to isolate blend operations caused by masking.
+    bool m_shouldIsolateBlending;
 };
 
 void isSVGGraphicsElement(const SVGGraphicsElement&); // Catch unnecessary runtime check of type known at compile time.

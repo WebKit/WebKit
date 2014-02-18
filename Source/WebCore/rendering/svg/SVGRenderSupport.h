@@ -83,7 +83,12 @@ public:
     static void setRendererHasSVGShadow(RenderObject&, bool hasShadow);
 
     static void childAdded(RenderElement& parent, RenderObject& child);
-    static void styleChanged(RenderElement&);
+    static void styleChanged(RenderElement&, const RenderStyle*);
+
+#if ENABLE(CSS_COMPOSITING)
+    static bool isolatesBlending(const RenderStyle&);
+    static void updateMaskedAncestorShouldIsolateBlending(const RenderElement&);
+#endif
 
     // FIXME: These methods do not belong here.
     static const RenderSVGRoot& findTreeRootObject(const RenderElement&);

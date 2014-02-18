@@ -928,7 +928,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     if (s_noLongerAffectsParentBlock)
         removeAnonymousWrappersForInlinesIfNecessary();
 
-    SVGRenderSupport::styleChanged(*this);
+    SVGRenderSupport::styleChanged(*this, oldStyle);
 
     if (!m_parent)
         return;

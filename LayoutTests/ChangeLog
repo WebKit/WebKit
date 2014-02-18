@@ -1,3 +1,84 @@
+2014-02-18  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Blending] Add -webkit-blend-mode support for SVG.
+        https://bugs.webkit.org/show_bug.cgi?id=110427
+
+        Reviewed by Dirk Schulze.
+
+        Test -webkit-blend-mode implementation for simple SVGs. This includes:
+        - Test each blend operator.
+        - Test that ensures blending is isolated by other properties: blending, filters, masks, shadow and opacity.
+
+        * css3/compositing/svg-blend-color-burn.html: Test blend mode color-burn.
+        * css3/compositing/svg-blend-color-dodge.html: Test blend mode color-dodge.
+        * css3/compositing/svg-blend-color.html: Test blend mode color.
+        * css3/compositing/svg-blend-darken.html: Test blend mode darken.
+        * css3/compositing/svg-blend-difference.html: Test blend mode difference.
+        * css3/compositing/svg-blend-exclusion.html: Test blend mode exclusion.
+        * css3/compositing/svg-blend-hard-light.html: Test blend mode hard-light.
+        * css3/compositing/svg-blend-hue.html: Test blend mode hue.
+        * css3/compositing/svg-blend-layer-blend.html: mix-blend-mode should isolate for blending.
+        * css3/compositing/svg-blend-layer-clip-path.html: clip-path should not isolate for blending.
+        * css3/compositing/svg-blend-layer-filter.html: filters should isolate for blending.
+        * css3/compositing/svg-blend-layer-mask.html: masks should isolate for blending.
+        * css3/compositing/svg-blend-layer-opacity.html: opacity should isolate for blending.
+        * css3/compositing/svg-blend-layer-shadow.html: -webkit-shadow should isolate for blending.
+        * css3/compositing/svg-blend-lighten.html: Test blend mode lighten.
+        * css3/compositing/svg-blend-luminosity.html: Test blend mode luminosity.
+        * css3/compositing/svg-blend-multiply-alpha.html: Test blend mode multiply while also having alpha set.
+        * css3/compositing/svg-blend-multiply.html: Test blend mode multiply.
+        * css3/compositing/svg-blend-normal.html: Test blend mode normal. Note this blend mode has no effect.
+        * css3/compositing/svg-blend-overlay.html: Test blend mode overlay.
+        * css3/compositing/svg-blend-saturation.html: Test blend mode saturation.
+        * css3/compositing/svg-blend-screen.html: Test blend mode screen.
+        * css3/compositing/svg-blend-soft-light.html: Test blend mode soft-light.
+        * platform/mac/css3/compositing/svg-blend-color-burn-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-color-burn-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-color-dodge-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-color-dodge-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-color-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-color-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-darken-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-darken-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-difference-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-difference-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-exclusion-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-exclusion-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-hard-light-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-hard-light-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-hue-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-hue-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-blend-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-blend-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-clip-path-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-clip-path-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-filter-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-filter-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-mask-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-mask-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-opacity-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-opacity-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-shadow-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-layer-shadow-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-lighten-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-lighten-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-luminosity-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-luminosity-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-multiply-alpha-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-multiply-alpha-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-multiply-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-multiply-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-normal-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-normal-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-overlay-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-overlay-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-saturation-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-saturation-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-screen-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-screen-expected.txt: Added.
+        * platform/mac/css3/compositing/svg-blend-soft-light-expected.png: Added.
+        * platform/mac/css3/compositing/svg-blend-soft-light-expected.txt: Added.
+
 2014-02-18  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening.
