@@ -27,6 +27,7 @@
     void GetHostnamesWithCookies(uint64_t callbackID)
     void DeleteCookiesForHostname(String hostname)
     void DeleteAllCookies()
+    void DeleteAllCookiesModifiedAfterDate(double date)
 
     void SetHTTPCookieAcceptPolicy(uint32_t policy)
     void GetHTTPCookieAcceptPolicy(uint64_t callbackID)

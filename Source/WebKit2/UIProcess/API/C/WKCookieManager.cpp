@@ -56,6 +56,11 @@ void WKCookieManagerDeleteAllCookies(WKCookieManagerRef cookieManagerRef)
     toImpl(cookieManagerRef)->deleteAllCookies();
 }
 
+void WKCookieManagerDeleteAllCookiesModifiedAfterDate(WKCookieManagerRef cookieManagerRef, double date)
+{
+    toImpl(cookieManagerRef)->deleteAllCookiesModifiedAfterDate(date);
+}
+
 void WKCookieManagerSetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, WKHTTPCookieAcceptPolicy policy)
 {
     toImpl(cookieManager)->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));

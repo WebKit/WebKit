@@ -39,6 +39,10 @@ enum {
     NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3
 };
 
+@interface NSHTTPCookieStorage (Details)
+- (void)removeCookiesSinceDate:(NSDate *)date;
+@end
+
 namespace WebCore {
 
 static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
@@ -190,6 +194,15 @@ void deleteCookiesForHostname(const NetworkStorageSession& session, const String
 void deleteAllCookies(const NetworkStorageSession& session)
 {
     wkDeleteAllHTTPCookies(session.cookieStorage().get());
+}
+
+void deleteAllCookiesModifiedAfterDate(const NetworkStorageSession& session, double date)
+{
+    UNUSED_PARAM(session);
+
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    if ([cookieStorage respondsToSelector:@selector(removeCookiesSinceDate:)])
+        [cookieStorage removeCookiesSinceDate:[NSDate dateWithTimeIntervalSince1970:date]];
 }
 
 }

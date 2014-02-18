@@ -224,4 +224,8 @@ void deleteAllCookies(const NetworkStorageSession& session)
     }
 }
 
+void deleteAllCookiesModifiedAfterDate(const NetworkStorageSession&, double)
+{
+}
+
 }

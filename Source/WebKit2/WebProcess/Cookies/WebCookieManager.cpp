@@ -78,6 +78,11 @@ void WebCookieManager::deleteAllCookies()
     WebCore::deleteAllCookies(NetworkStorageSession::defaultStorageSession());
 }
 
+void WebCookieManager::deleteAllCookiesModifiedAfterDate(double date)
+{
+    WebCore::deleteAllCookiesModifiedAfterDate(NetworkStorageSession::defaultStorageSession(), date);
+}
+
 void WebCookieManager::startObservingCookieChanges()
 {
     WebCore::startObservingCookieChanges(cookiesDidChange);

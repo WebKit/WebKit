@@ -326,4 +326,9 @@ void deleteAllCookies(const NetworkStorageSession&)
     // FIXME: Not yet implemented
 }
 
+void deleteAllCookiesModifiedAfterDate(const NetworkStorageSession&, double)
+{
+    // FIXME: Not yet implemented
+}
+
 }

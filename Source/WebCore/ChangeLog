@@ -1,3 +1,24 @@
+2014-02-17  Ricky Mondello  <rmondello@apple.com>
+
+        Expose a way to clear cookies modified after a given date
+        https://bugs.webkit.org/show_bug.cgi?id=128845
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.exp.in: Add a symbol.
+        * platform/network/PlatformCookieJar.h: Declare deleteAllCookiesModifiedAfterDate.
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::deleteAllCookiesModifiedAfterDate): Add a stub.
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::deleteAllCookiesModifiedAfterDate): Ditto.
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::deleteAllCookiesModifiedAfterDate): Ditto.
+        * platform/network/mac/CookieJarMac.mm: Add a category NSHTTPCookieStorage category with the method
+            used for time-based clearing so we can build on all platforms. For now, we'll check for support
+            at runtime.
+        (WebCore::deleteAllCookiesModifiedAfterDate): Added. Without foundation API, we'll ignore the passed-in
+            NetworkStorageSession.
+
 2014-02-17  Benjamin Poulain  <bpoulain@apple.com>
 
         SelectorCompiler incorrectly saves a backtracking register for a child chain without descendant relation on the right

@@ -1,3 +1,22 @@
+2014-02-17  Ricky Mondello  <rmondello@apple.com>
+
+        Expose a way to clear cookies modified after a given date
+        https://bugs.webkit.org/show_bug.cgi?id=128845
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerDeleteAllCookiesModifiedAfterDate): Added. Call out to the CookieManager.
+        * UIProcess/API/C/WKCookieManager.h: Declare WKCookieManagerDeleteAllCookiesModifiedAfterDate.
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::deleteAllCookiesModifiedAfterDate): Added. Dispatch message to the
+            Network Process.
+        * UIProcess/WebCookieManagerProxy.h: Declare deleteAllCookiesModifiedAfterDate.
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::deleteAllCookiesModifiedAfterDate): Added. Call out to WebCore to finish the job.
+        * WebProcess/Cookies/WebCookieManager.h: Declare deleteAllCookiesModifiedAfterDate.
+        * WebProcess/Cookies/WebCookieManager.messages.in: Add new message.
+
 2014-02-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Move and make WKColorPickerResultListener to EFL specific interface

@@ -48,6 +48,7 @@ void deleteCookie(const NetworkStorageSession&, const URL&, const String&);
 void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames);
 void deleteCookiesForHostname(const NetworkStorageSession&, const String& hostname);
 void deleteAllCookies(const NetworkStorageSession&);
+void deleteAllCookiesModifiedAfterDate(const NetworkStorageSession&, double date);
 
 }
 

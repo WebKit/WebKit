@@ -129,6 +129,11 @@ void WebCookieManagerProxy::deleteAllCookies()
     context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookies());
 }
 
+void WebCookieManagerProxy::deleteAllCookiesModifiedAfterDate(double date)
+{
+    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookiesModifiedAfterDate(date));
+}
+
 void WebCookieManagerProxy::startObservingCookieChanges()
 {
     context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StartObservingCookieChanges());
