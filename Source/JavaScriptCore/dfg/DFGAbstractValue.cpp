@@ -125,11 +125,8 @@ FiltrationResult AbstractValue::filterArrayModes(ArrayModes arrayModes)
 
 FiltrationResult AbstractValue::filter(SpeculatedType type)
 {
-    if (isClear())
+    if ((m_type & type) == m_type)
         return FiltrationOK;
-    
-    if (type == SpecTop)
-        return isClear() ? Contradiction : FiltrationOK;
     
     m_type &= type;
     
