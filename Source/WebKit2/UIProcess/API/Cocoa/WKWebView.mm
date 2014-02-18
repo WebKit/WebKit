@@ -197,14 +197,6 @@
     return [navigation.leakRef() autorelease];
 }
 
-- (WKNavigation *)reload
-{
-    _page->reload(false);
-
-    // FIXME: return a WKNavigation object.
-    return nil;
-}
-
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
 {
     _page->goToBackForwardItem(&item._item);
@@ -488,6 +480,14 @@
 - (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
 {
     _page->loadAlternateHTMLString(string, [baseURL _web_originalDataAsWTFString], [unreachableURL _web_originalDataAsWTFString]);
+}
+
+- (WKNavigation *)_reload
+{
+    _page->reload(false);
+
+    // FIXME: return a WKNavigation object.
+    return nil;
 }
 
 static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)

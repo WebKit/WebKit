@@ -78,8 +78,6 @@ WK_API_CLASS
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request;
 
-- (WKNavigation *)reload;
-
 /*! @abstract Navigates to an item from the back-forward list and sets it as the current item.
  @param item The item to navigate to. Must be one of the items in the receiver's back-forward
  list.

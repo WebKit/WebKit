@@ -49,6 +49,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 
 - (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL;
 
+- (WKNavigation *)_reload;
+
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
 
