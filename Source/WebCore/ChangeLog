@@ -1,3 +1,15 @@
+2014-02-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r164296.
+        http://trac.webkit.org/changeset/164296
+        https://bugs.webkit.org/show_bug.cgi?id=128989
+
+        Broke many media tests (Requested by eric_carlson on #webkit).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+
 2014-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Convert position:sticky to position:static upon copy and paste
