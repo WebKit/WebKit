@@ -2592,7 +2592,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     
     settings.setLayoutInterval(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(store.getDoubleValueForKey(WebPreferencesKey::layoutIntervalKey()))));
     settings.setMaxParseDuration(store.getDoubleValueForKey(WebPreferencesKey::maxParseDurationKey()));
-    settings.setMaximumDecodedImageSize(store.getUInt32ValueForKey(WebPreferencesKey::maximumDecodedImageSizeKey()));
 
     if (store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey())) {
         if (m_processSuppressionDisabledByWebPreference.isActive())

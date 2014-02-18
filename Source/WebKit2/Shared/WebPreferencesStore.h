@@ -236,7 +236,6 @@ namespace WebKit {
     macro(InspectorAttachedHeight, inspectorAttachedHeight, UInt32, uint32_t, 300) \
     macro(InspectorAttachedWidth, inspectorAttachedWidth, UInt32, uint32_t, 750) \
     macro(InspectorAttachmentSide, inspectorAttachmentSide, UInt32, uint32_t, 0) \
-    macro(MaximumDecodedImageSize, maximumDecodedImageSize, UInt32, uint32_t, 20 * 1024 * 1024) \
     \
 
 #if PLATFORM(COCOA)
