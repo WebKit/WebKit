@@ -135,10 +135,11 @@ WebInspector.ColorPicker.prototype = {
 
     _updateSliders: function(rawColor, tintedColor)
     {
-        var rgba = this._colorWheel.tintedColor.rgb.concat(0);
-        var transparent = new WebInspector.Color(WebInspector.Color.Format.RGBA, rgba).toString();
+        var rgb = this._colorWheel.tintedColor.rgb;
+        var opaque = new WebInspector.Color(WebInspector.Color.Format.RGBA, rgb.concat(1)).toString();
+        var transparent = new WebInspector.Color(WebInspector.Color.Format.RGBA, rgb.concat(0)).toString();
 
-        this._opacitySlider.element.style.backgroundImage = "linear-gradient(90deg, " + transparent + ", " + tintedColor + "), " + this._opacityPattern;
+        this._opacitySlider.element.style.backgroundImage = "linear-gradient(90deg, " + transparent + ", " + opaque + "), " + this._opacityPattern;
         this._brightnessSlider.element.style.backgroundImage = "linear-gradient(90deg, black, " + rawColor + ")";
     }
 };
