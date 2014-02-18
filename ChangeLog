@@ -1,3 +1,13 @@
+2014-02-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] JavaScriptCore crashes in JSC::eval
+        https://bugs.webkit.org/show_bug.cgi?id=128434
+
+        Reviewed by Anders Carlsson.
+
+        * Source/cmake/OptionsGTK.cmake: Add -fno-omit-frame-pointer to the GTK+ CMake
+        port as well as -fno-tree-dce, like it is used in the autotools build.
+
 2014-02-17  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] MEDIA_CONTROLS_SCRIPT depends on VIDEO_TRACK

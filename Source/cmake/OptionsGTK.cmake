@@ -266,6 +266,12 @@ set(FORWARDING_HEADERS_WEBKIT2GTK_DIR ${FORWARDING_HEADERS_DIR}/webkit2gtk)
 set(FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR ${FORWARDING_HEADERS_DIR}/webkit2gtk-webextension)
 set(SHOULD_INSTALL_JS_SHELL ON)
 
+# Push of rbp is needed after JSC JIT uses CStack. See http://wkbug.com/127777.
+if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
+    set(CMAKE_C_FLAGS_RELEASE "-fno-omit-frame-pointer -fno-tree-dce ${CMAKE_C_FLAGS_RELEASE}")
+    set(CMAKE_CXX_FLAGS_RELEASE "-fno-omit-frame-pointer -fno-tree-dce ${CMAKE_CXX_FLAGS_RELEASE}")
+endif ()
+
 # Add a typelib file to the list of all typelib dependencies. This makes it easy to
 # expose a 'gir' target with all gobject-introspection files.
 macro(ADD_TYPELIB typelib)
