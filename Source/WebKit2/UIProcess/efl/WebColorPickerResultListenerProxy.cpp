@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2012-2014 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +27,15 @@
 #include "WebColorPickerResultListenerProxy.h"
 
 #if ENABLE(INPUT_TYPE_COLOR)
-
-#include "WebPageProxy.h"
+#include "WebColorPickerEfl.h"
+#include <WebCore/Color.h>
 
 namespace WebKit {
 
-WebColorPickerResultListenerProxy::WebColorPickerResultListenerProxy(WebPageProxy* page)
-    : m_page(page)
+WebColorPickerResultListenerProxy::WebColorPickerResultListenerProxy(WebColorPickerEfl* colorPicker)
+    : m_colorPicker(colorPicker)
 {
+    ASSERT(m_colorPicker);
 }
 
 WebColorPickerResultListenerProxy::~WebColorPickerResultListenerProxy()
@@ -43,16 +44,15 @@ WebColorPickerResultListenerProxy::~WebColorPickerResultListenerProxy()
 
 void WebColorPickerResultListenerProxy::invalidate()
 {
-    m_page = 0;
+    m_colorPicker = 0;
 }
 
 void WebColorPickerResultListenerProxy::setColor(const String& color)
 {
-    if (!m_page)
+    if (!m_colorPicker)
         return;
 
-    m_page->setColorPickerColor(WebCore::Color(color));
-    m_page->endColorPicker();
+    m_colorPicker->didChooseColor(WebCore::Color(color));
 }
 
 } // namespace WebKit

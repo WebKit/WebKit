@@ -124,7 +124,7 @@ protected:
     }
 };
 
-TEST_F(EWK2ColorPickerTest, DISABLED_ewk_color_picker_color_set)
+TEST_F(EWK2ColorPickerTest, ewk_color_picker_color_set)
 {
     Ewk_View_Smart_Class* api = ewkViewClass();
     api->input_picker_color_request = showColorPicker;

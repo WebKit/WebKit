@@ -44,6 +44,10 @@
 #include "EwkTouchEvent.h"
 #endif
 
+#if ENABLE(INPUT_TYPE_COLOR)
+#include "WebColorPickerEfl.h"
+#endif
+
 using namespace EwkViewCallbacks;
 using namespace WebCore;
 
@@ -177,5 +181,17 @@ void WebViewEfl::exitFullScreen()
 }
 
 #endif // ENABLE(FULLSCREEN_API)
+
+#if ENABLE(INPUT_TYPE_COLOR)
+void WebViewEfl::initializeColorPickerClient(const WKColorPickerClientBase* client)
+{
+    m_colorPickerClient.initialize(client);
+}
+
+PassRefPtr<WebColorPicker> WebViewEfl::createColorPicker(WebPageProxy* page, const WebCore::Color& color, const WebCore::IntRect&)
+{
+    return WebColorPickerEfl::create(this, page, color);
+}
+#endif
 
 } // namespace WebKit

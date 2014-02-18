@@ -158,6 +158,19 @@ void ViewClientEfl::doneWithTouchEvent(WKViewRef, WKTouchEventRef event, bool wa
 }
 #endif
 
+#if ENABLE(INPUT_TYPE_COLOR)
+void ViewClientEfl::showColorPicker(WKViewRef, WKStringRef colorString, WKColorPickerResultListenerRef listener, const void* clientInfo)
+{
+    WebCore::Color color = WebCore::Color(WebKit::toWTFString(colorString));
+    toEwkView(clientInfo)->requestColorPicker(listener, color);
+}
+
+void ViewClientEfl::endColorPicker(WKViewRef, const void* clientInfo)
+{
+    toEwkView(clientInfo)->dismissColorPicker();
+}
+#endif
+
 ViewClientEfl::ViewClientEfl(EwkView* view)
     : m_view(view)
 {
@@ -182,11 +195,25 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
 #endif
 
     WKViewSetViewClient(m_view->wkView(), &viewClient.base);
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    WKColorPickerClientV0 colorPickerClient;
+    memset(&colorPickerClient, 0, sizeof(WKColorPickerClientV0));
+    colorPickerClient.base.version = 0;
+    colorPickerClient.base.clientInfo = this;
+    colorPickerClient.showColorPicker = showColorPicker;
+    colorPickerClient.endColorPicker = endColorPicker;
+    WKViewSetColorPickerClient(m_view->wkView(), &colorPickerClient.base);
+#endif
 }
 
 ViewClientEfl::~ViewClientEfl()
 {
     WKViewSetViewClient(m_view->wkView(), 0);
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    WKViewSetColorPickerClient(m_view->wkView(), 0);
+#endif
 }
 
 } // namespace WebKit

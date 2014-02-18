@@ -1,3 +1,68 @@
+2014-02-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Move and make WKColorPickerResultListener to EFL specific interface
+        https://bugs.webkit.org/show_bug.cgi?id=119120
+
+        Reviewed by Gyuyoung Kim.
+
+        WKColorPickerResultListener and related files are only used in EFL since added.
+        Indeed, it does not work since refactored common logic for ColorPicker in WebPageProxy.
+
+        This patch moved them to EFL specfic and refactor to work well.
+
+        * CMakeLists.txt: Moved WebColorPickerResultListenerProxy.cpp to PlatformEfl.cmake.
+        * GNUmakefile.list.am: Removed ColorPickerResultListener related files which are only for Efl from source list.
+        * PlatformEfl.cmake: Added ColorPickerResultListenerProxy related files and newly added files into source list.
+        * UIProcess/API/APIUIClient.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/efl/WKColorPickerResultListener.cpp: Renamed from Source/WebKit2/UIProcess/API/C/WKColorPickerResultListener.cpp.
+        (WKColorPickerResultListenerGetTypeID):
+        (WKColorPickerResultListenerSetColor):
+        * UIProcess/API/C/efl/WKColorPickerResultListener.h: Renamed from Source/WebKit2/UIProcess/API/C/WKColorPickerResultListener.h.
+        * UIProcess/API/C/efl/WKViewEfl.cpp: Introduced WKColorPickerClient and setter.
+        (WKViewSetColorPickerClient):
+        * UIProcess/API/C/efl/WKViewEfl.h:
+        * UIProcess/API/efl/tests/test_ewk2_color_picker.cpp: Enabled test case for color picker.
+        (TEST_F):
+        * UIProcess/WebPageProxy.cpp: Removed unnecessary WebColorPickerResultListenerProxy dependency.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/efl/PageUIClientEfl.cpp: Removed color picker callbacks of PageUIClient.
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+        * UIProcess/efl/PageUIClientEfl.h:
+        * UIProcess/efl/ViewClientEfl.cpp: Registered callbacks of WKColorPickerClient.
+        (WebKit::ViewClientEfl::showColorPicker):
+        (WebKit::ViewClientEfl::endColorPicker):
+        (WebKit::ViewClientEfl::ViewClientEfl):
+        (WebKit::ViewClientEfl::~ViewClientEfl):
+        * UIProcess/efl/ViewClientEfl.h:
+        * UIProcess/efl/WebColorPickerClient.cpp: Copied from Source/WebKit2/UIProcess/efl/ViewClientEfl.h.
+        (WebKit::WebColorPickerClient::showColorPicker):
+        (WebKit::WebColorPickerClient::endPicker):
+        * UIProcess/efl/WebColorPickerClient.h: Added.
+        * UIProcess/efl/WebColorPickerEfl.cpp: Copied from Source/WebKit2/UIProcess/efl/ViewClientEfl.h.
+        (WebKit::WebColorPickerEfl::WebColorPickerEfl):
+        (WebKit::WebColorPickerEfl::endPicker):
+        (WebKit::WebColorPickerEfl::showColorPicker):
+        (WebKit::WebColorPickerEfl::setSelectedColor):
+        (WebKit::WebColorPickerEfl::didChooseColor):
+        * UIProcess/efl/WebColorPickerEfl.h: Copied from Source/WebKit2/UIProcess/efl/ViewClientEfl.h.
+        (WebKit::WebColorPickerEfl::create):
+        (WebKit::WebColorPickerEfl::~WebColorPickerEfl):
+        * UIProcess/efl/WebColorPickerResultListenerProxy.cpp: Renamed from Source/WebKit2/UIProcess/WebColorPickerResultListenerProxy.cpp.
+        (WebKit::WebColorPickerResultListenerProxy::WebColorPickerResultListenerProxy):
+        (WebKit::WebColorPickerResultListenerProxy::~WebColorPickerResultListenerProxy):
+        (WebKit::WebColorPickerResultListenerProxy::invalidate):
+        (WebKit::WebColorPickerResultListenerProxy::setColor):
+        * UIProcess/efl/WebColorPickerResultListenerProxy.h: Renamed from Source/WebKit2/UIProcess/WebColorPickerResultListenerProxy.h.
+        (WebKit::WebColorPickerResultListenerProxy::create):
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebViewEfl::initializeColorPickerClient):
+        (WebKit::WebViewEfl::createColorPicker):
+        * UIProcess/efl/WebViewEfl.h:
+        (WebKit::WebViewEfl::colorPickerClient):
+        * WebKit2.xcodeproj/project.pbxproj: Removed ColorPickerResultListener related files which are only for Efl from source list.
+
 2014-02-17  Sam Weinig  <sam@webkit.org>
 
         [iOS, WebKit2] Add settings and correct default values for settings important on iOS

@@ -35,13 +35,13 @@
 
 namespace WebKit {
 
-class WebPageProxy;
+class WebColorPickerEfl;
 
 class WebColorPickerResultListenerProxy : public API::ObjectImpl<API::Object::Type::ColorPickerResultListener> {
 public:
-    static PassRefPtr<WebColorPickerResultListenerProxy> create(WebPageProxy* page)
+    static PassRefPtr<WebColorPickerResultListenerProxy> create(WebColorPickerEfl* colorPicker)
     {
-        return adoptRef(new WebColorPickerResultListenerProxy(page));
+        return adoptRef(new WebColorPickerResultListenerProxy(colorPicker));
     }
 
     virtual ~WebColorPickerResultListenerProxy();
@@ -50,9 +50,9 @@ public:
     void setColor(const String&);
 
 private:
-    explicit WebColorPickerResultListenerProxy(WebPageProxy*);
+    explicit WebColorPickerResultListenerProxy(WebColorPickerEfl*);
 
-    RefPtr<WebPageProxy> m_page;
+    WebColorPickerEfl* m_colorPicker;
 };
 
 } // namespace WebKit

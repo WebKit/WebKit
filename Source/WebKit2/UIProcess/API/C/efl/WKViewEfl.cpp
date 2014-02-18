@@ -34,6 +34,16 @@
 
 using namespace WebKit;
 
+void WKViewSetColorPickerClient(WKViewRef viewRef, const WKColorPickerClientBase* wkClient)
+{
+#if ENABLE(INPUT_TYPE_COLOR)
+    static_cast<WebViewEfl*>(toImpl(viewRef))->initializeColorPickerClient(wkClient);
+#else
+    UNUSED_PARAM(viewRef);
+    UNUSED_PARAM(wkClient);
+#endif
+}
+
 void WKViewPaintToCairoSurface(WKViewRef viewRef, cairo_surface_t* surface)
 {
     static_cast<WebViewEfl*>(toImpl(viewRef))->paintToCairoSurface(surface);

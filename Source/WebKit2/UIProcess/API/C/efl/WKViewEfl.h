@@ -37,6 +37,22 @@ typedef struct _cairo_surface cairo_surface_t;
 extern "C" {
 #endif
 
+typedef void (*WKShowColorPickerCallback)(WKViewRef view, WKStringRef initialColor, WKColorPickerResultListenerRef listener, const void* clientInfo);
+typedef void (*WKHideColorPickerCallback)(WKViewRef view, const void* clientInfo);
+
+typedef struct WKColorPickerClientBase {
+    int                                            version;
+    const void *                                   clientInfo;
+} WKColorPickerClientBase;
+
+typedef struct WKColorPickerClientV0 {
+    WKColorPickerClientBase                        base;
+    WKShowColorPickerCallback                      showColorPicker;
+    WKHideColorPickerCallback                      endColorPicker;
+} WKColorPickerClientV0;
+
+WK_EXPORT void WKViewSetColorPickerClient(WKViewRef page, const WKColorPickerClientBase* client);
+
 WK_EXPORT void WKViewPaintToCairoSurface(WKViewRef, cairo_surface_t*);
 
 WK_EXPORT WKImageRef WKViewCreateSnapshot(WKViewRef);

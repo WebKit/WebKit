@@ -1441,8 +1441,6 @@
 		E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */; };
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */; };
-		F036978515F4BE6B00C3A80E /* WKColorPickerResultListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F036978315F4BE6B00C3A80E /* WKColorPickerResultListener.cpp */; };
-		F036978615F4BE6B00C3A80E /* WKColorPickerResultListener.h in Headers */ = {isa = PBXBuildFile; fileRef = F036978415F4BE6B00C3A80E /* WKColorPickerResultListener.h */; };
 		F036978815F4BF0500C3A80E /* WebColorPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F036978715F4BF0500C3A80E /* WebColorPicker.cpp */; };
 		F036978B15F4BF1300C3A80E /* WebColorPickerResultListenerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F036978915F4BF1300C3A80E /* WebColorPickerResultListenerProxy.cpp */; };
 		F6113E25126CE1820057D0A7 /* WebUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = F6113E24126CE1820057D0A7 /* WebUserContentURLPattern.h */; };
@@ -3232,11 +3230,7 @@
 		E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxInitializationParameters.h; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
-		F036978315F4BE6B00C3A80E /* WKColorPickerResultListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKColorPickerResultListener.cpp; sourceTree = "<group>"; };
-		F036978415F4BE6B00C3A80E /* WKColorPickerResultListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKColorPickerResultListener.h; sourceTree = "<group>"; };
 		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
-		F036978915F4BF1300C3A80E /* WebColorPickerResultListenerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPickerResultListenerProxy.cpp; sourceTree = "<group>"; };
-		F036978A15F4BF1300C3A80E /* WebColorPickerResultListenerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPickerResultListenerProxy.h; sourceTree = "<group>"; };
 		F6113E24126CE1820057D0A7 /* WebUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserContentURLPattern.h; sourceTree = "<group>"; };
 		F6113E26126CE19B0057D0A7 /* WKUserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserContentURLPattern.cpp; sourceTree = "<group>"; };
 		F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentURLPattern.h; sourceTree = "<group>"; };
@@ -5078,8 +5072,6 @@
 				BC72BA1C11E64907001EB4EA /* WebBackForwardList.h */,
 				F036978715F4BF0500C3A80E /* WebColorPicker.cpp */,
 				3F87B9BF158940D80090FF62 /* WebColorPicker.h */,
-				F036978915F4BF1300C3A80E /* WebColorPickerResultListenerProxy.cpp */,
-				F036978A15F4BF1300C3A80E /* WebColorPickerResultListenerProxy.h */,
 				BC4A62A514744EC6006C681A /* WebConnectionToWebProcess.cpp */,
 				BC4A62A614744EC6006C681A /* WebConnectionToWebProcess.h */,
 				BCB9E2421120DACA00A137E0 /* WebContext.cpp */,
@@ -5204,8 +5196,6 @@
 				BC646C1911DD399F006455B0 /* WKBackForwardListItemRef.h */,
 				BC646C1611DD399F006455B0 /* WKBackForwardListRef.cpp */,
 				BC646C1711DD399F006455B0 /* WKBackForwardListRef.h */,
-				F036978315F4BE6B00C3A80E /* WKColorPickerResultListener.cpp */,
-				F036978415F4BE6B00C3A80E /* WKColorPickerResultListener.h */,
 				BCB9E24A1120E15C00A137E0 /* WKContext.cpp */,
 				BCB9E2491120E15C00A137E0 /* WKContext.h */,
 				1A445BA4184D5FDA004B3414 /* WKContextConnectionClient.h */,
@@ -6795,7 +6785,6 @@
 				BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */,
 				BC4075F6124FF0270068F20A /* WKCertificateInfo.h in Headers */,
 				BC407627124FF0400068F20A /* WKCertificateInfoMac.h in Headers */,
-				F036978615F4BE6B00C3A80E /* WKColorPickerResultListener.h in Headers */,
 				372CAF0B1833FD910040AC27 /* WKNSError.h in Headers */,
 				BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */,
 				BC4A6297147313A0006C681A /* WKConnectionRef.h in Headers */,
@@ -7972,7 +7961,6 @@
 				868160D0187645570021E79D /* WindowServerConnection.mm in Sources */,
 				3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */,
 				F036978815F4BF0500C3A80E /* WebColorPicker.cpp in Sources */,
-				F036978B15F4BF1300C3A80E /* WebColorPickerResultListenerProxy.cpp in Sources */,
 				BC4A628F147312BE006C681A /* WebConnection.cpp in Sources */,
 				BC4A6291147312BE006C681A /* WebConnectionClient.cpp in Sources */,
 				1A1FEC1C1627B45700700F6D /* WebConnectionMessageReceiver.cpp in Sources */,
@@ -8199,7 +8187,6 @@
 				BC4075F5124FF0270068F20A /* WKCertificateInfo.cpp in Sources */,
 				BC407628124FF0400068F20A /* WKCertificateInfoMac.mm in Sources */,
 				515E7727183DD6F60007203F /* AsyncRequest.cpp in Sources */,
-				F036978515F4BE6B00C3A80E /* WKColorPickerResultListener.cpp in Sources */,
 				BCA284D61492F2C7001F9042 /* WKConnection.mm in Sources */,
 				BC4A6296147313A0006C681A /* WKConnectionRef.cpp in Sources */,
 				2D8710161828415D0018FA01 /* PlatformCALayerRemoteCustom.mm in Sources */,

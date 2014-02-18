@@ -121,11 +121,6 @@ public:
     virtual void saveDataToFileInDownloadsFolder(WebKit::WebPageProxy*, const WTF::String& suggestedFilename, const WTF::String& mimeType, const WTF::String& originatingURLString, API::Data*) { }
 
     virtual bool shouldInterruptJavaScript(WebKit::WebPageProxy*) { return false; }
-
-#if ENABLE(INPUT_TYPE_COLOR)
-    virtual bool showColorPicker(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebColorPickerResultListenerProxy*) { return false; }
-    virtual bool hideColorPicker(WebKit::WebPageProxy*) { return false; }
-#endif
 };
 
 } // namespace API

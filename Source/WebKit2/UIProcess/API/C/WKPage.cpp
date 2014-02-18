@@ -1460,26 +1460,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
             return m_client.shouldInterruptJavaScript(toAPI(page), m_client.base.clientInfo);
         }
-
-#if ENABLE(INPUT_TYPE_COLOR)
-        virtual bool showColorPicker(WebPageProxy* page, const String& initialColor, WebColorPickerResultListenerProxy* listener) override
-        {
-            if (!m_client.showColorPicker)
-                return false;
-
-            m_client.showColorPicker(toAPI(page), toAPI(initialColor.impl()), toAPI(listener), m_client.base.clientInfo);
-            return true;
-        }
-
-        virtual bool hideColorPicker(WebPageProxy* page) override
-        {
-            if (!m_client.hideColorPicker)
-                return false;
-
-            m_client.hideColorPicker(toAPI(page), m_client.base.clientInfo);
-            return true;
-        }
-#endif
     };
 
     toImpl(pageRef)->setUIClient(std::make_unique<UIClient>(wkClient));

@@ -26,6 +26,7 @@
 #ifndef WebViewEfl_h
 #define WebViewEfl_h
 
+#include "WebColorPickerClient.h"
 #include "WebView.h"
 
 class EwkView;
@@ -52,6 +53,13 @@ public:
     void sendMouseEvent(const Evas_Event_Mouse_Up*);
     void sendMouseEvent(const Evas_Event_Mouse_Move*);
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    void initializeColorPickerClient(const WKColorPickerClientBase*);
+
+    WebColorPickerClient& colorPickerClient() { return m_colorPickerClient; }
+    virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&) override;
+#endif
+
 private:
     WebViewEfl(WebContext*, WebPageGroup*);
 
@@ -77,6 +85,10 @@ private:
 private:
     EwkView* m_ewkView;
     bool m_hasRequestedFullScreen;
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    WebColorPickerClient m_colorPickerClient;
+#endif
 
     friend class WebView;
 };

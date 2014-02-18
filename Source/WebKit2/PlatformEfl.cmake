@@ -57,6 +57,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
 
+    UIProcess/API/C/efl/WKColorPickerResultListener.cpp
     UIProcess/API/C/efl/WKEventEfl.cpp
     UIProcess/API/C/efl/WKPageEfl.cpp
     UIProcess/API/C/efl/WKPopupItem.cpp
@@ -144,6 +145,9 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/TextCheckerEfl.cpp
     UIProcess/efl/VibrationClientEfl.cpp
     UIProcess/efl/ViewClientEfl.cpp
+    UIProcess/efl/WebColorPickerClient.cpp
+    UIProcess/efl/WebColorPickerEfl.cpp
+    UIProcess/efl/WebColorPickerResultListenerProxy.cpp
     UIProcess/efl/WebContextEfl.cpp
     UIProcess/efl/WebContextMenuProxyEfl.cpp
     UIProcess/efl/WebInspectorProxyEfl.cpp
