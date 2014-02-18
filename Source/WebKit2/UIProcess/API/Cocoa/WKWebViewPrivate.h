@@ -45,6 +45,10 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 
 @property (nonatomic, weak, setter=_setHistoryDelegate:) id <WKHistoryDelegatePrivate> _historyDelegate;
 
+@property (nonatomic, readonly) NSURL *_unreachableURL;
+
+- (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL;
+
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
 

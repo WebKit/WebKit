@@ -34,6 +34,8 @@
 
 @protocol WKHistoryDelegatePrivate <NSObject>
 
+@optional
+
 - (void)_webView:(WKWebView *)webView didNavigateWithNavigationData:(WKNavigationData *)navigationData;
 - (void)_webView:(WKWebView *)webView didPerformClientRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL;
 - (void)_webView:(WKWebView *)webView didPerformServerRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL;

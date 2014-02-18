@@ -472,6 +472,16 @@
     _navigationState->setHistoryDelegate(historyDelegate);
 }
 
+- (NSURL *)_unreachableURL
+{
+    return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL()];
+}
+
+- (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
+{
+    _page->loadAlternateHTMLString(string, [baseURL _web_originalDataAsWTFString], [unreachableURL _web_originalDataAsWTFString]);
+}
+
 static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)
 {
     WebCore::LayoutMilestones milestones = 0;
