@@ -653,7 +653,7 @@ private:
     virtual void mediaCanStart() override;
 
     void setShouldDelayLoadEvent(bool);
-    void invalidateCachedTime();
+    void invalidateCachedTime() const;
     void refreshCachedTime() const;
 
     bool hasMediaControls() const;
