@@ -26,7 +26,6 @@
 #ifndef IDBPendingOpenCall_h
 #define IDBPendingOpenCall_h
 
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
@@ -38,16 +37,6 @@ class IDBDatabaseCallbacks;
 
 class IDBPendingOpenCall {
 public:
-    static PassOwnPtr<IDBPendingOpenCall> create(IDBCallbacks& callbacks, IDBDatabaseCallbacks& databaseCallbacks, int64_t transactionId, uint64_t version)
-    {
-        return adoptPtr(new IDBPendingOpenCall(callbacks, databaseCallbacks, transactionId, version));
-    }
-    IDBCallbacks* callbacks() { return m_callbacks.get(); }
-    IDBDatabaseCallbacks* databaseCallbacks() { return m_databaseCallbacks.get(); }
-    uint64_t version() { return m_version; }
-    int64_t transactionId() const { return m_transactionId; }
-
-private:
     IDBPendingOpenCall(IDBCallbacks& callbacks, IDBDatabaseCallbacks& databaseCallbacks, int64_t transactionId, uint64_t version)
         : m_callbacks(&callbacks)
         , m_databaseCallbacks(&databaseCallbacks)
@@ -55,6 +44,13 @@ private:
         , m_transactionId(transactionId)
     {
     }
+
+    IDBCallbacks* callbacks() { return m_callbacks.get(); }
+    IDBDatabaseCallbacks* databaseCallbacks() { return m_databaseCallbacks.get(); }
+    uint64_t version() { return m_version; }
+    int64_t transactionId() const { return m_transactionId; }
+
+private:
     RefPtr<IDBCallbacks> m_callbacks;
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
     uint64_t m_version;

@@ -28,8 +28,7 @@
 
 #if USE(LEVELDB)
 
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -62,8 +61,9 @@ private:
 
 class LevelDBDatabase {
 public:
-    static PassOwnPtr<LevelDBDatabase> open(const String& fileName, const LevelDBComparator*);
-    static PassOwnPtr<LevelDBDatabase> openInMemory(const LevelDBComparator*);
+    static std::unique_ptr<LevelDBDatabase> open(const String& fileName, const LevelDBComparator*);
+    static std::unique_ptr<LevelDBDatabase> openInMemory(const LevelDBComparator*);
+    LevelDBDatabase();
     static bool destroy(const String& fileName);
     virtual ~LevelDBDatabase();
 
@@ -71,18 +71,15 @@ public:
     bool remove(const LevelDBSlice& key);
     virtual bool safeGet(const LevelDBSlice& key, Vector<char>& value, bool& found, const LevelDBSnapshot* = 0);
     bool write(LevelDBWriteBatch&);
-    PassOwnPtr<LevelDBIterator> createIterator(const LevelDBSnapshot* = 0);
+    std::unique_ptr<LevelDBIterator> createIterator(const LevelDBSnapshot* = 0);
     const LevelDBComparator* comparator() const;
-
-protected:
-    LevelDBDatabase();
 
 private:
     friend class LevelDBSnapshot;
 
-    OwnPtr<leveldb::Env> m_env;
-    OwnPtr<leveldb::Comparator> m_comparatorAdapter;
-    OwnPtr<leveldb::DB> m_db;
+    std::unique_ptr<leveldb::Env> m_env;
+    std::unique_ptr<leveldb::Comparator> m_comparatorAdapter;
+    std::unique_ptr<leveldb::DB> m_db;
     const LevelDBComparator* m_comparator;
 };
 

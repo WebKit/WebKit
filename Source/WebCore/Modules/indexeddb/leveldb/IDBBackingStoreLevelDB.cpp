@@ -250,7 +250,7 @@ WARN_UNUSED_RETURN static bool setUpMetadata(LevelDBDatabase* db, const String& 
             putInt(transaction.get(), schemaVersionKey, dbSchemaVersion);
             const Vector<char> startKey = DatabaseNameKey::encodeMinKeyForOrigin(origin);
             const Vector<char> stopKey = DatabaseNameKey::encodeStopKeyForOrigin(origin);
-            OwnPtr<LevelDBIterator> it = db->createIterator();
+            std::unique_ptr<LevelDBIterator> it = db->createIterator();
             for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
                 int64_t databaseId = 0;
                 found = false;
@@ -326,7 +326,7 @@ WARN_UNUSED_RETURN static bool getMaxObjectStoreId(DBOrTransaction* db, const Ve
 
 class DefaultLevelDBFactory : public LevelDBFactory {
 public:
-    virtual PassOwnPtr<LevelDBDatabase> openLevelDB(const String& fileName, const LevelDBComparator* comparator)
+    virtual std::unique_ptr<LevelDBDatabase> openLevelDB(const String& fileName, const LevelDBComparator* comparator)
     {
         return LevelDBDatabase::open(fileName, comparator);
     }
@@ -336,10 +336,10 @@ public:
     }
 };
 
-IDBBackingStoreLevelDB::IDBBackingStoreLevelDB(const String& identifier, PassOwnPtr<LevelDBDatabase> db, PassOwnPtr<LevelDBComparator> comparator)
+IDBBackingStoreLevelDB::IDBBackingStoreLevelDB(const String& identifier, std::unique_ptr<LevelDBDatabase> db, std::unique_ptr<LevelDBComparator> comparator)
     : m_identifier(identifier)
-    , m_db(db)
-    , m_comparator(comparator)
+    , m_db(std::move(db))
+    , m_comparator(std::move(comparator))
     , m_weakFactory(this)
 {
 }
@@ -347,8 +347,8 @@ IDBBackingStoreLevelDB::IDBBackingStoreLevelDB(const String& identifier, PassOwn
 IDBBackingStoreLevelDB::~IDBBackingStoreLevelDB()
 {
     // m_db's destructor uses m_comparator. The order of destruction is important.
-    m_db.clear();
-    m_comparator.clear();
+    m_db = nullptr;
+    m_comparator = nullptr;
 }
 
 enum IDBLevelDBBackingStoreOpenResult {
@@ -378,8 +378,8 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(const SecurityOr
     ASSERT(!pathBaseArg.isEmpty());
     String pathBase = pathBaseArg;
 
-    OwnPtr<LevelDBComparator> comparator = adoptPtr(new Comparator());
-    OwnPtr<LevelDBDatabase> db;
+    std::unique_ptr<LevelDBComparator> comparator = std::make_unique<Comparator>();
+    std::unique_ptr<LevelDBDatabase> db;
 
     if (!pathBase.containsOnlyASCII())
             HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenAttemptNonASCII, IDBLevelDBBackingStoreOpenMax);
@@ -398,11 +398,11 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(const SecurityOr
         if (!ok) {
             LOG_ERROR("IndexedDB had IO error checking schema, treating it as failure to open");
             HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedIOErrCheckingSchema, IDBLevelDBBackingStoreOpenMax);
-            db.clear();
+            db = nullptr;
         } else if (!known) {
             LOG_ERROR("IndexedDB backing store had unknown schema, treating it as failure to open");
             HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedUnknownSchema, IDBLevelDBBackingStoreOpenMax);
-            db.clear();
+            db = nullptr;
         }
     }
 
@@ -433,7 +433,7 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(const SecurityOr
         return PassRefPtr<IDBBackingStoreLevelDB>();
     }
 
-    return create(fileIdentifier, db.release(), comparator.release());
+    return create(fileIdentifier, std::move(db), std::move(comparator));
 }
 
 PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::openInMemory(const String& identifier)
@@ -446,8 +446,8 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::openInMemory(const St
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::openInMemory");
 
-    OwnPtr<LevelDBComparator> comparator = adoptPtr(new Comparator());
-    OwnPtr<LevelDBDatabase> db = LevelDBDatabase::openInMemory(comparator.get());
+    std::unique_ptr<LevelDBComparator> comparator = std::make_unique<Comparator>();
+    std::unique_ptr<LevelDBDatabase> db = LevelDBDatabase::openInMemory(comparator.get());
     if (!db) {
         LOG_ERROR("LevelDBDatabase::openInMemory failed.");
         HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemoryFailed, IDBLevelDBBackingStoreOpenMax);
@@ -455,13 +455,13 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::openInMemory(const St
     }
     HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemorySuccess, IDBLevelDBBackingStoreOpenMax);
 
-    return create(identifier, db.release(), comparator.release());
+    return create(identifier, std::move(db), std::move(comparator));
 }
 
-PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::create(const String& identifier, PassOwnPtr<LevelDBDatabase> db, PassOwnPtr<LevelDBComparator> comparator)
+PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::create(const String& identifier, std::unique_ptr<LevelDBDatabase> db, std::unique_ptr<LevelDBComparator> comparator)
 {
     // FIXME: Handle comparator name changes.
-    RefPtr<IDBBackingStoreLevelDB> backingStore(adoptRef(new IDBBackingStoreLevelDB(identifier, db, comparator)));
+    RefPtr<IDBBackingStoreLevelDB> backingStore(adoptRef(new IDBBackingStoreLevelDB(identifier, std::move(db), std::move(comparator))));
 
     if (!setUpMetadata(backingStore->m_db.get(), identifier))
         return PassRefPtr<IDBBackingStoreLevelDB>();
@@ -477,7 +477,7 @@ Vector<String> IDBBackingStoreLevelDB::getDatabaseNames()
 
     ASSERT(foundNames.isEmpty());
 
-    OwnPtr<LevelDBIterator> it = m_db->createIterator();
+    std::unique_ptr<LevelDBIterator> it = m_db->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
         const char* p = it->key().begin();
         const char* limit = it->key().end();
@@ -655,7 +655,7 @@ bool IDBBackingStoreLevelDB::updateIDBDatabaseVersion(IDBBackingStoreTransaction
 
 static void deleteRange(LevelDBTransaction* transaction, const Vector<char>& begin, const Vector<char>& end)
 {
-    OwnPtr<LevelDBIterator> it = transaction->createIterator();
+    std::unique_ptr<LevelDBIterator> it = transaction->createIterator();
     for (it->seek(begin); it->isValid() && compareKeys(it->key(), end) < 0; it->next())
         transaction->remove(it->key());
 }
@@ -663,7 +663,7 @@ static void deleteRange(LevelDBTransaction* transaction, const Vector<char>& beg
 void IDBBackingStoreLevelDB::deleteDatabase(const String& name, std::function<void (bool success)> boolCallbackFunction)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::deleteDatabase");
-    OwnPtr<LevelDBWriteOnlyTransaction> transaction = LevelDBWriteOnlyTransaction::create(m_db.get());
+    std::unique_ptr<LevelDBWriteOnlyTransaction> transaction = std::make_unique<LevelDBWriteOnlyTransaction>(m_db.get());
 
     IDBDatabaseMetadata metadata;
     bool success = false;
@@ -680,7 +680,7 @@ void IDBBackingStoreLevelDB::deleteDatabase(const String& name, std::function<vo
 
     const Vector<char> startKey = DatabaseMetaDataKey::encode(metadata.id, DatabaseMetaDataKey::OriginName);
     const Vector<char> stopKey = DatabaseMetaDataKey::encode(metadata.id + 1, DatabaseMetaDataKey::OriginName);
-    OwnPtr<LevelDBIterator> it = m_db->createIterator();
+    std::unique_ptr<LevelDBIterator> it = m_db->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next())
         transaction->remove(it->key());
 
@@ -721,7 +721,7 @@ bool IDBBackingStoreLevelDB::getObjectStores(int64_t databaseId, IDBDatabaseMeta
 
     ASSERT(objectStores->isEmpty());
 
-    OwnPtr<LevelDBIterator> it = m_db->createIterator();
+    std::unique_ptr<LevelDBIterator> it = m_db->createIterator();
     it->seek(startKey);
     while (it->isValid() && compareKeys(it->key(), stopKey) < 0) {
         const char* p = it->key().begin();
@@ -1030,7 +1030,7 @@ bool IDBBackingStoreLevelDB::getKeyGeneratorCurrentNumber(IDBBackingStoreTransac
         const Vector<char> startKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, minIDBKey());
         const Vector<char> stopKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, maxIDBKey());
 
-        OwnPtr<LevelDBIterator> it = levelDBTransaction->createIterator();
+        std::unique_ptr<LevelDBIterator> it = levelDBTransaction->createIterator();
         int64_t maxNumericKey = 0;
 
         for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
@@ -1127,7 +1127,7 @@ bool IDBBackingStoreLevelDB::getIndexes(int64_t databaseId, int64_t objectStoreI
 
     ASSERT(indexes->isEmpty());
 
-    OwnPtr<LevelDBIterator> it = m_db->createIterator();
+    std::unique_ptr<LevelDBIterator> it = m_db->createIterator();
     it->seek(startKey);
     while (it->isValid() && compareKeys(it->key(), stopKey) < 0) {
         const char* p = it->key().begin();
@@ -1254,7 +1254,7 @@ bool IDBBackingStoreLevelDB::putIndexDataForRecord(IDBBackingStoreTransactionLev
 
 static bool findGreatestKeyLessThanOrEqual(LevelDBTransaction* transaction, const Vector<char>& target, Vector<char>& foundKey)
 {
-    OwnPtr<LevelDBIterator> it = transaction->createIterator();
+    std::unique_ptr<LevelDBIterator> it = transaction->createIterator();
     it->seek(target);
 
     if (!it->isValid()) {
@@ -1307,7 +1307,7 @@ bool IDBBackingStoreLevelDB::findKeyInIndex(IDBBackingStoreTransactionLevelDB& t
 
     LevelDBTransaction* levelDBTransaction = IDBBackingStoreTransactionLevelDB::levelDBTransactionFrom(transaction);
     const Vector<char> leveldbKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, key);
-    OwnPtr<LevelDBIterator> it = levelDBTransaction->createIterator();
+    std::unique_ptr<LevelDBIterator> it = levelDBTransaction->createIterator();
     it->seek(leveldbKey);
 
     for (;;) {

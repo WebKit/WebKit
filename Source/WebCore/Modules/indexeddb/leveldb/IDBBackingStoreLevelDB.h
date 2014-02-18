@@ -37,7 +37,7 @@
 #include "LevelDBIterator.h"
 #include "LevelDBTransaction.h"
 #include <functional>
-#include <wtf/OwnPtr.h>
+#include <memory>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -56,7 +56,7 @@ class SharedBuffer;
 class LevelDBFactory {
 public:
     virtual ~LevelDBFactory() { }
-    virtual PassOwnPtr<LevelDBDatabase> openLevelDB(const String& fileName, const LevelDBComparator*) = 0;
+    virtual std::unique_ptr<LevelDBDatabase> openLevelDB(const String& fileName, const LevelDBComparator*) = 0;
     virtual bool destroyLevelDB(const String& fileName) = 0;
 };
 
@@ -116,8 +116,8 @@ public:
     void removeBackingStoreTransaction(IDBBackingStoreTransactionLevelDB*);
 
 private:
-    IDBBackingStoreLevelDB(const String& identifier, PassOwnPtr<LevelDBDatabase>, PassOwnPtr<LevelDBComparator>);
-    static PassRefPtr<IDBBackingStoreLevelDB> create(const String& identifier, PassOwnPtr<LevelDBDatabase>, PassOwnPtr<LevelDBComparator>);
+    IDBBackingStoreLevelDB(const String& identifier, std::unique_ptr<LevelDBDatabase>, std::unique_ptr<LevelDBComparator>);
+    static PassRefPtr<IDBBackingStoreLevelDB> create(const String& identifier, std::unique_ptr<LevelDBDatabase>, std::unique_ptr<LevelDBComparator>);
 
     // FIXME: LevelDB needs to support uint64_t as the version type.
     bool createIDBDatabaseMetaData(IDBDatabaseMetadata&);
@@ -129,8 +129,8 @@ private:
 
     String m_identifier;
 
-    OwnPtr<LevelDBDatabase> m_db;
-    OwnPtr<LevelDBComparator> m_comparator;
+    std::unique_ptr<LevelDBDatabase> m_db;
+    std::unique_ptr<LevelDBComparator> m_comparator;
     WeakPtrFactory<IDBBackingStoreLevelDB> m_weakFactory;
 
     HashMap<int64_t, RefPtr<IDBBackingStoreTransactionLevelDB>> m_backingStoreTransactions;

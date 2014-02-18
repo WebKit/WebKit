@@ -27,7 +27,6 @@
 #define IDBPendingDeleteCall_h
 
 #include "IDBCallbacks.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
@@ -36,17 +35,14 @@ namespace WebCore {
 
 class IDBPendingDeleteCall {
 public:
-    static PassOwnPtr<IDBPendingDeleteCall> create(PassRefPtr<IDBCallbacks> callbacks)
-    {
-        return adoptPtr(new IDBPendingDeleteCall(callbacks));
-    }
-    IDBCallbacks* callbacks() { return m_callbacks.get(); }
-
-private:
-    IDBPendingDeleteCall(PassRefPtr<IDBCallbacks> callbacks)
+    explicit IDBPendingDeleteCall(PassRefPtr<IDBCallbacks> callbacks)
         : m_callbacks(callbacks)
     {
     }
+
+    IDBCallbacks* callbacks() { return m_callbacks.get(); }
+
+private:
     RefPtr<IDBCallbacks> m_callbacks;
 };
 

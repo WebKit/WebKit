@@ -28,8 +28,7 @@
 
 #if USE(LEVELDB)
 
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 
 namespace leveldb {
 class WriteBatch;
@@ -43,7 +42,7 @@ class LevelDBSlice;
 // This class holds a collection of updates to apply atomically to a database.
 class LevelDBWriteBatch {
 public:
-    static PassOwnPtr<LevelDBWriteBatch> create();
+    LevelDBWriteBatch();
     ~LevelDBWriteBatch();
 
     void put(const LevelDBSlice& key, const LevelDBSlice& value);
@@ -52,9 +51,8 @@ public:
 
 private:
     friend class LevelDBDatabase;
-    LevelDBWriteBatch();
 
-    OwnPtr<leveldb::WriteBatch> m_writeBatch;
+    std::unique_ptr<leveldb::WriteBatch> m_writeBatch;
 };
 
 }

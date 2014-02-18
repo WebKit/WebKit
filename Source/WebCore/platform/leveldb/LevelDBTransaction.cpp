@@ -139,7 +139,7 @@ bool LevelDBTransaction::commit()
         return true;
     }
 
-    OwnPtr<LevelDBWriteBatch> writeBatch = LevelDBWriteBatch::create();
+    std::unique_ptr<LevelDBWriteBatch> writeBatch = std::make_unique<LevelDBWriteBatch>();
 
     TreeType::Iterator iterator;
     iterator.start_iter_least(m_tree);
@@ -168,14 +168,9 @@ void LevelDBTransaction::rollback()
     clearTree();
 }
 
-PassOwnPtr<LevelDBIterator> LevelDBTransaction::createIterator()
+std::unique_ptr<LevelDBIterator> LevelDBTransaction::createIterator()
 {
-    return TransactionIterator::create(this);
-}
-
-PassOwnPtr<LevelDBTransaction::TreeIterator> LevelDBTransaction::TreeIterator::create(LevelDBTransaction* transaction)
-{
-    return adoptPtr(new TreeIterator(transaction));
+    return std::make_unique<TransactionIterator>(this);
 }
 
 bool LevelDBTransaction::TreeIterator::isValid() const
@@ -257,15 +252,10 @@ LevelDBTransaction::TreeIterator::TreeIterator(LevelDBTransaction* transaction)
 {
 }
 
-PassOwnPtr<LevelDBTransaction::TransactionIterator> LevelDBTransaction::TransactionIterator::create(PassRefPtr<LevelDBTransaction> transaction)
-{
-    return adoptPtr(new TransactionIterator(transaction));
-}
-
 LevelDBTransaction::TransactionIterator::TransactionIterator(PassRefPtr<LevelDBTransaction> transaction)
     : m_transaction(transaction)
     , m_comparator(m_transaction->m_comparator)
-    , m_treeIterator(TreeIterator::create(m_transaction.get()))
+    , m_treeIterator(std::make_unique<TreeIterator>((m_transaction.get())))
     , m_dbIterator(m_transaction->m_db->createIterator(&m_transaction->m_snapshot))
     , m_current(0)
     , m_direction(kForward)
@@ -387,7 +377,7 @@ void LevelDBTransaction::TransactionIterator::refreshTreeIterator() const
 
     m_treeChanged = false;
 
-    if (m_treeIterator->isValid() && m_treeIterator == m_current) {
+    if (m_treeIterator->isValid() && m_treeIterator.get() == m_current) {
         m_treeIterator->reset();
         return;
     }
@@ -499,14 +489,9 @@ void LevelDBTransaction::notifyIteratorsOfTreeChange()
     }
 }
 
-PassOwnPtr<LevelDBWriteOnlyTransaction> LevelDBWriteOnlyTransaction::create(LevelDBDatabase* db)
-{
-    return adoptPtr(new LevelDBWriteOnlyTransaction(db));
-}
-
 LevelDBWriteOnlyTransaction::LevelDBWriteOnlyTransaction(LevelDBDatabase* db)
     : m_db(db)
-    , m_writeBatch(LevelDBWriteBatch::create())
+    , m_writeBatch(std::make_unique<LevelDBWriteBatch>())
     , m_finished(false)
 {
 }

@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
@@ -39,7 +40,7 @@ class IDBTransactionBackend;
 // Transactions are executed in the order the were created.
 class IDBTransactionCoordinator {
 public:
-    static PassOwnPtr<IDBTransactionCoordinator> create();
+    IDBTransactionCoordinator();
     virtual ~IDBTransactionCoordinator();
 
     // Called by transactions as they start and finish.
@@ -53,8 +54,6 @@ public:
 #endif
 
 private:
-    IDBTransactionCoordinator();
-
     void processStartedTransactions();
     bool canRunTransaction(IDBTransactionBackend*);
 

@@ -249,7 +249,7 @@ void IDBDatabaseBackend::VersionChangeOperation::perform(std::function<void()> c
         } else {
             ASSERT(!m_transaction->database().hasPendingSecondHalfOpen());
             m_transaction->database().setCurrentVersion(m_version);
-            m_transaction->database().setPendingSecondHalfOpen(IDBPendingOpenCall::create(*m_callbacks, *m_databaseCallbacks, m_transaction->id(), m_version));
+            m_transaction->database().setPendingSecondHalfOpen(std::make_unique<IDBPendingOpenCall>(*m_callbacks, *m_databaseCallbacks, m_transaction->id(), m_version));
             m_callbacks->onUpgradeNeeded(oldVersion, &m_transaction->database(), m_transaction->database().metadata());
         }
         completionCallback();

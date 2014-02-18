@@ -34,13 +34,8 @@
 
 namespace WebCore {
 
-PassOwnPtr<LevelDBWriteBatch> LevelDBWriteBatch::create()
-{
-    return adoptPtr(new LevelDBWriteBatch);
-}
-
 LevelDBWriteBatch::LevelDBWriteBatch()
-    : m_writeBatch(adoptPtr(new leveldb::WriteBatch))
+    : m_writeBatch(std::make_unique<leveldb::WriteBatch>())
 {
 }
 

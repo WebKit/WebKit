@@ -33,11 +33,6 @@
 
 namespace WebCore {
 
-PassOwnPtr<IDBTransactionCoordinator> IDBTransactionCoordinator::create()
-{
-    return adoptPtr(new IDBTransactionCoordinator());
-}
-
 IDBTransactionCoordinator::IDBTransactionCoordinator()
 {
 }

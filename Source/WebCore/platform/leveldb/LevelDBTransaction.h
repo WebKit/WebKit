@@ -35,7 +35,6 @@
 #include "LevelDBSlice.h"
 #include <wtf/AVLTree.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -59,7 +58,7 @@ public:
     bool commit();
     void rollback();
 
-    PassOwnPtr<LevelDBIterator> createIterator();
+    std::unique_ptr<LevelDBIterator> createIterator();
 
 private:
     LevelDBTransaction(LevelDBDatabase*);
@@ -100,7 +99,7 @@ private:
 
     class TreeIterator : public LevelDBIterator {
     public:
-        static PassOwnPtr<TreeIterator> create(LevelDBTransaction*);
+        explicit TreeIterator(LevelDBTransaction*);
         ~TreeIterator();
 
         virtual bool isValid() const;
@@ -114,7 +113,6 @@ private:
         void reset();
 
     private:
-        TreeIterator(LevelDBTransaction*);
         mutable TreeType::Iterator m_iterator; // Dereferencing this is non-const.
         TreeType* m_tree;
         LevelDBTransaction* m_transaction;
@@ -123,8 +121,8 @@ private:
 
     class TransactionIterator : public LevelDBIterator {
     public:
+        explicit TransactionIterator(PassRefPtr<LevelDBTransaction>);
         ~TransactionIterator();
-        static PassOwnPtr<TransactionIterator> create(PassRefPtr<LevelDBTransaction>);
 
         virtual bool isValid() const;
         virtual void seekToLast();
@@ -136,7 +134,6 @@ private:
         void treeChanged();
 
     private:
-        TransactionIterator(PassRefPtr<LevelDBTransaction>);
         void handleConflictsAndDeletes();
         void setCurrentIteratorToSmallestKey();
         void setCurrentIteratorToLargestKey();
@@ -146,8 +143,8 @@ private:
 
         RefPtr<LevelDBTransaction> m_transaction;
         const LevelDBComparator* m_comparator;
-        mutable OwnPtr<TreeIterator> m_treeIterator;
-        OwnPtr<LevelDBIterator> m_dbIterator;
+        mutable std::unique_ptr<TreeIterator> m_treeIterator;
+        std::unique_ptr<LevelDBIterator> m_dbIterator;
         LevelDBIterator* m_current;
 
         enum Direction {
@@ -174,17 +171,14 @@ private:
 
 class LevelDBWriteOnlyTransaction {
 public:
-    static PassOwnPtr<LevelDBWriteOnlyTransaction> create(LevelDBDatabase*);
-
+    explicit LevelDBWriteOnlyTransaction(LevelDBDatabase*);
     ~LevelDBWriteOnlyTransaction();
     void remove(const LevelDBSlice& key);
     bool commit();
 
 private:
-    LevelDBWriteOnlyTransaction(LevelDBDatabase*);
-
     LevelDBDatabase* m_db;
-    OwnPtr<LevelDBWriteBatch> m_writeBatch;
+    std::unique_ptr<LevelDBWriteBatch> m_writeBatch;
     bool m_finished;
 };
 

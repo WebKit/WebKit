@@ -29,6 +29,7 @@
 #include "IDBKey.h"
 #include "IDBRecordIdentifier.h"
 #include "LevelDBIterator.h"
+#include <memory>
 
 #if ENABLE(INDEXED_DATABASE)
 #if USE(LEVELDB)
@@ -88,7 +89,7 @@ protected:
     int64_t m_cursorID;
     LevelDBTransaction* m_transaction;
     const CursorOptions m_cursorOptions;
-    OwnPtr<LevelDBIterator> m_iterator;
+    std::unique_ptr<LevelDBIterator> m_iterator;
     RefPtr<IDBKey> m_currentKey;
     RefPtr<IDBRecordIdentifier> m_recordIdentifier;
 };
