@@ -1,3 +1,19 @@
+2014-02-18  Samuel White  <samuel_white@apple.com>
+
+        AX: Searching for "immediate descendants only" can return unexpected results.
+        https://bugs.webkit.org/show_bug.cgi?id=128986
+
+        Reviewed by Chris Fleizach.
+
+        Missed an application of the immediateDescendantsOnly flag during the initial implementation. We
+        need to make sure we don't decend into the startObject first if it is provided. This fix causes
+        the outer loop to 'skip' the first iteration so only siblings of the startObject are considered.
+
+        No new tests, updated existing search-predicate-immediate-descendants-only.html test to cover this case.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::findMatchingObjects):
+
 2014-02-18 Ryosuke Niwa <rniwa@webkit.org>
 
         Merge notifyComponentsOnChangedSelection into respondToSelectionChange

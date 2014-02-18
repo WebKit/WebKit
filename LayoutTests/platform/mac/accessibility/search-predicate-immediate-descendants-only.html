@@ -7,9 +7,9 @@
 <body>
 
 <div id="container">
-<ul><li>immediate descendant</li><li><ul><li>distant descendant</li></ul></li></ul>
-<ul><li>immediate descendant</li><li><ul><li>distant descendant</li></ul></li></ul>
-<ul><li>immediate descendant</li><li><ul><li>distant descendant</li></ul></li></ul>
+<h1>heading<img src="resources/cake.png" alt="Cake"></h1>
+<p>text <a href="#">link</a></p>
+<ul><li>item</li><li><ul><li>subitem</li></ul></li></ul>
 </div>
 
 <p id="description"></p>
@@ -23,12 +23,16 @@
         var containerElement = accessibilityController.focusedElement;
         
         // All descendants.
-        var allDescendantsCount = containerElement.uiElementCountForSearchPredicate(null, true, "AXListSearchKey", "", false, false);
-        shouldBe("allDescendantsCount", "6");
+        var allDescendantsCount = containerElement.uiElementCountForSearchPredicate(null, true, "AXAnyTypeSearchKey", "", false, false);
+        shouldBe("allDescendantsCount", "25");
         
-        // Immediate descendants.
-        var immediateDescendantsCount = containerElement.uiElementCountForSearchPredicate(null, true, "AXListSearchKey", "", false, true);
-        shouldBe("immediateDescendantsCount", "3");
+        // Immeditate descendants.
+        var immediateDescendantsCount = containerElement.uiElementCountForSearchPredicate(null, true, "AXAnyTypeSearchKey", "", false, true);
+        shouldBe("immediateDescendantsCount", "6");
+        
+        // The number of immediate descendants should be equal to the number of children (when using "AXAnyTypeSearchKey").
+        var childrenCount = containerElement.childrenCount;
+        shouldBe("immediateDescendantsCount", "childrenCount");
         
         // Hide superfluous text.
         document.getElementById("container").style.display = "none";

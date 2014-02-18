@@ -489,7 +489,8 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
         // Only append the children after/before the previous element, so that the search does not check elements that are 
         // already behind/ahead of start element.
         AccessibilityChildrenVector searchStack;
-        appendChildrenToArray(startObject, isForward, previousObject, searchStack);
+        if (!criteria->immediateDescendantsOnly || startObject == this)
+            appendChildrenToArray(startObject, isForward, previousObject, searchStack);
 
         // This now does a DFS at the current level of the parent.
         while (!searchStack.isEmpty()) {
