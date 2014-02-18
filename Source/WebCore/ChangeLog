@@ -1,5 +1,23 @@
 2014-02-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        Move inheriting method to the superclass in the JavaScript media controls
+        https://bugs.webkit.org/show_bug.cgi?id=128897
+
+        Reviewed by Jer Noble.
+
+        The inheriting method of the JavaScript multimedia controls was
+        moved from the subclasses to the superclass because this way it is
+        only defined once.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.extend): Added to replace inheritFrom in the
+        subclasses.
+        * Modules/mediacontrols/mediaControlsGtk.js:
+        * Modules/mediacontrols/mediaControlsiOS.js: Removed inheritFrom
+        and used extend.
+
+2014-02-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         [GTK] Fix hitting hasClass() assertion in debug with the new JS media controls
         https://bugs.webkit.org/show_bug.cgi?id=128820
 

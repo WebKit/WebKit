@@ -12,13 +12,6 @@ function ControllerIOS(root, video, host)
 ControllerIOS.StartPlaybackControls = 2;
 
 ControllerIOS.prototype = {
-    inheritFrom: function(parent) {
-        for (var property in parent) {
-            if (!this.hasOwnProperty(property))
-                this[property] = parent[property];
-        }
-    },
-
     addVideoListeners: function() {
         Controller.prototype.addVideoListeners.call(this);
 
@@ -283,5 +276,5 @@ ControllerIOS.prototype = {
 
 };
 
-ControllerIOS.prototype.inheritFrom(Object.create(Controller.prototype));
+Object.create(Controller.prototype).extend(ControllerIOS.prototype);
 Object.defineProperty(ControllerIOS.prototype, 'constructor', { enumerable:false, value:ControllerIOS });

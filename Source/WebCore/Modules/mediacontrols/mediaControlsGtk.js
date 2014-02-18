@@ -19,13 +19,6 @@ function contains(list, obj)
 
 ControllerGtk.prototype = {
 
-    inheritFrom: function(parent) {
-        for (var property in parent) {
-            if (!this.hasOwnProperty(property))
-                this[property] = parent[property];
-        }
-    },
-
     createControls: function()
     {
         Controller.prototype.createControls.apply(this);
@@ -213,5 +206,5 @@ ControllerGtk.prototype = {
     },
 };
 
-ControllerGtk.prototype.inheritFrom(Object.create(Controller.prototype));
+Object.create(Controller.prototype).extend(ControllerGtk.prototype);
 Object.defineProperty(ControllerGtk.prototype, 'constructor', { enumerable:false, value:ControllerGtk });

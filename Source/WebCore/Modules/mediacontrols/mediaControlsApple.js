@@ -97,6 +97,13 @@ Controller.prototype = {
         down: 40
     },
 
+    extend: function(child) {
+        for (var property in this) {
+            if (!child.hasOwnProperty(property))
+                child[property] = this[property];
+        }
+    },
+
     // Localized string accessor
     UIString: function(s){
         if (this.localizedStrings[s])
