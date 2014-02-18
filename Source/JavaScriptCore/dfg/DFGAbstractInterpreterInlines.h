@@ -1071,8 +1071,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         AbstractValue& source = forNode(node->child1());
         AbstractValue& destination = forNode(node);
             
-        destination = source;
-        destination.merge(SpecObject);
+        if (m_graph.executableFor(node->codeOrigin)->isStrictMode())
+            destination.makeHeapTop();
+        else {
+            destination = source;
+            destination.merge(SpecObject);
+        }
         break;
     }
 

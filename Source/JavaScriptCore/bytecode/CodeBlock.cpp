@@ -140,6 +140,8 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
         out.print(" (SABI)");
     if (ownerExecutable()->neverInline())
         out.print(" (NeverInline)");
+    if (ownerExecutable()->isStrictMode())
+        out.print(" (StrictMode)");
     out.print("]");
 }
 
