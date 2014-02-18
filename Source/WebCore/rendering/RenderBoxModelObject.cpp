@@ -423,6 +423,8 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
     if (enclosingClippingLayer) {
         RenderBox& enclosingClippingBox = toRenderBox(enclosingClippingLayer->renderer());
         LayoutRect clipRect = enclosingClippingBox.overflowClipRect(LayoutPoint(), 0); // FIXME: make this work in regions.
+        clipRect.contract(LayoutSize(enclosingClippingBox.paddingLeft() + enclosingClippingBox.paddingRight(),
+            enclosingClippingBox.paddingTop() + enclosingClippingBox.paddingBottom()));
         constrainingRect = enclosingClippingBox.localToContainerQuad(FloatRect(clipRect), &view()).boundingBox();
 
         FloatPoint scrollOffset = FloatPoint() + enclosingClippingLayer->scrollOffset();

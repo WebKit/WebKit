@@ -1,3 +1,15 @@
+2014-02-18  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
+
+        Bottom/right sticky positioning don't correctly handle scroll containers with padding
+        https://bugs.webkit.org/show_bug.cgi?id=119280
+
+        Reviewed by Simon Fraser.
+
+        Check that sticky elements positioned correcly in overflow with padding.
+
+        * fast/css/sticky/sticky-bottom-overflow-padding-expected.html: Added.
+        * fast/css/sticky/sticky-bottom-overflow-padding.html: Added.
+
 2014-02-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Crash when merging ruby bases that contain floats

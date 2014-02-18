@@ -1,3 +1,18 @@
+2014-02-18  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
+
+        Bottom/right sticky positioning don't correctly handle scroll containers with padding
+        https://bugs.webkit.org/show_bug.cgi?id=119280
+
+        Reviewed by Simon Fraser.
+
+        Take padding into account during calculation of overflow constraining rect for sticky
+        positioning.
+
+        Test: fast/css/sticky/sticky-bottom-overflow-padding.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::stickyPositionOffset):
+
 2014-02-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Crash when merging ruby bases that contain floats
