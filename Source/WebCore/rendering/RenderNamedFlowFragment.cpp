@@ -197,34 +197,48 @@ LayoutRect RenderNamedFlowFragment::flowThreadPortionRectForClipping(bool isFirs
     // Regions with overflow:hidden will apply clip at the border box, not the content box.
     
     LayoutRect clippingRect = flowThreadPortionRect();
-    if (regionContainer()->style().hasPadding()) {
+    RenderBlockFlow& container = fragmentContainer();
+    if (container.style().hasPadding()) {
         if (isFirstRegionInRange) {
             if (flowThread()->isHorizontalWritingMode()) {
-                clippingRect.move(0, -regionContainer()->paddingBefore());
-                clippingRect.expand(0, regionContainer()->paddingBefore());
+                clippingRect.move(0, -container.paddingBefore());
+                clippingRect.expand(0, container.paddingBefore());
             } else {
-                clippingRect.move(-regionContainer()->paddingBefore(), 0);
-                clippingRect.expand(regionContainer()->paddingBefore(), 0);
+                clippingRect.move(-container.paddingBefore(), 0);
+                clippingRect.expand(container.paddingBefore(), 0);
             }
         }
         
         if (isLastRegionInRange) {
             if (flowThread()->isHorizontalWritingMode())
-                clippingRect.expand(0, regionContainer()->paddingAfter());
+                clippingRect.expand(0, container.paddingAfter());
             else
-                clippingRect.expand(regionContainer()->paddingAfter(), 0);
+                clippingRect.expand(container.paddingAfter(), 0);
         }
         
         if (flowThread()->isHorizontalWritingMode()) {
-            clippingRect.move(-regionContainer()->paddingStart(), 0);
-            clippingRect.expand(regionContainer()->paddingStart() + regionContainer()->paddingEnd(), 0);
+            clippingRect.move(-container.paddingStart(), 0);
+            clippingRect.expand(container.paddingStart() + container.paddingEnd(), 0);
         } else {
-            clippingRect.move(0, -regionContainer()->paddingStart());
-            clippingRect.expand(0, regionContainer()->paddingStart() + regionContainer()->paddingEnd());
+            clippingRect.move(0, -container.paddingStart());
+            clippingRect.expand(0, container.paddingStart() + container.paddingEnd());
         }
     }
     
     return clippingRect;
+}
+
+RenderBlockFlow& RenderNamedFlowFragment::fragmentContainer() const
+{
+    ASSERT(parent());
+    ASSERT(parent()->isRenderNamedFlowFragmentContainer());
+    return *toRenderBlockFlow(parent());
+}
+
+RenderLayer& RenderNamedFlowFragment::fragmentContainerLayer() const
+{
+    ASSERT(fragmentContainer().layer());
+    return *fragmentContainer().layer();
 }
 
 void RenderNamedFlowFragment::layoutBlock(bool relayoutChildren, LayoutUnit)

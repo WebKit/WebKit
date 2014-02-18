@@ -62,6 +62,9 @@ public:
     
     LayoutRect flowThreadPortionRectForClipping(bool isFirstRegionInRange, bool isLastRegionInRange) const;
 
+    RenderBlockFlow& fragmentContainer() const;
+    RenderLayer& fragmentContainerLayer() const;
+
     bool isPseudoElementRegion() const { return parent() && parent()->isPseudoElement(); }
 
     // When the content inside the region requires the region to have a layer, the layer will be created on the region's

@@ -1,3 +1,26 @@
+2014-02-17  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Move specific named flow methods from RenderRegion to RenderNamedFlowFragment
+        https://bugs.webkit.org/show_bug.cgi?id=128914
+
+        Reviewed by Antti Koivisto.
+
+        Moved named flow specific methods regionContainer() and regionContainerLayer() from 
+        RenderRegion to RenderNamedFlowFragment and renamed them to fragmentContainer and
+        fragmentContainerLayer.
+
+        No new tests required.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::mapLayerClipRectsToFragmentationLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::fragmentContainer):
+        (WebCore::RenderNamedFlowFragment::fragmentContainerLayer):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderRegion.cpp:
+        * rendering/RenderRegion.h:
+
 2014-02-17  Sangho Kim  <thomas.kim@lge.com>
 
         Move PublicURLMansger to std::unique_ptr.

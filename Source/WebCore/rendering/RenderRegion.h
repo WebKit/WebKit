@@ -56,9 +56,6 @@ public:
     LayoutRect flowThreadPortionOverflowRect();
 
     LayoutPoint flowThreadPortionLocation() const;
-    
-    RenderBlockFlow* regionContainer() const;
-    RenderLayer* regionContainerLayer() const;
 
     virtual void attachRegion();
     virtual void detachRegion();

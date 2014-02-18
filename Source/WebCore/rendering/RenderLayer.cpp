@@ -5252,15 +5252,17 @@ void RenderLayer::updateClipRects(const ClipRectsContext& clipRectsContext)
 
 void RenderLayer::mapLayerClipRectsToFragmentationLayer(RenderRegion* region, ClipRects& clipRects) const
 {
-    ASSERT(region && region->parent() && region->parent()->isRenderNamedFlowFragmentContainer());
+    ASSERT(region && region->isRenderNamedFlowFragment() && region->parent() && region->parent()->isRenderNamedFlowFragmentContainer());
+    
+    RenderNamedFlowFragment* flowFragment = toRenderNamedFlowFragment(region);
 
-    ClipRectsContext targetClipRectsContext(region->regionContainerLayer(), 0, TemporaryClipRects);
-    region->regionContainerLayer()->calculateClipRects(targetClipRectsContext, clipRects);
+    ClipRectsContext targetClipRectsContext(&flowFragment->fragmentContainerLayer(), 0, TemporaryClipRects);
+    flowFragment->fragmentContainerLayer().calculateClipRects(targetClipRectsContext, clipRects);
 
     LayoutRect flowThreadPortionRect = region->flowThreadPortionRect();
 
     LayoutPoint portionLocation = flowThreadPortionRect.location();
-    LayoutRect regionContentBox = region->regionContainer()->contentBoxRect();
+    LayoutRect regionContentBox = flowFragment->fragmentContainer().contentBoxRect();
     LayoutSize moveOffset = portionLocation - regionContentBox.location();
 
     ClipRect newOverflowClipRect = clipRects.overflowClipRect();
@@ -5456,8 +5458,10 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         outlineRect = backgroundRect;
         
         // If the region does not clip its overflow, inflate the outline rect.
-        if (!(clipRectsContext.region->parent()->hasOverflowClip() && (clipRectsContext.region->regionContainerLayer() != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)))
-            outlineRect.inflate(renderer().maximalOutlineSize(PaintPhaseOutline));
+        if (clipRectsContext.region->isRenderNamedFlowFragment()) {
+            if (!(clipRectsContext.region->parent()->hasOverflowClip() && (&toRenderNamedFlowFragment(clipRectsContext.region)->fragmentContainerLayer() != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)))
+                outlineRect.inflate(renderer().maximalOutlineSize(PaintPhaseOutline));
+        }
     }
 
     // Update the clip rects that will be passed to child layers.

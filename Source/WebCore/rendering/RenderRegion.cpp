@@ -150,17 +150,6 @@ LayoutPoint RenderRegion::flowThreadPortionLocation() const
     return portionLocation;
 }
 
-RenderBlockFlow* RenderRegion::regionContainer() const
-{
-    ASSERT(parent() && parent()->isRenderNamedFlowFragmentContainer());
-    return toRenderBlockFlow(parent());
-}
-
-RenderLayer* RenderRegion::regionContainerLayer() const
-{
-    return regionContainer()->layer();
-}
-
 LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType overflowType)
 {
     ASSERT(isValid());
