@@ -1,3 +1,22 @@
+2014-02-17  Alexey Proskuryakov  <ap@apple.com>
+
+        [iOS] All WebKit clients should encrypt WebCrypto keys automatically
+        https://bugs.webkit.org/show_bug.cgi?id=128938
+
+        Reviewed by Dan Bernstein.
+
+        Don't pass ACLs on iOS. Key will be added to app's default Keychain access group.
+
+        Also, don't pass kSecAttrIsPermanent, which is irrelevant for password items, and
+        caused error -50 in DumpRenderTree for me when passed.
+
+        Added fallback to _NSGetProgname for account name, to account for tools such as
+        Mac DumpRenderTree that don't have bundle identifiers.
+
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::masterKeyAccountNameForCurrentApplication):
+        (WebCore::createAndStoreMasterKey):
+
 2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         setSelectionRange should set selection without validation

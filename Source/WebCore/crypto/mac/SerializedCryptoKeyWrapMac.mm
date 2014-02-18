@@ -31,10 +31,13 @@
 #include "CommonCryptoUtilities.h"
 #include "LocalizedStrings.h"
 #include <CommonCrypto/CommonSymmetricKeywrap.h>
+#include <crt_externs.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/CryptographicUtilities.h>
 #include <wtf/RetainPtr.h>
+
+#define WTF_USE_KEYCHAIN_ACCESS_CONTROL_LISTS (!PLATFORM(IOS))
 
 namespace WebCore {
 
@@ -54,21 +57,16 @@ inline Vector<uint8_t> vectorFromNSData(NSData* data)
     return result;
 }
 
-#if PLATFORM(IOS)
-
-bool getDefaultWebCryptoMasterKey(Vector<uint8_t>& masterKey)
-{
-    // FIXME: Implement.
-    masterKey.resize(masterKeySizeInBytes);
-    memset(masterKey.data(), 0, masterKey.size());
-    return true;
-}
-
-#else
-
 static NSString* masterKeyAccountNameForCurrentApplication()
 {
-    return [NSString stringWithFormat:@"com.apple.WebKit.WebCrypto.master+%@", [[NSRunningApplication currentApplication] bundleIdentifier]];
+#if PLATFORM(IOS)
+    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+#else
+    NSString *bundleIdentifier = [[NSRunningApplication currentApplication] bundleIdentifier];
+#endif
+    if (!bundleIdentifier)
+        bundleIdentifier = [NSString stringWithCString:*_NSGetProgname() encoding:NSASCIIStringEncoding];
+    return [NSString stringWithFormat:@"com.apple.WebKit.WebCrypto.master+%@", bundleIdentifier];
 }
 
 static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
@@ -76,10 +74,23 @@ static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
     masterKeyData.resize(masterKeySizeInBytes);
     CCRandomCopyBytes(kCCRandomDefault, masterKeyData.data(), masterKeyData.size());
 
+#if PLATFORM(IOS)
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    NSString *applicationName = [mainBundle objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+    if (!applicationName)
+        applicationName = [mainBundle objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
+    if (!applicationName)
+        applicationName = [mainBundle bundleIdentifier];
+    NSString *localizedItemName = webCryptoMasterKeyKeychainLabel(applicationName);
+#else
     NSString *localizedItemName = webCryptoMasterKeyKeychainLabel([[NSRunningApplication currentApplication] localizedName]);
+#endif
 
+    OSStatus status;
+
+#if USE(KEYCHAIN_ACCESS_CONTROL_LISTS)
     SecAccessRef accessRef;
-    OSStatus status = SecAccessCreate((CFStringRef)localizedItemName, nullptr, &accessRef);
+    status = SecAccessCreate((CFStringRef)localizedItemName, nullptr, &accessRef);
     if (status) {
         WTFLogAlways("Cannot create a security access object for storing WebCrypto master key, error %d", (int)status);
         return nullptr;
@@ -102,6 +113,7 @@ static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
         WTFLogAlways("Cannot set ACL for WebCrypto master key, error %d", (int)status);
         return nullptr;
     }
+#endif
 
     Vector<char> base64EncodedMasterKeyData;
     base64Encode(masterKeyData, base64EncodedMasterKeyData);
@@ -110,8 +122,9 @@ static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
     NSDictionary *attributes = @{
         (id)kSecClass : (id)kSecClassGenericPassword,
         (id)kSecAttrSynchronizable : @NO,
-        (id)kSecAttrIsPermanent : @YES,
+#if USE(KEYCHAIN_ACCESS_CONTROL_LISTS)
         (id)kSecAttrAccess : (id)access.get(),
+#endif
         (id)kSecAttrComment : webCryptoMasterKeyKeychainComment(),
         (id)kSecAttrLabel : localizedItemName,
         (id)kSecAttrAccount : masterKeyAccountNameForCurrentApplication(),
@@ -154,8 +167,6 @@ bool getDefaultWebCryptoMasterKey(Vector<uint8_t>& masterKey)
     RELEASE_ASSERT(masterKey.size() == masterKeySizeInBytes);
     return true;
 }
-
-#endif
 
 bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result)
 {
