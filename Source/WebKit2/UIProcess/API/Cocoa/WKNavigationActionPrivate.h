@@ -23,19 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKNavigationActionPrivate.h"
+#import <WebKit2/WKNavigationAction.h>
 
 #if WK_API_ENABLED
 
-@interface WKNavigationAction ()
+@interface WKNavigationAction (WKPrivate)
 
-@property (nonatomic, readwrite, strong) WKFrameInfo *sourceFrame;
-@property (nonatomic, readwrite, strong) WKFrameInfo *destinationFrame;
-
-@property (nonatomic, readwrite) WKNavigationType navigationType;
-@property (nonatomic, readwrite, copy) NSURLRequest *request;
-
-@property (nonatomic, readwrite, copy, setter=_setOriginalURL:) NSURL *_originalURL;
+@property (nonatomic, readonly) NSURL *_originalURL;
 
 @end
 

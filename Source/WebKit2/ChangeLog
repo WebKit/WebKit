@@ -1,5 +1,18 @@
 2014-02-18  Anders Carlsson  <andersca@apple.com>
 
+        Add SPI for getting the original URL from a WKNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=128997
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKNavigationActionInternal.h:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKNavigationActionInternal.h.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-02-18  Anders Carlsson  <andersca@apple.com>
+
         Add more WKWebView SPI
         https://bugs.webkit.org/show_bug.cgi?id=128994
 
