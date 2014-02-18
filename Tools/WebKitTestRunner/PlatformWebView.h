@@ -80,7 +80,7 @@ public:
     void setWindowIsKey(bool isKey) { m_windowIsKey = isKey; }
     bool windowIsKey() const { return m_windowIsKey; }
 
-#if PLATFORM(MAC) || PLATFORM(EFL)
+#if PLATFORM(COCOA) || PLATFORM(EFL)
     bool viewSupportsOptions(WKDictionaryRef) const;
 #else
     bool viewSupportsOptions(WKDictionaryRef) const { return true; }

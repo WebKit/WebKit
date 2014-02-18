@@ -86,7 +86,7 @@ void computeMD5HashStringForContext(CGContextRef bitmapContext, char hashString[
     // We need to swap the bytes to ensure consistent hashes independently of endianness
     MD5 md5;
     unsigned char* bitmapData = static_cast<unsigned char*>(CGBitmapContextGetData(bitmapContext));
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if ((CGBitmapContextGetBitmapInfo(bitmapContext) & kCGBitmapByteOrderMask) == kCGBitmapByteOrder32Big) {
         for (unsigned row = 0; row < pixelsHigh; row++) {
             Vector<uint8_t> buffer(4 * pixelsWide);

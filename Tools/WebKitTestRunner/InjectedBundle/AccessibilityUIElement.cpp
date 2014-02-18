@@ -61,7 +61,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int) { return 0; }
 #endif
 
-#if (!PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(EFL)) || !HAVE(ACCESSIBILITY)
+#if (!PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(EFL)) || !HAVE(ACCESSIBILITY)
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement) { }
 AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement&) { }
 AccessibilityUIElement::~AccessibilityUIElement() { }

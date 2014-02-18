@@ -60,7 +60,7 @@ AccessibilityTextMarkerRange::~AccessibilityTextMarkerRange()
 
 PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() const
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     return m_textMarkerRange.get();
 #else
     return m_textMarkerRange;

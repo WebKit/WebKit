@@ -66,7 +66,7 @@ public:
 private:
     AccessibilityController();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<NotificationHandler> m_globalNotificationHandler;
 #endif
 

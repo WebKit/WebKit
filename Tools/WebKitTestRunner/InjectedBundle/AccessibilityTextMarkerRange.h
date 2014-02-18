@@ -31,7 +31,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Platform.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 typedef CFTypeRef PlatformTextMarkerRange;
 #else
@@ -57,14 +57,14 @@ private:
     AccessibilityTextMarkerRange(PlatformTextMarkerRange);
     AccessibilityTextMarkerRange(const AccessibilityTextMarkerRange&);
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RetainPtr<PlatformTextMarkerRange> m_textMarkerRange;
 #else
     PlatformTextMarkerRange m_textMarkerRange;
 #endif
 };
     
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 inline bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange*) { return false; }
 #endif
     

@@ -87,6 +87,6 @@
 #pragma clang diagnostic pop
 #endif
 
-#if PLATFORM(MAC) && defined(__OBJC__)
+#if PLATFORM(COCOA) && defined(__OBJC__)
 #import <WebKit/WebKit.h>
 #endif

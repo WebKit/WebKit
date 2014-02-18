@@ -41,10 +41,11 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(MAC)
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 #include <Carbon/Carbon.h>
 #endif
+
+#if PLATFORM(COCOA)
 #include <WebKit2/WKPagePrivateMac.h>
 #endif
 
@@ -138,7 +139,7 @@ static bool shouldOpenWebInspector(const char* pathOrURL)
 }
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 static bool shouldUseThreadedScrolling(const char* pathOrURL)
 {
     return strstr(pathOrURL, "tiled-drawing/") || strstr(pathOrURL, "tiled-drawing\\");
@@ -147,7 +148,7 @@ static bool shouldUseThreadedScrolling(const char* pathOrURL)
 
 static void updateThreadedScrollingForCurrentTest(const char* pathOrURL)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     WKRetainPtr<WKMutableDictionaryRef> viewOptions = adoptWK(WKMutableDictionaryCreate());
     WKRetainPtr<WKStringRef> useThreadedScrollingKey = adoptWK(WKStringCreateWithUTF8CString("ThreadedScrolling"));
     WKRetainPtr<WKBooleanRef> useThreadedScrollingValue = adoptWK(WKBooleanCreate(shouldUseThreadedScrolling(pathOrURL)));
@@ -274,7 +275,7 @@ void TestInvocation::dumpWebProcessUnresponsiveness()
 void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
 {
     const char* errorMessageToStderr = 0;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     char buffer[64];
     pid_t pid = WKPageGetProcessIdentifier(TestController::shared().mainWebView()->page());
     sprintf(buffer, "#PROCESS UNRESPONSIVE - WebProcess (pid %ld)\n", static_cast<long>(pid));

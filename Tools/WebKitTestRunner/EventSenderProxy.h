@@ -112,7 +112,7 @@ private:
     double m_clickTime;
     WKPoint m_clickPosition;
     WKEventMouseButton m_clickButton;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     int eventNumber;
 #elif PLATFORM(GTK)
     Deque<WTREventQueueItem> m_eventQueue;

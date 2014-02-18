@@ -52,11 +52,11 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <WebKit2/WKPagePrivateMac.h>
 #endif
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 #include <WebKit2/WKTextChecker.h>
 #endif
 
@@ -587,7 +587,7 @@ bool TestController::resetStateToConsistentValues()
     // some other code doing this, it should probably be responsible for cleanup too.
     resetPreferencesToConsistentValues();
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
 #endif
 
@@ -1171,7 +1171,7 @@ void TestController::processDidCrash()
     // This function can be called multiple times when crash logs are being saved on Windows, so
     // ensure we only print the crashed message once.
     if (!m_didPrintWebProcessCrashedMessage) {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
         pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
         fprintf(stderr, "#CRASHED - WebProcess (pid %ld)\n", static_cast<long>(pid));
 #else

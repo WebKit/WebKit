@@ -29,12 +29,8 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <string>
 
-#if PLATFORM(MAC)
-#if __OBJC__
-@class NSString;
-#else
-class NSString;
-#endif
+#if USE(FOUNDATION)
+OBJC_CLASS NSString;
 #endif
 
 namespace TestWebKitAPI {
@@ -63,7 +59,7 @@ bool isKeyDown(WKNativeEventPtr);
 std::string toSTD(WKStringRef);
 std::string toSTD(WKRetainPtr<WKStringRef>);
 std::string toSTD(const char*);
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
 std::string toSTD(NSString *);
 #endif
 

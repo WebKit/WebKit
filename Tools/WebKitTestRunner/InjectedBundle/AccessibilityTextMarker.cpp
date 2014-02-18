@@ -60,7 +60,7 @@ AccessibilityTextMarker::~AccessibilityTextMarker()
 
 PlatformTextMarker AccessibilityTextMarker::platformTextMarker() const
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     return m_textMarker.get();
 #else
     return m_textMarker;

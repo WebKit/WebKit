@@ -1862,7 +1862,7 @@ void InjectedBundlePage::dumpBackForwardList(StringBuilder& stringBuilder)
     stringBuilder.appendLiteral("===============================================\n");
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRef)
 {
 }

@@ -89,7 +89,7 @@ TEST(WebKit2, SpacebarScrolling)
     // On Mac, a key down event represents both a raw key down and a key press. On Windows, a key
     // down event only represents a raw key down. We expect the key press to be handled (because it
     // inserts text into the text field). But the raw key down should not be handled.
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     EXPECT_FALSE(didNotHandleKeyDownEvent);
 #elif PLATFORM(WIN)
     EXPECT_TRUE(didNotHandleKeyDownEvent);
@@ -107,7 +107,7 @@ TEST(WebKit2, SpacebarScrolling)
 #endif
     EXPECT_JS_TRUE(webView.page(), "textFieldContainsSpace()");
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     EXPECT_FALSE(didNotHandleKeyDownEvent);
 #elif PLATFORM(WIN)
     EXPECT_TRUE(didNotHandleKeyDownEvent);

@@ -35,7 +35,7 @@
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #ifdef __OBJC__
 typedef id PlatformUIElement;
 #else
@@ -50,7 +50,7 @@ typedef GRefPtr<AtkObject> PlatformUIElement;
 typedef void* PlatformUIElement;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #ifdef __OBJC__
 typedef id NotificationHandler;
 #else
@@ -264,7 +264,7 @@ private:
     
     // A retained, platform specific object used to help manage notifications for this object.
 #if HAVE(ACCESSIBILITY)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     NotificationHandler m_notificationHandler;
 
     void getLinkedUIElements(Vector<RefPtr<AccessibilityUIElement> >&);
@@ -273,7 +273,7 @@ private:
     void getUIElementsWithAttribute(JSStringRef, Vector<RefPtr<AccessibilityUIElement> >&) const;
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(EFL)
     void getChildren(Vector<RefPtr<AccessibilityUIElement> >&);
     void getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >&, unsigned location, unsigned length);
 #endif
