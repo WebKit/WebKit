@@ -1,3 +1,9 @@
+2014-02-17  Sam Weinig  <sam@webkit.org>
+
+        Fix build.
+
+        * WebCore.exp.in:
+
 2014-02-17  Anders Carlsson  <andersca@apple.com>
 
         Remove ENABLE_GLOBAL_FASTMALLOC_NEW
