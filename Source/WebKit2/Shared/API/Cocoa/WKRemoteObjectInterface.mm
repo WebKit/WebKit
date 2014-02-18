@@ -36,7 +36,7 @@
 extern "C"
 const char *_protocol_getMethodTypeEncoding(Protocol *p, SEL sel, BOOL isRequiredMethod, BOOL isInstanceMethod);
 
-@interface NSMethodSignature (Details)
+@interface NSMethodSignature (WKDetails)
 - (Class)_classForObjectAtArgumentIndex:(NSInteger)idx;
 @end
 
@@ -139,6 +139,11 @@ static void initializeAllowedArgumentClasses(WKRemoteObjectInterface *interface)
 + (instancetype)remoteObjectInterfaceWithProtocol:(Protocol *)protocol
 {
     return [[[self alloc] initWithProtocol:protocol identifier:NSStringFromProtocol(protocol)] autorelease];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; protocol = \"%@\"; identifier = \"%@\">", NSStringFromClass(self.class), self, _identifier, NSStringFromProtocol(_protocol)];
 }
 
 static RetainPtr<NSSet>& classesForSelectorArgument(WKRemoteObjectInterface *interface, SEL selector, NSUInteger argumentIndex)

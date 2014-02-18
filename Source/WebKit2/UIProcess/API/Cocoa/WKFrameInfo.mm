@@ -48,6 +48,11 @@
     return self;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; isMainFrame = %s; request = %@>", NSStringFromClass(self.class), self, _mainFrame ? "YES" : "NO", _request.get()];
+}
+
 - (NSURLRequest *)request
 {
     return _request.get();

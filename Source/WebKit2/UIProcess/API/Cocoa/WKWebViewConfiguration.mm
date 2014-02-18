@@ -37,6 +37,11 @@
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; processClass = %@; preferences = %@>", NSStringFromClass(self.class), self, _processClass.get(), _preferences.get()];
+}
+
 - (id)copyWithZone:(NSZone *)zone
 {
     WKWebViewConfiguration *configuration = [[[self class] allocWithZone:zone] init];

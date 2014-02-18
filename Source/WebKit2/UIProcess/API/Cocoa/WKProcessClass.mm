@@ -78,6 +78,11 @@
     [super dealloc];
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; configuration = %@>", NSStringFromClass(self.class), self, _configuration.get()];
+}
+
 - (WKProcessClassConfiguration *)configuration
 {
     return [[_configuration copy] autorelease];

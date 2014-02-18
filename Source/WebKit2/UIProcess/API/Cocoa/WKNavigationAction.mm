@@ -36,6 +36,12 @@
     RetainPtr<NSURLRequest> _request;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; navigationType = %ld; request = %@; sourceFrame = %@; destinationFrame = %@>", NSStringFromClass(self.class), self,
+        (long)_navigationType, _request.get(), _sourceFrame.get(), _destinationFrame.get()];
+}
+
 - (WKFrameInfo *)sourceFrame
 {
     return _sourceFrame.get();

@@ -35,6 +35,11 @@
     RetainPtr<NSURLResponse> _response;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; frame = %@; response = %@>", NSStringFromClass(self.class), self, _frame.get(), _response.get()];
+}
+
 - (WKFrameInfo *)frame
 {
     return _frame.get();
