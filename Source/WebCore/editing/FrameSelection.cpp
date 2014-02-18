@@ -515,7 +515,6 @@ void FrameSelection::textWasReplaced(CharacterData* node, unsigned offset, unsig
         else
             newSelection.setWithoutValidation(start, end);
 
-        m_frame->document()->updateLayout();
         setSelection(newSelection, DoNotSetFocus);
     }
 }
@@ -1700,25 +1699,15 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
         return false;
     ASSERT(&range->startContainer()->document() == &range->endContainer()->document());
 
-    m_frame->document()->updateLayoutIgnorePendingStylesheets();
+    VisibleSelection newSelection(range, affinity);
 
-    // Non-collapsed ranges are not allowed to start at the end of a line that is wrapped,
-    // they start at the beginning of the next line instead
-    ExceptionCode ec = 0;
-    bool collapsed = range->collapsed(ec);
-    if (ec)
-        return false;
-
-    // FIXME: Can we provide extentAffinity?
-    VisiblePosition visibleStart(range->startPosition(), collapsed ? affinity : DOWNSTREAM);
-    VisiblePosition visibleEnd(range->endPosition(), SEL_DEFAULT_AFFINITY);
 #if PLATFORM(IOS)
-    if (range->startContainer() && visibleStart.isNull())
-        return false;
-    if (range->endContainer() && visibleEnd.isNull())
+    // FIXME: Why do we need this check only in iOS?
+    if (range->startContainer() && range->endContainer() && newSelection.isNull())
         return false;
 #endif
-    setSelection(VisibleSelection(visibleStart, visibleEnd), ClearTypingStyle | (closeTyping ? CloseTyping : 0));
+
+    setSelection(newSelection, ClearTypingStyle | (closeTyping ? CloseTyping : 0));
     return true;
 }
 

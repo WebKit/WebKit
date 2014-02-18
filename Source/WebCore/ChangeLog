@@ -1,3 +1,17 @@
+2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        FrameSelection::textWasReplaced and setSelectedRange shouldn't trigger synchronous layout
+        https://bugs.webkit.org/show_bug.cgi?id=128951
+
+        Reviewed by Antti Koivisto.
+
+        Cleanup.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::textWasReplaced): Don't call updateLayout. It's totally unnecessarily.
+        (WebCore::FrameSelection::setSelectedRange): Ditto. Also removed the code to set affinity only when
+        range is collapsed since VisibleSelection::validate already does this.
+
 2014-02-18  Eric Carlson  <eric.carlson@apple.com>
 
         Do not cache media time until media engine returns a non-zero value
