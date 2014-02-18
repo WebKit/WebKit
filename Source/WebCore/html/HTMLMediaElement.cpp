@@ -2439,10 +2439,18 @@ bool HTMLMediaElement::seeking() const
 void HTMLMediaElement::refreshCachedTime() const
 {
     m_cachedTime = m_player->currentTime();
+    if (!m_cachedTime) { 
+        // Do not use m_cachedTime until the media engine returns a non-zero value because we can't 
+        // estimate current time until playback actually begins. 
+        invalidateCachedTime(); 
+        return; 
+    } 
+
+    LOG(Media, "HTMLMediaElement::refreshCachedTime - caching time %f", m_cachedTime); 
     m_clockTimeAtLastCachedTimeUpdate = monotonicallyIncreasingTime();
 }
 
-void HTMLMediaElement::invalidateCachedTime()
+void HTMLMediaElement::invalidateCachedTime() const
 {
     LOG(Media, "HTMLMediaElement::invalidateCachedTime");
 
@@ -2509,6 +2517,9 @@ double HTMLMediaElement::currentTime() const
 
     refreshCachedTime();
 
+    if (m_cachedTime == MediaPlayer::invalidTime())
+        return 0;
+    
     return m_cachedTime;
 }
 
