@@ -1,3 +1,34 @@
+2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        setSelectionRange should set selection without validation
+        https://bugs.webkit.org/show_bug.cgi?id=128949
+
+        Reviewed by Enrica Casucci.
+
+        Fixed input-select-webkit-user-select-none.html which was erroneously asserting selectionStart and selectionEnd
+        of a text field to be zero when it has -webkit-user-select: none. This doesn't not match behaviors of Chrome
+        and Firefox. They both retain the programatically set selection offsets since such style should not bleed into
+        the shadow DOM of the text field in the first place.
+
+        New behavior matches the latest Firefox and Chrome although we still have the bug that user cannot select text
+        inside such a text field.
+
+        Also modernized LayoutTests/editing/selection/5497643.html to make the expected results more readable and made
+        the test more robust against changes in the node index of textarea element.
+
+        * editing/selection/5497643-expected.txt: See above.
+        * editing/selection/5497643.html:
+        * fast/forms/input-select-webkit-user-select-none-expected.txt: See above.
+        * fast/forms/input-select-webkit-user-select-none.html:
+        * editing/deleting/delete-ligature-001-expected.txt: Progression in the editing delegate callbacks dumps.
+        Now we set selection directly into the text node inside the inner text element.
+        * platform/mac/platform/mac/editing/spelling/autocorrection-at-beginning-of-word-1-expected.txt: Ditto.
+        * platform/mac/platform/mac/editing/spelling/autocorrection-at-beginning-of-word-2-expected.txt: Ditto.
+        * platform/mac-mountainlion/platform/mac/editing/spelling/autocorrection-at-beginning-of-word-1-expected.txt:
+        Removed.
+        * platform/mac-mountainlion/platform/mac/editing/spelling/autocorrection-at-beginning-of-word-2-expected.txt:
+        Removed.
+
 2014-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Convert position:sticky to position:static upon copy and paste

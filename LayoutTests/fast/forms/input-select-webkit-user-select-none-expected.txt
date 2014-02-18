@@ -1,5 +1,12 @@
 Tests behavior of select() in case "-webkit-user-select: none" attribute is specified to the input element. The field should not be selected.
 
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS
+PASS input.select(); input.selectionStart is 0
+PASS input.selectionEnd is input.value.length
+PASS input.value.length is not 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

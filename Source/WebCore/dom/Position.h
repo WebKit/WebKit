@@ -272,17 +272,14 @@ inline bool operator<=(const Position& a, const Position& b)
 
 inline Position positionInParentBeforeNode(const Node* node)
 {
-    // FIXME: This should ASSERT(node->parentNode())
-    // At least one caller currently hits this ASSERT though, which indicates
-    // that the caller is trying to make a position relative to a disconnected node (which is likely an error)
-    // Specifically, editing/deleting/delete-ligature-001.html crashes with ASSERT(node->parentNode())
-    return Position(Position::findParent(node), node->nodeIndex(), Position::PositionIsOffsetInAnchor);
+    ASSERT(node->parentNode());
+    return Position(node->parentNode(), node->nodeIndex(), Position::PositionIsOffsetInAnchor);
 }
 
 inline Position positionInParentAfterNode(const Node* node)
 {
-    ASSERT(Position::findParent(node));
-    return Position(Position::findParent(node), node->nodeIndex() + 1, Position::PositionIsOffsetInAnchor);
+    ASSERT(node->parentNode());
+    return Position(node->parentNode(), node->nodeIndex() + 1, Position::PositionIsOffsetInAnchor);
 }
 
 // positionBeforeNode and positionAfterNode return neighbor-anchored positions, construction is O(1)

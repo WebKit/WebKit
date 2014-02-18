@@ -1,26 +1,25 @@
+<!DOCTYPE html>
 <html>
-<head>
+<body onload="test()">
+<script src="../../resources/js-test-pre.js"></script>
 <script>
+description("Tests behavior of select() in case &quot;-webkit-user-select: none&quot;"
+    + " attribute is specified to the input element. The field should not be selected.");
+
 function test() {
     if (window.testRunner)
         testRunner.dumpAsText();
-    var tf = document.getElementById('tf');
-    tf.select();
-    if (tf.selectionStart == 0 && tf.selectionEnd == 0) { // ;
-        document.getElementById("result").innerHTML = "PASS";
-    } else {
-        document.getElementById("result").innerHTML = "FAIL: selection start is "
-            + tf.selectionStart + " and end is " + tf.selectionEnd + ".";
-    }
+    window.input = document.querySelector('input');
+    shouldBe("input.select(); input.selectionStart", "0");
+    shouldBe("input.selectionEnd", "input.value.length");
+    shouldNotBe("input.value.length", "0");
+    finishJSTest();
 }
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
 </script>
-</head>
-<body onload="test()">
-<p>
-Tests behavior of select() in case &quot;-webkit-user-select: none&quot;
-attribute is specified to the input element. The field should not be selected.
-</p>
-<p><input type="text" id="tf" value="input text" style="-webkit-user-select: none"></input></p>
-<p id="result">TEST NOT RUN YET</p>
+<script src="../../resources/js-test-post.js"></script>
+<p><input type="text" value="input text" style="-webkit-user-select: none; -moz-user-select: none;"></input></p>
 </body>
 </html>

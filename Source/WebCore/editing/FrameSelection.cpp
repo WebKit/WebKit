@@ -164,10 +164,12 @@ void FrameSelection::moveTo(const Position &base, const Position &extent, EAffin
     setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveTo(const Position& base, const Position& extent, bool selectionHasDirection, bool shouldSetFocus)
+void FrameSelection::moveWithoutValidationTo(const Position& base, const Position& extent, bool selectionHasDirection, bool shouldSetFocus)
 {
-    setSelection(VisibleSelection(base, extent, DOWNSTREAM, selectionHasDirection),
-        defaultSetSelectionOptions() | (shouldSetFocus ? 0 : DoNotSetFocus));
+    VisibleSelection newSelection;
+    newSelection.setWithoutValidation(base, extent);
+    newSelection.setIsDirectional(selectionHasDirection);
+    setSelection(newSelection, defaultSetSelectionOptions() | (shouldSetFocus ? 0 : DoNotSetFocus));
 }
 
 void DragCaretController::setCaretPosition(const VisiblePosition& position)

@@ -1,3 +1,43 @@
+2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        setSelectionRange should set selection without validation
+        https://bugs.webkit.org/show_bug.cgi?id=128949
+
+        Reviewed by Enrica Casucci.
+
+        Since positionForIndex in HTMLTextFormControlElement always returns a candidate Position, we don't have to
+        validate selection in setSelectionRange.
+
+        Also fixed various bugs uncovered by this change.
+
+        This patch also fixes fast/forms/input-select-webkit-user-select-none.html, which used to assert wrong outcome
+        so that WebKit's behavior matches that of Chrome and Firefox.
+
+        Test: fast/forms/input-select-webkit-user-select-none.html
+
+        * dom/Position.h:
+        (WebCore::positionInParentBeforeNode): This function had a bug that when node is a child of the shadow root
+        it would return a null Position. Allow a position anchored inside a shadow root.
+        (WebCore::positionInParentAfterNode): Ditto.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::moveWithoutValidationTo): Renamed from moveTo and avoided selection validation.
+        * editing/FrameSelection.h:
+
+        * editing/htmlediting.cpp:
+        (WebCore::updatePositionForNodeRemoval): Fixed the bug that this function doesn't update positions before
+        or after children even if the shadow host of the anchor node is getting removed. Move the position before
+        the shadow host to be removed in both situations.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setSelectionRange): moveTo is renamed to moveWithoutValidationTo.
+        (WebCore::HTMLTextFormControlElement::selectionChanged): Check if the cached selection offsets are different
+        in lieu of FrameSelection::isRange() since they're equivalent here.
+        (WebCore::positionForIndex): Return the position inside or after the last br when there is one to match
+        the canonicalization algorithm we have. It's probably harmless to return the last position in the inner text
+        element anyways since most of our codebase supports that but this would avoid having to rebaseline dozens
+        of tests and reduces the risk of this patch.
+
 2014-02-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Move IndexedDB module, LevelDB code to std::unique_ptr

@@ -315,7 +315,7 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     }
 
     if (Frame* frame = document().frame())
-        frame->selection().moveTo(startPosition, endPosition, direction != SelectionHasNoDirection, !hasFocus);
+        frame->selection().moveWithoutValidationTo(startPosition, endPosition, direction != SelectionHasNoDirection, !hasFocus);
 }
 
 int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& position) const
@@ -480,13 +480,8 @@ void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
     // selectionStart() or selectionEnd() will return cached selection when this node doesn't have focus
     cacheSelection(computeSelectionStart(), computeSelectionEnd(), computeSelectionDirection());
     
-    if (!shouldFireSelectEvent)
-        return;
-
-    if (Frame* frame = document().frame()) {
-        if (frame->selection().isRange())
-            dispatchEvent(Event::create(eventNames().selectEvent, true, false));
-    }
+    if (shouldFireSelectEvent && m_cachedSelectionStart != m_cachedSelectionEnd)
+        dispatchEvent(Event::create(eventNames().selectEvent, true, false));
 }
 
 void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -556,19 +551,22 @@ String HTMLTextFormControlElement::innerTextValue() const
 static Position positionForIndex(TextControlInnerTextElement* innerText, unsigned index)
 {
     unsigned remainingCharactersToMoveForward = index;
+    Node* lastBrOrText = innerText;
     for (Node* node = innerText; node; node = NodeTraversal::next(node, innerText)) {
         if (node->hasTagName(brTag)) {
             if (!remainingCharactersToMoveForward)
                 return positionBeforeNode(node);
             remainingCharactersToMoveForward--;
+            lastBrOrText = node;
         } else if (node->isTextNode()) {
             Text& text = toText(*node);
             if (remainingCharactersToMoveForward < text.length())
                 return Position(&text, remainingCharactersToMoveForward);
             remainingCharactersToMoveForward -= text.length();
+            lastBrOrText = node;
         }
     }
-    return lastPositionInNode(innerText);
+    return lastPositionInOrAfterNode(lastBrOrText);
 }
 
 unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosition) const

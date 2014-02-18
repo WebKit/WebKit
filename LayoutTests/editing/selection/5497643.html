@@ -1,15 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
 <p>This tests to make sure that a selection inside a textarea is updated when the textarea is removed from the document.</p>
 <textarea id="textarea"></textarea>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 if (window.testRunner)
     window.testRunner.dumpAsText();
+function nodeIndex(node) {
+    return Array.prototype.slice.call(node.parentNode.childNodes).indexOf(node);
+}
 textarea = document.getElementById("textarea");
-textarea.setSelectionRange(0, 0);
-textarea.parentNode.removeChild(textarea);
-if (window.getSelection().type == 'Caret' &&
-    window.getSelection().getRangeAt(0).startContainer == document.body && 
-    window.getSelection().getRangeAt(0).startOffset == 2)
-    alert("SUCCESS: Selection is set to position 2 of BODY.")
-else
-    alert("FAILURE: The selection is not set correctly after textarea was deleted.")
+evalAndLog("textareaOffset = nodeIndex(textarea); textarea.setSelectionRange(0, 0); textarea.parentNode.removeChild(textarea);");
+shouldBe("getSelection().type", "'Caret'");
+shouldBe("getSelection().getRangeAt(0).startContainer", "document.body");
+shouldBe("getSelection().getRangeAt(0).startOffset", "textareaOffset");
+var successfullyParsed = true;
 </script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
