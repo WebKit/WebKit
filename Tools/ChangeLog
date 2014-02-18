@@ -1,3 +1,16 @@
+2014-02-18  Diego Pino García  <dpino@igalia.com>
+
+        [GTK] Minibrowser: Add shortcut to open Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=128813
+
+        Reviewed by Anders Carlsson.
+
+        Added shortcuts Ctrl+Shift+I and F12 for toggling Web Inspector.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (toggleWebInspector):
+        (browser_window_init):
+
 2014-02-18  Dan Bernstein  <mitz@apple.com>
 
         Stop using PLATFORM(MAC) except where it means “OS X but not iOS”

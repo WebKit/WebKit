@@ -56,6 +56,7 @@ struct _BrowserWindow {
     GtkWidget *downloadsBar;
     BrowserSearchBar *searchBar;
     gboolean searchBarVisible;
+    gboolean inspectorWindowIsVisible;
     GdkPixbuf *favicon;
     GtkWidget *reloadOrStopButton;
     GtkWidget *fullScreenMessageLabel;
@@ -483,6 +484,18 @@ static void webViewIsLoadingChanged(GObject *object, GParamSpec *paramSpec, Brow
     gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(window->reloadOrStopButton), isLoading ? GTK_STOCK_STOP : GTK_STOCK_REFRESH);
 }
 
+static gboolean inspectorWasOpenedInAnotherWindow(WebKitWebInspector *inspectorWindow, BrowserWindow *window)
+{
+    window->inspectorWindowIsVisible = TRUE;
+    return FALSE;
+}
+
+static gboolean inspectorWasClosed(WebKitWebInspector *inspectorWindow, BrowserWindow *window)
+{
+    window->inspectorWindowIsVisible = FALSE;
+    return FALSE;
+}
+
 static void zoomInCallback(BrowserWindow *window)
 {
     gdouble zoomLevel = webkit_web_view_get_zoom_level(window->webView) * zoomStep;
@@ -498,6 +511,20 @@ static void zoomOutCallback(BrowserWindow *window)
 static void searchCallback(BrowserWindow *window)
 {
     browser_search_bar_open(window->searchBar);
+}
+
+static gboolean toggleWebInspector(BrowserWindow *window, gpointer user_data)
+{
+    WebKitWebInspector *inspectorWindow;
+
+    inspectorWindow = webkit_web_view_get_inspector(WEBKIT_WEB_VIEW(window->webView));
+    if (!window->inspectorWindowIsVisible) {
+        webkit_web_inspector_show(inspectorWindow);
+        window->inspectorWindowIsVisible = TRUE;
+    } else
+        webkit_web_inspector_close(inspectorWindow);
+
+    return TRUE;
 }
 
 static void browserWindowFinalize(GObject *gObject)
@@ -566,6 +593,12 @@ static void browser_window_init(BrowserWindow *window)
     /* Keyboard accelerators */
     window->accelGroup = gtk_accel_group_new();
     gtk_window_add_accel_group(GTK_WINDOW(window), window->accelGroup);
+
+    /* Global accelerators */
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_I, GDK_CONTROL_MASK | GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(toggleWebInspector), window, NULL));
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_F12, 0, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(toggleWebInspector), window, NULL));
 
     GtkWidget *toolbar = gtk_toolbar_new();
     window->toolbar = toolbar;
@@ -660,6 +693,10 @@ static void browserWindowConstructed(GObject *gObject)
 
     WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(window->webView);
     g_signal_connect(backForwadlist, "changed", G_CALLBACK(backForwadlistChanged), window);
+
+    WebKitWebInspector *inspectorWindow = webkit_web_view_get_inspector(WEBKIT_WEB_VIEW(window->webView));
+    g_signal_connect(inspectorWindow, "open-window", G_CALLBACK(inspectorWasOpenedInAnotherWindow), window);
+    g_signal_connect(inspectorWindow, "closed", G_CALLBACK(inspectorWasClosed), window);
 
     GtkWidget *overlay = gtk_overlay_new();
     gtk_box_pack_start(GTK_BOX(window->mainBox), overlay, TRUE, TRUE, 0);
