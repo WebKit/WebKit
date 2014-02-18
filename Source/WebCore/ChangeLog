@@ -1,3 +1,20 @@
+2014-02-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Fix hitting hasClass() assertion in debug with the new JS media controls
+        https://bugs.webkit.org/show_bug.cgi?id=128820
+
+        Reviewed by Martin Robinson.
+
+        The code introduced at r164024 caused the hit of hasClass()
+        assertion when getting the classNames() of an element with no
+        class. Now we check for it to avoid the assertion.
+
+        No new tests, current set detects the crash in many tests.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::nodeHasClass): Check for hasClass() in order not to hit
+        the assertion when getting the classNames() in debug mode.
+
 2014-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Refactor SVGPreserveAspectRatio::parse()

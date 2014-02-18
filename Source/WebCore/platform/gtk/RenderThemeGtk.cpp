@@ -113,7 +113,15 @@ static bool nodeHasPseudo(Node* node, const char* pseudo)
 
 static bool nodeHasClass(Node* node, const char* className)
 {
-    return node->isElementNode() ? toElement(node)->classNames().contains(className) : false;
+    if (!node->isElementNode())
+        return false;
+
+    Element* element = toElement(node);
+
+    if (!element->hasClass())
+        return false;
+
+    return element->classNames().contains(className);
 }
 
 PassRefPtr<RenderTheme> RenderThemeGtk::create()
