@@ -700,6 +700,7 @@ private:
     void loadPlainTextString(const String&, CoreIPC::MessageDecoder&);
     void loadWebArchiveData(const CoreIPC::DataReference&, CoreIPC::MessageDecoder&);
     void linkClicked(const String& url, const WebMouseEvent&);
+    void loadString(const String&, const String& MIMEType, const WebCore::KURL& baseURL, const WebCore::KURL& failingURL, CoreIPC::MessageDecoder&);
     void reload(bool reloadFromOrigin, const SandboxExtension::Handle&);
     void goForward(uint64_t);
     void goBack(uint64_t);

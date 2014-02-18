@@ -1,3 +1,20 @@
+2014-02-18  Sami Wagiaalla  <swagiaal@redhat.com>
+
+        [GTK] webkit_web_view_load_html reads UTF8 css files as UTF16
+        https://bugs.webkit.org/show_bug.cgi?id=127481
+
+        Reviewed by Carlos Garcia Campos.
+
+        Partial merge of r160572.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadString):
+        (WebKit::WebPage::loadHTMLString):
+        (WebKit::WebPage::loadAlternateHTMLString):
+        (WebKit::WebPage::loadPlainTextString):
+        (WebKit::WebPage::loadWebArchiveData):
+        * WebProcess/WebPage/WebPage.h:
+
 2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] WebProcess sometimes crashes when a download is cancelled
