@@ -165,8 +165,6 @@ Page::Page(PageClients& pageClients)
     , m_userStyleSheetModificationTime(0)
     , m_group(0)
     , m_debugger(0)
-    , m_customHTMLTokenizerTimeDelay(-1)
-    , m_customHTMLTokenizerChunkSize(-1)
     , m_canStartMedia(true)
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
     , m_viewMode(ViewModeWindowed)
@@ -998,22 +996,15 @@ void Page::setSessionStorage(PassRefPtr<StorageNamespace> newStorage)
     m_sessionStorage = newStorage;
 }
 
-void Page::setCustomHTMLTokenizerTimeDelay(double customHTMLTokenizerTimeDelay)
+bool Page::hasCustomHTMLTokenizerTimeDelay() const
 {
-    if (customHTMLTokenizerTimeDelay < 0) {
-        m_customHTMLTokenizerTimeDelay = -1;
-        return;
-    }
-    m_customHTMLTokenizerTimeDelay = customHTMLTokenizerTimeDelay;
+    return m_settings->maxParseDuration() != -1;
 }
 
-void Page::setCustomHTMLTokenizerChunkSize(int customHTMLTokenizerChunkSize)
+double Page::customHTMLTokenizerTimeDelay() const
 {
-    if (customHTMLTokenizerChunkSize < 0) {
-        m_customHTMLTokenizerChunkSize = -1;
-        return;
-    }
-    m_customHTMLTokenizerChunkSize = customHTMLTokenizerChunkSize;
+    ASSERT(m_settings->maxParseDuration() != -1);
+    return m_settings->maxParseDuration();
 }
 
 void Page::setMemoryCacheClientCallsEnabled(bool enabled)

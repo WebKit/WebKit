@@ -3808,20 +3808,6 @@ static inline IMP getMethod(id o, SEL s)
     coreFrame->editor().command(name).execute(value);
 }
 
-- (void)_setCustomHTMLTokenizerTimeDelay:(double)timeDelay
-{
-    if (!_private->page)
-        return;
-    return _private->page->setCustomHTMLTokenizerTimeDelay(timeDelay);
-}
-
-- (void)_setCustomHTMLTokenizerChunkSize:(int)chunkSize
-{
-    if (!_private->page)
-        return;
-    return _private->page->setCustomHTMLTokenizerChunkSize(chunkSize);
-}
-
 - (void)_clearMainFrameName
 {
     _private->page->mainFrame().tree().clearName();

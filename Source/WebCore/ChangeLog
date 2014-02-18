@@ -1,3 +1,22 @@
+2014-02-18  Sam Weinig  <sam@webkit.org>
+
+        Simplify HTML tokenizer parameterization down to what is used
+        https://bugs.webkit.org/show_bug.cgi?id=128977
+
+        Reviewed by Alexey Proskuryakov.
+
+        - Removes support for CustomHTMLTokenizerChunkSize.
+        - Consolidates CustomHTMLTokenizerTimeDelay down to one implementation, using Settings::maxParseDuration
+
+        * WebCore.exp.in:
+        * html/parser/HTMLParserScheduler.cpp:
+        (WebCore::HTMLParserScheduler::HTMLParserScheduler):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::hasCustomHTMLTokenizerTimeDelay):
+        (WebCore::Page::customHTMLTokenizerTimeDelay):
+        * page/Page.h:
+
 2014-02-18  Eric Carlson  <eric.carlson@apple.com>
 
         Do not cache media time until media engine returns a non-zero value

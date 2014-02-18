@@ -5976,21 +5976,15 @@ HRESULT STDMETHODCALLTYPE WebView::elementFromJS(
 HRESULT STDMETHODCALLTYPE WebView::setCustomHTMLTokenizerTimeDelay(
     /* [in] */ double timeDelay)
 {
-    if (!m_page)
-        return E_FAIL;
-
-    m_page->setCustomHTMLTokenizerTimeDelay(timeDelay);
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::setCustomHTMLTokenizerChunkSize(
     /* [in] */ int chunkSize)
 {
-    if (!m_page)
-        return E_FAIL;
-
-    m_page->setCustomHTMLTokenizerChunkSize(chunkSize);
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::backingStore(

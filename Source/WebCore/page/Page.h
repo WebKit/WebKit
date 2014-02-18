@@ -322,20 +322,8 @@ public:
     StorageNamespace* sessionStorage(bool optionalCreate = true);
     void setSessionStorage(PassRefPtr<StorageNamespace>);
 
-    // FIXME: We should make Settings::maxParseDuration() platform-independent, remove {has, set}CustomHTMLTokenizerTimeDelay()
-    // and customHTMLTokenizerTimeDelay() and modify theirs callers to update or query Settings::maxParseDuration().
-    void setCustomHTMLTokenizerTimeDelay(double);
-#if PLATFORM(IOS)
-    bool hasCustomHTMLTokenizerTimeDelay() const { return m_settings->maxParseDuration() != -1; }
-    double customHTMLTokenizerTimeDelay() const { ASSERT(m_settings->maxParseDuration() != -1); return m_settings->maxParseDuration(); }
-#else
-    bool hasCustomHTMLTokenizerTimeDelay() const { return m_customHTMLTokenizerTimeDelay != -1; }
-    double customHTMLTokenizerTimeDelay() const { ASSERT(m_customHTMLTokenizerTimeDelay != -1); return m_customHTMLTokenizerTimeDelay; }
-#endif
-
-    void setCustomHTMLTokenizerChunkSize(int);
-    bool hasCustomHTMLTokenizerChunkSize() const { return m_customHTMLTokenizerChunkSize != -1; }
-    int customHTMLTokenizerChunkSize() const { ASSERT(m_customHTMLTokenizerChunkSize != -1); return m_customHTMLTokenizerChunkSize; }
+    bool hasCustomHTMLTokenizerTimeDelay() const;
+    double customHTMLTokenizerTimeDelay() const;
 
     void setMemoryCacheClientCallsEnabled(bool);
     bool areMemoryCacheClientCallsEnabled() const { return m_areMemoryCacheClientCallsEnabled; }
@@ -503,9 +491,6 @@ private:
     PageGroup* m_group;
 
     JSC::Debugger* m_debugger;
-
-    double m_customHTMLTokenizerTimeDelay;
-    int m_customHTMLTokenizerChunkSize;
 
     bool m_canStartMedia;
 

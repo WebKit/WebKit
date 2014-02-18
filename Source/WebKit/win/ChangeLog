@@ -1,3 +1,16 @@
+2014-02-18  Sam Weinig  <sam@webkit.org>
+
+        Simplify HTML tokenizer parameterization down to what is used
+        https://bugs.webkit.org/show_bug.cgi?id=128977
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove unused SPI.
+
+        * WebView.cpp:
+        (WebView::setCustomHTMLTokenizerTimeDelay):
+        (WebView::setCustomHTMLTokenizerChunkSize):
+
 2014-02-17  Anders Carlsson  <andersca@apple.com>
 
         Remove view source code

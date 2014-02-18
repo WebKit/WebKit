@@ -751,9 +751,6 @@ Could be worth adding to the API.
 - (void)_executeCoreCommandByName:(NSString *)name value:(NSString *)value;
 - (void)_clearMainFrameName;
 
-- (void)_setCustomHTMLTokenizerTimeDelay:(double)timeDelay;
-- (void)_setCustomHTMLTokenizerChunkSize:(int)chunkSize;
-
 - (void)setSelectTrailingWhitespaceEnabled:(BOOL)flag;
 - (BOOL)isSelectTrailingWhitespaceEnabled;
 

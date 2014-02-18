@@ -52,16 +52,6 @@ static double parserTimeLimit(Page* page)
     return defaultParserTimeLimit;
 }
 
-static int parserChunkSize(Page* page)
-{
-    // FIXME: We may need to divide the value from customHTMLTokenizerChunkSize
-    // by some constant to translate from the "character" based behavior of the
-    // old LegacyHTMLDocumentParser to the token-based behavior of this parser.
-    if (page && page->hasCustomHTMLTokenizerChunkSize())
-        return page->customHTMLTokenizerChunkSize();
-    return defaultParserChunkSize;
-}
-
 ActiveParserSession::ActiveParserSession(Document* document)
     : m_document(document)
 {
@@ -97,7 +87,7 @@ PumpSession::~PumpSession()
 HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser& parser)
     : m_parser(parser)
     , m_parserTimeLimit(parserTimeLimit(m_parser.document()->page()))
-    , m_parserChunkSize(parserChunkSize(m_parser.document()->page()))
+    , m_parserChunkSize(defaultParserChunkSize)
     , m_continueNextChunkTimer(this, &HTMLParserScheduler::continueNextChunkTimerFired)
     , m_isSuspendedWithActiveTimer(false)
 #if !ASSERT_DISABLED
