@@ -1,3 +1,18 @@
+2014-02-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove unnecessary UserActionElementSet constructor, destructor
+        https://bugs.webkit.org/show_bug.cgi?id=128962
+
+        Reviewed by Andreas Kling.
+
+        UserActionElementSet constructor and destructor are not necessary, as is not the
+        static create() function that returns PassOwnPtr<UserActionElementSet>. The implicit
+        constructor and destructor can take care of creating and destroying the sole HashMap
+        member variable.
+
+        * dom/UserActionElementSet.cpp:
+        * dom/UserActionElementSet.h:
+
 2014-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rename convertFixedAndStickyPosition() to convertPositionStyle()

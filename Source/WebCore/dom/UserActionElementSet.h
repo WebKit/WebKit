@@ -29,8 +29,6 @@
 #define UserActionElementSet_h
 
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -40,8 +38,6 @@ class Element;
 
 class UserActionElementSet {
 public:
-    static PassOwnPtr<UserActionElementSet> create() { return adoptPtr(new UserActionElementSet()); }
-
     bool isFocused(const Element* element) { return hasFlags(element, IsFocusedFlag); }
     bool isActive(const Element* element) { return hasFlags(element, IsActiveFlag); }
     bool isInActiveChain(const Element* element) { return hasFlags(element, InActiveChainFlag); }
@@ -50,9 +46,6 @@ public:
     void setActive(Element* element, bool enable) { setFlags(element, enable, IsActiveFlag); }
     void setInActiveChain(Element* element, bool enable) { setFlags(element, enable, InActiveChainFlag); }
     void setHovered(Element* element, bool enable) { setFlags(element, enable, IsHoveredFlag); }
-
-    UserActionElementSet();
-    ~UserActionElementSet();
 
     void didDetach(Element*);
     void documentDidRemoveLastRef();

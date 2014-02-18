@@ -32,14 +32,6 @@
 
 namespace WebCore {
 
-UserActionElementSet::UserActionElementSet()
-{
-}
-
-UserActionElementSet::~UserActionElementSet()
-{
-}
-
 void UserActionElementSet::didDetach(Element* element)
 {
     ASSERT(element->isUserActionElement());
