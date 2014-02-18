@@ -1,3 +1,40 @@
+2014-02-18  David Kilzer  <ddkilzer@apple.com>
+
+        Add type-checked casts for StyleImage and subclasses
+        <http://webkit.org/b/128915>
+
+        Reviewed by Oliver Hunt.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::detachPendingImage):
+        (WebCore::CSSCursorImageValue::cachedImage):
+        (WebCore::CSSCursorImageValue::cachedImageURL):
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::detachPendingImage):
+        (WebCore::CSSImageSetValue::~CSSImageSetValue):
+        (WebCore::CSSImageSetValue::cachedImageSet):
+        (WebCore::CSSImageSetValue::hasFailedOrCanceledSubresources):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::detachPendingImage):
+        (WebCore::CSSImageValue::cachedImage):
+        (WebCore::CSSImageValue::hasFailedOrCanceledSubresources):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingShapeImage):
+        (WebCore::StyleResolver::loadPendingImages):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::retrieveResourcesForProperties):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        - Switch from static_cast<>() operators to toTypeName() methods.
+        - Replace 0 with nullptr where convenient.
+
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleCachedImageSet.h:
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleImage.h:
+        * rendering/style/StylePendingImage.h:
+        - Define type-checked cast macros.
+
 2014-02-18  Sam Weinig  <sam@webkit.org>
 
         Simplify HTML tokenizer parameterization down to what is used

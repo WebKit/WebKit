@@ -93,5 +93,8 @@ protected:
     bool m_isCachedImageSet : 1;
 };
 
+#define STYLE_IMAGE_TYPE_CASTS(ToClassName, FromClassName, predicate) \
+    TYPE_CASTS_BASE(ToClassName, FromClassName, resource, resource->predicate(), resource.predicate())
+
 }
 #endif

@@ -53,7 +53,7 @@ CSSImageSetValue::CSSImageSetValue()
 inline void CSSImageSetValue::detachPendingImage()
 {
     if (m_imageSet && m_imageSet->isPendingImage())
-        static_cast<StylePendingImage&>(*m_imageSet).detachFromCSSValue();
+        toStylePendingImage(*m_imageSet).detachFromCSSValue();
 }
 
 CSSImageSetValue::~CSSImageSetValue()
@@ -61,7 +61,7 @@ CSSImageSetValue::~CSSImageSetValue()
     detachPendingImage();
 
     if (m_imageSet && m_imageSet->isCachedImageSet())
-        static_cast<StyleCachedImageSet*>(m_imageSet.get())->clearImageSetValue();
+        toStyleCachedImageSet(m_imageSet.get())->clearImageSetValue();
 }
 
 void CSSImageSetValue::fillImageSet()
@@ -130,7 +130,7 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* load
         }
     }
 
-    return (m_imageSet && m_imageSet->isCachedImageSet()) ? static_cast<StyleCachedImageSet*>(m_imageSet.get()) : 0;
+    return (m_imageSet && m_imageSet->isCachedImageSet()) ? toStyleCachedImageSet(m_imageSet.get()) : nullptr;
 }
 
 StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* loader)
@@ -191,7 +191,7 @@ bool CSSImageSetValue::hasFailedOrCanceledSubresources() const
 {
     if (!m_imageSet || !m_imageSet->isCachedImageSet())
         return false;
-    CachedResource* cachedResource = static_cast<StyleCachedImageSet*>(m_imageSet.get())->cachedImage();
+    CachedResource* cachedResource = toStyleCachedImageSet(m_imageSet.get())->cachedImage();
     if (!cachedResource)
         return true;
     return cachedResource->loadFailedOrCanceled();

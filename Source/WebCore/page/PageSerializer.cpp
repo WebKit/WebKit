@@ -335,7 +335,7 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
         if (!styleImage || !styleImage->isCachedImage())
             continue;
 
-        CachedImage* image = static_cast<StyleCachedImage*>(styleImage)->cachedImage();
+        CachedImage* image = toStyleCachedImage(styleImage)->cachedImage();
 
         URL url = document->completeURL(image->url());
         addImageToResources(image, 0, url);

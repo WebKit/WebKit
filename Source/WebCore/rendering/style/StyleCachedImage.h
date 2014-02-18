@@ -64,5 +64,7 @@ private:
     CachedResourceHandle<CachedImage> m_image;
 };
 
+STYLE_IMAGE_TYPE_CASTS(StyleCachedImage, StyleImage, isCachedImage)
+
 }
 #endif

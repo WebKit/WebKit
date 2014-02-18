@@ -324,7 +324,7 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
         CSSImageGeneratorValue& fromGenerated = toStyleGeneratedImage(from)->imageValue();
         if (fromGenerated.isFilterImageValue()) {
             CSSFilterImageValue& fromFilter = toCSSFilterImageValue(fromGenerated);
-            if (fromFilter.cachedImage() && static_cast<StyleCachedImage*>(to)->cachedImage() == fromFilter.cachedImage())
+            if (fromFilter.cachedImage() && toStyleCachedImage(to)->cachedImage() == fromFilter.cachedImage())
                 return blendFilter(anim, fromFilter.cachedImage(), fromFilter.filterOperations(), FilterOperations(), progress);
         }
         // FIXME: Add interpolation between cross-fade and image source.
@@ -332,7 +332,7 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
         CSSImageGeneratorValue& toGenerated = toStyleGeneratedImage(to)->imageValue();
         if (toGenerated.isFilterImageValue()) {
             CSSFilterImageValue& toFilter = toCSSFilterImageValue(toGenerated);
-            if (toFilter.cachedImage() && static_cast<StyleCachedImage*>(from)->cachedImage() == toFilter.cachedImage())     
+            if (toFilter.cachedImage() && toStyleCachedImage(from)->cachedImage() == toFilter.cachedImage())     
                 return blendFilter(anim, toFilter.cachedImage(), FilterOperations(), toFilter.filterOperations(), progress);
         }
 #endif
@@ -342,7 +342,7 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
     // FIXME: Add support cross fade between cached and generated images.
     // https://bugs.webkit.org/show_bug.cgi?id=78293
     if (from->isCachedImage() && to->isCachedImage())
-        return crossfadeBlend(anim, static_cast<StyleCachedImage*>(from), static_cast<StyleCachedImage*>(to), progress);
+        return crossfadeBlend(anim, toStyleCachedImage(from), toStyleCachedImage(to), progress);
 
     return to;
 }

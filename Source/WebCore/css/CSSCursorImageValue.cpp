@@ -65,7 +65,7 @@ CSSCursorImageValue::CSSCursorImageValue(PassRef<CSSValue> imageValue, bool hasH
 inline void CSSCursorImageValue::detachPendingImage()
 {
     if (m_image && m_image->isPendingImage())
-        static_cast<StylePendingImage&>(*m_image).detachFromCSSValue();
+        toStylePendingImage(*m_image).detachFromCSSValue();
 }
 
 CSSCursorImageValue::~CSSCursorImageValue()
@@ -161,9 +161,9 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
     }
 
     if (m_image && m_image->isCachedImage())
-        return static_cast<StyleCachedImage*>(m_image.get());
+        return toStyleCachedImage(m_image.get());
 
-    return 0;
+    return nullptr;
 }
 
 StyleImage* CSSCursorImageValue::cachedOrPendingImage(Document& document)
@@ -195,7 +195,7 @@ String CSSCursorImageValue::cachedImageURL()
 {
     if (!m_image || !m_image->isCachedImage())
         return String();
-    return static_cast<StyleCachedImage*>(m_image.get())->cachedImage()->url();
+    return toStyleCachedImage(m_image.get())->cachedImage()->url();
 }
 
 void CSSCursorImageValue::clearCachedImage()

@@ -63,11 +63,7 @@ private:
     bool m_fixedSize;
 };
 
-inline StyleGeneratedImage* toStyleGeneratedImage(StyleImage* image)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!image || image->isGeneratedImage());
-    return static_cast<StyleGeneratedImage*>(image);
-}
+STYLE_IMAGE_TYPE_CASTS(StyleGeneratedImage, StyleImage, isGeneratedImage)
 
 }
 #endif
