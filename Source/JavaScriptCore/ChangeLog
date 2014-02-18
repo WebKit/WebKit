@@ -1,3 +1,22 @@
+2014-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+        More ARM FTL glue
+        https://bugs.webkit.org/show_bug.cgi?id=128948
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig: Allow for an header search directory for LLVM's generated files.
+        * Configurations/LLVMForJSC.xcconfig: Link the right things for ARM.
+        * assembler/ARM64Assembler.h: Builds fix.
+        (JSC::ARM64Assembler::fillNops):
+        * disassembler/LLVMDisassembler.cpp: Use the right target triples.
+        (JSC::tryToDisassembleWithLLVM):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps): Build fix.
+        * jit/GPRInfo.h: Builds fix.
+        * llvm/library/LLVMExports.cpp: Link the right things.
+        (initializeAndGetJSCLLVMAPI):
+
 2014-02-17  Anders Carlsson  <andersca@apple.com>
 
         Remove ENABLE_GLOBAL_FASTMALLOC_NEW

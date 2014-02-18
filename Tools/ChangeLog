@@ -1,3 +1,13 @@
+2014-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+        More ARM FTL glue
+        https://bugs.webkit.org/show_bug.cgi?id=128948
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/configure-llvm: Removed. This isn't really practical now that we require a separate build directory.
+        * Scripts/copy-webkitlibraries-to-product-directory: Switch to using a separate build directory, and for setting a PATH before running LLVM's make.
+
 2014-02-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] There's another Windows SDK. Make sure we recognize it.

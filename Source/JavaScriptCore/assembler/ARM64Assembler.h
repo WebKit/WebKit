@@ -1669,6 +1669,14 @@ public:
         insn(nopPseudo());
     }
     
+    static void fillNops(void* base, size_t size)
+    {
+        RELEASE_ASSERT(!(size % sizeof(int32_t)));
+        size_t n = size / sizeof(int32_t);
+        for (int32_t* ptr = static_cast<int32_t*>(base); n--;)
+            *ptr++ = nopPseudo();
+    }
+    
     ALWAYS_INLINE void dmbSY()
     {
         insn(0xd5033fbf);

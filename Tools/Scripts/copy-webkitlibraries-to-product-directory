@@ -192,30 +192,38 @@ if ($llvm) {
     my $shouldUpdateLLVMLibraryToken = 0;
 
     if ($useOwnLLVM) {
-        if (!-e "$ownLLVMDirectory/Makefile.config") {
+        if (!-e "$ownLLVMDirectory/wkLLVMBuild/Makefile.config") {
             print("Configuring LLVM.\n");
-            (system("sh", "Tools/Scripts/configure-llvm", $ownLLVMDirectory)==0) or die;
+            (system("mkdir -p $ownLLVMDirectory/wkLLVMBuild"));
+            my $flags = "--enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-libcpp=yes --enable-zlib=no --enable-terminfo=no --enable-crash-overrides=no";
+            (system("(cd $ownLLVMDirectory/wkLLVMBuild && ../configure $flags)") == 0) or die;
         }
 
         print("Building LLVM.\n");
-        chdir $ownLLVMDirectory;
+        chdir "$ownLLVMDirectory/wkLLVMBuild";
+        my $oldPath = $ENV{"PATH"};
+        my $binariesDirectory = "binariesForLLVMBuild";
+        if (-e $binariesDirectory) {
+            $ENV{"PATH"} = File::Spec->rel2abs($binariesDirectory) . ":" . $oldPath;
+        }
         (system("(unset PROJECT_NAME ; make -j `sysctl -n hw.activecpu`)") == 0) or die;
+        $ENV{"PATH"} = $oldPath;
         chdirWebKit();
         
         my $ownLLVMBuildMode = "";
-        if (fileContains($ownLLVMDirectory . "/Makefile.config", "ENABLE_OPTIMIZED=1")) {
+        if (fileContains($ownLLVMDirectory . "/wkLLVMBuild/Makefile.config", "ENABLE_OPTIMIZED=1")) {
             $ownLLVMBuildMode .= "Release";
         } else {
             $ownLLVMBuildMode .= "Debug";
         }
         
-        if (fileContains($ownLLVMDirectory . "/Makefile.config", "DISABLE_ASSERTIONS=1")) {
+        if (fileContains($ownLLVMDirectory . "/wkLLVMBuild/Makefile.config", "DISABLE_ASSERTIONS=1")) {
             # Nothing to do.
         } else {
             $ownLLVMBuildMode .= "+Asserts";
         }
         
-        my $librarySourceDirectory = "$ownLLVMDirectory/$ownLLVMBuildMode/lib";
+        my $librarySourceDirectory = "$ownLLVMDirectory/wkLLVMBuild/$ownLLVMBuildMode/lib";
         my $libraryTargetDirectory = $libraryDir;
         $shouldUpdateLLVMLibraryToken = 0;
         print("Symlinking libraries from $librarySourceDirectory to $libraryTargetDirectory\n");
@@ -247,11 +255,13 @@ if ($llvm) {
             unpackIfNecessary($libraryDir, "$libraryDir/libLLVMCore.a", $llvmLibraryPackage, 1);
     }
 
+    (system("rm", "-f", "$productDir/ExtraIncludesForLocalLLVMBuild") == 0) or die;
     if ($useOwnLLVM) {
         (system("rm", "-rf", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm") == 0) or die;
         (system("rm", "-rf", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c") == 0) or die;
         symlink("$ownLLVMDirectory/include/llvm", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm") or die;
         symlink("$ownLLVMDirectory/include/llvm-c", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c") or die;
+        symlink("$ownLLVMDirectory/wkLLVMBuild/include", "$productDir/ExtraIncludesForLocalLLVMBuild") or die;
     } else {
         unpackIfNecessary("$productDir/usr/local/LLVMForJavaScriptCore/include", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c/Core.h", $llvmIncludePackage, 0);
     }

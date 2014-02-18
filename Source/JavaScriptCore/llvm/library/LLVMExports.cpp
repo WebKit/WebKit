@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,8 +48,15 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*
     
     LLVMLinkInMCJIT();
     LLVMInitializeNativeTarget();
+#if CPU(X86_64)
     LLVMInitializeX86AsmPrinter();
     LLVMInitializeX86Disassembler();
+#elif CPU(ARM64)
+    LLVMInitializeARM64AsmPrinter();
+    LLVMInitializeARM64Disassembler();
+#else
+    UNREACHABLE_FOR_PLATFORM();
+#endif
     
     JSC::LLVMAPI* result = new JSC::LLVMAPI;
     

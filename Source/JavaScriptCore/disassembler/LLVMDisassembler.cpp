@@ -87,6 +87,8 @@ bool tryToDisassembleWithLLVM(
     triple = "x86_64-apple-darwin";
 #elif CPU(X86)
     triple = "x86-apple-darwin";
+#elif CPU(ARM64)
+    triple = "arm64-apple-darwin";
 #else
 #error "LLVM disassembler currently not supported on this CPU."
 #endif

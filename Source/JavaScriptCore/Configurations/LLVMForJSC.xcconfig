@@ -27,13 +27,16 @@
 // Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
 OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-all_load;
 
+LLVM_LIBS_iphoneos = -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMARM64Disassembler -lLLVMARM64AsmParser -lLLVMARM64CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMARM64Desc -lLLVMARM64Info -lLLVMARM64AsmPrinter -lLLVMIRReader -lLLVMAsmParser -lLLVMMCDisassembler -lLLVMMCParser -lLLVMInstrumentation -lLLVMBitReader -lLLVMInterpreter -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMBitWriter -lLLVMMCJIT -lLLVMJIT -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMTarget -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport;
+LLVM_LIBS_macosx = -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMIRReader -lLLVMAsmParser -lLLVMMCDisassembler -lLLVMMCParser -lLLVMInstrumentation -lLLVMBitReader -lLLVMInterpreter -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMBitWriter -lLLVMMCJIT -lLLVMJIT -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMTarget -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport;
+
 OTHER_LDFLAGS_LLVM = $(OTHER_LDFLAGS_LLVM_$(ENABLE_FTL_JIT));
 OTHER_LDFLAGS_LLVM_ = ;
-OTHER_LDFLAGS_LLVM_ENABLE_FTL_JIT = -lpthread -lm -L/usr/local/LLVMForJavaScriptCore/lib -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMIRReader -lLLVMAsmParser -lLLVMMCDisassembler -lLLVMMCParser -lLLVMInstrumentation -lLLVMBitReader -lLLVMInterpreter -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMBitWriter -lLLVMMCJIT -lLLVMJIT -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMTarget -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport;
+OTHER_LDFLAGS_LLVM_ENABLE_FTL_JIT = -lpthread -lm -L/usr/local/LLVMForJavaScriptCore/lib $(LLVM_LIBS_$(PLATFORM_NAME));
 
 OTHER_LDFLAGS_BASE = -lobjc -Wl,-Y,3 $(OTHER_LDFLAGS_HIDE_SYMBOLS);
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE);
+OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_LLVM);
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
 OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_LLVM)
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;

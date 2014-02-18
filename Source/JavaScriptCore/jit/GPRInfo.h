@@ -399,6 +399,7 @@ public:
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::esi;
+    static const GPRReg patchpointScratchRegister = MacroAssembler::scratchRegister;
 
     static GPRReg toRegister(unsigned index)
     {
@@ -573,6 +574,7 @@ public:
     static const GPRReg returnValueGPR = ARM64Registers::x0; // regT0
     static const GPRReg returnValueGPR2 = ARM64Registers::x1; // regT1
     static const GPRReg nonPreservedNonReturnGPR = ARM64Registers::x2;
+    static const GPRReg patchpointScratchRegister = ARM64Registers::ip0;
 
     // GPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the GPR RegisterBank.

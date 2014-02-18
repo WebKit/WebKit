@@ -646,7 +646,7 @@
 #endif
 
 /* Do we have LLVM? */
-#if !defined(HAVE_LLVM) && OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK) && ENABLE(FTL_JIT) && CPU(X86_64)
+#if !defined(HAVE_LLVM) && OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK) && ENABLE(FTL_JIT) && (CPU(X86_64) || CPU(ARM64))
 #define HAVE_LLVM 1
 #endif
 
@@ -662,7 +662,7 @@
 
 /* If possible, try to enable the LLVM disassembler. This is optional and we can
    fall back on UDis86 if necessary. */
-#if !defined(WTF_USE_LLVM_DISASSEMBLER) && HAVE(LLVM) && (CPU(X86_64) || CPU(X86))
+#if !defined(WTF_USE_LLVM_DISASSEMBLER) && HAVE(LLVM) && (CPU(X86_64) || CPU(X86) || CPU(ARM64))
 #define WTF_USE_LLVM_DISASSEMBLER 1
 #endif
 
