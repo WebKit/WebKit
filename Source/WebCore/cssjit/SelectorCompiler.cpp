@@ -446,7 +446,8 @@ static inline void updateChainStates(const SelectorFragment& fragment, bool& has
         hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain = false;
         break;
     case FragmentRelation::Child:
-        ++ancestorPositionSinceDescendantRelation;
+        if (hasDescendantRelationOnTheRight)
+            ++ancestorPositionSinceDescendantRelation;
         hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain = false;
         break;
     case FragmentRelation::DirectAdjacent:
@@ -464,9 +465,9 @@ static inline bool isFirstAncestor(unsigned ancestorPositionSinceDescendantRelat
     return ancestorPositionSinceDescendantRelation == 1;
 }
 
-static inline bool isFirstAdjacent(unsigned ancestorPositionSinceDescendantRelation)
+static inline bool isFirstAdjacent(unsigned adjacentPositionSinceIndirectAdjacentTreeWalk)
 {
-    return ancestorPositionSinceDescendantRelation == 1;
+    return adjacentPositionSinceIndirectAdjacentTreeWalk == 1;
 }
 
 static inline bool isAfterChildRelation(unsigned ancestorPositionSinceDescendantRelation)

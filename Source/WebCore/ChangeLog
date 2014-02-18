@@ -1,3 +1,30 @@
+2014-02-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        SelectorCompiler incorrectly saves a backtracking register for a child chain without descendant relation on the right
+        https://bugs.webkit.org/show_bug.cgi?id=128944
+
+        Reviewed by Andreas Kling.
+
+        When resolving the backtracking relations, the value of ancestorPositionSinceDescendantRelation was incorrect for the
+        rightmost child chain.
+        What was happenning is updateChainStates() would increment ancestorPositionSinceDescendantRelation even if there was
+        no descendant relation previously in the chain. As a result, the second SelectorFragment in the fragment chain would
+        save a backtracking register.
+
+        Previously this would just be a wasted register but since r163850, the number of registers available for compilation
+        is defined by SelectorCompiler::minimumRegisterRequirements(). Since we would have one less register available than computed,
+        we could run out of register and RegisterAllocator would invoke WTFCrash to avoid generating incorrect code.
+
+        This patch fixes the issue by not updating ancestorPositionSinceDescendantRelation until the first descendant relation
+        is seen. There was no need to fix the Adjacent relation because adjacentPositionSinceIndirectAdjacentTreeWalk already
+        had the correct guard.
+
+        Test: fast/selectors/querySelector-rightmost-child-chain-attribute-matching.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::updateChainStates):
+        (WebCore::SelectorCompiler::isFirstAdjacent): The name was a bad copy-paste, fix it.
+
 2014-02-17  Dean Jackson  <dino@apple.com>
 
         Constrain replaced element layout to from-intrinsic aspect ratio if specified

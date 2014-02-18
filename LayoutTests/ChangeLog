@@ -1,3 +1,13 @@
+2014-02-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        SelectorCompiler incorrectly saves a backtracking register for a child chain without descendant relation on the right
+        https://bugs.webkit.org/show_bug.cgi?id=128944
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/querySelector-rightmost-child-chain-attribute-matching-expected.txt: Added.
+        * fast/selectors/querySelector-rightmost-child-chain-attribute-matching.html: Added.
+
 2014-02-17  Dean Jackson  <dino@apple.com>
 
         Constrain replaced element layout to from-intrinsic aspect ratio if specified
