@@ -1,3 +1,21 @@
+2014-02-18 Ryosuke Niwa <rniwa@webkit.org>
+
+        Merge notifyComponentsOnChangedSelection into respondToSelectionChange
+        https://bugs.webkit.org/show_bug.cgi?id=128993
+
+        Reviewed by Andreas Kling.
+
+        Merged notifyComponentsOnChangedSelection into respondToSelectionChange since notifyComponentsOnChangedSelection
+        was only added in iOS codebase in response to the code added for continuous spellchecking and alternative text controller
+        in respondToChangedSelection but they should have been called inside setIgnoreCompositionSelectionChange.
+
+        So merge these two functions and make respondToChangedSelection behave like setIgnoreCompositionSelectionChange.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::setIgnoreCompositionSelectionChange):
+        (WebCore::Editor::respondToChangedSelection):
+        * editing/Editor.h:
+
 2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         FrameSelection::textWasReplaced and setSelectedRange shouldn't trigger synchronous layout

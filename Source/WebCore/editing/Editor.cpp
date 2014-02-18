@@ -756,7 +756,7 @@ bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertActi
 void Editor::notifyComponentsOnChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions options)
 {
 #if PLATFORM(IOS)
-    // FIXME: Merge this to open source https://bugs.webkit.org/show_bug.cgi?id=38830
+    // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830>
     if (m_ignoreCompositionSelectionChange)
         return;
 #endif
@@ -2949,7 +2949,7 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection,  
     // does not call EditorClient::respondToChangedSelection(), which, on the Mac, sends selection change notifications and
     // starts a new kill ring sequence, but we want to do these things (matches AppKit).
 #if PLATFORM(IOS)
-    // FIXME: Merge this to open source https://bugs.webkit.org/show_bug.cgi?id=38830
+    // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830>
     if (m_ignoreCompositionSelectionChange)
         return;
 #endif
