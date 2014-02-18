@@ -1,5 +1,16 @@
 2014-02-18  Anders Carlsson  <andersca@apple.com>
 
+        Add -[WKWebView reload]
+        https://bugs.webkit.org/show_bug.cgi?id=129005
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView reload]):
+
+2014-02-18  Anders Carlsson  <andersca@apple.com>
+
         Add SPI for allowing HTTPS certificates
         https://bugs.webkit.org/show_bug.cgi?id=129002
 
