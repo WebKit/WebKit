@@ -46,7 +46,7 @@
 
 - (NSString *)description
 {
-    NSString *description = [NSString stringWithFormat:@"<%@: %p; maximumProcessCount = %ld", NSStringFromClass(self.class), self, _maximumProcessCount];
+    NSString *description = [NSString stringWithFormat:@"<%@: %p; maximumProcessCount = %lu", NSStringFromClass(self.class), self, static_cast<unsigned long>(_maximumProcessCount)];
     if (_injectedBundleURL)
         return [description stringByAppendingFormat:@"; injectedBundleURL: \"%@\">", _injectedBundleURL.get()];
 

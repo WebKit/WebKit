@@ -1,3 +1,10 @@
+2014-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * UIProcess/API/Cocoa/WKProcessClassConfiguration.mm:
+        (-[WKProcessClassConfiguration description]):
+
 2014-02-18  Sam Weinig  <sam@webkit.org>
 
         Temporarily remove support for setting the maximumDecodedImageSize. It is causing assertions.
