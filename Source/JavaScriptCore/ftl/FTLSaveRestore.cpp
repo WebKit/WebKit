@@ -62,6 +62,13 @@ size_t offsetOfFPR(FPRReg reg)
     return bytesForGPRs() + MacroAssembler::fpRegisterIndex(reg) * sizeof(double);
 }
 
+size_t offsetOfReg(Reg reg)
+{
+    if (reg.isGPR())
+        return offsetOfGPR(reg.gpr());
+    return offsetOfFPR(reg.fpr());
+}
+
 void saveAllRegisters(MacroAssembler& jit, char* scratchMemory)
 {
     // Get the first register out of the way, so that we can use it as a pointer.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "GPRInfo.h"
+#include "Reg.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC { namespace FTL {
@@ -36,40 +36,39 @@ namespace JSC { namespace FTL {
 class RegisterAtOffset {
 public:
     RegisterAtOffset()
-        : m_gpr(InvalidGPRReg)
-        , m_offset(0)
+        : m_offset(0)
     {
     }
     
-    RegisterAtOffset(GPRReg gpr, ptrdiff_t offset)
-        : m_gpr(gpr)
+    RegisterAtOffset(Reg reg, ptrdiff_t offset)
+        : m_reg(reg)
         , m_offset(offset)
     {
     }
     
-    bool operator!() const { return m_gpr == InvalidGPRReg; }
+    bool operator!() const { return !m_reg; }
     
-    GPRReg gpr() const { return m_gpr; }
+    Reg reg() const { return m_reg; }
     ptrdiff_t offset() const { return m_offset; }
     
     bool operator==(const RegisterAtOffset& other) const
     {
-        return gpr() == other.gpr() && offset() == other.offset();
+        return reg() == other.reg() && offset() == other.offset();
     }
     
     bool operator<(const RegisterAtOffset& other) const
     {
-        if (gpr() != other.gpr())
-            return gpr() < other.gpr();
+        if (reg() != other.reg())
+            return reg() < other.reg();
         return offset() < other.offset();
     }
     
-    static GPRReg getGPR(RegisterAtOffset* value) { return value->gpr(); }
+    static Reg getReg(RegisterAtOffset* value) { return value->reg(); }
     
     void dump(PrintStream& out) const;
 
 private:
-    GPRReg m_gpr;
+    Reg m_reg;
     ptrdiff_t m_offset;
 };
 

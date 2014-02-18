@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLSaveRestore_h
-#define FTLSaveRestore_h
+#include "config.h"
+#include "Reg.h"
 
-#include <wtf/Platform.h>
-
-#if ENABLE(FTL_JIT)
+#if ENABLE(JIT)
 
 #include "FPRInfo.h"
 #include "GPRInfo.h"
-#include "Reg.h"
 
 namespace JSC {
 
-class MacroAssembler;
+void Reg::dump(PrintStream& out) const
+{
+    if (!*this)
+        out.print("<none>");
+    else if (isGPR())
+        out.print(gpr());
+    else
+        out.print(fpr());
+}
 
-namespace FTL {
+} // namespace JSC
 
-size_t requiredScratchMemorySizeInBytes();
-
-size_t offsetOfReg(Reg);
-size_t offsetOfGPR(GPRReg);
-size_t offsetOfFPR(FPRReg);
-
-// Assumes that top-of-stack can be used as a pointer-sized scratchpad. Saves all of
-// the registers into the scratch buffer such that RegisterID * sizeof(int64_t) is the
-// offset of every register.
-void saveAllRegisters(MacroAssembler& jit, char* scratchMemory);
-
-void restoreAllRegisters(MacroAssembler& jit, char* scratchMemory);
-
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLSaveRestore_h
+#endif // ENABLE(JIT)
 

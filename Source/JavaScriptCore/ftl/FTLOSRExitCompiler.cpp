@@ -274,17 +274,17 @@ static void compileStub(
     
     // At this point regT1 points to where we would save our registers. Save them here.
     ptrdiff_t currentOffset = 0;
-    for (GPRReg gpr = AssemblyHelpers::firstRegister(); gpr <= AssemblyHelpers::lastRegister(); gpr = static_cast<GPRReg>(gpr + 1)) {
-        if (!toSave.get(gpr))
+    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+        if (!toSave.get(reg))
             continue;
         currentOffset += sizeof(Register);
-        unsigned unwindIndex = jitCode->unwindInfo.indexOf(gpr);
+        unsigned unwindIndex = jitCode->unwindInfo.indexOf(reg);
         if (unwindIndex == UINT_MAX) {
             // The FTL compilation didn't preserve this register. This means that it also
             // didn't use the register. So its value at the beginning of OSR exit should be
             // preserved by the thunk. Luckily, we saved all registers into the register
             // scratch buffer, so we can restore them from there.
-            jit.load64(registerScratch + offsetOfGPR(gpr), GPRInfo::regT0);
+            jit.load64(registerScratch + offsetOfReg(reg), GPRInfo::regT0);
         } else {
             // The FTL compilation preserved the register. Its new value is therefore
             // irrelevant, but we can get the value that was preserved by using the unwind

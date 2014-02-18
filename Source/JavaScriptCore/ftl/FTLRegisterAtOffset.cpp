@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ namespace JSC { namespace FTL {
 
 void RegisterAtOffset::dump(PrintStream& out) const
 {
-    out.print(gpr(), " at ", offset());
+    out.print(reg(), " at ", offset());
 }
 
 } } // namespace JSC::FTL

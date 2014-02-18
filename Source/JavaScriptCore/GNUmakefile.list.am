@@ -786,8 +786,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITToDFGDeferredCompilationCallback.h \
 	Source/JavaScriptCore/jit/JITWriteBarrier.h \
 	Source/JavaScriptCore/jit/JSInterfaceJIT.h \
-    Source/JavaScriptCore/jit/RegisterPreservationWrapperGenerator.h \
-    Source/JavaScriptCore/jit/RegisterPreservationWrapperGenerator.cpp \
+	Source/JavaScriptCore/jit/Reg.h \
+	Source/JavaScriptCore/jit/Reg.cpp \
+	Source/JavaScriptCore/jit/RegisterPreservationWrapperGenerator.h \
+	Source/JavaScriptCore/jit/RegisterPreservationWrapperGenerator.cpp \
 	Source/JavaScriptCore/jit/RegisterSet.cpp \
 	Source/JavaScriptCore/jit/RegisterSet.h \
 	Source/JavaScriptCore/jit/Repatch.cpp \

@@ -1,3 +1,73 @@
+2014-02-18  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL unwind parsing should handle ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=128984
+
+        Reviewed by Oliver Hunt.
+        
+        This makes unwind parsing handle ARM64 and it makes all clients of unwind info capable of
+        dealing with that architecture.
+        
+        The big difference is that ARM64 has callee-save double registers. This is conceptually easy
+        to handle, but out code for dealing with callee-saves spoke of "GPRReg". We've been in this
+        situation before: code that needs to deal with either a GPRReg or a FPRReg. In the past we'd
+        hacked around the problem, but this time I decided to do a full frontal assault. This patch
+        adds a Reg class, which is a box for either GPRReg or FPRReg along with tools for iterating
+        over all possible registers. Then, I threaded this through SaveRestore, RegisterSet,
+        RegisterAtOffset, and UnwindInfo. With the help of Reg, it was easy to refactor the code to
+        handle FPRs in addition to GPRs.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLRegisterAtOffset.cpp:
+        (JSC::FTL::RegisterAtOffset::dump):
+        * ftl/FTLRegisterAtOffset.h:
+        (JSC::FTL::RegisterAtOffset::RegisterAtOffset):
+        (JSC::FTL::RegisterAtOffset::operator!):
+        (JSC::FTL::RegisterAtOffset::reg):
+        (JSC::FTL::RegisterAtOffset::operator==):
+        (JSC::FTL::RegisterAtOffset::operator<):
+        (JSC::FTL::RegisterAtOffset::getReg):
+        * ftl/FTLSaveRestore.cpp:
+        (JSC::FTL::offsetOfReg):
+        * ftl/FTLSaveRestore.h:
+        * ftl/FTLUnwindInfo.cpp:
+        (JSC::FTL::UnwindInfo::parse):
+        (JSC::FTL::UnwindInfo::find):
+        (JSC::FTL::UnwindInfo::indexOf):
+        * ftl/FTLUnwindInfo.h:
+        * jit/Reg.cpp: Added.
+        (JSC::Reg::dump):
+        * jit/Reg.h: Added.
+        (JSC::Reg::Reg):
+        (JSC::Reg::fromIndex):
+        (JSC::Reg::first):
+        (JSC::Reg::last):
+        (JSC::Reg::next):
+        (JSC::Reg::index):
+        (JSC::Reg::isSet):
+        (JSC::Reg::operator!):
+        (JSC::Reg::isGPR):
+        (JSC::Reg::isFPR):
+        (JSC::Reg::gpr):
+        (JSC::Reg::fpr):
+        (JSC::Reg::operator==):
+        (JSC::Reg::operator!=):
+        (JSC::Reg::operator<):
+        (JSC::Reg::operator>):
+        (JSC::Reg::operator<=):
+        (JSC::Reg::operator>=):
+        (JSC::Reg::hash):
+        (JSC::Reg::invalid):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::set):
+        (JSC::RegisterSet::clear):
+        (JSC::RegisterSet::get):
+
 2014-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         More ARM FTL glue

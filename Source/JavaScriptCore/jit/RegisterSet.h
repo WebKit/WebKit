@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
+#include "Reg.h"
 #include "TempRegisterSet.h"
 #include <wtf/BitVector.h>
 
@@ -48,12 +49,13 @@ public:
     static RegisterSet allGPRs();
     static RegisterSet allFPRs();
     static RegisterSet allRegisters();
-
-    void set(GPRReg reg, bool value = true)
-    {
-        m_vector.set(MacroAssembler::registerIndex(reg), value);
-    }
     
+    void set(Reg reg, bool value = true)
+    {
+        ASSERT(!!reg);
+        m_vector.set(reg.index(), value);
+    }
+
     void set(JSValueRegs regs)
     {
         if (regs.tagGPR() != InvalidGPRReg)
@@ -61,24 +63,17 @@ public:
         set(regs.payloadGPR());
     }
     
-    void clear(GPRReg reg)
+    void clear(Reg reg)
     {
+        ASSERT(!!reg);
         set(reg, false);
     }
     
-    bool get(GPRReg reg) const { return m_vector.get(MacroAssembler::registerIndex(reg)); }
-    
-    void set(FPRReg reg, bool value = true)
+    bool get(Reg reg) const
     {
-        m_vector.set(MacroAssembler::registerIndex(reg), value);
+        ASSERT(!!reg);
+        return m_vector.get(reg.index());
     }
-    
-    void clear(FPRReg reg)
-    {
-        set(reg, false);
-    }
-    
-    bool get(FPRReg reg) const { return m_vector.get(MacroAssembler::registerIndex(reg)); }
     
     void merge(const RegisterSet& other) { m_vector.merge(other.m_vector); }
     void filter(const RegisterSet& other) { m_vector.filter(other.m_vector); }

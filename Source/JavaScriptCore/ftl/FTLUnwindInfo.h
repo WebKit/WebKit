@@ -41,8 +41,8 @@ struct UnwindInfo {
     
     void dump(PrintStream&) const;
     
-    RegisterAtOffset* find(GPRReg) const;
-    unsigned indexOf(GPRReg) const; // Returns UINT_MAX if not found.
+    RegisterAtOffset* find(Reg) const;
+    unsigned indexOf(Reg) const; // Returns UINT_MAX if not found.
     
     Vector<RegisterAtOffset> m_registers;
 };
