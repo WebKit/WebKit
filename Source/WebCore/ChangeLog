@@ -1,3 +1,28 @@
+2014-02-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Compute region ranges for inline replaced elements
+        https://bugs.webkit.org/show_bug.cgi?id=128800
+
+        Reviewed by Andrei Bucur.
+
+        Tests: fast/regions/hover-content-inside-iframe-in-region.html
+               fast/regions/select-multiple-in-region.html
+
+        When asking for the range of regions for an inline replaced box,
+        use the region cached on the root inline box for the inline replaced
+        box as the range of regions is computed only for blocks.
+        A future patch will extend the computation of region ranges
+        for inline blocks too.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint):
+        Remove the restriction set during https://bugs.webkit.org/show_bug.cgi?id=113703
+        and enable the code path for boxes not only for blocks.
+        Method RenderFlowThread::getRegionRangeForBox returns a null region when it is unable
+        to get the region range and we already check for null region case.
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+
 2014-02-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Move inheriting method to the superclass in the JavaScript media controls

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #region {
+                -webkit-flow-from: flow;
+                width: 150px;
+                height: 150px;
+                position: absolute;
+                top: 150px;
+                left: 150px;
+                border: 5px solid black;
+                background-color: green;
+            }
+            #iframe {
+                -webkit-flow-into: flow;
+                border: none;
+                width: 150px;
+                height: 150px;
+            }
+        </style>
+    </head>
+    <body onload="test()">
+        <iframe id="iframe" src="resources/iframe-in-region-source.html"></iframe>
+        <p>Test that moving the cursor over the content of an iframe that is displayed in region correctly aplies the hover style for the content.</p>
+        <p>To manually test, move the cursor over the red square.</p>
+        <p>On success, you should see a green rectangle with black border and no red.</p>
+        <div id="region"></div>
+        <script>
+            function test() {
+                if (window.eventSender) {
+                    var regionRect = document.getElementById("region").getBoundingClientRect();
+                    var iframe = document.getElementById("iframe");
+                    window.eventSender.mouseMoveTo(iframe.offsetLeft + 20, iframe.offsetTop + 20);
+                    window.eventSender.mouseDown(0);
+                }
+            }
+        </script>
+    </body>
+</html>

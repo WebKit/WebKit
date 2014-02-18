@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #region {
+                -webkit-flow-from: flow;
+                position: absolute;
+                top: 150px;
+                left: 150px;
+                width: 150px;
+                height: 150px;
+                border: 1px solid black;
+            }
+            #select {
+                -webkit-flow-into: flow;
+                font: 20px/1 monospace;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test that you can select an option from a multiple type select element displayed in region.</p>
+        <p>To manually test it, click on option_2 item.</p>
+        <p>On success, it should be selected and you should see PASS below.</p>
+        <p id="result"></p>
+        <div id="region"></div>
+        <select id="select" multiple>
+            <option>option_1</option>
+            <option>option_2</option>
+            <option>option_3</option>
+            <option>option_4</option>
+            <option>option_5</option>
+        </select>
+        <script>
+            document.getElementById("select").addEventListener("mouseup", function(evt)
+            {
+                document.getElementById("result").innerHTML = (this.selectedIndex == 1) ? "PASS" : "FAIL";
+            });
+
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            if (window.eventSender) {
+                var selectRect = document.getElementById("select").getBoundingClientRect();
+                eventSender.mouseMoveTo(selectRect.left + 10, selectRect.top + 30);
+                eventSender.mouseDown(0);
+                eventSender.mouseUp();
+            }
+        </script>
+    </body>
+</html>

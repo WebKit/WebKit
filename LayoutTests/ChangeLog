@@ -1,3 +1,16 @@
+2014-02-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Compute region ranges for inline replaced elements
+        https://bugs.webkit.org/show_bug.cgi?id=128800
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/hover-content-inside-iframe-in-region-expected.html: Added.
+        * fast/regions/hover-content-inside-iframe-in-region.html: Added.
+        * fast/regions/resources/iframe-in-region-source.html: Added.
+        * fast/regions/select-multiple-in-region-expected.txt: Added.
+        * fast/regions/select-multiple-in-region.html: Added.
+
 2014-02-17  Benjamin Poulain  <bpoulain@apple.com>
 
         SelectorCompiler incorrectly saves a backtracking register for a child chain without descendant relation on the right

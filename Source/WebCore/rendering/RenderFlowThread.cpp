@@ -33,6 +33,7 @@
 #include "FlowThreadController.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "InlineElementBox.h"
 #include "Node.h"
 #include "PODIntervalTree.h"
 #include "PaintInfo.h"
@@ -784,16 +785,23 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, RenderRegion* 
 
 void RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*& startRegion, RenderRegion*& endRegion) const
 {
-    startRegion = 0;
-    endRegion = 0;
+    startRegion = endRegion = 0;
     auto it = m_regionRangeMap.find(box);
-    if (it == m_regionRangeMap.end())
-        return;
 
-    const RenderRegionRange& range = it->value;
-    startRegion = range.startRegion();
-    endRegion = range.endRegion();
-    ASSERT(m_regionList.contains(startRegion) && m_regionList.contains(endRegion));
+    if (it != m_regionRangeMap.end()) {
+        const RenderRegionRange& range = it->value;
+        startRegion = range.startRegion();
+        endRegion = range.endRegion();
+        ASSERT(m_regionList.contains(startRegion) && m_regionList.contains(endRegion));
+        return;
+    }
+
+    InlineElementBox* boxWrapper = box->inlineBoxWrapper();
+    if (boxWrapper) {
+        const RootInlineBox& boxWrapperRootInlineBox =  boxWrapper->root();
+        startRegion = endRegion = boxWrapperRootInlineBox.containingRegion();
+        return;
+    }
 }
 
 void RenderFlowThread::applyBreakAfterContent(LayoutUnit clientHeight)
