@@ -56,7 +56,7 @@ class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface
 {
 
 public:
-    ~MediaPlayerPrivateGStreamerBase();
+    virtual ~MediaPlayerPrivateGStreamerBase();
 
     IntSize naturalSize() const;
 
