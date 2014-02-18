@@ -69,6 +69,12 @@ void RenderRubyBase::moveChildren(RenderRubyBase* toBase, RenderObject* beforeCh
     toBase->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
+void RenderRubyBase::mergeChildrenWithBase(RenderRubyBase* toBlock)
+{
+    moveChildren(toBlock);
+    moveFloatsTo(toBlock);
+}
+
 void RenderRubyBase::moveInlineChildren(RenderRubyBase* toBase, RenderObject* beforeChild)
 {
     ASSERT(childrenInline());

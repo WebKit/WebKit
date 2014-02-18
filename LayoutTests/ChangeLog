@@ -1,3 +1,14 @@
+2014-02-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash when merging ruby bases that contain floats
+
+        https://bugs.webkit.org/show_bug.cgi?id=127515
+        <rdar://problem/15896562>
+
+        Reviewed by David Hyatt.
+
+        * fast/ruby/ruby-base-merge-block-children-crash-2.html: Added.
+
 2014-02-18  Samuel White  <samuel_white@apple.com>
 
         AX: Searching for "immediate descendants only" can return unexpected results.

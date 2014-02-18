@@ -1901,11 +1901,8 @@ void RenderBlockFlow::deleteLines()
     RenderBlock::deleteLines();
 }
 
-void RenderBlockFlow::moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert)
+void RenderBlockFlow::moveFloatsTo(RenderBlockFlow* toBlockFlow)
 {
-    RenderBlockFlow* toBlockFlow = toRenderBlockFlow(toBlock);
-    moveAllChildrenTo(toBlockFlow, fullRemoveInsert);
-
     // When a portion of the render tree is being detached, anonymous blocks
     // will be combined as their children are deleted. In this process, the
     // anonymous block later in the tree is merged into the one preceeding it.
@@ -1940,6 +1937,13 @@ void RenderBlockFlow::moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, boo
             toBlockFlow->m_floatingObjects->add(floatingObject->unsafeClone());
         }
     }
+}
+
+void RenderBlockFlow::moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert)
+{
+    RenderBlockFlow* toBlockFlow = toRenderBlockFlow(toBlock);
+    moveAllChildrenTo(toBlockFlow, fullRemoveInsert);
+    moveFloatsTo(toBlockFlow);
 }
 
 void RenderBlockFlow::addOverflowFromFloats()

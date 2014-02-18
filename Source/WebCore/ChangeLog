@@ -1,3 +1,43 @@
+2014-02-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash when merging ruby bases that contain floats
+
+        https://bugs.webkit.org/show_bug.cgi?id=127515
+        <rdar://problem/15896562>
+
+        This crash occurs when we remove a ruby text object and decide to merge
+        two adjacent ruby base objects. The right ruby base's children were
+        being merged into the left ruby base, but the right ruby base's floats
+        were not being moved to the left base. This could cause us not to
+        descend into all nodes containing a FloatingObject in
+        RenderBlockFlow::markAllDescendantsWithFloatsForLayout(), because we
+        assume that if a block does not have a particular float in its float
+        list, none of its descendants will, either.
+
+        Reviewed by David Hyatt.
+
+        Test: fast/ruby/ruby-base-merge-block-children-crash-2.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::moveFloatsTo):
+        Code split out of moveAllChildrenIncludingFloatsTo().
+        (WebCore::RenderBlockFlow::moveAllChildrenIncludingFloatsTo):
+        Call moveFloatsTo().
+
+        * rendering/RenderBlockFlow.h:
+        Add declaration of moveFloatsTo().
+
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::mergeChildrenWithBase):
+        Move children and floats to the new base.
+
+        * rendering/RenderRubyBase.h:
+        Declare mergeChildrenWithBase().
+
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::removeChild):
+        Call mergeChildrenWithBase().
+
 2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS build fix after r164319.
