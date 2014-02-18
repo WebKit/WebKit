@@ -1,3 +1,29 @@
+2014-02-17  Dean Jackson  <dino@apple.com>
+
+        Constrain replaced element layout to from-intrinsic aspect ratio if specified
+        https://bugs.webkit.org/show_bug.cgi?id=128629
+
+        Reviewed by Simon Fraser.
+
+        First pass at implementing -webkit-aspect-ratio: from-instrinsics;
+
+        After RenderReplaced has done layout, attempt to update the
+        resulting size to match the desired aspect ratio. This step
+        will only reduce the size of an element, and never below the
+        minimum dimensions.
+
+        Tests: fast/css/aspect-ratio/columns.html
+               fast/css/aspect-ratio/containers.html
+               fast/css/aspect-ratio/simple.html
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageDimensionsChanged): If we get an update
+        to our intrinsic dimensions, and layout depends on this, trigger
+        another layout pass.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout): Implement the step described
+        above.
+
 2014-02-17  Sam Weinig  <sam@webkit.org>
 
         Fix build.

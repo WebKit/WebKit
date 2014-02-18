@@ -323,7 +323,9 @@ void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* r
             || style().logicalMaxWidth().isPercent()
             || style().logicalMinWidth().isPercent();
 
-        if (imageSizeChanged || hasOverrideSize || containingBlockNeedsToRecomputePreferredSize) {
+        bool layoutSizeDependsOnIntrinsicSize = style().aspectRatioType() == AspectRatioFromIntrinsic;
+
+        if (imageSizeChanged || hasOverrideSize || containingBlockNeedsToRecomputePreferredSize || layoutSizeDependsOnIntrinsicSize) {
             shouldRepaint = false;
             if (!selfNeedsLayout())
                 setNeedsLayout();

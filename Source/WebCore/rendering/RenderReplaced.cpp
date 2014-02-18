@@ -99,6 +99,18 @@ void RenderReplaced::layout()
     updateLogicalWidth();
     updateLogicalHeight();
 
+    // Now that we've calculated our preferred layout, we check to see
+    // if we should further constrain sizing to the intrinsic aspect ratio.
+    if (style().aspectRatioType() == AspectRatioFromIntrinsic && !m_intrinsicSize.isEmpty()) {
+        float aspectRatio = m_intrinsicSize.aspectRatio();
+        LayoutSize frameSize = size();
+        float frameAspectRatio = frameSize.aspectRatio();
+        if (frameAspectRatio < aspectRatio)
+            setHeight(computeReplacedLogicalHeightRespectingMinMaxHeight(frameSize.height() * frameAspectRatio / aspectRatio));
+        else if (frameAspectRatio > aspectRatio)
+            setWidth(computeReplacedLogicalWidthRespectingMinMaxWidth(frameSize.width() * aspectRatio / frameAspectRatio, ComputePreferred));
+    }
+
     clearOverflow();
     addVisualEffectOverflow();
     updateLayerTransform();
