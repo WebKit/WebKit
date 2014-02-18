@@ -646,7 +646,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
 
                     for (var i = 0; i < marks.length; ++i) {
                         var mark = marks[i];
-                        if (!mark.__markedColor)
+                        if (WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(mark).type !== WebInspector.TextMarker.Type.Color)
                             continue;
                         colorTextMarker = mark;
                         break;
@@ -672,7 +672,6 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                 range.to.ch = range.from.ch + newColorText.length;
 
                 colorTextMarker = this._codeMirror.markText(range.from, range.to);
-                colorTextMarker.__markedColor = true;
 
                 swatch.__colorTextMarker = colorTextMarker;
             }

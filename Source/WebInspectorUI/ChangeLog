@@ -1,5 +1,20 @@
 2014-02-18  Antoine Quint  <graouts@webkit.org>
 
+        Web Inspector: editing a color in the Styles sidebar using the color picker only works once for a given color
+        https://bugs.webkit.org/show_bug.cgi?id=128965
+
+        Reviewed by Timothy Hatcher.
+
+        Use the WebInspector.TextMarker backing the CodeMirror TextMarker object to inspect its type in
+        order to identify color markers that were created for a color. This fixes a regression introduced
+        in http://webkit.org/b/125695 when we abstracted CodeMirror TextMarker objects.
+
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._colorSwatchClicked.updateCodeMirror.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._colorSwatchClicked.updateCodeMirror):
+
+2014-02-18  Antoine Quint  <graouts@webkit.org>
+
         Web Inspector: Editing transparent color shows incorrect opacity slider
         https://bugs.webkit.org/show_bug.cgi?id=128975
 
