@@ -1,3 +1,23 @@
+2014-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Refactor SVGPreserveAspectRatio::parse()
+        https://bugs.webkit.org/show_bug.cgi?id=128658
+
+        Reviewed by Dirk Schulze.
+
+        To removed "goto" in SVGPreserveAspectRatio::parse(), this patch introduce parseInternal() to handle
+        existing behavior with local variables, and existing/new parse() functions invoke it, then set
+        those to member variables.
+
+        Motivated from Blink: https://src.chromium.org/viewvc/blink?view=rev&revision=166927
+
+        No new tests, no behavior change.
+
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::parse):
+        (WebCore::SVGPreserveAspectRatio::parseInternal):
+        * svg/SVGPreserveAspectRatio.h: Add parse() and parseInternal() functions.
+
 2014-02-17  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Move specific named flow methods from RenderRegion to RenderNamedFlowFragment

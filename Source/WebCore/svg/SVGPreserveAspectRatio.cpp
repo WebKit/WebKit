@@ -59,103 +59,121 @@ void SVGPreserveAspectRatio::setMeetOrSlice(unsigned short meetOrSlice, Exceptio
 void SVGPreserveAspectRatio::parse(const String& value)
 {
     const UChar* begin = value.deprecatedCharacters();
-    parse(begin, begin + value.length(), true);
+    parseInternal(begin, begin + value.length(), true);
 }
 
 bool SVGPreserveAspectRatio::parse(const UChar*& currParam, const UChar* end, bool validate)
 {
-    // FIXME: Rewrite this parser, without gotos!
+    return parseInternal(currParam, end, validate);
+}
+
+bool SVGPreserveAspectRatio::parseInternal(const UChar*& currParam, const UChar* end, bool validate)
+{
+    SVGPreserveAspectRatioType align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
+    SVGMeetOrSliceType meetOrSlice = SVG_MEETORSLICE_MEET;
+
+    m_align = align;
+    m_meetOrSlice = meetOrSlice;
+
     if (!skipOptionalSVGSpaces(currParam, end))
-        goto bailOut;
+        return false;
 
     if (*currParam == 'd') {
-        if (!skipString(currParam, end, "defer"))
-            goto bailOut;
+        if (!skipString(currParam, end, "defer")) {
+            LOG_ERROR("Skipped to parse except for *defer* value.");
+            return false;
+        }
 
         // FIXME: We just ignore the "defer" here.
         if (currParam == end)
             return true;
 
         if (!skipOptionalSVGSpaces(currParam, end))
-            goto bailOut;
+            return false;
     }
 
     if (*currParam == 'n') {
-        if (!skipString(currParam, end, "none"))
-            goto bailOut;
-        m_align = SVG_PRESERVEASPECTRATIO_NONE;
+        if (!skipString(currParam, end, "none")) {
+            LOG_ERROR("Skipped to parse except for *none* value.");
+            return false;
+        }
+        align = SVG_PRESERVEASPECTRATIO_NONE;
         skipOptionalSVGSpaces(currParam, end);
     } else if (*currParam == 'x') {
         if ((end - currParam) < 8)
-            goto bailOut;
+            return false;
         if (currParam[1] != 'M' || currParam[4] != 'Y' || currParam[5] != 'M')
-            goto bailOut;
+            return false;
         if (currParam[2] == 'i') {
             if (currParam[3] == 'n') {
                 if (currParam[6] == 'i') {
                     if (currParam[7] == 'n')
-                        m_align = SVG_PRESERVEASPECTRATIO_XMINYMIN;
+                        align = SVG_PRESERVEASPECTRATIO_XMINYMIN;
                     else if (currParam[7] == 'd')
-                        m_align = SVG_PRESERVEASPECTRATIO_XMINYMID;
+                        align = SVG_PRESERVEASPECTRATIO_XMINYMID;
                     else
-                        goto bailOut;
+                        return false;
                 } else if (currParam[6] == 'a' && currParam[7] == 'x')
-                     m_align = SVG_PRESERVEASPECTRATIO_XMINYMAX;
+                    align = SVG_PRESERVEASPECTRATIO_XMINYMAX;
                 else
-                     goto bailOut;
+                    return false;
              } else if (currParam[3] == 'd') {
                 if (currParam[6] == 'i') {
                     if (currParam[7] == 'n')
-                        m_align = SVG_PRESERVEASPECTRATIO_XMIDYMIN;
+                        align = SVG_PRESERVEASPECTRATIO_XMIDYMIN;
                     else if (currParam[7] == 'd')
-                        m_align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
+                        align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
                     else
-                        goto bailOut;
+                        return false;
                 } else if (currParam[6] == 'a' && currParam[7] == 'x')
-                    m_align = SVG_PRESERVEASPECTRATIO_XMIDYMAX;
+                    align = SVG_PRESERVEASPECTRATIO_XMIDYMAX;
                 else
-                    goto bailOut;
+                    return false;
             } else
-                goto bailOut;
+                return false;
         } else if (currParam[2] == 'a' && currParam[3] == 'x') {
             if (currParam[6] == 'i') {
                 if (currParam[7] == 'n')
-                    m_align = SVG_PRESERVEASPECTRATIO_XMAXYMIN;
+                    align = SVG_PRESERVEASPECTRATIO_XMAXYMIN;
                 else if (currParam[7] == 'd')
-                    m_align = SVG_PRESERVEASPECTRATIO_XMAXYMID;
+                    align = SVG_PRESERVEASPECTRATIO_XMAXYMID;
                 else
-                    goto bailOut;
+                    return false;
             } else if (currParam[6] == 'a' && currParam[7] == 'x')
-                m_align = SVG_PRESERVEASPECTRATIO_XMAXYMAX;
+                align = SVG_PRESERVEASPECTRATIO_XMAXYMAX;
             else
-                goto bailOut;
+                return false;
         } else
-            goto bailOut;
+            return false;
         currParam += 8;
         skipOptionalSVGSpaces(currParam, end);
     } else
-        goto bailOut;
+        return false;
 
     if (currParam < end) {
         if (*currParam == 'm') {
-            if (!skipString(currParam, end, "meet"))
-                goto bailOut;
+            if (!skipString(currParam, end, "meet")) {
+                LOG_ERROR("Skipped to parse except for *meet* or *slice* value.");
+                return false;
+            }
             skipOptionalSVGSpaces(currParam, end);
         } else if (*currParam == 's') {
-            if (!skipString(currParam, end, "slice"))
-                goto bailOut;
+            if (!skipString(currParam, end, "slice")) {
+                LOG_ERROR("Skipped to parse except for *meet* or *slice* value.");
+                return false;
+            }
             skipOptionalSVGSpaces(currParam, end);
-            if (m_align != SVG_PRESERVEASPECTRATIO_NONE)
-                m_meetOrSlice = SVG_MEETORSLICE_SLICE;
+            if (align != SVG_PRESERVEASPECTRATIO_NONE)
+                meetOrSlice = SVG_MEETORSLICE_SLICE;
         }
     }
 
-    if (end != currParam && validate) {
-bailOut:
-        m_align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
-        m_meetOrSlice = SVG_MEETORSLICE_MEET;
+    if (end != currParam && validate)
         return false;
-    }
+
+    m_align = align;
+    m_meetOrSlice = meetOrSlice;
+
     return true;
 }
 

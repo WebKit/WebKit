@@ -75,6 +75,8 @@ public:
 private:
     SVGPreserveAspectRatioType m_align;
     SVGMeetOrSliceType m_meetOrSlice;
+
+    bool parseInternal(const UChar*& currParam, const UChar* end, bool validate);
 };
 
 template<>
