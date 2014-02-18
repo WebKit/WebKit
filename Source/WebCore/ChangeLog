@@ -1,3 +1,18 @@
+2014-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename convertFixedAndStickyPosition() to convertPositionStyle()
+        https://bugs.webkit.org/show_bug.cgi?id=128987
+
+        Reviewed by NOBODY. This is addressing a post-commit review from Dean Jackson.
+
+        No new tests are necessary because there is no behavior change
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::convertPositionStyle):
+        * editing/EditingStyle.h:
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendElement):
+
 2014-02-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r164296.
@@ -21,7 +36,7 @@
 
         1. Make sure that position:absolute elements trigger the position:relative wrapping (as
         well as position:fixed)
-        2. Now that we copy position:sticky, convert that to position:fixed
+        2. Now that we copy position:sticky, convert that to position:static
 
         Tests: editing/pasteboard/copy-paste-converts-fixed.html
                editing/pasteboard/copy-paste-converts-sticky.html

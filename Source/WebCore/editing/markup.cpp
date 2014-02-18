@@ -328,7 +328,7 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
                 newInlineStyle->forceInline();
             
             if (m_needsPositionStyleConversion)
-                m_needRelativeStyleWrapper |= newInlineStyle->convertFixedAndStickyPosition();
+                m_needRelativeStyleWrapper |= newInlineStyle->convertPositionStyle();
 
             // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
             // only the ones that affect it and the nodes within it.

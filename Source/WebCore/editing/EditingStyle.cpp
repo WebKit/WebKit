@@ -1221,7 +1221,7 @@ void EditingStyle::forceInline()
     m_mutableStyle->setProperty(CSSPropertyDisplay, CSSValueInline, propertyIsImportant);
 }
 
-bool EditingStyle::convertFixedAndStickyPosition()
+bool EditingStyle::convertPositionStyle()
 {
     if (!m_mutableStyle)
         return false;
