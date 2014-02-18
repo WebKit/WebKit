@@ -55,8 +55,6 @@
 
 using namespace WebCore;
 
-const CFStringRef kLSActivePageUserVisibleOriginsKey = CFSTR("LSActivePageUserVisibleOriginsKey");
-
 namespace WebKit {
 
 static uint64_t memorySize()
@@ -142,6 +140,7 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
     });
 }
 
+#if USE(APPKIT)
 static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 {
     WebPage* page = WebProcess::shared().focusedWebPage();
@@ -150,14 +149,17 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 
     return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
 }
+#endif
 
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, IPC::MessageDecoder&)
 {
+#if ENABLE(WEB_PROCESS_SANDBOX)
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
     SandboxExtension::consumePermanently(parameters.localStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.databaseDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
+#endif
 
     // When the network process is enabled, each web process wants a stand-alone
     // NSURLCache, which it can disable to save memory.
@@ -170,6 +172,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
         }
     }
 
+    m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
+    m_presenterApplicationPid = parameters.presenterApplicationPid;
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
     Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
 
@@ -179,37 +183,41 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     if (!JSC::Options::useFTLJITWasOverridden())
         JSC::Options::useFTLJIT() = parameters.shouldEnableFTL;
 
-    m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
-
-    m_presenterApplicationPid = parameters.presenterApplicationPid;
-
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 
+#if USE(APPKIT)
     // rdar://9118639 accessibilityFocusedUIElement in NSApplication defaults to use the keyWindow. Since there's
     // no window in WK2, NSApplication needs to use the focused page's focused element.
     Method methodToPatch = class_getInstanceMethod([NSApplication class], @selector(accessibilityFocusedUIElement));
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
+#endif
 }
 
 void WebProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
+#if !PLATFORM(IOS)
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     WKSetVisibleApplicationName((CFStringRef)applicationName);
+#endif
 }
 
 void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
 {
+#if USE(APPKIT)
     WKAXRegisterRemoteApp();
+#endif
 
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShim::shared().initialize(this);
 #endif
 }
 
+#if USE(APPKIT)
 void WebProcess::stopRunLoop()
 {
     ChildProcess::stopNSAppRunLoop();
 }
+#endif
 
 void WebProcess::platformTerminate()
 {
@@ -222,21 +230,21 @@ void WebProcess::platformTerminate()
 
 void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-#if PLATFORM(IOS)
-    UNUSED_PARAM(parameters);
-    UNUSED_PARAM(sandboxParameters);
-#else
+#if ENABLE(WEB_PROCESS_SANDBOX)
     // Need to overide the default, because service has a different bundle ID.
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
     sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);
 
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
+#else
+    UNUSED_PARAM(parameters);
+    UNUSED_PARAM(sandboxParameters);
 #endif
 }
 
 void WebProcess::updateActivePages()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if USE(APPKIT) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<CFMutableArrayRef> activePageURLs = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
     for (const auto& iter: m_pageMap) {
         WebPage* page = iter.value.get();
@@ -258,7 +266,7 @@ void WebProcess::updateActivePages()
 
         CFArrayAppendValue(activePageURLs.get(), userVisibleOriginString);
     }
-    WKSetApplicationInformationItem(kLSActivePageUserVisibleOriginsKey, activePageURLs.get());
+    WKSetApplicationInformationItem(CFSTR("LSActivePageUserVisibleOriginsKey"), activePageURLs.get());
 #endif
 }
 

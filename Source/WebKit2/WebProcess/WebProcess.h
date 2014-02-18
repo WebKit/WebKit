@@ -256,7 +256,7 @@ private:
     virtual bool shouldTerminate() override;
     virtual void terminate() override;
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if USE(APPKIT)
     virtual void stopRunLoop() override;
 #endif
 
