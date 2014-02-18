@@ -78,11 +78,11 @@ WebInspector.Popover.prototype = {
 
     set frame(frame)
     {
-        this._element.style.left = frame.origin.x + "px";
-        this._element.style.top = frame.origin.y + "px";
-        this._element.style.width = frame.size.width + "px";
-        this._element.style.height = frame.size.height + "px";
-        this._element.style.backgroundSize = frame.size.width + "px " + frame.size.height + "px";
+        this._element.style.left = Math.round(frame.origin.x) + "px";
+        this._element.style.top = Math.round(frame.origin.y) + "px";
+        this._element.style.width = Math.ceil(frame.size.width) + "px";
+        this._element.style.height = Math.ceil(frame.size.height) + "px";
+        this._element.style.backgroundSize = Math.ceil(frame.size.width) + "px " + Math.ceil(frame.size.height) + "px";
         this._frame = frame;
     },
 
