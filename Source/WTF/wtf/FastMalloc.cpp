@@ -4531,64 +4531,6 @@ static inline void* cpp_alloc(size_t size, bool nothrow) {
   }
 }
 
-#if ENABLE(GLOBAL_FASTMALLOC_NEW)
-
-void* operator new(size_t size) {
-  void* p = cpp_alloc(size, false);
-  // We keep this next instruction out of cpp_alloc for a reason: when
-  // it's in, and new just calls cpp_alloc, the optimizer may fold the
-  // new call into cpp_alloc, which messes up our whole section-based
-  // stacktracing (see ATTRIBUTE_SECTION, above).  This ensures cpp_alloc
-  // isn't the last thing this fn calls, and prevents the folding.
-  MallocHook::InvokeNewHook(p, size);
-  return p;
-}
-
-void* operator new(size_t size, const std::nothrow_t&) __THROW {
-  void* p = cpp_alloc(size, true);
-  MallocHook::InvokeNewHook(p, size);
-  return p;
-}
-
-void operator delete(void* p) __THROW {
-  MallocHook::InvokeDeleteHook(p);
-  do_free(p);
-}
-
-void operator delete(void* p, const std::nothrow_t&) __THROW {
-  MallocHook::InvokeDeleteHook(p);
-  do_free(p);
-}
-
-void* operator new[](size_t size) {
-  void* p = cpp_alloc(size, false);
-  // We keep this next instruction out of cpp_alloc for a reason: when
-  // it's in, and new just calls cpp_alloc, the optimizer may fold the
-  // new call into cpp_alloc, which messes up our whole section-based
-  // stacktracing (see ATTRIBUTE_SECTION, above).  This ensures cpp_alloc
-  // isn't the last thing this fn calls, and prevents the folding.
-  MallocHook::InvokeNewHook(p, size);
-  return p;
-}
-
-void* operator new[](size_t size, const std::nothrow_t&) __THROW {
-  void* p = cpp_alloc(size, true);
-  MallocHook::InvokeNewHook(p, size);
-  return p;
-}
-
-void operator delete[](void* p) __THROW {
-  MallocHook::InvokeDeleteHook(p);
-  do_free(p);
-}
-
-void operator delete[](void* p, const std::nothrow_t&) __THROW {
-  MallocHook::InvokeDeleteHook(p);
-  do_free(p);
-}
-
-#endif
-
 extern "C" void* memalign(size_t align, size_t size) __THROW {
   void* result = do_memalign(align, size);
   MallocHook::InvokeNewHook(result, size);

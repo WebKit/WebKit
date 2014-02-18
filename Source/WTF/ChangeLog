@@ -1,3 +1,26 @@
+2014-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove ENABLE_GLOBAL_FASTMALLOC_NEW
+        https://bugs.webkit.org/show_bug.cgi?id=127067
+
+        Reviewed by Geoffrey Garen.
+
+        Remove the global operator new/operator delete overrides. Having ALWAYS_INLINE operators
+        like we do is really undefined behavior according to the C++ standard and we've been lucky enough
+        to get away with it so far, but any code that calls operator new/operator delete inside from the C++ standard
+        library (not from headers that are included) will be mismatched and potentially crash. libc++ calls
+        delete in it's std::thread implementation for example.
+        
+        The only supported way to override operator new and operator delete globally is to not use inline
+        functions, but that would mean that any application using WebKit would not be able to provide custom
+        operator new/operator delete functions so we'll just reuse the already existing infrastructure consisting
+        of the WTF_MAKE_FAST_ALLOCATED macro.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        * wtf/FastMalloc.h:
+        * wtf/Platform.h:
+
 2014-02-17  Ryan Lortie  <desrt@desrt.ca>
 
         Enable DFG_JIT on FreeBSD

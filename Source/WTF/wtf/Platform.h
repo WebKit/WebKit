@@ -449,7 +449,6 @@
 #define WTF_USE_HARFBUZZ 1
 #define WTF_USE_SOUP 1
 #define WTF_USE_WEBP 1
-#define ENABLE_GLOBAL_FASTMALLOC_NEW 0
 #endif
 
 /* On Windows, use QueryPerformanceCounter by default */
@@ -601,17 +600,8 @@
 /* Include feature macros */
 #include <wtf/FeatureDefines.h>
 
-#if PLATFORM(EFL)
-#define ENABLE_GLOBAL_FASTMALLOC_NEW 0
-#endif
-
 #if OS(WINDOWS)
-#define ENABLE_GLOBAL_FASTMALLOC_NEW 0
 #define USE_SYSTEM_MALLOC 1
-#endif
-
-#if !defined(ENABLE_GLOBAL_FASTMALLOC_NEW)
-#define ENABLE_GLOBAL_FASTMALLOC_NEW 1
 #endif
 
 #define ENABLE_DEBUG_WITH_BREAKPOINT 0

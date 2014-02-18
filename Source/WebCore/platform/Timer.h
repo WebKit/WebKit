@@ -44,7 +44,7 @@ class TimerHeapElement;
 
 class TimerBase {
     WTF_MAKE_NONCOPYABLE(TimerBase);
-    WTF_FASTMALLOC_OPERATORS;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     TimerBase();
     virtual ~TimerBase();

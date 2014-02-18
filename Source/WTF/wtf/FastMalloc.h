@@ -248,46 +248,7 @@ using WTF::fastMallocAllow;
 #define WTF_PRIVATE_INLINE inline
 #endif
 
-#if !defined(_CRTDBG_MAP_ALLOC) && !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
-
-// The nothrow functions here are actually not all that helpful, because fastMalloc will
-// call CRASH() rather than returning 0, and returning 0 is what nothrow is all about.
-// But since WebKit code never uses exceptions or nothrow at all, this is probably OK.
-// Long term we will adopt FastAllocBase.h everywhere, and and replace this with
-// debug-only code to make sure we don't use the system malloc via the default operator
-// new by accident.
-
-#if ENABLE(GLOBAL_FASTMALLOC_NEW)
-
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 4290) // Disable the C++ exception specification ignored warning.
-#elif COMPILER(CLANG) && defined(__has_warning)
-#pragma clang diagnostic push
-#if __has_warning("-Winline-new-delete")
-// FIXME: The operator new, delete definitions cannot be inline per replacement.functions (17.6.4.6/3) of the C++
-// standard. As a workaround, disable warnings for such usage. See <https://bugs.webkit.org/show_bug.cgi?id=124186>.
-#pragma clang diagnostic ignored "-Winline-new-delete"
-#endif
-#endif
-WTF_PRIVATE_INLINE void* operator new(size_t size) throw (std::bad_alloc) { return fastMalloc(size); }
-WTF_PRIVATE_INLINE void* operator new(size_t size, const std::nothrow_t&) throw() { return fastMalloc(size); }
-WTF_PRIVATE_INLINE void operator delete(void* p) throw() { fastFree(p); }
-WTF_PRIVATE_INLINE void operator delete(void* p, const std::nothrow_t&) throw() { fastFree(p); }
-WTF_PRIVATE_INLINE void* operator new[](size_t size) throw (std::bad_alloc) { return fastMalloc(size); }
-WTF_PRIVATE_INLINE void* operator new[](size_t size, const std::nothrow_t&) throw() { return fastMalloc(size); }
-WTF_PRIVATE_INLINE void operator delete[](void* p) throw() { fastFree(p); }
-WTF_PRIVATE_INLINE void operator delete[](void* p, const std::nothrow_t&) throw() { fastFree(p); }
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#elif COMPILER(CLANG) && defined(__has_warning)
-#pragma clang diagnostic pop
-#endif
-
-#endif // ENABLE(GLOBAL_FASTMALLOC_NEW)
-#endif // !defined(_CRTDBG_MAP_ALLOC) && !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
-
-#define WTF_FASTMALLOC_OPERATORS \
+#define WTF_MAKE_FAST_ALLOCATED \
 public: \
     void* operator new(size_t, void* p) { return p; } \
     void* operator new[](size_t, void* p) { return p; } \
@@ -324,12 +285,5 @@ public: \
     } \
 private: \
 typedef int __thisIsHereToForceASemicolonAfterThisMacro
-
-#if ENABLE(GLOBAL_FASTMALLOC_NEW)
-#define WTF_MAKE_FAST_ALLOCATED
-#else
-#define WTF_MAKE_FAST_ALLOCATED WTF_FASTMALLOC_OPERATORS
-#endif
-
 
 #endif /* WTF_FastMalloc_h */

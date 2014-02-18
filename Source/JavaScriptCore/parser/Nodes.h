@@ -112,7 +112,7 @@ namespace JSC {
     };
 
     class ParserArenaRefCounted : public RefCounted<ParserArenaRefCounted> {
-        WTF_FASTMALLOC_OPERATORS;
+        WTF_MAKE_FAST_ALLOCATED;
     protected:
         ParserArenaRefCounted(VM*);
 
