@@ -215,7 +215,7 @@ private:
     bool m_activeDOMObjectsAreStopped;
 
 #if ENABLE(BLOB)
-    OwnPtr<PublicURLManager> m_publicURLManager;
+    std::unique_ptr<PublicURLManager> m_publicURLManager;
 #endif
 
 #if ENABLE(SQL_DATABASE)

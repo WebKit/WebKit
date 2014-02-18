@@ -35,11 +35,11 @@
 
 namespace WebCore {
 
-PassOwnPtr<PublicURLManager> PublicURLManager::create(ScriptExecutionContext* context)
+std::unique_ptr<PublicURLManager> PublicURLManager::create(ScriptExecutionContext* context)
 {
-    OwnPtr<PublicURLManager> publicURLManager(adoptPtr(new PublicURLManager(context)));
+    auto publicURLManager = std::make_unique<PublicURLManager>(context);
     publicURLManager->suspendIfNeeded();
-    return publicURLManager.release();
+    return publicURLManager;
 }
 
 PublicURLManager::PublicURLManager(ScriptExecutionContext* context)

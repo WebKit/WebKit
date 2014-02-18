@@ -1,3 +1,17 @@
+2014-02-17  Sangho Kim  <thomas.kim@lge.com>
+
+        Move PublicURLMansger to std::unique_ptr.
+        https://bugs.webkit.org/show_bug.cgi?id=128891
+
+        Reviewed by Anders Carlsson.
+
+        Use std::unique_ptr and std::make_unique in place of PassOwnPtr and adoptPtr in the PublicURLManager
+
+        * dom/ScriptExecutionContext.h:
+        * html/PublicURLManager.cpp:
+        (WebCore::PublicURLManager::create):
+        * html/PublicURLManager.h:
+
 2014-02-17  Ricky Mondello  <rmondello@apple.com>
 
         Expose a way to clear cookies modified after a given date

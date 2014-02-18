@@ -28,10 +28,9 @@
 
 #if ENABLE(BLOB)
 #include "ActiveDOMObject.h"
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -45,7 +44,9 @@ class URLRegistrable;
 class PublicURLManager : public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<PublicURLManager> create(ScriptExecutionContext*);
+    explicit PublicURLManager(ScriptExecutionContext*);
+
+    static std::unique_ptr<PublicURLManager> create(ScriptExecutionContext*);
 
     void registerURL(SecurityOrigin*, const URL&, URLRegistrable*);
     void revoke(const URL&);
@@ -53,7 +54,6 @@ public:
     // ActiveDOMObject interface.
     virtual void stop() override;
 private:
-    PublicURLManager(ScriptExecutionContext*);
     
     typedef HashSet<String> URLSet;
     typedef HashMap<URLRegistry*, URLSet > RegistryURLMap;
