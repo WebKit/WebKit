@@ -66,8 +66,20 @@ namespace WebKit {
 
 #if PLATFORM(IOS)
 #define DEFAULT_FRAME_FLATTENING_ENABLED true
+#define DEFAULT_SHOULD_PRINT_BACKGROUNDS true
+#define DEFAULT_TEXT_AREAS_ARE_RESIZABLE false
+#define DEFAULT_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY false
+#define DEFAULT_SHOULD_RESPECT_IMAGE_ORIENTATION true
+#define DEFAULT_MINIMUM_FONT_ZOOM_SIZE WKGetMinimumZoomFontSize()
+#define DEFAULT_PASSWORD_ECHO_ENABLED true
 #else
 #define DEFAULT_FRAME_FLATTENING_ENABLED false
+#define DEFAULT_SHOULD_PRINT_BACKGROUNDS false
+#define DEFAULT_TEXT_AREAS_ARE_RESIZABLE true
+#define DEFAULT_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY true
+#define DEFAULT_SHOULD_RESPECT_IMAGE_ORIENTATION false
+#define DEFAULT_MINIMUM_FONT_ZOOM_SIZE 0
+#define DEFAULT_PASSWORD_ECHO_ENABLED false
 #endif
 
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
@@ -98,8 +110,8 @@ namespace WebKit {
     macro(DeveloperExtrasEnabled, developerExtrasEnabled, Bool, bool, false) \
     macro(JavaScriptExperimentsEnabled, javaScriptExperimentsEnabled, Bool, bool, false) \
     macro(PrivateBrowsingEnabled, privateBrowsingEnabled, Bool, bool, false) \
-    macro(TextAreasAreResizable, textAreasAreResizable, Bool, bool, true) \
-    macro(JavaScriptCanOpenWindowsAutomatically, javaScriptCanOpenWindowsAutomatically, Bool, bool, true) \
+    macro(TextAreasAreResizable, textAreasAreResizable, Bool, bool, DEFAULT_TEXT_AREAS_ARE_RESIZABLE) \
+    macro(JavaScriptCanOpenWindowsAutomatically, javaScriptCanOpenWindowsAutomatically, Bool, bool, DEFAULT_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY) \
     macro(HyperlinkAuditingEnabled, hyperlinkAuditingEnabled, Bool, bool, true) \
     macro(NeedsSiteSpecificQuirks, needsSiteSpecificQuirks, Bool, bool, false) \
     macro(AcceleratedCompositingEnabled, acceleratedCompositingEnabled, Bool, bool, true) \
@@ -140,7 +152,7 @@ namespace WebKit {
     macro(InspectorStartsAttached, inspectorStartsAttached, Bool, bool, true) \
     macro(ShowsToolTipOverTruncatedText, showsToolTipOverTruncatedText, Bool, bool, false) \
     macro(MockScrollbarsEnabled, mockScrollbarsEnabled, Bool, bool, false) \
-    macro(WebAudioEnabled, webAudioEnabled, Bool, bool, false) \
+    macro(WebAudioEnabled, webAudioEnabled, Bool, bool, true) \
     macro(ApplicationChromeModeEnabled, applicationChromeMode, Bool, bool, false) \
     macro(SuppressesIncrementalRendering, suppressesIncrementalRendering, Bool, bool, false) \
     macro(BackspaceKeyNavigationEnabled, backspaceKeyNavigationEnabled, Bool, bool, true) \
@@ -149,7 +161,7 @@ namespace WebKit {
     macro(ShouldDisplayCaptions, shouldDisplayCaptions, Bool, bool, false) \
     macro(ShouldDisplayTextDescriptions, shouldDisplayTextDescriptions, Bool, bool, false) \
     macro(NotificationsEnabled, notificationsEnabled, Bool, bool, true) \
-    macro(ShouldRespectImageOrientation, shouldRespectImageOrientation, Bool, bool, false) \
+    macro(ShouldRespectImageOrientation, shouldRespectImageOrientation, Bool, bool, DEFAULT_SHOULD_RESPECT_IMAGE_ORIENTATION) \
     macro(WantsBalancedSetDefersLoadingBehavior, wantsBalancedSetDefersLoadingBehavior, Bool, bool, false) \
     macro(RequestAnimationFrameEnabled, requestAnimationFrameEnabled, Bool, bool, true) \
     macro(DiagnosticLoggingEnabled, diagnosticLoggingEnabled, Bool, bool, false) \
@@ -191,15 +203,24 @@ namespace WebKit {
     macro(MediaSourceEnabled, mediaSourceEnabled, Bool, bool, false) \
     macro(ViewGestureDebuggingEnabled, viewGestureDebuggingEnabled, Bool, bool, false) \
     macro(ShouldConvertPositionStyleOnCopy, shouldConvertPositionStyleOnCopy, Bool, bool, false) \
-    \
+    macro(Standalone, standalone, Bool, bool, false) \
+    macro(TelephoneNumberParsingEnabled, telephoneNumberParsingEnabled, Bool, bool, false) \
+    macro(AlwaysUseBaselineOfPrimaryFont, alwaysUseBaselineOfPrimaryFont, Bool, bool, false) \
+    macro(AllowMultiElementImplicitSubmission, allowMultiElementImplicitSubmission, Bool, bool, false) \
+    macro(AlwaysUseAcceleratedOverflowScroll, alwaysUseAcceleratedOverflowScroll, Bool, bool, false) \
+    macro(PasswordEchoEnabled, passwordEchoEnabled, Bool, bool, DEFAULT_PASSWORD_ECHO_ENABLED)
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
     macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \
     macro(IncrementalRenderingSuppressionTimeout, incrementalRenderingSuppressionTimeout, Double, double, 5) \
     macro(MinimumFontSize, minimumFontSize, Double, double, 0) \
     macro(MinimumLogicalFontSize, minimumLogicalFontSize, Double, double, 9) \
+    macro(MinimumZoomFontSize, minimumZoomFontSize, Double, double, DEFAULT_MINIMUM_FONT_ZOOM_SIZE) \
     macro(DefaultFontSize, defaultFontSize, Double, double, 16) \
     macro(DefaultFixedFontSize, defaultFixedFontSize, Double, double, 13) \
+    macro(LayoutInterval, layoutInterval, Double, double, -1) \
+    macro(MaxParseDuration, maxParseDuration, Double, double, -1) \
+    macro(PasswordEchoDuration, passwordEchoDuration, Double, double, 2) \
     \
 
 #define FOR_EACH_WEBKIT_FLOAT_PREFERENCE(macro) \
@@ -215,13 +236,23 @@ namespace WebKit {
     macro(InspectorAttachedHeight, inspectorAttachedHeight, UInt32, uint32_t, 300) \
     macro(InspectorAttachedWidth, inspectorAttachedWidth, UInt32, uint32_t, 750) \
     macro(InspectorAttachmentSide, inspectorAttachmentSide, UInt32, uint32_t, 0) \
+    macro(MaximumDecodedImageSize, maximumDecodedImageSize, UInt32, uint32_t, 20 * 1024 * 1024) \
     \
 
 #if PLATFORM(COCOA)
 
+#if PLATFORM(IOS)
+#define DEFAULT_CURSIVE_FONT_FAMILY "Snell Roundhand"
+#define DEFAULT_PICTOGRAPH_FONT_FAMILY "AppleColorEmoji"
+#else
+#define DEFAULT_CURSIVE_FONT_FAMILY "Apple Chancery"
+#define DEFAULT_PICTOGRAPH_FONT_FAMILY "Apple Color Emoji"
+#endif
+
+
 #define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     macro(StandardFontFamily, standardFontFamily, String, String, "Times") \
-    macro(CursiveFontFamily, cursiveFontFamily, String, String, "Apple Chancery") \
+    macro(CursiveFontFamily, cursiveFontFamily, String, String, DEFAULT_CURSIVE_FONT_FAMILY) \
     macro(FantasyFontFamily, fantasyFontFamily, String, String, "Papyrus") \
     macro(FixedFontFamily, fixedFontFamily, String, String, "Courier") \
     macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Helvetica") \

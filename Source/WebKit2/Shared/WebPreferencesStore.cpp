@@ -31,6 +31,10 @@
 #include <WebCore/Settings.h>
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(IOS)
+#import <WebKitSystemInterfaceIOS.h>
+#endif
+
 namespace WebKit {
 
 namespace WebPreferencesKey {
