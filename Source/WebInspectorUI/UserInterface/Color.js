@@ -70,16 +70,16 @@ WebInspector.Color.fromString = function(colorString)
             var hex = match[1].toUpperCase();
             if (hex.length === 3) {
                 return new WebInspector.Color(WebInspector.Color.Format.ShortHEX, [
-                    parseInt(hex.charAt(0) + hex.charAt(0), 16) * 255,
-                    parseInt(hex.charAt(1) + hex.charAt(1), 16) * 255,
-                    parseInt(hex.charAt(2) + hex.charAt(2), 16) * 255,
+                    parseInt(hex.charAt(0) + hex.charAt(0), 16),
+                    parseInt(hex.charAt(1) + hex.charAt(1), 16),
+                    parseInt(hex.charAt(2) + hex.charAt(2), 16),
                     1
                 ]);
             } else {
                 return new WebInspector.Color(WebInspector.Color.Format.HEX, [
-                    parseInt(hex.substring(0, 2), 16) * 255,
-                    parseInt(hex.substring(2, 4), 16) * 255,
-                    parseInt(hex.substring(4, 6), 16) * 255,
+                    parseInt(hex.substring(0, 2), 16),
+                    parseInt(hex.substring(2, 4), 16),
+                    parseInt(hex.substring(4, 6), 16),
                     1
                 ]);
             }
