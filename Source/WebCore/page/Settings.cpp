@@ -156,9 +156,6 @@ Settings::Settings(Page* page)
     , m_fontGenericFamilies(std::make_unique<FontGenericFamilies>())
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
     , m_layoutInterval(layoutScheduleThreshold)
-#if PLATFORM(IOS)
-    , m_maxParseDuration(-1)
-#endif
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutosizingFontScaleFactor(1)
 #if HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP
@@ -180,15 +177,6 @@ Settings::Settings(Page* page)
     , m_needsAdobeFrameReloadingQuirk(false)
     , m_usesPageCache(false)
     , m_fontRenderingMode(0)
-#if PLATFORM(IOS)
-    , m_standalone(false)
-    , m_telephoneNumberParsingEnabled(false)
-    , m_mediaDataLoadsAutomatically(false)
-    , m_shouldTransformsAffectOverflow(true)
-    , m_shouldDispatchJavaScriptWindowOnErrorEvents(false)
-    , m_alwaysUseBaselineOfPrimaryFont(false)
-    , m_alwaysUseAcceleratedOverflowScroll(false)
-#endif
     , m_showTiledScrollingIndicator(false)
     , m_tiledBackingStoreEnabled(false)
     , m_backgroundShouldExtendBeyondPage(false)
@@ -714,11 +702,6 @@ void Settings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)
 }
 
 #if PLATFORM(IOS)
-void Settings::setStandalone(bool standalone)
-{
-    m_standalone = standalone;
-}
-
 void Settings::setAudioSessionCategoryOverride(unsigned sessionCategory)
 {
     AudioSession::sharedSession().setCategoryOverride(static_cast<AudioSession::CategoryType>(sessionCategory));

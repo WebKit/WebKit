@@ -1,3 +1,14 @@
+2014-02-17  Sam Weinig  <sam@webkit.org>
+
+        Move iOS only Settings into Settings.in and make them not-iOS only
+        https://bugs.webkit.org/show_bug.cgi?id=128942
+
+        Reviewed by Tim Horton.
+
+        * page/Settings.cpp:
+        * page/Settings.h:
+        * page/Settings.in:
+
 2014-02-17  Anders Carlsson  <andersca@apple.com>
 
         Remove view source code
