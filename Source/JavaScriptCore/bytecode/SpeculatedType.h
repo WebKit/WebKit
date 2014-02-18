@@ -62,17 +62,19 @@ static const SpeculatedType SpecString            = 0x00030000; // It's definite
 static const SpeculatedType SpecCellOther         = 0x00040000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
 static const SpeculatedType SpecCell              = 0x0007ffff; // It's definitely a JSCell.
 static const SpeculatedType SpecInt32             = 0x00800000; // It's definitely an Int32.
-static const SpeculatedType SpecDoubleReal        = 0x01000000; // It's definitely a non-NaN double.
-static const SpeculatedType SpecDoubleNaN         = 0x02000000; // It's definitely a NaN.
-static const SpeculatedType SpecDouble            = 0x03000000; // It's either a non-NaN or a NaN double.
-static const SpeculatedType SpecRealNumber        = 0x01800000; // It's either an Int32 or a DoubleReal.
-static const SpeculatedType SpecNumber            = 0x03800000; // It's either an Int32 or a Double.
-static const SpeculatedType SpecBoolean           = 0x04000000; // It's definitely a Boolean.
-static const SpeculatedType SpecOther             = 0x08000000; // It's definitely none of the above.
-static const SpeculatedType SpecTop               = 0x0fffffff; // It can be any of the above.
-static const SpeculatedType SpecEmpty             = 0x10000000; // It's definitely an empty value marker.
-static const SpeculatedType SpecEmptyOrTop        = 0x1fffffff; // It can be any of the above.
-static const SpeculatedType FixedIndexedStorageMask    = SpecInt8Array | SpecInt16Array | SpecInt32Array | SpecUint8Array | SpecUint8ClampedArray | SpecUint16Array | SpecUint32Array | SpecFloat32Array | SpecFloat64Array;
+static const SpeculatedType SpecInt48AsDouble     = 0x01000000; // It's definitely an Int48 and it's inside a double.
+static const SpeculatedType SpecInteger           = 0x01800000; // It's definitely some kind of integer.
+static const SpeculatedType SpecNonIntAsDouble    = 0x02000000; // It's definitely not an Int48 but it's a real number and it's a double.
+static const SpeculatedType SpecDoubleReal        = 0x03000000; // It's definitely a non-NaN double.
+static const SpeculatedType SpecDoubleNaN         = 0x04000000; // It's definitely a NaN.
+static const SpeculatedType SpecDouble            = 0x07000000; // It's either a non-NaN or a NaN double.
+static const SpeculatedType SpecRealNumber        = 0x03800000; // It's either an Int32 or a DoubleReal.
+static const SpeculatedType SpecNumber            = 0x07800000; // It's either an Int32 or a Double.
+static const SpeculatedType SpecBoolean           = 0x08000000; // It's definitely a Boolean.
+static const SpeculatedType SpecOther             = 0x10000000; // It's definitely none of the above.
+static const SpeculatedType SpecTop               = 0x1fffffff; // It can be any of the above.
+static const SpeculatedType SpecEmpty             = 0x20000000; // It's definitely an empty value marker.
+static const SpeculatedType SpecEmptyOrTop        = 0x3fffffff; // It can be any of the above.
 
 typedef bool (*SpeculatedTypeChecker)(SpeculatedType);
 
@@ -105,11 +107,6 @@ inline bool isFinalObjectSpeculation(SpeculatedType value)
 inline bool isFinalObjectOrOtherSpeculation(SpeculatedType value)
 {
     return !!(value & (SpecFinalObject | SpecOther)) && !(value & ~(SpecFinalObject | SpecOther));
-}
-
-inline bool isFixedIndexedStorageObjectSpeculation(SpeculatedType value)
-{
-    return !!value && (value & FixedIndexedStorageMask) == value;
 }
 
 inline bool isStringIdentSpeculation(SpeculatedType value)
@@ -248,9 +245,19 @@ inline bool isInt32SpeculationExpectingDefined(SpeculatedType value)
     return isInt32Speculation(value & ~SpecOther);
 }
 
+inline bool isInt48AsDoubleSpeculation(SpeculatedType value)
+{
+    return value == SpecInt48AsDouble;
+}
+
+inline bool isIntegerSpeculation(SpeculatedType value)
+{
+    return !!value && (value & SpecInteger) == value;
+}
+
 inline bool isDoubleRealSpeculation(SpeculatedType value)
 {
-    return value == SpecDoubleReal;
+    return !!value && (value & SpecDoubleReal) == value;
 }
 
 inline bool isDoubleSpeculation(SpeculatedType value)
