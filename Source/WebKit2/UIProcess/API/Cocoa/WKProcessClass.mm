@@ -31,7 +31,9 @@
 #import "HistoryClient.h"
 #import "WKObject.h"
 #import "WKProcessClassConfigurationPrivate.h"
+#import "WebCertificateInfo.h"
 #import "WebContext.h"
+#import <WebCore/CertificateInfo.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -91,6 +93,15 @@
 - (API::Object&)_apiObject
 {
     return *_context;
+}
+
+@end
+
+@implementation WKProcessClass (WKPrivate)
+
+- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host
+{
+    _context->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((CFArrayRef)certificateChain)).get(), host);
 }
 
 @end

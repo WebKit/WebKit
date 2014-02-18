@@ -23,29 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKProcessClassPrivate.h"
+#import <WebKit2/WKProcessClass.h>
 
 #if WK_API_ENABLED
 
-#import "WKObject.h"
-#import "WebContext.h"
+@interface WKProcessClass (WKPrivate)
 
-namespace WebKit {
+- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
 
-inline WKProcessClass *wrapper(WebContext& context)
-{
-    ASSERT([context.wrapper() isKindOfClass:[WKProcessClass class]]);
-    return (WKProcessClass *)context.wrapper();
-}
-
-}
-
-@interface WKProcessClass () <WKObject> {
-@package
-    RetainPtr<WKProcessClassConfiguration> _configuration;
-
-    API::ObjectStorage<WebKit::WebContext> _context;
-}
 @end
 
-#endif // WK_API_ENABLED
+#endif

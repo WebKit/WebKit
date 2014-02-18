@@ -202,6 +202,7 @@
 		1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */; };
 		1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64245C12DE29A100CAAE2C /* UpdateInfo.h */; };
 		1A64245F12DE29A100CAAE2C /* UpdateInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */; };
+		1A6509CE18B4146200614332 /* WKProcessClassPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6509CD18B4146200614332 /* WKProcessClassPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A6637D718B2831F00C0BCF3 /* APIHistoryClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6637D618B2831F00C0BCF3 /* APIHistoryClient.h */; };
 		1A66BF8F18A052ED002071B4 /* WKWebViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */; };
 		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
@@ -1872,6 +1873,7 @@
 		1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxyMessages.h; sourceTree = "<group>"; };
 		1A64245C12DE29A100CAAE2C /* UpdateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateInfo.h; sourceTree = "<group>"; };
 		1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateInfo.cpp; sourceTree = "<group>"; };
+		1A6509CD18B4146200614332 /* WKProcessClassPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessClassPrivate.h; sourceTree = "<group>"; };
 		1A6637D618B2831F00C0BCF3 /* APIHistoryClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIHistoryClient.h; sourceTree = "<group>"; };
 		1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewInternal.h; sourceTree = "<group>"; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
@@ -4378,6 +4380,7 @@
 				1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */,
 				1A158418189044F50017616C /* WKProcessClass.h */,
 				1A158417189044F50017616C /* WKProcessClass.mm */,
+				1A6509CD18B4146200614332 /* WKProcessClassPrivate.h */,
 				1A43E828188F3CDC009E4D30 /* WKProcessClassConfiguration.h */,
 				1A43E827188F3CDC009E4D30 /* WKProcessClassConfiguration.mm */,
 				1A43E82B188F3CF5009E4D30 /* WKProcessClassConfigurationPrivate.h */,
@@ -6571,6 +6574,7 @@
 				512A9761180E031D0039A149 /* DatabaseProcessMessages.h in Headers */,
 				BC09B8F9147460F7005F5625 /* WebContextConnectionClient.h in Headers */,
 				BCDE059B11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h in Headers */,
+				1A6509CE18B4146200614332 /* WKProcessClassPrivate.h in Headers */,
 				51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */,
 				BC032D7710F4378D0058C15A /* WebContextMenuClient.h in Headers */,
 				75E749EC180DBB9800088BA6 /* WebOriginDataManagerProxyMessages.h in Headers */,

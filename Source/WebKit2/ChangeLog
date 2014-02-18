@@ -1,5 +1,18 @@
 2014-02-18  Anders Carlsson  <andersca@apple.com>
 
+        Add SPI for allowing HTTPS certificates
+        https://bugs.webkit.org/show_bug.cgi?id=129002
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKProcessClass.mm:
+        (-[WKProcessClass _setAllowsSpecificHTTPSCertificate:forHost:]):
+        * UIProcess/API/Cocoa/WKProcessClassInternal.h:
+        * UIProcess/API/Cocoa/WKProcessClassPrivate.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessClassInternal.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-02-18  Anders Carlsson  <andersca@apple.com>
+
         Add SPI for getting the original URL from a WKNavigationAction
         https://bugs.webkit.org/show_bug.cgi?id=128997
 
