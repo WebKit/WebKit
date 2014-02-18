@@ -34,7 +34,7 @@
 #include <wtf/Platform.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include "DumpRenderTreeMac.h"
 #elif PLATFORM(WIN)
 #include "DumpRenderTreeWin.h"

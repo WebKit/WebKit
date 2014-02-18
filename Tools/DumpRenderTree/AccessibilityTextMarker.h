@@ -34,7 +34,7 @@
 #define SUPPORTS_AX_TEXTMARKERS 0
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 typedef CFTypeRef PlatformTextMarker;
 typedef CFTypeRef PlatformTextMarkerRange;

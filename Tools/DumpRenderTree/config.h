@@ -38,9 +38,9 @@
 #include <wtf/FastMalloc.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #define WTF_USE_CF 1
-#endif // PLATFORM(MAC)
+#endif
 
 #if PLATFORM(WIN)
 #define WTF_USE_CF 1 

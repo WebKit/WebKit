@@ -85,7 +85,7 @@ void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashStrin
     MD5_CTX md5Context;
     MD5_Init(&md5Context);
     unsigned char* bitmapData = static_cast<unsigned char*>(CGBitmapContextGetData(bitmapContext));
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if ((CGBitmapContextGetBitmapInfo(bitmapContext) & kCGBitmapByteOrderMask) == kCGBitmapByteOrder32Big) {
         for (unsigned row = 0; row < pixelsHigh; row++) {
             uint32_t buffer[pixelsWide];

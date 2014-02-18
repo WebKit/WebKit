@@ -41,7 +41,7 @@
 
 typedef struct CGContext* CGContextRef;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 typedef void* PlatformBitmapBuffer;
 #elif PLATFORM(WIN)
 typedef HBITMAP PlatformBitmapBuffer;
@@ -57,7 +57,7 @@ public:
     ~BitmapContext()
     {
         if (m_buffer)
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
             free(m_buffer);
 #elif PLATFORM(WIN)
             DeleteObject(m_buffer);

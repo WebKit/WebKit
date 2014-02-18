@@ -1,3 +1,23 @@
+2014-02-17  Dan Bernstein  <mitz@apple.com>
+
+        Stop using PLATFORM(MAC) in DumpRenderTree except where it means “OS X but not iOS”
+        https://bugs.webkit.org/show_bug.cgi?id=128950
+
+        Reviewed by Anders Carlsson.
+
+        Changed all PLATFORM(MAC) instances that were not excluding iOS to PLATFORM(COCOA).
+
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/AccessibilityTextMarker.h:
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (computeMD5HashStringForBitmapContext):
+        * DumpRenderTree/cg/PixelDumpSupportCG.h:
+        (BitmapContext::~BitmapContext):
+        * DumpRenderTree/config.h:
+
 2014-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         More ARM FTL glue
