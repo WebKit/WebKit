@@ -1,4 +1,22 @@
 =================
+WebKitGTK+  2.2.5
+=================
+
+What's new in WebKitGTK+ 2.2.5?
+
+  - Fix a crash in GStreamer media backend when playback rate is too high.
+  - Fix wrong mix of fcntl commands and flags in WebKit2.
+  - Fix a crash in facebook when hovering images.
+  - Fix a crash when loading tbpl.mozilla.org.
+  - Fix text encoding of pages loaded with webkit_web_view_load_html()
+    in WebKit2.
+  - Fix marshaller used in WebKitWebPage::document-loaded signal.
+  - Fix a bug that prevented from entering fullscreen again in HTML5
+    videos after fullscreen was left with ESC.
+  - Fix a web process crash when a download is cancelled.
+  - Fix the build on FreeBSD.
+
+=================
 WebKitGTK+  2.2.4
 =================
 
