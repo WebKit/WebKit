@@ -1,3 +1,16 @@
+2014-02-17  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][wk2] Custom layers are sometimes put on-screen without being parented
+        https://bugs.webkit.org/show_bug.cgi?id=128935
+        <rdar://problem/16022336>
+
+        Reviewed by Sam Weinig.
+
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForExternalHostingProcess):
+        Give an explicit and unlikely display ID, so that the layer will never
+        be brought on-screen unless explicitly parented.
+
 2014-02-17  Anders Carlsson  <andersca@apple.com>
 
         Add history delegate to WKWebView

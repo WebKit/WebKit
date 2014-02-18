@@ -61,7 +61,11 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
     layerHostingContext->m_layerHostingMode = LayerHostingMode::OutOfProcess;
 
 #if PLATFORM(IOS)
-    layerHostingContext->m_context = (WKCAContextRef)[CAContext remoteContextWithOptions:@{ kCAContextIgnoresHitTest : @YES }];
+    // Use a very large display ID to ensure that the context is never put on-screen 
+    // without being explicitly parented. See <rdar://problem/16089267> for details.
+    layerHostingContext->m_context = (WKCAContextRef)[CAContext remoteContextWithOptions:@{
+        kCAContextIgnoresHitTest : @YES,
+        kCAContextDisplayId : @10000 }];
 #else
     layerHostingContext->m_context = WKCAContextMakeRemoteForWindowServer();
 #endif
