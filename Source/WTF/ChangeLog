@@ -1,3 +1,21 @@
+2014-02-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Web Inspector: JSContext inspection crashes in isMainThread, uninitialized WebCoreWebThreadIsLockedOrDisabled
+        https://bugs.webkit.org/show_bug.cgi?id=128959
+
+        Reviewed by David Kilzer.
+
+        When JavaScriptCore is used without WebCore on iOS (e.g. JSContext)
+        the WebCoreWebThread* functions will not be initialized. Avoid
+        calling the function pointer if it is uninitialized. This was
+        happening with remote inspection via StringImpl::createCFString
+        for implicit NSString / WTFString conversion which uses isMainThread.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::webThreadIsUninitializedOrLockedOrDisabled):
+        (WTF::isMainThread):
+        (WTF::canAccessThreadLocalDataForThread):
+
 2014-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         More ARM FTL glue

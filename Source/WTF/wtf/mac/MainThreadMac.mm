@@ -140,9 +140,14 @@ void scheduleDispatchFunctionsOnMainThread()
 }
 
 #if USE(WEB_THREAD)
+static bool webThreadIsUninitializedOrLockedOrDisabled()
+{
+    return !WebCoreWebThreadIsLockedOrDisabled || WebCoreWebThreadIsLockedOrDisabled();
+}
+
 bool isMainThread()
 {
-    return (isWebThread() || pthread_main_np()) && WebCoreWebThreadIsLockedOrDisabled();
+    return (isWebThread() || pthread_main_np()) && webThreadIsUninitializedOrLockedOrDisabled();
 }
 
 bool isUIThread()
@@ -183,7 +188,7 @@ bool canAccessThreadLocalDataForThread(ThreadIdentifier threadId)
         return true;
 
     if (threadId == sWebThreadIdentifier || threadId == sApplicationUIThreadIdentifier)
-        return (currentThreadId == sWebThreadIdentifier || currentThreadId == sApplicationUIThreadIdentifier) && WebCoreWebThreadIsLockedOrDisabled();
+        return (currentThreadId == sWebThreadIdentifier || currentThreadId == sApplicationUIThreadIdentifier) && webThreadIsUninitializedOrLockedOrDisabled();
 
     return false;
 }
