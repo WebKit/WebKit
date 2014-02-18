@@ -23,37 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKWebView.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
-    _WKRenderingProgressEventFirstLayout = 1 << 0,
-    _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
-};
+#import <Foundation/Foundation.h>
 
-@class WKBrowsingContextHandle;
-@class WKRemoteObjectRegistry;
-@protocol WKHistoryDelegatePrivate;
+@class WKNavigationData;
+@class WKWebView;
 
-@interface WKWebView (WKPrivate)
+@protocol WKHistoryDelegatePrivate <NSObject>
 
-@property (nonatomic, readonly) WKRemoteObjectRegistry *_remoteObjectRegistry;
-@property (nonatomic, readonly) WKBrowsingContextHandle *_handle;
-
-@property (nonatomic, setter=_setObservedRenderingProgressEvents:) _WKRenderingProgressEvents _observedRenderingProgressEvents;
-
-@property (nonatomic, weak, setter=_setHistoryDelegate:) id <WKHistoryDelegatePrivate> _historyDelegate;
-
-#if TARGET_OS_IPHONE
-@property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
-
-// Define the inset of the scrollview unusable by the web page.
-@property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
-
-- (void)_beginInteractiveObscuredInsetsChange;
-- (void)_endInteractiveObscuredInsetsChange;
-#endif
+- (void)_webView:(WKWebView *)webView didNavigateWithNavigationData:(WKNavigationData *)navigationData;
+- (void)_webView:(WKWebView *)webView didPerformClientRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL;
+- (void)_webView:(WKWebView *)webView didPerformServerRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL;
+- (void)_webView:(WKWebView *)webView didUpdateHistoryTitle:(NSString *)title forURL:(NSURL *)URL;
 
 @end
 

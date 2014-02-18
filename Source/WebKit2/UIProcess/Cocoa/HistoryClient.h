@@ -23,38 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKWebView.h>
+#ifndef HistoryClient_h
+#define HistoryClient_h
+
+#import "WKFoundation.h"
 
 #if WK_API_ENABLED
 
-typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
-    _WKRenderingProgressEventFirstLayout = 1 << 0,
-    _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
+#import "APIHistoryClient.h"
+
+namespace WebKit {
+
+class HistoryClient : public API::HistoryClient {
+public:
+    HistoryClient();
+    ~HistoryClient();
+
+private:
+    // API::HistoryClient
+    virtual void didNavigateWithNavigationData(WebContext*, WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*) override;
+    virtual void didPerformClientRedirect(WebContext*, WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebFrameProxy*) override;
+    virtual void didPerformServerRedirect(WebContext*, WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebFrameProxy*) override;
+    virtual void didUpdateHistoryTitle(WebContext*, WebPageProxy*, const WTF::String& title, const WTF::String& url, WebFrameProxy*) override;
+    virtual void populateVisitedLinks(WebContext*) override;
+    virtual bool shouldTrackVisitedLinks() const override;
 };
 
-@class WKBrowsingContextHandle;
-@class WKRemoteObjectRegistry;
-@protocol WKHistoryDelegatePrivate;
+} // namespace WebKit
 
-@interface WKWebView (WKPrivate)
+#endif // WK_API_ENABLED
 
-@property (nonatomic, readonly) WKRemoteObjectRegistry *_remoteObjectRegistry;
-@property (nonatomic, readonly) WKBrowsingContextHandle *_handle;
-
-@property (nonatomic, setter=_setObservedRenderingProgressEvents:) _WKRenderingProgressEvents _observedRenderingProgressEvents;
-
-@property (nonatomic, weak, setter=_setHistoryDelegate:) id <WKHistoryDelegatePrivate> _historyDelegate;
-
-#if TARGET_OS_IPHONE
-@property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
-
-// Define the inset of the scrollview unusable by the web page.
-@property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
-
-- (void)_beginInteractiveObscuredInsetsChange;
-- (void)_endInteractiveObscuredInsetsChange;
-#endif
-
-@end
-
-#endif
+#endif // HistoryClient_h

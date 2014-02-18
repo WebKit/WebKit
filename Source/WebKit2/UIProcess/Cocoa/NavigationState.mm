@@ -28,35 +28,62 @@
 
 #if WK_API_ENABLED
 
+#import "APINavigationData.h"
+#import "APIURL.h"
+#import "APIString.h"
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKFrameInfoInternal.h"
+#import "WKHistoryDelegatePrivate.h"
 #import "WKNSURLAuthenticationChallenge.h"
+#import "WKNSURLExtras.h"
 #import "WKNSURLProtectionSpace.h"
 #import "WKNavigationActionInternal.h"
+#import "WKNavigationDataInternal.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKNavigationInternal.h"
 #import "WKNavigationResponseInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
+#import <wtf/NeverDestroyed.h>
 
 namespace WebKit {
+
+static HashMap<WebPageProxy*, NavigationState*>& navigationStates()
+{
+    static NeverDestroyed<HashMap<WebPageProxy*, NavigationState*>> navigationStates;
+
+    return navigationStates;
+}
 
 NavigationState::NavigationState(WKWebView *webView)
     : m_webView(webView)
     , m_navigationDelegateMethods()
+    , m_historyDelegateMethods()
 {
     ASSERT(m_webView->_page);
+    ASSERT(!navigationStates().contains(m_webView->_page.get()));
 
+    navigationStates().add(m_webView->_page.get(), this);
     m_webView->_page->pageLoadState().addObserver(*this);
 }
 
 NavigationState::~NavigationState()
 {
+    ASSERT(navigationStates().get(m_webView->_page.get()) == this);
+
+    navigationStates().remove(m_webView->_page.get());
     m_webView->_page->pageLoadState().removeObserver(*this);
+}
+
+NavigationState& NavigationState::fromWebPage(WebPageProxy& webPageProxy)
+{
+    ASSERT(navigationStates().contains(&webPageProxy));
+
+    return *navigationStates().get(&webPageProxy);
 }
 
 std::unique_ptr<API::LoaderClient> NavigationState::createLoaderClient()
@@ -94,6 +121,21 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewWebProcessDidCrash = [delegate respondsToSelector:@selector(_webViewWebProcessDidCrash:)];
 }
 
+RetainPtr<id <WKHistoryDelegatePrivate> > NavigationState::historyDelegate()
+{
+    return m_historyDelegate.get();
+}
+
+void NavigationState::setHistoryDelegate(id <WKHistoryDelegatePrivate> historyDelegate)
+{
+    m_historyDelegate = historyDelegate;
+
+    m_historyDelegateMethods.webViewDidNavigateWithNavigationData = [historyDelegate respondsToSelector:@selector(_webView:didNavigateWithNavigationData:)];
+    m_historyDelegateMethods.webViewDidPerformClientRedirectFromURLToURL = [historyDelegate respondsToSelector:@selector(_webView:didPerformClientRedirectFromURL:toURL:)];
+    m_historyDelegateMethods.webViewDidPerformServerRedirectFromURLToURL = [historyDelegate respondsToSelector:@selector(_webView:didPerformServerRedirectFromURL:toURL:)];
+    m_historyDelegateMethods.webViewDidUpdateHistoryTitleForURL = [historyDelegate respondsToSelector:@selector(_webView:didUpdateHistoryTitle:forURL:)];
+}
+
 RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *request)
 {
     ASSERT(!m_navigations.contains(navigationID));
@@ -105,6 +147,54 @@ RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t na
     m_navigations.set(navigationID, navigation);
 
     return navigation;
+}
+
+void NavigationState::didNavigateWithNavigationData(const WebKit::WebNavigationDataStore& navigationDataStore)
+{
+    if (!m_historyDelegateMethods.webViewDidNavigateWithNavigationData)
+        return;
+
+    auto historyDelegate = m_historyDelegate.get();
+    if (!historyDelegate)
+        return;
+
+    [historyDelegate _webView:m_webView didNavigateWithNavigationData:wrapper(*API::NavigationData::create(navigationDataStore))];
+}
+
+void NavigationState::didPerformClientRedirect(const WTF::String& sourceURL, const WTF::String& destinationURL)
+{
+    if (!m_historyDelegateMethods.webViewDidPerformClientRedirectFromURLToURL)
+        return;
+
+    auto historyDelegate = m_historyDelegate.get();
+    if (!historyDelegate)
+        return;
+
+    [historyDelegate _webView:m_webView didPerformClientRedirectFromURL:[NSURL _web_URLWithWTFString:sourceURL] toURL:[NSURL _web_URLWithWTFString:destinationURL]];
+}
+
+void NavigationState::didPerformServerRedirect(const WTF::String& sourceURL, const WTF::String& destinationURL)
+{
+    if (!m_historyDelegateMethods.webViewDidPerformServerRedirectFromURLToURL)
+        return;
+
+    auto historyDelegate = m_historyDelegate.get();
+    if (!historyDelegate)
+        return;
+
+    [historyDelegate _webView:m_webView didPerformServerRedirectFromURL:[NSURL _web_URLWithWTFString:sourceURL] toURL:[NSURL _web_URLWithWTFString:destinationURL]];
+}
+
+void NavigationState::didUpdateHistoryTitle(const WTF::String& title, const WTF::String& url)
+{
+    if (!m_historyDelegateMethods.webViewDidUpdateHistoryTitleForURL)
+        return;
+
+    auto historyDelegate = m_historyDelegate.get();
+    if (!historyDelegate)
+        return;
+
+    [historyDelegate _webView:m_webView didUpdateHistoryTitle:title forURL:[NSURL _web_URLWithWTFString:url]];
 }
 
 NavigationState::PolicyClient::PolicyClient(NavigationState& navigationState)

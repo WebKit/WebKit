@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "HistoryClient.h"
 #import "WKObject.h"
 #import "WKProcessClassConfigurationPrivate.h"
 #import "WebContext.h"
@@ -65,6 +66,7 @@
     }
 
     API::Object::constructInWrapper<WebKit::WebContext>(self, bundlePath);
+    _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());
 
     return self;
 }

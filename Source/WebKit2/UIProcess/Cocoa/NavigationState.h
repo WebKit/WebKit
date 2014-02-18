@@ -39,14 +39,19 @@
 
 @class WKNavigation;
 @class WKWebView;
+@protocol WKHistoryDelegatePrivate;
 @protocol WKNavigationDelegate;
 
 namespace WebKit {
+
+struct WebNavigationDataStore;
 
 class NavigationState : private PageLoadState::Observer {
 public:
     explicit NavigationState(WKWebView *);
     ~NavigationState();
+
+    static NavigationState& fromWebPage(WebPageProxy&);
 
     std::unique_ptr<API::PolicyClient> createPolicyClient();
     std::unique_ptr<API::LoaderClient> createLoaderClient();
@@ -54,7 +59,16 @@ public:
     RetainPtr<id <WKNavigationDelegate> > navigationDelegate();
     void setNavigationDelegate(id <WKNavigationDelegate>);
 
+    RetainPtr<id <WKHistoryDelegatePrivate> > historyDelegate();
+    void setHistoryDelegate(id <WKHistoryDelegatePrivate>);
+
     RetainPtr<WKNavigation> createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *);
+
+    // Called by the history client.
+    void didNavigateWithNavigationData(const WebKit::WebNavigationDataStore&);
+    void didPerformClientRedirect(const WTF::String& sourceURL, const WTF::String& destinationURL);
+    void didPerformServerRedirect(const WTF::String& sourceURL, const WTF::String& destinationURL);
+    void didUpdateHistoryTitle(const WTF::String& title, const WTF::String& url);
 
 private:
     class PolicyClient : public API::PolicyClient {
@@ -125,6 +139,14 @@ private:
     } m_navigationDelegateMethods;
 
     HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;
+
+    WeakObjCPtr<id <WKHistoryDelegatePrivate> > m_historyDelegate;
+    struct {
+        bool webViewDidNavigateWithNavigationData : 1;
+        bool webViewDidPerformClientRedirectFromURLToURL : 1;
+        bool webViewDidPerformServerRedirectFromURLToURL : 1;
+        bool webViewDidUpdateHistoryTitleForURL : 1;
+    } m_historyDelegateMethods;
 };
 
 } // namespace WebKit

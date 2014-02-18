@@ -35,6 +35,7 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
+#import "WKHistoryDelegatePrivate.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKPreferencesInternal.h"
@@ -459,6 +460,16 @@
 - (_WKRenderingProgressEvents)_observedRenderingProgressEvents
 {
     return _observedRenderingProgressEvents;
+}
+
+- (id <WKHistoryDelegatePrivate>)_historyDelegate
+{
+    return [_navigationState->historyDelegate().leakRef() autorelease];
+}
+
+- (void)_setHistoryDelegate:(id <WKHistoryDelegatePrivate>)historyDelegate
+{
+    _navigationState->setHistoryDelegate(historyDelegate);
 }
 
 static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)
