@@ -1828,7 +1828,6 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height,
     ewk_view_theme_set(window->ewk_view, TEST_THEME_DIR "/default.edj");
     if (device_pixel_ratio)
         ewk_view_device_pixel_ratio_set(window->ewk_view, (float)device_pixel_ratio);
-    ewk_view_source_mode_set(window->ewk_view, view_mode);
     ewk_view_user_agent_set(window->ewk_view, user_agent_string);
     ewk_view_layout_fixed_set(window->ewk_view, fixed_layout_enabled);
 

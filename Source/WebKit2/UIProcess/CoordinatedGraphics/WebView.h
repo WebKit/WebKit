@@ -93,9 +93,6 @@ public:
     void suspendActiveDOMObjectsAndAnimations();
     void resumeActiveDOMObjectsAndAnimations();
 
-    void setShowsAsSource(bool);
-    bool showsAsSource() const;
-
 #if ENABLE(FULLSCREEN_API)
     bool requestExitFullScreen();
 #endif

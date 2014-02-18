@@ -189,16 +189,6 @@ void WebView::resumeActiveDOMObjectsAndAnimations()
     m_page->resumeActiveDOMObjectsAndAnimations();
 }
 
-void WebView::setShowsAsSource(bool showsAsSource)
-{
-    m_page->setMainFrameInViewSourceMode(showsAsSource);
-}
-
-bool WebView::showsAsSource() const
-{
-    return m_page->mainFrameInViewSourceMode();
-}
-
 #if ENABLE(FULLSCREEN_API)
 WebFullScreenManagerProxyClient& WebView::fullScreenManagerProxyClient()
 {

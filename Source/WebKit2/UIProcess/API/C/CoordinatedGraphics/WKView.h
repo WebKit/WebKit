@@ -106,9 +106,6 @@ WK_EXPORT bool WKViewGetDrawsTransparentBackground(WKViewRef);
 WK_EXPORT void WKViewSuspendActiveDOMObjectsAndAnimations(WKViewRef);
 WK_EXPORT void WKViewResumeActiveDOMObjectsAndAnimations(WKViewRef);
 
-WK_EXPORT void WKViewSetShowsAsSource(WKViewRef, bool);
-WK_EXPORT bool WKViewGetShowsAsSource(WKViewRef);
-
 WK_EXPORT bool WKViewExitFullScreen(WKViewRef);
 
 WK_EXPORT void WKViewSetOpacity(WKViewRef view, double opacity);

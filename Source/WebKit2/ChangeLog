@@ -1,3 +1,21 @@
+2014-02-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CoordinatedGraphics][EFL] Remove view_source functions.
+        https://bugs.webkit.org/show_bug.cgi?id=128945
+
+        Reviewed by Anders Carlsson.
+
+        EFL port has been broken since r164254 because of removing view source files in WK2.
+        This patch is to follow to remove remained view source functions.
+
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        * UIProcess/CoordinatedGraphics/WebView.h:
+
 2014-02-17  Tim Horton  <timothy_horton@apple.com>
 
         [iOS][wk2] Custom layers are sometimes put on-screen without being parented
