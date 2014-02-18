@@ -1,3 +1,10 @@
+2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS build fix after r164319.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectedRange):
+
 2014-02-18  Samuel White  <samuel_white@apple.com>
 
         AX: Searching for "immediate descendants only" can return unexpected results.

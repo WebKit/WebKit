@@ -1703,7 +1703,7 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
 
 #if PLATFORM(IOS)
     // FIXME: Why do we need this check only in iOS?
-    if (range->startContainer() && range->endContainer() && newSelection.isNull())
+    if (range->startContainer() && range->endContainer() && newSelection.isNone())
         return false;
 #endif
 
