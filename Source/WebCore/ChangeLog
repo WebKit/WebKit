@@ -1,3 +1,12 @@
+2014-02-18  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Unreviewed fix. Correct wrong flags, ENABLE(GTK)->PLATFORM(GTK).
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::drawArraysInstanced):
+        (WebCore::Extensions3DOpenGL::drawElementsInstanced):
+        (WebCore::Extensions3DOpenGL::vertexAttribDivisor):
+
 2014-02-18  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Compute region ranges for inline replaced elements

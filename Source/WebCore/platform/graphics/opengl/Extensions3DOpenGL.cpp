@@ -238,7 +238,7 @@ void Extensions3DOpenGL::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
 
 void Extensions3DOpenGL::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
 {
-#if ENABLE(GTK)
+#if PLATFORM(GTK)
     m_context->makeContextCurrent();
     ::glDrawArraysInstanced(mode, first, count, primcount);
 #else
@@ -251,7 +251,7 @@ void Extensions3DOpenGL::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Ds
 
 void Extensions3DOpenGL::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
 {
-#if ENABLE(GTK)
+#if PLATFORM(GTK)
     m_context->makeContextCurrent();
     ::glDrawElementsInstanced(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 #else
@@ -265,7 +265,7 @@ void Extensions3DOpenGL::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, G
 
 void Extensions3DOpenGL::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
 {
-#if ENABLE(GTK)
+#if PLATFORM(GTK)
     m_context->makeContextCurrent();
     ::glVertexAttribDivisor(index, divisor);
 #else
