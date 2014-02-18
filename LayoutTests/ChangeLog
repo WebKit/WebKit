@@ -1,3 +1,14 @@
+2014-02-18  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Add test expecations for failing and crashing tests.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/search/search-size-with-decorations-expected.png: Added after r164145.
+        * platform/efl/fast/forms/search/search-size-with-decorations-expected.txt: Ditto.
+
 2014-02-18  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Compute region ranges for inline replaced elements

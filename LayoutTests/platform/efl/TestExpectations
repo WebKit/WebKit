@@ -1867,3 +1867,5 @@ webkit.org/b/128736 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure
 webkit.org/b/128901 accessibility/list-detection.html [ Failure ]
 
 webkit.org/b/128902 media/media-event-listeners.html [ Failure ]
+
+webkit.org/b/128973 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure ]

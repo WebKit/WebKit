@@ -74,6 +74,7 @@ webkit.org/b/116587 http/tests/security/contentSecurityPolicy/default-src-inline
 webkit.org/b/116587 http/tests/security/contentSecurityPolicy/default-src-inline-blocked.html [ Skip ]
 webkit.org/b/116587 http/tests/security/contentSecurityPolicy/directive-parsing-01.html [ Skip ]
 webkit.org/b/116587 http/tests/security/contentSecurityPolicy/directive-parsing-02.html [ Skip ]
+webkit.org/b/116587 http/tests/security/contentSecurityPolicy/directive-parsing-03.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/broken-utf8.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/deflate-frame-comp-bit-onoff.html [ Skip ]
@@ -84,6 +85,7 @@ webkit.org/b/116587 http/tests/websocket/tests/hybi/close-on-unload-and-force-gc
 webkit.org/b/116587 http/tests/websocket/tests/hybi/compressed-control-frame.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/cross-origin.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/extensions.html [ Skip ]
+webkit.org/b/116587 http/tests/websocket/tests/hybi/echo-with-no-extension.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/fragmented-binary-frames.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/fragmented-frames.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/frame-lengths.html [ Skip ]
@@ -555,3 +557,7 @@ webkit.org/b/128734 plugins/nested-plugin-objects.html [ Failure ]
 webkit.org/b/128734 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
 
 webkit.org/b/128737 fast/events/touch/basic-multi-touch-events.html [ Failure ]
+
+webkit.org/b/128969 fast/sub-pixel/input-caret-on-subpixel-bound.html [ ImageOnlyFailure ]
+
+webkit.org/b/128972 fast/regions/box-decorations-over-region-padding-fragmented.html [ ImageOnlyFailure ]
