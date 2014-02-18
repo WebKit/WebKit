@@ -195,7 +195,7 @@ String CSSCursorImageValue::cachedImageURL()
 {
     if (!m_image || !m_image->isCachedImage())
         return String();
-    return toStyleCachedImage(m_image.get())->cachedImage()->url();
+    return toStyleCachedImage(*m_image).cachedImage()->url();
 }
 
 void CSSCursorImageValue::clearCachedImage()

@@ -1,3 +1,24 @@
+2014-02-18  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: Add type-checked casts for StyleImage and subclasses
+        <http://webkit.org/b/128915>
+
+        Address some style issues based on feedback from Andreas Kling.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::cachedImageURL):
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::~CSSImageSetValue):
+        (WebCore::CSSImageSetValue::hasFailedOrCanceledSubresources):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::hasFailedOrCanceledSubresources):
+        - Use the reference version of the type-checked casts since we
+          know the pointers are not NULL.
+
+        * rendering/style/StyleImage.h:
+        - Use 'styleImage' instead of 'resource' in
+          STYLE_IMAGE_TYPE_CASTS.
+
 2014-02-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove unnecessary UserActionElementSet constructor, destructor

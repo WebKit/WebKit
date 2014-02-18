@@ -61,7 +61,7 @@ CSSImageSetValue::~CSSImageSetValue()
     detachPendingImage();
 
     if (m_imageSet && m_imageSet->isCachedImageSet())
-        toStyleCachedImageSet(m_imageSet.get())->clearImageSetValue();
+        toStyleCachedImageSet(*m_imageSet).clearImageSetValue();
 }
 
 void CSSImageSetValue::fillImageSet()
@@ -191,7 +191,7 @@ bool CSSImageSetValue::hasFailedOrCanceledSubresources() const
 {
     if (!m_imageSet || !m_imageSet->isCachedImageSet())
         return false;
-    CachedResource* cachedResource = toStyleCachedImageSet(m_imageSet.get())->cachedImage();
+    CachedResource* cachedResource = toStyleCachedImageSet(*m_imageSet).cachedImage();
     if (!cachedResource)
         return true;
     return cachedResource->loadFailedOrCanceled();

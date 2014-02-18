@@ -105,7 +105,7 @@ bool CSSImageValue::hasFailedOrCanceledSubresources() const
 {
     if (!m_image || !m_image->isCachedImage())
         return false;
-    CachedResource* cachedResource = toStyleCachedImage(m_image.get())->cachedImage();
+    CachedResource* cachedResource = toStyleCachedImage(*m_image).cachedImage();
     if (!cachedResource)
         return true;
     return cachedResource->loadFailedOrCanceled();

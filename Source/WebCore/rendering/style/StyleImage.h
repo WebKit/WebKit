@@ -94,7 +94,7 @@ protected:
 };
 
 #define STYLE_IMAGE_TYPE_CASTS(ToClassName, FromClassName, predicate) \
-    TYPE_CASTS_BASE(ToClassName, FromClassName, resource, resource->predicate(), resource.predicate())
+    TYPE_CASTS_BASE(ToClassName, FromClassName, styleImage, styleImage->predicate(), styleImage.predicate())
 
 }
 #endif
