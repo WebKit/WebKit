@@ -63,7 +63,7 @@ DiskCacheMonitor::DiskCacheMonitor(CFCachedURLResponseRef cachedResponse, Networ
     : m_connectionToWebProcess(loader->connectionToWebProcess())
     , m_resourceRequest(loader->request())
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     // Set up a delayed callback to cancel this monitor if the resource hasn't been cached yet.
     __block DiskCacheMonitor* rawMonitor = this;

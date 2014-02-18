@@ -57,7 +57,7 @@ NPObjectProxy::NPObjectProxy()
 
 NPObjectProxy::~NPObjectProxy()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_npRemoteObjectMap)
         return;

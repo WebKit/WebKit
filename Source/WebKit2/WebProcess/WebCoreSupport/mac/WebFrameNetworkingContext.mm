@@ -100,7 +100,7 @@ ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& req
 
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (frame())
         return *SessionTracker::session(webFrameLoaderClient()->webFrame()->page()->sessionID());

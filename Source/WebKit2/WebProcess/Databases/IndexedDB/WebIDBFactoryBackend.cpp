@@ -114,7 +114,7 @@ void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, 
 
 void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     LOG(IDB, "WebIDBFactoryBackend::open");
 
     String databaseIdentifier = uniqueDatabaseIdentifier(databaseName, openingOrigin, mainFrameOrigin);
@@ -149,7 +149,7 @@ void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, in
 
 void WebIDBFactoryBackend::deleteDatabase(const String& databaseName, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin, PassRefPtr<IDBCallbacks> callbacks, ScriptExecutionContext*, const String&)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     LOG(IDB, "WebIDBFactoryBackend::deleteDatabase");
 
     String databaseIdentifier = uniqueDatabaseIdentifier(databaseName, openingOrigin, mainFrameOrigin);

@@ -145,7 +145,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 
 void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     WebPage* webPage = WebProcess::shared().webPage(pageID);
     if (!webPage)

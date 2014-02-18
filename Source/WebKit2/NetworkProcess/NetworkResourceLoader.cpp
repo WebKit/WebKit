@@ -99,7 +99,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     if (RefPtr<SandboxExtension> resourceSandboxExtension = SandboxExtension::create(parameters.resourceSandboxExtension))
         m_resourceSandboxExtensions.append(resourceSandboxExtension);
 
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     
     if (reply)
         m_networkLoaderClient = std::make_unique<SynchronousNetworkLoaderClient>(m_request, reply);
@@ -109,7 +109,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
 
 NetworkResourceLoader::~NetworkResourceLoader()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     ASSERT(!m_handle);
     ASSERT(!m_hostRecord);
 }
@@ -121,7 +121,7 @@ bool NetworkResourceLoader::isSynchronous() const
 
 void NetworkResourceLoader::start()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     // Explicit ref() balanced by a deref() in NetworkResourceLoader::resourceHandleStopped()
     ref();
@@ -137,7 +137,7 @@ void NetworkResourceLoader::start()
 
 void NetworkResourceLoader::cleanup()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     invalidateSandboxExtensions();
 
@@ -163,7 +163,7 @@ void NetworkResourceLoader::didConvertHandleToDownload()
 
 void NetworkResourceLoader::abort()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (m_handle && !m_handleConvertedToDownload)
         m_handle->cancel();
@@ -233,7 +233,7 @@ void NetworkResourceLoader::willSendRequestAsync(ResourceHandle* handle, const R
 
     // We only expect to get the willSendRequest callback from ResourceHandle as the result of a redirect.
     ASSERT(!redirectResponse.isNull());
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     ResourceRequest proposedRequest = request;
     m_suggestedRequestForWillSendRequest = request;
@@ -378,7 +378,7 @@ void NetworkResourceLoader::invalidateSandboxExtensions()
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* handle, const ProtectionSpace& protectionSpace)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     ASSERT_UNUSED(handle, handle == m_handle);
 
     m_networkLoaderClient->canAuthenticateAgainstProtectionSpace(this, protectionSpace);

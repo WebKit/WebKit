@@ -119,7 +119,7 @@ void UniqueIDBDatabase::unregisterConnection(DatabaseProcessIDBConnection& conne
 
 void UniqueIDBDatabase::shutdown(UniqueIDBDatabaseShutdownType type)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests)
         return;
@@ -139,7 +139,7 @@ void UniqueIDBDatabase::shutdown(UniqueIDBDatabaseShutdownType type)
 
 void UniqueIDBDatabase::shutdownBackingStore(UniqueIDBDatabaseShutdownType type, const String& databaseDirectory)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     m_backingStore.clear();
 
@@ -155,7 +155,7 @@ void UniqueIDBDatabase::shutdownBackingStore(UniqueIDBDatabaseShutdownType type,
 
 void UniqueIDBDatabase::didShutdownBackingStore(UniqueIDBDatabaseShutdownType type)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     // Balanced by a ref in ::shutdown()
     RefPtr<UniqueIDBDatabase> protector(adoptRef(this));
@@ -184,7 +184,7 @@ void UniqueIDBDatabase::didShutdownBackingStore(UniqueIDBDatabaseShutdownType ty
 
 void UniqueIDBDatabase::deleteDatabase(std::function<void(bool)> successCallback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         // Someone else has already shutdown this database, so we can't request a delete.
@@ -208,7 +208,7 @@ void UniqueIDBDatabase::deleteDatabase(std::function<void(bool)> successCallback
 
 void UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata(std::function<void(bool, const IDBDatabaseMetadata&)> completionCallback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         completionCallback(false, IDBDatabaseMetadata());
@@ -247,7 +247,7 @@ void UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata(std::function<void(boo
 
 void UniqueIDBDatabase::openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(!m_backingStore);
 
     if (m_inMemory) {
@@ -263,7 +263,7 @@ void UniqueIDBDatabase::openBackingStoreAndReadMetadata(const UniqueIDBDatabaseI
 
 void UniqueIDBDatabase::didOpenBackingStoreAndReadMetadata(const IDBDatabaseMetadata& metadata, bool success)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     ASSERT(!m_metadata);
 
     m_didGetMetadataFromBackingStore = true;
@@ -304,7 +304,7 @@ void UniqueIDBDatabase::rollbackTransaction(const IDBIdentifier& transactionIden
 
 void UniqueIDBDatabase::postTransactionOperation(const IDBIdentifier& transactionIdentifier, std::unique_ptr<AsyncTask> task, std::function<void(bool)> successCallback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         successCallback(false);
@@ -330,7 +330,7 @@ void UniqueIDBDatabase::postTransactionOperation(const IDBIdentifier& transactio
 
 void UniqueIDBDatabase::didCompleteTransactionOperation(const IDBIdentifier& transactionIdentifier, bool success)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     RefPtr<AsyncRequest> request = m_pendingTransactionRequests.take(transactionIdentifier);
     if (!request)
@@ -341,7 +341,7 @@ void UniqueIDBDatabase::didCompleteTransactionOperation(const IDBIdentifier& tra
 
 void UniqueIDBDatabase::changeDatabaseVersion(const IDBIdentifier& transactionIdentifier, uint64_t newVersion, std::function<void(bool)> successCallback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         successCallback(false);
@@ -406,7 +406,7 @@ void UniqueIDBDatabase::didCompleteBoolRequest(uint64_t requestID, bool success)
 
 void UniqueIDBDatabase::createObjectStore(const IDBIdentifier& transactionIdentifier, const IDBObjectStoreMetadata& metadata, std::function<void(bool)> successCallback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         successCallback(false);
@@ -434,7 +434,7 @@ void UniqueIDBDatabase::createObjectStore(const IDBIdentifier& transactionIdenti
 
 void UniqueIDBDatabase::deleteObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void(bool)> successCallback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         successCallback(false);
@@ -461,7 +461,7 @@ void UniqueIDBDatabase::deleteObjectStore(const IDBIdentifier& transactionIdenti
 
 void UniqueIDBDatabase::clearObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void(bool)> successCallback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         successCallback(false);
@@ -484,7 +484,7 @@ void UniqueIDBDatabase::clearObjectStore(const IDBIdentifier& transactionIdentif
 
 void UniqueIDBDatabase::createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBIndexMetadata& metadata, std::function<void(bool)> successCallback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         successCallback(false);
@@ -518,7 +518,7 @@ void UniqueIDBDatabase::createIndex(const IDBIdentifier& transactionIdentifier, 
 
 void UniqueIDBDatabase::deleteIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, std::function<void(bool)> successCallback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         successCallback(false);
@@ -552,7 +552,7 @@ void UniqueIDBDatabase::deleteIndex(const IDBIdentifier& transactionIdentifier, 
 
 void UniqueIDBDatabase::putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyData& keyData, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys, std::function<void(const IDBKeyData&, uint32_t, const String&)> callback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         callback(IDBKeyData(), INVALID_STATE_ERR, "Unable to put record into database because it has shut down");
@@ -575,7 +575,7 @@ void UniqueIDBDatabase::putRecord(const IDBIdentifier& transactionIdentifier, in
 
 void UniqueIDBDatabase::getRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, IndexedDB::CursorType cursorType, std::function<void(const IDBGetResult&, uint32_t, const String&)> callback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         callback(IDBGetResult(), INVALID_STATE_ERR, "Unable to get record from database because it has shut down");
@@ -598,7 +598,7 @@ void UniqueIDBDatabase::getRecord(const IDBIdentifier& transactionIdentifier, in
 
 void UniqueIDBDatabase::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRangeData, std::function<void(int64_t, const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         callback(0, nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to open cursor in database because it has shut down");
@@ -621,7 +621,7 @@ void UniqueIDBDatabase::openCursor(const IDBIdentifier& transactionIdentifier, i
 
 void UniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uint64_t count, std::function<void(const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         callback(nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to advance cursor in database because it has shut down");
@@ -642,7 +642,7 @@ void UniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uin
 
 void UniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, const IDBKeyData& key, std::function<void(const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         callback(nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to iterate cursor in database because it has shut down");
@@ -663,7 +663,7 @@ void UniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, con
 
 void UniqueIDBDatabase::count(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, std::function<void(int64_t, uint32_t, const String&)> callback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         callback(0, INVALID_STATE_ERR, "Unable to get count from database because it has shut down");
@@ -684,7 +684,7 @@ void UniqueIDBDatabase::count(const IDBIdentifier& transactionIdentifier, int64_
 
 void UniqueIDBDatabase::deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData, std::function<void(uint32_t, const String&)> callback)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests) {
         callback(INVALID_STATE_ERR, "Unable to deleteRange from database because it has shut down");
@@ -705,7 +705,7 @@ void UniqueIDBDatabase::deleteRange(const IDBIdentifier& transactionIdentifier, 
 
 void UniqueIDBDatabase::openBackingStoreTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->establishTransaction(transactionIdentifier, objectStoreIDs, mode);
@@ -715,7 +715,7 @@ void UniqueIDBDatabase::openBackingStoreTransaction(const IDBIdentifier& transac
 
 void UniqueIDBDatabase::beginBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->beginTransaction(transactionIdentifier);
@@ -725,7 +725,7 @@ void UniqueIDBDatabase::beginBackingStoreTransaction(const IDBIdentifier& transa
 
 void UniqueIDBDatabase::commitBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->commitTransaction(transactionIdentifier);
@@ -735,7 +735,7 @@ void UniqueIDBDatabase::commitBackingStoreTransaction(const IDBIdentifier& trans
 
 void UniqueIDBDatabase::resetBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->resetTransaction(transactionIdentifier);
@@ -745,7 +745,7 @@ void UniqueIDBDatabase::resetBackingStoreTransaction(const IDBIdentifier& transa
 
 void UniqueIDBDatabase::rollbackBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->rollbackTransaction(transactionIdentifier);
@@ -755,7 +755,7 @@ void UniqueIDBDatabase::rollbackBackingStoreTransaction(const IDBIdentifier& tra
 
 void UniqueIDBDatabase::changeDatabaseVersionInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, uint64_t newVersion)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->changeDatabaseVersion(transactionIdentifier, newVersion);
@@ -765,7 +765,7 @@ void UniqueIDBDatabase::changeDatabaseVersionInBackingStore(uint64_t requestID, 
 
 void UniqueIDBDatabase::createObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, const IDBObjectStoreMetadata& metadata)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->createObjectStore(transactionIdentifier, metadata);
@@ -775,7 +775,7 @@ void UniqueIDBDatabase::createObjectStoreInBackingStore(uint64_t requestID, cons
 
 void UniqueIDBDatabase::deleteObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->deleteObjectStore(transactionIdentifier, objectStoreID);
@@ -785,7 +785,7 @@ void UniqueIDBDatabase::deleteObjectStoreInBackingStore(uint64_t requestID, cons
 
 void UniqueIDBDatabase::clearObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->clearObjectStore(transactionIdentifier, objectStoreID);
@@ -795,7 +795,7 @@ void UniqueIDBDatabase::clearObjectStoreInBackingStore(uint64_t requestID, const
 
 void UniqueIDBDatabase::createIndexInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBIndexMetadata& metadata)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->createIndex(transactionIdentifier, objectStoreID, metadata);
@@ -805,7 +805,7 @@ void UniqueIDBDatabase::createIndexInBackingStore(uint64_t requestID, const IDBI
 
 void UniqueIDBDatabase::deleteIndexInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->deleteIndex(transactionIdentifier, objectStoreID, indexID);
@@ -815,7 +815,7 @@ void UniqueIDBDatabase::deleteIndexInBackingStore(uint64_t requestID, const IDBI
 
 void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, const IDBKeyData& inputKeyData, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool keyWasGenerated = false;
@@ -888,7 +888,7 @@ void UniqueIDBDatabase::didPutRecordInBackingStore(uint64_t requestID, const IDB
 
 void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, int64_t indexID, const IDBKeyRangeData& keyRangeData, IndexedDB::CursorType cursorType)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     RefPtr<IDBKeyRange> keyRange = keyRangeData.maybeCreateIDBKeyRange();
@@ -949,7 +949,7 @@ void UniqueIDBDatabase::didGetRecordFromBackingStore(uint64_t requestID, const I
 
 void UniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     int64_t cursorID = 0;
@@ -1068,13 +1068,13 @@ void UniqueIDBDatabase::didDeleteRangeInBackingStore(uint64_t requestID, uint32_
 
 String UniqueIDBDatabase::absoluteDatabaseDirectory() const
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     return DatabaseProcess::shared().absoluteIndexedDatabasePathFromDatabaseRelativePath(m_databaseRelativeDirectory);
 }
 
 void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<AsyncTask> task, DatabaseTaskType taskType)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     if (!m_acceptingNewRequests && taskType == DatabaseTaskType::Normal)
         return;
@@ -1090,7 +1090,7 @@ void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<AsyncTask> task, Data
 
 void UniqueIDBDatabase::performNextMainThreadTask()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     // Balanced by a ref() in ::postMainThreadTask
     RefPtr<UniqueIDBDatabase> protector(adoptRef(this));
@@ -1121,7 +1121,7 @@ bool UniqueIDBDatabase::performNextMainThreadTaskWithoutAdoptRef()
 
 void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<AsyncTask> task, DatabaseTaskType taskType)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!m_acceptingNewRequests && taskType == DatabaseTaskType::Normal)
         return;
@@ -1135,7 +1135,7 @@ void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<AsyncTask> task, Databa
 
 void UniqueIDBDatabase::performNextDatabaseTask()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     // It is possible that this database might be shutting down on the main thread.
     // In this case, immediately after releasing m_databaseTaskMutex, this database might get deleted.

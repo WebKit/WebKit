@@ -26,8 +26,8 @@
 #include "config.h"
 #include "SessionTracker.h"
 
-#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 
 using namespace WebCore;
 
@@ -38,7 +38,7 @@ const uint64_t SessionTracker::legacyPrivateSessionID;
 
 static HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>& staticSessionMap()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     static NeverDestroyed<HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>> map;
     return map.get();
@@ -46,7 +46,7 @@ static HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>& staticSessionM
 
 static HashMap<const NetworkStorageSession*, uint64_t>& storageSessionToID()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     static NeverDestroyed<HashMap<const NetworkStorageSession*, uint64_t>> map;
     return map.get();
@@ -54,7 +54,7 @@ static HashMap<const NetworkStorageSession*, uint64_t>& storageSessionToID()
 
 static String& identifierBase()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     static NeverDestroyed<String> base;
     return base;
@@ -93,7 +93,7 @@ void SessionTracker::setSession(uint64_t sessionID, std::unique_ptr<NetworkStora
 
 void SessionTracker::destroySession(uint64_t sessionID)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     if (staticSessionMap().contains(sessionID)) {
         storageSessionToID().remove(session(sessionID));
         staticSessionMap().remove(sessionID);
@@ -102,7 +102,7 @@ void SessionTracker::destroySession(uint64_t sessionID)
 
 void SessionTracker::setIdentifierBase(const String& identifier)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     identifierBase() = identifier;
 }

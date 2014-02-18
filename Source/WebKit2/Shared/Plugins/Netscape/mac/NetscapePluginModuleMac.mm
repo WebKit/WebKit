@@ -292,7 +292,7 @@ static const ResID MIMEListStringStringNumber = 128;
 
 static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginModuleInfo& plugin)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     ResourceMap resourceMap(bundle);
     if (!resourceMap.isValid())

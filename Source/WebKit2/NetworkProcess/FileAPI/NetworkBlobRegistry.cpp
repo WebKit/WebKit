@@ -30,8 +30,8 @@
 
 #include "SandboxExtension.h"
 #include <WebCore/BlobRegistryImpl.h>
-#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 
 using namespace WebCore;
 
@@ -39,7 +39,7 @@ namespace WebKit {
 
 NetworkBlobRegistry& NetworkBlobRegistry::shared()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     static NeverDestroyed<NetworkBlobRegistry> registry;
     return registry;
 }

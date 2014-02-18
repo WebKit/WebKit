@@ -109,7 +109,7 @@ void DatabaseProcess::ensureIndexedDatabaseRelativePathExists(const String& rela
 
 void DatabaseProcess::ensurePathExists(const String& path)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     if (!makeAllDirectories(path))
         LOG_ERROR("Failed to make all directories for path '%s'", path.utf8().data());
@@ -124,7 +124,7 @@ String DatabaseProcess::absoluteIndexedDatabasePathFromDatabaseRelativePath(cons
 
 void DatabaseProcess::postDatabaseTask(std::unique_ptr<AsyncTask> task)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     MutexLocker locker(m_databaseTaskMutex);
 
@@ -135,7 +135,7 @@ void DatabaseProcess::postDatabaseTask(std::unique_ptr<AsyncTask> task)
 
 void DatabaseProcess::performNextDatabaseTask()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     std::unique_ptr<AsyncTask> task;
     {

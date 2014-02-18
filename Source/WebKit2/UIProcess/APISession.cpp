@@ -26,13 +26,13 @@
 #include "config.h"
 #include "APISession.h"
 
-#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 namespace API {
 
 static uint64_t generateID(bool isEphemeral)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     static uint64_t uniqueSessionID = WebKit::SessionTracker::legacyPrivateSessionID;
     ASSERT(isEphemeral);
@@ -41,7 +41,7 @@ static uint64_t generateID(bool isEphemeral)
 
 Session& Session::defaultSession()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     static Session* defaultSession = new Session(false, WebKit::SessionTracker::defaultSessionID);
     return *defaultSession;
@@ -49,7 +49,7 @@ Session& Session::defaultSession()
 
 Session& Session::legacyPrivateSession()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     static Session* legacyPrivateSession = new Session(true, WebKit::SessionTracker::legacyPrivateSessionID);
     return *legacyPrivateSession;

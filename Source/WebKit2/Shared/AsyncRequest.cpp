@@ -27,13 +27,13 @@
 #include "config.h"
 #include "AsyncRequest.h"
 
-#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
 static uint64_t generateRequestID()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     static uint64_t requestID = 0;
     return ++requestID;
 }

@@ -76,7 +76,7 @@ HostRecord* NetworkResourceLoadScheduler::hostForURL(const WebCore::URL& url, Cr
 
 void NetworkResourceLoadScheduler::removeLoader(NetworkResourceLoader* loader)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     ASSERT(loader);
 
     LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::removeLoadIdentifier removing loader %s", loader->request().url().string().utf8().data());
@@ -94,7 +94,7 @@ void NetworkResourceLoadScheduler::removeLoader(NetworkResourceLoader* loader)
 
 void NetworkResourceLoadScheduler::receivedRedirect(NetworkResourceLoader* loader, const WebCore::URL& redirectURL)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::receivedRedirect loader originally for '%s' redirected to '%s'", loader->request().url().string().utf8().data(), redirectURL.string().utf8().data());
 
     HostRecord* oldHost = loader->hostRecord();
@@ -138,7 +138,7 @@ static bool removeScheduledLoadersCalled = false;
 
 void NetworkResourceLoadScheduler::removeScheduledLoaders(void* context)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     ASSERT(removeScheduledLoadersCalled);
 
     NetworkResourceLoadScheduler* scheduler = static_cast<NetworkResourceLoadScheduler*>(context);

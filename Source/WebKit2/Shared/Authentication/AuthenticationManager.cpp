@@ -47,7 +47,7 @@ namespace WebKit {
 
 static uint64_t generateAuthenticationChallengeID()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     static int64_t uniqueAuthenticationChallengeID;
     return ++uniqueAuthenticationChallengeID;
@@ -66,7 +66,7 @@ AuthenticationManager::AuthenticationManager(ChildProcess* process)
 
 uint64_t AuthenticationManager::establishIdentifierForChallenge(const WebCore::AuthenticationChallenge& authenticationChallenge)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     uint64_t challengeID = generateAuthenticationChallengeID();
     m_challenges.set(challengeID, authenticationChallenge);
@@ -106,7 +106,7 @@ bool AuthenticationManager::tryUseCertificateInfoForChallenge(const WebCore::Aut
 
 void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const Credential& credential, const CertificateInfo& certificateInfo)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
@@ -126,7 +126,7 @@ void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, cons
 
 void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t challengeID)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
@@ -142,7 +142,7 @@ void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t chall
 
 void AuthenticationManager::cancelChallenge(uint64_t challengeID)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());

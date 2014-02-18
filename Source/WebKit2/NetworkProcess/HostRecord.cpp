@@ -57,7 +57,7 @@ HostRecord::~HostRecord()
 
 void HostRecord::scheduleResourceLoader(PassRefPtr<NetworkResourceLoader> loader)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     loader->setHostRecord(this);
     
@@ -69,7 +69,7 @@ void HostRecord::scheduleResourceLoader(PassRefPtr<NetworkResourceLoader> loader
 
 void HostRecord::addLoaderInProgress(NetworkResourceLoader* loader)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     m_loadersInProgress.add(loader);
     loader->setHostRecord(this);
@@ -90,7 +90,7 @@ inline bool removeLoaderFromQueue(NetworkResourceLoader* loader, LoaderQueue& qu
 
 void HostRecord::removeLoader(NetworkResourceLoader* loader)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     // FIXME (NetworkProcess): Due to IPC race conditions, it's possible this HostRecord will be asked to remove the same loader twice.
     // It would be nice to know the loader has already been removed and treat it as a no-op.

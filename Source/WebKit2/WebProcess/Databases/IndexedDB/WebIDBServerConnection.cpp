@@ -47,7 +47,7 @@ namespace WebKit {
 
 static uint64_t generateServerConnectionIdentifier()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     static uint64_t identifier = 0;
     return ++identifier;
 }

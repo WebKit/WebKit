@@ -43,7 +43,7 @@
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SharedBuffer.h>
-#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 using namespace JSC;
 using namespace WebCore;
@@ -57,7 +57,7 @@ static int64_t generateDatabaseId()
 {
     static int64_t databaseID = 0;
 
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     return ++databaseID;
 }
 
@@ -66,12 +66,12 @@ UniqueIDBDatabaseBackingStoreSQLite::UniqueIDBDatabaseBackingStoreSQLite(const U
     , m_absoluteDatabaseDirectory(databaseDirectory)
 {
     // The backing store is meant to be created and used entirely on a background thread.
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 }
 
 UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     m_transactions.clear();
     m_sqliteDB = nullptr;
@@ -85,7 +85,7 @@ UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite()
 
 std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -175,7 +175,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::create
 
 std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::extractExistingMetadata()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
 
     if (!m_sqliteDB->tableExists(ASCIILiteral("IDBDatabaseInfo")))
@@ -289,7 +289,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::extrac
 
 std::unique_ptr<SQLiteDatabase> UniqueIDBDatabaseBackingStoreSQLite::openSQLiteDatabaseAtPath(const String& path)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     auto sqliteDatabase = std::make_unique<SQLiteDatabase>();
     if (!sqliteDatabase->open(path)) {
@@ -306,7 +306,7 @@ std::unique_ptr<SQLiteDatabase> UniqueIDBDatabaseBackingStoreSQLite::openSQLiteD
 
 std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrEstablishMetadata()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     String dbFilename = UniqueIDBDatabase::calculateAbsoluteDatabaseFilename(m_absoluteDatabaseDirectory);
 
@@ -333,7 +333,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
 
 bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>&, IndexedDB::TransactionMode mode)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     if (!m_transactions.add(transactionIdentifier, SQLiteIDBTransaction::create(*this, transactionIdentifier, mode)).isNewEntry) {
         LOG_ERROR("Attempt to establish transaction identifier that already exists");
@@ -345,7 +345,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBIdentifi
 
 bool UniqueIDBDatabaseBackingStoreSQLite::beginTransaction(const IDBIdentifier& transactionIdentifier)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
@@ -358,7 +358,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::beginTransaction(const IDBIdentifier& 
 
 bool UniqueIDBDatabaseBackingStoreSQLite::commitTransaction(const IDBIdentifier& transactionIdentifier)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
@@ -371,7 +371,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::commitTransaction(const IDBIdentifier&
 
 bool UniqueIDBDatabaseBackingStoreSQLite::resetTransaction(const IDBIdentifier& transactionIdentifier)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     std::unique_ptr<SQLiteIDBTransaction> transaction = m_transactions.take(transactionIdentifier);
     if (!transaction) {
@@ -384,7 +384,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::resetTransaction(const IDBIdentifier& 
 
 bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBIdentifier& transactionIdentifier)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
@@ -397,7 +397,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBIdentifie
 
 bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBIdentifier& transactionIdentifier, uint64_t newVersion)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -426,7 +426,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBIdentif
 
 bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBIdentifier& transactionIdentifier, const IDBObjectStoreMetadata& metadata)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -475,7 +475,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBIdentifier&
 
 bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -549,7 +549,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBIdentifier&
 
 bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -588,7 +588,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBIdentifier& 
 
 bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBIndexMetadata& metadata)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -670,7 +670,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& trans
 
 bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -711,7 +711,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBIdentifier& trans
 
 bool UniqueIDBDatabaseBackingStoreSQLite::generateKeyNumber(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t& generatedKey)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -754,7 +754,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::generateKeyNumber(const IDBIdentifier&
 
 bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGeneratorNumber(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t keyNumber, bool)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -784,7 +784,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGeneratorNumber(const IDBIden
 
 bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyData& keyData, bool& keyExists)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -828,7 +828,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBIdenti
 
 bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyData& keyData, const uint8_t* valueBuffer, size_t valueSize)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -864,7 +864,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transac
 
 bool UniqueIDBDatabaseBackingStoreSQLite::putIndexRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyData& keyValue, const IDBKeyData& indexKey)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -912,7 +912,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::uncheckedPutIndexRecord(int64_t object
 
 bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, IndexedDB::CursorType cursorType, IDBGetResult& result)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -947,7 +947,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& tr
 
 bool UniqueIDBDatabaseBackingStoreSQLite::deleteRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyData& keyData)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -967,7 +967,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteRecord(const IDBIdentifier& tran
 
 bool UniqueIDBDatabaseBackingStoreSQLite::deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -1028,7 +1028,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteRange(const IDBIdentifier& trans
 
 bool UniqueIDBDatabaseBackingStoreSQLite::deleteRecord(SQLiteIDBTransaction& transaction, int64_t objectStoreID, const WebCore::IDBKeyData& key)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -1069,7 +1069,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteRecord(SQLiteIDBTransaction& tra
 
 bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey& key, RefPtr<SharedBuffer>& result)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -1115,7 +1115,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBI
 
 bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRange& keyRange, RefPtr<SharedBuffer>& result, RefPtr<IDBKey>& resultKey)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -1169,7 +1169,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const
 
 bool UniqueIDBDatabaseBackingStoreSQLite::count(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, int64_t& count)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -1199,7 +1199,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::count(const IDBIdentifier& transaction
 
 bool UniqueIDBDatabaseBackingStoreSQLite::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange, int64_t& cursorID, IDBKeyData& key, IDBKeyData& primaryKey, Vector<uint8_t>& valueBuffer)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -1224,7 +1224,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::openCursor(const IDBIdentifier& transa
 
 bool UniqueIDBDatabaseBackingStoreSQLite::advanceCursor(const IDBIdentifier& cursorIdentifier, uint64_t count, IDBKeyData& key, IDBKeyData& primaryKey, Vector<uint8_t>& valueBuffer)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -1252,7 +1252,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::advanceCursor(const IDBIdentifier& cur
 
 bool UniqueIDBDatabaseBackingStoreSQLite::iterateCursor(const IDBIdentifier& cursorIdentifier, const IDBKeyData& targetKey, IDBKeyData& key, IDBKeyData& primaryKey, Vector<uint8_t>& valueBuffer)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -1280,7 +1280,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::iterateCursor(const IDBIdentifier& cur
 
 void UniqueIDBDatabaseBackingStoreSQLite::notifyCursorsOfChanges(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 

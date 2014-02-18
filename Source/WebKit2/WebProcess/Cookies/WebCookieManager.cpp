@@ -95,7 +95,7 @@ void WebCookieManager::cookiesDidChange()
 
 void WebCookieManager::dispatchCookiesDidChange()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     m_process->send(Messages::WebCookieManagerProxy::CookiesDidChange(), 0);
 }
 
