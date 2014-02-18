@@ -1,3 +1,9 @@
+2014-02-17  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed gtk build fix.
+
+        * GNUmakefile.list.am: Remove WebHistoryClient.cpp/h after r164230.
+
 2014-02-17  Ricky Mondello  <rmondello@apple.com>
 
         Expose a way to clear cookies modified after a given date

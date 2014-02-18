@@ -940,8 +940,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebGeolocationProvider.h \
 	Source/WebKit2/UIProcess/WebGrammarDetail.cpp \
 	Source/WebKit2/UIProcess/WebGrammarDetail.h \
-	Source/WebKit2/UIProcess/WebHistoryClient.cpp \
-	Source/WebKit2/UIProcess/WebHistoryClient.h \
 	Source/WebKit2/UIProcess/WebIconDatabase.cpp \
 	Source/WebKit2/UIProcess/WebIconDatabase.h \
 	Source/WebKit2/UIProcess/WebIconDatabaseClient.cpp \
