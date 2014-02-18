@@ -1,3 +1,17 @@
+2014-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Convert position:sticky to position:static upon copy and paste
+        https://bugs.webkit.org/show_bug.cgi?id=128982
+
+        Reviewed by Simon Fraser.
+
+        * editing/pasteboard/copy-paste-converts-fixed-expected.txt: Copied from LayoutTests/editing/pasteboard/copy-paste-converts-sticky-and-fixed-expected.txt.
+        * editing/pasteboard/copy-paste-converts-fixed.html: Copied from LayoutTests/editing/pasteboard/copy-paste-converts-sticky-and-fixed.html.
+        * editing/pasteboard/copy-paste-converts-sticky-expected.txt: Copied from LayoutTests/editing/pasteboard/copy-paste-converts-sticky-and-fixed-expected.txt.
+        * editing/pasteboard/copy-paste-converts-sticky.html: Copied from LayoutTests/editing/pasteboard/copy-paste-converts-sticky-and-fixed.html.
+        * editing/pasteboard/copy-paste-wraps-position-absolute-expected.txt: Renamed from LayoutTests/editing/pasteboard/copy-paste-converts-sticky-and-fixed-expected.txt.
+        * editing/pasteboard/copy-paste-wraps-position-absolute.html: Renamed from LayoutTests/editing/pasteboard/copy-paste-converts-sticky-and-fixed.html.
+
 2014-02-18  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] Add -webkit-blend-mode support for SVG.

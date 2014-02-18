@@ -1,3 +1,23 @@
+2014-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Convert position:sticky to position:static upon copy and paste
+        https://bugs.webkit.org/show_bug.cgi?id=128982
+
+        Reviewed by Simon Fraser.
+
+        This patch has two parts:
+
+        1. Make sure that position:absolute elements trigger the position:relative wrapping (as
+        well as position:fixed)
+        2. Now that we copy position:sticky, convert that to position:fixed
+
+        Tests: editing/pasteboard/copy-paste-converts-fixed.html
+               editing/pasteboard/copy-paste-converts-sticky.html
+               editing/pasteboard/copy-paste-wraps-position-absolute.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::convertFixedAndStickyPosition):
+
 2014-02-18  David Kilzer  <ddkilzer@apple.com>
 
         Add type-checked casts for StyleImage and subclasses

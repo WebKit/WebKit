@@ -1227,11 +1227,18 @@ bool EditingStyle::convertFixedAndStickyPosition()
         return false;
 
     RefPtr<CSSPrimitiveValue> sticky = cssValuePool().createIdentifierValue(CSSValueWebkitSticky);
+    if (m_mutableStyle->propertyMatches(CSSPropertyPosition, sticky.get())) {
+        m_mutableStyle->setProperty(CSSPropertyPosition, cssValuePool().createIdentifierValue(CSSValueStatic), m_mutableStyle->propertyIsImportant(CSSPropertyPosition));
+        return false;
+    }
     RefPtr<CSSPrimitiveValue> fixed = cssValuePool().createIdentifierValue(CSSValueFixed);
     if (m_mutableStyle->propertyMatches(CSSPropertyPosition, fixed.get())) {
         m_mutableStyle->setProperty(CSSPropertyPosition, cssValuePool().createIdentifierValue(CSSValueAbsolute), m_mutableStyle->propertyIsImportant(CSSPropertyPosition));
         return true;
     }
+    RefPtr<CSSPrimitiveValue> absolute = cssValuePool().createIdentifierValue(CSSValueAbsolute);
+    if (m_mutableStyle->propertyMatches(CSSPropertyPosition, absolute.get()))
+        return true;
     return false;
 }
 

@@ -1,4 +1,4 @@
-These tests to see if position:sticky and position:fixed get converted to position:static and position:absolute upon copy/paste
+This tests to see if position:absolute gets wrapped with a position:relative upon copy/paste
 
 first test - before:
 | <html>
@@ -21,7 +21,7 @@ first test - before:
 |     "
 abc"
 |     <div>
-|       style="position: fixed; left: 0px; top: 0px;"
+|       style="position: absolute; left: 0px; top: 0px;"
 |       "def"
 |     "ghi
 "
@@ -32,7 +32,7 @@ abc"
 |     <script>
 |       "
 
-Markup.description('These tests to see if position:sticky and position:fixed get converted to position:static and position:absolute upon copy/paste');
+Markup.description('This tests to see if position:absolute gets wrapped with a position:relative upon copy/paste');
 
 document.designMode = 'on';
 
@@ -80,7 +80,7 @@ first test - after:
 |     <script>
 |       "
 
-Markup.description('These tests to see if position:sticky and position:fixed get converted to position:static and position:absolute upon copy/paste');
+Markup.description('This tests to see if position:absolute gets wrapped with a position:relative upon copy/paste');
 
 document.designMode = 'on';
 

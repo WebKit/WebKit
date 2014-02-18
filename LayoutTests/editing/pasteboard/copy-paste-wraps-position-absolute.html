@@ -4,12 +4,12 @@
 <script type="text/javascript" src="../../resources/dump-as-markup.js"></script>
 </head>
 <body>
-abc<div style="position: fixed; left: 0px; top: 0px;">def</div>ghi
+abc<div style="position: absolute; left: 0px; top: 0px;">def</div>ghi
 <br/>
 
 <script>
 
-Markup.description('These tests to see if position:sticky and position:fixed get converted to position:static and position:absolute upon copy/paste');
+Markup.description('This tests to see if position:absolute gets wrapped with a position:relative upon copy/paste');
 
 document.designMode = 'on';
 
