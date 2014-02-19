@@ -2588,7 +2588,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     if (!hostView.layer.sublayers.count)
         return nullptr;
 
-    return hostView.layer.sublayers[0];
+    return [hostView.layer.sublayers objectAtIndex:0];
 }
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot

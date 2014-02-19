@@ -1,5 +1,12 @@
 2014-02-18  Tim Horton  <timothy_horton@apple.com>
 
+        Another 32-bit build fix.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _acceleratedCompositingModeRootLayer]):
+
+2014-02-18  Tim Horton  <timothy_horton@apple.com>
+
         More more WK_API_ENABLED after r164337.
 
         * UIProcess/API/mac/PageClientImpl.mm:
