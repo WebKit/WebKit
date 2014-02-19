@@ -463,7 +463,6 @@ private:
     void setComposition(const String&, SetCompositionMode);
 
     void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions);
-    void notifyComponentsOnChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
 
     Node* findEventTargetFromSelection() const;
 

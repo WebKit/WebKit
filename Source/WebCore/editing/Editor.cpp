@@ -753,23 +753,6 @@ bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertActi
     return client() && client()->shouldInsertText(text, range, action);
 }
 
-void Editor::notifyComponentsOnChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions options)
-{
-#if PLATFORM(IOS)
-    // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830>
-    if (m_ignoreCompositionSelectionChange)
-        return;
-#endif
-
-    if (client())
-        client()->respondToChangedSelection(&m_frame);
-    setStartNewKillRingSequence(true);
-#if ENABLE(DELETION_UI)
-    m_deleteButtonController->respondToChangedSelection(oldSelection);
-#endif
-    m_alternativeTextController->respondToChangedSelection(oldSelection, options);
-}
-
 void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
 {
     if (AXObjectCache::accessibilityEnabled()) {
@@ -2814,9 +2797,9 @@ void Editor::setIgnoreCompositionSelectionChange(bool ignore)
 
     m_ignoreCompositionSelectionChange = ignore;
 #if PLATFORM(IOS)
-    // FIXME: Merge this to open source https://bugs.webkit.org/show_bug.cgi?id=38830
+    // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830> 
     if (!ignore)
-        notifyComponentsOnChangedSelection(m_frame.selection().selection(), 0);
+        respondToChangedSelection(m_frame.selection().selection(), 0);
 #endif
     if (!ignore)
         revealSelectionAfterEditingOperation(ScrollAlignment::alignToEdgeIfNeeded, RevealExtent);
@@ -3313,6 +3296,12 @@ void Editor::setMarkedTextMatchesAreHighlighted(bool flag)
 
 void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions options)
 {
+#if PLATFORM(IOS)
+    // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830> 
+    if (m_ignoreCompositionSelectionChange)
+        return;
+#endif
+
     m_alternativeTextController->stopPendingCorrection(oldSelection);
 
     bool closeTyping = options & FrameSelection::CloseTyping;
@@ -3376,7 +3365,13 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, Fra
     if (!isContinuousGrammarCheckingEnabled)
         document().markers().removeMarkers(DocumentMarker::Grammar);
 
-    notifyComponentsOnChangedSelection(oldSelection, options);
+    if (client())
+        client()->respondToChangedSelection(&m_frame);
+    setStartNewKillRingSequence(true);
+#if ENABLE(DELETION_UI)
+    m_deleteButtonController->respondToChangedSelection(oldSelection);
+#endif
+    m_alternativeTextController->respondToChangedSelection(oldSelection, options);
 }
 
 static Node* findFirstMarkable(Node* node)
