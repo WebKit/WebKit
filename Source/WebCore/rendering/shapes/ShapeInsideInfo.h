@@ -115,6 +115,8 @@ protected:
         return shapeValue()->layoutBox();
     }
 
+    virtual const RenderStyle& styleForWritingMode() const override;
+
 private:
     virtual LayoutRect computedShapeLogicalBoundingBox() const override { return computedShape().shapePaddingLogicalBoundingBox(); }
     virtual ShapeValue* shapeValue() const override;

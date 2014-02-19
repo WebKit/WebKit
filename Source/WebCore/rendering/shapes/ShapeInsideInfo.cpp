@@ -111,6 +111,11 @@ ShapeValue* ShapeInsideInfo::shapeValue() const
     return m_renderer.style().resolvedShapeInside();
 }
 
+const RenderStyle& ShapeInsideInfo::styleForWritingMode() const
+{
+    return m_renderer.style();
+}
+
 LayoutUnit ShapeInsideInfo::computeFirstFitPositionForFloat(const FloatSize floatSize) const
 {
     if (!floatSize.width() || shapeLogicalBottom() < logicalLineTop())

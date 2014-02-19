@@ -117,6 +117,8 @@ public:
     virtual LayoutUnit borderBottom() const { return style().borderBottomWidth(); }
     virtual LayoutUnit borderLeft() const { return style().borderLeftWidth(); }
     virtual LayoutUnit borderRight() const { return style().borderRightWidth(); }
+    virtual LayoutUnit borderWidth() const { return borderLeft() + borderRight(); }
+    virtual LayoutUnit borderHeight() const { return borderTop() + borderBottom(); }
     virtual LayoutUnit borderBefore() const { return style().borderBeforeWidth(); }
     virtual LayoutUnit borderAfter() const { return style().borderAfterWidth(); }
     virtual LayoutUnit borderStart() const { return style().borderStartWidth(); }

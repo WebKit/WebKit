@@ -1,3 +1,75 @@
+2014-02-19  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] shape-outside does not properly handle different writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=128631
+
+        Reviewed by David Hyatt.
+
+        Fix ShapeOutsideInfo to properly convert the line coordinates and
+        shape coordinates with respect to the writing mode and writing
+        direction for the lines that are affected by the shape. This is
+        notably different from shape inside in that shape outside needs to use
+        the writing mode of the container, not of the element that the shape
+        is applied to.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-border-box.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-content-box.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-margin-box.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-padding-box.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-border-box.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-content-box.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-margin-box.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-padding-box.html
+
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::borderWidth): Used by
+            ShapeInfo::setReferenceBoxLogicalSize.
+        (WebCore::RenderBoxModelObject::borderHeight): Ditto.
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::ShapeInfo<RenderType>::setReferenceBoxLogicalSize): Use the
+            container's writing mode to determine the logical dimensions in
+            the case of shape outside.
+        (WebCore::ShapeInfo<RenderType>::computedShape): Use the new
+            ShapeInfo::styleForWritingMode method.
+        (WebCore::borderBeforeInWritingMode): Determines the borderBefore for
+            the passed in renderer using the writing mode passed in. The
+            borderBefore method on the renderer is implemented in RenderStyle,
+            unlike with the margin methods, so this was chosen instead of
+            attempting to move the border method implementation into a place
+            where it could take the writing mode as an argument.
+        (WebCore::borderAndPaddingBeforeInWritingMode): Determines the
+            borderAndPaddingBefore for the passed in renderer using the
+            given writihg mode. See above for why this method instead of doing
+            it like margins.
+        (WebCore::borderStartWithStyleForWritingMode): Determines the
+            borderStart for the passed in renderer using the writing mode and
+            direction from the style passed in. See above for why this method
+            instead of doing it like margins.
+        (WebCore::borderAndPaddingStartWithStyleForWritingMode): Determines
+            the borderAndPaddingStart for the passed in renderer using the
+            writing mode and direction from the style passed in. See above for
+            why this method instead of doing it like margins.
+        (WebCore::ShapeInfo<RenderType>::logicalTopOffset): Use the
+            container's writing mode to determine the logicalTopOffset in the
+            case of shape outside.
+        (WebCore::ShapeInfo<RenderType>::logicalLeftOffset): Use the
+            container's writing mode to determine the logicalTopOffset in the
+            case of shape outside.
+        * rendering/shapes/ShapeInfo.h:
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::styleForWritingMode): Return the entire
+            style because to determine start/end the writing direction is
+            needed in addtion to the writing mode.
+        * rendering/shapes/ShapeInsideInfo.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine):
+            Properly convert the containing block line into the reference box
+            coordinates of the shape.
+        (WebCore::ShapeOutsideInfo::styleForWritingMode): Return the entire
+            style because to determine start/end the writing direction is
+            needed in addtion to the writing mode.
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2014-02-19  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] the GstPlayFlags enum diverged from upstream

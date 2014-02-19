@@ -1,3 +1,30 @@
+2014-02-19  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] shape-outside does not properly handle different writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=128631
+
+        Reviewed by David Hyatt.
+
+        Tests for floats with shape-outside where the float writing mode or
+        writing direction are difference from that of the container.
+
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-border-box-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-border-box.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-content-box-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-content-box.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-margin-box-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-margin-box.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-padding-box-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-direction-padding-box.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-border-box-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-border-box.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-content-box-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-content-box.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-margin-box-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-margin-box.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-padding-box-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes-padding-box.html: Added.
+
 2014-02-18  Brent Fulgham  <bfulgham@apple.com>
 
         Windows gardening: Add annotations for Debug case.

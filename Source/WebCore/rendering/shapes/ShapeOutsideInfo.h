@@ -81,7 +81,7 @@ private:
         return computedShape().getExcludedIntervals(lineTop, lineHeight, segments);
     }
 
-    virtual WritingMode writingMode() const;
+    virtual const RenderStyle& styleForWritingMode() const override;
 
     LayoutUnit m_leftMarginBoxDelta;
     LayoutUnit m_rightMarginBoxDelta;
