@@ -52,9 +52,8 @@ public:
     
     unsigned scaleToTotal(double total) const
     {
-        // LLVM accepts branch 32-bit unsigned branch weights but in dumps it might
-        // display them as signed values. We don't need all 32 bits, so we just use the
-        // 31 bits.
+        // LLVM accepts 32-bit unsigned branch weights but in dumps it might display them
+        // as signed values. We don't need all 32 bits, so we just use the 31 bits.
         double result = static_cast<double>(m_value) * INT_MAX / total;
         if (result < 0)
             return 0;

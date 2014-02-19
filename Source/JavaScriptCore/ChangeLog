@@ -1,3 +1,10 @@
+2014-02-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix comment.
+
+        * ftl/FTLWeight.h:
+        (JSC::FTL::Weight::scaleToTotal):
+
 2014-02-19  Anders Carlsson  <andersca@apple.com>
 
         Add WTF_MAKE_FAST_ALLOCATED to more classes
