@@ -1,3 +1,19 @@
+2014-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up WKContentView initialization
+        https://bugs.webkit.org/show_bug.cgi?id=129016
+
+        Reviewed by Benjamin Poulain.
+        
+        WKContentView had too many initializers and duplicated init
+        code. Clean up by removing all but one initializer and and
+        doing all the setup in it.
+
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentView.mm:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+
 2014-02-18  Tim Horton  <timothy_horton@apple.com>
 
         Another 32-bit build fix.

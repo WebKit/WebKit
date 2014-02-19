@@ -72,29 +72,6 @@ using namespace WebKit;
     WebCore::FloatPoint _currentExposedRectPosition;
 }
 
-- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
-{
-    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:nullptr];
-}
-
-- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
-{
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-
-    [self _commonInitializationWithContextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage];
-    return self;
-}
-
-- (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
-{
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-
-    [self _commonInitializationWithContextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef relatedToPage:nullptr];
-    return self;
-}
-
 - (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration
 {
     if (!(self = [super initWithFrame:frame]))
@@ -251,37 +228,6 @@ using namespace WebKit;
 }
 
 #pragma mark Internal
-
-- (void)_commonInitializationWithContextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
-{
-    InitializeWebKit2();
-
-    _pageClient = std::make_unique<PageClientImpl>(self);
-
-    WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.pageGroup = toImpl(pageGroupRef);
-    webPageConfiguration.relatedPage = toImpl(relatedPage);
-
-    _page = toImpl(contextRef)->createWebPage(*_pageClient, std::move(webPageConfiguration));
-    _page->initializeWebPage();
-    _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
-    _page->setUseFixedLayout(true);
-    _page->setDelegatesScrolling(true);
-
-    WebContext::statistics().wkViewCount++;
-
-    _rootContentView = adoptNS([[UIView alloc] init]);
-    [[_rootContentView layer] setMasksToBounds:NO];
-    [_rootContentView setUserInteractionEnabled:NO];
-
-    [self addSubview:_rootContentView.get()];
-
-    _interactionView = adoptNS([[WKInteractionView alloc] init]);
-    [_interactionView setPage:_page];
-    [self addSubview:_interactionView.get()];
-
-    self.layer.hitTestsAsOpaque = YES;
-}
 
 - (void)_windowDidMoveToScreenNotification:(NSNotification *)notification
 {

@@ -239,7 +239,12 @@ using namespace WebKit;
 
     [self addSubview:_scrollView.get()];
 
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage]);
+    WebKit::WebPageConfiguration webPageConfiguration;
+    webPageConfiguration.pageGroup = toImpl(pageGroupRef);
+    webPageConfiguration.relatedPage = toImpl(relatedPage);
+
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:*toImpl(contextRef) configuration:std::move(webPageConfiguration)]);
+
     [_contentView setDelegate:self];
     [[_contentView layer] setAnchorPoint:CGPointZero];
     [_contentView setFrame:bounds];
