@@ -1,3 +1,21 @@
+2014-02-19  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] the GstPlayFlags enum diverged from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=128957
+
+        Reviewed by Philippe Normand.
+
+        Removed the GstPlayFlags from the GStreamer implementation and
+        replaced by the use of the GFlags.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::getGstPlaysFlag): Created to get the flags by using the
+        GFlags infrastructure.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::setDownloadBuffering):
+        Replaced GST_PLAY_FLAG_DOWNLOAD with getGstPlaysFlag.
+
 2014-02-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Replace WTF::bind() uses in RTCPeerConnection with C++11 lambdas

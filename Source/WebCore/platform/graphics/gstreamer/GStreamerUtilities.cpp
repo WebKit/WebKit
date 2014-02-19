@@ -133,6 +133,18 @@ bool initializeGStreamer()
     return gstInitialized;
 }
 
+unsigned getGstPlaysFlag(const char* nick)
+{
+    static GFlagsClass* flagsClass = static_cast<GFlagsClass*>(g_type_class_ref(g_type_from_name("GstPlayFlags")));
+    ASSERT(flagsClass);
+
+    GFlagsValue* flag = g_flags_get_value_by_nick(flagsClass, nick);
+    if (!flag)
+        return 0;
+
+    return flag->value;
+}
+
 }
 
 #endif // USE(GSTREAMER)

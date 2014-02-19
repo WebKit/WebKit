@@ -72,5 +72,6 @@ char* getGstBufferDataPointer(GstBuffer*);
 void mapGstBuffer(GstBuffer*);
 void unmapGstBuffer(GstBuffer*);
 bool initializeGStreamer();
+unsigned getGstPlaysFlag(const char* nick);
 
 }

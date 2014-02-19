@@ -56,21 +56,6 @@
 #include "WebKitMediaSourceGStreamer.h"
 #endif
 
-// GstPlayFlags flags from playbin2. It is the policy of GStreamer to
-// not publicly expose element-specific enums. That's why this
-// GstPlayFlags enum has been copied here.
-typedef enum {
-    GST_PLAY_FLAG_VIDEO         = 0x00000001,
-    GST_PLAY_FLAG_AUDIO         = 0x00000002,
-    GST_PLAY_FLAG_TEXT          = 0x00000004,
-    GST_PLAY_FLAG_VIS           = 0x00000008,
-    GST_PLAY_FLAG_SOFT_VOLUME   = 0x00000010,
-    GST_PLAY_FLAG_NATIVE_AUDIO  = 0x00000020,
-    GST_PLAY_FLAG_NATIVE_VIDEO  = 0x00000040,
-    GST_PLAY_FLAG_DOWNLOAD      = 0x00000080,
-    GST_PLAY_FLAG_BUFFERING     = 0x000000100
-} GstPlayFlags;
-
 // Max interval in seconds to stay in the READY state on manual
 // state change requests.
 static const guint gReadyStateTimerInterval = 60;
@@ -1784,21 +1769,23 @@ void MediaPlayerPrivateGStreamer::setDownloadBuffering()
     if (!m_playBin)
         return;
 
-    GstPlayFlags flags;
+    unsigned flags;
     g_object_get(m_playBin.get(), "flags", &flags, NULL);
 
+    unsigned flagDownload = getGstPlaysFlag("download");
+
     // We don't want to stop downloading if we already started it.
-    if (flags & GST_PLAY_FLAG_DOWNLOAD && m_readyState > MediaPlayer::HaveNothing && !m_resetPipeline)
+    if (flags & flagDownload && m_readyState > MediaPlayer::HaveNothing && !m_resetPipeline)
         return;
 
     bool shouldDownload = !isLiveStream() && m_preload == MediaPlayer::Auto;
     if (shouldDownload) {
         LOG_MEDIA_MESSAGE("Enabling on-disk buffering");
-        g_object_set(m_playBin.get(), "flags", flags | GST_PLAY_FLAG_DOWNLOAD, NULL);
+        g_object_set(m_playBin.get(), "flags", flags | flagDownload, NULL);
         m_fillTimer.startRepeating(0.2);
     } else {
         LOG_MEDIA_MESSAGE("Disabling on-disk buffering");
-        g_object_set(m_playBin.get(), "flags", flags & ~GST_PLAY_FLAG_DOWNLOAD, NULL);
+        g_object_set(m_playBin.get(), "flags", flags & ~flagDownload, NULL);
         m_fillTimer.stop();
     }
 }
