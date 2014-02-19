@@ -1,5 +1,11 @@
 2014-02-18  Tim Horton  <timothy_horton@apple.com>
 
+        Don't build WKThumbnailView on iOS; it won't build.
+
+        * Configurations/WebKit2.xcconfig:
+
+2014-02-18  Tim Horton  <timothy_horton@apple.com>
+
         More WK_API_ENABLED after r164337.
 
         * UIProcess/API/mac/WKView.mm:
