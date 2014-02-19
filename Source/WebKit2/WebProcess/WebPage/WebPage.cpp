@@ -4241,4 +4241,14 @@ void WebPage::setThumbnailScale(double thumbnailScale)
     drawingArea()->setTransform(transform);
 }
 
+void WebPage::getBytecodeProfile(uint64_t callbackID)
+{
+    ASSERT(JSDOMWindow::commonVM()->m_perBytecodeProfiler);
+    if (!JSDOMWindow::commonVM()->m_perBytecodeProfiler)
+        send(Messages::WebPageProxy::StringCallback(String(), callbackID));
+    String result = JSDOMWindow::commonVM()->m_perBytecodeProfiler->toJSON();
+    ASSERT(result.length());
+    send(Messages::WebPageProxy::StringCallback(result, callbackID));
+}
+
 } // namespace WebKit

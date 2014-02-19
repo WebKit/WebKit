@@ -1,3 +1,24 @@
+2014-02-19  Oliver Hunt  <oliver@apple.com>
+
+        Add WK2 SPI to get bytecode profile from web process
+        https://bugs.webkit.org/show_bug.cgi?id=129069
+
+        Reviewed by Anders Carlsson.
+
+        Simple patch to allow asynchronous fetching of the
+        bytecode profiler output from the WebProcess.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetBytecodeProfile):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getBytecodeProfile):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getBytecodeProfile):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-02-19  Beth Dakin  <bdakin@apple.com>
 
         Build fix.

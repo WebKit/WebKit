@@ -717,6 +717,8 @@ public:
 
     PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(WebCore::Frame&, const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
+    void getBytecodeProfile(uint64_t callbackID);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

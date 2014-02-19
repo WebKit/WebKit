@@ -1504,6 +1504,11 @@ void WKPageGetContentsAsString(WKPageRef pageRef, void* context, WKPageGetConten
     toImpl(pageRef)->getContentsAsString(StringCallback::create(context, callback));
 }
 
+void WKPageGetBytecodeProfile(WKPageRef pageRef, void* context, WKPageGetBytecodeProfileFunction callback)
+{
+    toImpl(pageRef)->getBytecodeProfile(StringCallback::create(context, callback));
+}
+
 void WKPageGetSelectionAsWebArchiveData(WKPageRef pageRef, void* context, WKPageGetSelectionAsWebArchiveDataFunction callback)
 {
     toImpl(pageRef)->getSelectionAsWebArchiveData(DataCallback::create(context, callback));

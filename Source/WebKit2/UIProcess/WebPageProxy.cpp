@@ -1974,6 +1974,20 @@ void WebPageProxy::getContentsAsString(PassRefPtr<StringCallback> prpCallback)
     m_process->send(Messages::WebPage::GetContentsAsString(callbackID), m_pageID);
 }
 
+void WebPageProxy::getBytecodeProfile(PassRefPtr<StringCallback> prpCallback)
+{
+    RefPtr<StringCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
+    uint64_t callbackID = callback->callbackID();
+    m_loadDependentStringCallbackIDs.add(callbackID);
+    m_stringCallbacks.set(callbackID, callback.get());
+    m_process->send(Messages::WebPage::GetBytecodeProfile(callbackID), m_pageID);
+}
+    
 #if ENABLE(MHTML)
 void WebPageProxy::getContentsAsMHTMLData(PassRefPtr<DataCallback> prpCallback, bool useBinaryEncoding)
 {

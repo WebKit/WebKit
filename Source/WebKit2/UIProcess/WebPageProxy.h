@@ -665,6 +665,8 @@ public:
     void didFindStringMatches(const String&, Vector<Vector<WebCore::IntRect>> matchRects, int32_t firstIndexAfterSelection);
 
     void getContentsAsString(PassRefPtr<StringCallback>);
+    void getBytecodeProfile(PassRefPtr<StringCallback>);
+
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(PassRefPtr<DataCallback>, bool useBinaryEncoding);
 #endif

@@ -90,6 +90,9 @@ WK_EXPORT void WKPageSetShouldSendEventsSynchronously(WKPageRef page, bool sync)
 WK_EXPORT void WKPageSetMediaVolume(WKPageRef page, float volume);
 WK_EXPORT void WKPageSetMayStartMediaWhenInWindow(WKPageRef page, bool mayStartMedia);
 
+typedef void (*WKPageGetBytecodeProfileFunction)(WKStringRef, WKErrorRef, void*);
+WK_EXPORT void WKPageGetBytecodeProfile(WKPageRef page, void* context, WKPageGetBytecodeProfileFunction function);
+    
 WK_EXPORT WKArrayRef WKPageCopyRelatedPages(WKPageRef page);
 
 typedef void (*WKPageInvalidMessageFunction)(uint32_t messageID);
