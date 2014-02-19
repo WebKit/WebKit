@@ -1,3 +1,9 @@
+2014-02-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Windows gardening. Mark more flakes.
+
+        * platform/win/TestExpectations: Add flaky tests.
+
 2014-02-19  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r163560): Always treat SVG <tspan> and <textPath> as display inline
