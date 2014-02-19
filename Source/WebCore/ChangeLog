@@ -1,3 +1,15 @@
+2014-02-19  Antti Koivisto  <antti@apple.com>
+
+        Don't call to willBeDeletedFrom(Document&) when destructing document
+        https://bugs.webkit.org/show_bug.cgi?id=129013
+
+        Reviewed by Andreas Kling.
+        
+        The document is half dead at this point.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::~ContainerNode):
+
 2014-02-19  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r163560): Always treat SVG <tspan> and <textPath> as display inline
