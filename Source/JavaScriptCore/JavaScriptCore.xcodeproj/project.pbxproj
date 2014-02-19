@@ -5777,7 +5777,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/LLIntDesiredOffsets.h\"\n";
+			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/LLIntDesiredOffsets.h\"\n";
 		};
 		0FCEFAD91806191800472CE4 /* Copy LLVM Library Into Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5792,7 +5792,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ $ENABLE_FTL_JIT != \"ENABLE_FTL_JIT\" ]]\nthen\n    exit 0\nfi\n\n# Copy the llvmForJSC library into the framework.\nditto \"${BUILT_PRODUCTS_DIR}/libllvmForJSC.dylib\" \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Libraries/libllvmForJSC.dylib\"\nif [ ! -e \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\" ]\nthen\n    ln -fs \"Versions/Current/Libraries\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\"\nfi";
+			shellScript = "set -e\n\nif [[ $ENABLE_FTL_JIT != \"ENABLE_FTL_JIT\" ]]\nthen\n    exit 0\nfi\n\n# Copy the llvmForJSC library into the framework.\nditto \"${BUILT_PRODUCTS_DIR}/libllvmForJSC.dylib\" \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Libraries/libllvmForJSC.dylib\"\nif [ ! -e \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\" ]\nthen\n    ln -fs \"Versions/Current/Libraries\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\"\nfi";
 		};
 		3713F014142905240036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5807,7 +5807,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names JS || exit $?\nfi";
+			shellScript = "set -e\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names JS\nfi";
 		};
 		3732811A17FCD235004AD519 /* Postprocess Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5842,7 +5842,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi";
+			shellScript = "set -e\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals\nfi";
 		};
 		5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5874,7 +5874,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "TRACING_D=\"$SRCROOT/runtime/Tracing.d\";\nTRACING_H=\"$BUILT_PRODUCTS_DIR/DerivedSources/JavaScriptCore/TracingDtrace.h\";\n\nif [[ \"$HAVE_DTRACE\" = \"1\" && \"$TRACING_D\" -nt \"$TRACING_H\" ]];\nthen\n\tdtrace -h -o \"$TRACING_H\" -s \"$TRACING_D\";\nfi;\n";
+			shellScript = "set -e\n\nTRACING_D=\"$SRCROOT/runtime/Tracing.d\";\nTRACING_H=\"$BUILT_PRODUCTS_DIR/DerivedSources/JavaScriptCore/TracingDtrace.h\";\n\nif [[ \"$HAVE_DTRACE\" = \"1\" && \"$TRACING_D\" -nt \"$TRACING_H\" ]];\nthen\n\tdtrace -h -o \"$TRACING_H\" -s \"$TRACING_D\";\nfi;\n";
 		};
 		5DAFD6CD146B6B6E00FBEFB4 /* Install Support Script */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5906,7 +5906,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptCore.framework relative to its location.\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_RESOURCES_DIR}/jsc\"\ninstall_name_tool -change \"${JAVASCRIPTCORE_FRAMEWORKS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_RESOURCES_DIR}/jsc\"\n";
+			shellScript = "set -e\n\n# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptCore.framework relative to its location.\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_RESOURCES_DIR}/jsc\"\ninstall_name_tool -change \"${JAVASCRIPTCORE_FRAMEWORKS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_RESOURCES_DIR}/jsc\"\n";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5920,7 +5920,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/bin/ln -sfh \"${SRCROOT}\" JavaScriptCore\nexport JavaScriptCore=\"JavaScriptCore\"\nexport BUILT_PRODUCTS_DIR=\"../..\"\n\nmake --no-builtin-rules -f \"JavaScriptCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.ncpu` || exit 1\n\nif [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb JavaScriptCore/llint/LowLevelInterpreter.asm ${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor LLIntAssembly.h || exit 1\n";
+			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/bin/ln -sfh \"${SRCROOT}\" JavaScriptCore\nexport JavaScriptCore=\"JavaScriptCore\"\nexport BUILT_PRODUCTS_DIR=\"../..\"\n\nmake --no-builtin-rules -f \"JavaScriptCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.ncpu`\n\nif [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb JavaScriptCore/llint/LowLevelInterpreter.asm ${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor LLIntAssembly.h\n";
 		};
 		A55DEAA416703DF7003DB841 /* Check For Inappropriate Macros in External Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5935,7 +5935,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers PrivateHeaders/JSBasePrivate.h || exit $?\nfi";
+			shellScript = "set -e\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers PrivateHeaders/JSBasePrivate.h\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
