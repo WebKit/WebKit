@@ -1,5 +1,13 @@
 2014-02-18  Tim Horton  <timothy_horton@apple.com>
 
+        Can't use #if inside a macro, so we'll duplicate the macro for now.
+
+        Build fix for all of Mac.
+
+        * UIProcess/API/mac/WKView.mm:
+
+2014-02-18  Tim Horton  <timothy_horton@apple.com>
+
         Don't build WKThumbnailView on iOS; it won't build.
 
         * Configurations/WebKit2.xcconfig:
