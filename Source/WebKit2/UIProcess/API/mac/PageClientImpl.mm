@@ -169,7 +169,11 @@ IntSize PageClientImpl::viewSize()
 
 NSView *PageClientImpl::activeView() const
 {
+#if WK_API_ENABLED
     return m_wkView._thumbnailView ? (NSView *)m_wkView._thumbnailView : (NSView *)m_wkView;
+#else
+    return m_wkView;
+#endif
 }
 
 bool PageClientImpl::isViewWindowActive()
