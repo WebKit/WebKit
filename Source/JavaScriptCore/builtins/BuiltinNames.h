@@ -34,7 +34,7 @@ namespace JSC {
 #define INITIALISE_BUILTIN_NAMES(name) , m_##name(vm, #name), m_##name##PrivateName(Identifier::from(PrivateName()))
 #define DECLARE_BUILTIN_NAMES(name) const Identifier m_##name; const Identifier m_##name##PrivateName;;
 #define DECLARE_BUILTIN_IDENTIFIER_ACCESSOR(name) \
-    const Identifier& name() const { return m_##name; } \
+    const Identifier& name##PublicName() const { return m_##name; } \
     const Identifier& name##PrivateName() const { return m_##name##PrivateName; }
 
 #define INITIALISE_PRIVATE_TO_PUBLIC_ENTRY(name) m_privateToPublicMap.add(m_##name##PrivateName.impl(), &m_##name);

@@ -87,7 +87,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const So
 UnlinkedFunctionExecutable* BuiltinExecutables::name##Executable() \
 {\
     if (!m_##name##Executable)\
-        m_##name##Executable = createBuiltinExecutable(m_##name##Source, m_vm.propertyNames->builtinNames().functionName());\
+        m_##name##Executable = createBuiltinExecutable(m_##name##Source, m_vm.propertyNames->builtinNames().functionName##PublicName());\
     return m_##name##Executable.get();\
 }
 JSC_FOREACH_BUILTIN(DEFINE_BUILTIN_EXECUTABLES)

@@ -1,3 +1,16 @@
+2014-02-18  Oliver Hunt  <oliver@apple.com>
+
+        Prevent builtin js named with C++ reserved words from breaking the build
+        https://bugs.webkit.org/show_bug.cgi?id=129017
+
+        Reviewed by Sam Weinig.
+
+        Simple change to a couple of macros to make sure we don't create functions
+        named using reserved words.
+
+        * builtins/BuiltinExecutables.cpp:
+        * builtins/BuiltinNames.h:
+
 2014-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should build on ARM64
