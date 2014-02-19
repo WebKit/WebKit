@@ -136,20 +136,20 @@ void UnwindInfo::parse(void* section, size_t size, GeneratedFunction generatedFu
         m_registers.append(RegisterAtOffset(ARM64Registers::x28, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_D8_D9_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::d8, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::d9, offset -= 8));
+        m_registers.append(RegisterAtOffset(ARM64Registers::q8, offset -= 8));
+        m_registers.append(RegisterAtOffset(ARM64Registers::q9, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_D10_D11_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::d10, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::d11, offset -= 8));
+        m_registers.append(RegisterAtOffset(ARM64Registers::q10, offset -= 8));
+        m_registers.append(RegisterAtOffset(ARM64Registers::q11, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_D12_D13_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::d12, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::d13, offset -= 8));
+        m_registers.append(RegisterAtOffset(ARM64Registers::q12, offset -= 8));
+        m_registers.append(RegisterAtOffset(ARM64Registers::q13, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_D14_D15_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::d14, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::d15, offset -= 8));
+        m_registers.append(RegisterAtOffset(ARM64Registers::q14, offset -= 8));
+        m_registers.append(RegisterAtOffset(ARM64Registers::q15, offset -= 8));
     }
 #else
 #error "Unrecognized architecture"

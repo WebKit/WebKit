@@ -1,5 +1,24 @@
 2014-02-18  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should build on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=129010
+
+        Reviewed by Sam Weinig.
+        
+        * disassembler/X86Disassembler.cpp: Just because we have the LLVM disassembler doesn't mean we're on X86.
+        * ftl/FTLLocation.cpp: DWARF parsing for ARM64 is super easy.
+        (JSC::FTL::Location::isGPR):
+        (JSC::FTL::Location::gpr):
+        (JSC::FTL::Location::isFPR):
+        (JSC::FTL::Location::fpr):
+        (JSC::FTL::Location::restoreInto): This function wasn't even X86-specific to begin with so move it out of the #if stuff.
+        * ftl/FTLUnwindInfo.cpp: They're called q not d.
+        (JSC::FTL::UnwindInfo::parse):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toArgumentRegister): Add this method; we alraedy had it on X86.
+
+2014-02-18  Filip Pizlo  <fpizlo@apple.com>
+
         FTL unwind parsing should handle ARM64
         https://bugs.webkit.org/show_bug.cgi?id=128984
 

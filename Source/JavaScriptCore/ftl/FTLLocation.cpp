@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,6 +128,32 @@ FPRReg Location::fpr() const
     RELEASE_ASSERT(isFPR());
     return static_cast<FPRReg>(dwarfRegNum() - 17);
 }
+#elif CPU(ARM64)
+// This decodes Dwarf flavour 0 for ARM64.
+bool Location::isGPR() const
+{
+    return kind() == Register && dwarfRegNum() >= 0 && dwarfRegNum() <= 31;
+}
+
+GPRReg Location::gpr() const
+{
+    RELEASE_ASSERT(involvesGPR());
+    return static_cast<GPRReg>(dwarfRegNum());
+}
+
+bool Location::isFPR() const
+{
+    return kind() == Register && dwarfRegNum() >= 64 && dwarfRegNum() <= 95;
+}
+
+FPRReg Location::fpr() const
+{
+    RELEASE_ASSERT(isFPR());
+    return static_cast<FPRReg>(dwarfRegNum() - 64);
+}
+#else // CPU cases for Location methods
+#error "CPU architecture not supported."
+#endif // CPU cases for Location methods
 
 void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg result, unsigned numFramesToPop) const
 {
@@ -194,9 +220,6 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
     
     RELEASE_ASSERT_NOT_REACHED();
 }
-#else // CPU cases for Location methods
-#error "CPU architecture not supported."
-#endif // CPU cases for Location methods
 
 GPRReg Location::directGPR() const
 {

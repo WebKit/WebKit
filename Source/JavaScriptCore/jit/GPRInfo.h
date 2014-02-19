@@ -533,6 +533,7 @@ class GPRInfo {
 public:
     typedef GPRReg RegisterType;
     static const unsigned numberOfRegisters = 16;
+    static const unsigned numberOfArgumentRegisters = 8;
 
     // Note: regT3 is required to be callee-preserved.
 
@@ -601,6 +602,12 @@ public:
     static unsigned toIndex(GPRReg reg)
     {
         return (unsigned)reg;
+    }
+
+    static GPRReg toArgumentRegister(unsigned index)
+    {
+        ASSERT(index < numberOfArgumentRegisters);
+        return toRegister(index);
     }
 
     static const char* debugName(GPRReg reg)
