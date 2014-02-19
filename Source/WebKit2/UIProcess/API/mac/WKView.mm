@@ -228,7 +228,9 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _allowsMagnification;
     BOOL _allowsBackForwardNavigationGestures;
 
+#if WK_API_ENABLED
     WKThumbnailView *_thumbnailView;
+#endif
 }
 
 @end
@@ -277,7 +279,9 @@ struct WKViewInterpretKeyEventsParameters {
 {
     _data->_page->close();
 
+#if WK_API_ENABLED
     ASSERT(!_data->_thumbnailView);
+#endif
     ASSERT(!_data->_inSecureInputState);
 
     [_data release];
@@ -1082,8 +1086,10 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 #define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
     - (void)Selector:(NSEvent *)theEvent \
     { \
+    #if WK_API_ENABLED \
         if (_data->_thumbnailView) \
             return; \
+    #endif \
         if ([[self inputContext] handleEvent:theEvent]) { \
             LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
             return; \
@@ -1118,8 +1124,10 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)scrollWheel:(NSEvent *)event
 {
+#if WK_API_ENABLED
     if (_data->_thumbnailView)
         return;
+#endif
 
     if (_data->_allowsBackForwardNavigationGestures) {
         [self _ensureGestureController];
@@ -1133,8 +1141,10 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseMoved:(NSEvent *)event
 {
+#if WK_API_ENABLED
     if (_data->_thumbnailView)
         return;
+#endif
 
     // When a view is first responder, it gets mouse moved events even when the mouse is outside its visible rect.
     if (self == [[self window] firstResponder] && !NSPointInRect([self convertPoint:[event locationInWindow] fromView:nil], [self visibleRect]))
@@ -1145,8 +1155,10 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseDown:(NSEvent *)event
 {
+#if WK_API_ENABLED
     if (_data->_thumbnailView)
         return;
+#endif
 
     [self _setMouseDownEvent:event];
     _data->_ignoringMouseDraggedEvents = NO;
@@ -1155,8 +1167,10 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseUp:(NSEvent *)event
 {
+#if WK_API_ENABLED
     if (_data->_thumbnailView)
         return;
+#endif
 
     [self _setMouseDownEvent:nil];
     [self mouseUpInternal:event];
@@ -1164,8 +1178,10 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseDragged:(NSEvent *)event
 {
+#if WK_API_ENABLED
     if (_data->_thumbnailView)
         return;
+#endif
 
     if (_data->_ignoringMouseDraggedEvents)
         return;
@@ -2507,10 +2523,12 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 {
     [rootLayer web_disableAllActions];
 
+#if WK_API_ENABLED
     if (_data->_thumbnailView) {
         _data->_thumbnailView.thumbnailLayer = rootLayer;
         return;
     }
+#endif
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -2975,6 +2993,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [types release];
 }
 
+#if WK_API_ENABLED
 - (void)_setThumbnailView:(WKThumbnailView *)thumbnailView
 {
     ASSERT(!_data->_thumbnailView || !thumbnailView);
@@ -2995,6 +3014,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     return _data->_thumbnailView;
 }
+#endif // WK_API_ENABLED
 
 @end
 

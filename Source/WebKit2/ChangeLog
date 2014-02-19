@@ -1,3 +1,17 @@
+2014-02-18  Tim Horton  <timothy_horton@apple.com>
+
+        More WK_API_ENABLED after r164337.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]):
+        (-[WKView scrollWheel:]):
+        (-[WKView mouseMoved:]):
+        (-[WKView mouseDown:]):
+        (-[WKView mouseUp:]):
+        (-[WKView mouseDragged:]):
+        (-[WKView _setAcceleratedCompositingModeRootLayer:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+
 2014-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Remove UIWKRemoteView

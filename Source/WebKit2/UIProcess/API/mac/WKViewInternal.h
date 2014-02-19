@@ -54,7 +54,9 @@ struct WebPageConfiguration;
 }
 
 @class WKFullScreenWindowController;
+#if WK_API_ENABLED
 @class WKThumbnailView;
+#endif
 
 @interface WKView ()
 #if WK_API_ENABLED
@@ -105,7 +107,9 @@ struct WebPageConfiguration;
 - (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates;
 - (BOOL)_suppressVisibilityUpdates;
 
+#if WK_API_ENABLED
 @property (nonatomic, setter=_setThumbnailView:) WKThumbnailView *_thumbnailView;
+#endif
 
 // FullScreen
 
