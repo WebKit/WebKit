@@ -1,3 +1,23 @@
+2014-02-19  Dirk Schulze  <krit@webkit.org>
+
+        Missing box doesn't use border-box as reference box for clip-path
+        https://bugs.webkit.org/show_bug.cgi?id=129049
+
+        Reviewed by Simon Fraser.
+
+        If no reference box was specified the default reference box should be
+        border-box. Previously to this patch the reference box was the bounding
+        client rect. This was not following the specification.
+        http://www.w3.org/TR/2014/WD-css-masking-1-20140213/#the-clip-path
+        The change affects content using -webkit-clip-path in Safari. Since the
+        bounding client box is equalvalent to the border box most of the time
+        there shouldn't be to much impact.
+
+        Existing tests cover the issue.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeReferenceBox):
+
 2014-02-19  James Craig  <jcraig@apple.com>
 
         Web Inspector: AX: clarify reason for ignored state where possible (hidden, default for tag, etc)

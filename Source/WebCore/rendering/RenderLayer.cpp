@@ -3790,38 +3790,35 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext* context, bool& 
 template <class ReferenceBoxClipPathOperation>
 static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const ReferenceBoxClipPathOperation& clippingPath, const LayoutPoint& offsetFromRoot, const LayoutRect& rootRelativeBounds)
 {
+    // FIXME: Support different reference boxes for inline content.
+    // https://bugs.webkit.org/show_bug.cgi?id=129047
+    if (!renderer.isBox())
+        return rootRelativeBounds;
+
     LayoutRect referenceBox;
-    if (renderer.isBox()) {
-        const RenderBox& box = toRenderBox(renderer);
-        switch (clippingPath.referenceBox()) {
-            case ContentBox:
-                referenceBox = box.contentBoxRect();
-                referenceBox.moveBy(offsetFromRoot);
-                break;
-            case PaddingBox:
-                referenceBox = box.paddingBoxRect();
-                referenceBox.moveBy(offsetFromRoot);
-                break;
-            // fill, stroke, view-box compute to border-box for HTML elements.
-            case Fill:
-            case Stroke:
-            case ViewBox:
-            case BorderBox:
-                referenceBox = box.borderBoxRect();
-                referenceBox.moveBy(offsetFromRoot);
-                break;
-            case MarginBox:
-                // FIXME: Support margin-box. Use bounding client rect for now.
-                // https://bugs.webkit.org/show_bug.cgi?id=127984
-            case BoxMissing:
-                // FIXME: If no reference box was specified the spec demands to use
-                // the border-box. However, the current prefixed version of clip-path uses
-                // bounding-box. Keep bounding-box for now.
-                referenceBox = rootRelativeBounds;
-        }
-    } else
-        // FIXME: Support different reference boxes for inline content.
-        referenceBox = rootRelativeBounds;
+    const RenderBox& box = toRenderBox(renderer);
+    switch (clippingPath.referenceBox()) {
+    case ContentBox:
+        referenceBox = box.contentBoxRect();
+        referenceBox.moveBy(offsetFromRoot);
+        break;
+    case PaddingBox:
+        referenceBox = box.paddingBoxRect();
+        referenceBox.moveBy(offsetFromRoot);
+        break;
+    // FIXME: Support margin-box. Use bounding client rect for now.
+    // https://bugs.webkit.org/show_bug.cgi?id=127984
+    case MarginBox:
+    // fill, stroke, view-box compute to border-box for HTML elements.
+    case Fill:
+    case Stroke:
+    case ViewBox:
+    case BorderBox:
+    case BoxMissing:
+        referenceBox = box.borderBoxRect();
+        referenceBox.moveBy(offsetFromRoot);
+        break;
+    }
 
     return referenceBox;
 }
