@@ -47,11 +47,20 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*
         callback("Could not start LLVM multithreading");
     
     LLVMLinkInMCJIT();
-    LLVMInitializeNativeTarget();
+    
+    // You think you want to call LLVMInitializeNativeTarget()? Think again. This presumes that
+    // LLVM was ./configured correctly, which won't be the case in cross-compilation situations.
+    
 #if CPU(X86_64)
+    LLVMInitializeX86TargetInfo();
+    LLVMInitializeX86Target();
+    LLVMInitializeX86TargetMC();
     LLVMInitializeX86AsmPrinter();
     LLVMInitializeX86Disassembler();
 #elif CPU(ARM64)
+    LLVMInitializeARM64TargetInfo();
+    LLVMInitializeARM64Target();
+    LLVMInitializeARM64TargetMC();
     LLVMInitializeARM64AsmPrinter();
     LLVMInitializeARM64Disassembler();
 #else

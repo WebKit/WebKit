@@ -1,5 +1,20 @@
 2014-02-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Don't call LLVMInitializeNativeTarget() because it can be all messed up if you cross-compile LLVM
+        https://bugs.webkit.org/show_bug.cgi?id=129020
+
+        Reviewed by Dan Bernstein.
+        
+        LLVMInitializeNativeTarget() is this super special inline function in llvm-c/Target.h that
+        depends on some #define's that come from some really weird magic in autoconf/configure.ac.
+        That magic fails miserably for cross-compiles. So, we need to manually initialize the things
+        that InitializeNativeTarget initializes.
+
+        * llvm/library/LLVMExports.cpp:
+        (initializeAndGetJSCLLVMAPI):
+
+2014-02-18  Filip Pizlo  <fpizlo@apple.com>
+
         The shell scripts in the Xcode build system should tell you when they failed
         https://bugs.webkit.org/show_bug.cgi?id=129018
 
