@@ -1,3 +1,15 @@
+2014-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        border-box clip-paths jump around when outline changes
+        https://bugs.webkit.org/show_bug.cgi?id=128929
+
+        Reviewed by Dirk Schulze.
+        
+        Test comparing a border-box clip path with and without an outline.
+
+        * css3/masking/clip-path-root-relative-bounds-expected.html: Added.
+        * css3/masking/clip-path-root-relative-bounds.html: Added.
+
 2014-02-18  James Craig  <jcraig@apple.com>
 
         Web Inspector: AX: more properties: exists, required, and invalid (exists was previously combined with ignored)

@@ -1,3 +1,24 @@
+2014-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        border-box clip-paths jump around when outline changes
+        https://bugs.webkit.org/show_bug.cgi?id=128929
+
+        Reviewed by Dirk Schulze.
+        
+        computeReferenceBox() for clip paths was using "rootRelativeBounds"
+        to position the border-box. This bounds is an enclosing bounds for
+        the layer and its descendants, including outlines and absolute descendants,
+        so it is not the correct box to use to offset the border-box.
+        
+        The caller has offsetFromRoot(), which is the correct thing to use,
+        so use it.
+
+        Test: css3/masking/clip-path-root-relative-bounds.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeReferenceBox):
+        (WebCore::RenderLayer::setupClipPath):
+
 2014-02-18  James Craig  <jcraig@apple.com>
 
         Web Inspector: AX: more properties: exists, required, and invalid (exists was previously combined with ignored)

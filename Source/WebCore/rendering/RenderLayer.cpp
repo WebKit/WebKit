@@ -3788,7 +3788,7 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext* context, bool& 
 }
 
 template <class ReferenceBoxClipPathOperation>
-static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const ReferenceBoxClipPathOperation& clippingPath, const LayoutRect& rootRelativeBounds)
+static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const ReferenceBoxClipPathOperation& clippingPath, const LayoutPoint& offsetFromRoot, const LayoutRect& rootRelativeBounds)
 {
     LayoutRect referenceBox;
     if (renderer.isBox()) {
@@ -3796,11 +3796,11 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
         switch (clippingPath.referenceBox()) {
             case ContentBox:
                 referenceBox = box.contentBoxRect();
-                referenceBox.moveBy(rootRelativeBounds.location());
+                referenceBox.moveBy(offsetFromRoot);
                 break;
             case PaddingBox:
                 referenceBox = box.paddingBoxRect();
-                referenceBox.moveBy(rootRelativeBounds.location());
+                referenceBox.moveBy(offsetFromRoot);
                 break;
             // fill, stroke, view-box compute to border-box for HTML elements.
             case Fill:
@@ -3808,7 +3808,7 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
             case ViewBox:
             case BorderBox:
                 referenceBox = box.borderBoxRect();
-                referenceBox.moveBy(rootRelativeBounds.location());
+                referenceBox.moveBy(offsetFromRoot);
                 break;
             case MarginBox:
                 // FIXME: Support margin-box. Use bounding client rect for now.
@@ -3841,7 +3841,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
     if (style.clipPath()->type() == ClipPathOperation::Shape) {
         ShapeClipPathOperation& clippingPath = toShapeClipPathOperation(*(style.clipPath()));
 
-        LayoutRect referenceBox = computeReferenceBox(renderer(), clippingPath, rootRelativeBounds);
+        LayoutRect referenceBox = computeReferenceBox(renderer(), clippingPath, offsetFromRoot, rootRelativeBounds);
         context->save();
         context->clipPath(clippingPath.pathForReferenceRect(referenceBox), clippingPath.windRule());
         return true;
@@ -3850,7 +3850,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
     if (style.clipPath()->type() == ClipPathOperation::Box) {
         BoxClipPathOperation& clippingPath = toBoxClipPathOperation(*(style.clipPath()));
 
-        LayoutRect referenceBox = computeReferenceBox(renderer(), clippingPath, rootRelativeBounds);
+        LayoutRect referenceBox = computeReferenceBox(renderer(), clippingPath, offsetFromRoot, rootRelativeBounds);
         // FIXME This does not properly compute the rounded corners as specified in all conditions.
         // https://bugs.webkit.org/show_bug.cgi?id=127982
         const RoundedRect& shapeRect = renderer().style().getRoundedBorderFor(referenceBox, &(renderer().view()));
