@@ -42,7 +42,8 @@ class RenderObject;
 class ShapeInsideInfo;
 
 class LayoutState {
-    WTF_MAKE_NONCOPYABLE(LayoutState);
+    WTF_MAKE_NONCOPYABLE(LayoutState); WTF_MAKE_FAST_ALLOCATED;
+
 public:
     LayoutState()
         : m_clipped(false)

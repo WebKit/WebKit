@@ -36,8 +36,9 @@ enum BitmapAtomicMode {
     BitmapAtomic
 };
 
-template<size_t size, BitmapAtomicMode atomicMode = BitmapNotAtomic, typename WordType = uint32_t>
+template<size_t Size, BitmapAtomicMode atomicMode = BitmapNotAtomic, typename WordType = uint32_t>
 class Bitmap {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Bitmap();
 
@@ -57,7 +58,7 @@ public:
 
 private:
     static const unsigned wordSize = sizeof(WordType) * 8;
-    static const unsigned words = (size + wordSize - 1) / wordSize;
+    static const unsigned words = (Size + wordSize - 1) / wordSize;
 
     // the literal '1' is of type signed int.  We want to use an unsigned
     // version of the correct size when doing the calculations because if

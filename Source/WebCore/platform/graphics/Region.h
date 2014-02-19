@@ -32,6 +32,8 @@
 namespace WebCore {
 
 class Region {
+    WTF_MAKE_FAST_ALLOCATED;
+
 public:
     Region();
     Region(const IntRect&);

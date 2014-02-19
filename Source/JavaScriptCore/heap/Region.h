@@ -57,6 +57,8 @@ inline DeadBlock::DeadBlock(Region* region)
 }
 
 class Region : public DoublyLinkedListNode<Region> {
+    WTF_MAKE_FAST_ALLOCATED;
+
     friend class WTF::DoublyLinkedListNode<Region>;
     friend class BlockAllocator;
 public:

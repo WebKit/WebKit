@@ -77,6 +77,8 @@ inline NoResultTag extractResult(NoResultTag) { return NoResult; }
 // to propagate type information (including information that has
 // only speculatively been asserted) through the dataflow.
 class SpeculativeJIT {
+    WTF_MAKE_FAST_ALLOCATED;
+
     friend struct OSRExit;
 private:
     typedef JITCompiler::TrustedImm32 TrustedImm32;

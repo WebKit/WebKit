@@ -153,6 +153,8 @@ inline bool operator!=(const BidiStatus& status1, const BidiStatus& status2)
 }
 
 struct BidiCharacterRun {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     BidiCharacterRun(int start, int stop, BidiContext* context, UCharDirection direction)
         : m_override(context->override())
         , m_next(0)

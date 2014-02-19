@@ -139,6 +139,7 @@ private:
 };
 
 class CopyWorkList {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef CopyWorkListIterator iterator;
 

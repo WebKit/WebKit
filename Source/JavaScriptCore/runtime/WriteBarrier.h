@@ -201,6 +201,7 @@ public:
 };
 
 template <> class WriteBarrier<Unknown> : public WriteBarrierBase<Unknown> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WriteBarrier()
     {

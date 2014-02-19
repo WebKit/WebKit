@@ -1,3 +1,17 @@
+2014-02-19  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF_MAKE_FAST_ALLOCATED to more classes
+        https://bugs.webkit.org/show_bug.cgi?id=129064
+
+        Reviewed by Andreas Kling.
+
+        * dfg/DFGSpeculativeJIT.h:
+        * heap/CopyWorkList.h:
+        * heap/Region.h:
+        * runtime/Arguments.h:
+        * runtime/SymbolTable.h:
+        * runtime/WriteBarrier.h:
+
 2014-02-19  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix after r164374

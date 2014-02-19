@@ -40,6 +40,7 @@ class TouchList;
 #endif
 
 class EventContext {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // FIXME: Use ContainerNode instead of Node.
     EventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
