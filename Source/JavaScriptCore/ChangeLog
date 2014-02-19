@@ -1,5 +1,21 @@
 2014-02-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Correctly install libllvmForJSC.dylib in production builds
+        https://bugs.webkit.org/show_bug.cgi?id=129023
+
+        Reviewed by Mark Rowe.
+        
+        In non-production builds, we copy it as before. In production builds, we use the install
+        path.
+        
+        Also roll http://trac.webkit.org/changeset/164348 back in.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/LLVMForJSC.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2014-02-18  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, roll out http://trac.webkit.org/changeset/164348 because it broke some
         builds.
 
