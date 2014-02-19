@@ -1,3 +1,12 @@
+2014-02-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add missing layout test results for
+        <http://trac.webkit.org/changeset/164323>.
+
+        Unreviewed.
+
+        * platform/mac/fast/ruby/ruby-base-merge-block-children-crash-2-expected.txt: Added.
+
 2014-02-19  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         ASSERTION FAILED: (year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0) in WTF::dateToDaysFrom1970
