@@ -102,3 +102,5 @@ webkit.org/b/127697 fast/writing-mode/ruby-text-logical-left.html [ Skip ]
 webkit.org/b/128745 [ Debug ] fast/workers/use-machine-stack.html [ Pass Crash ]
 
 webkit.org/b/83618 fast/dom/inline-event-attributes-release.html [ Failure ]
+
+webkit.org/b/129057 media/controls-styling-strict.html [ Pass Failure ]
