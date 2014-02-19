@@ -1,3 +1,12 @@
+2014-02-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Add new ARM build slave for GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=128978
+
+        Reviewed by Brent Fulgham.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-02-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove the remaining Nix cruft under Tools

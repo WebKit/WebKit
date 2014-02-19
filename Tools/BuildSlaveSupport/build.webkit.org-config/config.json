@@ -36,6 +36,7 @@
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
                     { "name": "gtk-linux-slave-3", "platform": "gtk"},
                     { "name": "gtk-linux-slave-4", "platform": "gtk"},
+                    { "name": "gtk-linux-slave-5", "platform": "gtk"},
 
                     { "name": "wincairo-1", "platform": "wincairo" },
 
@@ -167,6 +168,11 @@
                       "slavenames": ["gtk-linux-slave-4"]
                     },
                     {
+                      "name": "GTK Linux ARM Release", "type": "BuildAndNonLayoutTest", "builddir": "gtk-linux-arm-release",
+                      "platform": "gtk", "configuration": "release", "architectures": ["armv7"],
+                      "slavenames": ["gtk-linux-slave-5"]
+                    },
+                    {
                       "name": "WinCairo Release", "type": "BuildAndNonLayoutTest", "builddir": "win-cairo-release",
                       "platform": "wincairo", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["wincairo-1"]
@@ -201,7 +207,7 @@
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
-                      "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug WK1",
+                      "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug WK1", "GTK Linux ARM Release",
                                        "EFL Linux 64-bit Release WK1", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)",
                                        "EFL Linux ARMv7 Thumb2 Release (Build)", "EFL Linux ARMv7 Traditional Release (Build)", "WinCairo Release"]
                     },
