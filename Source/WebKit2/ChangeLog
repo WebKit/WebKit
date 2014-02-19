@@ -1,5 +1,12 @@
 2014-02-19  Beth Dakin  <bdakin@apple.com>
 
+        Build fix.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView pageExtendedBackgroundColor]):
+
+2014-02-19  Beth Dakin  <bdakin@apple.com>
+
         UIProcess needs to know the color of the page's extended background
         https://bugs.webkit.org/show_bug.cgi?id=129004
 

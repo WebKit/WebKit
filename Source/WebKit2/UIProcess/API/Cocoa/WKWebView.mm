@@ -598,7 +598,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 
 - (UIColor *)pageExtendedBackgroundColor
 {
-    WebCore::Color color = _data->_page->pageExtendedBackgroundColor();
+    WebCore::Color color = _page->pageExtendedBackgroundColor();
     if (!color.isValid())
         return nil;
 
