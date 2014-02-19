@@ -1,3 +1,18 @@
+2014-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][CMake] Fix javascriptcore test failings by the jsCStack branch merge
+        https://bugs.webkit.org/show_bug.cgi?id=128961
+
+        Reviewed by Ryosuke Niwa.
+
+        Javascriptcore test on EFL port has been broken since the jsCStack branch merge.
+        For now we can fix almost tests by using "-fno-tree-dce option". Unfortunately,
+        EFL port needs not to check "uninitialized" build warning as error in order to
+        adjust the option to EFL port. This patch don't take it as error temporarily.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/WebKitHelpers.cmake:
+
 2014-02-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] JavaScriptCore crashes in JSC::eval
