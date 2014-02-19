@@ -61,7 +61,9 @@
             "properties": [
                 { "name": "exists", "type": "boolean", "description": "Returns whether there is an existing AX object for the DOM node. If this is false, all the other properties will be default values." },
                 { "name": "ignored", "type": "boolean", "optional": true, "description": "Returns whether the accessibility of the associated AX object node is ignored, whether heuristically or explicitly." },
+                { "name": "ignoredByDefault", "type": "boolean", "optional": true, "description": "Returns whether the accessibility of the associated AX object node is ignored by default for node type." },
                 { "name": "invalid", "type": "string", "optional": true, "description": "Returns the invalid status for form fields: true, false, grammar, spelling." },
+                { "name": "hidden", "type": "boolean", "optional": true, "description": "Returns true if node or an ancestor is hidden via CSS or explicit @aria-hidden, to clarify why the element is ignored." },
                 { "name": "label", "type": "string", "description": "Computed label value for the node, sometimes calculated by referencing other nodes." },
                 { "name": "required", "type": "boolean", "optional": true, "description": "Returns whether the element is required or not required." },
                 { "name": "role", "type": "string", "description": "Computed value for first recognized role token, default role per element, or overridden role." },

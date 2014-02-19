@@ -6,27 +6,33 @@
 
 <p>Checking Web Inspector protocol for the Accessibility Node Inspector.</p>
 
-<!-- This one is never rendered, so "exists" should return false. -->
 <script class="ex"></script>
+<script class="ex" style="display:block;"></script>
 
-<!-- The rest are rendered with various property differences. -->
 <div class="ex"><div></div></div>
 <div class="ex" role="presentation"><div></div></div>
 <div class="ex"></div>
+<div class="ex" aria-hidden="true"></div>
 <span class="ex"></span>
+<span class="ex" aria-hidden="true"></span>
 
 <div class="ex" role="button" tabindex="0"></div>
 <button class="ex"></button>
 <input class="ex" type="button">
 
+<input class="ex">
 <input class="ex" required>
 <input class="ex" aria-required="true">
 <input class="ex" aria-invalid="spelling">
 <input class="ex" aria-invalid="fake-value-will-eval-to-true">
+<input class="ex" aria-hidden="true">
+<input class="ex" style="display:none;">
 
 <img class="ex" src="./404.gif">
 <img class="ex" src="./404.gif" alt="">
 <img class="ex" src="./404.gif" alt="x">
+<img class="ex" src="./404.gif" alt="x" aria-hidden="true">
+<img class="ex" src="./404.gif" alt="x" style="display:none;">
 
 <script type="text/javascript">
 

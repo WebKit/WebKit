@@ -1,7 +1,20 @@
 Checking Web Inspector protocol for the Accessibility Node Inspector.
 
-           
-Total elements to be tested: 15.
+              
+Total elements to be tested: 23.
+
+<img src="./404.gif" alt="x" style="display:none;">
+    exists: false
+    label: 
+    role: 
+
+<img src="./404.gif" alt="x" aria-hidden="true">
+    exists: true
+    label: 
+    role: img
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
 
 <img src="./404.gif" alt="x">
     exists: true
@@ -19,6 +32,20 @@ Total elements to be tested: 15.
     label: 
     role: img
     ignored: true
+
+<input style="display:none;">
+    exists: false
+    label: 
+    role: 
+
+<input aria-hidden="true">
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
+    required: false
 
 <input aria-invalid="fake-value-will-eval-to-true">
     exists: true
@@ -46,6 +73,12 @@ Total elements to be tested: 15.
     role: 
     required: true
 
+<input>
+    exists: true
+    label: 
+    role: 
+    required: false
+
 <input type="button">
     exists: true
     label: 
@@ -61,11 +94,28 @@ Total elements to be tested: 15.
     label: 
     role: button
 
+<span aria-hidden="true"></span>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
+
 <span></span>
     exists: true
     label: 
     role: 
     ignored: true
+    ignoredByDefault: true
+
+<div aria-hidden="true"></div>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
 
 <div></div>
     exists: true
@@ -83,6 +133,12 @@ Total elements to be tested: 15.
     exists: true
     label: 
     role: 
+    ignored: true
+
+<script style="display:block;"></script>
+    exists: true
+    label: 
+    role: group
     ignored: true
 
 <script></script>

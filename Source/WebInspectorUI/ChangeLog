@@ -1,3 +1,16 @@
+2014-02-19  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AX: clarify reason for ignored state where possible (hidden, default for tag, etc)
+        https://bugs.webkit.org/show_bug.cgi?id=129037
+
+        Reviewed by Timothy Hatcher.
+
+        Passing back hidden and ignoredByDefault attrs to clarify some reasons for "ignored" status.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/DOMNode.js:
+        * UserInterface/DOMNodeDetailsSidebarPanel.js:
+
 2014-02-18  James Craig  <jcraig@apple.com>
 
         Web Inspector: AX: more properties: exists, required, and invalid (exists was previously combined with ignored)

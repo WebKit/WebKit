@@ -449,7 +449,9 @@ WebInspector.DOMNode.prototype = {
                 callback({
                     exists: accessibilityProperties.exists,
                     ignored: accessibilityProperties.ignored,
+                    ignoredByDefault: accessibilityProperties.ignoredByDefault,
                     invalid: accessibilityProperties.invalid,
+                    hidden: accessibilityProperties.hidden,
                     label: accessibilityProperties.label,
                     required: accessibilityProperties.required,
                     role: accessibilityProperties.role

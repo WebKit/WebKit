@@ -248,7 +248,15 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
 
             if (accessibilityProperties && accessibilityProperties.exists) {
                 
-                var ignored = accessibilityProperties.ignored ? WebInspector.UIString("Yes") : "";
+                var ignored = "";
+                if (accessibilityProperties.ignored) {
+                    ignored = WebInspector.UIString("Yes");
+                    if (accessibilityProperties.hidden)
+                        ignored = WebInspector.UIString("%s (hidden)").format(ignored);
+                    else if (accessibilityProperties.ignoredByDefault)
+                        ignored = WebInspector.UIString("%s (default)").format(ignored);
+                }
+
                 var invalid = accessibilityProperties.invalid ? accessibilityProperties.invalid : "";
 
                 // FIXME: label will always come back as empty. Blocked by http://webkit.org/b/121134

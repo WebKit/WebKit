@@ -1416,7 +1416,9 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
 
     bool exists = false;
     bool ignored = true;
+    bool ignoredByDefault = false;
     String invalid = "false"; // String values: true, false, spelling, grammar, etc.
+    bool hidden = false;
     String label; // FIXME: Waiting on http://webkit.org/b/121134
     bool required = false;
     String role;
@@ -1426,11 +1428,14 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
         if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node)) {
             exists = true;
             ignored = axObject->accessibilityIsIgnored();
+            ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
             invalid = axObject->invalidStatus();
-            role = axObject->computedRoleString();
+            if (axObject->isARIAHidden() || axObject->isDOMHidden())
+                hidden = true;
             supportsRequired = axObject->supportsRequiredAttribute();
             if (supportsRequired)
                 required = axObject->isRequired();
+            role = axObject->computedRoleString();
         }
     }
     
@@ -1443,8 +1448,12 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     if (exists) {
         if (ignored)
             value->setIgnored(ignored);
+        if (ignoredByDefault)
+            value->setIgnoredByDefault(ignoredByDefault);
         if (invalid != "false")
             value->setInvalid(invalid);
+        if (hidden)
+            value->setHidden(hidden);
         if (supportsRequired)
             value->setRequired(required);
     }

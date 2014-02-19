@@ -1,3 +1,15 @@
+2014-02-19  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AX: clarify reason for ignored state where possible (hidden, default for tag, etc)
+        https://bugs.webkit.org/show_bug.cgi?id=129037
+
+        Reviewed by Timothy Hatcher.
+
+        Test updates to support hidden and ignoredByDefault in accessibility properties.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2014-02-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add missing layout test results for
