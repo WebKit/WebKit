@@ -1,3 +1,18 @@
+2014-02-19  Brady Eidson  <beidson@apple.com>
+
+        Add settings/preferences for enabling image controls
+        https://bugs.webkit.org/show_bug.cgi?id=129027
+
+        Reviewed by Jer Noble.
+
+        * WebCore.exp.in:
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setImageControlsEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::imageControlsEnabled):
+
 2014-02-19  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] shape-outside does not properly handle different writing modes

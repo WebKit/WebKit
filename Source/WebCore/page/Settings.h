@@ -237,6 +237,11 @@ public:
     void setAggressiveTileRetentionEnabled(bool);
     bool aggressiveTileRetentionEnabled() { return m_aggressiveTileRetentionEnabled; }
 
+#if ENABLE(IMAGE_CONTROLS)
+    void setImageControlsEnabled(bool);
+    bool imageControlsEnabled() { return m_imageControlsEnabled; }
+#endif
+
     static void setShouldRespectPriorityInCSSAttributeSetters(bool);
     static bool shouldRespectPriorityInCSSAttributeSetters();
 
@@ -315,6 +320,9 @@ private:
 #endif
     bool m_scrollingPerformanceLoggingEnabled : 1;
     bool m_aggressiveTileRetentionEnabled : 1;
+#if ENABLE(IMAGE_CONTROLS)
+    bool m_imageControlsEnabled : 1;
+#endif
 
     double m_timeWithoutMouseMovementBeforeHidingControls;
 

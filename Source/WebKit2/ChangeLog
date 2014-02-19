@@ -1,3 +1,15 @@
+2014-02-19  Brady Eidson  <beidson@apple.com>
+
+        Add settings/preferences for enabling image controls
+        https://bugs.webkit.org/show_bug.cgi?id=129027
+
+        Reviewed by Jer Noble.
+
+        * Shared/WebPreferencesStore.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-02-19  Dan Bernstein  <mitz@apple.com>
 
         Simplify PLATFORM(MAC) && !PLATFORM(IOS) and similar expressions

@@ -208,7 +208,8 @@ namespace WebKit {
     macro(AlwaysUseBaselineOfPrimaryFont, alwaysUseBaselineOfPrimaryFont, Bool, bool, false) \
     macro(AllowMultiElementImplicitSubmission, allowMultiElementImplicitSubmission, Bool, bool, false) \
     macro(AlwaysUseAcceleratedOverflowScroll, alwaysUseAcceleratedOverflowScroll, Bool, bool, false) \
-    macro(PasswordEchoEnabled, passwordEchoEnabled, Bool, bool, DEFAULT_PASSWORD_ECHO_ENABLED)
+    macro(PasswordEchoEnabled, passwordEchoEnabled, Bool, bool, DEFAULT_PASSWORD_ECHO_ENABLED) \
+    macro(ImageControlsEnabled, imageControlsEnabled, Bool, bool, false) \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
     macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \
