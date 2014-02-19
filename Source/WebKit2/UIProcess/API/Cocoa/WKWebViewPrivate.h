@@ -58,8 +58,10 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 
 @property (nonatomic, readonly) pid_t _webProcessIdentifier;
 
-@property (readonly) NSData *_sessionState;
+@property (nonatomic, readonly) NSData *_sessionState;
 - (void)_restoreFromSessionState:(NSData *)sessionState;
+
+@property (nonatomic, setter=_setPrivateBrowsingEnabled:) BOOL _privateBrowsingEnabled;
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;

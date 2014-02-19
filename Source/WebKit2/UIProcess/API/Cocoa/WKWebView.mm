@@ -536,6 +536,16 @@ static void releaseNSData(unsigned char*, const void* data)
     _page->restoreFromSessionStateData(API::Data::createWithoutCopying((const unsigned char*)sessionState.bytes, sessionState.length, releaseNSData, sessionState).get());
 }
 
+- (BOOL)_privateBrowsingEnabled
+{
+    return [_configuration preferences]->_preferences->privateBrowsingEnabled();
+}
+
+- (void)_setPrivateBrowsingEnabled:(BOOL)privateBrowsingEnabled
+{
+    [_configuration preferences]->_preferences->setPrivateBrowsingEnabled(privateBrowsingEnabled);
+}
+
 static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)
 {
     WebCore::LayoutMilestones milestones = 0;
