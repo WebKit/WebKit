@@ -1,3 +1,17 @@
+2014-02-19  Daniel Bates  <dabates@apple.com>
+
+        Do not dispatch change event twice in single step action
+        https://bugs.webkit.org/show_bug.cgi?id=116936
+        <rdar://problem/16086828>
+
+        Reviewed by Ryosuke Niwa.
+
+        Merged from Blink (patch by Kent Tamura):
+        https://src.chromium.org/viewvc/blink?view=rev&revision=151175
+
+        * fast/forms/number/number-type-update-by-change-event-expected.txt: Added.
+        * fast/forms/number/number-type-update-by-change-event.html: Added.
+
 2014-02-19  Piotr Grad  <p.grad@samsung.com>
 
         Setting playback rate on Media Controller modifies current time.

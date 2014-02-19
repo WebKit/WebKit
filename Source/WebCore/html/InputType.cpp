@@ -64,6 +64,7 @@
 #include "RenderTheme.h"
 #include "ResetInputType.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScopedEventQueue.h"
 #include "SearchInputType.h"
 #include "ShadowRoot.h"
 #include "SubmitInputType.h"
@@ -1098,6 +1099,7 @@ void InputType::stepUpFromRenderer(int n)
     if (!stepRange.hasStep())
       return;
 
+    EventQueueScope scope;
     const Decimal step = stepRange.step();
 
     int sign;
@@ -1117,7 +1119,7 @@ void InputType::stepUpFromRenderer(int n)
             current = stepRange.minimum() - nextDiff;
         if (current > stepRange.maximum() - nextDiff)
             current = stepRange.maximum() - nextDiff;
-        setValueAsDecimal(current, DispatchInputAndChangeEvent, IGNORE_EXCEPTION);
+        setValueAsDecimal(current, DispatchNoEvent, IGNORE_EXCEPTION);
     }
     if ((sign > 0 && current < stepRange.minimum()) || (sign < 0 && current > stepRange.maximum()))
         setValueAsDecimal(sign > 0 ? stepRange.minimum() : stepRange.maximum(), DispatchInputAndChangeEvent, IGNORE_EXCEPTION);
