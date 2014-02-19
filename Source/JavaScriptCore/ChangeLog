@@ -1,3 +1,30 @@
+2014-02-19  Mark Lam  <mark.lam@apple.com>
+
+        Need to align sp before calling operationLoadVarargs on 32-bit platforms.
+        <https://webkit.org/b/129056>
+
+        Reviewed by Michael Saboff.
+
+        In JIT::compileLoadVarargs(), we'll call operationSizeFrameForVarargs()
+        to compute the amount of stack space we need for the varargs, adjust the
+        stack pointer to make room for those varargs, and then call
+        operationLoadVarargs() to fill in the varargs. Currently, the stack
+        pointer adjustment takes care of allocating space for the varargs, but
+        does not align the stack pointer for the call to operationLoadVarargs().
+        The fix is to align the stack pointer there.
+
+        Note: The stack pointer adjustment is based on the new CallFrame pointer
+        value returned by operationSizeFrameForVarargs(). On 64-bit platforms,
+        both the stack pointer and call frame pointer are similarly aligned
+        (i.e. low nibbles are 0). Hence, no additional adjustment is needed.
+        Only the 32-bit code needs the fix.
+
+        Note: The LLINT also works this way i.e. aligns the stack pointer before
+        calling llint_slow_path_call_varargs().
+
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+
 2014-02-19  Sam Weinig  <sam@webkit.org>
 
         [JS] Convert Promise.prototype.catch to be a built-in

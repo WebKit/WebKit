@@ -186,7 +186,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
 
     emitLoad(arguments, regT1, regT0);
     callOperation(operationSizeFrameForVarargs, regT1, regT0, firstFreeRegister);
-    move(returnValueGPR, stackPointerRegister);
+    addPtr(TrustedImm32(-sizeof(CallerFrameAndPC)), returnValueGPR, stackPointerRegister);
     emitLoad(thisValue, regT1, regT4);
     emitLoad(arguments, regT3, regT2);
     callOperation(operationLoadVarargs, returnValueGPR, regT1, regT4, regT3, regT2);
