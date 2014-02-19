@@ -104,7 +104,7 @@ namespace WebCore {
 
         void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest&);
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
         void applyWebArchiveHackForMail();
 #endif
 #if PLATFORM(COCOA)

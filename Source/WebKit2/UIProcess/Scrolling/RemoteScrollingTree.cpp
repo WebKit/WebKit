@@ -69,7 +69,7 @@ ScrollingTree::EventResult RemoteScrollingTree::tryToHandleWheelEvent(const Plat
     return DidHandleEvent;
 }
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 void RemoteScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
     // FIXME: hand off to m_scrollingCoordinatorProxy?

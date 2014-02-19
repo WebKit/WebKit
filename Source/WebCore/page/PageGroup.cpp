@@ -43,7 +43,7 @@
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(VIDEO_TRACK)
-#if (PLATFORM(MAC) && !PLATFORM(IOS)) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#if PLATFORM(MAC) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #include "CaptionUserPreferencesMediaAF.h"
 #else
 #include "CaptionUserPreferences.h"
@@ -321,7 +321,7 @@ void PageGroup::captionPreferencesChanged()
 CaptionUserPreferences* PageGroup::captionPreferences()
 {
     if (!m_captionPreferences) {
-#if (PLATFORM(MAC) && !PLATFORM(IOS)) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#if PLATFORM(MAC) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
         m_captionPreferences = std::make_unique<CaptionUserPreferencesMediaAF>(*this);
 #else
         m_captionPreferences = std::make_unique<CaptionUserPreferences>(*this);

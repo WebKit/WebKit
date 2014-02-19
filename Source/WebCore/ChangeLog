@@ -1,3 +1,82 @@
+2014-02-19  Dan Bernstein  <mitz@apple.com>
+
+        Simplify PLATFORM(MAC) && !PLATFORM(IOS) and similar expressions
+        https://bugs.webkit.org/show_bug.cgi?id=129029
+
+        Reviewed by Mark Rowe.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        * config.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::copyURL):
+        * editing/EditorCommand.cpp:
+        (WebCore::createCommandMap):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::markMisspellingsAfterTyping):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadArchive):
+        * page/AlternativeTextClient.h:
+        * page/EventHandler.cpp:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::captionPreferences):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        * page/scrolling/ThreadedScrollingTree.h:
+        * platform/DragData.h:
+        * platform/FileSystem.cpp:
+        * platform/MemoryPressureHandler.cpp:
+        * platform/Pasteboard.h:
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/PlatformPasteboard.h:
+        * platform/PlatformScreen.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::supportsUpdateOnSecondaryThread):
+        * platform/SuddenTermination.h:
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::destroy):
+        * platform/ThreadGlobalData.h:
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        * platform/audio/mac/AudioSessionMac.cpp:
+        * platform/graphics/DisplayRefreshMonitor.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::utiFromMIMEType):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+        (WebCore::Extensions3DOpenGL::drawBuffersEXT):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::Extensions3DOpenGLCommon):
+        * platform/mac/KeyEventMac.mm:
+        * platform/network/NetworkStateNotifier.h:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::reportErrorToClient):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::extendTextCodecMaps):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::allowsIndependentlyCompositedFrames):
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation):
+
 2014-02-18  Dan Bernstein  <mitz@apple.com>
 
         PLATFORM(MAC) is true when building for iOS

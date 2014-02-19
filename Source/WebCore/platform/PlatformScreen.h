@@ -28,7 +28,7 @@
 
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 OBJC_CLASS NSScreen;
 OBJC_CLASS NSWindow;
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
@@ -57,7 +57,7 @@ namespace WebCore {
     FloatRect screenAvailableRect(Widget*);
     void screenColorProfile(ColorProfile&);
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     NSScreen *screenForWindow(NSWindow *);
 
     FloatRect toUserSpace(const NSRect&, NSWindow *destination);

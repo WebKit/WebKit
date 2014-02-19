@@ -119,7 +119,7 @@ private:
     HashSet<DisplayRefreshMonitorClient*> m_clients;
     HashSet<DisplayRefreshMonitorClient*>* m_clientsToBeNotified;
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 public:
     void displayLinkFired(double nowSeconds, double outputTimeSeconds);
 private:

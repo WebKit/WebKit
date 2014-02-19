@@ -186,7 +186,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
             return;
 #endif
         }
-#if !PLATFORM(IOS) && PLATFORM(MAC)
+#if PLATFORM(MAC)
         // To support correction panel.
         case DocumentMarkerAutocorrectionReplacementLineStyle:
         case DocumentMarkerDictationAlternativesLineStyle:

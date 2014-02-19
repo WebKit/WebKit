@@ -44,13 +44,13 @@
 
 #include <algorithm> // for std::min
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #include <mach-o/dyld.h>
 #endif
 
 using namespace JSC;
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 static bool evernoteHackNeeded()
 {
     static const int32_t webkitLastVersionWithEvernoteHack = 35133959;
@@ -443,7 +443,7 @@ void JSValueProtect(JSContextRef ctx, JSValueRef value)
 
 void JSValueUnprotect(JSContextRef ctx, JSValueRef value)
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     if ((!value || !ctx) && evernoteHackNeeded())
         return;
 #endif

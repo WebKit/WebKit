@@ -1,3 +1,14 @@
+2014-02-19  Dan Bernstein  <mitz@apple.com>
+
+        Simplify PLATFORM(MAC) && !PLATFORM(IOS) and similar expressions
+        https://bugs.webkit.org/show_bug.cgi?id=129029
+
+        Reviewed by Mark Rowe.
+
+        * API/JSValueRef.cpp:
+        (JSValueUnprotect):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+
 2014-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         Correctly install libllvmForJSC.dylib in production builds

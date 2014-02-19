@@ -36,7 +36,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #include "WKGeometry.h"
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
@@ -93,7 +93,7 @@ public:
     void hide();
     void close();
     
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     void createInspectorWindow();
     void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange(CGFloat = 0);
@@ -224,7 +224,7 @@ private:
 
     AttachmentSide m_attachmentSide;
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     RetainPtr<WKWebInspectorWKView> m_inspectorView;
     RetainPtr<NSWindow> m_inspectorWindow;
     RetainPtr<NSButton> m_dockBottomButton;

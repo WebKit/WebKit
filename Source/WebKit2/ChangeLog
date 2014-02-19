@@ -1,3 +1,43 @@
+2014-02-19  Dan Bernstein  <mitz@apple.com>
+
+        Simplify PLATFORM(MAC) && !PLATFORM(IOS) and similar expressions
+        https://bugs.webkit.org/show_bug.cgi?id=129029
+
+        Reviewed by Mark Rowe.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::netscapePluginModule):
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/PageClient.h:
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * UIProcess/WebContext.h:
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+        (WebKit::WebPageProxy::pageDidScroll):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetTopOverhangImage):
+        (WKBundlePageSetBottomOverhangImage):
+        * WebProcess/WebPage/PageBanner.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setDeviceScaleFactor):
+        (WebKit::WebPage::mainFrameDidLayout):
+        (WebKit::WebPage::beginPrinting):
+        (WebKit::WebPage::drawRectToImage):
+        (WebKit::WebPage::drawPagesToPDF):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * config.h:
+
 2014-02-18  Dan Bernstein  <mitz@apple.com>
 
         PLATFORM(MAC) is true when building for iOS

@@ -553,7 +553,7 @@ String Editor::readPlainTextFromPasteboard(Pasteboard& pasteboard)
     return plainTextFromPasteboard(text);
 }
 
-#if !(PLATFORM(MAC) && !PLATFORM(IOS))
+#if !PLATFORM(MAC)
 
 String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
 {
@@ -1402,7 +1402,7 @@ void Editor::copyURL(const URL& url, const String& title, Pasteboard& pasteboard
     pasteboardURL.url = url;
     pasteboardURL.title = title;
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     fillInUserVisibleForm(pasteboardURL);
 #endif
 

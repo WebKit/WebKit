@@ -83,7 +83,7 @@ struct PasteboardWebContent {
 struct PasteboardURL {
     URL url;
     String title;
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     String userVisibleForm;
 #endif
 };
@@ -119,7 +119,7 @@ public:
 
 struct PasteboardPlainText {
     String text;
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     bool isURL;
 #endif
 };
@@ -180,7 +180,7 @@ public:
     static String resourceMIMEType(const NSString *mimeType);
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     explicit Pasteboard(const String& pasteboardName);
     static PassOwnPtr<Pasteboard> create(const String& pasteboardName);
 
@@ -223,7 +223,7 @@ private:
     long m_changeCount;
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     String m_pasteboardName;
     long m_changeCount;
 #endif
@@ -240,7 +240,7 @@ private:
 extern NSString *WebArchivePboardType;
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 extern const char* const WebArchivePboardType;
 extern const char* const WebURLNamePboardType;
 #endif

@@ -42,7 +42,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #include "TextCodecMac.h"
 #endif
 
@@ -279,7 +279,7 @@ static void extendTextCodecMaps()
     TextCodecICU::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecICU::registerCodecs(addToTextCodecMap);
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     TextCodecMac::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecMac::registerCodecs(addToTextCodecMap);
 #endif

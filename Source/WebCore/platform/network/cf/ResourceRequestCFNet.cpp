@@ -337,7 +337,7 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 #endif
 }
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 void ResourceRequest::applyWebArchiveHackForMail()
 {
     // Hack because Mail checks for this property to detect data / archive loads

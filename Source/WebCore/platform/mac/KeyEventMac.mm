@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PlatformKeyboardEvent.h"
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 
 #import "KeyEventCocoa.h"
 #import "Logging.h"
@@ -78,4 +78,4 @@ void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKe
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC) && !PLATFORM(IOS)
+#endif // PLATFORM(MAC)

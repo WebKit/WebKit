@@ -578,7 +578,7 @@ void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
     CFIndex errorCode = CFErrorGetCode(error);
     String description;
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic push

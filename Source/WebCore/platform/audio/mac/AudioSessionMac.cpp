@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AudioSession.h"
 
-#if USE(AUDIO_SESSION) && PLATFORM(MAC) && !PLATFORM(IOS)
+#if USE(AUDIO_SESSION) && PLATFORM(MAC)
 
 #include "FloatConversion.h"
 #include "Logging.h"
@@ -164,4 +164,4 @@ void AudioSession::setPreferredBufferSize(size_t bufferSize)
 
 }
 
-#endif // USE(AUDIO_SESSION) && PLATFORM(MAC) && !PLATFORM(IOS)
+#endif // USE(AUDIO_SESSION) && PLATFORM(MAC)

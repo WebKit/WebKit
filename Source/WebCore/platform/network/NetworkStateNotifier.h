@@ -31,7 +31,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 
 #include <wtf/RetainPtr.h>
 #include "Timer.h"
@@ -74,7 +74,7 @@ private:
     void notifyNetworkStateChange();
     void updateState();
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     void networkStateChangeTimerFired(Timer<NetworkStateNotifier>&);
 
     static void dynamicStoreCallback(SCDynamicStoreRef, CFArrayRef changedKeys, void *info); 

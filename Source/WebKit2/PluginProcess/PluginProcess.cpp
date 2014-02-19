@@ -40,7 +40,7 @@
 #include <WebCore/NotImplemented.h>
 #include <wtf/RunLoop.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #include <crt_externs.h>
 #endif
 
@@ -106,7 +106,7 @@ NetscapePluginModule* PluginProcess::netscapePluginModule()
         ASSERT(!m_pluginPath.isNull());
         m_pluginModule = NetscapePluginModule::getOrCreate(m_pluginPath);
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
         if (m_pluginModule) {
             if (m_pluginModule->pluginQuirks().contains(PluginQuirks::PrognameShouldBeWebKitPluginHost))
                 *const_cast<const char**>(_NSGetProgname()) = "WebKitPluginHost";

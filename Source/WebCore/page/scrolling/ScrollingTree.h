@@ -78,7 +78,7 @@ public:
 
     bool isPointInNonFastScrollableRegion(IntPoint);
     
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) = 0;
 #endif
 

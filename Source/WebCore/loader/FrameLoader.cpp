@@ -923,7 +923,7 @@ void FrameLoader::loadArchive(PassRefPtr<Archive> archive)
     SubstituteData substituteData(mainResource->data(), mainResource->mimeType(), mainResource->textEncoding(), URL());
     
     ResourceRequest request(mainResource->url());
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     request.applyWebArchiveHackForMail();
 #endif
 

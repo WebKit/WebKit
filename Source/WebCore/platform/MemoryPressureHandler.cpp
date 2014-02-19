@@ -51,7 +51,7 @@ MemoryPressureHandler::MemoryPressureHandler()
 {
 }
 
-#if !PLATFORM(MAC) || PLATFORM(IOS)
+#if !PLATFORM(MAC)
 
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }

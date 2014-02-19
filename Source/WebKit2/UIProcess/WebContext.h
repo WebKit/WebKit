@@ -488,7 +488,7 @@ private:
     HTTPCookieAcceptPolicy m_initialHTTPCookieAcceptPolicy;
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     RetainPtr<NSObject> m_enhancedAccessibilityObserver;
     RetainPtr<NSObject> m_automaticTextReplacementNotificationObserver;
     RetainPtr<NSObject> m_automaticSpellingCorrectionNotificationObserver;

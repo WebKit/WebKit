@@ -53,7 +53,7 @@ namespace WebCore {
             , m_button(NoButton)
             , m_clickCount(0)
             , m_modifierFlags(0)
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
             , m_eventNumber(0)
 #elif PLATFORM(WIN)
             , m_didActivateWebView(false)
@@ -69,7 +69,7 @@ namespace WebCore {
             , m_button(button)
             , m_clickCount(clickCount)
             , m_modifierFlags(0)
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
             , m_eventNumber(0)
 #elif PLATFORM(WIN)
             , m_didActivateWebView(false)
@@ -101,7 +101,7 @@ namespace WebCore {
         PlatformMouseEvent(const Evas_Event_Mouse_Move*, IntPoint);
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
         int eventNumber() const { return m_eventNumber; }
 #endif
 
@@ -121,7 +121,7 @@ namespace WebCore {
         int m_clickCount;
         unsigned m_modifierFlags;
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
         int m_eventNumber;
 #elif PLATFORM(WIN)
         bool m_didActivateWebView;

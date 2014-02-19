@@ -30,7 +30,7 @@
 #include "WKMutableDictionary.h"
 #include "WKSharedAPICast.h"
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #include "WKContextPrivateMac.h"
 #endif
 
@@ -47,7 +47,7 @@ WK_EXPORT bool WKDictionaryAddItem(WKMutableDictionaryRef dictionary, WKStringRe
 WK_EXPORT bool WKDictionaryIsMutable(WKDictionaryRef dictionary);
 WK_EXPORT void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionary, WKStringRef key);
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 WK_EXPORT CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphicsContext);
 #endif
 }
@@ -76,7 +76,7 @@ void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionaryRef, WKStringRef ke
     toImpl(dictionaryRef)->remove(toImpl(keyRef)->string());
 }
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphicsContext)
 {
     return nullptr;

@@ -38,7 +38,7 @@
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/StringImpl.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #include "TextCodeCMac.h"
 #endif
 
@@ -64,7 +64,7 @@ ThreadGlobalData::ThreadGlobalData()
     , m_isMainThread(isMainThread())
 #endif
     , m_cachedConverterICU(adoptPtr(new ICUConverterWrapper))
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     , m_cachedConverterTEC(adoptPtr(new TECConverterWrapper))
 #endif
 #if ENABLE(INSPECTOR)
@@ -85,7 +85,7 @@ ThreadGlobalData::~ThreadGlobalData()
 
 void ThreadGlobalData::destroy()
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     m_cachedConverterTEC.clear();
 #endif
 

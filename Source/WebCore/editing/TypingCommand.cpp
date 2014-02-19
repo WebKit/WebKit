@@ -291,7 +291,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
 {
     Frame& frame = this->frame();
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     if (!frame.editor().isContinuousSpellCheckingEnabled()
         && !frame.editor().isAutomaticQuoteSubstitutionEnabled()
         && !frame.editor().isAutomaticLinkDetectionEnabled()

@@ -34,7 +34,7 @@
 typedef struct CGRect CGRect;
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
 #else
@@ -193,7 +193,7 @@ public:
     operator CGRect() const;
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     operator NSRect() const;
 #endif
 
@@ -248,7 +248,7 @@ inline bool IntRect::isInfinite() const
 IntRect enclosingIntRect(const CGRect&);
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
 IntRect enclosingIntRect(const NSRect&);
 #endif
 

@@ -356,7 +356,7 @@ void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBu
 
 void WKBundlePageSetTopOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     toImpl(pageRef)->setTopOverhangImage(toImpl(imageRef));
 #else
     UNUSED_PARAM(pageRef);
@@ -366,7 +366,7 @@ void WKBundlePageSetTopOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRe
 
 void WKBundlePageSetBottomOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     toImpl(pageRef)->setBottomOverhangImage(toImpl(imageRef));
 #else
     UNUSED_PARAM(pageRef);

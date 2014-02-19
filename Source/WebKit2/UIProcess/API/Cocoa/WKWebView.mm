@@ -61,7 +61,7 @@
 
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #import "WKViewInternal.h"
 #endif
 
@@ -84,7 +84,7 @@
     bool _isChangingObscuredInsetsInteractively;
     CGFloat _lastAdjustmentForScroller;
 #endif
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
 #endif
 }
@@ -148,7 +148,7 @@
     [center addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     _wkView = [[WKView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration)];
     [self addSubview:_wkView.get()];
     _page = WebKit::toImpl([_wkView pageRef]);
@@ -431,7 +431,7 @@
 
 #pragma mark OS X-specific methods
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 
 - (void)resizeSubviewsWithOldSize:(NSSize)oldSize
 {

@@ -100,7 +100,7 @@
 #endif
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #define WTF_USE_NEW_THEME 1
 #endif
 

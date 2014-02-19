@@ -29,13 +29,13 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #include <objc/objc-auto.h>
 #endif
 
 static inline bool garbageCollectionEnabled()
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     return objc_collectingEnabled();
 #else
     return false;

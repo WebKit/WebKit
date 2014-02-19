@@ -405,7 +405,7 @@ static inline CFStringRef jpegUTI()
     
 static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
     return adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString().get(), 0));
 #else
     ASSERT(isMainThread()); // It is unclear if CFSTR is threadsafe.

@@ -1,3 +1,16 @@
+2014-02-19  Dan Bernstein  <mitz@apple.com>
+
+        Simplify PLATFORM(MAC) && !PLATFORM(IOS) and similar expressions
+        https://bugs.webkit.org/show_bug.cgi?id=129029
+
+        Reviewed by Mark Rowe.
+
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+        * wtf/Threading.cpp:
+        * wtf/text/cf/StringImplCF.cpp:
+        (garbageCollectionEnabled):
+
 2014-02-18  Dan Bernstein  <mitz@apple.com>
 
         PLATFORM(MAC) is true when building for iOS

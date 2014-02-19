@@ -30,7 +30,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 
 #include "AudioFileReaderMac.h"
 
@@ -249,6 +249,6 @@ PassRefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dat
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC) && !PLATFORM(IOS)
+#endif // PLATFORM(MAC)
 
 #endif // ENABLE(WEB_AUDIO)

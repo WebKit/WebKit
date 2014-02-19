@@ -64,7 +64,7 @@ namespace WebCore {
 
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
         TECConverterWrapper& cachedConverterTEC() { return *m_cachedConverterTEC; }
 #endif
 
@@ -91,7 +91,7 @@ namespace WebCore {
 
         OwnPtr<ICUConverterWrapper> m_cachedConverterICU;
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
         OwnPtr<TECConverterWrapper> m_cachedConverterTEC;
 #endif
 

@@ -31,10 +31,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#if !PLATFORM(IOS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 // Some platforms provide UI for suggesting alternative dictation text.
 #define WTF_USE_DICTATION_ALTERNATIVES 1
-#endif // !PLATFORM(IOS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 namespace WebCore {
 

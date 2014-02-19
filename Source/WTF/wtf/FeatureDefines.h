@@ -159,7 +159,7 @@
 #endif /* PLATFORM(IOS) */
 
 /* --------- Apple MAC port (not IOS) --------- */
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 
 #if !defined(ENABLE_CSS_IMAGE_SET)
 #define ENABLE_CSS_IMAGE_SET 1
@@ -236,7 +236,7 @@
 #define ENABLE_MEDIA_SOURCE 1
 #endif
 
-#endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
+#endif /* PLATFORM(MAC) */
 
 /* --------- Apple Windows port --------- */
 #if PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(WIN_CAIRO)
