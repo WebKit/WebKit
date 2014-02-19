@@ -463,8 +463,6 @@
 		2DA049B8180CCD0A00AAFA9E /* GraphicsLayerCARemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */; };
 		2DA944871884E3B500ED86DB /* PageClientImplIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA944781884E3B500ED86DB /* PageClientImplIOS.h */; };
 		2DA944881884E3B500ED86DB /* PageClientImplIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944791884E3B500ED86DB /* PageClientImplIOS.mm */; };
-		2DA944891884E3B500ED86DB /* UIWKRemoteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA9447A1884E3B500ED86DB /* UIWKRemoteView.h */; };
-		2DA9448A1884E3B500ED86DB /* UIWKRemoteView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9447B1884E3B500ED86DB /* UIWKRemoteView.mm */; };
 		2DA9448B1884E3B500ED86DB /* WKContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA9447C1884E3B500ED86DB /* WKContentView.h */; };
 		2DA9448C1884E3B500ED86DB /* WKContentView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9447D1884E3B500ED86DB /* WKContentView.mm */; };
 		2DA9448D1884E3B500ED86DB /* WKContentViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA9447E1884E3B500ED86DB /* WKContentViewInternal.h */; };
@@ -2170,8 +2168,6 @@
 		2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerCARemote.h; sourceTree = "<group>"; };
 		2DA944781884E3B500ED86DB /* PageClientImplIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageClientImplIOS.h; path = ios/PageClientImplIOS.h; sourceTree = "<group>"; };
 		2DA944791884E3B500ED86DB /* PageClientImplIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PageClientImplIOS.mm; path = ios/PageClientImplIOS.mm; sourceTree = "<group>"; };
-		2DA9447A1884E3B500ED86DB /* UIWKRemoteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIWKRemoteView.h; path = ios/UIWKRemoteView.h; sourceTree = "<group>"; };
-		2DA9447B1884E3B500ED86DB /* UIWKRemoteView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UIWKRemoteView.mm; path = ios/UIWKRemoteView.mm; sourceTree = "<group>"; };
 		2DA9447C1884E3B500ED86DB /* WKContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContentView.h; path = ios/WKContentView.h; sourceTree = "<group>"; };
 		2DA9447D1884E3B500ED86DB /* WKContentView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContentView.mm; path = ios/WKContentView.mm; sourceTree = "<group>"; };
 		2DA9447E1884E3B500ED86DB /* WKContentViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContentViewInternal.h; path = ios/WKContentViewInternal.h; sourceTree = "<group>"; };
@@ -4182,8 +4178,6 @@
 			children = (
 				2DA944781884E3B500ED86DB /* PageClientImplIOS.h */,
 				2DA944791884E3B500ED86DB /* PageClientImplIOS.mm */,
-				2DA9447A1884E3B500ED86DB /* UIWKRemoteView.h */,
-				2DA9447B1884E3B500ED86DB /* UIWKRemoteView.mm */,
 				C535BD5718919CFC0098F1F5 /* WKActionSheet.h */,
 				C535BD5818919CFC0098F1F5 /* WKActionSheet.mm */,
 				C524538F189C6B85003DF476 /* WKActionSheetAssistant.h */,
@@ -6636,7 +6630,6 @@
 				1A3DD202125E5A1F004515E6 /* WebFindClient.h in Headers */,
 				1A90C1EE1264FD50003E44D4 /* WebFindOptions.h in Headers */,
 				BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */,
-				2DA944891884E3B500ED86DB /* UIWKRemoteView.h in Headers */,
 				BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */,
 				75A8D2D7187D303A00C39C9E /* WKSessionRef.h in Headers */,
 				BC032D8D10F437A00058C15A /* WebFrame.h in Headers */,
@@ -7996,7 +7989,6 @@
 				BC111A5B112F4FBB00337BAB /* WebContextMenuClient.cpp in Sources */,
 				51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */,
 				512935D71288D19400A4B695 /* WebContextMenuItem.cpp in Sources */,
-				2DA9448A1884E3B500ED86DB /* UIWKRemoteView.mm in Sources */,
 				510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */,
 				2D819BA11862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp in Sources */,
 				51A84CE3127F386B00CA6EA4 /* WebContextMenuProxy.cpp in Sources */,

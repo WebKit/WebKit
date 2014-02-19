@@ -10107,7 +10107,6 @@
 		93CA4C9909DF93FA00DF8677 /* html.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html.css; sourceTree = "<group>"; };
 		93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "make-css-file-arrays.pl"; sourceTree = "<group>"; };
 		93CA4C9B09DF93FA00DF8677 /* makeprop.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makeprop.pl; sourceTree = "<group>"; };
-		93CA4C9C09DF93FA00DF8677 /* maketokenizer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = maketokenizer; sourceTree = "<group>"; };
 		93CA4C9D09DF93FA00DF8677 /* makevalues.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makevalues.pl; sourceTree = "<group>"; };
 		93CA4C9F09DF93FA00DF8677 /* quirks.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quirks.css; sourceTree = "<group>"; };
 		93CA4CA209DF93FA00DF8677 /* svg.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = svg.css; sourceTree = "<group>"; };
@@ -21283,7 +21282,6 @@
 			children = (
 				CD3E252118046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp */,
 				CD3E252218046BCD00E27F56 /* CSSGridTemplateAreasValue.h */,
-				93CA4C9C09DF93FA00DF8677 /* maketokenizer */,
 				FBD6AF8415EF21D4008B7110 /* BasicShapeFunctions.cpp */,
 				FBD6AF8515EF21D4008B7110 /* BasicShapeFunctions.h */,
 				A80E6CDA0A1989CA007FB8C5 /* Counter.h */,

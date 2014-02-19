@@ -1,5 +1,17 @@
 2014-02-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove UIWKRemoteView
+        https://bugs.webkit.org/show_bug.cgi?id=129015
+
+        Reviewed by Dan Bernstein.
+
+        The project referenced a maketokenizer script that disappeared
+        long ago.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2014-02-18  Simon Fraser  <simon.fraser@apple.com>
+
         border-box clip-paths jump around when outline changes
         https://bugs.webkit.org/show_bug.cgi?id=128929
 
