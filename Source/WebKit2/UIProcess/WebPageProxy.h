@@ -826,6 +826,7 @@ public:
     
     void setMediaVolume(float);
     void setMayStartMediaWhenInWindow(bool);
+    bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
 
     // WebPopupMenuProxy::Client
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent();
@@ -886,6 +887,8 @@ public:
     void wrapCryptoKey(const Vector<uint8_t>&, bool& succeeded, Vector<uint8_t>&);
     void unwrapCryptoKey(const Vector<uint8_t>&, bool& succeeded, Vector<uint8_t>&);
 #endif
+
+    void setThumbnailScale(double);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);

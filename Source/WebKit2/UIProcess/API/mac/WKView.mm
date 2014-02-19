@@ -57,6 +57,8 @@
 #import "WKProcessClassInternal.h"
 #import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
+#import "WKThumbnailView.h"
+#import "WKThumbnailViewInternal.h"
 #import "WKViewInternal.h"
 #import "WKViewPrivate.h"
 #import "WebBackForwardList.h"
@@ -225,6 +227,8 @@ struct WKViewInterpretKeyEventsParameters {
     std::unique_ptr<ViewGestureController> _gestureController;
     BOOL _allowsMagnification;
     BOOL _allowsBackForwardNavigationGestures;
+
+    WKThumbnailView *_thumbnailView;
 }
 
 @end
@@ -273,6 +277,7 @@ struct WKViewInterpretKeyEventsParameters {
 {
     _data->_page->close();
 
+    ASSERT(!_data->_thumbnailView);
     ASSERT(!_data->_inSecureInputState);
 
     [_data release];
@@ -1077,6 +1082,8 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 #define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
     - (void)Selector:(NSEvent *)theEvent \
     { \
+        if (_data->_thumbnailView) \
+            return; \
         if ([[self inputContext] handleEvent:theEvent]) { \
             LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
             return; \
@@ -1111,6 +1118,9 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)scrollWheel:(NSEvent *)event
 {
+    if (_data->_thumbnailView)
+        return;
+
     if (_data->_allowsBackForwardNavigationGestures) {
         [self _ensureGestureController];
         if (_data->_gestureController->handleScrollWheelEvent(event))
@@ -1123,6 +1133,9 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseMoved:(NSEvent *)event
 {
+    if (_data->_thumbnailView)
+        return;
+
     // When a view is first responder, it gets mouse moved events even when the mouse is outside its visible rect.
     if (self == [[self window] firstResponder] && !NSPointInRect([self convertPoint:[event locationInWindow] fromView:nil], [self visibleRect]))
         return;
@@ -1132,6 +1145,9 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseDown:(NSEvent *)event
 {
+    if (_data->_thumbnailView)
+        return;
+
     [self _setMouseDownEvent:event];
     _data->_ignoringMouseDraggedEvents = NO;
     [self mouseDownInternal:event];
@@ -1139,12 +1155,18 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseUp:(NSEvent *)event
 {
+    if (_data->_thumbnailView)
+        return;
+
     [self _setMouseDownEvent:nil];
     [self mouseUpInternal:event];
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
+    if (_data->_thumbnailView)
+        return;
+
     if (_data->_ignoringMouseDraggedEvents)
         return;
     [self mouseDraggedInternal:event];
@@ -2483,6 +2505,13 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer
 {
+    [rootLayer web_disableAllActions];
+
+    if (_data->_thumbnailView) {
+        _data->_thumbnailView.thumbnailLayer = rootLayer;
+        return;
+    }
+
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
@@ -2527,7 +2556,10 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     if (!hostView)
         return nullptr;
 
-    return hostView.layer;
+    if (!hostView.layer.sublayers.count)
+        return nullptr;
+
+    return hostView.layer.sublayers[0];
 }
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot
@@ -2941,6 +2973,27 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [types addObjectsFromArray:PasteboardTypes::forURL()];
     [self registerForDraggedTypes:[types allObjects]];
     [types release];
+}
+
+- (void)_setThumbnailView:(WKThumbnailView *)thumbnailView
+{
+    ASSERT(!_data->_thumbnailView || !thumbnailView);
+
+    RetainPtr<CALayer> thumbnailLayer = _data->_thumbnailView.thumbnailLayer;
+
+    _data->_thumbnailView = thumbnailView;
+
+    if (thumbnailView)
+        thumbnailView.thumbnailLayer = [self _acceleratedCompositingModeRootLayer];
+    else
+        [self _setAcceleratedCompositingModeRootLayer:thumbnailLayer.get()];
+
+    _data->_page->viewStateDidChange(ViewState::WindowIsActive | ViewState::IsInWindow | ViewState::IsVisible);
+}
+
+- (WKThumbnailView *)_thumbnailView
+{
+    return _data->_thumbnailView;
 }
 
 @end

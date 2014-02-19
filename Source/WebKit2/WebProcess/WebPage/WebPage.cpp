@@ -292,6 +292,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_viewState(parameters.viewState)
     , m_processSuppressionDisabledByWebPreference("Process suppression is disabled.")
     , m_pendingNavigationID(0)
+    , m_pageScaleWithoutThumbnailScale(1)
+    , m_thumbnailScale(1)
 {
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and
@@ -3964,8 +3966,14 @@ void WebPage::didCommitLoad(WebFrame* frame)
     // Only restore the scale factor for standard frame loads (of the main frame).
     if (frame->coreFrame()->loader().loadType() == FrameLoadTypeStandard) {
         Page* page = frame->coreFrame()->page();
-        if (page && page->pageScaleFactor() != 1)
-            scalePage(1, IntPoint());
+
+        if (page) {
+            if (m_thumbnailScale != 1) {
+                m_pageScaleWithoutThumbnailScale = 1;
+                setThumbnailScale(m_thumbnailScale);
+            } else if (page->pageScaleFactor() != 1)
+                scalePage(1, IntPoint());
+        }
     }
 #if PLATFORM(IOS)
     m_userHasChangedPageScaleFactor = false;
@@ -4193,6 +4201,40 @@ PassRefPtr<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const Res
     }
 
     return documentLoader.release();
+}
+
+void WebPage::setThumbnailScale(double thumbnailScale)
+{
+    // FIXME (129014): If the page programmatically scales while thumbnailed, we will restore the wrong scroll position.
+
+    ASSERT_ARG(thumbnailScale, thumbnailScale > 0);
+
+    double currentPageScaleFactor = pageScaleFactor();
+
+    if (thumbnailScale == m_thumbnailScale && currentPageScaleFactor == m_thumbnailScale * m_pageScaleWithoutThumbnailScale)
+        return;
+
+    if (m_thumbnailScale == 1) {
+        m_pageScaleWithoutThumbnailScale = currentPageScaleFactor;
+        m_scrollPositionIgnoringThumbnailScale = m_page->mainFrame().view()->scrollPosition();
+    }
+
+    m_thumbnailScale = thumbnailScale;
+
+    // Scale the page, but leave the original page scale intact if there was any.
+    scalePage(m_thumbnailScale * m_pageScaleWithoutThumbnailScale, IntPoint());
+
+    // Scroll as far as we can towards the original scroll position in the scaled page.
+    // This may get constrained; we'll transform the drawing area to expose the right part of the page.
+    m_page->mainFrame().view()->setScrollPosition(IntPoint(m_scrollPositionIgnoringThumbnailScale.x() * m_thumbnailScale, m_scrollPositionIgnoringThumbnailScale.y() * m_thumbnailScale));
+
+    double inverseScale = 1 / m_thumbnailScale;
+    IntPoint newScrollPosition = m_page->mainFrame().view()->scrollPosition();
+    TransformationMatrix transform;
+    transform.translate((newScrollPosition.x() * inverseScale) - m_scrollPositionIgnoringThumbnailScale.x(), (newScrollPosition.y() * inverseScale) - m_scrollPositionIgnoringThumbnailScale.y());
+    transform.scale(inverseScale);
+
+    drawingArea()->setTransform(transform);
 }
 
 } // namespace WebKit

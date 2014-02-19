@@ -392,7 +392,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
             m_currentSwipeLiveLayers.append(layer);
         }
     } else {
-        swipeArea = rootContentLayer.frame;
+        swipeArea = FloatRect(FloatPoint(), m_webPageProxy.drawingArea()->size());
         m_currentSwipeLiveLayers.append(rootContentLayer);
     }
 
@@ -455,7 +455,7 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
     if (!m_customSwipeViews.isEmpty())
         width = m_currentSwipeCustomViewBounds.width();
     else
-        width = m_webPageProxy.acceleratedCompositingRootLayer().frame.size.width;
+        width = m_webPageProxy.drawingArea()->size().width();
 
     double swipingLayerOffset = floor(width * progress);
 

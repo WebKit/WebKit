@@ -37,6 +37,7 @@
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKStringCF.h"
+#import "WKThumbnailView.h"
 #import "WKViewInternal.h"
 #import "WebColorPickerMac.h"
 #import "WebContextMenuProxyMac.h"
@@ -166,9 +167,15 @@ IntSize PageClientImpl::viewSize()
     return IntSize([m_wkView bounds].size);
 }
 
+NSView *PageClientImpl::activeView() const
+{
+    return m_wkView._thumbnailView ? m_wkView._thumbnailView : m_wkView;
+}
+
 bool PageClientImpl::isViewWindowActive()
 {
-    return [[m_wkView window] isKeyWindow] || [NSApp keyWindow] == [m_wkView window];
+    NSWindow *activeViewWindow = activeView().window;
+    return activeViewWindow.isKeyWindow || [NSApp keyWindow] == activeViewWindow;
 }
 
 bool PageClientImpl::isViewFocused()
@@ -183,24 +190,27 @@ void PageClientImpl::makeFirstResponder()
     
 bool PageClientImpl::isViewVisible()
 {
-    if (![m_wkView window])
+    NSView *activeView = this->activeView();
+    NSWindow *activeViewWindow = activeView.window;
+
+    if (!activeViewWindow)
         return false;
 
-    if (![[m_wkView window] isVisible])
+    if (!activeViewWindow.isVisible)
         return false;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
     // Mountain Lion and previous do not support occlusion notifications, and as such will
     // continue to report as "visible" when not on the active space.
-    if (![[m_wkView window] isOnActiveSpace])
+    if (!activeViewWindow.isOnActiveSpace)
         return false;
 #endif
 
-    if ([m_wkView isHiddenOrHasHiddenAncestor])
+    if (activeView.isHiddenOrHasHiddenAncestor)
         return false;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    if ([m_wkView windowOcclusionDetectionEnabled] && ([[m_wkView window] occlusionState] & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible)
+    if ([m_wkView windowOcclusionDetectionEnabled] && (activeViewWindow.occlusionState & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible)
         return false;
 #endif
 
@@ -209,12 +219,12 @@ bool PageClientImpl::isViewVisible()
 
 bool PageClientImpl::isViewVisibleOrOccluded()
 {
-    return [[m_wkView window] isVisible];
+    return activeView().window.isVisible;
 }
 
 bool PageClientImpl::isViewInWindow()
 {
-    return [m_wkView window];
+    return activeView().window;
 }
 
 bool PageClientImpl::isVisuallyIdle()
@@ -225,7 +235,7 @@ bool PageClientImpl::isVisuallyIdle()
 LayerHostingMode PageClientImpl::viewLayerHostingMode()
 {
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-    if ([m_wkView window] && [[m_wkView window] _hostsLayersInWindowServer])
+    if ([activeView().window _hostsLayersInWindowServer])
         return LayerHostingMode::OutOfProcess;
 #endif
     return LayerHostingMode::InProcess;

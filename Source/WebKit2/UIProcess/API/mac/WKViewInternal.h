@@ -28,6 +28,7 @@
 #import "PluginComplexTextInputState.h"
 #import "WebFindOptions.h"
 #import <wtf/Forward.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
 @class WKWebViewConfiguration;
@@ -53,6 +54,7 @@ struct WebPageConfiguration;
 }
 
 @class WKFullScreenWindowController;
+@class WKThumbnailView;
 
 @interface WKView ()
 #if WK_API_ENABLED
@@ -102,6 +104,8 @@ struct WebPageConfiguration;
 
 - (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates;
 - (BOOL)_suppressVisibilityUpdates;
+
+@property (nonatomic, setter=_setThumbnailView:) WKThumbnailView *_thumbnailView;
 
 // FullScreen
 

@@ -323,4 +323,6 @@ messages -> WebPage LegacyReceiver {
 #endif
   
     SetScrollPinningBehavior(uint32_t pinning)
+
+    SetThumbnailScale(double scale)
 }

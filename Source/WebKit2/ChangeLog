@@ -1,3 +1,123 @@
+2014-02-18  Tim Horton  <timothy_horton@apple.com>
+
+        Add a way to efficiently thumbnail WKViews
+        https://bugs.webkit.org/show_bug.cgi?id=128831
+        <rdar://problem/15669655>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKThumbnailView.h: Added.
+        * UIProcess/API/Cocoa/WKThumbnailView.mm: Added.
+        (-[WKThumbnailView initWithFrame:fromWKView:]):
+        (-[WKThumbnailView _viewWasUnparented]):
+        (-[WKThumbnailView _viewWasParented]):
+        (-[WKThumbnailView viewDidMoveToWindow]):
+        (-[WKThumbnailView setScale:]):
+        (-[WKThumbnailView setThumbnailLayer:]):
+        (-[WKThumbnailView thumbnailLayer]):
+        * UIProcess/API/Cocoa/WKThumbnailViewInternal.h: Added.
+        Add WKThumbnailView.
+        Clients of this private API will call initWithFrame:fromWKView:,
+        giving the WKView they wish to borrow contents from.
+        They can also call setScale: to set the scale that will be used to render
+        the content in an implementation-defined set of cases (currently, we will
+        use the low resolution scale for WKViews which were not parented when the
+        WKThumbnailView was created; parented WKViews will use the existing scale).
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewVisibleOrOccluded):
+        (WebKit::PageClientImpl::isViewInWindow):
+        (WebKit::PageClientImpl::viewLayerHostingMode):
+        If the WKView has an actively-parented WKThumbnailView attached to it,
+        we should determine view visibility/etc. using that view instead of the WKView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]):
+        WKThumbnailView holds on to the WKView, and clears WKView's backpointer
+        when it leaves the window, so we should never see WKView get deallocated
+        with a live thumbnail view.
+
+        (-[WKView scrollWheel:]):
+        (-[WKView mouseMoved:]):
+        (-[WKView mouseDown:]):
+        (-[WKView mouseUp:]):
+        (-[WKView mouseDragged:]):
+        Don't handle events while thumbnailed.
+
+        (-[WKView _setAcceleratedCompositingModeRootLayer:]):
+        Forward root layer changes to the installed thumbnail view.
+
+        (-[WKView _acceleratedCompositingModeRootLayer]):
+        _acceleratedCompositingModeRootLayer should return the same layer
+        that was set via _setAcceleratedCompositingModeRootLayer:, not its parent.
+
+        (-[WKView _setThumbnailView:]):
+        (-[WKView _thumbnailView]):
+        Install/uninstall a WKThumbnailView. Hand it our root layer if installing,
+        or recover it from the departing thumbnail view if uninstalling.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        Add in a missing RetainPtr.h include that I missed earlier and causes trouble.
+        Add WKView _thumbnailView and _setThumbnailView:.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setThumbnailScale):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::mayStartMediaWhenInWindow):
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        Swipe was accidentally depending on a mistake in WKView's
+        _acceleratedCompositingModeRootLayer where it was returning the wrong layer.
+        The actual root layer doesn't have a size, so we should use the drawing
+        area's size instead.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add some new files.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        If we reset the page scale because a load was committed, we should
+        reset the stored thumbnail-scale-less page scale so that we don't restore
+        the wrong scale when leaving thumbnailing.
+
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setThumbnailScale):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Apply the thumbnail scale to the page. If we're currently not in
+        thumbnail scaling mode, save the current page scale and scroll position
+        so we can restore them once we leave thumbnail mode again.
+        Transform the DrawingArea so that the page appears at the same
+        position and size, but scaled.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setTransform):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setTransform):
+        Add a DrawingArea method to apply an arbitrary transform to the drawing area.
+
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::suspendPainting):
+        (WebKit::TiledCoreAnimationDrawingArea::resumePainting):
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        (WebKit::TiledCoreAnimationDrawingArea::updateLayerHostingContext):
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::didCommitChangesForLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::updateDebugInfoLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::adjustTransientZoom):
+        Remove the word "compositing" in a bunch of places where it isn't needed.
+        Rename m_rootLayer to m_hostingLayer, and repurpose m_rootLayer to store
+        the root compositing layer actually passed in via setRootCompositingLayer.
+        Rename m_pendingRootCompositingLayer to m_pendingRootLayer.
+
 2014-02-18  Anders Carlsson  <andersca@apple.com>
 
         Add SPI for enabling/disabling private browsing

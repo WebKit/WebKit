@@ -4497,4 +4497,12 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succ
 }
 #endif
 
+void WebPageProxy::setThumbnailScale(double scale)
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetThumbnailScale(scale), m_pageID);
+}
+
 } // namespace WebKit
