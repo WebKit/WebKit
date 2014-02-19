@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLSwitchCase_h
-#define FTLSwitchCase_h
-
-#include <wtf/Platform.h>
+#ifndef FTLWeight_h
+#define FTLWeight_h
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLAbbreviatedTypes.h"
-#include "FTLWeight.h"
+#include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace FTL {
 
-class SwitchCase {
+class Weight {
 public:
-    SwitchCase(LValue value, LBasicBlock target, Weight weight)
-        : m_value(value)
-        , m_target(target)
-        , m_weight(weight)
+    Weight()
+        : m_value(std::numeric_limits<float>::quiet_NaN())
     {
     }
-
-    LValue value() const { return m_value; }
-    LBasicBlock target() const { return m_target; }
-    Weight weight() const { return m_weight; }
-
+    
+    explicit Weight(float value)
+        : m_value(value)
+    {
+    }
+    
+    bool isSet() const { return m_value == m_value; }
+    bool operator!() const { return !isSet(); }
+    
+    float value() const { return m_value; }
+    
+    unsigned scaleToTotal(double total) const
+    {
+        // LLVM accepts branch 32-bit unsigned branch weights but in dumps it might
+        // display them as signed values. We don't need all 32 bits, so we just use the
+        // 31 bits.
+        double result = static_cast<double>(m_value) * INT_MAX / total;
+        if (result < 0)
+            return 0;
+        if (result > INT_MAX)
+            return INT_MAX;
+        return static_cast<unsigned>(result);
+    }
+    
 private:
-    LValue m_value;
-    LBasicBlock m_target;
-    Weight m_weight;
+    float m_value;
 };
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLSwitchCase_h
+#endif // FTLWeight_h
 

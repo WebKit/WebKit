@@ -76,9 +76,11 @@ public:
     const LValue doubleZero;
     
     const unsigned rangeKind;
+    const unsigned profKind;
+    const LValue branchWeights;
     
     const ValueRange nonNegativeInt32;
-    
+
     LContext const m_context;
     LModule m_module;
 };

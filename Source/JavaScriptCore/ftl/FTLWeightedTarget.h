@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLSwitchCase_h
-#define FTLSwitchCase_h
-
-#include <wtf/Platform.h>
+#ifndef FTLWeightedTarget_h
+#define FTLWeightedTarget_h
 
 #if ENABLE(FTL_JIT)
 
@@ -35,28 +33,57 @@
 
 namespace JSC { namespace FTL {
 
-class SwitchCase {
+class WeightedTarget {
 public:
-    SwitchCase(LValue value, LBasicBlock target, Weight weight)
-        : m_value(value)
-        , m_target(target)
+    WeightedTarget()
+        : m_target(nullptr)
+    {
+    }
+    
+    WeightedTarget(LBasicBlock target, Weight weight)
+        : m_target(target)
         , m_weight(weight)
     {
     }
-
-    LValue value() const { return m_value; }
+    
+    WeightedTarget(LBasicBlock target, float weight)
+        : m_target(target)
+        , m_weight(weight)
+    {
+    }
+    
     LBasicBlock target() const { return m_target; }
     Weight weight() const { return m_weight; }
-
+    
 private:
-    LValue m_value;
     LBasicBlock m_target;
     Weight m_weight;
 };
+
+// Helpers for creating weighted targets for statically known (or unknown) branch
+// profiles.
+
+inline WeightedTarget usually(LBasicBlock block)
+{
+    return WeightedTarget(block, 1);
+}
+
+inline WeightedTarget rarely(LBasicBlock block)
+{
+    return WeightedTarget(block, 0);
+}
+
+// This means we let LLVM figure it out basic on its static estimates. LLVM's static
+// estimates are usually pretty darn good, so there's generally nothing wrong with
+// using this.
+inline WeightedTarget unsure(LBasicBlock block)
+{
+    return WeightedTarget(block, Weight());
+}
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLSwitchCase_h
+#endif // FTLWeightedTarget_h
 

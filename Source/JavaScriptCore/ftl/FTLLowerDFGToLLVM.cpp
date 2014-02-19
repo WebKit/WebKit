@@ -39,6 +39,7 @@
 #include "FTLLoweredNodeValue.h"
 #include "FTLOutput.h"
 #include "FTLThunks.h"
+#include "FTLWeightedTarget.h"
 #include "LinkBuffer.h"
 #include "OperandsInlines.h"
 #include "JSCInlines.h"
@@ -137,7 +138,7 @@ public:
         m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(JSStack::CodeBlock));
         m_out.branch(
             m_out.below(m_callFrame, m_out.loadPtr(m_out.absolute(vm().addressOfFTLStackLimit()))),
-            stackOverflow, lowBlock(m_graph.block(0)));
+            rarely(stackOverflow), usually(lowBlock(m_graph.block(0))));
         
         m_out.appendTo(stackOverflow, m_handleExceptions);
         vmCall(m_out.operation(operationThrowStackOverflowError), m_callFrame, m_out.constIntPtr(codeBlock()), NoExceptions);
@@ -626,7 +627,8 @@ private:
                 
                 Vector<ValueFromBlock> results;
                 
-                m_out.branch(isNotInt32(value.value()), notIntCase, intCase);
+                m_out.branch(
+                    isNotInt32(value.value()), unsure(notIntCase), unsure(intCase));
                 
                 LBasicBlock lastNext = m_out.appendTo(intCase, notIntCase);
                 results.append(m_out.anchor(unboxInt32(value.value())));
@@ -641,7 +643,9 @@ private:
                     m_out.jump(continuation);
                 } else {
                     m_out.appendTo(notIntCase, doubleCase);
-                    m_out.branch(isCellOrMisc(value.value()), notNumberCase, doubleCase);
+                    m_out.branch(
+                        isCellOrMisc(value.value()),
+                        unsure(notNumberCase), unsure(doubleCase));
                     
                     m_out.appendTo(doubleCase, notNumberCase);
                     results.append(m_out.anchor(doubleToInt32(unboxDouble(value.value()))));
@@ -711,7 +715,7 @@ private:
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
 
         LValue base = lowJSValue(m_node->child1());
-        m_out.branch(m_out.isZero64(base), continuation, isNotNull);
+        m_out.branch(m_out.isZero64(base), unsure(continuation), unsure(isNotNull));
         LBasicBlock lastNext = m_out.appendTo(isNotNull, continuation);
         emitStoreBarrier(base);
         m_out.appendTo(continuation, lastNext);
@@ -909,11 +913,11 @@ private:
         LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ToThis slow case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ToThis continuation"));
         
-        m_out.branch(isCell(value), isCellCase, slowCase);
+        m_out.branch(isCell(value), usually(isCellCase), rarely(slowCase));
         
         LBasicBlock lastNext = m_out.appendTo(isCellCase, slowCase);
         ValueFromBlock fastResult = m_out.anchor(value);
-        m_out.branch(isType(value, FinalObjectType), continuation, slowCase);
+        m_out.branch(isType(value, FinalObjectType), usually(continuation), rarely(slowCase));
         
         m_out.appendTo(slowCase, continuation);
         J_JITOperation_EJ function;
@@ -1077,7 +1081,8 @@ private:
                 LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ArithMul slow case"));
                 LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithMul continuation"));
                 
-                m_out.branch(m_out.notZero32(result), continuation, slowCase);
+                m_out.branch(
+                    m_out.notZero32(result), usually(continuation), rarely(slowCase));
                 
                 LBasicBlock lastNext = m_out.appendTo(slowCase, continuation);
                 LValue cond = m_out.bitOr(m_out.lessThan(left, m_out.int32Zero), m_out.lessThan(right, m_out.int32Zero));
@@ -1103,7 +1108,8 @@ private:
                 LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ArithMul slow case"));
                 LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithMul continuation"));
                 
-                m_out.branch(m_out.notZero64(result), continuation, slowCase);
+                m_out.branch(
+                    m_out.notZero64(result), usually(continuation), rarely(slowCase));
                 
                 LBasicBlock lastNext = m_out.appendTo(slowCase, continuation);
                 LValue cond = m_out.bitOr(m_out.lessThan(left, m_out.int64Zero), m_out.lessThan(right, m_out.int64Zero));
@@ -1143,7 +1149,9 @@ private:
             
             LValue adjustedDenominator = m_out.add(denominator, m_out.int32One);
             
-            m_out.branch(m_out.above(adjustedDenominator, m_out.int32One), continuation, unsafeDenominator);
+            m_out.branch(
+                m_out.above(adjustedDenominator, m_out.int32One),
+                usually(continuation), rarely(unsafeDenominator));
             
             LBasicBlock lastNext = m_out.appendTo(unsafeDenominator, continuation);
             
@@ -1163,14 +1171,17 @@ private:
                 LBasicBlock notDivByZero = FTL_NEW_BLOCK(m_out, ("ArithDiv not divide by zero"));
                 LBasicBlock neg2ToThe31ByNeg1 = FTL_NEW_BLOCK(m_out, ("ArithDiv -2^31/-1"));
                 
-                m_out.branch(m_out.isZero32(denominator), divByZero, notDivByZero);
+                m_out.branch(
+                    m_out.isZero32(denominator), rarely(divByZero), usually(notDivByZero));
                 
                 m_out.appendTo(divByZero, notDivByZero);
                 results.append(m_out.anchor(m_out.int32Zero));
                 m_out.jump(done);
                 
                 m_out.appendTo(notDivByZero, neg2ToThe31ByNeg1);
-                m_out.branch(m_out.equal(numerator, neg2ToThe31), neg2ToThe31ByNeg1, continuation);
+                m_out.branch(
+                    m_out.equal(numerator, neg2ToThe31),
+                    rarely(neg2ToThe31ByNeg1), usually(continuation));
                 
                 m_out.appendTo(neg2ToThe31ByNeg1, continuation);
                 results.append(m_out.anchor(neg2ToThe31));
@@ -1183,7 +1194,9 @@ private:
                 LBasicBlock zeroNumerator = FTL_NEW_BLOCK(m_out, ("ArithDiv zero numerator"));
                 LBasicBlock numeratorContinuation = FTL_NEW_BLOCK(m_out, ("ArithDiv numerator continuation"));
                 
-                m_out.branch(m_out.isZero32(numerator), zeroNumerator, numeratorContinuation);
+                m_out.branch(
+                    m_out.isZero32(numerator),
+                    rarely(zeroNumerator), usually(numeratorContinuation));
                 
                 LBasicBlock innerLastNext = m_out.appendTo(zeroNumerator, numeratorContinuation);
                 
@@ -1239,7 +1252,9 @@ private:
             
             LValue adjustedDenominator = m_out.add(denominator, m_out.int32One);
             
-            m_out.branch(m_out.above(adjustedDenominator, m_out.int32One), continuation, unsafeDenominator);
+            m_out.branch(
+                m_out.above(adjustedDenominator, m_out.int32One),
+                usually(continuation), rarely(unsafeDenominator));
             
             LBasicBlock lastNext = m_out.appendTo(unsafeDenominator, continuation);
             
@@ -1261,14 +1276,17 @@ private:
                 LBasicBlock notModByZero = FTL_NEW_BLOCK(m_out, ("ArithMod not modulo by zero"));
                 LBasicBlock neg2ToThe31ByNeg1 = FTL_NEW_BLOCK(m_out, ("ArithMod -2^31/-1"));
                 
-                m_out.branch(m_out.isZero32(denominator), modByZero, notModByZero);
+                m_out.branch(
+                    m_out.isZero32(denominator), rarely(modByZero), usually(notModByZero));
                 
                 m_out.appendTo(modByZero, notModByZero);
                 results.append(m_out.anchor(m_out.int32Zero));
                 m_out.jump(done);
                 
                 m_out.appendTo(notModByZero, neg2ToThe31ByNeg1);
-                m_out.branch(m_out.equal(numerator, neg2ToThe31), neg2ToThe31ByNeg1, continuation);
+                m_out.branch(
+                    m_out.equal(numerator, neg2ToThe31),
+                    rarely(neg2ToThe31ByNeg1), usually(continuation));
                 
                 m_out.appendTo(neg2ToThe31ByNeg1, continuation);
                 results.append(m_out.anchor(m_out.int32Zero));
@@ -1285,7 +1303,7 @@ private:
                 
                 m_out.branch(
                     m_out.lessThan(numerator, m_out.int32Zero),
-                    negativeNumerator, numeratorContinuation);
+                    unsure(negativeNumerator), unsure(numeratorContinuation));
                 
                 LBasicBlock innerLastNext = m_out.appendTo(negativeNumerator, numeratorContinuation);
                 
@@ -1347,7 +1365,7 @@ private:
                 m_node->op() == ArithMin
                     ? m_out.doubleLessThan(left, right)
                     : m_out.doubleGreaterThan(left, right),
-                continuation, notLessThan);
+                unsure(continuation), unsure(notLessThan));
             
             LBasicBlock lastNext = m_out.appendTo(notLessThan, continuation);
             results.append(m_out.anchor(m_out.select(
@@ -1535,7 +1553,7 @@ private:
             LBasicBlock nextStructure = FTL_NEW_BLOCK(m_out, ("CheckStructure nextStructure"));
             m_out.branch(
                 m_out.equal(structure, weakPointer(m_node->structureSet()[i])),
-                continuation, nextStructure);
+                unsure(continuation), unsure(nextStructure));
             m_out.appendTo(nextStructure);
         }
         
@@ -1585,7 +1603,7 @@ private:
         
         m_out.branch(
             m_out.notEqual(structure, weakPointer(m_node->structure())),
-            unexpectedStructure, continuation);
+            rarely(unexpectedStructure), usually(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(unexpectedStructure, continuation);
         
@@ -1669,7 +1687,7 @@ private:
             LBasicBlock notCellCase = FTL_NEW_BLOCK(m_out, ("GetById untyped not cell case"));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetById untyped continuation"));
             
-            m_out.branch(isCell(value), cellCase, notCellCase);
+            m_out.branch(isCell(value), unsure(cellCase), unsure(notCellCase));
             
             LBasicBlock lastNext = m_out.appendTo(cellCase, notCellCase);
             ValueFromBlock cellResult = m_out.anchor(getById(value));
@@ -1741,7 +1759,8 @@ private:
             ValueFromBlock fastResult = m_out.anchor(
                 m_out.loadPtr(cell, m_heaps.JSString_value));
             
-            m_out.branch(m_out.notNull(fastResult.value()), continuation, slowPath);
+            m_out.branch(
+                m_out.notNull(fastResult.value()), usually(continuation), rarely(slowPath));
             
             LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
             
@@ -1781,7 +1800,9 @@ private:
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("continuation branch"));
         
         LValue baseAddress = m_out.addPtr(basePtr, JSArrayBufferView::offsetOfMode());
-        m_out.branch(m_out.notEqual(baseAddress , m_out.constIntPtr(WastefulTypedArray)), simpleCase, wastefulCase);
+        m_out.branch(
+            m_out.notEqual(baseAddress , m_out.constIntPtr(WastefulTypedArray)),
+            unsure(simpleCase), unsure(wastefulCase));
 
         // begin simple case        
         LBasicBlock lastNext = m_out.appendTo(simpleCase, wastefulCase);
@@ -1875,13 +1896,14 @@ private:
             m_out.branch(
                 m_out.aboveOrEqual(
                     index, m_out.load32NonNegative(storage, m_heaps.Butterfly_publicLength)),
-                slowCase, fastCase);
+                rarely(slowCase), usually(fastCase));
             
             LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
             
             ValueFromBlock fastResult = m_out.anchor(
                 m_out.load64(baseIndex(heap, storage, index, m_node->child2())));
-            m_out.branch(m_out.isZero64(fastResult.value()), slowCase, continuation);
+            m_out.branch(
+                m_out.isZero64(fastResult.value()), rarely(slowCase), usually(continuation));
             
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
@@ -1922,13 +1944,14 @@ private:
             m_out.branch(
                 m_out.aboveOrEqual(
                     index, m_out.load32NonNegative(storage, m_heaps.Butterfly_publicLength)),
-                slowCase, inBounds);
+                rarely(slowCase), usually(inBounds));
             
             LBasicBlock lastNext = m_out.appendTo(inBounds, boxPath);
             LValue doubleValue = m_out.loadDouble(
                 baseIndex(heap, storage, index, m_node->child2()));
             m_out.branch(
-                m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue), slowCase, boxPath);
+                m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue),
+                rarely(slowCase), usually(boxPath));
             
             m_out.appendTo(boxPath, slowCase);
             ValueFromBlock fastResult = m_out.anchor(boxDouble(doubleValue));
@@ -2181,7 +2204,7 @@ private:
                             intValues.append(m_out.anchor(m_out.int32Zero));
                             m_out.branch(
                                 m_out.lessThan(intValue, m_out.int32Zero),
-                                continuation, atLeastZero);
+                                unsure(continuation), unsure(atLeastZero));
                             
                             LBasicBlock lastNext = m_out.appendTo(atLeastZero, continuation);
                             
@@ -2211,13 +2234,13 @@ private:
                             intValues.append(m_out.anchor(m_out.int32Zero));
                             m_out.branch(
                                 m_out.doubleLessThanOrUnordered(doubleValue, m_out.doubleZero),
-                                continuation, atLeastZero);
+                                unsure(continuation), unsure(atLeastZero));
                             
                             LBasicBlock lastNext = m_out.appendTo(atLeastZero, withinRange);
                             intValues.append(m_out.anchor(m_out.constInt32(255)));
                             m_out.branch(
                                 m_out.doubleGreaterThan(doubleValue, m_out.constDouble(255)),
-                                continuation, withinRange);
+                                unsure(continuation), unsure(withinRange));
                             
                             m_out.appendTo(withinRange, continuation);
                             intValues.append(m_out.anchor(m_out.fpToInt32(doubleValue)));
@@ -2274,7 +2297,7 @@ private:
                     
                     m_out.branch(
                         m_out.aboveOrEqual(index, lowInt32(child5)),
-                        continuation, isInBounds);
+                        unsure(continuation), unsure(isInBounds));
                     
                     LBasicBlock lastNext = m_out.appendTo(isInBounds, continuation);
                     m_out.store(valueToStore, pointer, refType);
@@ -2329,7 +2352,7 @@ private:
             m_out.branch(
                 m_out.aboveOrEqual(
                     prevLength, m_out.load32(storage, m_heaps.Butterfly_vectorLength)),
-                slowPath, fastPath);
+                rarely(slowPath), usually(fastPath));
             
             LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
             m_out.store(
@@ -2382,7 +2405,8 @@ private:
             
             Vector<ValueFromBlock, 3> results;
             results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));
-            m_out.branch(m_out.isZero32(prevLength), continuation, fastCase);
+            m_out.branch(
+                m_out.isZero32(prevLength), rarely(continuation), usually(fastCase));
             
             LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
             LValue newLength = m_out.sub(prevLength, m_out.int32One);
@@ -2393,12 +2417,15 @@ private:
                 LValue result = m_out.load64(pointer);
                 m_out.store64(m_out.int64Zero, pointer);
                 results.append(m_out.anchor(result));
-                m_out.branch(m_out.notZero64(result), continuation, slowCase);
+                m_out.branch(
+                    m_out.notZero64(result), usually(continuation), rarely(slowCase));
             } else {
                 LValue result = m_out.loadDouble(pointer);
                 m_out.store64(m_out.constInt64(bitwise_cast<int64_t>(QNaN)), pointer);
                 results.append(m_out.anchor(boxDouble(result)));
-                m_out.branch(m_out.doubleEqual(result, result), continuation, slowCase);
+                m_out.branch(
+                    m_out.doubleEqual(result, result),
+                    usually(continuation), rarely(slowCase));
             }
             
             m_out.appendTo(slowCase, continuation);
@@ -2588,7 +2615,7 @@ private:
             
             m_out.branch(
                 m_out.aboveOrEqual(publicLength, m_out.constInt32(MIN_SPARSE_ARRAY_INDEX)),
-                largeCase, fastCase);
+                rarely(largeCase), usually(fastCase));
 
             LBasicBlock lastNext = m_out.appendTo(fastCase, largeCase);
             
@@ -2617,7 +2644,8 @@ private:
                 
                 ValueFromBlock originalIndex = m_out.anchor(vectorLength);
                 ValueFromBlock originalPointer = m_out.anchor(butterfly);
-                m_out.branch(m_out.notZero32(vectorLength), initLoop, initDone);
+                m_out.branch(
+                    m_out.notZero32(vectorLength), unsure(initLoop), unsure(initDone));
                 
                 LBasicBlock initLastNext = m_out.appendTo(initLoop, initDone);
                 LValue index = m_out.phi(m_out.int32, originalIndex);
@@ -2630,7 +2658,8 @@ private:
                 LValue nextIndex = m_out.sub(index, m_out.int32One);
                 addIncoming(index, m_out.anchor(nextIndex));
                 addIncoming(pointer, m_out.anchor(m_out.add(pointer, m_out.intPtrEight)));
-                m_out.branch(m_out.notZero32(nextIndex), initLoop, initDone);
+                m_out.branch(
+                    m_out.notZero32(nextIndex), unsure(initLoop), unsure(initDone));
                 
                 m_out.appendTo(initDone, initLastNext);
             }
@@ -2792,7 +2821,7 @@ private:
             ValueFromBlock simpleResult = m_out.anchor(cell);
             m_out.branch(
                 m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())),
-                continuation, notString);
+                unsure(continuation), unsure(notString));
             
             LBasicBlock lastNext = m_out.appendTo(notString, continuation);
             speculateStringObjectForStructure(m_node->child1(), structure);
@@ -2824,7 +2853,7 @@ private:
                 isCellPredicate = m_out.booleanTrue;
             else
                 isCellPredicate = this->isCell(value);
-            m_out.branch(isCellPredicate, isCell, notString);
+            m_out.branch(isCellPredicate, unsure(isCell), unsure(notString));
             
             LBasicBlock lastNext = m_out.appendTo(isCell, notString);
             ValueFromBlock simpleResult = m_out.anchor(value);
@@ -2835,7 +2864,7 @@ private:
                     m_out.constIntPtr(vm().stringStructure.get()));
             } else
                 isStringPredicate = m_out.booleanFalse;
-            m_out.branch(isStringPredicate, continuation, notString);
+            m_out.branch(isStringPredicate, unsure(continuation), unsure(notString));
             
             m_out.appendTo(notString, continuation);
             LValue operation;
@@ -2868,11 +2897,11 @@ private:
         Vector<ValueFromBlock, 3> results;
         
         results.append(m_out.anchor(value));
-        m_out.branch(isCell(value), isCellCase, continuation);
+        m_out.branch(isCell(value), unsure(isCellCase), unsure(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(isCellCase, isObjectCase);
         results.append(m_out.anchor(value));
-        m_out.branch(isObject(value), isObjectCase, continuation);
+        m_out.branch(isObject(value), unsure(isObjectCase), unsure(continuation));
         
         m_out.appendTo(isObjectCase, continuation);
         results.append(m_out.anchor(vmCall(
@@ -2963,7 +2992,7 @@ private:
         m_out.branch(
             m_out.aboveOrEqual(
                 index, m_out.load32NonNegative(base, m_heaps.JSString_length)),
-            slowPath, fastPath);
+            rarely(slowPath), usually(fastPath));
             
         LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
             
@@ -2978,7 +3007,7 @@ private:
             m_out.testIsZero32(
                 m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
                 m_out.constInt32(StringImpl::flagIs8Bit())),
-            is16Bit, is8Bit);
+            unsure(is16Bit), unsure(is8Bit));
             
         m_out.appendTo(is8Bit, is16Bit);
             
@@ -2998,7 +3027,9 @@ private:
                 storage, m_out.zeroExt(index, m_out.intPtr),
                 m_state.forNode(m_node->child2()).m_value)),
             m_out.int32));
-        m_out.branch(m_out.aboveOrEqual(char16Bit.value(), m_out.constInt32(0x100)), bigCharacter, bitsContinuation);
+        m_out.branch(
+            m_out.aboveOrEqual(char16Bit.value(), m_out.constInt32(0x100)),
+            rarely(bigCharacter), usually(bitsContinuation));
             
         m_out.appendTo(bigCharacter, bitsContinuation);
             
@@ -3031,7 +3062,9 @@ private:
                 LBasicBlock negativeIndex = FTL_NEW_BLOCK(m_out, ("GetByVal String negative index"));
                     
                 results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));
-                m_out.branch(m_out.lessThan(index, m_out.int32Zero), negativeIndex, continuation);
+                m_out.branch(
+                    m_out.lessThan(index, m_out.int32Zero),
+                    rarely(negativeIndex), usually(continuation));
                     
                 m_out.appendTo(negativeIndex, continuation);
             }
@@ -3067,7 +3100,7 @@ private:
             m_out.testIsZero32(
                 m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
                 m_out.constInt32(StringImpl::flagIs8Bit())),
-            is16Bit, is8Bit);
+            unsure(is16Bit), unsure(is8Bit));
             
         LBasicBlock lastNext = m_out.appendTo(is8Bit, is16Bit);
             
@@ -3122,10 +3155,13 @@ private:
         Vector<SwitchCase, 2> cases;
         for (unsigned i = data.variants.size(); i--;) {
             GetByIdVariant variant = data.variants[i];
-            for (unsigned j = variant.structureSet().size(); j--;)
-                cases.append(SwitchCase(weakPointer(variant.structureSet()[j]), blocks[i]));
+            for (unsigned j = variant.structureSet().size(); j--;) {
+                cases.append(SwitchCase(
+                    weakPointer(variant.structureSet()[j]), blocks[i], Weight(1)));
+            }
         }
-        m_out.switchInstruction(m_out.loadPtr(base, m_heaps.JSCell_structure), cases, exit);
+        m_out.switchInstruction(
+            m_out.loadPtr(base, m_heaps.JSCell_structure), cases, exit, Weight(0));
         
         LBasicBlock lastNext = m_out.m_nextBlock;
         
@@ -3206,7 +3242,7 @@ private:
         
         m_out.branch(
             m_out.equal(state, m_out.constInt8(IsInvalidated)),
-            continuation, isNotInvalidated);
+            usually(continuation), rarely(isNotInvalidated));
         
         LBasicBlock lastNext = m_out.appendTo(isNotInvalidated, isClear);
 
@@ -3215,7 +3251,7 @@ private:
             isClearValue = m_out.equal(state, m_out.constInt8(ClearWatchpoint));
         else
             isClearValue = m_out.booleanFalse;
-        m_out.branch(isClearValue, isClear, isWatched);
+        m_out.branch(isClearValue, unsure(isClear), unsure(isWatched));
         
         m_out.appendTo(isClear, isWatched);
         
@@ -3227,13 +3263,13 @@ private:
         
         m_out.branch(
             m_out.equal(value, m_out.load64(m_out.absolute(set->addressOfInferredValue()))),
-            continuation, invalidate);
+            unsure(continuation), unsure(invalidate));
         
         m_out.appendTo(invalidate, invalidateFast);
         
         m_out.branch(
             m_out.notZero8(m_out.load8(m_out.absolute(set->addressOfSetIsNotEmpty()))),
-            invalidateSlow, invalidateFast);
+            rarely(invalidateSlow), usually(invalidateFast));
         
         m_out.appendTo(invalidateFast, invalidateSlow);
         
@@ -3456,14 +3492,20 @@ private:
     
     void compileBranch()
     {
+        // FIXME: DFG should be able to tell us branch weights here.
+        // https://bugs.webkit.org/show_bug.cgi?id=129055
+        
         m_out.branch(
             boolify(m_node->child1()),
-            lowBlock(m_node->takenBlock()),
-            lowBlock(m_node->notTakenBlock()));
+            unsure(lowBlock(m_node->takenBlock())),
+            unsure(lowBlock(m_node->notTakenBlock())));
     }
     
     void compileSwitch()
     {
+        // FIXME: DFG should be able to tell us branch weights here.
+        // https://bugs.webkit.org/show_bug.cgi?id=129055
+        
         SwitchData* data = m_node->switchData();
         switch (data->kind) {
         case SwitchImm: {
@@ -3485,7 +3527,7 @@ private:
                 LBasicBlock isDouble = FTL_NEW_BLOCK(m_out, ("Switch/SwitchImm is double"));
                 
                 LValue boxedValue = lowJSValue(m_node->child1());
-                m_out.branch(isNotInt32(boxedValue), isNotInt, isInt);
+                m_out.branch(isNotInt32(boxedValue), unsure(isNotInt), unsure(isInt));
                 
                 LBasicBlock innerLastNext = m_out.appendTo(isInt, isNotInt);
                 
@@ -3494,7 +3536,8 @@ private:
                 
                 m_out.appendTo(isNotInt, isDouble);
                 m_out.branch(
-                    isCellOrMisc(boxedValue), lowBlock(data->fallThrough), isDouble);
+                    isCellOrMisc(boxedValue),
+                    usually(lowBlock(data->fallThrough)), rarely(isDouble));
                 
                 m_out.appendTo(isDouble, innerLastNext);
                 LValue doubleValue = unboxDouble(boxedValue);
@@ -3502,7 +3545,7 @@ private:
                 intValues.append(m_out.anchor(intInDouble));
                 m_out.branch(
                     m_out.doubleEqual(m_out.intToDouble(intInDouble), doubleValue),
-                    switchOnInts, lowBlock(data->fallThrough));
+                    unsure(switchOnInts), unsure(lowBlock(data->fallThrough)));
                 break;
             }
                 
@@ -3532,11 +3575,14 @@ private:
                 LBasicBlock isStringCase = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar is string"));
                 
                 m_out.branch(
-                    isNotCell(unboxedValue), lowBlock(data->fallThrough), isCellCase);
+                    isNotCell(unboxedValue),
+                    unsure(lowBlock(data->fallThrough)), unsure(isCellCase));
                 
                 LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
                 LValue cellValue = unboxedValue;
-                m_out.branch(isNotString(cellValue), lowBlock(data->fallThrough), isStringCase);
+                m_out.branch(
+                    isNotString(cellValue),
+                    unsure(lowBlock(data->fallThrough)), unsure(isStringCase));
                 
                 m_out.appendTo(isStringCase, lastNext);
                 stringValue = cellValue;
@@ -3559,13 +3605,13 @@ private:
                 m_out.notEqual(
                     m_out.load32NonNegative(stringValue, m_heaps.JSString_length),
                     m_out.int32One),
-                lowBlock(data->fallThrough), lengthIs1);
+                unsure(lowBlock(data->fallThrough)), unsure(lengthIs1));
             
             LBasicBlock lastNext = m_out.appendTo(lengthIs1, needResolution);
             Vector<ValueFromBlock, 2> values;
             LValue fastValue = m_out.loadPtr(stringValue, m_heaps.JSString_value);
             values.append(m_out.anchor(fastValue));
-            m_out.branch(m_out.isNull(fastValue), needResolution, resolved);
+            m_out.branch(m_out.isNull(fastValue), rarely(needResolution), usually(resolved));
             
             m_out.appendTo(needResolution, resolved);
             values.append(m_out.anchor(
@@ -3579,7 +3625,7 @@ private:
                 m_out.testNonZero32(
                     m_out.load32(value, m_heaps.StringImpl_hashAndFlags),
                     m_out.constInt32(StringImpl::flagIs8Bit())),
-                is8Bit, is16Bit);
+                unsure(is8Bit), unsure(is16Bit));
             
             Vector<ValueFromBlock, 2> characters;
             m_out.appendTo(is8Bit, is16Bit);
@@ -3727,7 +3773,7 @@ private:
         LBasicBlock leftNotCellCase = FTL_NEW_BLOCK(m_out, ("CompareEqObjectOrOtherToObject left not cell case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CompareEqObjectOrOtherToObject continuation"));
         
-        m_out.branch(isCell(leftValue), leftCellCase, leftNotCellCase);
+        m_out.branch(isCell(leftValue), unsure(leftCellCase), unsure(leftNotCellCase));
         
         LBasicBlock lastNext = m_out.appendTo(leftCellCase, leftNotCellCase);
         speculateTruthyObject(leftChild, leftValue, SpecObject | (~SpecCell));
@@ -3772,10 +3818,10 @@ private:
         LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("CompareEq untyped slow path"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CompareEq untyped continuation"));
         
-        m_out.branch(isNotInt32(left), slowPath, leftIsInt);
+        m_out.branch(isNotInt32(left), rarely(slowPath), usually(leftIsInt));
         
         LBasicBlock lastNext = m_out.appendTo(leftIsInt, fastPath);
-        m_out.branch(isNotInt32(right), slowPath, fastPath);
+        m_out.branch(isNotInt32(right), rarely(slowPath), usually(fastPath));
         
         m_out.appendTo(fastPath, slowPath);
         ValueFromBlock fastResult = m_out.anchor(
@@ -3798,7 +3844,7 @@ private:
         LValue result = m_out.loadPtr(
             allocator, m_heaps.MarkedAllocator_freeListHead);
         
-        m_out.branch(m_out.notNull(result), success, slowPath);
+        m_out.branch(m_out.notNull(result), usually(success), rarely(slowPath));
         
         m_out.appendTo(success);
         
@@ -3843,7 +3889,9 @@ private:
         LValue remaining = m_out.loadPtr(m_out.absolute(&allocator.m_currentRemaining));
         LValue newRemaining = m_out.sub(remaining, size);
         
-        m_out.branch(m_out.lessThan(newRemaining, m_out.intPtrZero), slowPath, success);
+        m_out.branch(
+            m_out.lessThan(newRemaining, m_out.intPtrZero),
+            rarely(slowPath), usually(success));
         
         m_out.appendTo(success);
         
@@ -3971,7 +4019,7 @@ private:
             LBasicBlock fastCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped fast case"));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Boolify untyped continuation"));
             
-            m_out.branch(isNotBoolean(value), slowCase, fastCase);
+            m_out.branch(isNotBoolean(value), rarely(slowCase), usually(fastCase));
             
             LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
             ValueFromBlock fastResult = m_out.anchor(unboxBoolean(value));
@@ -4013,7 +4061,7 @@ private:
         LBasicBlock primitiveCase = FTL_NEW_BLOCK(m_out, ("EqualNullOrUndefined primitive case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("EqualNullOrUndefined continuation"));
         
-        m_out.branch(isNotCell(value), primitiveCase, cellCase);
+        m_out.branch(isNotCell(value), unsure(primitiveCase), unsure(cellCase));
         
         LBasicBlock lastNext = m_out.appendTo(cellCase, primitiveCase);
         
@@ -4046,7 +4094,7 @@ private:
                 m_out.testNonZero8(
                     m_out.load8(structure, m_heaps.Structure_typeInfoFlags),
                     m_out.constInt8(MasqueradesAsUndefined)),
-                masqueradesCase, continuation);
+                rarely(masqueradesCase), usually(continuation));
             
             m_out.appendTo(masqueradesCase, primitiveCase);
             
@@ -4097,7 +4145,7 @@ private:
             LBasicBlock performStore =
                 FTL_NEW_BLOCK(m_out, ("PutByVal perform store"));
                 
-            m_out.branch(isNotInBounds, notInBoundsCase, performStore);
+            m_out.branch(isNotInBounds, unsure(notInBoundsCase), unsure(performStore));
                 
             LBasicBlock lastNext = m_out.appendTo(notInBoundsCase, performStore);
                 
@@ -4112,7 +4160,7 @@ private:
                 LBasicBlock holeCase =
                     FTL_NEW_BLOCK(m_out, ("PutByVal hole case"));
                     
-                m_out.branch(isOutOfBounds, outOfBoundsCase, holeCase);
+                m_out.branch(isOutOfBounds, unsure(outOfBoundsCase), unsure(holeCase));
                     
                 LBasicBlock innerLastNext = m_out.appendTo(outOfBoundsCase, holeCase);
                     
@@ -4140,10 +4188,10 @@ private:
         for (unsigned i = 0; i < data->cases.size(); ++i) {
             cases.append(SwitchCase(
                 constInt(type, data->cases[i].value.switchLookupValue()),
-                lowBlock(data->cases[i].target)));
+                lowBlock(data->cases[i].target), Weight()));
         }
         
-        m_out.switchInstruction(switchValue, cases, lowBlock(data->fallThrough));
+        m_out.switchInstruction(switchValue, cases, lowBlock(data->fallThrough), Weight());
     }
     
     LValue doubleToInt32(LValue doubleValue, double low, double high, bool isSigned = true)
@@ -4160,12 +4208,12 @@ private:
         
         m_out.branch(
             m_out.doubleGreaterThanOrEqual(doubleValue, m_out.constDouble(low)),
-            greatEnough, slowPath);
+            unsure(greatEnough), unsure(slowPath));
         
         LBasicBlock lastNext = m_out.appendTo(greatEnough, withinRange);
         m_out.branch(
             m_out.doubleLessThanOrEqual(doubleValue, m_out.constDouble(high)),
-            withinRange, slowPath);
+            unsure(withinRange), unsure(slowPath));
         
         m_out.appendTo(withinRange, slowPath);
         LValue fastResult;
@@ -4202,7 +4250,7 @@ private:
             m_out.sensibleDoubleToInt(doubleValue));
         m_out.branch(
             m_out.equal(fastResult.value(), m_out.constInt32(0x80000000)),
-            slowPath, continuation);
+            rarely(slowPath), usually(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
         ValueFromBlock slowResult = m_out.anchor(
@@ -4510,7 +4558,7 @@ private:
             LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("Double unboxing double case"));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Double unboxing continuation"));
             
-            m_out.branch(isNotInt32(boxedResult), doubleCase, intCase);
+            m_out.branch(isNotInt32(boxedResult), unsure(doubleCase), unsure(intCase));
             
             LBasicBlock lastNext = m_out.appendTo(intCase, doubleCase);
             
@@ -4622,7 +4670,7 @@ private:
         LValue int32Value = m_out.castToInt32(value);
         m_out.branch(
             m_out.equal(m_out.signExt(int32Value, m_out.int64), value),
-            isInt32, isDouble);
+            unsure(isInt32), unsure(isDouble));
         
         LBasicBlock lastNext = m_out.appendTo(isInt32, isDouble);
         
@@ -4913,7 +4961,7 @@ private:
         LBasicBlock primitiveCase = FTL_NEW_BLOCK(m_out, ("speculateObjectOrOther primitive case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("speculateObjectOrOther continuation"));
         
-        m_out.branch(isNotCell(value), primitiveCase, cellCase);
+        m_out.branch(isNotCell(value), unsure(primitiveCase), unsure(cellCase));
         
         LBasicBlock lastNext = m_out.appendTo(cellCase, primitiveCase);
         
@@ -4973,7 +5021,7 @@ private:
         LValue structure = m_out.loadPtr(lowCell(edge), m_heaps.JSCell_structure);
         m_out.branch(
             m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())),
-            continuation, notString);
+            unsure(continuation), unsure(notString));
         
         LBasicBlock lastNext = m_out.appendTo(notString, continuation);
         speculateStringObjectForStructure(edge, structure);
@@ -5082,7 +5130,7 @@ private:
         LBasicBlock isCell = FTL_NEW_BLOCK(m_out, ("Store barrier is cell block"));
 
         if (m_state.forNode(valueEdge.node()).couldBeType(SpecCell))
-            m_out.branch(isNotCell(value), continuation, isCell);
+            m_out.branch(isNotCell(value), unsure(continuation), unsure(isCell));
         else
             m_out.jump(isCell);
 
@@ -5107,13 +5155,16 @@ private:
         LBasicBlock bufferIsFull = FTL_NEW_BLOCK(m_out, ("Store barrier buffer is full"));
 
         // Check the mark byte. 
-        m_out.branch(m_out.isZero8(loadMarkByte(base)), continuation, isMarked);
+        m_out.branch(
+            m_out.isZero8(loadMarkByte(base)), usually(continuation), rarely(isMarked));
 
         // Append to the write barrier buffer.
         LBasicBlock lastNext = m_out.appendTo(isMarked, bufferHasSpace);
         LValue currentBufferIndex = m_out.load32(m_out.absolute(&vm().heap.writeBarrierBuffer().m_currentIndex));
         LValue bufferCapacity = m_out.load32(m_out.absolute(&vm().heap.writeBarrierBuffer().m_capacity));
-        m_out.branch(m_out.lessThan(currentBufferIndex, bufferCapacity), bufferHasSpace, bufferIsFull);
+        m_out.branch(
+            m_out.lessThan(currentBufferIndex, bufferCapacity),
+            usually(bufferHasSpace), rarely(bufferIsFull));
 
         // Buffer has space, store to it.
         m_out.appendTo(bufferHasSpace, bufferIsFull);
@@ -5193,7 +5244,7 @@ private:
         
         m_out.branch(
             m_out.notZero64(m_out.load64(m_out.absolute(vm().addressOfException()))),
-            m_handleExceptions, continuation);
+            rarely(m_handleExceptions), usually(continuation));
         
         m_out.appendTo(continuation);
     }
@@ -5233,7 +5284,7 @@ private:
         LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node));
         continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation for ", m_node));
         
-        m_out.branch(failCondition, failCase, continuation);
+        m_out.branch(failCondition, rarely(failCase), usually(continuation));
         
         lastNext = m_out.appendTo(failCase, continuation);
         

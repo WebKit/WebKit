@@ -1,3 +1,108 @@
+2014-02-19  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should be able to convey branch weights to LLVM
+        https://bugs.webkit.org/show_bug.cgi?id=129054
+
+        Reviewed by Michael Saboff.
+        
+        This introduces a really nice way to convey branch weights to LLVM. The basic class
+        is Weight, which just wraps a float; NaN is used when you are not sure. You can
+        pass this alongside a LBasicBlock to branching instructions like condbr and switch.
+        But for simplicity, you can just pass a WeightedTarget, which is a tuple of the
+        two. And for even greater simplicity, you can create WeightedTargets from
+        LBasicBlocks by doing:
+        
+            usually(b)   => WeightedTarget(b, Weight(1))
+            rarely(b)    => WeightedTarget(b, Weight(0))
+            unsure(b)    => WeightedTarget(b, Weight()) or WeightedTarget(b, Weight(NaN))
+        
+        This allows for constructs like:
+        
+            m_out.branch(isCell(value), usually(isCellCase), rarely(slowCase));
+        
+        This was intended to be perf-neutral for now, but it did end up creating a ~1%
+        speed-up on V8v7 and Octane2.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::mdNode):
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        * ftl/FTLCommonValues.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileValueToInt32):
+        (JSC::FTL::LowerDFGToLLVM::compileStoreBarrierWithNullCheck):
+        (JSC::FTL::LowerDFGToLLVM::compileToThis):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileArithDiv):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMod):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMinOrMax):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayifyToStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileGetById):
+        (JSC::FTL::LowerDFGToLLVM::compileGetIndexedPropertyStorage):
+        (JSC::FTL::LowerDFGToLLVM::compileGetTypedArrayByteOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayPush):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayPop):
+        (JSC::FTL::LowerDFGToLLVM::compileNewArrayWithSize):
+        (JSC::FTL::LowerDFGToLLVM::compileToString):
+        (JSC::FTL::LowerDFGToLLVM::compileToPrimitive):
+        (JSC::FTL::LowerDFGToLLVM::compileStringCharAt):
+        (JSC::FTL::LowerDFGToLLVM::compileStringCharCodeAt):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileNotifyWrite):
+        (JSC::FTL::LowerDFGToLLVM::compileBranch):
+        (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+        (JSC::FTL::LowerDFGToLLVM::compareEqObjectOrOtherToObject):
+        (JSC::FTL::LowerDFGToLLVM::nonSpeculativeCompare):
+        (JSC::FTL::LowerDFGToLLVM::allocateCell):
+        (JSC::FTL::LowerDFGToLLVM::allocateBasicStorageAndGetEnd):
+        (JSC::FTL::LowerDFGToLLVM::boolify):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::LowerDFGToLLVM::contiguousPutByValOutOfBounds):
+        (JSC::FTL::LowerDFGToLLVM::buildSwitch):
+        (JSC::FTL::LowerDFGToLLVM::doubleToInt32):
+        (JSC::FTL::LowerDFGToLLVM::sensibleDoubleToInt32):
+        (JSC::FTL::LowerDFGToLLVM::lowDouble):
+        (JSC::FTL::LowerDFGToLLVM::strictInt52ToJSValue):
+        (JSC::FTL::LowerDFGToLLVM::speculateObjectOrOther):
+        (JSC::FTL::LowerDFGToLLVM::speculateStringOrStringObject):
+        (JSC::FTL::LowerDFGToLLVM::emitStoreBarrier):
+        (JSC::FTL::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::initialize):
+        (JSC::FTL::Output::appendTo):
+        (JSC::FTL::Output::newBlock):
+        (JSC::FTL::Output::sensibleDoubleToInt):
+        (JSC::FTL::Output::load):
+        (JSC::FTL::Output::store):
+        (JSC::FTL::Output::baseIndex):
+        (JSC::FTL::Output::branch):
+        (JSC::FTL::Output::crashNonTerminal):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::branch):
+        (JSC::FTL::Output::switchInstruction):
+        * ftl/FTLSwitchCase.h:
+        (JSC::FTL::SwitchCase::SwitchCase):
+        (JSC::FTL::SwitchCase::weight):
+        * ftl/FTLWeight.h: Added.
+        (JSC::FTL::Weight::Weight):
+        (JSC::FTL::Weight::isSet):
+        (JSC::FTL::Weight::operator!):
+        (JSC::FTL::Weight::value):
+        (JSC::FTL::Weight::scaleToTotal):
+        * ftl/FTLWeightedTarget.h: Added.
+        (JSC::FTL::WeightedTarget::WeightedTarget):
+        (JSC::FTL::WeightedTarget::target):
+        (JSC::FTL::WeightedTarget::weight):
+        (JSC::FTL::usually):
+        (JSC::FTL::rarely):
+        (JSC::FTL::unsure):
+
 2014-02-19  peavo@outlook.com  <peavo@outlook.com>
 
         [Win][LLINT] Incorrect stack alignment.

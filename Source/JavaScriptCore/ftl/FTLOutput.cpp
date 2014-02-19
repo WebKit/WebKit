@@ -45,6 +45,104 @@ Output::~Output()
     llvm->DisposeBuilder(m_builder);
 }
 
+void Output::initialize(LModule module, LValue function, AbstractHeapRepository& heaps)
+{
+    IntrinsicRepository::initialize(module);
+    m_function = function;
+    m_heaps = &heaps;
+}
+
+LBasicBlock Output::appendTo(LBasicBlock block, LBasicBlock nextBlock)
+{
+    appendTo(block);
+    return insertNewBlocksBefore(nextBlock);
+}
+
+void Output::appendTo(LBasicBlock block)
+{
+    m_block = block;
+    
+    llvm->PositionBuilderAtEnd(m_builder, block);
+}
+
+LBasicBlock Output::newBlock(const char* name)
+{
+    if (!m_nextBlock)
+        return appendBasicBlock(m_context, m_function, name);
+    return insertBasicBlock(m_context, m_nextBlock, name);
+}
+
+LValue Output::sensibleDoubleToInt(LValue value)
+{
+    RELEASE_ASSERT(isX86());
+    return call(
+        x86SSE2CvtTSD2SIIntrinsic(),
+        insertElement(
+            insertElement(getUndef(vectorType(doubleType, 2)), value, int32Zero),
+            doubleZero, int32One));
+}
+
+LValue Output::load(TypedPointer pointer, LType refType)
+{
+    LValue result = get(intToPtr(pointer.value(), refType));
+    pointer.heap().decorateInstruction(result, *m_heaps);
+    return result;
+}
+
+void Output::store(LValue value, TypedPointer pointer, LType refType)
+{
+    LValue result = set(value, intToPtr(pointer.value(), refType));
+    pointer.heap().decorateInstruction(result, *m_heaps);
+}
+
+LValue Output::baseIndex(LValue base, LValue index, Scale scale, ptrdiff_t offset)
+{
+    LValue accumulatedOffset;
+        
+    switch (scale) {
+    case ScaleOne:
+        accumulatedOffset = index;
+        break;
+    case ScaleTwo:
+        accumulatedOffset = shl(index, intPtrOne);
+        break;
+    case ScaleFour:
+        accumulatedOffset = shl(index, intPtrTwo);
+        break;
+    case ScaleEight:
+    case ScalePtr:
+        accumulatedOffset = shl(index, intPtrThree);
+        break;
+    }
+        
+    if (offset)
+        accumulatedOffset = add(accumulatedOffset, constIntPtr(offset));
+        
+    return add(base, accumulatedOffset);
+}
+
+void Output::branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBasicBlock notTaken, Weight notTakenWeight)
+{
+    LValue branch = buildCondBr(m_builder, condition, taken, notTaken);
+    
+    if (!takenWeight || !notTakenWeight)
+        return;
+    
+    double total = takenWeight.value() + notTakenWeight.value();
+    
+    setMetadata(
+        branch, profKind,
+        mdNode(
+            m_context, branchWeights,
+            constInt32(takenWeight.scaleToTotal(total)),
+            constInt32(notTakenWeight.scaleToTotal(total))));
+}
+
+void Output::crashNonTerminal()
+{
+    call(intToPtr(constIntPtr(abort), pointerType(functionType(voidType))));
+}
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

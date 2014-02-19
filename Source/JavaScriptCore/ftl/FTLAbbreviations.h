@@ -31,7 +31,6 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLAbbreviatedTypes.h"
-#include "FTLSwitchCase.h"
 #include "FTLValueFromBlock.h"
 #include "LLVMAPI.h"
 #include <cstring>
@@ -120,12 +119,19 @@ static inline unsigned mdKindID(LContext context, const char* string) { return l
 static inline LValue mdString(LContext context, const char* string, unsigned length) { return llvm->MDStringInContext(context, string, length); }
 static inline LValue mdString(LContext context, const char* string) { return mdString(context, string, std::strlen(string)); }
 static inline LValue mdNode(LContext context, LValue* args, unsigned numArgs) { return llvm->MDNodeInContext(context, args, numArgs); }
+template<typename VectorType>
+static inline LValue mdNode(LContext context, const VectorType& vector) { return mdNode(context, const_cast<LValue*>(vector.begin()), vector.size()); }
 static inline LValue mdNode(LContext context) { return mdNode(context, 0, 0); }
 static inline LValue mdNode(LContext context, LValue arg1) { return mdNode(context, &arg1, 1); }
 static inline LValue mdNode(LContext context, LValue arg1, LValue arg2)
 {
     LValue args[] = { arg1, arg2 };
     return mdNode(context, args, 2);
+}
+static inline LValue mdNode(LContext context, LValue arg1, LValue arg2, LValue arg3)
+{
+    LValue args[] = { arg1, arg2, arg3 };
+    return mdNode(context, args, 3);
 }
 
 static inline void setMetadata(LValue instruction, unsigned kind, LValue metadata) { llvm->SetMetadata(instruction, kind, metadata); }
