@@ -260,7 +260,6 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     , m_obligatoryBackingStoreBytes(0)
     , m_secondaryBackingStoreBytes(0)
 #endif
-    , m_rootExtendedBackgroundColor(Color())
 {
 }
 
