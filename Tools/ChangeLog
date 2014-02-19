@@ -1,3 +1,22 @@
+2014-02-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove the remaining Nix cruft under Tools
+        https://bugs.webkit.org/show_bug.cgi?id=129003
+
+        Reviewed by Csaba Osztrogonác.
+
+        The Nix port was removed from the source tree so the remaining Nix-specific code
+        in the utility scripts is not required anymore.
+
+        * Scripts/run-nix-tests: Removed.
+        * Scripts/update-webkitnix-libs: Removed.
+        * Scripts/webkitpy/style/checker.py:
+        * jhbuild/jhbuild-wrapper:
+        (determine_platform):
+        * nix/common.py: Removed.
+        * nix/jhbuild.modules: Removed.
+        * nix/jhbuildrc: Removed.
+
 2014-02-18  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][MiniBrowser] Remove view_mode parameter in window_create()
