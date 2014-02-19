@@ -1155,25 +1155,11 @@ namespace WTF {
         invalidateIterators();
         other.invalidateIterators();
 
-        ValueType* tmp_table = m_table;
-        m_table = other.m_table;
-        other.m_table = tmp_table;
-
-        int tmp_tableSize = m_tableSize;
-        m_tableSize = other.m_tableSize;
-        other.m_tableSize = tmp_tableSize;
-
-        int tmp_tableSizeMask = m_tableSizeMask;
-        m_tableSizeMask = other.m_tableSizeMask;
-        other.m_tableSizeMask = tmp_tableSizeMask;
-
-        int tmp_keyCount = m_keyCount;
-        m_keyCount = other.m_keyCount;
-        other.m_keyCount = tmp_keyCount;
-
-        int tmp_deletedCount = m_deletedCount;
-        m_deletedCount = other.m_deletedCount;
-        other.m_deletedCount = tmp_deletedCount;
+        std::swap(m_table, other.m_table);
+        std::swap(m_tableSize, other.m_tableSize);
+        std::swap(m_tableSizeMask, other.m_tableSizeMask);
+        std::swap(m_keyCount, other.m_keyCount);
+        std::swap(m_deletedCount, other.m_deletedCount);
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         m_stats.swap(other.m_stats);

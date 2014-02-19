@@ -1,5 +1,17 @@
 2014-02-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        Use std::swap() in HashTable::swap()
+        https://bugs.webkit.org/show_bug.cgi?id=128995
+
+        Reviewed by Brent Fulgham.
+
+        Use std::swap() to swap the member variable values of two HashTable objects in HashTable::swap().
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::swap):
+
+2014-02-19  Zan Dobersek  <zdobersek@igalia.com>
+
         SegmentedVector::append() should take in rvalue reference, forward it to Vector::uncheckedAppend()
         https://bugs.webkit.org/show_bug.cgi?id=128996
 
