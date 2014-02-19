@@ -62,7 +62,6 @@
 #include "RTCVoidRequestImpl.h"
 #include "ScriptExecutionContext.h"
 #include "VoidCallback.h"
-#include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -250,8 +249,10 @@ void RTCPeerConnection::setLocalDescription(PassRefPtr<RTCSessionDescription> pr
     }
 
     if (!checkStateForLocalDescription(sessionDescription.get())) {
-        RefPtr<DOMError> error = DOMError::create(RTCPeerConnectionHandler::invalidSessionDescriptionErrorName());
-        callOnMainThread(bind(&RTCPeerConnectionErrorCallback::handleEvent, errorCallback.get(), error.release()));
+        callOnMainThread([=] {
+            RefPtr<DOMError> error = DOMError::create(RTCPeerConnectionHandler::invalidSessionDescriptionErrorName());
+            errorCallback->handleEvent(error.get());
+        });
         return;
     }
 
@@ -285,8 +286,10 @@ void RTCPeerConnection::setRemoteDescription(PassRefPtr<RTCSessionDescription> p
     }
 
     if (!checkStateForRemoteDescription(sessionDescription.get())) {
-        RefPtr<DOMError> error = DOMError::create(RTCPeerConnectionHandler::invalidSessionDescriptionErrorName());
-        callOnMainThread(bind(&RTCPeerConnectionErrorCallback::handleEvent, errorCallback.get(), error.release()));
+        callOnMainThread([=] {
+            RefPtr<DOMError> error = DOMError::create(RTCPeerConnectionHandler::invalidSessionDescriptionErrorName());
+            errorCallback->handleEvent(error.get());
+        });
         return;
     }
 
