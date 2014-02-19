@@ -1,3 +1,15 @@
+2014-02-19  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Add performance test for stacked floats with shape-outsides
+        https://bugs.webkit.org/show_bug.cgi?id=128821
+
+        Reviewed by Brent Fulgham.
+
+        This tests generate stacked floats content with shape-outsides.
+        The test is skipped by default.
+
+        * Layout/Shapes/ShapeOutsideStackedPolygons.html: Added.
+
 2014-02-15  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add performance test for raster shape with shape-margin
