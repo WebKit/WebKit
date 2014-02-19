@@ -596,6 +596,15 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     _obscuredInsets = obscuredInsets;
 }
 
+- (UIColor *)pageExtendedBackgroundColor
+{
+    WebCore::Color color = _data->_page->pageExtendedBackgroundColor();
+    if (!color.isValid())
+        return nil;
+
+    return [UIColor colorWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)];
+}
+
 - (void)_beginInteractiveObscuredInsetsChange
 {
     ASSERT(!_isChangingObscuredInsetsInteractively);

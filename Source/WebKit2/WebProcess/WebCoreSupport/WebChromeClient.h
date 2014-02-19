@@ -255,6 +255,8 @@ private:
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) override;
 
     virtual WebCore::Color underlayColor() const override;
+
+    virtual void pageExtendedBackgroundColorDidChange(WebCore::Color) const override;
     
     virtual void numWheelEventHandlersChanged(unsigned) override;
 

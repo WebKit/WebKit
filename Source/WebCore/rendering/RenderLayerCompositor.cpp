@@ -260,6 +260,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     , m_obligatoryBackingStoreBytes(0)
     , m_secondaryBackingStoreBytes(0)
 #endif
+    , m_rootExtendedBackgroundColor(Color())
 {
 }
 
@@ -2937,16 +2938,22 @@ bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor)
 
 void RenderLayerCompositor::setRootExtendedBackgroundColor(const Color& color)
 {
+    if (color == m_rootExtendedBackgroundColor)
+        return;
+
+    m_rootExtendedBackgroundColor = color;
+
+    if (Page* page = this->page())
+        page->chrome().client().pageExtendedBackgroundColorDidChange(color);
+
 #if ENABLE(RUBBER_BANDING)
     if (!m_layerForOverhangAreas)
         return;
 
-    m_layerForOverhangAreas->setBackgroundColor(color);
+    m_layerForOverhangAreas->setBackgroundColor(m_rootExtendedBackgroundColor);
 
-    if (!color.isValid())
+    if (!m_rootExtendedBackgroundColor.isValid())
         m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::ScrollingOverhang);
-#else
-    UNUSED_PARAM(color);
 #endif
 }
 

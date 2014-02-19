@@ -191,6 +191,8 @@ public:
 
     virtual Color underlayColor() const { return Color(); }
 
+    virtual void pageExtendedBackgroundColorDidChange(Color) const { }
+
 #if ENABLE(SQL_DATABASE)
     virtual void exceededDatabaseQuota(Frame*, const String& databaseName, DatabaseDetails) = 0;
 #endif

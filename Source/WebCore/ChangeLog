@@ -1,3 +1,25 @@
+2014-02-19  Beth Dakin  <bdakin@apple.com>
+
+        UIProcess needs to know the color of the page's extended background
+        https://bugs.webkit.org/show_bug.cgi?id=129004
+
+        Reviewed by Brent Fulgham.
+
+        This patch adds a new ChromeClient function, 
+        pageExtendedBackgroundColorDidChange() which will be called whenever the extended 
+        background color has changed.
+
+        New function.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::pageExtendedBackgroundColorDidChange):
+
+        Store the extended background color in a member variable so that we can know if it 
+        changed even if we do not have an m_layerForOverhangAreas.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::setRootExtendedBackgroundColor):
+        * rendering/RenderLayerCompositor.h:
+
 2014-02-19  Dirk Schulze  <krit@webkit.org>
 
         Missing box doesn't use border-box as reference box for clip-path

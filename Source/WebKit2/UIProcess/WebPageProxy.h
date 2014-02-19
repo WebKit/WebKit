@@ -422,6 +422,8 @@ public:
     WebCore::Color underlayColor() const { return m_underlayColor; }
     void setUnderlayColor(const WebCore::Color&);
 
+    WebCore::Color pageExtendedBackgroundColor() const { return m_pageExtendedBackgroundColor; }
+
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 
@@ -994,6 +996,7 @@ private:
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
     void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide, bool pinnedToTopSide, bool pinnedToBottomSide);
     void didChangePageCount(unsigned);
+    void pageExtendedBackgroundColorDidChange(WebCore::Color);
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString);
     void didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured);
@@ -1297,6 +1300,7 @@ private:
     bool m_drawsTransparentBackground;
 
     WebCore::Color m_underlayColor;
+    WebCore::Color m_pageExtendedBackgroundColor;
 
     bool m_areMemoryCacheClientCallsEnabled;
 

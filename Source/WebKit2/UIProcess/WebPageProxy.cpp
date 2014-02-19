@@ -4170,6 +4170,11 @@ void WebPageProxy::didChangePageCount(unsigned pageCount)
     m_pageCount = pageCount;
 }
 
+void WebPageProxy::pageExtendedBackgroundColorDidChange(Color backgroundColor)
+{
+    m_pageExtendedBackgroundColor = backgroundColor;
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString)
 {

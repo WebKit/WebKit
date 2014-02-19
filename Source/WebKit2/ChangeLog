@@ -1,3 +1,30 @@
+2014-02-19  Beth Dakin  <bdakin@apple.com>
+
+        UIProcess needs to know the color of the page's extended background
+        https://bugs.webkit.org/show_bug.cgi?id=129004
+
+        Reviewed by Simon Fraser and Brent Fulgham.
+
+        New method on WKWebView and WKView will return the page’s extended background 
+        color.
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView pageExtendedBackgroundColor]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView pageExtendedBackgroundColor]):
+
+        The color is stored in the WebPageProxy, and the ChromeClient sends a message to 
+        the WebPageProxy with the new color whenever it changes.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageExtendedBackgroundColorDidChange):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::pageExtendedBackgroundColor):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::pageExtendedBackgroundColorDidChange):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2014-02-19  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] REGRESSION (r162710): Open tab urls not restored after switching to new Safari build

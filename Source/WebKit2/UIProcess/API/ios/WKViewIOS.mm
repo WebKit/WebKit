@@ -387,4 +387,14 @@ using namespace WebKit;
     _isChangingObscuredInsetsInteractively = NO;
 }
 
+- (UIColor *)pageExtendedBackgroundColor
+{
+    WebPageProxy *webPageProxy = toImpl([_contentView _pageRef]);
+    WebCore::Color color = webPageProxy->pageExtendedBackgroundColor();
+    if (!color.isValid())
+        return nil;
+
+    return [UIColor colorWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)];
+}
+
 @end

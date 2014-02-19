@@ -513,6 +513,8 @@ private:
     double m_obligatoryBackingStoreBytes;
     double m_secondaryBackingStoreBytes;
 #endif
+
+    Color m_rootExtendedBackgroundColor;
 };
 
 

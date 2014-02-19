@@ -870,6 +870,11 @@ Color WebChromeClient::underlayColor() const
     return m_page->underlayColor();
 }
 
+void WebChromeClient::pageExtendedBackgroundColorDidChange(Color backgroundColor) const
+{
+    m_page->send(Messages::WebPageProxy::PageExtendedBackgroundColorDidChange(backgroundColor));
+}
+
 void WebChromeClient::numWheelEventHandlersChanged(unsigned count)
 {
     m_page->numWheelEventHandlersChanged(count);
