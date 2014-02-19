@@ -1,3 +1,24 @@
+2014-02-19  Piotr Grad  <p.grad@samsung.com>
+
+        Setting playback rate on Media Controller modifies current time.
+        https://bugs.webkit.org/show_bug.cgi?id=129042
+
+        Reviewed by Jer Noble.
+
+        In ClockGeneric: when setting playback rate or stoping timer,clock was restarted using current real time
+        instead of provided time by setCurrentTime.
+        Changed impl. so that m_offset is updated when clock stops to remember last clock position.
+        When playbackRate is changed m_offset is updated in order to not use old time interval for new playback rate.
+
+        Test: media/video-controller-currentTime-rate.html
+
+        * html/MediaController.cpp:
+        (MediaController::updatePlaybackState):
+        * platform/ClockGeneric.cpp:
+        (ClockGeneric::setPlayRate):
+        (ClockGeneric::start):
+        (ClockGeneric::stop):
+
 2014-02-19  Brady Eidson  <beidson@apple.com>
 
         Add settings/preferences for enabling image controls

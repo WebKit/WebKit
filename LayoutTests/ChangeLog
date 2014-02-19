@@ -1,3 +1,13 @@
+2014-02-19  Piotr Grad  <p.grad@samsung.com>
+
+        Setting playback rate on Media Controller modifies current time.
+        https://bugs.webkit.org/show_bug.cgi?id=129042
+
+        Reviewed by Jer Noble.
+
+        * media/video-controller-currentTime-rate-expected.txt: Added.
+        * media/video-controller-currentTime-rate.html: Added.
+
 2014-02-19  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] shape-outside does not properly handle different writing modes

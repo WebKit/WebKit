@@ -53,7 +53,7 @@ double ClockGeneric::currentTime() const
 
 void ClockGeneric::setPlayRate(double rate)
 {
-    m_offset = now();
+    m_offset = currentTime();
     m_lastTime = m_startTime = now();
     m_rate = rate;
 }
@@ -72,7 +72,7 @@ void ClockGeneric::stop()
     if (!m_running)
         return;
 
-    m_offset = now();
+    m_offset = currentTime();
     m_lastTime = m_startTime = now();
     m_running = false;
 }

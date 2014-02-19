@@ -446,6 +446,7 @@ void MediaController::updatePlaybackState()
     case ENDED:
         eventName = eventNames().endedEvent;
         m_clock->stop();
+        m_clock->setCurrentTime(0);
         m_timeupdateTimer.stop();
         break;
     case PLAYING:
