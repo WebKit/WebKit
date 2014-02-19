@@ -1,3 +1,9 @@
+2014-02-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Another Windows update to quiet the bots.
+
+        * platform/win/TestExpectations: Add more flakes and pass lint-test-expectations.
+
 2014-02-19  Alexey Proskuryakov  <ap@apple.com>
 
         media/controls-styling-strict.html is flaky
