@@ -78,7 +78,7 @@ if X86_64 or ARM64 or C_LOOP
 const maxFrameExtentForSlowPathCall = 0
 elsif ARM or ARMv7_TRADITIONAL or ARMv7 or SH4
 const maxFrameExtentForSlowPathCall = 24
-elsif X86
+elsif X86 or X86_WIN
 const maxFrameExtentForSlowPathCall = 40
 elsif MIPS
 const maxFrameExtentForSlowPathCall = 40
@@ -245,7 +245,7 @@ macro preserveCallerPCAndCFR()
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         push lr
         push cfr
-    elsif X86 or X86_64
+    elsif X86 or X86_WIN or X86_64
         push cfr
     elsif ARM64
         pushLRAndFP
@@ -260,7 +260,7 @@ macro restoreCallerPCAndCFR()
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         pop cfr
         pop lr
-    elsif X86 or X86_64
+    elsif X86 or X86_WIN or X86_64
         pop cfr
     elsif ARM64
         popLRAndFP
@@ -271,7 +271,7 @@ macro preserveReturnAddressAfterCall(destinationRegister)
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or MIPS or SH4
         # In C_LOOP case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
-    elsif X86 or X86_64
+    elsif X86 or X86_WIN or X86_64
         pop destinationRegister
     else
         error
@@ -282,7 +282,7 @@ macro restoreReturnAddressBeforeReturn(sourceRegister)
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or MIPS or SH4
         # In C_LOOP case, we're only restoring the bytecode vPC.
         move sourceRegister, lr
-    elsif X86 or X86_64
+    elsif X86 or X86_WIN or X86_64
         push sourceRegister
     else
         error
@@ -290,7 +290,7 @@ macro restoreReturnAddressBeforeReturn(sourceRegister)
 end
 
 macro functionPrologue()
-    if X86 or X86_64
+    if X86 or X86_WIN or X86_64
         push cfr
     elsif ARM64
         pushLRAndFP
@@ -302,7 +302,7 @@ macro functionPrologue()
 end
 
 macro functionEpilogue()
-    if X86 or X86_64
+    if X86 or X86_WIN or X86_64
         pop cfr
     elsif ARM64
         popLRAndFP
@@ -316,7 +316,7 @@ macro callToJavaScriptPrologue()
     if X86_64
         push cfr
         push t0
-    elsif X86
+    elsif X86 or X86_WIN
         push cfr
     elsif ARM64
         pushLRAndFP
@@ -327,6 +327,15 @@ macro callToJavaScriptPrologue()
     pushCalleeSaves
     if X86
         subp 12, sp
+    elsif X86_WIN
+        subp 16, sp
+        move sp, t4
+        move t4, t0
+        move t4, t2
+        andp 0xf, t2
+        andp 0xfffffff0, t0
+        move t0, sp
+        storep t4, [sp]
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL
         subp 4, sp
         move sp, t4
@@ -348,6 +357,10 @@ macro callToJavaScriptEpilogue()
 
     if X86
         addp 12, sp
+    elsif X86_WIN
+        pop t4
+        move t4, sp
+        addp 16, sp
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL
         pop t4
         move t4, sp
@@ -358,7 +371,7 @@ macro callToJavaScriptEpilogue()
     if X86_64
         pop t2
         pop cfr
-    elsif X86
+    elsif X86 or X86_WIN
         pop cfr
     elsif ARM64
         popLRAndFP
@@ -618,8 +631,6 @@ end
 # stub to call into JavaScript or Native functions
 # EncodedJSValue callToJavaScript(void* code, ExecState** vmTopCallFrame, ProtoCallFrame* protoFrame)
 # EncodedJSValue callToNativeFunction(void* code, ExecState** vmTopCallFrame, ProtoCallFrame* protoFrame)
-# Note, if these stubs or one of their related macros are changed, make the
-# equivalent changes in jit/JITStubsX86.h and/or jit/JITStubsMSVC64.asm
 
 if C_LOOP
 _llint_call_to_javascript:
@@ -645,7 +656,7 @@ _sanitizeStackForVMImpl:
         const vm = t4
         const address = t1
         const zeroValue = t0
-    elsif X86
+    elsif X86 or X86_WIN
         const vm = t2
         const address = t1
         const zeroValue = t0
@@ -655,7 +666,7 @@ _sanitizeStackForVMImpl:
         const zeroValue = t2
     end
 
-    if X86
+    if X86 or X86_WIN
         loadp 4[sp], vm
     end
 

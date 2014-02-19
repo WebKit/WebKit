@@ -48,10 +48,16 @@
 
 #define OFFLINE_ASM_C_LOOP 0
 
-#if CPU(X86)
+#if CPU(X86) && !PLATFORM(WIN)
 #define OFFLINE_ASM_X86 1
 #else
 #define OFFLINE_ASM_X86 0
+#endif
+
+#if CPU(X86) && PLATFORM(WIN)
+#define OFFLINE_ASM_X86_WIN 1
+#else
+#define OFFLINE_ASM_X86_WIN 0
 #endif
 
 #ifdef __ARM_ARCH_7S__

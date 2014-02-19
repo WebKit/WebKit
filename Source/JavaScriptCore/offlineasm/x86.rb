@@ -28,6 +28,8 @@ def isX64
     case $activeBackend
     when "X86"
         false
+    when "X86_WIN"
+        false
     when "X86_64"
         true
     else
@@ -38,6 +40,8 @@ end
 def useX87
     case $activeBackend
     when "X86"
+        true
+    when "X86_WIN"
         true
     when "X86_64"
         false
@@ -97,6 +101,8 @@ def getSizeString(kind)
         size = "dword"
     when :ptr
         size = "dword"
+    when :double
+        size = "qword"
     else
         raise
     end
@@ -408,7 +414,11 @@ class BaseIndex
     end
     
     def x86Operand(kind)
-        x86AddressOperand(:ptr)
+        if !isIntelSyntax || kind != :double
+            x86AddressOperand(:ptr)
+        else
+            "#{getSizeString(kind)}[#{offset.value} + #{base.x86Operand(:ptr)} + #{index.x86Operand(:ptr)} * #{scale}]"
+        end
     end
 
     def x86CallOperand(kind)
@@ -807,6 +817,11 @@ class Instruction
 
     def lowerX86
         raise unless $activeBackend == "X86"
+        lowerX86Common
+    end
+
+    def lowerX86_WIN
+        raise unless $activeBackend == "X86_WIN" 
         lowerX86Common
     end
     
@@ -1430,7 +1445,7 @@ class Instruction
                 sp = RegisterID.new(nil, "sp")
                 $asm.puts "mov#{x86Suffix(:int)} #{orderOperands(operands[0].x86Operand(:int), offsetRegister(-8, sp.x86Operand(:ptr)))}"
                 $asm.puts "mov#{x86Suffix(:int)} #{orderOperands(operands[1].x86Operand(:int), offsetRegister(-4, sp.x86Operand(:ptr)))}"
-                $asm.puts "fld#{x86Suffix(:ptr)} #{getSizeString(:ptr)}#{offsetRegister(-8, sp.x86Operand(:ptr))}"
+                $asm.puts "fld#{x86Suffix(:ptr)} #{getSizeString(:double)}#{offsetRegister(-8, sp.x86Operand(:ptr))}"
                 $asm.puts "fstp #{operands[2].x87Operand(1)}"
             else
                 $asm.puts "movd #{operands[0].x86Operand(:int)}, #{operands[2].x86Operand(:double)}"
@@ -1442,7 +1457,7 @@ class Instruction
             if useX87
                 sp = RegisterID.new(nil, "sp")
                 if (operands[0].x87DefaultStackPosition == 0)
-                    $asm.puts "fst#{x86Suffix(:ptr)} #{getSizeString(:ptr)}#{offsetRegister(-8, sp.x86Operand(:ptr))}"
+                    $asm.puts "fst#{x86Suffix(:ptr)} #{getSizeString(:double)}#{offsetRegister(-8, sp.x86Operand(:ptr))}"
                 else
                     $asm.puts "fld #{operands[0].x87Operand(0)}"
                     $asm.puts "fstpl -8(#{sp.x86Operand(:ptr)})"

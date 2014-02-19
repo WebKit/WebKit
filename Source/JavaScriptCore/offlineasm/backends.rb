@@ -33,6 +33,7 @@ require "cloop"
 BACKENDS =
     [
      "X86",
+     "X86_WIN",
      "X86_64",
      "ARM",
      "ARMv7",
@@ -51,6 +52,7 @@ BACKENDS =
 WORKING_BACKENDS =
     [
      "X86",
+     "X86_WIN",
      "X86_64",
      "ARM",
      "ARMv7",

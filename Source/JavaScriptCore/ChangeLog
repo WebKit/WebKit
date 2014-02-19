@@ -1,3 +1,19 @@
+2014-02-19  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win][LLINT] Incorrect stack alignment.
+        https://bugs.webkit.org/show_bug.cgi?id=129045
+
+        Reviewed by Michael Saboff.
+
+        LLINT expects the stack to be 16 byte aligned, but with MSVC it is not.
+        To align the stack, a new backend, X86_WIN, is created.
+
+        * llint/LLIntOfflineAsmConfig.h: Use X86_WIN backend on Windows.
+        * llint/LowLevelInterpreter.asm: Align stack to 16 byte boundaries. Otherwise, use same implementation for X86_WIN as for X86.
+        * llint/LowLevelInterpreter32_64.asm: Adjust stack offset to retrieve function parameters now that the stack is aligned.
+        * offlineasm/backends.rb: Added X86_WIN backend.
+        * offlineasm/x86.rb: Fix crash caused by incorrect assembly code for double types.
+
 2014-02-19  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         ASSERTION FAILED: (year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0) in WTF::dateToDaysFrom1970
