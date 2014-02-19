@@ -1,3 +1,19 @@
+2014-02-19  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] REGRESSION (r162710): Open tab urls not restored after switching to new Safari build
+        https://bugs.webkit.org/show_bug.cgi?id=128536
+        <rdar://problem/15911839>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::extractBackForwardListEntriesFromArray):
+        Don't fail to extract an entry if it doesn't have a snapshot UUID.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        It turns out that this was the wrong version to bump, and we don't support
+        reading different versions of the session state data.
+
 2014-02-19  Brady Eidson  <beidson@apple.com>
 
         Add FeatureDefines for image controls

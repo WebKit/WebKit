@@ -311,12 +311,6 @@ static bool extractBackForwardListEntriesFromArray(CFArrayRef cfEntries, BackFor
             return false;
         }
 
-        CFStringRef snapshotUUID = (CFStringRef)CFDictionaryGetValue(entryDictionary, sessionHistoryEntrySnapshotUUIDKey);
-        if (!snapshotUUID || CFGetTypeID(snapshotUUID) != CFStringGetTypeID()) {
-            LOG(SessionState, "WebBackForwardList entry at index %i does not have a valid snapshot UUID", (int)i);
-            return false;
-        }
-
         CFDataRef backForwardData = (CFDataRef)CFDictionaryGetValue(entryDictionary, sessionHistoryEntryDataKey);
         if (!backForwardData || CFGetTypeID(backForwardData) != CFDataGetTypeID()) {
             LOG(SessionState, "WebBackForwardList entry at index %i does not have back/forward data", (int)i);
@@ -324,7 +318,11 @@ static bool extractBackForwardListEntriesFromArray(CFArrayRef cfEntries, BackFor
         }
 
         auto item = WebBackForwardListItem::create(originalURL, entryURL, entryTitle, CFDataGetBytePtr(backForwardData), CFDataGetLength(backForwardData), generateWebBackForwardItemID());
-        item->setSnapshotUUID(snapshotUUID);
+
+        CFStringRef snapshotUUID = (CFStringRef)CFDictionaryGetValue(entryDictionary, sessionHistoryEntrySnapshotUUIDKey);
+        if (snapshotUUID && CFGetTypeID(snapshotUUID) == CFStringGetTypeID())
+            item->setSnapshotUUID(snapshotUUID);
+
         entries.append(item);
     }
 
