@@ -1,3 +1,10 @@
+2014-02-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed Windows test gardening.
+
+        * platform/win/TestExpectations: Re-enable the many tests that actually pass on Windows. Mark tests
+        using current syntax so we can see when tests start passing. Identify a few flaky tests.
+
 2014-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         border-box clip-paths jump around when outline changes
