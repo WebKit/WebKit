@@ -62,7 +62,7 @@ struct NetworkProcessCreationParameters {
     Vector<String> urlSchemesRegisteredForCustomProtocols;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     String parentProcessName;
     String uiProcessBundleIdentifier;
     uint64_t nsURLCacheMemoryCapacity;

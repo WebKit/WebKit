@@ -1,3 +1,17 @@
+2014-02-18  Dan Bernstein  <mitz@apple.com>
+
+        PLATFORM(MAC) is true when building for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129025
+
+        Reviewed by Mark Rowe.
+
+        * Shared/Network/NetworkProcessCreationParameters.cpp: Changed PLATFORM(MAC) to
+        PLATFORM(COCOA) now that the former does not include iOS.
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h: Ditto.
+        * WebKit2Prefix.h: Ditto.
+
 2014-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up WKContentView initialization

@@ -46,7 +46,7 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
 #if ENABLE(CUSTOM_PROTOCOLS)
     encoder << urlSchemesRegisteredForCustomProtocols;
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     encoder << parentProcessName;
     encoder << uiProcessBundleIdentifier;
     encoder << nsURLCacheMemoryCapacity;
@@ -79,7 +79,7 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
     if (!decoder.decode(result.urlSchemesRegisteredForCustomProtocols))
         return false;
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (!decoder.decode(result.parentProcessName))
         return false;
     if (!decoder.decode(result.uiProcessBundleIdentifier))

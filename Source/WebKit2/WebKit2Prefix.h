@@ -34,7 +34,7 @@
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #if !PLATFORM(IOS)
 #define ENABLE_WEB_PROCESS_SANDBOX 1

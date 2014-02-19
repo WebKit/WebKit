@@ -1,3 +1,13 @@
+2014-02-18  Dan Bernstein  <mitz@apple.com>
+
+        PLATFORM(MAC) is true when building for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129025
+
+        Reviewed by Mark Rowe.
+
+        * wtf/Platform.h: Changed to define WTF_PLATFORM_MAC only on when building for OS X (but
+        still not when WTF_PLATFORM_GTK or WTF_PLATFORM_EFL are defined).
+
 2014-02-17  Gavin Barraclough  <barraclough@apple.com>
 
         Add fast mapping from StringImpl to JSString

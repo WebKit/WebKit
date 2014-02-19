@@ -1,3 +1,13 @@
+2014-02-18  Dan Bernstein  <mitz@apple.com>
+
+        PLATFORM(MAC) is true when building for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129025
+
+        Reviewed by Mark Rowe.
+
+        * editing/Editor.cpp: Changed PLATFORM(MAC) to PLATFORM(COCOA) now that the former does not
+        include iOS.
+
 2014-02-17  Gavin Barraclough  <barraclough@apple.com>
 
         Add fast mapping from StringImpl to JSString

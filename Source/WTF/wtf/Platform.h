@@ -408,28 +408,27 @@
 /* PLATFORM(EFL) */
 /* PLATFORM(GTK) */
 /* PLATFORM(MAC) */
+/* PLATFORM(IOS) */
+/* PLATFORM(IOS_SIMULATOR) */
 /* PLATFORM(WIN) */
 #if defined(BUILDING_EFL__)
 #define WTF_PLATFORM_EFL 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
-#elif OS(DARWIN)
-#define WTF_PLATFORM_COCOA 1
+#elif OS(MAC_OS_X)
 #define WTF_PLATFORM_MAC 1
+#elif OS(IOS)
+#define WTF_PLATFORM_IOS 1
+#if defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR
+#define WTF_PLATFORM_IOS_SIMULATOR 1
+#endif
 #elif OS(WINDOWS)
 #define WTF_PLATFORM_WIN 1
 #endif
 
-/* PLATFORM(IOS) */
-/* FIXME: this is sometimes used as an OS switch and sometimes for higher-level things */
-#if (defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)
-#define WTF_PLATFORM_IOS 1
-#endif
-
-/* PLATFORM(IOS_SIMULATOR) */
-#if defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR
-#define WTF_PLATFORM_IOS 1
-#define WTF_PLATFORM_IOS_SIMULATOR 1
+/* PLATFORM(COCOA) */
+#if PLATFORM(MAC) || PLATFORM(IOS)
+#define WTF_PLATFORM_COCOA 1
 #endif
 
 /* Graphics engines */
