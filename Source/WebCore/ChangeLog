@@ -1,3 +1,17 @@
+2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        TextFieldInputType::handleBeforeTextInsertedEvent shouldn't use plainText
+        https://bugs.webkit.org/show_bug.cgi?id=128953
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't use FrameSelection's toNormalizedRange and plainText. Instead, use the cached selection start and selection
+        end to extract the selected text. The caches are updated inside FrameSelection::setSelection whenever selection
+        is inside a text form control via HTMLTextFormControlElement::selectionChanged.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent):
+
 2014-02-18  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
 
         Bottom/right sticky positioning don't correctly handle scroll containers with padding

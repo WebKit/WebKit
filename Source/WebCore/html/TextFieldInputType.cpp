@@ -374,14 +374,19 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* 
     // We use RenderTextControlSingleLine::text() instead of InputElement::value()
     // because they can be mismatched by sanitizeValue() in
     // HTMLInputElement::subtreeHasChanged() in some cases.
-    unsigned oldLength = numGraphemeClusters(element().innerTextValue());
+    String innerText = element().innerTextValue();
+    unsigned oldLength = numGraphemeClusters(innerText);
 
     // selectionLength represents the selection length of this text field to be
     // removed by this insertion.
     // If the text field has no focus, we don't need to take account of the
     // selection length. The selection is the source of text drag-and-drop in
     // that case, and nothing in the text field will be removed.
-    unsigned selectionLength = element().focused() ? numGraphemeClusters(plainText(element().document().frame()->selection().selection().toNormalizedRange().get())) : 0;
+    unsigned selectionLength = 0;
+    if (element().focused()) {
+        ASSERT(enclosingTextFormControl(element().document().frame()->selection().selection().start()) == &element());
+        selectionLength = numGraphemeClusters(innerText.substring(element().selectionStart(), element().selectionEnd()));
+    }
     ASSERT(oldLength >= selectionLength);
 
     // Selected characters will be removed by the next text event.
