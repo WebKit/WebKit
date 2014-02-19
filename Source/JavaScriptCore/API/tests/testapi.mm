@@ -474,6 +474,12 @@ void testObjectiveCAPI()
     NSLog(@"Testing Objective-C API");
 
     @autoreleasepool {
+        JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
+        JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
+        [context evaluateScript:@"bad"];
+    }
+
+    @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
         JSValue *result = [context evaluateScript:@"2 + 2"];
         checkResult(@"2 + 2", [result isNumber] && [result toInt32] == 4);

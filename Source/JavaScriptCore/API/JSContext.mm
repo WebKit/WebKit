@@ -80,6 +80,7 @@
 
 - (void)dealloc
 {
+    m_exception.clear();
     [m_wrapperMap release];
     JSGlobalContextRelease(m_context);
     [m_virtualMachine release];
