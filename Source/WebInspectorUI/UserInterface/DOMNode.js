@@ -445,11 +445,14 @@ WebInspector.DOMNode.prototype = {
     {
         function accessibilityPropertiesCallback(error, accessibilityProperties)
         {
-            if (!error && callback) {
+            if (!error && callback && accessibilityProperties) {
                 callback({
+                    exists: accessibilityProperties.exists,
                     ignored: accessibilityProperties.ignored,
-                    role: accessibilityProperties.role,
-                    label: accessibilityProperties.label
+                    invalid: accessibilityProperties.invalid,
+                    label: accessibilityProperties.label,
+                    required: accessibilityProperties.required,
+                    role: accessibilityProperties.role
                 });
             }
         }

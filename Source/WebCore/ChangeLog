@@ -1,3 +1,18 @@
+2014-02-18  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AX: more properties: exists, required, and invalid (exists was previously combined with ignored)
+        https://bugs.webkit.org/show_bug.cgi?id=128504
+
+        Reviewed by Timothy Hatcher.
+
+        Additions to the accessibility node inspector: exists, required, invalid.
+
+        Test: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/protocol/DOM.json:
+
 2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Commit the code change supposed to happen in r164320.

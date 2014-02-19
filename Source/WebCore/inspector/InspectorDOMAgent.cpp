@@ -1414,27 +1414,40 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
 
+    bool exists = false;
     bool ignored = true;
-
-    // Computed ARIA Role
+    String invalid = "false"; // String values: true, false, spelling, grammar, etc.
+    String label; // FIXME: Waiting on http://webkit.org/b/121134
+    bool required = false;
     String role;
-
-    // Computed Label
-    // FIXME: Waiting on http://webkit.org/b/121134
-    String label;
+    bool supportsRequired = false;
 
     if (AXObjectCache* axObjectCache = node->document().axObjectCache()) {
         if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node)) {
+            exists = true;
             ignored = axObject->accessibilityIsIgnored();
+            invalid = axObject->invalidStatus();
             role = axObject->computedRoleString();
+            supportsRequired = axObject->supportsRequiredAttribute();
+            if (supportsRequired)
+                required = axObject->isRequired();
         }
     }
     
     RefPtr<Inspector::TypeBuilder::DOM::AccessibilityProperties> value = Inspector::TypeBuilder::DOM::AccessibilityProperties::create()
-        .setIgnored(ignored)
-        .setRole(role)
+        .setExists(exists)
         .setLabel(label)
+        .setRole(role)
         .setNodeId(pushNodePathToFrontend(node));
+
+    if (exists) {
+        if (ignored)
+            value->setIgnored(ignored);
+        if (invalid != "false")
+            value->setInvalid(invalid);
+        if (supportsRequired)
+            value->setRequired(required);
+    }
 
     return value.release();
 }

@@ -52,8 +52,11 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
     var eventListenersSection = new WebInspector.DetailsSection("dom-node-event-listeners", WebInspector.UIString("Event Listeners"), [this._eventListenersSectionGroup]);    
 
     this._accessibilityEmptyRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Accessibility Information"));
-    this._accessibilityNodeComputedLabelRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Label"));
-    this._accessibilityNodeComputedRoleRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Role"));
+    this._accessibilityNodeIgnoredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Ignored"));
+    this._accessibilityNodeInvalidRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Invalid"));
+    this._accessibilityNodeLabelRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Label"));
+    this._accessibilityNodeRequiredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Required"));
+    this._accessibilityNodeRoleRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Role"));
     
     this._accessibilityGroup = new WebInspector.DetailsSectionGroup([this._accessibilityEmptyRow]);
     var accessibilitySection = new WebInspector.DetailsSection("dom-node-accessibility", WebInspector.UIString("Accessibility"), [this._accessibilityGroup]);    
@@ -243,9 +246,25 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
             if (this.domNode !== domNode)
                 return;
 
-            if (accessibilityProperties && !accessibilityProperties.ignored) {
-                var role = accessibilityProperties.role;
+            if (accessibilityProperties && accessibilityProperties.exists) {
+                
+                var ignored = accessibilityProperties.ignored ? WebInspector.UIString("Yes") : "";
+                var invalid = accessibilityProperties.invalid ? accessibilityProperties.invalid : "";
 
+                // FIXME: label will always come back as empty. Blocked by http://webkit.org/b/121134
+                var label = accessibilityProperties.label;
+                if (label && label !== domNode.getAttribute("aria-label"))
+                    label = WebInspector.UIString("%s (computed)").format(label);
+
+                var required = "";
+                if (accessibilityProperties.required !== undefined) {
+                    if (accessibilityProperties.required)
+                        required = WebInspector.UIString("Yes");
+                    else
+                        required = WebInspector.UIString("No");
+                }
+
+                var role = accessibilityProperties.role;
                 if (role === "" || role === "unknown")
                     role = WebInspector.UIString("No exact ARIA role match.");
                 else if (role) {
@@ -255,16 +274,22 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                         role = WebInspector.UIString("%s (computed)").format(role);
                 }
                 
-                // FIXME: label will always come back as empty. Blocked by http://webkit.org/b/121134
-                var label = accessibilityProperties.label;
-                if (label && label !== domNode.getAttribute("aria-label"))
-                    label = WebInspector.UIString("%s (computed)").format(label);
+                this._accessibilityNodeIgnoredRow.value = ignored;
+                this._accessibilityNodeInvalidRow.value = invalid;
+                this._accessibilityNodeLabelRow.value = label;
+                this._accessibilityNodeRequiredRow.value = required;
+                this._accessibilityNodeRoleRow.value = role;
 
-                this._accessibilityNodeComputedLabelRow.value = label;
-                this._accessibilityNodeComputedRoleRow.value = role;
+                this._accessibilityGroup.rows = [
+                    this._accessibilityNodeIgnoredRow,
+                    this._accessibilityNodeRoleRow,
+                    this._accessibilityNodeLabelRow,
+                    this._accessibilityNodeRequiredRow,
+                    this._accessibilityNodeInvalidRow
+                ];
 
-                this._accessibilityGroup.rows = [this._accessibilityNodeComputedLabelRow, this._accessibilityNodeComputedRoleRow];
                 this._accessibilityEmptyRow.hideEmptyMessage();
+
             } else {
                 this._accessibilityGroup.rows = [this._accessibilityEmptyRow];
                 this._accessibilityEmptyRow.showEmptyMessage();

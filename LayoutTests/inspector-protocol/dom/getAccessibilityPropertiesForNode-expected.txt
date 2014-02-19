@@ -1,0 +1,94 @@
+Checking Web Inspector protocol for the Accessibility Node Inspector.
+
+           
+Total elements to be tested: 15.
+
+<img src="./404.gif" alt="x">
+    exists: true
+    label: 
+    role: img
+
+<img src="./404.gif" alt="">
+    exists: true
+    label: 
+    role: img
+    ignored: true
+
+<img src="./404.gif">
+    exists: true
+    label: 
+    role: img
+    ignored: true
+
+<input aria-invalid="fake-value-will-eval-to-true">
+    exists: true
+    label: 
+    role: 
+    invalid: true
+    required: false
+
+<input aria-invalid="spelling">
+    exists: true
+    label: 
+    role: 
+    invalid: spelling
+    required: false
+
+<input aria-required="true">
+    exists: true
+    label: 
+    role: 
+    required: true
+
+<input required="">
+    exists: true
+    label: 
+    role: 
+    required: true
+
+<input type="button">
+    exists: true
+    label: 
+    role: button
+
+<button></button>
+    exists: true
+    label: 
+    role: button
+
+<div role="button" tabindex="0"></div>
+    exists: true
+    label: 
+    role: button
+
+<span></span>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+
+<div></div>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+
+<div role="presentation"><div></div></div>
+    exists: true
+    label: 
+    role: presentation
+    ignored: true
+
+<div><div></div></div>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+
+<script></script>
+    exists: false
+    label: 
+    role: 
+
+
+

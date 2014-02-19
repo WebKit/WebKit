@@ -1,3 +1,15 @@
+2014-02-18  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AX: more properties: exists, required, and invalid (exists was previously combined with ignored)
+        https://bugs.webkit.org/show_bug.cgi?id=128504
+
+        Reviewed by Timothy Hatcher.
+
+        New files test the inspector protocol for DOM.getAccessibilityPropertiesForNode
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: Added.
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html: Added.
+
 2014-02-18  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
 
         Bottom/right sticky positioning don't correctly handle scroll containers with padding

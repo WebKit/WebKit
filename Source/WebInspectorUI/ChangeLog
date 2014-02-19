@@ -1,3 +1,16 @@
+2014-02-18  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AX: more properties: exists, required, and invalid (exists was previously combined with ignored)
+        https://bugs.webkit.org/show_bug.cgi?id=128504
+
+        Reviewed by Timothy Hatcher.
+
+        Additions to the accessibility node inspector: exists, required, invalid.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/DOMNode.js:
+        * UserInterface/DOMNodeDetailsSidebarPanel.js:
+
 2014-02-18  Antoine Quint  <graouts@webkit.org>
 
         Web Inspector: editing a color in the Styles sidebar using the color picker only works once for a given color
