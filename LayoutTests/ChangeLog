@@ -1,5 +1,11 @@
 2014-02-18  Brent Fulgham  <bfulgham@apple.com>
 
+        Windows gardening: Add annotations for Debug case.
+
+        * platform/win/TestExpectations:
+
+2014-02-18  Brent Fulgham  <bfulgham@apple.com>
+
         More Windows test gardening to get the bots green.
 
         * platform/win/TestExpectations: Mark some flaky tests, and some passes to reduce report output.
