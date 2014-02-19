@@ -1,5 +1,16 @@
 2014-02-18  Tim Horton  <timothy_horton@apple.com>
 
+        32-bit build fix after r164337
+
+        * UIProcess/API/Cocoa/WKThumbnailView.mm:
+        Address a review comment. We'll get this for free.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::activeView):
+        Build fix.
+
+2014-02-18  Tim Horton  <timothy_horton@apple.com>
+
         Add a way to efficiently thumbnail WKViews
         https://bugs.webkit.org/show_bug.cgi?id=128831
         <rdar://problem/15669655>

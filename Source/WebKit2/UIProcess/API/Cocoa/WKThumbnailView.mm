@@ -45,7 +45,6 @@ using namespace WebKit;
 @implementation WKThumbnailView {
     RetainPtr<WKView> _wkView;
     WebPageProxy* _webPageProxy;
-    double _scale;
 
     BOOL _originalMayStartMediaWhenInWindow;
     BOOL _originalSourceViewIsInWindow;

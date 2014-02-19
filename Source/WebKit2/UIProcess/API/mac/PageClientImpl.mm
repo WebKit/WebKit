@@ -169,7 +169,7 @@ IntSize PageClientImpl::viewSize()
 
 NSView *PageClientImpl::activeView() const
 {
-    return m_wkView._thumbnailView ? m_wkView._thumbnailView : m_wkView;
+    return m_wkView._thumbnailView ? (NSView *)m_wkView._thumbnailView : (NSView *)m_wkView;
 }
 
 bool PageClientImpl::isViewWindowActive()
