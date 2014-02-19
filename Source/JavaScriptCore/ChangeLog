@@ -1,5 +1,12 @@
 2014-02-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, roll out http://trac.webkit.org/changeset/164348 because it broke some
+        builds.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2014-02-18  Filip Pizlo  <fpizlo@apple.com>
+
         Don't call LLVMInitializeNativeTarget() because it can be all messed up if you cross-compile LLVM
         https://bugs.webkit.org/show_bug.cgi?id=129020
 
