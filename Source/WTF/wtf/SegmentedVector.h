@@ -148,13 +148,13 @@ namespace WTF {
             return at(size() - 1);
         }
 
-        template <typename U> void append(const U& value)
+        template <typename U> void append(U&& value)
         {
             ++m_size;
 
             if (!segmentExistsFor(m_size - 1))
                 m_segments.append(new Segment);
-            segmentFor(m_size - 1)->uncheckedAppend(value);
+            segmentFor(m_size - 1)->uncheckedAppend(std::forward<U>(value));
         }
 
         T& alloc()
