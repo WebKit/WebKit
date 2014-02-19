@@ -43,7 +43,6 @@ function InspectorBackendClass()
 
     this.dumpInspectorTimeStats = false;
     this.dumpInspectorProtocolMessages = false;
-    this._initialized = false;
 }
 
 InspectorBackendClass.prototype = {
@@ -78,8 +77,6 @@ InspectorBackendClass.prototype = {
         agent[domainAndMethod[1]]["invoke"] = this._invoke.bind(this, method, signature);
         agent[domainAndMethod[1]]["supports"] = this._supports.bind(this, method, signature);
         this._replyArgs[method] = replyArgs;
-
-        this._initialized = true;
     },
 
     registerEnum: function(type, values)
@@ -88,15 +85,11 @@ InspectorBackendClass.prototype = {
         var agent = this._getAgent(domainAndMethod[0]);
 
         agent[domainAndMethod[1]] = values;
-
-        this._initialized = true;
     },
 
     registerEvent: function(eventName, params)
     {
         this._eventArgs[eventName] = params;
-
-        this._initialized = true;
     },
 
     _invoke: function(method, signature, args, callback)
