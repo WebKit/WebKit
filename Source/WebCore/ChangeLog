@@ -1,3 +1,25 @@
+2014-02-19  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Updating RTCConfiguration to match WebRTC editor's draft of 01/27/2014
+        https://bugs.webkit.org/show_bug.cgi?id=129000
+
+        Reviewed by Eric Carlson.
+
+        Adding RTCIceTransports and RTCIdentityOption to RTCConfiguration object.
+
+        Existing test was updated.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::parseConfiguration): Taking into account iceTransports and requestIdentity
+        parameters.
+        * platform/mediastream/RTCConfiguration.h:
+        (WebCore::RTCConfiguration::iceTransports): Added.
+        (WebCore::RTCConfiguration::setIceTransports): Added.
+        (WebCore::RTCConfiguration::requestIdentity): Added.
+        (WebCore::RTCConfiguration::setRequestIdentity): Added.
+        (WebCore::RTCConfiguration::RTCConfiguration): Initialize iceTransports and requestIdentity with the default
+        values.
+
 2014-02-19  Antti Koivisto  <antti@apple.com>
 
         Don't call to willBeDeletedFrom(Document&) when destructing document

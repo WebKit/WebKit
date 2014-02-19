@@ -74,11 +74,29 @@ public:
     void appendServer(PassRefPtr<RTCIceServer> server) { m_servers.append(server); }
     size_t numberOfServers() { return m_servers.size(); }
     RTCIceServer* server(size_t index) { return m_servers[index].get(); }
+    const String& iceTransports() const { return m_iceTransports; }
+    void setIceTransports(const String& iceTransports)
+    {
+        if (iceTransports == "none" || iceTransports == "relay" || iceTransports == "all")
+            m_iceTransports = iceTransports;
+    }
+    const String& requestIdentity() const { return m_requestIdentity; }
+    void setRequestIdentity(const String& requestIdentity)
+    {
+        if (requestIdentity == "yes" || requestIdentity == "no" || requestIdentity == "ifconfigured")
+            m_requestIdentity = requestIdentity;
+    }
 
  private:
-    RTCConfiguration() { }
+    RTCConfiguration()
+        : m_iceTransports("all")
+        , m_requestIdentity("ifconfigured")
+    {
+    }
 
     Vector<RefPtr<RTCIceServer>> m_servers;
+    String m_iceTransports;
+    String m_requestIdentity;
 };
 
 } // namespace WebCore

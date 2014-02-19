@@ -1,3 +1,15 @@
+2014-02-19  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Updating RTCConfiguration to match WebRTC editor's draft of 01/27/2014
+        https://bugs.webkit.org/show_bug.cgi?id=129000
+
+        Adding RTCIceTransports and RTCIdentityOption to RTCConfiguration object.
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-expected.txt:
+        * fast/mediastream/RTCPeerConnection.html:
+
 2014-02-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Dedicated worker crash caused by global DFG worklists + GC

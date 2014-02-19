@@ -30,6 +30,26 @@
             shouldThrow("new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'},{url:'stun:bar.com', username:'user2', credential:'x'}]}, null);")
 
             shouldNotThrow("new webkitRTCPeerConnection({iceServers:[]});");
+
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'none'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'relay'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'all'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], requestIdentity:'yes'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], requestIdentity:'no'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], requestIdentity:'ifconfigured'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'foo', requestIdentity:'bar'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'none', requestIdentity:'bar'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'foo', requestIdentity:'no'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'none', requestIdentity:'yes'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'none', requestIdentity:'no'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'none', requestIdentity:'ifconfigured'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'relay', requestIdentity:'yes'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'relay', requestIdentity:'no'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'relay', requestIdentity:'ifconfigured'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'all', requestIdentity:'yes'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'all', requestIdentity:'no'});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[], iceTransports:'all', requestIdentity:'ifconfigured'});");
+
             shouldNotThrow("new webkitRTCPeerConnection({iceServers:[]}, {});");
             shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'stun:foo.com'}]}, {});");
             shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', credential:'x'}]}, {});");
@@ -37,6 +57,12 @@
             shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'stun:foo.com', username:'user'}]}, {});");
             shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'}]}, {});");
             shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'},{url:'stun:bar.com', username:'user2', credential:'x'}]}, {});");
+
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', credential:'x'}], iceTransports:'all', requestIdentity:'ifconfigured'}, {});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', credential:'x'},{url:'stun:bar.com'}], iceTransports:'all', requestIdentity:'ifconfigured'}, {});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'stun:foo.com', username:'user'}], iceTransports:'all', requestIdentity:'ifconfigured'}, {});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'}], iceTransports:'all', requestIdentity:'ifconfigured'}, {});");
+            shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'},{url:'stun:bar.com', username:'user2', credential:'x'}], iceTransports:'all', requestIdentity:'ifconfigured'}, {});");
 
             shouldThrow("new webkitRTCPeerConnection({fooServers:[]}, {});");
             shouldThrow("new webkitRTCPeerConnection({iceServers:true}, {});");

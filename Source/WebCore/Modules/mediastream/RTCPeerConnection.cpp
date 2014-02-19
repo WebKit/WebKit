@@ -85,7 +85,15 @@ PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Diction
         return nullptr;
     }
 
+    String iceTransports;
+    String requestIdentity;
+    configuration.get("iceTransports", iceTransports);
+    configuration.get("requestIdentity", requestIdentity);
+
     RefPtr<RTCConfiguration> rtcConfiguration = RTCConfiguration::create();
+
+    rtcConfiguration->setIceTransports(iceTransports);
+    rtcConfiguration->setRequestIdentity(requestIdentity);
 
     for (size_t i = 0; i < numberOfServers; ++i) {
         Dictionary iceServer;

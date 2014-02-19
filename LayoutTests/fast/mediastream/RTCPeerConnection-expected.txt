@@ -25,6 +25,24 @@ PASS new webkitRTCPeerConnection({iceServers:[{url:'stun:foo.com', username:'use
 PASS new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'}]}, null); threw exception TypeError: Optional constraints argument of RTCPeerConnection must be a valid Dictionary.
 PASS new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'},{url:'stun:bar.com', username:'user2', credential:'x'}]}, null); threw exception TypeError: Optional constraints argument of RTCPeerConnection must be a valid Dictionary.
 PASS new webkitRTCPeerConnection({iceServers:[]}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'none'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'relay'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'all'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], requestIdentity:'yes'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], requestIdentity:'no'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], requestIdentity:'ifconfigured'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'foo', requestIdentity:'bar'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'none', requestIdentity:'bar'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'foo', requestIdentity:'no'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'none', requestIdentity:'yes'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'none', requestIdentity:'no'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'none', requestIdentity:'ifconfigured'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'relay', requestIdentity:'yes'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'relay', requestIdentity:'no'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'relay', requestIdentity:'ifconfigured'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'all', requestIdentity:'yes'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'all', requestIdentity:'no'}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[], iceTransports:'all', requestIdentity:'ifconfigured'}); did not throw exception.
 PASS new webkitRTCPeerConnection({iceServers:[]}, {}); did not throw exception.
 PASS new webkitRTCPeerConnection({iceServers:[{url:'stun:foo.com'}]}, {}); did not throw exception.
 PASS new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', credential:'x'}]}, {}); did not throw exception.
@@ -32,6 +50,11 @@ PASS new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', credential:'x
 PASS new webkitRTCPeerConnection({iceServers:[{url:'stun:foo.com', username:'user'}]}, {}); did not throw exception.
 PASS new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'}]}, {}); did not throw exception.
 PASS new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'},{url:'stun:bar.com', username:'user2', credential:'x'}]}, {}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', credential:'x'}], iceTransports:'all', requestIdentity:'ifconfigured'}, {}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', credential:'x'},{url:'stun:bar.com'}], iceTransports:'all', requestIdentity:'ifconfigured'}, {}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[{url:'stun:foo.com', username:'user'}], iceTransports:'all', requestIdentity:'ifconfigured'}, {}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'}], iceTransports:'all', requestIdentity:'ifconfigured'}, {}); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[{url:'turn:foo.com', username:'user', credential:'x'},{url:'stun:bar.com', username:'user2', credential:'x'}], iceTransports:'all', requestIdentity:'ifconfigured'}, {}); did not throw exception.
 PASS new webkitRTCPeerConnection({fooServers:[]}, {}); threw exception TypeError: Invalid RTCPeerConnection constructor arguments.
 PASS new webkitRTCPeerConnection({iceServers:true}, {}); threw exception TypeError: Invalid RTCPeerConnection constructor arguments.
 PASS new webkitRTCPeerConnection({iceServers:[1, 2, 3]}, {}); threw exception TypeError: Invalid RTCPeerConnection constructor arguments.
