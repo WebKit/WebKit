@@ -1,3 +1,30 @@
+2014-02-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Dedicated worker crash caused by global DFG worklists + GC
+        https://bugs.webkit.org/show_bug.cgi?id=128537
+
+        Reviewed by Filip Pizlo.
+
+        The process-global DFG worklists were causing objects to participate in the garbage collections of VMs 
+        other than the one they were allocated in. This started manifesting in the worker tests because they're 
+        one of the few WebKit tests that do multithreaded JS.
+
+        The fix is to filter out Plans from other VMs during collection.
+
+        * dfg/DFGSafepoint.cpp:
+        (JSC::DFG::Safepoint::vm):
+        * dfg/DFGSafepoint.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::isActiveForVM):
+        (JSC::DFG::Worklist::suspendAllThreads):
+        (JSC::DFG::Worklist::resumeAllThreads):
+        (JSC::DFG::Worklist::visitChildren):
+        * dfg/DFGWorklist.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteAllCompiledCode):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::copyLater):
+
 2014-02-19  Brady Eidson  <beidson@apple.com>
 
         Add FeatureDefines for image controls

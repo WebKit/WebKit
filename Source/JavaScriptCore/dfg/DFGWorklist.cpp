@@ -72,6 +72,16 @@ PassRefPtr<Worklist> Worklist::create(unsigned numberOfThreads)
     return result;
 }
 
+bool Worklist::isActiveForVM(VM& vm) const
+{
+    PlanMap::const_iterator end = m_plans.end();
+    for (PlanMap::const_iterator iter = m_plans.begin(); iter != end; ++iter) {
+        if (&iter->value->vm == &vm)
+            return true;
+    }
+    return false;
+}
+
 void Worklist::enqueue(PassRefPtr<Plan> passedPlan)
 {
     RefPtr<Plan> plan = passedPlan;
@@ -195,6 +205,7 @@ void Worklist::completeAllPlansForVM(VM& vm)
 
 void Worklist::suspendAllThreads()
 {
+    m_suspensionLock.lock();
     for (unsigned i = m_threads.size(); i--;)
         m_threads[i]->m_rightToRun.lock();
 }
@@ -203,18 +214,24 @@ void Worklist::resumeAllThreads()
 {
     for (unsigned i = m_threads.size(); i--;)
         m_threads[i]->m_rightToRun.unlock();
+    m_suspensionLock.unlock();
 }
 
 void Worklist::visitChildren(SlotVisitor& visitor, CodeBlockSet& codeBlocks)
 {
+    VM* vm = visitor.heap()->vm();
     for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
+        Plan* plan = iter->value.get();
+        if (&plan->vm != vm)
+            continue;
         iter->key.visitChildren(codeBlocks);
         iter->value->visitChildren(visitor, codeBlocks);
     }
     
     for (unsigned i = m_threads.size(); i--;) {
         ThreadData* data = m_threads[i].get();
-        if (Safepoint* safepoint = data->m_safepoint)
+        Safepoint* safepoint = data->m_safepoint;
+        if (safepoint && &safepoint->vm() == vm)
             safepoint->visitChildren(visitor);
     }
 }

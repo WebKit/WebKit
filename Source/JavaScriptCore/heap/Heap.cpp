@@ -743,7 +743,7 @@ void Heap::deleteAllCompiledCode()
 #if ENABLE(DFG_JIT)
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
         if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i)) {
-            if (worklist->isActive())
+            if (worklist->isActiveForVM(*vm()))
                 return;
         }
     }

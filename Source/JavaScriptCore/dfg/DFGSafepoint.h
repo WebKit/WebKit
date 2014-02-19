@@ -33,6 +33,7 @@
 namespace JSC {
 
 class SlotVisitor;
+class VM;
 
 namespace DFG {
 
@@ -50,6 +51,8 @@ public:
     
     void visitChildren(SlotVisitor&);
     
+    VM& vm() const;
+
 private:
     Plan& m_plan;
     Vector<Scannable*> m_scannables;

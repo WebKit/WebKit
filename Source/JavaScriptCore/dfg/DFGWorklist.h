@@ -71,7 +71,7 @@ public:
     void suspendAllThreads();
     void resumeAllThreads();
     
-    bool isActive() const { return !!m_plans.size(); }
+    bool isActiveForVM(VM&) const;
     
     void visitChildren(SlotVisitor&, CodeBlockSet&); // Only called on the main thread after suspending all threads.
     
@@ -101,6 +101,8 @@ private:
     // Used to quickly find which plans have been compiled and are ready to
     // be completed.
     Vector<RefPtr<Plan>, 16> m_readyPlans;
+
+    Mutex m_suspensionLock;
     
     mutable Mutex m_lock;
     ThreadCondition m_planEnqueued;

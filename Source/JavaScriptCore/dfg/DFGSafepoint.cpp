@@ -75,6 +75,11 @@ void Safepoint::visitChildren(SlotVisitor& visitor)
         m_scannables[i]->visitChildren(visitor);
 }
 
+VM& Safepoint::vm() const
+{
+    return m_plan.vm;
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

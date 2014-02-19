@@ -1,3 +1,14 @@
+2014-02-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Dedicated worker crash caused by global DFG worklists + GC
+        https://bugs.webkit.org/show_bug.cgi?id=128537
+
+        Reviewed by Filip Pizlo.
+
+        Reenable a previously skipped test.
+
+        * TestExpectations:
+
 2014-02-19  Brent Fulgham  <bfulgham@apple.com>
 
         Windows gardening. Mark more flakes.
