@@ -1,5 +1,19 @@
 2014-02-18  Anders Carlsson  <andersca@apple.com>
 
+        Add more SPI methods to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=129011
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _webProcessIdentifier]):
+        (-[WKWebView _sessionState]):
+        (releaseNSData):
+        (-[WKWebView _restoreFromSessionState:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+2014-02-18  Anders Carlsson  <andersca@apple.com>
+
         Add more new SPI methods
         https://bugs.webkit.org/show_bug.cgi?id=129009
 

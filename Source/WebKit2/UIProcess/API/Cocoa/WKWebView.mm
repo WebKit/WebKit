@@ -36,6 +36,7 @@
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKHistoryDelegatePrivate.h"
+#import "WKNSData.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKPreferencesInternal.h"
@@ -512,6 +513,27 @@
 - (void)_setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
 {
     _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
+}
+
+- (pid_t)_webProcessIdentifier
+{
+    return _page->processIdentifier();
+}
+
+- (NSData *)_sessionState
+{
+    return [wrapper(*_page->sessionStateData(nullptr, nullptr).leakRef()) autorelease];
+}
+
+static void releaseNSData(unsigned char*, const void* data)
+{
+    [(NSData *)data release];
+}
+
+- (void)_restoreFromSessionState:(NSData *)sessionState
+{
+    [sessionState retain];
+    _page->restoreFromSessionStateData(API::Data::createWithoutCopying((const unsigned char*)sessionState.bytes, sessionState.length, releaseNSData, sessionState).get());
 }
 
 static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)

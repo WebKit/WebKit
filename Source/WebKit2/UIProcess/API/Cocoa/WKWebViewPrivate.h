@@ -56,6 +56,11 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 
 @property (copy, setter=_setApplicationNameForUserAgent:) NSString *_applicationNameForUserAgent;
 
+@property (nonatomic, readonly) pid_t _webProcessIdentifier;
+
+@property (readonly) NSData *_sessionState;
+- (void)_restoreFromSessionState:(NSData *)sessionState;
+
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
 
