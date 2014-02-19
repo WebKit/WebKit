@@ -148,13 +148,13 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
             args.at(5).toNumber(exec), 
             args.at(6).toNumber(exec)
         };
-        if (!std::isfinite(doubleArguments[0])
-            || !std::isfinite(doubleArguments[1])
-            || (numArgs >= 3 && !std::isfinite(doubleArguments[2]))
-            || (numArgs >= 4 && !std::isfinite(doubleArguments[3]))
-            || (numArgs >= 5 && !std::isfinite(doubleArguments[4]))
-            || (numArgs >= 6 && !std::isfinite(doubleArguments[5]))
-            || (numArgs >= 7 && !std::isfinite(doubleArguments[6])))
+        if ((!std::isfinite(doubleArguments[0]) || (doubleArguments[0] > INT_MAX) || (doubleArguments[0] < INT_MIN))
+            || (!std::isfinite(doubleArguments[1]) || (doubleArguments[1] > INT_MAX) || (doubleArguments[1] < INT_MIN))
+            || (numArgs >= 3 && (!std::isfinite(doubleArguments[2]) || (doubleArguments[2] > INT_MAX) || (doubleArguments[2] < INT_MIN)))
+            || (numArgs >= 4 && (!std::isfinite(doubleArguments[3]) || (doubleArguments[3] > INT_MAX) || (doubleArguments[3] < INT_MIN)))
+            || (numArgs >= 5 && (!std::isfinite(doubleArguments[4]) || (doubleArguments[4] > INT_MAX) || (doubleArguments[4] < INT_MIN)))
+            || (numArgs >= 6 && (!std::isfinite(doubleArguments[5]) || (doubleArguments[5] > INT_MAX) || (doubleArguments[5] < INT_MIN)))
+            || (numArgs >= 7 && (!std::isfinite(doubleArguments[6]) || (doubleArguments[6] > INT_MAX) || (doubleArguments[6] < INT_MIN))))
             value = QNaN;
         else {
             GregorianDateTime t;
@@ -227,13 +227,13 @@ static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec)
         exec->argument(6).toNumber(exec)
     };
     int n = exec->argumentCount();
-    if (std::isnan(doubleArguments[0])
-        || std::isnan(doubleArguments[1])
-        || (n >= 3 && std::isnan(doubleArguments[2]))
-        || (n >= 4 && std::isnan(doubleArguments[3]))
-        || (n >= 5 && std::isnan(doubleArguments[4]))
-        || (n >= 6 && std::isnan(doubleArguments[5]))
-        || (n >= 7 && std::isnan(doubleArguments[6])))
+    if ((std::isnan(doubleArguments[0]) || (doubleArguments[0] > INT_MAX) || (doubleArguments[0] < INT_MIN))
+        || (std::isnan(doubleArguments[1]) || (doubleArguments[1] > INT_MAX) || (doubleArguments[1] < INT_MIN))
+        || (n >= 3 && (std::isnan(doubleArguments[2]) || (doubleArguments[2] > INT_MAX) || (doubleArguments[2] < INT_MIN)))
+        || (n >= 4 && (std::isnan(doubleArguments[3]) || (doubleArguments[3] > INT_MAX) || (doubleArguments[3] < INT_MIN)))
+        || (n >= 5 && (std::isnan(doubleArguments[4]) || (doubleArguments[4] > INT_MAX) || (doubleArguments[4] < INT_MIN)))
+        || (n >= 6 && (std::isnan(doubleArguments[5]) || (doubleArguments[5] > INT_MAX) || (doubleArguments[5] < INT_MIN)))
+        || (n >= 7 && (std::isnan(doubleArguments[6]) || (doubleArguments[6] > INT_MAX) || (doubleArguments[6] < INT_MIN))))
         return JSValue::encode(jsNaN());
 
     GregorianDateTime t;

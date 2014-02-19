@@ -44,6 +44,8 @@ shouldBe("Number(new Date(new Date(1, 1, 1, 1, 1, Infinity, 1, 1, 1)).getTime() 
 shouldBe("Number(new Date(new Date(1, 1, 1, 1, 1, 1, Infinity, 1, 1)).getTime() - timeZoneOffset)", 'Number.NaN');
 shouldBe("Number(new Date(new Date(1, 1, 1, 1, 1, 1, 1, 1, Infinity)).getTime() - timeZoneOffset)", '-2174770738999');
 
+shouldBe('new Date(6501480442020679337816440, 81696082856817131586190070, 1, 1, 1, 1, 1).getTime()', 'Number.NaN');
+
 // In Firefox, the results of the following tests are timezone-dependent, which likely implies that the implementation is not quite correct.
 // Our results are even worse, though, as the dates are clipped: (new Date(1111, 1201).getTime()) == (new Date(1111, 601).getTime())
 // shouldBe('new Date(1111, 1111, 1111, 1111, 1111, 1111, 1111, 1111).getTime() - timeZoneOffset', '-24085894227889');

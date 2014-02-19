@@ -1,3 +1,16 @@
+2014-02-19  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        ASSERTION FAILED: (year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0) in WTF::dateToDaysFrom1970
+        https://bugs.webkit.org/show_bug.cgi?id=128740
+
+        Very large numbers could cause an overflow which resulted in the assertion failing in WTF::dateToDaysFrom1970
+        Added test case which checks for this
+
+        Reviewed by Geoffrey Garen.
+
+        * js/date-constructor-expected.txt:
+        * js/script-tests/date-constructor.js:
+
 2014-02-19  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Updating RTCConfiguration to match WebRTC editor's draft of 01/27/2014

@@ -1,3 +1,17 @@
+2014-02-19  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        ASSERTION FAILED: (year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0) in WTF::dateToDaysFrom1970
+        https://bugs.webkit.org/show_bug.cgi?id=128740
+
+        Very large numbers could cause an overflow which resulted in the assertion failing in WTF::dateToDaysFrom1970
+        DateConstructor will now check if the number fits into an Int32 before casting
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        (JSC::dateUTC):
+
 2014-02-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Dedicated worker crash caused by global DFG worklists + GC
