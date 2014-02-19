@@ -42,6 +42,7 @@
 #import "WKProcessClassInternal.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKWebViewConfigurationPrivate.h"
+#import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebBackForwardList.h"
 #import "WebPageProxy.h"
@@ -488,6 +489,29 @@
 
     // FIXME: return a WKNavigation object.
     return nil;
+}
+
+- (NSArray *)_certificateChain
+{
+    if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())
+        return mainFrame->certificateInfo() ? (NSArray *)mainFrame->certificateInfo()->certificateInfo().certificateChain() : nil;
+
+    return nil;
+}
+
+- (NSURL *)_committedURL
+{
+    return [NSURL _web_URLWithWTFString:_page->pageLoadState().url()];
+}
+
+- (NSString *)_applicationNameForUserAgent
+{
+    return _page->applicationNameForUserAgent();
+}
+
+- (void)_setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
+{
+    _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
 }
 
 static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)

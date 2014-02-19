@@ -51,6 +51,11 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 
 - (WKNavigation *)_reload;
 
+@property (nonatomic, readonly) NSArray *_certificateChain;
+@property (nonatomic, readonly) NSURL *_committedURL;
+
+@property (copy, setter=_setApplicationNameForUserAgent:) NSString *_applicationNameForUserAgent;
+
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
 

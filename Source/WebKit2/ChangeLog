@@ -1,5 +1,19 @@
 2014-02-18  Anders Carlsson  <andersca@apple.com>
 
+        Add more new SPI methods
+        https://bugs.webkit.org/show_bug.cgi?id=129009
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _certificateChain]):
+        (-[WKWebView _committedURL]):
+        (-[WKWebView _applicationNameForUserAgent]):
+        (-[WKWebView _setApplicationNameForUserAgent:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+2014-02-18  Anders Carlsson  <andersca@apple.com>
+
         Make reload SPI for now
         https://bugs.webkit.org/show_bug.cgi?id=129007
 
