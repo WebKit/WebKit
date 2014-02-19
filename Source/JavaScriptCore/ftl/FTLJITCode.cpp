@@ -49,7 +49,7 @@ void JITCode::addHandle(PassRefPtr<ExecutableMemoryHandle> handle)
     m_handles.append(handle);
 }
 
-void JITCode::addDataSection(RefCountedArray<LSectionWord> dataSection)
+void JITCode::addDataSection(PassRefPtr<DataSection> dataSection)
 {
     m_dataSections.append(dataSection);
 }

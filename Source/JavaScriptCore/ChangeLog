@@ -1,5 +1,37 @@
 2014-02-19  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should allow LLVM to allocate data sections with alignment > 8
+        https://bugs.webkit.org/show_bug.cgi?id=129066
+
+        Reviewed by Geoffrey Garen.
+        
+        We were previously using the native allocator's alignment guarantees (which we presumed
+        to be 8 bytes), and further hinting our desires by using the LSectionWord type (which
+        was 8 bytes). This breaks now that LLVM will sometimes ask for 16 byte alignment on
+        some sections.
+        
+        This changes our data section allocation strategy to use the new FTL::DataSection,
+        which can handle arbitrary 2^k alignment.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        (JSC::FTL::dumpDataSection):
+        (JSC::FTL::compile):
+        * ftl/FTLDataSection.cpp: Added.
+        (JSC::FTL::DataSection::DataSection):
+        (JSC::FTL::DataSection::~DataSection):
+        * ftl/FTLDataSection.h: Added.
+        (JSC::FTL::DataSection::base):
+        (JSC::FTL::DataSection::size):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::addDataSection):
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::dataSections):
+        * ftl/FTLState.h:
+
+2014-02-19  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix comment.
 
         * ftl/FTLWeight.h:

@@ -79,7 +79,7 @@ public:
     Vector<CString> dataSectionNames;
     void* compactUnwind;
     size_t compactUnwindSize;
-    RefCountedArray<LSectionWord> stackmapsSection;
+    RefPtr<DataSection> stackmapsSection;
     
     void dumpState(const char* when);
 };

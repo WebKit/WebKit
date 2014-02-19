@@ -31,6 +31,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "DFGCommonData.h"
+#include "FTLDataSection.h"
 #include "FTLOSRExit.h"
 #include "FTLStackMaps.h"
 #include "FTLUnwindInfo.h"
@@ -39,8 +40,6 @@
 #include <wtf/RefCountedArray.h>
 
 namespace JSC { namespace FTL {
-
-typedef int64_t LSectionWord; // We refer to LLVM data sections using LSectionWord*, just to be clear about our intended alignment restrictions.
 
 class JITCode : public JSC::JITCode {
 public:
@@ -56,12 +55,12 @@ public:
     
     void initializeExitThunks(CodeRef);
     void addHandle(PassRefPtr<ExecutableMemoryHandle>);
-    void addDataSection(RefCountedArray<LSectionWord>);
+    void addDataSection(PassRefPtr<DataSection>);
     void initializeArityCheckEntrypoint(CodeRef);
     void initializeAddressForCall(CodePtr);
     
     const Vector<RefPtr<ExecutableMemoryHandle>>& handles() const { return m_handles; }
-    const Vector<RefCountedArray<LSectionWord>>& dataSections() const { return m_dataSections; }
+    const Vector<RefPtr<DataSection>>& dataSections() const { return m_dataSections; }
     
     CodePtr exitThunks();
     
@@ -74,7 +73,7 @@ public:
     UnwindInfo unwindInfo;
     
 private:
-    Vector<RefCountedArray<LSectionWord>> m_dataSections;
+    Vector<RefPtr<DataSection>> m_dataSections;
     Vector<RefPtr<ExecutableMemoryHandle>> m_handles;
     CodePtr m_addressForCall;
     CodeRef m_arityCheckEntrypoint;

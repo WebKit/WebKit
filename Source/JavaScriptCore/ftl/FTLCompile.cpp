@@ -81,10 +81,7 @@ static uint8_t* mmAllocateDataSection(
 
     State& state = *static_cast<State*>(opaqueState);
     
-    RELEASE_ASSERT(alignment <= sizeof(LSectionWord));
-    
-    RefCountedArray<LSectionWord> section(
-        (size + sizeof(LSectionWord) - 1) / sizeof(LSectionWord));
+    RefPtr<DataSection> section = adoptRef(new DataSection(size, alignment));
     
     if (!strcmp(sectionName, "__llvm_stackmaps"))
         state.stackmapsSection = section;
@@ -92,12 +89,12 @@ static uint8_t* mmAllocateDataSection(
         state.jitCode->addDataSection(section);
         state.dataSectionNames.append(sectionName);
         if (!strcmp(sectionName, "__compact_unwind")) {
-            state.compactUnwind = section.data();
+            state.compactUnwind = section->base();
             state.compactUnwindSize = size;
         }
     }
     
-    return bitwise_cast<uint8_t*>(section.data());
+    return bitwise_cast<uint8_t*>(section->base());
 }
 
 static LLVMBool mmApplyPermissions(void*, char**)
@@ -109,12 +106,13 @@ static void mmDestroy(void*)
 {
 }
 
-static void dumpDataSection(RefCountedArray<LSectionWord> section, const char* prefix)
+static void dumpDataSection(DataSection* section, const char* prefix)
 {
-    for (unsigned j = 0; j < section.size(); ++j) {
+    for (unsigned j = 0; j < section->size() / sizeof(int64_t); ++j) {
         char buf[32];
-        snprintf(buf, sizeof(buf), "0x%lx", static_cast<unsigned long>(bitwise_cast<uintptr_t>(section.data() + j)));
-        dataLogF("%s%16s: 0x%016llx\n", prefix, buf, static_cast<long long>(section[j]));
+        int64_t* wordPointer = static_cast<int64_t*>(section->base()) + j;
+        snprintf(buf, sizeof(buf), "0x%lx", static_cast<unsigned long>(bitwise_cast<uintptr_t>(wordPointer)));
+        dataLogF("%s%16s: 0x%016llx\n", prefix, buf, static_cast<long long>(*wordPointer));
     }
 }
 
@@ -566,7 +564,7 @@ void compile(State& state)
         }
         
         for (unsigned i = 0; i < state.jitCode->dataSections().size(); ++i) {
-            const RefCountedArray<LSectionWord>& section = state.jitCode->dataSections()[i];
+            DataSection* section = state.jitCode->dataSections()[i].get();
             dataLog(
                 "Generated LLVM data section for ",
                 CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT),
@@ -580,17 +578,17 @@ void compile(State& state)
     if (shouldShowDisassembly())
         dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n    ", state.jitCode->unwindInfo, "\n");
     
-    if (state.stackmapsSection.size()) {
+    if (state.stackmapsSection && state.stackmapsSection->size()) {
         if (shouldShowDisassembly()) {
             dataLog(
                 "Generated LLVM stackmaps section for ",
                 CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n");
             dataLog("    Raw data:\n");
-            dumpDataSection(state.stackmapsSection, "    ");
+            dumpDataSection(state.stackmapsSection.get(), "    ");
         }
         
         RefPtr<DataView> stackmapsData = DataView::create(
-            ArrayBuffer::create(state.stackmapsSection.data(), state.stackmapsSection.byteSize()));
+            ArrayBuffer::create(state.stackmapsSection->base(), state.stackmapsSection->size()));
         state.jitCode->stackmaps.parse(stackmapsData.get());
     
         if (shouldShowDisassembly()) {

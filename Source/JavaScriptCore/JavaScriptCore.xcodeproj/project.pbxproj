@@ -500,6 +500,8 @@
 		0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Options.cpp */; };
 		0FE8534B1723CDA500B618F5 /* DFGDesiredWatchpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE853491723CDA500B618F5 /* DFGDesiredWatchpoints.cpp */; };
 		0FE8534C1723CDA500B618F5 /* DFGDesiredWatchpoints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE8534A1723CDA500B618F5 /* DFGDesiredWatchpoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FE95F7918B5694700B531FB /* FTLDataSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE95F7718B5694700B531FB /* FTLDataSection.cpp */; };
+		0FE95F7A18B5694700B531FB /* FTLDataSection.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE95F7818B5694700B531FB /* FTLDataSection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A08170513DB00BB722C /* FTLAbbreviations.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA09FD170513DB00BB722C /* FTLAbbreviations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA09FE170513DB00BB722C /* FTLCapabilities.cpp */; };
 		0FEA0A0A170513DB00BB722C /* FTLCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA09FF170513DB00BB722C /* FTLCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1984,6 +1986,8 @@
 		0FE228EB1436AB2300196C48 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
 		0FE853491723CDA500B618F5 /* DFGDesiredWatchpoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredWatchpoints.cpp; path = dfg/DFGDesiredWatchpoints.cpp; sourceTree = "<group>"; };
 		0FE8534A1723CDA500B618F5 /* DFGDesiredWatchpoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredWatchpoints.h; path = dfg/DFGDesiredWatchpoints.h; sourceTree = "<group>"; };
+		0FE95F7718B5694700B531FB /* FTLDataSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLDataSection.cpp; path = ftl/FTLDataSection.cpp; sourceTree = "<group>"; };
+		0FE95F7818B5694700B531FB /* FTLDataSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLDataSection.h; path = ftl/FTLDataSection.h; sourceTree = "<group>"; };
 		0FEA09FD170513DB00BB722C /* FTLAbbreviations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLAbbreviations.h; path = ftl/FTLAbbreviations.h; sourceTree = "<group>"; };
 		0FEA09FE170513DB00BB722C /* FTLCapabilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLCapabilities.cpp; path = ftl/FTLCapabilities.cpp; sourceTree = "<group>"; };
 		0FEA09FF170513DB00BB722C /* FTLCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLCapabilities.h; path = ftl/FTLCapabilities.h; sourceTree = "<group>"; };
@@ -3173,6 +3177,8 @@
 				0FEA0A211709606900BB722C /* FTLCommonValues.h */,
 				0FEA0A00170513DB00BB722C /* FTLCompile.cpp */,
 				0FEA0A01170513DB00BB722C /* FTLCompile.h */,
+				0FE95F7718B5694700B531FB /* FTLDataSection.cpp */,
+				0FE95F7818B5694700B531FB /* FTLDataSection.h */,
 				2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */,
 				2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */,
 				0F235BBD17178E1C00690C7F /* FTLExitArgument.cpp */,
@@ -4899,6 +4905,7 @@
 				C2C8D03014A3CEFC00578E65 /* CopiedBlock.h in Headers */,
 				C2FC9BD316644DFB00810D33 /* CopiedBlockInlines.h in Headers */,
 				C2EAA3FA149A835E00FCE112 /* CopiedSpace.h in Headers */,
+				0FE95F7A18B5694700B531FB /* FTLDataSection.h in Headers */,
 				C2C8D02D14A3C6E000578E65 /* CopiedSpaceInlines.h in Headers */,
 				0F5A52D017ADD717008ECB2D /* CopyToken.h in Headers */,
 				0F6B1CC61862C47800845D97 /* FTLUnwindInfo.h in Headers */,
@@ -6139,6 +6146,7 @@
 				0FD82E56141DAF0800179C94 /* DFGOSREntry.cpp in Sources */,
 				0FD8A32517D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.cpp in Sources */,
 				0FC09791146A6F7100CF2442 /* DFGOSRExit.cpp in Sources */,
+				0FE95F7918B5694700B531FB /* FTLDataSection.cpp in Sources */,
 				0F235BEB17178E7300690C7F /* DFGOSRExitBase.cpp in Sources */,
 				0FC09792146A6F7300CF2442 /* DFGOSRExitCompiler.cpp in Sources */,
 				0FC09776146943B000CF2442 /* DFGOSRExitCompiler32_64.cpp in Sources */,
