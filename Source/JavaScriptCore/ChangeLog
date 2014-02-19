@@ -1,3 +1,10 @@
+2014-02-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r164391
+
+        * runtime/Arguments.h: Make SlowArgumentData public so template libraries can
+        access its methods.
+
 2014-02-19  Mark Lam  <mark.lam@apple.com>
 
         Need to align sp before calling operationLoadVarargs on 32-bit platforms.

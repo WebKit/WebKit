@@ -138,6 +138,7 @@ private:
     WriteBarrierBase<Unknown>* m_registers;
     std::unique_ptr<WriteBarrier<Unknown>[]> m_registerArray;
 
+public:
     struct SlowArgumentData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -146,6 +147,7 @@ private:
         int bytecodeToMachineCaptureOffset; // Add this if you have a bytecode offset into captured registers and you want the machine offset instead. Subtract if you want to do the opposite.
     };
     
+private:
     std::unique_ptr<SlowArgumentData> m_slowArgumentData;
 
     WriteBarrier<JSFunction> m_callee;
