@@ -53,57 +53,20 @@ private:
 };
 
 // Stringify any type T that has a WTF::printInternal(PrintStream&, const T&)
-template<typename T>
-CString toCString(const T& value)
+
+template<typename... Types>
+CString toCString(const Types&... values)
 {
     StringPrintStream stream;
-    stream.print(value);
-    return stream.toCString();
-}
-template<typename T1, typename T2>
-CString toCString(const T1& value1, const T2& value2)
-{
-    StringPrintStream stream;
-    stream.print(value1, value2);
-    return stream.toCString();
-}
-template<typename T1, typename T2, typename T3>
-CString toCString(const T1& value1, const T2& value2, const T3& value3)
-{
-    StringPrintStream stream;
-    stream.print(value1, value2, value3);
+    stream.print(values...);
     return stream.toCString();
 }
 
-template<typename T1, typename T2, typename T3, typename T4>
-CString toCString(const T1& value1, const T2& value2, const T3& value3, const T4& value4)
+template<typename... Types>
+String toString(const Types&... values)
 {
     StringPrintStream stream;
-    stream.print(value1, value2, value3, value4);
-    return stream.toCString();
-}
-
-template<typename T1, typename T2, typename T3, typename T4, typename T5>
-CString toCString(const T1& value1, const T2& value2, const T3& value3, const T4& value4, const T5& value5)
-{
-    StringPrintStream stream;
-    stream.print(value1, value2, value3, value4, value5);
-    return stream.toCString();
-}
-
-template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
-CString toCString(const T1& value1, const T2& value2, const T3& value3, const T4& value4, const T5& value5, const T6& value6)
-{
-    StringPrintStream stream;
-    stream.print(value1, value2, value3, value4, value5, value6);
-    return stream.toCString();
-}
-
-template<typename T>
-String toString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
+    stream.print(values...);
     return stream.toString();
 }
 

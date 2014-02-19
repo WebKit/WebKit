@@ -1,5 +1,24 @@
 2014-02-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        Make PrintStream::print() a variadic template
+        https://bugs.webkit.org/show_bug.cgi?id=126388
+
+        Reviewed by Brent Fulgham.
+
+        PrintStream::print() can be converted into a variadic template, printing the value
+        of the first parameter and recursively calling itself until the single parameter version
+        is used for printing the last value.
+
+        * wtf/DataLog.h:
+        (WTF::dataLog): Convert the function to a variadic template as well.
+        * wtf/PrintStream.h:
+        (WTF::PrintStream::print):
+        * wtf/StringPrintStream.h:
+        (WTF::toCString): Ditto.
+        (WTF::toString): Ditto.
+
+2014-02-19  Zan Dobersek  <zdobersek@igalia.com>
+
         Use std::swap() in HashTable::swap()
         https://bugs.webkit.org/show_bug.cgi?id=128995
 
