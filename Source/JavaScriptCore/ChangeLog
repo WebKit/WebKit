@@ -1,3 +1,18 @@
+2014-02-19  Sam Weinig  <sam@webkit.org>
+
+        [JS] Convert Promise.prototype.catch to be a built-in
+        https://bugs.webkit.org/show_bug.cgi?id=129052
+
+        Reviewed by Geoffrey Garen.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/Promise.prototype.js: Added.
+        (catch): Add JS based implementation of Promise.prototype.catch.
+
+        * runtime/JSPromisePrototype.cpp:
+        Remove the C++ implementation of Promise.prototype.catch.
+
 2014-02-19  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should allow LLVM to allocate data sections with alignment > 8

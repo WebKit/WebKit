@@ -44,7 +44,6 @@ namespace JSC {
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromisePrototype);
 
 static EncodedJSValue JSC_HOST_CALL JSPromisePrototypeFuncThen(ExecState*);
-static EncodedJSValue JSC_HOST_CALL JSPromisePrototypeFuncCatch(ExecState*);
 
 }
 
@@ -185,31 +184,6 @@ EncodedJSValue JSC_HOST_CALL JSPromisePrototypeFuncThen(ExecState* exec)
 
     // 20. Return deferred.[[Promise]].
     return JSValue::encode(jsCast<JSPromiseDeferred*>(deferred)->promise());
-}
-
-EncodedJSValue JSC_HOST_CALL JSPromisePrototypeFuncCatch(ExecState* exec)
-{
-    // -- Promise.prototype.catch(onRejected) --
-
-    // 1. Let 'promise' be the this value.
-    JSValue promise = exec->thisValue();
-    
-    // 2. Return the result of calling Invoke(promise, "then", (undefined, onRejected)).
-    // NOTE: Invoke does not seem to be defined anywhere, so I am guessing here.
-    JSValue thenValue = promise.get(exec, exec->vm().propertyNames->then);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    CallData thenCallData;
-    CallType thenCallType = getCallData(thenValue, thenCallData);
-    if (thenCallType == CallTypeNone)
-        return JSValue::encode(throwTypeError(exec));
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(jsUndefined());
-    arguments.append(exec->argument(0));
-
-    return JSValue::encode(call(exec, thenValue, thenCallType, thenCallData, promise, arguments));
 }
 
 } // namespace JSC
