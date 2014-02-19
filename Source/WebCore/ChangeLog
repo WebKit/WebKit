@@ -1,3 +1,15 @@
+2014-02-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        isEditablePosition shouldn't trigger synchronous layout
+        https://bugs.webkit.org/show_bug.cgi?id=129026
+
+        Reviewed by Brent Fulgham.
+
+        Just trigger style recalc instead.
+
+        * editing/htmlediting.cpp:
+        (WebCore::isEditablePosition):
+
 2014-02-19  Beth Dakin  <bdakin@apple.com>
 
         UIProcess needs to know the color of the page's extended background

@@ -146,13 +146,13 @@ bool isEditablePosition(const Position& p, EditableType editableType, EUpdateSty
     if (!node)
         return false;
     if (updateStyle == UpdateStyle)
-        node->document().updateLayoutIgnorePendingStylesheets();
+        node->document().updateStyleIfNeeded();
     else
         ASSERT(updateStyle == DoNotUpdateStyle);
 
     if (node->renderer() && node->renderer()->isTable())
         node = node->parentNode();
-    
+
     return node->hasEditableStyle(editableType);
 }
 
