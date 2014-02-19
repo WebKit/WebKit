@@ -48,6 +48,7 @@ static StringImpl::StaticASCIILiteral ${name}Data = {
     $length,
     ${name}String8,
     0,
+    nullptr,
     StringImpl::StaticASCIILiteral::s_initialFlags | (${hash} << StringImpl::StaticASCIILiteral::s_hashShift)
 };
 END

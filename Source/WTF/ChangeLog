@@ -1,3 +1,22 @@
+2014-02-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Add fast mapping from StringImpl to JSString
+        https://bugs.webkit.org/show_bug.cgi?id=128625
+
+        Reviewed by Geoff Garen & Andreas Kling.
+
+        Add weak pointer from StringImpl to JSString.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+            - ASSERT m_weakJSString is null.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+            - initialize m_weakJSString.
+        (WTF::StringImpl::weakJSString):
+        (WTF::StringImpl::setWeakJSString):
+            - added acessors for m_weakJSString.
+
 2014-02-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Web Inspector: JSContext inspection crashes in isMainThread, uninitialized WebCoreWebThreadIsLockedOrDisabled

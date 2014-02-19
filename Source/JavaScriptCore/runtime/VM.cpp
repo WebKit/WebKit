@@ -403,9 +403,11 @@ PassRefPtr<VM> VM::create(HeapType heapType)
     return adoptRef(new VM(Default, heapType));
 }
 
-PassRefPtr<VM> VM::createLeaked(HeapType heapType)
+PassRefPtr<VM> VM::createLeakedForMainThread(HeapType heapType)
 {
-    return create(heapType);
+    VM* vm = new VM(Default, heapType);
+    vm->jsStringWeakOwner = adoptPtr(new JSString::WeakOwner);
+    return adoptRef(vm);
 }
 
 bool VM::sharedInstanceExists()

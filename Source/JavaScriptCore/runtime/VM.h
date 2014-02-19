@@ -184,8 +184,8 @@ namespace JSC {
     class VM : public ThreadSafeRefCounted<VM> {
     public:
         // WebCore has a one-to-one mapping of threads to VMs;
-        // either create() or createLeaked() should only be called once
-        // on a thread, this is the 'default' VM (it uses the
+        // either create() or createLeakedForMainThread() should only be
+        // called once on a thread, this is the 'default' VM (it uses the
         // thread's default string uniquing table from wtfThreadData).
         // API contexts created using the new context group aware interface
         // create APIContextGroup objects which require less locking of JSC
@@ -203,7 +203,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE static VM& sharedInstance();
 
         JS_EXPORT_PRIVATE static PassRefPtr<VM> create(HeapType = SmallHeap);
-        JS_EXPORT_PRIVATE static PassRefPtr<VM> createLeaked(HeapType = SmallHeap);
+        JS_EXPORT_PRIVATE static PassRefPtr<VM> createLeakedForMainThread(HeapType = SmallHeap);
         static PassRefPtr<VM> createContextGroup(HeapType = SmallHeap);
         JS_EXPORT_PRIVATE ~VM();
 
@@ -222,7 +222,10 @@ namespace JSC {
         // The heap should be just after executableAllocator and before other members to ensure that it's
         // destructed after all the objects that reference it.
         Heap heap;
-        
+
+        // Used to manage weak references from StringImpls to JSStrings.
+        OwnPtr<WeakHandleOwner> jsStringWeakOwner;
+
 #if ENABLE(DFG_JIT)
         OwnPtr<DFG::LongLivedState> dfgState;
 #endif // ENABLE(DFG_JIT)

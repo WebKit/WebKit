@@ -63,6 +63,11 @@ namespace JSC {
 
     class JSString : public JSCell {
     public:
+        class WeakOwner final : public WeakHandleOwner {
+        public:
+            virtual void finalize(Handle<Unknown>, void* context) override;
+        };
+
         friend class JIT;
         friend class VM;
         friend class SpecializedThunkJIT;
@@ -403,6 +408,28 @@ namespace JSC {
                 return vm->smallStrings.singleCharacterString(c);
         }
         return JSString::create(*vm, s.impl());
+    }
+
+    inline JSString* jsStringWithWeakOwner(VM* vm, const String& s)
+    {
+        WeakHandleOwner* jsStringWeakOwner = vm->jsStringWeakOwner.get();
+        StringImpl* impl = s.impl();
+
+        // If this vm is not allowed to weakly own strings just call jsString.
+        if (!jsStringWeakOwner || !impl)
+            return jsString(vm, s);
+
+        // Check for an existing weakly owned JSString.
+        if (WeakImpl* weakImpl = impl->weakJSString()) {
+            if (weakImpl->state() == WeakImpl::Live)
+                return asString(weakImpl->jsValue());
+            WeakSet::deallocate(weakImpl);
+            impl->setWeakJSString(nullptr);
+        }
+
+        JSString* string = jsString(vm, s);
+        impl->setWeakJSString(WeakSet::allocate(string, jsStringWeakOwner, impl));
+        return string;
     }
 
     inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsigned length)

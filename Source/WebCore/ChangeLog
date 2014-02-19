@@ -1,3 +1,27 @@
+2014-02-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Add fast mapping from StringImpl to JSString
+        https://bugs.webkit.org/show_bug.cgi?id=128625
+
+        Reviewed by Geoff Garen & Andreas Kling.
+
+        Removed JSStringCache from WebCore; call JSC::jsStringWithWeakOwner instead.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::clearWrappers):
+            - removed JSStringCache.
+        * bindings/js/DOMWrapperWorld.h:
+            - removed JSStringCache.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsStringWithCache):
+            - call jsStringWithWeakOwner insead of using JSStringCache.
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+            - renamed createLeaked -> createLeakedForMainThread.
+        * bindings/scripts/StaticString.pm:
+        (GenerateStrings):
+            - StringImpl has an additional field.
+
 2014-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Remove UIWKRemoteView

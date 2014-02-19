@@ -1,3 +1,26 @@
+2014-02-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Add fast mapping from StringImpl to JSString
+        https://bugs.webkit.org/show_bug.cgi?id=128625
+
+        Reviewed by Geoff Garen & Andreas Kling.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::WeakOwner::finalize):
+            - once the JSString weakly owned by a StringImpl becomed unreachable remove the WeakImpl.
+        * runtime/JSString.h:
+        (JSC::jsStringWithWeakOwner):
+            - create a JSString wrapping a StringImpl, and weakly caches the JSString on the StringImpl.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+            - initialize jsStringWeakOwner.
+        (JSC::VM::createLeakedForMainThread):
+            - initialize jsStringWeakOwner - the main thread gets to use the weak pointer
+              on StringImpl to cache a JSString wrapper.
+        * runtime/VM.h:
+            - renamed createLeaked -> createLeakedForMainThread to make it clear this
+              should only be used to cretae the main thread VM.
+
 2014-02-18  Oliver Hunt  <oliver@apple.com>
 
         Prevent builtin js named with C++ reserved words from breaking the build

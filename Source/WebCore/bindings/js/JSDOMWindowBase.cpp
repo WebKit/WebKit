@@ -215,7 +215,7 @@ VM* JSDOMWindowBase::commonVM()
 #endif
     if (!vm) {
         ScriptController::initializeThreading();
-        vm = VM::createLeaked(LargeHeap).leakRef();
+        vm = VM::createLeakedForMainThread(LargeHeap).leakRef();
 #if PLATFORM(IOS)
         PassOwnPtr<WebSafeGCActivityCallback> activityCallback = WebSafeGCActivityCallback::create(&vm->heap);
         vm->heap.setActivityCallback(activityCallback);

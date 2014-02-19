@@ -594,11 +594,7 @@ inline JSC::JSValue jsStringWithCache(JSC::ExecState* exec, const String& s)
         }
     }
 
-    JSStringCache& stringCache = currentWorld(exec).m_stringCache;
-    JSStringCache::AddResult addResult = stringCache.add(stringImpl, nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = JSC::jsString(exec, String(stringImpl));
-    return JSC::JSValue(addResult.iterator->value.get());
+    return JSC::jsStringWithWeakOwner(&exec->vm(), s);
 }
 
 inline String propertyNameToString(JSC::PropertyName propertyName)
