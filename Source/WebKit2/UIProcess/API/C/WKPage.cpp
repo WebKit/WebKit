@@ -74,6 +74,10 @@ template<> struct ClientTraits<WKPageUIClientBase> {
 
 }
 
+typedef GenericAPICallback<WKDataRef> DataAPICallback;
+typedef GenericAPICallback<WKStringRef, StringImpl*> StringAPICallback;
+typedef GenericAPICallback<WKSerializedScriptValueRef> ScriptValueAPICallback;
+
 WKTypeID WKPageGetTypeID()
 {
     return toAPI(WebPageProxy::APIType);
@@ -1472,7 +1476,7 @@ void WKPageSetSession(WKPageRef pageRef, WKSessionRef session)
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
 {
-    toImpl(pageRef)->runJavaScriptInMainFrame(toImpl(scriptRef)->string(), ScriptValueCallback::create(context, callback));
+    toImpl(pageRef)->runJavaScriptInMainFrame(toImpl(scriptRef)->string(), ScriptValueAPICallback::create(context, callback));
 }
 
 #ifdef __BLOCKS__
@@ -1491,17 +1495,17 @@ void WKPageRunJavaScriptInMainFrame_b(WKPageRef pageRef, WKStringRef scriptRef, 
 
 void WKPageRenderTreeExternalRepresentation(WKPageRef pageRef, void* context, WKPageRenderTreeExternalRepresentationFunction callback)
 {
-    toImpl(pageRef)->getRenderTreeExternalRepresentation(StringCallback::create(context, callback));
+    toImpl(pageRef)->getRenderTreeExternalRepresentation(StringAPICallback::create(context, callback));
 }
 
 void WKPageGetSourceForFrame(WKPageRef pageRef, WKFrameRef frameRef, void* context, WKPageGetSourceForFrameFunction callback)
 {
-    toImpl(pageRef)->getSourceForFrame(toImpl(frameRef), StringCallback::create(context, callback));
+    toImpl(pageRef)->getSourceForFrame(toImpl(frameRef), StringAPICallback::create(context, callback));
 }
 
 void WKPageGetContentsAsString(WKPageRef pageRef, void* context, WKPageGetContentsAsStringFunction callback)
 {
-    toImpl(pageRef)->getContentsAsString(StringCallback::create(context, callback));
+    toImpl(pageRef)->getContentsAsString(StringAPICallback::create(context, callback));
 }
 
 void WKPageGetBytecodeProfile(WKPageRef pageRef, void* context, WKPageGetBytecodeProfileFunction callback)
@@ -1511,13 +1515,13 @@ void WKPageGetBytecodeProfile(WKPageRef pageRef, void* context, WKPageGetBytecod
 
 void WKPageGetSelectionAsWebArchiveData(WKPageRef pageRef, void* context, WKPageGetSelectionAsWebArchiveDataFunction callback)
 {
-    toImpl(pageRef)->getSelectionAsWebArchiveData(DataCallback::create(context, callback));
+    toImpl(pageRef)->getSelectionAsWebArchiveData(DataAPICallback::create(context, callback));
 }
 
 void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, bool useBinaryEncoding, void* context, WKPageGetContentsAsMHTMLDataFunction callback)
 {
 #if ENABLE(MHTML)
-    toImpl(pageRef)->getContentsAsMHTMLData(DataCallback::create(context, callback), useBinaryEncoding);
+    toImpl(pageRef)->getContentsAsMHTMLData(DataAPICallback::create(context, callback), useBinaryEncoding);
 #else
     UNUSED_PARAM(pageRef);
     UNUSED_PARAM(useBinaryEncoding);
@@ -1528,7 +1532,7 @@ void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, bool useBinaryEncoding, voi
 
 void WKPageForceRepaint(WKPageRef pageRef, void* context, WKPageForceRepaintFunction callback)
 {
-    toImpl(pageRef)->forceRepaint(VoidCallback::create(context, callback));
+    toImpl(pageRef)->forceRepaint(VoidAPICallback::create(context, callback));
 }
 
 WK_EXPORT WKURLRef WKPageCopyPendingAPIRequestURL(WKPageRef pageRef)
@@ -1563,7 +1567,9 @@ WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef applicati
 
 void WKPageValidateCommand(WKPageRef pageRef, WKStringRef command, void* context, WKPageValidateCommandCallback callback)
 {
-    toImpl(pageRef)->validateCommand(toImpl(command)->string(), ValidateCommandCallback::create(context, callback)); 
+    toImpl(pageRef)->validateCommand(toImpl(command)->string(), ValidateCommandCallback::create([context, callback](bool error, StringImpl* commandName, bool isEnabled, int32_t state) {
+        callback(toAPI(commandName), isEnabled, state, error ? toAPI(API::Error::create().get()) : 0, context);
+    }));
 }
 
 void WKPageExecuteCommand(WKPageRef pageRef, WKStringRef command)
@@ -1572,25 +1578,6 @@ void WKPageExecuteCommand(WKPageRef pageRef, WKStringRef command)
 }
 
 #if PLATFORM(COCOA)
-struct ComputedPagesContext {
-    ComputedPagesContext(WKPageComputePagesForPrintingFunction callback, void* context)
-        : callback(callback)
-        , context(context)
-    {
-    }
-    WKPageComputePagesForPrintingFunction callback;
-    void* context;
-};
-
-static void computedPagesCallback(const Vector<WebCore::IntRect>& rects, double scaleFactor, WKErrorRef error, void* untypedContext)
-{
-    OwnPtr<ComputedPagesContext> context = adoptPtr(static_cast<ComputedPagesContext*>(untypedContext));
-    Vector<WKRect> wkRects(rects.size());
-    for (size_t i = 0; i < rects.size(); ++i)
-        wkRects[i] = toAPI(rects[i]);
-    context->callback(wkRects.data(), wkRects.size(), scaleFactor, error, context->context);
-}
-
 static PrintInfo printInfoFromWKPrintInfo(const WKPrintInfo& printInfo)
 {
     PrintInfo result;
@@ -1602,7 +1589,12 @@ static PrintInfo printInfoFromWKPrintInfo(const WKPrintInfo& printInfo)
 
 void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, WKPageComputePagesForPrintingFunction callback, void* context)
 {
-    toImpl(page)->computePagesForPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo), ComputedPagesCallback::create(new ComputedPagesContext(callback, context), computedPagesCallback));
+    toImpl(page)->computePagesForPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo), ComputedPagesCallback::create([context, callback](bool error, const Vector<WebCore::IntRect>& rects, double scaleFactor) {
+        Vector<WKRect> wkRects(rects.size());
+        for (size_t i = 0; i < rects.size(); ++i)
+            wkRects[i] = toAPI(rects[i]);
+        callback(wkRects.data(), wkRects.size(), scaleFactor, error ? toAPI(API::Error::create().get()) : 0, context);
+    }));
 }
 
 void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo)
@@ -1612,7 +1604,7 @@ void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo
 
 void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context)
 {
-    toImpl(page)->drawPagesToPDF(toImpl(frame), printInfoFromWKPrintInfo(printInfo), first, count, DataCallback::create(context, callback));
+    toImpl(page)->drawPagesToPDF(toImpl(frame), printInfoFromWKPrintInfo(printInfo), first, count, DataAPICallback::create(context, callback));
 }
 
 void WKPageEndPrinting(WKPageRef page)

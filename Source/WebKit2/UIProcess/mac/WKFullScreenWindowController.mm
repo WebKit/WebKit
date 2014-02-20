@@ -367,8 +367,6 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     [[self window] exitFullScreenMode:self];
 }
 
-static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*);
-
 - (void)finishedExitFullScreenAnimation:(bool)completed
 {
     if (_fullScreenState != ExitingFullScreen)
@@ -411,7 +409,9 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*)
         // clears _repaintCallback.
         ASSERT(!_repaintCallback);
     }
-    _repaintCallback = VoidCallback::create(self, completeFinishExitFullScreenAnimationAfterRepaint);
+    _repaintCallback = VoidCallback::create([self](bool) {
+        [self completeFinishExitFullScreenAnimationAfterRepaint];
+    });
     [self _page]->forceRepaint(_repaintCallback);
 }
 
@@ -421,11 +421,6 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*)
     [[_webView window] setAutodisplay:YES];
     [[_webView window] displayIfNeeded];
     NSEnableScreenUpdates();
-}
-
-static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void* _self)
-{
-    [(WKFullScreenWindowController*)_self completeFinishExitFullScreenAnimationAfterRepaint];
 }
 
 - (void)performClose:(id)sender

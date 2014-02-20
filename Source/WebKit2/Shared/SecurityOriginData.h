@@ -37,7 +37,7 @@ namespace IPC {
 
 namespace WebKit {
 
-typedef GenericCallback<WKArrayRef> ArrayCallback;
+typedef GenericCallback<API::Array*> ArrayCallback;
 
 struct SecurityOriginData {
     static SecurityOriginData fromSecurityOrigin(const WebCore::SecurityOrigin*);

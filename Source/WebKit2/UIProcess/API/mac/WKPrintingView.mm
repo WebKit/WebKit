@@ -207,11 +207,10 @@ struct IPCCallbackContext {
     uint64_t callbackID;
 };
 
-static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, WKErrorRef, void* untypedContext)
+static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, IPCCallbackContext* context)
 {
     ASSERT(RunLoop::isMain());
 
-    OwnPtr<IPCCallbackContext> context = adoptPtr(static_cast<IPCCallbackContext*>(untypedContext));
     WKPrintingView *view = context->view.get();
 
     // If the user has already changed print setup, then this response is obsolete. And if this callback is not in response to the latest request,
@@ -233,25 +232,6 @@ static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, WKErr
             view->_latestExpectedPreviewCallback = 0;
             [view _updatePreview];
         }
-    }
-}
-
-static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext)
-{
-    ASSERT(RunLoop::isMain());
-
-    OwnPtr<IPCCallbackContext> context = adoptPtr(static_cast<IPCCallbackContext*>(untypedContext));
-    WKPrintingView *view = context->view.get();
-    API::Data* data = toImpl(dataRef);
-
-    if (context->callbackID == view->_expectedPrintCallback) {
-        ASSERT(![view _isPrintingPreview]);
-        ASSERT(view->_printedPagesData.isEmpty());
-        ASSERT(!view->_printedPagesPDFDocument);
-        if (data)
-            view->_printedPagesData.append(data->bytes(), data->size());
-        view->_expectedPrintCallback = 0;
-        view->_printingCallbackCondition.notify_one();
     }
 }
 
@@ -283,7 +263,22 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
     _webFrame->page()->beginPrinting(_webFrame.get(), printInfo);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    RefPtr<DataCallback> callback = DataCallback::create(context, pageDidDrawToPDF);
+    RefPtr<DataCallback> callback = DataCallback::create([context](bool, API::Data* data) {
+        ASSERT(RunLoop::isMain());
+
+        OwnPtr<IPCCallbackContext> contextDeleter = adoptPtr(context);
+        WKPrintingView *view = context->view.get();
+
+        if (context->callbackID == view->_expectedPrintCallback) {
+            ASSERT(![view _isPrintingPreview]);
+            ASSERT(view->_printedPagesData.isEmpty());
+            ASSERT(!view->_printedPagesPDFDocument);
+            if (data)
+                view->_printedPagesData.append(data->bytes(), data->size());
+            view->_expectedPrintCallback = 0;
+            view->_printingCallbackCondition.notify_one();
+        }
+    });
     _expectedPrintCallback = callback->callbackID();
 
     context->view = self;
@@ -292,11 +287,10 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
     _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, callback.get());
 }
 
-static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, WKErrorRef, void* untypedContext)
+static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, IPCCallbackContext* context)
 {
     ASSERT(RunLoop::isMain());
 
-    OwnPtr<IPCCallbackContext> context = adoptPtr(static_cast<IPCCallbackContext*>(untypedContext));
     WKPrintingView *view = context->view.get();
 
     // If the user has already changed print setup, then this response is obsolete.
@@ -344,7 +338,10 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
     ASSERT(!_expectedComputedPagesCallback);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    RefPtr<ComputedPagesCallback> callback = ComputedPagesCallback::create(context, pageDidComputePageRects);
+    RefPtr<ComputedPagesCallback> callback = ComputedPagesCallback::create([context](bool, const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting) {
+        OwnPtr<IPCCallbackContext> contextDeleter = adoptPtr(context);
+        pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, context);
+    });
     _expectedComputedPagesCallback = callback->callbackID();
     context->view = self;
     context->callbackID = _expectedComputedPagesCallback;
@@ -493,7 +490,10 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
                 _webFrame->page()->beginPrinting(_webFrame.get(), PrintInfo([_printOperation printInfo]));
 
                 IPCCallbackContext* context = new IPCCallbackContext;
-                RefPtr<ImageCallback> callback = ImageCallback::create(context, pageDidDrawToImage);
+                RefPtr<ImageCallback> callback = ImageCallback::create([context](bool, const ShareableBitmap::Handle& imageHandle) {
+                    OwnPtr<IPCCallbackContext> contextDeleter = adoptPtr(context);
+                    pageDidDrawToImage(imageHandle, context);
+                });
                 _latestExpectedPreviewCallback = callback->callbackID();
                 _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, scaledPrintingRect);
 

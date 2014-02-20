@@ -35,7 +35,7 @@ namespace WebKit {
 
 struct StatisticsData;
 
-typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
+typedef GenericCallback<ImmutableDictionary*> DictionaryCallback;
 
 enum StatisticsRequestType {
     StatisticsRequestTypeWebContent = 0x00000001,

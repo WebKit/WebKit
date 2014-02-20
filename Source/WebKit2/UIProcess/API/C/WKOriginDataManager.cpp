@@ -31,6 +31,8 @@
 
 using namespace WebKit;
 
+typedef GenericAPICallback<WKArrayRef> ArrayAPICallback;
+
 WKTypeID WKOriginDataManagerGetTypeID()
 {
     return toAPI(WebOriginDataManagerProxy::APIType);
@@ -38,7 +40,7 @@ WKTypeID WKOriginDataManagerGetTypeID()
 
 void WKOriginDataManagerGetOrigins(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, void* context, WKOriginDataManagerGetOriginsFunction callback)
 {
-    toImpl(originDataManagerRef)->getOrigins(types, ArrayCallback::create(context, callback));
+    toImpl(originDataManagerRef)->getOrigins(types, ArrayAPICallback::create(context, callback));
 }
 
 void WKOriginDataManagerDeleteEntriesForOrigin(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, WKSecurityOriginRef originRef)

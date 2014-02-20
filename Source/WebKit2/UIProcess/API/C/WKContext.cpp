@@ -63,6 +63,8 @@ template<> struct ClientTraits<WKContextHistoryClientBase> {
 
 using namespace WebKit;
 
+typedef GenericAPICallback<WKDictionaryRef> DictionaryAPICallback;
+
 WKTypeID WKContextGetTypeID()
 {
     return toAPI(WebContext::APIType);
@@ -416,12 +418,12 @@ void WKContextWarmInitialProcess(WKContextRef contextRef)
 
 void WKContextGetStatistics(WKContextRef contextRef, void* context, WKContextGetStatisticsFunction callback)
 {
-    toImpl(contextRef)->getStatistics(0xFFFFFFFF, DictionaryCallback::create(context, callback));
+    toImpl(contextRef)->getStatistics(0xFFFFFFFF, DictionaryAPICallback::create(context, callback));
 }
 
 void WKContextGetStatisticsWithOptions(WKContextRef contextRef, WKStatisticsOptions optionsMask, void* context, WKContextGetStatisticsFunction callback)
 {
-    toImpl(contextRef)->getStatistics(optionsMask, DictionaryCallback::create(context, callback));
+    toImpl(contextRef)->getStatistics(optionsMask, DictionaryAPICallback::create(context, callback));
 }
 
 void WKContextGarbageCollectJavaScriptObjects(WKContextRef contextRef)

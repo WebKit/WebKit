@@ -252,30 +252,31 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
 }
 #endif
 
-static void drawPagesForPrintingCompleted(WKErrorRef wkPrintError, WKErrorRef, void* context)
+static void drawPagesForPrintingCompleted(API::Error* wkPrintError, WebKitPrintOperation* printOperation)
 {
-    GRefPtr<WebKitPrintOperation> printOperation = adoptGRef(WEBKIT_PRINT_OPERATION(context));
-
     // When running synchronously WebPageProxy::printFrame() calls endPrinting().
     if (printOperation->priv->printMode == PrintInfo::PrintModeAsync && printOperation->priv->webView) {
         WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
         page->endPrinting();
     }
 
-    const WebCore::ResourceError& resourceError = wkPrintError ? toImpl(wkPrintError)->platformError() : WebCore::ResourceError();
+    const WebCore::ResourceError& resourceError = wkPrintError ? wkPrintError->platformError() : WebCore::ResourceError();
     if (!resourceError.isNull()) {
         GUniquePtr<GError> printError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
             resourceError.errorCode(), resourceError.localizedDescription().utf8().data()));
-        g_signal_emit(printOperation.get(), signals[FAILED], 0, printError.get());
+        g_signal_emit(printOperation, signals[FAILED], 0, printError.get());
     }
-    g_signal_emit(printOperation.get(), signals[FINISHED], 0, NULL);
+    g_signal_emit(printOperation, signals[FINISHED], 0, NULL);
 }
 
 static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOperation, WebFrameProxy* webFrame, GtkPrintSettings* printSettings, GtkPageSetup* pageSetup)
 {
     PrintInfo printInfo(printSettings, pageSetup, printOperation->priv->printMode);
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
-    page->drawPagesForPrinting(webFrame, printInfo, PrintFinishedCallback::create(g_object_ref(printOperation), &drawPagesForPrintingCompleted));
+    g_object_ref(printOperation);
+    page->drawPagesForPrinting(webFrame, printInfo, PrintFinishedCallback::create([printOperation](bool /*error*/, API::Error* printError) {
+        drawPagesForPrintingCompleted(printError, adoptGRef(printOperation).get());
+    }));
 }
 
 WebKitPrintOperationResponse webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation, GtkWindow* parent, WebFrameProxy* webFrame)

@@ -48,8 +48,8 @@ namespace WebKit {
 class WebContext;
 class WebProcessProxy;
 
-typedef GenericCallback<WKArrayRef> ArrayCallback;
-typedef GenericCallback<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyCallback;
+typedef GenericCallback<API::Array*> ArrayCallback;
+typedef GenericCallback<HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyCallback;
 
 class WebCookieManagerProxy : public API::ObjectImpl<API::Object::Type::CookieManager>, public WebContextSupplement, private IPC::MessageReceiver {
 public:

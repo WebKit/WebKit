@@ -39,7 +39,7 @@ namespace WebKit {
 class WebContext;
 class WebProcessProxy;
 
-typedef GenericCallback<WKArrayRef> ArrayCallback;
+typedef GenericCallback<API::Array*> ArrayCallback;
 
 class WebPluginSiteDataManager : public API::ObjectImpl<API::Object::Type::PluginSiteDataManager> {
 public:

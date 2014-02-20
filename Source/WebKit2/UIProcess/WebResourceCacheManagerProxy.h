@@ -42,7 +42,7 @@ class WebContext;
 class WebProcessProxy;
 class WebSecurityOrigin;
 
-typedef GenericCallback<WKArrayRef> ArrayCallback;
+typedef GenericCallback<API::Array*> ArrayCallback;
 
 class WebResourceCacheManagerProxy : public API::ObjectImpl<API::Object::Type::CacheManager>, public WebContextSupplement, private IPC::MessageReceiver {
 public:

@@ -166,11 +166,11 @@ struct WebPopupItem;
 class WebVibrationProxy;
 #endif
 
-typedef GenericCallback<WKStringRef, StringImpl*> StringCallback;
-typedef GenericCallback<WKSerializedScriptValueRef, WebSerializedScriptValue*> ScriptValueCallback;
+typedef GenericCallback<StringImpl*> StringCallback;
+typedef GenericCallback<WebSerializedScriptValue*> ScriptValueCallback;
 
 #if PLATFORM(GTK)
-typedef GenericCallback<WKErrorRef> PrintFinishedCallback;
+typedef GenericCallback<API::Error*> PrintFinishedCallback;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -187,11 +187,11 @@ struct QueuedTouchEvents {
 // FIXME: Make a version of CallbackBase with three arguments, and define ValidateCommandCallback as a specialization.
 class ValidateCommandCallback : public CallbackBase {
 public:
-    typedef void (*CallbackFunction)(WKStringRef, bool, int32_t, WKErrorRef, void*);
+    typedef std::function<void (bool, StringImpl*, bool, int32_t)> CallbackFunction;
 
-    static PassRefPtr<ValidateCommandCallback> create(void* context, CallbackFunction callback)
+    static PassRefPtr<ValidateCommandCallback> create(CallbackFunction callback)
     {
-        return adoptRef(new ValidateCommandCallback(context, callback));
+        return adoptRef(new ValidateCommandCallback(callback));
     }
 
     virtual ~ValidateCommandCallback()
@@ -203,7 +203,7 @@ public:
     {
         ASSERT(m_callback);
 
-        m_callback(toAPI(returnValue1), returnValue2, returnValue3, 0, context());
+        m_callback(false, returnValue1, returnValue2, returnValue3);
 
         m_callback = 0;
     }
@@ -212,17 +212,15 @@ public:
     {
         ASSERT(m_callback);
 
-        RefPtr<API::Error> error = API::Error::create();
-        m_callback(0, 0, 0, toAPI(error.get()), context());
+        m_callback(true, 0, 0, 0);
         
         m_callback = 0;
     }
 
 private:
 
-    ValidateCommandCallback(void* context, CallbackFunction callback)
-        : CallbackBase(context)
-        , m_callback(callback)
+    ValidateCommandCallback(CallbackFunction callback)
+        : m_callback(callback)
     {
     }
 
@@ -232,11 +230,11 @@ private:
 #if PLATFORM(IOS)
 class GestureCallback : public CallbackBase {
 public:
-    typedef void (*CallbackFunction)(const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, WKErrorRef, void*);
+    typedef std::function<void (bool, const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t)> CallbackFunction;
 
-    static PassRefPtr<GestureCallback> create(void* context, CallbackFunction callback)
+    static PassRefPtr<GestureCallback> create(CallbackFunction callback)
     {
-        return adoptRef(new GestureCallback(context, callback));
+        return adoptRef(new GestureCallback(callback));
     }
 
     virtual ~GestureCallback()
@@ -248,7 +246,7 @@ public:
     {
         ASSERT(m_callback);
 
-        m_callback(returnValue1, returnValue2, returnValue3, returnValue4, 0, context());
+        m_callback(false, returnValue1, returnValue2, returnValue3, returnValue4);
 
         m_callback = 0;
     }
@@ -257,17 +255,15 @@ public:
     {
         ASSERT(m_callback);
 
-        RefPtr<API::Error> error = API::Error::create();
-        m_callback(WebCore::IntPoint(), 0, 0, 0, toAPI(error.get()), context());
+        m_callback(true, WebCore::IntPoint(), 0, 0, 0);
 
         m_callback = 0;
     }
 
 private:
 
-    GestureCallback(void* context, CallbackFunction callback)
-        : CallbackBase(context)
-        , m_callback(callback)
+    GestureCallback(CallbackFunction callback)
+        : m_callback(callback)
     {
         ASSERT(m_callback);
     }
@@ -277,11 +273,11 @@ private:
 
 class TouchesCallback : public CallbackBase {
 public:
-    typedef void (*CallbackFunction)(const WebCore::IntPoint&, uint32_t, WKErrorRef, void*);
+    typedef std::function<void(bool, const WebCore::IntPoint&, uint32_t)> CallbackFunction;
 
-    static PassRefPtr<TouchesCallback> create(void* context, CallbackFunction callback)
+    static PassRefPtr<TouchesCallback> create(CallbackFunction callback)
     {
-        return adoptRef(new TouchesCallback(context, callback));
+        return adoptRef(new TouchesCallback(callback));
     }
 
     virtual ~TouchesCallback()
@@ -293,7 +289,7 @@ public:
     {
         ASSERT(m_callback);
 
-        m_callback(returnValue1, returnValue2, 0, context());
+        m_callback(true, returnValue1, returnValue2);
 
         m_callback = 0;
     }
@@ -303,16 +299,15 @@ public:
         ASSERT(m_callback);
 
         RefPtr<API::Error> error = API::Error::create();
-        m_callback(WebCore::IntPoint(), 0, toAPI(error.get()), context());
+        m_callback(false, WebCore::IntPoint(), 0);
         
         m_callback = 0;
     }
     
 private:
     
-    TouchesCallback(void* context, CallbackFunction callback)
-        : CallbackBase(context)
-        , m_callback(callback)
+    TouchesCallback(CallbackFunction callback)
+        : m_callback(callback)
     {
         ASSERT(m_callback);
     }

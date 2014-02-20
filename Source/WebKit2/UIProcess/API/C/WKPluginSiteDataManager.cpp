@@ -36,6 +36,10 @@
 
 using namespace WebKit;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+typedef GenericAPICallback<WKArrayRef> ArrayAPICallback;
+#endif
+
 WKTypeID WKPluginSiteDataManagerGetTypeID()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -48,7 +52,7 @@ WKTypeID WKPluginSiteDataManagerGetTypeID()
 void WKPluginSiteDataManagerGetSitesWithData(WKPluginSiteDataManagerRef managerRef, void* context, WKPluginSiteDataManagerGetSitesWithDataFunction callback)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    toImpl(managerRef)->getSitesWithData(ArrayCallback::create(context, callback));
+    toImpl(managerRef)->getSitesWithData(ArrayAPICallback::create(context, callback));
 #else
     UNUSED_PARAM(managerRef);
     UNUSED_PARAM(context);
@@ -72,7 +76,7 @@ static uint64_t toNPClearSiteDataFlags(WKClearSiteDataFlags flags)
 void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef managerRef, WKArrayRef sitesRef, WKClearSiteDataFlags flags, uint64_t maxAgeInSeconds, void* context, WKPluginSiteDataManagerClearSiteDataFunction function)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    toImpl(managerRef)->clearSiteData(toImpl(sitesRef), toNPClearSiteDataFlags(flags), maxAgeInSeconds, VoidCallback::create(context, function));
+    toImpl(managerRef)->clearSiteData(toImpl(sitesRef), toNPClearSiteDataFlags(flags), maxAgeInSeconds, VoidAPICallback::create(context, function));
 #else
     UNUSED_PARAM(managerRef);
     UNUSED_PARAM(sitesRef);
@@ -86,7 +90,7 @@ void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef managerRef,
 void WKPluginSiteDataManagerClearAllSiteData(WKPluginSiteDataManagerRef managerRef, void* context, WKPluginSiteDataManagerClearSiteDataFunction function)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    toImpl(managerRef)->clearSiteData(0, NP_CLEAR_ALL, std::numeric_limits<uint64_t>::max(), VoidCallback::create(context, function));
+    toImpl(managerRef)->clearSiteData(0, NP_CLEAR_ALL, std::numeric_limits<uint64_t>::max(), VoidAPICallback::create(context, function));
 #else
     UNUSED_PARAM(managerRef);
     UNUSED_PARAM(context);

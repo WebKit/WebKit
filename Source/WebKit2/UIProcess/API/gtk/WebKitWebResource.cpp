@@ -314,12 +314,11 @@ struct ResourceGetDataAsyncData {
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ResourceGetDataAsyncData)
 
-static void resourceDataCallback(WKDataRef wkData, WKErrorRef, void* context)
+static void resourceDataCallback(API::Data* wkData, GTask* task)
 {
-    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
-    ResourceGetDataAsyncData* data = static_cast<ResourceGetDataAsyncData*>(g_task_get_task_data(task.get()));
-    data->webData = toImpl(wkData);
-    g_task_return_boolean(task.get(), TRUE);
+    ResourceGetDataAsyncData* data = static_cast<ResourceGetDataAsyncData*>(g_task_get_task_data(task));
+    data->webData = wkData;
+    g_task_return_boolean(task, TRUE);
 }
 
 /**
@@ -341,10 +340,14 @@ void webkit_web_resource_get_data(WebKitWebResource* resource, GCancellable* can
     GTask* task = g_task_new(resource, cancellable, callback, userData);
     g_task_set_task_data(task, createResourceGetDataAsyncData(), reinterpret_cast<GDestroyNotify>(destroyResourceGetDataAsyncData));
     if (resource->priv->isMainResource)
-        resource->priv->frame->getMainResourceData(DataCallback::create(task, resourceDataCallback));
+        resource->priv->frame->getMainResourceData(DataCallback::create([task](bool /*error*/, API::Data* data) {
+            resourceDataCallback(data, adoptGRef(task).get());
+        }));
     else {
         String url = String::fromUTF8(resource->priv->uri.data());
-        resource->priv->frame->getResourceData(API::URL::create(url).get(), DataCallback::create(task, resourceDataCallback));
+        resource->priv->frame->getResourceData(API::URL::create(url).get(), DataCallback::create([task](bool /*error*/, API::Data* data) {
+            resourceDataCallback(data, adoptGRef(task).get());
+        }));
     }
 }
 

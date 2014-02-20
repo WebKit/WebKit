@@ -2510,12 +2510,6 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
     return zoomTextOnly ? page->textZoomFactor() : page->pageZoomFactor();
 }
 
-static void didValidateCommand(WKStringRef command, bool isEnabled, int32_t state, WKErrorRef, void* context)
-{
-    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
-    g_task_return_boolean(task.get(), isEnabled);
-}
-
 /**
  * webkit_web_view_can_execute_editing_command:
  * @web_view: a #WebKitWebView
@@ -2535,7 +2529,9 @@ void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const c
     g_return_if_fail(command);
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView)->validateCommand(String::fromUTF8(command), ValidateCommandCallback::create(task, didValidateCommand));
+    getPage(webView)->validateCommand(String::fromUTF8(command), ValidateCommandCallback::create([task](bool /*error*/, StringImpl* /*command*/, bool isEnabled, int32_t /*state*/) {
+        g_task_return_boolean(adoptGRef(task).get(), isEnabled);        
+    }));
 }
 
 /**
@@ -2612,20 +2608,19 @@ JSGlobalContextRef webkit_web_view_get_javascript_global_context(WebKitWebView* 
     return webView->priv->javascriptGlobalContext;
 }
 
-static void webkitWebViewRunJavaScriptCallback(WKSerializedScriptValueRef wkSerializedScriptValue, WKErrorRef, void* context)
+static void webkitWebViewRunJavaScriptCallback(WebSerializedScriptValue* wkSerializedScriptValue, GTask* task)
 {
-    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
-    if (g_task_return_error_if_cancelled(task.get()))
+    if (g_task_return_error_if_cancelled(task))
         return;
 
     if (!wkSerializedScriptValue) {
-        g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,
+        g_task_return_new_error(task, WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,
             _("An exception was raised in JavaScript"));
         return;
     }
 
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
-    g_task_return_pointer(task.get(), webkitJavascriptResultCreate(webView, toImpl(wkSerializedScriptValue)),
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task));
+    g_task_return_pointer(task, webkitJavascriptResultCreate(webView, wkSerializedScriptValue),
         reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
 }
 
@@ -2649,7 +2644,9 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(script);
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), ScriptValueCallback::create(task, webkitWebViewRunJavaScriptCallback));
+    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), ScriptValueCallback::create([task](bool /*error*/, WebSerializedScriptValue* serializedScriptValue) {
+        webkitWebViewRunJavaScriptCallback(serializedScriptValue, adoptGRef(task).get());
+    }));
 }
 
 /**
@@ -2738,7 +2735,9 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
     getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
-        ScriptValueCallback::create(task.leakRef(), webkitWebViewRunJavaScriptCallback));
+        ScriptValueCallback::create([task](bool /*error*/, WebSerializedScriptValue* serializedScriptValue) {
+        webkitWebViewRunJavaScriptCallback(serializedScriptValue, task.get());
+    }));
 }
 
 /**
@@ -2865,16 +2864,16 @@ static void fileReplaceContentsCallback(GObject* object, GAsyncResult* result, g
     g_task_return_boolean(task.get(), TRUE);
 }
 
-static void getContentsAsMHTMLDataCallback(WKDataRef wkData, WKErrorRef, void* context)
+static void getContentsAsMHTMLDataCallback(API::Data* wkData, GTask* taskPtr)
 {
-    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
+    GRefPtr<GTask> task = adoptGRef(taskPtr);
     if (g_task_return_error_if_cancelled(task.get()))
         return;
 
     ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_task_get_task_data(task.get()));
     // We need to retain the data until the asyncronous process
     // initiated by the user has finished completely.
-    data->webData = toImpl(wkData);
+    data->webData = wkData;
 
     // If we are saving to a file we need to write the data on disk before finishing.
     if (g_task_get_source_tag(task.get()) == webkit_web_view_save_to_file) {
@@ -2914,7 +2913,9 @@ void webkit_web_view_save(WebKitWebView* webView, WebKitSaveMode saveMode, GCanc
     GTask* task = g_task_new(webView, cancellable, callback, userData);
     g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save));
     g_task_set_task_data(task, createViewSaveAsyncData(), reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
-    getPage(webView)->getContentsAsMHTMLData(DataCallback::create(task, getContentsAsMHTMLDataCallback), false);
+    getPage(webView)->getContentsAsMHTMLData(DataCallback::create([task](bool /*error*/, API::Data* data) {
+        getContentsAsMHTMLDataCallback(data, task);
+    }), false);
 }
 
 /**
@@ -2977,7 +2978,9 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
     data->file = file;
     g_task_set_task_data(task, data, reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
 
-    getPage(webView)->getContentsAsMHTMLData(DataCallback::create(task, getContentsAsMHTMLDataCallback), false);
+    getPage(webView)->getContentsAsMHTMLData(DataCallback::create([task](bool /*error*/, API::Data* data) {
+        getContentsAsMHTMLDataCallback(data, task);
+    }), false);
 }
 
 /**

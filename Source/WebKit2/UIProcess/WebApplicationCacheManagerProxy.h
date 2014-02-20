@@ -43,7 +43,7 @@ namespace WebKit {
 class WebSecurityOrigin;
 struct SecurityOriginData;
 
-typedef GenericCallback<WKArrayRef> ArrayCallback;
+typedef GenericCallback<API::Array*> ArrayCallback;
 
 class WebApplicationCacheManagerProxy : public API::ObjectImpl<API::Object::Type::ApplicationCacheManager>, public WebContextSupplement, private IPC::MessageReceiver {
 public:

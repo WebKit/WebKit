@@ -907,22 +907,17 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         [_webSelectionAssistant showDictionaryFor:text fromRect:presentationRect];
 }
 
-static void selectedString(WKStringRef string, WKErrorRef error, void* context)
-{
-    if (error)
-        return;
-    if (!string)
-        return;
-
-    NSString *convertedString = toImpl(string)->string();
-    WKInteractionView* view = static_cast<WKInteractionView*>(context);
-    ASSERT(view);
-    [view _showDictionary:convertedString];
-}
-
 - (void)_define:(id)sender
 {
-    _page->getSelectionOrContentsAsString(StringCallback::create(self, selectedString));
+    _page->getSelectionOrContentsAsString(StringCallback::create([self](bool error, StringImpl* string) {
+        if (error)
+            return;
+        if (!string)
+            return;
+
+        NSString *convertedString = *string;
+        [self _showDictionary:convertedString];
+    }));
 }
 
 // UIWKInteractionViewProtocol
@@ -1083,28 +1078,24 @@ static inline UIWKSelectionFlags toUIWKSelectionFlags(WKSelectionFlags flag)
     }
 }
 
-static void selectionChangedWithGesture(const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, WKErrorRef error, void* context)
+static void selectionChangedWithGesture(bool error, WKInteractionView *view, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags)
 {
     if (error) {
         ASSERT_NOT_REACHED();
         return;
     }
-    WKInteractionView *view = static_cast<WKInteractionView*>(context);
-    ASSERT(view);
     if ([view webSelectionAssistant])
         [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((WKSelectionFlags)flags))];
     else
         [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((WKSelectionFlags)flags))];
 }
 
-static void selectionChangedWithTouch(const WebCore::IntPoint& point, uint32_t touch, WKErrorRef error, void* context)
+static void selectionChangedWithTouch(bool error, WKInteractionView *view, const WebCore::IntPoint& point, uint32_t touch)
 {
     if (error) {
         ASSERT_NOT_REACHED();
         return;
     }
-    WKInteractionView *view = static_cast<WKInteractionView*>(context);
-    ASSERT(view);
     if ([view webSelectionAssistant])
         [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WKSelectionTouch)touch)];
     else
@@ -1113,45 +1104,28 @@ static void selectionChangedWithTouch(const WebCore::IntPoint& point, uint32_t t
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state
 {
-    _page->selectWithGesture(WebCore::IntPoint(point), CharacterGranularity, toWKGestureType(gestureType), toWKGestureRecognizerState(state), GestureCallback::create(self, selectionChangedWithGesture));
+    _page->selectWithGesture(WebCore::IntPoint(point), CharacterGranularity, toWKGestureType(gestureType), toWKGestureRecognizerState(state), GestureCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
+        selectionChangedWithGesture(error, self, point, gestureType, gestureState, flags);
+    }));
 }
 
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart
 {
-    _page->updateSelectionWithTouches(WebCore::IntPoint(point), toWKSelectionTouch(touch), baseIsStart, TouchesCallback::create(self, selectionChangedWithTouch));
+    _page->updateSelectionWithTouches(WebCore::IntPoint(point), toWKSelectionTouch(touch), baseIsStart, TouchesCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t touch) {
+        selectionChangedWithTouch(error, self, point, touch);
+    }));
 }
 
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState
 {
-    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), toWKGestureType(gestureType), toWKGestureRecognizerState(gestureState), GestureCallback::create(self, selectionChangedWithGesture));
+    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), toWKGestureType(gestureType), toWKGestureRecognizerState(gestureState), GestureCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
+        selectionChangedWithGesture(error, self, point, gestureType, gestureState, flags);
+    }));
 }
 
 - (WKAutoCorrectionData *)autocorrectionData
 {
     return &_autocorrectionData;
-}
-
-static void autocorrectionData(const Vector<FloatRect>& rects, const String& fontName, double fontSize, uint64_t traits, WKErrorRef error, void* context)
-{
-    WKInteractionView* view = static_cast<WKInteractionView*>(context);
-    ASSERT(view);
-    CGRect firstRect = CGRectZero;
-    CGRect lastRect = CGRectZero;
-    if (rects.size()) {
-        firstRect = rects[0];
-        lastRect = rects[rects.size() - 1];
-    }
-
-    WKAutoCorrectionData *autocorrectionData = view.autocorrectionData;
-    autocorrectionData->fontName = fontName;
-    autocorrectionData->fontSize = fontSize;
-    autocorrectionData->fontTraits = traits;
-    autocorrectionData->textFirstRect = firstRect;
-    autocorrectionData->textLastRect = lastRect;
-
-    autocorrectionData->autocorrectionHandler(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
-    [autocorrectionData->autocorrectionHandler release];
-    autocorrectionData->autocorrectionHandler = nil;
 }
 
 // The completion handler can pass nil if input does not match the actual text preceding the insertion point.
@@ -1162,7 +1136,25 @@ static void autocorrectionData(const Vector<FloatRect>& rects, const String& fon
         return;
     }
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
-    _page->requestAutocorrectionData(input, AutocorrectionDataCallback::create(self, autocorrectionData));
+    _page->requestAutocorrectionData(input, AutocorrectionDataCallback::create([self, completionHandler](bool, const Vector<FloatRect>& rects, const String& fontName, double fontSize, uint64_t traits) {
+        CGRect firstRect = CGRectZero;
+        CGRect lastRect = CGRectZero;
+        if (rects.size()) {
+            firstRect = rects[0];
+            lastRect = rects[rects.size() - 1];
+        }
+
+        WKAutoCorrectionData *autocorrectionData = self.autocorrectionData;
+        autocorrectionData->fontName = fontName;
+        autocorrectionData->fontSize = fontSize;
+        autocorrectionData->fontTraits = traits;
+        autocorrectionData->textFirstRect = firstRect;
+        autocorrectionData->textLastRect = lastRect;
+
+        autocorrectionData->autocorrectionHandler(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
+        [autocorrectionData->autocorrectionHandler release];
+        autocorrectionData->autocorrectionHandler = nil;
+    }));
 }
 
 - (CGRect)textFirstRect
@@ -1175,30 +1167,17 @@ static void autocorrectionData(const Vector<FloatRect>& rects, const String& fon
     return (_page->editorState().hasComposition) ? _page->editorState().lastMarkedRect : _autocorrectionData.textLastRect;
 }
 
-static void autocorrectionResult(WKStringRef correction, WKErrorRef error, void* context)
-{
-    WKInteractionView* view = static_cast<WKInteractionView*>(context);
-    ASSERT(view);
-    WKAutoCorrectionData *autocorrectionData = view.autocorrectionData;
-
-    autocorrectionData->autocorrectionHandler(correction ? [WKAutocorrectionRects autocorrectionRectsWithRects:autocorrectionData->textFirstRect lastRect:autocorrectionData->textLastRect] : nil);
-    [autocorrectionData->autocorrectionHandler release];
-    autocorrectionData->autocorrectionHandler = nil;
-}
-
 // The completion handler should pass the rect of the correction text after replacing the input text, or nil if the replacement could not be performed.
 - (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler
 {
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
-    _page->applyAutocorrection(correction, input, StringCallback::create(self, autocorrectionResult));
-}
+    _page->applyAutocorrection(correction, input, StringCallback::create([self](bool /*error*/, StringImpl* string) {
+        WKAutoCorrectionData *autocorrectionData = self.autocorrectionData;
 
-static void autocorrectionContext(const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, WKErrorRef error, void* context)
-{
-    WKInteractionView* view = static_cast<WKInteractionView*>(context);
-    ASSERT(view);
-    WKAutoCorrectionData *autocorrectionData = view.autocorrectionData;
-    autocorrectionData->autocorrectionContextHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
+        autocorrectionData->autocorrectionHandler(string ? [WKAutocorrectionRects autocorrectionRectsWithRects:autocorrectionData->textFirstRect lastRect:autocorrectionData->textLastRect] : nil);
+        [autocorrectionData->autocorrectionHandler release];
+        autocorrectionData->autocorrectionHandler = nil;
+    }));
 }
 
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler
@@ -1217,7 +1196,10 @@ static void autocorrectionContext(const String& beforeText, const String& marked
         completionHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
     } else {
         _autocorrectionData.autocorrectionContextHandler = [completionHandler copy];
-        _page->requestAutocorrectionContext(AutocorrectionContextCallback::create(self, autocorrectionContext));
+        _page->requestAutocorrectionContext(AutocorrectionContextCallback::create([self, completionHandler](bool /*error*/, const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length) {
+            WKAutoCorrectionData *autocorrectionData = self.autocorrectionData;
+            autocorrectionData->autocorrectionContextHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
+        }));
     }
 }
 

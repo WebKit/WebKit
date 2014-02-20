@@ -29,7 +29,9 @@
 #include "APIError.h"
 #include "ShareableBitmap.h"
 #include "WKAPICast.h"
+#include <functional>
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -44,32 +46,29 @@ public:
     uint64_t callbackID() const { return m_callbackID; }
 
 protected:
-    explicit CallbackBase(void* context)
-        : m_context(context)
-        , m_callbackID(generateCallbackID())
+    explicit CallbackBase()
+        : m_callbackID(generateCallbackID())
     {
     }
-
-    void* context() const { return m_context; }
 
 private:
     static uint64_t generateCallbackID()
     {
+        ASSERT(isMainThread());
         static uint64_t uniqueCallbackID = 1;
         return uniqueCallbackID++;
     }
 
-    void* m_context;
     uint64_t m_callbackID;
 };
 
 class VoidCallback : public CallbackBase {
 public:
-    typedef void (*CallbackFunction)(WKErrorRef, void*);
+    typedef std::function<void (bool)> CallbackFunction;
 
-    static PassRefPtr<VoidCallback> create(void* context, CallbackFunction callback)
+    static PassRefPtr<VoidCallback> create(CallbackFunction callback)
     {
-        return adoptRef(new VoidCallback(context, callback));
+        return adoptRef(new VoidCallback(callback));
     }
 
     virtual ~VoidCallback()
@@ -82,9 +81,9 @@ public:
         if (!m_callback)
             return;
 
-        m_callback(0, context());
+        m_callback(false);
 
-        m_callback = 0;
+        m_callback = nullptr;
     }
     
     void invalidate()
@@ -92,30 +91,40 @@ public:
         if (!m_callback)
             return;
 
-        RefPtr<API::Error> error = API::Error::create();
-        m_callback(toAPI(error.get()), context());
-        
-        m_callback = 0;
+        m_callback(true);
+
+        m_callback = nullptr;
     }
 
 private:
-    VoidCallback(void* context, CallbackFunction callback)
-        : CallbackBase(context)
-        , m_callback(callback)
+    VoidCallback(CallbackFunction callback)
+        : m_callback(callback)
     {
     }
 
     CallbackFunction m_callback;
 };
 
-template<typename APIReturnValueType, typename InternalReturnValueType = typename APITypeInfo<APIReturnValueType>::ImplType>
+class VoidAPICallback : public CallbackBase {
+public:
+    typedef void (*CallbackFunction)(WKErrorRef, void*);
+
+    static PassRefPtr<VoidCallback> create(void* context, CallbackFunction callback)
+    {
+        return VoidCallback::create([context, callback](bool error) {
+            callback(error ? toAPI(API::Error::create().get()) : 0, context);
+        });
+    }
+};
+
+template<typename T>
 class GenericCallback : public CallbackBase {
 public:
-    typedef void (*CallbackFunction)(APIReturnValueType, WKErrorRef, void*);
+    typedef std::function<void (bool, T)> CallbackFunction;
 
-    static PassRefPtr<GenericCallback> create(void* context, CallbackFunction callback)
+    static PassRefPtr<GenericCallback> create(CallbackFunction callback)
     {
-        return adoptRef(new GenericCallback(context, callback));
+        return adoptRef(new GenericCallback(callback));
     }
 
     virtual ~GenericCallback()
@@ -123,43 +132,56 @@ public:
         ASSERT(!m_callback);
     }
 
-    void performCallbackWithReturnValue(InternalReturnValueType returnValue)
+    void performCallbackWithReturnValue(T returnValue)
     {
-        ASSERT(m_callback);
+        if (!m_callback)
+            return;
 
-        m_callback(toAPI(returnValue), 0, context());
+        m_callback(false, returnValue);
 
-        m_callback = 0;
+        m_callback = nullptr;
     }
     
     void invalidate()
     {
-        ASSERT(m_callback);
+        if (!m_callback)
+            return;
 
-        RefPtr<API::Error> error = API::Error::create();
-        m_callback(0, toAPI(error.get()), context());
-        
-        m_callback = 0;
+        m_callback(true, T());
+
+        m_callback = nullptr;
     }
 
 private:
-    GenericCallback(void* context, CallbackFunction callback)
-        : CallbackBase(context)
-        , m_callback(callback)
+    GenericCallback(CallbackFunction callback)
+        : m_callback(callback)
     {
     }
 
     CallbackFunction m_callback;
 };
 
-// FIXME: Make a version of CallbackBase with two arguments, and define ComputedPagesCallback as a specialization.
+template<typename APIReturnValueType, typename InternalReturnValueType = typename APITypeInfo<APIReturnValueType>::ImplType>
+class GenericAPICallback : public CallbackBase {
+public:
+    typedef void (*CallbackFunction)(APIReturnValueType, WKErrorRef, void*);
+
+    static PassRefPtr<GenericCallback<InternalReturnValueType>> create(void* context, CallbackFunction callback)
+    {
+        return GenericCallback<InternalReturnValueType>::create([context, callback](bool error, InternalReturnValueType returnValue) {
+            callback(toAPI(returnValue), error ? toAPI(API::Error::create().get()) : 0, context);
+        });
+    }
+};
+
+// FIXME: Make a version of GenericCallback with two arguments, and define ComputedPagesCallback as a specialization.
 class ComputedPagesCallback : public CallbackBase {
 public:
-    typedef void (*CallbackFunction)(const Vector<WebCore::IntRect>&, double, WKErrorRef, void*);
+    typedef std::function<void (bool, const Vector<WebCore::IntRect>&, double)> CallbackFunction;
 
-    static PassRefPtr<ComputedPagesCallback> create(void* context, CallbackFunction callback)
+    static PassRefPtr<ComputedPagesCallback> create(CallbackFunction callback)
     {
-        return adoptRef(new ComputedPagesCallback(context, callback));
+        return adoptRef(new ComputedPagesCallback(callback));
     }
 
     virtual ~ComputedPagesCallback()
@@ -171,7 +193,7 @@ public:
     {
         ASSERT(m_callback);
 
-        m_callback(returnValue1, returnValue2, 0, context());
+        m_callback(false, returnValue1, returnValue2);
 
         m_callback = 0;
     }
@@ -180,17 +202,15 @@ public:
     {
         ASSERT(m_callback);
 
-        RefPtr<API::Error> error = API::Error::create();
-        m_callback(Vector<WebCore::IntRect>(), 0, toAPI(error.get()), context());
+        m_callback(true, Vector<WebCore::IntRect>(), 0);
         
         m_callback = 0;
     }
 
 private:
 
-    ComputedPagesCallback(void* context, CallbackFunction callback)
-        : CallbackBase(context)
-        , m_callback(callback)
+    ComputedPagesCallback(CallbackFunction callback)
+        : m_callback(callback)
     {
     }
 
@@ -199,11 +219,11 @@ private:
 
 class ImageCallback : public CallbackBase {
 public:
-    typedef void (*CallbackFunction)(const ShareableBitmap::Handle&, WKErrorRef, void*);
+    typedef std::function<void (bool, const ShareableBitmap::Handle&)> CallbackFunction;
 
-    static PassRefPtr<ImageCallback> create(void* context, CallbackFunction callback)
+    static PassRefPtr<ImageCallback> create(CallbackFunction callback)
     {
-        return adoptRef(new ImageCallback(context, callback));
+        return adoptRef(new ImageCallback(callback));
     }
 
     virtual ~ImageCallback()
@@ -215,7 +235,7 @@ public:
     {
         ASSERT(m_callback);
 
-        m_callback(returnValue1, 0, context());
+        m_callback(true, returnValue1);
 
         m_callback = 0;
     }
@@ -226,16 +246,15 @@ public:
 
         RefPtr<API::Error> error = API::Error::create();
         ShareableBitmap::Handle handle;
-        m_callback(handle, toAPI(error.get()), context());
+        m_callback(false, handle);
 
         m_callback = 0;
     }
 
 private:
 
-    ImageCallback(void* context, CallbackFunction callback)
-        : CallbackBase(context)
-        , m_callback(callback)
+    ImageCallback(CallbackFunction callback)
+        : m_callback(callback)
     {
     }
     

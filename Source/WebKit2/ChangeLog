@@ -1,3 +1,147 @@
+2014-02-18  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] IPC callback classes should not be tightly coupled to C API
+        https://bugs.webkit.org/show_bug.cgi?id=129030
+
+        Reviewed by Anders Carlsson.
+
+        Changed CallbackBase subclasses to take an std::function (with context captured inside).
+        Instead of C API objects, these callback functions take implementation ones.
+        There are VoidAPICallback and GenericAPICallback helpers for the common case of C API.
+
+        * Shared/SecurityOriginData.h:
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        (WKApplicationCacheManagerGetApplicationCacheOrigins):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetStatistics):
+        (WKContextGetStatisticsWithOptions):
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerGetHostnamesWithCookies):
+        (WKCookieManagerGetHTTPCookieAcceptPolicy):
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerGetDatabasesByOrigin):
+        (WKDatabaseManagerGetDatabaseOrigins):
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetMainResourceData):
+        (WKFrameGetResourceData):
+        (WKFrameGetWebArchive):
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetKeyValueStorageOrigins):
+        (WKKeyValueStorageManagerGetStorageDetailsByOrigin):
+        * UIProcess/API/C/WKMediaCacheManager.cpp:
+        (WKMediaCacheManagerGetHostnamesWithMediaCache):
+        * UIProcess/API/C/WKOriginDataManager.cpp:
+        (WKOriginDataManagerGetOrigins):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+        (WKPageRenderTreeExternalRepresentation):
+        (WKPageGetSourceForFrame):
+        (WKPageGetContentsAsString):
+        (WKPageGetSelectionAsWebArchiveData):
+        (WKPageGetContentsAsMHTMLData):
+        (WKPageForceRepaint):
+        (WKPageValidateCommand):
+        (WKPageComputePagesForPrinting):
+        (WKPageDrawPagesToPDF):
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerGetSitesWithData):
+        (WKPluginSiteDataManagerClearSiteData):
+        (WKPluginSiteDataManagerClearAllSiteData):
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        (WKResourceCacheManagerGetCacheOrigins):
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        (webkit_cookie_manager_get_accept_policy):
+        (webkit_cookie_manager_get_domains_with_cookies):
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (drawPagesForPrintingCompleted):
+        (webkitPrintOperationPrintPagesForFrame):
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (resourceDataCallback):
+        (webkit_web_resource_get_data):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_can_execute_editing_command):
+        (webkitWebViewRunJavaScriptCallback):
+        (webkit_web_view_run_javascript):
+        (resourcesStreamReadCallback):
+        (getContentsAsMHTMLDataCallback):
+        (webkit_web_view_save):
+        (webkit_web_view_save_to_file):
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView _define:]):
+        (selectionChangedWithGesture):
+        (selectionChangedWithTouch):
+        (-[WKInteractionView changeSelectionWithGestureAt:withGesture:withState:]):
+        (-[WKInteractionView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:]):
+        (-[WKInteractionView changeSelectionWithTouchesFrom:to:withGesture:withState:]):
+        (-[WKInteractionView requestAutocorrectionRectsForString:withCompletionHandler:]):
+        (-[WKInteractionView applyAutocorrection:toString:withCompletionHandler:]):
+        (-[WKInteractionView requestAutocorrectionContextWithCompletionHandler:]):
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (pageDidDrawToImage):
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (pageDidComputePageRects):
+        (-[WKPrintingView _askPageToComputePageRects]):
+        (-[WKPrintingView _drawPreview:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        (-[WKView startSpeaking:]):
+        * UIProcess/AutoCorrectionCallback.h:
+        (WebKit::AutocorrectionDataCallback::create):
+        (WebKit::AutocorrectionDataCallback::performCallbackWithReturnValue):
+        (WebKit::AutocorrectionDataCallback::invalidate):
+        (WebKit::AutocorrectionDataCallback::AutocorrectionDataCallback):
+        (WebKit::AutocorrectionContextCallback::create):
+        (WebKit::AutocorrectionContextCallback::performCallbackWithReturnValue):
+        (WebKit::AutocorrectionContextCallback::invalidate):
+        (WebKit::AutocorrectionContextCallback::AutocorrectionContextCallback):
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackBase::CallbackBase):
+        (WebKit::CallbackBase::generateCallbackID):
+        (WebKit::VoidCallback::create):
+        (WebKit::VoidCallback::performCallback):
+        (WebKit::VoidCallback::invalidate):
+        (WebKit::VoidCallback::VoidCallback):
+        (WebKit::VoidAPICallback::create):
+        (WebKit::GenericCallback::create):
+        (WebKit::GenericCallback::performCallbackWithReturnValue):
+        (WebKit::GenericCallback::invalidate):
+        (WebKit::GenericCallback::GenericCallback):
+        (WebKit::GenericAPICallback::create):
+        (WebKit::ComputedPagesCallback::create):
+        (WebKit::ComputedPagesCallback::performCallbackWithReturnValue):
+        (WebKit::ComputedPagesCallback::invalidate):
+        (WebKit::ComputedPagesCallback::ComputedPagesCallback):
+        (WebKit::ImageCallback::create):
+        (WebKit::ImageCallback::performCallbackWithReturnValue):
+        (WebKit::ImageCallback::invalidate):
+        (WebKit::ImageCallback::ImageCallback):
+        * UIProcess/Plugins/WebPluginSiteDataManager.h:
+        * UIProcess/StatisticsRequest.h:
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        * UIProcess/WebContext.h:
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebDatabaseManagerProxy.h:
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebKeyValueStorageManager.h:
+        * UIProcess/WebMediaCacheManagerProxy.h:
+        * UIProcess/WebOriginDataManagerProxy.h:
+        * UIProcess/WebPageProxy.h:
+        (WebKit::ValidateCommandCallback::create):
+        (WebKit::ValidateCommandCallback::performCallbackWithReturnValue):
+        (WebKit::ValidateCommandCallback::invalidate):
+        (WebKit::ValidateCommandCallback::ValidateCommandCallback):
+        (WebKit::GestureCallback::create):
+        (WebKit::GestureCallback::performCallbackWithReturnValue):
+        (WebKit::GestureCallback::invalidate):
+        (WebKit::GestureCallback::GestureCallback):
+        (WebKit::TouchesCallback::create):
+        (WebKit::TouchesCallback::performCallbackWithReturnValue):
+        (WebKit::TouchesCallback::invalidate):
+        (WebKit::TouchesCallback::TouchesCallback):
+        * UIProcess/WebResourceCacheManagerProxy.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+
 2014-02-19  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid sending redundant layer properties to the UI process, and avoid allocation of RemoteLayerBackingStore unless we need it

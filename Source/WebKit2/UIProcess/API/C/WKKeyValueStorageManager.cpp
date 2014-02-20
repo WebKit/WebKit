@@ -31,6 +31,8 @@
 
 using namespace WebKit;
 
+typedef GenericAPICallback<WKArrayRef> ArrayAPICallback;
+
 WKTypeID WKKeyValueStorageManagerGetTypeID()
 {
     return toAPI(WebKeyValueStorageManager::APIType);
@@ -56,12 +58,12 @@ WKStringRef WKKeyValueStorageManagerGetModificationTimeKey()
 
 void WKKeyValueStorageManagerGetKeyValueStorageOrigins(WKKeyValueStorageManagerRef keyValueStorageManagerRef, void* context, WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction callback)
 {
-    toImpl(keyValueStorageManagerRef)->getKeyValueStorageOrigins(ArrayCallback::create(context, callback));
+    toImpl(keyValueStorageManagerRef)->getKeyValueStorageOrigins(ArrayAPICallback::create(context, callback));
 }
 
 void WKKeyValueStorageManagerGetStorageDetailsByOrigin(WKKeyValueStorageManagerRef keyValueStorageManagerRef, void* context, WKKeyValueStorageManagerGetStorageDetailsByOriginFunction callback)
 {
-    toImpl(keyValueStorageManagerRef)->getStorageDetailsByOrigin(ArrayCallback::create(context, callback));
+    toImpl(keyValueStorageManagerRef)->getStorageDetailsByOrigin(ArrayAPICallback::create(context, callback));
 }
 
 void WKKeyValueStorageManagerDeleteEntriesForOrigin(WKKeyValueStorageManagerRef keyValueStorageManagerRef, WKSecurityOriginRef originRef)

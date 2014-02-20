@@ -80,7 +80,7 @@ struct StatisticsData;
 struct WebPageConfiguration;
 struct WebProcessCreationParameters;
     
-typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
+typedef GenericCallback<ImmutableDictionary*> DictionaryCallback;
 
 #if ENABLE(NETWORK_INFO)
 class WebNetworkInfoManagerProxy;
