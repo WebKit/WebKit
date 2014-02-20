@@ -1,3 +1,22 @@
+2014-02-19  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: (RenderLayer)Pass non-css-pixel-snapped dirty rects to PaintInfo when painting renderer().
+        https://bugs.webkit.org/show_bug.cgi?id=128913
+
+        Reviewed by Simon Fraser.
+
+        This is part of the preparation to move RenderLayers to device pixel positioning.
+        We might need to device pixelsnapp the dirty rects later, but PaintInfo should be
+        able to manage that instead of doing it everywhere in the code.
+
+        Covered by existing tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintBackgroundForFragments):
+        (WebCore::RenderLayer::paintForegroundForFragmentsWithPhase):
+        (WebCore::RenderLayer::paintOutlineForFragments):
+        (WebCore::RenderLayer::paintMaskForFragments):
+
 2014-02-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         fieldset:disabled fieldset > legend:first-child input should be disabled
