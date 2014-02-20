@@ -26,8 +26,6 @@
 #ifndef DFGCommon_h
 #define DFGCommon_h
 
-#include <wtf/Platform.h>
-
 #include "DFGCompilationMode.h"
 
 #if ENABLE(DFG_JIT)

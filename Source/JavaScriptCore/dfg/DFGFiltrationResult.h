@@ -26,8 +26,6 @@
 #ifndef DFGFiltrationResult_h
 #define DFGFiltrationResult_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {

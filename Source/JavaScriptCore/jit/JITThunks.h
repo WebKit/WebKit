@@ -26,8 +26,6 @@
 #ifndef JITThunks_h
 #define JITThunks_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "CallData.h"

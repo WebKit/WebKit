@@ -26,8 +26,6 @@
 #ifndef DFGGraph_h
 #define DFGGraph_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "AssemblyHelpers.h"

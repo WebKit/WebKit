@@ -26,8 +26,6 @@
 #ifndef ProcessID_h
 #define ProcessID_h
 
-#include <wtf/Platform.h>
-
 #if OS(UNIX)
 #include <unistd.h>
 #endif

@@ -26,8 +26,6 @@
 #ifndef FTLStackMaps_h
 #define FTLStackMaps_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "DataView.h"

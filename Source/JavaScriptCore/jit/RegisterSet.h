@@ -26,8 +26,6 @@
 #ifndef RegisterSet_h
 #define RegisterSet_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "FPRInfo.h"

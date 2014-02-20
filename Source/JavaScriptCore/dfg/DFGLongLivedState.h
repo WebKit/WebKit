@@ -26,8 +26,6 @@
 #ifndef DFGLongLivedState_h
 #define DFGLongLivedState_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGNodeAllocator.h"

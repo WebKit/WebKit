@@ -30,7 +30,6 @@
 #ifndef JSExportMacros_h
 #define JSExportMacros_h
 
-#include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
 
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.

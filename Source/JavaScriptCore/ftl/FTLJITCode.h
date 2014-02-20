@@ -26,8 +26,6 @@
 #ifndef FTLJITCode_h
 #define FTLJITCode_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "DFGCommonData.h"

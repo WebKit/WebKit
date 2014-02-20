@@ -26,8 +26,6 @@
 #ifndef TempRegisterSet_h
 #define TempRegisterSet_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "FPRInfo.h"

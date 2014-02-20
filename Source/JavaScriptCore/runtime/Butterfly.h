@@ -30,7 +30,6 @@
 #include "PropertyOffset.h"
 #include "PropertyStorage.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/Platform.h>
 
 namespace JSC {
 

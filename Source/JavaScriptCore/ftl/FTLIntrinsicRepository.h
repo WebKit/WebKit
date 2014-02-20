@@ -26,8 +26,6 @@
 #ifndef FTLIntrinsicRepository_h
 #define FTLIntrinsicRepository_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "DFGOperations.h"

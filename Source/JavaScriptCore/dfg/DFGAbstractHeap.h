@@ -26,8 +26,6 @@
 #ifndef DFGAbstractHeap_h
 #define DFGAbstractHeap_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "VirtualRegister.h"

@@ -26,8 +26,6 @@
 #ifndef DFGSilentRegisterSavePlan_h
 #define DFGSilentRegisterSavePlan_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

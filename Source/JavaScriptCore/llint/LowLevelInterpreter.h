@@ -26,8 +26,6 @@
 #ifndef LowLevelInterpreter_h
 #define LowLevelInterpreter_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(LLINT)
 
 #include "Opcode.h"

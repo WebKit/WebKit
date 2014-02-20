@@ -26,8 +26,6 @@
 #ifndef DFGSpeculativeJIT_h
 #define DFGSpeculativeJIT_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractInterpreter.h"

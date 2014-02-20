@@ -26,8 +26,6 @@
 #ifndef FTLAbstractHeapRepository_h
 #define FTLAbstractHeapRepository_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "DFGArrayMode.h"

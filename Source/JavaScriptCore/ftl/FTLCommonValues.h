@@ -26,8 +26,6 @@
 #ifndef FTLCommonValues_h
 #define FTLCommonValues_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FTLAbbreviations.h"

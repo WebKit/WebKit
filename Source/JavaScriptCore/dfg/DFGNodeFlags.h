@@ -26,8 +26,6 @@
 #ifndef DFGNodeFlags_h
 #define DFGNodeFlags_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include <wtf/PrintStream.h>

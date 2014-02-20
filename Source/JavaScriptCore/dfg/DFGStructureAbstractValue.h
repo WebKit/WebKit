@@ -26,8 +26,6 @@
 #ifndef DFGStructureAbstractValue_h
 #define DFGStructureAbstractValue_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "JSCell.h"

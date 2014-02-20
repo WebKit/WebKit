@@ -33,7 +33,6 @@
 #include "JSFunction.h"
 #include "Opcode.h"
 #include "WriteBarrier.h"
-#include <wtf/Platform.h>
 #include <wtf/SentinelLinkedList.h>
 
 namespace JSC {

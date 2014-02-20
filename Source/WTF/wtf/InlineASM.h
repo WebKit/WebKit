@@ -26,8 +26,6 @@
 #ifndef InlineASM_h
 #define InlineASM_h
 
-#include <wtf/Platform.h>
-
 /* asm directive helpers */ 
 
 #if OS(DARWIN) || (OS(WINDOWS) && CPU(X86))

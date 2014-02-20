@@ -26,8 +26,6 @@
 #ifndef DFGMinifiedNode_h
 #define DFGMinifiedNode_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

@@ -26,8 +26,6 @@
 #ifndef DFGDesiredStructureChains_h
 #define DFGDesiredStructureChains_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "IntendedStructureChain.h"

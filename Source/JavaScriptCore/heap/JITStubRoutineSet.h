@@ -26,8 +26,6 @@
 #ifndef JITStubRoutineSet_h
 #define JITStubRoutineSet_h
 
-#include <wtf/Platform.h>
-
 #include "JITStubRoutine.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>

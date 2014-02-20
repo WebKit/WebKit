@@ -26,8 +26,6 @@
 #ifndef LLIntEntrypoint_h
 #define LLIntEntrypoint_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(LLINT)
 
 #include "CodeSpecializationKind.h"

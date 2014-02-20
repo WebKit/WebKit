@@ -26,8 +26,6 @@
 #ifndef AssemblyHelpers_h
 #define AssemblyHelpers_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "CodeBlock.h"

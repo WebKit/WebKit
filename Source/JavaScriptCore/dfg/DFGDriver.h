@@ -29,7 +29,6 @@
 #include "CallFrame.h"
 #include "DFGCompilationMode.h"
 #include "DFGPlan.h"
-#include <wtf/Platform.h>
 
 namespace JSC {
 

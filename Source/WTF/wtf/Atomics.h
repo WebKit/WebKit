@@ -59,7 +59,6 @@
 #ifndef Atomics_h
 #define Atomics_h
 
-#include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 
 #if OS(WINDOWS)

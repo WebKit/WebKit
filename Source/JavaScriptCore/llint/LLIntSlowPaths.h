@@ -27,7 +27,6 @@
 #define LLIntSlowPaths_h
 
 #include "CommonSlowPaths.h"
-#include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(LLINT)

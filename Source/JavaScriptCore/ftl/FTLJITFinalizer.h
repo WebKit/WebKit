@@ -26,8 +26,6 @@
 #ifndef FTLJITFinalizer_h
 #define FTLJITFinalizer_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "DFGFinalizer.h"

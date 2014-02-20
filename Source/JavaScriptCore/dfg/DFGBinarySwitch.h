@@ -26,8 +26,6 @@
 #ifndef DFGBinarySwitch_h
 #define DFGBinarySwitch_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "GPRInfo.h"

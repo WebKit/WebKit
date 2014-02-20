@@ -33,7 +33,6 @@
 #include "NameInstance.h"
 #include "StackAlignment.h"
 #include "VM.h"
-#include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(JIT) || ENABLE(LLINT)

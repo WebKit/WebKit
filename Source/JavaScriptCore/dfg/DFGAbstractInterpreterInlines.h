@@ -26,8 +26,6 @@
 #ifndef DFGAbstractInterpreterInlines_h
 #define DFGAbstractInterpreterInlines_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractInterpreter.h"

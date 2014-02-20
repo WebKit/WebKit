@@ -26,8 +26,6 @@
 #ifndef Repatch_h
 #define Repatch_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"

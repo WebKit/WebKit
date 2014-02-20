@@ -26,8 +26,6 @@
 #ifndef DFGOSRExitCompilerCommon_h
 #define DFGOSRExitCompilerCommon_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "CCallHelpers.h"

@@ -26,8 +26,6 @@
 #ifndef DFGCriticalEdgeBreakingPhase_h
 #define DFGCriticalEdgeBreakingPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {

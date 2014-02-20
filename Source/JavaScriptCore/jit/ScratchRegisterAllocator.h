@@ -26,8 +26,6 @@
 #ifndef ScratchRegisterAllocator_h
 #define ScratchRegisterAllocator_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "MacroAssembler.h"

@@ -26,8 +26,6 @@
 #ifndef DFGAnalysis_h
 #define DFGAnalysis_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {

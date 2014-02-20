@@ -27,8 +27,6 @@
 #ifndef WTF_DynamicAnnotations_h
 #define WTF_DynamicAnnotations_h
 
-#include <wtf/Platform.h>
-
 /* This file defines dynamic annotations for use with dynamic analysis
  * tool such as ThreadSanitizer, Valgrind, etc.
  *

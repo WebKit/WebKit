@@ -26,8 +26,6 @@
 #ifndef FTLExitThunkGenerator_h
 #define FTLExitThunkGenerator_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "CCallHelpers.h"

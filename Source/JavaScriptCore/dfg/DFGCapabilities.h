@@ -33,7 +33,6 @@
 #include "Interpreter.h"
 #include "Intrinsic.h"
 #include "Options.h"
-#include <wtf/Platform.h>
 
 namespace JSC { namespace DFG {
 

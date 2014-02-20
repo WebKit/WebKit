@@ -26,8 +26,6 @@
 #ifndef JITDisassembler_h
 #define JITDisassembler_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "LinkBuffer.h"

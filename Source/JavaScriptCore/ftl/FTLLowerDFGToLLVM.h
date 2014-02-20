@@ -26,8 +26,6 @@
 #ifndef FTLLowerDFGToLLVM_h
 #define FTLLowerDFGToLLVM_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "DFGGraph.h"

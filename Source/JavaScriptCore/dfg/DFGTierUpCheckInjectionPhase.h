@@ -26,8 +26,6 @@
 #ifndef DFGTierUpCheckInjectionPhase_h
 #define DFGTierUpCheckInjectionPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {

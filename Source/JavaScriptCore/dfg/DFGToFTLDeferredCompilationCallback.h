@@ -26,8 +26,6 @@
 #ifndef DFGToFTLDeferredCompilationCallback_h
 #define DFGToFTLDeferredCompilationCallback_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "DeferredCompilationCallback.h"

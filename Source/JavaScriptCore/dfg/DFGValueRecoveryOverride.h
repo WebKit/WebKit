@@ -26,8 +26,6 @@
 #ifndef DFGValueRecoveryOverride_h
 #define DFGValueRecoveryOverride_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "ValueRecovery.h"

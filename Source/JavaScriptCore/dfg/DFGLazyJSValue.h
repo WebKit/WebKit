@@ -26,8 +26,6 @@
 #ifndef DFGLazyJSValue_h
 #define DFGLazyJSValue_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "JSCJSValue.h"

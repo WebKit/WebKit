@@ -26,8 +26,6 @@
 #ifndef DFGInPlaceAbstractState_h
 #define DFGInPlaceAbstractState_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractValue.h"

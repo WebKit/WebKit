@@ -26,8 +26,6 @@
 #ifndef CallReturnOffsetToBytecodeOffset_h
 #define CallReturnOffsetToBytecodeOffset_h
 
-#include <wtf/Platform.h>
-
 namespace JSC {
 
 #if ENABLE(JIT)

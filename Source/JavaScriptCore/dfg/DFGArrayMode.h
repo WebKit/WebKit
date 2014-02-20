@@ -26,8 +26,6 @@
 #ifndef DFGArrayMode_h
 #define DFGArrayMode_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "ArrayProfile.h"

@@ -26,8 +26,6 @@
 #ifndef FTLFail_h
 #define FTLFail_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FTLState.h"

@@ -26,8 +26,6 @@
 #ifndef CommonSlowPathExceptions_h
 #define CommonSlowPathExceptions_h
 
-#include <wtf/Platform.h>
-
 #include "MacroAssemblerCodeRef.h"
 
 namespace JSC {

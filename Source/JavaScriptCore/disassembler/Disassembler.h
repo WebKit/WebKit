@@ -26,7 +26,6 @@
 #ifndef Disassembler_h
 #define Disassembler_h
 
-#include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {

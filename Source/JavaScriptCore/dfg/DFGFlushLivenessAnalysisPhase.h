@@ -26,8 +26,6 @@
 #ifndef DFGFlushLivenessAnalysisPhase_h
 #define DFGFlushLivenessAnalysisPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

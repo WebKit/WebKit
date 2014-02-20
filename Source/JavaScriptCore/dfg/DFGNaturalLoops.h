@@ -26,8 +26,6 @@
 #ifndef DFGNaturalLoops_h
 #define DFGNaturalLoops_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGAnalysis.h"

@@ -26,8 +26,6 @@
 #ifndef DFGVariableAccessDataDump_h
 #define DFGVariableAccessDataDump_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include <wtf/PrintStream.h>

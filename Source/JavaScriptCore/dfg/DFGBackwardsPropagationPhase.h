@@ -26,8 +26,6 @@
 #ifndef DFGBackwardsPropagationPhase_h
 #define DFGBackwardsPropagationPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

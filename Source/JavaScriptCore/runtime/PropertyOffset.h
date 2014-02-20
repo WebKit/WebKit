@@ -26,7 +26,6 @@
 #ifndef PropertyOffset_h
 #define PropertyOffset_h
 
-#include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {

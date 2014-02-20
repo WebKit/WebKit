@@ -26,8 +26,6 @@
 #ifndef DFGSafeToExecute_h
 #define DFGSafeToExecute_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGGraph.h"

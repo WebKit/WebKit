@@ -26,8 +26,6 @@
 #ifndef FTLOSRExit_h
 #define FTLOSRExit_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "CodeOrigin.h"

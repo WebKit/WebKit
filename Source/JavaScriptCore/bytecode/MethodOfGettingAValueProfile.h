@@ -26,8 +26,6 @@
 #ifndef MethodOfGettingAValueProfile_h
 #define MethodOfGettingAValueProfile_h
 
-#include <wtf/Platform.h>
-
 // This is guarded by ENABLE_DFG_JIT only because it uses some value profiles
 // that are currently only used if the DFG is enabled (i.e. they are not
 // available in the profile-only configuration). Hopefully someday all of

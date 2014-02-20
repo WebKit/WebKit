@@ -32,7 +32,6 @@
 #include "PutDirectIndexMode.h"
 #include "WriteBarrier.h"
 #include <wtf/HashMap.h>
-#include <wtf/Platform.h>
 
 namespace JSC {
 

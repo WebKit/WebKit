@@ -32,7 +32,6 @@
 #include "SparseArrayValueMap.h"
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/Platform.h>
 
 namespace JSC {
 

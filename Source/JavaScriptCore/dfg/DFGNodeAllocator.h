@@ -26,8 +26,6 @@
 #ifndef DFGNodeAllocator_h
 #define DFGNodeAllocator_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGAllocator.h"

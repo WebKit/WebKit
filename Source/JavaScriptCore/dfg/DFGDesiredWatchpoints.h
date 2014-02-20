@@ -26,8 +26,6 @@
 #ifndef DFGDesiredWatchpoints_h
 #define DFGDesiredWatchpoints_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "CodeOrigin.h"

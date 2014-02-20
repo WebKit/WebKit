@@ -26,8 +26,6 @@
 #ifndef ThunkGenerator_h
 #define ThunkGenerator_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 namespace JSC {

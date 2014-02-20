@@ -26,8 +26,6 @@
 #ifndef FTLAbstractHeap_h
 #define FTLAbstractHeap_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FTLAbbreviations.h"

@@ -26,8 +26,6 @@
 #ifndef FTLExitArgument_h
 #define FTLExitArgument_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FTLValueFormat.h"

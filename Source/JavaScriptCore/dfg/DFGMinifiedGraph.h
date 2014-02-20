@@ -26,8 +26,6 @@
 #ifndef DFGMinifiedGraph_h
 #define DFGMinifiedGraph_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGMinifiedNode.h"

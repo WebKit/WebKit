@@ -29,8 +29,6 @@
 #include "LLIntCommon.h"
 #include <wtf/Assertions.h>
 #include <wtf/InlineASM.h>
-#include <wtf/Platform.h>
-
 
 #if ENABLE(LLINT_C_LOOP)
 #define OFFLINE_ASM_C_LOOP 1

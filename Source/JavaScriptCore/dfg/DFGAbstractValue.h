@@ -26,8 +26,6 @@
 #ifndef DFGAbstractValue_h
 #define DFGAbstractValue_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "ArrayProfile.h"

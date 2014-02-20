@@ -26,8 +26,6 @@
 #ifndef DFGJITFinalizer_h
 #define DFGJITFinalizer_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGFinalizer.h"

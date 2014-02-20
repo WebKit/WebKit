@@ -26,8 +26,6 @@
 #ifndef FTLThunks_h
 #define FTLThunks_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FTLLocation.h"

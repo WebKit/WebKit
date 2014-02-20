@@ -36,7 +36,6 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
-#include <wtf/platform.h>
 #include <WebCore/BString.h>
 #include <WebCore/URL.h>
 #include <WebCore/LocalizedStrings.h>

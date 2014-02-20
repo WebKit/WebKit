@@ -26,8 +26,6 @@
 #ifndef GCAwareJITStubRoutine_h
 #define GCAwareJITStubRoutine_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "JITStubRoutine.h"

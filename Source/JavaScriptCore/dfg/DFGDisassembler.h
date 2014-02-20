@@ -26,8 +26,6 @@
 #ifndef DFGDisassembler_h
 #define DFGDisassembler_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

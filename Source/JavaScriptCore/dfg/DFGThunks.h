@@ -26,8 +26,6 @@
 #ifndef DFGThunks_h
 #define DFGThunks_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "MacroAssemblerCodeRef.h"

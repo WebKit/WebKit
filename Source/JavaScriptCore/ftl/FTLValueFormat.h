@@ -26,8 +26,6 @@
 #ifndef FTLValueFormat_h
 #define FTLValueFormat_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "GPRInfo.h"

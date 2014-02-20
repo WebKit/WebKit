@@ -26,8 +26,6 @@
 #ifndef DFGSlowPathGenerator_h
 #define DFGSlowPathGenerator_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

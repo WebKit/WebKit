@@ -34,7 +34,6 @@
 #include "JSCJSValue.h"
 #include "MacroAssembler.h"
 #include "VirtualRegister.h"
-#include <wtf/Platform.h>
 
 namespace JSC {
 

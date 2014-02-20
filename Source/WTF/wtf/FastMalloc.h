@@ -23,7 +23,6 @@
 
 #include <new>
 #include <stdlib.h>
-#include <wtf/Platform.h>
 #include <wtf/PossiblyNull.h>
 #include <wtf/StdLibExtras.h>
 

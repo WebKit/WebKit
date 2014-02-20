@@ -28,7 +28,6 @@
 
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
-#include <wtf/Platform.h>
 
 #if ENABLE(JIT)
 

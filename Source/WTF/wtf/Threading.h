@@ -59,8 +59,6 @@
 #ifndef Threading_h
 #define Threading_h
 
-#include <wtf/Platform.h>
-
 #include <stdint.h>
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>

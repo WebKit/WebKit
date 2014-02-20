@@ -26,8 +26,6 @@
 #ifndef FTLCapabilities_h
 #define FTLCapabilities_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "DFGGraph.h"

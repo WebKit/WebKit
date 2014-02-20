@@ -26,8 +26,6 @@
 #ifndef DFGClobberSet_h
 #define DFGClobberSet_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractHeap.h"

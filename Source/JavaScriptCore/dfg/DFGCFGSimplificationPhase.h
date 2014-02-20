@@ -26,8 +26,6 @@
 #ifndef DFGCFGSimplificationPhase_h
 #define DFGCFGSimplificationPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {

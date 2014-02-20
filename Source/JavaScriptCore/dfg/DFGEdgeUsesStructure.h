@@ -26,8 +26,6 @@
 #ifndef DFGEdgeUsesStructure_h
 #define DFGEdgeUsesStructure_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGGraph.h"

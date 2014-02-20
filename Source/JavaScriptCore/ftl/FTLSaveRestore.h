@@ -26,8 +26,6 @@
 #ifndef FTLSaveRestore_h
 #define FTLSaveRestore_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FPRInfo.h"

@@ -26,8 +26,6 @@
 #ifndef DFGPlan_h
 #define DFGPlan_h
 
-#include <wtf/Platform.h>
-
 #include "CompilationResult.h"
 #include "DFGCompilationKey.h"
 #include "DFGCompilationMode.h"

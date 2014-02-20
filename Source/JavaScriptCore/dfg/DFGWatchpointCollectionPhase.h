@@ -26,8 +26,6 @@
 #ifndef DFGWatchpointCollectionPhase_h
 #define DFGWatchpointCollectionPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {

@@ -26,8 +26,6 @@
 #ifndef DFGFinalizer_h
 #define DFGFinalizer_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "JITCode.h"

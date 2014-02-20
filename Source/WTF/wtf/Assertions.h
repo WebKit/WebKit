@@ -39,7 +39,6 @@
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <wtf/Platform.h>
 
 #ifdef NDEBUG
 /* Disable ASSERT* macros in release mode. */

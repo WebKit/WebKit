@@ -26,8 +26,6 @@
 #ifndef LLIntThunks_h
 #define LLIntThunks_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(LLINT)
 
 #include "MacroAssemblerCodeRef.h"

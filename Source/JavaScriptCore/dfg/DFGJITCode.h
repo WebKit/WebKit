@@ -26,8 +26,6 @@
 #ifndef DFGJITCode_h
 #define DFGJITCode_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "CompilationResult.h"

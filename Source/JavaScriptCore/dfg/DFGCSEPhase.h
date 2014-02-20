@@ -26,8 +26,6 @@
 #ifndef DFGCSEPhase_h
 #define DFGCSEPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

@@ -26,8 +26,6 @@
 #ifndef DFGCommonData_h
 #define DFGCommonData_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlockJettisoningWatchpoint.h"

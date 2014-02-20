@@ -26,8 +26,6 @@
 #ifndef ByValInfo_h
 #define ByValInfo_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "ClassInfo.h"

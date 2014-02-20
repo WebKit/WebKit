@@ -29,7 +29,6 @@
 #include <stdarg.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Platform.h>
 #include <wtf/RawPointer.h>
 #include <wtf/StdLibExtras.h>
 

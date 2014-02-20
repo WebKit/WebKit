@@ -26,8 +26,6 @@
 #ifndef StructureStubInfo_h
 #define StructureStubInfo_h
 
-#include <wtf/Platform.h>
-
 #include "CodeOrigin.h"
 #include "Instruction.h"
 #include "JITStubRoutine.h"

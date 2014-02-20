@@ -26,8 +26,6 @@
 #ifndef FTLTypedPointer_h
 #define FTLTypedPointer_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FTLAbbreviations.h"

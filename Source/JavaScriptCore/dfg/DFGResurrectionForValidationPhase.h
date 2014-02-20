@@ -26,8 +26,6 @@
 #ifndef DFGResurrectionForValidationPhase_h
 #define DFGResurrectionForValidationPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

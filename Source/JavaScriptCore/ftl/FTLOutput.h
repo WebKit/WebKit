@@ -26,8 +26,6 @@
 #ifndef FTLOutput_h
 #define FTLOutput_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "DFGCommon.h"

@@ -26,8 +26,6 @@
 #ifndef DFGPredictionPropagationPhase_h
 #define DFGPredictionPropagationPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "SpeculatedType.h"

@@ -26,8 +26,6 @@
 #ifndef DFGVariableEventStream_h
 #define DFGVariableEventStream_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

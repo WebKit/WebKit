@@ -26,7 +26,6 @@
 #ifndef LLIntExceptions_h
 #define LLIntExceptions_h
 
-#include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(LLINT)

@@ -28,7 +28,6 @@
 
 #include "JSCJSValue.h"
 #include "Opcode.h"
-#include <wtf/Platform.h>
 
 namespace JSC {
 

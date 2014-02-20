@@ -26,8 +26,6 @@
 #ifndef ClosureCallStubRoutine_h
 #define ClosureCallStubRoutine_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "CodeOrigin.h"

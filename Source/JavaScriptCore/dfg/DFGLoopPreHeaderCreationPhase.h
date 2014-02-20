@@ -26,8 +26,6 @@
 #ifndef DFGLoopPreHeaderCreationPhase_h
 #define DFGLoopPreHeaderCreationPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {

@@ -26,8 +26,6 @@
 #ifndef FTLExitArgumentForOperand_h
 #define FTLExitArgumentForOperand_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FTLExitArgument.h"

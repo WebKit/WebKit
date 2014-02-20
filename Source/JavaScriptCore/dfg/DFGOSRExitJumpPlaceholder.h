@@ -26,8 +26,6 @@
 #ifndef DFGOSRExitJumpPlaceholder_h
 #define DFGOSRExitJumpPlaceholder_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

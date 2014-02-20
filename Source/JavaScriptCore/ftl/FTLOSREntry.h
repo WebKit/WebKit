@@ -26,8 +26,6 @@
 #ifndef FTLOSREntry_h
 #define FTLOSREntry_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 namespace JSC {

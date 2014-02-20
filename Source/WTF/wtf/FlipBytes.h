@@ -26,8 +26,6 @@
 #ifndef FlipBytes_h
 #define FlipBytes_h
 
-#include <wtf/Platform.h>
-
 namespace WTF {
 
 inline bool needToFlipBytesIfLittleEndian(bool littleEndian)

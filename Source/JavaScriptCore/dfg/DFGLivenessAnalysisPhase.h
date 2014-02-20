@@ -26,8 +26,6 @@
 #ifndef DFGLivenessAnalysisPhase_h
 #define DFGLivenessAnalysisPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

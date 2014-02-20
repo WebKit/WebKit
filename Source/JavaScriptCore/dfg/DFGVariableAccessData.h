@@ -34,7 +34,6 @@
 #include "Operands.h"
 #include "SpeculatedType.h"
 #include "VirtualRegister.h"
-#include <wtf/Platform.h>
 #include <wtf/UnionFind.h>
 #include <wtf/Vector.h>
 

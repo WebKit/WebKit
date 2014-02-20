@@ -26,8 +26,6 @@
 #ifndef DFGNode_h
 #define DFGNode_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"

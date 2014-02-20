@@ -26,8 +26,6 @@
 #ifndef JITStubRoutine_h
 #define JITStubRoutine_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "ExecutableAllocator.h"

@@ -26,8 +26,6 @@
 #ifndef LLIntOpcode_h
 #define LLIntOpcode_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(LLINT)
 
 #if ENABLE(LLINT_C_LOOP)

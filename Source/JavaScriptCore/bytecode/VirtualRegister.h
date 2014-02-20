@@ -28,7 +28,6 @@
 
 #include "CallFrame.h"
 
-#include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {

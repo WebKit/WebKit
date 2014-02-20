@@ -26,8 +26,6 @@
 #ifndef DFGEdgeDominates_h
 #define DFGEdgeDominates_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGGraph.h"

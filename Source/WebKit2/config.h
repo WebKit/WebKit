@@ -30,9 +30,10 @@
 #include "autotoolsconfig.h"
 #endif
 
+#include <wtf/Platform.h>
+
 #include <runtime/JSExportMacros.h>
 #include <wtf/DisallowCType.h>
-#include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
 
 #ifdef __cplusplus

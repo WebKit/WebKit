@@ -37,7 +37,6 @@
 #include "WebURLCredential.h"
 #include "WebURLResponse.h"
 
-#include <wtf/platform.h>
 #include <wtf/text/CString.h>
 
 #include <io.h>

@@ -26,8 +26,6 @@
 #ifndef FTLAbbreviations_h
 #define FTLAbbreviations_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FTLAbbreviatedTypes.h"

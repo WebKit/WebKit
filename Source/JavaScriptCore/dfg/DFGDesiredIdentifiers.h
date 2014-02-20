@@ -26,8 +26,6 @@
 #ifndef DFGDesiredIdentifiers_h
 #define DFGDesiredIdentifiers_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "Identifier.h"

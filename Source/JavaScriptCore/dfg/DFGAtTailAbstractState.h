@@ -26,8 +26,6 @@
 #ifndef DFGAtTailAbstractState_h
 #define DFGAtTailAbstractState_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractValue.h"

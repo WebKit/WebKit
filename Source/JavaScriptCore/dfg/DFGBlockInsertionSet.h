@@ -26,8 +26,6 @@
 #ifndef DFGBlockInsertionSet_h
 #define DFGBlockInsertionSet_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGGraph.h"

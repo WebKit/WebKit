@@ -26,8 +26,6 @@
 #ifndef DFGOSRExitCompiler_h
 #define DFGOSRExitCompiler_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "AssemblyHelpers.h"

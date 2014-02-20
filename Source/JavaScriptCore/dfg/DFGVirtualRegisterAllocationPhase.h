@@ -26,8 +26,6 @@
 #ifndef DFGVirtualRegisterAllocationPhase_h
 #define DFGVirtualRegisterAllocationPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGPhase.h"

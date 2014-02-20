@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <wtf/Platform.h>
+
 #include "JavaScriptCore.h"
 #include "JSBasePrivate.h"
 #include "JSContextRefPrivate.h"

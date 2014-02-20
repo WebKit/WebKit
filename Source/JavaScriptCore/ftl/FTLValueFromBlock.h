@@ -26,8 +26,6 @@
 #ifndef FTLValueFromBlock_h
 #define FTLValueFromBlock_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FTLAbbreviatedTypes.h"

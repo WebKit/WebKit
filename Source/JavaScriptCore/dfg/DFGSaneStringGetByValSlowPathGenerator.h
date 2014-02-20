@@ -26,8 +26,6 @@
 #ifndef DFGSaneStringGetByValSlowPathGenerator_h
 #define DFGSaneStringGetByValSlowPathGenerator_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

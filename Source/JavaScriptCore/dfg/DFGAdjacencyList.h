@@ -26,8 +26,6 @@
 #ifndef DFGAdjacencyList_h
 #define DFGAdjacencyList_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

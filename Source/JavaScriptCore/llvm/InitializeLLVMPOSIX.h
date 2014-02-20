@@ -26,8 +26,6 @@
 #ifndef InitializeLLVMPOSIX_h
 #define InitializeLLVMPOSIX_h
 
-#include <wtf/Platform.h>
-
 #if HAVE(LLVM)
 
 namespace JSC {

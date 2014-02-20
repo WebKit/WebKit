@@ -26,8 +26,6 @@
 #ifndef LLVMAPI_h
 #define LLVMAPI_h
 
-#include <wtf/Platform.h>
-
 #if HAVE(LLVM)
 
 #include "LLVMAPIFunctions.h"

@@ -31,8 +31,6 @@
 #ifndef WTF_ByteOrder_h
 #define WTF_ByteOrder_h
 
-#include <wtf/Platform.h>
-
 #if OS(UNIX)
 #include <arpa/inet.h>
 #endif

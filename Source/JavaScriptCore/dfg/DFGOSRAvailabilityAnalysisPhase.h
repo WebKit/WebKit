@@ -26,8 +26,6 @@
 #ifndef DFGOSRAvailabilityAnalysisPhase_h
 #define DFGOSRAvailabilityAnalysisPhase_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

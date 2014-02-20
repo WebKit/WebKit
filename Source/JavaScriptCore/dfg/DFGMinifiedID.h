@@ -26,8 +26,6 @@
 #ifndef DFGMinifiedID_h
 #define DFGMinifiedID_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"

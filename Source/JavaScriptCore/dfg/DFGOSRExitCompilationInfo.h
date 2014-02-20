@@ -26,8 +26,6 @@
 #ifndef DFGOSRExitCompilationInfo_h
 #define DFGOSRExitCompilationInfo_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "CodeOrigin.h"

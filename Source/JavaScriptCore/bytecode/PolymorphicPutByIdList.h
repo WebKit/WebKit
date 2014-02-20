@@ -26,8 +26,6 @@
 #ifndef PolymorphicPutByIdList_h
 #define PolymorphicPutByIdList_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "CodeOrigin.h"

@@ -26,8 +26,6 @@
 #ifndef InitializeLLVM_h
 #define InitializeLLVM_h
 
-#include <wtf/Platform.h>
-
 #if HAVE(LLVM)
 
 namespace JSC {

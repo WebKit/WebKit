@@ -26,8 +26,6 @@
 #ifndef DFGFlushFormat_h
 #define DFGFlushFormat_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(DFG_JIT)
 
 #include "DFGNodeFlags.h"

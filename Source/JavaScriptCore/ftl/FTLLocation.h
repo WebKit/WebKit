@@ -26,8 +26,6 @@
 #ifndef FTLLocation_h
 #define FTLLocation_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FTL_JIT)
 
 #include "FPRInfo.h"

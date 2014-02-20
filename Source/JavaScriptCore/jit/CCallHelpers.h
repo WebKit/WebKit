@@ -26,8 +26,6 @@
 #ifndef CCallHelpers_h
 #define CCallHelpers_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "AssemblyHelpers.h"

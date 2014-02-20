@@ -29,7 +29,6 @@
 #include "JITStubRoutine.h"
 #include "Structure.h"
 #include "StructureChain.h"
-#include <wtf/Platform.h>
 
 #define POLYMORPHIC_LIST_CACHE_SIZE 8
 

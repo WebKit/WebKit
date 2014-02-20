@@ -27,7 +27,6 @@
 #define IndexingHeader_h
 
 #include "PropertyStorage.h"
-#include <wtf/Platform.h>
 
 namespace JSC {
 
