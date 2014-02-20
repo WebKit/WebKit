@@ -695,6 +695,10 @@ webkit.org/b/124935 webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array
 webkit.org/b/128905 media/video-fast-seek.html [ Crash Pass ]
 webkit.org/b/128905 media/video-extreme-playbackrate-crash.html [ Crash Pass ]
 
+webkit.org/b/125517 compositing/regions/floated-region-with-transformed-child.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/128736 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -818,12 +822,15 @@ webkit.org/b/84338 editing/pasteboard/copy-element-with-conflicting-background-c
 webkit.org/b/84338 editing/pasteboard/copy-in-password-field.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-null-characters.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-bidi.html [ Failure ]
+webkit.org/b/84338 editing/pasteboard/copy-paste-converts-fixed.html [ Failure ]
+webkit.org/b/84338 editing/pasteboard/copy-paste-converts-sticky.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-converts-sticky-and-fixed.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-doesnt-convert-sticky-and-fixed-during-partial-copy.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-first-line-in-textarea.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-float.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-pre-line-content.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-paste-ruby-text-with-block.html [ Failure ]
+webkit.org/b/84338 editing/pasteboard/copy-paste-wraps-position-absolute.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-resolves-urls.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-text-with-backgroundcolor.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/copy-text-with-wrapped-tag.html [ Failure ]
@@ -1493,8 +1500,6 @@ webkit.org/b/110958 fast/dom/custom [ Skip ]
 
 webkit.org/b/110316 svg/as-background-image/tiled-background-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/110338 fast/events/touch/emulate-touch-events.html [ Failure ]
-
 webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
 
 # New test
@@ -1741,11 +1746,7 @@ webkit.org/b/124970 compositing/geometry/fixed-position-flipped-writing-mode.htm
 
 webkit.org/b/124971 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure ]
 
-webkit.org/b/124971 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ ImageOnlyFailure ]
-
 webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
-
-webkit.org/b/125352 fast/css/text-input-with-webkit-border-radius.html [ Failure ]
 
 webkit.org/b/125355 fast/events/updateLayoutForHitTest.html [ Failure ]
 
@@ -1759,7 +1760,6 @@ webkit.org/b/125496 animations/cross-fade-webkit-mask-box-image.html [ Failure ]
 webkit.org/b/125496 animations/cross-fade-webkit-mask-image.html [ Failure ]
 
 # Added in r157725, failing due differences in media player controls rendering
-webkit.org/b/125517 compositing/regions/floated-region-with-transformed-child.html [ ImageOnlyFailure ]
 webkit.org/b/125517 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ ImageOnlyFailure ]
 webkit.org/b/125517 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
 
@@ -1772,7 +1772,6 @@ webkit.org/b/125517 compositing/regions/transformed-layer-inside-transformed-lay
 webkit.org/b/125517 compositing/regions/z-index-update.html [ ImageOnlyFailure ]
 webkit.org/b/125517 compositing/regions/z-index.html [ ImageOnlyFailure ]
 
-webkit.org/b/125573 compositing/backgrounds/fixed-background-on-descendant.html [ ImageOnlyFailure ]
 webkit.org/b/125573 compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
 
 webkit.org/b/125578 compositing/images/positioned-image-content-rect.html [ ImageOnlyFailure ]
@@ -1861,8 +1860,6 @@ webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 webkit.org/b/128670 networkinformation/window-property.html [ Failure ]
 
 webkit.org/b/128735 fast/regions/nested-floated-region.html [ ImageOnlyFailure ]
-
-webkit.org/b/128736 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure ]
 
 webkit.org/b/128901 accessibility/list-detection.html [ Failure ]
 

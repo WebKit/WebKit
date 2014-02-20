@@ -1,3 +1,14 @@
+2014-02-20  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add tests expectations for failing tests and remove ones for
+        passing tests after r163645, r163614, r164145.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2014-02-20  Artur Moryc  <a.moryc@samsung.com>
 
         AX: Children Nodes for Canvas objects are not equal to Render Objects.

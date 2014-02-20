@@ -121,7 +121,6 @@ webkit.org/b/128259 fast/history/go-back-to-iframe-with-plugin.html [ Crash ]
 webkit.org/b/128259 fast/history/history-back-while-pdf-in-pagecache.html [ Crash ]
 webkit.org/b/128259 fast/history/visited-generated-content-test.html [ Crash ]
 webkit.org/b/128259 fast/images/animated-gif-with-offsets.html [ Crash ]
-webkit.org/b/128259 fast/loader/invalid-charset-on-script-crashes-loader.html [ Crash ]
 webkit.org/b/128259 fast/loader/show-only-one-beforeunload-dialog.html [ Crash ]
 webkit.org/b/128259 fast/loader/url-data-replace-backslash.html [ Crash ]
 webkit.org/b/128259 fast/overflow/image-selection-highlight.html [ Crash ]
@@ -130,6 +129,8 @@ webkit.org/b/128259 http/tests/navigation/history-back-across-form-submission-to
 webkit.org/b/128259 http/tests/navigation/https-in-page-cache.html [ Crash ]
 webkit.org/b/128259 loader/image-loader-adoptNode-assert.html [ Crash ]
 webkit.org/b/128259 media/sources-fallback-codecs.html [ Crash ]
+
+webkit.org/b/128906 fast/events/touch/basic-single-touch-events.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
@@ -250,7 +251,9 @@ webkit.org/b/127914 webgl/conformance/textures/texture-npot.html [ Crash Pass ]
 
 webkit.org/b/128259 animations/simultaneous-start-left.html [ Crash Pass ]
 
-webkit.org/b/128906 fast/events/touch/basic-single-touch-events.html [ Crash ]
+webkit.org/b/128259 fast/loader/invalid-charset-on-script-crashes-loader.html [ Crash Pass ]
+
+webkit.org/b/128969 fast/sub-pixel/input-caret-on-subpixel-bound.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
@@ -398,9 +401,6 @@ webkit.org/b/113094 editing/pasteboard/can-read-in-dragstart-event.html [ Failur
 
 webkit.org/b/102201 fast/dom/Window/open-window-min-size.html [ Failure ]
 
-# Regression(r142112): Several compositing tests started failing.
-webkit.org/b/109431 compositing/iframes/iframe-composited-scrolling.html [ Failure ]
-
 # New test introduced in r143073 that never passed on WK2 EFL.
 webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
 
@@ -422,9 +422,6 @@ webkit.org/b/109435 webgl/conformance/textures/copy-tex-image-2d-formats.html [ 
 
 # Failing media query test.
 webkit.org/b/114916 fast/media/mq-resolution.html [ Failure ]
-
-# New test introduced in r148672 that fails on EFL WK2.
-webkit.org/b/114917 fast/events/touch/frame-hover-update.html [ Failure Crash ]
 
 # Regression(r148748).
 webkit.org/b/114946 compositing/patterns/direct-pattern-compositing-add-text.html [ ImageOnlyFailure Crash ]
@@ -556,7 +553,5 @@ webkit.org/b/128734 plugins/nested-plugin-objects.html [ Failure ]
 webkit.org/b/128734 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
 
 webkit.org/b/128737 fast/events/touch/basic-multi-touch-events.html [ Failure ]
-
-webkit.org/b/128969 fast/sub-pixel/input-caret-on-subpixel-bound.html [ ImageOnlyFailure ]
 
 webkit.org/b/128972 fast/regions/box-decorations-over-region-padding-fragmented.html [ ImageOnlyFailure ]
