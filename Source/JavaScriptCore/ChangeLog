@@ -1,3 +1,9 @@
+2014-02-19  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed build fix after r164396
+
+        * GNUmakefile.list.am: Added Promises.prototype.js properly
+
 2014-02-19  Geoffrey Garen  <ggaren@apple.com>
 
         Crash after -[JSContext evaluateScript:] when initializing JSContext with JSVirtualMachine

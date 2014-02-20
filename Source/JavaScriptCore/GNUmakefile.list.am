@@ -38,7 +38,7 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/LLIntAssembly.h
 
 javascriptcore_builtins_js_nosources += \
-	Source/JavaScriptCore/builtins/Array.prototype.js
+	Source/JavaScriptCore/builtins/Array.prototype.js \
 	Source/JavaScriptCore/builtins/Promise.prototype.js
 
 javascriptcore_sources += \
