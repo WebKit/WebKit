@@ -151,6 +151,15 @@ void PlatformCALayerRemote::ensureBackingStore()
 {
     if (!m_properties.backingStore)
         m_properties.backingStore = std::make_unique<RemoteLayerBackingStore>();
+
+    updateBackingStore();
+}
+
+void PlatformCALayerRemote::updateBackingStore()
+{
+    if (!m_properties.backingStore)
+        return;
+
     m_properties.backingStore->ensureBackingStore(this, expandedIntSize(m_properties.size), m_properties.contentsScale, m_acceleratesDrawing);
 }
 
@@ -304,13 +313,16 @@ FloatRect PlatformCALayerRemote::bounds() const
 
 void PlatformCALayerRemote::setBounds(const FloatRect& value)
 {
+    if (value.size() == m_properties.size)
+        return;
+
     m_properties.size = value.size();
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::SizeChanged);
     
     if (requiresCustomAppearanceUpdateOnBoundsChange())
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
 
-    ensureBackingStore();
+    updateBackingStore();
 }
 
 FloatPoint3D PlatformCALayerRemote::position() const
@@ -320,6 +332,9 @@ FloatPoint3D PlatformCALayerRemote::position() const
 
 void PlatformCALayerRemote::setPosition(const FloatPoint3D& value)
 {
+    if (value == m_properties.position)
+        return;
+
     m_properties.position = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::PositionChanged);
 }
@@ -331,6 +346,9 @@ FloatPoint3D PlatformCALayerRemote::anchorPoint() const
 
 void PlatformCALayerRemote::setAnchorPoint(const FloatPoint3D& value)
 {
+    if (value == m_properties.anchorPoint)
+        return;
+
     m_properties.anchorPoint = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnchorPointChanged);
 }
@@ -387,6 +405,9 @@ bool PlatformCALayerRemote::masksToBounds() const
 
 void PlatformCALayerRemote::setMasksToBounds(bool value)
 {
+    if (value == m_properties.masksToBounds)
+        return;
+
     m_properties.masksToBounds = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::MasksToBoundsChanged);
 }
@@ -399,7 +420,7 @@ bool PlatformCALayerRemote::acceleratesDrawing() const
 void PlatformCALayerRemote::setAcceleratesDrawing(bool acceleratesDrawing)
 {
     m_acceleratesDrawing = acceleratesDrawing;
-    ensureBackingStore();
+    updateBackingStore();
 }
 
 CFTypeRef PlatformCALayerRemote::contents() const
@@ -442,12 +463,18 @@ void PlatformCALayerRemote::setBackgroundColor(const Color& value)
 
 void PlatformCALayerRemote::setBorderWidth(float value)
 {
+    if (value == m_properties.borderWidth)
+        return;
+
     m_properties.borderWidth = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BorderWidthChanged);
 }
 
 void PlatformCALayerRemote::setBorderColor(const Color& value)
 {
+    if (value == m_properties.borderColor)
+        return;
+
     m_properties.borderColor = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BorderColorChanged);
 }
@@ -509,7 +536,7 @@ void PlatformCALayerRemote::setContentsScale(float value)
     m_properties.contentsScale = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ContentsScaleChanged);
 
-    ensureBackingStore();
+    updateBackingStore();
 }
 
 void PlatformCALayerRemote::setEdgeAntialiasingMask(unsigned value)

@@ -155,6 +155,7 @@ protected:
 private:
     virtual bool isPlatformCALayerRemote() const override { return true; }
     void ensureBackingStore();
+    void updateBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
