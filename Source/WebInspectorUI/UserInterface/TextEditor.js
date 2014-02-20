@@ -621,11 +621,18 @@ WebInspector.TextEditor.prototype = {
         return this._codeMirror.createColorMarkers(range);
     },
 
+    createGradientMarkers: function(range)
+    {
+        return this._codeMirror.createGradientMarkers(range);
+    },
+
     editingControllerForMarker: function(editableMarker)
     {
         switch (editableMarker.type) {
         case WebInspector.TextMarker.Type.Color:
             return new WebInspector.CodeMirrorColorEditingController(this._codeMirror, editableMarker);
+        case WebInspector.TextMarker.Type.Gradient:
+            return new WebInspector.CodeMirrorGradientEditingController(this._codeMirror, editableMarker);
         default:
             return new WebInspector.CodeMirrorEditingController(this._codeMirror, editableMarker);
         }

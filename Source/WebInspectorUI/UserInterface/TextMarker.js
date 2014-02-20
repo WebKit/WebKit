@@ -35,6 +35,7 @@ WebInspector.TextMarker = function(codeMirrorTextMarker, type)
 
 WebInspector.TextMarker.Type = {
     Color: "text-marker-type-color",
+    Gradient: "text-marker-type-gradient",
     Plain: "text-marker-type-plain"
 };
 

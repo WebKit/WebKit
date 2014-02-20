@@ -1277,6 +1277,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _updateEditableMarkers: function(range)
     {
         this.createColorMarkers(range);
+        this.createGradientMarkers(range);
 
         this._updateTokenTrackingControllerState();
     },
@@ -1286,7 +1287,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         // Look for the outermost editable marker.
         var editableMarker;
         for (var marker of markers) {
-            if (!marker.range || marker.type !== WebInspector.TextMarker.Type.Color)
+            if (!marker.range || (marker.type !== WebInspector.TextMarker.Type.Color && marker.type !== WebInspector.TextMarker.Type.Gradient))
                 continue;
 
             if (!editableMarker || (marker.range.startLine < editableMarker.range.startLine || (marker.range.startLine === editableMarker.range.startLine && marker.range.startColumn < editableMarker.range.startColumn)))

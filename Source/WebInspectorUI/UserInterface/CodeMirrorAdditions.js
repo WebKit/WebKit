@@ -523,6 +523,73 @@
         return createdMarkers;
     });
 
+    CodeMirror.defineExtension("createGradientMarkers", function(range, callback) {
+        var createdMarkers = [];
+
+        var start = range instanceof WebInspector.TextRange ? range.startLine : 0;
+        var end = range instanceof WebInspector.TextRange ? range.endLine + 1 : this.lineCount();
+
+        const gradientRegex = /(repeating-)?(linear|radial)-gradient\s*\(\s*/g;
+
+        for (var lineNumber = start; lineNumber < end; ++lineNumber) {
+            var lineContent = this.getLine(lineNumber);
+            var match = gradientRegex.exec(lineContent);
+            while (match) {
+                var startLine = lineNumber;
+                var startChar = match.index;
+                var endChar = match.index + match[0].length;
+
+                var openParentheses = 0;
+                while (c = lineContent[endChar]) {
+                    if (c === "(")
+                        openParentheses++;
+                    if (c === ")")
+                        openParentheses--;
+
+                    if (openParentheses === -1) {
+                        endChar++;
+                        break;
+                    }
+
+                    endChar++;
+                    if (endChar >= lineContent.length) {
+                        lineNumber++;
+                        endChar = 0;
+                        lineContent = this.getLine(lineNumber);
+                        if (!lineContent)
+                            break;
+                    }
+                }
+
+                if (openParentheses !== -1) {
+                    match = gradientRegex.exec(lineContent);
+                    continue;
+                }
+
+                var from = {line: startLine, ch: startChar};
+                var to = {line: lineNumber, ch: endChar};
+
+                var gradientString = this.getRange(from, to);
+                var gradient = WebInspector.Gradient.fromString(gradientString);
+                if (!gradient) {
+                    match = gradientRegex.exec(lineContent);
+                    continue;
+                }
+
+                var marker = new WebInspector.TextMarker(this.markText(from, to), WebInspector.TextMarker.Type.Gradient);
+
+                createdMarkers.push(marker);
+
+                if (callback)
+                    callback(marker, gradient, gradientString);
+
+                match = gradientRegex.exec(lineContent);
+            }
+        }
+
+        return createdMarkers;
+    });
+
     function ignoreKey(codeMirror)
     {
         // Do nothing to ignore the key.

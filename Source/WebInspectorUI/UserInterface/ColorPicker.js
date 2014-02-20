@@ -46,7 +46,8 @@ WebInspector.ColorPicker = function()
     this._element.appendChild(this._brightnessSlider.element);
     this._element.appendChild(this._opacitySlider.element);
 
-    this._opacityPattern = 'url("data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" fill="rgb(204, 204, 204)"><rect width="3" height="3" /><rect x="3" y="3" width="3" height="3"/></svg>') + '")';
+    this._opacity = 0;
+    this._opacityPattern = 'url(Images/Checkers.svg)';
 
     this._color = "white";
 };
@@ -84,6 +85,11 @@ WebInspector.ColorPicker.prototype = {
 
         this._opacity = opacity;
         this._updateColor();
+    },
+
+    get colorWheel()
+    {
+        return this._colorWheel;
     },
 
     get color()
@@ -128,8 +134,14 @@ WebInspector.ColorPicker.prototype = {
             return;
 
         var opacity = Math.round(this._opacity * 100) / 100;
-        var rgba = this._colorWheel.tintedColor.rgb.concat(opacity);
-        this._color = new WebInspector.Color(WebInspector.Color.Format.RGBA, rgba).toString(this._colorFormat);
+
+        var components;
+        if (this._colorFormat === WebInspector.Color.Format.HSL || this._colorFormat === WebInspector.Color.Format.HSLA)
+            components = this._colorWheel.tintedColor.hsl.concat(opacity);
+        else
+            components = this._colorWheel.tintedColor.rgb.concat(opacity);
+
+        this._color = new WebInspector.Color(this._colorFormat, components);
         this.dispatchEventToListeners(WebInspector.ColorPicker.Event.ColorChanged, {color: this._color});
     },
 

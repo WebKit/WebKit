@@ -1,5 +1,203 @@
 2014-02-20  Antoine Quint  <graouts@webkit.org>
 
+        Web Inspector: rich editing of CSS gradients
+        https://bugs.webkit.org/show_bug.cgi?id=119686
+
+        Reviewed by Timothy Hatcher.
+
+        Look for gradient definitions in CSS resources and implement a gradient-specific CodeMirrorEditingController
+        to edit those CSS gradients. The CodeMirrorGradientEditingController consists of a GradientSlider, a new widget
+        allowing the editing of gradient stops, a <select> to pick between various gradient types, a text input to edit
+        the gradient angle (for linear gradients) and finally a ColorPicker when a gradient stop is picked for editing.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New localized strings for the content of the gradient editing controller popover.
+
+        * UserInterface/CodeMirrorAdditions.js:
+        New .createGradientMarkers() method which, similar to .createColorMarkers(), takes in an optional TextRange, and
+        looks for all gradients specified in CSS to create TextMarkers with new type WebInspector.TextMarker.Type.Gradient.
+        In order to fully identify these CSS gradient strings, we implement a tokenizer to look for the final closing
+        parenthesis since there can be nested opening and closing parentheses as colors are specified for stops.
+
+        * UserInterface/CodeMirrorGradientEditingController.css: Added.
+        (.gradient-editing-controller):
+        (.gradient-editing-controller.edits-color):
+        (.gradient-editing-controller.radial-gradient):
+        (.gradient-editing-controller.edits-color.radial-gradient):
+        (.gradient-editing-controller select):
+        (.gradient-editing-controller .gradient-slider):
+        (.gradient-editing-controller .color-picker):
+        (.gradient-editing-controller > .color-picker > .slider):
+        (.gradient-editing-controller > .color-picker > .brightness):
+        (.gradient-editing-controller > .color-picker > .opacity):
+        (.gradient-editing-controller > label):
+        (.gradient-editing-controller.radial-gradient > label):
+        (.gradient-editing-controller.edits-color > label):
+        (.gradient-editing-controller > label > input):
+
+        * UserInterface/CodeMirrorGradientEditingController.js: Added.
+        (WebInspector.CodeMirrorGradientEditingController):
+        (WebInspector.CodeMirrorGradientEditingController.prototype.get initialValue):
+        (WebInspector.CodeMirrorGradientEditingController.prototype.get cssClassName):
+        (WebInspector.CodeMirrorGradientEditingController.prototype.get popoverPreferredEdges):
+        (WebInspector.CodeMirrorGradientEditingController.prototype.popoverTargetFrameWithRects):
+        (WebInspector.CodeMirrorGradientEditingController.prototype.popoverWillPresent):
+        (WebInspector.CodeMirrorGradientEditingController.prototype.popoverDidPresent):
+        Implementation of CodeMirrorEditingController methods meant to be overridden. This allows us
+        to customize the popover's appearance, mostly to control how it attaches to the gradient
+        strings in the editor.
+
+        (WebInspector.CodeMirrorGradientEditingController.prototype.handleEvent):
+        Event handler for changes in the <select> governing gradient type and <input> for the angle.
+
+        (WebInspector.CodeMirrorGradientEditingController.prototype.gradientSliderStopsDidChange):
+        Implementation of a GradientSlider delegation method, we use this to update the .text property
+        in order to propagate the stops change to the editor.
+
+        (WebInspector.CodeMirrorGradientEditingController.prototype.gradientSliderStopWasSelected):
+        Implementation of a GradientSlider delegation method, we use this to control the display of the
+        ColorPicker used to edit the color of a selected stop.
+
+        (WebInspector.CodeMirrorGradientEditingController.prototype._handleInputEvent):
+        Deal with changes in the <input> for the angle, ensuring we have a "º" string added to the value.
+
+        (WebInspector.CodeMirrorGradientEditingController.prototype._handleChangeEvent):
+        Deal with changes in the <select> for the type, preserving the stops list from one gradient type
+        to the other. Gradient type-specific information (angle for linear gradients, sizing for radial
+        gradients) is lost as we toggle between gradient types.
+
+        (WebInspector.CodeMirrorGradientEditingController.prototype._colorPickerColorChanged):
+        Propagate a color change in the ColorPicker to the stop being edited in the GradientSlider and
+        and update the .text property in order to propagate the stops change to the editor.
+
+        (WebInspector.CodeMirrorGradientEditingController.prototype._updateCSSClassForGradientType):
+        As we toggle the gradient type in ._handleChangeEvent(), update the CSS class used to hide or show
+        the angle <input> which is only relevant for linear gradients.
+
+        * UserInterface/ColorPicker.js:
+        (WebInspector.ColorPicker):
+        Adopt the new Checkers.svg file to display the checkers pattern in the background of the opacity slider.
+
+        (WebInspector.ColorPicker.prototype.get colorWheel):
+        Expose the ColorWheel such that it can be sized by ColorPicker clients.
+
+        (WebInspector.ColorPicker.prototype._updateColor):
+        Drive-by fix for a bug where we'd attempt to use the RGB components of a color to get the alpha-aware version
+        of the color even though the base format was HSL.
+
+        * UserInterface/Gradient.js: Added.
+        Parser for gradient strings as passed from the CodeMirror .createGradientMarkers() extension method. In the case
+        of linear gradients, we parse all values, save for lengths, and in the case of radial gradients, we preserve the
+        sizing information as a string and parse only the gradient stops as the sizing information is only useful to show
+        in an editor if attached to an element with metrics.
+        
+        Since instances of Gradient are used as the .value property of CodeMirrorGradientEditingController, we implement
+        the required .copy() and .toString() methods. The .toString() implementations are aware of default values for angles
+        and color stop offsets and only print those as necessary and use shorthands when possible.
+
+        (WebInspector.Gradient.fromString):
+        (WebInspector.Gradient.stopsWithComponents):
+        (WebInspector.Gradient.stringFromStops):
+        (WebInspector.LinearGradient):
+        (WebInspector.LinearGradient.linearGradientWithComponents):
+        (WebInspector.LinearGradient.prototype.copy):
+        (WebInspector.LinearGradient.prototype.toString):
+        (WebInspector.RadialGradient):
+        (WebInspector.RadialGradient.radialGradientWithComponents):
+        (WebInspector.RadialGradient.prototype.copy):
+        (WebInspector.RadialGradient.prototype.toString):
+
+        * UserInterface/GradientSlider.css: Added.
+        (.gradient-slider):
+        (.gradient-slider > canvas):
+        (.gradient-slider > .add-area):
+        (.gradient-slider-knob):
+        (.gradient-slider-knob.shadow):
+        (.gradient-slider-knob.selected):
+        (.gradient-slider-knob.detaching):
+        (.gradient-slider-knob.fade-out):
+        (.gradient-slider-knob > div):
+        (.gradient-slider-knob > img):
+
+        * UserInterface/GradientSlider.js: Added.
+        Widget used to edit a list of stops for a gradient, linear or radial. The widget features a <canvas> element
+        that draws the gradient as a linear gradient from left to right with checkers in the background to correctly
+        display transparent colors. Attached to this background, individual knobs are shown for each stop in the provided
+        stops array. These knobs can be dragged from left to right to change the matching stop offset, but also down to
+        detach the knob and remove this stop. Additionally, knobs can be clicked to toggle their selected state, where only
+        one knob can be selected at a time. The Esc. key is used to remove selection of the currently selected knob.
+
+        (WebInspector.GradientSlider):
+        (WebInspector.GradientSlider.prototype.get element):
+        (WebInspector.GradientSlider.prototype.get stops):
+        (WebInspector.GradientSlider.prototype.set stops):
+        (WebInspector.GradientSlider.prototype.get selectedStop):
+        (WebInspector.GradientSlider.prototype.handleEvent):
+        (WebInspector.GradientSlider.prototype.handleKeydownEvent):
+        (WebInspector.GradientSlider.prototype.knobXDidChange):
+        (WebInspector.GradientSlider.prototype.knobCanDetach):
+        (WebInspector.GradientSlider.prototype.knobWillDetach):
+        (WebInspector.GradientSlider.prototype.knobSelectionChanged):
+        (WebInspector.GradientSlider.prototype._handleMouseover):
+        (WebInspector.GradientSlider.prototype._handleMousemove):
+        (WebInspector.GradientSlider.prototype._handleMouseout):
+        (WebInspector.GradientSlider.prototype._handleClick):
+        (WebInspector.GradientSlider.prototype._updateShadowKnob):
+        (WebInspector.GradientSlider.prototype._sortStops):
+        (WebInspector.GradientSlider.prototype._updateStops):
+        (WebInspector.GradientSlider.prototype._updateCanvas):
+        (WebInspector.GradientSlider.prototype._updateKnobs):
+        (WebInspector.GradientSliderKnob):
+        (WebInspector.GradientSliderKnob.prototype.get element):
+        (WebInspector.GradientSliderKnob.prototype.get stop):
+        (WebInspector.GradientSliderKnob.prototype.set stop):
+        (WebInspector.GradientSliderKnob.prototype.get x):
+        (WebInspector.GradientSliderKnob.prototype.set x):
+        (WebInspector.GradientSliderKnob.prototype.get y):
+        (WebInspector.GradientSliderKnob.prototype.set y):
+        (WebInspector.GradientSliderKnob.prototype.get wellColor):
+        (WebInspector.GradientSliderKnob.prototype.set wellColor):
+        (WebInspector.GradientSliderKnob.prototype.get selected):
+        (WebInspector.GradientSliderKnob.prototype.set selected):
+        (WebInspector.GradientSliderKnob.prototype.handleEvent):
+        (WebInspector.GradientSliderKnob.prototype._handleMousedown):
+        (WebInspector.GradientSliderKnob.prototype._handleMousemove):
+        (WebInspector.GradientSliderKnob.prototype._handleMouseup):
+        (WebInspector.GradientSliderKnob.prototype._handleTransitionEnd):
+        (WebInspector.GradientSliderKnob.prototype._updateTransform):
+
+        * UserInterface/Images/Checkers.svg: Added.
+        New asset to draw checkers for color wells.
+
+        * UserInterface/Images/GradientStop.png: Added.
+        * UserInterface/Images/GradientStop@2x.png: Added.
+        * UserInterface/Images/GradientStopSelected.png: Added.
+        * UserInterface/Images/GradientStopSelected@2x.png: Added.
+        New assets used by the gradient slider.
+
+        * UserInterface/Main.html:
+        Link to the new source files.
+
+        * UserInterface/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._updateEditableMarkers):
+        Add a call to .createGradientMarkers() such that we support editing of CSS gradients in such editors.
+
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedMarkedExpression):
+        Also recognize gradient markers as valid editable markers.
+
+        * UserInterface/TextEditor.js:
+        (WebInspector.TextEditor.prototype.createGradientMarkers):
+        Wrapper for the CodeMirror extension method .createGradientMarkers() such that it may be used by subclasses
+        that have no knowledge of CodeMirror.
+
+        (WebInspector.TextEditor.prototype.editingControllerForMarker):
+        Return a CodeMirrorGradientEditingController for TextMarkers with WebInspector.TextMarker.Type.Gradient type.
+
+        * UserInterface/TextMarker.js:
+        Add the WebInspector.TextMarker.Type.Gradient type.
+
+2014-02-20  Antoine Quint  <graouts@webkit.org>
+
         Web Inspector: create a CodeMirrorEditingController superclass
         https://bugs.webkit.org/show_bug.cgi?id=129094
 
