@@ -88,7 +88,7 @@ RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(PassRef<Rend
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const
 {
-    return const_cast<HTMLLegendElement*>(descendantsOfType<HTMLLegendElement>(*this).first());
+    return const_cast<HTMLLegendElement*>(childrenOfType<HTMLLegendElement>(*this).first());
 }
 
 PassRefPtr<HTMLCollection> HTMLFieldSetElement::elements()

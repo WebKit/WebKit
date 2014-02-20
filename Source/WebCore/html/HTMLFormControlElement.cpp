@@ -103,10 +103,10 @@ void HTMLFormControlElement::updateAncestorDisabledState() const
 {
     Element* previousAncestor = nullptr;
     for (Element* ancestor = parentElement(); ancestor; ancestor = ancestor->parentElement()) {
-        if (isHTMLFieldSetElement(ancestor)) {
+        if (isHTMLFieldSetElement(ancestor) && ancestor->hasAttribute(disabledAttr)) {
             HTMLFieldSetElement& fieldSetAncestor = toHTMLFieldSetElement(*ancestor);
             bool isInFirstLegend = previousAncestor && isHTMLLegendElement(previousAncestor) && previousAncestor == fieldSetAncestor.legend();
-            m_ancestorDisabledState = !fieldSetAncestor.isDisabledFormControl() || isInFirstLegend ? AncestorDisabledStateEnabled : AncestorDisabledStateDisabled;
+            m_ancestorDisabledState = isInFirstLegend ? AncestorDisabledStateEnabled : AncestorDisabledStateDisabled;
             return;
         }
         previousAncestor = ancestor;

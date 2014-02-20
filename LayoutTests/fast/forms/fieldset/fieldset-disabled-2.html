@@ -12,6 +12,7 @@ input:disabled { color: #666; }
 <fieldset disabled><legend><input id="inputInsideFirstLegend"></legend></fieldset>
 <fieldset disabled><legend></legend><legend><input id="inputInsideSecondLegend"></legend></fieldset>
 <fieldset disabled><legend><legend><input id="inputInsideNestedFirstLegend"></legend></legend></fieldset>
+<fieldset disabled><fieldset><legend><input id="inputInsideFirstLegendWithDisabledOuterFieldset"></legend></fieldset></fieldset>
 </div>
 <script>
 
@@ -26,6 +27,7 @@ shouldBeTrue('isInputDisabledById("inputOutsideLegend")');
 shouldBeFalse('isInputDisabledById("inputInsideFirstLegend")');
 shouldBeTrue('isInputDisabledById("inputInsideSecondLegend")');
 shouldBeFalse('isInputDisabledById("inputInsideNestedFirstLegend")');
+shouldBeTrue('isInputDisabledById("inputInsideFirstLegendWithDisabledOuterFieldset")');
 
 function setDisabledOnAllFieldsets(value) {
     var fieldsets = document.querySelectorAll('fieldset');
@@ -39,6 +41,7 @@ shouldBeFalse('isInputDisabledById("inputOutsideLegend")');
 shouldBeFalse('isInputDisabledById("inputInsideFirstLegend")');
 shouldBeFalse('isInputDisabledById("inputInsideSecondLegend")');
 shouldBeFalse('isInputDisabledById("inputInsideNestedFirstLegend")');
+shouldBeFalse('isInputDisabledById("inputInsideFirstLegendWithDisabledOuterFieldset")');
 
 document.getElementById('container').style.display = 'none';
 

@@ -1,5 +1,25 @@
 2014-02-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        fieldset:disabled fieldset > legend:first-child input should be disabled
+        https://bugs.webkit.org/show_bug.cgi?id=129077
+
+        Reviewed by Antti Koivisto.
+
+        Similar to r164403. When a fieldset inside a disabled fieldset, input elements inside
+        the inner fieldset's first legend element child should be disabled.
+
+        Test: fast/forms/fieldset/fieldset-disabled-2.html
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::legend): Fixed the bug where it was returning the first
+        legend element descendent. It should be the first legend element _child_.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::updateAncestorDisabledState): Fixed the algorithm
+        to look for any ancestor fieldset that has been disabled instead of the first fieldset
+        ancestor and checking its disabledness.
+
+2014-02-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Debug build fix after r164401. Removed a bogus assertion in comparePositions.
         When either position is anchored at a detached node, they don't have a tree scope in common.
 
