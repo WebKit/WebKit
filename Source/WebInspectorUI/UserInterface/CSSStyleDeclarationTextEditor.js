@@ -679,7 +679,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             this._codeMirror.operation(update.bind(this));
         }
 
-        if (event.shiftKey) {
+        if (event.shiftKey || this._codeMirror.getOption("readOnly")) {
             var nextFormat = color.nextFormat();
             console.assert(nextFormat);
             if (!nextFormat)

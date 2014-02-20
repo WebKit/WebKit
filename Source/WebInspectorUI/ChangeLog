@@ -1,3 +1,15 @@
+2014-02-20  Antoine Quint  <graouts@webkit.org>
+
+        Web Inspector: clicking on a color swatch in the Computed styles tab shouldn't show the color editing popover
+        https://bugs.webkit.org/show_bug.cgi?id=129093
+
+        Reviewed by Timothy Hatcher.
+
+        If the current editor is read-only, only allow cycling between color types since it wouldn't make sense to edit
+        such colors.
+
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+
 2014-02-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused InspectorBackend member variable
