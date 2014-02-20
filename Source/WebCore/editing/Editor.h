@@ -362,6 +362,7 @@ public:
     IntRect firstRectForRange(Range*) const;
 
     void respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
+    void updateEditorUINowIfScheduled();
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;
     unsigned countMatchesForText(const String&, Range*, FindOptions, unsigned limit, bool markMatches, Vector<RefPtr<Range>>*);
     bool markedTextMatchesAreHighlighted() const;
@@ -464,6 +465,8 @@ private:
 
     void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions);
 
+    void editorUIUpdateTimerFired(Timer<Editor>&);
+
     Node* findEventTargetFromSelection() const;
 
     bool unifiedTextCheckerEnabled() const;
@@ -495,6 +498,11 @@ private:
     bool m_areMarkedTextMatchesHighlighted;
     EditorParagraphSeparator m_defaultParagraphSeparator;
     bool m_overwriteModeEnabled;
+
+    VisibleSelection m_oldSelectionForEditorUIUpdate;
+    Timer<Editor> m_editorUIUpdateTimer;
+    bool m_editorUIUpdateTimerShouldCheckSpellingAndGrammar;
+    bool m_editorUIUpdateTimerWasTriggeredByDictation;
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)

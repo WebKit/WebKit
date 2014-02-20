@@ -48,14 +48,18 @@ function testMarkerForMisspelledWord(parentId, shouldBeMisspelled, id, type, spe
     var input = addInputElement(parentId, id, type, spellcheck);
     input.focus();
     // Activate spellchecking.
-    moveSelectionForwardByWordCommand();
-
-    logMarkup(id, spellcheck, true);
-
     if (window.internals)
-        shouldBecomeEqual('internals.hasSpellingMarker(0, 2)', shouldBeMisspelled ? 'true' : 'false', done);
-    else
-        done();
+        internals.updateEditorUINowIfScheduled();
+    setTimeout(function () {
+        moveSelectionForwardByWordCommand();
+
+        logMarkup(id, spellcheck, true);
+
+        if (window.internals)
+            shouldBecomeEqual('internals.hasSpellingMarker(0, 2)', shouldBeMisspelled ? 'true' : 'false', done);
+        else
+            done();
+    }, 10);
 }
 
 function logMarkup(id, spellcheckValue, shouldCloseTag)

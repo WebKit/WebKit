@@ -1,12 +1,8 @@
 <html>
-<head>
-<script src="../../../../resources/js-test-pre.js"></script>
-</head>
 <body>
-
 <div contenteditable="true">
 <ul class="needsDeletionUI"><li>1</li><li id="li">2</li></ul>
-
+<script src="../../../../resources/js-test-pre.js"></script>
 <script>
 description('Test document.getElementById("WebKit-Editing-Delete-Button")');
 
@@ -14,10 +10,11 @@ sel = window.getSelection();
 li = document.getElementById("li");
 sel.setPosition(li, 0);
 
-if (window.testRunner) {
-    deleteButton = document.getElementById("WebKit-Editing-Delete-Button");
-    shouldBeNonNull('deleteButton');
-}
+if (window.testRunner)
+    shouldBeNonNull('internals.findEditingDeleteButton(); document.getElementById("WebKit-Editing-Delete-Button")');
+
+var successfullyParsed = true;
+
 </script>
 <script src="../../../../resources/js-test-post.js"></script>
 </body>

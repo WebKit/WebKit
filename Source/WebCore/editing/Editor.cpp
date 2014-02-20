@@ -1066,14 +1066,16 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
     ASSERT(composition);
     VisibleSelection newSelection(cmd->endingSelection());
 
-    m_alternativeTextController->respondToAppliedEditing(cmd.get());
-
     notifyTextFromControls(composition->startingRootEditableElement(), composition->endingRootEditableElement());
 
     // Don't clear the typing style with this selection change.  We do those things elsewhere if necessary.
     FrameSelection::SetSelectionOptions options = cmd->isDictationCommand() ? FrameSelection::DictationTriggered : 0;
     changeSelectionAfterCommand(newSelection, options);
     dispatchEditableContentChangedEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement());
+
+    updateEditorUINowIfScheduled();
+    
+    m_alternativeTextController->respondToAppliedEditing(cmd.get());
 
     if (!cmd->preservesTypingStyle())
         m_frame.selection().clearTypingStyle();
@@ -1102,6 +1104,8 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
     changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
     dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
 
+    updateEditorUINowIfScheduled();
+
     m_alternativeTextController->respondToUnappliedEditing(cmd.get());
 
     m_lastEditCommand = 0;
@@ -1119,6 +1123,8 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
     VisibleSelection newSelection(cmd->endingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
     dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
+    
+    updateEditorUINowIfScheduled();
 
     m_lastEditCommand = 0;
     if (client())
@@ -1141,6 +1147,9 @@ Editor::Editor(Frame& frame)
     , m_areMarkedTextMatchesHighlighted(false)
     , m_defaultParagraphSeparator(EditorParagraphSeparatorIsDiv)
     , m_overwriteModeEnabled(false)
+    , m_editorUIUpdateTimer(this, &Editor::editorUIUpdateTimerFired)
+    , m_editorUIUpdateTimerShouldCheckSpellingAndGrammar(false)
+    , m_editorUIUpdateTimerWasTriggeredByDictation(false)
 {
 }
 
@@ -3294,7 +3303,7 @@ void Editor::setMarkedTextMatchesAreHighlighted(bool flag)
     document().markers().repaintMarkers(DocumentMarker::TextMatch);
 }
 
-void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions options)
+void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::SetSelectionOptions options)
 {
 #if PLATFORM(IOS)
     // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830> 
@@ -3302,9 +3311,34 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, Fra
         return;
 #endif
 
-    m_alternativeTextController->stopPendingCorrection(oldSelection);
+    if (client())
+        client()->respondToChangedSelection(&m_frame);
+    setStartNewKillRingSequence(true);
 
-    bool closeTyping = options & FrameSelection::CloseTyping;
+    if (m_editorUIUpdateTimer.isActive())
+        return;
+
+    // Don't check spelling and grammar if the change of selection is triggered by spelling correction itself.
+    m_editorUIUpdateTimerShouldCheckSpellingAndGrammar = options & FrameSelection::CloseTyping
+        && !(options & FrameSelection::SpellCorrectionTriggered);
+    m_editorUIUpdateTimerWasTriggeredByDictation = options & FrameSelection::DictationTriggered;
+    m_editorUIUpdateTimer.startOneShot(0);
+}
+
+void Editor::updateEditorUINowIfScheduled()
+{
+    if (!m_editorUIUpdateTimer.isActive())
+        return;
+    m_editorUIUpdateTimer.stop();
+    editorUIUpdateTimerFired(m_editorUIUpdateTimer);
+}
+
+void Editor::editorUIUpdateTimerFired(Timer<Editor>&)
+{
+    VisibleSelection oldSelection = m_oldSelectionForEditorUIUpdate;
+
+    m_alternativeTextController->stopPendingCorrection(oldSelection);
+    
     bool isContinuousSpellCheckingEnabled = this->isContinuousSpellCheckingEnabled();
     bool isContinuousGrammarCheckingEnabled = isContinuousSpellCheckingEnabled && isGrammarCheckingEnabled();
     if (isContinuousSpellCheckingEnabled) {
@@ -3331,13 +3365,10 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, Fra
                 newSelectedSentence = VisibleSelection(startOfSentence(newStart), endOfSentence(newStart));
         }
 
-        // Don't check spelling and grammar if the change of selection is triggered by spelling correction itself.
-        bool shouldCheckSpellingAndGrammar = !(options & FrameSelection::SpellCorrectionTriggered);
-
         // When typing we check spelling elsewhere, so don't redo it here.
         // If this is a change in selection resulting from a delete operation,
         // oldSelection may no longer be in the document.
-        if (shouldCheckSpellingAndGrammar && closeTyping && oldSelection.isContentEditable() && oldSelection.start().deprecatedNode() && oldSelection.start().anchorNode()->inDocument()) {
+        if (m_editorUIUpdateTimerShouldCheckSpellingAndGrammar && oldSelection.isContentEditable() && oldSelection.start().deprecatedNode() && oldSelection.start().anchorNode()->inDocument()) {
             VisiblePosition oldStart(oldSelection.visibleStart());
             VisibleSelection oldAdjacentWords = VisibleSelection(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));
             if (oldAdjacentWords != newAdjacentWords) {
@@ -3365,13 +3396,13 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, Fra
     if (!isContinuousGrammarCheckingEnabled)
         document().markers().removeMarkers(DocumentMarker::Grammar);
 
-    if (client())
-        client()->respondToChangedSelection(&m_frame);
-    setStartNewKillRingSequence(true);
 #if ENABLE(DELETION_UI)
     m_deleteButtonController->respondToChangedSelection(oldSelection);
 #endif
-    m_alternativeTextController->respondToChangedSelection(oldSelection, options);
+    if (m_editorUIUpdateTimerWasTriggeredByDictation)
+        m_alternativeTextController->respondToChangedSelection(oldSelection);
+
+    m_oldSelectionForEditorUIUpdate = m_frame.selection().selection();
 }
 
 static Node* findFirstMarkable(Node* node)

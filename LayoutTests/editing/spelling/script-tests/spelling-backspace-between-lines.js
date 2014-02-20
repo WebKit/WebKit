@@ -33,15 +33,19 @@ function testTwoLinesMisspellings()
     window.sel = setup("target1"); // ^OK
 
     sel.modify("move", "forward", "line"); // ^OK zz OK
-    for (var i = 0; i < 3; i++)
-        sel.modify("move", "forward", "word");
-
-    shouldBeEqualToString("firstLineText('target1')", "OK");
-    shouldBeEqualToString("sel.anchorNode.data", "OK zz OK");
     if (window.internals)
-        shouldBecomeEqual("internals.hasSpellingMarker(3, 2)", "true", done);
-    else
-        done();
+        internals.updateEditorUINowIfScheduled();
+    setTimeout(function () {
+        for (var i = 0; i < 3; i++)
+            sel.modify("move", "forward", "word");
+
+        shouldBeEqualToString("firstLineText('target1')", "OK");
+        shouldBeEqualToString("sel.anchorNode.data", "OK zz OK");
+        if (window.internals)
+            shouldBecomeEqual("internals.hasSpellingMarker(3, 2)", "true", done);
+        else
+            done();
+    }, 100);
 }
 
 function testMisspellingsAfterLineMergeUsingDelete()

@@ -129,6 +129,10 @@
     // Calling parserMetaData() with no arguments gets the metadata for the script of the current scope.
     DOMString parserMetaData(optional any func);
 
+    void updateEditorUINowIfScheduled();
+
+    Node findEditingDeleteButton();
+
     [RaisesException] boolean hasSpellingMarker(long from, long length);
     [RaisesException] boolean hasGrammarMarker(long from, long length);
     [RaisesException] boolean hasAutocorrectedMarker(long from, long length);

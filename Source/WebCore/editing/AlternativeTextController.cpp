@@ -440,7 +440,7 @@ FloatRect AlternativeTextController::rootViewRectForRange(const Range* range) co
     return view->contentsToRootView(IntRect(boundingRect));
 }        
 
-void AlternativeTextController::respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions options)
+void AlternativeTextController::respondToChangedSelection(const VisibleSelection& oldSelection)
 {
     VisibleSelection currentSelection(m_frame.selection().selection());
     // When user moves caret to the end of autocorrected word and pauses, we show the panel
@@ -473,7 +473,7 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
         if (!marker)
             continue;
 
-        if (respondToMarkerAtEndOfWord(*marker, position, options))
+        if (respondToMarkerAtEndOfWord(*marker, position))
             break;
     }
 }
@@ -625,10 +625,8 @@ bool AlternativeTextController::shouldStartTimerFor(const WebCore::DocumentMarke
     return (((marker.type() == DocumentMarker::Replacement && !marker.description().isNull()) || marker.type() == DocumentMarker::Spelling || marker.type() == DocumentMarker::DictationAlternatives) && static_cast<int>(marker.endOffset()) == endOffset);
 }
 
-bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker& marker, const Position& endOfWordPosition, FrameSelection::SetSelectionOptions options)
+bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker& marker, const Position& endOfWordPosition)
 {
-    if (options & FrameSelection::DictationTriggered)
-        return false;
     if (!shouldStartTimerFor(marker, endOfWordPosition.offsetInContainerNode()))
         return false;
     Node* node = endOfWordPosition.containerNode();

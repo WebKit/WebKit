@@ -108,7 +108,7 @@ public:
     void respondToUnappliedSpellCorrection(const VisibleSelection&, const String& corrected, const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
     void respondToAppliedEditing(CompositeEditCommand*) UNLESS_ENABLED({ })
     void respondToUnappliedEditing(EditCommandComposition*) UNLESS_ENABLED({ })
-    void respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
+    void respondToChangedSelection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
 
     void stopPendingCorrection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
     void applyPendingCorrection(const VisibleSelection& selectionAfterTyping) UNLESS_ENABLED({ UNUSED_PARAM(selectionAfterTyping); })
@@ -144,7 +144,7 @@ private:
     String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarker::MarkerType);
 
     bool shouldStartTimerFor(const DocumentMarker&, int endOffset) const;
-    bool respondToMarkerAtEndOfWord(const DocumentMarker&, const Position& endOfWordPosition, FrameSelection::SetSelectionOptions);
+    bool respondToMarkerAtEndOfWord(const DocumentMarker&, const Position& endOfWordPosition);
 
     AlternativeTextClient* alternativeTextClient();
     EditorClient* editorClient();

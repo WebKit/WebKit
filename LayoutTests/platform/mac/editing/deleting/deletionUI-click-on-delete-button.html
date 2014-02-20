@@ -14,13 +14,13 @@ li = document.getElementById("li");
 sel.setPosition(li, 0);
 
 if (window.testRunner) {
-    deleteButton = document.getElementById("WebKit-Editing-Delete-Button");
+    deleteButton = internals.findEditingDeleteButton();
     x = deleteButton.offsetParent.offsetLeft + deleteButton.offsetParent.offsetParent.offsetLeft + deleteButton.offsetLeft + deleteButton.offsetWidth / 2;
     y = deleteButton.offsetParent.offsetTop + deleteButton.offsetParent.offsetParent.offsetTop + deleteButton.offsetTop + deleteButton.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();
     eventSender.mouseUp();
-    deleteButton = document.getElementById("WebKit-Editing-Delete-Button");
+    deleteButton = internals.findEditingDeleteButton();
     testContainer = document.getElementById("test");
     Markup.description("There should be no visible content in the markup below. This test is for a bug where the delete button wouldn't work because it had -webkit-user-select:none instead of -webkit-user-select:ignore.");
     if (deleteButton)

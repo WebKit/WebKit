@@ -1,3 +1,14 @@
+2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Changing selection shouldn't synchronously update editor UI components
+        https://bugs.webkit.org/show_bug.cgi?id=129024
+
+        Reviewed by Brent Fulgham.
+
+        Added symbols for internals.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-02-17  Sergio Correia  <sergio.correia@openbossa.org>
 
         Replace uses of PassOwnPtr/OwnPtr with std::unique_ptr in WebCore/inspector

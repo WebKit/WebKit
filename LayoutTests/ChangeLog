@@ -1,3 +1,30 @@
+2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Changing selection shouldn't synchronously update editor UI components
+        https://bugs.webkit.org/show_bug.cgi?id=129024
+
+        Reviewed by Brent Fulgham.
+
+        Many tests now calls internals.updateEditorUINowIfScheduled() to update the spellchecker states, and uses
+        setTimeout() to make things testable in the browser.
+
+        * editing/spelling/script-tests/spelling-backspace-between-lines.js:
+        (testTwoLinesMisspellings): Uses updateEditorUINowIfScheduled and setTimeout to make spellchecker recognize
+        two selection changes. This is okay since the user never moves selection multiple times in a single task.
+        * editing/spelling/spellcheck-attribute.html: Ditto.
+
+        * platform/mac/editing/deleting/deletionUI-click-on-delete-button.html: Use intenals.findEditingDeleteButton
+        which updates delete button controller states synchronously instead of getElementById which doesn't do that.
+        * platform/mac/editing/deleting/id-in-deletebutton-expected.txt:
+        * platform/mac/editing/deleting/id-in-deletebutton.html: Ditto. Also did some cleanups.
+        * platform/mac/editing/deleting/resources/deletionUI-helpers.js:
+        (deletionUIDeleteButtonForElement): Ditto.
+
+        * platform/mac/editing/spelling/editing-word-with-marker-1.html: Again, we must notify the spellchecker
+        synchronously here because we're expecting spellchecker to use the old selection set by setSelectionRange
+        in Editor::editorUIUpdateTimerFired triggered by the pasting command. This is, again, not a problem in
+        practice since user never pastes content synchronously after changing selection like this in a single task.
+
 2014-02-19  Brent Fulgham  <bfulgham@apple.com>
 
         Another Windows update to quiet the bots.

@@ -10,11 +10,12 @@ function debug(msg)
 
 function deletionUIDeleteButtonForElement(id)
 {
+    if (!window.internals)
+        return null;
     var sel = window.getSelection();
     var selElement = document.getElementById(id);
     sel.setPosition(selElement, 0);
-    var deleteButton = document.getElementById("WebKit-Editing-Delete-Button");
-    return deleteButton;
+    return internals.findEditingDeleteButton();
 }
 
 function determineDeletionUIExistence(id)

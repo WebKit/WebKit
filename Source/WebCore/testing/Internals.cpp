@@ -748,6 +748,8 @@ unsigned Internals::markerCountForNode(Node* node, const String& markerType, Exc
         return 0;
     }
 
+    node->document().frame()->editor().updateEditorUINowIfScheduled();
+
     return node->document().markers().markersFor(node, markerTypes).size();
 }
 
@@ -764,6 +766,8 @@ DocumentMarker* Internals::markerAt(Node* node, const String& markerType, unsign
         ec = SYNTAX_ERR;
         return 0;
     }
+
+    node->document().frame()->editor().updateEditorUINowIfScheduled();
 
     Vector<DocumentMarker*> markers = node->document().markers().markersFor(node, markerTypes);
     if (markers.size() <= index)
@@ -1295,11 +1299,33 @@ void Internals::setDeviceProximity(const String& eventType, double value, double
 #endif
 }
 
+void Internals::updateEditorUINowIfScheduled()
+{
+    if (Document* document = contextDocument()) {
+        if (Frame* frame = document->frame())
+            frame->editor().updateEditorUINowIfScheduled();
+    }
+}
+
+Node* Internals::findEditingDeleteButton()
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return 0;
+
+    updateEditorUINowIfScheduled();
+
+    // FIXME: We shouldn't pollute the id namespace with this name.
+    return document->getElementById("WebKit-Editing-Delete-Button");
+}
+
 bool Internals::hasSpellingMarker(int from, int length, ExceptionCode&)
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
         return 0;
+
+    updateEditorUINowIfScheduled();
 
     return document->frame()->editor().selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
 }
@@ -1309,7 +1335,9 @@ bool Internals::hasAutocorrectedMarker(int from, int length, ExceptionCode&)
     Document* document = contextDocument();
     if (!document || !document->frame())
         return 0;
-    
+
+    updateEditorUINowIfScheduled();
+
     return document->frame()->editor().selectionStartHasMarkerFor(DocumentMarker::Autocorrected, from, length);
 }
 

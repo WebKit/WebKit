@@ -148,6 +148,8 @@ textarea = document.getElementById('test');
 textarea.setSelectionRange(0,4);
 execCopyCommand();
 textarea.setSelectionRange(15, 15);
+if (window.internals)
+    internals.updateEditorUINowIfScheduled();
 execPasteCommand();
 if (window.internals && window.internals.hasSpellingMarker) {
     if (window.internals.hasSpellingMarker(7,8) == 0) {
