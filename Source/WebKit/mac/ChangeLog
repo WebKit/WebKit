@@ -1,3 +1,15 @@
+2014-02-20  David Kilzer  <ddkilzer@apple.com>
+
+        [ASan] WebKit1 sources are not compiled using ASAN macros
+        <http://webkit.org/b/128871>
+
+        Reviewed by Brent Fulgham.
+
+        * Configurations/WebKit.xcconfig: Use $inherited for
+        OTHER_CFLAGS and OTHER_CPLUSPLUSFLAGS so that ASAN_OTHER_CFLAGS
+        and ASAN_OTHER_CPLUSPLUSFLAGS are inherited from
+        DebugRelease.xcconfig.
+
 2014-02-19  Brady Eidson  <beidson@apple.com>
 
         Add FeatureDefines for image controls
