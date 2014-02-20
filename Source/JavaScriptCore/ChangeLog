@@ -1,3 +1,16 @@
+2014-02-20  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        ASSERTION FAILED: isUInt16() on ARMv7 after r113253.
+        https://bugs.webkit.org/show_bug.cgi?id=129101
+
+        Reviewed by Michael Saboff.
+
+        If the immediate value type is encoded then we shouldn't reach this assert.
+        Check the immediate type to avoid assertion in alignemnt check.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::add):
+
 2014-02-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Get rid of redundant Platform.h includes
