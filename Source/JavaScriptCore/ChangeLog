@@ -1,3 +1,13 @@
+2014-02-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] Collect the JavaScript files required for JSC builtins through a wildcard
+        https://bugs.webkit.org/show_bug.cgi?id=129115
+
+        Reviewed by Oliver Hunt.
+
+        * GNUmakefile.list.am: Simplify adding new JavaScriptCore builtins by using a wildcard
+        to gather all the JavaScript files instead of listing each file explicitly.
+
 2014-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Replace uses of deprecated POSIX index() with strchr() in ObjcRuntimeExtras.h

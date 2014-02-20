@@ -38,8 +38,7 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/LLIntAssembly.h
 
 javascriptcore_builtins_js_nosources += \
-	Source/JavaScriptCore/builtins/Array.prototype.js \
-	Source/JavaScriptCore/builtins/Promise.prototype.js
+	$(wildcard $(srcdir)/Source/JavaScriptCore/builtins/*.js)
 
 javascriptcore_sources += \
 	Source/JavaScriptCore/API/APICallbackFunction.h \
