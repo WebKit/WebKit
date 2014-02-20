@@ -1,3 +1,31 @@
+2014-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Make it possible to reply asynchronously to JavaScript panels and alerts
+        https://bugs.webkit.org/show_bug.cgi?id=129116
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkit2/LegacyMessageReceiver-expected.cpp:
+        (Messages::WebPage::GetPluginProcessConnection::DelayedReply::send):
+        (Messages::WebPage::TestMultipleAttributes::DelayedReply::send):
+        * Scripts/webkit2/MessageReceiver-expected.cpp:
+        (Messages::WebPage::GetPluginProcessConnection::DelayedReply::send):
+        (Messages::WebPage::TestMultipleAttributes::DelayedReply::send):
+        * Scripts/webkit2/messages.py:
+        (generate_message_handler):
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::runJavaScriptAlert):
+        (API::UIClient::runJavaScriptConfirm):
+        (API::UIClient::runJavaScriptPrompt):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
 2014-02-20  Enrique Ocaña González  <eocanha@igalia.com>
 
         WebKitGTK+ should stop using COMPILE_ASSERT_MATCHING_ENUM macros

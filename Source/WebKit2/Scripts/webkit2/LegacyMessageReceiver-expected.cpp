@@ -74,9 +74,9 @@ bool GetPluginProcessConnection::DelayedReply::send(const IPC::Connection::Handl
 {
     ASSERT(m_encoder);
     *m_encoder << connectionHandle;
-    bool result = m_connection->sendSyncReply(std::move(m_encoder));
+    bool _result = m_connection->sendSyncReply(std::move(m_encoder));
     m_connection = nullptr;
-    return result;
+    return _result;
 }
 
 TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::MessageEncoder> encoder)
@@ -93,9 +93,9 @@ TestMultipleAttributes::DelayedReply::~DelayedReply()
 bool TestMultipleAttributes::DelayedReply::send()
 {
     ASSERT(m_encoder);
-    bool result = m_connection->sendSyncReply(std::move(m_encoder));
+    bool _result = m_connection->sendSyncReply(std::move(m_encoder));
     m_connection = nullptr;
-    return result;
+    return _result;
 }
 
 } // namespace WebPage

@@ -2642,7 +2642,7 @@ void WebPageProxy::closePage(bool stopResponsivenessTimer)
     m_uiClient->close(this);
 }
 
-void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const String& message)
+void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const String& message, RefPtr<Messages::WebPageProxy::RunJavaScriptAlert::DelayedReply> reply)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -2650,10 +2650,10 @@ void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const String& message)
     // Since runJavaScriptAlert() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    m_uiClient->runJavaScriptAlert(this, message, frame);
+    m_uiClient->runJavaScriptAlert(this, message, frame, [reply]{ reply->send(); });
 }
 
-void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const String& message, bool& result)
+void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const String& message, RefPtr<Messages::WebPageProxy::RunJavaScriptConfirm::DelayedReply> reply)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -2661,10 +2661,10 @@ void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const String& message,
     // Since runJavaScriptConfirm() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    result = m_uiClient->runJavaScriptConfirm(this, message, frame);
+    m_uiClient->runJavaScriptConfirm(this, message, frame, [reply](bool result) { reply->send(result); });
 }
 
-void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const String& message, const String& defaultValue, String& result)
+void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const String& message, const String& defaultValue, RefPtr<Messages::WebPageProxy::RunJavaScriptPrompt::DelayedReply> reply)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -2672,7 +2672,7 @@ void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const String& message, 
     // Since runJavaScriptPrompt() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    result = m_uiClient->runJavaScriptPrompt(this, message, defaultValue, frame);
+    m_uiClient->runJavaScriptPrompt(this, message, defaultValue, frame, [reply](const String& result) { reply->send(result); });
 }
 
 void WebPageProxy::shouldInterruptJavaScript(bool& result)

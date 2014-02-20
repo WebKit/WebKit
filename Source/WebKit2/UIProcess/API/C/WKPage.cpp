@@ -1148,35 +1148,41 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.unfocus(toAPI(page), m_client.base.clientInfo);
         }
 
-        virtual void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame) override
+        virtual void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame, std::function<void ()> completionHandler) override
         {
-            if (!m_client.runJavaScriptAlert)
+            if (!m_client.runJavaScriptAlert) {
+                completionHandler();
                 return;
+            }
 
             m_client.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
         }
 
-        virtual bool runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame) override
+        virtual void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, std::function<void (bool)> completionHandler) override
         {
-            if (!m_client.runJavaScriptConfirm)
-                return false;
+            if (!m_client.runJavaScriptConfirm) {
+                completionHandler(false);
+                return;
+            }
 
-            return m_client.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
+            bool result = m_client.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
+            completionHandler(result);
         }
 
-        virtual String runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame) override
+        virtual void runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame, std::function<void (const String&)> completionHandler) override
         {
-            if (!m_client.runJavaScriptPrompt)
-                return String();
+            if (!m_client.runJavaScriptPrompt) {
+                completionHandler(String());
+                return;
+            }
 
-            API::String* string = toImpl(m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.base.clientInfo));
-            if (!string)
-                return String();
+            RefPtr<API::String> string = adoptRef(toImpl(m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.base.clientInfo)));
+            if (!string) {
+                completionHandler(String());
+                return;
+            }
 
-            String result = string->string();
-            string->deref();
-
-            return result;
+            completionHandler(string->string());
         }
 
         virtual void setStatusText(WebPageProxy* page, const String& text) override

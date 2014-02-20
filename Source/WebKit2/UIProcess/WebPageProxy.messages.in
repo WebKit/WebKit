@@ -25,9 +25,9 @@ messages -> WebPageProxy {
     CreateNewPage(WebCore::ResourceRequest request, WebCore::WindowFeatures windowFeatures, uint32_t modifiers, int32_t mouseButton) -> (uint64_t newPageID, WebKit::WebPageCreationParameters newPageParameters)
     ShowPage()
     ClosePage(bool stopResponsivenessTimer)
-    RunJavaScriptAlert(uint64_t frameID, String message) -> ()
-    RunJavaScriptConfirm(uint64_t frameID, String message) -> (bool result)
-    RunJavaScriptPrompt(uint64_t frameID, String message, String defaultValue) -> (String result)
+    RunJavaScriptAlert(uint64_t frameID, String message) -> () Delayed
+    RunJavaScriptConfirm(uint64_t frameID, String message) -> (bool result) Delayed
+    RunJavaScriptPrompt(uint64_t frameID, String message, String defaultValue) -> (String result) Delayed
     ShouldInterruptJavaScript() -> (bool shouldInterupt)
     MouseDidMoveOverElement(WebKit::WebHitTestResult::Data hitTestResultData, uint32_t modifiers, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 #if ENABLE(NETSCAPE_PLUGIN_API)

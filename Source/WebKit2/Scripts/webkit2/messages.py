@@ -573,9 +573,9 @@ def generate_message_handler(file):
             result.append('{\n')
             result.append('    ASSERT(m_encoder);\n')
             result += ['    *m_encoder << %s;\n' % x.name for x in message.reply_parameters]
-            result.append('    bool result = m_connection->sendSyncReply(std::move(m_encoder));\n')
+            result.append('    bool _result = m_connection->sendSyncReply(std::move(m_encoder));\n')
             result.append('    m_connection = nullptr;\n')
-            result.append('    return result;\n')
+            result.append('    return _result;\n')
             result.append('}\n')
             result.append('\n')
 
