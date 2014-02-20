@@ -135,6 +135,7 @@ typedef OptionRange optionRange;
     v(bool, alwaysComputeHash, false) \
     v(bool, testTheFTL, false) \
     v(bool, verboseSanitizeStack, false) \
+    v(bool, alwaysDoFullCollection, false) \
     \
     v(bool, enableOSREntryToDFG, true) \
     v(bool, enableOSREntryToFTL, true) \

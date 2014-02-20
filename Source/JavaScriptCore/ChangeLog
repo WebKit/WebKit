@@ -1,3 +1,19 @@
+2014-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add a JSC option to disable EdenCollections
+        https://bugs.webkit.org/show_bug.cgi?id=128849
+
+        Reviewed by Mark Lam.
+
+        This will help quickly identify whether or not GenGC is responsible for a 
+        particular crash by prematurely collecting a live object.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        (JSC::Heap::shouldDoFullCollection):
+        * heap/Heap.h:
+        * runtime/Options.h:
+
 2014-02-20  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r164417): ASSERTION FAILED: isBranch() in X86 32 bit build

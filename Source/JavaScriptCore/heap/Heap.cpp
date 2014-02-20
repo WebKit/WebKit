@@ -832,24 +832,16 @@ void Heap::collect()
     }
 #endif
 
-    bool isFullCollection = m_shouldDoFullCollection;
-    if (isFullCollection) {
+    if (shouldDoFullCollection()) {
         m_operationInProgress = FullCollection;
         m_slotVisitor.clearMarkStack();
         m_shouldDoFullCollection = false;
         if (Options::logGC())
             dataLog("FullCollection, ");
     } else {
-#if ENABLE(GGC)
         m_operationInProgress = EdenCollection;
         if (Options::logGC())
             dataLog("EdenCollection, ");
-#else
-        m_operationInProgress = FullCollection;
-        m_slotVisitor.clearMarkStack();
-        if (Options::logGC())
-            dataLog("FullCollection, ");
-#endif
     }
     if (m_operationInProgress == FullCollection)
         m_extraMemoryUsage = 0;
@@ -1133,6 +1125,15 @@ void Heap::flushWriteBarrierBuffer(JSCell* cell)
     m_writeBarrierBuffer.add(cell);
 #else
     UNUSED_PARAM(cell);
+#endif
+}
+
+bool Heap::shouldDoFullCollection() const
+{
+#if ENABLE(GGC)
+    return Options::alwaysDoFullCollection() || m_shouldDoFullCollection;
+#else
+    return true;
 #endif
 }
 

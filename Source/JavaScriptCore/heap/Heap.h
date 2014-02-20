@@ -255,6 +255,7 @@ namespace JSC {
         void zombifyDeadObjects();
         void markDeadObjects();
 
+        bool shouldDoFullCollection() const;
         size_t sizeAfterCollect();
 
         JSStack& stack();
