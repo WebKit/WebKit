@@ -3009,7 +3009,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case DFG::Jump: {
-        jump(node->branchData()->taken.block);
+        jump(node->targetBlock());
         noResult(node);
         break;
     }

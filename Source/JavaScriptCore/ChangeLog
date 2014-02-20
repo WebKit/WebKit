@@ -1,3 +1,16 @@
+2014-02-20  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r164417): ASSERTION FAILED: isBranch() in X86 32 bit build
+        https://bugs.webkit.org/show_bug.cgi?id=129118
+
+        Reviewed by Filip Pizlo.
+
+        Changed 32 bit version of SpeculativeJIT::compile handling of Jump nodes to match
+        what is in the 64 bit build.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2014-02-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [Automake] Collect the JavaScript files required for JSC builtins through a wildcard
