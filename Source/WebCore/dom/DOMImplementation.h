@@ -26,6 +26,7 @@
 
 #include "Document.h"
 #include "MediaPlayer.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,7 +45,8 @@ typedef int ExceptionCode;
 class DOMImplementation : public ScriptWrappable {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<DOMImplementation> create(Document& document) { return adoptPtr(new DOMImplementation(document)); }
+    explicit DOMImplementation(Document&);
+
     
     void ref() { m_document.ref(); }
     void deref() { m_document.deref(); }
@@ -70,8 +72,6 @@ public:
     static bool isTextMIMEType(const String& MIMEType);
 
 private:
-    explicit DOMImplementation(Document&);
-
     Document& m_document;
 };
 

@@ -168,10 +168,10 @@ void DocumentMarkerController::addMarker(Node* node, const DocumentMarker& newMa
 
     m_possiblyExistingMarkerTypes.add(newMarker.type());
 
-    OwnPtr<MarkerList>& list = m_markers.add(node, nullptr).iterator->value;
+    std::unique_ptr<MarkerList>& list = m_markers.add(node, nullptr).iterator->value;
 
     if (!list) {
-        list = adoptPtr(new MarkerList);
+        list = std::make_unique<MarkerList>();
         list->append(RenderedDocumentMarker(newMarker));
 #if PLATFORM(IOS)
     } else if (newMarker.type() == DocumentMarker::DictationPhraseWithAlternatives || newMarker.type() == DocumentMarker::DictationResult) {

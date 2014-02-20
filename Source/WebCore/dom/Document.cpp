@@ -435,7 +435,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_updateFocusAppearanceRestoresSelection(false)
     , m_ignoreDestructiveWriteCount(0)
     , m_titleSetExplicitly(false)
-    , m_markers(adoptPtr(new DocumentMarkerController))
+    , m_markers(std::make_unique<DocumentMarkerController>())
     , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
     , m_resetHiddenFocusElementTimer(this, &Document::resetHiddenFocusElementTimer)
     , m_cssTarget(nullptr)
@@ -520,7 +520,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     m_cachedResourceLoader->setDocument(this);
 
 #if ENABLE(TEXT_AUTOSIZING)
-    m_textAutosizer = TextAutosizer::create(this);
+    m_textAutosizer = std::make_unique<TextAutosizer>(this);
 #endif
 
     resetLinkColor();
@@ -665,7 +665,7 @@ void Document::removedLastRef()
 
         destroyTreeScopeData();
         removeDetachedChildren();
-        m_formController.clear();
+        m_formController = nullptr;
         
         m_markers->detach();
         
@@ -745,7 +745,7 @@ HTMLImageElement* Document::imageElementByLowercasedUsemap(const AtomicStringImp
 SelectorQueryCache& Document::selectorQueryCache()
 {
     if (!m_selectorQueryCache)
-        m_selectorQueryCache = adoptPtr(new SelectorQueryCache());
+        m_selectorQueryCache = std::make_unique<SelectorQueryCache>();
     return *m_selectorQueryCache;
 }
 
@@ -796,7 +796,7 @@ void Document::resetActiveLinkColor()
 DOMImplementation* Document::implementation()
 {
     if (!m_implementation)
-        m_implementation = DOMImplementation::create(*this);
+        m_implementation = std::make_unique<DOMImplementation>(*this);
     return m_implementation.get();
 }
 
@@ -1602,7 +1602,7 @@ Node::NodeType Document::nodeType() const
 FormController& Document::formController()
 {
     if (!m_formController)
-        m_formController = FormController::create();
+        m_formController = std::make_unique<FormController>();
     return *m_formController;
 }
 
@@ -1922,13 +1922,13 @@ void Document::createStyleResolver()
     bool matchAuthorAndUserStyles = true;
     if (Settings* settings = this->settings())
         matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
-    m_styleResolver = adoptPtr(new StyleResolver(*this, matchAuthorAndUserStyles));
+    m_styleResolver = std::make_unique<StyleResolver>(*this, matchAuthorAndUserStyles);
     m_styleSheetCollection.combineCSSFeatureFlags();
 }
 
 void Document::clearStyleResolver()
 {
-    m_styleResolver.clear();
+    m_styleResolver = nullptr;
 }
 
 void Document::createRenderTree()
@@ -2156,7 +2156,7 @@ void Document::clearAXObjectCache()
     ASSERT(&topDocument() == this);
     // Clear the cache member variable before calling delete because attempts
     // are made to access it during destruction.
-    m_axObjectCache.clear();
+    m_axObjectCache = nullptr;
 }
 
 AXObjectCache* Document::existingAXObjectCache() const
@@ -2184,7 +2184,7 @@ AXObjectCache* Document::axObjectCache() const
 
     ASSERT(&topDocument == this || !m_axObjectCache);
     if (!topDocument.m_axObjectCache)
-        topDocument.m_axObjectCache = adoptPtr(new AXObjectCache(topDocument));
+        topDocument.m_axObjectCache = std::make_unique<AXObjectCache>(topDocument);
     return topDocument.m_axObjectCache.get();
 }
 
@@ -2465,7 +2465,7 @@ void Document::setParsing(bool b)
     m_bParsing = b;
 
     if (m_bParsing && !m_sharedObjectPool)
-        m_sharedObjectPool = DocumentSharedObjectPool::create();
+        m_sharedObjectPool = std::make_unique<DocumentSharedObjectPool>();
 
     if (!m_bParsing && view())
         view()->scheduleRelayout();
@@ -3179,7 +3179,7 @@ void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
     // Don't bother updating, since we haven't loaded all our style info yet
     // and haven't calculated the style selector for the first time.
     if (!hasLivingRenderTree() || (!m_didCalculateStyleResolver && !haveStylesheetsLoaded())) {
-        m_styleResolver.clear();
+        m_styleResolver = nullptr;
         return;
     }
     m_didCalculateStyleResolver = true;
@@ -4228,9 +4228,9 @@ void Document::applyXSLTransform(ProcessingInstruction* pi)
     InspectorInstrumentation::frameDocumentUpdated(ownerFrame);
 }
 
-void Document::setTransformSource(PassOwnPtr<TransformSource> source)
+void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 {
-    m_transformSource = source;
+    m_transformSource = std::move(source);
 }
 
 #endif
@@ -4304,7 +4304,7 @@ const SVGDocumentExtensions* Document::svgExtensions()
 SVGDocumentExtensions* Document::accessSVGExtensions()
 {
     if (!m_svgExtensions)
-        m_svgExtensions = adoptPtr(new SVGDocumentExtensions(this));
+        m_svgExtensions = std::make_unique<SVGDocumentExtensions>(this);
     return m_svgExtensions.get();
 }
 
@@ -4420,7 +4420,7 @@ void Document::finishedParsing()
 
 void Document::sharedObjectPoolClearTimerFired(Timer<Document>&)
 {
-    m_sharedObjectPool.clear();
+    m_sharedObjectPool = nullptr;
 }
 
 void Document::didAccessStyleResolver()
@@ -5608,7 +5608,7 @@ void Document::didAddTouchEventHandler(Node* handler)
 {
 #if ENABLE(TOUCH_EVENTS)
     if (!m_touchEventTargets.get())
-        m_touchEventTargets = adoptPtr(new TouchEventTargetSet);
+        m_touchEventTargets = std::make_unique<TouchEventTargetSet>();
     m_touchEventTargets->add(handler);
     if (Document* parent = parentDocument()) {
         parent->didAddTouchEventHandler(this);

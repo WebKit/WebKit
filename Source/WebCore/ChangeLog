@@ -1,3 +1,48 @@
+2014-02-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move to using std::unique_ptr for Document and related classes
+        https://bugs.webkit.org/show_bug.cgi?id=129063
+
+        Reviewed by Anders Carlsson.
+
+        Replace uses of OwnPtr and PassOwnPtr in the Document and related classes with std::unique_ptr.
+
+        * dom/DOMImplementation.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::selectorQueryCache):
+        (WebCore::Document::implementation):
+        (WebCore::Document::formController):
+        (WebCore::Document::createStyleResolver):
+        (WebCore::Document::clearStyleResolver):
+        (WebCore::Document::clearAXObjectCache):
+        (WebCore::Document::axObjectCache):
+        (WebCore::Document::setParsing):
+        (WebCore::Document::styleResolverChanged):
+        (WebCore::Document::setTransformSource):
+        (WebCore::Document::accessSVGExtensions):
+        (WebCore::Document::sharedObjectPoolClearTimerFired):
+        (WebCore::Document::didAddTouchEventHandler):
+        * dom/Document.h:
+        * dom/DocumentEventQueue.cpp:
+        (WebCore::DocumentEventQueue::DocumentEventQueue):
+        * dom/DocumentEventQueue.h:
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker):
+        * dom/DocumentMarkerController.h:
+        * dom/DocumentSharedObjectPool.cpp:
+        * dom/DocumentSharedObjectPool.h:
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        (WebCore::DocumentStyleSheetCollection::activeStyleSheetsContains):
+        * dom/DocumentStyleSheetCollection.h:
+        * dom/DocumentType.h:
+        * html/FormController.h:
+        * rendering/TextAutosizer.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doEnd):
+
 2014-02-20  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Add helper method for region clipping flow content

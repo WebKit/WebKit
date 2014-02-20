@@ -467,7 +467,7 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
         resetCSSFeatureFlags();
     }
 
-    m_weakCopyOfActiveStyleSheetListForFastLookup.clear();
+    m_weakCopyOfActiveStyleSheetListForFastLookup = nullptr;
     m_activeAuthorStyleSheets.swap(activeCSSStyleSheets);
     m_styleSheetsForStyleSheetList.swap(activeStyleSheets);
 
@@ -480,7 +480,7 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
 bool DocumentStyleSheetCollection::activeStyleSheetsContains(const CSSStyleSheet* sheet) const
 {
     if (!m_weakCopyOfActiveStyleSheetListForFastLookup) {
-        m_weakCopyOfActiveStyleSheetListForFastLookup = adoptPtr(new HashSet<const CSSStyleSheet*>);
+        m_weakCopyOfActiveStyleSheetListForFastLookup = std::make_unique<HashSet<const CSSStyleSheet*>>();
         for (unsigned i = 0; i < m_activeAuthorStyleSheets.size(); ++i)
             m_weakCopyOfActiveStyleSheetListForFastLookup->add(m_activeAuthorStyleSheets[i].get());
     }

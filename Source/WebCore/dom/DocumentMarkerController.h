@@ -29,6 +29,7 @@
 
 #include "DocumentMarker.h"
 #include "IntRect.h"
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -96,7 +97,7 @@ private:
     void addMarker(Node*, const DocumentMarker&);
 
     typedef Vector<RenderedDocumentMarker> MarkerList;
-    typedef HashMap<RefPtr<Node>, OwnPtr<MarkerList>> MarkerMap;
+    typedef HashMap<RefPtr<Node>, std::unique_ptr<MarkerList>> MarkerMap;
     bool possiblyHasMarkers(DocumentMarker::MarkerTypes);
     void removeMarkersFromList(MarkerMap::iterator, DocumentMarker::MarkerTypes);
 

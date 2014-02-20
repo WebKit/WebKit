@@ -46,8 +46,7 @@ class TextAutosizer {
     WTF_MAKE_NONCOPYABLE(TextAutosizer);
 
 public:
-    static PassOwnPtr<TextAutosizer> create(Document* document) { return adoptPtr(new TextAutosizer(document)); }
-
+    explicit TextAutosizer(Document*);
     virtual ~TextAutosizer();
 
     bool processSubtree(RenderObject* layoutRoot);
@@ -60,8 +59,6 @@ private:
         FirstToLast,
         LastToFirst
     };
-
-    explicit TextAutosizer(Document*);
 
     float clusterMultiplier(WritingMode, const TextAutosizingWindowInfo&, float textWidth) const;
 

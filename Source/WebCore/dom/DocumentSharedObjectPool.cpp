@@ -59,12 +59,4 @@ PassRef<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDa
     return *cachedData;
 }
 
-DocumentSharedObjectPool::DocumentSharedObjectPool()
-{
-}
-
-DocumentSharedObjectPool::~DocumentSharedObjectPool()
-{
-}
-
 }

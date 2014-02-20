@@ -29,9 +29,9 @@
 #define DocumentEventQueue_h
 
 #include "EventQueue.h"
+#include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -57,7 +57,7 @@ private:
     class Timer;
 
     Document& m_document;
-    OwnPtr<Timer> m_pendingEventTimer;
+    std::unique_ptr<Timer> m_pendingEventTimer;
     ListHashSet<RefPtr<Event>, 16> m_queuedEvents;
     HashSet<Node*> m_nodesWithQueuedScrollEvents;
     bool m_isClosed;

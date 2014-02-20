@@ -37,9 +37,9 @@ public:
         return adoptRef(new DocumentType(document, name, publicId, systemId));
     }
 
-    // FIXME: We never fill m_entities and m_notations. Current implementation of NamedNodeMap doesn't work without an associated Element yet.
-    NamedNodeMap* entities() const { return m_entities.get(); }
-    NamedNodeMap* notations() const { return m_notations.get(); }
+    // FIXME: We return null entities and notations. Current implementation of NamedNodeMap doesn't work without an associated Element yet.
+    NamedNodeMap* entities() const { return nullptr; }
+    NamedNodeMap* notations() const { return nullptr; }
 
     const String& name() const { return m_name; }
     const String& publicId() const { return m_publicId; }
@@ -53,9 +53,6 @@ private:
     virtual String nodeName() const override;
     virtual NodeType nodeType() const override;
     virtual PassRefPtr<Node> cloneNode(bool deep) override;
-
-    OwnPtr<NamedNodeMap> m_entities;
-    OwnPtr<NamedNodeMap> m_notations;
 
     String m_name;
     String m_publicId;

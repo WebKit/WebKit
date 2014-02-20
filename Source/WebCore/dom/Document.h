@@ -950,7 +950,7 @@ public:
     PassRefPtr<Document> transformSourceDocument() { return m_transformSourceDocument; }
     void setTransformSourceDocument(Document* doc) { m_transformSourceDocument = doc; }
 
-    void setTransformSource(PassOwnPtr<TransformSource>);
+    void setTransformSource(std::unique_ptr<TransformSource>);
     TransformSource* transformSource() const { return m_transformSource.get(); }
 #endif
 
@@ -1345,7 +1345,7 @@ private:
 
     DeferrableOneShotTimer<Document> m_styleResolverThrowawayTimer;
 
-    OwnPtr<StyleResolver> m_styleResolver;
+    std::unique_ptr<StyleResolver> m_styleResolver;
     bool m_didCalculateStyleResolver;
     bool m_hasNodesWithPlaceholderStyle;
     bool m_needsNotifyRemoveAllPendingStylesheet;
@@ -1386,7 +1386,7 @@ private:
 
     String m_baseTarget;
 
-    OwnPtr<DOMImplementation> m_implementation;
+    std::unique_ptr<DOMImplementation> m_implementation;
 
     RefPtr<CSSStyleSheet> m_elementSheet;
 
@@ -1419,7 +1419,7 @@ private:
     DocumentStyleSheetCollection m_styleSheetCollection;
     RefPtr<StyleSheetList> m_styleSheetList;
 
-    OwnPtr<FormController> m_formController;
+    std::unique_ptr<FormController> m_formController;
 
     Color m_linkColor;
     Color m_visitedLinkColor;
@@ -1451,8 +1451,8 @@ private:
     bool m_titleSetExplicitly;
     RefPtr<Element> m_titleElement;
 
-    OwnPtr<AXObjectCache> m_axObjectCache;
-    const OwnPtr<DocumentMarkerController> m_markers;
+    std::unique_ptr<AXObjectCache> m_axObjectCache;
+    const std::unique_ptr<DocumentMarkerController> m_markers;
     
     Timer<Document> m_updateFocusAppearanceTimer;
     Timer<Document> m_resetHiddenFocusElementTimer;
@@ -1475,7 +1475,7 @@ private:
     Vector<RefPtr<HTMLScriptElement>> m_currentScriptStack;
 
 #if ENABLE(XSLT)
-    OwnPtr<TransformSource> m_transformSource;
+    std::unique_ptr<TransformSource> m_transformSource;
     RefPtr<Document> m_transformSourceDocument;
 #endif
 
@@ -1497,7 +1497,7 @@ private:
 
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 
-    OwnPtr<SVGDocumentExtensions> m_svgExtensions;
+    std::unique_ptr<SVGDocumentExtensions> m_svgExtensions;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<AnnotatedRegionValue> m_annotatedRegions;
@@ -1527,7 +1527,7 @@ private:
 
     DocumentOrderedMap m_imagesByUsemap;
 
-    OwnPtr<SelectorQueryCache> m_selectorQueryCache;
+    std::unique_ptr<SelectorQueryCache> m_selectorQueryCache;
 
     DocumentClassFlags m_documentClasses;
 
@@ -1579,7 +1579,7 @@ private:
     
     unsigned m_wheelEventHandlerCount;
 #if ENABLE(TOUCH_EVENTS)
-    OwnPtr<TouchEventTargetSet> m_touchEventTargets;
+    std::unique_ptr<TouchEventTargetSet> m_touchEventTargets;
 #endif
 
     double m_lastHandledUserGestureTimestamp;
@@ -1632,7 +1632,7 @@ private:
 #endif
 
 #if ENABLE(TEXT_AUTOSIZING)
-    OwnPtr<TextAutosizer> m_textAutosizer;
+    std::unique_ptr<TextAutosizer> m_textAutosizer;
 #endif
 
     void platformSuspendOrStopActiveDOMObjects();
@@ -1651,7 +1651,7 @@ private:
     void sharedObjectPoolClearTimerFired(Timer<Document>&);
     Timer<Document> m_sharedObjectPoolClearTimer;
 
-    OwnPtr<DocumentSharedObjectPool> m_sharedObjectPool;
+    std::unique_ptr<DocumentSharedObjectPool> m_sharedObjectPool;
 
 #ifndef NDEBUG
     bool m_didDispatchViewportPropertiesChanged;

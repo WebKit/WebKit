@@ -38,18 +38,13 @@ namespace WebCore {
     
 class DocumentEventQueue::Timer final : public SuspendableTimer {
 public:
-    static PassOwnPtr<Timer> create(DocumentEventQueue& eventQueue)
-    {
-        return adoptPtr(new Timer(eventQueue));
-    }
-
-private:
     Timer(DocumentEventQueue& eventQueue)
         : SuspendableTimer(&eventQueue.m_document)
         , m_eventQueue(eventQueue)
     {
     }
 
+private:
     virtual void fired() override
     {
         ASSERT(!isSuspended());
@@ -61,7 +56,7 @@ private:
 
 DocumentEventQueue::DocumentEventQueue(Document& document)
     : m_document(document)
-    , m_pendingEventTimer(Timer::create(*this))
+    , m_pendingEventTimer(std::make_unique<Timer>(*this))
     , m_isClosed(false)
 {
     m_pendingEventTimer->suspendIfNeeded();

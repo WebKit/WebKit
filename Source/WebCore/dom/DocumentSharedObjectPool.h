@@ -27,8 +27,8 @@
 #ifndef DocumentSharedObjectPool_h
 #define DocumentSharedObjectPool_h
 
+#include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
 
@@ -39,14 +39,9 @@ class ShareableElementData;
 
 class DocumentSharedObjectPool {
 public:
-    static PassOwnPtr<DocumentSharedObjectPool> create() { return adoptPtr(new DocumentSharedObjectPool); }
-    ~DocumentSharedObjectPool();
-
     PassRef<ShareableElementData> cachedShareableElementDataWithAttributes(const Vector<Attribute>&);
 
 private:
-    DocumentSharedObjectPool();
-
     typedef HashMap<unsigned, RefPtr<ShareableElementData>, AlreadyHashed> ShareableElementDataCache;
     ShareableElementDataCache m_shareableElementDataCache;
 };
