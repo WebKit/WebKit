@@ -1,1 +1,37 @@
+2014-02-20  Tim Horton  <timothy_horton@apple.com>
+
+        Add magnification and swiping properties to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=129117
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        Move allowsBackForwardNavigationGestures out of a Mac-only block.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        Add allowsBackForwardNavigationGestures to WKWebView for both platforms.
+        Add magnification properties to WKWebView for Mac.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView contentView:didCommitLayerTree:WebKit::]):
+        (-[WKWebView setAllowsBackForwardNavigationGestures:]):
+        (-[WKWebView allowsBackForwardNavigationGestures]):
+        (-[WKWebView setAllowsMagnification:]):
+        (-[WKWebView allowsMagnification]):
+        (-[WKWebView setMagnification:]):
+        (-[WKWebView magnification]):
+        (-[WKWebView setMagnification:centeredAtPoint:]):
+        For iOS, copy implementations from WKViewIOS.
+        For Mac, forward to the inner WKView.
+
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView setAllowsBackForwardNavigationGestures:]):
+        Fix the logic to tear down the ViewGestureController.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setMagnification:centeredAtPoint:]):
+        (-[WKView setMagnification:]):
+        (-[WKView magnification]):
+        Use CG types for API.
+
 == Rolled over to ChangeLog-2014-02-20 ==

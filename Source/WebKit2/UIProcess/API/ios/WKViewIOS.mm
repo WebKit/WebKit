@@ -125,13 +125,18 @@ using namespace WebKit;
 
 - (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
 {
+    if (_allowsBackForwardNavigationGestures == allowsBackForwardNavigationGestures)
+        return;
+
     _allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
     
     WebPageProxy *webPageProxy = toImpl([_contentView _pageRef]);
     
-    if (allowsBackForwardNavigationGestures && !_gestureController) {
-        _gestureController = std::make_unique<ViewGestureController>(*webPageProxy);
-        _gestureController->installSwipeHandler(self, [self scrollView]);
+    if (allowsBackForwardNavigationGestures) {
+        if (!_gestureController) {
+            _gestureController = std::make_unique<ViewGestureController>(*webPageProxy);
+            _gestureController->installSwipeHandler(self, [self scrollView]);
+        }
     } else
         _gestureController = nullptr;
     

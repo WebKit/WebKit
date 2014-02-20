@@ -32,6 +32,7 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
+#import "ViewGestureController.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
@@ -83,6 +84,8 @@
     UIEdgeInsets _obscuredInsets;
     bool _isChangingObscuredInsetsInteractively;
     CGFloat _lastAdjustmentForScroller;
+
+    std::unique_ptr<WebKit::ViewGestureController> _gestureController;
 #endif
 #if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
@@ -307,6 +310,9 @@
     if (![_scrollView isZooming] && ![_scrollView isZoomBouncing])
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
 
+    if (_gestureController)
+        _gestureController->setRenderTreeSize(layerTreeTransaction.renderTreeSize());
+
     if (_isWaitingForNewLayerTreeAfterDidCommitLoad) {
         UIEdgeInsets inset = [_scrollView contentInset];
         [_scrollView setContentOffset:CGPointMake(-inset.left, -inset.top)];
@@ -436,6 +442,41 @@
 - (void)resizeSubviewsWithOldSize:(NSSize)oldSize
 {
     [_wkView setFrame:self.bounds];
+}
+
+- (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
+{
+    [_wkView setAllowsBackForwardNavigationGestures:allowsBackForwardNavigationGestures];
+}
+
+- (BOOL)allowsBackForwardNavigationGestures
+{
+    return [_wkView allowsBackForwardNavigationGestures];
+}
+
+- (void)setAllowsMagnification:(BOOL)allowsMagnification
+{
+    [_wkView setAllowsMagnification:allowsMagnification];
+}
+
+- (BOOL)allowsMagnification
+{
+    return [_wkView allowsMagnification];
+}
+
+- (void)setMagnification:(CGFloat)magnification
+{
+    [_wkView setMagnification:magnification];
+}
+
+- (CGFloat)magnification
+{
+    return [_wkView magnification];
+}
+
+- (void)setMagnification:(CGFloat)magnification centeredAtPoint:(CGPoint)point
+{
+    [_wkView setMagnification:magnification centeredAtPoint:NSPointFromCGPoint(point)];
 }
 
 #endif
@@ -625,6 +666,29 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 {
     ASSERT(_isChangingObscuredInsetsInteractively);
     _isChangingObscuredInsetsInteractively = NO;
+}
+
+- (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
+{
+    if (_allowsBackForwardNavigationGestures == allowsBackForwardNavigationGestures)
+        return;
+
+    _allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
+
+    if (allowsBackForwardNavigationGestures) {
+        if (!_gestureController) {
+            _gestureController = std::make_unique<WebKit::ViewGestureController>(*_page);
+            _gestureController->installSwipeHandler(self, [self scrollView]);
+        }
+    } else
+        _gestureController = nullptr;
+
+    _page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
+}
+
+- (BOOL)allowsBackForwardNavigationGestures
+{
+    return _allowsBackForwardNavigationGestures;
 }
 
 #endif

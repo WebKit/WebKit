@@ -117,8 +117,15 @@ WK_API_CLASS
 - (void)goBack;
 - (void)goForward;
 
+@property (nonatomic) BOOL allowsBackForwardNavigationGestures;
+
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly) UIScrollView *scrollView;
+#else
+@property (nonatomic) BOOL allowsMagnification;
+@property (nonatomic) CGFloat magnification;
+
+- (void)setMagnification:(CGFloat)magnification centeredAtPoint:(CGPoint)point;
 #endif
 
 @end
