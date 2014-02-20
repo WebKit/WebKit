@@ -1,3 +1,10 @@
+2014-02-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * UIProcess/API/C/WKPage.cpp: (WKPageGetBytecodeProfile): Updated a recently added
+        instance of ScriptCallback.
+
 2014-02-18  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] IPC callback classes should not be tightly coupled to C API
