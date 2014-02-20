@@ -101,17 +101,17 @@ bool HTMLFormControlElement::formNoValidate() const
 
 void HTMLFormControlElement::updateAncestorDisabledState() const
 {
-    HTMLFieldSetElement* fieldSetAncestor = 0;
-    ContainerNode* legendAncestor = 0;
-    for (ContainerNode* ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-        if (!legendAncestor && ancestor->hasTagName(legendTag))
-            legendAncestor = ancestor;
-        if (ancestor->hasTagName(fieldsetTag)) {
-            fieldSetAncestor = toHTMLFieldSetElement(ancestor);
-            break;
+    Element* previousAncestor = nullptr;
+    for (Element* ancestor = parentElement(); ancestor; ancestor = ancestor->parentElement()) {
+        if (isHTMLFieldSetElement(ancestor)) {
+            HTMLFieldSetElement& fieldSetAncestor = toHTMLFieldSetElement(*ancestor);
+            bool isInFirstLegend = previousAncestor && isHTMLLegendElement(previousAncestor) && previousAncestor == fieldSetAncestor.legend();
+            m_ancestorDisabledState = !fieldSetAncestor.isDisabledFormControl() || isInFirstLegend ? AncestorDisabledStateEnabled : AncestorDisabledStateDisabled;
+            return;
         }
+        previousAncestor = ancestor;
     }
-    m_ancestorDisabledState = (fieldSetAncestor && fieldSetAncestor->isDisabledFormControl() && !(legendAncestor && legendAncestor == fieldSetAncestor->legend())) ? AncestorDisabledStateDisabled : AncestorDisabledStateEnabled;
+    m_ancestorDisabledState = AncestorDisabledStateEnabled;
 }
 
 void HTMLFormControlElement::ancestorDisabledStateWasChanged()

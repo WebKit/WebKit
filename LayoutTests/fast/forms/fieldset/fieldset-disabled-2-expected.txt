@@ -1,0 +1,19 @@
+Additional tests for fieldset element disabling descendent input elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isInputDisabledById("inputOutsideLegend") is true
+PASS isInputDisabledById("inputInsideFirstLegend") is false
+PASS isInputDisabledById("inputInsideSecondLegend") is true
+PASS isInputDisabledById("inputInsideNestedFirstLegend") is false
+
+setDisabledOnAllFieldsets(false)
+PASS isInputDisabledById("inputOutsideLegend") is false
+PASS isInputDisabledById("inputInsideFirstLegend") is false
+PASS isInputDisabledById("inputInsideSecondLegend") is false
+PASS isInputDisabledById("inputInsideNestedFirstLegend") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

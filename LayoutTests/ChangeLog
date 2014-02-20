@@ -1,3 +1,15 @@
+2014-02-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        fieldset:disabled > legend:first-child legend input should not be disabled
+        https://bugs.webkit.org/show_bug.cgi?id=129068
+
+        Reviewed by Andreas Kling.
+
+        Added a new regression test.
+
+        * fast/forms/fieldset/fieldset-disabled-2-expected.txt: Added.
+        * fast/forms/fieldset/fieldset-disabled-2.html: Added.
+
 2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Changing selection shouldn't synchronously update editor UI components

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<style type="text/css">
+input:enabled { color: #000; }
+input:disabled { color: #666; }
+</style>
+<div id="container">
+<input id="randomInput">
+<fieldset disabled><input id="inputOutsideLegend"></fieldset>
+<fieldset disabled><legend><input id="inputInsideFirstLegend"></legend></fieldset>
+<fieldset disabled><legend></legend><legend><input id="inputInsideSecondLegend"></legend></fieldset>
+<fieldset disabled><legend><legend><input id="inputInsideNestedFirstLegend"></legend></legend></fieldset>
+</div>
+<script>
+
+description("Additional tests for fieldset element disabling descendent input elements");
+
+function isInputDisabledById(id) {
+    var input = document.getElementById(id);
+    return getComputedStyle(input).color == 'rgb(102, 102, 102)';
+}
+
+shouldBeTrue('isInputDisabledById("inputOutsideLegend")');
+shouldBeFalse('isInputDisabledById("inputInsideFirstLegend")');
+shouldBeTrue('isInputDisabledById("inputInsideSecondLegend")');
+shouldBeFalse('isInputDisabledById("inputInsideNestedFirstLegend")');
+
+function setDisabledOnAllFieldsets(value) {
+    var fieldsets = document.querySelectorAll('fieldset');
+    for (var i = 0; i < fieldsets.length; i++)
+        fieldsets[i].disabled = value;
+}
+
+debug('');
+evalAndLog('setDisabledOnAllFieldsets(false)');
+shouldBeFalse('isInputDisabledById("inputOutsideLegend")');
+shouldBeFalse('isInputDisabledById("inputInsideFirstLegend")');
+shouldBeFalse('isInputDisabledById("inputInsideSecondLegend")');
+shouldBeFalse('isInputDisabledById("inputInsideNestedFirstLegend")');
+
+document.getElementById('container').style.display = 'none';
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
