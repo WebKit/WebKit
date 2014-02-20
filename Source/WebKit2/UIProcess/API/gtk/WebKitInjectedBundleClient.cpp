@@ -21,6 +21,7 @@
 #include "WebKitInjectedBundleClient.h"
 
 #include "WebImage.h"
+#include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
@@ -87,7 +88,7 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
         API::Error* webError = static_cast<API::Error*>(message.get(String::fromUTF8("Error")));
         const ResourceError& platformError = webError->platformError();
         GUniquePtr<GError> resourceError(g_error_new_literal(g_quark_from_string(platformError.domain().utf8().data()),
-            platformError.errorCode(), platformError.localizedDescription().utf8().data()));
+            toWebKitError(platformError.errorCode()), platformError.localizedDescription().utf8().data()));
 
         webkitWebResourceFailed(resource.get(), resourceError.get());
         webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());

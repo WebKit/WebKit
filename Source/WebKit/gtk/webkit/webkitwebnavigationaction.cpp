@@ -364,12 +364,44 @@ namespace WebKit {
 
 WebKitWebNavigationReason kit(WebCore::NavigationType type)
 {
-    return (WebKitWebNavigationReason)type;
+    switch(type) {
+    case WebCore::NavigationTypeLinkClicked:
+        return WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED;
+    case WebCore::NavigationTypeFormSubmitted:
+        return WEBKIT_WEB_NAVIGATION_REASON_FORM_SUBMITTED;
+    case WebCore::NavigationTypeBackForward:
+        return WEBKIT_WEB_NAVIGATION_REASON_BACK_FORWARD;
+    case WebCore::NavigationTypeReload:
+        return WEBKIT_WEB_NAVIGATION_REASON_RELOAD;
+    case WebCore::NavigationTypeFormResubmitted:
+        return WEBKIT_WEB_NAVIGATION_REASON_FORM_RESUBMITTED;
+    case WebCore::NavigationTypeOther:
+        return WEBKIT_WEB_NAVIGATION_REASON_OTHER;
+    default:
+        ASSERT_NOT_REACHED();
+        return WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED;
+    }
 }
 
 WebCore::NavigationType core(WebKitWebNavigationReason type)
 {
-    return static_cast<WebCore::NavigationType>(type);
+    switch(type) {
+    case WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED:
+        return WebCore::NavigationTypeLinkClicked;
+    case WEBKIT_WEB_NAVIGATION_REASON_FORM_SUBMITTED:
+        return WebCore::NavigationTypeFormSubmitted;
+    case WEBKIT_WEB_NAVIGATION_REASON_BACK_FORWARD:
+        return WebCore::NavigationTypeBackForward;
+    case WEBKIT_WEB_NAVIGATION_REASON_RELOAD:
+        return WebCore::NavigationTypeReload;
+    case WEBKIT_WEB_NAVIGATION_REASON_FORM_RESUBMITTED:
+        return WebCore::NavigationTypeFormResubmitted;
+    case WEBKIT_WEB_NAVIGATION_REASON_OTHER:
+        return WebCore::NavigationTypeOther;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebCore::NavigationTypeLinkClicked;
+    }
 }
 
 }

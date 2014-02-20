@@ -1,3 +1,12 @@
+2014-02-20  Enrique Ocaña González  <eocanha@igalia.com>
+
+        WebKitGTK+ should stop using COMPILE_ASSERT_MATCHING_ENUM macros
+        https://bugs.webkit.org/show_bug.cgi?id=127800
+
+        Reviewed by Martin Robinson.
+
+        * PlatformGTK.cmake: Removed AssertMatchingEnums.cpp
+
 2014-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Changing selection shouldn't synchronously update editor UI components

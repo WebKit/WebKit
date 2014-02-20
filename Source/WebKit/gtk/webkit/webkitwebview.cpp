@@ -119,6 +119,7 @@
 #include <bindings/ScriptValue.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n-lib.h>
+#include <gtk/gtk.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -281,6 +282,47 @@ G_DEFINE_TYPE_WITH_CODE(WebKitWebView, webkit_web_view, GTK_TYPE_CONTAINER,
 static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GParamSpec* pspec, WebKitWebView* webView);
 static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWebWindowFeatures* webWindowFeatures);
 static void webkitWebViewDirectionChanged(WebKitWebView*, GtkTextDirection previousDirection, gpointer);
+
+static inline WebKitWebViewTargetInfo toWebKitWebViewTargetInfo(PasteboardHelper::PasteboardTargetType flags)
+{
+    switch (flags) {
+    case PasteboardHelper::TargetTypeMarkup:
+        return WEBKIT_WEB_VIEW_TARGET_INFO_HTML;
+        break;
+    case PasteboardHelper::TargetTypeText:
+        return WEBKIT_WEB_VIEW_TARGET_INFO_TEXT;
+        break;
+    case PasteboardHelper::TargetTypeImage:
+        return WEBKIT_WEB_VIEW_TARGET_INFO_IMAGE;
+        break;
+    case PasteboardHelper::TargetTypeURIList:
+        return WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST;
+        break;
+    case PasteboardHelper::TargetTypeNetscapeURL:
+        return WEBKIT_WEB_VIEW_TARGET_INFO_NETSCAPE_URL;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return WEBKIT_WEB_VIEW_TARGET_INFO_HTML;
+    }
+}
+
+static GtkTargetList* copyGtkTargetListConvertingWebCoreEnumValuesToWebKitEnumValues(GtkTargetList* coreGtkTargetList)
+{
+    g_return_val_if_fail(coreGtkTargetList, nullptr);
+
+    GtkTargetList* targetListWithWebKitEnumValues = nullptr;
+    int tableSize = 0;
+    GtkTargetEntry* table(gtk_target_table_new_from_list(coreGtkTargetList, &tableSize));
+
+    for (int i = 0; i < tableSize; i++)
+        table[i].flags = toWebKitWebViewTargetInfo(static_cast<PasteboardHelper::PasteboardTargetType>(table[i].flags));
+
+    targetListWithWebKitEnumValues = gtk_target_list_new(table, tableSize);
+    gtk_target_table_free(table, tableSize);
+
+    return targetListWithWebKitEnumValues;
+}
 
 #if ENABLE(CONTEXT_MENUS)
 static void PopupMenuPositionFunc(GtkMenu* menu, gint *x, gint *y, gboolean *pushIn, gpointer userData)
@@ -1380,6 +1422,7 @@ static void webkit_web_view_dispose(GObject* object)
     priv->webWindowFeatures.clear();
     priv->mainResource.clear();
     priv->subResources.clear();
+    priv->targetList.clear();
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 
@@ -3873,10 +3916,12 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     priv->subResources = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref));
 
+    priv->targetList = adoptGRef(copyGtkTargetListConvertingWebCoreEnumValuesToWebKitEnumValues(PasteboardHelper::defaultPasteboardHelper()->targetList()));
+
 #if ENABLE(DRAG_SUPPORT)
     priv->dragAndDropHelper.setWidget(GTK_WIDGET(webView));
     gtk_drag_dest_set(GTK_WIDGET(webView), static_cast<GtkDestDefaults>(0), 0, 0, static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE));
-    gtk_drag_dest_set_target_list(GTK_WIDGET(webView), PasteboardHelper::defaultPasteboardHelper()->targetList());
+    gtk_drag_dest_set_target_list(GTK_WIDGET(webView), priv->targetList.get());
 #endif
 
     priv->selfScrolling = false;
@@ -4691,7 +4736,8 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
  **/
 GtkTargetList* webkit_web_view_get_copy_target_list(WebKitWebView* webView)
 {
-    return PasteboardHelper::defaultPasteboardHelper()->targetList();
+    webView->priv->targetList = adoptGRef(copyGtkTargetListConvertingWebCoreEnumValuesToWebKitEnumValues(PasteboardHelper::defaultPasteboardHelper()->targetList()));
+    return webView->priv->targetList.get();
 }
 
 /**
@@ -4708,7 +4754,8 @@ GtkTargetList* webkit_web_view_get_copy_target_list(WebKitWebView* webView)
  **/
 GtkTargetList* webkit_web_view_get_paste_target_list(WebKitWebView* webView)
 {
-    return PasteboardHelper::defaultPasteboardHelper()->targetList();
+    webView->priv->targetList = adoptGRef(copyGtkTargetListConvertingWebCoreEnumValuesToWebKitEnumValues(PasteboardHelper::defaultPasteboardHelper()->targetList()));
+    return webView->priv->targetList.get();
 }
 
 /**

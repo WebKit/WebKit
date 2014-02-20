@@ -104,6 +104,47 @@ using namespace WebCore;
 
 namespace WebKit {
 
+inline int toWebKitNetworkError(int errorCode)
+{
+    switch (errorCode) {
+    case NetworkErrorFailed:
+        return WEBKIT_NETWORK_ERROR_FAILED;
+    case NetworkErrorTransport:
+        return WEBKIT_NETWORK_ERROR_TRANSPORT;
+    case NetworkErrorUnknownProtocol:
+        return WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL;
+    case NetworkErrorCancelled:
+        return WEBKIT_NETWORK_ERROR_CANCELLED;
+    case NetworkErrorFileDoesNotExist:
+        return WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST;
+    case PolicyErrorFailed:
+        return WEBKIT_POLICY_ERROR_FAILED;
+    case PolicyErrorCannotShowMimeType:
+        return WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE;
+    case PolicyErrorCannotShowURL:
+        return WEBKIT_POLICY_ERROR_CANNOT_SHOW_URL;
+    case PolicyErrorFrameLoadInterruptedByPolicyChange:
+        return WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE;
+    case PolicyErrorCannotUseRestrictedPort:
+        return WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT;
+    case PluginErrorFailed:
+        return WEBKIT_PLUGIN_ERROR_FAILED;
+    case PluginErrorCannotFindPlugin:
+        return WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN;
+    case PluginErrorCannotLoadPlugin:
+        return WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN;
+    case PluginErrorJavaUnavailable:
+        return WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE;
+    case PluginErrorConnectionCancelled:
+        return WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED;
+    case PluginErrorWillHandleLoad:
+        return WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD;
+    default:
+        ASSERT_NOT_REACHED();
+        return WEBKIT_NETWORK_ERROR_FAILED;
+    }
+}
+
 FrameLoaderClient::FrameLoaderClient(WebKitWebFrame* frame)
     : m_frame(frame)
     , m_policyDecision(0)
@@ -992,7 +1033,7 @@ void FrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, 
         return;
 
     GUniquePtr<GError> webError(g_error_new_literal(g_quark_from_string(error.domain().utf8().data()),
-        error.errorCode(), error.localizedDescription().utf8().data()));
+        toWebKitNetworkError(error.errorCode()), error.localizedDescription().utf8().data()));
 
     g_signal_emit_by_name(webResource, "load-failed", webError.get());
     g_signal_emit_by_name(m_frame, "resource-load-failed", webResource, webError.get());
@@ -1020,9 +1061,10 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     notifyStatus(m_frame, WEBKIT_LOAD_FAILED);
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
+
     GUniquePtr<GError> webError(g_error_new_literal(
         g_quark_from_string(error.domain().utf8().data()),
-        error.errorCode(),
+        toWebKitNetworkError(error.errorCode()),
         error.localizedDescription().utf8().data()));
     gboolean isHandled = false;
     g_signal_emit_by_name(webView, "load-error", m_frame, error.failingURL().utf8().data(), webError.get(), &isHandled);
@@ -1094,7 +1136,7 @@ ResourceError FrameLoaderClient::pluginWillHandleLoadError(const ResourceRespons
 
 bool FrameLoaderClient::shouldFallBack(const ResourceError& error)
 {
-    return !(error.isCancellation() || error.errorCode() == WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE || error.errorCode() == WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD);
+    return !(error.isCancellation() || error.errorCode() == PolicyErrorFrameLoadInterruptedByPolicyChange || error.errorCode() == PluginErrorWillHandleLoad);
 }
 
 bool FrameLoaderClient::canCachePage() const

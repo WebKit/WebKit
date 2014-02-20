@@ -23,6 +23,7 @@
 #include "DownloadProxy.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitMarshal.h"
+#include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include <WebCore/ErrorsGtk.h>
@@ -340,7 +341,7 @@ void webkitDownloadNotifyProgress(WebKitDownload* download, guint64 bytesReceive
 void webkitDownloadFailed(WebKitDownload* download, const ResourceError& resourceError)
 {
     GUniquePtr<GError> webError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
-        resourceError.errorCode(), resourceError.localizedDescription().utf8().data()));
+        toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().data()));
     if (download->priv->timer)
         g_timer_stop(download->priv->timer.get());
 

@@ -86,6 +86,16 @@ bool DumpRenderTreeSupportGtk::s_linksIncludedInTabChain = true;
 DumpRenderTreeSupportGtk::FrameLoadEventCallback DumpRenderTreeSupportGtk::s_frameLoadEventCallback = 0;
 DumpRenderTreeSupportGtk::AuthenticationCallback DumpRenderTreeSupportGtk::s_authenticationCallback = 0;
 
+static inline WebCore::FindOptions toWebCoreFindOptions(WebKitFindOptions type)
+{
+    return static_cast<WebCore::FindOptions>((type & WebFindOptionsCaseInsensitive ? CaseInsensitive : 0)
+        | (type & WebFindOptionsAtWordStarts ? AtWordStarts : 0)
+        | (type & WebFindOptionsTreatMedialCapitalAsWordStart ? TreatMedialCapitalAsWordStart : 0)
+        | (type & WebFindOptionsBackwards ? Backwards : 0)
+        | (type & WebFindOptionsWrapAround ? WrapAround : 0)
+        | (type & WebFindOptionsStartInSelection ? StartInSelection : 0));
+}
+
 DumpRenderTreeSupportGtk::DumpRenderTreeSupportGtk()
 {
 }
@@ -475,7 +485,7 @@ void DumpRenderTreeSupportGtk::clearOpener(WebKitWebFrame* frame)
 
 bool DumpRenderTreeSupportGtk::findString(WebKitWebView* webView, const gchar* targetString, WebKitFindOptions findOptions)
 {
-    return core(webView)->findString(String::fromUTF8(targetString), findOptions);
+    return core(webView)->findString(String::fromUTF8(targetString), toWebCoreFindOptions(findOptions));
 }
 
 void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)

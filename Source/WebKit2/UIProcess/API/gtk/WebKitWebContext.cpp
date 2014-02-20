@@ -165,6 +165,32 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
+static inline WebKit::ProcessModel toProcessModel(WebKitProcessModel webKitProcessModel)
+{
+    switch (webKitProcessModel) {
+    case WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS:
+        return ProcessModelSharedSecondaryProcess;
+    case WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES:
+        return ProcessModelMultipleSecondaryProcesses;
+    default:
+        ASSERT_NOT_REACHED();
+        return ProcessModelSharedSecondaryProcess;
+    }
+}
+
+static inline WebKitProcessModel toWebKitProcessModel(WebKit::ProcessModel processModel)
+{
+    switch (processModel) {
+    case ProcessModelSharedSecondaryProcess:
+        return WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS;
+    case ProcessModelMultipleSecondaryProcesses:
+        return WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES;
+    default:
+        ASSERT_NOT_REACHED();
+        return WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS;
+    }
+}
+
 static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(webContextClass);
@@ -917,18 +943,7 @@ void webkit_web_context_set_process_model(WebKitWebContext* context, WebKitProce
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    ProcessModel newProcessModel;
-
-    switch (processModel) {
-    case WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS:
-        newProcessModel = ProcessModelSharedSecondaryProcess;
-        break;
-    case WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES:
-        newProcessModel = ProcessModelMultipleSecondaryProcesses;
-        break;
-    default:
-        g_assert_not_reached();
-    }
+    ProcessModel newProcessModel(toProcessModel(processModel));
 
     if (newProcessModel == context->priv->context->processModel())
         return;
@@ -952,14 +967,7 @@ WebKitProcessModel webkit_web_context_get_process_model(WebKitWebContext* contex
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS);
 
-    switch (context->priv->context->processModel()) {
-    case ProcessModelSharedSecondaryProcess:
-        return WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS;
-    case ProcessModelMultipleSecondaryProcesses:
-        return WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES;
-    default:
-        g_assert_not_reached();
-    }
+    return toWebKitProcessModel(context->priv->context->processModel());
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy)

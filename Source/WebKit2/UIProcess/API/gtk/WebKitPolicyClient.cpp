@@ -29,10 +29,31 @@
 
 using namespace WebKit;
 
+static inline WebKitNavigationType toWebKitNavigationType(WKFrameNavigationType type)
+{
+    switch (type) {
+    case kWKFrameNavigationTypeLinkClicked:
+        return WEBKIT_NAVIGATION_TYPE_LINK_CLICKED;
+    case kWKFrameNavigationTypeFormSubmitted:
+        return WEBKIT_NAVIGATION_TYPE_FORM_SUBMITTED;
+    case kWKFrameNavigationTypeBackForward:
+        return WEBKIT_NAVIGATION_TYPE_BACK_FORWARD;
+    case kWKFrameNavigationTypeReload:
+        return WEBKIT_NAVIGATION_TYPE_RELOAD;
+    case kWKFrameNavigationTypeFormResubmitted:
+        return WEBKIT_NAVIGATION_TYPE_FORM_RESUBMITTED;
+    case kWKFrameNavigationTypeOther:
+        return WEBKIT_NAVIGATION_TYPE_OTHER;
+    default:
+        ASSERT_NOT_REACHED();
+        return WEBKIT_NAVIGATION_TYPE_LINK_CLICKED;
+    }
+}
+
 static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     GRefPtr<WebKitNavigationPolicyDecision> decision =
-        adoptGRef(webkitNavigationPolicyDecisionCreate(static_cast<WebKitNavigationType>(navigationType),
+        adoptGRef(webkitNavigationPolicyDecisionCreate(toWebKitNavigationType(navigationType),
                                                        wkEventMouseButtonToWebKitMouseButton(mouseButton),
                                                        wkEventModifiersToGdkModifiers(modifiers),
                                                        toImpl(request),
@@ -46,7 +67,7 @@ static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WK
 static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     GRefPtr<WebKitNavigationPolicyDecision> decision =
-        adoptGRef(webkitNavigationPolicyDecisionCreate(static_cast<WebKitNavigationType>(navigationType),
+        adoptGRef(webkitNavigationPolicyDecisionCreate(toWebKitNavigationType(navigationType),
                                                        wkEventMouseButtonToWebKitMouseButton(mouseButton),
                                                        wkEventModifiersToGdkModifiers(modifiers),
                                                        toImpl(request),

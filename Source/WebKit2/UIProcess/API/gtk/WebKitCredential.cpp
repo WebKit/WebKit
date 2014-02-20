@@ -37,11 +37,37 @@ struct _WebKitCredential {
     CString password;
 };
 
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_CREDENTIAL_PERSISTENCE_NONE, WebCore::CredentialPersistenceNone);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION, WebCore::CredentialPersistenceForSession);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_CREDENTIAL_PERSISTENCE_PERMANENT, WebCore::CredentialPersistencePermanent);
-
 G_DEFINE_BOXED_TYPE(WebKitCredential, webkit_credential, webkit_credential_copy, webkit_credential_free)
+
+static inline WebKitCredentialPersistence toWebKitCredentialPersistence(WebCore::CredentialPersistence corePersistence)
+{
+    switch (corePersistence) {
+    case WebCore::CredentialPersistenceNone:
+        return WEBKIT_CREDENTIAL_PERSISTENCE_NONE;
+    case WebCore::CredentialPersistenceForSession:
+        return WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION;
+    case WebCore::CredentialPersistencePermanent:
+        return WEBKIT_CREDENTIAL_PERSISTENCE_PERMANENT;
+    default:
+        ASSERT_NOT_REACHED();
+        return WEBKIT_CREDENTIAL_PERSISTENCE_NONE;
+    }
+}
+
+static inline WebCore::CredentialPersistence toWebCoreCredentialPersistence(WebKitCredentialPersistence kitPersistence)
+{
+    switch (kitPersistence) {
+    case WEBKIT_CREDENTIAL_PERSISTENCE_NONE:
+        return WebCore::CredentialPersistenceNone;
+    case WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION:
+        return WebCore::CredentialPersistenceForSession;
+    case WEBKIT_CREDENTIAL_PERSISTENCE_PERMANENT:
+        return WebCore::CredentialPersistencePermanent;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebCore::CredentialPersistenceNone;
+    }
+}
 
 WebKitCredential* webkitCredentialCreate(const WebCore::Credential& coreCredential)
 {
@@ -73,7 +99,7 @@ WebKitCredential* webkit_credential_new(const gchar* username, const gchar* pass
     g_return_val_if_fail(username, 0);
     g_return_val_if_fail(password, 0);
 
-    return webkitCredentialCreate(WebCore::Credential(String::fromUTF8(username), String::fromUTF8(password), static_cast<WebCore::CredentialPersistence>(persistence)));
+    return webkitCredentialCreate(WebCore::Credential(String::fromUTF8(username), String::fromUTF8(password), toWebCoreCredentialPersistence(persistence)));
 }
 
 /**
@@ -178,5 +204,5 @@ WebKitCredentialPersistence webkit_credential_get_persistence(WebKitCredential* 
 {
     g_return_val_if_fail(credential, WEBKIT_CREDENTIAL_PERSISTENCE_NONE);
 
-    return static_cast<WebKitCredentialPersistence>(credential->credential.persistence());
+    return toWebKitCredentialPersistence(credential->credential.persistence());
 }

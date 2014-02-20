@@ -263,7 +263,7 @@ static void drawPagesForPrintingCompleted(API::Error* wkPrintError, WebKitPrintO
     const WebCore::ResourceError& resourceError = wkPrintError ? wkPrintError->platformError() : WebCore::ResourceError();
     if (!resourceError.isNull()) {
         GUniquePtr<GError> printError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
-            resourceError.errorCode(), resourceError.localizedDescription().utf8().data()));
+            toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().data()));
         g_signal_emit(printOperation, signals[FAILED], 0, printError.get());
     }
     g_signal_emit(printOperation, signals[FINISHED], 0, NULL);

@@ -1,3 +1,61 @@
+2014-02-20  Enrique Ocaña González  <eocanha@igalia.com>
+
+        WebKitGTK+ should stop using COMPILE_ASSERT_MATCHING_ENUM macros
+        https://bugs.webkit.org/show_bug.cgi?id=127800
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitAuthenticationRequest.cpp: Defined and applied type conversions.
+        (webkit_authentication_request_get_scheme):
+        * UIProcess/API/gtk/WebKitCookieManager.cpp: Defined and applied type conversions.
+        (toWebKitCookieAcceptPolicy):
+        (toHTTPCookieAcceptPolicy):
+        (webkit_cookie_manager_set_persistent_storage):
+        (webkit_cookie_manager_set_accept_policy):
+        (webkitCookieManagerGetAcceptPolicyCallback):
+        * UIProcess/API/gtk/WebKitCredential.cpp: Defined and applied type conversions.
+        (toWebKitCredentialPersistence):
+        (toWebCoreCredentialPersistence):
+        (webkit_credential_new):
+        (webkit_credential_get_persistence):
+        * UIProcess/API/gtk/WebKitDownload.cpp: Defined and applied type conversions.
+        (webkitDownloadFailed):
+        * UIProcess/API/gtk/WebKitError.cpp: Defined and applied type conversions.
+        * UIProcess/API/gtk/WebKitFindController.cpp: Defined and applied type conversions.
+        (toWebKitFindOptions):
+        (webKitFindControllerPerform):
+        (webkit_find_controller_search_next):
+        (webkit_find_controller_search_previous):
+        * UIProcess/API/gtk/WebKitFindController.h: Added new private fields to the enum, needed to match conversions.
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp: Defined and applied type conversions.
+        (didReceiveWebViewMessageFromInjectedBundle):
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp: Defined and applied type conversions.
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didFailLoadWithErrorForFrame):
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp: Defined and applied type conversions.
+        * UIProcess/API/gtk/WebKitPolicyClient.cpp: Defined and applied type conversions.
+        (toWebKitNavigationType):
+        (decidePolicyForNavigationAction):
+        (decidePolicyForNewWindowAction):
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp: Defined and applied type conversions.
+        (drawPagesForPrintingCompleted):
+        * UIProcess/API/gtk/WebKitPrivate.cpp: Defined and applied type conversions.
+        (toWebKitError):
+        (toWebCoreError):
+        * UIProcess/API/gtk/WebKitPrivate.h: Defined and applied type conversions.
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp: Defined and applied type conversions.
+        (webkit_uri_scheme_request_finish_error):
+        * UIProcess/API/gtk/WebKitWebContext.cpp: Defined and applied type conversions.
+        (toWebKitProcessModel):
+        (webkit_web_context_set_process_model):
+        (webkit_web_context_get_process_model):
+        * UIProcess/API/gtk/WebKitWebView.cpp: Defined and applied type conversions.
+        (toSnapshotRegion):
+        (webkit_web_view_get_snapshot):
+        * UIProcess/API/gtk/WebKitWebViewGroup.cpp: Defined and applied type conversions.
+        (toWebCoreUserContentInjectedFrames):
+        (webkit_web_view_group_add_user_style_sheet):
+
 2014-02-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Get rid of redundant Platform.h includes

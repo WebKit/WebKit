@@ -67,17 +67,34 @@ struct _WebKitAuthenticationRequestPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_DEFAULT, ProtectionSpaceAuthenticationSchemeDefault);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC, ProtectionSpaceAuthenticationSchemeHTTPBasic);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_HTTP_DIGEST, ProtectionSpaceAuthenticationSchemeHTTPDigest);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_HTML_FORM, ProtectionSpaceAuthenticationSchemeHTMLForm);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_NTLM, ProtectionSpaceAuthenticationSchemeNTLM);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_NEGOTIATE, ProtectionSpaceAuthenticationSchemeNegotiate);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED, ProtectionSpaceAuthenticationSchemeClientCertificateRequested);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_SERVER_TRUST_EVALUATION_REQUESTED, ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_UNKNOWN, ProtectionSpaceAuthenticationSchemeUnknown);
-
 WEBKIT_DEFINE_TYPE(WebKitAuthenticationRequest, webkit_authentication_request, G_TYPE_OBJECT)
+
+static inline WebKitAuthenticationScheme toWebKitAuthenticationScheme(WebCore::ProtectionSpaceAuthenticationScheme coreScheme)
+{
+    switch (coreScheme) {
+    case WebCore::ProtectionSpaceAuthenticationSchemeDefault:
+        return WEBKIT_AUTHENTICATION_SCHEME_DEFAULT;
+    case WebCore::ProtectionSpaceAuthenticationSchemeHTTPBasic:
+        return WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC;
+    case WebCore::ProtectionSpaceAuthenticationSchemeHTTPDigest:
+        return WEBKIT_AUTHENTICATION_SCHEME_HTTP_DIGEST;
+    case WebCore::ProtectionSpaceAuthenticationSchemeHTMLForm:
+        return WEBKIT_AUTHENTICATION_SCHEME_HTML_FORM;
+    case WebCore::ProtectionSpaceAuthenticationSchemeNTLM:
+        return WEBKIT_AUTHENTICATION_SCHEME_NTLM;
+    case WebCore::ProtectionSpaceAuthenticationSchemeNegotiate:
+        return WEBKIT_AUTHENTICATION_SCHEME_NEGOTIATE;
+    case WebCore::ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+        return WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED;
+    case WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+        return WEBKIT_AUTHENTICATION_SCHEME_SERVER_TRUST_EVALUATION_REQUESTED;
+    case WebCore::ProtectionSpaceAuthenticationSchemeUnknown:
+        return WEBKIT_AUTHENTICATION_SCHEME_UNKNOWN;
+    default:
+        ASSERT_NOT_REACHED();
+        return WEBKIT_AUTHENTICATION_SCHEME_DEFAULT;
+    }
+}
 
 static void webkitAuthenticationRequestDispose(GObject* object)
 {
@@ -244,7 +261,7 @@ WebKitAuthenticationScheme webkit_authentication_request_get_scheme(WebKitAuthen
 {
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), WEBKIT_AUTHENTICATION_SCHEME_UNKNOWN);
 
-    return static_cast<WebKitAuthenticationScheme>(request->priv->authenticationChallenge->protectionSpace()->authenticationScheme());
+    return toWebKitAuthenticationScheme(request->priv->authenticationChallenge->protectionSpace()->authenticationScheme());
 }
 
 /**

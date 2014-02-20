@@ -22,6 +22,7 @@
 #include "WebKitLoaderClient.h"
 
 #include "WebKitBackForwardListPrivate.h"
+#include "WebKitPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
@@ -54,7 +55,7 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
 
     const ResourceError& resourceError = toImpl(error)->platformError();
     GUniquePtr<GError> webError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
-        resourceError.errorCode(), resourceError.localizedDescription().utf8().data()));
+        toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().data()));
     if (resourceError.tlsErrors()) {
         webkitWebViewLoadFailedWithTLSErrors(WEBKIT_WEB_VIEW(clientInfo), resourceError.failingURL().utf8().data(), webError.get(),
             static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()), resourceError.certificate());
@@ -85,7 +86,7 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
 
     const ResourceError& resourceError = toImpl(error)->platformError();
     GUniquePtr<GError> webError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
-        resourceError.errorCode(), resourceError.localizedDescription().utf8().data()));
+        toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().data()));
     webkitWebViewLoadFailed(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_LOAD_COMMITTED,
                             resourceError.failingURL().utf8().data(), webError.get());
 }

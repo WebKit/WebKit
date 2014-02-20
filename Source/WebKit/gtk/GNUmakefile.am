@@ -190,7 +190,6 @@ BUILT_SOURCES += $(webkitgtk_built_sources)
 webkitgtk_sources += \
 	Source/WebKit/gtk/WebCoreSupport/AcceleratedCompositingContext.h \
 	Source/WebKit/gtk/WebCoreSupport/AcceleratedCompositingContextGL.cpp \
-	Source/WebKit/gtk/WebCoreSupport/AssertMatchingEnums.cpp \
 	Source/WebKit/gtk/WebCoreSupport/BatteryClientGtk.cpp \
 	Source/WebKit/gtk/WebCoreSupport/BatteryClientGtk.h \
 	Source/WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \

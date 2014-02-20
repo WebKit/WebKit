@@ -82,11 +82,22 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 WEBKIT_DEFINE_TYPE(WebKitFindController, webkit_find_controller, G_TYPE_OBJECT)
 
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE, FindOptionsCaseInsensitive);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_AT_WORD_STARTS, FindOptionsAtWordStarts);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START, FindOptionsTreatMedialCapitalAsWordStart);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_BACKWARDS, FindOptionsBackwards);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_WRAP_AROUND, FindOptionsWrapAround);
+static inline WebKit::FindOptions toWebKitFindOptions(WebKitFindOptions type)
+{
+    return static_cast<WebKit::FindOptions>((type & WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE ? FindOptionsCaseInsensitive : 0)
+        | (type & WEBKIT_FIND_OPTIONS_AT_WORD_STARTS ? FindOptionsAtWordStarts : 0)
+        | (type & WEBKIT_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START ? FindOptionsTreatMedialCapitalAsWordStart : 0)
+        | (type & WEBKIT_FIND_OPTIONS_BACKWARDS ? FindOptionsBackwards : 0)
+        | (type & WEBKIT_FIND_OPTIONS_WRAP_AROUND ? FindOptionsWrapAround : 0)
+        | (type & WEBKIT_FIND_OPTIONS_SHOW_OVERLAY ? FindOptionsShowOverlay : 0)
+        | (type & WEBKIT_FIND_OPTIONS_SHOW_FIND_INDICATOR ? FindOptionsShowFindIndicator : 0)
+        | (type & WEBKIT_FIND_OPTIONS_SHOW_HIGHLIGHT ? FindOptionsShowHighlight : 0));
+}
+
+static inline WebKit::FindOptions toWebKitFindOptions(uint32_t type)
+{
+    return toWebKitFindOptions(static_cast<WebKitFindOptions>(type));
+}
 
 static void didFindString(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo)
 {
@@ -349,7 +360,7 @@ static void webKitFindControllerPerform(WebKitFindController* findController, We
     WebKitFindControllerPrivate* priv = findController->priv;
     if (operation == CountOperation) {
         getPage(findController)->countStringMatches(String::fromUTF8(priv->searchText.data()),
-                                                    static_cast<WebKit::FindOptions>(priv->findOptions), priv->maxMatchCount);
+            toWebKitFindOptions(priv->findOptions), priv->maxMatchCount);
         return;
     }
 
@@ -362,9 +373,9 @@ static void webKitFindControllerPerform(WebKitFindController* findController, We
         // unconditionally show highlights. Both search_next() and
         // search_prev() should not enable highlighting to avoid an
         // extra unmarkAllTextMatches() + markAllTextMatches()
-        findOptions |= FindOptionsShowHighlight;
+        findOptions |= WEBKIT_FIND_OPTIONS_SHOW_HIGHLIGHT;
 
-    getPage(findController)->findString(String::fromUTF8(priv->searchText.data()), static_cast<WebKit::FindOptions>(findOptions),
+    getPage(findController)->findString(String::fromUTF8(priv->searchText.data()), toWebKitFindOptions(findOptions),
                                         priv->maxMatchCount);
 }
 
@@ -425,7 +436,7 @@ void webkit_find_controller_search_next(WebKitFindController* findController)
     g_return_if_fail(WEBKIT_IS_FIND_CONTROLLER(findController));
 
     findController->priv->findOptions &= ~WEBKIT_FIND_OPTIONS_BACKWARDS;
-    findController->priv->findOptions &= ~FindOptionsShowHighlight;
+    findController->priv->findOptions &= ~WEBKIT_FIND_OPTIONS_SHOW_HIGHLIGHT;
     webKitFindControllerPerform(findController, FindNextPrevOperation);
 }
 
@@ -443,7 +454,7 @@ void webkit_find_controller_search_previous(WebKitFindController* findController
     g_return_if_fail(WEBKIT_IS_FIND_CONTROLLER(findController));
 
     findController->priv->findOptions |= WEBKIT_FIND_OPTIONS_BACKWARDS;
-    findController->priv->findOptions &= ~FindOptionsShowHighlight;
+    findController->priv->findOptions &= ~WEBKIT_FIND_OPTIONS_SHOW_HIGHLIGHT;
     webKitFindControllerPerform(findController, FindNextPrevOperation);
 }
 

@@ -21,6 +21,7 @@
 #include "WebKitURISchemeRequest.h"
 
 #include "APIData.h"
+#include "WebKitPrivate.h"
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebView.h"
@@ -230,7 +231,7 @@ void webkit_uri_scheme_request_finish_error(WebKitURISchemeRequest* request, GEr
 
     WebKitURISchemeRequestPrivate* priv = request->priv;
 
-    WebCore::ResourceError resourceError(g_quark_to_string(error->domain), error->code, priv->uri.data(), String::fromUTF8(error->message));
+    WebCore::ResourceError resourceError(g_quark_to_string(error->domain), toWebCoreError(error->code), priv->uri.data(), String::fromUTF8(error->message));
     priv->webRequestManager->didFailWithError(priv->requestID, resourceError);
     webkitWebContextDidFinishLoadingCustomProtocol(priv->webContext, priv->requestID);
 }

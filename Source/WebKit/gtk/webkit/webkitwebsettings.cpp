@@ -1658,9 +1658,19 @@ char* webkitWebSettingsUserAgentForURI(WebKitWebSettings* webSettings, const cha
 
 namespace WebKit {
 
-WebCore::EditingBehaviorType core(WebKitEditingBehavior type)
+inline WebCore::EditingBehaviorType core(WebKitEditingBehavior type)
 {
-    return static_cast<WebCore::EditingBehaviorType>(type);
+    switch (type) {
+    case WEBKIT_EDITING_BEHAVIOR_MAC:
+        return EditingMacBehavior;
+    case WEBKIT_EDITING_BEHAVIOR_WINDOWS:
+        return EditingWindowsBehavior;
+    case WEBKIT_EDITING_BEHAVIOR_UNIX:
+        return EditingUnixBehavior;
+    default:
+        ASSERT_NOT_REACHED();
+        return EditingMacBehavior;
+    }
 }
 
 }

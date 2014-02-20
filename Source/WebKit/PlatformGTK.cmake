@@ -40,7 +40,6 @@ list(APPEND WebKit_SOURCES
     ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitmarshal.cpp
 
     gtk/WebCoreSupport/AcceleratedCompositingContextGL.cpp
-    gtk/WebCoreSupport/AssertMatchingEnums.cpp
     gtk/WebCoreSupport/ChromeClientGtk.cpp
     gtk/WebCoreSupport/ContextMenuClientGtk.cpp
     gtk/WebCoreSupport/DeviceMotionClientGtk.cpp

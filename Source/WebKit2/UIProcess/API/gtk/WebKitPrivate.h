@@ -49,9 +49,6 @@
 #define WEBKIT_PARAM_WRITABLE (static_cast<GParamFlags>(G_PARAM_WRITABLE | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB))
 #define WEBKIT_PARAM_READWRITE (static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB))
 
-#define COMPILE_ASSERT_MATCHING_ENUM(webkitName, webcoreName) \
-        COMPILE_ASSERT(int(webkitName) == int(webcoreName), mismatchingEnums)
-
 #define WEBKIT_DEFINE_ASYNC_DATA_STRUCT(structName) \
 static structName* create##structName() \
 { \
@@ -118,6 +115,8 @@ GType type_name##_get_type(void) \
 
 unsigned wkEventModifiersToGdkModifiers(WKEventModifiers);
 unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton);
+unsigned toWebKitError(unsigned webCoreError);
+unsigned toWebCoreError(unsigned webKitError);
 
 enum SnapshotRegion {
     SnapshotRegionVisible,

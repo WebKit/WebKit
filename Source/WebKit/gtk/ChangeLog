@@ -1,3 +1,33 @@
+2014-02-20  Enrique Ocaña González  <eocanha@igalia.com>
+
+        WebKitGTK+ should stop using COMPILE_ASSERT_MATCHING_ENUM macros
+        https://bugs.webkit.org/show_bug.cgi?id=127800
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Removed AssertMatchingEnums.cpp
+        * WebCoreSupport/AssertMatchingEnums.cpp: Removed.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp: Defined and applied type conversions.
+        (toWebCoreFindOptions):
+        (DumpRenderTreeSupportGtk::findString):
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: Defined and applied type conversions.
+        (WebKit::toWebKitNetworkError):
+        (WebKit::FrameLoaderClient::dispatchDidFailLoading):
+        (WebKit::FrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::FrameLoaderClient::shouldFallBack):
+        * webkit/webkitwebnavigationaction.cpp: Defined and applied type conversions.
+        (WebKit::kit):
+        (WebKit::core):
+        * webkit/webkitwebsettings.cpp: Defined and applied type conversions.
+        (WebKit::core):
+        * webkit/webkitwebview.cpp: Defined and applied type conversions.
+        (copyGtkTargetListConvertingWebCoreEnumValuesToWebKitEnumValues):
+        (webkit_web_view_dispose):
+        (webkit_web_view_init):
+        (webkit_web_view_get_copy_target_list):
+        (webkit_web_view_get_paste_target_list):
+        * webkit/webkitwebviewprivate.h: Added targetList private field, which mirrors PasteboardHelper::defaultPasteboardHelper()->targetList() but with the flags converted to WebKitWebViewTargetInfo
+
 2014-02-17  Sergio Correia  <sergio.correia@openbossa.org>
 
         Replace uses of PassOwnPtr/OwnPtr with std::unique_ptr in WebCore/inspector

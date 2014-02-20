@@ -100,6 +100,7 @@ struct _WebKitWebViewPrivate {
     WebCore::GtkClickCounter clickCounter;
     WebCore::GtkDragAndDropHelper dragAndDropHelper;
     bool selfScrolling;
+    GRefPtr<GtkTargetList> targetList;
 
     OwnPtr<WebKit::AcceleratedCompositingContext> acceleratedCompositingContext;
 
