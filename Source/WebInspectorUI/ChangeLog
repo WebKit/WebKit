@@ -1,5 +1,71 @@
 2014-02-20  Antoine Quint  <graouts@webkit.org>
 
+        Web Inspector: Popover should animate its frame to display its refreshed content
+        https://bugs.webkit.org/show_bug.cgi?id=129088
+
+        Reviewed by Timothy Hatcher.
+
+        When calling .update(), we now check whether we can animate the change of frame provided the
+        new computed frame to best fit the current content still matches the edge the popover uses
+        to attach to the target frame. If we find that we can do so, we animate the background frame
+        of the popover while ensuring the anchor point remains stable during the animation such that
+        only the popover's frame seems to animate.
+
+        * UserInterface/Geometry.js:
+        (WebInspector.Rect.prototype.round):
+        Returns a new Rect with rounded values, using a floor for the position and a ceil for the size.
+
+        * UserInterface/Main.html:
+        Link to the new UnitBezier.js source file.
+
+        * UserInterface/Popover.js:
+        (WebInspector.Popover):
+        Make ._anchorPoint an ivar such that we don't need to pass a reference to the anchorPoint into
+        the various calls leading to an update of the popover's background drawing.
+
+        (WebInspector.Popover.prototype.set frame):
+        We no longer round the values of the frame here, instead calling the new .round() method on Rect
+        in places where we compute a new frame.
+
+        (WebInspector.Popover.prototype.set content):
+        (WebInspector.Popover.prototype.update):
+        Update the calls to ._update() to set the new shouldAnimate flag to true in situations where the
+        popover is already visible.
+
+        (WebInspector.Popover.prototype._update):
+        In the situation where there is a preference to animate the frame, as set by the new shouldAnimate
+        parameter, check that we can indeed animate by ensuring that the edge the popover uses to attach to
+        the target frame remains the same upon computing the new best metrics for the new content size. If
+        we can indeed animate, call _animateFrame(), otherwise set the new frame, anchor point and frame
+        drawing discretely like we used to.
+
+        (WebInspector.Popover.prototype._setAnchorPoint):
+        New method to ensure we floor the position of the anchor point to ensure, when animating, that the
+        anchor point remains stationary.
+
+        (WebInspector.Popover.prototype._animateFrame):
+        Using the new UnitBezier class, animate the popover frame from its previous value to its newly computed
+        value while ensuring the anchor point remains, at all times, the same absolute position such that it
+        remains stationary during the animation. The spline used to animate the frame is the same that a CSS
+        transition set with an "ease" timing-function (default value) would use.
+
+        (WebInspector.Popover.prototype._drawBackground):
+        (WebInspector.Popover.prototype._drawFrame):
+        Adopt new ._edge and ._anchorPoint ivars.
+
+        * UserInterface/UnitBezier.js: Added.
+        New class used to perform animations using a timing function specified with a cubic Bézier curve. The code
+        is directly adapted from the Source/WebCore/platform/graphics/UnitBezier.h file.
+
+        (WebInspector.UnitBezier):
+        (WebInspector.UnitBezier.prototype.solve):
+        (WebInspector.UnitBezier.prototype._sampleCurveX):
+        (WebInspector.UnitBezier.prototype._sampleCurveY):
+        (WebInspector.UnitBezier.prototype._sampleCurveDerivativeX):
+        (WebInspector.UnitBezier.prototype._solveCurveX):
+
+2014-02-20  Antoine Quint  <graouts@webkit.org>
+
         Web Inspector: content using a CSS transition within a popover causes the popover to disappear
         https://bugs.webkit.org/show_bug.cgi?id=129089
 

@@ -182,6 +182,16 @@ WebInspector.Rect.prototype = {
         intersection.origin.y = y1;
         intersection.size.height = y2 - y1;
         return intersection;
+    },
+    
+    round: function()
+    {
+        return new WebInspector.Rect(
+            Math.floor(this.origin.x),
+            Math.floor(this.origin.y),
+            Math.ceil(this.size.width),
+            Math.ceil(this.size.height)
+        );
     }
 };
 

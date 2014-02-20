@@ -31,6 +31,7 @@ WebInspector.Popover = function(delegate) {
     this._frame = new WebInspector.Rect;
     this._content = null;
     this._targetFrame = new WebInspector.Rect;
+    this._anchorPoint = new WebInspector.Point;
     this._preferredEdges = null;
 
     this._contentNeedsUpdate = false;
@@ -78,11 +79,11 @@ WebInspector.Popover.prototype = {
 
     set frame(frame)
     {
-        this._element.style.left = Math.round(frame.origin.x) + "px";
-        this._element.style.top = Math.round(frame.origin.y) + "px";
-        this._element.style.width = Math.ceil(frame.size.width) + "px";
-        this._element.style.height = Math.ceil(frame.size.height) + "px";
-        this._element.style.backgroundSize = Math.ceil(frame.size.width) + "px " + Math.ceil(frame.size.height) + "px";
+        this._element.style.left = frame.minX() + "px";
+        this._element.style.top = frame.minY() + "px";
+        this._element.style.width = frame.size.width + "px";
+        this._element.style.height = frame.size.height + "px";
+        this._element.style.backgroundSize = frame.size.width + "px " + frame.size.height + "px";
         this._frame = frame;
     },
 
@@ -96,7 +97,7 @@ WebInspector.Popover.prototype = {
         this._contentNeedsUpdate = true;
 
         if (this.visible)
-            this._update();
+            this._update(true);
     },
 
     update: function()
@@ -107,7 +108,7 @@ WebInspector.Popover.prototype = {
         var previouslyFocusedElement = document.activeElement;
 
         this._contentNeedsUpdate = true;
-        this._update();
+        this._update(true);
 
         if (previouslyFocusedElement)
             previouslyFocusedElement.focus();
@@ -167,8 +168,11 @@ WebInspector.Popover.prototype = {
 
     // Private
 
-    _update: function()
+    _update: function(shouldAnimate)
     {
+        if (shouldAnimate)
+            var previousEdge = this._edge;
+
         var targetFrame = this._targetFrame;
         var preferredEdges = this._preferredEdges;
 
@@ -232,12 +236,11 @@ WebInspector.Popover.prototype = {
         }
 
         var anchorPoint;
-        var bestFrame = bestMetrics.frame;
+        var bestFrame = bestMetrics.frame.round();
 
-        this.frame = bestFrame;
         this._edge = bestEdge;
 
-        if (this.frame === WebInspector.Rect.ZERO_RECT) {
+        if (bestFrame === WebInspector.Rect.ZERO_RECT) {
             // The target for the popover is offscreen.
             this.dismiss();
         } else {
@@ -258,7 +261,13 @@ WebInspector.Popover.prototype = {
 
             this._element.classList.add(this._cssClassNameForEdge());
 
-            this._drawBackground(bestEdge, anchorPoint);
+            if (shouldAnimate && this._edge === previousEdge)
+                this._animateFrame(bestFrame);
+            else {
+                 this.frame = bestFrame;
+                 this._setAnchorPoint(anchorPoint);
+                 this._drawBackground();
+            }
 
             // Make sure content is centered in case either of the dimension is smaller than the minimal bounds.
             if (this._preferredSize.width < WebInspector.Popover.MinWidth || this._preferredSize.height < WebInspector.Popover.MinHeight)
@@ -293,7 +302,57 @@ WebInspector.Popover.prototype = {
         return "arrow-up";
     },
 
-    _drawBackground: function(edge, anchorPoint)
+    _setAnchorPoint: function(anchorPoint) {
+        anchorPoint.x = Math.floor(anchorPoint.x);
+        anchorPoint.y = Math.floor(anchorPoint.y);
+        this._anchorPoint = anchorPoint;
+    },
+
+    _animateFrame: function(toFrame)
+    {
+        var startTime = Date.now();
+        var duration = 350;
+        var epsilon = 1 / (200 * duration);
+        var spline = new WebInspector.UnitBezier(0.25, 0.1, 0.25, 1);
+
+        var fromFrame = this._frame.copy();
+
+        var absoluteAnchorPoint = new WebInspector.Point(
+            fromFrame.minX() + this._anchorPoint.x,
+            fromFrame.minY() + this._anchorPoint.y
+        );
+
+        function animatedValue(from, to, progress)
+        {
+            return from + (to - from) * progress;
+        }
+
+        function drawBackground()
+        {
+            var progress = spline.solve(Math.min((Date.now() - startTime) / duration, 1), epsilon);
+
+            this.frame = new WebInspector.Rect(
+                animatedValue(fromFrame.minX(), toFrame.minX(), progress),
+                animatedValue(fromFrame.minY(), toFrame.minY(), progress),
+                animatedValue(fromFrame.size.width, toFrame.size.width, progress),
+                animatedValue(fromFrame.size.height, toFrame.size.height, progress)
+            ).round();
+
+            this._setAnchorPoint(new WebInspector.Point(
+                absoluteAnchorPoint.x - this._frame.minX(),
+                absoluteAnchorPoint.y - this._frame.minY()
+            ));
+
+            this._drawBackground();
+
+            if (progress < 1)
+                window.requestAnimationFrame(drawBackground.bind(this));
+        }
+
+        drawBackground.call(this);
+    },
+
+    _drawBackground: function()
     {
         var scaleFactor = window.devicePixelRatio;
 
@@ -315,7 +374,7 @@ WebInspector.Popover.prototype = {
         // of the content contained within the frame.
         var bounds;
         var arrowHeight = WebInspector.Popover.AnchorSize.height;
-        switch (edge) {
+        switch (this._edge) {
         case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
             bounds = new WebInspector.Rect(0, 0, width - arrowHeight, height);
             break;
@@ -334,7 +393,7 @@ WebInspector.Popover.prototype = {
 
         // Clip the frame.
         ctx.fillStyle = "black";
-        this._drawFrame(ctx, bounds, edge, anchorPoint);
+        this._drawFrame(ctx, bounds, this._edge, this._anchorPoint);
         ctx.clip();
 
         // Gradient fill, top-to-bottom.
@@ -347,7 +406,7 @@ WebInspector.Popover.prototype = {
         // Stroke.
         ctx.strokeStyle = "rgba(0, 0, 0, 0.25)";
         ctx.lineWidth = 2;
-        this._drawFrame(ctx, bounds, edge, anchorPoint);
+        this._drawFrame(ctx, bounds, this._edge, this._anchorPoint);
         ctx.stroke();
 
         // Draw the popover into the final context with a drop shadow.
@@ -428,10 +487,11 @@ WebInspector.Popover.prototype = {
         };
     },
 
-    _drawFrame: function(ctx, bounds, anchorEdge, anchorPoint)
+    _drawFrame: function(ctx, bounds, anchorEdge)
     {
         var r = WebInspector.Popover.CornerRadius;
         var arrowHalfLength = WebInspector.Popover.AnchorSize.width / 2;
+        var anchorPoint = this._anchorPoint;
 
         ctx.beginPath();
         switch (anchorEdge) {
