@@ -136,9 +136,9 @@ public:
         m_tagMask = m_out.constInt64(TagMask);
         
         m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(JSStack::CodeBlock));
+        
         m_out.branch(
-            m_out.below(m_callFrame, m_out.loadPtr(m_out.absolute(vm().addressOfFTLStackLimit()))),
-            rarely(stackOverflow), usually(lowBlock(m_graph.block(0))));
+            didOverflowStack(), rarely(stackOverflow), usually(lowBlock(m_graph.block(0))));
         
         m_out.appendTo(stackOverflow, m_handleExceptions);
         vmCall(m_out.operation(operationThrowStackOverflowError), m_callFrame, m_out.constIntPtr(codeBlock()), NoExceptions);
@@ -3702,6 +3702,42 @@ private:
     {
         TypedPointer counter = m_out.absolute(m_node->executionCounter()->address());
         m_out.store64(m_out.add(m_out.load64(counter), m_out.constInt64(1)), counter);
+    }
+    
+    LValue didOverflowStack()
+    {
+        // This does a very simple leaf function analysis. The invariant of FTL call
+        // frames is that the caller had already done enough of a stack check to
+        // prove that this call frame has enough stack to run, and also enough stack
+        // to make runtime calls. So, we only need to stack check when making calls
+        // to other JS functions. If we don't find such calls then we don't need to
+        // do any stack checks.
+        
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            
+            for (unsigned nodeIndex = block->size(); nodeIndex--;) {
+                Node* node = block->at(nodeIndex);
+                
+                switch (node->op()) {
+                case GetById:
+                case PutById:
+                case Call:
+                case Construct:
+                    return m_out.below(
+                        m_callFrame,
+                        m_out.loadPtr(
+                            m_out.absolute(vm().addressOfFTLStackLimit())));
+                    
+                default:
+                    break;
+                }
+            }
+        }
+        
+        return m_out.booleanFalse;
     }
     
     LValue getById(LValue base)
