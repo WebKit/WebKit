@@ -1,3 +1,19 @@
+2014-02-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash in WTF::StringBuilder::append()
+
+        https://bugs.webkit.org/show_bug.cgi?id=125817
+        <rdar://problem/15671883>
+
+        Reviewed by Oliver Hunt.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::expandedCapacity):
+        Ensure that we return a new capacity of at least 'requiredLength' in
+        the case where requiredLength is large. Also, use unsigned rather than
+        size_t for the parameters and the return value, as callers pass
+        unsigned arguments and treat the result as an unsigned int.
+
 2014-02-19  Anders Carlsson  <andersca@apple.com>
 
         Add WTF_MAKE_FAST_ALLOCATED to more classes
