@@ -411,7 +411,7 @@ void RenderSVGText::layout()
     ASSERT(childrenInline());
     LayoutUnit repaintLogicalTop = 0;
     LayoutUnit repaintLogicalBottom = 0;
-    clearFloats();
+    rebuildFloatingObjectSetFromIntrudingFloats();
     layoutInlineChildren(true, repaintLogicalTop, repaintLogicalBottom);
 
     if (m_needsReordering)

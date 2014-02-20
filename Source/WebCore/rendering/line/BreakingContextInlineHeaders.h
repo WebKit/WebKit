@@ -341,8 +341,7 @@ inline void BreakingContext::handleFloat()
     FloatingObject* floatingObject = m_lineBreaker.insertFloatingObject(floatBox);
     // check if it fits in the current line.
     // If it does, position it now, otherwise, position
-    // it after moving to next line (in newLine() func)
-    // FIXME: Bug 110372: Properly position multiple stacked floats with non-rectangular shape outside.
+    // it after moving to next line (in clearFloats() func)
     if (m_floatsFitOnLine && m_width.fitsOnLineExcludingTrailingWhitespace(m_block.logicalWidthForFloat(floatingObject))) {
         m_lineBreaker.positionNewFloatOnLine(floatingObject, m_lastFloatFromPreviousLine, m_lineInfo, m_width);
         if (m_lineBreak.renderer() == m_current.renderer()) {

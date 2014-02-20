@@ -1085,7 +1085,7 @@ void RenderBlockFlow::layoutRunsAndFloats(LineLayoutState& layoutState, bool has
             if (lastObject->isBR()) {
                 EClear clear = lastObject->style().clear();
                 if (clear != CNONE)
-                    newLine(clear);
+                    clearFloats(clear);
             }
         }
     }
@@ -1421,7 +1421,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
 
         if (!layoutState.lineInfo().isEmpty()) {
             layoutState.lineInfo().setFirstLine(false);
-            newLine(lineBreaker.clear());
+            clearFloats(lineBreaker.clear());
         }
 
         if (m_floatingObjects && lastRootBox()) {

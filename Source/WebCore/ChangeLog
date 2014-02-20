@@ -1,3 +1,37 @@
+2014-02-20  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Rename RenderBlockFlow::clearFloats and RenderBlockFlow::newLine to be more accurate
+        https://bugs.webkit.org/show_bug.cgi?id=128991
+
+        Reviewed by David Hyatt.
+
+        Rename clearFloats to rebuildFloatingObjectSetFromIntrudingFloats
+        since it does just that.
+
+        Rename newLine to clearFloats because it actually does what the CSS
+        spec calls clearing floats. This also matches clearFloatsIfNeeded.
+
+        This also removes a FIXME comment that points to a bug that has
+        already been fixed.
+
+        This patch is based on a Blink patch by leviw:
+        https://src.chromium.org/viewvc/blink?revision=158598&view=revision
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats):
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::clearFloats):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutRunsAndFloats):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleFloat):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2014-02-19  Pratik Solanki  <psolanki@apple.com>
 
         ASSERT in FrameLoader::shouldInterruptLoadForXFrameOptions
