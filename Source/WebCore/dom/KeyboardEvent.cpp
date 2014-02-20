@@ -108,7 +108,7 @@ KeyboardEvent::KeyboardEvent()
 KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, AbstractView* view)
     : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()),
                           true, true, key.timestamp(), view, 0, key.ctrlKey(), key.altKey(), key.shiftKey(), key.metaKey())
-    , m_keyEvent(adoptPtr(new PlatformKeyboardEvent(key)))
+    , m_keyEvent(std::make_unique<PlatformKeyboardEvent>(key))
     , m_keyIdentifier(key.keyIdentifier())
     , m_location(keyLocationCode(key))
     , m_altGraphKey(false)
