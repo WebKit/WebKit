@@ -70,12 +70,9 @@ static gint webkitAccessibleHypertextGetNLinks(AtkHypertext* hypertext)
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(hypertext), 0);
 
     const AccessibilityObject::AccessibilityChildrenVector& children = core(hypertext)->children();
-    if (!children.size())
-        return 0;
-
     gint linksFound = 0;
-    for (size_t i = 0; i < children.size(); i++) {
-        AccessibilityObject* coreChild = children.at(i).get();
+    for (const auto& child : children) {
+        AccessibilityObject* coreChild = child.get();
         if (!coreChild->accessibilityIsIgnored()) {
             AtkObject* axObject = coreChild->wrapper();
             if (axObject && ATK_IS_HYPERLINK_IMPL(axObject))

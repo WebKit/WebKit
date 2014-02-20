@@ -697,13 +697,9 @@ IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector
     if (!obj)
         return IntRect();
     
-    size_t count = quads.size();
-    if (!count)
-        return IntRect();
-    
     IntRect result;
-    for (size_t i = 0; i < count; ++i) {
-        IntRect r = quads[i].enclosingBoundingBox();
+    for (const auto& quad : quads) {
+        IntRect r = quad.enclosingBoundingBox();
         if (!r.isEmpty()) {
             if (obj->style().hasAppearance())
                 obj->theme().adjustRepaintRect(obj, r);
@@ -1728,9 +1724,7 @@ AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value
     Vector<String> roleVector;
     value.split(' ', roleVector);
     AccessibilityRole role = UnknownRole;
-    unsigned size = roleVector.size();
-    for (unsigned i = 0; i < size; ++i) {
-        String roleName = roleVector[i];
+    for (const auto& roleName : roleVector) {
         role = ariaRoleMap().get(roleName);
         if (role)
             return role;
