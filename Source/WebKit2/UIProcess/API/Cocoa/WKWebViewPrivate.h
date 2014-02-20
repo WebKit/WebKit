@@ -69,7 +69,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 // Define the inset of the scrollview unusable by the web page.
 @property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
 
-- (UIColor *)pageExtendedBackgroundColor;
+@property (nonatomic, setter=_setBackgroundExtendsBeyondPage:) BOOL _backgroundExtendsBeyondPage;
+@property (readonly) UIColor *_pageExtendedBackgroundColor;
 
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;

@@ -596,13 +596,23 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     _obscuredInsets = obscuredInsets;
 }
 
-- (UIColor *)pageExtendedBackgroundColor
+- (UIColor *)_pageExtendedBackgroundColor
 {
     WebCore::Color color = _page->pageExtendedBackgroundColor();
     if (!color.isValid())
         return nil;
 
     return [UIColor colorWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)];
+}
+
+- (void)_setBackgroundExtendsBeyondPage:(BOOL)backgroundExtends
+{
+    _page->setBackgroundExtendsBeyondPage(backgroundExtends);
+}
+
+- (BOOL)_backgroundExtendsBeyondPage
+{
+    return _page->backgroundExtendsBeyondPage();
 }
 
 - (void)_beginInteractiveObscuredInsetsChange

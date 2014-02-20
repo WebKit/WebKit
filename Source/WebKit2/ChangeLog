@@ -1,3 +1,23 @@
+2014-02-20  Beth Dakin  <bdakin@apple.com>
+
+        WKPage's setBackgroundExtendsBeyondPage API should be exposed through WKView and 
+        WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=129120
+
+        Reviewed by Anders Carlsson.
+
+        While we’re in this code, fix up the pageExtendedBackgroundColor to match.
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _pageExtendedBackgroundColor]):
+        (-[WKWebView _setBackgroundExtendsBeyondPage:]):
+        (-[WKWebView _backgroundExtendsBeyondPage]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _pageExtendedBackgroundColor]):
+        (-[WKView _setBackgroundExtendsBeyondPage:]):
+        (-[WKView _backgroundExtendsBeyondPage]):
+
 2014-02-20  Dean Jackson  <dino@apple.com>
 
         Add an unresolved WebGLPolicy and an API to resolve it
