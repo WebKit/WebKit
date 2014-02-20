@@ -1,3 +1,21 @@
+2014-02-20  Dean Jackson  <dino@apple.com>
+
+        Add an unresolved WebGLPolicy and an API to resolve it
+        https://bugs.webkit.org/show_bug.cgi?id=129109
+
+        Reviewed by Anders Carlsson.
+
+        Add a third WebGLLoadPolicy which is "pending" allowing the page
+        to go ahead with creating the WebGLRenderingContext and resolve the policy
+        at a later time. Add a new API resolveWebGLLoadPolicy to do the resolution.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext): WebGLBlock -> WebGLBlockCreation
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::webGLPolicyForURL): WebGLAllow -> WebGLAllowCreation.
+        (WebCore::FrameLoaderClient::resolveWebGLPolicyForURL): New method.
+        * loader/FrameLoaderTypes.h: Add WebGLPendingCreation.
+
 2014-02-20  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Enable compositing RenderLayer painting on device pixel position.

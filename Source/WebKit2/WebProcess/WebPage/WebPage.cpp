@@ -620,7 +620,17 @@ WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame* frame, const Strin
     if (sendSync(Messages::WebPageProxy::WebGLPolicyForURL(url), Messages::WebPageProxy::WebGLPolicyForURL::Reply(policyResult)))
         return static_cast<WebGLLoadPolicy>(policyResult);
 
-    return WebGLAllow;
+    return WebGLAllowCreation;
+}
+
+WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame* frame, const String& url)
+{
+    uint32_t policyResult = 0;
+
+    if (sendSync(Messages::WebPageProxy::ResolveWebGLPolicyForURL(url), Messages::WebPageProxy::ResolveWebGLPolicyForURL::Reply(policyResult)))
+        return static_cast<WebGLLoadPolicy>(policyResult);
+
+    return WebGLAllowCreation;
 }
 #endif // ENABLE(WEBGL)
 

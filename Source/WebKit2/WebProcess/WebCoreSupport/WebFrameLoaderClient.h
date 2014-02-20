@@ -187,6 +187,7 @@ private:
     
 #if ENABLE(WEBGL)
     virtual WebCore::WebGLLoadPolicy webGLPolicyForURL(const String&) const override;
+    virtual WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(const String&) const override;
 #endif // ENABLE(WEBGL)
 
     virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::URL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) override;

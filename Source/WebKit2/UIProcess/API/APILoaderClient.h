@@ -97,7 +97,8 @@ public:
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(WEBGL)
-    virtual WebCore::WebGLLoadPolicy webGLLoadPolicy(WebKit::WebPageProxy*, const WTF::String&) const { return WebCore::WebGLLoadPolicy::WebGLAllow; }
+    virtual WebCore::WebGLLoadPolicy webGLLoadPolicy(WebKit::WebPageProxy*, const WTF::String&) const { return WebCore::WebGLLoadPolicy::WebGLAllowCreation; }
+    virtual WebCore::WebGLLoadPolicy resolveWebGLLoadPolicy(WebKit::WebPageProxy*, const WTF::String&) const { return WebCore::WebGLLoadPolicy::WebGLAllowCreation; }
 #endif // ENABLE(WEBGL)
 };
 

@@ -1,3 +1,15 @@
+2014-02-20  Dean Jackson  <dino@apple.com>
+
+        Add an unresolved WebGLPolicy and an API to resolve it
+        https://bugs.webkit.org/show_bug.cgi?id=129109
+
+        Reviewed by Anders Carlsson.
+
+        Add a new entry for resolveWebGLLoadPolicy.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+
 2014-02-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Add new ARM build slave for GTK+

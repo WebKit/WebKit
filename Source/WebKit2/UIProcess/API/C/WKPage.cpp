@@ -967,13 +967,24 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
 #if ENABLE(WEBGL)
         virtual WebCore::WebGLLoadPolicy webGLLoadPolicy(WebPageProxy* page, const String& url) const override
         {
-            WebCore::WebGLLoadPolicy loadPolicy = WebGLAllow;
+            WebCore::WebGLLoadPolicy loadPolicy = WebGLAllowCreation;
 
             if (m_client.webGLLoadPolicy)
                 loadPolicy = toWebGLLoadPolicy(m_client.webGLLoadPolicy(toAPI(page), toAPI(url.impl()), m_client.base.clientInfo));
 
             return loadPolicy;
         }
+
+        virtual WebCore::WebGLLoadPolicy resolveWebGLLoadPolicy(WebPageProxy* page, const String& url) const override
+        {
+            WebCore::WebGLLoadPolicy loadPolicy = WebGLAllowCreation;
+
+            if (m_client.resolveWebGLLoadPolicy)
+                loadPolicy = toWebGLLoadPolicy(m_client.resolveWebGLLoadPolicy(toAPI(page), toAPI(url.impl()), m_client.base.clientInfo));
+
+            return loadPolicy;
+        }
+
 #endif // ENABLE(WEBGL)
     };
 

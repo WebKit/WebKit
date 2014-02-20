@@ -35,6 +35,7 @@ messages -> WebPageProxy {
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(WEBGL)
     WebGLPolicyForURL(String url) -> (uint32_t loadPolicy)
+    ResolveWebGLPolicyForURL(String url) -> (uint32_t loadPolicy)
 #endif // ENABLE(WEBGL)
     DidChangeViewportProperties(WebCore::ViewportAttributes attributes)
     DidReceiveEvent(uint32_t type, bool handled)

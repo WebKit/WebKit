@@ -325,7 +325,8 @@ namespace WebCore {
         // Informs the embedder that a WebGL canvas inside this frame received a lost context
         // notification with the given GL_ARB_robustness guilt/innocence code (see Extensions3D.h).
         virtual void didLoseWebGLContext(int) { }
-        virtual WebGLLoadPolicy webGLPolicyForURL(const String&) const { return WebGLAllow; }
+        virtual WebGLLoadPolicy webGLPolicyForURL(const String&) const { return WebGLAllowCreation; }
+        virtual WebGLLoadPolicy resolveWebGLPolicyForURL(const String&) const { return WebGLAllowCreation; }
 #endif
 
         virtual void forcePageTransitionIfNeeded() { }

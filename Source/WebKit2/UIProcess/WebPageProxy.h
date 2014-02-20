@@ -967,6 +967,7 @@ private:
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(WEBGL)
     void webGLPolicyForURL(const String& url, uint32_t& loadPolicy);
+    void resolveWebGLPolicyForURL(const String& url, uint32_t& loadPolicy);
 #endif // ENABLE(WEBGL)
     void setToolbarsAreVisible(bool toolbarsAreVisible);
     void getToolbarsAreVisible(bool& toolbarsAreVisible);

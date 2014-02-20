@@ -306,6 +306,7 @@ public:
 
 #if ENABLE(WEBGL)
     WebCore::WebGLLoadPolicy webGLPolicyForURL(WebFrame*, const String&);
+    WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(WebFrame*, const String&);
 #endif // ENABLE(WEBGL)
     
     EditorState editorState() const;

@@ -1,3 +1,35 @@
+2014-02-20  Dean Jackson  <dino@apple.com>
+
+        Add an unresolved WebGLPolicy and an API to resolve it
+        https://bugs.webkit.org/show_bug.cgi?id=129109
+
+        Reviewed by Anders Carlsson.
+
+        Add a third WebGLLoadPolicy which is "pending" allowing the page
+        to go ahead with creating the WebGLRenderingContext and resolve the policy
+        at a later time. Add a new API resolveWebGLLoadPolicy to do the resolution.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::webGLLoadPolicy): New return value.
+        (API::LoaderClient::resolveWebGLLoadPolicy): New method definition.
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toWebGLLoadPolicy): Change names of return types.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient): New stubs.
+        * UIProcess/API/C/WKPageLoaderClient.h: New policy type kWKWebGLLoadPolicyPending.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resolveWebGLPolicyForURL): New method.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: New message.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::webGLPolicyForURL):
+        (WebKit::WebFrameLoaderClient::resolveWebGLPolicyForURL):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::webGLPolicyForURL):
+        (WebKit::WebPage::resolveWebGLPolicyForURL):
+        * WebProcess/WebPage/WebPage.h:
+
 2014-02-20  Anders Carlsson  <andersca@apple.com>
 
         Make it possible to reply asynchronously to JavaScript panels and alerts

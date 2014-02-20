@@ -481,13 +481,15 @@ inline WebCore::WebGLLoadPolicy toWebGLLoadPolicy(WKWebGLLoadPolicy webGLLoadPol
 {
     switch (webGLLoadPolicy) {
     case kWKWebGLLoadPolicyLoadNormally:
-        return WebCore::WebGLAllow;
+        return WebCore::WebGLAllowCreation;
     case kWKWebGLLoadPolicyBlocked:
-        return WebCore::WebGLBlock;
+        return WebCore::WebGLBlockCreation;
+    case kWKWebGLLoadPolicyPending:
+        return WebCore::WebGLPendingCreation;
     }
     
     ASSERT_NOT_REACHED();
-    return WebCore::WebGLAllow;
+    return WebCore::WebGLAllowCreation;
 }
 
 inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& grammarDetail)

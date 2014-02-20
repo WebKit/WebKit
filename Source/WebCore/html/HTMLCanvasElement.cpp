@@ -226,7 +226,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
                 if (page && !topDocument.url().isLocalFile()) {
                     WebGLLoadPolicy policy = page->mainFrame().loader().client().webGLPolicyForURL(topDocument.url());
 
-                    if (policy == WebGLBlock)
+                    if (policy == WebGLBlockCreation)
                         return nullptr;
                 }
                 m_context = WebGLRenderingContext::create(this, static_cast<WebGLContextAttributes*>(attrs));

@@ -1348,7 +1348,15 @@ WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const String& u
     if (WebPage* webPage = m_frame->page())
         return webPage->webGLPolicyForURL(m_frame, url);
 
-    return WebGLAllow;
+    return WebGLAllowCreation;
+}
+
+WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const String& url) const
+{
+    if (WebPage* webPage = m_frame->page())
+        return webPage->resolveWebGLPolicyForURL(m_frame, url);
+
+    return WebGLAllowCreation;
 }
 #endif // ENABLE(WEBGL)
 
