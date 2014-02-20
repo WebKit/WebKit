@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,14 +133,17 @@ public:
                     
                     // Prune out cases that end up jumping to default.
                     for (unsigned i = 0; i < data->cases.size(); ++i) {
-                        if (data->cases[i].target == data->fallThrough)
-                            data->cases[i--] = data->cases.takeLast();
+                        if (data->cases[i].target.block == data->fallThrough.block) {
+                            data->fallThrough.count += data->cases[i].target.count;
+                            data->cases[i--] = data->cases.last();
+                            data->cases.removeLast();
+                        }
                     }
                     
                     // If there are no cases other than default then this turns
                     // into a jump.
                     if (data->cases.isEmpty()) {
-                        convertToJump(block, data->fallThrough);
+                        convertToJump(block, data->fallThrough.block);
                         innerChanged = outerChanged = true;
                         break;
                     }
@@ -153,13 +156,13 @@ public:
                         for (unsigned i = data->cases.size(); found == FalseTriState && i--;) {
                             found = data->cases[i].value.strictEqual(value);
                             if (found == TrueTriState)
-                                targetBlock = data->cases[i].target;
+                                targetBlock = data->cases[i].target.block;
                         }
                         
                         if (found == MixedTriState)
                             break;
                         if (found == FalseTriState)
-                            targetBlock = data->fallThrough;
+                            targetBlock = data->fallThrough.block;
                         ASSERT(targetBlock);
                         
                         Vector<BasicBlock*, 1> jettisonedBlocks;

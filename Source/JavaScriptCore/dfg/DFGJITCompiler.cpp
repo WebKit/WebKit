@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -160,8 +160,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     m_jitCode->common.slowArguments = std::move(m_graph.m_slowArguments);
 
     BitVector usedJumpTables;
-    for (unsigned i = m_graph.m_switchData.size(); i--;) {
-        SwitchData& data = m_graph.m_switchData[i];
+    for (Bag<SwitchData>::iterator iter = m_graph.m_switchData.begin(); !!iter; ++iter) {
+        SwitchData& data = **iter;
         if (!data.didUseJumpTable)
             continue;
         
@@ -172,14 +172,14 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         
         usedJumpTables.set(data.switchTableIndex);
         SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
-        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough->index]);
+        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough.block->index]);
         table.ctiOffsets.grow(table.branchOffsets.size());
         for (unsigned j = table.ctiOffsets.size(); j--;)
             table.ctiOffsets[j] = table.ctiDefault;
         for (unsigned j = data.cases.size(); j--;) {
             SwitchCase& myCase = data.cases[j];
             table.ctiOffsets[myCase.value.switchLookupValue() - table.min] =
-                linkBuffer.locationOf(m_blockHeads[myCase.target->index]);
+                linkBuffer.locationOf(m_blockHeads[myCase.target.block->index]);
         }
     }
     
@@ -193,8 +193,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     // NOTE: we cannot clear string switch tables because (1) we're running concurrently
     // and we cannot deref StringImpl's and (2) it would be weird to deref those
     // StringImpl's since we refer to them.
-    for (unsigned i = m_graph.m_switchData.size(); i--;) {
-        SwitchData& data = m_graph.m_switchData[i];
+    for (Bag<SwitchData>::iterator switchDataIter = m_graph.m_switchData.begin(); !!switchDataIter; ++switchDataIter) {
+        SwitchData& data = **switchDataIter;
         if (!data.didUseJumpTable)
             continue;
         
@@ -202,7 +202,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             continue;
         
         StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
-        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough->index]);
+        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough.block->index]);
         StringJumpTable::StringOffsetTable::iterator iter;
         StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
         for (iter = table.offsetTable.begin(); iter != end; ++iter)
@@ -211,7 +211,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             SwitchCase& myCase = data.cases[j];
             iter = table.offsetTable.find(myCase.value.stringImpl());
             RELEASE_ASSERT(iter != end);
-            iter->value.ctiOffset = linkBuffer.locationOf(m_blockHeads[myCase.target->index]);
+            iter->value.ctiOffset = linkBuffer.locationOf(m_blockHeads[myCase.target.block->index]);
         }
     }
 

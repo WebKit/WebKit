@@ -3487,25 +3487,23 @@ private:
     
     void compileJump()
     {
-        m_out.jump(lowBlock(m_node->takenBlock()));
+        m_out.jump(lowBlock(m_node->targetBlock()));
     }
     
     void compileBranch()
     {
-        // FIXME: DFG should be able to tell us branch weights here.
-        // https://bugs.webkit.org/show_bug.cgi?id=129055
-        
         m_out.branch(
             boolify(m_node->child1()),
-            unsure(lowBlock(m_node->takenBlock())),
-            unsure(lowBlock(m_node->notTakenBlock())));
+            WeightedTarget(
+                lowBlock(m_node->branchData()->taken.block),
+                m_node->branchData()->taken.count),
+            WeightedTarget(
+                lowBlock(m_node->branchData()->notTaken.block),
+                m_node->branchData()->notTaken.count));
     }
     
     void compileSwitch()
     {
-        // FIXME: DFG should be able to tell us branch weights here.
-        // https://bugs.webkit.org/show_bug.cgi?id=129055
-        
         SwitchData* data = m_node->switchData();
         switch (data->kind) {
         case SwitchImm: {
@@ -3537,7 +3535,7 @@ private:
                 m_out.appendTo(isNotInt, isDouble);
                 m_out.branch(
                     isCellOrMisc(boxedValue),
-                    usually(lowBlock(data->fallThrough)), rarely(isDouble));
+                    usually(lowBlock(data->fallThrough.block)), rarely(isDouble));
                 
                 m_out.appendTo(isDouble, innerLastNext);
                 LValue doubleValue = unboxDouble(boxedValue);
@@ -3545,7 +3543,7 @@ private:
                 intValues.append(m_out.anchor(intInDouble));
                 m_out.branch(
                     m_out.doubleEqual(m_out.intToDouble(intInDouble), doubleValue),
-                    unsure(switchOnInts), unsure(lowBlock(data->fallThrough)));
+                    unsure(switchOnInts), unsure(lowBlock(data->fallThrough.block)));
                 break;
             }
                 
@@ -3562,6 +3560,12 @@ private:
         case SwitchChar: {
             LValue stringValue;
             
+            // FIXME: We should use something other than unsure() for the branch weight
+            // of the fallThrough block. The main challenge is just that we have multiple
+            // branches to fallThrough but a single count, so we would need to divvy it up
+            // among the different lowered branches.
+            // https://bugs.webkit.org/show_bug.cgi?id=129082
+            
             switch (m_node->child1().useKind()) {
             case StringUse: {
                 stringValue = lowString(m_node->child1());
@@ -3576,13 +3580,13 @@ private:
                 
                 m_out.branch(
                     isNotCell(unboxedValue),
-                    unsure(lowBlock(data->fallThrough)), unsure(isCellCase));
+                    unsure(lowBlock(data->fallThrough.block)), unsure(isCellCase));
                 
                 LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
                 LValue cellValue = unboxedValue;
                 m_out.branch(
                     isNotString(cellValue),
-                    unsure(lowBlock(data->fallThrough)), unsure(isStringCase));
+                    unsure(lowBlock(data->fallThrough.block)), unsure(isStringCase));
                 
                 m_out.appendTo(isStringCase, lastNext);
                 stringValue = cellValue;
@@ -3605,7 +3609,7 @@ private:
                 m_out.notEqual(
                     m_out.load32NonNegative(stringValue, m_heaps.JSString_length),
                     m_out.int32One),
-                unsure(lowBlock(data->fallThrough)), unsure(lengthIs1));
+                unsure(lowBlock(data->fallThrough.block)), unsure(lengthIs1));
             
             LBasicBlock lastNext = m_out.appendTo(lengthIs1, needResolution);
             Vector<ValueFromBlock, 2> values;
@@ -4188,10 +4192,12 @@ private:
         for (unsigned i = 0; i < data->cases.size(); ++i) {
             cases.append(SwitchCase(
                 constInt(type, data->cases[i].value.switchLookupValue()),
-                lowBlock(data->cases[i].target), Weight()));
+                lowBlock(data->cases[i].target.block), Weight(data->cases[i].target.count)));
         }
         
-        m_out.switchInstruction(switchValue, cases, lowBlock(data->fallThrough), Weight());
+        m_out.switchInstruction(
+            switchValue, cases,
+            lowBlock(data->fallThrough.block), Weight(data->fallThrough.count));
     }
     
     LValue doubleToInt32(LValue doubleValue, double low, double high, bool isSigned = true)

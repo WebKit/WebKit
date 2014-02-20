@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1097,8 +1097,8 @@ FPRTemporary::FPRTemporary(SpeculativeJIT* jit, JSValueOperand& op1)
 
 void SpeculativeJIT::compilePeepHoleDoubleBranch(Node* node, Node* branchNode, JITCompiler::DoubleCondition condition)
 {
-    BasicBlock* taken = branchNode->takenBlock();
-    BasicBlock* notTaken = branchNode->notTakenBlock();
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
     
     SpeculateDoubleOperand op1(this, node->child1());
     SpeculateDoubleOperand op2(this, node->child2());
@@ -1109,8 +1109,8 @@ void SpeculativeJIT::compilePeepHoleDoubleBranch(Node* node, Node* branchNode, J
 
 void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
 {
-    BasicBlock* taken = branchNode->takenBlock();
-    BasicBlock* notTaken = branchNode->notTakenBlock();
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
 
     MacroAssembler::RelationalCondition condition = MacroAssembler::Equal;
     
@@ -1185,8 +1185,8 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
 
 void SpeculativeJIT::compilePeepHoleBooleanBranch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)
 {
-    BasicBlock* taken = branchNode->takenBlock();
-    BasicBlock* notTaken = branchNode->notTakenBlock();
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
 
     // The branch instruction will branch to the taken block.
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
@@ -1216,8 +1216,8 @@ void SpeculativeJIT::compilePeepHoleBooleanBranch(Node* node, Node* branchNode, 
 
 void SpeculativeJIT::compilePeepHoleInt32Branch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)
 {
-    BasicBlock* taken = branchNode->takenBlock();
-    BasicBlock* notTaken = branchNode->notTakenBlock();
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
 
     // The branch instruction will branch to the taken block.
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
@@ -3637,8 +3637,8 @@ bool SpeculativeJIT::compileStrictEqForConstant(Node* node, Edge value, JSValue 
     unsigned branchIndexInBlock = detectPeepHoleBranch();
     if (branchIndexInBlock != UINT_MAX) {
         Node* branchNode = m_block->at(branchIndexInBlock);
-        BasicBlock* taken = branchNode->takenBlock();
-        BasicBlock* notTaken = branchNode->notTakenBlock();
+        BasicBlock* taken = branchNode->branchData()->taken.block;
+        BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
         MacroAssembler::RelationalCondition condition = MacroAssembler::Equal;
         
         // The branch instruction will branch to the taken block.
@@ -4213,8 +4213,8 @@ bool SpeculativeJIT::compileRegExpExec(Node* node)
     Node* branchNode = m_block->at(branchIndexInBlock);
     ASSERT(node->adjustedRefCount() == 1);
 
-    BasicBlock* taken = branchNode->takenBlock();
-    BasicBlock* notTaken = branchNode->notTakenBlock();
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
     
     bool invert = false;
     if (taken == nextBlock()) {
@@ -4895,7 +4895,7 @@ void SpeculativeJIT::emitSwitchIntJump(
     m_jit.sub32(Imm32(table.min), value);
     addBranch(
         m_jit.branch32(JITCompiler::AboveOrEqual, value, Imm32(table.ctiOffsets.size())),
-        data->fallThrough);
+        data->fallThrough.block);
     m_jit.move(TrustedImmPtr(table.ctiOffsets.begin()), scratch);
     m_jit.loadPtr(JITCompiler::BaseIndex(scratch, value, JITCompiler::timesPtr()), scratch);
     m_jit.jump(scratch);
@@ -4929,7 +4929,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
         addBranch(
             m_jit.branchTest64(
                 JITCompiler::Zero, valueRegs.gpr(), GPRInfo::tagTypeNumberRegister),
-            data->fallThrough);
+            data->fallThrough.block);
         silentSpillAllRegisters(scratch);
         callOperation(operationFindSwitchImmTargetForDouble, scratch, valueRegs.gpr(), data->switchTableIndex);
         silentFillAllRegisters(scratch);
@@ -4943,7 +4943,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
             m_jit.branch32(
                 JITCompiler::AboveOrEqual, valueRegs.tagGPR(),
                 TrustedImm32(JSValue::LowestTag)),
-            data->fallThrough);
+            data->fallThrough.block);
         silentSpillAllRegisters(scratch);
         callOperation(operationFindSwitchImmTargetForDouble, scratch, valueRegs, data->switchTableIndex);
         silentFillAllRegisters(scratch);
@@ -4967,7 +4967,7 @@ void SpeculativeJIT::emitSwitchCharStringJump(
             MacroAssembler::NotEqual,
             MacroAssembler::Address(value, JSString::offsetOfLength()),
             TrustedImm32(1)),
-        data->fallThrough);
+        data->fallThrough.block);
     
     m_jit.loadPtr(MacroAssembler::Address(value, JSString::offsetOfValue()), scratch);
     
@@ -5025,12 +5025,12 @@ void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
         addBranch(
             m_jit.branchTest64(
                 MacroAssembler::NonZero, op1Regs.gpr(), GPRInfo::tagMaskRegister),
-            data->fallThrough);
+            data->fallThrough.block);
 #else
         addBranch(
             m_jit.branch32(
                 MacroAssembler::NotEqual, op1Regs.tagGPR(), TrustedImm32(JSValue::CellTag)),
-            data->fallThrough);
+            data->fallThrough.block);
 #endif
         
         addBranch(
@@ -5038,7 +5038,7 @@ void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
                 MacroAssembler::NotEqual,
                 MacroAssembler::Address(op1Regs.payloadGPR(), JSCell::structureOffset()),
                 MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())),
-            data->fallThrough);
+            data->fallThrough.block);
         
         emitSwitchCharStringJump(data, op1Regs.payloadGPR(), tempGPR);
         noResult(node, UseChildrenCalledExplicitly);
@@ -5093,7 +5093,7 @@ void SpeculativeJIT::emitBinarySwitchStringRecurse(
     }
     
     if (begin == end) {
-        jump(data->fallThrough, ForceJump);
+        jump(data->fallThrough.block, ForceJump);
         return;
     }
     
@@ -5129,14 +5129,14 @@ void SpeculativeJIT::emitBinarySwitchStringRecurse(
         dataLog("length = ", minLength, ", commonChars = ", commonChars, ", allLengthsEqual = ", allLengthsEqual, "\n");
     
     if (!allLengthsEqual && alreadyCheckedLength < minLength)
-        branch32(MacroAssembler::Below, length, Imm32(minLength), data->fallThrough);
+        branch32(MacroAssembler::Below, length, Imm32(minLength), data->fallThrough.block);
     if (allLengthsEqual && (alreadyCheckedLength < minLength || !checkedExactLength))
-        branch32(MacroAssembler::NotEqual, length, Imm32(minLength), data->fallThrough);
+        branch32(MacroAssembler::NotEqual, length, Imm32(minLength), data->fallThrough.block);
     
     for (unsigned i = numChecked; i < commonChars; ++i) {
         branch8(
             MacroAssembler::NotEqual, MacroAssembler::Address(buffer, i),
-            TrustedImm32(cases[begin].string->at(i)), data->fallThrough);
+            TrustedImm32(cases[begin].string->at(i)), data->fallThrough.block);
     }
     
     if (minLength == commonChars) {
@@ -5206,7 +5206,7 @@ void SpeculativeJIT::emitBinarySwitchStringRecurse(
             temp, minLength, allLengthsEqual);
     }
     
-    addBranch(binarySwitch.fallThrough(), data->fallThrough);
+    addBranch(binarySwitch.fallThrough(), data->fallThrough.block);
 }
 
 void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
@@ -5258,7 +5258,7 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
     Vector<StringSwitchCase> cases;
     for (unsigned i = 0; i < data->cases.size(); ++i) {
         cases.append(
-            StringSwitchCase(data->cases[i].value.stringImpl(), data->cases[i].target));
+            StringSwitchCase(data->cases[i].value.stringImpl(), data->cases[i].target.block));
     }
     
     std::sort(cases.begin(), cases.end());
@@ -5294,8 +5294,8 @@ void SpeculativeJIT::emitSwitchString(Node* node, SwitchData* data)
         
         BinarySwitch binarySwitch(tempGPR, identifierCaseValues, BinarySwitch::IntPtr);
         while (binarySwitch.advance(m_jit))
-            jump(data->cases[binarySwitch.caseIndex()].target, ForceJump);
-        addBranch(binarySwitch.fallThrough(), data->fallThrough);
+            jump(data->cases[binarySwitch.caseIndex()].target.block, ForceJump);
+        addBranch(binarySwitch.fallThrough(), data->fallThrough.block);
         
         noResult(node);
         break;
@@ -5325,12 +5325,12 @@ void SpeculativeJIT::emitSwitchString(Node* node, SwitchData* data)
         addBranch(
             m_jit.branchTest64(
                 MacroAssembler::NonZero, op1Regs.gpr(), GPRInfo::tagMaskRegister),
-            data->fallThrough);
+            data->fallThrough.block);
 #else
         addBranch(
             m_jit.branch32(
                 MacroAssembler::NotEqual, op1Regs.tagGPR(), TrustedImm32(JSValue::CellTag)),
-            data->fallThrough);
+            data->fallThrough.block);
 #endif
         
         addBranch(
@@ -5338,7 +5338,7 @@ void SpeculativeJIT::emitSwitchString(Node* node, SwitchData* data)
                 MacroAssembler::NotEqual,
                 MacroAssembler::Address(op1Regs.payloadGPR(), JSCell::structureOffset()),
                 MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())),
-            data->fallThrough);
+            data->fallThrough.block);
         
         emitSwitchStringOnString(data, op1Regs.payloadGPR());
         noResult(node, UseChildrenCalledExplicitly);

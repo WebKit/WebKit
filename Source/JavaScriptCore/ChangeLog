@@ -1,3 +1,85 @@
+2014-02-19  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have a way of carrying and preserving conditional branch weights
+        https://bugs.webkit.org/show_bug.cgi?id=129083
+
+        Reviewed by Michael Saboff.
+        
+        Branch and Switch now have branch counts/weights for each target. This is encapsulated
+        behind DFG::BranchTarget. We carry this data all the way to the FTL, and the DFG
+        backend ignores it.
+        
+        We don't set this data yet; that's for https://bugs.webkit.org/show_bug.cgi?id=129055.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::branchData):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::mergeToSuccessors):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::BranchTarget::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::BranchTarget::BranchTarget):
+        (JSC::DFG::BranchTarget::setBytecodeIndex):
+        (JSC::DFG::BranchTarget::bytecodeIndex):
+        (JSC::DFG::BranchData::withBytecodeIndices):
+        (JSC::DFG::BranchData::takenBytecodeIndex):
+        (JSC::DFG::BranchData::notTakenBytecodeIndex):
+        (JSC::DFG::BranchData::forCondition):
+        (JSC::DFG::SwitchCase::SwitchCase):
+        (JSC::DFG::SwitchCase::withBytecodeIndex):
+        (JSC::DFG::SwitchData::SwitchData):
+        (JSC::DFG::Node::targetBytecodeOffsetDuringParsing):
+        (JSC::DFG::Node::targetBlock):
+        (JSC::DFG::Node::branchData):
+        (JSC::DFG::Node::successor):
+        (JSC::DFG::Node::successorForCondition):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleDoubleBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBooleanBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleInt32Branch):
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+        (JSC::DFG::SpeculativeJIT::compileRegExpExec):
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchCharStringJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+        (JSC::DFG::SpeculativeJIT::emitBinarySwitchStringRecurse):
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        (JSC::DFG::SpeculativeJIT::emitSwitchString):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleInt52Branch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileJump):
+        (JSC::FTL::LowerDFGToLLVM::compileBranch):
+        (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+        (JSC::FTL::LowerDFGToLLVM::buildSwitch):
+
 2014-02-19  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unreviewed build fix after r164396

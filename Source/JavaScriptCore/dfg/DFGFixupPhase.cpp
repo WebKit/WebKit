@@ -669,10 +669,8 @@ private:
                     if (newChildEdge->hasBooleanResult()) {
                         node->children.setChild1(newChildEdge);
                         
-                        BasicBlock* toBeTaken = node->notTakenBlock();
-                        BasicBlock* toBeNotTaken = node->takenBlock();
-                        node->setTakenBlock(toBeTaken);
-                        node->setNotTakenBlock(toBeNotTaken);
+                        BranchData* data = node->branchData();
+                        std::swap(data->taken, data->notTaken);
                     }
                 }
             }

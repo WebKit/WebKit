@@ -829,7 +829,8 @@ public:
     SegmentedVector<StructureSet, 16> m_structureSet;
     SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
     SegmentedVector<NewArrayBufferData, 4> m_newArrayBufferData;
-    SegmentedVector<SwitchData, 4> m_switchData;
+    Bag<BranchData> m_branchData;
+    Bag<SwitchData> m_switchData;
     Bag<MultiGetByOffsetData> m_multiGetByOffsetData;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     OwnPtr<InlineCallFrameSet> m_inlineCallFrames;

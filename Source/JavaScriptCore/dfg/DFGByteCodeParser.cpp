@@ -723,6 +723,13 @@ private:
         return value.isBoolean() || value.isUndefinedOrNull();
     }
     
+    BranchData* branchData(unsigned taken, unsigned notTaken)
+    {
+        BranchData* data = m_graph.m_branchData.add();
+        *data = BranchData::withBytecodeIndices(taken, notTaken);
+        return data;
+    }
+    
     Node* addToGraph(NodeType op, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
@@ -1458,8 +1465,8 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         ASSERT(!blockToLink->isLinked);
         Node* node = blockToLink->last();
         ASSERT(node->op() == Jump);
-        ASSERT(node->takenBlock() == 0);
-        node->setTakenBlock(block.get());
+        ASSERT(!node->targetBlock());
+        node->targetBlock() = block.get();
         inlineStackEntry.m_unlinkedBlocks[i].m_needsEarlyReturnLinking = false;
 #if !ASSERT_DISABLED
         blockToLink->isLinked = true;
@@ -2697,7 +2704,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     NEXT_OPCODE(op_jtrue);
                 }
             }
-            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jtrue)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + OPCODE_LENGTH(op_jtrue))), condition);
             LAST_OPCODE(op_jtrue);
         }
 
@@ -2716,7 +2723,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     NEXT_OPCODE(op_jfalse);
                 }
             }
-            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jfalse)), OpInfo(m_currentIndex + relativeOffset), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jfalse), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jfalse);
         }
 
@@ -2724,7 +2731,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned relativeOffset = currentInstruction[2].u.operand;
             Node* value = get(VirtualRegister(currentInstruction[1].u.operand));
             Node* condition = addToGraph(CompareEqConstant, value, constantNull());
-            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jeq_null)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + OPCODE_LENGTH(op_jeq_null))), condition);
             LAST_OPCODE(op_jeq_null);
         }
 
@@ -2732,7 +2739,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned relativeOffset = currentInstruction[2].u.operand;
             Node* value = get(VirtualRegister(currentInstruction[1].u.operand));
             Node* condition = addToGraph(CompareEqConstant, value, constantNull());
-            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jneq_null)), OpInfo(m_currentIndex + relativeOffset), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jneq_null), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jneq_null);
         }
 
@@ -2758,7 +2765,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
             Node* condition = addToGraph(CompareLess, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jless)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + OPCODE_LENGTH(op_jless))), condition);
             LAST_OPCODE(op_jless);
         }
 
@@ -2784,7 +2791,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
             Node* condition = addToGraph(CompareLessEq, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jlesseq)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + OPCODE_LENGTH(op_jlesseq))), condition);
             LAST_OPCODE(op_jlesseq);
         }
 
@@ -2810,7 +2817,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
             Node* condition = addToGraph(CompareGreater, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jgreater)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + OPCODE_LENGTH(op_jgreater))), condition);
             LAST_OPCODE(op_jgreater);
         }
 
@@ -2836,7 +2843,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
             Node* condition = addToGraph(CompareGreaterEq, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jgreatereq)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + OPCODE_LENGTH(op_jgreatereq))), condition);
             LAST_OPCODE(op_jgreatereq);
         }
 
@@ -2862,7 +2869,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
             Node* condition = addToGraph(CompareLess, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jnless)), OpInfo(m_currentIndex + relativeOffset), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jnless), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jnless);
         }
 
@@ -2888,7 +2895,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
             Node* condition = addToGraph(CompareLessEq, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jnlesseq)), OpInfo(m_currentIndex + relativeOffset), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jnlesseq), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jnlesseq);
         }
 
@@ -2914,7 +2921,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
             Node* condition = addToGraph(CompareGreater, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jngreater)), OpInfo(m_currentIndex + relativeOffset), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jngreater), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jngreater);
         }
 
@@ -2940,66 +2947,63 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
             Node* condition = addToGraph(CompareGreaterEq, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jngreatereq)), OpInfo(m_currentIndex + relativeOffset), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jngreatereq), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jngreatereq);
         }
             
         case op_switch_imm: {
-            SwitchData data;
+            SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchImm;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[currentInstruction[1].u.operand];
-            data.setFallThroughBytecodeIndex(m_currentIndex + currentInstruction[2].u.operand);
+            data.fallThrough.setBytecodeIndex(m_currentIndex + currentInstruction[2].u.operand);
             SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
             for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
                 if (!table.branchOffsets[i])
                     continue;
                 unsigned target = m_currentIndex + table.branchOffsets[i];
-                if (target == data.fallThroughBytecodeIndex())
+                if (target == data.fallThrough.bytecodeIndex())
                     continue;
                 data.cases.append(SwitchCase::withBytecodeIndex(jsNumber(static_cast<int32_t>(table.min + i)), target));
             }
-            m_graph.m_switchData.append(data);
-            addToGraph(Switch, OpInfo(&m_graph.m_switchData.last()), get(VirtualRegister(currentInstruction[3].u.operand)));
+            addToGraph(Switch, OpInfo(&data), get(VirtualRegister(currentInstruction[3].u.operand)));
             LAST_OPCODE(op_switch_imm);
         }
             
         case op_switch_char: {
-            SwitchData data;
+            SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchChar;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[currentInstruction[1].u.operand];
-            data.setFallThroughBytecodeIndex(m_currentIndex + currentInstruction[2].u.operand);
+            data.fallThrough.setBytecodeIndex(m_currentIndex + currentInstruction[2].u.operand);
             SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
             for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
                 if (!table.branchOffsets[i])
                     continue;
                 unsigned target = m_currentIndex + table.branchOffsets[i];
-                if (target == data.fallThroughBytecodeIndex())
+                if (target == data.fallThrough.bytecodeIndex())
                     continue;
                 data.cases.append(
                     SwitchCase::withBytecodeIndex(LazyJSValue::singleCharacterString(table.min + i), target));
             }
-            m_graph.m_switchData.append(data);
-            addToGraph(Switch, OpInfo(&m_graph.m_switchData.last()), get(VirtualRegister(currentInstruction[3].u.operand)));
+            addToGraph(Switch, OpInfo(&data), get(VirtualRegister(currentInstruction[3].u.operand)));
             LAST_OPCODE(op_switch_char);
         }
 
         case op_switch_string: {
-            SwitchData data;
+            SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchString;
             data.switchTableIndex = currentInstruction[1].u.operand;
-            data.setFallThroughBytecodeIndex(m_currentIndex + currentInstruction[2].u.operand);
+            data.fallThrough.setBytecodeIndex(m_currentIndex + currentInstruction[2].u.operand);
             StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
             StringJumpTable::StringOffsetTable::iterator iter;
             StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
             for (iter = table.offsetTable.begin(); iter != end; ++iter) {
                 unsigned target = m_currentIndex + iter->value.branchOffset;
-                if (target == data.fallThroughBytecodeIndex())
+                if (target == data.fallThrough.bytecodeIndex())
                     continue;
                 data.cases.append(
                     SwitchCase::withBytecodeIndex(LazyJSValue::knownStringImpl(iter->key.get()), target));
             }
-            m_graph.m_switchData.append(data);
-            addToGraph(Switch, OpInfo(&m_graph.m_switchData.last()), get(VirtualRegister(currentInstruction[3].u.operand)));
+            addToGraph(Switch, OpInfo(&data), get(VirtualRegister(currentInstruction[3].u.operand)));
             LAST_OPCODE(op_switch_string);
         }
 
@@ -3423,19 +3427,23 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BasicBlock*>& possibleT
     
     switch (node->op()) {
     case Jump:
-        node->setTakenBlock(blockForBytecodeOffset(possibleTargets, node->takenBytecodeOffsetDuringParsing()));
+        node->targetBlock() = blockForBytecodeOffset(possibleTargets, node->targetBytecodeOffsetDuringParsing());
         break;
         
-    case Branch:
-        node->setTakenBlock(blockForBytecodeOffset(possibleTargets, node->takenBytecodeOffsetDuringParsing()));
-        node->setNotTakenBlock(blockForBytecodeOffset(possibleTargets, node->notTakenBytecodeOffsetDuringParsing()));
+    case Branch: {
+        BranchData* data = node->branchData();
+        data->taken.block = blockForBytecodeOffset(possibleTargets, data->takenBytecodeIndex());
+        data->notTaken.block = blockForBytecodeOffset(possibleTargets, data->notTakenBytecodeIndex());
         break;
+    }
         
-    case Switch:
+    case Switch: {
+        SwitchData* data = node->switchData();
         for (unsigned i = node->switchData()->cases.size(); i--;)
-            node->switchData()->cases[i].target = blockForBytecodeOffset(possibleTargets, node->switchData()->cases[i].targetBytecodeIndex());
-        node->switchData()->fallThrough = blockForBytecodeOffset(possibleTargets, node->switchData()->fallThroughBytecodeIndex());
+            data->cases[i].target.block = blockForBytecodeOffset(possibleTargets, data->cases[i].target.bytecodeIndex());
+        data->fallThrough.block = blockForBytecodeOffset(possibleTargets, data->fallThrough.bytecodeIndex());
         break;
+    }
         
     default:
         break;
