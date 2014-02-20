@@ -130,7 +130,7 @@ bool EventListenerMap::add(const AtomicString& eventType, PassRefPtr<EventListen
             return addListenerToVector(m_entries[i].second.get(), listener, useCapture);
     }
 
-    m_entries.append(std::make_pair(eventType, adoptPtr(new EventListenerVector)));
+    m_entries.append(std::make_pair(eventType, std::make_unique<EventListenerVector>()));
     return addListenerToVector(m_entries.last().second.get(), listener, useCapture);
 }
 

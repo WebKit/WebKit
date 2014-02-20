@@ -34,8 +34,8 @@
 #define EventListenerMap_h
 
 #include "RegisteredEventListener.h"
+#include <memory>
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
@@ -66,7 +66,7 @@ private:
 
     void assertNoActiveIterators();
 
-    Vector<std::pair<AtomicString, OwnPtr<EventListenerVector>>, 2> m_entries;
+    Vector<std::pair<AtomicString, std::unique_ptr<EventListenerVector>>, 2> m_entries;
 
 #ifndef NDEBUG
     int m_activeIteratorCount;

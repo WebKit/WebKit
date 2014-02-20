@@ -35,6 +35,7 @@
 #include "EventListenerMap.h"
 #include "EventNames.h"
 #include "EventTargetInterfaces.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -97,7 +98,7 @@ namespace WebCore {
         ~EventTargetData();
 
         EventListenerMap eventListenerMap;
-        OwnPtr<FiringEventIteratorVector> firingEventIterators;
+        std::unique_ptr<FiringEventIteratorVector> firingEventIterators;
     };
 
     enum EventTargetInterface {

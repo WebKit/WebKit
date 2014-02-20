@@ -1,5 +1,22 @@
 2014-02-20  Zan Dobersek  <zdobersek@igalia.com>
 
+        Move to using std::unique_ptr for EventListenerMap, EventTarget
+        https://bugs.webkit.org/show_bug.cgi?id=129062
+
+        Reviewed by Andreas Kling.
+
+        Replace uses of OwnPtr and PassOwnPtr in the EventListenerMap and
+        EventTarget classes with std::unique_ptr.
+
+        * dom/EventListenerMap.cpp:
+        (WebCore::EventListenerMap::add):
+        * dom/EventListenerMap.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * dom/EventTarget.h:
+
+2014-02-20  Zan Dobersek  <zdobersek@igalia.com>
+
         Move to using std::unique_ptr for Document and related classes
         https://bugs.webkit.org/show_bug.cgi?id=129063
 

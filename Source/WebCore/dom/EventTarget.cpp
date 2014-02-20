@@ -255,7 +255,7 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
     size_t i = 0;
     size_t size = entry.size();
     if (!d->firingEventIterators)
-        d->firingEventIterators = adoptPtr(new FiringEventIteratorVector);
+        d->firingEventIterators = std::make_unique<FiringEventIteratorVector>();
     d->firingEventIterators->append(FiringEventIterator(event->type(), i, size));
 
     ScriptExecutionContext* context = scriptExecutionContext();
