@@ -25,7 +25,6 @@
 #define KeyboardEvent_h
 
 #include "UIEventWithKeyState.h"
-#include <memory>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -114,7 +113,7 @@ private:
     KeyboardEvent(const PlatformKeyboardEvent&, AbstractView*);
     KeyboardEvent(const AtomicString&, const KeyboardEventInit&);
 
-    std::unique_ptr<PlatformKeyboardEvent> m_keyEvent;
+    OwnPtr<PlatformKeyboardEvent> m_keyEvent;
     String m_keyIdentifier;
     unsigned m_location;
     bool m_altGraphKey : 1;
