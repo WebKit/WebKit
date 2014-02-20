@@ -339,6 +339,7 @@ private:
     friend class WebGLRenderingContextErrorMessageCallback;
     friend class WebGLVertexArrayObjectOES;
 
+    WebGLRenderingContext(HTMLCanvasElement*, GraphicsContext3D::Attributes);
     WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
     void initializeNewContext();
     void setupFlags();
@@ -523,6 +524,13 @@ private:
 
     bool m_synthesizedErrorsToConsole;
     int m_numGLErrorsToConsoleAllowed;
+
+    // A WebGLRenderingContext can be created in a state where it appears as
+    // a valid and active context, but will not execute any important operations
+    // until its load policy is completely resolved.
+    bool m_isPendingPolicyResolution;
+    bool m_hasRequestedPolicyResolution;
+    bool isContextLostOrPending();
 
     // Enabled extension objects.
     OwnPtr<EXTDrawBuffers> m_extDrawBuffers;

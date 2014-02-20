@@ -42,7 +42,6 @@
 #include "HTMLNames.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "ScriptController.h"
@@ -221,14 +220,6 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             if (m_context && !m_context->is3d())
                 return nullptr;
             if (!m_context) {
-                Document& topDocument = document().topDocument();
-                Page* page = topDocument.page();
-                if (page && !topDocument.url().isLocalFile()) {
-                    WebGLLoadPolicy policy = page->mainFrame().loader().client().webGLPolicyForURL(topDocument.url());
-
-                    if (policy == WebGLBlockCreation)
-                        return nullptr;
-                }
                 m_context = WebGLRenderingContext::create(this, static_cast<WebGLContextAttributes*>(attrs));
                 if (m_context) {
                     // Need to make sure a RenderLayer and compositing layer get created for the Canvas
