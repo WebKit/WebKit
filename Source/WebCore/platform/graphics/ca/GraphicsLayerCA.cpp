@@ -1274,7 +1274,7 @@ bool GraphicsLayerCA::platformCALayerShowRepaintCounter(PlatformCALayer* platfor
     return isShowingRepaintCounter();
 }
 
-void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsContext& context, const IntRect& clip)
+void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsContext& context, const FloatRect& clip)
 {
     paintGraphicsLayerContents(context, clip);
 }

@@ -181,7 +181,7 @@ private:
 
     virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime);
     virtual CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return contentsOrientation(); }
-    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const IntRect& clip);
+    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& clip);
     virtual bool platformCALayerShowDebugBorders() const { return isShowingDebugBorder(); }
     virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const;
     virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) { return incrementRepaintCount(); }

@@ -1,5 +1,31 @@
 2014-02-19  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel rendering: Make GraphicsLayer::paintGraphicsLayerContents()'s cliprect FloatRect based.
+        https://bugs.webkit.org/show_bug.cgi?id=128911
+
+        Reviewed by Simon Fraser.
+
+        Switching from IntRect to FloatRect makes device pixel position clipping possible.
+
+        Covered by existing tests.
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerPaintContents):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::platformCALayerPaintContents):
+        * platform/graphics/mac/WebLayer.mm:
+        (WebCore::drawLayerContents):
+        (-[WebSimpleLayer drawInContext:]):
+
+2014-02-19  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel rendering: (RenderLayer)Pass non-css-pixel-snapped dirty rects to PaintInfo when painting renderer().
         https://bugs.webkit.org/show_bug.cgi?id=128913
 

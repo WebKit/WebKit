@@ -48,7 +48,7 @@ public:
 
     virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime) = 0;
     virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const = 0;
-    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const IntRect& inClip) = 0;
+    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& inClip) = 0;
     virtual bool platformCALayerShowDebugBorders() const = 0;
     virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const = 0;
     virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) = 0;

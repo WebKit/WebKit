@@ -171,7 +171,7 @@ void TileController::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileI
         tileInfo.hasStaleContent = true;
 }
 
-void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const IntRect&)
+void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&)
 {
 #if PLATFORM(IOS)
     if (pthread_main_np())

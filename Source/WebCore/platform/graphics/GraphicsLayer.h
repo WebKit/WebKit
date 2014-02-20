@@ -411,7 +411,7 @@ public:
     virtual bool hasContentsLayer() const { return false; }
 
     // Callback from the underlying graphics system to draw layer contents.
-    void paintGraphicsLayerContents(GraphicsContext&, const IntRect& clip);
+    void paintGraphicsLayerContents(GraphicsContext&, const FloatRect& clip);
     // Callback from the underlying graphics system when the layer has been displayed
     virtual void layerDidDisplay(PlatformLayer*) { }
     

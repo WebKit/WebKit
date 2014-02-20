@@ -134,7 +134,7 @@ void drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformC
         GraphicsContextStateSaver stateSaver(graphicsContext);
         graphicsContext.clip(rect);
 
-        layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, enclosingIntRect(rect));
+        layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect);
     }
 
 #if PLATFORM(IOS)
@@ -274,7 +274,7 @@ void drawRepaintIndicator(CGContextRef context, PlatformCALayer* platformCALayer
         graphicsContext.setIsAcceleratedContext(layer->acceleratesDrawing());
 
         FloatRect clipBounds = CGContextGetClipBoundingBox(context);
-        layer->owner()->platformCALayerPaintContents(layer, graphicsContext, enclosingIntRect(clipBounds));
+        layer->owner()->platformCALayerPaintContents(layer, graphicsContext, clipBounds);
     }
 }
 
