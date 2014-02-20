@@ -117,8 +117,8 @@ public:
     virtual LayoutUnit borderBottom() const { return style().borderBottomWidth(); }
     virtual LayoutUnit borderLeft() const { return style().borderLeftWidth(); }
     virtual LayoutUnit borderRight() const { return style().borderRightWidth(); }
-    virtual LayoutUnit borderWidth() const { return borderLeft() + borderRight(); }
-    virtual LayoutUnit borderHeight() const { return borderTop() + borderBottom(); }
+    virtual LayoutUnit horizontalBorderExtent() const { return borderLeft() + borderRight(); }
+    virtual LayoutUnit verticalBorderExtent() const { return borderTop() + borderBottom(); }
     virtual LayoutUnit borderBefore() const { return style().borderBeforeWidth(); }
     virtual LayoutUnit borderAfter() const { return style().borderAfterWidth(); }
     virtual LayoutUnit borderStart() const { return style().borderStartWidth(); }
@@ -128,8 +128,8 @@ public:
     LayoutUnit borderAndPaddingBefore() const { return borderBefore() + paddingBefore(); }
     LayoutUnit borderAndPaddingAfter() const { return borderAfter() + paddingAfter(); }
 
-    LayoutUnit borderAndPaddingHeight() const { return borderTop() + borderBottom() + paddingTop() + paddingBottom(); }
-    LayoutUnit borderAndPaddingWidth() const { return borderLeft() + borderRight() + paddingLeft() + paddingRight(); }
+    LayoutUnit verticalBorderAndPaddingExtent() const { return borderTop() + borderBottom() + paddingTop() + paddingBottom(); }
+    LayoutUnit horizontalBorderAndPaddingExtent() const { return borderLeft() + borderRight() + paddingLeft() + paddingRight(); }
     LayoutUnit borderAndPaddingLogicalHeight() const { return borderAndPaddingBefore() + borderAndPaddingAfter(); }
     LayoutUnit borderAndPaddingLogicalWidth() const { return borderStart() + borderEnd() + paddingStart() + paddingEnd(); }
     LayoutUnit borderAndPaddingLogicalLeft() const { return style().isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
@@ -152,8 +152,8 @@ public:
     virtual LayoutUnit marginAfter(const RenderStyle* otherStyle = 0) const = 0;
     virtual LayoutUnit marginStart(const RenderStyle* otherStyle = 0) const = 0;
     virtual LayoutUnit marginEnd(const RenderStyle* otherStyle = 0) const = 0;
-    LayoutUnit marginHeight() const { return marginTop() + marginBottom(); }
-    LayoutUnit marginWidth() const { return marginLeft() + marginRight(); }
+    LayoutUnit verticalMarginExtent() const { return marginTop() + marginBottom(); }
+    LayoutUnit horizontalMarginExtent() const { return marginLeft() + marginRight(); }
     LayoutUnit marginLogicalHeight() const { return marginBefore() + marginAfter(); }
     LayoutUnit marginLogicalWidth() const { return marginStart() + marginEnd(); }
 

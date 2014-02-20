@@ -1,5 +1,75 @@
 2014-02-20  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        Rename border/padding/margin width/height to horizontal/vertical extent on RenderBoxModelObject
+        https://bugs.webkit.org/show_bug.cgi?id=129043
+
+        Reviewed by David Hyatt.
+
+        Using horizontal extent instead of width and vertical extent instead
+        of height makes it more obvious that these are measurements of both
+        border/margin/padding sides, not just one.
+
+        As David Hyatt put it: "I dislike using terms like 'width' since it
+        could be confused with the actual border-width CSS name, i.e., a
+        person new to this code would think the method was returning the pixel
+        width of a single border."
+
+        No new tests, no behavior change.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::updateWidget):
+        * inspector/InspectorOverlay.cpp:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::checkFloatsInCleanLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+        (WebCore::RenderBox::positionForPoint):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::horizontalBorderExtent):
+        (WebCore::RenderBoxModelObject::verticalBorderExtent):
+        (WebCore::RenderBoxModelObject::verticalBorderAndPaddingExtent):
+        (WebCore::RenderBoxModelObject::horizontalBorderAndPaddingExtent):
+        (WebCore::RenderBoxModelObject::verticalMarginExtent):
+        (WebCore::RenderBoxModelObject::horizontalMarginExtent):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::computePreferredLogicalWidths):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::crossAxisMarginExtentForChild):
+        (WebCore::RenderFlexibleBox::mainAxisBorderAndPaddingExtentForChild):
+        (WebCore::RenderFlexibleBox::computeNextFlexLine):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::localCaretRect):
+        (WebCore::RenderInline::generateCulledLineBoxRects):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computePreferredLogicalWidths):
+        (WebCore::RenderListBox::computeLogicalHeight):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::computePreferredLogicalWidths):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::trackPieceRectWithMargins):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::computePreferredLogicalWidths):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeLogicalHeight):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        * rendering/line/LineLayoutState.h:
+        (WebCore::FloatWithRect::FloatWithRect):
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::ShapeInfo<RenderType>::setReferenceBoxLogicalSize):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::updateCachedBoundaries):
+
+2014-02-20  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         Rename RenderBlockFlow::clearFloats and RenderBlockFlow::newLine to be more accurate
         https://bugs.webkit.org/show_bug.cgi?id=128991
 

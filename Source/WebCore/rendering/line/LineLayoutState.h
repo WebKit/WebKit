@@ -42,7 +42,7 @@ namespace WebCore {
 struct FloatWithRect {
     FloatWithRect(RenderBox& f)
         : object(f)
-        , rect(LayoutRect(f.x() - f.marginLeft(), f.y() - f.marginTop(), f.width() + f.marginWidth(), f.height() + f.marginHeight()))
+        , rect(LayoutRect(f.x() - f.marginLeft(), f.y() - f.marginTop(), f.width() + f.horizontalMarginExtent(), f.height() + f.verticalMarginExtent()))
         , everHadLayout(f.everHadLayout())
     {
     }

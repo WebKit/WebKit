@@ -164,7 +164,7 @@ static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region,
                 paddingBox.width() - renderInline->paddingLeft() - renderInline->paddingRight(), paddingBox.height() - renderInline->paddingTop() - renderInline->paddingBottom());
             // Ignore marginTop and marginBottom for inlines.
             marginBox = LayoutRect(borderBox.x() - renderInline->marginLeft(), borderBox.y(),
-                borderBox.width() + renderInline->marginWidth(), borderBox.height());
+                borderBox.width() + renderInline->horizontalMarginExtent(), borderBox.height());
         }
 
         FloatQuad absContentQuad;

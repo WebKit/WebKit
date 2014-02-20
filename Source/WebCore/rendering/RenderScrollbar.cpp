@@ -325,10 +325,10 @@ IntRect RenderScrollbar::trackPieceRectWithMargins(ScrollbarPart partType, const
     IntRect rect = oldRect;
     if (orientation() == HorizontalScrollbar) {
         rect.setX(rect.x() + partRenderer->marginLeft());
-        rect.setWidth(rect.width() - partRenderer->marginWidth());
+        rect.setWidth(rect.width() - partRenderer->horizontalMarginExtent());
     } else {
         rect.setY(rect.y() + partRenderer->marginTop());
-        rect.setHeight(rect.height() - partRenderer->marginHeight());
+        rect.setHeight(rect.height() - partRenderer->verticalMarginExtent());
     }
     return rect;
 }
