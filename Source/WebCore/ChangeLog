@@ -1,3 +1,43 @@
+2014-02-20  Frédéric Wang  <fred.wang@free.fr>
+
+        Implement the MathML Operator Dictionary.
+        https://bugs.webkit.org/show_bug.cgi?id=99620
+
+        Reviewed by Chris Fleizach.
+
+        The MathML Operator Dictionary is implemented and the corresponding mo
+        attributes are parsed. Currently, only the stretchy property is used for
+        the visual rendering and the fence/separators properties are used by the
+        accessibility code. Very basic heuristics to determine the form are also
+        added.
+
+        Tests: mathml/presentation/mo-form-fallback.html
+               mathml/presentation/mo-form-stretchy.html
+               mathml/presentation/mo-invalid-attributes.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isMathFenceOperator):
+        (WebCore::AccessibilityRenderObject::isMathSeparatorOperator):
+        * mathml/mathattrs.in:
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::createMathMLOperator):
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::addChild):
+        * rendering/mathml/RenderMathMLFenced.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::MathMLOperatorDictionary::ExtractKey):
+        (WebCore::MathMLOperatorDictionary::ExtractChar):
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator):
+        (WebCore::RenderMathMLOperator::setOperatorFlagFromAttribute):
+        (WebCore::RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry):
+        (WebCore::RenderMathMLOperator::SetOperatorProperties):
+        (WebCore::RenderMathMLOperator::advanceForCharacter):
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        (WebCore::RenderMathMLOperator::shouldAllowStretching):
+        (WebCore::RenderMathMLOperator::updateStyle):
+        * rendering/mathml/RenderMathMLOperator.h:
+
 2014-02-19  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make GraphicsLayer's offsetFromRenderer subpixel position based.

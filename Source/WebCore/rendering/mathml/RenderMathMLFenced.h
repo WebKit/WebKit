@@ -47,7 +47,7 @@ private:
 
     virtual void updateFromElement() override;
 
-    RenderPtr<RenderMathMLOperator> createMathMLOperator(UChar, RenderMathMLOperator::OperatorType);
+    RenderPtr<RenderMathMLOperator> createMathMLOperator(UChar, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
     void makeFences();
 
     UChar m_open;

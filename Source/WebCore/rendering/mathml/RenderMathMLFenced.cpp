@@ -82,26 +82,25 @@ void RenderMathMLFenced::updateFromElement()
         makeFences();
 }
 
-RenderPtr<RenderMathMLOperator> RenderMathMLFenced::createMathMLOperator(UChar uChar, RenderMathMLOperator::OperatorType operatorType)
+RenderPtr<RenderMathMLOperator> RenderMathMLFenced::createMathMLOperator(UChar uChar, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
 {
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
     newStyle.get().setFlexDirection(FlowColumn);
-    newStyle.get().setMarginEnd(Length((operatorType == RenderMathMLOperator::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style().fontSize(), Fixed));
-    if (operatorType == RenderMathMLOperator::Fence)
+    newStyle.get().setMarginEnd(Length((flag == MathMLOperatorDictionary::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style().fontSize(), Fixed));
+    if (flag == MathMLOperatorDictionary::Fence)
         newStyle.get().setMarginStart(Length(gFenceMarginEms * style().fontSize(), Fixed));
-    RenderPtr<RenderMathMLOperator> newOperator = createRenderer<RenderMathMLOperator>(element(), std::move(newStyle), uChar);
-    newOperator->setOperatorType(operatorType);
+    RenderPtr<RenderMathMLOperator> newOperator = createRenderer<RenderMathMLOperator>(element(), std::move(newStyle), uChar, form, flag);
     newOperator->initializeStyle();
     return newOperator;
 }
 
 void RenderMathMLFenced::makeFences()
 {
-    RenderPtr<RenderMathMLOperator> openFence = createMathMLOperator(m_open, RenderMathMLOperator::Fence);
+    RenderPtr<RenderMathMLOperator> openFence = createMathMLOperator(m_open, MathMLOperatorDictionary::Prefix, MathMLOperatorDictionary::Fence);
     RenderMathMLOperator* openFencePtr = openFence.get();
     RenderMathMLRow::addChild(openFence.leakPtr(), firstChild());
 
-    RenderPtr<RenderMathMLOperator> closeFence = createMathMLOperator(m_close, RenderMathMLOperator::Fence);
+    RenderPtr<RenderMathMLOperator> closeFence = createMathMLOperator(m_close, MathMLOperatorDictionary::Postfix, MathMLOperatorDictionary::Fence);
     m_closeFenceRenderer = closeFence.get();
     RenderMathMLRow::addChild(closeFence.leakPtr());
 
@@ -140,7 +139,7 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
             else
                 separator = (*m_separators.get())[count - 1];
                 
-            separatorRenderer = createMathMLOperator(separator, RenderMathMLOperator::Separator);
+            separatorRenderer = createMathMLOperator(separator, MathMLOperatorDictionary::Infix, MathMLOperatorDictionary::Separator);
         }
     }
     

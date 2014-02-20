@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <title>form fallback</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- The left (respectively right) parenthesis only has a prefix
+         (respectively postfix) form which gives its stretchiness.
+         In theory, the parenthesis in the middle of the <math> element are
+         considered infix operators and should not stretch. Let's check that we
+         fallback to the postfix/prefix forms and actually make them stretchy.
+         This is to handle bad MathML markup that misses explicit <mrow> tags.
+      -->
+
+    <math>
+      <mo>(</mo> <mspace height="3em" depth="3em"/> <mo>)</mo>
+      <mo>(</mo> <mspace height="3em" depth="3em"/> <mo>)</mo>
+    </math>
+
+  </body>
+</html>
