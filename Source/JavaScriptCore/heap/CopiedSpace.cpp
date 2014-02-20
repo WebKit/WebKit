@@ -253,6 +253,7 @@ void CopiedSpace::doneCopying()
         // We don't add the block to the blockSet because it was never removed.
         ASSERT(m_blockSet.contains(block));
         blockFilter->add(reinterpret_cast<Bits>(block));
+        block->didSurviveGC();
         toSpace->push(block);
     }
 

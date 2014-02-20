@@ -1,5 +1,25 @@
 2014-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        CopiedBlock::pin can call into fastFree while forbidden
+        https://bugs.webkit.org/show_bug.cgi?id=128654
+
+        Reviewed by Oliver Hunt.
+
+        A FullCollection that skips copying doesn't clear the CopyWorkList of the all the surviving 
+        CopiedBlocks because we currently only call didSurviveGC() at the beginning of FullCollections.
+
+        EdenCollections always do copying, therefore they always clear all CopyWorkLists.
+
+        The fix is to call didSurviveGC() for all surviving CopiedBlocks at the end of FullCollections 
+        as well at the beginning.
+
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::didSurviveGC):
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::doneCopying):
+
+2014-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Add a JSC option to disable EdenCollections
         https://bugs.webkit.org/show_bug.cgi?id=128849
 

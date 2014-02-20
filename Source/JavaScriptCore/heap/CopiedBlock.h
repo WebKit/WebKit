@@ -147,6 +147,7 @@ inline CopiedBlock::CopiedBlock(Region* region)
 inline void CopiedBlock::didSurviveGC()
 {
     checkConsistency();
+    ASSERT(isOld());
     m_liveBytes = 0;
 #ifndef NDEBUG
     m_liveObjects = 0;
