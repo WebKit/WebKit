@@ -279,9 +279,9 @@ public:
         SetNeedsDisplay
     };
 
-    // Offset is origin of the renderer minus origin of the graphics layer (so either zero or negative).
-    IntSize offsetFromRenderer() const { return m_offsetFromRenderer; }
-    void setOffsetFromRenderer(const IntSize&, ShouldSetNeedsDisplay = SetNeedsDisplay);
+    // Offset is origin of the renderer minus origin of the graphics layer.
+    FloatSize offsetFromRenderer() const { return m_offsetFromRenderer; }
+    void setOffsetFromRenderer(const FloatSize&, ShouldSetNeedsDisplay = SetNeedsDisplay);
 
     // The position of the layer (the location of its top-left corner in its parent)
     const FloatPoint& position() const { return m_position; }
@@ -555,7 +555,7 @@ protected:
     String m_name;
     
     // Offset from the owning renderer
-    IntSize m_offsetFromRenderer;
+    FloatSize m_offsetFromRenderer;
     
     // Position is relative to the parent GraphicsLayer
     FloatPoint m_position;

@@ -241,9 +241,9 @@ private:
     
     LayoutSize contentOffsetInCompostingLayer() const;
     // Result is transform origin in pixels.
-    FloatPoint3D computeTransformOrigin(const IntRect& borderBox) const;
+    FloatPoint3D computeTransformOrigin(const LayoutRect& borderBox) const;
     // Result is perspective origin in pixels.
-    FloatPoint computePerspectiveOrigin(const IntRect& borderBox) const;
+    FloatPoint computePerspectiveOrigin(const LayoutRect& borderBox) const;
 
     void updateOpacity(const RenderStyle*);
     void updateTransform(const RenderStyle*);
@@ -286,7 +286,7 @@ private:
     void paintIntoLayer(const GraphicsLayer*, GraphicsContext*, const LayoutRect& paintDirtyRect, PaintBehavior, GraphicsLayerPaintingPhase);
 
     // Helper function for updateGraphicsLayerGeometry.
-    void adjustAncestorCompositingBoundsForFlowThread(IntRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const;
+    void adjustAncestorCompositingBoundsForFlowThread(LayoutRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const;
 
     static CSSPropertyID graphicsLayerToCSSProperty(AnimatedPropertyID);
     static AnimatedPropertyID cssToGraphicsLayerProperty(CSSPropertyID);

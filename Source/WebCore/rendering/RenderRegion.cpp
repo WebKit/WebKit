@@ -444,11 +444,11 @@ void RenderRegion::getRanges(Vector<RefPtr<Range>>& rangeObjects) const
     namedFlow.getRanges(rangeObjects, this);
 }
 
-void RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect(const IntPoint& layerOffset, IntRect& regionBounds)
+void RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint& layerOffset, LayoutRect& regionBounds)
 {
     LayoutRect flippedFlowThreadPortionRect = flowThreadPortionRect();
     flowThread()->flipForWritingMode(flippedFlowThreadPortionRect);
-    regionBounds.moveBy(roundedIntPoint(flippedFlowThreadPortionRect.location()));
+    regionBounds.moveBy(flippedFlowThreadPortionRect.location());
 
     UNUSED_PARAM(layerOffset);
 }

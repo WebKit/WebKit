@@ -1,5 +1,39 @@
 2014-02-19  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel rendering: Make GraphicsLayer's offsetFromRenderer subpixel position based.
+        https://bugs.webkit.org/show_bug.cgi?id=128694
+
+        Reviewed by Simon Fraser.
+
+        Changing layers from using integral types to using Float/LayoutUnits so that
+        we can position them on subpixels. They are still integral positioned though.
+
+        Covered by existing tests.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setOffsetFromRenderer):
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::offsetFromRenderer): removed incorrect comment.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread):
+        (WebCore::RenderLayerBacking::positionOverflowControlsLayers):
+        (WebCore::RenderLayerBacking::computeTransformOrigin):
+        (WebCore::RenderLayerBacking::computePerspectiveOrigin):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect):
+        * rendering/RenderRegion.h:
+
+2014-02-19  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel rendering: Make GraphicsLayer::paintGraphicsLayerContents()'s cliprect FloatRect based.
         https://bugs.webkit.org/show_bug.cgi?id=128911
 

@@ -2009,7 +2009,7 @@ bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
     return false;
 }
 
-bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, const RenderLayer* compositingAncestorLayer, const IntRect& layerCompositedBoundsInAncestor, const IntRect& ancestorCompositedBounds) const
+bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, const RenderLayer* compositingAncestorLayer, const LayoutRect& layerCompositedBoundsInAncestor, const LayoutRect& ancestorCompositedBounds) const
 {
     auto& renderer = layer.renderer();
 

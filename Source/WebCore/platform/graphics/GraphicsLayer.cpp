@@ -296,7 +296,7 @@ void GraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
     m_replicaLayer = layer;
 }
 
-void GraphicsLayer::setOffsetFromRenderer(const IntSize& offset, ShouldSetNeedsDisplay shouldSetNeedsDisplay)
+void GraphicsLayer::setOffsetFromRenderer(const FloatSize& offset, ShouldSetNeedsDisplay shouldSetNeedsDisplay)
 {
     if (offset == m_offsetFromRenderer)
         return;
@@ -327,7 +327,7 @@ void GraphicsLayer::setBackgroundColor(const Color& color)
 void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const FloatRect& clip)
 {
     if (m_client) {
-        IntSize offset = offsetFromRenderer();
+        FloatSize offset = offsetFromRenderer();
         context.translate(-offset);
 
         FloatRect clipRect(clip);

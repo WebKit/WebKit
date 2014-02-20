@@ -655,7 +655,7 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
     }
 }
 
-void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const IntPoint& layerOffset, IntRect& regionBounds)
+void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint& layerOffset, LayoutRect& regionBounds)
 {
     LayoutUnit layerLogicalTop = isHorizontalWritingMode() ? layerOffset.y() : layerOffset.x();
     unsigned startColumn = columnIndexAtOffset(layerLogicalTop);

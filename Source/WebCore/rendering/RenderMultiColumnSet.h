@@ -102,7 +102,7 @@ private:
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) override;
 
-    virtual void adjustRegionBoundsFromFlowThreadPortionRect(const IntPoint& layerOffset, IntRect& regionBounds) override;
+    virtual void adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint& layerOffset, LayoutRect& regionBounds) override;
 
     virtual const char* renderName() const;
     
