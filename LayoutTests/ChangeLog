@@ -1,3 +1,12 @@
+2014-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unskip fast/workers/use-machine-stack.html
+
+        Unreviewed test gardening. This was fixed as part of http://trac.webkit.org/changeset/164371, 
+        so we're unskipping it.
+
+        * TestExpectations:
+
 2014-02-20  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
