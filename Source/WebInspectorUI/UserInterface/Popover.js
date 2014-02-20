@@ -154,12 +154,14 @@ WebInspector.Popover.prototype = {
                 this.dismiss();
             break;
         case "transitionend":
-            document.body.removeChild(this._element);
-            this._element.classList.remove(WebInspector.Popover.FadeOutClassName);
-            this._container.textContent = "";
-            if (this.delegate && typeof this.delegate.didDismissPopover === "function")
-                this.delegate.didDismissPopover(this);
-            break;
+            if (event.target === this._element) {
+                document.body.removeChild(this._element);
+                this._element.classList.remove(WebInspector.Popover.FadeOutClassName);
+                this._container.textContent = "";
+                if (this.delegate && typeof this.delegate.didDismissPopover === "function")
+                    this.delegate.didDismissPopover(this);
+                break;
+            }
         }
     },
 

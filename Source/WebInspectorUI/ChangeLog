@@ -1,5 +1,18 @@
 2014-02-20  Antoine Quint  <graouts@webkit.org>
 
+        Web Inspector: content using a CSS transition within a popover causes the popover to disappear
+        https://bugs.webkit.org/show_bug.cgi?id=129089
+
+        Reviewed by Timothy Hatcher.
+
+        Simply check that the element being transitioned is indeed the popover's container before assuming
+        that the "transitonend" received was for a fade-out transition.
+
+        * UserInterface/Popover.js:
+        (WebInspector.Popover.prototype.handleEvent):
+
+2014-02-20  Antoine Quint  <graouts@webkit.org>
+
         Web Inspector: clicking on a color swatch in the Computed styles tab shouldn't show the color editing popover
         https://bugs.webkit.org/show_bug.cgi?id=129093
 
