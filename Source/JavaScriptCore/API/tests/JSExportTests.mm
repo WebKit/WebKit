@@ -25,6 +25,9 @@
 
 #import "JSExportTests.h"
 
+#import <objc/runtime.h>
+#import <objc/objc.h>
+
 #if JSC_OBJC_API_ENABLED
 
 extern "C" void checkResult(NSString *description, bool passed);
@@ -32,6 +35,7 @@ extern "C" void checkResult(NSString *description, bool passed);
 @interface JSExportTests : NSObject
 + (void) exportInstanceMethodWithIdProtocolTest;
 + (void) exportInstanceMethodWithClassProtocolTest;
++ (void) exportDynamicallyGeneratedProtocolTest;
 @end
 
 @protocol TruthTeller
@@ -100,6 +104,25 @@ extern "C" void checkResult(NSString *description, bool passed);
     [context evaluateScript:@"makeTestObject().methodWithClassProtocol(opaqueObject);"];
     checkResult(@"Successfully exported instance method", !context.exception);
 }
+
++ (void) exportDynamicallyGeneratedProtocolTest
+{
+    JSContext *context = [[JSContext alloc] init];
+    Protocol *dynProtocol = objc_allocateProtocol("NSStringJSExport");
+    Protocol *jsExportProtocol = @protocol(JSExport);
+    protocol_addProtocol(dynProtocol, jsExportProtocol);
+    Method method = class_getInstanceMethod([NSString class], @selector(boolValue));
+    protocol_addMethodDescription(dynProtocol, @selector(boolValue), method_getTypeEncoding(method), YES, YES);
+    NSLog(@"type encoding = %s", method_getTypeEncoding(method));
+    protocol_addMethodDescription(dynProtocol, @selector(boolValue), "B@:", YES, YES);
+    objc_registerProtocol(dynProtocol);
+    class_addProtocol([NSString class], dynProtocol);
+    
+    context[@"NSString"] = [NSString class];
+    context[@"myString"] = @"YES";
+    JSValue *value = [context evaluateScript:@"myString.boolValue()"];
+    checkResult(@"Dynamically generated JSExport-ed protocols are ignored", [value isUndefined] && !!context.exception);
+}
 @end
 
 void runJSExportTests()
@@ -107,6 +130,7 @@ void runJSExportTests()
     @autoreleasepool {
         [JSExportTests exportInstanceMethodWithIdProtocolTest];
         [JSExportTests exportInstanceMethodWithClassProtocolTest];
+        [JSExportTests exportDynamicallyGeneratedProtocolTest];
     }
 }
 

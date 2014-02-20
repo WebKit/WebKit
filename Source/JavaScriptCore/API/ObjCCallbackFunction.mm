@@ -632,6 +632,9 @@ inline bool skipNumber(const char*& position)
 
 static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvocation *invocation, CallbackType type, Class instanceClass, const char* signatureWithObjcClasses)
 {
+    if (!signatureWithObjcClasses)
+        return nil;
+
     const char* position = signatureWithObjcClasses;
 
     OwnPtr<CallbackResult> result = adoptPtr(parseObjCType<ResultTypeDelegate>(position));

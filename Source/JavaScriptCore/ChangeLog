@@ -1,3 +1,19 @@
+2014-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Dynamically generated JSExport protocols added to a class results in a crash
+        https://bugs.webkit.org/show_bug.cgi?id=129108
+
+        Reviewed by Oliver Hunt.
+
+        We're not getting any information from the runtime about the types of the methods on 
+        these protocols because they didn't exist at compile time. We should handle this gracefully.
+
+        * API/ObjCCallbackFunction.mm:
+        (objCCallbackFunctionForInvocation):
+        * API/tests/JSExportTests.mm:
+        (+[JSExportTests exportDynamicallyGeneratedProtocolTest]):
+        (runJSExportTests):
+
 2014-02-20  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         ASSERTION FAILED: isUInt16() on ARMv7 after r113253.
