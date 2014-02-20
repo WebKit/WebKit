@@ -6779,8 +6779,7 @@ void RenderLayer::paintFlowThreadIfRegion(GraphicsContext* context, const LayerP
     ClipRect regionClipRect;
     RenderNamedFlowThread* flowThread = flowFragment->namedFlowThread();
     RenderLayer* flowThreadLayer = flowThread->layer();
-    bool isLastRegionWithRegionFragmentBreak = (flowFragment->isLastRegion() && flowFragment->style().regionFragment() == BreakRegionFragment);
-    if (flowFragment->hasOverflowClip() || isLastRegionWithRegionFragmentBreak) {
+    if (flowFragment->shouldClipFlowThreadContent()) {
         regionClipRect = renderNamedFlowFragmentContainer->paddingBoxRect();
 
         // When the layer of the flow fragment's container is composited, the flow fragment container receives a
@@ -6804,12 +6803,13 @@ void RenderLayer::paintFlowThreadIfRegion(GraphicsContext* context, const LayerP
     }
 
     // Optimize clipping for the single fragment case.
-    if (!regionClipRect.isEmpty() && regionClipRect != LayoutRect::infiniteRect())
+    bool shouldClip = !regionClipRect.isEmpty() && regionClipRect != LayoutRect::infiniteRect();
+    if (shouldClip)
         clipToRect(paintingInfo.rootLayer, context, paintingInfo.paintDirtyRect, regionClipRect);
 
     flowThreadLayer->paintNamedFlowThreadInsideRegion(context, flowFragment, paintingInfo.paintDirtyRect, paintOffset, paintingInfo.paintBehavior, paintFlags);
 
-    if (!regionClipRect.isEmpty() && regionClipRect != LayoutRect::infiniteRect())
+    if (shouldClip)
         restoreClip(context, paintingInfo.paintDirtyRect, regionClipRect);
 }
 

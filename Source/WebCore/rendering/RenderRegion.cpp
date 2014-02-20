@@ -154,8 +154,7 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flow
 {
     ASSERT(isValid());
 
-    bool isLastRegionWithRegionFragmentBreak = (isLastPortion && (style().regionFragment() == BreakRegionFragment));
-    if (hasOverflowClip() || isLastRegionWithRegionFragmentBreak)
+    if (shouldClipFlowThreadContent())
         return flowThreadPortionRect;
 
     LayoutRect flowThreadOverflow = overflowType == VisualOverflow ? visualOverflowRectForBox(m_flowThread) : layoutOverflowRectForBox(m_flowThread);
@@ -217,7 +216,16 @@ bool RenderRegion::isLastRegion() const
 
     return m_flowThread->lastRegion() == this;
 }
-    
+
+bool RenderRegion::shouldClipFlowThreadContent() const
+{
+    if (hasOverflowClip())
+        return true;
+
+    // regionFragment is CSSRegions specific therefore we take it into account only in these cases.
+    return isRenderNamedFlowFragment() ? isLastRegion() && style().regionFragment() == BreakRegionFragment : false;
+}
+
 void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
@@ -509,8 +517,7 @@ LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const Layou
             mappedRect.setWidth(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.x(), mappedRect.width())));
     }
 
-    bool isLastRegionWithRegionFragmentBreak = (isLastRegion() && (style().regionFragment() == BreakRegionFragment));
-    if (hasOverflowClip() || isLastRegionWithRegionFragmentBreak) {
+    if (shouldClipFlowThreadContent()) {
         LayoutRect portionRect;
         if (isRenderNamedFlowFragment())
             portionRect = toRenderNamedFlowFragment(this)->flowThreadPortionRectForClipping(this == startRegion, this == endRegion);

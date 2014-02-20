@@ -77,6 +77,7 @@ public:
 
     bool isFirstRegion() const;
     bool isLastRegion() const;
+    bool shouldClipFlowThreadContent() const;
 
     RegionOversetState regionOversetState() const;
     void setRegionOversetState(RegionOversetState);

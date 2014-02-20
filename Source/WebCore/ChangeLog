@@ -1,3 +1,22 @@
+2014-02-20  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Add helper method for region clipping flow content
+        https://bugs.webkit.org/show_bug.cgi?id=129036
+
+        Reviewed by Andrei Bucur.
+
+        Add helper method to test whether a region should clip the flow thread content
+        and use it thoughout the code.
+        Code refactoring, no functionality change, no new tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::overflowRectForFlowThreadPortion):
+        (WebCore::RenderRegion::shouldClipFlowThreadContent):
+        (WebCore::RenderRegion::rectFlowPortionForBox):
+        * rendering/RenderRegion.h:
+
 2014-02-20  Frédéric Wang  <fred.wang@free.fr>
 
         Implement the MathML Operator Dictionary.
