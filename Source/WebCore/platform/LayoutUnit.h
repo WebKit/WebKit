@@ -945,6 +945,11 @@ inline float floorToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
     return floorf((value.rawValue() * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
 }
 
+inline float ceilToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
+{
+    return ceilf((value.rawValue() * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
+}
+
 inline float snapSizeToDevicePixel(LayoutUnit size, LayoutUnit location, float pixelSnappingFactor)
 {
     LayoutUnit fraction = location.fraction();

@@ -3572,7 +3572,7 @@ void RenderLayer::clipToRect(RenderLayer* rootLayer, GraphicsContext* context, c
 {
     if (clipRect.rect() != paintDirtyRect || clipRect.hasRadius()) {
         context->save();
-        context->clip(pixelSnappedIntRect(clipRect.rect()));
+        context->clip(clipRect.rect());
     }
 
     if (!clipRect.hasRadius())

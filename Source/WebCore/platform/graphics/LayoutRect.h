@@ -214,7 +214,7 @@ inline IntRect pixelSnappedIntRect(const LayoutRect& rect)
 
 IntRect enclosingIntRect(const LayoutRect&);
 LayoutRect enclosingLayoutRect(const FloatRect&);
-
+FloatRect enclosingRectForPainting(const LayoutRect&, float pixelSnappingFactor);
 
 inline IntRect pixelSnappedIntRect(LayoutUnit left, LayoutUnit top, LayoutUnit width, LayoutUnit height)
 {

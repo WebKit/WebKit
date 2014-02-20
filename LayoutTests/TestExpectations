@@ -102,3 +102,7 @@ webkit.org/b/127697 fast/writing-mode/ruby-text-logical-left.html [ Skip ]
 webkit.org/b/83618 fast/dom/inline-event-attributes-release.html [ Failure ]
 
 webkit.org/b/129057 media/controls-styling-strict.html [ Pass Failure ]
+
+#subpixel failure on non-retina displays.
+webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ Failure ]
+webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Failure ]

@@ -1,3 +1,21 @@
+2014-02-20  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Enable compositing RenderLayer painting on device pixel position.
+        https://bugs.webkit.org/show_bug.cgi?id=128509
+
+        Reviewed by Simon Fraser.
+
+        GraphicsLayer is now positioned on device pixel boundary. This enables us to put
+        compositing layers on a subpixel position and animate them with device pixel
+        precision.
+
+        * TestExpectations:
+        * fast/sub-pixel/compositing-layers-on-subpixel-position-expected.html: Added.
+        * fast/sub-pixel/compositing-layers-on-subpixel-position.html: Added.
+        * fast/sub-pixel/simple-clipping-expected.html: Added.
+        * fast/sub-pixel/simple-clipping.html: Added.
+        * platform/mac/compositing/layer-creation/overlap-animation-container-expected.txt:
+
 2014-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unskip fast/workers/use-machine-stack.html

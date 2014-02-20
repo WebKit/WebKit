@@ -147,4 +147,12 @@ LayoutRect enclosingLayoutRect(const FloatRect& rect)
 #endif
 }
 
+FloatRect enclosingRectForPainting(const LayoutRect& rect, float pixelSnappingFactor)
+{
+    FloatPoint location = flooredForPainting(rect.minXMinYCorner(), pixelSnappingFactor);
+    FloatPoint maxPoint = ceiledForPainting(rect.maxXMaxYCorner(), pixelSnappingFactor);
+
+    return FloatRect(location, maxPoint - location);
+}
+
 } // namespace WebCore

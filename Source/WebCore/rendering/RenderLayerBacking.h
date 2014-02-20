@@ -311,7 +311,7 @@ private:
     uint64_t m_scrollLayerID;
 
     LayoutRect m_compositedBounds;
-    LayoutSize m_subpixelAccumulation; // The accumulated subpixel offset of the compositedBounds compared to absolute coordinates.
+    LayoutSize m_devicePixelFractionFromRenderer;
 
     bool m_artificiallyInflatedBounds; // bounds had to be made non-zero to make transform-origin work
     bool m_isMainFrameRenderViewLayer;

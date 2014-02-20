@@ -1,3 +1,35 @@
+2014-02-20  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Enable compositing RenderLayer painting on device pixel position.
+        https://bugs.webkit.org/show_bug.cgi?id=128509
+
+        Reviewed by Simon Fraser.
+
+        GraphicsLayer is now positioned on device pixel boundary. This enables us to put
+        compositing layers on a subpixel position and animate them with device pixel
+        precision.
+
+        Tests: fast/sub-pixel/compositing-layers-on-subpixel-position.html
+               fast/sub-pixel/simple-clipping.html
+
+        * platform/LayoutUnit.h:
+        (WebCore::ceilToDevicePixel):
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::flooredForPainting):
+        (WebCore::ceiledForPainting):
+        * platform/graphics/LayoutRect.cpp:
+        (WebCore::enclosingRectForPainting):
+        * platform/graphics/LayoutRect.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::clipBox):
+        (WebCore::pixelFractionForLayerPainting):
+        (WebCore::calculateDevicePixelOffsetFromRenderer):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerBacking.h:
+
 2014-02-20  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Rename border/padding/margin width/height to horizontal/vertical extent on RenderBoxModelObject
