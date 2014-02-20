@@ -420,7 +420,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_listenerTypes(0)
     , m_mutationObserverTypes(0)
     , m_styleSheetCollection(*this)
-    , m_visitedLinkState(VisitedLinkState::create(*this))
+    , m_visitedLinkState(std::make_unique<VisitedLinkState>(*this))
     , m_visuallyOrdered(false)
     , m_readyState(Complete)
     , m_bParsing(false)

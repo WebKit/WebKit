@@ -1,3 +1,25 @@
+2014-02-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move to using std::unique_ptr for VisitedLinkState, CheckedRadioButtons
+        https://bugs.webkit.org/show_bug.cgi?id=128967
+
+        Reviewed by Andreas Kling.
+
+        Replace uses of OwnPtr and PassOwnPtr in the VisitedLinkState and
+        CheckedRadioButtons classes with std::unique_ptr.
+
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::RadioButtonGroup::RadioButtonGroup):
+        (WebCore::RadioButtonGroup::remove):
+        (WebCore::CheckedRadioButtons::addButton):
+        (WebCore::CheckedRadioButtons::removeButton):
+        * dom/CheckedRadioButtons.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        * dom/VisitedLinkState.cpp:
+        * dom/VisitedLinkState.h:
+
 2014-02-20  Artur Moryc  <a.moryc@samsung.com>
 
         AX: Children Nodes for Canvas objects are not equal to Render Objects.

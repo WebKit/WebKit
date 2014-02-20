@@ -52,6 +52,7 @@
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
 #include <chrono>
+#include <memory>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -1424,7 +1425,7 @@ private:
     Color m_linkColor;
     Color m_visitedLinkColor;
     Color m_activeLinkColor;
-    const OwnPtr<VisitedLinkState> m_visitedLinkState;
+    const std::unique_ptr<VisitedLinkState> m_visitedLinkState;
 
     bool m_visuallyOrdered;
     ReadyState m_readyState;

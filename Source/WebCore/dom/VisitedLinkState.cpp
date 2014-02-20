@@ -53,11 +53,6 @@ inline static const AtomicString* linkAttribute(Element& element)
     return 0;
 }
 
-PassOwnPtr<VisitedLinkState> VisitedLinkState::create(Document& document)
-{
-    return adoptPtr(new VisitedLinkState(document));
-}
-
 VisitedLinkState::VisitedLinkState(Document& document)
     : m_document(document)
 {
