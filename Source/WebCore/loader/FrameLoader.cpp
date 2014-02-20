@@ -3068,10 +3068,11 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
     case XFrameOptionsInvalid:
         m_frame.document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Invalid 'X-Frame-Options' header encountered when loading '" + url.stringCenterEllipsizedToLength() + "': '" + content + "' is not a recognized directive. The header will be ignored.", requestIdentifier);
         return false;
-    default:
-        ASSERT_NOT_REACHED();
+    case XFrameOptionsNone:
         return false;
     }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void FrameLoader::loadProvisionalItemFromCachedPage()
