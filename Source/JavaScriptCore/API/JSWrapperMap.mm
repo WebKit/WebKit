@@ -59,7 +59,7 @@ static const int32_t webkitFirstVersionWithInitConstructorSupport = 0x21A0400; /
 static NSString *selectorToPropertyName(const char* start)
 {
     // Use 'index' to check for colons, if there are none, this is easy!
-    const char* firstColon = index(start, ':');
+    const char* firstColon = strchr(start, ':');
     if (!firstColon)
         return [NSString stringWithUTF8String:start];
 

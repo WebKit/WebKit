@@ -1,3 +1,17 @@
+2014-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Replace uses of deprecated POSIX index() with strchr() in ObjcRuntimeExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=128610
+
+        Reviewed by Anders Carlsson.
+
+        index() is deprecated in favor of strchr() so we should use the latter.
+
+        * API/JSWrapperMap.mm:
+        (selectorToPropertyName):
+        * API/ObjcRuntimeExtras.h:
+        (parseObjCType):
+
 2014-02-19  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should not emit stack overflow checks in leaf functions
