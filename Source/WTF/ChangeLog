@@ -1,5 +1,15 @@
 2014-02-20  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Add StackStats sources to cmake and autotools build files
+        https://bugs.webkit.org/show_bug.cgi?id=129103
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.list.am:
+        * wtf/CMakeLists.txt:
+
+2014-02-20  Csaba Osztrogonác  <ossy@webkit.org>
+
         Get rid of redundant Platform.h includes
         https://bugs.webkit.org/show_bug.cgi?id=128817
 

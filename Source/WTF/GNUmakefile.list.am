@@ -154,6 +154,7 @@ wtf_sources += \
     Source/WTF/wtf/Spectrum.h \
     Source/WTF/wtf/StackBounds.cpp \
     Source/WTF/wtf/StackBounds.h \
+    Source/WTF/wtf/StackStats.cpp \
     Source/WTF/wtf/StackStats.h \
     Source/WTF/wtf/StaticConstructors.h \
     Source/WTF/wtf/StdLibExtras.h \

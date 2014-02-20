@@ -93,6 +93,7 @@ set(WTF_HEADERS
     SaturatedArithmetic.h
     SegmentedVector.h
     StackBounds.h
+    StackStats.h
     StaticConstructors.h
     StdLibExtras.h
     StringExtras.h
@@ -181,6 +182,7 @@ set(WTF_SOURCES
     RunLoop.cpp
     SHA1.cpp
     SixCharacterHash.cpp
+    StackStats.cpp
     StackBounds.cpp
     StringPrintStream.cpp
     TCSystemAlloc.cpp
