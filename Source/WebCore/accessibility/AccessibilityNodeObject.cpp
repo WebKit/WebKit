@@ -428,7 +428,12 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
         if (!string.length())
             return true;
     }
-    
+
+    AccessibilityObjectInclusion decision = defaultObjectInclusion();
+    if (decision == IncludeObject)
+        return false;
+    if (decision == IgnoreObject)
+        return true;
     // If this element is within a parent that cannot have children, it should not be exposed.
     if (isDescendantOfBarrenParent())
         return true;

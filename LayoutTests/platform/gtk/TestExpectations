@@ -1249,8 +1249,6 @@ webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 # This failure appears to be GTK-specific
 webkit.org/b/91319 css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
 
-webkit.org/b/92100 accessibility/canvas-accessibilitynodeobject.html [ Failure ]
-
 webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure ]
 
 # This has always failed on Gtk/Efl - exposed by bug 89826

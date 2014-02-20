@@ -1,3 +1,16 @@
+2014-02-20  Artur Moryc  <a.moryc@samsung.com>
+
+        AX: Children Nodes for Canvas objects are not equal to Render Objects.
+        https://bugs.webkit.org/show_bug.cgi?id=123568
+
+        Reviewed by Chris Fleizach.
+
+        The canvas-accessibilitynodeobject.html test is not failing anymore.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2014-02-20  Frédéric Wang  <fred.wang@free.fr>
 
         Implement the MathML Operator Dictionary.

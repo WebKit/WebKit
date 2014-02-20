@@ -106,7 +106,6 @@ webkit.org/b/111984 accessibility/aria-hidden-updates-alldescendants.html [ Fail
 webkit.org/b/111988 accessibility/aria-readonly.html [ Failure ]
 webkit.org/b/111991 accessibility/aria-text-role.html [ Failure ]
 webkit.org/b/111992 accessibility/aria-used-on-image-maps.html [ Failure ]
-webkit.org/b/111994 accessibility/canvas-accessibilitynodeobject.html [ Failure ]
 webkit.org/b/111996 accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/111999 accessibility/disabled-controls-not-focusable.html [ Failure ]
 webkit.org/b/122109 accessibility/file-upload-button-stringvalue.html [ Failure ]

@@ -1,3 +1,22 @@
+2014-02-20  Artur Moryc  <a.moryc@samsung.com>
+
+        AX: Children Nodes for Canvas objects are not equal to Render Objects.
+        https://bugs.webkit.org/show_bug.cgi?id=123568
+
+        Reviewed by Chris Fleizach.
+
+        There is a difference in children nodes taken into account for RenderObject
+        and for NodeObject types. There is a problem with text nodes that are
+        focusable for EFL/GTK and therefore are not filtered out in the test like it
+        happens for the MAC port. Text nodes are eliminated in the
+        AccessibilityRenderObject::computeAccessibilityIsIgnored() method. The same
+        approach has been applied to the NodeObject to eliminate text nodes.
+
+        Covered by existing tests.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::computeAccessibilityIsIgnored):
+
 2014-02-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Move to using std::unique_ptr for KeyboardEvent, ScriptExecutionContext::PendingException
