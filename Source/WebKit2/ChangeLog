@@ -1,3 +1,15 @@
+2014-02-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove -[WKContentView setViewportSize:]
+        https://bugs.webkit.org/show_bug.cgi?id=129071
+
+        Reviewed by Enrica Casucci.
+
+        I forgot to clean that up.
+
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentView.mm:
+
 2014-02-19  Oliver Hunt  <oliver@apple.com>
 
         Add WK2 SPI to get bytecode profile from web process

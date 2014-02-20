@@ -61,7 +61,6 @@ WK_API_CLASS
 - (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration;
 
 - (void)setMinimumSize:(CGSize)size;
-- (void)setViewportSize:(CGSize)size;
 - (void)setMinimumLayoutSize:(CGSize)size;
 
 - (void)didFinishScrollTo:(CGPoint)contentOffset;

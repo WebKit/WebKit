@@ -181,12 +181,6 @@ using namespace WebKit;
     drawingArea->setCustomFixedPositionRect(fixedPosRect);
 }
 
-- (void)setViewportSize:(CGSize)size
-{
-    _page->setFixedLayoutSize(IntSize(size));
-    [self _updateViewExposedRect];
-}
-
 - (void)setMinimumLayoutSize:(CGSize)size
 {
     _page->setViewportConfigurationMinimumLayoutSize(IntSize(CGCeiling(size.width), CGCeiling(size.height)));
