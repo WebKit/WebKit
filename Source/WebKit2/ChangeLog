@@ -1,3 +1,53 @@
+2014-02-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-Side Compositing] 6% of main thread time spent copying LayerProperties when adding to hash table
+        https://bugs.webkit.org/show_bug.cgi?id=129074
+
+        Reviewed by Tim Horton.
+        
+        Make RemoteLayerTreeTransaction::LayerProperties smaller and not copied by
+        value everywhere.
+        
+        Put some big members into unique_ptrs, and store unique_ptrs
+        in the hash of layerID to properties.
+        
+        Clean up member variable order of LayerProperties to improve packing.
+        
+        Also have applyPropertiesToLayer() take references to things to avoid
+        copies.
+        
+        * Shared/mac/RemoteLayerTreePropertyApplier.h:
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::changedLayers):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::layerPropertiesChanged):
+        (WebKit::dumpChangedLayers):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::create):
+        (PlatformCALayerRemote::PlatformCALayerRemote):
+        (PlatformCALayerRemote::clone):
+        (PlatformCALayerRemote::recursiveBuildTransaction):
+        (PlatformCALayerRemote::ensureBackingStore):
+        (PlatformCALayerRemote::setNeedsDisplay):
+        (PlatformCALayerRemote::transform):
+        (PlatformCALayerRemote::setTransform):
+        (PlatformCALayerRemote::sublayerTransform):
+        (PlatformCALayerRemote::setSublayerTransform):
+        (PlatformCALayerRemote::setFilters):
+        (PlatformCALayerRemote::enumerateRectsBeingDrawn):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2014-02-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove -[WKContentView setViewportSize:]

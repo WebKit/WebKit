@@ -72,26 +72,66 @@ bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::ArgumentDe
 RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     : changedProperties(NoChange)
     , everChangedProperties(NoChange)
-    , backgroundColor(Color::transparent)
     , anchorPoint(0.5, 0.5, 0)
+    , contentsRect(FloatPoint(), FloatSize(1, 1))
+    , maskLayerID(0)
+    , timeOffset(0)
+    , speed(1)
+    , contentsScale(1)
     , borderWidth(0)
-    , borderColor(Color::black)
     , opacity(1)
+    , backgroundColor(Color::transparent)
+    , borderColor(Color::black)
+    , edgeAntialiasingMask(kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge)
+    , customAppearance(GraphicsLayer::NoCustomAppearance)
+    , minificationFilter(PlatformCALayer::FilterType::Linear)
+    , magnificationFilter(PlatformCALayer::FilterType::Linear)
     , hidden(false)
     , geometryFlipped(false)
     , doubleSided(true)
     , masksToBounds(false)
     , opaque(false)
-    , maskLayerID(0)
-    , contentsRect(FloatPoint(), FloatSize(1, 1))
-    , contentsScale(1)
-    , minificationFilter(PlatformCALayer::FilterType::Linear)
-    , magnificationFilter(PlatformCALayer::FilterType::Linear)
-    , speed(1)
-    , timeOffset(0)
-    , edgeAntialiasingMask(kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge)
-    , customAppearance(GraphicsLayer::NoCustomAppearance)
 {
+}
+
+RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperties& other)
+    : changedProperties(other.changedProperties)
+    , everChangedProperties(other.everChangedProperties)
+    , name(other.name)
+    , children(other.children)
+    , position(other.position)
+    , anchorPoint(other.anchorPoint)
+    , size(other.size)
+    , contentsRect(other.contentsRect)
+    , maskLayerID(other.maskLayerID)
+    , timeOffset(other.timeOffset)
+    , speed(other.speed)
+    , contentsScale(other.contentsScale)
+    , borderWidth(other.borderWidth)
+    , opacity(other.opacity)
+    , backgroundColor(other.backgroundColor)
+    , borderColor(other.borderColor)
+    , edgeAntialiasingMask(other.edgeAntialiasingMask)
+    , customAppearance(other.customAppearance)
+    , minificationFilter(other.minificationFilter)
+    , magnificationFilter(other.magnificationFilter)
+    , hidden(other.hidden)
+    , geometryFlipped(other.geometryFlipped)
+    , doubleSided(other.doubleSided)
+    , masksToBounds(other.masksToBounds)
+    , opaque(other.opaque)
+{
+    if (other.transform)
+        transform = std::make_unique<TransformationMatrix>(*other.transform);
+
+    if (other.sublayerTransform)
+        sublayerTransform = std::make_unique<TransformationMatrix>(*other.sublayerTransform);
+    
+    if (other.backingStore)
+        backingStore = std::make_unique<RemoteLayerBackingStore>(*other.backingStore);
+
+    if (other.filters)
+        filters = std::make_unique<FilterOperations>(*other.filters);
 }
 
 void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& encoder) const
@@ -126,10 +166,10 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
         encoder << opacity;
 
     if (changedProperties & TransformChanged)
-        encoder << transform;
+        encoder << *transform;
 
     if (changedProperties & SublayerTransformChanged)
-        encoder << sublayerTransform;
+        encoder << *sublayerTransform;
 
     if (changedProperties & HiddenChanged)
         encoder << hidden;
@@ -168,13 +208,13 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
         encoder << timeOffset;
 
     if (changedProperties & BackingStoreChanged) {
-        encoder << backingStore.hasFrontBuffer();
-        if (backingStore.hasFrontBuffer())
-            encoder << backingStore;
+        encoder << backingStore->hasFrontBuffer();
+        if (backingStore->hasFrontBuffer())
+            encoder << *backingStore;
     }
 
     if (changedProperties & FiltersChanged)
-        encoder << filters;
+        encoder << *filters;
 
     if (changedProperties & EdgeAntialiasingMaskChanged)
         encoder << edgeAntialiasingMask;
@@ -239,13 +279,19 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
     }
 
     if (result.changedProperties & TransformChanged) {
-        if (!decoder.decode(result.transform))
+        TransformationMatrix transform;
+        if (!decoder.decode(transform))
             return false;
+        
+        result.transform = std::make_unique<TransformationMatrix>(transform);
     }
 
     if (result.changedProperties & SublayerTransformChanged) {
-        if (!decoder.decode(result.sublayerTransform))
+        TransformationMatrix transform;
+        if (!decoder.decode(transform))
             return false;
+
+        result.sublayerTransform = std::make_unique<TransformationMatrix>(transform);
     }
 
     if (result.changedProperties & HiddenChanged) {
@@ -312,13 +358,20 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
         bool hasFrontBuffer = false;
         if (!decoder.decode(hasFrontBuffer))
             return false;
-        if (hasFrontBuffer && !decoder.decode(result.backingStore))
-            return false;
+        if (hasFrontBuffer) {
+            RemoteLayerBackingStore backingStore;
+            if (!decoder.decode(backingStore))
+                return false;
+            
+            result.backingStore = std::make_unique<RemoteLayerBackingStore>(backingStore);
+        }
     }
 
     if (result.changedProperties & FiltersChanged) {
-        if (!decoder.decode(result.filters))
+        std::unique_ptr<FilterOperations> filters = std::make_unique<FilterOperations>();
+        if (!decoder.decode(*filters))
             return false;
+        result.filters = std::move(filters);
     }
 
     if (result.changedProperties & EdgeAntialiasingMaskChanged) {
@@ -346,7 +399,14 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_rootLayerID;
     encoder << m_createdLayers;
-    encoder << m_changedLayerProperties;
+
+    encoder << m_changedLayerProperties.size();
+
+    for (const auto& layerProperties : m_changedLayerProperties) {
+        encoder << layerProperties.key;
+        encoder << *layerProperties.value;
+    }
+    
     encoder << m_destroyedLayerIDs;
     encoder << m_contentsSize;
     encoder << m_pageScaleFactor;
@@ -366,8 +426,21 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
     if (!decoder.decode(result.m_createdLayers))
         return false;
 
-    if (!decoder.decode(result.m_changedLayerProperties))
+    int numChangedLayerProperties;
+    if (!decoder.decode(numChangedLayerProperties))
         return false;
+
+    for (int i = 0; i < numChangedLayerProperties; ++i) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+
+        std::unique_ptr<LayerProperties> layerProperties = std::make_unique<LayerProperties>();
+        if (!decoder.decode(*layerProperties))
+            return false;
+
+        result.changedLayers().set(layerID, std::move(layerProperties));
+    }
 
     if (!decoder.decode(result.m_destroyedLayerIDs))
         return false;
@@ -407,7 +480,7 @@ void RemoteLayerTreeTransaction::setRootLayerID(GraphicsLayer::PlatformLayerID r
 
 void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote* remoteLayer, RemoteLayerTreeTransaction::LayerProperties& properties)
 {
-    m_changedLayerProperties.set(remoteLayer->layerID(), properties);
+    m_changedLayerProperties.set(remoteLayer->layerID(), std::make_unique<RemoteLayerTreeTransaction::LayerProperties>(properties));
 }
 
 void RemoteLayerTreeTransaction::setCreatedLayers(Vector<LayerCreationProperties> createdLayers)
@@ -590,7 +663,7 @@ static void dumpProperty(RemoteLayerTreeTextStream& ts, String name, T value)
     ts.decreaseIndent();
 }
 
-static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<GraphicsLayer::PlatformLayerID, RemoteLayerTreeTransaction::LayerProperties>& changedLayerProperties)
+static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTreeTransaction::LayerPropertiesMap& changedLayerProperties)
 {
     if (changedLayerProperties.isEmpty())
         return;
@@ -605,7 +678,7 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<Graph
     std::sort(layerIDs.begin(), layerIDs.end());
 
     for (auto layerID : layerIDs) {
-        const RemoteLayerTreeTransaction::LayerProperties& layerProperties = changedLayerProperties.get(layerID);
+        const RemoteLayerTreeTransaction::LayerProperties& layerProperties = *changedLayerProperties.get(layerID);
 
         ts << "\n";
         ts.increaseIndent();
@@ -640,10 +713,10 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<Graph
             dumpProperty<float>(ts, "opacity", layerProperties.opacity);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::TransformChanged)
-            dumpProperty<TransformationMatrix>(ts, "transform", layerProperties.transform);
+            dumpProperty<TransformationMatrix>(ts, "transform", layerProperties.transform ? *layerProperties.transform : TransformationMatrix());
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SublayerTransformChanged)
-            dumpProperty<TransformationMatrix>(ts, "sublayerTransform", layerProperties.sublayerTransform);
+            dumpProperty<TransformationMatrix>(ts, "sublayerTransform", layerProperties.sublayerTransform ? *layerProperties.sublayerTransform : TransformationMatrix());
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::HiddenChanged)
             dumpProperty<bool>(ts, "hidden", layerProperties.hidden);
@@ -682,10 +755,10 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<Graph
             dumpProperty<double>(ts, "timeOffset", layerProperties.timeOffset);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged)
-            dumpProperty<IntSize>(ts, "backingStore", layerProperties.backingStore.size());
+            dumpProperty<IntSize>(ts, "backingStore", layerProperties.backingStore ? layerProperties.backingStore->size() : IntSize());
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
-            dumpProperty<FilterOperations>(ts, "filters", layerProperties.filters);
+            dumpProperty<FilterOperations>(ts, "filters", layerProperties.filters ? *layerProperties.filters : FilterOperations());
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
             dumpProperty<unsigned>(ts, "edgeAntialiasingMask", layerProperties.edgeAntialiasingMask);

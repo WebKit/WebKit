@@ -92,6 +92,7 @@ public:
 
     struct LayerProperties {
         LayerProperties();
+        LayerProperties(const LayerProperties& other);
 
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, LayerProperties&);
@@ -106,32 +107,32 @@ public:
         LayerChange everChangedProperties;
 
         String name;
+        std::unique_ptr<WebCore::TransformationMatrix> transform;
+        std::unique_ptr<WebCore::TransformationMatrix> sublayerTransform;
         Vector<WebCore::GraphicsLayer::PlatformLayerID> children;
         WebCore::FloatPoint3D position;
-        WebCore::FloatSize size;
-        WebCore::Color backgroundColor;
         WebCore::FloatPoint3D anchorPoint;
+        WebCore::FloatSize size;
+        WebCore::FloatRect contentsRect;
+        std::unique_ptr<RemoteLayerBackingStore> backingStore;
+        std::unique_ptr<WebCore::FilterOperations> filters;
+        WebCore::GraphicsLayer::PlatformLayerID maskLayerID;
+        double timeOffset;
+        float speed;
+        float contentsScale;
         float borderWidth;
-        WebCore::Color borderColor;
         float opacity;
-        WebCore::TransformationMatrix transform;
-        WebCore::TransformationMatrix sublayerTransform;
+        WebCore::Color backgroundColor;
+        WebCore::Color borderColor;
+        unsigned edgeAntialiasingMask;
+        WebCore::GraphicsLayer::CustomAppearance customAppearance;
+        WebCore::PlatformCALayer::FilterType minificationFilter;
+        WebCore::PlatformCALayer::FilterType magnificationFilter;
         bool hidden;
         bool geometryFlipped;
         bool doubleSided;
         bool masksToBounds;
         bool opaque;
-        WebCore::GraphicsLayer::PlatformLayerID maskLayerID;
-        WebCore::FloatRect contentsRect;
-        float contentsScale;
-        WebCore::PlatformCALayer::FilterType minificationFilter;
-        WebCore::PlatformCALayer::FilterType magnificationFilter;
-        float speed;
-        double timeOffset;
-        RemoteLayerBackingStore backingStore;
-        WebCore::FilterOperations filters;
-        unsigned edgeAntialiasingMask;
-        WebCore::GraphicsLayer::CustomAppearance customAppearance;
     };
 
     explicit RemoteLayerTreeTransaction();
@@ -151,8 +152,11 @@ public:
     void dump() const;
 #endif
 
+    typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<LayerProperties>> LayerPropertiesMap;
+    
     Vector<LayerCreationProperties> createdLayers() const { return m_createdLayers; }
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, LayerProperties> changedLayers() const { return m_changedLayerProperties; }
+    const LayerPropertiesMap& changedLayers() const { return m_changedLayerProperties; }
+    LayerPropertiesMap& changedLayers() { return m_changedLayerProperties; }
     Vector<WebCore::GraphicsLayer::PlatformLayerID> destroyedLayers() const { return m_destroyedLayerIDs; }
 
     WebCore::IntSize contentsSize() const { return m_contentsSize; }
@@ -175,7 +179,7 @@ public:
 
 private:
     WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, LayerProperties> m_changedLayerProperties;
+    LayerPropertiesMap m_changedLayerProperties;
     Vector<LayerCreationProperties> m_createdLayers;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayerIDs;
     WebCore::IntSize m_contentsSize;

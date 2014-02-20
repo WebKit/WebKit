@@ -52,7 +52,7 @@ public:
     bool isDebugLayerTreeHost() const { return m_isDebugLayerTreeHost; }
 
 private:
-    CALayer *createLayer(RemoteLayerTreeTransaction::LayerCreationProperties);
+    CALayer *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
 
     CALayer *m_rootLayer;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<CALayer>> m_layers;

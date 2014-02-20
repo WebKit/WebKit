@@ -79,7 +79,7 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #endif
 }
 
-void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeTransaction::LayerProperties properties, RelatedLayerMap relatedLayers)
+void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
     if (properties.changedProperties & RemoteLayerTreeTransaction::NameChanged)
         layer.name = properties.name;
@@ -117,10 +117,10 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         layer.opacity = properties.opacity;
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::TransformChanged)
-        layer.transform = properties.transform;
+        layer.transform = properties.transform ? (CATransform3D)*properties.transform.get() : CATransform3DIdentity;
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::SublayerTransformChanged)
-        layer.sublayerTransform = properties.sublayerTransform;
+        layer.sublayerTransform = properties.sublayerTransform ? (CATransform3D)*properties.sublayerTransform.get() : CATransform3DIdentity;
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::HiddenChanged)
         layer.hidden = properties.hidden;
@@ -168,17 +168,17 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
 #if USE(IOSURFACE)
-        if (properties.backingStore.acceleratesDrawing())
-            layer.contents = (id)properties.backingStore.surface().get();
+        if (properties.backingStore->acceleratesDrawing())
+            layer.contents = (id)properties.backingStore->surface().get();
         else
 #else
-            ASSERT(!properties.backingStore.acceleratesDrawing());
+            ASSERT(!properties.backingStore || !properties.backingStore->acceleratesDrawing());
 #endif
-        layer.contents = (id)properties.backingStore.image().get();
+        layer.contents = properties.backingStore ? (id)properties.backingStore->image().get() : nil;
     }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
-        PlatformCAFilters::setFiltersOnLayer(layer, properties.filters);
+        PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations());
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
         layer.edgeAntialiasingMask = properties.edgeAntialiasingMask;

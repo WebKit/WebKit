@@ -39,6 +39,7 @@ class PlatformCALayerRemote : public WebCore::PlatformCALayer {
 public:
     static PassRefPtr<PlatformCALayerRemote> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
     static PassRefPtr<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
+    static PassRefPtr<PlatformCALayerRemote> create(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
 
     virtual ~PlatformCALayerRemote();
 
@@ -149,6 +150,7 @@ public:
 
 protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);
+    PlatformCALayerRemote(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
 
 private:
     virtual bool isPlatformCALayerRemote() const override { return true; }

@@ -68,7 +68,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 
     for (auto& changedLayer : transaction.changedLayers()) {
         auto layerID = changedLayer.key;
-        const auto& properties = changedLayer.value;
+        const RemoteLayerTreeTransaction::LayerProperties& properties = *changedLayer.value;
 
         CALayer *layer = getLayer(layerID);
         ASSERT(layer);
@@ -107,7 +107,7 @@ CALayer *RemoteLayerTreeHost::getLayer(GraphicsLayer::PlatformLayerID layerID) c
     return m_layers.get(layerID).get();
 }
 
-CALayer *RemoteLayerTreeHost::createLayer(RemoteLayerTreeTransaction::LayerCreationProperties properties)
+CALayer *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     RetainPtr<CALayer>& layer = m_layers.add(properties.layerID, nullptr).iterator->value;
 
