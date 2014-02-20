@@ -98,6 +98,14 @@ WebInspector.Rect.rectFromClientRect = function(clientRect)
     return new WebInspector.Rect(clientRect.left, clientRect.top, clientRect.width, clientRect.height);
 };
 
+WebInspector.Rect.unionOfRects = function(rects)
+{
+    var union = rects[0];
+    for (var i = 1; i < rects.length; ++i)
+        union = union.unionWithRect(rects[i]);
+    return union;
+};
+
 WebInspector.Rect.prototype = {
     constructor: WebInspector.Rect,
 
@@ -183,7 +191,16 @@ WebInspector.Rect.prototype = {
         intersection.size.height = y2 - y1;
         return intersection;
     },
-    
+
+    unionWithRect: function(rect)
+    {
+        var x = Math.min(this.minX(), rect.minX());
+        var y = Math.min(this.minY(), rect.minY());
+        var width = Math.max(this.maxX(), rect.maxX()) - x;
+        var height = Math.max(this.maxY(), rect.maxY()) - y;
+        return new WebInspector.Rect(x, y, width, height);
+    },
+
     round: function()
     {
         return new WebInspector.Rect(
@@ -263,3 +280,27 @@ WebInspector.Quad.prototype = {
         ];
     }
 };
+
+WebInspector.Polygon = function(points)
+{
+    this.points = points;
+}
+
+WebInspector.Polygon.prototype = {
+    constructor: WebInspector.Polygon,
+
+    bounds: function()
+    {
+        var minX = Number.MAX_VALUE;
+        var minY = Number.MAX_VALUE;
+        var maxX = -Number.MAX_VALUE;
+        var maxY = -Number.MAX_VALUE;
+        for (var point of this.points) {
+            minX = Math.min(minX, point.x);
+            maxX = Math.max(maxX, point.x);
+            minY = Math.min(minY, point.y);
+            maxY = Math.max(maxY, point.y);
+        }
+        return new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY);
+    }
+}

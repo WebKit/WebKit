@@ -71,6 +71,7 @@
 .hover-menu.color > img {
     width: 16px;
     height: 16px;
-    -webkit-transform: translateX(14px);
     content: -webkit-image-set(url(Images/ColorIcon.png) 1x, url(Images/ColorIcon@2x.png) 2x);
+    
+    -webkit-transform: translateY(1px);
 }

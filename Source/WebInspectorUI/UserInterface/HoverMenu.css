@@ -25,26 +25,8 @@
 
 .hover-menu {
     position: absolute;
-    display: -webkit-flex;
 
-    /* Exceptionally use content-box such that the frame set is that of the highlighted string
-       and styling adds the required padding around it */
-    box-sizing: content-box;
-
-    /* Position the icon to the right of the menu and centered vertically */
-    -webkit-justify-content: flex-end;
-    -webkit-align-items: center;
-
-    /* Provide extra room for the icon */
-    padding-left: 2px;
-    padding-right: 16px;
-
-    min-height: 17px;
-
-    border-radius: 4px;
-    border: 2px solid rgba(0, 0, 0, 0.22);
-    
-    -webkit-transform: translate3d(-3px, -5px, 0);
+    -webkit-transform: translate(-1px, -1px);
 
     pointer-events: none;
     opacity: 0;
@@ -56,10 +38,27 @@
     opacity: 1;
 }
 
+.hover-menu > svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.hover-menu > svg > path,
+.hover-menu > svg > rect {
+    stroke: rgba(0, 0, 0, 0.22);
+    stroke-width: 2px;
+    fill: none;
+}
+
 .hover-menu > img {
+    position: absolute;
+
+    left: 0;
+    top: 0;
     width: 15px;
     height: 13px;
-    -webkit-transform: translateX(14px);
+
     content: -webkit-image-set(url(Images/HoverMenuButton.png) 1x, url(Images/HoverMenuButton@2x.png) 2x);
 }
 

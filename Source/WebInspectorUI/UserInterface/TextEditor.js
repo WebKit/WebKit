@@ -597,9 +597,9 @@ WebInspector.TextEditor.prototype = {
         // Implemented by subclasses.
     },
 
-    boundsForRange: function(range)
+    rectsForRange: function(range)
     {
-        return this._codeMirror.boundsForRange(range);
+        return this._codeMirror.rectsForRange(range);
     },
 
     get markers()
@@ -616,14 +616,19 @@ WebInspector.TextEditor.prototype = {
         });
     },
 
-    createColorMarkers: function(lineNumber)
+    createColorMarkers: function(range)
     {
-        return this._codeMirror.createColorMarkers(lineNumber);
+        return this._codeMirror.createColorMarkers(range);
     },
 
-    colorEditingControllerForMarker: function(colorMarker)
+    editingControllerForMarker: function(editableMarker)
     {
-        return new WebInspector.CodeMirrorColorEditingController(this._codeMirror, colorMarker);
+        switch (editableMarker.type) {
+        case WebInspector.TextMarker.Type.Color:
+            return new WebInspector.CodeMirrorColorEditingController(this._codeMirror, editableMarker);
+        default:
+            return new WebInspector.CodeMirrorEditingController(this._codeMirror, editableMarker);
+        }
     },
 
     // Private

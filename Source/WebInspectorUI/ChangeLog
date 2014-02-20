@@ -1,5 +1,200 @@
 2014-02-20  Antoine Quint  <graouts@webkit.org>
 
+        Web Inspector: create a CodeMirrorEditingController superclass
+        https://bugs.webkit.org/show_bug.cgi?id=129094
+
+        Reviewed by Timothy Hatcher.
+
+        Take code that is generic to editing of any text marker out of CodeMirrorColorEditingController to
+        create a new CodeMirrorEditingController superclass that'll be fit to use for future editing controllers.
+        Additioanlly, we fix existing issues with such editing by supporting text markers spread across several
+        lines and more robustly handling the Esc. key being pressed to dismiss a controller's popover.
+
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches):
+        Adopt the new .createColorMarkers() method signature to provide a TextRange parameter rather than a single
+        line number.
+
+        * UserInterface/CodeMirrorAdditions.js:
+        Remove the .boundsForRange() method in favor of a .rectsForRange() method which will allow us to draw better
+        menus when hovering over a text range by providing tight bounds rather than a large box. We also handle any
+        line wrapping produced by CodeMirror and remove any leading white-space so that the rects are tight to the
+        actual characters in the text marker.
+
+        We also change .createColorMarkers() to take in a TextRange parameter rather than a line number in order to
+        better deal with text markers spread across multiple lines.
+
+        * UserInterface/CodeMirrorColorEditingController.js:
+        Remove any code that is adequate for any editing controller (which is moving to CodeMirrorEditingController).
+        We also adopt new interfaces exposed by CodeMirrorEditingController.
+
+        (WebInspector.CodeMirrorColorEditingController):
+        (WebInspector.CodeMirrorColorEditingController.prototype.get initialValue):
+        (WebInspector.CodeMirrorColorEditingController.prototype.get cssClassName):
+        (WebInspector.CodeMirrorColorEditingController.prototype.popoverWillPresent):
+        (WebInspector.CodeMirrorColorEditingController.prototype.popoverDidPresent):
+        (WebInspector.CodeMirrorColorEditingController.prototype._colorPickerColorChanged):
+
+        * UserInterface/CodeMirrorEditingController.js: Copied from Source/WebInspectorUI/UserInterface/CodeMirrorColorEditingController.js.
+        New class meant to be subclassed by any future editing controller, and already subclassed by
+        CodeMirrorColorEditingController. This class exposes several hooks for subclasses to customize its behavior:
+        
+        .initialValue: a value we can revert to if the editing is canceled
+        .cssClassName: a CSS class name that can be added to the editing controller's container
+        .popoverPreferredEdges: a list of preferredEdges as passed to Popover.prototype.present() with a sensible default
+        .popoverTargetFrameWithRects: a targetFrame passed to Popover.prototype.present(), defaults to a union of provided rects
+        .popoverWillPresent: called as the popover is about to be presented, typically overridden to set the popover's content
+        .popoverDidPresent: called as the popover just was presented, typically overridden when content needs to tuned only after
+        being added to the DOM and setting of the necessary machinery to update the serialized value in the editor based on interaction
+        within the popover without changing the serialized value upon showing the popover the very first time.
+        
+        Additionally, the .value property must be an object supporting .toString() and .copy() method.
+
+        Finally, the .editingControllerDidStartEditing() and .editingControllerDidFinishEditing() delegate methods are fired
+        as editing begins and finishes. 
+
+        (WebInspector.CodeMirrorEditingController):
+        (WebInspector.CodeMirrorEditingController.prototype.get marker):
+        (WebInspector.CodeMirrorEditingController.prototype.get range):
+        (WebInspector.CodeMirrorEditingController.prototype.get value):
+        (WebInspector.CodeMirrorEditingController.prototype.set value):
+        (WebInspector.CodeMirrorEditingController.prototype.get delegate):
+        (WebInspector.CodeMirrorEditingController.prototype.set delegate):
+        (WebInspector.CodeMirrorEditingController.prototype.get text):
+        (WebInspector.CodeMirrorEditingController.prototype.set text):
+        (WebInspector.CodeMirrorEditingController.prototype.get initialValue):
+        (WebInspector.CodeMirrorEditingController.prototype.get cssClassName):
+        (WebInspector.CodeMirrorEditingController.prototype.get popover):
+        (WebInspector.CodeMirrorEditingController.prototype.get popoverPreferredEdges):
+        (WebInspector.CodeMirrorEditingController.prototype.popoverTargetFrameWithRects):
+        (WebInspector.CodeMirrorEditingController.prototype.presentHoverMenu):
+        (WebInspector.CodeMirrorEditingController.prototype.dismissHoverMenu):
+        (WebInspector.CodeMirrorEditingController.prototype.popoverWillPresent):
+        (WebInspector.CodeMirrorEditingController.prototype.popoverDidPresent):
+
+        (WebInspector.CodeMirrorEditingController.prototype.handleKeydownEvent):
+        Event handler for keydown events as registered via the new WebInspector.addWindowKeydownListener() method.
+
+        (WebInspector.CodeMirrorEditingController.prototype.hoverMenuButtonWasPressed):
+        (WebInspector.CodeMirrorEditingController.prototype.didDismissPopover):
+
+        * UserInterface/Geometry.js:
+        (WebInspector.Rect.unionOfRects):
+        (WebInspector.Rect.prototype.unionWithRect):
+        New utilities to get a Rect that is the union of the provided Rect or array of Rects.
+
+        (WebInspector.Polygon):
+        (WebInspector.Polygon.prototype.bounds):
+        New class used to store a list of points for a polygon and get its bounds, used by the HoverMenu class.
+
+        * UserInterface/HoverMenu.css:
+        (.hover-menu):
+        (.hover-menu > svg):
+        (.hover-menu > svg > rect):
+        (.hover-menu > img):
+
+        * UserInterface/HoverMenu.js:
+        We remove the assumption that a HoverMenu is only used to draw a single rounded rect based on a simple
+        Rect and instead support presentation based on an array of Rects where we either:
+        
+        - draw a single rounded rectangle if there is only a single Rect provided
+        - draw two disconnected open-ended rects if we're provided with two non-overlapping Rects
+        - draw a polygon surrounding all provided Rects in all other cases
+
+        No matter how the HoverMenu is drawn, the drawing is performed in SVG with either <rect> or a <path> elements.
+
+        (WebInspector.HoverMenu):
+        (WebInspector.HoverMenu.prototype.present):
+        (WebInspector.HoverMenu.prototype.dismiss):
+        (WebInspector.HoverMenu.prototype.handleEvent):
+        (WebInspector.HoverMenu.prototype._handleClickEvent):
+        (WebInspector.HoverMenu.prototype._drawOutline):
+        (WebInspector.HoverMenu.prototype._addRect):
+        (WebInspector.HoverMenu.prototype._addPath):
+        (WebInspector.HoverMenu.prototype._drawSingleLine):
+        (WebInspector.HoverMenu.prototype._drawTwoNonOverlappingLines):
+        (WebInspector.HoverMenu.prototype._drawOverlappingLines):
+
+        * UserInterface/Main.html:
+        Link to the new CodeMirrorEditingController class.
+
+        * UserInterface/Main.js:
+        Expose a new mechanism to deal with window-level handling of keydown events in order to allow
+        a list of handlers to accept or reject dealing with the provided keydown event based on the order
+        they were registered, in most recent to oldest registered handler. This allows, for instance, for
+        a more graceful handling of the Esc. key being pressed in the CodeMirrorEditingController and
+        bypasses the DOM structure allowing for objects managing elements in different DOM hierarchies
+        to compete with handling of keydown events.
+
+        (WebInspector.loaded):
+        (WebInspector.addWindowKeydownListener):
+        (WebInspector.removeWindowKeydownListener):
+        (WebInspector._updateWindowKeydownListener):
+        (WebInspector._sharedWindowKeydownListener):
+
+        * UserInterface/SourceCodeTextEditor.css:
+        (.hover-menu.color > img):
+        Update the offset applied to a HoverMenu button based on the change of layout for such buttons which
+        are now absolutely positioned in code by HoverMenu rather than being laid out using the flex-box model.
+
+        * UserInterface/SourceCodeTextEditor.js:
+        Abstrct away the assumption that only a color editing controller may be used to edit text markers in
+        a source code text editor.
+
+        (WebInspector.SourceCodeTextEditor.prototype.hidden):
+        Ensure we remove any currently-displayed hover menu for an editing controller when the editor is hidden.
+        This would happen in the situation where a keyboard shortcut was used to jump to another part of the
+        Web Inspector UI without using the mouse.
+
+        (WebInspector.SourceCodeTextEditor.prototype.contentDidChange):
+        Since we're now working with text ranges rather than lines, remove the code where we'd work out a set of
+        changed lines and call ._updateEditableMarkers() with the changed range directly instead.
+
+        (WebInspector.SourceCodeTextEditor.prototype._contentDidPopulate):
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerNewHighlightCandidate):
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerMouseOutOfHoveredMarker):
+        Adopt the more generic method names rather than color-specific ones.
+
+        (WebInspector.SourceCodeTextEditor.prototype._showPopover):
+        When showing the popover outside of the use of a CodeMirrorEditingController, such as a JavaScript expression
+        when debugging, also deal with the possibility of the highlighted range containing multiple lines rather
+        than assume a single line.
+
+        (WebInspector.SourceCodeTextEditor.prototype._updateEditableMarkers):
+        More generic method name to support future, non-color editing controllers.
+
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedMarkedExpression):
+        Find the outermost marker in the list of markers provided such that a marker containing other markers
+        shows the UI for the containing marker. For instance, a gradient marker would contain several color
+        markers and it's preferable to show the editing UI for the whole gradient rather than a specific color.
+
+        Additionally, adopt more generic ivars and method names to support future, non-color editing controllers.
+
+        (WebInspector.SourceCodeTextEditor.prototype._dismissEditingController):
+        Support for new parameter instructing that the editing controller dismissal should be instant rather than
+        animated, which is the default. This is useful when, for instance, the text editor is cleared.
+
+        (WebInspector.SourceCodeTextEditor.prototype.editingControllerDidStartEditing):
+        (WebInspector.SourceCodeTextEditor.prototype.editingControllerDidFinishEditing):
+        Adopt the more generic method names rather than color-specific ones.
+
+        * UserInterface/TextEditor.js:
+        (WebInspector.TextEditor.prototype.rectsForRange):
+        Remove .boundsForRange() in favor of this new method where we return a series of rects so that we may
+        draw a more pleasing HoverMenu.
+
+        (WebInspector.TextEditor.prototype.createColorMarkers):
+        Use a TextRanger rather than a single line number to match the underlying CodeMirror extension method.
+
+        (WebInspector.TextEditor.prototype.editingControllerForMarker):
+        Use the provided TextMarker's type to provide the most adequate CodeMirrorEditingController class.
+
+        * UserInterface/TextMarker.js:
+        (WebInspector.TextMarker.prototype.get rects):
+        Remove the .bounds property in favor of .rects to match the underlying CodeMirror extension method.
+
+2014-02-20  Antoine Quint  <graouts@webkit.org>
+
         Web Inspector: Popover should animate its frame to display its refreshed content
         https://bugs.webkit.org/show_bug.cgi?id=129088
 

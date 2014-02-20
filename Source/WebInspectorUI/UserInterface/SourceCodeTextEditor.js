@@ -107,6 +107,8 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this.tokenTrackingController.removeHighlightedRange();
 
         this._dismissPopover();
+        
+        this._dismissEditingController(true);
     },
 
     close: function()
@@ -226,23 +228,8 @@ WebInspector.SourceCodeTextEditor.prototype = {
         if (this._ignoreContentDidChange > 0)
             return;
 
-        // Gather all lines containing new text.
-        var lines = new Set;
-        for (var range of newRanges) {
-            // If the range is on a single line, only add the line if the range is not empty.
-            if (range.startLine === range.endLine) {
-                if (range.endColumn > range.startColumn)
-                    lines.add(range.startLine);
-            } else {
-                // Only add the last line if the range has characters on this line.
-                for (var line = range.startLine; line < range.endLine || range.endColumn > 0; ++line)
-                    lines.add(line);
-            }
-        }
-
-        // Consider all new lines for new color markers.
-        for (var line of lines)
-            this._updateColorMarkers(line);
+        for (var range of newRanges)
+            this._updateEditableMarkers(range);
     },
 
     // Private
@@ -360,8 +347,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
             this._addIssue(issue);
         }
 
-        this._updateTokenTrackingControllerState();
-        this._updateColorMarkers();
+        this._updateEditableMarkers();
     },
 
     _populateWithContent: function(content)
@@ -1076,13 +1062,13 @@ WebInspector.SourceCodeTextEditor.prototype = {
             if (markers.length > 0)
                 this._tokenTrackingControllerHighlightedMarkedExpression(candidate, markers);
             else
-                this._dismissCodeMirrorColorEditingController();
+                this._dismissEditingController();
         }
     },
 
     tokenTrackingControllerMouseOutOfHoveredMarker: function(tokenTrackingController, hoveredMarker)
     {
-        this._dismissCodeMirrorColorEditingController();
+        this._dismissEditingController();
     },
 
     _tokenTrackingControllerHighlightedJavaScriptExpression: function(candidate)
@@ -1131,11 +1117,10 @@ WebInspector.SourceCodeTextEditor.prototype = {
         if (!candidate)
             return;
 
-        var bounds = this.boundsForRange(candidate.hoveredTokenRange);
-        if (!bounds)
-            return;
-
         content.classList.add(WebInspector.SourceCodeTextEditor.PopoverDebuggerContentStyleClassName);
+
+        var rects = this.rectsForRange(candidate.hoveredTokenRange);
+        var bounds = WebInspector.Rect.unionOfRects(rects);
 
         this._popover = this._popover || new WebInspector.Popover(this);
         this._popover.content = content;
@@ -1289,80 +1274,84 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this._mouseIsOverPopover = this._popover.element.contains(event.relatedTarget);
     },
 
-    _updateColorMarkers: function(lineNumber)
+    _updateEditableMarkers: function(range)
     {
-        this.createColorMarkers(lineNumber);
+        this.createColorMarkers(range);
 
         this._updateTokenTrackingControllerState();
     },
-    
+
     _tokenTrackingControllerHighlightedMarkedExpression: function(candidate, markers)
     {
-        var colorMarker;
+        // Look for the outermost editable marker.
+        var editableMarker;
         for (var marker of markers) {
-            if (marker.type === WebInspector.TextMarker.Type.Color) {
-                colorMarker = marker;
-                break;
-            }
+            if (!marker.range || marker.type !== WebInspector.TextMarker.Type.Color)
+                continue;
+
+            if (!editableMarker || (marker.range.startLine < editableMarker.range.startLine || (marker.range.startLine === editableMarker.range.startLine && marker.range.startColumn < editableMarker.range.startColumn)))
+                editableMarker = marker;
         }
 
-        if (!colorMarker) {
+        if (!editableMarker) {
             this.tokenTrackingController.hoveredMarker = null;
             return;
         }
 
-        if (this.tokenTrackingController.hoveredMarker === colorMarker)
+        if (this.tokenTrackingController.hoveredMarker === editableMarker)
             return;
 
-        this._dismissCodeMirrorColorEditingController();
+        this._dismissEditingController();
 
-        this.tokenTrackingController.hoveredMarker = colorMarker;
+        this.tokenTrackingController.hoveredMarker = editableMarker;
 
-        this._colorEditingController = this.colorEditingControllerForMarker(colorMarker);
+        this._editingController = this.editingControllerForMarker(editableMarker);
 
-        var color = this._colorEditingController.color;
-        if (!color || !color.valid) {
-            colorMarker.clear();
-            delete this._colorEditingController;
-            return;
+        if (marker.type === WebInspector.TextMarker.Type.Color) {
+            var color = this._editingController.value;
+            if (!color || !color.valid) {
+                editableMarker.clear();
+                delete this._editingController;
+                return;
+            }
         }
 
-        this._colorEditingController.delegate = this;
-        this._colorEditingController.presentHoverMenu();
+        this._editingController.delegate = this;
+        this._editingController.presentHoverMenu();
     },
 
-    _dismissCodeMirrorColorEditingController: function()
+    _dismissEditingController: function(discrete)
     {
-        if (this._colorEditingController)
-            this._colorEditingController.dismissHoverMenu();
+        if (this._editingController)
+            this._editingController.dismissHoverMenu(discrete);
         
         this.tokenTrackingController.hoveredMarker = null;
-        delete this._colorEditingController;
+        delete this._editingController;
     },
 
-    // CodeMirrorColorEditingController Delegate
+    // CodeMirrorEditingController Delegate
     
-    colorEditingControllerDidStartEditing: function(colorEditingController)
+    editingControllerDidStartEditing: function(editingController)
     {
         // We can pause the token tracking controller during editing, it will be reset
-        // to the expected state by calling _updateColorMarkers() in the
-        // colorEditingControllerDidFinishEditing delegate.
+        // to the expected state by calling _updateEditableMarkers() in the
+        // editingControllerDidFinishEditing delegate.
         this.tokenTrackingController.enabled = false;
 
         // We clear the marker since we'll reset it after editing.
-        colorEditingController.marker.clear();
+        editingController.marker.clear();
         
         // We ignore content changes made as a result of color editing.
         this._ignoreContentDidChange++;
     },
     
-    colorEditingControllerDidFinishEditing: function(colorEditingController)
+    editingControllerDidFinishEditing: function(editingController)
     {
-        this._updateColorMarkers(colorEditingController.range.startLine);
+        this._updateEditableMarkers(editingController.range);
 
         this._ignoreContentDidChange--;
 
-        delete this._colorEditingController;
+        delete this._editingController;
     }
 };
 

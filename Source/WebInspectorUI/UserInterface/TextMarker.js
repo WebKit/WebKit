@@ -67,12 +67,12 @@ WebInspector.TextMarker.prototype = {
         return new WebInspector.TextRange(range.from.line, range.from.ch, range.to.line, range.to.ch);
     },
 
-    get bounds()
+    get rects()
     {
         var range = this._codeMirrorTextMarker.find();
         if (!range)
             return WebInspector.Rect.ZERO_RECT;
-        return this._codeMirrorTextMarker.doc.cm.boundsForRange({
+        return this._codeMirrorTextMarker.doc.cm.rectsForRange({
             start: range.from,
             end: range.to
         });

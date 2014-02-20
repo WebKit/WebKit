@@ -175,6 +175,8 @@ WebInspector.loaded = function()
         x: 0,
         y: 0
     };
+
+    this._windowKeydownListeners = [];
 }
 
 WebInspector.contentLoaded = function()
@@ -1785,3 +1787,39 @@ WebInspector.canArchiveMainFrame = function()
 
     return WebInspector.Resource.Type.fromMIMEType(WebInspector.frameResourceManager.mainFrame.mainResource.mimeType) === WebInspector.Resource.Type.Document;
 }
+
+WebInspector.addWindowKeydownListener = function(listener)
+{
+    if (typeof listener.handleKeydownEvent !== "function")
+        return;
+    
+    this._windowKeydownListeners.push(listener);
+
+    this._updateWindowKeydownListener();
+};
+
+WebInspector.removeWindowKeydownListener = function(listener)
+{
+    this._windowKeydownListeners.remove(listener);
+    
+    this._updateWindowKeydownListener();
+};
+
+WebInspector._updateWindowKeydownListener = function()
+{
+    if (this._windowKeydownListeners.length > 0)
+        window.addEventListener("keydown", WebInspector._sharedWindowKeydownListener, true);
+    else
+        window.removeEventListener("keydown", WebInspector._sharedWindowKeydownListener, true);
+}
+
+WebInspector._sharedWindowKeydownListener = function(event)
+{
+    for (var i = WebInspector._windowKeydownListeners.length - 1; i >= 0; --i) {
+        if (WebInspector._windowKeydownListeners[i].handleKeydownEvent(event)) {
+            event.stopImmediatePropagation();
+            event.preventDefault();
+            break;
+        }
+    }
+};

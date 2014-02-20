@@ -390,8 +390,10 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
     {
         function update()
         {
+            var range = typeof lineNumber === "number" ? new WebInspector.TextRange(lineNumber, 0, lineNumber + 1, 0) : null;
+
             // Look for color strings and add swatches in front of them.
-            this._codeMirror.createColorMarkers(lineNumber, function(marker, color, colorString) {
+            this._codeMirror.createColorMarkers(range, function(marker, color, colorString) {
                 var swatchElement = document.createElement("span");
                 swatchElement.title = WebInspector.UIString("Click to open a colorpicker. Shift-click to change color format.");
                 swatchElement.className = WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName;

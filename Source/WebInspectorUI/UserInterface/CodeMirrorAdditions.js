@@ -418,17 +418,50 @@
             return CodeMirror.Pass;
     }
 
-    CodeMirror.defineExtension("boundsForRange", function(range) {
-        var firstCharCoords = this.cursorCoords(range.start);
-        var lastCharCoords = this.cursorCoords(range.end);
-        return new WebInspector.Rect(firstCharCoords.left, firstCharCoords.top, lastCharCoords.right - firstCharCoords.left, firstCharCoords.bottom - firstCharCoords.top);
+    CodeMirror.defineExtension("rectsForRange", function(range) {
+        var lineRects = [];
+
+        for (var line = range.start.line; line <= range.end.line; ++line) {
+            var lineContent = this.getLine(line);
+
+            var startChar = line === range.start.line ? range.start.ch : (lineContent.length - lineContent.trimLeft().length);
+            var endChar = line === range.end.line ? range.end.ch : lineContent.length;
+            var firstCharCoords = this.cursorCoords({ch: startChar, line: line});
+            var endCharCoords = this.cursorCoords({ch: endChar, line: line});
+
+            // Handle line wrapping.
+            if (firstCharCoords.bottom !== endCharCoords.bottom) {
+                var maxY = -Number.MAX_VALUE;
+                for (var ch = startChar; ch <= endChar; ++ch) {
+                    var coords = this.cursorCoords({ch: ch, line: line});
+                    if (coords.bottom > maxY) {
+                        if (ch > startChar) {
+                            var maxX = Math.ceil(this.cursorCoords({ch: ch - 1, line: line}).right);
+                            lineRects.push(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
+                        }
+                        var minX = Math.floor(coords.left);
+                        var minY = Math.floor(coords.top)
+                        maxY = Math.ceil(coords.bottom);
+                    }
+                }
+                maxX = Math.ceil(coords.right);
+                lineRects.push(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
+            } else {
+                var minX = Math.floor(firstCharCoords.left);
+                var minY = Math.floor(firstCharCoords.top);
+                var maxX = Math.ceil(endCharCoords.right);
+                var maxY = Math.ceil(endCharCoords.bottom);
+                lineRects.push(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
+            }
+        }
+        return lineRects;
     });
 
-    CodeMirror.defineExtension("createColorMarkers", function(lineNumber, callback) {
+    CodeMirror.defineExtension("createColorMarkers", function(range, callback) {
         var createdMarkers = [];
 
-        var start = typeof lineNumber === "number" ? lineNumber : 0;
-        var end = typeof lineNumber === "number" ? lineNumber + 1 : this.lineCount();
+        var start = range instanceof WebInspector.TextRange ? range.startLine : 0;
+        var end = range instanceof WebInspector.TextRange ? range.endLine + 1 : this.lineCount();
 
         // Matches rgba(0, 0, 0, 0.5), rgb(0, 0, 0), hsl(), hsla(), #fff, #ffffff, white
         const colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|\b\w+\b(?![-.]))/g;
