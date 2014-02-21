@@ -1,3 +1,17 @@
+2014-02-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Update the visible content rects on zoom
+        https://bugs.webkit.org/show_bug.cgi?id=129174
+
+        Reviewed by Simon Fraser.
+
+        Generalize _updateVisibleContentRects to also act during the zoom and not only at the end.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewDidZoom:]):
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView scrollViewDidZoom:]):
+
 2014-02-21  Benjamin Poulain  <benjamin@webkit.org>
 
         jsDocumentPrototypeFunctionGetElementById should not create an AtomicString for the function argument

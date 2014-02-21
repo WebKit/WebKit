@@ -386,6 +386,11 @@
     [self _updateVisibleContentRects];
 }
 
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView
+{
+    [self _updateVisibleContentRects];
+}
+
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
     ASSERT(scrollView == _scrollView);
