@@ -1,3 +1,32 @@
+2014-02-20  David Kilzer  <ddkilzer@apple.com>
+
+        Stop generating Objective-C bindings for the SVG DOM
+        <http://webkit.org/b/129107>
+
+        Reviewed by Timothy Hatcher.
+
+        Bug 114076 stopped compiling the Objective-C bindings for the
+        SVG DOM, but we continued to generate the header and source
+        files after that landed in r147822.  This patch also stops
+        generating the unused header and source files.
+
+        * DerivedSources.make:
+        - Split BINDING_IDLS into NON_SVG_BINDING_IDLS and
+          SVG_BINDING_IDLS so that they may operated on separately.
+        - Define BINDING_IDLS again as the full list of IDL files.
+        - Rename DOM_CLASSES to JS_DOM_CLASSES so that JavaScript
+          bindings are still generated for all IDL files.
+        - Add OBJC_DOM_CLASSES so that Objective-C bindings are only
+          generated for non-SVG IDL files.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GetBaseClass):
+        (GetPropertyAttributes):
+        (AddIncludesForType):
+        (GenerateHeader):
+        (GenerateImplementation):
+        - Remove support for SVG classes.
+
 2014-02-20  Simon Fraser  <simon.fraser@apple.com>
 
         RenderBox::updateShapeOutsideInfoAfterStyleChange shows up on profiles
