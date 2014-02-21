@@ -29,9 +29,9 @@
 
 #include "WebGLFramebuffer.h"
 
-#include "EXTDrawBuffers.h"
 #include "Extensions3D.h"
 #include "WebGLContextGroup.h"
+#include "WebGLDrawBuffers.h"
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
@@ -601,7 +601,7 @@ void WebGLFramebuffer::drawBuffers(const Vector<GC3Denum>& bufs)
 
 void WebGLFramebuffer::drawBuffersIfNecessary(bool force)
 {
-    if (!context()->m_extDrawBuffers)
+    if (!context()->m_webglDrawBuffers)
         return;
     bool reset = force;
     // This filtering works around graphics driver bugs on Mac OS X.

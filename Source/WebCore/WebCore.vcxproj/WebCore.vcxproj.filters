@@ -6463,6 +6463,9 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLDepthTexture.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLDrawBuffers.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLFramebuffer.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -6494,9 +6497,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSANGLEInstancedArrays.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTDrawBuffers.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTTextureFilterAnisotropic.cpp">
@@ -6557,6 +6557,9 @@
       <Filter>html\canvas</Filter>
     </ClCompile>
     <ClCompile Include="..\html\canvas\WebGLDepthTexture.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLDrawBuffers.cpp">
       <Filter>html\canvas</Filter>
     </ClCompile>
     <ClCompile Include="..\html\canvas\WebGLExtension.cpp">
@@ -6620,9 +6623,6 @@
       <Filter>html\canvas</Filter>
     </ClCompile>
     <ClCompile Include="..\html\canvas\OESVertexArrayObject.cpp">
-      <Filter>html\canvas</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\canvas\EXTDrawBuffers.cpp">
       <Filter>html\canvas</Filter>
     </ClCompile>
     <ClCompile Include="..\html\canvas\EXTTextureFilterAnisotropic.cpp">
@@ -14224,6 +14224,9 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLDepthTexture.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLDrawBuffers.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLFramebuffer.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -14252,9 +14255,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLVertexArrayObjectOES.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTDrawBuffers.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTTextureFilterAnisotropic.h">
@@ -14323,6 +14323,9 @@
     <ClInclude Include="..\html\canvas\WebGLDepthTexture.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLDrawBuffers.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
     <ClInclude Include="..\html\canvas\WebGLExtension.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
@@ -14384,9 +14387,6 @@
       <Filter>html\canvas</Filter>
     </ClInclude>
     <ClInclude Include="..\html\canvas\OESVertexArrayObject.h">
-      <Filter>html\canvas</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\canvas\EXTDrawBuffers.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
     <ClInclude Include="..\html\canvas\EXTTextureFilterAnisotropic.h">

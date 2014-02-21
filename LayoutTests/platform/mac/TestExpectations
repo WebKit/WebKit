@@ -946,6 +946,9 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 # Expected to fail until WebGL extension implementation lands
 webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
 
+# Expected to fail until GL_EXT_draw_buffers works properly for DARWIN. See WebGLDrawBuffers::supported
+webkit.org/b/112486 fast/canvas/webgl/webgl-draw-buffers.html [ Failure Pass ]
+
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 

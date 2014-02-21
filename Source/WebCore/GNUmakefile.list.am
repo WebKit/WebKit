@@ -236,8 +236,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSEntityReference.h \
 	DerivedSources/WebCore/JSErrorEvent.cpp \
 	DerivedSources/WebCore/JSErrorEvent.h \
-	DerivedSources/WebCore/JSEXTDrawBuffers.cpp \
-	DerivedSources/WebCore/JSEXTDrawBuffers.h \
 	DerivedSources/WebCore/JSEXTTextureFilterAnisotropic.cpp \
 	DerivedSources/WebCore/JSEXTTextureFilterAnisotropic.h \
 	DerivedSources/WebCore/JSEvent.cpp \
@@ -771,6 +769,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLDebugShaders.h \
 	DerivedSources/WebCore/JSWebGLDepthTexture.cpp \
 	DerivedSources/WebCore/JSWebGLDepthTexture.h \
+	DerivedSources/WebCore/JSWebGLDrawBuffers.cpp \
+	DerivedSources/WebCore/JSWebGLDrawBuffers.h \
 	DerivedSources/WebCore/JSWebGLFramebuffer.cpp \
 	DerivedSources/WebCore/JSWebGLFramebuffer.h \
 	DerivedSources/WebCore/JSWebGLLoseContext.cpp \
@@ -1511,7 +1511,6 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/CanvasRenderingContext.idl \
 	$(WebCore)/html/canvas/CanvasRenderingContext2D.idl \
 	$(WebCore)/html/canvas/DOMPath.idl \
-	$(WebCore)/html/canvas/EXTDrawBuffers.idl \
 	$(WebCore)/html/canvas/EXTTextureFilterAnisotropic.idl \
 	$(WebCore)/html/canvas/OESStandardDerivatives.idl \
 	$(WebCore)/html/canvas/OESTextureFloat.idl \
@@ -1530,6 +1529,7 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLDebugRendererInfo.idl \
 	$(WebCore)/html/canvas/WebGLDebugShaders.idl \
 	$(WebCore)/html/canvas/WebGLDepthTexture.idl \
+	$(WebCore)/html/canvas/WebGLDrawBuffers.idl \
 	$(WebCore)/html/canvas/WebGLFramebuffer.idl \
 	$(WebCore)/html/canvas/WebGLLoseContext.idl \
 	$(WebCore)/html/canvas/WebGLProgram.idl \
@@ -3247,8 +3247,6 @@ webcore_sources += \
 	Source/WebCore/html/canvas/CanvasStyle.cpp \
 	Source/WebCore/html/canvas/CanvasStyle.h \
 	Source/WebCore/html/canvas/DOMPath.h \
-	Source/WebCore/html/canvas/EXTDrawBuffers.cpp \
-	Source/WebCore/html/canvas/EXTDrawBuffers.h \
 	Source/WebCore/html/canvas/EXTTextureFilterAnisotropic.cpp \
 	Source/WebCore/html/canvas/EXTTextureFilterAnisotropic.h \
 	Source/WebCore/html/canvas/OESStandardDerivatives.cpp \
@@ -3288,6 +3286,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLDebugShaders.h \
 	Source/WebCore/html/canvas/WebGLDepthTexture.cpp \
 	Source/WebCore/html/canvas/WebGLDepthTexture.h \
+	Source/WebCore/html/canvas/WebGLDrawBuffers.cpp \
+	Source/WebCore/html/canvas/WebGLDrawBuffers.h \
 	Source/WebCore/html/canvas/WebGLFramebuffer.cpp \
 	Source/WebCore/html/canvas/WebGLFramebuffer.h \
 	Source/WebCore/html/canvas/WebGLGetInfo.cpp \

@@ -42,7 +42,6 @@
 namespace WebCore {
 
 class ANGLEInstancedArrays;
-class EXTDrawBuffers;
 class EXTTextureFilterAnisotropic;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -67,6 +66,7 @@ class WebGLContextAttributes;
 class WebGLDebugRendererInfo;
 class WebGLDebugShaders;
 class WebGLDepthTexture;
+class WebGLDrawBuffers;
 class WebGLExtension;
 class WebGLFramebuffer;
 class WebGLLoseContext;
@@ -328,7 +328,7 @@ public:
     void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
 private:
-    friend class EXTDrawBuffers;
+    friend class WebGLDrawBuffers;
     friend class WebGLFramebuffer;
     friend class WebGLObject;
     friend class OESVertexArrayObject;
@@ -533,7 +533,6 @@ private:
     bool isContextLostOrPending();
 
     // Enabled extension objects.
-    OwnPtr<EXTDrawBuffers> m_extDrawBuffers;
     OwnPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
     OwnPtr<OESTextureFloat> m_oesTextureFloat;
     OwnPtr<OESTextureFloatLinear> m_oesTextureFloatLinear;
@@ -549,6 +548,7 @@ private:
     OwnPtr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;
     OwnPtr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
     OwnPtr<WebGLDepthTexture> m_webglDepthTexture;
+    OwnPtr<WebGLDrawBuffers> m_webglDrawBuffers;
     OwnPtr<ANGLEInstancedArrays> m_angleInstancedArrays;
 
     // Helpers for getParameter and others

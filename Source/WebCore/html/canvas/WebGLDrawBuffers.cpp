@@ -26,34 +26,33 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
-
-#include "EXTDrawBuffers.h"
+#include "WebGLDrawBuffers.h"
 
 #include "Extensions3D.h"
 
 namespace WebCore {
 
-EXTDrawBuffers::EXTDrawBuffers(WebGLRenderingContext* context)
+WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
 }
 
-EXTDrawBuffers::~EXTDrawBuffers()
+WebGLDrawBuffers::~WebGLDrawBuffers()
 {
 }
 
-WebGLExtension::ExtensionName EXTDrawBuffers::getName() const
+WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
 {
-    return WebGLExtension::EXTDrawBuffersName;
+    return WebGLExtension::WebGLDrawBuffersName;
 }
 
-OwnPtr<EXTDrawBuffers> EXTDrawBuffers::create(WebGLRenderingContext* context)
+OwnPtr<WebGLDrawBuffers> WebGLDrawBuffers::create(WebGLRenderingContext* context)
 {
-    return adoptPtr(new EXTDrawBuffers(context));
+    return adoptPtr(new WebGLDrawBuffers(context));
 }
 
 // static
-bool EXTDrawBuffers::supported(WebGLRenderingContext* context)
+bool WebGLDrawBuffers::supported(WebGLRenderingContext* context)
 {
 #if OS(DARWIN)
     // https://bugs.webkit.org/show_bug.cgi?id=112486
@@ -64,7 +63,7 @@ bool EXTDrawBuffers::supported(WebGLRenderingContext* context)
         && satisfiesWebGLRequirements(context));
 }
 
-void EXTDrawBuffers::drawBuffersEXT(const Vector<GC3Denum>& buffers)
+void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GC3Denum>& buffers)
 {
     if (m_context->isContextLost())
         return;
@@ -72,11 +71,11 @@ void EXTDrawBuffers::drawBuffersEXT(const Vector<GC3Denum>& buffers)
     const GC3Denum* bufs = buffers.data();
     if (!m_context->m_framebufferBinding) {
         if (n != 1) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffersEXT", "more than one buffer");
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffersWEBGL", "more than one buffer");
             return;
         }
         if (bufs[0] != GraphicsContext3D::BACK && bufs[0] != GraphicsContext3D::NONE) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawBuffersEXT", "BACK or NONE");
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawBuffersWEBGL", "BACK or NONE");
             return;
         }
         // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
@@ -85,12 +84,12 @@ void EXTDrawBuffers::drawBuffersEXT(const Vector<GC3Denum>& buffers)
         m_context->setBackDrawBuffer(bufs[0]);
     } else {
         if (n > m_context->getMaxDrawBuffers()) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffersEXT", "more than max draw buffers");
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffersWEBGL", "more than max draw buffers");
             return;
         }
         for (GC3Dsizei i = 0; i < n; ++i) {
             if (bufs[i] != GraphicsContext3D::NONE && bufs[i] != static_cast<GC3Denum>(Extensions3D::COLOR_ATTACHMENT0_EXT + i)) {
-                m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawBuffersEXT", "COLOR_ATTACHMENTi_EXT or NONE");
+                m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawBuffersWEBGL", "COLOR_ATTACHMENTi_EXT or NONE");
                 return;
             }
         }
@@ -99,7 +98,7 @@ void EXTDrawBuffers::drawBuffersEXT(const Vector<GC3Denum>& buffers)
 }
 
 // static
-bool EXTDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContext* webglContext)
+bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContext* webglContext)
 {
     GraphicsContext3D* context = webglContext->graphicsContext3D();
 

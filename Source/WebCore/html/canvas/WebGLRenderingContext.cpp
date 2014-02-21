@@ -33,7 +33,6 @@
 #include "CachedImage.h"
 #include "DOMWindow.h"
 #include "Document.h"
-#include "EXTDrawBuffers.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "ExceptionCode.h"
 #include "Extensions3D.h"
@@ -71,6 +70,7 @@
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
 #include "WebGLDepthTexture.h"
+#include "WebGLDrawBuffers.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLLoseContext.h"
 #include "WebGLProgram.h"
@@ -2478,12 +2478,12 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         }
         return m_webglDepthTexture.get();
     }
-    if (equalIgnoringCase(name, "EXT_draw_buffers") && supportsDrawBuffers()) {
-        if (!m_extDrawBuffers) {
+    if (equalIgnoringCase(name, "WEBGL_draw_buffers") && supportsDrawBuffers()) {
+        if (!m_webglDrawBuffers) {
             m_context->getExtensions()->ensureEnabled("GL_EXT_draw_buffers");
-            m_extDrawBuffers = EXTDrawBuffers::create(this);
+            m_webglDrawBuffers = WebGLDrawBuffers::create(this);
         }
-        return m_extDrawBuffers.get();
+        return m_webglDrawBuffers.get();
     }
     if (equalIgnoringCase(name, "ANGLE_instanced_arrays") && ANGLEInstancedArrays::supported(this)) {
         if (!m_angleInstancedArrays) {
@@ -2774,17 +2774,17 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
         return WebGLGetInfo();
     case Extensions3D::MAX_COLOR_ATTACHMENTS_EXT: // EXT_draw_buffers BEGIN
-        if (m_extDrawBuffers)
+        if (m_webglDrawBuffers)
             return WebGLGetInfo(getMaxColorAttachments());
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_draw_buffers not enabled");
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_draw_buffers not enabled");
         return WebGLGetInfo();
     case Extensions3D::MAX_DRAW_BUFFERS_EXT:
-        if (m_extDrawBuffers)
+        if (m_webglDrawBuffers)
             return WebGLGetInfo(getMaxDrawBuffers());
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_draw_buffers not enabled");
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_draw_buffers not enabled");
         return WebGLGetInfo();
     default:
-        if (m_extDrawBuffers
+        if (m_webglDrawBuffers
             && pname >= Extensions3D::DRAW_BUFFER0_EXT
             && pname < static_cast<GC3Denum>(Extensions3D::DRAW_BUFFER0_EXT + getMaxDrawBuffers())) {
             GC3Dint value = GraphicsContext3D::NONE;
@@ -3005,7 +3005,7 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     if (WebGLDepthTexture::supported(graphicsContext3D()))
         result.append("WEBGL_depth_texture");
     if (supportsDrawBuffers())
-        result.append("EXT_draw_buffers");
+        result.append("WEBGL_draw_buffers");
     if (ANGLEInstancedArrays::supported(this))
         result.append("ANGLE_instanced_arrays");
 
@@ -5491,7 +5491,7 @@ bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functi
     case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
         break;
     default:
-        if (m_extDrawBuffers
+        if (m_webglDrawBuffers
             && attachment > GraphicsContext3D::COLOR_ATTACHMENT0
             && attachment < static_cast<GC3Denum>(GraphicsContext3D::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
             break;
@@ -6080,7 +6080,7 @@ bool WebGLRenderingContext::supportsDrawBuffers()
 {
     if (!m_drawBuffersWebGLRequirementsChecked) {
         m_drawBuffersWebGLRequirementsChecked = true;
-        m_drawBuffersSupported = EXTDrawBuffers::supported(this);
+        m_drawBuffersSupported = WebGLDrawBuffers::supported(this);
     }
     return m_drawBuffersSupported;
 }

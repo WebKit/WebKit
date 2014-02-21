@@ -1,3 +1,49 @@
+2014-02-20  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Rename EXT_draw_buffers to WEBGL_draw_buffers
+        https://bugs.webkit.org/show_bug.cgi?id=128894
+
+        Reviewed by Dean Jackson.
+
+        I noticed the related spec has changed. Accordingly chromium also changed its implementation
+        to meet the spec. So here I'd like to apply it to webkit as well.
+
+        Merged from Blink (patch by bajones):
+        https://src.chromium.org/viewvc/blink?revision=152065&view=revision
+
+        Test: fast/canvas/webgl/webgl-draw-buffers.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * html/canvas/EXTDrawBuffers.idl: Removed.
+        * html/canvas/WebGLDrawBuffers.cpp: Renamed from Source/WebCore/html/canvas/EXTDrawBuffers.cpp.
+        (WebCore::WebGLDrawBuffers::WebGLDrawBuffers):
+        (WebCore::WebGLDrawBuffers::~WebGLDrawBuffers):
+        (WebCore::WebGLDrawBuffers::getName):
+        (WebCore::WebGLDrawBuffers::create):
+        (WebCore::WebGLDrawBuffers::supported):
+        (WebCore::WebGLDrawBuffers::drawBuffersWEBGL):
+        (WebCore::WebGLDrawBuffers::satisfiesWebGLRequirements):
+        * html/canvas/WebGLDrawBuffers.h: Renamed from Source/WebCore/html/canvas/EXTDrawBuffers.h.
+        * html/canvas/WebGLDrawBuffers.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::drawBuffersIfNecessary):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::validateFramebufferFuncParameters):
+        (WebCore::WebGLRenderingContext::supportsDrawBuffers):
+        * html/canvas/WebGLRenderingContext.h:
+
 2014-02-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         m_ancestorDisabledState should never be unknown

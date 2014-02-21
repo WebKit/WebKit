@@ -23,31 +23,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXTDrawBuffers_h
-#define EXTDrawBuffers_h
+#ifndef WebGLDrawBuffers_h
+#define WebGLDrawBuffers_h
 
 #include "WebGLExtension.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class EXTDrawBuffers : public WebGLExtension {
+class WebGLDrawBuffers : public WebGLExtension {
 public:
-    static OwnPtr<EXTDrawBuffers> create(WebGLRenderingContext*);
+    static OwnPtr<WebGLDrawBuffers> create(WebGLRenderingContext*);
 
     static bool supported(WebGLRenderingContext*);
 
-    virtual ~EXTDrawBuffers();
+    virtual ~WebGLDrawBuffers();
     virtual ExtensionName getName() const override;
 
-    void drawBuffersEXT(const Vector<GC3Denum>& buffers);
+    void drawBuffersWEBGL(const Vector<GC3Denum>& buffers);
 
 private:
-    EXTDrawBuffers(WebGLRenderingContext*);
+    WebGLDrawBuffers(WebGLRenderingContext*);
 
     static bool satisfiesWebGLRequirements(WebGLRenderingContext*);
 };
 
 } // namespace WebCore
 
-#endif // EXTDrawBuffers_h
+#endif // WebGLDrawBuffers_h

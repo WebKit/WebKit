@@ -297,6 +297,71 @@ var setupColorQuad = function(gl, opt_positionLocation) {
 };
 
 /**
+ * Creates a program, attaches shaders, binds attrib locations, links the
+ * program and calls useProgram.
+ * @param {!WebGLRenderingContext} gl The WebGLRenderingContext to use.
+ * @param {!Array.<!WebGLShader|string>} shaders The shaders to
+ *        attach, or the source, or the id of a script to get
+ *        the source from.
+ * @param {!Array.<string>} opt_attribs The attribs names.
+ * @param {!Array.<number>} opt_locations The locations for the attribs.
+ */
+var setupProgram = function(gl, shaders, opt_attribs, opt_locations) {
+  var realShaders = [];
+  var program = gl.createProgram();
+  var shaderCount = 0;
+  for (var ii = 0; ii < shaders.length; ++ii) {
+    var shader = shaders[ii];
+    var shaderType = undefined;
+    if (typeof shader == 'string') {
+      var element = document.getElementById(shader);
+      if (element) {
+        if (element.type != "x-shader/x-vertex" && element.type != "x-shader/x-fragment")
+          shaderType = ii ? gl.FRAGMENT_SHADER : gl.VERTEX_SHADER;
+        shader = loadShaderFromScript(gl, shader, shaderType);
+      } else if (endsWith(shader, ".vert")) {
+        shader = loadShaderFromFile(gl, shader, gl.VERTEX_SHADER);
+      } else if (endsWith(shader, ".frag")) {
+        shader = loadShaderFromFile(gl, shader, gl.FRAGMENT_SHADER);
+      } else {
+        shader = loadShader(gl, shader, ii ? gl.FRAGMENT_SHADER : gl.VERTEX_SHADER);
+      }
+    }
+    if (shader) {
+      ++shaderCount;
+      gl.attachShader(program, shader);
+    }
+  }
+  if (shaderCount != 2) {
+    error("Error in compiling shader");
+    return null;
+  }
+  if (opt_attribs) {
+    for (var ii = 0; ii < opt_attribs.length; ++ii) {
+      gl.bindAttribLocation(
+          program,
+          opt_locations ? opt_locations[ii] : ii,
+          opt_attribs[ii]);
+    }
+  }
+  gl.linkProgram(program);
+
+  // Check the link status
+  var linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+  if (!linked) {
+      // something went wrong with the link
+      lastError = gl.getProgramInfoLog (program);
+      error("Error in program linking:" + lastError);
+
+      gl.deleteProgram(program);
+      return null;
+  }
+
+  gl.useProgram(program);
+  return program;
+};
+
+/**
  * Creates a unit quad with only positions of a given rez
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {number} gridRez The resolution of the mesh grid.
@@ -572,6 +637,32 @@ var drawQuad = function(gl, opt_color) {
       opt_color[3] / 255);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.drawArrays(gl.TRIANGLES, 0, 6);
+};
+
+/**
+ * Draws a previously setupUnitQuad.
+ * @param {!WebGLRenderingContext} gl The WebGLRenderingContext to use.
+ */
+var drawUnitQuad = function(gl) {
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+};
+
+/**
+ * Clears then Draws a previously setupUnitQuad.
+ * @param {!WebGLRenderingContext} gl The WebGLRenderingContext to use.
+ * @param {!Array.<number>} opt_color The color to fill clear with before
+ *        drawing. A 4 element array where each element is in the range 0 to
+ *        255. Default [255, 255, 255, 255]
+ */
+var clearAndDrawUnitQuad = function(gl, opt_color) {
+  opt_color = opt_color || [255, 255, 255, 255];
+  gl.clearColor(
+      opt_color[0] / 255,
+      opt_color[1] / 255,
+      opt_color[2] / 255,
+      opt_color[3] / 255);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  drawUnitQuad(gl);
 };
 
 /**
@@ -1248,6 +1339,19 @@ var loadShaderFromFile = function(gl, file, type, opt_errorCallback) {
 };
 
 /**
+ * Gets the content of script.
+ * @param {string} scriptId The id of the script tag.
+ * @return {string} The content of the script.
+ */
+var getScript = function(scriptId) {
+  var shaderScript = document.getElementById(scriptId);
+  if (!shaderScript) {
+    throw("*** Error: unknown script element" + scriptId);
+  }
+  return shaderScript.text;
+};
+
+/**
  * Loads a shader from a script tag.
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {string} scriptId The id of the script tag.
@@ -1454,6 +1558,52 @@ var getUrlArguments = function() {
   return args;
 };
 
+/**
+ * Inserts a 'label' that when clicked expands to the pre
+ * formatted text supplied by 'source'.
+ * @param {!HTMLElement} element element to append label to.
+ * @param {string} label label for anchor.
+ * @param {string} source preformatted text to expand to.
+ * @param {string} opt_url url of source. If provided a 2nd link
+ *     will be added.
+ */
+var addShaderSource = function(element, label, source, opt_url) {
+  var div = document.createElement("div");
+  var s = document.createElement("pre");
+  s.className = "shader-source";
+  s.style.display = "none";
+  var ol = document.createElement("ol");
+  //s.appendChild(document.createTextNode(source));
+  var lines = source.split("\n");
+  for (var ii = 0; ii < lines.length; ++ii) {
+    var line = lines[ii];
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(line));
+    ol.appendChild(li);
+  }
+  s.appendChild(ol);
+  var l = document.createElement("a");
+  l.href = "show-shader-source";
+  l.appendChild(document.createTextNode(label));
+  l.addEventListener('click', function(event) {
+      if (event.preventDefault) {
+        event.preventDefault();
+      }
+      s.style.display = (s.style.display == 'none') ? 'block' : 'none';
+      return false;
+    }, false);
+  div.appendChild(l);
+  if (opt_url) {
+    var u = document.createElement("a");
+    u.href = opt_url;
+    div.appendChild(document.createTextNode(" "));
+    u.appendChild(document.createTextNode("(" + opt_url + ")"));
+    div.appendChild(u);
+  }
+  div.appendChild(s);
+  element.appendChild(div);
+};
+
 // Add your prefix here.
 var browserPrefixes = [
   "",
@@ -1496,6 +1646,28 @@ var getExtensionWithKnownPrefixes = function(gl, name) {
       return ext;
     }
   }
+};
+
+var replaceRE = /\$\((\w+)\)/g;
+
+/**
+ * Replaces strings with property values.
+ * Given a string like "hello $(first) $(last)" and an object
+ * like {first:"John", last:"Smith"} will return
+ * "hello John Smith".
+ * @param {string} str String to do replacements in.
+ * @param {...} 1 or more objects containing properties.
+ */
+var replaceParams = function(str) {
+  var args = arguments;
+  return str.replace(replaceRE, function(str, p1, offset, s) {
+    for (var ii = 1; ii < args.length; ++ii) {
+      if (args[ii][p1] !== undefined) {
+        return args[ii][p1];
+      }
+    }
+    throw "unknown string param '" + p1 + "'";
+  });
 };
 
 /**
@@ -1574,6 +1746,7 @@ var waitForComposite = function(gl, callback) {
 };
 
 return {
+  addShaderSource: addShaderSource,
   cancelAnimFrame: cancelAnimFrame,
   clipToRange: clipToRange,
   create3DContext: create3DContext,
@@ -1583,7 +1756,9 @@ return {
   checkCanvasRect: checkCanvasRect,
   checkCanvasRectColor: checkCanvasRectColor,
   createColoredTexture: createColoredTexture,
+  clearAndDrawUnitQuad: clearAndDrawUnitQuad,
   drawQuad: drawQuad,
+  drawUnitQuad: drawUnitQuad,
   drawIndexedQuad: drawIndexedQuad,
   drawUByteColorQuad: drawUByteColorQuad,
   drawFloatColorQuad: drawFloatColorQuad,
@@ -1591,6 +1766,7 @@ return {
   getExtensionWithKnownPrefixes: getExtensionWithKnownPrefixes,
   getFileListAsync: getFileListAsync,
   getLastError: getLastError,
+  getScript: getScript,
   getSupportedExtensionWithKnownPrefixes: getSupportedExtensionWithKnownPrefixes,
   getUrlArguments: getUrlArguments,
   glEnumToString: glEnumToString,
@@ -1627,6 +1803,7 @@ return {
   shouldGenerateGLError: shouldGenerateGLError,
   readFile: readFile,
   readFileList: readFileList,
+  replaceParams: replaceParams,
   requestAnimFrame: requestAnimFrame,
   waitFrames: waitFrames,
   waitForComposite: waitForComposite,

@@ -1,3 +1,24 @@
+2014-02-20  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Rename EXT_draw_buffers to WEBGL_draw_buffers
+        https://bugs.webkit.org/show_bug.cgi?id=128894
+
+        Reviewed by Dean Jackson.
+
+        webgl-draw-buffers.html came from Khronos's webgl conformace tests. It requires
+        some new apis in webgl-test-utils.js so that it is updated as well. The attached
+        test results are for mac. But they're expected to fail since EXT_draw_buffers are
+        disabled with some reason. See WebGLDrawBuffers::supported. So I add a line
+        for webgl-draw-buffers.html to mac/TestExpectations.
+
+        * fast/canvas/webgl/resources/webgl-test-utils.js:
+        (WebGLTestUtils):
+        (WebGLTestUtils.):
+        * fast/canvas/webgl/webgl-draw-buffers-expected.txt: Added.
+        * fast/canvas/webgl/webgl-draw-buffers.html: Added.
+        * platform/mac-mountainlion/fast/canvas/webgl/webgl-draw-buffers-expected.txt: Added.
+        * platform/mac/TestExpectations:
+
 2014-02-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update test expectations after r164449.
