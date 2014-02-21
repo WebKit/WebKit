@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test - Bug 120711: [CSS Regions] Regions don't paint correctly in new-multicol elements</title>
+    <style>
+      #region1 {
+        -webkit-flow-from: article;
+        width: 300px;
+        border: 1px solid black;
+        margin-top: 50px;
+        overflow: hidden;
+      }
+      
+      #content {
+        -webkit-flow-into: article;
+      }
+
+      #clipper {
+        border: 5px solid blue;
+        height: 110px;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <p>There should be no text below the blue rectangle.</p>
+    <div id="clipper">
+      <div id="region1"></div>
+    </div>
+    <article id="content">
+      <p>
+        Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. Text. 
+      </p>
+    </article>
+  </body>
+</html>

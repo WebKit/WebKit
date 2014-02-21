@@ -1,3 +1,41 @@
+2014-02-21  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Regions don't paint correctly in new-multicol elements
+        https://bugs.webkit.org/show_bug.cgi?id=120711
+
+        Reviewed by David Hyatt.
+
+        This patch implements basic support for regions inside multi-column elements.
+        Currently, the painting and hit-testing logic of CSS Regions is not aware of
+        enclosing multi-column elements. The change is integrated at a layer level by
+        making use of the pre-computed layer fragments during the painting and hit-testing
+        phases for regions.
+
+        There are limitations such that self painting layers found inside the named flow
+        thread layer will not be correctly processed because they don't go through the
+        layer fragment collection step. This is not trivial to implement because the enclosing
+        pagination layer provided by the multi-column element is not visibile from inside
+        the named flow thread layer and they reside in different coordinate systems.
+
+        A side effect of this patch is the fix of regions incorrect clipping in certain
+        cases (when both a region and its container clip their overflow, the region's
+        content is visible outside the container).
+
+        Tests: fast/regions/region-clipping.html
+               fast/regions/regions-in-multicol-bt.html
+               fast/regions/regions-in-multicol-hover-overflow.html
+               fast/regions/regions-in-multicol-hover.html
+               fast/regions/regions-in-multicol-lr.html
+               fast/regions/regions-in-multicol-rl.html
+               fast/regions/regions-in-multicol.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::paintFlowThreadIfRegionForFragments):
+        (WebCore::RenderLayer::hitTestFlowThreadIfRegionForFragments):
+        * rendering/RenderLayer.h:
+
 2014-02-21  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] Refactor -webkit-blend-mode to -webkit-mix-blend-mode

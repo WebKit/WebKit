@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test - Bug 120711: [CSS Regions] Regions don't paint correctly in new-multicol elements</title>
+    <style type="text/css">
+        html {
+            -webkit-writing-mode: vertical-lr;
+        }
+        .pass {
+            position: absolute;
+            background-color: green;
+            left: 150px;
+            height: 50px;
+            width: 200px;
+            z-index: -1;
+        }
+        #bar-1 {
+            top: 20px;
+        }
+        #bar-2 {
+            top: 80px;
+        }
+        #bar-3 {
+            top: 140px;
+        }
+    </style>
+</head>
+<body>
+    <p>This test checks that the named flow text content flows through the regions in the multicolumn layout that is applied to the regions' parent.</p>
+    <p>The test passes if there are four green vertical bars and no red.</p>
+    <div class="pass" id="bar-1"></div>
+    <div class="pass" id="bar-2"></div>
+    <div class="pass" id="bar-3"></div>
+</body>
+</html>

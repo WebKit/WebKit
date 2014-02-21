@@ -1,3 +1,31 @@
+2014-02-21  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Regions don't paint correctly in new-multicol elements
+        https://bugs.webkit.org/show_bug.cgi?id=120711
+
+        Reviewed by David Hyatt.
+
+        Add tests for regions in multi-column elements and a test that verifies
+        regions are correctly clipped by their containers when both have hidden
+        overflow.
+        For the non horizontal-tb writing modes tests there's no overflow after the
+        last region because it's not rendered correctly yet in a new column.
+
+        * fast/regions/region-clipping-expected.html: Added.
+        * fast/regions/region-clipping.html: Added.
+        * fast/regions/regions-in-multicol-bt-expected.html: Added.
+        * fast/regions/regions-in-multicol-bt.html: Added.
+        * fast/regions/regions-in-multicol-expected.html: Added.
+        * fast/regions/regions-in-multicol-hover-expected.html: Added.
+        * fast/regions/regions-in-multicol-hover-overflow-expected.html: Added.
+        * fast/regions/regions-in-multicol-hover-overflow.html: Added.
+        * fast/regions/regions-in-multicol-hover.html: Added.
+        * fast/regions/regions-in-multicol-lr-expected.html: Added.
+        * fast/regions/regions-in-multicol-lr.html: Added.
+        * fast/regions/regions-in-multicol-rl-expected.html: Added.
+        * fast/regions/regions-in-multicol-rl.html: Added.
+        * fast/regions/regions-in-multicol.html: Added.
+
 2014-02-21  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] Refactor -webkit-blend-mode to -webkit-mix-blend-mode

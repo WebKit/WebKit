@@ -1151,10 +1151,10 @@ private:
 
     bool overflowControlsIntersectRect(const IntRect& localRect) const;
 
-    RenderLayer* hitTestFlowThreadIfRegion(RenderLayer*, const HitTestRequest&, HitTestResult&,
+    RenderLayer* hitTestFlowThreadIfRegionForFragments(const LayerFragments&, RenderLayer*, const HitTestRequest&, HitTestResult&,
         const LayoutRect&, const HitTestLocation&,
         const HitTestingTransformState*, double*);
-    void paintFlowThreadIfRegion(GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags, LayoutPoint, LayoutRect, bool);
+    void paintFlowThreadIfRegionForFragments(const LayerFragments&, GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
     void mapLayerClipRectsToFragmentationLayer(RenderRegion*, ClipRects&) const;
 
 private:
