@@ -1,3 +1,16 @@
+2014-02-21  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win][LLINT] Many JSC stress test failures.
+        https://bugs.webkit.org/show_bug.cgi?id=129155
+
+        Reviewed by Michael Saboff.
+
+        Intel syntax has reversed operand order compared to AT&T syntax, so we need to swap the operand order, in this case on floating point operations.
+        Also avoid using the reverse opcode (e.g. fdivr), as this puts the result at the wrong position in the floating point stack.
+        E.g. "divd ft0, ft1" would translate to fdivr st, st(1) (Intel syntax) on Windows, but this puts the result in st, when it should be in st(1).
+
+        * offlineasm/x86.rb: Swap operand order on Windows.
+
 2014-02-21  Filip Pizlo  <fpizlo@apple.com>
 
         DFG write barriers should do more speculations
