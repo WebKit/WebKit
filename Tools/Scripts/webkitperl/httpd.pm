@@ -161,7 +161,7 @@ sub getHTTPDConfigPathForTestDirectory
         $httpdConfig = "fedora-httpd-$apacheVersion.conf";
     } else {
         # All other ports use apache2, so just use our default apache2 config.
-        $httpdConfig = "apache2-httpd.conf";
+        $httpdConfig = "apache$apacheVersion-httpd.conf";
     }
     return "$httpdConfDirectory/$httpdConfig";
 }

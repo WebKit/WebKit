@@ -1,3 +1,12 @@
+2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        run-webkit-httpd fails to find httpd configuation file.
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitperl/httpd.pm:
+        (getHTTPDConfigPathForTestDirectory):
+
 2014-02-21  Eric Carlson  <eric.carlson@apple.com>
 
         Fix TimeRanges layering violations
