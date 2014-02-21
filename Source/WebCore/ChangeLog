@@ -1,3 +1,55 @@
+2014-02-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        jsDocumentPrototypeFunctionGetElementById should not create an AtomicString for the function argument
+        https://bugs.webkit.org/show_bug.cgi?id=128893
+
+        Reviewed by Darin Adler.
+
+        The declaration of TreeScope::getElementById() was taking an AtomicString as the parameter.
+        Because of this, all the call sites manipulating String were creating and keeping alive an AtomicString
+        to make the call.
+
+        This had two negative consequences:
+        -The call sites were ref-ing the ID's atomic string for no reason.
+        -When there is no ID associated with the input string, an atomic string was created for the sole
+         purpose of failing the query. Since IDs are stored as AtomicString, if there is not an existing
+         AtomicString for the input, there is no reason to query anything.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::findAtomicString): Update this after the rename.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        Now that there are two overloads for TreeScope::getElementById(), the conversion from NSString*
+        is ambiguous. I add the keyword ObjCExplicitAtomicString to force an explicit conversion to AtomicString.
+
+        * dom/Document.idl:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getElementById):
+        When getting an AtomicString, the case of a empty string is not important, use isNull() instead.
+        When getting a String, get the corresponding AtomicString if any and use that for getting the element.
+
+        * dom/TreeScope.h:
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate):
+        Solve the ambiguous call.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        This is a wonderful candidate for substringSharingImpl. The substring does not survive the call since
+        the new getElementById never create any AtomicString.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getElementById):
+        It looks like there are opportunities to get faster here, Ryosuke should have a look.
+
+        * svg/SVGSVGElement.h:
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+        Unrelated cleanup: noStyleMessage was useless.
+
 2014-02-21  Daniel Bates  <dabates@apple.com>
 
         COL element in table has 0 for offsetWidth

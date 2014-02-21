@@ -102,11 +102,22 @@ void TreeScope::setParentTreeScope(TreeScope* newParentScope)
 
 Element* TreeScope::getElementById(const AtomicString& elementId) const
 {
-    if (elementId.isEmpty())
+    if (elementId.isNull())
         return nullptr;
     if (!m_elementsById)
         return nullptr;
     return m_elementsById->getElementById(*elementId.impl(), *this);
+}
+
+Element* TreeScope::getElementById(const String& elementId) const
+{
+    if (!m_elementsById)
+        return nullptr;
+
+    if (AtomicStringImpl* atomicElementId = AtomicString::find(elementId.impl()))
+        return m_elementsById->getElementById(*atomicElementId, *this);
+
+    return nullptr;
 }
 
 const Vector<Element*>* TreeScope::getAllElementsById(const AtomicString& elementId) const

@@ -51,7 +51,7 @@
                                                                           [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
     [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                                                    [Default=Undefined] optional DOMString localName);
-    Element getElementById([Default=Undefined] optional DOMString elementId);
+    Element getElementById([Default=Undefined,ObjCExplicitAtomicString] optional DOMString elementId);
 
     // DOM Level 3 Core
 

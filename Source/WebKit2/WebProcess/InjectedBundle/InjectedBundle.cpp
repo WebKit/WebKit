@@ -446,7 +446,7 @@ int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, 
     if (!coreFrame)
         return -1;
 
-    Element* element = coreFrame->document()->getElementById(AtomicString(id));
+    Element* element = coreFrame->document()->getElementById(id);
     if (!element)
         return -1;
 

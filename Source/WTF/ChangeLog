@@ -1,3 +1,22 @@
+2014-02-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        jsDocumentPrototypeFunctionGetElementById should not create an AtomicString for the function argument
+        https://bugs.webkit.org/show_bug.cgi?id=128893
+
+        Reviewed by Darin Adler.
+
+        AtomicString::find() is a special case optimized for the JavaScript bindings. The method can only
+        be called under specific conditions.
+        The method is renamed to findStringWithHash().
+
+        The new AtomicString::find is generic and does not require any propery on the input.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::findStringWithHash):
+        (WTF::AtomicString::findSlowCase):
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::find):
+
 2014-02-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add StackStats sources to cmake and autotools build files

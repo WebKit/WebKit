@@ -1,3 +1,13 @@
+2014-02-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        jsDocumentPrototypeFunctionGetElementById should not create an AtomicString for the function argument
+        https://bugs.webkit.org/show_bug.cgi?id=128893
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::pageNumberForElementById): Remove the explicit conversion to use the right overload.
+
 2014-02-21  Enrica Casucci  <enrica@apple.com>
 
         Support WebSelections in WK2 on iOS.

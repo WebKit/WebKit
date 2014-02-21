@@ -1474,7 +1474,12 @@ sub GenerateImplementation
                 AddIncludesForType($param->type);
 
                 my $idlType = $param->type;
-                my $implGetter = GetObjCTypeGetter($paramName, $idlType);
+                my $implGetter;
+                if ($param->extendedAttributes->{"ObjCExplicitAtomicString"}) {
+                    $implGetter = "AtomicString($paramName)"
+                } else {
+                    $implGetter = GetObjCTypeGetter($paramName, $idlType);
+                }
 
                 push(@parameterNames, $implGetter);
                 $needsCustom{"XPathNSResolver"} = $paramName if $idlType eq "XPathNSResolver";

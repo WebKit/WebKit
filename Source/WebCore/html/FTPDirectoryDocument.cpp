@@ -297,7 +297,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
 
     HTMLDocumentParser::insert(String(templateDocumentData->data(), templateDocumentData->size()));
 
-    RefPtr<Element> tableElement = document()->getElementById("ftpDirectoryTable");
+    RefPtr<Element> tableElement = document()->getElementById(String(ASCIILiteral("ftpDirectoryTable")));
     if (!tableElement)
         LOG_ERROR("Unable to find element by id \"ftpDirectoryTable\" in the template document.");
     else if (!isHTMLTableElement(tableElement.get()))
