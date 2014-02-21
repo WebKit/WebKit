@@ -1,3 +1,40 @@
+2014-02-21  Daniel Bates  <dabates@apple.com>
+
+        COL element in table has 0 for offsetWidth
+        https://bugs.webkit.org/show_bug.cgi?id=15277
+
+        Reviewed by David Hyatt.
+
+        Implements offset{Left, Top, Width, Height} for table columns and column groups
+        per section Extensions to the HTMLElement Interface of the CSSOM View spec,
+        <http://www.w3.org/TR/cssom-view/#extensions-to-the-htmlelement-interface> (Draft 17 December 2013).
+
+        For now, we fail almost all of the offset{Height, Top} sub-tests in the included test
+        for the separate border model as we need to fix <https://bugs.webkit.org/show_bug.cgi?id=128988>.
+
+        Test: fast/table/col-and-colgroup-offsets.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable): Initialize cached column offset top and offset height.
+        We cache these offsets since they are the same for all columns in the table.
+        (WebCore::RenderTable::invalidateCachedColumns): Clear cached effective column index map.
+        (WebCore::RenderTable::invalidateCachedColumnOffsets): Added.
+        (WebCore::RenderTable::layout): Invalidate cached column offsets as the location or height
+        of one or more sections may have changed.
+        (WebCore::RenderTable::updateColumnCache): Modified to build effective column index map.
+        (WebCore::RenderTable::effectiveIndexOfColumn): Added.
+        (WebCore::RenderTable::offsetTopForColumn): Added.
+        (WebCore::RenderTable::offsetLeftForColumn): Added.
+        (WebCore::RenderTable::offsetWidthForColumn): Added.
+        (WebCore::RenderTable::offsetHeightForColumn): Added.
+        * rendering/RenderTable.h: Make isTableColumnGroupWithColumnChildren() const.
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::offsetLeft): Added; turns around and calls RenderTable::offsetLeftForColumn().
+        (WebCore::RenderTableCol::offsetTop): Added; turns around and calls RenderTable::offsetTopForColumn().
+        (WebCore::RenderTableCol::offsetWidth): Added; turns around and calls RenderTable::offsetWidthForColumn().
+        (WebCore::RenderTableCol::offsetHeight): Added; turns around and calls RenderTable::offsetHeightForColumn().
+        * rendering/RenderTableCol.h:
+
 2014-02-21  Enrica Casucci  <enrica@apple.com>
 
         Build fix for iOS after r164498.

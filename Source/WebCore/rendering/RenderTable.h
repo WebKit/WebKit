@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2009, 2010, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "CollapsedBorderValue.h"
 #include "RenderBlock.h"
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -263,6 +264,11 @@ public:
     void addColumn(const RenderTableCol*);
     void removeColumn(const RenderTableCol*);
 
+    LayoutUnit offsetTopForColumn(const RenderTableCol&) const;
+    LayoutUnit offsetLeftForColumn(const RenderTableCol&) const;
+    LayoutUnit offsetWidthForColumn(const RenderTableCol&) const;
+    LayoutUnit offsetHeightForColumn(const RenderTableCol&) const;
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
     virtual void simplifiedNormalFlowLayout() override final;
@@ -292,6 +298,8 @@ private:
     void updateColumnCache() const;
     void invalidateCachedColumns();
 
+    void invalidateCachedColumnOffsets();
+
     virtual RenderBlock* firstLineBlock() const override final;
     virtual void updateFirstLetter() override final;
     
@@ -318,6 +326,10 @@ private:
     mutable Vector<RenderTableCaption*> m_captions;
     mutable Vector<RenderTableCol*> m_columnRenderers;
 
+    unsigned effectiveIndexOfColumn(const RenderTableCol&) const;
+    typedef HashMap<const RenderTableCol*, unsigned> EffectiveColumnIndexMap;
+    mutable EffectiveColumnIndexMap m_effectiveColumnIndexMap;
+
     mutable RenderTableSection* m_head;
     mutable RenderTableSection* m_foot;
     mutable RenderTableSection* m_firstBody;
@@ -338,6 +350,8 @@ private:
     short m_vSpacing;
     int m_borderStart;
     int m_borderEnd;
+    mutable LayoutUnit m_columnOffsetTop;
+    mutable LayoutUnit m_columnOffsetHeight;
 };
 
 inline RenderTableSection* RenderTable::topSection() const

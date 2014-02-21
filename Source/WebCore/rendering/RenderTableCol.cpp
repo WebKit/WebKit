@@ -200,4 +200,24 @@ const BorderValue& RenderTableCol::borderAdjoiningCellAfter(const RenderTableCel
     return style().borderEnd();
 }
 
+LayoutUnit RenderTableCol::offsetLeft() const
+{
+    return table()->offsetLeftForColumn(*this);
+}
+
+LayoutUnit RenderTableCol::offsetTop() const
+{
+    return table()->offsetTopForColumn(*this);
+}
+
+LayoutUnit RenderTableCol::offsetWidth() const
+{
+    return table()->offsetWidthForColumn(*this);
+}
+
+LayoutUnit RenderTableCol::offsetHeight() const
+{
+    return table()->offsetHeightForColumn(*this);
+}
+
 }

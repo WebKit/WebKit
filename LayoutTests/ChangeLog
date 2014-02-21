@@ -1,3 +1,19 @@
+2014-02-21  Daniel Bates  <dabates@apple.com>
+
+        COL element in table has 0 for offsetWidth
+        https://bugs.webkit.org/show_bug.cgi?id=15277
+
+        Reviewed by David Hyatt.
+
+        Added test to ensure that offset{Left, Top, Width, Height} return correct results
+        for table columns and column groups.
+
+        For now, we fail almost all of the offset{Height, Top} sub-tests for the separate
+        border model as we need to fix <https://bugs.webkit.org/show_bug.cgi?id=128988>.
+
+        * fast/table/col-and-colgroup-offsets-expected.txt: Added.
+        * fast/table/col-and-colgroup-offsets.html: Added.
+
 2014-02-21  Benjamin Poulain  <bpoulain@apple.com>
 
         'mouseenter' mouse compat event not fired when listeners for touch events

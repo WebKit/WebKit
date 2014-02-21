@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -64,6 +64,8 @@ RenderTable::RenderTable(Element& element, PassRef<RenderStyle> style)
     , m_vSpacing(0)
     , m_borderStart(0)
     , m_borderEnd(0)
+    , m_columnOffsetTop(-1)
+    , m_columnOffsetHeight(-1)
 {
     setChildrenInline(false);
     m_columnPos.fill(0, 1);
@@ -237,6 +239,13 @@ void RenderTable::invalidateCachedColumns()
 {
     m_columnRenderersValid = false;
     m_columnRenderers.resize(0);
+    m_effectiveColumnIndexMap.clear();
+}
+
+void RenderTable::invalidateCachedColumnOffsets()
+{
+    m_columnOffsetTop = -1;
+    m_columnOffsetHeight = -1;
 }
 
 void RenderTable::addColumn(const RenderTableCol*)
@@ -557,6 +566,9 @@ void RenderTable::layout()
     // Layout was changed, so probably borders too.
     invalidateCollapsedBorders();
 
+    // The location or height of one or more sections may have changed.
+    invalidateCachedColumnOffsets();
+
     computeOverflow(clientLogicalBottom());
 
     statePusher.pop();
@@ -849,14 +861,98 @@ void RenderTable::updateColumnCache() const
 {
     ASSERT(m_hasColElements);
     ASSERT(m_columnRenderers.isEmpty());
+    ASSERT(m_effectiveColumnIndexMap.isEmpty());
     ASSERT(!m_columnRenderersValid);
 
+    unsigned columnIndex = 0;
     for (RenderTableCol* columnRenderer = firstColumn(); columnRenderer; columnRenderer = columnRenderer->nextColumn()) {
         if (columnRenderer->isTableColumnGroupWithColumnChildren())
             continue;
         m_columnRenderers.append(columnRenderer);
+        // FIXME: We should look to compute the effective column index successively from previous values instead of
+        // calling colToEffCol(), which is in O(numEffCols()). Although it's unlikely that this is a hot function.
+        m_effectiveColumnIndexMap.add(columnRenderer, colToEffCol(columnIndex));
+        columnIndex += columnRenderer->span();
     }
     m_columnRenderersValid = true;
+}
+
+unsigned RenderTable::effectiveIndexOfColumn(const RenderTableCol& column) const
+{
+    if (!m_columnRenderersValid)
+        updateColumnCache();
+    const RenderTableCol* columnToUse = &column;
+    if (columnToUse->isTableColumnGroupWithColumnChildren())
+        columnToUse = columnToUse->nextColumn(); // First column in column-group
+    auto it = m_effectiveColumnIndexMap.find(columnToUse);
+    ASSERT(it != m_effectiveColumnIndexMap.end());
+    if (it == m_effectiveColumnIndexMap.end())
+        return std::numeric_limits<unsigned>::max();
+    return it->value;
+}
+
+LayoutUnit RenderTable::offsetTopForColumn(const RenderTableCol& column) const
+{
+    if (effectiveIndexOfColumn(column) >= numEffCols())
+        return 0;
+    if (m_columnOffsetTop >= 0) {
+        ASSERT(!needsLayout());
+        return m_columnOffsetTop;
+    }
+    RenderTableSection* section = topNonEmptySection();
+    return m_columnOffsetTop = section ? section->offsetTop() : LayoutUnit(0);
+}
+
+LayoutUnit RenderTable::offsetLeftForColumn(const RenderTableCol& column) const
+{
+    unsigned columnIndex = effectiveIndexOfColumn(column);
+    if (columnIndex >= numEffCols())
+        return 0;
+    return m_columnPos[columnIndex] + m_hSpacing + borderLeft();
+}
+
+LayoutUnit RenderTable::offsetWidthForColumn(const RenderTableCol& column) const
+{
+    const RenderTableCol* currentColumn = &column;
+    bool hasColumnChildren;
+    if ((hasColumnChildren = currentColumn->isTableColumnGroupWithColumnChildren()))
+        currentColumn = currentColumn->nextColumn(); // First column in column-group
+    unsigned numberOfEffectiveColumns = numEffCols();
+    ASSERT_WITH_SECURITY_IMPLICATION(m_columnPos.size() >= numberOfEffectiveColumns + 1);
+    unsigned width = 0;
+    while (currentColumn) {
+        unsigned columnIndex = effectiveIndexOfColumn(*currentColumn);
+        unsigned span = currentColumn->span();
+        while (span && columnIndex < numberOfEffectiveColumns) {
+            width += m_columnPos[columnIndex + 1] - m_columnPos[columnIndex] - m_hSpacing;
+            span -= m_columns[columnIndex].span;
+            ++columnIndex;
+            if (span)
+                width += m_hSpacing;
+        }
+        if (!hasColumnChildren)
+            break;
+        currentColumn = currentColumn->nextColumn();
+        if (!currentColumn || currentColumn->isTableColumnGroup())
+            break;
+        width += m_hSpacing;
+    }
+    return width;
+}
+
+LayoutUnit RenderTable::offsetHeightForColumn(const RenderTableCol& column) const
+{
+    if (effectiveIndexOfColumn(column) >= numEffCols())
+        return 0;
+    if (m_columnOffsetHeight >= 0) {
+        ASSERT(!needsLayout());
+        return m_columnOffsetHeight;
+    }
+    LayoutUnit height = 0;
+    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section))
+        height += section->offsetHeight();
+    m_columnOffsetHeight = height;
+    return m_columnOffsetHeight;
 }
 
 RenderTableCol* RenderTable::slowColElement(unsigned col, bool* startEdge, bool* endEdge) const
