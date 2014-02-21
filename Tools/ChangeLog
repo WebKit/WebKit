@@ -1,3 +1,29 @@
+2014-02-20  David Farler  <dfarler@apple.com>
+
+        Make old-run-webkit-tests work with iOS Simulator WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=128622
+
+        Reviewed by Simon Fraser.
+
+        With this change, we now have layout tests running in both DumpRenderTree
+        and WebKitTestRunner, with WebKit and WebKit2 used respectively in the iOS
+        simulator.
+
+        * Scripts/old-run-webkit-tests:
+        In general, make any specific reference to DumpRenderTree
+        able to refer to WebKitTestRunner wherever possible:
+        - Rename functions to remove DRT-specific naming.
+        - Name FIFOs after the tool that is being used.
+        -- Clean up FIFO creation code
+        Other necessary changes:
+        - Allow use of an ios-sim-wk2 platform.
+        - Clean up platform hierarchy creation where the simulator platform behavior differed.
+        * WebKitTestRunner/TestController.cpp:
+        Open FIFOs to get dumps out of the simulator as we do in DumpRenderTree.
+        (WTR::TestController::TestController):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        Copy the injected bundle into the app bundle.
+
 2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         run-webkit-httpd fails to find httpd configuation file.

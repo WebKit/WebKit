@@ -122,6 +122,16 @@ TestController::TestController(int argc, const char* argv[])
     , m_shouldUseAcceleratedDrawing(false)
     , m_shouldUseRemoteLayerTree(false)
 {
+
+#if PLATFORM(IOS)
+    int infd = open("/tmp/WebKitTestRunner_IN", O_RDWR);
+    dup2(infd, STDIN_FILENO);
+    int outfd = open("/tmp/WebKitTestRunner_OUT", O_RDWR);
+    dup2(outfd, STDOUT_FILENO);
+    int errfd = open("/tmp/WebKitTestRunner_ERROR", O_RDWR | O_NONBLOCK);
+    dup2(errfd, STDERR_FILENO);
+#endif
+
     initialize(argc, argv);
     controller = this;
     run();
