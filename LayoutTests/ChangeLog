@@ -1,3 +1,14 @@
+2014-02-21  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash reloading page with position: fixed content
+        https://bugs.webkit.org/show_bug.cgi?id=129119
+        <rdar://problem/16127090>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/mac-wk2/tiled-drawing/crash-reloading-with-position-fixed-content-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/crash-reloading-with-position-fixed-content.html: Added.
+
 2014-02-21  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Regions don't paint correctly in new-multicol elements

@@ -197,13 +197,13 @@ void ScrollingTree::removeDestroyedNodes(const ScrollingStateTree& stateTree)
         if (!node)
             continue;
 
+        if (node->scrollingNodeID() == m_latchedNode)
+            clearLatchedNode();
+
         // Never destroy the root node. There will be a new root node in the state tree, and we will
         // associate it with our existing root node in updateTreeFromStateNode().
         if (node->parent())
             m_rootNode->removeChild(node);
-
-        if (node->scrollingNodeID() == m_latchedNode)
-            clearLatchedNode();
     }
 }
 
