@@ -1,3 +1,15 @@
+2014-02-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Revive SABI (aka shouldAlwaysBeInlined)
+        https://bugs.webkit.org/show_bug.cgi?id=129159
+
+        Reviewed by Mark Hahnenberg.
+        
+        This is a small Octane speed-up.
+
+        * jit/Repatch.cpp:
+        (JSC::linkFor): This code was assuming that if it's invoked then the caller is a DFG code block. That's wrong, since it's now used by all of the JITs.
+
 2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JSContext inspection should report exceptions in the console

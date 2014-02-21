@@ -1423,11 +1423,12 @@ void linkFor(
 {
     ASSERT(!callLinkInfo.stub);
     
+    CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
+
     // If you're being call-linked from a DFG caller then you obviously didn't get inlined.
-    if (calleeCodeBlock)
+    if (calleeCodeBlock && JITCode::isOptimizingJIT(callerCodeBlock->jitType()))
         calleeCodeBlock->m_shouldAlwaysBeInlined = false;
     
-    CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
     VM* vm = callerCodeBlock->vm();
     
     RepatchBuffer repatchBuffer(callerCodeBlock);
