@@ -91,6 +91,12 @@ void RenderNamedFlowFragment::styleDidChange(StyleDifference diff, const RenderS
         setNeedsLayout(MarkOnlyThis);
 }
 
+void RenderNamedFlowFragment::getRanges(Vector<RefPtr<Range>>& rangeObjects) const
+{
+    const RenderNamedFlowThread& namedFlow = view().flowThreadController().ensureRenderFlowThreadWithName(style().regionThread());
+    namedFlow.getRanges(rangeObjects, this);
+}
+
 bool RenderNamedFlowFragment::shouldHaveAutoLogicalHeight() const
 {
     ASSERT(parent());

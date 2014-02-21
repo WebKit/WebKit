@@ -47,7 +47,7 @@ class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
 class PseudoElement;
-class RenderRegion;
+class RenderNamedFlowFragment;
 class ShadowRoot;
 
 enum AffectedSelectorType {
@@ -526,7 +526,7 @@ public:
 
     PassRef<RenderStyle> styleForRenderer();
 
-    RenderRegion* renderRegion() const;
+    RenderNamedFlowFragment* renderNamedFlowFragment() const;
 
 #if ENABLE(CSS_REGIONS)
     virtual bool shouldMoveToFlowThread(const RenderStyle&) const;

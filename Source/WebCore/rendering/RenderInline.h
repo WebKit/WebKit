@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class Position;
+class RenderRegion;
 
 class RenderInline : public RenderBoxModelObject {
 public:

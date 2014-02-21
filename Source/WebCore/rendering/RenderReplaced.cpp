@@ -33,7 +33,7 @@
 #include "RenderFlowThread.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
-#include "RenderRegion.h"
+#include "RenderNamedFlowFragment.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "VisiblePosition.h"
@@ -205,7 +205,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
         return false;
     
     // Check our region range to make sure we need to be painting in this region.
-    if (paintInfo.renderRegion && !paintInfo.renderRegion->flowThread()->objectShouldPaintInFlowRegion(this, paintInfo.renderRegion))
+    if (paintInfo.renderNamedFlowFragment && !paintInfo.renderNamedFlowFragment->flowThread()->objectShouldPaintInFlowRegion(this, paintInfo.renderNamedFlowFragment))
         return false;
 
     LayoutPoint adjustedPaintOffset = paintOffset + location();

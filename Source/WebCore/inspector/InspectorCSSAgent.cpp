@@ -48,7 +48,7 @@
 #include "NamedFlowCollection.h"
 #include "Node.h"
 #include "NodeList.h"
-#include "RenderRegion.h"
+#include "RenderNamedFlowFragment.h"
 #include "SVGStyleElement.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
@@ -1196,7 +1196,7 @@ PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::Region>> I
     for (unsigned i = 0; i < regionList->length(); ++i) {
         Inspector::TypeBuilder::CSS::Region::RegionOverset::Enum regionOverset;
 
-        switch (toElement(regionList->item(i))->renderRegion()->regionOversetState()) {
+        switch (toElement(regionList->item(i))->renderNamedFlowFragment()->regionOversetState()) {
         case RegionFit:
             regionOverset = Inspector::TypeBuilder::CSS::Region::RegionOverset::Fit;
             break;

@@ -77,7 +77,7 @@ public:
     bool hasContentElement(Element&) const;
 
     bool isMarkedForDestruction() const;
-    void getRanges(Vector<RefPtr<Range>>&, const RenderRegion*) const;
+    void getRanges(Vector<RefPtr<Range>>&, const RenderNamedFlowFragment*) const;
 
     virtual bool collectsGraphicsLayersUnderRegions() const override;
 
@@ -105,7 +105,7 @@ private:
     void addDependencyOnFlowThread(RenderNamedFlowThread*);
     void removeDependencyOnFlowThread(RenderNamedFlowThread*);
 
-    void addRegionToNamedFlowThread(RenderRegion*);
+    void addFragmentToNamedFlowThread(RenderNamedFlowFragment*);
 
     void checkInvalidRegions();
 

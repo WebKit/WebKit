@@ -57,6 +57,8 @@ public:
     virtual bool isRenderNamedFlowFragment() const override final { return true; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
+    void getRanges(Vector<RefPtr<Range>>&) const;
+
     virtual LayoutUnit pageLogicalHeight() const;
     LayoutUnit maxPageLogicalHeight() const;
     
