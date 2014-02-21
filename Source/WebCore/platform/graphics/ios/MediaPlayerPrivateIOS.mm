@@ -497,7 +497,7 @@ float MediaPlayerPrivateIOS::maxTimeSeekable() const
     return [m_mediaPlayerHelper.get() _maxTimeSeekable];
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateIOS::buffered()
+std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateIOS::buffered() const
 {
     auto timeRanges = PlatformTimeRanges::create();
 

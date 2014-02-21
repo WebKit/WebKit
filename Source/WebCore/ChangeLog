@@ -1,3 +1,12 @@
+2014-02-21  Enrica Casucci  <enrica@apple.com>
+
+        Build fix for iOS after r164498.
+
+        Unreviewed.
+
+        * platform/graphics/ios/MediaPlayerPrivateIOS.mm:
+        (WebCore::MediaPlayerPrivateIOS::buffered):
+
 2014-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disallow the use of -webkit-user-modify on shadow pseudo elements
