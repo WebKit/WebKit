@@ -91,11 +91,6 @@ void Extensions3DOpenGLES::renderbufferStorageMultisample(unsigned long target, 
         notImplemented();
 }
 
-void Extensions3DOpenGLES::copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum)
-{
-    notImplemented();
-}
-
 void Extensions3DOpenGLES::insertEventMarkerEXT(const String&)
 {
     notImplemented();

@@ -71,8 +71,6 @@ public:
     //   GL_IMG_texture_compression_pvrtc
     //   EXT_texture_filter_anisotropic
     //   GL_EXT_debug_marker
-    //   GL_CHROMIUM_copy_texture
-    //   GL_CHROMIUM_flipy
     //   GL_ARB_draw_buffers / GL_EXT_draw_buffers
     //   GL_ANGLE_instanced_arrays
 
@@ -155,13 +153,6 @@ public:
         TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE,
         MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF,
 
-        // GL_CHROMIUM_flipy
-        UNPACK_FLIP_Y_CHROMIUM = 0x9240,
-
-        // GL_CHROMIUM_copy_texture
-        UNPACK_PREMULTIPLY_ALPHA_CHROMIUM = 0x9241,
-        UNPACK_UNPREMULTIPLY_ALPHA_CHROMIUM = 0x9242,
-
         // GL_ARB_draw_buffers / GL_EXT_draw_buffers
         MAX_DRAW_BUFFERS_EXT = 0x8824,
         DRAW_BUFFER0_EXT = 0x8825,
@@ -222,9 +213,6 @@ public:
 
     // GL_ANGLE_translated_shader_source
     virtual String getTranslatedShaderSourceANGLE(Platform3DObject) = 0;
-
-    // GL_CHROMIUM_copy_texture
-    virtual void copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum) = 0;
 
     // EXT Robustness - uses getGraphicsResetStatusARB
     virtual void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data) = 0;

@@ -1,3 +1,20 @@
+2014-02-20  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Remove unused chromium stuff in Extensions3D
+        https://bugs.webkit.org/show_bug.cgi?id=129086
+
+        Reviewed by Anders Carlsson.
+
+        Remove GL_CHROMIUM_copy_texture and GL_CHROMIUM_flipy interfaces since they are used nowhere.
+
+        No new tests since no functionality changed.
+
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+
 2014-02-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Assert / crash trying to draw empty checked input

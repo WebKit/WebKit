@@ -141,12 +141,6 @@ void Extensions3DOpenGL::bindVertexArrayOES(Platform3DObject array)
 #endif
 }
 
-void Extensions3DOpenGL::copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum)
-{
-    // FIXME: implement this function and add GL_CHROMIUM_copy_texture in supports().
-    return;
-}
-
 void Extensions3DOpenGL::insertEventMarkerEXT(const String&)
 {
     // FIXME: implement this function and add GL_EXT_debug_marker in supports().
