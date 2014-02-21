@@ -447,7 +447,6 @@ input[type="search"] {
 input::-webkit-textfield-decoration-container {
     display: -webkit-flex;
     -webkit-align-items: center;
-    -webkit-user-modify: read-only !important;
     content: none !important;
 }
 
@@ -459,7 +458,6 @@ input::-webkit-clear-button {
     -webkit-appearance: searchfield-cancel-button;
     display: inline-block;
     -webkit-flex: none;
-    -webkit-user-modify: read-only !important;
     margin-left: 2px;
 }
 
@@ -467,7 +465,6 @@ input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: searchfield-cancel-button;
     display: block;
     -webkit-flex: none;
-    -webkit-user-modify: read-only !important;
     -webkit-align-self: flex-start;
     margin: auto 0;
 }
@@ -476,7 +473,6 @@ input[type="search"]::-webkit-search-decoration {
     -webkit-appearance: searchfield-decoration;
     display: block;
     -webkit-flex: none;
-    -webkit-user-modify: read-only !important;
     -webkit-align-self: flex-start;
     margin: auto 0;
 }
@@ -485,7 +481,6 @@ input[type="search"]::-webkit-search-results-decoration {
     -webkit-appearance: searchfield-results-decoration;
     display: block;
     -webkit-flex: none;
-    -webkit-user-modify: read-only !important;
     -webkit-align-self: flex-start;
     margin: auto 0;
 }
@@ -494,7 +489,6 @@ input[type="search"]::-webkit-search-results-button {
     -webkit-appearance: searchfield-results-button;
     display: block;
     -webkit-flex: none;
-    -webkit-user-modify: read-only !important;
 }
 
 #if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
@@ -589,7 +583,6 @@ input::-webkit-inner-spin-button {
     vertical-align: top;
     -webkit-flex: none;
     -webkit-user-select: none;
-    -webkit-user-modify: read-only !important;
 }
 
 #if defined(ENABLE_INPUT_SPEECH) && ENABLE_INPUT_SPEECH
@@ -598,7 +591,6 @@ input::-webkit-input-speech-button {
     display: block;
     vertical-align: top;
     -webkit-flex: none;
-    -webkit-user-modify: read-only !important;
     -webkit-align-self: flex-start;
     margin: auto 0;
 }
@@ -642,7 +634,6 @@ input::-webkit-input-placeholder, isindex::-webkit-input-placeholder {
     white-space: pre;
     word-wrap: normal;
     overflow: hidden;
-    -webkit-user-modify: read-only !important;
 }
 
 input[type="password"] {
@@ -691,7 +682,6 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 
 input[type="file"]::-webkit-file-upload-button {
     -webkit-appearance: push-button;
-    -webkit-user-modify: read-only !important;
     white-space: nowrap;
     margin: 0;
     font-size: inherit;
@@ -727,7 +717,6 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container {
     -webkit-flex: 1;
     box-sizing: border-box;
-    -webkit-user-modify: read-only !important;
     display: -webkit-flex;
     -webkit-align-contents: center;
 }
@@ -737,14 +726,12 @@ input[type="range"]::-webkit-slider-runnable-track {
     -webkit-align-self: center;
 
     box-sizing: border-box;
-    -webkit-user-modify: read-only !important;
     display: block;
 }
 
 input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb {
     -webkit-appearance: sliderthumb-horizontal;
     box-sizing: border-box;
-    -webkit-user-modify: read-only !important;
     display: block;
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
     background-color: white;
@@ -853,7 +840,6 @@ input[type="color"]::-webkit-color-swatch-wrapper {
     display:-webkit-flex;
     padding: 4px 2px;
     box-sizing: border-box;
-    -webkit-user-modify: read-only !important;
     width: 100%;
     height: 100%
 }
@@ -862,7 +848,6 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #000000;
     border: 1px solid #777777;
     -webkit-flex: 1;
-    -webkit-user-modify: read-only !important;
 }
 
 #if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
@@ -954,7 +939,6 @@ output {
     margin: 0;
     -webkit-text-security: none;
     -webkit-transition: opacity 05.5s ease;
-    -webkit-user-modify: read-only !important;
 }
 
 ::-webkit-validation-bubble-message {
@@ -972,7 +956,6 @@ output {
     -webkit-box-shadow: 4px 4px 4px rgba(100,100,100,0.6),
         inset -2px -2px 1px #d0c4c4,
         inset 2px 2px 1px white;
-    -webkit-user-modify: read-only !important;
     line-height: normal;
     white-space: normal;
     z-index: 2147483644;
@@ -980,12 +963,10 @@ output {
 
 ::-webkit-validation-bubble-text-block {
     -webkit-flex: 1;
-    -webkit-user-modify: read-only !important;
 }
 
 ::-webkit-validation-bubble-heading {
     font-weight: bold;
-    -webkit-user-modify: read-only !important;
 }
 
 ::-webkit-validation-bubble-arrow {
@@ -1001,7 +982,6 @@ output {
     box-shadow: inset 2px 2px 1px white;
     -webkit-transform-origin: 0 0;
     -webkit-transform: rotate(45deg);
-    -webkit-user-modify: read-only !important;
     z-index: 2147483645;
 }
 
@@ -1009,7 +989,6 @@ output {
     display: block;
     overflow: hidden;
     height: 16px;
-    -webkit-user-modify: read-only !important;
 }
 
 #if defined(ENABLE_METER_ELEMENT) && ENABLE_METER_ELEMENT
@@ -1027,7 +1006,6 @@ meter {
 meter::-webkit-meter-inner-element {
     -webkit-appearance: inherit;
     box-sizing: inherit;
-    -webkit-user-modify: read-only !important;
     height: 100%;
     width: 100%;
 }
@@ -1036,28 +1014,24 @@ meter::-webkit-meter-bar {
     background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#ddd), color-stop(0.20, #eee), color-stop(0.45, #ccc), color-stop(0.55, #ccc));
     height: 100%;
     width: 100%;
-    -webkit-user-modify: read-only !important;
     box-sizing: border-box;
 }
 
 meter::-webkit-meter-optimum-value {
     background: -webkit-gradient(linear, left top, left bottom, from(#ad7), to(#ad7), color-stop(0.20, #cea), color-stop(0.45, #7a3), color-stop(0.55, #7a3));
     height: 100%;
-    -webkit-user-modify: read-only !important;
     box-sizing: border-box;
 }
 
 meter::-webkit-meter-suboptimum-value {
     background: -webkit-gradient(linear, left top, left bottom, from(#fe7), to(#fe7), color-stop(0.20, #ffc), color-stop(0.45, #db3), color-stop(0.55, #db3));
     height: 100%;
-    -webkit-user-modify: read-only !important;
     box-sizing: border-box;
 }
 
 meter::-webkit-meter-even-less-good-value {
     background: -webkit-gradient(linear, left top, left bottom, from(#f77), to(#f77), color-stop(0.20, #fcc), color-stop(0.45, #d44), color-stop(0.55, #d44));
     height: 100%;
-    -webkit-user-modify: read-only !important;
     box-sizing: border-box;
 }
 #endif
@@ -1077,7 +1051,6 @@ progress {
 progress::-webkit-progress-inner-element {
     -webkit-appearance: inherit;
     box-sizing: inherit;
-    -webkit-user-modify: read-only;
     height: 100%;
     width: 100%;
 }
@@ -1086,7 +1059,6 @@ progress::-webkit-progress-bar {
     background-color: gray;
     height: 100%;
     width: 100%;
-    -webkit-user-modify: read-only !important;
     box-sizing: border-box;
 }
 
@@ -1094,7 +1066,6 @@ progress::-webkit-progress-value {
     background-color: green;
     height: 100%;
     width: 50%; /* should be removed later */
-    -webkit-user-modify: read-only !important;
     box-sizing: border-box;
 }
 #endif

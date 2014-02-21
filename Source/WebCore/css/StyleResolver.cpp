@@ -1250,6 +1250,10 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         style.setOverflowY(style.overflowY() == OVISIBLE ? OAUTO : style.overflowY());
     }
 
+    // Disallow -webkit-user-modify on :pseudo and ::pseudo elements.
+    if (e && !e->shadowPseudoId().isNull())
+        style.setUserModify(READ_ONLY);
+
     if (doesNotInheritTextDecoration(style, e))
         style.setTextDecorationsInEffect(style.textDecoration());
     else

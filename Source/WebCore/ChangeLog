@@ -1,3 +1,48 @@
+2014-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disallow the use of -webkit-user-modify on shadow pseudo elements
+        https://bugs.webkit.org/show_bug.cgi?id=129144
+
+        Reviewed by Geoffrey Garen.
+
+        Completely disallow -webkit-user-modify on user agent (builtin) pseudo elements.
+
+        We've already had rules to do this in html.css but just hard code it into the engine
+        in order to eliminate the all uses of -webkit-user-modify in html.css.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * css/html.css:
+        (input::-webkit-textfield-decoration-container):
+        (input::-webkit-clear-button):
+        (input[type="search"]::-webkit-search-cancel-button):
+        (input[type="search"]::-webkit-search-decoration):
+        (input[type="search"]::-webkit-search-results-decoration):
+        (input[type="search"]::-webkit-search-results-button):
+        (input::-webkit-inner-spin-button):
+        (input::-webkit-input-speech-button):
+        (input::-webkit-input-placeholder, isindex::-webkit-input-placeholder):
+        (input[type="file"]::-webkit-file-upload-button):
+        (input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container):
+        (input[type="range"]::-webkit-slider-runnable-track):
+        (input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb):
+        (input[type="color"]::-webkit-color-swatch-wrapper):
+        (input[type="color"]::-webkit-color-swatch):
+        (::-webkit-validation-bubble):
+        (::-webkit-validation-bubble-message):
+        (::-webkit-validation-bubble-text-block):
+        (::-webkit-validation-bubble-heading):
+        (::-webkit-validation-bubble-arrow):
+        (::-webkit-validation-bubble-arrow-clipper):
+        (meter::-webkit-meter-inner-element):
+        (meter::-webkit-meter-bar):
+        (meter::-webkit-meter-optimum-value):
+        (meter::-webkit-meter-suboptimum-value):
+        (meter::-webkit-meter-even-less-good-value):
+        (progress::-webkit-progress-inner-element):
+        (progress::-webkit-progress-bar):
+        (progress::-webkit-progress-value):
+
 2014-02-21  Eric Carlson  <eric.carlson@apple.com>
 
         Fix TimeRanges layering violations
