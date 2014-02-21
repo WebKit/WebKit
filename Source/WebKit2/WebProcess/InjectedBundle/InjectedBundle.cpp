@@ -189,6 +189,15 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         }
     }
 
+#if ENABLE(IMAGE_CONTROLS)
+    if (preference == "WebKitImageControlsEnabled") {
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey(), enabled);
+        for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
+            (*iter)->settings().setImageControlsEnabled(enabled);
+        return;
+    }
+#endif
+
 #if ENABLE(CSS_REGIONS)
     if (preference == "WebKitCSSRegionsEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(enabled);

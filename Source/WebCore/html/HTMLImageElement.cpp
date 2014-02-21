@@ -35,6 +35,12 @@
 #include "HTMLParserIdioms.h"
 #include "Page.h"
 #include "RenderImage.h"
+#include "Settings.h"
+#include "ShadowRoot.h"
+
+#if ENABLE(IMAGE_CONTROLS)
+#include "ImageControlsRootElement.h"
+#endif
 
 namespace WebCore {
 
@@ -46,6 +52,9 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     , m_form(form)
     , m_compositeOperator(CompositeSourceOver)
     , m_imageDevicePixelRatio(1.0f)
+#if ENABLE(IMAGE_CONTROLS)
+    , m_experimentalImageMenuEnabled(false)
+#endif
 {
     ASSERT(hasTagName(imgTag));
     setHasCustomStyleResolveCallbacks();
@@ -151,6 +160,11 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         BlendMode blendOp = BlendModeNormal;
         if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))
             m_compositeOperator = CompositeSourceOver;
+#if ENABLE(IMAGE_CONTROLS)
+    } else if (name == webkitimagemenuAttr) {
+        m_experimentalImageMenuEnabled = !value.isNull();
+        updateImageControls();
+#endif
     } else {
         if (name == nameAttr) {
             bool willHaveName = !value.isNull();
@@ -203,6 +217,11 @@ void HTMLImageElement::didAttachRenderers()
         return;
     if (m_imageLoader.hasPendingBeforeLoadEvent())
         return;
+
+#if ENABLE(IMAGE_CONTROLS)
+    updateImageControls();
+#endif
+
     RenderImage* renderImage = toRenderImage(renderer());
     RenderImageResource& renderImageResource = renderImage->imageResource();
     if (renderImageResource.hasImage())
@@ -411,6 +430,77 @@ bool HTMLImageElement::isServerMap() const
 
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
 }
+
+#if ENABLE(IMAGE_CONTROLS)
+void HTMLImageElement::updateImageControls()
+{
+    // If this image element is inside a shadow tree then it is part of an image control.
+    if (isInShadowTree())
+        return;
+
+    Settings* settings = document().settings();
+    if (!settings || !settings->imageControlsEnabled())
+        return;
+
+    bool hasControls = hasImageControls();
+    if (!m_experimentalImageMenuEnabled && hasControls)
+        destroyImageControls();
+    else if (m_experimentalImageMenuEnabled && !hasControls)
+        createImageControls();
+}
+
+void HTMLImageElement::createImageControls()
+{
+    ASSERT(m_experimentalImageMenuEnabled);
+    ASSERT(!hasImageControls());
+
+    RefPtr<ImageControlsRootElement> imageControls = ImageControlsRootElement::maybeCreate(document());
+    if (!imageControls)
+        return;
+
+    ensureUserAgentShadowRoot().appendChild(imageControls);
+
+    RenderObject* renderObject = renderer();
+    if (!renderObject)
+        return;
+
+    toRenderImage(renderObject)->setHasShadowControls(true);
+}
+
+void HTMLImageElement::destroyImageControls()
+{
+    ShadowRoot* shadowRoot = userAgentShadowRoot();
+    if (!shadowRoot)
+        return;
+
+    if (Node* node = shadowRoot->firstChild()) {
+        ASSERT_WITH_SECURITY_IMPLICATION(node->isImageControlsRootElement());
+        shadowRoot->removeChild(node);
+    }
+
+    RenderObject* renderObject = renderer();
+    if (!renderObject)
+        return;
+
+    toRenderImage(renderObject)->setHasShadowControls(false);
+}
+
+bool HTMLImageElement::hasImageControls() const
+{
+    if (ShadowRoot* shadowRoot = userAgentShadowRoot()) {
+        Node* node = shadowRoot->firstChild();
+        ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isImageControlsRootElement());
+        return node;
+    }
+
+    return false;
+}
+
+bool HTMLImageElement::childShouldCreateRenderer(const Node& child) const
+{
+    return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
+}
+#endif // ENABLE(IMAGE_CONTROLS)
 
 #if PLATFORM(IOS)
 // FIXME: This is a workaround for <rdar://problem/7725158>. We should find a better place for the touchCalloutEnabled() logic.

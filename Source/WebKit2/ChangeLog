@@ -1,3 +1,14 @@
+2014-02-20  Brady Eidson  <beidson@apple.com>
+
+        Add very basic image control rendering
+        https://bugs.webkit.org/show_bug.cgi?id=129080
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Expose the 
+          imageControlsEnabled setting to WKTR.
+
 2014-02-20  Tim Horton  <timothy_horton@apple.com>
 
         Add magnification and swiping properties to WKWebView

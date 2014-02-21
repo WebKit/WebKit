@@ -1,3 +1,22 @@
+2014-02-20  Brady Eidson  <beidson@apple.com>
+
+        Add very basic image control rendering
+        https://bugs.webkit.org/show_bug.cgi?id=129080
+
+        Reviewed by Tim Horton.
+
+        Expose the imageControlsEnabled setting to WebKit1 so DRT can use it.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences imageControlsEnabled]):
+        (-[WebPreferences setImageControlsEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2014-02-20  David Kilzer  <ddkilzer@apple.com>
 
         [ASan] WebKit1 sources are not compiled using ASAN macros

@@ -435,4 +435,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setShouldConvertPositionStyleOnCopy:(BOOL)flag;
 - (BOOL)shouldConvertPositionStyleOnCopy;
 
+- (void)setImageControlsEnabled:(BOOL)flag;
+- (BOOL)imageControlsEnabled;
+
 @end

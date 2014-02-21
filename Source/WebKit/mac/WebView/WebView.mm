@@ -2383,6 +2383,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setMediaSourceEnabled([preferences mediaSourceEnabled]);
 #endif
 
+#if ENABLE(IMAGE_CONTROLS)
+    settings.setImageControlsEnabled([preferences imageControlsEnabled]);
+#endif
+
     settings.setShouldConvertPositionStyleOnCopy([preferences shouldConvertPositionStyleOnCopy]);
 
     switch ([preferences storageBlockingPolicy]) {

@@ -1,1 +1,65 @@
+2014-02-20  Brady Eidson  <beidson@apple.com>
+
+        Add very basic image control rendering
+        https://bugs.webkit.org/show_bug.cgi?id=129080
+
+        Reviewed by Tim Horton.
+
+        Test: fast/images/image-controls-basic.html
+
+        This patch is groundwork that adds a very basic image control that can render on top of images.
+
+        * dom/Node.h:
+        (WebCore::Node:: isImageControlsRootElement): Returns false, unless you are an ImageControls object.
+        * html/HTMLAttributeNames.in:
+
+        Teach HTMLImageElement how to understand an experimental attribute to install controls,
+        how to actually build the DOM to attach to the shadow root, how to tear that DOM down,
+        and how to make sure that Renderers are created for that DOM:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::didAttachRenderers):
+        (WebCore::HTMLImageElement::updateImageControls):
+        (WebCore::HTMLImageElement::createImageControls):
+        (WebCore::HTMLImageElement::destroyImageControls):
+        (WebCore::HTMLImageElement::hasImageControls):
+        (WebCore::HTMLImageElement::childShouldCreateRenderer):
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::hasShadowControls): For RenderImage to query when it is constructed. 
+
+        Add a generic, platform independent ImageControls root element that does nothing:
+        * html/shadow/ImageControlsRootElement.cpp: Added.
+        (WebCore::ImageControlsRootElement::maybeCreate):
+        (WebCore::ImageControlsRootElement::ImageControlsRootElement):
+        (WebCore::ImageControlsRootElement::~ImageControlsRootElement):
+        * html/shadow/ImageControlsRootElement.h: Added.
+
+        Add a Mac-specific ImageControls root element that renders a 20x20 red box (for now):
+        * html/shadow/mac/ImageControlsRootElementMac.cpp: Added.
+        (WebCore::ImageControlsRootElementMac::ImageControlsRootElementMac):
+        (WebCore::ImageControlsRootElementMac::~ImageControlsRootElementMac):
+        (WebCore::ImageControlsRootElement::maybeCreate):
+        (WebCore::ImageControlsRootElementMac::maybeCreate):
+        * html/shadow/mac/ImageControlsRootElementMac.h: Added.
+
+        Since much of the RenderMedia::layout() method is now required for RenderImage as well,
+        move the logic to RenderImage. The extra work is controlled by a bool flag that will always
+        be set for RenderMedias but will only be set for certain RenderImages:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::canHaveChildren):
+        (WebCore::RenderImage::layout):
+        (WebCore::RenderImage::layoutShadowControls):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::setHasShadowControls):
+        (WebCore::RenderImage::shadowControlsNeedCustomLayoutMetrics):
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::RenderMedia):
+        * rendering/RenderMedia.h:
+        (WebCore::RenderMedia::shadowControlsNeedCustomLayoutMetrics):
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 == Rolled over to ChangeLog-2014-02-20 ==

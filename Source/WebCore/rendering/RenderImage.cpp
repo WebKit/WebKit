@@ -44,6 +44,7 @@
 #include "InlineElementBox.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderFlowThread.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderView.h"
 #include "SVGImage.h"
@@ -122,10 +123,14 @@ RenderImage::RenderImage(Element& element, PassRef<RenderStyle> style, StyleImag
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)
     , m_isGeneratedContent(false)
+    , m_hasShadowControls(false)
     , m_imageDevicePixelRatio(imageDevicePixelRatio)
 {
     updateAltText();
     imageResource().initialize(this);
+
+    if (isHTMLImageElement(element))
+        m_hasShadowControls = toHTMLImageElement(element).hasShadowControls();
 }
 
 RenderImage::RenderImage(Document& document, PassRef<RenderStyle> style, StyleImage* styleImage)
@@ -134,6 +139,7 @@ RenderImage::RenderImage(Document& document, PassRef<RenderStyle> style, StyleIm
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)
     , m_isGeneratedContent(false)
+    , m_hasShadowControls(false)
     , m_imageDevicePixelRatio(1.0f)
 {
     imageResource().initialize(this);
@@ -655,11 +661,63 @@ void RenderImage::updateAltText()
         m_altText = toHTMLImageElement(element())->altText();
 }
 
+bool RenderImage::canHaveChildren() const
+{
+#if !ENABLE(IMAGE_CONTROLS)
+    return false;
+#else
+    return m_hasShadowControls;
+#endif
+}
+
 void RenderImage::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
+
+    LayoutSize oldSize = contentBoxRect().size();
     RenderReplaced::layout();
+
     updateInnerContentRect();
+
+    if (m_hasShadowControls)
+        layoutShadowControls(oldSize);
+}
+
+void RenderImage::layoutShadowControls(const LayoutSize& oldSize)
+{
+    RenderBox* controlsRenderer = toRenderBox(firstChild());
+    if (!controlsRenderer)
+        return;
+    
+    bool controlsNeedLayout = controlsRenderer->needsLayout();
+    // If the region chain has changed we also need to relayout the controls to update the region box info.
+    // FIXME: We can do better once we compute region box info for RenderReplaced, not only for RenderBlock.
+    const RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (flowThread && !controlsNeedLayout) {
+        if (flowThread->pageLogicalSizeChanged())
+            controlsNeedLayout = true;
+    }
+
+    LayoutSize newSize = contentBoxRect().size();
+    if (newSize == oldSize && !controlsNeedLayout)
+        return;
+
+    // When calling layout() on a child node, a parent must either push a LayoutStateMaintainter, or 
+    // instantiate LayoutStateDisabler. Since using a LayoutStateMaintainer is slightly more efficient,
+    // and this method might be called many times per second during video playback, use a LayoutStateMaintainer:
+    LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
+
+    if (shadowControlsNeedCustomLayoutMetrics()) {
+        controlsRenderer->setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
+        controlsRenderer->style().setHeight(Length(newSize.height(), Fixed));
+        controlsRenderer->style().setWidth(Length(newSize.width(), Fixed));
+    }
+
+    controlsRenderer->setNeedsLayout(MarkOnlyThis);
+    controlsRenderer->layout();
+    clearChildNeedsLayout();
+
+    statePusher.pop();
 }
 
 void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const

@@ -41,9 +41,6 @@ public:
 
     HTMLMediaElement& mediaElement() const { return toHTMLMediaElement(nodeForNonAnonymous()); }
 
-protected:
-    virtual void layout();
-
 private:
     void element() const = delete;
 
@@ -55,6 +52,8 @@ private:
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
     virtual bool requiresForcedStyleRecalcPropagation() const override final { return true; }
+
+    virtual bool shadowControlsNeedCustomLayoutMetrics() const { return true; }
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderMedia, isMedia())

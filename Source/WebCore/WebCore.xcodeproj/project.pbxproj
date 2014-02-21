@@ -1725,6 +1725,10 @@
 		50D10D9A1545F5760096D288 /* RenderLayerFilterInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
+		510192D118B6B9AB007FC7A1 /* ImageControlsRootElementMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510192CF18B6B9AB007FC7A1 /* ImageControlsRootElementMac.cpp */; };
+		510192D218B6B9AB007FC7A1 /* ImageControlsRootElementMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */; };
+		510192D518B6B9B7007FC7A1 /* ImageControlsRootElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510192D318B6B9B7007FC7A1 /* ImageControlsRootElement.cpp */; };
+		510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */; };
 		510194401836D20800925523 /* IDBIndexWriterLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5101943E1836D20800925523 /* IDBIndexWriterLevelDB.cpp */; };
 		510194411836D20800925523 /* IDBIndexWriterLevelDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 5101943F1836D20800925523 /* IDBIndexWriterLevelDB.h */; };
 		510194441836F7E400925523 /* IDBCursorBackendOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510194421836F7E400925523 /* IDBCursorBackendOperations.cpp */; };
@@ -8603,6 +8607,10 @@
 		50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerFilterInfo.h; sourceTree = "<group>"; };
 		510184670B08602A004A825F /* CachedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPage.h; sourceTree = "<group>"; };
 		510184680B08602A004A825F /* CachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedPage.cpp; sourceTree = "<group>"; };
+		510192CF18B6B9AB007FC7A1 /* ImageControlsRootElementMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageControlsRootElementMac.cpp; sourceTree = "<group>"; };
+		510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageControlsRootElementMac.h; sourceTree = "<group>"; };
+		510192D318B6B9B7007FC7A1 /* ImageControlsRootElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageControlsRootElement.cpp; sourceTree = "<group>"; };
+		510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageControlsRootElement.h; sourceTree = "<group>"; };
 		5101943E1836D20800925523 /* IDBIndexWriterLevelDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexWriterLevelDB.cpp; sourceTree = "<group>"; };
 		5101943F1836D20800925523 /* IDBIndexWriterLevelDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexWriterLevelDB.h; sourceTree = "<group>"; };
 		510194421836F7E400925523 /* IDBCursorBackendOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorBackendOperations.cpp; sourceTree = "<group>"; };
@@ -15123,10 +15131,13 @@
 		4150F9ED12B6E0990008C860 /* shadow */ = {
 			isa = PBXGroup;
 			children = (
+				51C4AA5118B28357007BFE9B /* mac */,
 				57B7919F14C6A62900F202D1 /* ContentDistributor.cpp */,
 				57B791A014C6A62900F202D1 /* ContentDistributor.h */,
 				A7C9ABF61357A3BF00F5503F /* DetailsMarkerControl.cpp */,
 				A7C9ABF71357A3BF00F5503F /* DetailsMarkerControl.h */,
+				510192D318B6B9B7007FC7A1 /* ImageControlsRootElement.cpp */,
+				510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */,
 				57CF497214EE36D700ECFF14 /* InsertionPoint.cpp */,
 				57CF497314EE36D700ECFF14 /* InsertionPoint.h */,
 				417253A81354BBBC00360F2A /* MediaControlElements.cpp */,
@@ -15646,6 +15657,15 @@
 				51889F0A1554AF3D004427F7 /* PDFDocument.h */,
 			);
 			path = ios;
+			sourceTree = "<group>";
+		};
+		51C4AA5118B28357007BFE9B /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				510192CF18B6B9AB007FC7A1 /* ImageControlsRootElementMac.cpp */,
+				510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		59B5977111086556007159E8 /* jsc */ = {
@@ -23404,6 +23424,7 @@
 				07FFDE69181AED420072D409 /* MediaStreamTrackPrivate.h in Headers */,
 				76FC2B0C12370DA0006A991A /* DOMTokenList.h in Headers */,
 				E145349716A9BB6A000F6FD2 /* DOMTransitionEvent.h in Headers */,
+				510192D218B6B9AB007FC7A1 /* ImageControlsRootElementMac.h in Headers */,
 				E145349916A9BB6A000F6FD2 /* DOMTransitionEventInternal.h in Headers */,
 				A14832BB187F643200DA63A6 /* WAKWindow.h in Headers */,
 				BC1A37BE097C715F0019F3D8 /* DOMTraversal.h in Headers */,
@@ -24475,6 +24496,7 @@
 				AAA4FAD2175D5CB300743873 /* JSUIRequestEvent.h in Headers */,
 				15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */,
 				BE8EF04B171C9014009B48C3 /* JSVideoTrack.h in Headers */,
+				510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */,
 				BE8EF04D171C9014009B48C3 /* JSVideoTrackList.h in Headers */,
 				FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */,
 				A7D20F63107F406900A80392 /* JSWebGLActiveInfo.h in Headers */,
@@ -26567,6 +26589,7 @@
 				97BC6A231505F081001B74AC /* DatabaseAuthorizer.cpp in Sources */,
 				E125F8351822F18A00D84CD9 /* CryptoKeyHMAC.cpp in Sources */,
 				511EF2C517F0FD3500E4FA16 /* JSIDBIndex.cpp in Sources */,
+				510192D518B6B9B7007FC7A1 /* ImageControlsRootElement.cpp in Sources */,
 				FE16CFD3169D1DED00D3A0C7 /* DatabaseBackend.cpp in Sources */,
 				97BC69DA1505F076001B74AC /* DatabaseBackendBase.cpp in Sources */,
 				FE6F6AAF169E057500FC30A2 /* DatabaseBackendContext.cpp in Sources */,
@@ -28722,6 +28745,7 @@
 				B2A1F2AD0CEF0ABF00442F6A /* SVGGlyphElement.cpp in Sources */,
 				24D912BD13CA9A9700D21915 /* SVGGlyphRefElement.cpp in Sources */,
 				B2227A290D00BF220071B782 /* SVGGradientElement.cpp in Sources */,
+				510192D118B6B9AB007FC7A1 /* ImageControlsRootElementMac.cpp in Sources */,
 				B2227AB50D00BF220071B782 /* SVGGraphicsElement.cpp in Sources */,
 				078E090D17D14CEE00420AA1 /* RTCSessionDescriptionRequestImpl.cpp in Sources */,
 				650FBF2A0D9AF047008FC292 /* SVGHKernElement.cpp in Sources */,

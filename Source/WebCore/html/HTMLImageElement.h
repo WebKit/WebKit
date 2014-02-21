@@ -85,6 +85,8 @@ public:
 
     virtual const AtomicString& imageSourceURL() const override;
 
+    bool hasShadowControls() const { return m_experimentalImageMenuEnabled; }
+
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = 0);
 
@@ -120,6 +122,15 @@ private:
     AtomicString m_bestFitImageURL;
     AtomicString m_lowercasedUsemap;
     float m_imageDevicePixelRatio;
+    bool m_experimentalImageMenuEnabled;
+
+#if ENABLE(IMAGE_CONTROLS)
+    void updateImageControls();
+    void createImageControls();
+    void destroyImageControls();
+    bool hasImageControls() const;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
+#endif
 };
 
 NODE_TYPE_CASTS(HTMLImageElement)

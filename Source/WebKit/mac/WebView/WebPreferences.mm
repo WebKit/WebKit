@@ -595,6 +595,9 @@ public:
 #if ENABLE(MEDIA_SOURCE)
         [NSNumber numberWithBool:NO], WebKitMediaSourceEnabledPreferenceKey,
 #endif
+#if ENABLE(IMAGE_CONTROLS)
+        [NSNumber numberWithBool:NO], WebKitImageControlsEnabledPreferenceKey,
+#endif
         nil];
 
 #if !PLATFORM(IOS)
@@ -2533,6 +2536,16 @@ static bool needsScreenFontsEnabledQuirk()
 - (void)setMediaSourceEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitMediaSourceEnabledPreferenceKey];
+}
+
+- (BOOL)imageControlsEnabled
+{
+    return [self _boolValueForKey:WebKitImageControlsEnabledPreferenceKey];
+}
+
+- (void)setImageControlsEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitImageControlsEnabledPreferenceKey];
 }
 
 - (BOOL)shouldConvertPositionStyleOnCopy

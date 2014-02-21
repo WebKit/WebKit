@@ -238,6 +238,9 @@ public:
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isPluginElement() const { return false; }
     virtual bool isInsertionPointNode() const { return false; }
+#if ENABLE(IMAGE_CONTROLS)
+    virtual bool isImageControlsRootElement() const { return false; }
+#endif
 
     bool isDocumentNode() const;
     bool isTreeScope() const;
