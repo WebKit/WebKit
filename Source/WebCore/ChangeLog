@@ -1,3 +1,28 @@
+2014-02-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        'mouseenter' mouse compat event not fired when listeners for touch events
+        https://bugs.webkit.org/show_bug.cgi?id=128534
+
+        Reviewed by Andreas Kling.
+
+        The code dispatching mouseenter and mouseleave events was making the assumption that
+        only mouse move would cause Document::updateHoverActiveState.
+
+        This is not true in some cases. In the case of this bug, the first touch handler sets
+        the hover state. From there, the code handling enter/leave is in an inconsistent state.
+
+        This patch changes the delivery of mouse enter/leave events to be done through the regular
+        processing of mouse events. The update is done with the mouseover and mouseout events.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareMouseEvent):
+        (WebCore::Document::updateHoverActiveState):
+        * dom/Document.h:
+        * page/EventHandler.cpp:
+        (WebCore::nearestCommonHoverAncestor):
+        (WebCore::hierarchyHasCapturingEventListeners):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+
 2014-02-21  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Crash reloading page with position: fixed content

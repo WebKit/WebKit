@@ -1,3 +1,19 @@
+2014-02-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        'mouseenter' mouse compat event not fired when listeners for touch events
+        https://bugs.webkit.org/show_bug.cgi?id=128534
+
+        Reviewed by Andreas Kling.
+
+        The existing tests for mouseenter/mouseleave had very poor readability which made them
+        useless for debugging.
+        This updates them to log what cause the events, and log all the events everywhere on the page.
+
+        * fast/events/mouseenter-mouseleave-capture-expected.txt:
+        * fast/events/mouseenter-mouseleave-capture.html:
+        * fast/events/mouseenter-mouseleave-expected.txt:
+        * fast/events/mouseenter-mouseleave.html:
+
 2014-02-21  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Crash reloading page with position: fixed content

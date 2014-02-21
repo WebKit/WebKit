@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html id=html>
 <head>
 <script>
 function log(message) {
@@ -8,9 +8,8 @@ function log(message) {
 
 function logMouseEvent(ev) {
     var target = (ev.target)? ev.target : ev.srcElement;
-    if (target.id) {
-        log(ev.type + " on " + target.id);
-    }
+    log(ev.type + " on " + target.id);
+    event.stopPropagation();
 }
 
 function doTest() {
@@ -18,20 +17,39 @@ function doTest() {
     document.body.addEventListener('mouseenter',logMouseEvent,true);
     document.body.addEventListener('mouseleave',logMouseEvent,true);
     if (window.testRunner) {
-        eventSender.mouseMoveTo(1, 1);
-        eventSender.mouseMoveTo(90,140);
-        eventSender.mouseMoveTo(110,140);
-        eventSender.mouseMoveTo(130,140);
-        eventSender.mouseMoveTo(170,140);
-        eventSender.mouseMoveTo(180,140);
-        eventSender.mouseMoveTo(210,140);
+      log("mouseMoveTo(1, 1)");
+      eventSender.mouseMoveTo(1, 1);
+      log("<br>mouseMoveTo(90,140)");
+      eventSender.mouseMoveTo(90,140);
+      log("<br>mouseMoveTo(110,140)");
+      eventSender.mouseMoveTo(110,140);
+      log("<br>mouseMoveTo(130,140)");
+      eventSender.mouseMoveTo(130,140);
+      log("<br>mouseMoveTo(170,140)");
+      eventSender.mouseMoveTo(170,140);
+      log("<br>mouseMoveTo(180,140)");
+      eventSender.mouseMoveTo(180,140);
+      log("<br>mouseMoveTo(210,140)");
+      eventSender.mouseMoveTo(210,140);
 
-        testRunner.dumpAsText();
+      testRunner.dumpAsText();
     }
 }
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    var mouseTargets = document.querySelectorAll('[id]');
+    for (var i = 0; i < mouseTargets.length; ++i) {
+        var target = mouseTargets[i];
+        target.addEventListener('mouseover', logMouseEvent);
+        target.addEventListener('mouseout', logMouseEvent);
+        target.addEventListener('mousemove', logMouseEvent);
+    }
+    doTest();
+});
+
 </script>
 </head>
-<body onload="doTest()">
+<body id=body>
 <div id="outer1" style="width:100px; height:100px; background-color:blue; top:100px; left:100px; position:absolute">
 <div id="inner1" style="width:50px; height:50px; background-color:red; top:20px; left:20px; position:absolute">
 </div>

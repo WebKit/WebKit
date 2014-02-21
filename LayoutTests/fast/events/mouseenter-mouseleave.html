@@ -1,56 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html id=html>
 <head>
 <script>
 function log(message, console) {
-    document.getElementById(console).innerHTML += (message + "\n");
+    document.getElementById('console').innerHTML += (message + "\n");
 }
 
-function logMouseOverOutEvent(ev) {
+function logMouseEvent(ev) {
     var target = (ev.target)? ev.target : ev.srcElement;
-    log(ev.type + " on " + target.id, 'console1');
-}
-
-function logMouseEnterLeaveEvent(ev) {
-    var target = (ev.target)? ev.target : ev.srcElement;
-    log(ev.type + " on " + target.id, 'console2');
+    log(ev.type + " on " + target.id);
+    event.stopPropagation();
 }
 
 function doTest() {
     document.body.offsetLeft;
     if (window.testRunner) {
+        log("mouseMoveTo(1, 1)");
         eventSender.mouseMoveTo(1, 1);
+        log("<br>mouseMoveTo(90,140)");
         eventSender.mouseMoveTo(90,140);
+        log("<br>mouseMoveTo(110,140)");
         eventSender.mouseMoveTo(110,140);
+        log("<br>mouseMoveTo(130,140)");
         eventSender.mouseMoveTo(130,140);
+        log("<br>mouseMoveTo(170,140)");
         eventSender.mouseMoveTo(170,140);
+        log("<br>mouseMoveTo(180,140)");
         eventSender.mouseMoveTo(180,140);
+        log("<br>mouseMoveTo(210,140)");
         eventSender.mouseMoveTo(210,140);
 
         testRunner.dumpAsText();
     }
 }
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    var mouseTargets = document.querySelectorAll('[id]');
+    for (var i = 0; i < mouseTargets.length; ++i) {
+        var target = mouseTargets[i];
+        target.addEventListener('mouseover', logMouseEvent);
+        target.addEventListener('mouseenter', logMouseEvent);
+        target.addEventListener('mouseout', logMouseEvent);
+        target.addEventListener('mouseleave', logMouseEvent);
+        target.addEventListener('mousemove', logMouseEvent);
+    }
+    doTest();
+});
 </script>
 </head>
-<body onload="doTest()">
-<div id="outer1" style="width:100px; height:100px; background-color:blue; top:100px; left:100px; position:absolute"
-     onMouseOver="logMouseOverOutEvent(event)" onMouseOut="logMouseOverOutEvent(event)"
-     onMouseEnter="logMouseEnterLeaveEvent(event)" onMouseLeave="logMouseEnterLeaveEvent(event)">
-<div id="inner1" style="width:50px; height:50px; background-color:red; top:20px; left:20px; position:absolute"
-     onMouseOver="logMouseOverOutEvent(event)" onMouseOut="logMouseOverOutEvent(event)"
-     onMouseEnter="logMouseEnterLeaveEvent(event)" onMouseLeave="logMouseEnterLeaveEvent(event)">
+<body id='body'>
+<div id="outer1" style="width:100px; height:100px; background-color:blue; top:100px; left:100px; position:absolute">
+  <div id="inner1" style="width:50px; height:50px; background-color:red; top:20px; left:20px; position:absolute">
+  </div>
+  <div id="inner2" style="width:20px; height:20px; background-color:yellow; top:30px; left:60px; position:absolute">
+    <div id="inner3" style="margin:5px; width:10px; height:10px; background-color:green;">
+    </div>
+  </div>
 </div>
-<div id="inner2" style="width:20px; height:20px; background-color:yellow; top:30px; left:60px; position:absolute"
-     onMouseOver="logMouseOverOutEvent(event)" onMouseOut="logMouseOverOutEvent(event)"
-     onMouseEnter="logMouseEnterLeaveEvent(event)" onMouseLeave="logMouseEnterLeaveEvent(event)">
-<div id="inner3" style="margin:5px; width:10px; height:10px; background-color:green;"
-     onMouseOver="logMouseOverOutEvent(event)" onMouseOut="logMouseOverOutEvent(event)"
-     onMouseEnter="logMouseEnterLeaveEvent(event)" onMouseLeave="logMouseEnterLeaveEvent(event)">
-</div>
-</div>
-</div>
-<pre id="console1"></pre>
-<br>
-<pre id="console2"></pre>
+
+<pre id="console"></pre>
 </body>
 </html>

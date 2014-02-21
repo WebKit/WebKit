@@ -1,9 +1,42 @@
+mouseMoveTo(1, 1)
+mouseover on html
+mousemove on html
+
+mouseMoveTo(90,140)
+mousemove on html
+
+mouseMoveTo(110,140)
+mouseout on html
+mouseover on outer1
 mouseenter on outer1
+mouseenter on body
+mousemove on outer1
+
+mouseMoveTo(130,140)
+mouseout on outer1
+mouseover on inner1
 mouseenter on inner1
+mousemove on inner1
+
+mouseMoveTo(170,140)
+mouseout on inner1
 mouseleave on inner1
+mouseover on inner3
 mouseenter on inner3
 mouseenter on inner2
+mousemove on inner3
+
+mouseMoveTo(180,140)
+mouseout on inner3
 mouseleave on inner3
 mouseleave on inner2
+mouseover on outer1
+mousemove on outer1
+
+mouseMoveTo(210,140)
+mouseout on outer1
 mouseleave on outer1
+mouseover on console
+mouseenter on console
+mousemove on console
 

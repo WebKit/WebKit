@@ -2256,6 +2256,30 @@ static inline SVGElementInstance* instanceAssociatedWithShadowTreeElement(Node* 
     return toSVGUseElement(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode);
 }
 
+static RenderElement* nearestCommonHoverAncestor(RenderElement* obj1, RenderElement* obj2)
+{
+    if (!obj1 || !obj2)
+        return nullptr;
+
+    for (RenderElement* currObj1 = obj1; currObj1; currObj1 = currObj1->hoverAncestor()) {
+        for (RenderElement* currObj2 = obj2; currObj2; currObj2 = currObj2->hoverAncestor()) {
+            if (currObj1 == currObj2)
+                return currObj1;
+        }
+    }
+
+    return nullptr;
+}
+
+static bool hierarchyHasCapturingEventListeners(Element* element, const AtomicString& eventName)
+{
+    for (ContainerNode* curr = element; curr; curr = curr->parentOrShadowHostNode()) {
+        if (curr->hasCapturingEventListeners(eventName))
+            return true;
+    }
+    return false;
+}
+
 void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMouseEvent& mouseEvent, bool fireMouseOverOut)
 {
     Element* targetElement = nullptr;
@@ -2350,12 +2374,58 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         }
 
         if (m_lastElementUnderMouse != m_elementUnderMouse) {
-            // send mouseout event to the old node
+            // mouseenter and mouseleave events are only dispatched if there is a capturing eventhandler on an ancestor
+            // or a normal eventhandler on the element itself (they don't bubble).
+            // This optimization is necessary since these events can cause O(n^2) capturing event-handler checks.
+            bool hasCapturingMouseEnterListener = hierarchyHasCapturingEventListeners(m_elementUnderMouse.get(), eventNames().mouseenterEvent);
+            bool hasCapturingMouseLeaveListener = hierarchyHasCapturingEventListeners(m_lastElementUnderMouse.get(), eventNames().mouseleaveEvent);
+
+            RenderElement* oldHoverRenderer = m_lastElementUnderMouse ? m_lastElementUnderMouse->renderer() : nullptr;
+            RenderElement* newHoverRenderer = m_elementUnderMouse ? m_elementUnderMouse->renderer() : nullptr;
+            RenderElement* ancestor = nearestCommonHoverAncestor(oldHoverRenderer, newHoverRenderer);
+
+            Vector<Ref<Element>, 32> leftElementsChain;
+            if (oldHoverRenderer) {
+                for (RenderElement* curr = oldHoverRenderer; curr && curr != ancestor; curr = curr->hoverAncestor()) {
+                    if (Element* element = curr->element())
+                        leftElementsChain.append(*element);
+                }
+            } else {
+                // If the old hovered element is not null but it's renderer is, it was probably detached.
+                // In this case, the old hovered element (and its ancestors) must be updated, to ensure it's normal style is re-applied.
+                for (Element* element = m_lastElementUnderMouse.get(); element; element = element->parentElement())
+                    leftElementsChain.append(*element);
+            }
+
+            Vector<Ref<Element>, 32> enteredElementsChain;
+            const Element* ancestorElement = ancestor ? ancestor->element() : nullptr;
+            for (RenderElement* curr = newHoverRenderer; curr; curr = curr->hoverAncestor()) {
+                if (Element *element = curr->element()) {
+                    if (element == ancestorElement)
+                        break;
+                    enteredElementsChain.append(*element);
+                }
+            }
+
+            // Send mouseout event to the old node.
             if (m_lastElementUnderMouse)
                 m_lastElementUnderMouse->dispatchMouseEvent(mouseEvent, eventNames().mouseoutEvent, 0, m_elementUnderMouse.get());
-            // send mouseover event to the new node
+
+            // Send mouseleave to the node hierarchy no longer under the mouse.
+            for (size_t i = 0; i < leftElementsChain.size(); ++i) {
+                if (hasCapturingMouseLeaveListener || leftElementsChain[i]->hasEventListeners(eventNames().mouseleaveEvent))
+                    leftElementsChain[i]->dispatchMouseEvent(mouseEvent, eventNames().mouseleaveEvent, 0, m_elementUnderMouse.get());
+            }
+
+            // Send mouseover event to the new node.
             if (m_elementUnderMouse)
                 m_elementUnderMouse->dispatchMouseEvent(mouseEvent, eventNames().mouseoverEvent, 0, m_lastElementUnderMouse.get());
+
+            // Send mouseleave event to the nodes hierarchy under the mouse.
+            for (size_t i = 0, size = enteredElementsChain.size(); i < size; ++i) {
+                if (hasCapturingMouseEnterListener || enteredElementsChain[i]->hasEventListeners(eventNames().mouseenterEvent))
+                    enteredElementsChain[i]->dispatchMouseEvent(mouseEvent, eventNames().mouseenterEvent, 0, m_lastElementUnderMouse.get());
+            }
         }
         m_lastElementUnderMouse = m_elementUnderMouse;
         m_lastInstanceUnderMouse = instanceAssociatedWithShadowTreeElement(m_elementUnderMouse.get());
