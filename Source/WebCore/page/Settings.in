@@ -214,6 +214,7 @@ mediaDataLoadsAutomatically initial=false
 shouldTransformsAffectOverflow initial=true
 shouldDispatchJavaScriptWindowOnErrorEvents initial=false
 alwaysUseAcceleratedOverflowScroll initial=false
+imageControlsEnabled initial=false, conditional=IMAGE_CONTROLS
 
 # FIXME: This is unneeded and should be removed.
 alwaysUseBaselineOfPrimaryFont initial=false

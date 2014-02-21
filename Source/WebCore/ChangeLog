@@ -1,5 +1,17 @@
 2014-02-20  Brady Eidson  <beidson@apple.com>
 
+        Move the image controls setting to Settings.in
+        https://bugs.webkit.org/show_bug.cgi?id=129126
+
+        Reviewed by Tim Horton.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        * page/Settings.in:
+
+2014-02-20  Brady Eidson  <beidson@apple.com>
+
         Add very basic image control rendering
         https://bugs.webkit.org/show_bug.cgi?id=129080
 
