@@ -32,21 +32,21 @@
 
 namespace JSC {
 
-Mutex* GlobalJSLock::s_sharedInstanceLock = 0;
+std::mutex* GlobalJSLock::s_sharedInstanceMutex;
 
 GlobalJSLock::GlobalJSLock()
 {
-    s_sharedInstanceLock->lock();
+    s_sharedInstanceMutex->lock();
 }
 
 GlobalJSLock::~GlobalJSLock()
 {
-    s_sharedInstanceLock->unlock();
+    s_sharedInstanceMutex->unlock();
 }
 
 void GlobalJSLock::initialize()
 {
-    s_sharedInstanceLock = new Mutex();
+    s_sharedInstanceMutex = new std::mutex();
 }
 
 JSLockHolder::JSLockHolder(ExecState* exec)
@@ -84,8 +84,7 @@ JSLockHolder::~JSLockHolder()
 }
 
 JSLock::JSLock(VM* vm)
-    : m_ownerThread(0)
-    , m_lockCount(0)
+    : m_lockCount(0)
     , m_lockDropDepth(0)
     , m_vm(vm)
 {
@@ -109,7 +108,6 @@ void JSLock::lock()
 void JSLock::lock(intptr_t lockCount)
 {
     ASSERT(lockCount > 0);
-    ThreadIdentifier currentThread = WTF::currentThread();
     if (currentThreadIsHoldingLock()) {
         m_lockCount += lockCount;
         return;
@@ -117,7 +115,7 @@ void JSLock::lock(intptr_t lockCount)
 
     m_lock.lock();
 
-    setOwnerThread(currentThread);
+    m_ownerThreadID = std::this_thread::get_id();
     ASSERT(!m_lockCount);
     m_lockCount = lockCount;
 
@@ -148,7 +146,7 @@ void JSLock::unlock(intptr_t unlockCount)
     if (!m_lockCount) {
         if (m_vm)
             m_vm->setStackPointerAtVMEntry(nullptr);
-        setOwnerThread(0);
+        m_ownerThreadID = std::thread::id();
         m_lock.unlock();
     }
 }
@@ -165,7 +163,7 @@ void JSLock::unlock(ExecState* exec)
 
 bool JSLock::currentThreadIsHoldingLock()
 {
-    return m_ownerThread == WTF::currentThread();
+    return m_ownerThreadID == std::this_thread::get_id();
 }
 
 // This function returns the number of locks that were dropped.

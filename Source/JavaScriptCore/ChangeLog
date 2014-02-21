@@ -1,3 +1,22 @@
+2014-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Modernize JSGlobalLock and JSLockHolder
+        https://bugs.webkit.org/show_bug.cgi?id=129105
+
+        Reviewed by Michael Saboff.
+
+        Use std::mutex and std::thread::id where possible.
+
+        * runtime/JSLock.cpp:
+        (JSC::GlobalJSLock::GlobalJSLock):
+        (JSC::GlobalJSLock::~GlobalJSLock):
+        (JSC::GlobalJSLock::initialize):
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        * runtime/JSLock.h:
+
 2014-02-20  Mark Lam  <mark.lam@apple.com>
 
         virtualForWithFunction() should not throw an exception with a partially initialized frame.

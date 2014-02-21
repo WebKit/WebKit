@@ -21,10 +21,12 @@
 #ifndef JSLock_h
 #define JSLock_h
 
+#include <mutex>
+#include <thread>
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
 
@@ -60,7 +62,7 @@ namespace JSC {
 
         static void initialize();
     private:
-        static Mutex* s_sharedInstanceLock;
+        static std::mutex* s_sharedInstanceMutex;
     };
 
     class JSLockHolder {
@@ -119,13 +121,12 @@ namespace JSC {
     private:
         void lock(intptr_t lockCount);
         void unlock(intptr_t unlockCount);
-        void setOwnerThread(ThreadIdentifier owner) { m_ownerThread = owner; }
 
         unsigned dropAllLocks(DropAllLocks*);
         void grabAllLocks(DropAllLocks*, unsigned lockCount);
 
-        Mutex m_lock;
-        ThreadIdentifier m_ownerThread;
+        std::mutex m_lock;
+        std::thread::id m_ownerThreadID;
         intptr_t m_lockCount;
         unsigned m_lockDropDepth;
         VM* m_vm;
