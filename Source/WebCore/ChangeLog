@@ -1,3 +1,16 @@
+2014-02-20  Simon Fraser  <simon.fraser@apple.com>
+
+        RenderBox::updateShapeOutsideInfoAfterStyleChange shows up on profiles
+        https://bugs.webkit.org/show_bug.cgi?id=129075
+
+        Reviewed by Dean Jackson.
+
+        updateShapeOutsideInfoAfterStyleChange() showed up on profiles in content
+        with no shapes. Avoid calling this if no style has shapeOutside().
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+
 2014-02-20  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Remove unused chromium stuff in Extensions3D

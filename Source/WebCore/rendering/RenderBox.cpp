@@ -381,7 +381,8 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     }
 
 #if ENABLE(CSS_SHAPES)
-    updateShapeOutsideInfoAfterStyleChange(style(), oldStyle);
+    if ((oldStyle && oldStyle->shapeOutside()) || style().shapeOutside())
+        updateShapeOutsideInfoAfterStyleChange(style(), oldStyle);
 #endif
 }
 
