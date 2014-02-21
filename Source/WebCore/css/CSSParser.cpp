@@ -802,7 +802,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
 #if ENABLE(CSS_COMPOSITING)
-    case CSSPropertyWebkitBlendMode:
+    case CSSPropertyWebkitMixBlendMode:
         if (parserContext.isCSSCompositingEnabled && (valueID == CSSValueNormal || valueID == CSSValueMultiply || valueID == CSSValueScreen
             || valueID == CSSValueOverlay || valueID == CSSValueDarken || valueID == CSSValueLighten ||  valueID == CSSValueColorDodge
             || valueID == CSSValueColorBurn || valueID == CSSValueHardLight || valueID == CSSValueSoftLight || valueID == CSSValueDifference
@@ -1078,7 +1078,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyVisibility:
     case CSSPropertyWebkitAppearance:
 #if ENABLE(CSS_COMPOSITING)
-    case CSSPropertyWebkitBlendMode:
+    case CSSPropertyWebkitMixBlendMode:
 #endif
     case CSSPropertyWebkitBackfaceVisibility:
     case CSSPropertyWebkitBorderAfterStyle:
@@ -2411,7 +2411,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
 #endif
 #if ENABLE(CSS_COMPOSITING)
-    case CSSPropertyWebkitBlendMode:
+    case CSSPropertyWebkitMixBlendMode:
         if (cssCompositingEnabled())
             validPrimitive = true;
         break;

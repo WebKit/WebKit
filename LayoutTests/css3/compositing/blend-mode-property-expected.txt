@@ -1,56 +1,56 @@
-Test the parsing of the -webkit-blend-mode property.
+Test the parsing of the -webkit-mix-blend-mode property.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'normal'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'normal'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'multiply'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'multiply'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'screen'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'screen'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'overlay'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'overlay'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'darken'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'darken'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'lighten'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'lighten'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'color-dodge'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'color-dodge'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'color-burn'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'color-burn'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'hard-light'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'hard-light'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'soft-light'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'soft-light'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'difference'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'difference'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'exclusion'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'exclusion'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'hue'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'hue'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'saturation'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'saturation'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'color'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'color'
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-blend-mode') is 'luminosity'
+PASS declaration.getPropertyValue('-webkit-mix-blend-mode') is 'luminosity'
 PASS successfullyParsed is true
 
 TEST COMPLETE

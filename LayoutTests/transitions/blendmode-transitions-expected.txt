@@ -1,4 +1,4 @@
 Test to make sure that the blendmode property is properly propagated to shared styles
 BOX
-PASS - "-webkit-blend-mode" property for "box" element at 0.5s saw something close to: difference
+PASS - "-webkit-mix-blend-mode" property for "box" element at 0.5s saw something close to: difference
 

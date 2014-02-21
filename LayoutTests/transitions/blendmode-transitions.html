@@ -14,7 +14,7 @@
       -webkit-transition-timing-function: linear;
       -webkit-transition-property: opacity;
 	  opacity:1;
-	  -webkit-blend-mode: difference;
+	  -webkit-mix-blend-mode: difference;
     }
     
     .final {
@@ -26,7 +26,7 @@
 
     const expectedValues = [
       // [time, element-id, property, expected-value, tolerance]
-      [0.5, 'box', '-webkit-blend-mode', 'difference', 0],
+      [0.5, 'box', '-webkit-mix-blend-mode', 'difference', 0],
     ];
   
     function setupTest()

@@ -1,3 +1,24 @@
+2014-02-21  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Blending] Refactor -webkit-blend-mode to -webkit-mix-blend-mode
+        https://bugs.webkit.org/show_bug.cgi?id=128805
+
+        Reviewed by Dean Jackson.
+
+        The spec defines the mix-blend-mode property. This means that the
+        prefixed version should be -webkit-mix-blend-mode, instead of
+        -webkit-blend-mode.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+
 2014-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Bindings tests rebaseline after r164473.

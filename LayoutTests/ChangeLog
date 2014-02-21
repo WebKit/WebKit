@@ -1,3 +1,58 @@
+2014-02-21  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Blending] Refactor -webkit-blend-mode to -webkit-mix-blend-mode
+        https://bugs.webkit.org/show_bug.cgi?id=128805
+
+        Reviewed by Dean Jackson.
+
+        The spec defines the mix-blend-mode property. This means that the
+        prefixed version should be -webkit-mix-blend-mode, instead of
+        -webkit-blend-mode. Update all tests accordingly.
+
+        * css3/compositing/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer.html:
+        * css3/compositing/blend-mode-layers.html:
+        * css3/compositing/blend-mode-overflow.html:
+        * css3/compositing/blend-mode-parent-of-composited-blended-has-layer.html:
+        * css3/compositing/blend-mode-property-expected.txt:
+        * css3/compositing/blend-mode-property-parsing-expected.txt:
+        * css3/compositing/blend-mode-property-parsing-invalid-expected.txt:
+        * css3/compositing/blend-mode-reflection.html:
+        * css3/compositing/blend-mode-simple-composited.html:
+        * css3/compositing/blend-mode-simple.html:
+        * css3/compositing/blend-mode-with-composited-descendant-should-have-layer.html:
+        * css3/compositing/resources/red-circle.svg:
+        * css3/compositing/script-tests/blend-mode-property-parsing-invalid.js:
+        (testInvalidFilterRule):
+        * css3/compositing/script-tests/blend-mode-property-parsing.js:
+        (testBlendModeRule):
+        * css3/compositing/script-tests/blend-mode-property.js:
+        (testblendmode):
+        * css3/compositing/svg-blend-color-burn.html:
+        * css3/compositing/svg-blend-color-dodge.html:
+        * css3/compositing/svg-blend-color.html:
+        * css3/compositing/svg-blend-darken.html:
+        * css3/compositing/svg-blend-difference.html:
+        * css3/compositing/svg-blend-exclusion.html:
+        * css3/compositing/svg-blend-hard-light.html:
+        * css3/compositing/svg-blend-hue.html:
+        * css3/compositing/svg-blend-layer-blend.html:
+        * css3/compositing/svg-blend-layer-clip-path.html:
+        * css3/compositing/svg-blend-layer-filter.html:
+        * css3/compositing/svg-blend-layer-mask.html:
+        * css3/compositing/svg-blend-layer-opacity.html:
+        * css3/compositing/svg-blend-layer-shadow.html:
+        * css3/compositing/svg-blend-lighten.html:
+        * css3/compositing/svg-blend-luminosity.html:
+        * css3/compositing/svg-blend-multiply-alpha.html:
+        * css3/compositing/svg-blend-multiply.html:
+        * css3/compositing/svg-blend-normal.html:
+        * css3/compositing/svg-blend-overlay.html:
+        * css3/compositing/svg-blend-saturation.html:
+        * css3/compositing/svg-blend-screen.html:
+        * css3/compositing/svg-blend-soft-light.html:
+        * transitions/blendmode-transitions-expected.txt:
+        * transitions/blendmode-transitions.html:
+
 2014-02-20  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Rename EXT_draw_buffers to WEBGL_draw_buffers
