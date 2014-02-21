@@ -74,6 +74,8 @@ const DeletedValueTag = -7
 const LowestTag = DeletedValueTag
 end
 
+const CallOpCodeSize = 9
+
 if X86_64 or ARM64 or C_LOOP
 const maxFrameExtentForSlowPathCall = 0
 elsif ARM or ARMv7_TRADITIONAL or ARMv7 or SH4

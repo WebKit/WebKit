@@ -174,7 +174,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         - Caller initializes ScopeChain; ReturnPC; CodeBlock.
         - Caller restores callFrameRegister after return.
     */
-
+    COMPILE_ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct), call_and_construct_opcodes_must_be_same_length);
+    COMPILE_ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_varargs), call_and_call_varargs_opcodes_must_be_same_length);
     if (opcodeID == op_call_varargs)
         compileLoadVarargs(instruction);
     else {
@@ -185,7 +186,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
             emitGetVirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0);
             Jump done = emitJumpIfNotJSCell(regT0);
             loadPtr(Address(regT0, JSCell::structureOffset()), regT0);
-            storePtr(regT0, instruction[6].u.arrayProfile->addressOfLastSeenStructure());
+            storePtr(regT0, instruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile->addressOfLastSeenStructure());
             done.link(this);
         }
     

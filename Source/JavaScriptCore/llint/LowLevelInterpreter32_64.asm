@@ -92,8 +92,8 @@ macro dispatchAfterCall()
     loadi 4[PC], t2
     storei t1, TagOffset[cfr, t2, 8]
     storei t0, PayloadOffset[cfr, t2, 8]
-    valueProfile(t1, t0, 28, t3)
-    dispatch(8)
+    valueProfile(t1, t0, 4 * (CallOpCodeSize - 1), t3)
+    dispatch(CallOpCodeSize)
 end
 
 macro cCall2(function, arg1, arg2)
@@ -1962,7 +1962,7 @@ macro arrayProfileForCall()
     bineq ThisArgumentOffset + TagOffset[cfr, t3, 8], CellTag, .done
     loadi ThisArgumentOffset + PayloadOffset[cfr, t3, 8], t0
     loadp JSCell::m_structure[t0], t0
-    loadp 24[PC], t1
+    loadpFromInstruction(CallOpCodeSize - 2, t1)
     storep t0, ArrayProfile::m_lastSeenStructure[t1]
 .done:
 end

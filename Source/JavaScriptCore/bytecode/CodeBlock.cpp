@@ -442,6 +442,7 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, con
 #endif
     }
     ++it;
+    ++it;
     dumpArrayProfiling(out, it, hasPrintedProfiling);
     dumpValueProfiling(out, it, hasPrintedProfiling);
 }

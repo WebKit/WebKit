@@ -1,3 +1,32 @@
+2014-02-21  Oliver Hunt  <oliver@apple.com>
+
+        Add extra space to op_call and related opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=129170
+
+        Reviewed by Mark Lam.
+
+        No change in behaviour, just some refactoring to add an extra
+        slot to the op_call instructions, and refactoring to make similar
+        changes easier in future.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printCallOp):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2014-02-21  Mark Lam  <mark.lam@apple.com>
 
         gatherFromOtherThread() needs to align the sp before gathering roots.

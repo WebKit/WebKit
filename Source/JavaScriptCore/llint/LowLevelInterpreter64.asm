@@ -47,8 +47,8 @@ macro dispatchAfterCall()
     loadp CodeBlock::m_instructions[PB], PB
     loadisFromInstruction(1, t1)
     storeq t0, [cfr, t1, 8]
-    valueProfile(t0, 7, t2)
-    dispatch(8)
+    valueProfile(t0, (CallOpCodeSize - 1), t2)
+    dispatch(CallOpCodeSize)
 end
 
 macro cCall2(function, arg1, arg2)
@@ -1773,7 +1773,7 @@ macro arrayProfileForCall()
     loadq ThisArgumentOffset[cfr, t3, 8], t0
     btqnz t0, tagMask, .done
     loadp JSCell::m_structure[t0], t0
-    loadpFromInstruction(6, t1)
+    loadpFromInstruction((CallOpCodeSize - 2), t1)
     storep t0, ArrayProfile::m_lastSeenStructure[t1]
 .done:
 end

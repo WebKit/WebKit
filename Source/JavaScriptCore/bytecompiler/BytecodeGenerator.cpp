@@ -1766,6 +1766,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
 #else
     instructions().append(0);
 #endif
+    instructions().append(0);
     instructions().append(arrayProfile);
     instructions().append(profile);
     
@@ -1799,6 +1800,7 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     instructions().append(thisRegister->index());
     instructions().append(arguments->index());
     instructions().append(firstFreeRegister->index());
+    instructions().append(0);
     instructions().append(arrayProfile);
     instructions().append(profile);
     if (m_shouldEmitProfileHooks) {
@@ -1880,6 +1882,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
 #else
     instructions().append(0);
 #endif
+    instructions().append(0);
     instructions().append(0);
     instructions().append(profile);
 
