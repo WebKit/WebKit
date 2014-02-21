@@ -439,7 +439,7 @@ void InspectorResourceAgent::didScheduleStyleRecalculation(Document* document)
 
 PassRefPtr<Inspector::TypeBuilder::Network::Initiator> InspectorResourceAgent::buildInitiatorObject(Document* document)
 {
-    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), ScriptCallStack::maxCallStackSizeToCapture);
+    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), ScriptCallStack::maxCallStackSizeToCapture, true);
     if (stackTrace && stackTrace->size() > 0) {
         RefPtr<Inspector::TypeBuilder::Network::Initiator> initiatorObject = Inspector::TypeBuilder::Network::Initiator::create()
             .setType(Inspector::TypeBuilder::Network::Initiator::Type::Script);

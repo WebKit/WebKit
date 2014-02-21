@@ -171,10 +171,20 @@ void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScr
     int lineNumber = 0;
     int columnNumber = 0;
     String exceptionSourceURL;
-    if (const ScriptCallFrame* callFrame = callStack->firstNonNativeCallFrame()) {
-        lineNumber = callFrame->lineNumber();
-        columnNumber = callFrame->columnNumber();
-        exceptionSourceURL = callFrame->sourceURL();
+    if (callStack->size()) {
+        const ScriptCallFrame& frame = callStack->at(0);
+        lineNumber = frame.lineNumber();
+        columnNumber = frame.columnNumber();
+        exceptionSourceURL = frame.sourceURL();
+    } else {
+        // There may not be an exceptionStack for a <script> SyntaxError. Fallback to getting at least the line and sourceURL from the exception.
+        JSObject* exceptionObject = exception.toObject(exec);
+        JSValue lineValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "line"));
+        lineNumber = lineValue && lineValue.isNumber() ? int(lineValue.toNumber(exec)) : 0;
+        JSValue columnValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "column"));
+        columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(exec)) : 0;
+        JSValue sourceURLValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "sourceURL"));
+        exceptionSourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toString(exec)->value(exec) : ASCIILiteral("undefined");
     }
 
     String errorMessage;

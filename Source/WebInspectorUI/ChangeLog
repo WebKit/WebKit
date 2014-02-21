@@ -1,5 +1,11 @@
 2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Revert r164486, causing a number of test failures.
+
+        Unreviewed rollout.
+
+2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: JSContext inspection should report exceptions in the console
         https://bugs.webkit.org/show_bug.cgi?id=128776
 

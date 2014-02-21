@@ -54,10 +54,6 @@ public:
     const ScriptCallFrame& at(size_t) const;
     size_t size() const;
 
-    const ScriptCallFrame* firstNonNativeCallFrame() const;
-
-    void append(const ScriptCallFrame&);
-
     bool isEqual(ScriptCallStack*) const;
 
 #if ENABLE(INSPECTOR)
@@ -65,7 +61,6 @@ public:
 #endif
 
 private:
-    ScriptCallStack();
     ScriptCallStack(Vector<ScriptCallFrame>&);
 
     Vector<ScriptCallFrame> m_frames;

@@ -1,3 +1,9 @@
+2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Revert r164486, causing a number of test failures.
+
+        Unreviewed rollout.
+
 2014-02-21  David Kilzer  <ddkilzer@apple.com>
 
         StyleResolver::loadPendingImage() should take a reference to StylePendingImage
