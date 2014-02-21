@@ -1830,8 +1830,16 @@ private:
     
     void compileGetMyArgumentsLength() 
     {
-        TypedPointer reg = addressFor(m_node->origin.semantic.stackOffset() + JSStack::ArgumentCount);
-        setInt32(m_out.add(m_out.load32NonNegative(reg), m_out.constInt32(-1)));
+        CodeOrigin codeLocation = m_node->origin.semantic;
+        if (!isEmptySpeculation(
+            m_state.variables().operand(
+                m_graph.argumentsRegisterFor(m_node->origin.semantic)).m_type)) {
+            VirtualRegister argsReg = m_graph.machineArgumentsRegisterFor(codeLocation);
+            speculate(ArgumentsEscaped, noValue(), 0, m_out.notZero64(m_out.load64(addressFor(argsReg))));
+        }
+
+        RELEASE_ASSERT(!codeLocation.inlineCallFrame);
+        setInt32(m_out.add(m_out.load32NonNegative(payloadFor(JSStack::ArgumentCount)), m_out.constInt32(-1)));
     }
 
     void compileGetArrayLength()

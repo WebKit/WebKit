@@ -1,3 +1,13 @@
+2014-02-21  Matthew Mirman  <mmirman@apple.com>
+
+        Added a GetMyArgumentsLengthSafe and added a speculation check.
+        https://bugs.webkit.org/show_bug.cgi?id=129051
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentsLength):
+
 2014-02-21  peavo@outlook.com  <peavo@outlook.com>
 
         [Win][LLINT] Many JSC stress test failures.
