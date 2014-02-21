@@ -1,3 +1,36 @@
+2014-02-20  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant deviceScaleFactor() functions and make callers use Document::deviceScaleFactor() when accessible.
+        https://bugs.webkit.org/show_bug.cgi?id=129137
+
+        Reviewed by Simon Fraser.
+
+        No change in behavior.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        * page/Page.cpp:
+        * page/Page.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageSizeForError):
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::drawPlatformResizerImage):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintProgressBar):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem):
+
 2014-02-20  David Kilzer  <ddkilzer@apple.com>
 
         Stop generating Objective-C bindings for the SVG DOM

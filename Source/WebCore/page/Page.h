@@ -110,8 +110,6 @@ typedef uint64_t LinkHash;
 
 enum FindDirection { FindDirectionForward, FindDirectionBackward };
 
-float deviceScaleFactor(Frame*);
-
 class Page : public Supplementable<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
     friend class Settings;

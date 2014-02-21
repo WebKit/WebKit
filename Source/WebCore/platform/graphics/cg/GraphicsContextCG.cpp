@@ -125,9 +125,6 @@ void GraphicsContext::platformInit(CGContextRef cgContext, bool shouldUseContext
     m_data = new GraphicsContextPlatformPrivate(cgContext);
     setPaintingDisabled(!cgContext);
     if (cgContext) {
-        CGAffineTransform baseDeviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(cgContext);
-        ASSERT(fabs(baseDeviceMatrix.a) == fabs(baseDeviceMatrix.d));
-        m_pixelSnappingFactor = baseDeviceMatrix.a;
 #if PLATFORM(IOS)
         m_state.shouldUseContextColors = shouldUseContextColors;
         if (shouldUseContextColors) {

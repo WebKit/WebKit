@@ -80,7 +80,6 @@ private:
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext)
     : m_updatingControlTints(false)
     , m_transparencyCount(0)
-    , m_pixelSnappingFactor(1)
 {
     platformInit(platformGraphicsContext);
 }
@@ -88,7 +87,6 @@ GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContex
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext, bool shouldUseContextColors)
     : m_updatingControlTints(false)
     , m_transparencyCount(0)
-    , m_pixelSnappingFactor(1)
 {
     platformInit(platformGraphicsContext, shouldUseContextColors);
 }

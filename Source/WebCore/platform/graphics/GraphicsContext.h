@@ -444,12 +444,6 @@ namespace WebCore {
         enum IncludeDeviceScale { DefinitelyIncludeDeviceScale, PossiblyIncludeDeviceScale };
         AffineTransform getCTM(IncludeDeviceScale includeScale = PossiblyIncludeDeviceScale) const;
 
-#if PLATFORM(WIN)
-        float pixelSnappingFactor() const { return 1.0; }
-#else
-        float pixelSnappingFactor() const { return m_pixelSnappingFactor; }
-#endif
-
 #if ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
         // This is needed when using accelerated-compositing in software mode, like in TextureMapper.
         void concat3DTransform(const TransformationMatrix&);
@@ -582,7 +576,6 @@ namespace WebCore {
         Vector<GraphicsContextState> m_stack;
         bool m_updatingControlTints;
         unsigned m_transparencyCount;
-        float m_pixelSnappingFactor;
     };
 
     class GraphicsContextStateSaver {

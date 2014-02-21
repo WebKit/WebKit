@@ -1042,10 +1042,7 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
     else
         trackInfo.kind = renderProgress->position() < 0 ? kThemeMediumIndeterminateBar : kThemeMediumProgressBar;
 
-    float deviceScaleFactor = 1;
-    if (Page* page = renderObject->frame().page())
-        deviceScaleFactor = page->deviceScaleFactor();
-
+    float deviceScaleFactor = renderObject->document().deviceScaleFactor();
     trackInfo.bounds = IntRect(IntPoint(), inflatedRect.size());
     trackInfo.min = 0;
     trackInfo.max = std::numeric_limits<SInt32>::max();

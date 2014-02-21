@@ -177,7 +177,6 @@ static inline void shadowAndStrokeCurrentCairoPath(GraphicsContext* context)
 GraphicsContext::GraphicsContext(cairo_t* cr)
     : m_updatingControlTints(false)
     , m_transparencyCount(0)
-    , m_pixelSnappingFactor(1)
 {
     m_data = new GraphicsContextPlatformPrivateToplevel(new PlatformContextCairo(cr));
 }

@@ -208,7 +208,8 @@ bool FindController::getFindIndicatorBitmapAndRect(Frame* frame, ShareableBitmap
         return false;
 
     IntSize backingStoreSize = selectionRect.size();
-    backingStoreSize.scale(m_webPage->corePage()->deviceScaleFactor());
+    float deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
+    backingStoreSize.scale(deviceScaleFactor);
 
     // Create a backing store and paint the find indicator text into it.
     RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
@@ -216,7 +217,7 @@ bool FindController::getFindIndicatorBitmapAndRect(Frame* frame, ShareableBitmap
         return false;
 
     auto graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
-    graphicsContext->scale(FloatSize(m_webPage->corePage()->deviceScaleFactor(), m_webPage->corePage()->deviceScaleFactor()));
+    graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
 
     IntRect paintRect = selectionRect;
     paintRect.move(frame->view()->frameRect().x(), frame->view()->frameRect().y());

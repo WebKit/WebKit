@@ -738,7 +738,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, LayoutUn
     if (borderStyle == DOUBLE && thickness < 3)
         borderStyle = SOLID;
 
-    float pixelSnappingFactor = graphicsContext->pixelSnappingFactor();
+    float pixelSnappingFactor = document().deviceScaleFactor();
     // FIXME: We really would like this check to be an ASSERT as we don't want to draw empty borders. However
     // nothing guarantees that the following recursive calls to drawLineForBoxSide will have non-null dimensions.
     // FIXME: flooring is a temporary solution until the device pixel snapping is added here for all border types.

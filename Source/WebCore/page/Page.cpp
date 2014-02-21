@@ -114,16 +114,6 @@ static void networkStateChanged(bool isOnLine)
         frames[i]->document()->dispatchWindowEvent(Event::create(eventName, false, false));
 }
 
-float deviceScaleFactor(Frame* frame)
-{
-    if (!frame)
-        return 1;
-    Page* page = frame->page();
-    if (!page)
-        return 1;
-    return page->deviceScaleFactor();
-}
-
 static const ViewState::Flags PageInitialViewState = ViewState::IsVisible | ViewState::IsInWindow;
 
 Page::Page(PageClients& pageClients)
