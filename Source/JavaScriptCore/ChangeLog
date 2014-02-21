@@ -1,3 +1,38 @@
+2014-02-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG write barriers should do more speculations
+        https://bugs.webkit.org/show_bug.cgi?id=129160
+
+        Reviewed by Mark Hahnenberg.
+        
+        Replace ConditionalStoreBarrier with the cheapest speculation that you could do
+        instead.
+        
+        Miniscule speed-up on some things. It's a decent difference in code size, though.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationToAbbreviatedString):
+        * bytecode/SpeculatedType.h:
+        (JSC::isNotCellSpeculation):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::insertStoreBarrier):
+        (JSC::DFG::FixupPhase::insertPhantomCheck):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateOther):
+        (JSC::DFG::Node::shouldSpeculateNotCell):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compareEqObjectOrOtherToObject):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::LowerDFGToLLVM::isNotOther):
+        (JSC::FTL::LowerDFGToLLVM::isOther):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateObjectOrOther):
+        (JSC::FTL::LowerDFGToLLVM::speculateOther):
+        (JSC::FTL::LowerDFGToLLVM::speculateNotCell):
+
 2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Revert r164486, causing a number of test failures.

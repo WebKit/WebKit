@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -338,6 +338,11 @@ inline bool isOtherSpeculation(SpeculatedType value)
 inline bool isOtherOrEmptySpeculation(SpeculatedType value)
 {
     return !value || value == SpecOther;
+}
+
+inline bool isNotCellSpeculation(SpeculatedType value)
+{
+    return !!value && !(value & SpecCell);
 }
 
 inline bool isEmptySpeculation(SpeculatedType value)

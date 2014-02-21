@@ -330,6 +330,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case StringOrStringObjectUse:
                 case FinalObjectUse:
                 case NotCellUse:
+                case OtherUse:
                     // These are OK.
                     break;
                 default:
