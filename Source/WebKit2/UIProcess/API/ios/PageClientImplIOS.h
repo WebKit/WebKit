@@ -110,6 +110,7 @@ private:
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;
     virtual void positionInformationDidChange(const InteractionInformationAtPosition&);
     virtual void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>);
+    virtual void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold);
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

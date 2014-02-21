@@ -156,6 +156,7 @@ messages -> WebPageProxy {
     InterpretKeyEvent(WebKit::EditorState state, bool isCharEvent) -> (bool handled)
     DidReceivePositionInformation(WebKit::InteractionInformationAtPosition information)
     SaveImageToLibrary(WebKit::SharedMemory::Handle handle, uint64_t size)
+    DidUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold)
 #endif
 #if PLATFORM(GTK)
     PrintFinishedCallback(WebCore::ResourceError error, uint64_t callbackID)

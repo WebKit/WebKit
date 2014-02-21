@@ -1,3 +1,67 @@
+2014-02-21  Enrica Casucci  <enrica@apple.com>
+
+        Support WebSelections in WK2 on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=127015
+        <rdar://problem/15211964>
+
+        Reviewed by Benjamin Poulain.
+
+        This is the remaining work on block selections for iOS in WK2.
+        Once a block selection has been created with a long press gesture
+        on a selectable area, we can interact with it by touching the four
+        handles at the top, right, bottom and left side of the selection box.
+        Expanding or shrinking a block selection requires finding the next/previous
+        block in the direction of the movement, depending on the handle we
+        are interacting with.
+        Every time a new block is selected, we compute the thresholds required
+        to trigger another block change. The thresholds are sent back to the
+        UIProcess that will use this information to decide when to activate
+        the new selection, either bigger or smaller.
+        This patch also fixes a bug in selectWithTwoTouches where the points
+        were not mapped to the active frame.
+
+        * Shared/ios/WKGestureTypes.h:
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didUpdateBlockSelectionWithTouches):
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _didUpdateBlockSelectionWithTouches:withFlags:growThreshold:shrinkThreshold:]):
+        * UIProcess/API/ios/WKContentViewInternal.h:
+        * UIProcess/API/ios/WKInteractionView.h:
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView hasSelectablePositionAtPoint:]):
+        (-[WKInteractionView clearSelection]):
+        (toWKHandlePosition):
+        (-[WKInteractionView _didUpdateBlockSelectionWithTouches:WebKit::withFlags:WebKit::growThreshold:shrinkThreshold:]):
+        (-[WKInteractionView changeBlockSelectionWithTouchAt:withSelectionTouch:forHandle:]):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateBlockSelectionWithTouches):
+        (WebKit::WebPageProxy::didUpdateBlockSelectionWithTouches):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+        (WebKit::WebPage::rangeForBlockAtPoint):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::distanceBetweenRectsForPosition):
+        (WebKit::rectsEssentiallyTheSame):
+        (WebKit::containsRange):
+        (WebKit::unionDOMRanges):
+        (WebKit::computeEdgeCenter):
+        (WebKit::WebPage::expandedRangeFromHandle):
+        (WebKit::WebPage::contractedRangeFromHandle):
+        (WebKit::WebPage::computeExpandAndShrinkThresholdsForHandle):
+        (WebKit::shouldExpand):
+        (WebKit::WebPage::changeBlockSelection):
+        (WebKit::WebPage::updateBlockSelectionWithTouches):
+        (WebKit::WebPage::clearSelection):
+        (WebKit::WebPage::selectWithTwoTouches):
+        (WebKit::WebPage::getPositionInformation):
+
 2014-02-21  Anders Carlsson  <andersca@apple.com>
 
         Make sure to invoke the completion handler for JS alerts

@@ -564,6 +564,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     [self ensurePositionInformationIsUpToDate:point];
     // FIXME: This check needs to be extended to include other elements.
+    // FIXME: We need to reject positions that will lead to a very large selection.
     return _positionInformation.clickableElementName != "IMG" && _positionInformation.clickableElementName != "A" && !_positionInformation.selectionRects.isEmpty();
 }
 
@@ -691,6 +692,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
         [_textSelectionAssistant activateSelection];
     }
+}
+
+- (void)clearSelection
+{
+    _page->clearSelection();
 }
 
 - (void)_positionInformationDidChange:(const InteractionInformationAtPosition&)info
@@ -1105,6 +1111,20 @@ static inline UIWKSelectionFlags toUIWKSelectionFlags(WKSelectionFlags flag)
     }
 }
 
+static inline WKHandlePosition toWKHandlePosition(UIWKHandlePosition position)
+{
+    switch (position) {
+    case UIWKHandleTop:
+        return WKHandleTop;
+    case UIWKHandleRight:
+        return WKHandleRight;
+    case UIWKHandleBottom:
+        return WKHandleBottom;
+    case UIWKHandleLeft:
+        return WKHandleLeft;
+    }
+}
+
 static void selectionChangedWithGesture(bool error, WKInteractionView *view, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags)
 {
     if (error) {
@@ -1129,6 +1149,11 @@ static void selectionChangedWithTouch(bool error, WKInteractionView *view, const
         [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WKSelectionTouch)touch)];
 }
 
+- (void)_didUpdateBlockSelectionWithTouch:(WebKit::WKSelectionTouch)touch withFlags:(WebKit::WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold
+{
+    [_webSelectionAssistant blockSelectionChangedWithTouch:toUIWKSelectionTouch((WKSelectionTouch)touch) withFlags:toUIWKSelectionFlags((WKSelectionFlags)flags) growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
+}
+
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state
 {
     _page->selectWithGesture(WebCore::IntPoint(point), CharacterGranularity, toWKGestureType(gestureType), toWKGestureRecognizerState(state), GestureCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
@@ -1148,6 +1173,11 @@ static void selectionChangedWithTouch(bool error, WKInteractionView *view, const
     _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), toWKGestureType(gestureType), toWKGestureRecognizerState(gestureState), GestureCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
         selectionChangedWithGesture(error, self, point, gestureType, gestureState, flags);
     }));
+}
+
+- (void)changeBlockSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch forHandle:(UIWKHandlePosition)handle
+{
+    _page->updateBlockSelectionWithTouch(WebCore::IntPoint(point), toWKSelectionTouch(touch), toWKHandlePosition(handle));
 }
 
 - (WKAutoCorrectionData *)autocorrectionData

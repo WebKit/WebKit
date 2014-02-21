@@ -1,3 +1,15 @@
+2014-02-21  Enrica Casucci  <enrica@apple.com>
+
+        Support WebSelections in WK2 on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=127015
+        <rdar://problem/15211964>
+
+        Reviewed by Benjamin Poulain.
+
+        Adding some exports.
+
+        * WebCore.exp.in:
+
 2014-02-21  Benjamin Poulain  <bpoulain@apple.com>
 
         'mouseenter' mouse compat event not fired when listeners for touch events

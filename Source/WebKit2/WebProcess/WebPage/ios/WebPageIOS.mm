@@ -438,11 +438,10 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
     Node* currentNode = result.innerNode();
     RefPtr<Range> range;
     IntRect boundingRect;
-    ExceptionCode ec;
 
     if (currentNode->isTextNode()) {
         range = enclosingTextUnitOfGranularity(position, ParagraphGranularity, DirectionForward);
-        if (!range || range->collapsed(ec))
+        if (!range || range->collapsed(ASSERT_NO_EXCEPTION))
             range = Range::create(currentNode->document(), position, position);
         if (!range)
             return nullptr;
@@ -461,7 +460,7 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
         if (boundingRect.width() > m_blockSelectionDesiredSize.width() && boundingRect.height() > m_blockSelectionDesiredSize.height())
             return wordRangeFromPosition(position);
 
-        currentNode = range->commonAncestorContainer(ec);
+        currentNode = range->commonAncestorContainer(ASSERT_NO_EXCEPTION);
     }
 
     if (!currentNode->isElementNode())
@@ -482,12 +481,36 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
     RenderObject* renderer = bestChoice->renderer();
     if (renderer && renderer->childrenInline() && (renderer->isRenderBlock() && toRenderBlock(renderer)->inlineElementContinuation() == nil) && !renderer->isTable()) {
         range = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionBackward);
-        if (range && !range->collapsed(ec))
+        if (range && !range->collapsed(ASSERT_NO_EXCEPTION))
             return range;
     }
     flags = WKIsBlockSelection;
     range = Range::create(bestChoice->document());
-    range->selectNode(bestChoice, ec);
+    range->selectNodeContents(bestChoice, ASSERT_NO_EXCEPTION);
+    return range;
+}
+
+PassRefPtr<Range> WebPage::rangeForBlockAtPoint(const IntPoint& point)
+{
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
+
+    Node* currentNode = result.innerNode();
+    RefPtr<Range> range;
+
+    if (currentNode->isTextNode()) {
+        range = enclosingTextUnitOfGranularity(m_page->focusController().focusedOrMainFrame().visiblePositionForPoint(point), ParagraphGranularity, DirectionForward);
+        if (range && !range->collapsed(ASSERT_NO_EXCEPTION))
+            return range;
+    }
+
+    if (!currentNode->isElementNode())
+        currentNode = currentNode->parentElement();
+
+    if (!currentNode)
+        return nullptr;
+
+    range = Range::create(currentNode->document());
+    range->selectNodeContents(currentNode, ASSERT_NO_EXCEPTION);
     return range;
 }
 
@@ -504,6 +527,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
     }
     RefPtr<Range> range;
     WKSelectionFlags flags = WKNone;
+    WKGestureRecognizerState wkGestureState = static_cast<WKGestureRecognizerState>(gestureState);
     switch (static_cast<WKGestureType>(gestureType)) {
     case WKGestureOneFingerTap:
     {
@@ -543,20 +567,17 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         break;
 
     case WKGestureTapAndAHalf:
-        switch (static_cast<WKGestureRecognizerState>(gestureState)) {
+        switch (wkGestureState) {
         case WKGestureRecognizerStateBegan:
             range = wordRangeFromPosition(position);
             m_currentWordRange = Range::create(*frame.document(), range->startPosition(), range->endPosition());
             break;
         case WKGestureRecognizerStateChanged:
-        {
             range = Range::create(*frame.document(), m_currentWordRange->startPosition(), m_currentWordRange->endPosition());
-            ExceptionCode ec;
             if (position < range->startPosition())
-                range->setStart(position.deepEquivalent(), ec);
+                range->setStart(position.deepEquivalent(), ASSERT_NO_EXCEPTION);
             if (position > range->endPosition())
-                range->setEnd(position.deepEquivalent(), ec);
-        }
+                range->setEnd(position.deepEquivalent(), ASSERT_NO_EXCEPTION);
             break;
         case WKGestureRecognizerStateEnded:
         case WKGestureRecognizerStateCancelled:
@@ -594,11 +615,14 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         break;
 
     case WKGestureMakeWebSelection:
-        if (static_cast<WKGestureRecognizerState>(gestureState) == WKGestureRecognizerStateBegan) {
+        if (wkGestureState == WKGestureRecognizerStateBegan) {
             m_blockSelectionDesiredSize.setWidth(blockSelectionStartWidth);
             m_blockSelectionDesiredSize.setHeight(blockSelectionStartHeight);
+            m_currentBlockSelection = nullptr;
         }
         range = rangeForWebSelectionAtPosition(point, position, flags);
+        if (wkGestureState == WKGestureRecognizerStateEnded && flags & WKIsBlockSelection)
+            m_currentBlockSelection = range;
         break;
 
     default:
@@ -689,6 +713,415 @@ static PassRefPtr<Range> rangeAtWordBoundaryForPosition(Frame* frame, const Visi
     return (base < extent) ? Range::create(*frame->document(), base, extent) : Range::create(*frame->document(), extent, base);
 }
 
+static const int maxHitTests = 10;
+
+static inline float distanceBetweenRectsForPosition(IntRect& first, IntRect& second, WKHandlePosition handlePosition)
+{
+    switch (handlePosition) {
+    case WKHandleTop:
+        return abs(first.y() - second.y());
+    case WKHandleRight:
+        return abs(first.maxX() - second.maxX());
+    case WKHandleBottom:
+        return abs(first.maxY() - second.maxY());
+    case WKHandleLeft:
+        return abs(first.x() - second.x());
+    }
+}
+
+static inline bool rectsEssentiallyTheSame(IntRect& first, IntRect& second, float allowablePercentDifference)
+{
+    const float minMagnitudeRatio = 1.0 - allowablePercentDifference;
+    const float maxDisplacementRatio = allowablePercentDifference;
+
+    float xOriginShiftRatio = abs(first.x() - second.x())/std::min(first.width(), second.width());
+    float yOriginShiftRatio = abs(first.y() - second.y())/std::min(first.height(), second.height());
+
+    float widthRatio = std::min(first.width() / second.width(), second.width() / first.width());
+    float heightRatio = std::min(first.height() / second.height(), second.height() / first.height());
+    return ((widthRatio > minMagnitudeRatio && xOriginShiftRatio < maxDisplacementRatio)
+        && (heightRatio > minMagnitudeRatio && yOriginShiftRatio < maxDisplacementRatio));
+}
+
+static inline bool containsRange(Range* first, Range* second)
+{
+    if (!first || !second)
+        return false;
+    return (first->commonAncestorContainer(ASSERT_NO_EXCEPTION)->ownerDocument() == second->commonAncestorContainer(ASSERT_NO_EXCEPTION)->ownerDocument()
+        && first->compareBoundaryPoints(Range::START_TO_START, second, ASSERT_NO_EXCEPTION) <= 0
+        && first->compareBoundaryPoints(Range::END_TO_END, second, ASSERT_NO_EXCEPTION) >= 0);
+}
+
+static inline RefPtr<Range> unionDOMRanges(Range* rangeA, Range* rangeB)
+{
+    if (!rangeB)
+        return rangeA;
+    if (!rangeA)
+        return rangeB;
+
+    Range* start = rangeA->compareBoundaryPoints(Range::START_TO_START, rangeB, ASSERT_NO_EXCEPTION) <= 0 ? rangeA : rangeB;
+    Range* end = rangeA->compareBoundaryPoints(Range::END_TO_END, rangeB, ASSERT_NO_EXCEPTION) <= 0 ? rangeB : rangeA;
+
+    return Range::create(rangeA->ownerDocument(), start->startContainer(), start->startOffset(), end->endContainer(), end->endOffset());
+}
+
+static inline IntPoint computeEdgeCenter(const IntRect& box, WKHandlePosition handlePosition)
+{
+    switch (handlePosition) {
+    case WKHandleTop:
+        return IntPoint(box.x() + box.width() / 2, box.y());
+    case WKHandleRight:
+        return IntPoint(box.maxX(), box.y() + box.height() / 2);
+    case WKHandleBottom:
+        return IntPoint(box.x() + box.width() / 2, box.maxY());
+    case WKHandleLeft:
+        return IntPoint(box.x(), box.y() + box.height() / 2);
+    }
+}
+
+PassRefPtr<Range> WebPage::expandedRangeFromHandle(Range* currentRange, WKHandlePosition handlePosition)
+{
+    // FIXME: We should use boundingRect() instead of boundingBox() in this function when <rdar://problem/16063723> is fixed.
+    IntRect currentBox = currentRange->boundingBox();
+    IntPoint edgeCenter = computeEdgeCenter(currentBox, handlePosition);
+    static const float maxDistance = 1000;
+    const float multiple = powf(maxDistance, 1.0/(maxHitTests - 1));
+    float distance = 1;
+
+    RefPtr<Range> bestRange;
+    IntRect bestRect;
+
+    while (distance < maxDistance) {
+        if (bestRange) {
+            if (distanceBetweenRectsForPosition(bestRect, currentBox, handlePosition) < distance) {
+                // Break early, we're unlikely to do any better.
+                break;
+            }
+        }
+
+        IntPoint testPoint = edgeCenter;
+        switch (handlePosition) {
+        case WKHandleTop:
+            testPoint.move(0, -distance);
+            break;
+        case WKHandleRight:
+            testPoint.move(distance, 0);
+            break;
+        case WKHandleBottom:
+            testPoint.move(0, distance);
+            break;
+        case WKHandleLeft:
+            testPoint.move(-distance, 0);
+            break;
+        }
+
+        RefPtr<Range> newRange;
+        RefPtr<Range> rangeAtPosition = rangeForBlockAtPoint(testPoint);
+        if (containsRange(rangeAtPosition.get(), currentRange))
+            newRange = rangeAtPosition;
+        else if (containsRange(currentRange, rangeAtPosition.get()))
+            newRange = currentRange;
+        else
+            newRange = unionDOMRanges(currentRange, rangeAtPosition.get());
+
+        IntRect copyRect = newRange->boundingBox();
+
+        // Is it different and bigger than the current?
+        bool isBetterChoice = !(rectsEssentiallyTheSame(copyRect, currentBox, .05));
+        if (isBetterChoice) {
+            switch (handlePosition) {
+            case WKHandleTop:
+            case WKHandleBottom:
+                isBetterChoice = (copyRect.height() > currentBox.height());
+                break;
+            case WKHandleRight:
+            case WKHandleLeft:
+                isBetterChoice = (copyRect.width() > currentBox.width());
+                break;
+            }
+
+        }
+
+        if (bestRange && isBetterChoice) {
+            // Furtherore, is it smaller than the best we've found so far?
+            switch (handlePosition) {
+            case WKHandleTop:
+            case WKHandleBottom:
+                isBetterChoice = (copyRect.height() < bestRect.height());
+                break;
+            case WKHandleRight:
+            case WKHandleLeft:
+                isBetterChoice = (copyRect.width() < bestRect.width());
+                break;
+            }
+        }
+
+        if (isBetterChoice) {
+            bestRange = newRange;
+            bestRect = copyRect;
+        }
+
+        distance = ceilf(distance * multiple);
+    }
+
+    if (bestRange)
+        return bestRange;
+
+    return currentRange;
+}
+
+PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, WKHandlePosition handlePosition, WKSelectionFlags& flags)
+{
+    // Shrinking with a base and extent will always give better results. If we only have a single element,
+    // see if we can break that down to a base and extent. Shrinking base and extent is comparatively straightforward.
+    // Shrinking down to another element is unlikely to move just one edge, but we can try that as a fallback.
+
+    // FIXME: We should use boundingRect() instead of boundingBox() in this function when <rdar://problem/16063723> is fixed.
+    IntRect currentBox = currentRange->boundingBox();
+    IntPoint edgeCenter = computeEdgeCenter(currentBox, handlePosition);
+    flags = WKIsBlockSelection;
+
+    float maxDistance;
+
+    switch (handlePosition) {
+    case WKHandleTop:
+    case WKHandleBottom:
+        maxDistance = currentBox.height();
+        break;
+    case WKHandleRight:
+    case WKHandleLeft:
+        maxDistance = currentBox.width();
+        break;
+    }
+
+    const float multiple = powf(maxDistance - 1, 1.0/(maxHitTests - 1));
+    float distance = 1;
+    RefPtr<Range> bestRange;
+    IntRect bestRect;
+
+    while (distance < maxDistance) {
+        if (bestRange) {
+            float shrankDistance;
+            switch (handlePosition) {
+            case WKHandleTop:
+            case WKHandleBottom:
+                shrankDistance = abs(currentBox.height() - bestRect.height());
+                break;
+            case WKHandleRight:
+            case WKHandleLeft:
+                shrankDistance = abs(currentBox.width() - bestRect.width());
+                break;
+            }
+            if (shrankDistance > distance) {
+                // Certainly not going to do any better than that.
+                break;
+            }
+        }
+
+        IntPoint testPoint = edgeCenter;
+        switch (handlePosition) {
+        case WKHandleTop:
+            testPoint.move(0, distance);
+            break;
+        case WKHandleRight:
+            testPoint.move(-distance, 0);
+            break;
+        case WKHandleBottom:
+            testPoint.move(0, -distance);
+            break;
+        case WKHandleLeft:
+            testPoint.move(distance, 0);
+            break;
+        }
+
+        RefPtr<Range> newRange = rangeForBlockAtPoint(testPoint);
+        if (handlePosition == WKHandleTop || handlePosition == WKHandleLeft)
+            newRange = Range::create(newRange->startContainer()->document(), newRange->startPosition(), currentRange->endPosition());
+        else
+            newRange = Range::create(newRange->startContainer()->document(), currentRange->startPosition(), newRange->endPosition());
+
+        IntRect copyRect = newRange->boundingBox();
+        bool isBetterChoice;
+        switch (handlePosition) {
+        case WKHandleTop:
+        case WKHandleBottom:
+            isBetterChoice = (copyRect.height() < currentBox.height());
+            break;
+        case WKHandleLeft:
+        case WKHandleRight:
+            isBetterChoice = (copyRect.width() > bestRect.width());
+            break;
+        }
+
+        isBetterChoice = isBetterChoice && !areRangesEqual(newRange.get(), currentRange);
+        if (bestRange && isBetterChoice) {
+            switch (handlePosition) {
+            case WKHandleTop:
+            case WKHandleBottom:
+                isBetterChoice = (copyRect.height() > bestRect.height());
+                break;
+            case WKHandleLeft:
+            case WKHandleRight:
+                isBetterChoice = (copyRect.width() > bestRect.width());
+                break;
+            }
+        }
+        if (isBetterChoice) {
+            bestRange = newRange;
+            bestRect = copyRect;
+        }
+
+        distance *= multiple;
+    }
+
+    // If we can shrink down to text only, the only reason we wouldn't is that
+    // there are multiple sub-element blocks beneath us.  If we didn't find
+    // multiple sub-element blocks, don't shrink to a sub-element block.
+    if (!bestRange) {
+        bestRange = currentRange;
+        Node* node = currentRange->commonAncestorContainer(ASSERT_NO_EXCEPTION);
+        if (!node->isElementNode())
+            node = node->parentElement();
+
+        RenderObject* renderer = node->renderer();
+        if (renderer && renderer->childrenInline() && (renderer->isRenderBlock() && !toRenderBlock(renderer)->inlineElementContinuation()) && !renderer->isTable()) {
+            flags = WKNone;
+        }
+    }
+
+    return bestRange;
+}
+
+void WebPage::computeExpandAndShrinkThresholdsForHandle(const IntPoint& point, WKHandlePosition handlePosition, float& growThreshold, float& shrinkThreshold)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr<Range> currentRange = m_currentBlockSelection ? m_currentBlockSelection.get() : frame.selection().selection().toNormalizedRange();
+    ASSERT(currentRange);
+
+    RefPtr<Range> expandedRange = expandedRangeFromHandle(currentRange.get(), handlePosition);
+    WKSelectionFlags flags;
+    RefPtr<Range> contractedRange = contractedRangeFromHandle(currentRange.get(), handlePosition, flags);
+
+    // FIXME: We should use boundingRect() instead of boundingBox() in this function when <rdar://problem/16063723> is fixed.
+    IntRect currentBounds = currentRange->boundingBox();
+    IntRect expandedBounds = expandedRange->boundingBox();
+    IntRect contractedBounds = contractedRange->boundingBox();
+
+    float current;
+    float expanded;
+    float contracted;
+    float maxThreshold;
+    float minThreshold;
+
+    switch (handlePosition) {
+    case WKHandleTop: {
+        current = currentBounds.y();
+        expanded = expandedBounds.y();
+        contracted = contractedBounds.y();
+        maxThreshold = FLT_MIN;
+        minThreshold = FLT_MAX;
+        break;
+    }
+    case WKHandleRight: {
+        current = currentBounds.maxX();
+        expanded = expandedBounds.maxX();
+        contracted = contractedBounds.maxX();
+        maxThreshold = FLT_MAX;
+        minThreshold = FLT_MIN;
+        break;
+    }
+    case WKHandleBottom: {
+        current = currentBounds.maxY();
+        expanded = expandedBounds.maxY();
+        contracted = contractedBounds.maxY();
+        maxThreshold = FLT_MAX;
+        minThreshold = FLT_MIN;
+        break;
+    }
+    case WKHandleLeft: {
+        current = currentBounds.x();
+        expanded = expandedBounds.x();
+        contracted = contractedBounds.x();
+        maxThreshold = FLT_MIN;
+        minThreshold = FLT_MAX;
+        break;
+    }
+    }
+
+    static const float fractionToGrow = 0.3;
+
+    growThreshold = current + (expanded - current) * fractionToGrow;
+    shrinkThreshold = current + (contracted - current) * (1 - fractionToGrow);
+    if (areRangesEqual(expandedRange.get(), currentRange.get()))
+        growThreshold = maxThreshold;
+
+    if ((flags & WKIsBlockSelection) && areRangesEqual(contractedRange.get(), currentRange.get()))
+        shrinkThreshold = minThreshold;
+}
+
+static inline bool shouldExpand(WKHandlePosition handlePosition, const IntRect& rect, const IntPoint& point)
+{
+    switch (handlePosition) {
+    case WKHandleTop:
+        return (point.y() < rect.y());
+    case WKHandleLeft:
+        return (point.x() < rect.x());
+    case WKHandleRight:
+        return (point.x() > rect.maxX());
+    case WKHandleBottom:
+        return (point.y() > rect.maxY());
+    }
+}
+
+PassRefPtr<WebCore::Range> WebPage::changeBlockSelection(const IntPoint& point, WKHandlePosition handlePosition, float& growThreshold, float& shrinkThreshold, WKSelectionFlags& flags)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr<Range> currentRange = m_currentBlockSelection ? m_currentBlockSelection.get() : frame.selection().selection().toNormalizedRange();
+    // FIXME: We should use boundingRect() instead of boundingBox() in this function when <rdar://problem/16063723> is fixed.
+    IntRect currentRect = currentRange->boundingBox();
+
+    RefPtr<Range> newRange = shouldExpand(handlePosition, currentRect, point) ? expandedRangeFromHandle(currentRange.get(), handlePosition) : contractedRangeFromHandle(currentRange.get(), handlePosition, flags);
+
+    if (newRange) {
+        m_currentBlockSelection = newRange;
+        frame.selection().setSelectedRange(newRange.get(), VP_DEFAULT_AFFINITY, true);
+    }
+
+    computeExpandAndShrinkThresholdsForHandle(point, handlePosition, growThreshold, shrinkThreshold);
+    return newRange;
+}
+
+void WebPage::updateBlockSelectionWithTouch(const IntPoint& point, uint32_t touch, uint32_t handlePosition)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    IntPoint adjustedPoint = frame.view()->rootViewToContents(point);
+
+    float growThreshold = 0;
+    float shrinkThreshold = 0;
+    WKSelectionFlags flags = WKIsBlockSelection;
+
+    switch (static_cast<WKSelectionTouch>(touch)) {
+    case WKSelectionTouchStarted:
+        computeExpandAndShrinkThresholdsForHandle(adjustedPoint, static_cast<WKHandlePosition>(handlePosition), growThreshold, shrinkThreshold);
+        break;
+    case WKSelectionTouchEnded:
+        break;
+    case WKSelectionTouchMoved:
+        changeBlockSelection(adjustedPoint, static_cast<WKHandlePosition>(handlePosition), growThreshold, shrinkThreshold, flags);
+        break;
+    default:
+        return;
+    }
+
+    send(Messages::WebPageProxy::DidUpdateBlockSelectionWithTouch(touch, flags, growThreshold, shrinkThreshold));
+}
+
+void WebPage::clearSelection()
+{
+    m_currentBlockSelection = nullptr;
+    m_page->focusController().focusedOrMainFrame().selection().clear();
+}
+
 void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches, bool baseIsStart, uint64_t callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
@@ -736,8 +1169,8 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches
 void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    VisiblePosition fromPosition = frame.visiblePositionForPoint(from);
-    VisiblePosition toPosition = frame.visiblePositionForPoint(to);
+    VisiblePosition fromPosition = frame.visiblePositionForPoint(frame.view()->rootViewToContents(from));
+    VisiblePosition toPosition = frame.visiblePositionForPoint(frame.view()->rootViewToContents(to));
     RefPtr<Range> range;
     if (fromPosition.isNotNull() && toPosition.isNotNull()) {
         if (fromPosition < toPosition)
@@ -980,6 +1413,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
         if (hitNode) {
             m_page->focusController().setFocusedFrame(result.innerNodeFrame());
             info.selectionRects.append(SelectionRect(hitNode->renderer()->absoluteBoundingBoxRect(true), true, 0));
+            info.bounds = hitNode->renderer()->absoluteBoundingBoxRect();
         }
     }
 }

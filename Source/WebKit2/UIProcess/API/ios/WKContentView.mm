@@ -298,6 +298,11 @@ using namespace WebKit;
     [_interactionView _selectionChanged];
 }
 
+- (void)_didUpdateBlockSelectionWithTouch:(WKSelectionTouch)touch withFlags:(WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold
+{
+    [_interactionView _didUpdateBlockSelectionWithTouch:touch withFlags:flags growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
+}
+
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent
 {
     return [_interactionView _interpretKeyEvent:theEvent isCharEvent:isCharEvent];

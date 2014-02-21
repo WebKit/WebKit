@@ -75,6 +75,12 @@ typedef enum {
     WKIsBlockSelection = 2
 } WKSelectionFlags;
 
+typedef enum {
+    WKHandleTop,
+    WKHandleRight,
+    WKHandleBottom,
+    WKHandleLeft
+} WKHandlePosition;
 } // namespace WebKit
 
 #endif // WKGestureTypes_h

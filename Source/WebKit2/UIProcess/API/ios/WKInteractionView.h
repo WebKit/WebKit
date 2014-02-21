@@ -70,5 +70,6 @@ struct InteractionInformationAtPosition;
 - (void)_willStartScrollingOrZooming;
 - (void)_willStartUserTriggeredScrollingOrZooming;
 - (void)_didEndScrollingOrZooming;
+- (void)_didUpdateBlockSelectionWithTouch:(WebKit::WKSelectionTouch)touch withFlags:(WebKit::WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold;
 @property (readonly, nonatomic) WebKit::InteractionInformationAtPosition positionInformation;
 @end

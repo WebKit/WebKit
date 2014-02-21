@@ -3041,10 +3041,12 @@ void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
     return frame->editor().replaceSelectionWithText(text, selectReplacement, smartReplace);
 }
 
+#if !PLATFORM(IOS)
 void WebPage::clearSelection()
 {
     m_page->focusController().focusedOrMainFrame().selection().clear();
 }
+#endif
 
 void WebPage::updateMainFrameScrollOffsetPinning()
 {
