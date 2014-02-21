@@ -1,3 +1,80 @@
+2014-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        m_ancestorDisabledState should never be unknown
+        https://bugs.webkit.org/show_bug.cgi?id=129084
+
+        Reviewed by Benjamin Poulain.
+
+        In order to resolve the bug 129035, a text form control elements needs to synchronously change
+        its inner text element's editability by setting or unsetting contenteditable content attribute.
+        Before this patch, we could not do this because editability of a text form control dependent on
+        its disabled-ness which was only computed lazily via updateAncestorDisabledState().
+
+        This patch makes HTMLFieldSetElement and HTMLFormControlElement update this state synchronously.
+        To avoid O(k) DOM traversal, where k is the depth of the tree, in insertedInto and removedFrom of
+        HTMLFormControlElement on most pages, a new document-level flag, m_disabledFieldsetElementsCount,
+        has been added to indicate whether the document contains any disabled fieldset or not.
+
+        Also renamed the misleadingly named disabledAttributeChanged to disabledStateChanged, and added
+        new function of the same name (disabledAttributeChanged) to be used by HTMLFieldSetElement
+        for keeping the document-level flag up-to-date upon disabled attribute changes.
+
+        Tests: fast/forms/fieldset/fieldset-disabled-2.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initializes newly added m_disabledFieldsetElementsCount.
+        (WebCore::Document::~Document): Assert that we've done house keeping right.
+        * dom/Document.h:
+        (WebCore::Document::hasDisabledFieldsetElement): Added.
+        (WebCore::Document::addDisabledFieldsetElement): Added.
+        (WebCore::Document::removeDisabledFieldsetElement): Added.
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::~HTMLFieldSetElement): Removes itself from the owner document.
+
+        (WebCore::updateFromControlElementsAncestorDisabledStateUnder): Added. Updates startNode and
+        its descendants' ancestor disabled flag. We don't update controls under another disabled
+        fieldset element since disabled-ness of those controls aren't affected by startNode.
+
+        (WebCore::HTMLFieldSetElement::disabledAttributeChanged): Call addDisabledFieldsetElement and
+        removeDisabledFieldsetElement to update the owner document's flag.
+
+        (WebCore::HTMLFieldSetElement::disabledStateChanged): Renamed from disabledAttributeChanged. 
+        Enable form control elements under the first legend element and disable or enable other
+        descendent form controls in accordance with the presence of disabled content attribute.
+
+        (WebCore::HTMLFieldSetElement::childrenChanged): Update disabled-ness of form controls under
+        child legend elements because controls aren't disabled in the first legend element, and adding
+        or removing child elements may have changed the first legend element.
+
+        (WebCore::HTMLFieldSetElement::didMoveToNewDocument): Update the flag on the owner document.
+        * html/HTMLFieldSetElement.h:
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        (WebCore::HTMLFormControlElement::computeIsDisabledByFieldsetAncestor): Returns boolean instead of
+        updating m_ancestorDisabledState internally. Also renamed from updateAncestorDisabledState.
+
+        (WebCore::HTMLFormControlElement::setAncestorDisabled): Replaced ancestorDisabledStateWasChanged.
+        This function updates m_disabledByAncestorFieldset and calls disabledAttributeChanged as needed.
+
+        (WebCore::HTMLFormControlElement::disabledAttributeChanged): Added. Calls disabledStateChanged.
+        (WebCore::HTMLFormControlElement::disabledStateChanged): Renamed from disabledAttributeChanged.
+
+        (WebCore::HTMLFormControlElement::insertedInto): Update m_disabledByAncestorFieldset if there is
+        a possibility (i.e. the document contains any disabled fieldset element) that this form control
+        is inserted under a disabled fieldset element.
+
+        (WebCore::HTMLFormControlElement::removedFrom): If this form control element is not disabled by
+        a fieldset ancestor, then there is nothing to do. If it is, then check to see if the element is
+        still disabled now that we've lost some ancestors.
+
+        (WebCore::HTMLFormControlElement::isDisabledFormControl): No longer updates m_ancestorDisabledState
+        lazily since m_disabledByAncestorFieldset is never ambiguous now.
+
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::disabledByAncestorFieldset): Added.
+
 2014-02-20  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant deviceScaleFactor() functions and make callers use Document::deviceScaleFactor() when accessible.

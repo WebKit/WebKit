@@ -54,7 +54,7 @@ public:
     void setFormMethod(const String&);
     bool formNoValidate() const;
 
-    void ancestorDisabledStateWasChanged();
+    void setAncestorDisabled(bool isDisabled);
 
     virtual void reset() { }
 
@@ -120,9 +120,12 @@ public:
 protected:
     HTMLFormControlElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
 
+    bool disabledByAncestorFieldset() const { return m_disabledByAncestorFieldset; }
+
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void requiredAttributeChanged();
     virtual void disabledAttributeChanged();
+    virtual void disabledStateChanged();
     virtual void didAttachRenderers() override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
@@ -154,7 +157,8 @@ private:
     virtual HTMLFormElement* virtualForm() const override;
     virtual bool isDefaultButtonForForm() const override;
     virtual bool isValidFormControlElement() const override;
-    void updateAncestorDisabledState() const;
+
+    bool computeIsDisabledByFieldsetAncestor() const;
 
     virtual HTMLElement& asHTMLElement() override final { return *this; }
     virtual const HTMLFormControlElement& asHTMLElement() const override final { return *this; }
@@ -165,9 +169,8 @@ private:
     bool m_isReadOnly : 1;
     bool m_isRequired : 1;
     bool m_valueMatchesRenderer : 1;
+    bool m_disabledByAncestorFieldset : 1;
 
-    enum AncestorDisabledState { AncestorDisabledStateUnknown, AncestorDisabledStateEnabled, AncestorDisabledStateDisabled };
-    mutable AncestorDisabledState m_ancestorDisabledState;
     enum DataListAncestorState { Unknown, InsideDataList, NotInsideDataList };
     mutable enum DataListAncestorState m_dataListAncestorState;
 

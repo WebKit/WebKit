@@ -42,19 +42,21 @@ public:
     unsigned length() const;
 
 protected:
-    virtual void disabledAttributeChanged() override;
 
 private:
     HTMLFieldSetElement(const QualifiedName&, Document&, HTMLFormElement*);
+    ~HTMLFieldSetElement();
 
     virtual bool isEnumeratable() const override { return true; }
     virtual bool supportsFocus() const override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual const AtomicString& formControlType() const override;
     virtual bool recalcWillValidate() const override { return false; }
+    virtual void disabledAttributeChanged() override;
+    virtual void disabledStateChanged() override;
     virtual void childrenChanged(const ChildChange&) override;
+    virtual void didMoveToNewDocument(Document* oldDocument) override;
 
-    static void invalidateDisabledStateUnder(Element*);
     void refreshElementsIfNeeded() const;
 
     mutable Vector<FormAssociatedElement*> m_associatedElements;

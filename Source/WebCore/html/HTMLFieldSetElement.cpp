@@ -44,30 +44,88 @@ inline HTMLFieldSetElement::HTMLFieldSetElement(const QualifiedName& tagName, Do
     ASSERT(hasTagName(fieldsetTag));
 }
 
+HTMLFieldSetElement::~HTMLFieldSetElement()
+{
+    if (hasAttribute(disabledAttr))
+        document().removeDisabledFieldsetElement();
+}
+
 PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     return adoptRef(new HTMLFieldSetElement(tagName, document, form));
 }
 
-void HTMLFieldSetElement::invalidateDisabledStateUnder(Element* base)
+static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& startNode, bool isDisabled)
 {
-    for (auto& control : descendantsOfType<HTMLFormControlElement>(*base))
-        control.ancestorDisabledStateWasChanged();
+    HTMLFormControlElement* control;
+    if (isHTMLFormControlElement(startNode))
+        control = &toHTMLFormControlElement(startNode);
+    else
+        control = Traversal<HTMLFormControlElement>::firstWithin(&startNode);
+    while (control) {
+        control->setAncestorDisabled(isDisabled);
+        // Don't call setAncestorDisabled(false) on form contorls inside disabled fieldsets.
+        if (isHTMLFieldSetElement(control) && control->hasAttribute(disabledAttr))
+            control = Traversal<HTMLFormControlElement>::nextSkippingChildren(control, &startNode);
+        else
+            control = Traversal<HTMLFormControlElement>::next(control, &startNode);
+    }
 }
 
 void HTMLFieldSetElement::disabledAttributeChanged()
 {
-    // This element must be updated before the style of nodes in its subtree gets recalculated.
+    if (hasAttribute(disabledAttr))
+        document().addDisabledFieldsetElement();
+    else
+        document().removeDisabledFieldsetElement();
+
     HTMLFormControlElement::disabledAttributeChanged();
-    invalidateDisabledStateUnder(this);
+}
+
+void HTMLFieldSetElement::disabledStateChanged()
+{
+    // This element must be updated before the style of nodes in its subtree gets recalculated.
+    HTMLFormControlElement::disabledStateChanged();
+
+    if (disabledByAncestorFieldset())
+        return;
+
+    bool thisFieldsetIsDisabled = hasAttribute(disabledAttr);
+    bool hasSeenFirstLegendElement = false;
+    for (auto& control : childrenOfType<HTMLElement>(*this)) {
+        if (!hasSeenFirstLegendElement && isHTMLLegendElement(control)) {
+            hasSeenFirstLegendElement = true;
+            updateFromControlElementsAncestorDisabledStateUnder(control, false /* isDisabled */);
+            continue;
+        }
+        updateFromControlElementsAncestorDisabledStateUnder(control, thisFieldsetIsDisabled);
+    }
 }
 
 void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
 {
     HTMLFormControlElement::childrenChanged(change);
+    if (!hasAttribute(disabledAttr))
+        return;
 
-    for (auto& legend : childrenOfType<HTMLLegendElement>(*this))
-        invalidateDisabledStateUnder(&legend);
+    HTMLLegendElement* legend = Traversal<HTMLLegendElement>::firstChild(this);
+    if (!legend)
+        return;
+
+    // We only care about the first legend element (in which form contorls are not disabled by this element) changing here.
+    updateFromControlElementsAncestorDisabledStateUnder(*legend, false /* isDisabled */);
+    while ((legend = Traversal<HTMLLegendElement>::nextSibling(legend)))
+        updateFromControlElementsAncestorDisabledStateUnder(*legend, true);
+}
+
+void HTMLFieldSetElement::didMoveToNewDocument(Document* oldDocument)
+{
+    HTMLFormControlElement::didMoveToNewDocument(oldDocument);
+    if (hasAttribute(disabledAttr)) {
+        if (oldDocument)
+            oldDocument->removeDisabledFieldsetElement();
+        document().addDisabledFieldsetElement();
+    }
 }
 
 bool HTMLFieldSetElement::supportsFocus() const

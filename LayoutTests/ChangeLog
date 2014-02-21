@@ -1,3 +1,15 @@
+2014-02-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        m_ancestorDisabledState should never be unknown
+        https://bugs.webkit.org/show_bug.cgi?id=129084
+
+        Reviewed by Benjamin Poulain.
+
+        Added more test cases.
+
+        * fast/forms/fieldset/fieldset-disabled-2-expected.txt:
+        * fast/forms/fieldset/fieldset-disabled-2.html:
+
 2014-02-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Assert / crash trying to draw empty checked input

@@ -18,9 +18,12 @@ input:disabled { color: #666; }
 
 description("Additional tests for fieldset element disabling descendent input elements");
 
-function isInputDisabledById(id) {
-    var input = document.getElementById(id);
+function isInputDisabled(input) {
     return getComputedStyle(input).color == 'rgb(102, 102, 102)';
+}
+
+function isInputDisabledById(id) {
+    return isInputDisabled(document.getElementById(id));
 }
 
 shouldBeTrue('isInputDisabledById("inputOutsideLegend")');
@@ -30,7 +33,7 @@ shouldBeFalse('isInputDisabledById("inputInsideNestedFirstLegend")');
 shouldBeTrue('isInputDisabledById("inputInsideFirstLegendWithDisabledOuterFieldset")');
 
 function setDisabledOnAllFieldsets(value) {
-    var fieldsets = document.querySelectorAll('fieldset');
+    var fieldsets = document.querySelectorAll('#container > fieldset, body > fieldset');
     for (var i = 0; i < fieldsets.length; i++)
         fieldsets[i].disabled = value;
 }
@@ -42,6 +45,40 @@ shouldBeFalse('isInputDisabledById("inputInsideFirstLegend")');
 shouldBeFalse('isInputDisabledById("inputInsideSecondLegend")');
 shouldBeFalse('isInputDisabledById("inputInsideNestedFirstLegend")');
 shouldBeFalse('isInputDisabledById("inputInsideFirstLegendWithDisabledOuterFieldset")');
+
+function createIframe() {
+    var iframe = document.createElement("iframe");
+    document.getElementById('container').appendChild(iframe);
+    iframe.contentDocument.head.appendChild(document.querySelector('body style').cloneNode(true));
+    return iframe.contentDocument;
+}
+
+function insertNewFieldsetIntoBody(contentDocument) {
+    fieldset = contentDocument.createElement("fieldset");
+    contentDocument.body.appendChild(fieldset);
+    return fieldset;
+}
+
+debug('');
+evalAndLog('contentDocument = createIframe();');
+evalAndLog('fieldset = contentDocument.createElement("fieldset"); contentDocument.body.appendChild(fieldset);');
+shouldBeFalse('input = contentDocument.createElement("input"); fieldset.appendChild(input); isInputDisabled(input)');
+shouldBeTrue('fieldset.disabled = true; isInputDisabled(input)');
+shouldBeFalse('contentDocument.body.appendChild(input); isInputDisabled(input)');
+shouldBeFalse('document.body.appendChild(input); isInputDisabled(input)');
+shouldBeTrue('fieldset.appendChild(input); isInputDisabled(input)');
+evalAndLog('fieldset2 = document.createElement("fieldset"); fieldset2.disabled = true');
+evalAndLog('input2 = document.createElement("input"); fieldset2.appendChild(input2)');
+shouldBeTrue('contentDocument.body.appendChild(fieldset2); isInputDisabled(input2)');
+shouldBeTrue('document.body.appendChild(fieldset); isInputDisabled(input)');
+
+debug('');
+evalAndLog('setDisabledOnAllFieldsets(true)');
+shouldBeTrue('isInputDisabledById("inputOutsideLegend")');
+shouldBeFalse('isInputDisabledById("inputInsideFirstLegend")');
+shouldBeTrue('isInputDisabledById("inputInsideSecondLegend")');
+shouldBeFalse('isInputDisabledById("inputInsideNestedFirstLegend")');
+shouldBeTrue('isInputDisabledById("inputInsideFirstLegendWithDisabledOuterFieldset")');
 
 document.getElementById('container').style.display = 'none';
 

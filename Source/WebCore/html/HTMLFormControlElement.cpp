@@ -52,7 +52,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_isReadOnly(false)
     , m_isRequired(false)
     , m_valueMatchesRenderer(false)
-    , m_ancestorDisabledState(AncestorDisabledStateUnknown)
+    , m_disabledByAncestorFieldset(false)
     , m_dataListAncestorState(Unknown)
     , m_willValidateInitialized(false)
     , m_willValidate(true)
@@ -99,25 +99,27 @@ bool HTMLFormControlElement::formNoValidate() const
     return fastHasAttribute(formnovalidateAttr);
 }
 
-void HTMLFormControlElement::updateAncestorDisabledState() const
+bool HTMLFormControlElement::computeIsDisabledByFieldsetAncestor() const
 {
     Element* previousAncestor = nullptr;
     for (Element* ancestor = parentElement(); ancestor; ancestor = ancestor->parentElement()) {
         if (isHTMLFieldSetElement(ancestor) && ancestor->hasAttribute(disabledAttr)) {
             HTMLFieldSetElement& fieldSetAncestor = toHTMLFieldSetElement(*ancestor);
             bool isInFirstLegend = previousAncestor && isHTMLLegendElement(previousAncestor) && previousAncestor == fieldSetAncestor.legend();
-            m_ancestorDisabledState = isInFirstLegend ? AncestorDisabledStateEnabled : AncestorDisabledStateDisabled;
-            return;
+            return !isInFirstLegend;
         }
         previousAncestor = ancestor;
     }
-    m_ancestorDisabledState = AncestorDisabledStateEnabled;
+    return false;
 }
 
-void HTMLFormControlElement::ancestorDisabledStateWasChanged()
+void HTMLFormControlElement::setAncestorDisabled(bool isDisabled)
 {
-    m_ancestorDisabledState = AncestorDisabledStateUnknown;
-    disabledAttributeChanged();
+    ASSERT(computeIsDisabledByFieldsetAncestor() == isDisabled);
+    bool oldValue = m_disabledByAncestorFieldset;
+    m_disabledByAncestorFieldset = isDisabled;
+    if (oldValue != m_disabledByAncestorFieldset)
+        disabledStateChanged();
 }
 
 void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -153,6 +155,11 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
 }
 
 void HTMLFormControlElement::disabledAttributeChanged()
+{
+    disabledStateChanged();
+}
+
+void HTMLFormControlElement::disabledStateChanged()
 {
     setNeedsWillValidateCheck();
     didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
@@ -231,7 +238,8 @@ void HTMLFormControlElement::didMoveToNewDocument(Document* oldDocument)
 
 Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(ContainerNode& insertionPoint)
 {
-    m_ancestorDisabledState = AncestorDisabledStateUnknown;
+    if (document().hasDisabledFieldsetElement())
+        setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     m_dataListAncestorState = Unknown;
     setNeedsWillValidateCheck();
     HTMLElement::insertedInto(insertionPoint);
@@ -242,7 +250,8 @@ Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(Containe
 void HTMLFormControlElement::removedFrom(ContainerNode& insertionPoint)
 {
     m_validationMessage = nullptr;
-    m_ancestorDisabledState = AncestorDisabledStateUnknown;
+    if (m_disabledByAncestorFieldset)
+        setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     m_dataListAncestorState = Unknown;
     HTMLElement::removedFrom(insertionPoint);
     FormAssociatedElement::removedFrom(insertionPoint);
@@ -272,14 +281,7 @@ void HTMLFormControlElement::dispatchFormControlInputEvent()
 
 bool HTMLFormControlElement::isDisabledFormControl() const
 {
-    if (m_disabled)
-        return true;
-
-    if (m_ancestorDisabledState == AncestorDisabledStateUnknown)
-        updateAncestorDisabledState();
-    if (m_ancestorDisabledState == AncestorDisabledStateDisabled)
-        return true;
-    return HTMLElement::isDisabledFormControl();
+    return m_disabled || m_disabledByAncestorFieldset;
 }
 
 bool HTMLFormControlElement::isRequired() const

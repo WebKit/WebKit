@@ -15,6 +15,25 @@ PASS isInputDisabledById("inputInsideFirstLegend") is false
 PASS isInputDisabledById("inputInsideSecondLegend") is false
 PASS isInputDisabledById("inputInsideNestedFirstLegend") is false
 PASS isInputDisabledById("inputInsideFirstLegendWithDisabledOuterFieldset") is false
+
+contentDocument = createIframe();
+fieldset = contentDocument.createElement("fieldset"); contentDocument.body.appendChild(fieldset);
+PASS input = contentDocument.createElement("input"); fieldset.appendChild(input); isInputDisabled(input) is false
+PASS fieldset.disabled = true; isInputDisabled(input) is true
+PASS contentDocument.body.appendChild(input); isInputDisabled(input) is false
+PASS document.body.appendChild(input); isInputDisabled(input) is false
+PASS fieldset.appendChild(input); isInputDisabled(input) is true
+fieldset2 = document.createElement("fieldset"); fieldset2.disabled = true
+input2 = document.createElement("input"); fieldset2.appendChild(input2)
+PASS contentDocument.body.appendChild(fieldset2); isInputDisabled(input2) is true
+PASS document.body.appendChild(fieldset); isInputDisabled(input) is true
+
+setDisabledOnAllFieldsets(true)
+PASS isInputDisabledById("inputOutsideLegend") is true
+PASS isInputDisabledById("inputInsideFirstLegend") is false
+PASS isInputDisabledById("inputInsideSecondLegend") is true
+PASS isInputDisabledById("inputInsideNestedFirstLegend") is false
+PASS isInputDisabledById("inputInsideFirstLegendWithDisabledOuterFieldset") is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
