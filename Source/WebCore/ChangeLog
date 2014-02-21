@@ -1,3 +1,10 @@
+2014-02-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix WebCore's internals after r164505
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::findEditingDeleteButton): The call became ambiguous after r164505.
+
 2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JSContext inspection should report exceptions in the console

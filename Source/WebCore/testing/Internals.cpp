@@ -1316,7 +1316,7 @@ Node* Internals::findEditingDeleteButton()
     updateEditorUINowIfScheduled();
 
     // FIXME: We shouldn't pollute the id namespace with this name.
-    return document->getElementById("WebKit-Editing-Delete-Button");
+    return document->getElementById(String(ASCIILiteral("WebKit-Editing-Delete-Button")));
 }
 
 bool Internals::hasSpellingMarker(int from, int length, ExceptionCode&)
