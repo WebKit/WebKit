@@ -1,3 +1,13 @@
+2014-02-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Assert / crash trying to draw empty checked input
+        https://bugs.webkit.org/show_bug.cgi?id=129138
+
+        Reviewed by Simon Fraser.
+
+        * fast/forms/checkbox-empty-size-expected.txt: Added.
+        * fast/forms/checkbox-empty-size.html: Added.
+
 2014-02-20  Geoffrey Garen  <ggaren@apple.com>
 
         Math.imul gives wrong results
