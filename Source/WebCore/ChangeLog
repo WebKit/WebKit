@@ -1,3 +1,18 @@
+2014-02-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Start to use std::unique_ptr for DragImageLoader
+        https://bugs.webkit.org/show_bug.cgi?id=129078
+
+        Reviewed by Ryosuke Niwa.
+
+        As a step to use std::unique_ptr, this patch replace uses of OwnPtr and PassOwnPtr
+        in the DragImageLoader class with std::unique_ptr. Besides DragImageLoader is set to
+        non-copyable class.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::setDragImage):
+        * dom/Clipboard.h:
+
 2014-02-20  Brady Eidson  <beidson@apple.com>
 
         Move the image controls setting to Settings.in

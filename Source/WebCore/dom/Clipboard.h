@@ -114,7 +114,7 @@ namespace WebCore {
         IntPoint m_dragLocation;
         CachedResourceHandle<CachedImage> m_dragImage;
         RefPtr<Element> m_dragImageElement;
-        OwnPtr<DragImageLoader> m_dragImageLoader;
+        std::unique_ptr<DragImageLoader> m_dragImageLoader;
 #endif
     };
 

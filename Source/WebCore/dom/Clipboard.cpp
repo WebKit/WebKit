@@ -42,14 +42,13 @@ namespace WebCore {
 #if ENABLE(DRAG_SUPPORT)
 
 class DragImageLoader final : private CachedImageClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(DragImageLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<DragImageLoader> create(Clipboard*);
+    explicit DragImageLoader(Clipboard*);
     void startLoading(CachedResourceHandle<CachedImage>&);
     void stopLoading(CachedResourceHandle<CachedImage>&);
 
 private:
-    DragImageLoader(Clipboard*);
     virtual void imageChanged(CachedImage*, const IntRect*) override;
     Clipboard* m_clipboard;
 };
@@ -242,7 +241,7 @@ void Clipboard::setDragImage(Element* element, int x, int y)
     m_dragImage = image;
     if (m_dragImage) {
         if (!m_dragImageLoader)
-            m_dragImageLoader = DragImageLoader::create(this);
+            m_dragImageLoader = std::make_unique<DragImageLoader>(this);
         m_dragImageLoader->startLoading(m_dragImage);
     }
 
@@ -285,11 +284,6 @@ DragImageRef Clipboard::createDragImage(IntPoint& location) const
 }
 
 #endif
-
-PassOwnPtr<DragImageLoader> DragImageLoader::create(Clipboard* clipboard)
-{
-    return adoptPtr(new DragImageLoader(clipboard));
-}
 
 DragImageLoader::DragImageLoader(Clipboard* clipboard)
     : m_clipboard(clipboard)
