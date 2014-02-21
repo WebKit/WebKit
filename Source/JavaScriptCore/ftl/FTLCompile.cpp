@@ -164,7 +164,7 @@ void generateICFastPath(
 
 static void fixFunctionBasedOnStackMaps(
     State& state, CodeBlock* codeBlock, JITCode* jitCode, GeneratedFunction generatedFunction,
-    StackMaps::RecordMap& recordMap)
+    StackMaps::RecordMap& recordMap, bool didSeeUnwindInfo)
 {
     Graph& graph = state.graph;
     VM& vm = graph.m_vm;
@@ -236,10 +236,13 @@ static void fixFunctionBasedOnStackMaps(
     ExitThunkGenerator exitThunkGenerator(state);
     exitThunkGenerator.emitThunks();
     if (exitThunkGenerator.didThings()) {
+        RELEASE_ASSERT(state.finalizer->osrExit.size());
+        RELEASE_ASSERT(didSeeUnwindInfo);
+        
         OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(
             vm, &exitThunkGenerator, codeBlock, JITCompilationMustSucceed));
         
-        ASSERT(state.finalizer->osrExit.size() == state.jitCode->osrExit.size());
+        RELEASE_ASSERT(state.finalizer->osrExit.size() == state.jitCode->osrExit.size());
         
         for (unsigned i = 0; i < state.jitCode->osrExit.size(); ++i) {
             OSRExitCompilationInfo& info = state.finalizer->osrExit[i];
@@ -573,10 +576,15 @@ void compile(State& state)
         }
     }
     
-    state.jitCode->unwindInfo.parse(
+    bool didSeeUnwindInfo = state.jitCode->unwindInfo.parse(
         state.compactUnwind, state.compactUnwindSize, state.generatedFunction);
-    if (shouldShowDisassembly())
-        dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n    ", state.jitCode->unwindInfo, "\n");
+    if (shouldShowDisassembly()) {
+        dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n");
+        if (didSeeUnwindInfo)
+            dataLog("    ", state.jitCode->unwindInfo, "\n");
+        else
+            dataLog("    <no unwind info>\n");
+    }
     
     if (state.stackmapsSection && state.stackmapsSection->size()) {
         if (shouldShowDisassembly()) {
@@ -599,7 +607,7 @@ void compile(State& state)
         StackMaps::RecordMap recordMap = state.jitCode->stackmaps.computeRecordMap();
         fixFunctionBasedOnStackMaps(
             state, state.graph.m_codeBlock, state.jitCode.get(), state.generatedFunction,
-            recordMap);
+            recordMap, didSeeUnwindInfo);
         
         if (shouldShowDisassembly()) {
             for (unsigned i = 0; i < state.jitCode->handles().size(); ++i) {

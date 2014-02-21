@@ -48,11 +48,14 @@ struct CompactUnwind {
 
 } // anonymous namespace
 
-void UnwindInfo::parse(void* section, size_t size, GeneratedFunction generatedFunction)
+bool UnwindInfo::parse(void* section, size_t size, GeneratedFunction generatedFunction)
 {
     m_registers.clear();
     
-    RELEASE_ASSERT(section);
+    RELEASE_ASSERT(!!section == !!size);
+    if (!section)
+        return false;
+    
     RELEASE_ASSERT(size >= sizeof(CompactUnwind));
     
     CompactUnwind* data = bitwise_cast<CompactUnwind*>(section);
@@ -156,6 +159,7 @@ void UnwindInfo::parse(void* section, size_t size, GeneratedFunction generatedFu
 #endif
     
     std::sort(m_registers.begin(), m_registers.end());
+    return true;
 }
 
 void UnwindInfo::dump(PrintStream& out) const

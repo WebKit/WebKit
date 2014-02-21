@@ -1,1 +1,18 @@
+2014-02-20  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL may not see a compact_unwind section if there weren't any stackmaps
+        https://bugs.webkit.org/show_bug.cgi?id=129125
+
+        Reviewed by Geoffrey Garen.
+        
+        It's OK to not have an unwind section, so long as the function also doesn't have any
+        OSR exits.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        (JSC::FTL::compile):
+        * ftl/FTLUnwindInfo.cpp:
+        (JSC::FTL::UnwindInfo::parse):
+        * ftl/FTLUnwindInfo.h:
+
 == Rolled over to ChangeLog-2014-02-20 ==
