@@ -1,3 +1,13 @@
+2014-02-21  Anders Carlsson  <andersca@apple.com>
+
+        Make sure to invoke the completion handler for JS alerts
+        https://bugs.webkit.org/show_bug.cgi?id=129158
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+
 2014-02-20  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant deviceScaleFactor() functions and make callers use Document::deviceScaleFactor() when accessible.

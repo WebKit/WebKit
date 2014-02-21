@@ -1167,6 +1167,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             }
 
             m_client.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
+            completionHandler();
         }
 
         virtual void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, std::function<void (bool)> completionHandler) override
