@@ -131,7 +131,7 @@ double MediaSource::duration() const
     return isClosed() ? std::numeric_limits<float>::quiet_NaN() : m_private->duration();
 }
 
-PassRefPtr<TimeRanges> MediaSource::buffered() const
+std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 {
     // Implements MediaSource algorithm for HTMLMediaElement.buffered.
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#htmlmediaelement-extensions
@@ -139,7 +139,7 @@ PassRefPtr<TimeRanges> MediaSource::buffered() const
 
     // 1. If activeSourceBuffers.length equals 0 then return an empty TimeRanges object and abort these steps.
     if (ranges.isEmpty())
-        return TimeRanges::create();
+        return PlatformTimeRanges::create();
 
     // 2. Let active ranges be the ranges returned by buffered for each SourceBuffer object in activeSourceBuffers.
     // 3. Let highest end time be the largest range end time in the active ranges.
@@ -152,7 +152,7 @@ PassRefPtr<TimeRanges> MediaSource::buffered() const
 
     // Return an empty range if all ranges are empty.
     if (highestEndTime < 0)
-        return TimeRanges::create();
+        return PlatformTimeRanges::create();
 
     // 4. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
     RefPtr<TimeRanges> intersectionRanges = TimeRanges::create(0, highestEndTime);
@@ -169,10 +169,10 @@ PassRefPtr<TimeRanges> MediaSource::buffered() const
 
         // 5.3 Let new intersection ranges equal the the intersection between the intersection ranges and the source ranges.
         // 5.4 Replace the ranges in intersection ranges with the new intersection ranges.
-        intersectionRanges->intersectWith(sourceRanges);
+        intersectionRanges->intersectWith(*sourceRanges);
     }
 
-    return intersectionRanges.release();
+    return PlatformTimeRanges::create(intersectionRanges->ranges());
 }
 
 class SourceBufferBufferedDoesNotContainTime {

@@ -116,10 +116,10 @@ private:
     virtual bool seeking() const override;
     virtual void setRateDouble(double) override;
 
-    virtual PassRefPtr<TimeRanges> seekable() const override;
+    virtual std::unique_ptr<PlatformTimeRanges> seekable() const override;
     virtual double maxTimeSeekableDouble() const override;
     virtual double minTimeSeekable() const override;
-    virtual PassRefPtr<TimeRanges> buffered() const override;
+    virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
 
     virtual bool didLoadingProgress() const override;
 

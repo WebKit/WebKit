@@ -618,16 +618,16 @@ static bool timeRangeIsValidAndNotEmpty(CMTime start, CMTime duration)
     return true;
 }
 
-PassRefPtr<TimeRanges> MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRanges() const
+std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRanges() const
 {
-    RefPtr<TimeRanges> timeRanges = TimeRanges::create();
+    auto timeRanges = PlatformTimeRanges::create();
 
     if (!avPlayerItem(m_avfWrapper))
-        return timeRanges.release();
+        return timeRanges;
 
     RetainPtr<CFArrayRef> loadedRanges = adoptCF(AVCFPlayerItemCopyLoadedTimeRanges(avPlayerItem(m_avfWrapper)));
     if (!loadedRanges)
-        return timeRanges.release();
+        return timeRanges;
 
     CFIndex rangeCount = CFArrayGetCount(loadedRanges.get());
     for (CFIndex i = 0; i < rangeCount; i++) {
@@ -642,7 +642,7 @@ PassRefPtr<TimeRanges> MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRan
         }
     }
 
-    return timeRanges.release();
+    return timeRanges;
 }
 
 double MediaPlayerPrivateAVFoundationCF::platformMinTimeSeekable() const 

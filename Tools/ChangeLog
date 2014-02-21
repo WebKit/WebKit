@@ -1,3 +1,13 @@
+2014-02-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Fix TimeRanges layering violations
+        https://bugs.webkit.org/show_bug.cgi?id=128717
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebCore/TimeRanges.cpp: TimeRanges* -> TimeRanges&.
+        (TestWebKitAPI::TEST):
+
 2014-02-21  Diego Pino García  <dpino@igalia.com>
 
         Web Inspector: update check-webkit-style to flag single quotes in WebInspectorUI projects

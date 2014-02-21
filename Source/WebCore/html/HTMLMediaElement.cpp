@@ -3075,10 +3075,11 @@ double HTMLMediaElement::percentLoaded() const
         return 0;
 
     double buffered = 0;
-    RefPtr<TimeRanges> timeRanges = m_player->buffered();
+    bool ignored;
+    std::unique_ptr<PlatformTimeRanges> timeRanges = m_player->buffered();
     for (unsigned i = 0; i < timeRanges->length(); ++i) {
-        double start = timeRanges->start(i, IGNORE_EXCEPTION);
-        double end = timeRanges->end(i, IGNORE_EXCEPTION);
+        double start = timeRanges->start(i, ignored);
+        double end = timeRanges->end(i, ignored);
         buffered += end - start;
     }
     return buffered / duration;
@@ -4112,10 +4113,10 @@ PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
 
 #if ENABLE(MEDIA_SOURCE)
     if (m_mediaSource)
-        return m_mediaSource->buffered();
+        return TimeRanges::create(*m_mediaSource->buffered());
 #endif
 
-    return m_player->buffered();
+    return TimeRanges::create(*m_player->buffered());
 }
 
 PassRefPtr<TimeRanges> HTMLMediaElement::played()
@@ -4134,7 +4135,10 @@ PassRefPtr<TimeRanges> HTMLMediaElement::played()
 
 PassRefPtr<TimeRanges> HTMLMediaElement::seekable() const
 {
-    return m_player ? m_player->seekable() : TimeRanges::create();
+    if (m_player)
+        return TimeRanges::create(*m_player->seekable());
+
+    return TimeRanges::create();
 }
 
 bool HTMLMediaElement::potentiallyPlaying() const

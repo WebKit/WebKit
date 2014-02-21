@@ -43,9 +43,9 @@
 #import "InbandTextTrackPrivateLegacyAVFObjC.h"
 #import "URL.h"
 #import "Logging.h"
+#import "PlatformTimeRanges.h"
 #import "SecurityOrigin.h"
 #import "SoftLinking.h"
-#import "TimeRanges.h"
 #import "UUID.h"
 #import "VideoTrackPrivateAVFObjC.h"
 #import "WebCoreAVFResourceLoader.h"
@@ -752,12 +752,12 @@ float MediaPlayerPrivateAVFoundationObjC::rate() const
     return m_cachedRate;
 }
 
-PassRefPtr<TimeRanges> MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const
+std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const
 {
-    RefPtr<TimeRanges> timeRanges = TimeRanges::create();
+    auto timeRanges = PlatformTimeRanges::create();
 
     if (!m_avPlayerItem)
-        return timeRanges.release();
+        return timeRanges;
 
     for (NSValue *thisRangeValue in m_cachedLoadedRanges.get()) {
         CMTimeRange timeRange = [thisRangeValue CMTimeRangeValue];
@@ -767,7 +767,7 @@ PassRefPtr<TimeRanges> MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeR
             timeRanges->add(rangeStart, rangeEnd);
         }
     }
-    return timeRanges.release();
+    return timeRanges;
 }
 
 double MediaPlayerPrivateAVFoundationObjC::platformMinTimeSeekable() const

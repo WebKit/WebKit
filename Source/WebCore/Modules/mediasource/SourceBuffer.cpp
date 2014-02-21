@@ -967,7 +967,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             }
 
             erasedRanges->invert();
-            m_buffered->intersectWith(erasedRanges.get());
+            m_buffered->intersectWith(*erasedRanges.get());
         }
 
         // 1.17 If spliced audio frame is set:

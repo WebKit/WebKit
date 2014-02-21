@@ -95,7 +95,7 @@ PassRefPtr<TimeRanges> MediaController::buffered() const
     // user agent has buffered, at the time the attribute is evaluated.
     RefPtr<TimeRanges> bufferedRanges = m_mediaElements.first()->buffered();
     for (size_t index = 1; index < m_mediaElements.size(); ++index)
-        bufferedRanges->intersectWith(m_mediaElements[index]->buffered().get());
+        bufferedRanges->intersectWith(*m_mediaElements[index]->buffered().get());
     return bufferedRanges;
 }
 
@@ -109,7 +109,7 @@ PassRefPtr<TimeRanges> MediaController::seekable() const
     // user agent is able to seek to, at the time the attribute is evaluated.
     RefPtr<TimeRanges> seekableRanges = m_mediaElements.first()->seekable();
     for (size_t index = 1; index < m_mediaElements.size(); ++index)
-        seekableRanges->intersectWith(m_mediaElements[index]->seekable().get());
+        seekableRanges->intersectWith(*m_mediaElements[index]->seekable().get());
     return seekableRanges;
 }
 
@@ -123,7 +123,7 @@ PassRefPtr<TimeRanges> MediaController::played()
     // user agent has so far rendered, at the time the attribute is evaluated.
     RefPtr<TimeRanges> playedRanges = m_mediaElements.first()->played();
     for (size_t index = 1; index < m_mediaElements.size(); ++index)
-        playedRanges->unionWith(m_mediaElements[index]->played().get());
+        playedRanges->unionWith(*m_mediaElements[index]->played().get());
     return playedRanges;
 }
 

@@ -115,7 +115,7 @@ TEST(TimeRanges, IntersectWith_Self)
 
     ASSERT_RANGE("{ [0,2) }", ranges);
 
-    ranges->intersectWith(ranges.get());
+    ranges->intersectWith(*ranges.get());
 
     ASSERT_RANGE("{ [0,2) }", ranges);
 }
@@ -128,7 +128,7 @@ TEST(TimeRanges, IntersectWith_IdenticalRange)
     ASSERT_RANGE("{ [0,2) }", rangesA);
     ASSERT_RANGE("{ [0,2) }", rangesB);
 
-    rangesA->intersectWith(rangesB.get());
+    rangesA->intersectWith(*rangesB.get());
 
     ASSERT_RANGE("{ [0,2) }", rangesA);
     ASSERT_RANGE("{ [0,2) }", rangesB);
@@ -142,7 +142,7 @@ TEST(TimeRanges, IntersectWith_Empty)
     ASSERT_RANGE("{ [0,2) }", rangesA);
     ASSERT_RANGE("{ }", rangesB);
 
-    rangesA->intersectWith(rangesB.get());
+    rangesA->intersectWith(*rangesB.get());
 
     ASSERT_RANGE("{ }", rangesA);
     ASSERT_RANGE("{ }", rangesB);
@@ -150,6 +150,7 @@ TEST(TimeRanges, IntersectWith_Empty)
 
 TEST(TimeRanges, IntersectWith_DisjointRanges1)
 {
+    
     RefPtr<TimeRanges> rangesA = TimeRanges::create();
     RefPtr<TimeRanges> rangesB = TimeRanges::create();
 
@@ -162,7 +163,7 @@ TEST(TimeRanges, IntersectWith_DisjointRanges1)
     ASSERT_RANGE("{ [0,1) [4,5) }", rangesA);
     ASSERT_RANGE("{ [2,3) [6,7) }", rangesB);
 
-    rangesA->intersectWith(rangesB.get());
+    rangesA->intersectWith(*rangesB.get());
 
     ASSERT_RANGE("{ }", rangesA);
     ASSERT_RANGE("{ [2,3) [6,7) }", rangesB);
@@ -182,7 +183,7 @@ TEST(TimeRanges, IntersectWith_DisjointRanges2)
     ASSERT_RANGE("{ [0,1) [4,5) }", rangesA);
     ASSERT_RANGE("{ [1,4) [5,7) }", rangesB);
 
-    rangesA->intersectWith(rangesB.get());
+    rangesA->intersectWith(*rangesB.get());
 
     ASSERT_RANGE("{ }", rangesA);
     ASSERT_RANGE("{ [1,4) [5,7) }", rangesB);
@@ -202,7 +203,7 @@ TEST(TimeRanges, IntersectWith_CompleteOverlap1)
     ASSERT_RANGE("{ [1,3) [4,5) [6,9) }", rangesA);
     ASSERT_RANGE("{ [0,10) }", rangesB);
 
-    rangesA->intersectWith(rangesB.get());
+    rangesA->intersectWith(*rangesB.get());
 
     ASSERT_RANGE("{ [1,3) [4,5) [6,9) }", rangesA);
     ASSERT_RANGE("{ [0,10) }", rangesB);
@@ -222,7 +223,7 @@ TEST(TimeRanges, IntersectWith_CompleteOverlap2)
     ASSERT_RANGE("{ [1,3) [4,5) [6,9) }", rangesA);
     ASSERT_RANGE("{ [1,9) }", rangesB);
 
-    rangesA->intersectWith(rangesB.get());
+    rangesA->intersectWith(*rangesB.get());
 
     ASSERT_RANGE("{ [1,3) [4,5) [6,9) }", rangesA);
     ASSERT_RANGE("{ [1,9) }", rangesB);
@@ -241,7 +242,7 @@ TEST(TimeRanges, IntersectWith_Gaps1)
     ASSERT_RANGE("{ [0,2) [4,6) }", rangesA);
     ASSERT_RANGE("{ [1,5) }", rangesB);
 
-    rangesA->intersectWith(rangesB.get());
+    rangesA->intersectWith(*rangesB.get());
 
     ASSERT_RANGE("{ [1,2) [4,5) }", rangesA);
     ASSERT_RANGE("{ [1,5) }", rangesB);
@@ -261,7 +262,7 @@ TEST(TimeRanges, IntersectWith_Gaps2)
     ASSERT_RANGE("{ [0,2) [4,6) [8,10) }", rangesA);
     ASSERT_RANGE("{ [1,9) }", rangesB);
 
-    rangesA->intersectWith(rangesB.get());
+    rangesA->intersectWith(*rangesB.get());
 
     ASSERT_RANGE("{ [1,2) [4,6) [8,9) }", rangesA);
     ASSERT_RANGE("{ [1,9) }", rangesB);
@@ -282,7 +283,7 @@ TEST(TimeRanges, IntersectWith_Gaps3)
     ASSERT_RANGE("{ [0,2) [4,7) [8,10) }", rangesA);
     ASSERT_RANGE("{ [1,5) [6,9) }", rangesB);
 
-    rangesA->intersectWith(rangesB.get());
+    rangesA->intersectWith(*rangesB.get());
 
     ASSERT_RANGE("{ [1,2) [4,5) [6,7) [8,9) }", rangesA);
     ASSERT_RANGE("{ [1,5) [6,9) }", rangesB);

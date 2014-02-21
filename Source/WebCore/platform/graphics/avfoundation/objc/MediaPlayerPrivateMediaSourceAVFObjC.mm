@@ -388,9 +388,9 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaSourceAVFObjC::readyState() const
     return m_readyState;
 }
 
-PassRefPtr<TimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::seekable() const
+std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::seekable() const
 {
-    return TimeRanges::create(minTimeSeekable(), maxTimeSeekableDouble());
+    return PlatformTimeRanges::create(minTimeSeekable(), maxTimeSeekableDouble());
 }
 
 double MediaPlayerPrivateMediaSourceAVFObjC::maxTimeSeekableDouble() const
@@ -403,7 +403,7 @@ double MediaPlayerPrivateMediaSourceAVFObjC::minTimeSeekable() const
     return startTimeDouble();
 }
 
-PassRefPtr<TimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
+std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
 {
     return m_mediaSource->buffered();
 }

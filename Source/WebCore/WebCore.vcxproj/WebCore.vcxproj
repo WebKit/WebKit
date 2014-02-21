@@ -7675,6 +7675,7 @@
     <ClCompile Include="..\platform\graphics\Path.cpp" />
     <ClCompile Include="..\platform\graphics\PathTraversalState.cpp" />
     <ClCompile Include="..\platform\graphics\Pattern.cpp" />
+    <ClCompile Include="..\platform\graphics\PlatformTimeRanges.cpp" />
     <ClCompile Include="..\platform\graphics\Region.cpp" />
     <ClCompile Include="..\platform\graphics\RoundedRect.cpp" />
     <ClCompile Include="..\platform\graphics\SegmentedFontData.cpp" />
@@ -19111,6 +19112,7 @@
     <ClInclude Include="..\platform\graphics\PathTraversalState.h" />
     <ClInclude Include="..\platform\graphics\Pattern.h" />
     <ClInclude Include="..\platform\graphics\PlatformLayer.h" />
+    <ClInclude Include="..\platform\graphics\PlatformTimeRanges.h" />
     <ClInclude Include="..\platform\graphics\Region.h" />
     <ClInclude Include="..\platform\graphics\RoundedRect.h" />
     <ClInclude Include="..\platform\graphics\SegmentedFontData.h" />

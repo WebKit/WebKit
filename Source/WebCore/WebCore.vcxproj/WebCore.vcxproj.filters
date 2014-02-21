@@ -1383,6 +1383,9 @@
     <ClCompile Include="..\platform\graphics\Region.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\PlatformTimeRanges.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\RoundedRect.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
@@ -8322,6 +8325,9 @@
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\PlatformLayer.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\PlatformTimeRanges.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\Region.h">

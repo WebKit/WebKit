@@ -174,7 +174,7 @@ protected:
     virtual MediaPlayer::ReadyState readyState() const override { return m_readyState; }
     virtual double maxTimeSeekableDouble() const override;
     virtual double minTimeSeekable() const override;
-    virtual PassRefPtr<TimeRanges> buffered() const override;
+    virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
     virtual bool didLoadingProgress() const override;
     virtual void setSize(const IntSize&) override;
     virtual void paint(GraphicsContext*, const IntRect&) = 0;
@@ -229,7 +229,7 @@ protected:
     virtual float rate() const = 0;
     virtual void seekToTime(double time, double negativeTolerance, double positiveTolerance) = 0;
     virtual unsigned long long totalBytes() const = 0;
-    virtual PassRefPtr<TimeRanges> platformBufferedTimeRanges() const = 0;
+    virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const = 0;
     virtual double platformMaxTimeSeekable() const = 0;
     virtual double platformMinTimeSeekable() const = 0;
     virtual float platformMaxTimeLoaded() const = 0;
@@ -304,7 +304,7 @@ private:
     Vector<Notification> m_queuedNotifications;
     mutable Mutex m_queueMutex;
 
-    mutable RefPtr<TimeRanges> m_cachedLoadedTimeRanges;
+    mutable std::unique_ptr<PlatformTimeRanges> m_cachedLoadedTimeRanges;
 
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;

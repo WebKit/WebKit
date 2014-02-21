@@ -890,22 +890,22 @@ void MediaPlayerPrivateGStreamer::setPreservesPitch(bool preservesPitch)
     m_preservesPitch = preservesPitch;
 }
 
-PassRefPtr<TimeRanges> MediaPlayerPrivateGStreamer::buffered() const
+std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() const
 {
-    RefPtr<TimeRanges> timeRanges = TimeRanges::create();
+    auto timeRanges = PlatformTimeRanges::create();
     if (m_errorOccured || isLiveStream())
-        return timeRanges.release();
+        return timeRanges;
 
 #if GST_CHECK_VERSION(0, 10, 31)
     float mediaDuration(duration());
     if (!mediaDuration || std::isinf(mediaDuration))
-        return timeRanges.release();
+        return timeRanges;
 
     GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
 
     if (!gst_element_query(m_playBin.get(), query)) {
         gst_query_unref(query);
-        return timeRanges.release();
+        return timeRanges;
     }
 
     for (guint index = 0; index < gst_query_get_n_buffering_ranges(query); index++) {
@@ -927,7 +927,7 @@ PassRefPtr<TimeRanges> MediaPlayerPrivateGStreamer::buffered() const
     if (!m_errorOccured && !isLiveStream() && loaded > 0)
         timeRanges->add(0, loaded);
 #endif
-    return timeRanges.release();
+    return timeRanges;
 }
 
 gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)

@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "TimeRanges.h"
+#include "PlatformTimeRanges.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -41,7 +41,7 @@ public:
 
     virtual void setPrivateAndOpen(PassRef<MediaSourcePrivate>) = 0;
     virtual double duration() const = 0;
-    virtual PassRefPtr<TimeRanges> buffered() const = 0;
+    virtual std::unique_ptr<PlatformTimeRanges> buffered() const = 0;
 };
 
 }

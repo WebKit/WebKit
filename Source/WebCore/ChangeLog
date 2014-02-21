@@ -1,3 +1,110 @@
+2014-02-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Fix TimeRanges layering violations
+        https://bugs.webkit.org/show_bug.cgi?id=128717
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functionality changed.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am: Add PlatformTimeRanges.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::buffered): TimeRanges -> PlatformTimeRanges.
+        * Modules/mediasource/MediaSource.h:
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): TimeRanges* -> TimeRanges&.
+
+        * WebCore.exp.in: Update for signature changes.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj: Add PlatformTimeRanges.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::percentLoaded): Create TimeRanges from PlatformTimeRanges.
+        (WebCore::HTMLMediaElement::buffered): Ditto.
+        (WebCore::HTMLMediaElement::seekable): Ditto.
+
+        * html/MediaController.cpp:
+        (MediaController::buffered): TimeRanges* -> TimeRanges&.
+        (MediaController::seekable): Ditto.
+        (MediaController::played): Ditto.
+
+        Move all of the logic into PlatformTimeRanges. Change API to take TimeRanges& instead of TimeRanges*.
+        * html/TimeRanges.cpp:
+        (WebCore::TimeRanges::create): Move to .cpp from .h.
+        (WebCore::TimeRanges::TimeRanges): Initialize the PlatformTimeRanges member variable.
+        (WebCore::TimeRanges::start): Passthrough to PlatformTimeRanges.
+        (WebCore::TimeRanges::end): Ditto.
+        (WebCore::TimeRanges::invert): Ditto.
+        (WebCore::TimeRanges::copy): Ditto.
+        (WebCore::TimeRanges::intersectWith): Ditto.
+        (WebCore::TimeRanges::unionWith): Ditto.
+        (WebCore::TimeRanges::length): Ditto.
+        (WebCore::TimeRanges::add): Ditto.
+        (WebCore::TimeRanges::contain): Ditto.
+        (WebCore::TimeRanges::find): Ditto.
+        (WebCore::TimeRanges::nearest): Ditto.
+        (WebCore::TimeRanges::totalDuration): Ditto.
+        * html/TimeRanges.h:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::buffered): TimeRanges -> PlatformTimeRanges.
+        (WebCore::MediaPlayer::buffered): Ditto.
+        (WebCore::MediaPlayer::seekable): Ditto.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+
+        * platform/graphics/MediaSourcePrivateClient.h:
+
+        * platform/graphics/PlatformTimeRanges.cpp: Added.
+        * platform/graphics/PlatformTimeRanges.h: Added.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::buffered): TimeRanges -> PlatformTimeRanges.
+        (WebCore::MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged): Drive-by fix to log
+            FunctionType notifications. ASSERT when passed an unknown notification.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRanges):  TimeRanges -> PlatformTimeRanges.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::currentTime): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges): Ditto.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekable): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::buffered): Ditto.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::buffered): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
+        * platform/graphics/ios/MediaPlayerPrivateIOS.h:
+        * platform/graphics/ios/MediaPlayerPrivateIOS.mm:
+        (WebCore::MediaPlayerPrivateIOS::buffered): Ditto.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::buffered): Ditto.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::buffered): Ditto.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+
+        * platform/graphics/wince/MediaPlayerPrivateWinCE.h:
+
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::buffered): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::advanceCurrentTime): Ditto.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+
 2014-02-21  Enrica Casucci  <enrica@apple.com>
 
         Support WebSelections in WK2 on iOS.

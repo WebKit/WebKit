@@ -452,6 +452,7 @@ EXPORTS
         symbolWithPointer(?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVTimeRanges@1@@Z, ?toJS@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@PEAVTimeRanges@1@@Z)
         symbolWithPointer(?nearest@TimeRanges@WebCore@@QBENN@Z, ?nearest@TimeRanges@WebCore@@QEBANN@Z)
         symbolWithPointer(?add@TimeRanges@WebCore@@QAEXNN@Z, ?add@TimeRanges@WebCore@@QEAAXNN@Z)
+        symbolWithPointer(?create@TimeRanges@WebCore@@SA?AV?$PassRefPtr@VTimeRanges@WebCore@@@WTF@@XZ, ?create@TimeRanges@WebCore@@SA?AV?$PassRefPtr@VTimeRanges@WebCore@@@WTF@@XZ)
 #if USE(GSTREAMER)
         symbolWithPointer(?simulateAudioInterruption@MediaPlayer@WebCore@@QAEXXZ, ?simulateAudioInterruption@MediaPlayer@WebCore@@QEAAXXZ)
 #endif

@@ -128,12 +128,12 @@ class ContentType;
 class FrameView;
 class GraphicsContext;
 class GraphicsContext3D;
+class HostWindow;
 class IntRect;
 class IntSize;
 class MediaPlayer;
 struct MediaPlayerFactory;
-class TimeRanges;
-class HostWindow;
+class PlatformTimeRanges;
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
 struct GraphicsDeviceAdapter;
@@ -352,8 +352,8 @@ public:
     bool preservesPitch() const;
     void setPreservesPitch(bool);
 
-    PassRefPtr<TimeRanges> buffered();
-    PassRefPtr<TimeRanges> seekable();
+    std::unique_ptr<PlatformTimeRanges> buffered();
+    std::unique_ptr<PlatformTimeRanges> seekable();
     double minTimeSeekable();
     double maxTimeSeekable();
 

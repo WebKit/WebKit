@@ -5338,6 +5338,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/MediaPlayer.cpp \
 	Source/WebCore/platform/graphics/MediaPlayer.h \
 	Source/WebCore/platform/graphics/MediaPlayerPrivate.h \
+	Source/WebCore/platform/graphics/PlatformTimeRanges.cpp \
+	Source/WebCore/platform/graphics/PlatformTimeRanges.h \
 	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp \
 	Source/WebCore/platform/graphics/opengl/TemporaryOpenGLSetting.cpp \
 	Source/WebCore/platform/graphics/opengl/TemporaryOpenGLSetting.h \

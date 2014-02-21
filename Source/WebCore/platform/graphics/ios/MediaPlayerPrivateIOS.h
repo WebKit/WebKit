@@ -119,7 +119,7 @@ private:
     
     float maxTimeBuffered() const;
     virtual float maxTimeSeekable() const override;
-    virtual PassRefPtr<TimeRanges> buffered() const override;
+    virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
 
     virtual bool didLoadingProgress() const override;
     bool totalBytesKnown() const;

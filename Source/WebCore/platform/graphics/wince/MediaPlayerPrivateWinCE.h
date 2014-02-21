@@ -68,7 +68,7 @@ namespace WebCore {
         MediaPlayer::NetworkState networkState() const { return m_networkState; }
         MediaPlayer::ReadyState readyState() const { return m_readyState; }
 
-        PassRefPtr<TimeRanges> buffered() const;
+        std::unique_ptr<PlatformTimeRanges> buffered() const;
         float maxTimeSeekable() const;
         // FIXME: bytesLoaded() should be replaced with didLoadingProgress() (by somebody who can find the implementation of this class).
         unsigned bytesLoaded() const;

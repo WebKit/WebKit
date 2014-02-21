@@ -26,6 +26,7 @@
 #ifndef TimeRanges_h
 #define TimeRanges_h
 
+#include "PlatformTimeRanges.h"
 #include <algorithm>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -37,82 +38,36 @@ typedef int ExceptionCode;
 
 class TimeRanges : public RefCounted<TimeRanges> {
 public:
-    static PassRefPtr<TimeRanges> create() 
-    {
-        return adoptRef(new TimeRanges);
-    }
-    static PassRefPtr<TimeRanges> create(double start, double end)
-    {
-        return adoptRef(new TimeRanges(start, end));
-    }
+    static PassRefPtr<TimeRanges> create();
+    static PassRefPtr<TimeRanges> create(double start, double end);
+    static PassRefPtr<TimeRanges> create(const PlatformTimeRanges&);
 
-    PassRefPtr<TimeRanges> copy() const;
-    void invert();
-    void intersectWith(const TimeRanges*);
-    void unionWith(const TimeRanges*);
-
-    unsigned length() const { return m_ranges.size(); }
     double start(unsigned index, ExceptionCode&) const;
     double end(unsigned index, ExceptionCode&) const;
 
+    PassRefPtr<TimeRanges> copy() const;
+    void invert();
+    void intersectWith(const TimeRanges&);
+    void unionWith(const TimeRanges&);
+    
+    unsigned length() const;
+
     void add(double start, double end);
-    
     bool contain(double time) const;
-
-    size_t find(double time) const;
     
+    size_t find(double time) const;
     double nearest(double time) const;
-
     double totalDuration() const;
 
+    const PlatformTimeRanges& ranges() const { return m_ranges; }
+
 private:
-    TimeRanges() { }
+    explicit TimeRanges();
     TimeRanges(double start, double end);
-    TimeRanges(const TimeRanges&);
+    TimeRanges(const PlatformTimeRanges&);
 
-    // We consider all the Ranges to be semi-bounded as follow: [start, end[
-    struct Range {
-        Range() { }
-        Range(double start, double end)
-        {
-            m_start = start;
-            m_end = end;
-        }
-        double m_start;
-        double m_end;
 
-        inline bool isPointInRange(double point) const
-        {
-            return m_start <= point && point < m_end;
-        }
-        
-        inline bool isOverlappingRange(const Range& range) const
-        {
-            return isPointInRange(range.m_start) || isPointInRange(range.m_end) || range.isPointInRange(m_start);
-        }
-
-        inline bool isContiguousWithRange(const Range& range) const
-        {
-            return range.m_start == m_end || range.m_end == m_start;
-        }
-        
-        inline Range unionWithOverlappingOrContiguousRange(const Range& range) const
-        {
-            Range ret;
-
-            ret.m_start = std::min(m_start, range.m_start);
-            ret.m_end = std::max(m_end, range.m_end);
-
-            return ret;
-        }
-
-        inline bool isBeforeRange(const Range& range) const
-        {
-            return range.m_start >= m_end;
-        }
-    };
-    
-    Vector<Range> m_ranges;
+    PlatformTimeRanges m_ranges;
 };
 
 } // namespace WebCore

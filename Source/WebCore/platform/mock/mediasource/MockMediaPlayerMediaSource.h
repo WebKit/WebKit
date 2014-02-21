@@ -70,7 +70,7 @@ private:
     virtual bool paused() const override;
     virtual MediaPlayer::NetworkState networkState() const override;
     virtual double maxTimeSeekableDouble() const override;
-    virtual PassRefPtr<TimeRanges> buffered() const override;
+    virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
     virtual bool didLoadingProgress() const override;
     virtual void setSize(const IntSize&) override;
     virtual void paint(GraphicsContext*, const IntRect&) override;
