@@ -1,5 +1,52 @@
 2014-02-20  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should do its own static estimates of execution frequency before it starts creating OSR entrypoints
+        https://bugs.webkit.org/show_bug.cgi?id=129129
+
+        Reviewed by Geoffrey Garen.
+        
+        We estimate execution counts based on loop depth, and then use those to estimate branch
+        weights. These weights then get carried all the way down to LLVM prof branch_weights
+        meta-data.
+        
+        This is better than letting LLVM do its own static estimates, since by the time we
+        generate LLVM IR, we may have messed up the CFG due to OSR entrypoint creation. Of
+        course, it would be even better if we just slurped in some kind of execution counts
+        from profiling, but we don't do that, yet.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGBlockInsertionSet.cpp:
+        (JSC::DFG::BlockInsertionSet::insert):
+        (JSC::DFG::BlockInsertionSet::insertBefore):
+        * dfg/DFGBlockInsertionSet.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp:
+        (JSC::DFG::CriticalEdgeBreakingPhase::breakCriticalEdge):
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::createPreHeader):
+        * dfg/DFGNaturalLoops.h:
+        (JSC::DFG::NaturalLoops::loopDepth):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGStaticExecutionCountEstimationPhase.cpp: Added.
+        (JSC::DFG::StaticExecutionCountEstimationPhase::StaticExecutionCountEstimationPhase):
+        (JSC::DFG::StaticExecutionCountEstimationPhase::run):
+        (JSC::DFG::StaticExecutionCountEstimationPhase::applyCounts):
+        (JSC::DFG::performStaticExecutionCountEstimation):
+        * dfg/DFGStaticExecutionCountEstimationPhase.h: Added.
+
+2014-02-20  Filip Pizlo  <fpizlo@apple.com>
+
         FTL may not see a compact_unwind section if there weren't any stackmaps
         https://bugs.webkit.org/show_bug.cgi?id=129125
 

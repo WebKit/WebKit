@@ -410,6 +410,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGSSALoweringPhase.h \
 	Source/JavaScriptCore/dfg/DFGStackLayoutPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGStackLayoutPhase.h \
+	Source/JavaScriptCore/dfg/DFGStaticExecutionCountEstimationPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGStaticExecutionCountEstimationPhase.h \
 	Source/JavaScriptCore/dfg/DFGStoreBarrierElisionPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGStoreBarrierElisionPhase.h \
 	Source/JavaScriptCore/dfg/DFGStrengthReductionPhase.cpp \

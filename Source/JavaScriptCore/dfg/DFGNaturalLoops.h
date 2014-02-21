@@ -154,6 +154,14 @@ public:
         return false;
     }
     
+    unsigned loopDepth(BasicBlock* block) const
+    {
+        unsigned depth = 0;
+        for (const NaturalLoop* loop = innerMostLoopOf(block); loop; loop = innerMostOuterLoop(*loop))
+            depth++;
+        return depth;
+    }
+    
     // Return the indices of all loops this belongs to.
     Vector<const NaturalLoop*> loopsOf(BasicBlock*) const;
 

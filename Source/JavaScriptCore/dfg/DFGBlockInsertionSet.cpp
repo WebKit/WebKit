@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,20 +49,21 @@ void BlockInsertionSet::insert(size_t index, PassRefPtr<BasicBlock> block)
     insert(BlockInsertion(index, block));
 }
 
-BasicBlock* BlockInsertionSet::insert(size_t index)
+BasicBlock* BlockInsertionSet::insert(size_t index, float executionCount)
 {
     RefPtr<BasicBlock> block = adoptRef(new BasicBlock(
         UINT_MAX,
         m_graph.block(0)->variablesAtHead.numberOfArguments(),
-        m_graph.block(0)->variablesAtHead.numberOfLocals()));
+        m_graph.block(0)->variablesAtHead.numberOfLocals(),
+        executionCount));
     block->isReachable = true;
     insert(index, block);
     return block.get();
 }
 
-BasicBlock* BlockInsertionSet::insertBefore(BasicBlock* before)
+BasicBlock* BlockInsertionSet::insertBefore(BasicBlock* before, float executionCount)
 {
-    return insert(before->index);
+    return insert(before->index, executionCount);
 }
 
 bool BlockInsertionSet::execute()

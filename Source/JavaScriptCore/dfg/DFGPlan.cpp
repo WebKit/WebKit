@@ -56,6 +56,7 @@
 #include "DFGSSAConversionPhase.h"
 #include "DFGSSALoweringPhase.h"
 #include "DFGStackLayoutPhase.h"
+#include "DFGStaticExecutionCountEstimationPhase.h"
 #include "DFGStoreBarrierElisionPhase.h"
 #include "DFGStrengthReductionPhase.h"
 #include "DFGTierUpCheckInjectionPhase.h"
@@ -207,6 +208,9 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     performCPSRethreading(dfg);
     performUnification(dfg);
     performPredictionInjection(dfg);
+    
+    if (isFTL(mode))
+        performStaticExecutionCountEstimation(dfg);
     
     if (mode == FTLForOSREntryMode) {
         bool result = performOSREntrypointCreation(dfg);

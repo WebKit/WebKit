@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGBlockInsertionSet_h
-#define DFGBlockInsertionSet_h
+#ifndef DFGStaticExecutionCountEstimationPhase_h
+#define DFGStaticExecutionCountEstimationPhase_h
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
-#include <wtf/Insertion.h>
-#include <wtf/Vector.h>
-
 namespace JSC { namespace DFG {
 
-typedef WTF::Insertion<RefPtr<BasicBlock>> BlockInsertion;
+class Graph;
 
-class BlockInsertionSet {
-public:
-    BlockInsertionSet(Graph& graph);
-    ~BlockInsertionSet();
-    
-    void insert(const BlockInsertion& insertion);
-    void insert(size_t index, PassRefPtr<BasicBlock> block);
-    BasicBlock* insert(size_t index, float executionCount);
-    BasicBlock* insertBefore(BasicBlock* before, float executionCount);
-    
-    bool execute();
+// Estimate execution counts (branch execution counts, in particular) based on
+// presently available static information. This phase is important because
+// subsequent CFG transformations, such as OSR entrypoint creation, perturb our
+// ability to do accurate static estimations. Hence we lock in the estimates early.
+// Ideally, we would have dynamic information, but we don't right now, so this is as
+// good as it gets.
+//
+// It's worth noting that if we didn't have this phase, then the static estimation
+// would be perfomed by LLVM instead. It's worth trying to make this phase perform
+// the estimates using the same heuristics that LLVM would use.
 
-private:
-    Graph& m_graph;
-    Vector<BlockInsertion, 8> m_insertions;
-};
+bool performStaticExecutionCountEstimation(Graph&);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGBlockInsertionSet_h
+#endif // DFGStaticExecutionCountEstimationPhase_h
 

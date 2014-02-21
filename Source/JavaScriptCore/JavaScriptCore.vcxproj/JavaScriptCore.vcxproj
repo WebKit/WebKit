@@ -436,6 +436,7 @@
     <ClCompile Include="..\dfg\DFGSSAConversionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGSSALoweringPhase.cpp" />
     <ClCompile Include="..\dfg\DFGStackLayoutPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGStaticExecutionCountEstimationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGStoreBarrierElisionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGStrengthReductionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGThreadData.cpp" />
@@ -997,6 +998,7 @@
     <ClInclude Include="..\dfg\DFGSSAConversionPhase.h" />
     <ClInclude Include="..\dfg\DFGSSALoweringPhase.h" />
     <ClInclude Include="..\dfg\DFGStackLayoutPhase.h" />
+    <ClInclude Include="..\dfg\DFGStaticExecutionCountEstimationPhase.h" />
     <ClInclude Include="..\dfg\DFGStoreBarrierElisionPhase.h" />
     <ClInclude Include="..\dfg\DFGStrengthReductionPhase.h" />
     <ClInclude Include="..\dfg\DFGStructureAbstractValue.h" />

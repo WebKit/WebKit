@@ -83,7 +83,7 @@ public:
         
         BlockInsertionSet insertionSet(m_graph);
         
-        BasicBlock* newRoot = insertionSet.insert(0);
+        BasicBlock* newRoot = insertionSet.insert(0, QNaN);
         NodeOrigin origin = target->at(0)->origin;
         
         Vector<Node*> locals(baseline->m_numCalleeRegisters);

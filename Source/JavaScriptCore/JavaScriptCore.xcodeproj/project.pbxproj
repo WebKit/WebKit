@@ -261,6 +261,8 @@
 		0F48532A187DFDEC0083B687 /* FTLRecoveryOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F485326187DFDEC0083B687 /* FTLRecoveryOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F493AFA16D0CAD30084508B /* SourceProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F493AF816D0CAD10084508B /* SourceProvider.cpp */; };
 		0F4B94DC17B9F07500DD03A4 /* TypedArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4B94DB17B9F07500DD03A4 /* TypedArrayInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F4F29DF18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4F29DD18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp */; };
+		0F4F29E018B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5541B11613C1FB00CE3E25 /* SpecialPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5541AF1613C1FB00CE3E25 /* SpecialPointer.cpp */; };
 		0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5541B01613C1FB00CE3E25 /* SpecialPointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F55989717C86C5600A1E543 /* ToNativeFromValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1735,6 +1737,8 @@
 		0F485326187DFDEC0083B687 /* FTLRecoveryOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLRecoveryOpcode.h; path = ftl/FTLRecoveryOpcode.h; sourceTree = "<group>"; };
 		0F493AF816D0CAD10084508B /* SourceProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceProvider.cpp; sourceTree = "<group>"; };
 		0F4B94DB17B9F07500DD03A4 /* TypedArrayInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedArrayInlines.h; sourceTree = "<group>"; };
+		0F4F29DD18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStaticExecutionCountEstimationPhase.cpp; path = dfg/DFGStaticExecutionCountEstimationPhase.cpp; sourceTree = "<group>"; };
+		0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStaticExecutionCountEstimationPhase.h; path = dfg/DFGStaticExecutionCountEstimationPhase.h; sourceTree = "<group>"; };
 		0F5541AF1613C1FB00CE3E25 /* SpecialPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpecialPointer.cpp; sourceTree = "<group>"; };
 		0F5541B01613C1FB00CE3E25 /* SpecialPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecialPointer.h; sourceTree = "<group>"; };
 		0F55989717C86C5600A1E543 /* ToNativeFromValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ToNativeFromValue.h; sourceTree = "<group>"; };
@@ -4174,6 +4178,8 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
+				0F4F29DD18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp */,
+				0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */,
 				A77A423617A0BBFD00A8DB81 /* DFGAbstractHeap.cpp */,
 				A77A423717A0BBFD00A8DB81 /* DFGAbstractHeap.h */,
 				A704D8FE17A0BAA8006BA554 /* DFGAbstractInterpreter.h */,
@@ -5158,6 +5164,7 @@
 				0F2B66E017B6B5AB00A7AE3F /* GenericTypedArrayView.h in Headers */,
 				0F2B66E117B6B5AB00A7AE3F /* GenericTypedArrayViewInlines.h in Headers */,
 				0F9332A014CA7DCD0085F3C6 /* GetByIdStatus.h in Headers */,
+				0F4F29E018B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h in Headers */,
 				0F24E54417EA9F5900ABB217 /* GPRInfo.h in Headers */,
 				142E3134134FF0A600AFADB5 /* Handle.h in Headers */,
 				C283190016FE4B7D00157BFD /* HandleBlock.h in Headers */,
@@ -6082,6 +6089,7 @@
 				0F55C19417276E4600CEABFD /* DFGAbstractValue.cpp in Sources */,
 				0F16015D156198C900C2587C /* DFGArgumentsSimplificationPhase.cpp in Sources */,
 				0F63948415E48118006A597C /* DFGArrayMode.cpp in Sources */,
+				0F4F29DF18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp in Sources */,
 				A7D9A29417A0BC7400EE2618 /* DFGAtTailAbstractState.cpp in Sources */,
 				0F714CA416EA92F000F3EBEB /* DFGBackwardsPropagationPhase.cpp in Sources */,
 				FEB58C14187B8B160098EF0B /* ErrorHandlingScope.cpp in Sources */,
