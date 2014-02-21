@@ -21,6 +21,7 @@ PASS Math.imul(Infinity, Infinity) is 0
 PASS Math.imul(Infinity, -Infinity) is 0
 PASS Math.imul(-Infinity, Infinity) is 0
 PASS Math.imul(-Infinity, -Infinity) is 0
+PASS Math.imul(0xffffffff, 5) is -5
 PASS testIMul(2,2,10000) is 40000
 PASS testIMul(2.5,2,10000) is 40000
 PASS testIMul(2,2.5,10000) is 40000

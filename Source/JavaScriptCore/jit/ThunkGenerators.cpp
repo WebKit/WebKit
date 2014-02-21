@@ -924,8 +924,7 @@ MacroAssemblerCodeRef imulThunkGenerator(VM* vm)
         nonIntArg0Jump.link(&jit);
         jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
         jit.branchTruncateDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::BranchIfTruncateSuccessful).linkTo(doneLoadingArg0, &jit);
-        jit.xor32(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0);
-        jit.jump(doneLoadingArg0);
+        jit.appendFailure(jit.jump());
     } else
         jit.appendFailure(nonIntArg0Jump);
 
@@ -933,8 +932,7 @@ MacroAssemblerCodeRef imulThunkGenerator(VM* vm)
         nonIntArg1Jump.link(&jit);
         jit.loadDoubleArgument(1, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT1);
         jit.branchTruncateDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT1, SpecializedThunkJIT::BranchIfTruncateSuccessful).linkTo(doneLoadingArg1, &jit);
-        jit.xor32(SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT1);
-        jit.jump(doneLoadingArg1);
+        jit.appendFailure(jit.jump());
     } else
         jit.appendFailure(nonIntArg1Jump);
 

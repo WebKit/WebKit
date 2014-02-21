@@ -1,3 +1,16 @@
+2014-02-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Math.imul gives wrong results
+        https://bugs.webkit.org/show_bug.cgi?id=126345
+
+        Reviewed by Mark Hahnenberg.
+
+        Don't truncate non-int doubles to 0 -- that's just not how ToInt32 works.
+        Instead, take a slow path that will do the right thing.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::imulThunkGenerator):
+
 2014-02-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should do its own static estimates of execution frequency before it starts creating OSR entrypoints

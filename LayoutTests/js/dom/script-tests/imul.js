@@ -20,6 +20,7 @@ shouldBe("Math.imul(Infinity, Infinity)", "0");
 shouldBe("Math.imul(Infinity, -Infinity)", "0");
 shouldBe("Math.imul(-Infinity, Infinity)", "0");
 shouldBe("Math.imul(-Infinity, -Infinity)", "0");
+shouldBe("Math.imul(0xffffffff, 5)", "-5");
 
 function testIMul(left, right, count)
 {
