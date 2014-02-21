@@ -32,6 +32,7 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
+#import "UIClient.h"
 #import "ViewGestureController.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
@@ -43,6 +44,7 @@
 #import "WKPreferencesInternal.h"
 #import "WKProcessClassInternal.h"
 #import "WKRemoteObjectRegistryInternal.h"
+#import "WKUIDelegate.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
@@ -161,6 +163,8 @@
     _page->setPolicyClient(_navigationState->createPolicyClient());
     _page->setLoaderClient(_navigationState->createLoaderClient());
 
+    _page->setUIClient(std::make_unique<WebKit::UIClient>(self));
+
     return self;
 }
 
@@ -192,6 +196,16 @@
 - (void)setNavigationDelegate:(id <WKNavigationDelegate>)navigationDelegate
 {
     _navigationState->setNavigationDelegate(navigationDelegate);
+}
+
+- (id <WKUIDelegate>)UIDelegate
+{
+    return [static_cast<WebKit::UIClient&>(_page->uiClient()).delegate().leakRef() autorelease];
+}
+
+- (void)setUIDelegate:(id<WKUIDelegate>)UIDelegate
+{
+    static_cast<WebKit::UIClient&>(_page->uiClient()).setDelegate(UIDelegate);
 }
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request

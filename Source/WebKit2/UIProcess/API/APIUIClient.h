@@ -29,6 +29,7 @@
 #include "WKPage.h"
 #include "WebEvent.h"
 #include "WebHitTestResult.h"
+#include "WebPageProxy.h"
 #include <WebCore/FloatRect.h>
 #include <functional>
 #include <wtf/PassRefPtr.h>

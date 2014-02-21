@@ -40,6 +40,7 @@
 @class WKWebViewConfiguration;
 
 @protocol WKNavigationDelegate;
+@protocol WKUIDelegate;
 
 /*!
  A @link WKWebView @/link displays interactive Web content.
@@ -58,6 +59,8 @@ WK_API_CLASS
 @property (nonatomic, readonly) WKWebViewConfiguration *configuration;
 
 @property (nonatomic, weak) id <WKNavigationDelegate> navigationDelegate;
+
+@property (nonatomic, weak) id <WKUIDelegate> UIDelegate;
 
 /*! @abstract The view's back-forward list. */
 @property (nonatomic, readonly) WKBackForwardList *backForwardList;
