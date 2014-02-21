@@ -148,6 +148,9 @@ struct WKAutoCorrectionData{
 
 @implementation WKInteractionView {
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
+    BOOL _canSendTouchEventsAsynchronously;
+    unsigned _nativeWebTouchEventUniqueIdBeingSentSynchronously;
+
     RetainPtr<UITapGestureRecognizer> _singleTapGestureRecognizer;
     RetainPtr<_UIWebHighlightLongPressGestureRecognizer> _highlightLongPressGestureRecognizer;
     RetainPtr<UILongPressGestureRecognizer> _longPressGestureRecognizer;
@@ -279,8 +282,13 @@ struct WKAutoCorrectionData{
 {
     NativeWebTouchEvent nativeWebTouchEvent(gestureRecognizer);
 
-    // FIXME: this kind of event delivery is supposed to be only used for testing. We must switch to asynchronous handling.
-    _page->setShouldSendEventsSynchronously(true);
+    if (nativeWebTouchEvent.type() == WebKit::WebEvent::TouchStart)
+        _canSendTouchEventsAsynchronously = NO;
+
+    if (!_canSendTouchEventsAsynchronously)
+        _nativeWebTouchEventUniqueIdBeingSentSynchronously = nativeWebTouchEvent.uniqueId();
+
+    _page->setShouldSendEventsSynchronously(!_canSendTouchEventsAsynchronously);
     _page->handleTouchEvent(nativeWebTouchEvent);
     _page->setShouldSendEventsSynchronously(false);
 }
@@ -320,6 +328,20 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
     points[3].move(inflateSize, inflateSize);
 
     return FloatQuad(points[1], points[0], points[2], points[3]);
+}
+
+- (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsNativeGesture
+{
+    if (preventsNativeGesture) {
+        // If we are dispatching events synchronously and the event coming back is not the one we are sending, it is a callback
+        // from an event sent asynchronously prior to the synchronous event. In that case, it should not use that information
+        // to update UIWebTouchEventsGestureRecognizer.
+        if (!_canSendTouchEventsAsynchronously && _nativeWebTouchEventUniqueIdBeingSentSynchronously != touchEvent.uniqueId())
+            return;
+
+        _canSendTouchEventsAsynchronously = YES;
+        [_touchEventGestureRecognizer setDefaultPrevented:YES];
+    }
 }
 
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius
@@ -683,6 +705,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     [_webSelectionAssistant willStartScrollingOrZoomingPage];
     [_textSelectionAssistant willStartScrollingOverflow];
+}
+
+- (void)_willStartUserTriggeredScrollingOrZooming
+{
+    _canSendTouchEventsAsynchronously = YES;
 }
 
 - (void)_didEndScrollingOrZooming

@@ -199,8 +199,14 @@ using namespace WebKit;
     [_interactionView _willStartScrollingOrZooming];
 }
 
+- (void)willStartUserTriggeredScroll
+{
+    [_interactionView _willStartUserTriggeredScrollingOrZooming];
+}
+
 - (void)willStartUserTriggeredZoom
 {
+    [_interactionView _willStartUserTriggeredScrollingOrZooming];
     _page->willStartUserTriggeredZooming();
 }
 
@@ -259,6 +265,11 @@ using namespace WebKit;
 
     if ([_delegate respondsToSelector:@selector(contentView:didCommitLayerTree:)])
         [_delegate contentView:self didCommitLayerTree:layerTreeTransaction];
+}
+
+- (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsNativeGesture
+{
+    [_interactionView _webTouchEvent:touchEvent preventsNativeGestures:preventsNativeGesture];
 }
 
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const Color&)color quads:(const Vector<FloatQuad>&)highlightedQuads topLeftRadius:(const IntSize&)topLeftRadius topRightRadius:(const IntSize&)topRightRadius bottomLeftRadius:(const IntSize&)bottomLeftRadius bottomRightRadius:(const IntSize&)bottomRightRadius

@@ -1,5 +1,35 @@
 2014-02-20  Benjamin Poulain  <bpoulain@apple.com>
 
+        WKInteractionView always blocks the main thread when sending touch events
+        https://bugs.webkit.org/show_bug.cgi?id=129059
+
+        Reviewed by Enrica Casucci.
+
+        Add the asynchronous dispatching to WebKit2.
+
+        * Shared/NativeWebTouchEvent.h:
+        (WebKit::NativeWebTouchEvent::uniqueId):
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView willStartUserTriggeredScroll]):
+        (-[WKContentView willStartUserTriggeredZoom]):
+        (-[WKContentView _webTouchEvent:WebKit::preventsNativeGestures:]):
+        * UIProcess/API/ios/WKContentViewInternal.h:
+        * UIProcess/API/ios/WKInteractionView.h:
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView _webTouchEventsRecognized:]):
+        (-[WKInteractionView _webTouchEvent:WebKit::preventsNativeGestures:]):
+        (-[WKInteractionView _willStartUserTriggeredScrollingOrZooming]):
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView scrollViewWillBeginDragging:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-02-20  Benjamin Poulain  <bpoulain@apple.com>
+
         Start fixing the view states driven by the WKScrollView
         https://bugs.webkit.org/show_bug.cgi?id=129140
 

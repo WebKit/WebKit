@@ -42,6 +42,7 @@ class IntSize;
 }
 
 namespace WebKit {
+class NativeWebTouchEvent;
 class WebPageProxy;
 struct InteractionInformationAtPosition;
 }
@@ -55,6 +56,7 @@ struct InteractionInformationAtPosition;
 - (void)setScrollView:(UIWebScrollView *)scrollView;
 - (void)setPage:(PassRefPtr<WebKit::WebPageProxy>)page;
 
+- (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius;
 
 - (void)_startAssistingNode;
@@ -66,6 +68,7 @@ struct InteractionInformationAtPosition;
 - (void)_updatePositionInformation;
 - (void)_performAction:(WebKit::WKSheetActions)action;
 - (void)_willStartScrollingOrZooming;
+- (void)_willStartUserTriggeredScrollingOrZooming;
 - (void)_didEndScrollingOrZooming;
 @property (readonly, nonatomic) WebKit::InteractionInformationAtPosition positionInformation;
 @end

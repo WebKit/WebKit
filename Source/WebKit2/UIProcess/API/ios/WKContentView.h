@@ -67,6 +67,7 @@ WK_API_CLASS
 - (void)didFinishScrolling;
 - (void)didZoomToScale:(CGFloat)scale;
 - (void)willStartZoomOrScroll;
+- (void)willStartUserTriggeredScroll;
 - (void)willStartUserTriggeredZoom;
 
 @end
