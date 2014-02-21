@@ -1,3 +1,17 @@
+2014-02-21  Antoine Quint  <graouts@webkit.org>
+
+        Web Inspector: scrollbar may appear when selecting a stop in gradient editor
+        https://bugs.webkit.org/show_bug.cgi?id=129149
+
+        Reviewed by Timothy Hatcher.
+
+        Ensure the angle input is not focused as we update the size of the gradient editor's
+        popover content since, if it were, it'd make a scrollbar appear as we animate the
+        popover's frame to fit its new content.
+
+        * UserInterface/CodeMirrorGradientEditingController.js:
+        (WebInspector.CodeMirrorGradientEditingController.prototype.gradientSliderStopWasSelected):
+
 2014-02-20  Antoine Quint  <graouts@webkit.org>
 
         Web Inspector: rich editing of CSS gradients

@@ -159,6 +159,10 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
             this._colorPicker.element.remove();
             this._container.classList.remove(WebInspector.CodeMirrorGradientEditingController.EditsColorClassName);
         }
+
+        // Ensure the angle input is not focused since, if it were, it'd make a scrollbar appear as we
+        // animate the popover's frame to fit its new content.
+        this._angleInput.blur();
         
         this.popover.update();
     },
