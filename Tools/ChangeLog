@@ -1,1 +1,20 @@
+2014-02-21  Diego Pino García  <dpino@igalia.com>
+
+        Web Inspector: update check-webkit-style to flag single quotes in WebInspectorUI projects
+        https://bugs.webkit.org/show_bug.cgi?id=128422
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitpy/style/checkers/js.py:
+        (JSChecker.__init__):
+        (JSChecker.check):
+        (SingleQuoteChecker):
+        (SingleQuoteChecker.__init__):
+        (SingleQuoteChecker.check):
+        * Scripts/webkitpy/style/checkers/js_unittest.py:
+        (JSTestCase.assertError.error_for_test):
+        (JSTestCase.assertError):
+        (JSTestCase.test_no_error):
+        (JSTestCase.test_error):
+
 == Rolled over to ChangeLog-2014-02-20 ==

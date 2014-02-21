@@ -56,18 +56,27 @@ class JSTestCase(unittest.TestCase):
         def error_for_test(line_number, category, confidence, message):
             """Checks if the expected error occurs."""
             self.assertEqual(expected_line_number, line_number)
-            self.assertEqual('whitespace/tab', category)
+            self.assertTrue(category in ['whitespace/tab', 'js/syntax'])
             self.had_error = True
 
         checker = JSChecker('', error_for_test)
         checker.check(lines)
-        self.assertTrue(self.had_error, '%s should have an error [whitespace/tab].' % lines)
+        self.assertTrue(self.had_error, '%s should have an error [whitespace/tab] or [js/syntax].' % lines)
 
     def test_no_error(self):
         """Tests for no error cases."""
         self.assertNoError([''])
         self.assertNoError(['abc def', 'ggg'])
+        # Single-quotes within string are OK.
+        self.assertNoError(['var foo = "''"'])
+        # Single-quotes within regular expression are OK.
+        self.assertNoError(["var regex = /[a-z']/"])
 
     def test_error(self):
         """Tests for error cases."""
         self.assertError(['\tvar foo = window;\n'], 1)
+        # Single-quotes are not OK.
+        self.assertError(["var foo = 'Hello world!;'\n"], 1)
+        self.assertError(["foo(\"a'b\", 'c');"], 1)
+        self.assertError(["foo(\"a/'b\", '/c');"], 1)
+        self.assertError(["foo(/'/, 'c');"], 1)
