@@ -2787,10 +2787,6 @@ __ZNK7WebCore12IconDatabase24shouldStopThreadActivityEv
 __ZNK7WebCore12IconDatabase9isEnabledEv
 #endif
 
-#if ENABLE(IMAGE_CONTROLS)
-__ZN7WebCore8Settings23setImageControlsEnabledEb
-#endif
-
 #if ENABLE(INPUT_TYPE_COLOR)
 __ZN7WebCore5ColorC1EP7CGColor
 __ZN7WebCore5ColorC1ERKN3WTF6StringE

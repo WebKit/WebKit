@@ -1,3 +1,9 @@
+2014-02-21  Tim Horton  <timothy_horton@apple.com>
+
+        Remove removed symbol from exports list.
+
+        * WebCore.exp.in:
+
 2014-02-20  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Rename EXT_draw_buffers to WEBGL_draw_buffers
