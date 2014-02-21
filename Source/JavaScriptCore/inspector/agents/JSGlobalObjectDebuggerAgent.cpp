@@ -69,7 +69,7 @@ InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString* e
 
 void JSGlobalObjectDebuggerAgent::breakpointActionLog(JSC::ExecState* exec, const String& message)
 {
-    m_consoleAgent->addMessageToConsole(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(exec, ScriptCallStack::maxCallStackSizeToCapture, true), 0);
+    m_consoleAgent->addMessageToConsole(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(exec, ScriptCallStack::maxCallStackSizeToCapture), 0);
 }
 
 } // namespace Inspector

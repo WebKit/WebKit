@@ -61,6 +61,25 @@ size_t ScriptCallStack::size() const
     return m_frames.size();
 }
 
+const ScriptCallFrame* ScriptCallStack::firstNonNativeCallFrame() const
+{
+    if (!m_frames.size())
+        return nullptr;
+
+    for (size_t i = 0; i < m_frames.size(); ++i) {
+        const ScriptCallFrame& frame = m_frames[i];
+        if (frame.sourceURL() != "[native code]")
+            return &frame;
+    }
+
+    return nullptr;
+}
+
+void ScriptCallStack::append(const ScriptCallFrame& frame)
+{
+    m_frames.append(frame);
+}
+
 bool ScriptCallStack::isEqual(ScriptCallStack* o) const
 {
     if (!o)

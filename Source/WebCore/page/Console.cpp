@@ -77,7 +77,7 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
         return;
 
     size_t stackSize = printTrace ? ScriptCallStack::maxCallStackSizeToCapture : 1;
-    RefPtr<ScriptCallStack> callStack(createScriptCallStack(state, stackSize));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state, stackSize));
     const ScriptCallFrame& lastCaller = callStack->at(0);
 
     String message;
@@ -203,7 +203,7 @@ void Console::profile(JSC::ExecState* state, const String& title)
 
     ScriptProfiler::start(state, resolvedTitle);
 
-    RefPtr<ScriptCallStack> callStack(createScriptCallStack(state, 1));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state, 1));
     const ScriptCallFrame& lastCaller = callStack->at(0);
     InspectorInstrumentation::addStartProfilingMessageToConsole(page, resolvedTitle, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
 }
@@ -222,7 +222,7 @@ void Console::profileEnd(JSC::ExecState* state, const String& title)
         return;
 
     m_profiles.append(profile);
-    RefPtr<ScriptCallStack> callStack(createScriptCallStack(state, 1));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state, 1));
     InspectorInstrumentation::addProfile(page, profile, callStack);
 }
 
@@ -233,7 +233,7 @@ void Console::time(const String& title)
 
 void Console::timeEnd(JSC::ExecState* state, const String& title)
 {
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state, 1));
     InspectorInstrumentation::stopConsoleTiming(m_frame, title, callStack.release());
 }
 
