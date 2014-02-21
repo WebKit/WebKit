@@ -1,3 +1,9 @@
+2014-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update test expectations after r164449.
+
+        * TestExpectations:
+
 2014-02-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         m_ancestorDisabledState should never be unknown
