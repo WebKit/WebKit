@@ -758,7 +758,7 @@ inline char* virtualForWithFunction(
         JSObject* error = functionExecutable->prepareForExecution(execCallee, function, &scope, kind);
         execCallee->setScope(scope);
         if (error) {
-            exec->vm().throwException(execCallee, error);
+            exec->vm().throwException(exec, error);
             return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
         }
     }

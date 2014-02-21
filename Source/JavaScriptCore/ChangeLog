@@ -1,5 +1,25 @@
 2014-02-20  Mark Lam  <mark.lam@apple.com>
 
+        virtualForWithFunction() should not throw an exception with a partially initialized frame.
+        <https://webkit.org/b/129134>
+
+        Reviewed by Michael Saboff.
+
+        Currently, when JITOperations.cpp's virtualForWithFunction() fails to
+        prepare the callee function for execution, it proceeds to throw the
+        exception using the callee frame which is only partially initialized
+        thus far. Instead, it should be throwing the exception using the caller
+        frame because:
+        1. the error happened "in" the caller while preparing the callee for
+           execution i.e. the caller frame is the top fully initialized frame
+           on the stack.
+        2. the callee frame is not fully initialized yet, and the unwind
+           mechanism cannot depend on the data in it.
+
+        * jit/JITOperations.cpp:
+
+2014-02-20  Mark Lam  <mark.lam@apple.com>
+
         DefaultGCActivityCallback::doWork() should reschedule if GC is deferred.
         <https://webkit.org/b/129131>
 
