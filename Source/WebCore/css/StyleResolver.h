@@ -472,8 +472,8 @@ private:
 
     void applySVGProperty(CSSPropertyID, CSSValue*);
 
-    PassRefPtr<StyleImage> loadPendingImage(StylePendingImage*, const ResourceLoaderOptions&);
-    PassRefPtr<StyleImage> loadPendingImage(StylePendingImage*);
+    PassRefPtr<StyleImage> loadPendingImage(const StylePendingImage&, const ResourceLoaderOptions&);
+    PassRefPtr<StyleImage> loadPendingImage(const StylePendingImage&);
     void loadPendingImages();
 #if ENABLE(CSS_SHAPES)
     void loadPendingShapeImage(ShapeValue*);

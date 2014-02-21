@@ -1,3 +1,20 @@
+2014-02-21  David Kilzer  <ddkilzer@apple.com>
+
+        StyleResolver::loadPendingImage() should take a reference to StylePendingImage
+        <http://webkit.org/b/129021>
+
+        Reviewed by Brent Fulgham.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingImage): Change pendingImage
+        parameter to a reference.
+        (WebCore::StyleResolver::loadPendingShapeImage): Update to use
+        references.
+        (WebCore::StyleResolver::loadPendingImages): Ditto.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::loadPendingImage): Change pendingImage
+        parameter to a reference.
+
 2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JSContext inspection should report exceptions in the console
