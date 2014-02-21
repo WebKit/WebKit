@@ -4,9 +4,11 @@ fallbackInterfaceName="SVGUnknownElement"
 fallbackJSInterfaceName="SVGElement"
 
 a
+#if ENABLE_SVG_FONTS
 altGlyph generateTypeHelpers
 altGlyphDef generateTypeHelpers
 altGlyphItem generateTypeHelpers
+#endif
 animate
 animateColor
 animateMotion generateTypeHelpers

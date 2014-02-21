@@ -1,3 +1,16 @@
+2014-02-21  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        Fixing the !ENABLE(SVG_FONTS) build
+        https://bugs.webkit.org/show_bug.cgi?id=129150
+
+        Reviewed by Anders Carlsson.
+
+        No new tests required.
+
+        * svg/SVGAltGlyphElement.cpp:
+        * svg/SVGAltGlyphElement.h:
+        * svg/svgtags.in:
+
 2014-02-21  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Use the named-flow-specific object RenderNamedFlowFragment instead of the generic RenderRegion whenever possible
