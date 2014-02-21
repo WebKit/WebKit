@@ -157,7 +157,7 @@
 - (DOMSVGPoint *)immutablePointFunction
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::SVGPoint>::create(IMPL->immutablePointFunction())));
+    return kit(WTF::getPtr(IMPL->immutablePointFunction()));
 }
 
 - (void)methodWithException

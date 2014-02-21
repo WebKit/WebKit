@@ -1,3 +1,15 @@
+2014-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Bindings tests rebaseline after r164473.
+
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj mutablePoint]):
+        (-[DOMTestObj immutablePoint]):
+        (-[DOMTestObj mutablePointFunction]):
+        (-[DOMTestObj immutablePointFunction]):
+        * bindings/scripts/test/ObjC/DOMTestTypedefs.mm:
+        (-[DOMTestTypedefs immutablePointFunction]):
+
 2014-02-21  Tim Horton  <timothy_horton@apple.com>
 
         Remove removed symbol from exports list.
