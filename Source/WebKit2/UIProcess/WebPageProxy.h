@@ -450,8 +450,11 @@ public:
     void executeEditCommand(const String& commandName);
     void validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback>);
 #if PLATFORM(IOS)
+    const WebCore::FloatRect& unobscuredContentRect() const;
+    void setUnobscuredContentRect(const WebCore::FloatRect& unobscuredRect);
     void setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize&);
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
+
     void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback>);
     void updateSelectionWithTouches(const WebCore::IntPoint, uint32_t touches, bool baseIsStart, PassRefPtr<TouchesCallback>);
     void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback>);
@@ -841,7 +844,6 @@ public:
 
 #if PLATFORM(IOS)
     void willStartUserTriggeredZooming();
-    void didFinishScrolling(const WebCore::FloatPoint& contentOffset);
     void didFinishZooming(float newScale);
 
     void tapHighlightAtPosition(const WebCore::FloatPoint&, uint64_t& requestID);
@@ -1235,6 +1237,7 @@ private:
 #endif
 #if PLATFORM(IOS)
     RefPtr<WebVideoFullscreenManagerProxy> m_videoFullscreenManager;
+    WebCore::FloatRect m_unobscuredRect;
 #endif
 
 #if ENABLE(VIBRATION)

@@ -1080,11 +1080,6 @@ void WebPage::willStartUserTriggeredZooming()
     m_userHasChangedPageScaleFactor = true;
 }
 
-void WebPage::didFinishScrolling(const WebCore::FloatPoint& contentOffset)
-{
-    m_page->mainFrame().view()->setScrollOffset(WebCore::IntPoint(contentOffset));
-}
-
 void WebPage::didFinishZooming(float newScale)
 {
     m_page->setPageScaleFactor(newScale, m_page->mainFrame().view()->scrollPosition());

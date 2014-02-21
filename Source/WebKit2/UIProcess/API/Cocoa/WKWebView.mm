@@ -356,38 +356,38 @@
     [_contentView willStartZoomOrScroll];
 }
 
-- (void)_didFinishScroll
+- (void)_didFinishScrolling
 {
-    CGPoint position = [_scrollView convertPoint:[_scrollView contentOffset] toView:_contentView.get()];
-    [_contentView didFinishScrollTo:position];
+    [self _updateVisibleContentRects];
+    [_contentView didFinishScrolling];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     // If we're decelerating, scroll offset will be updated when scrollViewDidFinishDecelerating: is called.
     if (!decelerate)
-        [self _didFinishScroll];
+        [self _didFinishScrolling];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    [self _didFinishScroll];
+    [self _didFinishScrolling];
 }
 
 - (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
 {
-    [self _didFinishScroll];
+    [self _didFinishScrolling];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    CGPoint position = [_scrollView convertPoint:[_scrollView contentOffset] toView:_contentView.get()];
-    [_contentView didScrollTo:position];
+    [self _updateVisibleContentRects];
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
     ASSERT(scrollView == _scrollView);
+    [self _updateVisibleContentRects];
     [_contentView didZoomToScale:scale];
 }
 
@@ -399,17 +399,20 @@
         [_contentView setMinimumLayoutSize:bounds.size];
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
+    [self _updateVisibleContentRects];
 }
 
-- (void)_setDocumentScale:(CGFloat)newScale
+- (void)_updateVisibleContentRects
 {
-    CGPoint contentOffsetInDocumentCoordinates = [_scrollView convertPoint:[_scrollView contentOffset] toView:_contentView.get()];
+    CGRect fullViewRect = self.bounds;
+    CGRect visibleRectInContentCoordinates = [self convertRect:fullViewRect toView:_contentView.get()];
 
-    [_scrollView setZoomScale:newScale];
-    [_contentView didZoomToScale:newScale];
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, _obscuredInsets);
+    CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
 
-    CGPoint contentOffset = [_scrollView convertPoint:contentOffsetInDocumentCoordinates fromView:_contentView.get()];
-    [_scrollView setContentOffset:contentOffset];
+    CGFloat scaleFactor = [_scrollView zoomScale];
+
+    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates scale:scaleFactor];
 }
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView
@@ -672,6 +675,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     ASSERT(obscuredInsets.bottom >= 0);
     ASSERT(obscuredInsets.right >= 0);
     _obscuredInsets = obscuredInsets;
+    [self _updateVisibleContentRects];
 }
 
 - (UIColor *)_pageExtendedBackgroundColor

@@ -1,3 +1,15 @@
+2014-02-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Start fixing the view states driven by the WKScrollView
+        https://bugs.webkit.org/show_bug.cgi?id=129140
+
+        Reviewed by Tim Horton and Simon Fraser.
+
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::scaledExposedRect):
+        That comment was more confusing than helping. FrameView-relative coordinates should not need
+        scaling.
+
 2014-02-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Start to use std::unique_ptr for DragImageLoader

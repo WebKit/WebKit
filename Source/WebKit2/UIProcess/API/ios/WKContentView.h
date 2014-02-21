@@ -62,9 +62,9 @@ WK_API_CLASS
 
 - (void)setMinimumSize:(CGSize)size;
 - (void)setMinimumLayoutSize:(CGSize)size;
+- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)scale;
 
-- (void)didFinishScrollTo:(CGPoint)contentOffset;
-- (void)didScrollTo:(CGPoint)contentOffset;
+- (void)didFinishScrolling;
 - (void)didZoomToScale:(CGFloat)scale;
 - (void)willStartZoomOrScroll;
 - (void)willStartUserTriggeredZoom;

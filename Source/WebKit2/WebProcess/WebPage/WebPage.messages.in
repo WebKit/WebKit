@@ -314,7 +314,6 @@ messages -> WebPage LegacyReceiver {
 
 #if PLATFORM(IOS)
     WillStartUserTriggeredZooming();
-    DidFinishScrolling(WebCore::FloatPoint contentOffset);
     DidFinishZooming(float scale);
 #endif
 

@@ -319,7 +319,6 @@ void TileController::setExposedRect(const FloatRect& exposedRect)
 
 FloatRect TileController::scaledExposedRect() const
 {
-    // Since the exposedRect is in FrameView-relative coordinates, we need to scale into document space.
     FloatRect scaledExposedRect = m_exposedRect;
     scaledExposedRect.scale(1 / m_scale);
     return scaledExposedRect;

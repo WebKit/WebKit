@@ -68,8 +68,6 @@ using namespace WebKit;
 
     RetainPtr<UIView> _rootContentView;
     RetainPtr<WKInteractionView> _interactionView;
-
-    WebCore::FloatPoint _currentExposedRectPosition;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration
@@ -150,6 +148,20 @@ using namespace WebKit;
     return [_interactionView isEditable];
 }
 
+- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)scale
+{
+    _page->setUnobscuredContentRect(unobscuredRect);
+    _page->scrollingCoordinatorProxy()->scrollPositionChangedViaDelegatedScrolling(_page->scrollingCoordinatorProxy()->rootScrollingNodeID(), roundedIntPoint(unobscuredRect.origin));
+
+    if (auto drawingArea = _page->drawingArea()) {
+        FloatRect exposedRect = visibleRect;
+        exposedRect.scale(scale);
+        drawingArea->setExposedRect(exposedRect);
+    }
+
+    [self _updateFixedPositionRect];
+}
+
 - (void)setMinimumSize:(CGSize)size
 {
     _page->drawingArea()->setSize(IntSize(size), IntSize(), IntSize());
@@ -162,22 +174,12 @@ using namespace WebKit;
     return exposedRect;
 }
 
-- (void)_updateViewExposedRect
-{
-    FloatPoint exposedRectPosition = _currentExposedRectPosition;
-    exposedRectPosition.scale(_page->pageScaleFactor(), _page->pageScaleFactor());
-
-    if (auto drawingArea = _page->drawingArea())
-        drawingArea->setExposedRect(FloatRect(exposedRectPosition, _page->drawingArea()->size()));
-}
-
 - (void)_updateFixedPositionRect
 {
     auto drawingArea = _page->drawingArea();
     if (!drawingArea)
         return;
-    FloatRect exposedRect(_currentExposedRectPosition, drawingArea->size());
-    FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:exposedRect scale:_page->pageScaleFactor()];
+    FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:_page->unobscuredContentRect() scale:_page->pageScaleFactor()];
     drawingArea->setCustomFixedPositionRect(fixedPosRect);
 }
 
@@ -186,21 +188,10 @@ using namespace WebKit;
     _page->setViewportConfigurationMinimumLayoutSize(IntSize(CGCeiling(size.width), CGCeiling(size.height)));
 }
 
-- (void)didFinishScrollTo:(CGPoint)contentOffset
+- (void)didFinishScrolling
 {
-    _currentExposedRectPosition = contentOffset;
-    _page->didFinishScrolling(contentOffset);
-    [self _updateViewExposedRect];
     [self _updateFixedPositionRect];
     [_interactionView _didEndScrollingOrZooming];
-}
-
-- (void)didScrollTo:(CGPoint)contentOffset
-{
-    _currentExposedRectPosition = contentOffset;
-    [self _updateViewExposedRect];
-
-    _page->scrollingCoordinatorProxy()->scrollPositionChangedViaDelegatedScrolling(_page->scrollingCoordinatorProxy()->rootScrollingNodeID(), roundedIntPoint(contentOffset));
 }
 
 - (void)willStartZoomOrScroll
@@ -216,8 +207,6 @@ using namespace WebKit;
 - (void)didZoomToScale:(CGFloat)scale
 {
     _page->didFinishZooming(scale);
-    [self _updateViewExposedRect];
-    [self _updateFixedPositionRect];
     [_interactionView _didEndScrollingOrZooming];
 }
 

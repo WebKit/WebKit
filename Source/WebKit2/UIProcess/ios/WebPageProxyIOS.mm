@@ -229,6 +229,16 @@ void WebPageProxy::autocorrectionContextCallback(const String& beforeText, const
     callback->performCallbackWithReturnValue(beforeText, markedText, selectedText, afterText, location, length);
 }
 
+const FloatRect& WebPageProxy::unobscuredContentRect() const
+{
+    return m_unobscuredRect;
+}
+
+void WebPageProxy::setUnobscuredContentRect(const FloatRect& unobscuredRect)
+{
+    m_unobscuredRect = unobscuredRect;
+}
+
 void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize& size)
 {
     m_process->send(Messages::WebPage::SetViewportConfigurationMinimumLayoutSize(size), m_pageID);
@@ -430,11 +440,6 @@ bool WebPageProxy::acceptsFirstMouse(int, const WebKit::WebMouseEvent&)
 void WebPageProxy::willStartUserTriggeredZooming()
 {
     process().send(Messages::WebPage::WillStartUserTriggeredZooming(), m_pageID);
-}
-
-void WebPageProxy::didFinishScrolling(const WebCore::FloatPoint& contentOffset)
-{
-    process().send(Messages::WebPage::DidFinishScrolling(contentOffset), m_pageID);
 }
 
 void WebPageProxy::didFinishZooming(float newScale)
