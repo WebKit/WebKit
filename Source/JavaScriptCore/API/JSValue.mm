@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -46,6 +46,12 @@
 #import <wtf/TCSpinLock.h>
 #import <wtf/text/WTFString.h>
 #import <wtf/text/StringHash.h>
+
+#if ENABLE(REMOTE_INSPECTOR)
+#import "CallFrame.h"
+#import "JSGlobalObject.h"
+#import "JSGlobalObjectInspectorController.h"
+#endif
 
 #if JSC_OBJC_API_ENABLED
 
@@ -629,6 +635,14 @@ JSContainerConvertor::Task JSContainerConvertor::take()
     return last;
 }
 
+#if ENABLE(REMOTE_INSPECTOR)
+static void reportExceptionToInspector(JSGlobalContextRef context, JSC::JSValue exception)
+{
+    JSC::ExecState* exec = toJS(context);
+    exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exception);
+}
+#endif
+
 static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef context, JSValueRef value)
 {
     if (!JSValueIsObject(context, value)) {
@@ -781,8 +795,13 @@ id valueToArray(JSGlobalContextRef context, JSValueRef value, JSValueRef* except
         return containerValueToObject(context, (JSContainerConvertor::Task){ value, [NSMutableArray array], ContainerArray});
 
     JSC::APIEntryShim shim(toJS(context));
-    if (!(JSValueIsNull(context, value) || JSValueIsUndefined(context, value)))
-        *exception = toRef(JSC::createTypeError(toJS(context), ASCIILiteral("Cannot convert primitive to NSArray")));
+    if (!(JSValueIsNull(context, value) || JSValueIsUndefined(context, value))) {
+        JSC::JSObject* exceptionObject = JSC::createTypeError(toJS(context), ASCIILiteral("Cannot convert primitive to NSArray"));
+        *exception = toRef(exceptionObject);
+#if ENABLE(REMOTE_INSPECTOR)
+        reportExceptionToInspector(context, exceptionObject);
+#endif
+    }
     return nil;
 }
 
@@ -798,8 +817,13 @@ id valueToDictionary(JSGlobalContextRef context, JSValueRef value, JSValueRef* e
         return containerValueToObject(context, (JSContainerConvertor::Task){ value, [NSMutableDictionary dictionary], ContainerDictionary});
 
     JSC::APIEntryShim shim(toJS(context));
-    if (!(JSValueIsNull(context, value) || JSValueIsUndefined(context, value)))
-        *exception = toRef(JSC::createTypeError(toJS(context), ASCIILiteral("Cannot convert primitive to NSDictionary")));
+    if (!(JSValueIsNull(context, value) || JSValueIsUndefined(context, value))) {
+        JSC::JSObject* exceptionObject = JSC::createTypeError(toJS(context), ASCIILiteral("Cannot convert primitive to NSDictionary"));
+        *exception = toRef(exceptionObject);
+#if ENABLE(REMOTE_INSPECTOR)
+        reportExceptionToInspector(context, exceptionObject);
+#endif
+    }
     return nil;
 }
 

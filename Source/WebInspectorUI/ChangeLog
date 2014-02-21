@@ -1,5 +1,22 @@
 2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: JSContext inspection should report exceptions in the console
+        https://bugs.webkit.org/show_bug.cgi?id=128776
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatMessage):
+        (WebInspector.ConsoleMessageImpl.prototype._shouldHideURL):
+        (WebInspector.ConsoleMessageImpl.prototype._firstNonNativeCallFrame):
+        (WebInspector.ConsoleMessageImpl.prototype._populateStackTraceTreeElement):
+        Provide better handling for "[native code]" and legacy "undefined"
+        call frame URLs. Never linkify these. Also, when showing a link
+        for an exception, always use the first non-native call frame as
+        the link location.
+
+2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
+
         Revert r164486, causing a number of test failures.
 
         Unreviewed rollout.
