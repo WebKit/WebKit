@@ -1,3 +1,13 @@
+2014-02-20  Tim Horton  <timothy_horton@apple.com>
+
+        Fix a build warning by moving some WKWebView methods from the private category to WKWebView itself.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setAllowsBackForwardNavigationGestures:]):
+        (-[WKWebView allowsBackForwardNavigationGestures]):
+
 2014-02-20  Enrica Casucci  <enrica@apple.com>
 
         ASSERT on touches callbacks after r164409 on iOS.

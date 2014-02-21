@@ -88,6 +88,7 @@
     CGFloat _lastAdjustmentForScroller;
 
     std::unique_ptr<WebKit::ViewGestureController> _gestureController;
+    BOOL _allowsBackForwardNavigationGestures;
 #endif
 #if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
@@ -446,6 +447,28 @@
     [self _keyboardChangedWithInfo:notification.userInfo adjustScrollView:YES];
 }
 
+- (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
+{
+    if (_allowsBackForwardNavigationGestures == allowsBackForwardNavigationGestures)
+        return;
+
+    _allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
+
+    if (allowsBackForwardNavigationGestures) {
+        if (!_gestureController) {
+            _gestureController = std::make_unique<WebKit::ViewGestureController>(*_page);
+            _gestureController->installSwipeHandler(self, [self scrollView]);
+        }
+    } else
+        _gestureController = nullptr;
+
+    _page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
+}
+
+- (BOOL)allowsBackForwardNavigationGestures
+{
+    return _allowsBackForwardNavigationGestures;
+}
 
 #endif
 
@@ -680,29 +703,6 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 {
     ASSERT(_isChangingObscuredInsetsInteractively);
     _isChangingObscuredInsetsInteractively = NO;
-}
-
-- (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
-{
-    if (_allowsBackForwardNavigationGestures == allowsBackForwardNavigationGestures)
-        return;
-
-    _allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
-
-    if (allowsBackForwardNavigationGestures) {
-        if (!_gestureController) {
-            _gestureController = std::make_unique<WebKit::ViewGestureController>(*_page);
-            _gestureController->installSwipeHandler(self, [self scrollView]);
-        }
-    } else
-        _gestureController = nullptr;
-
-    _page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
-}
-
-- (BOOL)allowsBackForwardNavigationGestures
-{
-    return _allowsBackForwardNavigationGestures;
 }
 
 #endif
