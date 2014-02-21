@@ -87,6 +87,11 @@ void DefaultGCActivityCallback::doWork()
         return;
     
     APIEntryShim shim(m_vm);
+    if (heap->isDeferred()) {
+        scheduleTimer(0);
+        return;
+    }
+
 #if !PLATFORM(IOS)
     double startTime = WTF::monotonicallyIncreasingTime();
     if (heap->isPagedOut(startTime + pagingTimeOut)) {

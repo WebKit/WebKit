@@ -1,3 +1,20 @@
+2014-02-20  Mark Lam  <mark.lam@apple.com>
+
+        DefaultGCActivityCallback::doWork() should reschedule if GC is deferred.
+        <https://webkit.org/b/129131>
+
+        Reviewed by Mark Hahnenberg.
+
+        Currently, DefaultGCActivityCallback::doWork() does not check if the GC
+        needs to be deferred before commencing. As a result, the GC may crash
+        and/or corrupt data because the VM is not in the consistent state needed
+        for the GC to run. With this fix, doWork() now checks if the GC is
+        supposed to be deferred and re-schedules if needed. It only commences
+        with GC'ing when it's safe to do so.
+
+        * runtime/GCActivityCallback.cpp:
+        (JSC::DefaultGCActivityCallback::doWork):
+
 2014-02-20  Geoffrey Garen  <ggaren@apple.com>
 
         Math.imul gives wrong results
