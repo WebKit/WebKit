@@ -1,3 +1,33 @@
+2014-02-21  Mark Lam  <mark.lam@apple.com>
+
+        gatherFromOtherThread() needs to align the sp before gathering roots.
+        <https://webkit.org/b/129169>
+
+        Reviewed by Geoffrey Garen.
+
+        The GC scans the stacks of other threads using MachineThreads::gatherFromOtherThread().
+        gatherFromOtherThread() defines the range of the other thread's stack as
+        being bounded by the other thread's stack pointer and stack base. While
+        the stack base will always be aligned to sizeof(void*), the stack pointer
+        may not be. This is because the other thread may have just pushed a 32-bit
+        value on its stack before we suspended it for scanning.
+
+        The fix is to round the stack pointer up to the next aligned address of
+        sizeof(void*) and start scanning from there. On 64-bit systems, we will
+        effectively ignore the 32-bit word at the bottom of the stack (top of the
+        stack for stacks growing up) because it cannot be a 64-bit pointer anyway.
+        64-bit pointers should always be stored on 64-bit aligned boundaries (our
+        conservative scan algorithm already depends on this assumption).
+
+        On 32-bit systems, the rounding is effectively a no-op.
+
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddSpan):
+        - Hardened somne assertions so that we can catch misalignment issues on
+          release builds as well.
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::gatherFromOtherThread):
+
 2014-02-21  Matthew Mirman  <mmirman@apple.com>
 
         Added a GetMyArgumentsLengthSafe and added a speculation check.

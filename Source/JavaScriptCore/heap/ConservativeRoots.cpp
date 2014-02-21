@@ -100,8 +100,8 @@ void ConservativeRoots::genericAddSpan(void* begin, void* end, MarkHook& markHoo
         end = swapTemp;
     }
 
-    ASSERT(isPointerAligned(begin));
-    ASSERT(isPointerAligned(end));
+    RELEASE_ASSERT(isPointerAligned(begin));
+    RELEASE_ASSERT(isPointerAligned(end));
 
     TinyBloomFilter filter = m_blocks->filter(); // Make a local copy of filter to show the compiler it won't alias, and can be register-allocated.
     for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it)
