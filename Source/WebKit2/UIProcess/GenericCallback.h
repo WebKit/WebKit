@@ -31,9 +31,9 @@
 #include "WKAPICast.h"
 #include <functional>
 #include <wtf/HashMap.h>
-#include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
@@ -54,7 +54,7 @@ protected:
 private:
     static uint64_t generateCallbackID()
     {
-        ASSERT(isMainThread());
+        ASSERT(RunLoop::isMain());
         static uint64_t uniqueCallbackID = 1;
         return uniqueCallbackID++;
     }
@@ -235,7 +235,7 @@ public:
     {
         ASSERT(m_callback);
 
-        m_callback(true, returnValue1);
+        m_callback(false, returnValue1);
 
         m_callback = 0;
     }
@@ -246,7 +246,7 @@ public:
 
         RefPtr<API::Error> error = API::Error::create();
         ShareableBitmap::Handle handle;
-        m_callback(false, handle);
+        m_callback(true, handle);
 
         m_callback = 0;
     }

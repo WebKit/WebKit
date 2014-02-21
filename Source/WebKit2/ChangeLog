@@ -1,3 +1,22 @@
+2014-02-20  Enrica Casucci  <enrica@apple.com>
+
+        ASSERT on touches callbacks after r164409 on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=129135
+
+        Reviewed by Alexey Proskuryakov.
+
+        The change used incorrecly true and false in TouchesCallbacks and
+        ImageCallback. It also reintroduced isMainThread() which doesn't work
+        for iOS.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackBase::generateCallbackID):
+        (WebKit::ImageCallback::performCallbackWithReturnValue):
+        (WebKit::ImageCallback::invalidate):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::TouchesCallback::performCallbackWithReturnValue):
+        (WebKit::TouchesCallback::invalidate):
+
 2014-02-20  Anders Carlsson  <andersca@apple.com>
 
         We need something like WKPageUIClient in the Obj-C API

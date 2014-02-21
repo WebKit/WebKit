@@ -289,7 +289,7 @@ public:
     {
         ASSERT(m_callback);
 
-        m_callback(true, returnValue1, returnValue2);
+        m_callback(false, returnValue1, returnValue2);
 
         m_callback = 0;
     }
@@ -299,7 +299,7 @@ public:
         ASSERT(m_callback);
 
         RefPtr<API::Error> error = API::Error::create();
-        m_callback(false, WebCore::IntPoint(), 0);
+        m_callback(true, WebCore::IntPoint(), 0);
         
         m_callback = 0;
     }
