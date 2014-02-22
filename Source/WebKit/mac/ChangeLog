@@ -1,3 +1,12 @@
+2014-02-22  David Kilzer  <ddkilzer@apple.com>
+
+        Revert r164434 since it actually broke ASan builds
+        <http://webkit.org/b/128871>
+
+        * Configurations/WebKit.xcconfig: This caused -asan-blacklist to
+        be included twice on every compiler command, which caused clang
+        to error out.
+
 2014-02-21  Brent Fulgham  <bfulgham@apple.com>
 
         Extend media support for WebVTT sources

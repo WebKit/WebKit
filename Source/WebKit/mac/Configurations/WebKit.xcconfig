@@ -53,9 +53,9 @@ FRAMEWORK_SEARCH_PATHS_macosx = $(STAGED_FRAMEWORKS_SEARCH_PATH) $(UMBRELLA_FRAM
 STAGED_FRAMEWORKS_SEARCH_PATH = $(STAGED_FRAMEWORKS_SEARCH_PATH_$(USE_STAGING_INSTALL_PATH));
 STAGED_FRAMEWORKS_SEARCH_PATH_YES = $(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/StagedFrameworks/Safari;
 
-OTHER_CFLAGS = $(inherited) $(OTHER_CFLAGS_$(PLATFORM_NAME));
-OTHER_CFLAGS_macosx = -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
-OTHER_CPLUSPLUSFLAGS = $(inherited) $(OTHER_CFLAGS_$(PLATFORM_NAME));
+OTHER_CFLAGS = $(OTHER_CFLAGS_$(PLATFORM_NAME));
+OTHER_CFLAGS_macosx = $(OTHER_CFLAGS) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS);
 
 GCC_PREFIX_HEADER = mac/WebKitPrefix.h;
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(FEATURE_DEFINES) FRAMEWORK_NAME=WebKit WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST $(GCC_PREPROCESSOR_DEFINITIONS);
