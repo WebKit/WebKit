@@ -24,9 +24,14 @@
 #include "BaseTarget.xcconfig"
 
 GCC_ENABLE_OBJC_GC = NO;
-INSTALL_PATH = $(INSTALL_PATH_$(PLATFORM_NAME));
-INSTALL_PATH_macosx = $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Versions/A/XPCServices;
-INSTALL_PATH_iphoneos = $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/XPCServices;
+
+INSTALL_PATH = $(INSTALL_PATH_$(WK_XPC_SERVICE_VARIANT));
+
+INSTALL_PATH_Normal = $(INSTALL_PATH_Normal_$(PLATFORM_NAME));
+INSTALL_PATH_Normal_macosx = $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Versions/A/XPCServices;
+INSTALL_PATH_Normal_iphoneos = $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/XPCServices;
+
+INSTALL_PATH_Development = $(APPLE_INTERNAL_DIR)/WebKit/XPCServicesForDevelopment;
 
 APP_ICON = $(APP_ICON_$(CONFIGURATION));
 APP_ICON_Debug = WebKit.icns;

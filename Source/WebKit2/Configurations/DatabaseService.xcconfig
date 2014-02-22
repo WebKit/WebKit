@@ -23,5 +23,7 @@
 
 #include "BaseXPCService.xcconfig"
 
+WK_XPC_SERVICE_VARIANT = Normal;
+
 PRODUCT_NAME = com.apple.WebKit.Databases;
 INFOPLIST_FILE = DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService/Info.plist;

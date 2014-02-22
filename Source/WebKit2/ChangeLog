@@ -1,3 +1,24 @@
+2014-02-22  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12500358> [Cocoa] Development variants of XPC services should not be installed in WebKit2.framework/XPCServices
+        https://bugs.webkit.org/show_bug.cgi?id=129197
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/BaseXPCService.xcconfig: Made INSTALL_PATH vary based on
+        WK_XPC_SERVICE_VARIANT. For the Development variant, use an install path outside the
+        framework. Note that engineering builds using the build action continue to have the
+        Development variants copied into the framework by a script build phase.
+        * Configurations/DatabaseService.Development.xcconfig: Set WK_XPC_SERVICE_VARIANT.
+        * Configurations/DatabaseService.xcconfig: Ditto.
+        * Configurations/NetworkService.Development.xcconfig: Ditto.
+        * Configurations/NetworkService.xcconfig: Ditto.
+        * Configurations/PluginService.32.xcconfig: Ditto.
+        * Configurations/PluginService.64.xcconfig: Ditto.
+        * Configurations/PluginService.Development.xcconfig: Ditto.
+        * Configurations/WebContentService.Development.xcconfig: Ditto.
+        * Configurations/WebContentService.xcconfig: Ditto.
+
 2014-02-21  Brent Fulgham  <bfulgham@apple.com>
 
         Extend media support for WebVTT sources

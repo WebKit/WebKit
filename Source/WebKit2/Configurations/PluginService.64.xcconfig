@@ -23,6 +23,8 @@
 
 #include "BaseXPCService.xcconfig"
 
+WK_XPC_SERVICE_VARIANT = Normal;
+
 ARCHS = $(ARCHS_$(PLATFORM_NAME));
 ARCHS_macosx = x86_64;
 ARCHS_iphoneos = $(ARCHS_STANDARD_32_64_BIT);

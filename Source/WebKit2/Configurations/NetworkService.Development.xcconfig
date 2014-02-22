@@ -23,6 +23,8 @@
 
 #include "BaseXPCService.xcconfig"
 
+WK_XPC_SERVICE_VARIANT = Development;
+
 PRODUCT_NAME = com.apple.WebKit.Networking.Development;
 INFOPLIST_FILE = $(INFOPLIST_FILE_$(PLATFORM_NAME));
 INFOPLIST_FILE_macosx = NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info-OSX.plist;

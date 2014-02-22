@@ -23,6 +23,8 @@
 
 #include "BaseXPCService.xcconfig"
 
+WK_XPC_SERVICE_VARIANT = Normal;
+
 VALID_ARCHS = $(VALID_ARCHS_$(PLATFORM_NAME));
 VALID_ARCHS_macosx = $(VALID_ARCHS_macosx_$(CONFIGURATION));
 VALID_ARCHS_macosx_Debug = $(ARCHS_STANDARD_32_64_BIT);
