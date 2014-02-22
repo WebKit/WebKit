@@ -4,9 +4,11 @@ This tests for a bug where InsertLineBreak would insert a '\n' instead of a <br>
 |   this.value=""
 |   <shadow:root>
 |     <div>
+|       contenteditable="plaintext-only"
 | <br>
 | <input>
 |   type="text"
 |   this.value=""
 |   <shadow:root>
 |     <div>
+|       contenteditable="plaintext-only"

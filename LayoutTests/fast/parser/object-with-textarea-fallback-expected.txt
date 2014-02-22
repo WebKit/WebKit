@@ -15,6 +15,7 @@
 |         this.value=""
 |         <shadow:root>
 |           <div>
+|             contenteditable="plaintext-only"
 |       "
 "
 |     "

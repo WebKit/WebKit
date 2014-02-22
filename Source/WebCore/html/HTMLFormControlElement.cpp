@@ -135,12 +135,8 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
     } else if (name == readonlyAttr) {
         bool wasReadOnly = m_isReadOnly;
         m_isReadOnly = !value.isNull();
-        if (wasReadOnly != m_isReadOnly) {
-            setNeedsWillValidateCheck();
-            setNeedsStyleRecalc();
-            if (renderer() && renderer()->style().hasAppearance())
-                renderer()->theme().stateChanged(renderer(), ReadOnlyState);
-        }
+        if (wasReadOnly != m_isReadOnly)
+            readOnlyAttributeChanged();
     } else if (name == requiredAttr) {
         bool wasRequired = m_isRequired;
         m_isRequired = !value.isNull();
@@ -165,6 +161,14 @@ void HTMLFormControlElement::disabledStateChanged()
     didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
     if (renderer() && renderer()->style().hasAppearance())
         renderer()->theme().stateChanged(renderer(), EnabledState);
+}
+
+void HTMLFormControlElement::readOnlyAttributeChanged()
+{
+    setNeedsWillValidateCheck();
+    setNeedsStyleRecalc();
+    if (renderer() && renderer()->style().hasAppearance())
+        renderer()->theme().stateChanged(renderer(), ReadOnlyState);
 }
 
 void HTMLFormControlElement::requiredAttributeChanged()

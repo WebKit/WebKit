@@ -99,6 +99,10 @@ protected:
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
+    virtual void disabledStateChanged() override;
+    virtual void readOnlyAttributeChanged() override;
+    void updateInnerTextElementEditability();
+
     void cacheSelection(int start, int end, TextFieldSelectionDirection direction)
     {
         m_cachedSelectionStart = start;

@@ -3,6 +3,7 @@ This tests that image alt text makes it to the clipboard. This test requires DRT
 Dump of markup 1:
 |   <shadow:root>
 |     <div>
+|       contenteditable="plaintext-only"
 |       "Here is an emoticon [], some more text [], an empty alt tag [], no alt tag [] and two consecutive images [].
 
 "
@@ -17,6 +18,7 @@ Dump of markup 2:
 Dump of markup 3:
 |   <shadow:root>
 |     <div>
+|       contenteditable="plaintext-only"
 |       "Here is an emoticon [:)], some more text [sample text], an empty alt tag [], no alt tag [] and two consecutive images [firstsecond].
 
 "

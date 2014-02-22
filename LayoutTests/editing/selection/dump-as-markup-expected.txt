@@ -20,6 +20,7 @@ Tests basic dump-as-markup functionality.
 |       this.value=""
 |       <shadow:root>
 |         <div>
+|           contenteditable="plaintext-only"
 |     "
 "
 |     <div>

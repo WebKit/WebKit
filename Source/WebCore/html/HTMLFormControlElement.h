@@ -123,9 +123,10 @@ protected:
     bool disabledByAncestorFieldset() const { return m_disabledByAncestorFieldset; }
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void requiredAttributeChanged();
     virtual void disabledAttributeChanged();
     virtual void disabledStateChanged();
+    virtual void readOnlyAttributeChanged();
+    virtual void requiredAttributeChanged();
     virtual void didAttachRenderers() override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;

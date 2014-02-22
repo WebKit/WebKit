@@ -7,6 +7,7 @@ The dump below should have the "suggested value" instead of "initial value".
 |   this.value="initial value"
 |   <shadow:root>
 |     <div>
+|       contenteditable="plaintext-only"
 |       "suggested value"
 | "input.value: initial value"
 | "internals.suggestedValue(input): suggested value"

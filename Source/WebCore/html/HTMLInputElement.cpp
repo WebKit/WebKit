@@ -149,6 +149,7 @@ HTMLImageLoader* HTMLInputElement::imageLoader()
 void HTMLInputElement::didAddUserAgentShadowRoot(ShadowRoot*)
 {
     m_inputType->createShadowSubtree();
+    updateInnerTextElementEditability();
 }
 
 HTMLInputElement::~HTMLInputElement()
@@ -473,6 +474,7 @@ void HTMLInputElement::updateType()
 
     m_inputType = std::move(newType);
     m_inputType->createShadowSubtree();
+    updateInnerTextElementEditability();
 
 #if ENABLE(TOUCH_EVENTS)
     bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
@@ -735,6 +737,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
     else if (name == webkitspeechAttr) {
         m_inputType->destroyShadowSubtree();
         m_inputType->createShadowSubtree();
+        updateInnerTextElementEditability();
 
         // This renderer and its children have quite different layouts and styles depending on
         // whether the speech button is visible or not. So we reset the whole thing and recreate

@@ -92,13 +92,13 @@ void HTMLFieldSetElement::disabledStateChanged()
 
     bool thisFieldsetIsDisabled = hasAttribute(disabledAttr);
     bool hasSeenFirstLegendElement = false;
-    for (auto& control : childrenOfType<HTMLElement>(*this)) {
+    for (HTMLElement* control = Traversal<HTMLElement>::firstChild(this); control; control = Traversal<HTMLElement>::nextSibling(control)) {
         if (!hasSeenFirstLegendElement && isHTMLLegendElement(control)) {
             hasSeenFirstLegendElement = true;
-            updateFromControlElementsAncestorDisabledStateUnder(control, false /* isDisabled */);
+            updateFromControlElementsAncestorDisabledStateUnder(*control, false /* isDisabled */);
             continue;
         }
-        updateFromControlElementsAncestorDisabledStateUnder(control, thisFieldsetIsDisabled);
+        updateFromControlElementsAncestorDisabledStateUnder(*control, thisFieldsetIsDisabled);
     }
 }
 

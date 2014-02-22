@@ -1,3 +1,25 @@
+2014-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Inner text element should not use -webkit-user-modify
+        https://bugs.webkit.org/show_bug.cgi?id=129035
+
+        Reviewed by Andreas Kling.
+
+        Rebaselined tests as the user agent shadow DOM of input and textarea elements now have contenteditable attribute.
+
+        * editing/input/paste-text-ending-with-interchange-newline-expected.txt:
+        * editing/inserting/5607069-2-expected.txt:
+        * editing/inserting/5607069-3-expected.txt:
+        * editing/pasteboard/copy-image-with-alt-text-expected.txt:
+        * editing/pasteboard/copy-null-characters-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.txt:
+        * editing/selection/dump-as-markup-expected.txt:
+        * editing/selection/dump-as-markup-form-text-expected.txt:
+        * fast/forms/suggested-value-after-setvalue-expected.txt:
+        * fast/forms/suggested-value-expected.txt:
+        * fast/parser/object-with-textarea-fallback-expected.txt:
+
 2014-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         After copy and paste, cursor may appear to be above the bottom of content

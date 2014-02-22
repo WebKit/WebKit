@@ -25,6 +25,7 @@ These demonstrate 11475: the '\n's at the end of the fragment should be unrender
 |       this.value=""
 |       <shadow:root>
 |         <div>
+|           contenteditable="plaintext-only"
 |     " 
 x<#selection-caret>
 "

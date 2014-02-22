@@ -1,3 +1,48 @@
+2014-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Inner text element should not use -webkit-user-modify
+        https://bugs.webkit.org/show_bug.cgi?id=129035
+
+        Reviewed by Andreas Kling.
+
+        To eliminate the internal use of -webkit-user-modify, use contenteditable attribute in the inner text elements
+        instead of manually inspecting disabled-ness and readonly-ness in RenderTextControl.
+
+        Unfortunately, we still have to manually set UserModify value in RenderTextControl::adjustInnerTextStyle since
+        RenderTextControl::styleDidChange creates RenderStyle for its inner text from scratch via createInnerTextStyle.    
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::disabledStateChanged): Don't use childrenOfType iterator which asserts that DOM
+        isn't mutated during the traversal since we now set contenteditable attribute inside disabledStateChanged via
+        updateFromControlElementsAncestorDisabledStateUnder.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::parseAttribute): Extracted readOnlyAttributeChanged out of this function so
+        that HTMLTextFormControl could override it to call updateInnerTextElementEditability.
+        (WebCore::HTMLFormControlElement::readOnlyAttributeChanged): Ditto.
+        * html/HTMLFormControlElement.h:
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::didAddUserAgentShadowRoot): Call updateInnerTextElementEditability after creating
+        shadow DOM for the current input type.
+        (WebCore::HTMLInputElement::updateType): Ditto.
+        (WebCore::HTMLInputElement::parseAttribute): Ditto.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::didAddUserAgentShadowRoot): Call updateInnerTextElementEditability.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::disabledStateChanged): Added to update contenteditable attribute since
+        the editability of the inner text element depends on disabled-ness of the element.
+        (WebCore::HTMLTextFormControlElement::readOnlyAttributeChanged): Ditto for the readonly-ness of the element.
+        (WebCore::HTMLTextFormControlElement::updateInnerTextElementEditability): Added.
+        * html/HTMLTextFormControlElement.h:
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::adjustInnerTextStyle): Use the inner text element's presentationAttributeStyle() to
+        compute the appropriate EUserModify value instead of hard-coding it here.
+        * rendering/RenderTextControl.h:
+
 2014-02-21  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Support WEBGL_draw_buffers extension.

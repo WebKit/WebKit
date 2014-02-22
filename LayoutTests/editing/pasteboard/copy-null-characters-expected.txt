@@ -40,6 +40,7 @@ Copy paste me
 green"
 |   <shadow:root>
 |     <div>
+|       contenteditable="plaintext-only"
 |       "Copy paste mebold
 
 Copy paste me

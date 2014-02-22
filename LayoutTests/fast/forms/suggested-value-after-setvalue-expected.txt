@@ -8,6 +8,7 @@ After setting suggestedValue:
 |   this.value="initial value"
 |   <shadow:root>
 |     <div>
+|       contenteditable="plaintext-only"
 |       "suggested value"
 | "input.value: initial value"
 | "internals.suggestedValue(input): suggested value"
@@ -22,6 +23,7 @@ After setting value:
 |   this.value="new value"
 |   <shadow:root>
 |     <div>
+|       contenteditable="plaintext-only"
 |       "new value"
 | "input.value: new value"
 | "internals.suggestedValue(input): "

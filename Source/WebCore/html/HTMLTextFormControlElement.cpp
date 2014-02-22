@@ -493,6 +493,24 @@ void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const
         HTMLFormControlElementWithState::parseAttribute(name, value);
 }
 
+void HTMLTextFormControlElement::disabledStateChanged()
+{
+    HTMLFormControlElementWithState::disabledStateChanged();
+    updateInnerTextElementEditability();
+}
+
+void HTMLTextFormControlElement::readOnlyAttributeChanged()
+{
+    HTMLFormControlElementWithState::disabledAttributeChanged();
+    updateInnerTextElementEditability();
+}
+
+void HTMLTextFormControlElement::updateInnerTextElementEditability()
+{
+    if (TextControlInnerTextElement* innerText = innerTextElement())
+        innerText->setAttribute(contenteditableAttr, isDisabledOrReadOnly() ? "false" : "plaintext-only");
+}
+
 bool HTMLTextFormControlElement::lastChangeWasUserEdit() const
 {
     if (!isTextFormControl())
