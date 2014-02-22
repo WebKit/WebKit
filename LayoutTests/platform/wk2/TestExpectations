@@ -60,11 +60,6 @@ platform/mac/accessibility/iframe-with-title-correct-hierarchy.html
 compositing/iframes/iframe-size-from-zero.html
 compositing/iframes/iframe-src-change.html
 
-# Skipping the tests for the old inspector UI
-inspector [ Skip ]
-http/tests/inspector [ Skip ]
-http/tests/inspector-enabled [ Skip ]
-
 # Flakey on Snow Leopard Intel WebKit2 Release Tests
 # https://bugs.webkit.org/show_bug.cgi?id=58183
 editing/execCommand/convert-style-elements-to-spans.html

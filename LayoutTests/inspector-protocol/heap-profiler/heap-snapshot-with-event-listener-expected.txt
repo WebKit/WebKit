@@ -1,6 +1,0 @@
-Test that all nodes from the detached DOM tree will get into one group in the heap snapshot. Bug 107819.
-
- SUCCESS: found myEventListener
-SUCCESS: found link from HTMLBodyElement to HTMLBodyElement
-SUCCESS: didGetHeapSnapshot
-

@@ -186,11 +186,6 @@ fast/events/drag-link.html
 # https://bugs.webkit.org/show_bug.cgi?id=82061 rdar://problem/11108649
 http/tests/appcache
 
-# Skipping the tests for the old inspector UI
-inspector [ Skip ]
-http/tests/inspector [ Skip ]
-http/tests/inspector-enabled [ Skip ]
-
 # flaky storage tests
 # https://bugs.webkit.org/show_bug.cgi?id=82679
 storage/websql/statement-success-callback-isolated-world.html
@@ -637,7 +632,6 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 [ Mavericks ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Skip ]
 [ Mavericks ] http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
 [ Mavericks ] http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
-[ Mavericks ] inspector/console/clients-ignored-in-privatebrowsing.html [ Skip ]
 [ Mavericks ] plugins/private-browsing-mode-2.html [ Skip ]
 [ Mavericks ] plugins/private-browsing-mode.html [ Skip ]
 [ Mavericks ] storage/domstorage/localstorage/private-browsing-affects-storage.html [ Skip ]

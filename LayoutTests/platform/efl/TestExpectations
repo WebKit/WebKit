@@ -239,11 +239,6 @@ http/tests/xmlhttprequest/cross-origin-no-authorization.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 
-# Skipping the tests for the old inspector UI
-webkit.org/b/121096 inspector [ Skip ]
-http/tests/inspector [ Skip ]
-http/tests/inspector-enabled [ Skip ]
-
 # There are no expected result set yet.
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 
@@ -265,7 +260,6 @@ webkit.org/b/99096 fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Fail
 
 # IndexedDB is on refactoring/refreshing, so the tests are quite unstable at this point.
 webkit.org/b/87661 storage/indexeddb [ Skip ]
-webkit.org/b/87661 http/tests/inspector/indexeddb [ Skip ]
 webkit.org/b/87661 http/tests/security/cross-origin-indexeddb-allowed.html [ Skip ]
 webkit.org/b/87661 http/tests/security/cross-origin-indexeddb.html [ Skip ]
 webkit.org/b/87661 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
@@ -1246,9 +1240,6 @@ webkit.org/b/61799 canvas/philip/tests/2d.text.draw.space.collapse.other.html [ 
 webkit.org/b/61799 canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
 webkit.org/b/61799 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
 webkit.org/b/61799 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
-
-# JSC doesn't support heap profiling
-webkit.org/b/50485 inspector-protocol/heap-profiler [ Skip ]
 
 webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure ]
 

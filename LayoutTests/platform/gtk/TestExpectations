@@ -1050,12 +1050,6 @@ webkit.org/b/36627 editing/selection/extend-after-mouse-selection.html [ Failure
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
 
-# Skipping the tests for the old inspector UI
-webkit.org/b/83174 inspector [ Skip ]
-webkit.org/b/83174 inspector-protocol/heap-profiler [ Skip ]
-webkit.org/b/83174 http/tests/inspector [ Skip ]
-webkit.org/b/83174 http/tests/inspector-enabled [ Skip ]
-
 webkit.org/b/37613 webkit.org/b/20011 printing [ Skip ]
 webkit.org/b/37613 editing/execCommand/print.html [ Skip ]
 

@@ -432,11 +432,6 @@ fonts/monospace.html
 fonts/sans-serif.html 
 fonts/serif.html 
 
-# Skipping the tests for the old inspector UI
-inspector [ Skip ]
-http/tests/inspector [ Skip ]
-http/tests/inspector-enabled [ Skip ]
-
 loader/go-back-to-different-window-size.html 
 loader/load-defer-resume-crash.html
 

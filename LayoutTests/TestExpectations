@@ -46,10 +46,8 @@ webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Crash Pas
 # This test will run slowly in debug mode, but is plenty fast in release.
 [ Debug ] js/regress/emscripten-memops.html [ Skip ]
 
-# Skipping the tests for the old inspector UI
-inspector [ Skip ]
-http/tests/inspector [ Skip ]
-http/tests/inspector-enabled [ Skip ]
+# Skip tests for the old inspector UI that will be ported or removed soon.
+inspector-obsolete [ Skip ]
 
 webkit.org/b/112521 [ Release ] webaudio/javascriptaudionode.html [ Pass Failure ]
 webkit.org/b/112521 [ Debug ] webaudio/javascriptaudionode.html [ Pass Crash ]

@@ -80,11 +80,6 @@ http/tests/ssl
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
 
-# Skipping the tests for the old inspector UI
-inspector [ Skip ]
-http/tests/inspector [ Skip ]
-http/tests/inspector-enabled [ Skip ]
-
 # The following needs a rebaseline
 webkit.org/b/125754 js/dom/global-constructors-attributes.html [ Failure ]
 
@@ -1903,9 +1898,6 @@ webkit.org/b/128979 inspector-protocol/debugger/pause-on-assert.html [ Pass Fail
 webkit.org/b/128979 inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html [ Failure ]
 webkit.org/b/128979 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure ]
 webkit.org/b/100846 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Failure ]
-webkit.org/b/128979 inspector-protocol/heap-profiler/heap-snapshot-with-detached-dom-tree.html [ Failure ]
-webkit.org/b/128979 inspector-protocol/heap-profiler/heap-snapshot-with-event-listener.html [ Failure ]
-webkit.org/b/128979 inspector-protocol/heap-profiler/take-heap-snapshot.html [ Failure ]
 webkit.org/b/128979 inspector-protocol/model/content-node-region-info.html [ Pass Failure ]
 webkit.org/b/128979 [ Debug ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Crash ]
 webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Pass Failure ]

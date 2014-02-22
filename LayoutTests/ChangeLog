@@ -1,5 +1,43 @@
 2014-02-21  Brian Burg  <bburg@apple.com>
 
+        Move unported Web Inspector tests to LayoutTests/inspector-obsolete
+        https://bugs.webkit.org/show_bug.cgi?id=129183
+
+        Rubber-stamped by Timothy Hatcher.
+
+        Move inspector/ to inspector-obsolete/.
+        Move http/tests/inspector/ to inspector-obsolete/http-tests/.
+        Fold http/tests/inspector-enabled/ into inspector-obsolete/http-tests/.
+
+        I have elided about 1100 lines of rename Changelog spew;
+        no filenames have been altered in this reorganization.
+
+        Remove mentions of obsolete tests from TestExpectations. Remove skips
+        for inspector-obsolete/ from port-specific expectations, and just
+        put it in the generic expectations file.
+
+        Remove inspector-protocol/heap-profiler tests, as they are obsolete.
+
+        * TestExpectations:
+         * inspector-protocol/heap-profiler/heap-snapshot-with-detached-dom-tree-expected.txt: Removed.
+        * inspector-protocol/heap-profiler/heap-snapshot-with-detached-dom-tree.html: Removed.
+        * inspector-protocol/heap-profiler/heap-snapshot-with-event-listener-expected.txt: Removed.
+        * inspector-protocol/heap-profiler/heap-snapshot-with-event-listener.html: Removed.
+        * inspector-protocol/heap-profiler/resources/heap-snapshot-common.js: Removed.
+        * inspector-protocol/heap-profiler/resources/page-with-function.html: Removed.
+        * inspector-protocol/heap-profiler/take-heap-snapshot-expected.txt: Removed.
+        * inspector-protocol/heap-profiler/take-heap-snapshot.html: Removed.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win-xp/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
+2014-02-21  Brian Burg  <bburg@apple.com>
+
         Web Inspector: remove old inspector tests that cannot be ported
         https://bugs.webkit.org/show_bug.cgi?id=129168
 
