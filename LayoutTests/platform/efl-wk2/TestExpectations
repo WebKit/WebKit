@@ -63,8 +63,9 @@ webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restricti
 webkit.org/b/109945 webgl/conformance/uniforms/uniform-default-values.html [ Crash ]
 
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
-webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
-webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Crash ]
+webkit.org/b/129199 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
+webkit.org/b/129199 webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Crash ]
+webkit.org/b/129199 webgl/conformance/uniforms/uniform-default-values.html [ Crash ]
 
 # EFL specific error : (_ecore_main_fd_handlers_bads_rem() No bad fd found)
 webkit.org/b/116587 http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked.html [ Skip ]

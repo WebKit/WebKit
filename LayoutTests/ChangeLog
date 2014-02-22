@@ -1,3 +1,10 @@
+2014-02-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL WK2 gardening. Skip a webgl test because of crashing.
+        Besides a bug is filed and assigned to those crash tests.
+
+        * platform/efl-wk2/TestExpectations:
+
 2014-02-21  Dirk Schulze  <krit@webkit.org>
 
         Replace svg/clip-path pixel tests by reference tests
