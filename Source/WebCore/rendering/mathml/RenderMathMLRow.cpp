@@ -57,25 +57,38 @@ RenderPtr<RenderMathMLRow> RenderMathMLRow::createAnonymousWithParentRenderer(Re
 
 void RenderMathMLRow::layout()
 {
-    int stretchLogicalHeight = 0;
+    int stretchHeightAboveBaseline = 0, stretchDepthBelowBaseline = 0;
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->needsLayout())
             toRenderElement(child)->layout();
         // FIXME: Only skip renderMo if it is stretchy.
         if (child->isRenderMathMLBlock() && toRenderMathMLBlock(child)->unembellishedOperator())
             continue;
-        if (child->isBox())
-            stretchLogicalHeight = std::max<int>(stretchLogicalHeight, roundToInt(toRenderBox(child)->logicalHeight()));
+        int childHeightAboveBaseline = 0, childDepthBelowBaseline = 0;
+        if (child->isRenderMathMLBlock()) {
+            RenderMathMLBlock* mathmlChild = toRenderMathMLBlock(child);
+            childHeightAboveBaseline = mathmlChild->firstLineBaseline();
+            if (childHeightAboveBaseline == -1)
+                childHeightAboveBaseline = mathmlChild->logicalHeight();
+            childDepthBelowBaseline = mathmlChild->logicalHeight() - childHeightAboveBaseline;
+        } else if (child->isRenderMathMLTable()) {
+            RenderMathMLTable* tableChild = toRenderMathMLTable(child);
+            childHeightAboveBaseline = tableChild->firstLineBaseline();
+            childDepthBelowBaseline = tableChild->logicalHeight() - childHeightAboveBaseline;
+        } else if (child->isBox()) {
+            childHeightAboveBaseline = toRenderBox(child)->logicalHeight();
+            childDepthBelowBaseline = 0;
+        }
+        stretchHeightAboveBaseline = std::max<int>(stretchHeightAboveBaseline, roundToInt(childHeightAboveBaseline));
+        stretchDepthBelowBaseline = std::max<int>(stretchDepthBelowBaseline, roundToInt(childDepthBelowBaseline));
     }
-    if (!stretchLogicalHeight)
-        stretchLogicalHeight = style().fontSize();
+    if (stretchHeightAboveBaseline + stretchDepthBelowBaseline <= 0)
+        stretchHeightAboveBaseline = style().fontSize();
     
     // Set the sizes of (possibly embellished) stretchy operator children.
     for (auto& child : childrenOfType<RenderMathMLBlock>(*this)) {
-        if (auto renderMo = child.unembellishedOperator()) {
-            if (renderMo->stretchHeight() != stretchLogicalHeight)
-                renderMo->stretchToHeight(stretchLogicalHeight);
-        }
+        if (auto renderOperator = child.unembellishedOperator())
+            renderOperator->stretchTo(stretchHeightAboveBaseline, stretchDepthBelowBaseline);
     }
 
     RenderMathMLBlock::layout();
