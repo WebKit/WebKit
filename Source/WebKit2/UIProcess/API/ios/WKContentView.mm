@@ -253,6 +253,7 @@ using namespace WebKit;
 {
     if ([_delegate respondsToSelector:@selector(contentViewDidCommitLoadForMainFrame:)])
         [_delegate contentViewDidCommitLoadForMainFrame:self];
+    [_interactionView _stopAssistingNode];
 }
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction

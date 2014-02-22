@@ -1,3 +1,16 @@
+2014-02-21  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] Keyboard appears every time a link is tapped after searching Google
+        <rdar://problem/16072563>.
+
+        Reviewed by Benjamin Poulain.
+
+        We need to stop assisting the node if we have
+        navigated to a different page.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _didCommitLoadForMainFrame]):
+
 2014-02-21  Dan Bernstein  <mitz@apple.com>
 
         Made WKWebView implement all WKContentViewDelegate methods.
