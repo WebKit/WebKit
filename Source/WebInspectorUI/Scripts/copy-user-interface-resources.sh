@@ -52,6 +52,9 @@ if [[ ${COMBINE_INSPECTOR_RESOURCES:=YES} == "YES" ]]; then
     # Remove console.assert calls from the Main.js file.
     "${SRCROOT}/Scripts/remove-console-asserts.pl" --input-script "${DERIVED_SOURCES_DIR}/Main.js" --output-script "${DERIVED_SOURCES_DIR}/Main.js"
 
+    # Fix Image URLs in the Main.css file by removing the "../".
+    sed -i "" -e "s/\.\.\/Images/Images/g" "${DERIVED_SOURCES_DIR}/Main.css"
+
     # Export the license into Main.js.
     echo "${LICENSE}" > "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Main.js"
 
@@ -72,9 +75,9 @@ if [[ ${COMBINE_INSPECTOR_RESOURCES:=YES} == "YES" ]]; then
     ditto "${SRCROOT}/UserInterface/Images" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Images"
 
     # Copy over files that are dynamically loaded. The default Inspector*BackendCommands.js and the Legacy directory.
-    ditto "${SRCROOT}/UserInterface/InspectorJSBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/InspectorJSBackendCommands.js"
-    ditto "${SRCROOT}/UserInterface/InspectorWebBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/InspectorWebBackendCommands.js"
-    ditto "${SRCROOT}/UserInterface/Legacy" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Legacy"
+    ditto "${SRCROOT}/UserInterface/Protocol/InspectorJSBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Protocol/InspectorJSBackendCommands.js"
+    ditto "${SRCROOT}/UserInterface/Protocol/InspectorWebBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Protocol/InspectorWebBackendCommands.js"
+    ditto "${SRCROOT}/UserInterface/Protocol/Legacy" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Protocol/Legacy"
 else
     # Keep the files separate for engineering builds.
     ditto "${SRCROOT}/UserInterface" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"

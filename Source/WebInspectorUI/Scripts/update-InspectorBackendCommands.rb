@@ -22,6 +22,7 @@ $inspector_js_json_path = Tempfile.new("generated-InspectorJS.json").path
 $inspector_web_json_path = Tempfile.new("generated-InspectorWeb.json").path
 $versions_directory_path = File.join WEB_INSPECTOR_PATH, "Versions"
 $web_inspector_user_interface_path = File.join WEB_INSPECTOR_PATH, "UserInterface"
+$web_inspector_protocol_path = File.join WEB_INSPECTOR_PATH, "UserInterface", "Protocol"
 
 class Task
   def initialize(input_json_path, dependency_json_path, type, output_directory_path, verification)
@@ -82,8 +83,8 @@ def all_tasks
 
   # ToT Inspector json files.
   generate_combined_inspector_json
-  tasks << Task.new($inspector_js_json_path, nil, "JavaScript", $web_inspector_user_interface_path, true)
-  tasks << Task.new($inspector_web_json_path, $inspector_js_json_path, "Web", $web_inspector_user_interface_path, true)
+  tasks << Task.new($inspector_js_json_path, nil, "JavaScript", $web_inspector_protocol_path, true)
+  tasks << Task.new($inspector_web_json_path, $inspector_js_json_path, "Web", $web_inspector_protocol_path, true)
 
   had_error = false
   Dir.glob(File.join($versions_directory_path, "*.json")).each do |version_path|

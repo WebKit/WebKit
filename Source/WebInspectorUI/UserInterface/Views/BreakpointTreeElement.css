@@ -1,0 +1,78 @@
+/*
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.item.breakpoint .status > .status-image {
+    width: 21px;
+    height: 12px;
+    content: url(../Images/BreakpointInactiveButton.svg);
+    margin-top: 3px;
+}
+
+.item.breakpoint .status > .status-image.resolved {
+    content: url(../Images/BreakpointButton.svg);
+}
+
+.item.breakpoint .status > .status-image.auto-continue {
+    opacity: 0.6;
+}
+
+.item.breakpoint .status > .status-image.disabled {
+    opacity: 0.35;
+}
+
+.item.breakpoint .subtitle.formatted-location {
+    font-style: italic;
+}
+
+.breakpoint-exception-icon .icon {
+    content: url(../Images/Exception.svg);
+}
+
+/* When animating a layer on top of a tree element's icon, move the main
+icon to the icon element's background so animations are layered on top. */
+.breakpoint-generic-line-icon .icon {
+    background-image: url(../Images/ResultLine.svg);
+    content: '';
+}
+
+.breakpoint-generic-line-icon .icon > span {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    border-radius: 50%;
+    -webkit-transform: scale(0);
+    -webkit-transition: none;
+    background-color: rgba(76, 102, 143, 1);
+}
+
+.data-updated.breakpoint-generic-line-icon .icon > span {
+    border-radius: 0;
+    -webkit-transform: scale(0.85);
+    -webkit-transition: all .4s ease-out;
+    background-color: rgba(76, 102, 143, 0.1);
+}

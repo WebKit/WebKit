@@ -1,5 +1,22 @@
 2014-02-21  Timothy Hatcher  <timothy@apple.com>
 
+        Organize WebInspectorUI/UserInterface into sub-directories.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129194
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Scripts/copy-user-interface-resources.sh: Fix Image URLs and Protocol paths.
+        * UserInterface/Base: Added.
+        * UserInterface/Controllers: Added.
+        * UserInterface/Images: Added.
+        * UserInterface/Main.html: Updated.
+        * UserInterface/Models Added.
+        * UserInterface/Protocol Added.
+        * UserInterface/Views: Added.
+
+2014-02-21  Timothy Hatcher  <timothy@apple.com>
+
         Add inspection user interface for IndexedDB.
 
         https://bugs.webkit.org/show_bug.cgi?id=129162
