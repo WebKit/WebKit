@@ -1,5 +1,14 @@
 2014-02-22  Frédéric Wang  <fred.wang@free.fr>
 
+        Only skip stretchy operators when determining the stretch height.
+        https://bugs.webkit.org/show_bug.cgi?id=126842
+
+        Reviewed by Chris Fleizach.
+
+        * mathml/presentation/stretchy-depth-height.html: Add a test with non-stretchy mo siblings.
+
+2014-02-22  Frédéric Wang  <fred.wang@free.fr>
+
         Implement asymmetric/symmetric stretching of vertical operators.
         https://bugs.webkit.org/show_bug.cgi?id=124827.
 

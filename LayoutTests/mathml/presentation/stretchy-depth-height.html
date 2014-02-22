@@ -46,6 +46,13 @@
               assert("testing several operators in one mrow (operator " + i + ")", almostEqual(s6.top, c6maxheight.top) && almostEqual(s6.bottom, c6maxdepth.bottom));
           }
 
+          var s71 = document.getElementById("s71").getBoundingClientRect();
+          var c71 = document.getElementById("c71").getBoundingClientRect();
+          var s72 = document.getElementById("s72").getBoundingClientRect();
+          var c72 = document.getElementById("c72").getBoundingClientRect();
+
+          assert("testing with non-stretchy mo", almostEqual(s71.top, c71.top) && almostEqual(s71.bottom, c71.bottom) && almostEqual(s72.top, c72.top) && almostEqual(s72.bottom, c72.bottom));
+
           document.getElementById("result").innerText = result;
   
           if (window.testRunner)
@@ -198,7 +205,17 @@
           <mo id="s6_3" symmetric="false">}</mo>
         </mrow>
       </math>
-
+      <!-- These tests whether the size of non-stretchy operators is taken into account (bug 126842). -->
+      <math>
+        <mrow>
+          <mo id="s71" symmetric="false">{</mo>
+          <mo id="c71" mathsize="8em">p</mo>
+        </mrow>
+        <mrow>
+          <mo id="s72" symmetric="false">{</mo>
+          <mo id="c72" mathsize="8em" stretchy="false">|</mo>
+        </mrow>
+      </math>
     </p>
 
     <div id="result"></div>

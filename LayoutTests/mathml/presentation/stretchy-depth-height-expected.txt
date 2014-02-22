@@ -40,6 +40,7 @@ x	y	z
 5
 6
  
+ 
 
 symmetric stretching: PASS
 large depth: PASS
@@ -49,4 +50,5 @@ several siblings with different heights/depths: PASS
 testing several operators in one mrow (operator 1): PASS
 testing several operators in one mrow (operator 2): PASS
 testing several operators in one mrow (operator 3): PASS
+testing with non-stretchy mo: PASS
 
