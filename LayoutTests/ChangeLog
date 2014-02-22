@@ -1,3 +1,19 @@
+2014-02-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Rename JWK key_ops values from wrap/unwrap to wrapKey/unwrapKey
+        https://bugs.webkit.org/show_bug.cgi?id=129121
+
+        Reviewed by Sam Weinig.
+
+        * crypto/subtle/aes-export-key-expected.txt:
+        * crypto/subtle/aes-export-key.html:
+        * crypto/subtle/jwk-export-use-values-expected.txt:
+        * crypto/subtle/jwk-export-use-values.html:
+        * crypto/subtle/jwk-import-use-values-expected.txt:
+        * crypto/subtle/jwk-import-use-values.html:
+        * crypto/subtle/rsa-oaep-key-manipulation-expected.txt:
+        * crypto/subtle/rsa-oaep-key-manipulation.html:
+
 2014-02-21  Timothy Hatcher  <timothy@apple.com>
 
         Add inspection user interface for IndexedDB.

@@ -17,23 +17,23 @@ PASS jwk.key_ops is ["encrypt","decrypt"]
 
 wrapKey:
 PASS jwk.use is undefined
-PASS jwk.key_ops is ["wrap"]
+PASS jwk.key_ops is ["wrapKey"]
 
 unwrapKey:
 PASS jwk.use is undefined
-PASS jwk.key_ops is ["unwrap"]
+PASS jwk.key_ops is ["unwrapKey"]
 
 wrapKey,unwrapKey:
 PASS jwk.use is undefined
-PASS jwk.key_ops is ["wrap","unwrap"]
+PASS jwk.key_ops is ["wrapKey","unwrapKey"]
 
 encrypt,decrypt,wrapKey:
 PASS jwk.use is undefined
-PASS jwk.key_ops is ["encrypt","decrypt","wrap"]
+PASS jwk.key_ops is ["encrypt","decrypt","wrapKey"]
 
 encrypt,decrypt,wrapKey,unwrapKey:
 PASS jwk.use is undefined
-PASS jwk.key_ops is ["encrypt","decrypt","wrap","unwrap"]
+PASS jwk.key_ops is ["encrypt","decrypt","wrapKey","unwrapKey"]
 
 sign:
 PASS jwk.use is undefined

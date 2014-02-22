@@ -282,9 +282,9 @@ void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsage& suggestedUsage
                 return;
             if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("decrypt"), CryptoKeyUsageDecrypt))
                 return;
-            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("wrap"), CryptoKeyUsageWrapKey))
+            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("wrapKey"), CryptoKeyUsageWrapKey))
                 return;
-            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("unwrap"), CryptoKeyUsageUnwrapKey))
+            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("unwrapKey"), CryptoKeyUsageUnwrapKey))
                 return;
             if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("deriveKey"), CryptoKeyUsageDeriveKey))
                 return;
@@ -666,9 +666,9 @@ static void addUsagesToJSON(ExecState* exec, JSObject* json, CryptoKeyUsage usag
     if (usages & CryptoKeyUsageDecrypt)
         keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("decrypt")));
     if (usages & CryptoKeyUsageWrapKey)
-        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("wrap")));
+        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("wrapKey")));
     if (usages & CryptoKeyUsageUnwrapKey)
-        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("unwrap")));
+        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("unwrapKey")));
     if (usages & CryptoKeyUsageDeriveKey)
         keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("deriveKey")));
     if (usages & CryptoKeyUsageDeriveBits)
@@ -709,7 +709,7 @@ String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& 
     if (exec->hadException())
         return String();
 
-    return JSONStringify(exec, result, 4);
+    return JSONStringify(exec, result, 0);
 }
 
 } // namespace WebCore

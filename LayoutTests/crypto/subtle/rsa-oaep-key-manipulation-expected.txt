@@ -27,7 +27,7 @@ PASS Promise rejected for exporting private key
 Exporting public key to JWK...
 PASS jwkPublicKey.alg is 'RSA-OAEP'
 PASS jwkPublicKey.ext is true
-PASS jwkPublicKey.key_ops is ['encrypt', 'decrypt', 'wrap', 'unwrap']
+PASS jwkPublicKey.key_ops is ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']
 PASS jwkPublicKey.use is undefined
 PASS jwkPublicKey.kty is 'RSA'
 PASS bytesToHexString(Base64URL.parse(jwkPublicKey.e)) is '010001'

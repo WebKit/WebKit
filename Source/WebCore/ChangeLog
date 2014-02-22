@@ -1,3 +1,18 @@
+2014-02-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Rename JWK key_ops values from wrap/unwrap to wrapKey/unwrapKey
+        https://bugs.webkit.org/show_bug.cgi?id=129121
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::JSCryptoKeySerializationJWK::reconcileUsages): Updated to newer names.
+        (WebCore::addUsagesToJSON): Ditto.
+        (WebCore::JSCryptoKeySerializationJWK::serialize): rsa-oaep-key-manipulation test
+        started ot fail, because RSA-OAEP with 2048 bit key and sha-1 can only encrypt
+        214 bytes, and the new longer names made JSON serialization slightly longer.
+        Compensate by not doing any indentation in JSON.
+
 2014-02-22  Frédéric Wang  <fred.wang@free.fr>
 
         Only skip stretchy operators when determining the stretch height.

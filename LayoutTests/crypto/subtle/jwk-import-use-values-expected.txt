@@ -14,16 +14,16 @@ PASS key.usages is ["decrypt"]
 {"key_ops":["encrypt","decrypt"]}:
 PASS key.usages is ["decrypt","encrypt"]
 
-{"key_ops":["wrap"]}:
+{"key_ops":["wrapKey"]}:
 PASS key.usages is ["wrapKey"]
 
-{"key_ops":["unwrap"]}:
+{"key_ops":["unwrapKey"]}:
 PASS key.usages is ["unwrapKey"]
 
-{"key_ops":["wrap","unwrap"]}:
+{"key_ops":["wrapKey","unwrapKey"]}:
 PASS key.usages is ["unwrapKey","wrapKey"]
 
-{"key_ops":["encrypt","decrypt","wrap"]}:
+{"key_ops":["encrypt","decrypt","wrapKey"]}:
 PASS key.usages is ["decrypt","encrypt","wrapKey"]
 
 {"use":"enc"}:

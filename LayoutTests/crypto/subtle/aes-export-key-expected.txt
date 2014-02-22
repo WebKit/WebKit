@@ -24,7 +24,7 @@ PASS exportedJWK.k is 'jnOw99oOZFLIEPMrgJB55WL46tJSLGt7'
 PASS exportedJWK.alg is 'A192CBC'
 PASS exportedJWK.ext is true
 PASS exportedJWK.use is undefined
-PASS exportedJWK.key_ops is ['encrypt', 'decrypt', 'wrap', 'unwrap']
+PASS exportedJWK.key_ops is ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']
 
 Importing a key that's not extractable...
 
