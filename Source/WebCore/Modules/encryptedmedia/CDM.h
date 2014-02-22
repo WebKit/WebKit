@@ -28,6 +28,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
+#include "CDMSession.h"
 #include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -37,7 +38,6 @@ namespace WebCore {
 
 class CDM;
 class CDMPrivateInterface;
-class CDMSession;
 class MediaPlayer;
 
 typedef PassOwnPtr<CDMPrivateInterface> (*CreateCDM)(CDM*);
@@ -51,17 +51,6 @@ public:
     virtual MediaPlayer* cdmMediaPlayer(const CDM*) const = 0;
 };
 
-class CDMSession {
-public:
-    CDMSession() { }
-    virtual ~CDMSession() { }
-
-    virtual const String& sessionId() const = 0;
-    virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) = 0;
-    virtual void releaseKeys() = 0;
-    virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) = 0;
-};
-
 class CDM {
 public:
 
@@ -73,7 +62,7 @@ public:
     ~CDM();
 
     bool supportsMIMEType(const String&) const;
-    PassOwnPtr<CDMSession> createSession();
+    std::unique_ptr<CDMSession> createSession();
 
     const String& keySystem() const { return m_keySystem; }
 

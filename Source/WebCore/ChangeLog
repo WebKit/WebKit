@@ -1,5 +1,60 @@
 2014-02-21  Jer Noble  <jer.noble@apple.com>
 
+        Make a generic CDMPrivateMediaPlayer and move its CDMSession into platform/.
+        https://bugs.webkit.org/show_bug.cgi?id=129164
+
+        Reviewed by Eric Carlson.
+
+        Move the session created by CDMPrivateAVFoundation into platform, and rename
+        CDMPrivateAVFoundation to CDMPrivateMediaPlayer. Future media engines who want
+        to support a keysystem from within the media engine can create their own
+        CDMSession as part of the MediaPlayerPrivate interface.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::installedCDMFactories):
+        (WebCore::CDM::createSession):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMPrivate.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/CDMPrivateAVFoundation.mm: Removed.
+        * Modules/encryptedmedia/CDMPrivateMediaPlayer.cpp: Renamed from Source/WebCore/Modules/encryptedmedia/CDMPrivateAVFoundation.cpp.
+        (WebCore::CDMPrivateMediaPlayer::supportsKeySystem):
+        (WebCore::CDMPrivateMediaPlayer::supportsKeySystemAndMimeType):
+        (WebCore::CDMPrivateMediaPlayer::supportsMIMEType):
+        (WebCore::CDMPrivateMediaPlayer::createSession):
+        * Modules/encryptedmedia/CDMPrivateMediaPlayer.h: Renamed from Source/WebCore/Modules/encryptedmedia/CDMPrivateAVFoundation.h.
+        (WebCore::CDMPrivateMediaPlayer::create):
+        (WebCore::CDMPrivateMediaPlayer::~CDMPrivateMediaPlayer):
+        (WebCore::CDMPrivateMediaPlayer::cdm):
+        (WebCore::CDMPrivateMediaPlayer::CDMPrivateMediaPlayer):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/CDMSession.h: Extracted from CDMPrivateAVFoundation.h.
+        (WebCore::CDMSessionClient::~CDMSessionClient):
+        (WebCore::CDMSession::CDMSession):
+        (WebCore::CDMSession::~CDMSession):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::createSession):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::createSession):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h: Renamed from Source/WebCore/Modules/encryptedmedia/CDMPrivateAVFoundation.h.
+        (WebCore::CDMSessionAVFoundationObjC::~CDMSessionAVFoundationObjC):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm: Renamed from Source/WebCore/Modules/encryptedmedia/CDMPrivateAVFoundation.mm.
+        (WebCore::CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC):
+        (WebCore::CDMSessionAVFoundationObjC::generateKeyRequest):
+        (WebCore::CDMSessionAVFoundationObjC::releaseKeys):
+        (WebCore::CDMSessionAVFoundationObjC::update):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createSession):
+        * testing/MockCDM.cpp:
+        (WebCore::MockCDMSession::setClient):
+        (WebCore::MockCDM::createSession):
+        * testing/MockCDM.h:
+
+2014-02-21  Jer Noble  <jer.noble@apple.com>
+
         Add a supportsKeySystem media engine factory parameter.
         https://bugs.webkit.org/show_bug.cgi?id=129161
 

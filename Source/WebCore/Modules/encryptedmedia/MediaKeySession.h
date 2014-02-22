@@ -85,7 +85,7 @@ protected:
     String m_sessionId;
     RefPtr<MediaKeyError> m_error;
     GenericEventQueue m_asyncEventQueue;
-    OwnPtr<CDMSession> m_session;
+    std::unique_ptr<CDMSession> m_session;
 
     struct PendingKeyRequest {
         PendingKeyRequest(const String& mimeType, Uint8Array* initData) : mimeType(mimeType), initData(initData) { }

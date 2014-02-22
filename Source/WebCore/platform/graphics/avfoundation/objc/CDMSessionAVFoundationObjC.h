@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMPrivate_h
-#define CDMPrivate_h
+#ifndef CDMSessionAVFoundationObjC_h
+#define CDMSessionAVFoundationObjC_h
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#include "CDMSession.h"
+#include <wtf/PassOwnPtr.h>
+#include <wtf/RetainPtr.h>
 
-#include <wtf/OwnPtr.h>
-#include <wtf/text/WTFString.h>
+#if ENABLE(ENCRYPTED_MEDIA_V2) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+
+OBJC_CLASS AVAssetResourceLoadingRequest;
 
 namespace WebCore {
 
-class CDMSession;
+class MediaPlayerPrivateAVFoundationObjC;
 
-class CDMPrivateInterface {
+class CDMSessionAVFoundationObjC : public CDMSession {
 public:
-    CDMPrivateInterface() { }
-    virtual ~CDMPrivateInterface() { }
+    CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent);
+    virtual ~CDMSessionAVFoundationObjC() { }
 
-    virtual bool supportsMIMEType(const String&) = 0;
+    virtual void setClient(CDMSessionClient* client) override { m_client = client; }
+    virtual const String& sessionId() const override { return m_sessionId; }
+    virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
+    virtual void releaseKeys() override;
+    virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) override;
 
-    virtual std::unique_ptr<CDMSession> createSession() = 0;
+protected:
+    MediaPlayerPrivateAVFoundationObjC* m_parent;
+    CDMSessionClient* m_client;
+    String m_sessionId;
+    RetainPtr<AVAssetResourceLoadingRequest> m_request;
 };
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
+#endif
 
-#endif // CDMPrivate_h
+#endif // CDMSessionAVFoundationObjC_h

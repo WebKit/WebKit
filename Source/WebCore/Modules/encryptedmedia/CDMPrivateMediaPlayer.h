@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMPrivate_h
-#define CDMPrivate_h
+#ifndef CDMPrivateMediaPlayer_h
+#define CDMPrivateMediaPlayer_h
+
+#include "CDMPrivate.h"
+#include <wtf/PassOwnPtr.h>
+#include <wtf/RetainPtr.h>
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
-#include <wtf/OwnPtr.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
-class CDMSession;
+class CDM;
 
-class CDMPrivateInterface {
+class CDMPrivateMediaPlayer : public CDMPrivateInterface {
 public:
-    CDMPrivateInterface() { }
-    virtual ~CDMPrivateInterface() { }
+    static PassOwnPtr<CDMPrivateInterface> create(CDM* cdm) { return adoptPtr(new CDMPrivateMediaPlayer(cdm)); }
+    static bool supportsKeySystem(const String&);
+    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
-    virtual bool supportsMIMEType(const String&) = 0;
+    virtual ~CDMPrivateMediaPlayer() { }
 
-    virtual std::unique_ptr<CDMSession> createSession() = 0;
+    virtual bool supportsMIMEType(const String& mimeType) override;
+    virtual std::unique_ptr<CDMSession> createSession() override;
+
+    CDM* cdm() const { return m_cdm; }
+
+protected:
+    CDMPrivateMediaPlayer(CDM* cdm) : m_cdm(cdm) { }
+    CDM* m_cdm;
 };
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
+#endif
 
-#endif // CDMPrivate_h
+#endif // CDMPriavateMediaPlayer_h

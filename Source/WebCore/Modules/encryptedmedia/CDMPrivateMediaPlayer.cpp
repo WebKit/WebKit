@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMPrivate_h
-#define CDMPrivate_h
+#import "config.h"
+#import "CDMPrivateMediaPlayer.h"
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
-#include <wtf/OwnPtr.h>
-#include <wtf/text/WTFString.h>
+#import "CDM.h"
+#import "CDMSession.h"
+#import "ContentType.h"
+#import "ExceptionCode.h"
+#import "MediaPlayer.h"
+#import "SoftLinking.h"
 
 namespace WebCore {
 
-class CDMSession;
+bool CDMPrivateMediaPlayer::supportsKeySystem(const String& keySystem)
+{
+    return MediaPlayer::supportsKeySystem(keySystem, emptyString());
+}
 
-class CDMPrivateInterface {
-public:
-    CDMPrivateInterface() { }
-    virtual ~CDMPrivateInterface() { }
+bool CDMPrivateMediaPlayer::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+{
+    return MediaPlayer::supportsKeySystem(keySystem, mimeType);
+}
 
-    virtual bool supportsMIMEType(const String&) = 0;
+bool CDMPrivateMediaPlayer::supportsMIMEType(const String& mimeType)
+{
+    return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
+}
 
-    virtual std::unique_ptr<CDMSession> createSession() = 0;
-};
+std::unique_ptr<CDMSession> CDMPrivateMediaPlayer::createSession()
+{
+    MediaPlayer* mediaPlayer = m_cdm->mediaPlayer();
+    if (!mediaPlayer)
+        return nullptr;
+
+    return mediaPlayer->createSession(m_cdm->keySystem());
+}
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
-
-#endif // CDMPrivate_h
+#endif

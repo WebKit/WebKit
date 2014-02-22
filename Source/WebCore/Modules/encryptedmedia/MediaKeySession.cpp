@@ -29,6 +29,7 @@
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
 #include "CDM.h"
+#include "CDMSession.h"
 #include "Event.h"
 #include "GenericEventQueue.h"
 #include "MediaKeyError.h"

@@ -29,6 +29,7 @@
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
 #include "CDM.h"
+#include "CDMSession.h"
 #include "MediaKeyError.h"
 #include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
@@ -38,17 +39,17 @@ namespace WebCore {
 
 class MockCDMSession : public CDMSession {
 public:
-    static PassOwnPtr<MockCDMSession> create() { return adoptPtr(new MockCDMSession()); }
+    MockCDMSession();
     virtual ~MockCDMSession() { }
 
+    virtual void setClient(CDMSessionClient* client) { m_client = client; }
     virtual const String& sessionId() const override { return m_sessionId; }
     virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
     virtual void releaseKeys() override;
     virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) override;
 
 protected:
-    MockCDMSession();
-
+    CDMSessionClient* m_client;
     String m_sessionId;
 };
 
@@ -70,9 +71,9 @@ bool MockCDM::supportsMIMEType(const String& mimeType)
     return equalIgnoringCase(mimeType, "video/mock");
 }
 
-PassOwnPtr<CDMSession> MockCDM::createSession()
+std::unique_ptr<CDMSession> MockCDM::createSession()
 {
-    return MockCDMSession::create();
+    return std::make_unique<MockCDMSession>();
 }
 
 static Uint8Array* initDataPrefix()

@@ -91,7 +91,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    static RetainPtr<AVAssetResourceLoadingRequest> takeRequestForPlayerAndKeyURI(MediaPlayer*, const String&);
+    RetainPtr<AVAssetResourceLoadingRequest> takeRequestForKeyURI(const String&);
 #endif
 
     void playerItemStatusDidChange(int);
@@ -200,9 +200,7 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    PassRefPtr<Uint8Array> generateKeyRequest(const String& sessionId, const String& mimeType, Uint8Array* initData, String& destinationURL, MediaPlayer::MediaKeyException& error, unsigned long& systemCode);
-    void releaseKeys(const String& sessionId);
-    bool update(const String& sessionId, Uint8Array* key, RefPtr<Uint8Array>& nextMessage, MediaPlayer::MediaKeyException& error, unsigned long& systemCode);
+    std::unique_ptr<CDMSession> createSession(const String& keySystem);
 #endif
 
     virtual String languageOfPrimaryAudioTrack() const override;

@@ -45,7 +45,7 @@ public:
     virtual ~MockCDM() { }
 
     virtual bool supportsMIMEType(const String& mimeType) override;
-    virtual PassOwnPtr<CDMSession> createSession() override;
+    virtual std::unique_ptr<CDMSession> createSession() override;
 
 protected:
     MockCDM(CDM* cdm) : m_cdm(cdm) { }

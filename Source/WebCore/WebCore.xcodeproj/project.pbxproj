@@ -5462,7 +5462,6 @@
 		CD3E251C18046B0600E27F56 /* GridCoordinate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E251B18046B0600E27F56 /* GridCoordinate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD3E252318046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3E252118046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp */; };
 		CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E252218046BCD00E27F56 /* CSSGridTemplateAreasValue.h */; };
-		CD47B3FC16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD47B3FA16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm */; };
 		CD4AC52A1496AE9A0087C4EF /* Composite.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD4AC5281496AE2F0087C4EF /* Composite.wav */; };
 		CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393D1175E018600C07123 /* JSMemoryInfo.cpp */; };
 		CD5393D4175E018600C07123 /* JSMemoryInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5393D2175E018600C07123 /* JSMemoryInfo.h */; };
@@ -5535,10 +5534,13 @@
 		CDC8B5AB18047FF10016E685 /* SourceBufferPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC8B5A918047FF10016E685 /* SourceBufferPrivateAVFObjC.h */; };
 		CDC8B5AD1804AE5D0016E685 /* SourceBufferPrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */; };
 		CDCA82961679100F00875714 /* TextTrackRepresentationIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA82941679100F00875714 /* TextTrackRepresentationIOS.mm */; };
+		CDCA98EB18B2C8EB00C12FF9 /* CDMPrivateMediaPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA98EA18B2C8EB00C12FF9 /* CDMPrivateMediaPlayer.cpp */; };
 		CDD525D7145B6DD0008D204D /* JSHTMLMediaElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */; };
 		CDD7089618359F6F002B3DC6 /* SampleMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDD7089418359F6E002B3DC6 /* SampleMap.cpp */; };
 		CDD7089718359F6F002B3DC6 /* SampleMap.h in Headers */ = {isa = PBXBuildFile; fileRef = CDD7089518359F6F002B3DC6 /* SampleMap.h */; };
 		CDDC1E7A18A952F30027A9D4 /* MediaSourcePrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDC1E7918A952F30027A9D4 /* MediaSourcePrivateClient.h */; };
+		CDDD571518B57A8200A94FCB /* CDMSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDE02E918B3DFC700CF7FF1 /* CDMSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDDE02ED18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDDE02EB18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm */; };
 		CDE3A85417F5FCE600C5BE20 /* AudioTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE3A85217F5FCE600C5BE20 /* AudioTrackPrivateAVF.h */; };
 		CDE3A85717F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */; };
 		CDE3A85817F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */; };
@@ -12690,8 +12692,6 @@
 		CD3E251B18046B0600E27F56 /* GridCoordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridCoordinate.h; path = style/GridCoordinate.h; sourceTree = "<group>"; };
 		CD3E252118046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGridTemplateAreasValue.cpp; sourceTree = "<group>"; };
 		CD3E252218046BCD00E27F56 /* CSSGridTemplateAreasValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGridTemplateAreasValue.h; sourceTree = "<group>"; };
-		CD47B3F916CC34F800A21EC8 /* CDMPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMPrivateAVFoundation.h; sourceTree = "<group>"; };
-		CD47B3FA16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CDMPrivateAVFoundation.mm; sourceTree = "<group>"; };
 		CD4AC5281496AE2F0087C4EF /* Composite.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = Composite.wav; path = platform/audio/resources/Composite.wav; sourceTree = SOURCE_ROOT; };
 		CD4E0AFA11F7BC27009D3811 /* fullscreen.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = fullscreen.css; sourceTree = "<group>"; };
 		CD5393CB175DCCE600C07123 /* MemoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInfo.h; sourceTree = "<group>"; };
@@ -12799,11 +12799,16 @@
 		CDC8B5A918047FF10016E685 /* SourceBufferPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SourceBufferPrivateAVFObjC.h; path = objc/SourceBufferPrivateAVFObjC.h; sourceTree = "<group>"; };
 		CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBufferPrivateClient.h; sourceTree = "<group>"; };
 		CDCA82941679100F00875714 /* TextTrackRepresentationIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextTrackRepresentationIOS.mm; sourceTree = "<group>"; };
+		CDCA98E918B2C8D000C12FF9 /* CDMPrivateMediaPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMPrivateMediaPlayer.h; sourceTree = "<group>"; };
+		CDCA98EA18B2C8EB00C12FF9 /* CDMPrivateMediaPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDMPrivateMediaPlayer.cpp; sourceTree = "<group>"; };
 		CDCE5CD014633BC900D47CCA /* EventTargetFactory.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventTargetFactory.in; sourceTree = "<group>"; };
 		CDD1E525167BA56400CE820B /* TextTrackRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentation.h; sourceTree = "<group>"; };
 		CDD7089418359F6E002B3DC6 /* SampleMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleMap.cpp; sourceTree = "<group>"; };
 		CDD7089518359F6F002B3DC6 /* SampleMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleMap.h; sourceTree = "<group>"; };
 		CDDC1E7918A952F30027A9D4 /* MediaSourcePrivateClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSourcePrivateClient.h; sourceTree = "<group>"; };
+		CDDE02E918B3DFC700CF7FF1 /* CDMSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDMSession.h; sourceTree = "<group>"; };
+		CDDE02EA18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDMSessionAVFoundationObjC.h; path = objc/CDMSessionAVFoundationObjC.h; sourceTree = "<group>"; };
+		CDDE02EB18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CDMSessionAVFoundationObjC.mm; path = objc/CDMSessionAVFoundationObjC.mm; sourceTree = "<group>"; };
 		CDE3A85217F5FCE600C5BE20 /* AudioTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackPrivateAVF.h; sourceTree = "<group>"; };
 		CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AudioTrackPrivateAVFObjC.mm; path = objc/AudioTrackPrivateAVFObjC.mm; sourceTree = "<group>"; };
 		CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioTrackPrivateAVFObjC.h; path = objc/AudioTrackPrivateAVFObjC.h; sourceTree = "<group>"; };
@@ -19783,6 +19788,7 @@
 				BEF29EE91715DD0900C4B4C9 /* AudioTrackPrivate.h */,
 				A89943270B42338700D7C802 /* BitmapImage.cpp */,
 				A89943260B42338700D7C802 /* BitmapImage.h */,
+				CDDE02E918B3DFC700CF7FF1 /* CDMSession.h */,
 				B27535380B053814002CE64F /* Color.cpp */,
 				B27535390B053814002CE64F /* Color.h */,
 				9382DF5710A8D5C900925652 /* ColorSpace.h */,
@@ -20898,8 +20904,8 @@
 				CDA98E091603CD5900FEA3B1 /* CDM.cpp */,
 				CDA98E0A1603CD5900FEA3B1 /* CDM.h */,
 				CDA98E0C1603CF3C00FEA3B1 /* CDMPrivate.h */,
-				CD47B3F916CC34F800A21EC8 /* CDMPrivateAVFoundation.h */,
-				CD47B3FA16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm */,
+				CDCA98E918B2C8D000C12FF9 /* CDMPrivateMediaPlayer.h */,
+				CDCA98EA18B2C8EB00C12FF9 /* CDMPrivateMediaPlayer.cpp */,
 				CDA98DD516025BED00FEA3B1 /* MediaKeyMessageEvent.cpp */,
 				CDA98DD616025BED00FEA3B1 /* MediaKeyMessageEvent.h */,
 				CDA98DD716025BEE00FEA3B1 /* MediaKeyMessageEvent.idl */,
@@ -21004,6 +21010,8 @@
 				CD54A761180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h */,
 				CD336F6017F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h */,
 				CD336F5F17F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm */,
+				CDDE02EA18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.h */,
+				CDDE02EB18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm */,
 				07AA6B69166D019500D45671 /* InbandTextTrackPrivateAVFObjC.h */,
 				07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */,
 				07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */,
@@ -24066,6 +24074,7 @@
 				1ABA80001897341200DCE9D6 /* VisitedLinkProvider.h in Headers */,
 				2E0888D51148848A00AF4265 /* JSDOMFormData.h in Headers */,
 				E1C36C030EB076D6007410BC /* JSDOMGlobalObject.h in Headers */,
+				CDDD571518B57A8200A94FCB /* CDMSession.h in Headers */,
 				65DF31F809D1CC60000BE325 /* JSDOMImplementation.h in Headers */,
 				A9D248070D757E7D00FDF959 /* JSDOMMimeType.h in Headers */,
 				A9D248090D757E7D00FDF959 /* JSDOMMimeTypeArray.h in Headers */,
@@ -26447,7 +26456,6 @@
 				6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */,
 				078E090917D14CEE00420AA1 /* RTCIceCandidate.cpp in Sources */,
 				CDA98E0B1603CD6000FEA3B1 /* CDM.cpp in Sources */,
-				CD47B3FC16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm in Sources */,
 				990A1A0418ADA48400183FD1 /* ReplayInputTypes.cpp in Sources */,
 				E1A8E56617552B2A007488E7 /* CFURLExtras.cpp in Sources */,
 				97BC69DC1505F076001B74AC /* ChangeVersionWrapper.cpp in Sources */,
@@ -27111,6 +27119,7 @@
 				977B3866122883E900B81FF8 /* HTMLDocumentParser.cpp in Sources */,
 				93309DE7099E64920056E581 /* htmlediting.cpp in Sources */,
 				A516E8B8136E04DB0076C3C0 /* LocalizedDateCache.mm in Sources */,
+				CDDE02ED18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm in Sources */,
 				93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */,
 				E157A8F018185425009F821D /* JSCryptoAlgorithmBuilder.cpp in Sources */,
 				A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */,
@@ -27805,6 +27814,7 @@
 				B27B28270CEF0C0700D39D54 /* JSSVGGlyphElement.cpp in Sources */,
 				070363E1181A1CDC00C074A5 /* AVAudioCaptureSource.mm in Sources */,
 				24D9129813CA96DE00D21915 /* JSSVGGlyphRefElement.cpp in Sources */,
+				CDCA98EB18B2C8EB00C12FF9 /* CDMPrivateMediaPlayer.cpp in Sources */,
 				B2FA3D9C0AB75A6F000E5AC4 /* JSSVGGradientElement.cpp in Sources */,
 				85174EC2BCCAF17EAE3F46F8 /* JSSVGGraphicsElement.cpp in Sources */,
 				8485227B1190162C006EDC7F /* JSSVGHKernElement.cpp in Sources */,

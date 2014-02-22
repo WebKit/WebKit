@@ -33,6 +33,7 @@
 #endif
 
 #include "AudioTrackPrivate.h"
+#include "CDMSession.h"
 #include "InbandTextTrackPrivate.h"
 #include "IntRect.h"
 #include "URL.h"
@@ -329,9 +330,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    PassRefPtr<Uint8Array> generateKeyRequest(const String& sessionID, const String& mimeType, Uint8Array* initData, String& destinationURL, MediaKeyException& error, unsigned long& systemCode);
-    void releaseKeys(const String& sessionID);
-    bool update(const String& sessionID, Uint8Array* key, RefPtr<Uint8Array>& nextMessage, MediaKeyException& error, unsigned long& systemCode);
+    std::unique_ptr<CDMSession> createSession(const String& keySystem);
 #endif
 
     bool paused() const;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMPrivateAVFoundation_h
-#define CDMPrivateAVFoundation_h
+#ifndef CDMSession_h
+#define CDMSession_h
 
-#include "CDMPrivate.h"
-#include <wtf/PassOwnPtr.h>
-#include <wtf/RetainPtr.h>
+#if ENABLE(ENCRYPTED_MEDIA_V2)
 
-#if ENABLE(ENCRYPTED_MEDIA_V2) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#include <runtime/Uint8Array.h>
+#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CDM;
-
-class CDMPrivateAVFoundation : public CDMPrivateInterface {
+class CDMSessionClient {
 public:
-    // CDMFactory support:
-    static PassOwnPtr<CDMPrivateInterface> create(CDM* cdm) { return adoptPtr(new CDMPrivateAVFoundation(cdm)); }
-    static bool supportsKeySystem(const String&);
-    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
+    virtual ~CDMSessionClient() { };
+    virtual void sendMessage(Uint8Array*, String destinationURL) = 0;
+};
 
-    virtual ~CDMPrivateAVFoundation() { }
+class CDMSession {
+public:
+    CDMSession() { }
+    virtual ~CDMSession() { }
 
-    virtual bool supportsMIMEType(const String& mimeType) override;
-    virtual PassOwnPtr<CDMSession> createSession() override;
-
-    CDM* cdm() const { return m_cdm; }
-
-protected:
-    CDMPrivateAVFoundation(CDM* cdm) : m_cdm(cdm) { }
-    CDM* m_cdm;
+    virtual void setClient(CDMSessionClient*) = 0;
+    virtual const String& sessionId() const = 0;
+    virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) = 0;
+    virtual void releaseKeys() = 0;
+    virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) = 0;
 };
 
 }
 
-#endif
+#endif // ENABLE(ENCRYPTED_MEDIA_V2)
 
-#endif // CDMPrivateAVFoundation_h
+#endif // CDMSession_h

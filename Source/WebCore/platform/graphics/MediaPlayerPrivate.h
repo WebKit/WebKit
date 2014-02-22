@@ -209,9 +209,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    virtual PassRefPtr<Uint8Array> generateKeyRequest(const String&, const String&, Uint8Array*, String&, MediaPlayer::MediaKeyException&, unsigned long&) { return nullptr; }
-    virtual void releaseKeys(const String&) { }
-    virtual bool update(const String&, Uint8Array*, RefPtr<Uint8Array>&, MediaPlayer::MediaKeyException&, unsigned long&) { return false; }
+    virtual std::unique_ptr<CDMSession> createSession(const String&) { return nullptr; }
 #endif
 
 #if ENABLE(VIDEO_TRACK)
