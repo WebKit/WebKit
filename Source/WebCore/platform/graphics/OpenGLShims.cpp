@@ -147,6 +147,7 @@ bool initializeOpenGLShims()
     ASSIGN_FUNCTION_TABLE_ENTRY(glDetachShader, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glDisableVertexAttribArray, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glDrawArraysInstanced, success);
+    ASSIGN_FUNCTION_TABLE_ENTRY(glDrawBuffers, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glDrawElementsInstanced, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glEnableVertexAttribArray, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glFramebufferRenderbuffer, success);

@@ -70,6 +70,7 @@ typedef void (GLAPIENTRY *glDeleteVertexArraysType) (GLsizei, const GLuint*);
 typedef void (GLAPIENTRY *glDetachShaderType) (GLuint, GLuint);
 typedef void (GLAPIENTRY *glDisableVertexAttribArrayType) (GLuint);
 typedef void (GLAPIENTRY *glDrawArraysInstancedType) (GLenum, GLint, GLsizei, GLsizei);
+typedef void (GLAPIENTRY *glDrawBuffersType) (GLsizei, const GLenum*);
 typedef void (GLAPIENTRY *glDrawElementsInstancedType) (GLenum, GLsizei, GLenum, const GLvoid*, GLsizei);
 typedef void (GLAPIENTRY *glEnableVertexAttribArrayType) (GLuint);
 typedef void (GLAPIENTRY *glFramebufferRenderbufferType) (GLenum, GLenum, GLenum, GLuint);
@@ -175,6 +176,7 @@ typedef struct _OpenGLFunctionTable {
     FUNCTION_TABLE_ENTRY(glDetachShader);
     FUNCTION_TABLE_ENTRY(glDisableVertexAttribArray);
     FUNCTION_TABLE_ENTRY(glDrawArraysInstanced);
+    FUNCTION_TABLE_ENTRY(glDrawBuffers);
     FUNCTION_TABLE_ENTRY(glDrawElementsInstanced);
     FUNCTION_TABLE_ENTRY(glEnableVertexAttribArray);
     FUNCTION_TABLE_ENTRY(glFramebufferRenderbuffer);
@@ -290,6 +292,8 @@ typedef struct _OpenGLFunctionTable {
 #define glDisableVertexAttribArray             LOOKUP_GL_FUNCTION(glDisableVertexAttribArray)
 #define glDrawArraysInstancedEXT               glDrawArraysInstanced
 #define glDrawArraysInstanced                  LOOKUP_GL_FUNCTION(glDrawArraysInstanced)
+#define glDrawBuffersEXT                       glDrawBuffers
+#define glDrawBuffers                          LOOKUP_GL_FUNCTION(glDrawBuffers)
 #define glDrawElementsInstancedEXT             glDrawElementsInstanced
 #define glDrawElementsInstanced                LOOKUP_GL_FUNCTION(glDrawElementsInstanced)
 #define glEnableVertexAttribArray              LOOKUP_GL_FUNCTION(glEnableVertexAttribArray)

@@ -1,5 +1,24 @@
 2014-02-21  ChangSeok Oh  <changseok.oh@collabora.com>
 
+        [GTK] Support WEBGL_draw_buffers extension.
+        https://bugs.webkit.org/show_bug.cgi?id=129143
+
+        Reviewed by Dean Jackson.
+
+        Support the WEBGL_draw_buffers WebGL extension for gtk port. Relevant opengl APIs
+        are exposed for WebGLRenderingContext to access them properly.
+
+        Covered by fast/canvas/webgl/webgl-draw-buffers.html
+
+        * platform/graphics/OpenGLShims.cpp:
+        (WebCore::initializeOpenGLShims):
+        * platform/graphics/OpenGLShims.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+        (WebCore::Extensions3DOpenGL::drawBuffersEXT):
+
+2014-02-21  ChangSeok Oh  <changseok.oh@collabora.com>
+
         Mac port uses ANGLE_instanced_arrays related apis through those in GraphicsContext3DCommon.cpp
         https://bugs.webkit.org/show_bug.cgi?id=128803
 
