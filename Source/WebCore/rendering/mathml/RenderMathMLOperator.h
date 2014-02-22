@@ -64,8 +64,9 @@ public:
 
     MathMLElement& element() { return toMathMLElement(nodeForNonAnonymous()); }
 
-    void stretchTo(int heightAboveBaseline, int depthBelowBaseline);
-    int stretchSize() const { return m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline; }
+    void stretchToHeight(int pixelHeight);
+    int stretchHeight() { return m_stretchHeight; }
+    float expandedStretchHeight() const;
     
     bool hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const { return m_operatorFlags & flag; }
 
@@ -110,8 +111,7 @@ private:
     LayoutRect paintCharacter(PaintInfo&, UChar, const LayoutPoint& origin, CharacterPaintTrimming);
     void fillWithExtensionGlyph(PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
 
-    int m_stretchHeightAboveBaseline;
-    int m_stretchDepthBelowBaseline;
+    int m_stretchHeight;
     bool m_isStretched;
 
     UChar m_operator;

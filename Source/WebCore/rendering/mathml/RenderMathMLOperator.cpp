@@ -1120,8 +1120,7 @@ static const Entry dictionary[MATHML_OPDICT_SIZE] = {
 
 RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<RenderStyle> style)
     : RenderMathMLBlock(element, std::move(style))
-    , m_stretchHeightAboveBaseline(0)
-    , m_stretchDepthBelowBaseline(0)
+    , m_stretchHeight(0)
     , m_operator(0)
     , m_stretchyCharacter(nullptr)
     , m_isFencedOperator(false)
@@ -1131,8 +1130,7 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<Rende
 
 RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<RenderStyle> style, UChar operatorChar, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
     : RenderMathMLBlock(element, std::move(style))
-    , m_stretchHeightAboveBaseline(0)
-    , m_stretchDepthBelowBaseline(0)
+    , m_stretchHeight(0)
     , m_operator(operatorChar == hyphenMinus ? minusSign : operatorChar)
     , m_stretchyCharacter(nullptr)
     , m_isFencedOperator(true)
@@ -1252,13 +1250,19 @@ bool RenderMathMLOperator::isChildAllowed(const RenderObject&, const RenderStyle
     return false;
 }
 
-void RenderMathMLOperator::stretchTo(int heightAboveBaseline, int depthBelowBaseline)
+static const float gOperatorExpansion = 1.2f;
+
+float RenderMathMLOperator::expandedStretchHeight() const
 {
-    if (heightAboveBaseline <= m_stretchHeightAboveBaseline && depthBelowBaseline <= m_stretchDepthBelowBaseline)
+    return m_stretchHeight * gOperatorExpansion;
+}
+
+void RenderMathMLOperator::stretchToHeight(int height)
+{
+    if (m_stretchHeight == height)
         return;
 
-    m_stretchHeightAboveBaseline = heightAboveBaseline;
-    m_stretchDepthBelowBaseline = depthBelowBaseline;
+    m_stretchHeight = height;
     updateStyle();
 }
 
@@ -1380,7 +1384,7 @@ RenderMathMLOperator::StretchyCharacter* RenderMathMLOperator::findAcceptableStr
     if (stretchyCharacter->middleGlyph)
         height += glyphHeightForCharacter(stretchyCharacter->middleGlyph);
 
-    if (height > stretchSize())
+    if (height > expandedStretchHeight())
         return 0;
 
     return stretchyCharacter;
@@ -1397,7 +1401,7 @@ void RenderMathMLOperator::updateStyle()
     bool allowStretching = shouldAllowStretching(stretchedCharacter);
 
     float stretchedCharacterHeight = style().fontMetrics().floatHeight();
-    m_isStretched = allowStretching && stretchSize() > stretchedCharacterHeight;
+    m_isStretched = allowStretching && expandedStretchHeight() > stretchedCharacterHeight;
 
     // Sometimes we cannot stretch an operator properly, so in that case, we should just use the original size.
     m_stretchyCharacter = m_isStretched ? findAcceptableStretchyCharacter(stretchedCharacter) : 0;
@@ -1408,14 +1412,14 @@ void RenderMathMLOperator::updateStyle()
 int RenderMathMLOperator::firstLineBaseline() const
 {
     if (m_isStretched)
-        return m_stretchHeightAboveBaseline;
+        return expandedStretchHeight() * 2 / 3 - (expandedStretchHeight() - m_stretchHeight) / 2;
     return RenderMathMLBlock::firstLineBaseline();
 }
 
 void RenderMathMLOperator::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
     if (m_isStretched)
-        logicalHeight = stretchSize();
+        logicalHeight = expandedStretchHeight();
     RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
 }
 
