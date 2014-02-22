@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Antoine Quint
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CodeMirrorDragToAlterNumberController = function(codeMirror)
+WebInspector.DragToAdjustController = function(delegate)
 {
-    this._codeMirror = codeMirror;
+    this._delegate = delegate;
+
+    this._element = null;
     this._active = false;
-    this._dragging = false;
     this._enabled = false;
+    this._dragging = false;
     this._tracksMouseClickAndDrag = false;
 };
 
-WebInspector.CodeMirrorDragToAlterNumberController.StyleClassName = "drag-to-adjust";
+WebInspector.DragToAdjustController.StyleClassName = "drag-to-adjust";
 
-WebInspector.CodeMirrorDragToAlterNumberController.prototype = {
-    constructor: WebInspector.CodeMirrorDragToAlterNumberController,
+WebInspector.DragToAdjustController.prototype = {
+    constructor: WebInspector.DragToAdjustController,
 
     // Public
+
+    get element()
+    {
+        return this._element;
+    },
+
+    set element(element)
+    {
+        this._element = element;
+    },
 
     set enabled(enabled)
     {
         if (this._enabled === enabled)
             return;
-
-        this._element = this._codeMirror.getWrapperElement();
 
         if (enabled) {
             this._element.addEventListener("mouseenter", this);
@@ -55,18 +65,59 @@ WebInspector.CodeMirrorDragToAlterNumberController.prototype = {
         }
     },
 
+    get active()
+    {
+        return this._active;
+    },
+
+    set active(active)
+    {
+        if (!this._element)
+            return;
+        
+        if (this._active === active)
+            return;
+
+        if (active) {
+            WebInspector.notifications.addEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._modifiersDidChange, this);
+            this._element.addEventListener("mousemove", this);
+        } else {
+            WebInspector.notifications.removeEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._modifiersDidChange, this);
+            this._element.removeEventListener("mousemove", this);
+            this._setTracksMouseClickAndDrag(false);
+        }
+
+        this._active = active;
+
+        if (this._delegate && typeof this._delegate.dragToAdjustControllerActiveStateChanged === "function")
+            this._delegate.dragToAdjustControllerActiveStateChanged(this);
+    },
+
+    reset: function()
+    {
+        this._setTracksMouseClickAndDrag(false);
+        this._element.classList.remove(WebInspector.DragToAdjustController.StyleClassName);
+
+        if (this._delegate && typeof this._delegate.dragToAdjustControllerDidReset === "function")
+            this._delegate.dragToAdjustControllerDidReset(this);
+    },
+
     // Protected
 
     handleEvent: function(event)
     {
         switch(event.type) {
         case "mouseenter":
-            if (!this._dragging)
-                this._setActive(true);
+            if (!this._dragging) {
+                if (this._delegate && typeof this._delegate.dragToAdjustControllerCanBeActivated === "function")
+                    this.active = this._delegate.dragToAdjustControllerCanBeActivated(this);
+                else
+                    this.active = true;
+            }
             break;
         case "mouseleave":
             if (!this._dragging)
-                this._setActive(false);
+                this.active = false;
             break;
         case "mousemove":
             if (this._dragging)
@@ -88,24 +139,6 @@ WebInspector.CodeMirrorDragToAlterNumberController.prototype = {
 
     // Private
 
-    _setActive: function(active)
-    {
-        if (this._active === active || this._codeMirror.getOption("readOnly"))
-            return;
-
-        if (active) {
-            WebInspector.notifications.addEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._modifiersDidChange, this);
-            this._element.addEventListener("mousemove", this);
-        } else {
-            WebInspector.notifications.removeEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._modifiersDidChange, this);
-            this._element.removeEventListener("mousemove", this);
-            this._hoveredTokenInfo = null;
-            this._setTracksMouseClickAndDrag(false);
-        }
-
-        this._active = active;
-    },
-
     _setDragging: function(dragging)
     {
         if (this._dragging === dragging)
@@ -126,11 +159,11 @@ WebInspector.CodeMirrorDragToAlterNumberController.prototype = {
             return;
         
         if (tracksMouseClickAndDrag) {
-            this._element.classList.add(WebInspector.CodeMirrorDragToAlterNumberController.StyleClassName);
+            this._element.classList.add(WebInspector.DragToAdjustController.StyleClassName);
             window.addEventListener("mousedown", this, true);
             window.addEventListener("contextmenu", this, true);
         } else {
-            this._element.classList.remove(WebInspector.CodeMirrorDragToAlterNumberController.StyleClassName);
+            this._element.classList.remove(WebInspector.DragToAdjustController.StyleClassName);
             window.removeEventListener("mousedown", this, true);
             window.removeEventListener("contextmenu", this, true);
             this._setDragging(false);
@@ -141,41 +174,20 @@ WebInspector.CodeMirrorDragToAlterNumberController.prototype = {
 
     _modifiersDidChange: function(event)
     {
-        this._setTracksMouseClickAndDrag(this._hoveredTokenInfo && this._hoveredTokenInfo.containsNumber && WebInspector.modifierKeys.altKey);
+        var canBeAdjusted = WebInspector.modifierKeys.altKey;
+        if (canBeAdjusted && this._delegate && typeof this._delegate.dragToAdjustControllerCanBeAdjusted === "function")
+            canBeAdjusted = this._delegate.dragToAdjustControllerCanBeAdjusted(this);
+
+        this._setTracksMouseClickAndDrag(canBeAdjusted);
     },
     
     _mouseMoved: function(event)
     {
-        var position = this._codeMirror.coordsChar({left: event.pageX, top: event.pageY});
-        var token = this._codeMirror.getTokenAt(position);
+        var canBeAdjusted = event.altKey;
+        if (canBeAdjusted && this._delegate && typeof this._delegate.dragToAdjustControllerCanAdjustObjectAtPoint === "function")
+            canBeAdjusted = this._delegate.dragToAdjustControllerCanAdjustObjectAtPoint(this, WebInspector.Point.fromEvent(event));
 
-        if (!token || !token.type || !token.string) {
-            if (this._hoveredTokenInfo)
-                this._reset();
-            return;
-        }
-
-        // Stop right here if we're hovering the same token as we were last time.
-        if (this._hoveredTokenInfo && this._hoveredTokenInfo.line === position.line &&
-            this._hoveredTokenInfo.token.start === token.start && this._hoveredTokenInfo.token.end === token.end)
-            return;
-
-        var containsNumber = token.type.indexOf("number") !== -1;
-        this._hoveredTokenInfo = {
-            token: token,
-            line: position.line,
-            containsNumber: containsNumber,
-            startPosition: {
-                ch: token.start,
-                line: position.line
-            },
-            endPosition: {
-                ch: token.end,
-                line: position.line
-            }
-        };
-
-        this._setTracksMouseClickAndDrag(containsNumber && event.altKey);
+        this._setTracksMouseClickAndDrag(canBeAdjusted);
     },
     
     _mouseWasPressed: function(event)
@@ -203,7 +215,8 @@ WebInspector.CodeMirrorDragToAlterNumberController.prototype = {
         else if (event.shiftKey)
             amount *= 10;
 
-        this._codeMirror.alterNumberInRange(amount, this._hoveredTokenInfo.startPosition, this._hoveredTokenInfo.endPosition, false);
+        if (this._delegate && typeof this._delegate.dragToAdjustControllerWasAdjustedByAmount === "function")
+            this._delegate.dragToAdjustControllerWasAdjustedByAmount(this, amount);
 
         event.preventDefault();
         event.stopPropagation();
@@ -216,19 +229,6 @@ WebInspector.CodeMirrorDragToAlterNumberController.prototype = {
         event.preventDefault();
         event.stopPropagation();
 
-        this._reset();
-    },
-    
-    _reset: function()
-    {
-        this._hoveredTokenInfo = null;
-        this._setTracksMouseClickAndDrag(false);
-        this._element.classList.remove(WebInspector.CodeMirrorDragToAlterNumberController.StyleClassName);
+        this.reset();
     }
 };
-
-CodeMirror.defineOption("dragToAdjustNumbers", true, function(codeMirror, value, oldValue) {
-    if (!codeMirror.dragToAlterNumberController)
-        codeMirror.dragToAlterNumberController = new WebInspector.CodeMirrorDragToAlterNumberController(codeMirror);
-    codeMirror.dragToAlterNumberController.enabled = value;
-});

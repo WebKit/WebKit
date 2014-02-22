@@ -1,3 +1,87 @@
+2014-02-22  Antoine Quint  <graouts@webkit.org>
+
+        Web Inspector: allow drag-to-adjust on angle input of gradients editor
+        https://bugs.webkit.org/show_bug.cgi?id=129095
+
+        Reviewed by Timothy Hatcher.
+
+        Rename CodeMirrorDragToAlterNumberController to CodeMirrorDragToAdjustNumberController and move
+        the core logic of a drag-to-adjust behavior out of it to a new generic class DragToAdjustController.
+        We use this new class from CodeMirrorGradientEditingController to provide drag-to-adjust behavior
+        in the angle input field of the gradient editor and also as a supporting object for the CodeMirror-
+        specific class.
+
+        * UserInterface/CodeMirrorDragToAdjustNumberController.css: Renamed from Source/WebInspectorUI/UserInterface/CodeMirrorDragToAlterNumberController.css.
+        (.CodeMirror.drag-to-adjust .CodeMirror-lines):
+
+        * UserInterface/CodeMirrorDragToAdjustNumberController.js: Added.
+        Removed the UI logic and use the new DragToAdjustController as a supporting object instead. We implement
+        the various DragToAdjustController delegate methods in order to customize its behavior to work within the
+        context of a CodeMirror editor, specifically to prevent activation when the editor is read-only and to
+        prevent adjustment when the hovered token isn't a number.
+
+        (WebInspector.CodeMirrorDragToAdjustNumberController):
+        (WebInspector.CodeMirrorDragToAdjustNumberController.prototype.get enabled):
+        (WebInspector.CodeMirrorDragToAdjustNumberController.prototype.set enabled):
+        (WebInspector.CodeMirrorDragToAdjustNumberController.prototype.dragToAdjustControllerActiveStateChanged):
+        (WebInspector.CodeMirrorDragToAdjustNumberController.prototype.dragToAdjustControllerCanBeActivated):
+        (WebInspector.CodeMirrorDragToAdjustNumberController.prototype.dragToAdjustControllerCanBeAdjusted):
+        (WebInspector.CodeMirrorDragToAdjustNumberController.prototype.dragToAdjustControllerWasAdjustedByAmount):
+        (WebInspector.CodeMirrorDragToAdjustNumberController.prototype.dragToAdjustControllerDidReset):
+        (WebInspector.CodeMirrorDragToAdjustNumberController.prototype.dragToAdjustControllerCanAdjustObjectAtPoint):
+
+        * UserInterface/CodeMirrorGradientEditingController.css:
+        (.gradient-editing-controller > label.drag-to-adjust > input):
+
+        * UserInterface/CodeMirrorGradientEditingController.js:
+        Adopt the new DragToAdjustController to make the angle input field value adjustable by dragging.
+
+        (WebInspector.CodeMirrorGradientEditingController.prototype.popoverWillPresent):
+        (WebInspector.CodeMirrorGradientEditingController.prototype.dragToAdjustControllerWasAdjustedByAmount):
+        (WebInspector.CodeMirrorGradientEditingController.prototype._handleInputEvent):
+        (WebInspector.CodeMirrorGradientEditingController.prototype._angleInputValueDidChange):
+
+        * UserInterface/DragToAdjustController.js: Renamed from Source/WebInspectorUI/UserInterface/CodeMirrorDragToAlterNumberController.js.
+        New DragToAdjustController class exposing only the core UI logic of a drag-to-adjust behavior in the context
+        of a DOM element, exposing a few delegation methods to customize the controller's behavior:
+
+        - dragToAdjustControllerActiveStateChanged() notifies that the .active property has changed, allowing bringup
+        and cleanup work to be performed.
+
+        - dragToAdjustControllerDidReset() notifies that the various tracking states of the controller have been reset
+        allowing other state objects used by clients to be cleared.
+
+        - dragToAdjustControllerCanBeActivated() is used to check whether the controller may enter the active state upon
+        first hovering the target element.
+
+        - dragToAdjustControllerCanBeAdjusted() is used to check whether adjustment can be performed at the moment when
+        the user actually is about to engage in a drag-to-adjust interaction.
+
+        - dragToAdjustControllerCanAdjustObjectAtPoint() is used to check whether the object at the provided point (mouse
+        location) is an adjustable value.
+
+        - dragToAdjustControllerWasAdjustedByAmount() notifies that there is a new amount to add to the current value
+        following a drag-to-adjust interaction.
+
+        (WebInspector.DragToAdjustController):
+        (WebInspector.DragToAdjustController.prototype.get element):
+        (WebInspector.DragToAdjustController.prototype.set element):
+        (WebInspector.DragToAdjustController.prototype.set enabled):
+        (WebInspector.DragToAdjustController.prototype.get active):
+        (WebInspector.DragToAdjustController.prototype.set active):
+        (WebInspector.DragToAdjustController.prototype.reset):
+        (WebInspector.DragToAdjustController.prototype.handleEvent):
+        (WebInspector.DragToAdjustController.prototype._setDragging):
+        (WebInspector.DragToAdjustController.prototype._setTracksMouseClickAndDrag):
+        (WebInspector.DragToAdjustController.prototype._modifiersDidChange):
+        (WebInspector.DragToAdjustController.prototype._mouseMoved):
+        (WebInspector.DragToAdjustController.prototype._mouseWasPressed):
+        (WebInspector.DragToAdjustController.prototype._mouseWasDragged):
+        (WebInspector.DragToAdjustController.prototype._mouseWasReleased):
+
+        * UserInterface/Main.html:
+        Link in new source files.
+
 2014-02-21  Chi Wai Lau  <clau@apple.com>
 
         Web Inspector: Replace binarySearch with lowerBound and upperBound functions

@@ -112,3 +112,8 @@
     font-size: 13px;
     text-align: right;
 }
+
+.gradient-editing-controller > label.drag-to-adjust,
+.gradient-editing-controller > label.drag-to-adjust > input {
+    cursor: col-resize;
+}

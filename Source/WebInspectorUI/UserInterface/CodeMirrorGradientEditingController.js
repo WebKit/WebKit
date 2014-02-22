@@ -114,6 +114,10 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
         this._angleInput.addEventListener("input", this);
         angleLabel.appendChild(this._angleInput);
 
+        var dragToAdjustController = new WebInspector.DragToAdjustController(this);
+        dragToAdjustController.element = angleLabel;
+        dragToAdjustController.enabled = true;
+
         this._updateCSSClassForGradientType();
 
         popover.content = this._container;
@@ -167,6 +171,16 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
         this.popover.update();
     },
 
+    dragToAdjustControllerWasAdjustedByAmount: function(dragToAdjustController, amount)
+    {
+        var angle = parseFloat(this._angleInput.value) + amount;
+        if (Math.round(angle) !== angle)
+            angle = angle.toFixed(1);
+
+        this._angleInput.value = angle;
+        this._angleInputValueDidChange(angle);
+    },
+
     // Private
 
     _handleInputEvent: function(event)
@@ -175,6 +189,11 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
         if (isNaN(angle))
             return;
 
+        this._angleInputValueDidChange(angle);
+    },
+
+    _angleInputValueDidChange: function(angle)
+    {
         this.value.angle = angle;
         this.text = this.value.toString();
 
