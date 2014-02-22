@@ -1,5 +1,21 @@
 2014-02-22  Frédéric Wang  <fred.wang@free.fr>
 
+        Implement asymmetric/symmetric stretching of vertical operators.
+        https://bugs.webkit.org/show_bug.cgi?id=124827.
+
+        Reviewed by Chris Fleizach.
+
+        The MathML code stretches vertical operators asymmetrically by default. This patch takes into account the symmetric attribute or the symmetric property of the operator dictionary to stretch operators symmetrically.
+
+        Test: mathml/presentation/stretchy-depth-height-symmetric.html
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::stretchTo):
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        (WebCore::RenderMathMLOperator::updateStyle):
+
+2014-02-22  Frédéric Wang  <fred.wang@free.fr>
+
         Bug 119043 - Large stretch size error for MathML operators.
         https://bugs.webkit.org/show_bug.cgi?id=119043
 

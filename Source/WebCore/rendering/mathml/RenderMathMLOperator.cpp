@@ -1259,6 +1259,16 @@ void RenderMathMLOperator::stretchTo(int heightAboveBaseline, int depthBelowBase
 
     m_stretchHeightAboveBaseline = heightAboveBaseline;
     m_stretchDepthBelowBaseline = depthBelowBaseline;
+
+    SetOperatorProperties();
+    if (hasOperatorFlag(MathMLOperatorDictionary::Symmetric)) {
+        // We make the operator stretch symmetrically above and below the axis.
+        // FIXME: We should read the axis from the MATH table (https://bugs.webkit.org/show_bug.cgi?id=122297). For now, we use the same value as in RenderMathMLFraction::firstLineBaseline().
+        int axis = static_cast<int>(lroundf(style().fontMetrics().xHeight() / 2));
+        int halfStretchSize = std::max(m_stretchHeightAboveBaseline - axis, m_stretchDepthBelowBaseline + axis);
+        m_stretchHeightAboveBaseline = halfStretchSize + axis;
+        m_stretchDepthBelowBaseline = halfStretchSize - axis;
+    }
     updateStyle();
 }
 
@@ -1347,6 +1357,7 @@ void RenderMathMLOperator::updateFromElement()
     container->addChild(text.leakPtr());
     addChild(container.leakPtr());
 
+    SetOperatorProperties();
     updateStyle();
     setNeedsLayoutAndPrefWidthsRecalc();
 }
@@ -1392,7 +1403,6 @@ void RenderMathMLOperator::updateStyle()
     if (!firstChild())
         return;
 
-    SetOperatorProperties();
     UChar stretchedCharacter;
     bool allowStretching = shouldAllowStretching(stretchedCharacter);
 
