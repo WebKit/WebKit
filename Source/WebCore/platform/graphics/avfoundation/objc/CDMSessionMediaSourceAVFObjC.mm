@@ -71,8 +71,13 @@ PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const St
     systemCode = 0;
 
     m_initData = initData;
+
     String certificateString(ASCIILiteral("certificate"));
-    return Uint8Array::create((uint8_t*)certificateString.getCharactersWithUpconvert<UChar>(), certificateString.length() * sizeof(UChar));
+    RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(certificateString.length(), 2);
+    RefPtr<JSC::Uint16Array> array = JSC::Uint16Array::create(buffer, 0, buffer->byteLength());
+    for (unsigned i = 0, length = certificateString.length(); i < length; ++i)
+        array->set(i, certificateString[i]);
+    return Uint8Array::create(buffer, 0, buffer->byteLength());
 }
 
 void CDMSessionMediaSourceAVFObjC::releaseKeys()

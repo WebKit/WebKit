@@ -1,5 +1,15 @@
 2014-02-21  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed Mac build fix after r164529.
+
+        Replace the string-to-array algorithm with a archictecture-independant
+        one.
+
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::generateKeyRequest):
+
+2014-02-21  Jer Noble  <jer.noble@apple.com>
+
         [EME] Add a CDMSession for MediaPlayerPrivateMediaSourceAVFObjC
         https://bugs.webkit.org/show_bug.cgi?id=129166
 
