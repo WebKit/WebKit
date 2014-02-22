@@ -1,3 +1,10 @@
+2014-02-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r164505
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Update exports
+        definition for TreeScope::getElementById.
+
 2014-02-21  Eric Carlson  <eric.carlson@apple.com>
 
         Fix TimeRanges layering violations
