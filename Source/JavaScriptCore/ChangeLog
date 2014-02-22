@@ -1,3 +1,9 @@
+2014-02-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, ARMv7 build fix.
+
+        * assembler/ARMv7Assembler.h:
+
 2014-02-21  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible for a LinkBuffer to outlive the MacroAssembler and still be useful

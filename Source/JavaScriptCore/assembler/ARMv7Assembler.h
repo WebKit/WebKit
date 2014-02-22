@@ -2875,7 +2875,6 @@ private:
 
         unsigned debugOffset() { return m_buffer.debugOffset(); }
 
-    private:
         AssemblerBuffer m_buffer;
     } m_formatter;
 
