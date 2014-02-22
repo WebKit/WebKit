@@ -1,3 +1,12 @@
+2014-02-21  Sam Weinig  <sam@webkit.org>
+
+        <rdar://problem/16073882> Please add _AbandonCoalition key to plugin XPC service Info.plist
+
+        Anders Carlsson.
+
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist:
+
 2014-02-21  Jeffrey Pfau  <jpfau@apple.com>
 
         [Mac] Cache callbacks for cache partitioning may be passed null

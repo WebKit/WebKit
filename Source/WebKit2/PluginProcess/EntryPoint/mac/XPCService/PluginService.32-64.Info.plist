@@ -44,6 +44,8 @@
 		<true/>
 		<key>_MultipleInstances</key>
 		<true/>
+		<key>_AbandonCoalition</key>
+		<true/>
 		<key>EnvironmentVariables</key>
 		<dict>
 			<key>DYLD_INSERT_LIBRARIES</key>
