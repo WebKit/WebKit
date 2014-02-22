@@ -370,44 +370,6 @@ void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>
 {
 }
 
-void GraphicsContext3D::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
-{
-#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    makeContextCurrent();
-    ::glDrawArraysInstancedARB(mode, first, count, primcount);
-#else
-    UNUSED_PARAM(mode);
-    UNUSED_PARAM(first);
-    UNUSED_PARAM(count);
-    UNUSED_PARAM(primcount);
-#endif
-}
-
-void GraphicsContext3D::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount)
-{
-#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    makeContextCurrent();
-    ::glDrawElementsInstancedARB(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
-#else
-    UNUSED_PARAM(mode);
-    UNUSED_PARAM(count);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(primcount);
-#endif
-}
-
-void GraphicsContext3D::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
-{
-#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    makeContextCurrent();
-    ::glVertexAttribDivisorARB(index, divisor);
-#else
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(divisor);
-#endif
-}
-
 }
 
 #endif // USE(3D_GRAPHICS)

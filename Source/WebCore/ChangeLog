@@ -1,3 +1,22 @@
+2014-02-21  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Mac port uses ANGLE_instanced_arrays related apis through those in GraphicsContext3DCommon.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=128803
+
+        Reviewed by Dean Jackson.
+
+        Merge mac port implementation of ANGLE_instanced_arrays into common code.
+
+        No new tests, no functionality changed.
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::drawArraysInstanced):
+        (WebCore::Extensions3DOpenGL::drawElementsInstanced):
+        (WebCore::Extensions3DOpenGL::vertexAttribDivisor):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::vertexAttribDivisor):
+
 2014-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         After copy and paste, cursor may appear to be above the bottom of content
