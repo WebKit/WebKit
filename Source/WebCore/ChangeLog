@@ -1,3 +1,13 @@
+2014-02-21  Alexey Proskuryakov  <ap@apple.com>
+
+        CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify contains seemingly accidental unreachable code
+        https://bugs.webkit.org/show_bug.cgi?id=129193
+
+        Reviewed by Joseph Pecoraro.
+
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify): Fix the accidental code.
+
 2014-02-21  Brent Fulgham  <bfulgham@apple.com>
 
         Extend media support for WebVTT sources
