@@ -5541,6 +5541,7 @@
 		CDDC1E7A18A952F30027A9D4 /* MediaSourcePrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDC1E7918A952F30027A9D4 /* MediaSourcePrivateClient.h */; };
 		CDDD571518B57A8200A94FCB /* CDMSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDE02E918B3DFC700CF7FF1 /* CDMSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDDE02ED18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDDE02EB18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm */; };
+		CDDE02F018B5651300CF7FF1 /* CDMSessionMediaSourceAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDDE02EF18B5651200CF7FF1 /* CDMSessionMediaSourceAVFObjC.mm */; };
 		CDE3A85417F5FCE600C5BE20 /* AudioTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE3A85217F5FCE600C5BE20 /* AudioTrackPrivateAVF.h */; };
 		CDE3A85717F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */; };
 		CDE3A85817F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */; };
@@ -12809,6 +12810,8 @@
 		CDDE02E918B3DFC700CF7FF1 /* CDMSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDMSession.h; sourceTree = "<group>"; };
 		CDDE02EA18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDMSessionAVFoundationObjC.h; path = objc/CDMSessionAVFoundationObjC.h; sourceTree = "<group>"; };
 		CDDE02EB18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CDMSessionAVFoundationObjC.mm; path = objc/CDMSessionAVFoundationObjC.mm; sourceTree = "<group>"; };
+		CDDE02EE18B564FA00CF7FF1 /* CDMSessionMediaSourceAVFObjC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CDMSessionMediaSourceAVFObjC.h; path = objc/CDMSessionMediaSourceAVFObjC.h; sourceTree = "<group>"; };
+		CDDE02EF18B5651200CF7FF1 /* CDMSessionMediaSourceAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CDMSessionMediaSourceAVFObjC.mm; path = objc/CDMSessionMediaSourceAVFObjC.mm; sourceTree = "<group>"; };
 		CDE3A85217F5FCE600C5BE20 /* AudioTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackPrivateAVF.h; sourceTree = "<group>"; };
 		CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AudioTrackPrivateAVFObjC.mm; path = objc/AudioTrackPrivateAVFObjC.mm; sourceTree = "<group>"; };
 		CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioTrackPrivateAVFObjC.h; path = objc/AudioTrackPrivateAVFObjC.h; sourceTree = "<group>"; };
@@ -21012,6 +21015,8 @@
 				CD336F5F17F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm */,
 				CDDE02EA18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.h */,
 				CDDE02EB18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm */,
+				CDDE02EE18B564FA00CF7FF1 /* CDMSessionMediaSourceAVFObjC.h */,
+				CDDE02EF18B5651200CF7FF1 /* CDMSessionMediaSourceAVFObjC.mm */,
 				07AA6B69166D019500D45671 /* InbandTextTrackPrivateAVFObjC.h */,
 				07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */,
 				07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */,
@@ -29015,6 +29020,7 @@
 				511EF2C617F0FD3500E4FA16 /* JSIDBKeyRange.cpp in Sources */,
 				49C7B9D41042D32F0009D447 /* WebGLObject.cpp in Sources */,
 				51D719D8181106E00016DC51 /* IDBIndex.cpp in Sources */,
+				CDDE02F018B5651300CF7FF1 /* CDMSessionMediaSourceAVFObjC.mm in Sources */,
 				49C7B9D61042D32F0009D447 /* WebGLProgram.cpp in Sources */,
 				49C7B9D91042D32F0009D447 /* WebGLRenderbuffer.cpp in Sources */,
 				49C7B9DF1042D32F0009D447 /* WebGLRenderingContext.cpp in Sources */,

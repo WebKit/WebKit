@@ -115,6 +115,10 @@ SOFT_LINK(CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStr
 - (void)appendStreamData:(NSData *)data;
 - (void)setShouldProvideMediaData:(BOOL)shouldProvideMediaData forTrackID:(CMPersistentTrackID)trackID;
 - (BOOL)shouldProvideMediaDataForTrackID:(CMPersistentTrackID)trackID;
+- (void)processContentKeyResponseData:(NSData *)contentKeyResponseData forTrackID:(CMPersistentTrackID)trackID;
+- (void)processContentKeyResponseError:(NSError *)error forTrackID:(CMPersistentTrackID)trackID;
+- (void)renewExpiringContentKeyResponseDataForTrackID:(CMPersistentTrackID)trackID;
+- (NSData *)streamingContentKeyRequestDataForApp:(NSData *)appIdentifier contentIdentifier:(NSData *)contentIdentifier trackID:(CMPersistentTrackID)trackID options:(NSDictionary *)options error:(NSError **)outError;
 @end
 
 #pragma mark -
@@ -217,6 +221,15 @@ SOFT_LINK(CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStr
 #endif
     ASSERT(streamDataParser == _parser);
     _parent->didReachEndOfTrackWithTrackID(trackID, mediaType);
+}
+
+- (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideContentKeyRequestInitializationData:(NSData *)initData forTrackID:(CMPersistentTrackID)trackID
+{
+#if ASSERT_DISABLED
+    UNUSED_PARAM(streamDataParser);
+#endif
+    ASSERT(streamDataParser == _parser);
+    _parent->didProvideContentKeyRequestInitializationDataForTrackID(initData, trackID);
 }
 @end
 
@@ -327,6 +340,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     , m_client(0)
     , m_parsingSucceeded(true)
     , m_enabledVideoTrackID(-1)
+    , m_protectedTrackID(-1)
 {
 }
 
@@ -410,6 +424,20 @@ void SourceBufferPrivateAVFObjC::didReachEndOfTrackWithTrackID(int trackID, cons
     UNUSED_PARAM(mediaType);
     UNUSED_PARAM(trackID);
     notImplemented();
+}
+
+void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(NSData* initData, int trackID)
+{
+    UNUSED_PARAM(trackID);
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    LOG(Media, "SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(%p) - track:%d", this, trackID);
+    m_protectedTrackID = trackID;
+    RefPtr<Uint8Array> initDataArray = Uint8Array::create([initData length]);
+    [initData getBytes:initDataArray->data() length:initDataArray->length()];
+    m_mediaSource->sourceBufferKeyNeeded(this, initDataArray.get());
+#else
+    UNUSED_PARAM(initData);
+#endif
 }
 
 void SourceBufferPrivateAVFObjC::setClient(SourceBufferPrivateClient* client)

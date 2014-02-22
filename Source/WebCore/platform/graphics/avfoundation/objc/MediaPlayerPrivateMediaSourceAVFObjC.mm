@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#import "CDMSession.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "MediaTimeMac.h"
@@ -165,7 +166,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar(create, getSupportedTypes, supportsType, 0, 0, 0, 0);
+        registrar(create, getSupportedTypes, supportsType, 0, 0, 0, supportsKeySystem);
 }
 
 PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateMediaSourceAVFObjC::create(MediaPlayer* player)
@@ -204,8 +205,20 @@ void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String>& ty
     types = mimeTypeCache();
 }
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+static bool keySystemIsSupported(const String& keySystem)
+{
+    return equalIgnoringCase(keySystem, "com.apple.fps.2_0");
+}
+#endif
+
 MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
 {
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    if (!parameters.keySystem.isEmpty() && !keySystemIsSupported(parameters.keySystem))
+            return MediaPlayer::IsNotSupported;
+#endif
+
     // This engine does not support non-media-source sources.
     if (!parameters.isMediaSource)
         return MediaPlayer::IsNotSupported;
@@ -220,6 +233,25 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
 
     NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)parameters.type, (NSString *)parameters.codecs];
     return [getAVURLAssetClass() isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::supportsKeySystem(const String& keySystem, const String& mimeType)
+{
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    if (!keySystem.isEmpty()) {
+        if (!keySystemIsSupported(keySystem))
+            return false;
+
+        if (!mimeType.isEmpty() && !mimeTypeCache().contains(mimeType))
+            return false;
+
+        return true;
+    }
+#else
+    UNUSED_PARAM(keySystem);
+    UNUSED_PARAM(mimeType);
+#endif
+    return false;
 }
 
 #pragma mark -
@@ -535,6 +567,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::sizeChanged()
 }
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
+std::unique_ptr<CDMSession> MediaPlayerPrivateMediaSourceAVFObjC::createSession(const String& keySystem)
+{
+    if (!m_mediaSourcePrivate)
+        return nullptr;
+
+    return m_mediaSourcePrivate->createSession(keySystem);
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)
 {
     m_player->keyNeeded(initData);

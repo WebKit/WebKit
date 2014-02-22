@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#import "CDMSessionMediaSourceAVFObjC.h"
 #import "ContentType.h"
 #import "ExceptionCodePlaceholder.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
@@ -136,6 +137,26 @@ void MediaSourcePrivateAVFObjC::sourceBufferPrivateDidChangeActiveState(SourceBu
             m_activeSourceBuffers.remove(position);
     }
 }
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+std::unique_ptr<CDMSession> MediaSourcePrivateAVFObjC::createSession(const String&)
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (m_sourceBuffersNeedingSessions.isEmpty())
+        return nullptr;
+    return std::make_unique<CDMSessionMediaSourceAVFObjC>(m_sourceBuffersNeedingSessions.takeFirst());
+#endif
+    return nullptr;
+}
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+void MediaSourcePrivateAVFObjC::sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC* buffer, Uint8Array* initData)
+{
+    m_sourceBuffersNeedingSessions.append(buffer);
+    player()->keyNeeded(initData);
+}
+#endif
 
 static bool MediaSourcePrivateAVFObjCHasAudio(PassRefPtr<SourceBufferPrivateAVFObjC> prpSourceBuffer)
 {

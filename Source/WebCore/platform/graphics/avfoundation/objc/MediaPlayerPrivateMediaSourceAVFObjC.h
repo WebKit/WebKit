@@ -73,6 +73,7 @@ public:
     void sizeChanged();
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
+    virtual std::unique_ptr<CDMSession> createSession(const String&);
     void keyNeeded(Uint8Array*);
 #endif
 
@@ -159,6 +160,7 @@ private:
     static bool isAvailable();
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
+    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
 
     friend class MediaSourcePrivateAVFObjC;
 

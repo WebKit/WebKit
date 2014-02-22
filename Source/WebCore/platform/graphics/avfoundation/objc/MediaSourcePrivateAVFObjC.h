@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #include "MediaSourcePrivate.h"
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -42,6 +43,7 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
+class CDMSession;
 class MediaPlayerPrivateMediaSourceAVFObjC;
 class SourceBufferPrivateAVFObjC;
 class TimeRanges;
@@ -68,11 +70,18 @@ public:
     MediaTime seekToTime(MediaTime, MediaTime negativeThreshold, MediaTime positiveThreshold);
     IntSize naturalSize() const;
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    std::unique_ptr<CDMSession> createSession(const String&);
+#endif
+
 private:
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC*);
 
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateAVFObjC*, bool active);
     void sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivateAVFObjC*);
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    void sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC*, Uint8Array*);
+#endif
     void monitorSourceBuffers();
     void removeSourceBuffer(SourceBufferPrivate*);
 
@@ -82,6 +91,7 @@ private:
     double m_duration;
     Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;
     Vector<SourceBufferPrivateAVFObjC*> m_activeSourceBuffers;
+    Deque<SourceBufferPrivateAVFObjC*> m_sourceBuffersNeedingSessions;
     bool m_isEnded;
 };
 

@@ -1,3 +1,46 @@
+2014-02-21  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Add a CDMSession for MediaPlayerPrivateMediaSourceAVFObjC
+        https://bugs.webkit.org/show_bug.cgi?id=129166
+
+        Reviewed by Eric Carlson.
+
+        Add a new CDMSession, cerated by MediaPlayerPrivateMediaSourceAVFObjC allowing
+        media-source-backed media elements to play protected content.
+
+        Add a new CDMSessionMediaSourceAVFObjC class:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h: Added.
+        (WebCore::CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC):
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm: Added.
+        (WebCore::CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC):
+        (WebCore::CDMSessionMediaSourceAVFObjC::generateKeyRequest): Do not actually generate a
+            key request until the certificate data has been added via update();
+        (WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys): No-op.
+        (WebCore::CDMSessionMediaSourceAVFObjC::update): If no certificate data has yet been
+            added, assume the incoming message contains it.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine): Add supportsKeySystem.
+        (WebCore::keySystemIsSupported): Use "com.apple.fps.2_0" to distinguish from the not-media-source scheme.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType): Check the keySystem type.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsKeySystem): Added.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::createSession): Added, pass through to MediaSourcePrivate.
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::createSession): Added.
+        (WebCore::MediaSourcePrivateAVFObjC::sourceBufferKeyNeeded): Pass through to MediaPlayer.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeyRequestInitializationData:forTrackID:]):
+            Added, pass through to SourceBufferPrivate.
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID): Remember
+            which track is requesting the key, and pass the request to MediaSourcePrivate.
+
+        Add new files to the project.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-02-21  Alexey Proskuryakov  <ap@apple.com>
 
         CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify contains seemingly accidental unreachable code
