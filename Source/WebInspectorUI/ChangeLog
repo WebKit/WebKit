@@ -1,3 +1,18 @@
+2014-02-21  Chi Wai Lau  <clau@apple.com>
+
+        Web Inspector: Replace binarySearch with lowerBound and upperBound functions
+        https://bugs.webkit.org/show_bug.cgi?id=118609
+
+        Reviewed by Timothy Hatcher.
+
+        This makes insertionIndexForObjectInListSortedByFunction work in O(log(n)) time instead of O(n).
+
+        * UserInterface/BinarySearch.js: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Utilities.js:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
 2014-02-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: animate breakpoint tree elements when probe samples are received

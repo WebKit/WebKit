@@ -36,6 +36,68 @@ function test()
                 testArray(testArrays[i]);
             next();
         },
+        
+        function lowerBoundTest(next)
+        {
+            var testArrays = [
+                [],
+                [1],
+                [-1, -1, 0, 0, 0, 0, 2, 3, 4, 4, 4, 7, 9, 9, 9]
+            ];
+        
+            function testArray(array, useComparator)
+            {
+                function comparator(a, b)
+                {
+                    return a < b ? -1 : (a > b ? 1 : 0);
+                }
+        
+                for (var value = -2; value <= 12; ++value) {
+                    var index = useComparator ? array.lowerBound(value, comparator) : array.lowerBound(value);
+                    InspectorTest.assertTrue(0 <= index && index <= array.length, "index is within bounds");
+                    InspectorTest.assertTrue(index === 0 || array[index - 1] < value, "array[index - 1] < value");
+                    InspectorTest.assertTrue(index === array.length || array[index] >= value, "array[index] >= value");
+                    
+                }
+            }
+        
+            for (var i = 0, l = testArrays.length; i < l; ++i) {
+                testArray(testArrays[i], false);
+                testArray(testArrays[i], true);
+            }
+            next();
+        },
+        
+        function upperBoundTest(next)
+        {
+            var testArrays = [
+                [],
+                [1],
+                [-1, -1, 0, 0, 0, 0, 2, 3, 4, 4, 4, 7, 9, 9, 9]
+            ];
+        
+            function testArray(array, useComparator)
+            {
+                function comparator(a, b)
+                {
+                    return a < b ? -1 : (a > b ? 1 : 0);
+                }
+        
+                for (var value = -2; value <= 12; ++value) {
+                    var index = useComparator ? array.upperBound(value, comparator) : array.upperBound(value);
+                    InspectorTest.assertTrue(0 <= index && index <= array.length, "index is within bounds");
+                    InspectorTest.assertTrue(index === 0 || array[index - 1] <= value, "array[index - 1] <= value");
+                    InspectorTest.assertTrue(index === array.length || array[index] > value, "array[index] > value");
+                }
+            }
+        
+            for (var i = 0, l = testArrays.length; i < l; ++i) {
+                testArray(testArrays[i], false);
+                testArray(testArrays[i], true);
+            }
+            next();
+        },
+        
 
         function qselectTest(next)
         {
@@ -60,13 +122,13 @@ function test()
                     min: sorted[0],
                     median: sorted[Math.floor(sorted.length / 2)],
                     max: sorted[sorted.length - 1]
-                }
+                };
 
                 var actual = {
                     min: array.slice(0).qselect(0),
                     median: array.slice(0).qselect(Math.floor(array.length / 2)),
                     max: array.slice(0).qselect(array.length - 1)
-                }
+                };
                 InspectorTest.addResult("Array: " + JSON.stringify(array));
                 InspectorTest.addResult("Reference: " + JSON.stringify(reference));
                 InspectorTest.addResult("Actual:    " + JSON.stringify(actual));

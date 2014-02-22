@@ -236,7 +236,6 @@
     <None Include="..\UserInterface\ApplicationCacheManifest.js" />
     <None Include="..\UserInterface\ApplicationCacheManifestTreeElement.js" />
     <None Include="..\UserInterface\ApplicationCacheObserver.js" />
-    <None Include="..\UserInterface\BinarySearch.js" />
     <None Include="..\UserInterface\BlankStylePropertiesSection.js" />
     <None Include="..\UserInterface\BottomUpProfileDataGridTree.js" />
     <None Include="..\UserInterface\BoxModelDetailsSectionRow.css" />

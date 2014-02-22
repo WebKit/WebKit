@@ -426,25 +426,6 @@ Object.defineProperty(Array.prototype, "keySet",
     }
 });
 
-Object.defineProperty(Array.prototype, "upperBound",
-{
-    value: function(value)
-    {
-        var first = 0;
-        var count = this.length;
-        while (count > 0) {
-          var step = count >> 1;
-          var middle = first + step;
-          if (value >= this[middle]) {
-              first = middle + 1;
-              count -= step + 1;
-          } else
-              count = step;
-        }
-        return first;
-    }
-});
-
 Object.defineProperty(String.prototype, "trimMiddle",
 {
     value: function(maxLength)
@@ -953,4 +934,79 @@ function simpleGlobStringToRegExp(globString, regExpFlags)
     }
 
     return new RegExp(regexString, regExpFlags);
+}
+
+Object.defineProperty(Array.prototype, "lowerBound",
+{
+    // Return index of the leftmost element that is equal or greater
+    // than the specimen object. If there's no such element (i.e. all
+    // elements are smaller than the specimen) returns array.length.
+    // The function works for sorted array.
+    value: function(object, comparator)
+    {
+        function defaultComparator(a, b)
+        {
+            return a - b;
+        }
+        comparator = comparator || defaultComparator;
+        var l = 0;
+        var r = this.length;
+        while (l < r) {
+            var m = (l + r) >> 1;
+            if (comparator(object, this[m]) > 0)
+                l = m + 1;
+            else
+                r = m;
+        }
+        return r;
+    }
+});
+
+Object.defineProperty(Array.prototype, "upperBound",
+{
+    // Return index of the leftmost element that is greater
+    // than the specimen object. If there's no such element (i.e. all
+    // elements are smaller than the specimen) returns array.length.
+    // The function works for sorted array.
+    value: function(object, comparator)
+    {
+        function defaultComparator(a, b)
+        {
+            return a - b;
+        }
+        comparator = comparator || defaultComparator;
+        var l = 0;
+        var r = this.length;
+        while (l < r) {
+            var m = (l + r) >> 1;
+            if (comparator(object, this[m]) >= 0)
+                l = m + 1;
+            else
+                r = m;
+        }
+        return r;
+    }
+});
+
+Object.defineProperty(Array.prototype, "binaryIndexOf",
+{
+    value: function(value, comparator)
+    {
+        var index = this.lowerBound(value, comparator);
+        return index < this.length && comparator(value, this[index]) === 0 ? index : -1;
+    }
+});
+
+function insertionIndexForObjectInListSortedByFunction(object, list, comparator, insertionIndexAfter)
+{
+    if (insertionIndexAfter) {
+        return list.upperBound(object, comparator);
+    } else {
+        return list.lowerBound(object, comparator);
+    }
+}
+
+function insertObjectIntoSortedArray(object, array, comparator)
+{
+    array.splice(insertionIndexForObjectInListSortedByFunction(object, array, comparator), 0, object);
 }

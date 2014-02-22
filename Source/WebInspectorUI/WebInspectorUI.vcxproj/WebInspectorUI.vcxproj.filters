@@ -69,9 +69,6 @@
     <None Include="..\UserInterface\ApplicationCacheObserver.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\BinarySearch.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\BlankStylePropertiesSection.js">
       <Filter>UserInterface</Filter>
     </None>
