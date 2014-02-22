@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,47 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
     font-family: -apple-system-font;
 }
 
+video::-webkit-media-controls-panel input[type="button"],
+audio::-webkit-media-controls-panel input[type="button"],
+video::-webkit-media-controls-panel button,
+audio::-webkit-media-controls-panel button {
+    padding: 0;
+    border: none;
+    -webkit-appearance: none;
+}
+
+video::-webkit-media-controls-wireless-playback-status,
+audio::-webkit-media-controls-wireless-playback-status {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 100% 50%;
+}
+
+video::-webkit-media-controls-wireless-playback-status.hidden,
+audio::-webkit-media-controls-wireless-playback-status.hidden {
+    display: none;
+}
+
+video::-webkit-media-controls-wireless-playback-picker-button,
+audio::-webkit-media-controls-wireless-playback-picker-button {
+    display: block;
+    width: 21px;
+    height: 21px;
+    background-color: rgb(92, 92, 92);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: 0 1px;
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 305"><g fill="white"><polygon points="50.699,293 175,146 299.302,293"/><polygon points="9,9 9,213 97.392,213 110.921,197 25,197 25,25 325,25 325,197 239.079,197 252.608,213 341,213 341,9"/></g></svg>');
+}
+
+video::-webkit-media-controls-wireless-playback-picker-button.active,
+audio::-webkit-media-controls-wireless-playback-picker-button.active {
+    background-color: #1060FE;
+}
+
 video::-webkit-media-text-track-container,
 audio::-webkit-media-text-track-container {
     position: relative;
@@ -64,7 +105,7 @@ audio::-webkit-media-text-track-container {
 video::-webkit-media-controls-panel,
 audio::-webkit-media-controls-panel {
     box-sizing: border-box;
-    position: relative;
+    position: absolute;
     bottom: 0;
     width: 100%;
     padding-bottom: 1px;
@@ -90,7 +131,6 @@ video::-webkit-media-controls-panel.paused,
 video::-webkit-media-controls-panel:hover {
     opacity: 1;
 }
-
 
 video::-webkit-media-controls-rewind-button,
 audio::-webkit-media-controls-rewind-button,

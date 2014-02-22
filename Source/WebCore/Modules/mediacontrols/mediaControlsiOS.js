@@ -5,11 +5,19 @@ function createControls(root, video, host)
 
 function ControllerIOS(root, video, host)
 {
+    this.hasWirelessPlaybackTargets = false;
     Controller.call(this, root, video, host);
+
+    this.updateWirelessTargetAvailable();
+    this.updateWirelessPlaybackStatus();
 };
 
 /* Enums */
 ControllerIOS.StartPlaybackControls = 2;
+
+/* Globals */
+ControllerIOS.gWirelessImage = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 245"><g fill="#1060FE"><path d="M193.6,6.3v121.6H6.4V6.3H193.6 M199.1,0.7H0.9v132.7h198.2V0.7L199.1,0.7z"/><path d="M43.5,139.3c15.8,8,35.3,12.7,56.5,12.7s40.7-4.7,56.5-12.7H43.5z"/></g><g text-anchor="middle" font-family="Helvetica Neue"><text x="100" y="204" fill="white" font-size="24">##DEVICE_TYPE##</text><text x="100" y="234" fill="#5C5C5C" font-size="21">##DEVICE_NAME##</text></g></svg>';
+ControllerIOS.gSimulateWirelessPlaybackTarget = false; // Used for testing when there are no wireless targets.
 
 ControllerIOS.prototype = {
     addVideoListeners: function() {
@@ -17,6 +25,11 @@ ControllerIOS.prototype = {
 
         this.listenFor(this.video, 'webkitbeginfullscreen', this.handleFullscreenChange);
         this.listenFor(this.video, 'webkitendfullscreen', this.handleFullscreenChange);
+
+        if (window.WebKitPlaybackTargetAvailabilityEvent) {
+            this.listenFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
+            this.listenFor(this.video, 'webkitplaybacktargetavailabilitychanged', this.handleWirelessTargetAvailableChange);
+        }
     },
 
     removeVideoListeners: function() {
@@ -24,8 +37,12 @@ ControllerIOS.prototype = {
 
         this.stopListeningFor(this.video, 'webkitbeginfullscreen', this.handleFullscreenChange);
         this.stopListeningFor(this.video, 'webkitendfullscreen', this.handleFullscreenChange);
-    },
 
+        if (window.WebKitPlaybackTargetAvailabilityEvent) {
+            this.stopListeningFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
+            this.stopListeningFor(this.video, 'webkitplaybacktargetavailabilitychanged', this.handleWirelessTargetAvailableChange);
+        }
+    },
 
     createBase: function() {
         Controller.prototype.createBase.call(this);
@@ -37,6 +54,22 @@ ControllerIOS.prototype = {
         this.listenFor(this.base, 'touchstart', this.handleWrapperTouchStart);
         this.stopListeningFor(this.base, 'mousemove', this.handleWrapperMouseMove);
         this.stopListeningFor(this.base, 'mouseout', this.handleWrapperMouseOut);
+    },
+
+    UIString: function(s){
+        var string = Controller.prototype.UIString.call(this, s);
+        if (string)
+            return string;
+
+        if (this.localizedStrings[s])
+            return this.localizedStrings[s];
+        else
+            return s; // FIXME: LOG something if string not localized.
+    },
+    localizedStrings: {
+        // FIXME: Move localization to ext strings file <http://webkit.org/b/120956>
+        '##DEVICE_TYPE##': 'AirPlay',
+        '##DEVICE_NAME##': 'This video is playing on "##DEVICE_NAME##".',
     },
 
     shouldHaveStartPlaybackButton: function() {
@@ -68,11 +101,59 @@ ControllerIOS.prototype = {
     },
 
     shouldHaveAnyUI: function() {
-        return this.shouldHaveStartPlaybackButton() || Controller.prototype.shouldHaveAnyUI.call(this);
+        return this.shouldHaveStartPlaybackButton() || Controller.prototype.shouldHaveAnyUI.call(this) || this.currentPlaybackTargetIsWireless();
+    },
+
+    currentPlaybackTargetIsWireless: function()
+    {
+        return ControllerIOS.gSimulateWirelessPlaybackTarget || ((typeof this.video.webkitCurrentPlaybackTargetIsWireless === "function") && this.video.webkitCurrentPlaybackTargetIsWireless());
+    },
+
+    updateWirelessPlaybackStatus: function()
+    {
+        if (this.currentPlaybackTargetIsWireless()) {
+            var backgroundImageSVG = "url('" + ControllerIOS.gWirelessImage + "')";
+
+            var deviceType = this.UIString('##DEVICE_TYPE##');
+            backgroundImageSVG = backgroundImageSVG.replace('##DEVICE_TYPE##', deviceType);
+
+            // FIXME: Get the device type and name from the host.
+            var deviceName = "unknown";
+            var deviceName = this.UIString('##DEVICE_NAME##').replace('##DEVICE_NAME##', deviceName);;
+            backgroundImageSVG = backgroundImageSVG.replace('##DEVICE_NAME##', deviceName);
+
+            this.controls.wirelessPlaybackStatus.style.backgroundImage = backgroundImageSVG;
+            this.controls.wirelessPlaybackStatus.setAttribute('aria-label', deviceType + ", " + deviceName);
+
+            this.controls.wirelessPlaybackStatus.classList.remove(this.ClassNames.hidden);
+            this.controls.wirelessTargetPicker.classList.add(this.ClassNames.active);
+        } else {
+            this.controls.wirelessPlaybackStatus.classList.add(this.ClassNames.hidden);
+            this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.active);
+        }
+    },
+
+    updateWirelessTargetAvailable: function()
+    {
+        if (ControllerIOS.gSimulateWirelessPlaybackTarget || this.hasWirelessPlaybackTargets)
+            this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.hidden);
+        else
+            this.controls.wirelessTargetPicker.classList.add(this.ClassNames.hidden);
     },
 
     createControls: function() {
         Controller.prototype.createControls.call(this);
+
+        var wirelessPlaybackStatus = this.controls.wirelessPlaybackStatus = document.createElement('div');
+        wirelessPlaybackStatus.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-status');
+        wirelessPlaybackStatus.classList.add(this.ClassNames.hidden);
+
+        var wirelessTargetPicker = this.controls.wirelessTargetPicker = document.createElement('button');
+        wirelessTargetPicker.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-picker-button');
+        wirelessTargetPicker.setAttribute('aria-label', this.UIString('Choose Wireless Display'));
+        this.listenFor(wirelessTargetPicker, 'click', this.handleWirelessPickerButtonClicked);
+        if (!ControllerIOS.gSimulateWirelessPlaybackTarget)
+            wirelessTargetPicker.classList.add(this.ClassNames.hidden);
 
         this.listenFor(this.controls.startPlaybackButton, 'touchstart', this.handleStartPlaybackButtonTouchStart);
         this.listenFor(this.controls.startPlaybackButton, 'touchend', this.handleStartPlaybackButtonTouchEnd);
@@ -111,8 +192,11 @@ ControllerIOS.prototype = {
     },
 
     configureInlineControls: function() {
+        this.base.appendChild(this.controls.wirelessPlaybackStatus);
+
         this.controls.panel.appendChild(this.controls.playButton);
         this.controls.panel.appendChild(this.controls.timelineBox);
+        this.controls.panel.appendChild(this.controls.wirelessTargetPicker);
         this.controls.timelineBox.appendChild(this.controls.currentTime);
         this.controls.timelineBox.appendChild(this.controls.timeline);
         this.controls.timelineBox.appendChild(this.controls.remainingTime);
@@ -274,6 +358,21 @@ ControllerIOS.prototype = {
         this.updateControls();
     },
 
+    handleWirelessPlaybackChange: function(event)
+    {
+        updateWirelessPlaybackStatus();
+    },
+
+    handleWirelessTargetAvailableChange: function(event)
+    {
+        this.hasWirelessPlaybackTargets = event.availability == "available";
+        updateWirelessTargetAvailable();
+    },
+
+    handleWirelessPickerButtonClicked: function(event)
+    {
+        video.webkitShowPlaybackTargetPicker();
+    },
 };
 
 Object.create(Controller.prototype).extend(ControllerIOS.prototype);

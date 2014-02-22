@@ -1,3 +1,45 @@
+2014-02-21  Dean Jackson  <dino@apple.com>
+
+        [iOS Media] Wireless target UI
+        https://bugs.webkit.org/show_bug.cgi?id=129189
+        <rdar://problem/15349928>
+        <rdar://problem/16100060>
+
+        Reviewed by Eric Carlson.
+
+        Implement a prototype UI for wireless playback targets. The UI
+        doesn't currently work, but can be simulated via a class variable
+        in ControllerIOS.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-panel button): Reset the default style of
+        button elements, to avoid getting a border.
+        (audio::-webkit-media-controls-wireless-playback-status): Holds the UI showing
+        the user that the media is playing on another target.
+        (audio::-webkit-media-controls-wireless-playback-status.hidden):
+        (audio::-webkit-media-controls-wireless-playback-picker-button): The button to
+        trigger selection of targets.
+        (audio::-webkit-media-controls-wireless-playback-picker-button.active):
+        (audio::-webkit-media-controls-panel): This needs to be position absolute for
+        the wireless playback status to fill the viewport.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS): Check for targets.
+        (ControllerIOS.prototype.addVideoListeners):
+        (ControllerIOS.prototype.removeVideoListeners):
+        (ControllerIOS.prototype.UIString): New method to return localized strings (with
+        a FIXME).
+        (ControllerIOS.prototype.shouldHaveAnyUI): Needs to display if there is a wireless
+        target.
+        (ControllerIOS.prototype.currentPlaybackTargetIsWireless):
+        (ControllerIOS.prototype.updateWirelessPlaybackStatus): Create the status content,
+        replacing the device name if it is available.
+        (ControllerIOS.prototype.updateWirelessTargetAvailable):
+        (ControllerIOS.prototype.createControls):
+        (ControllerIOS.prototype.configureInlineControls):
+        (ControllerIOS.prototype.handleWirelessPlaybackChange):
+        (ControllerIOS.prototype.handleWirelessTargetAvailableChange):
+        (ControllerIOS.prototype.handleWirelessPickerButtonClicked):
+
 2014-02-21  Jer Noble  <jer.noble@apple.com>
 
         Make a generic CDMPrivateMediaPlayer and move its CDMSession into platform/.
