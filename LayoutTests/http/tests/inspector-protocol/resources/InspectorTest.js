@@ -184,7 +184,6 @@ InspectorTest.initializeInspectorModels = function()
         "Base/Object",
 
         "Base/DOMUtilities",
-        "Base/Setting",
         "Base/URLUtilities",
         "Base/Utilities",
 
@@ -225,6 +224,7 @@ InspectorTest.initializeInspectorModels = function()
         "Models/ResourceCollection",
         "Models/Revision",
         "Models/Script",
+        "Models/Setting",
         "Models/SourceCodeLocation",
         "Models/SourceCodeRevision",
         "Models/SourceMapResource",
