@@ -1,8 +1,21 @@
+2014-02-21  Dan Bernstein  <mitz@apple.com>
+
+        Made WKWebView implement all WKContentViewDelegate methods.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeViewSnapshotForContentView:]): Moved from WKViewIOS.mm.
+        * UIProcess/API/ios/WKContentView.h: Made all protocol methods required.
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]): Removed code
+        to set self as the delegate on the content view.
+
 2014-02-21  Sam Weinig  <sam@webkit.org>
 
         <rdar://problem/16073882> Please add _AbandonCoalition key to plugin XPC service Info.plist
 
-        Anders Carlsson.
+        Reviewed by Anders Carlsson.
 
         * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist:
         * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist:

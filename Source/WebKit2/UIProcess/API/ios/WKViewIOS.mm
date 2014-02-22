@@ -43,7 +43,7 @@
 
 using namespace WebKit;
 
-@interface WKView () <UIScrollViewDelegate, WKContentViewDelegate>
+@interface WKView () <UIScrollViewDelegate>
 @end
 
 @interface UIScrollView (UIScrollViewInternal)
@@ -147,32 +147,6 @@ using namespace WebKit;
     return _allowsBackForwardNavigationGestures;
 }
 
-#pragma mark WKContentViewDelegate
-
-- (void)contentViewDidCommitLoadForMainFrame:(WKContentView *)contentView
-{
-    _isWaitingForNewLayerTreeAfterDidCommitLoad = YES;
-}
-
-- (void)contentView:(WKContentView *)contentView didCommitLayerTree:(const RemoteLayerTreeTransaction&)layerTreeTransaction
-{
-    [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
-    [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
-    [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];
-    if (![_scrollView isZooming] && ![_scrollView isZoomBouncing])
-        [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
-    
-    if (_gestureController)
-        _gestureController->setRenderTreeSize(layerTreeTransaction.renderTreeSize());
-
-    if (_isWaitingForNewLayerTreeAfterDidCommitLoad) {
-        UIEdgeInsets inset = [_scrollView contentInset];
-        [_scrollView setContentOffset:CGPointMake(-inset.left, -inset.top)];
-        _isWaitingForNewLayerTreeAfterDidCommitLoad = NO;
-    }
-    [self _updateVisibleContentRects];
-}
-
 #pragma mark - UIScrollViewDelegate
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
@@ -256,7 +230,6 @@ using namespace WebKit;
 
     _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:*toImpl(contextRef) configuration:std::move(webPageConfiguration)]);
 
-    [_contentView setDelegate:self];
     [[_contentView layer] setAnchorPoint:CGPointZero];
     [_contentView setFrame:bounds];
     [_scrollView addSubview:_contentView.get()];
@@ -291,16 +264,6 @@ using namespace WebKit;
     CGFloat scaleFactor = [_scrollView zoomScale];
 
     [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates scale:scaleFactor];
-}
-
-- (RetainPtr<CGImageRef>)takeViewSnapshotForContentView:(WKContentView *)contentView
-{
-    // FIXME: We should be able to use acquire an IOSurface directly, instead of going to CGImage here and back in ViewSnapshotStore.
-    UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
-    [self drawViewHierarchyInRect:[self bounds] afterScreenUpdates:NO];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return image.CGImage;
 }
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView

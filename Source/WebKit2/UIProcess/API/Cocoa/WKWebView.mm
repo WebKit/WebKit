@@ -336,6 +336,16 @@
     
 }
 
+- (RetainPtr<CGImageRef>)takeViewSnapshotForContentView:(WKContentView *)contentView
+{
+    // FIXME: We should be able to use acquire an IOSurface directly, instead of going to CGImage here and back in ViewSnapshotStore.
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
+    [self drawViewHierarchyInRect:[self bounds] afterScreenUpdates:NO];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image.CGImage;
+}
+
 #pragma mark - UIScrollViewDelegate
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView

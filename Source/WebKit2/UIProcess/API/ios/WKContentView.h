@@ -40,7 +40,6 @@ struct WebPageConfiguration;
 }
 
 @protocol WKContentViewDelegate <NSObject>
-@optional
 - (void)contentViewDidCommitLoadForMainFrame:(WKContentView *)contentView;
 - (void)contentView:(WKContentView *)contentView didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
 
