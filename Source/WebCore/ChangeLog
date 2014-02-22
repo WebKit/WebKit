@@ -1,3 +1,32 @@
+2014-02-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Extend media support for WebVTT sources
+        https://bugs.webkit.org/show_bug.cgi?id=129156
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig: Add new feature define for AVF_CAPTIONS
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::outOfBandTrackSources): Added.
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::outOfBandTrackSources): Added.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::outOfBandTrackSources): Added.
+        * platform/graphics/PlatformTextTrack.h:
+        (WebCore::PlatformTextTrack::create): Update for new constructor signature.
+        (WebCore::PlatformTextTrack::createOutOfBand): Added.
+        (WebCore::PlatformTextTrack::url): Added.
+        (WebCore::PlatformTextTrack::isDefault): Added.
+        (WebCore::PlatformTextTrack::PlatformTextTrack): Revised to take new URL and
+        'isDefault' arguments.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::mediaDescriptionForKind): Added.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Tell AVFoundation about any
+        WebVTT tracks supplied by the web page.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions): Filter out any out-of-band
+        WebVTT tracks returned by the media engine to avoid double-counting tracks.
+
 2014-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Inner text element should not use -webkit-user-modify

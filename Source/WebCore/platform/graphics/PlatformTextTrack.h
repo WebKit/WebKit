@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #ifndef PlatformTextTrack_h
 #define PlatformTextTrack_h
 
-#if USE(PLATFORM_TEXT_TRACK_MENU)
+#if USE(PLATFORM_TEXT_TRACK_MENU) || ENABLE(AVF_CAPTIONS)
 
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -62,47 +62,58 @@ public:
 
     static PassRefPtr<PlatformTextTrack> create(PlatformTextTrackClient* client, const String& label, const String& language, TrackKind kind, TrackType type, int uniqueId)
     {
-        return adoptRef(new PlatformTextTrack(client, label, language, kind, type, uniqueId));
+        return adoptRef(new PlatformTextTrack(client, label, language, String(), kind, type, uniqueId, false));
+    }
+
+    static PassRefPtr<PlatformTextTrack> createOutOfBand(const String& label, const String& language, const String& url, TrackKind kind, int uniqueId, bool isDefault)
+    {
+        return adoptRef(new PlatformTextTrack(nullptr, label, language, url, kind, OutOfBand, uniqueId, isDefault));
     }
 
     virtual ~PlatformTextTrack() { }
     
     TrackType type() const { return m_type; }
     TrackKind kind() const { return m_kind; }
-    String label() const { return m_label; }
-    String language() const { return m_language; }
+    const String& label() const { return m_label; }
+    const String& language() const { return m_language; }
+    const String& url() const { return m_url; }
     PlatformTextTrackClient* client() const { return m_client; }
     int uniqueId() const { return m_uniqueId; }
+    bool isDefault() const { return m_isDefault; }
 
     static PlatformTextTrack* captionMenuOffItem()
     {
-        static PlatformTextTrack* off = PlatformTextTrack::create(0, "off menu item", "", Subtitle, InBand, 0).leakRef();
+        static PlatformTextTrack* off = PlatformTextTrack::create(nullptr, "off menu item", "", Subtitle, InBand, 0).leakRef();
         return off;
     }
 
     static PlatformTextTrack* captionMenuAutomaticItem()
     {
-        static PlatformTextTrack *automatic = PlatformTextTrack::create(0, "automatic menu item", "", Subtitle, InBand, 0).leakRef();
+        static PlatformTextTrack* automatic = PlatformTextTrack::create(nullptr, "automatic menu item", "", Subtitle, InBand, 0).leakRef();
         return automatic;
     }
 
 protected:
-    PlatformTextTrack(PlatformTextTrackClient* client, const String& label, const String& language, TrackKind kind, TrackType type, int uniqueId)
+    PlatformTextTrack(PlatformTextTrackClient* client, const String& label, const String& language, const String& url, TrackKind kind, TrackType type, int uniqueId, bool isDefault)
         : m_label(label)
         , m_language(language)
+        , m_url(url)
         , m_kind(kind)
         , m_type(type)
         , m_client(client)
         , m_uniqueId(uniqueId)
+        , m_isDefault(isDefault)
     {
     }
 
     String m_label;
     String m_language;
+    String m_url;
     TrackKind m_kind;
     TrackType m_type;
     PlatformTextTrackClient* m_client;
     int m_uniqueId;
+    bool m_isDefault;
 };
 
 }

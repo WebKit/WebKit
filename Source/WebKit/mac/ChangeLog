@@ -1,3 +1,12 @@
+2014-02-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Extend media support for WebVTT sources
+        https://bugs.webkit.org/show_bug.cgi?id=129156
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig: Add new feature define for AVF_CAPTIONS
+
 2014-02-20  Brady Eidson  <beidson@apple.com>
 
         Add very basic image control rendering

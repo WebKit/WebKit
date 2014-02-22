@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,6 +62,10 @@
 #import <wtf/Functional.h>
 #import <wtf/text/CString.h>
 
+#if ENABLE(AVF_CAPTIONS)
+#include "TextTrack.h"
+#endif
+
 #import <AVFoundation/AVFoundation.h>
 #if PLATFORM(IOS)
 #import <CoreImage/CoreImage.h>
@@ -74,6 +78,15 @@
 #import <CoreVideo/CoreVideo.h>
 #import <VideoToolbox/VideoToolbox.h>
 #endif
+
+#if ENABLE(AVF_CAPTIONS)
+// Note: This must be defined before our SOFT_LINK macros:
+@class AVMediaSelectionOption;
+@interface AVMediaSelectionOption (OutOfBandExtensions)
+@property (nonatomic, readonly) NSString *outOfBandSource /*NS_AVAILABLE(TBD, TBD)*/;
+@end
+#endif
+
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
@@ -164,6 +177,28 @@ SOFT_LINK_POINTER(AVFoundation, AVPlayerItemLegibleOutputTextStylingResolutionSo
 #define AVMediaTypeSubtitle getAVMediaTypeSubtitle()
 #define AVMediaCharacteristicContainsOnlyForcedSubtitles getAVMediaCharacteristicContainsOnlyForcedSubtitles()
 #define AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly getAVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly()
+#endif
+
+#if ENABLE(AVF_CAPTIONS)
+SOFT_LINK_POINTER(AVFoundation, AVURLAssetOutOfBandAlternateTracksKey, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVOutOfBandAlternateTrackDisplayNameKey, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVOutOfBandAlternateTrackExtendedLanguageTagKey, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVOutOfBandAlternateTrackIsDefaultKey, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVOutOfBandAlternateTrackMediaCharactersticsKey, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVOutOfBandAlternateTrackIdentifierKey, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVOutOfBandAlternateTrackSourceKey, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicDescribesMusicAndSoundForAccessibility, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, NSString*)
+
+#define AVURLAssetOutOfBandAlternateTracksKey getAVURLAssetOutOfBandAlternateTracksKey()
+#define AVOutOfBandAlternateTrackDisplayNameKey getAVOutOfBandAlternateTrackDisplayNameKey()
+#define AVOutOfBandAlternateTrackExtendedLanguageTagKey getAVOutOfBandAlternateTrackExtendedLanguageTagKey()
+#define AVOutOfBandAlternateTrackIsDefaultKey getAVOutOfBandAlternateTrackIsDefaultKey()
+#define AVOutOfBandAlternateTrackMediaCharactersticsKey getAVOutOfBandAlternateTrackMediaCharactersticsKey()
+#define AVOutOfBandAlternateTrackIdentifierKey getAVOutOfBandAlternateTrackIdentifierKey()
+#define AVOutOfBandAlternateTrackSourceKey getAVOutOfBandAlternateTrackSourceKey()
+#define AVMediaCharacteristicDescribesMusicAndSoundForAccessibility getAVMediaCharacteristicDescribesMusicAndSoundForAccessibility()
+#define AVMediaCharacteristicTranscribesSpokenDialogForAccessibility getAVMediaCharacteristicTranscribesSpokenDialogForAccessibility()
 #endif
 
 #define kCMTimeZero getkCMTimeZero()
@@ -474,6 +509,26 @@ bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
     return m_videoFrameHasDrawn;
 }
 
+#if ENABLE(AVF_CAPTIONS)
+static const NSArray* mediaDescriptionForKind(PlatformTextTrack::TrackKind kind)
+{
+    // FIXME: Match these to correct types:
+    if (kind == PlatformTextTrack::Caption)
+        return [NSArray arrayWithObjects: AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, nil];
+
+    if (kind == PlatformTextTrack::Subtitle)
+        return [NSArray arrayWithObjects: AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, nil];
+
+    if (kind == PlatformTextTrack::Description)
+        return [NSArray arrayWithObjects: AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, AVMediaCharacteristicDescribesMusicAndSoundForAccessibility, nil];
+
+    if (kind == PlatformTextTrack::Forced)
+        return [NSArray arrayWithObjects: AVMediaCharacteristicContainsOnlyForcedSubtitles, nil];
+
+    return [NSArray arrayWithObjects: AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, nil];
+}
+#endif
+
 void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 {
     if (m_avAsset)
@@ -500,6 +555,30 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     if ([headerFields.get() count])
         [options.get() setObject:headerFields.get() forKey:@"AVURLAssetHTTPHeaderFieldsKey"];
 
+#if ENABLE(AVF_CAPTIONS)
+    const Vector<RefPtr<PlatformTextTrack>>& outOfBandTrackSources = player()->outOfBandTrackSources();
+    if (!outOfBandTrackSources.isEmpty()) {
+        NSMutableArray* outOfBandTracks = [[NSMutableArray alloc] init];
+        for (auto& trackSource : outOfBandTrackSources) {
+            RetainPtr<CFStringRef> label = trackSource->label().createCFString();
+            RetainPtr<CFStringRef> language = trackSource->language().createCFString();
+            RetainPtr<CFStringRef> uniqueID = String::number(trackSource->uniqueId()).createCFString();
+            RetainPtr<CFStringRef> url = trackSource->url().createCFString();
+            [outOfBandTracks addObject:
+                [NSDictionary dictionaryWithObjectsAndKeys:
+                    reinterpret_cast<const NSString*>(label.get()), AVOutOfBandAlternateTrackDisplayNameKey,
+                    reinterpret_cast<const NSString*>(language.get()), AVOutOfBandAlternateTrackExtendedLanguageTagKey,
+                    [NSNumber numberWithBool: (trackSource->isDefault() ? YES : NO)], AVOutOfBandAlternateTrackIsDefaultKey,
+                    reinterpret_cast<const NSString*>(uniqueID.get()), AVOutOfBandAlternateTrackIdentifierKey,
+                    reinterpret_cast<const NSString*>(url.get()), AVOutOfBandAlternateTrackSourceKey,
+                    mediaDescriptionForKind(trackSource->kind()), AVOutOfBandAlternateTrackMediaCharactersticsKey,
+                    nil]];
+        }
+
+        [options.get() setObject: outOfBandTracks forKey: AVURLAssetOutOfBandAlternateTracksKey];
+    }
+#endif
+    
     NSURL *cocoaURL = URL(ParsedURLString, url);
     m_avAsset = adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options.get()]);
 
@@ -1715,6 +1794,12 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
         }
         if (!newTrack)
             continue;
+
+#if ENABLE(AVF_CAPTIONS)
+        // Ignore out-of-band tracks that we passed to AVFoundation so we do not double-count them
+        if ([option outOfBandSource])
+            continue;
+#endif
 
         m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, option));
     }

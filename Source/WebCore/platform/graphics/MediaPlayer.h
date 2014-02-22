@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,10 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringHash.h>
+
+#if ENABLE(AVF_CAPTIONS)
+#include "PlatformTextTrack.h"
+#endif
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
 #include "PlatformTextTrackMenu.h"
@@ -253,7 +257,11 @@ public:
     virtual void mediaPlayerDidRemoveVideoTrack(PassRefPtr<VideoTrackPrivate>) { }
 
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) { }
+#if ENABLE(AVF_CAPTIONS)
+    virtual Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources() { return Vector<RefPtr<PlatformTextTrack>>(); }
 #endif
+#endif
+
 
     virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) { return false; }
 };
@@ -522,6 +530,9 @@ public:
 
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);
+#if ENABLE(AVF_CAPTIONS)
+    Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources();
+#endif
 #endif
 
     static void resetMediaEngines();
