@@ -2796,7 +2796,15 @@ fast/repaint/transform-repaint-descendants.html [ Pass Timeout ImageOnlyFailure 
 fast/replaced/width100percent-textarea.html [ Pass Timeout ImageOnlyFailure ]
 fast/table/border-collapsing/cached-change-row-border-color.html [ Pass Timeout ImageOnlyFailure ]
 
+# Regressions in svg/clip-path
+webkit.org/b/128499 svg/clip-path/clip-path-content-use-005.svg [ ImageOnlyFailure ]
+webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure ]
+webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailure ]
+webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
+webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
+
 # Media tests are unhappy. Disable for now
 media [ Skip ]
 
+platform/win/plugins/iframe-inside-overflow.html [ Failure ]
 fast/repaint/background-shorthand-with-gradient-and-height-changes.html [ Failure ]

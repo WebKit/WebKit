@@ -1,3 +1,145 @@
+2014-02-21  Dirk Schulze  <krit@webkit.org>
+
+        Replace svg/clip-path pixel tests by reference tests
+        https://bugs.webkit.org/show_bug.cgi?id=129177
+
+        Reviewed by Dean Jackson.
+
+        New reference tests for SVG clip-path.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * svg/clip-path/clip-path-clip-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-nested-twice-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-nested-twice.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-001-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-001.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-002-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-002.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-003-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-003.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-004-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-004.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-005-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-005.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-006-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-006.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-007-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-007.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-008-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-008.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-009-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-009.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-010-expected.svg: Added.
+        * svg/clip-path/clip-path-clip-rule-010.svg: Added.
+        * svg/clip-path/clip-path-clip.svg: Added.
+        * svg/clip-path/clip-path-content-clip-001-expected.svg: Added.
+        * svg/clip-path/clip-path-content-clip-001.svg: Added.
+        * svg/clip-path/clip-path-content-clip-002-expected.svg: Added.
+        * svg/clip-path/clip-path-content-clip-002.svg: Added.
+        * svg/clip-path/clip-path-content-clip-003-expected.svg: Added.
+        * svg/clip-path/clip-path-content-clip-003.svg: Added.
+        * svg/clip-path/clip-path-content-invisible-expected.svg: Added.
+        * svg/clip-path/clip-path-content-invisible.svg: Added.
+        * svg/clip-path/clip-path-content-syling-expected.svg: Added.
+        * svg/clip-path/clip-path-content-syling.svg: Added.
+        * svg/clip-path/clip-path-content-use-001-expected.svg: Added.
+        * svg/clip-path/clip-path-content-use-001.svg: Added.
+        * svg/clip-path/clip-path-content-use-002-expected.svg: Added.
+        * svg/clip-path/clip-path-content-use-002.svg: Added.
+        * svg/clip-path/clip-path-content-use-003-expected.svg: Added.
+        * svg/clip-path/clip-path-content-use-003.svg: Added.
+        * svg/clip-path/clip-path-content-use-004-expected.svg: Added.
+        * svg/clip-path/clip-path-content-use-004.svg: Added.
+        * svg/clip-path/clip-path-content-use-005-expected.svg: Added.
+        * svg/clip-path/clip-path-content-use-005.svg: Added.
+        * svg/clip-path/clip-path-content-use-006-expected.svg: Added.
+        * svg/clip-path/clip-path-content-use-006.svg: Added.
+        * svg/clip-path/clip-path-css-transform-001-expected.svg: Added.
+        * svg/clip-path/clip-path-css-transform-001.svg: Added.
+        * svg/clip-path/clip-path-css-transform-002-expected.svg: Added.
+        * svg/clip-path/clip-path-css-transform-002.svg: Added.
+        * svg/clip-path/clip-path-invalid-expected.svg: Added.
+        * svg/clip-path/clip-path-invalid.svg: Added.
+        * svg/clip-path/clip-path-no-content-001-expected.svg: Added.
+        * svg/clip-path/clip-path-no-content-001.svg: Added.
+        * svg/clip-path/clip-path-no-content-002-expected.svg: Added.
+        * svg/clip-path/clip-path-no-content-002.svg: Added.
+        * svg/clip-path/clip-path-no-content-003-expected.svg: Added.
+        * svg/clip-path/clip-path-no-content-003.svg: Added.
+        * svg/clip-path/clip-path-objectboundingbox-001-expected.svg: Added.
+        * svg/clip-path/clip-path-objectboundingbox-001.svg: Added.
+        * svg/clip-path/clip-path-objectboundingbox-002-expected.svg: Added.
+        * svg/clip-path/clip-path-objectboundingbox-002.svg: Added.
+        * svg/clip-path/clip-path-objectboundingbox-003-expected.svg: Added.
+        * svg/clip-path/clip-path-objectboundingbox-003.svg: Added.
+        * svg/clip-path/clip-path-objectboundingbox-004-expected.svg: Added.
+        * svg/clip-path/clip-path-objectboundingbox-004.svg: Added.
+        * svg/clip-path/clip-path-on-g-001-expected.svg: Added.
+        * svg/clip-path/clip-path-on-g-001.svg: Added.
+        * svg/clip-path/clip-path-on-g-002-expected.svg: Added.
+        * svg/clip-path/clip-path-on-g-002.svg: Added.
+        * svg/clip-path/clip-path-on-g-003-expected.svg: Added.
+        * svg/clip-path/clip-path-on-g-003.svg: Added.
+        * svg/clip-path/clip-path-on-g-004-expected.svg: Added.
+        * svg/clip-path/clip-path-on-g-004.svg: Added.
+        * svg/clip-path/clip-path-on-g-005-expected.svg: Added.
+        * svg/clip-path/clip-path-on-g-005.svg: Added.
+        * svg/clip-path/clip-path-on-svg-001-expected.svg: Added.
+        * svg/clip-path/clip-path-on-svg-001.svg: Added.
+        * svg/clip-path/clip-path-on-svg-002-expected.svg: Added.
+        * svg/clip-path/clip-path-on-svg-002.svg: Added.
+        * svg/clip-path/clip-path-on-use-001-expected.svg: Added.
+        * svg/clip-path/clip-path-on-use-001.svg: Added.
+        * svg/clip-path/clip-path-on-use-002-expected.svg: Added.
+        * svg/clip-path/clip-path-on-use-002.svg: Added.
+        * svg/clip-path/clip-path-precision-001-expected.svg: Added.
+        * svg/clip-path/clip-path-precision-001.svg: Added.
+        * svg/clip-path/clip-path-text-001-expected.svg: Added.
+        * svg/clip-path/clip-path-text-001.svg: Added.
+        * svg/clip-path/clip-path-text-002-expected.svg: Added.
+        * svg/clip-path/clip-path-text-002.svg: Added.
+        * svg/clip-path/clip-path-text-003-expected.svg: Added.
+        * svg/clip-path/clip-path-text-003.svg: Added.
+        * svg/clip-path/clip-path-text-004-expected.svg: Added.
+        * svg/clip-path/clip-path-text-004.svg: Added.
+        * svg/clip-path/clip-path-text-005-expected.svg: Added.
+        * svg/clip-path/clip-path-text-005.svg: Added.
+        * svg/clip-path/clip-path-userspaceonuse-001-expected.svg: Added.
+        * svg/clip-path/clip-path-userspaceonuse-001.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-001-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-001.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-002-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-002.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-003-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-003.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-004-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-004.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-005-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-005.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-006-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-006.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-007-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-007.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-008-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-008.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-009-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-009.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-panning-001-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-panning-001.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-panning-002-expected.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-panning-002.svg: Added.
+        * svg/clip-path/mask-objectboundingbox-content-clip-expected.svg: Added.
+        * svg/clip-path/mask-objectboundingbox-content-clip-transform-expected.svg: Added.
+        * svg/clip-path/mask-objectboundingbox-content-clip-transform.svg: Added.
+        * svg/clip-path/mask-objectboundingbox-content-clip.svg: Added.
+        * svg/clip-path/mask-userspaceonuse-content-clip-expected.svg: Added.
+        * svg/clip-path/mask-userspaceonuse-content-clip-transform-expected.svg: Added.
+        * svg/clip-path/mask-userspaceonuse-content-clip-transform.svg: Added.
+        * svg/clip-path/mask-userspaceonuse-content-clip.svg: Added.
+
 2014-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Inner text element should not use -webkit-user-modify

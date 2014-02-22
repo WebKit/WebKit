@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<clipPath id="clip1" clipPathUnits="objectBoundingBox">
+  <rect x="0.1" y="0.1" width="0.3" height="0.3"/>
+  <rect x="0.1" y="0.6" width="0.3" height="0.3"/>
+</clipPath>
+
+<clipPath id="clip2" clipPathUnits="objectBoundingBox">
+  <rect x="0.6" y="0.1" width="0.3" height="0.3"/>
+  <rect x="0.6" y="0.6" width="0.3" height="0.3"/>
+</clipPath>
+
+<clipPath id="clip" clipPathUnits="objectBoundingBox">
+  <rect x="0" y="0" width="1" height="1" clip-path="url(#clip1)"/>
+  <rect x="0" y="0" width="1" height="1" clip-path="url(#clip2)"/>
+</clipPath>
+
+<mask id="mask1a" x="0" y="0" width="1" height="1" maskContentUnits="objectBoundingBox">
+  <rect x="0" y="0" width="1" height="1" fill="white"/>
+  <rect x="0" y="0" width="1" height="1" fill="black" clip-path="url(#clip1)" />
+</mask>
+
+<mask id="mask1b" x="0" y="0" width="1" height="1" maskContentUnits="objectBoundingBox">
+  <rect x="0" y="0" width="1" height="1" fill="white"/>
+  <rect x="0" y="0" width="1" height="1" fill="black" clip-path="url(#clip2)" />
+</mask>
+
+<g mask="url(#mask1a)" transform="translate(75, 0)">
+  <rect width="200" height="200" fill="green" mask="url(#mask1b)"/>
+</g>
+<script>
+var translate = document.getElementsByTagName('svg')[0].currentTranslate;
+translate.x = -75;
+</script>
+</svg>

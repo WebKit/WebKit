@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<mask id="mask" x="0" y="0" width="1" height="1">
+  <circle cx="100" cy="100" r="50" fill="white"/>
+</mask>
+<rect x="0" y="0" height="200" width="200" fill="green" mask="url(#mask)"/>
+</svg>

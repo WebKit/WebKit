@@ -1542,6 +1542,13 @@ webkit.org/b/123097 media/track/track-cue-mutable-text.html [ Failure ]
 webkit.org/b/123097 media/video-controls-captions-trackmenu-sorted.html [ Failure ]
 webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
 
+# Regressions in svg/clip-path
+webkit.org/b/128499 svg/clip-path/clip-path-content-use-005.svg [ ImageOnlyFailure ]
+webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure ]
+webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailure ]
+webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
+webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

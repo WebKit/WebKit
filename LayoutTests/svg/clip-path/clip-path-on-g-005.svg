@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<clipPath id="clip2" clipPathUnits="objectBoundingBox">
+  <rect width="0.75" height="0.75"/>
+</clipPath>
+<clipPath id="clip1" clipPathUnits="objectBoundingBox">
+  <rect x="0.25" y="0.25" width="0.75" height="0.75"/>
+</clipPath>
+<g clip-path="url(#clip1)">
+  <rect width="200" height="200" fill="green" clip-path="url(#clip2)"/>
+</g>
+</svg>

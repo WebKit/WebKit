@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<clipPath id="clip" clipPathUnits="userSpaceOnUse">
+  <circle cx="50" cy="50" r="25" transform="scale(0.01 0.01)"/>
+</clipPath>
+<mask id="mask" x="0" y="0" width="200" height="200" maskUnits="userSpaceOnUse" maskContentUnits="objectBoundingBox">
+  <rect x="0.25" y="0.25" width="0.5" height="0.5" fill="white" clip-path="url(#clip)"/>
+</mask>
+<rect x="0" y="0" height="200" width="200" fill="green" mask="url(#mask)"/>
+</svg>

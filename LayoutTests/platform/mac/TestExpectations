@@ -1325,3 +1325,10 @@ webkit.org/b/128379 animations/suspend-resume-animation.html [ Pass Failure ]
 
 webkit.org/b/119747 [ Debug ] svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html [ Skip ]
 webkit.org/b/119747 [ Debug ] svg/css/font-face-crash.html [ Skip ]
+
+# Regressions in svg/clip-path
+webkit.org/b/128499 svg/clip-path/clip-path-content-use-005.svg [ ImageOnlyFailure ]
+webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure ]
+webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailure ]
+webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
+webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
