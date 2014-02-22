@@ -55,6 +55,21 @@ function relativePath(path, basePath)
     return finalComponents.join("/");
 }
 
+function parseSecurityOrigin(securityOrigin)
+{
+    securityOrigin = securityOrigin ? securityOrigin.trim() : "";
+
+    var match = securityOrigin.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?$/i);
+    if (!match)
+        return {scheme: null, host: null, port: null};
+
+    var scheme = match[1].toLowerCase();
+    var host = match[2].toLowerCase();
+    var port = Number(match[3]) || null;
+
+    return {scheme: scheme, host: host, port: port};
+}
+
 function parseURL(url)
 {
     url = url ? url.trim() : "";

@@ -106,19 +106,6 @@ InspectorBackend.registerCommand("Database.disable", [], []);
 InspectorBackend.registerCommand("Database.getDatabaseTableNames", [{"name": "databaseId", "type": "string", "optional": false}], ["tableNames"]);
 InspectorBackend.registerCommand("Database.executeSQL", [{"name": "databaseId", "type": "string", "optional": false}, {"name": "query", "type": "string", "optional": false}], ["success", "transactionId"]);
 
-// IndexedDB.
-InspectorBackend.registerIndexedDBDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "IndexedDB");
-InspectorBackend.registerEnum("IndexedDB.KeyType", {Number: "number", String: "string", Date: "date", Array: "array"});
-InspectorBackend.registerEvent("IndexedDB.databaseNamesLoaded", ["requestId", "securityOriginWithDatabaseNames"]);
-InspectorBackend.registerEvent("IndexedDB.databaseLoaded", ["requestId", "databaseWithObjectStores"]);
-InspectorBackend.registerEvent("IndexedDB.objectStoreDataLoaded", ["requestId", "objectStoreDataEntries", "hasMore"]);
-InspectorBackend.registerEvent("IndexedDB.indexDataLoaded", ["requestId", "indexDataEntries", "hasMore"]);
-InspectorBackend.registerCommand("IndexedDB.enable", [], []);
-InspectorBackend.registerCommand("IndexedDB.disable", [], []);
-InspectorBackend.registerCommand("IndexedDB.requestDatabaseNamesForFrame", [{"name": "requestId", "type": "number", "optional": false}, {"name": "frameId", "type": "string", "optional": false}], []);
-InspectorBackend.registerCommand("IndexedDB.requestDatabase", [{"name": "requestId", "type": "number", "optional": false}, {"name": "frameId", "type": "string", "optional": false}, {"name": "databaseName", "type": "string", "optional": false}], []);
-InspectorBackend.registerCommand("IndexedDB.requestData", [{"name": "requestId", "type": "number", "optional": false}, {"name": "frameId", "type": "string", "optional": false}, {"name": "databaseName", "type": "string", "optional": false}, {"name": "objectStoreName", "type": "string", "optional": false}, {"name": "indexName", "type": "string", "optional": false}, {"name": "skipCount", "type": "number", "optional": false}, {"name": "pageSize", "type": "number", "optional": false}, {"name": "keyRange", "type": "object", "optional": true}], []);
-
 // DOMStorage.
 InspectorBackend.registerDOMStorageDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "DOMStorage");
 InspectorBackend.registerEvent("DOMStorage.addDOMStorage", ["storage"]);

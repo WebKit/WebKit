@@ -1,0 +1,17 @@
+IndexedDatabaseWasAdded: test-inspector-database
+ - Object Store: People (key path: null, auto increment: false)
+  - Index: name (key path: name, unique: true, multi entry: false)
+  - Index: weight (key path: weight, unique: false, multi entry: false)
+  - Index: height (key path: height, unique: false, multi entry: false)
+
+Index Data (name):
+0: 237-23-7733, Ann, Object
+1: 237-23-7732, Bob, Object
+2: 237-23-7739, Jef, Object
+3: 237-23-7736, Joe, Object
+4: 237-23-7738, Leo, Object
+5: 237-23-7737, Pat, Object
+6: 237-23-7734, Ron, Object
+7: 237-23-7740, Sam, Object
+8: 237-23-7735, Sue, Object
+

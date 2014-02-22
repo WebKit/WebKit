@@ -56,6 +56,9 @@ WebInspector.ResourceSidebarPanel = function() {
     this._databaseRootTreeElement = null;
     this._databaseHostTreeElementMap = {};
 
+    this._indexedDatabaseRootTreeElement = null;
+    this._indexedDatabaseHostTreeElementMap = {};
+
     this._cookieStorageRootTreeElement = null;
 
     this._applicationCacheRootTreeElement = null;
@@ -66,6 +69,7 @@ WebInspector.ResourceSidebarPanel = function() {
     WebInspector.storageManager.addEventListener(WebInspector.StorageManager.Event.DOMStorageObjectWasInspected, this._domStorageObjectWasInspected, this);
     WebInspector.storageManager.addEventListener(WebInspector.StorageManager.Event.DatabaseWasAdded, this._databaseWasAdded, this);
     WebInspector.storageManager.addEventListener(WebInspector.StorageManager.Event.DatabaseWasInspected, this._databaseWasInspected, this);
+    WebInspector.storageManager.addEventListener(WebInspector.StorageManager.Event.IndexedDatabaseWasAdded, this._indexedDatabaseWasAdded, this);
     WebInspector.storageManager.addEventListener(WebInspector.StorageManager.Event.Cleared, this._storageCleared, this);
 
     WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.FrameManifestAdded, this._frameManifestAdded, this);
@@ -635,13 +639,15 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
     _treeElementSelected: function(treeElement, selectedByUser)
     {
-        if (treeElement instanceof WebInspector.FolderTreeElement || treeElement instanceof WebInspector.DatabaseHostTreeElement)
+        if (treeElement instanceof WebInspector.FolderTreeElement || treeElement instanceof WebInspector.DatabaseHostTreeElement ||
+            treeElement instanceof WebInspector.IndexedDatabaseHostTreeElement || treeElement instanceof WebInspector.IndexedDatabaseTreeElement)
             return;
 
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement ||
             treeElement instanceof WebInspector.StorageTreeElement || treeElement instanceof WebInspector.DatabaseTableTreeElement ||
             treeElement instanceof WebInspector.DatabaseTreeElement || treeElement instanceof WebInspector.ApplicationCacheFrameTreeElement ||
-            treeElement instanceof WebInspector.ContentFlowTreeElement) {
+            treeElement instanceof WebInspector.ContentFlowTreeElement || treeElement instanceof WebInspector.IndexedDatabaseObjectStoreTreeElement ||
+            treeElement instanceof WebInspector.IndexedDatabaseObjectStoreIndexTreeElement) {
             WebInspector.contentBrowser.showContentViewForRepresentedObject(treeElement.representedObject);
             return;
         }
@@ -699,6 +705,21 @@ WebInspector.ResourceSidebarPanel.prototype = {
         var database = event.data.database;
         var treeElement = this.treeElementForRepresentedObject(database);
         treeElement.revealAndSelect(true);
+    },
+
+    _indexedDatabaseWasAdded: function(event)
+    {
+        var indexedDatabase = event.data.indexedDatabase;
+
+        console.assert(indexedDatabase instanceof WebInspector.IndexedDatabase);
+
+        if (!this._indexedDatabaseHostTreeElementMap[indexedDatabase.host]) {
+            this._indexedDatabaseHostTreeElementMap[indexedDatabase.host] = new WebInspector.IndexedDatabaseHostTreeElement(indexedDatabase.host);
+            this._indexedDatabaseRootTreeElement = this._addStorageChild(this._indexedDatabaseHostTreeElementMap[indexedDatabase.host], this._indexedDatabaseRootTreeElement, WebInspector.UIString("Indexed Databases"));
+        }
+
+        var indexedDatabaseElement = new WebInspector.IndexedDatabaseTreeElement(indexedDatabase);
+        this._indexedDatabaseHostTreeElementMap[indexedDatabase.host].appendChild(indexedDatabaseElement);
     },
 
     _cookieStorageObjectWasAdded: function(event)
@@ -794,6 +815,9 @@ WebInspector.ResourceSidebarPanel.prototype = {
         if (this._databaseRootTreeElement && this._databaseRootTreeElement.parent)
             this._databaseRootTreeElement.parent.removeChild(this._databaseRootTreeElement);
 
+        if (this._indexedDatabaseRootTreeElement && this._indexedDatabaseRootTreeElement.parent)
+            this._indexedDatabaseRootTreeElement.parent.removeChild(this._indexedDatabaseRootTreeElement);
+
         if (this._cookieStorageRootTreeElement && this._cookieStorageRootTreeElement.parent)
             this._cookieStorageRootTreeElement.parent.removeChild(this._cookieStorageRootTreeElement);
 
@@ -804,6 +828,8 @@ WebInspector.ResourceSidebarPanel.prototype = {
         this._sessionStorageRootTreeElement = null;
         this._databaseRootTreeElement = null;
         this._databaseHostTreeElementMap = {};
+        this._indexedDatabaseRootTreeElement = null;
+        this._indexedDatabaseHostTreeElementMap = {};
         this._cookieStorageRootTreeElement = null;
         this._applicationCacheRootTreeElement = null;
         this._applicationCacheURLTreeElementMap = {};

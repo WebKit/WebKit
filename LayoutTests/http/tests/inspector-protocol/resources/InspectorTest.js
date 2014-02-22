@@ -227,7 +227,12 @@ InspectorTest.initializeInspectorModels = function()
         "ProbeManager",
         "ProbeSetDataFrame",
         "ProbeSetDataTable",
-        "RemoteObject"
+        "RemoteObject",
+        "DOMStorageObject",
+        "IndexedDatabase",
+        "IndexedDatabaseObjectStore",
+        "IndexedDatabaseObjectStoreIndex",
+        "StorageManager"
     ];
 
     // This corresponds to loading the scripts in Main.hml.
@@ -252,6 +257,7 @@ InspectorTest.initializeInspectorModels = function()
         InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
 
     WebInspector.frameResourceManager = new WebInspector.FrameResourceManager;
+    WebInspector.storageManager = new WebInspector.StorageManager;
     WebInspector.domTreeManager = new WebInspector.DOMTreeManager;
     WebInspector.cssStyleManager = new WebInspector.CSSStyleManager;
     WebInspector.debuggerManager = new WebInspector.DebuggerManager;

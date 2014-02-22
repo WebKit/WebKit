@@ -263,7 +263,7 @@ InspectorBackend.registerCommand("Page.archive", [], ["data"]);
 
 // Profiler.
 InspectorBackend.registerProfilerDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Profiler");
-InspectorBackend.registerEnum("Profiler.ProfileHeaderTypeId", {CPU: "CPU", CSS: "CSS", HEAP: "HEAP"});
+InspectorBackend.registerEnum("Profiler.ProfileHeaderTypeId", {CPU: "CPU", HEAP: "HEAP"});
 InspectorBackend.registerEvent("Profiler.addProfileHeader", ["header"]);
 InspectorBackend.registerEvent("Profiler.addHeapSnapshotChunk", ["uid", "chunk"]);
 InspectorBackend.registerEvent("Profiler.finishHeapSnapshot", ["uid"]);

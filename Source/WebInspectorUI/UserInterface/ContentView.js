@@ -54,6 +54,12 @@ WebInspector.ContentView = function(representedObject)
         if (representedObject instanceof WebInspector.DatabaseObject)
             return new WebInspector.DatabaseContentView(representedObject);
 
+        if (representedObject instanceof WebInspector.IndexedDatabaseObjectStore)
+            return new WebInspector.IndexedDatabaseObjectStoreContentView(representedObject);
+
+        if (representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
+            return new WebInspector.IndexedDatabaseObjectStoreContentView(representedObject);
+
         if (representedObject instanceof WebInspector.ApplicationCacheFrame)
             return new WebInspector.ApplicationCacheFrameContentView(representedObject);
 
@@ -110,6 +116,10 @@ WebInspector.ContentView.isViewable = function(representedObject)
     if (representedObject instanceof WebInspector.DatabaseTableObject)
         return true;
     if (representedObject instanceof WebInspector.DatabaseObject)
+        return true;
+    if (representedObject instanceof WebInspector.IndexedDatabaseObjectStore)
+        return true;
+    if (representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
         return true;
     if (representedObject instanceof WebInspector.ApplicationCacheFrame)
         return true;

@@ -1,3 +1,109 @@
+2014-02-21  Timothy Hatcher  <timothy@apple.com>
+
+        Add inspection user interface for IndexedDB.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129162
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+        * UserInterface/ContentView.js:
+        (WebInspector.ContentView):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/IndexedDatabase.js: Added.
+        (WebInspector.IndexedDatabase):
+        (WebInspector.IndexedDatabase.prototype.get name):
+        (WebInspector.IndexedDatabase.prototype.get securityOrigin):
+        (WebInspector.IndexedDatabase.prototype.get host):
+        (WebInspector.IndexedDatabase.prototype.get version):
+        (WebInspector.IndexedDatabase.prototype.get objectStores):
+        (WebInspector.IndexedDatabase.prototype.saveIdentityToCookie):
+        * UserInterface/IndexedDatabaseEntryDataGridNode.js: Added.
+        (WebInspector.IndexedDatabaseEntryDataGridNode):
+        (WebInspector.IndexedDatabaseEntryDataGridNode.prototype.get entry):
+        (WebInspector.IndexedDatabaseEntryDataGridNode.prototype.createCellContent):
+        * UserInterface/IndexedDatabaseHostTreeElement.js: Added.
+        (WebInspector.IndexedDatabaseHostTreeElement):
+        (WebInspector.IndexedDatabaseHostTreeElement.prototype.get name):
+        (WebInspector.IndexedDatabaseHostTreeElement.prototype.get categoryName):
+        * UserInterface/IndexedDatabaseObjectStore.js: Added.
+        (WebInspector.IndexedDatabaseObjectStore):
+        (WebInspector.IndexedDatabaseObjectStore.prototype.get name):
+        (WebInspector.IndexedDatabaseObjectStore.prototype.get keyPath):
+        (WebInspector.IndexedDatabaseObjectStore.prototype.get autoIncrement):
+        (WebInspector.IndexedDatabaseObjectStore.prototype.get parentDatabase):
+        (WebInspector.IndexedDatabaseObjectStore.prototype.get indexes):
+        (WebInspector.IndexedDatabaseObjectStore.prototype.saveIdentityToCookie):
+        (WebInspector.IndexedDatabaseObjectStore.prototype.establishRelationship):
+        * UserInterface/IndexedDatabaseObjectStoreContentView.css: Added.
+        (.content-view.indexed-database-object-store > .data-grid):
+        (.content-view.indexed-database-object-store > .data-grid td .section .header):
+        (.content-view.indexed-database-object-store > .data-grid td .section .header::before):
+        (.content-view.indexed-database-object-store > .data-grid td .section .header .title):
+        (.content-view.indexed-database-object-store > .data-grid table.data):
+        (.content-view.indexed-database-object-store > .data-grid table.data tr:nth-child(even)):
+        (.content-view.indexed-database-object-store > .data-grid table.data tr:nth-child(odd)):
+        (.content-view.indexed-database-object-store > .data-grid table.data tr.filler):
+        (.content-view.indexed-database-object-store > .data-grid :focus tr.selected td .section .header::before):
+        (.content-view.indexed-database-object-store > .data-grid :focus tr.selected td .section.expanded .header::before):
+        (.content-view.indexed-database-object-store > .data-grid :focus tr.selected td .properties-tree li.parent::before):
+        (.content-view.indexed-database-object-store > .data-grid :focus tr.selected td .properties-tree li.parent.expanded::before):
+        (.content-view.indexed-database-object-store > .data-grid :focus tr.selected td .properties-tree li *):
+        * UserInterface/IndexedDatabaseObjectStoreContentView.js: Added.
+        (WebInspector.IndexedDatabaseObjectStoreContentView.displayKeyPath):
+        (WebInspector.IndexedDatabaseObjectStoreContentView):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype.closed):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype.saveToCookie):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype.updateLayout):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype._reset):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype._dataGridScrolled):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype._fetchMoreData.processEntries):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype._fetchMoreData):
+        * UserInterface/IndexedDatabaseObjectStoreIndex.js: Added.
+        (WebInspector.IndexedDatabaseObjectStoreIndex):
+        (WebInspector.IndexedDatabaseObjectStoreIndex.prototype.get name):
+        (WebInspector.IndexedDatabaseObjectStoreIndex.prototype.get keyPath):
+        (WebInspector.IndexedDatabaseObjectStoreIndex.prototype.get unique):
+        (WebInspector.IndexedDatabaseObjectStoreIndex.prototype.get multiEntry):
+        (WebInspector.IndexedDatabaseObjectStoreIndex.prototype.get parentObjectStore):
+        (WebInspector.IndexedDatabaseObjectStoreIndex.prototype.saveIdentityToCookie):
+        (WebInspector.IndexedDatabaseObjectStoreIndex.prototype.establishRelationship):
+        * UserInterface/IndexedDatabaseObjectStoreIndexTreeElement.js: Added.
+        (WebInspector.IndexedDatabaseObjectStoreIndexTreeElement):
+        (WebInspector.IndexedDatabaseObjectStoreIndexTreeElement.prototype.get objectStoreIndex):
+        * UserInterface/IndexedDatabaseObjectStoreTreeElement.js: Added.
+        (WebInspector.IndexedDatabaseObjectStoreTreeElement):
+        (WebInspector.IndexedDatabaseObjectStoreTreeElement.prototype.get objectStore):
+        (WebInspector.IndexedDatabaseObjectStoreTreeElement.prototype.oncollapse):
+        (WebInspector.IndexedDatabaseObjectStoreTreeElement.prototype.onpopulate):
+        * UserInterface/IndexedDatabaseTreeElement.js: Added.
+        (WebInspector.IndexedDatabaseTreeElement):
+        (WebInspector.IndexedDatabaseTreeElement.prototype.get indexedDatabase):
+        (WebInspector.IndexedDatabaseTreeElement.prototype.oncollapse):
+        (WebInspector.IndexedDatabaseTreeElement.prototype.onpopulate):
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.sidebarPanelForRepresentedObject):
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype._treeElementSelected):
+        (WebInspector.ResourceSidebarPanel.prototype._indexedDatabaseWasAdded):
+        (WebInspector.ResourceSidebarPanel.prototype._storageCleared):
+        * UserInterface/StorageManager.js:
+        (WebInspector.StorageManager):
+        (WebInspector.StorageManager.prototype.initialize):
+        (WebInspector.StorageManager.prototype.processData):
+        (WebInspector.StorageManager.prototype.requestIndexedDatabaseData):
+        (WebInspector.StorageManager.prototype._mainResourceDidChange):
+        (WebInspector.StorageManager.prototype._addIndexedDBDatabasesIfNeeded.processDatabaseNames):
+        (WebInspector.StorageManager.prototype._addIndexedDBDatabasesIfNeeded.processDatabase):
+        (WebInspector.StorageManager.prototype._addIndexedDBDatabasesIfNeeded):
+        (WebInspector.StorageManager.prototype._addIndexedDBDatabasesIfNeeded.processObjectStore):
+        (WebInspector.StorageManager.prototype._addIndexedDBDatabasesIfNeeded.processObjectStoreIndex):
+        (WebInspector.StorageManager.prototype._securityOriginDidChange):
+        * UserInterface/URLUtilities.js:
+        (parseSecurityOrigin):
+
 2014-02-22  Antoine Quint  <graouts@webkit.org>
 
         Web Inspector: allow drag-to-adjust on angle input of gradients editor

@@ -349,7 +349,8 @@ WebInspector.sidebarPanelForRepresentedObject = function(representedObject)
 
     if (representedObject instanceof WebInspector.DOMStorageObject || representedObject instanceof WebInspector.CookieStorageObject ||
         representedObject instanceof WebInspector.DatabaseTableObject || representedObject instanceof WebInspector.DatabaseObject ||
-        representedObject instanceof WebInspector.ApplicationCacheFrame)
+        representedObject instanceof WebInspector.ApplicationCacheFrame || representedObject instanceof WebInspector.IndexedDatabaseObjectStore ||
+        representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
         return this.resourceSidebarPanel;
 
     if (representedObject instanceof WebInspector.TimelineRecording)

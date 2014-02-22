@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+</head>
+<body>
+<script>
+if (!window.testRunner)
+    throw "This test requires DumpRenderTree";
+
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+const databaseName = "test-inspector-database";
+
+indexedDB.deleteDatabase(databaseName).onsuccess = function() {
+    var openRequest = indexedDB.open(databaseName);
+    openRequest.onupgradeneeded = prepareDatabase;
+    openRequest.onsuccess = inspectDatabase;
+};
+
+function prepareDatabase(event)
+{
+    const db = event.target.result;
+    const objectStore = db.createObjectStore("People");
+
+    const indexData = [
+        {name: "name", keyPath: "name", options: {unique: true}},
+        {name: "height", keyPath: "height", options: {}},
+        {name: "weight", keyPath: "weight", options: {}}
+    ];
+
+    for (var data of indexData)
+        objectStore.createIndex(data.name, data.keyPath, data.options);
+
+    const objectStoreData = [
+        {key: "237-23-7732", value: {name: "Bob", height: 60, weight: 120}},
+        {key: "237-23-7733", value: {name: "Ann", height: 52, weight: 110}},
+        {key: "237-23-7734", value: {name: "Ron", height: 73, weight: 180}},
+        {key: "237-23-7735", value: {name: "Sue", height: 58, weight: 130}},
+        {key: "237-23-7736", value: {name: "Joe", height: 65, weight: 150}},
+        {key: "237-23-7737", value: {name: "Pat", height: 65, weight: 100}},
+        {key: "237-23-7738", value: {name: "Leo", height: 65, weight: 180}},
+        {key: "237-23-7739", value: {name: "Jef", height: 65, weight: 120}},
+        {key: "237-23-7740", value: {name: "Sam", height: 73, weight: 110}}
+    ];
+
+    for (var data of objectStoreData)
+        objectStore.put(data.value, data.key);
+}
+
+function inspectDatabase()
+{
+    runTest();
+
+    // Balance the extra testRunner.waitUntilDone().
+    // FIXME: No good way to do this without an arbitrary timeout.
+    setTimeout(function() { testRunner.notifyDone(); }, 500);
+}
+
+function test()
+{
+    InspectorTest.initializeInspectorModels();
+
+    function databaseAdded(event)
+    {
+        var db = event.data.indexedDatabase;
+
+        InspectorTest.log("IndexedDatabaseWasAdded: " + db.name);
+
+        for (var objectStore of db.objectStores) {
+            InspectorTest.log(" - Object Store: " + objectStore.name + " (key path: " + objectStore.keyPath + ", auto increment: " + objectStore.autoIncrement + ")");
+
+            for (var index of objectStore.indexes) {
+                InspectorTest.log("  - Index: " + index.name + " (key path: " + index.keyPath + ", unique: " + index.unique + ", multi entry: " + index.multiEntry + ")");
+
+                // FIXME: Only one requestIndexedDatabaseData is allowed at a time due to limitations of the backend. So we only print the name data.
+
+                if (index.keyPath === "name")
+                    WebInspector.storageManager.requestIndexedDatabaseData(objectStore, index, 0, 15, processData);
+            }
+        }
+    }
+
+    function processData(entries, moreAvailable)
+    {
+        InspectorTest.log("");
+        InspectorTest.log("Index Data (name):");
+
+        for (var i = 0; i < entries.length; ++i) {
+            var entry = entries[i];
+            InspectorTest.log(i + ": " + entry.primaryKey.description + ", " + entry.key.description + ", " + entry.value.description);
+        }
+    }
+
+    WebInspector.storageManager.addEventListener(WebInspector.StorageManager.Event.IndexedDatabaseWasAdded, databaseAdded);
+}
+</script>
+</body>
+</html>

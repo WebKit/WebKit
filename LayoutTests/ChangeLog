@@ -1,3 +1,16 @@
+2014-02-21  Timothy Hatcher  <timothy@apple.com>
+
+        Add inspection user interface for IndexedDB.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129162
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorTest.initializeInspectorModels): Add IndexedDatabase models and StorageManager.
+        * inspector-protocol/indexeddb/basics-expected.txt: Added.
+        * inspector-protocol/indexeddb/basics.html: Added.
+
 2014-02-21  Dirk Schulze  <krit@webkit.org>
 
         Replace svg/clip-path pixel tests by reference tests
