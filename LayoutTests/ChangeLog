@@ -1,3 +1,15 @@
+2014-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        After copy and paste, cursor may appear to be above the bottom of content
+        https://bugs.webkit.org/show_bug.cgi?id=129167
+
+        Reviewed by Ryosuke Niwa.
+
+        Makes sure that the clearing div is inserted.
+
+        * editing/pasteboard/copy-paste-inserts-clearing-div-expected.txt: Added.
+        * editing/pasteboard/copy-paste-inserts-clearing-div.html: Added.
+
 2014-02-21  Brian Burg  <bburg@apple.com>
 
         Move unported Web Inspector tests to LayoutTests/inspector-obsolete

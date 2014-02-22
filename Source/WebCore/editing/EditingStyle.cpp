@@ -1242,6 +1242,13 @@ bool EditingStyle::convertPositionStyle()
     return false;
 }
 
+bool EditingStyle::isFloating()
+{
+    RefPtr<CSSValue> v = m_mutableStyle->getPropertyCSSValue(CSSPropertyFloat);
+    RefPtr<CSSPrimitiveValue> noneValue = cssValuePool().createIdentifierValue(CSSValueNone);
+    return v && !v->equals(*noneValue);
+}
+
 int EditingStyle::legacyFontSize(Document* document) const
 {
     RefPtr<CSSValue> cssValue = m_mutableStyle->getPropertyCSSValue(CSSPropertyFontSize);

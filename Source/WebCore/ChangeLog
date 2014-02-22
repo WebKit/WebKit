@@ -1,3 +1,30 @@
+2014-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        After copy and paste, cursor may appear to be above the bottom of content
+        https://bugs.webkit.org/show_bug.cgi?id=129167
+
+        Reviewed by Ryosuke Niwa.
+
+        Adding a clear:both to the end of content.
+
+        I can't handle the case of the cursor appearing above the bottom of
+        absolutely positioned divs (of the case of floats inside absolutely
+        positioned divs) because you can't know where the bottom of a div
+        will end up being rendered (it is affected by things like browser
+        window width and text size settings). Therefore, the only case I
+        can handle is the case where there is a floating div in the same
+        level as the document itself.
+
+        Test: editing/pasteboard/copy-paste-inserts-clearing-div.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::isFloating):
+        * editing/EditingStyle.h:
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::StyledMarkupAccumulator):
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        (WebCore::createMarkupInternal):
+
 2014-02-21  Dean Jackson  <dino@apple.com>
 
         [iOS Media] Wireless target UI
