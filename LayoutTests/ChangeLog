@@ -1,3 +1,16 @@
+2014-02-21  Daniel Bates  <dabates@apple.com>
+
+        [Win] fast/table/col-and-colgroup-offsets.html - offsetHeight differs from Mac results
+        https://bugs.webkit.org/show_bug.cgi?id=129179
+
+        The test col-and-colgroup-offsets.html is failing on the Apple Win Debug (Tests) bot due
+        to platform-specific numeric differences in the computed offsetHeight of the table cells.
+        For now, I am landing Windows-specific expected results as the behavior tested by the test
+        is correct despite the numerical differences. I'll further investigate the Window-specific
+        difference in <https://bugs.webkit.org/show_bug.cgi?id=129179>.
+
+        * platform/win/fast/table/col-and-colgroup-offsets-expected.txt: Added.
+
 2014-02-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: animate breakpoint tree elements when probe samples are received
