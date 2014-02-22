@@ -1,5 +1,14 @@
 2014-02-22  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] WKUIDelegate.h is a project header
+        https://bugs.webkit.org/show_bug.cgi?id=129215
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj: Make it a public header.
+
+2014-02-22  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/12500358> [Cocoa] Development variants of XPC services should not be installed in WebKit2.framework/XPCServices
         https://bugs.webkit.org/show_bug.cgi?id=129197
 
