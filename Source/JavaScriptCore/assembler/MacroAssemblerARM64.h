@@ -70,7 +70,6 @@ public:
     void recordLinkOffsets(int32_t regionStart, int32_t regionEnd, int32_t offset) {return m_assembler.recordLinkOffsets(regionStart, regionEnd, offset); }
     int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return m_assembler.jumpSizeDelta(jumpType, jumpLinkType); }
     void link(LinkRecord& record, uint8_t* from, uint8_t* to) { return m_assembler.link(record, from, to); }
-    int executableOffsetFor(int location) { return m_assembler.executableOffsetFor(location); }
 
     static const Scale ScalePtr = TimesEight;
 

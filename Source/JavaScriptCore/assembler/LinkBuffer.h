@@ -87,6 +87,7 @@ public:
 #endif
         , m_didAllocate(false)
         , m_code(0)
+        , m_storage(masm->m_assembler.buffer().storage())
         , m_assembler(masm)
         , m_vm(&vm)
 #ifndef NDEBUG
@@ -103,6 +104,7 @@ public:
 #endif
         , m_didAllocate(false)
         , m_code(code)
+        , m_storage(masm->m_assembler.buffer().storage())
         , m_assembler(masm)
         , m_vm(&vm)
 #ifndef NDEBUG
@@ -257,10 +259,19 @@ public:
     }
 
 private:
+#if ENABLE(BRANCH_COMPACTION)
+    int executableOffsetFor(int location)
+    {
+        if (!location)
+            return 0;
+        return bitwise_cast<int32_t*>(m_storage->m_data.begin())[location / sizeof(int32_t) - 1];
+    }
+#endif
+    
     template <typename T> T applyOffset(T src)
     {
 #if ENABLE(BRANCH_COMPACTION)
-        src.m_offset -= m_assembler->executableOffsetFor(src.m_offset);
+        src.m_offset -= executableOffsetFor(src.m_offset);
 #endif
         return src;
     }
@@ -297,6 +308,7 @@ private:
 #endif
     bool m_didAllocate;
     void* m_code;
+    RefPtr<AssemblerData> m_storage;
     MacroAssembler* m_assembler;
     VM* m_vm;
 #ifndef NDEBUG

@@ -112,7 +112,7 @@ void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort eff
         if (jumpsToLink[i].to() >= jumpsToLink[i].from())
             target = outData + jumpsToLink[i].to() - offset; // Compensate for what we have collapsed so far
         else
-            target = outData + jumpsToLink[i].to() - m_assembler->executableOffsetFor(jumpsToLink[i].to());
+            target = outData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
             
         JumpLinkType jumpLinkType = m_assembler->computeJumpType(jumpsToLink[i], outData + writePtr, target);
         // Compact branch if we can...
@@ -132,7 +132,7 @@ void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort eff
         
     for (unsigned i = 0; i < jumpCount; ++i) {
         uint8_t* location = outData + jumpsToLink[i].from();
-        uint8_t* target = outData + jumpsToLink[i].to() - m_assembler->executableOffsetFor(jumpsToLink[i].to());
+        uint8_t* target = outData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
         m_assembler->link(jumpsToLink[i], location, target);
     }
 

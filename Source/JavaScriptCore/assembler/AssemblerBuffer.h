@@ -59,13 +59,21 @@ namespace JSC {
         uint32_t m_offset;
     };
 
-    class AssemblerBuffer {
+    struct AssemblerData : public RefCounted<AssemblerData> {
         static const int inlineCapacity = 128;
+
+        AssemblerData() : m_data(inlineCapacity) { }
+        
+        typedef Vector<char, inlineCapacity, UnsafeVectorOverflow> DataVector;
+        DataVector m_data;
+    };
+
+    class AssemblerBuffer {
     public:
         AssemblerBuffer()
-            : m_storage(inlineCapacity)
-            , m_buffer(m_storage.begin())
-            , m_capacity(inlineCapacity)
+            : m_storage(adoptRef(new AssemblerData()))
+            , m_buffer(m_storage->m_data.begin())
+            , m_capacity(AssemblerData::inlineCapacity)
             , m_index(0)
         {
         }
@@ -130,6 +138,8 @@ namespace JSC {
         }
 
         unsigned debugOffset() { return m_index; }
+        
+        AssemblerData* storage() { return m_storage.get(); }
 
     protected:
         void append(const char* data, int size)
@@ -145,12 +155,12 @@ namespace JSC {
         {
             m_capacity += m_capacity / 2 + extraCapacity;
 
-            m_storage.grow(m_capacity);
-            m_buffer = m_storage.begin();
+            m_storage->m_data.grow(m_capacity);
+            m_buffer = m_storage->m_data.begin();
         }
 
     private:
-        Vector<char, inlineCapacity, UnsafeVectorOverflow> m_storage;
+        RefPtr<AssemblerData> m_storage;
         char* m_buffer;
         int m_capacity;
         int m_index;

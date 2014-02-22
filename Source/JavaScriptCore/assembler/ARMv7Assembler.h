@@ -583,6 +583,8 @@ public:
     {
     }
 
+    AssemblerBuffer& buffer() { return m_formatter.m_buffer; }
+
 private:
 
     // ARMv7, Appx-A.6.3
@@ -2059,13 +2061,6 @@ public:
         return b.m_offset - a.m_offset;
     }
 
-    int executableOffsetFor(int location)
-    {
-        if (!location)
-            return 0;
-        return static_cast<int32_t*>(m_formatter.data())[location / sizeof(int32_t) - 1];
-    }
-    
     int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return JUMP_ENUM_SIZE(jumpType) - JUMP_ENUM_SIZE(jumpLinkType); }
     
     // Assembler admin methods:

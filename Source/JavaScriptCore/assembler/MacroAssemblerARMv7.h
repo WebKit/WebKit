@@ -1790,11 +1790,6 @@ public:
     }
 
     
-    int executableOffsetFor(int location)
-    {
-        return m_assembler.executableOffsetFor(location);
-    }
-
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
         return FunctionPtr(reinterpret_cast<void(*)()>(ARMv7Assembler::readCallTarget(call.dataLocation())));

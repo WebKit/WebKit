@@ -2590,13 +2590,6 @@ public:
         return b.m_offset - a.m_offset;
     }
 
-    int executableOffsetFor(int location)
-    {
-        if (!location)
-            return 0;
-        return static_cast<int32_t*>(m_buffer.data())[location / sizeof(int32_t) - 1];
-    }
-
     void* unlinkedCode() { return m_buffer.data(); }
     size_t codeSize() const { return m_buffer.codeSize(); }
 
