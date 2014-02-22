@@ -1,5 +1,33 @@
 2014-02-22  Frédéric Wang  <fred.wang@free.fr>
 
+        Bug 119043 - Large stretch size error for MathML operators.
+        https://bugs.webkit.org/show_bug.cgi?id=119043
+
+        Reviewed by Chris Fleizach.
+
+        The MathML code used some arbitrary gOperatorExpansion factor for the
+        stretch size and 2/3 1/2 constants for the baseline. This change tries
+        to consider height/depth of siblings of the stretchy operator so that
+        the stretchy operator now matches its target.
+
+        Test: mathml/presentation/stretchy-depth-height.html
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderMathMLTable):
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator):
+        (WebCore::RenderMathMLOperator::stretchTo):
+        (WebCore::RenderMathMLOperator::findAcceptableStretchyCharacter):
+        (WebCore::RenderMathMLOperator::updateStyle):
+        (WebCore::RenderMathMLOperator::firstLineBaseline):
+        (WebCore::RenderMathMLOperator::computeLogicalHeight):
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::layout):
+
+2014-02-22  Frédéric Wang  <fred.wang@free.fr>
+
         Unreviewed, rolling out r164534.
         http://trac.webkit.org/changeset/164534
         https://bugs.webkit.org/show_bug.cgi?id=119043

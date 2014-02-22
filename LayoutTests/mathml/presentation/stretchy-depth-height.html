@@ -1,0 +1,207 @@
+<html>
+  <head>
+    <title>stretch depth/height</title>
+    <meta charset="utf-8">
+    <script type="text/javascript">
+      var result;
+      var epsilon = 1;
+
+      function almostEqual(x, y) {
+          return Math.abs(x - y) < epsilon;
+      }
+
+      function assert(text, condition) {
+          result += text + ": " + (condition ? "PASS" : "FAIL") + "\n";
+      }
+
+      function test() {
+          result = "";
+
+          var s1 = document.getElementById("s1").getBoundingClientRect();
+          var c1 = document.getElementById("c1").getBoundingClientRect();
+          assert("symmetric stretching", almostEqual(s1.top, c1.top) && almostEqual(s1.bottom, c1.bottom));
+
+          var s2 = document.getElementById("s2").getBoundingClientRect();
+          var c2 = document.getElementById("c2").getBoundingClientRect();
+          assert("large depth", almostEqual(s2.top, c2.top) && almostEqual(s2.bottom, c2.bottom));
+
+          var s3 = document.getElementById("s3").getBoundingClientRect();
+          var c3 = document.getElementById("c3").getBoundingClientRect();
+          assert("large height", almostEqual(s3.top, c3.top) && almostEqual(s3.bottom, c3.bottom));
+
+          var s4 = document.getElementById("s4").getBoundingClientRect();
+          var c4 = document.getElementById("c4").getBoundingClientRect();
+          assert("mtable", almostEqual(s4.top, c4.top) && almostEqual(s4.bottom, c4.bottom));
+
+          var s5 = document.getElementById("s5").getBoundingClientRect();
+          var c5maxheight = document.getElementById("c5maxheight").getBoundingClientRect();
+          var c5maxdepth = document.getElementById("c5maxdepth").getBoundingClientRect();
+          assert("several siblings with different heights/depths", almostEqual(s5.top, c5maxheight.top) && almostEqual(s5.bottom, c5maxdepth.bottom));
+
+
+          var c6maxheight = document.getElementById("c6maxheight").getBoundingClientRect();
+          var c6maxdepth = document.getElementById("c6maxdepth").getBoundingClientRect();
+          for (var i = 1; i <= 3; i++) {
+              var s6 = document.getElementById("s6_" + i).getBoundingClientRect();
+              assert("testing several operators in one mrow (operator " + i + ")", almostEqual(s6.top, c6maxheight.top) && almostEqual(s6.bottom, c6maxdepth.bottom));
+          }
+
+          document.getElementById("result").innerText = result;
+  
+          if (window.testRunner)
+              testRunner.dumpAsText();
+      }
+    </script>
+  </head>
+  <body onload="test()">
+
+    <p>This test passes if the depth and height of braces match the maximum depth and height of its siblings.</p>
+
+    <p>
+      <!-- This tests symmetric stretching. -->
+      <math>
+        <mrow>
+          <mo id="s1" symmetric="false">{</mo>
+          <mspace id="c1" width="10px" height="150px" depth="150px" mathbackground="blue"/>
+        </mrow>
+      </math>
+      <!-- This tests a large depth. -->
+      <math>
+        <mrow>
+          <mo id="s2" symmetric="false">{</mo>
+          <mspace id="c2" width="10px" height="50px" depth="250px" mathbackground="blue"/>
+        </mrow>
+      </math>
+      <!-- This tests a large height. -->
+      <math>
+        <mrow>
+          <mo id="s3" symmetric="false">{</mo>
+          <mspace id="c3" width="10px" height="250px" depth="50px" mathbackground="blue"/>
+        </mrow>
+      </math>
+      <!-- This tests an mtable sibling. -->
+      <math>
+        <mrow>
+          <mo id="s4" symmetric="false">{</mo>
+          <mtable id="c4">
+            <mtr><mtd><mi>x</mi></mtd><mtd><mi>y</mi></mtd><mtd><mi>z</mi></mtd></mtr>
+            <mtr><mtd><mi>x</mi></mtd><mtd><mi>y</mi></mtd><mtd><mi>z</mi></mtd></mtr>
+            <mtr><mtd><mi>x</mi></mtd><mtd><mi>y</mi></mtd><mtd><mi>z</mi></mtd></mtr>
+            <mtr><mtd><mi>x</mi></mtd><mtd><mi>y</mi></mtd><mtd><mi>z</mi></mtd></mtr>
+            <mtr><mtd><mi>x</mi></mtd><mtd><mi>y</mi></mtd><mtd><mi>z</mi></mtd></mtr>
+          </mtable>
+        </mrow>
+      </math>
+      <!-- This tests several siblings with different heights/depths. -->
+      <math>
+        <mrow>
+          <mo id="s5" symmetric="false">{</mo>
+          <mfrac>
+            <mfrac>
+              <mn>1</mn>
+              <mn>2</mn>
+            </mfrac>
+            <msup>
+              <mn>3</mn>
+              <mn>4</mn>
+            </msup>
+          </mfrac>
+          <mo>-</mo>
+          <msqrt>
+            <mfrac>
+              <mn>5</mn>
+              <mn>6</mn>
+            </mfrac>
+          </msqrt>
+          <mo>*</mo>
+          <mfrac id="c5maxheight">
+            <mfrac>
+              <mfrac>
+                <mfrac>
+                  <mn>1</mn>
+                  <mn>2</mn>
+                </mfrac>
+                <msup>
+                  <mn>3</mn>
+                  <mn>4</mn>
+                </msup>
+              </mfrac>
+              <msqrt>
+                <mfrac>
+                  <mn>5</mn>
+                  <mn>6</mn>
+                </mfrac>
+              </msqrt>
+            </mfrac>
+            <mfrac>
+              <mfrac>
+                <msub>
+                  <mn>7</mn>
+                  <mn>8</mn>
+                </msub>
+                <munder>
+                  <mn>9</mn>
+                  <mn>10</mn>
+                </munder>
+              </mfrac>
+              <mn>11</mn>
+            </mfrac>
+          </mfrac>
+          <mo>+</mo>
+          <mfrac>
+            <msub>
+              <mn>7</mn>
+              <mn>8</mn>
+            </msub>
+            <munder>
+              <mn>9</mn>
+              <mn>10</mn>
+            </munder>
+          </mfrac>
+          <mo>/</mo>
+          <mfrac id="c5maxdepth">
+            <mfrac>
+              <mn>1</mn>
+              <mn>2</mn>
+            </mfrac>
+            <mfrac>
+              <mfrac>
+                <mfrac>
+                  <mn>1</mn>
+                  <mn>2</mn>
+                </mfrac>
+                <msup>
+                  <mn>3</mn>
+                  <mn>4</mn>
+                </msup>
+              </mfrac>
+              <msqrt>
+                <mfrac>
+                  <mn>5</mn>
+                  <mfrac>
+                    <mn>5</mn>
+                    <mn>6</mn>
+                  </mfrac>
+                </mfrac>
+              </msqrt>
+            </mfrac>
+          </mfrac>
+        </mrow>
+      </math>
+      <!-- This tests several operators in the same mrow. -->
+      <math>
+        <mrow>
+          <mo id="s6_1" symmetric="false">{</mo>
+          <mspace id="c6maxdepth" width="10px" height="50px" depth="150px" mathbackground="red"/>
+          <mo id="s6_2" symmetric="false">|</mo>
+          <mspace id="c6maxheight" width="10px" height="150px" depth="50px" mathbackground="red"/>
+          <mo id="s6_3" symmetric="false">}</mo>
+        </mrow>
+      </math>
+
+    </p>
+
+    <div id="result"></div>
+
+  </body>
+</html>

@@ -86,8 +86,11 @@ public:
     virtual int firstLineBaseline() const override;
     
 private:
+    virtual bool isRenderMathMLTable() const override final { return true; }
     virtual const char* renderName() const override { return "RenderMathMLTable"; }
 };
+
+RENDER_OBJECT_TYPE_CASTS(RenderMathMLTable, isRenderMathMLTable())
 
 // Parsing functions for MathML Length values
 bool parseMathMLLength(const String&, LayoutUnit&, const RenderStyle*, bool allowNegative = true);
