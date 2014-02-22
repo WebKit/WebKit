@@ -1,3 +1,18 @@
+2014-02-21  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r164412): Pixel cracks when zooming in to any web content.
+        https://bugs.webkit.org/show_bug.cgi?id=129195
+
+        Reviewed by Simon Fraser.
+
+        Integral clipping of the repaint rect was prematurely removed in RenderLayerBacking::paintContents().
+        Repaint rects needs a uniform, device pixel precise clipping across the painting flow including RenderLayer,
+        RenderView and TileController.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents):
+        (WebCore::RenderLayerBacking::compositedBoundsIncludingMargin):
+
 2014-02-21  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Mac build fix after r164529.

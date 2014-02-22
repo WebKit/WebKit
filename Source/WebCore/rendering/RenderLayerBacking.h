@@ -283,7 +283,7 @@ private:
     bool hasTiledBackingFlatteningLayer() const { return (m_childContainmentLayer && m_usingTiledCacheLayer); }
     GraphicsLayer* tileCacheFlatteningLayer() const { return m_usingTiledCacheLayer ? m_childContainmentLayer.get() : 0; }
 
-    void paintIntoLayer(const GraphicsLayer*, GraphicsContext*, const LayoutRect& paintDirtyRect, PaintBehavior, GraphicsLayerPaintingPhase);
+    void paintIntoLayer(const GraphicsLayer*, GraphicsContext*, const IntRect& paintDirtyRect, PaintBehavior, GraphicsLayerPaintingPhase);
 
     // Helper function for updateGraphicsLayerGeometry.
     void adjustAncestorCompositingBoundsForFlowThread(LayoutRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const;

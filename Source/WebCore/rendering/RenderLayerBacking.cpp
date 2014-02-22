@@ -2172,7 +2172,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
 }
 
 void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext* context,
-    const LayoutRect& paintDirtyRect, // In the coords of rootLayer.
+    const IntRect& paintDirtyRect, // In the coords of rootLayer.
     PaintBehavior paintBehavior, GraphicsLayerPaintingPhase paintingPhase)
 {
     if (paintsIntoWindow() || paintsIntoCompositedAncestor()) {
@@ -2239,8 +2239,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 #endif
 
     // The dirtyRect is in the coords of the painting root.
-    LayoutRect dirtyRect(clip);
-    IntRect pixelSnappedRectForIntegralPositionedItems = pixelSnappedIntRect(dirtyRect);
+    IntRect dirtyRect = enclosingIntRect(clip);
 
     if (graphicsLayer == m_graphicsLayer.get()
         || graphicsLayer == m_foregroundLayer.get()
@@ -2257,9 +2256,9 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         InspectorInstrumentation::didPaint(&renderer(), &context, dirtyRect);
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {
-        paintScrollbar(m_owningLayer.horizontalScrollbar(), context, pixelSnappedRectForIntegralPositionedItems);
+        paintScrollbar(m_owningLayer.horizontalScrollbar(), context, dirtyRect);
     } else if (graphicsLayer == layerForVerticalScrollbar()) {
-        paintScrollbar(m_owningLayer.verticalScrollbar(), context, pixelSnappedRectForIntegralPositionedItems);
+        paintScrollbar(m_owningLayer.verticalScrollbar(), context, dirtyRect);
     } else if (graphicsLayer == layerForScrollCorner()) {
         const LayoutRect& scrollCornerAndResizer = m_owningLayer.scrollCornerAndResizerRect();
         context.save();
@@ -2537,8 +2536,8 @@ LayoutRect RenderLayerBacking::compositedBoundsIncludingMargin() const
     LayoutUnit leftMarginWidth = tiledBacking->leftMarginWidth();
     LayoutUnit topMarginHeight = tiledBacking->topMarginHeight();
 
-    boundsIncludingMargin.moveBy(IntPoint(-leftMarginWidth, -topMarginHeight));
-    boundsIncludingMargin.expand(leftMarginWidth + (LayoutUnit)tiledBacking->rightMarginWidth(), topMarginHeight + (LayoutUnit)tiledBacking->bottomMarginHeight());
+    boundsIncludingMargin.moveBy(LayoutPoint(-leftMarginWidth, -topMarginHeight));
+    boundsIncludingMargin.expand(leftMarginWidth + tiledBacking->rightMarginWidth(), topMarginHeight + tiledBacking->bottomMarginHeight());
 
     return boundsIncludingMargin;
 }
