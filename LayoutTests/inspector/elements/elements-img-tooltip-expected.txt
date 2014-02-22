@@ -1,5 +1,0 @@
-Tests the tooltip for the image on hover.
-
-
-PASSED, image dimensions for tooltip: 215x174.
-

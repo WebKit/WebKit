@@ -1,8 +1,0 @@
-Test that resolving heap snaphot object to a JS object will not crash on DOM wrapper boilerplate. Test passes if it doesn't crash.
-
-finishHeapSnapshot 1
-_callLoadCallbacks
-Error resolving heap snapshot object: Object is not available
-Error resolving heap snapshot object: Object is not available
-clearProfiles
-

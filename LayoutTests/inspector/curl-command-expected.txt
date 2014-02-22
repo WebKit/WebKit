@@ -1,7 +1,0 @@
-Tests curl command generation
-
-curl "http://example.org/path"
-curl "http://example.org/path" --data-binary "123"
-curl "http://example.org/path" -H "Content-Type: application/x-www-form-urlencoded" --data "1&b"
-curl "http://example.org/path" -H "Content-Type: application/json" --data-binary "{\"a\":1}"
-

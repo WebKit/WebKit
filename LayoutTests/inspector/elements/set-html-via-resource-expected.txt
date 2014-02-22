@@ -1,5 +1,0 @@
-Tests that the DOM content can be set via editing resource content.
-
-
-<html><head></head><body>New iframe content</body></html>
-

@@ -1,9 +1,0 @@
-Tests showing several node ranges in the Summary view of detailed heap snapshot.
-
-Profiler was enabled.
-Detailed heap profiles were enabled.
-
-Running: testShowAll
-
-Profiler was disabled.
-

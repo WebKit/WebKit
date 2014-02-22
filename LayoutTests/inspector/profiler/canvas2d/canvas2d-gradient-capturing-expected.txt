@@ -1,3 +1,0 @@
-Tests Canvas 2D capturing for CanvasGradient objects.
-
-Bug 101432

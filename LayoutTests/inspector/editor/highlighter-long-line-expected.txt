@@ -1,5 +1,0 @@
-This test checks highlighter on a long line.
-
-Line length: 11264, number of comments: 1024
-All checks completed.
-

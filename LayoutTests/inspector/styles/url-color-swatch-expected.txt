@@ -1,5 +1,0 @@
-Tests that url(...) with space-delimited color names as filename segments do not contain color swatches. Bug 106770.
-
-url("red green blue.jpg")
-[] red
-

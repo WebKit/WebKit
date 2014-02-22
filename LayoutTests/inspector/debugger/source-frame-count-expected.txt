@@ -1,8 +1,0 @@
-Tests that scripts panel does not create too many source frames.
-
-Debugger was enabled.
-
-Running: testSourceFramesCount
-Page reloaded.
-Debugger was disabled.
-

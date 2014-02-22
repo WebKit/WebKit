@@ -1,7 +1,0 @@
-This test checks the text editor model.
-
-Lines:4, length:5, input equals output:true
-Lines:4, length:8, input equals output:true
-Lines:4, length:8, input equals output:false
-Lines:1, length:14, input equals output:true
-

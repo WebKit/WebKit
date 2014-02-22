@@ -1,3 +1,0 @@
-Tests Canvas 2D capturing basics.
-
-Bug 100752
