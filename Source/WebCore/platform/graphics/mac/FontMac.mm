@@ -287,7 +287,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
 #endif
     matrix.b = -matrix.b;
     matrix.d = -matrix.d;
-    if (platformData.m_syntheticOblique && !useLetterpressEffect) {
+    if (platformData.m_syntheticOblique) {
         static float obliqueSkew = tanf(SYNTHETIC_OBLIQUE_ANGLE * piFloat / 180);
         if (platformData.orientation() == Vertical)
             matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, obliqueSkew, 0, 1, 0, 0));

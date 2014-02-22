@@ -1,3 +1,16 @@
+2014-02-22  Dean Jackson  <dino@apple.com>
+
+        Letterpress effect disabled for synthetic italic
+        https://bugs.webkit.org/show_bug.cgi?id=129218
+        <rdar://problem/15997846>
+
+        Reviewed by Dan Bernstein.
+
+        There was no need to guard against synthetic italics and letterpress.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs): Remove !useLetterpressEffect from conditional.
+
 2014-02-21  Sam Weinig  <sam@webkit.org>
 
         Expose phase and momentum phase as SPI on DOMWheelEvent
