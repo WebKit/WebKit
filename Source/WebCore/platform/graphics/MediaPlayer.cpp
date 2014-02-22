@@ -166,13 +166,14 @@ struct MediaPlayerFactory {
     WTF_MAKE_NONCOPYABLE(MediaPlayerFactory); WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaPlayerFactory(CreateMediaEnginePlayer constructor, MediaEngineSupportedTypes getSupportedTypes, MediaEngineSupportsType supportsTypeAndCodecs,
-        MediaEngineGetSitesInMediaCache getSitesInMediaCache, MediaEngineClearMediaCache clearMediaCache, MediaEngineClearMediaCacheForSite clearMediaCacheForSite)
+        MediaEngineGetSitesInMediaCache getSitesInMediaCache, MediaEngineClearMediaCache clearMediaCache, MediaEngineClearMediaCacheForSite clearMediaCacheForSite, MediaEngineSupportsKeySystem supportsKeySystem)
         : constructor(constructor)
         , getSupportedTypes(getSupportedTypes)
         , supportsTypeAndCodecs(supportsTypeAndCodecs)
         , getSitesInMediaCache(getSitesInMediaCache)
         , clearMediaCache(clearMediaCache)
         , clearMediaCacheForSite(clearMediaCacheForSite)
+        , supportsKeySystem(supportsKeySystem)
     {
     }
 
@@ -182,9 +183,10 @@ public:
     MediaEngineGetSitesInMediaCache getSitesInMediaCache;
     MediaEngineClearMediaCache clearMediaCache;
     MediaEngineClearMediaCacheForSite clearMediaCacheForSite;
+    MediaEngineSupportsKeySystem supportsKeySystem;
 };
 
-static void addMediaEngine(CreateMediaEnginePlayer, MediaEngineSupportedTypes, MediaEngineSupportsType, MediaEngineGetSitesInMediaCache, MediaEngineClearMediaCache, MediaEngineClearMediaCacheForSite);
+static void addMediaEngine(CreateMediaEnginePlayer, MediaEngineSupportedTypes, MediaEngineSupportsType, MediaEngineGetSitesInMediaCache, MediaEngineClearMediaCache, MediaEngineClearMediaCacheForSite, MediaEngineSupportsKeySystem);
 
 static MediaPlayerFactory* bestMediaEngineForSupportParameters(const MediaEngineSupportParameters&, MediaPlayerFactory* current = 0);
 static MediaPlayerFactory* nextMediaEngine(MediaPlayerFactory* current);
@@ -237,13 +239,13 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions r
 }
 
 static void addMediaEngine(CreateMediaEnginePlayer constructor, MediaEngineSupportedTypes getSupportedTypes, MediaEngineSupportsType supportsType,
-    MediaEngineGetSitesInMediaCache getSitesInMediaCache, MediaEngineClearMediaCache clearMediaCache, MediaEngineClearMediaCacheForSite clearMediaCacheForSite)
+    MediaEngineGetSitesInMediaCache getSitesInMediaCache, MediaEngineClearMediaCache clearMediaCache, MediaEngineClearMediaCacheForSite clearMediaCacheForSite, MediaEngineSupportsKeySystem supportsKeySystem)
 {
     ASSERT(constructor);
     ASSERT(getSupportedTypes);
     ASSERT(supportsType);
 
-    installedMediaEngines().append(new MediaPlayerFactory(constructor, getSupportedTypes, supportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite));
+    installedMediaEngines().append(new MediaPlayerFactory(constructor, getSupportedTypes, supportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite, supportsKeySystem));
 }
 
 static const AtomicString& applicationOctetStream()
@@ -1006,6 +1008,15 @@ void MediaPlayer::clearMediaCacheForSite(const String& site)
         if (engines[i]->clearMediaCacheForSite)
             engines[i]->clearMediaCacheForSite(site);
     }
+}
+
+bool MediaPlayer::supportsKeySystem(const String& keySystem, const String& mimeType)
+{
+    for (auto& engine : installedMediaEngines()) {
+        if (engine->supportsKeySystem && engine->supportsKeySystem(keySystem, mimeType))
+            return true;
+    }
+    return false;
 }
 
 void MediaPlayer::setPrivateBrowsingMode(bool privateBrowsingMode)

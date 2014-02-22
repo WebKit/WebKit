@@ -1,3 +1,41 @@
+2014-02-21  Jer Noble  <jer.noble@apple.com>
+
+        Add a supportsKeySystem media engine factory parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=129161
+
+        Reviewed by Eric Carlson.
+
+        Add a new parameter to the MediaPlayerFactory to allow registered media
+        engines to be queried for keySystem support:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayerFactory::MediaPlayerFactory):
+        (WebCore::MediaPlayer::supportsKeySystem):
+        * platform/graphics/MediaPlayer.h:
+
+        Support this new field in MediaPlayerPrivateAVFoundationObjC:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::registerMediaEngine):
+        (WebCore::keySystemIsSupported):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsKeySystem):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+
+        Add an empty field for SupportsKeySystem to the remaining media engines:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::registerMediaEngine):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::registerMediaEngine):
+        * platform/graphics/ios/MediaPlayerPrivateIOS.mm:
+        (WebCore::MediaPlayerPrivateIOS::registerMediaEngine):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::registerMediaEngine):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::registerMediaEngine):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::registerMediaEngine):
+
 2014-02-21  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix WebCore's internals after r164505

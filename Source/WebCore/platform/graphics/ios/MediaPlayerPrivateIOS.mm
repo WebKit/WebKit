@@ -114,7 +114,7 @@ PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateIOS::create(MediaPlaye
 void MediaPlayerPrivateIOS::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
+        registrar(create, getSupportedTypes, supportsType, 0, 0, 0, 0);
 }
 
 MediaPlayerPrivateIOS::MediaPlayerPrivateIOS(MediaPlayer* player)
