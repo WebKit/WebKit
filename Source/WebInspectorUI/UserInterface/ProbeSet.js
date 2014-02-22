@@ -84,8 +84,9 @@ WebInspector.ProbeSet.prototype = {
         for (var probe of this._probes)
             probe.clearSamples();
 
+        var oldTable = this._dataTable;
         this._createDataTable();
-        this.dispatchEventToListeners(WebInspector.ProbeSet.Event.SamplesCleared, this);
+        this.dispatchEventToListeners(WebInspector.ProbeSet.Event.SamplesCleared, {oldTable: oldTable});
     },
 
     createProbe: function(expression)

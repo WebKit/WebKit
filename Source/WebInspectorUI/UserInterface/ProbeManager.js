@@ -158,7 +158,7 @@ WebInspector.ProbeManager.prototype = {
             if (!probeSet.probes.length) {
                 this._probeSetsByBreakpoint.delete(probeSet.breakpoint);
                 probeSet.willRemove();
-                this.dispatchEventToListeners(WebInspector.ProbeManager.Event.ProbeSetRemoved, probeSet);
+                this.dispatchEventToListeners(WebInspector.ProbeManager.Event.ProbeSetRemoved, {probeSet: probeSet});
             }
         }, this);
     },
@@ -170,7 +170,7 @@ WebInspector.ProbeManager.prototype = {
 
         var newProbeSet = new WebInspector.ProbeSet(breakpoint);
         this._probeSetsByBreakpoint.set(breakpoint, newProbeSet);
-        this.dispatchEventToListeners(WebInspector.ProbeManager.Event.ProbeSetAdded, newProbeSet);
+        this.dispatchEventToListeners(WebInspector.ProbeManager.Event.ProbeSetAdded, {probeSet: newProbeSet});
         return newProbeSet;
     }
 };

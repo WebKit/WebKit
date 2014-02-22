@@ -1,3 +1,15 @@
+2014-02-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: animate breakpoint tree elements when probe samples are received
+        https://bugs.webkit.org/show_bug.cgi?id=128334
+
+        Reviewed by Timothy Hatcher.
+
+        Adjust probe manager tracing listeners to access the correct data container property.
+
+        * inspector-protocol/resources/probe-helper.js:
+        (ProbeHelper.installTracingListeners):
+
 2014-02-21  Daniel Bates  <dabates@apple.com>
 
         COL element in table has 0 for offsetWidth

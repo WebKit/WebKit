@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,4 +44,35 @@
 
 .item.breakpoint .subtitle.formatted-location {
     font-style: italic;
+}
+
+.breakpoint-exception-icon .icon {
+    content: url(Images/Exception.svg);
+}
+
+/* When animating a layer on top of a tree element's icon, move the main
+icon to the icon element's background so animations are layered on top. */
+.breakpoint-generic-line-icon .icon {
+    background-image: url(Images/ResultLine.svg);
+    content: '';
+}
+
+.breakpoint-generic-line-icon .icon > span {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    border-radius: 50%;
+    -webkit-transform: scale(0);
+    -webkit-transition: none;
+    background-color: rgba(76, 102, 143, 1);
+}
+
+.data-updated.breakpoint-generic-line-icon .icon > span {
+    border-radius: 0;
+    -webkit-transform: scale(0.85);
+    -webkit-transition: all .4s ease-out;
+    background-color: rgba(76, 102, 143, 0.1);
 }

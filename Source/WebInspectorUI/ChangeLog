@@ -1,3 +1,51 @@
+2014-02-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: animate breakpoint tree elements when probe samples are received
+        https://bugs.webkit.org/show_bug.cgi?id=128334
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/BreakpointIcons.css: Removed, rules migrated to the following file.
+
+        * UserInterface/BreakpointTreeElement.css: When we want to animateon top of the
+        static icon, we set the icon image as the icon element's background, and animate
+        a span on top of the icon element.
+
+        (.breakpoint-exception-icon .icon): Moved.
+        (.breakpoint-generic-line-icon .icon):
+        (.breakpoint-generic-line-icon .icon > span): Added.
+        (.data-updated.breakpoint-generic-line-icon .icon > span): Added.
+
+        * UserInterface/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement): Rewrite event listener add/remove to use EventListenerSet.
+        (WebInspector.BreakpointTreeElement.prototype.ondetach): Override to unregister the instance's listeners.
+        (WebInspector.BreakpointTreeElement.prototype._addProbeSet): Added.
+        (WebInspector.BreakpointTreeElement.prototype._removeProbeSet): Added.
+        (WebInspector.BreakpointTreeElement.prototype._probeSetAdded): Added.
+        (WebInspector.BreakpointTreeElement.prototype._probeSetRemoved): Added.
+        Add/remove listeners when probe sets change.
+
+        (WebInspector.BreakpointTreeElement.prototype._samplesCleared): Listeners should follow
+        the active data table.
+
+        (WebInspector.BreakpointTreeElement.prototype._dataUpdated): Run the animation when probe data changes.
+        (WebInspector.BreakpointTreeElement.prototype._breakpointLocationDidChange): Fix a listener leak.
+        * UserInterface/Main.html: Remove BreakpointIcons.css.
+        * UserInterface/NavigationSidebarPanel.css:
+        (.navigation-sidebar-panel-content-tree-outline .item .icon): give icons
+        'position: relative' so child spans can be absolutely positioned.
+        * UserInterface/ProbeDetailsSidebarPanel.js: Get probeSet out of the event data
+        container. The probe set used to be passed as the data container itself.
+        (WebInspector.ProbeDetailsSidebarPanel.prototype._probeSetAdded):
+        * UserInterface/ProbeManager.js:
+        (WebInspector.ProbeManager.prototype._breakpointActionsChanged.set get knownProbeIdentifiers):
+        (WebInspector.ProbeManager.prototype._breakpointActionsChanged):
+        (WebInspector.ProbeManager.prototype.get _probeSetForBreakpoint.set this):
+        * UserInterface/ProbeSet.js:
+        (WebInspector.ProbeSet.prototype.clearSamples): include the old data table as the SamplesCleared event data.
+        * UserInterface/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView.prototype._probeSetsChanged):
+
 2014-02-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JSContext inspection should report exceptions in the console

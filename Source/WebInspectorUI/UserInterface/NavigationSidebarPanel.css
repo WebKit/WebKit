@@ -190,6 +190,7 @@
 
 .navigation-sidebar-panel-content-tree-outline .item .icon {
     float: left;
+    position: relative;
 
     width: 32px;
     height: 32px;

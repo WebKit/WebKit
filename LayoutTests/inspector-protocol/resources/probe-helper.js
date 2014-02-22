@@ -69,14 +69,14 @@ ProbeHelper.installTracingListeners = function()
     });
 
     WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetAdded, function(event) {
-        var probeSet = event.data;
+        var probeSet = event.data.probeSet;
         console.assert(probeSet instanceof WebInspector.ProbeSet, "Unexpected object type!");
 
         InspectorTest.log("Probe set was added. New count: " + WebInspector.probeManager.probeSets.length);
     });
 
     WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetRemoved, function(event) {
-        var probeSet = event.data;
+        var probeSet = event.data.probeSet;
         console.assert(probeSet instanceof WebInspector.ProbeSet, "Unexpected object type!");
 
         InspectorTest.log("Probe set was removed. New count: " + WebInspector.probeManager.probeSets.length);

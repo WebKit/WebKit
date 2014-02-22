@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +34,20 @@ WebInspector.BreakpointTreeElement = function(breakpoint, className, title)
 
     this._breakpoint = breakpoint;
 
+    this._listeners = new WebInspector.EventListenerSet(this, "BreakpointTreeElement listeners");
     if (!title)
-        this._breakpoint.addEventListener(WebInspector.Breakpoint.Event.LocationDidChange, this._breakpointLocationDidChange, this);
-    this._breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
-    this._breakpoint.addEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateStatus, this);
-    this._breakpoint.addEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateStatus, this);
+        this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.LocationDidChange, this._breakpointLocationDidChange);
+    this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateStatus);
+    this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateStatus);
+    this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateStatus);
+
+    this._listeners.register(WebInspector.probeManager, WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded);
+    this._listeners.register(WebInspector.probeManager, WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved);
 
     this._statusImageElement = document.createElement("img");
     this._statusImageElement.className = WebInspector.BreakpointTreeElement.StatusImageElementStyleClassName;
-    this._statusImageElement.addEventListener("mousedown", this._statusImageElementMouseDown.bind(this));
-    this._statusImageElement.addEventListener("click", this._statusImageElementClicked.bind(this));
+    this._listeners.register(this._statusImageElement, "mousedown", this._statusImageElementMouseDown);
+    this._listeners.register(this._statusImageElement, "click", this._statusImageElementClicked);
 
     if (!title)
         this._updateTitles();
@@ -51,6 +55,9 @@ WebInspector.BreakpointTreeElement = function(breakpoint, className, title)
 
     this.status = this._statusImageElement;
     this.small = true;
+
+    this._iconAnimationLayerElement = document.createElement("span");
+    this.iconElement.appendChild(this._iconAnimationLayerElement);
 };
 
 WebInspector.BreakpointTreeElement.GenericLineIconStyleClassName = "breakpoint-generic-line-icon";
@@ -60,6 +67,10 @@ WebInspector.BreakpointTreeElement.StatusImageResolvedStyleClassName = "resolved
 WebInspector.BreakpointTreeElement.StatusImageAutoContinueStyleClassName = "auto-continue";
 WebInspector.BreakpointTreeElement.StatusImageDisabledStyleClassName = "disabled";
 WebInspector.BreakpointTreeElement.FormattedLocationStyleClassName = "formatted-location";
+WebInspector.BreakpointTreeElement.ProbeDataUpdatedStyleClassName = "data-updated";
+
+WebInspector.BreakpointTreeElement.ProbeDataUpdatedAnimationDuration = 400; // milliseconds
+
 
 WebInspector.BreakpointTreeElement.prototype = {
     constructor: WebInspector.BreakpointTreeElement,
@@ -97,6 +108,27 @@ WebInspector.BreakpointTreeElement.prototype = {
         var contextMenu = new WebInspector.ContextMenu(event);
         this._breakpoint.appendContextMenuItems(contextMenu, this._statusImageElement);
         contextMenu.show();
+    },
+
+    onattach: function()
+    {
+        WebInspector.GeneralTreeElement.prototype.onattach.call(this);
+
+        this._listeners.install();
+
+        for (var probeSet of WebInspector.probeManager.probeSets)
+            if (probeSet.breakpoint === this._breakpoint)
+                this._addProbeSet(probeSet);
+    },
+
+    ondetach: function()
+    {
+        WebInspector.GeneralTreeElement.prototype.ondetach.call(this);
+
+        this._listeners.uninstall();
+
+        if (this._probeSet)
+            this._removeProbeSet(this._probeSet);
     },
 
     // Private
@@ -142,18 +174,75 @@ WebInspector.BreakpointTreeElement.prototype = {
             this._statusImageElement.classList.remove(WebInspector.BreakpointTreeElement.StatusImageResolvedStyleClassName);
     },
 
+    _addProbeSet: function(probeSet)
+    {
+        console.assert(probeSet instanceof WebInspector.ProbeSet);
+        console.assert(probeSet.breakpoint === this._breakpoint);
+        console.assert(probeSet !== this._probeSet);
+
+        this._probeSet = probeSet;
+        probeSet.addEventListener(WebInspector.ProbeSet.Event.SamplesCleared, this._samplesCleared, this);
+        probeSet.dataTable.addEventListener(WebInspector.ProbeSetDataTable.Event.FrameInserted, this._dataUpdated, this);
+    },
+
+    _removeProbeSet: function(probeSet)
+    {
+        console.assert(probeSet instanceof WebInspector.ProbeSet);
+        console.assert(probeSet === this._probeSet);
+
+        probeSet.removeEventListener(WebInspector.ProbeSet.Event.SamplesCleared, this._samplesCleared, this);
+        probeSet.dataTable.removeEventListener(WebInspector.ProbeSetDataTable.Event.FrameInserted, this._dataUpdated, this);
+        delete this._probeSet;
+    },
+
+    _probeSetAdded: function(event)
+    {
+        var probeSet = event.data.probeSet;
+        if (probeSet.breakpoint === this._breakpoint)
+            this._addProbeSet(probeSet);
+    },
+
+    _probeSetRemoved: function(event)
+    {
+        var probeSet = event.data.probeSet;
+        if (probeSet.breakpoint === this._breakpoint)
+            this._removeProbeSet(probeSet);
+    },
+
+    _samplesCleared: function(event)
+    {
+        console.assert(this._probeSet);
+
+        var oldTable = event.data.oldTable;
+        oldTable.removeEventListener(WebInspector.ProbeSetDataTable.Event.FrameInserted, this._dataUpdated, this);
+        this._probeSet.dataTable.addEventListener(WebInspector.ProbeSetDataTable.Event.FrameInserted, this._dataUpdated, this);
+    },
+
+    _dataUpdated: function()
+    {
+        if (this.element.classList.contains(WebInspector.BreakpointTreeElement.ProbeDataUpdatedStyleClassName)) {
+            clearTimeout(this._removeIconAnimationTimeoutIdentifier);
+            this.element.classList.remove(WebInspector.BreakpointTreeElement.ProbeDataUpdatedStyleClassName);
+            // We want to restart the animation, which can only be done by removing the class,
+            // performing layout, and re-adding the class. Try adding class back on next run loop.
+            window.requestAnimationFrame(this._dataUpdated.bind(this));
+            return;
+        }
+
+        this.element.classList.add(WebInspector.BreakpointTreeElement.ProbeDataUpdatedStyleClassName);
+        this._removeIconAnimationTimeoutIdentifier = setTimeout(function() {
+            this.element.classList.remove(WebInspector.BreakpointTreeElement.ProbeDataUpdatedStyleClassName);
+        }.bind(this), WebInspector.BreakpointTreeElement.ProbeDataUpdatedAnimationDuration);
+    },
+
+
     _breakpointLocationDidChange: function(event)
     {
         console.assert(event.target === this._breakpoint);
 
-        // The Breakpoint has a new display SourceCode. The sidebar will remove us. Stop listening to the breakpoint.
-        if (event.data.oldDisplaySourceCode === this._breakpoint.displaySourceCode) {
-            this._breakpoint.addEventListener(WebInspector.Breakpoint.Event.LocationDidChange, this._breakpointLocationDidChange, this);
-            this._breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
-            this._breakpoint.addEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateStatus, this);
-            this._breakpoint.addEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateStatus, this);
+        // The Breakpoint has a new display SourceCode. The sidebar will remove us, and ondetach() will clear listeners.
+        if (event.data.oldDisplaySourceCode === this._breakpoint.displaySourceCode)
             return;
-        }
 
         this._updateTitles();
     },

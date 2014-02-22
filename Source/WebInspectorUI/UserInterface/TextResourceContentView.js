@@ -234,7 +234,7 @@ WebInspector.TextResourceContentView.prototype = {
 
     _probeSetsChanged: function(event)
     {
-        var breakpoint = event.data.breakpoint;
+        var breakpoint = event.data.probeSet.breakpoint;
         if (breakpoint.sourceCodeLocation.sourceCode === this.resource)
             this.dispatchEventToListeners(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange);
     }

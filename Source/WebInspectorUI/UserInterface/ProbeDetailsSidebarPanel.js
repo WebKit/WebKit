@@ -87,7 +87,7 @@ WebInspector.ProbeDetailsSidebarPanel.prototype = {
         if (probeSetOrEvent instanceof WebInspector.ProbeSet)
             probeSet = probeSetOrEvent;
         else
-            probeSet = probeSetOrEvent.data;
+            probeSet = probeSetOrEvent.data.probeSet;
         console.assert(!this._probeSetSections.has(probeSet), "New probe group ", probeSet, " already has its own sidebar.");
 
         var newSection = new WebInspector.ProbeSetDetailsSection(probeSet);
@@ -97,7 +97,7 @@ WebInspector.ProbeDetailsSidebarPanel.prototype = {
 
     _probeSetRemoved: function(event)
     {
-        var probeSet = event.data;
+        var probeSet = event.data.probeSet;
         console.assert(this._probeSetSections.has(probeSet), "Removed probe group ", probeSet, " doesn't have a sidebar.");
 
         // First remove probe set from inspected list, then from mapping.
