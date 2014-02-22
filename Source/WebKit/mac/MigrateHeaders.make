@@ -177,6 +177,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMUIEvent.h \
     $(PUBLIC_HEADERS_DIR)/DOMViews.h \
     $(PUBLIC_HEADERS_DIR)/DOMWheelEvent.h \
+    $(INTERNAL_HEADERS_DIR)/DOMWheelEventInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPath.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPathException.h \
     $(PUBLIC_HEADERS_DIR)/DOMXPathExpression.h \

@@ -1,3 +1,32 @@
+2014-02-21  Sam Weinig  <sam@webkit.org>
+
+        Expose phase and momentum phase as SPI on DOMWheelEvent
+        <rdar://problem/16110871>
+        https://bugs.webkit.org/show_bug.cgi?id=129184
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        Export core(DOMWheelEvent).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make DOMWheelEventInternal.h available in WebKit.
+
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchWheelEvent):
+        * dom/WheelEvent.cpp:
+        (WebCore::determineDeltaMode):
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::initWheelEvent):
+        (WebCore::WheelEvent::initWebKitWheelEvent):
+        Move PlatformWheelEvent -> DOMWheelEvent conversion to DOMWheelEvent.
+
+        * dom/WheelEvent.h:
+        (WebCore::WheelEvent::create):
+        (WebCore::WheelEvent::phase):
+        (WebCore::WheelEvent::momentumPhase):
+        Store phase and momentumPhase on the WheelEvent.
+
 2014-02-22  Alexey Proskuryakov  <ap@apple.com>
 
         Rename JWK key_ops values from wrap/unwrap to wrapKey/unwrapKey

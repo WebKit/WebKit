@@ -254,27 +254,13 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
     return didNotSwallowEvent;
 }
 
-inline static unsigned deltaMode(const PlatformWheelEvent& event)
-{
-    return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::DOM_DELTA_PAGE : WheelEvent::DOM_DELTA_PIXEL;
-}
 
 bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
 {
     if (!(event.deltaX() || event.deltaY()))
         return true;
 
-    RefPtr<WheelEvent> wheelEvent = WheelEvent::create(
-        FloatPoint(event.wheelTicksX(), event.wheelTicksY()),
-        FloatPoint(event.deltaX(), event.deltaY()),
-        deltaMode(event),
-        document().defaultView(),
-        event.globalPosition(),
-        event.position(),
-        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(),
-        event.directionInvertedFromDevice(),
-        event.timestamp());
-
+    RefPtr<WheelEvent> wheelEvent = WheelEvent::create(event, document().defaultView());
     return EventDispatcher::dispatchEvent(this, wheelEvent) && !wheelEvent->defaultHandled();
 }
 

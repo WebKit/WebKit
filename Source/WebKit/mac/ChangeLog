@@ -1,3 +1,21 @@
+2014-02-21  Sam Weinig  <sam@webkit.org>
+
+        Expose phase and momentum phase as SPI on DOMWheelEvent
+        <rdar://problem/16110871>
+        https://bugs.webkit.org/show_bug.cgi?id=129184
+
+        Reviewed by Anders Carlsson.
+
+        * DOM/WebDOMOperations.mm:
+        (toNSEventPhase):
+        (-[DOMWheelEvent _phase]):
+        (-[DOMWheelEvent _momentumPhase]):
+        * DOM/WebDOMOperationsPrivate.h:
+        Expose _phase and _momentumPhase as SPI.
+
+        * MigrateHeaders.make:
+        Make DOMWheelEventInternal.h to WebKit.
+
 2014-02-22  David Kilzer  <ddkilzer@apple.com>
 
         Revert r164434 since it actually broke ASan builds

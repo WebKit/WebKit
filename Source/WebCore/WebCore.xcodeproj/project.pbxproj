@@ -2289,6 +2289,7 @@
 		7BE7427381FA906FBB4F0F2C /* JSSVGGraphicsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 950C4C02BED8936F818E2F99 /* JSSVGGraphicsElement.h */; };
 		7C2BDD3D17C7F98C0038FF15 /* JSDOMGlobalObjectTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */; };
 		7C2BDD3E17C7F98C0038FF15 /* JSDOMGlobalObjectTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */; };
+		7C4902A218B825F8007D9298 /* DOMWheelEventInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85989DCA0ACC8BBD00A0BC51 /* DOMWheelEventInternal.h */; };
 		7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */; };
 		7C5343FC17B74B63004232F0 /* JSMediaQueryListListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5343FA17B74B63004232F0 /* JSMediaQueryListListener.cpp */; };
 		7C5343FD17B74B63004232F0 /* JSMediaQueryListListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5343FB17B74B63004232F0 /* JSMediaQueryListListener.h */; };
@@ -2473,7 +2474,7 @@
 		85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B380A44EFC700F992E0 /* UIEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B390A44EFC700F992E0 /* UIEventWithKeyState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85031B500A44EFC700F992E0 /* WheelEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85031B3A0A44EFC700F992E0 /* WheelEvent.cpp */; };
-		85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B3B0A44EFC700F992E0 /* WheelEvent.h */; };
+		85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85031B3B0A44EFC700F992E0 /* WheelEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85032DD70AA8C9BE007D3B7D /* DOMCSSCharsetRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 85032DC30AA8C9BE007D3B7D /* DOMCSSCharsetRule.h */; };
 		85032DD80AA8C9BE007D3B7D /* DOMCSSCharsetRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85032DC40AA8C9BE007D3B7D /* DOMCSSCharsetRule.mm */; };
 		85032DD90AA8C9BE007D3B7D /* DOMCSSFontFaceRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 85032DC50AA8C9BE007D3B7D /* DOMCSSFontFaceRule.h */; };
@@ -6633,6 +6634,7 @@
 				85F32B400AA6401A00FF3184 /* DOMHTMLInputElement.h in Copy Generated Headers */,
 				6596F2B30B8731DF001326BD /* DOMHTMLInputElementInternal.h in Copy Generated Headers */,
 				1CCA732210ADD44A00FD440D /* DOMHTMLInputElementPrivate.h in Copy Generated Headers */,
+				7C4902A218B825F8007D9298 /* DOMWheelEventInternal.h in Copy Generated Headers */,
 				85BA4CE70AA686510088052D /* DOMHTMLLabelElement.h in Copy Generated Headers */,
 				85BA4CE80AA686510088052D /* DOMHTMLLegendElement.h in Copy Generated Headers */,
 				85BA4D2B0AA6889F0088052D /* DOMHTMLLIElement.h in Copy Generated Headers */,

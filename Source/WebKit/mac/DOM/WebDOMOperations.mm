@@ -32,6 +32,7 @@
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "DOMWheelEventInternal.h"
 #import "WebArchiveInternal.h"
 #import "WebDataSourcePrivate.h"
 #import "WebFrameInternal.h"
@@ -46,14 +47,16 @@
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/JSElement.h>
 #import <WebCore/LegacyWebArchive.h>
-#import <WebCore/markup.h>
+#import <WebCore/PlatformWheelEvent.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderTreeAsText.h>
 #import <WebCore/ShadowRoot.h>
+#import <WebCore/WheelEvent.h>
+#import <WebCore/markup.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMHTML.h>
-#import <runtime/JSLock.h>
 #import <runtime/JSCJSValue.h>
+#import <runtime/JSLock.h>
 #import <wtf/Assertions.h>
 
 using namespace WebCore;
@@ -224,3 +227,40 @@ using namespace JSC;
 }
 
 @end
+
+#if !PLATFORM(IOS)
+static NSEventPhase toNSEventPhase(PlatformWheelEventPhase platformPhase)
+{
+    uint32_t phase = PlatformWheelEventPhaseNone; 
+    if (platformPhase & PlatformWheelEventPhaseBegan)
+        phase |= NSEventPhaseBegan;
+    if (platformPhase & PlatformWheelEventPhaseStationary)
+        phase |= NSEventPhaseStationary;
+    if (platformPhase & PlatformWheelEventPhaseChanged)
+        phase |= NSEventPhaseChanged;
+    if (platformPhase & PlatformWheelEventPhaseEnded)
+        phase |= NSEventPhaseEnded;
+    if (platformPhase & PlatformWheelEventPhaseCancelled)
+        phase |= NSEventPhaseCancelled;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    if (platformPhase & PlatformWheelEventPhaseMayBegin)
+        phase |= NSEventPhaseMayBegin;
+#endif
+
+    return static_cast<NSEventPhase>(phase);
+}
+
+@implementation DOMWheelEvent (WebDOMWheelEventOperationsPrivate)
+
+- (NSEventPhase)_phase
+{
+    return toNSEventPhase(core(self)->phase());
+}
+
+- (NSEventPhase)_momentumPhase
+{
+    return toNSEventPhase(core(self)->momentumPhase());
+}
+
+@end
+#endif

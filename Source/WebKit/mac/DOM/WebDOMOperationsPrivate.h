@@ -31,6 +31,9 @@
 
 #if TARGET_OS_IPHONE
 #import <Foundation/NSGeometry.h>
+#else
+#import <AppKit/NSEvent.h>
+#import <WebKit/DOMWheelEvent.h>
 #endif
 
 @interface DOMElement (WebDOMElementOperationsPrivate)
@@ -56,3 +59,10 @@ typedef BOOL (^WebArchiveSubframeFilter)(WebFrame* subframe);
 - (void)showPlaceholderIfNecessary;
 #endif
 @end
+
+#if !TARGET_OS_IPHONE
+@interface DOMWheelEvent (WebDOMWheelEventOperationsPrivate)
+- (NSEventPhase)_phase;
+- (NSEventPhase)_momentumPhase;
+@end
+#endif
