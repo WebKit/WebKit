@@ -23,8 +23,13 @@ import sys
 resources_path = common.top_level_path() + "/Source/WebInspectorUI/"
 inspector_files = \
     glob.glob(resources_path + 'UserInterface/*.html') + \
-    glob.glob(resources_path + 'UserInterface/*.js') + \
-    glob.glob(resources_path + 'UserInterface/*.css') + \
+    glob.glob(resources_path + 'UserInterface/Base/*.js') + \
+    glob.glob(resources_path + 'UserInterface/Controllers/*.css') + \
+    glob.glob(resources_path + 'UserInterface/Controllers/*.js') + \
+    glob.glob(resources_path + 'UserInterface/Models/*.js') + \
+    glob.glob(resources_path + 'UserInterface/Protocol/*.js') + \
+    glob.glob(resources_path + 'UserInterface/Views/*.css') + \
+    glob.glob(resources_path + 'UserInterface/Views/*.js') + \
     glob.glob(resources_path + 'UserInterface/Images/*.png') + \
     glob.glob(resources_path + 'UserInterface/Images/*.svg') + \
     glob.glob(resources_path + 'UserInterface/External/CodeMirror/*') + \

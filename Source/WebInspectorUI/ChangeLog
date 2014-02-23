@@ -1,3 +1,13 @@
+2014-02-23  Diego Pino García  <dpino@igalia.com>
+
+        [GTK] Fix build after Web Inspector code reorganization (r164543)
+        https://bugs.webkit.org/show_bug.cgi?id=129231
+
+        Reviewed by Dean Jackson.
+
+        * GNUmakefile.am:
+        Modify paths to Web Inspector code.
+
 2014-02-23  Antoine Quint  <graouts@webkit.org>
 
         Web Inspector: color picker sliders aren't laid out correctly
