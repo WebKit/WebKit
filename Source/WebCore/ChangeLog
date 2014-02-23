@@ -1,5 +1,13 @@
 2014-02-23  Sam Weinig  <sam@webkit.org>
 
+        Move RenderMathMLMenclose.h/cpp to the right place in the Xcode project and sort.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2014-02-23  Sam Weinig  <sam@webkit.org>
+
         Move telephone number detection behind its own ENABLE macro
         https://bugs.webkit.org/show_bug.cgi?id=129236
 
