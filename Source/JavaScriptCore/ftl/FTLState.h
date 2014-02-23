@@ -46,7 +46,7 @@ inline bool verboseCompilationEnabled()
     return DFG::verboseCompilationEnabled(DFG::FTLMode);
 }
 
-inline bool showDisassembly()
+inline bool shouldShowDisassembly()
 {
     return DFG::shouldShowDisassembly(DFG::FTLMode);
 }

@@ -170,17 +170,23 @@ typedef OptionRange optionRange;
     \
     v(bool, breakOnThrow, false) \
     \
-    v(unsigned, maximumOptimizationCandidateInstructionCount, 10000) \
+    v(unsigned, maximumOptimizationCandidateInstructionCount, 100000) \
     \
     v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 180) \
     v(unsigned, maximumFunctionForClosureCallInlineCandidateInstructionCount, 100) \
     v(unsigned, maximumFunctionForConstructInlineCandidateInstructionCount, 100) \
+    \
+    v(unsigned, maximumFTLCandidateInstructionCount, 20000) \
     \
     /* Depth of inline stack, so 1 = no inlining, 2 = one level, etc. */ \
     v(unsigned, maximumInliningDepth, 5) \
     v(unsigned, maximumInliningRecursion, 2) \
     v(unsigned, maximumInliningDepthForMustInline, 7) \
     v(unsigned, maximumInliningRecursionForMustInline, 3) \
+    \
+    /* Maximum size of a caller for enabling inlining. This is purely to protect us */\
+    /* from super long compiles that take a lot of memory. */\
+    v(unsigned, maximumInliningCallerSize, 10000) \
     \
     v(bool, enablePolyvariantCallInlining, true) \
     v(bool, enablePolyvariantByIdInlining, true) \

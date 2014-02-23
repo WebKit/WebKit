@@ -144,6 +144,11 @@ inline CapabilityLevel inlineFunctionForCapabilityLevel(CodeBlock* codeBlock, Co
     return inlineFunctionForConstructCapabilityLevel(codeBlock);
 }
 
+inline bool isSmallEnoughToInlineCodeInto(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Options::maximumInliningCallerSize();
+}
+
 } } // namespace JSC::DFG
 
 #endif // DFGCapabilities_h

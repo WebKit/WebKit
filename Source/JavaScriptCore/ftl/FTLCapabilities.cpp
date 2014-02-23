@@ -278,6 +278,12 @@ inline CapabilityLevel canCompile(Node* node)
 
 CapabilityLevel canCompile(Graph& graph)
 {
+    if (graph.m_codeBlock->instructionCount() > Options::maximumFTLCandidateInstructionCount()) {
+        if (verboseCapabilities())
+            dataLog("FTL rejecting ", *graph.m_codeBlock, " because it's too big.\n");
+        return CannotCompile;
+    }
+    
     if (graph.m_codeBlock->codeType() != FunctionCode) {
         if (verboseCapabilities())
             dataLog("FTL rejecting ", *graph.m_codeBlock, " because it doesn't belong to a function.\n");

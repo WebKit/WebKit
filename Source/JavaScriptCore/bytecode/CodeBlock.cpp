@@ -2787,6 +2787,13 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
 
     if (!canInline(m_capabilityLevelState))
         return;
+    
+    if (!DFG::isSmallEnoughToInlineCodeInto(callerCodeBlock)) {
+        m_shouldAlwaysBeInlined = false;
+        if (Options::verboseCallLink())
+            dataLog("    Clearing SABI because caller is too large.\n");
+        return;
+    }
 
     if (callerCodeBlock->jitType() == JITCode::InterpreterThunk) {
         // If the caller is still in the interpreter, then we can't expect inlining to
@@ -2795,7 +2802,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
         // any of its callers.
         m_shouldAlwaysBeInlined = false;
         if (Options::verboseCallLink())
-            dataLog("    Marking SABI because caller is in LLInt.\n");
+            dataLog("    Clearing SABI because caller is in LLInt.\n");
         return;
     }
     
@@ -2805,7 +2812,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
         // delay eval optimization by a *lot*.
         m_shouldAlwaysBeInlined = false;
         if (Options::verboseCallLink())
-            dataLog("    Marking SABI because caller is not a function.\n");
+            dataLog("    Clearing SABI because caller is not a function.\n");
         return;
     }
     
@@ -2816,7 +2823,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
         if (frame->codeBlock() == this) {
             // Recursive calls won't be inlined.
             if (Options::verboseCallLink())
-                dataLog("    Marking SABI because recursion was detected.\n");
+                dataLog("    Clearing SABI because recursion was detected.\n");
             m_shouldAlwaysBeInlined = false;
             return;
         }
@@ -2828,7 +2835,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
         return;
     
     if (Options::verboseCallLink())
-        dataLog("    Marking SABI because the caller is not a DFG candidate.\n");
+        dataLog("    Clearing SABI because the caller is not a DFG candidate.\n");
     
     m_shouldAlwaysBeInlined = false;
 #endif

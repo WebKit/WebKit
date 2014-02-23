@@ -1316,6 +1316,16 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         return false;
     }
     
+    // Check if the caller is already too large. We do this check here because that's just
+    // where we happen to also have the callee's code block, and we want that for the
+    // purpose of unsetting SABI.
+    if (!isSmallEnoughToInlineCodeInto(m_codeBlock)) {
+        codeBlock->m_shouldAlwaysBeInlined = false;
+        if (verbose)
+            dataLog("    Failing because the caller is too large.\n");
+        return false;
+    }
+    
     // FIXME: this should be better at predicting how much bloat we will introduce by inlining
     // this function.
     // https://bugs.webkit.org/show_bug.cgi?id=127627
