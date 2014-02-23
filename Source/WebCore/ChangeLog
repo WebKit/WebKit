@@ -1,3 +1,22 @@
+2014-02-23  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Add devicepixel based computation to BorderEdge class.
+        https://bugs.webkit.org/show_bug.cgi?id=129224
+
+        Reviewed by Simon Fraser.
+
+        To produce correct width (and type) results, BorderEdge class needs to take device pixel ratio into account.
+
+        Currently not testable.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::BorderEdge::BorderEdge):
+        (WebCore::BorderEdge::obscuresBackgroundEdge):
+        (WebCore::BorderEdge::getDoubleBorderStripeWidths): this does not always produce the same
+        result as before, but the sum of inner and outer is not different.
+        (WebCore::BorderEdge::borderWidthInDevicePixel):
+        (WebCore::RenderBoxModelObject::getBorderEdgeInfo):
+
 2014-02-22  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r164507): Crash beneath JSGlobalObjectInspectorController::reportAPIException at facebook.com, twitter.com, youtube.com

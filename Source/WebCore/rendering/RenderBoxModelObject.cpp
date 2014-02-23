@@ -1396,22 +1396,24 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
 
 class BorderEdge {
 public:
-    BorderEdge(LayoutUnit edgeWidth, const Color& edgeColor, EBorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent = true)
+    BorderEdge(LayoutUnit edgeWidth, const Color& edgeColor, EBorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent, float devicePixelRatio)
         : width(edgeWidth)
         , color(edgeColor)
         , style(edgeStyle)
         , isTransparent(edgeIsTransparent)
         , isPresent(edgeIsPresent)
+        , devicePixelRatio(devicePixelRatio)
     {
-        if (style == DOUBLE && edgeWidth < 3)
+        if (style == DOUBLE && width  < borderWidthInDevicePixel(3))
             style = SOLID;
     }
     
     BorderEdge()
-        : width(0)
+        : width(LayoutUnit::fromPixel(0))
         , style(BHIDDEN)
         , isTransparent(false)
         , isPresent(false)
+        , devicePixelRatio(1)
     {
     }
     
@@ -1420,14 +1422,14 @@ public:
     bool presentButInvisible() const { return usedWidth() && !hasVisibleColorAndStyle(); }
     bool obscuresBackgroundEdge(float scale) const
     {
-        if (!isPresent || isTransparent || (width * scale) < 2 || color.hasAlpha() || style == BHIDDEN)
+        if (!isPresent || isTransparent || (width * scale) < borderWidthInDevicePixel(2) || color.hasAlpha() || style == BHIDDEN)
             return false;
 
         if (style == DOTTED || style == DASHED)
             return false;
 
         if (style == DOUBLE)
-            return width >= 5 * scale; // The outer band needs to be >= 2px wide at unit scale.
+            return width >= scale * borderWidthInDevicePixel(5); // The outer band needs to be >= 2px wide at unit scale.
 
         return true;
     }
@@ -1446,16 +1448,9 @@ public:
     
     void getDoubleBorderStripeWidths(LayoutUnit& outerWidth, LayoutUnit& innerWidth) const
     {
-        int fullWidth = usedWidth();
-        outerWidth = fullWidth / 3;
-        innerWidth = fullWidth * 2 / 3;
-
-        // We need certain integer rounding results
-        if (fullWidth % 3 == 2)
-            outerWidth += 1;
-
-        if (fullWidth % 3 == 1)
-            innerWidth += 1;
+        LayoutUnit fullWidth = usedWidth();
+        innerWidth = ceilToDevicePixel(fullWidth * 2 / 3, devicePixelRatio);
+        outerWidth = floorToDevicePixel(fullWidth / 3, devicePixelRatio);
     }
     
     LayoutUnit width;
@@ -1463,6 +1458,10 @@ public:
     EBorderStyle style;
     bool isTransparent;
     bool isPresent;
+    float devicePixelRatio;
+
+private:
+    float borderWidthInDevicePixel(int logicalPixels) const { return LayoutUnit(logicalPixels / devicePixelRatio).toFloat(); }
 };
 
 static bool allCornersClippedOut(const RoundedRect& border, const LayoutRect& clipRect)
@@ -2353,30 +2352,35 @@ void RenderBoxModelObject::clipBorderSideForComplexInnerPath(GraphicsContext* gr
 void RenderBoxModelObject::getBorderEdgeInfo(BorderEdge edges[], const RenderStyle* style, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     bool horizontal = style->isHorizontalWritingMode();
+    float deviceScaleFactor = document().deviceScaleFactor();
 
     edges[BSTop] = BorderEdge(style->borderTopWidth(),
         style->visitedDependentColor(CSSPropertyBorderTopColor),
         style->borderTopStyle(),
         style->borderTopIsTransparent(),
-        horizontal || includeLogicalLeftEdge);
+        horizontal || includeLogicalLeftEdge,
+        deviceScaleFactor);
 
     edges[BSRight] = BorderEdge(style->borderRightWidth(),
         style->visitedDependentColor(CSSPropertyBorderRightColor),
         style->borderRightStyle(),
         style->borderRightIsTransparent(),
-        !horizontal || includeLogicalRightEdge);
+        !horizontal || includeLogicalRightEdge,
+        deviceScaleFactor);
 
     edges[BSBottom] = BorderEdge(style->borderBottomWidth(),
         style->visitedDependentColor(CSSPropertyBorderBottomColor),
         style->borderBottomStyle(),
         style->borderBottomIsTransparent(),
-        horizontal || includeLogicalRightEdge);
+        horizontal || includeLogicalRightEdge,
+        deviceScaleFactor);
 
     edges[BSLeft] = BorderEdge(style->borderLeftWidth(),
         style->visitedDependentColor(CSSPropertyBorderLeftColor),
         style->borderLeftStyle(),
         style->borderLeftIsTransparent(),
-        !horizontal || includeLogicalLeftEdge);
+        !horizontal || includeLogicalLeftEdge,
+        deviceScaleFactor);
 }
 
 bool RenderBoxModelObject::borderObscuresBackgroundEdge(const FloatSize& contextScale) const
