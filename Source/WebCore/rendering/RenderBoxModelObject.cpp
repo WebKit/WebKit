@@ -494,7 +494,6 @@ RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& bor
         RoundedRect segmentBorder = style().getRoundedBorderFor(LayoutRect(0, 0, inlineBoxWidth, inlineBoxHeight), &view(), includeLogicalLeftEdge, includeLogicalRightEdge);
         border.setRadii(segmentBorder.radii());
     }
-
     return border;
 }
 
@@ -530,26 +529,30 @@ void RenderBoxModelObject::clipRoundedInnerRect(GraphicsContext * context, const
     }
 }
 
-static LayoutRect shrinkRectByOnePixel(GraphicsContext* context, const LayoutRect& rect)
+static LayoutRect shrinkRectByOneDevicePixel(const GraphicsContext& context, const LayoutRect& rect, float devicePixelRatio)
 {
     LayoutRect shrunkRect = rect;
-    AffineTransform transform = context->getCTM();
-    shrunkRect.inflateX(-static_cast<LayoutUnit>(ceil(1 / transform.xScale())));
-    shrunkRect.inflateY(-static_cast<LayoutUnit>(ceil(1 / transform.yScale())));
+    AffineTransform transform = context.getCTM();
+    shrunkRect.inflateX(-ceilToDevicePixel(LayoutUnit::fromPixel(1) / transform.xScale(), devicePixelRatio));
+    shrunkRect.inflateY(-ceilToDevicePixel(LayoutUnit::fromPixel(1) / transform.yScale(), devicePixelRatio));
     return shrunkRect;
 }
 
-LayoutRect RenderBoxModelObject::borderInnerRectAdjustedForBleedAvoidance(GraphicsContext* context, const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance) const
+LayoutRect RenderBoxModelObject::borderInnerRectAdjustedForBleedAvoidance(const GraphicsContext& context, const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance) const
 {
-    // We shrink the rectangle by one pixel on each side to make it fully overlap the anti-aliased background border
-    return (bleedAvoidance == BackgroundBleedBackgroundOverBorder) ? shrinkRectByOnePixel(context, rect) : rect;
+    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder)
+        return rect;
+
+    // We shrink the rectangle by one device pixel on each side to make it fully overlap the anti-aliased background border
+    return shrinkRectByOneDevicePixel(context, rect, document().deviceScaleFactor());
 }
 
-RoundedRect RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance(GraphicsContext* context, const LayoutRect& borderRect, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+RoundedRect RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance(const GraphicsContext& context, const LayoutRect& borderRect, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     if (bleedAvoidance == BackgroundBleedShrinkBackground) {
-        // We shrink the rectangle by one pixel on each side because the bleed is one pixel maximum.
-        return getBackgroundRoundedRect(shrinkRectByOnePixel(context, borderRect), box, boxSize.width(), boxSize.height(), includeLogicalLeftEdge, includeLogicalRightEdge);
+        // We shrink the rectangle by one device pixel on each side because the bleed is one pixel maximum.
+        return getBackgroundRoundedRect(shrinkRectByOneDevicePixel(context, borderRect, document().deviceScaleFactor()), box, boxSize.width(), boxSize.height(),
+            includeLogicalLeftEdge, includeLogicalRightEdge);
     }
     if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
         return style().getRoundedInnerBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
@@ -648,7 +651,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             applyBoxShadowForBackground(context, &style());
 
         if (hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer) {
-            RoundedRect border = backgroundRoundedRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance, box, boxSize, includeLeftEdge, includeRightEdge);
+            RoundedRect border = backgroundRoundedRectAdjustedForBleedAvoidance(*context, rect, bleedAvoidance, box, boxSize, includeLeftEdge, includeRightEdge);
             if (border.isRenderable())
                 context->fillRoundedRect(border, bgColor, style().colorSpace());
             else {
@@ -667,7 +670,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     bool clipToBorderRadius = hasRoundedBorder && !(isBorderFill && bleedAvoidance == BackgroundBleedUseTransparencyLayer);
     GraphicsContextStateSaver clipToBorderStateSaver(*context, clipToBorderRadius);
     if (clipToBorderRadius) {
-        RoundedRect border = isBorderFill ? backgroundRoundedRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance, box, boxSize, includeLeftEdge, includeRightEdge) : getBackgroundRoundedRect(rect, box, boxSize.width(), boxSize.height(), includeLeftEdge, includeRightEdge);
+        RoundedRect border = isBorderFill ? backgroundRoundedRectAdjustedForBleedAvoidance(*context, rect, bleedAvoidance, box, boxSize, includeLeftEdge, includeRightEdge) : getBackgroundRoundedRect(rect, box, boxSize.width(), boxSize.height(), includeLeftEdge, includeRightEdge);
 
         // Clip to the padding or content boxes as necessary.
         if (bgLayer->clip() == ContentFillBox) {
@@ -1817,7 +1820,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     BorderEdge edges[4];
     getBorderEdgeInfo(edges, style, includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect outerBorder = style->getRoundedBorderFor(rect, &view(), includeLogicalLeftEdge, includeLogicalRightEdge);
-    RoundedRect innerBorder = style->getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(graphicsContext, rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
+    RoundedRect innerBorder = style->getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(*graphicsContext, rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
 
     bool haveAlphaColor = false;
     bool haveAllSolidEdges = true;

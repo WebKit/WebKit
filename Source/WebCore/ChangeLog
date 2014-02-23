@@ -1,5 +1,24 @@
 2014-02-23  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel rendering: Fix bleed avoidance subpixel calculation.
+        https://bugs.webkit.org/show_bug.cgi?id=129225
+
+        Reviewed by Simon Fraser.
+        
+        static_cast<LayoutUnit>(int value) only produces the desired result when subpixel is off.
+
+        Currently not testable.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::getBackgroundRoundedRect):
+        (WebCore::shrinkRectByOneDevicePixel):
+        (WebCore::RenderBoxModelObject::borderInnerRectAdjustedForBleedAvoidance):
+        (WebCore::RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderBoxModelObject.h:
+
+2014-02-23  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel rendering: Add devicepixel based computation to BorderEdge class.
         https://bugs.webkit.org/show_bug.cgi?id=129224
 
