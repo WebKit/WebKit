@@ -2647,13 +2647,10 @@ String HTMLMediaElement::preload() const
     switch (m_preload) {
     case MediaPlayer::None:
         return ASCIILiteral("none");
-        break;
     case MediaPlayer::MetaData:
         return ASCIILiteral("metadata");
-        break;
     case MediaPlayer::Auto:
         return ASCIILiteral("auto");
-        break;
     }
 
     ASSERT_NOT_REACHED();

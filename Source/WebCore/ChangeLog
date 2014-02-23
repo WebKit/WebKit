@@ -1,3 +1,31 @@
+2014-02-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove some unreachable code (-Wunreachable-code)
+        https://bugs.webkit.org/show_bug.cgi?id=129220
+
+        Reviewed by Eric Carlson.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        The only tricky case. Here there was a break inside the
+        #if, but not the #else, and a break after the #endif.
+        Remove the break inside the #if, and always use the
+        break after the #endif.
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::modeToString):
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::functionForUniform):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionDisplayMode):
+
 2014-02-22  Dean Jackson  <dino@apple.com>
 
         Letterpress effect disabled for synthetic italic

@@ -636,7 +636,6 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             return isEnabled(element);
         case CSSSelector::PseudoFullPageMedia:
             return element->document().isMediaDocument();
-            break;
         case CSSSelector::PseudoDefault:
             return isDefaultButtonForForm(element);
         case CSSSelector::PseudoDisabled:

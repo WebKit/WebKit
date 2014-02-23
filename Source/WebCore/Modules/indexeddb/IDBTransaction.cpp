@@ -348,15 +348,12 @@ const AtomicString& IDBTransaction::modeToString(IndexedDB::TransactionMode mode
     switch (mode) {
     case IndexedDB::TransactionMode::ReadOnly:
         return IDBTransaction::modeReadOnly();
-        break;
 
     case IndexedDB::TransactionMode::ReadWrite:
         return IDBTransaction::modeReadWrite();
-        break;
 
     case IndexedDB::TransactionMode::VersionChange:
         return IDBTransaction::modeVersionChange();
-        break;
     }
 
     ASSERT_NOT_REACHED();

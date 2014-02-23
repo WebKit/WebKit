@@ -2297,8 +2297,6 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
             processTemplateEndTag(token);
             return;
         }
-
-        break;
 #else
         ASSERT_NOT_REACHED();
 #endif
@@ -2552,7 +2550,6 @@ ReprocessBuffer:
         // FIXME: parse error
         setInsertionMode(InsertionMode::InBody);
         goto ReprocessBuffer;
-        break;
     }
     case InsertionMode::Text: {
         ASSERT(insertionMode() == InsertionMode::Text);
@@ -2568,7 +2565,6 @@ ReprocessBuffer:
             return;
         defaultForInHeadNoscript();
         goto ReprocessBuffer;
-        break;
     }
     case InsertionMode::InFrameset:
     case InsertionMode::AfterFrameset: {

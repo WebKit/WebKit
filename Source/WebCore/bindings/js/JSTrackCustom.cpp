@@ -69,15 +69,12 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TrackBa
         
     case TrackBase::AudioTrack:
         return CREATE_DOM_WRAPPER(exec, globalObject, AudioTrack, track);
-        break;
 
     case TrackBase::VideoTrack:
         return CREATE_DOM_WRAPPER(exec, globalObject, VideoTrack, track);
-        break;
 
     case TrackBase::TextTrack:
         return CREATE_DOM_WRAPPER(exec, globalObject, TextTrack, track);
-        break;
     }
     
     return jsNull();

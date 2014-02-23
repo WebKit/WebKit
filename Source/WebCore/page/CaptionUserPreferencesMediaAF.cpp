@@ -165,15 +165,12 @@ CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferencesMediaAF::captio
     switch (displayType) {
     case kMACaptionAppearanceDisplayTypeForcedOnly:
         return ForcedOnly;
-        break;
 
     case kMACaptionAppearanceDisplayTypeAutomatic:
         return Automatic;
-        break;
 
     case kMACaptionAppearanceDisplayTypeAlwaysOn:
         return AlwaysOn;
-        break;
     }
 
     ASSERT_NOT_REACHED();

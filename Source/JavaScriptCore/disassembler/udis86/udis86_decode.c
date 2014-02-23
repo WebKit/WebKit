@@ -652,7 +652,6 @@ decode_operand(struct ud           *u,
     case OP_E:
       decode_modrm_rm(u, operand, T_GPR, size);
       break;
-      break;
     case OP_G:
       decode_modrm_reg(u, operand, T_GPR, size);
       break;

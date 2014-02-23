@@ -465,7 +465,6 @@ static bool functionForUniform(DataFunctionToCall f)
     case f_uniform3v:
     case f_uniform4v:
         return true;
-        break;
     default: break;
     }
     return false;

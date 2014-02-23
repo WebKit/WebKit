@@ -1,3 +1,13 @@
+2014-02-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove some unreachable code (-Wunreachable-code)
+        https://bugs.webkit.org/show_bug.cgi?id=129220
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (WebKit::toAPI):
+
 2014-02-22  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WKUIDelegate.h is a project header
