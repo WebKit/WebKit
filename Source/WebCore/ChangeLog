@@ -1,3 +1,31 @@
+2014-02-22  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r164507): Crash beneath JSGlobalObjectInspectorController::reportAPIException at facebook.com, twitter.com, youtube.com
+        https://bugs.webkit.org/show_bug.cgi?id=129227
+
+        Reviewed by Eric Carlson.
+
+        Reverted r164507.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::buildInitiatorObject):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::breakpointActionLog):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        * page/Console.cpp:
+        (WebCore::internalAddMessage):
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+        (WebCore::Console::timeEnd):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::gatherSecurityPolicyViolationEventData):
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+
 2014-02-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove some unreachable code (-Wunreachable-code)

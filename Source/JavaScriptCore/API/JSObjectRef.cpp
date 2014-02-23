@@ -55,10 +55,6 @@
 #include "PropertyNameArray.h"
 #include "RegExpConstructor.h"
 
-#if ENABLE(REMOTE_INSPECTOR)
-#include "JSGlobalObjectInspectorController.h"
-#endif
-
 using namespace JSC;
 
 JSClassRef JSClassCreate(const JSClassDefinition* definition)
@@ -149,13 +145,9 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
 
     JSObject* result = constructFunction(exec, exec->lexicalGlobalObject(), args, nameID, sourceURL->string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
         result = 0;
     }
     return toRef(result);
@@ -181,13 +173,9 @@ JSObjectRef JSObjectMakeArray(JSContextRef ctx, size_t argumentCount, const JSVa
         result = constructEmptyArray(exec, 0);
 
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
         result = 0;
     }
 
@@ -209,13 +197,9 @@ JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSVal
 
     JSObject* result = constructDate(exec, exec->lexicalGlobalObject(), argList);
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
         result = 0;
     }
 
@@ -236,13 +220,9 @@ JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSVa
     JSObject* result = ErrorInstance::create(exec, errorStructure, message);
 
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
         result = 0;
     }
 
@@ -264,13 +244,9 @@ JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSV
 
     JSObject* result = constructRegExp(exec, exec->lexicalGlobalObject(),  argList);
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
         result = 0;
     }
     
@@ -332,13 +308,9 @@ JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef
 
     JSValue jsValue = jsObject->get(exec, propertyName->identifier(&exec->vm()));
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
     }
     return toRef(exec, jsValue);
 }
@@ -365,13 +337,9 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
     }
 
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
     }
 }
 
@@ -388,13 +356,9 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsi
 
     JSValue jsValue = jsObject->get(exec, propertyIndex);
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
     }
     return toRef(exec, jsValue);
 }
@@ -414,13 +378,9 @@ void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned p
     
     jsObject->methodTable()->putByIndex(jsObject, exec, propertyIndex, jsValue, false);
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
     }
 }
 
@@ -437,13 +397,9 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 
     bool result = jsObject->methodTable()->deleteProperty(jsObject, exec, propertyName->identifier(&exec->vm()));
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
     }
     return result;
 }
@@ -585,13 +541,9 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
 
     JSValueRef result = toRef(exec, call(exec, jsObject, callType, callData, jsThisObject, argList));
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
         result = 0;
     }
     return result;
@@ -626,13 +578,9 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
         argList.append(toJS(exec, arguments[i]));
     JSObjectRef result = toRef(construct(exec, jsObject, constructType, constructData, argList));
     if (exec->hadException()) {
-        JSValue exceptionValue = exec->exception();
         if (exception)
-            *exception = toRef(exec, exceptionValue);
+            *exception = toRef(exec, exec->exception());
         exec->clearException();
-#if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
-#endif
         result = 0;
     }
     return result;

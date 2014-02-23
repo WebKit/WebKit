@@ -1,3 +1,59 @@
+2014-02-22  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r164507): Crash beneath JSGlobalObjectInspectorController::reportAPIException at facebook.com, twitter.com, youtube.com
+        https://bugs.webkit.org/show_bug.cgi?id=129227
+
+        Reviewed by Eric Carlson.
+
+        Reverted r164507.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        (JSObjectMakeArray):
+        (JSObjectMakeDate):
+        (JSObjectMakeError):
+        (JSObjectMakeRegExp):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * API/JSValue.mm:
+        (valueToArray):
+        (valueToDictionary):
+        * API/JSValueRef.cpp:
+        (JSValueIsEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueCreateJSONString):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::ConsoleMessage):
+        (Inspector::ConsoleMessage::autogenerateMetadata):
+        * inspector/ConsoleMessage.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/ScriptCallStack.cpp:
+        * inspector/ScriptCallStack.h:
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStack):
+        (Inspector::createScriptCallStackForConsole):
+        (Inspector::createScriptCallStackFromException):
+        * inspector/ScriptCallStackFactory.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::enable):
+        (Inspector::InspectorConsoleAgent::addMessageToConsole):
+        (Inspector::InspectorConsoleAgent::count):
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        (Inspector::JSGlobalObjectDebuggerAgent::breakpointActionLog):
+
 2014-02-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove some unreachable code (-Wunreachable-code)

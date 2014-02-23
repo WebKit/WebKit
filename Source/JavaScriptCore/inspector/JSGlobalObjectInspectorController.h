@@ -37,16 +37,13 @@
 namespace JSC {
 class ExecState;
 class JSGlobalObject;
-class JSValue;
 }
 
 namespace Inspector {
 
 class InjectedScriptManager;
 class InspectorBackendDispatcher;
-class InspectorConsoleAgent;
 class InspectorFrontendChannel;
-class ScriptCallStack;
 
 class JSGlobalObjectInspectorController final : public InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectInspectorController);
@@ -61,8 +58,6 @@ public:
 
     void globalObjectDestroyed();
 
-    void reportAPIException(JSC::ExecState*, JSC::JSValue exception);
-
     virtual bool developerExtrasEnabled() const override { return true; }
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override { return true; }
     virtual InspectorFunctionCallHandler functionCallHandler() const override;
@@ -71,11 +66,8 @@ public:
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override { }
 
 private:
-    void appendAPIBacktrace(ScriptCallStack* callStack);
-
     JSC::JSGlobalObject& m_globalObject;
     std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
-    InspectorConsoleAgent* m_consoleAgent;
     InspectorAgentRegistry m_agents;
     InspectorFrontendChannel* m_inspectorFrontendChannel;
     RefPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;

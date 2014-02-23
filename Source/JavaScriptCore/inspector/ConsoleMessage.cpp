@@ -45,7 +45,7 @@
 
 namespace Inspector {
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(bool canGenerateCallStack, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -56,9 +56,10 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
+    autogenerateMetadata(canGenerateCallStack);
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned column, JSC::ExecState* state, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(bool canGenerateCallStack, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned column, JSC::ExecState* state, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -69,31 +70,30 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
-    autogenerateMetadata(state);
+    autogenerateMetadata(canGenerateCallStack, state);
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(bool, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)
     , m_level(level)
     , m_message(message)
-    , m_url()
+    , m_arguments(nullptr)
     , m_line(0)
     , m_column(0)
     , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
-    m_callStack = callStack;
-
-    const ScriptCallFrame* frame = m_callStack ? m_callStack->firstNonNativeCallFrame() : nullptr;
-    if (frame) {
-        m_url = frame->sourceURL();
-        m_line = frame->lineNumber();
-        m_column = frame->columnNumber();
+    if (callStack && callStack->size()) {
+        const ScriptCallFrame& frame = callStack->at(0);
+        m_url = frame.sourceURL();
+        m_line = frame.lineNumber();
+        m_column = frame.columnNumber();
     }
+    m_callStack = callStack;
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, JSC::ExecState* state, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(bool canGenerateCallStack, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, JSC::ExecState* state, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -105,30 +105,35 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
-    autogenerateMetadata(state);
+    autogenerateMetadata(canGenerateCallStack, state);
 }
 
 ConsoleMessage::~ConsoleMessage()
 {
 }
 
-void ConsoleMessage::autogenerateMetadata(JSC::ExecState* state)
+// FIXME: Remove the generate without ExecState path. The caller should always provide an ExecState.
+void ConsoleMessage::autogenerateMetadata(bool /*canGenerateCallStack*/, JSC::ExecState* state)
 {
-    if (!state)
-        return;
-
     if (m_type == MessageType::EndGroup)
         return;
 
-    // FIXME: Should this really be using "for console" in the generic ConsoleMessage autogeneration? This can skip the first frame.
-    m_callStack = createScriptCallStackForConsole(state, ScriptCallStack::maxCallStackSizeToCapture);
+    if (state)
+        m_callStack = createScriptCallStackForConsole(state);
+    // else if (canGenerateCallStack)
+    //     m_callStack = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
+    else
+        return;
 
-    if (const ScriptCallFrame* frame = m_callStack->firstNonNativeCallFrame()) {
-        m_url = frame->sourceURL();
-        m_line = frame->lineNumber();
-        m_column = frame->columnNumber();
+    if (m_callStack && m_callStack->size()) {
+        const ScriptCallFrame& frame = m_callStack->at(0);
+        m_url = frame.sourceURL();
+        m_line = frame.lineNumber();
+        m_column = frame.columnNumber();
         return;
     }
+
+    m_callStack.clear();
 }
 
 static Inspector::TypeBuilder::Console::ConsoleMessage::Source::Enum messageSourceValue(MessageSource source)

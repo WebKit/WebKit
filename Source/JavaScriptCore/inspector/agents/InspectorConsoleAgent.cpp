@@ -80,7 +80,7 @@ void InspectorConsoleAgent::enable(ErrorString*)
     m_enabled = true;
 
     if (m_expiredConsoleMessageCount) {
-        ConsoleMessage expiredMessage(MessageSource::Other, MessageType::Log, MessageLevel::Warning, String::format("%d console messages are not shown.", m_expiredConsoleMessageCount));
+        ConsoleMessage expiredMessage(!isWorkerAgent(), MessageSource::Other, MessageType::Log, MessageLevel::Warning, String::format("%d console messages are not shown.", m_expiredConsoleMessageCount));
         expiredMessage.addToFrontend(m_frontendDispatcher.get(), m_injectedScriptManager, false);
     }
 
@@ -128,7 +128,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
-    addConsoleMessage(std::make_unique<ConsoleMessage>(source, type, level, message, callStack, requestIdentifier));
+    addConsoleMessage(std::make_unique<ConsoleMessage>(!isWorkerAgent(), source, type, level, message, callStack, requestIdentifier));
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
@@ -141,7 +141,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
-    addConsoleMessage(std::make_unique<ConsoleMessage>(source, type, level, message, arguments, state, requestIdentifier));
+    addConsoleMessage(std::make_unique<ConsoleMessage>(!isWorkerAgent(), source, type, level, message, arguments, state, requestIdentifier));
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
@@ -154,7 +154,8 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
-    addConsoleMessage(std::make_unique<ConsoleMessage>(source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier));
+    bool canGenerateCallStack = !isWorkerAgent() && m_frontendDispatcher;
+    addConsoleMessage(std::make_unique<ConsoleMessage>(canGenerateCallStack, source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier));
 }
 
 Vector<unsigned> InspectorConsoleAgent::consoleMessageArgumentCounts() const
@@ -196,7 +197,7 @@ void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCal
 
 void InspectorConsoleAgent::count(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state, ScriptCallStack::maxCallStackSizeToCapture));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state));
     const ScriptCallFrame& lastCaller = callStack->at(0);
     // Follow Firebug's behavior of counting with null and undefined title in
     // the same bucket as no argument

@@ -109,11 +109,10 @@ WebInspector.ConsoleMessageImpl.prototype = {
         }
 
         if (this.source !== WebInspector.ConsoleMessage.MessageSource.Network || this._request) {
-            var firstNonNativeCallFrame = this._firstNonNativeCallFrame();
-            if (firstNonNativeCallFrame) {
-                var urlElement = this._linkifyCallFrame(firstNonNativeCallFrame);
+            if (this._stackTrace && this._stackTrace.length && this._stackTrace[0].url) {
+                var urlElement = this._linkifyCallFrame(this._stackTrace[0]);
                 this._formattedMessage.appendChild(urlElement);
-            } else if (this.url && !this._shouldHideURL(this.url)) {
+            } else if (this.url && this.url !== "undefined") {
                 var urlElement = this._linkifyLocation(this.url, this.line, this.column);
                 this._formattedMessage.appendChild(urlElement);
             }
@@ -144,26 +143,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
     _shouldDumpStackTrace: function()
     {
         return !!this._stackTrace && this._stackTrace.length && (this.source === WebInspector.ConsoleMessage.MessageSource.Network || this.level === WebInspector.ConsoleMessage.MessageLevel.Error || this.type === WebInspector.ConsoleMessage.MessageType.Trace);
-    },
-
-    _shouldHideURL: function(url)
-    {
-        return url === "undefined" || url === "[native code]";
-    },
-
-    _firstNonNativeCallFrame: function()
-    {
-        if (!this._stackTrace)
-            return null;
-
-        for (var i = 0; i < this._stackTrace.length; i++) {
-            var frame = this._stackTrace[i];
-            if (!frame.url || frame.url === "[native code]")
-                continue;
-            return frame;
-        }
-
-        return null;
     },
 
     get message()
@@ -547,7 +526,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             messageTextElement.appendChild(document.createTextNode(functionName));
             content.appendChild(messageTextElement);
 
-            if (frame.url && !this._shouldHideURL(frame.url)) {
+            if (frame.url) {
                 var urlElement = this._linkifyCallFrame(frame);
                 content.appendChild(urlElement);
             }
