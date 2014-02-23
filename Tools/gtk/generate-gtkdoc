@@ -15,6 +15,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+import argparse
 import common
 import glob
 import gtkdoc
@@ -22,8 +23,8 @@ import logging
 import os.path
 import sys
 
-def configure_logging():
-    level = logging.DEBUG if '-v' in sys.argv else logging.INFO
+def configure_logging(verbose):
+    level = logging.DEBUG if verbose else logging.INFO
     logger = logging.getLogger('gtkdoc')
     logger.setLevel(level)
     handler = logging.StreamHandler()
@@ -49,22 +50,6 @@ def get_gtkdoc_module_paths(xref_dep_packages):
     return deps
 
 
-def get_common_options():
-    # TODO: We should consider using an arguments parsing library if
-    # we need more of these complex ones.
-    virtual_root = ''
-    for argument in sys.argv:
-        if argument.startswith('--virtual-root='):
-            virtual_root = argument.split('=')[1]
-            break
-
-    return {
-        'decorator': 'WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\(.+\)',
-        'deprecation_guard': 'WEBKIT_DISABLE_DEPRECATED',
-        'library_path' : common.library_build_path(),
-        'virtual_root' : virtual_root,
-    }
-
 def get_common_xref_deps():
     return {
         'glib-2.0' : ['glib', 'gobject', 'gio'],
@@ -75,7 +60,7 @@ def get_common_xref_deps():
 def webkitdom_docs_html_path():
     return common.build_path('Documentation', 'webkitdomgtk', 'html')
 
-def get_webkit2_options():
+def get_webkit2_options(virtual_root):
     api_path = common.top_level_path('Source', 'WebKit2', 'UIProcess', 'API', 'gtk')
     injected_bundle_api_path = common.top_level_path('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk')
 
@@ -92,8 +77,11 @@ def get_webkit2_options():
     def src_path(*args):
         return os.path.join(api_path, *args)
 
-    options = get_common_options().copy()
-    options.update({
+    options = {
+        'decorator': 'WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\(.+\)',
+        'deprecation_guard': 'WEBKIT_DISABLE_DEPRECATED',
+        'library_path' : common.library_build_path(),
+        'virtual_root' : virtual_root,
         'module_name' : 'webkit2gtk',
         'namespace' : 'webkit',
         'doc_dir' : src_path('docs'),
@@ -122,10 +110,10 @@ def get_webkit2_options():
                          glob.glob(os.path.join(generated_api_path, 'WebKitMarshal.*')) + \
                          glob.glob(os.path.join(generated_api_path, 'WebKitEnumTypes.*')) + \
                          glob.glob(src_path('tests/*.h'))
-    })
+    }
     return options
 
-def get_webkit1_options(gtk_version):
+def get_webkit1_options(gtk_version, virtual_root):
     def src_path(*args):
         return common.top_level_path(*(('Source', 'WebKit', 'gtk') + args))
 
@@ -145,8 +133,11 @@ def get_webkit1_options(gtk_version):
                 'gtk+-2.0' : ['gtk', 'gdk']
         })
 
-    options = get_common_options().copy()
-    options.update({
+    options = {
+        'decorator': 'WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\(.+\)',
+        'deprecation_guard': 'WEBKIT_DISABLE_DEPRECATED',
+        'library_path' : common.library_build_path(),
+        'virtual_root' : virtual_root,
         'module_name' : 'webkitgtk',
         'namespace' : 'webkit',
         'doc_dir' : src_path('docs'),
@@ -161,10 +152,10 @@ def get_webkit1_options(gtk_version):
         'ignored_files': glob.glob(src_path('webkit', '*private.*')) + \
                          glob.glob(src_path('webkit', 'webkitauthenticationdialog.*')) + \
                          glob.glob(src_path('webkit', 'webkitspellcheckerenchant.*'))
-    })
+    }
     return options
 
-def get_webkitdom_options():
+def get_webkitdom_options(virtual_root):
     def derived_sources_path(*args):
         return common.build_path(*(('DerivedSources', 'webkitdom') + args))
     def src_path(*args):
@@ -172,8 +163,11 @@ def get_webkitdom_options():
 
     xref_deps = { 'glib-2.0' : ['glib', 'gobject', 'gio'] }
 
-    options = get_common_options().copy()
-    options.update({
+    options = {
+        'decorator': 'WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\(.+\)',
+        'deprecation_guard': 'WEBKIT_DISABLE_DEPRECATED',
+        'library_path' : common.library_build_path(),
+        'virtual_root' : virtual_root,
         'module_name' : 'webkitdomgtk',
         'namespace' : 'webkit_dom',
         'doc_dir' : derived_sources_path('docs'),
@@ -184,7 +178,7 @@ def get_webkitdom_options():
                    ' -I' + common.top_level_path('Source'),
         'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps),
         'ignored_files': glob.glob(derived_sources_path('*Private.h'))
-    })
+    }
     return options
 
 def print_missing_api(generator):
@@ -195,85 +189,100 @@ def print_missing_api(generator):
     for api in missing_api:
         print("\t%s" % api)
 
-def generate_doc(generator):
-    generator.generate(html='--skip-html' not in sys.argv)
+def generate_doc(generator, skip_html):
+    generator.generate(not skip_html)
     if generator.saw_warnings:
         print_missing_api(generator)
     return generator.saw_warnings
 
-configure_logging()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Generate gtkdoc for WebKit.')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Whether or not to run in verbose mode.')
+    parser.add_argument('--rebase', action='store_true',
+                        help='When specified, run the tool in rebase mode.')
+    parser.add_argument('--skip-html', action='store_true',
+                        help='Whether or not to skip HTML generation, which can be slow.')
+    parser.add_argument('--virtual-root', type=str, default='',
+                        help='A temporary installation directory which is used as the root ' + \
+                             'where the actual installation prefix lives; this is mostly ' + \
+                             'useful for packagers, and should be set to what is given to ' + \
+                             'make install as DESTDIR.')
 
-# We need to add the JavaScriptCore build directory to the PKG_CONFIG_PATH
-# so that pkgconfig can properly resolve the libjavascriptcore dependency.
-pkg_config_path = os.environ.get("PKG_CONFIG_PATH")
-os.environ['PKG_CONFIG_PATH'] = common.build_path('Source', 'JavaScriptCore')
-if pkg_config_path:
-    os.environ['PKG_CONFIG_PATH'] += ':' + pkg_config_path
+    arguments = parser.parse_args()
+    configure_logging(arguments.verbose)
 
-# Newer versions of glib have deprecated g_type_init, so we need to disable
-# that warning when running gtkdoc-scanobj by overriding the CFLAGS we use
-# to compile it.
-cflags = os.environ.get('CFLAGS', '')
-cflags += ' -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_32'
-os.environ['CFLAGS'] = cflags
+    # We need to add the JavaScriptCore build directory to the PKG_CONFIG_PATH
+    # so that pkgconfig can properly resolve the libjavascriptcore dependency.
+    pkg_config_path = os.environ.get("PKG_CONFIG_PATH")
+    os.environ['PKG_CONFIG_PATH'] = common.build_path('Source', 'JavaScriptCore')
+    if pkg_config_path:
+        os.environ['PKG_CONFIG_PATH'] += ':' + pkg_config_path
 
-# Clang can be noisy, throwing unnecessary warnings for unused arguments.
-if os.environ.get('CC') == "clang":
-    os.environ['CFLAGS'] += ' -Qunused-arguments'
+    # Newer versions of glib have deprecated g_type_init, so we need to disable
+    # that warning when running gtkdoc-scanobj by overriding the CFLAGS we use
+    # to compile it.
+    cflags = os.environ.get('CFLAGS', '')
+    cflags += ' -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_32'
+    os.environ['CFLAGS'] = cflags
 
-saw_webkit1_warnings = saw_webkit2_warnings = False
-wk2_pkg_config_path = common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')
-wk1_pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc')
-if not os.path.exists(wk1_pkg_config_path):
-    wk1_pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkit-1.0.pc')
+    # Clang can be noisy, throwing unnecessary warnings for unused arguments.
+    if os.environ.get('CC') == "clang":
+        os.environ['CFLAGS'] += ' -Qunused-arguments'
 
-if os.path.exists(wk2_pkg_config_path):
-    pkg_config_path = wk2_pkg_config_path
-elif os.path.exists(wk1_pkg_config_path):
+    saw_webkit1_warnings = saw_webkit2_warnings = False
+    wk2_pkg_config_path = common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')
+    wk1_pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc')
+    if not os.path.exists(wk1_pkg_config_path):
+        wk1_pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkit-1.0.pc')
+
+    if os.path.exists(wk2_pkg_config_path):
+        pkg_config_path = wk2_pkg_config_path
+    elif os.path.exists(wk1_pkg_config_path):
+        pkg_config_path = wk1_pkg_config_path
+
+    webkitdom_docs_path = common.build_path('DerivedSources', 'webkitdom', 'docs')
+    if not common.is_cmake_build():
+        generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, get_webkitdom_options(arguments.virtual_root))
+        if not arguments.rebase:
+            print("\nGenerating WebKitDOM documentation...")
+            saw_webkitdom_warnings = generate_doc(generator, arguments.skip_html)
+        else:
+            print("\nRebasing WebKitDOM documentation...")
+            try:
+                generator.rebase_installed_docs()
+            except Exception:
+                print("Rebase did not happen, likely no documentation is present.")
+
     pkg_config_path = wk1_pkg_config_path
+    if os.path.exists(pkg_config_path):
+        options = get_webkit1_options(common.gtk_version_of_pkg_config_file(pkg_config_path), arguments.virtual_root)
+        generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
+        if not arguments.rebase:
+            print("Generating WebKit1 documentation...")
+            saw_webkit1_warnings = generate_doc(generator, arguments.skip_html)
+        else:
+            print("Rebasing WebKit1 documentation...")
+            try:
+                generator.rebase_installed_docs()
+            except Exception:
+                print("Rebase did not happen, likely no documentation is present.")
 
-webkitdom_docs_path = common.build_path('DerivedSources', 'webkitdom', 'docs')
-if not common.is_cmake_build():
-    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, get_webkitdom_options())
-    if '--rebase' not in sys.argv:
-        print("\nGenerating WebKitDOM documentation...")
-        saw_webkitdom_warnings = generate_doc(generator)
-    else:
-        print("\nRebasing WebKitDOM documentation...")
-        try:
-            generator.rebase_installed_docs()
-        except Exception:
-            print("Rebase did not happen, likely no documentation is present.")
+    # WebKit2 might not be enabled, so check for the pkg-config file before building documentation.
+    pkg_config_path = wk2_pkg_config_path
+    if os.path.exists(pkg_config_path):
+        generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, get_webkit2_options(arguments.virtual_root))
+        if not arguments.rebase:
+            print("\nGenerating WebKit2 documentation...")
+            saw_webkit2_warnings = generate_doc(generator, arguments.skip_html)
+        else:
+            print("\nRebasing WebKit2 documentation...")
+            try:
+                generator.rebase_installed_docs()
+            except Exception:
+                print("Rebase did not happen, likely no documentation is present.")
 
-pkg_config_path = wk1_pkg_config_path
-if os.path.exists(pkg_config_path):
-    options = get_webkit1_options(common.gtk_version_of_pkg_config_file(pkg_config_path))
-    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
-    if '--rebase' not in sys.argv:
-        print("Generating WebKit1 documentation...")
-        saw_webkit1_warnings = generate_doc(generator)
-    else:
-        print("Rebasing WebKit1 documentation...")
-        try:
-            generator.rebase_installed_docs()
-        except Exception:
-            print("Rebase did not happen, likely no documentation is present.")
-
-# WebKit2 might not be enabled, so check for the pkg-config file before building documentation.
-pkg_config_path = wk2_pkg_config_path
-if os.path.exists(pkg_config_path):
-    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, get_webkit2_options())
-    if '--rebase' not in sys.argv:
-        print("\nGenerating WebKit2 documentation...")
-        saw_webkit2_warnings = generate_doc(generator)
-    else:
-        print("\nRebasing WebKit2 documentation...")
-        try:
-            generator.rebase_installed_docs()
-        except Exception:
-            print("Rebase did not happen, likely no documentation is present.")
-
-# For CMake we are still generating warnings because we lack DOM bindings docs,
-# so do not cause the build to fail for now.
-if not common.is_cmake_build():
-    sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)
+    # For CMake we are still generating warnings because we lack DOM bindings docs,
+    # so do not cause the build to fail for now.
+    if not common.is_cmake_build():
+        sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)

@@ -1,5 +1,15 @@
 2014-02-23  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] generate-gtkdoc should use argparse
+        https://bugs.webkit.org/show_bug.cgi?id=128418
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/generate-gtkdoc: Get all arguments from argparse, pass then as parameters
+        to all functions, and guard the main routine with a __name__ == __main__ check.
+
+2014-02-23  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK][CMake] Many plugin tests fail when running WebKit1 layout tests
         https://bugs.webkit.org/show_bug.cgi?id=129191
 

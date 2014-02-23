@@ -1886,8 +1886,6 @@ sub buildAutotoolsProject($@)
     if (!checkForArgumentAndRemoveFromARGV("--disable-gtk-doc")) {
         if ($project eq 'WebKit' && !isCrossCompilation() && !($noWebKit1 && $noWebKit2)) {
             my @docGenerationOptions = ("$sourceDir/Tools/gtk/generate-gtkdoc", "--skip-html");
-            push(@docGenerationOptions, productDir());
-
             unshift(@docGenerationOptions, jhbuildWrapperPrefixIfNeeded());
 
             if (system(@docGenerationOptions)) {
