@@ -1,3 +1,15 @@
+2014-02-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] Many plugin tests fail when running WebKit1 layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=129191
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/PlatformGTK.cmake: Properly specify the library build directory
+        for the GTK+ DumpRenderTree build. We could manually construct this path, but the
+        name of the directory is "lib" and not "libs". Instead we should use the CMake
+        variable specifically assigned to this task.
+
 2014-02-23  David Kilzer  <ddkilzer@apple.com>
 
         [ASan] Add JSC::DFG::prepareOSREntry() to ignore list

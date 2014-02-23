@@ -45,7 +45,7 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
 )
 
 add_definitions(
-    -DTEST_PLUGIN_DIR="${CMAKE_BINARY_DIR}/libs"
+    -DTEST_PLUGIN_DIR="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
     -DFONTS_CONF_DIR="${TOOLS_DIR}/DumpRenderTree/gtk/fonts"
     -DTOP_LEVEL_DIR="${CMAKE_SOURCE_DIR}"
 )
