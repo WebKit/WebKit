@@ -485,6 +485,8 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_deviceOrientationClient(DeviceOrientationClientIOS::create())
     , m_deviceOrientationController(DeviceOrientationController::create(m_deviceOrientationClient.get()))
 #endif
+#endif
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
     , m_isTelephoneNumberParsingAllowed(true)
 #endif
     , m_pendingTasksTimer(this, &Document::pendingTasksTimerFired)
@@ -4436,7 +4438,7 @@ void Document::styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>
     clearStyleResolver();
 }
 
-#if PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
 // FIXME: Find a better place for this functionality.
 bool Document::isTelephoneNumberParsingEnabled() const
 {

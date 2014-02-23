@@ -1602,7 +1602,7 @@ private:
 #endif
 
 // FIXME: Find a better place for this functionality.
-#if PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
 public:
 
     // These functions provide a two-level setting:

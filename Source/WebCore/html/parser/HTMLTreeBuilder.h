@@ -114,7 +114,7 @@ private:
         AfterAfterFrameset,
     };
 
-#if PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
     void insertPhoneNumberLink(const String&);
     void linkifyPhoneNumbers(const String&);
 #endif

@@ -1,3 +1,25 @@
+2014-02-23  Sam Weinig  <sam@webkit.org>
+
+        Move telephone number detection behind its own ENABLE macro
+        https://bugs.webkit.org/show_bug.cgi?id=129236
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add ENABLE_TELEPHONE_NUMBER_DETECTION.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCharacterBufferForInBody):
+        * html/parser/HTMLTreeBuilder.h:
+        Use ENABLE(TELEPHONE_NUMBER_DETECTION).
+
+        * platform/mac/SoftLinking.h:
+        Remove PLATOFORM(IOS) from SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL, it is not iOS specific.
+
 2014-02-23  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Fix bleed avoidance subpixel calculation.

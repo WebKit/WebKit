@@ -158,7 +158,7 @@ public:
 
     ParserContentPolicy parserContentPolicy() { return m_parserContentPolicy; }
 
-#if PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
     bool isTelephoneNumberParsingEnabled() { return m_document->isTelephoneNumberParsingEnabled(); }
 #endif
 

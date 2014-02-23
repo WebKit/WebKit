@@ -66,14 +66,12 @@
         return frameworkLibrary; \
     }
 
-#if PLATFORM(IOS)
 #define SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(framework) \
     static void* framework##Library() \
     { \
         static void* frameworkLibrary = dlopen("/System/Library/PrivateFrameworks/" #framework ".framework/" #framework, RTLD_NOW); \
         return frameworkLibrary; \
     }
-#endif // PLATFORM(IOS)
 
 #define SOFT_LINK_STAGED_FRAMEWORK(framework, unstagedLocation, version) \
     static void* framework##Library() \

@@ -1,3 +1,13 @@
+2014-02-23  Sam Weinig  <sam@webkit.org>
+
+        Move telephone number detection behind its own ENABLE macro
+        https://bugs.webkit.org/show_bug.cgi?id=129236
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add ENABLE_TELEPHONE_NUMBER_DETECTION.
+
 2014-02-21  Sam Weinig  <sam@webkit.org>
 
         Expose phase and momentum phase as SPI on DOMWheelEvent
