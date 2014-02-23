@@ -1,3 +1,14 @@
+2014-02-23  David Kilzer  <ddkilzer@apple.com>
+
+        [ASan] Add JSC::DFG::prepareOSREntry() to ignore list
+        <http://webkit.org/b/129209>
+
+        Reviewed by Geoffrey Garen.
+
+        * asan/webkit-asan-ignore.txt: Add DFG::prepareOSREntry() to the
+        ignore list to make ASan builds usable again.  Follow-up
+        investigation is tracked by <rdar://problem/16055903>.
+
 2014-02-20  David Farler  <dfarler@apple.com>
 
         Make old-run-webkit-tests work with iOS Simulator WebKitTestRunner
