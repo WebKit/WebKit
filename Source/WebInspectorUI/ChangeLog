@@ -1,3 +1,17 @@
+2014-02-23  Antoine Quint  <graouts@webkit.org>
+
+        Web Inspector: color picker sliders aren't laid out correctly
+        https://bugs.webkit.org/show_bug.cgi?id=129234
+
+        Reviewed by Joseph Pecoraro.
+
+        While it's unclear to me what happened, the "position" property for the color picker sliders
+        wasn't being computed as expected and used relative positioning. I assume this is related to
+        r164543 when the order of CSS files changed.
+
+        * UserInterface/Views/Slider.css:
+        (.slider):
+
 2014-02-22  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r164507): Crash beneath JSGlobalObjectInspectorController::reportAPIException at facebook.com, twitter.com, youtube.com
