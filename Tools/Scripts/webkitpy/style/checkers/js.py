@@ -71,13 +71,13 @@ class SingleQuoteChecker(object):
                 in_multiline_comment = True
                 continue
 
-            #  Remove "double quoted" strings.
+            # Remove "double quoted" strings.
             line = re.sub(r'"(?:[^"\\]|\\.)*"', '""', line)
 
             # Remove single line comment if any.
             single_line_comment_pos = line.find('//')
             if (single_line_comment_pos != -1):
-                    line = line[:single_line_comment_pos]
+                line = line[:single_line_comment_pos]
 
             # The whole line was a single line comment, so continue.
             if (len(line) == 0):

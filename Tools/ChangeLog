@@ -1,3 +1,10 @@
+2014-02-24  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed. Fix code indentation and spacing.
+
+        * Scripts/webkitpy/style/checkers/js.py:
+        (SingleQuoteChecker.check):
+
 2014-02-24  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Wrong selected element at a given index in a list box.
