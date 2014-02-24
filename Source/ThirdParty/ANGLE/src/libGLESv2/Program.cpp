@@ -106,17 +106,21 @@ void InfoLog::append(const char *format, ...)
 
     if (!mInfoLog)
     {
-        mInfoLog = new char[infoLength + 2];
-        strcpy(mInfoLog, info);
-        strcpy(mInfoLog + infoLength, "\n");
+        const size_t newInfoLogLength = infoLength + 2;
+        mInfoLog = new char[newInfoLogLength];
+        strncpy(mInfoLog, info, newInfoLogLength);
+        strncpy(mInfoLog + infoLength, "\n", newInfoLogLength - infoLength);
+        mInfoLog[newInfoLogLength - 1] = '\0';
     }
     else
     {
         size_t logLength = strlen(mInfoLog);
-        char *newLog = new char[logLength + infoLength + 2];
-        strcpy(newLog, mInfoLog);
-        strcpy(newLog + logLength, info);
-        strcpy(newLog + logLength + infoLength, "\n");
+        const size_t newInfoLogLength = logLength + infoLength + 2;
+        char *newLog = new char[newInfoLogLength];
+        strncpy(newLog, mInfoLog, newInfoLogLength);
+        strncpy(newLog + logLength, info, newInfoLogLength - logLength);
+        strncpy(newLog + logLength + infoLength, "\n", newInfoLogLength - logLength - infoLength);
+        newLog[newInfoLogLength - 1] = '\0';
 
         delete[] mInfoLog;
         mInfoLog = newLog;

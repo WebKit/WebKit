@@ -1,3 +1,22 @@
+2014-02-23  David Kilzer  <ddkilzer@apple.com>
+
+        ANGLE: Stop using unsafe strcpy method
+        <http://webkit.org/b/129237>
+        <rdar://problem/11077580>
+
+        Reviewed by Dean Jackson.
+
+        * include/GLSLANG/ShaderLang.h:
+        - Drive-by fix for header documentation.
+
+        * src/compiler/translator/ShaderLang.cpp:
+        (ShGetInfoLog):
+        (ShGetObjectCode):
+        * src/libGLESv2/Program.cpp:
+        (gl::InfoLog::append):
+        - Switch to use strncpy(), and explicitly set NULL terminator at
+          the end of the buffer.
+
 2014-02-23  Brent Fulgham  <bfulgham@apple.com>
 
         [WinCairo] Unreviewed build fix after r164565.

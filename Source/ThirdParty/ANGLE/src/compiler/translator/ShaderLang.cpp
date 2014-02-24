@@ -225,8 +225,12 @@ void ShGetInfoLog(const ShHandle handle, char* infoLog)
     TCompiler* compiler = base->getAsCompiler();
     if (!compiler) return;
 
+    size_t infoLogLength = 0;
+    ShGetInfo(compiler, SH_INFO_LOG_LENGTH, &infoLogLength);
+
     TInfoSink& infoSink = compiler->getInfoSink();
-    strcpy(infoLog, infoSink.info.c_str());
+    strncpy(infoLog, infoSink.info.c_str(), infoLogLength);
+    infoLog[infoLogLength - 1] = '\0';
 }
 
 //
@@ -241,8 +245,12 @@ void ShGetObjectCode(const ShHandle handle, char* objCode)
     TCompiler* compiler = base->getAsCompiler();
     if (!compiler) return;
 
+    size_t objCodeLength = 0;
+    ShGetInfo(handle, SH_OBJECT_CODE_LENGTH, &objCodeLength);
+
     TInfoSink& infoSink = compiler->getInfoSink();
-    strcpy(objCode, infoSink.obj.c_str());
+    strncpy(objCode, infoSink.obj.c_str(), objCodeLength);
+    objCode[objCodeLength - 1] = '\0';
 }
 
 void ShGetVariableInfo(const ShHandle handle,

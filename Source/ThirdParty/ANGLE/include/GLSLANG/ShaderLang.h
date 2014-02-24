@@ -383,8 +383,8 @@ COMPILER_EXPORT void ShGetInfoLog(const ShHandle handle, char* infoLog);
 // Returns null-terminated object code for a compiled shader.
 // Parameters:
 // handle: Specifies the compiler
-// infoLog: Specifies an array of characters that is used to return
-//          the object code. It is assumed that infoLog has enough memory to
+// objCode: Specifies an array of characters that is used to return
+//          the object code. It is assumed that objCode has enough memory to
 //          accomodate the object code. The size of the buffer required to
 //          store the returned object code can be obtained by calling
 //          ShGetInfo with SH_OBJECT_CODE_LENGTH.
