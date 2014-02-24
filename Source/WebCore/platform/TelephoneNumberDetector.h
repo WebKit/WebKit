@@ -26,7 +26,7 @@
 #ifndef TelephoneNumberDetector_h
 #define TelephoneNumberDetector_h
 
-//#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
 
 #include <unicode/utypes.h>
 
@@ -39,5 +39,5 @@ bool find(const UChar* buffer, unsigned length, int* startPos, int* endPos);
 } // namespace TelephoneNumberDetector
 } // namespace WebCore
 
-//#endif // ENABLE(TELEPHONE_NUMBER_DETECTION)
+#endif // ENABLE(TELEPHONE_NUMBER_DETECTION)
 #endif // TelephoneNumberDetector_h
