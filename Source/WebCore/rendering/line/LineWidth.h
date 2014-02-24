@@ -64,7 +64,7 @@ public:
     void addUncommittedWidth(float delta) { m_uncommittedWidth += delta; }
     void commit();
     void applyOverhang(RenderRubyRun*, RenderObject* startRenderer, RenderObject* endRenderer);
-    void fitBelowFloats();
+    void fitBelowFloats(bool isFirstLine = false);
     void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
 
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
@@ -76,6 +76,10 @@ public:
 private:
     void computeAvailableWidthFromLeftAndRight();
     bool fitsOnLineExcludingTrailingCollapsedWhitespace() const;
+    void updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWidth);
+#if ENABLE(CSS_SHAPES)
+    void wrapNextToShapeOutside(bool isFirstLine);
+#endif
 
     RenderBlockFlow& m_block;
     float m_uncommittedWidth;

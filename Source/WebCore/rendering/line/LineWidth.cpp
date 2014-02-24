@@ -158,28 +158,85 @@ void LineWidth::applyOverhang(RenderRubyRun* rubyRun, RenderObject* startRendere
     m_overhangWidth += startOverhang + endOverhang;
 }
 
-void LineWidth::fitBelowFloats()
+inline static float availableWidthAtOffset(const RenderBlock& block, const LayoutUnit& offset, bool shouldIndentText)
 {
+    float newLineLeft = block.logicalLeftOffsetForLine(offset, shouldIndentText);
+    float newLineRight = block.logicalRightOffsetForLine(offset, shouldIndentText);
+    return std::max(0.0f, newLineRight - newLineLeft);
+}
+
+void LineWidth::updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWidth)
+{
+    if (newLineWidth <= m_availableWidth)
+        return;
+
+    m_block.setLogicalHeight(newLineTop);
+    m_availableWidth = newLineWidth + m_overhangWidth;
+    m_left = m_block.logicalLeftOffsetForLine(newLineTop, shouldIndentText());
+    m_right = m_block.logicalRightOffsetForLine(newLineTop, shouldIndentText());
+}
+
+#if ENABLE(CSS_SHAPES)
+inline static bool isWholeLineFit(const RenderBlock& block, const LayoutUnit& lineTop, LayoutUnit lineHeight, float uncommittedWidth, bool shouldIndentText)
+{
+    for (LayoutUnit lineBottom = lineTop; lineBottom <= lineTop + lineHeight; ++lineBottom) {
+        LayoutUnit availableWidthAtBottom = availableWidthAtOffset(block, lineBottom, shouldIndentText);
+        if (availableWidthAtBottom < uncommittedWidth)
+            return false;
+    }
+    return true;
+}
+
+void LineWidth::wrapNextToShapeOutside(bool isFirstLine)
+{
+    LayoutUnit lineHeight = m_block.lineHeight(isFirstLine, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+    LayoutUnit lineLogicalTop = m_block.logicalHeight();
+    LayoutUnit newLineTop = lineLogicalTop;
+    LayoutUnit floatLogicalBottom = m_block.nextFloatLogicalBottomBelow(lineLogicalTop);
+
+    float newLineWidth;
+    while (true) {
+        newLineWidth = availableWidthAtOffset(m_block, newLineTop, shouldIndentText());
+        if (newLineWidth >= m_uncommittedWidth && isWholeLineFit(m_block, newLineTop, lineHeight, m_uncommittedWidth, shouldIndentText()))
+            break;
+
+        if (newLineTop >= floatLogicalBottom)
+            break;
+
+        ++newLineTop;
+    }
+    updateLineDimension(newLineTop, newLineWidth);
+}
+#endif
+
+void LineWidth::fitBelowFloats(bool isFirstLine)
+{
+#if !ENABLE(CSS_SHAPES)
+    UNUSED_PARAM(isFirstLine);
+#endif
+
     ASSERT(!m_committedWidth);
     ASSERT(!fitsOnLine());
 
     LayoutUnit floatLogicalBottom;
     LayoutUnit lastFloatLogicalBottom = m_block.logicalHeight();
     float newLineWidth = m_availableWidth;
-    float newLineLeft = m_left;
-    float newLineRight = m_right;
+
+#if ENABLE(CSS_SHAPES)
+    FloatingObject* lastFloatFromPreviousLine = (m_block.containsFloats() ? m_block.m_floatingObjects->set().last().get() : 0);
+    if (lastFloatFromPreviousLine && lastFloatFromPreviousLine->renderer().shapeOutsideInfo())
+        return wrapNextToShapeOutside(isFirstLine);
+#endif
+
     while (true) {
         floatLogicalBottom = m_block.nextFloatLogicalBottomBelow(lastFloatLogicalBottom);
         if (floatLogicalBottom <= lastFloatLogicalBottom)
             break;
 
-        newLineLeft = m_block.logicalLeftOffsetForLine(floatLogicalBottom, shouldIndentText());
-        newLineRight = m_block.logicalRightOffsetForLine(floatLogicalBottom, shouldIndentText());
-        newLineWidth = std::max(0.0f, newLineRight - newLineLeft);
+        newLineWidth = availableWidthAtOffset(m_block, floatLogicalBottom, shouldIndentText());
         lastFloatLogicalBottom = floatLogicalBottom;
 
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-        // FIXME: This code should be refactored to incorporate with the code above.
         ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo();
         if (shapeInsideInfo) {
             LayoutUnit logicalOffsetFromShapeContainer = m_block.logicalOffsetFromShapeAncestorContainer(&shapeInsideInfo->owner()).height();
@@ -193,12 +250,7 @@ void LineWidth::fitBelowFloats()
             break;
     }
 
-    if (newLineWidth > m_availableWidth) {
-        m_block.setLogicalHeight(lastFloatLogicalBottom);
-        m_availableWidth = newLineWidth + m_overhangWidth;
-        m_left = newLineLeft;
-        m_right = newLineRight;
-    }
+    updateLineDimension(lastFloatLogicalBottom, newLineWidth);
 }
 
 void LineWidth::setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin)

@@ -1,3 +1,13 @@
+2014-02-24  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Adjust lineTop position to the next available wrapping location at shape-outsides
+        https://bugs.webkit.org/show_bug.cgi?id=128693
+
+        Reviewed by David Hyatt.
+
+        * fast/shapes/shape-outside-floats/shape-outside-floats-linetop-adjustment-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-linetop-adjustment.html: Added.
+
 2014-02-24  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] handle undefined RemainingSpace in computeUsedBreadthOfGridTracks algorithm
