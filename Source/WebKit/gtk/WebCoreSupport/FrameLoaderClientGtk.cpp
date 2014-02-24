@@ -140,8 +140,8 @@ inline int toWebKitNetworkError(int errorCode)
     case PluginErrorWillHandleLoad:
         return WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD;
     default:
-        ASSERT_NOT_REACHED();
-        return WEBKIT_NETWORK_ERROR_FAILED;
+        // This may be other type of error, which needs to be passed as-is.
+        return errorCode;
     }
 }
 

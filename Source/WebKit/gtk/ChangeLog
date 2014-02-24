@@ -1,3 +1,13 @@
+2014-02-24  Enrique Ocaña González  <eocanha@igalia.com>
+
+        REGRESSION(r164438): [GTK] Tests /WebKitGtk/testcontextmenu, /WebKitGtk/testmimehandling, /WebKitGtk/testloading assert in Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=129256
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: Manage error values not present in WebCore
+        (WebKit::toWebKitNetworkError):
+
 2014-02-24  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
 
         Get rid of the unused 'immediate' parameters from repaint related functions
