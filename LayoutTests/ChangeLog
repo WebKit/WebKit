@@ -1,3 +1,49 @@
+2014-02-24  Dirk Schulze  <krit@webkit.org>
+
+        Transform more clip-path pixel tests to reference tests
+        https://bugs.webkit.org/show_bug.cgi?id=129230
+
+        Reviewed by Andreas Kling.
+
+        Remove unnecessary pixel test results.
+
+        * platform/efl/svg/custom/clip-mask-negative-scale-expected.png: Removed.
+        * platform/gtk/svg/custom/clip-mask-negative-scale-expected.png: Removed.
+        * platform/gtk/svg/custom/clip-mask-negative-scale-expected.txt: Removed.
+        * platform/gtk/svg/custom/clip-path-child-changes-expected.png: Removed.
+        * platform/gtk/svg/custom/clip-path-href-changes-expected.png: Removed.
+        * platform/gtk/svg/custom/clip-path-id-changes-expected.png: Removed.
+        * platform/gtk/svg/custom/clip-path-referencing-use-expected.png: Removed.
+        * platform/gtk/svg/custom/clip-path-referencing-use-expected.txt: Removed.
+        * platform/gtk/svg/custom/clip-path-referencing-use2-expected.png: Removed.
+        * platform/gtk/svg/custom/clip-path-referencing-use2-expected.txt: Removed.
+        * platform/gtk/svg/custom/clip-path-units-changes-expected.png: Removed.
+        * platform/gtk/svg/custom/clip-path-with-css-transform-1-expected.png: Removed.
+        * platform/gtk/svg/custom/clip-path-with-css-transform-2-expected.png: Removed.
+        * platform/gtk/svg/custom/clip-path-with-transform-expected.png: Removed.
+        * platform/gtk/svg/custom/empty-clip-path-expected.png: Removed.
+        * platform/gtk/svg/custom/empty-clip-path-expected.txt: Removed.
+        * platform/gtk/svg/custom/recursive-clippath-expected.png: Removed.
+        * platform/gtk/svg/custom/recursive-clippath-expected.txt: Removed.
+        * platform/mac/svg/custom/clip-mask-negative-scale-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-child-changes-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-display-none-child-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-display-none-child-expected.txt: Removed.
+        * platform/mac/svg/custom/clip-path-href-changes-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-id-changes-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-referencing-use-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-referencing-use-expected.txt: Removed.
+        * platform/mac/svg/custom/clip-path-referencing-use2-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-referencing-use2-expected.txt: Removed.
+        * platform/mac/svg/custom/clip-path-units-changes-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-with-css-transform-1-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-with-css-transform-2-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-with-transform-expected.png: Removed.
+        * platform/mac/svg/custom/empty-clip-path-expected.png: Removed.
+        * platform/mac/svg/custom/empty-clip-path-expected.txt: Removed.
+        * platform/mac/svg/custom/recursive-clippath-expected.png: Removed.
+        * platform/mac/svg/custom/recursive-clippath-expected.txt: Removed.
+
 2014-02-24  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] An element having -webkit-mix-blend-mode should only blend with the contents of the parent stacking context
