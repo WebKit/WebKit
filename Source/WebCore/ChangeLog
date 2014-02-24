@@ -1,3 +1,9 @@
+2014-02-24  David Kilzer  <ddkilzer@apple.com>
+
+        Remove redundant setting in FeatureDefines.xcconfig
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-02-24  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] An element having -webkit-mix-blend-mode should only blend with the contents of the parent stacking context

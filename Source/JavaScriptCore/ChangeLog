@@ -1,3 +1,9 @@
+2014-02-24  David Kilzer  <ddkilzer@apple.com>
+
+        Remove redundant setting in FeatureDefines.xcconfig
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-02-23  Sam Weinig  <sam@webkit.org>
 
         Update FeatureDefines.xcconfig
