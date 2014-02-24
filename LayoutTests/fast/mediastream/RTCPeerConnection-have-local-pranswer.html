@@ -105,7 +105,7 @@
                 shouldBe('pc.signalingState', signalingState);
             }
 
-            pc = new webkitRTCPeerConnection({iceServers:[]});
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
             shouldBe('pc.signalingState', '"stable"');
             var sessionDescription = new RTCSessionDescription({type:"offer", sdp:"remote"});
             shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded1, finishIfFailed);');

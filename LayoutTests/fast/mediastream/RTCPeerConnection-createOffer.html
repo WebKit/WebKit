@@ -50,7 +50,7 @@
                 shouldNotThrow('pc.createOffer(requestSucceeded2, requestFailed2, {mandatory:{"succeed":false}});');
             }
 
-            pc = new webkitRTCPeerConnection({iceServers:[]});
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
             shouldNotThrow('pc.createOffer(requestSucceeded1, requestFailed1, {mandatory:{"succeed":true}});');
 
             window.jsTestIsAsync = true;

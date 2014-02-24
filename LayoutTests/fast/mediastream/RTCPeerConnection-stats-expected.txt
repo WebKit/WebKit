@@ -3,7 +3,7 @@ Tests the RTCPeerConnection stats interface.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS pc = new webkitRTCPeerConnection({iceServers:[]}) did not throw exception.
+PASS pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]}) did not throw exception.
 PASS pc.getStats(statsHandler1) did not throw exception.
 PASS statsHandler1 was called
 PASS status is non-null.

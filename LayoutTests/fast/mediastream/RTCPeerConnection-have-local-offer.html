@@ -28,7 +28,7 @@
             {
                 testPassed('setRemoteDescription succeeded.');
                 check("offer", "local", "pranswer", "remote", '"have-remote-pranswer"');
-                pc = new webkitRTCPeerConnection({iceServers:[]});
+                pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
                 check("", "", "", "", '"stable"');
                 sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
                 shouldNotThrow('pc.setLocalDescription(sessionDescription, requestSucceeded4, finishIfFailed);');
@@ -109,7 +109,7 @@
                 shouldBe('pc.signalingState', signalingState);
             }
 
-            pc = new webkitRTCPeerConnection({iceServers:[]});
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
             shouldBe('pc.signalingState', '"stable"');
             var sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
             shouldNotThrow('pc.setLocalDescription(sessionDescription, requestSucceeded1, finishIfFailed);');

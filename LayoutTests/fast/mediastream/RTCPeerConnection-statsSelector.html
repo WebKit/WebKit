@@ -47,7 +47,7 @@
             }
 
             var startTime = new Date().getTime();
-            shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]})');
+            shouldNotThrow("pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]})");
             shouldNotThrow('getUserMedia({audio:true, video:true}, gotStream)');
 
             window.jsTestIsAsync = true;

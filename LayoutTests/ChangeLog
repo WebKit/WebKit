@@ -1,3 +1,42 @@
+2014-02-24  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Validating RTCConfiguration according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=129182
+
+        Reviewed by Eric Carlson.
+
+        Spec states that:
+            - iceServers should not be an empty list
+            - the entry in the configuration dictionary is "urls", instead of "url"
+            - urls can be either a list or a string
+        Fixing all that in RTCConfiguration validation when creating a RTCPeerConnection
+
+        * fast/mediastream/RTCPeerConnection-AddRemoveStream.html:
+        * fast/mediastream/RTCPeerConnection-createAnswer.html:
+        * fast/mediastream/RTCPeerConnection-createOffer.html:
+        * fast/mediastream/RTCPeerConnection-datachannel.html:
+        * fast/mediastream/RTCPeerConnection-dtmf.html:
+        * fast/mediastream/RTCPeerConnection-events.html:
+        * fast/mediastream/RTCPeerConnection-expected.txt:
+        * fast/mediastream/RTCPeerConnection-have-local-answer.html:
+        * fast/mediastream/RTCPeerConnection-have-local-offer.html:
+        * fast/mediastream/RTCPeerConnection-have-local-pranswer.html:
+        * fast/mediastream/RTCPeerConnection-have-remote-offer.html:
+        * fast/mediastream/RTCPeerConnection-have-remote-pranswer.html:
+        * fast/mediastream/RTCPeerConnection-ice-expected.txt:
+        * fast/mediastream/RTCPeerConnection-ice.html:
+        * fast/mediastream/RTCPeerConnection-localDescription.html:
+        * fast/mediastream/RTCPeerConnection-onnegotiationneeded.html:
+        * fast/mediastream/RTCPeerConnection-remoteDescription.html:
+        * fast/mediastream/RTCPeerConnection-stable.html:
+        * fast/mediastream/RTCPeerConnection-state-expected.txt:
+        * fast/mediastream/RTCPeerConnection-state.html:
+        * fast/mediastream/RTCPeerConnection-stats-expected.txt:
+        * fast/mediastream/RTCPeerConnection-stats.html:
+        * fast/mediastream/RTCPeerConnection-statsSelector-expected.txt:
+        * fast/mediastream/RTCPeerConnection-statsSelector.html:
+        * fast/mediastream/RTCPeerConnection.html:
+
 2014-02-24  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Relative positioned elements overflowing the region do not get painted into the next tile

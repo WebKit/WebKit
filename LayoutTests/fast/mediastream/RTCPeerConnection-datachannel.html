@@ -81,7 +81,7 @@
                 }
             }
 
-            pc = new webkitRTCPeerConnection({iceServers:[]});
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
             shouldNotThrow('dc = pc.createDataChannel("label1");');
             shouldNotThrow('dc = pc.createDataChannel("label2", {});');
             shouldNotThrow('dc = pc.createDataChannel("label3", {ordered:true});');
@@ -89,7 +89,7 @@
             shouldNotThrow('dc = pc.createDataChannel("label3", {maxRetransmits:0});');
             shouldNotThrow('dc = pc.createDataChannel("label3", {maxRetransmitTime:0});');
 
-            pc = new webkitRTCPeerConnection({iceServers:[]});
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
             pc.oniceconnectionstatechange = pc_onicechange;
             pc.ondatachannel = pc_ondatachannel;
 

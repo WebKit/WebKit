@@ -72,7 +72,7 @@
             }
 
             var startTime = new Date().getTime();
-            shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]})');
+            shouldNotThrow("pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]})");
             shouldNotThrow('pc.getStats(statsHandler1)');
 
             window.jsTestIsAsync = true;

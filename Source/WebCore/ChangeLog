@@ -1,3 +1,23 @@
+2014-02-24  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Validating RTCConfiguration according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=129182
+
+        Reviewed by Eric Carlson.
+
+        Spec states that:
+            - iceServers should not be an empty list
+            - the entry in the configuration dictionary is "urls", instead of "url"
+            - urls can be either a list or a string
+        Fixing all that in RTCConfiguration validation when creating a RTCPeerConnection
+
+        Existing tests were updated.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::appendIceServer): Added.
+        (WebCore::processIceServer): Added.
+        (WebCore::RTCPeerConnection::parseConfiguration):
+
 2014-02-24  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Relative positioned elements overflowing the region do not get painted into the next tile
