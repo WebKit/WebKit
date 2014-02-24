@@ -860,3 +860,13 @@ void AccessibilityUIElement::rowHeaders(Vector<AccessibilityUIElement>&) const
 {
     // FIXME: implement
 }
+
+unsigned AccessibilityUIElement::selectedChildrenCount() const
+{
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::selectedChildAtIndex(unsigned) const
+{
+    return 0;
+}

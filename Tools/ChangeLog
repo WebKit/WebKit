@@ -1,3 +1,11 @@
+2014-02-24  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix after r164577.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::selectedChildrenCount):
+        (AccessibilityUIElement::selectedChildAtIndex):
+
 2014-02-24  David Kilzer  <ddkilzer@apple.com>
 
         [ASan] Remove methods from ignore list that no longer cause crashes
