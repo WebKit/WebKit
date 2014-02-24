@@ -68,7 +68,7 @@ namespace WebCore {
         TECConverterWrapper& cachedConverterTEC() { return *m_cachedConverterTEC; }
 #endif
 
-#if ENABLE(WORKERS) && USE(WEB_THREAD)
+#if USE(WEB_THREAD)
         void setWebCoreThreadData();
 #endif
 

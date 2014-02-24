@@ -103,7 +103,7 @@ void ThreadGlobalData::destroy()
     m_threadTimers.clear();
 }
 
-#if ENABLE(WORKERS) && USE(WEB_THREAD)
+#if USE(WEB_THREAD)
 void ThreadGlobalData::setWebCoreThreadData()
 {
     ASSERT(isWebThread());

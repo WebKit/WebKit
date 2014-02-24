@@ -1,3 +1,15 @@
+2014-02-24  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Code cleanup: remove leftover ENABLE(WORKERS) macros and support.
+        https://bugs.webkit.org/show_bug.cgi?id=129255
+
+        Reviewed by Csaba Osztrogonác.
+
+        ENABLE_WORKERS macro was removed in r159679.
+        Support is now also removed from xcconfig files.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-02-24  David Kilzer  <ddkilzer@apple.com>
 
         Remove redundant setting in FeatureDefines.xcconfig
