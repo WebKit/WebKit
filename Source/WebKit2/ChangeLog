@@ -1,5 +1,13 @@
 2014-02-23  Sam Weinig  <sam@webkit.org>
 
+        Update FeatureDefines.xcconfig
+
+        Rubber-stamped by Anders Carlsson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2014-02-23  Sam Weinig  <sam@webkit.org>
+
         [WebKit2] Add C-SPI to enable/disable telephone number detection
         https://bugs.webkit.org/show_bug.cgi?id=129239
 

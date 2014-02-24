@@ -1,5 +1,13 @@
 2014-02-23  Sam Weinig  <sam@webkit.org>
 
+        Update FeatureDefines.xcconfig
+
+        Rubber-stamped by Anders Carlsson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2014-02-23  Sam Weinig  <sam@webkit.org>
+
         Move telephone number detection behind its own ENABLE macro
         https://bugs.webkit.org/show_bug.cgi?id=129236
 
