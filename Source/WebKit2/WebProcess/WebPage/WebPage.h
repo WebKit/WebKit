@@ -186,9 +186,9 @@ public:
 
     WebCore::Page* corePage() const { return m_page.get(); }
     uint64_t pageID() const { return m_pageID; }
-    uint64_t sessionID() const;
+    WebCore::SessionID sessionID() const;
     bool isUsingEphemeralSession() const;
-    void setSessionID(uint64_t);
+    void setSessionID(WebCore::SessionID);
 
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_viewSize; }
@@ -908,7 +908,6 @@ private:
     void reportUsedFeatures();
 
     uint64_t m_pageID;
-    uint64_t m_sessionID;
 
     OwnPtr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;

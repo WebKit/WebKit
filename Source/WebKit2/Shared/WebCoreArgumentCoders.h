@@ -55,6 +55,7 @@ class Region;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+class SessionID;
 class StickyPositionViewportConstraints;
 class TextCheckingRequestData;
 class TransformationMatrix;
@@ -397,7 +398,13 @@ template<> struct ArgumentCoder<WebCore::IDBObjectStoreMetadata> {
     static void encode(ArgumentEncoder&, const WebCore::IDBObjectStoreMetadata&);
     static bool decode(ArgumentDecoder&, WebCore::IDBObjectStoreMetadata&);
 };
-#endif
+
+#endif // ENABLE(INDEXED_DATABASE)
+
+template<> struct ArgumentCoder<WebCore::SessionID> {
+    static void encode(ArgumentEncoder&, const WebCore::SessionID&);
+    static bool decode(ArgumentDecoder&, WebCore::SessionID&);
+};
 
 } // namespace IPC
 

@@ -44,6 +44,7 @@
 #include "WebDownloadClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/LinkHash.h>
+#include <WebCore/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -306,7 +307,7 @@ public:
     static void willStartUsingPrivateBrowsing();
     static void willStopUsingPrivateBrowsing();
 
-    static bool isEphemeralSession(uint64_t sessionID);
+    static bool isEphemeralSession(WebCore::SessionID);
 
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);

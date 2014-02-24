@@ -23,66 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APISession.h"
+#ifndef SessionID_h
+#define SessionID_h
 
-#include <wtf/RunLoop.h>
+namespace WebCore {
 
-namespace API {
+class SessionID {
+public:
+    SessionID()
+        : SessionID(emptySessionID()) { }
+    explicit SessionID(uint64_t sessionID)
+        : m_sessionID(sessionID) { }
+    bool isValid() const { return *this != emptySessionID(); }
+    bool isEphemeral() const { return *this != defaultSessionID(); }
+    uint64_t sessionID() const { return m_sessionID; }
+    bool operator==(SessionID sessionID) const { return m_sessionID == sessionID.m_sessionID; }
+    bool operator!=(SessionID sessionID) const { return m_sessionID != sessionID.m_sessionID; }
 
-static uint64_t generateID(bool isEphemeral)
-{
-    ASSERT(RunLoop::isMain());
+    static SessionID emptySessionID() { return SessionID(0); }
+    static SessionID defaultSessionID() { return SessionID(1); }
+    static SessionID legacyPrivateSessionID() { return SessionID(2); }
+private:
+    uint64_t m_sessionID;
+};
 
-    static uint64_t uniqueSessionID = WebCore::SessionID::legacyPrivateSessionID().sessionID();
-    ASSERT(isEphemeral);
-    return ++uniqueSessionID;
-}
+} // namespace WebCore
 
-Session& Session::defaultSession()
-{
-    ASSERT(RunLoop::isMain());
-
-    static Session* defaultSession = new Session(WebCore::SessionID::defaultSessionID());
-    return *defaultSession;
-}
-
-Session& Session::legacyPrivateSession()
-{
-    ASSERT(RunLoop::isMain());
-
-    static Session* legacyPrivateSession = new Session(WebCore::SessionID::legacyPrivateSessionID());
-    return *legacyPrivateSession;
-}
-
-Session::Session(bool isEphemeral)
-    : m_sessionID(generateID(isEphemeral))
-{
-}
-
-Session::Session(WebCore::SessionID sessionID)
-    : m_sessionID(sessionID)
-{
-}
-
-PassRefPtr<Session> Session::create(bool isEphemeral)
-{
-    // FIXME: support creation of non-default, non-ephemeral sessions
-    return adoptRef(new Session(isEphemeral));
-}
-
-bool Session::isEphemeral() const
-{
-    return m_sessionID.isEphemeral();
-}
-
-WebCore::SessionID Session::getID() const
-{
-    return m_sessionID;
-}
-
-Session::~Session()
-{
-}
-
-} // namespace API
+#endif // SessionID_h

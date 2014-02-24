@@ -35,6 +35,7 @@
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SessionID.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
@@ -173,7 +174,7 @@ private:
     ResourceLoadIdentifier m_identifier;
     uint64_t m_webPageID;
     uint64_t m_webFrameID;
-    uint64_t m_sessionID;
+    WebCore::SessionID m_sessionID;
     WebCore::ResourceRequest m_request;
     WebCore::ResourceLoadPriority m_priority;
     WebCore::ContentSniffingPolicy m_contentSniffingPolicy;

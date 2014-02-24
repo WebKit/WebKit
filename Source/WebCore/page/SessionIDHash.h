@@ -23,66 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APISession.h"
+#ifndef SessionIDHash_h
+#define SessionIDHash_h
 
-#include <wtf/RunLoop.h>
+#include "SessionID.h"
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 
-namespace API {
+namespace WTF {
 
-static uint64_t generateID(bool isEphemeral)
-{
-    ASSERT(RunLoop::isMain());
+// The empty value is emptySessionID(), the deleted value is (-1)
+struct SessionIDHash {
+    static unsigned hash(const WebCore::SessionID& p) { return (unsigned)p.sessionID(); }
+    static bool equal(const WebCore::SessionID& a, const WebCore::SessionID& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+template<> struct HashTraits<WebCore::SessionID> : GenericHashTraits<WebCore::SessionID> {
+    static const bool needsDestruction = false;
+    static WebCore::SessionID emptyValue() { return WebCore::SessionID::emptySessionID(); }
 
-    static uint64_t uniqueSessionID = WebCore::SessionID::legacyPrivateSessionID().sessionID();
-    ASSERT(isEphemeral);
-    return ++uniqueSessionID;
+    static void constructDeletedValue(WebCore::SessionID& slot) { slot = WebCore::SessionID(-2); }
+    static bool isDeletedValue(const WebCore::SessionID& slot) { return slot == WebCore::SessionID(-2); }
+};
+template<> struct DefaultHash<WebCore::SessionID> {
+    typedef SessionIDHash Hash;
+};
+
 }
 
-Session& Session::defaultSession()
-{
-    ASSERT(RunLoop::isMain());
-
-    static Session* defaultSession = new Session(WebCore::SessionID::defaultSessionID());
-    return *defaultSession;
-}
-
-Session& Session::legacyPrivateSession()
-{
-    ASSERT(RunLoop::isMain());
-
-    static Session* legacyPrivateSession = new Session(WebCore::SessionID::legacyPrivateSessionID());
-    return *legacyPrivateSession;
-}
-
-Session::Session(bool isEphemeral)
-    : m_sessionID(generateID(isEphemeral))
-{
-}
-
-Session::Session(WebCore::SessionID sessionID)
-    : m_sessionID(sessionID)
-{
-}
-
-PassRefPtr<Session> Session::create(bool isEphemeral)
-{
-    // FIXME: support creation of non-default, non-ephemeral sessions
-    return adoptRef(new Session(isEphemeral));
-}
-
-bool Session::isEphemeral() const
-{
-    return m_sessionID.isEphemeral();
-}
-
-WebCore::SessionID Session::getID() const
-{
-    return m_sessionID;
-}
-
-Session::~Session()
-{
-}
-
-} // namespace API
+#endif // SessionIDHash_h

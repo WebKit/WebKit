@@ -465,14 +465,14 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
     m_fullKeyboardAccessEnabled = fullKeyboardAccessEnabled;
 }
 
-void WebProcess::ensurePrivateBrowsingSession(uint64_t sessionID)
+void WebProcess::ensurePrivateBrowsingSession(SessionID sessionID)
 {
 #if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     WebFrameNetworkingContext::ensurePrivateBrowsingSession(sessionID);
 #endif
 }
 
-void WebProcess::destroyPrivateBrowsingSession(uint64_t sessionID)
+void WebProcess::destroyPrivateBrowsingSession(SessionID sessionID)
 {
 #if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     SessionTracker::destroySession(sessionID);

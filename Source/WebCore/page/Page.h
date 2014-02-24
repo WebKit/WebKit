@@ -31,6 +31,7 @@
 #include "Pagination.h"
 #include "PlatformScreen.h"
 #include "Region.h"
+#include "SessionID.h"
 #include "Supplementable.h"
 #include "ViewState.h"
 #include "ViewportArguments.h"
@@ -397,6 +398,8 @@ public:
 
     void setUserContentController(UserContentController*);
     UserContentController* userContentController() { return m_userContentController.get(); }
+    SessionID sessionID() const;
+    void setSessionID(SessionID);
 
 private:
     void initGroup();
@@ -537,6 +540,8 @@ private:
     unsigned m_framesHandlingBeforeUnloadEvent;
 
     RefPtr<UserContentController> m_userContentController;
+
+    SessionID m_sessionID;
 };
 
 inline PageGroup& Page::group()

@@ -133,6 +133,7 @@
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/SharedBuffer.h>
@@ -226,7 +227,6 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParame
 
 WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     : m_pageID(pageID)
-    , m_sessionID(0)
     , m_viewSize(parameters.viewSize)
     , m_hasSeenPlugin(false)
     , m_useFixedLayout(false)
@@ -2106,23 +2106,23 @@ void WebPage::setLayerHostingMode(unsigned layerHostingMode)
         pluginView->setLayerHostingMode(m_layerHostingMode);
 }
 
-uint64_t WebPage::sessionID() const
+SessionID WebPage::sessionID() const
 {
-    if (m_sessionID)
-        return m_sessionID;
+    if (m_page->sessionID().isValid())
+        return m_page->sessionID();
 
-    return m_page->settings().privateBrowsingEnabled() ? SessionTracker::legacyPrivateSessionID : SessionTracker::defaultSessionID;
+    return m_page->settings().privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID();
 }
 
 bool WebPage::isUsingEphemeralSession() const
 {
-    return SessionTracker::isEphemeralID(sessionID());
+    return sessionID().isEphemeral();
 }
 
-void WebPage::setSessionID(uint64_t sessionID)
+void WebPage::setSessionID(SessionID sessionID)
 {
-    m_sessionID = sessionID;
-    if (SessionTracker::isEphemeralID(sessionID))
+    m_page->setSessionID(sessionID);
+    if (sessionID.isEphemeral())
         WebProcess::shared().ensurePrivateBrowsingSession(sessionID);
 }
 
@@ -2428,8 +2428,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setLocalStorageEnabled(store.getBoolValueForKey(WebPreferencesKey::localStorageEnabledKey()));
     settings.setXSSAuditorEnabled(store.getBoolValueForKey(WebPreferencesKey::xssAuditorEnabledKey()));
     settings.setFrameFlatteningEnabled(store.getBoolValueForKey(WebPreferencesKey::frameFlatteningEnabledKey()));
-    if (m_sessionID)
-        settings.setPrivateBrowsingEnabled(SessionTracker::isEphemeralID(m_sessionID));
+    if (m_page->sessionID().isValid())
+        settings.setPrivateBrowsingEnabled(m_page->sessionID().isEphemeral());
     else
         settings.setPrivateBrowsingEnabled(store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()));
     settings.setDeveloperExtrasEnabled(store.getBoolValueForKey(WebPreferencesKey::developerExtrasEnabledKey()));
