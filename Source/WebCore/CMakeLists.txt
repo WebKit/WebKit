@@ -575,32 +575,6 @@ set(WebCore_IDL_FILES
     storage/Storage.idl
     storage/StorageEvent.idl
 
-    workers/AbstractWorker.idl
-    workers/DedicatedWorkerGlobalScope.idl
-    workers/SharedWorker.idl
-    workers/SharedWorkerGlobalScope.idl
-    workers/Worker.idl
-    workers/WorkerGlobalScope.idl
-    workers/WorkerLocation.idl
-
-    xml/DOMParser.idl
-    xml/XMLHttpRequest.idl
-    xml/XMLHttpRequestException.idl
-    xml/XMLHttpRequestProgressEvent.idl
-    xml/XMLHttpRequestUpload.idl
-    xml/XMLSerializer.idl
-    xml/XPathEvaluator.idl
-    xml/XPathException.idl
-    xml/XPathExpression.idl
-    xml/XPathNSResolver.idl
-    xml/XPathResult.idl
-    xml/XSLTProcessor.idl
-)
-
-# FIXME: The BlackBerry port doesn't support generating DOM bindings from the SVG IDL files.
-# For now, we explicitly demarcate the SVG IDL files so that the BlackBerry port can skip them
-# during DOM binding generation. See <https://bugs.webkit.org/show_bug.cgi?id=72773>.
-set(WebCore_SVG_IDL_FILES
     svg/SVGAElement.idl
     svg/SVGAltGlyphDefElement.idl
     svg/SVGAltGlyphElement.idl
@@ -750,10 +724,27 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGViewSpec.idl
     svg/SVGZoomAndPan.idl
     svg/SVGZoomEvent.idl
-)
 
-list(APPEND WebCore_IDL_FILES
-    ${WebCore_SVG_IDL_FILES}
+    workers/AbstractWorker.idl
+    workers/DedicatedWorkerGlobalScope.idl
+    workers/SharedWorker.idl
+    workers/SharedWorkerGlobalScope.idl
+    workers/Worker.idl
+    workers/WorkerGlobalScope.idl
+    workers/WorkerLocation.idl
+
+    xml/DOMParser.idl
+    xml/XMLHttpRequest.idl
+    xml/XMLHttpRequestException.idl
+    xml/XMLHttpRequestProgressEvent.idl
+    xml/XMLHttpRequestUpload.idl
+    xml/XMLSerializer.idl
+    xml/XPathEvaluator.idl
+    xml/XPathException.idl
+    xml/XPathExpression.idl
+    xml/XPathNSResolver.idl
+    xml/XPathResult.idl
+    xml/XSLTProcessor.idl
 )
 
 set(WebCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
