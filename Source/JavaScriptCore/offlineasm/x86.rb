@@ -808,7 +808,11 @@ class Instruction
         if (operands[1].x87DefaultStackPosition == 0)
             $asm.puts "#{opcode} #{orderOperands(operands[0].x87Operand(0), register("st"))}"
         elsif (operands[0].x87DefaultStackPosition == 0)
-            $asm.puts "#{opcode} #{orderOperands(register("st"), operands[1].x87Operand(0))}"
+            if !isIntelSyntax
+                $asm.puts "#{opcodereverse} #{register("st")}, #{operands[1].x87Operand(0)}"
+            else
+                $asm.puts "#{opcode} #{operands[1].x87Operand(0)}, #{register("st")}"
+            end
         else
             $asm.puts "fld #{operands[0].x87Operand(0)}"
             $asm.puts "#{opcodereverse}p #{orderOperands(register("st"), operands[1].x87Operand(1))}"

@@ -1,3 +1,12 @@
+2014-02-24  peavo@outlook.com  <peavo@outlook.com>
+
+        JSC regressions after r164494
+        https://bugs.webkit.org/show_bug.cgi?id=129272
+
+        Reviewed by Mark Lam.
+
+        * offlineasm/x86.rb: Only avoid reverse opcode (fdivr) for Windows.
+
 2014-02-24  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Code cleanup: remove leftover ENABLE(WORKERS) macros and support.
