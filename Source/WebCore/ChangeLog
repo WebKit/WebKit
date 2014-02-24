@@ -1,3 +1,9 @@
+2014-02-24  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed pre-emptive build fix.
+
+        * WebCore.vcxproj/WebCoreCommon.props: Add replay directory to include path.
+
 2014-02-24  Brady Eidson  <beidson@apple.com>
 
         Break out ImageControls style into an external stylesheet
