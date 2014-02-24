@@ -1,3 +1,13 @@
+2014-02-24  Iago Toral Quiroga  <itoral@igalia.com>
+
+        [GTK] Wrong active context when destroying GL objects.
+        https://bugs.webkit.org/show_bug.cgi?id=129244
+
+        Reviewed by Martin Robinson.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::invalidate): make context current before destroying GL objects.
+
 2014-02-24  Koop Mast <kwm@FreeBSD.org>
 
         Remove unused error.h header.

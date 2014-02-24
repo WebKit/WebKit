@@ -168,6 +168,11 @@ void LayerTreeHostGtk::invalidate()
 {
     ASSERT(m_isValid);
 
+    // This can trigger destruction of GL objects so let's make sure that
+    // we have the right active context
+    if (m_context)
+        m_context->makeContextCurrent();
+
     cancelPendingLayerFlush();
     m_rootLayer = nullptr;
     m_nonCompositedContentLayer = nullptr;
