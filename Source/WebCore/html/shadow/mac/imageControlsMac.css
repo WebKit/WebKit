@@ -23,44 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ImageControlsRootElementMac.h"
-
-#if ENABLE(IMAGE_CONTROLS)
-
-#include "Text.h"
-
-namespace WebCore {
-
-ImageControlsRootElementMac::ImageControlsRootElementMac(Document& document)
-    : ImageControlsRootElement(document)
-{
+.x-webkit-imagemenu {
+    opacity: 0;
+    position: relative;
+    background-color: red;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    transition: opacity 0.5s;
 }
 
-ImageControlsRootElementMac::~ImageControlsRootElementMac()
-{
+.x-webkit-imagemenu:hover {
+    opacity: 1.0;
 }
-
-PassRefPtr<ImageControlsRootElement> ImageControlsRootElement::maybeCreate(Document& document)
-{
-    return ImageControlsRootElementMac::maybeCreate(document);
-}
-
-PassRefPtr<ImageControlsRootElementMac> ImageControlsRootElementMac::maybeCreate(Document& document)
-{
-    if (!document.page())
-        return nullptr;
-
-    RefPtr<ImageControlsRootElementMac> controls = adoptRef(new ImageControlsRootElementMac(document));
-    controls->setAttribute(HTMLNames::classAttr, "x-webkit-imagemenu");
-    ExceptionCode ec;
-    controls->appendChild(Text::create(document, ""), ec);
-    if (ec)
-        return nullptr;
-
-    return controls.release();
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(IMAGE_CONTROLS)

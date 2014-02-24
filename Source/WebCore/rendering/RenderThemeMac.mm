@@ -203,6 +203,14 @@ String RenderThemeMac::mediaControlsScript()
 
 #endif // ENABLE(VIDEO)
 
+
+#if ENABLE(IMAGE_CONTROLS)
+String RenderThemeMac::imageControlsStyleSheet() const
+{
+    return String(imageControlsMacUserAgentStyleSheet, sizeof(imageControlsMacUserAgentStyleSheet));
+}
+#endif
+
 Color RenderThemeMac::platformActiveSelectionBackgroundColor() const
 {
     NSColor* color = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];

@@ -1,3 +1,31 @@
+2014-02-24  Brady Eidson  <beidson@apple.com>
+
+        Break out ImageControls style into an external stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=129273
+
+        Reviewed by Jer Noble.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+        * css/CSSDefaultStyleSheets.h:
+
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::ImageControlsRootElementMac::maybeCreate):
+
+        * html/shadow/mac/imageControlsMac.css:
+        (.x-webkit-imagemenu):
+        (.x-webkit-imagemenu:hover):
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::mediaControlsScript):
+        (WebCore::RenderTheme::imageControlsStyleSheet):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::imageControlsStyleSheet):
+
 2014-02-24  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Validating RTCConfiguration according to the spec

@@ -93,10 +93,13 @@ public:
 #if ENABLE(VIDEO)
     virtual String mediaControlsStyleSheet() { return String(); }
     virtual String extraMediaControlsStyleSheet() { return String(); }
-    virtual String mediaControlsScript() { return String() ; }
+    virtual String mediaControlsScript() { return String(); }
 #endif
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet() { return String(); }
+#endif
+#if ENABLE(IMAGE_CONTROLS)
+    virtual String imageControlsStyleSheet() const { return String(); }
 #endif
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline

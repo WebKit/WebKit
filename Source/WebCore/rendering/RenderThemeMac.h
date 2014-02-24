@@ -112,6 +112,11 @@ protected:
     virtual String mediaControlsStyleSheet() override;
     virtual String mediaControlsScript() override;
 #endif
+
+#if ENABLE(IMAGE_CONTROLS)
+    virtual String imageControlsStyleSheet() const override;
+#endif
+
     virtual bool supportsSelectionForegroundColors() const { return false; }
 
     virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);

@@ -873,6 +873,10 @@ ifeq ($(WTF_PLATFORM_IOS), 1)
 endif
 endif
 
+ifeq ($(findstring ENABLE_IMAGE_CONTROLS,$(FEATURE_DEFINES)), ENABLE_IMAGE_CONTROLS)
+	USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/html/shadow/mac/imageControlsMac.css
+endif
+
 ifeq ($(OS),MACOS)
 	USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css
 endif

@@ -8622,6 +8622,7 @@
 		510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageControlsRootElementMac.h; sourceTree = "<group>"; };
 		510192D318B6B9B7007FC7A1 /* ImageControlsRootElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageControlsRootElement.cpp; sourceTree = "<group>"; };
 		510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageControlsRootElement.h; sourceTree = "<group>"; };
+		510192D818B7D7AB007FC7A1 /* imageControlsMac.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = imageControlsMac.css; sourceTree = "<group>"; };
 		5101943E1836D20800925523 /* IDBIndexWriterLevelDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexWriterLevelDB.cpp; sourceTree = "<group>"; };
 		5101943F1836D20800925523 /* IDBIndexWriterLevelDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexWriterLevelDB.h; sourceTree = "<group>"; };
 		510194421836F7E400925523 /* IDBCursorBackendOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorBackendOperations.cpp; sourceTree = "<group>"; };
@@ -15682,6 +15683,7 @@
 			children = (
 				510192CF18B6B9AB007FC7A1 /* ImageControlsRootElementMac.cpp */,
 				510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */,
+				510192D818B7D7AB007FC7A1 /* imageControlsMac.css */,
 			);
 			path = mac;
 			sourceTree = "<group>";
