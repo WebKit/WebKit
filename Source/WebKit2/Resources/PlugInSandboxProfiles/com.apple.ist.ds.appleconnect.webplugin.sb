@@ -6,6 +6,7 @@
     (global-name "com.apple.wifi.anqp")
     (global-name "org.h5l.kcm"))
 (allow mach-lookup
+    (global-name-regex #"^com\.apple\.ist\.ds\.appleconnect2\.service\.com\.apple\.WebKit\.Plugin\.(32|64|Development)\[[0-9]+\]$")
     (global-name-regex #"^com\.apple\.ist\.ds\.appleconnect2\.service\.PluginProcess\[[0-9]+\]$"))
 
 (shared-preferences-read
@@ -29,6 +30,7 @@
 
 (if (defined? 'mach-register)
     (allow mach-register
+        (global-name-regex #"^com\.apple\.ist\.ds\.appleconnect2\.service\.com\.apple\.WebKit\.Plugin\.(32|64|Development)\[[0-9]+\]$")
         (global-name-regex #"^com\.apple\.ist\.ds\.appleconnect2\.service\.PluginProcess\[[0-9]+\]$")))
 
 (allow system-socket)

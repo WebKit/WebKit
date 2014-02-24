@@ -1,3 +1,11 @@
+2014-02-24  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/16059894> Update AppleConnect sandbox profile for XPC process names.
+
+        Patch by Ivan Krstić, reviewed and landed by me.
+
+        * Resources/PlugInSandboxProfiles/com.apple.ist.ds.appleconnect.webplugin.sb:
+
 2014-02-24  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Code cleanup: remove leftover ENABLE(WORKERS) macros and support.
