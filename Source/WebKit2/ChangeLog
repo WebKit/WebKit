@@ -1,5 +1,22 @@
 2014-02-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Move non-API files out of WebKit2/UIProcess/API/mac
+        https://bugs.webkit.org/show_bug.cgi?id=129267
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/FindIndicatorWindow.h: Renamed from Source/WebKit2/UIProcess/API/mac/FindIndicatorWindow.h.
+        * UIProcess/mac/FindIndicatorWindow.mm: Renamed from Source/WebKit2/UIProcess/API/mac/FindIndicatorWindow.mm.
+        * UIProcess/mac/PDFViewController.h: Renamed from Source/WebKit2/UIProcess/API/mac/PDFViewController.h.
+        * UIProcess/mac/PDFViewController.mm: Renamed from Source/WebKit2/UIProcess/API/mac/PDFViewController.mm.
+        * UIProcess/mac/WKPrintingView.h: Renamed from Source/WebKit2/UIProcess/API/mac/WKPrintingView.h.
+        * UIProcess/mac/WKPrintingView.mm: Renamed from Source/WebKit2/UIProcess/API/mac/WKPrintingView.mm.
+        * UIProcess/mac/WKTextInputWindowController.h: Renamed from Source/WebKit2/UIProcess/API/mac/WKTextInputWindowController.h.
+        * UIProcess/mac/WKTextInputWindowController.mm: Renamed from Source/WebKit2/UIProcess/API/mac/WKTextInputWindowController.mm.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-02-24  Simon Fraser  <simon.fraser@apple.com>
+
         Move non-API files in the API/ios directory out to UIProcess/ios
         https://bugs.webkit.org/show_bug.cgi?id=129264
 

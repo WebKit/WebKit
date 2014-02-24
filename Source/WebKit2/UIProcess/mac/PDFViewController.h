@@ -38,7 +38,7 @@
 @class WKPDFView;
 
 namespace IPC {
-    class DataReference;
+class DataReference;
 }
 
 namespace WebKit {
@@ -75,7 +75,7 @@ public:
     void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
 
 private:
-    explicit PDFViewController(WKView *wkView);
+    explicit PDFViewController(WKView *);
 
     static Class pdfDocumentClass();
     static NSBundle* pdfKitBundle();

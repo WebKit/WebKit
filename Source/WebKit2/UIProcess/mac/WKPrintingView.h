@@ -31,8 +31,8 @@
 @class PDFDocument;
 
 namespace WebKit {
-    class ShareableBitmap;
-    class WebFrameProxy;
+class ShareableBitmap;
+class WebFrameProxy;
 }
 
 @interface WKPrintingView : NSView {
