@@ -1,3 +1,11 @@
+2014-02-23  Dan Bernstein  <mitz@apple.com>
+
+        Removed -Wno-format-y2k from WARNING_CFLAGS
+
+        Rubber-stamped by Sam Weinig.
+
+        * Configurations/Base.xcconfig:
+
 2014-02-23  Diego Pino García  <dpino@igalia.com>
 
         [GTK] Fix build after Web Inspector code reorganization (r164543)

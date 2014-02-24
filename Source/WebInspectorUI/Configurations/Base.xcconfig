@@ -35,7 +35,7 @@ GCC_WARN_UNINITIALIZED_AUTOS = YES
 GCC_WARN_UNUSED_VARIABLE = YES
 GCC_WARN_UNUSED_VARIABLE = YES;
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
-WARNING_CFLAGS = -Wall -W -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wexit-time-destructors;
+WARNING_CFLAGS = -Wall -W -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-unused-parameter -Wexit-time-destructors;
 
 ENGINEERING_BUILD_DEFINES = $(ENGINEERING_BUILD_DEFINES_$(ENGINEERING_BUILD));
 ENGINEERING_BUILD_DEFINES_1 = ENGINEERING_BUILD=1;
