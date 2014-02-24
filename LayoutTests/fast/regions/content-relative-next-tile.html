@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<style>
+    #region {
+        -webkit-flow-from: flow;
+        border: 4px solid brown;
+        padding: 5px;
+        position: relative;
+        top: 300px;
+    }
+
+    #content {
+        -webkit-flow-into: flow;
+        border: 2px solid green;
+        color: green;
+        width: 210px;
+        height: 150px;
+        padding: 3px;
+        position: relative;
+        top: 100px;
+    }
+
+    #firstTile {
+        margin: 0px;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 512px;
+        height: 512px;
+        border: 2px solid blue;
+        border-top: none;
+        border-left: none;
+    }
+</style>
+
+<body>
+    <div id="firstTile"></div>
+    <div style="position:absolute">
+        <div>This tests that <span style="color:green">relative-positioned elements</span> flowed into <span style="color:brown">a region</span> are properly painted across <span style="color:blue">different tiles</span></div>
+        <a href="https://bugs.webkit.org/show_bug.cgi?id=129254">Bug 129254</a>
+    </div>
+
+    <div id="region"></div>
+
+    <div id="content">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <span style="color:brown"><b>THE END</b></span>.
+    </div>
+</body>

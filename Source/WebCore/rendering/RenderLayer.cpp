@@ -6821,14 +6821,11 @@ void RenderLayer::paintFlowThreadIfRegionForFragments(const LayerFragments& frag
     for (size_t i = 0; i < fragments.size(); ++i) {
         const LayerFragment& fragment = fragments.at(i);
 
-        if (!fragment.shouldPaintContent)
-            continue;
-
         ClipRect clipRect = fragment.backgroundRect;
         if (flowFragment->shouldClipFlowThreadContent())
             clipRect.intersect(regionClipRect);
 
-        bool shouldClip = !clipRect.isEmpty() && clipRect != LayoutRect::infiniteRect();
+        bool shouldClip = (clipRect != LayoutRect::infiniteRect());
         // Optimize clipping for the single fragment case.
         if (shouldClip)
             clipToRect(paintingInfo.rootLayer, context, paintingInfo.paintDirtyRect, clipRect);

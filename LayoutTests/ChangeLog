@@ -1,3 +1,15 @@
+2014-02-24  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Relative positioned elements overflowing the region do not get painted into the next tile
+        https://bugs.webkit.org/show_bug.cgi?id=129254
+
+        Reviewed by Antti Koivisto.
+
+        Added test for the painting across tiles of relative positioned elements flowed into regions.
+
+        * fast/regions/content-relative-next-tile-expected.html: Added.
+        * fast/regions/content-relative-next-tile.html: Added.
+
 2014-02-24  Dirk Schulze  <krit@webkit.org>
 
         Transform more clip-path pixel tests to reference tests
