@@ -1,3 +1,24 @@
+2014-02-24  Diego Pino Garcia  <dpino@igalia.com>
+
+        Web Inspector: Remove single quote characters from Web Inspector JavaScript files
+        https://bugs.webkit.org/show_bug.cgi?id=129253
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.openURL):
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.cookieDomainMatchesResourceDomain):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._insertInLastAttributePosition):
+        (WebInspector.DOMTreeElement.prototype._startEditingTagName.editingComitted):
+        (WebInspector.DOMTreeElement.prototype._startEditingTagName.editingCancelled):
+        (WebInspector.DOMTreeElement.prototype._startEditingTagName):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype._ondragover):
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.addPlaceholderNode):
+
 2014-02-23  Dan Bernstein  <mitz@apple.com>
 
         Removed -Wno-format-y2k from WARNING_CFLAGS

@@ -251,7 +251,7 @@ WebInspector.cookieMatchesResourceURL = function(cookie, resourceURL)
 
 WebInspector.cookieDomainMatchesResourceDomain = function(cookieDomain, resourceDomain)
 {
-    if (cookieDomain.charAt(0) !== '.')
+    if (cookieDomain.charAt(0) !== ".")
         return resourceDomain === cookieDomain;
     return !!resourceDomain.match(new RegExp("^([^\\.]+\\.)?" + cookieDomain.substring(1).escapeForRegExp() + "$"), "i");
 }

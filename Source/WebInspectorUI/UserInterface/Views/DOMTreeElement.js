@@ -536,10 +536,10 @@ WebInspector.DOMTreeElement.prototype = {
             tag.insertBefore(node, tag.lastChild);
         else {
             var nodeName = tag.textContent.match(/^<(.*?)>$/)[1];
-            tag.textContent = '';
-            tag.appendChild(document.createTextNode('<'+nodeName));
+            tag.textContent = "";
+            tag.appendChild(document.createTextNode("<"+nodeName));
             tag.appendChild(node);
-            tag.appendChild(document.createTextNode('>'));
+            tag.appendChild(document.createTextNode(">"));
         }
 
         this.updateSelection();
@@ -749,17 +749,17 @@ WebInspector.DOMTreeElement.prototype = {
 
         function editingComitted(element, newTagName)
         {
-            tagNameElement.removeEventListener('keyup', keyupListener, false);
+            tagNameElement.removeEventListener("keyup", keyupListener, false);
             this._tagNameEditingCommitted.apply(this, arguments);
         }
 
         function editingCancelled()
         {
-            tagNameElement.removeEventListener('keyup', keyupListener, false);
+            tagNameElement.removeEventListener("keyup", keyupListener, false);
             this._editingCancelled.apply(this, arguments);
         }
 
-        tagNameElement.addEventListener('keyup', keyupListener, false);
+        tagNameElement.addEventListener("keyup", keyupListener, false);
 
         var config = new WebInspector.EditingConfig(editingComitted.bind(this), editingCancelled.bind(this), tagName);
         this._editing = WebInspector.startEditing(tagNameElement, config);

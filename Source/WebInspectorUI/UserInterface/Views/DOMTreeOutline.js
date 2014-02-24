@@ -377,7 +377,7 @@ WebInspector.DOMTreeOutline.prototype = {
         treeElement.listItemElement.classList.add("elements-drag-over");
         this._dragOverTreeElement = treeElement;
         event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
+        event.dataTransfer.dropEffect = "move";
         return false;
     },
 

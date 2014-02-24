@@ -491,7 +491,7 @@ WebInspector.openURL = function(url, frame, alwaysOpenExternally, lineNumber)
 
         // The path of of the profile URL starts with a slash, remove it, so
         // we can get the actual title.
-        console.assert(profileTitle[0] === '/');
+        console.assert(profileTitle[0] === "/");
         profileTitle = profileTitle.substring(1);
 
         this.timelineSidebarPanel.showProfile(profileType, profileTitle);

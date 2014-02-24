@@ -657,7 +657,7 @@ WebInspector.DataGrid.prototype = {
 
         var emptyData = {};
         for (var identifier of this.columns.keys())
-            emptyData[identifier] = '';
+            emptyData[identifier] = "";
         this.placeholderNode = new WebInspector.PlaceholderDataGridNode(emptyData);
         this.appendChild(this.placeholderNode);
     },
@@ -1108,7 +1108,7 @@ WebInspector.DataGrid.prototype = {
                 else {
                     var element = event.target.enclosingNodeOrSelfWithNodeName("td");
                     var columnIdentifier = element.__columnIdentifier;
-                    var columnTitle = this.dataGrid.columns.get(columnIdentifier).get('title');
+                    var columnTitle = this.dataGrid.columns.get(columnIdentifier).get("title");
                     contextMenu.appendItem(WebInspector.UIString("Edit “%s”").format(columnTitle), this._startEditing.bind(this, event.target));
                 }
             }
