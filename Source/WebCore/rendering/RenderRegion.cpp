@@ -261,12 +261,12 @@ void RenderRegion::computeOverflowFromFlowThread()
     updateScrollInfoAfterLayout();
 }
 
-void RenderRegion::repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate)
+void RenderRegion::repaintFlowThreadContent(const LayoutRect& repaintRect)
 {
-    repaintFlowThreadContentRectangle(repaintRect, immediate, flowThreadPortionRect(), contentBoxRect().location());
+    repaintFlowThreadContentRectangle(repaintRect, flowThreadPortionRect(), contentBoxRect().location());
 }
 
-void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, bool immediate, const LayoutRect& flowThreadPortionRect, const LayoutPoint& regionLocation, const LayoutRect* flowThreadPortionClipRect)
+void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, const LayoutRect& flowThreadPortionRect, const LayoutPoint& regionLocation, const LayoutRect* flowThreadPortionClipRect)
 {
     ASSERT(isValid());
 
@@ -292,7 +292,7 @@ void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRe
     flipForWritingMode(clippedRect);
     
     // Issue the repaint.
-    repaintRectangle(clippedRect, immediate);
+    repaintRectangle(clippedRect);
 }
 
 void RenderRegion::installFlowThread()

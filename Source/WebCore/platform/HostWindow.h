@@ -38,17 +38,17 @@ public:
     HostWindow() { }
     virtual ~HostWindow() { }
 
-    // Requests the host invalidate the root view, not the contents. If immediate is true do so synchronously, otherwise async.
-    virtual void invalidateRootView(const IntRect& updateRect, bool immediate) = 0;
+    // Requests the host invalidate the root view, not the contents.
+    virtual void invalidateRootView(const IntRect& updateRect) = 0;
 
-    // Requests the host invalidate the contents and the root view. If immediate is true do so synchronously, otherwise async.
-    virtual void invalidateContentsAndRootView(const IntRect& updateRect, bool immediate) = 0;
+    // Requests the host invalidate the contents and the root view.
+    virtual void invalidateContentsAndRootView(const IntRect& updateRect) = 0;
 
     // Requests the host scroll backingstore by the specified delta, rect to scroll, and clip rect.
     virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) = 0;
 
     // Requests the host invalidate the contents, not the root view. This is the slow path for scrolling.
-    virtual void invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate) = 0;
+    virtual void invalidateContentsForSlowScroll(const IntRect& updateRect) = 0;
 
 #if USE(TILED_BACKING_STORE)
     // Requests the host to do the actual scrolling. This is only used in combination with a tiled backing store.

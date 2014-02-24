@@ -160,10 +160,10 @@ public:
 
     virtual void cancelGeolocationPermissionForFrame(Frame*, Geolocation*);
 
-    virtual void invalidateContents(const IntRect&, bool);
-    virtual void invalidateRootView(const IntRect&, bool);
-    virtual void invalidateContentsAndRootView(const IntRect&, bool);
-    virtual void invalidateContentsForSlowScroll(const IntRect&, bool);
+    virtual void invalidateContents(const IntRect&);
+    virtual void invalidateRootView(const IntRect&);
+    virtual void invalidateContentsAndRootView(const IntRect&);
+    virtual void invalidateContentsForSlowScroll(const IntRect&);
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&);
     virtual void cancelGeolocationPermissionRequestForFrame(Frame*);
     virtual void iconForFiles(const Vector<String, 0u>&, PassRefPtr<FileChooser>);

@@ -98,7 +98,7 @@ private:
     // FIXME: This will change once we have column sets constrained by enclosing pages, etc.
     virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const override { return m_computedColumnHeight; }
     
-    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) override;
+    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect) override;
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) override;
 

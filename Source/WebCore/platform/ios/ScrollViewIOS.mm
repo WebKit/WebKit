@@ -212,14 +212,13 @@ bool ScrollView::platformScroll(ScrollDirection, ScrollGranularity)
     return false;
 }
 
-void ScrollView::platformRepaintContentRectangle(const IntRect& rect, bool /*now*/)
+void ScrollView::platformRepaintContentRectangle(const IntRect& rect)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSView *view = documentView();
 
     [view setNeedsDisplayInRect:rect];    
-    // FIXME: Handle "now".
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

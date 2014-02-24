@@ -94,9 +94,9 @@ public:
     virtual WebCore::IntRect windowResizerRect() const override;
 
     virtual bool supportsImmediateInvalidation() override;
-    virtual void invalidateRootView(const WebCore::IntRect&, bool) override;
-    virtual void invalidateContentsAndRootView(const WebCore::IntRect&, bool) override;
-    virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool) override;
+    virtual void invalidateRootView(const WebCore::IntRect&) override;
+    virtual void invalidateContentsAndRootView(const WebCore::IntRect&) override;
+    virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&) override;
     virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect) override;
 
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const override;

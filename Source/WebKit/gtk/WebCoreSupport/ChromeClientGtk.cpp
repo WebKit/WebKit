@@ -638,11 +638,11 @@ void ChromeClient::forcePaint()
     m_forcePaint = false;
 }
 
-void ChromeClient::invalidateRootView(const IntRect&, bool immediate)
+void ChromeClient::invalidateRootView(const IntRect&)
 {
 }
 
-void ChromeClient::invalidateContentsAndRootView(const IntRect& updateRect, bool immediate)
+void ChromeClient::invalidateContentsAndRootView(const IntRect& updateRect)
 {
     AcceleratedCompositingContext* acContext = m_webView->priv->acceleratedCompositingContext.get();
     if (acContext->enabled()) {
@@ -656,7 +656,7 @@ void ChromeClient::invalidateContentsAndRootView(const IntRect& updateRect, bool
     m_displayTimer.startOneShot(0);
 }
 
-void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
+void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect)
 {
     m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
 
@@ -666,7 +666,7 @@ void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect, bo
         return;
     }
 
-    invalidateContentsAndRootView(updateRect, immediate);
+    invalidateContentsAndRootView(updateRect);
 }
 
 void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, const IntRect& clipRect)

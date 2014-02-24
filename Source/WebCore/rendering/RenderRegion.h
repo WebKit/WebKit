@@ -108,7 +108,7 @@ public:
     // Whether or not this region is a set.
     virtual bool isRenderRegionSet() const { return false; }
     
-    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate);
+    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect);
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) { }
 
@@ -147,7 +147,7 @@ protected:
     };
 
     LayoutRect overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType);
-    void repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, bool immediate, const LayoutRect& flowThreadPortionRect, const LayoutPoint& regionLocation, const LayoutRect* flowThreadPortionClipRect = 0);
+    void repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, const LayoutRect& flowThreadPortionRect, const LayoutPoint& regionLocation, const LayoutRect* flowThreadPortionClipRect = 0);
 
     void computeOverflowFromFlowThread();
 

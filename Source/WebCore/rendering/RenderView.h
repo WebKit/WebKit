@@ -73,10 +73,10 @@ public:
     virtual LayoutRect visualOverflowRect() const override;
     virtual void computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect&, bool fixed = false) const override;
     void repaintRootContents();
-    void repaintViewRectangle(const LayoutRect&, bool immediate = false) const;
+    void repaintViewRectangle(const LayoutRect&) const;
     // Repaint the view, and all composited layers that intersect the given absolute rectangle.
     // FIXME: ideally we'd never have to do this, if all repaints are container-relative.
-    void repaintRectangleInViewAndCompositedLayers(const LayoutRect&, bool immediate = false);
+    void repaintRectangleInViewAndCompositedLayers(const LayoutRect&);
     void repaintViewAndCompositedLayers();
 
     virtual void paint(PaintInfo&, const LayoutPoint&) override;

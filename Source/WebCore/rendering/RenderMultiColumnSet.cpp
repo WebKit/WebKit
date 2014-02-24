@@ -479,7 +479,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     }
 }
 
-void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate)
+void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRect)
 {
     // Figure out the start and end columns and only check within that range so that we don't walk the
     // entire column set. Put the repaint rect into flow thread coordinates by flipping it first.
@@ -513,7 +513,7 @@ void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRec
         LayoutRect flowThreadOverflowPortion = flowThreadPortionOverflowRect(flowThreadPortion, i, colCount, colGap);
 
         // Do a repaint for this specific column.
-        repaintFlowThreadContentRectangle(repaintRect, immediate, flowThreadPortion, colRect.location(), &flowThreadOverflowPortion);
+        repaintFlowThreadContentRectangle(repaintRect, flowThreadPortion, colRect.location(), &flowThreadOverflowPortion);
     }
 }
 

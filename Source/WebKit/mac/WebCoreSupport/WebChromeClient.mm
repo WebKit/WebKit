@@ -573,25 +573,17 @@ bool WebChromeClient::supportsImmediateInvalidation()
     return true;
 }
 
-void WebChromeClient::invalidateRootView(const IntRect&, bool immediate)
-{
-#if !PLATFORM(IOS)
-    if (immediate) {
-        [[m_webView window] displayIfNeeded];
-        [[m_webView window] flushWindowIfNeeded];
-    }
-#else
-    UNUSED_PARAM(immediate);
-#endif
-}
-
-void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect, bool immediate)
+void WebChromeClient::invalidateRootView(const IntRect&)
 {
 }
 
-void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
+void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect)
 {
-    invalidateContentsAndRootView(rect, immediate);
+}
+
+void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
+{
+    invalidateContentsAndRootView(rect);
 }
 
 void WebChromeClient::scroll(const IntSize&, const IntRect&, const IntRect&)

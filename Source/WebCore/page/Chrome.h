@@ -69,9 +69,9 @@ public:
     ChromeClient& client() { return m_client; }
 
     // HostWindow methods.
-    virtual void invalidateRootView(const IntRect&, bool) override;
-    virtual void invalidateContentsAndRootView(const IntRect&, bool) override;
-    virtual void invalidateContentsForSlowScroll(const IntRect&, bool) override;
+    virtual void invalidateRootView(const IntRect&) override;
+    virtual void invalidateContentsAndRootView(const IntRect&) override;
+    virtual void invalidateContentsForSlowScroll(const IntRect&) override;
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&) override;
 #if USE(TILED_BACKING_STORE)
     virtual void delegatedScrollRequested(const IntPoint& scrollPoint) override;

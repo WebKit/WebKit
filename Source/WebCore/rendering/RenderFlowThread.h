@@ -85,7 +85,7 @@ public:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    void repaintRectangleInRegions(const LayoutRect&, bool immediate) const;
+    void repaintRectangleInRegions(const LayoutRect&) const;
     
     LayoutPoint adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject&, const LayoutPoint&);
 

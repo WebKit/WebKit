@@ -609,7 +609,7 @@ public:
 #if ENABLE(CSS_FILTERS)
     RenderLayer* enclosingFilterLayer(IncludeSelfOrNot = IncludeSelf) const;
     RenderLayer* enclosingFilterRepaintLayer() const;
-    void setFilterBackendNeedsRepaintingInRect(const LayoutRect&, bool immediate);
+    void setFilterBackendNeedsRepaintingInRect(const LayoutRect&);
     bool hasAncestorWithFilterOutsets() const;
 #endif
 

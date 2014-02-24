@@ -1225,21 +1225,21 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
     return repaintContainer;
 }
 
-void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const LayoutRect& r, bool immediate, bool shouldClipToLayer) const
+void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const LayoutRect& r, bool shouldClipToLayer) const
 {
     if (!repaintContainer) {
-        view().repaintViewRectangle(r, immediate);
+        view().repaintViewRectangle(r);
         return;
     }
 
     if (repaintContainer->isRenderFlowThread()) {
-        toRenderFlowThread(repaintContainer)->repaintRectangleInRegions(r, immediate);
+        toRenderFlowThread(repaintContainer)->repaintRectangleInRegions(r);
         return;
     }
 
 #if ENABLE(CSS_FILTERS)
     if (repaintContainer->hasFilter() && repaintContainer->layer() && repaintContainer->layer()->requiresFullLayerImageForFilters()) {
-        repaintContainer->layer()->setFilterBackendNeedsRepaintingInRect(r, immediate);
+        repaintContainer->layer()->setFilterBackendNeedsRepaintingInRect(r);
         return;
     }
 #endif
@@ -1249,7 +1249,7 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
         ASSERT(repaintContainer == &v);
         bool viewHasCompositedLayer = v.hasLayer() && v.layer()->isComposited();
         if (!viewHasCompositedLayer || v.layer()->backing()->paintsIntoWindow()) {
-            v.repaintViewRectangle(viewHasCompositedLayer && v.layer()->transform() ? v.layer()->transform()->mapRect(r) : r, immediate);
+            v.repaintViewRectangle(viewHasCompositedLayer && v.layer()->transform() ? v.layer()->transform()->mapRect(r) : r);
             return;
         }
     }
@@ -1260,7 +1260,7 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
     }
 }
 
-void RenderObject::repaint(bool immediate) const
+void RenderObject::repaint() const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
     RenderView* view;
@@ -1271,10 +1271,10 @@ void RenderObject::repaint(bool immediate) const
         return; // Don't repaint if we're printing.
 
     RenderLayerModelObject* repaintContainer = containerForRepaint();
-    repaintUsingContainer(repaintContainer ? repaintContainer : view, clippedOverflowRectForRepaint(repaintContainer), immediate);
+    repaintUsingContainer(repaintContainer ? repaintContainer : view, clippedOverflowRectForRepaint(repaintContainer));
 }
 
-void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate, bool shouldClipToLayer) const
+void RenderObject::repaintRectangle(const LayoutRect& r, bool shouldClipToLayer) const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
     RenderView* view;
@@ -1292,7 +1292,7 @@ void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate, bool sh
 
     RenderLayerModelObject* repaintContainer = containerForRepaint();
     computeRectForRepaint(repaintContainer, dirtyRect);
-    repaintUsingContainer(repaintContainer ? repaintContainer : view, dirtyRect, immediate, shouldClipToLayer);
+    repaintUsingContainer(repaintContainer ? repaintContainer : view, dirtyRect, shouldClipToLayer);
 }
 
 void RenderObject::repaintSlowRepaintObject() const
@@ -1321,7 +1321,7 @@ void RenderObject::repaintSlowRepaintObject() const
     } else
         repaintRect = pixelSnappedIntRect(clippedOverflowRectForRepaint(repaintContainer));
 
-    repaintUsingContainer(repaintContainer, repaintRect, false, shouldClipToLayer);
+    repaintUsingContainer(repaintContainer, repaintRect, shouldClipToLayer);
 }
 
 IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const

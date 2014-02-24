@@ -208,7 +208,7 @@ public:
 
     bool shouldUpdateWhileOffscreen() const;
     void setShouldUpdateWhileOffscreen(bool);
-    bool shouldUpdate(bool = false) const;
+    bool shouldUpdate() const;
 
     void adjustViewSize();
     
@@ -503,7 +503,7 @@ private:
     void performPostLayoutTasks();
     void autoSizeIfEnabled();
 
-    virtual void repaintContentRectangle(const IntRect&, bool immediate) override;
+    virtual void repaintContentRectangle(const IntRect&) override;
     virtual void contentsResized() override;
     virtual void visibleContentsResized() override;
     virtual void addedOrRemovedScrollbar() override;

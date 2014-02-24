@@ -392,7 +392,7 @@ void FrameView::invalidateRect(const IntRect& rect)
 {
     if (!parent()) {
         if (HostWindow* window = hostWindow())
-            window->invalidateContentsAndRootView(rect, false /*immediate*/);
+            window->invalidateContentsAndRootView(rect);
         return;
     }
 
@@ -1687,7 +1687,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         }
         if (clipsRepaints())
             updateRect.intersect(rectToScroll);
-        hostWindow()->invalidateContentsAndRootView(updateRect, false);
+        hostWindow()->invalidateContentsAndRootView(updateRect);
     }
 
     return true;
@@ -2067,11 +2067,11 @@ void FrameView::addTrackedRepaintRect(const IntRect& r)
     m_trackedRepaintRects.append(repaintRect);
 }
 
-void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
+void FrameView::repaintContentRectangle(const IntRect& r)
 {
     ASSERT(!frame().ownerElement());
 
-    if (!shouldUpdate(immediate))
+    if (!shouldUpdate())
         return;
 
 #if USE(TILED_BACKING_STORE)
@@ -2080,7 +2080,7 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
         return;
     }
 #endif
-    ScrollView::repaintContentRectangle(r, immediate);
+    ScrollView::repaintContentRectangle(r);
 }
 
 static unsigned countRenderedCharactersInRenderObjectWithThreshold(const RenderObject& renderer, unsigned countSoFar, unsigned threshold)
@@ -2517,9 +2517,9 @@ void FrameView::setShouldUpdateWhileOffscreen(bool shouldUpdateWhileOffscreen)
     m_shouldUpdateWhileOffscreen = shouldUpdateWhileOffscreen;
 }
 
-bool FrameView::shouldUpdate(bool immediateRequested) const
+bool FrameView::shouldUpdate() const
 {
-    if (!immediateRequested && isOffscreen() && !shouldUpdateWhileOffscreen())
+    if (isOffscreen() && !shouldUpdateWhileOffscreen())
         return false;
     return true;
 }

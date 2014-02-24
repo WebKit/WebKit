@@ -406,7 +406,7 @@ bool RenderFlowThread::shouldRepaint(const LayoutRect& r) const
     return true;
 }
 
-void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, bool immediate) const
+void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect) const
 {
     if (!shouldRepaint(repaintRect) || !hasValidRegionInfo())
         return;
@@ -418,7 +418,7 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
     CurrentRenderFlowThreadDisabler disabler(&view());
     
     for (auto& region : m_regionList)
-        region->repaintFlowThreadContent(repaintRect, immediate);
+        region->repaintFlowThreadContent(repaintRect);
 }
 
 RenderRegion* RenderFlowThread::regionAtBlockOffset(const RenderBox* clampBox, LayoutUnit offset, bool extendLastRegion, RegionAutoGenerationPolicy autoGenerationPolicy)

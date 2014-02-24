@@ -341,7 +341,7 @@ public:
 protected:
     ScrollView();
 
-    virtual void repaintContentRectangle(const IntRect&, bool now = false);
+    virtual void repaintContentRectangle(const IntRect&);
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect) = 0;
 
     virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
@@ -437,7 +437,7 @@ private:
     void platformSetScrollPosition(const IntPoint&);
     bool platformScroll(ScrollDirection, ScrollGranularity);
     void platformSetScrollbarsSuppressed(bool repaintOnUnsuppress);
-    void platformRepaintContentRectangle(const IntRect&, bool now);
+    void platformRepaintContentRectangle(const IntRect&);
     bool platformIsOffscreen() const;
     void platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle);
    

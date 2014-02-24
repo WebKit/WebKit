@@ -514,7 +514,7 @@ void Element::setActive(bool flag, bool pause)
 
         // Do an immediate repaint.
         if (renderer())
-            renderer()->repaint(true);
+            renderer()->repaint();
 
         // FIXME: Come up with a less ridiculous way of doing this.
 #ifdef HAVE_FUNC_USLEEP

@@ -1,3 +1,70 @@
+2014-02-24  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
+        
+        Get rid of the unused 'immediate' parameters from repaint related functions
+        https://bugs.webkit.org/show_bug.cgi?id=129111
+
+        Reviewed by Simon Fraser.
+
+        Removing the 'immediate' parameters from repaint related functions - accoring
+        to the FIXME in RenderView::repaintViewRectangle() - since they have no effect.
+
+        No new tests are necessary because there is no behavior change
+
+        * dom/Element.cpp:
+        (WebCore::Element::setActive):
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::invalidateRootView):
+        (WebCore::Chrome::invalidateContentsAndRootView):
+        (WebCore::Chrome::invalidateContentsForSlowScroll):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::tiledBackingStorePaintEnd):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::invalidateRect):
+        (WebCore::FrameView::scrollContentsFastPath):
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::shouldUpdate):
+        * page/FrameView.h:
+        * platform/HostWindow.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::scrollContentsSlowPath):
+        (WebCore::ScrollView::repaintContentRectangle):
+        (WebCore::ScrollView::updateOverhangAreas):
+        (WebCore::ScrollView::addPanScrollIcon):
+        (WebCore::ScrollView::removePanScrollIcon):
+        (WebCore::ScrollView::platformRepaintContentRectangle):
+        * platform/ScrollView.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setFilterBackendNeedsRepaintingInRect):
+        * rendering/RenderLayer.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::repaintFlowThreadContent):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintUsingContainer):
+        (WebCore::RenderObject::repaint):
+        (WebCore::RenderObject::repaintRectangle):
+        (WebCore::RenderObject::repaintSlowRepaintObject):
+        * rendering/RenderObject.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::repaintFlowThreadContent):
+        (WebCore::RenderRegion::repaintFlowThreadContentRectangle):
+        * rendering/RenderRegion.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+        (WebCore::RenderView::flushAccumulatedRepaintRegion):
+        (WebCore::RenderView::repaintRectangleInViewAndCompositedLayers):
+        * rendering/RenderView.h:
+        * svg/graphics/SVGImageChromeClient.h:
+
 2014-02-24  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Code cleanup: remove leftover ENABLE(WORKERS) macros and support.

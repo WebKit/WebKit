@@ -1471,7 +1471,7 @@ RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
     return 0;
 }
 
-void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, bool immediate)
+void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
 {
     if (rect.isEmpty())
         return;
@@ -1498,12 +1498,12 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, 
     }
 
     if (parentLayer->paintsWithFilters()) {
-        parentLayer->setFilterBackendNeedsRepaintingInRect(parentLayerRect, immediate);
+        parentLayer->setFilterBackendNeedsRepaintingInRect(parentLayerRect);
         return;        
     }
     
     if (parentLayer->isRootLayer()) {
-        toRenderView(parentLayer->renderer()).repaintViewRectangle(parentLayerRect, immediate);
+        toRenderView(parentLayer->renderer()).repaintViewRectangle(parentLayerRect);
         return;
     }
     

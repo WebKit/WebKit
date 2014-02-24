@@ -524,12 +524,12 @@ void ChromeClientEfl::cancelGeolocationPermissionForFrame(Frame*, Geolocation*)
     notImplemented();
 }
 
-void ChromeClientEfl::invalidateContents(const IntRect& /*updateRect*/, bool /*immediate*/)
+void ChromeClientEfl::invalidateContents(const IntRect& /*updateRect*/)
 {
     notImplemented();
 }
 
-void ChromeClientEfl::invalidateRootView(const IntRect& updateRect, bool /*immediate*/)
+void ChromeClientEfl::invalidateRootView(const IntRect& updateRect)
 {
 #if USE(TILED_BACKING_STORE)
     ewk_view_tiled_backing_store_invalidate(m_view, updateRect);
@@ -539,7 +539,7 @@ void ChromeClientEfl::invalidateRootView(const IntRect& updateRect, bool /*immed
 #endif
 }
 
-void ChromeClientEfl::invalidateContentsAndRootView(const IntRect& updateRect, bool /*immediate*/)
+void ChromeClientEfl::invalidateContentsAndRootView(const IntRect& updateRect)
 {
     if (updateRect.isEmpty())
         return;
@@ -553,9 +553,9 @@ void ChromeClientEfl::invalidateContentsAndRootView(const IntRect& updateRect, b
     ewk_view_repaint(m_view, x, y, w, h);
 }
 
-void ChromeClientEfl::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
+void ChromeClientEfl::invalidateContentsForSlowScroll(const IntRect& updateRect)
 {
-    invalidateContentsAndRootView(updateRect, immediate);
+    invalidateContentsAndRootView(updateRect);
 }
 
 void ChromeClientEfl::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)

@@ -1619,7 +1619,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                 }
             }
 
-            layerRenderer->repaintRectangle(rectToRepaint, false, shouldClipToLayer);
+            layerRenderer->repaintRectangle(rectToRepaint, shouldClipToLayer);
             if (geometry.destRect() == rendererRect)
                 return true;
         }

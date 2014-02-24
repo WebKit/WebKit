@@ -539,9 +539,8 @@ void RenderView::repaintRootContents()
     repaint();
 }
 
-void RenderView::repaintViewRectangle(const LayoutRect& repaintRect, bool immediate) const
+void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
 {
-    // FIXME: Get rid of the 'immediate' argument. It only works on Mac WK1 and should never be used.
     if (!shouldRepaint(repaintRect))
         return;
 
@@ -558,15 +557,15 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect, bool immedi
 #endif
         adjustedRect.moveBy(-viewRect.location());
         adjustedRect.moveBy(ownerBox.contentBoxRect().location());
-        ownerBox.repaintRectangle(adjustedRect, immediate);
+        ownerBox.repaintRectangle(adjustedRect);
         return;
     }
     IntRect pixelSnappedRect = pixelSnappedIntRect(repaintRect);
 
     frameView().addTrackedRepaintRect(pixelSnappedRect);
 
-    if (!m_accumulatedRepaintRegion || immediate) {
-        frameView().repaintContentRectangle(pixelSnappedRect, immediate);
+    if (!m_accumulatedRepaintRegion) {
+        frameView().repaintContentRectangle(pixelSnappedRect);
         return;
     }
     m_accumulatedRepaintRegion->unite(pixelSnappedRect);
@@ -584,16 +583,16 @@ void RenderView::flushAccumulatedRepaintRegion() const
     ASSERT(m_accumulatedRepaintRegion);
     auto repaintRects = m_accumulatedRepaintRegion->rects();
     for (auto& rect : repaintRects)
-        frameView().repaintContentRectangle(rect, false);
+        frameView().repaintContentRectangle(rect);
     m_accumulatedRepaintRegion = nullptr;
 }
 
-void RenderView::repaintRectangleInViewAndCompositedLayers(const LayoutRect& ur, bool immediate)
+void RenderView::repaintRectangleInViewAndCompositedLayers(const LayoutRect& ur)
 {
     if (!shouldRepaint(ur))
         return;
 
-    repaintViewRectangle(ur, immediate);
+    repaintViewRectangle(ur);
 
     RenderLayerCompositor& compositor = this->compositor();
     if (compositor.inCompositingMode()) {

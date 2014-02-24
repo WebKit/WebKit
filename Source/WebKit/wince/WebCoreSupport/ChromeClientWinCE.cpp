@@ -226,28 +226,25 @@ IntRect ChromeClientWinCE::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClientWinCE::invalidateRootView(const IntRect&, bool)
+void ChromeClientWinCE::invalidateRootView(const IntRect&)
 {
     notImplemented();
 }
 
-void ChromeClientWinCE::invalidateContentsAndRootView(const IntRect& updateRect, bool immediate)
+void ChromeClientWinCE::invalidateContentsAndRootView(const IntRect& updateRect)
 {
     RECT rect = updateRect;
     InvalidateRect(m_webView->windowHandle(), &rect, FALSE);
-
-    if (immediate)
-        UpdateWindow(m_webView->windowHandle());
 }
 
-void ChromeClientWinCE::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
+void ChromeClientWinCE::invalidateContentsForSlowScroll(const IntRect& updateRect)
 {
-    invalidateContentsAndRootView(updateRect, immediate);
+    invalidateContentsAndRootView(updateRect);
 }
 
 void ChromeClientWinCE::scroll(const IntSize&, const IntRect& rectToScroll, const IntRect&)
 {
-    invalidateContentsAndRootView(rectToScroll, false);
+    invalidateContentsAndRootView(rectToScroll);
 }
 
 IntRect ChromeClientWinCE::rootViewToScreen(const IntRect& rect) const
