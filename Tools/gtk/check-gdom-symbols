@@ -22,6 +22,8 @@ import subprocess
 import sys
 import tempfile
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild"))
+import jhbuildrc_common 
 
 def should_update_symbols_file(new, old):
     if not os.path.exists(old):
@@ -50,7 +52,7 @@ if __name__ == '__main__':
                 tmp.write(file_handle.read())
         tmp.flush()
 
-        gdom_source_path = common.top_level_path('Source', 'WebCore', 'bindings')
+        gdom_source_path = jhbuildrc_common.top_level_path('Source', 'WebCore', 'bindings')
         api_break_test_path = os.path.join(gdom_source_path, 'scripts', 'gobject-run-api-break-test')
         subprocess.call([sys.executable, api_break_test_path, os.path.join(gdom_source_path, 'gobject',  'webkitdom.symbols'), tmp.name])
 

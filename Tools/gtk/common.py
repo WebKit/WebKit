@@ -21,7 +21,9 @@ import select
 import subprocess
 import sys
 
-script_dir = None
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild"))
+import jhbuildrc_common
+
 build_dir = None
 library_build_dir = None
 tests_library_build_dir = None
@@ -71,17 +73,6 @@ def binary_build_path(*args):
     return library_build_dir
 
 
-def script_path(*args):
-    global script_dir
-    if not script_dir:
-        script_dir = os.path.join(os.path.dirname(__file__), '..', 'Scripts')
-    return os.path.join(*(script_dir,) + args)
-
-
-def top_level_path(*args):
-    return os.path.join(*((os.path.join(os.path.dirname(__file__), '..', '..'),) + args))
-
-
 def get_build_path(fatal=True):
     global build_dir
     if build_dir:
@@ -109,20 +100,20 @@ def get_build_path(fatal=True):
 
     global build_types
     for build_type in build_types:
-        build_dir = top_level_path('WebKitBuild', build_type)
+        build_dir = jhbuildrc_common.top_level_path('WebKitBuild', build_type)
         if is_valid_build_directory(build_dir):
             return build_dir
 
     # distcheck builds in a directory named _build in the top-level path.
-    build_dir = top_level_path("_build")
+    build_dir = jhbuildrc_common.top_level_path("_build")
     if is_valid_build_directory(build_dir):
         return build_dir
 
-    build_dir = top_level_path()
+    build_dir = jhbuildrc_common.top_level_path()
     if is_valid_build_directory(build_dir):
         return build_dir
 
-    build_dir = top_level_path("WebKitBuild")
+    build_dir = jhbuildrc_common.top_level_path("WebKitBuild")
     if is_valid_build_directory(build_dir):
         return build_dir
 

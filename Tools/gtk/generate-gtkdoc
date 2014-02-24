@@ -23,6 +23,9 @@ import logging
 import os.path
 import sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild"))
+import jhbuildrc_common
+
 def configure_logging(verbose):
     level = logging.DEBUG if verbose else logging.INFO
     logger = logging.getLogger('gtkdoc')
@@ -61,8 +64,8 @@ def webkitdom_docs_html_path():
     return common.build_path('Documentation', 'webkitdomgtk', 'html')
 
 def get_webkit2_options(virtual_root):
-    api_path = common.top_level_path('Source', 'WebKit2', 'UIProcess', 'API', 'gtk')
-    injected_bundle_api_path = common.top_level_path('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk')
+    api_path = jhbuildrc_common.top_level_path('Source', 'WebKit2', 'UIProcess', 'API', 'gtk')
+    injected_bundle_api_path = jhbuildrc_common.top_level_path('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk')
 
     if common.is_cmake_build():
         generated_api_path = common.build_path('DerivedSources', 'webkit2gtk', 'webkit2')
@@ -89,7 +92,7 @@ def get_webkit2_options(virtual_root):
         'source_dirs' : [src_path(), generated_api_path, injected_bundle_api_path],
         'cflags' :
             # Common paths
-            ' -I' + common.top_level_path('Source') + \
+            ' -I' + jhbuildrc_common.top_level_path('Source') + \
             ' -I' + api_path + \
             # Autotools paths
             ' -I' + common.build_path('DerivedSources', 'webkit2gtk', 'include') + \
@@ -115,7 +118,7 @@ def get_webkit2_options(virtual_root):
 
 def get_webkit1_options(gtk_version, virtual_root):
     def src_path(*args):
-        return common.top_level_path(*(('Source', 'WebKit', 'gtk') + args))
+        return jhbuildrc_common.top_level_path(*(('Source', 'WebKit', 'gtk') + args))
 
     def webkitversionh_path():
         if common.is_cmake_build():
@@ -146,8 +149,8 @@ def get_webkit1_options(gtk_version, virtual_root):
         'cflags' : ' -I' + common.build_path('WebKit', 'gtk') + \
                    ' -I' + common.build_path('DerivedSources') + \
                    ' -I' + src_path() + \
-                   ' -I' + common.top_level_path('Source') + \
-                   ' -I' + common.top_level_path('Source', 'JavaScriptCore', 'ForwardingHeaders'),
+                   ' -I' + jhbuildrc_common.top_level_path('Source') + \
+                   ' -I' + jhbuildrc_common.top_level_path('Source', 'JavaScriptCore', 'ForwardingHeaders'),
         'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps) + [webkitdom_docs_html_path()],
         'ignored_files': glob.glob(src_path('webkit', '*private.*')) + \
                          glob.glob(src_path('webkit', 'webkitauthenticationdialog.*')) + \
@@ -159,7 +162,7 @@ def get_webkitdom_options(virtual_root):
     def derived_sources_path(*args):
         return common.build_path(*(('DerivedSources', 'webkitdom') + args))
     def src_path(*args):
-        return common.top_level_path(*(('Source', 'WebCore', 'bindings', 'gobject') + args))
+        return jhbuildrc_common.top_level_path(*(('Source', 'WebCore', 'bindings', 'gobject') + args))
 
     xref_deps = { 'glib-2.0' : ['glib', 'gobject', 'gio'] }
 
@@ -175,7 +178,7 @@ def get_webkitdom_options(virtual_root):
         'source_dirs' : [derived_sources_path()],
         'cflags' : ' -I' + derived_sources_path() + \
                    ' -I' + src_path() + \
-                   ' -I' + common.top_level_path('Source'),
+                   ' -I' + jhbuildrc_common.top_level_path('Source'),
         'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps),
         'ignored_files': glob.glob(derived_sources_path('*Private.h'))
     }
