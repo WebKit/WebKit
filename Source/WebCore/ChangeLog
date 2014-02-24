@@ -1,3 +1,11 @@
+2014-02-23  Dean Jackson  <dino@apple.com>
+
+        Sort the project file with sort-Xcode-project-file.
+
+        Rubber-stamped by Sam Weinig.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-02-23  Sam Weinig  <sam@webkit.org>
 
         Fix incorrectly commented out code.
