@@ -11,42 +11,42 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\compiler\DetectDiscontinuity.cpp">
+    <ClCompile Include="..\src\compiler\translator\DetectDiscontinuity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\SearchSymbol.cpp">
+    <ClCompile Include="..\src\compiler\translator\SearchSymbol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\UnfoldShortCircuit.cpp">
+    <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\Uniform.cpp">
+    <ClCompile Include="..\src\compiler\translator\Uniform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\OutputHLSL.cpp">
+    <ClCompile Include="..\src\compiler\translator\OutputHLSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\TranslatorHLSL.cpp">
+    <ClCompile Include="..\src\compiler\translator\TranslatorHLSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\compiler\DetectDiscontinuity.h">
+    <ClInclude Include="..\src\compiler\translator\DetectDiscontinuity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\SearchSymbol.h">
+    <ClInclude Include="..\src\compiler\translator\SearchSymbol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\UnfoldShortCircuit.h">
+    <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\Uniform.h">
+    <ClInclude Include="..\src\compiler\translator\Uniform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\OutputHLSL.h">
+    <ClInclude Include="..\src\compiler\translator\OutputHLSL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\TranslatorHLSL.h">
+    <ClInclude Include="..\src\compiler\translator\TranslatorHLSL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

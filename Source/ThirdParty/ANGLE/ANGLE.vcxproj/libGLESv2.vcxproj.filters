@@ -185,9 +185,6 @@
     <ClCompile Include="..\src\libGLESv2\renderer\d3d9\renderer9_utils.cpp">
       <Filter>Source Files\Renderer9</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\libGLESv2\renderer\d3d9\RenderTarget9.cpp">
-      <Filter>Source Files\Renderer9</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\libGLESv2\renderer\d3d9\ShaderExecutable9.cpp">
       <Filter>Source Files\Renderer9</Filter>
     </ClCompile>
@@ -200,18 +197,6 @@
     <ClCompile Include="..\src\libGLESv2\renderer\d3d9\VertexBuffer9.cpp">
       <Filter>Source Files\Renderer9</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\libGLESv2\renderer\d3d9\Blit.cpp">
-      <Filter>Source Files\Renderer9</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\libGLESv2\renderer\d3d11\InputLayoutCache.cpp">
-      <Filter>Source Files\Renderer11</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\libGLESv2\renderer\d3d11\RenderStateCache.cpp">
-      <Filter>Source Files\Renderer11</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\libGLESv2\renderer\d3d9\VertexDeclarationCache.cpp">
-      <Filter>Source Files\Renderer9</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\libGLESv2\precompiled.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -222,6 +207,21 @@
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="..\src\common\event_tracer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\libGLESv2\renderer\Blit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\libGLESv2\renderer\InputLayoutCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\libGLESv2\renderer\RenderTarget9.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\libGLESv2\renderer\RenderStateCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\libGLESv2\renderer\VertexDeclarationCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -385,9 +385,6 @@
     <ClInclude Include="..\src\libGLESv2\renderer\VertexBuffer.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libGLESv2\renderer\vertexconversion.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\libGLESv2\renderer\VertexDataManager.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
@@ -469,18 +466,6 @@
     <ClInclude Include="..\src\libGLESv2\renderer\d3d11\Query11.h">
       <Filter>Header Files\Renderer\Renderer11</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libGLESv2\renderer\d3d9\Blit.h">
-      <Filter>Header Files\Renderer9</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\libGLESv2\renderer\d3d9\ShaderCache.h">
-      <Filter>Header Files\Renderer9</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\libGLESv2\renderer\d3d11\InputLayoutCache.h">
-      <Filter>Header Files\Renderer11</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\libGLESv2\renderer\d3d11\RenderStateCache.h">
-      <Filter>Header Files\Renderer11</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\libGLESv2\renderer\VertexDeclarationCache.h">
       <Filter>Header Files\Renderer9</Filter>
     </ClInclude>
@@ -496,17 +481,23 @@
     <ClInclude Include="..\src\common\event_tracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\libGLESv2\renderer\Blit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libGLESv2\renderer\InputLayoutCache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libGLESv2\renderer\RenderStateCache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libGLESv2\renderer\ShaderCache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libGLESv2\renderer\d3d9\vertexconversion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\src\libGLESv2\renderer\shaders\Blit.ps">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\src\libGLESv2\renderer\shaders\Blit.vs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\src\libGLESv2\renderer\shaders\generate_shaders.bat">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\src\libGLESv2\renderer\d3d11\shaders\Passthrough11.hlsl">
       <Filter>Shaders</Filter>
     </None>
@@ -514,6 +505,11 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\src\libGLESv2\libGLESv2.def" />
+    <None Include="..\src\libGLESv2\renderer\d3d9\shaders\Blit.ps" />
+    <None Include="..\src\libGLESv2\renderer\d3d9\shaders\Blit.vs" />
+    <None Include="..\src\libGLESv2\renderer\d3d9\shaders\generate_shaders.bat">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\libGLESv2\libGLESv2.rc" />

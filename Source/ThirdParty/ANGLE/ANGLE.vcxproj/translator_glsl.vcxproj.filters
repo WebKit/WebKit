@@ -11,66 +11,66 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\compiler\VersionGLSL.cpp">
+    <ClCompile Include="..\src\compiler\translator\VersionGLSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\DetectDiscontinuity.cpp">
+    <ClCompile Include="..\src\compiler\translator\DetectDiscontinuity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\OutputESSL.cpp">
+    <ClCompile Include="..\src\compiler\translator\OutputESSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\OutputGLSL.cpp">
+    <ClCompile Include="..\src\compiler\translator\OutputGLSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\OutputGLSLBase.cpp">
+    <ClCompile Include="..\src\compiler\translator\OutputGLSLBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\SearchSymbol.cpp">
+    <ClCompile Include="..\src\compiler\translator\SearchSymbol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\TranslatorESSL.cpp">
+    <ClCompile Include="..\src\compiler\translator\TranslatorESSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\TranslatorGLSL.cpp">
+    <ClCompile Include="..\src\compiler\translator\TranslatorGLSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\UnfoldShortCircuit.cpp">
+    <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\Uniform.cpp">
+    <ClCompile Include="..\src\compiler\translator\Uniform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\compiler\DetectDiscontinuity.h">
+    <ClInclude Include="..\src\compiler\translator\DetectDiscontinuity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\VersionGLSL.h">
+    <ClInclude Include="..\src\compiler\translator\VersionGLSL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\OutputESSL.h">
+    <ClInclude Include="..\src\compiler\translator\OutputESSL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\OutputGLSL.h">
+    <ClInclude Include="..\src\compiler\translator\OutputGLSL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\OutputGLSLBase.h">
+    <ClInclude Include="..\src\compiler\translator\OutputGLSLBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\SearchSymbol.h">
+    <ClInclude Include="..\src\compiler\translator\SearchSymbol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\TranslatorESSL.h">
+    <ClInclude Include="..\src\compiler\translator\TranslatorESSL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\TranslatorGLSL.h">
+    <ClInclude Include="..\src\compiler\translator\TranslatorGLSL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\UnfoldShortCircuit.h">
+    <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\Uniform.h">
+    <ClInclude Include="..\src\compiler\translator\Uniform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

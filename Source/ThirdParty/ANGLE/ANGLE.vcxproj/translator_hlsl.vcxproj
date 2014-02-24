@@ -70,7 +70,7 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -139,20 +139,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="..\src\compiler\DetectDiscontinuity.cpp" />
-    <ClCompile Include="..\src\compiler\OutputHLSL.cpp" />
-    <ClCompile Include="..\src\compiler\SearchSymbol.cpp" />
-    <ClCompile Include="..\src\compiler\TranslatorHLSL.cpp" />
-    <ClCompile Include="..\src\compiler\UnfoldShortCircuit.cpp" />
-    <ClCompile Include="..\src\compiler\Uniform.cpp" />
+    <ClCompile Include="..\src\compiler\translator\DetectDiscontinuity.cpp" />
+    <ClCompile Include="..\src\compiler\translator\OutputHLSL.cpp" />
+    <ClCompile Include="..\src\compiler\translator\SearchSymbol.cpp" />
+    <ClCompile Include="..\src\compiler\translator\TranslatorHLSL.cpp" />
+    <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuit.cpp" />
+    <ClCompile Include="..\src\compiler\translator\Uniform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\compiler\DetectDiscontinuity.h" />
-    <ClInclude Include="..\src\compiler\OutputHLSL.h" />
-    <ClInclude Include="..\src\compiler\SearchSymbol.h" />
-    <ClInclude Include="..\src\compiler\TranslatorHLSL.h" />
-    <ClInclude Include="..\src\compiler\UnfoldShortCircuit.h" />
-    <ClInclude Include="..\src\compiler\Uniform.h" />
+    <ClInclude Include="..\src\compiler\translator\DetectDiscontinuity.h" />
+    <ClInclude Include="..\src\compiler\translator\OutputHLSL.h" />
+    <ClInclude Include="..\src\compiler\translator\SearchSymbol.h" />
+    <ClInclude Include="..\src\compiler\translator\TranslatorHLSL.h" />
+    <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuit.h" />
+    <ClInclude Include="..\src\compiler\translator\Uniform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

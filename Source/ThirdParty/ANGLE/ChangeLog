@@ -1,3 +1,18 @@
+2014-02-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [WinCairo] Unreviewed build fix after r164565.
+
+        * ANGLE.vcxproj/libEGL.vcxproj: Use correct path to files.
+        * ANGLE.vcxproj/libGLESv2.vcxproj: Ditto.
+        * ANGLE.vcxproj/libGLESv2.vcxproj.filters: Ditto.
+        * ANGLE.vcxproj/preprocessor.vcxproj: Ditto.
+        * ANGLE.vcxproj/translator_common.vcxproj: Ditto.
+        * ANGLE.vcxproj/translator_common.vcxproj.filters: Ditto.
+        * ANGLE.vcxproj/translator_glsl.vcxproj: Ditto.
+        * ANGLE.vcxproj/translator_glsl.vcxproj.filters: Ditto.
+        * ANGLE.vcxproj/translator_hlsl.vcxproj: Ditto.
+        * ANGLE.vcxproj/translator_hlsl.vcxproj.filters: Ditto.
+
 2014-02-23  Dean Jackson  <dino@apple.com>
 
         Missing files from previous commit.

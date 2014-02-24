@@ -149,6 +149,9 @@
     <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuitAST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\RewriteElseBlocks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\compiler\translator\glslang_tab.h">
@@ -278,6 +281,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuitAST.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\RewriteElseBlocks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
