@@ -1,3 +1,35 @@
+2014-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename PageClientImplIOS::m_view to m_contentView
+        https://bugs.webkit.org/show_bug.cgi?id=129124
+
+        Reviewed by Benjamin Poulain.
+        
+        Simple rename of m_view to m_contentView in preparation for
+        also holding onto the WKView.
+
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        (WebKit::PageClientImpl::viewSize):
+        (WebKit::PageClientImpl::isViewInWindow):
+        (WebKit::PageClientImpl::processDidExit):
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        (WebKit::PageClientImpl::decidePolicyForGeolocationPermissionRequest):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::interpretKeyEvent):
+        (WebKit::PageClientImpl::positionInformationDidChange):
+        (WebKit::PageClientImpl::selectionDidChange):
+        (WebKit::PageClientImpl::screenToRootView):
+        (WebKit::PageClientImpl::rootViewToScreen):
+        (WebKit::PageClientImpl::setAcceleratedCompositingRootLayer):
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        (WebKit::PageClientImpl::didGetTapHighlightGeometries):
+        (WebKit::PageClientImpl::didCommitLayerTree):
+        (WebKit::PageClientImpl::startAssistingNode):
+        (WebKit::PageClientImpl::stopAssistingNode):
+
 2014-02-24  Enrique Ocaña González  <eocanha@igalia.com>
 
         REGRESSION(r164438): [GTK] Tests /webkit2/WebKitWebView/tls-errors-policy and /webkit2/WebKitWebContext/uri-scheme fail

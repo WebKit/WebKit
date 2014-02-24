@@ -127,7 +127,7 @@ private:
     virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
 #endif
 
-    WKContentView *m_view;
+    WKContentView *m_contentView;
 };
 } // namespace WebKit
 

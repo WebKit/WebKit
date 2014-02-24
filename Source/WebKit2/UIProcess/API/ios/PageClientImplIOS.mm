@@ -46,7 +46,7 @@ using namespace WebCore;
 namespace WebKit {
 
 PageClientImpl::PageClientImpl(WKContentView *view)
-    : m_view(view)
+    : m_contentView(view)
 {
 }
 
@@ -56,7 +56,7 @@ PageClientImpl::~PageClientImpl()
 
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
-    return [m_view _createDrawingAreaProxy];
+    return [m_contentView _createDrawingAreaProxy];
 }
 
 void PageClientImpl::setViewNeedsDisplay(const IntRect& rect)
@@ -82,10 +82,10 @@ bool PageClientImpl::canScrollView()
 
 IntSize PageClientImpl::viewSize()
 {
-    if (UIScrollView *scroller = [m_view _scroller])
+    if (UIScrollView *scroller = [m_contentView _scroller])
         return IntSize(scroller.bounds.size);
 
-    return IntSize(m_view.bounds.size);
+    return IntSize(m_contentView.bounds.size);
 }
 
 bool PageClientImpl::isViewWindowActive()
@@ -108,17 +108,17 @@ bool PageClientImpl::isViewVisible()
 
 bool PageClientImpl::isViewInWindow()
 {
-    return [m_view window];
+    return [m_contentView window];
 }
 
 void PageClientImpl::processDidExit()
 {
-    [m_view _processDidExit];
+    [m_contentView _processDidExit];
 }
 
 void PageClientImpl::didRelaunchProcess()
 {
-    [m_view _didRelaunchProcess];
+    [m_contentView _didRelaunchProcess];
 }
 
 void PageClientImpl::pageClosed()
@@ -138,13 +138,13 @@ void PageClientImpl::toolTipChanged(const String&, const String&)
 
 bool PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, WebSecurityOrigin& origin, GeolocationPermissionRequestProxy& request)
 {
-    [m_view _decidePolicyForGeolocationRequestFromOrigin:origin frame:frame request:request];
+    [m_contentView _decidePolicyForGeolocationRequestFromOrigin:origin frame:frame request:request];
     return true;
 }
 
 void PageClientImpl::didCommitLoadForMainFrame()
 {
-    [m_view _didCommitLoadForMainFrame];
+    [m_contentView _didCommitLoadForMainFrame];
 }
 
 void PageClientImpl::setCursor(const Cursor&)
@@ -196,12 +196,12 @@ bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent&, Vector<Key
 
 bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, bool isCharEvent)
 {
-    return [m_view _interpretKeyEvent:event.nativeEvent() isCharEvent:isCharEvent];
+    return [m_contentView _interpretKeyEvent:event.nativeEvent() isCharEvent:isCharEvent];
 }
 
 void PageClientImpl::positionInformationDidChange(const InteractionInformationAtPosition& info)
 {
-    [m_view _positionInformationDidChange:info];
+    [m_contentView _positionInformationDidChange:info];
 }
 
 void PageClientImpl::saveImageToLibrary(PassRefPtr<SharedBuffer> imageBuffer)
@@ -223,7 +223,7 @@ void PageClientImpl::setDragImage(const IntPoint&, PassRefPtr<ShareableBitmap>, 
 
 void PageClientImpl::selectionDidChange()
 {
-    [m_view _selectionChanged];
+    [m_contentView _selectionChanged];
 }
 
 void PageClientImpl::updateSecureInputState()
@@ -260,12 +260,12 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
 {
-    return IntPoint([m_view convertPoint:point fromView:nil]);
+    return IntPoint([m_contentView convertPoint:point fromView:nil]);
 }
 
 IntRect PageClientImpl::rootViewToScreen(const IntRect& rect)
 {
-    return enclosingIntRect([m_view convertRect:rect toView:nil]);
+    return enclosingIntRect([m_contentView convertRect:rect toView:nil]);
 }
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
@@ -276,7 +276,7 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 #if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& nativeWebtouchEvent, bool eventHandled)
 {
-    [m_view _webTouchEvent:nativeWebtouchEvent preventsNativeGestures:eventHandled];
+    [m_contentView _webTouchEvent:nativeWebtouchEvent preventsNativeGestures:eventHandled];
 }
 #endif
 
@@ -312,7 +312,7 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
 
 void PageClientImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
 {
-    [m_view _setAcceleratedCompositingRootLayer:rootLayer];
+    [m_contentView _setAcceleratedCompositingRootLayer:rootLayer];
 }
 
 CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
@@ -323,7 +323,7 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
 
 RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()
 {
-    return [m_view _takeViewSnapshot];
+    return [m_contentView _takeViewSnapshot];
 }
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
@@ -338,27 +338,27 @@ void PageClientImpl::clearCustomSwipeViews()
 
 void PageClientImpl::didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius)
 {
-    [m_view _didGetTapHighlightForRequest:requestID color:color quads:highlightedQuads topLeftRadius:topLeftRadius topRightRadius:topRightRadius bottomLeftRadius:bottomLeftRadius bottomRightRadius:bottomRightRadius];
+    [m_contentView _didGetTapHighlightForRequest:requestID color:color quads:highlightedQuads topLeftRadius:topLeftRadius topRightRadius:topRightRadius bottomLeftRadius:bottomLeftRadius bottomRightRadius:bottomRightRadius];
 }
 
 void PageClientImpl::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction)
 {
-    [m_view _didCommitLayerTree:layerTreeTransaction];
+    [m_contentView _didCommitLayerTree:layerTreeTransaction];
 }
 
 void PageClientImpl::startAssistingNode(const WebCore::IntRect&, bool, bool)
 {
-    [m_view _startAssistingNode];
+    [m_contentView _startAssistingNode];
 }
 
 void PageClientImpl::stopAssistingNode()
 {
-    [m_view _stopAssistingNode];
+    [m_contentView _stopAssistingNode];
 }
 
 void PageClientImpl::didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold)
 {
-    [m_view _didUpdateBlockSelectionWithTouch:(WKSelectionTouch)touch withFlags:(WKSelectionFlags)flags growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
+    [m_contentView _didUpdateBlockSelectionWithTouch:(WKSelectionTouch)touch withFlags:(WKSelectionFlags)flags growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
 }
 
 #if ENABLE(FULLSCREEN_API)
