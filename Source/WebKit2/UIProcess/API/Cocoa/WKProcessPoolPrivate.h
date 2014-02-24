@@ -23,5 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessClassConfiguration.h>
-#import <WebKit2/WKProcessPoolConfigurationPrivate.h>
+#import <WebKit2/WKProcessPool.h>
+
+#if WK_API_ENABLED
+
+@interface WKProcessPool (WKPrivate)
+
+- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
+
+@end
+
+#endif

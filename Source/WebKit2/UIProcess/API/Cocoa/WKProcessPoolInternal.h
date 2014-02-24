@@ -23,5 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessClassConfiguration.h>
-#import <WebKit2/WKProcessPoolConfigurationPrivate.h>
+#import "WKProcessPoolPrivate.h"
+
+#if WK_API_ENABLED
+
+#import "WKObject.h"
+#import "WebContext.h"
+
+namespace WebKit {
+
+inline WKProcessPool *wrapper(WebContext& context)
+{
+    ASSERT([context.wrapper() isKindOfClass:[WKProcessPool class]]);
+    return (WKProcessPool *)context.wrapper();
+}
+
+}
+
+@interface WKProcessPool () <WKObject> {
+@package
+    RetainPtr<WKProcessPoolConfiguration> _configuration;
+
+    API::ObjectStorage<WebKit::WebContext> _context;
+}
+@end
+
+#endif // WK_API_ENABLED

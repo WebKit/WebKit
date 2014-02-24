@@ -23,5 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessClassConfiguration.h>
-#import <WebKit2/WKProcessPoolConfigurationPrivate.h>
+#import "config.h"
+#import "WKProcessPoolConfigurationPrivate.h"
+
+#if WK_API_ENABLED
+
+#import <wtf/RetainPtr.h>
+
+@implementation WKProcessPoolConfiguration {
+    RetainPtr<NSURL> _injectedBundleURL;
+}
+
+- (NSURL *)_injectedBundleURL
+{
+    return _injectedBundleURL.get();
+}
+
+- (void)_setInjectedBundleURL:(NSURL *)injectedBundleURL
+{
+    _injectedBundleURL = adoptNS([injectedBundleURL copy]);
+}
+
+- (NSString *)description
+{
+    NSString *description = [NSString stringWithFormat:@"<%@: %p; maximumProcessCount = %lu", NSStringFromClass(self.class), self, static_cast<unsigned long>(_maximumProcessCount)];
+    if (_injectedBundleURL)
+        return [description stringByAppendingFormat:@"; injectedBundleURL: \"%@\">", _injectedBundleURL.get()];
+
+    return [description stringByAppendingString:@">"];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    WKProcessPoolConfiguration *configuration = [[[self class] allocWithZone:zone] init];
+
+    configuration.maximumProcessCount = self.maximumProcessCount;
+    configuration._injectedBundleURL = self._injectedBundleURL;
+
+    return configuration;
+}
+
+@end
+
+#endif

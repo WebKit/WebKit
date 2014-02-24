@@ -23,5 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessClassConfiguration.h>
-#import <WebKit2/WKProcessPoolConfigurationPrivate.h>
+#import "config.h"
+#import "WKWebViewConfiguration.h"
+
+#if WK_API_ENABLED
+
+#import "WKProcessClass.h"
+
+@interface WKWebViewConfiguration (WKToBeReoved)
+@property (nonatomic) WKProcessClass *processClass;
+@end
+
+@implementation WKWebViewConfiguration (WKToBeReoved)
+
+- (void)setProcessClass:(WKProcessClass *)processClass
+{
+    self.processPool = processClass;
+}
+
+- (WKProcessClass *)processClass
+{
+    return (WKProcessClass *)self.processPool;
+}
+
+@end
+
+#endif
+

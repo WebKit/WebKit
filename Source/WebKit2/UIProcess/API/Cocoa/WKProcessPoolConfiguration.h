@@ -23,29 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKProcessClassPrivate.h"
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import "WKObject.h"
-#import "WebContext.h"
+/*! A WKProcessPoolConfiguration is used to characterize a class of Web Content processes.
+ @helps Contains properties used to configure a @link WKProcessPool @/link.
+ */
+WK_API_CLASS
+@interface WKProcessPoolConfiguration : NSObject <NSCopying>
 
-namespace WebKit {
+/*! @abstract The maximum number of Web Content processes of the class that may exist at any time.
+ @discussion When the number of Web Content processes of the class reaches this value, one of the
+ existing processes will be used for any new @link WKWebView @/link configured to use the
+ same class.
 
-inline WKProcessClass *wrapper(WebContext& context)
-{
-    ASSERT([context.wrapper() isKindOfClass:[WKProcessClass class]]);
-    return (WKProcessClass *)context.wrapper();
-}
+ A value of 0 means that WebKit will automatically choose a maximum. This is the default.
+ */
+@property (nonatomic) NSUInteger maximumProcessCount;
 
-}
-
-@interface WKProcessClass () <WKObject> {
-@package
-    RetainPtr<WKProcessClassConfiguration> _configuration;
-
-    API::ObjectStorage<WebKit::WebContext> _context;
-}
 @end
 
-#endif // WK_API_ENABLED
+#endif

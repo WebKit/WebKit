@@ -54,7 +54,7 @@
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKPrintingView.h"
-#import "WKProcessClassInternal.h"
+#import "WKProcessPoolInternal.h"
 #import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
 #import "WKThumbnailView.h"

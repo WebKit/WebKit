@@ -28,27 +28,35 @@
 
 #if WK_API_ENABLED
 
-@class WKPreferences;
-@class WKProcessPool;
+@class WKProcessPoolConfiguration;
 
-/*! A @link WKWebViewConfiguration @/link is a collection of properties used to initialize a web
-        view.
-    @helps Contains properties used to configure a @link WKWebView @/link.
-*/
+/*! A WKProcessPool defines a distinct type-or category-of Web Content process.
+ A @link WKWebView @/link specifies the WKProcessPool of the Web
+ Content process backing it through its @link WKWebViewConfiguration @/link.
+ @helperclass @link WKProcessPoolConfiguration @/link
+ Used to configure @link WKProcessPool @/link instances.
+ */
 WK_API_CLASS
-@interface WKWebViewConfiguration : NSObject <NSCopying>
+@interface WKProcessPool : NSObject
 
-/*! @abstract The process class of which the Web Content process for the view must be.
-    @discussion When the @link WKWebView @/link is initialized with the configuration, a new Web
-        content process of the specified class will be created for it, or an existing process of
-        that class will be used.
-
-        When this property is set to nil, a unique process class will be created for each
-        @link WKWebView @/link initialized with the configuration.
+/*! @abstract A copy of the configuration with which the @link WKProcessPool @/link was
+        initialized.
 */
-@property (nonatomic, strong) WKProcessPool *processPool;
+@property (nonatomic, readonly) WKProcessPoolConfiguration *configuration;
 
-@property (nonatomic, strong) WKPreferences *preferences;
+/*!
+    @abstract Returns an instance initialized with the specified configuration.
+    @param configuration The configuration for the new instance.
+    @result An initialized instance, or nil if the object could not be initialized.
+    @discussion This is a designated initializer. You can use @link -init @/link to initialize an
+        instance with the default configuration.
+
+        The initializer copies
+        @link //apple_ref/doc/methodparam/WKProcessPool/initWithConfiguration:/configuration
+        configuration@/link, so mutating it after initialization has no effect on the
+        @link WKProcessPool @/link instance.
+*/
+- (instancetype)initWithConfiguration:(WKProcessPoolConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
 
 @end
 

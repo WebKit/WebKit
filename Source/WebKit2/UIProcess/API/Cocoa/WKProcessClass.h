@@ -23,41 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKFoundation.h>
+#import <WebKit2/WKProcessPool.h>
 
 #if WK_API_ENABLED
 
-@class WKProcessClassConfiguration;
-
-/*! A WKProcessClass defines a distinct type-or category-of Web Content process.
- A @link WKWebView @/link specifies the WKProcessClass of the Web
- Content process backing it through its @link WKWebViewConfiguration @/link.
- @helperclass @link WKProcessClassConfiguration @/link
- Used to configure @link WKProcessClass @/link instances.
- */
 WK_API_CLASS
-@interface WKProcessClass : NSObject
-
-/*! @abstract A copy of the configuration with which the @link WKProcessClass @/link was
-        initialized.
-*/
-@property (nonatomic, readonly) WKProcessClassConfiguration *configuration;
-
-/*!
-    @abstract Returns an instance initialized with the specified configuration.
-    @param configuration The configuration for the new instance.
-    @result An initialized instance, or nil if the object could not be initialized.
-    @discussion This is a designated initializer. You can use @link -init @/link to initialize an
-        instance with the default configuration.
-
-        The initializer copies
-        @link //apple_ref/doc/methodparam/WKProcessClass/initWithConfiguration:/configuration
-        configuration@/link, so mutating it after initialization has no effect on the
-        @link WKProcessClass @/link instance.
-*/
-- (instancetype)initWithConfiguration:(WKProcessClassConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
-
+@interface WKProcessClass : WKProcessPool
 @end
 
 #endif

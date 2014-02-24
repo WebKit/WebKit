@@ -42,7 +42,7 @@
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKPreferencesInternal.h"
-#import "WKProcessClassInternal.h"
+#import "WKProcessPoolInternal.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKUIDelegate.h"
 #import "WKWebViewConfigurationPrivate.h"
@@ -108,23 +108,23 @@
     _configuration = adoptNS([configuration copy]);
 
     if (WKWebView *relatedWebView = [_configuration _relatedWebView]) {
-        WKProcessClass *processClass = [_configuration processClass];
-        WKProcessClass *relatedWebViewProcessClass = [relatedWebView->_configuration processClass];
-        if (processClass && processClass != relatedWebViewProcessClass)
-            [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has process class %@ but configuration specifies a different process class %@", relatedWebView, relatedWebViewProcessClass, configuration.processClass];
+        WKProcessPool *processPool = [_configuration processPool];
+        WKProcessPool *relatedWebViewProcessPool = [relatedWebView->_configuration processPool];
+        if (processPool && processPool != relatedWebViewProcessPool)
+            [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has process pool %@ but configuration specifies a different process pool %@", relatedWebView, relatedWebViewProcessPool, configuration.processPool];
 
-        [_configuration setProcessClass:relatedWebViewProcessClass];
+        [_configuration setProcessPool:relatedWebViewProcessPool];
     }
 
-    if (![_configuration processClass])
-        [_configuration setProcessClass:adoptNS([[WKProcessClass alloc] init]).get()];
+    if (![_configuration processPool])
+        [_configuration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
 
     if (![_configuration preferences])
         [_configuration setPreferences:adoptNS([[WKPreferences alloc] init]).get()];
 
     CGRect bounds = self.bounds;
 
-    WebKit::WebContext& context = *[_configuration processClass]->_context;
+    WebKit::WebContext& context = *[_configuration processPool]->_context;
 
     WebKit::WebPageConfiguration webPageConfiguration;
     webPageConfiguration.preferences = [_configuration preferences]->_preferences.get();

@@ -24,13 +24,4 @@
  */
 
 #import <WebKit2/WKProcessClass.h>
-
-#if WK_API_ENABLED
-
-@interface WKProcessClass (WKPrivate)
-
-- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
-
-@end
-
-#endif
+#import <WebKit2/WKProcessPoolPrivate.h>

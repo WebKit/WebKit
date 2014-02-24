@@ -43,7 +43,7 @@
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLProtectionSpace.h"
 #import "WKNavigationDataInternal.h"
-#import "WKProcessClassInternal.h"
+#import "WKProcessPoolInternal.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import "WKWebProcessPlugInFrameInternal.h"
 #import "WKWebProcessPlugInHitTestResultInternal.h"
@@ -102,7 +102,7 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::Context:
-        wrapper = [WKProcessClass alloc];
+        wrapper = [WKProcessPool alloc];
         break;
 
     case Type::Data:

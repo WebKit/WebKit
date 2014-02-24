@@ -37,7 +37,7 @@
 #import "WKInteractionView.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessGroupPrivate.h"
-#import "WKProcessClassInternal.h"
+#import "WKProcessPoolInternal.h"
 #import "WKWebViewConfiguration.h"
 #import "WebContext.h"
 #import "WebFrameProxy.h"
@@ -316,7 +316,7 @@ using namespace WebKit;
 
 - (void)_decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin&)origin frame:(WebFrameProxy&)frame request:(GeolocationPermissionRequestProxy&)permissionRequest
 {
-    // FIXME: The line below is commented out since wrapper(WebContext&) now returns a WKProcessClass.
+    // FIXME: The line below is commented out since wrapper(WebContext&) now returns a WKProcessPool.
     // As part of the new API we should figure out where geolocation fits in, see <rdar://problem/15885544>.
     // [[wrapper(_page->process().context()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:toAPI(&origin) frame:toAPI(&frame) request:toAPI(&permissionRequest) window:[self window]];
 }

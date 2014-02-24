@@ -23,5 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessClassConfiguration.h>
-#import <WebKit2/WKProcessPoolConfigurationPrivate.h>
+#import <WebKit2/WKProcessPoolConfiguration.h>
+
+#if WK_API_ENABLED
+
+@interface WKProcessPoolConfiguration (WKPrivate)
+
+/*! @abstract The location of a bundle that will be loaded into Web Content processes of the
+ class.
+ */
+@property (nonatomic, copy, setter=_setInjectedBundleURL:) NSURL *_injectedBundleURL;
+
+@end
+
+#endif

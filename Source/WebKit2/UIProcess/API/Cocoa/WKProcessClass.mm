@@ -24,86 +24,11 @@
  */
 
 #import "config.h"
-#import "WKProcessClassInternal.h"
+#import "WKProcessClass.h"
 
 #if WK_API_ENABLED
 
-#import "HistoryClient.h"
-#import "WKObject.h"
-#import "WKProcessClassConfigurationPrivate.h"
-#import "WebCertificateInfo.h"
-#import "WebContext.h"
-#import <WebCore/CertificateInfo.h>
-#import <wtf/RetainPtr.h>
-
-#if PLATFORM(IOS)
-#import <WebCore/WebCoreThreadSystemInterface.h>
-#endif
-
 @implementation WKProcessClass
+@end
 
-- (instancetype)init
-{
-    return [self initWithConfiguration:adoptNS([[WKProcessClassConfiguration alloc] init]).get()];
-}
-
-- (instancetype)initWithConfiguration:(WKProcessClassConfiguration *)configuration
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _configuration = adoptNS([configuration copy]);
-
-#if PLATFORM(IOS)
-    // FIXME: Remove once <rdar://problem/15256572> is fixed.
-    InitWebCoreThreadSystemInterface();
 #endif
-
-    String bundlePath;
-    if (NSURL *bundleURL = [_configuration _injectedBundleURL]) {
-        if (!bundleURL.isFileURL)
-            [NSException raise:NSInvalidArgumentException format:@"Injected Bundle URL must be a file URL"];
-
-        bundlePath = bundleURL.path;
-    }
-
-    API::Object::constructInWrapper<WebKit::WebContext>(self, bundlePath);
-    _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());
-
-    return self;
-}
-
-- (void)dealloc
-{
-    _context->~WebContext();
-
-    [super dealloc];
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; configuration = %@>", NSStringFromClass(self.class), self, _configuration.get()];
-}
-
-- (WKProcessClassConfiguration *)configuration
-{
-    return [[_configuration copy] autorelease];
-}
-
-- (API::Object&)_apiObject
-{
-    return *_context;
-}
-
-@end
-
-@implementation WKProcessClass (WKPrivate)
-
-- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host
-{
-    _context->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((CFArrayRef)certificateChain)).get(), host);
-}
-
-@end
-
-#endif // WK_API_ENABLED
