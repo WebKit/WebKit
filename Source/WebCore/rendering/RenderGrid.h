@@ -72,8 +72,9 @@ private:
     class GridIterator;
     class GridSizingData;
     enum GridTrackSizingDirection { ForColumns, ForRows };
-    void computedUsedBreadthOfGridTracks(GridTrackSizingDirection, GridSizingData&);
-    void computedUsedBreadthOfGridTracks(GridTrackSizingDirection, GridSizingData&, LayoutUnit& availableLogicalSpace);
+    void computeUsedBreadthOfGridTracks(GridTrackSizingDirection, GridSizingData&);
+    void computeUsedBreadthOfGridTracks(GridTrackSizingDirection, GridSizingData&, LayoutUnit& availableLogicalSpace);
+    bool gridElementIsShrinkToFit();
     LayoutUnit computeUsedBreadthOfMinLength(GridTrackSizingDirection, const GridLength&) const;
     LayoutUnit computeUsedBreadthOfMaxLength(GridTrackSizingDirection, const GridLength&, LayoutUnit usedBreadth) const;
     LayoutUnit computeUsedBreadthOfSpecifiedLength(GridTrackSizingDirection, const Length&) const;
@@ -101,7 +102,7 @@ private:
     void resolveContentBasedTrackSizingFunctionsForItems(GridTrackSizingDirection, GridSizingData&, RenderBox*, FilterFunction, SizingFunction, AccumulatorGetter, AccumulatorGrowFunction);
     void distributeSpaceToTracks(Vector<GridTrack*>&, Vector<GridTrack*>* tracksForGrowthAboveMaxBreadth, AccumulatorGetter, AccumulatorGrowFunction, GridSizingData&, LayoutUnit& availableLogicalSpace);
 
-    double computeNormalizedFractionBreadth(Vector<GridTrack>&, GridTrackSizingDirection, LayoutUnit availableLogicalSpace) const;
+    double computeNormalizedFractionBreadth(Vector<GridTrack>&, const GridSpan& tracksSpan, GridTrackSizingDirection, LayoutUnit availableLogicalSpace) const;
 
     const GridTrackSize& gridTrackSize(GridTrackSizingDirection, size_t) const;
     size_t explicitGridColumnCount() const;

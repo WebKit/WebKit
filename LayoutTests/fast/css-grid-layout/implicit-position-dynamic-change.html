@@ -52,6 +52,33 @@ function updateImplicitGridColumn()
 
     testPosition("constrainedGrid", { 'column': '10', 'row': '15' }, { 'width': '40', 'height': '30' });
 
+    var gridItem = document.getElementById("constrainedGridUndefinedHeight").firstChild;
+    testPosition("constrainedGridUndefinedHeight", { 'column': '1', 'row': '1' }, { 'width': '50', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '1', 'row': '2' }, { 'width': '50', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '1', 'row': '3' }, { 'width': '50', 'height': '50' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '1', 'row': '4' }, { 'width': '50', 'height': '65' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '1', 'row': '5' }, { 'width': '50', 'height': '30' });
+
+    testPosition("constrainedGridUndefinedHeight", { 'column': '2', 'row': '1' }, { 'width': '40', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '2', 'row': '2' }, { 'width': '40', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '2', 'row': '3' }, { 'width': '40', 'height': '50' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '2', 'row': '4' }, { 'width': '40', 'height': '65' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '2', 'row': '5' }, { 'width': '40', 'height': '30' });
+
+    testPosition("constrainedGridUndefinedHeight", { 'column': '3', 'row': '1' }, { 'width': '140', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '3', 'row': '2' }, { 'width': '140', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '3', 'row': '3' }, { 'width': '140', 'height': '50' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '3', 'row': '4' }, { 'width': '140', 'height': '65' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '3', 'row': '5' }, { 'width': '140', 'height': '10' });
+
+    testPosition("constrainedGridUndefinedHeight", { 'column': '4', 'row': '1' }, { 'width': '50', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '4', 'row': '2' }, { 'width': '50', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '4', 'row': '3' }, { 'width': '50', 'height': '50' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '4', 'row': '4' }, { 'width': '50', 'height': '65' });
+    testPosition("constrainedGridUndefinedHeight", { 'column': '4', 'row': '5' }, { 'width': '50', 'height': '30' });
+
+    testPosition("constrainedGridUndefinedHeight", { 'column': '10', 'row': '15' }, { 'width': '40', 'height': '30' });
+
     gridItem = document.getElementById("unconstrainedGrid").firstChild;
     testPosition("unconstrainedGrid", { 'column': '1', 'row': '1' }, { 'width': '50', 'height': '70' });
     testPosition("unconstrainedGrid", { 'column': '2', 'row': '1' }, { 'width': '60', 'height': '70' });
@@ -86,7 +113,11 @@ window.addEventListener("load", updateImplicitGridColumn, false);
 <p>This test checks that we properly recompute our grid tracks' sizes when a grid item changes its -webkit-grid-row or -webkit-grid-column.</p>
 
 <div class="constrainedContainer">
-    <div class="grid gridFixedContent" id="constrainedGrid"><div class="sizedToGridArea">XXXX XXXX XXXX</div></div>
+    <div class="grid gridFixedContent" id="constrainedGrid" style="height: 100%"><div class="sizedToGridArea">XXXX XXXX XXXX</div></div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid gridFixedContent" id="constrainedGridUndefinedHeight"><div class="sizedToGridArea">XXXX XXXX XXXX</div></div>
 </div>
 
 <!-- Allow the extra logical space distribution to occur. -->

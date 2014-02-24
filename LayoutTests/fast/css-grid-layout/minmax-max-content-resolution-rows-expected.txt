@@ -2,11 +2,17 @@ Test that resolving minmax function with max-content on grid items works properl
 
 XX XX XX
 PASS
+XX XX XX
+PASS
 XX XX XX XX XX
 PASS
 XX XX XX XX XX XX XX XX
 PASS
+XX XX XX XX XX XX XX XX
+PASS
 XX XX XX
+PASS
+XX XX XX XX XX XX XX XX
 PASS
 XX XX XX XX XX XX XX XX
 PASS
@@ -16,7 +22,11 @@ XX XX XX
 PASS
 XX XX XX XX XX
 PASS
+XX XX XX XX XX
+PASS
 XX XX XX
+PASS
+XX XX XX XX XX
 PASS
 XX XX XX XX XX
 PASS

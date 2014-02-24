@@ -62,6 +62,33 @@ function updateImplicitGridColumn()
     testPosition("constrainedGrid", "XXXX XXXX XXXX", { 'column': '4', 'row': '4' }, { 'width': '50', 'height': '65' });
     testPosition("constrainedGrid", "XXXX XXXX XXXX", { 'column': '4', 'row': '5' }, { 'width': '50', 'height': '30' });
 
+
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '10', 'row': '15' }, { 'width': '40', 'height': '30' });
+
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '1', 'row': '1' }, { 'width': '50', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '1', 'row': '2' }, { 'width': '50', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '1', 'row': '3' }, { 'width': '50', 'height': '50' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '1', 'row': '4' }, { 'width': '50', 'height': '65' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '1', 'row': '5' }, { 'width': '50', 'height': '30' });
+
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '2', 'row': '1' }, { 'width': '40', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '2', 'row': '2' }, { 'width': '40', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '2', 'row': '3' }, { 'width': '40', 'height': '50' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '2', 'row': '4' }, { 'width': '40', 'height': '65' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '2', 'row': '5' }, { 'width': '40', 'height': '30' });
+
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '3', 'row': '1' }, { 'width': '140', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '3', 'row': '2' }, { 'width': '140', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '3', 'row': '3' }, { 'width': '140', 'height': '50' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '3', 'row': '4' }, { 'width': '140', 'height': '65' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '3', 'row': '5' }, { 'width': '140', 'height': '30' });
+
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '4', 'row': '1' }, { 'width': '50', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '4', 'row': '2' }, { 'width': '50', 'height': '70' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '4', 'row': '3' }, { 'width': '50', 'height': '50' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '4', 'row': '4' }, { 'width': '50', 'height': '65' });
+    testPosition("constrainedGridUndefinedHeight", "XXXX XXXX XXXX", { 'column': '4', 'row': '5' }, { 'width': '50', 'height': '30' });
+
     testPosition("unconstrainedGrid", "XXXXXX XXXXXX", { 'column': '10', 'row': '15' }, { 'width': '130', 'height': '10' });
 
     testPosition("unconstrainedGrid", "XXXXXX XXXXXX", { 'column': '1', 'row': '1' }, { 'width': '50', 'height': '70' });
@@ -95,7 +122,11 @@ window.addEventListener("load", updateImplicitGridColumn, false);
 <p>This test checks that we properly recompute our grid tracks' sizes when we add more grid items.</p>
 
 <div class="constrainedContainer">
-    <div class="grid gridFixedContent" id="constrainedGrid"></div>
+    <div class="grid gridFixedContent" id="constrainedGrid" style="height: 100%"></div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid gridFixedContent" id="constrainedGridUndefinedHeight"></div>
 </div>
 
 <!-- Allow the extra logical space distribution to occur. -->

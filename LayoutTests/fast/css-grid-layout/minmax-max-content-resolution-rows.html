@@ -33,8 +33,14 @@ if (window.testRunner)
 <p>Test that resolving minmax function with max-content on grid items works properly.</p>
 
 <div class="constrainedContainer">
-    <div class="grid gridMinMaxContent">
+    <div class="grid gridMinMaxContent" style="height: 100%">
         <div class="firstRowFirstColumn" data-expected-width="20" data-expected-height="30">XX XX XX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid gridMinMaxContent">
+        <div class="firstRowFirstColumn" data-expected-width="20" data-expected-height="50">XX XX XX</div>
     </div>
 </div>
 
@@ -45,9 +51,15 @@ if (window.testRunner)
 </div>
 
 <div class="constrainedContainer">
-    <div class="grid gridMinMaxContent">
+    <div class="grid gridMinMaxContent" style="height: 100%">
         <!-- The 'max' logical width ends up being smaller than the 'min' so per the spec we ignore the 'max'. -->
         <div class="firstRowFirstColumn" data-expected-width="20" data-expected-height="80">XX XX XX XX XX XX XX XX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid gridMinMaxContent">
+        <div class="firstRowFirstColumn" data-expected-width="20" data-expected-height="50">XX XX XX XX XX XX XX XX</div>
     </div>
 </div>
 
@@ -59,9 +71,16 @@ if (window.testRunner)
 </div>
 
 <div style="width: 10px; height: 100px;">
-    <div class="grid gridMinMaxContent">
+    <div class="grid gridMinMaxContent" style="height: 100%">
         <!-- The 'max' logical width ends up being smaller than the 'min' so per the spec we ignore the 'max'. -->
         <div class="firstRowFirstColumn" data-expected-width="20" data-expected-height="80">XX XX XX XX XX XX XX XX</div>
+    </div>
+</div>
+
+<div style="width: 10px; height: 100px;">
+    <div class="grid gridMinMaxContent">
+        <!-- The 'max' logical width ends up being smaller than the 'min' so per the spec we ignore the 'max'. -->
+        <div class="firstRowFirstColumn" data-expected-width="20" data-expected-height="50">XX XX XX XX XX XX XX XX</div>
     </div>
 </div>
 
@@ -78,8 +97,14 @@ if (window.testRunner)
 </div>
 
 <div class="constrainedContainer">
-    <div class="grid gridMaxMaxContent">
+    <div class="grid gridMaxMaxContent" style="height: 100%">
         <div class="firstRowFirstColumn" data-expected-width="20" data-expected-height="30">XX XX XX XX XX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid gridMaxMaxContent">
+        <div class="firstRowFirstColumn" data-expected-width="20" data-expected-height="50">XX XX XX XX XX</div>
     </div>
 </div>
 
@@ -92,9 +117,15 @@ if (window.testRunner)
 </div>
 
 <div style="width: 100px; height: 20px">
-    <div class="grid gridMaxMaxContent">
+    <div class="grid gridMaxMaxContent" style="height: 100%">
         <!-- The 'max' logical width ends up being smaller than the 'min' so per the spec we ignore the 'max'. -->
         <div class="firstRowFirstColumn" data-expected-width="20" data-expected-height="30">XX XX XX XX XX</div>
+    </div>
+</div>
+
+<div style="width: 100px; height: 20px">
+    <div class="grid gridMaxMaxContent">
+        <div class="firstRowFirstColumn" data-expected-width="20" data-expected-height="50">XX XX XX XX XX</div>
     </div>
 </div>
 

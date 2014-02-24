@@ -54,62 +54,107 @@ if (window.testRunner)
 
 <!-- Allow the extra logical space distribution to occur. -->
 <div style="width: 10px; height: 40px">
-    <div class="grid gridMaxMaxContent">
+    <div class="grid gridMaxMaxContent" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="10">XXXXX</div>
         <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="30"></div>
     </div>
 </div>
 
-<div style="width: 10px; height: 110px;">
+<div style="width: 10px; height: 40px">
     <div class="grid gridMaxMaxContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="10">XXXXX</div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="10"></div>
+    </div>
+</div>
+
+<div style="width: 10px; height: 110px;">
+    <div class="grid gridMaxMaxContent" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="10">XXXXX</div>
         <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="100"></div>
     </div>
 </div>
 
+<div style="width: 10px; height: 110px;">
+    <div class="grid gridMaxMaxContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="10">XXXXX</div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="10"></div>
+    </div>
+</div>
 
 <div class="constrainedContainer">
-    <div class="grid gridMinMinContent">
+    <div class="grid gridMinMinContent" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="10">XXXXX XXXX</div>
         <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="20">XXXXX XXXX</div>
     </div>
 </div>
 
+<div class="constrainedContainer">
+    <div class="grid gridMinMinContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="30">XXXXX XXXX</div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="50">XXXXX XXXX</div>
+    </div>
+</div>
+
 <!-- Allow the extra logical space distribution to occur. -->
 <div style="width: 10px; height: 40px">
-    <div class="grid gridMinMinContent">
+    <div class="grid gridMinMinContent" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="10">XXXXX XXXX</div>
         <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="30">XXXXX XXXX</div>
     </div>
 </div>
 
-<div style="width: 10px; height: 110px;">
+<div style="width: 10px; height: 40px">
     <div class="grid gridMinMinContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="30">XXXXX XXXX</div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="50">XXXXX XXXX</div>
+    </div>
+</div>
+
+<div style="width: 10px; height: 110px;">
+    <div class="grid gridMinMinContent" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="60">XXXXX XXXX</div>
         <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="50">XXXXX XXXX</div>
     </div>
 </div>
 
+<div style="width: 10px; height: 110px;">
+    <div class="grid gridMinMinContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="30">XXXXX XXXX</div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="50">XXXXX XXXX</div>
+    </div>
+</div>
 
 <div style="width: 10px; height: 60px;">
-    <div class="grid gridWithIntrinsicSizeBiggerThanFlex">
+    <div class="grid gridWithIntrinsicSizeBiggerThanFlex" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="40">XXXXX XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="20"></div>
     </div>
 </div>
 
+<div style="width: 10px; height: 60px;">
+    <div class="grid gridWithIntrinsicSizeBiggerThanFlex">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="40">XXXXX XXXXX XXXXX XXXXX</div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="160"></div>
+    </div>
+</div>
 
 <div style="width: 10px; height: 60px;">
-    <div class="grid gridShrinkBelowItemsIntrinsicSize">
+    <div class="grid gridShrinkBelowItemsIntrinsicSize" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="20">XXXXX XXXXX XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="40">XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX</div>
     </div>
 </div>
 
+<div style="width: 10px; height: 60px;">
+    <div class="grid gridShrinkBelowItemsIntrinsicSize">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX XXXXX XXXXX</div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX</div>
+    </div>
+</div>
 
 <!-- No space available for the <flex> -->
 <div style="width: 10px; height: 100px;">
-    <div class="grid gridWithNonFlexingItems">
+    <div class="grid gridWithNonFlexingItems" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="40"></div>
         <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="40">XXXXX XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea thirdRowFirstColumn" data-expected-width="50" data-expected-height="60">XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX</div>
@@ -117,9 +162,18 @@ if (window.testRunner)
     </div>
 </div>
 
+<div style="width: 10px; height: 100px;">
+    <div class="grid gridWithNonFlexingItems">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="40"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="40">XXXXX XXXXX XXXXX XXXXX</div>
+        <div class="sizedToGridArea thirdRowFirstColumn" data-expected-width="50" data-expected-height="60">XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX</div>
+        <div class="sizedToGridArea fourthRowFirstColumn" data-expected-width="50" data-expected-height="80"></div>
+    </div>
+</div>
+
 <!-- The second track should be sized after the min-content as the <flex> value should be too small. -->
 <div style="width: 10px; height: 180px;">
-    <div class="grid gridWithNonFlexingItems">
+    <div class="grid gridWithNonFlexingItems" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="40"></div>
         <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="40">XXXXX XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea thirdRowFirstColumn" data-expected-width="50" data-expected-height="60">XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX</div>
@@ -127,12 +181,30 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="width: 10px; height: 400px;">
+<div style="width: 10px; height: 180px;">
     <div class="grid gridWithNonFlexingItems">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="40"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="40">XXXXX XXXXX XXXXX XXXXX</div>
+        <div class="sizedToGridArea thirdRowFirstColumn" data-expected-width="50" data-expected-height="60">XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX</div>
+        <div class="sizedToGridArea fourthRowFirstColumn" data-expected-width="50" data-expected-height="80"></div>
+    </div>
+</div>
+
+<div style="width: 10px; height: 400px;">
+    <div class="grid gridWithNonFlexingItems" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="40"></div>
         <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea thirdRowFirstColumn" data-expected-width="50" data-expected-height="60">XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea fourthRowFirstColumn" data-expected-width="50" data-expected-height="200"></div>
+    </div>
+</div>
+
+<div style="width: 10px; height: 400px;">
+    <div class="grid gridWithNonFlexingItems">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="40"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="40">XXXXX XXXXX XXXXX XXXXX</div>
+        <div class="sizedToGridArea thirdRowFirstColumn" data-expected-width="50" data-expected-height="60">XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX</div>
+        <div class="sizedToGridArea fourthRowFirstColumn" data-expected-width="50" data-expected-height="80"></div>
     </div>
 </div>
 

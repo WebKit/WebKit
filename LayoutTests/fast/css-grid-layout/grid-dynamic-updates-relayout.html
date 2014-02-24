@@ -28,6 +28,13 @@ function updateRowsColumns()
     testLayout("constrainedGrid", { 'rows': 'auto', 'columns': 'minmax(-webkit-max-content, 50px)' }, { 'width': '120', 'height': '10' });
     testLayout("constrainedGrid", { 'rows': '70px', 'columns': 'minmax(-webkit-max-content, 50px)' }, { 'width': '120', 'height': '70' });
 
+    testLayout("constrainedGridUndefinedHeight", { 'rows': 'minmax(20px, 50px)', 'columns': 'minmax(30px, 50px)' }, { 'width': '30', 'height': '50' });
+    testLayout("constrainedGridUndefinedHeight", { 'rows': 'minmax(40px, 50px)', 'columns': 'minmax(30px, 50px)' }, { 'width': '30', 'height': '50' });
+    testLayout("constrainedGridUndefinedHeight", { 'rows': 'minmax(40px, 50px)', 'columns': 'minmax(50px, 50px)' }, { 'width': '50', 'height': '50' });
+    testLayout("constrainedGridUndefinedHeight", { 'rows': 'auto', 'columns': 'minmax(50px, 50px)' }, { 'width': '50', 'height': '20' });
+    testLayout("constrainedGridUndefinedHeight", { 'rows': 'auto', 'columns': 'minmax(-webkit-max-content, 50px)' }, { 'width': '120', 'height': '10' });
+    testLayout("constrainedGridUndefinedHeight", { 'rows': '70px', 'columns': 'minmax(-webkit-max-content, 50px)' }, { 'width': '120', 'height': '70' });
+
     testLayout("unconstrainedGrid", { 'rows': 'minmax(20px, 50px)', 'columns': 'minmax(20px, 60px)' }, { 'width': '60', 'height': '50' });
     testLayout("unconstrainedGrid", { 'rows': 'minmax(20px, 50px)', 'columns': 'minmax(20px, 40px)' }, { 'width': '40', 'height': '50' });
     testLayout("unconstrainedGrid", { 'rows': 'minmax(20px, 30px)', 'columns': 'minmax(20px, 40px)' }, { 'width': '40', 'height': '30' });
@@ -44,7 +51,13 @@ window.addEventListener("load", updateRowsColumns, false);
 <body>
 <div>This test checks that grid-{rows|columns} dynamic updates properly relayout the grid items.</div>
 <div class="constrainedContainer">
-    <div class="grid" id="constrainedGrid">
+    <div class="grid" id="constrainedGrid" style="height: 100%">
+        <div class="sizedToGridArea">XXXXX XXXXXX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid" id="constrainedGridUndefinedHeight">
         <div class="sizedToGridArea">XXXXX XXXXXX</div>
     </div>
 </div>

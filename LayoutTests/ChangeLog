@@ -1,3 +1,39 @@
+2014-02-24  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] handle undefined RemainingSpace in computeUsedBreadthOfGridTracks algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=128372
+
+        Reviewed by David Hyatt.
+
+        From Blink r165692 by <svillar@igalia.com>
+
+        Adapt tests to consider also cases for undefined RemainingSpace.
+
+        * fast/css-grid-layout/flex-and-minmax-content-resolution-rows-expected.txt:
+        * fast/css-grid-layout/flex-and-minmax-content-resolution-rows.html:
+        * fast/css-grid-layout/flex-content-resolution-rows-expected.txt:
+        * fast/css-grid-layout/flex-content-resolution-rows.html:
+        * fast/css-grid-layout/grid-auto-columns-rows-update-expected.txt:
+        * fast/css-grid-layout/grid-auto-columns-rows-update.html:
+        * fast/css-grid-layout/grid-dynamic-updates-relayout-expected.txt:
+        * fast/css-grid-layout/grid-dynamic-updates-relayout.html:
+        * fast/css-grid-layout/grid-item-addition-track-breadth-update-expected.txt:
+        * fast/css-grid-layout/grid-item-addition-track-breadth-update.html:
+        * fast/css-grid-layout/grid-item-multiple-minmax-content-resolution-expected.txt:
+        * fast/css-grid-layout/grid-item-multiple-minmax-content-resolution.html:
+        * fast/css-grid-layout/grid-item-removal-track-breadth-update-expected.txt:
+        * fast/css-grid-layout/grid-item-removal-track-breadth-update.html:
+        * fast/css-grid-layout/grid-item-with-percent-height-in-auto-height-grid-resolution-expected.txt:
+        * fast/css-grid-layout/grid-item-with-percent-height-in-auto-height-grid-resolution.html:
+        * fast/css-grid-layout/implicit-position-dynamic-change-expected.txt:
+        * fast/css-grid-layout/implicit-position-dynamic-change.html:
+        * fast/css-grid-layout/minmax-max-content-resolution-rows-expected.txt:
+        * fast/css-grid-layout/minmax-max-content-resolution-rows.html:
+        * fast/css-grid-layout/minmax-min-content-column-resolution-rows-expected.txt:
+        * fast/css-grid-layout/minmax-min-content-column-resolution-rows.html:
+        * fast/css-grid-layout/minmax-spanning-resolution-rows-expected.txt:
+        * fast/css-grid-layout/minmax-spanning-resolution-rows.html:
+
 2014-02-24  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Validating RTCConfiguration according to the spec

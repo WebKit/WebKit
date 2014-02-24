@@ -26,7 +26,7 @@ if (window.testRunner)
 </div>
 
 <div class="constrainedContainer" style="position: relative;">
-<div class="grid gridMinMaxAutoWithColumnMinMaxAuto">
+<div class="grid gridMinMaxAutoWithColumnMinMaxAuto" style="height: 100%">
     <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="30">XXXXX XXXXX</div>
     <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="50" data-expected-height="30">XXXXX XXXXX XXXXX</div>
     <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="50">XXXXX XXXXX</div>
@@ -34,12 +34,21 @@ if (window.testRunner)
 </div>
 </div>
 
+<div class="constrainedContainer" style="position: relative;">
+<div class="grid gridMinMaxAutoWithColumnMinMaxAuto">
+    <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="30">XXXXX XXXXX</div>
+    <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="50" data-expected-height="30">XXXXX XXXXX XXXXX</div>
+    <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="100">XXXXX XXXXX</div>
+    <div class="sizedToGridArea secondRowSecondColumn" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX XXXXX</div>
+</div>
+</div>
+
 <div style="height: 100px; width: 220px; position: relative;">
 <div class="grid gridMinMaxAutoWithColumnMinMaxAuto">
     <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="110" data-expected-height="20">XXXXX XXXXX</div>
     <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="110" data-expected-height="20">XXXXX XXXXX XXXXX</div>
-    <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="110" data-expected-height="80">XXXXX XXXXX</div>
-    <div class="sizedToGridArea secondRowSecondColumn" data-expected-width="110" data-expected-height="80">XXXXX XXXXX XXXXX XXXXX</div>
+    <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="110" data-expected-height="100">XXXXX XXXXX</div>
+    <div class="sizedToGridArea secondRowSecondColumn" data-expected-width="110" data-expected-height="100">XXXXX XXXXX XXXXX XXXXX</div>
 </div>
 </div>
 

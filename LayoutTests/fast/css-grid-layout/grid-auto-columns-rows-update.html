@@ -47,12 +47,21 @@ function updateGridAutoRowsColumns()
 
     updateAndCheck("unconstrainedGrid", { 'rows': 'minmax(20em, 15px)', 'columns': '50px' }, { 'width': '50px', 'height': '200px' });
     updateAndCheck("unconstrainedGrid", { 'rows': 'minmax(20em, 15px)', 'columns': 'minmax(10%, 100px)' }, { 'width': '100px', 'height': '200px' });
-    updateAndCheck("unconstrainedGrid", { 'rows': 'minmax(-webkit-min-content, 15px)', 'columns': 'minmax(10%, 100px)' }, { 'width': '100px', 'height': '20px' });
+    updateAndCheck("unconstrainedGrid", { 'rows': 'minmax(-webkit-min-content, 15px)', 'columns': 'minmax(10%, 100px)' }, { 'width': '100px', 'height': '15px' });
     updateAndCheck("unconstrainedGrid", { 'rows': 'minmax(-webkit-min-content, 15px)', 'columns': 'minmax(10%, -webkit-max-content)' }, { 'width': '120px', 'height': '15px' });
     updateAndCheck("unconstrainedGrid", { 'rows': 'minmax(-webkit-min-content, 15px)', 'columns': 'minmax(10%, -webkit-max-content)' }, { 'width': '120px', 'height': '15px' });
     updateAndCheck("unconstrainedGrid", { 'rows': 'auto', 'columns': 'minmax(10em, -webkit-max-content)' }, { 'width': '120px', 'height': '10px' });
     updateAndCheck("unconstrainedGrid", { 'rows': 'auto', 'columns': 'minmax(20em, -webkit-max-content)' }, { 'width': '200px', 'height': '10px' });
     updateAndCheck("unconstrainedGrid", { 'rows': 'auto', 'columns': 'auto' }, { 'width': '120px', 'height': '10px' });
+
+    updateAndCheck("constrainedGridUndefinedHeight", { 'rows': 'minmax(20em, 15px)', 'columns': '50px' }, { 'width': '50px', 'height': '200px' });
+    updateAndCheck("constrainedGridUndefinedHeight", { 'rows': 'minmax(20em, 15px)', 'columns': 'minmax(10%, 100px)' }, { 'width': '1px', 'height': '200px' });
+    updateAndCheck("constrainedGridUndefinedHeight", { 'rows': 'minmax(-webkit-min-content, 15px)', 'columns': 'minmax(10%, 100px)' }, { 'width': '1px', 'height': '15px' });
+    updateAndCheck("constrainedGridUndefinedHeight", { 'rows': 'minmax(-webkit-min-content, 15px)', 'columns': 'minmax(-webkit-max-content, 100px)' }, { 'width': '120px', 'height': '15px' });
+    updateAndCheck("constrainedGridUndefinedHeight", { 'rows': 'minmax(40em, 15px)', 'columns': 'minmax(-webkit-max-content, 100px)' }, { 'width': '120px', 'height': '400px' });
+    updateAndCheck("constrainedGridUndefinedHeight", { 'rows': 'minmax(40em, 15px)', 'columns': 'minmax(10%, 100px)' }, { 'width': '1px', 'height': '400px' });
+    updateAndCheck("constrainedGridUndefinedHeight", { 'rows': 'minmax(40em, 15px)', 'columns': 'auto' }, { 'width': '60px', 'height': '400px' });
+    updateAndCheck("constrainedGridUndefinedHeight", { 'rows': 'auto', 'columns': 'auto' }, { 'width': '60px', 'height': '20px' });
 }
 
 window.addEventListener("load", updateGridAutoRowsColumns, false);
@@ -62,13 +71,19 @@ window.addEventListener("load", updateGridAutoRowsColumns, false);
 <div>This test checks that grid-auto-{row|column} updates properly recomputes the grid items' sizes.</div>
 
 <div class="constrainedContainer" style="position: relative">
-    <div class="grid" id="constrainedGrid">
+    <div class="grid" id="constrainedGrid" style="height: 100%">
         <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="10" data-offset-y="20" data-expected-width="50" data-expected-height="30">XXXXX XXXXXX</div>
     </div>
 </div>
 
 <div class="unconstrainedContainer" style="position: relative">
     <div class="grid" id="unconstrainedGrid">
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="10" data-offset-y="20" data-expected-width="50" data-expected-height="30">XXXXX XXXXXX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer" style="position: relative;">
+    <div class="grid" id="constrainedGridUndefinedHeight">
         <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="10" data-offset-y="20" data-expected-width="50" data-expected-height="30">XXXXX XXXXXX</div>
     </div>
 </div>
