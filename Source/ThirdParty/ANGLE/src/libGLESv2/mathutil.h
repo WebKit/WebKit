@@ -11,7 +11,6 @@
 
 #include <intrin.h>
 
-#include "common/system.h"
 #include "common/debug.h"
 
 namespace gl

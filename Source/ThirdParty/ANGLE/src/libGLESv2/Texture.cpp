@@ -14,7 +14,7 @@
 #include "libGLESv2/main.h"
 #include "libGLESv2/mathutil.h"
 #include "libGLESv2/utilities.h"
-#include "libGLESv2/renderer/Blit.h"
+#include "libGLESv2/renderer/d3d9/Blit.h"
 #include "libGLESv2/Renderbuffer.h"
 #include "libGLESv2/renderer/Image.h"
 #include "libGLESv2/renderer/Renderer.h"

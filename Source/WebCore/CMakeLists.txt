@@ -2847,55 +2847,56 @@ if (WTF_USE_3D_GRAPHICS)
     endif ()
 
     list(APPEND ANGLESupport_SOURCES
-        ${DERIVED_SOURCES_WEBCORE_DIR}/glslang.cpp
-        ${DERIVED_SOURCES_WEBCORE_DIR}/glslang_tab.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulator.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/CodeGen.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Compiler.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/DetectCallDepth.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/DetectDiscontinuity.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Diagnostics.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/DirectiveHandler.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ForLoopUnroll.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InfoSink.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Initialize.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InitializeDll.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InitializeParseContext.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InitializeVariables.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Intermediate.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermTraverse.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Intermediate.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/MapLongVariableNames.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputESSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputGLSLBase.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ParseContext.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/PoolAlloc.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/QualifierAlive.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveTree.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteElseBlocks.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SearchSymbol.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ShaderLang.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SymbolTable.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorESSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UnfoldShortCircuit.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UnfoldShortCircuitAST.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Uniform.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateLimitations.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VariableInfo.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VariablePacker.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VersionGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/compilerdebug.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/glslang_lex.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/glslang_tab.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/intermOut.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/parseConst.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/util.cpp
 
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/BuiltInFunctionEmulator.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/CodeGen.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/Compiler.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/DetectCallDepth.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/DetectDiscontinuity.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/Diagnostics.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/DirectiveHandler.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/ForLoopUnroll.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/InfoSink.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/Initialize.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/InitializeDll.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/InitializeGLPosition.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/InitializeParseContext.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/IntermTraverse.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/Intermediate.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/MapLongVariableNames.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/OutputESSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/OutputGLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/OutputGLSLBase.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/OutputHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/ParseContext.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/PoolAlloc.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/QualifierAlive.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/RemoveTree.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/SearchSymbol.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/ShaderLang.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/SymbolTable.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/TranslatorESSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/TranslatorGLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/TranslatorHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/UnfoldShortCircuit.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/UnfoldShortCircuitAST.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/Uniform.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/ValidateLimitations.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/VariableInfo.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/VariablePacker.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/VersionGLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/debug.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/intermOut.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/parseConst.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/util.cpp
-
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/depgraph/DependencyGraph.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/depgraph/DependencyGraphBuilder.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/depgraph/DependencyGraphOutput.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/depgraph/DependencyGraphTraverse.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/depgraph/DependencyGraph.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/depgraph/DependencyGraphBuilder.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/depgraph/DependencyGraphOutput.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/depgraph/DependencyGraphTraverse.cpp
 
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/DiagnosticsBase.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/DirectiveHandlerBase.cpp
@@ -2909,19 +2910,19 @@ if (WTF_USE_3D_GRAPHICS)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/Token.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/Tokenizer.cpp
 
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/timing/RestrictFragmentShaderTiming.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/timing/RestrictVertexShaderTiming.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/timing/RestrictFragmentShaderTiming.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/timing/RestrictVertexShaderTiming.cpp
 
         ${THIRDPARTY_DIR}/ANGLE/src/third_party/compiler/ArrayBoundsClamper.cpp
     )
 
     if (WIN32)
         list(APPEND ANGLESupport_SOURCES
-            ${THIRDPARTY_DIR}/ANGLE/src/compiler/ossource_win.cpp
+            ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ossource_win.cpp
         )
     else ()
         list(APPEND ANGLESupport_SOURCES
-            ${THIRDPARTY_DIR}/ANGLE/src/compiler/ossource_posix.cpp
+            ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ossource_posix.cpp
         )
     endif ()
 
@@ -2988,22 +2989,6 @@ set(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/
 set(IDL_ATTRIBUTES_FILE ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
-
-# ANGLE tokenizer & parser
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/glslang.cpp
-    MAIN_DEPENDENCY ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang.l
-    COMMAND ${FLEX_EXECUTABLE} --noline --nounistd --outfile=glslang.cpp ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang.l
-    WORKING_DIRECTORY ${DERIVED_SOURCES_WEBCORE_DIR}
-    VERBATIM)
-
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/glslang_tab.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/glslang_tab.h
-    MAIN_DEPENDENCY ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang.y
-    COMMAND ${BISON_EXECUTABLE} --no-lines --defines=glslang_tab.h --skeleton=yacc.c --output=glslang_tab.cpp ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang.y
-    WORKING_DIRECTORY ${DERIVED_SOURCES_WEBCORE_DIR}
-    VERBATIM)
-
 
 # Generate InspectorWeb.json
 add_custom_command(

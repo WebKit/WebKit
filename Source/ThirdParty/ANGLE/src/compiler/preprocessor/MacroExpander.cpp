@@ -254,7 +254,7 @@ bool MacroExpander::collectMacroArgs(const Macro& macro,
 
         if (token.type == Token::LAST)
         {
-            mDiagnostics->report(Diagnostics::MACRO_UNTERMINATED_INVOCATION,
+            mDiagnostics->report(Diagnostics::PP_MACRO_UNTERMINATED_INVOCATION,
                                  identifier.location, identifier.text);
             // Do not lose EOF token.
             ungetToken(token);
@@ -302,8 +302,8 @@ bool MacroExpander::collectMacroArgs(const Macro& macro,
     if (args->size() != params.size())
     {
         Diagnostics::ID id = args->size() < macro.parameters.size() ?
-            Diagnostics::MACRO_TOO_FEW_ARGS :
-            Diagnostics::MACRO_TOO_MANY_ARGS;
+            Diagnostics::PP_MACRO_TOO_FEW_ARGS :
+            Diagnostics::PP_MACRO_TOO_MANY_ARGS;
         mDiagnostics->report(id, identifier.location, identifier.text);
         return false;
     }

@@ -1,3 +1,17 @@
+2014-02-23  Dean Jackson  <dino@apple.com>
+
+        Update ANGLE to 836bd2176e5607b14846cf1fbc5932dbc91318f4
+        https://bugs.webkit.org/show_bug.cgi?id=129232
+
+        Reviewed by Brent Fulgham.
+
+        New files added, derived sources compiled directly, and generated
+        steps removed for both EFL and GTK, with much-needed help from
+        Sergio Correia.
+
+        * CMakeLists.txt:
+        * GNUMakefile.am:
+
 2014-02-23  Sam Weinig  <sam@webkit.org>
 
         Move RenderMathMLMenclose.h/cpp to the right place in the Xcode project and sort.

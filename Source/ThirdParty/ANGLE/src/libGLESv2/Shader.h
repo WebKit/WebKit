@@ -18,7 +18,7 @@
 #include <list>
 #include <vector>
 
-#include "compiler/Uniform.h"
+#include "compiler/translator/Uniform.h"
 #include "common/angleutils.h"
 
 namespace rx

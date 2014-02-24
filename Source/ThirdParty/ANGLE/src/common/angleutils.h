@@ -42,6 +42,20 @@ void SafeRelease(T& resource)
     }
 }
 
+template <typename T>
+void SafeDelete(T*& resource)
+{
+    delete resource;
+    resource = NULL;
+}
+
+template <typename T>
+void SafeDeleteArray(T*& resource)
+{
+    delete[] resource;
+    resource = NULL;
+}
+
 #if defined(_MSC_VER)
 #define snprintf _snprintf
 #endif

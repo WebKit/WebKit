@@ -10,7 +10,6 @@
 #define LIBGLESV2_MAIN_H_
 
 #include "common/debug.h"
-#include "common/system.h"
 
 namespace egl
 {

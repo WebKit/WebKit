@@ -11,8 +11,6 @@
 #ifndef LIBEGL_DISPLAY_H_
 #define LIBEGL_DISPLAY_H_
 
-#include "common/system.h"
-
 #include <set>
 #include <vector>
 

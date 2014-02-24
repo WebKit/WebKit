@@ -1627,9 +1627,19 @@ bool ProgramBinary::load(InfoLog &infoLog, const void *binary, GLsizei length)
         return false;
     }
 
-    int version = 0;
-    stream.read(&version);
-    if (version != VERSION_DWORD)
+    int majorVersion = 0;
+    int minorVersion = 0;
+    stream.read(&majorVersion);
+    stream.read(&minorVersion);
+    if (majorVersion != ANGLE_MAJOR_VERSION || minorVersion != ANGLE_MINOR_VERSION)
+    {
+        infoLog.append("Invalid program binary version.");
+        return false;
+    }
+
+    unsigned char commitString[ANGLE_COMMIT_HASH_SIZE];
+    stream.read(commitString, ANGLE_COMMIT_HASH_SIZE);
+    if (memcmp(commitString, ANGLE_COMMIT_HASH, sizeof(unsigned char) * ANGLE_COMMIT_HASH_SIZE) != 0)
     {
         infoLog.append("Invalid program binary version.");
         return false;
@@ -1796,7 +1806,9 @@ bool ProgramBinary::save(void* binary, GLsizei bufSize, GLsizei *length)
     BinaryOutputStream stream;
 
     stream.write(GL_PROGRAM_BINARY_ANGLE);
-    stream.write(VERSION_DWORD);
+    stream.write(ANGLE_MAJOR_VERSION);
+    stream.write(ANGLE_MINOR_VERSION);
+    stream.write(ANGLE_COMMIT_HASH, ANGLE_COMMIT_HASH_SIZE);
     stream.write(ANGLE_COMPILE_OPTIMIZATION_LEVEL);
 
     for (unsigned int i = 0; i < MAX_VERTEX_ATTRIBS; ++i)
@@ -2592,7 +2604,9 @@ struct AttributeSorter
 
     bool operator()(int a, int b)
     {
-        return originalIndices[a] == -1 ? false : originalIndices[a] < originalIndices[b];
+        if (originalIndices[a] == -1) return false;
+        if (originalIndices[b] == -1) return true;
+        return (originalIndices[a] < originalIndices[b]);
     }
 
     const int (&originalIndices)[MAX_VERTEX_ATTRIBS];

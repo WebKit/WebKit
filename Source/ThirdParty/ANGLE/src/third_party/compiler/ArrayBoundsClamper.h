@@ -28,8 +28,8 @@
 
 #include "GLSLANG/ShaderLang.h"
 
-#include "compiler/InfoSink.h"
-#include "compiler/intermediate.h"
+#include "compiler/translator/InfoSink.h"
+#include "compiler/translator/intermediate.h"
 
 class ArrayBoundsClamper {
 public:

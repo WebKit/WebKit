@@ -7,17 +7,23 @@
 // debug.cpp: Debugging utilities.
 
 #include "common/debug.h"
-#include "common/system.h"
+#include <stdarg.h>
+
+#if defined(ANGLE_ENABLE_PERF)
 #include <d3d9.h>
+#endif
 
 namespace gl
 {
-
+#if defined(ANGLE_ENABLE_PERF)
 typedef void (WINAPI *PerfOutputFunction)(D3DCOLOR, LPCWSTR);
+#else
+typedef void (*PerfOutputFunction)(unsigned int, const wchar_t*);
+#endif
 
 static void output(bool traceFileDebugOnly, PerfOutputFunction perfFunc, const char *format, va_list vararg)
 {
-#if !defined(ANGLE_DISABLE_PERF)
+#if defined(ANGLE_ENABLE_PERF)
     if (perfActive())
     {
         char message[32768];
@@ -37,15 +43,15 @@ static void output(bool traceFileDebugOnly, PerfOutputFunction perfFunc, const c
 
         perfFunc(0, wideMessage);
     }
-#endif
+#endif // ANGLE_ENABLE_PERF
 
-#if !defined(ANGLE_DISABLE_TRACE)
+#if defined(ANGLE_ENABLE_TRACE)
 #if defined(NDEBUG)
     if (traceFileDebugOnly)
     {
         return;
     }
-#endif
+#endif // NDEBUG
 
     FILE* file = fopen(TRACE_OUTPUT_FILE, "a");
     if (file)
@@ -53,50 +59,50 @@ static void output(bool traceFileDebugOnly, PerfOutputFunction perfFunc, const c
         vfprintf(file, format, vararg);
         fclose(file);
     }
-#endif
+#endif // ANGLE_ENABLE_TRACE
 }
 
 void trace(bool traceFileDebugOnly, const char *format, ...)
 {
     va_list vararg;
     va_start(vararg, format);
-#if defined(ANGLE_DISABLE_PERF)
-    output(traceFileDebugOnly, NULL, format, vararg);
-#else
+#if defined(ANGLE_ENABLE_PERF)
     output(traceFileDebugOnly, D3DPERF_SetMarker, format, vararg);
+#else
+    output(traceFileDebugOnly, NULL, format, vararg);
 #endif
     va_end(vararg);
 }
 
 bool perfActive()
 {
-#if defined(ANGLE_DISABLE_PERF)
-    return false;
-#else
+#if defined(ANGLE_ENABLE_PERF)
     static bool active = D3DPERF_GetStatus() != 0;
     return active;
+#else
+    return false;
 #endif
 }
 
 ScopedPerfEventHelper::ScopedPerfEventHelper(const char* format, ...)
 {
-#if !defined(ANGLE_DISABLE_PERF)
-#if defined(ANGLE_DISABLE_TRACE)
+#if defined(ANGLE_ENABLE_PERF)
+#if !defined(ANGLE_ENABLE_TRACE)
     if (!perfActive())
     {
         return;
     }
-#endif
+#endif // !ANGLE_ENABLE_TRACE
     va_list vararg;
     va_start(vararg, format);
     output(true, reinterpret_cast<PerfOutputFunction>(D3DPERF_BeginEvent), format, vararg);
     va_end(vararg);
-#endif
+#endif // ANGLE_ENABLE_PERF
 }
 
 ScopedPerfEventHelper::~ScopedPerfEventHelper()
 {
-#if !defined(ANGLE_DISABLE_PERF)
+#if defined(ANGLE_ENABLE_PERF)
     if (perfActive())
     {
         D3DPERF_EndEvent();

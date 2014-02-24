@@ -29,263 +29,263 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\compiler\glslang_lex.cpp">
+    <ClCompile Include="..\src\compiler\translator\glslang_lex.cpp">
       <Filter>Source Files\generated</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\glslang_tab.cpp">
+    <ClCompile Include="..\src\compiler\translator\glslang_tab.cpp">
       <Filter>Source Files\generated</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\depgraph\DependencyGraph.cpp">
+    <ClCompile Include="..\src\compiler\translator\depgraph\DependencyGraph.cpp">
       <Filter>Source Files\depgraph</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\depgraph\DependencyGraphBuilder.cpp">
+    <ClCompile Include="..\src\compiler\translator\depgraph\DependencyGraphBuilder.cpp">
       <Filter>Source Files\depgraph</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\depgraph\DependencyGraphOutput.cpp">
+    <ClCompile Include="..\src\compiler\translator\depgraph\DependencyGraphOutput.cpp">
       <Filter>Source Files\depgraph</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\depgraph\DependencyGraphTraverse.cpp">
+    <ClCompile Include="..\src\compiler\translator\depgraph\DependencyGraphTraverse.cpp">
       <Filter>Source Files\depgraph</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\timing\RestrictFragmentShaderTiming.cpp">
+    <ClCompile Include="..\src\compiler\translator\timing\RestrictFragmentShaderTiming.cpp">
       <Filter>Source Files\timing</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\timing\RestrictVertexShaderTiming.cpp">
+    <ClCompile Include="..\src\compiler\translator\timing\RestrictVertexShaderTiming.cpp">
       <Filter>Source Files\timing</Filter>
     </ClCompile>
     <ClCompile Include="..\src\third_party\compiler\ArrayBoundsClamper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\VariablePacker.cpp">
+    <ClCompile Include="..\src\compiler\translator\VariablePacker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\BuiltInFunctionEmulator.cpp">
+    <ClCompile Include="..\src\compiler\translator\BuiltInFunctionEmulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\Compiler.cpp">
+    <ClCompile Include="..\src\compiler\translator\Compiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\debug.cpp">
+    <ClCompile Include="..\src\compiler\translator\compilerdebug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\DetectCallDepth.cpp">
+    <ClCompile Include="..\src\compiler\translator\DetectCallDepth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\Diagnostics.cpp">
+    <ClCompile Include="..\src\compiler\translator\Diagnostics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\DirectiveHandler.cpp">
+    <ClCompile Include="..\src\compiler\translator\DirectiveHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\ForLoopUnroll.cpp">
+    <ClCompile Include="..\src\compiler\translator\ForLoopUnroll.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\InfoSink.cpp">
+    <ClCompile Include="..\src\compiler\translator\InfoSink.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\Initialize.cpp">
+    <ClCompile Include="..\src\compiler\translator\Initialize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\InitializeDll.cpp">
+    <ClCompile Include="..\src\compiler\translator\InitializeVariables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\InitializeParseContext.cpp">
+    <ClCompile Include="..\src\compiler\translator\InitializeDll.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\Intermediate.cpp">
+    <ClCompile Include="..\src\compiler\translator\InitializeParseContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\intermOut.cpp">
+    <ClCompile Include="..\src\compiler\translator\Intermediate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\IntermTraverse.cpp">
+    <ClCompile Include="..\src\compiler\translator\intermOut.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\MapLongVariableNames.cpp">
+    <ClCompile Include="..\src\compiler\translator\IntermTraverse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\ossource_win.cpp">
+    <ClCompile Include="..\src\compiler\translator\MapLongVariableNames.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\parseConst.cpp">
+    <ClCompile Include="..\src\compiler\translator\ossource_win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\PoolAlloc.cpp">
+    <ClCompile Include="..\src\compiler\translator\parseConst.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\QualifierAlive.cpp">
+    <ClCompile Include="..\src\compiler\translator\PoolAlloc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\RemoveTree.cpp">
+    <ClCompile Include="..\src\compiler\translator\QualifierAlive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\ShaderLang.cpp">
+    <ClCompile Include="..\src\compiler\translator\RemoveTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\SymbolTable.cpp">
+    <ClCompile Include="..\src\compiler\translator\ShaderLang.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\util.cpp">
+    <ClCompile Include="..\src\compiler\translator\SymbolTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\ValidateLimitations.cpp">
+    <ClCompile Include="..\src\compiler\translator\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\VariableInfo.cpp">
+    <ClCompile Include="..\src\compiler\translator\ValidateLimitations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\InitializeGLPosition.cpp">
+    <ClCompile Include="..\src\compiler\translator\VariableInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\ParseContext.cpp">
+    <ClCompile Include="..\src\compiler\translator\ParseContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\VersionGLSL.cpp">
+    <ClCompile Include="..\src\compiler\translator\VersionGLSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\CodeGen.cpp">
+    <ClCompile Include="..\src\compiler\translator\CodeGen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\UnfoldShortCircuitAST.cpp">
+    <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuitAST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\compiler\glslang_tab.h">
+    <ClInclude Include="..\src\compiler\translator\glslang_tab.h">
       <Filter>Header Files\generated</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\timing\RestrictFragmentShaderTiming.h">
+    <ClInclude Include="..\src\compiler\translator\timing\RestrictFragmentShaderTiming.h">
       <Filter>Header Files\timing</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\timing\RestrictVertexShaderTiming.h">
+    <ClInclude Include="..\src\compiler\translator\timing\RestrictVertexShaderTiming.h">
       <Filter>Header Files\timing</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\depgraph\DependencyGraph.h">
+    <ClInclude Include="..\src\compiler\translator\depgraph\DependencyGraph.h">
       <Filter>Header Files\depgraph</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\depgraph\DependencyGraphBuilder.h">
+    <ClInclude Include="..\src\compiler\translator\depgraph\DependencyGraphBuilder.h">
       <Filter>Header Files\depgraph</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\depgraph\DependencyGraphOutput.h">
+    <ClInclude Include="..\src\compiler\translator\depgraph\DependencyGraphOutput.h">
       <Filter>Header Files\depgraph</Filter>
     </ClInclude>
     <ClInclude Include="..\src\third_party\compiler\ArrayBoundsClamper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\VariablePacker.h">
+    <ClInclude Include="..\src\compiler\translator\VariablePacker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\VariableInfo.h">
+    <ClInclude Include="..\src\compiler\translator\VariableInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\ValidateLimitations.h">
+    <ClInclude Include="..\src\compiler\translator\ValidateLimitations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\util.h">
+    <ClInclude Include="..\src\compiler\translator\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\Types.h">
+    <ClInclude Include="..\src\compiler\translator\Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\SymbolTable.h">
+    <ClInclude Include="..\src\compiler\translator\SymbolTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\ShHandle.h">
+    <ClInclude Include="..\src\compiler\translator\ShHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\GLSLANG\ShaderLang.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\RenameFunction.h">
+    <ClInclude Include="..\src\compiler\translator\RenameFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\RemoveTree.h">
+    <ClInclude Include="..\src\compiler\translator\RemoveTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\QualifierAlive.h">
+    <ClInclude Include="..\src\compiler\translator\QualifierAlive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\PoolAlloc.h">
+    <ClInclude Include="..\src\compiler\translator\PoolAlloc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\osinclude.h">
+    <ClInclude Include="..\src\compiler\translator\osinclude.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\MMap.h">
+    <ClInclude Include="..\src\compiler\translator\MMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\MapLongVariableNames.h">
+    <ClInclude Include="..\src\compiler\translator\MapLongVariableNames.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\localintermediate.h">
+    <ClInclude Include="..\src\compiler\translator\localintermediate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\intermediate.h">
+    <ClInclude Include="..\src\compiler\translator\intermediate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\InitializeParseContext.h">
+    <ClInclude Include="..\src\compiler\translator\InitializeParseContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\InitializeGlobals.h">
+    <ClInclude Include="..\src\compiler\translator\InitializeGlobals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\InitializeDll.h">
+    <ClInclude Include="..\src\compiler\translator\InitializeDll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\Initialize.h">
+    <ClInclude Include="..\src\compiler\translator\Initialize.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\InfoSink.h">
+    <ClInclude Include="..\src\compiler\translator\InitializeVariables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\HashNames.h">
+    <ClInclude Include="..\src\compiler\translator\InfoSink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\ForLoopUnroll.h">
+    <ClInclude Include="..\src\compiler\translator\HashNames.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\DirectiveHandler.h">
+    <ClInclude Include="..\src\compiler\translator\ForLoopUnroll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\Diagnostics.h">
+    <ClInclude Include="..\src\compiler\translator\DirectiveHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\DetectCallDepth.h">
+    <ClInclude Include="..\src\compiler\translator\Diagnostics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\debug.h">
+    <ClInclude Include="..\src\compiler\translator\DetectCallDepth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\ConstantUnion.h">
+    <ClInclude Include="..\src\compiler\translator\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\Common.h">
+    <ClInclude Include="..\src\compiler\translator\ConstantUnion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\BuiltInFunctionEmulator.h">
+    <ClInclude Include="..\src\compiler\translator\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\BaseTypes.h">
+    <ClInclude Include="..\src\compiler\translator\BuiltInFunctionEmulator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\InitializeGLPosition.h">
+    <ClInclude Include="..\src\compiler\translator\BaseTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\ParseContext.h">
+    <ClInclude Include="..\src\compiler\translator\ParseContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\VersionGLSL.h">
+    <ClInclude Include="..\src\compiler\translator\VersionGLSL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\UnfoldShortCircuitAST.h">
+    <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuitAST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\src\compiler\glslang.l">
+    <CustomBuild Include="..\src\compiler\translator\glslang.l">
       <Filter>Source Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\src\compiler\glslang.y">
+    <CustomBuild Include="..\src\compiler\translator\glslang.y">
       <Filter>Source Files</Filter>
     </CustomBuild>
   </ItemGroup>

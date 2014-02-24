@@ -3844,9 +3844,9 @@ const GLubyte* __stdcall glGetString(GLenum name)
           case GL_RENDERER:
             return (GLubyte*)((context != NULL) ? context->getRendererString() : "ANGLE");
           case GL_VERSION:
-            return (GLubyte*)"OpenGL ES 2.0 (ANGLE " VERSION_STRING ")";
+            return (GLubyte*)"OpenGL ES 2.0 (ANGLE " ANGLE_VERSION_STRING ")";
           case GL_SHADING_LANGUAGE_VERSION:
-            return (GLubyte*)"OpenGL ES GLSL ES 1.00 (ANGLE " VERSION_STRING ")";
+            return (GLubyte*)"OpenGL ES GLSL ES 1.00 (ANGLE " ANGLE_VERSION_STRING ")";
           case GL_EXTENSIONS:
             return (GLubyte*)((context != NULL) ? context->getExtensionString() : "");
           default:

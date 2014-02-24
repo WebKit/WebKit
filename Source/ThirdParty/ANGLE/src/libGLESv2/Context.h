@@ -73,7 +73,7 @@ enum QueryType
 class VertexAttribute
 {
   public:
-    VertexAttribute() : mType(GL_FLOAT), mSize(0), mNormalized(false), mStride(0), mPointer(NULL), mArrayEnabled(false), mDivisor(0)
+    VertexAttribute() : mType(GL_FLOAT), mSize(4), mNormalized(false), mStride(0), mPointer(NULL), mArrayEnabled(false), mDivisor(0)
     {
         mCurrentValue[0] = 0.0f;
         mCurrentValue[1] = 0.0f;

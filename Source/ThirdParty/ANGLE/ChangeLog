@@ -1,3 +1,15 @@
+2014-02-23  Dean Jackson  <dino@apple.com>
+
+        Update ANGLE to 836bd2176e5607b14846cf1fbc5932dbc91318f4
+        https://bugs.webkit.org/show_bug.cgi?id=129232
+
+        Reviewed by Brent Fulgham.
+
+        I also reapplied some of our changes from previous updates, including disabling the clang deprecation
+        warnings in some files, adding the Apple note about license and defining YY_NO_INPUT.
+
+        Huge list of source changes omitted.
+
 2013-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

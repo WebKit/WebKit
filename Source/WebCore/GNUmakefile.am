@@ -390,14 +390,6 @@ audio_DATA = $(WebCore)/platform/audio/resources/Composite.wav
 dist_audio_DATA = $(audio_DATA)
 endif  # END ENABLE_WEB_AUDIO
 
-# ANGLE tokenizer & parser
-DerivedSources/ANGLE/glslang.cpp: Source/ThirdParty/ANGLE/src/compiler/glslang.l DerivedSources/ANGLE/glslang_tab.cpp
-	$(AM_V_GEN)$(FLEX) --noline --nounistd --outfile="$@" "$<"
-
-DerivedSources/ANGLE/glslang_tab.cpp: Source/ThirdParty/ANGLE/src/compiler/glslang.y
-	$(AM_V_GEN)$(BISON) --no-lines --defines="DerivedSources/ANGLE/glslang_tab.h" --skeleton=yacc.c --output="$@" $<
-DerivedSources/ANGLE/glslang_tab.h: DerivedSources/ANGLE/glslang_tab.cpp
-
 IDL_PATH := \
     $(WebCore)/Modules/battery \
     $(WebCore)/Modules/gamepad \
@@ -664,8 +656,6 @@ EXTRA_DIST += \
 	$(wildcard $(srcdir)/Source/WebCore/workers/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/xml/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/inspector/protocol/*.json) \
-	Source/ThirdParty/ANGLE/src/compiler/glslang.l \
-	Source/ThirdParty/ANGLE/src/compiler/glslang.y \
 	Source/WebCore/bindings/scripts/CodeGeneratorGObject.pm \
 	Source/WebCore/bindings/scripts/CodeGeneratorJS.pm \
 	Source/WebCore/bindings/scripts/CodeGenerator.pm \

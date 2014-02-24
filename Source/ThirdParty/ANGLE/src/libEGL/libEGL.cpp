@@ -184,7 +184,7 @@ const char *__stdcall eglQueryString(EGLDisplay dpy, EGLint name)
           case EGL_VENDOR:
             return egl::success(display->getVendorString());
           case EGL_VERSION:
-            return egl::success("1.4 (ANGLE " VERSION_STRING ")");
+            return egl::success("1.4 (ANGLE " ANGLE_VERSION_STRING ")");
         }
 
         return egl::error(EGL_BAD_PARAMETER, (const char*)NULL);

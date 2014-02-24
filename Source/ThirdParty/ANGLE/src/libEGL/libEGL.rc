@@ -54,8 +54,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION MAJOR_VERSION,MINOR_VERSION,BUILD_VERSION,BUILD_REVISION
- PRODUCTVERSION MAJOR_VERSION,MINOR_VERSION,BUILD_VERSION,BUILD_REVISION
+ FILEVERSION ANGLE_MAJOR_VERSION,ANGLE_MINOR_VERSION,0,0
+ PRODUCTVERSION ANGLE_MAJOR_VERSION,ANGLE_MINOR_VERSION,0,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -71,13 +71,14 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "ANGLE libEGL Dynamic Link Library"
-            VALUE "FileVersion", VERSION_STRING
+            VALUE "FileVersion", ANGLE_VERSION_STRING
             VALUE "InternalName", "libEGL"
             VALUE "LegalCopyright", "Copyright (C) 2011 Google Inc."
             VALUE "OriginalFilename", "libEGL.dll"
-            VALUE "PrivateBuild", VERSION_STRING
+            VALUE "PrivateBuild", ANGLE_VERSION_STRING
             VALUE "ProductName", "ANGLE libEGL Dynamic Link Library"
-            VALUE "ProductVersion", VERSION_STRING
+            VALUE "ProductVersion", ANGLE_VERSION_STRING
+            VALUE "Comments", "Build Date: " ANGLE_COMMIT_DATE
         END
     END
     BLOCK "VarFileInfo"
