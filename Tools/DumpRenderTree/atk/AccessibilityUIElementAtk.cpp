@@ -1623,4 +1623,37 @@ JSStringRef AccessibilityUIElement::sentenceAtOffset(int offset)
     return stringAtOffset(m_element, ATK_TEXT_BOUNDARY_SENTENCE_START, offset);
 }
 
+unsigned AccessibilityUIElement::selectedChildrenCount() const
+{
+    if (!ATK_IS_SELECTION(m_element))
+        return 0;
+
+    return atk_selection_get_selection_count(ATK_SELECTION(m_element));
+}
+
+AccessibilityUIElement AccessibilityUIElement::selectedChildAtIndex(unsigned index) const
+{
+    if (!ATK_IS_SELECTION(m_element))
+        return nullptr;
+
+    GRefPtr<AtkObject> child = adoptGRef(atk_selection_ref_selection(ATK_SELECTION(m_element), index));
+    return child ? AccessibilityUIElement(child.get()) : nullptr;
+}
+
+void AccessibilityUIElement::setSelectedChildAtIndex(unsigned index) const
+{
+    if (!ATK_IS_SELECTION(m_element))
+        return;
+
+    atk_selection_add_selection(ATK_SELECTION(m_element), index);
+}
+
+void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
+{
+    if (!ATK_IS_SELECTION(m_element))
+        return;
+
+    atk_selection_remove_selection(ATK_SELECTION(m_element), index);
+}
+
 #endif

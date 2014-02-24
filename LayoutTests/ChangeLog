@@ -1,3 +1,18 @@
+2014-02-24  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Wrong selected element at a given index in a list box.
+        https://bugs.webkit.org/show_bug.cgi?id=129039
+
+        Reviewed by Chris Fleizach.
+
+        Proposed test that checks whether correct element at a given index is retrieved.
+        Also testing some other scenarios such as removing selection from rows, counting all
+        selected rows and setting selection.
+
+        * accessibility/select-element-at-index-expected.txt: Added.
+        * accessibility/select-element-at-index.html: Added.
+        * platform/mac/TestExpectations: Skipping test in Mac, missing implementation.
+
 2014-02-23  Dean Jackson  <dino@apple.com>
 
         [WebGL] Allow ANGLE to initialize unused varyings

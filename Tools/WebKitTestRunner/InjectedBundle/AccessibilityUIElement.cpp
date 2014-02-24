@@ -59,6 +59,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int) { return
 JSRetainPtr<JSStringRef> AccessibilityUIElement::wordAtOffset(int) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int) { return 0; }
+void AccessibilityUIElement::setSelectedChildAtIndex(unsigned) const { }
+void AccessibilityUIElement::removeSelectionAtIndex(unsigned) const { }
 #endif
 
 #if (!PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(EFL)) || !HAVE(ACCESSIBILITY)

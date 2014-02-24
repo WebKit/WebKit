@@ -1,3 +1,37 @@
+2014-02-24  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Wrong selected element at a given index in a list box.
+        https://bugs.webkit.org/show_bug.cgi?id=129039
+
+        Reviewed by Chris Fleizach.
+
+        Added missing implementation and proposed some new function for testing selection
+        in a list boxes.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (setSelectedChildAtIndexCallback):
+        (removeSelectionAtIndexCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::selectedChildrenCount):
+        (AccessibilityUIElement::selectedChildAtIndex):
+        (AccessibilityUIElement::setSelectedChildAtIndex):
+        (AccessibilityUIElement::removeSelectionAtIndex):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::selectedChildrenCount):
+        (AccessibilityUIElement::selectedChildAtIndex):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::setSelectedChildAtIndex):
+        (WTR::AccessibilityUIElement::removeSelectionAtIndex):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::selectedChildAtIndex):
+        (WTR::AccessibilityUIElement::selectedChildrenCount):
+        (WTR::AccessibilityUIElement::setSelectedChildAtIndex):
+        (WTR::AccessibilityUIElement::removeSelectionAtIndex):
+
 2014-02-23  Diego Pino García  <dpino@igalia.com>
 
         [GTK] Fix build after Web Inspector code reorganization (r164543)

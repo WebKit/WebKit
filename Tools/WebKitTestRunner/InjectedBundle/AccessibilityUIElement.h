@@ -141,6 +141,8 @@ public:
     bool isSelectable() const;
     bool isMultiSelectable() const;
     void setSelectedChild(AccessibilityUIElement*) const;
+    void setSelectedChildAtIndex(unsigned) const;
+    void removeSelectionAtIndex(unsigned) const;
     unsigned selectedChildrenCount() const;
     PassRefPtr<AccessibilityUIElement> selectedChildAtIndex(unsigned) const;
     

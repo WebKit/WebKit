@@ -873,3 +873,15 @@ JSStringRef AccessibilityUIElement::classList() const
     // FIXME: implement
     return 0;
 }
+
+unsigned AccessibilityUIElement::selectedChildrenCount() const
+{
+    // FIXME: implement
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::selectedChildAtIndex(unsigned) const
+{
+    // FIXME: implement
+    return 0;
+}

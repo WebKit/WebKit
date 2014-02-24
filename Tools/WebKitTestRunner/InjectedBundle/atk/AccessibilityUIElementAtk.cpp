@@ -701,14 +701,18 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned i
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned index) const
 {
-    // FIXME: implement
-    return nullptr;
+    if (!ATK_SELECTION(m_element.get()))
+        return nullptr;
+
+    GRefPtr<AtkObject> child = adoptGRef(atk_selection_ref_selection(ATK_SELECTION(m_element.get()), index));
+    return child ? AccessibilityUIElement::create(child.get()) : nullptr;
 }
 
 unsigned AccessibilityUIElement::selectedChildrenCount() const
 {
-    // FIXME: implement
-    return 0;
+    if (!ATK_IS_SELECTION(m_element.get()))
+        return 0;
+    return atk_selection_get_selection_count(ATK_SELECTION(m_element.get()));
 }
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(unsigned index)
@@ -1463,6 +1467,22 @@ void AccessibilityUIElement::press()
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) const
 {
     // FIXME: implement
+}
+
+void AccessibilityUIElement::setSelectedChildAtIndex(unsigned index) const
+{
+    if (!ATK_IS_SELECTION(m_element.get()))
+        return;
+
+    atk_selection_add_selection(ATK_SELECTION(m_element.get()), index);
+}
+
+void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
+{
+    if (!ATK_IS_SELECTION(m_element.get()))
+        return;
+
+    atk_selection_remove_selection(ATK_SELECTION(m_element.get()), index);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const

@@ -148,6 +148,8 @@ public:
     void setSelectedChild(AccessibilityUIElement*) const;
     unsigned selectedChildrenCount() const;
     AccessibilityUIElement selectedChildAtIndex(unsigned) const;
+    void setSelectedChildAtIndex(unsigned) const;
+    void removeSelectionAtIndex(unsigned) const;
     
     bool isExpanded() const;
     bool isChecked() const;

@@ -37,6 +37,8 @@ interface AccessibilityUIElement {
     AccessibilityUIElement linkedUIElementAtIndex(unsigned long index);
     AccessibilityUIElement selectedChildAtIndex(unsigned long index);
     void setSelectedChild(AccessibilityUIElement element);
+    void setSelectedChildAtIndex(unsigned long index);
+    void removeSelectionAtIndex(unsigned long index);
     AccessibilityUIElement titleUIElement();
     AccessibilityUIElement parentElement();
     

@@ -49,6 +49,8 @@ accessibility/multiselect-list-reports-active-option.html
 
 # isIndeterminate is not implemented in mac
 webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
+# Missing implementation of some functions in mac.
+webkit.org/b/129039 accessibility/select-element-at-index.html [ Skip ]
 
 # ariaControlsElementAtIndex is not implemented in mac
 webkit.org/b/127908 accessibility/aria-controls.html [ Skip ]

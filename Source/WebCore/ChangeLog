@@ -1,3 +1,22 @@
+2014-02-24  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Wrong selected element at a given index in a list box.
+        https://bugs.webkit.org/show_bug.cgi?id=129039
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/select-element-at-index.html
+
+        The selected element at a given index was wrong. One should be considered among the
+        all children of a list box, not only selected ones.
+
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (core):
+        (listObjectForSelection):
+        (optionFromList):
+        (optionFromSelection):
+        (webkitAccessibleSelectionRefSelection):
+
 2014-02-23  Dean Jackson  <dino@apple.com>
 
         [WebGL] Allow ANGLE to initialize unused varyings

@@ -1,0 +1,27 @@
+
+Tests that checks whether setting selection at the given index works correctly
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectElement.selectedChildrenCount is 0
+PASS selectElement.selectedChildrenCount is 1
+PASS option1.isSelected is true
+PASS selectElement.selectedChildAtIndex(0).isEqual(option1) is true
+PASS selectElement.selectedChildrenCount is 2
+PASS option2.isSelected is true
+PASS selectElement.selectedChildAtIndex(1).isEqual(option2) is true
+PASS option3.isSelected is false
+PASS selectElement.selectedChildrenCount is 3
+PASS option4.isSelected is true
+PASS selectElement.selectedChildAtIndex(3).isEqual(option4) is true
+PASS option4.isSelected is false
+PASS selectElement.selectedChildrenCount is 2
+PASS option2.isSelected is false
+PASS selectElement.selectedChildrenCount is 1
+PASS option1.isSelected is false
+PASS selectElement.selectedChildrenCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
