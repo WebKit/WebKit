@@ -1,3 +1,13 @@
+2014-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove PDFViewController.*, which is unused
+        https://bugs.webkit.org/show_bug.cgi?id=129270
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/PDFViewController.h: Removed.
+        * UIProcess/mac/PDFViewController.mm: Removed.
+
 2014-02-24  Anders Carlsson  <andersca@apple.com>
 
         Rename WKProcessClass to WKProcessPool
