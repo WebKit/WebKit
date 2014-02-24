@@ -1,3 +1,15 @@
+2014-02-23  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Allow ANGLE to initialize unused varyings
+        https://bugs.webkit.org/show_bug.cgi?id=129240
+        <rdar://problem/15203342>
+
+        Reviewed by Sam Weinig.
+
+        Unskip conformance/glsl/misc/shaders-with-varyings.html.
+
+        * platform/mac/TestExpectations:
+
 2014-02-22  Alexey Proskuryakov  <ap@apple.com>
 
         Rename JWK key_ops values from wrap/unwrap to wrapKey/unwrapKey

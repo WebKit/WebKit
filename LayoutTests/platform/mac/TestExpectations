@@ -657,9 +657,6 @@ webgl/1.0.1/conformance/limits/gl-max-texture-dimensions.html [ Pass Failure ]
 webgl/1.0.2/conformance/textures/texture-size.html [ Pass Failure ]
 webgl/1.0.2/conformance/limits/gl-max-texture-dimensions.html [ Pass Failure ]
 
-# Currently working on 1.0.2 conformance, skip currently known failing tests, <rdar://problem/12099869>
-webgl/1.0.2/conformance/glsl/misc/shaders-with-varyings.html [ Failure ]
-
 # Test is faulty, skipping for now
 webgl/1.0.2/conformance/ogles/GL/build/build_009_to_016.html [ Failure ]
 

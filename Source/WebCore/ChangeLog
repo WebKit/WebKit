@@ -1,3 +1,17 @@
+2014-02-23  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Allow ANGLE to initialize unused varyings
+        https://bugs.webkit.org/show_bug.cgi?id=129240
+        <rdar://problem/15203342>
+
+        Reviewed by Sam Weinig.
+
+        Covered by: conformance/glsl/misc/shaders-with-varyings.html
+
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE):
+        Add SH_INIT_VARYINGS_WITHOUT_STATIC_USE to compiler flags.
+
 2014-02-23  Sam Weinig  <sam@webkit.org>
 
         Update FeatureDefines.xcconfig
