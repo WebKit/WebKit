@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<!-- Test that an element having -webkit-mix-blend-mode applied blends only with the contents of the parent stacking context.-->
+<style>
+    body {
+        background: blue;
+    }
+
+    div {
+        margin: 20px;
+        width: 60px;
+        height: 60px;
+    }
+
+    .parent {
+        position: relative;
+        z-index: 0;
+        float: left;
+        background: violet;
+    }
+
+    .child {
+        background: url('resources/ducky.png') no-repeat 0 0 /100% 100%, green;
+        -webkit-mix-blend-mode: multiply;
+    }
+
+    .composited {
+        -webkit-transform: translateZ(0);
+    }
+</style>
+
+<div class="parent"><div class="child"></div></div>
+<div class="parent composited"><div class="child"></div></div>
+<div class="parent"><div class="child composited"></div></div>
+<div class="parent composited"><div class="child composited"></div></div>

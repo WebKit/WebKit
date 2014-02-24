@@ -1,3 +1,29 @@
+2014-02-24  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Blending] An element having -webkit-mix-blend-mode should only blend with the contents of the parent stacking context
+        https://bugs.webkit.org/show_bug.cgi?id=129154
+
+        Reviewed by Dean Jackson.
+
+        The blending operation of an element having -webkit-mix-blend-mode should be restricted to the parent stacking context.
+        This change isolates blending, preventing it from blending with other underlying elements besides the parent stacking context.
+
+        Tests: css3/compositing/blend-mode-isolated-group-1.html
+               css3/compositing/blend-mode-isolated-group-2.html
+               css3/compositing/blend-mode-isolated-group-3.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer): Initialize added members to false.
+        (WebCore::RenderLayer::updateBlendMode): Check if a blend mode was set or unset. If so, set the m_updateParentStackingContextShouldIsolateBlendingDirty to true.
+        (WebCore::RenderLayer::updateParentStackingContextShouldIsolateBlending): Traverse to the parent stacking context and update the
+        m_isolatesBlending member accordingly.
+        * rendering/RenderLayer.h:
+        - Add isolatesBlending() as a condition for creating a transparency layer in the paintsWithTransparency method.
+        - Add m_updateParentStackingContextShouldIsolateBlendingDirty member.
+        - Add m_isolatesBlending member and getter.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): Call updateParentStackingContextShouldIsolateBlending. 
+
 2014-02-24  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Wrong selected element at a given index in a list box.

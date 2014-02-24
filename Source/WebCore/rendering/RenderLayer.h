@@ -503,7 +503,8 @@ public:
     void updateTransform();
     
 #if ENABLE(CSS_COMPOSITING)
-    void updateBlendMode();
+    void updateBlendMode(const RenderStyle*);
+    void updateParentStackingContextShouldIsolateBlending();
 #endif
 
     const LayoutSize& offsetForInFlowPosition() const { return m_offsetForInFlowPosition; }
@@ -775,11 +776,23 @@ public:
     bool hasFilter() const { return false; }
 #endif
 
+    bool hasBlendMode() const
+    {
 #if ENABLE(CSS_COMPOSITING)
-    bool hasBlendMode() const { return renderer().hasBlendMode(); }
+        return renderer().hasBlendMode();
 #else
-    bool hasBlendMode() const { return false; }
+        return false;
 #endif
+    }
+
+    bool isolatesBlending() const
+    {
+#if ENABLE(CSS_COMPOSITING)
+        return m_isolatesBlending;
+#else
+        return false;
+#endif
+    }
 
     bool isComposited() const { return m_backing != 0; }
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
@@ -798,7 +811,7 @@ public:
 
     bool paintsWithTransparency(PaintBehavior paintBehavior) const
     {
-        return (isTransparent() || hasBlendMode()) && ((paintBehavior & PaintBehaviorFlattenCompositingLayers) || !isComposited());
+        return (isTransparent() || hasBlendMode() || isolatesBlending()) && ((paintBehavior & PaintBehaviorFlattenCompositingLayers) || !isComposited());
     }
 
     bool paintsWithTransform(PaintBehavior) const;
@@ -1231,6 +1244,8 @@ private:
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode m_blendMode : 5;
+    bool m_isolatesBlending : 1;
+    bool m_updateParentStackingContextShouldIsolateBlendingDirty : 1;
 #endif
 
     RenderLayerModelObject& m_renderer;

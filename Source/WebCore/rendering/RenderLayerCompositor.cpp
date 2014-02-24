@@ -1053,6 +1053,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     layer.updateDescendantDependentFlags();
     layer.updateLayerListsIfNeeded();
 
+#if ENABLE(CSS_COMPOSITING)
+    layer.updateParentStackingContextShouldIsolateBlending();
+#endif
+
     if (layer.isFlowThreadCollectingGraphicsLayersUnderRegions()) {
         RenderFlowThread& flowThread = toRenderFlowThread(layer.renderer());
         layer.setHasCompositingDescendant(flowThread.hasCompositingRegionDescendant());

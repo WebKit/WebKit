@@ -185,6 +185,8 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
 #endif
 #if ENABLE(CSS_COMPOSITING)
     , m_blendMode(BlendModeNormal)
+    , m_isolatesBlending(false)
+    , m_updateParentStackingContextShouldIsolateBlendingDirty(false)
 #endif
     , m_renderer(rendererLayerModelObject)
     , m_parent(0)
@@ -801,14 +803,39 @@ void RenderLayer::positionNewlyCreatedOverflowControls()
 
 #if ENABLE(CSS_COMPOSITING)
 
-void RenderLayer::updateBlendMode()
+void RenderLayer::updateBlendMode(const RenderStyle* oldStyle)
 {
+    m_updateParentStackingContextShouldIsolateBlendingDirty = false;
+
+    if ((!oldStyle && renderer().style().hasBlendMode()) || (oldStyle && oldStyle->hasBlendMode() != renderer().style().hasBlendMode()))
+        m_updateParentStackingContextShouldIsolateBlendingDirty = true;
+
     BlendMode newBlendMode = renderer().style().blendMode();
     if (newBlendMode != m_blendMode) {
         m_blendMode = newBlendMode;
         if (backing())
             backing()->setBlendMode(newBlendMode);
     }
+}
+
+void RenderLayer::updateParentStackingContextShouldIsolateBlending()
+{
+    if (!m_updateParentStackingContextShouldIsolateBlendingDirty)
+        return;
+
+    if (isComposited()) {
+        m_updateParentStackingContextShouldIsolateBlendingDirty = false;
+        return;
+    }
+
+    for (auto ancestor = parent(); ancestor && !ancestor->isComposited() && !ancestor->isRootLayer(); ancestor = ancestor->parent()) {
+        if (ancestor->isStackingContext()) {
+            ancestor->m_isolatesBlending = renderer().style().hasBlendMode();
+            break;
+        }
+    }
+
+    m_updateParentStackingContextShouldIsolateBlendingDirty = false;
 }
 
 #endif
@@ -6515,7 +6542,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     updateDescendantDependentFlags();
     updateTransform();
 #if ENABLE(CSS_COMPOSITING)
-    updateBlendMode();
+    updateBlendMode(oldStyle);
 #endif
 #if ENABLE(CSS_FILTERS)
     updateOrRemoveFilterClients();
