@@ -1245,3 +1245,13 @@ bool WKPreferencesGetShouldConvertPositionStyleOnCopy(WKPreferencesRef preferenc
 {
     return toImpl(preferencesRef)->shouldConvertPositionStyleOnCopy();
 }
+
+void WKPreferencesSetTelephoneNumberParsingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setTelephoneNumberParsingEnabled(enabled);
+}
+
+bool WKPreferencesGetTelephoneNumberParsingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->telephoneNumberParsingEnabled();
+}
