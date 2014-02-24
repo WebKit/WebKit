@@ -1,3 +1,17 @@
+2014-02-24  Koop Mast <kwm@FreeBSD.org>
+
+        Remove unused error.h header.
+        https://bugs.webkit.org/show_bug.cgi?id=126774
+
+        Reviewed by Anders Carlsson.
+
+        This header doesn't exists on FreeBSD. According to
+        https://www.gnu.org/software/gnulib/manual/html_node/error_002eh.html
+        the function that this header implements are not present in the file.
+        So there isn't any need for this header.
+
+        * NetworkProcess/unix/NetworkProcessMainUnix.cpp:
+
 2014-02-24  David Kilzer  <ddkilzer@apple.com>
 
         Remove redundant setting in FeatureDefines.xcconfig
