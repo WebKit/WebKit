@@ -28,6 +28,7 @@
 
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
 
+#include "URL.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class Page;
 class NavigatorContentUtilsClient {
 public:
     virtual ~NavigatorContentUtilsClient() { }
-    virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) = 0;
+    virtual void registerProtocolHandler(const String& scheme, const URL& baseURL, const URL&, const String& title) = 0;
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
     enum CustomHandlersState {
@@ -46,8 +47,8 @@ public:
         CustomHandlersDeclined
     };
 
-    virtual CustomHandlersState isProtocolHandlerRegistered(const String& scheme, const String& baseURL, const String& url) = 0;
-    virtual void unregisterProtocolHandler(const String& scheme, const String& baseURL, const String& url) = 0;
+    virtual CustomHandlersState isProtocolHandlerRegistered(const String& scheme, const URL& baseURL, const URL&) = 0;
+    virtual void unregisterProtocolHandler(const String& scheme, const URL& baseURL, const URL&) = 0;
 #endif
 };
 

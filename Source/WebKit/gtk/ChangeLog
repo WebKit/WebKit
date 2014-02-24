@@ -1,3 +1,18 @@
+2014-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change a url parameter type with URL in NavigatorContentUtils
+        https://bugs.webkit.org/show_bug.cgi?id=129202
+
+        Reviewed by Sam Weinig.
+
+        It would be good if we use *URL* for url parameters instead of using String.
+
+        Merge from blink. https://src.chromium.org/viewvc/blink?view=rev&revision=165458.
+
+        * WebCoreSupport/NavigatorContentUtilsClientGtk.cpp:
+        (WebKit::NavigatorContentUtilsClient::registerProtocolHandler):
+        * WebCoreSupport/NavigatorContentUtilsClientGtk.h:
+
 2014-02-20  Enrique Ocaña González  <eocanha@igalia.com>
 
         WebKitGTK+ should stop using COMPILE_ASSERT_MATCHING_ENUM macros

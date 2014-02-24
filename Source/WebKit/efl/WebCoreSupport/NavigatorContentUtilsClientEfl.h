@@ -39,11 +39,11 @@ public:
     static PassOwnPtr<NavigatorContentUtilsClientEfl> create(Evas_Object* view);
 
     ~NavigatorContentUtilsClientEfl() { }
-    virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title);
+    virtual void registerProtocolHandler(const String& scheme, const URL& baseURL, const URL&, const String& title);
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
-    virtual CustomHandlersState isProtocolHandlerRegistered(const String& scheme, const String& baseURL, const String& url);
-    virtual void unregisterProtocolHandler(const String& scheme, const String& baseURL, const String& url);
+    virtual CustomHandlersState isProtocolHandlerRegistered(const String& scheme, const URL& baseURL, const URL&);
+    virtual void unregisterProtocolHandler(const String& scheme, const URL& baseURL, const URL&);
 #endif
 
 private:

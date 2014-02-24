@@ -1,3 +1,20 @@
+2014-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change a url parameter type with URL in NavigatorContentUtils
+        https://bugs.webkit.org/show_bug.cgi?id=129202
+
+        Reviewed by Sam Weinig.
+
+        It would be good if we use *URL* for url parameters instead of using String.
+
+        Merge from blink. https://src.chromium.org/viewvc/blink?view=rev&revision=165458.
+
+        * WebCoreSupport/NavigatorContentUtilsClientEfl.cpp:
+        (WebCore::NavigatorContentUtilsClientEfl::registerProtocolHandler):
+        (WebCore::NavigatorContentUtilsClientEfl::isProtocolHandlerRegistered):
+        (WebCore::NavigatorContentUtilsClientEfl::unregisterProtocolHandler):
+        * WebCoreSupport/NavigatorContentUtilsClientEfl.h:
+
 2014-02-17  Sergio Correia  <sergio.correia@openbossa.org>
 
         Replace uses of PassOwnPtr/OwnPtr with std::unique_ptr in WebCore/inspector

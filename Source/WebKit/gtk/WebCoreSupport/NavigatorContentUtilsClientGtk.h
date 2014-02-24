@@ -32,7 +32,7 @@ public:
 
     ~NavigatorContentUtilsClient() { }
 
-    virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title);
+    virtual void registerProtocolHandler(const String& scheme, const URL& baseURL, const URL&, const String& title);
 
 private:
     NavigatorContentUtilsClient();

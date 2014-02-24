@@ -38,11 +38,11 @@ public:
     virtual ~WebNavigatorContentUtilsClient() { }
 
 private:
-    virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) override { }
+    virtual void registerProtocolHandler(const String& scheme, const URL& baseURL, const URL& url, const String& title) override { }
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
-    virtual CustomHandlersState isProtocolHandlerRegistered(const String&, const String&, const String&) { return CustomHandlersDeclined; }
-    virtual void unregisterProtocolHandler(const String&, const String&, const String&) { }
+    virtual CustomHandlersState isProtocolHandlerRegistered(const String&, const URL&, const URL&) { return CustomHandlersDeclined; }
+    virtual void unregisterProtocolHandler(const String&, const URL&, const URL&) { }
 #endif
 };
 

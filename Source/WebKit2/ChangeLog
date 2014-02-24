@@ -1,3 +1,18 @@
+2014-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change a url parameter type with URL in NavigatorContentUtils
+        https://bugs.webkit.org/show_bug.cgi?id=129202
+
+        Reviewed by Sam Weinig.
+
+        It would be good if we use *URL* for url parameters instead of using String.
+
+        Merge from blink. https://src.chromium.org/viewvc/blink?view=rev&revision=165458.
+
+        * WebProcess/WebCoreSupport/WebNavigatorContentUtilsClient.h:
+        (WebKit::WebNavigatorContentUtilsClient::isProtocolHandlerRegistered):
+        (WebKit::WebNavigatorContentUtilsClient::unregisterProtocolHandler):
+
 2014-02-23  Sam Weinig  <sam@webkit.org>
 
         Move telephone number detection behind its own ENABLE macro

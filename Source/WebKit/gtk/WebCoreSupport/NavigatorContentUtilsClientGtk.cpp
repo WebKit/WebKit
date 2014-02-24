@@ -35,9 +35,9 @@ NavigatorContentUtilsClient::NavigatorContentUtilsClient()
 {
 }
 
-void NavigatorContentUtilsClient::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
-{ 
-    notImplemented(); 
+void NavigatorContentUtilsClient::registerProtocolHandler(const String& scheme, const URL& baseURL, const URL& url, const String& title)
+{
+    notImplemented();
 } 
 
 }
