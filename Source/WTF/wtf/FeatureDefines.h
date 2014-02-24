@@ -283,10 +283,6 @@
 #define ENABLE_VIEW_MODE_CSS_MEDIA 0
 #endif
 
-#if !defined(ENABLE_WEBGL)
-#define ENABLE_WEBGL 1
-#endif
-
 #endif /* PLATFORM(WIN_CAIRO) */
 
 /* --------- EFL port (Unix) --------- */

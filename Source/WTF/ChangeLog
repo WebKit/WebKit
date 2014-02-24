@@ -1,3 +1,14 @@
+2014-02-24  Alex Christensen  <achristensen@webkit.org>
+
+        Disabled WebGL on WinCairo.
+
+        Unreviewed.
+
+        * wtf/FeatureDefines.h:
+        Removed ENABLE_WEBGL definition for WinCairo port.
+        WebGL has not worked on WinCairo since r163079
+        and it was not compiling with a recent ANGLE update.
+
 2014-02-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Turn GenGC on for 32-bit systems
