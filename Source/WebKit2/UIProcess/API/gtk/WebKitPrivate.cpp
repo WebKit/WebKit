@@ -102,8 +102,8 @@ unsigned toWebKitError(unsigned webCoreError)
     case WebCore::PrintErrorInvalidPageRange:
         return WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE;
     default:
-        ASSERT_NOT_REACHED();
-        return WEBKIT_NETWORK_ERROR_FAILED;
+        // This may be a user app defined error, which needs to be passed as-is.
+        return webCoreError;
     }
 }
 
@@ -155,7 +155,7 @@ unsigned toWebCoreError(unsigned webKitError)
     case WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE:
         return WebCore::PrintErrorInvalidPageRange;
     default:
-        ASSERT_NOT_REACHED();
-        return WebCore::NetworkErrorFailed;
+        // This may be a user app defined error, which needs to be passed as-is.
+        return webKitError;
     }
 }
