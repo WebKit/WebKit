@@ -20,7 +20,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/HTMLEntityTable.cpp \
 	DerivedSources/WebCore/HTMLNames.cpp \
 	DerivedSources/WebCore/HTMLNames.h \
-	DerivedSources/WebCore/InjectedScriptCanvasModuleSource.h \
 	DerivedSources/WebCore/InspectorOverlayPage.h \
 	DerivedSources/WebCore/InspectorWebBackendDispatchers.cpp \
 	DerivedSources/WebCore/InspectorWebBackendDispatchers.h \
@@ -3756,15 +3755,10 @@ webcore_sources += \
 	Source/WebCore/inspector/DOMEditor.h \
 	Source/WebCore/inspector/DOMPatchSupport.cpp \
 	Source/WebCore/inspector/DOMPatchSupport.h \
-	Source/WebCore/inspector/InjectedScriptCanvasModule.cpp \
-	Source/WebCore/inspector/InjectedScriptCanvasModule.h \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.cpp \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.h \
 	Source/WebCore/inspector/InspectorCSSAgent.cpp \
 	Source/WebCore/inspector/InspectorCSSAgent.h \
-	Source/WebCore/inspector/InspectorCanvasAgent.cpp \
-	Source/WebCore/inspector/InspectorCanvasAgent.h \
-	Source/WebCore/inspector/InspectorCanvasInstrumentation.h \
 	Source/WebCore/inspector/InspectorClient.cpp \
 	Source/WebCore/inspector/InspectorClient.h \
 	Source/WebCore/inspector/InspectorConsoleInstrumentation.h \

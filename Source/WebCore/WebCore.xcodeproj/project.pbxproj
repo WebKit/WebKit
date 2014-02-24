@@ -4131,8 +4131,6 @@
 		AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE27B7516CBFC0D00623043 /* PlatformSpeechSynthesizerMock.h */; };
 		AA5F3B8F16CC4B3900455EB0 /* PlatformSpeechSynthesizerMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE27B7416CBFC0D00623043 /* PlatformSpeechSynthesizerMock.cpp */; };
 		AA5F3B9116CC5BEB00455EB0 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */; };
-		AA73183E159255B900A93E6E /* InjectedScriptCanvasModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA73183C159255B900A93E6E /* InjectedScriptCanvasModule.cpp */; };
-		AA73183F159255B900A93E6E /* InjectedScriptCanvasModule.h in Headers */ = {isa = PBXBuildFile; fileRef = AA73183D159255B900A93E6E /* InjectedScriptCanvasModule.h */; };
 		AA7FEEA416A4E6F3004C0C33 /* JSSpeechSynthesis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7FEE9C16A4E6F3004C0C33 /* JSSpeechSynthesis.cpp */; };
 		AA7FEEA616A4E6F3004C0C33 /* JSSpeechSynthesisUtterance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7FEE9E16A4E6F3004C0C33 /* JSSpeechSynthesisUtterance.cpp */; };
 		AA7FEEA716A4E6F3004C0C33 /* JSSpeechSynthesisUtterance.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7FEE9F16A4E6F3004C0C33 /* JSSpeechSynthesisUtterance.h */; };
@@ -4147,9 +4145,6 @@
 		AAA728F916D1D8BC00D3BBC6 /* AXObjectCacheIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAA728F316D1D8BC00D3BBC6 /* AXObjectCacheIOS.mm */; };
 		AAC08CEF15F933D600F1E188 /* SVGImageChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC08CED15F933D600F1E188 /* SVGImageChromeClient.h */; };
 		AAC08CF315F941FD00F1E188 /* AccessibilitySVGRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC08CF115F941FC00F1E188 /* AccessibilitySVGRoot.h */; };
-		AAD766EB157E502F00E85423 /* InspectorCanvasAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD766E8157E502F00E85423 /* InspectorCanvasAgent.cpp */; };
-		AAD766EC157E502F00E85423 /* InspectorCanvasAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD766E9157E502F00E85423 /* InspectorCanvasAgent.h */; };
-		AAD766ED157E502F00E85423 /* InspectorCanvasInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD766EA157E502F00E85423 /* InspectorCanvasInstrumentation.h */; };
 		AAF5B7B71524B6C50004CB49 /* WebSocketFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF5B7B11524B4BD0004CB49 /* WebSocketFrame.cpp */; };
 		AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */; };
 		AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */; };
@@ -11152,8 +11147,6 @@
 		AA4C3A740B2B1679002334A2 /* InlineStyleSheetOwner.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InlineStyleSheetOwner.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* InlineStyleSheetOwner.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InlineStyleSheetOwner.h; sourceTree = "<group>"; };
 		AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
-		AA73183C159255B900A93E6E /* InjectedScriptCanvasModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptCanvasModule.cpp; sourceTree = "<group>"; };
-		AA73183D159255B900A93E6E /* InjectedScriptCanvasModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptCanvasModule.h; sourceTree = "<group>"; };
 		AA7EA0AA17557B9000DF4643 /* UIRequestEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIRequestEvent.idl; sourceTree = "<group>"; };
 		AA7FEE9C16A4E6F3004C0C33 /* JSSpeechSynthesis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechSynthesis.cpp; sourceTree = "<group>"; };
 		AA7FEE9E16A4E6F3004C0C33 /* JSSpeechSynthesisUtterance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechSynthesisUtterance.cpp; sourceTree = "<group>"; };
@@ -11161,8 +11154,6 @@
 		AA7FEEA016A4E6F3004C0C33 /* JSSpeechSynthesisVoice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechSynthesisVoice.cpp; sourceTree = "<group>"; };
 		AA7FEEA116A4E6F3004C0C33 /* JSSpeechSynthesisVoice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechSynthesisVoice.h; sourceTree = "<group>"; };
 		AA7FEEAC16A4E74B004C0C33 /* JSSpeechSynthesis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechSynthesis.h; sourceTree = "<group>"; };
-		AA9030FE157E16A000276247 /* InjectedScriptCanvasModuleSource.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InjectedScriptCanvasModuleSource.js; sourceTree = "<group>"; };
-		AA912750157E35A500454E54 /* InjectedScriptCanvasModuleSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptCanvasModuleSource.h; sourceTree = "<group>"; };
 		AAA4FACE175D5CB300743873 /* JSUIRequestEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSUIRequestEvent.h; sourceTree = "<group>"; };
 		AAA4FACF175D5CB300743873 /* JSUIRequestEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUIRequestEvent.cpp; sourceTree = "<group>"; };
 		AAA728F016D1D8BC00D3BBC6 /* AccessibilityObjectIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectIOS.mm; sourceTree = "<group>"; };
@@ -11172,9 +11163,6 @@
 		AAC08CED15F933D600F1E188 /* SVGImageChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageChromeClient.h; sourceTree = "<group>"; };
 		AAC08CF015F941FC00F1E188 /* AccessibilitySVGRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilitySVGRoot.cpp; sourceTree = "<group>"; };
 		AAC08CF115F941FC00F1E188 /* AccessibilitySVGRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySVGRoot.h; sourceTree = "<group>"; };
-		AAD766E8157E502F00E85423 /* InspectorCanvasAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCanvasAgent.cpp; sourceTree = "<group>"; };
-		AAD766E9157E502F00E85423 /* InspectorCanvasAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCanvasAgent.h; sourceTree = "<group>"; };
-		AAD766EA157E502F00E85423 /* InspectorCanvasInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCanvasInstrumentation.h; sourceTree = "<group>"; };
 		AAE27B7416CBFC0D00623043 /* PlatformSpeechSynthesizerMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformSpeechSynthesizerMock.cpp; sourceTree = "<group>"; };
 		AAE27B7516CBFC0D00623043 /* PlatformSpeechSynthesizerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformSpeechSynthesizerMock.h; sourceTree = "<group>"; };
 		AAE3755D17429BCC006200C2 /* PlatformSpeechSynthesizerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformSpeechSynthesizerIOS.mm; path = ios/PlatformSpeechSynthesizerIOS.mm; sourceTree = "<group>"; };
@@ -14771,7 +14759,6 @@
 			isa = PBXGroup;
 			children = (
 				A584FE2518637DAB00843B10 /* CommandLineAPIModuleSource.h */,
-				AA912750157E35A500454E54 /* InjectedScriptCanvasModuleSource.h */,
 				4F707A9711EF679400ACDA69 /* InspectorWebBackendDispatchers.cpp */,
 				4F707A9811EF679400ACDA69 /* InspectorWebBackendDispatchers.h */,
 				4F4F5FFA11CBD2D200A186BF /* InspectorWebFrontendDispatchers.cpp */,
@@ -14805,14 +14792,8 @@
 				7AABA25814BC613300AA9A11 /* DOMEditor.h */,
 				7A54881614E432A1006AE05A /* DOMPatchSupport.cpp */,
 				7A54881514E432A1006AE05A /* DOMPatchSupport.h */,
-				AA73183C159255B900A93E6E /* InjectedScriptCanvasModule.cpp */,
-				AA73183D159255B900A93E6E /* InjectedScriptCanvasModule.h */,
-				AA9030FE157E16A000276247 /* InjectedScriptCanvasModuleSource.js */,
 				B885E8D211E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp */,
 				B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */,
-				AAD766E8157E502F00E85423 /* InspectorCanvasAgent.cpp */,
-				AAD766E9157E502F00E85423 /* InspectorCanvasAgent.h */,
-				AAD766EA157E502F00E85423 /* InspectorCanvasInstrumentation.h */,
 				7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */,
 				1C81B9580E97330800266E07 /* InspectorClient.h */,
 				F3F5CF1012ED81A80084C569 /* InspectorConsoleInstrumentation.h */,
@@ -23911,7 +23892,6 @@
 				BE16C59517CFE17200852C04 /* InbandWebVTTTextTrack.h in Headers */,
 				DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */,
 				51D719F8181106E00016DC51 /* IndexedDB.h in Headers */,
-				AA73183F159255B900A93E6E /* InjectedScriptCanvasModule.h in Headers */,
 				A8CFF5E50A155A05000A4234 /* InlineBox.h in Headers */,
 				B57CB52E182A3EFC0079A647 /* InlineElementBox.h in Headers */,
 				A8CFF5E30A155A05000A4234 /* InlineFlowBox.h in Headers */,
@@ -23928,8 +23908,6 @@
 				93309DF0099E64920056E581 /* InsertParagraphSeparatorCommand.h in Headers */,
 				93309DF2099E64920056E581 /* InsertTextCommand.h in Headers */,
 				B885E8D511E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h in Headers */,
-				AAD766EC157E502F00E85423 /* InspectorCanvasAgent.h in Headers */,
-				AAD766ED157E502F00E85423 /* InspectorCanvasInstrumentation.h in Headers */,
 				1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */,
 				F3F5CF1112ED81A80084C569 /* InspectorConsoleInstrumentation.h in Headers */,
 				1C81B95A0E97330800266E07 /* InspectorController.h in Headers */,
@@ -27276,7 +27254,6 @@
 				07367DE0172CA68200D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm in Sources */,
 				BE16C59417CFE17200852C04 /* InbandWebVTTTextTrack.cpp in Sources */,
 				DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */,
-				AA73183E159255B900A93E6E /* InjectedScriptCanvasModule.cpp in Sources */,
 				A8CFF5E60A155A05000A4234 /* InlineBox.cpp in Sources */,
 				B57CB52D182A3EED0079A647 /* InlineElementBox.cpp in Sources */,
 				A8CFF5E40A155A05000A4234 /* InlineFlowBox.cpp in Sources */,
@@ -27292,7 +27269,6 @@
 				93309DEF099E64920056E581 /* InsertParagraphSeparatorCommand.cpp in Sources */,
 				93309DF1099E64920056E581 /* InsertTextCommand.cpp in Sources */,
 				B885E8D411E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp in Sources */,
-				AAD766EB157E502F00E85423 /* InspectorCanvasAgent.cpp in Sources */,
 				7A1F2B52126C61B20006A7E6 /* InspectorClient.cpp in Sources */,
 				1C81B95B0E97330800266E07 /* InspectorController.cpp in Sources */,
 				F325A40A14EE36FA007324E2 /* InspectorCounters.cpp in Sources */,

@@ -1143,13 +1143,6 @@ CommandLineAPIModuleSource.h : CommandLineAPIModuleSource.js
 	perl $(InspectorScripts)/xxd.pl CommandLineAPIModuleSource_js ./CommandLineAPIModuleSource.min.js CommandLineAPIModuleSource.h
 	rm -f ./CommandLineAPIModuleSource.min.js
 
-all : InjectedScriptCanvasModuleSource.h
-
-InjectedScriptCanvasModuleSource.h : InjectedScriptCanvasModuleSource.js
-	python $(InspectorScripts)/jsmin.py <$(WebCore)/inspector/InjectedScriptCanvasModuleSource.js > ./InjectedScriptCanvasModuleSource.min.js
-	perl $(InspectorScripts)/xxd.pl InjectedScriptCanvasModuleSource_js ./InjectedScriptCanvasModuleSource.min.js InjectedScriptCanvasModuleSource.h
-	rm -f ./InjectedScriptCanvasModuleSource.min.js
-
 -include $(JS_DOM_HEADERS:.h=.dep)
 
 # ------------------------

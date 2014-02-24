@@ -38,7 +38,6 @@
 #include "GraphicsContext.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorCanvasAgent.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
@@ -161,8 +160,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_agents.append(std::make_unique<InspectorHeapProfilerAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get()));
 
     m_agents.append(std::make_unique<InspectorWorkerAgent>(m_instrumentingAgents.get()));
-
-    m_agents.append(std::make_unique<InspectorCanvasAgent>(m_instrumentingAgents.get(), pageAgent, m_injectedScriptManager.get()));
 
     m_agents.append(std::make_unique<InspectorInputAgent>(m_instrumentingAgents.get(), &page));
 
@@ -416,8 +413,6 @@ void InspectorController::didBeginFrame()
 {
     if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didBeginFrame();
-    if (InspectorCanvasAgent* canvasAgent = m_instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->didBeginFrame();
 }
 
 void InspectorController::didCancelFrame()

@@ -65,7 +65,6 @@ InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)
     , m_inspectorDOMDebuggerAgent(nullptr)
     , m_inspectorProfilerAgent(nullptr)
     , m_inspectorWorkerAgent(nullptr)
-    , m_inspectorCanvasAgent(nullptr)
 {
 }
 
@@ -91,7 +90,6 @@ void InstrumentingAgents::reset()
     m_inspectorDOMDebuggerAgent = nullptr;
     m_inspectorProfilerAgent = nullptr;
     m_inspectorWorkerAgent = nullptr;
-    m_inspectorCanvasAgent = nullptr;
 }
 
 InstrumentingAgents* instrumentationForPage(Page* page)

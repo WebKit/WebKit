@@ -46,7 +46,6 @@ namespace WebCore {
 
 class InspectorApplicationCacheAgent;
 class InspectorCSSAgent;
-class InspectorCanvasAgent;
 class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;
 class InspectorDOMStorageAgent;
@@ -134,9 +133,6 @@ public:
     InspectorWorkerAgent* inspectorWorkerAgent() const { return m_inspectorWorkerAgent; }
     void setInspectorWorkerAgent(InspectorWorkerAgent* agent) { m_inspectorWorkerAgent = agent; }
 
-    InspectorCanvasAgent* inspectorCanvasAgent() const { return m_inspectorCanvasAgent; }
-    void setInspectorCanvasAgent(InspectorCanvasAgent* agent) { m_inspectorCanvasAgent = agent; }
-
     InspectorLayerTreeAgent* inspectorLayerTreeAgent() const { return m_inspectorLayerTreeAgent; }
     void setInspectorLayerTreeAgent(InspectorLayerTreeAgent* agent) { m_inspectorLayerTreeAgent = agent; }
 
@@ -166,7 +162,6 @@ private:
     InspectorProfilerAgent* m_inspectorProfilerAgent;
     InspectorHeapProfilerAgent* m_inspectorHeapProfilerAgent;
     InspectorWorkerAgent* m_inspectorWorkerAgent;
-    InspectorCanvasAgent* m_inspectorCanvasAgent;
 };
 
 InstrumentingAgents* instrumentationForPage(Page*);

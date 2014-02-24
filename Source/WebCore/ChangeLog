@@ -1,3 +1,40 @@
+2014-02-24  Andreas Kling  <akling@apple.com>
+
+        Prune dead code for Web Inspector canvas instrumentation.
+        <https://webkit.org/b/129269>
+
+        This was leftover code from Chromium's inspector. It's not used by
+        today's WebKit inspector.
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        * inspector/InjectedScriptCanvasModule.cpp: Removed.
+        * inspector/InjectedScriptCanvasModule.h: Removed.
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorCanvasAgent.cpp: Removed.
+        * inspector/InspectorCanvasAgent.h: Removed.
+        * inspector/InspectorCanvasInstrumentation.h: Removed.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::didBeginFrame):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::frameDetachedFromParentImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+
 2014-02-24  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Adjust lineTop position to the next available wrapping location at shape-outsides

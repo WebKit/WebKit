@@ -29,7 +29,6 @@
 
 #include "CanvasContextAttributes.h"
 #include "HTMLCanvasElement.h"
-#include "InspectorCanvasInstrumentation.h"
 #include "JSCanvasRenderingContext2D.h"
 #include <bindings/ScriptObject.h>
 #include <wtf/GetPtr.h>
@@ -84,20 +83,7 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
     CanvasRenderingContext* context = canvas.getContext(contextId, attrs.get());
     if (!context)
         return jsNull();
-    JSValue jsValue = toJS(exec, globalObject(), WTF::getPtr(context));
-    if (InspectorInstrumentation::canvasAgentEnabled(&canvas.document())) {
-        Deprecated::ScriptObject contextObject(exec, jsValue.getObject());
-        Deprecated::ScriptObject wrapped;
-        if (context->is2d())
-            wrapped = InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrumentation(&canvas.document(), contextObject);
-#if ENABLE(WEBGL)
-        else if (context->is3d())
-            wrapped = InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(&canvas.document(), contextObject);
-#endif
-        if (!wrapped.hasNoValue())
-            return wrapped.jsValue();
-    }
-    return jsValue;
+    return toJS(exec, globalObject(), WTF::getPtr(context));
 }
 
 JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState* exec)

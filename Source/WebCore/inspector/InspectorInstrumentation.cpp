@@ -43,7 +43,6 @@
 #include "EventDispatcher.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorCanvasAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
@@ -739,8 +738,6 @@ void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents* instrumen
 
 void InspectorInstrumentation::frameDetachedFromParentImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
 {
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->frameDetached(frame);
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
         pageAgent->frameDetached(frame);
 }
@@ -773,8 +770,6 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
     }
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
         domAgent->didCommitLoad(loader->frame()->document());
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->frameNavigated(loader->frame());
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
         pageAgent->frameNavigated(loader);
 }
@@ -1060,12 +1055,6 @@ void InspectorInstrumentation::updateApplicationCacheStatusImpl(InstrumentingAge
 {
     if (InspectorApplicationCacheAgent* applicationCacheAgent = instrumentingAgents->inspectorApplicationCacheAgent())
         applicationCacheAgent->updateApplicationCacheStatus(frame);
-}
-
-bool InspectorInstrumentation::canvasAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
-{
-    InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext);
-    return instrumentingAgents && instrumentingAgents->inspectorCanvasAgent();
 }
 
 bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scriptExecutionContext)

@@ -379,10 +379,6 @@ DerivedSources/WebCore/CommandLineAPIModuleSource.h: $(WebCore)/inspector/Comman
 	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/jsmin.py <$(WebCore)/inspector/CommandLineAPIModuleSource.js > $(GENSOURCES_WEBCORE)/CommandLineAPIModuleSource.min.js
 	$(AM_V_GEN)$(PERL) $(INSPECTOR_SCRIPTS_DIR)/xxd.pl CommandLineAPIModuleSource_js $(GENSOURCES_WEBCORE)/CommandLineAPIModuleSource.min.js $(GENSOURCES_WEBCORE)/CommandLineAPIModuleSource.h
 
-DerivedSources/WebCore/InjectedScriptCanvasModuleSource.h: $(WebCore)/inspector/InjectedScriptCanvasModuleSource.js
-	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/jsmin.py <$(WebCore)/inspector/InjectedScriptCanvasModuleSource.js > $(GENSOURCES_WEBCORE)/InjectedScriptCanvasModuleSource.min.js
-	$(AM_V_GEN)$(PERL) $(INSPECTOR_SCRIPTS_DIR)/xxd.pl InjectedScriptCanvasModuleSource_js $(GENSOURCES_WEBCORE)/InjectedScriptCanvasModuleSource.min.js $(GENSOURCES_WEBCORE)/InjectedScriptCanvasModuleSource.h
-
 if ENABLE_WEB_AUDIO
 # Installing HRTF database wav files
 audiodir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/resources/audio/
@@ -701,7 +697,6 @@ EXTRA_DIST += \
 	Source/WebCore/html/parser/create-html-entity-table \
 	Source/WebCore/html/parser/HTMLEntityNames.in \
 	Source/WebCore/icu/LICENSE \
-	Source/WebCore/inspector/InjectedScriptCanvasModuleSource.js \
 	Source/WebCore/inspector/InspectorOverlayPage.html \
 	Source/WebCore/LICENSE-APPLE \
 	Source/WebCore/LICENSE-LGPL-2 \
