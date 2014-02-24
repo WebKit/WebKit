@@ -1,3 +1,20 @@
+2014-02-24  Timothy Hatcher  <timothy@apple.com>
+
+        Give non-Mac platforms a default toolbar background so it isn't just white.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129260
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded): Style the boby with platform classes.
+        * UserInterface/Base/Utilities.js:
+        (String.prototype.contains): Added.
+        * UserInterface/Views/Toolbar.css:
+        (body.docked .toolbar, body:not(.mac-platform) .toolbar): Added. Default toolbar background.
+        (body.docked.mac-platform.mavericks .toolbar, body.docked.mac-platform.mountain-lion): Added.
+        (body.mac-platform:not(.docked) .toolbar .item.button > .label): Only apply to Mac.
+
 2014-02-24  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: Remove single quote characters from Web Inspector JavaScript files

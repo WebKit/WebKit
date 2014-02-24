@@ -186,6 +186,17 @@ WebInspector.contentLoaded = function()
     if (versionMatch && versionMatch[1].indexOf("+") !== -1 && document.styleSheets.length < 10)
         document.body.classList.add("nightly-build");
 
+    // Add platform style classes so the UI can be tweaked per-platform.
+    document.body.classList.add(InspectorFrontendHost.platform() + "-platform");
+
+    if (InspectorFrontendHost.platform() === "mac") {
+        var versionMatch = / Mac OS X (\d+)_(\d+)/.exec(navigator.appVersion);
+        if (versionMatch && versionMatch[1] == 10 && versionMatch[2] == 8)
+            document.body.classList.add("mountain-lion");
+        else if (versionMatch && versionMatch[1] == 10 && versionMatch[2] == 9)
+            document.body.classList.add("mavericks");
+    }
+
     this.debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WebInspector.DebuggableType.Web : WebInspector.DebuggableType.JavaScript;
     document.body.classList.add(this.debuggableType);
 

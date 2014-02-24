@@ -383,6 +383,14 @@ Object.defineProperty(DocumentFragment.prototype, "createChild",
     value: Element.prototype.createChild
 });
 
+Object.defineProperty(String.prototype, "contains",
+{
+    value: function(value)
+    {
+        return this.indexOf(value) !== -1;
+    }
+});
+
 Object.defineProperty(Array.prototype, "contains",
 {
     value: function(value)

@@ -53,12 +53,19 @@
     height: 32px;
 }
 
-body.docked .toolbar {
+body.docked .toolbar,
+body:not(.mac-platform) .toolbar {
+    background-image: -webkit-linear-gradient(top, rgb(233, 233, 233), rgb(229, 229, 229));
+    box-shadow: inset rgb(252, 252, 252) 0 1px 0;
+}
+
+body.docked.mac-platform.mountain-lion .toolbar,
+body.docked.mac-platform.mavericks .toolbar {
     background-image: -webkit-linear-gradient(top, rgb(216, 216, 216), rgb(190, 190, 190));
     box-shadow: inset rgba(255, 255, 255, 0.1) 0 1px 0, inset rgba(0, 0, 0, 0.02) 0 -1px 0;
 }
 
-body:not(.docked) .toolbar .item.button > .label {
+body.mac-platform:not(.docked) .toolbar .item.button > .label {
  /* We need to disable sub-pixel antialiasing in the toolbar when not docked because the
     toolbar is transparent and so is the WebView. */
     -webkit-font-smoothing: antialiased;
