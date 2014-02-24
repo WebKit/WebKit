@@ -1,3 +1,17 @@
+2014-02-23  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/16144508> [iOS] Some definitions of INSTALL_PATH don’t account for INSTALL_PATH_PREFIX
+        https://bugs.webkit.org/show_bug.cgi?id=129241
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Define INSTALL_PATH here in terms of INSTALL_PATH_ACTUAL.
+        * Configurations/BaseLegacyProcess.xcconfig: Define only INSTALL_PATH_ACTUAL.
+        * Configurations/BaseTarget.xcconfig: Simplify the definition of
+        NORMAL_WEBKIT2_FRAMEWORKS_DIR, now that it shouldn’t include SDKROOT for the Simulator.
+        * Configurations/BaseXPCService.xcconfig: Define only INSTALL_PATH_ACTUAL.
+        * Configurations/WebKit2.xcconfig: Ditto.
+
 2014-02-23  Sam Weinig  <sam@webkit.org>
 
         Update FeatureDefines.xcconfig
