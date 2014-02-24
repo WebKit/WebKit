@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<!--It tests that an empty clip path clips the referencing graphic. Bug 15289.-->
+<clipPath id="nothing">
+</clipPath>
+<clipPath id="emptyrect">
+  <rect width="0" height="0"/>
+</clipPath>
+
+<rect width="200" height="200" fill="green"/>
+<rect width="200" height="200" fill="red" clip-path="url(#nothing)"/>
+<rect width="200" height="200" fill="red" clip-path="url(#emptyrect)"/>
+</svg>
+

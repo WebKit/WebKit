@@ -5,6 +5,71 @@
 
         Reviewed by Andreas Kling.
 
+        * svg/clip-path/clip-path-content-use-007-expected.svg: Added.
+        * svg/clip-path/clip-path-content-use-007.svg: Added.
+        * svg/clip-path/clip-path-css-transform-003-expected.svg: Added.
+        * svg/clip-path/clip-path-css-transform-003.svg: Added.
+        * svg/clip-path/clip-path-css-transform-004-expected.svg: Added.
+        * svg/clip-path/clip-path-css-transform-004.svg: Added.
+        * svg/clip-path/clip-path-document-change-assert-expected.txt: Renamed from LayoutTests/svg/custom/clip-path-document-change-assert-expected.txt.
+        * svg/clip-path/clip-path-document-change-assert.html: Renamed from LayoutTests/svg/custom/clip-path-document-change-assert.html.
+        * svg/clip-path/clip-path-dom-child-changes-expected.svg: Added.
+        * svg/clip-path/clip-path-dom-child-changes.svg: Added.
+        * svg/clip-path/clip-path-dom-clippathunits-expected.svg: Added.
+        * svg/clip-path/clip-path-dom-clippathunits.svg: Added.
+        * svg/clip-path/clip-path-dom-href-expected.svg: Added.
+        * svg/clip-path/clip-path-dom-href.svg: Added.
+        * svg/clip-path/clip-path-dom-id-expected.svg: Added.
+        * svg/clip-path/clip-path-dom-id.svg: Added.
+        * svg/clip-path/clip-path-negative-scale-expected.svg: Added.
+        * svg/clip-path/clip-path-negative-scale.svg: Added.
+        * svg/clip-path/clip-path-no-content-004-expected.svg: Added.
+        * svg/clip-path/clip-path-no-content-004.svg: Added.
+        * svg/clip-path/clip-path-on-marker-001-expected.svg: Added.
+        * svg/clip-path/clip-path-on-marker-001.svg: Added.
+        * svg/clip-path/clip-path-on-marker-002-expected.svg: Added.
+        * svg/clip-path/clip-path-on-marker-002.svg: Added.
+        * svg/clip-path/clip-path-on-marker-003-expected.svg: Added.
+        * svg/clip-path/clip-path-on-marker-003.svg: Added.
+        * svg/clip-path/clip-path-recursion-001-expected.svg: Renamed from LayoutTests/svg/custom/circular-clip-path-references-crash-expected.svg.
+        * svg/clip-path/clip-path-recursion-001.svg: Renamed from LayoutTests/svg/custom/circular-clip-path-references-crash.svg.
+        * svg/clip-path/clip-path-recursion-002-expected.svg: Added.
+        * svg/clip-path/clip-path-recursion-002.svg: Added.
+        * svg/clip-path/clip-path-shape-stroke-expected.svg:
+        * svg/clip-path/clip-path-with-transform-expected.svg: Added.
+        * svg/clip-path/clip-path-with-transform.svg: Added.
+        * svg/clip-path/mask-nested-clip-path-010-expected.svg: Renamed from LayoutTests/svg/custom/clamped-masking-clipping-expected.svg.
+        * svg/clip-path/mask-nested-clip-path-010.svg: Renamed from LayoutTests/svg/custom/clamped-masking-clipping.svg.
+        * svg/custom/clip-mask-negative-scale-expected.txt: Removed.
+        * svg/custom/clip-mask-negative-scale.svg: Removed.
+        * svg/custom/clip-path-child-changes-expected.txt: Removed.
+        * svg/custom/clip-path-child-changes.svg: Removed.
+        * svg/custom/clip-path-href-changes-expected.txt: Removed.
+        * svg/custom/clip-path-href-changes.svg: Removed.
+        * svg/custom/clip-path-id-changes-expected.txt: Removed.
+        * svg/custom/clip-path-id-changes.svg: Removed.
+        * svg/custom/clip-path-referencing-use.svg: Removed.
+        * svg/custom/clip-path-referencing-use2.svg: Removed.
+        * svg/custom/clip-path-units-changes-expected.txt: Removed.
+        * svg/custom/clip-path-units-changes.svg: Removed.
+        * svg/custom/clip-path-with-css-transform-1-expected.txt: Removed.
+        * svg/custom/clip-path-with-css-transform-1.svg: Removed.
+        * svg/custom/clip-path-with-css-transform-2-expected.txt: Removed.
+        * svg/custom/clip-path-with-css-transform-2.svg: Removed.
+        * svg/custom/clip-path-with-transform-expected.txt: Removed.
+        * svg/custom/clip-path-with-transform.svg: Removed.
+        * svg/custom/empty-clip-path.svg: Removed.
+        * svg/custom/recursive-clippath.svg: Removed.
+        * svg/masking/mask-negative-scale.svg: Added.
+        * svg/masking/mast-negative-scale-expected.svg: Added.
+
+2014-02-24  Dirk Schulze  <krit@webkit.org>
+
+        Transform more clip-path pixel tests to reference tests
+        https://bugs.webkit.org/show_bug.cgi?id=129230
+
+        Reviewed by Andreas Kling.
+
         Remove unnecessary pixel test results.
 
         * platform/efl/svg/custom/clip-mask-negative-scale-expected.png: Removed.
