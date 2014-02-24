@@ -1,3 +1,23 @@
+2014-02-23  Sam Weinig  <sam@webkit.org>
+
+        Extract platform specific parts of telephone number detection 
+        https://bugs.webkit.org/show_bug.cgi?id=129238
+
+        Reviewed by Dean Jackson.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::linkifyPhoneNumbers):
+        (WebCore::HTMLTreeBuilder::processCharacterBufferForInBody):
+        * platform/TelephoneNumberDetector.h: Added.
+        * platform/cocoa/TelephoneNumberDetectorCocoa.cpp: Added.
+        (WebCore::TelephoneNumberDetector::phoneNumbersScanner):
+        (WebCore::TelephoneNumberDetector::isSupported):
+        (WebCore::TelephoneNumberDetector::find):
+        Move code to TelephoneNumberDetector.
+
 2014-02-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Change a url parameter type with URL in NavigatorContentUtils

@@ -2299,6 +2299,8 @@
 		7C74D43818823B1900E5ED57 /* UTextProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C74D43618823B1900E5ED57 /* UTextProvider.h */; };
 		7C74D43B1882400400E5ED57 /* UTextProviderUTF16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D4391882400400E5ED57 /* UTextProviderUTF16.cpp */; };
 		7C74D43C1882400400E5ED57 /* UTextProviderUTF16.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C74D43A1882400400E5ED57 /* UTextProviderUTF16.h */; };
+		7CC564B818BABEA6001B9652 /* TelephoneNumberDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC564B618BABEA6001B9652 /* TelephoneNumberDetector.h */; };
+		7CC564BA18BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC564B918BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp */; };
 		7CC7E3D717208C0F003C5277 /* IDNScriptWhiteList.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */; };
 		7CE6CBFB187F370700D46BF5 /* FormatConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE6CBFA187F370700D46BF5 /* FormatConverter.h */; };
 		7CE6CBFD187F394900D46BF5 /* FormatConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */; };
@@ -9249,6 +9251,8 @@
 		7C74D43618823B1900E5ED57 /* UTextProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTextProvider.h; sourceTree = "<group>"; };
 		7C74D4391882400400E5ED57 /* UTextProviderUTF16.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTextProviderUTF16.cpp; sourceTree = "<group>"; };
 		7C74D43A1882400400E5ED57 /* UTextProviderUTF16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTextProviderUTF16.h; sourceTree = "<group>"; };
+		7CC564B618BABEA6001B9652 /* TelephoneNumberDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TelephoneNumberDetector.h; sourceTree = "<group>"; };
+		7CC564B918BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TelephoneNumberDetectorCocoa.cpp; sourceTree = "<group>"; };
 		7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDNScriptWhiteList.txt; sourceTree = "<group>"; };
 		7CE6CBFA187F370700D46BF5 /* FormatConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormatConverter.h; sourceTree = "<group>"; };
 		7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormatConverter.cpp; sourceTree = "<group>"; };
@@ -10624,8 +10628,8 @@
 		A5AFB34D115151A700B045CB /* StepRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StepRange.cpp; sourceTree = "<group>"; };
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
 		A5C566AA127A3AAD00E8A3FF /* DiskImageCacheClientIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiskImageCacheClientIOS.h; sourceTree = "<group>"; };
-		A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCocoa.h; path = cocoa/KeyEventCocoa.h; sourceTree = "<group>"; };
-		A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventCocoa.mm; path = cocoa/KeyEventCocoa.mm; sourceTree = "<group>"; };
+		A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyEventCocoa.h; sourceTree = "<group>"; };
+		A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KeyEventCocoa.mm; sourceTree = "<group>"; };
 		A5DEBD9F16FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitPlaybackTargetAvailabilityEvent.cpp; sourceTree = "<group>"; };
 		A5DEBDA016FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPlaybackTargetAvailabilityEvent.h; sourceTree = "<group>"; };
 		A5DEBDA116FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitPlaybackTargetAvailabilityEvent.idl; sourceTree = "<group>"; };
@@ -17983,10 +17987,11 @@
 		A5C974CE11485FDA0066F2AB /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				7CC564B918BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp */,
 				A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */,
 				A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */,
 			);
-			name = cocoa;
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
@@ -20819,6 +20824,7 @@
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
 				93B2D8150F9920D2006AE6B2 /* SuddenTermination.h */,
 				97627B9714FB5424002CDCA1 /* Supplementable.h */,
+				7CC564B618BABEA6001B9652 /* TelephoneNumberDetector.h */,
 				BCE65D310EAD1211007E4533 /* Theme.cpp */,
 				BCE658FE0EA9248A007E4533 /* Theme.h */,
 				BCE659A80EA927B9007E4533 /* ThemeTypes.h */,
@@ -24146,6 +24152,7 @@
 				1AE2AA210A1CDAB400B42B25 /* JSHTMLBaseFontElement.h in Headers */,
 				1AE2AA230A1CDAB400B42B25 /* JSHTMLBodyElement.h in Headers */,
 				1AE2AA250A1CDAB400B42B25 /* JSHTMLBRElement.h in Headers */,
+				7CC564B818BABEA6001B9652 /* TelephoneNumberDetector.h in Headers */,
 				A80E7E9F0A1A83E3007FB8C5 /* JSHTMLButtonElement.h in Headers */,
 				938E666209F09B87008A48EC /* JSHTMLCanvasElement.h in Headers */,
 				BCCBAD410C18C14200CE890F /* JSHTMLCollection.h in Headers */,
@@ -27874,6 +27881,7 @@
 				8542A7960AE5C94200DF58DF /* JSSVGPoint.cpp in Sources */,
 				B2FA3DE20AB75A6F000E5AC4 /* JSSVGPointList.cpp in Sources */,
 				B2FA3DE50AB75A6F000E5AC4 /* JSSVGPolygonElement.cpp in Sources */,
+				7CC564BA18BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp in Sources */,
 				B2FA3DE70AB75A6F000E5AC4 /* JSSVGPolylineElement.cpp in Sources */,
 				B2FA3DE90AB75A6F000E5AC4 /* JSSVGPreserveAspectRatio.cpp in Sources */,
 				B2FA3DEB0AB75A6F000E5AC4 /* JSSVGRadialGradientElement.cpp in Sources */,
