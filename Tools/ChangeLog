@@ -1,3 +1,12 @@
+2014-02-24  David Kilzer  <ddkilzer@apple.com>
+
+        [ASan] Remove methods from ignore list that no longer cause crashes
+        <http://webkit.org/b/129257>
+
+        Reviewed by Anders Carlsson.
+
+        * asan/webkit-asan-ignore.txt: Remove old methods.
+
 2014-02-24  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Extract common parts from jhbuildrc files.
