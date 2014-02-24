@@ -1,5 +1,25 @@
 2014-02-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Move non-API files in the API/ios directory out to UIProcess/ios
+        https://bugs.webkit.org/show_bug.cgi?id=129264
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/ios/PageClientImplIOS.h: Renamed from Source/WebKit2/UIProcess/API/ios/PageClientImplIOS.h.
+        * UIProcess/ios/PageClientImplIOS.mm: Renamed from Source/WebKit2/UIProcess/API/ios/PageClientImplIOS.mm.
+        * UIProcess/ios/WKActionSheet.h: Renamed from Source/WebKit2/UIProcess/API/ios/WKActionSheet.h.
+        * UIProcess/ios/WKActionSheet.mm: Renamed from Source/WebKit2/UIProcess/API/ios/WKActionSheet.mm.
+        * UIProcess/ios/WKContentViewInternal.h: Renamed from Source/WebKit2/UIProcess/API/ios/WKContentViewInternal.h.
+        * UIProcess/ios/WKGeolocationProviderIOS.h: Renamed from Source/WebKit2/UIProcess/API/ios/WKGeolocationProviderIOS.h.
+        * UIProcess/ios/WKGeolocationProviderIOS.mm: Renamed from Source/WebKit2/UIProcess/API/ios/WKGeolocationProviderIOS.mm.
+        * UIProcess/ios/WKInteractionView.h: Renamed from Source/WebKit2/UIProcess/API/ios/WKInteractionView.h.
+        * UIProcess/ios/WKInteractionView.mm: Renamed from Source/WebKit2/UIProcess/API/ios/WKInteractionView.mm.
+        * UIProcess/ios/WKScrollView.h: Renamed from Source/WebKit2/UIProcess/API/ios/WKScrollView.h.
+        * UIProcess/ios/WKScrollView.mm: Renamed from Source/WebKit2/UIProcess/API/ios/WKScrollView.mm.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-02-24  Simon Fraser  <simon.fraser@apple.com>
+
         Rename PageClientImplIOS::m_view to m_contentView
         https://bugs.webkit.org/show_bug.cgi?id=129124
 

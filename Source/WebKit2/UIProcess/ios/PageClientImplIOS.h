@@ -92,7 +92,7 @@ private:
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     virtual void exitAcceleratedCompositingMode() override;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
-    virtual void setAcceleratedCompositingRootLayer(CALayer *rootLayer) override;
+    virtual void setAcceleratedCompositingRootLayer(CALayer *) override;
     virtual CALayer *acceleratedCompositingRootLayer() const override;
     virtual LayerHostingMode viewLayerHostingMode() override { return LayerHostingMode::OutOfProcess; }
 
@@ -100,7 +100,7 @@ private:
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
     virtual void clearCustomSwipeViews() override;
 
-    virtual void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius) override;
+    virtual void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius) override;
 
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
 
