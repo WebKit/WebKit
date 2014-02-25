@@ -81,6 +81,7 @@ extern BOOL applicationIsTerminating;
 extern int pluginDatabaseClientCount;
 
 class LayerFlushController;
+class WebViewGroup;
 
 class WebViewLayerFlushScheduler : public WebCore::LayerFlushScheduler {
 public:
@@ -120,7 +121,8 @@ private:
 @interface WebViewPrivate : NSObject {
 @public
     WebCore::Page* page;
-    
+    RefPtr<WebViewGroup> group;
+
     id UIDelegate;
     id UIDelegateForwarder;
     id resourceProgressDelegate;

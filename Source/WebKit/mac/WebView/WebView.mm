@@ -104,6 +104,7 @@
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebUserMediaClient.h"
+#import "WebViewGroup.h"
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/APICast.h>
@@ -1181,7 +1182,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     // FIXME: this is a workaround for <rdar://problem/11820090> Quoted text changes in size when replying to certain email
     _private->page->settings().setMinimumFontSize([_private->preferences minimumFontSize]);
 
-    _private->page->setGroupName(groupName);
+    [self setGroupName:groupName];
 
 #if ENABLE(REMOTE_INSPECTOR)
     // Production installs always disallow debugging simple HTML documents.
@@ -1732,7 +1733,9 @@ static bool fastDocumentTeardownEnabled()
     [self removeDragCaret];
 #endif
 
-    // Deleteing the WebCore::Page will clear the page cache so we call destroy on 
+    _private->group->removeWebView(self);
+
+    // Deleteing the WebCore::Page will clear the page cache so we call destroy on
     // all the plug-ins in the page cache to break any retain cycles.
     // See comment in HistoryItem::releaseAllPendingPageCaches() for more information.
     Page* page = _private->page;
@@ -6123,6 +6126,12 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (void)setGroupName:(NSString *)groupName
 {
+    if (_private->group)
+        _private->group->removeWebView(self);
+
+    _private->group = WebViewGroup::getOrCreate(groupName);
+    _private->group->addWebView(self);
+
     if (!_private->page)
         return;
     _private->page->setGroupName(groupName);

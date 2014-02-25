@@ -1,3 +1,14 @@
+2014-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Add WebViewGroup
+        https://bugs.webkit.org/show_bug.cgi?id=129280
+
+        Reviewed by Dan Bernstein.
+
+        Add new files.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2014-02-24  Roger Fong  <roger_fong@apple.com>
 
         [WinCairo] Disable ANGLE build on WinCairo port.
