@@ -3651,6 +3651,7 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
     const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, 0, false);
 
     LayoutUnit logicalTopValue = 0;
+    LayoutUnit resolvedLogicalHeight = 0;
 
     bool logicalHeightIsAuto = logicalHeightLength.isAuto();
     bool logicalTopIsAuto = logicalTop.isAuto();
@@ -3658,9 +3659,10 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
 
     // Height is never unsolved for tables.
     if (isTable()) {
-        logicalHeightLength.setValue(Fixed, contentLogicalHeight);
+        resolvedLogicalHeight = contentLogicalHeight;
         logicalHeightIsAuto = false;
-    }
+    } else
+        resolvedLogicalHeight = adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeightLength, containerLogicalHeight));
 
     if (!logicalTopIsAuto && !logicalHeightIsAuto && !logicalBottomIsAuto) {
         /*-----------------------------------------------------------------------*\
@@ -3674,7 +3676,7 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
         // NOTE:  It is not necessary to solve for 'bottom' in the over constrained
         // case because the value is not used for any further calculations.
 
-        logicalHeightValue = adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeightLength, containerLogicalHeight));
+        logicalHeightValue = resolvedLogicalHeight;
         logicalTopValue = valueForLength(logicalTop, containerLogicalHeight);
 
         const LayoutUnit availableSpace = containerLogicalHeight - (logicalTopValue + logicalHeightValue + valueForLength(logicalBottom, containerLogicalHeight) + bordersPlusPadding);
@@ -3741,7 +3743,7 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
             logicalHeightValue = contentLogicalHeight;
         } else if (logicalTopIsAuto && !logicalHeightIsAuto && !logicalBottomIsAuto) {
             // RULE 4: (solve of top)
-            logicalHeightValue = adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeightLength, containerLogicalHeight));
+            logicalHeightValue = resolvedLogicalHeight;
             logicalTopValue = availableSpace - (logicalHeightValue + valueForLength(logicalBottom, containerLogicalHeight));
         } else if (!logicalTopIsAuto && logicalHeightIsAuto && !logicalBottomIsAuto) {
             // RULE 5: (solve of height)
@@ -3749,7 +3751,7 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
             logicalHeightValue = std::max<LayoutUnit>(0, availableSpace - (logicalTopValue + valueForLength(logicalBottom, containerLogicalHeight)));
         } else if (!logicalTopIsAuto && !logicalHeightIsAuto && logicalBottomIsAuto) {
             // RULE 6: (no need solve of bottom)
-            logicalHeightValue = adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeightLength, containerLogicalHeight));
+            logicalHeightValue = resolvedLogicalHeight;
             logicalTopValue = valueForLength(logicalTop, containerLogicalHeight);
         }
     }

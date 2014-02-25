@@ -1,3 +1,20 @@
+2014-02-25  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
+
+        display:table with padding and/or borders in border-box calculates height incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=126576
+
+        Reviewed by David Hyatt.
+
+        Based on blink issue https://codereview.chromium.org/25206002/
+
+        Tests: fast/box-sizing/css-table-collapse.html
+               fast/box-sizing/css-table-no-collapse.html
+               fast/box-sizing/table-collapse.html
+               fast/box-sizing/table-no-collapse.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
         Get rid of VisitedLinkStrategy
