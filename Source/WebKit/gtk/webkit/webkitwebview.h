@@ -415,12 +415,14 @@ webkit_web_view_redo                            (WebKitWebView        *web_view)
 WEBKIT_API gboolean
 webkit_web_view_can_redo                        (WebKitWebView        *web_view);
 
+#if !defined(WEBKIT_DISABLE_DEPRECATED)
 WEBKIT_API void
 webkit_web_view_set_view_source_mode            (WebKitWebView        *web_view,
                                                  gboolean             view_source_mode);
 
 WEBKIT_API gboolean
 webkit_web_view_get_view_source_mode            (WebKitWebView        *web_view);
+#endif
 
 WEBKIT_API WebKitHitTestResult*
 webkit_web_view_get_hit_test_result             (WebKitWebView        *web_view,

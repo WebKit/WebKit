@@ -418,27 +418,6 @@ static void testWebViewSave(SaveWebViewTest* test, gconstpointer)
     g_assert_cmpint(g_file_info_get_size(fileInfo.get()), ==, totalBytesFromStream);
 }
 
-static void testWebViewMode(WebViewTest* test, gconstpointer)
-{
-    static const char* indexHTML = "<html><body><p>Test Web View Mode</p></body></html>";
-
-    // Web mode.
-    g_assert_cmpuint(webkit_web_view_get_view_mode(test->m_webView), ==, WEBKIT_VIEW_MODE_WEB);
-    test->loadHtml(indexHTML, 0);
-    test->waitUntilLoadFinished();
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.body.textContent;", 0);
-    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
-    g_assert_cmpstr(valueString.get(), ==, "Test Web View Mode");
-
-    // Source mode.
-    webkit_web_view_set_view_mode(test->m_webView, WEBKIT_VIEW_MODE_SOURCE);
-    test->loadHtml(indexHTML, 0);
-    test->waitUntilLoadFinished();
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.body.textContent;", 0);
-    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
-    g_assert_cmpstr(valueString.get(), ==, indexHTML);
-}
-
 // To test page visibility API. Currently only 'visible' and 'hidden' states are implemented fully in WebCore.
 // See also http://www.w3.org/TR/2011/WD-page-visibility-20110602/ and https://developers.google.com/chrome/whitepapers/pagevisibility
 static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
@@ -597,7 +576,6 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "can-show-mime-type", testWebViewCanShowMIMEType);
     FormClientTest::add("WebKitWebView", "submit-form", testWebViewSubmitForm);
     SaveWebViewTest::add("WebKitWebView", "save", testWebViewSave);
-    WebViewTest::add("WebKitWebView", "view-mode", testWebViewMode);
     SnapshotWebViewTest::add("WebKitWebView", "snapshot", testWebViewSnapshot);
     WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
 }

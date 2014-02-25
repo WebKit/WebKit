@@ -1,3 +1,18 @@
+2014-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Mark view source mode methods as deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=128920
+
+        Reviewed by Martin Robinson.
+
+        Mark WEBKIT_VIEW_MODE_SOURCE as deprecated in documentation and
+        only show warnings when set_view_mode is used with WEBKIT_VIEW_MODE_SOURCE.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_set_view_mode):
+        (webkit_web_view_get_view_mode):
+        * UIProcess/API/gtk/WebKitWebView.h:
+
 2014-02-24  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Stop looking for plug-in profiles in /S/L/Sandbox/Profiles

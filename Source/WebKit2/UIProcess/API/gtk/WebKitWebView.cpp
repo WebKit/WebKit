@@ -3035,7 +3035,8 @@ void webkit_web_view_set_view_mode(WebKitWebView* webView, WebKitViewMode viewMo
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    g_warning("webkit_web_view_set_view_mode has been deprecated and is a no-op.");
+    if (viewMode == WEBKIT_VIEW_MODE_SOURCE)
+        g_warning("WEBKIT_VIEW_MODE_SOURCE has been deprecated and is no longer supported.");
 }
 
 /**
@@ -3050,7 +3051,6 @@ WebKitViewMode webkit_web_view_get_view_mode(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), WEBKIT_VIEW_MODE_WEB);
 
-    g_warning("webkit_web_view_get_view_mode has been deprecated and always returns WEBKIT_VIEW_MODE_WEB.");
     return WEBKIT_VIEW_MODE_WEB;
 }
 

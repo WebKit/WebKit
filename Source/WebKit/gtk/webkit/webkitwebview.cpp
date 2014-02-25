@@ -5233,6 +5233,7 @@ void webkit_web_view_redo(WebKitWebView* webView)
  * nice and readable format.
  *
  * Since: 1.1.14
+ * Deprecated: 2.6
  */
 void webkit_web_view_set_view_source_mode (WebKitWebView* webView, gboolean mode)
 {
@@ -5248,6 +5249,7 @@ void webkit_web_view_set_view_source_mode (WebKitWebView* webView, gboolean mode
  * Return value: %TRUE if @web_view is in view source mode, %FALSE otherwise.
  *
  * Since: 1.1.14
+ * Deprecated: 2.6
  */
 gboolean webkit_web_view_get_view_source_mode (WebKitWebView* webView)
 {
