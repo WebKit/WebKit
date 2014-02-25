@@ -150,8 +150,6 @@ class GtkPort(DeprecatedPort):
         command.append("--gtk")
         command.append("--update-gtk")
         command.append("--no-webkit2")
-        # FIXME: Disable gtk-doc temporarily due to http://webkit.org/b/128369.
-        command.append("--disable-gtk-doc")
         command.append(super(GtkPort, self).makeArgs())
         return command
 
@@ -169,8 +167,6 @@ class GtkWK2Port(DeprecatedPort):
         command.append("--gtk")
         command.append("--update-gtk")
         command.append("--no-webkit1")
-        # FIXME: Disable gtk-doc temporarily due to http://webkit.org/b/128369.
-        command.append("--disable-gtk-doc")
         command.append(super(GtkWK2Port, self).makeArgs())
         return command
 
