@@ -1,3 +1,13 @@
+2014-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: All inspector-protocol/model very frequently assert in IDBRequest::~IDBRequest
+        https://bugs.webkit.org/show_bug.cgi?id=129328
+
+        inspector-protocol/indexeddb/basics.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=129327
+
+        * TestExpectations: Updating test expectations.
+
 2014-02-25  Morten Stenshorne  <mstensho@opera.com>
 
         [New Multicolumn] -webkit-column-break-inside:avoid doesn't work
