@@ -78,7 +78,6 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
-#include <memory>
 #include <wtf/BitVector.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
@@ -94,7 +93,7 @@ static inline bool shouldIgnoreAttributeCase(const Element& element)
 }
 
 typedef Vector<RefPtr<Attr>> AttrNodeList;
-typedef HashMap<Element*, std::unique_ptr<AttrNodeList>> AttrNodeListMap;
+typedef HashMap<Element*, OwnPtr<AttrNodeList>> AttrNodeListMap;
 
 static AttrNodeListMap& attrNodeListMap()
 {
@@ -118,7 +117,7 @@ static AttrNodeList& ensureAttrNodeListForElement(Element* element)
     }
     ASSERT(!attrNodeListMap().contains(element));
     element->setHasSyntheticAttrChildNodes(true);
-    AttrNodeListMap::AddResult result = attrNodeListMap().add(element, std::make_unique<AttrNodeList>());
+    AttrNodeListMap::AddResult result = attrNodeListMap().add(element, adoptPtr(new AttrNodeList));
     return *result.iterator->value;
 }
 
@@ -352,7 +351,7 @@ NamedNodeMap* Element::attributes() const
     if (NamedNodeMap* attributeMap = rareData.attributeMap())
         return attributeMap;
 
-    rareData.setAttributeMap(std::make_unique<NamedNodeMap>(const_cast<Element&>(*this)));
+    rareData.setAttributeMap(NamedNodeMap::create(const_cast<Element&>(*this)));
     return rareData.attributeMap();
 }
 

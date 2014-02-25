@@ -35,7 +35,6 @@
 #include "SimulatedClickOptions.h"
 #include "TreeScope.h"
 #include "TreeShared.h"
-#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/text/AtomicString.h>
@@ -675,7 +674,7 @@ private:
 
     void trackForDebugging();
 
-    Vector<std::unique_ptr<MutationObserverRegistration>>* mutationObserverRegistry();
+    Vector<OwnPtr<MutationObserverRegistration>>* mutationObserverRegistry();
     HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
 
     mutable uint32_t m_nodeFlags;

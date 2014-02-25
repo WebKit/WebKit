@@ -1,3 +1,53 @@
+2014-02-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r164638.
+        http://trac.webkit.org/changeset/164638
+        https://bugs.webkit.org/show_bug.cgi?id=129321
+
+        Broke Windows build. (Requested by bfulgham on #webkit).
+
+        * dom/ContainerNode.h:
+        (WebCore::ChildNodesLazySnapshot::takeSnapshot):
+        (WebCore::ChildNodesLazySnapshot::hasSnapshot):
+        * dom/Element.cpp:
+        (WebCore::ensureAttrNodeListForElement):
+        (WebCore::Element::attributes):
+        * dom/ElementIteratorAssertions.h:
+        (WebCore::ElementIteratorAssertions::ElementIteratorAssertions):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::create):
+        (WebCore::ElementRareData::setAttributeMap):
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::create):
+        (WebCore::MutationObserverRegistration::observedSubtreeNodeWillDetach):
+        (WebCore::MutationObserverRegistration::clearTransientRegistrations):
+        (WebCore::MutationObserverRegistration::addRegistrationNodesToSet):
+        * dom/MutationObserverRegistration.h:
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::create):
+        (WebCore::NamedNodeMap::NamedNodeMap):
+        * dom/Node.cpp:
+        (WebCore::Node::ensureRareData):
+        (WebCore::Node::didMoveToNewDocument):
+        (WebCore::Node::ensureEventTargetData):
+        (WebCore::Node::mutationObserverRegistry):
+        (WebCore::Node::registerMutationObserver):
+        (WebCore::Node::unregisterMutationObserver):
+        (WebCore::Node::notifyMutationObserversNodeWillDetach):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::create):
+        (WebCore::NodeListsNodeData::NodeListsNodeData):
+        (WebCore::NodeMutationObserverData::create):
+        (WebCore::NodeMutationObserverData::NodeMutationObserverData):
+        (WebCore::NodeRareData::create):
+        (WebCore::NodeRareData::clearNodeLists):
+        (WebCore::NodeRareData::ensureNodeLists):
+        (WebCore::NodeRareData::ensureMutationObserverData):
+        (WebCore::NodeRareData::NodeRareData):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+
 2014-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Show status image when playing video to external device

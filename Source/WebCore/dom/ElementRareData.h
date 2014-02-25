@@ -30,13 +30,14 @@
 #include "RenderElement.h"
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
-#include <memory>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
 class ElementRareData : public NodeRareData {
 public:
-    explicit ElementRareData(RenderElement*);
+    static PassOwnPtr<ElementRareData> create(RenderElement* renderer) { return adoptPtr(new ElementRareData(renderer)); }
+
     ~ElementRareData();
 
     void setBeforePseudoElement(PassRefPtr<PseudoElement>);
@@ -92,7 +93,7 @@ public:
     void setShadowRoot(PassRefPtr<ShadowRoot> shadowRoot) { m_shadowRoot = shadowRoot; }
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
-    void setAttributeMap(std::unique_ptr<NamedNodeMap> attributeMap) { m_attributeMap = std::move(attributeMap); }
+    void setAttributeMap(PassOwnPtr<NamedNodeMap> attributeMap) { m_attributeMap = attributeMap; }
 
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
     void setComputedStyle(PassRef<RenderStyle> computedStyle) { m_computedStyle = std::move(computedStyle); }
@@ -149,11 +150,12 @@ private:
     std::unique_ptr<DatasetDOMStringMap> m_dataset;
     std::unique_ptr<ClassList> m_classList;
     RefPtr<ShadowRoot> m_shadowRoot;
-    std::unique_ptr<NamedNodeMap> m_attributeMap;
+    OwnPtr<NamedNodeMap> m_attributeMap;
 
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
 
+    explicit ElementRareData(RenderElement*);
     void releasePseudoElement(PseudoElement*);
 };
 

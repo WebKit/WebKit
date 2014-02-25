@@ -36,6 +36,11 @@
 
 namespace WebCore {
 
+PassOwnPtr<MutationObserverRegistration> MutationObserverRegistration::create(PassRefPtr<MutationObserver> observer, Node* registrationNode, MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter)
+{
+    return adoptPtr(new MutationObserverRegistration(observer, registrationNode, options, attributeFilter));
+}
+
 MutationObserverRegistration::MutationObserverRegistration(PassRefPtr<MutationObserver> observer, Node* registrationNode, MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter)
     : m_observer(observer)
     , m_registrationNode(registrationNode)
@@ -67,7 +72,7 @@ void MutationObserverRegistration::observedSubtreeNodeWillDetach(Node* node)
     m_observer->setHasTransientRegistration();
 
     if (!m_transientRegistrationNodes) {
-        m_transientRegistrationNodes = std::make_unique<NodeHashSet>();
+        m_transientRegistrationNodes = adoptPtr(new NodeHashSet);
 
         ASSERT(!m_registrationNodeKeepAlive);
         m_registrationNodeKeepAlive = m_registrationNode; // Balanced in clearTransientRegistrations.
@@ -82,10 +87,10 @@ void MutationObserverRegistration::clearTransientRegistrations()
         return;
     }
 
-    for (auto& iter : *m_transientRegistrationNodes)
-        iter->unregisterTransientMutationObserver(this);
+    for (NodeHashSet::iterator iter = m_transientRegistrationNodes->begin(); iter != m_transientRegistrationNodes->end(); ++iter)
+        (*iter)->unregisterTransientMutationObserver(this);
 
-    m_transientRegistrationNodes = nullptr;
+    m_transientRegistrationNodes.clear();
 
     ASSERT(m_registrationNodeKeepAlive);
     m_registrationNodeKeepAlive = 0; // Balanced in observeSubtreeNodeWillDetach.
@@ -121,8 +126,8 @@ void MutationObserverRegistration::addRegistrationNodesToSet(HashSet<Node*>& nod
     nodes.add(m_registrationNode);
     if (!m_transientRegistrationNodes)
         return;
-    for (auto& iter : *m_transientRegistrationNodes)
-        nodes.add(iter.get());
+    for (NodeHashSet::const_iterator iter = m_transientRegistrationNodes->begin(); iter != m_transientRegistrationNodes->end(); ++iter)
+        nodes.add(iter->get());
 }
 
 } // namespace WebCore

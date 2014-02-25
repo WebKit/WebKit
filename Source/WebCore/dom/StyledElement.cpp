@@ -58,7 +58,7 @@ public:
     RefPtr<StyleProperties> value;
 };
 
-typedef HashMap<unsigned, std::unique_ptr<PresentationAttributeCacheEntry>, AlreadyHashed> PresentationAttributeCache;
+typedef HashMap<unsigned, OwnPtr<PresentationAttributeCacheEntry>, AlreadyHashed> PresentationAttributeCache;
     
 static bool operator!=(const PresentationAttributeCacheKey& a, const PresentationAttributeCacheKey& b)
 {
@@ -346,7 +346,7 @@ void StyledElement::rebuildPresentationAttributeStyle()
     if (!cacheHash || cacheIterator->value)
         return;
 
-    auto newEntry = std::make_unique<PresentationAttributeCacheEntry>();
+    OwnPtr<PresentationAttributeCacheEntry> newEntry = adoptPtr(new PresentationAttributeCacheEntry);
     newEntry->key = cacheKey;
     newEntry->value = style.release();
 
@@ -354,9 +354,9 @@ void StyledElement::rebuildPresentationAttributeStyle()
     if (presentationAttributeCache().size() > presentationAttributeCacheMaximumSize) {
         // Start building from scratch if the cache ever gets big.
         presentationAttributeCache().clear();
-        presentationAttributeCache().set(cacheHash, std::move(newEntry));
+        presentationAttributeCache().set(cacheHash, newEntry.release());
     } else
-        cacheIterator->value = std::move(newEntry);
+        cacheIterator->value = newEntry.release();
 }
 
 void StyledElement::addPropertyToPresentationAttributeStyle(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValueID identifier)
