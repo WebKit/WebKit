@@ -36,7 +36,7 @@
 #include <WebCore/EventNames.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/Settings.h>
-#include <Webcore/PlatformCALayer.h>
+#include <WebCore/PlatformCALayer.h>
 
 using namespace WebCore;
 

@@ -1,3 +1,9 @@
+2014-02-25  Dan Bernstein  <mitz@apple.com>
+
+        Build fix for case-sensitive filesystems.
+
+        * WebProcess/ios/WebVideoFullscreenManager.cpp:
+
 2014-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Mark view source mode methods as deprecated
