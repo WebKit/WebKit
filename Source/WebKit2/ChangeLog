@@ -1,5 +1,12 @@
 2014-02-24  Dan Bernstein  <mitz@apple.com>
 
+        32-bit build fix.
+
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction elementActionWithType:customTitle:]):
+
+2014-02-24  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Start adding API for customizing actions on activated elements
         https://bugs.webkit.org/show_bug.cgi?id=129284
 

@@ -121,7 +121,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         };
         break;
     default:
-        [NSException raise:NSInvalidArgumentException format:@"There is no standard web element action of type %ld.", type];
+        [NSException raise:NSInvalidArgumentException format:@"There is no standard web element action of type %ld.", (long)type];
         return nil;
     }
 
