@@ -1,3 +1,92 @@
+2014-02-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Show status image when playing video to external device
+        https://bugs.webkit.org/show_bug.cgi?id=129277
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handleEvent): Restructure the code so it is possible to handle events
+            that target the video element which aren't in the HandledVideoEvents array.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.currentPlaybackTargetIsWireless): webkitCurrentPlaybackTargetIsWireless
+            is an attribute, not a function.
+        (ControllerIOS.prototype.updateWirelessPlaybackStatus): Fix style.
+        (ControllerIOS.prototype.updateWirelessTargetAvailable): Ditto.
+        (ControllerIOS.prototype.updateProgress): Ditto.
+        (ControllerIOS.prototype.handleWrapperTouchStart): Show the controls if the wireless status
+            display is touched.
+        (ControllerIOS.prototype.handleFullscreenButtonClicked): Fix style
+        (ControllerIOS.prototype.handleWirelessPlaybackChange): Ditto.
+        (ControllerIOS.prototype.handleWirelessTargetAvailableChange):
+        (ControllerIOS.prototype.handleWirelessPickerButtonClicked): Ditto. Stop even propagation.
+
+        Move "playback target" logic into HTMLMediaSession.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Call media session.
+        (WebCore::HTMLMediaElement::loadResource): Tell media session to apply media player
+            restrictions now that it has a url.
+        (WebCore::HTMLMediaElement::invalidateCachedTime): Only log when cached time is not 
+            already invalie.
+        (WebCore::HTMLMediaElement::webkitShowPlaybackTargetPicker): Call media session.
+        (WebCore::HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged): Ditto.
+        (WebCore::HTMLMediaElement::addEventListener): Ditto.
+        (WebCore::HTMLMediaElement::removeEventListen): Ditto.
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent): Ditto.
+        (WebCore::HTMLMediaElement::createMediaPlayer): Ditto.
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::restrictionName): Log new WirelessVideoPlaybackDisabled restriction.
+        (WebCore::HTMLMediaSession::showingPlaybackTargetPickerPermitted): Return false if there
+            is no page, or if wireless playback is disabled.
+        (WebCore::HTMLMediaSession::currentPlaybackTargetIsWireless): New, logic from HTMLMediaElement.
+        (WebCore::HTMLMediaSession::showPlaybackTargetPicker): Ditto.
+        (WebCore::HTMLMediaSession::hasWirelessPlaybackTargets): Ditto.
+        (WebCore::HTMLMediaSession::wirelessVideoPlaybackDisabled): Ditto.
+        (WebCore::HTMLMediaSession::setWirelessVideoPlaybackDisabled): Ditto.
+        (WebCore::HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners): Ditto.
+        (WebCore::HTMLMediaSession::applyMediaPlayerRestrictions): New, apply media player specific
+            restriction.
+        * html/HTMLMediaSession.h:
+
+        Move "playback target" logic into HTMLMediaSession.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseAttribute): Call media session.
+        (WebCore::HTMLVideoElement::webkitWirelessVideoPlaybackDisabled): Call media session.
+
+        * platform/audio/MediaSessionManager.h:
+        (WebCore::MediaSessionManager::showPlaybackTargetPicker): New method, does nothing in base class.
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::showPlaybackTargetPicker): Add non-functional stub.
+
+        Implement wireless playback control and status API.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification): Dispatch TargetIsWirelessChanged.
+        (WebCore::MediaPlayerPrivateAVFoundation::playbackTargetIsWirelessChanged): Pass through to
+            media element.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): Initialize
+            m_allowsWirelessVideoPlayback.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad): Remove "externalPlaybackActive" observer.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer): Fix broken logging.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Add "externalPlaybackActive" observer,
+            set initial wireless playback.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createPixelBuffer):  Fix broken logging.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless): New.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled): New.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled): New.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange): New.
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]): Deal with 
+            externalPlaybackActive.
+
 2014-02-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Gracefully recover from missing 'naturalSize' parameter for media

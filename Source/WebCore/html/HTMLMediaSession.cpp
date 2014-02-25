@@ -30,8 +30,10 @@
 #include "HTMLMediaSession.h"
 
 #include "HTMLMediaElement.h"
+#include "HTMLNames.h"
 #include "Logging.h"
 #include "MediaSessionManager.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "ScriptController.h"
 
@@ -55,6 +57,7 @@ static const char* restrictionName(HTMLMediaSession::BehaviorRestrictions restri
     CASE(RequirePageConsentToResumeMedia);
 #if ENABLE(IOS_AIRPLAY)
     CASE(RequireUserGestureToShowPlaybackTargetPicker);
+    CASE(WirelessVideoPlaybackDisabled);
 #endif
     }
 
@@ -155,14 +158,143 @@ bool HTMLMediaSession::pageAllowsPlaybackAfterResuming(const HTMLMediaElement& e
 }
 
 #if ENABLE(IOS_AIRPLAY)
-bool HTMLMediaSession::showingPlaybackTargetPickerPermitted(const HTMLMediaElement&) const
+bool HTMLMediaSession::showingPlaybackTargetPickerPermitted(const HTMLMediaElement& element) const
 {
     if (m_restrictions & RequireUserGestureToShowPlaybackTargetPicker && !ScriptController::processingUserGesture()) {
-        LOG(Media, "HTMLMediaSession::showingPlaybackTargetPickerPermitted - returning FALSE");
+        LOG(Media, "HTMLMediaSession::showingPlaybackTargetPickerPermitted - returning FALSE because of permissions");
         return false;
     }
 
-    return true;
+    if (!element.document().page()) {
+        LOG(Media, "HTMLMediaSession::showingPlaybackTargetPickerPermitted - returning FALSE because page is NULL");
+        return false;
+    }
+
+    return !wirelessVideoPlaybackDisabled(element);
+}
+
+bool HTMLMediaSession::currentPlaybackTargetIsWireless(const HTMLMediaElement& element) const
+{
+    MediaPlayer* player = element.player();
+    if (!player) {
+        LOG(Media, "HTMLMediaSession::currentPlaybackTargetIsWireless - returning FALSE because player is NULL");
+        return false;
+    }
+
+    bool isWireless = player->isCurrentPlaybackTargetWireless();
+    LOG(Media, "HTMLMediaSession::currentPlaybackTargetIsWireless - returning %s", isWireless ? "TRUE" : "FALSE");
+
+    return isWireless;
+}
+
+void HTMLMediaSession::showPlaybackTargetPicker(const HTMLMediaElement& element)
+{
+    LOG(Media, "HTMLMediaSession::showPlaybackTargetPicker");
+
+    if (!showingPlaybackTargetPickerPermitted(element))
+        return;
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    if (element.shouldUseVideoPluginProxy()) {
+        MediaPlayer* player = element.player();
+        if (!player)
+            return;
+
+        player->showPlaybackTargetPicker();
+        return;
+    }
+#endif
+
+    MediaSessionManager::sharedManager().showPlaybackTargetPicker();
+}
+
+bool HTMLMediaSession::hasWirelessPlaybackTargets(const HTMLMediaElement& element) const
+{
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    if (element.shouldUseVideoPluginProxy()) {
+        MediaPlayer* player = element.player();
+        if (!player)
+            return false;
+
+        return player->hasWirelessPlaybackTargets();
+    }
+#else
+    UNUSED_PARAM(element);
+#endif
+
+    // FIXME: this only lets us know if the current element is playing to an external target, we want to
+    // know if there are *any* external targets.
+    bool hasTargets = currentPlaybackTargetIsWireless(element);
+    LOG(Media, "HTMLMediaSession::hasWirelessPlaybackTargets - returning %s", hasTargets ? "TRUE" : "FALSE");
+
+    return hasTargets;
+}
+
+bool HTMLMediaSession::wirelessVideoPlaybackDisabled(const HTMLMediaElement& element) const
+{
+    Settings* settings = element.document().settings();
+    if (!settings || !settings->mediaPlaybackAllowsAirPlay()) {
+        LOG(Media, "HTMLMediaSession::wirelessVideoPlaybackDisabled - returning TRUE because of settings");
+        return true;
+    }
+
+    if (element.fastHasAttribute(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)) {
+        LOG(Media, "HTMLMediaSession::wirelessVideoPlaybackDisabled - returning TRUE because of attribute");
+        return true;
+    }
+
+#if PLATFORM(IOS)
+    String legacyAirplayAttributeValue = element.fastGetAttribute(HTMLNames::webkitairplayAttr);
+    if (equalIgnoringCase(legacyAirplayAttributeValue, "deny")) {
+        LOG(Media, "HTMLMediaSession::wirelessVideoPlaybackDisabled - returning TRUE because of legacy attribute");
+        return true;
+    }
+#endif
+
+    MediaPlayer* player = element.player();
+    if (!player)
+        return false;
+
+    bool disabled = player->wirelessVideoPlaybackDisabled();
+    LOG(Media, "HTMLMediaSession::wirelessVideoPlaybackDisabled - returning %s because media engine says so", disabled ? "TRUE" : "FALSE");
+    
+    return disabled;
+}
+
+void HTMLMediaSession::setWirelessVideoPlaybackDisabled(const HTMLMediaElement& element, bool disabled)
+{
+    if (disabled)
+        addBehaviorRestriction(WirelessVideoPlaybackDisabled);
+    else
+        removeBehaviorRestriction(WirelessVideoPlaybackDisabled);
+
+    MediaPlayer* player = element.player();
+    if (!player)
+        return;
+
+    LOG(Media, "HTMLMediaSession::setWirelessVideoPlaybackDisabled - disabled %s", disabled ? "TRUE" : "FALSE");
+    player->setWirelessVideoPlaybackDisabled(disabled);
+}
+
+void HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners(const HTMLMediaElement& element, bool hasListeners)
+{
+    LOG(Media, "HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners - hasListeners %s", hasListeners ? "TRUE" : "FALSE");
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    if (element.shouldUseVideoPluginProxy()) {
+        MediaPlayer* player = element.player();
+        if (!player)
+            return;
+        
+        player->setHasPlaybackTargetAvailabilityListeners(hasListeners);
+        return;
+    }
+#else
+    UNUSED_PARAM(hasListeners);
+    UNUSED_PARAM(element);
+#endif
+
+    notImplemented();
 }
 #endif
 
@@ -200,6 +332,18 @@ bool HTMLMediaSession::requiresFullscreenForVideoPlayback(const HTMLMediaElement
 #endif
 
     return true;
+}
+
+void HTMLMediaSession::applyMediaPlayerRestrictions(const HTMLMediaElement& element)
+{
+    LOG(Media, "HTMLMediaSession::applyMediaPlayerRestrictions");
+
+#if ENABLE(IOS_AIRPLAY)
+    setWirelessVideoPlaybackDisabled(element, m_restrictions & WirelessVideoPlaybackDisabled);
+#else
+    UNUSED_PARAM(element);
+#endif
+    
 }
 
 }

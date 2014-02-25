@@ -104,13 +104,11 @@ ControllerIOS.prototype = {
         return this.shouldHaveStartPlaybackButton() || Controller.prototype.shouldHaveAnyUI.call(this) || this.currentPlaybackTargetIsWireless();
     },
 
-    currentPlaybackTargetIsWireless: function()
-    {
-        return ControllerIOS.gSimulateWirelessPlaybackTarget || ((typeof this.video.webkitCurrentPlaybackTargetIsWireless === "function") && this.video.webkitCurrentPlaybackTargetIsWireless());
+    currentPlaybackTargetIsWireless: function() {
+        return ControllerIOS.gSimulateWirelessPlaybackTarget || (('webkitCurrentPlaybackTargetIsWireless' in this.video) && this.video.webkitCurrentPlaybackTargetIsWireless);
     },
 
-    updateWirelessPlaybackStatus: function()
-    {
+    updateWirelessPlaybackStatus: function() {
         if (this.currentPlaybackTargetIsWireless()) {
             var backgroundImageSVG = "url('" + ControllerIOS.gWirelessImage + "')";
 
@@ -133,8 +131,7 @@ ControllerIOS.prototype = {
         }
     },
 
-    updateWirelessTargetAvailable: function()
-    {
+    updateWirelessTargetAvailable: function() {
         if (ControllerIOS.gSimulateWirelessPlaybackTarget || this.hasWirelessPlaybackTargets)
             this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.hidden);
         else
@@ -227,8 +224,7 @@ ControllerIOS.prototype = {
         return 'rgba(0, 0, 0, 0.5)';
     },
 
-    updateProgress: function()
-    {
+    updateProgress: function() {
         Controller.prototype.updateProgress.call(this);
 
         var width = this.controls.timeline.offsetWidth;
@@ -280,7 +276,7 @@ ControllerIOS.prototype = {
     },
 
     handleWrapperTouchStart: function(event) {
-        if (event.target != this.base)
+        if (event.target != this.base && event.target != this.controls.wirelessPlaybackStatus)
             return;
 
         if (this.controlsAreHidden()) {
@@ -309,9 +305,7 @@ ControllerIOS.prototype = {
         return this.video.webkitDisplayingFullscreen;
     },
 
-    handleFullscreenButtonClicked: function(event)
-    {
-        console.trace();
+    handleFullscreenButtonClicked: function(event) {
         if (this.isFullScreen())
             this.video.webkitExitFullscreen();
         else
@@ -358,20 +352,18 @@ ControllerIOS.prototype = {
         this.updateControls();
     },
 
-    handleWirelessPlaybackChange: function(event)
-    {
-        updateWirelessPlaybackStatus();
+    handleWirelessPlaybackChange: function(event) {
+        this.updateWirelessPlaybackStatus();
     },
 
-    handleWirelessTargetAvailableChange: function(event)
-    {
+    handleWirelessTargetAvailableChange: function(event) {
         this.hasWirelessPlaybackTargets = event.availability == "available";
-        updateWirelessTargetAvailable();
+        this.updateWirelessTargetAvailable();
     },
 
-    handleWirelessPickerButtonClicked: function(event)
-    {
-        video.webkitShowPlaybackTargetPicker();
+    handleWirelessPickerButtonClicked: function(event) {
+        this.video.webkitShowPlaybackTargetPicker();
+        event.stopPropagation();
     },
 };
 

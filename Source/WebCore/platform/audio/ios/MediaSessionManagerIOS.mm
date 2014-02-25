@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "MediaSession.h"
+#import "NotImplemented.h"
 #import "SoftLinking.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreThreadRun.h"
@@ -105,6 +106,13 @@ void MediaSessionManageriOS::resetRestrictions()
     addRestriction(MediaSession::Audio, AutoPreloadingNotPermitted);
     addRestriction(MediaSession::Video, AutoPreloadingNotPermitted);
 }
+
+#if ENABLE(IOS_AIRPLAY)
+void MediaSessionManageriOS::showPlaybackTargetPicker()
+{
+    notImplemented();
+}
+#endif
 
 } // namespace WebCore
 

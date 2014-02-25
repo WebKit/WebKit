@@ -49,9 +49,20 @@ public:
     bool pageAllowsPlaybackAfterResuming(const HTMLMediaElement&) const;
 #if ENABLE(IOS_AIRPLAY)
     bool showingPlaybackTargetPickerPermitted(const HTMLMediaElement&) const;
+
+    bool currentPlaybackTargetIsWireless(const HTMLMediaElement&) const;
+    void showPlaybackTargetPicker(const HTMLMediaElement&);
+    bool hasWirelessPlaybackTargets(const HTMLMediaElement&) const;
+
+    bool wirelessVideoPlaybackDisabled(const HTMLMediaElement&) const;
+    void setWirelessVideoPlaybackDisabled(const HTMLMediaElement&, bool);
+
+    void setHasPlaybackTargetAvailabilityListeners(const HTMLMediaElement&, bool);
 #endif
     bool requiresFullscreenForVideoPlayback(const HTMLMediaElement&) const;
     MediaPlayer::Preload effectivePreloadForElement(const HTMLMediaElement&) const;
+
+    void applyMediaPlayerRestrictions(const HTMLMediaElement&);
 
     // Restrictions to modify default behaviors.
     enum BehaviorRestrictionFlags {
@@ -63,6 +74,7 @@ public:
         RequirePageConsentToResumeMedia = 1 << 4,
 #if ENABLE(IOS_AIRPLAY)
         RequireUserGestureToShowPlaybackTargetPicker = 1 << 5,
+        WirelessVideoPlaybackDisabled =  1 << 6,
 #endif
     };
     typedef unsigned BehaviorRestrictions;

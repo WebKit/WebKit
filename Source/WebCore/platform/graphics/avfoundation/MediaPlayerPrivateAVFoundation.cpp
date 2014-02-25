@@ -892,6 +892,11 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
     case Notification::FunctionType:
         notification.function()();
         break;
+    case Notification::TargetIsWirelessChanged:
+#if ENABLE(IOS_AIRPLAY)
+        playbackTargetIsWirelessChanged();
+#endif
+        break;
 
     case Notification::None:
         ASSERT_NOT_REACHED();
@@ -971,6 +976,13 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
     LOG(Media, "MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(%p) - found %lu text tracks", this, m_textTracks.size());
 }
 
+#if ENABLE(IOS_AIRPLAY)
+void MediaPlayerPrivateAVFoundation::playbackTargetIsWirelessChanged()
+{
+    if (m_player)
+        m_player->currentPlaybackTargetIsWirelessChanged();
+}
+#endif
 } // namespace WebCore
 
 #endif

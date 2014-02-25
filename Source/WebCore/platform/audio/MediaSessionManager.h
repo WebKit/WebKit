@@ -69,6 +69,10 @@ public:
 
     bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;
 
+#if ENABLE(IOS_AIRPLAY)
+    virtual void showPlaybackTargetPicker() { }
+#endif
+
 protected:
     friend class MediaSession;
     explicit MediaSessionManager();

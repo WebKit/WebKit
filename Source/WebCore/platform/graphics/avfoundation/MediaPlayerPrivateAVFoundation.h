@@ -59,7 +59,10 @@ public:
     virtual void configureInbandTracks();
     virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) { }
     virtual InbandTextTrackPrivateAVF* currentTrack() const = 0;
-
+#if ENABLE(IOS_AIRPLAY)
+    void playbackTargetIsWirelessChanged();
+#endif
+    
     class Notification {
     public:
 #define FOR_EACH_MEDIAPLAYERPRIVATEAVFOUNDATION_NOTIFICATION_TYPE(macro) \
@@ -81,6 +84,7 @@ public:
     macro(DurationChanged) \
     macro(ContentsNeedsDisplay) \
     macro(InbandTracksNeedConfiguration) \
+    macro(TargetIsWirelessChanged) \
 
         enum Type {
 #define DEFINE_TYPE_ENUM(type) type,

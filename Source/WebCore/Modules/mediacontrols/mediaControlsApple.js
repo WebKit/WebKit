@@ -225,15 +225,15 @@ Controller.prototype = {
                 var handler = this[handlerName];
                 if (handler && handler instanceof Function)
                     handler.call(this, event);
-            } else {
-                if (!(this.listeners[event.type] instanceof Array))
-                    return;
-
-                this.listeners[event.type].forEach(function(entry) {
-                    if (entry.element === event.currentTarget && entry.handler instanceof Function)
-                        entry.handler.call(this, event);
-                }, this);
             }
+
+            if (!(this.listeners[event.type] instanceof Array))
+                return;
+
+            this.listeners[event.type].forEach(function(entry) {
+                if (entry.element === event.currentTarget && entry.handler instanceof Function)
+                    entry.handler.call(this, event);
+            }, this);
         } catch(e) {
             if (window.console)
                 console.error(e);

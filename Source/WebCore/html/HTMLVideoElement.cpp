@@ -133,21 +133,18 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
         }
     }
 #if ENABLE(IOS_AIRPLAY)
-    else if (name == webkitwirelessvideoplaybackdisabledAttr) {
-        if (player())
-            player()->setWirelessVideoPlaybackDisabled(webkitWirelessVideoPlaybackDisabled());
-    } else {
-        HTMLMediaElement::parseAttribute(name, value);
-
-        if (name == webkitairplayAttr) {
-            if (player())
-                player()->setWirelessVideoPlaybackDisabled(webkitWirelessVideoPlaybackDisabled());
-        }
-    }
-#else
-    else
-        HTMLMediaElement::parseAttribute(name, value);    
+    else if (name == webkitwirelessvideoplaybackdisabledAttr)
+        mediaSession().setWirelessVideoPlaybackDisabled(*this, webkitWirelessVideoPlaybackDisabled());
 #endif
+    else {
+        HTMLMediaElement::parseAttribute(name, value);    
+
+#if PLATFORM(IOS) && ENABLE(IOS_AIRPLAY)
+        if (name == webkitairplayAttr)
+            mediaSession().setWirelessVideoPlaybackDisabled(*this, webkitWirelessVideoPlaybackDisabled());
+#endif
+    }
+
 }
 
 bool HTMLVideoElement::supportsFullscreen() const
@@ -316,14 +313,7 @@ bool HTMLVideoElement::webkitDisplayingFullscreen()
 #if ENABLE(IOS_AIRPLAY)
 bool HTMLVideoElement::webkitWirelessVideoPlaybackDisabled() const
 {
-    Settings* settings = document().settings();
-    if (!settings || !settings->mediaPlaybackAllowsAirPlay())
-        return true;
-
-    String legacyAirplayAttributeValue = fastGetAttribute(webkitairplayAttr);
-    if (equalIgnoringCase(legacyAirplayAttributeValue, "deny"))
-        return true;
-    return fastHasAttribute(webkitwirelessvideoplaybackdisabledAttr);
+    return mediaSession().wirelessVideoPlaybackDisabled(*this);
 }
 
 void HTMLVideoElement::setWebkitWirelessVideoPlaybackDisabled(bool disabled)

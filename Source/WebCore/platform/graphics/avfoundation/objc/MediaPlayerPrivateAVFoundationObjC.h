@@ -113,6 +113,10 @@ public:
     void outputMediaDataWillChange(AVPlayerItemVideoOutput*);
 #endif
 
+#if ENABLE(IOS_AIRPLAY)
+    void playbackTargetIsWirelessDidChange();
+#endif
+
 private:
     MediaPlayerPrivateAVFoundationObjC(MediaPlayer*);
 
@@ -222,6 +226,12 @@ private:
     void updateVideoTracks();
 #endif
 
+#if ENABLE(IOS_AIRPLAY)
+    virtual bool isCurrentPlaybackTargetWireless() const override;
+    virtual bool wirelessVideoPlaybackDisabled() const override;
+    virtual void setWirelessVideoPlaybackDisabled(bool) override;
+#endif
+
     WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
 
     RetainPtr<AVURLAsset> m_avAsset;
@@ -277,6 +287,9 @@ private:
     bool m_cachedBufferEmpty;
     bool m_cachedBufferFull;
     bool m_cachedHasEnabledAudio;
+#if ENABLE(IOS_AIRPLAY)
+    mutable bool m_allowsWirelessVideoPlayback;
+#endif
 };
 
 }

@@ -331,6 +331,9 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_cachedBufferEmpty(false)
     , m_cachedBufferFull(false)
     , m_cachedHasEnabledAudio(false)
+#if ENABLE(IOS_AIRPLAY)
+    , m_allowsWirelessVideoPlayback(true)
+#endif
 {
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     playerToPrivateMap().set(player, this);
@@ -389,6 +392,9 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
             [m_avPlayer.get() removeTimeObserver:m_timeObserver.get()];
         m_timeObserver = nil;
         [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"rate"];
+#if ENABLE(IOS_AIRPLAY)
+        [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"externalPlaybackActive"];
+#endif
         m_avPlayer = nil;
     }
 
@@ -494,7 +500,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
     if (!m_videoLayer)
         return;
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer(%p) - destroying", this, m_videoLayer.get());
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer(%p) - destroying %p", this, m_videoLayer.get());
 
     [m_videoLayer.get() setPlayer:nil];
 
@@ -602,9 +608,16 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 
     m_avPlayer = adoptNS([[AVPlayer alloc] init]);
     [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
+#if ENABLE(IOS_AIRPLAY)
+    [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"externalPlaybackActive" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
+#endif
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     [m_avPlayer.get() setAppliesMediaSelectionCriteriaAutomatically:YES];
+#endif
+
+#if ENABLE(IOS_AIRPLAY)
+    [m_avPlayer.get() setAllowsExternalPlayback:m_allowsWirelessVideoPlayback];
 #endif
 
     if (m_avPlayerItem)
@@ -1459,7 +1472,7 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::createPixelBuffe
 
 #if !LOG_DISABLED
     double duration = monotonicallyIncreasingTime() - start;
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createPixelBuffer() - creating buffer took %.4f", this, narrowPrecisionToFloat(duration));
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createPixelBuffer(%p) - creating buffer took %.4f", this, narrowPrecisionToFloat(duration));
 #endif
 
     return buffer;
@@ -1876,7 +1889,7 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     NSArray *tracks = [m_avAsset.get() tracksWithMediaType:AVMediaTypeAudio];
     if (!tracks || [tracks count] != 1) {
         m_languageOfPrimaryAudioTrack = emptyString();
-        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack(%p) - %i audio tracks, returning emptyString()", this, (tracks ? [tracks count] : 0));
+        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack(%p) - %lu audio tracks, returning emptyString()", this, static_cast<unsigned long>(tracks ? [tracks count] : 0));
         return m_languageOfPrimaryAudioTrack;
     }
 
@@ -1892,6 +1905,39 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
 
     return m_languageOfPrimaryAudioTrack;
 }
+
+#if ENABLE(IOS_AIRPLAY)
+bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
+{
+    if (!m_avPlayer)
+        return false;
+
+    bool wirelessTarget = [m_avPlayer.get() isExternalPlaybackActive];
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless(%p) - returning %s", this, boolString(wirelessTarget));
+    return wirelessTarget;
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled() const
+{
+    if (!m_avPlayer)
+        return !m_allowsWirelessVideoPlayback;
+    
+    m_allowsWirelessVideoPlayback = ![m_avPlayer.get() allowsExternalPlayback];
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled(%p) - returning %s", this, boolString(!m_allowsWirelessVideoPlayback));
+
+    return !m_allowsWirelessVideoPlayback;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool disabled)
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(%p) - %s", this, boolString(disabled));
+    m_allowsWirelessVideoPlayback = !disabled;
+    if (!m_avPlayer)
+        return;
+    
+    [m_avPlayer.get() setAllowsExternalPlayback:disabled];
+}
+#endif
 
 void MediaPlayerPrivateAVFoundationObjC::playerItemStatusDidChange(int status)
 {
@@ -1996,6 +2042,13 @@ void MediaPlayerPrivateAVFoundationObjC::rateDidChange(double rate)
     updateStates();
     rateChanged();
 }
+    
+#if ENABLE(IOS_AIRPLAY)
+void MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange()
+{
+    playbackTargetIsWirelessChanged();
+}
+#endif
 
 NSArray* assetMetadataKeyNames()
 {
@@ -2082,7 +2135,7 @@ NSArray* itemKVOProperties()
     UNUSED_PARAM(object);
     id newValue = [change valueForKey:NSKeyValueChangeNewKey];
 
-    LOG(Media, "WebCoreAVFMovieObserver:observeValueForKeyPath(%p) - keyPath = %s", self, [keyPath UTF8String]);
+    LOG(Media, "WebCoreAVFMovieObserver::observeValueForKeyPath(%p) - keyPath = %s", self, [keyPath UTF8String]);
 
     if (!m_callback)
         return;
@@ -2130,6 +2183,10 @@ NSArray* itemKVOProperties()
         // A value changed for an AVPlayer.
         if ([keyPath isEqualToString:@"rate"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::rateDidChange, m_callback, [newValue doubleValue]);
+#if ENABLE(IOS_AIRPLAY)
+        else if ([keyPath isEqualToString:@"externalPlaybackActive"])
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange, m_callback);
+#endif
     }
     
     if (function.isNull())

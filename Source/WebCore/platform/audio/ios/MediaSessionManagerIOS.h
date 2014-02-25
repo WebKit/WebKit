@@ -44,6 +44,10 @@ private:
 
     virtual void resetRestrictions() override;
 
+#if ENABLE(IOS_AIRPLAY)
+    virtual void showPlaybackTargetPicker() override;
+#endif
+
     MediaSessionManageriOS();
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
 };
