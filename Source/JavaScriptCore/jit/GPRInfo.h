@@ -548,8 +548,8 @@ public:
     static const GPRReg regT1 = ARM64Registers::x1;
     static const GPRReg regT2 = ARM64Registers::x2;
     static const GPRReg regT3 = ARM64Registers::x23;
-    static const GPRReg regT4 = ARM64Registers::x24;
-    static const GPRReg regT5 = ARM64Registers::x5;
+    static const GPRReg regT4 = ARM64Registers::x5;
+    static const GPRReg regT5 = ARM64Registers::x24;
     static const GPRReg regT6 = ARM64Registers::x6;
     static const GPRReg regT7 = ARM64Registers::x7;
     static const GPRReg regT8 = ARM64Registers::x8;
@@ -564,9 +564,9 @@ public:
     static const GPRReg argumentGPR0 = ARM64Registers::x0; // regT0
     static const GPRReg argumentGPR1 = ARM64Registers::x1; // regT1
     static const GPRReg argumentGPR2 = ARM64Registers::x2; // regT2
-    static const GPRReg argumentGPR3 = ARM64Registers::x3; // regT3
-    static const GPRReg argumentGPR4 = ARM64Registers::x4; // regT4
-    static const GPRReg argumentGPR5 = ARM64Registers::x5; // regT5
+    static const GPRReg argumentGPR3 = ARM64Registers::x3;
+    static const GPRReg argumentGPR4 = ARM64Registers::x4;
+    static const GPRReg argumentGPR5 = ARM64Registers::x5; // regT4
     static const GPRReg argumentGPR6 = ARM64Registers::x6; // regT6
     static const GPRReg argumentGPR7 = ARM64Registers::x7; // regT7
     static const GPRReg nonArgGPR0 = ARM64Registers::x8; // regT8

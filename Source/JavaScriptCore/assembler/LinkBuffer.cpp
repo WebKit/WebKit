@@ -82,6 +82,8 @@ void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort eff
 {
     m_initialSize = m_assembler->m_assembler.codeSize();
     allocate(m_initialSize, ownerUID, effort);
+    if (didFailToAllocate())
+        return;
     uint8_t* inData = (uint8_t*)m_assembler->unlinkedCode();
     uint8_t* outData = reinterpret_cast<uint8_t*>(m_code);
     int readPtr = 0;
@@ -196,6 +198,8 @@ void LinkBuffer::allocate(size_t initialSize, void* ownerUID, JITCompilationEffo
 
 void LinkBuffer::shrink(size_t newSize)
 {
+    if (!m_executableMemory)
+        return;
     m_size = newSize;
     m_executableMemory->shrink(m_size);
 }

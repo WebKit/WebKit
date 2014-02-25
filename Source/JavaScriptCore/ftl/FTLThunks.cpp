@@ -70,7 +70,9 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     jit.storePtr(MacroAssembler::TrustedImmPtr(requiredScratchMemorySizeInBytes()), GPRInfo::nonArgGPR1);
 
     jit.loadPtr(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    jit.peek(GPRInfo::argumentGPR1, (stackMisalignment / sizeof(void*)) - 1);
+    jit.peek(
+        GPRInfo::argumentGPR1,
+        (stackMisalignment - MacroAssembler::pushToSaveByteOffset()) / sizeof(void*));
     MacroAssembler::Call functionCall = jit.call();
     
     // At this point we want to make a tail call to what was returned to us in the

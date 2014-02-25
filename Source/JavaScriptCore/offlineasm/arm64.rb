@@ -40,14 +40,14 @@ require "risc"
 #  x1  => t1, a1, r1
 #  x2  => t2, a2
 #  x3  => a3
-#  x5  => t5
+#  x5  => t4
 #  x6  => t6
 #  x9  => (nonArgGPR1 in baseline)
 # x13  => scratch (unused in baseline)
 # x16  => scratch
 # x17  => scratch
 # x23  => t3
-# x24  => t4
+# x24  => t5
 # x27  => csr1 (tagTypeNumber)
 # x28  => csr2 (tagMask)
 # x29  => cfr
@@ -113,9 +113,9 @@ class RegisterID
         when 't3'
             arm64GPRName('x23', kind)
         when 't4'
-            arm64GPRName('x24', kind)
-        when 't5'
             arm64GPRName('x5', kind)
+        when 't5'
+            arm64GPRName('x24', kind)
         when 't6'
             arm64GPRName('x6', kind)
         when 'cfr'
