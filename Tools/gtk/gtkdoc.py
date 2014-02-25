@@ -38,11 +38,14 @@ class GTKDoc(object):
     module_name        -- The name of the documentation module. For libraries this
                           is typically the library name. Required if not library path
                           is given.
-    source_dirs        -- A list of paths to the source code to be scanned. Required.
+    source_dirs        -- A list of paths to directories of source code to be scanned.
+                          Required if headers is not specified.
     ignored_files      -- A list of filenames to ignore in the source directory. It is
                           only necessary to provide the basenames of these files.
                           Typically it is important to provide an updated list of
                           ignored files to prevent warnings about undocumented symbols.
+    headers            -- A list of paths to headers to be scanned. Required if source_dirs
+                          is not specified.
     namespace          -- The library namespace.
     decorator          -- If a decorator is used to unhide certain symbols in header
                           files this parameter is required for successful scanning.
@@ -87,6 +90,7 @@ class GTKDoc(object):
         # Parameters specific to scanning.
         self.module_name = ''
         self.source_dirs = []
+        self.headers = []
         self.ignored_files = []
         self.namespace = ''
         self.decorator = ''
@@ -112,18 +116,18 @@ class GTKDoc(object):
         for key, value in iter(args.items()):
             setattr(self, key, value)
 
-        def raise_error_if_not_specified(key):
-            if not getattr(self, key):
-                raise Exception('%s not specified.' % key)
-
-        raise_error_if_not_specified('output_dir')
-        raise_error_if_not_specified('source_dirs')
-        raise_error_if_not_specified('module_name')
+        if not getattr(self, 'output_dir'):
+            raise Exception('output_dir not specified.')
+        if not getattr(self, 'module_name'):
+            raise Exception('module_name not specified.')
+        if not getattr(self, 'source_dirs') and not getattr(self, 'headers'):
+            raise Exception('Neither source_dirs nor headers specified.' % key)
 
         # Make all paths absolute in case we were passed relative paths, since
         # we change the current working directory when executing subcommands.
         self.output_dir = os.path.abspath(self.output_dir)
         self.source_dirs = [os.path.abspath(x) for x in self.source_dirs]
+        self.headers = [os.path.abspath(x) for x in self.headers]
         if self.library_path:
             self.library_path = os.path.abspath(self.library_path)
 
@@ -274,8 +278,9 @@ class GTKDoc(object):
                 '--module=%s' % self.module_name,
                 '--rebuild-types']
 
-        # Each source directory should be have its own "--source-dir=" prefix.
-        args.extend(['--source-dir=%s' % path for path in self.source_dirs])
+        if not self.headers:
+            # Each source directory should be have its own "--source-dir=" prefix.
+            args.extend(['--source-dir=%s' % path for path in self.source_dirs])
 
         if self.decorator:
             args.append('--ignore-decorators=%s' % self.decorator)
@@ -284,12 +289,17 @@ class GTKDoc(object):
         if self.output_dir:
             args.append('--output-dir=%s' % self.output_dir)
 
-        # gtkdoc-scan wants the basenames of ignored headers, so strip the
-        # dirname. Different from "--source-dir", the headers should be
-        # specified as one long string.
-        ignored_files_basenames = self._ignored_files_basenames()
-        if ignored_files_basenames:
-            args.append('--ignore-headers=%s' % ignored_files_basenames)
+        # We only need to pass the list of ignored files if the we are not using an explicit list of headers.
+        if not self.headers:
+            # gtkdoc-scan wants the basenames of ignored headers, so strip the
+            # dirname. Different from "--source-dir", the headers should be
+            # specified as one long string.
+            ignored_files_basenames = self._ignored_files_basenames()
+            if ignored_files_basenames:
+                args.append('--ignore-headers=%s' % ignored_files_basenames)
+
+        if self.headers:
+            args.extend(self.headers)
 
         self._run_command(args)
 

@@ -10,21 +10,23 @@ docs: docs-build.stamp
 .PHONY : docs
 DISTCLEANFILES += docs-build.stamp
 
-docs_build_stamp_list = \
+docs_build_dependencies = \
 	Source/WebKit/gtk/docs/webkitenvironment.xml
 
 if ENABLE_WEBKIT1
-docs_build_stamp_list += \
+docs_build_dependencies += \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
-	Source/WebKit/gtk/docs/webkitgtk-sections.txt
+	Source/WebKit/gtk/docs/webkitgtk-sections.txt \
+	gtkdoc-webkitgtk.cfg
 endif
 
 if ENABLE_WEBKIT2
-docs_build_stamp_list += \
+docs_build_dependencies += \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \
-	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt
+	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt \
+	gtkdoc-webkit2gtk.cfg
 endif
 
 $(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-docs.sgml: $(gdom_symbol_files) $(srcdir)/Tools/gtk/generate-webkitdom-doc-files
@@ -39,12 +41,13 @@ BUILT_SOURCES += \
 	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-docs.sgml \
 	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-sections.txt
 
-docs_build_stamp_list += \
+docs_build_dependencies += \
 	libGObjectDOMBindings.la \
 	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-docs.sgml \
-	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-sections.txt
+	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-sections.txt \
+	gtkdoc-webkitdom.cfg
 
-docs-build.stamp: $(docs_build_stamp_list)
+docs-build.stamp: $(docs_build_dependencies)
 	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
 	@touch docs-build.stamp
 

@@ -1,3 +1,13 @@
+2014-02-24  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] generate-gtkdoc should not generate documentation for source files for unbuilt source files
+        https://bugs.webkit.org/show_bug.cgi?id=128417
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Define the paths to the pkgconfig files here, so that they
+        may one day be used in the webkitdom config file generation.
+
 2014-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][CMake] Fix javascriptcore test failings by the jsCStack branch merge

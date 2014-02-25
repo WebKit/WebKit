@@ -376,6 +376,17 @@ $(GENSOURCES_WEBKIT)/webkitenumtypes.cpp: $(webkitgtk_h_api) $(WebKit)/GNUmakefi
 	&& cp xgen-gtc $@ \
 	&& rm -f xgen-gtc
 
+gtkdoc-webkitgtk.cfg: $(WebKit)/GNUmakefile.am $(srcdir)/Tools/gtk/GNUmakefile.am
+	$(AM_V_GEN)echo "[webkitgtk]" > $@ && \
+	echo "pkgconfig_file=$(webkit1_pkg_config_file)" >> $@ && \
+	echo "namespace=webkit" >> $@ && \
+	echo -e "cflags=$(libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS)" >> $@ && \
+	echo "doc_dir=$(srcdir)/Source/WebKit/gtk/docs" >> $@ && \
+	echo -e "source_dirs=$(srcdir)/Source/WebKit/gtk/webkit\n \
+           Source/WebKit/gtk/webkit" >> $@ && \
+	echo -e "headers=$(webkitgtk_static_h_api) Source/WebKit/gtk/webkit/webkitversion.h" >> $@
+BUILT_SOURCES += gtkdoc-webkitgtk.cfg
+
 EXTRA_DIST += \
 	$(WebKit)/ChangeLog \
 	$(WebKit)/NEWS \

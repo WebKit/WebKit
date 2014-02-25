@@ -803,6 +803,25 @@ Programs_WebKitPluginProcess_CXXFLAGS = \
 	-fvisibility-inlines-hidden \
 	$(global_cxxflags)
 
+# It would be nice to use the CPPFLAGS from the WebKit2 library here, but the prefix
+# header doesn't seem to play nicely with the gtkdoc tools.
+gtkdoc-webkit2gtk.cfg: $(WebKit2)/GNUmakefile.am $(WebKit2)/GNUmakefile.list.am
+	$(AM_V_GEN)echo "[webkit2gtk]" > $@ && \
+	echo "pkgconfig_file=$(webkit2_pkg_config_file)" >> $@ && \
+	echo "namespace=webkit" >> $@ && \
+	echo -e "cflags=-I$(srcdir)/Source\n \
+       -I$(WebKit2)/UIProcess/API/gtk\n \
+       -IDerivedSources/webkit2gtk/include\n \
+       -IDerivedSources/WebKit2/webkit2gtk\n" >> $@ && \
+	echo "doc_dir=$(WebKit2)/UIProcess/API/gtk/docs" >> $@ && \
+	echo -e "source_dirs=$(WebKit2)/UIProcess/API/gtk\n \
+           $(WebKit2)/WebProcess/InjectedBundle/API/gtk\n \
+           DerivedSources/WebKit2/webkit2gtk/webkit2\n" >> $@ && \
+	echo -e "headers=$(webkit2gtk_ui_h_api)\n \
+         $(webkit2gtk_web_extension_h_api)\n \
+         DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitVersion.h" >> $@
+BUILT_SOURCES += gtkdoc-webkit2gtk.cfg
+
 EXTRA_DIST += \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-sections.txt \

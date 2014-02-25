@@ -575,12 +575,15 @@ libGObjectDOMBindings_la_CFLAGS = \
 	-fvisibility=hidden \
 	$(global_cflags)
 
+webkitgtk_gdom_include_dirs = \
+	-I$(WebCore)/bindings \
+	-I$(WebCore)/bindings/gobject \
+	-I$(GENSOURCES_WEBKITDOM)
+
 libGObjectDOMBindings_la_CPPFLAGS = \
 	-DBUILDING_WebCore \
 	-DBUILDING_WEBKIT \
-	-I$(WebCore)/bindings \
-	-I$(WebCore)/bindings/gobject \
-	-I$(GENSOURCES_WEBKITDOM) \
+	$(webkitgtk_gdom_include_dirs) \
 	$(global_cppflags) \
 	$(platform_cppflags) \
 	$(platformgtk_cppflags) \
@@ -591,3 +594,13 @@ libGObjectDOMBindings_la_CPPFLAGS = \
 	$(FREETYPE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
+
+gtkdoc-webkitdom.cfg: $(WebCore)/bindings/gobject/GNUmakefile.am $(srcdir)/Tools/gtk/GNUmakefile.am
+	$(AM_V_GEN)echo "[webkitdomgtk]" > $@ && \
+	echo "pkgconfig_file=$(webkitdom_pkgconfig_file)" >> $@ && \
+	echo "namespace=webkit_dom" >> $@ && \
+	echo "doc_dir=DerivedSources/webkitdom/docs" >> $@ && \
+	echo -e "cflags=-I$(srcdir)/Source $(webkitgtk_gdom_include_dirs)" >> $@ && \
+	echo "source_dirs=$(top_builddir)/DerivedSources/webkitdom $(srcdir)/Source/WebCore/bindings/gobject" >> $@ && \
+	echo "headers=$(webkitgtk_gdom_built_h_api) DerivedSources/webkitdom/WebKitDOMDeprecated.h" >> $@
+BUILT_SOURCES += gtkdoc-webkitdom.cfg

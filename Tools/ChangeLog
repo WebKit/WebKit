@@ -1,3 +1,18 @@
+2014-02-24  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] generate-gtkdoc should not generate documentation for source files for unbuilt source files
+        https://bugs.webkit.org/show_bug.cgi?id=128417
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/GNUmakefile.am: Make the documentation process depend on the configuration files.
+        * gtk/generate-gtkdoc: Switch from using hard-coded configurations to reading them from
+        a makefile. This allows accepting a header list from the build system, which can be used
+        to dynamically build a list of ignored files. We can ignore any source file that doesn't
+        have a corresponding header file on the header list. 
+        * gtk/gtkdoc.py: Now accept a headers parameter, which can be used instead of passing just
+        source directories to gtkdoc-scan.
+
 2014-02-24  Anders Carlsson  <andersca@apple.com>
 
         Add a DefaultVisitedLinkProvider and route visited link actions through it

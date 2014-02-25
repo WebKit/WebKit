@@ -4,7 +4,7 @@ file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WEBKIT2GTK_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR})
 
 configure_file(UIProcess/API/gtk/WebKitVersion.h.in ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitVersion.h)
-configure_file(webkit2gtk.pc.in ${CMAKE_BINARY_DIR}/Source/WebKit2/webkit2gtk-${WEBKITGTK_API_VERSION}.pc @ONLY)
+configure_file(webkit2gtk.pc.in ${WebKit2_PKGCONFIG_FILE} @ONLY)
 
 add_definitions(-DWEBKIT2_COMPILATION)
 add_definitions(-DLIBEXECDIR="${CMAKE_INSTALL_FULL_LIBEXECDIR}")
@@ -789,4 +789,19 @@ install(FILES ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
 install(FILES ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib
               ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib
         DESTINATION ${INTROSPECTION_INSTALL_TYPELIBDIR}
+)
+
+file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkit2gtk.cfg
+    "[webkit2gtk]\n"
+    "pkgconfig_file=${WebKit2_PKGCONFIG_FILE}\n"
+    "namespace=webkit\n"
+    "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
+    "       -I${WEBKIT2_DIR}/UIProcess/API/gtk\n"
+    "       -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}\n"
+    "       -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}\n"
+    "doc_dir=${WEBKIT2_DIR}/UIProcess/API/gtk/docs\n"
+    "source_dirs=${WEBKIT2_DIR}/UIProcess/API/gtk\n"
+    "            ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk\n"
+    "            ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}\n"
+    "headers=${WebKit2GTK_ENUM_GENERATION_HEADERS} ${WebKit2WebExtension_INSTALLED_HEADERS}\n"
 )

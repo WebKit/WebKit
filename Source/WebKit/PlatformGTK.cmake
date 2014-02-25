@@ -1,7 +1,7 @@
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKITGTK_DIR})
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKITGTK_API_DIR})
 configure_file(gtk/webkit/webkitversion.h.in ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitversion.h)
-configure_file(gtk/webkit.pc.in ${CMAKE_BINARY_DIR}/Source/WebKit/gtk/webkitgtk-${WEBKITGTK_API_VERSION}.pc @ONLY)
+configure_file(gtk/webkit.pc.in ${WebKit_PKGCONFIG_FILE} @ONLY)
 
 add_definitions(-DPACKAGE_LOCALE_DIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 
@@ -155,7 +155,7 @@ add_custom_command(
 
 # To generate webkitenumtypes.h we want to use all installed headers, except webkitenumtypes.h itself.
 set(WebKitGTK_ENUM_GENERATION_HEADERS ${WebKitGTK_INSTALLED_HEADERS})
-list(REMOVE_ITEM WebKitGTK_ENUM_GENERATION_HEADERS ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/webkitenumtypes.h)
+list(REMOVE_ITEM WebKitGTK_ENUM_GENERATION_HEADERS ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.h)
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.h
            ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.cpp
@@ -227,4 +227,18 @@ install(FILES ${CMAKE_BINARY_DIR}/WebKit-${WEBKITGTK_API_VERSION}.gir
 )
 install(FILES ${CMAKE_BINARY_DIR}/WebKit-${WEBKITGTK_API_VERSION}.typelib
         DESTINATION ${INTROSPECTION_INSTALL_TYPELIBDIR}
+)
+
+file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitgtk.cfg
+    "[webkitgtk]\n"
+    "pkgconfig_file=${WebKit_PKGCONFIG_FILE}\n"
+    "namespace=webkit\n"
+    "cflags=-I${DERIVED_SOURCES_DIR}\n"
+    "       -I${CMAKE_SOURCE_DIR}\n"
+    "       -I${CMAKE_SOURCE_DIR}/Source\n"
+    "       -I${CMAKE_SOURCE_DIR}/JavaScriptCore/ForwardingHeaders\n"
+    "doc_dir=${WEBKIT_DIR}/gtk/docs\n"
+    "source_dirs=${WEBKIT_DIR}/gtk/webkit\n"
+    "            ${DERIVED_SOURCES_WEBKITGTK_API_DIR}\n"
+    "headers=${WebKitGTK_ENUM_GENERATION_HEADERS}\n"
 )
