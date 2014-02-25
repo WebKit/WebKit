@@ -509,7 +509,7 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
             break;
 
         // When moving backwards, the parent object needs to be checked, because technically it's "before" the starting element.
-        if (!isForward && objectMatchesSearchCriteriaWithResultLimit(startObject, criteria, results))
+        if (!isForward && startObject != this && objectMatchesSearchCriteriaWithResultLimit(startObject, criteria, results))
             break;
 
         previousObject = startObject;

@@ -1,5 +1,17 @@
 2014-02-24  Samuel White  <samuel_white@apple.com>
 
+        AX: AccessibilityObject::findMatchingObjects should never include 'this' in results.
+        https://bugs.webkit.org/show_bug.cgi?id=129243
+
+        Reviewed by Chris Fleizach.
+
+        Added test to ensure that the container you are searching in can never be a search result.
+
+        * platform/mac/accessibility/search-predicate-container-not-included-expected.txt: Added.
+        * platform/mac/accessibility/search-predicate-container-not-included.html: Added.
+
+2014-02-24  Samuel White  <samuel_white@apple.com>
+
         AX: findMatchingObjects backwards start position inconsistent with forwards start position when startObject == nullptr.
         https://bugs.webkit.org/show_bug.cgi?id=129266
 

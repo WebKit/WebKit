@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<title>Search Predicate Container Not Included</title>
+</head>
+<body>
+
+<ul id="container"><li id="start">item</li></ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that the search predicate container is not included in the search results.");
+    
+    if (window.accessibilityController) {
+        var containerElement = accessibilityController.accessibleElementById("container");
+        var startElement = accessibilityController.accessibleElementById("start");
+        
+        var backwardResultCount = containerElement.uiElementCountForSearchPredicate(startElement, false, "AXListSearchKey", "", false);
+        var forwardResultCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXListSearchKey", "", false);
+        // The search predicate container should not be found.
+        shouldBe("backwardResultCount", "0");
+        shouldBe("forwardResultCount", "0");
+        
+        // Hide superfluous text.
+        document.getElementById("container").style.display = "none";
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
