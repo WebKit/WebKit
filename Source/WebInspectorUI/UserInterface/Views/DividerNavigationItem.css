@@ -26,7 +26,7 @@
 .navigation-bar .item.divider {
     width: 1px;
 
-    background-image: -webkit-linear-gradient(rgb(190, 190, 190), rgb(190, 190, 190));
+    background-image: linear-gradient(rgb(190, 190, 190), rgb(190, 190, 190));
     background-size: 100% 13px;
     background-repeat: no-repeat;
     background-position: center;

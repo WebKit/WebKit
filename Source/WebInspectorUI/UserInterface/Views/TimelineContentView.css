@@ -46,6 +46,6 @@
 }
 
 .content-view.timeline > .view-container > .timeline-view > .data-grid table.data {
-    background-image: -webkit-linear-gradient(top, white, white 50%, rgb(243, 243, 243) 50%, rgb(243, 243, 243));
+    background-image: linear-gradient(to bottom, white, white 50%, rgb(243, 243, 243) 50%, rgb(243, 243, 243));
     background-size: 100% 40px;
 }

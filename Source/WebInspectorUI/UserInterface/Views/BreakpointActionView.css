@@ -46,11 +46,11 @@
 }
 
 .breakpoint-action-append-button {
-    background-image: url(../Images/BreakpointActionAdd.svg), -webkit-linear-gradient(top, rgb(250, 250, 250), rgb(200, 200, 200));
+    background-image: url(../Images/BreakpointActionAdd.svg), linear-gradient(to bottom, rgb(250, 250, 250), rgb(200, 200, 200));
 }
 
 .breakpoint-action-remove-button {
-    background-image: url(../Images/BreakpointActionRemove.svg), -webkit-linear-gradient(top, rgb(250, 250, 250), rgb(200, 200, 200));
+    background-image: url(../Images/BreakpointActionRemove.svg), linear-gradient(to bottom, rgb(250, 250, 250), rgb(200, 200, 200));
 }
 
 .breakpoint-action-block-body {

@@ -76,8 +76,8 @@
     text-align: left;
     vertical-align: middle;
 
-    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), -webkit-linear-gradient(top, transparent, transparent),
-        -webkit-linear-gradient(top, white, white 25%, rgb(244, 244, 244) 50%, rgb(236, 236, 236) 50%, rgb(237, 237, 237));
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(to bottom, transparent, transparent),
+        linear-gradient(to bottom, white, white 25%, rgb(244, 244, 244) 50%, rgb(236, 236, 236) 50%, rgb(237, 237, 237));
     background-size: 1px 11px, 0 0, 100% 100%;
     background-position: left 2px, right 2px, center;
     background-repeat: no-repeat;
@@ -126,7 +126,7 @@
     bottom: 0;
     height: 100%;
     border-top: 0 none transparent;
-    background-image: -webkit-linear-gradient(top, white, white 50%, rgb(243, 246, 250) 50%, rgb(243, 246, 250));
+    background-image: linear-gradient(to bottom, white, white 50%, rgb(243, 246, 250) 50%, rgb(243, 246, 250));
     background-size: 100% 32px;
     table-layout: fixed;
 }
@@ -175,8 +175,8 @@
 }
 
 .data-grid th.sortable:not(.mouse-over-collapser):active {
-    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), -webkit-linear-gradient(top, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-        -webkit-linear-gradient(top, rgb(224, 224, 224), rgb(224, 224, 224) 25%, rgb(214, 214, 214) 50%, rgb(207, 207, 207) 50%, rgb(208, 208, 208));
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+        linear-gradient(to bottom, rgb(224, 224, 224), rgb(224, 224, 224) 25%, rgb(214, 214, 214) 50%, rgb(207, 207, 207) 50%, rgb(208, 208, 208));
     background-size: 1px 15px, 1px 15px, 100% 100%;
     background-position: left top, right top, center;
 
@@ -185,8 +185,8 @@
 }
 
 .data-grid th.sort-ascending, .data-grid th.sort-descending {
-    background-image: -webkit-linear-gradient(top, rgba(0, 0, 120, 0.2), rgba(0, 0, 120, 0.2)), -webkit-linear-gradient(top, rgba(0, 0, 120, 0.2), rgba(0, 0, 120, 0.2)),
-        -webkit-linear-gradient(top, rgb(199, 226, 246), rgb(169, 209, 239) 25%, rgb(158, 204, 239) 50%, rgb(142, 196, 237) 50%, rgb(187, 230, 245));
+    background-image: linear-gradient(to bottom, rgba(0, 0, 120, 0.2), rgba(0, 0, 120, 0.2)), linear-gradient(to bottom, rgba(0, 0, 120, 0.2), rgba(0, 0, 120, 0.2)),
+        linear-gradient(to bottom, rgb(199, 226, 246), rgb(169, 209, 239) 25%, rgb(158, 204, 239) 50%, rgb(142, 196, 237) 50%, rgb(187, 230, 245));
     background-size: 1px 15px, 1px 15px, 100% 100%;
     background-position: left top, right top, center;
 
@@ -195,8 +195,8 @@
 }
 
 .data-grid th.sortable.sort-ascending:not(.mouse-over-collapser):active, .data-grid th.sortable.sort-descending:not(.mouse-over-collapser):active {
-    background-image: -webkit-linear-gradient(top, rgba(0, 0, 120, 0.2), rgba(0, 0, 120, 0.2)), -webkit-linear-gradient(top, rgba(0, 0, 120, 0.2), rgba(0, 0, 120, 0.2)),
-        -webkit-linear-gradient(top, rgb(144, 180, 227), rgb(109, 160, 220) 25%, rgb(96, 155, 221) 50%, rgb(77, 146, 219) 50%, rgb(130, 186, 227));
+    background-image: linear-gradient(to bottom, rgba(0, 0, 120, 0.2), rgba(0, 0, 120, 0.2)), linear-gradient(to bottom, rgba(0, 0, 120, 0.2), rgba(0, 0, 120, 0.2)),
+        linear-gradient(to bottom, rgb(144, 180, 227), rgb(109, 160, 220) 25%, rgb(96, 155, 221) 50%, rgb(77, 146, 219) 50%, rgb(130, 186, 227));
     background-size: 1px 15px, 1px 15px, 100% 100%;
     background-position: left top, right top, center;
 
@@ -277,8 +277,8 @@
 
 body.window-inactive .data-grid th.sort-ascending,
 body.window-inactive .data-grid th.sort-descending {
-    background-image: -webkit-linear-gradient(top, white, white 25%, rgb(244, 244, 244) 50%, rgb(236, 236, 236) 50%, rgb(237, 237, 237)),
-        -webkit-linear-gradient(top, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+    background-image: linear-gradient(to bottom, white, white 25%, rgb(244, 244, 244) 50%, rgb(236, 236, 236) 50%, rgb(237, 237, 237)),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
     background-size: 100% 100%, 1px 11px;
     background-position: center, right center;
     background-repeat: no-repeat;

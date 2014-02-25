@@ -71,7 +71,7 @@
 .completion-suggestions-container:not(:active) > .item.selected,
 .completion-suggestions-container > .item:active {
     box-shadow: inset rgb(87, 152, 206) 0 1px 0;
-    background: -webkit-linear-gradient(top, rgb(110, 167, 216), rgb(36, 114, 181));
+    background: linear-gradient(to bottom, rgb(110, 167, 216), rgb(36, 114, 181));
 
     color: white;
     text-shadow: rgb(51, 88, 123) 0 1px 0;

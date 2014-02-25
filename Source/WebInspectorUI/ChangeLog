@@ -1,5 +1,63 @@
 2014-02-24  Timothy Hatcher  <timothy@apple.com>
 
+        Switch from prefixed CSS gradient to unprefixed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129279
+
+        Reviewed by Andreas Kling.
+
+        * UserInterface/Views/BreakpointActionView.css:
+        (.breakpoint-action-append-button):
+        (.breakpoint-action-remove-button):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .color-swatch):
+        * UserInterface/Views/CompletionSuggestionsView.css:
+        (.completion-suggestions-container > .item:active):
+        * UserInterface/Views/DashboardView.css:
+        (.toolbar .dashboard):
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid th):
+        (.data-grid table.data):
+        (.data-grid th.sortable:not(.mouse-over-collapser):active):
+        (.data-grid th.sort-ascending, .data-grid th.sort-descending):
+        (.data-grid th.sortable.sort-ascending:not(.mouse-over-collapser):active, .data-grid th.sortable.sort-descending:not(.mouse-over-collapser):active):
+        (body.window-inactive .data-grid th.sort-descending):
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .header):
+        (.details-section .details-section > .header):
+        * UserInterface/Views/DividerNavigationItem.css:
+        (.navigation-bar .item.divider):
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner > button:active:not(:disabled)):
+        * UserInterface/Views/Main.css:
+        (#split-content-browser > .navigation-bar):
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation > .overflow-shadow):
+        (.navigation-sidebar-panel-content-tree-outline .item.selected):
+        (.navigation-sidebar-panel-content-tree-outline:focus .item.selected):
+        (body.window-inactive .navigation-sidebar-panel-content-tree-outline .item.selected):
+        * UserInterface/Views/ProbeSetDataGrid.css:
+        (.details-section.probe-set .data-grid > .data-container td.unknown-value):
+        (.details-section.probe-set .data-grid th):
+        * UserInterface/Views/RadioButtonNavigationItem.css:
+        (.navigation-bar .item.radio.button.text-only.selected):
+        * UserInterface/Views/TextEditor.css:
+        (.text-editor .bouncy-highlight):
+        * UserInterface/Views/TimelineContentView.css:
+        (.content-view.timeline > .view-container > .timeline-view > .data-grid table.data):
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.timeline-data-grid-tree-outline .item:hover):
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .header > .divider):
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.timeline > .title-bar):
+        (.sidebar > .panel.timeline > .content > .stripe-background):
+        * UserInterface/Views/Toolbar.css:
+        (body:not(.mac-platform) .toolbar):
+        (body.docked.mac-platform.mavericks .toolbar):
+
+2014-02-24  Timothy Hatcher  <timothy@apple.com>
+
         Fix the missing navigation bar in the Debugger sidebar panel.
 
         Sorting the CSS resources caused specificity issue.

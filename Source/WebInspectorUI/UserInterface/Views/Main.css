@@ -138,7 +138,7 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
 #split-content-browser > .navigation-bar {
     cursor: row-resize;
 
-    background-image: -webkit-linear-gradient(top, rgb(248, 248, 248), rgb(226, 226, 226));
+    background-image: linear-gradient(to bottom, rgb(248, 248, 248), rgb(226, 226, 226));
 }
 
 #split-content-browser > .navigation-bar .item:not(.flexible-space) {

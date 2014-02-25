@@ -132,7 +132,7 @@
 
 .find-banner > button:active:not(:disabled) {
     border: 1px solid rgb(141, 141, 141);
-    background-image: -webkit-linear-gradient(top, rgb(200, 200, 200), rgb(218, 218, 218));
+    background-image: linear-gradient(to bottom, rgb(200, 200, 200), rgb(218, 218, 218));
     box-shadow: rgba(255, 255, 255, 0.33) 0 1px 0, inset rgb(165, 165, 165) 0 1px 1px;
 }
 

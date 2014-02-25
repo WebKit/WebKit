@@ -109,7 +109,7 @@
     box-shadow: inset rgb(250, 232, 140) 0 -1px 0, rgba(211, 197, 96, 1) 0 1px 1px, rgba(0, 0, 0, 0.33) 0 1px 2px 1px;
     text-shadow: white 0 0 2px;
 
-    background: -webkit-linear-gradient(top, rgb(250, 237, 108), rgb(242, 220, 100));
+    background: linear-gradient(to bottom, rgb(250, 237, 108), rgb(242, 220, 100));
     border-radius: 7px;
 
     padding: 2px 4px;

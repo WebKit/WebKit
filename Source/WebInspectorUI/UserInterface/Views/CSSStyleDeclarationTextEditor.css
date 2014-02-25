@@ -125,8 +125,8 @@
     position: relative;
 
     /* Make a checkered background for transparent colors to show against. */
-    background-image: -webkit-linear-gradient(top, rgb(204, 204, 204), rgb(204, 204, 204)),
-        -webkit-linear-gradient(top, rgb(204, 204, 204), rgb(204, 204, 204));
+    background-image: linear-gradient(to bottom, rgb(204, 204, 204), rgb(204, 204, 204)),
+        linear-gradient(to bottom, rgb(204, 204, 204), rgb(204, 204, 204));
     background-color: white;
     background-size: calc(50% + 1px);
     background-position: top left, bottom right;

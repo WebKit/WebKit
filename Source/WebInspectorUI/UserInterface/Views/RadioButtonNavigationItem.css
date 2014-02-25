@@ -33,8 +33,8 @@
 
 .navigation-bar .item.radio.button.text-only.selected {
     background-repeat: no-repeat;
-    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.09) 12%, rgba(0, 0, 0, 0.06) 12%, transparent), -webkit-linear-gradient(top, rgba(0, 0, 0, 0.45), transparent),
-        -webkit-linear-gradient(top, rgba(0, 0, 0, 0.45), transparent);
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.09) 12%, rgba(0, 0, 0, 0.06) 12%, transparent), linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent);
     background-size: 100% 100%, 1px 100%, 1px 100%;
     background-position: left top, left top, right top;
 

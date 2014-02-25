@@ -97,7 +97,7 @@
     height: 22px;
 
     border-bottom: 1px solid rgb(179, 179, 179);
-    background-image: -webkit-linear-gradient(top, rgb(238, 240, 244), rgb(224, 226, 230));
+    background-image: linear-gradient(to bottom, rgb(238, 240, 244), rgb(224, 226, 230));
 
     color: rgb(57, 57, 57);
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
@@ -195,7 +195,7 @@
     right: 0;
     min-height: 100%;
 
-    background-image: -webkit-linear-gradient(top, transparent, transparent 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03));
+    background-image: linear-gradient(to bottom, transparent, transparent 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03));
     background-size: 100% 40px;
 
     pointer-events: none;

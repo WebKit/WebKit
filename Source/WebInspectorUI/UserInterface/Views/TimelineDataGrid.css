@@ -207,7 +207,7 @@
     color: white;
     border-radius: 4px;
     box-shadow: inset rgb(87, 152, 206) 0 1px 0;
-    background: -webkit-linear-gradient(top, rgb(110, 167, 216), rgb(36, 114, 181));
+    background: linear-gradient(to bottom, rgb(110, 167, 216), rgb(36, 114, 181));
     background-origin: padding-box;
     background-clip: padding-box;
     text-shadow: rgb(51, 88, 123) 0 1px 0;

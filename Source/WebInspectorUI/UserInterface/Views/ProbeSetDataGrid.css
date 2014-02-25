@@ -31,7 +31,7 @@
 
 .details-section.probe-set .data-grid > .data-container td.unknown-value {
     background-color: rgba(230, 230, 230, 0.8);
-    background-image: -webkit-repeating-linear-gradient(-45deg, transparent, transparent 7px, rgba(255, 255, 255, .5) 7px, rgba(255, 255, 255, .5) 14px);
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 7px, rgba(255, 255, 255, .5) 7px, rgba(255, 255, 255, .5) 14px);
 }
 
 .details-section.probe-set .data-grid .data-container tr.revealed.highlighted {
@@ -91,7 +91,7 @@
 
     font-size: 11px;
     font-family: "Lucida Grande", sans-serif;
-    background-image: -webkit-linear-gradient(top, rgb(248, 248, 248), rgb(226, 226, 226));
+    background-image: linear-gradient(to bottom, rgb(248, 248, 248), rgb(226, 226, 226));
     background-size: 100% 100% !important;
     background-position: center !important;
     background-repeat: no-repeat !important;

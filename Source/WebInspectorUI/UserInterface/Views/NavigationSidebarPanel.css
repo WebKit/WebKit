@@ -50,8 +50,8 @@
 
     pointer-events: none;
 
-    background-image: -webkit-radial-gradient(center, ellipse closest-side, rgba(0, 0, 0, 0.2) 25%, transparent),
-        -webkit-linear-gradient(left, rgba(0, 0, 0, 0.0125), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.0125));
+    background-image: radial-gradient(center, ellipse closest-side, rgba(0, 0, 0, 0.2) 25%, transparent),
+        linear-gradient(to right, rgba(0, 0, 0, 0.0125), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.0125));
     background-size: 125% 15px, 100% 1px;
     background-position: top center, bottom center;
     background-repeat: no-repeat;
@@ -219,19 +219,19 @@
 
     border-top: 1px solid rgb(162, 177, 201);
 
-    background-image: -webkit-linear-gradient(top, rgb(175, 190, 213), rgb(130, 151, 182));
+    background-image: linear-gradient(to bottom, rgb(175, 190, 213), rgb(130, 151, 182));
     background-origin: padding;
     background-clip: padding;
 }
 
 .navigation-sidebar-panel-content-tree-outline:focus .item.selected {
     border-top: 1px solid rgb(148, 174, 193);
-    background-image: -webkit-linear-gradient(top, rgb(154, 180, 203), rgb(112, 139, 176));
+    background-image: linear-gradient(to bottom, rgb(154, 180, 203), rgb(112, 139, 176));
 }
 
 body.window-inactive .navigation-sidebar-panel-content-tree-outline .item.selected {
     border-top: 1px solid rgb(168, 168, 168);
-    background-image: -webkit-linear-gradient(top, rgb(194, 194, 194), rgb(158, 158, 158));
+    background-image: linear-gradient(to bottom, rgb(194, 194, 194), rgb(158, 158, 158));
 }
 
 .navigation-sidebar-panel-content-tree-outline .item .titles {

@@ -52,7 +52,7 @@
     top: 0;
     bottom: 0;
     -webkit-transform: translateX(-1px);
-    background-image: -webkit-linear-gradient(bottom, rgba(200, 200, 200, 1), rgba(200, 200, 200, 0) 85%);
+    background-image: linear-gradient(to bottom, rgba(200, 200, 200, 0), rgba(200, 200, 200, 1) 85%);
 }
 
 .timeline-ruler > .header > .divider > .label {
