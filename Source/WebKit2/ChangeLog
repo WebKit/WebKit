@@ -1,3 +1,13 @@
+2014-02-24  Anders Carlsson  <andersca@apple.com>
+
+        WKProcessPool should use secondary processes + network process
+        https://bugs.webkit.org/show_bug.cgi?id=129282
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool initWithConfiguration:]):
+
 2014-02-24  Jeremy Jones  <jeremyj@apple.com>
 
         WK2 AVKit fullscreen doesn't display video.

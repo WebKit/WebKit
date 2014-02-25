@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "HistoryClient.h"
+#import "ProcessModel.h"
 #import "WKObject.h"
 #import "WKProcessPoolConfigurationPrivate.h"
 #import "WebCertificateInfo.h"
@@ -69,6 +70,8 @@
 
     API::Object::constructInWrapper<WebKit::WebContext>(self, bundlePath);
     _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());
+    _context->setUsesNetworkProcess(true);
+    _context->setProcessModel(WebKit::ProcessModelMultipleSecondaryProcesses);
 
     return self;
 }
