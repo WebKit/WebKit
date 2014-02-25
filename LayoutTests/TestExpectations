@@ -109,3 +109,5 @@ webkit.org/b/129327 inspector-protocol/indexeddb/basics.html [ Pass Failure ]
 
 # These assert in IndexedDB code very freqyently.
 webkit.org/b/129328 inspector-protocol/model [ Skip ]
+
+webkit.org/b/129331 inspector-protocol/page/deny-X-FrameOption.html [ Pass Failure ]
