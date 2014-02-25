@@ -1,3 +1,34 @@
+2014-02-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support abbr, acronym
+        https://bugs.webkit.org/show_bug.cgi?id=128860
+
+        Reviewed by Mario Sanchez Prada.
+
+        Expose the data in <abbr>, <acronym> and <th abbr=""> as an 
+        alternateTextValue() parameter.
+
+        Test: platform/mac/accessibility/abbr-acronym-tags.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::hasTagName):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::alternateTextValue):
+        (WebCore::AccessibilityObject::supportsAlternateTextValue):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::alternateTextValue):
+        (WebCore::AccessibilityRenderObject::supportsAlternateTextValue):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::alternateTextValue):
+        (WebCore::AccessibilityTableCell::supportsAlternateTextValue):
+        * accessibility/AccessibilityTableCell.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetAlternateTextValue):
+        (AXAttributedStringAppendText):
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2014-02-24  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] generate-gtkdoc should not generate documentation for source files for unbuilt source files

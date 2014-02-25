@@ -142,6 +142,16 @@ bool AccessibilityTableCell::isTableCellInSameColGroup(AccessibilityTableCell* t
     return false;
 }
     
+String AccessibilityTableCell::expandedTextValue() const
+{
+    return getAttribute(abbrAttr);
+}
+    
+bool AccessibilityTableCell::supportsExpandedTextValue() const
+{
+    return isTableHeaderCell() && hasAttribute(abbrAttr);
+}
+    
 void AccessibilityTableCell::columnHeaders(AccessibilityChildrenVector& headers)
 {
     AccessibilityTable* parent = parentTable();

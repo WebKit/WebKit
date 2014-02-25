@@ -2431,6 +2431,26 @@ bool AccessibilityRenderObject::isDescendantOfElementType(const QualifiedName& t
     }
     return false;
 }
+    
+String AccessibilityRenderObject::expandedTextValue() const
+{
+    if (AccessibilityObject* parent = parentObject()) {
+        if (parent->hasTagName(abbrTag) || parent->hasTagName(acronymTag))
+            return parent->getAttribute(titleAttr);
+    }
+    
+    return String();
+}
+
+bool AccessibilityRenderObject::supportsExpandedTextValue() const
+{
+    if (roleValue() == StaticTextRole) {
+        if (AccessibilityObject* parent = parentObject())
+            return parent->hasTagName(abbrTag) || parent->hasTagName(acronymTag);
+    }
+    
+    return false;
+}
 
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 {

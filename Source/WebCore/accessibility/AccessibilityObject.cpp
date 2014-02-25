@@ -1548,6 +1548,13 @@ const AtomicString& AccessibilityObject::invalidStatus() const
     return invalidStatusTrue;
 }
  
+bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
+{
+    if (Node* node = this->node())
+        return node->hasTagName(tagName);
+    return false;
+}
+    
 bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
 {
     Node* elementNode = node();

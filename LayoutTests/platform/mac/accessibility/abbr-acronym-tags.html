@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content1">
+<abbr title="World Wide Web">WWW</abbr>
+</div>
+
+<div id="content2">
+<acronym title="WebKit2">WK2</acronym>
+</div>
+
+<table border=1>
+<tr><th id="cell" abbr="Test">Longer Test</th></tr>
+<tr><td>test</td></tr>
+</table>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that 'alternate text' for certain tags works correctly, including abbr tag, acronym tag and abbr attribute.");
+
+    if (window.accessibilityController) {
+
+        var content = accessibilityController.accessibleElementById("content1");
+        var abbr = content.childAtIndex(0);
+        shouldBe("abbr.stringAttributeValue('AXExpandedTextValue')", "'World Wide Web'");
+        var markerRange = content.textMarkerRangeForElement(content);
+        shouldBeTrue("content.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange)");
+
+        content = accessibilityController.accessibleElementById("content2");
+        var acronym = content.childAtIndex(0);
+        shouldBe("acronym.stringAttributeValue('AXExpandedTextValue')", "'WebKit2'");
+        markerRange = content.textMarkerRangeForElement(content);
+        shouldBeTrue("content.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange)");
+
+        var headerCell = accessibilityController.accessibleElementById("cell");
+        shouldBe("headerCell.stringAttributeValue('AXExpandedTextValue')", "'Test'");
+
+
+    }
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -197,6 +197,10 @@ using namespace HTMLNames;
 #define NSAccessibilityPathAttribute @"AXPath"
 #endif
 
+#ifndef NSAccessibilityExpandedTextValueAttribute
+#define NSAccessibilityExpandedTextValueAttribute @"AXExpandedTextValue"
+#endif
+
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
 #define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
 
@@ -919,6 +923,17 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
     }
 }
 
+static void AXAttributeStringSetexpandedTextValue(NSMutableAttributedString *attrString, RenderObject* renderer, NSRange range)
+{
+    if (!renderer || !AXAttributedStringRangeIsValid(attrString, range))
+        return;
+    AccessibilityObject* axObject = renderer->document().axObjectCache()->getOrCreate(renderer);
+    if (axObject->supportsExpandedTextValue())
+        [attrString addAttribute:NSAccessibilityExpandedTextValueAttribute value:axObject->expandedTextValue() range:range];
+    else
+        [attrString removeAttribute:NSAccessibilityExpandedTextValueAttribute range:range];
+}
+
 static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
 {
     if (!renderer)
@@ -971,7 +986,8 @@ static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, N
 static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, StringView text)
 {
     // skip invisible text
-    if (!node->renderer())
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
         return;
     
     // easier to calculate the range before appending the string
@@ -993,9 +1009,10 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     [attrString removeAttribute:NSAccessibilityMisspelledTextAttribute range:attrStringRange];
     
     // set new attributes
-    AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
-    AXAttributeStringSetHeadingLevel(attrString, node->renderer(), attrStringRange);
-    AXAttributeStringSetBlockquoteLevel(attrString, node->renderer(), attrStringRange);
+    AXAttributeStringSetStyle(attrString, renderer, attrStringRange);
+    AXAttributeStringSetHeadingLevel(attrString, renderer, attrStringRange);
+    AXAttributeStringSetBlockquoteLevel(attrString, renderer, attrStringRange);
+    AXAttributeStringSetexpandedTextValue(attrString, renderer, attrStringRange);
     AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AccessibilityObject::anchorElementForNode(node), attrStringRange);
     
     // do spelling last because it tends to break up the range
@@ -1213,6 +1230,9 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     
     if (m_object->supportsPath())
         [additional addObject:NSAccessibilityPathAttribute];
+    
+    if (m_object->supportsExpandedTextValue())
+        [additional addObject:NSAccessibilityExpandedTextValueAttribute];
     
     return additional;
 }
@@ -2847,6 +2867,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if ([attributeName isEqualToString:NSAccessibilityMathPrescriptsAttribute])
             return [self accessibilityMathPrescriptPairs];
     }
+    
+    if ([attributeName isEqualToString:NSAccessibilityExpandedTextValueAttribute])
+        return m_object->expandedTextValue();
     
     if ([attributeName isEqualToString:NSAccessibilityDOMIdentifierAttribute])
         return m_object->identifierAttribute();

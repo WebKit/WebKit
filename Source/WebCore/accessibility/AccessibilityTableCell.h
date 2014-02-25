@@ -64,7 +64,9 @@ private:
     virtual AccessibilityObject* titleUIElement() const override;
     virtual bool exposesTitleUIElement() const override { return true; }
     virtual bool computeAccessibilityIsIgnored() const override;
-    
+    virtual String expandedTextValue() const;
+    virtual bool supportsExpandedTextValue() const;
+
     bool isTableCellInSameRowGroup(AccessibilityTableCell*);
     bool isTableCellInSameColGroup(AccessibilityTableCell*);
 };
