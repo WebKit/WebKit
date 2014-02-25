@@ -153,6 +153,7 @@
 #include "MockMediaStreamCenter.h"
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionHandlerMock.h"
+#include "UserMediaClientMock.h"
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -307,6 +308,7 @@ Internals::Internals(Document* document)
 #if ENABLE(MEDIA_STREAM)
     MockMediaStreamCenter::registerMockMediaStreamCenter();
     enableMockRTCPeerConnectionHandler();
+    WebCore::provideUserMediaTo(document->page(), new UserMediaClientMock());
 #endif
 }
 

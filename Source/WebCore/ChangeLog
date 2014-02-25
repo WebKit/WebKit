@@ -1,3 +1,15 @@
+2014-02-25  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [MediaStream] Adding mock implementation of UserMediaClient
+        https://bugs.webkit.org/show_bug.cgi?id=129274
+
+        Reviewed by Eric Carlson.
+
+        * platform/mock/UserMediaClientMock.h: Added.
+        (WebCore::UserMediaClientRequestNotifier::UserMediaClientRequestNotifier):
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+
 2014-02-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Tighten bitfields in live NodeLists and HTMLCollections
