@@ -23,29 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VisitedLinkProvider_h
-#define VisitedLinkProvider_h
+#include "config.h"
+#include "DefaultVisitedLinkProvider.h"
 
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "PlatformStrategies.h"
+#include "VisitedLinkStrategy.h"
 
 namespace WebCore {
 
-typedef uint64_t LinkHash;
-class Page;
-class URL;
+PassRefPtr<DefaultVisitedLinkProvider> DefaultVisitedLinkProvider::create()
+{
+    return adoptRef(new DefaultVisitedLinkProvider);
+}
 
-class VisitedLinkProvider : public RefCounted<VisitedLinkProvider> {
-public:
-    VisitedLinkProvider();
-    virtual ~VisitedLinkProvider();
+DefaultVisitedLinkProvider::DefaultVisitedLinkProvider()
+{
+}
 
-    // FIXME: These two members should only take the link hash.
-    virtual bool isLinkVisited(Page&, LinkHash, const URL& baseURL, const AtomicString& attributeURL) = 0;
-    virtual void addVisitedLink(Page&, LinkHash) = 0;
-};
+DefaultVisitedLinkProvider::~DefaultVisitedLinkProvider()
+{
+}
+
+bool DefaultVisitedLinkProvider::isLinkVisited(Page& page, LinkHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
+{
+    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(&page, linkHash, baseURL, attributeURL);
+}
+
+void DefaultVisitedLinkProvider::addVisitedLink(Page& page, LinkHash linkHash)
+{
+    platformStrategies()->visitedLinkStrategy()->addVisitedLink(&page, linkHash);
+}
 
 } // namespace WebCore
-
-#endif // VisitedLinkProvider_h

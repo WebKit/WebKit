@@ -23,29 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VisitedLinkProvider_h
-#define VisitedLinkProvider_h
+#ifndef DefaultVisitedLinkProvider_h
+#define DefaultVisitedLinkProvider_h
 
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "VisitedLinkProvider.h"
 
 namespace WebCore {
 
-typedef uint64_t LinkHash;
-class Page;
-class URL;
-
-class VisitedLinkProvider : public RefCounted<VisitedLinkProvider> {
+class DefaultVisitedLinkProvider : public VisitedLinkProvider {
 public:
-    VisitedLinkProvider();
-    virtual ~VisitedLinkProvider();
+    static PassRefPtr<DefaultVisitedLinkProvider> create();
+    virtual ~DefaultVisitedLinkProvider();
 
-    // FIXME: These two members should only take the link hash.
-    virtual bool isLinkVisited(Page&, LinkHash, const URL& baseURL, const AtomicString& attributeURL) = 0;
-    virtual void addVisitedLink(Page&, LinkHash) = 0;
+private:
+    DefaultVisitedLinkProvider();
+
+    virtual bool isLinkVisited(Page&, LinkHash, const URL& baseURL, const AtomicString& attributeURL) override;
+    virtual void addVisitedLink(Page&, LinkHash) override;
 };
 
 } // namespace WebCore
 
-#endif // VisitedLinkProvider_h
+#endif // DefaultVisitedLinkProvider_h

@@ -798,7 +798,6 @@
 		1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */; };
 		1ABA76CB11D20E57004C201C /* CSSValueKeywords.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */; };
 		1ABA80001897341200DCE9D6 /* VisitedLinkProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABA7FFF1897341200DCE9D6 /* VisitedLinkProvider.h */; };
-		1ABA80061897355500DCE9D6 /* VisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ABA80051897355500DCE9D6 /* VisitedLinkProvider.cpp */; };
 		1ABC7109170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC7108170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h */; };
 		1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */; };
 		1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */; };
@@ -869,6 +868,9 @@
 		1AEF4E67170E160300AB2799 /* CachedFontClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEF4E66170E160300AB2799 /* CachedFontClient.h */; };
 		1AEF4E69170E174800AB2799 /* CachedSVGDocumentClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326770D78B9440068F0C4 /* EditorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AF4CEE918BC350100BC2D34 /* DefaultVisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF4CEE718BC350100BC2D34 /* DefaultVisitedLinkProvider.cpp */; };
+		1AF4CEEA18BC350100BC2D34 /* DefaultVisitedLinkProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF4CEE818BC350100BC2D34 /* DefaultVisitedLinkProvider.h */; };
+		1AF4CEEC18BC3C1B00BC2D34 /* VisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkProvider.cpp */; };
 		1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */; };
 		1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */; };
 		1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF62EE514DA22A70041556C /* ScrollingCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7577,7 +7579,6 @@
 		1AB7FC660A8B92EC00D9D37B /* XPathVariableReference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathVariableReference.cpp; sourceTree = "<group>"; };
 		1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathVariableReference.h; sourceTree = "<group>"; };
 		1ABA7FFF1897341200DCE9D6 /* VisitedLinkProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkProvider.h; sourceTree = "<group>"; };
-		1ABA80051897355500DCE9D6 /* VisitedLinkProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProvider.cpp; sourceTree = "<group>"; };
 		1ABC7108170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerNavigatorStorageQuota.h; sourceTree = "<group>"; };
 		1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMApplicationCache.cpp; sourceTree = "<group>"; };
 		1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMApplicationCache.h; sourceTree = "<group>"; };
@@ -7668,6 +7669,9 @@
 		1AEF4E66170E160300AB2799 /* CachedFontClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFontClient.h; sourceTree = "<group>"; };
 		1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGDocumentClient.h; sourceTree = "<group>"; };
 		1AF326770D78B9440068F0C4 /* EditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorClient.h; sourceTree = "<group>"; };
+		1AF4CEE718BC350100BC2D34 /* DefaultVisitedLinkProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultVisitedLinkProvider.cpp; sourceTree = "<group>"; };
+		1AF4CEE818BC350100BC2D34 /* DefaultVisitedLinkProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultVisitedLinkProvider.h; sourceTree = "<group>"; };
+		1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProvider.cpp; sourceTree = "<group>"; };
 		1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingCoordinatorMac.mm; sourceTree = "<group>"; };
 		1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingCoordinator.cpp; sourceTree = "<group>"; };
 		1AF62EE514DA22A70041556C /* ScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingCoordinator.h; sourceTree = "<group>"; };
@@ -16076,6 +16080,8 @@
 				517FBA18151AA71B00B57959 /* DOMWindowExtension.h */,
 				97D2AD0114B823A60093DF32 /* DOMWindowProperty.cpp */,
 				97D2AD0214B823A60093DF32 /* DOMWindowProperty.h */,
+				1AF4CEE718BC350100BC2D34 /* DefaultVisitedLinkProvider.cpp */,
+				1AF4CEE818BC350100BC2D34 /* DefaultVisitedLinkProvider.h */,
 				A718760D0B2A120100A16ECE /* DragActions.h */,
 				A7CA59620B27C1F200FA021D /* DragClient.h */,
 				A7CA595C0B27BD9E00FA021D /* DragController.cpp */,
@@ -16203,7 +16209,7 @@
 				26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */,
 				26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */,
 				8678D0BA1878E810003ABDE6 /* ViewState.h */,
-				1ABA80051897355500DCE9D6 /* VisitedLinkProvider.cpp */,
+				1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkProvider.cpp */,
 				1ABA7FFF1897341200DCE9D6 /* VisitedLinkProvider.h */,
 				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
 				494BD7930F55C8EE00747828 /* WebKitPoint.h */,
@@ -23999,6 +24005,7 @@
 				FDA15EBE12B03F0B003A583A /* JSConvolverNode.h in Headers */,
 				FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */,
 				930705DA09E0C9BF00B17FE4 /* JSCounter.h in Headers */,
+				1AF4CEEA18BC350100BC2D34 /* DefaultVisitedLinkProvider.h in Headers */,
 				975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */,
 				E157A8F118185425009F821D /* JSCryptoAlgorithmBuilder.h in Headers */,
 				E1C657131815F9DD00256CDD /* JSCryptoAlgorithmDictionary.h in Headers */,
@@ -28821,6 +28828,7 @@
 				B2227AC00D00BF220071B782 /* SVGSymbolElement.cpp in Sources */,
 				B2227AC40D00BF220071B782 /* SVGTests.cpp in Sources */,
 				B2227AC70D00BF220071B782 /* SVGTextContentElement.cpp in Sources */,
+				1AF4CEEC18BC3C1B00BC2D34 /* VisitedLinkProvider.cpp in Sources */,
 				B2227ACA0D00BF220071B782 /* SVGTextElement.cpp in Sources */,
 				B2227ACD0D00BF220071B782 /* SVGTextPathElement.cpp in Sources */,
 				B2227AD00D00BF220071B782 /* SVGTextPositioningElement.cpp in Sources */,
@@ -28836,6 +28844,7 @@
 				B2227AEF0D00BF220071B782 /* SVGViewElement.cpp in Sources */,
 				B2227AF20D00BF220071B782 /* SVGViewSpec.cpp in Sources */,
 				8485228A1190173C006EDC7F /* SVGVKernElement.cpp in Sources */,
+				1AF4CEE918BC350100BC2D34 /* DefaultVisitedLinkProvider.cpp in Sources */,
 				B2227AF50D00BF220071B782 /* SVGZoomAndPan.cpp in Sources */,
 				B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */,
 				E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */,
@@ -28973,7 +28982,6 @@
 				93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */,
 				A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */,
 				93309E1D099E64920056E581 /* VisibleUnits.cpp in Sources */,
-				1ABA80061897355500DCE9D6 /* VisitedLinkProvider.cpp in Sources */,
 				419BC2DE1685329900D64D6D /* VisitedLinkState.cpp in Sources */,
 				BE20507918A458680080647E /* VTTCue.cpp in Sources */,
 				A14832B1187F61E100DA63A6 /* WAKAppKitStubs.m in Sources */,

@@ -36,7 +36,7 @@
 
 - (void)awakeFromNib
 {
-    _webView = [[WebView alloc] initWithFrame:[containerView bounds]];
+    _webView = [[WebView alloc] initWithFrame:[containerView bounds] frameName:nil groupName:@"MiniBrowser"];
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 
     // Set the WebView delegates

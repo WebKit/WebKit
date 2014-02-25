@@ -1511,6 +1511,12 @@ void Page::setSessionID(SessionID sessionID)
     m_sessionID = sessionID;
 }
 
+VisitedLinkProvider& Page::visitedLinkProvider()
+{
+    // FIXME: This shouldn't always return the group visited link provider.
+    return group().visitedLinkProvider();
+}
+
 Page::PageClients::PageClients()
     : alternativeTextClient(nullptr)
     , chromeClient(nullptr)

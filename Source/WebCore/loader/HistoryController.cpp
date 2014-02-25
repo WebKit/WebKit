@@ -46,17 +46,16 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
-#include "PlatformStrategies.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
-#include "VisitedLinkStrategy.h"
+#include "VisitedLinkProvider.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
-static inline void addVisitedLink(Page* page, const URL& url)
+static inline void addVisitedLink(Page& page, const URL& url)
 {
-    platformStrategies()->visitedLinkStrategy()->addVisitedLink(page, visitedLinkHash(url.string()));
+    page.visitedLinkProvider().addVisitedLink(page, visitedLinkHash(url.string()));
 }
 
 HistoryController::HistoryController(Frame& frame)
@@ -372,7 +371,7 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
 
     if (!historyURL.isEmpty() && !needPrivacy) {
         if (Page* page = m_frame.page())
-            addVisitedLink(page, historyURL);
+            addVisitedLink(*page, historyURL);
 
         if (!frameLoader.documentLoader()->didCreateGlobalHistoryEntry() && frameLoader.documentLoader()->unreachableURL().isEmpty() && !m_frame.document()->url().isEmpty())
             frameLoader.client().updateGlobalHistoryRedirectLinks();
@@ -413,7 +412,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
 
     if (!historyURL.isEmpty() && !needPrivacy) {
         if (Page* page = m_frame.page())
-            addVisitedLink(page, historyURL);
+            addVisitedLink(*page, historyURL);
 
         if (!m_frame.loader().documentLoader()->didCreateGlobalHistoryEntry() && m_frame.loader().documentLoader()->unreachableURL().isEmpty() && !m_frame.document()->url().isEmpty())
             m_frame.loader().client().updateGlobalHistoryRedirectLinks();
@@ -439,7 +438,7 @@ void HistoryController::updateForClientRedirect()
 
     if (!historyURL.isEmpty() && !needPrivacy) {
         if (Page* page = m_frame.page())
-            addVisitedLink(page, historyURL);
+            addVisitedLink(*page, historyURL);
     }
 }
 
@@ -531,7 +530,7 @@ void HistoryController::updateForSameDocumentNavigation()
     if (!page)
         return;
 
-    addVisitedLink(page, m_frame.document()->url());
+    addVisitedLink(*page, m_frame.document()->url());
     m_frame.mainFrame().loader().history().recursiveUpdateForSameDocumentNavigation();
 
     if (m_currentItem) {
@@ -851,7 +850,7 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
     if (m_frame.settings().privateBrowsingEnabled())
         return;
 
-    addVisitedLink(page, URL(ParsedURLString, urlString));
+    addVisitedLink(*page, URL(ParsedURLString, urlString));
     m_frame.loader().client().updateGlobalHistory();
 }
 
@@ -871,7 +870,7 @@ void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObje
         return;
 
     ASSERT(m_frame.page());
-    addVisitedLink(m_frame.page(), URL(ParsedURLString, urlString));
+    addVisitedLink(*m_frame.page(), URL(ParsedURLString, urlString));
     m_frame.loader().client().updateGlobalHistory();
 }
 

@@ -1,3 +1,18 @@
+2014-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Add a DefaultVisitedLinkProvider and route visited link actions through it
+        https://bugs.webkit.org/show_bug.cgi?id=129285
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate applicationDidFinishLaunching:]):
+        Set a shared history so we'll get visited link tracking.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController awakeFromNib]):
+        Set a group name.
+
 2014-02-24  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix after r164577.

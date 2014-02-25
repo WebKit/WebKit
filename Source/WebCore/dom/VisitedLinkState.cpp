@@ -34,8 +34,7 @@
 #include "HTMLAnchorElement.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PlatformStrategies.h"
-#include "VisitedLinkStrategy.h"
+#include "VisitedLinkProvider.h"
 #include "XLinkNames.h"
 
 namespace WebCore {
@@ -119,7 +118,10 @@ EInsideLink VisitedLinkState::determineLinkStateSlowCase(Element& element)
 
     m_linksCheckedForVisitedState.add(hash);
 
-    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, element.document().baseURL(), *attribute) ? InsideVisitedLink : InsideUnvisitedLink;
+    if (!page->visitedLinkProvider().isLinkVisited(*page, hash, element.document().baseURL(), *attribute))
+        return InsideUnvisitedLink;
+
+    return InsideVisitedLink;
 }
 
-}
+} // namespace WebCore

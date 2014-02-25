@@ -106,6 +106,7 @@ class Settings;
 class StorageNamespace;
 class UserContentController;
 class ValidationMessageClient;
+class VisitedLinkProvider;
 
 typedef uint64_t LinkHash;
 
@@ -398,6 +399,9 @@ public:
 
     void setUserContentController(UserContentController*);
     UserContentController* userContentController() { return m_userContentController.get(); }
+
+    VisitedLinkProvider& visitedLinkProvider();
+
     SessionID sessionID() const;
     void setSessionID(SessionID);
 

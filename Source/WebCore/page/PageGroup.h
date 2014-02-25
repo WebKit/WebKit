@@ -72,7 +72,7 @@ namespace WebCore {
         void addPage(Page&);
         void removePage(Page&);
 
-        VisitedLinkProvider& visitedLinkProvider() { return *m_visitedLinkProvider; }
+        VisitedLinkProvider& visitedLinkProvider();
 
         bool isLinkVisited(LinkHash);
 

@@ -1,3 +1,44 @@
+2014-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Add a DefaultVisitedLinkProvider and route visited link actions through it
+        https://bugs.webkit.org/show_bug.cgi?id=129285
+
+        Reviewed by Dan Bernstein.
+
+        DefaultVisitedLinkProvider currently just forwards everything to the visited link strategy,
+        but will soon take over the responsibilities of visited link handling from PageGroup.
+        
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/VisitedLinkState.cpp:
+        (WebCore::VisitedLinkState::determineLinkStateSlowCase):
+        * loader/HistoryController.cpp:
+        (WebCore::addVisitedLink):
+        (WebCore::HistoryController::updateForStandardLoad):
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+        (WebCore::HistoryController::updateForClientRedirect):
+        (WebCore::HistoryController::updateForSameDocumentNavigation):
+        (WebCore::HistoryController::pushState):
+        (WebCore::HistoryController::replaceState):
+        * page/DefaultVisitedLinkProvider.cpp: Copied from Source/WebCore/page/VisitedLinkProvider.h.
+        (WebCore::DefaultVisitedLinkProvider::create):
+        (WebCore::DefaultVisitedLinkProvider::DefaultVisitedLinkProvider):
+        (WebCore::DefaultVisitedLinkProvider::~DefaultVisitedLinkProvider):
+        (WebCore::DefaultVisitedLinkProvider::isLinkVisited):
+        (WebCore::DefaultVisitedLinkProvider::addVisitedLink):
+        * page/DefaultVisitedLinkProvider.h: Copied from Source/WebCore/page/VisitedLinkProvider.h.
+        * page/Page.cpp:
+        (WebCore::Page::visitedLinkProvider):
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::PageGroup):
+        (WebCore::PageGroup::visitedLinkProvider):
+        * page/PageGroup.h:
+        * page/VisitedLinkProvider.h:
+
 2014-02-24  Jeremy Jones  <jeremyj@apple.com>
 
         WK2 AVKit fullscreen doesn't display video.

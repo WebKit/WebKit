@@ -27,7 +27,7 @@
 
 #import "WK1BrowserWindowController.h"
 #import "WK2BrowserWindowController.h"
-
+#import <WebKit/WebHistory.h>
 #import <WebKit2/WebKit2.h>
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKURLCF.h>
@@ -83,6 +83,10 @@ enum {
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    WebHistory *webHistory = [[WebHistory alloc] init];
+    [WebHistory setOptionalSharedHistory:webHistory];
+    [webHistory release];
+
     [self newWindow:self];
 }
 

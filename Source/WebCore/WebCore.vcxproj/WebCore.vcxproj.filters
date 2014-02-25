@@ -702,6 +702,9 @@
     <ClCompile Include="..\page\DOMWindowProperty.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\DefaultVisitedLinkProvider.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\DragController.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7505,6 +7508,9 @@
     <ClInclude Include="..\page\DOMWindowProperty.h">
       <Filter>page</Filter>
     </ClInclude>
+    <ClCompile Include="..\page\DefaultVisitedLinkProvider.h">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClInclude Include="..\page\DragActions.h">
       <Filter>page</Filter>
     </ClInclude>

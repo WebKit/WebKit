@@ -29,6 +29,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWrapperWorld.h"
+#include "DefaultVisitedLinkProvider.h"
 #include "Document.h"
 #include "DocumentStyleSheetCollection.h"
 #include "GroupSettings.h"
@@ -64,7 +65,6 @@ static bool shouldTrackVisitedLinks = false;
 
 PageGroup::PageGroup(const String& name)
     : m_name(name)
-    , m_visitedLinkProvider(VisitedLinkProvider::create())
     , m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
     , m_userContentController(UserContentController::create())
@@ -73,8 +73,7 @@ PageGroup::PageGroup(const String& name)
 }
 
 PageGroup::PageGroup(Page& page)
-    : m_visitedLinkProvider(VisitedLinkProvider::create())
-    , m_visitedLinksPopulated(false)
+    : m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
     , m_userContentController(UserContentController::create())
     , m_groupSettings(std::make_unique<GroupSettings>())
@@ -177,6 +176,14 @@ void PageGroup::removePage(Page& page)
     m_pages.remove(&page);
 
     page.setUserContentController(nullptr);
+}
+
+VisitedLinkProvider& PageGroup::visitedLinkProvider()
+{
+    if (!m_visitedLinkProvider)
+        m_visitedLinkProvider = DefaultVisitedLinkProvider::create();
+
+    return *m_visitedLinkProvider;
 }
 
 bool PageGroup::isLinkVisited(LinkHash visitedLinkHash)
