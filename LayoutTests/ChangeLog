@@ -1,3 +1,54 @@
+2014-02-25  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Refactoring inline_spelling_markers.html to use asynchronous spellchecking
+        https://bugs.webkit.org/show_bug.cgi?id=127284
+
+        Reviewed by Ryosuke Niwa.
+
+        Use asynchronous text checking in inline-spelling-markers.html and
+        inline-spelling-markers-hidpi.html
+
+        Rename the test to inline-spelling-markers.html to match the naming convention.
+
+        * editing/spelling/inline-spelling-markers-expected.txt: Added.
+        Make cross platform text expectation by dumping spelling/grammar markers
+        instead of whole tree which in terms of spellchecking says nothing.
+
+        * editing/spelling/inline-spelling-markers.html: Added.
+        Remove unnecessary new lines from div elements so position of markers can be given from 0.
+        Activate text checking by adding a word separator so WebKit starts performing spell and grammar
+        checking. Selection change does not invoke grammar checking unless we start editing the input
+        element's content.
+
+        * platform/efl/editing/spelling/inline_spelling_markers-expected.png: Removed.
+        * platform/efl/editing/spelling/inline_spelling_markers-expected.txt: Removed.
+        * platform/gtk/editing/spelling/inline_spelling_markers-expected.png: Removed.
+        * platform/gtk/editing/spelling/inline_spelling_markers-expected.txt: Removed.
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.png: Removed.
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.txt: Removed.
+        Those are not needed as pixel tests don't introduce anything special here.
+        Let's keep them in hidpi test only.
+
+        * editing/spelling/inline-spelling-markers-hidpi-expected.txt:
+        * editing/spelling/inline-spelling-markers-hidpi.html:
+        Apply changes from inline-spelling-markers.html
+
+        * platform/mac/editing/spelling/inline-spelling-markers-hidpi-expected.png: Added.
+
+        * platform/efl/editing/spelling/inline-spelling-markers-hidpi-expected.png: Removed.
+        * platform/gtk/editing/spelling/inline-spelling-markers-hidpi-expected.png: Removed.
+        Remove wrong baselines due to missing grammar markers.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+        Mark inline-spelling-markers.html and its hidpi version as failures
+        since EFL and GTK do not implement grammar checking.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        Mark inline-spelling-markers.html and its hidpi version as failures
+        due to missing TextChecker::requestCheckingOfString() implementation.
+
 2014-02-25  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] scrollIntoView for elements flowed into regions

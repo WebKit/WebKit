@@ -313,6 +313,8 @@ Bug(EFL) editing/spelling/grammar-edit-word.html [ Failure ]
 Bug(EFL) editing/spelling/grammar-markers.html [ Failure ]
 Bug(EFL) editing/spelling/grammar-markers-hidpi.html [ Failure ]
 Bug(EFL) editing/spelling/grammar-paste.html [ Failure ]
+Bug(EFL) editing/spelling/inline-spelling-markers.html [ Failure ]
+Bug(EFL) editing/spelling/inline-spelling-markers-hidpi.html [ Failure ]
 Bug(EFL) editing/spelling/markers.html [ Failure ]
 
 # EFL's text checker doesn't support the text replacement feature.

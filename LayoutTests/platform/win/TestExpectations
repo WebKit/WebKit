@@ -1063,6 +1063,8 @@ webkit.org/b/62597 editing/pasteboard/copy-standalone-image-crash.html [ Failure
 editing/spelling/grammar.html
 
 # Needs grammar checking.
+editing/spelling/inline-spelling-markers.html [ Failure ]
+editing/spelling/inline-spelling-markers-hidpi.html [ Failure ]
 editing/spelling/markers.html
 
 # EditorClient::requestCheckingOfString() is not implemented

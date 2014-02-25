@@ -1136,6 +1136,8 @@ Bug(GTK) editing/spelling/grammar-edit-word.html [ Skip ]
 Bug(GTK) editing/spelling/grammar-markers.html [ Skip ]
 Bug(GTK) editing/spelling/grammar-markers-hidpi.html [ Skip ]
 Bug(GTK) editing/spelling/grammar-paste.html [ Skip ]
+Bug(GTK) editing/spelling/inline-spelling-markers.html [ Skip ]
+Bug(GTK) editing/spelling/inline-spelling-markers-hidpi.html [ Skip ]
 Bug(GTK) editing/spelling/markers.html [ Skip ]
 
 # Missing asynchronous spellchecking implementation.

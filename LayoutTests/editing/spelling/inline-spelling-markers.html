@@ -50,6 +50,8 @@ if (window.internals) {
 function runTextCheckingTestFor(id)
 {
     var div = document.getElementById(id);
+    debug(div.id);
+
     div.focus();
     document.execCommand("InsertText", false, incorrectPhrase);
 
@@ -65,9 +67,12 @@ function verifyMarkers()
         return done();
 
     // Take care of spelling markers first.
-    shouldBecomeEqual('internals.hasSpellingMarker(8, 4)', 'true', function() { // Verifies 'adlj'.
-        shouldBecomeEqual('internals.hasSpellingMarker(13, 6)', 'true', function() { // Verifies 'adaasj'.
-            shouldBecomeEqual('internals.hasSpellingMarker(20, 5)', 'true', function() {  // Verifies 'sdklj'.
+    debug("Verifies 'adlj'.");
+    shouldBecomeEqual('internals.hasSpellingMarker(8, 4)', 'true', function() {
+        debug("Verifies 'adaasj'.");
+        shouldBecomeEqual('internals.hasSpellingMarker(13, 6)', 'true', function() {
+            debug("Verifies 'sdklj'.");
+            shouldBecomeEqual('internals.hasSpellingMarker(20, 5)', 'true', function() {
                 verifyGrammarMarkers();
             });
          });
@@ -75,8 +80,11 @@ function verifyMarkers()
 
     function verifyGrammarMarkers()
     {
-        shouldBecomeEqual('internals.hasGrammarMarker(4, 3)', 'true', function() { // Verifies duplicated 'the'.
-            shouldBecomeEqual('internals.hasGrammarMarker(33, 5)', 'true', function() { // Verifies duplicated 'there'.
+        debug("Verifies duplicated 'the'.");
+        shouldBecomeEqual('internals.hasGrammarMarker(4, 3)', 'true', function() {
+            debug("Verifies duplicated 'there'.");
+            shouldBecomeEqual('internals.hasGrammarMarker(33, 5)', 'true', function() {
+                debug("");
                 done();
             });
         });
@@ -98,14 +106,7 @@ function done()
 
     finishJSTest();
 }
-
-if (window.testRunner) {
-    testRunner.dumpAsText(true);
-    testRunner.setBackingScaleFactor(2, function () {
-        done();
-    });
-}
-
+done();
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

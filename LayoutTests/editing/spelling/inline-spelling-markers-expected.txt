@@ -3,26 +3,54 @@ This tests the correct placement of inline spelling and grammar markers in the f
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+testLTR
+Verifies 'adlj'.
 PASS internals.hasSpellingMarker(8, 4) became true
+Verifies 'adaasj'.
 PASS internals.hasSpellingMarker(13, 6) became true
+Verifies 'sdklj'.
 PASS internals.hasSpellingMarker(20, 5) became true
+Verifies duplicated 'the'.
 PASS internals.hasGrammarMarker(4, 3) became true
+Verifies duplicated 'there'.
 PASS internals.hasGrammarMarker(33, 5) became true
+
+testRTL
+Verifies 'adlj'.
 PASS internals.hasSpellingMarker(8, 4) became true
+Verifies 'adaasj'.
 PASS internals.hasSpellingMarker(13, 6) became true
+Verifies 'sdklj'.
 PASS internals.hasSpellingMarker(20, 5) became true
+Verifies duplicated 'the'.
 PASS internals.hasGrammarMarker(4, 3) became true
+Verifies duplicated 'there'.
 PASS internals.hasGrammarMarker(33, 5) became true
+
+testLTREllipses
+Verifies 'adlj'.
 PASS internals.hasSpellingMarker(8, 4) became true
+Verifies 'adaasj'.
 PASS internals.hasSpellingMarker(13, 6) became true
+Verifies 'sdklj'.
 PASS internals.hasSpellingMarker(20, 5) became true
+Verifies duplicated 'the'.
 PASS internals.hasGrammarMarker(4, 3) became true
+Verifies duplicated 'there'.
 PASS internals.hasGrammarMarker(33, 5) became true
+
+testRTLEllipses
+Verifies 'adlj'.
 PASS internals.hasSpellingMarker(8, 4) became true
+Verifies 'adaasj'.
 PASS internals.hasSpellingMarker(13, 6) became true
+Verifies 'sdklj'.
 PASS internals.hasSpellingMarker(20, 5) became true
+Verifies duplicated 'the'.
 PASS internals.hasGrammarMarker(4, 3) became true
+Verifies duplicated 'there'.
 PASS internals.hasGrammarMarker(33, 5) became true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

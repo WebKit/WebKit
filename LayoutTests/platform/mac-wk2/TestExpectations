@@ -373,6 +373,8 @@ webkit.org/b/127960 [ MountainLion ] http/tests/security/cross-origin-plugin-pri
 editing/spelling/grammar-markers.html
 editing/spelling/grammar-paste.html
 editing/spelling/grammar-markers-hidpi.html
+editing/spelling/inline-spelling-markers.html
+editing/spelling/inline-spelling-markers-hidpi.html
 editing/spelling/spellcheck-async-mutation.html
 editing/spelling/spellcheck-async-remove-frame.html
 editing/spelling/spellcheck-async.html
