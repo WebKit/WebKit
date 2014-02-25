@@ -1,3 +1,10 @@
+2014-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        * WTF.vcxproj/work-around-vs-dependency-tracking-bugs.py: Handle unset 'WEBKIT_LIBRARIES' properly
+        since this is expected to be unset in the production build environmenet.
+
 2014-02-05  Brent Fulgham  <bfulgham@apple.com>
 
         Merge in build correction to prevent needless "rebuild all" builds.

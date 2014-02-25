@@ -9,6 +9,9 @@ import sys
 # It's fragile to rely on the location of this script to find the top-level
 # source directory.
 TOP_LEVEL_DIRECTORY = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+if not os.environ.has_key('WEBKIT_LIBRARIES'):
+    exit
+
 WEBKIT_LIBRARIES = os.environ['WEBKIT_LIBRARIES'];
 
 def main():
