@@ -262,7 +262,7 @@ private:
 
     std::pair<unsigned char, String> namedNodeListKey(LiveNodeList::Type type, const String& name)
     {
-        return std::pair<unsigned char, String>(type, name);
+        return std::pair<unsigned char, String>(static_cast<unsigned char>(type), name);
     }
 
     bool deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(Node&);

@@ -36,13 +36,13 @@ public:
     static PassRefPtr<TagNodeList> create(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
     {
         ASSERT(namespaceURI != starAtom);
-        return adoptRef(new TagNodeList(rootNode, TagNodeListType, namespaceURI, localName));
+        return adoptRef(new TagNodeList(rootNode, Type::TagNodeListType, namespaceURI, localName));
     }
 
     static PassRefPtr<TagNodeList> create(ContainerNode& rootNode, Type type, const AtomicString& localName)
     {
-        ASSERT_UNUSED(type, type == TagNodeListType);
-        return adoptRef(new TagNodeList(rootNode, TagNodeListType, starAtom, localName));
+        ASSERT_UNUSED(type, type == Type::TagNodeListType);
+        return adoptRef(new TagNodeList(rootNode, Type::TagNodeListType, starAtom, localName));
     }
 
     virtual ~TagNodeList();
@@ -60,7 +60,7 @@ class HTMLTagNodeList : public TagNodeList {
 public:
     static PassRefPtr<HTMLTagNodeList> create(ContainerNode& rootNode, Type type, const AtomicString& localName)
     {
-        ASSERT_UNUSED(type, type == HTMLTagNodeListType);
+        ASSERT_UNUSED(type, type == Type::HTMLTagNodeListType);
         return adoptRef(new HTMLTagNodeList(rootNode, localName));
     }
 

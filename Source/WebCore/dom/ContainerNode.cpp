@@ -1103,8 +1103,8 @@ PassRefPtr<NodeList> ContainerNode::getElementsByTagName(const AtomicString& loc
         return 0;
 
     if (document().isHTMLDocument())
-        return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTagNodeList>(*this, LiveNodeList::HTMLTagNodeListType, localName);
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<TagNodeList>(*this, LiveNodeList::TagNodeListType, localName);
+        return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTagNodeList>(*this, LiveNodeList::Type::HTMLTagNodeListType, localName);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<TagNodeList>(*this, LiveNodeList::Type::TagNodeListType, localName);
 }
 
 PassRefPtr<NodeList> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
@@ -1120,18 +1120,18 @@ PassRefPtr<NodeList> ContainerNode::getElementsByTagNameNS(const AtomicString& n
 
 PassRefPtr<NodeList> ContainerNode::getElementsByName(const String& elementName)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, LiveNodeList::NameNodeListType, elementName);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, LiveNodeList::Type::NameNodeListType, elementName);
 }
 
 PassRefPtr<NodeList> ContainerNode::getElementsByClassName(const String& classNames)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithName<ClassNodeList>(*this, LiveNodeList::ClassNodeListType, classNames);
+    return ensureRareData().ensureNodeLists().addCacheWithName<ClassNodeList>(*this, LiveNodeList::Type::ClassNodeListType, classNames);
 }
 
 PassRefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
 {
     ASSERT(hasTagName(HTMLNames::formTag) || hasTagName(HTMLNames::fieldsetTag));
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, LiveNodeList::RadioNodeListType, name);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, LiveNodeList::Type::RadioNodeListType, name);
 }
 
 } // namespace WebCore

@@ -54,7 +54,7 @@ bool TagNodeList::nodeMatches(Element* testNode) const
 }
 
 HTMLTagNodeList::HTMLTagNodeList(ContainerNode& rootNode, const AtomicString& localName)
-    : TagNodeList(rootNode, HTMLTagNodeListType, starAtom, localName)
+    : TagNodeList(rootNode, Type::HTMLTagNodeListType, starAtom, localName)
     , m_loweredLocalName(localName.lower())
 {
 }

@@ -1,3 +1,48 @@
+2014-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Tighten bitfields in live NodeLists and HTMLCollections
+        https://bugs.webkit.org/show_bug.cgi?id=129300
+
+        Reviewed by Geoffrey Garen.
+
+        Reduce the number of bits used for m_rootType and m_type in LiveNodeList.
+        Also use enum class for LiveNodeList types. We keep "Type" suffix not to
+        confuse old-ish compilers.
+
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getElementsByTagName):
+        (WebCore::ContainerNode::getElementsByName):
+        (WebCore::ContainerNode::getElementsByClassName):
+        (WebCore::ContainerNode::radioNodeList):
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeList::collectionFirst):
+        (WebCore::LiveNodeList::collectionTraverseForward):
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeList::LiveNodeList):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        * dom/NameNodeList.h:
+        (WebCore::NameNodeList::create):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::namedNodeListKey):
+        * dom/TagNodeList.cpp:
+        (WebCore::HTMLTagNodeList::HTMLTagNodeList):
+        * dom/TagNodeList.h:
+        (WebCore::TagNodeList::create):
+        (WebCore::HTMLTagNodeList::create):
+        * html/HTMLCollection.h:
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        * html/LabelsNodeList.h:
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+        * html/RadioNodeList.h:
+        (WebCore::RadioNodeList::create):
+
 2014-02-24  Anders Carlsson  <andersca@apple.com>
 
         Make it possible to set the visited link provider on a per page basis

@@ -35,7 +35,7 @@ class NameNodeList : public LiveNodeList {
 public:
     static PassRefPtr<NameNodeList> create(ContainerNode& rootNode, Type type, const AtomicString& name)
     {
-        ASSERT_UNUSED(type, type == NameNodeListType);
+        ASSERT_UNUSED(type, type == Type::NameNodeListType);
         return adoptRef(new NameNodeList(rootNode, name));
     }
 

@@ -36,7 +36,7 @@ class RadioNodeList : public LiveNodeList {
 public:
     static PassRefPtr<RadioNodeList> create(ContainerNode& rootNode, Type type, const AtomicString& name)
     {
-        ASSERT_UNUSED(type, type == RadioNodeListType);
+        ASSERT_UNUSED(type, type == Type::RadioNodeListType);
         return adoptRef(new RadioNodeList(rootNode, name));
     }
 

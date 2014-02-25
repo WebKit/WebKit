@@ -34,7 +34,7 @@ class LabelsNodeList final : public LiveNodeList {
 public:
     static PassRef<LabelsNodeList> create(LabelableElement& forNode, Type type, const AtomicString&)
     {
-        ASSERT_UNUSED(type, type == LabelsNodeListType);
+        ASSERT_UNUSED(type, type == Type::LabelsNodeListType);
         return adoptRef(*new LabelsNodeList(forNode));
     }
     ~LabelsNodeList();

@@ -45,7 +45,7 @@ static bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, cons
 
 class LiveNodeList : public NodeList {
 public:
-    enum Type {
+    enum class Type {
         ClassNodeListType,
         NameNodeListType,
         TagNodeListType,
@@ -58,7 +58,7 @@ public:
         : m_ownerNode(ownerNode)
         , m_rootType(rootType)
         , m_invalidationType(invalidationType)
-        , m_type(type)
+        , m_type(static_cast<unsigned>(type))
     {
         ASSERT(m_rootType == static_cast<unsigned>(rootType));
         ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
@@ -111,9 +111,9 @@ private:
 
     mutable CollectionIndexCache<LiveNodeList, Element> m_indexCache;
 
-    const unsigned m_rootType : 2;
+    const unsigned m_rootType : 1;
     const unsigned m_invalidationType : 4;
-    const unsigned m_type : 5;
+    const unsigned m_type : 3;
 };
 
 ALWAYS_INLINE bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType type, const QualifiedName& attrName)

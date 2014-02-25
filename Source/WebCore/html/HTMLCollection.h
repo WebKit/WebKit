@@ -111,7 +111,7 @@ private:
 
     mutable CollectionIndexCache<HTMLCollection, Element> m_indexCache;
 
-    const unsigned m_rootType : 2;
+    const unsigned m_rootType : 1;
     const unsigned m_invalidationType : 4;
     const unsigned m_shouldOnlyIncludeDirectChildren : 1;
 
