@@ -1,3 +1,21 @@
+2014-02-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Gracefully recover from missing 'naturalSize' parameter for media
+        https://bugs.webkit.org/show_bug.cgi?id=129278
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h: Add declaration for
+        missing function call.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::assetStatus): Don't treat missing 'naturalSize'
+        as a fatal error.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::tracksChanged): Handle case of asset track
+        not being available yet. 
+        (WebCore::MediaPlayerPrivateAVFoundationCF::sizeChanged): If the 'naturalSize' is empty,
+        use the Player Item's 'presentationSize' instead.
+        (WebCore::AVFWrapper::processNotification): Add missing handler for duration changed.
+
 2014-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add ENABLE flag

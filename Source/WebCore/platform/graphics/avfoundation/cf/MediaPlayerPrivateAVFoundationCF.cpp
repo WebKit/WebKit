@@ -751,8 +751,21 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationCF::as
 
         if (keyStatus < AVCFPropertyValueStatusLoaded)
             return MediaPlayerAVAssetStatusLoading;
-        if (keyStatus == AVCFPropertyValueStatusFailed)
+        if (keyStatus == AVCFPropertyValueStatusFailed) {
+            if (CFStringCompare(keyName, AVCFAssetPropertyNaturalSize, 0) == kCFCompareEqualTo) {
+                // Don't treat a failure to retrieve @"naturalSize" as fatal. We will use @"presentationSize" instead.
+                // <rdar://problem/15966685>
+                continue;
+            }
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+            if (CFStringCompare(keyName, AVCFAssetPropertyAvailableMediaCharacteristicsWithMediaSelectionOptions, 0) == kCFCompareEqualTo) {
+                // On Windows, the media selection options are not available when initially interacting with a streaming source.
+                // <rdar://problem/16160699>
+                continue;
+            }
+#endif
             return MediaPlayerAVAssetStatusFailed;
+        }
         if (keyStatus == AVCFPropertyValueStatusCancelled)
             return MediaPlayerAVAssetStatusCancelled;
     }
@@ -893,6 +906,11 @@ void MediaPlayerPrivateAVFoundationCF::tracksChanged()
             
             if (AVCFPlayerItemTrackIsEnabled(track)) {
                 RetainPtr<AVCFAssetTrackRef> assetTrack = adoptCF(AVCFPlayerItemTrackCopyAssetTrack(track));
+                if (!assetTrack) {
+                    // Asset tracks may not be available yet when streaming. <rdar://problem/16160699>
+                    LOG(Media, "MediaPlayerPrivateAVFoundationCF:tracksChanged(%p) - track = %d is enabled, but has no asset track.", this, track);
+                    continue;
+                }
                 CFStringRef mediaType = AVCFAssetTrackGetMediaType(assetTrack.get());
                 if (!mediaType)
                     continue;
@@ -963,6 +981,9 @@ void MediaPlayerPrivateAVFoundationCF::sizeChanged()
     trackRectUnion = CGRectOffset(trackRectUnion, trackRectUnion.origin.x, trackRectUnion.origin.y);
     CGSize naturalSize = trackRectUnion.size;
 
+    if (!naturalSize.height && !naturalSize.width && avPlayerItem(m_avfWrapper))
+        naturalSize = AVCFPlayerItemGetPresentationSize(avPlayerItem(m_avfWrapper));
+
     // Also look at the asset's preferred transform so we account for a movie matrix.
     CGSize movieSize = CGSizeApplyAffineTransform(AVCFAssetGetNaturalSize(avAsset(m_avfWrapper)), AVCFAssetGetPreferredTransform(avAsset(m_avfWrapper)));
     if (movieSize.width > naturalSize.width)
@@ -997,6 +1018,11 @@ void MediaPlayerPrivateAVFoundationCF::processLegacyClosedCaptionsTracks()
         AVCFPlayerItemTrackRef playerItemTrack = (AVCFPlayerItemTrackRef)(CFArrayGetValueAtIndex(tracks.get(), i));
 
         RetainPtr<AVCFAssetTrackRef> assetTrack = adoptCF(AVCFPlayerItemTrackCopyAssetTrack(playerItemTrack));
+        if (!assetTrack) {
+            // Asset tracks may not be available yet when streaming. <rdar://problem/16160699>
+            LOG(Media, "MediaPlayerPrivateAVFoundationCF:tracksChanged(%p) - track = %d is enabled, but has no asset track.", this, track);
+            continue;
+        }
         CFStringRef mediaType = AVCFAssetTrackGetMediaType(assetTrack.get());
         if (!mediaType)
             continue;
@@ -1470,6 +1496,8 @@ void AVFWrapper::processNotification(void* context)
         self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::PlayerRateChanged);
     else if (CFEqual(propertyName, CACFContextNeedsFlushNotification()))
         self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ContentsNeedsDisplay);
+    else if (CFEqual(propertyName, AVCFPlayerItemDurationChangedNotification))
+        self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::DurationChanged);
     else
         ASSERT_NOT_REACHED();
 }
