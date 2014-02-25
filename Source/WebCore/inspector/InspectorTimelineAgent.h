@@ -47,7 +47,6 @@ class Event;
 class FloatQuad;
 class Frame;
 class InspectorClient;
-class InspectorMemoryAgent;
 class InspectorPageAgent;
 class InstrumentingAgents;
 class IntRect;
@@ -127,7 +126,7 @@ class InspectorTimelineAgent
 public:
     enum InspectorType { PageInspector, WorkerInspector };
 
-    InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorMemoryAgent*, InspectorType, InspectorClient*);
+    InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorType, InspectorClient*);
     ~InspectorTimelineAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
@@ -249,7 +248,6 @@ private:
     Page* page();
 
     InspectorPageAgent* m_pageAgent;
-    InspectorMemoryAgent* m_memoryAgent;
     TimelineTimeConverter m_timeConverter;
 
     std::unique_ptr<Inspector::InspectorTimelineFrontendDispatcher> m_frontendDispatcher;

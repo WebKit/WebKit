@@ -1,3 +1,12 @@
+2014-02-25  Andreas Kling  <akling@apple.com>
+
+        Prune dead code for Web Inspector memory instrumentation.
+        <https://webkit.org/b/129286>
+
+        Reviewed by Sam Weinig.
+
+        * UserInterface/Protocol/InspectorWebBackendCommands.js:
+
 2014-02-24  Timothy Hatcher  <timothy@apple.com>
 
         Switch from prefixed CSS gradient to unprefixed.

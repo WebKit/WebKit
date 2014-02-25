@@ -1,3 +1,33 @@
+2014-02-25  Andreas Kling  <akling@apple.com>
+
+        Prune dead code for Web Inspector memory instrumentation.
+        <https://webkit.org/b/129286>
+
+        This was leftover code from Chromium's inspector. It's not used by
+        today's WebKit inspector.
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        * inspector/InspectorMemoryAgent.cpp: Removed.
+        * inspector/InspectorMemoryAgent.h: Removed.
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        * inspector/protocol/Memory.json: Removed.
+
 2014-02-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support abbr, acronym

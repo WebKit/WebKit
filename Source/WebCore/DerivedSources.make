@@ -1106,7 +1106,6 @@ INSPECTOR_DOMAINS = \
     $(WebCore)/inspector/protocol/IndexedDB.json \
     $(WebCore)/inspector/protocol/Input.json \
     $(WebCore)/inspector/protocol/LayerTree.json \
-    $(WebCore)/inspector/protocol/Memory.json \
     $(WebCore)/inspector/protocol/Network.json \
     $(WebCore)/inspector/protocol/Page.json \
     $(WebCore)/inspector/protocol/Profiler.json \

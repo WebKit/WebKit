@@ -48,7 +48,6 @@
 #include "InspectorInstrumentation.cpp"
 #include "InspectorInstrumentationCookie.cpp"
 #include "InspectorLayerTreeAgent.cpp"
-#include "InspectorMemoryAgent.cpp"
 #include "InspectorNodeFinder.cpp"
 #include "InspectorOverlay.cpp"
 #include "InspectorPageAgent.cpp"

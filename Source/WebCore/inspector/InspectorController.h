@@ -59,7 +59,6 @@ class InspectorClient;
 class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;
 class InspectorFrontendClient;
-class InspectorMemoryAgent;
 class InspectorOverlay;
 class InspectorPageAgent;
 class InspectorProfilerAgent;
@@ -149,7 +148,6 @@ private:
     InspectorDOMAgent* m_domAgent;
     InspectorResourceAgent* m_resourceAgent;
     InspectorPageAgent* m_pageAgent;
-    InspectorMemoryAgent* m_memoryAgent;
     Inspector::InspectorDebuggerAgent* m_debuggerAgent;
     InspectorDOMDebuggerAgent* m_domDebuggerAgent;
     InspectorProfilerAgent* m_profilerAgent;

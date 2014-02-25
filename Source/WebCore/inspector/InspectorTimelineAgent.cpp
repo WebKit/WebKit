@@ -40,7 +40,6 @@
 #include "InspectorClient.h"
 #include "InspectorCounters.h"
 #include "InspectorInstrumentation.h"
-#include "InspectorMemoryAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
@@ -620,10 +619,9 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
     }
 }
 
-InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorMemoryAgent* memoryAgent, InspectorType type, InspectorClient* client)
+InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorType type, InspectorClient* client)
     : InspectorAgentBase(ASCIILiteral("Timeline"), instrumentingAgents)
     , m_pageAgent(pageAgent)
-    , m_memoryAgent(memoryAgent)
     , m_id(1)
     , m_maxCallStackDepth(5)
     , m_inspectorType(type)

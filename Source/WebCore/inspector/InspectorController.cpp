@@ -49,7 +49,6 @@
 #include "InspectorInputAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorLayerTreeAgent.h"
-#include "InspectorMemoryAgent.h"
 #include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
 #include "InspectorProfilerAgent.h"
@@ -129,11 +128,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
     m_agents.append(std::move(domStorageAgentPtr));
 
-    auto memoryAgentPtr = std::make_unique<InspectorMemoryAgent>(m_instrumentingAgents.get());
-    m_memoryAgent = memoryAgentPtr.get();
-    m_agents.append(std::move(memoryAgentPtr));
-
-    m_agents.append(std::make_unique<InspectorTimelineAgent>(m_instrumentingAgents.get(), pageAgent, m_memoryAgent, InspectorTimelineAgent::PageInspector, inspectorClient));
+    m_agents.append(std::make_unique<InspectorTimelineAgent>(m_instrumentingAgents.get(), pageAgent, InspectorTimelineAgent::PageInspector, inspectorClient));
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(m_instrumentingAgents.get(), pageAgent));
 
     auto resourceAgentPtr = std::make_unique<InspectorResourceAgent>(m_instrumentingAgents.get(), pageAgent, inspectorClient);

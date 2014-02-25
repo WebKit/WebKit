@@ -761,7 +761,6 @@ set(WebCore_INSPECTOR_DOMAINS
     inspector/protocol/IndexedDB.json
     inspector/protocol/Input.json
     inspector/protocol/LayerTree.json
-    inspector/protocol/Memory.json
     inspector/protocol/Network.json
     inspector/protocol/Page.json
     inspector/protocol/Profiler.json
@@ -1577,7 +1576,6 @@ set(WebCore_SOURCES
     inspector/InspectorInstrumentation.cpp
     inspector/InspectorInstrumentationCookie.cpp
     inspector/InspectorLayerTreeAgent.cpp
-    inspector/InspectorMemoryAgent.cpp
     inspector/InspectorNodeFinder.cpp
     inspector/InspectorOverlay.cpp
     inspector/InspectorPageAgent.cpp

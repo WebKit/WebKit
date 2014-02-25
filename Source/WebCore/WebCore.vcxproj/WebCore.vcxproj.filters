@@ -4791,9 +4791,6 @@
     <ClCompile Include="..\inspector\InspectorLayerTreeAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\InspectorMemoryAgent.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\inspector\InspectorOverlay.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -12333,9 +12330,6 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorLayerTreeAgent.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\InspectorMemoryAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorNodeFinder.h">
