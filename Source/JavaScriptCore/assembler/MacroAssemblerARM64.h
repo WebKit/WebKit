@@ -541,12 +541,12 @@ public:
     
     void rshift64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
-        m_assembler.lsr<64>(dest, src, shiftAmount);
+        m_assembler.asr<64>(dest, src, shiftAmount);
     }
     
     void rshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.lsr<64>(dest, src, imm.m_value & 0x3f);
+        m_assembler.asr<64>(dest, src, imm.m_value & 0x3f);
     }
     
     void rshift64(RegisterID shiftAmount, RegisterID dest)

@@ -1,3 +1,13 @@
+2014-02-25  Filip Pizlo  <fpizlo@apple.com>
+
+        ARM64 rshift64 should be an arithmetic shift
+        https://bugs.webkit.org/show_bug.cgi?id=129323
+
+        Reviewed by Mark Hahnenberg.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::rshift64):
+
 2014-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add ENABLE flag
