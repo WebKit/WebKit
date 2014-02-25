@@ -29,7 +29,7 @@
 #if WK_API_ENABLED
 
 #import "WKFrameInfoInternal.h"
-#import "WKUIDelegate.h"
+#import "WKUIDelegatePrivate.h"
 
 namespace WebKit {
 
@@ -54,6 +54,24 @@ void UIClient::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
+#if PLATFORM(IOS)
+    m_delegateMethods.webViewActionsForElementDefaultActions = [delegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)];
+#endif
+}
+
+NSArray *UIClient::actionsForElement(_WKActivatedElementInfo *elementInfo, NSArray *defaultActions)
+{
+#if PLATFORM(IOS)
+    if (!m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler)
+        return defaultActions;
+
+    auto delegate = m_delegate.get();
+    if (!delegate)
+        return defaultActions;
+
+    return [(id <WKUIDelegatePrivate>)delegate _webView:m_webView actionsForElement:elementInfo defaultActions:defaultActions];
+#endif
+    return defaultActions;
 }
 
 void UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, std::function<void ()> completionHandler)

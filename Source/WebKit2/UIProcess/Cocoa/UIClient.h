@@ -34,6 +34,7 @@
 #import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
 
+@class _WKActivatedElementInfo;
 @class WKWebView;
 @protocol WKUIDelegate;
 
@@ -46,6 +47,8 @@ public:
 
     RetainPtr<id <WKUIDelegate> > delegate();
     void setDelegate(id <WKUIDelegate>);
+
+    NSArray *actionsForElement(_WKActivatedElementInfo *, NSArray *defaultActions);
 
 private:
     // API::UIClient
@@ -60,6 +63,9 @@ private:
         bool webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler : 1;
+#if PLATFORM(IOS)
+        bool webViewActionsForElementDefaultActions : 1;
+#endif
     } m_delegateMethods;
 };
 

@@ -28,6 +28,7 @@
 
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKElementActionInternal.h"
+#import "UIClient.h"
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
@@ -53,8 +54,11 @@ SOFT_LINK_CONSTANT(TCC, kTCCServicePhotos, CFStringRef)
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
 SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
 
+using namespace WebKit;
+
 @implementation WKActionSheetAssistant {
     RetainPtr<WKActionSheet> _interactionSheet;
+    RetainPtr<_WKActivatedElementInfo> _elementInfo;
     RetainPtr<NSArray> _elementActions;
     WKContentView *_view;
 }
@@ -154,12 +158,8 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
     if (actionSheet != _interactionSheet)
         return;
 
-    if (_elementActions && buttonIndex < (NSInteger)[_elementActions count]) {
-        _WKActivatedElementInfo *actionInfo = [[_WKActivatedElementInfo alloc] _initWithURL:[NSURL URLWithString:_view.positionInformation.url]
-            location:_view.positionInformation.point title:_view.positionInformation.title rect:_view.positionInformation.bounds];
-        [[_elementActions objectAtIndex:buttonIndex] _runActionWithElementInfo:actionInfo view:_view];
-        [actionInfo release];
-    }
+    if (_elementActions && buttonIndex < (NSInteger)[_elementActions count])
+        [[_elementActions objectAtIndex:buttonIndex] _runActionWithElementInfo:_elementInfo.get() view:_view];
 
     [self cleanupSheet];
 }
@@ -215,23 +215,34 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
 - (void)showImageSheet
 {
     ASSERT(!_interactionSheet);
+    ASSERT(!_elementInfo);
 
-    NSURL *targetURL = [NSURL URLWithString:_view.positionInformation.url];
-    NSMutableArray *actions = [NSMutableArray array];
-    if (!_view.positionInformation.url.isEmpty())
-        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
+    const auto& positionInformation = _view.positionInformation;
+
+    NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
+    NSMutableArray *defaultActions = [NSMutableArray array];
+    if (!positionInformation.url.isEmpty())
+        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
     if ([getSSReadingListClass() supportsURL:targetURL])
-        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
+        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
     if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
-        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeSaveImage]];
-    if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
-        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
+        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeSaveImage]];
+    if (!targetURL.scheme.length || [targetURL.scheme caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
+        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
 
-    // FIXME: Add call to delegate to add custom actions.
+    RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage
+        URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds]);
 
-    [self _createSheetWithElementActions:actions showLinkTitle:YES];
+    RetainPtr<NSArray> actions = static_cast<UIClient&>(_view.page->uiClient()).actionsForElement(elementInfo.get(), [[defaultActions copy] autorelease]);
+
+    if (![actions count])
+        return;
+
+    [self _createSheetWithElementActions:actions.get() showLinkTitle:YES];
     if (!_interactionSheet)
         return;
+
+    _elementInfo = std::move(elementInfo);
 
     if (![_interactionSheet presentSheet])
         [self actionSheet:_interactionSheet.get() clickedButtonAtIndex:[_interactionSheet cancelButtonIndex]];
@@ -240,22 +251,34 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
 - (void)showLinkSheet
 {
     ASSERT(!_interactionSheet);
-    NSURL *targetURL = [NSURL URLWithString:_view.positionInformation.url];
+    ASSERT(!_elementInfo);
+
+    const auto& positionInformation = _view.positionInformation;
+
+    NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
     if (!targetURL)
         return;
 
-    NSMutableArray *actions = [NSMutableArray array];
-    [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
+    NSMutableArray *defaultActions = [NSMutableArray array];
+    [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
     if ([getSSReadingListClass() supportsURL:targetURL])
-        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
+        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
     if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
-        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
+        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
 
-    // FIXME: Add call to delegate to add custom actions.
+    RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink
+        URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds]);
 
-    [self _createSheetWithElementActions:actions showLinkTitle:YES];
+    RetainPtr<NSArray> actions = static_cast<UIClient&>(_view.page->uiClient()).actionsForElement(elementInfo.get(), [[defaultActions copy] autorelease]);
+
+    if (![actions count])
+        return;
+
+    [self _createSheetWithElementActions:actions.get() showLinkTitle:YES];
     if (!_interactionSheet)
         return;
+
+    _elementInfo = std::move(elementInfo);
 
     if (![_interactionSheet presentSheet])
         [self actionSheet:_interactionSheet.get() clickedButtonAtIndex:[_interactionSheet cancelButtonIndex]];
@@ -321,6 +344,7 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
     [_interactionSheet setSheetDelegate:nil];
     [_interactionSheet setDelegate:nil];
     _interactionSheet = nil;
+    _elementInfo = nil;
 
     _elementActions = nil;
 }

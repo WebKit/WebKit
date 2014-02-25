@@ -1,3 +1,35 @@
+2014-02-25  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add delegate method for customizing actions on activated elements
+        https://bugs.webkit.org/show_bug.cgi?id=129290
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Added. Declared new delegate method.
+
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h:
+        (_WKActivatedElementType): Defined enum of element types.
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        (-[_WKActivatedElementInfo _initWithType:URL:location:title:rect:]): Added type parameter
+        to the initializer, used to set the new type property.
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h:
+
+        * UIProcess/Cocoa/UIClient.h:
+        * UIProcess/Cocoa/UIClient.mm:
+        (WebKit::UIClient::setDelegate): Initialize webViewActionsForElementDefaultActions member
+        of m_delegateMethods.
+        (WebKit::UIClient::actionsForElement): Added. Calls out to the new delegate method if
+        implemented. Otherwise returns the default actions.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant actionSheet:clickedButtonAtIndex:]): Use new _elementInfo ivar
+        instead of creating element info here.
+        (-[WKActionSheetAssistant showImageSheet]): Create element info here and assign it to
+        _elementInfo ivar if presenting a sheet. Call the UI client to get custom actions.
+        (-[WKActionSheetAssistant showLinkSheet]): Ditto.
+        (-[WKActionSheetAssistant cleanupSheet]): Clear _elementInfo ivar.
+        * WebKit2.xcodeproj/project.pbxproj: Added reference to WKUIDelegatePrivate.h.
+
 2014-02-25  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL build fix attempt after r164562

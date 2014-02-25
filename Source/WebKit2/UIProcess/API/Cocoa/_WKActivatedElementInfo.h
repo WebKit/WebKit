@@ -29,11 +29,17 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSInteger, _WKActivatedElementType) {
+    _WKActivatedElementTypeLink,
+    _WKActivatedElementTypeImage,
+};
+
 WK_API_CLASS
 @interface _WKActivatedElementInfo : NSObject
 
 @property (nonatomic, readonly) NSURL *URL;
 @property (nonatomic, readonly) NSString *title;
+@property (nonatomic, readonly) _WKActivatedElementType type;
 
 @end
 

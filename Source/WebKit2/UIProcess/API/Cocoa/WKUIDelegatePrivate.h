@@ -23,16 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKActivatedElementInfo.h"
+#import <WebKit2/WKUIDelegate.h>
 
 #if WK_API_ENABLED
 
-@interface _WKActivatedElementInfo ()
+#import <WebKit2/_WKActivatedElementInfo.h>
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect;
+@protocol WKUIDelegatePrivate <WKUIDelegate>
 
-@property (nonatomic, readonly) CGPoint _interactionLocation;
-@property (nonatomic, readonly) CGRect _boundingRect;
+@optional
+
+#if TARGET_OS_IPHONE
+- (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray *)defaultActions;
+#endif
 
 @end
 

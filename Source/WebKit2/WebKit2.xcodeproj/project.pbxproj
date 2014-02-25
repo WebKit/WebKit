@@ -600,6 +600,7 @@
 		373D122518A473B30066D9CC /* WKBrowsingContextHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122418A473B30066D9CC /* WKBrowsingContextHandleInternal.h */; };
 		373D122718A473F60066D9CC /* WKFrameHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122618A473F60066D9CC /* WKFrameHandleInternal.h */; };
 		373D122D18A4B6EB0066D9CC /* WKWebProcessPlugInFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122C18A4B6A80066D9CC /* WKWebProcessPlugInFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3743925818BC4C60001C8675 /* WKUIDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		374436881820E7240049579F /* WKObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 374436871820E7240049579F /* WKObject.mm */; };
 		3760881E150413E900FC82C7 /* WebRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3760881C150413E900FC82C7 /* WebRenderObject.cpp */; };
 		3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3760881D150413E900FC82C7 /* WebRenderObject.h */; };
@@ -2333,6 +2334,7 @@
 		373D122418A473B30066D9CC /* WKBrowsingContextHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHandleInternal.h; sourceTree = "<group>"; };
 		373D122618A473F60066D9CC /* WKFrameHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrameHandleInternal.h; sourceTree = "<group>"; };
 		373D122C18A4B6A80066D9CC /* WKWebProcessPlugInFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInFramePrivate.h; sourceTree = "<group>"; };
+		3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUIDelegatePrivate.h; sourceTree = "<group>"; };
 		374436871820E7240049579F /* WKObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKObject.mm; sourceTree = "<group>"; };
 		375FB4731883415600BE34D4 /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		3760881C150413E900FC82C7 /* WebRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebRenderObject.cpp; sourceTree = "<group>"; };
@@ -4448,6 +4450,7 @@
 				1A43E82B188F3CF5009E4D30 /* WKProcessPoolConfigurationPrivate.h */,
 				1A3CC16818907EB0001E6ED8 /* WKProcessPoolInternal.h */,
 				1AD8790918B6C38A006CAFD7 /* WKUIDelegate.h */,
+				3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */,
 				1A3CC16518906ACF001E6ED8 /* WKWebView.h */,
 				1A3CC16418906ACF001E6ED8 /* WKWebView.mm */,
 				1ADF59191890528E0043C145 /* WKWebViewConfiguration.h */,
@@ -6541,6 +6544,7 @@
 				1A7865BA16CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h in Headers */,
 				1A2BB6D114117B4D000F35D4 /* PluginProcessConnectionMessages.h in Headers */,
 				1A2D90D21281C966001EB962 /* PluginProcessCreationParameters.h in Headers */,
+				3743925818BC4C60001C8675 /* WKUIDelegatePrivate.h in Headers */,
 				1A0EC603124A9F2C007EF4A5 /* PluginProcessManager.h in Headers */,
 				0FCB4E6618BBE3D9000FCFC9 /* WKPrintingView.h in Headers */,
 				1A1EC69E1872092100B951F0 /* ImportanceAssertion.h in Headers */,

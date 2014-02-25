@@ -37,7 +37,7 @@
     CGRect _boundingRect;
 }
 
-- (instancetype)_initWithURL:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect
 {
     if (!(self = [super init]))
         return nil;
@@ -46,6 +46,7 @@
     _interactionLocation = location;
     _title = adoptNS([title copy]);
     _boundingRect = rect;
+    _type = type;
 
     return self;
 }
