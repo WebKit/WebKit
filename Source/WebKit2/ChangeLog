@@ -1,3 +1,262 @@
+2014-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove WKInteractionView, move code into WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=129275
+
+        Reviewed by Benjamin Poulain.
+        
+        WKInteractionView as an interim solution as WebKit2 on iOS was being
+        brought up, and should be removed.
+        
+        Move its code into a category on WKContentView, mostly unchanged. The
+        WKContentView (WKInteraction) categroy now implements the various protocols
+        that WKInteractionView implemented.
+        
+        WKContentView is not an API class, so no longer has WK_API_CLASS, and can
+        have implementation-related data members. WKContentViewInternal.h is removed.
+        
+        WKContentView now exposes a WebPageProxy* rather than a WKPageRef.
+        
+        Other changes: WKActionSheetAssistant no longer stores a WebPageProxy,
+        getting it from the WKContentView instead.
+        
+        WKAutoCorrectionData and InteractionInformationAtPosition are stored via unique_ptr
+        to reduce class size, and avoid having to expose their details in the header.
+
+        * Configurations/WebKit2.xcconfig:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView setAllowsBackForwardNavigationGestures:]):
+        (-[WKView pageRef]):
+        (-[WKView _pageExtendedBackgroundColor]):
+        (-[WKView _setBackgroundExtendsBeyondPage:]):
+        (-[WKView _backgroundExtendsBeyondPage]):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/ios/WKActionSheet.h:
+        * UIProcess/ios/WKActionSheet.mm:
+        (-[WKActionSheet initWithView:]):
+        (+[WKElementAction customElementActionWithTitle:actionHandler:]):
+        (copyElement):
+        (saveImage):
+        (+[WKElementAction standardElementActionWithType:customTitle:]):
+        (-[WKElementAction runActionWithElementInfo:view:]):
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant initWithView:]):
+        (-[WKActionSheetAssistant dealloc]):
+        (-[WKActionSheetAssistant initialPresentationRectInHostViewForSheet]):
+        (-[WKActionSheetAssistant presentationRectInHostViewForSheet]):
+        (-[WKActionSheetAssistant actionSheet:clickedButtonAtIndex:]):
+        (-[WKActionSheetAssistant _createSheetWithElementActions:showLinkTitle:]):
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        (-[WKActionSheetAssistant cleanupSheet]):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:context:WebKit::configuration:WebKit::]):
+        (-[WKContentView dealloc]):
+        (-[WKContentView page]):
+        (-[WKContentView isAssistingNode]):
+        (-[WKContentView didFinishScrolling]):
+        (-[WKContentView willStartZoomOrScroll]):
+        (-[WKContentView willStartUserTriggeredScroll]):
+        (-[WKContentView willStartUserTriggeredZoom]):
+        (-[WKContentView didZoomToScale:]):
+        (-[WKContentView _didCommitLoadForMainFrame]):
+        (-[WKContentView _didCommitLayerTree:WebKit::]):
+        * UIProcess/ios/WKContentViewInteraction.h: Renamed from Source/WebKit2/UIProcess/ios/WKInteractionView.h.
+        * UIProcess/ios/WKContentViewInteraction.mm: Renamed from Source/WebKit2/UIProcess/ios/WKInteractionView.mm.
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView positionInformation]):
+        (-[WKContentView setInputDelegate:]):
+        (-[WKContentView inputDelegate]):
+        (-[WKContentView isEditable]):
+        (-[WKContentView canBecomeFirstResponder]):
+        (-[WKContentView resignFirstResponder]):
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (inflateQuad):
+        (-[WKContentView _webTouchEvent:WebKit::preventsNativeGestures:]):
+        (-[WKContentView _didGetTapHighlightForRequest:color:WebCore::quads:WebCore::topLeftRadius:WebCore::topRightRadius:WebCore::bottomLeftRadius:WebCore::bottomRightRadius:WebCore::]):
+        (-[WKContentView _cancelLongPressGestureRecognizer]):
+        (-[WKContentView _didScroll]):
+        (-[WKContentView _requiresKeyboardResetOnReload]):
+        (-[WKContentView gestureRecognizer:canPreventGestureRecognizer:]):
+        (-[WKContentView gestureRecognizer:canBePreventedByGestureRecognizer:]):
+        (isSamePair):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView _showImageSheet]):
+        (-[WKContentView _showLinkSheet]):
+        (-[WKContentView _showDataDetectorsSheet]):
+        (-[WKContentView _actionForLongPress]):
+        (-[WKContentView ensurePositionInformationIsUpToDate:]):
+        (-[WKContentView _updatePositionInformation]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView _cancelInteraction]):
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView pointIsInAssistedNode:]):
+        (-[WKContentView webSelectionRects]):
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (-[WKContentView _longPressRecognized:]):
+        (-[WKContentView _singleTapRecognized:]):
+        (-[WKContentView _doubleTapRecognized:]):
+        (-[WKContentView _twoFingerDoubleTapRecognized:]):
+        (-[WKContentView _twoFingerPanRecognized:]):
+        (-[WKContentView _attemptClickAtLocation:]):
+        (-[WKContentView useSelectionAssistantWithMode:]):
+        (-[WKContentView clearSelection]):
+        (-[WKContentView _positionInformationDidChange:]):
+        (-[WKContentView _willStartScrollingOrZooming]):
+        (-[WKContentView _willStartUserTriggeredScrollingOrZooming]):
+        (-[WKContentView _didEndScrollingOrZooming]):
+        (-[WKContentView inputAccessoryView]):
+        (-[WKContentView supportedPasteboardTypesForCurrentSelection]):
+        (-[WKContentView _addShortcut:]):
+        (-[WKContentView _promptForReplace:]):
+        (-[WKContentView replace:]):
+        (-[WKContentView canPerformAction:withSender:]):
+        (-[WKContentView _resetShowingTextStyle:]):
+        (-[WKContentView _performAction:]):
+        (-[WKContentView copy:]):
+        (-[WKContentView cut:]):
+        (-[WKContentView paste:]):
+        (-[WKContentView select:]):
+        (-[WKContentView selectAll:]):
+        (-[WKContentView toggleBoldface:]):
+        (-[WKContentView toggleItalics:]):
+        (-[WKContentView toggleUnderline:]):
+        (-[WKContentView _showTextStyleOptions:]):
+        (-[WKContentView _showDictionary:]):
+        (-[WKContentView _define:]):
+        (toWKGestureType):
+        (toUIWKGestureType):
+        (toWKSelectionTouch):
+        (toUIWKSelectionTouch):
+        (toWKGestureRecognizerState):
+        (toUIGestureRecognizerState):
+        (toUIWKSelectionFlags):
+        (toWKHandlePosition):
+        (selectionChangedWithGesture):
+        (selectionChangedWithTouch):
+        (-[WKContentView _didUpdateBlockSelectionWithTouch:WebKit::withFlags:WebKit::growThreshold:shrinkThreshold:]):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:]):
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:]):
+        (-[WKContentView changeSelectionWithTouchesFrom:to:withGesture:withState:]):
+        (-[WKContentView changeBlockSelectionWithTouchAt:withSelectionTouch:forHandle:]):
+        (-[WKContentView autocorrectionData]):
+        (-[WKContentView requestAutocorrectionRectsForString:withCompletionHandler:]):
+        (-[WKContentView textFirstRect]):
+        (-[WKContentView textLastRect]):
+        (-[WKContentView applyAutocorrection:toString:withCompletionHandler:]):
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+        (-[WKContentView accessoryDone]):
+        (-[WKContentView accessoryTab:]):
+        (-[WKContentView accessoryAutoFill]):
+        (-[WKContentView accessoryClear]):
+        (-[WKContentView _updateAccessory]):
+        (-[WKContentView textInRange:]):
+        (-[WKContentView replaceRange:withText:]):
+        (-[WKContentView selectedTextRange]):
+        (-[WKContentView caretRectForPosition:]):
+        (-[WKContentView selectionRectsForRange:]):
+        (-[WKContentView setSelectedTextRange:]):
+        (-[WKContentView hasMarkedText]):
+        (-[WKContentView markedText]):
+        (-[WKContentView markedTextRange]):
+        (-[WKContentView markedTextStyle]):
+        (-[WKContentView setMarkedTextStyle:]):
+        (-[WKContentView setMarkedText:selectedRange:]):
+        (-[WKContentView unmarkText]):
+        (-[WKContentView beginningOfDocument]):
+        (-[WKContentView endOfDocument]):
+        (-[WKContentView textRangeFromPosition:toPosition:]):
+        (-[WKContentView positionFromPosition:offset:]):
+        (-[WKContentView positionFromPosition:inDirection:offset:]):
+        (-[WKContentView comparePosition:toPosition:]):
+        (-[WKContentView offsetFromPosition:toPosition:]):
+        (-[WKContentView tokenizer]):
+        (-[WKContentView positionWithinRange:farthestInDirection:]):
+        (-[WKContentView characterRangeByExtendingPosition:inDirection:]):
+        (-[WKContentView baseWritingDirectionForPosition:inDirection:]):
+        (-[WKContentView setBaseWritingDirection:forRange:]):
+        (-[WKContentView firstRectForRange:]):
+        (-[WKContentView closestPositionToPoint:]):
+        (-[WKContentView closestPositionToPoint:withinRange:]):
+        (-[WKContentView characterRangeAtPoint:]):
+        (-[WKContentView deleteBackward]):
+        (-[WKContentView insertText:]):
+        (-[WKContentView hasText]):
+        (-[WKContentView textInputTraits]):
+        (-[WKContentView interactionAssistant]):
+        (-[WKContentView webSelectionAssistant]):
+        (-[WKContentView selectionRange]):
+        (-[WKContentView rectForNSRange:]):
+        (-[WKContentView _markedTextNSRange]):
+        (-[WKContentView selectedDOMRange]):
+        (-[WKContentView setSelectedDOMRange:affinityDownstream:]):
+        (-[WKContentView replaceRangeWithTextWithoutClosingTyping:replacementText:]):
+        (-[WKContentView rectContainingCaretSelection]):
+        (-[WKContentView requiresKeyEvents]):
+        (-[WKContentView handleKeyWebEvent:]):
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+        (-[WKContentView setBottomBufferHeight:]):
+        (-[WKContentView automaticallySelectedOverlay]):
+        (-[WKContentView selectionGranularity]):
+        (-[WKContentView insertDictationResult:withCorrectionIdentifier:]):
+        (-[WKContentView metadataDictionariesForDictationResults]):
+        (-[WKContentView previousUnperturbedDictationResultBoundaryFromPosition:]):
+        (-[WKContentView nextUnperturbedDictationResultBoundaryFromPosition:]):
+        (-[WKContentView moveBackward:]):
+        (-[WKContentView moveForward:]):
+        (-[WKContentView characterBeforeCaretSelection]):
+        (-[WKContentView wordContainingCaretSelection]):
+        (-[WKContentView wordRangeContainingCaretSelection]):
+        (-[WKContentView setMarkedText:]):
+        (-[WKContentView hasContent]):
+        (-[WKContentView selectAll]):
+        (-[WKContentView textColorForCaretSelection]):
+        (-[WKContentView fontForCaretSelection]):
+        (-[WKContentView hasSelection]):
+        (-[WKContentView isPosition:atBoundary:inDirection:]):
+        (-[WKContentView positionFromPosition:toBoundary:inDirection:]):
+        (-[WKContentView isPosition:withinTextUnit:inDirection:]):
+        (-[WKContentView rangeEnclosingPosition:withGranularity:inDirection:]):
+        (-[WKContentView takeTraitsFrom:]):
+        (-[WKContentView _startAssistingKeyboard]):
+        (-[WKContentView _stopAssistingKeyboard]):
+        (-[WKContentView _startAssistingNode]):
+        (-[WKContentView _stopAssistingNode]):
+        (-[WKContentView _selectionChanged]):
+        (-[WKContentView shouldIgnoreWebTouch]):
+        (-[WKContentView isAnyTouchOverActiveArea:]):
+        (-[WKTextRange _isCaret]):
+        (-[WKTextRange _isRanged]):
+        (+[WKTextRange textRangeWithState:isRange:isEditable:startRect:endRect:selectionRects:selectedTextLength:]):
+        (-[WKTextRange dealloc]):
+        (-[WKTextRange description]):
+        (-[WKTextRange start]):
+        (-[WKTextRange end]):
+        (-[WKTextRange isEmpty]):
+        (-[WKTextRange isEqual:]):
+        (+[WKTextPosition textPositionWithRect:]):
+        (-[WKTextPosition isEqual:]):
+        (-[WKTextPosition description]):
+        (-[WKTextSelectionRect initWithWebRect:]):
+        (-[WKTextSelectionRect dealloc]):
+        (+[WKTextSelectionRect textSelectionRectsWithWebRects:]):
+        (-[WKTextSelectionRect rect]):
+        (-[WKTextSelectionRect writingDirection]):
+        (-[WKTextSelectionRect range]):
+        (-[WKTextSelectionRect containsStart]):
+        (-[WKTextSelectionRect containsEnd]):
+        (-[WKTextSelectionRect isVertical]):
+        (+[WKAutocorrectionRects autocorrectionRectsWithRects:lastRect:]):
+        (+[WKAutocorrectionContext autocorrectionContextWithData:markedText:selectedText:afterText:selectedRangeInMarkedText:]):
+        (-[WKAutocorrectionContext dealloc]):
+        * UIProcess/ios/WKContentViewInternal.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-24  Anders Carlsson  <andersca@apple.com>
 
         WKProcessPool should use secondary processes + network process

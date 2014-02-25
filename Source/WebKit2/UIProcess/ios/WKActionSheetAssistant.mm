@@ -27,7 +27,7 @@
 #import "WKActionSheetAssistant.h"
 
 #import "WKActionSheet.h"
-#import "WKInteractionView.h"
+#import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
 #import <TCC/TCC.h>
 #import <DataDetectorsUI/DDDetectionController.h>
@@ -52,17 +52,16 @@ SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
 SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
 
 @interface WKElementAction(Private)
-- (void)_runActionWithElement:(NSURL *)targetURL documentView:(WKInteractionView *)view interactionLocation:(CGPoint)interactionLocation;
+- (void)_runActionWithElement:(NSURL *)targetURL documentView:(WKContentView *)view interactionLocation:(CGPoint)interactionLocation;
 @end
 
 @implementation WKActionSheetAssistant {
     RetainPtr<WKActionSheet> _interactionSheet;
-    RefPtr<WebKit::WebPageProxy> _page;
     RetainPtr<NSArray> _elementActions;
-    WKInteractionView *_view;
+    WKContentView *_view;
 }
 
-- (id)initWithView:(WKInteractionView *)view
+- (id)initWithView:(WKContentView *)view
 {
     _view = view;
     return self;
@@ -71,13 +70,7 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
 - (void)dealloc
 {
     [self cleanupSheet];
-    _page = nullptr;
     [super dealloc];
-}
-
-- (void)setPage:(PassRefPtr<WebKit::WebPageProxy>)page
-{
-    _page = page;
 }
 
 - (UIView *)superviewForSheet
@@ -220,7 +213,7 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
         [_interactionSheet addButtonWithTitle:[action title]];
 
     [_interactionSheet setCancelButtonIndex:[_interactionSheet addButtonWithTitle:WEB_UI_STRING_KEY("Cancel", "Cancel button label in button bar", "Title for Cancel button label in button bar")]];
-    _page->startInteractionWithElementAtPosition(_view.positionInformation.point);
+    _view.page->startInteractionWithElementAtPosition(_view.positionInformation.point);
 }
 
 - (void)showImageSheet
@@ -326,7 +319,7 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
 
 - (void)cleanupSheet
 {
-    _page->stopInteraction();
+    _view.page->stopInteraction();
 
     [_interactionSheet doneWithSheet];
     [_interactionSheet setSheetDelegate:nil];

@@ -28,7 +28,8 @@
 
 #import "NativeWebKeyboardEvent.h"
 #import "InteractionInformationAtPosition.h"
-#import "WKContentViewInternal.h"
+#import "WKContentView.h"
+#import "WKContentViewInteraction.h"
 #import "WebContextMenuProxy.h"
 #import "WebEditCommandProxy.h"
 #import <UIKit/UIImagePickerController_Private.h>

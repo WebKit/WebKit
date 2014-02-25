@@ -72,12 +72,9 @@
 		0FCB4E4B18BBE044000FCFC9 /* WKActionSheetAssistant.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E3B18BBE044000FCFC9 /* WKActionSheetAssistant.mm */; };
 		0FCB4E4C18BBE044000FCFC9 /* WKContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E3C18BBE044000FCFC9 /* WKContentView.h */; };
 		0FCB4E4D18BBE044000FCFC9 /* WKContentView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */; };
-		0FCB4E4E18BBE044000FCFC9 /* WKContentViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E3E18BBE044000FCFC9 /* WKContentViewInternal.h */; };
 		0FCB4E4F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E3F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h */; };
 		0FCB4E5018BBE044000FCFC9 /* WKGeolocationProviderIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E4018BBE044000FCFC9 /* WKGeolocationProviderIOS.mm */; };
 		0FCB4E5118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E4118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm */; };
-		0FCB4E5218BBE044000FCFC9 /* WKInteractionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E4218BBE044000FCFC9 /* WKInteractionView.h */; };
-		0FCB4E5318BBE044000FCFC9 /* WKInteractionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E4318BBE044000FCFC9 /* WKInteractionView.mm */; };
 		0FCB4E5418BBE044000FCFC9 /* WKScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E4418BBE044000FCFC9 /* WKScrollView.h */; };
 		0FCB4E5518BBE044000FCFC9 /* WKScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E4518BBE044000FCFC9 /* WKScrollView.mm */; };
 		0FCB4E6018BBE3D9000FCFC9 /* FindIndicatorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E5618BBE3D9000FCFC9 /* FindIndicatorWindow.h */; };
@@ -88,6 +85,8 @@
 		0FCB4E6718BBE3D9000FCFC9 /* WKPrintingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E5D18BBE3D9000FCFC9 /* WKPrintingView.mm */; };
 		0FCB4E6818BBE3D9000FCFC9 /* WKTextInputWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E5E18BBE3D9000FCFC9 /* WKTextInputWindowController.h */; };
 		0FCB4E6918BBE3D9000FCFC9 /* WKTextInputWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E5F18BBE3D9000FCFC9 /* WKTextInputWindowController.mm */; };
+		0FCB4E6C18BBF26A000FCFC9 /* WKContentViewInteraction.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */; };
+		0FCB4E6D18BBF26A000FCFC9 /* WKContentViewInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E6B18BBF26A000FCFC9 /* WKContentViewInteraction.mm */; };
 		0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */; };
 		0FF24A2E1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */; };
 		1A043976124D034800FFBFB5 /* PluginProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043974124D034800FFBFB5 /* PluginProcess.h */; };
@@ -1736,12 +1735,9 @@
 		0FCB4E3B18BBE044000FCFC9 /* WKActionSheetAssistant.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKActionSheetAssistant.mm; path = ios/WKActionSheetAssistant.mm; sourceTree = "<group>"; };
 		0FCB4E3C18BBE044000FCFC9 /* WKContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContentView.h; path = ios/WKContentView.h; sourceTree = "<group>"; };
 		0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContentView.mm; path = ios/WKContentView.mm; sourceTree = "<group>"; };
-		0FCB4E3E18BBE044000FCFC9 /* WKContentViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContentViewInternal.h; path = ios/WKContentViewInternal.h; sourceTree = "<group>"; };
 		0FCB4E3F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKGeolocationProviderIOS.h; path = ios/WKGeolocationProviderIOS.h; sourceTree = "<group>"; };
 		0FCB4E4018BBE044000FCFC9 /* WKGeolocationProviderIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKGeolocationProviderIOS.mm; path = ios/WKGeolocationProviderIOS.mm; sourceTree = "<group>"; };
 		0FCB4E4118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKGeolocationProviderIOSObjCSecurityOrigin.mm; path = ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm; sourceTree = "<group>"; };
-		0FCB4E4218BBE044000FCFC9 /* WKInteractionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKInteractionView.h; path = ios/WKInteractionView.h; sourceTree = "<group>"; };
-		0FCB4E4318BBE044000FCFC9 /* WKInteractionView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKInteractionView.mm; path = ios/WKInteractionView.mm; sourceTree = "<group>"; };
 		0FCB4E4418BBE044000FCFC9 /* WKScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKScrollView.h; path = ios/WKScrollView.h; sourceTree = "<group>"; };
 		0FCB4E4518BBE044000FCFC9 /* WKScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKScrollView.mm; path = ios/WKScrollView.mm; sourceTree = "<group>"; };
 		0FCB4E5618BBE3D9000FCFC9 /* FindIndicatorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindIndicatorWindow.h; sourceTree = "<group>"; };
@@ -1752,6 +1748,8 @@
 		0FCB4E5D18BBE3D9000FCFC9 /* WKPrintingView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrintingView.mm; sourceTree = "<group>"; };
 		0FCB4E5E18BBE3D9000FCFC9 /* WKTextInputWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTextInputWindowController.h; sourceTree = "<group>"; };
 		0FCB4E5F18BBE3D9000FCFC9 /* WKTextInputWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTextInputWindowController.mm; sourceTree = "<group>"; };
+		0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContentViewInteraction.h; path = ios/WKContentViewInteraction.h; sourceTree = "<group>"; };
+		0FCB4E6B18BBF26A000FCFC9 /* WKContentViewInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContentViewInteraction.mm; path = ios/WKContentViewInteraction.mm; sourceTree = "<group>"; };
 		0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxyMessages.h; sourceTree = "<group>"; };
 		0FF24A2F1879E4FE003ABF0C /* RemoteLayerTreeDrawingAreaProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteLayerTreeDrawingAreaProxy.messages.in; sourceTree = "<group>"; };
@@ -4261,12 +4259,11 @@
 				0FCB4E3B18BBE044000FCFC9 /* WKActionSheetAssistant.mm */,
 				0FCB4E3C18BBE044000FCFC9 /* WKContentView.h */,
 				0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */,
-				0FCB4E3E18BBE044000FCFC9 /* WKContentViewInternal.h */,
+				0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */,
+				0FCB4E6B18BBF26A000FCFC9 /* WKContentViewInteraction.mm */,
 				0FCB4E3F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h */,
 				0FCB4E4018BBE044000FCFC9 /* WKGeolocationProviderIOS.mm */,
 				0FCB4E4118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm */,
-				0FCB4E4218BBE044000FCFC9 /* WKInteractionView.h */,
-				0FCB4E4318BBE044000FCFC9 /* WKInteractionView.mm */,
 				0FCB4E4418BBE044000FCFC9 /* WKScrollView.h */,
 				0FCB4E4518BBE044000FCFC9 /* WKScrollView.mm */,
 			);
@@ -6438,7 +6435,6 @@
 				51FCB18617BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.h in Headers */,
 				1A3CC16918907EB0001E6ED8 /* WKProcessPoolInternal.h in Headers */,
 				2D1B5D5E185869C8006C6596 /* ViewGestureControllerMessages.h in Headers */,
-				0FCB4E5218BBE044000FCFC9 /* WKInteractionView.h in Headers */,
 				1A2328FF162C866A00D82F7A /* MessageEncoder.h in Headers */,
 				1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */,
 				1AE00D6C18327C1200087DD7 /* StringReference.h in Headers */,
@@ -6784,7 +6780,6 @@
 				1AC7537C183A9FDB0072CB15 /* PageLoadState.h in Headers */,
 				BCDB86C11200FB97007254BE /* APIURL.h in Headers */,
 				51C96119183D294700D2002E /* WebIDBServerConnectionMessages.h in Headers */,
-				0FCB4E4E18BBE044000FCFC9 /* WKContentViewInternal.h in Headers */,
 				BCE2315D122C30CA00D5C35A /* APIURLRequest.h in Headers */,
 				BC90A1D2122DD55E00CC8C50 /* APIURLResponse.h in Headers */,
 				F6113E25126CE1820057D0A7 /* WebUserContentURLPattern.h in Headers */,
@@ -6810,6 +6805,7 @@
 				BC204EEF11C83EC8008F3375 /* WKBundle.h in Headers */,
 				BC204EF011C83EC8008F3375 /* WKBundleAPICast.h in Headers */,
 				935EEB9F127761AC003322B8 /* WKBundleBackForwardList.h in Headers */,
+				0FCB4E6C18BBF26A000FCFC9 /* WKContentViewInteraction.h in Headers */,
 				517DD5BF180DA7D30081660B /* DatabaseProcessProxy.h in Headers */,
 				935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */,
 				51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */,
@@ -8265,7 +8261,6 @@
 				1AB7D78E1288CD9A00CFD08C /* WKDownload.cpp in Sources */,
 				0F594792187B3B3A00437857 /* RemoteScrollingCoordinator.mm in Sources */,
 				BC4075FB124FF0270068F20A /* WKError.cpp in Sources */,
-				0FCB4E5318BBE044000FCFC9 /* WKInteractionView.mm in Sources */,
 				BCFD548B132D82680055D816 /* WKErrorCF.cpp in Sources */,
 				BCE469591214EDF4000B98EB /* WKFormSubmissionListener.cpp in Sources */,
 				BCD0139C110FA420003B8A67 /* WKFrame.cpp in Sources */,
@@ -8340,6 +8335,7 @@
 				F6113E28126CE19B0057D0A7 /* WKUserContentURLPattern.cpp in Sources */,
 				BC8699B6116AADAA002A925B /* WKView.mm in Sources */,
 				C5E1AFE816B20B67006CC1F2 /* WKWebArchive.cpp in Sources */,
+				0FCB4E6D18BBF26A000FCFC9 /* WKContentViewInteraction.mm in Sources */,
 				C5E1AFEA16B20B7B006CC1F2 /* WKWebArchiveResource.cpp in Sources */,
 				373CEAD5185417AE008C363D /* WKNSData.mm in Sources */,
 				0FCB4E5518BBE044000FCFC9 /* WKScrollView.mm in Sources */,

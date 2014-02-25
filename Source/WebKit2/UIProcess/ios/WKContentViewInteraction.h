@@ -23,17 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WKContentView.h"
+
+#import "InteractionInformationAtPosition.h"
 #import "WKGestureTypes.h"
-#import <UIKit/UIWebFormAccessory.h>
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIView.h>
+#import <UIKit/UIWebFormAccessory.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
 #import <UIKit/UIWKSelectionAssistant.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <wtf/Forward.h>
+#import <wtf/text/WTFString.h>
 #import <wtf/Vector.h>
-
-@class UIWebScrollView;
 
 namespace WebCore {
 class Color;
@@ -47,14 +49,65 @@ class WebPageProxy;
 struct InteractionInformationAtPosition;
 }
 
+@class _UIWebHighlightLongPressGestureRecognizer;
+@class _UIHighlightView;
 @class WebIOSEvent;
+@class WKActionSheetAssistant;
 
-@interface WKInteractionView : UIView<UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol>
+typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
+typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
+
+namespace WebKit {
+struct WKAutoCorrectionData {
+    String fontName;
+    CGFloat fontSize;
+    uint64_t fontTraits;
+    CGRect textFirstRect;
+    CGRect textLastRect;
+    UIWKAutocorrectionCompletionHandler autocorrectionHandler;
+    UIWKAutocorrectionContextHandler autocorrectionContextHandler;
+};
+}
+
+@interface WKContentView () {
+    RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
+    BOOL _canSendTouchEventsAsynchronously;
+    unsigned _nativeWebTouchEventUniqueIdBeingSentSynchronously;
+
+    RetainPtr<UITapGestureRecognizer> _singleTapGestureRecognizer;
+    RetainPtr<_UIWebHighlightLongPressGestureRecognizer> _highlightLongPressGestureRecognizer;
+    RetainPtr<UILongPressGestureRecognizer> _longPressGestureRecognizer;
+    RetainPtr<UITapGestureRecognizer> _doubleTapGestureRecognizer;
+    RetainPtr<UITapGestureRecognizer> _twoFingerDoubleTapGestureRecognizer;
+    RetainPtr<UIPanGestureRecognizer> _twoFingerPanGestureRecognizer;
+
+    RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;
+    RetainPtr<UIWKSelectionAssistant> _webSelectionAssistant;
+
+    UITextInputTraits *_traits;
+    BOOL _isEditable;
+    UIWebFormAccessory *_accessory;
+    id <UITextInputDelegate> _inputDelegate;
+    BOOL _showingTextStyleOptions;
+
+    RetainPtr<_UIHighlightView> _highlightView;
+    uint64_t _latestTapHighlightID;
+    BOOL _isTapHighlightIDValid;
+    WebKit::WKAutoCorrectionData _autocorrectionData;
+    RetainPtr<NSString> _markedText;
+    WebKit::InteractionInformationAtPosition _positionInformation;
+    BOOL _hasValidPositionInformation;
+    RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
+}
+
+@end
+
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol>
 
 @property (nonatomic, readonly) BOOL isEditable;
 
-- (void)setScrollView:(UIWebScrollView *)scrollView;
-- (void)setPage:(PassRefPtr<WebKit::WebPageProxy>)page;
+- (void)setupInteraction;
+- (void)cleanupInteraction;
 
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius;
@@ -71,5 +124,8 @@ struct InteractionInformationAtPosition;
 - (void)_willStartUserTriggeredScrollingOrZooming;
 - (void)_didEndScrollingOrZooming;
 - (void)_didUpdateBlockSelectionWithTouch:(WebKit::WKSelectionTouch)touch withFlags:(WebKit::WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold;
-@property (readonly, nonatomic) WebKit::InteractionInformationAtPosition positionInformation;
+
+@property (readonly, nonatomic) const WebKit::InteractionInformationAtPosition& positionInformation;
+@property (readonly, nonatomic) const WebKit::WKAutoCorrectionData& autocorrectionData;
+
 @end

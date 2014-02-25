@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,37 +24,32 @@
  */
 
 #import "config.h"
-#import "WKInteractionView.h"
+#import "WKContentViewInteraction.h"
 
-#import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
-#import "WKActionSheetAssistant.h"
-#import "WKBase.h"
-#import "WKGestureTypes.h"
 #import "WebEvent.h"
 #import "WebIOSEventFactory.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
+#import "WKActionSheetAssistant.h"
 #import <DataDetectorsUI/DDDetectionController.h>
+#import <UIKit/_UIHighlightView.h>
+#import <UIKit/_UIWebHighlightLongPressGestureRecognizer.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIGestureRecognizer_Private.h>
 #import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UILongPressGestureRecognizer_Private.h>
 #import <UIKit/UITapGestureRecognizer_Private.h>
 #import <UIKit/UITextInteractionAssistant_Private.h>
-#import <UIKit/UIWebDocumentView.h>
-#import <UIKit/UIWebScrollView.h>
-#import <UIKit/_UIHighlightView.h>
-#import <UIKit/_UIWebHighlightLongPressGestureRecognizer.h>
+#import <UIKit/UIWebDocumentView.h> // FIXME: should not include this header.
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebEvent.h>
-#import <WebKit/WebSelectionRect.h>
+#import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
 #import <wtf/RetainPtr.h>
-#import <wtf/text/WTFString.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
 SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
@@ -129,106 +124,56 @@ static const float tapAndHoldDelay  = 0.75;
 - (void)selectWord;
 @end
 
-typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
-typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
+@interface WKContentView () {
 
-struct WKAutoCorrectionData{
-    String fontName;
-    CGFloat fontSize;
-    uint64_t fontTraits;
-    CGRect textFirstRect;
-    CGRect textLastRect;
-    UIWKAutocorrectionCompletionHandler autocorrectionHandler;
-    UIWKAutocorrectionContextHandler autocorrectionContextHandler;
-};
-
-@interface WKInteractionView (Private)
-@property (readonly, nonatomic) WKAutoCorrectionData *autocorrectionData;
-@end
-
-@implementation WKInteractionView {
-    RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
-    BOOL _canSendTouchEventsAsynchronously;
-    unsigned _nativeWebTouchEventUniqueIdBeingSentSynchronously;
-
-    RetainPtr<UITapGestureRecognizer> _singleTapGestureRecognizer;
-    RetainPtr<_UIWebHighlightLongPressGestureRecognizer> _highlightLongPressGestureRecognizer;
-    RetainPtr<UILongPressGestureRecognizer> _longPressGestureRecognizer;
-    RetainPtr<UITapGestureRecognizer> _doubleTapGestureRecognizer;
-    RetainPtr<UITapGestureRecognizer> _twoFingerDoubleTapGestureRecognizer;
-    RetainPtr<UIPanGestureRecognizer> _twoFingerPanGestureRecognizer;
-
-    RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;
-    RetainPtr<UIWKSelectionAssistant> _webSelectionAssistant;
-
-    UITextInputTraits *_traits;
-    BOOL _isEditable;
-    UIWebFormAccessory *_accessory;
-    id <UITextInputDelegate> _inputDelegate;
-    BOOL _showingTextStyleOptions;
-
-    __weak UIWebScrollView *_scrollView;
-    RefPtr<WebPageProxy> _page;
-
-    RetainPtr<_UIHighlightView> _highlightView;
-    uint64_t _latestTapHighlightID;
-    BOOL _isTapHighlightIDValid;
-    WKAutoCorrectionData _autocorrectionData;
-    RetainPtr<NSString> _markedText;
-    InteractionInformationAtPosition _positionInformation;
-    BOOL _hasValidPositionInformation;
-    RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
 }
 
-@synthesize inputDelegate = _inputDelegate;
+@end
 
-- (id)initWithFrame:(CGRect)frame
+@implementation WKContentView (WKInteraction)
+
+- (void)setupInteraction
 {
-    self = [super initWithFrame:frame];
-    if (self) {
-        _touchEventGestureRecognizer = adoptNS([[UIWebTouchEventsGestureRecognizer alloc] initWithTarget:self action:@selector(_webTouchEventsRecognized:) touchDelegate:self]);
-        [_touchEventGestureRecognizer setDelegate:self];
-        [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
+    _touchEventGestureRecognizer = adoptNS([[UIWebTouchEventsGestureRecognizer alloc] initWithTarget:self action:@selector(_webTouchEventsRecognized:) touchDelegate:self]);
+    [_touchEventGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
 
-        _singleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapRecognized:)]);
-        [_singleTapGestureRecognizer setDelegate:self];
-        [self addGestureRecognizer:_singleTapGestureRecognizer.get()];
+    _singleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapRecognized:)]);
+    [_singleTapGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_singleTapGestureRecognizer.get()];
 
-        _doubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
-        [_doubleTapGestureRecognizer setNumberOfTapsRequired:2];
-        [_doubleTapGestureRecognizer setDelegate:self];
-        [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
-        [_singleTapGestureRecognizer requireOtherGestureToFail:_doubleTapGestureRecognizer.get()];
+    _doubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
+    [_doubleTapGestureRecognizer setNumberOfTapsRequired:2];
+    [_doubleTapGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
+    [_singleTapGestureRecognizer requireOtherGestureToFail:_doubleTapGestureRecognizer.get()];
 
-        _highlightLongPressGestureRecognizer = adoptNS([[_UIWebHighlightLongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_highlightLongPressRecognized:)]);
-        [_highlightLongPressGestureRecognizer setDelay:highlightDelay];
-        [_highlightLongPressGestureRecognizer setDelegate:self];
-        [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
+    _highlightLongPressGestureRecognizer = adoptNS([[_UIWebHighlightLongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_highlightLongPressRecognized:)]);
+    [_highlightLongPressGestureRecognizer setDelay:highlightDelay];
+    [_highlightLongPressGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
 
-        _longPressGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_longPressRecognized:)]);
-        [_longPressGestureRecognizer setDelay:tapAndHoldDelay];
-        [_longPressGestureRecognizer setDelegate:self];
-        [self addGestureRecognizer:_longPressGestureRecognizer.get()];
+    _longPressGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_longPressRecognized:)]);
+    [_longPressGestureRecognizer setDelay:tapAndHoldDelay];
+    [_longPressGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 
-        _twoFingerPanGestureRecognizer = adoptNS([[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerPanRecognized:)]);
-        [_twoFingerPanGestureRecognizer setMinimumNumberOfTouches:2];
-        [_twoFingerPanGestureRecognizer setMaximumNumberOfTouches:2];
-        [_twoFingerPanGestureRecognizer setDelegate:self];
-        [self addGestureRecognizer:_twoFingerPanGestureRecognizer.get()];
+    _twoFingerPanGestureRecognizer = adoptNS([[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerPanRecognized:)]);
+    [_twoFingerPanGestureRecognizer setMinimumNumberOfTouches:2];
+    [_twoFingerPanGestureRecognizer setMaximumNumberOfTouches:2];
+    [_twoFingerPanGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_twoFingerPanGestureRecognizer.get()];
 
-        [self setUserInteractionEnabled:YES];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_resetShowingTextStyle:) name:UIMenuControllerDidHideMenuNotification object:nil];
-        _showingTextStyleOptions = NO;
-    }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_resetShowingTextStyle:) name:UIMenuControllerDidHideMenuNotification object:nil];
+    _showingTextStyleOptions = NO;
 
     // FIXME: This should be called when we get notified that loading has completed.
     [self useSelectionAssistantWithMode:UIWebSelectionModeWeb];
-
+    
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
-    return self;
 }
 
-- (void)dealloc
+- (void)cleanupInteraction
 {
     _webSelectionAssistant = nil;
     _textSelectionAssistant = nil;
@@ -241,18 +186,21 @@ struct WKAutoCorrectionData{
     [_twoFingerPanGestureRecognizer setDelegate:nil];
 
     [_accessory release];
-    [super dealloc];
 }
 
-- (void)setScrollView:(UIWebScrollView *)scrollView
+- (const InteractionInformationAtPosition&)positionInformation
 {
-    _scrollView = scrollView;
+    return _positionInformation;
 }
 
-- (void)setPage:(PassRefPtr<WebKit::WebPageProxy>)page
+- (void)setInputDelegate:(id <UITextInputDelegate>)inputDelegate
 {
-    _page = page;
-    [_actionSheetAssistant setPage:_page];
+    _inputDelegate = inputDelegate;
+}
+
+- (id <UITextInputDelegate>)inputDelegate
+{
+    return _inputDelegate;
 }
 
 - (BOOL)isEditable
@@ -1125,7 +1073,7 @@ static inline WKHandlePosition toWKHandlePosition(UIWKHandlePosition position)
     }
 }
 
-static void selectionChangedWithGesture(bool error, WKInteractionView *view, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags)
+static void selectionChangedWithGesture(bool error, WKContentView *view, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags)
 {
     if (error) {
         ASSERT_NOT_REACHED();
@@ -1137,7 +1085,7 @@ static void selectionChangedWithGesture(bool error, WKInteractionView *view, con
         [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((WKSelectionFlags)flags))];
 }
 
-static void selectionChangedWithTouch(bool error, WKInteractionView *view, const WebCore::IntPoint& point, uint32_t touch)
+static void selectionChangedWithTouch(bool error, WKContentView *view, const WebCore::IntPoint& point, uint32_t touch)
 {
     if (error) {
         ASSERT_NOT_REACHED();
@@ -1180,9 +1128,9 @@ static void selectionChangedWithTouch(bool error, WKInteractionView *view, const
     _page->updateBlockSelectionWithTouch(WebCore::IntPoint(point), toWKSelectionTouch(touch), toWKHandlePosition(handle));
 }
 
-- (WKAutoCorrectionData *)autocorrectionData
+- (const WKAutoCorrectionData&)autocorrectionData
 {
-    return &_autocorrectionData;
+    return _autocorrectionData;
 }
 
 // The completion handler can pass nil if input does not match the actual text preceding the insertion point.
@@ -1192,6 +1140,7 @@ static void selectionChangedWithTouch(bool error, WKInteractionView *view, const
         completionHandler(nil);
         return;
     }
+
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
     _page->requestAutocorrectionData(input, AutocorrectionDataCallback::create([self, completionHandler](bool, const Vector<FloatRect>& rects, const String& fontName, double fontSize, uint64_t traits) {
         CGRect firstRect = CGRectZero;
@@ -1200,17 +1149,16 @@ static void selectionChangedWithTouch(bool error, WKInteractionView *view, const
             firstRect = rects[0];
             lastRect = rects[rects.size() - 1];
         }
+        
+        _autocorrectionData.fontName = fontName;
+        _autocorrectionData.fontSize = fontSize;
+        _autocorrectionData.fontTraits = traits;
+        _autocorrectionData.textFirstRect = firstRect;
+        _autocorrectionData.textLastRect = lastRect;
 
-        WKAutoCorrectionData *autocorrectionData = self.autocorrectionData;
-        autocorrectionData->fontName = fontName;
-        autocorrectionData->fontSize = fontSize;
-        autocorrectionData->fontTraits = traits;
-        autocorrectionData->textFirstRect = firstRect;
-        autocorrectionData->textLastRect = lastRect;
-
-        autocorrectionData->autocorrectionHandler(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
-        [autocorrectionData->autocorrectionHandler release];
-        autocorrectionData->autocorrectionHandler = nil;
+        _autocorrectionData.autocorrectionHandler(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
+        [_autocorrectionData.autocorrectionHandler release];
+        _autocorrectionData.autocorrectionHandler = nil;
     }));
 }
 
@@ -1229,11 +1177,9 @@ static void selectionChangedWithTouch(bool error, WKInteractionView *view, const
 {
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
     _page->applyAutocorrection(correction, input, StringCallback::create([self](bool /*error*/, StringImpl* string) {
-        WKAutoCorrectionData *autocorrectionData = self.autocorrectionData;
-
-        autocorrectionData->autocorrectionHandler(string ? [WKAutocorrectionRects autocorrectionRectsWithRects:autocorrectionData->textFirstRect lastRect:autocorrectionData->textLastRect] : nil);
-        [autocorrectionData->autocorrectionHandler release];
-        autocorrectionData->autocorrectionHandler = nil;
+        _autocorrectionData.autocorrectionHandler(string ? [WKAutocorrectionRects autocorrectionRectsWithRects:_autocorrectionData.textFirstRect lastRect:_autocorrectionData.textLastRect] : nil);
+        [_autocorrectionData.autocorrectionHandler release];
+        _autocorrectionData.autocorrectionHandler = nil;
     }));
 }
 
@@ -1254,8 +1200,7 @@ static void selectionChangedWithTouch(bool error, WKInteractionView *view, const
     } else {
         _autocorrectionData.autocorrectionContextHandler = [completionHandler copy];
         _page->requestAutocorrectionContext(AutocorrectionContextCallback::create([self, completionHandler](bool /*error*/, const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length) {
-            WKAutoCorrectionData *autocorrectionData = self.autocorrectionData;
-            autocorrectionData->autocorrectionContextHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
+            _autocorrectionData.autocorrectionContextHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
         }));
     }
 }

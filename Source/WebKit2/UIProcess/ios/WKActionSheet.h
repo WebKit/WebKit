@@ -28,13 +28,13 @@
 #import <WebKit2/WKDeclarationSpecifiers.h>
 
 @protocol WKActionSheetDelegate;
-@class WKInteractionView;
+@class WKContentView;
 
 @interface WKActionSheet : UIActionSheet
 
 @property (nonatomic, assign) id <WKActionSheetDelegate> sheetDelegate;
 @property (nonatomic) UIPopoverArrowDirection arrowDirections;
-- (id)initWithView:(WKInteractionView *)view;
+- (id)initWithView:(WKContentView *)view;
 - (void)doneWithSheet;
 - (BOOL)presentSheet;
 - (BOOL)presentSheetFromRect:(CGRect)presentationRect;
@@ -61,7 +61,7 @@ WK_EXPORT @interface WKElementActionInfo : NSObject
 @end
 
 typedef void (^WKElementActionHandler)(WKElementActionInfo *);
-typedef void (^WKElementActionHandlerInternal)(WKInteractionView *, WKElementActionInfo *);
+typedef void (^WKElementActionHandlerInternal)(WKContentView *, WKElementActionInfo *);
 
 typedef enum {
     WKElementActionTypeCustom = 0,
@@ -78,6 +78,6 @@ WK_EXPORT @interface WKElementAction : NSObject
 + (WKElementAction *)customElementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler;
 + (WKElementAction *)standardElementActionWithType:(WKElementActionType)type;
 + (WKElementAction *)standardElementActionWithType:(WKElementActionType)type customTitle:(NSString *)title;
-- (void)runActionWithElementInfo:(WKElementActionInfo *)info view:(WKInteractionView *)view;
+- (void)runActionWithElementInfo:(WKElementActionInfo *)info view:(WKContentView *)view;
 
 @end

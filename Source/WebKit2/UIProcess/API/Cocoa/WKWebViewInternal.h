@@ -30,7 +30,7 @@
 #import <wtf/RefPtr.h>
 
 #if PLATFORM(IOS)
-#import "WKContentViewInternal.h"
+#import "WKContentView.h"
 #import <UIKit/UIScrollView_Private.h>
 #endif
 

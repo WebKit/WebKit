@@ -31,11 +31,15 @@
 #import <wtf/RetainPtr.h>
 
 @class WKContentView;
-@class WKWebViewConfiguration;
 
 namespace WebKit {
+class DrawingAreaProxy;
+class GeolocationPermissionRequestProxy;
 class RemoteLayerTreeTransaction;
 class WebContext;
+class WebFrameProxy;
+class WebPageProxy;
+class WebSecurityOrigin;
 struct WebPageConfiguration;
 }
 
@@ -47,14 +51,15 @@ struct WebPageConfiguration;
 - (RetainPtr<CGImageRef>)takeViewSnapshotForContentView:(WKContentView *)contentView;
 @end
 
-WK_API_CLASS
-@interface WKContentView : UIView
+@interface WKContentView : UIView {
+@package
+    RefPtr<WebKit::WebPageProxy> _page;
+}
 
 @property (nonatomic, readonly) WKBrowsingContextController *browsingContextController;
-
 @property (nonatomic, assign) id <WKContentViewDelegate> delegate;
 
-@property (nonatomic, readonly) WKPageRef _pageRef;
+@property (nonatomic, readonly) WebKit::WebPageProxy* page;
 @property (nonatomic, readonly) BOOL isAssistingNode;
 
 - (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration;
@@ -68,5 +73,17 @@ WK_API_CLASS
 - (void)willStartZoomOrScroll;
 - (void)willStartUserTriggeredScroll;
 - (void)willStartUserTriggeredZoom;
+
+- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
+- (void)_processDidExit;
+- (void)_didRelaunchProcess;
+- (void)_setAcceleratedCompositingRootLayer:(CALayer *)rootLayer;
+
+- (void)_didCommitLoadForMainFrame;
+- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
+
+- (void)_decidePolicyForGeolocationRequestFromOrigin:(WebKit::WebSecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame request:(WebKit::GeolocationPermissionRequestProxy&)permissionRequest;
+
+- (RetainPtr<CGImageRef>)_takeViewSnapshot;
 
 @end

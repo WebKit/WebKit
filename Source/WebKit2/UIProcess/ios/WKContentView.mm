@@ -24,9 +24,8 @@
  */
 
 #import "config.h"
-#import "WKContentViewInternal.h"
+#import "WKContentViewInteraction.h"
 
-#import "InteractionInformationAtPosition.h"
 #import "PageClientImplIOS.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
@@ -34,7 +33,6 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKGeolocationProviderIOS.h"
-#import "WKInteractionView.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKProcessPoolInternal.h"
@@ -44,12 +42,7 @@
 #import "WebPageGroup.h"
 #import "WebSystemInterface.h"
 #import <UIKit/UIWindow_Private.h>
-#import <WebCore/ViewportArguments.h>
 #import <wtf/RetainPtr.h>
-
-#if USE(IOSURFACE)
-#import <IOSurface/IOSurface.h>
-#endif
 
 #if __has_include(<QuartzCore/QuartzCorePrivate.h>)
 #import <QuartzCore/QuartzCorePrivate.h>
@@ -67,7 +60,6 @@ using namespace WebKit;
     RetainPtr<WKBrowsingContextController> _browsingContextController;
 
     RetainPtr<UIView> _rootContentView;
-    RetainPtr<WKInteractionView> _interactionView;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration
@@ -93,9 +85,8 @@ using namespace WebKit;
 
     [self addSubview:_rootContentView.get()];
 
-    _interactionView = adoptNS([[WKInteractionView alloc] init]);
-    [_interactionView setPage:_page];
-    [self addSubview:_interactionView.get()];
+    [self setupInteraction];
+    [self setUserInteractionEnabled:YES];
 
     self.layer.hitTestsAsOpaque = YES;
 
@@ -104,11 +95,18 @@ using namespace WebKit;
 
 - (void)dealloc
 {
+    [self cleanupInteraction];
+
     _page->close();
 
     WebContext::statistics().wkViewCount--;
 
     [super dealloc];
+}
+
+- (WebPageProxy*)page
+{
+    return _page.get();
 }
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
@@ -145,7 +143,7 @@ using namespace WebKit;
 
 - (BOOL)isAssistingNode
 {
-    return [_interactionView isEditable];
+    return [self isEditable];
 }
 
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)scale
@@ -191,29 +189,29 @@ using namespace WebKit;
 - (void)didFinishScrolling
 {
     [self _updateFixedPositionRect];
-    [_interactionView _didEndScrollingOrZooming];
+    [self _didEndScrollingOrZooming];
 }
 
 - (void)willStartZoomOrScroll
 {
-    [_interactionView _willStartScrollingOrZooming];
+    [self _willStartScrollingOrZooming];
 }
 
 - (void)willStartUserTriggeredScroll
 {
-    [_interactionView _willStartUserTriggeredScrollingOrZooming];
+    [self _willStartUserTriggeredScrollingOrZooming];
 }
 
 - (void)willStartUserTriggeredZoom
 {
-    [_interactionView _willStartUserTriggeredScrollingOrZooming];
+    [self _willStartUserTriggeredScrollingOrZooming];
     _page->willStartUserTriggeredZooming();
 }
 
 - (void)didZoomToScale:(CGFloat)scale
 {
     _page->didFinishZooming(scale);
-    [_interactionView _didEndScrollingOrZooming];
+    [self _didEndScrollingOrZooming];
 }
 
 #pragma mark Internal
@@ -253,7 +251,8 @@ using namespace WebKit;
 {
     if ([_delegate respondsToSelector:@selector(contentViewDidCommitLoadForMainFrame:)])
         [_delegate contentViewDidCommitLoadForMainFrame:self];
-    [_interactionView _stopAssistingNode];
+
+    [self _stopAssistingNode];
 }
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
@@ -261,57 +260,15 @@ using namespace WebKit;
     CGSize contentsSize = layerTreeTransaction.contentsSize();
 
     [self setBounds:{CGPointZero, contentsSize}];
-    [_interactionView setFrame:CGRectMake(0, 0, contentsSize.width, contentsSize.height)];
     [_rootContentView setFrame:CGRectMake(0, 0, contentsSize.width, contentsSize.height)];
 
     if ([_delegate respondsToSelector:@selector(contentView:didCommitLayerTree:)])
         [_delegate contentView:self didCommitLayerTree:layerTreeTransaction];
 }
 
-- (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsNativeGesture
-{
-    [_interactionView _webTouchEvent:touchEvent preventsNativeGestures:preventsNativeGesture];
-}
-
-- (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const Color&)color quads:(const Vector<FloatQuad>&)highlightedQuads topLeftRadius:(const IntSize&)topLeftRadius topRightRadius:(const IntSize&)topRightRadius bottomLeftRadius:(const IntSize&)bottomLeftRadius bottomRightRadius:(const IntSize&)bottomRightRadius
-{
-    [_interactionView _didGetTapHighlightForRequest:requestID color:color quads:highlightedQuads topLeftRadius:topLeftRadius topRightRadius:topRightRadius bottomLeftRadius:bottomLeftRadius bottomRightRadius:bottomRightRadius];
-}
-
 - (void)_setAcceleratedCompositingRootLayer:(CALayer *)rootLayer
 {
     [[_rootContentView layer] setSublayers:@[rootLayer]];
-}
-
-// FIXME: change the name. Leave it for now to make it easier to refer to the UIKit implementation.
-- (void)_startAssistingNode
-{
-    [_interactionView _startAssistingNode];
-}
-
-- (void)_stopAssistingNode
-{
-    [_interactionView _stopAssistingNode];
-}
-
-- (void)_selectionChanged
-{
-    [_interactionView _selectionChanged];
-}
-
-- (void)_didUpdateBlockSelectionWithTouch:(WKSelectionTouch)touch withFlags:(WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold
-{
-    [_interactionView _didUpdateBlockSelectionWithTouch:touch withFlags:flags growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
-}
-
-- (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent
-{
-    return [_interactionView _interpretKeyEvent:theEvent isCharEvent:isCharEvent];
-}
-
-- (void)_positionInformationDidChange:(const InteractionInformationAtPosition&)info
-{
-    [_interactionView _positionInformationDidChange:info];
 }
 
 - (void)_decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin&)origin frame:(WebFrameProxy&)frame request:(GeolocationPermissionRequestProxy&)permissionRequest

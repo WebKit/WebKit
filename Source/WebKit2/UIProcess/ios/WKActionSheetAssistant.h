@@ -31,7 +31,7 @@
 #import <wtf/RetainPtr.h>
 
 @protocol WKActionSheetDelegate;
-@class WKInteractionView;
+@class WKContentView;
 
 namespace WebKit {
 class WebPageProxy;
@@ -39,8 +39,7 @@ class WebPageProxy;
 
 @interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate>
 
-- (id)initWithView:(WKInteractionView *)view;
-- (void)setPage:(PassRefPtr<WebKit::WebPageProxy>)page;
+- (id)initWithView:(WKContentView *)view;
 - (void)showLinkSheet;
 - (void)showImageSheet;
 - (void)showDataDetectorsSheet;

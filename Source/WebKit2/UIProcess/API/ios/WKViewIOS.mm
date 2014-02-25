@@ -129,7 +129,7 @@ using namespace WebKit;
 
     _allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
     
-    WebPageProxy *webPageProxy = toImpl([_contentView _pageRef]);
+    WebPageProxy *webPageProxy = [_contentView page];
     
     if (allowsBackForwardNavigationGestures) {
         if (!_gestureController) {
@@ -307,7 +307,7 @@ using namespace WebKit;
 
 - (WKPageRef)pageRef
 {
-    return [_contentView _pageRef];
+    return toAPI([_contentView page]);
 }
 
 - (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
@@ -366,8 +366,7 @@ using namespace WebKit;
 
 - (UIColor *)_pageExtendedBackgroundColor
 {
-    WebPageProxy* webPageProxy = toImpl([_contentView _pageRef]);
-    WebCore::Color color = webPageProxy->pageExtendedBackgroundColor();
+    WebCore::Color color = [_contentView page]->pageExtendedBackgroundColor();
     if (!color.isValid())
         return nil;
 
@@ -376,14 +375,12 @@ using namespace WebKit;
 
 - (void)_setBackgroundExtendsBeyondPage:(BOOL)backgroundExtends
 {
-    WebPageProxy* webPageProxy = toImpl([_contentView _pageRef]);
-    webPageProxy->setBackgroundExtendsBeyondPage(backgroundExtends);
+    [_contentView page]->setBackgroundExtendsBeyondPage(backgroundExtends);
 }
 
 - (BOOL)_backgroundExtendsBeyondPage
 {
-    WebPageProxy* webPageProxy = toImpl([_contentView _pageRef]);
-    return webPageProxy->backgroundExtendsBeyondPage();
+    return [_contentView page]->backgroundExtendsBeyondPage();
 }
 
 @end

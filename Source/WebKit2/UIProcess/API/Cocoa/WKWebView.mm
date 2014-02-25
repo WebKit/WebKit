@@ -139,7 +139,7 @@
     [self addSubview:_scrollView.get()];
 
     _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration)]);
-    _page = _contentView->_page;
+    _page = [_contentView page];
     [_contentView setDelegate:self];
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
