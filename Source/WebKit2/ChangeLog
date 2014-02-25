@@ -1,3 +1,13 @@
+2014-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Rolling out http://trac.webkit.org/changeset/164611, because it broke
+        WebKit2.PrivateBrowsingPushStateNoHistoryCallback API test
+
+        The change was for:
+
+        https://bugs.webkit.org/show_bug.cgi?id=129141
+        Create SessionID class
+
 2014-02-25  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Add delegate method for customizing actions on activated elements

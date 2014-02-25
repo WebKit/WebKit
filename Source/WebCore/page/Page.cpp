@@ -183,7 +183,6 @@ Page::Page(PageClients& pageClients)
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
     , m_visitedLinkProvider(std::move(pageClients.visitedLinkProvider))
-    , m_sessionID(SessionID::emptySessionID())
 {
     ASSERT(m_editorClient);
 
@@ -1494,23 +1493,6 @@ void Page::setUserContentController(UserContentController* userContentController
 
     if (m_userContentController)
         m_userContentController->addPage(*this);
-}
-
-SessionID Page::sessionID() const
-{
-    if (m_sessionID.isValid())
-        return m_sessionID;
-
-    if (settings().privateBrowsingEnabled())
-        return SessionID::legacyPrivateSessionID();
-
-    return SessionID::defaultSessionID();
-}
-
-void Page::setSessionID(SessionID sessionID)
-{
-    ASSERT(sessionID.isValid());
-    m_sessionID = sessionID;
 }
 
 VisitedLinkProvider& Page::visitedLinkProvider()

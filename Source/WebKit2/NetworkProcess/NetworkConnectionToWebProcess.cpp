@@ -42,7 +42,6 @@
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/SessionID.h>
 #include <wtf/RunLoop.h>
 
 using namespace WebCore;
@@ -149,9 +148,9 @@ void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)
     m_serialLoadingEnabled = enabled;
 }
 
-static NetworkStorageSession& storageSession(SessionID sessionID)
+static NetworkStorageSession& storageSession(uint64_t sessionID)
 {
-    if (sessionID.isEphemeral()) {
+    if (SessionTracker::isEphemeralID(sessionID)) {
         NetworkStorageSession* privateSession = SessionTracker::session(sessionID);
         if (privateSession)
             return *privateSession;
@@ -162,7 +161,7 @@ static NetworkStorageSession& storageSession(SessionID sessionID)
     return NetworkStorageSession::defaultStorageSession();
 }
 
-void NetworkConnectionToWebProcess::startDownload(SessionID sessionID, uint64_t downloadID, const ResourceRequest& request)
+void NetworkConnectionToWebProcess::startDownload(uint64_t sessionID, uint64_t downloadID, const ResourceRequest& request)
 {
     // FIXME: Do something with the session ID.
     NetworkProcess::shared().downloadManager().startDownload(downloadID, request);
@@ -184,32 +183,32 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(uint64_t m
     loader->didConvertHandleToDownload();
 }
 
-void NetworkConnectionToWebProcess::cookiesForDOM(SessionID sessionID, const URL& firstParty, const URL& url, String& result)
+void NetworkConnectionToWebProcess::cookiesForDOM(uint64_t sessionID, const URL& firstParty, const URL& url, String& result)
 {
     result = WebCore::cookiesForDOM(storageSession(sessionID), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::setCookiesFromDOM(SessionID sessionID, const URL& firstParty, const URL& url, const String& cookieString)
+void NetworkConnectionToWebProcess::setCookiesFromDOM(uint64_t sessionID, const URL& firstParty, const URL& url, const String& cookieString)
 {
     WebCore::setCookiesFromDOM(storageSession(sessionID), firstParty, url, cookieString);
 }
 
-void NetworkConnectionToWebProcess::cookiesEnabled(SessionID sessionID, const URL& firstParty, const URL& url, bool& result)
+void NetworkConnectionToWebProcess::cookiesEnabled(uint64_t sessionID, const URL& firstParty, const URL& url, bool& result)
 {
     result = WebCore::cookiesEnabled(storageSession(sessionID), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(SessionID sessionID, const URL& firstParty, const URL& url, String& result)
+void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(uint64_t sessionID, const URL& firstParty, const URL& url, String& result)
 {
     result = WebCore::cookieRequestHeaderFieldValue(storageSession(sessionID), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::getRawCookies(SessionID sessionID, const URL& firstParty, const URL& url, Vector<Cookie>& result)
+void NetworkConnectionToWebProcess::getRawCookies(uint64_t sessionID, const URL& firstParty, const URL& url, Vector<Cookie>& result)
 {
     WebCore::getRawCookies(storageSession(sessionID), firstParty, url, result);
 }
 
-void NetworkConnectionToWebProcess::deleteCookie(SessionID sessionID, const URL& url, const String& cookieName)
+void NetworkConnectionToWebProcess::deleteCookie(uint64_t sessionID, const URL& url, const String& cookieName)
 {
     WebCore::deleteCookie(storageSession(sessionID), url, cookieName);
 }

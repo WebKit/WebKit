@@ -33,7 +33,6 @@
 #include "DownloadManager.h"
 #include "MessageReceiverMap.h"
 #include "NetworkResourceLoadScheduler.h"
-#include <WebCore/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -105,8 +104,8 @@ private:
     void didReceiveNetworkProcessMessage(IPC::Connection*, IPC::MessageDecoder&);
     void initializeNetworkProcess(const NetworkProcessCreationParameters&);
     void createNetworkConnectionToWebProcess();
-    void ensurePrivateBrowsingSession(WebCore::SessionID);
-    void destroyPrivateBrowsingSession(WebCore::SessionID);
+    void ensurePrivateBrowsingSession(uint64_t sessionID);
+    void destroyPrivateBrowsingSession(uint64_t sessionID);
     void downloadRequest(uint64_t downloadID, const WebCore::ResourceRequest&);
     void cancelDownload(uint64_t downloadID);
     void setCacheModel(uint32_t);

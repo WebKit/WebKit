@@ -46,7 +46,7 @@ bool RemoteNetworkingContext::isValid() const
     return true;
 }
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
+void RemoteNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
 {
     notImplemented();
 }

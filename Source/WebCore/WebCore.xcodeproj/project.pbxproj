@@ -2217,7 +2217,6 @@
 		75415D5A129AB2D2003AD669 /* JSSpeechInputResultList.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */; };
 		7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */; };
 		7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */; };
-		756B2CE118B7101600FECFAA /* SessionID.h in Headers */ = {isa = PBXBuildFile; fileRef = 756B2CE018B7101600FECFAA /* SessionID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7578F90C11DDF26900D933C5 /* SpeechInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 7578F90911DDF26900D933C5 /* SpeechInput.h */; };
 		7578F90D11DDF26900D933C5 /* SpeechInputClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7578F90A11DDF26900D933C5 /* SpeechInputClient.h */; };
 		7578F92011E4E32800D933C5 /* SpeechInputListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7578F91E11E4E32800D933C5 /* SpeechInputListener.h */; };
@@ -2228,7 +2227,6 @@
 		75793ED30D0CE85B007FC0AC /* DOMMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */; };
 		75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */; };
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
-		75DCC7B818B81C8800A57128 /* SessionIDHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75DCC7B718B81C8800A57128 /* SessionIDHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */; };
 		7633A72713D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */; };
 		76808B50159DADFA002B5233 /* JSHTMLDialogElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 76808B4E159DADFA002B5233 /* JSHTMLDialogElement.h */; };
@@ -9153,7 +9151,6 @@
 		75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechInputResultList.h; sourceTree = "<group>"; };
 		7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineRecordFactory.h; sourceTree = "<group>"; };
 		7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineRecordFactory.cpp; sourceTree = "<group>"; };
-		756B2CE018B7101600FECFAA /* SessionID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionID.h; sourceTree = "<group>"; };
 		7578F90911DDF26900D933C5 /* SpeechInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInput.h; sourceTree = "<group>"; };
 		7578F90A11DDF26900D933C5 /* SpeechInputClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputClient.h; sourceTree = "<group>"; };
 		7578F91E11E4E32800D933C5 /* SpeechInputListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputListener.h; sourceTree = "<group>"; };
@@ -9166,7 +9163,6 @@
 		75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessageEvent.mm; sourceTree = "<group>"; };
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
 		758978EB127090D60076D5A9 /* SpeechInputResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputResult.h; sourceTree = "<group>"; };
-		75DCC7B718B81C8800A57128 /* SessionIDHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionIDHash.h; sourceTree = "<group>"; };
 		7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocaleToScriptMapping.h; sourceTree = "<group>"; };
 		7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocaleToScriptMappingDefault.cpp; sourceTree = "<group>"; };
 		76808B4E159DADFA002B5233 /* JSHTMLDialogElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDialogElement.h; sourceTree = "<group>"; };
@@ -16171,8 +16167,6 @@
 				BCD0E0F90E972C3500265DEA /* SecurityOriginHash.h */,
 				974D2DA2146A535D00D51F8B /* SecurityPolicy.cpp */,
 				974D2DA3146A535D00D51F8B /* SecurityPolicy.h */,
-				756B2CE018B7101600FECFAA /* SessionID.h */,
-				75DCC7B718B81C8800A57128 /* SessionIDHash.h */,
 				14C9A5E90B3D105F005A0232 /* Settings.cpp */,
 				F587863A02DE3A1401EA4122 /* Settings.h */,
 				BC59DEF8169DEDC30016AC34 /* Settings.in */,
@@ -22717,7 +22711,6 @@
 				FD31601D12B0267600C1A359 /* AudioParam.h in Headers */,
 				FD359190138DB22000E1EBEC /* AudioParamTimeline.h in Headers */,
 				FD31602012B0267600C1A359 /* AudioProcessingEvent.h in Headers */,
-				75DCC7B818B81C8800A57128 /* SessionIDHash.h in Headers */,
 				FD31608412B026F700C1A359 /* AudioProcessor.h in Headers */,
 				FD31608612B026F700C1A359 /* AudioResampler.h in Headers */,
 				FD31608812B026F700C1A359 /* AudioResamplerKernel.h in Headers */,
@@ -23919,7 +23912,6 @@
 				41F062140F5F192600A07EAC /* InspectorDatabaseResource.h in Headers */,
 				7A24587C1021EAF4000A00AA /* InspectorDOMAgent.h in Headers */,
 				F3D4C47912E07663003DA150 /* InspectorDOMDebuggerAgent.h in Headers */,
-				756B2CE118B7101600FECFAA /* SessionID.h in Headers */,
 				7A74ECBB101839A600BF939E /* InspectorDOMStorageAgent.h in Headers */,
 				227777601345DEA9008EA455 /* InspectorForwarding.h in Headers */,
 				F344C7141125B82C00F26EEE /* InspectorFrontendClient.h in Headers */,

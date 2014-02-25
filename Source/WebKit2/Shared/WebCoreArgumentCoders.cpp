@@ -57,7 +57,6 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingCoordinator.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/URL.h>
@@ -1881,23 +1880,6 @@ bool ArgumentCoder<IDBObjectStoreMetadata>::decode(ArgumentDecoder& decoder, IDB
 
     return true;
 }
-
-#endif // ENABLE(INDEXED_DATABASE)
-
-void ArgumentCoder<SessionID>::encode(ArgumentEncoder& encoder, const SessionID& sessionID)
-{
-    encoder << sessionID.sessionID();
-}
-
-bool ArgumentCoder<SessionID>::decode(ArgumentDecoder& decoder, SessionID& sessionID)
-{
-    uint64_t session;
-    if (!decoder.decode(session))
-        return false;
-
-    sessionID = SessionID(session);
-
-    return true;
-}
+#endif
 
 } // namespace IPC

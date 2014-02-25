@@ -29,7 +29,6 @@
 #define WebFrameNetworkingContext_h
 
 #include <WebCore/FrameNetworkingContext.h>
-#include <WebCore/SessionID.h>
 
 namespace WebKit {
 
@@ -43,7 +42,7 @@ public:
         return adoptRef(new WebFrameNetworkingContext(frame));
     }
 
-    static void ensurePrivateBrowsingSession(WebCore::SessionID);
+    static void ensurePrivateBrowsingSession(uint64_t sessionID);
 
     WebFrameLoaderClient* webFrameLoaderClient() const;
 

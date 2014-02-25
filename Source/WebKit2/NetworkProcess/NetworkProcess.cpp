@@ -45,7 +45,6 @@
 #include "WebCookieManager.h"
 #include <WebCore/Logging.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/SessionID.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 
@@ -164,7 +163,7 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 
     // FIXME: instead of handling this here, a message should be sent later (scales to multiple sessions)
     if (parameters.privateBrowsingEnabled)
-        RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID());
+        RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID);
 
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
@@ -215,12 +214,12 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
 #endif
 }
 
-void NetworkProcess::ensurePrivateBrowsingSession(SessionID sessionID)
+void NetworkProcess::ensurePrivateBrowsingSession(uint64_t sessionID)
 {
     RemoteNetworkingContext::ensurePrivateBrowsingSession(sessionID);
 }
 
-void NetworkProcess::destroyPrivateBrowsingSession(SessionID sessionID)
+void NetworkProcess::destroyPrivateBrowsingSession(uint64_t sessionID)
 {
     SessionTracker::destroySession(sessionID);
 }

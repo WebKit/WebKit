@@ -30,7 +30,6 @@
 #include "SessionTracker.h"
 #include "WebFrame.h"
 #include "WebPage.h"
-#include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -38,14 +37,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
+void WebFrameNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
 {
     ASSERT(isMainThread());
 
     if (SessionTracker::session(sessionID))
         return;
 
-    SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(String::number(sessionID.sessionID())));
+    SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(String::number(sessionID)));
 }
 
 WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
@@ -56,7 +55,7 @@ WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     if (frame() && frame()->settings().privateBrowsingEnabled())
-        return *SessionTracker::session(SessionID::legacyPrivateSessionID());
+        return *SessionTracker::session(SessionTracker::legacyPrivateSessionID);
 
     return NetworkStorageSession::defaultStorageSession();
 }

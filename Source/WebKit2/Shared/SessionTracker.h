@@ -27,7 +27,6 @@
 #define SessionTracker_h
 
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/SessionIDHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/CString.h>
@@ -37,13 +36,16 @@ namespace WebKit {
 class SessionTracker {
     WTF_MAKE_NONCOPYABLE(SessionTracker);
 public:
+    static const uint64_t defaultSessionID = 1;
+    static const uint64_t legacyPrivateSessionID = 2;
+    static bool isEphemeralID(uint64_t sessionID) { return sessionID != SessionTracker::defaultSessionID; }
     // FIXME: sessionMap()'s returned map does not include default session.
-    static const HashMap<WebCore::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>>& sessionMap();
+    static const HashMap<uint64_t, std::unique_ptr<WebCore::NetworkStorageSession>>& sessionMap();
     static const String& getIdentifierBase();
-    static WebCore::NetworkStorageSession* session(WebCore::SessionID);
-    static WebCore::SessionID sessionID(const WebCore::NetworkStorageSession&);
-    static void setSession(WebCore::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>);
-    static void destroySession(WebCore::SessionID);
+    static WebCore::NetworkStorageSession* session(uint64_t sessionID);
+    static uint64_t sessionID(const WebCore::NetworkStorageSession&);
+    static void setSession(uint64_t sessionID, std::unique_ptr<WebCore::NetworkStorageSession>);
+    static void destroySession(uint64_t sessionID);
     static void setIdentifierBase(const String&);
 };
 

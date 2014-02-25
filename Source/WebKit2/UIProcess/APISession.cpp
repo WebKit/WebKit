@@ -34,7 +34,7 @@ static uint64_t generateID(bool isEphemeral)
 {
     ASSERT(RunLoop::isMain());
 
-    static uint64_t uniqueSessionID = WebCore::SessionID::legacyPrivateSessionID().sessionID();
+    static uint64_t uniqueSessionID = WebKit::SessionTracker::legacyPrivateSessionID;
     ASSERT(isEphemeral);
     return ++uniqueSessionID;
 }
@@ -43,7 +43,7 @@ Session& Session::defaultSession()
 {
     ASSERT(RunLoop::isMain());
 
-    static Session* defaultSession = new Session(WebCore::SessionID::defaultSessionID());
+    static Session* defaultSession = new Session(false, WebKit::SessionTracker::defaultSessionID);
     return *defaultSession;
 }
 
@@ -51,17 +51,19 @@ Session& Session::legacyPrivateSession()
 {
     ASSERT(RunLoop::isMain());
 
-    static Session* legacyPrivateSession = new Session(WebCore::SessionID::legacyPrivateSessionID());
+    static Session* legacyPrivateSession = new Session(true, WebKit::SessionTracker::legacyPrivateSessionID);
     return *legacyPrivateSession;
 }
 
 Session::Session(bool isEphemeral)
-    : m_sessionID(generateID(isEphemeral))
+    : m_isEphemeral(isEphemeral)
+    , m_sessionID(generateID(isEphemeral))
 {
 }
 
-Session::Session(WebCore::SessionID sessionID)
-    : m_sessionID(sessionID)
+Session::Session(bool isEphemeral, uint64_t sessionID)
+    : m_isEphemeral(isEphemeral)
+    , m_sessionID(sessionID)
 {
 }
 
@@ -73,10 +75,10 @@ PassRefPtr<Session> Session::create(bool isEphemeral)
 
 bool Session::isEphemeral() const
 {
-    return m_sessionID.isEphemeral();
+    return m_isEphemeral;
 }
 
-WebCore::SessionID Session::getID() const
+uint64_t Session::getID() const
 {
     return m_sessionID;
 }

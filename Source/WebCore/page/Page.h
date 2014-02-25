@@ -31,7 +31,6 @@
 #include "Pagination.h"
 #include "PlatformScreen.h"
 #include "Region.h"
-#include "SessionID.h"
 #include "Supplementable.h"
 #include "ViewState.h"
 #include "ViewportArguments.h"
@@ -404,9 +403,6 @@ public:
 
     VisitedLinkProvider& visitedLinkProvider();
 
-    SessionID sessionID() const;
-    void setSessionID(SessionID);
-
 private:
     void initGroup();
 
@@ -547,8 +543,6 @@ private:
 
     RefPtr<UserContentController> m_userContentController;
     RefPtr<VisitedLinkProvider> m_visitedLinkProvider;
-
-    SessionID m_sessionID;
 };
 
 inline PageGroup& Page::group()

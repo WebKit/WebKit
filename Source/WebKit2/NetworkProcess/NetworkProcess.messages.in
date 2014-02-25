@@ -34,8 +34,8 @@ messages -> NetworkProcess LegacyReceiver {
     UserPreferredLanguagesChanged(Vector<String> languages)
 #endif
 
-    EnsurePrivateBrowsingSession(WebCore::SessionID sessionID)
-    DestroyPrivateBrowsingSession(WebCore::SessionID sessionID)
+    EnsurePrivateBrowsingSession(uint64_t sessionID)
+    DestroyPrivateBrowsingSession(uint64_t sessionID)
 
     DownloadRequest(uint64_t downloadID, WebCore::ResourceRequest request)
     CancelDownload(uint64_t downloadID)

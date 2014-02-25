@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "MutableDictionary.h"
 #include "SandboxExtension.h"
+#include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "TextChecker.h"
 #include "WKContextPrivate.h"
@@ -62,7 +63,6 @@
 #include <WebCore/LinkHash.h>
 #include <WebCore/Logging.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/SessionID.h>
 #include <runtime/JSCInlines.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -486,16 +486,16 @@ void WebContext::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool privateBrow
 #if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess() && networkProcess()) {
         if (privateBrowsingEnabled)
-            networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
+            networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID), 0);
         else
-            networkProcess()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
+            networkProcess()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(SessionTracker::legacyPrivateSessionID), 0);
     }
 #endif // ENABLED(NETWORK_PROCESS)
 
     if (privateBrowsingEnabled)
-        sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()));
+        sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID));
     else
-        sendToAllProcesses(Messages::WebProcess::DestroyPrivateBrowsingSession(SessionID::legacyPrivateSessionID()));
+        sendToAllProcesses(Messages::WebProcess::DestroyPrivateBrowsingSession(SessionTracker::legacyPrivateSessionID));
 }
 
 void (*s_invalidMessageCallback)(WKStringRef messageName);
@@ -625,7 +625,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
 #endif
 
     if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
-        process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
+        process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID), 0);
 
     m_processes.append(process);
 

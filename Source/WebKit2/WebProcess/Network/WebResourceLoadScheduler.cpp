@@ -47,7 +47,6 @@
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceLoader.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SubresourceLoader.h>
 #include <wtf/text/CString.h>
@@ -119,7 +118,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     loadParameters.identifier = identifier;
     loadParameters.webPageID = webPage ? webPage->pageID() : 0;
     loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
-    loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
+    loadParameters.sessionID = webPage ? webPage->sessionID() : SessionTracker::defaultSessionID;
     loadParameters.request = resourceLoader->request();
     loadParameters.priority = priority;
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
