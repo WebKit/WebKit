@@ -141,6 +141,8 @@ public:
         RefPtr<BackForwardClient> backForwardClient;
         ValidationMessageClient* validationMessageClient;
         FrameLoaderClient* loaderClientForMainFrame;
+
+        RefPtr<VisitedLinkProvider> visitedLinkProvider;
     };
 
     explicit Page(PageClients&);
@@ -544,6 +546,7 @@ private:
     unsigned m_framesHandlingBeforeUnloadEvent;
 
     RefPtr<UserContentController> m_userContentController;
+    RefPtr<VisitedLinkProvider> m_visitedLinkProvider;
 
     SessionID m_sessionID;
 };

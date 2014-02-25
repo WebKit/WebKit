@@ -1,3 +1,26 @@
+2014-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Make it possible to set the visited link provider on a per page basis
+        https://bugs.webkit.org/show_bug.cgi?id=129288
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in:
+        Export symbols needed by WebKit2.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make VisitedLinkProvider a private header.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        Take the visited link provider from the PageClients object.
+
+        (WebCore::Page::visitedLinkProvider):
+        If the page has a visited link provider set, return it.
+
+        * page/Page.h:
+        Add VisitedLinkProvider to Page and PageClients.
+
 2014-02-25  Morten Stenshorne  <mstensho@opera.com>
 
         [New Multicolumn] -webkit-column-break-inside:avoid doesn't work

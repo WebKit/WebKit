@@ -1,3 +1,23 @@
+2014-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Make it possible to set the visited link provider on a per page basis
+        https://bugs.webkit.org/show_bug.cgi?id=129288
+
+        Reviewed by Andreas Kling.
+
+        Add WebVisitedLinkProvider which just calls the web process.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebVisitedLinkProvider.cpp: Added.
+        (WebKit::WebVisitedLinkProvider::create):
+        (WebKit::WebVisitedLinkProvider::WebVisitedLinkProvider):
+        (WebKit::WebVisitedLinkProvider::~WebVisitedLinkProvider):
+        (WebKit::WebVisitedLinkProvider::isLinkVisited):
+        (WebKit::WebVisitedLinkProvider::addVisitedLink):
+        * WebProcess/WebPage/WebVisitedLinkProvider.h: Added.
+
 2014-02-25  Dan Bernstein  <mitz@apple.com>
 
         Build fix for case-sensitive filesystems.

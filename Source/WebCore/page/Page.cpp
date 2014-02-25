@@ -83,6 +83,7 @@
 #include "SubframeLoader.h"
 #include "TextResourceDecoder.h"
 #include "UserContentController.h"
+#include "VisitedLinkProvider.h"
 #include "VisitedLinkState.h"
 #include "VoidCallback.h"
 #include "Widget.h"
@@ -181,6 +182,7 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
+    , m_visitedLinkProvider(std::move(pageClients.visitedLinkProvider))
     , m_sessionID(SessionID::emptySessionID())
 {
     ASSERT(m_editorClient);
@@ -1513,7 +1515,9 @@ void Page::setSessionID(SessionID sessionID)
 
 VisitedLinkProvider& Page::visitedLinkProvider()
 {
-    // FIXME: This shouldn't always return the group visited link provider.
+    if (m_visitedLinkProvider)
+        return *m_visitedLinkProvider;
+
     return group().visitedLinkProvider();
 }
 
