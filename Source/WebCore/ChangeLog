@@ -1,3 +1,19 @@
+2014-02-24  Mark Lam  <mark.lam@apple.com>
+
+        Need to initialize VM stack data even when the VM is on an exclusive thread.
+        <https://webkit.org/b/129265>
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        - Added an assertion to ensure that we are holding the JSLock.
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+        - Updated to use the new VM::setExclusiveThread().
+
 2014-02-24  Anders Carlsson  <andersca@apple.com>
 
         Add a DefaultVisitedLinkProvider and route visited link actions through it

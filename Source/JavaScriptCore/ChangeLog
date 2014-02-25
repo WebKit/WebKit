@@ -1,3 +1,53 @@
+2014-02-24  Mark Lam  <mark.lam@apple.com>
+
+        Need to initialize VM stack data even when the VM is on an exclusive thread.
+        <https://webkit.org/b/129265>
+
+        Reviewed by Geoffrey Garen.
+
+        We check VM::exclusiveThread as an optimization to forego the need to do
+        JSLock locking. However, we recently started piggy backing on JSLock's
+        lock() and unlock() to initialize VM stack data (stackPointerAtVMEntry
+        and lastStackTop) to appropriate values for the current thread. This is
+        needed because we may be acquiring the lock to enter the VM on a different
+        thread.
+
+        As a result, we ended up not initializing the VM stack data when
+        VM::exclusiveThread causes us to bypass the locking activity. Even though
+        the VM::exclusiveThread will not have to deal with the VM being entered
+        on a different thread, it still needs to initialize the VM stack data.
+        The VM relies on that data being initialized properly once it has been
+        entered.
+
+        With this fix, we push the check for exclusiveThread down into the JSLock,
+        and handle the bypassing of unneeded locking activity there while still
+        executing the necessary the VM stack data initialization.
+
+        * API/APIShims.h:
+        (JSC::APIEntryShim::APIEntryShim):
+        (JSC::APICallbackShim::shouldDropAllLocks):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::addCurrentThread):
+        * runtime/JSLock.cpp:
+        (JSC::JSLockHolder::JSLockHolder):
+        (JSC::JSLockHolder::init):
+        (JSC::JSLockHolder::~JSLockHolder):
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::setExclusiveThread):
+        (JSC::JSLock::lock):
+        (JSLock::unlock):
+        (JSLock::currentThreadIsHoldingLock):
+        (JSLock::dropAllLocks):
+        (JSLock::grabAllLocks):
+        * runtime/JSLock.h:
+        (JSC::JSLock::exclusiveThread):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::exclusiveThread):
+        (JSC::VM::setExclusiveThread):
+        (JSC::VM::currentThreadIsHoldingAPILock):
+
 2014-02-24  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should do polymorphic PutById inlining

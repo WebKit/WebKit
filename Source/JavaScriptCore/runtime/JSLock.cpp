@@ -50,7 +50,7 @@ void GlobalJSLock::initialize()
 }
 
 JSLockHolder::JSLockHolder(ExecState* exec)
-    : m_vm(exec ? &exec->vm() : 0)
+    : m_vm(&exec->vm())
 {
     init();
 }
@@ -69,23 +69,21 @@ JSLockHolder::JSLockHolder(VM& vm)
 
 void JSLockHolder::init()
 {
-    if (m_vm)
-        m_vm->apiLock().lock();
+    m_vm->apiLock().lock();
 }
 
 JSLockHolder::~JSLockHolder()
 {
-    if (!m_vm)
-        return;
-
     RefPtr<JSLock> apiLock(&m_vm->apiLock());
     m_vm.clear();
     apiLock->unlock();
 }
 
 JSLock::JSLock(VM* vm)
-    : m_lockCount(0)
+    : m_ownerThreadID(std::thread::id())
+    , m_lockCount(0)
     , m_lockDropDepth(0)
+    , m_hasExclusiveThread(false)
     , m_vm(vm)
 {
 }
@@ -98,6 +96,13 @@ void JSLock::willDestroyVM(VM* vm)
 {
     ASSERT_UNUSED(vm, m_vm == vm);
     m_vm = 0;
+}
+
+void JSLock::setExclusiveThread(std::thread::id threadId)
+{
+    RELEASE_ASSERT(!m_lockCount && m_ownerThreadID == std::thread::id());
+    m_hasExclusiveThread = (threadId != std::thread::id());
+    m_ownerThreadID = threadId;
 }
 
 void JSLock::lock()
@@ -113,21 +118,21 @@ void JSLock::lock(intptr_t lockCount)
         return;
     }
 
-    m_lock.lock();
-
-    m_ownerThreadID = std::this_thread::get_id();
+    if (!m_hasExclusiveThread) {
+        m_lock.lock();
+        m_ownerThreadID = std::this_thread::get_id();
+    }
     ASSERT(!m_lockCount);
     m_lockCount = lockCount;
 
     if (!m_vm)
         return;
 
-    WTFThreadData& threadData = wtfThreadData();
-
     RELEASE_ASSERT(!m_vm->stackPointerAtVMEntry());
     void* p = &p; // A proxy for the current stack pointer.
     m_vm->setStackPointerAtVMEntry(p);
 
+    WTFThreadData& threadData = wtfThreadData();
     m_vm->setLastStackTop(threadData.savedLastStackTop());
 }
 
@@ -146,8 +151,11 @@ void JSLock::unlock(intptr_t unlockCount)
     if (!m_lockCount) {
         if (m_vm)
             m_vm->setStackPointerAtVMEntry(nullptr);
-        m_ownerThreadID = std::thread::id();
-        m_lock.unlock();
+
+        if (!m_hasExclusiveThread) {
+            m_ownerThreadID = std::thread::id();
+            m_lock.unlock();
+        }
     }
 }
 
@@ -163,12 +171,20 @@ void JSLock::unlock(ExecState* exec)
 
 bool JSLock::currentThreadIsHoldingLock()
 {
+    ASSERT(!m_hasExclusiveThread || (exclusiveThread() == std::this_thread::get_id()));
+    if (m_hasExclusiveThread)
+        return !!m_lockCount;
     return m_ownerThreadID == std::this_thread::get_id();
 }
 
 // This function returns the number of locks that were dropped.
 unsigned JSLock::dropAllLocks(DropAllLocks* dropper)
 {
+    if (m_hasExclusiveThread) {
+        ASSERT(exclusiveThread() == std::this_thread::get_id());
+        return 0;
+    }
+
     // Check if this thread is currently holding the lock.
     // FIXME: Maybe we want to require this, guard with an ASSERT?
     if (!currentThreadIsHoldingLock())
@@ -193,6 +209,8 @@ unsigned JSLock::dropAllLocks(DropAllLocks* dropper)
 
 void JSLock::grabAllLocks(DropAllLocks* dropper, unsigned droppedLockCount)
 {
+    ASSERT(!m_hasExclusiveThread || !droppedLockCount);
+
     // If no locks were dropped, nothing to do!
     if (!droppedLockCount)
         return;
