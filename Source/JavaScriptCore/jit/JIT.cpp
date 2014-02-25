@@ -519,7 +519,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         }
 
         addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, regT1);
-        stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfJSStackLimit()), regT1);
+        stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfStackLimit()), regT1);
     }
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);

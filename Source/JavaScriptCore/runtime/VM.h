@@ -389,12 +389,12 @@ namespace JSC {
         void** addressOfFTLStackLimit() { return &m_ftlStackLimit; }
 #endif
 
-        void** addressOfJSStackLimit() { return &m_jsStackLimit; }
 #if ENABLE(LLINT_C_LOOP)
         void* jsStackLimit() { return m_jsStackLimit; }
         void setJSStackLimit(void* limit) { m_jsStackLimit = limit; }
 #endif
         void* stackLimit() { return m_stackLimit; }
+        void** addressOfStackLimit() { return &m_stackLimit; }
 
         bool isSafeToRecurse(size_t neededStackInBytes = 0) const
         {
