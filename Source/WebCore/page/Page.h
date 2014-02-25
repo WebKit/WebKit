@@ -317,8 +317,8 @@ public:
 
     static void removeAllVisitedLinks();
 
-    static void allVisitedStateChanged(PageGroup*);
-    static void visitedStateChanged(PageGroup*, LinkHash visitedHash);
+    void invalidateStylesForAllLinks();
+    void invalidateStylesForLink(LinkHash);
 
     StorageNamespace* sessionStorage(bool optionalCreate = true);
     void setSessionStorage(PassRefPtr<StorageNamespace>);

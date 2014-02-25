@@ -506,11 +506,11 @@ void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)
 void WebProcess::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes)
 {
     // FIXME: We may want to track visited links per WebPageGroup rather than per WebContext.
-    for (size_t i = 0; i < linkHashes.size(); ++i) {
-        HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator it = m_pageGroupMap.begin();
-        HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator end = m_pageGroupMap.end();
-        for (; it != end; ++it)
-            Page::visitedStateChanged(PageGroup::pageGroup(it->value->identifier()), linkHashes[i]);
+    for (const auto& webPage : m_pageMap.values()) {
+        if (Page* page = webPage->corePage()) {
+            for (auto linkHash : linkHashes)
+                page->invalidateStylesForLink(linkHash);
+        }
     }
 
     pageCache()->markPagesForVistedLinkStyleRecalc();
@@ -518,11 +518,10 @@ void WebProcess::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHa
 
 void WebProcess::allVisitedLinkStateChanged()
 {
-    // FIXME: We may want to track visited links per WebPageGroup rather than per WebContext.
-    HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator it = m_pageGroupMap.begin();
-    HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator end = m_pageGroupMap.end();
-    for (; it != end; ++it)
-        Page::allVisitedStateChanged(PageGroup::pageGroup(it->value->identifier()));
+    for (const auto& webPage : m_pageMap.values()) {
+        if (Page* page = webPage->corePage())
+            page->invalidateStylesForAllLinks();
+    }
 
     pageCache()->markPagesForVistedLinkStyleRecalc();
 }

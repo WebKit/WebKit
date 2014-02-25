@@ -1,3 +1,24 @@
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Simplify visited link style invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=129340
+
+        Reviewed by Dan Bernstein.
+
+        Get rid of the static Page::allVisitedStateChanged and Page::visitedStateChanged
+        member functions and add functions to invalidate all styles on a single page or the style
+        for a single link hash on a single page.
+
+        * WebCore.exp.in:
+        * page/Page.cpp:
+        (WebCore::Page::invalidateStylesForAllLinks):
+        (WebCore::Page::invalidateStylesForLink):
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addVisitedLink):
+        (WebCore::PageGroup::removeVisitedLink):
+        (WebCore::PageGroup::removeVisitedLinks):
+
 2014-02-25  Andreas Kling  <akling@apple.com>
 
         Remove unused ThreadSpecificInspectorCounters.

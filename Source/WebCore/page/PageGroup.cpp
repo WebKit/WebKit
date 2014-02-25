@@ -207,7 +207,8 @@ inline void PageGroup::addVisitedLink(LinkHash hash)
     ASSERT(shouldTrackVisitedLinks);
     if (!m_visitedLinkHashes.add(hash).isNewEntry)
         return;
-    Page::visitedStateChanged(this, hash);
+    for (auto& page : m_pages)
+        page->invalidateStylesForLink(hash);
     pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 
@@ -232,7 +233,9 @@ void PageGroup::removeVisitedLink(const URL& url)
     ASSERT(m_visitedLinkHashes.contains(hash));
     m_visitedLinkHashes.remove(hash);
 
-    Page::allVisitedStateChanged(this);
+    // FIXME: Why can't we just invalidate the single visited link hash here?
+    for (auto& page : m_pages)
+        page->invalidateStylesForAllLinks();
     pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 
@@ -242,7 +245,9 @@ void PageGroup::removeVisitedLinks()
     if (m_visitedLinkHashes.isEmpty())
         return;
     m_visitedLinkHashes.clear();
-    Page::allVisitedStateChanged(this);
+
+    for (auto& page : m_pages)
+        page->invalidateStylesForAllLinks();
     pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 

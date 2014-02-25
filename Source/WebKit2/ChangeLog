@@ -1,5 +1,18 @@
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
+        Simplify visited link style invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=129340
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::addVisitedLink):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::visitedLinkStateChanged):
+        (WebKit::WebProcess::allVisitedLinkStateChanged):
+
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         Remove VisitedLinkStrategy.
