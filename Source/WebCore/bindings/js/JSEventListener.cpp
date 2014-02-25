@@ -51,16 +51,10 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
         m_jsFunction = JSC::Weak<JSC::JSObject>(function);
     } else
         ASSERT(!function);
-#if ENABLE(INSPECTOR)
-    ThreadLocalInspectorCounters::current().incrementCounter(ThreadLocalInspectorCounters::JSEventListenerCounter);
-#endif
 }
 
 JSEventListener::~JSEventListener()
 {
-#if ENABLE(INSPECTOR)
-    ThreadLocalInspectorCounters::current().decrementCounter(ThreadLocalInspectorCounters::JSEventListenerCounter);
-#endif
 }
 
 JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext*) const

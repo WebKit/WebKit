@@ -7,8 +7,7 @@
             "type": "object",
             "properties": [
                 { "name": "documents", "type": "integer" },
-                { "name": "nodes", "type": "integer" },
-                { "name": "jsEventListeners", "type": "integer" }
+                { "name": "nodes", "type": "integer" }
             ],
             "description": "Current values of DOM counters."
         },

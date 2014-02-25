@@ -1,3 +1,28 @@
+2014-02-25  Andreas Kling  <akling@apple.com>
+
+        Remove unused ThreadSpecificInspectorCounters.
+        <https://webkit.org/b/129337>
+
+        We were keeping count of all the JS event listeners in every thread
+        to support an old Chromium feature that's no longer relevant.
+
+        Removing this gets rid of expensive thread-local storage lookups.
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        * inspector/InspectorCounters.cpp:
+        * inspector/InspectorCounters.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::setDOMCounters):
+        * inspector/protocol/Timeline.json:
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::destroy):
+        * platform/ThreadGlobalData.h:
+
 2014-02-25  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
 
         display:table with padding and/or borders in border-box calculates height incorrectly

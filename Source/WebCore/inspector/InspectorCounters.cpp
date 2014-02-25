@@ -34,8 +34,6 @@
 
 #include "InspectorCounters.h"
 
-#include "ThreadGlobalData.h"
-
 namespace WebCore {
 
 int InspectorCounters::s_counters[CounterTypeLength];
@@ -43,22 +41,6 @@ int InspectorCounters::s_counters[CounterTypeLength];
 int InspectorCounters::counterValue(CounterType type)
 {
     return s_counters[type];
-}
-
-ThreadLocalInspectorCounters::ThreadLocalInspectorCounters()
-{
-    for (size_t i = 0; i < CounterTypeLength; i++)
-        m_counters[i] = 0;
-}
-
-int ThreadLocalInspectorCounters::counterValue(CounterType type)
-{
-    return m_counters[type];
-}
-
-ThreadLocalInspectorCounters& ThreadLocalInspectorCounters::current()
-{
-    return threadGlobalData().inspectorCounters();
 }
 
 } // namespace WebCore
