@@ -61,6 +61,8 @@ private
         /^diff/
     ]
 
+    RENAME_FROM = /^rename from (.*)/
+
     BINARY_FILE_MARKER_FORMAT = /^Cannot display: file marked as a binary type.$/
 
     IMAGE_FILE_MARKER_FORMAT = /^svn:mime-type = image\/png$/
@@ -150,10 +152,13 @@ private
         [nil, file_path]
     end
 
-    def self.linkifyFilename(filename)
-        url, pathBeneathTrunk = find_url_and_path(filename)
-
-        url.nil? ? filename : "<a href='#{url}browser/trunk/#{pathBeneathTrunk}'>#{filename}</a>"
+    def self.linkifyFilename(filename, force)
+        if force
+          "<a href='#{OPENSOURCE_TRAC_URL}browser/trunk/#{filename}'>#{filename}</a>"
+        else
+          url, pathBeneathTrunk = find_url_and_path(filename)
+          url.nil? ? filename : "<a href='#{url}browser/trunk/#{pathBeneathTrunk}'>#{filename}</a>"
+        end
     end
 
 
@@ -184,7 +189,7 @@ h1 {
     font-family: sans-serif;
     font-size: 1em;
     margin-left: 0.5em;
-    display: table-cell;
+    display: inline;
     width: 100%;
     padding: 0.5em;
 }
@@ -560,6 +565,8 @@ EOF
                         startOfSections = i + 1
                     end
                     break
+                when RENAME_FROM
+                    @renameFrom = RENAME_FROM.match(lines[i])[1]
                 end
             end
             lines_with_contents = lines[startOfSections...lines.length]
@@ -616,7 +623,13 @@ EOF
 
         def to_html
             str = "<div class='FileDiff'>\n"
-            str += "<h1>#{PrettyPatch.linkifyFilename(@filename)}</h1>\n"
+            if @renameFrom
+                str += "<h1>#{@filename}</h1>"
+                str += "was renamed from"
+                str += "<h1>#{PrettyPatch.linkifyFilename(@renameFrom.to_s, true)}</h1>"
+            else
+                str += "<h1>#{PrettyPatch.linkifyFilename(@filename, false)}</h1>\n"
+            end
             if @image then
                 str += self.image_to_html
             elsif @git_image then
