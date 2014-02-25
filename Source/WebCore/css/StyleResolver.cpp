@@ -40,7 +40,6 @@
 #include "CSSFontSelector.h"
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
-#include "CSSGridTemplateAreasValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSPageRule.h"
 #include "CSSParser.h"
@@ -141,6 +140,10 @@
 #if ENABLE(CSS_FILTERS)
 #include "FilterOperation.h"
 #include "WebKitCSSFilterValue.h"
+#endif
+
+#if ENABLE(CSS_GRID_LAYOUT)
+#include "CSSGridTemplateAreasValue.h"
 #endif
 
 #if ENABLE(CSS_IMAGE_SET)
@@ -1073,7 +1076,9 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
     case TABLE:
     case BOX:
     case FLEX:
+#if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
+#endif
         return display;
 
     case LIST_ITEM:
@@ -1087,8 +1092,10 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
         return BOX;
     case INLINE_FLEX:
         return FLEX;
+#if ENABLE(CSS_GRID_LAYOUT)
     case INLINE_GRID:
         return GRID;
+#endif
 
     case INLINE:
     case COMPACT:
@@ -1332,7 +1339,9 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         || style.hasBlendMode()))
         style.setTransformStyle3D(TransformStyle3DFlat);
 
+#if ENABLE(CSS_GRID_LAYOUT)
     adjustGridItemPosition(style, parentStyle);
+#endif
 
     if (e && e->isSVGElement()) {
         // Spec: http://www.w3.org/TR/SVG/masking.html#OverflowProperty
@@ -1365,6 +1374,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     }
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 void StyleResolver::adjustGridItemPosition(RenderStyle& style, const RenderStyle& parentStyle) const
 {
     const GridPosition& columnStartPosition = style.gridItemColumnStart();
@@ -1395,6 +1405,7 @@ void StyleResolver::adjustGridItemPosition(RenderStyle& style, const RenderStyle
     CLEAR_UNKNOWN_NAMED_AREA(rowStartPosition, RowStart);
     CLEAR_UNKNOWN_NAMED_AREA(rowEndPosition, RowEnd);
 }
+#endif /* ENABLE(CSS_GRID_LAYOUT) */
 
 bool StyleResolver::checkRegionStyle(Element* regionElement)
 {
@@ -1869,6 +1880,7 @@ bool StyleResolver::useSVGZoomRules()
     return m_state.element() && m_state.element()->isSVGElement();
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, const StyleResolver::State& state, GridLength& workingLength)
 {
     if (primitiveValue->getValueID() == CSSValueWebkitMinContent) {
@@ -2010,6 +2022,7 @@ static bool createGridPosition(CSSValue* value, GridPosition& position)
 
     return true;
 }
+#endif /* ENABLE(CSS_GRID_LAYOUT) */
 
 void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 {
@@ -2291,9 +2304,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitColumnRule:
     case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexFlow:
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridArea:
     case CSSPropertyWebkitGridColumn:
     case CSSPropertyWebkitGridRow:
+#endif
     case CSSPropertyWebkitMarginCollapse:
     case CSSPropertyWebkitMarquee:
     case CSSPropertyWebkitMask:
@@ -2645,6 +2660,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridAutoColumns: {
         HANDLE_INHERIT_AND_INITIAL(gridAutoColumns, GridAutoColumns);
         GridTrackSize trackSize;
@@ -2758,7 +2774,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.style()->setNamedGridAreaColumnCount(gridTemplateValue->columnCount());
         return;
     }
-
+#endif /* ENABLE(CSS_GRID_LAYOUT) */
     // These properties are aliased and DeprecatedStyleBuilder already applied the property on the prefixed version.
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:

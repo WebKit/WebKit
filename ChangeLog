@@ -1,3 +1,20 @@
+2014-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add ENABLE flag
+        https://bugs.webkit.org/show_bug.cgi?id=129153
+
+        Reviewed by Simon Fraser.
+
+        Added the ENABLE_CSS_GRID_LAYOUT feature flag to the cmake and
+        autotools build systems. The feature is disabled by default for
+        production builds.
+
+        * Source/autotools/SetupWebKitFeatures.m4:
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-02-24  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] generate-gtkdoc should not generate documentation for source files for unbuilt source files

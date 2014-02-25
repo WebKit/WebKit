@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,6 +31,8 @@
 
 #ifndef GridPosition_h
 #define GridPosition_h
+
+#if ENABLE(CSS_GRID_LAYOUT)
 
 #include <wtf/text/WTFString.h>
 
@@ -114,5 +117,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif /* ENABLE(CSS_GRID_LAYOUT) */
 
 #endif // GridPosition_h

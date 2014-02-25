@@ -1,3 +1,69 @@
+2014-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add ENABLE flag
+        https://bugs.webkit.org/show_bug.cgi?id=129153
+
+        Reviewed by Simon Fraser.
+
+        Added ENABLE_CSS_GRID_LAYOUT feature flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::isLayoutDependent):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSGridTemplateAreasValue.cpp:
+        * css/CSSGridTemplateAreasValue.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSParser.h:
+        * css/CSSParserMode.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::shorthandForProperty):
+        (WebCore::matchingShorthandsForLonghand):
+        * css/StyleResolver.cpp:
+        (WebCore::equivalentBlockDisplay):
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::applyProperty):
+        * css/StyleResolver.h:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        * rendering/RenderGrid.cpp:
+        * rendering/RenderGrid.h:
+        * rendering/style/GridCoordinate.h:
+        * rendering/style/GridLength.h:
+        * rendering/style/GridPosition.h:
+        * rendering/style/GridTrackSize.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleAllInOne.cpp:
+        * rendering/style/StyleGridData.cpp:
+        * rendering/style/StyleGridData.h:
+        * rendering/style/StyleGridItemData.cpp:
+        * rendering/style/StyleGridItemData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2014-02-25  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Fix a few issues in CDMSessionMediaSourceAVFObjC.

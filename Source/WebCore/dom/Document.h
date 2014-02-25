@@ -430,7 +430,9 @@ public:
 
     bool regionBasedColumnsEnabled() const;
 
+#if ENABLE(CSS_GRID_LAYOUT)
     bool cssGridLayoutEnabled() const;
+#endif
 
     Element* elementFromPoint(int x, int y) const;
     PassRefPtr<Range> caretRangeFromPoint(int x, int y);

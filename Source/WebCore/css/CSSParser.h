@@ -152,6 +152,7 @@ public:
     bool parseTransitionShorthand(CSSPropertyID, bool important);
     bool parseAnimationShorthand(bool important);
 
+#if ENABLE(CSS_GRID_LAYOUT)
     bool cssGridLayoutEnabled() const;
     PassRefPtr<CSSValue> parseGridPosition();
     bool parseGridItemPositionShorthand(CSSPropertyID, bool important);
@@ -163,6 +164,7 @@ public:
     PassRefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue*);
     PassRefPtr<CSSValue> parseGridTemplateAreas();
     void parseGridTrackNames(CSSParserValueList& inputList, CSSValueList& values);
+#endif
 
     bool parseDashboardRegions(CSSPropertyID, bool important);
 
@@ -517,7 +519,9 @@ private:
 
     bool parseColor(const String&);
 
+#if ENABLE(CSS_GRID_LAYOUT)
     bool parseIntegerOrStringFromGridPosition(RefPtr<CSSPrimitiveValue>& numericValue, RefPtr<CSSPrimitiveValue>& gridLineName);
+#endif
 
     enum ParsingMode {
         NormalMode,

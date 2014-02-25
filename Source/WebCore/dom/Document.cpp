@@ -1110,10 +1110,12 @@ bool Document::cssCompositingEnabled() const
     return RuntimeEnabledFeatures::sharedFeatures().cssCompositingEnabled();
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 bool Document::cssGridLayoutEnabled() const
 {
     return settings() && settings()->cssGridLayoutEnabled();
 }
+#endif
 
 #if ENABLE(CSS_REGIONS)
 

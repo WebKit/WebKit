@@ -40,7 +40,6 @@
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
-#include "CSSGridTemplateAreasValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSInheritedValue.h"
@@ -56,6 +55,10 @@
 #include "SVGPaint.h"
 #include "WebKitCSSFilterValue.h"
 #include "WebKitCSSTransformValue.h"
+
+#if ENABLE(CSS_GRID_LAYOUT)
+#include "CSSGridTemplateAreasValue.h"
+#endif
 
 namespace WebCore {
 
@@ -189,8 +192,10 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSInheritedValue>(*this, other);
         case InitialClass:
             return compareCSSValues<CSSInitialValue>(*this, other);
+#if ENABLE(CSS_GRID_LAYOUT)
         case GridTemplateAreasClass:
             return compareCSSValues<CSSGridTemplateAreasValue>(*this, other);
+#endif
         case PrimitiveClass:
             return compareCSSValues<CSSPrimitiveValue>(*this, other);
         case ReflectClass:
@@ -275,8 +280,10 @@ String CSSValue::cssText() const
         return toCSSInheritedValue(this)->customCSSText();
     case InitialClass:
         return toCSSInitialValue(this)->customCSSText();
+#if ENABLE(CSS_GRID_LAYOUT)
     case GridTemplateAreasClass:
         return toCSSGridTemplateAreasValue(this)->customCSSText();
+#endif
     case PrimitiveClass:
         return toCSSPrimitiveValue(this)->customCSSText();
     case ReflectClass:
@@ -366,9 +373,11 @@ void CSSValue::destroy()
     case InitialClass:
         delete toCSSInitialValue(this);
         return;
+#if ENABLE(CSS_GRID_LAYOUT)
     case GridTemplateAreasClass:
         delete toCSSGridTemplateAreasValue(this);
         return;
+#endif
     case PrimitiveClass:
         delete toCSSPrimitiveValue(this);
         return;

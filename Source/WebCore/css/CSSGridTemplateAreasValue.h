@@ -32,6 +32,8 @@
 #ifndef CSSGridTemplateAreasValue_h
 #define CSSGridTemplateAreasValue_h
 
+#if ENABLE(CSS_GRID_LAYOUT)
+
 #include "CSSValue.h"
 #include "GridCoordinate.h"
 
@@ -63,5 +65,7 @@ private:
 CSS_VALUE_TYPE_CASTS(CSSGridTemplateAreasValue, isGridTemplateAreasValue())
 
 } // namespace WebCore
+
+#endif /* ENABLE(CSS_GRID_LAYOUT) */
 
 #endif // CSSGridTemplateAreasValue_h

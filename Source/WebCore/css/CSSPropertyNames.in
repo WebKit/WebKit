@@ -299,6 +299,7 @@ z-index
 -webkit-flex-wrap
 -webkit-justify-content
 -webkit-font-size-delta
+#if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid-area
 -webkit-grid-auto-columns
 -webkit-grid-auto-rows
@@ -312,6 +313,7 @@ z-index
 -webkit-grid-row
 -webkit-grid-template-areas
 -webkit-grid-auto-flow
+#endif
 -webkit-hyphenate-character [Inherited]
 -webkit-hyphenate-limit-after [Inherited]
 -webkit-hyphenate-limit-before [Inherited]

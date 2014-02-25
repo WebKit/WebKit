@@ -1,3 +1,14 @@
+2014-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add ENABLE flag
+        https://bugs.webkit.org/show_bug.cgi?id=129153
+
+        Reviewed by Simon Fraser.
+
+        Added ENABLE_CSS_GRID_LAYOUT feature flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-02-24  Anders Carlsson  <andersca@apple.com>
 
         Add WebViewGroup

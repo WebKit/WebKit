@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StyleGridData.h"
 
+#if ENABLE(CSS_GRID_LAYOUT)
+
 #include "RenderStyle.h"
 
 namespace WebCore {
@@ -66,3 +68,4 @@ PassRef<StyleGridData> StyleGridData::copy() const
 
 } // namespace WebCore
 
+#endif /* ENABLE(CSS_GRID_LAYOUT) */

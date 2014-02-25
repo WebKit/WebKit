@@ -49,8 +49,10 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #if ENABLE(CSS_FILTERS)
     , m_filter(StyleFilterData::create())
 #endif
+#if ENABLE(CSS_GRID_LAYOUT)
     , m_grid(StyleGridData::create())
     , m_gridItem(StyleGridItemData::create())
+#endif
     , m_mask(FillLayer(MaskFillLayer))
     , m_pageSize()
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
@@ -115,8 +117,10 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
 #if ENABLE(CSS_FILTERS)
     , m_filter(o.m_filter)
 #endif
+#if ENABLE(CSS_GRID_LAYOUT)
     , m_grid(o.m_grid)
     , m_gridItem(o.m_gridItem)
+#endif
     , m_content(o.m_content ? o.m_content->clone() : nullptr)
     , m_counterDirectives(o.m_counterDirectives ? clone(*o.m_counterDirectives) : nullptr)
     , m_boxShadow(o.m_boxShadow ? std::make_unique<ShadowData>(*o.m_boxShadow) : nullptr)
@@ -206,8 +210,10 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #if ENABLE(CSS_FILTERS)
         && m_filter == o.m_filter
 #endif
+#if ENABLE(CSS_GRID_LAYOUT)
         && m_grid == o.m_grid
         && m_gridItem == o.m_gridItem
+#endif
         && contentDataEquivalent(o)
         && counterDataEquivalent(o)
         && shadowDataEquivalent(o)

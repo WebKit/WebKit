@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
- * Copyright (C) 2013 Igalia S.L. All rights reserved.
+ * Copyright (C) 2013, 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 
 #ifndef RenderGrid_h
 #define RenderGrid_h
+
+#if ENABLE(CSS_GRID_LAYOUT)
 
 #include "OrderIterator.h"
 #include "RenderBlock.h"
@@ -154,5 +156,7 @@ private:
 RENDER_OBJECT_TYPE_CASTS(RenderGrid, isRenderGrid())
 
 } // namespace WebCore
+
+#endif /* ENABLE(CSS_GRID_LAYOUT) */
 
 #endif // RenderGrid_h

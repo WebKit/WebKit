@@ -1,3 +1,15 @@
+2014-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add ENABLE flag
+        https://bugs.webkit.org/show_bug.cgi?id=129153
+
+        Reviewed by Simon Fraser.
+
+        Added ENABLE_CSS_GRID_LAYOUT feature flag. It's on by default for
+        all ports for developer builds.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2014-02-25  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Added myself as a committer.

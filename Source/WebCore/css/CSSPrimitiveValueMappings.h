@@ -1363,12 +1363,14 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
     case INLINE_FLEX:
         m_value.valueID = CSSValueWebkitInlineFlex;
         break;
+#if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
         m_value.valueID = CSSValueWebkitGrid;
         break;
     case INLINE_GRID:
         m_value.valueID = CSSValueWebkitInlineGrid;
         break;
+#endif
     case NONE:
         m_value.valueID = CSSValueNone;
         break;
@@ -4624,6 +4626,7 @@ template<> inline CSSPrimitiveValue::operator WrapThrough() const
     return WrapThroughWrap;
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 template<> inline CSSPrimitiveValue::operator GridAutoFlow() const
 {
     ASSERT(isValueID());
@@ -4660,6 +4663,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(GridAutoFlow flow)
         break;
     }
 }
+#endif /* ENABLE_(CSS_GRID_LAYOUT) */
 
 enum LengthConversion {
     AnyConversion = ~0,

@@ -351,6 +351,7 @@ StylePropertyShorthand webkitMarginCollapseShorthand()
     return StylePropertyShorthand(CSSPropertyWebkitMarginCollapse, marginCollapseProperties, WTF_ARRAY_LENGTH(marginCollapseProperties));
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
 StylePropertyShorthand webkitGridAreaShorthand()
 {
     static const CSSPropertyID webkitGridAreaProperties[] = {
@@ -381,6 +382,7 @@ StylePropertyShorthand webkitGridRowShorthand()
     return StylePropertyShorthand(CSSPropertyWebkitGridRow, webkitGridRowProperties, WTF_ARRAY_LENGTH(webkitGridRowProperties));
 
 }
+#endif /* ENABLE(CSS_GRID_LAYOUT) */
 
 StylePropertyShorthand webkitMarqueeShorthand()
 {
@@ -552,12 +554,14 @@ StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
         return webkitFlexShorthand();
     case CSSPropertyWebkitFlexFlow:
         return webkitFlexFlowShorthand();
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridArea:
         return webkitGridAreaShorthand();
     case CSSPropertyWebkitGridColumn:
         return webkitGridColumnShorthand();
     case CSSPropertyWebkitGridRow:
         return webkitGridRowShorthand();
+#endif
     case CSSPropertyWebkitMarginCollapse:
         return webkitMarginCollapseShorthand();
     case CSSPropertyWebkitMarquee:
@@ -746,12 +750,14 @@ Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID prope
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexWrap:
         return makeVector(webkitFlexFlowShorthand());
+#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridColumnStart:
     case CSSPropertyWebkitGridColumnEnd:
         return makeVector(webkitGridColumnShorthand());
     case CSSPropertyWebkitGridRowStart:
     case CSSPropertyWebkitGridRowEnd:
         return makeVector(webkitGridRowShorthand());
+#endif
     case CSSPropertyWebkitMarginBeforeCollapse:
     case CSSPropertyWebkitMarginAfterCollapse:
         return makeVector(webkitMarginCollapseShorthand());

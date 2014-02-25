@@ -294,7 +294,9 @@ private:
 #endif
 
     void adjustRenderStyle(RenderStyle& styleToAdjust, const RenderStyle& parentStyle, Element*);
+#if ENABLE(CSS_GRID_LAYOUT)
     void adjustGridItemPosition(RenderStyle& styleToAdjust, const RenderStyle& parentStyle) const;
+#endif
 
     bool fastRejectSelector(const RuleData&) const;
 

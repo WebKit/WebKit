@@ -32,6 +32,8 @@
 #include "config.h"
 #include "CSSGridTemplateAreasValue.h"
 
+#if ENABLE(CSS_GRID_LAYOUT)
+
 #include "GridCoordinate.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -84,3 +86,5 @@ String CSSGridTemplateAreasValue::customCSSText() const
 }
 
 } // namespace WebCore
+
+#endif /* ENABLE(CSS_GRID_LAYOUT) */

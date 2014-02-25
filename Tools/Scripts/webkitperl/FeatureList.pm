@@ -58,6 +58,7 @@ my (
     $cssDeviceAdaptation,
     $cssExclusionsSupport,
     $cssFiltersSupport,
+    $cssGridLayoutSupport,
     $cssImageOrientationSupport,
     $cssImageResolutionSupport,
     $cssImageSetSupport,
@@ -195,6 +196,9 @@ my @features = (
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => (isAppleMacWebKit() || isIOSWebKit()), value => \$cssFiltersSupport },
+
+    { option => "css-grid-layout", desc => "Toggle CSS Grid Layout support",
+      define => "ENABLE_CSS_GRID_LAYOUT", default => 1, value => \$cssGridLayoutSupport },
 
     { option => "css3-conditional-rules", desc => "Toggle CSS3 Conditional Rules support (i.e. \@supports)",
       define => "ENABLE_CSS3_CONDITIONAL_RULES", default => 0, value => \$css3ConditionalRulesSupport },

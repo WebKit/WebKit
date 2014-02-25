@@ -26,6 +26,8 @@
 #ifndef StyleGridData_h
 #define StyleGridData_h
 
+#if ENABLE(CSS_GRID_LAYOUT)
+
 #include "GridCoordinate.h"
 #include "GridTrackSize.h"
 #include "RenderStyleConstants.h"
@@ -78,5 +80,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif /* ENABLE(CSS_GRID_LAYOUT) */
 
 #endif // StyleGridData_h

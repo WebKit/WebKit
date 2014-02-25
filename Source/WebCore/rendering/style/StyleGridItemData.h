@@ -31,6 +31,7 @@
 #ifndef StyleGridItemData_h
 #define StyleGridItemData_h
 
+#if ENABLE(CSS_GRID_LAYOUT)
 
 #include "GridPosition.h"
 #include <wtf/PassRefPtr.h>
@@ -66,5 +67,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif /* ENABLE(CSS_GRID_LAYOUT) */
 
 #endif // StyleGridItemData_h

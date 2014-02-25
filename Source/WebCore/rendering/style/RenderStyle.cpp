@@ -464,9 +464,11 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             // Don't return; keep looking for another change
         }
 
+#if ENABLE(CSS_GRID_LAYOUT)
         if (rareNonInheritedData->m_grid.get() != other->rareNonInheritedData->m_grid.get()
             || rareNonInheritedData->m_gridItem.get() != other->rareNonInheritedData->m_gridItem.get())
             return true;
+#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
         // If regions change, trigger a relayout to re-calc regions.

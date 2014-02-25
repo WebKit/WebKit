@@ -37,7 +37,6 @@
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
-#include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderIterator.h"
@@ -58,6 +57,10 @@
 #include "SVGRenderSupport.h"
 #include "StyleResolver.h"
 #include <wtf/StackStats.h>
+
+#if ENABLE(CSS_GRID_LAYOUT)
+#include "RenderGrid.h"
+#endif
 
 namespace WebCore {
 
@@ -182,9 +185,11 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<Rend
     case FLEX:
     case INLINE_FLEX:
         return createRenderer<RenderFlexibleBox>(element, std::move(style));
+#if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
     case INLINE_GRID:
         return createRenderer<RenderGrid>(element, std::move(style));
+#endif
     }
     ASSERT_NOT_REACHED();
     return nullptr;
