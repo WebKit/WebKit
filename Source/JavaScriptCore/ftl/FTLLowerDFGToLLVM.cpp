@@ -3927,7 +3927,7 @@ private:
         
         m_out.appendTo(leftNotCellCase, continuation);
         FTL_TYPE_CHECK(
-            jsValueValue(leftValue), leftChild, SpecOther | SpecCell, isNotOther(leftValue));
+            jsValueValue(leftValue), leftChild, SpecOther | SpecCell, isNotNully(leftValue));
         ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
         m_out.jump(continuation);
         
@@ -4261,11 +4261,11 @@ private:
             primitiveResult = m_out.equal(value, m_out.constInt64(ValueUndefined));
             break;
         case EqualNullOrUndefined:
-            primitiveResult = isOther(value);
+            primitiveResult = isNully(value);
             break;
         case SpeculateNullOrUndefined:
             FTL_TYPE_CHECK(
-                jsValueValue(value), edge, SpecCell | SpecOther, isNotOther(value));
+                jsValueValue(value), edge, SpecCell | SpecOther, isNotNully(value));
             primitiveResult = m_out.booleanTrue;
             break;
         }
@@ -4914,13 +4914,13 @@ private:
             value, m_out.constInt64(ValueTrue), m_out.constInt64(ValueFalse));
     }
     
-    LValue isNotOther(LValue value)
+    LValue isNotNully(LValue value)
     {
         return m_out.notEqual(
             m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
             m_out.constInt64(ValueNull));
     }
-    LValue isOther(LValue value)
+    LValue isNully(LValue value)
     {
         return m_out.equal(
             m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
@@ -4972,9 +4972,6 @@ private:
             break;
         case MachineIntUse:
             speculateMachineInt(edge);
-            break;
-        case OtherUse:
-            speculateOther(edge);
             break;
         case BooleanUse:
             speculateBoolean(edge);
@@ -5123,7 +5120,7 @@ private:
         m_out.appendTo(primitiveCase, continuation);
         
         FTL_TYPE_CHECK(
-            jsValueValue(value), edge, SpecCell | SpecOther, isNotOther(value));
+            jsValueValue(value), edge, SpecCell | SpecOther, isNotNully(value));
         
         m_out.jump(continuation);
         
@@ -5246,15 +5243,6 @@ private:
         lowWhicheverInt52(edge, kind);
     }
     
-    void speculateOther(Edge edge)
-    {
-        if (!m_interpreter.needsTypeCheck(edge))
-            return;
-
-        LValue value = lowJSValue(edge, ManualOperandSpeculation);
-        typeCheck(jsValueValue(value), edge, SpecOther, isNotOther(value));
-    }
-    
     void speculateBoolean(Edge edge)
     {
         lowBoolean(edge);
@@ -5265,7 +5253,7 @@ private:
         if (!m_interpreter.needsTypeCheck(edge))
             return;
         
-        LValue value = lowJSValue(edge, ManualOperandSpeculation);
+        LValue value = lowJSValue(edge);
         typeCheck(jsValueValue(value), edge, ~SpecCell, isCell(value));
     }
     

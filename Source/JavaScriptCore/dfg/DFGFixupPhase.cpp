@@ -1062,6 +1062,11 @@ private:
             // FIXME: Get rid of this by allowing Phantoms after terminals.
             // https://bugs.webkit.org/show_bug.cgi?id=126778
             m_requiredPhantoms.resize(0);
+        // Since StoreBarriers are recursively fixed up so that their children look 
+        // identical to that of the node they're barrier-ing, we need to avoid adding
+        // any Phantoms when processing them because this would invalidate the 
+        // InsertionSet's invariant of inserting things in a monotonically increasing
+        // order. This should be okay anyways because StoreBarriers can't exit. 
         } else
             addPhantomsIfNecessary();
     }
@@ -1610,46 +1615,14 @@ private:
     
     void insertStoreBarrier(unsigned indexInBlock, Edge child1, Edge child2 = Edge())
     {
-        if (!child2) {
-            m_insertionSet.insertNode(
-                indexInBlock, SpecNone, StoreBarrier, m_currentNode->origin, child1);
-            return;
+        Node* barrierNode;
+        if (!child2)
+            barrierNode = m_graph.addNode(SpecNone, StoreBarrier, m_currentNode->origin, Edge(child1.node(), child1.useKind()));
+        else {
+            barrierNode = m_graph.addNode(SpecNone, ConditionalStoreBarrier, m_currentNode->origin, 
+                Edge(child1.node(), child1.useKind()), Edge(child2.node(), child2.useKind()));
         }
-        
-        // Figure out some cheap way of avoiding the barrier entirely. In addition to being
-        // cheap, we try to make these checks strong: we want to prove as much as possible for
-        // the code that follows.
-        if (child2->shouldSpeculateInt32()) {
-            insertPhantomCheck(indexInBlock, child2.node(), Int32Use);
-            return;
-        }
-        if (child2->shouldSpeculateMachineInt()) {
-            insertPhantomCheck(indexInBlock, child2.node(), MachineIntUse);
-            return;
-        }
-        if (child2->shouldSpeculateBoolean()) {
-            insertPhantomCheck(indexInBlock, child2.node(), BooleanUse);
-            return;
-        }
-        if (child2->shouldSpeculateOther()) {
-            insertPhantomCheck(indexInBlock, child2.node(), OtherUse);
-            return;
-        }
-        if (child2->shouldSpeculateNotCell()) {
-            insertPhantomCheck(indexInBlock, child2.node(), NotCellUse);
-            return;
-        }
-        
-        m_insertionSet.insertNode(
-            indexInBlock, SpecNone, ConditionalStoreBarrier, m_currentNode->origin,
-            child1, Edge(child2.node(), UntypedUse));
-    }
-    
-    void insertPhantomCheck(unsigned indexInBlock, Node* node, UseKind useKind)
-    {
-        m_insertionSet.insertNode(
-            indexInBlock, SpecNone, Phantom, m_currentNode->origin, Edge(node, useKind));
-        observeUseKindOnNode(node, useKind);
+        m_insertionSet.insert(indexInBlock, barrierNode);
     }
 
     void fixIntEdge(Edge& edge)

@@ -1,3 +1,28 @@
+2014-02-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out http://trac.webkit.org/changeset/164493.
+        
+        It causes crashes, apparently because it's removing too many barriers. I will investigate
+        later.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationToAbbreviatedString):
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::insertStoreBarrier):
+        * dfg/DFGNode.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compareEqObjectOrOtherToObject):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::LowerDFGToLLVM::isNotNully):
+        (JSC::FTL::LowerDFGToLLVM::isNully):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateObjectOrOther):
+        (JSC::FTL::LowerDFGToLLVM::speculateNotCell):
+
 2014-02-24  Oliver Hunt  <oliver@apple.com>
 
         Fix build.

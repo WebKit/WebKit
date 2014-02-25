@@ -1500,19 +1500,9 @@ struct Node {
         return isObjectOrOtherSpeculation(prediction());
     }
 
-    bool shouldSpeculateOther()
-    {
-        return isOtherSpeculation(prediction());
-    }
-
     bool shouldSpeculateCell()
     {
         return isCellSpeculation(prediction());
-    }
-    
-    bool shouldSpeculateNotCell()
-    {
-        return isNotCellSpeculation(prediction());
     }
     
     static bool shouldSpeculateBoolean(Node* op1, Node* op2)
