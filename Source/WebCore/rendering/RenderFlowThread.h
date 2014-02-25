@@ -235,7 +235,6 @@ protected:
 
     // Triggers a layers' update if a layer has moved from a region to another since the last update.
     void updateLayerToRegionMappings(RenderLayer&, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
-    RenderNamedFlowFragment* regionForCompositedLayer(RenderLayer*);
     bool updateLayerToRegionMappings();
     void updateRegionForRenderLayer(RenderLayer*, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
 

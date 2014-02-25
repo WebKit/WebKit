@@ -1,3 +1,14 @@
+2014-02-25  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Remove unused function RenderFlowThread::regionForCompositedLayer
+        https://bugs.webkit.org/show_bug.cgi?id=129303
+
+        Reviewed by Andrei Bucur.
+
+        Cleanup, no funtionality change, no new tests.
+
+        * rendering/RenderFlowThread.h:
+
 2014-02-25  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] -webkit-mix-blend-mode should force transform-style: flat.
