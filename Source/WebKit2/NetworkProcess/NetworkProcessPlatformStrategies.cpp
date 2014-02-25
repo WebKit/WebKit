@@ -74,11 +74,6 @@ StorageStrategy* NetworkProcessPlatformStrategies::createStorageStrategy()
     return 0;
 }
 
-VisitedLinkStrategy* NetworkProcessPlatformStrategies::createVisitedLinkStrategy()
-{
-    return 0;
-}
-
 ResourceLoadScheduler* NetworkProcessPlatformStrategies::resourceLoadScheduler()
 {
     ASSERT_NOT_REACHED();

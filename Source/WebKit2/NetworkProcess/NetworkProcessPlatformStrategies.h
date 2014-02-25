@@ -44,7 +44,6 @@ private:
     virtual WebCore::PluginStrategy* createPluginStrategy() override;
     virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy() override;
     virtual WebCore::StorageStrategy* createStorageStrategy() override;
-    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy() override;
 
     // WebCore::LoaderStrategy
     virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() override;

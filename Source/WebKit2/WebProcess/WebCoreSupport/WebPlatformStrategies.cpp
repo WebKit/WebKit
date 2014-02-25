@@ -122,11 +122,6 @@ StorageStrategy* WebPlatformStrategies::createStorageStrategy()
     return this;
 }
 
-VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
-{
-    return this;
-}
-
 // CookiesStrategy
 
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
@@ -371,18 +366,6 @@ PassRefPtr<StorageNamespace> WebPlatformStrategies::sessionStorageNamespace(Page
 #else
     return StorageStrategy::sessionStorageNamespace(page);
 #endif
-}
-
-// VisitedLinkStrategy
-
-bool WebPlatformStrategies::isLinkVisited(Page*, LinkHash linkHash, const URL&, const AtomicString&)
-{
-    return WebProcess::shared().isLinkVisited(linkHash);
-}
-
-void WebPlatformStrategies::addVisitedLink(Page*, LinkHash linkHash)
-{
-    WebProcess::shared().addVisitedLink(linkHash);
 }
 
 #if PLATFORM(COCOA)

@@ -1,3 +1,14 @@
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        Remove VisitedLinkStrategy.
+
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        * NetworkProcess/NetworkProcessPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2014-02-25  Alexey Proskuryakov  <ap@apple.com>
 
         Rolling out http://trac.webkit.org/changeset/164611, because it broke
