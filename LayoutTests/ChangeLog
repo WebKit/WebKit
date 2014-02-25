@@ -1,3 +1,15 @@
+2014-02-25  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Blending] -webkit-mix-blend-mode should force transform-style: flat.
+        https://bugs.webkit.org/show_bug.cgi?id=126158
+
+        Reviewed by Mihnea Ovidenie.
+
+        For an element with -webkit-mix-blend-mode, test that the value of -webkit-transform-style computes to flat.
+
+        * css3/compositing/blend-mode-transform-style-expected.txt: Added.
+        * css3/compositing/blend-mode-transform-style.html: Added.
+
 2014-02-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support abbr, acronym

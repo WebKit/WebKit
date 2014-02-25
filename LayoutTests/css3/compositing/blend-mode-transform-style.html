@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<style>
+    div {
+        width: 100px;
+        height: 100px;
+    }
+    .noblender {
+        -webkit-mix-blend-mode: normal;
+    }
+    .blender {
+        -webkit-mix-blend-mode: difference;
+    }
+</style>
+<p>Test that an element with -webkit-mix-blend-mode other than normal forces the computed value of transform-style to flat.</p>
+<div id="blend-mode-normal-with-transform-style-preserve-3d" class="noblender" style="-webkit-transform-style: preserve-3d;"></div>
+<div id="blending-with-transform-style-preserve-3d" class="blender" style="-webkit-transform-style: preserve-3d;"></div>
+<div id="blending-with-transform-style-flat" class="blender" style="-webkit-transform-style: flat;"></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+    function getTransformStyle(elementID) {
+        return getComputedStyle(document.getElementById(elementID)).webkitTransformStyle;
+    }
+
+    function test(id, expected) {
+        shouldBeEqualToString('getTransformStyle("' + id + '")', expected);
+    }
+
+    test("blend-mode-normal-with-transform-style-preserve-3d", "preserve-3d");
+    test("blending-with-transform-style-preserve-3d", "flat");
+    test("blending-with-transform-style-flat", "flat");
+</script>

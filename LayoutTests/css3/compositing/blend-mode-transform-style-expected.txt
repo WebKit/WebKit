@@ -1,0 +1,9 @@
+PASS getTransformStyle("blend-mode-normal-with-transform-style-preserve-3d") is "preserve-3d"
+PASS getTransformStyle("blending-with-transform-style-preserve-3d") is "flat"
+PASS getTransformStyle("blending-with-transform-style-flat") is "flat"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test that an element with -webkit-mix-blend-mode other than normal forces the computed value of transform-style to flat.
+
+

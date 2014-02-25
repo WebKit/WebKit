@@ -1328,7 +1328,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     // FIXME: when dropping the -webkit prefix on transform-style, we should also have opacity < 1 cause flattening.
     if (style.preserves3D() && (style.overflowX() != OVISIBLE
         || style.overflowY() != OVISIBLE
-        || style.hasFilter()))
+        || style.hasFilter()
+        || style.hasBlendMode()))
         style.setTransformStyle3D(TransformStyle3DFlat);
 
     adjustGridItemPosition(style, parentStyle);

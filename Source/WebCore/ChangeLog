@@ -1,3 +1,18 @@
+2014-02-25  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Blending] -webkit-mix-blend-mode should force transform-style: flat.
+        https://bugs.webkit.org/show_bug.cgi?id=126158
+
+        Reviewed by Mihnea Ovidenie.
+
+        As stated in the http://www.w3.org/TR/css3-transforms/#propdef-transform-style, an element with blending
+        should force transform-style: flat.
+
+        Test: css3/compositing/blend-mode-transform-style.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): If blending is detected, set transform-style to flat.
+
 2014-02-25  Zan Dobersek  <zdobersek@igalia.com>
 
         Move to using std::unique_ptr for Element, Node and related classes
