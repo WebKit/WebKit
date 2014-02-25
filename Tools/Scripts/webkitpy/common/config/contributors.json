@@ -1955,6 +1955,14 @@
             "pkasting"
          ]
       },
+      "Peter Molnar" : {
+         "emails" : [
+            "pmolnar.u-szeged@partner.samsung.com"
+         ],
+         "nicks" : [
+            "molnarp"
+         ]
+      },
       "Peter Varga" : {
          "emails" : [
             "pvarga@webkit.org",
@@ -3024,14 +3032,6 @@
          ],
          "nicks" : [
             "plinss"
-         ]
-      },
-      "Peter Molnar" : {
-         "emails" : [
-            "pmolnar.u-szeged@partner.samsung.com"
-         ],
-         "nicks" : [
-            "molnarp"
          ]
       },
       "Philip J\u00E4genstedt" : {
