@@ -1,3 +1,11 @@
+2014-02-25  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Added myself as a committer.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-02-25  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Unreviewed. Moved myself to the list of committers.
