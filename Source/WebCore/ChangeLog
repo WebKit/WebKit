@@ -1,3 +1,20 @@
+2014-02-25  Mark Lam  <mark.lam@apple.com>
+
+        JSDOMPromise methods should acquire VM lock before calling into JS.
+        <https://webkit.org/b/129341>
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredWrapper::resolve):
+        (WebCore::DeferredWrapper::reject):
+        (WebCore::DeferredWrapper::resolve<String>):
+        (WebCore::DeferredWrapper::resolve<bool>):
+        (WebCore::char>>):
+        (WebCore::DeferredWrapper::reject<String>):
+
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
         Simplify visited link style invalidation
