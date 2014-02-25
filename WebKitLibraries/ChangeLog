@@ -1,3 +1,10 @@
+2014-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        * win/tools/vsprops/production.props: Production build needs to have 'OFFICIAL_BUILD' set
+        in the environment for build sub-processes.
+
 2014-01-22  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r154534
