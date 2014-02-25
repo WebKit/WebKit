@@ -1,3 +1,19 @@
+2014-02-24  Oliver Hunt  <oliver@apple.com>
+
+        Spread operator has a bad time when applied to call function
+        https://bugs.webkit.org/show_bug.cgi?id=128853
+
+        Reviewed by Geoffrey Garen.
+
+        Test case all the things!
+
+        * js/regress/call-spread-call-expected.txt: Added.
+        * js/regress/call-spread-call.html: Added.
+        * js/regress/script-tests/call-spread-call.js: Added.
+        (testFunction):
+        (test2):
+        (test3):
+
 2014-02-24  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should do polymorphic PutById inlining

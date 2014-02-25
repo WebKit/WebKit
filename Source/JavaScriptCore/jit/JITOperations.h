@@ -82,8 +82,8 @@ extern "C" {
     Z: int32_t
 */
 
-typedef CallFrame* JIT_OPERATION (*F_JITOperation_EFJJ)(ExecState*, CallFrame*, EncodedJSValue, EncodedJSValue);
-typedef CallFrame* JIT_OPERATION (*F_JITOperation_EJZ)(ExecState*, EncodedJSValue, int32_t);
+typedef CallFrame* JIT_OPERATION (*F_JITOperation_EFJJZ)(ExecState*, CallFrame*, EncodedJSValue, EncodedJSValue, int32_t);
+typedef CallFrame* JIT_OPERATION (*F_JITOperation_EJZZ)(ExecState*, EncodedJSValue, int32_t, int32_t);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_E)(ExecState*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EA)(ExecState*, JSArray*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EAZ)(ExecState*, JSArray*, int32_t);
@@ -275,8 +275,8 @@ void JIT_OPERATION operationTearOffArguments(ExecState*, JSCell*, JSCell*) WTF_I
 EncodedJSValue JIT_OPERATION operationDeleteById(ExecState*, EncodedJSValue base, const Identifier*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationGetPNames(ExecState*, JSObject*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState*, EncodedJSValue, EncodedJSValue proto) WTF_INTERNAL;
-CallFrame* JIT_OPERATION operationSizeFrameForVarargs(ExecState*, EncodedJSValue arguments, int32_t firstFreeRegister) WTF_INTERNAL;
-CallFrame* JIT_OPERATION operationLoadVarargs(ExecState*, CallFrame*, EncodedJSValue thisValue, EncodedJSValue arguments) WTF_INTERNAL;
+CallFrame* JIT_OPERATION operationSizeFrameForVarargs(ExecState*, EncodedJSValue arguments, int32_t firstFreeRegister, int32_t firstVarArgOffset) WTF_INTERNAL;
+CallFrame* JIT_OPERATION operationLoadVarargs(ExecState*, CallFrame*, EncodedJSValue thisValue, EncodedJSValue arguments, int32_t firstVarArgOffset) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToObject(ExecState*, EncodedJSValue) WTF_INTERNAL;
 
 char* JIT_OPERATION operationSwitchCharWithUnknownKeyType(ExecState*, EncodedJSValue key, size_t tableIndex) WTF_INTERNAL;

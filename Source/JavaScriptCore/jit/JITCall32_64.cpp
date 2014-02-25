@@ -131,6 +131,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     int thisValue = instruction[3].u.operand;
     int arguments = instruction[4].u.operand;
     int firstFreeRegister = instruction[5].u.operand;
+    int firstVarArgOffset = instruction[6].u.operand;
 
     JumpList slowCase;
     JumpList end;
@@ -143,6 +144,8 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         slowCase.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::EmptyValueTag)));
 
         load32(payloadFor(JSStack::ArgumentCount), regT2);
+        if (firstVarArgOffset)
+            sub32(TrustedImm32(firstVarArgOffset), regT2);
         slowCase.append(branch32(Above, regT2, TrustedImm32(Arguments::MaxArguments + 1)));
         // regT2: argumentCountIncludingThis
 
@@ -172,8 +175,8 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         // regT2: argumentCount;
 
         Label copyLoop = label();
-        load32(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))), regT0);
-        load32(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))), regT1);
+        load32(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) +((CallFrame::thisArgumentOffset() + firstVarArgOffset) * static_cast<int>(sizeof(Register)))), regT0);
+        load32(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) +((CallFrame::thisArgumentOffset() + firstVarArgOffset) * static_cast<int>(sizeof(Register)))), regT1);
         store32(regT0, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))));
         store32(regT1, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))));
         branchSub32(NonZero, TrustedImm32(1), regT2).linkTo(copyLoop, this);
@@ -185,11 +188,11 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         slowCase.link(this);
 
     emitLoad(arguments, regT1, regT0);
-    callOperation(operationSizeFrameForVarargs, regT1, regT0, firstFreeRegister);
+    callOperation(operationSizeFrameForVarargs, regT1, regT0, firstFreeRegister, firstVarArgOffset);
     addPtr(TrustedImm32(-sizeof(CallerFrameAndPC)), returnValueGPR, stackPointerRegister);
     emitLoad(thisValue, regT1, regT4);
     emitLoad(arguments, regT3, regT2);
-    callOperation(operationLoadVarargs, returnValueGPR, regT1, regT4, regT3, regT2);
+    callOperation(operationLoadVarargs, returnValueGPR, regT1, regT4, regT3, regT2, firstVarArgOffset);
     move(returnValueGPR, regT3);
 
     if (canOptimize)

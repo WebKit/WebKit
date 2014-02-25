@@ -137,10 +137,10 @@ JSValue eval(CallFrame* callFrame)
     return interpreter->execute(eval, callFrame, thisValue, callerScopeChain);
 }
 
-CallFrame* sizeFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue arguments, int firstFreeRegister)
+CallFrame* sizeFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue arguments, int firstFreeRegister, int32_t firstVarArgOffset)
 {
     if (!arguments) { // f.apply(x, arguments), with arguments unmodified.
-        unsigned argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
+        unsigned argumentCountIncludingThis = callFrame->argumentCountIncludingThis() - firstVarArgOffset;
         unsigned paddedCalleeFrameOffset = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -firstFreeRegister + argumentCountIncludingThis + JSStack::CallFrameHeaderSize + 1);
         CallFrame* newCallFrame = CallFrame::create(callFrame->registers() - paddedCalleeFrameOffset);
         if (argumentCountIncludingThis > Arguments::MaxArguments + 1 || !stack->ensureCapacityFor(newCallFrame->registers())) {
@@ -168,7 +168,7 @@ CallFrame* sizeFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue arg
 
     if (asObject(arguments)->classInfo() == Arguments::info()) {
         Arguments* argsObject = asArguments(arguments);
-        unsigned argCount = argsObject->length(callFrame);
+        unsigned argCount = argsObject->length(callFrame) - firstVarArgOffset;
         unsigned paddedCalleeFrameOffset = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -firstFreeRegister + CallFrame::offsetFor(argCount + 1));
         CallFrame* newCallFrame = CallFrame::create(callFrame->registers() - paddedCalleeFrameOffset);
         if (argCount > Arguments::MaxArguments || !stack->ensureCapacityFor(newCallFrame->registers())) {
@@ -180,7 +180,7 @@ CallFrame* sizeFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue arg
 
     if (isJSArray(arguments)) {
         JSArray* array = asArray(arguments);
-        unsigned argCount = array->length();
+        unsigned argCount = array->length() - firstVarArgOffset;
         unsigned paddedCalleeFrameOffset = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -firstFreeRegister + CallFrame::offsetFor(argCount + 1));
         CallFrame* newCallFrame = CallFrame::create(callFrame->registers() - paddedCalleeFrameOffset);
         if (argCount > Arguments::MaxArguments || !stack->ensureCapacityFor(newCallFrame->registers())) {
@@ -191,7 +191,7 @@ CallFrame* sizeFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue arg
     }
 
     JSObject* argObject = asObject(arguments);
-    unsigned argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
+    unsigned argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame) - firstVarArgOffset;
     unsigned paddedCalleeFrameOffset = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -firstFreeRegister + CallFrame::offsetFor(argCount + 1));
     CallFrame* newCallFrame = CallFrame::create(callFrame->registers() - paddedCalleeFrameOffset);
     if (argCount > Arguments::MaxArguments || !stack->ensureCapacityFor(newCallFrame->registers())) {
@@ -201,15 +201,15 @@ CallFrame* sizeFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue arg
     return newCallFrame;
 }
 
-void loadVarargs(CallFrame* callFrame, CallFrame* newCallFrame, JSValue thisValue, JSValue arguments)
+void loadVarargs(CallFrame* callFrame, CallFrame* newCallFrame, JSValue thisValue, JSValue arguments, int32_t firstVarArgOffset)
 {
     if (!arguments) { // f.apply(x, arguments), with arguments unmodified.
-        unsigned argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
+        unsigned argumentCountIncludingThis = callFrame->argumentCountIncludingThis() - firstVarArgOffset;
 
         newCallFrame->setArgumentCountIncludingThis(argumentCountIncludingThis);
         newCallFrame->setThisValue(thisValue);
-        for (size_t i = 0; i < callFrame->argumentCount(); ++i)
-            newCallFrame->setArgument(i, callFrame->argumentAfterCapture(i));
+        for (size_t i = firstVarArgOffset; i < callFrame->argumentCount(); ++i)
+            newCallFrame->setArgument(i - firstVarArgOffset, callFrame->argumentAfterCapture(i));
         return;
     }
     
@@ -221,28 +221,28 @@ void loadVarargs(CallFrame* callFrame, CallFrame* newCallFrame, JSValue thisValu
     
     if (asObject(arguments)->classInfo() == Arguments::info()) {
         Arguments* argsObject = asArguments(arguments);
-        unsigned argCount = argsObject->length(callFrame);
+        unsigned argCount = argsObject->length(callFrame) - firstVarArgOffset;
         newCallFrame->setArgumentCountIncludingThis(argCount + 1);
         newCallFrame->setThisValue(thisValue);
-        argsObject->copyToArguments(callFrame, newCallFrame, argCount);
+        argsObject->copyToArguments(callFrame, newCallFrame, argCount, firstVarArgOffset);
         return;
     }
     
     if (isJSArray(arguments)) {
         JSArray* array = asArray(arguments);
-        unsigned argCount = array->length();
+        unsigned argCount = array->length() - firstVarArgOffset;
         newCallFrame->setArgumentCountIncludingThis(argCount + 1);
         newCallFrame->setThisValue(thisValue);
-        array->copyToArguments(callFrame, newCallFrame, argCount);
+        array->copyToArguments(callFrame, newCallFrame, argCount, firstVarArgOffset);
         return;
     }
     
     JSObject* argObject = asObject(arguments);
-    unsigned argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
+    unsigned argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame) - firstVarArgOffset;
     newCallFrame->setArgumentCountIncludingThis(argCount + 1);
     newCallFrame->setThisValue(thisValue);
     for (size_t i = 0; i < argCount; ++i) {
-        newCallFrame->setArgument(i, asObject(arguments)->get(callFrame, i));
+        newCallFrame->setArgument(i, asObject(arguments)->get(callFrame, i + firstVarArgOffset));
         if (UNLIKELY(callFrame->vm().exception()))
             return;
     }

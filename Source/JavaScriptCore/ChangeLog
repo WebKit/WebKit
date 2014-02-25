@@ -1,3 +1,49 @@
+2014-02-24  Oliver Hunt  <oliver@apple.com>
+
+        Spread operator has a bad time when applied to call function
+        https://bugs.webkit.org/show_bug.cgi?id=128853
+
+        Reviewed by Geoffrey Garen.
+
+        Follow on from the previous patch the added an extra slot to
+        op_call_varargs (and _call, _call_eval, _construct).  We now
+        use the slot as an offset to in effect act as a 'slice' on
+        the spread subject.  This allows us to automatically retain
+        all our existing argument and array optimisatons.  Most of
+        this patch is simply threading the offset around.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::getArgumentByVal):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeFrameForVarargs):
+        (JSC::loadVarargs):
+        * interpreter/Interpreter.h:
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::copyToArguments):
+        * runtime/Arguments.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArray.h:
+
 2014-02-24  Mark Lam  <mark.lam@apple.com>
 
         Need to initialize VM stack data even when the VM is on an exclusive thread.

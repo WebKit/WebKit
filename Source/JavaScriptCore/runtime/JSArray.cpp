@@ -1540,12 +1540,12 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
         args.append(get(exec, i));
 }
 
-void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t length)
+void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t copyLength, int32_t firstVarArgOffset)
 {
-    unsigned i = 0;
+    unsigned i = firstVarArgOffset;
     WriteBarrier<Unknown>* vector;
     unsigned vectorEnd;
-    
+    unsigned length = copyLength + firstVarArgOffset;
     ASSERT(length == this->length());
     switch (structure()->indexingType()) {
     case ArrayClass:
@@ -1572,7 +1572,7 @@ void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t le
             double v = m_butterfly->contiguousDouble()[i];
             if (v != v)
                 break;
-            callFrame->setArgument(i, JSValue(JSValue::EncodeAsDouble, v));
+            callFrame->setArgument(i - firstVarArgOffset, JSValue(JSValue::EncodeAsDouble, v));
         }
         break;
     }
@@ -1595,11 +1595,11 @@ void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t le
         WriteBarrier<Unknown>& v = vector[i];
         if (!v)
             break;
-        callFrame->setArgument(i, v.get());
+        callFrame->setArgument(i - firstVarArgOffset, v.get());
     }
     
     for (; i < length; ++i)
-        callFrame->setArgument(i, get(exec, i));
+        callFrame->setArgument(i - firstVarArgOffset, get(exec, i));
 }
 
 template<IndexingType indexingType>

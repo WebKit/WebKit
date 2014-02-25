@@ -58,6 +58,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     int thisValue = instruction[3].u.operand;
     int arguments = instruction[4].u.operand;
     int firstFreeRegister = instruction[5].u.operand;
+    int firstVarArgOffset = instruction[6].u.operand;
 
     JumpList slowCase;
     JumpList end;
@@ -70,6 +71,8 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         slowCase.append(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(JSValue()))));
 
         emitGetFromCallFrameHeader32(JSStack::ArgumentCount, regT0);
+        if (firstVarArgOffset)
+            sub32(TrustedImm32(firstVarArgOffset), regT0);
         slowCase.append(branch32(Above, regT0, TrustedImm32(Arguments::MaxArguments + 1)));
         // regT0: argumentCountIncludingThis
         move(regT0, regT1);
@@ -99,7 +102,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         // regT0: argumentCount
 
         Label copyLoop = label();
-        load64(BaseIndex(callFrameRegister, regT0, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT2);
+        load64(BaseIndex(callFrameRegister, regT0, TimesEight, (CallFrame::thisArgumentOffset() + firstVarArgOffset) * static_cast<int>(sizeof(Register))), regT2);
         store64(regT2, BaseIndex(regT1, regT0, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
         branchSub64(NonZero, TrustedImm32(1), regT0).linkTo(copyLoop, this);
 
@@ -110,11 +113,11 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         slowCase.link(this);
 
     emitGetVirtualRegister(arguments, regT1);
-    callOperation(operationSizeFrameForVarargs, regT1, firstFreeRegister);
+    callOperation(operationSizeFrameForVarargs, regT1, firstFreeRegister, firstVarArgOffset);
     move(returnValueGPR, stackPointerRegister);
     emitGetVirtualRegister(thisValue, regT1);
     emitGetVirtualRegister(arguments, regT2);
-    callOperation(operationLoadVarargs, returnValueGPR, regT1, regT2);
+    callOperation(operationLoadVarargs, returnValueGPR, regT1, regT2, firstVarArgOffset);
     move(returnValueGPR, regT1);
 
     if (canOptimize)

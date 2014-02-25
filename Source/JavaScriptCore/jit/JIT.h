@@ -665,7 +665,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(C_JITOperation_EO, GPRReg);
         MacroAssembler::Call callOperation(C_JITOperation_ESt, Structure*);
         MacroAssembler::Call callOperation(C_JITOperation_EZ, int32_t);
-        MacroAssembler::Call callOperation(F_JITOperation_EJZ, GPRReg, int32_t);
+        MacroAssembler::Call callOperation(F_JITOperation_EJZZ, GPRReg, int32_t, int32_t);
         MacroAssembler::Call callOperation(J_JITOperation_E, int);
         MacroAssembler::Call callOperation(J_JITOperation_EAapJ, int, ArrayAllocationProfile*, GPRReg);
         MacroAssembler::Call callOperation(J_JITOperation_EAapJcpZ, int, ArrayAllocationProfile*, GPRReg, int32_t);
@@ -707,7 +707,7 @@ namespace JSC {
 #endif
         MacroAssembler::Call callOperation(V_JITOperation_EJIdJJ, RegisterID, const Identifier*, RegisterID, RegisterID);
 #if USE(JSVALUE64)
-        MacroAssembler::Call callOperation(F_JITOperation_EFJJ, RegisterID, RegisterID, RegisterID);
+        MacroAssembler::Call callOperation(F_JITOperation_EFJJZ, RegisterID, RegisterID, RegisterID, int32_t);
         MacroAssembler::Call callOperation(V_JITOperation_ESsiJJI, StructureStubInfo*, RegisterID, RegisterID, StringImpl*);
 #else
         MacroAssembler::Call callOperation(V_JITOperation_ESsiJJI, StructureStubInfo*, RegisterID, RegisterID, RegisterID, RegisterID, StringImpl*);
@@ -722,8 +722,8 @@ namespace JSC {
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb, CodeBlock*);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_E);
 #if USE(JSVALUE32_64)
-        MacroAssembler::Call callOperation(F_JITOperation_EFJJ, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(F_JITOperation_EJZ, GPRReg, GPRReg, int32_t);
+        MacroAssembler::Call callOperation(F_JITOperation_EFJJZ, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID, int32_t);
+        MacroAssembler::Call callOperation(F_JITOperation_EJZZ, GPRReg, GPRReg, int32_t, int32_t);
         MacroAssembler::Call callOperation(J_JITOperation_EAapJ, int, ArrayAllocationProfile*, GPRReg, GPRReg);
         MacroAssembler::Call callOperation(J_JITOperation_EJ, int, GPRReg, GPRReg);
         MacroAssembler::Call callOperation(J_JITOperation_EJIdc, int, GPRReg, GPRReg, const Identifier*);

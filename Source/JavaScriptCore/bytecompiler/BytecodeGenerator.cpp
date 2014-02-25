@@ -1730,8 +1730,13 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
         if (n && n->m_expr->isSpreadExpression()) {
             RELEASE_ASSERT(!n->m_next);
             auto expression = static_cast<SpreadExpressionNode*>(n->m_expr)->expression();
-            expression->emitBytecode(*this, callArguments.argumentRegister(0));
-            return emitCallVarargs(dst, func, callArguments.thisRegister(), callArguments.argumentRegister(0), newTemporary(), callArguments.profileHookRegister(), divot, divotStart, divotEnd);
+            RefPtr<RegisterID> argumentRegister;
+            if (expression->isResolveNode() && willResolveToArguments(static_cast<ResolveNode*>(expression)->identifier()) && !symbolTable().slowArguments())
+                argumentRegister = uncheckedRegisterForArguments();
+            else
+                argumentRegister = expression->emitBytecode(*this, callArguments.argumentRegister(0));
+            RefPtr<RegisterID> thisRegister = emitMove(newTemporary(), callArguments.thisRegister());
+            return emitCallVarargs(dst, func, callArguments.thisRegister(), argumentRegister.get(), newTemporary(), 0, callArguments.profileHookRegister(), divot, divotStart, divotEnd);
         }
         for (; n; n = n->m_next)
             emitNode(callArguments.argumentRegister(argument++), n);
@@ -1781,7 +1786,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
 {
     if (m_shouldEmitProfileHooks) {
         emitMove(profileHookRegister, func);
@@ -1800,7 +1805,7 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     instructions().append(thisRegister->index());
     instructions().append(arguments->index());
     instructions().append(firstFreeRegister->index());
-    instructions().append(0);
+    instructions().append(firstVarArgOffset);
     instructions().append(arrayProfile);
     instructions().append(profile);
     if (m_shouldEmitProfileHooks) {

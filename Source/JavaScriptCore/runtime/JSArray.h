@@ -132,7 +132,7 @@ public:
     }
 
     void fillArgList(ExecState*, MarkedArgumentBuffer&);
-    void copyToArguments(ExecState*, CallFrame*, uint32_t length);
+    void copyToArguments(ExecState*, CallFrame*, uint32_t length, int32_t firstVarArgOffset);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
     {

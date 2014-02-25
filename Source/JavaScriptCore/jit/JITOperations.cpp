@@ -1562,23 +1562,23 @@ EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState* exec, EncodedJSValue
     return JSValue::encode(jsBoolean(result));
 }
 
-CallFrame* JIT_OPERATION operationSizeFrameForVarargs(ExecState* exec, EncodedJSValue encodedArguments, int32_t firstFreeRegister)
+CallFrame* JIT_OPERATION operationSizeFrameForVarargs(ExecState* exec, EncodedJSValue encodedArguments, int32_t firstFreeRegister, int32_t firstVarArgOffset)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     JSStack* stack = &exec->interpreter()->stack();
     JSValue arguments = JSValue::decode(encodedArguments);
-    CallFrame* newCallFrame = sizeFrameForVarargs(exec, stack, arguments, firstFreeRegister);
+    CallFrame* newCallFrame = sizeFrameForVarargs(exec, stack, arguments, firstFreeRegister, firstVarArgOffset);
     return newCallFrame;
 }
 
-CallFrame* JIT_OPERATION operationLoadVarargs(ExecState* exec, CallFrame* newCallFrame, EncodedJSValue encodedThis, EncodedJSValue encodedArguments)
+CallFrame* JIT_OPERATION operationLoadVarargs(ExecState* exec, CallFrame* newCallFrame, EncodedJSValue encodedThis, EncodedJSValue encodedArguments, int32_t firstVarArgOffset)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     JSValue thisValue = JSValue::decode(encodedThis);
     JSValue arguments = JSValue::decode(encodedArguments);
-    loadVarargs(exec, newCallFrame, thisValue, arguments);
+    loadVarargs(exec, newCallFrame, thisValue, arguments, firstVarArgOffset);
     return newCallFrame;
 }
 
