@@ -1,3 +1,13 @@
+2014-02-25  Morten Stenshorne  <mstensho@opera.com>
+
+        [New Multicolumn] -webkit-column-break-inside:avoid doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=129299
+
+        Reviewed by Andrei Bucur.
+
+        * fast/multicol/newmulticol/avoid-column-break-inside-expected.html: Added.
+        * fast/multicol/newmulticol/avoid-column-break-inside.html: Added.
+
 2014-02-25  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Refactoring inline_spelling_markers.html to use asynchronous spellchecking

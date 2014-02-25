@@ -1,3 +1,18 @@
+2014-02-25  Morten Stenshorne  <mstensho@opera.com>
+
+        [New Multicolumn] -webkit-column-break-inside:avoid doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=129299
+
+        Reviewed by Andrei Bucur.
+
+        adjustForUnsplittableChild() simply forgot to check whether we
+        were inside flow thread based multicol.
+
+        Test: fast/multicol/newmulticol/avoid-column-break-inside.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustForUnsplittableChild):
+
 2014-02-25  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Remove unused function RenderFlowThread::regionForCompositedLayer

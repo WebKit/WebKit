@@ -1692,9 +1692,10 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pag
 
 LayoutUnit RenderBlockFlow::adjustForUnsplittableChild(RenderBox& child, LayoutUnit logicalOffset, bool includeMargins)
 {
-    bool checkColumnBreaks = view().layoutState()->isPaginatingColumns();
-    bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight;
     RenderFlowThread* flowThread = flowThreadContainingBlock();
+    bool isInsideMulticolFlowThread = flowThread && !flowThread->isRenderNamedFlowThread();
+    bool checkColumnBreaks = isInsideMulticolFlowThread || view().layoutState()->isPaginatingColumns();
+    bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight;
     bool checkRegionBreaks = flowThread && flowThread->isRenderNamedFlowThread();
     bool isUnsplittable = child.isUnsplittableForPagination() || (checkColumnBreaks && child.style().columnBreakInside() == PBAVOID)
         || (checkPageBreaks && child.style().pageBreakInside() == PBAVOID)
