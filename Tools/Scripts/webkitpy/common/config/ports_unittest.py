@@ -42,14 +42,14 @@ class DeprecatedPortTest(unittest.TestCase):
     def test_gtk_port(self):
         self.assertEqual(GtkPort().flag(), "--port=gtk")
         self.assertEqual(GtkPort().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests") + ["--gtk"])
-        self.assertEqual(GtkPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--gtk", "--update-gtk", "--no-webkit2", DeprecatedPort().makeArgs()])
-        self.assertEqual(GtkPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--gtk", "--update-gtk", "--no-webkit2", DeprecatedPort().makeArgs()])
+        self.assertEqual(GtkPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--gtk", "--update-gtk", "--no-webkit2", "--disable-gtk-doc", DeprecatedPort().makeArgs()])
+        self.assertEqual(GtkPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--gtk", "--update-gtk", "--no-webkit2", "--disable-gtk-doc", DeprecatedPort().makeArgs()])
 
     def test_gtk_wk2_port(self):
         self.assertEqual(GtkWK2Port().flag(), "--port=gtk-wk2")
         self.assertEqual(GtkWK2Port().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests") + ["--gtk", "-2"])
-        self.assertEqual(GtkWK2Port().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--gtk", "--update-gtk", "--no-webkit1", DeprecatedPort().makeArgs()])
-        self.assertEqual(GtkWK2Port().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--gtk", "--update-gtk", "--no-webkit1", DeprecatedPort().makeArgs()])
+        self.assertEqual(GtkWK2Port().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--gtk", "--update-gtk", "--no-webkit1", "--disable-gtk-doc", DeprecatedPort().makeArgs()])
+        self.assertEqual(GtkWK2Port().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--gtk", "--update-gtk", "--no-webkit1", "--disable-gtk-doc", DeprecatedPort().makeArgs()])
 
     def test_efl_port(self):
         self.assertEqual(EflPort().flag(), "--port=efl")
