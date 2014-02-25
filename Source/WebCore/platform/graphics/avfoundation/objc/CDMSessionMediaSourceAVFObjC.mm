@@ -74,7 +74,7 @@ PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const St
 
     String certificateString(ASCIILiteral("certificate"));
     RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(certificateString.length(), 2);
-    RefPtr<JSC::Uint16Array> array = JSC::Uint16Array::create(buffer, 0, buffer->byteLength());
+    RefPtr<JSC::Uint16Array> array = JSC::Uint16Array::create(buffer, 0, certificateString.length());
     for (unsigned i = 0, length = certificateString.length(); i < length; ++i)
         array->set(i, certificateString[i]);
     return Uint8Array::create(buffer, 0, buffer->byteLength());
@@ -96,7 +96,7 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
         RetainPtr<NSData> initData = adoptNS([[NSData alloc] initWithBytes:m_initData->data() length:m_initData->length()]);
 
         NSError* error = nil;
-        RetainPtr<NSData> request = adoptNS([m_parent->parser() streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:initData.get() trackID:m_parent->protectedTrackID() options:nil error:&error]);
+        RetainPtr<NSData> request = [m_parent->parser() streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:initData.get() trackID:m_parent->protectedTrackID() options:nil error:&error];
 
         if (error) {
             LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - error:%@", this, [error description]);

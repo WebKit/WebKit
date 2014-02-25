@@ -200,7 +200,7 @@ void MediaKeySession::addKeyTimerFired(Timer<MediaKeySession>&)
         }
 
         // 2.8. If any of the preceding steps in the task failed
-        if (!didStoreKey) {
+        if (errorCode) {
             // 2.8.1. Create a new MediaKeyError object with the following attributes:
             //        code = the appropriate MediaKeyError code
             //        systemCode = a Key System-specific value, if provided, and 0 otherwise

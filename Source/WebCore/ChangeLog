@@ -1,3 +1,25 @@
+2014-02-25  Jer Noble  <jer.noble@apple.com>
+
+        [EME][Mac] Fix a few issues in CDMSessionMediaSourceAVFObjC.
+        https://bugs.webkit.org/show_bug.cgi?id=129310
+
+        Reviewed by Eric Carlson.
+
+        Only send a 'keyerror' event if an actual error code was returned, not just
+        when no key was added:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::addKeyTimerFired):
+
+        The 'length' parameter to a typed ArrayBufferView is the number of entries
+        in the array, not the byte length:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::generateKeyRequest):
+
+        The return value of streamingContentKeyRequestDataForApp:contentIdentifier:trackId:options:error
+        is autoreleased; do not wrap it in an adoptNS:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::update):
+
 2014-02-25  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [MediaStream] Adding mock implementation of UserMediaClient
