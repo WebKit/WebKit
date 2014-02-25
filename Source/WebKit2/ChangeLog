@@ -1,3 +1,72 @@
+2014-02-24  Jeremy Jones  <jeremyj@apple.com>
+
+        WK2 AVKit fullscreen doesn't display video.
+        https://bugs.webkit.org/show_bug.cgi?id=128564
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        Add a property to track video layer pending fullscreen.
+
+        (WebKit::RemoteLayerTreeTransaction::isVideoLayerIDPendingFullscreen):
+        (WebKit::RemoteLayerTreeTransaction::addVideoLayerIDPendingFullscreen):
+        Add a property to track video layer pending fullscreen.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        Encode and decode m_videoLayerIDsPendingFullscreen.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        Let WebVideoFullscreenManagerProxy see the RemoteLayerTreeTransaction.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.cpp:
+        (WebKit::WebVideoFullscreenManagerProxy::didCommitLayerTree):
+        Look for video layer pending fullscreen on the transaction to initiate
+        fullscreen.
+
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerID):
+        Start looking for the video layer pending fullscreen in the transaction.
+
+        (WebKit::WebVideoFullscreenManagerProxy::enterFullscreen):
+        Override to prevent fullscreen from happening before the layer
+        is pending fullscreen.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        Pass a more specific videoLayerID in SetVideoLayerID,
+        i.e. WebCore::GraphicsLayer::PlatformLayerID.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+        Move webPage specific transaction building here, including,
+        giving WebVideoFullscreenManager a chance to modify the transaction.
+
+        * WebProcess/WebPage/WebPage.h:
+        Add willCommitLayerTree();
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+        (PlatformCALayerRemoteCustom::~PlatformCALayerRemoteCustom):
+        Make and break the connection from CALayer to PlatformCALayerRemoteCustom,
+        the same way it is done for PlatformCALayerMac.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        Move WebPage specific transaction building into WebPage::willCommitLayerTree.
+
+        * WebProcess/ios/WebVideoFullscreenManager.cpp:
+        (WebKit::WebVideoFullscreenManager::willCommitLayerTree):
+        addVideoLayerIDPendingFullscreen on RemoteLayerTreeTransaction when needed.
+
+        (WebKit::WebVideoFullscreenManager::setVideoLayer):
+        Pass along the video layerID.
+
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        Add willCommitLayerTree() and remove setVideoLayerID().
+        Add a member to retain the unparented PlatformCALayer.
+
 2014-02-24  Martin Hock  <mhock@apple.com>
 
         Create SessionID value-style class for session IDs.

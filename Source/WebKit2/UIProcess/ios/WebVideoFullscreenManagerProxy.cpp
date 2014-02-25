@@ -28,6 +28,9 @@
 
 #if PLATFORM(IOS)
 
+#include "DrawingAreaProxy.h"
+#include "RemoteLayerTreeDrawingAreaProxy.h"
+#include "RemoteLayerTreeTransaction.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include "WebVideoFullscreenManagerMessages.h"
@@ -44,6 +47,8 @@ PassRefPtr<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::creat
 
 WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy(WebPageProxy& page)
     : m_page(&page)
+    , m_enterFullscreenAfterVideoLayerUnparentedTransaction(false)
+    , m_videoLayerID(0)
 {
     m_page->process().addMessageReceiver(Messages::WebVideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID(), *this);
     setWebVideoFullscreenModel(this);
@@ -54,12 +59,26 @@ WebVideoFullscreenManagerProxy::~WebVideoFullscreenManagerProxy()
     m_page->process().removeMessageReceiver(Messages::WebVideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID());
 }
 
-void WebVideoFullscreenManagerProxy::setVideoLayerID(uint32_t videoLayerID)
+void WebVideoFullscreenManagerProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction)
 {
-    // TODO: find a real video layer or make one that meets the necessary requirements.
-    setVideoLayer(nullptr);
+    if (m_enterFullscreenAfterVideoLayerUnparentedTransaction && layerTreeTransaction.isVideoLayerIDPendingFullscreen(m_videoLayerID)) {
+        m_enterFullscreenAfterVideoLayerUnparentedTransaction = false;
+        WebCore::WebVideoFullscreenInterfaceAVKit::enterFullscreen();
+    }
 }
 
+void WebVideoFullscreenManagerProxy::setVideoLayerID(GraphicsLayer::PlatformLayerID videoLayerID)
+{
+    RemoteLayerTreeDrawingAreaProxy* remoteDrawingAreaProxy = toRemoteLayerTreeDrawingAreaProxy(m_page->drawingArea());
+    setVideoLayer(remoteDrawingAreaProxy->remoteLayerTreeHost().getLayer(videoLayerID));
+    m_videoLayerID = videoLayerID;
+    m_enterFullscreenAfterVideoLayerUnparentedTransaction = true;
+}
+
+void WebVideoFullscreenManagerProxy::enterFullscreen()
+{
+}
+    
 void WebVideoFullscreenManagerProxy::requestExitFullScreen()
 {
     m_page->send(Messages::WebVideoFullscreenManager::RequestExitFullScreen(), m_page->pageID());

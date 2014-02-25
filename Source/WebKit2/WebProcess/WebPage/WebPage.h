@@ -167,6 +167,10 @@ struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
+#if PLATFORM(COCOA)
+class RemoteLayerTreeTransaction;
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 class WebTouchEvent;
 #endif
@@ -207,6 +211,10 @@ public:
     bool scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity);
 
     void centerSelectionInVisibleArea();
+    
+#if PLATFORM(COCOA)
+    void willCommitLayerTree(RemoteLayerTreeTransaction&);
+#endif
 
 #if ENABLE(INSPECTOR)
     WebInspector* inspector();

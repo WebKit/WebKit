@@ -39,6 +39,7 @@
 using namespace WebCore;
 using namespace WebKit;
 
+static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
     : PlatformCALayerRemote(LayerTypeCustom, owner, context)
 {
@@ -54,6 +55,7 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLa
     }
 
     m_layerHostingContext->setRootLayer(customLayer);
+    [customLayer setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
 
     m_platformLayer = customLayer;
     [customLayer web_disableAllActions];
@@ -63,6 +65,7 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLa
 
 PlatformCALayerRemoteCustom::~PlatformCALayerRemoteCustom()
 {
+    [m_platformLayer setValue:nil forKey:platformCALayerPointer];
 }
 
 uint32_t PlatformCALayerRemoteCustom::hostingContextID()

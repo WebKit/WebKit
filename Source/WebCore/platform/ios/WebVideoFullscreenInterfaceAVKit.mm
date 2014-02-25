@@ -68,6 +68,9 @@ SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
 @end
 
 @protocol AVPlayerLayer
+@property (nonatomic, copy) NSString *videoGravity;
+@property (nonatomic, readonly, getter = isReadyForDisplay) BOOL readyForDisplay;
+@property (nonatomic, readonly) CGRect videoRect;
 @end
 
 @interface AVPlayerController : UIResponder
@@ -202,6 +205,20 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
 
 @end
 
+@interface WebAVPlayerLayer : CALayer <AVPlayerLayer>
++(WebAVPlayerLayer *)playerLayer;
+@property (nonatomic, copy) NSString *videoGravity;
+@property (nonatomic, getter = isReadyForDisplay) BOOL readyForDisplay;
+@property (nonatomic) CGRect videoRect;
+@end
+
+@implementation WebAVPlayerLayer
++(WebAVPlayerLayer *)playerLayer
+{
+    return [[[WebAVPlayerLayer alloc] init] autorelease];
+}
+@end
+
 WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit()
     : m_videoFullscreenModel(nullptr)
 {
@@ -278,10 +295,19 @@ void WebVideoFullscreenInterfaceAVKit::setVideoLayer(PlatformLayer* videoLayer)
 {
     [playerController().playerLayer removeFromSuperlayer];
     [videoLayer removeFromSuperlayer];
-    ASSERT(!videoLayer
-        || [videoLayer isKindOfClass:[classAVPlayerLayer class]]
-        || ([videoLayer isKindOfClass:[CALayer class]] && [videoLayer conformsToProtocol:@protocol(AVPlayerLayer)]));
-    playerController().playerLayer = (CALayer<AVPlayerLayer>*)videoLayer;
+    
+    CALayer<AVPlayerLayer> *avPlayerLayer = nil;
+    
+    // WebKit provides a AVPlayerLayer. WebKit2 provies a hosted layer.
+    if ([videoLayer isKindOfClass:[classAVPlayerLayer class]])
+        avPlayerLayer = (CALayer<AVPlayerLayer>*)videoLayer;
+    else if (videoLayer) {
+        ASSERT([videoLayer isKindOfClass:[CALayer class]]);
+        avPlayerLayer = [WebAVPlayerLayer playerLayer];
+        [avPlayerLayer addSublayer:videoLayer];
+    }
+
+    m_playerController.get().playerLayer = avPlayerLayer;
 }
 
 void WebVideoFullscreenInterfaceAVKit::enterFullscreenWithCompletionHandler(std::function<void()> completion)

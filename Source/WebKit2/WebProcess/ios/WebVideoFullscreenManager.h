@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/EventListener.h>
+#include <WebCore/PlatformCALayer.h>
 #include <WebCore/WebVideoFullscreenInterface.h>
 #include <WebCore/WebVideoFullscreenModelMediaElement.h>
 #include <wtf/RefCounted.h>
@@ -47,6 +48,7 @@ class Node;
 namespace WebKit {
 
 class WebPage;
+class RemoteLayerTreeTransaction;
 
 class WebVideoFullscreenManager : public WebCore::WebVideoFullscreenModelMediaElement, public WebCore::WebVideoFullscreenInterface, private IPC::MessageReceiver {
 public:
@@ -55,6 +57,8 @@ public:
     
     void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
     
+    void willCommitLayerTree(RemoteLayerTreeTransaction&);
+
     bool supportsFullscreen(const WebCore::Node*) const;
     void enterFullscreenForNode(WebCore::Node*);
     void exitFullscreenForNode(WebCore::Node*);
@@ -68,12 +72,13 @@ protected:
     virtual void setRate(bool isPlaying, float playbackRate) override;
     virtual void setVideoDimensions(bool hasVideo, float width, float height) override;
     virtual void setVideoLayer(PlatformLayer*) override;
-    virtual void setVideoLayerID(uint32_t) override;
     virtual void enterFullscreen() override;
     virtual void exitFullscreen() override;
     
     WebPage* m_page;
     RefPtr<WebCore::Node> m_node;
+    RefPtr<WebCore::PlatformCALayer> m_platformCALayer;
+    bool m_sendUnparentVideoLayerTransaction;
 };
     
 } // namespace WebKit

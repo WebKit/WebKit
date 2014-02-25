@@ -32,9 +32,10 @@
 #import "WebKitSystemInterfaceIOS.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
+#import "WebVideoFullscreenManagerProxy.h"
 #import <WebCore/NotImplemented.h>
-#import <WebCore/UserAgent.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/UserAgent.h>
 
 using namespace WebCore;
 
@@ -247,6 +248,8 @@ void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::IntS
 void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
 {
     m_pageClient.didCommitLayerTree(layerTreeTransaction);
+    if (m_videoFullscreenManager)
+        m_videoFullscreenManager->didCommitLayerTree(layerTreeTransaction);
 }
 
 void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::TextGranularity granularity, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback> callback)

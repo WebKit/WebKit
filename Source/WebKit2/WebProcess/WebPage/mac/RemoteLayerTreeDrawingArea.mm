@@ -321,14 +321,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     // FIXME: minize these transactions if nothing changed.
     RemoteLayerTreeTransaction layerTransaction;
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *m_rootLayer);
-    layerTransaction.setContentsSize(m_webPage->corePage()->mainFrame().view()->contentsSize());
-    layerTransaction.setPageScaleFactor(m_webPage->corePage()->pageScaleFactor());
-    layerTransaction.setRenderTreeSize(m_webPage->corePage()->renderTreeSize());
-#if PLATFORM(IOS)
-    layerTransaction.setMinimumScaleFactor(m_webPage->minimumPageScaleFactor());
-    layerTransaction.setMaximumScaleFactor(m_webPage->maximumPageScaleFactor());
-    layerTransaction.setAllowsUserScaling(m_webPage->allowsUserScaling());
-#endif
+    m_webPage->willCommitLayerTree(layerTransaction);
 
     RemoteScrollingCoordinatorTransaction scrollingTransaction;
 #if ENABLE(ASYNC_SCROLLING)

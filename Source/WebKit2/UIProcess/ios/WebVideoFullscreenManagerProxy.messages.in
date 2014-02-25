@@ -24,7 +24,7 @@
 #if PLATFORM(IOS)
 messages -> WebVideoFullscreenManagerProxy {
     SetCurrentTime(double currentTime, double hostTime)
-    SetVideoLayerID(uint32_t videoLayerID)
+    SetVideoLayerID(WebCore::GraphicsLayer::PlatformLayerID videoLayerID)
     SetVideoDimensions(bool hasVideo, unsigned width, unsigned height)
     SetDuration(double duration)
     SetRate(bool isPlaying, double rate)

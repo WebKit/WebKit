@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS)
 
+#include "RemoteLayerTreeTransaction.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebVideoFullscreenManagerMessages.h"
@@ -35,6 +36,7 @@
 #include <WebCore/EventNames.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/Settings.h>
+#include <Webcore/PlatformCALayer.h>
 
 using namespace WebCore;
 
@@ -47,6 +49,7 @@ PassRefPtr<WebVideoFullscreenManager> WebVideoFullscreenManager::create(PassRefP
 
 WebVideoFullscreenManager::WebVideoFullscreenManager(PassRefPtr<WebPage> page)
     : m_page(page.get())
+    , m_sendUnparentVideoLayerTransaction(false)
 {
     setWebVideoFullscreenInterface(this);
     WebProcess::shared().addMessageReceiver(Messages::WebVideoFullscreenManager::messageReceiverName(), page->pageID(), *this);
@@ -57,6 +60,14 @@ WebVideoFullscreenManager::~WebVideoFullscreenManager()
     WebProcess::shared().removeMessageReceiver(Messages::WebVideoFullscreenManager::messageReceiverName(), m_page->pageID());
 }
 
+void WebVideoFullscreenManager::willCommitLayerTree(RemoteLayerTreeTransaction& transaction)
+{
+    if (m_sendUnparentVideoLayerTransaction) {
+        transaction.addVideoLayerIDPendingFullscreen(m_platformCALayer->layerID());
+        m_sendUnparentVideoLayerTransaction = false;
+    }
+}
+    
 bool WebVideoFullscreenManager::supportsFullscreen(const Node* node) const
 {
     if (!Settings::avKitEnabled())
@@ -98,15 +109,12 @@ void WebVideoFullscreenManager::setVideoDimensions(bool hasVideo, float width, f
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetVideoDimensions(hasVideo, width, height), m_page->pageID());
 }
     
-void WebVideoFullscreenManager::setVideoLayer(PlatformLayer*)
+void WebVideoFullscreenManager::setVideoLayer(PlatformLayer* videoLayer)
 {
-    // TODO: implement with correct layer ID.
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetVideoLayerID(0), m_page->pageID());
-}
+    m_platformCALayer = PlatformCALayer::platformCALayer(videoLayer);
+    m_sendUnparentVideoLayerTransaction = !!m_platformCALayer;
     
-void WebVideoFullscreenManager::setVideoLayerID(uint32_t videoLayerID)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetVideoLayerID(videoLayerID), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetVideoLayerID(m_platformCALayer ? m_platformCALayer->layerID() : 0), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::enterFullscreen()

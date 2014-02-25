@@ -171,6 +171,7 @@
 
 #if PLATFORM(COCOA)
 #include "PDFPlugin.h"
+#include "RemoteLayerTreeTransaction.h"
 #include <WebCore/LegacyWebArchive.h>
 #endif
 
@@ -2623,6 +2624,23 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         m_drawingArea->updatePreferences(store);
 }
 
+#if PLATFORM(COCOA)
+void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
+{
+    layerTransaction.setContentsSize(corePage()->mainFrame().view()->contentsSize());
+    layerTransaction.setPageScaleFactor(corePage()->pageScaleFactor());
+    layerTransaction.setRenderTreeSize(corePage()->renderTreeSize());
+#if PLATFORM(IOS)
+    layerTransaction.setMinimumScaleFactor(minimumPageScaleFactor());
+    layerTransaction.setMaximumScaleFactor(maximumPageScaleFactor());
+    layerTransaction.setAllowsUserScaling(allowsUserScaling());
+    if (m_videoFullscreenManager)
+        m_videoFullscreenManager->willCommitLayerTree(layerTransaction);
+#endif
+}
+#endif
+
+    
 #if ENABLE(INSPECTOR)
 WebInspector* WebPage::inspector()
 {

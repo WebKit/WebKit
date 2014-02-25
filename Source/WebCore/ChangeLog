@@ -1,3 +1,26 @@
+2014-02-24  Jeremy Jones  <jeremyj@apple.com>
+
+        WK2 AVKit fullscreen doesn't display video.
+        https://bugs.webkit.org/show_bug.cgi?id=128564
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        Export WebCore::PlatformCALayer::platformCALayer()
+
+        * platform/ios/WebVideoFullscreenInterface.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        Remove SetVideoLayerID(). 
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setVideoLayer):
+        Wrap make video layer look like an AVAVPlayerLayer with WebAVPlayerLayer
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        (WebVideoFullscreenModelMediaElement::setMediaElement):
+        Pass along the videoLayer before borrowing it so the interface will be ready to
+        catch the transaction that removes it.
+
 2014-02-24  Samuel White  <samuel_white@apple.com>
 
         AX: AccessibilityObject::findMatchingObjects should never include 'this' in results.

@@ -29,6 +29,7 @@
 #if PLATFORM(IOS)
 
 #include "MessageReceiver.h"
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/WebVideoFullscreenInterfaceAVKit.h>
 #include <WebCore/WebVideoFullscreenModel.h>
 #include <wtf/PassRefPtr.h>
@@ -38,17 +39,21 @@
 namespace WebKit {
 
 class WebPageProxy;
+class RemoteLayerTreeTransaction;
 
 class WebVideoFullscreenManagerProxy : public WebCore::WebVideoFullscreenInterfaceAVKit, public WebCore::WebVideoFullscreenModel, private IPC::MessageReceiver {
 public:
     static PassRefPtr<WebVideoFullscreenManagerProxy> create(WebPageProxy&);
     virtual ~WebVideoFullscreenManagerProxy();
 
+    void didCommitLayerTree(const RemoteLayerTreeTransaction&);
+    
 private:
     explicit WebVideoFullscreenManagerProxy(WebPageProxy&);
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
-    virtual void setVideoLayerID(uint32_t) override;
+    virtual void setVideoLayerID(WebCore::GraphicsLayer::PlatformLayerID);
+    virtual void enterFullscreen() override;
     
     virtual void requestExitFullScreen() override;
     virtual void play() override;
@@ -58,6 +63,8 @@ private:
     virtual void didExitFullscreen() override;
 
     WebPageProxy* m_page;
+    bool m_enterFullscreenAfterVideoLayerUnparentedTransaction;
+    WebCore::GraphicsLayer::PlatformLayerID m_videoLayerID;
 };
     
 } // namespace WebKit

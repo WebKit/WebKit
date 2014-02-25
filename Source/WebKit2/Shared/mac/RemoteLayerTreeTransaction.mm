@@ -414,6 +414,7 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_maximumScaleFactor;
     encoder << m_allowsUserScaling;
     encoder << m_renderTreeSize;
+    encoder << m_videoLayerIDsPendingFullscreen;
 }
 
 bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLayerTreeTransaction& result)
@@ -466,6 +467,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
         return false;
     
     if (!decoder.decode(result.m_renderTreeSize))
+        return false;
+    
+    if (!decoder.decode(result.m_videoLayerIDsPendingFullscreen))
         return false;
 
     return true;

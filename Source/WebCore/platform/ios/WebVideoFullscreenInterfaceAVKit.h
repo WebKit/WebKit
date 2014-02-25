@@ -66,7 +66,6 @@ public:
     void setRate(bool isPlaying, float playbackRate) override;
     void setVideoDimensions(bool hasVideo, float width, float height) override;
     void setVideoLayer(PlatformLayer*) override;
-    void setVideoLayerID(uint32_t) override { };
     void enterFullscreen() override;
     void enterFullscreenWithCompletionHandler(std::function<void()>);
     void exitFullscreen() override;

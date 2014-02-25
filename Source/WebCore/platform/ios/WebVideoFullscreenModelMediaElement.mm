@@ -94,8 +94,9 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
     m_videoFullscreenInterface->setDuration(m_mediaElement->duration());
     m_videoFullscreenInterface->setRate(m_mediaElement->isPlaying(), m_mediaElement->playbackRate());
 
+    m_videoFullscreenInterface->setVideoLayer(m_mediaElement->platformLayer());
+
     m_borrowedVideoLayer = m_mediaElement->borrowPlatformLayer();
-    m_videoFullscreenInterface->setVideoLayer(m_borrowedVideoLayer.get());
 
     m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
 
