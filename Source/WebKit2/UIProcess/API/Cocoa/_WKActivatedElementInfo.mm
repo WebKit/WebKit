@@ -23,26 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIActionSheet.h>
-#import <UIKit/UIPopoverController.h>
+#import "config.h"
+#import "_WKActivatedElementInfoInternal.h"
 
-@protocol WKActionSheetDelegate;
-@class WKContentView;
+#if WK_API_ENABLED
 
-@interface WKActionSheet : UIActionSheet
+#import <wtf/RetainPtr.h>
 
-@property (nonatomic, assign) id <WKActionSheetDelegate> sheetDelegate;
-@property (nonatomic) UIPopoverArrowDirection arrowDirections;
-- (id)initWithView:(WKContentView *)view;
-- (void)doneWithSheet;
-- (BOOL)presentSheet;
-- (BOOL)presentSheetFromRect:(CGRect)presentationRect;
-- (void)updateSheetPosition;
+@implementation _WKActivatedElementInfo  {
+    RetainPtr<NSURL> _URL;
+    RetainPtr<NSString> _title;
+    CGPoint _interactionLocation;
+    CGRect _boundingRect;
+}
+
+- (instancetype)_initWithURL:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _URL = adoptNS([url copy]);
+    _interactionLocation = location;
+    _title = adoptNS([title copy]);
+    _boundingRect = rect;
+
+    return self;
+}
+
+- (NSURL *)URL
+{
+    return _URL.get();
+}
+
+- (NSString *)title
+{
+    return _title.get();
+}
+
+- (CGRect)_boundingRect
+{
+    return _boundingRect;
+}
+
+- (CGPoint)_interactionLocation
+{
+    return _interactionLocation;
+}
+
 @end
 
-@protocol WKActionSheetDelegate<UIActionSheetDelegate>
-@required
-- (UIView *)hostViewForSheet;
-- (CGRect)initialPresentationRectInHostViewForSheet;
-- (CGRect)presentationRectInHostViewForSheet;
-@end
+#endif // WK_API_ENABLED

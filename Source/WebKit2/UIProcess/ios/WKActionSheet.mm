@@ -26,29 +26,13 @@
 #import "config.h"
 #import "WKActionSheet.h"
 
-#import "WKGestureTypes.h"
 #import "WKContentViewInteraction.h"
-#import <SafariServices/SSReadingList.h>
 #import <UIKit/UIActionSheet_Private.h>
-#import <UIKit/UIView.h>
 #import <UIKit/UIWindow_Private.h>
-#import <WebCore/LocalizedStrings.h>
-#import <WebCore/SoftLinking.h>
-#import <wtf/text/WTFString.h>
-#import <wtf/RetainPtr.h>
-
-SOFT_LINK_FRAMEWORK(SafariServices);
-SOFT_LINK_CLASS(SafariServices, SSReadingList);
-
-using namespace WebKit;
-
-@interface WKElementAction(Private)
-- (void)_runActionWithElement:(NSURL *)targetURL documentView:(WKContentView *)view interactionLocation:(CGPoint)interactionLocation;
-@end
 
 @implementation WKActionSheet {
-    id<WKActionSheetDelegate> _sheetDelegate;
-    id<UIActionSheetDelegate> _delegateWhileRotating;
+    id <WKActionSheetDelegate> _sheetDelegate;
+    id <UIActionSheetDelegate> _delegateWhileRotating;
     WKContentView *_view;
     UIPopoverArrowDirection _arrowDirections;
     BOOL _isRotating;
@@ -173,128 +157,3 @@ using namespace WebKit;
 }
 
 @end
-
-@implementation WKElementActionInfo  {
-    CGPoint _interactionLocation;
-    NSURL *_url;
-    NSString *_title;
-    CGRect _boundingRect;
-    CGImageRef _snapshot;
-}
-
-- (WKElementActionInfo *) initWithInfo:(NSURL *)url location:(CGPoint)location title:(NSString *)title rect:(CGRect)rect
-{
-    _url = [url copy];
-    _interactionLocation = location;
-    _title = [title copy];
-    _boundingRect = rect;
-
-    return self;
-}
-
-- (void)dealloc
-{
-    [_title release];
-    [_url release];
-    
-    [super dealloc];
-}
-
-@end
-
-@implementation WKElementAction  {
-    NSString *_title;
-    WKElementActionHandlerInternal _actionHandler;
-    WKElementActionType _type;
-}
-
-- (id)initWithTitle:(NSString *)title actionHandler:(WKElementActionHandlerInternal)handler type:(WKElementActionType)type
-{
-    if (!(self = [super init]))
-        return nil;
-    _title = [title copy];
-    _type = type;
-    _actionHandler = Block_copy(handler);
-    return self;
-}
-
-- (void)dealloc
-{
-    [_title release];
-    [_actionHandler release];
-    [super dealloc];
-}
-
-+ (WKElementAction *)customElementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler
-{
-    return [[[self alloc] initWithTitle:title
-                          actionHandler:^(WKContentView *view, WKElementActionInfo *actionInfo) { handler(actionInfo); }
-                                   type:WKElementActionTypeCustom] autorelease];
-}
-
-static void copyElement(WKContentView *view)
-{
-    [view _performAction:WebKit::WKSheetActionCopy];
-}
-
-static void saveImage(WKContentView *view)
-{
-    [view _performAction:WebKit::WKSheetActionSaveImage];
-}
-
-static void addToReadingList(NSURL *targetURL, NSString *title)
-{
-    if (!title || [title length] == 0)
-        title = [targetURL absoluteString];
-
-    [[getSSReadingListClass() defaultReadingList] addReadingListItemWithURL:targetURL title:title previewText:nil error:nil];
-}
-
-+ (WKElementAction *)standardElementActionWithType:(WKElementActionType)type customTitle:(NSString *)customTitle
-{
-    NSString *title;
-    WKElementActionHandlerInternal handler;
-    switch (type) {
-    case WKElementActionTypeCopy:
-        title = WEB_UI_STRING_KEY("Copy", "Copy ActionSheet Link", "Title for Copy Link or Image action button");
-        handler = ^(WKContentView *view, WKElementActionInfo *actionInfo) {
-            copyElement(view);
-        };
-        break;
-    case WKElementActionTypeOpen:
-        title = WEB_UI_STRING_KEY("Open", "Open ActionSheet Link", "Title for Open Link action button");
-        handler = ^(WKContentView *view, WKElementActionInfo *actionInfo) {
-            [view _attemptClickAtLocation:actionInfo.interactionLocation];
-        };
-        break;
-    case WKElementActionTypeSaveImage:
-        title = WEB_UI_STRING_KEY("Save Image", "Save Image", "Title for Save Image action button");
-        handler = ^(WKContentView *view, WKElementActionInfo *actionInfo) {
-            saveImage(view);
-        };
-        break;
-    case WKElementActionTypeAddToReadingList:
-        title = WEB_UI_STRING("Add to Reading List", "Title for Add to Reading List action button");
-        handler = ^(WKContentView *view, WKElementActionInfo *actionInfo) {
-            addToReadingList(actionInfo.url, actionInfo.title);
-        };
-        break;
-    default:
-        [NSException raise:NSInvalidArgumentException format:@"There is no standard web element action of type %d.", type];
-        return nil;
-    }
-    return [[[WKElementAction alloc] initWithTitle:(customTitle ? customTitle : title) actionHandler:handler type:type] autorelease];
-}
-
-+ (WKElementAction *)standardElementActionWithType:(WKElementActionType)type
-{
-    return [self standardElementActionWithType:type customTitle:nil];
-}
-
-- (void)runActionWithElementInfo:(WKElementActionInfo *)info view:(WKContentView *)view
-{
-    _actionHandler(view, info);
-}
-@end
-
-

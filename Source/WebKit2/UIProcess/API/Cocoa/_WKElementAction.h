@@ -23,26 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIActionSheet.h>
-#import <UIKit/UIPopoverController.h>
+#import <WebKit2/WKFoundation.h>
 
-@protocol WKActionSheetDelegate;
-@class WKContentView;
+#if WK_API_ENABLED
 
-@interface WKActionSheet : UIActionSheet
+#if TARGET_OS_IPHONE
 
-@property (nonatomic, assign) id <WKActionSheetDelegate> sheetDelegate;
-@property (nonatomic) UIPopoverArrowDirection arrowDirections;
-- (id)initWithView:(WKContentView *)view;
-- (void)doneWithSheet;
-- (BOOL)presentSheet;
-- (BOOL)presentSheetFromRect:(CGRect)presentationRect;
-- (void)updateSheetPosition;
+#import <WebKit2/_WKActivatedElementInfo.h>
+
+typedef void (^WKElementActionHandler)(_WKActivatedElementInfo *);
+
+typedef NS_ENUM(NSInteger, _WKElementActionType) {
+    _WKElementActionTypeCustom,
+    _WKElementActionTypeOpen,
+    _WKElementActionTypeCopy,
+    _WKElementActionTypeSaveImage,
+    _WKElementActionTypeAddToReadingList,
+};
+
+WK_API_CLASS
+@interface _WKElementAction : NSObject
+
++ (instancetype)elementActionWithType:(_WKElementActionType)type;
++ (instancetype)elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)title;
+
++ (instancetype)elementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler;
+
+@property (nonatomic, readonly) _WKElementActionType type;
+@property (nonatomic, readonly) NSString* title;
+
 @end
 
-@protocol WKActionSheetDelegate<UIActionSheetDelegate>
-@required
-- (UIView *)hostViewForSheet;
-- (CGRect)initialPresentationRectInHostViewForSheet;
-- (CGRect)presentationRectInHostViewForSheet;
-@end
+#endif // TARGET_OS_IPHONE
+
+#endif // WK_API_ENABLED

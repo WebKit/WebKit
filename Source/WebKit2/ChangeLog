@@ -1,3 +1,46 @@
+2014-02-24  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Start adding API for customizing actions on activated elements
+        https://bugs.webkit.org/show_bug.cgi?id=129284
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h: Added. Includes the public interface of what
+        was WKElementActionInfo.
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.m: Added.
+        (-[_WKActivatedElementInfo _initWithURL:location:title:rect:]): Moved and renamed internal
+        initializer from WKElementActionInfo.
+        (-[_WKActivatedElementInfo dealloc]): Moved from WKElementActionInfo.
+        (-[_WKActivatedElementInfo _boundingRect]): Added private accessor.
+        (-[_WKActivatedElementInfo _interactionLocation]): Ditto.
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h: Added.
+
+        * UIProcess/API/Cocoa/_WKElementAction.h: Added.
+        (_WKElementActionType): Moved from WKActionSheet.h and turned into a proper NS_ENUM.
+        * UIProcess/API/Cocoa/_WKElementAction.mm: Added.
+        (-[_WKElementAction _initWithTitle:actionHandler:type:]): Moved and renamed internal
+        initializer from WKActionSheet.mm.
+        (-[_WKElementAction dealloc]): Moved from WKActionSheet.mm.
+        (+[_WKElementAction elementActionWithTitle:actionHandler:]): Moved and renamed.
+        (copyElement): Moved from WKActionSheet.mm.
+        (saveImage): Ditto.
+        (addToReadingList): Ditto.
+        (+[_WKElementAction elementActionWithType:customTitle:]): Moved and renamed.
+        (+[_WKElementAction elementActionWithType:]): Ditto.
+        (-[_WKElementAction _runActionWithElementInfo:view:]): Moved from WKActionSheet.mm.
+        * UIProcess/API/Cocoa/WKElementActionInternal.h: Added.
+
+        * UIProcess/ios/WKActionSheet.h: Removed declarations that were moved elsewhere.
+        * UIProcess/ios/WKActionSheet.mm: Removed code that was moved elsewhere.
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant actionSheet:clickedButtonAtIndex:]):
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files. Changed the Objective-C
+        class name check to allow _WK as a class name prefix.
+
 2014-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Use RetainPtrs for two WKContentView data members

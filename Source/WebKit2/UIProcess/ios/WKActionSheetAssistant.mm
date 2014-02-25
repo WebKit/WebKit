@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKActionSheetAssistant.h"
 
+#import "_WKActivatedElementInfoInternal.h"
+#import "_WKElementActionInternal.h"
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
@@ -50,10 +52,6 @@ SOFT_LINK_CONSTANT(TCC, kTCCServicePhotos, CFStringRef)
 
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
 SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
-
-@interface WKElementAction(Private)
-- (void)_runActionWithElement:(NSURL *)targetURL documentView:(WKContentView *)view interactionLocation:(CGPoint)interactionLocation;
-@end
 
 @implementation WKActionSheetAssistant {
     RetainPtr<WKActionSheet> _interactionSheet;
@@ -157,11 +155,9 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
         return;
 
     if (_elementActions && buttonIndex < (NSInteger)[_elementActions count]) {
-        WKElementActionInfo* actionInfo = [[WKElementActionInfo alloc] initWithInfo:[NSURL URLWithString:_view.positionInformation.url]
-                                                                           location:_view.positionInformation.point
-                                                                              title:_view.positionInformation.title
-                                                                               rect:_view.positionInformation.bounds];
-        [[_elementActions objectAtIndex:buttonIndex] runActionWithElementInfo:actionInfo view:_view];
+        _WKActivatedElementInfo *actionInfo = [[_WKActivatedElementInfo alloc] _initWithURL:[NSURL URLWithString:_view.positionInformation.url]
+            location:_view.positionInformation.point title:_view.positionInformation.title rect:_view.positionInformation.bounds];
+        [[_elementActions objectAtIndex:buttonIndex] _runActionWithElementInfo:actionInfo view:_view];
         [actionInfo release];
     }
 
@@ -209,7 +205,7 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
     }
 
     _elementActions = adoptNS([actions copy]);
-    for (WKElementAction *action in _elementActions.get())
+    for (_WKElementAction *action in _elementActions.get())
         [_interactionSheet addButtonWithTitle:[action title]];
 
     [_interactionSheet setCancelButtonIndex:[_interactionSheet addButtonWithTitle:WEB_UI_STRING_KEY("Cancel", "Cancel button label in button bar", "Title for Cancel button label in button bar")]];
@@ -223,13 +219,13 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
     NSURL *targetURL = [NSURL URLWithString:_view.positionInformation.url];
     NSMutableArray *actions = [NSMutableArray array];
     if (!_view.positionInformation.url.isEmpty())
-        [actions addObject:[WKElementAction standardElementActionWithType:WKElementActionTypeOpen]];
+        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
     if ([getSSReadingListClass() supportsURL:targetURL])
-        [actions addObject:[WKElementAction standardElementActionWithType:WKElementActionTypeAddToReadingList]];
+        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
     if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
-        [actions addObject:[WKElementAction standardElementActionWithType:WKElementActionTypeSaveImage]];
+        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeSaveImage]];
     if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
-        [actions addObject:[WKElementAction standardElementActionWithType:WKElementActionTypeCopy]];
+        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
 
     // FIXME: Add call to delegate to add custom actions.
 
@@ -249,11 +245,11 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
         return;
 
     NSMutableArray *actions = [NSMutableArray array];
-    [actions addObject:[WKElementAction standardElementActionWithType:WKElementActionTypeOpen]];
+    [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
     if ([getSSReadingListClass() supportsURL:targetURL])
-        [actions addObject:[WKElementAction standardElementActionWithType:WKElementActionTypeAddToReadingList]];
+        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
     if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
-        [actions addObject:[WKElementAction standardElementActionWithType:WKElementActionTypeCopy]];
+        [actions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
 
     // FIXME: Add call to delegate to add custom actions.
 
@@ -288,7 +284,7 @@ SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
     NSMutableArray *elementActions = [NSMutableArray array];
     for (NSUInteger actionNumber = 0; actionNumber < [dataDetectorsActions count]; actionNumber++) {
         DDAction *action = [dataDetectorsActions objectAtIndex:actionNumber];
-        [elementActions addObject:[WKElementAction customElementActionWithTitle:[action localizedName] actionHandler:^(WKElementActionInfo *actionInfo) {
+        [elementActions addObject:[_WKElementAction elementActionWithTitle:[action localizedName] actionHandler:^(_WKActivatedElementInfo *actionInfo) {
             UIPopoverController *popoverController = nil;
             if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPhone) {
                 [_interactionSheet setUserInteractionEnabled:NO];

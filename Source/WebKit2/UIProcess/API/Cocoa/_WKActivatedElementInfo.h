@@ -23,26 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIActionSheet.h>
-#import <UIKit/UIPopoverController.h>
+#import <WebKit2/WKFoundation.h>
 
-@protocol WKActionSheetDelegate;
-@class WKContentView;
+#if WK_API_ENABLED
 
-@interface WKActionSheet : UIActionSheet
+#import <Foundation/Foundation.h>
 
-@property (nonatomic, assign) id <WKActionSheetDelegate> sheetDelegate;
-@property (nonatomic) UIPopoverArrowDirection arrowDirections;
-- (id)initWithView:(WKContentView *)view;
-- (void)doneWithSheet;
-- (BOOL)presentSheet;
-- (BOOL)presentSheetFromRect:(CGRect)presentationRect;
-- (void)updateSheetPosition;
+WK_API_CLASS
+@interface _WKActivatedElementInfo : NSObject
+
+@property (nonatomic, readonly) NSURL *URL;
+@property (nonatomic, readonly) NSString *title;
+
 @end
 
-@protocol WKActionSheetDelegate<UIActionSheetDelegate>
-@required
-- (UIView *)hostViewForSheet;
-- (CGRect)initialPresentationRectInHostViewForSheet;
-- (CGRect)presentationRectInHostViewForSheet;
-@end
+#endif // WK_API_ENABLED
