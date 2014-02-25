@@ -1,3 +1,20 @@
+2014-02-24  Samuel White  <samuel_white@apple.com>
+
+        AX: findMatchingObjects backwards start position inconsistent with forwards start position when startObject == nullptr.
+        https://bugs.webkit.org/show_bug.cgi?id=129266
+
+        Reviewed by Chris Fleizach.
+
+        When searching forward with no start object, the first thing considered is the first child of
+        the container. However, when searching backwards with no start object nothing in the container
+        is considered; this basically negates the search. This patch makes backwards searching without
+        a start object start from the last child of the container to match forward search expectations.
+
+        Test: platform/mac/accessibility/search-predicate-start-not-specified.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::findMatchingObjects):
+
 2014-02-24  Andreas Kling  <akling@apple.com>
 
         Prune dead code for Web Inspector canvas instrumentation.

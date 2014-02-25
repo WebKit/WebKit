@@ -475,10 +475,11 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
     
     bool isForward = criteria->searchDirection == SearchDirectionNext;
     
-    // In the first iteration of the loop, it will examine the children of the start object for matches.
-    // However, when going backwards, those children should not be considered, so the loop is skipped ahead.
+    // The first iteration of the outer loop will examine the children of the start object for matches. However, when
+    // iterating backwards, the start object children should not be considered, so the loop is skipped ahead. We make an
+    // exception when no start object was specified because we want to search everything regardless of search direction.
     AccessibilityObject* previousObject = 0;
-    if (!isForward) {
+    if (!isForward && startObject != this) {
         previousObject = startObject;
         startObject = startObject->parentObjectUnignored();
     }

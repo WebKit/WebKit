@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<title>Search Predicate Start Not Specified</title>
+</head>
+<body>
+
+<ul id="container"><li aria-label="first">item</li><li aria-label="middle">item</li><li aria-label="last">item</li></ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that search predicate results are accurate when no start element is specified.");
+    
+    if (window.accessibilityController) {
+        var containerElement = accessibilityController.accessibleElementById("container");
+        
+        // Backward search with no start element.
+        var backwardResult = containerElement.uiElementForSearchPredicate(null, false, "AXAnyTypeSearchKey", "", false);
+        shouldBe("backwardResult.description", "'AXDescription: last'");
+        
+        // Forward search with no start element.
+        var forwardResult = containerElement.uiElementForSearchPredicate(null, true, "AXAnyTypeSearchKey", "", false);
+        shouldBe("forwardResult.description", "'AXDescription: first'");
+        
+        // Hide superfluous text.
+        document.getElementById("container").style.display = "none";
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,16 @@
+2014-02-24  Samuel White  <samuel_white@apple.com>
+
+        AX: findMatchingObjects backwards start position inconsistent with forwards start position when startObject == nullptr.
+        https://bugs.webkit.org/show_bug.cgi?id=129266
+
+        Reviewed by Chris Fleizach.
+
+        Added test to ensure that searching backward & forward without a start object produces similar
+        results. Backward will begin from the end of the container and forward will begin from the start.
+
+        * platform/mac/accessibility/search-predicate-start-not-specified-expected.txt: Added.
+        * platform/mac/accessibility/search-predicate-start-not-specified.html: Added.
+
 2014-02-24  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Adjust lineTop position to the next available wrapping location at shape-outsides
