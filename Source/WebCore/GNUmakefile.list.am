@@ -6066,7 +6066,6 @@ platform_sources += \
 	Source/WebCore/platform/UUID.cpp \
 	Source/WebCore/platform/UUID.h \
 	Source/WebCore/platform/ValueToString.h \
-	Source/WebCore/platform/VisitedLinkStrategy.h \
 	Source/WebCore/platform/Widget.cpp \
 	Source/WebCore/platform/Widget.h \
 	Source/WebCore/platform/WindowsKeyboardCodes.h

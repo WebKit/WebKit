@@ -18996,7 +18996,6 @@
     <ClInclude Include="..\platform\TreeShared.h" />
     <ClInclude Include="..\platform\UserActivity.h" />
     <ClInclude Include="..\platform\UUID.h" />
-    <ClInclude Include="..\platform\VisitedLinkStrategy.h" />
     <ClInclude Include="..\platform\Widget.h" />
     <ClInclude Include="..\platform\win\BitmapInfo.h" />
     <ClInclude Include="..\platform\win\BString.h" />

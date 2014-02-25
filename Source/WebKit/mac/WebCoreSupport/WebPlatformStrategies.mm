@@ -89,11 +89,6 @@ StorageStrategy* WebPlatformStrategies::createStorageStrategy()
     return this;
 }
 
-VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
-{
-    return this;
-}
-
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     return WebCore::cookiesForDOM(session, firstParty, url);
@@ -145,16 +140,6 @@ void WebPlatformStrategies::getPluginInfo(const Page* page, Vector<PluginInfo>& 
     }
     
     END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-bool WebPlatformStrategies::isLinkVisited(Page* page, LinkHash hash, const URL&, const AtomicString&)
-{
-    return page->group().isLinkVisited(hash);
-}
-
-void WebPlatformStrategies::addVisitedLink(Page* page, LinkHash hash)
-{
-    return page->group().addVisitedLinkHash(hash);
 }
 
 void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName)

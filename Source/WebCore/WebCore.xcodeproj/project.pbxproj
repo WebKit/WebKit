@@ -1821,7 +1821,6 @@
 		514C767D0CE923A1007EF3CD /* ResourceRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76680CE923A1007EF3CD /* ResourceRequestBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C767E0CE923A1007EF3CD /* ResourceResponseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */; };
 		514C767F0CE923A1007EF3CD /* ResourceResponseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		515788C11207852C00A37C4A /* VisitedLinkStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 515788C01207852C00A37C4A /* VisitedLinkStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5160300B0CC4251200C8AC25 /* FileSystemPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160300A0CC4251200C8AC25 /* FileSystemPOSIX.cpp */; };
 		5160306C0CC4362300C8AC25 /* FileSystemCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */; };
 		5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */; };
@@ -8709,7 +8708,6 @@
 		514C76680CE923A1007EF3CD /* ResourceRequestBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceRequestBase.h; sourceTree = "<group>"; };
 		514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceResponseBase.cpp; sourceTree = "<group>"; };
 		514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceResponseBase.h; sourceTree = "<group>"; };
-		515788C01207852C00A37C4A /* VisitedLinkStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkStrategy.h; sourceTree = "<group>"; };
 		5160300A0CC4251200C8AC25 /* FileSystemPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemPOSIX.cpp; sourceTree = "<group>"; };
 		5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemCF.cpp; sourceTree = "<group>"; };
 		5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HistoryItemMac.mm; path = mac/HistoryItemMac.mm; sourceTree = "<group>"; };
@@ -20827,7 +20825,6 @@
 				2E3BBF051162DA1100B9409A /* UUID.cpp */,
 				2E3BBF061162DA1100B9409A /* UUID.h */,
 				9A1142031832D134000BB8AD /* ValueToString.h */,
-				515788C01207852C00A37C4A /* VisitedLinkStrategy.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */,
@@ -25763,7 +25760,6 @@
 				93309E1E099E64920056E581 /* VisibleUnits.h in Headers */,
 				1ABA80001897341200DCE9D6 /* VisitedLinkProvider.h in Headers */,
 				419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */,
-				515788C11207852C00A37C4A /* VisitedLinkStrategy.h in Headers */,
 				E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */,
 				BE20507A18A4586B0080647E /* VTTCue.h in Headers */,
 				A14832B0187F618D00DA63A6 /* WAKAppKitStubs.h in Headers */,

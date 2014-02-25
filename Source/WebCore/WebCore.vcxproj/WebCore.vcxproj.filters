@@ -12856,9 +12856,6 @@
     <ClInclude Include="..\loader\cache\CachedRawResourceClient.h">
       <Filter>loader\cache</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\VisitedLinkStrategy.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\AudioTrackPrivate.h">
       <Filter>html\track</Filter>
     </ClInclude>

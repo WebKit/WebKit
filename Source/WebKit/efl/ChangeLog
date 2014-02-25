@@ -1,3 +1,14 @@
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of VisitedLinkStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=129324
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/PlatformStrategiesEfl.cpp:
+        (PlatformStrategiesEfl::getPluginInfo):
+        * WebCoreSupport/PlatformStrategiesEfl.h:
+
 2014-02-24  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
 
         Get rid of the unused 'immediate' parameters from repaint related functions

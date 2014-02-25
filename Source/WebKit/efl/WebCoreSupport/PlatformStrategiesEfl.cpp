@@ -76,11 +76,6 @@ SharedWorkerStrategy* PlatformStrategiesEfl::createSharedWorkerStrategy()
     return this;
 }
 
-VisitedLinkStrategy* PlatformStrategiesEfl::createVisitedLinkStrategy()
-{
-    return this;
-}
-
 StorageStrategy* PlatformStrategiesEfl::createStorageStrategy()
 {
     return this;
@@ -155,15 +150,4 @@ void PlatformStrategiesEfl::getPluginInfo(const Page*, Vector<PluginInfo>& outPl
 #else
     UNUSED_PARAM(outPlugins);
 #endif
-}
-
-// VisitedLinkStrategy
-bool PlatformStrategiesEfl::isLinkVisited(Page* page, LinkHash hash, const URL&, const AtomicString&)
-{
-    return page->group().isLinkVisited(hash);
-}
-
-void PlatformStrategiesEfl::addVisitedLink(Page* page, LinkHash hash)
-{
-    page->group().addVisitedLinkHash(hash);
 }

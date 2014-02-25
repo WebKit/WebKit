@@ -75,11 +75,6 @@ StorageStrategy* PlatformStrategiesGtk::createStorageStrategy()
     return this;
 }
 
-VisitedLinkStrategy* PlatformStrategiesGtk::createVisitedLinkStrategy()
-{
-    return this;
-}
-
 // CookiesStrategy
 String PlatformStrategiesGtk::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
@@ -142,15 +137,4 @@ void PlatformStrategiesGtk::getPluginInfo(const Page* page, Vector<PluginInfo>& 
 
         outPlugins.append(pluginInfo);
     }
-}
-
-// VisitedLinkStrategy
-bool PlatformStrategiesGtk::isLinkVisited(Page* page, LinkHash hash, const URL&, const AtomicString&)
-{
-    return page->group().isLinkVisited(hash);
-}
-
-void PlatformStrategiesGtk::addVisitedLink(Page* page, LinkHash hash)
-{
-    page->group().addVisitedLinkHash(hash);
 }
