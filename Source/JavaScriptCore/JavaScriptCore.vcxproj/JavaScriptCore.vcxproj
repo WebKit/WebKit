@@ -337,6 +337,7 @@
     <ClCompile Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.cpp" />
     <ClCompile Include="..\bytecode\PreciseJumpTargets.cpp" />
     <ClCompile Include="..\bytecode\PutByIdStatus.cpp" />
+    <ClCompile Include="..\bytecode\PutByIdVariant.cpp" />
     <ClCompile Include="..\bytecode\ReduceWhitespace.cpp" />
     <ClCompile Include="..\bytecode\SamplingTool.cpp" />
     <ClCompile Include="..\bytecode\SpecialPointer.cpp" />
@@ -858,6 +859,7 @@
     <ClInclude Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.h" />
     <ClInclude Include="..\bytecode\PreciseJumpTargets.h" />
     <ClInclude Include="..\bytecode\PutByIdStatus.h" />
+    <ClInclude Include="..\bytecode\PutByIdVariant.h" />
     <ClInclude Include="..\bytecode\PutKind.h" />
     <ClInclude Include="..\bytecode\ReduceWhitespace.h" />
     <ClInclude Include="..\bytecode\SamplingTool.h" />

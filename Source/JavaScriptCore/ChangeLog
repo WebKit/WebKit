@@ -1,3 +1,119 @@
+2014-02-24  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should do polymorphic PutById inlining
+        https://bugs.webkit.org/show_bug.cgi?id=129210
+
+        Reviewed by Mark Hahnenberg and Oliver Hunt.
+        
+        This makes PutByIdStatus inform us about polymorphic cases by returning an array of
+        PutByIdVariants. The DFG now has a node called MultiPutByOffset that indicates a
+        selection of multiple inlined PutByIdVariants.
+        
+        MultiPutByOffset is almost identical to MultiGetByOffset, which we added in
+        http://trac.webkit.org/changeset/164207.
+        
+        This also does some FTL refactoring to make MultiPutByOffset share code with some nodes
+        that generate similar code.
+        
+        1% speed-up on V8v7 due to splay improving by 6.8%. Splay does the thing where it
+        sometimes swaps field insertion order, creating fake polymorphism.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        (JSC::PutByIdStatus::dump):
+        * bytecode/PutByIdStatus.h:
+        (JSC::PutByIdStatus::PutByIdStatus):
+        (JSC::PutByIdStatus::isSimple):
+        (JSC::PutByIdStatus::numVariants):
+        (JSC::PutByIdStatus::variants):
+        (JSC::PutByIdStatus::at):
+        (JSC::PutByIdStatus::operator[]):
+        * bytecode/PutByIdVariant.cpp: Added.
+        (JSC::PutByIdVariant::dump):
+        (JSC::PutByIdVariant::dumpInContext):
+        * bytecode/PutByIdVariant.h: Added.
+        (JSC::PutByIdVariant::PutByIdVariant):
+        (JSC::PutByIdVariant::replace):
+        (JSC::PutByIdVariant::transition):
+        (JSC::PutByIdVariant::kind):
+        (JSC::PutByIdVariant::isSet):
+        (JSC::PutByIdVariant::operator!):
+        (JSC::PutByIdVariant::structure):
+        (JSC::PutByIdVariant::oldStructure):
+        (JSC::PutByIdVariant::newStructure):
+        (JSC::PutByIdVariant::structureChain):
+        (JSC::PutByIdVariant::offset):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::emitPrototypeChecks):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::emitPutById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::checkStructureElimination):
+        (JSC::DFG::CSEPhase::structureTransitionWatchpointElimination):
+        (JSC::DFG::CSEPhase::putStructureStoreElimination):
+        (JSC::DFG::CSEPhase::getByOffsetLoadElimination):
+        (JSC::DFG::CSEPhase::putByOffsetStoreElimination):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::MultiPutByOffsetData::writesStructures):
+        (JSC::DFG::MultiPutByOffsetData::reallocatesStorage):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPutByOffset):
+        (JSC::DFG::Node::hasMultiPutByOffsetData):
+        (JSC::DFG::Node::multiPutByOffsetData):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compilePutStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileAllocatePropertyStorage):
+        (JSC::FTL::LowerDFGToLLVM::compileReallocatePropertyStorage):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiPutByOffset):
+        (JSC::FTL::LowerDFGToLLVM::loadProperty):
+        (JSC::FTL::LowerDFGToLLVM::storeProperty):
+        (JSC::FTL::LowerDFGToLLVM::addressOfProperty):
+        (JSC::FTL::LowerDFGToLLVM::storageForTransition):
+        (JSC::FTL::LowerDFGToLLVM::allocatePropertyStorage):
+        (JSC::FTL::LowerDFGToLLVM::reallocatePropertyStorage):
+        (JSC::FTL::LowerDFGToLLVM::emitStoreBarrier):
+        * tests/stress/fold-multi-put-by-offset-to-put-by-offset.js: Added.
+        * tests/stress/multi-put-by-offset-reallocation-butterfly-cse.js: Added.
+        * tests/stress/multi-put-by-offset-reallocation-cases.js: Added.
+
 2014-02-24  peavo@outlook.com  <peavo@outlook.com>
 
         JSC regressions after r164494

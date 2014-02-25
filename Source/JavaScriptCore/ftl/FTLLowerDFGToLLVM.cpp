@@ -474,6 +474,9 @@ private:
         case PutByOffset:
             compilePutByOffset();
             break;
+        case MultiPutByOffset:
+            compileMultiPutByOffset();
+            break;
         case GetGlobalVar:
             compileGetGlobalVar();
             break;
@@ -1656,8 +1659,8 @@ private:
     {
         m_ftlState.jitCode->common.notifyCompilingStructureTransition(m_graph.m_plan, codeBlock(), m_node);
         
-        m_out.store64(
-            m_out.constIntPtr(m_node->structureTransitionData().newStructure),
+        m_out.storePtr(
+            weakPointer(m_node->structureTransitionData().newStructure),
             lowCell(m_node->child1()), m_heaps.JSCell_structure);
     }
     
@@ -2708,104 +2711,21 @@ private:
     void compileAllocatePropertyStorage()
     {
         StructureTransitionData& data = m_node->structureTransitionData();
-        
         LValue object = lowCell(m_node->child1());
         
-        if (data.previousStructure->couldHaveIndexingHeader()) {
-            setStorage(vmCall(
-                m_out.operation(
-                    operationReallocateButterflyToHavePropertyStorageWithInitialCapacity),
-                m_callFrame, object));
-            return;
-        }
-        
-        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("AllocatePropertyStorage slow path"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("AllocatePropertyStorage continuation"));
-        
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
-        
-        LValue endOfStorage = allocateBasicStorageAndGetEnd(
-            m_out.constIntPtr(initialOutOfLineCapacity * sizeof(JSValue)), slowPath);
-        
-        ValueFromBlock fastButterfly = m_out.anchor(
-            m_out.add(m_out.constIntPtr(sizeof(IndexingHeader)), endOfStorage));
-        
-        m_out.jump(continuation);
-        
-        m_out.appendTo(slowPath, continuation);
-        
-        ValueFromBlock slowButterfly = m_out.anchor(vmCall(
-            m_out.operation(operationAllocatePropertyStorageWithInitialCapacity), m_callFrame));
-        
-        m_out.jump(continuation);
-        
-        m_out.appendTo(continuation, lastNext);
-        
-        LValue result = m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
-        m_out.storePtr(result, object, m_heaps.JSObject_butterfly);
-        
-        setStorage(result);
+        setStorage(allocatePropertyStorage(object, data.previousStructure));
     }
 
     void compileReallocatePropertyStorage()
     {
         StructureTransitionData& data = m_node->structureTransitionData();
-        
-        Structure* previous = data.previousStructure;
         LValue object = lowCell(m_node->child1());
-
-        size_t oldSize = previous->outOfLineCapacity() * sizeof(JSValue);
-        size_t newSize = oldSize * outOfLineGrowthFactor; 
-
-        ASSERT(newSize == data.newStructure->outOfLineCapacity() * sizeof(JSValue));
+        LValue oldStorage = lowStorage(m_node->child2());
         
-        if (previous->couldHaveIndexingHeader()) {
-            LValue newAllocSize = m_out.constInt64(newSize / sizeof(JSValue));                    
-            LValue result = vmCall(m_out.operation(operationReallocateButterflyToGrowPropertyStorage), m_callFrame, object, newAllocSize);
-            setStorage(result);
-            return;
-        }
-        
-        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("ReallocatePropertyStorage slow path"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ReallocatePropertyStorage continuation"));
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
-        
-        LValue endOfStorage = 
-            allocateBasicStorageAndGetEnd(m_out.constIntPtr(newSize), slowPath);
-        
-        ValueFromBlock fastButterfly = m_out.anchor(m_out.add(m_out.constIntPtr(sizeof(IndexingHeader)), endOfStorage));
-        
-        m_out.jump(continuation);
-        
-        m_out.appendTo(slowPath, continuation);
-        
-        LValue newAllocSize = m_out.constInt64(newSize / sizeof(JSValue));       
-        
-        LValue storageLocation = vmCall(m_out.operation(operationAllocatePropertyStorage), m_callFrame, newAllocSize);
-        
-        ValueFromBlock slowButterfly = m_out.anchor(storageLocation);
-        
-        m_out.jump(continuation);
-        
-        m_out.appendTo(continuation, lastNext);
-        
-        LValue result = m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
-        LValue oldStorage = m_out.loadPtr(object, m_heaps.JSObject_butterfly);
-
-        ptrdiff_t headerSize = -sizeof(JSValue) - sizeof(void *);
-        ptrdiff_t endStorage = headerSize - static_cast<ptrdiff_t>(oldSize);
-
-        for (ptrdiff_t offset = headerSize; offset > endStorage; offset -= sizeof(void*)) {
-            LValue loaded = 
-                m_out.loadPtr(m_out.address(m_heaps.properties.atAnyNumber(), oldStorage, offset));
-            m_out.storePtr(loaded, m_out.address(m_heaps.properties.atAnyNumber(), result, offset));
-        } 
-        
-        m_out.storePtr(result, m_out.address(object, m_heaps.JSObject_butterfly));
-        
-        setStorage(result); 
+        setStorage(
+            reallocatePropertyStorage(
+                object, oldStorage, data.previousStructure, data.newStructure));
     }
-    
     
     void compileToString()
     {
@@ -3140,12 +3060,8 @@ private:
         StorageAccessData& data =
             m_graph.m_storageAccessData[m_node->storageAccessDataIndex()];
         
-        setJSValue(
-            m_out.load64(
-                m_out.address(
-                    m_heaps.properties[data.identifierNumber],
-                    lowStorage(m_node->child1()),
-                    offsetRelativeToBase(data.offset))));
+        setJSValue(loadProperty(
+            lowStorage(m_node->child1()), data.identifierNumber, data.offset));
     }
     
     void compileMultiGetByOffset()
@@ -3189,11 +3105,7 @@ private:
                     propertyBase = base;
                 if (!isInlineOffset(variant.offset()))
                     propertyBase = m_out.loadPtr(propertyBase, m_heaps.JSObject_butterfly);
-                result = m_out.load64(
-                    m_out.address(
-                        m_heaps.properties[data.identifierNumber],
-                        propertyBase,
-                        offsetRelativeToBase(variant.offset())));
+                result = loadProperty(propertyBase, data.identifierNumber, variant.offset());
             }
             
             results.append(m_out.anchor(result));
@@ -3213,12 +3125,66 @@ private:
         StorageAccessData& data =
             m_graph.m_storageAccessData[m_node->storageAccessDataIndex()];
         
-        m_out.store64(
+        storeProperty(
             lowJSValue(m_node->child3()),
-            m_out.address(
-                m_heaps.properties[data.identifierNumber],
-                lowStorage(m_node->child1()),
-                offsetRelativeToBase(data.offset)));
+            lowStorage(m_node->child1()), data.identifierNumber, data.offset);
+    }
+    
+    void compileMultiPutByOffset()
+    {
+        LValue base = lowCell(m_node->child1());
+        LValue value = lowJSValue(m_node->child2());
+        
+        MultiPutByOffsetData& data = m_node->multiPutByOffsetData();
+        
+        Vector<LBasicBlock, 2> blocks(data.variants.size());
+        for (unsigned i = data.variants.size(); i--;)
+            blocks[i] = FTL_NEW_BLOCK(m_out, ("MultiPutByOffset case ", i));
+        LBasicBlock exit = FTL_NEW_BLOCK(m_out, ("MultiPutByOffset fail"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("MultiPutByOffset continuation"));
+        
+        Vector<SwitchCase, 2> cases;
+        for (unsigned i = data.variants.size(); i--;) {
+            PutByIdVariant variant = data.variants[i];
+            cases.append(
+                SwitchCase(weakPointer(variant.oldStructure()), blocks[i], Weight(1)));
+        }
+        m_out.switchInstruction(
+            m_out.loadPtr(base, m_heaps.JSCell_structure), cases, exit, Weight(0));
+        
+        LBasicBlock lastNext = m_out.m_nextBlock;
+        
+        for (unsigned i = data.variants.size(); i--;) {
+            m_out.appendTo(blocks[i], i  + 1 < data.variants.size() ? blocks[i + 1] : exit);
+            
+            PutByIdVariant variant = data.variants[i];
+            
+            LValue storage;
+            if (variant.kind() == PutByIdVariant::Replace) {
+                if (isInlineOffset(variant.offset()))
+                    storage = base;
+                else
+                    storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
+            } else {
+                m_graph.m_plan.transitions.addLazily(
+                    codeBlock(), m_node->origin.semantic.codeOriginOwner(),
+                    variant.oldStructure(), variant.newStructure());
+                
+                storage = storageForTransition(
+                    base, variant.offset(), variant.oldStructure(), variant.newStructure());
+                m_out.storePtr(
+                    weakPointer(variant.newStructure()), base, m_heaps.JSCell_structure);
+            }
+            
+            storeProperty(value, storage, data.identifierNumber, variant.offset());
+            m_out.jump(continuation);
+        }
+        
+        m_out.appendTo(exit, continuation);
+        terminate(BadCache);
+        m_out.unreachable();
+        
+        m_out.appendTo(continuation, lastNext);
     }
     
     void compileGetGlobalVar()
@@ -3746,6 +3712,137 @@ private:
         }
         
         return m_out.booleanFalse;
+    }
+    
+    LValue loadProperty(LValue storage, unsigned identifierNumber, PropertyOffset offset)
+    {
+        return m_out.load64(addressOfProperty(storage, identifierNumber, offset));
+    }
+    
+    void storeProperty(
+        LValue value, LValue storage, unsigned identifierNumber, PropertyOffset offset)
+    {
+        m_out.store64(value, addressOfProperty(storage, identifierNumber, offset));
+    }
+    
+    TypedPointer addressOfProperty(
+        LValue storage, unsigned identifierNumber, PropertyOffset offset)
+    {
+        return m_out.address(
+            m_heaps.properties[identifierNumber], storage, offsetRelativeToBase(offset));
+    }
+    
+    LValue storageForTransition(
+        LValue object, PropertyOffset offset,
+        Structure* previousStructure, Structure* nextStructure)
+    {
+        if (isInlineOffset(offset))
+            return object;
+        
+        if (previousStructure->outOfLineCapacity() == nextStructure->outOfLineCapacity())
+            return m_out.loadPtr(object, m_heaps.JSObject_butterfly);
+        
+        LValue result;
+        if (!previousStructure->outOfLineCapacity())
+            result = allocatePropertyStorage(object, previousStructure);
+        else {
+            result = reallocatePropertyStorage(
+                object, m_out.loadPtr(object, m_heaps.JSObject_butterfly),
+                previousStructure, nextStructure);
+        }
+        
+        emitStoreBarrier(object);
+        
+        return result;
+    }
+    
+    LValue allocatePropertyStorage(LValue object, Structure* previousStructure)
+    {
+        if (previousStructure->couldHaveIndexingHeader()) {
+            return vmCall(
+                m_out.operation(
+                    operationReallocateButterflyToHavePropertyStorageWithInitialCapacity),
+                m_callFrame, object);
+        }
+        
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("allocatePropertyStorage slow path"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("allocatePropertyStorage continuation"));
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+        
+        LValue endOfStorage = allocateBasicStorageAndGetEnd(
+            m_out.constIntPtr(initialOutOfLineCapacity * sizeof(JSValue)), slowPath);
+        
+        ValueFromBlock fastButterfly = m_out.anchor(
+            m_out.add(m_out.constIntPtr(sizeof(IndexingHeader)), endOfStorage));
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(slowPath, continuation);
+        
+        ValueFromBlock slowButterfly = m_out.anchor(vmCall(
+            m_out.operation(operationAllocatePropertyStorageWithInitialCapacity), m_callFrame));
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        
+        LValue result = m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
+        m_out.storePtr(result, object, m_heaps.JSObject_butterfly);
+        
+        return result;
+    }
+    
+    LValue reallocatePropertyStorage(
+        LValue object, LValue oldStorage, Structure* previous, Structure* next)
+    {
+        size_t oldSize = previous->outOfLineCapacity() * sizeof(JSValue);
+        size_t newSize = oldSize * outOfLineGrowthFactor; 
+
+        ASSERT_UNUSED(next, newSize == next->outOfLineCapacity() * sizeof(JSValue));
+        
+        if (previous->couldHaveIndexingHeader()) {
+            LValue newAllocSize = m_out.constInt64(newSize / sizeof(JSValue));                    
+            return vmCall(m_out.operation(operationReallocateButterflyToGrowPropertyStorage), m_callFrame, object, newAllocSize);
+        }
+        
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("reallocatePropertyStorage slow path"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("reallocatePropertyStorage continuation"));
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+        
+        LValue endOfStorage = 
+            allocateBasicStorageAndGetEnd(m_out.constIntPtr(newSize), slowPath);
+        
+        ValueFromBlock fastButterfly = m_out.anchor(m_out.add(m_out.constIntPtr(sizeof(IndexingHeader)), endOfStorage));
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(slowPath, continuation);
+        
+        LValue newAllocSize = m_out.constInt64(newSize / sizeof(JSValue));       
+        
+        LValue storageLocation = vmCall(m_out.operation(operationAllocatePropertyStorage), m_callFrame, newAllocSize);
+        
+        ValueFromBlock slowButterfly = m_out.anchor(storageLocation);
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        
+        LValue result = m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
+
+        ptrdiff_t headerSize = -sizeof(JSValue) - sizeof(void *);
+        ptrdiff_t endStorage = headerSize - static_cast<ptrdiff_t>(oldSize);
+
+        for (ptrdiff_t offset = headerSize; offset > endStorage; offset -= sizeof(void*)) {
+            LValue loaded = 
+                m_out.loadPtr(m_out.address(m_heaps.properties.atAnyNumber(), oldStorage, offset));
+            m_out.storePtr(loaded, m_out.address(m_heaps.properties.atAnyNumber(), result, offset));
+        }
+        
+        m_out.storePtr(result, m_out.address(object, m_heaps.JSObject_butterfly));
+        
+        return result;
     }
     
     LValue getById(LValue base)
@@ -5185,7 +5282,7 @@ private:
         return m_out.load8(m_out.baseIndex(m_heaps.MarkedBlock_markBits, markedBlock, markByteIndex, ScaleOne, MarkedBlock::offsetOfMarks()));
     }
 
-    void emitStoreBarrier(LValue base, LValue value, Edge& valueEdge)
+    void emitStoreBarrier(LValue base, LValue value, Edge valueEdge)
     {
 #if ENABLE(GGC)
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));

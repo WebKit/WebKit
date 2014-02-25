@@ -1,3 +1,17 @@
+2014-02-24  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should do polymorphic PutById inlining
+        https://bugs.webkit.org/show_bug.cgi?id=129210
+
+        Reviewed by Mark Hahnenberg and Oliver Hunt.
+        
+        Add a microbenchmark for polymorphic PutById.
+
+        * js/regress/polymorphic-put-by-id-expected.txt: Added.
+        * js/regress/polymorphic-put-by-id.html: Added.
+        * js/regress/script-tests/polymorphic-put-by-id.js: Added.
+        (foo):
+
 2014-02-24  Samuel White  <samuel_white@apple.com>
 
         AX: AccessibilityObject::findMatchingObjects should never include 'this' in results.

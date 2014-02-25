@@ -246,6 +246,7 @@ private:
                 case HardPhantom:
                 case MovHint:
                 case MultiGetByOffset:
+                case MultiPutByOffset:
                     // Don't count these uses.
                     break;
                     
@@ -346,6 +347,7 @@ private:
                 case HardPhantom:
                 case MovHint:
                 case MultiGetByOffset:
+                case MultiPutByOffset:
                     // Don't count these uses.
                     break;
                     

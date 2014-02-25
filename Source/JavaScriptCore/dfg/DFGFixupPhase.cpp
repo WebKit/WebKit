@@ -891,6 +891,12 @@ private:
             break;
         }
             
+        case MultiPutByOffset: {
+            fixEdge<CellUse>(node->child1());
+            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
+            break;
+        }
+            
         case InstanceOf: {
             // FIXME: This appears broken: CheckHasInstance already does an unconditional cell
             // check. https://bugs.webkit.org/show_bug.cgi?id=107479

@@ -42,6 +42,7 @@
 #include "GetByIdVariant.h"
 #include "JSCJSValue.h"
 #include "Operands.h"
+#include "PutByIdVariant.h"
 #include "SpeculatedType.h"
 #include "StructureSet.h"
 #include "ValueProfile.h"
@@ -55,6 +56,14 @@ struct BasicBlock;
 struct MultiGetByOffsetData {
     unsigned identifierNumber;
     Vector<GetByIdVariant, 2> variants;
+};
+
+struct MultiPutByOffsetData {
+    unsigned identifierNumber;
+    Vector<PutByIdVariant, 2> variants;
+    
+    bool writesStructures() const;
+    bool reallocatesStorage() const;
 };
 
 struct StructureTransitionData {
@@ -460,7 +469,7 @@ struct Node {
     
     void convertToPutByOffset(unsigned storageAccessDataIndex, Edge storage)
     {
-        ASSERT(m_op == PutById || m_op == PutByIdDirect);
+        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == MultiPutByOffset);
         m_opInfo = storageAccessDataIndex;
         children.setChild3(children.child2());
         children.setChild2(children.child1());
@@ -1089,6 +1098,16 @@ struct Node {
     MultiGetByOffsetData& multiGetByOffsetData()
     {
         return *reinterpret_cast<MultiGetByOffsetData*>(m_opInfo);
+    }
+    
+    bool hasMultiPutByOffsetData()
+    {
+        return op() == MultiPutByOffset;
+    }
+    
+    MultiPutByOffsetData& multiPutByOffsetData()
+    {
+        return *reinterpret_cast<MultiPutByOffsetData*>(m_opInfo);
     }
     
     bool hasFunctionDeclIndex()

@@ -82,6 +82,7 @@ set(JavaScriptCore_SOURCES
     bytecode/PreciseJumpTargets.cpp
     bytecode/ProfiledCodeBlockJettisoningWatchpoint.cpp
     bytecode/PutByIdStatus.cpp
+    bytecode/PutByIdVariant.cpp
     bytecode/ReduceWhitespace.cpp
     bytecode/SamplingTool.cpp
     bytecode/SpecialPointer.cpp

@@ -252,6 +252,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ConstantStoragePointer:
     case Check:
     case MultiGetByOffset:
+    case MultiPutByOffset:
         return true;
         
     case GetByVal:

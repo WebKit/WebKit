@@ -182,6 +182,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/SpeculatedType.h \
 	Source/JavaScriptCore/bytecode/PutByIdStatus.cpp \
 	Source/JavaScriptCore/bytecode/PutByIdStatus.h \
+	Source/JavaScriptCore/bytecode/PutByIdVariant.cpp \
+	Source/JavaScriptCore/bytecode/PutByIdVariant.h \
 	Source/JavaScriptCore/bytecode/PutKind.h \
 	Source/JavaScriptCore/bytecode/ReduceWhitespace.cpp \
 	Source/JavaScriptCore/bytecode/ReduceWhitespace.h \

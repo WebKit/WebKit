@@ -469,7 +469,21 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         return;
         
     case MultiGetByOffset:
+        read(JSCell_structure);
+        read(JSObject_butterfly);
         read(AbstractHeap(NamedProperties, node->multiGetByOffsetData().identifierNumber));
+        return;
+        
+    case MultiPutByOffset:
+        read(JSCell_structure);
+        read(JSObject_butterfly);
+        write(AbstractHeap(NamedProperties, node->multiPutByOffsetData().identifierNumber));
+        if (node->multiPutByOffsetData().writesStructures())
+            write(JSCell_structure);
+        if (node->multiPutByOffsetData().reallocatesStorage()) {
+            write(JSObject_butterfly);
+            clobberizeForAllocation(read, write);
+        }
         return;
         
     case PutByOffset:

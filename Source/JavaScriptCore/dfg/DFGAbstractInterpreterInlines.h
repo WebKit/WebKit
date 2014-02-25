@@ -1640,7 +1640,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;)
             set.addAll(node->multiGetByOffsetData().variants[i].structureSet());
         
-        filter(value, set);
+        filter(node->child1(), set);
         forNode(node).makeHeapTop();
         break;
     }
@@ -1648,7 +1648,60 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PutByOffset: {
         break;
     }
-            
+        
+    case MultiPutByOffset: {
+        AbstractValue& value = forNode(node->child1());
+        ASSERT(!(value.m_type & ~SpecCell)); // Edge filtering should have already ensured this.
+
+        if (Structure* structure = value.bestProvenStructure()) {
+            bool done = false;
+            for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
+                const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
+                if (variant.oldStructure() != structure)
+                    continue;
+                
+                if (variant.kind() == PutByIdVariant::Replace) {
+                    filter(node->child1(), structure);
+                    m_state.setFoundConstants(true);
+                    m_state.setHaveStructures(true);
+                    done = true;
+                    break;
+                }
+                
+                ASSERT(variant.kind() == PutByIdVariant::Transition);
+                clobberStructures(clobberLimit);
+                forNode(node->child1()).set(m_graph, variant.newStructure());
+                m_state.setFoundConstants(true);
+                m_state.setHaveStructures(true);
+                done = true;
+                break;
+            }
+            if (done)
+                break;
+        }
+        
+        clobberStructures(clobberLimit);
+        
+        StructureSet newSet;
+        for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
+            const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
+            if (variant.kind() == PutByIdVariant::Replace) {
+                if (value.m_currentKnownStructure.contains(variant.structure()))
+                    newSet.addAll(variant.structure());
+                continue;
+            }
+            ASSERT(variant.kind() == PutByIdVariant::Transition);
+            if (value.m_currentKnownStructure.contains(variant.oldStructure()))
+                newSet.addAll(variant.newStructure());
+        }
+        
+        // Use filter(value, set) as a way of setting the structure set. This works because
+        // we would have already made the set be TOP before this. Filtering top is another 
+        // way of setting.
+        filter(node->child1(), newSet);
+        break;
+    }
+    
     case CheckFunction: {
         JSValue value = forNode(node->child1()).value();
         if (value == node->function()) {
@@ -1685,18 +1738,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 structure,
                 m_graph.identifiers()[node->identifierNumber()],
                 node->op() == PutByIdDirect);
-            if (status.isSimpleReplace()) {
-                filter(node->child1(), structure);
-                m_state.setFoundConstants(true);
-                m_state.setHaveStructures(true);
-                break;
-            }
-            if (status.isSimpleTransition()) {
-                clobberStructures(clobberLimit);
-                forNode(node->child1()).set(m_graph, status.newStructure());
-                m_state.setHaveStructures(true);
-                m_state.setFoundConstants(true);
-                break;
+            if (status.isSimple() && status.numVariants() == 1) {
+                if (status[0].kind() == PutByIdVariant::Replace) {
+                    filter(node->child1(), structure);
+                    m_state.setFoundConstants(true);
+                    m_state.setHaveStructures(true);
+                    break;
+                }
+                if (status[0].kind() == PutByIdVariant::Transition) {
+                    clobberStructures(clobberLimit);
+                    forNode(node->child1()).set(m_graph, status[0].newStructure());
+                    m_state.setHaveStructures(true);
+                    m_state.setFoundConstants(true);
+                    break;
+                }
             }
         }
         clobberWorld(node->origin.semantic, clobberLimit);

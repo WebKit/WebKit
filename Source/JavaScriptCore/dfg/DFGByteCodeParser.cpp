@@ -179,7 +179,12 @@ private:
     void handleGetById(
         int destinationOperand, SpeculatedType, Node* base, unsigned identifierNumber,
         const GetByIdStatus&);
-    Node* emitPrototypeChecks(const GetByIdVariant&);
+    void emitPutById(
+        Node* base, unsigned identifierNumber, Node* value, bool isDirect);
+    void handlePutById(
+        Node* base, unsigned identifierNumber, Node* value, const PutByIdStatus&,
+        bool isDirect);
+    Node* emitPrototypeChecks(Structure*, IntendedStructureChain*);
 
     Node* getScope(bool skipTop, unsigned skipCount);
     
@@ -1844,15 +1849,16 @@ Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, Propert
     return result;
 }
 
-Node* ByteCodeParser::emitPrototypeChecks(const GetByIdVariant& variant)
+Node* ByteCodeParser::emitPrototypeChecks(
+    Structure* structure, IntendedStructureChain* chain)
 {
     Node* base = 0;
-    m_graph.chains().addLazily(variant.chain());
-    Structure* currentStructure = variant.structureSet().singletonStructure();
+    m_graph.chains().addLazily(chain);
+    Structure* currentStructure = structure;
     JSObject* currentObject = 0;
-    for (unsigned i = 0; i < variant.chain()->size(); ++i) {
+    for (unsigned i = 0; i < chain->size(); ++i) {
         currentObject = asObject(currentStructure->prototypeForLookup(m_inlineStackTop->m_codeBlock));
-        currentStructure = variant.chain()->at(i);
+        currentStructure = chain->at(i);
         base = cellConstantWithStructureCheck(currentObject, currentStructure);
     }
     RELEASE_ASSERT(base);
@@ -1878,12 +1884,18 @@ void ByteCodeParser::handleGetById(
             return;
         }
         
+        if (m_graph.compilation())
+            m_graph.compilation()->noticeInlinedGetById();
+    
         // 1) Emit prototype structure checks for all chains. This could sort of maybe not be
         //    optimal, if there is some rarely executed case in the chain that requires a lot
         //    of checks and those checks are not watchpointable.
         for (unsigned variantIndex = getByIdStatus.numVariants(); variantIndex--;) {
-            if (getByIdStatus[variantIndex].chain())
-                emitPrototypeChecks(getByIdStatus[variantIndex]);
+            if (getByIdStatus[variantIndex].chain()) {
+                emitPrototypeChecks(
+                    getByIdStatus[variantIndex].structureSet().singletonStructure(),
+                    getByIdStatus[variantIndex].chain());
+            }
         }
         
         // 2) Emit a MultiGetByOffset
@@ -1905,8 +1917,10 @@ void ByteCodeParser::handleGetById(
                 
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), base);
     
-    if (variant.chain())
-        base = emitPrototypeChecks(variant);
+    if (variant.chain()) {
+        base = emitPrototypeChecks(
+            variant.structureSet().singletonStructure(), variant.chain());
+    }
     
     // Unless we want bugs like https://bugs.webkit.org/show_bug.cgi?id=88783, we need to
     // ensure that the base of the original get_by_id is kept alive until we're done with
@@ -1926,6 +1940,123 @@ void ByteCodeParser::handleGetById(
     
     handleGetByOffset(
         destinationOperand, prediction, base, identifierNumber, variant.offset());
+}
+
+void ByteCodeParser::emitPutById(
+    Node* base, unsigned identifierNumber, Node* value, bool isDirect)
+{
+    if (isDirect)
+        addToGraph(PutByIdDirect, OpInfo(identifierNumber), base, value);
+    else
+        addToGraph(PutById, OpInfo(identifierNumber), base, value);
+}
+
+void ByteCodeParser::handlePutById(
+    Node* base, unsigned identifierNumber, Node* value,
+    const PutByIdStatus& putByIdStatus, bool isDirect)
+{
+    if (!putByIdStatus.isSimple()) {
+        if (!putByIdStatus.isSet())
+            addToGraph(ForceOSRExit);
+        emitPutById(base, identifierNumber, value, isDirect);
+        return;
+    }
+    
+    if (putByIdStatus.numVariants() > 1) {
+        if (!isFTL(m_graph.m_plan.mode)) {
+            emitPutById(base, identifierNumber, value, isDirect);
+            return;
+        }
+        
+        if (m_graph.compilation())
+            m_graph.compilation()->noticeInlinedPutById();
+        
+        if (!isDirect) {
+            for (unsigned variantIndex = putByIdStatus.numVariants(); variantIndex--;) {
+                if (putByIdStatus[variantIndex].kind() != PutByIdVariant::Transition)
+                    continue;
+                if (!putByIdStatus[variantIndex].structureChain())
+                    continue;
+                emitPrototypeChecks(
+                    putByIdStatus[variantIndex].oldStructure(),
+                    putByIdStatus[variantIndex].structureChain());
+            }
+        }
+        
+        MultiPutByOffsetData* data = m_graph.m_multiPutByOffsetData.add();
+        data->variants = putByIdStatus.variants();
+        data->identifierNumber = identifierNumber;
+        addToGraph(MultiPutByOffset, OpInfo(data), base, value);
+        return;
+    }
+    
+    ASSERT(putByIdStatus.numVariants() == 1);
+    const PutByIdVariant& variant = putByIdStatus[0];
+    
+    if (variant.kind() == PutByIdVariant::Replace) {
+        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structure())), base);
+        handlePutByOffset(base, identifierNumber, variant.offset(), value);
+        if (m_graph.compilation())
+            m_graph.compilation()->noticeInlinedPutById();
+        return;
+    }
+    
+    ASSERT(variant.kind() == PutByIdVariant::Transition);
+    if (variant.structureChain() && !variant.structureChain()->isStillValid()) {
+        emitPutById(base, identifierNumber, value, isDirect);
+        return;
+    }
+    
+    m_graph.chains().addLazily(variant.structureChain());
+                
+    addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
+    if (!isDirect)
+        emitPrototypeChecks(variant.oldStructure(), variant.structureChain());
+
+    ASSERT(variant.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
+    
+    Node* propertyStorage;
+    StructureTransitionData* transitionData = m_graph.addStructureTransitionData(
+        StructureTransitionData(variant.oldStructure(), variant.newStructure()));
+
+    if (variant.oldStructure()->outOfLineCapacity()
+        != variant.newStructure()->outOfLineCapacity()) {
+
+        // If we're growing the property storage then it must be because we're
+        // storing into the out-of-line storage.
+        ASSERT(!isInlineOffset(variant.offset()));
+
+        if (!variant.oldStructure()->outOfLineCapacity()) {
+            propertyStorage = addToGraph(
+                AllocatePropertyStorage, OpInfo(transitionData), base);
+        } else {
+            propertyStorage = addToGraph(
+                ReallocatePropertyStorage, OpInfo(transitionData),
+                base, addToGraph(GetButterfly, base));
+        }
+    } else {
+        if (isInlineOffset(variant.offset()))
+            propertyStorage = base;
+        else
+            propertyStorage = addToGraph(GetButterfly, base);
+    }
+
+    addToGraph(PutStructure, OpInfo(transitionData), base);
+
+    addToGraph(
+        PutByOffset,
+        OpInfo(m_graph.m_storageAccessData.size()),
+        propertyStorage,
+        base,
+        value);
+
+    StorageAccessData storageAccessData;
+    storageAccessData.offset = variant.offset();
+    storageAccessData.identifierNumber = identifierNumber;
+    m_graph.m_storageAccessData.append(storageAccessData);
+
+    if (m_graph.compilation())
+        m_graph.compilation()->noticeInlinedPutById();
 }
 
 void ByteCodeParser::prepareToParseBlock()
@@ -2590,91 +2721,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_profiledBlock, m_dfgCodeBlock,
                 m_inlineStackTop->m_stubInfos, m_dfgStubInfos,
                 currentCodeOrigin(), m_graph.identifiers()[identifierNumber]);
-            bool canCountAsInlined = true;
-            if (!putByIdStatus.isSet()) {
-                addToGraph(ForceOSRExit);
-                canCountAsInlined = false;
-            }
             
-            if (putByIdStatus.isSimpleReplace()) {
-                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(putByIdStatus.oldStructure())), base);
-                handlePutByOffset(base, identifierNumber, putByIdStatus.offset(), value);
-            } else if (
-                putByIdStatus.isSimpleTransition()
-                && (!putByIdStatus.structureChain()
-                    || putByIdStatus.structureChain()->isStillValid())) {
-                
-                m_graph.chains().addLazily(putByIdStatus.structureChain());
-                
-                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(putByIdStatus.oldStructure())), base);
-                if (!direct) {
-                    if (!putByIdStatus.oldStructure()->storedPrototype().isNull()) {
-                        cellConstantWithStructureCheck(
-                            putByIdStatus.oldStructure()->storedPrototype().asCell());
-                    }
-                    
-                    for (unsigned i = 0; i < putByIdStatus.structureChain()->size(); ++i) {
-                        JSValue prototype = putByIdStatus.structureChain()->at(i)->storedPrototype();
-                        if (prototype.isNull())
-                            continue;
-                        cellConstantWithStructureCheck(prototype.asCell());
-                    }
-                }
-                ASSERT(putByIdStatus.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
-                
-                Node* propertyStorage;
-                StructureTransitionData* transitionData =
-                    m_graph.addStructureTransitionData(
-                        StructureTransitionData(
-                            putByIdStatus.oldStructure(),
-                            putByIdStatus.newStructure()));
-
-                if (putByIdStatus.oldStructure()->outOfLineCapacity()
-                    != putByIdStatus.newStructure()->outOfLineCapacity()) {
-                    
-                    // If we're growing the property storage then it must be because we're
-                    // storing into the out-of-line storage.
-                    ASSERT(!isInlineOffset(putByIdStatus.offset()));
-                    
-                    if (!putByIdStatus.oldStructure()->outOfLineCapacity()) {
-                        propertyStorage = addToGraph(
-                            AllocatePropertyStorage, OpInfo(transitionData), base);
-                    } else {
-                        propertyStorage = addToGraph(
-                            ReallocatePropertyStorage, OpInfo(transitionData),
-                            base, addToGraph(GetButterfly, base));
-                    }
-                } else {
-                    if (isInlineOffset(putByIdStatus.offset()))
-                        propertyStorage = base;
-                    else
-                        propertyStorage = addToGraph(GetButterfly, base);
-                }
-                
-                addToGraph(PutStructure, OpInfo(transitionData), base);
-                
-                addToGraph(
-                    PutByOffset,
-                    OpInfo(m_graph.m_storageAccessData.size()),
-                    propertyStorage,
-                    base,
-                    value);
-                
-                StorageAccessData storageAccessData;
-                storageAccessData.offset = putByIdStatus.offset();
-                storageAccessData.identifierNumber = identifierNumber;
-                m_graph.m_storageAccessData.append(storageAccessData);
-            } else {
-                if (direct)
-                    addToGraph(PutByIdDirect, OpInfo(identifierNumber), base, value);
-                else
-                    addToGraph(PutById, OpInfo(identifierNumber), base, value);
-                canCountAsInlined = false;
-            }
-            
-            if (canCountAsInlined && m_graph.compilation())
-                m_graph.compilation()->noticeInlinedPutById();
-
+            handlePutById(base, identifierNumber, value, putByIdStatus, direct);
             NEXT_OPCODE(op_put_by_id);
         }
 
@@ -3269,11 +3317,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalProperty:
             case GlobalPropertyWithVarInjectionChecks: {
                 PutByIdStatus status = PutByIdStatus::computeFor(*m_vm, globalObject, structure, uid, false);
-                if (!status.isSimpleReplace()) {
+                if (status.numVariants() != 1 || status[0].kind() != PutByIdVariant::Replace) {
                     addToGraph(PutById, OpInfo(identifierNumber), get(VirtualRegister(scope)), get(VirtualRegister(value)));
                     break;
                 }
-                Node* base = cellConstantWithStructureCheck(globalObject, status.oldStructure());
+                Node* base = cellConstantWithStructureCheck(globalObject, status[0].structure());
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 handlePutByOffset(base, identifierNumber, static_cast<PropertyOffset>(operand), get(VirtualRegister(value)));
                 // Keep scope alive until after put.

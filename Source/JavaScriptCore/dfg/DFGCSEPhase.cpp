@@ -495,7 +495,12 @@ private:
             case PutByOffset:
                 // Setting a property cannot change the structure.
                 break;
-                    
+                
+            case MultiPutByOffset:
+                if (node->multiPutByOffsetData().writesStructures())
+                    return false;
+                break;
+                
             case PutByValDirect:
             case PutByVal:
             case PutByValAlias:
@@ -544,6 +549,11 @@ private:
                 // Setting a property cannot change the structure.
                 break;
                     
+            case MultiPutByOffset:
+                if (node->multiPutByOffsetData().writesStructures())
+                    return false;
+                break;
+                
             case PutByValDirect:
             case PutByVal:
             case PutByValAlias:
@@ -617,6 +627,7 @@ private:
             case NewStringObject:
             case MakeRope:
             case NewTypedArray:
+            case MultiPutByOffset:
                 return 0;
                 
             // This either exits, causes a GC (lazy string allocation), or clobbers
@@ -668,6 +679,14 @@ private:
                     return 0;
                 }
                 break;
+                
+            case MultiPutByOffset:
+                if (node->multiPutByOffsetData().identifierNumber == identifierNumber) {
+                    if (node->child1() == base)
+                        return node->child2().node();
+                    return 0;
+                }
+                break;
                     
             case PutByValDirect:
             case PutByVal:
@@ -709,7 +728,12 @@ private:
                     return 0;
                 }
                 break;
-                    
+                
+            case MultiPutByOffset:
+                if (node->multiPutByOffsetData().identifierNumber == identifierNumber)
+                    return 0;
+                break;
+                
             case PutByValDirect:
             case PutByVal:
             case PutByValAlias:
@@ -773,6 +797,11 @@ private:
                 // We could check if the arrayification could affect our butterfly.
                 // But that seems like it would take Effort.
                 return 0;
+                
+            case MultiPutByOffset:
+                //if (node->multiPutByOffsetData().reallocatesStorage())
+                //    return 0;
+                break;
                 
             default:
                 if (m_graph.clobbersWorld(node))

@@ -830,6 +830,7 @@ public:
     Bag<BranchData> m_branchData;
     Bag<SwitchData> m_switchData;
     Bag<MultiGetByOffsetData> m_multiGetByOffsetData;
+    Bag<MultiPutByOffsetData> m_multiPutByOffsetData;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     OwnPtr<InlineCallFrameSet> m_inlineCallFrames;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
