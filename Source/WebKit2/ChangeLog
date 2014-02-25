@@ -1,3 +1,19 @@
+2014-02-24  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Stop looking for plug-in profiles in /S/L/Sandbox/Profiles
+        https://bugs.webkit.org/show_bug.cgi?id=129262
+        <rdar://problem/16149420>
+
+        Reviewed by Sam Weinig.
+
+        Remove unused code.
+
+        * Shared/Plugins/mac/PluginSandboxProfile.mm:
+        (WebKit::pluginSandboxProfileDirectory):
+        (WebKit::pluginSandboxCommonProfile):
+        (WebKit::pluginSandboxProfile):
+        (WebKit::pluginHasSandboxProfile):
+
 2014-02-24  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] generate-gtkdoc should not generate documentation for source files for unbuilt source files

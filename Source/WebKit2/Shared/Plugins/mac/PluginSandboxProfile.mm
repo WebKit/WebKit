@@ -32,20 +32,9 @@
 
 namespace WebKit {
 
-static NSString *pluginSandboxProfileDefaultDirectory()
+static NSString *pluginSandboxProfileDirectory()
 {
     return [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] resourcePath] stringByAppendingPathComponent:@"PlugInSandboxProfiles"];
-}
-
-static NSArray *pluginSandboxProfileDirectories()
-{
-    return @[
-        // First look in the WebKit2 bundle.
-        pluginSandboxProfileDefaultDirectory(),
-
-        // Then try /System/Library/Sandbox/Profiles/.
-        @"/System/Library/Sandbox/Profiles/"
-    ];
 }
 
 static NSString *pluginSandboxProfileName(const String& bundleIdentifier)
@@ -59,18 +48,8 @@ static NSString *pluginSandboxProfileName(const String& bundleIdentifier)
 
 static String pluginSandboxCommonProfile()
 {
-    NSString *profilePath = [pluginSandboxProfileDefaultDirectory() stringByAppendingPathComponent:@"com.apple.WebKit.plugin-common.sb"];
+    NSString *profilePath = [pluginSandboxProfileDirectory() stringByAppendingPathComponent:@"com.apple.WebKit.plugin-common.sb"];
     return [NSString stringWithContentsOfFile:profilePath encoding:NSUTF8StringEncoding error:NULL];
-}
-
-static String pluginSandboxProfileForDirectory(NSString *profileName, NSString *sandboxProfileDirectoryPath)
-{
-    NSString *profilePath = [sandboxProfileDirectoryPath stringByAppendingPathComponent:profileName];
-    NSString *profileString = [NSString stringWithContentsOfFile:profilePath encoding:NSUTF8StringEncoding error:NULL];
-    if (!profileString)
-        return String();
-
-    return makeString(pluginSandboxCommonProfile(), String(profileString));
 }
 
 String pluginSandboxProfile(const String& bundleIdentifier)
@@ -80,19 +59,12 @@ String pluginSandboxProfile(const String& bundleIdentifier)
 
     NSString *profileName = pluginSandboxProfileName(bundleIdentifier);
 
-    for (NSString *directory in pluginSandboxProfileDirectories()) {
-        String sandboxProfile = pluginSandboxProfileForDirectory(profileName, directory);
-        if (!sandboxProfile.isEmpty())
-            return sandboxProfile;
-    }
+    NSString *profilePath = [pluginSandboxProfileDirectory() stringByAppendingPathComponent:profileName];
+    NSString *profileString = [NSString stringWithContentsOfFile:profilePath encoding:NSUTF8StringEncoding error:NULL];
+    if (!profileString)
+        return String();
 
-    return String();
-}
-
-static bool pluginHasSandboxProfileForDirectory(NSString *profileName, NSString *sandboxProfileDirectoryPath)
-{
-    NSString *profilePath = [sandboxProfileDirectoryPath stringByAppendingPathComponent:profileName];
-    return [[NSFileManager defaultManager] fileExistsAtPath:profilePath];
+    return makeString(pluginSandboxCommonProfile(), String(profileString));
 }
 
 bool pluginHasSandboxProfile(const String& bundleIdentifier)
@@ -101,13 +73,9 @@ bool pluginHasSandboxProfile(const String& bundleIdentifier)
         return false;
 
     NSString *profileName = pluginSandboxProfileName(bundleIdentifier);
+    NSString *profilePath = [pluginSandboxProfileDirectory() stringByAppendingPathComponent:profileName];
 
-    for (NSString *directory in pluginSandboxProfileDirectories()) {
-        if (pluginHasSandboxProfileForDirectory(profileName, directory))
-            return true;
-    }
-    
-    return false;
+    return [[NSFileManager defaultManager] fileExistsAtPath:profilePath];
 }
 
 } // namespace WebKit
