@@ -339,9 +339,9 @@ NodeRareData& Node::ensureRareData()
 
     NodeRareData* data;
     if (isElementNode())
-        data = ElementRareData::create(toRenderElement(m_data.m_renderer)).leakPtr();
+        data = new ElementRareData(toRenderElement(m_data.m_renderer));
     else
-        data = NodeRareData::create(m_data.m_renderer).leakPtr();
+        data = new NodeRareData(m_data.m_renderer);
     ASSERT(data);
 
     m_data.m_rareData = data;
@@ -1766,7 +1766,7 @@ void Node::didMoveToNewDocument(Document* oldDocument)
         }
     }
 
-    if (Vector<OwnPtr<MutationObserverRegistration>>* registry = mutationObserverRegistry()) {
+    if (Vector<std::unique_ptr<MutationObserverRegistration>>* registry = mutationObserverRegistry()) {
         for (size_t i = 0; i < registry->size(); ++i) {
             document().addMutationObserverTypes(registry->at(i)->mutationTypes());
         }
@@ -1863,7 +1863,7 @@ bool Node::removeEventListener(const AtomicString& eventType, EventListener* lis
     return tryRemoveEventListener(this, eventType, listener, useCapture);
 }
 
-typedef HashMap<Node*, OwnPtr<EventTargetData>> EventTargetDataMap;
+typedef HashMap<Node*, std::unique_ptr<EventTargetData>> EventTargetDataMap;
 
 static EventTargetDataMap& eventTargetDataMap()
 {
@@ -1882,7 +1882,7 @@ EventTargetData& Node::ensureEventTargetData()
         return *eventTargetDataMap().get(this);
     setHasEventTargetData(true);
     EventTargetData* data = new EventTargetData;
-    eventTargetDataMap().set(this, adoptPtr(data));
+    eventTargetDataMap().set(this, std::unique_ptr<EventTargetData>(data));
     return *data;
 }
 
@@ -1891,7 +1891,7 @@ void Node::clearEventTargetData()
     eventTargetDataMap().remove(this);
 }
 
-Vector<OwnPtr<MutationObserverRegistration>>* Node::mutationObserverRegistry()
+Vector<std::unique_ptr<MutationObserverRegistration>>* Node::mutationObserverRegistry()
 {
     if (!hasRareData())
         return 0;
@@ -1941,7 +1941,7 @@ void Node::getRegisteredMutationObserversOfType(HashMap<MutationObserver*, Mutat
 void Node::registerMutationObserver(MutationObserver* observer, MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter)
 {
     MutationObserverRegistration* registration = 0;
-    Vector<OwnPtr<MutationObserverRegistration>>& registry = ensureRareData().ensureMutationObserverData().registry;
+    Vector<std::unique_ptr<MutationObserverRegistration>>& registry = ensureRareData().ensureMutationObserverData().registry;
     for (size_t i = 0; i < registry.size(); ++i) {
         if (registry[i]->observer() == observer) {
             registration = registry[i].get();
@@ -1950,7 +1950,7 @@ void Node::registerMutationObserver(MutationObserver* observer, MutationObserver
     }
 
     if (!registration) {
-        registry.append(MutationObserverRegistration::create(observer, this, options, attributeFilter));
+        registry.append(std::make_unique<MutationObserverRegistration>(observer, this, options, attributeFilter));
         registration = registry.last().get();
     }
 
@@ -1959,17 +1959,22 @@ void Node::registerMutationObserver(MutationObserver* observer, MutationObserver
 
 void Node::unregisterMutationObserver(MutationObserverRegistration* registration)
 {
-    Vector<OwnPtr<MutationObserverRegistration>>* registry = mutationObserverRegistry();
+    Vector<std::unique_ptr<MutationObserverRegistration>>* registry = mutationObserverRegistry();
     ASSERT(registry);
     if (!registry)
         return;
 
-    size_t index = registry->find(registration);
-    ASSERT(index != notFound);
-    if (index == notFound)
-        return;
+    size_t index = 0;
+    for (const auto& storedRegistration : *registry) {
+        if (storedRegistration.get() == registration) {
+            registry->remove(index);
+            return;
+        }
 
-    registry->remove(index);
+        index++;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void Node::registerTransientMutationObserver(MutationObserverRegistration* registration)
@@ -1994,7 +1999,7 @@ void Node::notifyMutationObserversNodeWillDetach()
         return;
 
     for (Node* node = parentNode(); node; node = node->parentNode()) {
-        if (Vector<OwnPtr<MutationObserverRegistration>>* registry = node->mutationObserverRegistry()) {
+        if (Vector<std::unique_ptr<MutationObserverRegistration>>* registry = node->mutationObserverRegistry()) {
             const size_t size = registry->size();
             for (size_t i = 0; i < size; ++i)
                 registry->at(i)->observedSubtreeNodeWillDetach(this);

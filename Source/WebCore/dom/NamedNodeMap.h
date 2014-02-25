@@ -26,7 +26,6 @@
 #define NamedNodeMap_h
 
 #include "ScriptWrappable.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/AtomicString.h>
 
@@ -41,9 +40,10 @@ class NamedNodeMap : public ScriptWrappable {
     WTF_MAKE_FAST_ALLOCATED;
     friend class Element;
 public:
-    static PassOwnPtr<NamedNodeMap> create(Element& element)
+    explicit NamedNodeMap(Element& element)
+        : m_element(element)
     {
-        return adoptPtr(new NamedNodeMap(element));
+        // Only supports NamedNodeMaps with Element associated, DocumentType.entities and DocumentType.notations are not supported yet.
     }
 
     void ref();
@@ -67,12 +67,6 @@ public:
     Element* element() const { return &m_element; }
 
 private:
-    explicit NamedNodeMap(Element& element)
-        : m_element(element)
-    {
-        // Only supports NamedNodeMaps with Element associated, DocumentType.entities and DocumentType.notations are not supported yet.
-    }
-
     Element& m_element;
 };
 

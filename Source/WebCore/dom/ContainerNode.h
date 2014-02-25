@@ -26,8 +26,7 @@
 
 #include "ExceptionCodePlaceholder.h"
 #include "Node.h"
-
-#include <wtf/OwnPtr.h>
+#include <memory>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -288,7 +287,7 @@ public:
     {
         if (hasSnapshot())
             return;
-        m_childNodes = adoptPtr(new Vector<RefPtr<Node>>());
+        m_childNodes = std::make_unique<Vector<RefPtr<Node>>>();
         Node* node = m_currentNode.get();
         while (node) {
             m_childNodes->append(node);
@@ -297,7 +296,7 @@ public:
     }
 
     ChildNodesLazySnapshot* nextSnapshot() { return m_nextSnapshot; }
-    bool hasSnapshot() { return !!m_childNodes.get(); }
+    bool hasSnapshot() { return !!m_childNodes; }
 
     static void takeChildNodesLazySnapshot()
     {
@@ -313,7 +312,7 @@ private:
 
     RefPtr<Node> m_currentNode;
     unsigned m_currentIndex;
-    OwnPtr<Vector<RefPtr<Node>>> m_childNodes; // Lazily instantiated.
+    std::unique_ptr<Vector<RefPtr<Node>>> m_childNodes; // Lazily instantiated.
     ChildNodesLazySnapshot* m_nextSnapshot;
 };
 

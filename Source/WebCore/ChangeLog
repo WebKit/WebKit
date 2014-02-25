@@ -1,3 +1,48 @@
+2014-02-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move to using std::unique_ptr for Element, Node and related classes
+        https://bugs.webkit.org/show_bug.cgi?id=129058
+
+        Reviewed by Anders Carlsson.
+
+        Replace uses of OwnPtr and PassOwnPtr in Element, Node and the related
+        classes with std::unique_ptr and move semantics.
+
+        * dom/ContainerNode.h:
+        (WebCore::ChildNodesLazySnapshot::takeSnapshot):
+        (WebCore::ChildNodesLazySnapshot::hasSnapshot):
+        * dom/Element.cpp:
+        (WebCore::ensureAttrNodeListForElement):
+        (WebCore::Element::attributes):
+        * dom/ElementIteratorAssertions.h:
+        (WebCore::ElementIteratorAssertions::ElementIteratorAssertions):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::setAttributeMap):
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::observedSubtreeNodeWillDetach):
+        (WebCore::MutationObserverRegistration::clearTransientRegistrations):
+        (WebCore::MutationObserverRegistration::addRegistrationNodesToSet):
+        * dom/MutationObserverRegistration.h:
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::NamedNodeMap):
+        * dom/Node.cpp:
+        (WebCore::Node::ensureRareData):
+        (WebCore::Node::didMoveToNewDocument):
+        (WebCore::Node::ensureEventTargetData):
+        (WebCore::Node::mutationObserverRegistry):
+        (WebCore::Node::registerMutationObserver):
+        (WebCore::Node::unregisterMutationObserver):
+        (WebCore::Node::notifyMutationObserversNodeWillDetach):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::NodeListsNodeData):
+        (WebCore::NodeRareData::NodeRareData):
+        (WebCore::NodeRareData::clearNodeLists):
+        (WebCore::NodeRareData::ensureNodeLists):
+        (WebCore::NodeRareData::ensureMutationObserverData):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+
 2014-02-25  Andreas Kling  <akling@apple.com>
 
         Prune dead code for Web Inspector memory instrumentation.

@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "Element.h"
+#include <memory>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ public:
 private:
     const Document* m_document;
     uint64_t m_initialDOMTreeVersion;
-    OwnPtr<NoEventDispatchAssertion> m_noEventDispatchAssertion;
+    std::unique_ptr<NoEventDispatchAssertion> m_noEventDispatchAssertion;
 };
 
 inline ElementIteratorAssertions::ElementIteratorAssertions()
@@ -53,7 +54,7 @@ inline ElementIteratorAssertions::ElementIteratorAssertions()
 inline ElementIteratorAssertions::ElementIteratorAssertions(const Element* first)
     : m_document(first ? &first->document() : nullptr)
     , m_initialDOMTreeVersion(m_document ? m_document->domTreeVersion() : 0)
-    , m_noEventDispatchAssertion(m_document ? adoptPtr(new NoEventDispatchAssertion) : nullptr)
+    , m_noEventDispatchAssertion(m_document ? std::make_unique<NoEventDispatchAssertion>() : nullptr)
 {
 }
 

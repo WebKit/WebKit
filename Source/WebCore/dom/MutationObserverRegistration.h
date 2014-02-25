@@ -32,6 +32,7 @@
 #define MutationObserverRegistration_h
 
 #include "MutationObserver.h"
+#include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -42,7 +43,7 @@ class QualifiedName;
 
 class MutationObserverRegistration {
 public:
-    static PassOwnPtr<MutationObserverRegistration> create(PassRefPtr<MutationObserver>, Node*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
+    MutationObserverRegistration(PassRefPtr<MutationObserver>, Node*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
     ~MutationObserverRegistration();
 
     void resetObservation(MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
@@ -61,13 +62,11 @@ public:
     void addRegistrationNodesToSet(HashSet<Node*>&) const;
 
 private:
-    MutationObserverRegistration(PassRefPtr<MutationObserver>, Node*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
-
     RefPtr<MutationObserver> m_observer;
     Node* m_registrationNode;
     RefPtr<Node> m_registrationNodeKeepAlive;
     typedef HashSet<RefPtr<Node>> NodeHashSet;
-    OwnPtr<NodeHashSet> m_transientRegistrationNodes;
+    std::unique_ptr<NodeHashSet> m_transientRegistrationNodes;
 
     MutationObserverOptions m_options;
     HashSet<AtomicString> m_attributeFilter;
