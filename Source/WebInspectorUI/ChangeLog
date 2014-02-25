@@ -1,5 +1,54 @@
 2014-02-24  Timothy Hatcher  <timothy@apple.com>
 
+        Fix the missing navigation bar in the Debugger sidebar panel.
+
+        Sorting the CSS resources caused specificity issue.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129251
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger > .content):
+        (.sidebar > .panel.navigation.debugger > .navigation-bar):
+        * UserInterface/Views/LayoutTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.layout .item .subtitle):
+        * UserInterface/Views/NetworkTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.network .item .subtitle):
+        * UserInterface/Views/ResourceSidebarPanel.css:
+        (.sidebar > .panel.navigation.resource > .empty-content-placeholder):
+        (.sidebar > .panel.navigation.resource > .search-bar):
+        (.sidebar > .panel.navigation.resource > .search-bar > input[type="search"]):
+        * UserInterface/Views/ScriptTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.script .item .subtitle):
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .status-bar):
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph):
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording):
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover):
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording:hover):
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.forced):
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording.forced):
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-status):
+        (.sidebar > .panel.navigation.timeline > .title-bar):
+        (.sidebar > .panel.navigation.timeline > .title-bar.timelines):
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events):
+        (.sidebar > .panel.navigation.timeline > .timelines-content):
+        (.sidebar > .panel.navigation.timeline > .timelines-content .close-button):
+        (.sidebar > .panel.navigation.timeline > .timelines-content li.item .icon):
+        (.sidebar > .panel.navigation.timeline > .timelines-content li.item.selected .close-button):
+        (.sidebar > .panel.navigation.timeline > .timelines-content li.item:not(.selected):nth-child(even)):
+        (.sidebar > .panel.navigation.timeline > .timelines-content li.item:not(.selected):not(:first-child)):
+        (.sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item):
+        (.sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item):
+        (.sidebar > .panel.navigation.timeline > .timelines-content .close-button:active):
+        (.sidebar > .panel.navigation.timeline > .empty-content-placeholder):
+        (.sidebar > .panel.navigation.timeline.timeline-content-view-showing > .content):
+        (.sidebar > .panel.navigation.timeline > .content > .stripe-background):
+        (.sidebar > .panel.navigation.timeline.timeline-content-view-showing > .content > .stripe-background):
+
+2014-02-24  Timothy Hatcher  <timothy@apple.com>
+
         Give non-Mac platforms a default toolbar background so it isn't just white.
 
         https://bugs.webkit.org/show_bug.cgi?id=129260

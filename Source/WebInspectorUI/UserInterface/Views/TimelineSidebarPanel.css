@@ -23,19 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.timeline > .status-bar {
+.sidebar > .panel.navigation.timeline > .status-bar {
     position: absolute;
     top: 0;
-    left: 5px;
+    left: 0;
     right: 0;
     height: 22px;
     border-bottom: 1px solid rgb(179, 179, 179);
 }
 
-.sidebar > .panel.timeline > .status-bar > .record-glyph {
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph {
     position: absolute;
     top: 0;
-    left: 0;
+    left: 5px;
     width: 21px;
     height: 21px;
     padding: 0;
@@ -52,27 +52,27 @@
     background-size: 21px 21px;
 }
 
-.sidebar > .panel.timeline > .status-bar > .record-glyph.recording {
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording {
     background-image: -webkit-image-set(url(../Images/Recording.png) 1x, url(../Images/Recording@2x.png) 2x);
 }
 
-.sidebar > .panel.timeline > .status-bar > .record-glyph:hover {
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover {
     background-image: -webkit-image-set(url(../Images/RecordingHovered.png) 1x, url(../Images/RecordingHovered@2x.png) 2x);
 }
 
-.sidebar > .panel.timeline > .status-bar > .record-glyph.recording:hover {
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording:hover {
     background-image: -webkit-image-set(url(../Images/RecordingStopped.png) 1x, url(../Images/RecordingStopped@2x.png) 2x);
 }
 
-.sidebar > .panel.timeline > .status-bar > .record-glyph.forced {
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.forced {
     background-image: -webkit-image-set(url(../Images/RecordingStopped.png) 1x, url(../Images/RecordingStopped@2x.png) 2x) !important;
 }
 
-.sidebar > .panel.timeline > .status-bar > .record-glyph.recording.forced {
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording.forced {
     background-image: -webkit-image-set(url(../Images/Recording.png) 1x, url(../Images/Recording@2x.png) 2x) !important;
 }
 
-.sidebar > .panel.timeline > .status-bar > .record-status {
+.sidebar > .panel.navigation.timeline > .status-bar > .record-status {
     position: absolute;
     top: 0;
     right: 21px;
@@ -89,7 +89,7 @@
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
 }
 
-.sidebar > .panel.timeline > .title-bar {
+.sidebar > .panel.navigation.timeline > .title-bar {
     position: absolute;
     left: 0;
     right: 0;
@@ -116,17 +116,17 @@
     overflow: hidden;
 }
 
-.sidebar > .panel.timeline > .title-bar.timelines {
+.sidebar > .panel.navigation.timeline > .title-bar.timelines {
     top: 22px;
 }
 
-.sidebar > .panel.timeline > .title-bar.timeline-events {
+.sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
     height: 23px;
     border-top: 1px solid rgb(179, 179, 179);
     top: 152px;
 }
 
-.sidebar > .panel.timeline > .timelines-content {
+.sidebar > .panel.navigation.timeline > .timelines-content {
     position: absolute;
     top: 44px;
     height: 108px;
@@ -136,7 +136,7 @@
     overflow: hidden;
 }
 
-.sidebar > .panel.timeline > .timelines-content .close-button {
+.sidebar > .panel.navigation.timeline > .timelines-content .close-button {
     margin-top: 2px;
     width: 12px;
     height: 12px;
@@ -146,49 +146,49 @@
     visibility: hidden;
 }
 
-.sidebar > .panel.timeline > .timelines-content li.item .icon {
+.sidebar > .panel.navigation.timeline > .timelines-content li.item .icon {
     width: 24px;
     height: 24px;
     margin-top: 5px;
 }
 
-.sidebar > .panel.timeline > .timelines-content li.item.selected .close-button {
+.sidebar > .panel.navigation.timeline > .timelines-content li.item.selected .close-button {
     visibility: visible;
 }
 
-.sidebar > .panel.timeline > .timelines-content li.item:not(.selected):nth-child(even) {
+.sidebar > .panel.navigation.timeline > .timelines-content li.item:not(.selected):nth-child(even) {
     background-color: rgba(0, 0, 0, 0.03);
     background-clip: padding-box;
 }
 
-.sidebar > .panel.timeline > .timelines-content li.item:not(.selected):not(:first-child) {
+.sidebar > .panel.navigation.timeline > .timelines-content li.item:not(.selected):not(:first-child) {
     border-top: 1px solid rgba(0, 0, 0, 0.09);
 }
 
-.sidebar > .panel.timeline > .timelines-content li.item.selected + li.item {
+.sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item {
     border-top-color: rgb(120, 139, 168);
 }
 
-.sidebar > .panel.timeline > .timelines-content :focus li.item.selected + li.item {
+.sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item {
     border-top-color: rgb(107, 130, 164);
 }
 
-.sidebar > .panel.timeline > .timelines-content .close-button:active {
+.sidebar > .panel.navigation.timeline > .timelines-content .close-button:active {
     opacity: 0.8;
 }
 
-.sidebar > .panel.timeline > .content,
-.sidebar > .panel.timeline > .empty-content-placeholder {
+.sidebar > .panel.navigation.timeline > .content,
+.sidebar > .panel.navigation.timeline > .empty-content-placeholder {
     top: 175px;
 }
 
-.sidebar > .panel.timeline.timeline-content-view-showing > .content {
+.sidebar > .panel.navigation.timeline.timeline-content-view-showing > .content {
  /* This hides the scrollbar. The view shows a scrollbar, we don't need two. */
     padding-right: 16px;
     right: -16px;
 }
 
-.sidebar > .panel.timeline > .content > .stripe-background {
+.sidebar > .panel.navigation.timeline > .content > .stripe-background {
     position: absolute;
     top: 0;
     left: 0;
@@ -202,6 +202,6 @@
     display: none;
 }
 
-.sidebar > .panel.timeline.timeline-content-view-showing > .content > .stripe-background {
+.sidebar > .panel.navigation.timeline.timeline-content-view-showing > .content > .stripe-background {
     display: block;
 }

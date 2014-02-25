@@ -32,6 +32,6 @@
     border: none;
 }
 
-.sidebar > .panel.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.network .item .subtitle {
+.sidebar > .panel.navigation.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.network .item .subtitle {
     display: none;
 }

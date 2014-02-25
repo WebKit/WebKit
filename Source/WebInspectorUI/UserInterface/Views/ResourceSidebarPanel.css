@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.resource > .content,
-.sidebar > .panel.resource > .empty-content-placeholder {
+.sidebar > .panel.navigation.resource > .content,
+.sidebar > .panel.navigation.resource > .empty-content-placeholder {
     top: 21px;
 }
 
-.sidebar > .panel.resource > .search-bar {
+.sidebar > .panel.navigation.resource > .search-bar {
     position: absolute;
     top: 0;
     left: 0;
@@ -44,7 +44,7 @@
     overflow: hidden;
 }
 
-.sidebar > .panel.resource > .search-bar > input[type="search"] {
+.sidebar > .panel.navigation.resource > .search-bar > input[type="search"] {
     display: -webkit-flex;
     -webkit-flex: 1;
 
