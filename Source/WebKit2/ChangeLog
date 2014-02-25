@@ -1,3 +1,9 @@
+2014-02-25  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL build fix attempt after r164562
+
+        * CMakeLists.txt: Added WebVisitedLinkProvider.cpp.
+
 2014-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add ENABLE flag

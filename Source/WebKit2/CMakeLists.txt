@@ -565,6 +565,7 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/WebOpenPanelResultListener.cpp
     WebProcess/WebPage/WebPage.cpp
     WebProcess/WebPage/WebPageGroupProxy.cpp
+    WebProcess/WebPage/WebVisitedLinkProvider.cpp
     WebProcess/WebPage/WebUndoStep.cpp
 
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp
