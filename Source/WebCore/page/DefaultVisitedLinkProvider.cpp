@@ -26,8 +26,8 @@
 #include "config.h"
 #include "DefaultVisitedLinkProvider.h"
 
-#include "PlatformStrategies.h"
-#include "VisitedLinkStrategy.h"
+#include "Page.h"
+#include "PageGroup.h"
 
 namespace WebCore {
 
@@ -44,14 +44,14 @@ DefaultVisitedLinkProvider::~DefaultVisitedLinkProvider()
 {
 }
 
-bool DefaultVisitedLinkProvider::isLinkVisited(Page& page, LinkHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
+bool DefaultVisitedLinkProvider::isLinkVisited(Page& page, LinkHash linkHash, const URL&, const AtomicString&)
 {
-    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(&page, linkHash, baseURL, attributeURL);
+    return page.group().isLinkVisited(linkHash);
 }
 
 void DefaultVisitedLinkProvider::addVisitedLink(Page& page, LinkHash linkHash)
 {
-    platformStrategies()->visitedLinkStrategy()->addVisitedLink(&page, linkHash);
+    page.group().addVisitedLinkHash(linkHash);
 }
 
 } // namespace WebCore
