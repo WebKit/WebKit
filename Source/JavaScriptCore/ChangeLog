@@ -1,5 +1,12 @@
 2014-02-24  Oliver Hunt  <oliver@apple.com>
 
+        Fix build.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+
+2014-02-24  Oliver Hunt  <oliver@apple.com>
+
         Spread operator has a bad time when applied to call function
         https://bugs.webkit.org/show_bug.cgi?id=128853
 
