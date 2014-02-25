@@ -71,6 +71,7 @@ struct WKAutoCorrectionData {
 
 @interface WKContentView () {
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
+
     BOOL _canSendTouchEventsAsynchronously;
     unsigned _nativeWebTouchEventUniqueIdBeingSentSynchronously;
 
@@ -84,20 +85,23 @@ struct WKAutoCorrectionData {
     RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;
     RetainPtr<UIWKSelectionAssistant> _webSelectionAssistant;
 
-    UITextInputTraits *_traits;
-    BOOL _isEditable;
-    UIWebFormAccessory *_accessory;
-    id <UITextInputDelegate> _inputDelegate;
-    BOOL _showingTextStyleOptions;
-
+    RetainPtr<UITextInputTraits> _traits;
+    RetainPtr<UIWebFormAccessory> _formAccessoryView;
     RetainPtr<_UIHighlightView> _highlightView;
-    uint64_t _latestTapHighlightID;
-    BOOL _isTapHighlightIDValid;
-    WebKit::WKAutoCorrectionData _autocorrectionData;
     RetainPtr<NSString> _markedText;
-    WebKit::InteractionInformationAtPosition _positionInformation;
-    BOOL _hasValidPositionInformation;
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
+
+    id <UITextInputDelegate> _inputDelegate;
+
+    uint64_t _latestTapHighlightID;
+
+    WebKit::WKAutoCorrectionData _autocorrectionData;
+    WebKit::InteractionInformationAtPosition _positionInformation;
+
+    BOOL _isEditable;
+    BOOL _showingTextStyleOptions;
+    BOOL _hasValidPositionInformation;
+    BOOL _isTapHighlightIDValid;
 }
 
 @end
@@ -105,6 +109,8 @@ struct WKAutoCorrectionData {
 @interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol>
 
 @property (nonatomic, readonly) BOOL isEditable;
+@property (nonatomic, readonly) const WebKit::InteractionInformationAtPosition& positionInformation;
+@property (nonatomic, readonly) const WebKit::WKAutoCorrectionData& autocorrectionData;
 
 - (void)setupInteraction;
 - (void)cleanupInteraction;
@@ -124,8 +130,5 @@ struct WKAutoCorrectionData {
 - (void)_willStartUserTriggeredScrollingOrZooming;
 - (void)_didEndScrollingOrZooming;
 - (void)_didUpdateBlockSelectionWithTouch:(WebKit::WKSelectionTouch)touch withFlags:(WebKit::WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold;
-
-@property (readonly, nonatomic) const WebKit::InteractionInformationAtPosition& positionInformation;
-@property (readonly, nonatomic) const WebKit::WKAutoCorrectionData& autocorrectionData;
 
 @end

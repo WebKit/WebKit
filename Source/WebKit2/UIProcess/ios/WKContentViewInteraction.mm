@@ -184,8 +184,6 @@ static const float tapAndHoldDelay  = 0.75;
     [_highlightLongPressGestureRecognizer setDelegate:nil];
     [_longPressGestureRecognizer setDelegate:nil];
     [_twoFingerPanGestureRecognizer setDelegate:nil];
-
-    [_accessory release];
 }
 
 - (const InteractionInformationAtPosition&)positionInformation
@@ -677,12 +675,12 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (!_isEditable)
         return nil;
     
-    if (!_accessory) {
-        _accessory = [[UIWebFormAccessory alloc] init];
-        _accessory.delegate = self;
+    if (!_formAccessoryView) {
+        _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
+        [_formAccessoryView setDelegate:self];
     }
     
-    return _accessory;
+    return _formAccessoryView.get();
 }
 
 - (NSArray *)supportedPasteboardTypesForCurrentSelection
@@ -1226,10 +1224,10 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 - (void)_updateAccessory
 {
     // FIXME: We need to initialize with values from the WebProcess.
-    _accessory.nextEnabled = YES;
-    _accessory.previousEnabled = YES;
+    [_formAccessoryView setNextEnabled:YES];
+    [_formAccessoryView setPreviousEnabled:YES];
     
-    [_accessory setClearVisible:NO];
+    [_formAccessoryView setClearVisible:NO];
 
     // FIXME: hide or show the AutoFill button as needed.
 }
@@ -1410,8 +1408,9 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 - (UITextInputTraits *)textInputTraits
 {
     if (!_traits)
-        _traits = [[UITextInputTraits alloc] init];
-    return _traits;
+        _traits = adoptNS([[UITextInputTraits alloc] init]);
+
+    return _traits.get();
 }
 
 - (UITextInteractionAssistant *)interactionAssistant
