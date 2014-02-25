@@ -1,3 +1,17 @@
+2014-02-25  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] scrollIntoView for elements flowed into regions
+        https://bugs.webkit.org/show_bug.cgi?id=129151
+
+        Reviewed by Mihnea Ovidenie.
+
+        Added tests for scrollIntoView on elements flowed inside regions.
+
+        * fast/regions/scroll-into-view-expected.html: Added.
+        * fast/regions/scroll-into-view-relative-expected.html: Added.
+        * fast/regions/scroll-into-view-relative.html: Added.
+        * fast/regions/scroll-into-view.html: Added.
+
 2014-02-25  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] -webkit-mix-blend-mode should force transform-style: flat.
