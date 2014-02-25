@@ -224,7 +224,7 @@ VM* JSDOMWindowBase::commonVM()
         vm->makeUsableFromMultipleThreads();
         vm->heap.machineThreads().addCurrentThread();
 #else
-        vm->setExclusiveThread(std::this_thread::get_id());
+        vm->exclusiveThread = currentThread();
 #endif // !PLATFORM(IOS)
         initNormalWorldClientData(vm);
     }

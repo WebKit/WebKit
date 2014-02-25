@@ -463,9 +463,7 @@ namespace JSC {
         RTTraceList* m_rtTraceList;
 #endif
 
-        bool hasExclusiveThread() const { return m_apiLock->hasExclusiveThread(); }
-        std::thread::id exclusiveThread() const { return m_apiLock->exclusiveThread(); }
-        void setExclusiveThread(std::thread::id threadId) { m_apiLock->setExclusiveThread(threadId); }
+        ThreadIdentifier exclusiveThread;
 
         JS_EXPORT_PRIVATE void resetDateCache();
 
@@ -493,7 +491,10 @@ namespace JSC {
         bool haveEnoughNewStringsToHashCons() { return m_newStringsSinceLastHashCons > s_minNumberOfNewStringsToHashCons; }
         void resetNewStringsSinceLastHashCons() { m_newStringsSinceLastHashCons = 0; }
 
-        bool currentThreadIsHoldingAPILock() const { return m_apiLock->currentThreadIsHoldingLock(); }
+        bool currentThreadIsHoldingAPILock() const
+        {
+            return m_apiLock->currentThreadIsHoldingLock() || exclusiveThread == currentThread();
+        }
 
         JSLock& apiLock() { return *m_apiLock; }
         CodeCache* codeCache() { return m_codeCache.get(); }

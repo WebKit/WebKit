@@ -1,3 +1,16 @@
+2014-02-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r164627.
+        http://trac.webkit.org/changeset/164627
+        https://bugs.webkit.org/show_bug.cgi?id=129325
+
+        Broke SubtleCrypto tests (Requested by ap on #webkit).
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
         DefaultVisitedLinkProvider can just call into the page group directly
