@@ -145,7 +145,7 @@ HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type, El
     ASSERT(m_invalidationType == static_cast<unsigned>(invalidationTypeExcludingIdAndNameAttributes(type)));
     ASSERT(m_collectionType == static_cast<unsigned>(type));
 
-    document().registerCollection(*this);
+    document().registerCollection(*this, hasIdNameCache());
 }
 
 PassRefPtr<HTMLCollection> HTMLCollection::create(ContainerNode& base, CollectionType type)
@@ -155,7 +155,7 @@ PassRefPtr<HTMLCollection> HTMLCollection::create(ContainerNode& base, Collectio
 
 HTMLCollection::~HTMLCollection()
 {
-    document().unregisterCollection(*this);
+    document().unregisterCollection(*this, hasIdNameCache());
     // HTMLNameCollection removes cache by itself.
     if (type() != WindowNamedItems && type() != DocumentNamedItems)
         ownerNode().nodeLists()->removeCachedCollection(this);
@@ -367,14 +367,16 @@ Element* HTMLCollection::collectionTraverseBackward(Element& current, unsigned c
 void HTMLCollection::invalidateCache() const
 {
     m_indexCache.invalidate();
-    m_isNameCacheValid = false;
     m_isItemRefElementsCacheValid = false;
-    m_idCache.clear();
-    m_nameCache.clear();
+    if (hasIdNameCache())
+        invalidateIdNameCacheMaps();
 }
 
 void HTMLCollection::invalidateIdNameCacheMaps() const
 {
+    ASSERT(hasIdNameCache());
+    document().collectionWillClearIdNameMap(*this);
+    m_isNameCacheValid = false;
     m_idCache.clear();
     m_nameCache.clear();
 }
@@ -429,7 +431,7 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
 
 void HTMLCollection::updateNameCache() const
 {
-    if (hasNameCache())
+    if (hasIdNameCache())
         return;
 
     ContainerNode& root = rootNode();
@@ -446,7 +448,7 @@ void HTMLCollection::updateNameCache() const
             appendNameCache(nameAttrVal, element);
     }
 
-    setHasNameCache();
+    setHasIdNameCache();
 }
 
 bool HTMLCollection::hasNamedItem(const AtomicString& name) const

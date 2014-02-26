@@ -758,8 +758,10 @@ public:
 
     void registerNodeList(LiveNodeList&);
     void unregisterNodeList(LiveNodeList&);
-    void registerCollection(HTMLCollection&);
-    void unregisterCollection(HTMLCollection&);
+    void registerCollection(HTMLCollection&, bool hasIdNameCache);
+    void unregisterCollection(HTMLCollection&, bool hasIdNameCache);
+    void collectionCachedIdNameMap(const HTMLCollection&);
+    void collectionWillClearIdNameMap(const HTMLCollection&);
     bool shouldInvalidateNodeListAndCollectionCaches(const QualifiedName* attrName = nullptr) const;
     void invalidateNodeListAndCollectionCaches(const QualifiedName* attrName);
 

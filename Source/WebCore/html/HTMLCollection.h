@@ -61,11 +61,10 @@ public:
     {
         if (!attrName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attrName))
             invalidateCache();
-        else if (*attrName == HTMLNames::idAttr || *attrName == HTMLNames::nameAttr)
+        else if (hasIdNameCache() && (*attrName == HTMLNames::idAttr || *attrName == HTMLNames::nameAttr))
             invalidateIdNameCacheMaps();
     }
     virtual void invalidateCache() const;
-    void invalidateIdNameCacheMaps() const;
 
     // For CollectionIndexCache
     Element* collectionFirst() const;
@@ -74,10 +73,13 @@ public:
     Element* collectionTraverseBackward(Element&, unsigned count) const;
     bool collectionCanTraverseBackward() const { return !m_usesCustomForwardOnlyTraversal; }
 
+    bool hasIdNameCache() const { return m_isNameCacheValid; }
+
 protected:
     enum ElementTraversalType { NormalTraversal, CustomForwardOnlyTraversal };
     HTMLCollection(ContainerNode& base, CollectionType, ElementTraversalType = NormalTraversal);
 
+    void invalidateIdNameCacheMaps() const;
     virtual void updateNameCache() const;
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<Element*>>> NodeCacheMap;
@@ -95,8 +97,11 @@ protected:
 
     NodeListRootType rootType() const { return static_cast<NodeListRootType>(m_rootType); }
 
-    bool hasNameCache() const { return m_isNameCacheValid; }
-    void setHasNameCache() const { m_isNameCacheValid = true; }
+    void setHasIdNameCache() const
+    {
+        m_isNameCacheValid = true;
+        document().collectionCachedIdNameMap(*this);
+    }
 
 private:
     static void append(NodeCacheMap&, const AtomicString&, Element*);

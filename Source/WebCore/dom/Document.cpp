@@ -3450,22 +3450,38 @@ void Document::unregisterNodeList(LiveNodeList& list)
     }
 }
 
-void Document::registerCollection(HTMLCollection& collection)
+void Document::registerCollection(HTMLCollection& collection, bool hasIdNameMap)
 {
-    m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]++;
+    if (hasIdNameMap)
+        collectionCachedIdNameMap(collection);
     m_nodeListAndCollectionCounts[collection.invalidationType()]++;
     if (collection.isRootedAtDocument())
         m_collectionsInvalidatedAtDocument.add(&collection);
 }
 
-void Document::unregisterCollection(HTMLCollection& collection)
+void Document::unregisterCollection(HTMLCollection& collection, bool hasIdNameMap)
 {
-    m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]--;
+    if (hasIdNameMap)
+        collectionWillClearIdNameMap(collection);
+    ASSERT(m_nodeListAndCollectionCounts[collection.invalidationType()]);
     m_nodeListAndCollectionCounts[collection.invalidationType()]--;
     if (collection.isRootedAtDocument()) {
         ASSERT(m_collectionsInvalidatedAtDocument.contains(&collection));
         m_collectionsInvalidatedAtDocument.remove(&collection);
     }
+}
+
+void Document::collectionCachedIdNameMap(const HTMLCollection& collection)
+{
+    ASSERT_UNUSED(collection, collection.hasIdNameCache());
+    m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]++;
+}
+
+void Document::collectionWillClearIdNameMap(const HTMLCollection& collection)
+{
+    ASSERT_UNUSED(collection, collection.hasIdNameCache());
+    ASSERT(m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]);
+    m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]--;
 }
 
 void Document::attachNodeIterator(NodeIterator* ni)

@@ -137,7 +137,7 @@ Node* HTMLFormControlsCollection::namedItem(const AtomicString& name) const
 
 void HTMLFormControlsCollection::updateNameCache() const
 {
-    if (hasNameCache())
+    if (hasIdNameCache())
         return;
 
     HashSet<AtomicStringImpl*> foundInputElements;
@@ -174,7 +174,7 @@ void HTMLFormControlsCollection::updateNameCache() const
         }
     }
 
-    setHasNameCache();
+    setHasIdNameCache();
 }
 
 void HTMLFormControlsCollection::invalidateCache() const

@@ -1,3 +1,50 @@
+2014-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Avoid unnecessary HTML Collection invalidations for id and name attribute changes
+        https://bugs.webkit.org/show_bug.cgi?id=129361
+
+        Reviewed by Benjamin Poulain.
+
+        Before this patch, setting id and name attributes resulted in traversing all the ancestors to invalidate
+        HTML collections on those nodes whenever we had more than one HTMLCollection alive.
+
+        Avoid the traversal when HTMLCollections don't have any valid id and name map caches by making each
+        HTMLCollection explicitly call collectionCachedIdNameMap and collectionWillClearIdNameMap when it caches
+        or clears the id and name map.
+
+        Inspired by https://chromium.googlesource.com/chromium/blink/+/5b06b91b79098f7d42e480f85be32198315d2440
+
+        * dom/Document.cpp:
+        (WebCore::Document::registerCollection): Takes a boolean to indicate whether collection has a valid cache
+        for the id and name map.
+        (WebCore::Document::unregisterCollection): Ditto.
+        (WebCore::Document::collectionCachedIdNameMap): Added.
+        (WebCore::Document::collectionWillClearIdNameMap): Added.
+        * dom/Document.h:
+
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptDocument): Call invalidateCache on HTML collections after, not before,
+        calling unregisterCollection and registerCollection since collections' owner nodes have already been
+        moved to the new document here and invalidateCache uses owner node's document to call
+        collectionWillClearIdNameMap. So calling invalidateCache before calling unregister/registerCollection
+        would result in collectionWillClearIdNameMap getting called on a wrong document.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::~HTMLCollection):
+        (WebCore::HTMLCollection::invalidateCache):
+        (WebCore::HTMLCollection::invalidateIdNameCacheMaps): Added the code to uncount itself from the number
+        of live node lists and HTML collections that need to be invalidated upon id and name attribute changes.
+        (WebCore::HTMLCollection::updateNameCache):
+
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::invalidateCache):
+        (WebCore::HTMLCollection::hasIdNameCache): Renamed from hasNameCache.
+        (WebCore::HTMLCollection::setHasIdNameCache): Renamed from setHasIdNameCache.
+
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::updateNameCache):
+
 2014-02-25  Frédéric Wang  <fred.wang@free.fr>
 
         Add support for minsize/maxsize attributes.

@@ -225,33 +225,38 @@ public:
 
     void adoptDocument(Document* oldDocument, Document* newDocument)
     {
-        invalidateCaches();
+        if (oldDocument == newDocument) {
+            invalidateCaches();
+            return;
+        }
 
-        if (oldDocument != newDocument) {
-            for (auto it = m_atomicNameCaches.begin(), end = m_atomicNameCaches.end(); it != end; ++it) {
-                LiveNodeList& list = *it->value;
-                oldDocument->unregisterNodeList(list);
-                newDocument->registerNodeList(list);
-            }
+        for (auto it : m_atomicNameCaches) {
+            LiveNodeList& list = *it.value;
+            oldDocument->unregisterNodeList(list);
+            newDocument->registerNodeList(list);
+            list.invalidateCache();
+        }
 
-            for (auto it = m_nameCaches.begin(), end = m_nameCaches.end(); it != end; ++it) {
-                LiveNodeList& list = *it->value;
-                oldDocument->unregisterNodeList(list);
-                newDocument->registerNodeList(list);
-            }
+        for (auto it : m_nameCaches) {
+            LiveNodeList& list = *it.value;
+            oldDocument->unregisterNodeList(list);
+            newDocument->registerNodeList(list);
+            list.invalidateCache();
+        }
 
-            for (auto it = m_tagNodeListCacheNS.begin(), end = m_tagNodeListCacheNS.end(); it != end; ++it) {
-                LiveNodeList& list = *it->value;
-                ASSERT(!list.isRootedAtDocument());
-                oldDocument->unregisterNodeList(list);
-                newDocument->registerNodeList(list);
-            }
+        for (auto it : m_tagNodeListCacheNS) {
+            LiveNodeList& list = *it.value;
+            ASSERT(!list.isRootedAtDocument());
+            oldDocument->unregisterNodeList(list);
+            newDocument->registerNodeList(list);
+            list.invalidateCache();
+        }
 
-            for (auto it = m_cachedCollections.begin(), end = m_cachedCollections.end(); it != end; ++it) {
-                HTMLCollection& collection = *it->value;
-                oldDocument->unregisterCollection(collection);
-                newDocument->registerCollection(collection);
-            }
+        for (auto it : m_cachedCollections) {
+            HTMLCollection& collection = *it.value;
+            oldDocument->unregisterCollection(collection, collection.hasIdNameCache());
+            newDocument->registerCollection(collection, collection.hasIdNameCache());
+            collection.invalidateCache();
         }
     }
 
