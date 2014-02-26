@@ -23,36 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebVisitedLinkProvider.h"
+#ifndef VisitedLinkTableController_h
+#define VisitedLinkTableController_h
 
-#include "WebProcess.h"
-
-using namespace WebCore;
+#include <WebCore/VisitedLinkStore.h>
 
 namespace WebKit {
 
-PassRefPtr<WebVisitedLinkProvider> WebVisitedLinkProvider::create()
-{
-    return adoptRef(new WebVisitedLinkProvider);
-}
+class VisitedLinkTableController final : public WebCore::VisitedLinkStore {
+public:
+    static PassRefPtr<VisitedLinkTableController> create();
+    virtual ~VisitedLinkTableController();
 
-WebVisitedLinkProvider::WebVisitedLinkProvider()
-{
-}
+private:
+    VisitedLinkTableController();
 
-WebVisitedLinkProvider::~WebVisitedLinkProvider()
-{
-}
+    virtual bool isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
+    virtual void addVisitedLink(WebCore::Page&, WebCore::LinkHash) override;
+};
 
-bool WebVisitedLinkProvider::isLinkVisited(Page&, LinkHash linkHash, const URL&, const AtomicString&)
-{
-    return WebProcess::shared().isLinkVisited(linkHash);
-}
+} // namepsace WebKit
 
-void WebVisitedLinkProvider::addVisitedLink(Page&, LinkHash linkHash)
-{
-    WebProcess::shared().addVisitedLink(linkHash);
-}
-
-} // namespace WebKit
+#endif // VisitedLinkTableController_h

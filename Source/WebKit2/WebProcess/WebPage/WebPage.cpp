@@ -51,6 +51,7 @@
 #include "PrintInfo.h"
 #include "SessionState.h"
 #include "ShareableBitmap.h"
+#include "VisitedLinkTableController.h"
 #include "WKSharedAPICast.h"
 #include "WebAlternativeTextClient.h"
 #include "WebBackForwardListItem.h"
@@ -87,7 +88,6 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include "WebProgressTrackerClient.h"
-#include "WebVisitedLinkProvider.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
@@ -325,7 +325,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageClients.progressTrackerClient = new WebProgressTrackerClient(*this);
 
-    pageClients.visitedLinkStore = WebVisitedLinkProvider::create();
+    pageClients.visitedLinkStore = VisitedLinkTableController::create();
 
     m_page = adoptPtr(new Page(pageClients));
 

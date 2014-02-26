@@ -1,3 +1,21 @@
+2014-02-26  Anders Carlsson  <andersca@apple.com>
+
+        Rename WebVisitedLinkProvider to VisitedLinkTableController
+        https://bugs.webkit.org/show_bug.cgi?id=129396
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/VisitedLinkTableController.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/WebVisitedLinkProvider.cpp.
+        (WebKit::VisitedLinkTableController::create):
+        (WebKit::VisitedLinkTableController::VisitedLinkTableController):
+        (WebKit::VisitedLinkTableController::~VisitedLinkTableController):
+        (WebKit::VisitedLinkTableController::isLinkVisited):
+        (WebKit::VisitedLinkTableController::addVisitedLink):
+        * WebProcess/WebPage/VisitedLinkTableController.h: Renamed from Source/WebKit2/WebProcess/WebPage/WebVisitedLinkProvider.h.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2014-02-26  Enrica Casucci  <enrica@apple.com>
 
         Keyboard keeps showing up when clicking links after being shown once.
