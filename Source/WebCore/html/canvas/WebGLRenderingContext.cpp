@@ -764,11 +764,16 @@ void WebGLRenderingContext::restoreStateAfterClear()
 
 void WebGLRenderingContext::markLayerComposited()
 {
+    if (isContextLostOrPending())
+        return;
     m_context->markLayerComposited();
 }
 
 void WebGLRenderingContext::paintRenderingResultsToCanvas()
 {
+    if (isContextLostOrPending())
+        return;
+
     if (canvas()->document().printing())
         canvas()->clearPresentationCopy();
 
@@ -802,6 +807,8 @@ void WebGLRenderingContext::paintRenderingResultsToCanvas()
 
 PassRefPtr<ImageData> WebGLRenderingContext::paintRenderingResultsToImageData()
 {
+    if (isContextLostOrPending())
+        return nullptr;
     clearIfComposited();
     if (m_drawingBuffer)
         m_drawingBuffer->commit();
@@ -819,6 +826,9 @@ PassRefPtr<ImageData> WebGLRenderingContext::paintRenderingResultsToImageData()
 
 void WebGLRenderingContext::reshape(int width, int height)
 {
+    if (isContextLostOrPending())
+        return;
+
     // This is an approximation because at WebGLRenderingContext level we don't
     // know if the underlying FBO uses textures or renderbuffers.
     GC3Dint maxSize = std::min(m_maxTextureSize, m_maxRenderbufferSize);
@@ -1508,7 +1518,7 @@ void WebGLRenderingContext::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC
 PassRefPtr<WebGLBuffer> WebGLRenderingContext::createBuffer()
 {
     if (isContextLostOrPending())
-        return 0;
+        return nullptr;
     RefPtr<WebGLBuffer> o = WebGLBuffer::create(this);
     addSharedObject(o.get());
     return o;
@@ -1517,7 +1527,7 @@ PassRefPtr<WebGLBuffer> WebGLRenderingContext::createBuffer()
 PassRefPtr<WebGLFramebuffer> WebGLRenderingContext::createFramebuffer()
 {
     if (isContextLostOrPending())
-        return 0;
+        return nullptr;
     RefPtr<WebGLFramebuffer> o = WebGLFramebuffer::create(this);
     addContextObject(o.get());
     return o;
@@ -1526,7 +1536,7 @@ PassRefPtr<WebGLFramebuffer> WebGLRenderingContext::createFramebuffer()
 PassRefPtr<WebGLTexture> WebGLRenderingContext::createTexture()
 {
     if (isContextLostOrPending())
-        return 0;
+        return nullptr;
     RefPtr<WebGLTexture> o = WebGLTexture::create(this);
     addSharedObject(o.get());
     return o;
@@ -1535,7 +1545,7 @@ PassRefPtr<WebGLTexture> WebGLRenderingContext::createTexture()
 PassRefPtr<WebGLProgram> WebGLRenderingContext::createProgram()
 {
     if (isContextLostOrPending())
-        return 0;
+        return nullptr;
     RefPtr<WebGLProgram> o = WebGLProgram::create(this);
     addSharedObject(o.get());
     return o;
@@ -1544,7 +1554,7 @@ PassRefPtr<WebGLProgram> WebGLRenderingContext::createProgram()
 PassRefPtr<WebGLRenderbuffer> WebGLRenderingContext::createRenderbuffer()
 {
     if (isContextLostOrPending())
-        return 0;
+        return nullptr;
     RefPtr<WebGLRenderbuffer> o = WebGLRenderbuffer::create(this);
     addSharedObject(o.get());
     return o;
@@ -1554,10 +1564,10 @@ PassRefPtr<WebGLShader> WebGLRenderingContext::createShader(GC3Denum type, Excep
 {
     UNUSED_PARAM(ec);
     if (isContextLostOrPending())
-        return 0;
+        return nullptr;
     if (type != GraphicsContext3D::VERTEX_SHADER && type != GraphicsContext3D::FRAGMENT_SHADER) {
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "createShader", "invalid shader type");
-        return 0;
+        return nullptr;
     }
 
     RefPtr<WebGLShader> o = WebGLShader::create(this, type);
@@ -2266,10 +2276,10 @@ PassRefPtr<WebGLActiveInfo> WebGLRenderingContext::getActiveAttrib(WebGLProgram*
 {
     UNUSED_PARAM(ec);
     if (isContextLostOrPending() || !validateWebGLObject("getActiveAttrib", program))
-        return 0;
+        return nullptr;
     ActiveInfo info;
     if (!m_context->getActiveAttrib(objectOrZero(program), index, info))
-        return 0;
+        return nullptr;
 
     LOG(WebGL, "Returning active attribute %d: %s", index, info.name.utf8().data());
 
@@ -2283,7 +2293,7 @@ PassRefPtr<WebGLActiveInfo> WebGLRenderingContext::getActiveUniform(WebGLProgram
         return 0;
     ActiveInfo info;
     if (!m_context->getActiveUniform(objectOrZero(program), index, info))
-        return 0;
+        return nullptr;
     if (!isGLES2Compliant())
         if (info.size > 1 && !info.name.endsWith("[0]"))
             info.name.append("[0]");
@@ -2354,7 +2364,7 @@ WebGLGetInfo WebGLRenderingContext::getBufferParameter(GC3Denum target, GC3Denum
 PassRefPtr<WebGLContextAttributes> WebGLRenderingContext::getContextAttributes()
 {
     if (isContextLostOrPending())
-        return 0;
+        return nullptr;
     // We always need to return a new WebGLContextAttributes object to
     // prevent the user from mutating any cached version.
 
@@ -2376,13 +2386,15 @@ PassRefPtr<WebGLContextAttributes> WebGLRenderingContext::getContextAttributes()
 
 GC3Denum WebGLRenderingContext::getError()
 {
+    if (isContextLostOrPending())
+        return GraphicsContext3D::NO_ERROR;
     return m_context->getError();
 }
 
 WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
 {
     if (isContextLostOrPending())
-        return 0;
+        return nullptr;
 
     if (equalIgnoringCase(name, "WEBKIT_EXT_texture_filter_anisotropic")
         && m_context->getExtensions()->supports("GL_EXT_texture_filter_anisotropic")) {
@@ -2506,7 +2518,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         }
     }
 
-    return 0;
+    return nullptr;
 }
 
 WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode& ec)
@@ -2938,14 +2950,14 @@ PassRefPtr<WebGLShaderPrecisionFormat> WebGLRenderingContext::getShaderPrecision
 {
     UNUSED_PARAM(ec);
     if (isContextLostOrPending())
-        return 0;
+        return nullptr;
     switch (shaderType) {
     case GraphicsContext3D::VERTEX_SHADER:
     case GraphicsContext3D::FRAGMENT_SHADER:
         break;
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getShaderPrecisionFormat", "invalid shader type");
-        return 0;
+        return nullptr;
     }
     switch (precisionType) {
     case GraphicsContext3D::LOW_FLOAT:
@@ -2957,7 +2969,7 @@ PassRefPtr<WebGLShaderPrecisionFormat> WebGLRenderingContext::getShaderPrecision
         break;
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getShaderPrecisionFormat", "invalid precision type");
-        return 0;
+        return nullptr;
     }
 
     GC3Dint range[2] = {0, 0};
@@ -3199,7 +3211,7 @@ PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGL
     for (GC3Dint i = 0; i < activeUniforms; i++) {
         ActiveInfo info;
         if (!m_context->getActiveUniform(objectOrZero(program), i, info))
-            return 0;
+            return nullptr;
         // Strip "[0]" from the name if it's an array.
         if (info.name.endsWith("[0]"))
             info.name = info.name.left(info.name.length() - 3);
@@ -3860,7 +3872,7 @@ PassRefPtr<Image> WebGLRenderingContext::drawImageIntoBuffer(Image* image, int w
     ImageBuffer* buf = m_generatedImageCache.imageBuffer(size);
     if (!buf) {
         synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "texImage2D", "out of memory");
-        return 0;
+        return nullptr;
     }
 
     IntRect srcRect(IntPoint(), image->size());
@@ -3922,7 +3934,7 @@ PassRefPtr<Image> WebGLRenderingContext::videoFrameToImage(HTMLVideoElement* vid
     ImageBuffer* buf = m_generatedImageCache.imageBuffer(size);
     if (!buf) {
         synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "texImage2D", "out of memory");
-        return 0;
+        return nullptr;
     }
     IntRect destRect(0, 0, size.width(), size.height());
     // FIXME: Turn this into a GPU-GPU texture copy instead of CPU readback.
@@ -5612,11 +5624,11 @@ WebGLBuffer* WebGLRenderingContext::validateBufferDataParameters(const char* fun
         break;
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid target");
-        return 0;
+        return nullptr;
     }
     if (!buffer) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "no buffer");
-        return 0;
+        return nullptr;
     }
     switch (usage) {
     case GraphicsContext3D::STREAM_DRAW:
@@ -5625,7 +5637,7 @@ WebGLBuffer* WebGLRenderingContext::validateBufferDataParameters(const char* fun
         return buffer;
     }
     synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid usage");
-    return 0;
+    return nullptr;
 }
 
 bool WebGLRenderingContext::validateHTMLImageElement(const char* functionName, HTMLImageElement* image, ExceptionCode& ec)
@@ -5953,7 +5965,7 @@ ImageBuffer* WebGLRenderingContext::LRUImageBufferCache::imageBuffer(const IntSi
 
     std::unique_ptr<ImageBuffer> temp = ImageBuffer::create(size, 1);
     if (!temp)
-        return 0;
+        return nullptr;
     i = std::min(m_capacity - 1, i);
     m_buffers[i] = std::move(temp);
 
