@@ -1,3 +1,18 @@
+2014-02-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Regression when showing the captions menu
+        https://bugs.webkit.org/show_bug.cgi?id=129106
+
+        Reviewed by Martin Robinson.
+
+        Checked in an existing test that the menu is shown then the
+        captions button is clicked.
+
+        * media/trackmenu-test.js:
+        (startTrackMenuTest): Deactivated animations
+        * media/video-controls-captions-trackmenu.html: Added check for
+        the regression we are testing.
+
 2014-02-25  Frédéric Wang  <fred.wang@free.fr>
 
         Add support for minsize/maxsize attributes.

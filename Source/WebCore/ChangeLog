@@ -1,3 +1,20 @@
+2014-02-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Regression when showing the captions menu
+        https://bugs.webkit.org/show_bug.cgi?id=129106
+
+        Reviewed by Martin Robinson.
+
+        In some cases, when clicking the captions button the menu was not
+        shown.
+
+        Updated test: media/video-controls-captions-trackmenu.html
+
+        * Modules/mediacontrols/mediaControlsGtk.js:
+        (ControllerGtk.prototype.buildCaptionMenu):
+        (ControllerGtk.prototype.showCaptionMenu): Specify sizes in
+        pixels.
+
 2014-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Avoid unnecessary HTML Collection invalidations for id and name attribute changes

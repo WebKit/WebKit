@@ -157,7 +157,7 @@ ControllerGtk.prototype = {
         // Caption menu has to be centered to the caption button.
         var captionButtonCenter =  this.controls.panel.offsetLeft + this.controls.captionButton.offsetLeft +
             this.controls.captionButton.offsetWidth / 2;
-        this.captionMenu.style.left = (captionButtonCenter - this.captionMenu.offsetWidth / 2);
+        this.captionMenu.style.left = (captionButtonCenter - this.captionMenu.offsetWidth / 2) + 'px';
         // As height is not in the css, it needs to be specified to animate it.
         this.captionMenu.height = this.captionMenu.offsetHeight;
         this.captionMenu.style.height = 0;
@@ -170,7 +170,7 @@ ControllerGtk.prototype = {
 
     showCaptionMenu: function()
     {
-        this.captionMenu.style.height = this.captionMenu.height;
+        this.captionMenu.style.height = this.captionMenu.height + 'px';
     },
 
     hideCaptionMenu: function()

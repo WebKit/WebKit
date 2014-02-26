@@ -18,6 +18,8 @@ function clickCCButton()
 
 function startTrackMenuTest(testFunction)
 {
+    internals.suspendAnimations();
+
     if (window.eventSender) {
         consoleWrite("<br>*** Set the user language preference.");
         run("internals.setUserPreferredLanguages(['en'])");

@@ -12,6 +12,11 @@
 
             function startTest()
             {
+                trackListElement = getTrackListElement();
+                if (!trackListElement)
+                    return;
+                testExpected("trackListElement.offsetHeight", 0, ">");
+
                 consoleWrite("<br>*** Add another text track.");
                 run('video.addTextTrack("captions", "Commentary", "ru")');
                 showTrackMenu()
