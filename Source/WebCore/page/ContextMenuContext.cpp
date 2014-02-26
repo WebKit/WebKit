@@ -42,6 +42,8 @@ ContextMenuContext::ContextMenuContext(const HitTestResult& hitTestResult, bool 
     : m_hitTestResult(hitTestResult)
 #if ENABLE(IMAGE_CONTROLS)
     , m_isImageControl(isImageControl)
+#else
+    UNUSED_PARAM(isImageControl);
 #endif
 {
     ASSERT_UNUSED(isImageControl, true);

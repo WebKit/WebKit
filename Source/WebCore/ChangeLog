@@ -1,3 +1,9 @@
+2014-02-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Build fix for OS X after r164720.
+
+        * page/ContextMenuContext.cpp:
+
 2014-02-26  Brady Eidson  <beidson@apple.com>
 
         Pipe experimental image controls menu up to WebKit2
