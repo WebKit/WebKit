@@ -1,5 +1,12 @@
 2014-02-26  Eric Carlson  <eric.carlson@apple.com>
 
+        Fix builds that don't define IMAGE_CONTROLS.
+
+        * page/ContextMenuContext.cpp:
+        (WebCore::ContextMenuContext::ContextMenuContext):
+
+2014-02-26  Eric Carlson  <eric.carlson@apple.com>
+
         Build fix for OS X after r164720.
 
         * page/ContextMenuContext.cpp:
