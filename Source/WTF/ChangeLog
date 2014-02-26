@@ -1,3 +1,70 @@
+2014-02-25  Gavin Barraclough  <barraclough@apple.com>
+
+        FastMalloc should use vm_page_shift intead of PAGE_SHIFT.
+        https://bugs.webkit.org/show_bug.cgi?id=129370
+
+        Reviewed by Geoff Garen.
+
+        Previously we used PAGE_SHIFT to initialize kPageShift.
+        Since this was a constant, it could be used to calculate other
+        contants used in the code. Some of these values are used in the
+        definition of certain data structures (specifiying the length of
+        some array members).
+
+        Make kPageShift & dependent properties variables setup during
+        initialization. Add upper bound values (K_PAGE_SHIFT_MAX,
+        K_NUM_CLASSES_MAX) for use in cases where we need a constant.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::InitSizeClasses):
+            - initialize kPageShift, kNumClasses, kPageSize, kMaxValidPages.
+        (WTF::pages):
+            - added ASSERT.
+        (WTF::AllocationSize):
+            - added ASSERT.
+        (WTF::TCMalloc_PageHeap::FreeBytes):
+            - added ASSERT.
+        (WTF::TCMalloc_PageHeap::init):
+            - COMPILE_ASSERT -> ASSERT
+        (WTF::TCMalloc_PageHeap::scavenge):
+            - added ASSERT.
+        (WTF::TCMalloc_PageHeap::Carve):
+            - added ASSERT.
+        (WTF::mergeDecommittedStates):
+            - added ASSERT.
+        (WTF::TCMalloc_PageHeap::IncrementalScavenge):
+            - added ASSERT.
+        (WTF::TCMalloc_PageHeap::ReturnedBytes):
+            - added ASSERT.
+        (WTF::PagesToMB):
+            - added ASSERT.
+        (WTF::TCMalloc_PageHeap::GrowHeap):
+            - added ASSERT.
+        (WTF::TCMalloc_PageHeap::ReleaseFreeList):
+            - kNumClasses -> K_NUM_CLASSES_MAX
+        (WTF::TCMalloc_ThreadCache::enumerateFreeObjects):
+            - added ASSERT.
+        (WTF::TCMalloc_Central_FreeList::Init):
+            - added ASSERT.
+        (WTF::TCMalloc_Central_FreeList::ReleaseToSpans):
+            - added ASSERT.
+        (WTF::TCMalloc_Central_FreeList::EvictRandomSizeClass):
+            - added ASSERT.
+        (WTF::TCMalloc_Central_FreeList::MakeCacheSpace):
+            - added ASSERT.
+        (WTF::TCMalloc_Central_FreeList::InsertRange):
+            - added ASSERT.
+        (WTF::TCMalloc_Central_FreeList::Populate):
+            - added ASSERT.
+        (WTF::TCMalloc_ThreadCache::Init):
+            - added ASSERT.
+        (WTF::TCMalloc_ThreadCache::Cleanup):
+            - added ASSERT.
+        (WTF::TCMalloc_ThreadCache::Scavenge):
+            - added ASSERT.
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+            - added ASSERT.
+
 2014-02-24  Alex Christensen  <achristensen@webkit.org>
 
         Disabled WebGL on WinCairo.

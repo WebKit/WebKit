@@ -91,6 +91,7 @@
 #include <wtf/StdLibExtras.h>
 
 #if OS(DARWIN)
+#include <mach/mach_init.h>
 #include <malloc/malloc.h>
 #endif
 
@@ -629,28 +630,21 @@ static ALWAYS_INLINE uint32_t freedObjectEndPoison()
 // Configuration
 //-------------------------------------------------------------------
 
+// Type that can hold the length of a run of pages
+typedef uintptr_t Length;
+
 // Not all possible combinations of the following parameters make
 // sense.  In particular, if kMaxSize increases, you may have to
 // increase kNumClasses as well.
-#if OS(DARWIN)
-#    define K_PAGE_SHIFT PAGE_SHIFT
-#    if (K_PAGE_SHIFT == 12)
-#        define K_NUM_CLASSES 68
-#    elif (K_PAGE_SHIFT == 14)
-#        define K_NUM_CLASSES 77
-#    else
-#        error "Unsupported PAGE_SHIFT amount"
-#    endif
-#else
-#    define K_PAGE_SHIFT 12
-#    define K_NUM_CLASSES 68
-#endif
-static const size_t kPageShift  = K_PAGE_SHIFT;
-static const size_t kPageSize   = 1 << kPageShift;
+#define K_PAGE_SHIFT_MAX 14
+#define K_NUM_CLASSES_MAX 77
+static size_t kPageShift  = 0;
+static size_t kNumClasses = 0;
+static size_t kPageSize   = 0;
+static Length kMaxValidPages = 0;
 static const size_t kMaxSize    = 32u * 1024;
 static const size_t kAlignShift = 3;
 static const size_t kAlignment  = 1 << kAlignShift;
-static const size_t kNumClasses = K_NUM_CLASSES;
 
 // Allocates a big block of memory for the pagemap once we reach more than
 // 128MB
@@ -662,14 +656,14 @@ static const size_t kPageMapBigAllocationThreshold = 128 << 20;
 // should keep this value big because various incarnations of Linux
 // have small limits on the number of mmap() regions per
 // address-space.
-static const size_t kMinSystemAlloc = 1 << (20 - kPageShift);
+static const size_t kMinSystemAlloc = 1 << (20 - K_PAGE_SHIFT_MAX);
 
 // Number of objects to move between a per-thread list and a central
 // list in one shot.  We want this to be not too small so we can
 // amortize the lock overhead for accessing the central list.  Making
 // it too big may temporarily cause unnecessary memory wastage in the
 // per-thread free list until the scavenger cleans up the list.
-static int num_objects_to_move[kNumClasses];
+static int num_objects_to_move[K_NUM_CLASSES_MAX];
 
 // Maximum length we allow a per-thread free-list to have before we
 // move objects from it into the corresponding central free-list.  We
@@ -765,10 +759,10 @@ static inline int ClassIndex(size_t s) {
 }
 
 // Mapping from size class to max size storable in that class
-static size_t class_to_size[kNumClasses];
+static size_t class_to_size[K_NUM_CLASSES_MAX];
 
 // Mapping from size class to number of pages to allocate at a time
-static size_t class_to_pages[kNumClasses];
+static size_t class_to_pages[K_NUM_CLASSES_MAX];
 
 // Hardened singly linked list.  We make this a class to allow compiler to
 // statically prevent mismatching hardened and non-hardened list
@@ -813,7 +807,8 @@ struct TCEntry {
 // number of TCEntries across size classes is fixed.  Currently each size
 // class is initially given one TCEntry which also means that the maximum any
 // one class can have is kNumClasses.
-static const int kNumTransferEntries = kNumClasses;
+#define K_NUM_TRANSFER_ENTRIES_MAX static_cast<int>(K_NUM_CLASSES_MAX)
+#define kNumTransferEntries static_cast<int>(kNumClasses)
 
 // Note: the following only works for "n"s that fit in 32-bits, but
 // that is fine since we only use it for small sizes.
@@ -917,6 +912,25 @@ static int NumMoveSize(size_t size) {
 
 // Initialize the mapping arrays
 static void InitSizeClasses() {
+#if OS(DARWIN)
+  kPageShift = vm_page_shift;
+  switch (kPageShift) {
+  case 12:
+    kNumClasses = 68;
+    break;
+  case 14:
+    kNumClasses = 77;
+    break;
+  default:
+    CRASH();
+  };
+#else
+  kPageShift = 12;
+  kNumClasses = 68;
+#endif
+  kPageSize = 1 << kPageShift;
+  kMaxValidPages = (~static_cast<Length>(0)) >> kPageShift;
+
   // Do some sanity checking on add_amount[]/shift_amount[]/class_array[]
   if (ClassIndex(0) < 0) {
     MESSAGE("Invalid class index %d for size 0\n", ClassIndex(0));
@@ -1144,14 +1158,10 @@ class PageHeapAllocator {
 // Type that can hold a page number
 typedef uintptr_t PageID;
 
-// Type that can hold the length of a run of pages
-typedef uintptr_t Length;
-
-static const Length kMaxValidPages = (~static_cast<Length>(0)) >> kPageShift;
-
 // Convert byte size into pages.  This won't overflow, but may return
 // an unreasonably large value if bytes is huge enough.
 static inline Length pages(size_t bytes) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   return (bytes >> kPageShift) +
       ((bytes & (kPageSize - 1)) > 0 ? 1 : 0);
 }
@@ -1159,6 +1169,7 @@ static inline Length pages(size_t bytes) {
 // Convert a user size into the number of bytes that will actually be
 // allocated
 static size_t AllocationSize(size_t bytes) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   if (bytes > kMaxSize) {
     // Large object: we allocate an integral number of pages
     ASSERT(bytes <= (kMaxValidPages << kPageShift));
@@ -1431,7 +1442,7 @@ class TCMalloc_Central_FreeList {
   // Here we reserve space for TCEntry cache slots.  Since one size class can
   // end up getting all the TCEntries quota in the system we just preallocate
   // sufficient number of entries here.
-  TCEntry tc_slots_[kNumTransferEntries];
+  TCEntry tc_slots_[K_NUM_TRANSFER_ENTRIES_MAX];
 
   // Number of currently used cached entries in tc_slots_.  This variable is
   // updated under a lock but can be read without one.
@@ -1653,7 +1664,7 @@ static Span sampled_objects;
 // Selector class -- general selector uses 3-level map
 template <int BITS> class MapSelector {
  public:
-  typedef TCMalloc_PageMap3<BITS-kPageShift> Type;
+  typedef TCMalloc_PageMap3<BITS-K_PAGE_SHIFT_MAX> Type;
   typedef PackedCache<BITS, uint64_t> CacheType;
 };
 
@@ -1671,7 +1682,7 @@ static const size_t kBitsUnusedOn64Bit = 0;
 // A three-level map for 64-bit machines
 template <> class MapSelector<64> {
  public:
-  typedef TCMalloc_PageMap3<64 - kPageShift - kBitsUnusedOn64Bit> Type;
+  typedef TCMalloc_PageMap3<64 - K_PAGE_SHIFT_MAX - kBitsUnusedOn64Bit> Type;
   typedef PackedCache<64, uint64_t> CacheType;
 };
 #endif
@@ -1679,8 +1690,8 @@ template <> class MapSelector<64> {
 // A two-level map for 32-bit machines
 template <> class MapSelector<32> {
  public:
-  typedef TCMalloc_PageMap2<32 - kPageShift> Type;
-  typedef PackedCache<32 - kPageShift, uint16_t> CacheType;
+  typedef TCMalloc_PageMap2<32 - K_PAGE_SHIFT_MAX> Type;
+  typedef PackedCache<32 - K_PAGE_SHIFT_MAX, uint16_t> CacheType;
 };
 
 // -------------------------------------------------------------------------
@@ -1777,6 +1788,7 @@ class TCMalloc_PageHeap {
 
   // Return number of free bytes in heap
   uint64_t FreeBytes() const {
+    ASSERT(kPageShift && kNumClasses && kPageSize);
     return (static_cast<uint64_t>(free_pages_) << kPageShift);
   }
 
@@ -1912,6 +1924,8 @@ class TCMalloc_PageHeap {
 
 void TCMalloc_PageHeap::init()
 {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
+
   pagemap_.init(MetaDataAlloc);
   pagemap_cache_ = PageMapCache(0);
   free_pages_ = 0;
@@ -1926,7 +1940,7 @@ void TCMalloc_PageHeap::init()
   scavenge_counter_ = 0;
   // Start scavenging at kMaxPages list
   scavenge_index_ = kMaxPages-1;
-  COMPILE_ASSERT(kNumClasses <= (1 << PageMapCache::kValuebits), valuebits);
+  ASSERT(kNumClasses <= (1 << PageMapCache::kValuebits));
   DLL_Init(&large_.normal, entropy_);
   DLL_Init(&large_.returned, entropy_);
   for (size_t i = 0; i < kMaxPages; i++) {
@@ -2067,6 +2081,7 @@ ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
 
 void TCMalloc_PageHeap::scavenge()
 {
+    ASSERT(kPageShift && kNumClasses && kPageSize);
     size_t pagesToRelease = min_free_committed_pages_since_last_scavenge_ * kScavengePercentage;
     size_t targetPageCount = std::max<size_t>(kMinimumFreeCommittedPageCount, free_committed_pages_ - pagesToRelease);
 
@@ -2228,6 +2243,7 @@ Span* TCMalloc_PageHeap::Split(Span* span, Length n) {
 }
 
 inline void TCMalloc_PageHeap::Carve(Span* span, Length n, bool released) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   ASSERT(n > 0);
   DLL_Remove(span, entropy_);
   span->free = 0;
@@ -2264,6 +2280,7 @@ inline void TCMalloc_PageHeap::Carve(Span* span, Length n, bool released) {
 
 static ALWAYS_INLINE void mergeDecommittedStates(Span* destination, Span* other)
 {
+    ASSERT(kPageShift && kNumClasses && kPageSize);
     if (destination->decommitted && !other->decommitted) {
         TCMalloc_SystemRelease(reinterpret_cast<void*>(other->start << kPageShift),
                                static_cast<size_t>(other->length << kPageShift));
@@ -2367,6 +2384,7 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
 
 #if !USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
 void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   // Fast path; not yet time to release memory
   scavenge_counter_ -= n;
   if (scavenge_counter_ >= 0) return;  // Not yet time to scavenge
@@ -2428,6 +2446,7 @@ void TCMalloc_PageHeap::RegisterSizeClass(Span* span, size_t sc) {
     
 #ifdef WTF_CHANGES
 size_t TCMalloc_PageHeap::ReturnedBytes() const {
+    ASSERT(kPageShift && kNumClasses && kPageSize);
     size_t result = 0;
     for (unsigned s = 0; s < kMaxPages; s++) {
         const int r_length = DLL_Length(&free_[s].returned, entropy_);
@@ -2443,6 +2462,7 @@ size_t TCMalloc_PageHeap::ReturnedBytes() const {
 
 #ifndef WTF_CHANGES
 static double PagesToMB(uint64_t pages) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   return (pages << kPageShift) / 1048576.0;
 }
 
@@ -2509,6 +2529,7 @@ void TCMalloc_PageHeap::Dump(TCMalloc_Printer* out) {
 #endif
 
 bool TCMalloc_PageHeap::GrowHeap(Length n) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   ASSERT(kMaxPages >= kMinSystemAlloc);
   if (n > kMaxValidPages) return false;
   Length ask = (n>kMinSystemAlloc) ? n : static_cast<Length>(kMinSystemAlloc);
@@ -2605,6 +2626,7 @@ size_t TCMalloc_PageHeap::CheckList(Span* list, Length min_pages, Length max_pag
 #endif
 
 void TCMalloc_PageHeap::ReleaseFreeList(Span* list, Span* returned) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   // Walk backwards through list so that when we push these
   // spans on the "returned" list, we preserve the order.
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
@@ -2738,7 +2760,7 @@ class TCMalloc_ThreadCache {
   size_t        size_;                  // Combined size of data
   ThreadIdentifier tid_;                // Which thread owns it
   bool          in_setspecific_;           // Called pthread_setspecific?
-  FreeList      list_[kNumClasses];     // Array indexed by size-class
+  FreeList      list_[K_NUM_CLASSES_MAX];     // Array indexed by size-class
 
   // We sample allocations, biased by the size of the allocation
   uint32_t      rnd_;                   // Cheap random number generator
@@ -2794,6 +2816,7 @@ class TCMalloc_ThreadCache {
   template <class Finder, class Reader>
   void enumerateFreeObjects(Finder& finder, const Reader& reader)
   {
+      ASSERT(kPageShift && kNumClasses && kPageSize);
       for (unsigned sizeClass = 0; sizeClass < kNumClasses; sizeClass++)
           list_[sizeClass].enumerateFreeObjects(finder, reader);
   }
@@ -2806,7 +2829,7 @@ class TCMalloc_ThreadCache {
 
 // Central cache -- a collection of free-lists, one per size-class.
 // We have a separate lock per free-list to reduce contention.
-static TCMalloc_Central_FreeListPadded central_cache[kNumClasses];
+static TCMalloc_Central_FreeListPadded central_cache[K_NUM_CLASSES_MAX];
 
 // Page-level allocator
 static AllocAlignmentInteger pageheap_memory[(sizeof(TCMalloc_PageHeap) + sizeof(AllocAlignmentInteger) - 1) / sizeof(AllocAlignmentInteger)];
@@ -2962,6 +2985,7 @@ static volatile size_t per_thread_cache_size = kMaxThreadCacheSize;
 //-------------------------------------------------------------------
 
 void TCMalloc_Central_FreeList::Init(size_t cl, uintptr_t entropy) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   lock_.Init();
   size_class_ = cl;
   entropy_ = entropy;
@@ -2986,6 +3010,7 @@ void TCMalloc_Central_FreeList::ReleaseListToSpans(HardenedSLL start) {
 }
 
 ALWAYS_INLINE void TCMalloc_Central_FreeList::ReleaseToSpans(HardenedSLL object) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   const PageID p = reinterpret_cast<uintptr_t>(object.value()) >> kPageShift;
   Span* span = pageheap->GetDescriptor(p);
   ASSERT(span != NULL);
@@ -3032,6 +3057,7 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::ReleaseToSpans(HardenedSLL object)
 
 ALWAYS_INLINE bool TCMalloc_Central_FreeList::EvictRandomSizeClass(
     size_t locked_size_class, bool force) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   static int race_counter = 0;
   int t = race_counter++;  // Updated without a lock, but who cares.
   if (t >= static_cast<int>(kNumClasses)) {
@@ -3047,6 +3073,7 @@ ALWAYS_INLINE bool TCMalloc_Central_FreeList::EvictRandomSizeClass(
 }
 
 bool TCMalloc_Central_FreeList::MakeCacheSpace() {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   // Is there room in the cache?
   if (used_slots_ < cache_size_) return true;
   // Check if we can expand this cache?
@@ -3101,6 +3128,7 @@ bool TCMalloc_Central_FreeList::ShrinkCache(int locked_size_class, bool force) {
 }
 
 void TCMalloc_Central_FreeList::InsertRange(HardenedSLL start, HardenedSLL end, int N) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   SpinLockHolder h(&lock_);
   if (N == num_objects_to_move[size_class_] &&
     MakeCacheSpace()) {
@@ -3183,6 +3211,7 @@ HardenedSLL TCMalloc_Central_FreeList::FetchFromSpans() {
 
 // Fetch memory from the system and add to the central cache freelist.
 ALWAYS_INLINE void TCMalloc_Central_FreeList::Populate() {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   // Release central list lock while operating on pageheap
   lock_.Unlock();
   const size_t npages = class_to_pages[size_class_];
@@ -3269,6 +3298,7 @@ inline bool TCMalloc_ThreadCache::SampleAllocation(size_t k) {
 }
 
 void TCMalloc_ThreadCache::Init(ThreadIdentifier tid, uintptr_t entropy) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   size_ = 0;
   next_ = NULL;
   prev_ = NULL;
@@ -3291,6 +3321,7 @@ void TCMalloc_ThreadCache::Init(ThreadIdentifier tid, uintptr_t entropy) {
 }
 
 void TCMalloc_ThreadCache::Cleanup() {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   // Put unused memory back into central cache
   for (size_t cl = 0; cl < kNumClasses; ++cl) {
     if (list_[cl].length() > 0) {
@@ -3365,6 +3396,7 @@ inline void TCMalloc_ThreadCache::ReleaseToCentralCache(size_t cl, int N) {
 
 // Release idle memory to the central cache
 inline void TCMalloc_ThreadCache::Scavenge() {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   // If the low-water mark for the free list is L, it means we would
   // not have had to allocate anything from the central cache even if
   // we had reduced the free list size by L.  We aim to get closer to
@@ -3657,6 +3689,7 @@ void TCMalloc_ThreadCache::RecomputeThreadCacheSize() {
 }
 
 void TCMalloc_ThreadCache::Print() const {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   for (size_t cl = 0; cl < kNumClasses; ++cl) {
     MESSAGE("      %5" PRIuS " : %4d len; %4d lo\n",
             ByteSizeForClass(cl),
@@ -3678,6 +3711,7 @@ struct TCMallocStats {
 #ifndef WTF_CHANGES
 // Get stats into "r".  Also get per-size-class counts if class_count != NULL
 static void ExtractStats(TCMallocStats* r, uint64_t* class_count) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   r->central_bytes = 0;
   r->transfer_bytes = 0;
   for (int cl = 0; cl < kNumClasses; ++cl) {
@@ -3715,6 +3749,7 @@ static void ExtractStats(TCMallocStats* r, uint64_t* class_count) {
 #ifndef WTF_CHANGES
 // WRITE stats to "out"
 static void DumpStats(TCMalloc_Printer* out, int level) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   TCMallocStats stats;
   uint64_t class_count[kNumClasses];
   ExtractStats(&stats, (level >= 2 ? class_count : NULL));
@@ -4003,6 +4038,7 @@ static Span* DoSampledAllocation(size_t size) {
 
 #if !ASSERT_DISABLED
 static inline bool CheckCachedSizeClass(void *ptr) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   PageID p = reinterpret_cast<uintptr_t>(ptr) >> kPageShift;
   size_t cached_value = pageheap->GetSizeClassIfCached(p);
   return cached_value == 0 ||
@@ -4017,6 +4053,7 @@ static inline void* CheckedMallocResult(void *result)
 }
 
 static inline void* SpanToMallocResult(Span *span) {
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   ASSERT_SPAN_COMMITTED(span);
   pageheap->CacheSizeClass(span->start, 0);
   void* result = reinterpret_cast<void*>(span->start << kPageShift);
@@ -4070,6 +4107,7 @@ static ALWAYS_INLINE void* do_malloc(size_t size) {
 static ALWAYS_INLINE void do_free(void* ptr) {
   if (ptr == NULL) return;
   ASSERT(pageheap != NULL);  // Should not call free() before malloc()
+  ASSERT(kPageShift && kNumClasses && kPageSize);
   const PageID p = reinterpret_cast<uintptr_t>(ptr) >> kPageShift;
   Span* span = pageheap->GetDescriptor(p);
   RELEASE_ASSERT(span->isValid());
@@ -4121,6 +4159,7 @@ static void* do_memalign(size_t align, size_t size) {
   ASSERT((align & (align - 1)) == 0);
   ASSERT(align > 0);
   if (pageheap == NULL) TCMalloc_ThreadCache::InitModule();
+  ASSERT(kPageShift && kNumClasses && kPageSize);
 
   // Allocate at least one byte to avoid boundary conditions below
   if (size == 0) size = 1;
@@ -4441,6 +4480,9 @@ void* realloc(void* old_ptr, size_t new_size) {
     new_size += Internal::ValidationBufferSize;
 #endif
 
+  ASSERT(pageheap != NULL);  // Should not call realloc() before malloc()
+  ASSERT(kPageShift && kNumClasses && kPageSize);
+
   // Get the size of the old entry
   const PageID p = reinterpret_cast<uintptr_t>(old_ptr) >> kPageShift;
   size_t cl = pageheap->GetSizeClassIfCached(p);
@@ -4659,6 +4701,7 @@ void releaseFastMallocFreeMemory()
 
 FastMallocStatistics fastMallocStatistics()
 {
+    ASSERT(kPageShift && kNumClasses && kPageSize);
     FastMallocStatistics statistics;
 
     SpinLockHolder lockHolder(&pageheap_lock);
@@ -4680,6 +4723,9 @@ FastMallocStatistics fastMallocStatistics()
 
 size_t fastMallocSize(const void* ptr)
 {
+  if (pageheap == NULL) TCMalloc_ThreadCache::InitModule();
+  ASSERT(kPageShift && kNumClasses && kPageSize);
+
 #if ENABLE(WTF_MALLOC_VALIDATION)
     return Internal::fastMallocValidationHeader(const_cast<void*>(ptr))->m_size;
 #else
@@ -4791,6 +4837,7 @@ public:
 
     int visit(void* ptr) const
     {
+        ASSERT(kPageShift && kNumClasses && kPageSize);
         if (!ptr)
             return 1;
 
@@ -4838,6 +4885,8 @@ public:
 
     void recordPendingRegions()
     {
+        ASSERT(kPageShift && kNumClasses && kPageSize);
+
         bool recordRegionsContainingPointers = m_typeMask & MALLOC_PTR_REGION_RANGE_TYPE;
         bool recordAllocations = m_typeMask & MALLOC_PTR_IN_USE_RANGE_TYPE;
 
@@ -4886,6 +4935,7 @@ public:
 
     int visit(void* ptr)
     {
+        ASSERT(kPageShift && kNumClasses && kPageSize);
         if (!ptr)
             return 1;
 
