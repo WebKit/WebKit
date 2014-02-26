@@ -1275,8 +1275,10 @@ private:
 #endif
 
     RefPtr<WebPopupMenuProxy> m_activePopupMenu;
+#if ENABLE(CONTEXT_MENUS)
     RefPtr<WebContextMenuProxy> m_activeContextMenu;
     ContextMenuContextData m_activeContextMenuContextData;
+#endif
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;
     GeolocationPermissionRequestManagerProxy m_geolocationPermissionRequestManager;
     NotificationPermissionRequestManagerProxy m_notificationPermissionRequestManager;

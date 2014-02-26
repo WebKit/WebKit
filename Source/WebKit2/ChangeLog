@@ -1,3 +1,9 @@
+2014-02-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build by wrapping some context menu stuff in #if ENABLE(CONTEXT_MENUS)
+
+        * UIProcess/WebPageProxy.h:
+
 2014-02-26  Martin Hock  <mhock@apple.com>
 
         Create SessionID value-style class for session IDs.
