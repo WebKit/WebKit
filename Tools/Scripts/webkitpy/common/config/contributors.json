@@ -1772,6 +1772,15 @@
             "michelangelo"
          ]
       },
+      "Mihai Maerean" : {
+         "emails" : [
+            "mmaerean@adobe.com",
+            "maerean@gmail.com"
+         ],
+         "nicks" : [
+            "mmaerean"
+         ]
+      },
       "Mike Belshe" : {
          "emails" : [
             "mbelshe@chromium.org",
@@ -3012,14 +3021,6 @@
          ],
          "nicks" : [
             "miChou"
-         ]
-      },
-      "Mihai Maerean" : {
-         "emails" : [
-            "mmaerean@adobe.com"
-         ],
-         "nicks" : [
-            "mmaerean"
          ]
       },
       "Min Qin" : {
