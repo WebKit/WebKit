@@ -1,3 +1,33 @@
+2014-02-26  Brady Eidson  <beidson@apple.com>
+
+        Pipe experimental image controls menu up to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=129339
+
+        Reviewed by Simon Fraser.
+
+        Add a WebKit object to represent the data from a ContextMenuContext object that can be shared via IPC:
+        * Shared/ContextMenuContextData.cpp: Added.
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::encode):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h: Added.
+        (WebKit::ContextMenuContextData::webHitTestResultData):
+        (WebKit::ContextMenuContextData::isImageControl):
+
+        Update the rest of WK2 to use this object instead of WebHitTestResult::Data directly:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu):
+        (WebKit::WebPageProxy::internalShowContextMenu): Also make an ENABLE(IMAGE_CONTROLS) change here.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-26  Enrique Ocaña González  <eocanha@igalia.com>
 
         WebKitFindOptions shouldn't expose WEBKIT_FIND_OPTIONS_SHOW_{OVERLAY,FIND_INDICATOR,HIGHLIGHT}

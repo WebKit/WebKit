@@ -28,7 +28,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "HitTestResult.h"
+#include "ContextMenuContext.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -36,62 +36,67 @@
 
 namespace WebCore {
 
-    class ContextMenu;
-    class ContextMenuClient;
-    class ContextMenuItem;
-    class ContextMenuProvider;
-    class Event;
-    class Page;
+class ContextMenu;
+class ContextMenuClient;
+class ContextMenuItem;
+class ContextMenuProvider;
+class Event;
+class Page;
 
-    class ContextMenuController {
-        WTF_MAKE_NONCOPYABLE(ContextMenuController); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        ContextMenuController(Page&, ContextMenuClient&);
-        ~ContextMenuController();
+class ContextMenuController {
+    WTF_MAKE_NONCOPYABLE(ContextMenuController); WTF_MAKE_FAST_ALLOCATED;
+public:
+    ContextMenuController(Page&, ContextMenuClient&);
+    ~ContextMenuController();
 
-        ContextMenu* contextMenu() const { return m_contextMenu.get(); }
-        void clearContextMenu();
+    ContextMenu* contextMenu() const { return m_contextMenu.get(); }
+    void clearContextMenu();
 
-        void handleContextMenuEvent(Event*);
-        void showContextMenu(Event*, PassRefPtr<ContextMenuProvider>);
+    void handleContextMenuEvent(Event*);
+    void showContextMenu(Event*, PassRefPtr<ContextMenuProvider>);
 
-        void populate();
-        void contextMenuItemSelected(ContextMenuItem*);
-        void addInspectElementItem();
+    void populate();
+    void contextMenuItemSelected(ContextMenuItem*);
+    void addInspectElementItem();
 
-        void checkOrEnableIfNeeded(ContextMenuItem&) const;
+    void checkOrEnableIfNeeded(ContextMenuItem&) const;
 
-        void setHitTestResult(const HitTestResult& result) { m_hitTestResult = result; }
-        const HitTestResult& hitTestResult() { return m_hitTestResult; }
+    void setContextMenuContext(const ContextMenuContext& context) { m_context = context; }
+    const ContextMenuContext& context() const { return m_context; }
+    const HitTestResult& hitTestResult() const { return m_context.hitTestResult(); }
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
-        void showContextMenuAt(Frame*, const IntPoint& clickPoint);
+    void showContextMenuAt(Frame*, const IntPoint& clickPoint);
 #endif
 
-    private:
-        PassOwnPtr<ContextMenu> createContextMenu(Event*);
-        void showContextMenu(Event*);
-        
-        void appendItem(ContextMenuItem&, ContextMenu* parentMenu);
+#if ENABLE(IMAGE_CONTROLS)
+    void showImageControlsMenu(Event*);
+#endif
 
-        void createAndAppendFontSubMenu(ContextMenuItem&);
-        void createAndAppendSpellingAndGrammarSubMenu(ContextMenuItem&);
-        void createAndAppendSpellingSubMenu(ContextMenuItem&);
-        void createAndAppendSpeechSubMenu(ContextMenuItem& );
-        void createAndAppendWritingDirectionSubMenu(ContextMenuItem&);
-        void createAndAppendTextDirectionSubMenu(ContextMenuItem&);
-        void createAndAppendSubstitutionsSubMenu(ContextMenuItem&);
-        void createAndAppendTransformationsSubMenu(ContextMenuItem&);
+private:
+    PassOwnPtr<ContextMenu> createContextMenu(Event*);
+    void showContextMenu(Event*);
+    
+    void appendItem(ContextMenuItem&, ContextMenu* parentMenu);
+
+    void createAndAppendFontSubMenu(ContextMenuItem&);
+    void createAndAppendSpellingAndGrammarSubMenu(ContextMenuItem&);
+    void createAndAppendSpellingSubMenu(ContextMenuItem&);
+    void createAndAppendSpeechSubMenu(ContextMenuItem&);
+    void createAndAppendWritingDirectionSubMenu(ContextMenuItem&);
+    void createAndAppendTextDirectionSubMenu(ContextMenuItem&);
+    void createAndAppendSubstitutionsSubMenu(ContextMenuItem&);
+    void createAndAppendTransformationsSubMenu(ContextMenuItem&);
 #if PLATFORM(GTK)
-        void createAndAppendUnicodeSubMenu(ContextMenuItem&);
+    void createAndAppendUnicodeSubMenu(ContextMenuItem&);
 #endif
 
-        Page& m_page;
-        ContextMenuClient& m_client;
-        OwnPtr<ContextMenu> m_contextMenu;
-        RefPtr<ContextMenuProvider> m_menuProvider;
-        HitTestResult m_hitTestResult;
-    };
+    Page& m_page;
+    ContextMenuClient& m_client;
+    OwnPtr<ContextMenu> m_contextMenu;
+    RefPtr<ContextMenuProvider> m_menuProvider;
+    ContextMenuContext m_context;
+};
 
 }
 

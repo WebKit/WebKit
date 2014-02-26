@@ -1689,6 +1689,7 @@ set(WebCore_SOURCES
     page/Chrome.cpp
     page/Console.cpp
     page/ContentSecurityPolicy.cpp
+    page/ContextMenuContext.cpp
     page/ContextMenuController.cpp
     page/Crypto.cpp
     page/DOMSecurityPolicy.cpp

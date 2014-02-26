@@ -40,6 +40,8 @@ public:
 
 private:
     ImageControlsRootElementMac(Document&);
+
+    virtual void defaultEventHandler(Event*) override;
 };
 
 } // namespace WebCore

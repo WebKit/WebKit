@@ -6967,6 +6967,7 @@
     <ClCompile Include="..\page\animation\CompositeAnimation.cpp" />
     <ClCompile Include="..\page\Console.cpp" />
     <ClCompile Include="..\page\ContentSecurityPolicy.cpp" />
+    <ClCompile Include="..\page\ContextMenuContext.cpp" />
     <ClCompile Include="..\page\ContextMenuController.cpp" />
     <ClCompile Include="..\page\Crypto.cpp" />
     <ClCompile Include="..\page\animation\CSSPropertyAnimation.cpp" />
@@ -18656,6 +18657,7 @@
     <ClInclude Include="..\page\Console.h" />
     <ClInclude Include="..\page\ContentSecurityPolicy.h" />
     <ClInclude Include="..\page\ContextMenuClient.h" />
+    <ClInclude Include="..\page\ContextMenuContext.h" />
     <ClInclude Include="..\page\ContextMenuController.h" />
     <ClInclude Include="..\page\ContextMenuProvider.h" />
     <ClInclude Include="..\page\Crypto.h" />

@@ -360,6 +360,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/CommandLine.h \
 	Source/WebKit2/Shared/ConnectionStack.cpp \
 	Source/WebKit2/Shared/ConnectionStack.h \
+	Source/WebKit2/Shared/ContextMenuContextData.cpp \
+	Source/WebKit2/Shared/ContextMenuContextData.h \
 	Source/WebKit2/Shared/CoreIPCSupport/WebContextMessageKinds.h \
 	Source/WebKit2/Shared/DrawingAreaInfo.h \
 	Source/WebKit2/Shared/Downloads/Download.cpp \

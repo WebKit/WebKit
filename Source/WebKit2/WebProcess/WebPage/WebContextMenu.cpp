@@ -25,6 +25,7 @@
 
 #include "WebContextMenu.h"
 
+#include "ContextMenuContextData.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
@@ -66,11 +67,11 @@ void WebContextMenu::show()
     Vector<WebContextMenuItemData> menuItems;
     RefPtr<API::Object> userData;
     menuItemsWithUserData(menuItems, userData);
-    WebHitTestResult::Data webHitTestResultData(controller.hitTestResult());
+    ContextMenuContextData contextMenuContextData(controller.context());
 
     // Mark the WebPage has having a shown context menu then notify the UIProcess.
     m_page->contextMenuShowing();
-    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(controller.hitTestResult().roundedPointInInnerNodeFrame()), webHitTestResultData, menuItems, InjectedBundleUserMessageEncoder(userData.get())));
+    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(controller.hitTestResult().roundedPointInInnerNodeFrame()), contextMenuContextData, menuItems, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebContextMenu::itemSelected(const WebContextMenuItemData& item)

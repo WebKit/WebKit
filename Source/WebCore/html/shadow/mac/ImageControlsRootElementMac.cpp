@@ -28,6 +28,9 @@
 
 #if ENABLE(IMAGE_CONTROLS)
 
+#include "ContextMenuController.h"
+#include "Event.h"
+#include "Page.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -59,6 +62,18 @@ PassRefPtr<ImageControlsRootElementMac> ImageControlsRootElementMac::maybeCreate
         return nullptr;
 
     return controls.release();
+}
+
+void ImageControlsRootElementMac::defaultEventHandler(Event* event)
+{
+    if (event->type() == eventNames().clickEvent) {
+        if (Page* page = document().page())
+            page->contextMenuController().showImageControlsMenu(event);
+
+        return;
+    }
+    
+    HTMLDivElement::defaultEventHandler(event);
 }
 
 } // namespace WebCore

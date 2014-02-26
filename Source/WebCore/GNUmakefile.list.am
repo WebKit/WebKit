@@ -4046,6 +4046,8 @@ webcore_sources += \
 	Source/WebCore/page/ContentSecurityPolicy.cpp \
 	Source/WebCore/page/ContentSecurityPolicy.h \
 	Source/WebCore/page/ContextMenuClient.h \
+	Source/WebCore/page/ContextMenuContext.cpp \
+	Source/WebCore/page/ContextMenuContext.h \
 	Source/WebCore/page/ContextMenuController.cpp \
 	Source/WebCore/page/ContextMenuController.h \
 	Source/WebCore/page/ContextMenuProvider.h \

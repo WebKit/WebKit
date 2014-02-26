@@ -1,3 +1,42 @@
+2014-02-26  Brady Eidson  <beidson@apple.com>
+
+        Pipe experimental image controls menu up to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=129339
+
+        Reviewed by Simon Fraser.
+
+        Handle events for the image control, starting down the context menu code path if appropriate:
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::ImageControlsRootElementMac::defaultEventHandler):
+        * html/shadow/mac/ImageControlsRootElementMac.h:
+
+        Add a class to hold a HitTestResult and addition info about the current ContextMenu invocation:
+        * page/ContextMenuContext.cpp: Added.
+        (WebCore::ContextMenuContext::ContextMenuContext):
+        * page/ContextMenuContext.h: Added.
+        (WebCore::ContextMenuContext::hitTestResult):
+        (WebCore::ContextMenuContext::isImageControl):
+
+        Update ContextMenuController to work with ContextMenuContext instead of HitTestResult directly:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::showContextMenu):
+        (WebCore::ContextMenuController::createContextMenu):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::addInspectElementItem):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded):
+        (WebCore::ContextMenuController::showImageControlsMenu):
+        * page/ContextMenuController.h:
+        (WebCore::ContextMenuController::contextMenu):
+        (WebCore::ContextMenuController::setContextMenuContext):
+        (WebCore::ContextMenuController::context):
+        (WebCore::ContextMenuController::hitTestResult):
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-02-26  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r162947): Document::topDocument() returns an incorrect reference for cached Documents
