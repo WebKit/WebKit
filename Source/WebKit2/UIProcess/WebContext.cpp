@@ -779,6 +779,8 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPa
         configuration.pageGroup = &m_defaultPageGroup.get();
     if (!configuration.preferences)
         configuration.preferences = &configuration.pageGroup->preferences();
+    if (!configuration.visitedLinkProvider)
+        configuration.visitedLinkProvider = m_visitedLinkProvider.get();
     if (!configuration.session)
         configuration.session = configuration.preferences->privateBrowsingEnabled() ? &API::Session::legacyPrivateSession() : &API::Session::defaultSession();
 

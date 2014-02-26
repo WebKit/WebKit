@@ -84,6 +84,7 @@ struct WebPageCreationParameters {
     SessionState sessionState;
     uint64_t highestUsedBackForwardItemID;
 
+    uint64_t visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel;
     bool canRunModal;
 

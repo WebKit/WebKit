@@ -144,6 +144,7 @@ class PageClient;
 class RemoteLayerTreeTransaction;
 class RemoteScrollingCoordinatorProxy;
 class StringPairVector;
+class VisitedLinkProvider;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContextMenuProxy;
@@ -321,6 +322,7 @@ private:
 struct WebPageConfiguration {
     WebPageGroup* pageGroup = nullptr;
     WebPreferences* preferences = nullptr;
+    VisitedLinkProvider* visitedLinkProvider = nullptr;
     API::Session* session = nullptr;
     WebPageProxy* relatedPage = nullptr;
 };
@@ -1224,6 +1226,7 @@ private:
     Ref<WebProcessProxy> m_process;
     Ref<WebPageGroup> m_pageGroup;
     Ref<WebPreferences> m_preferences;
+    Ref<VisitedLinkProvider> m_visitedLinkProvider;
 
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebFrameProxy> m_focusedFrame;

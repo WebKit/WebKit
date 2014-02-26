@@ -28,7 +28,19 @@
 
 #if WK_API_ENABLED
 
+#import "VisitedLinkProvider.h"
+
 @implementation WKVisitedLinkProvider
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _visitedLinkProvider = WebKit::VisitedLinkProvider::create();
+
+    return self;
+}
 
 @end
 

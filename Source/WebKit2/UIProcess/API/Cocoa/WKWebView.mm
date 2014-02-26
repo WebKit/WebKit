@@ -46,7 +46,7 @@
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKUIDelegate.h"
 #import "WKWebViewConfigurationPrivate.h"
-#import "WKVisitedLinkProvider.h"
+#import "WKVisitedLinkProviderInternal.h"
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebBackForwardList.h"
@@ -134,6 +134,8 @@
     webPageConfiguration.preferences = [_configuration preferences]->_preferences.get();
     if (WKWebView *relatedWebView = [_configuration _relatedWebView])
         webPageConfiguration.relatedPage = relatedWebView->_page.get();
+
+    webPageConfiguration.visitedLinkProvider = [_configuration visitedLinkProvider]->_visitedLinkProvider.get();
 
 #if PLATFORM(IOS)
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);

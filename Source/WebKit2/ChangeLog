@@ -1,3 +1,27 @@
+2014-02-26  Anders Carlsson  <andersca@apple.com>
+
+        Give VisitedLinkProviders an identifier and send them to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=129400
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKVisitedLinkProviderInternal.h:
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::generateIdentifier):
+        (WebKit::VisitedLinkProvider::VisitedLinkProvider):
+        * UIProcess/VisitedLinkProvider.h:
+        (WebKit::VisitedLinkProvider::identifier):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createWebPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPageProxy.h:
+
 2014-02-26  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed CMAKE build fix after r164751.

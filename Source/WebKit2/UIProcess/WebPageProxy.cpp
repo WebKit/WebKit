@@ -259,6 +259,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_process(process)
     , m_pageGroup(*configuration.pageGroup)
     , m_preferences(*configuration.preferences)
+    , m_visitedLinkProvider(*configuration.visitedLinkProvider)
     , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
     , m_geolocationPermissionRequestManager(*this)
@@ -3984,6 +3985,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.userAgent = userAgent();
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
+    parameters.visitedLinkTableID = m_visitedLinkProvider->identifier();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = deviceScaleFactor();

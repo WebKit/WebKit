@@ -27,7 +27,16 @@
 
 #if WK_API_ENABLED
 
-@interface WKVisitedLinkProvider ()
+#import <wtf/RefPtr.h>
+
+namespace WebKit {
+class VisitedLinkProvider;
+}
+
+@interface WKVisitedLinkProvider () {
+@package
+    RefPtr<WebKit::VisitedLinkProvider> _visitedLinkProvider;
+}
 
 @end
 

@@ -37,6 +37,13 @@ namespace WebKit {
 
 static const int VisitedLinkTableMaxLoad = 2;
 
+static uint64_t generateIdentifier()
+{
+    static uint64_t identifier;
+
+    return ++identifier;
+}
+
 PassRefPtr<VisitedLinkProvider> VisitedLinkProvider::create()
 {
     return adoptRef(new VisitedLinkProvider);
@@ -47,7 +54,8 @@ VisitedLinkProvider::~VisitedLinkProvider()
 }
 
 VisitedLinkProvider::VisitedLinkProvider()
-    : m_keyCount(0)
+    : m_identifier(generateIdentifier())
+    , m_keyCount(0)
     , m_tableSize(0)
     , m_pendingVisitedLinksTimer(RunLoop::main(), this, &VisitedLinkProvider::pendingVisitedLinksTimerFired)
 {

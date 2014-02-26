@@ -43,6 +43,8 @@ public:
     static PassRefPtr<VisitedLinkProvider> create();
     ~VisitedLinkProvider();
 
+    uint64_t identifier() const { return m_identifier; }
+
     void addVisitedLink(WebCore::LinkHash);
 
     void processDidFinishLaunching(WebProcessProxy*);
@@ -55,6 +57,8 @@ private:
 
     HashSet<WebProcessProxy*> m_processesWithVisitedLinkState;
     HashSet<WebProcessProxy*> m_processesWithoutVisitedLinkState;
+
+    uint64_t m_identifier;
 
     unsigned m_keyCount;
     unsigned m_tableSize;
