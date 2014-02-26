@@ -448,7 +448,7 @@ private:
 #if ENABLE(NETSCAPE_PLUGIN_API)
     PluginInfoStore m_pluginInfoStore;
 #endif
-    VisitedLinkProvider m_visitedLinkProvider;
+    RefPtr<VisitedLinkProvider> m_visitedLinkProvider;
     bool m_visitedLinksPopulated;
 
     PlugInAutoStartProvider m_plugInAutoStartProvider;

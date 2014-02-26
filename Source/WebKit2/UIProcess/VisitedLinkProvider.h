@@ -30,6 +30,7 @@
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -37,10 +38,10 @@ namespace WebKit {
 class WebContext;
 class WebProcessProxy;
     
-class VisitedLinkProvider {
-    WTF_MAKE_NONCOPYABLE(VisitedLinkProvider);
+class VisitedLinkProvider : public RefCounted<VisitedLinkProvider> {
 public:
-    VisitedLinkProvider();
+    static PassRefPtr<VisitedLinkProvider> create();
+    ~VisitedLinkProvider();
 
     void addVisitedLink(WebCore::LinkHash);
 
@@ -48,6 +49,8 @@ public:
     void processDidClose(WebProcessProxy*);
 
 private:
+    VisitedLinkProvider();
+
     void pendingVisitedLinksTimerFired();
 
     HashSet<WebProcessProxy*> m_processesWithVisitedLinkState;

@@ -37,6 +37,15 @@ namespace WebKit {
 
 static const int VisitedLinkTableMaxLoad = 2;
 
+PassRefPtr<VisitedLinkProvider> VisitedLinkProvider::create()
+{
+    return adoptRef(new VisitedLinkProvider);
+}
+
+VisitedLinkProvider::~VisitedLinkProvider()
+{
+}
+
 VisitedLinkProvider::VisitedLinkProvider()
     : m_keyCount(0)
     , m_tableSize(0)

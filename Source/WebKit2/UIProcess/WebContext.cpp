@@ -137,6 +137,7 @@ WebContext::WebContext(const String& injectedBundlePath)
     , m_defaultPageGroup(WebPageGroup::createNonNull())
     , m_injectedBundlePath(injectedBundlePath)
     , m_historyClient(std::make_unique<API::HistoryClient>())
+    , m_visitedLinkProvider(VisitedLinkProvider::create())
     , m_visitedLinksPopulated(false)
     , m_plugInAutoStartProvider(this)
     , m_alwaysUsesComplexTextCodePath(false)
@@ -699,7 +700,7 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
 
-    m_visitedLinkProvider.processDidFinishLaunching(process);
+    m_visitedLinkProvider->processDidFinishLaunching(process);
     if (!m_visitedLinksPopulated) {
         populateVisitedLinks();
         m_visitedLinksPopulated = true;
@@ -723,7 +724,7 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
 
-    m_visitedLinkProvider.processDidClose(process);
+    m_visitedLinkProvider->processDidClose(process);
 
     if (m_haveInitialEmptyProcess && process == m_processes.last())
         m_haveInitialEmptyProcess = false;
@@ -983,7 +984,7 @@ void WebContext::addVisitedLink(const String& visitedURL)
 
 void WebContext::addVisitedLinkHash(LinkHash linkHash)
 {
-    m_visitedLinkProvider.addVisitedLink(linkHash);
+    m_visitedLinkProvider->addVisitedLink(linkHash);
 }
 
 DownloadProxy* WebContext::createDownloadProxy()

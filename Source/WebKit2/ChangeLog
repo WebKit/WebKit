@@ -1,5 +1,23 @@
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
+        VisitedLinkProvider should be refcounted
+        https://bugs.webkit.org/show_bug.cgi?id=129351
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::create):
+        (WebKit::VisitedLinkProvider::~VisitedLinkProvider):
+        * UIProcess/VisitedLinkProvider.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::processDidFinishLaunching):
+        (WebKit::WebContext::disconnectProcess):
+        (WebKit::WebContext::addVisitedLinkHash):
+        * UIProcess/WebContext.h:
+
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
         Make WebContext handle populating visited links
         https://bugs.webkit.org/show_bug.cgi?id=129348
 
