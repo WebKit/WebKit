@@ -1,5 +1,20 @@
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
+        DrawingAreaProxy is using WebCore's Timer
+        https://bugs.webkit.org/show_bug.cgi?id=129347
+        <rdar://problem/16078133>
+
+        Reviewed by Tim Horton.
+
+        Use a RunLoop::Timer instead.
+
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::exposedRectChangedTimerFired):
+        * UIProcess/DrawingAreaProxy.h:
+
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
         Add WKVisitedLinkProvider
         https://bugs.webkit.org/show_bug.cgi?id=129343
 

@@ -40,7 +40,7 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy* webPagePr
     , m_webPageProxy(webPageProxy)
     , m_size(webPageProxy->viewSize())
 #if PLATFORM(COCOA)
-    , m_exposedRectChangedTimer(this, &DrawingAreaProxy::exposedRectChangedTimerFired)
+    , m_exposedRectChangedTimer(RunLoop::main(), this, &DrawingAreaProxy::exposedRectChangedTimerFired)
 #endif
 {
     m_webPageProxy->process().addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), webPageProxy->pageID(), *this);
@@ -74,7 +74,7 @@ void DrawingAreaProxy::setExposedRect(const FloatRect& exposedRect)
         m_exposedRectChangedTimer.startOneShot(0);
 }
 
-void DrawingAreaProxy::exposedRectChangedTimerFired(Timer<DrawingAreaProxy>*)
+void DrawingAreaProxy::exposedRectChangedTimerFired()
 {
     if (!m_webPageProxy->isValid())
         return;

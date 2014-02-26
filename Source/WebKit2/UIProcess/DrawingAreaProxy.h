@@ -32,10 +32,10 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/Timer.h>
 #include <chrono>
 #include <stdint.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
@@ -76,7 +76,7 @@ public:
 #if PLATFORM(COCOA)
     virtual void setExposedRect(const WebCore::FloatRect&);
     WebCore::FloatRect exposedRect() const { return m_exposedRect; }
-    void exposedRectChangedTimerFired(WebCore::Timer<DrawingAreaProxy>*);
+    void exposedRectChangedTimerFired();
     
     void setCustomFixedPositionRect(const WebCore::FloatRect&);
 #endif
@@ -111,7 +111,7 @@ private:
     virtual void didUpdateGeometry() { }
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) { }
 
-    WebCore::Timer<DrawingAreaProxy> m_exposedRectChangedTimer;
+    RunLoop::Timer<DrawingAreaProxy> m_exposedRectChangedTimer;
     WebCore::FloatRect m_exposedRect;
     WebCore::FloatRect m_lastSentExposedRect;
 #endif
