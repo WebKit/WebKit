@@ -326,6 +326,10 @@ using namespace HTMLNames;
 #define NSAccessibilityMisspelledWordSearchKey @"AXMisspelledWordSearchKey"
 #endif
 
+#ifndef NSAccessibilityOutlineSearchKey
+#define NSAccessibilityOutlineSearchKey @"AXOutlineSearchKey"
+#endif
+
 #ifndef NSAccessibilityPlainTextSearchKey
 #define NSAccessibilityPlainTextSearchKey @"AXPlainTextSearchKey"
 #endif
@@ -553,6 +557,7 @@ static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
         { NSAccessibilityListSearchKey, ListSearchKey },
         { NSAccessibilityLiveRegionSearchKey, LiveRegionSearchKey },
         { NSAccessibilityMisspelledWordSearchKey, MisspelledWordSearchKey },
+        { NSAccessibilityOutlineSearchKey, OutlineSearchKey },
         { NSAccessibilityPlainTextSearchKey, PlainTextSearchKey },
         { NSAccessibilityRadioGroupSearchKey, RadioGroupSearchKey },
         { NSAccessibilitySameTypeSearchKey, SameTypeSearchKey },

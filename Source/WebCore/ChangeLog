@@ -1,3 +1,20 @@
+2014-02-25  Samuel White  <samuel_white@apple.com>
+
+        Add accessibility search predicate support for AXOutlines
+        https://bugs.webkit.org/show_bug.cgi?id=123748
+
+        Reviewed by Chris Fleizach.
+
+        Added new AXOutlineSearchKey to support finding elements with aria role=tree.
+
+        No new tests, updated existing search-predicate.html test to cover AXOutlineSearchKey.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilitySearchKeyMap):
+
 2014-02-25  Mark Lam  <mark.lam@apple.com>
 
         Need to initialize VM stack data even when the VM is on an exclusive thread.

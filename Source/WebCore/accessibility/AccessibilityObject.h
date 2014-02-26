@@ -316,6 +316,7 @@ enum AccessibilitySearchKey {
     ListSearchKey,
     LiveRegionSearchKey,
     MisspelledWordSearchKey,
+    OutlineSearchKey,
     PlainTextSearchKey,
     RadioGroupSearchKey,
     SameTypeSearchKey,

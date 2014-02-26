@@ -1,3 +1,15 @@
+2014-02-25  Samuel White  <samuel_white@apple.com>
+
+        Add accessibility search predicate support for AXOutlines
+        https://bugs.webkit.org/show_bug.cgi?id=123748
+
+        Reviewed by Chris Fleizach.
+
+        Updated test to validate support for AXOutlineSearchKey (elements with aria role=tree).
+
+        * platform/mac/accessibility/search-predicate-expected.txt:
+        * platform/mac/accessibility/search-predicate.html:
+
 2014-02-25  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
 
         display:table with padding and/or borders in border-box calculates height incorrectly

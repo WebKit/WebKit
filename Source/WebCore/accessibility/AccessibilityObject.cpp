@@ -203,6 +203,9 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex(AccessibilityO
     case MisspelledWordSearchKey:
         return axObject->hasMisspelling();
         
+    case OutlineSearchKey:
+        return axObject->isTree();
+        
     case PlainTextSearchKey:
         return axObject->hasPlainText();
         

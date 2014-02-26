@@ -33,6 +33,7 @@ first table heading level 1
 first table body level 1
 second table heading level 1
 second table body level 1
+tree item
 isVisible test start
 
 test button 1
@@ -95,6 +96,8 @@ PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
 PASS resultElement.role is 'AXRole: AXList'
 PASS resultElement.role is 'AXRole: AXGroup'
 PASS resultElement.stringAttributeValue('AXARIALive') is 'polite'
+PASS resultElement.role is 'AXRole: AXOutline'
+PASS resultElement.childAtIndex(0).childAtIndex(0).stringValue is 'AXValue: tree item'
 PASS resultElement.role is 'AXRole: AXStaticText'
 PASS resultElement.stringValue is 'AXValue: first blockquote level 1'
 PASS resultElement.role is 'AXRole: AXRadioGroup'
