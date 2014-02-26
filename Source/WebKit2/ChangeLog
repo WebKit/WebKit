@@ -1,3 +1,16 @@
+2014-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WebProcessProxy::updateProcessState() is causing duplicate symbol linker errors
+        https://bugs.webkit.org/show_bug.cgi?id=129390
+
+        Reviewed by Tim Horton.
+
+        Caused by r164737. WebProcessProxy::updateProcessState() is defined in a header, outside of
+        a class, but isn't inlined.
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::updateProcessState):
+
 2014-02-26  Brian Burg  <bburg@apple.com>
 
         Web Replay: route through UserInputBridge when delivering user inputs to WebCore

@@ -216,7 +216,7 @@ private:
 };
 
 #if !PLATFORM(IOS)
-void WebProcessProxy::updateProcessState() { }
+inline void WebProcessProxy::updateProcessState() { }
 #endif
 
 } // namespace WebKit
