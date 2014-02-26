@@ -1,5 +1,24 @@
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
+        Add WKVisitedLinkProvider
+        https://bugs.webkit.org/show_bug.cgi?id=129343
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKVisitedLinkProvider.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKWebViewConfiguration.h.
+        * UIProcess/API/Cocoa/WKVisitedLinkProvider.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKWebViewConfiguration.h.
+        * UIProcess/API/Cocoa/WKVisitedLinkProviderInternal.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKWebViewConfiguration.h.
+        * UIProcess/API/Cocoa/WKVisitedLinkProviderPrivate.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKWebViewConfiguration.h.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration visitedLinkProvider]):
+        (-[WKWebViewConfiguration setVisitedLinkProvider:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
         Simplify visited link style invalidation
         https://bugs.webkit.org/show_bug.cgi?id=129340
 

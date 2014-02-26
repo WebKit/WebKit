@@ -28,30 +28,8 @@
 
 #if WK_API_ENABLED
 
-@class WKPreferences;
-@class WKProcessPool;
-@class WKVisitedLinkProvider;
-
-/*! A @link WKWebViewConfiguration @/link is a collection of properties used to initialize a web
-        view.
-    @helps Contains properties used to configure a @link WKWebView @/link.
-*/
 WK_API_CLASS
-@interface WKWebViewConfiguration : NSObject <NSCopying>
-
-/*! @abstract The process class of which the Web Content process for the view must be.
-    @discussion When the @link WKWebView @/link is initialized with the configuration, a new Web
-        content process of the specified class will be created for it, or an existing process of
-        that class will be used.
-
-        When this property is set to nil, a unique process class will be created for each
-        @link WKWebView @/link initialized with the configuration.
-*/
-@property (nonatomic, strong) WKProcessPool *processPool;
-
-@property (nonatomic, strong) WKPreferences *preferences;
-
-@property (nonatomic, strong) WKVisitedLinkProvider *visitedLinkProvider;
+@interface WKVisitedLinkProvider : NSObject
 
 @end
 

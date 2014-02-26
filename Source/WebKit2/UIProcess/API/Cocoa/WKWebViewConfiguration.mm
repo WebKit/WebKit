@@ -34,6 +34,7 @@
 @implementation WKWebViewConfiguration {
     RetainPtr<WKProcessPool> _processPool;
     RetainPtr<WKPreferences> _preferences;
+    RetainPtr<WKVisitedLinkProvider> _visitedLinkProvider;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
 }
 
@@ -71,6 +72,16 @@
 - (void)setPreferences:(WKPreferences *)preferences
 {
     _preferences = preferences;
+}
+
+- (WKVisitedLinkProvider *)visitedLinkProvider
+{
+    return _visitedLinkProvider.get();
+}
+
+- (void)setVisitedLinkProvider:(WKVisitedLinkProvider *)visitedLinkProvider
+{
+    _visitedLinkProvider = visitedLinkProvider;
 }
 
 - (WKWebView *)_relatedWebView

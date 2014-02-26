@@ -46,6 +46,7 @@
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKUIDelegate.h"
 #import "WKWebViewConfigurationPrivate.h"
+#import "WKVisitedLinkProvider.h"
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebBackForwardList.h"
@@ -121,6 +122,9 @@
 
     if (![_configuration preferences])
         [_configuration setPreferences:adoptNS([[WKPreferences alloc] init]).get()];
+
+    if (![_configuration visitedLinkProvider])
+        [_configuration setVisitedLinkProvider:adoptNS([[WKVisitedLinkProvider alloc] init]).get()];
 
     CGRect bounds = self.bounds;
 
