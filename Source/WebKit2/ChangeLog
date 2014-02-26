@@ -1,3 +1,57 @@
+2014-02-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r164725 and r164731.
+        http://trac.webkit.org/changeset/164725
+        http://trac.webkit.org/changeset/164731
+        https://bugs.webkit.org/show_bug.cgi?id=129382
+
+        WebKitTestRunner build is broken on IOS (Requested by smfr on
+        #webkit).
+
+        * UIProcess/API/Cocoa/WKView.h:
+        * UIProcess/API/ios/WKViewIOS.mm: Added.
+        (-[WKView initWithCoder:]):
+        (-[WKView initWithFrame:processGroup:browsingContextGroup:]):
+        (-[WKView initWithFrame:processGroup:browsingContextGroup:relatedToView:]):
+        (-[WKView dealloc]):
+        (-[WKView setFrame:]):
+        (-[WKView setBounds:]):
+        (-[WKView scrollView]):
+        (-[WKView browsingContextController]):
+        (-[WKView setAllowsBackForwardNavigationGestures:]):
+        (-[WKView allowsBackForwardNavigationGestures]):
+        (-[WKView viewForZoomingInScrollView:]):
+        (-[WKView scrollViewWillBeginZooming:withView:]):
+        (-[WKView scrollViewWillBeginDragging:]):
+        (-[WKView _didFinishScrolling]):
+        (-[WKView scrollViewDidEndDragging:willDecelerate:]):
+        (-[WKView scrollViewDidEndDecelerating:]):
+        (-[WKView scrollViewDidScrollToTop:]):
+        (-[WKView scrollViewDidScroll:]):
+        (-[WKView scrollViewDidZoom:]):
+        (-[WKView scrollViewDidEndZooming:withView:atScale:]):
+        (-[WKView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        (-[WKView _frameOrBoundsChanged]):
+        (-[WKView _updateVisibleContentRects]):
+        (-[WKView _keyboardChangedWithInfo:adjustScrollView:]):
+        (-[WKView _keyboardWillChangeFrame:]):
+        (-[WKView _keyboardDidChangeFrame:]):
+        (-[WKView _keyboardWillShow:]):
+        (-[WKView _keyboardWillHide:]):
+        (-[WKView pageRef]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        (-[WKView minimumLayoutSizeOverride]):
+        (-[WKView setMinimumLayoutSizeOverride:]):
+        (-[WKView _obscuredInsets]):
+        (-[WKView _setObscuredInsets:]):
+        (-[WKView _beginInteractiveObscuredInsetsChange]):
+        (-[WKView _endInteractiveObscuredInsetsChange]):
+        (-[WKView _pageExtendedBackgroundColor]):
+        (-[WKView _setBackgroundExtendsBeyondPage:]):
+        (-[WKView _backgroundExtendsBeyondPage]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-26  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix: ContextMenuContextData.* should not be in the Copy Files
