@@ -62,11 +62,7 @@ typedef enum {
   WEBKIT_FIND_OPTIONS_AT_WORD_STARTS =                     1 << 1,
   WEBKIT_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START = 1 << 2,
   WEBKIT_FIND_OPTIONS_BACKWARDS =                          1 << 3,
-  WEBKIT_FIND_OPTIONS_WRAP_AROUND =                        1 << 4,
-  /*< private >*/
-  WEBKIT_FIND_OPTIONS_SHOW_OVERLAY =                       1 << 5,
-  WEBKIT_FIND_OPTIONS_SHOW_FIND_INDICATOR =                1 << 6,
-  WEBKIT_FIND_OPTIONS_SHOW_HIGHLIGHT =                     1 << 7,
+  WEBKIT_FIND_OPTIONS_WRAP_AROUND =                        1 << 4
 } WebKitFindOptions;
 
 struct _WebKitFindController {

@@ -1,3 +1,28 @@
+2014-02-26  Enrique Ocaña González  <eocanha@igalia.com>
+
+        WebKitFindOptions shouldn't expose WEBKIT_FIND_OPTIONS_SHOW_{OVERLAY,FIND_INDICATOR,HIGHLIGHT}
+        https://bugs.webkit.org/show_bug.cgi?id=129263
+
+        Reviewed by Sergio Villar Senin.
+
+        Avoided the need of WEBKIT_FIND_OPTIONS_SHOW_* fields by changing the semantics
+        of the findOptions field in WebKitFindOptions.
+
+        * UIProcess/API/gtk/WebKitFindController.cpp: Now
+        _WebKitFindControllerPrivate.findOptions is interpreted as WebKit::FindOptions
+        instead of WebKitFindOptions like before. Now the conversion has to be done in
+        both ways.
+        (toWebKitFindOptions): Added conversion function from WebKit::FindOptions to
+        WebKitFindOptions.
+        (webkit_find_controller_get_options):
+        (webKitFindControllerPerform):
+        (webkit_find_controller_search):
+        (webkit_find_controller_search_next):
+        (webkit_find_controller_search_previous):
+        (webkit_find_controller_count_matches):
+        * UIProcess/API/gtk/WebKitFindController.h: Removed values that shouldn't be
+        exposed.
+
 2014-02-26  Gergo Balogh  <gbalogh.u-szeged@partner.samsung.com>
 
         Inspector server should be enabled only when the web sockets is enabled too.
