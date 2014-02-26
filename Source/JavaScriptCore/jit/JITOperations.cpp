@@ -35,6 +35,7 @@
 #include "DFGOSREntry.h"
 #include "DFGThunks.h"
 #include "DFGWorklist.h"
+#include "Debugger.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
 #include "GetterSetter.h"
@@ -1007,6 +1008,12 @@ void JIT_OPERATION operationDebug(ExecState* exec, int32_t debugHookID)
 }
 
 #if ENABLE(DFG_JIT)
+static void updateAllPredictionsAndOptimizeAfterWarmUp(CodeBlock* codeBlock)
+{
+    codeBlock->updateAllPredictions();
+    codeBlock->optimizeAfterWarmUp();
+}
+
 SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t bytecodeIndex)
 {
     VM& vm = exec->vm();
@@ -1060,9 +1067,19 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t byte
         return encodeResult(0, 0);
     }
     
+    if (vm.enabledProfiler()) {
+        updateAllPredictionsAndOptimizeAfterWarmUp(codeBlock);
+        return encodeResult(0, 0);
+    }
+
+    Debugger* debugger = codeBlock->globalObject()->debugger();
+    if (debugger && (debugger->isStepping() || codeBlock->baselineAlternative()->hasDebuggerRequests())) {
+        updateAllPredictionsAndOptimizeAfterWarmUp(codeBlock);
+        return encodeResult(0, 0);
+    }
+
     if (codeBlock->m_shouldAlwaysBeInlined) {
-        codeBlock->updateAllPredictions();
-        codeBlock->optimizeAfterWarmUp();
+        updateAllPredictionsAndOptimizeAfterWarmUp(codeBlock);
         if (Options::verboseOSR())
             dataLog("Choosing not to optimize ", *codeBlock, " yet, because m_shouldAlwaysBeInlined == true.\n");
         return encodeResult(0, 0);

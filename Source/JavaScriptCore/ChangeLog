@@ -1,3 +1,40 @@
+2014-02-26  Mark Lam  <mark.lam@apple.com>
+
+        Compilation policy management belongs in operationOptimize(), not the DFG Driver.
+        <https://webkit.org/b/129355>
+
+        Reviewed by Filip Pizlo.
+
+        By compilation policy, I mean the rules for determining whether to
+        compile, when to compile, when to attempt compilation again, etc.  The
+        few of these policy decisions that were previously being made in the
+        DFG driver are now moved to operationOptimize() where we keep the rest
+        of the policy logic.  Decisions that are based on the capabilities
+        supported by the DFG are moved to DFG capabiliityLevel().
+
+        I've run the following benchmarks:
+        1. the collection of jsc benchmarks on the jsc executable vs. its
+           baseline.
+        2. Octane 2.0 in browser without the WebInspector.
+        3. Octane 2.0 in browser with the WebInspector open and a breakpoint
+           set somewhere where it won't break.
+
+        In all of these, the results came out to be a wash as expected.
+
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::isSupported):
+        (JSC::DFG::mightCompileEval):
+        (JSC::DFG::mightCompileProgram):
+        (JSC::DFG::mightCompileFunctionForCall):
+        (JSC::DFG::mightCompileFunctionForConstruct):
+        (JSC::DFG::mightInlineFunctionForCall):
+        (JSC::DFG::mightInlineFunctionForClosureCall):
+        (JSC::DFG::mightInlineFunctionForConstruct):
+        * dfg/DFGCapabilities.h:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * jit/JITOperations.cpp:
+
 2014-02-26  Michael Saboff  <msaboff@apple.com>
 
         Auto generate bytecode information for bytecode parser and LLInt
