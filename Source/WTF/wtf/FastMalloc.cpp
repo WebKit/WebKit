@@ -636,6 +636,7 @@ typedef uintptr_t Length;
 // Not all possible combinations of the following parameters make
 // sense.  In particular, if kMaxSize increases, you may have to
 // increase kNumClasses as well.
+#define K_PAGE_SHIFT_MIN 12
 #define K_PAGE_SHIFT_MAX 14
 #define K_NUM_CLASSES_MAX 77
 static size_t kPageShift  = 0;
@@ -1664,7 +1665,7 @@ static Span sampled_objects;
 // Selector class -- general selector uses 3-level map
 template <int BITS> class MapSelector {
  public:
-  typedef TCMalloc_PageMap3<BITS-K_PAGE_SHIFT_MAX> Type;
+  typedef TCMalloc_PageMap3<BITS-K_PAGE_SHIFT_MIN> Type;
   typedef PackedCache<BITS, uint64_t> CacheType;
 };
 
@@ -1682,7 +1683,7 @@ static const size_t kBitsUnusedOn64Bit = 0;
 // A three-level map for 64-bit machines
 template <> class MapSelector<64> {
  public:
-  typedef TCMalloc_PageMap3<64 - K_PAGE_SHIFT_MAX - kBitsUnusedOn64Bit> Type;
+  typedef TCMalloc_PageMap3<64 - K_PAGE_SHIFT_MIN - kBitsUnusedOn64Bit> Type;
   typedef PackedCache<64, uint64_t> CacheType;
 };
 #endif
@@ -1690,8 +1691,8 @@ template <> class MapSelector<64> {
 // A two-level map for 32-bit machines
 template <> class MapSelector<32> {
  public:
-  typedef TCMalloc_PageMap2<32 - K_PAGE_SHIFT_MAX> Type;
-  typedef PackedCache<32 - K_PAGE_SHIFT_MAX, uint16_t> CacheType;
+  typedef TCMalloc_PageMap2<32 - K_PAGE_SHIFT_MIN> Type;
+  typedef PackedCache<32 - K_PAGE_SHIFT_MIN, uint16_t> CacheType;
 };
 
 // -------------------------------------------------------------------------

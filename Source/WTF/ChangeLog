@@ -1,3 +1,18 @@
+2014-02-26  Gavin Barraclough  <barraclough@apple.com>
+
+        FastMalloc should use vm_page_shift intead of PAGE_SHIFT.
+        https://bugs.webkit.org/show_bug.cgi?id=129370
+
+        Reviewed by Mark Rowe.
+
+        "Doesn't this lead to the page map using fewer bits than it was before?
+        It seems like this will cause some page addresses to no longer be
+        representable in the map when using 4K pages. Am I missing something?"
+
+        * wtf/FastMalloc.cpp:
+            - bdash raises a valid point. This should make the TCMalloc_PageMap
+              larger than absolutely necessary, rather than potentially too small.
+
 2014-02-25  Gavin Barraclough  <barraclough@apple.com>
 
         FastMalloc should use vm_page_shift intead of PAGE_SHIFT.
