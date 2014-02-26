@@ -1,3 +1,12 @@
+2014-02-26  Martin Robinson  <mrobinson@igalia.com>
+
+        ENABLE_PROMISES is improperly specified as ENABLE_PROMISE in Features.pm
+        https://bugs.webkit.org/show_bug.cgi?id=129377
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitperl/FeatureList.pm: Properly specify the promises feature as ENABLE_PROMISES.
+
 2014-02-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Re-enable gtk-doc in EWS
