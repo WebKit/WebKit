@@ -2386,7 +2386,7 @@ PassRefPtr<WebGLContextAttributes> WebGLRenderingContext::getContextAttributes()
 
 GC3Denum WebGLRenderingContext::getError()
 {
-    if (isContextLostOrPending())
+    if (m_isPendingPolicyResolution)
         return GraphicsContext3D::NO_ERROR;
     return m_context->getError();
 }

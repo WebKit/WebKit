@@ -1,3 +1,16 @@
+2014-02-26  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Only skip context error retrieval if a pending context
+        https://bugs.webkit.org/show_bug.cgi?id=129397
+
+        Reviewed by Tim Horton.
+
+        A lost context should still ask the GC3D what the error is. Only
+        a pending context should return early.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getError):
+
 2014-02-26  Brian Burg  <bburg@apple.com>
 
         Web Replay: route through UserInputBridge when delivering user inputs to WebCore
