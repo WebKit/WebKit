@@ -24,15 +24,15 @@
  */
 
 #include "config.h"
-#include "VisitedLinkProvider.h"
+#include "VisitedLinkStore.h"
 
 namespace WebCore {
 
-VisitedLinkProvider::VisitedLinkProvider()
+VisitedLinkStore::VisitedLinkStore()
 {
 }
 
-VisitedLinkProvider::~VisitedLinkProvider()
+VisitedLinkStore::~VisitedLinkStore()
 {
 }
 

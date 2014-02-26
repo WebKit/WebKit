@@ -1,3 +1,35 @@
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Rename WebCore::VisitedLinkProvider to WebCore::VisitedLinkStore
+        https://bugs.webkit.org/show_bug.cgi?id=129357
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/VisitedLinkState.cpp:
+        (WebCore::VisitedLinkState::determineLinkStateSlowCase):
+        * loader/HistoryController.cpp:
+        (WebCore::addVisitedLink):
+        * page/DefaultVisitedLinkStore.cpp: Renamed from Source/WebCore/page/DefaultVisitedLinkProvider.cpp.
+        (WebCore::DefaultVisitedLinkStore::create):
+        (WebCore::DefaultVisitedLinkStore::DefaultVisitedLinkStore):
+        (WebCore::DefaultVisitedLinkStore::~DefaultVisitedLinkStore):
+        (WebCore::DefaultVisitedLinkStore::isLinkVisited):
+        (WebCore::DefaultVisitedLinkStore::addVisitedLink):
+        * page/DefaultVisitedLinkStore.h: Renamed from Source/WebCore/page/DefaultVisitedLinkProvider.h.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::visitedLinkStore):
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::visitedLinkStore):
+        * page/PageGroup.h:
+        * page/VisitedLinkStore.cpp: Renamed from Source/WebCore/page/VisitedLinkProvider.cpp.
+        (WebCore::VisitedLinkStore::VisitedLinkStore):
+        (WebCore::VisitedLinkStore::~VisitedLinkStore):
+        * page/VisitedLinkStore.h: Renamed from Source/WebCore/page/VisitedLinkProvider.h.
+
 2014-02-25  Enrica Casucci  <enrica@apple.com>
 
         [WebKit2] Form controls handling.

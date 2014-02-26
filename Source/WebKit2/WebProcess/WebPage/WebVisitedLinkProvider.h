@@ -26,11 +26,11 @@
 #ifndef WebVisitedLinkProvider_h
 #define WebVisitedLinkProvider_h
 
-#include <WebCore/VisitedLinkProvider.h>
+#include <WebCore/VisitedLinkStore.h>
 
 namespace WebKit {
 
-class WebVisitedLinkProvider final : public WebCore::VisitedLinkProvider {
+class WebVisitedLinkProvider final : public WebCore::VisitedLinkStore {
 public:
     static PassRefPtr<WebVisitedLinkProvider> create();
     virtual ~WebVisitedLinkProvider();

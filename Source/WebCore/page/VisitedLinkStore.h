@@ -23,35 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DefaultVisitedLinkProvider.h"
+#ifndef VisitedLinkStore_h
+#define VisitedLinkStore_h
 
-#include "Page.h"
-#include "PageGroup.h"
+#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-PassRefPtr<DefaultVisitedLinkProvider> DefaultVisitedLinkProvider::create()
-{
-    return adoptRef(new DefaultVisitedLinkProvider);
-}
+typedef uint64_t LinkHash;
+class Page;
+class URL;
 
-DefaultVisitedLinkProvider::DefaultVisitedLinkProvider()
-{
-}
+class VisitedLinkStore : public RefCounted<VisitedLinkStore> {
+public:
+    VisitedLinkStore();
+    virtual ~VisitedLinkStore();
 
-DefaultVisitedLinkProvider::~DefaultVisitedLinkProvider()
-{
-}
-
-bool DefaultVisitedLinkProvider::isLinkVisited(Page& page, LinkHash linkHash, const URL&, const AtomicString&)
-{
-    return page.group().isLinkVisited(linkHash);
-}
-
-void DefaultVisitedLinkProvider::addVisitedLink(Page& page, LinkHash linkHash)
-{
-    page.group().addVisitedLinkHash(linkHash);
-}
+    // FIXME: These two members should only take the link hash.
+    virtual bool isLinkVisited(Page&, LinkHash, const URL& baseURL, const AtomicString& attributeURL) = 0;
+    virtual void addVisitedLink(Page&, LinkHash) = 0;
+};
 
 } // namespace WebCore
+
+#endif // VisitedLinkStore_h

@@ -105,7 +105,7 @@ class Settings;
 class StorageNamespace;
 class UserContentController;
 class ValidationMessageClient;
-class VisitedLinkProvider;
+class VisitedLinkStore;
 
 typedef uint64_t LinkHash;
 
@@ -141,7 +141,7 @@ public:
         ValidationMessageClient* validationMessageClient;
         FrameLoaderClient* loaderClientForMainFrame;
 
-        RefPtr<VisitedLinkProvider> visitedLinkProvider;
+        RefPtr<VisitedLinkStore> visitedLinkStore;
     };
 
     explicit Page(PageClients&);
@@ -401,7 +401,7 @@ public:
     void setUserContentController(UserContentController*);
     UserContentController* userContentController() { return m_userContentController.get(); }
 
-    VisitedLinkProvider& visitedLinkProvider();
+    VisitedLinkStore& visitedLinkStore();
 
 private:
     void initGroup();
@@ -542,7 +542,7 @@ private:
     unsigned m_framesHandlingBeforeUnloadEvent;
 
     RefPtr<UserContentController> m_userContentController;
-    RefPtr<VisitedLinkProvider> m_visitedLinkProvider;
+    RefPtr<VisitedLinkStore> m_visitedLinkStore;
 };
 
 inline PageGroup& Page::group()

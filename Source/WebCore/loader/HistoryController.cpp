@@ -48,14 +48,14 @@
 #include "PageGroup.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
-#include "VisitedLinkProvider.h"
+#include "VisitedLinkStore.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
 static inline void addVisitedLink(Page& page, const URL& url)
 {
-    page.visitedLinkProvider().addVisitedLink(page, visitedLinkHash(url.string()));
+    page.visitedLinkStore().addVisitedLink(page, visitedLinkHash(url.string()));
 }
 
 HistoryController::HistoryController(Frame& frame)

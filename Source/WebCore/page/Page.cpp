@@ -83,8 +83,8 @@
 #include "SubframeLoader.h"
 #include "TextResourceDecoder.h"
 #include "UserContentController.h"
-#include "VisitedLinkProvider.h"
 #include "VisitedLinkState.h"
+#include "VisitedLinkStore.h"
 #include "VoidCallback.h"
 #include "Widget.h"
 #include <wtf/HashMap.h>
@@ -182,7 +182,7 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
-    , m_visitedLinkProvider(std::move(pageClients.visitedLinkProvider))
+    , m_visitedLinkStore(std::move(pageClients.visitedLinkStore))
 {
     ASSERT(m_editorClient);
 
@@ -1475,12 +1475,12 @@ void Page::setUserContentController(UserContentController* userContentController
         m_userContentController->addPage(*this);
 }
 
-VisitedLinkProvider& Page::visitedLinkProvider()
+VisitedLinkStore& Page::visitedLinkStore()
 {
-    if (m_visitedLinkProvider)
-        return *m_visitedLinkProvider;
+    if (m_visitedLinkStore)
+        return *m_visitedLinkStore;
 
-    return group().visitedLinkProvider();
+    return group().visitedLinkStore();
 }
 
 Page::PageClients::PageClients()

@@ -323,7 +323,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageClients.progressTrackerClient = new WebProgressTrackerClient(*this);
 
-    pageClients.visitedLinkProvider = WebVisitedLinkProvider::create();
+    pageClients.visitedLinkStore = WebVisitedLinkProvider::create();
 
     m_page = adoptPtr(new Page(pageClients));
 

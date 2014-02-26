@@ -42,7 +42,7 @@ namespace WebCore {
     class Page;
     class SecurityOrigin;
     class StorageNamespace;
-    class VisitedLinkProvider;
+    class VisitedLinkStore;
     class UserContentController;
 
 #if ENABLE(VIDEO_TRACK)
@@ -72,7 +72,7 @@ namespace WebCore {
         void addPage(Page&);
         void removePage(Page&);
 
-        VisitedLinkProvider& visitedLinkProvider();
+        VisitedLinkStore& visitedLinkStore();
 
         bool isLinkVisited(LinkHash);
 
@@ -114,7 +114,7 @@ namespace WebCore {
         String m_name;
         HashSet<Page*> m_pages;
 
-        RefPtr<VisitedLinkProvider> m_visitedLinkProvider;
+        RefPtr<VisitedLinkStore> m_visitedLinkStore;
 
         HashSet<LinkHash, LinkHashHash> m_visitedLinkHashes;
         bool m_visitedLinksPopulated;

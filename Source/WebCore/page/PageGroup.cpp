@@ -29,7 +29,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWrapperWorld.h"
-#include "DefaultVisitedLinkProvider.h"
+#include "DefaultVisitedLinkStore.h"
 #include "Document.h"
 #include "DocumentStyleSheetCollection.h"
 #include "GroupSettings.h"
@@ -40,7 +40,7 @@
 #include "Settings.h"
 #include "StorageNamespace.h"
 #include "UserContentController.h"
-#include "VisitedLinkProvider.h"
+#include "VisitedLinkStore.h"
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(VIDEO_TRACK)
@@ -178,12 +178,12 @@ void PageGroup::removePage(Page& page)
     page.setUserContentController(nullptr);
 }
 
-VisitedLinkProvider& PageGroup::visitedLinkProvider()
+VisitedLinkStore& PageGroup::visitedLinkStore()
 {
-    if (!m_visitedLinkProvider)
-        m_visitedLinkProvider = DefaultVisitedLinkProvider::create();
+    if (!m_visitedLinkStore)
+        m_visitedLinkStore = DefaultVisitedLinkStore::create();
 
-    return *m_visitedLinkProvider;
+    return *m_visitedLinkStore;
 }
 
 bool PageGroup::isLinkVisited(LinkHash visitedLinkHash)

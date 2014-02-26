@@ -1,3 +1,14 @@
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Rename WebCore::VisitedLinkProvider to WebCore::VisitedLinkStore
+        https://bugs.webkit.org/show_bug.cgi?id=129357
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebVisitedLinkProvider.h:
+
 2014-02-25  Enrica Casucci  <enrica@apple.com>
 
         [WebKit2] Form controls handling.
