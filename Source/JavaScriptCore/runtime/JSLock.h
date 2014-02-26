@@ -94,6 +94,13 @@ namespace JSC {
 
         VM* vm() { return m_vm; }
 
+        bool hasExclusiveThread() const { return m_hasExclusiveThread; }
+        std::thread::id exclusiveThread() const
+        {
+            ASSERT(m_hasExclusiveThread);
+            return m_ownerThreadID;
+        }
+        JS_EXPORT_PRIVATE void setExclusiveThread(std::thread::id);
         JS_EXPORT_PRIVATE bool currentThreadIsHoldingLock();
 
         void willDestroyVM(VM*);
@@ -129,6 +136,7 @@ namespace JSC {
         std::thread::id m_ownerThreadID;
         intptr_t m_lockCount;
         unsigned m_lockDropDepth;
+        bool m_hasExclusiveThread;
         VM* m_vm;
     };
 

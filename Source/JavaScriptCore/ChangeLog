@@ -1,3 +1,39 @@
+2014-02-25  Mark Lam  <mark.lam@apple.com>
+
+        Need to initialize VM stack data even when the VM is on an exclusive thread.
+        <https://webkit.org/b/129265>
+
+        Not reviewed.
+
+        Relanding r164627 now that <https://webkit.org/b/129341> is fixed.
+
+        * API/APIShims.h:
+        (JSC::APIEntryShim::APIEntryShim):
+        (JSC::APICallbackShim::shouldDropAllLocks):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::addCurrentThread):
+        * runtime/JSLock.cpp:
+        (JSC::JSLockHolder::JSLockHolder):
+        (JSC::JSLockHolder::init):
+        (JSC::JSLockHolder::~JSLockHolder):
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::setExclusiveThread):
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::grabAllLocks):
+        * runtime/JSLock.h:
+        (JSC::JSLock::hasExclusiveThread):
+        (JSC::JSLock::exclusiveThread):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::hasExclusiveThread):
+        (JSC::VM::exclusiveThread):
+        (JSC::VM::setExclusiveThread):
+        (JSC::VM::currentThreadIsHoldingAPILock):
+
 2014-02-25  Filip Pizlo  <fpizlo@apple.com>
 
         Inline caching in the FTL on ARM64 should "work"

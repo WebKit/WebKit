@@ -1,5 +1,21 @@
 2014-02-25  Mark Lam  <mark.lam@apple.com>
 
+        Need to initialize VM stack data even when the VM is on an exclusive thread.
+        <https://webkit.org/b/129265>
+
+        Not reviewed.
+
+        No new tests.
+
+        Relanding r164627 now that <https://webkit.org/b/129341> is fixed.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+
+2014-02-25  Mark Lam  <mark.lam@apple.com>
+
         JSDOMPromise methods should acquire VM lock before calling into JS.
         <https://webkit.org/b/129341>
 

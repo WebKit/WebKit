@@ -153,6 +153,7 @@ JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Pass
 
 void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScript)
 {
+    RELEASE_ASSERT(exec->vm().currentThreadIsHoldingAPILock());
     if (isTerminatedExecutionException(exception))
         return;
 

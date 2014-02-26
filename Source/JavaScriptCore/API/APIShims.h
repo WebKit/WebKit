@@ -58,13 +58,13 @@ class APIEntryShim : public APIEntryShimWithoutLock {
 public:
     APIEntryShim(ExecState* exec, bool registerThread = true)
         : APIEntryShimWithoutLock(&exec->vm(), registerThread)
-        , m_lockHolder(exec->vm().exclusiveThread ? 0 : exec)
+        , m_lockHolder(&exec->vm())
     {
     }
 
     APIEntryShim(VM* vm, bool registerThread = true)
         : APIEntryShimWithoutLock(vm, registerThread)
-        , m_lockHolder(vm->exclusiveThread ? 0 : vm)
+        , m_lockHolder(vm)
     {
     }
 
@@ -102,9 +102,6 @@ public:
 private:
     static bool shouldDropAllLocks(VM& vm)
     {
-        if (vm.exclusiveThread)
-            return false;
-
         // If the VM is in the middle of being destroyed then we don't want to resurrect it
         // by allowing DropAllLocks to ref it. By this point the APILock has already been 
         // released anyways, so it doesn't matter that DropAllLocks is a no-op.
