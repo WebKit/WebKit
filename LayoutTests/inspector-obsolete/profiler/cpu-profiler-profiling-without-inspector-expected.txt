@@ -1,6 +1,0 @@
-Tests that CPU profiling works.
-Doesn't open Inspector, uses console.profile....
-
-
-Found pageFunction
-

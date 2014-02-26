@@ -1,0 +1,66 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+function collectProfiles()
+{
+    console.profile();
+    console.profile("titled");
+    console.profileEnd();
+    console.profileEnd();
+}
+
+function test()
+{
+    function fail(message)
+    {
+        InspectorTest.log("FAIL: " + message);
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.sendCommand("Profiler.enable", {});
+    InspectorTest.sendCommand("Runtime.evaluate", {expression: "collectProfiles()"}, didCollectProfiles);
+
+    InspectorTest.eventHandler["Profiler.addProfileHeader"] = function(messageObject)
+    {
+        InspectorTest.log("FAIL: unexpected header = " + JSON.stringify(messageObject, null, 4));
+    }
+
+    function didCollectProfiles(messageObject)
+    {
+        InspectorTest.checkForError(messageObject);
+        InspectorTest.sendCommand("Profiler.getProfileHeaders", {}, didReceiveProfileHeaders);
+    }
+
+    function didReceiveProfileHeaders(messageObject)
+    {
+        InspectorTest.checkForError(messageObject);
+
+        var headers = messageObject["result"]["headers"];
+        if (!headers || headers.length !== 2) {
+            fail("Cannot retrive headers: " + JSON.stringify(messageObject, null, 4));
+            return;
+        }
+
+        InspectorTest.log("SUCCESS: found 2 profile headers");
+        for (var i = 0; i < headers.length; i++) {
+            if (headers[i].title === "titled") {
+                InspectorTest.log("SUCCESS: titled profile found");
+                InspectorTest.sendCommand("Profiler.clearProfiles", {});
+                InspectorTest.completeTest();
+                return;
+            }
+        }
+
+        fail("Cannot find titled profile");
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that "console.profileEnd()" does not cause crash.<br>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=105759">Bug 105759.</a><br>
+</p>
+</body>
+</html>

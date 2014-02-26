@@ -1,6 +1,0 @@
-Tests that "console.profileEnd()" do not cause crash.
-Bug 105759.
-
-Profiles count: 2
-Titled profile found.
-

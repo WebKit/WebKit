@@ -1,0 +1,87 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+function collectProfiles()
+{
+    console.profile("outer");
+    console.profile("inner");
+    console.profileEnd("outer");
+    console.profileEnd("inner");
+}
+
+function test()
+{
+    function fail(message)
+    {
+        InspectorTest.log("FAIL: " + message);
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.sendCommand("Profiler.enable", {});
+    InspectorTest.sendCommand("Runtime.evaluate", {expression: "collectProfiles()"}, didCollectProfiles);
+
+    InspectorTest.eventHandler["Profiler.addProfileHeader"] = function(messageObject)
+    {
+        InspectorTest.log("FAIL: unexpected header = " + JSON.stringify(messageObject, null, 4));
+    }
+
+    function didCollectProfiles(messageObject)
+    {
+        InspectorTest.checkForError(messageObject);
+        InspectorTest.sendCommand("Profiler.getProfileHeaders", {}, didReceiveProfileHeaders);
+    }
+
+    function didReceiveProfileHeaders(messageObject)
+    {
+        InspectorTest.checkForError(messageObject);
+
+        var headers = messageObject["result"]["headers"];
+        if (!headers || headers.length !== 2) {
+            fail("Cannot retrive headers: " + JSON.stringify(messageObject, null, 4));
+            return;
+        }
+
+        for (var i = 0; i < headers.length; i++) {
+            if (headers[i].title === "inner") {
+                InspectorTest.sendCommand("Profiler.getCPUProfile", { uid: headers[i].uid }, didGetProfile);
+                return;
+            }
+        }
+
+        fail("Cannot find 'inner' profile header");
+    }
+
+    function didGetProfile(messageObject)
+    {
+        InspectorTest.checkForError(messageObject);
+        InspectorTest.log("SUCCESS: retrieved 'inner' profile");
+
+        var rootNodes = messageObject.result.profile.rootNodes;
+        if (!findFunctionInProfile(rootNodes, "collectProfiles")) {
+            fail("collectProfiles function not found in the profile: " + JSON.stringify(messageObject, null, 4));
+            return;
+        }
+
+        InspectorTest.log("SUCCESS: found 'collectProfiles' function in the profile");
+        InspectorTest.sendCommand("Profiler.clearProfiles", {});
+        InspectorTest.completeTest();
+    }
+
+    function findFunctionInProfile(rootNodes, functionName)
+    {
+        for (var i = 0; i < rootNodes.length; ++i)
+            if (rootNodes[i].functionName === functionName)
+                return true;
+
+        return false;
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that console.profile/profileEnd will record CPU profile when inspector front-end is connected.<br>
+</p>
+</body>
+</html>

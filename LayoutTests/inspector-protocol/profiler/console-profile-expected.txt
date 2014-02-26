@@ -1,0 +1,4 @@
+Tests that console.profile/profileEnd will record CPU profile when inspector front-end is connected.
+SUCCESS: retrieved 'inner' profile
+SUCCESS: found 'collectProfiles' function in the profile
+

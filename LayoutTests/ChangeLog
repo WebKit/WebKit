@@ -1,3 +1,19 @@
+2014-02-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Port some profiler tests to inspector-protocol
+        https://bugs.webkit.org/show_bug.cgi?id=129353
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector-obsolete/profiler/cpu-profiler-parameterless-profile-end-crash-expected.txt: Removed.
+        * inspector-obsolete/profiler/cpu-profiler-parameterless-profile-end-crash.html: Removed.
+        * inspector-obsolete/profiler/cpu-profiler-profiling-without-inspector-expected.txt: Removed.
+        * inspector-obsolete/profiler/cpu-profiler-profiling-without-inspector.html: Removed.
+        * inspector-protocol/profiler/console-profile-expected.txt: Added.
+        * inspector-protocol/profiler/console-profile.html: Added.
+        * inspector-protocol/profiler/console-profileEnd-parameterless-expected.txt: Added.
+        * inspector-protocol/profiler/console-profileEnd-parameterless.html: Added.
+
 2014-02-25  Samuel White  <samuel_white@apple.com>
 
         Add accessibility search predicate support for AXOutlines
