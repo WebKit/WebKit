@@ -235,7 +235,6 @@ protected:
 
     // Triggers a layers' update if a layer has moved from a region to another since the last update.
     void updateLayerToRegionMappings(RenderLayer&, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
-    bool updateLayerToRegionMappings();
     void updateRegionForRenderLayer(RenderLayer*, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
 
     void setDispatchRegionLayoutUpdateEvent(bool value) { m_dispatchRegionLayoutUpdateEvent = value; }
@@ -314,10 +313,10 @@ protected:
         RenderRegion* m_result;
     };
 
-    // To easily find the region where a layer should be painted.
+    // Map a layer to the region in which the layer is painted.
     OwnPtr<LayerToRegionMap> m_layerToRegionMap;
 
-    // To easily find the list of layers that paint in a region.
+    // Map a region to the list of layers that paint in that region.
     OwnPtr<RegionToLayerListMap> m_regionToLayerListMap;
 
     // Map a box to the list of regions in which the box is rendered.

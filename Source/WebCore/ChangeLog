@@ -1,3 +1,14 @@
+2014-02-26  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Remove unused method RenderFlowThread::updateLayerToRegionMappings()
+        https://bugs.webkit.org/show_bug.cgi?id=129368
+
+        Reviewed by Andrei Bucur.
+
+        Remove unused code, no new tests.
+
+        * rendering/RenderFlowThread.h:
+
 2014-02-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Regression when showing the captions menu
