@@ -1,3 +1,20 @@
+2014-02-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r162947): Document::topDocument() returns an incorrect reference for cached Documents
+        https://bugs.webkit.org/show_bug.cgi?id=128175
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::topDocument): Fall back to pre-r162947 way of determining the top document
+        when the Document is in page cache or is in the middle of having its render tree destroyed.
+        In the first case, the determined top document is actually the document currently loaded in the
+        Frame to which the cached document is still connected, which is obviously not desired. In the
+        second case the top document is similarly incorrectly deduced, leading to non-deletion of the
+        proper top document's AXObjectCache. Because of this AccessibilityRenderObjects are not detached
+        which results in assertions in RenderObject destructor where the objects are found to be still
+        flagged as in use by the AX cache.
+
 2014-02-26  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Remove unused method RenderFlowThread::updateLayerToRegionMappings()
