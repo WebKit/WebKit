@@ -1,3 +1,15 @@
+2014-02-25  Enrica Casucci  <enrica@apple.com>
+
+        [WebKit2] Form controls handling.
+        https://bugs.webkit.org/show_bug.cgi?id=129344
+        <rdar://problem/16053643>
+
+        Reviewed by Simon Fraser and Joseph Pecoraro.
+
+        Adding some exports.
+        
+        * WebCore.exp.in:
+
 2014-02-25  Samuel White  <samuel_white@apple.com>
 
         Add accessibility search predicate support for AXOutlines

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebPage.h"
 
+#import "AssistedNodeInformation.h"
 #import "EditorState.h"
 #import "InteractionInformationAtPosition.h"
 #import "WebChromeClient.h"
@@ -44,7 +45,12 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/HTMLElementTypeHelpers.h>
+#import <WebCore/HTMLFormElement.h>
+#import <WebCore/HTMLInputElement.h>
+#import <WebCore/HTMLOptionElement.h>
 #import <WebCore/HTMLParserIdioms.h>
+#import <WebCore/HTMLSelectElement.h>
+#import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Node.h>
 #import <WebCore/NotImplemented.h>
@@ -1475,11 +1481,111 @@ void WebPage::performActionOnElement(uint32_t action)
     }
 }
 
+static inline bool isAssistableNode(Node* node)
+{
+    if (isHTMLSelectElement(node))
+        return true;
+    if (isHTMLTextAreaElement(node))
+        return !toHTMLTextAreaElement(node)->isReadOnlyNode();
+    if (isHTMLInputElement(node)) {
+        HTMLInputElement* element = toHTMLInputElement(node);
+        return !element->isReadOnlyNode() && (element->isTextField() || element->isDateField() || element->isDateTimeLocalField() || element->isMonthField() || element->isTimeField());
+    }
+
+    return node->isContentEditable();
+}
+
+static inline bool hasFocusableNode(Node* startNode, Page* page, bool isForward)
+{
+    RefPtr<KeyboardEvent> key = KeyboardEvent::create();
+
+    Node* nextNode = startNode;
+    do {
+        nextNode = isForward ? page->focusController().nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextNode->document()), nextNode, key.get())
+            : page->focusController().previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextNode->document()), nextNode, key.get());
+    } while (nextNode && !isAssistableNode(startNode));
+
+    return nextNode;
+}
+
+void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
+{
+    information.elementRect = m_page->focusController().focusedOrMainFrame().view()->contentsToRootView(m_assistedNode->renderer()->absoluteBoundingBoxRect());
+    information.hasNextNode = hasFocusableNode(m_assistedNode.get(), m_page.get(), true);
+    information.hasPreviousNode = hasFocusableNode(m_assistedNode.get(), m_page.get(), false);
+
+    if (isHTMLSelectElement(m_assistedNode.get())) {
+        HTMLSelectElement* element = toHTMLSelectElement(m_assistedNode.get());
+        information.elementType = WKTypeSelect;
+        size_t count = element->listItems().size();
+        // FIXME: We need to handle group elements as well
+        for (size_t i = 0; i < count; ++i) {
+            HTMLOptionElement* item = toHTMLOptionElement(element->listItems()[i]);
+            information.selectionOptions.append(item->text());
+        }
+        information.selectedIndex = element->selectedIndex();
+        information.isMultiSelect = element->multiple();
+    } else if (isHTMLTextAreaElement(m_assistedNode.get())) {
+        HTMLTextAreaElement* element = toHTMLTextAreaElement(m_assistedNode.get());
+        information.autocapitalizeType = static_cast<WebAutocapitalizeType>(element->autocapitalizeType());
+        information.isAutocorrect = element->autocorrect();
+        information.elementType = WKTypeTextArea;
+        information.isReadOnly = element->isReadOnly();
+        information.value = element->value();
+    } else if (isHTMLInputElement(m_assistedNode.get())) {
+        HTMLInputElement* element = toHTMLInputElement(m_assistedNode.get());
+        HTMLFormElement* form = element->form();
+        if (form)
+            information.formAction = form->getURLAttribute(WebCore::HTMLNames::actionAttr);
+        information.autocapitalizeType = static_cast<WebAutocapitalizeType>(element->autocapitalizeType());
+        information.isAutocorrect = element->autocorrect();
+        if (element->isPasswordField())
+            information.elementType = WKTypePassword;
+        else if (element->isSearchField())
+            information.elementType = WKTypeSearch;
+        else if (element->isEmailField())
+            information.elementType = WKTypeEmail;
+        else if (element->isTelephoneField())
+            information.elementType = WKTypePhone;
+        else if (element->isNumberField())
+            information.elementType = element->getAttribute("pattern") == "\\d*" || element->getAttribute("pattern") == "[0-9]*" ? WKTypeNumberPad : WKTypeNumber;
+        else if (element->isDateTimeLocalField())
+            information.elementType = WKTypeDateTimeLocal;
+        else if (element->isDateField())
+            information.elementType = WKTypeDate;
+        else if (element->isDateTimeField())
+            information.elementType = WKTypeDateTime;
+        else if (element->isTimeField())
+            information.elementType = WKTypeTime;
+        else if (element->isWeekField())
+            information.elementType = WKTypeWeek;
+        else if (element->isMonthField())
+            information.elementType = WKTypeMonth;
+        else if (element->isURLField())
+            information.elementType = WKTypeURL;
+        else if (element->isText())
+            information.elementType = element->getAttribute("pattern") == "\\d*" || element->getAttribute("pattern") == "[0-9]*" ? WKTypeNumberPad : WKTypeText;
+
+        information.isReadOnly = element->isReadOnly();
+        information.value = element->value();
+        information.valueAsNumber = element->valueAsNumber();
+        information.title = element->title();
+    } else if (m_assistedNode->hasEditableStyle()) {
+        information.elementType = WKTypeContentEditable;
+        information.isAutocorrect = true;   // FIXME: Should we look at the attribute?
+        information.autocapitalizeType = WebAutocapitalizeTypeSentences; // FIXME: Should we look at the attribute?
+        information.isReadOnly = false;
+    }
+}
+
 void WebPage::elementDidFocus(WebCore::Node* node)
 {
     m_assistedNode = node;
-    if (node->hasTagName(WebCore::HTMLNames::inputTag) || node->hasTagName(WebCore::HTMLNames::textareaTag) || node->hasEditableStyle())
-        send(Messages::WebPageProxy::StartAssistingNode(WebCore::IntRect(), true, true));    
+    if (node->hasTagName(WebCore::HTMLNames::inputTag) || node->hasTagName(WebCore::HTMLNames::textareaTag) || node->hasEditableStyle()) {
+        AssistedNodeInformation information;
+        getAssistedNodeInformation(information);
+        send(Messages::WebPageProxy::StartAssistingNode(information));
+    }
 }
 
 void WebPage::elementDidBlur(WebCore::Node* node)

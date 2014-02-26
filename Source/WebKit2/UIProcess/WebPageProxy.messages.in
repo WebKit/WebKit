@@ -307,7 +307,7 @@ messages -> WebPageProxy {
 #if PLATFORM(IOS)
     DidGetTapHighlightGeometries(uint64_t requestID, WebCore::Color color, Vector<WebCore::FloatQuad> geometries, WebCore::IntSize topLeftRadius, WebCore::IntSize topRightRadius, WebCore::IntSize bottomLeftRadius, WebCore::IntSize bottomRightRadius)
 
-    StartAssistingNode(WebCore::IntRect scrollRect, bool hasNextFocusable, bool hasPreviousFocusable)
+    StartAssistingNode(WebKit::AssistedNodeInformation information)
     StopAssistingNode()
     NotifyRevealedSelection()
 #endif

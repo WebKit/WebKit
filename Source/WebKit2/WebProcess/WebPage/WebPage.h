@@ -160,6 +160,7 @@ class WebPageGroupProxy;
 class WebPopupMenu;
 class WebVideoFullscreenManager;
 class WebWheelEvent;
+struct AssistedNodeInformation;
 struct AttributedString;
 struct EditorState;
 struct InteractionInformationAtPosition;
@@ -749,6 +750,7 @@ private:
     PassRefPtr<WebCore::Range> changeBlockSelection(const WebCore::IntPoint&, WKHandlePosition, float& growThreshold, float& shrinkThreshold, WKSelectionFlags&);
     PassRefPtr<WebCore::Range> expandedRangeFromHandle(WebCore::Range*, WKHandlePosition);
     PassRefPtr<WebCore::Range> contractedRangeFromHandle(WebCore::Range* currentRange, WKHandlePosition, WKSelectionFlags&);
+    void getAssistedNodeInformation(AssistedNodeInformation&);
 
     RefPtr<WebCore::Range> m_currentBlockSelection;
 #endif

@@ -104,7 +104,7 @@ private:
 
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
 
-    virtual void startAssistingNode(const WebCore::IntRect&, bool hasNextFocusable, bool hasPreviousFocusable) override;
+    virtual void startAssistingNode(const AssistedNodeInformation&) override;
     virtual void stopAssistingNode() override;
     virtual void selectionDidChange() override;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;

@@ -25,6 +25,7 @@
 
 #import "WKContentView.h"
 
+#import "AssistedNodeInformation.h"
 #import "InteractionInformationAtPosition.h"
 #import "WKGestureTypes.h"
 #import <UIKit/UITextInput_Private.h>
@@ -46,6 +47,7 @@ class IntSize;
 namespace WebKit {
 class NativeWebTouchEvent;
 class WebPageProxy;
+struct AssistedNodeInformation;
 struct InteractionInformationAtPosition;
 }
 
@@ -97,6 +99,7 @@ struct WKAutoCorrectionData {
 
     WebKit::WKAutoCorrectionData _autocorrectionData;
     WebKit::InteractionInformationAtPosition _positionInformation;
+    WebKit::AssistedNodeInformation _assistedNodeInformation;
 
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
@@ -111,6 +114,7 @@ struct WKAutoCorrectionData {
 @property (nonatomic, readonly) BOOL isEditable;
 @property (nonatomic, readonly) const WebKit::InteractionInformationAtPosition& positionInformation;
 @property (nonatomic, readonly) const WebKit::WKAutoCorrectionData& autocorrectionData;
+@property (nonatomic, readonly) const WebKit::AssistedNodeInformation& assistedNodeInformation;
 
 - (void)setupInteraction;
 - (void)cleanupInteraction;
@@ -118,7 +122,7 @@ struct WKAutoCorrectionData {
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius;
 
-- (void)_startAssistingNode;
+- (void)_startAssistingNode:(const WebKit::AssistedNodeInformation&)information;
 - (void)_stopAssistingNode;
 - (void)_selectionChanged;
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent;

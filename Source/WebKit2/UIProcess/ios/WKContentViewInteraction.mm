@@ -357,6 +357,23 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
     [self _cancelInteraction];
 }
 
+- (BOOL)_requiresKeyboardWhenFirstResponder
+{
+    // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
+    switch (_assistedNodeInformation.elementType) {
+    case WebKit::WKTypeSelect:
+        return !UICurrentUserInterfaceIdiomIsPad();
+    case WebKit::WKTypeDate:
+    case WebKit::WKTypeMonth:
+    case WebKit::WKTypeDateTimeLocal:
+    case WebKit::WKTypeTime:
+        return !UICurrentUserInterfaceIdiomIsPad();
+    default:
+        return !_assistedNodeInformation.isReadOnly;
+    }
+    return NO;
+}
+
 - (BOOL)_requiresKeyboardResetOnReload
 {
     return YES;
@@ -1223,9 +1240,8 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 
 - (void)_updateAccessory
 {
-    // FIXME: We need to initialize with values from the WebProcess.
-    [_formAccessoryView setNextEnabled:YES];
-    [_formAccessoryView setPreviousEnabled:YES];
+    [_formAccessoryView setNextEnabled:_assistedNodeInformation.hasNextNode];
+    [_formAccessoryView setPreviousEnabled:_assistedNodeInformation.hasPreviousNode];
     
     [_formAccessoryView setClearVisible:NO];
 
@@ -1403,12 +1419,64 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 
 // end of UITextInput protocol implementation
 
+static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType webkitType)
+{
+    switch (webkitType) {
+    case WebAutocapitalizeTypeDefault:
+        return UITextAutocapitalizationTypeSentences;
+    case WebAutocapitalizeTypeNone:
+        return UITextAutocapitalizationTypeNone;
+    case WebAutocapitalizeTypeWords:
+        return UITextAutocapitalizationTypeWords;
+    case WebAutocapitalizeTypeSentences:
+        return UITextAutocapitalizationTypeSentences;
+    case WebAutocapitalizeTypeAllCharacters:
+        return UITextAutocapitalizationTypeAllCharacters;
+    }
+
+    return UITextAutocapitalizationTypeSentences;
+}
+
 // UITextInputPrivate protocol
 // Direct access to the (private) UITextInputTraits object.
 - (UITextInputTraits *)textInputTraits
 {
     if (!_traits)
         _traits = adoptNS([[UITextInputTraits alloc] init]);
+
+    [_traits setSecureTextEntry:_assistedNodeInformation.elementType == WKTypePassword];
+    [_traits setShortcutConversionType:_assistedNodeInformation.elementType == WKTypePassword ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault];
+
+    if (!_assistedNodeInformation.formAction.isEmpty())
+        [_traits setReturnKeyType:(_assistedNodeInformation.elementType == WebKit::WKTypeSearch) ? UIReturnKeySearch : UIReturnKeyGo];
+
+    if (_assistedNodeInformation.elementType == WKTypePassword || _assistedNodeInformation.elementType == WKTypeEmail || _assistedNodeInformation.elementType == WKTypeURL || _assistedNodeInformation.formAction.contains("login")) {
+        [_traits setAutocapitalizationType:UITextAutocapitalizationTypeNone];
+        [_traits setAutocorrectionType:UITextAutocorrectionTypeNo];
+    } else {
+        [_traits setAutocapitalizationType:toUITextAutocapitalize(_assistedNodeInformation.autocapitalizeType)];
+        [_traits setAutocorrectionType:_assistedNodeInformation.isAutocorrect ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo];
+    }
+
+    switch (_assistedNodeInformation.elementType) {
+    case WebKit::WKTypePhone:
+         [_traits setKeyboardType:UIKeyboardTypePhonePad];
+         break;
+    case WebKit::WKTypeURL:
+         [_traits setKeyboardType:UIKeyboardTypeURL];
+         break;
+    case WebKit::WKTypeEmail:
+         [_traits setKeyboardType:UIKeyboardTypeEmailAddress];
+          break;
+    case WebKit::WKTypeNumber:
+         [_traits setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
+         break;
+    case WebKit::WKTypeNumberPad:
+         [_traits setKeyboardType:UIKeyboardTypeNumberPad];
+         break;
+    default:
+         [_traits setKeyboardType:UIKeyboardTypeDefault];
+    }
 
     return _traits.get();
 }
@@ -1700,9 +1768,16 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
     [self useSelectionAssistantWithMode:UIWebSelectionModeWeb];
 }
 
-- (void)_startAssistingNode
+- (const AssistedNodeInformation&)assistedNodeInformation
+{
+    return _assistedNodeInformation;
+}
+
+- (void)_startAssistingNode:(const AssistedNodeInformation&)information
 {
     _isEditable = YES;
+    _assistedNodeInformation = information;
+    _traits = nil;
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
@@ -1714,6 +1789,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 - (void)_stopAssistingNode
 {
     _isEditable = NO;
+    _assistedNodeInformation.elementType = WKTypeNone;
 
     [self _stopAssistingKeyboard];
     [self reloadInputViews];

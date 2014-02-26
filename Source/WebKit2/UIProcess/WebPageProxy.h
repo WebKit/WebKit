@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "APISession.h"
+#include "AssistedNodeInformation.h"
 #include "AutoCorrectionCallback.h"
 #include "Connection.h"
 #include "DragControllerAction.h"
@@ -1163,7 +1164,7 @@ private:
 #if PLATFORM(IOS)
     void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& geometries, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius);
 
-    void startAssistingNode(const WebCore::IntRect&, bool hasNextFocusable, bool hasPreviousFocusable);
+    void startAssistingNode(const AssistedNodeInformation&);
     void stopAssistingNode();
     void notifyRevealedSelection();
 #endif // PLATFORM(IOS)

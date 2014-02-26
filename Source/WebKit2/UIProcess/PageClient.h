@@ -243,7 +243,7 @@ public:
 
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) = 0;
 
-    virtual void startAssistingNode(const WebCore::IntRect&, bool hasNextFocusable, bool hasPreviousFocusable) = 0;
+    virtual void startAssistingNode(const AssistedNodeInformation&) = 0;
     virtual void stopAssistingNode() = 0;
     virtual void selectionDidChange() = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) = 0;

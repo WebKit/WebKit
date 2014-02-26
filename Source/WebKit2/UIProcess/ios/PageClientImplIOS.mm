@@ -347,9 +347,9 @@ void PageClientImpl::didCommitLayerTree(const RemoteLayerTreeTransaction& layerT
     [m_contentView _didCommitLayerTree:layerTreeTransaction];
 }
 
-void PageClientImpl::startAssistingNode(const WebCore::IntRect&, bool, bool)
+void PageClientImpl::startAssistingNode(const AssistedNodeInformation& nodeInformation)
 {
-    [m_contentView _startAssistingNode];
+    [m_contentView _startAssistingNode:nodeInformation];
 }
 
 void PageClientImpl::stopAssistingNode()

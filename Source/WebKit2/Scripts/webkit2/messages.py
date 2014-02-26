@@ -204,6 +204,7 @@ def struct_or_class(namespace, type):
         'WebCore::ViewportArguments',
         'WebCore::ViewportAttributes',
         'WebCore::WindowFeatures',
+        'WebKit::AssistedNodeInformation',
         'WebKit::AttributedString',
         'WebKit::ColorSpaceData',
         'WebKit::ContextMenuState',

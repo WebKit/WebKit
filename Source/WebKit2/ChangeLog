@@ -1,3 +1,52 @@
+2014-02-25  Enrica Casucci  <enrica@apple.com>
+
+        [WebKit2] Form controls handling.
+        https://bugs.webkit.org/show_bug.cgi?id=129344
+        <rdar://problem/16053643>
+
+        Reviewed by Simon Fraser and Joseph Pecoraro.
+
+        This is the step toward adding support for
+        form controls iOS style. It adds the logic to
+        select the appropriate keyboard type based on the
+        element type and introduces the AssistedNodeInformation
+        structure used currently for the keyboard type selection
+        and that will be used to populate pickers and popovers.
+        It also provides information to enable/disable next/previous
+        buttons in the accessory view.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        * Shared/AssistedNodeInformation.cpp: Added.
+        (WebKit::AssistedNodeInformation::encode):
+        (WebKit::AssistedNodeInformation::decode):
+        * Shared/AssistedNodeInformation.h: Added.
+        (WebKit::AssistedNodeInformation::AssistedNodeInformation):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::startAssistingNode):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+        (-[WKContentView _updateAccessory]):
+        (toUITextAutocapitalize):
+        (-[WKContentView textInputTraits]):
+        (-[WKContentView assistedNodeInformation]):
+        (-[WKContentView _startAssistingNode:]):
+        (-[WKContentView _stopAssistingNode]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startAssistingNode):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::isAssistableNode):
+        (WebKit::hasFocusableNode):
+        (WebKit::WebPage::getAssistedNodeInformation):
+        (WebKit::WebPage::elementDidFocus):
+
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
         VisitedLinkProvider should be refcounted

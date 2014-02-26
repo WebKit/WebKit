@@ -479,9 +479,9 @@ void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCor
     m_pageClient.didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
 }
 
-void WebPageProxy::startAssistingNode(const WebCore::IntRect& scrollRect, bool hasNextFocusable, bool hasPreviousFocusable)
+void WebPageProxy::startAssistingNode(const AssistedNodeInformation& information)
 {
-    m_pageClient.startAssistingNode(scrollRect, hasNextFocusable, hasPreviousFocusable);
+    m_pageClient.startAssistingNode(information);
 }
 
 void WebPageProxy::stopAssistingNode()
