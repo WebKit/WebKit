@@ -87,6 +87,7 @@ void DrawingAreaProxy::exposedRectChangedTimerFired()
 }
 #endif // PLATFORM(MAC)
 
+#if PLATFORM(COCOA)
 void DrawingAreaProxy::setCustomFixedPositionRect(const FloatRect& fixedPositionRect)
 {
     if (!m_webPageProxy->isValid())
@@ -94,5 +95,6 @@ void DrawingAreaProxy::setCustomFixedPositionRect(const FloatRect& fixedPosition
 
     m_webPageProxy->process().send(Messages::DrawingArea::SetCustomFixedPositionRect(fixedPositionRect), m_webPageProxy->pageID());
 }
+#endif
 
 } // namespace WebKit
