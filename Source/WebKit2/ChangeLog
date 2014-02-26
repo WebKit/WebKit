@@ -1,3 +1,27 @@
+2014-02-26  Pratik Solanki  <psolanki@apple.com>
+
+        [iOS][WebKit2] Adopt SPI for managing tabs
+        https://bugs.webkit.org/show_bug.cgi?id=129188
+        <rdar://problem/15939827>
+
+        Reviewed by Gavin Barraclough.
+
+        Call into assertions SPI to mark tabs as foreground and background.
+
+        * Configurations/WebKit2.xcconfig:
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::xpcConnection): Expose the xpc_connection_t.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::updateProcessState):
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::updateProcessState): Added. This goes through the list of
+        WebPageProxies and sets the process state to foreground if one of them is in a window.
+        Otherwise, it sets it to background.
+
 2014-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r164725 and r164731.

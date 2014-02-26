@@ -1025,6 +1025,9 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     }
 #endif
 
+    if (changed & ViewState::IsInWindow)
+        process().updateProcessState();
+
     updateBackingStoreDiscardableState();
 }
 

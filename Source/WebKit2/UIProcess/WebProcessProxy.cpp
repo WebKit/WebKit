@@ -453,6 +453,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #if PLATFORM(COCOA)
     updateProcessSuppressionState();
 #endif
+    updateProcessState();
 }
 
 WebFrameProxy* WebProcessProxy::webFrame(uint64_t frameID) const

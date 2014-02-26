@@ -127,6 +127,8 @@ public:
 
     void windowServerConnectionStateChanged();
 
+    void updateProcessState();
+
 private:
     explicit WebProcessProxy(WebContext&);
 
@@ -212,7 +214,11 @@ private:
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
 };
-    
+
+#if !PLATFORM(IOS)
+void WebProcessProxy::updateProcessState() { }
+#endif
+
 } // namespace WebKit
 
 #endif // WebProcessProxy_h
