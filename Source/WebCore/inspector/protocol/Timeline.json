@@ -3,15 +3,6 @@
     "description": "Timeline provides its clients with instrumentation records that are generated during the page runtime. Timeline instrumentation can be started and stopped using corresponding commands. While timeline is started, it is generating timeline event records.",
     "types": [
         {
-            "id": "DOMCounters",
-            "type": "object",
-            "properties": [
-                { "name": "documents", "type": "integer" },
-                { "name": "nodes", "type": "integer" }
-            ],
-            "description": "Current values of DOM counters."
-        },
-        {
             "id": "EventType",
             "type": "string",
             "enum": ["EventDispatch", "BeginFrame", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "CompositeLayers", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
@@ -25,7 +16,6 @@
                 { "name": "thread", "type": "string", "optional": true, "description": "If present, identifies the thread that produced the event." },
                 { "name": "data", "type": "object", "description": "Event data." },
                 { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." },
-                { "name": "counters", "$ref": "DOMCounters", "optional": true, "description": "Current values of DOM counters." },
                 { "name": "usedHeapSize", "type": "integer", "optional": true, "description": "Current size of JS heap." }
             ],
             "description": "Timeline record contains information about the recorded activity."
@@ -35,8 +25,7 @@
         {
             "name": "start",
             "parameters": [
-                { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." },
-                { "name": "includeDomCounters", "optional": true, "type": "boolean", "description": "Whether DOM counters data should be included into timeline events." }
+                { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." }
             ],
             "description": "Starts capturing instrumentation events."
         },

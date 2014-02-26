@@ -37,7 +37,6 @@
 #include "FocusDirection.h"
 #include "HitTestRequest.h"
 #include "IconURL.h"
-#include "InspectorCounters.h"
 #include "MutationObserver.h"
 #include "PageVisibilityState.h"
 #include "PlatformScreen.h"
@@ -287,7 +286,11 @@ public:
         }
     }
 
+    unsigned referencingNodeCount() const { return m_referencingNodeCount; }
+
     void removedLastRef();
+
+    static HashSet<Document*>& allDocuments();
 
     MediaQueryMatcher& mediaQueryMatcher();
 
@@ -1725,8 +1728,6 @@ inline Node::Node(Document& document, ConstructionType type)
 #if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
     trackForDebugging();
 #endif
-
-    InspectorCounters::incrementCounter(InspectorCounters::NodeCounter);
 }
 
 inline ScriptExecutionContext* Node::scriptExecutionContext() const

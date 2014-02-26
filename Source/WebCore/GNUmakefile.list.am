@@ -3764,8 +3764,6 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorConsoleInstrumentation.h \
 	Source/WebCore/inspector/InspectorController.cpp \
 	Source/WebCore/inspector/InspectorController.h \
-	Source/WebCore/inspector/InspectorCounters.cpp \
-	Source/WebCore/inspector/InspectorCounters.h \
 	Source/WebCore/inspector/InspectorDOMAgent.cpp \
 	Source/WebCore/inspector/InspectorDOMAgent.h \
 	Source/WebCore/inspector/InspectorDOMDebuggerAgent.cpp \

@@ -1,3 +1,49 @@
+2014-02-26  Andreas Kling  <akling@apple.com>
+
+        Remove unused InspectorCounters.
+        <https://webkit.org/b/129367>
+
+        The InspectorCounters code was only used to implement two layout test
+        APIs (window.internals.numberOfLive{Nodes,Documents}) yet it had hooks
+        in crazy places like Node construction and destruction.
+
+        Rewrote the internals APIs to iterate over all live Documents instead,
+        totaling up their referencing Node count. Added a process-global
+        Document::allDocuments() HashSet to make this whole thing possible.
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventListener.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::allDocuments):
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        * dom/Document.h:
+        (WebCore::Node::Node):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorCounters.cpp: Removed.
+        * inspector/InspectorCounters.h: Removed.
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::start):
+        (WebCore::InspectorTimelineAgent::innerAddRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/protocol/Timeline.json:
+        * platform/ThreadGlobalData.cpp:
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfLiveNodes):
+        (WebCore::Internals::numberOfLiveDocuments):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-02-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove console.profiles from window.console API

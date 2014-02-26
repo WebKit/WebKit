@@ -29,7 +29,6 @@
 
 #include "CachedResourceRequestInitiators.h"
 #include "EventNames.h"
-#include "InspectorCounters.h"
 #include "TextCodecICU.h"
 #include "ThreadTimers.h"
 #include <wtf/MainThread.h>

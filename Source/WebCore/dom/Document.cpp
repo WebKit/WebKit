@@ -392,6 +392,12 @@ bool TextAutoSizingTraits::isDeletedValue(const TextAutoSizingKey& value)
 }
 #endif
 
+HashSet<Document*>& Document::allDocuments()
+{
+    static NeverDestroyed<HashSet<Document*>> documents;
+    return documents;
+}
+
 Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
@@ -508,6 +514,8 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_hasInjectedPlugInsScript(false)
     , m_renderTreeBeingDestroyed(false)
 {
+    allDocuments().add(this);
+
     // We depend on the url getting immediately set in subframes, but we
     // also depend on the url NOT getting immediately set in opened windows.
     // See fast/dom/early-frame-url.html
@@ -535,8 +543,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListAndCollectionCounts); ++i)
         m_nodeListAndCollectionCounts[i] = 0;
-
-    InspectorCounters::incrementCounter(InspectorCounters::DocumentCounter);
 }
 
 static void histogramMutationEventUsage(const unsigned short& listenerTypes)
@@ -571,6 +577,8 @@ PassRefPtr<Document> Document::create(ScriptExecutionContext& context)
 
 Document::~Document()
 {
+    allDocuments().remove(this);
+
     ASSERT(!renderView());
     ASSERT(!m_inPageCache);
     ASSERT(m_ranges.isEmpty());
@@ -636,8 +644,6 @@ Document::~Document()
 
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListAndCollectionCounts); ++i)
         ASSERT(!m_nodeListAndCollectionCounts[i]);
-
-    InspectorCounters::decrementCounter(InspectorCounters::DocumentCounter);
 }
 
 void Document::removedLastRef()

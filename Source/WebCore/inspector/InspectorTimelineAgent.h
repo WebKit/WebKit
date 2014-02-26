@@ -132,7 +132,7 @@ public:
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
-    virtual void start(ErrorString*, const int* maxCallStackDepth, const bool* includeDomCounters) override;
+    virtual void start(ErrorString*, const int* maxCallStackDepth) override;
     virtual void stop(ErrorString*) override;
     virtual void canMonitorMainThread(ErrorString*, bool*) override;
     virtual void supportsFrameInstrumentation(ErrorString*, bool*) override;
@@ -230,7 +230,6 @@ private:
     void appendRecord(PassRefPtr<Inspector::InspectorObject> data, TimelineRecordType, bool captureCallStack, Frame*);
     void pushCurrentRecord(PassRefPtr<Inspector::InspectorObject>, TimelineRecordType, bool captureCallStack, Frame*);
 
-    void setDOMCounters(Inspector::TypeBuilder::Timeline::TimelineEvent* record);
     void setFrameIdentifier(Inspector::InspectorObject* record, Frame*);
 
     void didCompleteCurrentRecord(TimelineRecordType);
@@ -264,7 +263,6 @@ private:
     WeakPtrFactory<InspectorTimelineAgent> m_weakFactory;
 
     bool m_enabled;
-    bool m_includeDOMCounters;
     bool m_recordingProfile;
 };
 

@@ -33,7 +33,6 @@
 #include "InspectorCSSAgent.cpp"
 #include "InspectorClient.cpp"
 #include "InspectorController.cpp"
-#include "InspectorCounters.cpp"
 #include "InspectorDOMAgent.cpp"
 #include "InspectorDOMDebuggerAgent.cpp"
 #include "InspectorDOMStorageAgent.cpp"

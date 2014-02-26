@@ -191,8 +191,8 @@
     // FIXME: this will lead to BUG interals.consoleProfiles !== interals.consoleProfiles as profile will always returns new array.
     readonly attribute ScriptProfile[] consoleProfiles;
 
-    [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();
-    [Conditional=INSPECTOR] unsigned long numberOfLiveDocuments();
+    unsigned long numberOfLiveNodes();
+    unsigned long numberOfLiveDocuments();
     [Conditional=INSPECTOR] sequence<DOMString> consoleMessageArgumentCounts();
     [Conditional=INSPECTOR] DOMWindow openDummyInspectorFrontend(DOMString url);
     [Conditional=INSPECTOR] void closeDummyInspectorFrontend();

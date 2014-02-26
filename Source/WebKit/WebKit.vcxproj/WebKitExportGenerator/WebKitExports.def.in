@@ -125,7 +125,6 @@ EXPORTS
         symbolWithPointer(?broadcast@ThreadCondition@WTF@@QAEXXZ, ?broadcast@ThreadCondition@WTF@@QEAAXXZ)
         symbolWithPointer(?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z, ?callOnMainThread@WTF@@YAXP6AXPEAX@Z0@Z)
 #if ENABLE(INSPECTOR)
-        ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
         symbolWithPointer(?didBeginFrame@InspectorController@WebCore@@QAEXXZ, ?didBeginFrame@InspectorController@WebCore@@QEAAXXZ)
         symbolWithPointer(?didCancelFrame@InspectorController@WebCore@@QAEXXZ, ?didCancelFrame@InspectorController@WebCore@@QEAAXXZ)
 #endif
@@ -171,6 +170,7 @@ EXPORTS
         symbolWithPointer(??0String@WTF@@QAE@PB_WI@Z, ??0String@WTF@@QEAA@PEB_WI@Z)
         symbolWithPointer(??0String@WTF@@QAE@VASCIILiteral@1@@Z, ??0String@WTF@@QEAA@VASCIILiteral@1@@Z)
         symbolWithPointer(??1SerializedScriptValue@WebCore@@QAE@XZ, ??1SerializedScriptValue@WebCore@@QEAA@XZ)
+        symbolWithPointer(?allDocuments@Document@WebCore@@SAAAV?$HashSet@PAVDocument@WebCore@@U?$PtrHash@PAVDocument@WebCore@@@WTF@@U?$HashTraits@PAVDocument@WebCore@@@4@@WTF@@XZ)
         symbolWithPointer(?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z, ?absoluteBoundingBoxRect@RenderObject@WebCore@@QEBA?AVIntRect@2@_N@Z)
         symbolWithPointer(?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ, ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QEBA?AVIntRect@2@XZ)
         symbolWithPointer(?description@DocumentMarker@WebCore@@QBEABVString@WTF@@XZ, ?description@DocumentMarker@WebCore@@QEBAAEBVString@WTF@@XZ)

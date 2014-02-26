@@ -38,7 +38,6 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "InspectorClient.h"
-#include "InspectorCounters.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorPageAgent.h"
 #include "InspectorWebFrontendDispatchers.h"
@@ -82,7 +81,7 @@ void InspectorTimelineAgent::willDestroyFrontendAndBackend(InspectorDisconnectRe
     stop(&error);
 }
 
-void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, const bool* includeDomCounters)
+void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
 {
     if (!m_frontendDispatcher)
         return;
@@ -91,9 +90,6 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, c
         m_maxCallStackDepth = *maxCallStackDepth;
     else
         m_maxCallStackDepth = 5;
-
-    if (includeDomCounters)
-        m_includeDOMCounters = *includeDomCounters;
 
     m_timeConverter.reset();
 
@@ -556,8 +552,6 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
 
     RefPtr<Inspector::TypeBuilder::Timeline::TimelineEvent> record = Inspector::TypeBuilder::Timeline::TimelineEvent::runtimeCast(prpRecord);
 
-    setDOMCounters(record.get());
-
     if (m_recordStack.isEmpty())
         sendEvent(record.release());
     else {
@@ -569,24 +563,6 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
 static size_t usedHeapSize()
 {
     return JSDOMWindow::commonVM()->heap.size();
-}
-
-void InspectorTimelineAgent::setDOMCounters(Inspector::TypeBuilder::Timeline::TimelineEvent* record)
-{
-    record->setUsedHeapSize(usedHeapSize());
-
-    if (m_includeDOMCounters) {
-        int documentCount = 0;
-        int nodeCount = 0;
-        if (m_inspectorType == PageInspector) {
-            documentCount = InspectorCounters::counterValue(InspectorCounters::DocumentCounter);
-            nodeCount = InspectorCounters::counterValue(InspectorCounters::NodeCounter);
-        }
-        RefPtr<Inspector::TypeBuilder::Timeline::DOMCounters> counters = Inspector::TypeBuilder::Timeline::DOMCounters::create()
-            .setDocuments(documentCount)
-            .setNodes(nodeCount);
-        record->setCounters(counters.release());
-    }
 }
 
 void InspectorTimelineAgent::setFrameIdentifier(InspectorObject* record, Frame* frame)
@@ -626,7 +602,6 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_client(client)
     , m_weakFactory(this)
     , m_enabled(false)
-    , m_includeDOMCounters(false)
     , m_recordingProfile(false)
 {
 }

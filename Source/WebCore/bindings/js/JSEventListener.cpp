@@ -23,7 +23,6 @@
 #include "BeforeUnloadEvent.h"
 #include "Event.h"
 #include "Frame.h"
-#include "InspectorCounters.h"
 #include "JSEvent.h"
 #include "JSEventTarget.h"
 #include "JSMainThreadExecState.h"

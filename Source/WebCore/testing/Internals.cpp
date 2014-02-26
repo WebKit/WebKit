@@ -59,7 +59,6 @@
 #include "HistoryItem.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
-#include "InspectorCounters.h"
 #include "InspectorForwarding.h"
 #include "InspectorFrontendClientLocal.h"
 #include "InspectorInstrumentation.h"
@@ -1441,17 +1440,20 @@ const ProfilesArray& Internals::consoleProfiles() const
     return contextDocument()->domWindow()->console()->profiles();
 }
 
-#if ENABLE(INSPECTOR)
 unsigned Internals::numberOfLiveNodes() const
 {
-    return InspectorCounters::counterValue(InspectorCounters::NodeCounter);
+    unsigned nodeCount = 0;
+    for (auto* document : Document::allDocuments())
+        nodeCount += document->referencingNodeCount();
+    return nodeCount;
 }
 
 unsigned Internals::numberOfLiveDocuments() const
 {
-    return InspectorCounters::counterValue(InspectorCounters::DocumentCounter);
+    return Document::allDocuments().size();
 }
 
+#if ENABLE(INSPECTOR)
 Vector<String> Internals::consoleMessageArgumentCounts() const
 {
     Document* document = contextDocument();

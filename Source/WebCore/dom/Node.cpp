@@ -309,8 +309,6 @@ Node::~Node()
         willBeDeletedFrom(document());
 
     document().decrementReferencingNodeCount();
-
-    InspectorCounters::decrementCounter(InspectorCounters::NodeCounter);
 }
 
 void Node::willBeDeletedFrom(Document& document)
