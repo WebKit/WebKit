@@ -1,5 +1,12 @@
 2014-02-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix MiniBrowser/WebKitTestRunner link errors; WKView still
+        needs to be exported while these tools are using it.
+
+        * UIProcess/API/Cocoa/WKView.h:
+
+2014-02-26  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the iOS build by wrapping some context menu stuff in #if ENABLE(CONTEXT_MENUS)
 
         * UIProcess/WebPageProxy.h:

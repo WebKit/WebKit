@@ -33,6 +33,7 @@
 @class WKProcessGroup;
 @class WKViewData;
 
+WK_EXPORT
 @interface WKView : NSView <NSTextInputClient> {
 @private
     WKViewData *_data;
