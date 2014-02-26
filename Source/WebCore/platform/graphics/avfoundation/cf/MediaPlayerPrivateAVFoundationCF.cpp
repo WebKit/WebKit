@@ -209,7 +209,9 @@ static CFArrayRef createMetadataKeyNames()
         AVCFAssetPropertyPreferredRate,
         AVCFAssetPropertyPlayable,
         AVCFAssetPropertyTracks,
-        AVCFAssetPropertyAvailableMediaCharacteristicsWithMediaSelectionOptions
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+        AVCFAssetPropertyAvailableMediaCharacteristicsWithMediaSelectionOptions,
+#endif
     };
     
     return CFArrayCreate(0, (const void**)keyNames, sizeof(keyNames) / sizeof(keyNames[0]), &kCFTypeArrayCallBacks);
@@ -736,8 +738,21 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationCF::as
 
         if (keyStatus < AVCFPropertyValueStatusLoaded)
             return MediaPlayerAVAssetStatusLoading;
-        if (keyStatus == AVCFPropertyValueStatusFailed)
+        if (keyStatus == AVCFPropertyValueStatusFailed) {
+            if (CFStringCompare(keyName, AVCFAssetPropertyNaturalSize, 0) == kCFCompareEqualTo) {
+                // Don't treat a failure to retrieve @"naturalSize" as fatal. We will use @"presentationSize" instead.
+                // <rdar://problem/15966685>
+                continue;
+            }
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+            if (CFStringCompare(keyName, AVCFAssetPropertyAvailableMediaCharacteristicsWithMediaSelectionOptions, 0) == kCFCompareEqualTo) {
+                // On Windows, the media selection options are not available when initially interacting with a streaming source.
+                // <rdar://problem/16160699>
+                continue;
+            }
+#endif
             return MediaPlayerAVAssetStatusFailed;
+        }
         if (keyStatus == AVCFPropertyValueStatusCancelled)
             return MediaPlayerAVAssetStatusCancelled;
     }
@@ -878,6 +893,11 @@ void MediaPlayerPrivateAVFoundationCF::tracksChanged()
             
             if (AVCFPlayerItemTrackIsEnabled(track)) {
                 RetainPtr<AVCFAssetTrackRef> assetTrack = adoptCF(AVCFPlayerItemTrackCopyAssetTrack(track));
+                if (!assetTrack) {
+                    // Asset tracks may not be available yet when streaming. <rdar://problem/16160699>
+                    LOG(Media, "MediaPlayerPrivateAVFoundationCF:tracksChanged(%p) - track = %d is enabled, but has no asset track.", this, track);
+                    continue;
+                }
                 CFStringRef mediaType = AVCFAssetTrackGetMediaType(assetTrack.get());
                 if (!mediaType)
                     continue;
@@ -948,6 +968,9 @@ void MediaPlayerPrivateAVFoundationCF::sizeChanged()
     trackRectUnion = CGRectOffset(trackRectUnion, trackRectUnion.origin.x, trackRectUnion.origin.y);
     CGSize naturalSize = trackRectUnion.size;
 
+    if (!naturalSize.height && !naturalSize.width && avPlayerItem(m_avfWrapper))
+        naturalSize = AVCFPlayerItemGetPresentationSize(avPlayerItem(m_avfWrapper));
+
     // Also look at the asset's preferred transform so we account for a movie matrix.
     CGSize movieSize = CGSizeApplyAffineTransform(AVCFAssetGetNaturalSize(avAsset(m_avfWrapper)), AVCFAssetGetPreferredTransform(avAsset(m_avfWrapper)));
     if (movieSize.width > naturalSize.width)
@@ -971,7 +994,9 @@ bool MediaPlayerPrivateAVFoundationCF::requiresImmediateCompositing() const
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 void MediaPlayerPrivateAVFoundationCF::processLegacyClosedCaptionsTracks()
 {
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     AVCFPlayerItemSelectMediaOptionInMediaSelectionGroup(avPlayerItem(m_avfWrapper), 0, safeMediaSelectionGroupForLegibleMedia(m_avfWrapper));
+#endif
 
     Vector<RefPtr<InbandTextTrackPrivateAVF> > removedTextTracks = m_textTracks;
     RetainPtr<CFArrayRef> tracks = adoptCF(AVCFPlayerItemCopyTracks(avPlayerItem(m_avfWrapper)));
@@ -980,6 +1005,11 @@ void MediaPlayerPrivateAVFoundationCF::processLegacyClosedCaptionsTracks()
         AVCFPlayerItemTrackRef playerItemTrack = (AVCFPlayerItemTrackRef)(CFArrayGetValueAtIndex(tracks.get(), i));
 
         RetainPtr<AVCFAssetTrackRef> assetTrack = adoptCF(AVCFPlayerItemTrackCopyAssetTrack(playerItemTrack));
+        if (!assetTrack) {
+            // Asset tracks may not be available yet when streaming. <rdar://problem/16160699>
+            LOG(Media, "MediaPlayerPrivateAVFoundationCF:tracksChanged(%p) - track = %d is enabled, but has no asset track.", this, track);
+            continue;
+        }
         CFStringRef mediaType = AVCFAssetTrackGetMediaType(assetTrack.get());
         if (!mediaType)
             continue;
@@ -1295,7 +1325,10 @@ void AVFWrapper::createPlayer(IDirect3DDevice9* d3dDevice)
 {
     ASSERT(isMainThread());
     ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
-    ASSERT(!avPlayer() && avPlayerItem());
+    ASSERT(avPlayerItem());
+
+    if (avPlayer())
+        return;
 
     RetainPtr<CFMutableDictionaryRef> optionsRef = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
@@ -1338,7 +1371,10 @@ void AVFWrapper::createPlayerItem()
 {
     ASSERT(isMainThread());
     ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
-    ASSERT(!avPlayerItem() && avAsset());
+    ASSERT(avAsset());
+
+    if (avPlayerItem())
+        return;
 
     // Create the player item so we begin loading media data.
     AVCFPlayerItemRef itemRef = AVCFPlayerItemCreateWithAsset(kCFAllocatorDefault, avAsset(), m_notificationQueue);
@@ -1447,6 +1483,8 @@ void AVFWrapper::processNotification(void* context)
         self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::PlayerRateChanged);
     else if (CFEqual(propertyName, CACFContextNeedsFlushNotification()))
         self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ContentsNeedsDisplay);
+    else if (CFEqual(propertyName, AVCFPlayerItemDurationChangedNotification))
+        self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::DurationChanged);
     else
         ASSERT_NOT_REACHED();
 }
@@ -1532,6 +1570,7 @@ void AVFWrapper::seekToTime(float time)
         kCMTimeZero, kCMTimeZero, &seekCompletedCallback, callbackContext());
 }
 
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 struct LegibleOutputData {
     RetainPtr<CFArrayRef> m_attributedStrings;
     double m_time;
@@ -1584,6 +1623,7 @@ void AVFWrapper::legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutpu
 
     dispatch_async_f(dispatch_get_main_queue(), legibleOutputData.leakPtr(), processCue);
 }
+#endif
 
 void AVFWrapper::setAsset(AVCFURLAssetRef asset)
 {
