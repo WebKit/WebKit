@@ -333,7 +333,7 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
     if (factor <= 0)
         factor = 20;
 
-    LayoutUnit result = static_cast<LayoutUnit>(ceiledLayoutUnit(charWidth * factor));
+    LayoutUnit result = ceiledLayoutUnit(charWidth * factor);
 
     float maxCharWidth = 0.f;
 

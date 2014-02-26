@@ -2719,9 +2719,9 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
 
         for (auto box = firstRootBox(); box; box = box->nextRootBox()) {
             if (box->firstChild())
-                left = std::min(left, x + static_cast<LayoutUnit>(box->firstChild()->x()));
+                left = std::min(left, x + LayoutUnit(box->firstChild()->x()));
             if (box->lastChild())
-                right = std::max(right, x + static_cast<LayoutUnit>(ceilf(box->lastChild()->logicalRight())));
+                right = std::max(right, x + LayoutUnit(ceilf(box->lastChild()->logicalRight())));
         }
     } else {
         for (RenderBox* obj = firstChildBox(); obj; obj = obj->nextSiblingBox()) {

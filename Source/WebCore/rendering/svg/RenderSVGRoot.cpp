@@ -133,7 +133,7 @@ bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
 
 static inline LayoutUnit resolveLengthAttributeForSVG(const Length& length, float scale, float maxSize, RenderView* renderView)
 {
-    return static_cast<LayoutUnit>(valueForLength(length, maxSize, renderView) * (length.isFixed() ? scale : 1));
+    return valueForLength(length, maxSize, renderView) * (length.isFixed() ? scale : 1);
 }
 
 LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const

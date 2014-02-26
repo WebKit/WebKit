@@ -176,11 +176,11 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
     // https://bugs.webkit.org/show_bug.cgi?id=47236
     if (style().isHorizontalWritingMode()) {
         LayoutUnit clipTop = paintRect.y();
-        LayoutUnit clipHeight = std::max(static_cast<LayoutUnit>(style().borderTopWidth()), legend->height() - ((legend->height() - borderTop()) / 2));
+        LayoutUnit clipHeight = std::max<LayoutUnit>(style().borderTopWidth(), legend->height() - ((legend->height() - borderTop()) / 2));
         graphicsContext->clipOut(pixelSnappedIntRect(paintRect.x() + legend->x(), clipTop, legend->width(), clipHeight));
     } else {
         LayoutUnit clipLeft = paintRect.x();
-        LayoutUnit clipWidth = std::max(static_cast<LayoutUnit>(style().borderLeftWidth()), legend->width());
+        LayoutUnit clipWidth = std::max<LayoutUnit>(style().borderLeftWidth(), legend->width());
         graphicsContext->clipOut(pixelSnappedIntRect(clipLeft, paintRect.y() + legend->y(), clipWidth, legend->height()));
     }
 

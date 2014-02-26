@@ -1,3 +1,44 @@
+2014-02-25  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Remove explicit static_cast<LayoutUnit> conversions.
+        https://bugs.webkit.org/show_bug.cgi?id=129359
+
+        Reviewed by Simon Fraser.
+
+        No testable change in behavior.
+
+        * css/LengthFunctions.cpp:
+        (WebCore::minimumValueForLength):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayer):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::logicalLeftVisualOverflow):
+        (WebCore::InlineFlowBox::logicalRightVisualOverflow):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::isSelected):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeColumnCountAndWidth):
+        (WebCore::getBPMWidth):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustForBorderFit):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::borderSpacingInRowDirection):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::preferredContentLogicalWidth):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::preferredContentLogicalWidth):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::beforeAnnotationsAdjustment):
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::resolveLengthAttributeForSVG):
+
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
         Build fixes.

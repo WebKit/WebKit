@@ -47,29 +47,29 @@ LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, 
         return length.value();
     case Percent:
         if (roundPercentages)
-            return static_cast<LayoutUnit>(round(maximumValue * length.percent() / 100.0f));
+            return LayoutUnit(round(maximumValue * length.percent() / 100.0f));
         // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
-        return static_cast<LayoutUnit>(static_cast<float>(maximumValue * length.percent() / 100.0f));
+        return LayoutUnit(static_cast<float>(maximumValue * length.percent() / 100.0f));
     case Calculated:
         return length.nonNanCalculatedValue(maximumValue);
     case ViewportPercentageWidth:
         if (renderView)
-            return static_cast<LayoutUnit>(renderView->viewportSize().width() * length.viewportPercentageLength() / 100.0f);
+            return LayoutUnit(renderView->viewportSize().width() * length.viewportPercentageLength() / 100.0f);
         return 0;
     case ViewportPercentageHeight:
         if (renderView)
-            return static_cast<LayoutUnit>(renderView->viewportSize().height() * length.viewportPercentageLength() / 100.0f);
+            return LayoutUnit(renderView->viewportSize().height() * length.viewportPercentageLength() / 100.0f);
         return 0;
     case ViewportPercentageMin:
         if (renderView) {
             IntSize viewportSize = renderView->viewportSize();
-            return static_cast<LayoutUnit>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
+            return LayoutUnit(std::min(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
         }
         return 0;
     case ViewportPercentageMax:
         if (renderView) {
             IntSize viewportSize = renderView->viewportSize();
-            return static_cast<LayoutUnit>(std::max(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
+            return LayoutUnit(std::max(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
         }
         return 0;
     case FillAvailable:

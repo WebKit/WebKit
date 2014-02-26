@@ -191,7 +191,7 @@ public:
     LayoutUnit borderSpacingInRowDirection() const
     {
         if (unsigned effectiveColumnCount = numEffCols())
-            return static_cast<LayoutUnit>(effectiveColumnCount + 1) * hBorderSpacing();
+            return (effectiveColumnCount + 1) * hBorderSpacing();
 
         return 0;
     }

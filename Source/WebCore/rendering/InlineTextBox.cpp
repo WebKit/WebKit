@@ -196,8 +196,8 @@ LayoutUnit InlineTextBox::selectionHeight() const
 
 bool InlineTextBox::isSelected(int startPos, int endPos) const
 {
-    LayoutUnit sPos = std::max<LayoutUnit>(startPos - m_start, 0);
-    LayoutUnit ePos = std::min<LayoutUnit>(endPos - m_start, m_len);
+    int sPos = std::max(startPos - m_start, 0);
+    int ePos = std::min(endPos - m_start, static_cast<int>(m_len));
     return (sPos < ePos);
 }
 
