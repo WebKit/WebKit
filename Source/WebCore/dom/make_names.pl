@@ -70,7 +70,7 @@ if ($ENV{CC}) {
 } elsif ($Config::Config{"osname"} eq "darwin" && $ENV{SDKROOT}) {
     chomp($gccLocation = `xcrun -find cc -sdk '$ENV{SDKROOT}'`);
 } else {
-    $gccLocation = "/usr/bin/gcc";
+    $gccLocation = "/usr/bin/cc";
 }
 my $preprocessor = $gccLocation . " -E -x c++";
 
