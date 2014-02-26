@@ -55,10 +55,6 @@ void StructureStubInfo::deref()
     case access_put_by_id_transition_direct:
     case access_put_by_id_replace:
     case access_unset:
-    case access_get_by_id_generic:
-    case access_put_by_id_generic:
-    case access_get_array_length:
-    case access_get_string_length:
         // These instructions don't have to release any allocated memory
         return;
     default:

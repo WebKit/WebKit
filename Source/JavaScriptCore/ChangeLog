@@ -1,5 +1,22 @@
 2014-02-26  Oliver Hunt  <oliver@apple.com>
 
+        Remove unused access types
+        https://bugs.webkit.org/show_bug.cgi?id=129385
+
+        Reviewed by Filip Pizlo.
+
+        Remove unused cruft.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        * bytecode/StructureStubInfo.h:
+        (JSC::isGetByIdAccess):
+        (JSC::isPutByIdAccess):
+
+2014-02-26  Oliver Hunt  <oliver@apple.com>
+
         Function.prototype.apply has a bad time with the spread operator
         https://bugs.webkit.org/show_bug.cgi?id=129381
 

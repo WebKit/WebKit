@@ -362,15 +362,6 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
             case access_unset:
                 out.printf("unset");
                 break;
-            case access_get_by_id_generic:
-                out.printf("generic");
-                break;
-            case access_get_array_length:
-                out.printf("array_length");
-                break;
-            case access_get_string_length:
-                out.printf("string_length");
-                break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
