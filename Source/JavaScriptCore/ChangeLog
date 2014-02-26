@@ -1,3 +1,16 @@
+2014-02-26  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: m_heap->vm()->currentThreadIsHoldingAPILock() in inspector-protocol/*.
+        <https://webkit.org/b/129364>
+
+        Reviewed by Alexey Proskuryakov.
+
+        InjectedScriptModule::ensureInjected() needs an APIEntryShim.
+
+        * inspector/InjectedScriptModule.cpp:
+        (Inspector::InjectedScriptModule::ensureInjected):
+        - Added the needed but missing APIEntryShim. 
+
 2014-02-25  Mark Lam  <mark.lam@apple.com>
 
         Web Inspector: CRASH when evaluating in console of JSContext RWI with disabled breakpoints.
