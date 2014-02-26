@@ -302,6 +302,24 @@ rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
 rect: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-auto-columns) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-auto-columns) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-auto-flow) : none
+rect: style.getPropertyCSSValue(-webkit-grid-auto-flow) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-auto-rows) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-auto-rows) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-column-end) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-column-end) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-column-start) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-column-start) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-template-columns) : none
+rect: style.getPropertyCSSValue(-webkit-grid-template-columns) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-template-rows) : none
+rect: style.getPropertyCSSValue(-webkit-grid-template-rows) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-row-end) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-row-end) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-row-start) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-row-start) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-character) : auto
 rect: style.getPropertyCSSValue(-webkit-hyphenate-character) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
@@ -796,6 +814,24 @@ g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
 g: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-auto-columns) : auto
+g: style.getPropertyCSSValue(-webkit-grid-auto-columns) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-auto-flow) : none
+g: style.getPropertyCSSValue(-webkit-grid-auto-flow) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-auto-rows) : auto
+g: style.getPropertyCSSValue(-webkit-grid-auto-rows) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-column-end) : auto
+g: style.getPropertyCSSValue(-webkit-grid-column-end) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-column-start) : auto
+g: style.getPropertyCSSValue(-webkit-grid-column-start) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-template-columns) : none
+g: style.getPropertyCSSValue(-webkit-grid-template-columns) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-template-rows) : none
+g: style.getPropertyCSSValue(-webkit-grid-template-rows) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-row-end) : auto
+g: style.getPropertyCSSValue(-webkit-grid-row-end) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-row-start) : auto
+g: style.getPropertyCSSValue(-webkit-grid-row-start) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-character) : auto
 g: style.getPropertyCSSValue(-webkit-hyphenate-character) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto

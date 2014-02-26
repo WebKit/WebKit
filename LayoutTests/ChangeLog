@@ -1,3 +1,20 @@
+2014-02-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Check default getComputedStyle() return values for grid properties
+        https://bugs.webkit.org/show_bug.cgi?id=129092
+
+        Reviewed by Darin Adler.
+
+        Added checks for several CSS Grid Layout properties. According to
+        the specs, the ones we have implemented so far should be all of
+        them "auto" but grid-template-{rows|columns}, grid-auto-flow and
+        grid-template-areas that should be "none" by default.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2014-02-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Regression when showing the captions menu
