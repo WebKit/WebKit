@@ -1239,7 +1239,6 @@ void RenderMathMLOperator::SetOperatorProperties()
         parseMathMLLength(element().fastGetAttribute(MathMLNames::lspaceAttr), m_leadingSpace, &style(), false); // FIXME: Negative leading space must be implemented (https://bugs.webkit.org/show_bug.cgi?id=124830).
         parseMathMLLength(element().fastGetAttribute(MathMLNames::rspaceAttr), m_trailingSpace, &style(), false); // FIXME: Negative trailing space must be implemented (https://bugs.webkit.org/show_bug.cgi?id=124830).
 
-        // FIXME: Attributes minsize/maxsize are not implemented (https://bugs.webkit.org/show_bug.cgi?id=122567).
         parseMathMLLength(element().fastGetAttribute(MathMLNames::minsizeAttr), m_minSize, &style(), false);
         const AtomicString& maxsize = element().fastGetAttribute(MathMLNames::maxsizeAttr);
         if (maxsize != "infinity")
@@ -1252,9 +1251,9 @@ bool RenderMathMLOperator::isChildAllowed(const RenderObject&, const RenderStyle
     return false;
 }
 
-void RenderMathMLOperator::stretchTo(int heightAboveBaseline, int depthBelowBaseline)
+void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)
 {
-    if (heightAboveBaseline <= m_stretchHeightAboveBaseline && depthBelowBaseline <= m_stretchDepthBelowBaseline)
+    if (heightAboveBaseline == m_stretchHeightAboveBaseline && depthBelowBaseline == m_stretchDepthBelowBaseline)
         return;
 
     m_stretchHeightAboveBaseline = heightAboveBaseline;
@@ -1264,11 +1263,23 @@ void RenderMathMLOperator::stretchTo(int heightAboveBaseline, int depthBelowBase
     if (hasOperatorFlag(MathMLOperatorDictionary::Symmetric)) {
         // We make the operator stretch symmetrically above and below the axis.
         // FIXME: We should read the axis from the MATH table (https://bugs.webkit.org/show_bug.cgi?id=122297). For now, we use the same value as in RenderMathMLFraction::firstLineBaseline().
-        int axis = static_cast<int>(lroundf(style().fontMetrics().xHeight() / 2));
-        int halfStretchSize = std::max(m_stretchHeightAboveBaseline - axis, m_stretchDepthBelowBaseline + axis);
+        LayoutUnit axis = style().fontMetrics().xHeight() / 2;
+        LayoutUnit halfStretchSize = std::max(m_stretchHeightAboveBaseline - axis, m_stretchDepthBelowBaseline + axis);
         m_stretchHeightAboveBaseline = halfStretchSize + axis;
         m_stretchDepthBelowBaseline = halfStretchSize - axis;
     }
+    // We try to honor the minsize/maxsize condition by increasing or decreasing both height and depth proportionately.
+    // The MathML specification does not indicate what to do when maxsize < minsize, so we follow Gecko and make minsize take precedence.
+    LayoutUnit size = stretchSize();
+    float aspect = 1.0;
+    if (size > 0) {
+        if (size < m_minSize)
+            aspect = float(m_minSize) / size;
+        else if (m_maxSize < size)
+            aspect = float(m_maxSize) / size;
+    }
+    m_stretchHeightAboveBaseline *= aspect;
+    m_stretchDepthBelowBaseline *= aspect;
     updateStyle();
 }
 

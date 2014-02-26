@@ -1,3 +1,23 @@
+2014-02-25  Frédéric Wang  <fred.wang@free.fr>
+
+        Add support for minsize/maxsize attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=122567
+
+        Reviewed by Chris Fleizach.
+
+        This change implements the minsize/maxsize attributes of the mo element.
+        We also switch stretch sizes from int to LayoutUnit to improve accuracy.
+
+        Tests: mathml/presentation/stretchy-minsize-maxsize-dynamic.html
+               mathml/presentation/stretchy-minsize-maxsize.html
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::SetOperatorProperties):
+        (WebCore::RenderMathMLOperator::stretchTo):
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::layout):
+
 2014-02-25  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Small clean-up of flow threads accelerated compositing code

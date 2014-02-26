@@ -67,7 +67,7 @@ void RenderMathMLRow::layout()
             if (renderOperator && renderOperator->hasOperatorFlag(MathMLOperatorDictionary::Stretchy))
                 continue;
         }
-        int childHeightAboveBaseline = 0, childDepthBelowBaseline = 0;
+        LayoutUnit childHeightAboveBaseline = 0, childDepthBelowBaseline = 0;
         if (child->isRenderMathMLBlock()) {
             RenderMathMLBlock* mathmlChild = toRenderMathMLBlock(child);
             childHeightAboveBaseline = mathmlChild->firstLineBaseline();
@@ -82,8 +82,8 @@ void RenderMathMLRow::layout()
             childHeightAboveBaseline = toRenderBox(child)->logicalHeight();
             childDepthBelowBaseline = 0;
         }
-        stretchHeightAboveBaseline = std::max<int>(stretchHeightAboveBaseline, roundToInt(childHeightAboveBaseline));
-        stretchDepthBelowBaseline = std::max<int>(stretchDepthBelowBaseline, roundToInt(childDepthBelowBaseline));
+        stretchHeightAboveBaseline = std::max<LayoutUnit>(stretchHeightAboveBaseline, childHeightAboveBaseline);
+        stretchDepthBelowBaseline = std::max<LayoutUnit>(stretchDepthBelowBaseline, childDepthBelowBaseline);
     }
     if (stretchHeightAboveBaseline + stretchDepthBelowBaseline <= 0)
         stretchHeightAboveBaseline = style().fontSize();

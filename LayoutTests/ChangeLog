@@ -1,3 +1,18 @@
+2014-02-25  Frédéric Wang  <fred.wang@free.fr>
+
+        Add support for minsize/maxsize attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=122567
+
+        Reviewed by Chris Fleizach.
+
+        Add some reftests for the minsize/maxsize attributes of the mo element.
+
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * mathml/presentation/stretchy-minsize-maxsize-dynamic-expected.html: Added.
+        * mathml/presentation/stretchy-minsize-maxsize-dynamic.html: Added.
+        * mathml/presentation/stretchy-minsize-maxsize-expected.html: Added.
+        * mathml/presentation/stretchy-minsize-maxsize.html: Added.
+
 2014-02-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Port some profiler tests to inspector-protocol

@@ -44,7 +44,7 @@ enum Flag {
     MovableLimits = 0x8, // FIXME: This must be used to implement displaystyle  (https://bugs.webkit.org/show_bug.cgi?id=118737).
     Separator = 0x10, // This has no visual effect but allows to expose semantic information via the accessibility tree.
     Stretchy = 0x20,
-    Symmetric = 0x40, // FIXME: This is not implemented yet (https://bugs.webkit.org/show_bug.cgi?id=124827).
+    Symmetric = 0x40
 };
 struct Entry {
     UChar character;
@@ -64,8 +64,8 @@ public:
 
     MathMLElement& element() { return toMathMLElement(nodeForNonAnonymous()); }
 
-    void stretchTo(int heightAboveBaseline, int depthBelowBaseline);
-    int stretchSize() const { return m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline; }
+    void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
+    LayoutUnit stretchSize() const { return m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline; }
     
     bool hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const { return m_operatorFlags & flag; }
 
@@ -110,8 +110,8 @@ private:
     LayoutRect paintCharacter(PaintInfo&, UChar, const LayoutPoint& origin, CharacterPaintTrimming);
     void fillWithExtensionGlyph(PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
 
-    int m_stretchHeightAboveBaseline;
-    int m_stretchDepthBelowBaseline;
+    LayoutUnit m_stretchHeightAboveBaseline;
+    LayoutUnit m_stretchDepthBelowBaseline;
     bool m_isStretched;
 
     UChar m_operator;

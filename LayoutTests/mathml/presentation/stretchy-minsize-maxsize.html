@@ -1,0 +1,102 @@
+<html>
+  <head>
+    <title>stretch minsize/maxsize</title>
+    <meta charset="utf-8">
+  </head>
+  <body>
+
+    <p>
+      <!-- In theory, the bar should stretch to the size of the mspace (4em) but the minsize attribute forces it to stretch to 10em. -->
+      <math>
+        <mrow>
+          <mo symmetric="false" minsize="10em">|</mo>
+          <mspace height="2em" depth="2em"/>
+        </mrow>
+      </math>
+
+      <!-- In theory, the bar should stretch to the size of the mspace (6em) but the minsize attribute forces it to stretch to 3em. -->
+      <math>
+        <mrow>
+          <mo symmetric="false" maxsize="3em">|</mo>
+          <mspace height="3em" depth="3em"/>
+        </mrow>
+        <mspace height="5em" depth="5em"/>
+      </math>
+
+      <!-- Here minsize is more than maxsize, so minsize takes precedence. -->
+      <math>
+        <mrow>
+          <mo symmetric="false" minsize="10em" maxsize="3em">|</mo>
+          <mspace height="3em" depth="3em"/>
+        </mrow>
+      </math>
+
+      <!-- We verify that invalid values are ignored. -->
+      <math>
+        <mrow>
+          <mo symmetric="false" minsize="30centimeters">|</mo>
+          <mspace height="3em" depth="3em"/>
+        </mrow>
+      </math>
+      <math>
+        <mrow>
+          <mo symmetric="false" maxsize="three">|</mo>
+          <mspace height="3em" depth="3em"/>
+        </mrow>
+      </math>
+
+      <!-- We verify that negative values are ignored. -->
+      <math>
+        <mrow>
+          <mo symmetric="false" minsize="-5em">|</mo>
+          <mspace height="4em" depth="4em"/>
+        </mrow>
+      </math>
+      <math>
+        <mrow>
+          <mo symmetric="false" maxsize="-5em">|</mo>
+          <mspace height="4em" depth="4em"/>
+        </mrow>
+      </math>
+      
+
+      <!-- We test default values for minsize and maxsize. -->
+      <math>
+        <mrow>
+          <mo symmetric="false" maxsize="infinity">|</mo>
+          <mspace height="10em" depth="10em"/>
+        </mrow>
+      </math>
+      <math>
+        <mrow>
+          <mo symmetric="false" minsize="1em">|</mo>
+          <mspace height=".1em" depth=".1em"/>
+        </mrow>
+      </math>
+
+      <!-- We test that the ratio between height and depth is preserved. -->
+      <math>
+        <mrow>
+          <mo symmetric="false" minsize="18em">|</mo>
+          <mspace height="2em" depth="4em"/>
+        </mrow>
+      </math>
+      <math>
+        <mrow>
+          <mo symmetric="false" maxsize="4em">|</mo>
+          <mspace height="15em" depth="5em"/>
+        </mrow>
+        <mspace height="15em" depth="15em"/>
+      </math>
+
+      <!-- We test that the symmetric property is applied before the resize. -->
+      <math>
+        <mrow>
+          <mo symmetric="true" minsize="10em">|</mo>
+          <mspace height="1em" depth="5em"/>
+        </mrow>
+      </math>
+    </p>
+
+  </body>
+</html>
