@@ -39,7 +39,7 @@ lockDir=".lock_dir"
 trap "kill -9 0" SIGINT SIGHUP SIGTERM
 
 echo 0 > ${indexFile}
-ls test_script_* > ${testList}
+find . -name 'test_script_*' -depth 1 > ${testList}
 
 function lock_test_list() {
     until mkdir ${lockDir} 2> /dev/null; do sleep 0; done
