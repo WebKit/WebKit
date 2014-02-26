@@ -25,11 +25,7 @@
 
 #import <WebKit2/WKFoundation.h>
 
-#if TARGET_OS_IPHONE
-#import <UIKit/UIKit.h>
-#else
 #import <Cocoa/Cocoa.h>
-#endif
 #import <WebKit2/WKDeclarationSpecifiers.h>
 
 @class WKBrowsingContextController;
@@ -37,13 +33,7 @@
 @class WKProcessGroup;
 @class WKViewData;
 
-#if TARGET_OS_IPHONE
-WK_EXPORT
-@interface WKView : UIView {
-#else
-WK_EXPORT
 @interface WKView : NSView <NSTextInputClient> {
-#endif
 @private
     WKViewData *_data;
     unsigned _unused;
@@ -51,13 +41,8 @@ WK_EXPORT
 
 #if WK_API_ENABLED
 
-#if TARGET_OS_IPHONE
-- (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
-- (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView;
-#else
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView;
-#endif
 
 @property(readonly) WKBrowsingContextController *browsingContextController;
 
@@ -65,9 +50,5 @@ WK_EXPORT
 
 @property BOOL drawsBackground;
 @property BOOL drawsTransparentBackground;
-
-#if TARGET_OS_IPHONE
-@property (nonatomic, readonly) UIScrollView *scrollView;
-#endif
 
 @end
