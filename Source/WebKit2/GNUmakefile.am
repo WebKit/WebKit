@@ -803,6 +803,7 @@ Programs_WebKitPluginProcess_CXXFLAGS = \
 	-fvisibility-inlines-hidden \
 	$(global_cxxflags)
 
+if ENABLE_WEBKIT2
 # It would be nice to use the CPPFLAGS from the WebKit2 library here, but the prefix
 # header doesn't seem to play nicely with the gtkdoc tools.
 gtkdoc-webkit2gtk.cfg: $(WebKit2)/GNUmakefile.am $(WebKit2)/GNUmakefile.list.am
@@ -821,6 +822,7 @@ gtkdoc-webkit2gtk.cfg: $(WebKit2)/GNUmakefile.am $(WebKit2)/GNUmakefile.list.am
          $(webkit2gtk_web_extension_h_api)\n \
          DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitVersion.h" >> $@
 BUILT_SOURCES += gtkdoc-webkit2gtk.cfg
+endif
 
 EXTRA_DIST += \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \

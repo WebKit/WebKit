@@ -1,3 +1,13 @@
+2014-02-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] generate-gtkdoc can fail with WebKit1 or WebKit2 only builds
+        https://bugs.webkit.org/show_bug.cgi?id=129319
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/generate-gtkdoc:
+        (get_generator_for_config): Properly handle the situation where the pkgconfig file is missing.
+
 2014-02-25  Mihai Maerean  <mmaerean@adobe.com>
 
         Unreviewed. Add myself as a committer.

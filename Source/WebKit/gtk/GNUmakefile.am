@@ -376,6 +376,7 @@ $(GENSOURCES_WEBKIT)/webkitenumtypes.cpp: $(webkitgtk_h_api) $(WebKit)/GNUmakefi
 	&& cp xgen-gtc $@ \
 	&& rm -f xgen-gtc
 
+if ENABLE_WEBKIT1
 gtkdoc-webkitgtk.cfg: $(WebKit)/GNUmakefile.am $(srcdir)/Tools/gtk/GNUmakefile.am
 	$(AM_V_GEN)echo "[webkitgtk]" > $@ && \
 	echo "pkgconfig_file=$(webkit1_pkg_config_file)" >> $@ && \
@@ -386,6 +387,7 @@ gtkdoc-webkitgtk.cfg: $(WebKit)/GNUmakefile.am $(srcdir)/Tools/gtk/GNUmakefile.a
            Source/WebKit/gtk/webkit" >> $@ && \
 	echo -e "headers=$(webkitgtk_static_h_api) Source/WebKit/gtk/webkit/webkitversion.h" >> $@
 BUILT_SOURCES += gtkdoc-webkitgtk.cfg
+endif
 
 EXTRA_DIST += \
 	$(WebKit)/ChangeLog \
