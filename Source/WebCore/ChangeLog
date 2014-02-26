@@ -1,3 +1,19 @@
+2014-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Underlines are too thick when zoomed in
+        https://bugs.webkit.org/show_bug.cgi?id=129352
+
+        Reviewed by Dean Jackson.
+
+        The input to the underline drawing code is in user-space, not device-space.
+        The underlines were getting scaled twice, once in InlineTextBox and the other
+        in GraphicsContext.
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-scaled.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDecoration):
+
 2014-02-26  Andreas Kling  <akling@apple.com>
 
         Remove unused InspectorCounters.

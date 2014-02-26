@@ -1,3 +1,21 @@
+2014-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Underlines are too thick when zoomed in
+        https://bugs.webkit.org/show_bug.cgi?id=129352
+
+        Reviewed by Dean Jackson.
+
+        This test changes the page scale factor to a very large value, simulating
+        the user zooming in with a trackpad. It then positions the viewport
+        to a place where the underline should not be drawn. It then compares this
+        to a completely white page.
+
+        This explanation cannot be in the test itself because the test sets the
+        scale factor too high for the tester to be able to read text.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-scaled-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-scaled.html: Added.
+
 2014-02-26  Oliver Hunt  <oliver@apple.com>
 
         Function.prototype.apply has a bad time with the spread operator
