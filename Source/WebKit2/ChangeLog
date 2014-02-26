@@ -1,3 +1,14 @@
+2014-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove unneeded method webkitWebViewBaseRequestExitFullScreen
+        https://bugs.webkit.org/show_bug.cgi?id=129245
+
+        Reviewed by Sergio Villar Senin.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseKeyPressEvent): Call FullscreenManager::requestExitFullScreen() directly.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+
 2014-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
