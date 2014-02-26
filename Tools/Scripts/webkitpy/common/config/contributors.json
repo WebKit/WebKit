@@ -1530,6 +1530,15 @@
             "llango"
          ]
       },
+      "Laszlo Vidacs" : {
+         "emails" : [
+            "lvidacs.u-szeged@partner.samsung.com",
+            "lac@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "lvidacs"
+         ]
+      },
       "Lauro Neto" : {
          "emails" : [
             "lauro.neto@openbossa.org"
@@ -2999,15 +3008,6 @@
          ],
          "nicks" : [
             "kvel"
-         ]
-      },
-      "Laszlo Vidacs" : {
-         "emails" : [
-            "lvidacs.u-szeged@partner.samsung.com",
-            "lac@inf.u-szeged.hu"
-         ],
-         "nicks" : [
-            "lvidacs"
          ]
       },
       "Lia Chen" : {
