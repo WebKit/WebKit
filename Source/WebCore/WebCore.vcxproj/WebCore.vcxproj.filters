@@ -702,7 +702,7 @@
     <ClCompile Include="..\page\DOMWindowProperty.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\DefaultVisitedLinkProvider.cpp">
+    <ClCompile Include="..\page\DefaultVisitedLinkStore.cpp">
       <Filter>page</Filter>
     </ClCompile>
     <ClCompile Include="..\page\DragController.cpp">
@@ -795,7 +795,7 @@
     <ClCompile Include="..\page\UserContentURLPattern.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\VisitedLinkProvider.cpp">
+    <ClCompile Include="..\page\VisitedLinkStore.cpp">
       <Filter>page</Filter>
     </ClCompile>
     <ClCompile Include="..\fileapi\WebKitBlobBuilder.cpp">
@@ -7505,7 +7505,7 @@
     <ClInclude Include="..\page\DOMWindowProperty.h">
       <Filter>page</Filter>
     </ClInclude>
-    <ClCompile Include="..\page\DefaultVisitedLinkProvider.h">
+    <ClCompile Include="..\page\DefaultVisitedLinkStore.h">
       <Filter>page</Filter>
     </ClCompile>
     <ClInclude Include="..\page\DragActions.h">
@@ -7622,7 +7622,7 @@
     <ClInclude Include="..\page\UserStyleSheetTypes.h">
       <Filter>page</Filter>
     </ClInclude>
-    <ClCompile Include="..\page\VisitedLinkProvider.h">
+    <ClCompile Include="..\page\VisitedLinkStore.h">
       <Filter>page</Filter>
     </ClCompile>
     <ClInclude Include="..\fileapi\WebKitBlobBuilder.h">

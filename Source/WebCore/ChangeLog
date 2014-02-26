@@ -1,3 +1,12 @@
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Build fixes.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2014-02-25  Benjamin Poulain  <bpoulain@apple.com>
 
         Build fix for OS X after r164690

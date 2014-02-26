@@ -4068,8 +4068,8 @@ webcore_sources += \
 	Source/WebCore/page/DOMWindowExtension.h \
 	Source/WebCore/page/DOMWindowProperty.cpp \
 	Source/WebCore/page/DOMWindowProperty.h \
-	Source/WebCore/page/DefaultVisitedLinkProvider.cpp \
-	Source/WebCore/page/DefaultVisitedLinkProvider.h \
+	Source/WebCore/page/DefaultVisitedLinkStore.cpp \
+	Source/WebCore/page/DefaultVisitedLinkStore.h \
 	Source/WebCore/page/DragActions.h \
 	Source/WebCore/page/DragClient.h \
 	Source/WebCore/page/DragController.cpp \
@@ -4202,8 +4202,8 @@ webcore_sources += \
 	Source/WebCore/page/UserStyleSheetTypes.h \
 	Source/WebCore/page/ValidationMessageClient.h \
 	Source/WebCore/page/ViewState.h \
-	Source/WebCore/page/VisitedLinkProvider.cpp \
-	Source/WebCore/page/VisitedLinkProvider.h \
+	Source/WebCore/page/VisitedLinkStore.cpp \
+	Source/WebCore/page/VisitedLinkStore.h \
 	Source/WebCore/page/WebCoreKeyboardUIMode.h \
 	Source/WebCore/page/WebKitPoint.h \
 	Source/WebCore/page/WheelEventDeltaTracker.cpp \

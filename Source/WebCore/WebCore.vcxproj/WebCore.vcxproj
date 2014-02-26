@@ -6977,7 +6977,7 @@
     <ClCompile Include="..\page\DOMWindow.cpp" />
     <ClCompile Include="..\page\DOMWindowExtension.cpp" />
     <ClCompile Include="..\page\DOMWindowProperty.cpp" />
-    <ClCompile Include="..\page\DefaultVisitedLinkProvider.cpp" />
+    <ClCompile Include="..\page\DefaultVisitedLinkStore.cpp" />
     <ClCompile Include="..\page\DragController.cpp" />
     <ClCompile Include="..\page\scrolling\coordinatedgraphics\ScrollingCoordinatorCoordinatedGraphics.cpp" />
     <ClCompile Include="..\page\scrolling\coordinatedgraphics\ScrollingStateNodeCoordinatedGraphics.cpp" />
@@ -7038,7 +7038,7 @@
     <ClCompile Include="..\page\SuspendableTimer.cpp" />
     <ClCompile Include="..\page\UserContentController.cpp" />
     <ClCompile Include="..\page\UserContentURLPattern.cpp" />
-    <ClCompile Include="..\page\VisitedLinkProvider.cpp" />
+    <ClCompile Include="..\page\VisitedLinkStore.cpp" />
     <ClCompile Include="..\fileapi\WebKitBlobBuilder.cpp" />
     <ClCompile Include="..\page\WheelEventDeltaTracker.cpp" />
     <ClCompile Include="..\page\WindowFeatures.cpp" />
@@ -18668,7 +18668,7 @@
     <ClInclude Include="..\page\DOMWindow.h" />
     <ClInclude Include="..\page\DOMWindowExtension.h" />
     <ClInclude Include="..\page\DOMWindowProperty.h" />
-    <ClInclude Include="..\page\DefaultVisitedLinkProvider.h" />
+    <ClInclude Include="..\page\DefaultVisitedLinkStore.h" />
     <ClInclude Include="..\page\DragActions.h" />
     <ClInclude Include="..\page\DragClient.h" />
     <ClInclude Include="..\page\DragController.h" />
@@ -18733,7 +18733,7 @@
     <ClInclude Include="..\page\UserScriptTypes.h" />
     <ClInclude Include="..\page\UserStyleSheet.h" />
     <ClInclude Include="..\page\UserStyleSheetTypes.h" />
-    <ClInclude Include="..\page\VisitedLinkProvider.h" />
+    <ClInclude Include="..\page\VisitedLinkStore.h" />
     <ClInclude Include="..\fileapi\WebKitBlobBuilder.h" />
     <ClInclude Include="..\page\WebKitPoint.h" />
     <ClInclude Include="..\page\WheelEventDeltaTracker.h" />

@@ -1697,7 +1697,7 @@ set(WebCore_SOURCES
     page/DOMWindow.cpp
     page/DOMWindowExtension.cpp
     page/DOMWindowProperty.cpp
-    page/DefaultVisitedLinkProvider.cpp
+    page/DefaultVisitedLinkStore.cpp
     page/DeviceController.cpp
     page/DiagnosticLoggingKeys.cpp
     page/DragController.cpp
@@ -1747,7 +1747,7 @@ set(WebCore_SOURCES
     page/SuspendableTimer.cpp
     page/UserContentController.cpp
     page/UserContentURLPattern.cpp
-    page/VisitedLinkProvider.cpp
+    page/VisitedLinkStore.cpp
     page/WheelEventDeltaTracker.cpp
     page/WindowFeatures.cpp
     page/WindowFocusAllowedIndicator.cpp
