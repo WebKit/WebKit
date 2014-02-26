@@ -1,5 +1,33 @@
 2014-02-25  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel rendering: Ensure consistent border painting width.
+        https://bugs.webkit.org/show_bug.cgi?id=129259
+
+        Reviewed by Simon Fraser.
+
+        Border edges are painted as (semi)independent rectangles. When snapping an edge rectangle
+        to device pixels, its painted dimensions depend on its size and its fractional position.
+        Specific combination of position and border width can result in painting edges sized differently.
+        Using device snapped border width to calculate inner/outer rectangles helps to maintain
+        uniform border width.
+
+        Currently not testable.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::BorderEdge::BorderEdge):
+        (WebCore::BorderEdge::shouldRender):
+        (WebCore::BorderEdge::presentButInvisible):
+        (WebCore::BorderEdge::widthForPainting):
+        (WebCore::BorderEdge::getDoubleBorderStripeWidths):
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::calculateSideRect):
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        (WebCore::calculateSideRectIncludingInner):
+
+2014-02-25  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel layout: Remove explicit static_cast<LayoutUnit> conversions.
         https://bugs.webkit.org/show_bug.cgi?id=129359
 
