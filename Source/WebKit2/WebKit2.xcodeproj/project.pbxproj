@@ -674,9 +674,7 @@
 		51032F1E180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51032F1C180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h */; };
 		51064D35189781C4004B2FEB /* SQLiteIDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51064D33189781C4004B2FEB /* SQLiteIDBCursor.cpp */; };
 		51064D36189781C4004B2FEB /* SQLiteIDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 51064D34189781C4004B2FEB /* SQLiteIDBCursor.h */; };
-		5106D7C118BDBE73000AB166 /* ContextMenuContextData.cpp in Copy Files */ = {isa = PBXBuildFile; fileRef = 5106D7BF18BDBE73000AB166 /* ContextMenuContextData.cpp */; };
 		5106D7C218BDBE73000AB166 /* ContextMenuContextData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5106D7BF18BDBE73000AB166 /* ContextMenuContextData.cpp */; };
-		5106D7C318BDBE73000AB166 /* ContextMenuContextData.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 5106D7C018BDBE73000AB166 /* ContextMenuContextData.h */; };
 		5106D7C418BDBE73000AB166 /* ContextMenuContextData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5106D7C018BDBE73000AB166 /* ContextMenuContextData.h */; };
 		510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510AFFB716542048001BA05E /* WebResourceLoader.cpp */; };
 		510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 510AFFB816542048001BA05E /* WebResourceLoader.h */; };
@@ -1657,12 +1655,10 @@
 			dstPath = WebKit2.framework;
 			dstSubfolderSpec = 1;
 			files = (
-				5106D7C118BDBE73000AB166 /* ContextMenuContextData.cpp in Copy Files */,
 				510CC8491613C85C00D03ED3 /* NetworkProcess.app in Copy Files */,
 				BCDE0ABF13272708001259FB /* PluginProcess.app in Copy Files */,
 				51A60B2A180CCEB500F3BF50 /* DatabaseProcess.app in Copy Files */,
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */,
-				5106D7C318BDBE73000AB166 /* ContextMenuContextData.h in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;

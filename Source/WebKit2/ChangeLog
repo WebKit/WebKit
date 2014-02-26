@@ -1,3 +1,10 @@
+2014-02-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix: ContextMenuContextData.* should not be in the Copy Files
+        phase.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-26  Michael Saboff  <msaboff@apple.com>
 
         Auto generate bytecode information for bytecode parser and LLInt
