@@ -28,24 +28,25 @@
 #define RemoteNetworkingContext_h
 
 #include <WebCore/NetworkingContext.h>
+#include <WebCore/SessionID.h>
 
 namespace WebKit {
 
 class RemoteNetworkingContext final : public WebCore::NetworkingContext {
 public:
-    static PassRefPtr<RemoteNetworkingContext> create(uint64_t sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+    static PassRefPtr<RemoteNetworkingContext> create(WebCore::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     {
         return adoptRef(new RemoteNetworkingContext(sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect));
     }
     virtual ~RemoteNetworkingContext();
 
     // FIXME: Remove platform-specific code and use SessionTracker.
-    static void ensurePrivateBrowsingSession(uint64_t sessionID);
+    static void ensurePrivateBrowsingSession(WebCore::SessionID);
 
     virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const override { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
 
 private:
-    RemoteNetworkingContext(uint64_t sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+    RemoteNetworkingContext(WebCore::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
         : m_sessionID(sessionID)
         , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
 #if PLATFORM(COCOA)
@@ -66,7 +67,7 @@ private:
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
 #endif
 
-    uint64_t m_sessionID;
+    WebCore::SessionID m_sessionID;
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
 
 #if PLATFORM(COCOA)

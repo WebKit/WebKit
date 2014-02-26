@@ -339,7 +339,7 @@ public:
     void setSession(API::Session&);
 
     uint64_t pageID() const { return m_pageID; }
-    uint64_t sessionID() const { return m_session->getID(); }
+    WebCore::SessionID sessionID() const { return m_session->getID(); }
 
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }

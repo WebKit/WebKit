@@ -1,3 +1,36 @@
+2014-02-26  Martin Hock  <mhock@apple.com>
+
+        Create SessionID value-style class for session IDs.
+        https://bugs.webkit.org/show_bug.cgi?id=129141
+
+        Reviewed by Sam Weinig.
+
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp: Add SessionID member.
+        (WebCore::Page::Page):
+        (WebCore::Page::sessionID): Retrieve sessionID or use settings if not set.
+        * page/Page.h:
+        (WebCore::Page::isSessionIDSet):
+        (WebCore::Page::setSessionID):
+        * page/SessionID.h: Session ID class consisting solely of its uint64_t session ID.
+        (WebCore::SessionID::SessionID):
+        (WebCore::SessionID::isValid): Not empty.
+        (WebCore::SessionID::isEphemeral):
+        (WebCore::SessionID::sessionID):
+        (WebCore::SessionID::operator==): Value-based equality.
+        (WebCore::SessionID::operator!=):
+        (WebCore::SessionID::emptySessionID): Zero value also used for HashTraits emptyValue.
+        (WebCore::SessionID::defaultSessionID):
+        (WebCore::SessionID::legacyPrivateSessionID):
+        * page/SessionIDHash.h:
+        (WTF::SessionIDHash::hash): Just the casted session ID (low order bytes)
+        (WTF::SessionIDHash::equal):
+        (WTF::HashTraits<WebCore::SessionID>::emptyValue): Equal to emptySessionID.
+        (WTF::HashTraits<WebCore::SessionID>::constructDeletedValue): -1 value.
+        (WTF::HashTraits<WebCore::SessionID>::isDeletedValue):
+
 2014-02-26  Eric Carlson  <eric.carlson@apple.com>
 
         Fix builds that don't define IMAGE_CONTROLS.

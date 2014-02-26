@@ -1,3 +1,95 @@
+2014-02-26  Martin Hock  <mhock@apple.com>
+
+        Create SessionID value-style class for session IDs.
+        https://bugs.webkit.org/show_bug.cgi?id=129141
+
+        The below changes deal solely with mechanical changes to use the SessionID value class instead of uint64_t except where noted.
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::storageSession):
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookiesEnabled):
+        (WebKit::NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookie):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::ensurePrivateBrowsingSession):
+        (WebKit::NetworkProcess::destroyPrivateBrowsingSession):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp:
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        * Shared/SessionTracker.cpp:
+        (WebKit::staticSessionMap):
+        (WebKit::storageSessionToID):
+        (WebKit::SessionTracker::sessionMap):
+        (WebKit::SessionTracker::session):
+        (WebKit::SessionTracker::sessionID):
+        (WebKit::SessionTracker::setSession):
+        (WebKit::SessionTracker::destroySession):
+        * Shared/SessionTracker.h: Move code to SessionID class.
+        * Shared/WebCoreArgumentCoders.cpp: Add encode and decode for SessionID.
+        (IPC::ArgumentCoder<SessionID>::encode):
+        (IPC::ArgumentCoder<SessionID>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/CookieStorageShim.mm:
+        (WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL):
+        * UIProcess/APISession.cpp:
+        (API::generateID):
+        (API::Session::defaultSession):
+        (API::Session::legacyPrivateSession):
+        (API::Session::Session):
+        (API::Session::isEphemeral):
+        (API::Session::getID):
+        * UIProcess/APISession.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setAnyPageGroupMightHavePrivateBrowsingEnabled):
+        (WebKit::WebContext::createNewWebProcess):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::sessionID):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h:
+        * WebProcess/WebPage/WebPage.cpp: Move sessionID to Page to allow WebCore to access it.
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::sessionID):
+        (WebKit::WebPage::isUsingEphemeralSession):
+        (WebKit::WebPage::setSessionID):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensurePrivateBrowsingSession):
+        (WebKit::WebProcess::destroyPrivateBrowsingSession):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2014-02-26  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WKViewIOS.mm

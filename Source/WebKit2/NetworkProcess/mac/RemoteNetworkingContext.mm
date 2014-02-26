@@ -77,15 +77,15 @@ ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& reque
     return WebKit::blockedError(request);
 }
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
+void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
 {
-    ASSERT(SessionTracker::isEphemeralID(sessionID));
+    ASSERT(sessionID.isEphemeral());
 
     if (SessionTracker::session(sessionID))
         return;
 
     ASSERT(!SessionTracker::getIdentifierBase().isNull());
-    SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(SessionTracker::getIdentifierBase() + '.' + String::number(sessionID)));
+    SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(SessionTracker::getIdentifierBase() + '.' + String::number(sessionID.sessionID())));
 }
 
 }

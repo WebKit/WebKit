@@ -4177,6 +4177,7 @@ webcore_sources += \
 	Source/WebCore/page/SecurityOriginHash.h \
 	Source/WebCore/page/SecurityPolicy.cpp \
 	Source/WebCore/page/SecurityPolicy.h \
+	Source/WebCore/page/SessionID.h \
 	Source/WebCore/page/Settings.cpp \
 	Source/WebCore/page/Settings.h \
 	Source/WebCore/page/SpatialNavigation.cpp \

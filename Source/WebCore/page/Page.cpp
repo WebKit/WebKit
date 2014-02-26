@@ -183,6 +183,7 @@ Page::Page(PageClients& pageClients)
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
     , m_visitedLinkStore(std::move(pageClients.visitedLinkStore))
+    , m_sessionID(SessionID::emptySessionID())
 {
     ASSERT(m_editorClient);
 
@@ -1481,6 +1482,23 @@ VisitedLinkStore& Page::visitedLinkStore()
         return *m_visitedLinkStore;
 
     return group().visitedLinkStore();
+}
+
+SessionID Page::sessionID() const
+{
+    if (m_sessionID.isValid())
+        return m_sessionID;
+
+    if (settings().privateBrowsingEnabled())
+        return SessionID::legacyPrivateSessionID();
+
+    return SessionID::defaultSessionID();
+}
+
+void Page::setSessionID(SessionID sessionID)
+{
+    ASSERT(sessionID.isValid());
+    m_sessionID = sessionID;
 }
 
 Page::PageClients::PageClients()

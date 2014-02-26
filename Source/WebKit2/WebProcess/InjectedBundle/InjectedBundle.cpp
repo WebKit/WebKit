@@ -67,6 +67,7 @@
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
+#include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
 
@@ -308,9 +309,9 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
     // FIXME (NetworkProcess): This test-only function doesn't work with NetworkProcess, <https://bugs.webkit.org/show_bug.cgi?id=115274>.
 #if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     if (enabled)
-        WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID);
+        WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID());
     else
-        SessionTracker::destroySession(SessionTracker::legacyPrivateSessionID);
+        SessionTracker::destroySession(SessionID::legacyPrivateSessionID());
 #endif
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)

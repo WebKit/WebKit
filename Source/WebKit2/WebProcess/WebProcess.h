@@ -37,6 +37,7 @@
 #include "ViewUpdateDispatcher.h"
 #include "VisitedLinkTable.h"
 #include <WebCore/LinkHash.h>
+#include <WebCore/SessionID.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -164,8 +165,8 @@ public:
 
     void setCacheModel(uint32_t);
 
-    void ensurePrivateBrowsingSession(uint64_t sessionID);
-    void destroyPrivateBrowsingSession(uint64_t sessionID);
+    void ensurePrivateBrowsingSession(WebCore::SessionID);
+    void destroyPrivateBrowsingSession(WebCore::SessionID);
 
     void pageDidEnterWindow(uint64_t pageID);
     void pageWillLeaveWindow(uint64_t pageID);

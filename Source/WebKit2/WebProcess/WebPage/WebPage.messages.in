@@ -25,7 +25,7 @@ messages -> WebPage LegacyReceiver {
     SetViewState(unsigned viewState, bool wantsDidUpdateViewState)
     SetLayerHostingMode(unsigned layerHostingMode)
 
-    SetSessionID(uint64_t sessionID)
+    SetSessionID(WebCore::SessionID sessionID)
 
     SetDrawsBackground(bool drawsBackground)
     SetDrawsTransparentBackground(bool drawsTransparentBackground)
