@@ -45,10 +45,12 @@ UserInputBridge::UserInputBridge(Page& page)
 {
 }
 
+#if ENABLE(CONTEXT_MENUS)
 bool UserInputBridge::handleContextMenuEvent(const PlatformMouseEvent& mouseEvent, const Frame* frame, InputSource)
 {
     return frame->eventHandler().sendContextMenuEvent(mouseEvent);
 }
+#endif
 
 bool UserInputBridge::handleMousePressEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {

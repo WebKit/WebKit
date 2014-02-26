@@ -54,7 +54,9 @@ public:
     UserInputBridge(Page&);
 
     // User input APIs.
+#if ENABLE(CONTEXT_MENUS)
     bool handleContextMenuEvent(const PlatformMouseEvent&, const Frame*, InputSource source = InputSource::User);
+#endif
     bool handleMousePressEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
     bool handleMouseReleaseEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
     bool handleMouseMoveEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);

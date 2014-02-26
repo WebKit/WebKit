@@ -1,3 +1,12 @@
+2014-02-26  Brian Burg  <bburg@apple.com>
+
+        Unreviewed build fix for !ENABLE(CONTEXT_MENUS).
+
+        I forgot to add guards to handleContextMenuEvent().
+
+        * replay/UserInputBridge.cpp:
+        * replay/UserInputBridge.h:
+
 2014-02-26  Dean Jackson  <dino@apple.com>
 
         [WebGL] Only skip context error retrieval if a pending context
