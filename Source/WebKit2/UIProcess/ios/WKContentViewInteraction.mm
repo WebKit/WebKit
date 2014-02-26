@@ -361,6 +361,8 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
 {
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
     switch (_assistedNodeInformation.elementType) {
+    case WebKit::WKTypeNone:
+        return NO;
     case WebKit::WKTypeSelect:
         return !UICurrentUserInterfaceIdiomIsPad();
     case WebKit::WKTypeDate:

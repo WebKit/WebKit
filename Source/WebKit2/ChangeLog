@@ -1,3 +1,17 @@
+2014-02-26  Enrica Casucci  <enrica@apple.com>
+
+        Keyboard keeps showing up when clicking links after being shown once.
+        https://bugs.webkit.org/show_bug.cgi?id=129392
+
+        Reviewed by Benjamin Poulain.
+
+        This is a regression introduced by http://trac.webkit.org/changeset/164690.
+        _requiresKeyboardWhenFirstResponder should always return NO, if there is
+        no assisted node.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+
 2014-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         WebProcessProxy::updateProcessState() is causing duplicate symbol linker errors
