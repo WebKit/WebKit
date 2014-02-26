@@ -29,18 +29,6 @@
 			name = "Test Tools";
 			productName = "Test Tools";
 		};
-		65788A9D18B409EB00C189FF /* Offline Assembler */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 65788AA218B409EB00C189FF /* Build configuration list for PBXAggregateTarget "Offline Assembler" */;
-			buildPhases = (
-				65788AA018B409EB00C189FF /* Generate Offline Assembler */,
-			);
-			dependencies = (
-				65788A9E18B409EB00C189FF /* PBXTargetDependency */,
-			);
-			name = "Offline Assembler";
-			productName = "Offline Assembler";
-		};
 		65FB3F6609D11E9100F49DEB /* Derived Sources */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 65FB3F7709D11EBD00F49DEB /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
@@ -49,7 +37,7 @@
 				5D35DEE10C7C140B008648B2 /* Generate DTrace header */,
 			);
 			dependencies = (
-				65788AA918B40A3300C189FF /* PBXTargetDependency */,
+				0FF922D614F46B600041A24E /* PBXTargetDependency */,
 			);
 			name = "Derived Sources";
 			productName = "Derived Sources";
@@ -804,7 +792,6 @@
 		651122FD14046A4C002B101D /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		651122FE14046A4C002B101D /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
 		6511230714046B0A002B101D /* testRegExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651122E5140469BA002B101D /* testRegExp.cpp */; };
-		6514F21918B3E1670098FF8B /* Bytecodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6514F21718B3E1670098FF8B /* Bytecodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65303D641447B9E100D3F904 /* ParserTokens.h in Headers */ = {isa = PBXBuildFile; fileRef = 65303D631447B9E100D3F904 /* ParserTokens.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6553A33117A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6553A32F17A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp */; };
 		6553A33217A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6553A33017A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h */; };
@@ -1466,6 +1453,13 @@
 			remoteGlobalIDString = 0F4680A914BA7FD900BFE272;
 			remoteInfo = "LLInt Offsets";
 		};
+		0FF922D514F46B600041A24E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FF922C314F46B130041A24E;
+			remoteInfo = JSCLLIntOffsetsExtractor;
+		};
 		5D69E911152BE5470028D720 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1500,34 +1494,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5D6B2A47152B9E17005231DE;
 			remoteInfo = "Test Tools";
-		};
-		65788A9F18B409EB00C189FF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0FF922C314F46B130041A24E;
-			remoteInfo = JSCLLIntOffsetsExtractor;
-		};
-		65788AA818B40A3300C189FF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0F4680A914BA7FD900BFE272;
-			remoteInfo = "LLInt Offsets";
-		};
-		65788AAA18B40A3B00C189FF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
-			remoteInfo = "Derived Sources";
-		};
-		65788AAC18B40A7B00C189FF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 65788A9D18B409EB00C189FF;
-			remoteInfo = "Offline Assembler";
 		};
 		65FB3F7D09D11EF300F49DEB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2270,10 +2236,6 @@
 		6507D2970E871E4A00D7D896 /* JSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeInfo.h; sourceTree = "<group>"; };
 		651122E5140469BA002B101D /* testRegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testRegExp.cpp; sourceTree = "<group>"; };
 		6511230514046A4C002B101D /* testRegExp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testRegExp; sourceTree = BUILT_PRODUCTS_DIR; };
-		6514F21718B3E1670098FF8B /* Bytecodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bytecodes.h; sourceTree = "<group>"; };
-		6514F21818B3E1670098FF8B /* InitBytecodes.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = InitBytecodes.asm; sourceTree = "<group>"; };
-		6529FB3018B2D63900C61102 /* generate-bytecode-files */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-bytecode-files"; sourceTree = "<group>"; };
-		6529FB3118B2D99900C61102 /* BytecodeList.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BytecodeList.json; sourceTree = "<group>"; };
 		652A3A201651C66100A80AFE /* ARM64Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ARM64Disassembler.cpp; path = disassembler/ARM64Disassembler.cpp; sourceTree = "<group>"; };
 		652A3A221651C69700A80AFE /* A64DOpcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = A64DOpcode.cpp; path = disassembler/ARM64/A64DOpcode.cpp; sourceTree = "<group>"; };
 		652A3A231651C69700A80AFE /* A64DOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = A64DOpcode.h; path = disassembler/ARM64/A64DOpcode.h; sourceTree = "<group>"; };
@@ -3092,7 +3054,6 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
-				6529FB3018B2D63900C61102 /* generate-bytecode-files */,
 				8604F4F2143A6C4400B295F5 /* ChangeLog */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
@@ -3697,9 +3658,7 @@
 			isa = PBXGroup;
 			children = (
 				BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */,
-				6514F21718B3E1670098FF8B /* Bytecodes.h */,
 				BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */,
-				6514F21818B3E1670098FF8B /* InitBytecodes.asm */,
 				A513E5C6185F9436007E95AD /* InjectedScriptSource.h */,
 				A53243951856A475002ED692 /* InspectorJS.json */,
 				A53243961856A475002ED692 /* InspectorJSBackendCommands.js */,
@@ -4559,7 +4518,6 @@
 		969A078F0ED1D3AE00F1F681 /* bytecode */ = {
 			isa = PBXGroup;
 			children = (
-				6529FB3118B2D99900C61102 /* BytecodeList.json */,
 				0F8335B41639C1E3001443B5 /* ArrayAllocationProfile.cpp */,
 				0F8335B51639C1E3001443B5 /* ArrayAllocationProfile.h */,
 				0F63945115D07051006A597C /* ArrayProfile.cpp */,
@@ -4873,10 +4831,6 @@
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
-				A5CEEE15187F3BAD00E55C99 /* InspectorAgent.h in Headers */,
-				6514F21918B3E1670098FF8B /* Bytecodes.h in Headers */,
-				2A343F7618A1748B0039B085 /* GCSegmentedArray.h in Headers */,
-				2A343F7818A1749D0039B085 /* GCSegmentedArrayInlines.h in Headers */,
 				65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */,
 				0F8335B81639C1EA001443B5 /* ArrayAllocationProfile.h in Headers */,
 				A7A8AF3517ADB5F3005AB174 /* ArrayBuffer.h in Headers */,
@@ -5696,7 +5650,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				65788AAB18B40A3B00C189FF /* PBXTargetDependency */,
 				0FF922D314F46B2F0041A24E /* PBXTargetDependency */,
 			);
 			name = JSCLLIntOffsetsExtractor;
@@ -5776,7 +5729,6 @@
 			);
 			dependencies = (
 				0FCEFABD1805D66300472CE4 /* PBXTargetDependency */,
-				65788AAD18B40A7B00C189FF /* PBXTargetDependency */,
 				65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */,
 			);
 			name = JavaScriptCore;
@@ -5828,16 +5780,15 @@
 			targets = (
 				932F5BE30822A1C700736975 /* All */,
 				932F5B3E0822A1C700736975 /* JavaScriptCore */,
-				0FCEFAB51805D61600472CE4 /* llvmForJSC */,
-				0F4680A914BA7FD900BFE272 /* LLInt Offsets */,
 				65FB3F6609D11E9100F49DEB /* Derived Sources */,
-				0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */,
-				65788A9D18B409EB00C189FF /* Offline Assembler */,
 				1412111F0A48793C00480255 /* minidom */,
 				14BD59BE0A3E8F9000BAF59C /* testapi */,
 				932F5BDA0822A1C700736975 /* jsc */,
 				651122F714046A4C002B101D /* testRegExp */,
+				0F4680A914BA7FD900BFE272 /* LLInt Offsets */,
+				0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				5D6B2A47152B9E17005231DE /* Test Tools */,
+				0FCEFAB51805D61600472CE4 /* llvmForJSC */,
 			);
 		};
 /* End PBXProject section */
@@ -5988,20 +5939,6 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\n# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptCore.framework relative to its location.\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_RESOURCES_DIR}/jsc\"\ninstall_name_tool -change \"${JAVASCRIPTCORE_FRAMEWORKS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_RESOURCES_DIR}/jsc\"\n";
 		};
-		65788AA018B409EB00C189FF /* Generate Derived Sources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate Derived Sources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb JavaScriptCore/llint/LowLevelInterpreter.asm ${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor LLIntAssembly.h || exit 1";
-		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -6014,7 +5951,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/bin/ln -sfh \"${SRCROOT}\" JavaScriptCore\nexport JavaScriptCore=\"JavaScriptCore\"\nexport BUILT_PRODUCTS_DIR=\"../..\"\n\nmake --no-builtin-rules -f \"JavaScriptCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.ncpu`\n\nif [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi";
+			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/bin/ln -sfh \"${SRCROOT}\" JavaScriptCore\nexport JavaScriptCore=\"JavaScriptCore\"\nexport BUILT_PRODUCTS_DIR=\"../..\"\n\nmake --no-builtin-rules -f \"JavaScriptCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.ncpu`\n\nif [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb JavaScriptCore/llint/LowLevelInterpreter.asm ${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor LLIntAssembly.h\n";
 		};
 		A55DEAA416703DF7003DB841 /* Check For Inappropriate Macros in External Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6647,6 +6584,11 @@
 			target = 0F4680A914BA7FD900BFE272 /* LLInt Offsets */;
 			targetProxy = 0FF922D214F46B2F0041A24E /* PBXContainerItemProxy */;
 		};
+		0FF922D614F46B600041A24E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */;
+			targetProxy = 0FF922D514F46B600041A24E /* PBXContainerItemProxy */;
+		};
 		5D69E912152BE5470028D720 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 932F5BDA0822A1C700736975 /* jsc */;
@@ -6671,26 +6613,6 @@
 			isa = PBXTargetDependency;
 			target = 5D6B2A47152B9E17005231DE /* Test Tools */;
 			targetProxy = 5D6B2A56152B9E2E005231DE /* PBXContainerItemProxy */;
-		};
-		65788A9E18B409EB00C189FF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */;
-			targetProxy = 65788A9F18B409EB00C189FF /* PBXContainerItemProxy */;
-		};
-		65788AA918B40A3300C189FF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0F4680A914BA7FD900BFE272 /* LLInt Offsets */;
-			targetProxy = 65788AA818B40A3300C189FF /* PBXContainerItemProxy */;
-		};
-		65788AAB18B40A3B00C189FF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
-			targetProxy = 65788AAA18B40A3B00C189FF /* PBXContainerItemProxy */;
-		};
-		65788AAD18B40A7B00C189FF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 65788A9D18B409EB00C189FF /* Offline Assembler */;
-			targetProxy = 65788AAC18B40A7B00C189FF /* PBXContainerItemProxy */;
 		};
 		65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6979,42 +6901,6 @@
 			};
 			name = Production;
 		};
-		65788AA318B409EB00C189FF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
-			buildSettings = {
-				INFOPLIST_FILE = "Derived Sources copy-Info.plist";
-				PRODUCT_NAME = "Derived Sources copy";
-			};
-			name = Debug;
-		};
-		65788AA418B409EB00C189FF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
-			buildSettings = {
-				INFOPLIST_FILE = "Derived Sources copy-Info.plist";
-				PRODUCT_NAME = "Derived Sources copy";
-			};
-			name = Release;
-		};
-		65788AA518B409EB00C189FF /* Profiling */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
-			buildSettings = {
-				INFOPLIST_FILE = "Derived Sources copy-Info.plist";
-				PRODUCT_NAME = "Derived Sources copy";
-			};
-			name = Profiling;
-		};
-		65788AA618B409EB00C189FF /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
-			buildSettings = {
-				INFOPLIST_FILE = "Derived Sources copy-Info.plist";
-				PRODUCT_NAME = "Derived Sources copy";
-			};
-			name = Production;
-		};
 		65FB3F7809D11EBD00F49DEB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
@@ -7211,17 +7097,6 @@
 				6511230214046A4C002B101D /* Release */,
 				6511230314046A4C002B101D /* Profiling */,
 				6511230414046A4C002B101D /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		65788AA218B409EB00C189FF /* Build configuration list for PBXAggregateTarget "Offline Assembler" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				65788AA318B409EB00C189FF /* Debug */,
-				65788AA418B409EB00C189FF /* Release */,
-				65788AA518B409EB00C189FF /* Profiling */,
-				65788AA618B409EB00C189FF /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

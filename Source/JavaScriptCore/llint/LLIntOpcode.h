@@ -31,7 +31,19 @@
 #if ENABLE(LLINT_C_LOOP)
 
 #define FOR_EACH_LLINT_NOJIT_NATIVE_HELPER(macro) \
-    FOR_EACH_CLOOP_BYTECODE_HELPER_ID(macro)
+    macro(getHostCallReturnValue, 1) \
+    macro(llint_return_to_host, 1) \
+    macro(llint_call_to_javascript, 1) \
+    macro(llint_call_to_native_function, 1) \
+    macro(handleUncaughtException, 1) \
+    \
+    macro(llint_cloop_did_return_from_js_1, 1) \
+    macro(llint_cloop_did_return_from_js_2, 1) \
+    macro(llint_cloop_did_return_from_js_3, 1) \
+    macro(llint_cloop_did_return_from_js_4, 1) \
+    macro(llint_cloop_did_return_from_js_5, 1) \
+    macro(llint_cloop_did_return_from_js_6, 1) \
+    macro(llint_cloop_did_return_from_js_7, 1) \
 
 #else // !ENABLE(LLINT_C_LOOP)
 
@@ -44,8 +56,23 @@
 #define FOR_EACH_LLINT_NATIVE_HELPER(macro) \
     FOR_EACH_LLINT_NOJIT_NATIVE_HELPER(macro) \
     \
-    FOR_EACH_BYTECODE_HELPER_ID(macro)
-
+    macro(llint_begin, 1) \
+    \
+    macro(llint_program_prologue, 1) \
+    macro(llint_eval_prologue, 1) \
+    macro(llint_function_for_call_prologue, 1) \
+    macro(llint_function_for_construct_prologue, 1) \
+    macro(llint_function_for_call_arity_check, 1) \
+    macro(llint_function_for_construct_arity_check, 1) \
+    macro(llint_generic_return_point, 1) \
+    macro(llint_throw_from_slow_path_trampoline, 1) \
+    macro(llint_throw_during_call_trampoline, 1) \
+    \
+    /* Native call trampolines */ \
+    macro(llint_native_call_trampoline, 1) \
+    macro(llint_native_construct_trampoline, 1) \
+    \
+    macro(llint_end, 1)
 
 
 #if ENABLE(LLINT_C_LOOP)

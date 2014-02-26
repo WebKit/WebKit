@@ -3336,9 +3336,6 @@
     <None Include="JavaScriptCorePreLink.cmd" />
     <None Include="JavaScriptCorePostBuild.cmd" />
     <None Include="JavaScriptCorePreBuild.cmd" />
-    <None Include="..\bytecode\BytecodeList.json">
-      <Filter>bytecode</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\LowLevelInterpreterWin.asm" />
