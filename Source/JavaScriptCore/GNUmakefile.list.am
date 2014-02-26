@@ -34,6 +34,8 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/RegExpObject.lut.h \
 	DerivedSources/JavaScriptCore/RegExpPrototype.lut.h \
 	DerivedSources/JavaScriptCore/StringConstructor.lut.h \
+	DerivedSources/JavaScriptCore/Bytecodes.h \
+	DerivedSources/JavaScriptCore/InitBytecodes.asm \
 	DerivedSources/JavaScriptCore/LLIntDesiredOffsets.h \
 	DerivedSources/JavaScriptCore/LLIntAssembly.h
 

@@ -1,3 +1,42 @@
+2014-02-26  Michael Saboff  <msaboff@apple.com>
+
+        Auto generate bytecode information for bytecode parser and LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=129181
+
+        Reviewed by Mark Lam.
+
+        Added new bytecode/BytecodeList.json that contains a list of bytecodes and related
+        helpers.  It also includes bytecode length and other information used to generate files.
+        Added a new generator, generate-bytecode-files that generates Bytecodes.h and InitBytecodes.asm
+        in DerivedSources/JavaScriptCore/.
+
+        Added the generation of these files to the "DerivedSource" build step.
+        Slighty changed the build order, since the Bytecodes.h file is needed by
+        JSCLLIntOffsetsExtractor.  Moved the offline assembly to a separate step since it needs
+        to be run after JSCLLIntOffsetsExtractor.
+
+        Made related changes to OPCODE macros and their use.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json: Added.
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * generate-bytecode-files: Added.
+        * llint/LLIntCLoop.cpp:
+        (JSC::LLInt::CLoop::initialize):
+        * llint/LLIntCLoop.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntOpcode.h:
+        * llint/LowLevelInterpreter.asm:
+
 2014-02-26  Mark Lam  <mark.lam@apple.com>
 
         ASSERTION FAILED: m_heap->vm()->currentThreadIsHoldingAPILock() in inspector-protocol/*.
