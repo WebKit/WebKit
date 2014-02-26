@@ -26,9 +26,7 @@
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
-#if ENABLE(LLINT_C_LOOP)
 #include <thread>
-#endif
 
 namespace JSC {
 
@@ -192,10 +190,7 @@ unsigned JSLock::dropAllLocks(DropAllLocks* dropper)
 
     ++m_lockDropDepth;
 
-    UNUSED_PARAM(dropper);
-#if ENABLE(LLINT_C_LOOP)
     dropper->setDropDepth(m_lockDropDepth);
-#endif
 
     WTFThreadData& threadData = wtfThreadData();
     threadData.setSavedStackPointerAtVMEntry(m_vm->stackPointerAtVMEntry());
@@ -218,14 +213,11 @@ void JSLock::grabAllLocks(DropAllLocks* dropper, unsigned droppedLockCount)
     ASSERT(!currentThreadIsHoldingLock());
     lock(droppedLockCount);
 
-    UNUSED_PARAM(dropper);
-#if ENABLE(LLINT_C_LOOP)
     while (dropper->dropDepth() != m_lockDropDepth) {
         unlock(droppedLockCount);
         std::this_thread::yield();
         lock(droppedLockCount);
     }
-#endif
 
     --m_lockDropDepth;
 

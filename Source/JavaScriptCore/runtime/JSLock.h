@@ -112,17 +112,13 @@ namespace JSC {
             JS_EXPORT_PRIVATE DropAllLocks(VM*);
             JS_EXPORT_PRIVATE ~DropAllLocks();
             
-#if ENABLE(LLINT_C_LOOP)
             void setDropDepth(unsigned depth) { m_dropDepth = depth; }
             unsigned dropDepth() const { return m_dropDepth; }
-#endif
 
         private:
             intptr_t m_droppedLockCount;
             RefPtr<VM> m_vm;
-#if ENABLE(LLINT_C_LOOP)
             unsigned m_dropDepth;
-#endif
         };
 
     private:

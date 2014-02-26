@@ -1,5 +1,51 @@
 2014-02-25  Mark Lam  <mark.lam@apple.com>
 
+        Web Inspector: CRASH when evaluating in console of JSContext RWI with disabled breakpoints.
+        <https://webkit.org/b/128766>
+
+        Reviewed by Geoffrey Garen.
+
+        Make the JSLock::grabAllLocks() work the same way as for the C loop LLINT.
+        The reasoning is that we don't know of any clients that need unordered
+        re-entry into the VM from different threads. So, we're enforcing ordered
+        re-entry i.e. we must re-grab locks in the reverse order of dropping locks.
+
+        The crash in this bug happened because we were allowing unordered re-entry,
+        and the following type of scenario occurred:
+
+        1. Thread T1 locks the VM, and enters the VM to execute some JS code.
+        2. On entry, T1 detects that VM::m_entryScope is null i.e. this is the
+           first time it entered the VM.
+           T1 sets VM::m_entryScope to T1's entryScope.
+        3. T1 drops all locks.
+
+        4. Thread T2 locks the VM, and enters the VM to execute some JS code.
+           On entry, T2 sees that VM::m_entryScope is NOT null, and therefore
+           does not set the entryScope.
+        5. T2 drops all locks.
+
+        6. T1 re-grabs locks.
+        7. T1 returns all the way out of JS code. On exit from the outer most
+           JS function, T1 clears VM::m_entryScope (because T1 was the one who
+           set it).
+        8. T1 unlocks the VM.
+
+        9. T2 re-grabs locks.
+        10. T2 proceeds to execute some code and expects VM::m_entryScope to be
+            NOT null, but it turns out to be null. Assertion failures and
+            crashes ensue.
+
+        With ordered re-entry, at step 6, T1 will loop and yield until T2 exits
+        the VM. Hence, the issue will no longer manifest.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::grabAllLocks):
+        * runtime/JSLock.h:
+        (JSC::JSLock::DropAllLocks::dropDepth):
+
+2014-02-25  Mark Lam  <mark.lam@apple.com>
+
         Need to initialize VM stack data even when the VM is on an exclusive thread.
         <https://webkit.org/b/129265>
 
