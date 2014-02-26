@@ -1,3 +1,9 @@
+2014-02-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        Build fix for OS X after r164690
+
+        * WebCore.exp.in:
+
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
         Rename WebCore::VisitedLinkProvider to WebCore::VisitedLinkStore
