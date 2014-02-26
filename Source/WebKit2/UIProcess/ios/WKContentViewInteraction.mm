@@ -1157,7 +1157,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
     }
 
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
-    _page->requestAutocorrectionData(input, AutocorrectionDataCallback::create([self, completionHandler](bool, const Vector<FloatRect>& rects, const String& fontName, double fontSize, uint64_t traits) {
+    _page->requestAutocorrectionData(input, AutocorrectionDataCallback::create([self](bool, const Vector<FloatRect>& rects, const String& fontName, double fontSize, uint64_t traits) {
         CGRect firstRect = CGRectZero;
         CGRect lastRect = CGRectZero;
         if (rects.size()) {
@@ -1214,7 +1214,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
         completionHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
     } else {
         _autocorrectionData.autocorrectionContextHandler = [completionHandler copy];
-        _page->requestAutocorrectionContext(AutocorrectionContextCallback::create([self, completionHandler](bool /*error*/, const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length) {
+        _page->requestAutocorrectionContext(AutocorrectionContextCallback::create([self](bool /*error*/, const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length) {
             _autocorrectionData.autocorrectionContextHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
         }));
     }
