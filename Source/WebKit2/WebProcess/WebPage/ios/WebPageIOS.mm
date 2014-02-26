@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,8 @@
 #import "AssistedNodeInformation.h"
 #import "EditorState.h"
 #import "InteractionInformationAtPosition.h"
+#import "LayerTreeHost.h"
+#import "VisibleContentRectUpdateInfo.h"
 #import "WebChromeClient.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
@@ -1615,14 +1617,30 @@ void WebPage::viewportConfigurationChanged()
     scalePage(scale, m_page->mainFrame().view()->scrollPosition());
 }
 
+void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
+{
+    double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), visibleContentRectUpdateInfo.scale()));
+
+    IntPoint scrollPosition = roundedIntPoint(visibleContentRectUpdateInfo.unobscuredRect().location());
+
+    FloatRect exposedRect = visibleContentRectUpdateInfo.exposedRect();
+    exposedRect.scale(boundedScale);
+    m_drawingArea->setExposedRect(exposedRect);
+
+    if (boundedScale != m_page->pageScaleFactor()) {
+        m_scaleWasSetByUIProcess = true;
+        m_page->setPageScaleFactor(boundedScale, scrollPosition);
+        if (m_drawingArea->layerTreeHost())
+            m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
+        send(Messages::WebPageProxy::PageScaleFactorDidChange(boundedScale));
+    }
+
+    // FIXME: we should also update the frame view from unobscured rect. Altenatively, we can have it pull the values from ScrollView.
+}
+
 void WebPage::willStartUserTriggeredZooming()
 {
     m_userHasChangedPageScaleFactor = true;
-}
-
-void WebPage::didFinishZooming(float newScale)
-{
-    m_page->setPageScaleFactor(newScale, m_page->mainFrame().view()->scrollPosition());
 }
 
 } // namespace WebKit

@@ -151,6 +151,9 @@ WebProcess& WebProcess::shared()
 
 WebProcess::WebProcess()
     : m_eventDispatcher(EventDispatcher::create())
+#if PLATFORM(IOS)
+    , m_viewUpdateDispatcher(ViewUpdateDispatcher::create())
+#endif // PLATFORM(IOS)
     , m_inDidClose(false)
     , m_shouldTrackVisitedLinks(true)
     , m_hasSetCacheModel(false)
@@ -216,6 +219,9 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
     connection->setShouldExitOnSyncMessageSendFailure(true);
 
     m_eventDispatcher->initializeConnection(connection);
+#if PLATFORM(IOS)
+    m_viewUpdateDispatcher->initializeConnection(connection);
+#endif // PLATFORM(IOS)
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginProcessConnectionManager->initializeConnection(connection);

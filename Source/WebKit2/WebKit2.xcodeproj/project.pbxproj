@@ -448,6 +448,12 @@
 		1QQ417CB12C00CCA002BE67B /* TextCheckerCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC417C912C00CCA002BE67B /* TextCheckerCompletion.h */; };
 		1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BB417C912C00CCA002BE67B /* TextCheckerCompletion.cpp */; };
 		263172CF18B469490065B9C3 /* NativeWebTouchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 263172CE18B469490065B9C3 /* NativeWebTouchEvent.h */; };
+		2684054418B85A630022C38B /* VisibleContentRectUpdateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */; };
+		2684054918B85FF70022C38B /* ViewUpdateDispatcher.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 2684054818B85FF70022C38B /* ViewUpdateDispatcher.messages.in */; };
+		2684054C18B86C350022C38B /* VisibleContentRectUpdateInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */; };
+		2684054F18B86C8E0022C38B /* ViewUpdateDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2684054518B85E7E0022C38B /* ViewUpdateDispatcher.cpp */; };
+		2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2684055018B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp */; };
+		2684055318B86ED60022C38B /* ViewUpdateDispatcherMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2684055118B86ED60022C38B /* ViewUpdateDispatcherMessages.h */; };
 		26F9A83B18A3468100AEB88A /* WKWebViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F9A83A18A3463F00AEB88A /* WKWebViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		290F4272172A0C7400939FF0 /* ChildProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 290F4271172A0C7400939FF0 /* ChildProcessSupplement.h */; };
 		293EBEAB1627D9C9005F89F1 /* WKDOMText.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EBEA91627D9C9005F89F1 /* WKDOMText.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2164,6 +2170,13 @@
 		1FB00AC6185F76460019142E /* WKWebProcessPlugInPageGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInPageGroupInternal.h; sourceTree = "<group>"; };
 		263172CE18B469490065B9C3 /* NativeWebTouchEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebTouchEvent.h; sourceTree = "<group>"; };
 		26659AA0185FAAED004303DD /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
+		2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleContentRectUpdateInfo.h; sourceTree = "<group>"; };
+		2684054518B85E7E0022C38B /* ViewUpdateDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewUpdateDispatcher.cpp; sourceTree = "<group>"; };
+		2684054618B85E7E0022C38B /* ViewUpdateDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewUpdateDispatcher.h; sourceTree = "<group>"; };
+		2684054818B85FF70022C38B /* ViewUpdateDispatcher.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewUpdateDispatcher.messages.in; sourceTree = "<group>"; };
+		2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibleContentRectUpdateInfo.cpp; sourceTree = "<group>"; };
+		2684055018B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewUpdateDispatcherMessageReceiver.cpp; path = "ViewUpdateDispatcherMessageReceiver.cpp"; sourceTree = "<group>"; };
+		2684055118B86ED60022C38B /* ViewUpdateDispatcherMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewUpdateDispatcherMessages.h; path = "ViewUpdateDispatcherMessages.h"; sourceTree = "<group>"; };
 		26F9A83A18A3463F00AEB88A /* WKWebViewPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrivate.h; sourceTree = "<group>"; };
 		290F4271172A0C7400939FF0 /* ChildProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessSupplement.h; sourceTree = "<group>"; };
 		293EBEA91627D9C9005F89F1 /* WKDOMText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMText.h; sourceTree = "<group>"; };
@@ -3957,6 +3970,8 @@
 				1AC1336518565B5700F3EC05 /* UserData.cpp */,
 				1AC1336618565B5700F3EC05 /* UserData.h */,
 				BCB0B0DF12305AB100B1341E /* UserMessageCoders.h */,
+				2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */,
+				2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */,
 				1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */,
 				1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */,
 				BC329D9916ACCE9900316DE2 /* WebArchive.cpp */,
@@ -5081,6 +5096,9 @@
 				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
 				2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */,
 				2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */,
+				2684054518B85E7E0022C38B /* ViewUpdateDispatcher.cpp */,
+				2684054618B85E7E0022C38B /* ViewUpdateDispatcher.h */,
+				2684054818B85FF70022C38B /* ViewUpdateDispatcher.messages.in */,
 				BC72B9F811E6476B001EB4EA /* WebBackForwardListProxy.cpp */,
 				BC72B9F911E6476B001EB4EA /* WebBackForwardListProxy.h */,
 				51871B59127CB89D00F76232 /* WebContextMenu.cpp */,
@@ -6129,6 +6147,8 @@
 				1AB31A9516BC688100F6DBC9 /* StorageManagerMessages.h */,
 				2D1B5D5B185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp */,
 				2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */,
+				2684055018B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp */,
+				2684055118B86ED60022C38B /* ViewUpdateDispatcherMessages.h */,
 				512E3568130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp */,
 				512E3569130B57F000ABD19A /* WebApplicationCacheManagerMessages.h */,
 				512E35F6130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp */,
@@ -6703,6 +6723,7 @@
 				51064D36189781C4004B2FEB /* SQLiteIDBCursor.h in Headers */,
 				BC032D7D10F4378D0058C15A /* WebEditorClient.h in Headers */,
 				0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */,
+				2684055318B86ED60022C38B /* ViewUpdateDispatcherMessages.h in Headers */,
 				516A4A5D120A2CCD00C05B7F /* APIError.h in Headers */,
 				1A433F0D113C53DD00FACDE9 /* WebErrors.h in Headers */,
 				BC032DB910F4380F0058C15A /* WebEvent.h in Headers */,
@@ -6812,6 +6833,7 @@
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
 				512F589D12A8838800629530 /* WebProtectionSpace.h in Headers */,
 				1AC1337218566C7C00F3EC05 /* APIFrameHandle.h in Headers */,
+				2684054418B85A630022C38B /* VisibleContentRectUpdateInfo.h in Headers */,
 				37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */,
 				51E351F6180F5C7500E53BE9 /* WebIDBFactoryBackend.h in Headers */,
 				3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */,
@@ -7408,6 +7430,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1D26A51175964D70095BFD1 /* WebContentProcess.xib in Resources */,
+				2684054918B85FF70022C38B /* ViewUpdateDispatcher.messages.in in Resources */,
 				E133FD8A1423DD7F00FC7BFB /* WebKit.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7848,6 +7871,7 @@
 				75E749E9180DBB9800088BA6 /* WebOriginDataManagerMessageReceiver.cpp in Sources */,
 				BC204EE611C83EA9008F3375 /* InjectedBundleMac.mm in Sources */,
 				BC8147D612F66D31007B2C32 /* InjectedBundleNavigationAction.cpp in Sources */,
+				2684054C18B86C350022C38B /* VisibleContentRectUpdateInfo.cpp in Sources */,
 				BC4BEEAC120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp in Sources */,
 				512935E31288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp in Sources */,
 				CD67D30E15C08F9A00843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp in Sources */,
@@ -8072,6 +8096,7 @@
 				BC82836516B354F600A278FE /* WebContentProcessMain.mm in Sources */,
 				2D125C5F1857EA05003BA3CB /* ViewGestureControllerMac.mm in Sources */,
 				BC82839916B48DC000A278FE /* WebContentServiceEntryPoint.mm in Sources */,
+				2684054F18B86C8E0022C38B /* ViewUpdateDispatcher.cpp in Sources */,
 				BCB9E2441120DACA00A137E0 /* WebContext.cpp in Sources */,
 				31A505F91680025500A930EB /* WebContextClient.cpp in Sources */,
 				BC09B8F8147460F7005F5625 /* WebContextConnectionClient.cpp in Sources */,
@@ -8145,6 +8170,7 @@
 				BC0E607412D6BC200012A72A /* WebGeolocationPosition.cpp in Sources */,
 				BC1BE1F312D54DBD0004A228 /* WebGeolocationProvider.cpp in Sources */,
 				7801C099142290C400FAF9AF /* WebHitTestResult.cpp in Sources */,
+				2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */,
 				511B24AA132E097200065A0C /* WebIconDatabase.cpp in Sources */,
 				51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */,
 				51D02F64132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp in Sources */,

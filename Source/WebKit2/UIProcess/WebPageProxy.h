@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #include "PlatformProcessIdentifier.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
+#include "VisibleContentRectUpdateInfo.h"
 #include "WKBase.h"
 #include "WKPagePrivate.h"
 #include "WebColorPicker.h"
@@ -451,8 +452,11 @@ public:
     void executeEditCommand(const String& commandName);
     void validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback>);
 #if PLATFORM(IOS)
-    const WebCore::FloatRect& unobscuredContentRect() const;
-    void setUnobscuredContentRect(const WebCore::FloatRect& unobscuredRect);
+    double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }
+    const WebCore::FloatRect& exposedContentRect() const { return m_lastVisibleContentRectUpdate.exposedRect(); }
+    const WebCore::FloatRect& unobscuredContentRect() const { return m_lastVisibleContentRectUpdate.unobscuredRect(); }
+
+    void updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
     void setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize&);
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
 
@@ -847,7 +851,6 @@ public:
 
 #if PLATFORM(IOS)
     void willStartUserTriggeredZooming();
-    void didFinishZooming(float newScale);
 
     void tapHighlightAtPosition(const WebCore::FloatPoint&, uint64_t& requestID);
 
@@ -1240,7 +1243,7 @@ private:
 #endif
 #if PLATFORM(IOS)
     RefPtr<WebVideoFullscreenManagerProxy> m_videoFullscreenManager;
-    WebCore::FloatRect m_unobscuredRect;
+    VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
 #endif
 
 #if ENABLE(VIBRATION)

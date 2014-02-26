@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,7 @@ struct WebPageConfiguration;
 
 - (void)setMinimumSize:(CGSize)size;
 - (void)setMinimumLayoutSize:(CGSize)size;
-- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)scale;
+- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)scale inStableState:(BOOL)isStableState;
 
 - (void)didFinishScrolling;
 - (void)didZoomToScale:(CGFloat)scale;

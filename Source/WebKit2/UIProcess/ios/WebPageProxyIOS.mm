@@ -28,6 +28,7 @@
 
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
+#import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebKitSystemInterfaceIOS.h"
 #import "WebPageMessages.h"
@@ -230,14 +231,12 @@ void WebPageProxy::autocorrectionContextCallback(const String& beforeText, const
     callback->performCallbackWithReturnValue(beforeText, markedText, selectedText, afterText, location, length);
 }
 
-const FloatRect& WebPageProxy::unobscuredContentRect() const
+void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
 {
-    return m_unobscuredRect;
-}
-
-void WebPageProxy::setUnobscuredContentRect(const FloatRect& unobscuredRect)
-{
-    m_unobscuredRect = unobscuredRect;
+    if (visibleContentRectUpdateInfo == m_lastVisibleContentRectUpdate)
+        return;
+    m_lastVisibleContentRectUpdate = visibleContentRectUpdateInfo;
+    m_process->send(Messages::ViewUpdateDispatcher::VisibleContentRectUpdate(m_pageID, visibleContentRectUpdateInfo), 0);
 }
 
 void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize& size)
@@ -453,12 +452,6 @@ bool WebPageProxy::acceptsFirstMouse(int, const WebKit::WebMouseEvent&)
 void WebPageProxy::willStartUserTriggeredZooming()
 {
     process().send(Messages::WebPage::WillStartUserTriggeredZooming(), m_pageID);
-}
-
-void WebPageProxy::didFinishZooming(float newScale)
-{
-    m_pageScaleFactor = newScale;
-    process().send(Messages::WebPage::DidFinishZooming(newScale), m_pageID);
 }
 
 void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, uint64_t& requestID)

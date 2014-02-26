@@ -34,6 +34,7 @@
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
 #include "TextCheckerState.h"
+#include "ViewUpdateDispatcher.h"
 #include "VisitedLinkTable.h"
 #include <WebCore/LinkHash.h>
 #include <WebCore/Timer.h>
@@ -279,6 +280,9 @@ private:
     RefPtr<InjectedBundle> m_injectedBundle;
 
     RefPtr<EventDispatcher> m_eventDispatcher;
+#if PLATFORM(IOS)
+    RefPtr<ViewUpdateDispatcher> m_viewUpdateDispatcher;
+#endif
 
     bool m_inDidClose;
 

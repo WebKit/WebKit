@@ -143,6 +143,7 @@ class PageBanner;
 class PageOverlay;
 class PluginView;
 class SessionState;
+class VisibleContentRectUpdateInfo;
 class WebColorChooser;
 class WebContextMenu;
 class WebContextMenuItemData;
@@ -661,9 +662,9 @@ public:
 #if PLATFORM(IOS)
     void setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize&);
     void viewportConfigurationChanged();
+    void updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
+    bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
     void willStartUserTriggeredZooming();
-    void didFinishScrolling(const WebCore::FloatPoint& contentOffset);
-    void didFinishZooming(float);
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
@@ -1094,6 +1095,7 @@ private:
     bool m_shouldReturnWordAtSelection;
 
     WebCore::ViewportConfiguration m_viewportConfiguration;
+    bool m_scaleWasSetByUIProcess;
     bool m_userHasChangedPageScaleFactor;
     WebCore::IntSize m_blockSelectionDesiredSize;
 #endif

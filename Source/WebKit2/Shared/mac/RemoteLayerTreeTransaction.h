@@ -164,6 +164,9 @@ public:
 
     double pageScaleFactor() const { return m_pageScaleFactor; }
     void setPageScaleFactor(double pageScaleFactor) { m_pageScaleFactor = pageScaleFactor; }
+
+    bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
+    void setScaleWasSetByUIProcess(bool scaleWasSetByUIProcess) { m_scaleWasSetByUIProcess = scaleWasSetByUIProcess; }
     
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
     void setRenderTreeSize(uint64_t renderTreeSize) { m_renderTreeSize = renderTreeSize; }
@@ -187,6 +190,7 @@ private:
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayerIDs;
     WebCore::IntSize m_contentsSize;
     double m_pageScaleFactor;
+    bool m_scaleWasSetByUIProcess;
     uint64_t m_renderTreeSize;
     double m_minimumScaleFactor;
     double m_maximumScaleFactor;

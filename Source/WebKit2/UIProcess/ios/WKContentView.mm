@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,18 +146,21 @@ using namespace WebKit;
     return [self isEditable];
 }
 
-- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)scale
+- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)scale inStableState:(BOOL)isStableState
 {
-    _page->setUnobscuredContentRect(unobscuredRect);
-    _page->scrollingCoordinatorProxy()->scrollPositionChangedViaDelegatedScrolling(_page->scrollingCoordinatorProxy()->rootScrollingNodeID(), roundedIntPoint(unobscuredRect.origin));
+    double scaleNoiseThreshold = 0.0005;
+    if (!isStableState && abs(scale - _page->displayedContentScale()) < scaleNoiseThreshold) {
+        // Tiny changes of scale during interactive zoom cause content to jump by one pixel, creating
+        // visual noise. We filter those useless updates.
+        scale = _page->displayedContentScale();
+    }
+    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(visibleRect, unobscuredRect, scale));
 
     if (auto drawingArea = _page->drawingArea()) {
-        FloatRect exposedRect = visibleRect;
-        exposedRect.scale(scale);
-        drawingArea->setExposedRect(exposedRect);
+        FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:unobscuredRect scale:scale];
+        drawingArea->setCustomFixedPositionRect(fixedPosRect);
+        drawingArea->updateDebugIndicator();
     }
-
-    [self _updateFixedPositionRect];
 }
 
 - (void)setMinimumSize:(CGSize)size
@@ -172,15 +175,6 @@ using namespace WebKit;
     return exposedRect;
 }
 
-- (void)_updateFixedPositionRect
-{
-    auto drawingArea = _page->drawingArea();
-    if (!drawingArea)
-        return;
-    FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:_page->unobscuredContentRect() scale:_page->pageScaleFactor()];
-    drawingArea->setCustomFixedPositionRect(fixedPosRect);
-}
-
 - (void)setMinimumLayoutSize:(CGSize)size
 {
     _page->setViewportConfigurationMinimumLayoutSize(IntSize(CGCeiling(size.width), CGCeiling(size.height)));
@@ -188,7 +182,6 @@ using namespace WebKit;
 
 - (void)didFinishScrolling
 {
-    [self _updateFixedPositionRect];
     [self _didEndScrollingOrZooming];
 }
 
@@ -210,7 +203,6 @@ using namespace WebKit;
 
 - (void)didZoomToScale:(CGFloat)scale
 {
-    _page->didFinishZooming(scale);
     [self _didEndScrollingOrZooming];
 }
 

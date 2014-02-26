@@ -326,7 +326,7 @@
     [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
     [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
     [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];
-    if (![_scrollView isZooming] && ![_scrollView isZoomBouncing])
+    if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing])
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
 
     if (_gestureController)
@@ -374,7 +374,7 @@
 
 - (void)_didFinishScrolling
 {
-    [self _updateVisibleContentRects];
+    [self _updateVisibleContentRectsWithStableState:YES];
     [_contentView didFinishScrolling];
 }
 
@@ -397,18 +397,18 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    [self _updateVisibleContentRects];
+    [self _updateVisibleContentRectsWithStableState:NO];
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
-    [self _updateVisibleContentRects];
+    [self _updateVisibleContentRectsWithStableState:NO];
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
     ASSERT(scrollView == _scrollView);
-    [self _updateVisibleContentRects];
+    [self _updateVisibleContentRectsWithStableState:YES];
     [_contentView didZoomToScale:scale];
 }
 
@@ -420,10 +420,10 @@
         [_contentView setMinimumLayoutSize:bounds.size];
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
-    [self _updateVisibleContentRects];
+    [self _updateVisibleContentRectsWithStableState:YES];
 }
 
-- (void)_updateVisibleContentRects
+- (void)_updateVisibleContentRectsWithStableState:(BOOL)isStateStable
 {
     CGRect fullViewRect = self.bounds;
     CGRect visibleRectInContentCoordinates = [self convertRect:fullViewRect toView:_contentView.get()];
@@ -433,7 +433,7 @@
 
     CGFloat scaleFactor = [_scrollView zoomScale];
 
-    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates scale:scaleFactor];
+    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates scale:scaleFactor inStableState:isStateStable];
 }
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView
@@ -696,7 +696,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     ASSERT(obscuredInsets.bottom >= 0);
     ASSERT(obscuredInsets.right >= 0);
     _obscuredInsets = obscuredInsets;
-    [self _updateVisibleContentRects];
+    [self _updateVisibleContentRectsWithStableState:!_isChangingObscuredInsetsInteractively];
 }
 
 - (UIColor *)_pageExtendedBackgroundColor
@@ -728,6 +728,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 {
     ASSERT(_isChangingObscuredInsetsInteractively);
     _isChangingObscuredInsetsInteractively = NO;
+    [self _updateVisibleContentRectsWithStableState:YES];
 }
 
 #endif

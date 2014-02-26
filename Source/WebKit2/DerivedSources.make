@@ -97,6 +97,7 @@ MESSAGE_RECEIVERS = \
     StorageManager \
     ViewGestureController \
     ViewGestureGeometryCollector \
+    ViewUpdateDispatcher \
     WebApplicationCacheManager \
     WebApplicationCacheManagerProxy \
     WebConnection \

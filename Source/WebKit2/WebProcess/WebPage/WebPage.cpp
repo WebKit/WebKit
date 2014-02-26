@@ -284,6 +284,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 #if PLATFORM(IOS)
     , m_shouldReturnWordAtSelection(false)
+    , m_scaleWasSetByUIProcess(false)
     , m_userHasChangedPageScaleFactor(false)
 #endif
     , m_inspectorClient(0)
@@ -1259,6 +1260,12 @@ void WebPage::windowScreenDidChange(uint64_t displayID)
 
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {
+    if (scale == pageScaleFactor())
+        return;
+
+#if PLATFORM(IOS)
+    m_scaleWasSetByUIProcess = false;
+#endif
     PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
     if (pluginView && pluginView->handlesPageScaleFactor()) {
         pluginView->setPageScaleFactor(scale, origin);
@@ -2636,6 +2643,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setPageScaleFactor(corePage()->pageScaleFactor());
     layerTransaction.setRenderTreeSize(corePage()->renderTreeSize());
 #if PLATFORM(IOS)
+    layerTransaction.setScaleWasSetByUIProcess(scaleWasSetByUIProcess());
     layerTransaction.setMinimumScaleFactor(minimumPageScaleFactor());
     layerTransaction.setMaximumScaleFactor(maximumPageScaleFactor());
     layerTransaction.setAllowsUserScaling(allowsUserScaling());

@@ -1,3 +1,121 @@
+2014-02-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Split the rects/scale updates in 3 internally consistent groups
+        https://bugs.webkit.org/show_bug.cgi?id=129354
+
+        Reviewed by Sam Weinig.
+
+        During scaling, the scale and rect of UIScrollView, WebPageProxy, DrawingAreaProxy,
+        DrawingArea and WebPage were in completely inconsistent states.
+
+        Some of those disconnect were temporary (like when setting the rect and scale in two different
+        messages), some were lasting the time of a tile update (like the UIProcess view of the scale).
+        This was causing various visual glitches.
+
+        To fix this, all the updates from the UIProcess are funneled through a single path and the values
+        are split into 3 different groups/types.
+        When updating the scale/rects, the UIProcess sends the new information to the WebProcess on a queue
+        through ViewUpdateDispatcher. There, the updates are accumulated until the MainThread is available.
+        Once the main thread is "unblocked" from the previous frame, all the data are updated at once from
+        the last known state in ViewUpdateDispatcher. The new tiles are created for the new converage information
+        and they are sent to the UIProcess.
+
+        At any point, there are 3 types of scale and rects used for different purpose:
+        -In the UIProcess, there is the UIScrollView scale and rects which represent the "true" state or what
+         is currently on screen.
+         That information is mirrored into WebPageProxy for the other classes needing it like DrawingAreaProxy.
+        -In the WebProcess, there is the last known state. That state is always lagging a little behind the "true"
+         state.
+        -Back in the UIProcess, we have the tile states that is attached to RemoteLayerTreeTransaction. It is used
+         to setup the rendering.
+
+        With this change, there are two paths for updating the page scale factor:
+        -The UI drives the change, the updates goes WKWebView->WKContentView->WebPageProxy->ViewUpdateDispatcher
+         ->WebPage->RemoteLayerTreeDrawingArea->RemoteLayerTreeDrawingAreaProxy->WKContentView->WKWebView.
+        -If changes in the content force scaling parameters, the updates goes: WebPage->RemoteLayerTreeDrawingArea
+         ->RemoteLayerTreeDrawingAreaProxy->WKContentView->WKWebView.
+        The two kind of updates frequently conflicts during loading. We differentiate those through the flag
+        scaleWasSetByUIProcess passed with the updates. In cases of conflicts, the user always wins.
+
+        * DerivedSources.make:
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        * Shared/VisibleContentRectUpdateInfo.cpp: Added.
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        * Shared/VisibleContentRectUpdateInfo.h: Added.
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::exposedRect):
+        (WebKit::VisibleContentRectUpdateInfo::unobscuredRect):
+        (WebKit::VisibleContentRectUpdateInfo::scale):
+        (WebKit::operator==):
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::scaleWasSetByUIProcess):
+        (WebKit::RemoteLayerTreeTransaction::setScaleWasSetByUIProcess):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView contentView:didCommitLayerTree:WebKit::]):
+        (-[WKWebView _didFinishScrolling]):
+        (-[WKWebView scrollViewDidScroll:]):
+        (-[WKWebView scrollViewDidZoom:]):
+        (-[WKWebView scrollViewDidEndZooming:withView:atScale:]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _updateVisibleContentRectsWithStableState:]):
+        (-[WKWebView _setObscuredInsets:]):
+        (-[WKWebView _endInteractiveObscuredInsetsChange]):
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _updateVisibleContentRects]):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::setCustomFixedPositionRect):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::updateDebugIndicator):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::displayedContentScale):
+        (WebKit::WebPageProxy::exposedContentRect):
+        (WebKit::WebPageProxy::unobscuredContentRect):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:inStableState:]):
+        (-[WKContentView didFinishScrolling]):
+        (-[WKContentView didZoomToScale:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateVisibleContentRects):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::scaledExposedRect):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::indicatorLocation):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::indicatorScale):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp: Added.
+        (WebKit::ViewUpdateDispatcher::create):
+        (WebKit::ViewUpdateDispatcher::ViewUpdateDispatcher):
+        (WebKit::ViewUpdateDispatcher::~ViewUpdateDispatcher):
+        (WebKit::ViewUpdateDispatcher::initializeConnection):
+        (WebKit::ViewUpdateDispatcher::visibleContentRectUpdate):
+        (WebKit::ViewUpdateDispatcher::dispatchVisibleContentRectUpdate):
+        * WebProcess/WebPage/ViewUpdateDispatcher.h: Added.
+        * WebProcess/WebPage/ViewUpdateDispatcher.messages.in: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::scalePage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::scaleWasSetByUIProcess):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::tapHighlightAtPosition):
+        (WebKit::WebPage::updateVisibleContentRects):
+        (WebKit::WebPage::willStartUserTriggeredZooming):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
         Rename WebCore::VisitedLinkProvider to WebCore::VisitedLinkStore

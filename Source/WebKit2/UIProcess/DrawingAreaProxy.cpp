@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy* webPagePr
     : m_type(type)
     , m_webPageProxy(webPageProxy)
     , m_size(webPageProxy->viewSize())
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     , m_exposedRectChangedTimer(RunLoop::main(), this, &DrawingAreaProxy::exposedRectChangedTimerFired)
 #endif
 {
@@ -62,7 +62,7 @@ void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition
     sizeDidChange();
 }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
 void DrawingAreaProxy::setExposedRect(const FloatRect& exposedRect)
 {
     if (!m_webPageProxy->isValid())
@@ -85,6 +85,7 @@ void DrawingAreaProxy::exposedRectChangedTimerFired()
     m_webPageProxy->process().send(Messages::DrawingArea::SetExposedRect(m_exposedRect), m_webPageProxy->pageID());
     m_lastSentExposedRect = m_exposedRect;
 }
+#endif // PLATFORM(MAC)
 
 void DrawingAreaProxy::setCustomFixedPositionRect(const FloatRect& fixedPositionRect)
 {
@@ -93,6 +94,5 @@ void DrawingAreaProxy::setCustomFixedPositionRect(const FloatRect& fixedPosition
 
     m_webPageProxy->process().send(Messages::DrawingArea::SetCustomFixedPositionRect(fixedPositionRect), m_webPageProxy->pageID());
 }
-#endif
 
 } // namespace WebKit

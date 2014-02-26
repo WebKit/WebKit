@@ -315,7 +315,6 @@ messages -> WebPage LegacyReceiver {
 
 #if PLATFORM(IOS)
     WillStartUserTriggeredZooming();
-    DidFinishZooming(float scale);
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
