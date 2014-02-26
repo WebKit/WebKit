@@ -626,7 +626,36 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
     if (mayBeCall) {
         if (m_args->m_listNode && m_args->m_listNode->m_expr) {
             ArgumentListNode* oldList = m_args->m_listNode;
-            if (m_args->m_listNode->m_next) {
+            if (m_args->m_listNode->m_expr->isSpreadExpression()) {
+                SpreadExpressionNode* spread = static_cast<SpreadExpressionNode*>(m_args->m_listNode->m_expr);
+                RefPtr<RegisterID> profileHookRegister;
+                if (generator.shouldEmitProfileHooks())
+                    profileHookRegister = generator.newTemporary();
+                RefPtr<RegisterID> realFunction = generator.emitMove(generator.newTemporary(), base.get());
+                RefPtr<RegisterID> index = generator.emitLoad(generator.newTemporary(), jsNumber(0));
+                RefPtr<RegisterID> thisRegister = generator.emitLoad(generator.newTemporary(), jsUndefined());
+                RefPtr<RegisterID> argumentsRegister = generator.emitLoad(generator.newTemporary(), jsUndefined());
+                
+                auto extractor = [&thisRegister, &argumentsRegister, &index](BytecodeGenerator& generator, RegisterID* value)
+                {
+                    RefPtr<Label> haveThis = generator.newLabel();
+                    RefPtr<Label> end = generator.newLabel();
+                    RefPtr<RegisterID> compareResult = generator.newTemporary();
+                    RefPtr<RegisterID> indexZeroCompareResult = generator.emitBinaryOp(op_eq, compareResult.get(), index.get(), generator.emitLoad(0, jsNumber(0)), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
+                    generator.emitJumpIfFalse(indexZeroCompareResult.get(), haveThis.get());
+                    generator.emitMove(thisRegister.get(), value);
+                    generator.emitLoad(index.get(), jsNumber(1));
+                    generator.emitJump(end.get());
+                    generator.emitLabel(haveThis.get());
+                    RefPtr<RegisterID> indexOneCompareResult = generator.emitBinaryOp(op_eq, compareResult.get(), index.get(), generator.emitLoad(0, jsNumber(1)), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
+                    generator.emitJumpIfFalse(indexOneCompareResult.get(), end.get());
+                    generator.emitMove(argumentsRegister.get(), value);
+                    generator.emitLoad(index.get(), jsNumber(2));
+                    generator.emitLabel(end.get());
+                };
+                generator.emitEnumeration(this, spread->expression(), extractor);
+                generator.emitCallVarargs(returnValue.get(), realFunction.get(), thisRegister.get(), argumentsRegister.get(), generator.newTemporary(), 0, profileHookRegister.get(), divot(), divotStart(), divotEnd());
+            } else if (m_args->m_listNode->m_next) {
                 ASSERT(m_args->m_listNode->m_next->m_expr->isSimpleArray());
                 ASSERT(!m_args->m_listNode->m_next->m_next);
                 m_args->m_listNode = static_cast<ArrayNode*>(m_args->m_listNode->m_next->m_expr)->toArgumentList(generator.vm(), 0, 0);

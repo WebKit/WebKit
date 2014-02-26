@@ -1,3 +1,18 @@
+2014-02-26  Oliver Hunt  <oliver@apple.com>
+
+        Function.prototype.apply has a bad time with the spread operator
+        https://bugs.webkit.org/show_bug.cgi?id=129381
+
+        Reviewed by Mark Hahnenberg.
+
+        Make sure our apply logic handle the spread operator correctly.
+        To do this we simply emit the enumeration logic that we'd normally
+        use for other enumerations, but only store the first two results
+        to registers.  Then perform a varargs call.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+
 2014-02-26  Mark Lam  <mark.lam@apple.com>
 
         Compilation policy management belongs in operationOptimize(), not the DFG Driver.
