@@ -1,3 +1,21 @@
+2014-02-26  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] inset and inset-rectangle trigger assert with replaced element and large percentage dimension
+        https://bugs.webkit.org/show_bug.cgi?id=129060
+
+        Reviewed by Simon Fraser.
+
+        A bounds check was omitted when computing the width and height for inset
+        rectangles, making it possible for the width or height to end up being
+        negative. This patch adds in that check for both. It seems that only
+        replaced elements like iframe and img trigger this problem.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-floats-img-inset-negative-width-crash.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-img-inset-rectangle-negative-width-crash.html
+
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape):
+
 2014-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Underlines are too thick when zoomed in

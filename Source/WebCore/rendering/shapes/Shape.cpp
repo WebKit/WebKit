@@ -210,8 +210,8 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
         FloatRect bounds(
             left,
             top,
-            boxWidth - left - floatValueForLength(rectangle.right(), boxWidth),
-            boxHeight - top - floatValueForLength(rectangle.bottom(), boxHeight));
+            std::max<float>(boxWidth - left - floatValueForLength(rectangle.right(), boxWidth), 0),
+            std::max<float>(boxHeight - top - floatValueForLength(rectangle.bottom(), boxHeight), 0));
         FloatSize cornerRadii(
             floatValueForLength(rectangle.cornerRadiusX(), boxWidth),
             floatValueForLength(rectangle.cornerRadiusY(), boxHeight));
@@ -228,8 +228,8 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
         float top = floatValueForLength(inset.top(), boxHeight);
         FloatRect rect(left,
             top,
-            boxWidth - left - floatValueForLength(inset.right(), boxWidth),
-            boxHeight - top - floatValueForLength(inset.bottom(), boxHeight));
+            std::max<float>(boxWidth - left - floatValueForLength(inset.right(), boxWidth), 0),
+            std::max<float>(boxHeight - top - floatValueForLength(inset.bottom(), boxHeight), 0));
         FloatRect logicalRect = physicalRectToLogical(rect, logicalBoxSize.height(), writingMode);
 
         FloatSize boxSize(boxWidth, boxHeight);
