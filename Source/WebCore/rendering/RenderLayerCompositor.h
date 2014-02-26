@@ -140,9 +140,6 @@ public:
     // we discover that an iframe is overlapped during painting).
     void scheduleCompositingLayerUpdate();
 
-    // Update the maps that we use to distribute layers to coresponding regions.
-    void updateRenderFlowThreadLayersIfNeeded();
-    
     // Update the compositing state of the given layer. Returns true if that state changed.
     enum CompositingChangeRepaint { CompositingChangeRepaintNow, CompositingChangeWillRepaintLater };
     bool updateLayerCompositingState(RenderLayer&, CompositingChangeRepaint = CompositingChangeRepaintNow);

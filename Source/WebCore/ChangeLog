@@ -1,3 +1,26 @@
+2014-02-25  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Small clean-up of flow threads accelerated compositing code
+        https://bugs.webkit.org/show_bug.cgi?id=129312
+
+        Reviewed by Andrei Bucur.
+
+        Some clean-up for the code used for regions in accelerated compositing functionality:
+        1. Rename updateRenderFlowThreadLayersIfNeeded -> updateFlowThreadsLayerToRegionMappingsIfNeeded
+        as the function updates the mapping between the flow threads layers and their corresponding regions
+        2. Remove RenderLayerCompositor::updateRenderFlowThreadLayersIfNeeded and move the code in place
+        at call site since the function body does not require a dedicated function.
+
+        No new functionality, no new tests.
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::updateFlowThreadsLayerToRegionMappingsIfNeeded):
+        Now that the regions are always layers, we do not need to iterate backwards.
+        * rendering/FlowThreadController.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        * rendering/RenderLayerCompositor.h:
+
 2014-02-25  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Ensure consistent border painting width.

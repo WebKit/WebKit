@@ -645,8 +645,8 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 #endif
 
     if (checkForHierarchyUpdate) {
-        if (isFullUpdate)
-            updateRenderFlowThreadLayersIfNeeded();
+        if (m_renderView.hasRenderNamedFlowThreads() && isFullUpdate)
+            m_renderView.flowThreadController().updateFlowThreadsLayerToRegionMappingsIfNeeded();
         // Go through the layers in presentation order, so that we can compute which RenderLayers need compositing layers.
         // FIXME: we could maybe do this and the hierarchy udpate in one pass, but the parenting logic would be more complex.
         CompositingState compState(updateRoot);
@@ -707,12 +707,6 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     // Inform the inspector that the layer tree has changed.
     InspectorInstrumentation::layerTreeDidChange(page());
-}
-
-void RenderLayerCompositor::updateRenderFlowThreadLayersIfNeeded()
-{
-    if (m_renderView.hasRenderNamedFlowThreads())
-        m_renderView.flowThreadController().updateRenderFlowThreadLayersIfNeeded();
 }
 
 void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer& layer)

@@ -263,10 +263,9 @@ void FlowThreadController::updateFlowThreadsIntoFinalPhase()
     }
 }
 
-void FlowThreadController::updateRenderFlowThreadLayersIfNeeded()
+void FlowThreadController::updateFlowThreadsLayerToRegionMappingsIfNeeded()
 {
-    // Walk the flow chain in reverse order because RenderRegions might become RenderLayers for the following flow threads.
-    for (auto iter = m_renderNamedFlowThreadList->rbegin(), end = m_renderNamedFlowThreadList->rend(); iter != end; ++iter) {
+    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
         RenderNamedFlowThread* flowRenderer = *iter;
         flowRenderer->updateAllLayerToRegionMappingsIfNeeded();
     }
