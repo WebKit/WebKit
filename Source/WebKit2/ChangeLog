@@ -1,3 +1,9 @@
+2014-02-26  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed CMAKE build fix after r164751.
+
+        * CMakeLists.txt: Renamed WebVisitedLinkProvider.cpp to VisitedLinkTableController.cpp.
+
 2014-02-26  Anders Carlsson  <andersca@apple.com>
 
         Rename WebVisitedLinkProvider to VisitedLinkTableController
