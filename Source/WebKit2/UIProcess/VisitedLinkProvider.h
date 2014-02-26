@@ -40,7 +40,7 @@ class WebProcessProxy;
 class VisitedLinkProvider {
     WTF_MAKE_NONCOPYABLE(VisitedLinkProvider);
 public:
-    explicit VisitedLinkProvider(WebContext*);
+    VisitedLinkProvider();
 
     void addVisitedLink(WebCore::LinkHash);
 
@@ -50,8 +50,6 @@ public:
 private:
     void pendingVisitedLinksTimerFired();
 
-    WebContext* m_context;
-    bool m_visitedLinksPopulated;
     HashSet<WebProcessProxy*> m_processesWithVisitedLinkState;
     HashSet<WebProcessProxy*> m_processesWithoutVisitedLinkState;
 

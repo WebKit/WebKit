@@ -449,6 +449,8 @@ private:
     PluginInfoStore m_pluginInfoStore;
 #endif
     VisitedLinkProvider m_visitedLinkProvider;
+    bool m_visitedLinksPopulated;
+
     PlugInAutoStartProvider m_plugInAutoStartProvider;
         
     HashSet<String> m_schemesToRegisterAsEmptyDocument;

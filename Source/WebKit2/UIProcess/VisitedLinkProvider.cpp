@@ -37,10 +37,8 @@ namespace WebKit {
 
 static const int VisitedLinkTableMaxLoad = 2;
 
-VisitedLinkProvider::VisitedLinkProvider(WebContext* context)
-    : m_context(context)
-    , m_visitedLinksPopulated(false)
-    , m_keyCount(0)
+VisitedLinkProvider::VisitedLinkProvider()
+    : m_keyCount(0)
     , m_tableSize(0)
     , m_pendingVisitedLinksTimer(RunLoop::main(), this, &VisitedLinkProvider::pendingVisitedLinksTimerFired)
 {
@@ -52,13 +50,6 @@ void VisitedLinkProvider::processDidFinishLaunching(WebProcessProxy* process)
 
     if (m_keyCount)
         m_pendingVisitedLinksTimer.startOneShot(0);
-
-    if (m_visitedLinksPopulated)
-        return;
-
-    m_context->populateVisitedLinks();
-
-    m_visitedLinksPopulated = true;
 }
 
 void VisitedLinkProvider::addVisitedLink(LinkHash linkHash)

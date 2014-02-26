@@ -1,5 +1,23 @@
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
+        Make WebContext handle populating visited links
+        https://bugs.webkit.org/show_bug.cgi?id=129348
+
+        Reviewed by Tim Horton.
+
+        This makes it possible to decouple VisitedLinkProvider from WebContext.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::VisitedLinkProvider):
+        (WebKit::VisitedLinkProvider::processDidFinishLaunching):
+        * UIProcess/VisitedLinkProvider.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::processDidFinishLaunching):
+        * UIProcess/WebContext.h:
+
+2014-02-25  Anders Carlsson  <andersca@apple.com>
+
         DrawingAreaProxy is using WebCore's Timer
         https://bugs.webkit.org/show_bug.cgi?id=129347
         <rdar://problem/16078133>
