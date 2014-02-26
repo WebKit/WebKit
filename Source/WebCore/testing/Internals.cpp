@@ -36,6 +36,7 @@
 #include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
+#include "Console.h"
 #include "ContentDistributor.h"
 #include "Cursor.h"
 #include "DOMStringList.h"
@@ -1433,6 +1434,11 @@ void Internals::toggleOverwriteModeEnabled(ExceptionCode&)
         return;
 
     document->frame()->editor().toggleOverwriteModeEnabled();
+}
+
+const ProfilesArray& Internals::consoleProfiles() const
+{
+    return contextDocument()->domWindow()->console()->profiles();
 }
 
 #if ENABLE(INSPECTOR)

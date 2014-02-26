@@ -43,10 +43,6 @@
     [CallWith=ScriptArguments&ScriptState, ImplementedAs=assertCondition] void assert(boolean condition);
     [CallWith=ScriptArguments&ScriptState] void count();
 
-    // As per spec: http://www.w3.org/TR/WebIDL/#idl-sequence
-    // "Sequences must not be used as the type of an attribute, constant or exception field."
-    // FIXME: this will lead to BUG console.profiles !== console.profiles as profile will always returns new array.
-    readonly attribute ScriptProfile[] profiles;
     [CallWith=ScriptState] void profile([TreatNullAs=NullString, TreatUndefinedAs=NullString] optional DOMString title);
     [CallWith=ScriptState] void profileEnd([TreatNullAs=NullString, TreatUndefinedAs=NullString] optional DOMString title);
 

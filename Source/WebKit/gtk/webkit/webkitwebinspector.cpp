@@ -292,8 +292,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
     /**
     * WebKitWebInspector:javascript-profiling-enabled:
     *
-    * This is enabling JavaScript profiling in the Inspector. This means
-    * that Console.profiles will return the profiles.
+    * This is enabling JavaScript profiling in the Inspector.
     *
     * Since: 1.1.1
     */

@@ -1,3 +1,21 @@
+2014-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove console.profiles from window.console API
+        https://bugs.webkit.org/show_bug.cgi?id=116883
+
+        Reviewed by Timothy Hatcher.
+
+        console.profiles has been removed or never implemented by other
+        browsers. We should remove it as well. However, since tests
+        rely on it, keep it as window.internals.consoleProfiles.
+
+        * WebCore.exp.in:
+        * page/Console.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::consoleProfiles):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-02-26  Martin Hock  <mhock@apple.com>
 
         Create SessionID value-style class for session IDs.

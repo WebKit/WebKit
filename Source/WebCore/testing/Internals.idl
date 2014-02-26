@@ -186,6 +186,11 @@
     [RaisesException] void setDeviceProximity(DOMString eventType, double value, double min, double max);
 #endif
 
+    // As per spec: http://www.w3.org/TR/WebIDL/#idl-sequence
+    // "Sequences must not be used as the type of an attribute, constant or exception field."
+    // FIXME: this will lead to BUG interals.consoleProfiles !== interals.consoleProfiles as profile will always returns new array.
+    readonly attribute ScriptProfile[] consoleProfiles;
+
     [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();
     [Conditional=INSPECTOR] unsigned long numberOfLiveDocuments();
     [Conditional=INSPECTOR] sequence<DOMString> consoleMessageArgumentCounts();

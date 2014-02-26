@@ -49,7 +49,7 @@ function printHeavyProfilesDataWithoutTime()
     var preElement = document.createElement("pre");
     preElement.appendChild(document.createTextNode("\n"));
 
-    var profiles = console.profiles;
+    var profiles = internals.consoleProfiles;
     for (var i = 0; i < profiles.length; ++i) {
         preElement.appendChild(document.createTextNode("Profile title: " + profiles[i].title + "\n"));
         printProfileNodeWithoutTime(preElement, profiles[i].heavyProfile.head, 0);
@@ -64,7 +64,7 @@ function printProfilesDataWithoutTime()
     var preElement = document.createElement("pre");
     preElement.appendChild(document.createTextNode("\n"));
 
-    var profiles = console.profiles;
+    var profiles = internals.consoleProfiles;
     for (var i = 0; i < profiles.length; ++i) {
         preElement.appendChild(document.createTextNode("Profile title: " + profiles[i].title + "\n"));
         printProfileNodeWithoutTime(preElement, profiles[i].head, 0);

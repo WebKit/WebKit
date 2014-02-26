@@ -1,3 +1,14 @@
+2014-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove console.profiles from window.console API
+        https://bugs.webkit.org/show_bug.cgi?id=116883
+
+        Reviewed by Timothy Hatcher.
+
+        * webkit/webkitwebinspector.cpp:
+        (webkit_web_inspector_class_init):
+        Removed stale part of comment.
+
 2014-02-26  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] generate-gtkdoc can fail with WebKit1 or WebKit2 only builds

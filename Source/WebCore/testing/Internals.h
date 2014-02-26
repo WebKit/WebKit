@@ -50,17 +50,19 @@ class Element;
 class Frame;
 class InspectorFrontendChannelDummy;
 class InternalSettings;
+class MallocStatistics;
 class MemoryInfo;
 class Node;
 class Page;
 class Range;
 class ScriptExecutionContext;
-class MallocStatistics;
+class ScriptProfile;
 class SerializedScriptValue;
 class TimeRanges;
 class TypeConversions;
 
 typedef int ExceptionCode;
+typedef Vector<RefPtr<ScriptProfile>> ProfilesArray;
 
 class Internals : public RefCounted<Internals>
                 , public ContextDestructionObserver {
@@ -221,6 +223,8 @@ public:
 
     void insertAuthorCSS(const String&, ExceptionCode&) const;
     void insertUserCSS(const String&, ExceptionCode&) const;
+
+    const ProfilesArray& consoleProfiles() const;
 
 #if ENABLE(INSPECTOR)
     unsigned numberOfLiveNodes() const;
