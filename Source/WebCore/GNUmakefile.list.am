@@ -4618,6 +4618,8 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleVisualData.h \
 	Source/WebCore/rendering/TableLayout.h \
 	Source/WebCore/rendering/TrailingFloatsRootInlineBox.h \
+	Source/WebCore/replay/UserInputBridge.cpp \
+	Source/WebCore/replay/UserInputBridge.h \
 	Source/WebCore/storage/StorageThread.cpp \
 	Source/WebCore/storage/StorageThread.h \
 	Source/WebCore/storage/StorageArea.h \

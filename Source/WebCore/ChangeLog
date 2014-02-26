@@ -1,3 +1,59 @@
+2014-02-26  Brian Burg  <bburg@apple.com>
+
+        Web Replay: route through UserInputBridge when delivering user inputs to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=128150
+
+        Reviewed by Timothy Hatcher.
+
+        Add an UserInputBridge instance to each Page. WebKit2 routes a page's user inputs through
+        the WebCore page's user input bridge so that the inputs can be selectively captured, filtered,
+        and replayed using instrumentation inside the UserInputBridge.
+
+        For now, the routing methods of UserInputBridge have no replay-specific code paths, and just
+        put the input delivery code inside WebCore rather than its external clients. Replay-specific
+        code paths will be added once https://bugs.webkit.org/show_bug.cgi?id=128782 is fixed. However,
+        once complete the code will work as follows:
+
+        - When neither capturing or replaying, behavior is unchanged.
+
+        - When capturing user inputs, each external input is saved into a replay log as it crosses
+        the bridge from outside WebCore.
+
+        - When replaying, the bridge closes and user inputs from WebKit2 are not accepted. Instead,
+        the saved inputs from the replay log are re-dispatched as if they had crossed the bridge.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.exp.in: Add symbols for input routing methods.
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize the owned UserInputBridge in the Page constructor.
+        * page/Page.h:
+        (WebCore::Page::inputBridge): Added a by-reference getter.
+        * replay/UserInputBridge.cpp: Added.
+        (WebCore::UserInputBridge::UserInputBridge):
+        (WebCore::UserInputBridge::~UserInputBridge):
+        (WebCore::UserInputBridge::handleContextMenuEvent):
+        (WebCore::UserInputBridge::handleMousePressEvent):
+        (WebCore::UserInputBridge::handleMouseReleaseEvent):
+        (WebCore::UserInputBridge::handleMouseMoveEvent):
+        (WebCore::UserInputBridge::handleMouseMoveOnScrollbarEvent):
+        (WebCore::UserInputBridge::handleKeyEvent):
+        (WebCore::UserInputBridge::handleAccessKeyEvent):
+        (WebCore::UserInputBridge::handleWheelEvent):
+        (WebCore::UserInputBridge::focusSetActive):
+        (WebCore::UserInputBridge::focusSetFocused):
+        (WebCore::UserInputBridge::scrollRecursively):
+        (WebCore::UserInputBridge::logicalScrollRecursively):
+        (WebCore::UserInputBridge::loadRequest):
+        (WebCore::UserInputBridge::reloadFrame):
+        (WebCore::UserInputBridge::stopLoadingFrame):
+        (WebCore::UserInputBridge::tryClosePage):
+        * replay/UserInputBridge.h: Added.
+
 2014-02-26  Dean Jackson  <dino@apple.com>
 
         [WebGL] Protect more WebGL entry points for pending contexts

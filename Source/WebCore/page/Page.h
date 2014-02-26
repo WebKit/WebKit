@@ -80,6 +80,7 @@ class FrameLoaderClient;
 class FrameSelection;
 class HaltablePlugin;
 class HistoryItem;
+class UserInputBridge;
 class InspectorClient;
 class InspectorController;
 class MainFrame;
@@ -198,6 +199,7 @@ public:
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuController& contextMenuController() const { return *m_contextMenuController; }
 #endif
+    UserInputBridge& userInputBridge() const { return *m_userInputBridge; }
 #if ENABLE(INSPECTOR)
     InspectorController& inspectorController() const { return *m_inspectorController; }
 #endif
@@ -447,6 +449,7 @@ private:
 #if ENABLE(CONTEXT_MENUS)
     const std::unique_ptr<ContextMenuController> m_contextMenuController;
 #endif
+    const std::unique_ptr<UserInputBridge> m_userInputBridge;
 #if ENABLE(INSPECTOR)
     const std::unique_ptr<InspectorController> m_inspectorController;
 #endif

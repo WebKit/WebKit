@@ -86,6 +86,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/rendering/shapes"
     "${WEBCORE_DIR}/rendering/style"
     "${WEBCORE_DIR}/rendering/svg"
+    "${WEBCORE_DIR}/replay"
     "${WEBCORE_DIR}/storage"
     "${WEBCORE_DIR}/style"
     "${WEBCORE_DIR}/svg"
@@ -2296,6 +2297,8 @@ set(WebCore_SOURCES
     rendering/svg/SVGTextMetricsBuilder.cpp
     rendering/svg/SVGTextQuery.cpp
     rendering/svg/SVGTextRunRenderingContext.cpp
+
+    replay/UserInputBridge.cpp
 
     storage/Storage.cpp
     storage/StorageAreaImpl.cpp

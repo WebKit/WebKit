@@ -193,6 +193,9 @@
     <Filter Include="rendering\svg">
       <UniqueIdentifier>{76d4960a-59c1-42de-bc37-cf4dba01b7a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="replay">
+      <UniqueIdentifier>{1fac2980-eaa4-4245-8073-90b55475479f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="xml">
       <UniqueIdentifier>{7bf95243-bb51-49a0-8e4f-173242e5fc4e}</UniqueIdentifier>
     </Filter>
@@ -2912,6 +2915,9 @@
     </ClCompile>
     <ClCompile Include="..\rendering\TextPainter.cpp">
       <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\replay\UserInputBridge.cpp">
+      <Filter>replay</Filter>
     </ClCompile>
     <ClCompile Include="..\xml\DOMParser.cpp">
       <Filter>xml</Filter>
@@ -9784,6 +9790,9 @@
     </ClInclude>
     <ClInclude Include="..\rendering\svg\SVGTextRunRenderingContext.h">
       <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\replay\UserInputBridge.h">
+      <Filter>replay</Filter>
     </ClInclude>
     <ClInclude Include="..\xml\DOMParser.h">
       <Filter>xml</Filter>

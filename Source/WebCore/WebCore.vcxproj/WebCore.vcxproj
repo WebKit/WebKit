@@ -11906,6 +11906,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\replay\UserInputBridge.cpp" />
     <ClCompile Include="..\workers\SharedWorkerRepository.cpp" />
     <ClCompile Include="..\xml\DOMParser.cpp" />
     <ClCompile Include="..\xml\NativeXPathNSResolver.cpp" />
@@ -19889,6 +19890,7 @@
     <ClInclude Include="..\rendering\svg\SVGTextMetricsBuilder.h" />
     <ClInclude Include="..\rendering\svg\SVGTextQuery.h" />
     <ClInclude Include="..\rendering\svg\SVGTextRunRenderingContext.h" />
+    <ClInclude Include="..\replay\UserInputBridge.h" />   
     <ClInclude Include="..\xml\DOMParser.h" />
     <ClInclude Include="..\xml\NativeXPathNSResolver.h" />
     <ClInclude Include="..\xml\XMLErrors.h" />
