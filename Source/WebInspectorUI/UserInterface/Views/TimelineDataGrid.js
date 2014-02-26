@@ -149,7 +149,7 @@ WebInspector.TimelineDataGrid.prototype = {
         console.assert(dataGridNode);
 
         for (var identifier of this._filterableColumns) {
-            var scopeBar = this.columns.get(identifier).scopeBar;
+            var scopeBar = this.columns.get(identifier).get("scopeBar");
             if (!scopeBar || scopeBar.defaultItem.selected)
                 continue;
 

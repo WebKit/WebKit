@@ -1,3 +1,12 @@
+2014-02-26  Timothy Hatcher  <timothy@apple.com>
+
+        Fix an issue where the Timeline filter scope bars were not applying.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (TimelineDataGrid.prototype.treeElementMatchesActiveScopeFilters): Use .get() to access the ScopeBar.
+
 2014-02-25  Andreas Kling  <akling@apple.com>
 
         Prune dead code for Web Inspector memory instrumentation.
