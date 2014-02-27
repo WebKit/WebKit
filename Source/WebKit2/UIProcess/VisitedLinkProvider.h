@@ -36,6 +36,7 @@
 namespace WebKit {
 
 class WebContext;
+class WebPageProxy;
 class WebProcessProxy;
     
 class VisitedLinkProvider : public RefCounted<VisitedLinkProvider> {
@@ -44,6 +45,9 @@ public:
     ~VisitedLinkProvider();
 
     uint64_t identifier() const { return m_identifier; }
+
+    void addPage(WebPageProxy&);
+    void removePage(WebPageProxy&);
 
     void addVisitedLink(WebCore::LinkHash);
 
@@ -59,6 +63,7 @@ private:
     HashSet<WebProcessProxy*> m_processesWithoutVisitedLinkState;
 
     uint64_t m_identifier;
+    HashSet<WebPageProxy*> m_pages;
 
     unsigned m_keyCount;
     unsigned m_tableSize;

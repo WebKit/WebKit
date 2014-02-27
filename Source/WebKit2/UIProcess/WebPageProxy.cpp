@@ -336,6 +336,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_scrollPinningBehavior(DoNotPin)
     , m_navigationID(0)
 {
+    m_visitedLinkProvider->addPage(*this);
+
     updateViewState();
 
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
@@ -588,6 +590,8 @@ void WebPageProxy::close()
         return;
 
     m_isClosed = true;
+
+    m_visitedLinkProvider->removePage(*this);
 
     m_backForwardList->pageClosed();
     m_pageClient.pageClosed();

@@ -51,6 +51,7 @@ PassRefPtr<VisitedLinkProvider> VisitedLinkProvider::create()
 
 VisitedLinkProvider::~VisitedLinkProvider()
 {
+    ASSERT(m_pages.isEmpty());
 }
 
 VisitedLinkProvider::VisitedLinkProvider()
@@ -59,6 +60,18 @@ VisitedLinkProvider::VisitedLinkProvider()
     , m_tableSize(0)
     , m_pendingVisitedLinksTimer(RunLoop::main(), this, &VisitedLinkProvider::pendingVisitedLinksTimerFired)
 {
+}
+
+void VisitedLinkProvider::addPage(WebPageProxy& webPageProxy)
+{
+    ASSERT(!m_pages.contains(&webPageProxy));
+    m_pages.add(&webPageProxy);
+}
+
+void VisitedLinkProvider::removePage(WebPageProxy& webPageProxy)
+{
+    ASSERT(m_pages.contains(&webPageProxy));
+    m_pages.remove(&webPageProxy);
 }
 
 void VisitedLinkProvider::processDidFinishLaunching(WebProcessProxy* process)
