@@ -1653,7 +1653,14 @@ void WKPagePostMessageToInjectedBundle(WKPageRef pageRef, WKStringRef messageNam
 
 WKArrayRef WKPageCopyRelatedPages(WKPageRef pageRef)
 {
-    return toAPI(toImpl(pageRef)->relatedPages().leakRef());
+    Vector<RefPtr<API::Object>> relatedPages;
+
+    for (auto& page : toImpl(pageRef)->process().pages()) {
+        if (page != toImpl(pageRef))
+            relatedPages.append(page);
+    }
+
+    return toAPI(API::Array::create(std::move(relatedPages)).leakRef());
 }
 
 void WKPageSetMayStartMediaWhenInWindow(WKPageRef pageRef, bool mayStartMedia)

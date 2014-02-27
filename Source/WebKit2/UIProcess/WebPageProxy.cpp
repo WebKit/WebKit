@@ -422,22 +422,6 @@ void WebPageProxy::setPreferences(WebPreferences& preferences)
     preferencesDidChange();
 }
 
-PassRefPtr<API::Array> WebPageProxy::relatedPages() const
-{
-    // pages() returns a list of pages in WebProcess, so this page may or may not be among them - a client can use a reference to WebPageProxy after the page has closed.
-    Vector<WebPageProxy*> pages = m_process->pages();
-
-    Vector<RefPtr<API::Object>> result;
-    result.reserveInitialCapacity(pages.size());
-
-    for (const auto& page : pages) {
-        if (page != this)
-            result.uncheckedAppend(page);
-    }
-
-    return API::Array::create(std::move(result));
-}
-
 void WebPageProxy::setLoaderClient(std::unique_ptr<API::LoaderClient> loaderClient)
 {
     if (!loaderClient) {

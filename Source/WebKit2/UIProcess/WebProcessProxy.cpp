@@ -211,13 +211,6 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
     }
 }
 
-Vector<WebPageProxy*> WebProcessProxy::pages() const
-{
-    Vector<WebPageProxy*> result;
-    copyValuesToVector(m_pageMap, result);
-    return result;
-}
-
 WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) const
 {
     return m_backForwardListItemMap.get(itemID);

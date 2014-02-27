@@ -761,16 +761,12 @@ WebProcessProxy& WebContext::createNewWebProcessRespectingProcessCountLimit()
     if (m_processes.size() < m_webProcessCountLimit)
         return createNewWebProcess();
 
-    // Choose a process with fewest pages, to achieve flat distribution.
-    WebProcessProxy* result = nullptr;
-    unsigned fewestPagesSeen = UINT_MAX;
-    for (unsigned i = 0; i < m_processes.size(); ++i) {
-        if (fewestPagesSeen > m_processes[i]->pages().size()) {
-            result = m_processes[i].get();
-            fewestPagesSeen = m_processes[i]->pages().size();
-        }
-    }
-    return *result;
+    // Choose the process with fewest pages.
+    auto& process = *std::min_element(m_processes.begin(), m_processes.end(), [](const RefPtr<WebProcessProxy>& a, const RefPtr<WebProcessProxy>& b) {
+        return a->pageCount() < b->pageCount();
+    });
+
+    return *process;
 }
 
 PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageConfiguration configuration)

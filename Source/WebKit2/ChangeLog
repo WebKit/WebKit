@@ -1,3 +1,31 @@
+2014-02-27  Anders Carlsson  <andersca@apple.com>
+
+        Make WebProcessProxy::pages() return an IteratorRange
+        https://bugs.webkit.org/show_bug.cgi?id=129440
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopyRelatedPages):
+        Move the implementation of WebPageProxy::relatedPages here.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcessRespectingProcessCountLimit):
+        Use std::min_element here instead of a manual loop.
+
+        * UIProcess/WebPageProxy.cpp:
+        Remove WebPageProxy::relatedPages().
+
+        * UIProcess/WebProcessProxy.cpp:
+        Remove WebProcessProxy::pages().
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::pages):
+        Make this return an IteratorRange.
+
+        (WebKit::WebProcessProxy::pageCount):
+        New function that returns the page count.
+
 2014-02-27  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac][WK2] Remove hardcoded Cmd+B and Cmd+I from WKView.mm
