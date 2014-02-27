@@ -513,7 +513,7 @@ bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContex
     GRefPtr<GdkPixbuf> icon = getStockSymbolicIconForWidgetType(GTK_TYPE_CONTAINER, symbolicIconName, fallbackStockIconName,
         gtkTextDirection(renderObject->style().direction()), gtkIconState(this, renderObject), iconRect.width());
     paintGdkPixbuf(context, icon.get(), iconRect);
-    return false;
+    return true;
 }
 
 bool RenderThemeGtk::hasOwnDisabledStateHandlingFor(ControlPart part) const

@@ -27,6 +27,22 @@
 
 /* These are based on the Chromium media controls */
 
+.hidden {
+    display: none !important;
+}
+
+video::-webkit-media-controls-panel *:active,
+video::-webkit-media-controls-panel *:focus,
+audio::-webkit-media-controls-panel *:active,
+audio::-webkit-media-controls-panel *:focus {
+    background-image: linear-gradient(rgba(0, 0, 0, .05), rgba(255, 255, 255, .05)) !important;
+}
+
+audio::-webkit-media-controls-panel.down *:active,
+audio::-webkit-media-controls-panel.down *:focus {
+    background-image: linear-gradient(rgba(255, 255, 255, .05), rgba(0, 0, 0, .05)) !important;
+}
+
 body:-webkit-full-page-media {
     background-color: rgb(0, 0, 0);
 }
@@ -86,6 +102,9 @@ video::-webkit-media-controls-panel {
     opacity: 0;
 }
 
+audio::-webkit-media-controls-panel,
+video:-webkit-full-page-media::-webkit-media-controls-panel.no-video,
+video::-webkit-media-controls-panel:hover,
 video::-webkit-media-controls-panel.show,
 video::-webkit-media-controls-panel.paused {
     opacity: 1;
@@ -99,11 +118,6 @@ audio::-webkit-media-controls-panel div.mute-box {
     width: 30px;
     height: 30px;
     margin: 0 9px 0 -7px;
-}
-
-video::-webkit-media-controls-panel div.mute-box.hidden,
-audio::-webkit-media-controls-panel div.mute-box.hidden {
-    display: none;
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
@@ -136,6 +150,7 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
     -webkit-flex: none;
+    display: block;
     border: none;
     cursor: default;
 
@@ -157,27 +172,6 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     text-decoration: none;
 }
 
-audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
-    display: block;
-}
-
-audio::-webkit-media-controls-time-remaining-display,
-video::-webkit-media-controls-time-remaining-display {
-    display: none;
-}
-
-audio::-webkit-media-controls-time-remaining-display.show,
-video::-webkit-media-controls-time-remaining-display.show {
-    display: block;
-}
-
-audio::-webkit-media-controls-current-time-display.hidden,
-video::-webkit-media-controls-current-time-display.hidden,
-audio::-webkit-media-controls-time-remaining-display.hidden,
-video::-webkit-media-controls-time-remaining-display.hidden {
-    display: none;
-}
-
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
     display: -webkit-flex;
@@ -194,6 +188,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
 
 audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
     -webkit-appearance: media-volume-slider-container;
+    display: -webkit-flex;
     overflow: hidden;
     position: absolute;
     padding: 0;
@@ -207,8 +202,8 @@ audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-cont
     transition: height 0.10s linear;
 }
 
-audio::-webkit-media-controls-volume-slider-container.hidden,
-video::-webkit-media-controls-volume-slider-container.hidden {
+audio::-webkit-media-controls-volume-slider-container.hiding,
+video::-webkit-media-controls-volume-slider-container.hiding {
     height: 0;
 }
 
@@ -219,8 +214,8 @@ video::-webkit-media-controls-volume-slider-container.down {
     transition: height 0.10s linear, bottom 0.10s linear;
 }
 
-audio::-webkit-media-controls-panel .hidden.down,
-video::-webkit-media-controls-panel .hidden.down {
+audio::-webkit-media-controls-panel .hiding.down,
+video::-webkit-media-controls-panel .hiding.down {
     bottom: 0;
 }
 
@@ -353,9 +348,4 @@ audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-f
     line-height: 30px;
     margin: 0 9px 0 -7px;
     outline: none;
-}
-
-video::-webkit-media-controls-panel button.hidden,
-audio::-webkit-media-controls-panel button.hidden {
-    display: none;
 }

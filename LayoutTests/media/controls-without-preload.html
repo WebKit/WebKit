@@ -9,6 +9,7 @@
 
             function start()
             {
+                internals.suspendAnimations();
                 setSrcByTagName("video", findMediaFile("video", "content/test"));
                 video = document.getElementsByTagName('video')[0];
                 video.load();

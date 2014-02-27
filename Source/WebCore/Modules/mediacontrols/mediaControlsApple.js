@@ -69,6 +69,7 @@ Controller.prototype = {
     ClassNames: {
         exit: 'exit',
         hidden: 'hidden',
+        hiding: 'hiding',
         list: 'list',
         muteBox: 'mute-box',
         muted: 'muted',

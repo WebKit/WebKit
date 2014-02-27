@@ -1,3 +1,55 @@
+2014-02-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Improve JavaScript multimedia controls
+        https://bugs.webkit.org/show_bug.cgi?id=129044
+
+        Reviewed by Jer Noble.
+
+        After webkit.org/b/123097 a follow up was needed to improve
+        accessibily and some other cosmetic problems, like cleaner CSS and
+        new missing baselines.
+
+        No new tests because of no new functionality.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        Added hiding class name.
+        * Modules/mediacontrols/mediaControlsGtk.js:
+        (ControllerGtk.prototype.createControls): Set remaining time as
+        hidden by default and turned volumebox hidden into hiding.
+        (ControllerGtk.prototype.updateTime): Simplified the hiding and
+        showing by removing the show class and using hidden only.
+        (ControllerGtk.prototype.handleMuteButtonMouseOver):
+        (ControllerGtk.prototype.handleVolumeBoxMouseOut): Turned hidden
+        into hiding.
+        (ControllerGtk.prototype.updateReadyState): Changed coding style
+        and added down class for the panel too.
+        (ControllerGtk.prototype.updatePlaying): Change for coding style
+        coherence.
+        (ControllerGtk.prototype.handleCaptionButtonClicked): Call
+        handleCaptionButtonShowMenu.
+        (ControllerGtk.prototype.handleCaptionButtonMouseOver): Call
+        handleCaptionButtonShowMenu.
+        (ControllerGtk.prototype.handleCaptionButtonShowMenu): Created
+        with the former behavior of handleCaptionButtonMouseOver.
+        * css/mediaControlsGtk.css:
+        (.hidden): Set display none for all objects with hidden class.
+        (audio::-webkit-media-controls-panel *:focus):
+        (audio::-webkit-media-controls-panel.down *:focus): Added gradient
+        for the active and focus status.
+        (audio::-webkit-media-controls-time-remaining-display)
+        (video::-webkit-media-controls-time-remaining-display): Set
+        display block.
+        (audio::-webkit-media-controls-volume-slider-container)
+        (video::-webkit-media-controls-volume-slider-container): Set
+        display flex.
+        (video::-webkit-media-controls-volume-slider-container.hiding):
+        Changed from hidden.
+        (video::-webkit-media-controls-panel .hiding.down): Changed from
+        hidden.
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintMediaButton): Returning true to
+        allow CSS painting the gradient.
+
 2014-02-27  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Fixing the GTK build fix after r164757.

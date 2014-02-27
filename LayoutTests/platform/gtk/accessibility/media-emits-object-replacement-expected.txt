@@ -6,16 +6,16 @@ AXRole: AXWebArea
     AXRole: AXSection AXValue: a <obj> b
         AXRole: AXEmbedded 
             AXRole: AXToolbar 
-                AXRole: AXToolbar 
-                    AXRole: AXButton 
-                    AXRole: AXSlider 
+                AXRole: AXButton 
+                AXRole: AXSlider 
+                AXRole: AXTimer AXValue: 00:00
     AXRole: AXGroup AXValue: <\n>
     AXRole: AXSection AXValue: a <obj> b
         AXRole: AXEmbedded 
             AXRole: AXToolbar 
-                AXRole: AXToolbar 
-                    AXRole: AXButton 
-                    AXRole: AXSlider 
+                AXRole: AXButton 
+                AXRole: AXSlider 
+                AXRole: AXTimer AXValue: 00:00
     AXRole: AXSection AXValue: End of test
 This tests ensures that if video or audio tags are used, they will emit an object replacement character in a range for string operation.
 

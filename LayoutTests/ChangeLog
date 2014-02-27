@@ -1,3 +1,18 @@
+2014-02-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Improve JavaScript multimedia controls
+        https://bugs.webkit.org/show_bug.cgi?id=129044
+
+        Reviewed by Jer Noble.
+
+        * media/controls-without-preload.html: Fixed.
+        * platform/gtk/accessibility/media-controls-panel-title-expected.txt:
+        * platform/gtk/accessibility/media-controls-panel-title.html:
+        * platform/gtk/accessibility/media-emits-object-replacement-expected.txt:
+        * platform/gtk/media/video-volume-slider-expected.png:
+        * platform/gtk/media/video-volume-slider-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.txt: Rebaseline.
+
 2014-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Indenting an indented image element resulted in an extra indentation

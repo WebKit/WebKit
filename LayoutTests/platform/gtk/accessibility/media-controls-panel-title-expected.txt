@@ -9,11 +9,11 @@ PASS mainBlock.title is 'AXTitle: '
 PASS element.role is 'AXRole: AXEmbedded'
 PASS element.title is 'AXTitle: '
 PASS element.role is 'AXRole: AXToolbar'
-PASS element.title is 'AXTitle: video playback'
+PASS element.title is 'AXTitle: Video Playback'
 PASS element.role is 'AXRole: AXEmbedded'
 PASS element.title is 'AXTitle: '
 PASS element.role is 'AXRole: AXToolbar'
-PASS element.title is 'AXTitle: audio playback'
+PASS element.title is 'AXTitle: Audio Playback'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -6,19 +6,19 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 433x17
         text run at (0,0) width 433: "Tests if the volume slider is rendererd properly. This test assumes the"
       RenderBR {BR} at (433,14) size 0x0
-      RenderText {#text} at (0,18) size 453x17
-        text run at (0,18) width 453: "volume slider is implemented and mouse over the right bottom corner of"
-      RenderBR {BR} at (453,32) size 0x0
-      RenderText {#text} at (0,36) size 270x17
-        text run at (0,36) width 270: "video element will show the volume slider."
-      RenderBR {BR} at (270,50) size 0x0
+      RenderText {#text} at (0,17) size 453x17
+        text run at (0,17) width 453: "volume slider is implemented and mouse over the right bottom corner of"
+      RenderBR {BR} at (453,31) size 0x0
+      RenderText {#text} at (0,34) size 270x17
+        text run at (0,34) width 270: "video element will show the volume slider."
+      RenderBR {BR} at (270,48) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (8,62) size 320x240
-  RenderVideo {VIDEO} at (0,54) size 320x240
-layer at (8,62) size 320x240
+layer at (8,59) size 320x240
+  RenderVideo {VIDEO} at (0,51) size 320x240
+layer at (8,59) size 320x240
   RenderFlexibleBox {DIV} at (0,0) size 320x240
     RenderBlock {DIV} at (0,200) size 320x40
-layer at (13,267) size 310x30
+layer at (13,264) size 310x30
   RenderFlexibleBox {DIV} at (5,5) size 310x30 [bgcolor=#141414CC]
     RenderButton {BUTTON} at (9,0) size 30x30
     RenderSlider {INPUT} at (49,11) size 135x8 [color=#E6E6E659]
@@ -31,8 +31,8 @@ layer at (13,267) size 310x30
     RenderButton {BUTTON} at (239,0) size 30x30
     RenderFlexibleBox {DIV} at (271,0) size 30x30
       RenderButton {BUTTON} at (0,0) size 30x30
-layer at (284,167) size 30x100
-  RenderBlock (positioned) zI: 2 {DIV} at (271,-100) size 30x100 [bgcolor=#141414CC]
+layer at (284,164) size 30x100
+  RenderFlexibleBox zI: 2 {DIV} at (271,-100) size 30x100 [bgcolor=#141414CC]
     RenderSlider {INPUT} at (11,10) size 8x80 [color=#E6E6E659]
       RenderFlexibleBox {DIV} at (0,0) size 8x80 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (-2,-6) size 12x92
