@@ -126,6 +126,14 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
         rangeForParagraphSplittingTextNodesIfNeeded(endOfCurrentParagraph, start, end);
         endOfCurrentParagraph = end;
 
+        // FIXME: endOfParagraph can errornously return a position at the beginning of a block element
+        // when the position passed into endOfParagraph is at the beginning of a block.
+        // Work around this bug here because too much of the existing code depends on the current behavior of endOfParagraph.
+        if (start == end && startOfBlock(start) != endOfBlock(start) && !isEndOfBlock(end) && start == startOfParagraph(endOfBlock(start))) {
+            endOfCurrentParagraph = endOfBlock(end);
+            end = endOfCurrentParagraph.deepEquivalent();
+        }
+
         Position afterEnd = end.next();
         Node* enclosingCell = enclosingNodeOfType(start, &isTableCell);
         VisiblePosition endOfNextParagraph = endOfNextParagrahSplittingTextNodesIfNeeded(endOfCurrentParagraph, start, end);

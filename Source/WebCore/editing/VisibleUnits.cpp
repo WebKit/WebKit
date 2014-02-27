@@ -1231,6 +1231,7 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
             continue;
         }
         
+        // FIXME: This is wrong when startNode is a block. We should return a position after the block.
         if (r->isBR() || isBlock(n))
             break;
 

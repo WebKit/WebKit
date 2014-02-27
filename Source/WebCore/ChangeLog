@@ -1,3 +1,37 @@
+2014-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Indenting an indented image element resulted in an extra indentation
+        https://bugs.webkit.org/show_bug.cgi?id=129201
+
+        Reviewed by Enrica Casucci.
+
+        The bug was caused by endOfParagraph returning a position at the beginning of a block when the position
+        passed into the function was at the beginning of the block. Consider the following DOM:
+        <blockquote><img></blockquote>
+
+        When endOfParagraph is called on (blockquote, 0), the condition r->isBR() || isBlock(n) in endOfParagraph
+        matches immediately on startNode and it returns (blockquote, 0) again.
+
+        This resulted in moveParagraphWithClones invoked by indentIntoBlockquote to erroneously clone the inner
+        blockquote. Worked around this bug in ApplyBlockElementCommand::formatSelection by checking this specific
+        condition and moving the position to the end of the block. Unfortunately, a lot of existing code depends
+        on the current behavior of endOfParagraph so fixing the function itself was not possible.
+
+        There was another bug in indentIntoBlockquote to incorrectly insert a new blockquote into the existing
+        blockquote due to the code introduced in r99594 to avoid inserting before the root editable element.
+        Since this happens only if outerBlock is the root editable element, which is nodeToSplitTo or an ancestor
+        of nodeToSplitTo, explicitly look for this condition.
+
+        Test: editing/execCommand/indent-img-twice.html
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::formatSelection):
+        (WebCore::isNewLineAtPosition):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote):
+        * editing/VisibleUnits.cpp:
+        (WebCore::endOfParagraph): Added a FIXME.
+
 2014-02-26  Simon Fraser  <simon.fraser@apple.com>
 
         Fix two assertions/crashes in compositing code

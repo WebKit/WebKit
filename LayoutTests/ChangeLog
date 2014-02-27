@@ -1,3 +1,15 @@
+2014-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Indenting an indented image element resulted in an extra indentation
+        https://bugs.webkit.org/show_bug.cgi?id=129201
+
+        Reviewed by Enrica Casucci.
+
+        Added a regression test.
+
+        * editing/execCommand/indent-img-twice-expected.txt: Added.
+        * editing/execCommand/indent-img-twice.html: Added.
+
 2014-02-26  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] inset and inset-rectangle trigger assert with replaced element and large percentage dimension
