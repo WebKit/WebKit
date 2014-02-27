@@ -1,3 +1,24 @@
+2014-02-27  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Move named-flow specific method decorationsClipRectForBoxInRegion to RenderNamedFlowThread
+        https://bugs.webkit.org/show_bug.cgi?id=129428
+
+        Reviewed by Andreas Kling.
+
+        Since the decorationsClipRectForBoxInRegion method is a named flow specific method, it makes
+        sense to be in the named flow specific class, RenderNamedFlowThread, instead of the more
+        generic RenderFlowThread.
+
+        No new tests required. No new functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderFlowThread.cpp:
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment):
+        * rendering/RenderNamedFlowThread.h:
+
 2014-02-27  Zoltan Horvath  <zoltan@webkit.org>
 
         Avoid calling logicalLeftOffsetForLine 2 times in LineWidth::fitBelowFloats

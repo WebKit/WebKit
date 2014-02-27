@@ -68,6 +68,8 @@ public:
 
     virtual void regionChangedWritingMode(RenderRegion*) override;
 
+    LayoutRect decorationsClipRectForBoxInNamedFlowFragment(const RenderBox&, RenderNamedFlowFragment&) const;
+
     bool overset() const { return m_overset; }
     void computeOversetStateForRegions(LayoutUnit oldClientAfterEdge);
 

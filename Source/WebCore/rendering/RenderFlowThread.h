@@ -199,9 +199,7 @@ public:
 
     LayoutRect mapFromFlowThreadToLocal(const RenderBox*, const LayoutRect&) const;
     LayoutRect mapFromLocalToFlowThread(const RenderBox*, const LayoutRect&) const;
-    
-    LayoutRect decorationsClipRectForBoxInRegion(const RenderBox&, RenderRegion&) const;
-    
+
     void flipForWritingModeLocalCoordinates(LayoutRect&) const;
 
     // Used to estimate the maximum height of the flow thread.

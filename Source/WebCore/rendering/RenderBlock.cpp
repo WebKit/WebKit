@@ -2301,7 +2301,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         if (hasBoxDecorations()) {
             bool didClipToRegion = false;
             
-            if (paintInfo.paintContainer && paintInfo.renderNamedFlowFragment && paintInfo.paintContainer->isRenderFlowThread()) {
+            if (paintInfo.paintContainer && paintInfo.renderNamedFlowFragment && paintInfo.paintContainer->isRenderNamedFlowThread()) {
                 // If this box goes beyond the current region, then make sure not to overflow the region.
                 // This (overflowing region X altough also fragmented to region X+1) could happen when one of this box's children
                 // overflows region X and is an unsplittable element (like an image).
@@ -2310,7 +2310,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
                 paintInfo.context->save();
                 didClipToRegion = true;
 
-                paintInfo.context->clip(toRenderFlowThread(paintInfo.paintContainer)->decorationsClipRectForBoxInRegion(*this, *paintInfo.renderNamedFlowFragment));
+                paintInfo.context->clip(toRenderNamedFlowThread(paintInfo.paintContainer)->decorationsClipRectForBoxInNamedFlowFragment(*this, *paintInfo.renderNamedFlowFragment));
             }
 
             paintBoxDecorations(paintInfo, paintOffset);
