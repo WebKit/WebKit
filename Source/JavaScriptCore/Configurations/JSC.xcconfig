@@ -28,3 +28,6 @@ INSTALL_PATH_ACTUAL = $(JAVASCRIPTCORE_FRAMEWORKS_DIR)/$(JAVASCRIPTCORE_RESOURCE
 PRODUCT_NAME = jsc;
 CODE_SIGN_ENTITLEMENTS = $(CODE_SIGN_ENTITLEMENTS_$(PLATFORM_NAME));
 CODE_SIGN_ENTITLEMENTS_iphoneos = entitlements.plist;
+
+// Explicitly add the PrivateHeaders directory to the search path so that generated header files can be found in production builds.
+HEADER_SEARCH_PATHS = $(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders $(inherited);

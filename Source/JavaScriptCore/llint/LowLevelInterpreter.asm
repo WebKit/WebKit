@@ -631,6 +631,12 @@ macro doReturn()
     ret
 end
 
+# Dummy entry point the C Loop uses to initialize.
+if C_LOOP
+_llint_c_loop_init:
+    crash()
+end
+
 # stub to call into JavaScript or Native functions
 # EncodedJSValue callToJavaScript(void* code, ExecState** vmTopCallFrame, ProtoCallFrame* protoFrame)
 # EncodedJSValue callToNativeFunction(void* code, ExecState** vmTopCallFrame, ProtoCallFrame* protoFrame)
@@ -687,11 +693,6 @@ _sanitizeStackForVMImpl:
     storep address, VM::m_lastStackTop[vm]
     ret
 end
-
-
-# Indicate the beginning of LLInt.
-_llint_begin:
-    crash()
 
 
 _llint_program_prologue:
@@ -1143,8 +1144,4 @@ end
 
 _llint_op_init_global_const_nop:
     dispatch(5)
-
-# Indicate the end of LLInt.
-_llint_end:
-    crash()
 

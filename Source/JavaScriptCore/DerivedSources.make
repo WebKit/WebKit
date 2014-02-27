@@ -58,6 +58,8 @@ all : \
     RegExpObject.lut.h \
     StringConstructor.lut.h \
     udis86_itab.h \
+    Bytecodes.h \
+    InitBytecodes.asm \
     JSCBuiltins \
 #
 
@@ -90,6 +92,13 @@ KeywordLookup.h: KeywordLookupGenerator.py Keywords.table
 udis86_itab.h: $(JavaScriptCore)/disassembler/udis86/itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml
 	(PYTHONPATH=$(JavaScriptCore)/disassembler/udis86 python $(JavaScriptCore)/disassembler/udis86/itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml || exit 1)
 
+# Bytecode files
+
+Bytecodes.h: $(JavaScriptCore)/generate-bytecode-files $(JavaScriptCore)/bytecode/BytecodeList.json
+	python $(JavaScriptCore)/generate-bytecode-files --bytecodes_h Bytecodes.h $(JavaScriptCore)/bytecode/BytecodeList.json
+
+InitBytecodes.asm: $(JavaScriptCore)/generate-bytecode-files $(JavaScriptCore)/bytecode/BytecodeList.json
+	python $(JavaScriptCore)/generate-bytecode-files --init_bytecodes_asm InitBytecodes.asm $(JavaScriptCore)/bytecode/BytecodeList.json
 
 # Inspector interfaces
 

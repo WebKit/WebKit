@@ -595,24 +595,31 @@ if (ENABLE_LLINT)
     )
 
     add_custom_command(
+        OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm
+        MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/generate-bytecode-files
+        DEPENDS ${JAVASCRIPTCORE_DIR}/generate-bytecode-files bytecode/BytecodeList.json
+        COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generate-bytecode-files --bytecodes_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h --init_bytecodes_asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.json
+        VERBATIM)
+
+    add_custom_command(
         OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h
         MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb
         DEPENDS ${LLINT_ASM} ${OFFLINE_ASM}
         COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h
         VERBATIM)
 
-    # We add the header file directly to the ADD_EXECUTABLE call instead of setting the
-    # OBJECT_DEPENDS property in LLIntOffsetsExtractor.cpp because generate_offset_extractor.rb may
-    # not regenerate it in case the hash it calculates does not change.
-    # In this case, if some of the dependencies specified in the ADD_CUSTOM_COMMAND above have
-    # changed the command will always be called because the mtime of LLIntDesiredOffsets.h will
-    # always be older than that of its dependencies.
-    # Additionally, setting the OBJECT_DEPENDS property will make LLIntDesiredOffsets.h a Makefile
+    # We add the header files directly to the ADD_EXECUTABLE call instead of setting the
+    # OBJECT_DEPENDS property in LLIntOffsetsExtractor.cpp because generate_offset_extractor.rb and
+    # generate-bytecode-files may not regenerate the .h files in case the hash it calculates does not change.
+    # In this case, if some of the dependencies specified in the ADD_CUSTOM_COMMANDs above have
+    # changed the command will always be called because the mtime of the .h files will
+    # always be older than that of their dependencies.
+    # Additionally, setting the OBJECT_DEPENDS property will make the .h files a Makefile
     # dependency of both LLIntOffsetsExtractor and LLIntOffsetsExtractor.cpp, so the command will
-    # actually be run twice!
+    # actually be run multiple times!
     add_executable(LLIntOffsetsExtractor
         ${JAVASCRIPTCORE_DIR}/llint/LLIntOffsetsExtractor.cpp
-        ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h
+        ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h
     )
     target_link_libraries(LLIntOffsetsExtractor WTF)
 
@@ -625,7 +632,7 @@ if (ENABLE_LLINT)
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntAssembly.h
         MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb
-        DEPENDS LLIntOffsetsExtractor ${LLINT_ASM} ${OFFLINE_ASM}
+        DEPENDS LLIntOffsetsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm
         COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntOffsetsExtractor> ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntAssembly.h
         COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntAssembly.h
         VERBATIM)
@@ -790,6 +797,7 @@ set(JavaScriptCore_FORWARDING_HEADERS_FILES
     runtime/VM.h
 
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h
 )
 
 

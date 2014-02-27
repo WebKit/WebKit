@@ -36,8 +36,6 @@
 namespace JSC {
 namespace LLInt {
 
-const OpcodeID llint_unused = llint_end;
-
 class CLoop {
 public:
     static void initialize();

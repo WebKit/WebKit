@@ -1449,6 +1449,7 @@
     <ClInclude Include="..\yarr\YarrSyntaxChecker.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\bytecode\BytecodeList.json" />
     <None Include="JavaScriptCorePostBuild.cmd">
       <FileType>Document</FileType>
     </None>

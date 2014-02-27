@@ -95,6 +95,12 @@ pkgconfig_DATA += Source/JavaScriptCore/javascriptcoregtk-@WEBKITGTK_API_VERSION
 
 $(shell mkdir -p DerivedSources/JavaScriptCore)
 
+DerivedSources/JavaScriptCore/Bytecodes.h: $(srcdir)/Source/JavaScriptCore/generate-bytecode-files $(srcdir)/Source/JavaScriptCore/bytecode/BytecodeList.json
+	$(AM_V_GEN)$(PYTHON) $(srcdir)/Source/JavaScriptCore/generate-bytecode-files --bytecodes_h $@ $(srcdir)/Source/JavaScriptCore/bytecode/BytecodeList.json
+
+DerivedSources/JavaScriptCore/InitBytecodes.asm: $(srcdir)/Source/JavaScriptCore/generate-bytecode-files $(srcdir)/Source/JavaScriptCore/bytecode/BytecodeList.json
+	$(AM_V_GEN)$(PYTHON) $(srcdir)/Source/JavaScriptCore/generate-bytecode-files --init_bytecodes_asm $@ $(srcdir)/Source/JavaScriptCore/bytecode/BytecodeList.json
+
 DerivedSources/JavaScriptCore/Lexer.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/parser/Keywords.table
 	$(AM_V_GEN)$(PERL) $^ > $@
 
@@ -111,9 +117,9 @@ DerivedSources/JavaScriptCore/LLIntDesiredOffsets.h: $(javascriptcore_sources) $
 	$(AM_V_GEN)$(RUBY) $(srcdir)/Source/JavaScriptCore/offlineasm/generate_offset_extractor.rb $(srcdir)/Source/JavaScriptCore/llint/LowLevelInterpreter.asm $@
 	$(AM_V_at)touch $@
 
-$(Programs_LLIntOffsetsExtractor_OBJECTS): DerivedSources/JavaScriptCore/LLIntDesiredOffsets.h 
+$(Programs_LLIntOffsetsExtractor_OBJECTS): DerivedSources/JavaScriptCore/LLIntDesiredOffsets.h DerivedSources/JavaScriptCore/Bytecodes.h
 
-DerivedSources/JavaScriptCore/LLIntAssembly.h: Programs/LLIntOffsetsExtractor$(EXEEXT)
+DerivedSources/JavaScriptCore/LLIntAssembly.h: Programs/LLIntOffsetsExtractor$(EXEEXT) DerivedSources/JavaScriptCore/InitBytecodes.asm
 	$(AM_V_GEN)$(RUBY) $(srcdir)/Source/JavaScriptCore/offlineasm/asm.rb $(srcdir)/Source/JavaScriptCore/llint/LowLevelInterpreter.asm Programs/LLIntOffsetsExtractor$(EXEEXT) $@
 	$(AM_V_at)touch $@
 

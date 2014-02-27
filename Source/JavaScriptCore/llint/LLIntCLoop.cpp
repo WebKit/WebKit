@@ -35,7 +35,7 @@ namespace LLInt {
 
 void CLoop::initialize()
 {
-    execute(llint_unused, 0, 0, 0, true);
+    execute(llint_c_loop_init, 0, 0, 0, true);
 }
 
 } // namespace LLInt
