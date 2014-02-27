@@ -129,7 +129,10 @@ esac
 AC_SUBST([UNICODE_CFLAGS])
 AC_SUBST([UNICODE_LIBS])
 
-PKG_CHECK_MODULES([ZLIB], [zlib])
+PKG_CHECK_MODULES([ZLIB], [zlib], [], [
+	AC_CHECK_LIB([z], [gzread], ,
+	  [AC_MSG_ERROR([unable to find the libz library])]
+	)])
 AC_SUBST([ZLIB_CFLAGS])
 AC_SUBST([ZLIB_LIBS])
 

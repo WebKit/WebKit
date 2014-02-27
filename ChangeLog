@@ -1,3 +1,12 @@
+2014-02-27  Koop Mast  <kwm@FreeBSD.org>
+
+        Fallback on checking for libz manualy if zlib.pc isn't available.
+        https://bugs.webkit.org/show_bug.cgi?id=127061
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/autotools/FindDependencies.m4:
+
 2014-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add ENABLE flag
