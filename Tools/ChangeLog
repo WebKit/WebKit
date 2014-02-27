@@ -1,3 +1,12 @@
+2014-02-27  Andres Gomez  <agomez@igalia.com>
+
+        Unreviewed, rolling out r164790.
+        http://trac.webkit.org/changeset/164790
+
+        Revert r164790 because of erroneous commit log
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-02-27  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Utilize AtkTableCell to expose directly AccessibilityTableCell to AT
