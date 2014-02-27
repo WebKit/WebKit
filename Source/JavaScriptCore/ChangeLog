@@ -1,3 +1,16 @@
+2014-02-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better name for RemoteInspectorDebuggableConnection dispatch queue
+        https://bugs.webkit.org/show_bug.cgi?id=129443
+
+        Reviewed by Timothy Hatcher.
+
+        This queue is specific to the JSContext debuggable connections,
+        there is no XPC involved. Give it a better name.
+
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorDebuggableConnection::RemoteInspectorDebuggableConnection):
+
 2014-02-27  David Kilzer  <ddkilzer@apple.com>
 
         Remove jsc symlink if it already exists

@@ -47,7 +47,7 @@ RemoteInspectorDebuggableConnection::RemoteInspectorDebuggableConnection(RemoteI
     // Web debuggables must be accessed on the main queue (or the WebThread on iOS). Signal that with a NULL m_queueForDebuggable.
     // However, JavaScript debuggables can be accessed from any thread/queue, so we create a queue for each JavaScript debuggable.
     if (type == RemoteInspectorDebuggable::JavaScript)
-        m_queueForDebuggable = dispatch_queue_create("com.apple.JavaScriptCore.remote-inspector-xpc-connection", DISPATCH_QUEUE_SERIAL);
+        m_queueForDebuggable = dispatch_queue_create("com.apple.JavaScriptCore.remote-inspector-debuggable-connection", DISPATCH_QUEUE_SERIAL);
 }
 
 RemoteInspectorDebuggableConnection::~RemoteInspectorDebuggableConnection()
