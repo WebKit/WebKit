@@ -1,3 +1,17 @@
+2014-02-27  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Fix style errors in enum members
+        https://bugs.webkit.org/show_bug.cgi?id=129421
+
+        Reviewed by Mario Sanchez Prada.
+
+        No new tests. No new functionality.
+
+        Enum members should use InterCaps with an initial capital letter.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (getInterfaceMaskFromObject):
+
 2014-02-27  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] Parse and implement the -webkit-isolation CSS property.
