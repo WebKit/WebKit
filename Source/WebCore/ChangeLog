@@ -1,3 +1,18 @@
+2014-02-27  Andreas Kling  <akling@apple.com>
+
+        Micro-optimize elementAffectsDirectionality().
+        <https://webkit.org/b/129444>
+
+        Tweak this function to skip an unnecessary bit check and use
+        fastHasAttribute() instead of hasAttribute() for looking up dirAttr.
+
+        ~1% speedup on DYEB/AngularJS.
+
+        Reviewed by Ryosuke Niwa.
+
+        * html/HTMLElement.cpp:
+        (WebCore::elementAffectsDirectionality):
+
 2014-02-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: model tests should use a special Test.html inspector page
