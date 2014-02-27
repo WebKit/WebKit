@@ -1,3 +1,47 @@
+2014-02-27  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Blending] Parse and implement the -webkit-isolation CSS property.
+
+        https://bugs.webkit.org/show_bug.cgi?id=128958
+
+        Reviewed by Dirk Schulze.
+
+        Parse and implement -webkit-isolation, part of the CSS Blending and Compositing spec.
+        This patch adds functionality for HTML and SVG.
+        -webkit-isolation: isolate restricts any child elements from blending with any of the content outside the isolated parent element.
+
+        Tests: css3/compositing/isolation-isolate-blended-child.html
+               css3/compositing/isolation-parsing.html
+               css3/compositing/svg-isolation-default.html
+               css3/compositing/svg-isolation-isolated-group.html
+               css3/compositing/svg-isolation-simple.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator Isolation):
+        * css/CSSPropertyNames.in: Add -webkit-isolation.
+        * css/CSSValueKeywords.in: Add the isolate value.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): Explicitly set isolation:isolate to create a stacking context.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayerRepaint): Changing isolation should trigger a repaint.
+        * rendering/style/RenderStyle.h: Setters and getters for isolation.
+        * rendering/style/RenderStyleConstants.h: Add Isolation enum.
+        * rendering/style/StyleRareNonInheritedData.cpp: Add m_isolation.
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent): If isolated, paint in a transparency layer.
+
 2014-02-27  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Utilize AtkTableCell to expose directly AccessibilityTableCell to AT

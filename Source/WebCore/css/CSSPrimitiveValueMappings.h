@@ -4157,6 +4157,38 @@ template<> inline CSSPrimitiveValue::operator BlendMode() const
     return BlendModeNormal;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Isolation isolation)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (isolation) {
+    case IsolationAuto:
+        m_value.valueID = CSSValueAuto;
+        break;
+    case IsolationIsolate:
+        m_value.valueID = CSSValueIsolate;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator Isolation() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueAuto:
+        return IsolationAuto;
+    case CSSValueIsolate:
+        return IsolationIsolate;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return IsolationAuto;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineCap e)
     : CSSValue(PrimitiveClass)
 {

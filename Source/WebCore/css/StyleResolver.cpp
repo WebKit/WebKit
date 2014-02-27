@@ -1245,6 +1245,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         || style.boxReflect()
         || style.hasFilter()
         || style.hasBlendMode()
+        || style.hasIsolation()
         || style.position() == StickyPosition
         || (style.position() == FixedPosition && e && e->document().page() && e->document().page()->settings().fixedPositionCreatesStackingContext())
         || style.hasFlowFrom()

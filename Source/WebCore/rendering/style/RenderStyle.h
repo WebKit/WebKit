@@ -972,11 +972,18 @@ public:
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode blendMode() const { return static_cast<BlendMode>(rareNonInheritedData->m_effectiveBlendMode); }
-    void setBlendMode(BlendMode v) { rareNonInheritedData.access()->m_effectiveBlendMode = v; }
+    void setBlendMode(BlendMode blendMode) { SET_VAR(rareNonInheritedData, m_effectiveBlendMode, blendMode); }
     bool hasBlendMode() const { return static_cast<BlendMode>(rareNonInheritedData->m_effectiveBlendMode) != BlendModeNormal; }
+
+    Isolation isolation() const { return static_cast<Isolation>(rareNonInheritedData->m_isolation); }
+    void setIsolation(Isolation isolation) { SET_VAR(rareNonInheritedData, m_isolation, isolation); }
+    bool hasIsolation() const { return rareNonInheritedData->m_isolation != IsolationAuto; }
 #else
     BlendMode blendMode() const { return BlendModeNormal; }
     bool hasBlendMode() const { return false; }
+
+    Isolation isolation() const { return IsolationAuto; }
+    bool hasIsolation() const { return false; }
 #endif
  
 #if USE(RTL_SCROLLBAR)
@@ -1825,6 +1832,7 @@ public:
 #endif
 #if ENABLE(CSS_COMPOSITING)
     static BlendMode initialBlendMode() { return BlendModeNormal; }
+    static Isolation initialIsolation() { return IsolationAuto; }
 #endif
 
 private:

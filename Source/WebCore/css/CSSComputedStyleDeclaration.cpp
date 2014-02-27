@@ -228,6 +228,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitBackgroundSize,
 #if ENABLE(CSS_COMPOSITING)
     CSSPropertyWebkitMixBlendMode,
+    CSSPropertyWebkitIsolation,
 #endif
     CSSPropertyWebkitBorderFit,
     CSSPropertyWebkitBorderHorizontalSpacing,
@@ -2849,6 +2850,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 #if ENABLE(CSS_COMPOSITING)
         case CSSPropertyWebkitMixBlendMode:
             return cssValuePool().createValue(style->blendMode());
+        case CSSPropertyWebkitIsolation:
+            return cssValuePool().createValue(style->isolation());
 #endif
         case CSSPropertyBackgroundBlendMode: {
             const FillLayer* layers = style->backgroundLayers();

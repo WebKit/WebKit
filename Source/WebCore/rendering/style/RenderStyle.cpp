@@ -681,6 +681,9 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle* other, unsigned&
 #if ENABLE(CSS_COMPOSITING)
     if (rareNonInheritedData->m_effectiveBlendMode != other->rareNonInheritedData->m_effectiveBlendMode)
         return true;
+
+    if (rareNonInheritedData->m_isolation != other->rareNonInheritedData->m_isolation)
+        return true;
 #endif
 
     if (rareNonInheritedData->opacity != other->rareNonInheritedData->opacity) {

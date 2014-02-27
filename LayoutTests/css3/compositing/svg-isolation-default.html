@@ -1,0 +1,7 @@
+<!DOCTYPE HTML>
+<!-- Test the default behaviour of isolation with two simple elements. The test passes if the small square is drawn with black (blending is performed since the element is not isolated). -->
+<svg xmlns="http://www.w3.org/2000/svg" width="400px" height="400px" style="background: green">
+    <g style="-webkit-isolation: auto">
+        <rect x="100" y="100" width="200" height="200" style="fill: blue; -webkit-mix-blend-mode: multiply"/>
+    </g>
+</svg>

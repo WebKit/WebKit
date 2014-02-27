@@ -94,6 +94,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_aspectRatioType(RenderStyle::initialAspectRatioType())
 #if ENABLE(CSS_COMPOSITING)
     , m_effectiveBlendMode(RenderStyle::initialBlendMode())
+    , m_isolation(RenderStyle::initialIsolation())
 #endif
     , m_objectFit(RenderStyle::initialObjectFit())
 {
@@ -176,6 +177,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_aspectRatioType(o.m_aspectRatioType)
 #if ENABLE(CSS_COMPOSITING)
     , m_effectiveBlendMode(o.m_effectiveBlendMode)
+    , m_isolation(o.m_isolation)
 #endif
     , m_objectFit(o.m_objectFit)
 {
@@ -268,6 +270,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && !m_runningAcceleratedAnimation && !o.m_runningAcceleratedAnimation
 #if ENABLE(CSS_COMPOSITING)
         && m_effectiveBlendMode == o.m_effectiveBlendMode
+        && m_isolation == o.m_isolation
 #endif
         && m_aspectRatioType == o.m_aspectRatioType
         && m_objectFit == o.m_objectFit;

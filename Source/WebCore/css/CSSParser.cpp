@@ -818,6 +818,10 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             || valueID == CSSValueLuminosity))
             return true;
         break;
+    case CSSPropertyWebkitIsolation:
+        if (parserContext.isCSSCompositingEnabled && (valueID == CSSValueAuto || valueID == CSSValueIsolate))
+            return true;
+        break;
 #endif
     case CSSPropertyWebkitBorderFit:
         if (valueID == CSSValueBorder || valueID == CSSValueLines)
@@ -1089,6 +1093,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitAppearance:
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyWebkitMixBlendMode:
+    case CSSPropertyWebkitIsolation:
 #endif
     case CSSPropertyWebkitBackfaceVisibility:
     case CSSPropertyWebkitBorderAfterStyle:
@@ -2424,6 +2429,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #endif
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyWebkitMixBlendMode:
+        if (cssCompositingEnabled())
+            validPrimitive = true;
+        break;
+    case CSSPropertyWebkitIsolation:
         if (cssCompositingEnabled())
             validPrimitive = true;
         break;

@@ -2488,6 +2488,7 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitBackgroundSize, CSSPropertyBackgroundSize);
 #if ENABLE(CSS_COMPOSITING)
     setPropertyHandler(CSSPropertyWebkitMixBlendMode, ApplyPropertyDefault<BlendMode, &RenderStyle::blendMode, BlendMode, &RenderStyle::setBlendMode, BlendMode, &RenderStyle::initialBlendMode>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitIsolation, ApplyPropertyDefault<Isolation, &RenderStyle::isolation, Isolation, &RenderStyle::setIsolation, Isolation, &RenderStyle::initialIsolation>::createHandler());
 #endif
     setPropertyHandler(CSSPropertyWebkitBorderFit, ApplyPropertyDefault<EBorderFit, &RenderStyle::borderFit, EBorderFit, &RenderStyle::setBorderFit, EBorderFit, &RenderStyle::initialBorderFit>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBorderHorizontalSpacing, ApplyPropertyComputeLength<short, &RenderStyle::horizontalBorderSpacing, &RenderStyle::setHorizontalBorderSpacing, &RenderStyle::initialHorizontalBorderSpacing>::createHandler());

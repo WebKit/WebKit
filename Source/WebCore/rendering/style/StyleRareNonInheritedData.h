@@ -198,6 +198,7 @@ public:
 
 #if ENABLE(CSS_COMPOSITING)
     unsigned m_effectiveBlendMode: 5; // EBlendMode
+    unsigned m_isolation : 1; // Isolation
 #endif
 
     unsigned m_objectFit : 3; // ObjectFit

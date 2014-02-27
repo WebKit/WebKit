@@ -1024,6 +1024,10 @@ saturation
 color
 luminosity
 
+// isolation
+// auto
+isolate
+
 // object-fit
 // fill
 // contain

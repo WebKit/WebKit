@@ -283,6 +283,7 @@ z-index
 #endif
 #if defined(ENABLE_CSS_COMPOSITING) && ENABLE_CSS_COMPOSITING
 -webkit-mix-blend-mode
+-webkit-isolation
 #endif
 #if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
 -webkit-filter

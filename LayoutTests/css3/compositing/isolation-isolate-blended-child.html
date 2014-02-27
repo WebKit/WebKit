@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<!-- Test to ensure that "-webkit-isolation:isolate" creates a stacking context, thus preventing blending with the parent element. -->
+<style>
+    div {
+        margin: 20px;
+        width: 130px;
+        height: 130px;
+    }
+
+    .parent {
+        background: rgb(55, 55, 55);
+        position: fixed;
+        width: 300px;
+        height: 300px;
+    }
+
+    .isolator {
+        -webkit-isolation: isolate;
+        background: violet;
+    }
+
+    .child {
+        -webkit-mix-blend-mode: multiply;
+        background: olive;
+    }
+
+</style>
+<div class="parent"><div class="isolator"><div class="child"></div></div></div>
