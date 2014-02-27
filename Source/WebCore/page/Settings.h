@@ -271,6 +271,9 @@ public:
 
     static void setAVKitEnabled(bool flag) { gAVKitEnabled = flag; }
     static bool avKitEnabled() { return gAVKitEnabled; }
+
+    static void setShouldOptOutOfNetworkStateObservation(bool flag) { gShouldOptOutOfNetworkStateObservation = flag; }
+    static bool shouldOptOutOfNetworkStateObservation() { return gShouldOptOutOfNetworkStateObservation; }
 #endif
 
 private:
@@ -353,6 +356,7 @@ private:
 #if PLATFORM(IOS)
     static bool gNetworkDataUsageTrackingEnabled;
     static bool gAVKitEnabled;
+    static bool gShouldOptOutOfNetworkStateObservation;
 #endif
 
     static double gHiddenPageDOMTimerAlignmentInterval;

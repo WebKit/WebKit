@@ -1,3 +1,56 @@
+2014-02-26  Andy Estes  <aestes@apple.com>
+
+        [iOS] Support network state notification using CPNetworkObserver
+        https://bugs.webkit.org/show_bug.cgi?id=129358
+
+        Reviewed by Dan Bernstein.
+
+        Add iOS support for navigator.onLine and online/offline events. Since
+        it can be expensive to query CPNetworkObserver, wait to do so until
+        someone calls NetworkStateObserver::onLine() or
+        NetworkStateObserver::addNetworkStateChangeListener(). For clients that
+        don't wish to observe network reachability at all, add a global opt-out.
+        These clients will only pay the cost of CPNetworkObserver if they load
+        a page that explicitly accesses navigator.onLine.
+
+        No new tests. Covered by existing tests.
+
+        * WebCore.exp.in: Stopped exporting NetworkStateNotifier::setIsOnLine()
+        and started exporting Settings::gShouldOptOutOfNetworkStateObservation.
+        * WebCore.xcodeproj/project.pbxproj: Renamed NetworkStateNotifierIOS.cpp
+        to NetworkStateNotifierIOS.mm.
+        * page/Settings.cpp: Defaulted gShouldOptOutOfNetworkStateObservation
+        to false.
+        * page/Settings.h:
+        (WebCore::Settings::setShouldOptOutOfNetworkStateObservation):
+        (WebCore::Settings::shouldOptOutOfNetworkStateObservation):
+        * platform/network/NetworkStateNotifier.cpp:
+        (WebCore::NetworkStateNotifier::addNetworkStateChangeListener): Ignored
+        the listener if Settings::shouldOptOutOfNetworkStateObservation().
+        Called registerObserverIfNecessary() and added the listener otherwise.
+        (WebCore::NetworkStateNotifier::notifyNetworkStateChange): Const qualified.
+        * platform/network/NetworkStateNotifier.h
+        (NetworkStateNotifier::onLine):
+        * platform/network/ios/NetworkStateNotifierIOS.cpp: Removed.
+        * platform/network/ios/NetworkStateNotifierIOS.mm: Added.
+        (-[NetworkStateObserver initWithNotifier:WebCore::]): Registered self
+        as a network reachable observer on CPNetworkObserver.
+        (-[NetworkStateObserver dealloc]): Removed self as a network reachable
+        observer.
+        (-[NetworkStateObserver networkStateChanged:]): Called setOnLine() on
+        the web thread, passing the reachability value from the notification.
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        (WebCore::NetworkStateNotifier::~NetworkStateNotifier): Cleared
+        m_observer's pointer back to us.
+        (WebCore::NetworkStateNotifier::registerObserverIfNecessary): Initialized
+        m_observer if necessary.
+        (WebCore::NetworkStateNotifier::onLine): Called
+        registerObserverIfNecessary() and set an initial value for m_isOnLine
+        if m_isOnLineInitialized is false. Returned m_isOnLine.
+        (WebCore::setOnLine): Set m_isOnLine and called
+        notifyNetworkStateChange() if needed. Unconditionally set
+        m_isOnLineInitialized to true.
+
 2014-02-26  Brian Burg  <bburg@apple.com>
 
         Unreviewed build fix for !ENABLE(CONTEXT_MENUS).

@@ -572,8 +572,6 @@ Could be worth adding to the API.
 - (void)_setAllowsMessaging:(BOOL)aFlag;
 - (BOOL)_allowsMessaging;
 
-- (void)_setNetworkStateIsOnline:(BOOL)isOnLine;
-
 - (void)_setCustomFixedPositionLayoutRectInWebThread:(CGRect)rect synchronize:(BOOL)synchronize;
 - (void)_setCustomFixedPositionLayoutRect:(CGRect)rect;
 
@@ -583,6 +581,13 @@ Could be worth adding to the API.
 - (void)_overflowScrollPositionChangedTo:(CGPoint)offset forNode:(DOMNode *)node isUserScroll:(BOOL)userScroll;
 
 - (NSArray *)_touchEventRegions;
+
+/*!
+    @method _doNotStartObservingNetworkReachability
+    @abstract Does not start observation of network reachability in any WebView.
+    @discussion To take effect, this method must be called before the first WebView is created.
+ */
++ (void)_doNotStartObservingNetworkReachability;
 #endif
 
 #if !TARGET_OS_IPHONE

@@ -1484,7 +1484,7 @@
 		44311CD812E4E24B000A8D19 /* DOMDocumentPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 44311CD512E4E22D000A8D19 /* DOMDocumentPrivate.h */; };
 		44311CD912E4E257000A8D19 /* DOMDocumentFragmentPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 44311CD412E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h */; };
 		44311F8212E4E66C000A8D19 /* DOMDocumentFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711450AC5D5340053270F /* DOMDocumentFragmentInternal.h */; };
-		443F04270E75C8FB007E5407 /* NetworkStateNotifierIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.cpp */; };
+		443F04270E75C8FB007E5407 /* NetworkStateNotifierIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */; };
 		444D4E230F708B2E003158E0 /* WebCoreURLResponseIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 444D4E210F708B2E003158E0 /* WebCoreURLResponseIOS.mm */; };
 		4476531B133170990006B789 /* SSLKeyGeneratorIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4476531A133170990006B789 /* SSLKeyGeneratorIOS.cpp */; };
 		447958041643B49A001E0A7F /* ParsedContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 447958031643B47B001E0A7F /* ParsedContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8350,7 +8350,7 @@
 		442AF7A8102CDDEA008FD4D3 /* QuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLook.mm; sourceTree = "<group>"; };
 		44311CD412E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDocumentFragmentPrivate.h; sourceTree = "<group>"; };
 		44311CD512E4E22D000A8D19 /* DOMDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDocumentPrivate.h; sourceTree = "<group>"; };
-		443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStateNotifierIOS.cpp; sourceTree = "<group>"; };
+		443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkStateNotifierIOS.mm; sourceTree = "<group>"; };
 		444D4E210F708B2E003158E0 /* WebCoreURLResponseIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponseIOS.mm; sourceTree = "<group>"; };
 		4476531A133170990006B789 /* SSLKeyGeneratorIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SSLKeyGeneratorIOS.cpp; path = ios/SSLKeyGeneratorIOS.cpp; sourceTree = "<group>"; };
 		447958021643B47B001E0A7F /* ParsedContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentType.cpp; sourceTree = "<group>"; };
@@ -15290,7 +15290,7 @@
 		4497D58C0EBA854F00A10552 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.cpp */,
+				443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */,
 				442AF7A7102CDDEA008FD4D3 /* QuickLook.h */,
 				442AF7A8102CDDEA008FD4D3 /* QuickLook.mm */,
 				7E428CE413E3407F003B661C /* ResourceHandleIOS.mm */,
@@ -28149,7 +28149,7 @@
 				5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */,
 				59C27F05138D28C10079B7E2 /* NetworkResourcesData.cpp in Sources */,
 				1A7FA61B0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp in Sources */,
-				443F04270E75C8FB007E5407 /* NetworkStateNotifierIOS.cpp in Sources */,
+				443F04270E75C8FB007E5407 /* NetworkStateNotifierIOS.mm in Sources */,
 				1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */,
 				E13EF34916850C470034C83F /* NetworkStorageSessionCFNet.cpp in Sources */,
 				BCEF43E00E674110001C1287 /* NinePieceImage.cpp in Sources */,

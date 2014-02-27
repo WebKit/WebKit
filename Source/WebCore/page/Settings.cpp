@@ -99,6 +99,7 @@ bool Settings::gLowPowerVideoAudioBufferSizeEnabled = false;
 #if PLATFORM(IOS)
 bool Settings::gNetworkDataUsageTrackingEnabled = false;
 bool Settings::gAVKitEnabled = false;
+bool Settings::gShouldOptOutOfNetworkStateObservation = false;
 #endif
 
 // NOTEs

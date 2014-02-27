@@ -3607,11 +3607,9 @@ static inline IMP getMethod(id o, SEL s)
     return _private->allowsMessaging;
 }
 
+// FIXME: Remove once this is no longer necessary for UIKit binary compatibility.
 - (void)_setNetworkStateIsOnline:(BOOL)isOnLine
 {
-    WebThreadRun(^{
-        networkStateNotifier().setIsOnLine(isOnLine);
-    });
 }
 
 - (void)_setFixedLayoutSize:(CGSize)size
@@ -3699,6 +3697,11 @@ static inline IMP getMethod(id o, SEL s)
         return;
 
     frame->overflowScrollPositionChangedForNode(roundedIntPoint(offset), node, userScroll);
+}
+
++ (void)_doNotStartObservingNetworkReachability
+{
+    Settings::setShouldOptOutOfNetworkStateObservation(true);
 }
 #endif // PLATFORM(IOS)
 

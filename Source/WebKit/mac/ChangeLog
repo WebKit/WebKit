@@ -1,3 +1,19 @@
+2014-02-26  Andy Estes  <aestes@apple.com>
+
+        [iOS] Support network state notification using CPNetworkObserver
+        https://bugs.webkit.org/show_bug.cgi?id=129358
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebView.mm:
+        (-[WebView _setNetworkStateIsOnline:]): Retained an empty
+        implementation for binary compatibility for UIKit.
+        (+[WebView _doNotStartObservingNetworkReachability]): Called
+        Settings::setShouldOptOutOfNetworkStateObservation(true).
+        * WebView/WebViewPrivate.h: Removed declaration of
+        _setNetworkStateIsOnline: and declared
+        _doNotStartObservingNetworkReachability.
+
 2014-02-25  Anders Carlsson  <andersca@apple.com>
 
         Get rid of VisitedLinkStrategy
