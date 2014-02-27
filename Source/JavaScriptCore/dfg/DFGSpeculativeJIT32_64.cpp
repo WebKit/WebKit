@@ -1195,19 +1195,9 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     GPRReg op2TagGPR = op2.tagGPR();
     GPRReg op2PayloadGPR = op2.payloadGPR();
     GPRReg resultGPR = result.gpr();
-    GPRTemporary structure;
-    GPRReg structureGPR = InvalidGPRReg;
 
     bool masqueradesAsUndefinedWatchpointValid =
         masqueradesAsUndefinedWatchpointIsStillValid();
-
-    if (!masqueradesAsUndefinedWatchpointValid) {
-        // The masquerades as undefined case will use the structure register, so allocate it here.
-        // Do this at the top of the function to avoid branching around a register allocation.
-        GPRTemporary realStructure(this);
-        structure.adopt(realStructure);
-        structureGPR = structure.gpr();
-    }
 
     if (masqueradesAsUndefinedWatchpointValid) {
         DFG_TYPE_CHECK(
@@ -1300,19 +1290,9 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     GPRReg op2TagGPR = op2.tagGPR();
     GPRReg op2PayloadGPR = op2.payloadGPR();
     GPRReg resultGPR = result.gpr();
-    GPRTemporary structure;
-    GPRReg structureGPR = InvalidGPRReg;
 
     bool masqueradesAsUndefinedWatchpointValid =
         masqueradesAsUndefinedWatchpointIsStillValid();
-
-    if (!masqueradesAsUndefinedWatchpointValid) {
-        // The masquerades as undefined case will use the structure register, so allocate it here.
-        // Do this at the top of the function to avoid branching around a register allocation.
-        GPRTemporary realStructure(this);
-        structure.adopt(realStructure);
-        structureGPR = structure.gpr();
-    }
 
     if (masqueradesAsUndefinedWatchpointValid) {
         DFG_TYPE_CHECK(
