@@ -112,6 +112,12 @@ String WebInspectorProxy::inspectorPageURL() const
     return String();
 }
 
+String WebInspectorProxy::inspectorTestPageURL() const
+{
+    notImplemented();
+    return String();
+}
+
 String WebInspectorProxy::inspectorBaseURL() const
 {
     notImplemented();

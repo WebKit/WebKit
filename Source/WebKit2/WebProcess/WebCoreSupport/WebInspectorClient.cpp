@@ -47,9 +47,9 @@ void WebInspectorClient::inspectorDestroyed()
     delete this;
 }
 
-WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController*)
+WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* controller)
 {
-    WebPage* inspectorPage = m_page->inspector()->createInspectorPage();
+    WebPage* inspectorPage = controller->isUnderTest() ? m_page->inspector()->createInspectorPageForTest() : m_page->inspector()->createInspectorPage();
     ASSERT_UNUSED(inspectorPage, inspectorPage);
     return this;
 }

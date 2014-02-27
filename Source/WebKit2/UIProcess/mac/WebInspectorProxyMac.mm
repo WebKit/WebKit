@@ -757,6 +757,17 @@ String WebInspectorProxy::inspectorPageURL() const
     return [[NSURL fileURLWithPath:path] absoluteString];
 }
 
+String WebInspectorProxy::inspectorTestPageURL() const
+{
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
+
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Test" ofType:@"html"];
+    ASSERT([path length]);
+
+    return [[NSURL fileURLWithPath:path] absoluteString];
+}
+
 String WebInspectorProxy::inspectorBaseURL() const
 {
     // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.

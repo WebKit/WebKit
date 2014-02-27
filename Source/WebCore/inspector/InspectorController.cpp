@@ -304,14 +304,8 @@ void InspectorController::setProcessId(long processId)
     IdentifiersFactory::setProcessId(processId);
 }
 
-bool InspectorController::isUnderTest()
-{
-    return m_isUnderTest;
-}
-
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
 {
-    m_isUnderTest = true;
     m_inspectorAgent->evaluateForTestInFrontend(callId, script);
 }
 

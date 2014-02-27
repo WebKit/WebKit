@@ -153,6 +153,11 @@ String WebInspectorProxy::inspectorPageURL() const
     return String("resource:///org/webkitgtk/inspector/UserInterface/Main.html");
 }
 
+String WebInspectorProxy::inspectorTestPageURL() const
+{
+    return String("resource:///org/webkitgtk/inspector/UserInterface/Test.html");
+}
+
 String WebInspectorProxy::inspectorBaseURL() const
 {
     return String("resource:///org/webkitgtk/inspector/UserInterface/");

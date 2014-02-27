@@ -1,3 +1,26 @@
+2014-02-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: model tests should use a special Test.html inspector page
+        https://bugs.webkit.org/show_bug.cgi?id=129190
+
+        Reviewed by Timothy Hatcher.
+
+        Remove code that immediately opens the Web Inspector based on the file path of the test.
+        Instead, the test page should request that the inspector open inside its `test()` method.
+
+        This change is necessary because otherwise, the inspector would be opened too early for
+        InspectorController::isUnderTest to get set in time, so the normal Web Inspector page
+        will get loaded instead of the minimal test page.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (createTestRunner):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+
 2014-02-27  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
 
         check-webkit-style indentation false alarm in WebKit/win/WebNodeHighlight.cpp

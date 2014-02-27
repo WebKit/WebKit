@@ -1,3 +1,33 @@
+2014-02-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: model tests should use a special Test.html inspector page
+        https://bugs.webkit.org/show_bug.cgi?id=129190
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Test.js: Added.
+        (WebInspector.loaded):
+        (WebInspector.contentLoaded):
+        (WebInspector.updateDockedState):
+        (InspectorTest.log):
+        (InspectorTest.assert):
+        (InspectorTest.debugLog):
+        (InspectorTest.completeTest):
+        (InspectorTest.evaluateInPage):
+        (InspectorTest.addResult):
+        (InspectorTest.clearResults):
+        (InspectorTest.pageLoaded):
+        (InspectorTest.reportUncaughtException):
+        (.console.logType):
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.dispatch):
+        (InspectorBackendClass.prototype.runAfterPendingDispatches):
+        (InspectorBackendClass.prototype._flushPendingScripts):
+        * UserInterface/Protocol/InspectorObserver.js:
+        (WebInspector.InspectorObserver.prototype.evaluateForTestInFrontend):
+        * UserInterface/Test.html: Added.
+
 2014-02-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JSContext inspection should report exceptions in the console

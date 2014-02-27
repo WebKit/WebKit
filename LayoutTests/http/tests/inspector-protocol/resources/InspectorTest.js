@@ -158,6 +158,8 @@ InspectorTest.importScript = function(scriptName)
     window.eval(script);
 }
 
+// FIXME: Move model tests off of the stub inspector page, and delete this function
+// since it's now implemented as Test.html. <https://webkit.org/b/129217>
 InspectorTest.initializeInspectorModels = function()
 {
     // Catch any errors and finish the test early.

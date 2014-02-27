@@ -198,6 +198,7 @@
     [Conditional=INSPECTOR] void closeDummyInspectorFrontend();
     [Conditional=INSPECTOR, RaisesException] void setInspectorResourcesDataSizeLimits(long maximumResourcesContentSize, long maximumSingleResourceContentSize);
     [Conditional=INSPECTOR, RaisesException] void setJavaScriptProfilingEnabled(boolean creates);
+    [Conditional=INSPECTOR, RaisesException] void setInspectorIsUnderTest(boolean isUnderTest);
 
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional float pageWidth, optional float pageHeight);

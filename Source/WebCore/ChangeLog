@@ -1,3 +1,23 @@
+2014-02-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: model tests should use a special Test.html inspector page
+        https://bugs.webkit.org/show_bug.cgi?id=129190
+
+        Reviewed by Timothy Hatcher.
+
+        Convert InspectorController::isUnderTest() into a flag, and expose an
+        Internals method so it can be set by the test before opening the inspector.
+
+        Test: inspector/test-harness-trivially-works.html
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::evaluateForTestInFrontend):
+        * inspector/InspectorController.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setInspectorIsUnderTest): Added.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-02-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed build fix after r164824.

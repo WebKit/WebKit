@@ -112,7 +112,8 @@ public:
 
     PassRefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
 
-    bool isUnderTest();
+    bool isUnderTest() const { return m_isUnderTest; }
+    void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
     void evaluateForTestInFrontend(long callId, const String& script);
 
     bool profilerEnabled() const;

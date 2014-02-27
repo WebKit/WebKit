@@ -177,6 +177,15 @@ String WebInspectorProxy::inspectorPageURL() const
     return builder.toString();
 }
 
+String WebInspectorProxy::inspectorTestPageURL() const
+{
+    StringBuilder builder;
+    builder.append(inspectorBaseURL());
+    builder.appendLiteral("/Test.html");
+
+    return builder.toString();
+}
+
 String WebInspectorProxy::inspectorBaseURL() const
 {
     return "file://" + WebCore::inspectorResourcePath();

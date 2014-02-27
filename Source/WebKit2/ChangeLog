@@ -1,3 +1,38 @@
+2014-02-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: model tests should use a special Test.html inspector page
+        https://bugs.webkit.org/show_bug.cgi?id=129190
+
+        Reviewed by Timothy Hatcher.
+
+        Support creating a separate test inspector page, based on the value of
+        InspectorController::isUnderTest(). Add this as a separate API call for
+        WebInspectorProxy. Modify the navigation policy to check the URL against
+        both normal and test inspector pages.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::isMainOrTestInspectorPage):
+        (WebKit::decidePolicyForNavigationAction):
+        (WebKit::WebInspectorProxy::createInspectorPageForTest):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        * UIProcess/ios/WebInspectorProxyIOS.mm:
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::openInspectorFrontend):
+        * WebProcess/WebPage/WebInspector.cpp: Some drive-by nullptr refactorings.
+        (WebKit::WebInspector::WebInspector):
+        (WebKit::WebInspector::createInspectorPage):
+        (WebKit::WebInspector::createInspectorPageForTest):
+        (WebKit::WebInspector::destroyInspectorPage):
+        * WebProcess/WebPage/WebInspector.h:
+
 2014-02-27  Anders Carlsson  <andersca@apple.com>
 
         Make WebProcessProxy::pages() return an IteratorRange

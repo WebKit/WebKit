@@ -1,0 +1,15 @@
+<html>
+<head>
+<script type="text/javascript" src="inspector-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.log("Logged a message from the inspector page.");
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the test harness for non-stub inspector tests can load and run a test.</p>
+</body>
+</html>

@@ -1534,6 +1534,17 @@ void Internals::setJavaScriptProfilingEnabled(bool enabled, ExceptionCode& ec)
 
     page->inspectorController().setProfilerEnabled(enabled);
 }
+
+void Internals::setInspectorIsUnderTest(bool isUnderTest, ExceptionCode& ec)
+{
+    Page* page = contextDocument()->frame()->page();
+    if (!page) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    page->inspectorController().setIsUnderTest(isUnderTest);
+}
 #endif // ENABLE(INSPECTOR)
 
 bool Internals::hasGrammarMarker(int from, int length, ExceptionCode&)

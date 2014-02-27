@@ -111,11 +111,6 @@ static bool shouldLogFrameLoadDelegates(const string& pathOrURL)
     return pathOrURL.find("loading/") != string::npos;
 }
 
-static bool shouldOpenWebInspector(const string& pathOrURL)
-{
-    return pathOrURL.find("inspector/") != string::npos;
-}
-
 static bool shouldDumpAsText(const string& pathOrURL)
 {
     return pathOrURL.find("dumpAsText/") != string::npos;
@@ -759,8 +754,6 @@ static void runTest(const string& inputLine)
 
     if (shouldEnableDeveloperExtras(testURL)) {
         gTestRunner->setDeveloperExtrasEnabled(true);
-        if (shouldOpenWebInspector(testURL))
-            gTestRunner->showWebInspector();
         if (shouldDumpAsText(testURL)) {
             gTestRunner->setDumpAsText(true);
             gTestRunner->setGeneratePixelResults(false);

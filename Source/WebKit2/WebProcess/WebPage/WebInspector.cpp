@@ -53,8 +53,8 @@ PassRefPtr<WebInspector> WebInspector::create(WebPage* page, InspectorFrontendCh
 
 WebInspector::WebInspector(WebPage* page, InspectorFrontendChannel* frontendChannel)
     : m_page(page)
-    , m_inspectorPage(0)
-    , m_frontendClient(0)
+    , m_inspectorPage(nullptr)
+    , m_frontendClient(nullptr)
     , m_frontendChannel(frontendChannel)
 #if PLATFORM(COCOA)
     , m_hasLocalizedStringsURL(false)
@@ -69,7 +69,7 @@ WebInspector::WebInspector(WebPage* page, InspectorFrontendChannel* frontendChan
 WebPage* WebInspector::createInspectorPage()
 {
     if (!m_page)
-        return 0;
+        return nullptr;
 
     ASSERT(!m_inspectorPage);
     ASSERT(!m_frontendClient);
@@ -80,11 +80,41 @@ WebPage* WebInspector::createInspectorPage()
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebInspectorProxy::CreateInspectorPage(),
             Messages::WebInspectorProxy::CreateInspectorPage::Reply(inspectorPageID, parameters),
             m_page->pageID(), std::chrono::milliseconds::max())) {
-        return 0;
+        return nullptr;
     }
 
     if (!inspectorPageID)
-        return 0;
+        return nullptr;
+
+    WebProcess::shared().createWebPage(inspectorPageID, parameters);
+    m_inspectorPage = WebProcess::shared().webPage(inspectorPageID);
+    ASSERT(m_inspectorPage);
+
+    auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_page, m_inspectorPage);
+    m_frontendClient = frontendClient.get();
+    m_inspectorPage->corePage()->inspectorController().setInspectorFrontendClient(std::move(frontendClient));
+    return m_inspectorPage;
+}
+
+WebPage* WebInspector::createInspectorPageForTest()
+{
+    if (!m_page)
+        return nullptr;
+
+    ASSERT(!m_inspectorPage);
+    ASSERT(!m_frontendClient);
+
+    uint64_t inspectorPageID = 0;
+    WebPageCreationParameters parameters;
+
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebInspectorProxy::CreateInspectorPageForTest(),
+            Messages::WebInspectorProxy::CreateInspectorPageForTest::Reply(inspectorPageID, parameters),
+            m_page->pageID(), std::chrono::milliseconds::max())) {
+        return nullptr;
+    }
+
+    if (!inspectorPageID)
+        return nullptr;
 
     WebProcess::shared().createWebPage(inspectorPageID, parameters);
     m_inspectorPage = WebProcess::shared().webPage(inspectorPageID);
@@ -98,9 +128,9 @@ WebPage* WebInspector::createInspectorPage()
 
 void WebInspector::destroyInspectorPage()
 {
-    m_inspectorPage = 0;
-    m_frontendClient = 0;
-    m_frontendChannel = 0;
+    m_inspectorPage = nullptr;
+    m_frontendClient = nullptr;
+    m_frontendChannel = nullptr;
 }
 
 // Called from WebInspectorFrontendClient

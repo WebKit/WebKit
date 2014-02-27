@@ -1598,11 +1598,6 @@ static bool shouldLogHistoryDelegates(const char* pathOrURL)
     return strstr(pathOrURL, "globalhistory/");
 }
 
-static bool shouldOpenWebInspector(const char* pathOrURL)
-{
-    return strstr(pathOrURL, "inspector/");
-}
-
 static bool shouldDumpAsText(const char* pathOrURL)
 {
     return strstr(pathOrURL, "dumpAsText/");
@@ -1765,8 +1760,6 @@ static void runTest(const string& inputLine)
 
     if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
         gTestRunner->setDeveloperExtrasEnabled(true);
-        if (shouldOpenWebInspector(pathOrURL.c_str()))
-            gTestRunner->showWebInspector();
         if (shouldDumpAsText(pathOrURL.c_str())) {
             gTestRunner->setDumpAsText(true);
             gTestRunner->setGeneratePixelResults(false);

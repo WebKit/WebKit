@@ -134,8 +134,9 @@ public:
 
     static bool isInspectorPage(WebPageProxy&);
 
-    // Implemented the platform WebInspectorProxy file
+    // Provided by platform WebInspectorProxy implementations.
     String inspectorPageURL() const;
+    String inspectorTestPageURL() const;
     String inspectorBaseURL() const;
 
 #if ENABLE(INSPECTOR_SERVER)
@@ -173,6 +174,7 @@ private:
 
     // Called by WebInspectorProxy messages
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
+    void createInspectorPageForTest(uint64_t& inspectorPageID, WebPageCreationParameters&);
     void didClose();
     void bringToFront();
     void attachAvailabilityChanged(bool);

@@ -1,3 +1,31 @@
+2014-02-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: model tests should use a special Test.html inspector page
+        https://bugs.webkit.org/show_bug.cgi?id=129190
+
+        Reviewed by Timothy Hatcher.
+
+        Add a stripped-down version of the inspector test script that's used by
+        all inspector model tests. Clean up the namespaces so things accessible
+        from only the test page are part of the `InspectorTestProxy` object.
+
+        Add a minimal test that exercises the initialization and communication code
+        paths on the test page and the inspector page.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js: Add a FIXME.
+        * inspector/inspector-test.js: Added.
+        (InspectorTestProxy.register):
+        (runTest.initializeFrontend):
+        (runTest.runTestInFrontend):
+        (runTest):
+        (InspectorTestProxy.completeTest):
+        (InspectorTestProxy.debugLog):
+        (InspectorTestProxy.addResult):
+        (InspectorTestProxy.clearResults):
+        (InspectorTestProxy.reportUncaughtException):
+        * inspector/test-harness-trivially-works-expected.txt: Added.
+        * inspector/test-harness-trivially-works.html: Added.
+
 2014-02-27  Dirk Schulze  <krit@webkit.org>
 
         Transform more clip-path pixel tests to reference tests

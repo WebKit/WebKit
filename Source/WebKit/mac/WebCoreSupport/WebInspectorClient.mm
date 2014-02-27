@@ -108,8 +108,9 @@ using namespace WebCore;
     BOOL _visible;
     BOOL _destroyingInspectorView;
 }
-- (id)initWithInspectedWebView:(WebView *)webView;
+- (id)initWithInspectedWebView:(WebView *)webView isUnderTest:(BOOL)isUnderTest;
 - (NSString *)inspectorPagePath;
+- (NSString *)inspectorTestPagePath;
 - (WebView *)webView;
 - (void)attach;
 - (void)detach;
@@ -141,7 +142,7 @@ void WebInspectorClient::inspectorDestroyed()
 
 InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
 {
-    RetainPtr<WebInspectorWindowController> windowController = adoptNS([[WebInspectorWindowController alloc] initWithInspectedWebView:m_webView]);
+    RetainPtr<WebInspectorWindowController> windowController = adoptNS([[WebInspectorWindowController alloc] initWithInspectedWebView:m_webView isUnderTest:inspectorController->isUnderTest()]);
     [windowController.get() setInspectorClient:this];
 
     m_frontendPage = core([windowController.get() webView]);
@@ -420,20 +421,22 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
     [preferences release];
 
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:[self inspectorPagePath]]];
-    [[_webView mainFrame] loadRequest:request];
-    [request release];
-
     [self setWindowFrameAutosaveName:@"Web Inspector 2"];
     return self;
 }
 
-- (id)initWithInspectedWebView:(WebView *)webView
+- (id)initWithInspectedWebView:(WebView *)webView isUnderTest:(BOOL)isUnderTest
 {
     if (!(self = [self init]))
         return nil;
 
     _inspectedWebView = webView;
+
+    NSString *pagePath = isUnderTest ? [self inspectorTestPagePath] : [self inspectorPagePath];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath: pagePath]];
+    [[_webView mainFrame] loadRequest:request];
+    [request release];
+
     return self;
 }
 
@@ -451,6 +454,16 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     WebInspectorUILibrary();
 
     NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"];
+    ASSERT([path length]);
+    return path;
+}
+
+- (NSString *)inspectorTestPagePath
+{
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
+
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Test" ofType:@"html"];
     ASSERT([path length]);
     return path;
 }
@@ -745,6 +758,12 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
     // Allow loading of the main inspector file.
     if ([[request URL] isFileURL] && [[[request URL] path] isEqualToString:[self inspectorPagePath]]) {
+        [listener use];
+        return;
+    }
+
+    // Allow loading of the test inspector file.
+    if ([[request URL] isFileURL] && [[[request URL] path] isEqualToString:[self inspectorTestPagePath]]) {
         [listener use];
         return;
     }

@@ -40,6 +40,7 @@ function InspectorBackendClass()
     this._domainDispatchers = {};
     this._eventArgs = {};
     this._replyArgs = {};
+    this._deferredScripts = [];
 
     this.dumpInspectorTimeStats = false;
     this.dumpInspectorProtocolMessages = false;
@@ -218,8 +219,8 @@ InspectorBackendClass.prototype = {
                     console.log("time-stats: " + callback.methodName + " = " + (processingStartTime - callback.sendRequestTime) + " + " + (Date.now() - processingStartTime));
             }
 
-            if (this._scripts && !this._pendingResponsesCount)
-                this.runAfterPendingDispatches();
+            if (this._deferredScripts.length && !this._pendingResponsesCount)
+                this._flushPendingScripts();
 
             return;
         } else {
@@ -227,7 +228,7 @@ InspectorBackendClass.prototype = {
             var domainName = method[0];
             var functionName = method[1];
             if (!(domainName in this._domainDispatchers)) {
-                console.error("Protocol Error: the message is for non-existing domain '" + domainName + "'");
+                console.error("Protocol Error: Attempted to dispatch method '" + functionName + "' for non-existing domain '" + domainName + "'");
                 return;
             }
             var dispatcher = this._domainDispatchers[domainName];
@@ -264,23 +265,27 @@ InspectorBackendClass.prototype = {
         console.error("Request with id = " + messageObject.id + " failed. " + JSON.stringify(messageObject.error));
     },
 
-    /**
-     * @param {string=} script
-     */
     runAfterPendingDispatches: function(script)
     {
-        if (!this._scripts)
-            this._scripts = [];
+        console.assert(script);
+        console.assert(typeof script === "function");
 
-        if (script)
-            this._scripts.push(script);
+        if (!this._pendingResponsesCount)
+            script.call(this);
+        else
+            this._deferredScripts.push(script);
+    },
 
-        if (!this._pendingResponsesCount) {
-            var scripts = this._scripts;
-            this._scripts = [];
-            for (var id = 0; id < scripts.length; ++id)
-                 scripts[id].call(this);
-        }
+    // Private
+
+    _flushPendingScripts: function()
+    {
+        console.assert(!this._pendingResponsesCount);
+
+        var scriptsToRun = this._deferredScripts;
+        this._deferredScripts = [];
+        for (var script of scriptsToRun)
+            script.call(this);
     }
 }
 

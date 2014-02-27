@@ -156,11 +156,6 @@ static bool shouldDumpAsText(const String& pathOrURL)
     return pathOrURL.contains("dumpAsText/");
 }
 
-static bool shouldOpenWebInspector(const String& pathOrURL)
-{
-    return pathOrURL.contains("inspector/");
-}
-
 static void sendPixelResultsEOF()
 {
     puts("#EOF");
@@ -243,8 +238,6 @@ static void createTestRunner(const String& testURL, const String& expectedPixelH
         gTestRunner->setDumpFrameLoadCallbacks(true);
 
     gTestRunner->setDeveloperExtrasEnabled(true);
-    if (shouldOpenWebInspector(testURL))
-        gTestRunner->showWebInspector();
 
     gTestRunner->setDumpHistoryDelegateCallbacks(isGlobalHistoryTest(testURL));
 
