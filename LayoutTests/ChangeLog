@@ -1,3 +1,17 @@
+2014-02-27  Antoine Quint  <graouts@webkit.org>
+
+        Respect SVG fragment identifiers in <img> src attribute
+        https://bugs.webkit.org/show_bug.cgi?id=129387
+
+        Reviewed by Antti Koivisto.
+
+        Test that we correctly handle the fragment identifier used in SVG URLs in <img> elements,
+        checking for correct srcset handling as well.
+
+        * svg/css/resources/fragment-identifiers.svg: Added.
+        * svg/css/svg-resource-fragment-identifier-img-src-expected.html: Added.
+        * svg/css/svg-resource-fragment-identifier-img-src.html: Added.
+
 2014-02-27  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] Parse and implement the -webkit-isolation CSS property.

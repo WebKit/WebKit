@@ -31,6 +31,7 @@
 #include "FloatSize.h"
 #include "Image.h"
 #include "SVGImage.h"
+#include "URL.h"
 
 namespace WebCore {
 
@@ -44,6 +45,8 @@ public:
     virtual bool isSVGImage() const override { return true; }
 
     virtual IntSize size() const override;
+
+    void setURL(const URL&);
 
     virtual bool usesContainerSize() const override { return m_image->usesContainerSize(); }
     virtual bool hasRelativeWidth() const override { return m_image->hasRelativeWidth(); }

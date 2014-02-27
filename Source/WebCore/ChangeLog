@@ -1,3 +1,31 @@
+2014-02-27  Antoine Quint  <graouts@webkit.org>
+
+        Respect SVG fragment identifiers in <img> src attribute
+        https://bugs.webkit.org/show_bug.cgi?id=129387
+
+        Reviewed by Antti Koivisto.
+
+        Test: svg/css/svg-resource-fragment-identifier-img-src.html
+
+        When providing an SVG image for a given renderer, check that the URL used to load
+        that image is taken into account in case it featured a fragment identifier, ensuring
+        that the CSS :target pseudo-class is correctly handled for SVG resources. This patch
+        is specific to <img> elements, specific support will also need to be added for various
+        CSS properties that support SVG images.
+
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::imageForRenderer):
+        Check if the provided renderer is attached to an <img> element and, if so, pass the
+        resolved <img> source URL, taking into account srcset, to the SVGImageForContainer.
+
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::setURL):
+        Trigger the FrameView machinery to ensure that the :target pseudo-class is respected
+        should the provided URL feature a fragment identifier.
+
+        * svg/graphics/SVGImageForContainer.h:
+        Declare the new setURL() method.
+
 2014-02-27  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Fix style errors in enum members
