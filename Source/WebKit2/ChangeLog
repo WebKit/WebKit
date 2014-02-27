@@ -1,3 +1,24 @@
+2014-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Web Inspector doesn't work with network process enabled
+        https://bugs.webkit.org/show_bug.cgi?id=127651
+
+        Reviewed by Sergio Villar Senin.
+
+        The problem is that the web inspector loads so many resources,
+        that when using the network process, a lot of IPC traffic is
+        generated causing the send buffer of the socket to be full. When
+        that happens sendmsg() fails with EAGAIN, because we are using non
+        blocking sockets, and we are not handling neither EAGAIN nor
+        EWOULDBLOCK errors (we do when reading from the socket, though).
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::readyReadHandler): Add a log message to know
+        when reading from the socket fails for any unhandled error.
+        (IPC::Connection::sendOutgoingMessage): Handle EAGAIN and
+        EWOULDBLOCK errors to try again in those cases. Also add a log
+        message for unhandled errors.
+
 2014-02-26  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK build fix after r164751.
