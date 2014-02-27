@@ -1,0 +1,24 @@
+<html>
+<head>
+	<style type="text/css">
+		.c1 { -webkit-column-width: 1px; }		
+	</style>
+	<script>
+		function afterload() {
+			document.getElementById("details").setAttribute('class', 'c1');
+			document.body.offsetTop;
+			document.getElementById("legend").style["color"] = "red";
+			document.body.innerHTML = "PASS if it does not crash. See bug 125449.";
+		}
+	</script>
+</head>
+<body onload="afterload()">
+	<b id="legend">
+		<div class="c1">
+			<details id="details" open>a
+				<summary id="summary" style="-webkit-column-span: all;"></summary>
+			</details>
+		</div>
+	</b>	
+</body>
+</html>
