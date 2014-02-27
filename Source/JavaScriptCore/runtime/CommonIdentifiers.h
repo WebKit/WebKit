@@ -63,7 +63,6 @@
     macro(__lookupSetter__) \
     macro(add) \
     macro(anonymous) \
-    macro(apply) \
     macro(arguments) \
     macro(bind) \
     macro(buffer) \
@@ -73,7 +72,6 @@
     macro(bytecodeIndex) \
     macro(bytecodes) \
     macro(bytecodesID) \
-    macro(call) \
     macro(callee) \
     macro(caller) \
     macro(cast) \
@@ -207,8 +205,6 @@
     macro(yield)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
-    macro(apply) \
-    macro(call) \
     macro(iterator) \
     macro(iteratorNext) \
     macro(resolve) \

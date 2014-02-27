@@ -2245,7 +2245,7 @@ void JSObject::putDirectNativeFunction(VM& vm, JSGlobalObject* globalObject, con
     putDirect(vm, propertyName, function, attributes);
 }
 
-void JSObject::putDirectBuiltinFunction(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, FunctionExecutable* functionExecutable, unsigned attributes)
+JSFunction* JSObject::putDirectBuiltinFunction(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, FunctionExecutable* functionExecutable, unsigned attributes)
 {
     StringImpl* name = propertyName.publicName();
     if (!name)
@@ -2253,6 +2253,18 @@ void JSObject::putDirectBuiltinFunction(VM& vm, JSGlobalObject* globalObject, co
     ASSERT(name);
     JSFunction* function = JSFunction::createBuiltinFunction(vm, static_cast<FunctionExecutable*>(functionExecutable), globalObject);
     putDirect(vm, propertyName, function, attributes);
+    return function;
+}
+
+JSFunction* JSObject::putDirectBuiltinFunctionWithoutTransition(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, FunctionExecutable* functionExecutable, unsigned attributes)
+{
+    StringImpl* name = propertyName.publicName();
+    if (!name)
+        name = vm.propertyNames->anonymous.impl();
+    ASSERT(name);
+    JSFunction* function = JSFunction::createBuiltinFunction(vm, static_cast<FunctionExecutable*>(functionExecutable), globalObject);
+    putDirectWithoutTransition(vm, propertyName, function, attributes);
+    return function;
 }
 
 void JSObject::putDirectNativeFunctionWithoutTransition(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)

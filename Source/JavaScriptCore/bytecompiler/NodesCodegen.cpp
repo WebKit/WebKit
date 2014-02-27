@@ -28,6 +28,7 @@
 #include "Nodes.h"
 #include "NodeConstructors.h"
 
+#include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
 #include "CallFrame.h"
 #include "Debugger.h"
@@ -549,7 +550,7 @@ RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, 
     RefPtr<RegisterID> function;
     bool emitCallCheck = !generator.isBuiltinFunction();
     if (emitCallCheck) {
-        function = generator.emitGetById(generator.tempDestination(dst), base.get(), generator.propertyNames().call);
+        function = generator.emitGetById(generator.tempDestination(dst), base.get(), generator.propertyNames().builtinNames().callPublicName());
         generator.emitJumpIfNotFunctionCall(function.get(), realCall.get());
     }
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst);
@@ -620,7 +621,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, function.get());
     bool emitCallCheck = !generator.isBuiltinFunction();
     if (emitCallCheck) {
-        function = generator.emitGetById(generator.tempDestination(dst), base.get(), generator.propertyNames().apply);
+        function = generator.emitGetById(generator.tempDestination(dst), base.get(), generator.propertyNames().builtinNames().applyPublicName());
         generator.emitJumpIfNotFunctionApply(function.get(), realCall.get());
     }
     if (mayBeCall) {

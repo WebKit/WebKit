@@ -1,3 +1,43 @@
+2014-02-27  Oliver Hunt  <oliver@apple.com>
+
+        Slow cases for function.apply and function.call should not require vm re-entry
+        https://bugs.webkit.org/show_bug.cgi?id=129454
+
+        Reviewed by Geoffrey Garen.
+
+        Implement call and apply using builtins. Happily the use
+        of @call and @apply don't perform function equality checks
+        and just plant direct var_args calls. This did expose a few
+        codegen issues, but they're all covered by existing tests
+        once call and apply are implemented in JS.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/Function.prototype.js: Added.
+        (call):
+        (apply):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeFrameForVarargs):
+        (JSC::loadVarargs):
+        * interpreter/Interpreter.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/Lexer.cpp:
+        (JSC::isSafeBuiltinIdentifier):
+        * runtime/CommonIdentifiers.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectBuiltinFunction):
+        (JSC::JSObject::putDirectBuiltinFunctionWithoutTransition):
+        * runtime/JSObject.h:
+
 2014-02-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better name for RemoteInspectorDebuggableConnection dispatch queue

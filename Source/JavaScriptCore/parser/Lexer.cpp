@@ -27,6 +27,7 @@
 
 #include "JSFunctionInlines.h"
 
+#include "BuiltinNames.h"
 #include "JSGlobalObjectFunctions.h"
 #include "Identifier.h"
 #include "NodeInfo.h"
@@ -765,9 +766,9 @@ bool isSafeBuiltinIdentifier(VM& vm, const Identifier* ident)
     /* Just block any use of suspicious identifiers.  This is intended to
      * be used as a safety net while implementing builtins.
      */
-    if (*ident == vm.propertyNames->call)
+    if (*ident == vm.propertyNames->builtinNames().callPublicName())
         return false;
-    if (*ident == vm.propertyNames->apply)
+    if (*ident == vm.propertyNames->builtinNames().applyPublicName())
         return false;
     if (*ident == vm.propertyNames->eval)
         return false;

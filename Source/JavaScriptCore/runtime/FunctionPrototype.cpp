@@ -22,6 +22,8 @@
 #include "FunctionPrototype.h"
 
 #include "Arguments.h"
+#include "BuiltinExecutables.h"
+#include "BuiltinNames.h"
 #include "JSArray.h"
 #include "JSBoundFunction.h"
 #include "JSFunction.h"
@@ -38,8 +40,6 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(FunctionPrototype);
 const ClassInfo FunctionPrototype::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionPrototype) };
 
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionProtoFuncCall(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState*);
 
 FunctionPrototype::FunctionPrototype(VM& vm, Structure* structure)
@@ -60,11 +60,8 @@ void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* g
     JSFunction* toStringFunction = JSFunction::create(vm, globalObject, 0, vm.propertyNames->toString.string(), functionProtoFuncToString);
     putDirectWithoutTransition(vm, vm.propertyNames->toString, toStringFunction, DontEnum);
 
-    *applyFunction = JSFunction::create(vm, globalObject, 2, vm.propertyNames->apply.string(), functionProtoFuncApply);
-    putDirectWithoutTransition(vm, vm.propertyNames->apply, *applyFunction, DontEnum);
-
-    *callFunction = JSFunction::create(vm, globalObject, 1, vm.propertyNames->call.string(), functionProtoFuncCall);
-    putDirectWithoutTransition(vm, vm.propertyNames->call, *callFunction, DontEnum);
+    *applyFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().applyPublicName(), functionPrototypeApplyCodeGenerator(vm), DontEnum);
+    *callFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().callPublicName(), functionPrototypeCallCodeGenerator(vm), DontEnum);
 
     JSFunction* bindFunction = JSFunction::create(vm, globalObject, 1, vm.propertyNames->bind.string(), functionProtoFuncBind);
     putDirectWithoutTransition(vm, vm.propertyNames->bind, bindFunction, DontEnum);
@@ -122,55 +119,6 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
     }
 
     return throwVMTypeError(exec);
-}
-
-EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState* exec)
-{
-    JSValue thisValue = exec->hostThisValue();
-    CallData callData;
-    CallType callType = getCallData(thisValue, callData);
-    if (callType == CallTypeNone)
-        return throwVMTypeError(exec);
-
-    JSValue array = exec->argument(1);
-
-    MarkedArgumentBuffer applyArgs;
-    if (!array.isUndefinedOrNull()) {
-        if (!array.isObject())
-            return throwVMTypeError(exec);
-        if (asObject(array)->classInfo() == Arguments::info()) {
-            if (asArguments(array)->length(exec) > Arguments::MaxArguments)
-                return JSValue::encode(throwStackOverflowError(exec));
-            asArguments(array)->fillArgList(exec, applyArgs);
-        } else if (isJSArray(array)) {
-            if (asArray(array)->length() > Arguments::MaxArguments)
-                return JSValue::encode(throwStackOverflowError(exec));
-            asArray(array)->fillArgList(exec, applyArgs);
-        } else {
-            unsigned length = asObject(array)->get(exec, exec->propertyNames().length).toUInt32(exec);
-            if (length > Arguments::MaxArguments)
-                return JSValue::encode(throwStackOverflowError(exec));
-
-            for (unsigned i = 0; i < length; ++i)
-                applyArgs.append(asObject(array)->get(exec, i));
-        }
-    }
-    
-    return JSValue::encode(call(exec, thisValue, callType, callData, exec->argument(0), applyArgs));
-}
-
-EncodedJSValue JSC_HOST_CALL functionProtoFuncCall(ExecState* exec)
-{
-    JSValue thisValue = exec->hostThisValue();
-    CallData callData;
-    CallType callType = getCallData(thisValue, callData);
-    if (callType == CallTypeNone)
-        return throwVMTypeError(exec);
-
-    ArgList args(exec);
-    ArgList callArgs;
-    args.getSlice(1, callArgs);
-    return JSValue::encode(call(exec, thisValue, callType, callData, exec->argument(0), callArgs));
 }
 
 // 15.3.4.5 Function.prototype.bind (thisArg [, arg1 [, arg2, ...]])

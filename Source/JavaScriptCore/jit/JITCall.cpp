@@ -71,8 +71,14 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         slowCase.append(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(JSValue()))));
 
         emitGetFromCallFrameHeader32(JSStack::ArgumentCount, regT0);
-        if (firstVarArgOffset)
+        if (firstVarArgOffset) {
+            Jump sufficientArguments = branch32(GreaterThan, regT0, TrustedImm32(firstVarArgOffset + 1));
+            move(TrustedImm32(1), regT0);
+            Jump endVarArgs = jump();
+            sufficientArguments.link(this);
             sub32(TrustedImm32(firstVarArgOffset), regT0);
+            endVarArgs.link(this);
+        }
         slowCase.append(branch32(Above, regT0, TrustedImm32(Arguments::MaxArguments + 1)));
         // regT0: argumentCountIncludingThis
         move(regT0, regT1);

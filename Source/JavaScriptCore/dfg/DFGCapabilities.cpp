@@ -211,7 +211,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     }
 
     case op_call_varargs:
-        if (codeBlock->usesArguments() && pc[4].u.operand == codeBlock->argumentsRegister().offset())
+        if (codeBlock->usesArguments() && pc[4].u.operand == codeBlock->argumentsRegister().offset()
+            && !pc[6].u.operand)
             return CanInline;
         // FIXME: We should handle this.
         // https://bugs.webkit.org/show_bug.cgi?id=127626

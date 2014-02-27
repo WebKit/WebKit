@@ -2729,6 +2729,7 @@
 		A7A8AF3117ADB5F3005AB174 /* Uint8ClampedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint8ClampedArray.h; sourceTree = "<group>"; };
 		A7A8AF3217ADB5F3005AB174 /* Uint16Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint16Array.h; sourceTree = "<group>"; };
 		A7A8AF3317ADB5F3005AB174 /* Uint32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint32Array.h; sourceTree = "<group>"; };
+		A7A979C418BE8D9E002C3733 /* Function.prototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Function.prototype.js; sourceTree = "<group>"; };
 		A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableAllocator.h; sourceTree = "<group>"; };
 		A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocator.cpp; sourceTree = "<group>"; };
 		A7B4ACAE1484C9CE00B38A36 /* JSExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExportMacros.h; sourceTree = "<group>"; };
@@ -4833,6 +4834,7 @@
 				A7D801A21880D66E0026C39B /* BuiltinExecutables.h */,
 				A75EE9B018AAB7E200AAD043 /* BuiltinNames.h */,
 				7CFBAC1C18B535E500D00750 /* Promise.prototype.js */,
+				A7A979C418BE8D9E002C3733 /* Function.prototype.js */,
 			);
 			path = builtins;
 			sourceTree = "<group>";
