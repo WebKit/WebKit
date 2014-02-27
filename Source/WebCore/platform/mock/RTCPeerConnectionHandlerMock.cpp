@@ -51,12 +51,8 @@ RTCPeerConnectionHandlerMock::RTCPeerConnectionHandlerMock(RTCPeerConnectionHand
 {
 }
 
-bool RTCPeerConnectionHandlerMock::initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints> constraints)
+bool RTCPeerConnectionHandlerMock::initialize(PassRefPtr<RTCConfiguration>)
 {
-    String invalidQuery = MediaConstraintsMock::verifyConstraints(constraints);
-    if (!invalidQuery.isEmpty())
-        return false;
-
     RefPtr<IceConnectionNotifier> notifier = adoptRef(new IceConnectionNotifier(m_client, RTCPeerConnectionHandlerClient::IceConnectionStateCompleted, RTCPeerConnectionHandlerClient::IceGatheringStateComplete));
     m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
     return true;
@@ -143,7 +139,7 @@ PassRefPtr<RTCSessionDescriptionDescriptor> RTCPeerConnectionHandlerMock::remote
     return m_remoteSessionDescription;
 }
 
-bool RTCPeerConnectionHandlerMock::updateIce(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>)
+bool RTCPeerConnectionHandlerMock::updateIce(PassRefPtr<RTCConfiguration>)
 {
     return true;
 }
@@ -155,12 +151,8 @@ bool RTCPeerConnectionHandlerMock::addIceCandidate(PassRefPtr<RTCVoidRequest> re
     return true;
 }
 
-bool RTCPeerConnectionHandlerMock::addStream(PassRefPtr<MediaStreamPrivate>, PassRefPtr<MediaConstraints> constraints)
+bool RTCPeerConnectionHandlerMock::addStream(PassRefPtr<MediaStreamPrivate>)
 {
-    String invalidQuery = MediaConstraintsMock::verifyConstraints(constraints);
-    if (!invalidQuery.isEmpty())
-        return false;
-
     // Spec states that every time a stream is added, a negotiationneeded event must be fired.
     m_client->negotiationNeeded();
     return true;

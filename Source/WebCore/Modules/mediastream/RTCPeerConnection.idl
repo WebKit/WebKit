@@ -32,7 +32,7 @@
 [
     Conditional=MEDIA_STREAM,
     ActiveDOMObject,
-    CustomConstructor(Dictionary rtcIceServers, optional Dictionary mediaConstraints),
+    CustomConstructor(Dictionary rtcConfiguration),
     ConstructorCallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     ConstructorCallWith=ScriptExecutionContext,
@@ -51,7 +51,7 @@
 
     readonly attribute DOMString signalingState;
 
-    [RaisesException] void updateIce(optional Dictionary configuration, optional Dictionary mediaConstraints);
+    [RaisesException] void updateIce(optional Dictionary configuration);
 
     [RaisesException] void addIceCandidate(RTCIceCandidate candidate, VoidCallback successCallback, RTCPeerConnectionErrorCallback failureCallback);
 
@@ -62,7 +62,7 @@
     sequence<MediaStream> getRemoteStreams();
     MediaStream getStreamById(DOMString streamId);
 
-    [StrictTypeChecking, RaisesException] void addStream(MediaStream stream, optional Dictionary mediaConstraints);
+    [StrictTypeChecking, RaisesException] void addStream(MediaStream stream);
     [StrictTypeChecking, RaisesException] void removeStream(MediaStream stream);
 
     void getStats(RTCStatsCallback successCallback, [Default=Undefined] optional MediaStreamTrack selector);

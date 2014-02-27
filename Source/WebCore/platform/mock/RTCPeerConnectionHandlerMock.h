@@ -41,7 +41,7 @@ public:
 
     virtual ~RTCPeerConnectionHandlerMock() { }
 
-    virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) override;
+    virtual bool initialize(PassRefPtr<RTCConfiguration>) override;
 
     virtual void createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<MediaConstraints>) override;
     virtual void createAnswer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<MediaConstraints>) override;
@@ -49,9 +49,9 @@ public:
     virtual void setRemoteDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>) override;
     virtual PassRefPtr<RTCSessionDescriptionDescriptor> localDescription() override;
     virtual PassRefPtr<RTCSessionDescriptionDescriptor> remoteDescription() override;
-    virtual bool updateIce(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) override;
+    virtual bool updateIce(PassRefPtr<RTCConfiguration>) override;
     virtual bool addIceCandidate(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCIceCandidateDescriptor>) override;
-    virtual bool addStream(PassRefPtr<MediaStreamPrivate>, PassRefPtr<MediaConstraints>) override;
+    virtual bool addStream(PassRefPtr<MediaStreamPrivate>) override;
     virtual void removeStream(PassRefPtr<MediaStreamPrivate>) override;
     virtual void getStats(PassRefPtr<RTCStatsRequest>) override;
     virtual std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String& label, const RTCDataChannelInit&) override;

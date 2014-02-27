@@ -77,7 +77,7 @@
 
                 pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
                 pc.onnegotiationneeded = onErroneousNegotiationNeeded;
-                shouldThrow("pc.addStream(stream, {mandatory:{invalid:1}})");
+                shouldThrow("pc.addStream(null)");
 
                 shouldBe('pc.getLocalStreams().length', '0');
 
