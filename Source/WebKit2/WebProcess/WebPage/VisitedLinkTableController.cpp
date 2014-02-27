@@ -27,22 +27,41 @@
 #include "VisitedLinkTableController.h"
 
 #include "WebProcess.h"
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<VisitedLinkTableController> VisitedLinkTableController::create()
+static HashMap<uint64_t, VisitedLinkTableController*>& visitedLinkTableControllers()
 {
-    return adoptRef(new VisitedLinkTableController);
+    static NeverDestroyed<HashMap<uint64_t, VisitedLinkTableController*>> visitedLinkTableControllers;
+
+    return visitedLinkTableControllers;
 }
 
-VisitedLinkTableController::VisitedLinkTableController()
+PassRefPtr<VisitedLinkTableController> VisitedLinkTableController::getOrCreate(uint64_t identifier)
+{
+    auto& visitedLinkTableControllerPtr = visitedLinkTableControllers().add(identifier, nullptr).iterator->value;
+    if (visitedLinkTableControllerPtr)
+        return visitedLinkTableControllerPtr;
+
+    RefPtr<VisitedLinkTableController> visitedLinkTableController = adoptRef(new VisitedLinkTableController(identifier));
+    visitedLinkTableControllerPtr = visitedLinkTableController.get();
+
+    return visitedLinkTableController.release();
+}
+
+VisitedLinkTableController::VisitedLinkTableController(uint64_t identifier)
+    : m_identifier(identifier)
 {
 }
 
 VisitedLinkTableController::~VisitedLinkTableController()
 {
+    ASSERT(visitedLinkTableControllers().contains(m_identifier));
+
+    visitedLinkTableControllers().remove(m_identifier);
 }
 
 bool VisitedLinkTableController::isLinkVisited(Page&, LinkHash linkHash, const URL&, const AtomicString&)

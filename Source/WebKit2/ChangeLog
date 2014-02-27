@@ -1,3 +1,19 @@
+2014-02-27  Anders Carlsson  <andersca@apple.com>
+
+        Look up already existing VisitedLinkTableController objects by identifier
+        https://bugs.webkit.org/show_bug.cgi?id=129431
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::visitedLinkTableControllers):
+        (WebKit::VisitedLinkTableController::getOrCreate):
+        (WebKit::VisitedLinkTableController::VisitedLinkTableController):
+        (WebKit::VisitedLinkTableController::~VisitedLinkTableController):
+        * WebProcess/WebPage/VisitedLinkTableController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2014-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WK2] Blocks when fetching plugins information

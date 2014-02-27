@@ -32,14 +32,16 @@ namespace WebKit {
 
 class VisitedLinkTableController final : public WebCore::VisitedLinkStore {
 public:
-    static PassRefPtr<VisitedLinkTableController> create();
+    static PassRefPtr<VisitedLinkTableController> getOrCreate(uint64_t identifier);
     virtual ~VisitedLinkTableController();
 
 private:
-    VisitedLinkTableController();
+    explicit VisitedLinkTableController(uint64_t identifier);
 
     virtual bool isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
     virtual void addVisitedLink(WebCore::Page&, WebCore::LinkHash) override;
+
+    uint64_t m_identifier;
 };
 
 } // namepsace WebKit
