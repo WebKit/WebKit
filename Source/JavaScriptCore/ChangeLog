@@ -1,3 +1,12 @@
+2014-02-27  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed build fix for Mac tools after r164814
+
+        * Configurations/ToolExecutable.xcconfig:
+        - Added JavaScriptCore.framework/PrivateHeaders to ToolExecutable include path.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        - Changed productName to testRegExp for testRegExp target.
+
 2014-02-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JSContext inspection should report exceptions in the console

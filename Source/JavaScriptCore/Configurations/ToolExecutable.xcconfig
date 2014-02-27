@@ -49,3 +49,6 @@ CLANG_ENABLE_OBJC_ARC_arm64 = YES;
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
 OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
+
+// Explicitly add the PrivateHeaders directory to the search path so that generated header files can be found in production builds.
+HEADER_SEARCH_PATHS = $(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders $(inherited);

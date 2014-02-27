@@ -5765,7 +5765,7 @@
 			);
 			name = testRegExp;
 			productInstallPath = /usr/local/bin;
-			productName = jsc;
+			productName = testRegExp;
 			productReference = 6511230514046A4C002B101D /* testRegExp */;
 			productType = "com.apple.product-type.tool";
 		};
