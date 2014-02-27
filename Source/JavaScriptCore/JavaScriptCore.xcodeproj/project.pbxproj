@@ -5802,6 +5802,7 @@
 			buildPhases = (
 				932F5BDC0822A1C700736975 /* Sources */,
 				932F5BDE0822A1C700736975 /* Frameworks */,
+				5D5D8ABF0E0D0B0300F9C692 /* Create /usr/local/bin/jsc symlink */,
 			);
 			buildRules = (
 			);
@@ -5966,6 +5967,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nTRACING_D=\"$SRCROOT/runtime/Tracing.d\";\nTRACING_H=\"$BUILT_PRODUCTS_DIR/DerivedSources/JavaScriptCore/TracingDtrace.h\";\n\nif [[ \"$HAVE_DTRACE\" = \"1\" && \"$TRACING_D\" -nt \"$TRACING_H\" ]];\nthen\n\tdtrace -h -o \"$TRACING_H\" -s \"$TRACING_D\";\nfi;\n";
+		};
+		5D5D8ABF0E0D0B0300F9C692 /* Create /usr/local/bin/jsc symlink */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(DSTROOT)$(INSTALL_PATH)/jsc",
+			);
+			name = "Create /usr/local/bin/jsc symlink";
+			outputPaths = (
+				"$(DSTROOT)$(INSTALL_PATH_PREFIX)/usr/local/bin/jsc",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${SKIP_INSTALL}\" == \"NO\" ]]; then\n    mkdir -p \"${DSTROOT}${INSTALL_PATH_PREFIX}/usr/local/bin\"\n    cd \"${DSTROOT}${INSTALL_PATH_PREFIX}/usr/local/bin\"\n    ln -s \"../../..${INSTALL_PATH_ACTUAL}/jsc\" jsc\n    exit\nfi\n";
 		};
 		5DAFD6CD146B6B6E00FBEFB4 /* Install Support Script */ = {
 			isa = PBXShellScriptBuildPhase;

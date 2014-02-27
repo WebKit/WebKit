@@ -1,3 +1,15 @@
+2014-02-27  David Kilzer  <ddkilzer@apple.com>
+
+        Create symlink to /usr/local/bin/jsc during installation
+        <http://webkit.org/b/129399>
+        <rdar://problem/16168734>
+
+        Reviewed by Dan Bernstein.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        - Add "Create /usr/local/bin/jsc symlink" build phase script to
+          create the symlink during installation.
+
 2014-02-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Math.{max, min}() must not return after first NaN value
