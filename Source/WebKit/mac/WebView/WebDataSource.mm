@@ -481,7 +481,11 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         --WebDataSourceCount;
 
 #if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-    if (_private) {
+    // The code to remove memory mapped notification is only needed when we are viewing a PDF file.
+    // In such a case, WebPDFViewPlaceholder sets itself as the dataSourceDelegate. Guard the access
+    // to mainResourceData with this nil check so that we avoid assertions due to the resource being
+    // made purgeable.
+    if (_private && [self dataSourceDelegate]) {
         RefPtr<ResourceBuffer> mainResourceBuffer = toPrivate(_private)->loader->mainResourceData();
         if (mainResourceBuffer) {
             RefPtr<SharedBuffer> mainResourceData = mainResourceBuffer->sharedBuffer();
