@@ -1,3 +1,10 @@
+2014-02-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed. Add Víctor Jáquez and myself to watchlists
+
+        * Scripts/webkitpy/common/config/watchlist: Add Víctor Jáquez and
+        myself to watchlists.
+
 2014-02-26  Julien Brianceau  <jbriance@cisco.com>
 
         Unreviewed. Add myself as a committer.
