@@ -1,3 +1,13 @@
+2014-02-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        r164764 broke the ARM build
+        https://bugs.webkit.org/show_bug.cgi?id=129415
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::moveWithPatch):
+
 2014-02-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         r164764 broke the ARM build
