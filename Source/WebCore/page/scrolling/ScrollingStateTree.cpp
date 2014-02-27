@@ -108,8 +108,6 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
             break;
         }
         case ScrollingNode: {
-            // FIXME: We currently only support child nodes that are fixed.
-            ASSERT_NOT_REACHED();
             OwnPtr<ScrollingStateScrollingNode> scrollingNode = ScrollingStateScrollingNode::create(*this, newNodeID);
             newNode = scrollingNode.get();
             parent->appendChild(scrollingNode.release());

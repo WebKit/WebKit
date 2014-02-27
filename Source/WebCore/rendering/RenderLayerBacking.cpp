@@ -109,7 +109,8 @@ bool RenderLayerBacking::m_creatingPrimaryGraphicsLayer = false;
 
 RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
     : m_owningLayer(layer)
-    , m_scrollLayerID(0)
+    , m_viewportConstrainedNodeID(0)
+    , m_scrollingNodeID(0)
     , m_artificiallyInflatedBounds(false)
     , m_isMainFrameRenderViewLayer(false)
     , m_usingTiledCacheLayer(false)
@@ -951,9 +952,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         m_scrollingContentsLayer->setSize(scrollSize);
         // Scrolling the content layer does not need to trigger a repaint. The offset will be compensated away during painting.
         // FIXME: The paint offset and the scroll offset should really be separate concepts.
-        m_scrollingContentsLayer->setOffsetFromRenderer(paddingBox.location() - FloatPoint() - scrollOffset, GraphicsLayer::DontSetNeedsDisplay);
-        
-        compositor().scrollingLayerAddedOrUpdated(&m_owningLayer);
+        m_scrollingContentsLayer->setOffsetFromRenderer(paddingBox.location() - IntPoint() - scrollOffset, GraphicsLayer::DontSetNeedsDisplay);
 #else
         m_scrollingContentsLayer->setPosition(FloatPoint(-scrollOffset.width(), -scrollOffset.height()));
 
@@ -992,7 +991,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     updateDrawsContent(isSimpleContainer);
     updateAfterWidgetResize();
 
-    compositor().updateViewportConstraintStatus(m_owningLayer);
+    compositor().updateScrollCoordinatedStatus(m_owningLayer);
 }
 
 void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(LayoutRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const
@@ -1423,91 +1422,59 @@ bool RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
 
 bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
 {
-    ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer);
+    if (needsScrollingLayers == !!m_scrollingLayer)
+        return false;
 
-    bool layerChanged = false;
-    if (needsScrollingLayers) {
-        if (!m_scrollingLayer) {
-            // Outer layer which corresponds with the scroll view.
-            m_scrollingLayer = createGraphicsLayer("Scrolling container");
-            m_scrollingLayer->setDrawsContent(false);
-            m_scrollingLayer->setMasksToBounds(true);
+    if (!m_scrollingLayer) {
+        // Outer layer which corresponds with the scroll view.
+        m_scrollingLayer = createGraphicsLayer("Scrolling container");
+        m_scrollingLayer->setDrawsContent(false);
+        m_scrollingLayer->setMasksToBounds(true);
 
-            // Inner layer which renders the content that scrolls.
-            m_scrollingContentsLayer = createGraphicsLayer("Scrolled Contents");
-            m_scrollingContentsLayer->setDrawsContent(true);
-            GraphicsLayerPaintingPhase paintPhase = GraphicsLayerPaintOverflowContents | GraphicsLayerPaintCompositedScroll;
-            if (!m_foregroundLayer)
-                paintPhase |= GraphicsLayerPaintForeground;
-            m_scrollingContentsLayer->setPaintingPhase(paintPhase);
-            m_scrollingLayer->addChild(m_scrollingContentsLayer.get());
+        // Inner layer which renders the content that scrolls.
+        m_scrollingContentsLayer = createGraphicsLayer("Scrolled Contents");
+        m_scrollingContentsLayer->setDrawsContent(true);
+        GraphicsLayerPaintingPhase paintPhase = GraphicsLayerPaintOverflowContents | GraphicsLayerPaintCompositedScroll;
+        if (!m_foregroundLayer)
+            paintPhase |= GraphicsLayerPaintForeground;
+        m_scrollingContentsLayer->setPaintingPhase(paintPhase);
+        m_scrollingLayer->addChild(m_scrollingContentsLayer.get());
+    } else {
+        compositor().willRemoveScrollingLayer(m_owningLayer);
 
-            layerChanged = true;
-            if (scrollingCoordinator)
-                scrollingCoordinator->scrollableAreaScrollLayerDidChange(&m_owningLayer);
-#if PLATFORM(IOS)
-            if (m_owningLayer.parent())
-                compositor().scrollingLayerAddedOrUpdated(&m_owningLayer);
-#endif
-        }
-    } else if (m_scrollingLayer) {
-#if PLATFORM(IOS)
-        if (!renderer().documentBeingDestroyed())
-            compositor().scrollingLayerRemoved(&m_owningLayer, m_scrollingLayer->platformLayer(), m_scrollingContentsLayer->platformLayer());
-#endif
         willDestroyLayer(m_scrollingLayer.get());
         willDestroyLayer(m_scrollingContentsLayer.get());
         m_scrollingLayer = nullptr;
         m_scrollingContentsLayer = nullptr;
-        layerChanged = true;
-        if (scrollingCoordinator)
-            scrollingCoordinator->scrollableAreaScrollLayerDidChange(&m_owningLayer);
     }
 
-    if (layerChanged) {
-        updateInternalHierarchy();
-        m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
-#if !PLATFORM(IOS)
-        m_graphicsLayer->setNeedsDisplay();
-        compositor().scrollingLayerDidChange(m_owningLayer);
-#endif
-    }
+    updateInternalHierarchy();
+    m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
+    m_graphicsLayer->setNeedsDisplay(); // Because painting phases changed.
 
-    return layerChanged;
-}
-
-void RenderLayerBacking::attachToScrollingCoordinatorWithParent(RenderLayerBacking* parent)
-{
-    ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer);
-    if (!scrollingCoordinator)
-        return;
-
-    // FIXME: When we support overflow areas, we will have to refine this for overflow areas that are also
-    // positon:fixed.
-    ScrollingNodeType nodeType;
-    if (renderer().style().position() == FixedPosition)
-        nodeType = FixedNode;
-    else if (renderer().style().position() == StickyPosition)
-        nodeType = StickyNode;
-    else
-        nodeType = ScrollingNode;
-
-    ScrollingNodeID parentID = parent ? parent->scrollLayerID() : 0;
-    m_scrollLayerID = scrollingCoordinator->attachToStateTree(nodeType, m_scrollLayerID ? m_scrollLayerID : scrollingCoordinator->uniqueScrollLayerID(), parentID);
+    if (m_scrollingLayer)
+        compositor().didAddScrollingLayer(m_owningLayer);
+    
+    return true;
 }
 
 void RenderLayerBacking::detachFromScrollingCoordinator()
 {
-    // If m_scrollLayerID is 0, then this backing is not attached to the ScrollingCoordinator.
-    if (!m_scrollLayerID)
+    if (!m_scrollingNodeID && !m_viewportConstrainedNodeID)
         return;
 
     ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer);
     if (!scrollingCoordinator)
         return;
 
-    scrollingCoordinator->detachFromStateTree(m_scrollLayerID);
-    m_scrollLayerID = 0;
+    if (m_scrollingNodeID)
+        scrollingCoordinator->detachFromStateTree(m_scrollingNodeID);
+
+    if (m_viewportConstrainedNodeID)
+        scrollingCoordinator->detachFromStateTree(m_viewportConstrainedNodeID);
+
+    m_scrollingNodeID = 0;
+    m_viewportConstrainedNodeID = 0;
 }
 
 GraphicsLayerPaintingPhase RenderLayerBacking::paintingPhaseForPrimaryLayer() const

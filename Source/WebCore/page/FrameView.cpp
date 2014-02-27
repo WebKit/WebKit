@@ -814,7 +814,7 @@ uint64_t FrameView::scrollLayerID() const
     if (!backing)
         return 0;
 
-    return backing->scrollLayerID();
+    return backing->scrollingNodeID();
 }
 
 #if ENABLE(RUBBER_BANDING)

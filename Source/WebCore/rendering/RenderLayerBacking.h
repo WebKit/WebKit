@@ -31,6 +31,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "RenderLayer.h"
+#include "ScrollingCoordinator.h"
 
 namespace WebCore {
 
@@ -101,10 +102,16 @@ public:
     GraphicsLayer* scrollingLayer() const { return m_scrollingLayer.get(); }
     GraphicsLayer* scrollingContentsLayer() const { return m_scrollingContentsLayer.get(); }
 
-    void attachToScrollingCoordinatorWithParent(RenderLayerBacking* parent);
     void detachFromScrollingCoordinator();
-    uint64_t scrollLayerID() const { return m_scrollLayerID; }
+
+    ScrollingNodeID viewportConstrainedNodeID() const { return m_viewportConstrainedNodeID; }
+    void setViewportConstrainedNodeID(ScrollingNodeID nodeID) { m_viewportConstrainedNodeID = nodeID; }
+
+    ScrollingNodeID scrollingNodeID() const { return m_scrollingNodeID; }
+    void setScrollingNodeID(ScrollingNodeID nodeID) { m_scrollingNodeID = nodeID; }
     
+    ScrollingNodeID scrollingNodeIDForChildren() const { return m_scrollingNodeID ? m_scrollingNodeID : m_viewportConstrainedNodeID; }
+
     bool hasMaskLayer() const { return m_maskLayer != 0; }
 
     GraphicsLayer* parentForSublayers() const;
@@ -308,7 +315,8 @@ private:
     std::unique_ptr<GraphicsLayer> m_scrollingLayer; // Only used if the layer is using composited scrolling.
     std::unique_ptr<GraphicsLayer> m_scrollingContentsLayer; // Only used if the layer is using composited scrolling.
 
-    uint64_t m_scrollLayerID;
+    ScrollingNodeID m_viewportConstrainedNodeID;
+    ScrollingNodeID m_scrollingNodeID;
 
     LayoutRect m_compositedBounds;
     LayoutSize m_devicePixelFractionFromRenderer;

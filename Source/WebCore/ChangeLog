@@ -1,3 +1,60 @@
+2014-02-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Prepare for overflow scrolling nodes in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=129398
+
+        Reviewed by Tim Horton.
+
+        Lay some groundwork for overflow:scrolling nodes in the scrolling tree.
+        Change terminology to refer to "scroll-coordinatored" layers now, not just viewport-constrained
+        layers.
+        
+        A given layer can be both viewport-constrained and overflow-scrolling (e.g. position:fixed,
+        overflow:scroll), so handle that in RenderLayerBacking, and use some "reason" flags
+        in RenderLayerCompositor.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollLayerID): Rename
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::attachNode): Remove invalid assertion.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::updateScrollingLayers): Simplify the logic with
+        an early return.
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        Allow a layer to play both viewport-constrained and scrolling roles
+        in the scrolling tree.
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::viewportConstrainedNodeID):
+        (WebCore::RenderLayerBacking::setViewportConstrainedNodeID):
+        (WebCore::RenderLayerBacking::scrollingNodeID):
+        (WebCore::RenderLayerBacking::setScrollingNodeID):
+        (WebCore::RenderLayerBacking::scrollingNodeIDForChildren):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::didFlushChangesForLayer):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        (WebCore::RenderLayerCompositor::fixedRootBackgroundLayerChanged):
+        (WebCore::RenderLayerCompositor::clearBackingForLayerIncludingDescendants):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore):
+        (WebCore::RenderLayerCompositor::reasonsForCompositing):
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrolling):
+        (WebCore::isViewportConstrainedFixedOrStickyLayer):
+        (WebCore::isMainFrameScrollingOrOverflowScrolling):
+        (WebCore::RenderLayerCompositor::rootLayerAttachmentChanged):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus):
+        (WebCore::RenderLayerCompositor::removeFromScrollCoordinatedLayers):
+        (WebCore::nearestScrollCoordinatedAncestor):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayer):
+        (WebCore::RenderLayerCompositor::didAddScrollingLayer):
+        * rendering/RenderLayerCompositor.h:
+
 2014-02-26  Andy Estes  <aestes@apple.com>
 
         [iOS] Support network state notification using CPNetworkObserver
