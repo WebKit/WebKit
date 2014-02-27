@@ -154,13 +154,20 @@ bool isDirectiveName(const String& name)
     );
 }
 
-const ScriptCallFrame& getFirstNonNativeFrame(PassRefPtr<ScriptCallStack> stack)
+FeatureObserver::Feature getFeatureObserverType(ContentSecurityPolicy::HeaderType type)
 {
-    int frameNumber = 0;
-    if (!stack->at(0).lineNumber() && stack->size() > 1 && stack->at(1).lineNumber())
-        frameNumber = 1;
-
-    return stack->at(frameNumber);
+    switch (type) {
+    case ContentSecurityPolicy::PrefixedEnforce:
+        return FeatureObserver::PrefixedContentSecurityPolicy;
+    case ContentSecurityPolicy::Enforce:
+        return FeatureObserver::ContentSecurityPolicy;
+    case ContentSecurityPolicy::PrefixedReport:
+        return FeatureObserver::PrefixedContentSecurityPolicyReportOnly;
+    case ContentSecurityPolicy::Report:
+        return FeatureObserver::ContentSecurityPolicyReportOnly;
+    }
+    ASSERT_NOT_REACHED();
+    return FeatureObserver::NumberOfFeatures;
 }
 
 } // namespace
@@ -1704,16 +1711,12 @@ static void gatherSecurityPolicyViolationEventData(SecurityPolicyViolationEventI
     init.sourceFile = String();
     init.lineNumber = 0;
 
-    RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2, false);
-    if (!stack)
-        return;
-
-    const ScriptCallFrame& callFrame = getFirstNonNativeFrame(stack);
-
-    if (callFrame.lineNumber()) {
-        URL source = URL(ParsedURLString, callFrame.sourceURL());
+    RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
+    const ScriptCallFrame* callFrame = stack->firstNonNativeCallFrame();
+    if (callFrame && callFrame->lineNumber()) {
+        URL source = URL(URL(), callFrame->sourceURL());
         init.sourceFile = stripURLForUseInReport(document, source);
-        init.lineNumber = callFrame.lineNumber();
+        init.lineNumber = callFrame->lineNumber();
     }
 }
 #endif
@@ -1754,31 +1757,28 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     // harmless information.
 
     RefPtr<InspectorObject> cspReport = InspectorObject::create();
-    cspReport->setString("document-uri", document->url().strippedForUseAsReferrer());
-    cspReport->setString("referrer", document->referrer());
-    cspReport->setString("violated-directive", directiveText);
+    cspReport->setString(ASCIILiteral("document-uri"), document->url().strippedForUseAsReferrer());
+    cspReport->setString(ASCIILiteral("referrer"), document->referrer());
+    cspReport->setString(ASCIILiteral("violated-directive"), directiveText);
 #if ENABLE(CSP_NEXT)
     if (experimentalFeaturesEnabled())
-        cspReport->setString("effective-directive", effectiveDirective);
+        cspReport->setString(ASCIILiteral("effective-directive"), effectiveDirective);
 #else
     UNUSED_PARAM(effectiveDirective);
 #endif
-    cspReport->setString("original-policy", header);
-    cspReport->setString("blocked-uri", stripURLForUseInReport(document, blockedURL));
+    cspReport->setString(ASCIILiteral("original-policy"), header);
+    cspReport->setString(ASCIILiteral("blocked-uri"), stripURLForUseInReport(document, blockedURL));
 
-    RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2, false);
-    if (stack) {
-        const ScriptCallFrame& callFrame = getFirstNonNativeFrame(stack);
-
-        if (callFrame.lineNumber()) {
-            URL source = URL(ParsedURLString, callFrame.sourceURL());
-            cspReport->setString("source-file", stripURLForUseInReport(document, source));
-            cspReport->setNumber("line-number", callFrame.lineNumber());
-        }
+    RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
+    const ScriptCallFrame* callFrame = stack->firstNonNativeCallFrame();
+    if (callFrame && callFrame->lineNumber()) {
+        URL source = URL(URL(), callFrame->sourceURL());
+        cspReport->setString(ASCIILiteral("source-file"), stripURLForUseInReport(document, source));
+        cspReport->setNumber(ASCIILiteral("line-number"), callFrame->lineNumber());
     }
 
     RefPtr<InspectorObject> reportObject = InspectorObject::create();
-    reportObject->setObject("csp-report", cspReport.release());
+    reportObject->setObject(ASCIILiteral("csp-report"), cspReport.release());
 
     RefPtr<FormData> report = FormData::create(reportObject->toJSONString().utf8());
 

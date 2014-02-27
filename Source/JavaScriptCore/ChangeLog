@@ -1,3 +1,87 @@
+2014-02-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: JSContext inspection should report exceptions in the console
+        https://bugs.webkit.org/show_bug.cgi?id=128776
+
+        Reviewed by Timothy Hatcher.
+
+        When JavaScript API functions have an exception, let the inspector
+        know so it can log the JavaScript and Native backtrace that caused
+        the exception.
+
+        Include some clean up of ConsoleMessage and ScriptCallStack construction.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        (JSObjectMakeArray):
+        (JSObjectMakeDate):
+        (JSObjectMakeError):
+        (JSObjectMakeRegExp):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * API/JSValue.mm:
+        (reportExceptionToInspector):
+        (valueToArray):
+        (valueToDictionary):
+        * API/JSValueRef.cpp:
+        (JSValueIsEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueCreateJSONString):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        When seeing an exception, let the inspector know there was an exception.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::appendAPIBacktrace):
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+        Log API exceptions by also grabbing the native backtrace.
+
+        * inspector/ScriptCallStack.h:
+        * inspector/ScriptCallStack.cpp:
+        (Inspector::ScriptCallStack::firstNonNativeCallFrame):
+        (Inspector::ScriptCallStack::append):
+        Minor extensions to ScriptCallStack to make it easier to work with.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::ConsoleMessage):
+        (Inspector::ConsoleMessage::autogenerateMetadata):
+        Provide better default information if the first call frame was native.
+
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStack):
+        (Inspector::extractSourceInformationFromException):
+        (Inspector::createScriptCallStackFromException):
+        Perform the handling here of inserting a fake call frame for exceptions
+        if there was no call stack (e.g. a SyntaxError) or if the first call
+        frame had no information.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::ConsoleMessage):
+        (Inspector::ConsoleMessage::autogenerateMetadata):
+        * inspector/ConsoleMessage.h:
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStack):
+        (Inspector::createScriptCallStackForConsole):
+        * inspector/ScriptCallStackFactory.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::enable):
+        (Inspector::InspectorConsoleAgent::addMessageToConsole):
+        (Inspector::InspectorConsoleAgent::count):
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        (Inspector::JSGlobalObjectDebuggerAgent::breakpointActionLog):
+        ConsoleMessage cleanup.
+
 2014-02-27  David Kilzer  <ddkilzer@apple.com>
 
         Create symlink to /usr/local/bin/jsc during installation

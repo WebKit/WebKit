@@ -47,12 +47,17 @@ class JS_EXPORT_PRIVATE ScriptCallStack : public RefCounted<ScriptCallStack> {
 public:
     static const size_t maxCallStackSizeToCapture = 200;
     
+    static PassRefPtr<ScriptCallStack> create();
     static PassRefPtr<ScriptCallStack> create(Vector<ScriptCallFrame>&);
 
     ~ScriptCallStack();
 
     const ScriptCallFrame& at(size_t) const;
     size_t size() const;
+
+    const ScriptCallFrame* firstNonNativeCallFrame() const;
+
+    void append(const ScriptCallFrame&);
 
     bool isEqual(ScriptCallStack*) const;
 
@@ -61,6 +66,7 @@ public:
 #endif
 
 private:
+    ScriptCallStack();
     ScriptCallStack(Vector<ScriptCallFrame>&);
 
     Vector<ScriptCallFrame> m_frames;

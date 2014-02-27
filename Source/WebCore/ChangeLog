@@ -1,3 +1,40 @@
+2014-02-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: JSContext inspection should report exceptions in the console
+        https://bugs.webkit.org/show_bug.cgi?id=128776
+
+        Reviewed by Timothy Hatcher.
+
+        Include some clean up of ConsoleMessage and ScriptCallStack construction.
+
+        Covered by existing tests.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        Simplify code now that createStackTraceFromException handles it.
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::gatherSecurityPolicyViolationEventData):
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        ScriptCallStack can give us the first non-native callframe.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::buildInitiatorObject):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::breakpointActionLog):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        * page/Console.cpp:
+        (WebCore::internalAddMessage):
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+        (WebCore::Console::timeEnd):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::gatherSecurityPolicyViolationEventData):
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+
 2014-02-27  Andreas Kling  <akling@apple.com>
 
         Remove FeatureObserver.
