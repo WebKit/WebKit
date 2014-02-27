@@ -1045,6 +1045,15 @@ public:
         return jump;
     }
 
+    Jump branch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        load32(left, ARMRegisters::S1);
+        ensureSpace(3 * sizeof(ARMWord), 2 * sizeof(ARMWord));
+        dataLabel = moveWithPatch(initialRightValue, ARMRegisters::S0);
+        Jump jump = branch32(cond, ARMRegisters::S0, ARMRegisters::S1, true);
+        return jump;
+    }
+
     DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
     {
         DataLabelPtr dataLabel = moveWithPatch(initialValue, ARMRegisters::S1);
