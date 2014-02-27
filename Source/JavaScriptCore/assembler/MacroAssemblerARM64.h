@@ -2220,6 +2220,13 @@ public:
         return branch64(cond, left, dataTempRegister);
     }
 
+    ALWAYS_INLINE Jump branch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        dataLabel = DataLabel32(this);
+        moveWithPatch(initialRightValue, getCachedDataTempRegisterIDAndInvalidate());
+        return branch32(cond, left, dataTempRegister);
+    }
+
     PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(0))
     {
         m_makeJumpPatchable = true;
@@ -2248,6 +2255,14 @@ public:
     {
         m_makeJumpPatchable = true;
         Jump result = branchPtrWithPatch(cond, left, dataLabel, initialRightValue);
+        m_makeJumpPatchable = false;
+        return PatchableJump(result);
+    }
+
+    PatchableJump patchableBranch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        m_makeJumpPatchable = true;
+        Jump result = branch32WithPatch(cond, left, dataLabel, initialRightValue);
         m_makeJumpPatchable = false;
         return PatchableJump(result);
     }
@@ -2322,6 +2337,7 @@ public:
     RegisterID scratchRegisterForBlinding() { return getCachedDataTempRegisterIDAndInvalidate(); }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
+    static bool canJumpReplacePatchableBranch32WithPatch() { return false; }
     
     static CodeLocationLabel startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr label)
     {
@@ -2334,12 +2350,23 @@ public:
         return CodeLocationLabel();
     }
     
+    static CodeLocationLabel startOfPatchableBranch32WithPatchOnAddress(CodeLocationDataLabel32)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+        return CodeLocationLabel();
+    }
+    
     static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, RegisterID, void* initialValue)
     {
         reemitInitialMoveWithPatch(instructionStart.dataLocation(), initialValue);
     }
     
     static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel, Address, void*)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    static void revertJumpReplacementToPatchableBranch32WithPatch(CodeLocationLabel, Address, int32_t)
     {
         UNREACHABLE_FOR_PLATFORM();
     }

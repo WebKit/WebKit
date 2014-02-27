@@ -773,12 +773,15 @@
 		2A68295B1875F80500B6C3E2 /* CopyWriteBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A68295A1875F80500B6C3E2 /* CopyWriteBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A6F462617E959CE00C45C98 /* HeapOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A6F462517E959CE00C45C98 /* HeapOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A7A58EF1808A4C40020BDF7 /* DeferGC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */; };
+		2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AAD964A18569417001F93BE /* RecursiveAllocationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAD964918569417001F93BE /* RecursiveAllocationScope.h */; };
 		2AC922BB18A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */; };
 		2AC922BC18A16182003CE0FB /* FTLDWARFDebugLineInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */; };
 		2ACCF3DE185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ACCF3DC185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp */; };
 		2ACCF3DF185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ACCF3DD185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h */; };
 		2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD8932917E3868F00668276 /* HeapIterationScope.h */; };
+		2AF7382C18BBBF92008A5A37 /* StructureIDTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */; };
+		2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		371D842D17C98B6E00ECF994 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 371D842C17C98B6E00ECF994 /* libz.dylib */; };
 		41359CF30FDD89AD00206180 /* DateConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateConversion.h */; };
 		4443AE3316E188D90076F110 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
@@ -2214,12 +2217,15 @@
 		2A68295A1875F80500B6C3E2 /* CopyWriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyWriteBarrier.h; sourceTree = "<group>"; };
 		2A6F462517E959CE00C45C98 /* HeapOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapOperation.h; sourceTree = "<group>"; };
 		2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferGC.cpp; sourceTree = "<group>"; };
+		2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDBlob.h; sourceTree = "<group>"; };
 		2AAD964918569417001F93BE /* RecursiveAllocationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecursiveAllocationScope.h; sourceTree = "<group>"; };
 		2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLDWARFDebugLineInfo.cpp; path = ftl/FTLDWARFDebugLineInfo.cpp; sourceTree = "<group>"; };
 		2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLDWARFDebugLineInfo.h; path = ftl/FTLDWARFDebugLineInfo.h; sourceTree = "<group>"; };
 		2ACCF3DC185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStoreBarrierElisionPhase.cpp; path = dfg/DFGStoreBarrierElisionPhase.cpp; sourceTree = "<group>"; };
 		2ACCF3DD185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStoreBarrierElisionPhase.h; path = dfg/DFGStoreBarrierElisionPhase.h; sourceTree = "<group>"; };
 		2AD8932917E3868F00668276 /* HeapIterationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapIterationScope.h; sourceTree = "<group>"; };
+		2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureIDTable.cpp; sourceTree = "<group>"; };
+		2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDTable.h; sourceTree = "<group>"; };
 		371D842C17C98B6E00ECF994 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		451539B812DC994500EF7AC4 /* Yarr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Yarr.h; path = yarr/Yarr.h; sourceTree = "<group>"; };
@@ -3757,6 +3763,8 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
+				2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */,
+				2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -4140,6 +4148,7 @@
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
 				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
+				2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -4830,6 +4839,7 @@
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
+				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */,
 				0F8335B81639C1EA001443B5 /* ArrayAllocationProfile.h in Headers */,
@@ -4843,6 +4853,7 @@
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
 				BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */,
+				2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */,
 				0FB7F39615ED8E4600F167B2 /* ArrayStorage.h in Headers */,
 				9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */,
 				86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */,
@@ -6282,6 +6293,7 @@
 				A5CEEE14187F3BAD00E55C99 /* InspectorAgent.cpp in Sources */,
 				A593CF86184038CA00BFCE27 /* InspectorAgentRegistry.cpp in Sources */,
 				A593CF7C1840360300BFCE27 /* InspectorBackendDispatcher.cpp in Sources */,
+				2AF7382C18BBBF92008A5A37 /* StructureIDTable.cpp in Sources */,
 				A5FD0081189B191A00633231 /* InspectorConsoleAgent.cpp in Sources */,
 				A57D23E51890CEBF0031C7FA /* InspectorDebuggerAgent.cpp in Sources */,
 				A532438718568335002ED692 /* InspectorJSBackendDispatchers.cpp in Sources */,

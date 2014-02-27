@@ -78,7 +78,7 @@ protected:
     JSValueRegs m_base;
     JSValueRegs m_value;
     
-    MacroAssembler::DataLabelPtr m_structureImm;
+    MacroAssembler::DataLabel32 m_structureImm;
     MacroAssembler::PatchableJump m_structureCheck;
     MacroAssembler::ConvertibleLoadLabel m_propertyStorageLoad;
     AssemblerLabel m_loadOrStore;

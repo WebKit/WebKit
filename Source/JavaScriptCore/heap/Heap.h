@@ -38,6 +38,7 @@
 #include "MarkedSpace.h"
 #include "Options.h"
 #include "SlotVisitor.h"
+#include "StructureIDTable.h"
 #include "WeakHandleOwner.h"
 #include "WriteBarrierBuffer.h"
 #include "WriteBarrierSupport.h"
@@ -201,6 +202,9 @@ namespace JSC {
         
         bool isDeferred() const { return !!m_deferralDepth || Options::disableGC(); }
 
+        BlockAllocator& blockAllocator();
+        StructureIDTable& structureIDTable() { return m_structureIDTable; }
+
 #if USE(CF)
         template<typename T> void releaseSoon(RetainPtr<T>&&);
 #endif
@@ -259,7 +263,6 @@ namespace JSC {
         size_t sizeAfterCollect();
 
         JSStack& stack();
-        BlockAllocator& blockAllocator();
         
         JS_EXPORT_PRIVATE void incrementDeferralDepth();
         void decrementDeferralDepth();
@@ -280,6 +283,7 @@ namespace JSC {
         
         HeapOperation m_operationInProgress;
         BlockAllocator m_blockAllocator;
+        StructureIDTable m_structureIDTable;
         MarkedSpace m_objectSpace;
         CopiedSpace m_storageSpace;
         GCIncomingRefCountedSet<ArrayBuffer> m_arrayBuffers;
@@ -391,18 +395,6 @@ namespace JSC {
 #else
         return false;
 #endif
-    }
-
-    inline void Heap::writeBarrier(const JSCell* from, JSCell* to)
-    {
-#if ENABLE(WRITE_BARRIER_PROFILING)
-        WriteBarrierCounters::countWriteBarrier();
-#endif
-        if (!from || !isMarked(from))
-            return;
-        if (!to || isMarked(to))
-            return;
-        addToRememberedSet(from);
     }
 
     inline void Heap::writeBarrier(const JSCell* from, JSValue to)

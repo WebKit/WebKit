@@ -106,9 +106,9 @@ static void compileStub(
         if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
             if (ArrayProfile* arrayProfile = jit.baselineCodeBlockFor(codeOrigin)->getArrayProfile(codeOrigin.bytecodeIndex)) {
-                jit.loadPtr(MacroAssembler::Address(GPRInfo::regT0, JSCell::structureOffset()), GPRInfo::regT1);
-                jit.storePtr(GPRInfo::regT1, arrayProfile->addressOfLastSeenStructure());
-                jit.load8(MacroAssembler::Address(GPRInfo::regT1, Structure::indexingTypeOffset()), GPRInfo::regT1);
+                jit.load32(MacroAssembler::Address(GPRInfo::regT0, JSCell::structureIDOffset()), GPRInfo::regT1);
+                jit.store32(GPRInfo::regT1, arrayProfile->addressOfLastSeenStructureID());
+                jit.load8(MacroAssembler::Address(GPRInfo::regT0, JSCell::indexingTypeOffset()), GPRInfo::regT1);
                 jit.move(MacroAssembler::TrustedImm32(1), GPRInfo::regT2);
                 jit.lshift32(GPRInfo::regT1, GPRInfo::regT2);
                 jit.or32(GPRInfo::regT2, MacroAssembler::AbsoluteAddress(arrayProfile->addressOfArrayModes()));

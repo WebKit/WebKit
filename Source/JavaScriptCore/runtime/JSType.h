@@ -23,7 +23,7 @@
 
 namespace JSC {
 
-enum JSType {
+enum JSType : uint8_t {
     UnspecifiedType,
     UndefinedType,
     BooleanType,
@@ -55,6 +55,18 @@ enum JSType {
     ErrorInstanceType,
     ProxyType,
     WithScopeType,
+    ArgumentsType,
+
+    Int8ArrayType,
+    Int16ArrayType,
+    Int32ArrayType,
+    Uint8ArrayType,
+    Uint8ClampedArrayType,
+    Uint16ArrayType,
+    Uint32ArrayType,
+    Float32ArrayType,
+    Float64ArrayType,
+    DataViewType,
 
     NameScopeObjectType,
     // VariableObjectType must be less than MOST of the types of its subclasses and only its subclasses.
@@ -63,6 +75,8 @@ enum JSType {
     GlobalObjectType,
     ActivationObjectType,
 };
+
+COMPILE_ASSERT(sizeof(JSType) == sizeof(uint8_t), sizeof_jstype_is_one_byte);
 
 } // namespace JSC
 

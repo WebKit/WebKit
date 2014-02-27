@@ -38,12 +38,17 @@
 namespace JSC {
 
 inline JSCell::JSCell(CreatingEarlyCellTag)
+    : m_gcData(0)
 {
     ASSERT(!isCompilationThread());
 }
 
-inline JSCell::JSCell(VM& vm, Structure* structure)
-    : m_structure(vm, this, structure)
+inline JSCell::JSCell(VM&, Structure* structure)
+    : m_structureID(structure->id())
+    , m_indexingType(structure->indexingType())
+    , m_type(structure->typeInfo().type())
+    , m_flags(structure->typeInfo().inlineTypeFlags())
+    , m_gcData(0)
 {
     ASSERT(!isCompilationThread());
 }
@@ -56,7 +61,7 @@ inline void JSCell::finishCreation(VM& vm)
 #else
     UNUSED_PARAM(vm);
 #endif
-    ASSERT(m_structure);
+    ASSERT(m_structureID);
 }
 
 inline void JSCell::finishCreation(VM& vm, Structure* structure, CreatingEarlyCellTag)
@@ -64,23 +69,47 @@ inline void JSCell::finishCreation(VM& vm, Structure* structure, CreatingEarlyCe
 #if ENABLE(GC_VALIDATION)
     ASSERT(vm.isInitializingObject());
     vm.setInitializingObjectClass(0);
-    if (structure)
+    if (structure) {
 #endif
-        m_structure.setEarlyValue(vm, this, structure);
+        m_structureID = structure->id();
+        m_indexingType = structure->indexingType();
+        m_type = structure->typeInfo().type();
+        m_flags = structure->typeInfo().inlineTypeFlags();
+#if ENABLE(GC_VALIDATION)
+    }
+#else
+    UNUSED_PARAM(vm);
+#endif
     // Very first set of allocations won't have a real structure.
-    ASSERT(m_structure || !vm.structureStructure);
+    ASSERT(m_structureID || !vm.structureStructure);
+}
+
+inline JSType JSCell::type() const
+{
+    return m_type;
+}
+
+inline IndexingType JSCell::indexingType() const
+{
+    return m_indexingType;
 }
 
 inline Structure* JSCell::structure() const
 {
-    return m_structure.get();
+    return Heap::heap(this)->structureIDTable().get(m_structureID);
+}
+
+inline Structure* JSCell::structure(VM& vm) const
+{
+    return vm.heap.structureIDTable().get(m_structureID);
 }
 
 inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     MARK_LOG_PARENT(visitor, cell);
 
-    visitor.append(&cell->m_structure);
+    Structure* structure = cell->structure(visitor.vm());
+    visitor.appendUnbarrieredPointer(&structure);
 }
 
 template<typename T>
@@ -116,37 +145,41 @@ inline bool isZapped(const JSCell* cell)
 
 inline bool JSCell::isObject() const
 {
-    return m_structure->isObject();
+    return TypeInfo::isObject(m_type);
 }
 
 inline bool JSCell::isString() const
 {
-    return m_structure->typeInfo().type() == StringType;
+    return m_type == StringType;
 }
 
 inline bool JSCell::isGetterSetter() const
 {
-    return m_structure->typeInfo().type() == GetterSetterType;
+    return m_type == GetterSetterType;
 }
 
 inline bool JSCell::isProxy() const
 {
-    return structure()->typeInfo().type() == ProxyType;
+    return m_type == ProxyType;
 }
 
 inline bool JSCell::isAPIValueWrapper() const
 {
-    return m_structure->typeInfo().type() == APIValueWrapperType;
+    return m_type == APIValueWrapperType;
 }
 
 inline void JSCell::setStructure(VM& vm, Structure* structure)
 {
     ASSERT(structure->typeInfo().overridesVisitChildren() == this->structure()->typeInfo().overridesVisitChildren());
-    ASSERT(structure->classInfo() == m_structure->classInfo());
-    ASSERT(!m_structure
-        || m_structure->transitionWatchpointSetHasBeenInvalidated()
-        || m_structure.get() == structure);
-    m_structure.set(vm, this, structure);
+    ASSERT(structure->classInfo() == this->structure()->classInfo());
+    ASSERT(!this->structure()
+        || this->structure()->transitionWatchpointSetHasBeenInvalidated()
+        || Heap::heap(this)->structureIDTable().get(structure->id()) == structure);
+    vm.heap.writeBarrier(this, structure);
+    m_structureID = structure->id();
+    m_flags = structure->typeInfo().inlineTypeFlags();
+    m_type = structure->typeInfo().type();
+    m_indexingType = structure->indexingType();
 }
 
 inline const MethodTable* JSCell::methodTableForDestruction() const
@@ -156,10 +189,20 @@ inline const MethodTable* JSCell::methodTableForDestruction() const
 
 inline const MethodTable* JSCell::methodTable() const
 {
-    if (Structure* rootStructure = m_structure->structure())
+    Structure* structure = this->structure();
+    if (Structure* rootStructure = structure->structure())
         RELEASE_ASSERT(rootStructure == rootStructure->structure());
 
-    return &classInfo()->methodTable;
+    return &structure->classInfo()->methodTable;
+}
+
+inline const MethodTable* JSCell::methodTable(VM& vm) const
+{
+    Structure* structure = this->structure(vm);
+    if (Structure* rootStructure = structure->structure())
+        RELEASE_ASSERT(rootStructure == rootStructure->structure());
+
+    return &structure->classInfo()->methodTable;
 }
 
 inline bool JSCell::inherits(const ClassInfo* info) const
@@ -195,6 +238,22 @@ inline TriState JSCell::pureToBoolean() const
     if (isString()) 
         return static_cast<const JSString*>(this)->toBoolean() ? TrueTriState : FalseTriState;
     return MixedTriState;
+}
+
+inline void Heap::writeBarrier(const JSCell* from, JSCell* to)
+{
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    WriteBarrierCounters::countWriteBarrier();
+#endif
+    if (!from || !from->isMarked()) {
+        ASSERT(!from || !isMarked(from));
+        return;
+    }
+    if (!to || to->isMarked()) {
+        ASSERT(!to || isMarked(to));
+        return;
+    }
+    addToRememberedSet(from);
 }
 
 } // namespace JSC

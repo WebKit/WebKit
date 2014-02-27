@@ -120,23 +120,14 @@ protected:
         if (m_op == ArrayifyToStructure) {
             ASSERT(m_structure);
             m_badIndexingTypeJump.fill(
-                jit, jit->m_jit.branchWeakPtr(
-                    MacroAssembler::NotEqual,
-                    MacroAssembler::Address(m_baseGPR, JSCell::structureOffset()),
-                    m_structure));
+                jit, jit->m_jit.branchWeakStructure(MacroAssembler::NotEqual, MacroAssembler::Address(m_baseGPR, JSCell::structureIDOffset()), m_structure));
         } else {
-            // Alas, we need to reload the structure because silent spilling does not save
-            // temporaries. Nor would it be useful for it to do so. Either way we're talking
-            // about a load.
-            jit->m_jit.loadPtr(
-                MacroAssembler::Address(m_baseGPR, JSCell::structureOffset()), m_structureGPR);
-            
             // Finally, check that we have the kind of array storage that we wanted to get.
             // Note that this is a backwards speculation check, which will result in the 
             // bytecode operation corresponding to this arrayification being reexecuted.
             // That's fine, since arrayification is not user-visible.
             jit->m_jit.load8(
-                MacroAssembler::Address(m_structureGPR, Structure::indexingTypeOffset()), m_structureGPR);
+                MacroAssembler::Address(m_baseGPR, JSCell::indexingTypeOffset()), m_structureGPR);
             m_badIndexingTypeJump.fill(
                 jit, jit->jumpSlowForUnwantedArrayMode(m_structureGPR, m_arrayMode));
         }

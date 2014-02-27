@@ -366,6 +366,11 @@ public:
         return PatchableJump(branchPtrWithPatch(cond, left, dataLabel, initialRightValue));
     }
 
+    PatchableJump patchableBranch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        return PatchableJump(branch32WithPatch(cond, left, dataLabel, initialRightValue));
+    }
+
 #if !CPU(ARM_TRADITIONAL)
     PatchableJump patchableJump()
     {
@@ -380,6 +385,11 @@ public:
     PatchableJump patchableBranch32(RelationalCondition cond, RegisterID reg, TrustedImm32 imm)
     {
         return PatchableJump(branch32(cond, reg, imm));
+    }
+
+    PatchableJump patchableBranch32(RelationalCondition cond, Address address, TrustedImm32 imm)
+    {
+        return PatchableJump(branch32(cond, address, imm));
     }
 #endif
 #endif

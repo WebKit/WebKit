@@ -57,7 +57,7 @@ JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
         return jsUndefined();
 
     CallData callData;
-    CallType callType = getter->methodTable()->getCallData(getter, callData);
+    CallType callType = getter->methodTable(exec->vm())->getCallData(getter, callData);
     return call(exec, getter, callType, callData, base, ArgList());
 }
 
@@ -74,7 +74,7 @@ void callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue val
     args.append(value);
 
     CallData callData;
-    CallType callType = setter->methodTable()->getCallData(setter, callData);
+    CallType callType = setter->methodTable(exec->vm())->getCallData(setter, callData);
     call(exec, setter, callType, callData, base, args);
 }
 

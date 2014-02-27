@@ -698,6 +698,8 @@ static id containerValueToObject(JSGlobalContextRef context, JSContainerConverto
             ASSERT([current.objc isKindOfClass:[NSMutableDictionary class]]);
             NSMutableDictionary *dictionary = (NSMutableDictionary *)current.objc;
 
+            JSC::APIEntryShim entryShim(toJS(context));
+
             JSPropertyNameArrayRef propertyNameArray = JSObjectCopyPropertyNames(context, js);
             size_t length = JSPropertyNameArrayGetCount(propertyNameArray);
 

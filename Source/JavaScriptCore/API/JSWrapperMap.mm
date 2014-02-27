@@ -625,6 +625,7 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     JSValueRef exception = 0;
     JSObjectRef object = JSValueToObject(context, value, &exception);
     ASSERT(!exception);
+    JSC::APIEntryShim entryShim(toJS(context));
     if (toJS(object)->inherits(JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::info()))
         return (id)JSC::jsCast<JSC::JSAPIWrapperObject*>(toJS(object))->wrappedObject();
     if (id target = tryUnwrapConstructor(object))

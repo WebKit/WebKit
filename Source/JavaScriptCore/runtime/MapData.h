@@ -96,7 +96,7 @@ public:
     void clear();
 
     DECLARE_INFO;
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
+    static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal | Base::StructureFlags;
 
 private:
     typedef WTF::UnsignedWithZeroKeyHashTraits<int32_t> IndexTraits;

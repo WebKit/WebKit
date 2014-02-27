@@ -531,6 +531,13 @@ macro loadConstantOrVariablePayloadUnchecked(index, payload)
         payload)
 end
 
+macro storeStructureWithTypeInfo(cell, structure, scratch)
+    storep structure, JSCell::m_structureID[cell]
+
+    loadi Structure::m_blob + StructureIDBlob::u.words.word2[structure], scratch
+    storei scratch, JSCell::m_indexingType[cell]
+end
+
 macro writeBarrierOnOperand(cellOperand)
     if GGC
         loadisFromInstruction(cellOperand, t1)
@@ -748,10 +755,9 @@ _llint_op_to_this:
     loadi 4[PC], t0
     bineq TagOffset[cfr, t0, 8], CellTag, .opToThisSlow
     loadi PayloadOffset[cfr, t0, 8], t0
-    loadp JSCell::m_structure[t0], t0
-    bbneq Structure::m_typeInfo + TypeInfo::m_type[t0], FinalObjectType, .opToThisSlow
+    bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
     loadpFromInstruction(2, t2)
-    bpneq t0, t2, .opToThisSlow
+    bpneq JSCell::m_structureID[t0], t2, .opToThisSlow
     dispatch(3)
 
 .opToThisSlow:
@@ -868,8 +874,7 @@ _llint_op_eq_null:
     loadi TagOffset[cfr, t0, 8], t1
     loadi PayloadOffset[cfr, t0, 8], t0
     bineq t1, CellTag, .opEqNullImmediate
-    loadp JSCell::m_structure[t0], t1
-    btbnz Structure::m_typeInfo + TypeInfo::m_flags[t1], MasqueradesAsUndefined, .opEqNullMasqueradesAsUndefined
+    btbnz JSCell::m_flags[t0], MasqueradesAsUndefined, .opEqNullMasqueradesAsUndefined
     move 0, t1
     jmp .opEqNullNotImmediate
 .opEqNullMasqueradesAsUndefined:
@@ -915,8 +920,7 @@ _llint_op_neq_null:
     loadi TagOffset[cfr, t0, 8], t1
     loadi PayloadOffset[cfr, t0, 8], t0
     bineq t1, CellTag, .opNeqNullImmediate
-    loadp JSCell::m_structure[t0], t1
-    btbnz Structure::m_typeInfo + TypeInfo::m_flags[t1], MasqueradesAsUndefined, .opNeqNullMasqueradesAsUndefined
+    btbnz JSCell::m_flags[t0], MasqueradesAsUndefined, .opNeqNullMasqueradesAsUndefined
     move 1, t1
     jmp .opNeqNullNotImmediate
 .opNeqNullMasqueradesAsUndefined:
@@ -942,10 +946,8 @@ macro strictEq(equalityOperation, slowPath)
     bineq t2, t3, .slow
     bib t2, LowestTag, .slow
     bineq t2, CellTag, .notString
-    loadp JSCell::m_structure[t0], t2
-    loadp JSCell::m_structure[t1], t3
-    bbneq Structure::m_typeInfo + TypeInfo::m_type[t2], StringType, .notString
-    bbeq Structure::m_typeInfo + TypeInfo::m_type[t3], StringType, .slow
+    bbneq JSCell::m_type[t0], StringType, .notString
+    bbeq JSCell::m_type[t1], StringType, .slow
 .notString:
     loadi 4[PC], t2
     equalityOperation(t0, t1, t0)
@@ -1225,8 +1227,7 @@ _llint_op_check_has_instance:
     traceExecution()
     loadi 12[PC], t1
     loadConstantOrVariablePayload(t1, CellTag, t0, .opCheckHasInstanceSlow)
-    loadp JSCell::m_structure[t0], t0
-    btbz Structure::m_typeInfo + TypeInfo::m_flags[t0], ImplementsDefaultHasInstance, .opCheckHasInstanceSlow
+    btbz JSCell::m_flags[t0], ImplementsDefaultHasInstance, .opCheckHasInstanceSlow
     dispatch(5)
 
 .opCheckHasInstanceSlow:
@@ -1240,15 +1241,14 @@ _llint_op_instanceof:
     loadi 12[PC], t0
     loadi 4[PC], t3
     loadConstantOrVariablePayload(t0, CellTag, t1, .opInstanceofSlow)
-    loadp JSCell::m_structure[t1], t2
-    bbb Structure::m_typeInfo + TypeInfo::m_type[t2], ObjectType, .opInstanceofSlow
+    bbb JSCell::m_type[t1], ObjectType, .opInstanceofSlow
     loadi 8[PC], t0
     loadConstantOrVariablePayload(t0, CellTag, t2, .opInstanceofSlow)
     
     # Register state: t1 = prototype, t2 = value
     move 1, t0
 .opInstanceofLoop:
-    loadp JSCell::m_structure[t2], t2
+    loadp JSCell::m_structureID[t2], t2
     loadi Structure::m_prototype + PayloadOffset[t2], t2
     bpeq t2, t1, .opInstanceofDone
     btinz t2, .opInstanceofLoop
@@ -1275,12 +1275,12 @@ _llint_op_is_undefined:
     storei t3, PayloadOffset[cfr, t0, 8]
     dispatch(3)
 .opIsUndefinedCell:
-    loadp JSCell::m_structure[t3], t1
-    btbnz Structure::m_typeInfo + TypeInfo::m_flags[t1], MasqueradesAsUndefined, .opIsUndefinedMasqueradesAsUndefined
+    btbnz JSCell::m_flags[t3], MasqueradesAsUndefined, .opIsUndefinedMasqueradesAsUndefined
     move 0, t1
     storei t1, PayloadOffset[cfr, t0, 8]
     dispatch(3)
 .opIsUndefinedMasqueradesAsUndefined:
+    loadp JSCell::m_structureID[t3], t1
     loadp CodeBlock[cfr], t3
     loadp CodeBlock::m_globalObject[t3], t3
     cpeq Structure::m_globalObject[t1], t3, t1
@@ -1318,8 +1318,7 @@ _llint_op_is_string:
     loadConstantOrVariable(t1, t0, t3)
     storei BooleanTag, TagOffset[cfr, t2, 8]
     bineq t0, CellTag, .opIsStringNotCell
-    loadp JSCell::m_structure[t3], t0
-    cbeq Structure::m_typeInfo + TypeInfo::m_type[t0], StringType, t1
+    cbeq JSCell::m_type[t3], StringType, t1
     storei t1, PayloadOffset[cfr, t2, 8]
     dispatch(3)
 .opIsStringNotCell:
@@ -1387,7 +1386,7 @@ macro getById(getPropertyStorage)
         t3,
         t0,
         macro (propertyStorage, scratch)
-            bpneq JSCell::m_structure[t3], t1, .opGetByIdSlow
+            bpneq JSCell::m_structureID[t3], t1, .opGetByIdSlow
             loadi 4[PC], t1
             loadi TagOffset[propertyStorage, t2], scratch
             loadi PayloadOffset[propertyStorage, t2], t2
@@ -1415,7 +1414,7 @@ _llint_op_get_array_length:
     loadi 8[PC], t0
     loadp 16[PC], t1
     loadConstantOrVariablePayload(t0, CellTag, t3, .opGetArrayLengthSlow)
-    loadp JSCell::m_structure[t3], t2
+    loadp JSCell::m_structureID[t3], t2
     arrayProfile(t2, t1, t0)
     btiz t2, IsArray, .opGetArrayLengthSlow
     btiz t2, IndexingShapeMask, .opGetArrayLengthSlow
@@ -1460,7 +1459,7 @@ macro putById(getPropertyStorage)
         t0,
         t3,
         macro (propertyStorage, scratch)
-            bpneq JSCell::m_structure[t0], t1, .opPutByIdSlow
+            bpneq JSCell::m_structureID[t0], t1, .opPutByIdSlow
             loadi 20[PC], t1
             loadConstantOrVariable2Reg(t2, scratch, t2)
             storei scratch, TagOffset[propertyStorage, t1]
@@ -1488,7 +1487,7 @@ macro putByIdTransition(additionalChecks, getPropertyStorage)
     loadi 16[PC], t1
     loadConstantOrVariablePayload(t3, CellTag, t0, .opPutByIdSlow)
     loadi 12[PC], t2
-    bpneq JSCell::m_structure[t0], t1, .opPutByIdSlow
+    bpneq JSCell::m_structureID[t0], t1, .opPutByIdSlow
     additionalChecks(t1, t3, .opPutByIdSlow)
     loadi 20[PC], t1
     getPropertyStorage(
@@ -1500,7 +1499,7 @@ macro putByIdTransition(additionalChecks, getPropertyStorage)
             storei t1, TagOffset[t3]
             loadi 24[PC], t1
             storei t2, PayloadOffset[t3]
-            storep t1, JSCell::m_structure[t0]
+            storep t1, JSCell::m_structureID[t0]
             dispatch(9)
         end)
 
@@ -1522,7 +1521,7 @@ macro structureChainChecks(oldStructure, scratch, slowPath)
     bieq Structure::m_prototype + TagOffset[oldStructure], NullTag, .done
 .loop:
     loadi Structure::m_prototype + PayloadOffset[oldStructure], protoCell
-    loadp JSCell::m_structure[protoCell], oldStructure
+    loadp JSCell::m_structureID[protoCell], oldStructure
     bpneq oldStructure, [scratch], slowPath
     addp 4, scratch
     bineq Structure::m_prototype + TagOffset[oldStructure], NullTag, .loop
@@ -1549,7 +1548,7 @@ _llint_op_get_by_val:
     traceExecution()
     loadi 8[PC], t2
     loadConstantOrVariablePayload(t2, CellTag, t0, .opGetByValSlow)
-    loadp JSCell::m_structure[t0], t2
+    loadp JSCell::m_structureID[t0], t2
     loadp 16[PC], t3
     arrayProfile(t2, t3, t1)
     loadi 12[PC], t3
@@ -1633,7 +1632,7 @@ _llint_op_get_by_pname:
     loadConstantOrVariablePayload(t0, CellTag, t2, .opGetByPnameSlow)
     loadi 20[PC], t0
     loadi PayloadOffset[cfr, t0, 8], t3
-    loadp JSCell::m_structure[t2], t0
+    loadp JSCell::m_structureID[t2], t0
     bpneq t0, JSPropertyNameIterator::m_cachedStructure[t3], .opGetByPnameSlow
     loadi 24[PC], t0
     loadi [cfr, t0, 8], t0
@@ -1675,7 +1674,7 @@ macro putByVal(holeCheck, slowPath)
     writeBarrierOnOperands(1, 3)
     loadi 4[PC], t0
     loadConstantOrVariablePayload(t0, CellTag, t1, .opPutByValSlow)
-    loadp JSCell::m_structure[t1], t2
+    loadp JSCell::m_structureID[t1], t2
     loadp 16[PC], t3
     arrayProfile(t2, t3, t0)
     loadi 8[PC], t0
@@ -1781,8 +1780,8 @@ macro equalNull(cellHandler, immediateHandler)
     loadi TagOffset[cfr, t0, 8], t1
     loadi PayloadOffset[cfr, t0, 8], t0
     bineq t1, CellTag, .immediate
-    loadp JSCell::m_structure[t0], t2
-    cellHandler(t2, Structure::m_typeInfo + TypeInfo::m_flags[t2], .target)
+    loadp JSCell::m_structureID[t0], t2
+    cellHandler(t2, JSCell::m_flags[t0], .target)
     dispatch(3)
 
 .target:
@@ -1912,8 +1911,7 @@ _llint_op_switch_char:
     loadp CodeBlock::RareData::m_switchJumpTables + VectorBufferOffset[t2], t2
     addp t3, t2
     bineq t1, CellTag, .opSwitchCharFallThrough
-    loadp JSCell::m_structure[t0], t1
-    bbneq Structure::m_typeInfo + TypeInfo::m_type[t1], StringType, .opSwitchCharFallThrough
+    bbneq JSCell::m_type[t0], StringType, .opSwitchCharFallThrough
     bineq JSString::m_length[t0], 1, .opSwitchCharFallThrough
     loadp JSString::m_value[t0], t0
     btpz  t0, .opSwitchOnRope
@@ -1961,9 +1959,9 @@ macro arrayProfileForCall()
     negi t3
     bineq ThisArgumentOffset + TagOffset[cfr, t3, 8], CellTag, .done
     loadi ThisArgumentOffset + PayloadOffset[cfr, t3, 8], t0
-    loadp JSCell::m_structure[t0], t0
+    loadp JSCell::m_structureID[t0], t0
     loadpFromInstruction(CallOpCodeSize - 2, t1)
-    storep t0, ArrayProfile::m_lastSeenStructure[t1]
+    storep t0, ArrayProfile::m_lastSeenStructureID[t1]
 .done:
 end
 
@@ -2026,8 +2024,7 @@ _llint_op_ret_object_or_this:
     loadi 4[PC], t2
     loadConstantOrVariable(t2, t1, t0)
     bineq t1, CellTag, .opRetObjectOrThisNotObject
-    loadp JSCell::m_structure[t0], t2
-    bbb Structure::m_typeInfo + TypeInfo::m_type[t2], ObjectType, .opRetObjectOrThisNotObject
+    bbb JSCell::m_type[t0], ObjectType, .opRetObjectOrThisNotObject
     doReturn()
 
 .opRetObjectOrThisNotObject:
@@ -2042,8 +2039,7 @@ _llint_op_to_primitive:
     loadi 4[PC], t3
     loadConstantOrVariable(t2, t1, t0)
     bineq t1, CellTag, .opToPrimitiveIsImm
-    loadp JSCell::m_structure[t0], t2
-    bbneq Structure::m_typeInfo + TypeInfo::m_type[t2], StringType, .opToPrimitiveSlowCase
+    bbneq JSCell::m_type[t0], StringType, .opToPrimitiveSlowCase
 .opToPrimitiveIsImm:
     storei t1, TagOffset[cfr, t3, 8]
     storei t0, PayloadOffset[cfr, t3, 8]
@@ -2071,7 +2067,7 @@ _llint_op_next_pname:
     storei t3, PayloadOffset[cfr, t1, 8]
     loadi 8[PC], t3
     loadi PayloadOffset[cfr, t3, 8], t3
-    loadp JSCell::m_structure[t3], t1
+    loadp JSCell::m_structureID[t3], t1
     bpneq t1, JSPropertyNameIterator::m_cachedStructure[t2], .opNextPnameSlow
     loadp JSPropertyNameIterator::m_cachedPrototypeChain[t2], t0
     loadp StructureChain::m_vector[t0], t0
@@ -2079,7 +2075,7 @@ _llint_op_next_pname:
 .opNextPnameCheckPrototypeLoop:
     bieq Structure::m_prototype + TagOffset[t1], NullTag, .opNextPnameSlow
     loadp Structure::m_prototype + PayloadOffset[t1], t2
-    loadp JSCell::m_structure[t2], t1
+    loadp JSCell::m_structureID[t2], t1
     bpneq t1, [t0], .opNextPnameSlow
     addp 4, t0
     btpnz [t0], .opNextPnameCheckPrototypeLoop
@@ -2324,7 +2320,7 @@ macro loadWithStructureCheck(operand, slowPath)
     loadisFromInstruction(operand, t0)
     loadp [cfr, t0, 8], t0
     loadpFromInstruction(5, t1)
-    bpneq JSCell::m_structure[t0], t1, slowPath
+    bpneq JSCell::m_structureID[t0], t1, slowPath
 end
 
 macro getProperty()

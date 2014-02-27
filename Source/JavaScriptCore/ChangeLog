@@ -1,3 +1,560 @@
+2014-02-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Make JSCells have 32-bit Structure pointers
+        https://bugs.webkit.org/show_bug.cgi?id=123195
+
+        Reviewed by Filip Pizlo.
+
+        This patch changes JSCells such that they no longer have a full 64-bit Structure
+        pointer in their header. Instead they now have a 32-bit index into
+        a per-VM table of Structure pointers. 32-bit platforms still use normal Structure
+        pointers.
+
+        This change frees up an additional 32 bits of information in our object headers.
+        We then use this extra space to store the indexing type of the object, the JSType
+        of the object, some various type flags, and garbage collection data (e.g. mark bit).
+        Because this inline type information is now faster to read, it pays for the slowdown 
+        incurred by having to perform an extra indirection through the StructureIDTable.
+
+        This patch also threads a reference to the current VM through more of the C++ runtime
+        to offset the cost of having to look up the VM to get the actual Structure pointer.
+
+        * API/JSContext.mm:
+        (-[JSContext setException:]):
+        (-[JSContext wrapperForObjCObject:]):
+        (-[JSContext wrapperForJSObject:]):
+        * API/JSContextRef.cpp:
+        (JSContextGroupRelease):
+        (JSGlobalContextRelease):
+        * API/JSObjectRef.cpp:
+        (JSObjectIsFunction):
+        (JSObjectCopyPropertyNames):
+        * API/JSValue.mm:
+        (containerValueToObject):
+        * API/JSWrapperMap.mm:
+        (tryUnwrapObjcObject):
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::patchableBranch32WithPatch):
+        (JSC::MacroAssembler::patchableBranch32):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchPtrWithPatch):
+        (JSC::MacroAssemblerARM64::patchableBranch32WithPatch):
+        (JSC::MacroAssemblerARM64::canJumpReplacePatchableBranch32WithPatch):
+        (JSC::MacroAssemblerARM64::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerARM64::revertJumpReplacementToPatchableBranch32WithPatch):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::store8):
+        (JSC::MacroAssemblerARMv7::branch32WithPatch):
+        (JSC::MacroAssemblerARMv7::patchableBranch32WithPatch):
+        (JSC::MacroAssemblerARMv7::canJumpReplacePatchableBranch32WithPatch):
+        (JSC::MacroAssemblerARMv7::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerARMv7::revertJumpReplacementToPatchableBranch32WithPatch):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::branch32WithPatch):
+        (JSC::MacroAssemblerX86::canJumpReplacePatchableBranch32WithPatch):
+        (JSC::MacroAssemblerX86::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerX86::revertJumpReplacementToPatchableBranch32WithPatch):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::store32):
+        (JSC::MacroAssemblerX86_64::moveWithPatch):
+        (JSC::MacroAssemblerX86_64::branch32WithPatch):
+        (JSC::MacroAssemblerX86_64::canJumpReplacePatchableBranch32WithPatch):
+        (JSC::MacroAssemblerX86_64::startOfBranch32WithPatchOnRegister):
+        (JSC::MacroAssemblerX86_64::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerX86_64::revertJumpReplacementToPatchableBranch32WithPatch):
+        * assembler/RepatchBuffer.h:
+        (JSC::RepatchBuffer::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::RepatchBuffer::revertJumpReplacementToPatchableBranch32WithPatch):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::revertJumpTo_movq_i64r):
+        (JSC::X86Assembler::revertJumpTo_movl_i32r):
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::ArrayProfile):
+        (JSC::ArrayProfile::addressOfLastSeenStructureID):
+        (JSC::ArrayProfile::observeStructure):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::heap):
+        * bytecode/UnlinkedCodeBlock.h:
+        * debugger/Debugger.h:
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::branchWeakStructure):
+        (JSC::DFG::JITCompiler::branchStructurePtr):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::osrWriteBarrier):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        (JSC::DFG::SpeculativeJIT::compileToStringOnCell):
+        (JSC::DFG::SpeculativeJIT::speculateObject):
+        (JSC::DFG::SpeculativeJIT::speculateFinalObject):
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateString):
+        (JSC::DFG::SpeculativeJIT::speculateStringObject):
+        (JSC::DFG::SpeculativeJIT::speculateStringOrStringObject):
+        (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+        (JSC::DFG::SpeculativeJIT::emitSwitchString):
+        (JSC::DFG::SpeculativeJIT::genericWriteBarrier):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSCell):
+        (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGWorklist.cpp:
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCheckStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayifyToStructure):
+        (JSC::FTL::LowerDFGToLLVM::compilePutStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileToString):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiPutByOffset):
+        (JSC::FTL::LowerDFGToLLVM::speculateTruthyObject):
+        (JSC::FTL::LowerDFGToLLVM::allocateCell):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::LowerDFGToLLVM::isObject):
+        (JSC::FTL::LowerDFGToLLVM::isString):
+        (JSC::FTL::LowerDFGToLLVM::isArrayType):
+        (JSC::FTL::LowerDFGToLLVM::hasClassInfo):
+        (JSC::FTL::LowerDFGToLLVM::isType):
+        (JSC::FTL::LowerDFGToLLVM::speculateStringOrStringObject):
+        (JSC::FTL::LowerDFGToLLVM::speculateStringObjectForCell):
+        (JSC::FTL::LowerDFGToLLVM::speculateStringObjectForStructureID):
+        (JSC::FTL::LowerDFGToLLVM::speculateNonNullObject):
+        (JSC::FTL::LowerDFGToLLVM::loadMarkByte):
+        (JSC::FTL::LowerDFGToLLVM::loadStructure):
+        (JSC::FTL::LowerDFGToLLVM::weakStructure):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::store8):
+        * heap/GCAssertions.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::getConservativeRegisterRoots):
+        (JSC::Heap::collect):
+        (JSC::Heap::writeBarrier):
+        * heap/Heap.h:
+        (JSC::Heap::structureIDTable):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::forEachBlock):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::internalAppend):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfCellNotObject):
+        (JSC::AssemblyHelpers::genericWriteBarrier):
+        (JSC::AssemblyHelpers::emitLoadStructure):
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::generateFastPathChecks):
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitLoadCharacterString):
+        (JSC::JIT::checkStructure):
+        (JSC::JIT::emitJumpIfCellNotObject):
+        (JSC::JIT::emitAllocateJSObject):
+        (JSC::JIT::emitArrayProfilingSiteWithCell):
+        (JSC::JIT::emitArrayProfilingSiteForBytecodeIndexWithCell):
+        (JSC::JIT::branchStructure):
+        (JSC::branchStructure):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_check_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_is_string):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emitSlow_op_to_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_check_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_is_string):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emit_op_to_this):
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_get_by_pname):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitLoadWithStructureCheck):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::checkMarkWord):
+        (JSC::JIT::emitWriteBarrier):
+        (JSC::JIT::addStructureTransitionCheck):
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_pname):
+        (JSC::JIT::emitLoadWithStructureCheck):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitJumpIfNotType):
+        * jit/Repatch.cpp:
+        (JSC::repatchByIdSelfAccess):
+        (JSC::addStructureTransitionCheck):
+        (JSC::replaceWithJump):
+        (JSC::generateProtoChainAccessStub):
+        (JSC::tryCacheGetByID):
+        (JSC::tryBuildGetByIDList):
+        (JSC::writeBarrier):
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStub):
+        (JSC::tryBuildPutByIdList):
+        (JSC::tryRepatchIn):
+        (JSC::linkClosureCall):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::loadJSStringArgument):
+        (JSC::SpecializedThunkJIT::loadArgumentWithSpecificClass):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualForThunkGenerator):
+        (JSC::arrayIteratorNextThunkGenerator):
+        * jit/UnusedPointer.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::createStrictModeCallerIfNecessary):
+        (JSC::Arguments::createStrictModeCalleeIfNecessary):
+        * runtime/Arguments.h:
+        (JSC::Arguments::createStructure):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::shift):
+        (JSC::unshift):
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::performSlowSort):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::isFunctionExecutable):
+        (JSC::ExecutableBase::clearCodeVirtual):
+        (JSC::ScriptExecutable::unlinkCalls):
+        * runtime/GetterSetter.cpp:
+        (JSC::callGetter):
+        (JSC::callSetter):
+        * runtime/InitializeThreading.cpp:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        (JSC::JSArray::sortNumericVector):
+        (JSC::JSArray::sortNumeric):
+        (JSC::JSArray::sortCompactedVector):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::sortVector):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toThis):
+        (JSC::JSValue::put):
+        (JSC::JSValue::putByIndex):
+        (JSC::JSValue::equalSlowCaseInline):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::put):
+        (JSC::JSCell::putByIndex):
+        (JSC::JSCell::deleteProperty):
+        (JSC::JSCell::deletePropertyByIndex):
+        * runtime/JSCell.h:
+        (JSC::JSCell::clearStructure):
+        (JSC::JSCell::mark):
+        (JSC::JSCell::isMarked):
+        (JSC::JSCell::structureIDOffset):
+        (JSC::JSCell::typeInfoFlagsOffset):
+        (JSC::JSCell::typeInfoTypeOffset):
+        (JSC::JSCell::indexingTypeOffset):
+        (JSC::JSCell::gcDataOffset):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::JSCell):
+        (JSC::JSCell::finishCreation):
+        (JSC::JSCell::type):
+        (JSC::JSCell::indexingType):
+        (JSC::JSCell::structure):
+        (JSC::JSCell::visitChildren):
+        (JSC::JSCell::isObject):
+        (JSC::JSCell::isString):
+        (JSC::JSCell::isGetterSetter):
+        (JSC::JSCell::isProxy):
+        (JSC::JSCell::isAPIValueWrapper):
+        (JSC::JSCell::setStructure):
+        (JSC::JSCell::methodTable):
+        (JSC::Heap::writeBarrier):
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::createStructure):
+        * runtime/JSDestructibleObject.h:
+        (JSC::JSCell::classInfo):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::createStructure):
+        * runtime/JSObject.cpp:
+        (JSC::getCallableObjectSlow):
+        (JSC::JSObject::copyButterfly):
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSFinalObject::visitChildren):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::put):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::enterDictionaryIndexingMode):
+        (JSC::JSObject::notifyPresenceOfIndexedAccessors):
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::constructConvertedArrayStorageWithoutCopyingElements):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToContiguous):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::genericConvertDoubleToContiguous):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::ensureInt32Slow):
+        (JSC::JSObject::ensureDoubleSlow):
+        (JSC::JSObject::ensureContiguousSlow):
+        (JSC::JSObject::ensureArrayStorageSlow):
+        (JSC::JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode):
+        (JSC::JSObject::switchToSlowPutArrayStorage):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::JSObject::putDirectNonIndexAccessor):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::hasOwnProperty):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getPrimitiveNumber):
+        (JSC::JSObject::hasInstance):
+        (JSC::JSObject::getPropertySpecificValue):
+        (JSC::JSObject::getPropertyNames):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+        (JSC::JSObject::seal):
+        (JSC::JSObject::freeze):
+        (JSC::JSObject::preventExtensions):
+        (JSC::JSObject::reifyStaticFunctionsForDelete):
+        (JSC::JSObject::removeDirect):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        (JSC::JSObject::getNewVectorLength):
+        (JSC::JSObject::countElements):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::growOutOfLineStorage):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::putDescriptor):
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        * runtime/JSObject.h:
+        (JSC::getJSFunction):
+        (JSC::JSObject::getArrayLength):
+        (JSC::JSObject::getVectorLength):
+        (JSC::JSObject::putByIndexInline):
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly):
+        (JSC::JSObject::getDirectIndex):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::canSetIndexQuicklyForPutDirect):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::hasSparseMap):
+        (JSC::JSObject::inSparseIndexingMode):
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectOffset):
+        (JSC::JSObject::isSealed):
+        (JSC::JSObject::isFrozen):
+        (JSC::JSObject::flattenDictionaryObject):
+        (JSC::JSObject::ensureInt32):
+        (JSC::JSObject::ensureDouble):
+        (JSC::JSObject::ensureContiguous):
+        (JSC::JSObject::rageEnsureContiguous):
+        (JSC::JSObject::ensureArrayStorage):
+        (JSC::JSObject::arrayStorage):
+        (JSC::JSObject::arrayStorageOrNull):
+        (JSC::JSObject::ensureLength):
+        (JSC::JSObject::currentIndexingData):
+        (JSC::JSObject::getHolyIndexQuickly):
+        (JSC::JSObject::currentRelevantLength):
+        (JSC::JSObject::isGlobalObject):
+        (JSC::JSObject::isVariableObject):
+        (JSC::JSObject::isStaticScopeObject):
+        (JSC::JSObject::isNameScopeObject):
+        (JSC::JSObject::isActivationObject):
+        (JSC::JSObject::isErrorInstance):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSObject::fastGetOwnPropertySlot):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::setStructureAndReallocateStorageIfNecessary):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::createStructure):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::getOwnPropertySlot):
+        (JSC::JSProxy::getOwnPropertySlotByIndex):
+        (JSC::JSProxy::put):
+        (JSC::JSProxy::putByIndex):
+        (JSC::JSProxy::defineOwnProperty):
+        (JSC::JSProxy::deleteProperty):
+        (JSC::JSProxy::deletePropertyByIndex):
+        (JSC::JSProxy::getPropertyNames):
+        (JSC::JSProxy::getOwnPropertyNames):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::objectAtScope):
+        * runtime/JSString.h:
+        (JSC::JSString::createStructure):
+        (JSC::isJSString):
+        * runtime/JSType.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::isObject):
+        (JSC::TypeInfo::structureIsImmortal):
+        (JSC::TypeInfo::zeroedGCDataOffset):
+        (JSC::TypeInfo::inlineTypeFlags):
+        * runtime/MapData.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorKeys):
+        (JSC::objectConstructorDefineProperty):
+        (JSC::defineProperties):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncToString):
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectType):
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChainForChainAccess):
+        (JSC::normalizePrototypeChain):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::createStructure):
+        * runtime/RegExp.h:
+        (JSC::RegExp::createStructure):
+        * runtime/SparseArrayValueMap.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::~Structure):
+        (JSC::Structure::prototypeChainMayInterceptStoreTo):
+        * runtime/Structure.h:
+        (JSC::Structure::id):
+        (JSC::Structure::idBlob):
+        (JSC::Structure::objectInitializationFields):
+        (JSC::Structure::structureIDOffset):
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::createStructure):
+        * runtime/StructureIDTable.cpp: Added.
+        (JSC::StructureIDTable::StructureIDTable):
+        (JSC::StructureIDTable::~StructureIDTable):
+        (JSC::StructureIDTable::resize):
+        (JSC::StructureIDTable::flushOldTables):
+        (JSC::StructureIDTable::allocateID):
+        (JSC::StructureIDTable::deallocateID):
+        * runtime/StructureIDTable.h: Added.
+        (JSC::StructureIDTable::base):
+        (JSC::StructureIDTable::get):
+        * runtime/SymbolTable.h:
+        * runtime/TypedArrayType.cpp:
+        (JSC::typeForTypedArrayType):
+        * runtime/TypedArrayType.h:
+        * runtime/WeakMapData.h:
+
 2014-02-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unconditional logging in compileFTLOSRExit

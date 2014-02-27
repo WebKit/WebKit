@@ -507,10 +507,11 @@ bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStrin
     return false;
 }
 
-bool JSObjectIsFunction(JSContextRef, JSObjectRef object)
+bool JSObjectIsFunction(JSContextRef ctx, JSObjectRef object)
 {
     if (!object)
         return false;
+    APIEntryShim entryShim(toJS(ctx));
     CallData callData;
     JSCell* cell = toJS(object);
     return cell->methodTable()->getCallData(cell, callData) != CallTypeNone;
@@ -606,12 +607,12 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
         ASSERT_NOT_REACHED();
         return 0;
     }
-    JSObject* jsObject = toJS(object);
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
     VM* vm = &exec->vm();
 
+    JSObject* jsObject = toJS(object);
     JSPropertyNameArrayRef propertyNames = new OpaqueJSPropertyNameArray(vm);
     PropertyNameArray array(vm);
     jsObject->methodTable()->getPropertyNames(jsObject, exec, array, ExcludeDontEnumProperties);

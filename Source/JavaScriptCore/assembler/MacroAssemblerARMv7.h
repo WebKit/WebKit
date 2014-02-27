@@ -753,6 +753,11 @@ public:
         store32(dataTempRegister, address);
     }
 
+    void store8(RegisterID src, Address address)
+    {
+        store8(src, setupArmAddress(address));
+    }
+    
     void store8(RegisterID src, BaseIndex address)
     {
         store8(src, setupArmAddress(address));
@@ -765,6 +770,12 @@ public:
     }
     
     void store8(TrustedImm32 imm, void* address)
+    {
+        move(imm, dataTempRegister);
+        store8(dataTempRegister, address);
+    }
+    
+    void store8(TrustedImm32 imm, Address address)
     {
         move(imm, dataTempRegister);
         store8(dataTempRegister, address);
@@ -1726,6 +1737,13 @@ public:
         return branch32(cond, addressTempRegister, dataTempRegister);
     }
     
+    ALWAYS_INLINE Jump branch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        load32(left, addressTempRegister);
+        dataLabel = moveWithPatch(initialRightValue, dataTempRegister);
+        return branch32(cond, addressTempRegister, dataTempRegister);
+    }
+    
     PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(0))
     {
         m_makeJumpPatchable = true;
@@ -1754,6 +1772,14 @@ public:
     {
         m_makeJumpPatchable = true;
         Jump result = branchPtrWithPatch(cond, left, dataLabel, initialRightValue);
+        m_makeJumpPatchable = false;
+        return PatchableJump(result);
+    }
+
+    PatchableJump patchableBranch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        m_makeJumpPatchable = true;
+        Jump result = branch32WithPatch(cond, left, dataLabel, initialRightValue);
         m_makeJumpPatchable = false;
         return PatchableJump(result);
     }
@@ -1796,6 +1822,7 @@ public:
     }
     
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
+    static bool canJumpReplacePatchableBranch32WithPatch() { return false; }
     
     static CodeLocationLabel startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr label)
     {
@@ -1819,7 +1846,18 @@ public:
         return CodeLocationLabel();
     }
     
+    static CodeLocationLabel startOfPatchableBranch32WithPatchOnAddress(CodeLocationDataLabel32)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+        return CodeLocationLabel();
+    }
+    
     static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel, Address, void*)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    static void revertJumpReplacementToPatchableBranch32WithPatch(CodeLocationLabel, Address, int32_t)
     {
         UNREACHABLE_FOR_PLATFORM();
     }

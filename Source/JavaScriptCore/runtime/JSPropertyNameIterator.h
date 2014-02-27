@@ -54,7 +54,7 @@ namespace JSC {
        
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), info());
+            return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), info());
         }
 
         static void visitChildren(JSCell*, SlotVisitor&);
@@ -76,6 +76,8 @@ namespace JSC {
         DECLARE_EXPORT_INFO;
 
     protected:
+        static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal;
+
         void finishCreation(VM& vm, PropertyNameArrayData* propertyNameArrayData, JSObject* object)
         {
             Base::finishCreation(vm);

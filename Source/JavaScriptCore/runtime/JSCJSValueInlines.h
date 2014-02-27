@@ -645,7 +645,7 @@ inline bool JSValue::inherits(const ClassInfo* classInfo) const
 
 inline JSValue JSValue::toThis(ExecState* exec, ECMAMode ecmaMode) const
 {
-    return isCell() ? asCell()->methodTable()->toThis(asCell(), exec, ecmaMode) : toThisSlowCase(exec, ecmaMode);
+    return isCell() ? asCell()->methodTable(exec->vm())->toThis(asCell(), exec, ecmaMode) : toThisSlowCase(exec, ecmaMode);
 }
 
 inline JSValue JSValue::get(ExecState* exec, PropertyName propertyName) const
@@ -700,7 +700,7 @@ inline void JSValue::put(ExecState* exec, PropertyName propertyName, JSValue val
         putToPrimitive(exec, propertyName, value, slot);
         return;
     }
-    asCell()->methodTable()->put(asCell(), exec, propertyName, value, slot);
+    asCell()->methodTable(exec->vm())->put(asCell(), exec, propertyName, value, slot);
 }
 
 inline void JSValue::putByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
@@ -709,7 +709,7 @@ inline void JSValue::putByIndex(ExecState* exec, unsigned propertyName, JSValue 
         putToPrimitiveByIndex(exec, propertyName, value, shouldThrow);
         return;
     }
-    asCell()->methodTable()->putByIndex(asCell(), exec, propertyName, value, shouldThrow);
+    asCell()->methodTable(exec->vm())->putByIndex(asCell(), exec, propertyName, value, shouldThrow);
 }
 
 inline JSValue JSValue::structureOrUndefined() const
@@ -730,6 +730,7 @@ inline bool JSValue::equal(ExecState* exec, JSValue v1, JSValue v2)
 
 ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSValue v2)
 {
+    VM& vm = exec->vm();
     do {
         if (v1.isNumber() && v2.isNumber())
             return v1.asNumber() == v2.asNumber();
@@ -744,13 +745,13 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
                 return true;
             if (!v2.isCell())
                 return false;
-            return v2.asCell()->structure()->masqueradesAsUndefined(exec->lexicalGlobalObject());
+            return v2.asCell()->structure(vm)->masqueradesAsUndefined(exec->lexicalGlobalObject());
         }
 
         if (v2.isUndefinedOrNull()) {
             if (!v1.isCell())
                 return false;
-            return v1.asCell()->structure()->masqueradesAsUndefined(exec->lexicalGlobalObject());
+            return v1.asCell()->structure(vm)->masqueradesAsUndefined(exec->lexicalGlobalObject());
         }
 
         if (v1.isObject()) {

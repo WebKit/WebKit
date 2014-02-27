@@ -108,9 +108,12 @@ ALWAYS_INLINE void SlotVisitor::internalAppend(void* from, JSCell* cell)
 #if ENABLE(GC_VALIDATION)
     validate(cell);
 #endif
-    if (Heap::testAndSetMarked(cell) || !cell->structure())
+    if (Heap::testAndSetMarked(cell) || !cell->structure()) {
+        ASSERT(cell->structure());
         return;
+    }
 
+    cell->mark();
     m_bytesVisited += MarkedBlock::blockFor(cell)->cellSize();
         
     MARK_LOG_CHILD(*this, cell);
@@ -277,6 +280,16 @@ inline void SlotVisitor::reportExtraMemoryUsage(JSCell* owner, size_t size)
 inline Heap* SlotVisitor::heap() const
 {
     return &sharedData().m_vm->heap;
+}
+
+inline VM& SlotVisitor::vm()
+{
+    return *sharedData().m_vm;
+}
+
+inline const VM& SlotVisitor::vm() const
+{
+    return *sharedData().m_vm;
 }
 
 } // namespace JSC

@@ -100,7 +100,7 @@ public:
     }
     bool isFunctionExecutable()
     {
-        return structure()->typeInfo().type() == FunctionExecutableType;
+        return type() == FunctionExecutableType;
     }
     bool isProgramExecutable()
     {
@@ -120,7 +120,7 @@ public:
     DECLARE_EXPORT_INFO;
 
 protected:
-    static const unsigned StructureFlags = 0;
+    static const unsigned StructureFlags = StructureIsImmortal;
     int m_numParametersForCall;
     int m_numParametersForConstruct;
 
@@ -680,7 +680,7 @@ private:
 
 inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)
 {
-    switch (executable->structure()->typeInfo().type()) {
+    switch (executable->type()) {
     case EvalExecutableType:
         return jsCast<EvalExecutable*>(executable)->clearCode();
     case ProgramExecutableType:
@@ -694,7 +694,7 @@ inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)
 
 inline void ScriptExecutable::unlinkCalls()
 {
-    switch (structure()->typeInfo().type()) {
+    switch (type()) {
     case EvalExecutableType:
         return jsCast<EvalExecutable*>(this)->unlinkCalls();
     case ProgramExecutableType:

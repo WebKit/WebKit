@@ -38,6 +38,7 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "LLIntData.h"
+#include "StructureIDTable.h"
 #include "WriteBarrier.h"
 #include <mutex>
 #include <wtf/dtoa.h>

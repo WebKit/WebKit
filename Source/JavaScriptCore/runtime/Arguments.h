@@ -86,7 +86,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
     { 
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ArgumentsType, StructureFlags), info()); 
     }
     
     static ptrdiff_t offsetOfNumArguments() { return OBJECT_OFFSETOF(Arguments, m_numArguments); }

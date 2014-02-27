@@ -247,12 +247,15 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(Edge operand, bool inv
     } else {
         GPRTemporary localGlobalObject(this);
         GPRTemporary remoteGlobalObject(this);
+        GPRTemporary scratch(this);
 
         if (!isKnownCell(operand.node()))
             notCell = m_jit.branchTest64(MacroAssembler::NonZero, argGPR, GPRInfo::tagMaskRegister);
 
-        m_jit.loadPtr(JITCompiler::Address(argGPR, JSCell::structureOffset()), resultGPR);
-        JITCompiler::Jump isMasqueradesAsUndefined = m_jit.branchTest8(JITCompiler::NonZero, JITCompiler::Address(resultGPR, Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(MasqueradesAsUndefined));
+        JITCompiler::Jump isMasqueradesAsUndefined = m_jit.branchTest8(
+            JITCompiler::NonZero, 
+            JITCompiler::Address(argGPR, JSCell::typeInfoFlagsOffset()), 
+            JITCompiler::TrustedImm32(MasqueradesAsUndefined));
 
         m_jit.move(invert ? TrustedImm32(1) : TrustedImm32(0), resultGPR);
         notMasqueradesAsUndefined = m_jit.jump();
@@ -261,6 +264,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(Edge operand, bool inv
         GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
         GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
         m_jit.move(JITCompiler::TrustedImmPtr(m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)), localGlobalObjectGPR);
+        m_jit.emitLoadStructure(argGPR, resultGPR, scratch.gpr());
         m_jit.loadPtr(JITCompiler::Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
         m_jit.comparePtr(invert ? JITCompiler::NotEqual : JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, resultGPR);
     }
@@ -311,16 +315,20 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNull(Edge operand, Node* branch
     } else {
         GPRTemporary localGlobalObject(this);
         GPRTemporary remoteGlobalObject(this);
+        GPRTemporary scratch(this);
 
         if (!isKnownCell(operand.node()))
             notCell = m_jit.branchTest64(MacroAssembler::NonZero, argGPR, GPRInfo::tagMaskRegister);
 
-        m_jit.loadPtr(JITCompiler::Address(argGPR, JSCell::structureOffset()), resultGPR);
-        branchTest8(JITCompiler::Zero, JITCompiler::Address(resultGPR, Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(MasqueradesAsUndefined), invert ? taken : notTaken);
+        branchTest8(JITCompiler::Zero, 
+            JITCompiler::Address(argGPR, JSCell::typeInfoFlagsOffset()), 
+            JITCompiler::TrustedImm32(MasqueradesAsUndefined), 
+            invert ? taken : notTaken);
 
         GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
         GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
         m_jit.move(TrustedImmPtr(m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)), localGlobalObjectGPR);
+        m_jit.emitLoadStructure(argGPR, resultGPR, scratch.gpr());
         m_jit.loadPtr(JITCompiler::Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
         branchPtr(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, invert ? notTaken : taken);
     }
@@ -1519,41 +1527,36 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
    
     if (masqueradesAsUndefinedWatchpointIsStillValid()) {
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op1GPR), node->child1(), SpecObject, m_jit.branchPtr(
+            JSValueSource::unboxedCell(op1GPR), node->child1(), SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                MacroAssembler::Address(op1GPR, JSCell::structureOffset()), 
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op1GPR, JSCell::structureIDOffset()), 
+                m_jit.vm()->stringStructure.get()));
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op2GPR), node->child2(), SpecObject, m_jit.branchPtr(
+            JSValueSource::unboxedCell(op2GPR), node->child2(), SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                MacroAssembler::Address(op2GPR, JSCell::structureOffset()), 
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op2GPR, JSCell::structureIDOffset()), 
+                m_jit.vm()->stringStructure.get()));
     } else {
-        GPRTemporary structure(this);
-        GPRReg structureGPR = structure.gpr();
-
-        m_jit.loadPtr(MacroAssembler::Address(op1GPR, JSCell::structureOffset()), structureGPR);
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op1GPR), node->child1(), SpecObject, m_jit.branchPtr(
+            JSValueSource::unboxedCell(op1GPR), node->child1(), SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                structureGPR, 
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op1GPR, JSCell::structureIDOffset()), 
+                m_jit.vm()->stringStructure.get()));
         speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), node->child1(),
             m_jit.branchTest8(
                 MacroAssembler::NonZero, 
-                MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()), 
+                MacroAssembler::Address(op1GPR, JSCell::typeInfoFlagsOffset()), 
                 MacroAssembler::TrustedImm32(MasqueradesAsUndefined)));
 
-        m_jit.loadPtr(MacroAssembler::Address(op2GPR, JSCell::structureOffset()), structureGPR);
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op2GPR), node->child2(), SpecObject, m_jit.branchPtr(
+            JSValueSource::unboxedCell(op2GPR), node->child2(), SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                structureGPR, 
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op2GPR, JSCell::structureIDOffset()),
+                m_jit.vm()->stringStructure.get()));
         speculationCheck(BadType, JSValueSource::unboxedCell(op2GPR), node->child2(),
             m_jit.branchTest8(
                 MacroAssembler::NonZero, 
-                MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()), 
+                MacroAssembler::Address(op2GPR, JSCell::typeInfoFlagsOffset()), 
                 MacroAssembler::TrustedImm32(MasqueradesAsUndefined)));
     }
     
@@ -1576,37 +1579,26 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     GPRReg op1GPR = op1.gpr();
     GPRReg op2GPR = op2.gpr();
     GPRReg resultGPR = result.gpr();
-    GPRTemporary structure;
-    GPRReg structureGPR = InvalidGPRReg;
 
     bool masqueradesAsUndefinedWatchpointValid =
         masqueradesAsUndefinedWatchpointIsStillValid();
 
-    if (!masqueradesAsUndefinedWatchpointValid) {
-        // The masquerades as undefined case will use the structure register, so allocate it here.
-        // Do this at the top of the function to avoid branching around a register allocation.
-        GPRTemporary realStructure(this);
-        structure.adopt(realStructure);
-        structureGPR = structure.gpr();
-    }
-
     if (masqueradesAsUndefinedWatchpointValid) {
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchPtr(
+            JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                MacroAssembler::Address(op1GPR, JSCell::structureOffset()), 
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op1GPR, JSCell::structureIDOffset()), 
+                m_jit.vm()->stringStructure.get()));
     } else {
-        m_jit.loadPtr(MacroAssembler::Address(op1GPR, JSCell::structureOffset()), structureGPR);
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchPtr(
+            JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal,
-                structureGPR,
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op1GPR, JSCell::structureIDOffset()), 
+                m_jit.vm()->stringStructure.get()));
         speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), leftChild,
             m_jit.branchTest8(
                 MacroAssembler::NonZero, 
-                MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()), 
+                MacroAssembler::Address(op1GPR, JSCell::typeInfoFlagsOffset()), 
                 MacroAssembler::TrustedImm32(MasqueradesAsUndefined)));
     }
     
@@ -1618,21 +1610,20 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     // We know that within this branch, rightChild must be a cell. 
     if (masqueradesAsUndefinedWatchpointValid) {
         DFG_TYPE_CHECK(
-            JSValueRegs(op2GPR), rightChild, (~SpecCell) | SpecObject, m_jit.branchPtr(
+            JSValueRegs(op2GPR), rightChild, (~SpecCell) | SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                MacroAssembler::Address(op2GPR, JSCell::structureOffset()), 
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op2GPR, JSCell::structureIDOffset()), 
+                m_jit.vm()->stringStructure.get()));
     } else {
-        m_jit.loadPtr(MacroAssembler::Address(op2GPR, JSCell::structureOffset()), structureGPR);
         DFG_TYPE_CHECK(
-            JSValueRegs(op2GPR), rightChild, (~SpecCell) | SpecObject, m_jit.branchPtr(
+            JSValueRegs(op2GPR), rightChild, (~SpecCell) | SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal,
-                structureGPR,
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op2GPR, JSCell::structureIDOffset()), 
+                m_jit.vm()->stringStructure.get()));
         speculationCheck(BadType, JSValueRegs(op2GPR), rightChild,
             m_jit.branchTest8(
                 MacroAssembler::NonZero, 
-                MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()), 
+                MacroAssembler::Address(op2GPR, JSCell::typeInfoFlagsOffset()), 
                 MacroAssembler::TrustedImm32(MasqueradesAsUndefined)));
     }
     
@@ -1679,37 +1670,26 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     GPRReg op1GPR = op1.gpr();
     GPRReg op2GPR = op2.gpr();
     GPRReg resultGPR = result.gpr();
-    GPRTemporary structure;
-    GPRReg structureGPR = InvalidGPRReg;
     
-    bool masqueradesAsUndefinedWatchpointValid =
+    bool masqueradesAsUndefinedWatchpointValid = 
         masqueradesAsUndefinedWatchpointIsStillValid();
-
-    if (!masqueradesAsUndefinedWatchpointValid) {
-        // The masquerades as undefined case will use the structure register, so allocate it here.
-        // Do this at the top of the function to avoid branching around a register allocation.
-        GPRTemporary realStructure(this);
-        structure.adopt(realStructure);
-        structureGPR = structure.gpr();
-    }
 
     if (masqueradesAsUndefinedWatchpointValid) {
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchPtr(
+            JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                MacroAssembler::Address(op1GPR, JSCell::structureOffset()), 
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op1GPR, JSCell::structureIDOffset()), 
+                m_jit.vm()->stringStructure.get()));
     } else {
-        m_jit.loadPtr(MacroAssembler::Address(op1GPR, JSCell::structureOffset()), structureGPR);
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchPtr(
+            JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                structureGPR, 
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op1GPR, JSCell::structureIDOffset()),
+                m_jit.vm()->stringStructure.get()));
         speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), leftChild, 
             m_jit.branchTest8(
                 MacroAssembler::NonZero, 
-                MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()), 
+                MacroAssembler::Address(op1GPR, JSCell::typeInfoFlagsOffset()), 
                 MacroAssembler::TrustedImm32(MasqueradesAsUndefined)));
     }
 
@@ -1721,21 +1701,20 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     // We know that within this branch, rightChild must be a cell. 
     if (masqueradesAsUndefinedWatchpointValid) {
         DFG_TYPE_CHECK(
-            JSValueRegs(op2GPR), rightChild, (~SpecCell) | SpecObject, m_jit.branchPtr(
+            JSValueRegs(op2GPR), rightChild, (~SpecCell) | SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                MacroAssembler::Address(op2GPR, JSCell::structureOffset()), 
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op2GPR, JSCell::structureIDOffset()), 
+                m_jit.vm()->stringStructure.get()));
     } else {
-        m_jit.loadPtr(MacroAssembler::Address(op2GPR, JSCell::structureOffset()), structureGPR);
         DFG_TYPE_CHECK(
-            JSValueRegs(op2GPR), rightChild, (~SpecCell) | SpecObject, m_jit.branchPtr(
+            JSValueRegs(op2GPR), rightChild, (~SpecCell) | SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                structureGPR, 
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(op2GPR, JSCell::structureIDOffset()),
+                m_jit.vm()->stringStructure.get()));
         speculationCheck(BadType, JSValueRegs(op2GPR), rightChild,
             m_jit.branchTest8(
                 MacroAssembler::NonZero, 
-                MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()), 
+                MacroAssembler::Address(op2GPR, JSCell::typeInfoFlagsOffset()), 
                 MacroAssembler::TrustedImm32(MasqueradesAsUndefined)));
     }
     
@@ -1833,6 +1812,8 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
     GPRReg resultGPR = result.gpr();
     GPRTemporary structure;
     GPRReg structureGPR = InvalidGPRReg;
+    GPRTemporary scratch;
+    GPRReg scratchGPR = InvalidGPRReg;
 
     bool masqueradesAsUndefinedWatchpointValid =
         masqueradesAsUndefinedWatchpointIsStillValid();
@@ -1841,32 +1822,34 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
         // The masquerades as undefined case will use the structure register, so allocate it here.
         // Do this at the top of the function to avoid branching around a register allocation.
         GPRTemporary realStructure(this);
+        GPRTemporary realScratch(this);
         structure.adopt(realStructure);
+        scratch.adopt(realScratch);
         structureGPR = structure.gpr();
+        scratchGPR = scratch.gpr();
     }
 
     MacroAssembler::Jump notCell = m_jit.branchTest64(MacroAssembler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
     if (masqueradesAsUndefinedWatchpointValid) {
         DFG_TYPE_CHECK(
-            JSValueRegs(valueGPR), nodeUse, (~SpecCell) | SpecObject, m_jit.branchPtr(
+            JSValueRegs(valueGPR), nodeUse, (~SpecCell) | SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal,
-                MacroAssembler::Address(valueGPR, JSCell::structureOffset()),
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(valueGPR, JSCell::structureIDOffset()),
+                m_jit.vm()->stringStructure.get()));
     } else {
-        m_jit.loadPtr(MacroAssembler::Address(valueGPR, JSCell::structureOffset()), structureGPR);
-
         DFG_TYPE_CHECK(
-            JSValueRegs(valueGPR), nodeUse, (~SpecCell) | SpecObject, m_jit.branchPtr(
+            JSValueRegs(valueGPR), nodeUse, (~SpecCell) | SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal,
-                structureGPR,
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(valueGPR, JSCell::structureIDOffset()), 
+                m_jit.vm()->stringStructure.get()));
 
         MacroAssembler::Jump isNotMasqueradesAsUndefined = 
             m_jit.branchTest8(
                 MacroAssembler::Zero, 
-                MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()), 
+                MacroAssembler::Address(valueGPR, JSCell::typeInfoFlagsOffset()), 
                 MacroAssembler::TrustedImm32(MasqueradesAsUndefined));
 
+        m_jit.emitLoadStructure(valueGPR, structureGPR, scratchGPR);
         speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse, 
             m_jit.branchPtr(
                 MacroAssembler::Equal, 
@@ -1985,31 +1968,41 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BasicBlock* taken, Ba
 {
     JSValueOperand value(this, nodeUse, ManualOperandSpeculation);
     GPRTemporary scratch(this);
+    GPRTemporary structure;
     GPRReg valueGPR = value.gpr();
     GPRReg scratchGPR = scratch.gpr();
-    
+    GPRReg structureGPR = InvalidGPRReg;
+
+    if (!masqueradesAsUndefinedWatchpointIsStillValid()) {
+        GPRTemporary realStructure(this);
+        structure.adopt(realStructure);
+        structureGPR = structure.gpr();
+    }
+
     MacroAssembler::Jump notCell = m_jit.branchTest64(MacroAssembler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
     if (masqueradesAsUndefinedWatchpointIsStillValid()) {
         DFG_TYPE_CHECK(
-            JSValueRegs(valueGPR), nodeUse, (~SpecCell) | SpecObject, m_jit.branchPtr(
+            JSValueRegs(valueGPR), nodeUse, (~SpecCell) | SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                MacroAssembler::Address(valueGPR, JSCell::structureOffset()),
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(valueGPR, JSCell::structureIDOffset()),
+                m_jit.vm()->stringStructure.get()));                
     } else {
-        m_jit.loadPtr(MacroAssembler::Address(valueGPR, JSCell::structureOffset()), scratchGPR);
-
         DFG_TYPE_CHECK(
-            JSValueRegs(valueGPR), nodeUse, (~SpecCell) | SpecObject, m_jit.branchPtr(
+            JSValueRegs(valueGPR), nodeUse, (~SpecCell) | SpecObject, m_jit.branchStructurePtr(
                 MacroAssembler::Equal, 
-                scratchGPR,
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+                MacroAssembler::Address(valueGPR, JSCell::structureIDOffset()),
+                m_jit.vm()->stringStructure.get()));
 
-        JITCompiler::Jump isNotMasqueradesAsUndefined = m_jit.branchTest8(JITCompiler::Zero, MacroAssembler::Address(scratchGPR, Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined));
+        JITCompiler::Jump isNotMasqueradesAsUndefined = m_jit.branchTest8(
+            JITCompiler::Zero, 
+            MacroAssembler::Address(valueGPR, JSCell::typeInfoFlagsOffset()), 
+            TrustedImm32(MasqueradesAsUndefined));
 
+        m_jit.emitLoadStructure(valueGPR, structureGPR, scratchGPR);
         speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse,
             m_jit.branchPtr(
                 MacroAssembler::Equal, 
-                MacroAssembler::Address(scratchGPR, Structure::globalObjectOffset()), 
+                MacroAssembler::Address(structureGPR, Structure::globalObjectOffset()), 
                 MacroAssembler::TrustedImmPtr(m_jit.graph().globalObjectFor(m_currentNode->origin.semantic))));
 
         isNotMasqueradesAsUndefined.link(&m_jit);
@@ -3417,7 +3410,10 @@ void SpeculativeJIT::compile(Node* node)
         op1.use();
         
         MacroAssembler::Jump alreadyPrimitive = m_jit.branchTest64(MacroAssembler::NonZero, op1GPR, GPRInfo::tagMaskRegister);
-        MacroAssembler::Jump notPrimitive = m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op1GPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get()));
+        MacroAssembler::Jump notPrimitive = m_jit.branchStructurePtr(
+            MacroAssembler::NotEqual, 
+            MacroAssembler::Address(op1GPR, JSCell::structureIDOffset()), 
+            m_jit.vm()->stringStructure.get());
         
         alreadyPrimitive.link(&m_jit);
         m_jit.move(op1GPR, resultGPR);
@@ -3443,10 +3439,10 @@ void SpeculativeJIT::compile(Node* node)
             if (node->child1()->prediction() & SpecString) {
                 JITCompiler::Jump slowPath1 = m_jit.branchTest64(
                     JITCompiler::NonZero, op1GPR, GPRInfo::tagMaskRegister);
-                JITCompiler::Jump slowPath2 = m_jit.branchPtr(
+                JITCompiler::Jump slowPath2 = m_jit.branchStructurePtr(
                     JITCompiler::NotEqual,
-                    JITCompiler::Address(op1GPR, JSCell::structureOffset()),
-                    TrustedImmPtr(m_jit.vm()->stringStructure.get()));
+                    JITCompiler::Address(op1GPR, JSCell::structureIDOffset()),
+                    m_jit.vm()->stringStructure.get());
                 m_jit.move(op1GPR, resultGPR);
                 done = m_jit.jump();
                 slowPath1.link(&m_jit);
@@ -3665,7 +3661,7 @@ void SpeculativeJIT::compile(Node* node)
                 emitAllocateBasicStorage(resultGPR, storageGPR));
             m_jit.subPtr(scratchGPR, storageGPR);
             Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType());
-            emitAllocateJSObject<JSArray>(resultGPR, ImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
+            emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
             
             m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
             m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
@@ -3803,11 +3799,9 @@ void SpeculativeJIT::compile(Node* node)
         MacroAssembler::JumpList slowCases;
         slowCases.append(m_jit.branchTest64(
             MacroAssembler::NonZero, thisValueGPR, GPRInfo::tagMaskRegister));
-        m_jit.loadPtr(
-            MacroAssembler::Address(thisValueGPR, JSCell::structureOffset()), tempGPR);
         slowCases.append(m_jit.branch8(
             MacroAssembler::NotEqual,
-            MacroAssembler::Address(tempGPR, Structure::typeInfoTypeOffset()),
+            MacroAssembler::Address(thisValueGPR, JSCell::typeInfoTypeOffset()),
             TrustedImm32(FinalObjectType)));
         m_jit.move(thisValueGPR, tempGPR);
         J_JITOperation_EJ function;
@@ -4098,24 +4092,20 @@ void SpeculativeJIT::compile(Node* node)
         if (node->structureSet().size() == 1) {
             speculationCheck(
                 exitKind, JSValueSource::unboxedCell(base.gpr()), 0,
-                m_jit.branchWeakPtr(
+                m_jit.branchWeakStructure(
                     JITCompiler::NotEqual,
-                    JITCompiler::Address(base.gpr(), JSCell::structureOffset()),
+                    JITCompiler::Address(base.gpr(), JSCell::structureIDOffset()),
                     node->structureSet()[0]));
         } else {
-            GPRTemporary structure(this);
-            
-            m_jit.loadPtr(JITCompiler::Address(base.gpr(), JSCell::structureOffset()), structure.gpr());
-            
             JITCompiler::JumpList done;
             
             for (size_t i = 0; i < node->structureSet().size() - 1; ++i)
-                done.append(m_jit.branchWeakPtr(JITCompiler::Equal, structure.gpr(), node->structureSet()[i]));
+                done.append(m_jit.branchWeakStructure(JITCompiler::Equal, MacroAssembler::Address(base.gpr(), JSCell::structureIDOffset()), node->structureSet()[i]));
             
             speculationCheck(
                 exitKind, JSValueSource::unboxedCell(base.gpr()), 0,
-                m_jit.branchWeakPtr(
-                    JITCompiler::NotEqual, structure.gpr(), node->structureSet().last()));
+                m_jit.branchWeakStructure(
+                    JITCompiler::NotEqual, MacroAssembler::Address(base.gpr(), JSCell::structureIDOffset()), node->structureSet().last()));
             
             done.link(&m_jit);
         }
@@ -4131,12 +4121,15 @@ void SpeculativeJIT::compile(Node* node)
         // we shouldn't really load it since that could be a waste. For now though,
         // we'll just rely on the fact that when a watchpoint fires then that's
         // quite a hint already.
-        
+
         m_jit.addWeakReference(node->structure());
 
 #if !ASSERT_DISABLED
         SpeculateCellOperand op1(this, node->child1());
-        JITCompiler::Jump isOK = m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(op1.gpr(), JSCell::structureOffset()), TrustedImmPtr(node->structure()));
+        JITCompiler::Jump isOK = m_jit.branchStructurePtr(
+            JITCompiler::Equal, 
+            JITCompiler::Address(op1.gpr(), JSCell::structureIDOffset()), 
+            node->structure());
         m_jit.breakpoint();
         isOK.link(&m_jit);
 #else
@@ -4155,14 +4148,18 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case PutStructure: {
+        Structure* oldStructure = node->structureTransitionData().previousStructure;
+        Structure* newStructure = node->structureTransitionData().newStructure;
+
         m_jit.jitCode()->common.notifyCompilingStructureTransition(m_jit.graph().m_plan, m_jit.codeBlock(), node);
 
         SpeculateCellOperand base(this, node->child1());
-        GPRTemporary scratch1(this);
-        GPRTemporary scratch2(this);
         GPRReg baseGPR = base.gpr();
         
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(node->structureTransitionData().newStructure), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
+        ASSERT_UNUSED(oldStructure, oldStructure->indexingType() == newStructure->indexingType());
+        ASSERT(oldStructure->typeInfo().type() == newStructure->typeInfo().type());
+        ASSERT(oldStructure->typeInfo().inlineTypeFlags() == newStructure->typeInfo().inlineTypeFlags());
+        m_jit.store32(MacroAssembler::TrustedImm32(newStructure->id()), MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()));
         
         noResult(node);
         break;
@@ -4342,8 +4339,10 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary structure(this);
 
         // Speculate that base 'ImplementsDefaultHasInstance'.
-        m_jit.loadPtr(MacroAssembler::Address(base.gpr(), JSCell::structureOffset()), structure.gpr());
-        speculationCheck(Uncountable, JSValueRegs(), 0, m_jit.branchTest8(MacroAssembler::Zero, MacroAssembler::Address(structure.gpr(), Structure::typeInfoFlagsOffset()), MacroAssembler::TrustedImm32(ImplementsDefaultHasInstance)));
+        speculationCheck(Uncountable, JSValueRegs(), 0, m_jit.branchTest8(
+            MacroAssembler::Zero, 
+            MacroAssembler::Address(base.gpr(), JSCell::typeInfoFlagsOffset()), 
+            MacroAssembler::TrustedImm32(ImplementsDefaultHasInstance)));
 
         noResult(node);
         break;
@@ -4371,8 +4370,10 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.move(TrustedImm32(0), result.gpr());
             notMasqueradesAsUndefined = m_jit.jump();
         } else {
-            m_jit.loadPtr(JITCompiler::Address(value.gpr(), JSCell::structureOffset()), result.gpr());
-            JITCompiler::Jump isMasqueradesAsUndefined = m_jit.branchTest8(JITCompiler::NonZero, JITCompiler::Address(result.gpr(), Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined));
+            JITCompiler::Jump isMasqueradesAsUndefined = m_jit.branchTest8(
+                JITCompiler::NonZero, 
+                JITCompiler::Address(value.gpr(), JSCell::typeInfoFlagsOffset()), 
+                TrustedImm32(MasqueradesAsUndefined));
             m_jit.move(TrustedImm32(0), result.gpr());
             notMasqueradesAsUndefined = m_jit.jump();
 
@@ -4419,8 +4420,10 @@ void SpeculativeJIT::compile(Node* node)
         
         JITCompiler::Jump isNotCell = m_jit.branchTest64(JITCompiler::NonZero, value.gpr(), GPRInfo::tagMaskRegister);
         
-        m_jit.loadPtr(JITCompiler::Address(value.gpr(), JSCell::structureOffset()), result.gpr());
-        m_jit.compare8(JITCompiler::Equal, JITCompiler::Address(result.gpr(), Structure::typeInfoTypeOffset()), TrustedImm32(StringType), result.gpr());
+        m_jit.compare8(JITCompiler::Equal, 
+            JITCompiler::Address(value.gpr(), JSCell::typeInfoTypeOffset()), 
+            TrustedImm32(StringType), 
+            result.gpr());
         m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
         JITCompiler::Jump done = m_jit.jump();
         
@@ -4459,8 +4462,6 @@ void SpeculativeJIT::compile(Node* node)
     case TypeOf: {
         JSValueOperand value(this, node->child1(), ManualOperandSpeculation);
         GPRReg valueGPR = value.gpr();
-        GPRTemporary temp(this);
-        GPRReg tempGPR = temp.gpr();
         GPRResult result(this);
         GPRReg resultGPR = result.gpr();
         JITCompiler::JumpList doneJumps;
@@ -4474,8 +4475,10 @@ void SpeculativeJIT::compile(Node* node)
             DFG_TYPE_CHECK(JSValueSource(valueGPR), node->child1(), SpecCell, isNotCell);
 
         if (!node->child1()->shouldSpeculateObject() || node->child1().useKind() == StringUse) {
-            m_jit.loadPtr(JITCompiler::Address(valueGPR, JSCell::structureOffset()), tempGPR);
-            JITCompiler::Jump notString = m_jit.branch8(JITCompiler::NotEqual, JITCompiler::Address(tempGPR, Structure::typeInfoTypeOffset()), TrustedImm32(StringType));
+            JITCompiler::Jump notString = m_jit.branch8(
+                JITCompiler::NotEqual, 
+                JITCompiler::Address(valueGPR, JSCell::typeInfoTypeOffset()), 
+                TrustedImm32(StringType));
             if (node->child1().useKind() == StringUse)
                 DFG_TYPE_CHECK(JSValueSource(valueGPR), node->child1(), SpecString, notString);
             m_jit.move(TrustedImmPtr(m_jit.vm()->smallStrings.stringString()), resultGPR);
@@ -5025,7 +5028,7 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, Edge valueUs
     if (!isKnownCell(valueUse.node()))
         isNotCell = m_jit.branchTest64(JITCompiler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
 
-    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(m_jit, ownerGPR, scratch1, scratch2);
+    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(m_jit, ownerGPR);
     storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
     definitelyNotMarked.link(&m_jit);
 

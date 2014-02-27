@@ -1330,7 +1330,7 @@ public:
     {
         m_formatter.oneByteOp8(OP_MOV_EbGb, src, base, index, scale, offset);
     }
-    
+
     void movw_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
     {
         m_formatter.prefix(PRE_OPERAND_SIZE);
@@ -2054,9 +2054,9 @@ public:
 #if CPU(X86_64)
     static void revertJumpTo_movq_i64r(void* instructionStart, int64_t imm, RegisterID dst)
     {
+        const unsigned instructionSize = 10; // REX.W MOV IMM64
         const int rexBytes = 1;
         const int opcodeBytes = 1;
-        ASSERT(rexBytes + opcodeBytes <= maxJumpReplacementSize());
         uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
         ptr[0] = PRE_REX | (1 << 3) | (dst >> 3);
         ptr[1] = OP_MOV_EAXIv | (dst & 7);
@@ -2066,11 +2066,33 @@ public:
             uint8_t asBytes[8];
         } u;
         u.asWord = imm;
-        for (unsigned i = rexBytes + opcodeBytes; i < static_cast<unsigned>(maxJumpReplacementSize()); ++i)
+        for (unsigned i = rexBytes + opcodeBytes; i < instructionSize; ++i)
+            ptr[i] = u.asBytes[i - rexBytes - opcodeBytes];
+    }
+
+    static void revertJumpTo_movl_i32r(void* instructionStart, int32_t imm, RegisterID dst)
+    {
+        // We only revert jumps on inline caches, and inline caches always use the scratch register (r11).
+        // FIXME: If the above is ever false then we need to make this smarter with respect to emitting 
+        // the REX byte.
+        ASSERT(dst == X86Registers::r11);
+        const unsigned instructionSize = 6; // REX MOV IMM32
+        const int rexBytes = 1;
+        const int opcodeBytes = 1;
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
+        ptr[0] = PRE_REX | (dst >> 3);
+        ptr[1] = OP_MOV_EAXIv | (dst & 7);
+        
+        union {
+            uint32_t asWord;
+            uint8_t asBytes[4];
+        } u;
+        u.asWord = imm;
+        for (unsigned i = rexBytes + opcodeBytes; i < instructionSize; ++i)
             ptr[i] = u.asBytes[i - rexBytes - opcodeBytes];
     }
 #endif
-    
+
     static void revertJumpTo_cmpl_ir_force32(void* instructionStart, int32_t imm, RegisterID dst)
     {
         const int opcodeBytes = 1;

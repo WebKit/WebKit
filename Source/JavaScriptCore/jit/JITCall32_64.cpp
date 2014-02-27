@@ -70,8 +70,7 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
 
     emitLoad(result, regT1, regT0);
     Jump notJSCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-    Jump notObject = emitJumpIfNotObject(regT2);
+    Jump notObject = emitJumpIfCellNotObject(regT0);
 
     checkStackPointerAlignment();
     emitFunctionEpilogue();
@@ -266,8 +265,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         if (opcodeID == op_call && shouldEmitProfiling()) {
             emitLoad(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0, regT1);
             Jump done = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
-            loadPtr(Address(regT1, JSCell::structureOffset()), regT1);
-            storePtr(regT1, instruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile->addressOfLastSeenStructure());
+            loadPtr(Address(regT1, JSCell::structureIDOffset()), regT1);
+            storePtr(regT1, instruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile->addressOfLastSeenStructureID());
             done.link(this);
         }
     
@@ -342,7 +341,7 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
     JumpList slowCases;
 
     slowCases.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
-    slowCases.append(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(expectedStructure)));
+    slowCases.append(branchPtr(NotEqual, Address(regT0, JSCell::structureIDOffset()), TrustedImmPtr(expectedStructure)));
     slowCases.append(branchPtr(NotEqual, Address(regT0, JSFunction::offsetOfExecutable()), TrustedImmPtr(expectedExecutable)));
     
     loadPtr(Address(regT0, JSFunction::offsetOfScopeChain()), regT1);

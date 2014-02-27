@@ -77,24 +77,25 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
 
 void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBlock* codeBlock)
 {
-    if (!m_lastSeenStructure)
+    if (!m_lastSeenStructureID)
         return;
     
-    m_observedArrayModes |= arrayModeFromStructure(m_lastSeenStructure);
+    Structure* lastSeenStructure = codeBlock->heap()->structureIDTable().get(m_lastSeenStructureID);
+    m_observedArrayModes |= arrayModeFromStructure(lastSeenStructure);
     
     if (!m_didPerformFirstRunPruning
         && hasTwoOrMoreBitsSet(m_observedArrayModes)) {
-        m_observedArrayModes = arrayModeFromStructure(m_lastSeenStructure);
+        m_observedArrayModes = arrayModeFromStructure(lastSeenStructure);
         m_didPerformFirstRunPruning = true;
     }
     
     m_mayInterceptIndexedAccesses |=
-        m_lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
+        lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
     JSGlobalObject* globalObject = codeBlock->globalObject();
-    if (!globalObject->isOriginalArrayStructure(m_lastSeenStructure)
-        && !globalObject->isOriginalTypedArrayStructure(m_lastSeenStructure))
+    if (!globalObject->isOriginalArrayStructure(lastSeenStructure)
+        && !globalObject->isOriginalTypedArrayStructure(lastSeenStructure))
         m_usesOriginalArrayStructures = false;
-    m_lastSeenStructure = 0;
+    m_lastSeenStructureID = 0;
 }
 
 CString ArrayProfile::briefDescription(const ConcurrentJITLocker& locker, CodeBlock* codeBlock)

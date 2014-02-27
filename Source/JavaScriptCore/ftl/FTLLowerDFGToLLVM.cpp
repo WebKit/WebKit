@@ -1540,12 +1540,12 @@ private:
         else
             exitKind = BadCache;
         
-        LValue structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
+        LValue structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
         
         if (m_node->structureSet().size() == 1) {
             speculate(
                 exitKind, jsValueValue(cell), 0,
-                m_out.notEqual(structure, weakPointer(m_node->structureSet()[0])));
+                m_out.notEqual(structureID, weakStructure(m_node->structureSet()[0])));
             return;
         }
         
@@ -1555,14 +1555,14 @@ private:
         for (unsigned i = 0; i < m_node->structureSet().size() - 1; ++i) {
             LBasicBlock nextStructure = FTL_NEW_BLOCK(m_out, ("CheckStructure nextStructure"));
             m_out.branch(
-                m_out.equal(structure, weakPointer(m_node->structureSet()[i])),
+                m_out.equal(structureID, weakStructure(m_node->structureSet()[i])),
                 unsure(continuation), unsure(nextStructure));
             m_out.appendTo(nextStructure);
         }
         
         speculate(
             exitKind, jsValueValue(cell), 0,
-            m_out.notEqual(structure, weakPointer(m_node->structureSet().last())));
+            m_out.notEqual(structureID, weakStructure(m_node->structureSet().last())));
         
         m_out.jump(continuation);
         m_out.appendTo(continuation, lastNext);
@@ -1602,10 +1602,10 @@ private:
         LBasicBlock unexpectedStructure = FTL_NEW_BLOCK(m_out, ("ArrayifyToStructure unexpected structure"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArrayifyToStructure continuation"));
         
-        LValue structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
+        LValue structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
         
         m_out.branch(
-            m_out.notEqual(structure, weakPointer(m_node->structure())),
+            m_out.notEqual(structureID, weakStructure(m_node->structure())),
             rarely(unexpectedStructure), usually(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(unexpectedStructure, continuation);
@@ -1646,10 +1646,9 @@ private:
             break;
         }
         
-        structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
         speculate(
             BadIndexingType, jsValueValue(cell), 0,
-            m_out.notEqual(structure, weakPointer(m_node->structure())));
+            m_out.notEqual(structureID, weakStructure(m_node->structure())));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -1658,10 +1657,17 @@ private:
     void compilePutStructure()
     {
         m_ftlState.jitCode->common.notifyCompilingStructureTransition(m_graph.m_plan, codeBlock(), m_node);
-        
-        m_out.storePtr(
-            weakPointer(m_node->structureTransitionData().newStructure),
-            lowCell(m_node->child1()), m_heaps.JSCell_structure);
+
+        Structure* oldStructure = m_node->structureTransitionData().previousStructure;
+        Structure* newStructure = m_node->structureTransitionData().newStructure;
+        ASSERT_UNUSED(oldStructure, oldStructure->indexingType() == newStructure->indexingType());
+        ASSERT(oldStructure->typeInfo().inlineTypeFlags() == newStructure->typeInfo().inlineTypeFlags());
+        ASSERT(oldStructure->typeInfo().type() == newStructure->typeInfo().type());
+
+        LValue cell = lowCell(m_node->child1()); 
+        m_out.store32(
+            weakStructure(newStructure),
+            cell, m_heaps.JSCell_structureID);
     }
     
     void compilePhantomPutStructure()
@@ -2467,7 +2473,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
         ValueFromBlock fastResult = m_out.anchor(allocateObject(
-            m_out.constIntPtr(allocator), m_out.constIntPtr(structure), m_out.intPtrZero, slowPath));
+            m_out.constIntPtr(allocator), structure, m_out.intPtrZero, slowPath));
         
         m_out.jump(continuation);
         
@@ -2644,7 +2650,7 @@ private:
             LValue butterfly = m_out.sub(endOfStorage, payloadSize);
             
             LValue object = allocateObject<JSArray>(
-                m_out.constIntPtr(structure), butterfly, failCase);
+                structure, butterfly, failCase);
             
             m_out.store32(publicLength, butterfly, m_heaps.Butterfly_publicLength);
             m_out.store32(vectorLength, butterfly, m_heaps.Butterfly_vectorLength);
@@ -2741,18 +2747,18 @@ private:
             
         case StringOrStringObjectUse: {
             LValue cell = lowCell(m_node->child1());
-            LValue structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
+            LValue structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
             
             LBasicBlock notString = FTL_NEW_BLOCK(m_out, ("ToString StringOrStringObject not string case"));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ToString StringOrStringObject continuation"));
             
             ValueFromBlock simpleResult = m_out.anchor(cell);
             m_out.branch(
-                m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())),
+                m_out.equal(structureID, m_out.constInt32(vm().stringStructure->id())),
                 unsure(continuation), unsure(notString));
             
             LBasicBlock lastNext = m_out.appendTo(notString, continuation);
-            speculateStringObjectForStructure(m_node->child1(), structure);
+            speculateStringObjectForStructureID(m_node->child1(), structureID);
             ValueFromBlock unboxedResult = m_out.anchor(
                 m_out.loadPtr(cell, m_heaps.JSWrapperObject_internalValue));
             m_out.jump(continuation);
@@ -2788,8 +2794,8 @@ private:
             LValue isStringPredicate;
             if (m_node->child1()->prediction() & SpecString) {
                 isStringPredicate = m_out.equal(
-                    m_out.loadPtr(value, m_heaps.JSCell_structure),
-                    m_out.constIntPtr(vm().stringStructure.get()));
+                    m_out.load32(value, m_heaps.JSCell_structureID),
+                    m_out.constInt32(vm().stringStructure->id()));
             } else
                 isStringPredicate = m_out.booleanFalse;
             m_out.branch(isStringPredicate, unsure(continuation), unsure(notString));
@@ -2864,7 +2870,7 @@ private:
         
         LValue result = allocateCell(
             m_out.constIntPtr(&allocator),
-            m_out.constIntPtr(vm().stringStructure.get()),
+            vm().stringStructure.get(),
             slowPath);
         
         m_out.storePtr(m_out.intPtrZero, result, m_heaps.JSString_value);
@@ -3081,11 +3087,11 @@ private:
             GetByIdVariant variant = data.variants[i];
             for (unsigned j = variant.structureSet().size(); j--;) {
                 cases.append(SwitchCase(
-                    weakPointer(variant.structureSet()[j]), blocks[i], Weight(1)));
+                    weakStructure(variant.structureSet()[j]), blocks[i], Weight(1)));
             }
         }
         m_out.switchInstruction(
-            m_out.loadPtr(base, m_heaps.JSCell_structure), cases, exit, Weight(0));
+            m_out.load32(base, m_heaps.JSCell_structureID), cases, exit, Weight(0));
         
         LBasicBlock lastNext = m_out.m_nextBlock;
         
@@ -3147,10 +3153,10 @@ private:
         for (unsigned i = data.variants.size(); i--;) {
             PutByIdVariant variant = data.variants[i];
             cases.append(
-                SwitchCase(weakPointer(variant.oldStructure()), blocks[i], Weight(1)));
+                SwitchCase(weakStructure(variant.oldStructure()), blocks[i], Weight(1)));
         }
         m_out.switchInstruction(
-            m_out.loadPtr(base, m_heaps.JSCell_structure), cases, exit, Weight(0));
+            m_out.load32(base, m_heaps.JSCell_structureID), cases, exit, Weight(0));
         
         LBasicBlock lastNext = m_out.m_nextBlock;
         
@@ -3172,8 +3178,12 @@ private:
                 
                 storage = storageForTransition(
                     base, variant.offset(), variant.oldStructure(), variant.newStructure());
-                m_out.storePtr(
-                    weakPointer(variant.newStructure()), base, m_heaps.JSCell_structure);
+
+                ASSERT(variant.oldStructure()->indexingType() == variant.newStructure()->indexingType());
+                ASSERT(variant.oldStructure()->typeInfo().inlineTypeFlags() == variant.newStructure()->typeInfo().inlineTypeFlags());
+                ASSERT(variant.oldStructure()->typeInfo().type() == variant.newStructure()->typeInfo().type());
+                m_out.store32(
+                    weakStructure(variant.newStructure()), base, m_heaps.JSCell_structureID);
             }
             
             storeProperty(value, storage, data.identifierNumber, variant.offset());
@@ -3942,14 +3952,14 @@ private:
             return;
         }
         
-        LValue structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
+        LValue structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
         FTL_TYPE_CHECK(
             jsValueValue(cell), edge, filter,
-            m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())));
+            m_out.equal(structureID, m_out.constInt32(vm().stringStructure->id())));
         speculate(
             BadType, jsValueValue(cell), edge.node(),
             m_out.testNonZero8(
-                m_out.load8(structure, m_heaps.Structure_typeInfoFlags),
+                m_out.load8(cell, m_heaps.JSCell_typeInfoFlags),
                 m_out.constInt8(MasqueradesAsUndefined)));
     }
     
@@ -3981,8 +3991,8 @@ private:
         m_out.appendTo(continuation, lastNext);
         setBoolean(m_out.phi(m_out.boolean, fastResult, slowResult));
     }
-    
-    LValue allocateCell(LValue allocator, LValue structure, LBasicBlock slowPath)
+
+    LValue allocateCell(LValue allocator, Structure* structure, LBasicBlock slowPath)
     {
         LBasicBlock success = FTL_NEW_BLOCK(m_out, ("object allocation success"));
         
@@ -3997,13 +4007,17 @@ private:
             m_out.loadPtr(result, m_heaps.JSCell_freeListNext),
             allocator, m_heaps.MarkedAllocator_freeListHead);
         
-        m_out.storePtr(structure, result, m_heaps.JSCell_structure);
+        m_out.store32(m_out.constInt32(structure->id()), result, m_heaps.JSCell_structureID);
+        m_out.store8(m_out.constInt8(structure->indexingType()), result, m_heaps.JSCell_indexingType);
+        m_out.store8(m_out.constInt8(structure->typeInfo().type()), result, m_heaps.JSCell_typeInfoType);
+        m_out.store8(m_out.constInt8(structure->typeInfo().inlineTypeFlags()), result, m_heaps.JSCell_typeInfoFlags);
+        m_out.store8(m_out.constInt8(0), result, m_heaps.JSCell_gcData);
         
         return result;
     }
-    
+
     LValue allocateObject(
-        LValue allocator, LValue structure, LValue butterfly, LBasicBlock slowPath)
+        LValue allocator, Structure* structure, LValue butterfly, LBasicBlock slowPath)
     {
         LValue result = allocateCell(allocator, structure, slowPath);
         m_out.storePtr(butterfly, result, m_heaps.JSObject_butterfly);
@@ -4011,7 +4025,7 @@ private:
     }
     
     template<typename ClassType>
-    LValue allocateObject(LValue structure, LValue butterfly, LBasicBlock slowPath)
+    LValue allocateObject(Structure* structure, LValue butterfly, LBasicBlock slowPath)
     {
         MarkedAllocator* allocator;
         size_t size = ClassType::allocationSize(0);
@@ -4080,7 +4094,7 @@ private:
             endOfStorage, m_out.constIntPtr(sizeof(JSValue) * vectorLength));
         
         LValue object = allocateObject<JSArray>(
-            m_out.constIntPtr(structure), butterfly, slowPath);
+            structure, butterfly, slowPath);
         
         m_out.store32(m_out.constInt32(numElements), butterfly, m_heaps.Butterfly_publicLength);
         m_out.store32(m_out.constInt32(vectorLength), butterfly, m_heaps.Butterfly_vectorLength);
@@ -4219,8 +4233,8 @@ private:
             FTL_TYPE_CHECK(
                 jsValueValue(value), edge, (~SpecCell) | SpecObject,
                 m_out.equal(
-                    m_out.loadPtr(value, m_heaps.JSCell_structure),
-                    m_out.constIntPtr(vm().stringStructure.get())));
+                    m_out.load32(value, m_heaps.JSCell_structureID),
+                    m_out.constInt32(vm().stringStructure->id())));
             break;
         }
         
@@ -4231,17 +4245,17 @@ private:
             LBasicBlock masqueradesCase =
                 FTL_NEW_BLOCK(m_out, ("EqualNullOrUndefined masquerades case"));
                 
-            LValue structure = m_out.loadPtr(value, m_heaps.JSCell_structure);
-            
             results.append(m_out.anchor(m_out.booleanFalse));
             
             m_out.branch(
                 m_out.testNonZero8(
-                    m_out.load8(structure, m_heaps.Structure_typeInfoFlags),
+                    m_out.load8(value, m_heaps.JSCell_typeInfoFlags),
                     m_out.constInt8(MasqueradesAsUndefined)),
                 rarely(masqueradesCase), usually(continuation));
             
             m_out.appendTo(masqueradesCase, primitiveCase);
+            
+            LValue structure = loadStructure(value);
             
             results.append(m_out.anchor(
                 m_out.equal(
@@ -5003,8 +5017,8 @@ private:
     LValue isObject(LValue cell)
     {
         return m_out.notEqual(
-            m_out.loadPtr(cell, m_heaps.JSCell_structure),
-            m_out.constIntPtr(vm().stringStructure.get()));
+            m_out.load32(cell, m_heaps.JSCell_structureID),
+            m_out.constInt32(vm().stringStructure->id()));
     }
     
     LValue isNotString(LValue cell)
@@ -5015,8 +5029,8 @@ private:
     LValue isString(LValue cell)
     {
         return m_out.equal(
-            m_out.loadPtr(cell, m_heaps.JSCell_structure),
-            m_out.constIntPtr(vm().stringStructure.get()));
+            m_out.load32(cell, m_heaps.JSCell_structureID),
+            m_out.constInt32(vm().stringStructure->id()));
     }
     
     LValue isNotObject(LValue cell)
@@ -5030,9 +5044,7 @@ private:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous: {
-            LValue indexingType = m_out.load8(
-                m_out.loadPtr(cell, m_heaps.JSCell_structure),
-                m_heaps.Structure_indexingType);
+            LValue indexingType = m_out.load8(cell, m_heaps.JSCell_indexingType);
             
             switch (arrayMode.arrayClass()) {
             case Array::OriginalArray:
@@ -5060,7 +5072,9 @@ private:
         }
             
         default:
-            return hasClassInfo(cell, classInfoForType(arrayMode.typedArrayType()));
+            return m_out.equal(
+                m_out.load8(cell, m_heaps.JSCell_typeInfoType), 
+                m_out.constInt8(typeForTypedArrayType(arrayMode.typedArrayType())));
         }
     }
     
@@ -5068,7 +5082,7 @@ private:
     {
         return m_out.equal(
             m_out.loadPtr(
-                m_out.loadPtr(cell, m_heaps.JSCell_structure),
+                loadStructure(cell),
                 m_heaps.Structure_classInfo),
             m_out.constIntPtr(classInfo));
     }
@@ -5076,9 +5090,7 @@ private:
     LValue isType(LValue cell, JSType type)
     {
         return m_out.equal(
-            m_out.load8(
-                m_out.loadPtr(cell, m_heaps.JSCell_structure),
-                m_heaps.Structure_typeInfoType),
+            m_out.load8(cell, m_heaps.JSCell_typeInfoType),
             m_out.constInt8(type));
     }
     
@@ -5165,13 +5177,13 @@ private:
         LBasicBlock notString = FTL_NEW_BLOCK(m_out, ("Speculate StringOrStringObject not string case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Speculate StringOrStringObject continuation"));
         
-        LValue structure = m_out.loadPtr(lowCell(edge), m_heaps.JSCell_structure);
+        LValue structureID = m_out.load32(lowCell(edge), m_heaps.JSCell_structureID);
         m_out.branch(
-            m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())),
+            m_out.equal(structureID, m_out.constInt32(vm().stringStructure->id())),
             unsure(continuation), unsure(notString));
         
         LBasicBlock lastNext = m_out.appendTo(notString, continuation);
-        speculateStringObjectForStructure(edge, structure);
+        speculateStringObjectForStructureID(edge, structureID);
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -5181,10 +5193,10 @@ private:
     
     void speculateStringObjectForCell(Edge edge, LValue cell)
     {
-        speculateStringObjectForStructure(edge, m_out.loadPtr(cell, m_heaps.JSCell_structure));
+        speculateStringObjectForStructureID(edge, m_out.load32(cell, m_heaps.JSCell_structureID));
     }
     
-    void speculateStringObjectForStructure(Edge edge, LValue structure)
+    void speculateStringObjectForStructureID(Edge edge, LValue structureID)
     {
         Structure* stringObjectStructure =
             m_graph.globalObjectFor(m_node->origin.semantic)->stringObjectStructure();
@@ -5194,22 +5206,23 @@ private:
         
         speculate(
             NotStringObject, noValue(), 0,
-            m_out.notEqual(structure, weakPointer(stringObjectStructure)));
+            m_out.notEqual(structureID, weakStructure(stringObjectStructure)));
     }
     
     void speculateNonNullObject(Edge edge, LValue cell)
     {
-        LValue structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
         FTL_TYPE_CHECK(
             jsValueValue(cell), edge, SpecObject, 
-            m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())));
+            m_out.equal(
+                m_out.load32(cell, m_heaps.JSCell_structureID),
+                m_out.constInt32(vm().stringStructure->id())));
         if (masqueradesAsUndefinedWatchpointIsStillValid())
             return;
         
         speculate(
             BadType, jsValueValue(cell), edge.node(),
             m_out.testNonZero8(
-                m_out.load8(structure, m_heaps.Structure_typeInfoFlags),
+                m_out.load8(cell, m_heaps.JSCell_typeInfoFlags),
                 m_out.constInt8(MasqueradesAsUndefined)));
     }
     
@@ -5264,10 +5277,7 @@ private:
     
     LValue loadMarkByte(LValue base)
     {
-        LValue markedBlock = m_out.bitAnd(base, m_out.constInt64(MarkedBlock::blockMask));
-        LValue baseOffset = m_out.bitAnd(base, m_out.constInt64(~MarkedBlock::blockMask));
-        LValue markByteIndex = m_out.lShr(baseOffset, m_out.constInt64(MarkedBlock::atomShiftAmount + MarkedBlock::markByteShiftAmount));
-        return m_out.load8(m_out.baseIndex(m_heaps.MarkedBlock_markBits, markedBlock, markByteIndex, ScaleOne, MarkedBlock::offsetOfMarks()));
+        return m_out.load8(base, m_heaps.JSCell_gcData);
     }
 
     void emitStoreBarrier(LValue base, LValue value, Edge valueEdge)
@@ -5732,11 +5742,24 @@ private:
     {
         m_graph.m_plan.weakReferences.addLazily(target);
     }
-    
+
+    LValue loadStructure(LValue value)
+    {
+        LValue tableIndex = m_out.load32(value, m_heaps.JSCell_structureID);
+        LValue tableBase = m_out.get(m_out.constIntPtr(vm().heap.structureIDTable().base()));
+        return m_out.get(m_out.baseIndex(tableBase, tableIndex, ScaleEight));
+    }
+
     LValue weakPointer(JSCell* pointer)
     {
         addWeakReference(pointer);
         return m_out.constIntPtr(pointer);
+    }
+
+    LValue weakStructure(Structure* structure)
+    {
+        addWeakReference(structure);
+        return m_out.constInt32(structure->id());
     }
     
     TypedPointer addressFor(LValue base, int operand, ptrdiff_t offset = 0)

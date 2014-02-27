@@ -206,7 +206,7 @@ public:
         return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedFunctionExecutableType, StructureFlags), info());
     }
 
-    static const unsigned StructureFlags = OverridesVisitChildren | JSCell::StructureFlags;
+    static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal | JSCell::StructureFlags;
 
     DECLARE_EXPORT_INFO;
 };
@@ -579,7 +579,7 @@ private:
 
 protected:
 
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
+    static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal | Base::StructureFlags;
     static void visitChildren(JSCell*, SlotVisitor&);
 
 public:

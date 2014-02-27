@@ -669,6 +669,7 @@ public:
         return constantBufferAsVector(index).data();
     }
 
+    Heap* heap() const { return m_heap; }
     JSGlobalObject* globalObject() { return m_globalObject.get(); }
 
     JSGlobalObject* globalObjectFor(CodeOrigin);

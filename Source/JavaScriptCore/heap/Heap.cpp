@@ -437,6 +437,7 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
     JSCell** registerRoots = stackRoots.roots();
     for (size_t i = 0; i < stackRootCount; i++) {
         setMarked(registerRoots[i]);
+        registerRoots[i]->mark();
         roots.add(registerRoots[i]);
     }
 }
@@ -857,6 +858,7 @@ void Heap::collect()
 
     {
         GCPHASE(StopAllocation);
+        m_structureIDTable.flushOldTables();
         m_objectSpace.stopAllocating();
         if (m_operationInProgress == FullCollection)
             m_storageSpace.didStartFullCollection();
@@ -1110,8 +1112,11 @@ void Heap::writeBarrier(const JSCell* from)
 {
 #if ENABLE(GGC)
     ASSERT_GC_OBJECT_LOOKS_VALID(const_cast<JSCell*>(from));
-    if (!from || !isMarked(from))
+    if (!from || !from->isMarked()) {
+        ASSERT(!from || !isMarked(from));
         return;
+    }
+    ASSERT(isMarked(from));
     addToRememberedSet(from);
 #else
     UNUSED_PARAM(from);

@@ -795,6 +795,9 @@
     <ClCompile Include="..\runtime\StructureChain.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\StructureIDTable.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\SymbolTable.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2429,7 +2432,16 @@
     <ClInclude Include="..\runtime\Structure.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\StructureIDBlobh">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\StructureChain.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\StructureIDBlob.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\StructureIDTable.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\StructureTransitionTable.h">

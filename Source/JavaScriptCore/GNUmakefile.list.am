@@ -1228,6 +1228,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/StructureChain.h \
 	Source/JavaScriptCore/runtime/Structure.cpp \
 	Source/JavaScriptCore/runtime/Structure.h \
+	Source/JavaScriptCore/runtime/StructureIDBlob.h \
+	Source/JavaScriptCore/runtime/StructureIDTable.cpp \
+	Source/JavaScriptCore/runtime/StructureIDTable.h \
 	Source/JavaScriptCore/runtime/StructureInlines.h \
 	Source/JavaScriptCore/runtime/StructureRareData.cpp \
 	Source/JavaScriptCore/runtime/StructureRareData.h \

@@ -32,7 +32,7 @@
 #if ENABLE(GC_VALIDATION)
 #define ASSERT_GC_OBJECT_LOOKS_VALID(cell) do { \
     RELEASE_ASSERT(cell);\
-    RELEASE_ASSERT(cell->unvalidatedStructure()->unvalidatedStructure() == cell->unvalidatedStructure()->unvalidatedStructure()->unvalidatedStructure()); \
+    RELEASE_ASSERT(cell->structure()->structure() == cell->structure()->structure()->structure()); \
 } while (0)
 
 #define ASSERT_GC_OBJECT_INHERITS(object, classInfo) do {\

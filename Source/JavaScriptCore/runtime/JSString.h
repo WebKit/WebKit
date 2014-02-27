@@ -163,7 +163,7 @@ namespace JSC {
 
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(vm, globalObject, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero), info());
+            return Structure::create(vm, globalObject, proto, TypeInfo(StringType, StructureFlags), info());
         }
 
         static size_t offsetOfLength() { return OBJECT_OFFSETOF(JSString, m_length); }
@@ -181,6 +181,8 @@ namespace JSC {
         };
 
     protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal;
+
         friend class JSValue;
             
         bool isRope() const { return m_value.isNull(); }
@@ -526,7 +528,7 @@ namespace JSC {
         return false;
     }
 
-    inline bool isJSString(JSValue v) { return v.isCell() && v.asCell()->classInfo() == JSString::info(); }
+    inline bool isJSString(JSValue v) { return v.isCell() && v.asCell()->type() == StringType; }
 
     // --- JSValue inlines ----------------------------
         

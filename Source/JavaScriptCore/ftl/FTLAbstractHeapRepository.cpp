@@ -45,7 +45,7 @@ AbstractHeapRepository::AbstractHeapRepository(LContext context)
     FOR_EACH_ABSTRACT_FIELD(ABSTRACT_FIELD_INITIALIZATION)
 #undef ABSTRACT_FIELD_INITIALIZATION
     
-    , JSCell_freeListNext(JSCell_structure)
+    , JSCell_freeListNext(JSCell_structureID)
     
 #define INDEXED_ABSTRACT_HEAP_INITIALIZATION(name, offset, size) , name(context, &root, #name, offset, size)
     FOR_EACH_INDEXED_ABSTRACT_HEAP(INDEXED_ABSTRACT_HEAP_INITIALIZATION)

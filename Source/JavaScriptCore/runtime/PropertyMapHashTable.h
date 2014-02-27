@@ -138,7 +138,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), info());
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -201,6 +201,9 @@ public:
     size_t sizeInMemory();
     void checkConsistency();
 #endif
+
+protected:
+    static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal;
 
 private:
     PropertyTable(VM&, unsigned initialCapacity);

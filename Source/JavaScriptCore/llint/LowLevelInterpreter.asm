@@ -439,11 +439,12 @@ macro slowPathForCall(slowPath)
         end)
 end
 
-macro arrayProfile(structureAndIndexingType, profile, scratch)
-    const structure = structureAndIndexingType
-    const indexingType = structureAndIndexingType
-    storep structure, ArrayProfile::m_lastSeenStructure[profile]
-    loadb Structure::m_indexingType[structure], indexingType
+macro arrayProfile(cellAndIndexingType, profile, scratch)
+    const cell = cellAndIndexingType
+    const indexingType = cellAndIndexingType 
+    loadi JSCell::m_structureID[cell], scratch
+    storei scratch, ArrayProfile::m_lastSeenStructureID[profile]
+    loadb JSCell::m_indexingType[cell], indexingType
 end
 
 macro checkMarkByte(cell, scratch1, scratch2, continuation)
@@ -620,8 +621,8 @@ macro allocateJSObject(allocator, structure, result, scratch1, slowCase)
         storep scratch1, offsetOfFirstFreeCell[allocator]
     
         # Initialize the object.
-        storep structure, JSCell::m_structure[result]
         storep 0, JSObject::m_butterfly[result]
+        storeStructureWithTypeInfo(result, structure, scratch1)
     end
 end
 

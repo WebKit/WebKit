@@ -32,34 +32,37 @@
 
 namespace JSC {
 
-const ClassInfo* classInfoForType(TypedArrayType type)
+JSType typeForTypedArrayType(TypedArrayType type)
 {
     switch (type) {
     case NotTypedArray:
-        return 0;
+        RELEASE_ASSERT_NOT_REACHED();
+        return UnspecifiedType;
     case TypeInt8:
-        return JSInt8Array::info();
+        return Int8ArrayType;
     case TypeUint8:
-        return JSUint8Array::info();
+        return Uint8ArrayType;
     case TypeUint8Clamped:
-        return JSUint8ClampedArray::info();
+        return Uint8ClampedArrayType;
     case TypeInt16:
-        return JSInt16Array::info();
+        return Int16ArrayType;
     case TypeUint16:
-        return JSUint16Array::info();
+        return Uint16ArrayType;
     case TypeInt32:
-        return JSInt32Array::info();
+        return Int32ArrayType;
     case TypeUint32:
-        return JSUint32Array::info();
+        return Uint32ArrayType;
     case TypeFloat32:
-        return JSFloat32Array::info();
+        return Float32ArrayType;
     case TypeFloat64:
-        return JSFloat64Array::info();
+        return Float64ArrayType;
     case TypeDataView:
-        return JSDataView::info();
+        return DataViewType;
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return UnspecifiedType;
     }
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0;
 }
 
 const ClassInfo* constructorClassInfoForType(TypedArrayType type)

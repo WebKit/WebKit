@@ -135,7 +135,7 @@ class ArrayProfile {
 public:
     ArrayProfile()
         : m_bytecodeOffset(std::numeric_limits<unsigned>::max())
-        , m_lastSeenStructure(0)
+        , m_lastSeenStructureID(0)
         , m_mayStoreToHole(false)
         , m_outOfBounds(false)
         , m_mayInterceptIndexedAccesses(false)
@@ -147,7 +147,7 @@ public:
     
     ArrayProfile(unsigned bytecodeOffset)
         : m_bytecodeOffset(bytecodeOffset)
-        , m_lastSeenStructure(0)
+        , m_lastSeenStructureID(0)
         , m_mayStoreToHole(false)
         , m_outOfBounds(false)
         , m_mayInterceptIndexedAccesses(false)
@@ -159,14 +159,14 @@ public:
     
     unsigned bytecodeOffset() const { return m_bytecodeOffset; }
     
-    Structure** addressOfLastSeenStructure() { return &m_lastSeenStructure; }
+    StructureID* addressOfLastSeenStructureID() { return &m_lastSeenStructureID; }
     ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
     bool* addressOfMayStoreToHole() { return &m_mayStoreToHole; }
     bool* addressOfOutOfBounds() { return &m_outOfBounds; }
     
     void observeStructure(Structure* structure)
     {
-        m_lastSeenStructure = structure;
+        m_lastSeenStructureID = structure->id();
     }
     
     void computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBlock*);
@@ -188,7 +188,7 @@ private:
     static Structure* polymorphicStructure() { return static_cast<Structure*>(reinterpret_cast<void*>(1)); }
     
     unsigned m_bytecodeOffset;
-    Structure* m_lastSeenStructure;
+    StructureID m_lastSeenStructureID;
     bool m_mayStoreToHole; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
     bool m_outOfBounds;
     bool m_mayInterceptIndexedAccesses : 1;

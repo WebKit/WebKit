@@ -26,6 +26,7 @@
 #ifndef TypedArrayType_h
 #define TypedArrayType_h
 
+#include "JSType.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -100,8 +101,8 @@ inline size_t elementSize(TypedArrayType type)
     return static_cast<size_t>(1) << logElementSize(type);
 }
 
-const ClassInfo* classInfoForType(TypedArrayType);
 const ClassInfo* constructorClassInfoForType(TypedArrayType);
+JSType typeForTypedArrayType(TypedArrayType);
 
 inline bool isInt(TypedArrayType type)
 {

@@ -186,7 +186,7 @@ public:
     
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info(), NonArray);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(typeForTypedArrayType(Adaptor::typeValue), StructureFlags), info(), NonArray);
     }
     
     static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.

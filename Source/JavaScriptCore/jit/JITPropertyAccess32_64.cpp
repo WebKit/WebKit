@@ -83,7 +83,7 @@ JIT::CodeRef JIT::stringGetByValStubGenerator(VM* vm)
 {
     JSInterfaceJIT jit(vm);
     JumpList failures;
-    failures.append(jit.branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(vm->stringStructure.get())));
+    failures.append(JSC::branchStructure(jit, NotEqual, Address(regT0, JSCell::structureIDOffset()), vm->stringStructure.get()));
     
     // Load string length to regT1, and start the process of loading the data pointer into regT0
     jit.load32(Address(regT0, ThunkHelpers::jsStringLengthOffset()), regT1);
@@ -132,8 +132,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
     emitJumpSlowCaseIfNotJSCell(base, regT1);
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-    emitArrayProfilingSite(regT1, regT3, profile);
+    emitArrayProfilingSiteWithCell(regT0, regT1, profile);
     and32(TrustedImm32(IndexingShapeMask), regT1);
 
     PatchableJump badType;
@@ -235,7 +234,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
 
     Jump nonCell = jump();
     linkSlowCase(iter); // base array check
-    Jump notString = branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(m_vm->stringStructure.get()));
+    Jump notString = branchStructure(NotEqual, Address(regT0, JSCell::structureIDOffset()), m_vm->stringStructure.get());
     emitNakedCall(m_vm->getCTIStub(stringGetByValStubGenerator).code());
     Jump failed = branchTestPtr(Zero, regT0);
     emitStore(dst, regT1, regT0);
@@ -276,8 +275,7 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
     emitJumpSlowCaseIfNotJSCell(base, regT1);
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-    emitArrayProfilingSite(regT1, regT3, profile);
+    emitArrayProfilingSiteWithCell(regT0, regT1, profile);
     and32(TrustedImm32(IndexingShapeMask), regT1);
     
     PatchableJump badType;
@@ -475,10 +473,8 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
     emitLoad(base, regT1, regT0);
     emitJumpSlowCaseIfNotJSCell(base, regT1);
 
-    if (*ident == m_vm->propertyNames->length && shouldEmitProfiling()) {
-        loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-        emitArrayProfilingSiteForBytecodeIndex(regT2, regT3, m_bytecodeOffset);
-    }
+    if (*ident == m_vm->propertyNames->length && shouldEmitProfiling())
+        emitArrayProfilingSiteForBytecodeIndexWithCell(regT0, regT2, m_bytecodeOffset);
 
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), RegisterSet::specialRegisters(),
@@ -634,7 +630,7 @@ void JIT::emit_op_get_by_pname(Instruction* currentInstruction)
     emitLoadPayload(iter, regT1);
     
     // Test base's structure
-    loadPtr(Address(regT2, JSCell::structureOffset()), regT0);
+    loadPtr(Address(regT2, JSCell::structureIDOffset()), regT0);
     addSlowCase(branchPtr(NotEqual, regT0, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructure))));
     load32(addressFor(i), regT3);
     sub32(TrustedImm32(1), regT3);
@@ -731,7 +727,7 @@ void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)
 {
     emitLoad(scope, regT1, regT0);
     loadPtr(structureSlot, regT2);
-    addSlowCase(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), regT2));
+    addSlowCase(branchPtr(NotEqual, Address(regT0, JSCell::structureIDOffset()), regT2));
 }
 
 void JIT::emitGetGlobalProperty(uintptr_t* operandSlot)

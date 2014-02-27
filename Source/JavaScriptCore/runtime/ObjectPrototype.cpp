@@ -123,7 +123,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
     descriptor.setGetter(get);
     descriptor.setEnumerable(true);
     descriptor.setConfigurable(true);
-    thisObject->methodTable()->defineOwnProperty(thisObject, exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), descriptor, false);
+    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), descriptor, false);
 
     return JSValue::encode(jsUndefined());
 }
@@ -143,7 +143,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     descriptor.setSetter(set);
     descriptor.setEnumerable(true);
     descriptor.setConfigurable(true);
-    thisObject->methodTable()->defineOwnProperty(thisObject, exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), descriptor, false);
+    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), descriptor, false);
 
     return JSValue::encode(jsUndefined());
 }
@@ -214,14 +214,14 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
         return JSValue::encode(jsNontrivialString(exec, String(thisValue.isUndefined() ? ASCIILiteral("[object Undefined]") : ASCIILiteral("[object Null]"))));
     JSObject* thisObject = thisValue.toObject(exec);
 
-    JSString* result = thisObject->structure()->objectToStringValue();
+    JSString* result = thisObject->structure(exec->vm())->objectToStringValue();
     if (!result) {
-        RefPtr<StringImpl> newString = WTF::tryMakeString("[object ", thisObject->methodTable()->className(thisObject), "]");
+        RefPtr<StringImpl> newString = WTF::tryMakeString("[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]");
         if (!newString)
             return JSValue::encode(throwOutOfMemoryError(exec));
 
         result = jsNontrivialString(exec, newString.release());
-        thisObject->structure()->setObjectToStringValue(exec->vm(), thisObject, result);
+        thisObject->structure(exec->vm())->setObjectToStringValue(exec->vm(), thisObject, result);
     }
     return JSValue::encode(result);
 }

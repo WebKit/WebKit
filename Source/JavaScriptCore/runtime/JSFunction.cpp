@@ -391,14 +391,15 @@ void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, 
 {
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (!thisObject->isHostOrBuiltinFunction() && (mode == IncludeDontEnumProperties)) {
+        VM& vm = exec->vm();
         // Make sure prototype has been reified.
         PropertySlot slot(thisObject);
-        thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, exec->propertyNames().prototype, slot);
+        thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, vm.propertyNames->prototype, slot);
 
-        propertyNames.add(exec->propertyNames().arguments);
-        propertyNames.add(exec->propertyNames().caller);
-        propertyNames.add(exec->propertyNames().length);
-        propertyNames.add(exec->propertyNames().name);
+        propertyNames.add(vm.propertyNames->arguments);
+        propertyNames.add(vm.propertyNames->caller);
+        propertyNames.add(vm.propertyNames->length);
+        propertyNames.add(vm.propertyNames->name);
     }
     Base::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -414,7 +415,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot(thisObject);
-        thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
+        thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_allocationProfile.clear();
         thisObject->m_allocationProfileWatchpoint.fireAll();
         // Don't allow this to be cached, since a [[Put]] must clear m_allocationProfile.
@@ -461,7 +462,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot(thisObject);
-        thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
+        thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_allocationProfile.clear();
         thisObject->m_allocationProfileWatchpoint.fireAll();
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);

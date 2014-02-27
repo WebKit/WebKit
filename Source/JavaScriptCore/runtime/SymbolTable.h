@@ -476,6 +476,9 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+protected:
+    static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
+
 private:
     class WatchpointCleanup : public UnconditionalFinalizer {
     public:

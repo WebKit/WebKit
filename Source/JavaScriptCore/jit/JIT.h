@@ -305,7 +305,7 @@ namespace JSC {
         
         void emitLoadDouble(int index, FPRegisterID value);
         void emitLoadInt32ToDouble(int index, FPRegisterID value);
-        Jump emitJumpIfNotObject(RegisterID structureReg);
+        Jump emitJumpIfCellNotObject(RegisterID cellReg);
 
         Jump addStructureTransitionCheck(JSCell*, Structure*, StructureStubInfo*, RegisterID scratch);
         void addStructureTransitionCheck(JSCell*, Structure*, StructureStubInfo*, JumpList& failureCases, RegisterID scratch);
@@ -314,7 +314,7 @@ namespace JSC {
         enum WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterValue, ShouldFilterBaseAndValue };
         // value register in write barrier is used before any scratch registers
         // so may safely be the same as either of the scratch registers.
-        Jump checkMarkWord(RegisterID owner, RegisterID scratch1, RegisterID scratch2);
+        Jump checkMarkWord(RegisterID owner);
         Jump checkMarkWord(JSCell* owner);
         void emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode);
         void emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode);
@@ -328,8 +328,8 @@ namespace JSC {
         void emitValueProfilingSite(ValueProfile*);
         void emitValueProfilingSite(unsigned bytecodeOffset);
         void emitValueProfilingSite();
-        void emitArrayProfilingSite(RegisterID structureAndIndexingType, RegisterID scratch, ArrayProfile*);
-        void emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndIndexingType, RegisterID scratch, unsigned bytecodeIndex);
+        void emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID indexingType, ArrayProfile*);
+        void emitArrayProfilingSiteForBytecodeIndexWithCell(RegisterID cell, RegisterID indexingType, unsigned bytecodeIndex);
         void emitArrayProfileStoreToHoleSpecialCase(ArrayProfile*);
         void emitArrayProfileOutOfBoundsSpecialCase(ArrayProfile*);
         
@@ -368,6 +368,8 @@ namespace JSC {
         JumpList emitFloatTypedArrayPutByVal(Instruction*, PatchableJump& badType, TypedArrayType);
         
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
+
+        template <typename T> Jump branchStructure(RelationalCondition, T leftHandSide, Structure*);
 
 #if USE(JSVALUE32_64)
         bool getOperandConstantImmediateInt(int op1, int op2, int& op, int32_t& constant);

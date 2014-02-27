@@ -472,6 +472,7 @@ set(JavaScriptCore_SOURCES
     runtime/StringRecursionChecker.cpp
     runtime/Structure.cpp
     runtime/StructureChain.cpp
+    runtime/StructureIDTable.cpp
     runtime/StructureRareData.cpp
     runtime/SymbolTable.cpp
     runtime/TestRunnerUtils.cpp

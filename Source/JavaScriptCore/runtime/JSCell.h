@@ -26,7 +26,9 @@
 #include "CallData.h"
 #include "ConstructData.h"
 #include "Heap.h"
+#include "IndexingType.h"
 #include "JSLock.h"
+#include "JSTypeInfo.h"
 #include "SlotVisitor.h"
 #include "TypedArrayType.h"
 #include "WriteBarrier.h"
@@ -92,9 +94,12 @@ public:
     bool inherits(const ClassInfo*) const;
     bool isAPIValueWrapper() const;
 
+    JSType type() const;
+    IndexingType indexingType() const;
     Structure* structure() const;
+    Structure* structure(VM&) const;
     void setStructure(VM&, Structure*);
-    void clearStructure() { m_structure.clear(); }
+    void clearStructure() { m_structureID = 0; }
 
     const char* className();
 
@@ -121,6 +126,7 @@ public:
     // Object operations, with the toObject operation included.
     const ClassInfo* classInfo() const;
     const MethodTable* methodTable() const;
+    const MethodTable* methodTable(VM&) const;
     const MethodTable* methodTableForDestruction() const;
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
@@ -135,20 +141,34 @@ public:
 
     JSValue fastGetOwnProperty(VM&, const String&);
 
-    static ptrdiff_t structureOffset()
+    void mark() { m_gcData = 1; }
+    bool isMarked() const { return m_gcData; }
+
+    static ptrdiff_t structureIDOffset()
     {
-        return OBJECT_OFFSETOF(JSCell, m_structure);
+        return OBJECT_OFFSETOF(JSCell, m_structureID);
     }
 
-    void* structureAddress()
+    static ptrdiff_t typeInfoFlagsOffset()
     {
-        return &m_structure;
+        return OBJECT_OFFSETOF(JSCell, m_flags);
     }
-        
-#if ENABLE(GC_VALIDATION)
-    Structure* unvalidatedStructure() const { return m_structure.unvalidatedGet(); }
-#endif
-        
+
+    static ptrdiff_t typeInfoTypeOffset()
+    {
+        return OBJECT_OFFSETOF(JSCell, m_type);
+    }
+
+    static ptrdiff_t indexingTypeOffset()
+    {
+        return OBJECT_OFFSETOF(JSCell, m_indexingType);
+    }
+
+    static ptrdiff_t gcDataOffset()
+    {
+        return OBJECT_OFFSETOF(JSCell, m_gcData);
+    }
+
     static const TypedArrayType TypedArrayStorageType = NotTypedArray;
 protected:
 
@@ -170,8 +190,12 @@ protected:
 
 private:
     friend class LLIntOffsetsExtractor;
-        
-    WriteBarrier<Structure> m_structure;
+
+    StructureID m_structureID;
+    IndexingType m_indexingType;
+    JSType m_type;
+    TypeInfo::InlineTypeFlags m_flags;
+    uint8_t m_gcData;
 };
 
 template<typename To, typename From>

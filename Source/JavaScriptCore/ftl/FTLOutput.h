@@ -267,6 +267,7 @@ public:
     LValue load64(LValue base, const AbstractField& field) { return load64(address(base, field)); }
     LValue loadPtr(LValue base, const AbstractField& field) { return loadPtr(address(base, field)); }
     LValue loadDouble(LValue base, const AbstractField& field) { return loadDouble(address(base, field)); }
+    void store8(LValue value, LValue base, const AbstractField& field) { store8(value, address(base, field)); }
     void store32(LValue value, LValue base, const AbstractField& field) { store32(value, address(base, field)); }
     void store64(LValue value, LValue base, const AbstractField& field) { store64(value, address(base, field)); }
     void storePtr(LValue value, LValue base, const AbstractField& field) { storePtr(value, address(base, field)); }

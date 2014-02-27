@@ -162,9 +162,9 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 }
 
 #if ENABLE(GGC)
-static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2)
+static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 {
-    AssemblyHelpers::Jump definitelyNotMarked = jit.genericWriteBarrier(owner, scratch1, scratch2);
+    AssemblyHelpers::Jump definitelyNotMarked = jit.genericWriteBarrier(owner);
 
     // We need these extra slots because setupArgumentsWithExecState will use poke on x86.
 #if CPU(X86)
@@ -172,8 +172,8 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GP
 #endif
 
     jit.setupArgumentsWithExecState(owner);
-    jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(operationOSRWriteBarrier)), scratch1);
-    jit.call(scratch1);
+    jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(operationOSRWriteBarrier)), scratch);
+    jit.call(scratch);
 
 #if CPU(X86)
     jit.addPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 3), MacroAssembler::stackPointerRegister);
@@ -190,7 +190,7 @@ void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
     for (CodeOrigin codeOrigin = exit.m_codeOrigin; ; codeOrigin = codeOrigin.inlineCallFrame->caller) {
         CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(codeOrigin);
         jit.move(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock->ownerExecutable()), GPRInfo::nonArgGPR0); 
-        osrWriteBarrier(jit, GPRInfo::nonArgGPR0, GPRInfo::nonArgGPR1, GPRInfo::nonArgGPR2);
+        osrWriteBarrier(jit, GPRInfo::nonArgGPR0, GPRInfo::nonArgGPR1);
         if (!codeOrigin.inlineCallFrame)
             break;
     }

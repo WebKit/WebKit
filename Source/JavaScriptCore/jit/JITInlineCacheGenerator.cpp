@@ -101,10 +101,10 @@ void JITByIdGenerator::finalize(LinkBuffer& linkBuffer)
 
 void JITByIdGenerator::generateFastPathChecks(MacroAssembler& jit, GPRReg butterfly)
 {
-    m_structureCheck = jit.patchableBranchPtrWithPatch(
+    m_structureCheck = jit.patchableBranch32WithPatch(
         MacroAssembler::NotEqual,
-        MacroAssembler::Address(m_base.payloadGPR(), JSCell::structureOffset()),
-        m_structureImm, MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(unusedPointer)));
+        MacroAssembler::Address(m_base.payloadGPR(), JSCell::structureIDOffset()),
+        m_structureImm, MacroAssembler::TrustedImm32(0));
     
     m_propertyStorageLoad = jit.convertibleLoadPtr(
         MacroAssembler::Address(m_base.payloadGPR(), JSObject::butterflyOffset()), butterfly);

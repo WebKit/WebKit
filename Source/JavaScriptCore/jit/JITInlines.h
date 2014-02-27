@@ -72,7 +72,7 @@ ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader64(JSStack::CallFrameHeaderEnt
 
 ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
 {
-    failures.append(branchPtr(NotEqual, Address(src, JSCell::structureOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
+    failures.append(branchStructure(NotEqual, Address(src, JSCell::structureIDOffset()), m_vm->stringStructure.get()));
     failures.append(branch32(NotEqual, MacroAssembler::Address(src, ThunkHelpers::jsStringLengthOffset()), TrustedImm32(1)));
     loadPtr(MacroAssembler::Address(src, ThunkHelpers::jsStringValueOffset()), dst);
     failures.append(branchTest32(Zero, dst));
@@ -557,7 +557,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJZJ operat
 
 ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)
 {
-    return branchPtr(NotEqual, Address(reg, JSCell::structureOffset()), TrustedImmPtr(structure));
+    return branchStructure(NotEqual, Address(reg, JSCell::structureIDOffset()), structure);
 }
 
 ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator& iter, int vReg)
@@ -605,9 +605,9 @@ ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
     jump.linkTo(m_labels[m_bytecodeOffset + relativeOffset], this);
 }
 
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotObject(RegisterID structureReg)
+ALWAYS_INLINE JIT::Jump JIT::emitJumpIfCellNotObject(RegisterID cellReg)
 {
-    return branch8(Below, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+    return branch8(Below, Address(cellReg, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));
 }
 
 #if ENABLE(SAMPLING_FLAGS)
@@ -678,11 +678,11 @@ inline void JIT::emitAllocateJSObject(RegisterID allocator, StructureType struct
     loadPtr(Address(result), scratch);
     storePtr(scratch, Address(allocator, MarkedAllocator::offsetOfFreeListHead()));
 
-    // initialize the object's structure
-    storePtr(structure, Address(result, JSCell::structureOffset()));
-
     // initialize the object's property storage pointer
     storePtr(TrustedImmPtr(0), Address(result, JSObject::butterflyOffset()));
+
+    // initialize the object's structure
+    emitStoreStructureWithTypeInfo(structure, result, scratch);
 }
 
 inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
@@ -718,22 +718,19 @@ inline void JIT::emitValueProfilingSite()
     emitValueProfilingSite(m_bytecodeOffset);
 }
 
-inline void JIT::emitArrayProfilingSite(RegisterID structureAndIndexingType, RegisterID scratch, ArrayProfile* arrayProfile)
+inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID indexingType, ArrayProfile* arrayProfile)
 {
-    UNUSED_PARAM(scratch); // We had found this scratch register useful here before, so I will keep it for now.
-    
-    RegisterID structure = structureAndIndexingType;
-    RegisterID indexingType = structureAndIndexingType;
-    
-    if (shouldEmitProfiling())
-        storePtr(structure, arrayProfile->addressOfLastSeenStructure());
+    if (shouldEmitProfiling()) {
+        load32(MacroAssembler::Address(cell, JSCell::structureIDOffset()), indexingType);
+        store32(indexingType, arrayProfile->addressOfLastSeenStructureID());
+    }
 
-    load8(Address(structure, Structure::indexingTypeOffset()), indexingType);
+    load8(Address(cell, JSCell::indexingTypeOffset()), indexingType);
 }
 
-inline void JIT::emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndIndexingType, RegisterID scratch, unsigned bytecodeIndex)
+inline void JIT::emitArrayProfilingSiteForBytecodeIndexWithCell(RegisterID cell, RegisterID indexingType, unsigned bytecodeIndex)
 {
-    emitArrayProfilingSite(structureAndIndexingType, scratch, m_codeBlock->getOrAddArrayProfile(bytecodeIndex));
+    emitArrayProfilingSiteWithCell(cell, indexingType, m_codeBlock->getOrAddArrayProfile(bytecodeIndex));
 }
 
 inline void JIT::emitArrayProfileStoreToHoleSpecialCase(ArrayProfile* arrayProfile)
@@ -1081,6 +1078,26 @@ ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 }
 
 #endif // USE(JSVALUE32_64)
+
+template <typename T>
+JIT::Jump JIT::branchStructure(RelationalCondition condition, T leftHandSide, Structure* structure)
+{
+#if USE(JSVALUE64)
+    return branch32(condition, leftHandSide, TrustedImm32(structure->id()));
+#else
+    return branchPtr(condition, leftHandSide, TrustedImmPtr(structure));
+#endif
+}
+
+template <typename T>
+MacroAssembler::Jump branchStructure(MacroAssembler& jit, MacroAssembler::RelationalCondition condition, T leftHandSide, Structure* structure)
+{
+#if USE(JSVALUE64)
+    return jit.branch32(condition, leftHandSide, MacroAssembler::TrustedImm32(structure->id()));
+#else
+    return jit.branchPtr(condition, leftHandSide, MacroAssembler::TrustedImmPtr(structure));
+#endif
+}
 
 } // namespace JSC
 

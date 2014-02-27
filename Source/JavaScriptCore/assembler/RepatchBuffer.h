@@ -157,6 +157,11 @@ public:
     {
         return MacroAssembler::startOfPatchableBranchPtrWithPatchOnAddress(label);
     }
+
+    static CodeLocationLabel startOfPatchableBranch32WithPatchOnAddress(CodeLocationDataLabel32 label)
+    {
+        return MacroAssembler::startOfPatchableBranch32WithPatchOnAddress(label);
+    }
     
     void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
     {
@@ -174,6 +179,11 @@ public:
     void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel instructionStart, MacroAssembler::Address address, void* value)
     {
         MacroAssembler::revertJumpReplacementToPatchableBranchPtrWithPatch(instructionStart, address, value);
+    }
+
+    void revertJumpReplacementToPatchableBranch32WithPatch(CodeLocationLabel instructionStart, MacroAssembler::Address address, int32_t value)
+    {
+        MacroAssembler::revertJumpReplacementToPatchableBranch32WithPatch(instructionStart, address, value);
     }
 
 private:

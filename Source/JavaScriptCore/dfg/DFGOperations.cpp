@@ -79,7 +79,7 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
             return;
         }
 
-        object->methodTable()->putByIndex(object, exec, index, value, strict);
+        object->methodTable(vm)->putByIndex(object, exec, index, value, strict);
         return;
     }
 
@@ -222,12 +222,12 @@ EncodedJSValue JIT_OPERATION operationToThisStrict(ExecState* exec, EncodedJSVal
 
 JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor, int32_t inlineCapacity)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
 
 #if !ASSERT_DISABLED
     ConstructData constructData;
-    ASSERT(jsCast<JSFunction*>(constructor)->methodTable()->getConstructData(jsCast<JSFunction*>(constructor), constructData) == ConstructTypeJS);
+    ASSERT(jsCast<JSFunction*>(constructor)->methodTable(vm)->getConstructData(jsCast<JSFunction*>(constructor), constructData) == ConstructTypeJS);
 #endif
     
     return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->allocationProfile(exec, inlineCapacity)->structure());
@@ -392,8 +392,8 @@ void JIT_OPERATION operationPutByValCellNonStrict(ExecState* exec, JSCell* cell,
 
 void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
     if (index >= 0) {
         array->putByIndexInline(exec, index, JSValue::decode(encodedValue), true);

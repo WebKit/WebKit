@@ -251,7 +251,7 @@ SLOW_PATH_DECL(slow_path_to_this)
     BEGIN();
     JSValue v1 = OP(1).jsValue();
     if (v1.isCell())
-        pc[2].u.structure.set(exec->vm(), exec->codeBlock()->ownerExecutable(), v1.asCell()->structure());
+        pc[2].u.structure.set(vm, exec->codeBlock()->ownerExecutable(), v1.asCell()->structure(vm));
     else
         pc[2].u.structure.clear();
     RETURN(v1.toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode));

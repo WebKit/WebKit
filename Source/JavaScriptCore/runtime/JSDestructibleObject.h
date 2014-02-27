@@ -31,13 +31,10 @@ private:
 
 inline const ClassInfo* JSCell::classInfo() const
 {
-    if (MarkedBlock::blockFor(this)->destructorType() == MarkedBlock::Normal)
+    MarkedBlock* block = MarkedBlock::blockFor(this);
+    if (block->destructorType() == MarkedBlock::Normal)
         return static_cast<const JSDestructibleObject*>(this)->classInfo();
-#if ENABLE(GC_VALIDATION)
-    return m_structure.unvalidatedGet()->classInfo();
-#else
-    return m_structure->classInfo();
-#endif
+    return structure(*block->vm())->classInfo();
 }
 
 } // namespace JSC

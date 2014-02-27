@@ -157,13 +157,13 @@ void Structure::dumpStatistics()
 
 Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
     : JSCell(vm, vm.structureStructure.get())
+    , m_blob(vm.heap.structureIDTable().allocateID(this), indexingType, typeInfo)
+    , m_outOfLineTypeFlags(typeInfo.outOfLineTypeFlags())
     , m_globalObject(vm, this, globalObject, WriteBarrier<JSGlobalObject>::MayBeNull)
     , m_prototype(vm, this, prototype)
     , m_classInfo(classInfo)
     , m_transitionWatchpointSet(IsWatched)
     , m_offset(invalidOffset)
-    , m_typeInfo(typeInfo)
-    , m_indexingType(indexingType)
     , m_inlineCapacity(inlineCapacity)
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
@@ -191,8 +191,6 @@ Structure::Structure(VM& vm)
     , m_classInfo(info())
     , m_transitionWatchpointSet(IsWatched)
     , m_offset(invalidOffset)
-    , m_typeInfo(CompoundType, OverridesVisitChildren)
-    , m_indexingType(0)
     , m_inlineCapacity(0)
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
@@ -205,6 +203,10 @@ Structure::Structure(VM& vm)
     , m_didTransition(false)
     , m_staticFunctionReified(false)
 {
+    TypeInfo typeInfo = TypeInfo(CompoundType, OverridesVisitChildren | StructureIsImmortal);
+    m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), 0, typeInfo);
+    m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
+
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
     ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
 }
@@ -215,8 +217,6 @@ Structure::Structure(VM& vm, const Structure* previous)
     , m_classInfo(previous->m_classInfo)
     , m_transitionWatchpointSet(IsWatched)
     , m_offset(invalidOffset)
-    , m_typeInfo(previous->typeInfo().type(), previous->typeInfo().flags() & ~StructureHasRareData)
-    , m_indexingType(previous->indexingTypeIncludingHistory())
     , m_inlineCapacity(previous->m_inlineCapacity)
     , m_dictionaryKind(previous->m_dictionaryKind)
     , m_isPinnedPropertyTable(false)
@@ -229,6 +229,11 @@ Structure::Structure(VM& vm, const Structure* previous)
     , m_didTransition(true)
     , m_staticFunctionReified(previous->m_staticFunctionReified)
 {
+    TypeInfo typeInfo = TypeInfo(previous->typeInfo().type(), previous->typeInfo().flags() & ~StructureHasRareData);
+    m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), previous->indexingTypeIncludingHistory(), typeInfo);
+    m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
+
+    ASSERT(!previous->typeInfo().structureIsImmortal());
     if (previous->typeInfo().structureHasRareData() && previous->rareData()->needsCloning())
         cloneRareDataFrom(vm, previous);
     else if (previous->previousID())
@@ -239,6 +244,13 @@ Structure::Structure(VM& vm, const Structure* previous)
         m_globalObject.set(vm, this, previous->m_globalObject.get());
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
     ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
+}
+
+Structure::~Structure()
+{
+    if (typeInfo().structureIsImmortal())
+        return;
+    Heap::heap(this)->structureIDTable().deallocateID(this, m_blob.structureID());
 }
 
 void Structure::destroy(JSCell* cell)
@@ -638,7 +650,7 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
     Structure* transition = create(vm, structure);
     transition->setPreviousID(vm, transition, structure);
     transition->m_attributesInPrevious = attributes;
-    transition->m_indexingType = indexingType;
+    transition->m_blob.setIndexingType(indexingType);
     transition->propertyTable().set(vm, transition, structure->takePropertyTableOrCloneIfPinned(vm, transition));
     transition->m_offset = structure->m_offset;
     checkOffset(transition->m_offset, transition->inlineCapacity());
@@ -769,16 +781,22 @@ void Structure::allocateRareData(VM& vm)
 {
     ASSERT(!typeInfo().structureHasRareData());
     StructureRareData* rareData = StructureRareData::create(vm, previous());
-    m_typeInfo = TypeInfo(typeInfo().type(), typeInfo().flags() | StructureHasRareData);
+    TypeInfo oldTypeInfo = typeInfo();
+    TypeInfo newTypeInfo = TypeInfo(oldTypeInfo.type(), oldTypeInfo.flags() | StructureHasRareData);
+    m_outOfLineTypeFlags = newTypeInfo.outOfLineTypeFlags();
     m_previousOrRareData.set(vm, this, rareData);
+    ASSERT(typeInfo().structureHasRareData());
 }
 
 void Structure::cloneRareDataFrom(VM& vm, const Structure* other)
 {
     ASSERT(other->typeInfo().structureHasRareData());
     StructureRareData* newRareData = StructureRareData::clone(vm, other->rareData());
-    m_typeInfo = TypeInfo(typeInfo().type(), typeInfo().flags() | StructureHasRareData);
+    TypeInfo oldTypeInfo = typeInfo();
+    TypeInfo newTypeInfo = TypeInfo(oldTypeInfo.type(), oldTypeInfo.flags() | StructureHasRareData);
+    m_outOfLineTypeFlags = newTypeInfo.outOfLineTypeFlags();
     m_previousOrRareData.set(vm, this, newRareData);
+    ASSERT(typeInfo().structureHasRareData());
 }
 
 #if DUMP_PROPERTYMAP_STATS
@@ -1019,7 +1037,7 @@ bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyN
         if (prototype.isNull())
             return false;
         
-        current = prototype.asCell()->structure();
+        current = prototype.asCell()->structure(vm);
         
         unsigned attributes;
         JSCell* specificValue;

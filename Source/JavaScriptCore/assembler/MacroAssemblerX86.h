@@ -257,6 +257,14 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    Jump branch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        padBeforePatch();
+        m_assembler.cmpl_im_force32(initialRightValue.m_value, left.offset, left.base);
+        dataLabel = DataLabel32(this);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
     DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
     {
         padBeforePatch();
@@ -277,6 +285,7 @@ public:
     }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return true; }
+    static bool canJumpReplacePatchableBranch32WithPatch() { return true; }
     
     static CodeLocationLabel startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr label)
     {
@@ -299,6 +308,17 @@ public:
         return label.labelAtOffset(-totalBytes);
     }
     
+    static CodeLocationLabel startOfPatchableBranch32WithPatchOnAddress(CodeLocationDataLabel32 label)
+    {
+        const int opcodeBytes = 1;
+        const int modRMBytes = 1;
+        const int offsetBytes = 0;
+        const int immediateBytes = 4;
+        const int totalBytes = opcodeBytes + modRMBytes + offsetBytes + immediateBytes;
+        ASSERT(totalBytes >= maxJumpReplacementSize());
+        return label.labelAtOffset(-totalBytes);
+    }
+    
     static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, RegisterID reg, void* initialValue)
     {
         X86Assembler::revertJumpTo_cmpl_ir_force32(instructionStart.executableAddress(), reinterpret_cast<intptr_t>(initialValue), reg);
@@ -308,6 +328,12 @@ public:
     {
         ASSERT(!address.offset);
         X86Assembler::revertJumpTo_cmpl_im_force32(instructionStart.executableAddress(), reinterpret_cast<intptr_t>(initialValue), 0, address.base);
+    }
+
+    static void revertJumpReplacementToPatchableBranch32WithPatch(CodeLocationLabel instructionStart, Address address, int32_t initialValue)
+    {
+        ASSERT(!address.offset);
+        X86Assembler::revertJumpTo_cmpl_im_force32(instructionStart.executableAddress(), initialValue, 0, address.base);
     }
 
 #if USE(MASM_PROBE)

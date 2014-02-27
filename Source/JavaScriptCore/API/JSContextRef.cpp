@@ -67,16 +67,10 @@ JSContextGroupRef JSContextGroupRetain(JSContextGroupRef group)
 
 void JSContextGroupRelease(JSContextGroupRef group)
 {
-    IdentifierTable* savedIdentifierTable;
     VM& vm = *toJS(group);
 
-    {
-        JSLockHolder lock(vm);
-        savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(vm.identifierTable);
-        vm.deref();
-    }
-
-    wtfThreadData().setCurrentIdentifierTable(savedIdentifierTable);
+    APIEntryShim entryShim(&vm);
+    vm.deref();
 }
 
 static bool internalScriptTimeoutCallback(ExecState* exec, void* callbackPtr, void* callbackData)
@@ -164,7 +158,7 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
     IdentifierTable* savedIdentifierTable;
     ExecState* exec = toJS(ctx);
     {
-        JSLockHolder lock(exec);
+        APIEntryShim entryShim(exec);
 
         VM& vm = exec->vm();
         savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(vm.identifierTable);

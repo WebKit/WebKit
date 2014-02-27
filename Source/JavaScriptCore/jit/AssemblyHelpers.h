@@ -286,9 +286,9 @@ public:
         return payloadFor(static_cast<VirtualRegister>(operand));
     }
 
-    Jump branchIfNotObject(GPRReg structureReg)
+    Jump branchIfCellNotObject(GPRReg cellReg)
     {
-        return branch8(Below, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+        return branch8(Below, Address(cellReg, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));
     }
 
     static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg, GPRReg preserve4 = InvalidGPRReg)
@@ -387,21 +387,9 @@ public:
     void jitAssertArgumentCountSane() { }
 #endif
 
-    Jump genericWriteBarrier(GPRReg owner, GPRReg scratch1, GPRReg scratch2)
+    Jump genericWriteBarrier(GPRReg owner)
     {
-        move(owner, scratch1);
-        move(owner, scratch2);
-    
-        andPtr(TrustedImmPtr(MarkedBlock::blockMask), scratch1);
-        andPtr(TrustedImmPtr(~MarkedBlock::blockMask), scratch2);
-    
-#if USE(JSVALUE64)
-        rshift64(TrustedImm32(MarkedBlock::atomShiftAmount + MarkedBlock::markByteShiftAmount), scratch2);
-#else
-        rshift32(TrustedImm32(MarkedBlock::atomShiftAmount + MarkedBlock::markByteShiftAmount), scratch2);
-#endif
-    
-        return branchTest8(Zero, BaseIndex(scratch1, scratch2, TimesOne, MarkedBlock::offsetOfMarks()));
+        return branchTest8(Zero, Address(owner, JSCell::gcDataOffset()));
     }
 
     // These methods convert between doubles, and doubles boxed and JSValues.
@@ -557,6 +545,79 @@ public:
     int offsetOfArgumentsIncludingThis(const CodeOrigin& codeOrigin)
     {
         return offsetOfArgumentsIncludingThis(codeOrigin.inlineCallFrame);
+    }
+
+    void emitLoadStructure(RegisterID source, RegisterID dest, RegisterID scratch)
+    {
+#if USE(JSVALUE64)
+        load32(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
+        loadPtr(vm()->heap.structureIDTable().base(), scratch);
+        loadPtr(MacroAssembler::BaseIndex(scratch, dest, MacroAssembler::TimesEight), dest);
+#else
+        UNUSED_PARAM(scratch);
+        loadPtr(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
+#endif
+    }
+
+    static void emitLoadStructure(AssemblyHelpers& jit, RegisterID base, RegisterID dest, RegisterID scratch)
+    {
+#if USE(JSVALUE64)
+        jit.load32(MacroAssembler::Address(base, JSCell::structureIDOffset()), dest);
+        jit.loadPtr(jit.vm()->heap.structureIDTable().base(), scratch);
+        jit.loadPtr(MacroAssembler::BaseIndex(scratch, dest, MacroAssembler::TimesEight), dest);
+#else
+        UNUSED_PARAM(scratch);
+        jit.loadPtr(MacroAssembler::Address(base, JSCell::structureIDOffset()), dest);
+#endif
+    }
+
+    void emitStoreStructureWithTypeInfo(TrustedImmPtr structure, RegisterID dest, RegisterID)
+    {
+        emitStoreStructureWithTypeInfo(*this, structure, dest);
+    }
+
+    void emitStoreStructureWithTypeInfo(RegisterID structure, RegisterID dest, RegisterID scratch)
+    {
+#if USE(JSVALUE64)
+        load64(MacroAssembler::Address(structure, Structure::structureIDOffset()), scratch);
+        store64(scratch, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+#else
+        // Store all the info flags using a single 32-bit wide load and store.
+        load32(MacroAssembler::Address(structure, Structure::indexingTypeOffset()), scratch);
+        store32(scratch, MacroAssembler::Address(dest, JSCell::indexingTypeOffset()));
+
+        // Store the StructureID
+        storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+#endif
+    }
+
+    static void emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest)
+    {
+        const Structure* structurePtr = static_cast<const Structure*>(structure.m_value);
+#if USE(JSVALUE64)
+        jit.store64(TrustedImm64(structurePtr->idBlob()), MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+#ifndef NDEBUG
+        Jump correctStructure = jit.branch32(Equal, MacroAssembler::Address(dest, JSCell::structureIDOffset()), TrustedImm32(structurePtr->id()));
+        jit.breakpoint();
+        correctStructure.link(&jit);
+
+        Jump correctIndexingType = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::indexingTypeOffset()), TrustedImm32(structurePtr->indexingType()));
+        jit.breakpoint();
+        correctIndexingType.link(&jit);
+
+        Jump correctType = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::typeInfoTypeOffset()), TrustedImm32(structurePtr->typeInfo().type()));
+        jit.breakpoint();
+        correctType.link(&jit);
+
+        Jump correctFlags = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::typeInfoFlagsOffset()), TrustedImm32(structurePtr->typeInfo().inlineTypeFlags()));
+        jit.breakpoint();
+        correctFlags.link(&jit);
+#endif
+#else
+        // Do a 32-bit wide store to initialize the cell's fields.
+        jit.store32(TrustedImm32(structurePtr->objectInitializationBlob()), MacroAssembler::Address(dest, JSCell::indexingTypeOffset()));
+        jit.storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+#endif
     }
 
     void writeBarrier(GPRReg owner, GPRReg scratch1, GPRReg scratch2, WriteBarrierUseKind useKind)

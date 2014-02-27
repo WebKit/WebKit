@@ -54,6 +54,8 @@ public:
 
     MarkStackArray& markStack() { return m_stack; }
 
+    VM& vm();
+    const VM& vm() const;
     Heap* heap() const;
 
     void append(ConservativeRoots&);

@@ -126,6 +126,16 @@ public:
         move(TrustedImmPtr(address), scratchRegister);
         store32(imm, scratchRegister);
     }
+
+    void store32(RegisterID source, void* address)
+    {
+        if (source == X86Registers::eax)
+            m_assembler.movl_EAXm(address);
+        else {
+            move(TrustedImmPtr(address), scratchRegister);
+            store32(source, scratchRegister);
+        }
+    }
     
     void store8(TrustedImm32 imm, void* address)
     {
@@ -627,6 +637,13 @@ public:
         return DataLabelPtr(this);
     }
 
+    DataLabelPtr moveWithPatch(TrustedImm32 initialValue, RegisterID dest)
+    {
+        padBeforePatch();
+        m_assembler.movq_i64r(initialValue.m_value, dest);
+        return DataLabelPtr(this);
+    }
+
     Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         dataLabel = moveWithPatch(initialRightValue, scratchRegister);
@@ -637,6 +654,14 @@ public:
     {
         dataLabel = moveWithPatch(initialRightValue, scratchRegister);
         return branch64(cond, left, scratchRegister);
+    }
+
+    Jump branch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        padBeforePatch();
+        m_assembler.movl_i32r(initialRightValue.m_value, scratchRegister);
+        dataLabel = DataLabel32(this);
+        return branch32(cond, left, scratchRegister);
     }
 
     DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
@@ -687,6 +712,7 @@ public:
     static RegisterID scratchRegisterForBlinding() { return scratchRegister; }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return true; }
+    static bool canJumpReplacePatchableBranch32WithPatch() { return true; }
     
     static CodeLocationLabel startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr label)
     {
@@ -698,14 +724,34 @@ public:
         return label.labelAtOffset(-totalBytes);
     }
     
+    static CodeLocationLabel startOfBranch32WithPatchOnRegister(CodeLocationDataLabel32 label)
+    {
+        const int rexBytes = 1;
+        const int opcodeBytes = 1;
+        const int immediateBytes = 4;
+        const int totalBytes = rexBytes + opcodeBytes + immediateBytes;
+        ASSERT(totalBytes >= maxJumpReplacementSize());
+        return label.labelAtOffset(-totalBytes);
+    }
+    
     static CodeLocationLabel startOfPatchableBranchPtrWithPatchOnAddress(CodeLocationDataLabelPtr label)
     {
         return startOfBranchPtrWithPatchOnRegister(label);
+    }
+
+    static CodeLocationLabel startOfPatchableBranch32WithPatchOnAddress(CodeLocationDataLabel32 label)
+    {
+        return startOfBranch32WithPatchOnRegister(label);
     }
     
     static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel instructionStart, Address, void* initialValue)
     {
         X86Assembler::revertJumpTo_movq_i64r(instructionStart.executableAddress(), reinterpret_cast<intptr_t>(initialValue), scratchRegister);
+    }
+
+    static void revertJumpReplacementToPatchableBranch32WithPatch(CodeLocationLabel instructionStart, Address, int32_t initialValue)
+    {
+        X86Assembler::revertJumpTo_movl_i32r(instructionStart.executableAddress(), initialValue, scratchRegister);
     }
 
     static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, RegisterID, void* initialValue)

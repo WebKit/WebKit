@@ -244,20 +244,22 @@ inline void* MarkedSpace::allocateWithNormalDestructor(size_t bytes)
 
 template <typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachBlock(Functor& functor)
 {
-    for (size_t i = 0; i < preciseCount; ++i) {
+    for (size_t i = 0; i < preciseCount; ++i)
         m_normalSpace.preciseAllocators[i].forEachBlock(functor);
-        m_normalDestructorSpace.preciseAllocators[i].forEachBlock(functor);
-        m_immortalStructureDestructorSpace.preciseAllocators[i].forEachBlock(functor);
-    }
-
-    for (size_t i = 0; i < impreciseCount; ++i) {
+    for (size_t i = 0; i < impreciseCount; ++i)
         m_normalSpace.impreciseAllocators[i].forEachBlock(functor);
-        m_normalDestructorSpace.impreciseAllocators[i].forEachBlock(functor);
-        m_immortalStructureDestructorSpace.impreciseAllocators[i].forEachBlock(functor);
-    }
-
     m_normalSpace.largeAllocator.forEachBlock(functor);
+
+    for (size_t i = 0; i < preciseCount; ++i)
+        m_normalDestructorSpace.preciseAllocators[i].forEachBlock(functor);
+    for (size_t i = 0; i < impreciseCount; ++i)
+        m_normalDestructorSpace.impreciseAllocators[i].forEachBlock(functor);
     m_normalDestructorSpace.largeAllocator.forEachBlock(functor);
+
+    for (size_t i = 0; i < preciseCount; ++i)
+        m_immortalStructureDestructorSpace.preciseAllocators[i].forEachBlock(functor);
+    for (size_t i = 0; i < impreciseCount; ++i)
+        m_immortalStructureDestructorSpace.impreciseAllocators[i].forEachBlock(functor);
     m_immortalStructureDestructorSpace.largeAllocator.forEachBlock(functor);
 
     return functor.returnValue();

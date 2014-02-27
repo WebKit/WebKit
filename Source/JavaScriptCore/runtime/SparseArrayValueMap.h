@@ -69,7 +69,7 @@ private:
     
     void finishCreation(VM&);
 
-    static const unsigned StructureFlags = OverridesVisitChildren | JSCell::StructureFlags;
+    static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal | JSCell::StructureFlags;
 
 public:
     DECLARE_EXPORT_INFO;

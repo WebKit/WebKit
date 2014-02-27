@@ -68,11 +68,11 @@ JSValue jsTypeStringForValue(VM& vm, JSGlobalObject* globalObject, JSValue v)
     if (v.isObject()) {
         // Return "undefined" for objects that should be treated
         // as null when doing comparisons.
-        if (asObject(v)->structure()->masqueradesAsUndefined(globalObject))
+        if (asObject(v)->structure(vm)->masqueradesAsUndefined(globalObject))
             return vm.smallStrings.undefinedString();
         CallData callData;
         JSObject* object = asObject(v);
-        if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
+        if (object->methodTable(vm)->getCallData(object, callData) != CallTypeNone)
             return vm.smallStrings.functionString();
     }
     return vm.smallStrings.objectString();
@@ -88,15 +88,15 @@ bool jsIsObjectType(CallFrame* callFrame, JSValue v)
     if (!v.isCell())
         return v.isNull();
 
-    JSType type = v.asCell()->structure()->typeInfo().type();
+    JSType type = v.asCell()->type();
     if (type == StringType)
         return false;
     if (type >= ObjectType) {
-        if (asObject(v)->structure()->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))
+        if (asObject(v)->structure(callFrame->vm())->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))
             return false;
         CallData callData;
         JSObject* object = asObject(v);
-        if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
+        if (object->methodTable(callFrame->vm())->getCallData(object, callData) != CallTypeNone)
             return false;
     }
     return true;

@@ -55,7 +55,10 @@ namespace JSC {
         WriteBarrier<Structure>* head() { return m_vector.get(); }
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) { return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), info()); }
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+        {
+            return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), info());
+        }
         
         DECLARE_INFO;
 
@@ -64,6 +67,8 @@ namespace JSC {
         static void destroy(JSCell*);
 
     protected:
+        static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal;
+
         void finishCreation(VM& vm, Structure* head)
         {
             Base::finishCreation(vm);
