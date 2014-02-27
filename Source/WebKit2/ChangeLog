@@ -1,3 +1,9 @@
+2014-02-26  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GTK build fix after r164751.
+
+        * GNUmakefile.list.am:
+
 2014-02-26  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix.

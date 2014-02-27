@@ -1249,6 +1249,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebPage/PageBanner.h \
 	Source/WebKit2/WebProcess/WebPage/PageOverlay.cpp \
 	Source/WebKit2/WebProcess/WebPage/PageOverlay.h \
+	Source/WebKit2/WebProcess/WebPage/VisitedLinkTableController.cpp \
+	Source/WebKit2/WebProcess/WebPage/VisitedLinkTableController.h \
 	Source/WebKit2/WebProcess/WebPage/WebBackForwardListProxy.cpp \
 	Source/WebKit2/WebProcess/WebPage/WebBackForwardListProxy.h \
 	Source/WebKit2/WebProcess/WebPage/WebContextMenu.cpp \
@@ -1267,8 +1269,6 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebPage/WebPage.h \
 	Source/WebKit2/WebProcess/WebPage/WebUndoStep.cpp \
 	Source/WebKit2/WebProcess/WebPage/WebUndoStep.h \
-	Source/WebKit2/WebProcess/WebPage/WebVisitedLinkProvider.cpp \
-	Source/WebKit2/WebProcess/WebPage/WebVisitedLinkProvider.h \
 	Source/WebKit2/WebProcess/WebConnectionToUIProcess.cpp \
 	Source/WebKit2/WebProcess/WebConnectionToUIProcess.h \
 	Source/WebKit2/WebProcess/WebProcessSupplement.h \
