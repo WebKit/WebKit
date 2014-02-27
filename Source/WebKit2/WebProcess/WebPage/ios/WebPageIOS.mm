@@ -367,7 +367,7 @@ void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& posit
     Vector<FloatQuad> quads;
     if (renderer) {
         renderer->absoluteQuads(quads);
-        Color highlightColor = node->computedStyle()->tapHighlightColor();
+        Color highlightColor = renderer->style().tapHighlightColor();
         if (!node->document().frame()->isMainFrame()) {
             FrameView* view = node->document().frame()->view();
             for (size_t i = 0; i < quads.size(); ++i) {

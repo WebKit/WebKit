@@ -1,3 +1,16 @@
+2014-02-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash tapping on play button on video on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129452
+
+        Reviewed by Benjamin Poulain.
+        
+        node->computedStyle() can return null. Just use
+        renderer->style() to get the tap highlight color.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::tapHighlightAtPosition):
+
 2014-02-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: model tests should use a special Test.html inspector page
