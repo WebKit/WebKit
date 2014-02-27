@@ -1640,7 +1640,7 @@ public:
 
     JITCompiler::Call callOperation(V_JITOperation_EJ operation, GPRReg arg1Tag, GPRReg arg1Payload)
     {
-        m_jit.setupArgumentsWithExecState(arg1Tag, arg1Payload);
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag);
         return appendCallWithExceptionCheck(operation);
     }
 

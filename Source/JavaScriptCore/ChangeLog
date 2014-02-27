@@ -1,3 +1,14 @@
+2014-02-27  Julien Brianceau   <jbriance@cisco.com>
+
+        Fix 32-bit V_JITOperation_EJ callOperation introduced in r162652.
+        https://bugs.webkit.org/show_bug.cgi?id=129420
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation): Payload and tag are swapped.
+        Also, EABI_32BIT_DUMMY_ARG is missing for arm EABI and mips.
+
 2014-02-27  Filip Pizlo  <fpizlo@apple.com>
 
         Octane/closure thrashes between flattening dictionaries during global object initialization in a global eval
