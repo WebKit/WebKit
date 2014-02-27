@@ -1128,10 +1128,12 @@ PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()
     return adoptRef(texture);
 }
 
+#if USE(TEXTURE_MAPPER_GL)
 PassOwnPtr<TextureMapper> TextureMapper::platformCreateAccelerated()
 {
     return TextureMapperGL::create();
 }
+#endif
 
 };
 #endif
