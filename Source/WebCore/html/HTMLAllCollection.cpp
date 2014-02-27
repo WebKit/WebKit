@@ -46,17 +46,18 @@ HTMLAllCollection::~HTMLAllCollection()
 
 Node* HTMLAllCollection::namedItemWithIndex(const AtomicString& name, unsigned index) const
 {
-    updateNameCache();
+    updateNamedElementCache();
+    const CollectionNamedElementCache& cache = namedItemCaches();
 
-    if (Vector<Element*>* cache = idCache(name)) {
-        if (index < cache->size())
-            return cache->at(index);
-        index -= cache->size();
+    if (const Vector<Element*>* elements = cache.findElementsWithId(name)) {
+        if (index < elements->size())
+            return elements->at(index);
+        index -= elements->size();
     }
 
-    if (Vector<Element*>* cache = nameCache(name)) {
-        if (index < cache->size())
-            return cache->at(index);
+    if (const Vector<Element*>* elements = cache.findElementsWithName(name)) {
+        if (index < elements->size())
+            return elements->at(index);
     }
 
     return 0;

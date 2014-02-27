@@ -3479,13 +3479,13 @@ void Document::unregisterCollection(HTMLCollection& collection, bool hasIdNameMa
 
 void Document::collectionCachedIdNameMap(const HTMLCollection& collection)
 {
-    ASSERT_UNUSED(collection, collection.hasIdNameCache());
+    ASSERT_UNUSED(collection, collection.hasNamedElementCache());
     m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]++;
 }
 
 void Document::collectionWillClearIdNameMap(const HTMLCollection& collection)
 {
-    ASSERT_UNUSED(collection, collection.hasIdNameCache());
+    ASSERT_UNUSED(collection, collection.hasNamedElementCache());
     ASSERT(m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]);
     m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]--;
 }

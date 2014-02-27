@@ -254,8 +254,8 @@ public:
 
         for (auto it : m_cachedCollections) {
             HTMLCollection& collection = *it.value;
-            oldDocument->unregisterCollection(collection, collection.hasIdNameCache());
-            newDocument->registerCollection(collection, collection.hasIdNameCache());
+            oldDocument->unregisterCollection(collection, collection.hasNamedElementCache());
+            newDocument->registerCollection(collection, collection.hasNamedElementCache());
             collection.invalidateCache();
         }
     }
