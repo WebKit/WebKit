@@ -1,5 +1,20 @@
 2014-02-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix two assertions/crashes in compositing code
+        https://bugs.webkit.org/show_bug.cgi?id=129414
+
+        Reviewed by Dean Jackson.
+
+        Fix two issues introduced in r164759.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::removeFromScrollCoordinatedLayers): Don't call
+        ourselves recursively!
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer): We call this
+        function unconditionally on layer teardown, so this assertion is bogus.
+
+2014-02-26  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the build with some compiler configurations.
 
         * platform/mac/ScrollAnimatorMac.mm:

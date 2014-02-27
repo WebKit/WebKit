@@ -3371,7 +3371,6 @@ void RenderLayerCompositor::removeFromScrollCoordinatedLayers(RenderLayer& layer
     if (!m_scrollCoordinatedLayers.contains(&layer))
         return;
 
-    removeFromScrollCoordinatedLayers(layer);
     m_scrollCoordinatedLayers.remove(&layer);
     m_scrollCoordinatedLayersNeedingUpdate.remove(&layer);
 }
@@ -3533,8 +3532,6 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
 
 void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer)
 {
-    ASSERT(m_scrollCoordinatedLayers.contains(&layer));
-
     if (RenderLayerBacking* backing = layer.backing())
         backing->detachFromScrollingCoordinator();
 }
