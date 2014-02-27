@@ -571,7 +571,8 @@ static String createMarkupInternal(Document& document, const Range& range, const
     Node* body = enclosingNodeWithTag(firstPositionInNode(commonAncestor), bodyTag);
     Node* fullySelectedRoot = 0;
     // FIXME: Do this for all fully selected blocks, not just the body.
-    if (body && areRangesEqual(VisibleSelection::selectionFromContentsOfNode(body).toNormalizedRange().get(), &range))
+    if (body && VisiblePosition(firstPositionInNode(body)) == VisiblePosition(range.startPosition())
+        && VisiblePosition(lastPositionInNode(body)) == VisiblePosition(range.endPosition()))
         fullySelectedRoot = body;
     Node* specialCommonAncestor = highestAncestorToWrapMarkup(&updatedRange, shouldAnnotate);
 

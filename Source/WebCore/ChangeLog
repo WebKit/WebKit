@@ -1,3 +1,20 @@
+2014-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Ranges given to createMarkupInternal might not be canonicalized
+        https://bugs.webkit.org/show_bug.cgi?id=129408
+
+        Reviewed by Ryosuke Niwa.
+
+        When WebKit clients (such as Mail) call WKWebArchiveCreateFromRange() with a range,
+        that range is not necessarily canonicalized. Therefore, comparing it for equality
+        with a canonicalized range might return a false negative. Instead, we should compare
+        canonicalized ranges.
+
+        No new tests because this codepath will only be reached via SPI.
+
+        * editing/markup.cpp:
+        (WebCore::createMarkupInternal):
+
 2014-02-26  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] Form controls handling: implement date and time controls.
