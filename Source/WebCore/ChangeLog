@@ -51,44 +51,6 @@
 
 2014-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
-        Extract named items caches in HTMLCollection as a class
-        https://bugs.webkit.org/show_bug.cgi?id=129365
-
-        Reviewed by Antti Koivisto.
-
-        Extracted CollectionNamedItemCaches, like CollectionIndexCache, out of HTMLCollection.
-        We can move more named item related functions into this class in the future.
-
-        HTMLCollection's member variables m_isNameCacheValid, m_idCache, and m_nameCache were replaced by
-        a single unique_ptr that holds an instance of CollectionNamedItemCaches since this object rarely
-        exists in most HTMLCollections.
-
-        Also removed m_isItemRefElementsCacheValid since it was only used by Microdata API removed in r153772.
-
-        * html/HTMLAllCollection.cpp:
-        (WebCore::HTMLAllCollection::namedItemWithIndex):
-        * html/HTMLCollection.cpp:
-        (WebCore::HTMLCollection::HTMLCollection):
-        (WebCore::HTMLCollection::invalidateCache):
-        (WebCore::HTMLCollection::invalidateIdNameCacheMaps):
-        (WebCore::HTMLCollection::namedItem):
-        (WebCore::HTMLCollection::updateNameCache):
-        (WebCore::HTMLCollection::namedItems):
-        * html/HTMLCollection.h:
-        (WebCore::CollectionNamedItemCaches::idCache):
-        (WebCore::CollectionNamedItemCaches::nameCache):
-        (WebCore::CollectionNamedItemCaches::appendIdCache):
-        (WebCore::CollectionNamedItemCaches::appendNameCache):
-        (WebCore::CollectionNamedItemCaches::find):
-        (WebCore::CollectionNamedItemCaches::append):
-        (WebCore::HTMLCollection::hasIdNameCache):
-        (WebCore::HTMLCollection::createNameItemCaches):
-        (WebCore::HTMLCollection::namedItemCachesAssertingExistence):
-        * html/HTMLFormControlsCollection.cpp:
-        (WebCore::HTMLFormControlsCollection::updateNameCache):
-
-2014-02-26  Ryosuke Niwa  <rniwa@webkit.org>
-
         Indenting an indented image element resulted in an extra indentation
         https://bugs.webkit.org/show_bug.cgi?id=129201
 
