@@ -776,8 +776,6 @@
 		2600B5A6152BAAA70091EE5F /* JSStringJoiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2600B5A4152BAAA70091EE5F /* JSStringJoiner.cpp */; };
 		2600B5A7152BAAA70091EE5F /* JSStringJoiner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2600B5A5152BAAA70091EE5F /* JSStringJoiner.h */; };
 		2A2825D018341F2D0087FBA9 /* DelayedReleaseScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A2825CF18341F2D0087FBA9 /* DelayedReleaseScope.h */; };
-		2A343F7618A1748B0039B085 /* GCSegmentedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A343F7418A1748B0039B085 /* GCSegmentedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2A343F7818A1749D0039B085 /* GCSegmentedArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A343F7718A1749D0039B085 /* GCSegmentedArrayInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A48D1911772365B00C65A5F /* APICallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = C211B574176A224D000E2A23 /* APICallbackFunction.h */; };
 		2A4BB7F318A41179008A0FCD /* JSManagedValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A4BB7F218A41179008A0FCD /* JSManagedValueInternal.h */; };
 		2A4EC90B1860D6C20094F782 /* WriteBarrierBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A4EC9091860D6C20094F782 /* WriteBarrierBuffer.cpp */; };
@@ -1018,6 +1016,8 @@
 		A54CF2F6184EAB2400237F19 /* ScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A54CF2F3184EAB2400237F19 /* ScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A54CF2F9184EAEDA00237F19 /* ScriptObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54CF2F7184EAEDA00237F19 /* ScriptObject.cpp */; };
 		A54CF2FA184EAEDA00237F19 /* ScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A54CF2F8184EAEDA00237F19 /* ScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A54E8EB018BFFBBB00556D28 /* GCSegmentedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A343F7418A1748B0039B085 /* GCSegmentedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A54E8EB118BFFBBE00556D28 /* GCSegmentedArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A343F7718A1749D0039B085 /* GCSegmentedArrayInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A55D93A5185012A800400DED /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55D93A3185012A800400DED /* ScriptFunctionCall.cpp */; };
 		A55D93A6185012A800400DED /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A55D93A4185012A800400DED /* ScriptFunctionCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A55D93AC18514F7900400DED /* InspectorTypeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A55D93AB18514F7900400DED /* InspectorTypeBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1029,6 +1029,7 @@
 		A57D23EE1891B5540031C7FA /* RegularExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = A57D23EC1891B5540031C7FA /* RegularExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A57D23F11891B5B40031C7FA /* ContentSearchUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D23EF1891B5B40031C7FA /* ContentSearchUtilities.cpp */; };
 		A57D23F21891B5B40031C7FA /* ContentSearchUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = A57D23F01891B5B40031C7FA /* ContentSearchUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEEE13187F3BAD00E55C99 /* InspectorAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E20187B7B8600843B10 /* InjectedScriptModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5840E1E187B7B8600843B10 /* InjectedScriptModule.cpp */; };
 		A5840E21187B7B8600843B10 /* InjectedScriptModule.h in Headers */ = {isa = PBXBuildFile; fileRef = A5840E1F187B7B8600843B10 /* InjectedScriptModule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E27187C981E00843B10 /* cssmin.py in Headers */ = {isa = PBXBuildFile; fileRef = A5840E26187C980700843B10 /* cssmin.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1056,7 +1057,6 @@
 		A5BA15EE182340B400A82E69 /* RemoteInspectorXPCConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15E7182340B300A82E69 /* RemoteInspectorXPCConnection.mm */; };
 		A5BA15F0182345AF00A82E69 /* RemoteInspectorDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15EF182345AF00A82E69 /* RemoteInspectorDebuggable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5CEEE14187F3BAD00E55C99 /* InspectorAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */; };
-		A5CEEE15187F3BAD00E55C99 /* InspectorAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CEEE13187F3BAD00E55C99 /* InspectorAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5D0A1BB1862301B00C7B496 /* InspectorEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = A5D0A1BA1862301B00C7B496 /* InspectorEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5FD0067189AFE9C00633231 /* ScriptArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */; };
 		A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0066189AFE9C00633231 /* ScriptArguments.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4883,12 +4883,12 @@
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
+				A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */,
 				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
+				A54E8EB118BFFBBE00556D28 /* GCSegmentedArrayInlines.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
-				A5CEEE15187F3BAD00E55C99 /* InspectorAgent.h in Headers */,
+				A54E8EB018BFFBBB00556D28 /* GCSegmentedArray.h in Headers */,
 				6514F21918B3E1670098FF8B /* Bytecodes.h in Headers */,
-				2A343F7618A1748B0039B085 /* GCSegmentedArray.h in Headers */,
-				2A343F7818A1749D0039B085 /* GCSegmentedArrayInlines.h in Headers */,
 				65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */,
 				0F8335B81639C1EA001443B5 /* ArrayAllocationProfile.h in Headers */,
 				A7A8AF3517ADB5F3005AB174 /* ArrayBuffer.h in Headers */,
@@ -5204,8 +5204,6 @@
 				0F2B66AD17B6B54500A7AE3F /* GCIncomingRefCountedInlines.h in Headers */,
 				0F2B66AE17B6B54500A7AE3F /* GCIncomingRefCountedSet.h in Headers */,
 				0F2B66AF17B6B54500A7AE3F /* GCIncomingRefCountedSetInlines.h in Headers */,
-				2A343F7618A1748B0039B085 /* GCSegmentedArray.h in Headers */,
-				2A343F7818A1749D0039B085 /* GCSegmentedArrayInlines.h in Headers */,
 				C2239D1B16262BDD005AC5FD /* GCThread.h in Headers */,
 				C21122E215DD9AB300790E3A /* GCThreadSharedData.h in Headers */,
 				A532439418569709002ED692 /* generate-combined-inspector-json.py in Headers */,
@@ -5247,7 +5245,6 @@
 				A5840E29187CA5E600843B10 /* inline-and-minify-stylesheets-and-scripts.py in Headers */,
 				0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */,
 				99E45A2718A1B2590026D88F /* InputCursor.h in Headers */,
-				A5CEEE15187F3BAD00E55C99 /* InspectorAgent.h in Headers */,
 				A593CF7F1840362C00BFCE27 /* InspectorAgentBase.h in Headers */,
 				A593CF87184038CA00BFCE27 /* InspectorAgentRegistry.h in Headers */,
 				A593CF7D1840360300BFCE27 /* InspectorBackendDispatcher.h in Headers */,
