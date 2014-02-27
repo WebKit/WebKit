@@ -110,11 +110,6 @@
 - (void)_setCurrentEvent:(NSEvent *)event;
 @end
 
-@interface NSObject (WKNSTextInputContextDetails)
-- (BOOL)wantsToHandleMouseEvents;
-- (BOOL)handleMouseEvent:(NSEvent *)event;
-@end
-
 @interface NSWindow (WKNSWindowDetails)
 - (NSRect)_intersectBottomCornersWithRect:(NSRect)viewRect;
 - (void)_maskRoundedBottomCorners:(NSRect)clipRect;

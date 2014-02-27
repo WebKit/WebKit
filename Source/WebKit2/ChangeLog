@@ -1,3 +1,12 @@
+2014-02-27  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Remove unused SPI declarations from WKView.mm
+        https://bugs.webkit.org/show_bug.cgi?id=129434
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKView.mm:
+
 2014-02-26  Michael Saboff  <msaboff@apple.com>
 
         Auto generate bytecode information for bytecode parser and LLInt
