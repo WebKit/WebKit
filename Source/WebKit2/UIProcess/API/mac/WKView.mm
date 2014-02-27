@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKView.h"
 
+#if PLATFORM(MAC)
+
 #if USE(DICTATION_ALTERNATIVES)
 #import <AppKit/NSTextAlternatives.h>
 #import <AppKit/NSAttributedString.h>
@@ -3487,3 +3489,5 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 }
 
 @end
+
+#endif // PLATFORM(MAC)

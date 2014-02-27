@@ -26,6 +26,8 @@
 #import "config.h"
 #import "TextChecker.h"
 
+#if PLATFORM(IOS)
+
 #import "TextCheckerState.h"
 #import <WebCore/NotImplemented.h>
 
@@ -191,3 +193,5 @@ void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion>)
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

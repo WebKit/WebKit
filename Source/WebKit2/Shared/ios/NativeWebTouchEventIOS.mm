@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NativeWebTouchEvent.h"
 
+#if PLATFORM(IOS)
+
 #import "WebEvent.h"
 #import <Foundation/NSGeometry.h>
 #import <UIKit/UITouch.h>
@@ -102,3 +104,5 @@ NativeWebTouchEvent::NativeWebTouchEvent(UIWebTouchEventsGestureRecognizer *gest
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

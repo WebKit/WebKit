@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKPrintingView.h"
 
+#if PLATFORM(MAC)
+
 #import "APIData.h"
 #import "Logging.h"
 #import "PDFKitImports.h"
@@ -675,3 +677,5 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     [super endDocument];
 }
 @end
+
+#endif // PLATFORM(MAC)

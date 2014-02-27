@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOS)
+
 #import "WKActionSheet.h"
 
 #import <UIKit/UIActionSheet.h>
@@ -47,3 +49,4 @@ class WebPageProxy;
 - (void)updateSheetPosition;
 @end
 
+#endif // PLATFORM(IOS)

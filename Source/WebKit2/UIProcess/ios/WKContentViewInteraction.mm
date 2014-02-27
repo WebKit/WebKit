@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKContentViewInteraction.h"
 
+#if PLATFORM(IOS)
+
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
 #import "WebEvent.h"
@@ -2065,3 +2067,5 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 }
 
 @end
+
+#endif // PLATFORM(IOS)

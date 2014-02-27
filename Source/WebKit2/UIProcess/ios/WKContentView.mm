@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKContentViewInteraction.h"
 
+#if PLATFORM(IOS)
+
 #import "PageClientImplIOS.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
@@ -276,3 +278,5 @@ using namespace WebKit;
 }
 
 @end
+
+#endif // PLATFORM(IOS)

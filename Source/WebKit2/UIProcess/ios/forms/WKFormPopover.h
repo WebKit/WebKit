@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOS)
+
 #import <UIKit/UIPopoverController.h>
 
 @class WKContentView;
@@ -53,3 +55,5 @@
 @interface WKFormRotatingAccessoryPopover : WKRotatingPopover <WKRotatingPopoverDelegate>
 - (void)accessoryDone;
 @end
+
+#endif // PLATFORM(IOS)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKActionSheet.h"
 
+#if PLATFORM(IOS)
+
 #import "WKContentViewInteraction.h"
 #import <UIKit/UIActionSheet_Private.h>
 #import <UIKit/UIWindow_Private.h>
@@ -157,3 +159,5 @@
 }
 
 @end
+
+#endif // PLATFORM(IOS)

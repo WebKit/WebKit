@@ -27,6 +27,8 @@
 
 #if WK_API_ENABLED
 
+#if !TARGET_OS_IPHONE
+
 #import <AppKit/AppKit.h>
 
 @class WKView;
@@ -40,4 +42,6 @@ WK_API_CLASS
 
 @end
 
-#endif
+#endif // TARGET_OS_IPHONE
+
+#endif // WK_API_ENABLED

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ViewGestureController.h"
 
+#if PLATFORM(IOS)
+
 #import "WebPageGroup.h"
 #import "ViewGestureControllerMessages.h"
 #import "ViewGestureGeometryCollectorMessages.h"
@@ -274,3 +276,5 @@ void ViewGestureController::removeSwipeSnapshot()
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NativeWebKeyboardEvent.h"
 
+#if PLATFORM(IOS)
+
 #import "WebIOSEventFactory.h"
 
 namespace WebKit {
@@ -37,3 +39,5 @@ NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebIOSEvent *event)
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

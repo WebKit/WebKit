@@ -24,9 +24,12 @@
  */
 
 #import "config.h"
+#import "WKFormPopover.h"
+
+#if PLATFORM(IOS)
+
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
-#import "WKFormPopover.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIPeripheralHost.h>
 #import <UIKit/UIWindow_Private.h>
@@ -167,3 +170,4 @@ using namespace WebKit;
 
 @end
 
+#endif // PLATFORM(IOS)

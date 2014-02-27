@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PageClientImpl.h"
 
+#if PLATFORM(MAC)
+
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
@@ -638,3 +640,5 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 #endif // ENABLE(FULLSCREEN_API)
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)

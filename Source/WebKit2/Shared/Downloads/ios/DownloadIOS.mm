@@ -26,6 +26,8 @@
 #import "config.h"
 #import "Download.h"
 
+#if PLATFORM(IOS)
+
 #import <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -78,3 +80,5 @@ void Download::receivedCancellation(const AuthenticationChallenge&)
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

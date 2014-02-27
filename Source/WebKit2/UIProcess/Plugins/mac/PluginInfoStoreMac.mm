@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PluginInfoStore.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
+#if PLATFORM(MAC) && ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "NetscapePluginModule.h"
 #import "WebKitSystemInterface.h"
@@ -119,4 +119,4 @@ PluginModuleInfo PluginInfoStore::findPluginWithBundleIdentifier(const String& b
 
 } // namespace WebKit
 
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
+#endif // PLATFORM(MAC) && ENABLE(NETSCAPE_PLUGIN_API)

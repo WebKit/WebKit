@@ -26,6 +26,8 @@
 #import "config.h"
 #import "Download.h"
 
+#if PLATFORM(MAC)
+
 #import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/NotImplemented.h>
@@ -270,3 +272,5 @@ static void dispatchOnMainThread(void (^block)())
 }
 
 @end
+
+#endif // PLATFORM(MAC)

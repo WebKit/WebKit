@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKViewPrivate.h"
 
+#if PLATFORM(IOS)
+
 #import "RemoteLayerTreeTransaction.h"
 #import "ViewGestureController.h"
 #import "WebPageProxy.h"
@@ -384,3 +386,5 @@ using namespace WebKit;
 }
 
 @end
+
+#endif // PLATFORM(IOS)

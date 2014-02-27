@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKScrollView.h"
 
+#if PLATFORM(IOS)
+
 @interface WKScrollViewDelegateForwarder : NSObject <UIScrollViewDelegate>
 
 - (instancetype)initWithInternalDelegate:(id <UIScrollViewDelegate>)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate;
@@ -133,3 +135,4 @@
 
 @end
 
+#endif // PLATFORM(IOS)

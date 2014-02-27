@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PasteboardTypes.h"
 
+#if PLATFORM(MAC)
+
 #import <wtf/RetainPtr.h>
 
 namespace WebKit {
@@ -73,3 +75,5 @@ NSArray* PasteboardTypes::forSelection()
 }
     
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)

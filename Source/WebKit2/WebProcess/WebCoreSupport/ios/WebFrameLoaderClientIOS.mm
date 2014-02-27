@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebFrameLoaderClient.h"
 
+#if PLATFORM(IOS)
+
 #import <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -49,3 +51,5 @@ RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(DocumentLo
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

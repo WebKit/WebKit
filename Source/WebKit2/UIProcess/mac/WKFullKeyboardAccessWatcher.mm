@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKFullKeyboardAccessWatcher.h"
 
+#if PLATFORM(MAC)
+
 #import "WebContext.h"
 
 NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
@@ -83,3 +85,5 @@ using namespace WebKit;
 }
 
 @end
+
+#endif // PLATFORM(MAC)

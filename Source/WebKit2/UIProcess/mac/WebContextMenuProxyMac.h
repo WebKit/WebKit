@@ -26,6 +26,8 @@
 #ifndef WebContextMenuProxyMac_h
 #define WebContextMenuProxyMac_h
 
+#if PLATFORM(MAC)
+
 #include "WebContextMenuProxy.h"
 #include <wtf/RetainPtr.h>
 
@@ -60,5 +62,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)
 
 #endif // WebContextMenuProxyMac_h

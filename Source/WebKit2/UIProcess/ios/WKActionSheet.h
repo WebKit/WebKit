@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOS)
+
 #import <UIKit/UIActionSheet.h>
 #import <UIKit/UIPopoverController.h>
 
@@ -46,3 +48,5 @@
 - (CGRect)initialPresentationRectInHostViewForSheet;
 - (CGRect)presentationRectInHostViewForSheet;
 @end
+
+#endif // PLATFORM(IOS)

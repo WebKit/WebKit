@@ -27,10 +27,14 @@
 
 #if WK_API_ENABLED
 
+#if PLATFORM(MAC)
+
 @interface WKThumbnailView ()
 
 @property (nonatomic, assign) CALayer *thumbnailLayer;
 
 @end
 
-#endif
+#endif // PLATFORM(MAC)
+
+#endif // WK_API_ENABLED

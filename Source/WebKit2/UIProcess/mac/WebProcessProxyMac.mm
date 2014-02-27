@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebProcessProxy.h"
 
+#if PLATFORM(MAC)
+
 #import "WebContext.h"
 #import "WebPageGroup.h"
 #import "WebPreferences.h"
@@ -78,3 +80,5 @@ void WebProcessProxy::updateProcessSuppressionState()
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)

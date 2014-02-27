@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebPage.h"
 
+#if PLATFORM(IOS)
+
 #import "AssistedNodeInformation.h"
 #import "EditorState.h"
 #import "InteractionInformationAtPosition.h"
@@ -1665,3 +1667,5 @@ void WebPage::willStartUserTriggeredZooming()
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

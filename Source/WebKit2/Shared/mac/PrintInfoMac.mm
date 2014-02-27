@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PrintInfo.h"
 
+#if PLATFORM(MAC)
+
 namespace WebKit {
 
 PrintInfo::PrintInfo(NSPrintInfo *printInfo)
@@ -37,3 +39,5 @@ PrintInfo::PrintInfo(NSPrintInfo *printInfo)
 }
 
 }
+
+#endif // PLATFORM(MAC)

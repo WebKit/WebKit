@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKFormInputControl.h"
 
+#if PLATFORM(IOS)
+
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
@@ -369,3 +371,5 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 }
 
 @end
+
+#endif // PLATFORM(IOS)

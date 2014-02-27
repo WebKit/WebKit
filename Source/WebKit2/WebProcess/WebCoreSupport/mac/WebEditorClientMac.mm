@@ -30,6 +30,8 @@
 #import "config.h"
 #import "WebEditorClient.h"
 
+#if PLATFORM(MAC)
+
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebFrame.h"
@@ -235,3 +237,5 @@ void WebEditorClient::toggleAutomaticSpellingCorrection()
 #endif // USE(AUTOMATIC_TEXT_REPLACEMENT)
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)

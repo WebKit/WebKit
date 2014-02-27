@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebIOSEventFactory.h"
 
+#if PLATFORM(IOS)
+
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/PlatformEventFactoryIOS.h>
 
@@ -81,3 +83,5 @@ WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(WebIOSEvent 
 
     return WebKit::WebKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
 }
+
+#endif // PLATFORM(IOS)

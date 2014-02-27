@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(MAC)
+
 #import <WebCore/IntRectHash.h>
 #import <condition_variable>
 #import <wtf/RetainPtr.h>
@@ -63,3 +65,5 @@ class WebFrameProxy;
 - (id)initWithFrameProxy:(WebKit::WebFrameProxy*)frame view:(NSView *)wkView;
 
 @end
+
+#endif // PLATFORM(MAC)

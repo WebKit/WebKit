@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebPageProxy.h"
 
+#if PLATFORM(MAC)
+
 #import "APIUIClient.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
@@ -574,3 +576,5 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOS)
+
 #import "WKFormPeripheral.h"
 
 @class WKContentView;
@@ -30,3 +32,5 @@
 @interface WKFormInputControl : NSObject<WKFormPeripheral>
 + (WKFormInputControl *)createPeripheralWithView:(WKContentView *)view;
 @end
+
+#endif // PLATFORM(IOS)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebPage.h"
 
+#if PLATFORM(MAC)
+
 #import "AttributedString.h"
 #import "DataReference.h"
 #import "EditorState.h"
@@ -955,3 +957,5 @@ void WebPage::didUpdateViewStateTimerFired()
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebBackForwardListProxy.h"
 
+#if PLATFORM(IOS)
+
 #import <WebCore/NotImplemented.h>
 
 namespace WebKit {
@@ -48,3 +50,5 @@ bool WebBackForwardListProxy::clearAllPageCaches()
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebEditorClient.h"
 
+#if PLATFORM(IOS)
+
 #import "WebPage.h"
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/NotImplemented.h>
@@ -133,3 +135,5 @@ int WebEditorClient::pasteboardChangeCount()
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

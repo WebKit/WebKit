@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOS)
+
 #import "WKContentView.h"
 
 #import "AssistedNodeInformation.h"
@@ -138,3 +140,5 @@ struct WKAutoCorrectionData {
 - (void)_didUpdateBlockSelectionWithTouch:(WebKit::WKSelectionTouch)touch withFlags:(WebKit::WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold;
 - (void)accessoryDone;
 @end
+
+#endif // PLATFORM(IOS)

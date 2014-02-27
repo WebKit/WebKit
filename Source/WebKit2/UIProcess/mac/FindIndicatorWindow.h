@@ -26,6 +26,8 @@
 #ifndef FindIndicatorWindow_h
 #define FindIndicatorWindow_h
 
+#if PLATFORM(MAC)
+
 #import "WebKitSystemInterface.h"
 #import <wtf/Noncopyable.h>
 #import <wtf/RefPtr.h>
@@ -73,3 +75,5 @@ private:
 } // namespace WebKit
 
 #endif // FindIndicatorWindow_h
+
+#endif // PLATFORM(MAC)

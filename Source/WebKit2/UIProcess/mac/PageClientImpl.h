@@ -26,6 +26,8 @@
 #ifndef PageClientImpl_h
 #define PageClientImpl_h
 
+#if PLATFORM(MAC)
+
 #include "CorrectionPanel.h"
 #include "PageClient.h"
 #include "WebFullScreenManagerProxy.h"
@@ -174,5 +176,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)
 
 #endif // PageClientImpl_h

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKActionSheetAssistant.h"
 
+#if PLATFORM(IOS)
+
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKElementActionInternal.h"
 #import "UIClient.h"
@@ -351,4 +353,4 @@ using namespace WebKit;
 
 @end
 
-
+#endif // PLATFORM(IOS)

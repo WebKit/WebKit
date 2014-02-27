@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKGeolocationProviderIOS.h"
 
+#if PLATFORM(IOS)
+
 #import <Foundation/NSURL.h>
 #import <UIKit/UIWebGeolocationPolicyDecider.h>
 #import <UIKit/UIWindow.h>
@@ -53,3 +55,5 @@ void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin* origin
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

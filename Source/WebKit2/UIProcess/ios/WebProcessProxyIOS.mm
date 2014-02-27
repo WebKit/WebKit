@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebProcessProxy.h"
 
+#if PLATFORM(IOS)
+
 #import <assertion/extension_private.h>
 #import <WebCore/NotImplemented.h>
 
@@ -93,3 +95,5 @@ void WebProcessProxy::updateProcessState()
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

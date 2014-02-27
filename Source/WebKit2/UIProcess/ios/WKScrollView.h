@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOS)
+
 #import <UIKit/UIWebScrollView.h>
 
 @interface WKScrollView : UIWebScrollView
@@ -30,3 +32,5 @@
 @property (nonatomic, assign) id <UIScrollViewDelegate> internalDelegate;
 
 @end
+
+#endif // PLATFORM(IOS)

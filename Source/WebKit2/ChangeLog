@@ -1,3 +1,83 @@
+2014-02-26  Dan Bernstein  <mitz@apple.com>
+
+        Replaced use of the EXCLUDED_SOURCE_FILE_NAMES build setting with #if PLATFORM(…) guards in
+        the files themselves.
+
+        Rubber-stamped by Sam Weinig.
+
+        * Configurations/WebKit2.xcconfig: Cleared out EXCLUDED_SOURCE_FILE_NAMES_macosx, and left
+        EXCLUDED_SOURCE_FILE_NAMES_iphoneos containing just the names of resources the should be
+        excluded from Copy Files build phases.
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        * Shared/Downloads/ios/DownloadIOS.mm:
+        * Shared/Downloads/mac/DownloadMac.mm:
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/WebPlatformTouchPoint.cpp:
+        * Shared/WebTouchEvent.cpp:
+        * Shared/ios/NativeWebKeyboardEventIOS.mm:
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        * Shared/ios/WebIOSEventFactory.h:
+        * Shared/ios/WebIOSEventFactory.mm:
+        * Shared/mac/PasteboardTypes.h:
+        * Shared/mac/PasteboardTypes.mm:
+        * Shared/mac/PrintInfoMac.mm:
+        * UIProcess/API/C/WKInspector.cpp:
+        * UIProcess/API/Cocoa/WKThumbnailView.h:
+        * UIProcess/API/Cocoa/WKThumbnailView.mm:
+        * UIProcess/API/Cocoa/WKThumbnailViewInternal.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/ios/TextCheckerIOS.mm:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        * UIProcess/ios/WKActionSheet.h:
+        * UIProcess/ios/WKActionSheet.mm:
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/WKGeolocationProviderIOS.h:
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        * UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm:
+        * UIProcess/ios/WKScrollView.h:
+        * UIProcess/ios/WKScrollView.mm:
+        * UIProcess/ios/WebInspectorProxyIOS.mm:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        * UIProcess/ios/forms/WKFormInputControl.h:
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        * UIProcess/ios/forms/WKFormPopover.h:
+        * UIProcess/ios/forms/WKFormPopover.mm:
+        * UIProcess/mac/FindIndicatorWindow.h:
+        * UIProcess/mac/FindIndicatorWindow.mm:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        * UIProcess/mac/TextCheckerMac.mm:
+        * UIProcess/mac/WKFullKeyboardAccessWatcher.h:
+        * UIProcess/mac/WKFullKeyboardAccessWatcher.mm:
+        * UIProcess/mac/WKPrintingView.h:
+        * UIProcess/mac/WKPrintingView.mm:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        * WebProcess/WebCoreSupport/ios/WebDatabaseManagerIOS.mm:
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        * WebProcess/WebPage/ios/WebBackForwardListProxyIOS.mm:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.h:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+
 2014-02-26  Anders Carlsson  <andersca@apple.com>
 
         VisitedLinkProvider should know which pages it belongs to

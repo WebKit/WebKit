@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebDatabaseManager.h"
 
+#if PLATFORM(IOS)
+
 #import <WebCore/NotImplemented.h>
 
 namespace WebKit {
@@ -46,3 +48,5 @@ void WebDatabaseManager::dispatchDidDeleteDatabaseOrigin()
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

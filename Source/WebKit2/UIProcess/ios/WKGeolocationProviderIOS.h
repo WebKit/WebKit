@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOS)
+
 #import <Foundation/NSObject.h>
 #import <WebKit2/WKBase.h>
 
@@ -36,3 +38,5 @@ class WebContext;
 -(id)initWithContext:(WebKit::WebContext*)context;
 -(void)decidePolicyForGeolocationRequestFromOrigin:(WKSecurityOriginRef)origin frame:(WKFrameRef)frame request:(WKGeolocationPermissionRequestRef)permissionRequest window:(UIWindow*)window;
 @end
+
+#endif // PLATFORM(IOS)

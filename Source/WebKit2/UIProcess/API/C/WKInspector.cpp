@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WKInspector.h"
 
+#if !PLATFORM(IOS)
+
 #include "WKAPICast.h"
 #include "WebInspectorProxy.h"
 
@@ -228,3 +230,5 @@ void WKInspectorTogglePageProfiling(WKInspectorRef inspectorRef)
     UNUSED_PARAM(inspectorRef);
 #endif
 }
+
+#endif // !PLATFORM(IOS)

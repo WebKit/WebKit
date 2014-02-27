@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebPageProxy.h"
 
+#if PLATFORM(IOS)
+
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
 #import "ViewUpdateDispatcherMessages.h"
@@ -518,3 +520,5 @@ void WebPageProxy::setAcceleratedCompositingRootLayer(PlatformLayer* rootLayer)
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

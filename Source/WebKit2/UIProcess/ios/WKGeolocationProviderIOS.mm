@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKGeolocationProviderIOS.h"
 
+#if PLATFORM(IOS)
+
 #import "GeolocationPermissionRequestProxy.h"
 #import "WebContext.h"
 #import "WebGeolocationManagerProxy.h"
@@ -280,3 +282,5 @@ struct GeolocationRequestData {
 @end
 
 #pragma clang diagnostic pop
+
+#endif // PLATFORM(IOS)

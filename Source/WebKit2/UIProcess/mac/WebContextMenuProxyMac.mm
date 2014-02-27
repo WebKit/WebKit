@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebContextMenuProxyMac.h"
 
+#if PLATFORM(MAC)
+
 #import "PageClientImpl.h"
 #import "StringUtilities.h"
 #import "WebContextMenuItemData.h"
@@ -235,3 +237,5 @@ void WebContextMenuProxyMac::hideContextMenu()
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)

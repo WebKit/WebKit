@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKAccessibilityWebPageObject.h"
 
+#if PLATFORM(MAC)
+
 #import "WebFrame.h"
 #import "WebPage.h"
 #import "WKArray.h"
@@ -253,5 +255,6 @@ using namespace WebKit;
     return [[self accessibilityRootObjectWrapper] accessibilityFocusedUIElement];
 }
 
-
 @end
+
+#endif // PLATFORM(MAC)

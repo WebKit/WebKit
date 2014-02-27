@@ -26,6 +26,8 @@
 #ifndef WebIOSEventFactory_h
 #define WebIOSEventFactory_h
 
+#if PLATFORM(IOS)
+
 #import "WebEvent.h"
 #import <WebCore/WebEvent.h>
 
@@ -33,5 +35,7 @@ class WebIOSEventFactory {
 public:
     static WebKit::WebKeyboardEvent createWebKeyboardEvent(WebIOSEvent *event);
 };
+
+#endif // PLATFORM(IOS)
 
 #endif // WebIOSEventFactory_h

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "FindIndicatorWindow.h"
 
+#if PLATFORM(MAC)
+
 #import "FindIndicator.h"
 #import "WKView.h"
 #import <WebCore/GraphicsContext.h>
@@ -244,3 +246,5 @@ void FindIndicatorWindow::bounceAnimationDidEnd()
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)

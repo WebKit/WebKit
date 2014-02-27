@@ -26,6 +26,8 @@
 #ifndef NativeWebTouchEvent_h
 #define NativeWebTouchEvent_h
 
+#if ENABLE(TOUCH_EVENTS)
+
 #include "WebEvent.h"
 
 #if PLATFORM(IOS)
@@ -69,5 +71,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(TOUCH_EVENTS)
 
 #endif // NativeWebTouchEvent_h

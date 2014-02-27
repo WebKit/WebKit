@@ -28,6 +28,8 @@
 
 #if WK_API_ENABLED
 
+#if PLATFORM(MAC)
+
 #import "WKAPICast.h"
 #import "WKView.h"
 #import "WKViewInternal.h"
@@ -122,4 +124,6 @@ using namespace WebKit;
 
 @end
 
-#endif
+#endif // PLATFORM(MAC)
+
+#endif // WK_API_ENABLED

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebChromeClient.h"
 
+#if PLATFORM(IOS)
+
 #import <WebCore/NotImplemented.h>
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
@@ -121,4 +123,7 @@ void WebChromeClient::webAppOrientationsUpdated()
 {
     notImplemented();
 }
+
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

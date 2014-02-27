@@ -26,6 +26,8 @@
 #ifndef WKFullKeyboardAccessWatcher_h
 #define WKFullKeyboardAccessWatcher_h
 
+#if PLATFORM(MAC)
+
 @interface WKFullKeyboardAccessWatcher : NSObject {
 @private
     BOOL fullKeyboardAccessEnabled;
@@ -34,5 +36,7 @@
 + (BOOL)fullKeyboardAccessEnabled;
 
 @end;
+
+#endif // PLATFORM(MAC)
 
 #endif // WKFullKeyboardAccessWatcher_h

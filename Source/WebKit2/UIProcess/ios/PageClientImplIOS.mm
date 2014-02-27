@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PageClientImplIOS.h"
 
+#if PLATFORM(IOS)
+
 #import "NativeWebKeyboardEvent.h"
 #import "InteractionInformationAtPosition.h"
 #import "WKContentView.h"
@@ -399,3 +401,5 @@ void PageClientImpl::beganExitFullScreen(const IntRect&, const IntRect&)
 #endif // ENABLE(FULLSCREEN_API)
 
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)

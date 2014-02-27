@@ -27,13 +27,13 @@
 #ifndef WebChromeClient_h
 #define WebChromeClient_h
 
+#include "WebFrame.h"
 #include <WebCore/ChromeClient.h>
 #include <WebCore/ViewportArguments.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class WebFrame;
 class WebPage;
 
 class WebChromeClient : public WebCore::ChromeClient {

@@ -26,6 +26,8 @@
 #ifndef PageClientImplIOS_h
 #define PageClientImplIOS_h
 
+#if PLATFORM(IOS)
+
 #import "PageClient.h"
 #import "WebFullScreenManagerProxy.h"
 #import <wtf/RetainPtr.h>
@@ -130,5 +132,7 @@ private:
     WKContentView *m_contentView;
 };
 } // namespace WebKit
+
+#endif // PLATFORM(IOS)
 
 #endif // PageClientImplIOS_h

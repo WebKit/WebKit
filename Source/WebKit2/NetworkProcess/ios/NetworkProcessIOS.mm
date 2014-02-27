@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkProcess.h"
 
-#if ENABLE(NETWORK_PROCESS)
+#if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
 
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/NotImplemented.h>
@@ -83,4 +83,4 @@ void NetworkProcess::platformTerminate()
 
 } // namespace WebKit
 
-#endif // ENABLE(NETWORK_PROCESS)
+#endif // PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebEvent.h"
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 
 #include "ArgumentCoders.h"
 #include "Arguments.h"
@@ -65,4 +65,4 @@ bool WebTouchEvent::isTouchEventType(Type type)
     
 } // namespace WebKit
 
-#endif // ENABLE(TOUCH_EVENTS)
+#endif // ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)

@@ -26,6 +26,8 @@
 #ifndef WKAccessibilityWebPageObject_h
 #define WKAccessibilityWebPageObject_h
 
+#if PLATFORM(MAC)
+
 namespace WebKit {
 class WebPage;
 }
@@ -43,5 +45,7 @@ class WebPage;
 - (void)setRemoteParent:(id)parent;
 
 @end
+
+#endif // PLATFORM(MAC)
 
 #endif // WKAccessibilityWebPageObject_h

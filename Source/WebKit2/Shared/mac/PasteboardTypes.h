@@ -26,6 +26,8 @@
 #ifndef PasteboardTypes_h
 #define PasteboardTypes_h
 
+#if PLATFORM(MAC)
+
 namespace WebKit {
 
 class PasteboardTypes {
@@ -43,5 +45,7 @@ public:
 };
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)
 
 #endif // PasteboardTypes_h
