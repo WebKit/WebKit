@@ -23,6 +23,13 @@
 
 2014-02-27  Andres Gomez  <agomez@igalia.com>
 
+        Unreviewed. Add myself to watchlists
+
+        * Scripts/webkitpy/common/config/watchlist: Add myself to
+        watchlists.
+
+2014-02-27  Andres Gomez  <agomez@igalia.com>
+
         Unreviewed. Add myself as a committer.
 
         * Scripts/webkitpy/common/config/contributors.json:
