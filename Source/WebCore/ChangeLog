@@ -1,3 +1,27 @@
+2014-02-27  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Utilize AtkTableCell to expose directly AccessibilityTableCell to AT
+        https://bugs.webkit.org/show_bug.cgi?id=129250
+
+        Reviewed by Mario Sanchez Prada.
+
+        Test: accessibility/table-scope.html
+
+        Exposing AtkTableCell to AT. Implementing possibility to get column headers and row headers
+        as an array of cells.
+
+        * GNUmakefile.list.am:
+        * PlatformEfl.cmake:
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp: Added.
+        (convertToGPtrArray):
+        (core):
+        (webkitAccessibleTableCellGetColumnHeaderCells):
+        (webkitAccessibleTableCellGetRowHeaderCells):
+        (webkitAccessibleTableCellInterfaceInit):
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.h: Added.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (getInterfaceMaskFromObject):
+
 2014-02-27  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
 
         Improving containing column block determination

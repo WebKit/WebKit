@@ -885,3 +885,13 @@ AccessibilityUIElement AccessibilityUIElement::selectedChildAtIndex(unsigned) co
     // FIXME: implement
     return 0;
 }
+
+void AccessibilityUIElement::columnHeaders(Vector<AccessibilityUIElement>&) const
+{
+    // FIXME: implement
+}
+
+void AccessibilityUIElement::rowHeaders(Vector<AccessibilityUIElement>&) const
+{
+    // FIXME: implement
+}

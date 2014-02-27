@@ -35,6 +35,9 @@
 #include "NotImplemented.h"
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
+#if ATK_CHECK_VERSION(2,11,90)
+#include <WebKit2/WKBundleFrame.h>
+#endif
 #include <atk/atk.h>
 #include <wtf/Assertions.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -550,6 +553,31 @@ static Vector<RefPtr<AccessibilityUIElement> > getVisibleCells(AccessibilityUIEl
     return visibleCells;
 }
 
+#if ATK_CHECK_VERSION(2,11,90)
+static Vector<RefPtr<AccessibilityUIElement>> convertGPtrArrayToVector(const GPtrArray* array)
+{
+    Vector<RefPtr<AccessibilityUIElement>> cells;
+    for (guint i = 0; i < array->len; i++) {
+        if (AtkObject* atkObject = static_cast<AtkObject*>(g_ptr_array_index(array, i)))
+            cells.append(AccessibilityUIElement::create(atkObject));
+    }
+    return cells;
+}
+
+static JSValueRef convertToJSObjectArray(const Vector<RefPtr<AccessibilityUIElement>>& children)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    size_t elementCount = children.size();
+    auto valueElements = std::make_unique<JSValueRef[]>(elementCount);
+    for (size_t i = 0; i < elementCount; i++)
+        valueElements[i] = JSObjectMake(context, children[i]->wrapperClass(), children[i].get());
+
+    return JSObjectMakeArray(context, elementCount, valueElements.get(), nullptr);
+}
+#endif
+
 } // namespace
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
@@ -836,14 +864,36 @@ JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attr
 
 JSValueRef AccessibilityUIElement::rowHeaders() const
 {
-    // FIXME: implement
+#if ATK_CHECK_VERSION(2,11,90)
+    if (!ATK_IS_TABLE_CELL(m_element.get()))
+        return nullptr;
+
+    GRefPtr<GPtrArray> array = adoptGRef(atk_table_cell_get_row_header_cells(ATK_TABLE_CELL(m_element.get())));
+    if (!array)
+        return nullptr;
+
+    Vector<RefPtr<AccessibilityUIElement>> rows = convertGPtrArrayToVector(array.get());
+    return convertToJSObjectArray(rows);
+#else
     return nullptr;
+#endif
 }
 
 JSValueRef AccessibilityUIElement::columnHeaders() const
 {
-    // FIXME: implement
+#if ATK_CHECK_VERSION(2,11,90)
+    if (!ATK_IS_TABLE_CELL(m_element.get()))
+        return nullptr;
+
+    GRefPtr<GPtrArray> array = adoptGRef(atk_table_cell_get_column_header_cells(ATK_TABLE_CELL(m_element.get())));
+    if (!array)
+        return nullptr;
+
+    Vector<RefPtr<AccessibilityUIElement>> columns = convertGPtrArrayToVector(array.get());
+    return convertToJSObjectArray(columns);
+#else
     return nullptr;
+#endif
 }
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const

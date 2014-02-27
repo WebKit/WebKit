@@ -341,9 +341,9 @@
   <autotools id="atk"
              autogen-sh="configure"
              autogenargs="--disable-introspection">
-    <branch module="pub/GNOME/sources/atk/2.11/atk-2.11.4.tar.xz" version="2.11.4"
+    <branch module="pub/GNOME/sources/atk/2.11/atk-2.11.90.tar.xz" version="2.11.90"
             repo="ftp.gnome.org"
-            hash="sha256:b609fa7a3f21147d40f0fe0f47278a62c263de0eadbbbe9839f2b63a0cb07d41"/>
+            hash="sha256:44e33abad64419b92fd2ae45fb0d37b9faab6b53640a1a54e068af6fccad4417"/>
   </autotools>
 
 </moduleset>

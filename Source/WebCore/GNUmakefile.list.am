@@ -6097,6 +6097,8 @@ webcoregtk_sources += \
 	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceSelection.h \
 	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceTable.cpp \
 	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceTable.h \
+    Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp \
+    Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceTableCell.h \
 	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceText.cpp \
 	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceText.h \
 	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceValue.cpp \

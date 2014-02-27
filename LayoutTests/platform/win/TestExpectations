@@ -701,6 +701,9 @@ webkit.org/b/127485 platform/win/accessibility/option-element-selection-and-focu
 webkit.org/b/127485 platform/win/accessibility/parent-element.html [ Failure ]
 webkit.org/b/127485 platform/win/accessibility/select-element-valuechange-event.html [ Failure ]
 
+# Skipping on windows, missing implementation.
+webkit.org/b/129250 accessibility/table-scope.html [ Skip ]
+
 # Temporarily skip a bunch of failing tests on Windows bots until
 # https://bugs.webkit.org/show_bug.cgi?id=108249
 

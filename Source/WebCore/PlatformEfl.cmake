@@ -29,6 +29,7 @@ list(APPEND WebCore_SOURCES
     accessibility/atk/WebKitAccessibleInterfaceImage.cpp
     accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
     accessibility/atk/WebKitAccessibleInterfaceTable.cpp
+    accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp
     accessibility/atk/WebKitAccessibleInterfaceText.cpp
     accessibility/atk/WebKitAccessibleInterfaceValue.cpp
     accessibility/atk/WebKitAccessibleUtil.cpp

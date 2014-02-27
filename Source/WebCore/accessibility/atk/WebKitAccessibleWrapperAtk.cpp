@@ -57,6 +57,7 @@
 #include "WebKitAccessibleInterfaceImage.h"
 #include "WebKitAccessibleInterfaceSelection.h"
 #include "WebKitAccessibleInterfaceTable.h"
+#include "WebKitAccessibleInterfaceTableCell.h"
 #include "WebKitAccessibleInterfaceText.h"
 #include "WebKitAccessibleInterfaceValue.h"
 #include "WebKitAccessibleUtil.h"
@@ -1053,6 +1054,9 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleComponentInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleImageInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleTableInterfaceInit), 0, 0},
+#if ATK_CHECK_VERSION(2,11,90)
+    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleTableCellInterfaceInit), 0, 0},
+#endif
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHypertextInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHyperlinkImplInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleDocumentInterfaceInit), 0, 0},
@@ -1067,6 +1071,9 @@ enum WAIType {
     WAI_COMPONENT,
     WAI_IMAGE,
     WAI_TABLE,
+#if ATK_CHECK_VERSION(2,11,90)
+    WAI_TABLE_CELL,
+#endif
     WAI_HYPERTEXT,
     WAI_HYPERLINK,
     WAI_DOCUMENT,
@@ -1090,6 +1097,10 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
         return ATK_TYPE_IMAGE;
     case WAI_TABLE:
         return ATK_TYPE_TABLE;
+#if ATK_CHECK_VERSION(2,11,90)
+    case WAI_TABLE_CELL:
+        return ATK_TYPE_TABLE_CELL;
+#endif
     case WAI_HYPERTEXT:
         return ATK_TYPE_HYPERTEXT;
     case WAI_HYPERLINK:
@@ -1172,6 +1183,11 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     // Table
     if (role == TableRole)
         interfaceMask |= 1 << WAI_TABLE;
+
+#if ATK_CHECK_VERSION(2,11,90)
+    if (role == CellRole)
+        interfaceMask |= 1 << WAI_TABLE_CELL;
+#endif
 
     // Document
     if (role == WebAreaRole)

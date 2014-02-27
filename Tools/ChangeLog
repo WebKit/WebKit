@@ -1,3 +1,26 @@
+2014-02-27  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Utilize AtkTableCell to expose directly AccessibilityTableCell to AT
+        https://bugs.webkit.org/show_bug.cgi?id=129250
+
+        Reviewed by Mario Sanchez Prada.
+
+        Changing version of ATK to 2.11.90, because it introduces AtkTableCell interface.
+        Implementing methods so that we could test column/row headers represented as an array of cells.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::columnHeaders):
+        (AccessibilityUIElement::rowHeaders):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp: Adding empty stubs, to not break compilation.
+        (AccessibilityUIElement::columnHeaders):
+        (AccessibilityUIElement::rowHeaders):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::rowHeaders):
+        (WTR::AccessibilityUIElement::columnHeaders):
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
 2014-02-27  Andres Gomez  <agomez@igalia.com>
 
         Unreviewed. Add myself as a committer.

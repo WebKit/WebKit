@@ -1325,8 +1325,6 @@ JSStringRef AccessibilityUIElement::pathDescription() const { return 0; }
 
 #if !PLATFORM(COCOA)
 void AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef, Vector<AccessibilityUIElement>&) const { }
-void AccessibilityUIElement::columnHeaders(Vector<AccessibilityUIElement>&) const { }
-void AccessibilityUIElement::rowHeaders(Vector<AccessibilityUIElement>&) const { }
 #endif
 
 #if !PLATFORM(WIN)

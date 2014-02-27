@@ -1,3 +1,16 @@
+2014-02-27  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Utilize AtkTableCell to expose directly AccessibilityTableCell to AT
+        https://bugs.webkit.org/show_bug.cgi?id=129250
+
+        Reviewed by Mario Sanchez Prada.
+
+        Sharing test with GTK/EFL.
+
+        * accessibility/table-scope-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/table-scope-expected.txt.
+        * accessibility/table-scope.html: Renamed from LayoutTests/platform/mac/accessibility/table-scope.html.
+        * platform/win/TestExpectations: Skipping on windows, missing implementation.
+
 2014-02-27  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
 
         Improving containing column block determination

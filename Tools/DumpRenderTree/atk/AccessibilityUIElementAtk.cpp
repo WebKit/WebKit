@@ -485,6 +485,16 @@ static Vector<AccessibilityUIElement> getVisibleCells(AccessibilityUIElement* el
     return visibleCells;
 }
 
+#if ATK_CHECK_VERSION(2,11,90)
+static void convertGPtrArrayToVector(const GPtrArray* array, Vector<AccessibilityUIElement>& elements)
+{
+    for (guint i = 0; i < array->len; i++) {
+        if (AtkObject* atkObject = static_cast<AtkObject*>(g_ptr_array_index(array, i)))
+            elements.append(AccessibilityUIElement(atkObject));
+    }
+}
+#endif
+
 } // namespace
 
 JSStringRef indexRangeInTable(PlatformUIElement element, bool isRowRange)
@@ -1654,6 +1664,34 @@ void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
         return;
 
     atk_selection_remove_selection(ATK_SELECTION(m_element), index);
+}
+
+void AccessibilityUIElement::columnHeaders(Vector<AccessibilityUIElement>& columns) const
+{
+#if ATK_CHECK_VERSION(2,11,90)
+    if (!ATK_IS_TABLE_CELL(m_element))
+        return;
+
+    GRefPtr<GPtrArray> array = adoptGRef(atk_table_cell_get_column_header_cells(ATK_TABLE_CELL(m_element)));
+    if (!array)
+        return;
+
+    convertGPtrArrayToVector(array.get(), columns);
+#endif
+}
+
+void AccessibilityUIElement::rowHeaders(Vector<AccessibilityUIElement>& cells) const
+{
+#if ATK_CHECK_VERSION(2,11,90)
+    if (!ATK_IS_TABLE_CELL(m_element))
+        return;
+
+    GRefPtr<GPtrArray> array = adoptGRef(atk_table_cell_get_row_header_cells(ATK_TABLE_CELL(m_element)));
+    if (!array)
+        return;
+
+    convertGPtrArrayToVector(array.get(), cells);
+#endif
 }
 
 #endif
