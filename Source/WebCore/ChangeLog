@@ -1,3 +1,11 @@
+2014-02-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing the GTK build fix after r164757.
+
+        * platform/network/NetworkStateNotifier.cpp: r164757 introduced a layering violation by including
+        the Settings.h header. The use of that class is guarded by PLATFORM(IOS), so the header inclusion
+        should be guarded as well.
+
 2014-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extract named items caches in HTMLCollection as a class

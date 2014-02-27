@@ -26,7 +26,10 @@
 #include "config.h"
 #include "NetworkStateNotifier.h"
 
+#if PLATFORM(IOS)
 #include "Settings.h"
+#endif
+
 #include <mutex>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
