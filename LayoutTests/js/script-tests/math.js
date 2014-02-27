@@ -139,6 +139,13 @@ shouldBe("Math.max(NaN,1)", "NaN");
 shouldBe("Math.max(0)", "0");
 shouldBe("Math.max(-0)", "-0");
 shouldBe("Math.max(-0, 0)", "0");
+shouldThrow("Math.max(NaN, {valueOf:function(){throw \"err\"}})","'err'");
+shouldThrow("Math.max(NaN, NaN, {valueOf:function(){throw \"err\"}})","'err'");
+shouldBe("Math.max(-0, NaN, 0)", "NaN");
+shouldBe("Math.max(-0, NaN, 0, NaN)", "NaN");
+sideEffect = 0;
+shouldThrow("Math.max({valueOf:function(){throw \"error1\"}}, {valueOf:function(){sideEffect = 1}})", "'error1'")
+shouldBe('sideEffect', '0');
 
 shouldBe("Math.min()", "Infinity");
 shouldBe("Math.min(NaN)", "NaN");
@@ -146,6 +153,13 @@ shouldBe("Math.min(NaN,1)", "NaN");
 shouldBe("Math.min(0)", "0");
 shouldBe("Math.min(-0)", "-0");
 shouldBe("Math.min(-0, 0)", "-0");
+shouldThrow("Math.min(NaN, {valueOf:function(){throw \"err\"}})","'err'");
+shouldThrow("Math.min(NaN, NaN, {valueOf:function(){throw \"err\"}})","'err'");
+shouldBe("Math.min(-0, NaN, 0)", "NaN");
+shouldBe("Math.min(-0, NaN, 0, NaN)", "NaN");
+sideEffect = 0;
+shouldThrow("Math.min({valueOf:function(){throw \"error1\"}}, {valueOf:function(){sideEffect = 1}})", "'error1'")
+shouldBe('sideEffect', '0');
 
 shouldBe("Math.pow(NaN, NaN)", "NaN");
 shouldBe("Math.pow(NaN, 0)", "1");

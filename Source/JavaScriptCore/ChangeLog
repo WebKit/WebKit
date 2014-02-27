@@ -1,3 +1,17 @@
+2014-02-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Math.{max, min}() must not return after first NaN value
+        https://bugs.webkit.org/show_bug.cgi?id=104147
+
+        Reviewed by Oliver Hunt.
+
+        According to the spec, ToNumber going to be called on each argument
+        even if a `NaN` value was already found
+
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncMax):
+        (JSC::mathProtoFuncMin):
+
 2014-02-27  Gergo Balogh  <gbalogh.u-szeged@partner.samsung.com>
 
         JSType upper limit (0xff) assertion can be removed.

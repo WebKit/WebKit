@@ -97,12 +97,24 @@ PASS Math.max(NaN,1) is NaN
 PASS Math.max(0) is 0
 PASS Math.max(-0) is -0
 PASS Math.max(-0, 0) is 0
+PASS Math.max(NaN, {valueOf:function(){throw "err"}}) threw exception err.
+PASS Math.max(NaN, NaN, {valueOf:function(){throw "err"}}) threw exception err.
+PASS Math.max(-0, NaN, 0) is NaN
+PASS Math.max(-0, NaN, 0, NaN) is NaN
+PASS Math.max({valueOf:function(){throw "error1"}}, {valueOf:function(){sideEffect = 1}}) threw exception error1.
+PASS sideEffect is 0
 PASS Math.min() is Infinity
 PASS Math.min(NaN) is NaN
 PASS Math.min(NaN,1) is NaN
 PASS Math.min(0) is 0
 PASS Math.min(-0) is -0
 PASS Math.min(-0, 0) is -0
+PASS Math.min(NaN, {valueOf:function(){throw "err"}}) threw exception err.
+PASS Math.min(NaN, NaN, {valueOf:function(){throw "err"}}) threw exception err.
+PASS Math.min(-0, NaN, 0) is NaN
+PASS Math.min(-0, NaN, 0, NaN) is NaN
+PASS Math.min({valueOf:function(){throw "error1"}}, {valueOf:function(){sideEffect = 1}}) threw exception error1.
+PASS sideEffect is 0
 PASS Math.pow(NaN, NaN) is NaN
 PASS Math.pow(NaN, 0) is 1
 PASS Math.pow(NaN, -0) is 1

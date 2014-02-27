@@ -1,3 +1,15 @@
+2014-02-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Math.{max, min}() must not return after first NaN value
+        https://bugs.webkit.org/show_bug.cgi?id=104147
+
+        Reviewed by Oliver Hunt.
+
+        Extended the Math.{max, min}() tests, to check that these methods are return after first NaN value or not.
+
+        * js/math-expected.txt:
+        * js/script-tests/math.js:
+
 2014-02-27  Chris Fleizach  <cfleizach@apple.com>
 
         speechSynthesis.speak of a zero length utterance kills future speech
