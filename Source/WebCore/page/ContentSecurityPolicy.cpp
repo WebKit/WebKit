@@ -154,22 +154,6 @@ bool isDirectiveName(const String& name)
     );
 }
 
-FeatureObserver::Feature getFeatureObserverType(ContentSecurityPolicy::HeaderType type)
-{
-    switch (type) {
-    case ContentSecurityPolicy::PrefixedEnforce:
-        return FeatureObserver::PrefixedContentSecurityPolicy;
-    case ContentSecurityPolicy::Enforce:
-        return FeatureObserver::ContentSecurityPolicy;
-    case ContentSecurityPolicy::PrefixedReport:
-        return FeatureObserver::PrefixedContentSecurityPolicyReportOnly;
-    case ContentSecurityPolicy::Report:
-        return FeatureObserver::ContentSecurityPolicyReportOnly;
-    }
-    ASSERT_NOT_REACHED();
-    return FeatureObserver::NumberOfFeatures;
-}
-
 } // namespace
 
 static bool skipExactly(const UChar*& position, const UChar* end, UChar delimiter)
