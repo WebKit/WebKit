@@ -195,9 +195,9 @@ class GTKDoc(object):
 
         if print_output:
             if stdout:
-                sys.stdout.write(stdout)
+                sys.stdout.write(stdout.encode("utf-8"))
             if stderr:
-                sys.stderr.write(stderr)
+                sys.stderr.write(stderr.encode("utf-8"))
 
         if process.returncode != 0:
             raise Exception('%s produced a non-zero return code %i'
