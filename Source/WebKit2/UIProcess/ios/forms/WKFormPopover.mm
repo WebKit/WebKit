@@ -67,10 +67,19 @@ using namespace WebKit;
 {
     [self accessoryDone];
 }
+
+@end
+
+@interface WKRotatingPopover () <UIPopoverControllerDelegate>
 @end
 
 @implementation WKRotatingPopover {
     WKContentView *_view;
+
+    BOOL _isRotating;
+    CGPoint _presentationPoint;
+    RetainPtr<UIPopoverController> _popoverController;
+    id <WKRotatingPopoverDelegate> _dismissionDelegate;
 }
 
 - (id)initWithView:(WKContentView *)view

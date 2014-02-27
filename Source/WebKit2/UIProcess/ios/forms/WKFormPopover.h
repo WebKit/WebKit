@@ -30,12 +30,7 @@
 @class WKContentView;
 @protocol WKRotatingPopoverDelegate;
 
-@interface WKRotatingPopover : NSObject <UIPopoverControllerDelegate> {
-    BOOL _isRotating;
-    CGPoint _presentationPoint;
-    RetainPtr<UIPopoverController> _popoverController;
-    id <WKRotatingPopoverDelegate> _dismissionDelegate;
-}
+@interface WKRotatingPopover : NSObject
 
 - (id)initWithView:(WKContentView *)view;
 - (void)presentPopoverAnimated:(BOOL)animated;

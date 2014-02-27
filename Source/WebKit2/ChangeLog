@@ -1,5 +1,12 @@
 2014-02-26  Dan Bernstein  <mitz@apple.com>
 
+        iOS build fix.
+
+        * UIProcess/ios/forms/WKFormPopover.h:
+        * UIProcess/ios/forms/WKFormPopover.mm:
+
+2014-02-26  Dan Bernstein  <mitz@apple.com>
+
         Replaced use of the EXCLUDED_SOURCE_FILE_NAMES build setting with #if PLATFORM(…) guards in
         the files themselves.
 
