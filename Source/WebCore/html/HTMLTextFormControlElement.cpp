@@ -31,7 +31,6 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "FeatureObserver.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLBRElement.h"
@@ -486,10 +485,9 @@ void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
 
 void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == placeholderAttr) {
+    if (name == placeholderAttr)
         updatePlaceholderVisibility(true);
-        FeatureObserver::observe(&document(), FeatureObserver::PlaceholderAttribute);
-    } else
+    else
         HTMLFormControlElementWithState::parseAttribute(name, value);
 }
 

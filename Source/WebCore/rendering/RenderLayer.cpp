@@ -52,7 +52,6 @@
 #include "DocumentEventQueue.h"
 #include "Element.h"
 #include "EventHandler.h"
-#include "FeatureObserver.h"
 #include "FloatConversion.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
@@ -6506,7 +6505,6 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     if (renderer().style().overflowX() == OMARQUEE && renderer().style().marqueeBehavior() != MNONE && renderer().isBox()) {
         if (!m_marquee)
             m_marquee = adoptPtr(new RenderMarquee(this));
-        FeatureObserver::observe(&renderer().document(), renderer().isHTMLMarquee() ? FeatureObserver::HTMLMarqueeElement : FeatureObserver::CSSOverflowMarquee);
         m_marquee->updateMarqueeStyle();
     }
     else if (m_marquee) {
@@ -6527,7 +6525,6 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
             createReflection();
         else
             m_reflection->setStyle(createReflectionStyle());
-        FeatureObserver::observe(&renderer().document(), FeatureObserver::Reflection);
     }
     
     // FIXME: Need to detect a swap from custom to native scrollbars (and vice versa).

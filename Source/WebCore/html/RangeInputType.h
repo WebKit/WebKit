@@ -42,7 +42,6 @@ public:
     explicit RangeInputType(HTMLInputElement&);
 
 private:
-    virtual void attach() override;
     virtual bool isRangeControl() const override;
     virtual const AtomicString& formControlType() const override;
     virtual double valueAsDouble() const override;

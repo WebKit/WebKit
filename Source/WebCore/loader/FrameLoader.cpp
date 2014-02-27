@@ -3036,8 +3036,6 @@ void FrameLoader::applyUserAgent(ResourceRequest& request)
 
 bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, const URL& url, unsigned long requestIdentifier)
 {
-    FeatureObserver::observe(m_frame.document(), FeatureObserver::XFrameOptions);
-
     Frame& topFrame = m_frame.tree().top();
     if (&m_frame == &topFrame)
         return false;
@@ -3046,15 +3044,12 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
 
     switch (disposition) {
     case XFrameOptionsSameOrigin: {
-        FeatureObserver::observe(m_frame.document(), FeatureObserver::XFrameOptionsSameOrigin);
         RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url);
         if (!origin->isSameSchemeHostPort(topFrame.document()->securityOrigin()))
             return true;
         for (Frame* frame = m_frame.tree().parent(); frame; frame = frame->tree().parent()) {
-            if (!origin->isSameSchemeHostPort(frame->document()->securityOrigin())) {
-                FeatureObserver::observe(m_frame.document(), FeatureObserver::XFrameOptionsSameOriginWithBadAncestorChain);
+            if (!origin->isSameSchemeHostPort(frame->document()->securityOrigin()))
                 break;
-            }
         }
         return false;
     }
@@ -3362,12 +3357,10 @@ void FrameLoader::dispatchDidCommitLoad()
 
     InspectorInstrumentation::didCommitLoad(&m_frame, m_documentLoader.get());
 
-    if (m_frame.isMainFrame()) {
-        m_frame.page()->featureObserver()->didCommitLoad();
 #if ENABLE(REMOTE_INSPECTOR)
+    if (m_frame.isMainFrame())
         m_frame.page()->remoteInspectorInformationDidChange();
 #endif
-    }
 }
 
 void FrameLoader::tellClientAboutPastMemoryCacheLoads()

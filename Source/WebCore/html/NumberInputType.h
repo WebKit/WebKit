@@ -40,7 +40,6 @@ public:
     explicit NumberInputType(HTMLInputElement& element) : TextFieldInputType(element) { }
 
 private:
-    virtual void attach() override;
     virtual const AtomicString& formControlType() const override;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
     virtual double valueAsDouble() const override;

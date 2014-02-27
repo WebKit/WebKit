@@ -44,11 +44,6 @@ static const int dateTimeLocalDefaultStep = 60;
 static const int dateTimeLocalDefaultStepBase = 0;
 static const int dateTimeLocalStepScaleFactor = 1000;
 
-void DateTimeLocalInputType::attach()
-{
-    observeFeatureIfVisible(FeatureObserver::InputTypeDateTimeLocal);
-}
-
 const AtomicString& DateTimeLocalInputType::formControlType() const
 {
     return InputTypeNames::datetimelocal();

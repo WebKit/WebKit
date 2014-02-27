@@ -47,11 +47,6 @@ static const int monthDefaultStep = 1;
 static const int monthDefaultStepBase = 0;
 static const int monthStepScaleFactor = 1;
 
-void MonthInputType::attach()
-{
-    observeFeatureIfVisible(FeatureObserver::InputTypeMonth);
-}
-
 const AtomicString& MonthInputType::formControlType() const
 {
     return InputTypeNames::month();

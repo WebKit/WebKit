@@ -688,34 +688,26 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
             setNeedsStyleRecalc(ReconstructRenderTree);
         else
             setNeedsStyleRecalc();
-        FeatureObserver::observe(&document(), FeatureObserver::ResultsAttribute);
     } else if (name == autosaveAttr) {
         setNeedsStyleRecalc();
-        FeatureObserver::observe(&document(), FeatureObserver::AutoSaveAttribute);
     } else if (name == incrementalAttr) {
         setNeedsStyleRecalc();
-        FeatureObserver::observe(&document(), FeatureObserver::IncrementalAttribute);
     } else if (name == minAttr) {
         m_inputType->minOrMaxAttributeChanged();
         setNeedsValidityCheck();
-        FeatureObserver::observe(&document(), FeatureObserver::MinAttribute);
     } else if (name == maxAttr) {
         m_inputType->minOrMaxAttributeChanged();
         setNeedsValidityCheck();
-        FeatureObserver::observe(&document(), FeatureObserver::MaxAttribute);
     } else if (name == multipleAttr) {
         m_inputType->multipleAttributeChanged();
         setNeedsValidityCheck();
     } else if (name == stepAttr) {
         m_inputType->stepAttributeChanged();
         setNeedsValidityCheck();
-        FeatureObserver::observe(&document(), FeatureObserver::StepAttribute);
     } else if (name == patternAttr) {
         setNeedsValidityCheck();
-        FeatureObserver::observe(&document(), FeatureObserver::PatternAttribute);
     } else if (name == precisionAttr) {
         setNeedsValidityCheck();
-        FeatureObserver::observe(&document(), FeatureObserver::PrecisionAttribute);
     } else if (name == disabledAttr) {
         HTMLTextFormControlElement::parseAttribute(name, value);
         m_inputType->disabledAttributeChanged();
@@ -730,7 +722,6 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
             resetListAttributeTargetObserver();
             listAttributeTargetChanged();
         }
-        FeatureObserver::observe(&document(), FeatureObserver::ListAttribute);
     }
 #endif
 #if ENABLE(INPUT_SPEECH)
@@ -745,7 +736,6 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         setNeedsStyleRecalc(ReconstructRenderTree);
 
         setFormControlValueMatchesRenderer(false);
-        FeatureObserver::observe(&document(), FeatureObserver::PrefixedSpeechAttribute);
     } else if (name == onwebkitspeechchangeAttr)
         setAttributeEventListener(eventNames().webkitspeechchangeEvent, name, value);
 #endif

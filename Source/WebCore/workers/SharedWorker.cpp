@@ -36,7 +36,6 @@
 #include "SharedWorker.h"
 
 #include "ExceptionCode.h"
-#include "FeatureObserver.h"
 #include "InspectorInstrumentation.h"
 #include "URL.h"
 #include "MessageChannel.h"
@@ -59,8 +58,6 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext& context, c
     // We don't currently support nested workers, so workers can only be created from documents.
     ASSERT_WITH_SECURITY_IMPLICATION(context.isDocument());
     Document& document = static_cast<Document&>(context);
-
-    FeatureObserver::observe(document.domWindow(), FeatureObserver::SharedWorkerStart);
 
     RefPtr<SharedWorker> worker = adoptRef(new SharedWorker(context));
 

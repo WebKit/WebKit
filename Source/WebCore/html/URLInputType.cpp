@@ -38,12 +38,6 @@
 
 namespace WebCore {
 
-void URLInputType::attach()
-{
-    TextFieldInputType::attach();
-    observeFeatureIfVisible(FeatureObserver::InputTypeURL);
-}
-
 const AtomicString& URLInputType::formControlType() const
 {
     return InputTypeNames::url();

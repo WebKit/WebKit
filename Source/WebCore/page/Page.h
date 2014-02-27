@@ -21,7 +21,6 @@
 #ifndef Page_h
 #define Page_h
 
-#include "FeatureObserver.h"
 #include "FindOptions.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
@@ -217,8 +216,6 @@ public:
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }
     BackForwardController& backForward() const { return *m_backForwardController; }
-
-    FeatureObserver* featureObserver() { return &m_featureObserver; }
 
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
     enum ViewMode {
@@ -471,8 +468,6 @@ private:
     EditorClient* m_editorClient;
     PlugInClient* m_plugInClient;
     ValidationMessageClient* m_validationMessageClient;
-
-    FeatureObserver m_featureObserver;
 
     int m_subframeCount;
     String m_groupName;

@@ -92,12 +92,6 @@ static RealNumberRenderSize calculateRenderSize(const Decimal& value)
     return RealNumberRenderSize(sizeOfSign + sizeOfZero , numberOfZeroAfterDecimalPoint + sizeOfDigits);
 }
 
-void NumberInputType::attach()
-{
-    TextFieldInputType::attach();
-    observeFeatureIfVisible(FeatureObserver::InputTypeNumber);
-}
-
 const AtomicString& NumberInputType::formControlType() const
 {
     return InputTypeNames::number();

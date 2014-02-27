@@ -1,3 +1,80 @@
+2014-02-27  Andreas Kling  <akling@apple.com>
+
+        Remove FeatureObserver.
+        <https://webkit.org/b/129439>
+
+        This code was only used by the Chromium port and nobody else is
+        making use of it.
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * dom/EventTarget.h:
+        * html/ColorInputType.cpp:
+        * html/ColorInputType.h:
+        * html/DateInputType.cpp:
+        * html/DateInputType.h:
+        * html/DateTimeInputType.cpp:
+        * html/DateTimeInputType.h:
+        * html/DateTimeLocalInputType.cpp:
+        * html/DateTimeLocalInputType.h:
+        * html/EmailInputType.cpp:
+        * html/EmailInputType.h:
+        * html/HTMLDataListElement.cpp:
+        (WebCore::HTMLDataListElement::create):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::parseAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::parseAttribute):
+        * html/InputType.cpp:
+        * html/InputType.h:
+        * html/MonthInputType.cpp:
+        * html/MonthInputType.h:
+        * html/NumberInputType.cpp:
+        * html/NumberInputType.h:
+        * html/RangeInputType.cpp:
+        * html/RangeInputType.h:
+        * html/SearchInputType.cpp:
+        * html/SearchInputType.h:
+        * html/TelephoneInputType.cpp:
+        * html/TelephoneInputType.h:
+        * html/TextInputType.cpp:
+        * html/TextInputType.h:
+        * html/TimeInputType.cpp:
+        * html/TimeInputType.h:
+        * html/URLInputType.cpp:
+        * html/URLInputType.h:
+        * html/WeekInputType.cpp:
+        * html/WeekInputType.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldInterruptLoadForXFrameOptions):
+        (WebCore::FrameLoader::dispatchDidCommitLoad):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        * page/FeatureObserver.cpp: Removed.
+        * page/FeatureObserver.h: Removed.
+        * page/Page.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * workers/SharedWorker.cpp:
+        (WebCore::SharedWorker::create):
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+
 2014-02-27  Chris Fleizach  <cfleizach@apple.com>
 
         speechSynthesis.speak of a zero length utterance kills future speech

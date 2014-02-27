@@ -41,7 +41,6 @@ public:
     explicit WeekInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
 
 private:
-    virtual void attach() override;
     virtual const AtomicString& formControlType() const override;
     virtual DateComponents::Type dateType() const override;
     virtual StepRange createStepRange(AnyStepHandling) const override;

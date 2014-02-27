@@ -40,7 +40,6 @@ public:
     explicit TextInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 
 private:
-    virtual void attach() override;
     virtual const AtomicString& formControlType() const override;
     virtual bool shouldRespectSpeechAttribute() override;
 };

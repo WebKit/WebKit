@@ -51,7 +51,6 @@ public:
     virtual Vector<Color> suggestions() const override;
 
 private:
-    virtual void attach() override;
     virtual bool isColorControl() const override;
     virtual const AtomicString& formControlType() const override;
     virtual bool supportsRequired() const override;

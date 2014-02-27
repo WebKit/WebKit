@@ -36,7 +36,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "FeatureObserver.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
@@ -79,9 +78,6 @@ PassRefPtr<Worker> Worker::create(ScriptExecutionContext& context, const String&
 
     // We don't currently support nested workers, so workers can only be created from documents.
     ASSERT_WITH_SECURITY_IMPLICATION(context.isDocument());
-    Document& document = static_cast<Document&>(context);
-
-    FeatureObserver::observe(document.domWindow(), FeatureObserver::WorkerStart);
 
     RefPtr<Worker> worker = adoptRef(new Worker(context));
 

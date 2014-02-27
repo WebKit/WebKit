@@ -45,11 +45,6 @@ static const int dateTimeDefaultStep = 60;
 static const int dateTimeDefaultStepBase = 0;
 static const int dateTimeStepScaleFactor = 1000;
 
-void DateTimeInputType::attach()
-{
-    observeFeatureIfVisible(FeatureObserver::InputTypeDateTime);
-}
-
 const AtomicString& DateTimeInputType::formControlType() const
 {
     return InputTypeNames::datetime();

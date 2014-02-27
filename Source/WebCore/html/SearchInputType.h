@@ -46,7 +46,6 @@ public:
     void stopSearchEventTimer();
 
 private:
-    virtual void attach() override;
     virtual void addSearchResult() override;
     virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
     virtual const AtomicString& formControlType() const override;

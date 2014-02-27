@@ -52,12 +52,6 @@ static bool isValidEmailAddress(const String& address)
     return !matchOffset && matchLength == addressLength;
 }
 
-void EmailInputType::attach()
-{
-    TextFieldInputType::attach();
-    observeFeatureIfVisible(FeatureObserver::InputTypeEmail);
-}
-
 const AtomicString& EmailInputType::formControlType() const
 {
     return InputTypeNames::email();

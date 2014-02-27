@@ -723,9 +723,6 @@
     <ClCompile Include="..\page\EventSource.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\FeatureObserver.cpp">
-      <Filter>page</Filter>
-    </ClCompile>
     <ClCompile Include="..\page\FocusController.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7527,9 +7524,6 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\EventSource.h">
-      <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\FeatureObserver.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\FocusController.h">

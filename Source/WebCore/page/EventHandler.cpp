@@ -1316,10 +1316,9 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
     const Cursor& iBeam = horizontalText ? iBeamCursor() : verticalTextCursor();
 
 #if ENABLE(CURSOR_VISIBILITY)
-    if (style && style->cursorVisibility() == CursorVisibilityAutoHide) {
-        FeatureObserver::observe(m_frame.document(), FeatureObserver::CursorVisibility);
+    if (style && style->cursorVisibility() == CursorVisibilityAutoHide)
         startAutoHideCursorTimer();
-    } else
+    else
         cancelAutoHideCursorTimer();
 #endif
 

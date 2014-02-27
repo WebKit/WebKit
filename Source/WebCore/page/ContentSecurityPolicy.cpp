@@ -30,7 +30,6 @@
 #include "Console.h"
 #include "DOMStringList.h"
 #include "Document.h"
-#include "FeatureObserver.h"
 #include "FormData.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -153,22 +152,6 @@ bool isDirectiveName(const String& name)
         || equalIgnoringCase(name, reflectedXSS)
 #endif
     );
-}
-
-FeatureObserver::Feature getFeatureObserverType(ContentSecurityPolicy::HeaderType type)
-{
-    switch (type) {
-    case ContentSecurityPolicy::PrefixedEnforce:
-        return FeatureObserver::PrefixedContentSecurityPolicy;
-    case ContentSecurityPolicy::Enforce:
-        return FeatureObserver::ContentSecurityPolicy;
-    case ContentSecurityPolicy::PrefixedReport:
-        return FeatureObserver::PrefixedContentSecurityPolicyReportOnly;
-    case ContentSecurityPolicy::Report:
-        return FeatureObserver::ContentSecurityPolicyReportOnly;
-    }
-    ASSERT_NOT_REACHED();
-    return FeatureObserver::NumberOfFeatures;
 }
 
 const ScriptCallFrame& getFirstNonNativeFrame(PassRefPtr<ScriptCallStack> stack)
@@ -1467,12 +1450,6 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
 
 void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType type)
 {
-    if (m_scriptExecutionContext->isDocument()) {
-        Document* document = toDocument(m_scriptExecutionContext);
-        if (document->domWindow())
-            FeatureObserver::observe(document->domWindow(), getFeatureObserverType(type));
-    }
-
     // RFC2616, section 4.2 specifies that headers appearing multiple times can
     // be combined with a comma. Walk the header string, and parse each comma
     // separated chunk as a separate header.

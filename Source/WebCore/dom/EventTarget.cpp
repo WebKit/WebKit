@@ -177,41 +177,6 @@ static const AtomicString& legacyType(const Event* event)
     return emptyAtom;
 }
 
-static inline bool shouldObserveLegacyType(const AtomicString& legacyTypeName, bool hasLegacyTypeListeners, bool hasNewTypeListeners, FeatureObserver::Feature& feature)
-{
-    if (legacyTypeName == eventNames().webkitTransitionEndEvent) {
-        if (hasLegacyTypeListeners) {
-            if (hasNewTypeListeners)
-                feature = FeatureObserver::PrefixedAndUnprefixedTransitionEndEvent;
-            else
-                feature = FeatureObserver::PrefixedTransitionEndEvent;
-        } else {
-            ASSERT(hasNewTypeListeners);
-            feature = FeatureObserver::UnprefixedTransitionEndEvent;
-        }
-        return true;
-    }
-    return false;
-}
-
-void EventTarget::setupLegacyTypeObserverIfNeeded(const AtomicString& legacyTypeName, bool hasLegacyTypeListeners, bool hasNewTypeListeners)
-{
-    ASSERT(!legacyTypeName.isEmpty());
-    ASSERT(hasLegacyTypeListeners || hasNewTypeListeners);
-
-    ScriptExecutionContext* context = scriptExecutionContext();
-    if (!context || !context->isDocument())
-        return;
-
-    Document* document = toDocument(context);
-    if (!document->domWindow())
-        return;
-
-    FeatureObserver::Feature feature;
-    if (shouldObserveLegacyType(legacyTypeName, hasLegacyTypeListeners, hasNewTypeListeners, feature))
-        FeatureObserver::observe(document->domWindow(), feature);
-}
-
 bool EventTarget::fireEventListeners(Event* event)
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
@@ -236,9 +201,6 @@ bool EventTarget::fireEventListeners(Event* event)
         fireEventListeners(event, d, *legacyListenersVector);
         event->setType(typeName);
     }
-
-    if (!legacyTypeName.isEmpty() && (legacyListenersVector || listenersVector))
-        setupLegacyTypeObserverIfNeeded(legacyTypeName, !!legacyListenersVector, !!listenersVector);
 
     return !event->defaultPrevented();
 }

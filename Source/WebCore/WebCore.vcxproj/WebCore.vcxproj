@@ -6996,7 +6996,6 @@
     <ClCompile Include="..\page\EventHandler.cpp" />
     <ClCompile Include="..\page\win\EventHandlerWin.cpp" />
     <ClCompile Include="..\page\EventSource.cpp" />
-    <ClCompile Include="..\page\FeatureObserver.cpp" />
     <ClCompile Include="..\page\FocusController.cpp" />
     <ClCompile Include="..\page\Frame.cpp" />
     <ClCompile Include="..\page\FrameDestructionObserver.cpp" />
@@ -18670,7 +18669,6 @@
     <ClInclude Include="..\page\DragState.h" />
     <ClInclude Include="..\page\EventHandler.h" />
     <ClInclude Include="..\page\EventSource.h" />
-    <ClInclude Include="..\page\FeatureObserver.h" />
     <ClInclude Include="..\page\FocusController.h" />
     <ClInclude Include="..\page\FocusDirection.h" />
     <ClInclude Include="..\page\Frame.h" />

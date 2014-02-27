@@ -25,7 +25,6 @@
 #include "config.h"
 #include "RenderDeprecatedFlexibleBox.h"
 
-#include "FeatureObserver.h"
 #include "Font.h"
 #include "LayoutRepainter.h"
 #include "RenderLayer.h"
@@ -123,8 +122,6 @@ RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, PassR
 {
     setChildrenInline(false); // All of our children must be block-level
     m_stretchingChildren = false;
-
-    FeatureObserver::observe(&document(), FeatureObserver::DeprecatedFlexboxWebContent);
 }
 
 RenderDeprecatedFlexibleBox::~RenderDeprecatedFlexibleBox()

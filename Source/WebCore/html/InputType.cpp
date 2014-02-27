@@ -1150,12 +1150,4 @@ void InputType::stepUpFromRenderer(int n)
     }
 }
 
-void InputType::observeFeatureIfVisible(FeatureObserver::Feature feature) const
-{
-    if (RenderStyle* style = element().renderStyle()) {
-        if (style->visibility() != HIDDEN)
-            FeatureObserver::observe(&element().document(), feature);
-    }
-}
-
 } // namespace WebCore

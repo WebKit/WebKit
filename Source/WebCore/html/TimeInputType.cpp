@@ -52,11 +52,6 @@ TimeInputType::TimeInputType(HTMLInputElement& element)
 {
 }
 
-void TimeInputType::attach()
-{
-    observeFeatureIfVisible(FeatureObserver::InputTypeTime);
-}
-
 const AtomicString& TimeInputType::formControlType() const
 {
     return InputTypeNames::time();

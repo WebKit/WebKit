@@ -51,12 +51,6 @@ SearchInputType::SearchInputType(HTMLInputElement& element)
 {
 }
 
-void SearchInputType::attach()
-{
-    TextFieldInputType::attach();
-    observeFeatureIfVisible(FeatureObserver::InputTypeSearch);
-}
-
 void SearchInputType::addSearchResult()
 {
 #if !PLATFORM(IOS)

@@ -635,10 +635,8 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
     if (m_isLoadingMultipartContent) {
         setupForReplace();
         m_mainResource->clear();
-    } else if (response.isMultipart()) {
-        FeatureObserver::observe(m_frame->document(), FeatureObserver::MultipartMainResource);
+    } else if (response.isMultipart())
         m_isLoadingMultipartContent = true;
-    }
 
     m_response = response;
 
