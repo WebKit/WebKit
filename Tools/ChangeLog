@@ -1,3 +1,9 @@
+2014-02-27  Andres Gomez  <agomez@igalia.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-02-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed. Add Víctor Jáquez and myself to watchlists

@@ -186,6 +186,18 @@
             "andreip"
          ]
       },
+      "Andres Gomez" : {
+         "emails" : [
+            "tanty0@gmail.com",
+            "agomez@gnome.org",
+            "agomez@igalia.com"
+         ],
+         "expertise" : "WebKitGTK+",
+         "nicks" : [
+            "tanty",
+            "agomez"
+         ]
+      },
       "Andrew Lo" : {
          "emails" : [
             "anlo@blackberry.com",
