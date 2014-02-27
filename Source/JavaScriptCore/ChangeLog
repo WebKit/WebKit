@@ -1,3 +1,18 @@
+2014-02-27  David Kilzer  <ddkilzer@apple.com>
+
+        Remove jsc symlink if it already exists
+
+        This is a follow-up fix for:
+
+        Create symlink to /usr/local/bin/jsc during installation
+        <http://webkit.org/b/129399>
+        <rdar://problem/16168734>
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        (Create /usr/local/bin/jsc symlink): If a jsc symlink already
+        exists where we're about to create the symlink, remove the old
+        one first.
+
 2014-02-27  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix for Mac tools after r164814

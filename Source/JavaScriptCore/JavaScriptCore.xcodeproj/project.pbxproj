@@ -5981,8 +5981,8 @@
 				"$(DSTROOT)$(INSTALL_PATH_PREFIX)/usr/local/bin/jsc",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"${SKIP_INSTALL}\" == \"NO\" ]]; then\n    mkdir -p \"${DSTROOT}${INSTALL_PATH_PREFIX}/usr/local/bin\"\n    cd \"${DSTROOT}${INSTALL_PATH_PREFIX}/usr/local/bin\"\n    ln -s \"../../..${INSTALL_PATH_ACTUAL}/jsc\" jsc\n    exit\nfi\n";
+			shellPath = "/bin/sh -x";
+			shellScript = "if [[ \"${SKIP_INSTALL}\" == \"NO\" ]]; then\n    mkdir -p \"${DSTROOT}${INSTALL_PATH_PREFIX}/usr/local/bin\"\n    cd \"${DSTROOT}${INSTALL_PATH_PREFIX}/usr/local/bin\"\n    if [ -L jsc ]; then\n        rm -f jsc\n    fi\n    ln -s \"../../..${INSTALL_PATH_ACTUAL}/jsc\" jsc\n    exit\nfi\n";
 		};
 		5DAFD6CD146B6B6E00FBEFB4 /* Install Support Script */ = {
 			isa = PBXShellScriptBuildPhase;
