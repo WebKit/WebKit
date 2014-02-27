@@ -36,7 +36,7 @@ namespace WebKit {
 
 void NetworkProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 {
-    if (!isValid())
+    if (state() != State::Running)
         return;
     
     connection()->send(Messages::NetworkProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);

@@ -1,3 +1,44 @@
+2014-02-27  Anders Carlsson  <andersca@apple.com>
+
+        Simplify WebProcessProxy state accessors
+        https://bugs.webkit.org/show_bug.cgi?id=129453
+
+        Reviewed by Andreas Kling.
+
+        Replace WebProcessProxy::isLaunching() and WebProcessProxy::isValid() with a single
+        WebProcessProxy::state() that return one of three values: Launching, Running or Terminated.
+
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::state):
+        (WebKit::ChildProcessProxy::sendMessage):
+        (WebKit::ChildProcessProxy::abortProcessLaunchIfNeeded):
+        * Shared/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::canSendMessage):
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::getDatabaseProcessConnection):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::NetworkProcessProxy::setProcessSuppressionEnabled):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::getPluginProcessConnection):
+        (WebKit::PluginProcessProxy::getSitesWithData):
+        (WebKit::PluginProcessProxy::clearSiteData):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::waitForDidUpdateViewState):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::requestTermination):
+        (WebKit::WebProcessProxy::enableSuddenTermination):
+        (WebKit::WebProcessProxy::disableSuddenTermination):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::shouldDelayWindowOrderingForEvent):
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::updateProcessSuppressionState):
+
 2014-02-27  Simon Fraser  <simon.fraser@apple.com>
 
         Crash tapping on play button on video on iOS

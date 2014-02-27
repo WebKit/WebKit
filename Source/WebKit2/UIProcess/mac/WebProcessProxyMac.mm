@@ -68,7 +68,7 @@ bool WebProcessProxy::allPagesAreProcessSuppressible() const
 
 void WebProcessProxy::updateProcessSuppressionState()
 {
-    if (!isValid())
+    if (state() != State::Running)
         return;
 
     bool canEnable = allPagesAreProcessSuppressible();

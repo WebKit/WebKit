@@ -69,19 +69,33 @@ void ChildProcessProxy::terminate()
         m_processLauncher->terminateProcess();
 }
 
+ChildProcessProxy::State ChildProcessProxy::state() const
+{
+    if (m_processLauncher && m_processLauncher->isLaunching())
+        return ChildProcessProxy::State::Launching;
+
+    if (!m_connection)
+        return ChildProcessProxy::State::Terminated;
+
+    return ChildProcessProxy::State::Running;
+}
+
 bool ChildProcessProxy::sendMessage(std::unique_ptr<IPC::MessageEncoder> encoder, unsigned messageSendFlags)
 {
-    // If we're waiting for the child process to launch, we need to stash away the messages so we can send them once we have a connection.
-    if (isLaunching()) {
+    switch (state()) {
+    case State::Launching:
+        // If we're waiting for the child process to launch, we need to stash away the messages so we can send them once we have a connection.
         m_pendingMessages.append(std::make_pair(std::move(encoder), messageSendFlags));
         return true;
+
+    case State::Running:
+        return connection()->sendMessage(std::move(encoder), messageSendFlags);
+
+    case State::Terminated:
+        return false;
     }
 
-    // If the web process has exited, connection will be null here.
-    if (!m_connection)
-        return false;
-
-    return connection()->sendMessage(std::move(encoder), messageSendFlags);
+    return false;
 }
 
 void ChildProcessProxy::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)
@@ -109,14 +123,6 @@ bool ChildProcessProxy::dispatchSyncMessage(IPC::Connection* connection, IPC::Me
     return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
-bool ChildProcessProxy::isLaunching() const
-{
-    if (m_processLauncher)
-        return m_processLauncher->isLaunching();
-
-    return false;
-}
-
 void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier connectionIdentifier)
 {
     ASSERT(!m_connection);
@@ -140,11 +146,11 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Id
 
 void ChildProcessProxy::abortProcessLaunchIfNeeded()
 {
-    if (!isLaunching())
+    if (state() != State::Launching)
         return;
 
     m_processLauncher->invalidate();
-    m_processLauncher = 0;
+    m_processLauncher = nullptr;
 }
 
 void ChildProcessProxy::clearConnection()

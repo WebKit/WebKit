@@ -371,7 +371,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
     // FIXME: If we ever expose the session storage size as a preference, we need to pass it here.
-    m_process->context().storageManager().createSessionStorageNamespace(m_pageID, m_process->isValid() ? m_process->connection() : 0, std::numeric_limits<unsigned>::max());
+    IPC::Connection* connection = m_process->state() == WebProcessProxy::State::Running ? m_process->connection() : nullptr;
+    m_process->context().storageManager().createSessionStorageNamespace(m_pageID, connection, std::numeric_limits<unsigned>::max());
     setSession(*configuration.session);
 }
 
@@ -483,8 +484,7 @@ void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClientBase
 void WebPageProxy::reattachToWebProcess()
 {
     ASSERT(!isValid());
-    ASSERT(!m_process->isValid());
-    ASSERT(!m_process->isLaunching());
+    ASSERT(m_process->state() == WebProcessProxy::State::Terminated);
 
     updateViewState();
 
@@ -1031,7 +1031,7 @@ void WebPageProxy::waitForDidUpdateViewState()
 
     m_waitingForDidUpdateViewState = true;
 
-    if (!m_process->isLaunching()) {
+    if (m_process->state() != WebProcessProxy::State::Launching) {
         auto viewStateUpdateTimeout = std::chrono::milliseconds(250);
         m_process->connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateViewState>(m_pageID, viewStateUpdateTimeout);
     }

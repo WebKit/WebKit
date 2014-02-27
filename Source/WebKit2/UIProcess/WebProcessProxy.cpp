@@ -646,7 +646,7 @@ void WebProcessProxy::windowServerConnectionStateChanged()
 
 void WebProcessProxy::requestTermination()
 {
-    if (!isValid())
+    if (state() != State::Running)
         return;
 
     ChildProcessProxy::terminate();
@@ -659,7 +659,7 @@ void WebProcessProxy::requestTermination()
 
 void WebProcessProxy::enableSuddenTermination()
 {
-    if (!isValid())
+    if (state() != State::Running)
         return;
 
     ASSERT(m_numberOfTimesSuddenTerminationWasDisabled);
@@ -669,7 +669,7 @@ void WebProcessProxy::enableSuddenTermination()
 
 void WebProcessProxy::disableSuddenTermination()
 {
-    if (!isValid())
+    if (state() != State::Running)
         return;
 
     WebCore::disableSuddenTermination();

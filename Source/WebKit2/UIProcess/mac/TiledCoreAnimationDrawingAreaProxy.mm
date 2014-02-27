@@ -72,7 +72,7 @@ void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate(std::chro
     if (!m_isWaitingForDidUpdateGeometry)
         return;
 
-    if (m_webPageProxy->process().isLaunching())
+    if (m_webPageProxy->process().state() != WebProcessProxy::State::Running)
         return;
 
     m_webPageProxy->process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateGeometry>(m_webPageProxy->pageID(), timeout);

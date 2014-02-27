@@ -437,7 +437,7 @@ void WebPageProxy::executeSavedCommandBySelector(const String& selector, bool& h
 
 bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent& event)
 {
-    if (!process().isValid())
+    if (process().state() != WebProcessProxy::State::Running)
         return false;
 
     bool result = false;

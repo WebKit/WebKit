@@ -87,7 +87,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebPr
 {
     m_pendingConnectionReplies.append(reply);
 
-    if (isLaunching()) {
+    if (state() == State::Launching) {
         m_numPendingConnectionRequests++;
         return;
     }

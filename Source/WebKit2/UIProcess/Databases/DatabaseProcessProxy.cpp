@@ -70,7 +70,7 @@ void DatabaseProcessProxy::getDatabaseProcessConnection(PassRefPtr<Messages::Web
 {
     m_pendingConnectionReplies.append(reply);
 
-    if (isLaunching()) {
+    if (state() == State::Launching) {
         m_numPendingConnectionRequests++;
         return;
     }
