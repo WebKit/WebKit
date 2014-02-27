@@ -391,6 +391,7 @@ void Connection::readyReadHandler()
                 return;
 
             // FIXME: Handle other errors here?
+            WTFLogAlways("Error receiving IPC message: %s", strerror(errno));
             return;
         }
 
@@ -554,8 +555,11 @@ bool Connection::sendOutgoingMessage(PassOwnPtr<MessageEncoder> encoder)
 
     int bytesSent = 0;
     while ((bytesSent = sendmsg(m_socketDescriptor, &message, 0)) == -1) {
-        if (errno != EINTR)
-            return false;
+        if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
+            continue;
+
+        WTFLogAlways("Error sending IPC message: %s", strerror(errno));
+        return false;
     }
     return true;
 }
