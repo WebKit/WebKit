@@ -143,8 +143,14 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         slowCase.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::EmptyValueTag)));
 
         load32(payloadFor(JSStack::ArgumentCount), regT2);
-        if (firstVarArgOffset)
-            sub32(TrustedImm32(firstVarArgOffset), regT2);
+        if (firstVarArgOffset) {
+            Jump sufficientArguments = branch32(GreaterThan, regT0, TrustedImm32(firstVarArgOffset + 1));
+            move(TrustedImm32(1), regT0);
+            Jump endVarArgs = jump();
+            sufficientArguments.link(this);
+            sub32(TrustedImm32(firstVarArgOffset), regT0);
+            endVarArgs.link(this);
+        }
         slowCase.append(branch32(Above, regT2, TrustedImm32(Arguments::MaxArguments + 1)));
         // regT2: argumentCountIncludingThis
 

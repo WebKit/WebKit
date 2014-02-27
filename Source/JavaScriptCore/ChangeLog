@@ -1,5 +1,12 @@
 2014-02-27  Oliver Hunt  <oliver@apple.com>
 
+        Whoops, include all of last patch.
+
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+
+2014-02-27  Oliver Hunt  <oliver@apple.com>
+
         Slow cases for function.apply and function.call should not require vm re-entry
         https://bugs.webkit.org/show_bug.cgi?id=129454
 
