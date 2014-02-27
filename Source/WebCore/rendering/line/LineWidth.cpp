@@ -158,26 +158,33 @@ void LineWidth::applyOverhang(RenderRubyRun* rubyRun, RenderObject* startRendere
     m_overhangWidth += startOverhang + endOverhang;
 }
 
-inline static float availableWidthAtOffset(const RenderBlock& block, const LayoutUnit& offset, bool shouldIndentText)
+inline static float availableWidthAtOffset(const RenderBlockFlow& block, const LayoutUnit& offset, bool shouldIndentText, float& newLineLeft, float& newLineRight)
 {
-    float newLineLeft = block.logicalLeftOffsetForLine(offset, shouldIndentText);
-    float newLineRight = block.logicalRightOffsetForLine(offset, shouldIndentText);
+    newLineLeft = block.logicalLeftOffsetForLine(offset, shouldIndentText);
+    newLineRight = block.logicalRightOffsetForLine(offset, shouldIndentText);
     return std::max(0.0f, newLineRight - newLineLeft);
 }
 
-void LineWidth::updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWidth)
+inline static float availableWidthAtOffset(const RenderBlockFlow& block, const LayoutUnit& offset, bool shouldIndentText)
+{
+    float newLineLeft = 0;
+    float newLineRight = 0;
+    return availableWidthAtOffset(block, offset, shouldIndentText, newLineLeft, newLineRight);
+}
+
+void LineWidth::updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWidth, float newLineLeft, float newLineRight)
 {
     if (newLineWidth <= m_availableWidth)
         return;
 
     m_block.setLogicalHeight(newLineTop);
     m_availableWidth = newLineWidth + m_overhangWidth;
-    m_left = m_block.logicalLeftOffsetForLine(newLineTop, shouldIndentText());
-    m_right = m_block.logicalRightOffsetForLine(newLineTop, shouldIndentText());
+    m_left = newLineLeft;
+    m_right = newLineRight;
 }
 
 #if ENABLE(CSS_SHAPES)
-inline static bool isWholeLineFit(const RenderBlock& block, const LayoutUnit& lineTop, LayoutUnit lineHeight, float uncommittedWidth, bool shouldIndentText)
+inline static bool isWholeLineFit(const RenderBlockFlow& block, const LayoutUnit& lineTop, LayoutUnit lineHeight, float uncommittedWidth, bool shouldIndentText)
 {
     for (LayoutUnit lineBottom = lineTop; lineBottom <= lineTop + lineHeight; ++lineBottom) {
         LayoutUnit availableWidthAtBottom = availableWidthAtOffset(block, lineBottom, shouldIndentText);
@@ -195,8 +202,10 @@ void LineWidth::wrapNextToShapeOutside(bool isFirstLine)
     LayoutUnit floatLogicalBottom = m_block.nextFloatLogicalBottomBelow(lineLogicalTop);
 
     float newLineWidth;
+    float newLineLeft = m_left;
+    float newLineRight = m_right;
     while (true) {
-        newLineWidth = availableWidthAtOffset(m_block, newLineTop, shouldIndentText());
+        newLineWidth = availableWidthAtOffset(m_block, newLineTop, shouldIndentText(), newLineLeft, newLineRight);
         if (newLineWidth >= m_uncommittedWidth && isWholeLineFit(m_block, newLineTop, lineHeight, m_uncommittedWidth, shouldIndentText()))
             break;
 
@@ -205,7 +214,7 @@ void LineWidth::wrapNextToShapeOutside(bool isFirstLine)
 
         ++newLineTop;
     }
-    updateLineDimension(newLineTop, newLineWidth);
+    updateLineDimension(newLineTop, newLineWidth, newLineLeft, newLineRight);
 }
 #endif
 
@@ -221,6 +230,8 @@ void LineWidth::fitBelowFloats(bool isFirstLine)
     LayoutUnit floatLogicalBottom;
     LayoutUnit lastFloatLogicalBottom = m_block.logicalHeight();
     float newLineWidth = m_availableWidth;
+    float newLineLeft = m_left;
+    float newLineRight = m_right;
 
 #if ENABLE(CSS_SHAPES)
     FloatingObject* lastFloatFromPreviousLine = (m_block.containsFloats() ? m_block.m_floatingObjects->set().last().get() : 0);
@@ -233,7 +244,7 @@ void LineWidth::fitBelowFloats(bool isFirstLine)
         if (floatLogicalBottom <= lastFloatLogicalBottom)
             break;
 
-        newLineWidth = availableWidthAtOffset(m_block, floatLogicalBottom, shouldIndentText());
+        newLineWidth = availableWidthAtOffset(m_block, floatLogicalBottom, shouldIndentText(), newLineLeft, newLineRight);
         lastFloatLogicalBottom = floatLogicalBottom;
 
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
@@ -250,7 +261,7 @@ void LineWidth::fitBelowFloats(bool isFirstLine)
             break;
     }
 
-    updateLineDimension(lastFloatLogicalBottom, newLineWidth);
+    updateLineDimension(lastFloatLogicalBottom, newLineWidth, newLineLeft, newLineRight);
 }
 
 void LineWidth::setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin)

@@ -76,7 +76,7 @@ public:
 private:
     void computeAvailableWidthFromLeftAndRight();
     bool fitsOnLineExcludingTrailingCollapsedWhitespace() const;
-    void updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWidth);
+    void updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWidth, float newLineLeft, float newLineRight);
 #if ENABLE(CSS_SHAPES)
     void wrapNextToShapeOutside(bool isFirstLine);
 #endif

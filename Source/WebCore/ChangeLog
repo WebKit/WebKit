@@ -1,3 +1,21 @@
+2014-02-27  Zoltan Horvath  <zoltan@webkit.org>
+
+        Avoid calling logicalLeftOffsetForLine 2 times in LineWidth::fitBelowFloats
+        https://bugs.webkit.org/show_bug.cgi?id=129433
+
+        Reviewed by Darin Adler.
+
+        This change updates fitBelowFloats and its helpers to call RenderBlock::logicalLeftOffsetForLine only once.
+
+        No new tests, no behavior change.
+
+        * rendering/line/LineWidth.cpp:
+        (WebCore::availableWidthAtOffset):
+        (WebCore::LineWidth::updateLineDimension):
+        (WebCore::LineWidth::wrapNextToShapeOutside):
+        (WebCore::LineWidth::fitBelowFloats):
+        * rendering/line/LineWidth.h:
+
 2014-02-27  Andreas Kling  <akling@apple.com>
 
         Micro-optimize elementAffectsDirectionality().
