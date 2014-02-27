@@ -1,3 +1,14 @@
+2014-02-27  Dirk Schulze  <krit@webkit.org>
+
+        Transform more clip-path pixel tests to reference tests
+        https://bugs.webkit.org/show_bug.cgi?id=129230
+
+        Reviewed by Simon Fraser.
+
+        Fix masking test.
+
+        * svg/masking/mask-negative-scale.svg:
+
 2014-02-27  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Math.{max, min}() must not return after first NaN value

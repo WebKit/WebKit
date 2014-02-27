@@ -13,16 +13,16 @@
 </mask>
 
 <g transform="translate(200, 200)">
-<g transform="matrix(1 0 0 1 -100 -100)" clip-path="url(#mask)">
+<g transform="matrix(1 0 0 1 -100 -100)" mask="url(#mask)">
   <use xlink:href="#img"/>
 </g>
-<g transform="matrix(-1 0 0 -1 -100 -100)" clip-path="url(#mask)">
+<g transform="matrix(-1 0 0 -1 -100 -100)" mask="url(#mask)">
   <use xlink:href="#img"/>
 </g>
-<g transform="matrix(-1 0 0 1 -100 -100)" clip-path="url(#mask)">
+<g transform="matrix(-1 0 0 1 -100 -100)" mask="url(#mask)">
   <use xlink:href="#img"/>
 </g>
-<g transform="matrix(1 0 0 -1 -100 -100)" clip-path="url(#mask)">
+<g transform="matrix(1 0 0 -1 -100 -100)" mask="url(#mask)">
   <use xlink:href="#img"/>
 </g>
 </g>
