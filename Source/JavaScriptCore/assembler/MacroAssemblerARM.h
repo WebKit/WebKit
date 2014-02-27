@@ -1031,7 +1031,7 @@ public:
     DataLabel32 moveWithPatch(TrustedImm32 initialValue, RegisterID dest)
     {
         DataLabel32 dataLabel(this);
-        m_assembler.ldrUniqueImmediate(dest, reinterpret_cast<ARMWord>(initialValue.m_value));
+        m_assembler.ldrUniqueImmediate(dest, static_cast<ARMWord>(initialValue.m_value));
         return dataLabel;
     }
 
@@ -1370,6 +1370,13 @@ public:
     }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
+    static bool canJumpReplacePatchableBranch32WithPatch() { return false; }
+
+    static CodeLocationLabel startOfPatchableBranch32WithPatchOnAddress(CodeLocationDataLabel32)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+        return CodeLocationLabel();
+    }
 
     static CodeLocationLabel startOfPatchableBranchPtrWithPatchOnAddress(CodeLocationDataLabelPtr)
     {
@@ -1385,6 +1392,11 @@ public:
     static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, RegisterID reg, void* initialValue)
     {
         ARMAssembler::revertBranchPtrWithPatch(instructionStart.dataLocation(), reg, reinterpret_cast<uintptr_t>(initialValue) & 0xffff);
+    }
+
+    static void revertJumpReplacementToPatchableBranch32WithPatch(CodeLocationLabel, Address, int32_t)
+    {
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel, Address, void*)

@@ -1,3 +1,16 @@
+2014-02-27  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        r164764 broke the ARM build
+        https://bugs.webkit.org/show_bug.cgi?id=129415
+
+        Reviewed by Zoltan Herczeg.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::moveWithPatch): Change reinterpret_cast to static_cast.
+        (JSC::MacroAssemblerARM::canJumpReplacePatchableBranch32WithPatch): Add missing function.
+        (JSC::MacroAssemblerARM::startOfPatchableBranch32WithPatchOnAddress): Add missing function.
+        (JSC::MacroAssemblerARM::revertJumpReplacementToPatchableBranch32WithPatch): Add missing function.
+
 2014-02-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         r164764 broke the ARM build
