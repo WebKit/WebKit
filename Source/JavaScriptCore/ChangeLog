@@ -1,3 +1,10 @@
+2014-02-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Added svn:ignore to two directories, so that .pyc files don't show up as unversioned.
+
+        * inspector/scripts: Added property svn:ignore.
+        * replay/scripts: Added property svn:ignore.
+
 2014-02-27  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         r164764 broke the ARM build
