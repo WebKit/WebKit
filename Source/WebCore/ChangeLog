@@ -1,3 +1,14 @@
+2014-02-26  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] Form controls handling: implement date and time controls.
+        https://bugs.webkit.org/show_bug.cgi?id=129344
+
+        Reviewed by Simon Fraser and Joseph Pecoraro.
+
+        Adding one localizable string.
+
+        * English.lproj/Localizable.strings:
+
 2014-02-26  Simon Fraser  <simon.fraser@apple.com>
 
         Prepare for overflow scrolling nodes in the scrolling tree

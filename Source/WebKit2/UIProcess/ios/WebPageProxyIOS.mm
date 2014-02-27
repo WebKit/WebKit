@@ -482,6 +482,16 @@ void WebPageProxy::stopAssistingNode()
     m_pageClient.stopAssistingNode();
 }
 
+void WebPageProxy::setAssistedNodeValue(const String& value)
+{
+    process().send(Messages::WebPage::SetAssistedNodeValue(value), m_pageID);
+}
+
+void WebPageProxy::setAssistedNodeValueAsNumber(double value)
+{
+    process().send(Messages::WebPage::SetAssistedNodeValueAsNumber(value), m_pageID);
+}
+
 void WebPageProxy::didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&)
 {
     notImplemented();

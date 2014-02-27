@@ -393,6 +393,27 @@ void WebPage::blurAssistedNode()
         toElement(m_assistedNode.get())->blur();
 }
 
+void WebPage::setAssistedNodeValue(const String& value)
+{
+    if (!m_assistedNode)
+        return;
+    if (isHTMLInputElement(m_assistedNode.get())) {
+        HTMLInputElement *element = toHTMLInputElement(m_assistedNode.get());
+        element->setValue(value, DispatchInputAndChangeEvent);
+    }
+    // FIXME: should also handle the case of HTMLSelectElement.
+}
+
+void WebPage::setAssistedNodeValueAsNumber(double value)
+{
+    if (!m_assistedNode)
+        return;
+    if (isHTMLInputElement(m_assistedNode.get())) {
+        HTMLInputElement *element = toHTMLInputElement(m_assistedNode.get());
+        element->setValueAsNumber(value, ASSERT_NO_EXCEPTION, DispatchInputAndChangeEvent);
+    }
+}
+
 static FloatQuad innerFrameQuad(Frame* frame, Node* assistedNode)
 {
     frame->document()->updateLayoutIgnorePendingStylesheets();

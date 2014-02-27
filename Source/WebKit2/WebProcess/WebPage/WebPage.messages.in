@@ -63,6 +63,8 @@ messages -> WebPage LegacyReceiver {
     StartInteractionWithElementAtPosition(WebCore::IntPoint point)
     StopInteraction()
     PerformActionOnElement(uint32_t action)
+    SetAssistedNodeValue(String value)
+    SetAssistedNodeValueAsNumber(double value)
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

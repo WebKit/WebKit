@@ -33,6 +33,7 @@
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import "WKActionSheetAssistant.h"
+#import "WKFormInputControl.h"
 #import <DataDetectorsUI/DDDetectionController.h>
 #import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UIWebHighlightLongPressGestureRecognizer.h>
@@ -379,6 +380,22 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
 - (BOOL)_requiresKeyboardResetOnReload
 {
     return YES;
+}
+
+- (void)_displayFormNodeInputView
+{
+    // FIXME: This is the place where we should zoom to node
+    [self _updateAccessory];
+}
+
+- (UIView *)inputView
+{
+    if (!_inputPeripheral)
+        _inputPeripheral = adoptNS([WKFormInputControl createPeripheralWithView:self]);
+    else
+        [self _displayFormNodeInputView];
+
+    return [_inputPeripheral assistantView];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
@@ -1779,6 +1796,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 {
     _isEditable = YES;
     _assistedNodeInformation = information;
+    _inputPeripheral = nil;
     _traits = nil;
     if (![self isFirstResponder])
         [self becomeFirstResponder];
@@ -1786,12 +1804,16 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     [self _startAssistingKeyboard];
     [self reloadInputViews];
     [self _updateAccessory];
+    // _inputPeripheral has been initialized in inputView called by reloadInputViews.
+    [_inputPeripheral beginEditing];
 }
 
 - (void)_stopAssistingNode
 {
     _isEditable = NO;
+    [_inputPeripheral endEditing];
     _assistedNodeInformation.elementType = WKTypeNone;
+    _inputPeripheral = nil;
 
     [self _stopAssistingKeyboard];
     [self reloadInputViews];

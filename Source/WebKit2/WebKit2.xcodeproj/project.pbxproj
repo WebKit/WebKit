@@ -1392,6 +1392,12 @@
 		C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E3AA441209E2BA00A49D01 /* Module.h */; };
 		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
 		C5237F6012441CA300780472 /* WebEditorClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5237F5F12441CA300780472 /* WebEditorClientMac.mm */; };
+		C54256B518BEC18C00DE4179 /* WKFormInputControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */; };
+		C54256B618BEC18C00DE4179 /* WKFormInputControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = C54256B018BEC18B00DE4179 /* WKFormInputControl.mm */; };
+		C54256B718BEC18C00DE4179 /* WKFormPeripheral.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256B118BEC18B00DE4179 /* WKFormPeripheral.h */; };
+		C54256B818BEC18C00DE4179 /* WKFormPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256B218BEC18B00DE4179 /* WKFormPopover.h */; };
+		C54256B918BEC18C00DE4179 /* WKFormPopover.mm in Sources */ = {isa = PBXBuildFile; fileRef = C54256B318BEC18B00DE4179 /* WKFormPopover.mm */; };
+		C54256BA18BEC18C00DE4179 /* WKFormSelectControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256B418BEC18C00DE4179 /* WKFormSelectControl.h */; };
 		C574A37712E6099D002DFE98 /* WebDragClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */; };
 		C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C574A57F12E66681002DFE98 /* PasteboardTypes.h */; };
 		C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */ = {isa = PBXBuildFile; fileRef = C574A58012E66681002DFE98 /* PasteboardTypes.mm */; };
@@ -3216,6 +3222,12 @@
 		C0E3AA481209E45000A49D01 /* ModuleCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleCF.cpp; sourceTree = "<group>"; };
 		C517388012DF8F4F00EE3F47 /* DragControllerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragControllerAction.h; sourceTree = "<group>"; };
 		C5237F5F12441CA300780472 /* WebEditorClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClientMac.mm; sourceTree = "<group>"; };
+		C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormInputControl.h; path = ios/forms/WKFormInputControl.h; sourceTree = "<group>"; };
+		C54256B018BEC18B00DE4179 /* WKFormInputControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormInputControl.mm; path = ios/forms/WKFormInputControl.mm; sourceTree = "<group>"; };
+		C54256B118BEC18B00DE4179 /* WKFormPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormPeripheral.h; path = ios/forms/WKFormPeripheral.h; sourceTree = "<group>"; };
+		C54256B218BEC18B00DE4179 /* WKFormPopover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormPopover.h; path = ios/forms/WKFormPopover.h; sourceTree = "<group>"; };
+		C54256B318BEC18B00DE4179 /* WKFormPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormPopover.mm; path = ios/forms/WKFormPopover.mm; sourceTree = "<group>"; };
+		C54256B418BEC18C00DE4179 /* WKFormSelectControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormSelectControl.h; path = ios/forms/WKFormSelectControl.h; sourceTree = "<group>"; };
 		C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClientMac.mm; sourceTree = "<group>"; };
 		C574A57F12E66681002DFE98 /* PasteboardTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardTypes.h; sourceTree = "<group>"; };
 		C574A58012E66681002DFE98 /* PasteboardTypes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardTypes.mm; sourceTree = "<group>"; };
@@ -4296,6 +4308,7 @@
 		2DA944A81884E9AB00ED86DB /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				C54256AE18BEC16100DE4179 /* forms */,
 				0FCB4E3618BBE044000FCFC9 /* PageClientImplIOS.h */,
 				0FCB4E3718BBE044000FCFC9 /* PageClientImplIOS.mm */,
 				2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */,
@@ -6243,6 +6256,19 @@
 			tabWidth = 8;
 			usesTabs = 0;
 		};
+		C54256AE18BEC16100DE4179 /* forms */ = {
+			isa = PBXGroup;
+			children = (
+				C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */,
+				C54256B018BEC18B00DE4179 /* WKFormInputControl.mm */,
+				C54256B118BEC18B00DE4179 /* WKFormPeripheral.h */,
+				C54256B218BEC18B00DE4179 /* WKFormPopover.h */,
+				C54256B318BEC18B00DE4179 /* WKFormPopover.mm */,
+				C54256B418BEC18C00DE4179 /* WKFormSelectControl.h */,
+			);
+			name = forms;
+			sourceTree = "<group>";
+		};
 		CD73BA3D131A2A2100EEDED2 /* FullScreen */ = {
 			isa = PBXGroup;
 			children = (
@@ -6647,6 +6673,7 @@
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
 				379A873A18BBFE0F00588AF2 /* _WKElementAction.h in Headers */,
 				511D81FF185BBDEE001AED56 /* SQLiteIDBTransaction.h in Headers */,
+				C54256BA18BEC18C00DE4179 /* WKFormSelectControl.h in Headers */,
 				2DA944A01884E4F000ED86DB /* WebIOSEventFactory.h in Headers */,
 				7CD102DA1866770600ED429D /* AutoCorrectionCallback.h in Headers */,
 				1AB474E4184D44980051B622 /* WKBundlePageContextMenuClient.h in Headers */,
@@ -6670,12 +6697,14 @@
 				512E35F9130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h in Headers */,
 				C5E1AFED16B21017006CC1F2 /* WebArchive.h in Headers */,
 				C5E1AFEF16B21029006CC1F2 /* WebArchiveResource.h in Headers */,
+				C54256B718BEC18C00DE4179 /* WKFormPeripheral.h in Headers */,
 				BC72BA1E11E64907001EB4EA /* WebBackForwardList.h in Headers */,
 				518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */,
 				BC72B9FB11E6476B001EB4EA /* WebBackForwardListProxy.h in Headers */,
 				37FC194B18510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h in Headers */,
 				75A8D2C8187CCFAB00C39C9E /* WKSession.h in Headers */,
 				BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */,
+				C54256B818BEC18C00DE4179 /* WKFormPopover.h in Headers */,
 				BC032D7510F4378D0058C15A /* WebChromeClient.h in Headers */,
 				515E773418402D510007203F /* UniqueIDBDatabaseIdentifier.h in Headers */,
 				3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */,
@@ -6702,6 +6731,7 @@
 				51ACBBA0127A8F2C00D203B9 /* WebContextMenuProxyMac.h in Headers */,
 				BCCB75C61203A1CE00222D1B /* WebContextMessageKinds.h in Headers */,
 				BCEE7D0E12846F69009827DA /* WebContextMessages.h in Headers */,
+				C54256B518BEC18C00DE4179 /* WKFormInputControl.h in Headers */,
 				BCF4DE25168FA44800C94AFC /* WebContextSupplement.h in Headers */,
 				BCB0B0DC12305A2500B1341E /* WebContextUserMessageCoders.h in Headers */,
 				2D819BA21862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h in Headers */,
@@ -7789,6 +7819,7 @@
 				BC032DA510F437D10058C15A /* ArgumentDecoder.cpp in Sources */,
 				BC032DA710F437D10058C15A /* ArgumentEncoder.cpp in Sources */,
 				BCEE966C112FAF57006BCC24 /* Attachment.cpp in Sources */,
+				C54256B618BEC18C00DE4179 /* WKFormInputControl.mm in Sources */,
 				E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */,
 				512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */,
 				1AE00D4C182D6EB000087DD7 /* WKBrowsingContextHandle.mm in Sources */,
@@ -8054,6 +8085,7 @@
 				51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */,
 				1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */,
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,
+				C54256B918BEC18C00DE4179 /* WKFormPopover.mm in Sources */,
 				1A5B1C5418987EDF004FCF9B /* WebDocumentLoader.cpp in Sources */,
 				51A4D5A916CAC4FF000E615E /* StatisticsRequest.cpp in Sources */,
 				1AD3306E16B1D991004F60E7 /* StorageAreaImpl.cpp in Sources */,

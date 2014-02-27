@@ -27,6 +27,7 @@
 
 #import "AssistedNodeInformation.h"
 #import "InteractionInformationAtPosition.h"
+#import "WKFormPeripheral.h"
 #import "WKGestureTypes.h"
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIView.h>
@@ -100,6 +101,7 @@ struct WKAutoCorrectionData {
     WebKit::WKAutoCorrectionData _autocorrectionData;
     WebKit::InteractionInformationAtPosition _positionInformation;
     WebKit::AssistedNodeInformation _assistedNodeInformation;
+    RetainPtr<NSObject<WKFormPeripheral>> _inputPeripheral;
 
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
@@ -134,5 +136,5 @@ struct WKAutoCorrectionData {
 - (void)_willStartUserTriggeredScrollingOrZooming;
 - (void)_didEndScrollingOrZooming;
 - (void)_didUpdateBlockSelectionWithTouch:(WebKit::WKSelectionTouch)touch withFlags:(WebKit::WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold;
-
+- (void)accessoryDone;
 @end

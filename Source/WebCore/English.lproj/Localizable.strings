@@ -127,6 +127,9 @@
 /* Title for file button used in HTML forms for media files */
 "Choose Media (Single)" = "Choose Media (Single)";
 
+/* Clear button in date input popover */
+"Clear Button Date Popover" = "Clear";
+
 /* menu item in Recent Searches menu that empties menu's contents */
 "Clear Recent Searches" = "Clear Recent Searches";
 

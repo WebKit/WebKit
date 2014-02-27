@@ -465,6 +465,8 @@ public:
     void startInteractionWithElementAtPosition(const WebCore::IntPoint&);
     void stopInteraction();
     void performActionOnElement(uint32_t action);
+    void setAssistedNodeValue(const String&);
+    void setAssistedNodeValueAsNumber(double);
 #endif
 
     NotificationPermissionRequestManager* notificationPermissionRequestManager();
