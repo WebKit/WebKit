@@ -1,3 +1,10 @@
+2014-02-26  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Fixed linking after disabling WebGL.
+
+        * WebKit.vcxproj/WebKit/WebKitCFLite.props:
+        Don't link to ANGLE libraries, which are no longer built.
+
 2014-02-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove console.profiles from window.console API
