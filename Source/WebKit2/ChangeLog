@@ -2,8 +2,16 @@
 
         Build fix.
 
+        Unexpected line break.
+
+        * Configurations/WebKit2.xcconfig:
+
+2014-02-26  Enrica Casucci  <enrica@apple.com>
+
+        Build fix.
+
         WKFormInputControl.mm and WKFormPopover.mm should be excluded from OS X builds.
-        
+
         * Configurations/WebKit2.xcconfig:
 
 2014-02-26  Enrica Casucci  <enrica@apple.com>

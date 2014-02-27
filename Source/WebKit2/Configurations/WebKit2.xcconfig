@@ -45,7 +45,6 @@ OTHER_LDFLAGS_macosx = $(ASAN_OTHER_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS);
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
 EXCLUDED_SOURCE_FILE_NAMES_iphoneos = BuiltInPDFView.mm DownloadMac.mm FindIndicatorWindow.mm NetworkProcessMac.mm PDFViewController.mm PageClientImpl.mm PasteboardTypes.mm PluginInfoStoreMac.mm PrintInfoMac.mm SecItemShimMethods.mm TextCheckerMac.mm WKAccessibilityWebPageObject.mm WKFullKeyboardAccessWatcher.mm WKInspector.cpp WKPrintingView.mm UIProcess/API/mac/WKView.mm WKThumbnailView.mm WebContextMenuProxyMac.mm WebEditorClientMac.mm WebInspectorProxyMac.mm WebPageMac.mm WebPageProxyMac.mm WebPlatformTouchPoint.cpp WebProcessMac.mm WebProcessProxyMac.mm WebTouchEvent.cpp *.pdf com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
-EXCLUDED_SOURCE_FILE_NAMES_macosx = *IOS.mm WKContentView.mm WKContentViewInteraction.mm WKScrollView.mm WKGeolocationProviderIOSObjCSecurityOrigin.mm WebIOSEventFactory.mm WKActionSheet.mm WKActionSheetAssistant.mm
-    WKFormInputControl.mm WKFormPopover.mm;
+EXCLUDED_SOURCE_FILE_NAMES_macosx = *IOS.mm WKContentView.mm WKContentViewInteraction.mm WKScrollView.mm WKGeolocationProviderIOSObjCSecurityOrigin.mm WebIOSEventFactory.mm WKActionSheet.mm WKActionSheetAssistant.mm WKFormInputControl.mm WKFormPopover.mm;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
