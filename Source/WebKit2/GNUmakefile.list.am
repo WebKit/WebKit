@@ -866,6 +866,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Plugins/PluginProcessProxy.h \
 	Source/WebKit2/UIProcess/Plugins/WebPluginSiteDataManager.h \
 	Source/WebKit2/UIProcess/Plugins/WebPluginSiteDataManager.cpp \
+	Source/WebKit2/UIProcess/Plugins/gtk/PluginInfoCache.cpp \
+	Source/WebKit2/UIProcess/Plugins/gtk/PluginInfoCache.h \
 	Source/WebKit2/UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp \
 	Source/WebKit2/UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp \
 	Source/WebKit2/UIProcess/ProcessModel.h \

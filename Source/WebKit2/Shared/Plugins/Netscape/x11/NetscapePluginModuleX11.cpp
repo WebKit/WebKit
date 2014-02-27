@@ -36,6 +36,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
@@ -67,7 +68,7 @@ StdoutDevNullRedirector::~StdoutDevNullRedirector()
 }
 
 
-static void parseMIMEDescription(const String& mimeDescription, Vector<MimeClassInfo>& result)
+void NetscapePluginModule::parseMIMEDescription(const String& mimeDescription, Vector<MimeClassInfo>& result)
 {
     ASSERT_ARG(result, result.isEmpty());
 
@@ -92,6 +93,32 @@ static void parseMIMEDescription(const String& mimeDescription, Vector<MimeClass
         if (mimeTypeParts.size() > 2)
             mimeInfo.desc = mimeTypeParts[2];
     }
+}
+
+String NetscapePluginModule::buildMIMEDescription(const Vector<MimeClassInfo>& mimeDescription)
+{
+    StringBuilder builder;
+
+    size_t mimeInfoCount = mimeDescription.size();
+    for (size_t i = 0; i < mimeInfoCount; ++i) {
+        const MimeClassInfo& mimeInfo = mimeDescription[i];
+        builder.append(mimeInfo.type);
+        builder.append(':');
+
+        size_t extensionsCount = mimeInfo.extensions.size();
+        for (size_t j = 0; j < extensionsCount; ++j) {
+            builder.append(mimeInfo.extensions[j]);
+            if (j != extensionsCount - 1)
+                builder.append(',');
+        }
+        builder.append(':');
+
+        builder.append(mimeInfo.desc);
+        if (i != mimeInfoCount - 1)
+            builder.append(';');
+    }
+
+    return builder.toString();
 }
 
 bool NetscapePluginModule::getPluginInfoForLoadedPlugin(RawPluginMetaData& metaData)

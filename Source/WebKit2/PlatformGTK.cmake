@@ -248,6 +248,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp
     UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp
 
+    UIProcess/Plugins/gtk/PluginInfoCache.cpp
+
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
     UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
 
@@ -409,6 +411,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/cpp/gtk"
     "${WEBKIT2_DIR}/UIProcess/API/gtk"
     "${WEBKIT2_DIR}/UIProcess/Network/CustomProtocols/soup"
+    "${WEBKIT2_DIR}/UIProcess/Plugins/gtk"
     "${WEBKIT2_DIR}/UIProcess/gtk"
     "${WEBKIT2_DIR}/UIProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk"
