@@ -1,3 +1,21 @@
+2014-02-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Octane/closure thrashes between flattening dictionaries during global object initialization in a global eval
+        https://bugs.webkit.org/show_bug.cgi?id=129435
+
+        Reviewed by Oliver Hunt.
+        
+        This is a 5-10% speed-up on Octane/closure.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionClearCodeCache):
+        * runtime/BatchedTransitionOptimizer.h:
+        (JSC::BatchedTransitionOptimizer::BatchedTransitionOptimizer):
+        (JSC::BatchedTransitionOptimizer::~BatchedTransitionOptimizer):
+
 2014-02-27  Alexey Proskuryakov  <ap@apple.com>
 
         Added svn:ignore to two directories, so that .pyc files don't show up as unversioned.

@@ -1,6 +1,5 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,13 +35,13 @@ class BatchedTransitionOptimizer {
 public:
     BatchedTransitionOptimizer(VM& vm, JSObject* object)
         : m_vm(&vm)
-        , m_object(object)
+        , m_object(object->structure()->isDictionary() ? nullptr : object)
     {
     }
 
     ~BatchedTransitionOptimizer()
     {
-        if (m_object->structure()->isDictionary())
+        if (m_object && m_object->structure()->isDictionary())
             m_object->flattenDictionaryObject(*m_vm);
     }
 
