@@ -107,6 +107,13 @@ void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance* utteran
     utterance->setStartTime(monotonicallyIncreasingTime());
     m_currentSpeechUtterance = utterance;
     m_isPaused = false;
+    
+    // Zero lengthed strings should immediately notify that the event is complete.
+    if (utterance->text().isEmpty()) {
+        handleSpeakingCompleted(utterance, false);
+        return;
+    }
+    
     if (!m_platformSpeechSynthesizer)
         m_platformSpeechSynthesizer = PlatformSpeechSynthesizer::create(this);
     m_platformSpeechSynthesizer->speak(utterance->platformUtterance());
