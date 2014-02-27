@@ -2006,7 +2006,7 @@ def check_member_initialization_list(clean_lines, line_number, error):
     # with the colon or comma preceding the member on that line.
     begin_line = line
     # match the start of initialization list
-    if search(r'^(?P<indentation>\s*)((explicit\s+)?[^(\s|\?)]+\([^\?]*\)\s?\:|^(\s|\?)*\:).*[^;]*$', line):
+    if search(r'^(?P<indentation>\s*)((explicit\s+)?[^(\s|\?)]+\([^\?]*\)\s?\:|^(\s|\?)*\:)([^\:]|\Z)[^;]*$', line):
         if search(r'[^:]\:[^\:\s]+', line):
             error(line_number, 'whitespace/init', 4,
                 'Missing spaces around :')

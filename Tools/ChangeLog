@@ -1,3 +1,18 @@
+2014-02-27  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
+
+        check-webkit-style indentation false alarm in WebKit/win/WebNodeHighlight.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=127076
+
+        Reviewed by Anders Carlsson.
+
+        Avoid match for :: as start of a member initialization list. Modify expression to match
+        after a colon either non-colon character or end of line.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_member_initialization_list):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_member_initialization_list):
+
 2014-02-27  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
 
         Unreviewed. Update my email addresses in contributors.json.

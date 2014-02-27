@@ -5019,6 +5019,7 @@ class WebKitStyleTest(CppStyleTestBase):
             : MySuperClass(doc, doc)
         { }''',
         '')
+        self.assert_lint('::ShowWindow(m_overlay);', '')
         self.assert_lint('o = foo(b ? bar() : baz());', '')
         self.assert_lint('MYMACRO(a ? b() : c);', '')
 
