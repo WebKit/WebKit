@@ -1,3 +1,37 @@
+2014-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WK2] Blocks when fetching plugins information
+        https://bugs.webkit.org/show_bug.cgi?id=115650
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use a persistent cache to store the plugins metadata to avoid
+        having to load all the plugins everytime a plugin is used for the
+        first time.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::parseMIMEDescription): Make this
+        method public.
+        (WebKit::NetscapePluginModule::buildMIMEDescription): Added this
+        helper to build the MIME description string.
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp: Added.
+        (WebKit::PluginInfoCache::shared):
+        (WebKit::PluginInfoCache::PluginInfoCache):
+        (WebKit::PluginInfoCache::~PluginInfoCache):
+        (WebKit::PluginInfoCache::saveToFileIdleCallback):
+        (WebKit::PluginInfoCache::saveToFile):
+        (WebKit::PluginInfoCache::getPluginInfo):
+        (WebKit::PluginInfoCache::updatePluginInfo):
+        * UIProcess/Plugins/gtk/PluginInfoCache.h: Added.
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo): Check first if we have
+        metadata of the plugin in the cache and update the cache if we
+        loaded the plugin to get its metadata.
+
 2014-02-27  Ryan Lortie  <desrt@desrt.ca>
 
         need to #include <libgen.h> for basename

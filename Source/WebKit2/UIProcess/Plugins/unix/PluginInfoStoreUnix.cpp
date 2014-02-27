@@ -35,6 +35,10 @@
 #include "PluginDatabase.h"
 #include <WebCore/FileSystem.h>
 
+#if PLATFORM(GTK)
+#include "PluginInfoCache.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -98,7 +102,18 @@ Vector<String> PluginInfoStore::individualPluginPaths()
 
 bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
+#if PLATFORM(GTK)
+    if (PluginInfoCache::shared().getPluginInfo(pluginPath, plugin))
+        return true;
+
+    if (NetscapePluginModule::getPluginInfo(pluginPath, plugin)) {
+        PluginInfoCache::shared().updatePluginInfo(pluginPath, plugin);
+        return true;
+    }
+    return false;
+#else
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
+#endif
 }
 
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& /*alreadyLoadedPlugins*/, const PluginModuleInfo& /*plugin*/)
