@@ -1,3 +1,12 @@
+2014-02-26  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Update style guide to use nullptr instead of 0 for C++ null pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=129413
+
+        Reviewed by Ryosuke Niwa.
+
+        * coding/coding-style.html:
+
 2014-02-10  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Change tools.html to say Xcode 5 is required to build
