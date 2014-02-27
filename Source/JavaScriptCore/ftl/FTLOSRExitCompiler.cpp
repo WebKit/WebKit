@@ -353,8 +353,9 @@ static void compileStub(
 extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
 {
     SamplingRegion samplingRegion("FTL OSR Exit Compilation");
-    
-    dataLog("Compiling OSR exit with exitID = ", exitID, "\n");
+
+    if (shouldShowDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit())
+        dataLog("Compiling OSR exit with exitID = ", exitID, "\n");
     
     CodeBlock* codeBlock = exec->codeBlock();
     

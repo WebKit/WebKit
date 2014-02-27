@@ -1,3 +1,15 @@
+2014-02-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unconditional logging in compileFTLOSRExit
+        https://bugs.webkit.org/show_bug.cgi?id=129407
+
+        Reviewed by Michael Saboff.
+
+        This was causing tests to fail with the FTL enabled.
+
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+
 2014-02-26  Oliver Hunt  <oliver@apple.com>
 
         Remove unused access types
