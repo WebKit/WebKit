@@ -1,5 +1,15 @@
 2014-02-27  Alexey Proskuryakov  <ap@apple.com>
 
+        [Mac][WK2] Remove hardcoded Cmd+B and Cmd+I from WKView.mm
+        https://bugs.webkit.org/show_bug.cgi?id=129436
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm: Removed a historic WebKit1 behavior that we don't
+        need to preserve in WebKit2.
+
+2014-02-27  Alexey Proskuryakov  <ap@apple.com>
+
         [Mac] Remove unused SPI declarations from WKView.mm
         https://bugs.webkit.org/show_bug.cgi?id=129434
 

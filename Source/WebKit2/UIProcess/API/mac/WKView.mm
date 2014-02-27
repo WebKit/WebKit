@@ -1307,32 +1307,6 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
         parameters->eventInterpretationHadSideEffects |= eventHandled;
 }
 
-- (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
-{
-    if (!_data->_page->editorState().isContentEditable)
-        return NO;
-
-    if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) != NSCommandKeyMask)
-        return NO;
-    
-    // Here we special case cmd+b and cmd+i but not cmd+u, for historic reason.
-    // This should not be changed, since it could break some Mac applications that
-    // rely on this inherent behavior.
-    // See https://bugs.webkit.org/show_bug.cgi?id=24943
-    
-    NSString *string = [event characters];
-    if ([string caseInsensitiveCompare:@"b"] == NSOrderedSame) {
-        _data->_page->executeEditCommand("ToggleBold");
-        return YES;
-    }
-    if ([string caseInsensitiveCompare:@"i"] == NSOrderedSame) {
-        _data->_page->executeEditCommand("ToggleItalic");
-        return YES;
-    }
-    
-    return NO;
-}
-
 - (BOOL)performKeyEquivalent:(NSEvent *)event
 {
     // There's a chance that responding to this event will run a nested event loop, and
@@ -1354,7 +1328,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
         return YES;
     }
     
-    return [self _handleStyleKeyEquivalent:event] || [super performKeyEquivalent:event];
+    return [super performKeyEquivalent:event];
 }
 
 - (void)keyUp:(NSEvent *)theEvent
