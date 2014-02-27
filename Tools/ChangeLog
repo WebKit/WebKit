@@ -1,3 +1,9 @@
+2014-02-27  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
+
+        Unreviewed. Update my email addresses in contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-02-27  Alberto Garcia  <berto@igalia.com>
 
         [gtk-doc] UnicodeEncodeError: 'ascii' codec can't encode character
