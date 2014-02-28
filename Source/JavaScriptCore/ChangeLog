@@ -1,3 +1,16 @@
+2014-02-28  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should be able to call sin/cos directly on platforms where the intrinsic is busted
+        https://bugs.webkit.org/show_bug.cgi?id=129503
+
+        Reviewed by Mark Lam.
+
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::doubleSin):
+        (JSC::FTL::Output::doubleCos):
+        (JSC::FTL::Output::intrinsicOrOperation):
+
 2014-02-28  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix !ENABLE(GGC) builds

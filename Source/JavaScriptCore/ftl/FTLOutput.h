@@ -167,14 +167,15 @@ public:
     {
         return call(doubleAbsIntrinsic(), value);
     }
+
     LValue doubleSin(LValue value)
     {
-        return call(doubleSinIntrinsic(), value);
+        return call(intrinsicOrOperation(doubleSinIntrinsic(), sin), value);
+        
     }
-
     LValue doubleCos(LValue value)
     {
-        return call(doubleCosIntrinsic(), value);
+        return call(intrinsicOrOperation(doubleCosIntrinsic(), cos), value);
     }
 
     LValue doubleSqrt(LValue value)
@@ -351,6 +352,21 @@ public:
     LValue operation(FunctionType function)
     {
         return intToPtr(constIntPtr(function), pointerType(operationType(function)));
+    }
+    
+    template<typename FunctionType>
+    LValue intrinsicOrOperation(LValue intrinsic, FunctionType function)
+    {
+        if (isX86())
+            return intrinsic;
+        
+        // LLVM's behavior with respect to math intrinsics that lower to calls is pretty odd
+        // on hardware that requires real effort during relocation.
+        // https://bugs.webkit.org/show_bug.cgi?id=129495
+        
+        // FIXME: At least mark these pure.
+        // https://bugs.webkit.org/show_bug.cgi?id=129494
+        return operation(function);
     }
     
     void jump(LBasicBlock destination) { buildBr(m_builder, destination); }
