@@ -94,7 +94,6 @@ static void createKeyMap()
     keyMap().set(ASCIILiteral("Home"), ASCIILiteral("Home"));
     keyMap().set(ASCIILiteral("Insert"), ASCIILiteral("Insert"));
     keyMap().set(ASCIILiteral("Left"), ASCIILiteral("Left"));
-    keyMap().set(ASCIILiteral("Down"), ASCIILiteral("Down"));
     keyMap().set(ASCIILiteral("Next"), ASCIILiteral("PageDown"));
     keyMap().set(ASCIILiteral("Prior"), ASCIILiteral("PageUp"));
     keyMap().set(ASCIILiteral("Right"), ASCIILiteral("Right"));

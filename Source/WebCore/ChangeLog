@@ -1,3 +1,15 @@
+2014-02-27  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Remove duplicated keyboard string key from keyMap
+        https://bugs.webkit.org/show_bug.cgi?id=129469
+
+        Reviewed by Gyuyoung Kim.
+
+        "Down" key is duplicated in keyMap().
+
+        * platform/efl/EflKeyboardUtilities.cpp:
+        (WebCore::createKeyMap):
+
 2014-02-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Unify the three call sites of SelectorQueryCache
