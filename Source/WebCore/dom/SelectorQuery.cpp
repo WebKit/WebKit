@@ -333,7 +333,7 @@ SelectorQuery::SelectorQuery(const CSSSelectorList& selectorList)
     m_selectors.initialize(m_selectorList);
 }
 
-SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document& document, ExceptionCode& ec)
+SelectorQuery* SelectorQueryCache::add(const String& selectors, Document& document, ExceptionCode& ec)
 {
     auto it = m_entries.find(selectors);
     if (it != m_entries.end())

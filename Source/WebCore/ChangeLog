@@ -1,3 +1,31 @@
+2014-02-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Unify the three call sites of SelectorQueryCache
+        https://bugs.webkit.org/show_bug.cgi?id=129249
+
+        Reviewed by Andreas Kling.
+
+        The three call sites of SelectorQueryCache were doing the exact same thing.
+        That code is mvoed to a new function Document::selectorQueryForString().
+
+        Also use String instead of AtomicString for querySelector() and querySelectorAll().
+        This prevent the call sites from creating AtomicString just for the time of the call.
+        This causes a tiny slow down on microbenchmarks that continuously query the same string
+        but has no negative impact on realistic/good test cases (and the bindings are simplified).
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::querySelector):
+        (WebCore::ContainerNode::querySelectorAll):
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::selectorQueryForString):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::webkitMatchesSelector):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQueryCache::add):
+        * dom/SelectorQuery.h:
+
 2014-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         JSC ignores the extra memory cost of HTMLCollection after a major GC

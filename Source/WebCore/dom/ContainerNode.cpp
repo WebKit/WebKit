@@ -1071,30 +1071,18 @@ void ContainerNode::setAttributeEventListener(const AtomicString& eventType, con
     setAttributeEventListener(eventType, JSLazyEventListener::createForNode(*this, attributeName, attributeValue));
 }
 
-Element* ContainerNode::querySelector(const AtomicString& selectors, ExceptionCode& ec)
+Element* ContainerNode::querySelector(const String& selectors, ExceptionCode& ec)
 {
-    if (selectors.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return nullptr;
-    }
-
-    SelectorQuery* selectorQuery = document().selectorQueryCache().add(selectors, document(), ec);
-    if (!selectorQuery)
-        return nullptr;
-    return selectorQuery->queryFirst(*this);
+    if (SelectorQuery* selectorQuery = document().selectorQueryForString(selectors, ec))
+        return selectorQuery->queryFirst(*this);
+    return nullptr;
 }
 
-RefPtr<NodeList> ContainerNode::querySelectorAll(const AtomicString& selectors, ExceptionCode& ec)
+RefPtr<NodeList> ContainerNode::querySelectorAll(const String& selectors, ExceptionCode& ec)
 {
-    if (selectors.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return nullptr;
-    }
-
-    SelectorQuery* selectorQuery = document().selectorQueryCache().add(selectors, document(), ec);
-    if (!selectorQuery)
-        return nullptr;
-    return selectorQuery->queryAll(*this);
+    if (SelectorQuery* selectorQuery = document().selectorQueryForString(selectors, ec))
+        return selectorQuery->queryAll(*this);
+    return nullptr;
 }
 
 PassRefPtr<NodeList> ContainerNode::getElementsByTagName(const AtomicString& localName)

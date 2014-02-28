@@ -137,6 +137,7 @@ class ScriptableDocumentParser;
 class ScriptElementData;
 class ScriptRunner;
 class SecurityOrigin;
+class SelectorQuery;
 class SelectorQueryCache;
 class SerializedScriptValue;
 class SegmentedString;
@@ -306,7 +307,7 @@ public:
     void removeImageElementByLowercasedUsemap(const AtomicStringImpl&, HTMLImageElement&);
     HTMLImageElement* imageElementByLowercasedUsemap(const AtomicStringImpl&) const;
 
-    SelectorQueryCache& selectorQueryCache();
+    SelectorQuery* selectorQueryForString(const String&, ExceptionCode&);
 
     // DOM methods & attributes for Document
 

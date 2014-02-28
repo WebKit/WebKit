@@ -752,11 +752,16 @@ HTMLImageElement* Document::imageElementByLowercasedUsemap(const AtomicStringImp
     return m_imagesByUsemap.getElementByLowercasedUsemap(name, *this);
 }
 
-SelectorQueryCache& Document::selectorQueryCache()
+SelectorQuery* Document::selectorQueryForString(const String& selectorString, ExceptionCode& ec)
 {
+    if (selectorString.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return nullptr;
+    }
+
     if (!m_selectorQueryCache)
         m_selectorQueryCache = std::make_unique<SelectorQueryCache>();
-    return *m_selectorQueryCache;
+    return m_selectorQueryCache->add(selectorString, *this, ec);
 }
 
 MediaQueryMatcher& Document::mediaQueryMatcher()

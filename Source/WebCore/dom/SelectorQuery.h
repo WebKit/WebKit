@@ -98,11 +98,11 @@ class SelectorQueryCache {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    SelectorQuery* add(const AtomicString&, Document&, ExceptionCode&);
+    SelectorQuery* add(const String&, Document&, ExceptionCode&);
     void invalidate();
 
 private:
-    HashMap<AtomicString, std::unique_ptr<SelectorQuery>> m_entries;
+    HashMap<String, std::unique_ptr<SelectorQuery>> m_entries;
 };
 
 inline bool SelectorQuery::matches(Element& element) const

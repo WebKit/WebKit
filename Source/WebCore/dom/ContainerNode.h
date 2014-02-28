@@ -128,8 +128,8 @@ public:
 
     RenderElement* renderer() const;
 
-    Element* querySelector(const AtomicString& selectors, ExceptionCode&);
-    RefPtr<NodeList> querySelectorAll(const AtomicString& selectors, ExceptionCode&);
+    Element* querySelector(const String& selectors, ExceptionCode&);
+    RefPtr<NodeList> querySelectorAll(const String& selectors, ExceptionCode&);
 
     PassRefPtr<NodeList> getElementsByTagName(const AtomicString&);
     PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);
