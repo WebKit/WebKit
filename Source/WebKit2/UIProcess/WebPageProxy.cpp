@@ -336,7 +336,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_scrollPinningBehavior(DoNotPin)
     , m_navigationID(0)
 {
-    m_visitedLinkProvider->addPage(*this);
+    if (m_process->state() == WebProcessProxy::State::Running)
+        m_visitedLinkProvider->addProcess(m_process.get());
 
     updateViewState();
 
@@ -575,7 +576,8 @@ void WebPageProxy::close()
 
     m_isClosed = true;
 
-    m_visitedLinkProvider->removePage(*this);
+    if (m_process->state() == WebProcessProxy::State::Running)
+        m_visitedLinkProvider->removeProcess(m_process.get());
 
     m_backForwardList->pageClosed();
     m_pageClient.pageClosed();
@@ -2696,6 +2698,8 @@ void WebPageProxy::connectionWillOpen(IPC::Connection* connection)
 {
     ASSERT(connection == m_process->connection());
 
+    m_visitedLinkProvider->addProcess(m_process.get());
+
     m_process->context().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, connection);
 }
 
@@ -3907,6 +3911,8 @@ void WebPageProxy::resetStateAfterProcessExited()
 {
     if (!isValid())
         return;
+
+    m_visitedLinkProvider->removeProcess(m_process.get());
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 

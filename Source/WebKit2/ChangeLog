@@ -1,3 +1,39 @@
+2014-02-28  Anders Carlsson  <andersca@apple.com>
+
+        VisitedLinkProvider should keep track of processes, not pages
+        https://bugs.webkit.org/show_bug.cgi?id=129497
+
+        Reviewed by Dan Bernstein.
+
+        Use a counted set of WebProcessProxy pointers instead of a set of pages.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::~VisitedLinkProvider):
+        Assert that m_processes is null.
+
+        (WebKit::VisitedLinkProvider::addProcess):
+        Add the process to the set.
+
+        (WebKit::VisitedLinkProvider::removeProcess):
+        Remove the process from the set.
+
+        * UIProcess/VisitedLinkProvider.h:
+        
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        If our process is currently running, add it to the visited link provider.
+        Otherwise it will be added in connectionWillOpen.
+
+        (WebKit::WebPageProxy::close):
+        If our process is running, remove it from the visited link provider. 
+        Otherwise it's either crashed or not yet launched and will not have been added.
+
+        (WebKit::WebPageProxy::connectionWillOpen):
+        Add the process to the visited link provider.
+
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        Remove the process from the visited link provider.
+
 2014-02-27  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Stop using some deprecated functions in WKView.mm

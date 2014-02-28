@@ -1,3 +1,12 @@
+2014-02-28  Anders Carlsson  <andersca@apple.com>
+
+        Remove logging.
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController browsingContextController:decidePolicyForNavigationAction:decisionHandler:]):
+
 2014-02-28  Daniel Bates  <dabates@apple.com>
 
         [iOS] DumpRenderTree Perl Support may build against wrong SDK and toolchain

@@ -29,6 +29,7 @@
 #include "VisitedLinkTable.h"
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
@@ -46,8 +47,8 @@ public:
 
     uint64_t identifier() const { return m_identifier; }
 
-    void addPage(WebPageProxy&);
-    void removePage(WebPageProxy&);
+    void addProcess(WebProcessProxy&);
+    void removeProcess(WebProcessProxy&);
 
     void addVisitedLink(WebCore::LinkHash);
 
@@ -59,11 +60,12 @@ private:
 
     void pendingVisitedLinksTimerFired();
 
+    HashCountedSet<WebProcessProxy*> m_processes;
+
     HashSet<WebProcessProxy*> m_processesWithVisitedLinkState;
     HashSet<WebProcessProxy*> m_processesWithoutVisitedLinkState;
 
     uint64_t m_identifier;
-    HashSet<WebPageProxy*> m_pages;
 
     unsigned m_keyCount;
     unsigned m_tableSize;

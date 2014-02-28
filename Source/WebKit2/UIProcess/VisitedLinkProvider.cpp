@@ -51,7 +51,7 @@ PassRefPtr<VisitedLinkProvider> VisitedLinkProvider::create()
 
 VisitedLinkProvider::~VisitedLinkProvider()
 {
-    ASSERT(m_pages.isEmpty());
+    ASSERT(m_processes.isEmpty());
 }
 
 VisitedLinkProvider::VisitedLinkProvider()
@@ -62,16 +62,18 @@ VisitedLinkProvider::VisitedLinkProvider()
 {
 }
 
-void VisitedLinkProvider::addPage(WebPageProxy& webPageProxy)
+void VisitedLinkProvider::addProcess(WebProcessProxy& process)
 {
-    ASSERT(!m_pages.contains(&webPageProxy));
-    m_pages.add(&webPageProxy);
+    ASSERT(process.state() == WebProcessProxy::State::Running);
+
+    m_processes.add(&process);
 }
 
-void VisitedLinkProvider::removePage(WebPageProxy& webPageProxy)
+void VisitedLinkProvider::removeProcess(WebProcessProxy& process)
 {
-    ASSERT(m_pages.contains(&webPageProxy));
-    m_pages.remove(&webPageProxy);
+    ASSERT(m_processes.contains(&process));
+
+    m_processes.remove(&process);
 }
 
 void VisitedLinkProvider::processDidFinishLaunching(WebProcessProxy* process)
