@@ -2982,14 +2982,18 @@ void Document::processReferrerPolicy(const String& policy)
 {
     ASSERT(!policy.isNull());
 
-    m_referrerPolicy = ReferrerPolicyDefault;
-
     if (equalIgnoringCase(policy, "never"))
         m_referrerPolicy = ReferrerPolicyNever;
     else if (equalIgnoringCase(policy, "always"))
         m_referrerPolicy = ReferrerPolicyAlways;
     else if (equalIgnoringCase(policy, "origin"))
         m_referrerPolicy = ReferrerPolicyOrigin;
+    else if (equalIgnoringCase(policy, "default"))
+        m_referrerPolicy = ReferrerPolicyDefault;
+    else {
+        addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, "Failed to set referrer policy: The value '" + policy + "' is not one of 'always', 'default', 'never', or 'origin'. Defaulting to 'never'.");
+        m_referrerPolicy = ReferrerPolicyNever;
+    }
 }
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const LayoutPoint& documentPoint, const PlatformMouseEvent& event)

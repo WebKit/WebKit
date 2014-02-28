@@ -1,3 +1,20 @@
+2014-02-28  Jochen Eisinger  <jochen@chromium.org>
+
+        Update meta-referrer behavior for invalid policies
+        https://bugs.webkit.org/show_bug.cgi?id=129475
+
+        This patch aligns the behavior with the CSP 1.1 referrer directive,
+        where the fallback for an invalid value is the "never" policy.
+
+        Original patch from Mike West: https://src.chromium.org/viewvc/blink?view=rev&revision=165627
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/security/referrer-policy-invalid.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::processReferrerPolicy):
+
 2014-02-28  Daniel Bates  <dabates@apple.com>
 
         SubresourceLoader::didFinishLoading() should not assert when a decode error occurs
