@@ -1,3 +1,19 @@
+2014-02-28  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Add subpixel support to border type of double, groove, ridge, inset and outset.
+        https://bugs.webkit.org/show_bug.cgi?id=129226
+
+        Reviewed by Simon Fraser.
+
+        This is the conversion of double, inset, outset, groove and ridge border type
+        painting to support device pixel precision width/height.
+
+        Regression is covered by existing tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        * rendering/RenderObject.h:
+
 2014-02-28  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Filters should test for area instead of single dimension

@@ -876,8 +876,7 @@ public:
 
     RespectImageOrientationEnum shouldRespectImageOrientation() const;
 
-    void drawLineForBoxSide(GraphicsContext*, LayoutUnit x1, LayoutUnit y1, LayoutUnit x2, LayoutUnit y2, BoxSide,
-                            Color, EBorderStyle, int adjbw1, int adjbw2, bool antialias = false);
+    void drawLineForBoxSide(GraphicsContext*, float x1, float y1, float x2, float y2, BoxSide, Color, EBorderStyle, float adjbw1, float adjbw2, bool antialias = false);
 protected:
     int columnNumberForOffset(int offset);
 
