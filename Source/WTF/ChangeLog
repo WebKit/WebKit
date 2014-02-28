@@ -1,3 +1,11 @@
+2014-02-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix: Pass build environment to sub-processes via command line.
+        <rdar://problem/16197002>
+
+        * WTF.vcxproj/build-generated-files.sh: Pass WEBKIT_LIBRARIES via argument, rather than
+        relying on global environment.
+
 2014-02-25  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.
