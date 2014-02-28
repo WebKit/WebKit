@@ -1125,6 +1125,7 @@ set(WebCore_SOURCES
     dom/ClientRectList.cpp
     dom/Clipboard.cpp
     dom/ClipboardEvent.cpp
+    dom/CollectionIndexCache.cpp
     dom/Comment.cpp
     dom/CompositionEvent.cpp
     dom/ContainerNode.cpp

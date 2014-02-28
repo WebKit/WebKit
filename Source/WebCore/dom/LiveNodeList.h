@@ -77,6 +77,7 @@ public:
     // DOM API
     virtual unsigned length() const override final;
     virtual Node* item(unsigned offset) const override final;
+    virtual size_t memoryCost() const override;
 
     ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument; }
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }

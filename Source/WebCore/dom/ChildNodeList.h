@@ -49,6 +49,7 @@ private:
     virtual unsigned length() const override { return 0; }
     virtual Node* item(unsigned) const override { return nullptr; }
     virtual Node* namedItem(const AtomicString&) const override { return nullptr; }
+    virtual size_t memoryCost() const override { return 0; }
 
     virtual bool isEmptyNodeList() const override { return true; }
 
@@ -81,6 +82,7 @@ private:
     virtual unsigned length() const override;
     virtual Node* item(unsigned index) const override;
     virtual Node* namedItem(const AtomicString&) const override;
+    virtual size_t memoryCost() const override { return m_indexCache.memoryCost(); }
 
     virtual bool isChildNodeList() const override { return true; }
 

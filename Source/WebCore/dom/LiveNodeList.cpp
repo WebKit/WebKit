@@ -143,6 +143,11 @@ Node* LiveNodeList::item(unsigned offset) const
     return m_indexCache.nodeAt(*this, offset);
 }
 
+size_t LiveNodeList::memoryCost() const
+{
+    return m_indexCache.memoryCost();
+}
+
 void LiveNodeList::invalidateCache() const
 {
     m_indexCache.invalidate();

@@ -158,7 +158,6 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, readonl
     // attribute to readonly.
     COMPILE_ASSERT(!__is_polymorphic(readonly), readonly_is_polymorphic_but_idl_claims_not_to_be);
 #endif
-    ReportMemoryCost<readonly>::reportMemoryCost(exec, impl);
     return createNewWrapper<JSreadonly>(exec, globalObject, impl);
 }
 

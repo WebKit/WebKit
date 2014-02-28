@@ -40,17 +40,34 @@ class Element;
 
 class CollectionNamedElementCache {
 public:
+#ifndef ASSERT_DISABLED
+    CollectionNamedElementCache : m_didPopulateCalled(false) { }
+#endif
+
     const Vector<Element*>* findElementsWithId(const AtomicString& id) const { return find(m_idToElementsMap, id); }
     const Vector<Element*>* findElementsWithName(const AtomicString& name) const { return find(m_nameToElementsMap, name); }
 
     void appendIdCache(const AtomicString& id, Element* element) { return append(m_idToElementsMap, id, element); }
     void appendNameCache(const AtomicString& name, Element* element)  { return append(m_nameToElementsMap, name, element); }
 
+    void didPopulate()
+    {
+#ifndef ASSERT_DISABLED
+        m_didPopulateCalled = true;
+#endif
+        if (size_t cost = memoryCost())
+            reportExtraMemoryCostForCollectionIndexCache(cost);
+    }
+    size_t memoryCost() const { return (m_idToElementsMap.size() + m_nameToElementsMap.size()) * sizeof(Element*); }
+
 private:
     typedef HashMap<AtomicStringImpl*, Vector<Element*>> StringToElementsMap;
 
-    static const Vector<Element*>* find(const StringToElementsMap& map, const AtomicString& key)
+    const Vector<Element*>* find(const StringToElementsMap& map, const AtomicString& key) const
     {
+#ifndef ASSERT_DISABLED
+        ASSERT(m_didPopulateCalled);
+#endif
         auto it = map.find(key.impl());
         return it != map.end() ? &it->value : nullptr;
     }
@@ -62,6 +79,9 @@ private:
 
     StringToElementsMap m_idToElementsMap;
     StringToElementsMap m_nameToElementsMap;
+#ifndef ASSERT_DISABLED
+    bool m_didPopulateCalled;
+#endif
 };
 
 class HTMLCollection : public ScriptWrappable, public RefCounted<HTMLCollection> {
@@ -78,6 +98,7 @@ public:
     // Non-DOM API
     bool hasNamedItem(const AtomicString& name) const;
     void namedItems(const AtomicString& name, Vector<Ref<Element>>&) const;
+    size_t memoryCost() const { return m_indexCache.memoryCost() + (m_namedElementCache ? m_namedElementCache->memoryCost() : 0); }
 
     bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument; }
     NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }

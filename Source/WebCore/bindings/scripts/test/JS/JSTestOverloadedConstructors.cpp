@@ -253,7 +253,6 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestOve
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    ReportMemoryCost<TestOverloadedConstructors>::reportMemoryCost(exec, impl);
     return createNewWrapper<JSTestOverloadedConstructors>(exec, globalObject, impl);
 }
 

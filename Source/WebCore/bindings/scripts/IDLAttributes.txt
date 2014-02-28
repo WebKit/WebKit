@@ -98,6 +98,7 @@ RaisesException
 Reflect=*
 Replaceable
 ReplaceableConstructor
+ReportExtraMemoryCost
 ReturnNewObject
 SetterRaisesException
 SkipVTableValidation

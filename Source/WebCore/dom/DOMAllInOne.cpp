@@ -39,6 +39,7 @@
 #include "ClientRectList.cpp"
 #include "Clipboard.cpp"
 #include "ClipboardEvent.cpp"
+#include "CollectionIndexCache.cpp"
 #include "Comment.cpp"
 #include "CompositionEvent.cpp"
 #include "ContainerNode.cpp"

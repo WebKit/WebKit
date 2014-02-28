@@ -845,7 +845,6 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInt
     // attribute to TestInterface.
     COMPILE_ASSERT(!__is_polymorphic(TestInterface), TestInterface_is_polymorphic_but_idl_claims_not_to_be);
 #endif
-    ReportMemoryCost<TestInterface>::reportMemoryCost(exec, impl);
     return createNewWrapper<JSTestInterface>(exec, globalObject, impl);
 }
 

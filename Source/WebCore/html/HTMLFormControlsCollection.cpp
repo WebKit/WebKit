@@ -173,6 +173,8 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
                 cache.appendNameCache(nameAttrVal, &element);
         }
     }
+
+    cache.didPopulate();
 }
 
 void HTMLFormControlsCollection::invalidateCache() const

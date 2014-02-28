@@ -1,3 +1,91 @@
+2014-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        JSC ignores the extra memory cost of HTMLCollection after a major GC
+        https://bugs.webkit.org/show_bug.cgi?id=129450
+
+        Reviewed by Andreas Kling.
+
+        Report the extra memory cost of HTMLCollection to JSC.
+
+        Unfortunately, the existing mechanism to report the extra memory cost in toJS is insufficient for
+        HTMLCollection since collection caches are populated later when HTMLCollection is accessed. Also,
+        the extra memory cost reported by Heap::reportExtraMemoryCost will be thrown away after a major GC.
+
+        To work around this limitation, added a visitor.reportExtraMemoryUsage call inside visitChildren
+        for interfaces with a newly added ReportExtraMemoryCost IDL extension flag to report the extra cost.
+
+        Since we may need to generate visitChildren when this flag is set, we can't automatically detect
+        and generate calls using C++ template as done in r148648.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/webaudio/AudioBuffer.idl:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InstanceNeedsVisitChildren):
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::toJS):
+        * dom/ChildNodeList.h:
+        * dom/CollectionIndexCache.cpp: Added.
+        (WebCore::reportExtraMemoryCostForCollectionIndexCache):
+        * dom/CollectionIndexCache.h:
+        (WebCore::CollectionIndexCache::memoryCost):
+        (WebCore::NodeType>::CollectionIndexCache):
+        (WebCore::NodeType>::nodeCount):
+        (WebCore::NodeType>::computeNodeCountUpdatingListCache):
+        (WebCore::NodeType>::nodeAt):
+        (WebCore::NodeType>::invalidate):
+        * dom/DOMAllInOne.cpp:
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeList::memoryCost):
+        * dom/LiveNodeList.h:
+        * dom/NodeList.h:
+        (WebCore::NodeList::memoryCost):
+        * dom/NodeList.idl:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::updateNamedElementCache):
+        * html/HTMLCollection.h:
+        (WebCore::CollectionNamedElementCache::didPopulate):
+        (WebCore::CollectionNamedElementCache::memoryCost):
+        (WebCore::CollectionNamedElementCache::find):
+        (WebCore::HTMLCollection::memoryCost):
+        * html/HTMLCollection.idl:
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::updateNamedElementCache):
+
 2014-02-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Compile attribute value matching

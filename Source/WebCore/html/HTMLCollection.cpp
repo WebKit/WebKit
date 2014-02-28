@@ -444,6 +444,10 @@ void HTMLCollection::updateNamedElementCache() const
         if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (type() != DocAll || nameShouldBeVisibleInDocumentAll(toHTMLElement(*element))))
             cache.appendNameCache(nameAttrVal, element);
     }
+
+    m_indexCache.nodeCount(*this);
+
+    cache.didPopulate();
 }
 
 bool HTMLCollection::hasNamedItem(const AtomicString& name) const

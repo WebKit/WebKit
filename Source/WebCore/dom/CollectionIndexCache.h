@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,11 @@
 #ifndef CollectionIndexCache_h
 #define CollectionIndexCache_h
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
+
+void reportExtraMemoryCostForCollectionIndexCache(size_t);
 
 template <class Collection, class NodeType>
 class CollectionIndexCache {
@@ -37,15 +41,19 @@ public:
     NodeType* nodeAt(const Collection&, unsigned index);
 
     void invalidate();
+    size_t memoryCost() { return m_cachedList.capacity() * sizeof(NodeType*); }
 
 private:
+    unsigned computeNodeCountUpdatingListCache(const Collection&);
     NodeType* nodeBeforeCached(const Collection&, unsigned);
     NodeType* nodeAfterCached(const Collection&, unsigned);
 
     NodeType* m_currentNode;
     unsigned m_currentIndex;
     unsigned m_nodeCount;
-    bool m_nodeCountValid;
+    Vector<NodeType*> m_cachedList;
+    bool m_nodeCountValid : 1;
+    bool m_listValid : 1;
 };
 
 template <class Collection, class NodeType>
@@ -54,6 +62,7 @@ inline CollectionIndexCache<Collection, NodeType>::CollectionIndexCache()
     , m_currentIndex(0)
     , m_nodeCount(0)
     , m_nodeCountValid(false)
+    , m_listValid(false)
 {
 }
 
@@ -61,16 +70,34 @@ template <class Collection, class NodeType>
 inline unsigned CollectionIndexCache<Collection, NodeType>::nodeCount(const Collection& collection)
 {
     if (!m_nodeCountValid) {
-        if (auto first = collection.collectionFirst()) {
-            unsigned count;
-            collection.collectionTraverseForward(*first, std::numeric_limits<unsigned>::max(), count);
-            m_nodeCount = count + 1;
-        } else
-            m_nodeCount = 0;
+        m_nodeCount = computeNodeCountUpdatingListCache(collection);
         m_nodeCountValid = true;
     }
 
     return m_nodeCount;
+}
+
+template <class Collection, class NodeType>
+unsigned CollectionIndexCache<Collection, NodeType>::computeNodeCountUpdatingListCache(const Collection& collection)
+{
+    NodeType* first = collection.collectionFirst();
+    if (!first)
+        return 0;
+
+    unsigned oldCapacity = m_cachedList.capacity();
+    NodeType* currentNode = first;
+    while (currentNode) {
+        m_cachedList.append(currentNode);
+        unsigned traversed;
+        currentNode = collection.collectionTraverseForward(*currentNode, 1, traversed);
+        ASSERT(traversed == (currentNode ? 1 : 0));
+    }
+    m_listValid = true;
+
+    if (unsigned capacityDifference = m_cachedList.capacity() - oldCapacity)
+        reportExtraMemoryCostForCollectionIndexCache(capacityDifference * sizeof(NodeType*));
+
+    return m_cachedList.size();
 }
 
 template <class Collection, class NodeType>
@@ -133,6 +160,9 @@ inline NodeType* CollectionIndexCache<Collection, NodeType>::nodeAt(const Collec
     if (m_nodeCountValid && index >= m_nodeCount)
         return nullptr;
 
+    if (m_listValid)
+        return m_cachedList[index];
+
     if (m_currentNode) {
         if (index > m_currentIndex)
             return nodeAfterCached(collection, index);
@@ -165,7 +195,10 @@ void CollectionIndexCache<Collection, NodeType>::invalidate()
 {
     m_currentNode = nullptr;
     m_nodeCountValid = false;
+    m_listValid = false;
+    m_cachedList.shrink(0);
 }
+
 
 }
 
