@@ -101,15 +101,132 @@ bool SVGTextRunRenderingContext::applySVGKerning(const SimpleFontData* fontData,
     return true;
 }
 
-void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const SimpleFontData* fontData, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
+class SVGGlyphToPathTranslator final : public GlyphToPathTranslator {
+public:
+    SVGGlyphToPathTranslator(const GlyphBuffer& glyphBuffer, const FloatPoint& point, const SVGFontData& svgFontData, SVGFontElement& fontElement, const int from, const int numGlyphs, float scale, bool isVerticalText);
+private:
+    virtual bool containsMorePaths() override
+    {
+        return m_index != m_stoppingPoint;
+    }
+    virtual Path nextPath() override;
+    void moveToNextValidGlyph();
+    void incrementIndex();
+
+    const GlyphBuffer& m_glyphBuffer;
+    const SVGFontData& m_svgFontData;
+    FloatPoint m_currentPoint;
+    FloatPoint m_glyphOrigin;
+    SVGGlyph m_svgGlyph;
+    int m_index;
+    Glyph m_glyph;
+    SVGFontElement& m_fontElement;
+    const float m_stoppingPoint;
+    const float m_scale;
+    const bool m_isVerticalText;
+};
+
+SVGGlyphToPathTranslator::SVGGlyphToPathTranslator(const GlyphBuffer& glyphBuffer, const FloatPoint& point, const SVGFontData& svgFontData, SVGFontElement& fontElement, const int from, const int numGlyphs, float scale, bool isVerticalText)
+    : m_glyphBuffer(glyphBuffer)
+    , m_svgFontData(svgFontData)
+    , m_currentPoint(point)
+    , m_glyphOrigin(m_svgFontData.horizontalOriginX() * scale, m_svgFontData.horizontalOriginY() * scale)
+    , m_index(from)
+    , m_glyph(glyphBuffer.glyphAt(m_index))
+    , m_fontElement(fontElement)
+    , m_stoppingPoint(numGlyphs + from)
+    , m_scale(scale)
+    , m_isVerticalText(isVerticalText)
+{
+    ASSERT(glyphBuffer.size() > m_index);
+    if (m_glyph) {
+        m_svgGlyph = m_fontElement.svgGlyphForGlyph(m_glyph);
+        ASSERT(!m_svgGlyph.isPartOfLigature);
+        ASSERT(m_svgGlyph.tableEntry == m_glyph);
+        SVGGlyphElement::inheritUnspecifiedAttributes(m_svgGlyph, &m_svgFontData);
+    }
+    moveToNextValidGlyph();
+}
+
+Path SVGGlyphToPathTranslator::nextPath()
+{
+    if (m_isVerticalText) {
+        m_glyphOrigin.setX(m_svgGlyph.verticalOriginX * m_scale);
+        m_glyphOrigin.setY(m_svgGlyph.verticalOriginY * m_scale);
+    }
+
+    AffineTransform glyphPathTransform;
+    glyphPathTransform.translate(m_currentPoint.x() + m_glyphOrigin.x(), m_currentPoint.y() + m_glyphOrigin.y());
+    glyphPathTransform.scale(m_scale, -m_scale);
+
+    Path glyphPath = m_svgGlyph.pathData;
+    glyphPath.transform(glyphPathTransform);
+    incrementIndex();
+    return glyphPath;
+}
+
+void SVGGlyphToPathTranslator::moveToNextValidGlyph()
+{
+    if (m_glyph && !m_svgGlyph.pathData.isEmpty())
+        return;
+    incrementIndex();
+}
+
+void SVGGlyphToPathTranslator::incrementIndex()
+{
+    do {
+        if (m_glyph) {
+            float advance = m_glyphBuffer.advanceAt(m_index).width();
+            if (m_isVerticalText)
+                m_currentPoint.move(0, advance);
+            else
+                m_currentPoint.move(advance, 0);
+        }
+
+        ++m_index;
+        if (m_index >= m_stoppingPoint)
+            break;
+        m_glyph = m_glyphBuffer.glyphAt(m_index);
+        if (!m_glyph)
+            continue;
+        m_svgGlyph = m_fontElement.svgGlyphForGlyph(m_glyph);
+        ASSERT(!m_svgGlyph.isPartOfLigature);
+        ASSERT(m_svgGlyph.tableEntry == m_glyph);
+        SVGGlyphElement::inheritUnspecifiedAttributes(m_svgGlyph, &m_svgFontData);
+    } while ((!m_glyph || m_svgGlyph.pathData.isEmpty()) && m_index < m_stoppingPoint);
+}
+
+class DummyGlyphToPathTranslator final : public GlyphToPathTranslator {
+    virtual bool containsMorePaths() override
+    {
+        return false;
+    }
+    virtual Path nextPath() override
+    {
+        return Path();
+    }
+};
+
+std::unique_ptr<GlyphToPathTranslator> SVGTextRunRenderingContext::createGlyphToPathTranslator(const SimpleFontData& fontData, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
     SVGFontElement* fontElement = 0;
     SVGFontFaceElement* fontFaceElement = 0;
 
-    const SVGFontData* svgFontData = svgFontAndFontFaceElementForFontData(fontData, fontFaceElement, fontElement);
+    const SVGFontData* svgFontData = svgFontAndFontFaceElementForFontData(&fontData, fontFaceElement, fontElement);
     if (!fontElement || !fontFaceElement)
-        return;
+        return std::make_unique<DummyGlyphToPathTranslator>();
 
+    auto& elementRenderer = renderer().isRenderElement() ? toRenderElement(renderer()) : *renderer().parent();
+    RenderStyle& style = elementRenderer.style();
+    bool isVerticalText = style.svgStyle().isVerticalWritingMode();
+
+    float scale = scaleEmToUnits(fontData.platformData().size(), fontFaceElement->unitsPerEm());
+
+    return std::make_unique<SVGGlyphToPathTranslator>(glyphBuffer, point, *svgFontData, *fontElement, from, numGlyphs, scale, isVerticalText);
+}
+
+void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const SimpleFontData* fontData, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
+{
     auto activePaintingResource = this->activePaintingResource();
     if (!activePaintingResource) {
         // TODO: We're only supporting simple filled HTML text so far.
@@ -120,50 +237,13 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
 
     auto& elementRenderer = renderer().isRenderElement() ? toRenderElement(renderer()) : *renderer().parent();
     RenderStyle& style = elementRenderer.style();
-    bool isVerticalText = style.svgStyle().isVerticalWritingMode();
 
-    float scale = scaleEmToUnits(fontData->platformData().size(), fontFaceElement->unitsPerEm());
     ASSERT(activePaintingResource);
 
-    FloatPoint glyphOrigin;
-    glyphOrigin.setX(svgFontData->horizontalOriginX() * scale);
-    glyphOrigin.setY(svgFontData->horizontalOriginY() * scale);
-
-    FloatPoint currentPoint = point;
     RenderSVGResourceMode resourceMode = context->textDrawingMode() == TextModeStroke ? ApplyToStrokeMode : ApplyToFillMode;
-    for (int i = 0; i < numGlyphs; ++i) {
-        Glyph glyph = glyphBuffer.glyphAt(from + i);
-        if (!glyph)
-            continue;
-
-        float advance = glyphBuffer.advanceAt(from + i).width();
-        SVGGlyph svgGlyph = fontElement->svgGlyphForGlyph(glyph);
-        ASSERT(!svgGlyph.isPartOfLigature);
-        ASSERT(svgGlyph.tableEntry == glyph);
-
-        SVGGlyphElement::inheritUnspecifiedAttributes(svgGlyph, svgFontData);
-
-        // FIXME: Support arbitary SVG content as glyph (currently limited to <glyph d="..."> situations).
-        if (svgGlyph.pathData.isEmpty()) {
-            if (isVerticalText)
-                currentPoint.move(0, advance);
-            else
-                currentPoint.move(advance, 0);
-            continue;
-         }
-
-        if (isVerticalText) {
-            glyphOrigin.setX(svgGlyph.verticalOriginX * scale);
-            glyphOrigin.setY(svgGlyph.verticalOriginY * scale);
-         }
-
-        AffineTransform glyphPathTransform;
-        glyphPathTransform.translate(currentPoint.x() + glyphOrigin.x(), currentPoint.y() + glyphOrigin.y());
-        glyphPathTransform.scale(scale, -scale);
-
-        Path glyphPath = svgGlyph.pathData;
-        glyphPath.transform(glyphPathTransform);
-
+    auto translator(createGlyphToPathTranslator(*fontData, glyphBuffer, from, numGlyphs, point));
+    while (translator->containsMorePaths()) {
+        Path glyphPath = translator->nextPath();
         if (activePaintingResource->applyResource(elementRenderer, style, context, resourceMode)) {
             float strokeThickness = context->strokeThickness();
             if (renderer().isSVGInlineText())
@@ -171,11 +251,6 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
             activePaintingResource->postApplyResource(elementRenderer, context, resourceMode, &glyphPath, 0);
             context->setStrokeThickness(strokeThickness);
         }
-
-        if (isVerticalText)
-            currentPoint.move(0, advance);
-        else
-            currentPoint.move(advance, 0);
     }
 }
 

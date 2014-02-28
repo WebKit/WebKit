@@ -78,6 +78,11 @@ Path::Path()
 {
 }
 
+Path::Path(RetainPtr<CGMutablePathRef> p)
+    : m_path(p.leakRef())
+{
+}
+
 Path::~Path()
 {
     if (m_path)

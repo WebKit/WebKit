@@ -35,6 +35,7 @@ class FloatRect;
 class Font;
 class GraphicsContext;
 class GlyphBuffer;
+class GlyphToPathTranslator;
 class SimpleFontData;
 struct GlyphData;
 struct WidthIterator;
@@ -188,6 +189,7 @@ public:
 
     class RenderingContext : public RefCounted<RenderingContext> {
     public:
+        virtual std::unique_ptr<GlyphToPathTranslator> createGlyphToPathTranslator(const SimpleFontData&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&) const = 0;
         virtual ~RenderingContext() { }
 
 #if ENABLE(SVG_FONTS)

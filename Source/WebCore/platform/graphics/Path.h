@@ -33,6 +33,8 @@
 #include <wtf/Forward.h>
 
 #if USE(CG)
+#include <wtf/RetainPtr.h>
+#include <CoreGraphics/CGPath.h>
 typedef struct CGPath PlatformPath;
 #elif USE(CAIRO)
 namespace WebCore {
@@ -82,6 +84,9 @@ namespace WebCore {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         Path();
+#if USE(CG)
+        Path(RetainPtr<CGMutablePathRef>);
+#endif
         ~Path();
 
         Path(const Path&);

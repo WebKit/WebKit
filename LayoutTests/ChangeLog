@@ -1,3 +1,16 @@
+2014-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        text-decoration-skip: ink does not skip over SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=128936
+
+        Reviewed by Darin Adler.
+
+        This font simply draws some underlined text with a SVG font and makes sure the underline skips.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/resources/Litherum.svg: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html: Added.
+
 2014-02-27  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Removing MediaConstraints argument from RTCPeerConnection addStream, updateIce methods and constructor

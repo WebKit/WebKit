@@ -59,6 +59,8 @@ private:
 
     virtual ~SVGTextRunRenderingContext() { }
 
+    virtual std::unique_ptr<GlyphToPathTranslator> createGlyphToPathTranslator(const SimpleFontData&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&) const override;
+
     RenderObject& m_renderer;
 
 #if ENABLE(SVG_FONTS)

@@ -436,33 +436,95 @@ static void findPathIntersections(void* stateAsVoidPointer, const CGPathElement*
     state.currentPoint = point;
 }
 
+class MacGlyphToPathTranslator final : public GlyphToPathTranslator {
+public:
+    MacGlyphToPathTranslator(const GlyphBuffer& glyphBuffer, const FloatPoint& textOrigin)
+        : m_index(0)
+        , m_glyphBuffer(glyphBuffer)
+        , m_fontData(glyphBuffer.fontDataAt(m_index))
+        , m_translation(CGAffineTransformScale(CGAffineTransformMakeTranslation(textOrigin.x(), textOrigin.y()), 1, -1))
+    {
+        moveToNextValidGlyph();
+    }
+private:
+    virtual bool containsMorePaths() override
+    {
+        return m_index != m_glyphBuffer.size();
+    }
+    virtual Path nextPath() override;
+    void moveToNextValidGlyph();
+    void incrementIndex();
+
+    int m_index;
+    const GlyphBuffer& m_glyphBuffer;
+    const SimpleFontData* m_fontData;
+    CGAffineTransform m_translation;
+};
+
+Path MacGlyphToPathTranslator::nextPath()
+{
+    RetainPtr<CGPathRef> result = adoptCF(CTFontCreatePathForGlyph(m_fontData->platformData().ctFont(), m_glyphBuffer.glyphAt(m_index), &m_translation));
+    incrementIndex();
+    return adoptCF(CGPathCreateMutableCopy(result.get()));
+}
+
+void MacGlyphToPathTranslator::moveToNextValidGlyph()
+{
+    if (!m_fontData->isSVGFont())
+        return;
+    incrementIndex();
+}
+
+void MacGlyphToPathTranslator::incrementIndex()
+{
+    do {
+        GlyphBufferAdvance advance = m_glyphBuffer.advanceAt(m_index);
+        m_translation = CGAffineTransformTranslate(m_translation, advance.width(), advance.height());
+        ++m_index;
+        if (m_index >= m_glyphBuffer.size())
+            break;
+        m_fontData = m_glyphBuffer.fontDataAt(m_index);
+    } while (m_fontData->isSVGFont() && m_index < m_glyphBuffer.size());
+}
+
 DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
 {
     if (loadingCustomFonts())
         return DashArray();
 
-    float deltaX;
     GlyphBuffer glyphBuffer;
-    if (codePath(run) != Complex)
+    float deltaX;
+    if (codePath(run) != Font::Complex)
         deltaX = getGlyphsAndAdvancesForSimpleText(run, 0, run.length(), glyphBuffer);
     else
         deltaX = getGlyphsAndAdvancesForComplexText(run, 0, run.length(), glyphBuffer);
-    CGAffineTransform translation = CGAffineTransformMakeTranslation(textOrigin.x() + deltaX, textOrigin.y());
-    translation = CGAffineTransformScale(translation, 1, -1);
+
+    if (!glyphBuffer.size())
+        return DashArray();
+    
+    // FIXME: Handle SVG + non-SVG interleaved runs
+    const SimpleFontData* fontData = glyphBuffer.fontDataAt(0);
+    std::unique_ptr<GlyphToPathTranslator> translator;
+    bool isSVG = false;
+    FloatPoint origin = FloatPoint(textOrigin.x() + deltaX, textOrigin.y());
+    if (!fontData->isSVGFont())
+        translator = std::move(std::make_unique<MacGlyphToPathTranslator>(glyphBuffer, origin));
+    else {
+        translator = std::move(run.renderingContext()->createGlyphToPathTranslator(*fontData, glyphBuffer, 0, run.length(), origin));
+        isSVG = true;
+    }
     DashArray result;
-    for (int i = 0; i < glyphBuffer.size(); ++i) {
+    for (int index = 0; translator->containsMorePaths(); ++index) {
         GlyphIterationState info = GlyphIterationState(CGPointMake(0, 0), CGPointMake(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x());
-        const SimpleFontData* fontData = glyphBuffer.fontDataAt(i);
-        if (fontData->isSVGFont())
-            continue;
-        RetainPtr<CGPathRef> path = adoptCF(CTFontCreatePathForGlyph(fontData->platformData().ctFont(), glyphBuffer.glyphAt(i), &translation));
-        CGPathApply(path.get(), &info, &findPathIntersections);
+        const SimpleFontData* localFontData = glyphBuffer.fontDataAt(index);
+        if (!localFontData || (!isSVG && localFontData->isSVGFont()) || (isSVG && localFontData != fontData))
+            break; // The advances will get all messed up if we do anything other than bail here.
+        Path path = translator->nextPath();
+        CGPathApply(path.platformPath(), &info, &findPathIntersections);
         if (info.minX < info.maxX) {
             result.append(info.minX - lineExtents.x());
             result.append(info.maxX - lineExtents.x());
         }
-        GlyphBufferAdvance advance = glyphBuffer.advanceAt(i);
-        translation = CGAffineTransformTranslate(translation, advance.width(), advance.height());
     }
     return result;
 }

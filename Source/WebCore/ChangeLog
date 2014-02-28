@@ -1,3 +1,41 @@
+2014-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        text-decoration-skip: ink does not skip over SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=128936
+
+        Reviewed by Darin Adler.
+
+        When drawing glyphs in an SVG font, the glyphs are converted to paths and then filled. This patch moves
+        the glyph -> path conversion into a helper class, GlyphToPathTranslator, and creates an implementation
+        for the SVG drawing code. Once this helper class is created, it can be used to trace paths in order
+        to make underlines skip over SVG glyphs. This helper class also has an implementation for non-SVG glyphs,
+        which allows for the glyph tracing code to be paramaterized over the implementation of the helper class
+        rather than if the FontData itself is SVG or not.
+
+        Tests: fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html
+
+        * platform/graphics/Font.h:
+        (WebCore::GlyphToPathTranslator::~GlyphToPathTranslator): Virtual implementation of helper class
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::Path): Created constructor that takes a RefPtr<CGMutablePathRef>
+        * platform/graphics/Path.h:
+        * platform/graphics/TextRun.h: Give RenderingContext a factory function to create the helper class
+        instance
+        * platform/graphics/mac/FontMac.mm: Implementation of helper class used for skipping underlines on
+        regular (CoreText) glyphs
+        (WebCore::MacGlyphToPathTranslator::MacGlyphToPathTranslator):
+        (WebCore::MacGlyphToPathTranslator::moveToNextValidGlyph):
+        (WebCore::MacGlyphToPathTranslator::incrementIndex):
+        (WebCore::Font::dashesForIntersectionsWithRect): Call the relevant factory function, and use it
+        to successively generate Paths
+        * rendering/svg/SVGTextRunRenderingContext.cpp: Implementation of helper class used for SVG fonts
+        (WebCore::SVGGlyphToPathTranslator::SVGGlyphToPathTranslator):
+        (WebCore::SVGGlyphToPathTranslator::moveToNextValidGlyph):
+        (WebCore::SVGGlyphToPathTranslator::incrementIndex):
+        (WebCore::SVGTextRunRenderingContext::createGlyphToPathTranslator):
+        (WebCore::SVGTextRunRenderingContext::drawSVGGlyphs): Use the above implementation
+        * rendering/svg/SVGTextRunRenderingContext.h: Factory function declaration
+
 2014-02-27  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Removing MediaConstraints argument from RTCPeerConnection addStream, updateIce methods and constructor
