@@ -5565,7 +5565,7 @@ Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
         else
             continue;
 
-        outOfBandTrackSources.append(PlatformTextTrack::createOutOfBand(url.string(), trackElement.label(), trackElement.srclang(), platformKind, ++uniqueId, trackElement.isDefault()));
+        outOfBandTrackSources.append(PlatformTextTrack::createOutOfBand(trackElement.label(), trackElement.srclang(), url.string(), platformKind, ++uniqueId, trackElement.isDefault()));
     }
     
     return outOfBandTrackSources;

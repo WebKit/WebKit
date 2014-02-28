@@ -1,3 +1,15 @@
+2014-02-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac, iOS] Incorrect ordering of construction arguments for out-of-band text elements
+        https://bugs.webkit.org/show_bug.cgi?id=129501
+        <rdar://problem/16198587>
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Correct order of arguments
+        to PlatformTextTrack.
+
 2014-02-28  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Properly clear m_logicallyLastRun to remove use-after-free possibility
