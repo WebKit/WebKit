@@ -127,6 +127,10 @@ void PlatformWebView::makeWebViewFirstResponder()
 {
 }
 
+void PlatformWebView::changeWindowScaleIfNeeded(float)
+{
+}
+
 WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
     int width;

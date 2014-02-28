@@ -90,6 +90,7 @@
 #import <wtf/Threading.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/OwnPtr.h>
+#import <wtf/text/WTFString.h>
 
 #if !PLATFORM(IOS)
 #import <Carbon/Carbon.h>
@@ -771,8 +772,34 @@ WebView *createWebViewAndOffscreenWindow()
         [uiWindow retain];
     }
 #endif
+    mainFrame = [webView mainFrame];
 
     return webView;
+}
+
+static void destroyWebViewAndOffscreenWindow()
+{
+    WebView *webView = [mainFrame webView];
+
+    [webView close];
+    mainFrame = nil;
+
+#if !PLATFORM(IOS)
+    NSWindow* window = [webView window];
+    // Work around problem where registering drag types leaves an outstanding
+    // "perform selector" on the window, which retains the window. It's a bit
+    // inelegant and perhaps dangerous to just blow them all away, but in practice
+    // it probably won't cause any trouble (and this is just a test tool, after all).
+    [NSObject cancelPreviousPerformRequestsWithTarget:window];
+
+    [window close]; // releases when closed
+#else
+    UIWindow *uiWindow = [gWebBrowserView window];
+    [uiWindow removeFromSuperview];
+    [uiWindow release];
+#endif
+
+    [webView release];
 }
 
 static NSString *libraryPathForDumpRenderTree()
@@ -1121,8 +1148,7 @@ void dumpRenderTree(int argc, const char *argv[])
     [NSSound _setAlertType:0];
 #endif
 
-    WebView *webView = createWebViewAndOffscreenWindow();
-    mainFrame = [webView mainFrame];
+    createWebViewAndOffscreenWindow();
 
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
     [WebCache empty];
@@ -1148,27 +1174,7 @@ void dumpRenderTree(int argc, const char *argv[])
     if (threaded)
         stopJavaScriptThreads();
 
-#if !PLATFORM(IOS)
-    NSWindow *window = [webView window];
-#endif
-    [webView close];
-    mainFrame = nil;
-
-#if !PLATFORM(IOS)
-    // Work around problem where registering drag types leaves an outstanding
-    // "perform selector" on the window, which retains the window. It's a bit
-    // inelegant and perhaps dangerous to just blow them all away, but in practice
-    // it probably won't cause any trouble (and this is just a test tool, after all).
-    [NSObject cancelPreviousPerformRequestsWithTarget:window];
-    
-    [window close]; // releases when closed
-#else
-    UIWindow *uiWindow = [gWebBrowserView window];
-    [uiWindow removeFromSuperview];
-    [uiWindow release];
-#endif
-
-    [webView release];
+    destroyWebViewAndOffscreenWindow();
     
     releaseGlobalControllers();
     
@@ -1435,6 +1441,20 @@ static void dumpBackForwardListForWebView(WebView *view)
 
     [itemsToPrint release];
     printf("===============================================\n");
+}
+
+static void changeWindowScaleIfNeeded(const char* testPathOrUR)
+{
+    bool hasHighDPIWindow = [[[mainFrame webView] window] backingScaleFactor] != 1;
+    WTF::String localPathOrUrl = String(testPathOrUR);
+    bool needsHighDPIWindow = localPathOrUrl.findIgnoringCase("hidpi-") != notFound;
+    if (hasHighDPIWindow == needsHighDPIWindow)
+        return;
+
+    CGFloat newScaleFactor = needsHighDPIWindow ? 2 : 1;
+    // When the new scale factor is set on the window first, WebView doesn't see it as a new scale and stops propagating the behavior change to WebCore::Page.
+    gTestRunner->setBackingScaleFactor(newScaleFactor);
+    [[[mainFrame webView] window] _setWindowResolution:newScaleFactor displayIfChanged:YES];
 }
 
 static void sizeWebViewForCurrentTest()
@@ -1733,8 +1753,10 @@ static void runTest(const string& inputLine)
         return;
     }
 
-    const string testURL([[url absoluteString] UTF8String]);
+    const char* testURL([[url absoluteString] UTF8String]);
     
+    changeWindowScaleIfNeeded(testURL);
+
     resetWebViewToConsistentStateBeforeTesting();
 
     gTestRunner = TestRunner::create(testURL, command.expectedPixelHash);

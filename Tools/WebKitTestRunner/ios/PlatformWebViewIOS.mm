@@ -207,6 +207,11 @@ void PlatformWebView::makeWebViewFirstResponder()
 //    [m_window makeFirstResponder:m_view];
 }
 
+void PlatformWebView::changeWindowScaleIfNeeded(float)
+{
+    // Retina only surface.
+}
+
 WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
     return 0; // FIXME for iOS?
