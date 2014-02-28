@@ -3912,7 +3912,11 @@ void WebPageProxy::resetStateAfterProcessExited()
     if (!isValid())
         return;
 
-    m_visitedLinkProvider->removeProcess(m_process.get());
+    // FIXME: It's weird that resetStateAfterProcessExited() is called even though the process is launching.
+    ASSERT(m_process->state() == WebProcessProxy::State::Launching || m_process->state() == WebProcessProxy::State::Terminated);
+
+    if (m_process->state() == WebProcessProxy::State::Terminated)
+        m_visitedLinkProvider->removeProcess(m_process.get());
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 

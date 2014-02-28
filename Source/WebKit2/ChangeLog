@@ -1,3 +1,12 @@
+2014-02-28  Anders Carlsson  <andersca@apple.com>
+
+        WebKit2.TerminateTwice test is failing.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        Turns out this can be called even when we're in the launching state so don't try to
+        remove the process from the visited link provider when in that state.
+
 2014-02-28  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash in WebKit::WebPageProxy::registerWebProcessAccessibilityToken
