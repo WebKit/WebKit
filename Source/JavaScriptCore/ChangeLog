@@ -1,3 +1,16 @@
+2014-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        indexOf and lastIndexOf shouldn't resolve ropes when needle is longer than haystack
+        https://bugs.webkit.org/show_bug.cgi?id=129466
+
+        Reviewed by Michael Saboff.
+
+        Refactored the code to avoid calling JSString::value when needle is longer than haystack.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+
 2014-02-27  Timothy Hatcher  <timothy@apple.com>
 
         Improve how ContentSearchUtilities::lineEndings works by supporting the three common line endings.

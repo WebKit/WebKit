@@ -752,18 +752,16 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
-    String s = thisValue.toString(exec)->value(exec);
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
-    String u2 = a0.toString(exec)->value(exec);
 
-    size_t result;
-    if (a1.isUndefined())
-        result = s.find(u2);
-    else {
-        unsigned pos;
-        int len = s.length();
+    JSString* thisJSString = thisValue.toString(exec);
+    JSString* otherJSString = a0.toString(exec);
+
+    unsigned pos = 0;
+    if (!a1.isUndefined()) {
+        int len = thisJSString->length();
         if (a1.isUInt32())
             pos = std::min<uint32_t>(a1.asUInt32(), len);
         else {
@@ -774,9 +772,12 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
                 dpos = len;
             pos = static_cast<unsigned>(dpos);
         }
-        result = s.find(u2, pos);
     }
 
+    if (thisJSString->length() < otherJSString->length() + pos)
+        return JSValue::encode(jsNumber(-1));
+
+    size_t result = thisJSString->value(exec).find(otherJSString->value(exec), pos);
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
@@ -787,25 +788,33 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
-    String s = thisValue.toString(exec)->value(exec);
-    int len = s.length();
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
 
-    String u2 = a0.toString(exec)->value(exec);
-    double dpos = a1.toIntegerPreserveNaN(exec);
-    if (dpos < 0)
-        dpos = 0;
-    else if (!(dpos <= len)) // true for NaN
-        dpos = len;
+    JSString* thisJSString = thisValue.toString(exec);
+    unsigned len = thisJSString->length();
+    JSString* otherJSString = a0.toString(exec);
 
-    size_t result;
-    unsigned startPosition = static_cast<unsigned>(dpos);
-    if (!startPosition)
-        result = s.startsWith(u2) ? 0 : notFound;
+    double dpos = a1.toIntegerPreserveNaN(exec);
+    unsigned startPosition;
+    if (dpos < 0)
+        startPosition = 0;
+    else if (!(dpos <= len)) // true for NaN
+        startPosition = len;
     else
-        result = s.reverseFind(u2, startPosition);
+        startPosition = static_cast<unsigned>(dpos);
+
+    if (len < otherJSString->length())
+        return JSValue::encode(jsNumber(-1));
+
+    String thisString = thisJSString->value(exec);
+    String otherString = otherJSString->value(exec);
+    size_t result;
+    if (!startPosition)
+        result = thisString.startsWith(otherString) ? 0 : notFound;
+    else
+        result = thisString.reverseFind(otherString, startPosition);
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
