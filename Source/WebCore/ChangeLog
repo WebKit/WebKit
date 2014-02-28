@@ -1,3 +1,19 @@
+2014-02-28  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Disambiguate calls to [[window contentView] layer] and [... setLayer:]
+        https://bugs.webkit.org/show_bug.cgi?id=129491
+
+        Reviewed by Alexey Proskuryakov.
+
+        -[NSWindow contentView] returns a bare id, leading to ambiguity when calling
+        certain methods, including -layer and -setLayer:. Resolve the ambiguity by
+        explicitly casting the -contentView call to a NSView*.
+
+        * platform/mac/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController setupVideoOverlay:]):
+        (-[WebVideoFullscreenController windowDidLoad]):
+        (-[WebVideoFullscreenController windowDidExitFullscreen]):
+
 2014-02-28  Andreas Kling  <akling@apple.com>
 
         MouseEvent.offsetX/Y should just return 0,0 for simulated clicks.

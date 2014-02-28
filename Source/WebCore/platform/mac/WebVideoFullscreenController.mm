@@ -98,7 +98,7 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 - (void)setupVideoOverlay:(CALayer *)layer
 {
     WebVideoFullscreenWindow *window = [self fullscreenWindow];
-    [[window contentView] setLayer:layer];
+    [(NSView*)[window contentView] setLayer:layer];
     [[window contentView] setWantsLayer:YES];
 }
 
@@ -107,7 +107,7 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
     WebVideoFullscreenWindow *window = [self fullscreenWindow];
     [window setHasShadow:YES]; // This is nicer with a shadow.
     [window setLevel:NSPopUpMenuWindowLevel-1];
-    [[window contentView] setLayer:[CALayer layer]];
+    [(NSView*)[window contentView] setLayer:[CALayer layer]];
     [[window contentView] setWantsLayer:YES];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
@@ -171,7 +171,7 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 
 - (void)windowDidExitFullscreen
 {
-    CALayer *layer = [[[self window] contentView] layer];
+    CALayer *layer = [(NSView*)[[self window] contentView] layer];
     if ([layer isKindOfClass:getAVPlayerLayerClass()])
         [[(AVPlayerLayer*)layer player] removeObserver:self forKeyPath:@"rate"];
 
