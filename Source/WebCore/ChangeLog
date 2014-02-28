@@ -1,3 +1,37 @@
+2014-02-28  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        paragraphs with different directionality in textarea with unicode-bidi: plaintext are aligned the same
+        https://bugs.webkit.org/show_bug.cgi?id=71194
+
+        Reviewed by David Hyatt.
+
+        Merged from Blink r157263 by <igor.o@sisa.samsung.com>
+        <https://src.chromium.org/viewvc/blink?revision=157263&view=revision>
+
+        In the css3-text spec (http://www.w3.org/TR/css3-text/#bidi-linebox):
+
+        The start and end edges of a line box are determined by the inline
+        base direction of the line box. In most cases, this is given by
+        its containing block's computed ‘direction’. However if its
+        containing block has ‘unicode-bidi: plaintext’, the inline base
+        direction the line box must be determined by the base direction of
+        the bidi paragraph to which it belongs: that is, the bidi
+        paragraph for which the line box holds content.
+
+        This patch just implements the behavior described above modifying
+        updateLogicalWidthForAlignment and setting the bidi level of the
+        RootInlineBox.
+
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::updateLogicalWidthForAlignment):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+        (WebCore::RenderBlockFlow::createLineBoxesFromBidiRuns):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::deleteEllipsisLineBoxes):
+        (WebCore::RenderBlockFlow::checkLinesForTextOverflow):
+        (WebCore::RenderBlockFlow::startAlignedOffsetForLine):
+
 2014-02-28  Jochen Eisinger  <jochen@chromium.org>
 
         Update meta-referrer behavior for invalid policies

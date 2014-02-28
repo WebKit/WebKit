@@ -2,24 +2,34 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+.rightAligned {
+  display: block;
+  text-align: right;
+}
+</style>
 </head>
 <body>
 <div>This tests proper handling of unicode-bidi: plaintext. You should not see any red.</div>
 
 <div dir=ltr>
 !hello.<br>
-<span dir=rtl>
+<span class="rightAligned" dir=rtl>
 !שלום.
-</span><br>
+</span>
 <span dir=ltr>
 hello, לוי!
 </span><br>
-<span dir=rtl>
-שלום, WebKit!</span><br>
-<pre>
+<span class="rightAligned" dir=rtl>
+שלום, WebKit!</span>
+<pre style="margin-bottom: 0px">
 a
 (
-!WebKit ,שלום
+</pre>
+<pre dir="rtl" style="margin: 0px">
+שלום, WebKit!
+</pre>
+<pre style="margin-top: 0px">
 hello, לוי!
 )
 </pre>

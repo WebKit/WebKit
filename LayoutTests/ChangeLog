@@ -1,3 +1,19 @@
+2014-02-28  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        paragraphs with different directionality in textarea with unicode-bidi: plaintext are aligned the same
+        https://bugs.webkit.org/show_bug.cgi?id=71194
+
+        Reviewed by David Hyatt.
+
+        Merged from Blink r157263 by <igor.o@sisa.samsung.com>
+        <https://src.chromium.org/viewvc/blink?revision=157263&view=revision>
+
+        Modified expectations for two layout tests to make them conforming to the spec.
+
+        * fast/text/international/unicode-bidi-plaintext-expected.html:
+        * platform/gtk/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/mac-mountainlion/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+
 2014-02-28  Jochen Eisinger  <jochen@chromium.org>
 
         Update meta-referrer behavior for invalid policies
