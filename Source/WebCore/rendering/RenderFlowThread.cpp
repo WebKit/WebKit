@@ -253,11 +253,9 @@ bool RenderFlowThread::hasCompositingRegionDescendant() const
     return false;
 }
 
-const RenderLayerList* RenderFlowThread::getLayerListForRegion(RenderNamedFlowFragment* region)
+const RenderLayerList* RenderFlowThread::getLayerListForRegion(RenderNamedFlowFragment* region) const
 {
-    if (!m_regionToLayerListMap)
-        return 0;
-    updateAllLayerToRegionMappingsIfNeeded();
+    ASSERT(m_regionToLayerListMap);
     auto iterator = m_regionToLayerListMap->find(region);
     return iterator == m_regionToLayerListMap->end() ? 0 : &iterator->value;
 }
@@ -281,11 +279,9 @@ RenderNamedFlowFragment* RenderFlowThread::regionForCompositedLayer(RenderLayer&
     return toRenderNamedFlowFragment(regionAtBlockOffset(0, flipForWritingMode(isHorizontalWritingMode() ? flowThreadOffset.y() : flowThreadOffset.x()), true, DisallowRegionAutoGeneration));
 }
 
-RenderNamedFlowFragment* RenderFlowThread::cachedRegionForCompositedLayer(RenderLayer& childLayer)
+RenderNamedFlowFragment* RenderFlowThread::cachedRegionForCompositedLayer(RenderLayer& childLayer) const
 {
-    if (!m_layerToRegionMap)
-        return 0;
-    updateAllLayerToRegionMappingsIfNeeded();
+    ASSERT(m_layerToRegionMap);
     return m_layerToRegionMap->get(&childLayer);
 }
 

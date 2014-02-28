@@ -1,3 +1,13 @@
+2014-02-28  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] ASSERTION FAILED: !m_regionsInvalidated in RenderFlowThread::regionAtBlockOffset
+        https://bugs.webkit.org/show_bug.cgi?id=129371
+
+        Reviewed Andrei Bucur.
+
+        * compositing/regions/video-in-overflow-region-expected.txt: Added.
+        * compositing/regions/video-in-overflow-region.html: Added.
+
 2014-02-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Compile attribute value matching

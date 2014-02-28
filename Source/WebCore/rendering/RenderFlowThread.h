@@ -178,10 +178,10 @@ public:
             updateAllLayerToRegionMappings();
     }
 
-    const RenderLayerList* getLayerListForRegion(RenderNamedFlowFragment*);
+    const RenderLayerList* getLayerListForRegion(RenderNamedFlowFragment*) const;
 
     RenderNamedFlowFragment* regionForCompositedLayer(RenderLayer&); // By means of getRegionRangeForBox or regionAtBlockOffset.
-    RenderNamedFlowFragment* cachedRegionForCompositedLayer(RenderLayer&);
+    RenderNamedFlowFragment* cachedRegionForCompositedLayer(RenderLayer&) const;
 
     virtual bool collectsGraphicsLayersUnderRegions() const;
 

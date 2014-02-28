@@ -1,3 +1,31 @@
+2014-02-28  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] ASSERTION FAILED: !m_regionsInvalidated in RenderFlowThread::regionAtBlockOffset
+        https://bugs.webkit.org/show_bug.cgi?id=129371
+
+        Reviewed by Andrei Bucur.
+
+        regionAtBlockOffset method is meant to be used after the flow thread validated
+        its region chain, otherwise we cannot rely on regionAtBlockOffset to determine correctly
+        the target region based on the offset in flow thread coordinates.
+
+        When the video element is collected in a named flow and displayed in a region, we ensure
+        that the region's decorations are taken into account to properly position the video.
+        However, we have to do that only if the named flow regions are validated.
+
+        I changed the method cachedRegionForCompositedLayer to check only the "cached" region
+        for a layer and not update the layer to region mappings before returning the region.
+        Because method cachedRegionForCompositedLayer does not update the region - layer mappings,
+        the code does not call regionAtBlockOffset in situations where the region chain is not validated yet.
+
+        Test: compositing/regions/video-in-overflow-region.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::getLayerListForRegion): Make it a getter that relies on
+        cached information and refrain from updating the mappings. Make it const too.
+        (WebCore::RenderFlowThread::cachedRegionForCompositedLayer):
+        * rendering/RenderFlowThread.h:
+
 2014-02-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Finetune captions menu as per design team
