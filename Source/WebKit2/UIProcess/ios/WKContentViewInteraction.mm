@@ -293,9 +293,22 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
     }
 }
 
+static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& quads, const FloatRect& rect)
+{
+    for (size_t i = 0; i < quads.size(); ++i) {
+        FloatRect boundingBox = quads[i].boundingBox();
+        if (boundingBox.width() > rect.width() || boundingBox.height() > rect.height())
+            return false;
+    }
+    return true;
+}
+
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius
 {
     if (!_isTapHighlightIDValid || _latestTapHighlightID != requestID)
+        return;
+
+    if (!highlightedQuadsAreSmallerThanRect(highlightedQuads, _page->unobscuredContentRect()))
         return;
 
     const CGFloat UIWebViewMinimumHighlightRadius = 2.0;
@@ -324,10 +337,8 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
         }
     }
 
-    // FIXME: WebKit1 uses the visibleRect. Using the whole frame from the page seems overkill.
-    CGRect boundaryRect = [self frame];
     if (allHighlightRectsAreRectilinear)
-        [_highlightView setFrames:rects.get() boundaryRect:boundaryRect];
+        [_highlightView setFrames:rects.get() boundaryRect:_page->exposedContentRect()];
     else {
         RetainPtr<NSMutableArray> quads = adoptNS([[NSMutableArray alloc] initWithCapacity:static_cast<const NSUInteger>(quadCount)]);
         for (size_t i = 0; i < quadCount; ++i) {
@@ -338,7 +349,7 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
             [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p3()]];
             [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p4()]];
         }
-        [_highlightView setQuads:quads.get() boundaryRect:boundaryRect];
+        [_highlightView setQuads:quads.get() boundaryRect:_page->exposedContentRect()];
     }
 
     RetainPtr<NSMutableArray> borderRadii = adoptNS([[NSMutableArray alloc] initWithCapacity:4]);
