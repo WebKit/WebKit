@@ -308,15 +308,24 @@ video::-webkit-media-controls-closed-captions-container {
     transition: height 0.10s linear;
 }
 
+video::-webkit-media-controls-closed-captions-container.out {
+    border-radius: 5px;
+}
+
 video::-webkit-media-controls-closed-captions-container h3 {
-    margin: 1px 10px;
-    padding-top: 4px;
+    padding-top: 8px;
+    margin: 0;
+    padding-left: 17px;
+    padding-right: 15px;
+    font-size: 10pt;
+    font-weight: bold;
+    font-style: normal;
 }
 
 video::-webkit-media-controls-closed-captions-container ul {
     list-style-type: none;
     margin: 0 0 4px 0;
-    padding: 0;
+    padding: 4px 0 0 0;
 }
 
 video::-webkit-media-controls-closed-captions-container li {

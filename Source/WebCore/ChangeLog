@@ -1,3 +1,27 @@
+2014-02-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Finetune captions menu as per design team
+        https://bugs.webkit.org/show_bug.cgi?id=129432
+
+        Reviewed by Eric Carlson.
+
+        Some design fine tuning of the captions dialog was required.
+        
+        No new tests, current suffice.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        Added out class.
+        * Modules/mediacontrols/mediaControlsGtk.js:
+        (ControllerGtk.prototype.buildCaptionMenu): Setting out class when
+        menu is going to show overlap the panel right border.
+        * css/mediaControlsGtk.css:
+        (video::-webkit-media-controls-closed-captions-container.out):
+        Setting all borders to 5px;
+        (video::-webkit-media-controls-closed-captions-container h3):
+        Reduced font size and increasing top padding.
+        (video::-webkit-media-controls-closed-captions-container ul):
+        Increased top padding.
+
 2014-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Element::attributeChanged shouldn't do any work when attribute value didn't change

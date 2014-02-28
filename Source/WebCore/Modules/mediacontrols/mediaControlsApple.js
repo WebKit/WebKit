@@ -83,6 +83,7 @@ Controller.prototype = {
         volumeBox: 'volume-box',
         noVideo: 'no-video',
         down: 'down',
+        out: 'out',
     },
     KeyCodes: {
         enter: 13,
