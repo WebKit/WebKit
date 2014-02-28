@@ -1,3 +1,21 @@
+2014-02-28  Timothy Hatcher  <timothy@apple.com>
+
+        Enable breakpoints when adding a new breakpoint or enabling an existing breakpoint.
+
+        This eliminates a multi-step process for the user that can be confusing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129426
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.set breakpointsEnabled):
+        (WebInspector.DebuggerManager.prototype._breakpointDisabledStateDidChange):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointsEnabledDidChange):
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointsToggleButtonClicked):
+
 2014-02-27  Timothy Hatcher  <timothy@apple.com>
 
         Use a RegExp when when using CodeMirror's SearchCursor.

@@ -30,6 +30,7 @@ WebInspector.DebuggerSidebarPanel = function()
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceChanged, this);
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceAdded, this);
 
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange, this._breakpointsEnabledDidChange, this);
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, this._debuggerCallFramesDidChange, this);
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointAdded, this._breakpointAdded, this);
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointRemoved, this._breakpointRemoved, this);
@@ -219,10 +220,14 @@ WebInspector.DebuggerSidebarPanel.prototype = {
         this._debuggerStepOutButtonItem.enabled = false;
     },
 
+    _breakpointsEnabledDidChange: function(event)
+    {
+        this._debuggerBreakpointsButtonItem.activated = WebInspector.debuggerManager.breakpointsEnabled;
+    },
+
     _breakpointsToggleButtonClicked: function(event)
     {
-        this._debuggerBreakpointsButtonItem.activated = !this._debuggerBreakpointsButtonItem.activated;
-        WebInspector.debuggerManager.breakpointsEnabled = this._debuggerBreakpointsButtonItem.activated;
+        WebInspector.debuggerManager.breakpointsEnabled = !this._debuggerBreakpointsButtonItem.activated;
     },
 
     _addBreakpoint: function(breakpoint, sourceCode)

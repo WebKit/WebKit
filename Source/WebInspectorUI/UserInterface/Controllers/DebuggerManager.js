@@ -85,7 +85,8 @@ WebInspector.DebuggerManager.Event = {
     CallFramesDidChange: "debugger-manager-call-frames-did-change",
     ActiveCallFrameDidChange: "debugger-manager-active-call-frame-did-change",
     ScriptAdded: "debugger-manager-script-added",
-    ScriptsCleared: "debugger-manager-scripts-cleared"
+    ScriptsCleared: "debugger-manager-scripts-cleared",
+    BreakpointsEnabledDidChange: "debugger-manager-breakpoints-enabled-did-change"
 };
 
 WebInspector.DebuggerManager.prototype = {
@@ -104,6 +105,8 @@ WebInspector.DebuggerManager.prototype = {
             return;
 
         this._breakpointsEnabledSetting.value = enabled;
+
+        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange);
 
         this._allExceptionsBreakpoint.dispatchEventToListeners(WebInspector.Breakpoint.Event.ResolvedStateDidChange);
         this._allUncaughtExceptionsBreakpoint.dispatchEventToListeners(WebInspector.Breakpoint.Event.ResolvedStateDidChange);
@@ -517,6 +520,10 @@ WebInspector.DebuggerManager.prototype = {
         if (breakpoint.identifier || breakpoint.disabled)
             return;
 
+        // Enable breakpoints since a breakpoint is being set. This eliminates
+        // a multi-step process for the user that can be confusing.
+        this.breakpointsEnabled = true;
+
         function didSetBreakpoint(error, breakpointIdentifier)
         {
             if (error)
@@ -616,12 +623,16 @@ WebInspector.DebuggerManager.prototype = {
         var breakpoint = event.target;
 
         if (breakpoint === this._allExceptionsBreakpoint) {
+            if (!breakpoint.disabled)
+                this.breakpointsEnabled = true;
             this._allExceptionsBreakpointEnabledSetting.value = !breakpoint.disabled;
             this._updateBreakOnExceptionsState();
             return;
         }
 
         if (breakpoint === this._allUncaughtExceptionsBreakpoint) {
+            if (!breakpoint.disabled)
+                this.breakpointsEnabled = true;
             this._allUncaughtExceptionsBreakpointEnabledSetting.value = !breakpoint.disabled;
             this._updateBreakOnExceptionsState();
             return;
