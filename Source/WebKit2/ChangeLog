@@ -1,3 +1,17 @@
+2014-02-27  Tim Horton  <timothy_horton@apple.com>
+
+        Crash in RemoteLayerTreePropertyApplier::applyPropertiesToLayer
+        https://bugs.webkit.org/show_bug.cgi?id=129456
+        <rdar://problem/16182676>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        We were dereferencing the RemoteLayerBackingStore without checking if it exists,
+        in the accelerated drawing codepath. This case will occur if a layer
+        previously drew contents, but now does not.
+
 2014-02-27  Anders Carlsson  <andersca@apple.com>
 
         Simplify WebProcessProxy state accessors
