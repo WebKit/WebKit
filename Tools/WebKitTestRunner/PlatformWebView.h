@@ -89,8 +89,6 @@ public:
     WKRetainPtr<WKImageRef> windowSnapshotImage();
     WKDictionaryRef options() const { return m_options.get(); }
 
-    void changeWindowScaleIfNeeded(float newScale);
-
 private:
     PlatformWKView m_view;
     PlatformWindow m_window;

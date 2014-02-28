@@ -74,9 +74,8 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 #if !PLATFORM(IOS)
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
-    if ((self = [super initWithContentRect:contentRect styleMask:styleMask backing:bufferingType defer:deferCreation]))
-        [self _addToOpenWindows];
-    return self;
+    [self _addToOpenWindows];
+    return [super initWithContentRect:contentRect styleMask:styleMask backing:bufferingType defer:deferCreation];
 }
 #else
 - (id)initWithLayer:(CALayer *)layer

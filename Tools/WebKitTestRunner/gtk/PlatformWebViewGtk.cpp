@@ -114,10 +114,6 @@ void PlatformWebView::makeWebViewFirstResponder()
 {
 }
 
-void PlatformWebView::changeWindowScaleIfNeeded(float)
-{
-}
-
 WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
     // FIXME: implement to capture pixels in the UI process,

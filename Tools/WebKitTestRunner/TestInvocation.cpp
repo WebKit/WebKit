@@ -127,13 +127,6 @@ static void sizeWebViewForCurrentTest(const char* pathOrURL)
         TestController::shared().mainWebView()->resizeTo(TestController::viewWidth, TestController::viewHeight);
 }
 
-static void changeWindowScaleIfNeeded(const char* pathOrURL)
-{
-    WTF::String localPathOrUrl = String(pathOrURL);
-    bool needsHighDPIWindow = localPathOrUrl.findIgnoringCase("hidpi-") != notFound;
-    TestController::shared().mainWebView()->changeWindowScaleIfNeeded(needsHighDPIWindow ? 2 : 1);
-}
-
 static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
 {
     return strstr(pathOrURL, "loading/");
@@ -200,7 +193,6 @@ static void updateLayoutType(const char* pathOrURL)
 void TestInvocation::invoke()
 {
     TestController::TimeoutDuration timeoutToUse = TestController::LongTimeout;
-    changeWindowScaleIfNeeded(m_pathOrURL.c_str());
     sizeWebViewForCurrentTest(m_pathOrURL.c_str());
     updateLayoutType(m_pathOrURL.c_str());
     updateThreadedScrollingForCurrentTest(m_pathOrURL.c_str());
