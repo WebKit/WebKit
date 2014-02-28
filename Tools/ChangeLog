@@ -1,3 +1,37 @@
+2014-02-28  Zalan Bujtas  <zalan@apple.com>
+
+        Add hiDPI support to DumpRenderTree/WebKitTestRunner without the need of reloading the test case.
+        https://bugs.webkit.org/show_bug.cgi?id=129438
+
+        Reviewed by Simon Fraser.
+
+        'hidpi-' prefixed test cases now trigger 2x scale factor on the testing
+        offscreen window. It makes testing subpixel rendering and positioning possible.
+
+        Both the offscreen window's and WebKit's scaling are set accordingly.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow): cleanup
+        (destroyWebViewAndOffscreenWindow): cleanup
+        (dumpRenderTree):
+        (changeWindowScaleIfNeeded):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow initWithContentRect:styleMask:backing:defer:]): cleanup
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::changeWindowScaleIfNeeded):
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::changeWindowScaleIfNeeded):
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::changeWindowScaleIfNeeded):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::changeWindowScaleIfNeeded):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::changeWindowScaleIfNeeded):
+
 2014-02-28  Anders Carlsson  <andersca@apple.com>
 
         Remove logging.

@@ -109,6 +109,11 @@ enum {
     NSRect currentFrame = [self frame];
     return NSMakeRect(_fakeOrigin.x, _fakeOrigin.y, currentFrame.size.width, currentFrame.size.height);
 }
+@end
+
+@interface NSWindow (Details)
+
+- (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
 
 @end
 
@@ -240,6 +245,18 @@ bool PlatformWebView::viewSupportsOptions(WKDictionaryRef options) const
     bool useThreadedScrolling = useThreadedScrollingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useThreadedScrollingValue));
 
     return useThreadedScrolling == [(TestRunnerWKView *)m_view useThreadedScrolling];
+}
+
+void PlatformWebView::changeWindowScaleIfNeeded(float newScale)
+{
+    CGFloat currentScale = [m_window backingScaleFactor];
+    if (currentScale == newScale)
+        return;
+    [m_window _setWindowResolution:newScale displayIfChanged:YES];
+    // Changing the scaling factor on the window does not trigger NSWindowDidChangeBackingPropertiesNotification. We need to send the notification manually.
+    RetainPtr<NSMutableDictionary> notificationUserInfo = [[NSMutableDictionary alloc] initWithCapacity:1];
+    [notificationUserInfo setObject:[NSNumber numberWithDouble:currentScale] forKey:NSBackingPropertyOldScaleFactorKey];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidChangeBackingPropertiesNotification object:m_window userInfo:notificationUserInfo.get()];
 }
 
 } // namespace WTR
