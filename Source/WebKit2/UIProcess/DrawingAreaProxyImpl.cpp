@@ -279,7 +279,7 @@ void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState()
 
     if (!m_webPageProxy->isValid())
         return;
-    if (m_webPageProxy->process().isLaunching())
+    if (m_webPageProxy->process().state() == WebProcessProxy::State::Launching)
         return;
 
     // FIXME: waitForAndDispatchImmediately will always return the oldest DidUpdateBackingStoreState message that
