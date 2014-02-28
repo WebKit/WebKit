@@ -1,3 +1,18 @@
+2014-02-28  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Properly clear m_logicallyLastRun to remove use-after-free possibility
+        https://bugs.webkit.org/show_bug.cgi?id=129489
+
+        Reviewed by David Hyatt.
+
+        A use-after-free issue was caught in Blink because m_logicallyLastRun
+        is not cleared when the item it points to is deleted. Clearing it
+        turns the use-after-free into a segfault, and prevents any future
+        use-after-frees from happening.
+
+        * platform/text/BidiRunList.h:
+        (WebCore::BidiRunList<Run>::deleteRuns):
+
 2014-02-28  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Disambiguate calls to [[window contentView] layer] and [... setLayer:]
