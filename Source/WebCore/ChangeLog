@@ -1,3 +1,19 @@
+2014-02-28  Daniel Bates  <dabates@apple.com>
+
+        SubresourceLoader::didFinishLoading() should not assert when a decode error occurs
+        https://bugs.webkit.org/show_bug.cgi?id=127029
+
+        Reviewed by Darin Adler.
+
+        SubresourceLoader::didFinishLoading() can be called for a resource (e.g. an image) that
+        failed to be decoded or, in the case of an image, whose estimated decoded size exceeds
+        the maximum decoded size (Settings::maximumDecodedImageSize()).
+
+        Test: fast/images/decoded-size-exceeds-max-decoded-size.html
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+
 2014-02-28  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
 
         ASSERTION FAILED: roundedIntPoint(rendererMappedResult) == roundedIntPoint(result) in WebCore::RenderGeometryMap::mapToContainer

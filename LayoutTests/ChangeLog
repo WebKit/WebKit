@@ -1,3 +1,17 @@
+2014-02-28  Daniel Bates  <dabates@apple.com>
+
+        SubresourceLoader::didFinishLoading() should not assert when a decode error occurs
+        https://bugs.webkit.org/show_bug.cgi?id=127029
+
+        Reviewed by Darin Adler.
+
+        Added a test to ensure that we don't cause an assertion failure when an image fails
+        to load because of a decode error. In particular, the estimated decoded image size
+        exceeds the maximum decoded image size.
+
+        * fast/images/decoded-size-exceeds-max-decoded-size-expected.txt: Added.
+        * fast/images/decoded-size-exceeds-max-decoded-size.html: Added.
+
 2014-02-28  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
 
         ASSERTION FAILED: roundedIntPoint(rendererMappedResult) == roundedIntPoint(result) in WebCore::RenderGeometryMap::mapToContainer
