@@ -1,3 +1,17 @@
+2014-02-27  Timothy Hatcher  <timothy@apple.com>
+
+        Use a RegExp when when using CodeMirror's SearchCursor.
+
+        This avoids doing toLowerCase() on every line of the TextEditor.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129463
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TextEditor.js:
+        (TextEditor.prototype.performSearch): Use a RegExp for query. Pass false for the caseFold
+        argument, but it is ignored for RegExp searches anyway.
+
 2014-02-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: model tests should use a special Test.html inspector page

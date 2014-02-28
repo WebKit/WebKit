@@ -311,7 +311,8 @@ WebInspector.TextEditor.prototype = {
         }
 
         // Go down the slow patch for all other text content.
-        var searchCursor = this._codeMirror.getSearchCursor(query, {line: 0, ch: 0}, true);
+        var queryRegex = new RegExp(query.escapeForRegExp(), "gi");
+        var searchCursor = this._codeMirror.getSearchCursor(queryRegex, {line: 0, ch: 0}, false);
         var boundBatchSearch = batchSearch.bind(this);
         var numberOfSearchResultsDidChangeTimeout = null;
 
