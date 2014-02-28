@@ -1,3 +1,15 @@
+2014-02-28  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION(r164835): It broke 10 JSC stress test on 32 bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=129488
+
+        Reviewed by Mark Lam.
+
+        Whoops, modify the right register.
+
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+
 2014-02-28  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should be able to call sin/cos directly on platforms where the intrinsic is busted
