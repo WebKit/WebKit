@@ -296,6 +296,7 @@ private:
     void adjustRenderStyle(RenderStyle& styleToAdjust, const RenderStyle& parentStyle, Element*);
 #if ENABLE(CSS_GRID_LAYOUT)
     void adjustGridItemPosition(RenderStyle& styleToAdjust, const RenderStyle& parentStyle) const;
+    std::unique_ptr<GridPosition> adjustNamedGridItemPosition(const NamedGridAreaMap&, const NamedGridLinesMap&, const GridPosition&, GridPositionSide) const;
 #endif
 
     bool fastRejectSelector(const RuleData&) const;

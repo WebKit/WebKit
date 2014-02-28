@@ -1,3 +1,24 @@
+2014-02-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Fix positioning grid items using named grid lines/areas
+        https://bugs.webkit.org/show_bug.cgi?id=129372
+
+        Reviewed by Darin Adler.
+
+        Added a new test that checks that we correctly position grid items
+        using named grid lines, grid areas and also with the implicit
+        named grid lines created by grid areas.
+
+        I'm also importing a test from Blink that checks that we can
+        dynamically change the position of a grid item by changing the
+        name of the grid lines used to position it.
+
+        * fast/css-grid-layout/grid-item-position-changed-dynamic-expected.txt:
+        Merged from Blink r153913 by <jchaffraix@chromium.org>.
+        * fast/css-grid-layout/grid-item-position-changed-dynamic.html: Ditto.
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-resolution-expected.txt: Added.
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-resolution.html: Added.
+
 2014-02-28  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         paragraphs with different directionality in textarea with unicode-bidi: plaintext are aligned the same

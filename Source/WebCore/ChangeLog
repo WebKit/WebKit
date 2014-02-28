@@ -1,3 +1,55 @@
+2014-02-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Fix positioning grid items using named grid lines/areas
+        https://bugs.webkit.org/show_bug.cgi?id=129372
+
+        Reviewed by Darin Adler.
+
+        Our code was assuming that a <custom-ident> in
+        -webkit-grid-{column|row}-{start|end} and
+        -webkit-grid-{column|row} was always a grid area name. That's
+        wrong because the <custom-ident> could be also a explicitly named
+        grid line or the an implicitly named grid line created by a grid
+        area definition.
+
+        The style resolution code was not correct either. This patch fixes
+        it so it now matches the spec, which means that:
+        - first we try to match any existing grid area.
+        - then if there is a named grid line with the name
+        <custom-ident>-{start|end} for -webkit-grid-{column|row}-{start|end}
+        defined before the grid area then we use it instead of the grid
+        area.
+        - otherwise if there is a named grid line we resolve to the first such line.
+        - otherwise we treat it as 'auto'.
+
+        Fixing this uncovered a bug in GridPosition, we were not using the
+        name of the stored grid area to check if two GridPositions were
+        the same.
+
+        Tests: fast/css-grid-layout/grid-item-position-changed-dynamic.html
+               fast/css-grid-layout/named-grid-lines-with-named-grid-areas-resolution.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::gridLineDefinedBeforeGridArea): New function to check if
+        a given named grid line was defined before an implicit named grid
+        line created by a grid area definition.
+        (WebCore::StyleResolver::adjustNamedGridItemPosition): New
+        function that adjusts the position of a GridPosition parsed as a
+        grid area.
+        (WebCore::StyleResolver::adjustGridItemPosition): Use the new
+        function adjustNamedGridItemPosition to adjust the positions of
+        named grid lines.
+        * css/StyleResolver.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveNamedGridLinePositionFromStyle): Use GridPosition:: namespace.
+        (WebCore::RenderGrid::resolveGridPositionFromStyle): Ditto.
+        (WebCore::RenderGrid::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition): Ditto.
+        * rendering/RenderGrid.h:
+        * rendering/style/GridPosition.h:
+        (WebCore::GridPosition::adjustGridPositionForRowEndColumnEndSide): Moved from RenderGrid.cpp.
+        (WebCore::GridPosition::adjustGridPositionForSide): Ditto.
+        (WebCore::GridPosition::operator==): Use the named grid line to check equality.
+
 2014-02-28  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Update line segments for ShapeInside only if the new line is wide enough

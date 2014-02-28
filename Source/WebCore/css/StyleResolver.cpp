@@ -9,6 +9,7 @@
  * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1376,6 +1377,82 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)
+static inline bool gridLineDefinedBeforeGridArea(const String& gridLineName, const String& gridAreaName, const NamedGridAreaMap& gridAreaMap, const NamedGridLinesMap& namedLinesMap, GridPositionSide side)
+{
+    ASSERT(namedLinesMap.contains(gridLineName));
+    // Grid line indexes are inserted in order.
+    size_t namedGridLineFirstDefinition = GridPosition::adjustGridPositionForSide(namedLinesMap.get(gridLineName)[0], side);
+
+    ASSERT(gridAreaMap.contains(gridAreaName));
+    const GridCoordinate& gridAreaCoordinates = gridAreaMap.get(gridAreaName);
+
+    // GridCoordinate refers to tracks while the indexes in namedLinesMap refer to lines, that's why we need to add 1 to
+    // the grid coordinate to get the end line index.
+    switch (side) {
+    case ColumnStartSide:
+        return namedGridLineFirstDefinition < gridAreaCoordinates.columns.initialPositionIndex;
+    case ColumnEndSide:
+        return namedGridLineFirstDefinition < gridAreaCoordinates.columns.finalPositionIndex;
+    case RowStartSide:
+        return namedGridLineFirstDefinition < gridAreaCoordinates.rows.initialPositionIndex;
+    case RowEndSide:
+        return namedGridLineFirstDefinition < gridAreaCoordinates.rows.finalPositionIndex;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+std::unique_ptr<GridPosition> StyleResolver::adjustNamedGridItemPosition(const NamedGridAreaMap& gridAreaMap, const NamedGridLinesMap& namedLinesMap, const GridPosition& position, GridPositionSide side) const
+{
+    ASSERT(position.isNamedGridArea());
+    // The StyleBuilder always treats <custom-ident> as a named grid area. We must decide here if they are going to be
+    // resolved to either a grid area or a grid line.
+
+    String namedGridAreaOrGridLine = position.namedGridLine();
+    bool hasStartSuffix = namedGridAreaOrGridLine.endsWith("-start");
+    bool hasEndSuffix = namedGridAreaOrGridLine.endsWith("-end");
+    bool isStartSide = side == ColumnStartSide || side == RowStartSide;
+    bool hasStartSuffixForStartSide = hasStartSuffix && isStartSide;
+    bool hasEndSuffixForEndSide = hasEndSuffix && !isStartSide;
+    size_t suffixLength = hasStartSuffix ? strlen("-start") : strlen("-end");
+    String gridAreaName = hasStartSuffixForStartSide || hasEndSuffixForEndSide ? namedGridAreaOrGridLine.substring(0, namedGridAreaOrGridLine.length() - suffixLength) : namedGridAreaOrGridLine;
+
+    if (gridAreaMap.contains(gridAreaName)) {
+        String gridLineName;
+        if (isStartSide && !hasStartSuffix)
+            gridLineName = namedGridAreaOrGridLine + "-start";
+        else if (!isStartSide && !hasEndSuffix)
+            gridLineName = namedGridAreaOrGridLine + "-end";
+        else
+            gridLineName = namedGridAreaOrGridLine;
+
+        if (namedLinesMap.contains(gridLineName) && gridLineDefinedBeforeGridArea(gridLineName, gridAreaName, gridAreaMap, namedLinesMap, side)) {
+            // Use the explicitly defined grid line defined before the grid area instead of the grid area.
+            auto adjustedPosition = std::make_unique<GridPosition>();
+            adjustedPosition->setExplicitPosition(1, gridLineName);
+            return adjustedPosition;
+        }
+
+        if (hasStartSuffixForStartSide || hasEndSuffixForEndSide) {
+            // Renderer expects the grid area name instead of the implicit grid line name.
+            auto adjustedPosition = std::make_unique<GridPosition>();
+            adjustedPosition->setNamedGridArea(gridAreaName);
+            return adjustedPosition;
+        }
+
+        return nullptr;
+    }
+
+    if (namedLinesMap.contains(namedGridAreaOrGridLine)) {
+        auto adjustedPosition = std::make_unique<GridPosition>();
+        adjustedPosition->setExplicitPosition(1, namedGridAreaOrGridLine);
+        return adjustedPosition;
+    }
+
+    // We must clear unknown named grid areas
+    return std::make_unique<GridPosition>();
+}
+
 void StyleResolver::adjustGridItemPosition(RenderStyle& style, const RenderStyle& parentStyle) const
 {
     const GridPosition& columnStartPosition = style.gridItemColumnStart();
@@ -1394,17 +1471,27 @@ void StyleResolver::adjustGridItemPosition(RenderStyle& style, const RenderStyle
         style.setGridItemRowEnd(GridPosition());
     }
 
-    // Unknown named grid area compute to 'auto'.
-    const NamedGridAreaMap& map = parentStyle.namedGridArea();
+    // If the grid position is a single <custom-ident> then the spec mandates us to resolve it following this steps:
+    //     * If there is a named grid area called <custom-ident> resolve the position to the area's corresponding edge.
+    //         * If a grid area was found with that name, check that there is no <custom-ident>-start or <custom-ident>-end (depending
+    // on the css property being defined) specified before the grid area. If that's the case resolve to that grid line.
+    //     * Otherwise check if there is a grid line named <custom-ident>.
+    //     * Otherwise treat it as auto.
+    const NamedGridLinesMap& namedGridColumnLines = parentStyle.namedGridColumnLines();
+    const NamedGridLinesMap& namedGridRowLines = parentStyle.namedGridRowLines();
+    const NamedGridAreaMap& gridAreaMap = parentStyle.namedGridArea();
 
-#define CLEAR_UNKNOWN_NAMED_AREA(prop, Prop) \
-    if (prop.isNamedGridArea() && !map.contains(prop.namedGridLine())) \
-        style.setGridItem##Prop(GridPosition());
+#define ADJUST_GRID_POSITION_MAYBE(position, Prop, namedGridLines, side) \
+    if (position.isNamedGridArea()) {                                   \
+        std::unique_ptr<GridPosition> adjustedPosition = adjustNamedGridItemPosition(gridAreaMap, namedGridLines, position, side); \
+        if (adjustedPosition)                                           \
+            style.setGridItem##Prop(*adjustedPosition);                 \
+    }
 
-    CLEAR_UNKNOWN_NAMED_AREA(columnStartPosition, ColumnStart);
-    CLEAR_UNKNOWN_NAMED_AREA(columnEndPosition, ColumnEnd);
-    CLEAR_UNKNOWN_NAMED_AREA(rowStartPosition, RowStart);
-    CLEAR_UNKNOWN_NAMED_AREA(rowEndPosition, RowEnd);
+    ADJUST_GRID_POSITION_MAYBE(columnStartPosition, ColumnStart, namedGridColumnLines, ColumnStartSide);
+    ADJUST_GRID_POSITION_MAYBE(columnEndPosition, ColumnEnd, namedGridColumnLines, ColumnEndSide);
+    ADJUST_GRID_POSITION_MAYBE(rowStartPosition, RowStart, namedGridRowLines, RowStartSide);
+    ADJUST_GRID_POSITION_MAYBE(rowEndPosition, RowEnd, namedGridRowLines, RowEndSide);
 }
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
 
