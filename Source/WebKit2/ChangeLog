@@ -1,3 +1,11 @@
+2014-02-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r164832.
+
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::updateProcessState): Switch from removed
+        'isValid' to 'state() != State::Running'
+
 2014-02-28  Anders Carlsson  <andersca@apple.com>
 
         VisitedLinkProvider should keep track of processes, not pages

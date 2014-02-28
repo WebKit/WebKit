@@ -74,7 +74,7 @@ void WebProcessProxy::updateProcessSuppressionState()
 void WebProcessProxy::updateProcessState()
 {
 #if USE(XPC_SERVICES)
-    if (!isValid())
+    if (state() != State::Running)
         return;
 
     xpc_connection_t xpcConnection = connection()->xpcConnection();
