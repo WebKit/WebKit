@@ -40,6 +40,13 @@ DUMPRENDERTREE=$(OUTPUT_DIR)/DumpRenderTree.app/DumpRenderTree
 # FIXME: We shouldn't hard code these architectures. See <rdar://problem/9047171> for more discussion on why we have to.
 ARCHS=i386 x86_64
 
+# The DumpRenderTreeSupport dylib and the IPhoneSimulatorNotification bundle are OS X-specific components that
+# are needed to run DumpRenderTree in iOS Simulator. We explicitly unexport environment variables SDKROOT and
+# TOOLCHAINS and then override them to use the OS X SDK and toolchain when building these components.
+unexport SDKROOT
+unexport TOOLCHAINS
+SDKROOT=macosx
+TOOLCHAINS=osx
 
 all: $(DYLIB) $(PERL_MODULE)
 
@@ -51,7 +58,7 @@ $(PERL_MODULE): DumpRenderTreeSupportPregenerated.pm $(DUMPRENDERTREE)
 	cp DumpRenderTreeSupportPregenerated.pm $(PERL_MODULE)
 
 $(DYLIB): DumpRenderTreeSupport.c $(WRAPPER)
-	xcrun -sdk macosx clang -g -dynamiclib -o $(DYLIB) `$(PERL) -MExtUtils::Embed -eperl_inc` `$(PERL) -MExtUtils::Embed -e'my $$opts = ldopts(0); $$opts =~ s/-arch [^ ]*( |$$)//g; print $$opts, " -arch ", join(" -arch ", split(" ",$$ENV{ARCHS}))'` $^
+	xcrun clang -g -dynamiclib -o $(DYLIB) `$(PERL) -MExtUtils::Embed -eperl_inc` `$(PERL) -MExtUtils::Embed -e'my $$opts = ldopts(0); $$opts =~ s/-arch [^ ]*( |$$)//g; print $$opts, " -arch ", join(" -arch ", split(" ",$$ENV{ARCHS}))'` $^
 
 IPHONE_SIMULATOR_NOTIFCATION_BUNDLE=$(OUTPUT_DIR)/lib/perl5/darwin-thread-multi-2level/auto/IPhoneSimulatorNotification/IPhoneSimulatorNotification.bundle
 IPHONE_SIMULATOR_NOTIFCATION_MODULE=$(OUTPUT_DIR)/lib/perl5/darwin-thread-multi-2level/IPhoneSimulatorNotification.pm
@@ -59,7 +66,7 @@ IPHONE_SIMULATOR_NOTIFCATION_MODULE=$(OUTPUT_DIR)/lib/perl5/darwin-thread-multi-
 all: $(IPHONE_SIMULATOR_NOTIFCATION_BUNDLE) $(IPHONE_SIMULATOR_NOTIFCATION_MODULE)
 
 $(IPHONE_SIMULATOR_NOTIFCATION_BUNDLE) $(IPHONE_SIMULATOR_NOTIFCATION_MODULE): IPhoneSimulatorNotification/IPhoneSimulatorNotification.xs IPhoneSimulatorNotification/Makefile.PL IPhoneSimulatorNotification/lib/IPhoneSimulatorNotification.pm IPhoneSimulatorNotification/ppport.h IPhoneSimulatorNotification/t/IPhoneSimulatorNotification.t
-	cd IPhoneSimulatorNotification && SDKROOT=iphonesimulator perl Makefile.PL INSTALL_BASE=$(OUTPUT_DIR) 
+	cd IPhoneSimulatorNotification && perl Makefile.PL INSTALL_BASE=$(OUTPUT_DIR)
 	make -C IPhoneSimulatorNotification test
 	make -C IPhoneSimulatorNotification install
 	make -C IPhoneSimulatorNotification realclean
