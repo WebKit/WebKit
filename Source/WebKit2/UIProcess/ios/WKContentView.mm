@@ -260,9 +260,12 @@ using namespace WebKit;
         [_delegate contentView:self didCommitLayerTree:layerTreeTransaction];
 }
 
-- (void)_setAcceleratedCompositingRootLayer:(CALayer *)rootLayer
+- (void)_setAcceleratedCompositingRootView:(UIView *)rootView
 {
-    [[_rootContentView layer] setSublayers:@[rootLayer]];
+    for (UIView* subview in [_rootContentView subviews])
+        [subview removeFromSuperview];
+
+    [_rootContentView addSubview:rootView];
 }
 
 - (void)_decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin&)origin frame:(WebFrameProxy&)frame request:(GeolocationPermissionRequestProxy&)permissionRequest

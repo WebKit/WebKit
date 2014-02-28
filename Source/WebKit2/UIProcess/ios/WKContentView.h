@@ -77,7 +77,7 @@ struct WebPageConfiguration;
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (void)_processDidExit;
 - (void)_didRelaunchProcess;
-- (void)_setAcceleratedCompositingRootLayer:(CALayer *)rootLayer;
+- (void)_setAcceleratedCompositingRootView:(UIView *)rootView;
 
 - (void)_didCommitLoadForMainFrame;
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;

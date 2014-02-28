@@ -116,7 +116,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
         float scale = indicatorScale(layerTreeTransaction.contentsSize());
         bool rootLayerChanged = m_debugIndicatorLayerTreeHost->updateLayerTree(layerTreeTransaction, scale);
         updateDebugIndicator(layerTreeTransaction.contentsSize(), rootLayerChanged, scale);
-        m_debugIndicatorLayerTreeHost->rootLayer().name = @"Indicator host root";
+        asLayer(m_debugIndicatorLayerTreeHost->rootLayer()).name = @"Indicator host root";
     }
 }
 
@@ -180,7 +180,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator()
 void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize, bool rootLayerChanged, float scale)
 {
     // Make sure we're the last sublayer.
-    CALayer *rootLayer = m_remoteLayerTreeHost.rootLayer();
+    CALayer *rootLayer = asLayer(m_remoteLayerTreeHost.rootLayer());
     [m_tileMapHostLayer removeFromSuperlayer];
     [rootLayer addSublayer:m_tileMapHostLayer.get()];
 
@@ -193,7 +193,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
 
     if (rootLayerChanged) {
         [m_tileMapHostLayer setSublayers:@[]];
-        [m_tileMapHostLayer addSublayer:m_debugIndicatorLayerTreeHost->rootLayer()];
+        [m_tileMapHostLayer addSublayer:asLayer(m_debugIndicatorLayerTreeHost->rootLayer())];
         [m_tileMapHostLayer addSublayer:m_exposedRectIndicatorLayer.get()];
     }
     

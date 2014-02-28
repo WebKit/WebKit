@@ -47,6 +47,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0F0C365818C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */; };
+		0F0C365A18C0555800F607D7 /* LayerRepresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0C365918C0555800F607D7 /* LayerRepresentation.h */; };
+		0F0C365C18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */; };
+		0F0C365E18C110A500F607D7 /* LayerRepresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C365D18C110A500F607D7 /* LayerRepresentation.mm */; };
 		0F174AA3142A4CB70039250F /* APIGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F174AA2142A4CB60039250F /* APIGeometry.h */; };
 		0F174AA7142AAC610039250F /* WKGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F174AA6142AAC610039250F /* WKGeometry.cpp */; };
 		0F594790187B3B3A00437857 /* RemoteScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F59478D187B3B3A00437857 /* RemoteScrollingCoordinator.h */; };
@@ -664,7 +668,7 @@
 		3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */; };
 		3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BB15893F630090FF62 /* WebColorChooser.h */; };
 		3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorPicker.h */; };
-		3F889D14188778C900FEADAF /* WebVideoFullscreenManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.cpp */; };
+		3F889D14188778C900FEADAF /* WebVideoFullscreenManagerProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.mm */; };
 		3F889D15188778C900FEADAF /* WebVideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F889D13188778C900FEADAF /* WebVideoFullscreenManagerProxy.h */; };
 		3F889D171887859300FEADAF /* WebVideoFullscreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.cpp */; };
 		4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */; };
@@ -1738,6 +1742,10 @@
 /* Begin PBXFileReference section */
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RemoteLayerTreeHostIOS.mm; path = ios/RemoteLayerTreeHostIOS.mm; sourceTree = "<group>"; };
+		0F0C365918C0555800F607D7 /* LayerRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerRepresentation.h; path = UIProcess/Cocoa/LayerRepresentation.h; sourceTree = SOURCE_ROOT; };
+		0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RemoteScrollingCoordinatorProxyIOS.mm; path = ios/RemoteScrollingCoordinatorProxyIOS.mm; sourceTree = "<group>"; };
+		0F0C365D18C110A500F607D7 /* LayerRepresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LayerRepresentation.mm; path = ios/LayerRepresentation.mm; sourceTree = "<group>"; };
 		0F174AA2142A4CB60039250F /* APIGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIGeometry.h; sourceTree = "<group>"; };
 		0F174AA6142AAC610039250F /* WKGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGeometry.cpp; sourceTree = "<group>"; };
 		0F59478D187B3B3A00437857 /* RemoteScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingCoordinator.h; path = Scrolling/RemoteScrollingCoordinator.h; sourceTree = "<group>"; };
@@ -2418,7 +2426,7 @@
 		3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebVideoFullscreenManager.cpp; path = ios/WebVideoFullscreenManager.cpp; sourceTree = "<group>"; };
 		3F889D0E1887699C00FEADAF /* WebVideoFullscreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenManager.h; path = ios/WebVideoFullscreenManager.h; sourceTree = "<group>"; };
 		3F889D101887710000FEADAF /* WebVideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebVideoFullscreenManager.messages.in; path = ios/WebVideoFullscreenManager.messages.in; sourceTree = "<group>"; };
-		3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebVideoFullscreenManagerProxy.cpp; path = ios/WebVideoFullscreenManagerProxy.cpp; sourceTree = "<group>"; };
+		3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenManagerProxy.mm; path = ios/WebVideoFullscreenManagerProxy.mm; sourceTree = "<group>"; };
 		3F889D13188778C900FEADAF /* WebVideoFullscreenManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenManagerProxy.h; path = ios/WebVideoFullscreenManagerProxy.h; sourceTree = "<group>"; };
 		3F889D1618877A2400FEADAF /* WebVideoFullscreenManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = WebVideoFullscreenManagerProxy.messages.in; path = ios/WebVideoFullscreenManagerProxy.messages.in; sourceTree = "<group>"; };
 		4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockingResponseMap.h; sourceTree = "<group>"; };
@@ -4114,6 +4122,7 @@
 		1ABC3DF21899E415004F0626 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				0F0C365918C0555800F607D7 /* LayerRepresentation.h */,
 				1A422F8D18B29C6400D8CD96 /* HistoryClient.h */,
 				1A422F8C18B29C6400D8CD96 /* HistoryClient.mm */,
 				1ABC3DF41899E437004F0626 /* NavigationState.h */,
@@ -4309,14 +4318,17 @@
 			isa = PBXGroup;
 			children = (
 				C54256AE18BEC16100DE4179 /* forms */,
+				0F0C365D18C110A500F607D7 /* LayerRepresentation.mm */,
 				0FCB4E3618BBE044000FCFC9 /* PageClientImplIOS.h */,
 				0FCB4E3718BBE044000FCFC9 /* PageClientImplIOS.mm */,
+				0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */,
+				0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */,
 				2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */,
 				2DF9593418A42412009785A1 /* ViewGestureControllerIOS.mm */,
 				2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */,
 				2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */,
 				2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */,
-				3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.cpp */,
+				3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.mm */,
 				3F889D13188778C900FEADAF /* WebVideoFullscreenManagerProxy.h */,
 				3F889D1618877A2400FEADAF /* WebVideoFullscreenManagerProxy.messages.in */,
 				0FCB4E3818BBE044000FCFC9 /* WKActionSheet.h */,
@@ -6424,6 +6436,7 @@
 				BC017D2116263308007054F5 /* WKDOMTextIterator.h in Headers */,
 				37DFA7001810BB92001F4A9F /* WKFoundation.h in Headers */,
 				1ABC3DF11899C6B6004F0626 /* WKNavigationInternal.h in Headers */,
+				0F0C365A18C0555800F607D7 /* LayerRepresentation.h in Headers */,
 				1F604BA81889FA7400EE0395 /* WKRenderingProgressEvents.h in Headers */,
 				1A422F8F18B29C6400D8CD96 /* HistoryClient.h in Headers */,
 				BCBAACEB145225E30053F82F /* WKProcessGroup.h in Headers */,
@@ -8037,6 +8050,7 @@
 				2DA9449E1884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm in Sources */,
 				1A0EC604124A9F2C007EF4A5 /* PluginProcessManager.cpp in Sources */,
 				9F54F8951648AE0F007DF81A /* PluginProcessManagerMac.mm in Sources */,
+				0F0C365E18C110A500F607D7 /* LayerRepresentation.mm in Sources */,
 				1A043CEB124FE38F00FFBFB5 /* PluginProcessMessageReceiver.cpp in Sources */,
 				1A0EC75F124BC7B2007EF4A5 /* PluginProcessProxy.cpp in Sources */,
 				1A2D90BB1281C931001EB962 /* PluginProcessProxyMac.mm in Sources */,
@@ -8306,7 +8320,7 @@
 				33367635130C99B2006C9DE2 /* WebResourceCacheManagerProxy.cpp in Sources */,
 				33367657130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp in Sources */,
 				510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */,
-				3F889D14188778C900FEADAF /* WebVideoFullscreenManagerProxy.cpp in Sources */,
+				3F889D14188778C900FEADAF /* WebVideoFullscreenManagerProxy.mm in Sources */,
 				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,
 				2D6B371C18A967AD0042AE80 /* WKThumbnailView.mm in Sources */,
 				378E1A3D181ED6FF0031007A /* APIObject.mm in Sources */,
@@ -8364,6 +8378,8 @@
 				BC407628124FF0400068F20A /* WKCertificateInfoMac.mm in Sources */,
 				515E7727183DD6F60007203F /* AsyncRequest.cpp in Sources */,
 				BCA284D61492F2C7001F9042 /* WKConnection.mm in Sources */,
+				0F0C365818C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm in Sources */,
+				0F0C365C18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm in Sources */,
 				BC4A6296147313A0006C681A /* WKConnectionRef.cpp in Sources */,
 				2D8710161828415D0018FA01 /* PlatformCALayerRemoteCustom.mm in Sources */,
 				BCB9E24C1120E15C00A137E0 /* WKContext.cpp in Sources */,

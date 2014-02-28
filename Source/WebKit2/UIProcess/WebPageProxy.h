@@ -37,6 +37,7 @@
 #include "EditorState.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "InteractionInformationAtPosition.h"
+#include "LayerRepresentation.h"
 #include "LayerTreeContext.h"
 #include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
@@ -92,10 +93,6 @@
 #include "WKPageEfl.h"
 #include "WebUIPopupMenuClient.h"
 #include <Evas.h>
-#endif
-
-#if PLATFORM(COCOA)
-#include <WebCore/PlatformLayer.h>
 #endif
 
 namespace API {
@@ -527,8 +524,8 @@ public:
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
 
-    void setAcceleratedCompositingRootLayer(PlatformLayer* rootLayer);
-    PlatformLayer* acceleratedCompositingRootLayer() const;
+    void setAcceleratedCompositingRootLayer(LayerOrView*);
+    LayerOrView* acceleratedCompositingRootLayer() const;
 
 #if USE(APPKIT)
     WKView* wkView() const;

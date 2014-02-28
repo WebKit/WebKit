@@ -30,8 +30,30 @@
 #import <QuartzCore/CALayer.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
+#if PLATFORM(IOS)
+#import <UIKit/UIView.h>
+#endif
 
 using namespace WebCore;
+
+#if PLATFORM(IOS)
+@interface UIView (WKUIViewUtilities)
+- (void)_web_setSubviews:(NSArray *)subviews;
+@end
+
+@implementation UIView (WKUIViewUtilities)
+
+- (void)_web_setSubviews:(NSArray *)subviews
+{
+    for (UIView* subview in self.subviews)
+        [subview removeFromSuperview];
+
+    for (UIView* view in subviews)
+        [self addSubview:view];
+}
+
+@end
+#endif
 
 namespace WebKit {
 
@@ -79,7 +101,7 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #endif
 }
 
-void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+static void applyPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties)
 {
     if (properties.changedProperties & RemoteLayerTreeTransaction::NameChanged)
         layer.name = properties.name;
@@ -99,13 +121,6 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, cons
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged)
         layer.backgroundColor = cgColorFromColor(properties.backgroundColor).get();
-
-    if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
-        RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
-        for (auto& child : properties.children)
-            [children addObject:relatedLayers.get(child)];
-        layer.sublayers = children.get();
-    }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::BorderColorChanged)
         layer.borderColor = cgColorFromColor(properties.borderColor).get();
@@ -136,17 +151,6 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, cons
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::OpaqueChanged)
         layer.opaque = properties.opaque;
-
-    if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
-        if (!properties.maskLayerID)
-            layer.mask = nullptr;
-        else {
-            CALayer *maskLayer = relatedLayers.get(properties.maskLayerID);
-            ASSERT(!maskLayer.superlayer);
-            if (!maskLayer.superlayer)
-                layer.mask = maskLayer;
-        }
-    }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged)
         layer.contentsRect = properties.contentsRect;
@@ -190,5 +194,64 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, cons
     if (properties.changedProperties & RemoteLayerTreeTransaction::CustomAppearanceChanged)
         updateCustomAppearance(layer, properties.customAppearance);
 }
+
+void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+{
+    applyPropertiesToLayer(layer, properties);
+
+    if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
+        RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
+        for (auto& child : properties.children)
+            [children addObject:relatedLayers.get(child)];
+
+        layer.sublayers = children.get();
+    }
+
+    if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
+        if (!properties.maskLayerID)
+            layer.mask = nullptr;
+        else {
+#if PLATFORM(IOS)
+            UIView *maskView = relatedLayers.get(properties.maskLayerID);
+            // FIXME: need to check that the mask view is kept alive.
+            ASSERT(!maskView.layer.superlayer);
+            if (!maskView.layer.superlayer)
+                layer.mask = maskView.layer;
+#else
+            CALayer *maskLayer = relatedLayers.get(properties.maskLayerID);
+            ASSERT(!maskLayer.superlayer);
+            if (!maskLayer.superlayer)
+                layer.mask = maskLayer;
+#endif
+        }
+    }
+}
+
+#if PLATFORM(IOS)
+void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+{
+    applyPropertiesToLayer(view.layer, properties);
+
+    if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
+        RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
+        for (auto& child : properties.children)
+            [children addObject:relatedLayers.get(child)];
+
+        [view _web_setSubviews:children.get()];
+    }
+
+    if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
+        if (!properties.maskLayerID)
+            view.layer.mask = nullptr;
+        else {
+            UIView *maskView = relatedLayers.get(properties.maskLayerID);
+            // FIXME: need to check that the mask view is kept alive.
+            ASSERT(!maskView.layer.superlayer);
+            if (!maskView.layer.superlayer)
+                maskView.layer.mask = maskView.layer;
+        }
+    }
+}
+#endif
 
 } // namespace WebKit

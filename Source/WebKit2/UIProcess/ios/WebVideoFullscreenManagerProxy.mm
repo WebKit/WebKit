@@ -35,6 +35,7 @@
 #include "WebProcessProxy.h"
 #include "WebVideoFullscreenManagerMessages.h"
 #include "WebVideoFullscreenManagerProxyMessages.h"
+#include <UIKit/UIView.h>
 
 using namespace WebCore;
 
@@ -70,7 +71,10 @@ void WebVideoFullscreenManagerProxy::didCommitLayerTree(const RemoteLayerTreeTra
 void WebVideoFullscreenManagerProxy::setVideoLayerID(GraphicsLayer::PlatformLayerID videoLayerID)
 {
     RemoteLayerTreeDrawingAreaProxy* remoteDrawingAreaProxy = toRemoteLayerTreeDrawingAreaProxy(m_page->drawingArea());
-    setVideoLayer(remoteDrawingAreaProxy->remoteLayerTreeHost().getLayer(videoLayerID));
+
+    UIView *videoView = remoteDrawingAreaProxy->remoteLayerTreeHost().getLayer(videoLayerID);
+    setVideoLayer(videoView.layer);
+    
     m_videoLayerID = videoLayerID;
     m_enterFullscreenAfterVideoLayerUnparentedTransaction = true;
 }
@@ -108,7 +112,6 @@ void WebVideoFullscreenManagerProxy::didExitFullscreen()
 {
     m_page->send(Messages::WebVideoFullscreenManager::DidExitFullscreen(), m_page->pageID());
 }
-
     
 } // namespace WebKit
 

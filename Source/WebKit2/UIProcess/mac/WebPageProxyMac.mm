@@ -470,12 +470,12 @@ void WebPageProxy::intrinsicContentSizeDidChange(const IntSize& intrinsicContent
     m_pageClient.intrinsicContentSizeDidChange(intrinsicContentSize);
 }
 
-void WebPageProxy::setAcceleratedCompositingRootLayer(PlatformLayer* rootLayer)
+void WebPageProxy::setAcceleratedCompositingRootLayer(LayerOrView* rootLayer)
 {
     m_pageClient.setAcceleratedCompositingRootLayer(rootLayer);
 }
 
-PlatformLayer* WebPageProxy::acceleratedCompositingRootLayer() const
+LayerOrView* WebPageProxy::acceleratedCompositingRootLayer() const
 {
     return m_pageClient.acceleratedCompositingRootLayer();
 }

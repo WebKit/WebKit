@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTreeHost_h
-#define RemoteLayerTreeHost_h
+#ifndef LayerRepresentation_h
+#define LayerRepresentation_h
 
-#include "LayerRepresentation.h"
-#include "RemoteLayerTreeTransaction.h"
-#include <WebCore/PlatformCALayer.h>
-#include <wtf/HashMap.h>
-#include <wtf/RetainPtr.h>
+#if PLATFORM(IOS)
 
-namespace WebKit {
+OBJC_CLASS CALayer;
+OBJC_CLASS UIView;
+typedef UIView LayerOrView;
 
-class WebPageProxy;
+CALayer *asLayer(LayerOrView *);
 
-class RemoteLayerTreeHost {
-public:
-    explicit RemoteLayerTreeHost();
-    virtual ~RemoteLayerTreeHost();
+#else
 
-    LayerOrView *getLayer(WebCore::GraphicsLayer::PlatformLayerID) const;
-    LayerOrView *rootLayer() const { return m_rootLayer; }
+OBJC_CLASS CALayer;
+typedef CALayer LayerOrView;
 
-    // Returns true if the root layer changed.
-    bool updateLayerTree(const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
+inline CALayer *asLayer(LayerOrView *layer)
+{
+    return layer;
+}
 
-    void setIsDebugLayerTreeHost(bool flag) { m_isDebugLayerTreeHost = flag; }
-    bool isDebugLayerTreeHost() const { return m_isDebugLayerTreeHost; }
+#endif
 
-private:
-    LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
-
-    LayerOrView *m_rootLayer;
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<LayerOrView>> m_layers;
-    bool m_isDebugLayerTreeHost;
-};
-
-} // namespace WebKit
-
-#endif // RemoteLayerTreeHost_h
+#endif // LayerRepresentation_h

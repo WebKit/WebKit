@@ -1,3 +1,83 @@
+2014-02-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Make UIViews for compositing layers in the UI process on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129508
+
+        Reviewed by Sam Weinig.
+        
+        In order to parent UIScrollViews for -webkit-overflow-scrolling:touch,
+        we need to use UIViews in the compositing layer hierarchy on iOS.
+        
+        Make much of the code that currently uses CALayers layer-or-view
+        agnostic by using a typedef LayerOrView.
+        
+        Fix RemoteLayerTreePropertyApplier to apply properties to UIViews
+        or CALayers; on iOS, we need both paths because we have to set properties
+        on CALayer for remotely hosted content.
+        
+        Add iOS-specific implementation files for RemoteLayerTreeHost and RemoteScrollingCoordinatorProxy,
+        since these need to see the UIView implementation. WebVideoFullscreenManagerProxy.cpp also needs
+        to be come a .mm file.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.h:
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (-[UIView setSubviews:]):
+        (WebKit::applyPropertiesToLayer):
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        * UIProcess/Cocoa/LayerRepresentation.h: Copied from Source/WebKit2/Shared/mac/RemoteLayerTreePropertyApplier.h.
+        (asLayer):
+        * UIProcess/PageClient.h:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/LayerRepresentation.mm: Copied from Source/WebKit2/Shared/mac/RemoteLayerTreePropertyApplier.h.
+        (asLayer):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setAcceleratedCompositingRootLayer):
+        (WebKit::PageClientImpl::acceleratedCompositingRootLayer):
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm: Added.
+        (+[WKTransformView layerClass]):
+        (-[WKRemoteView initWithFrame:contextID:]):
+        (+[WKRemoteView layerClass]):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm: Added.
+        (WebKit::layerRepresentationFromLayerOrView):
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _setAcceleratedCompositingRootView:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setAcceleratedCompositingRootLayer):
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm: Renamed from Source/WebKit2/UIProcess/ios/WebVideoFullscreenManagerProxy.cpp.
+        (WebKit::WebVideoFullscreenManagerProxy::create):
+        (WebKit::WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy):
+        (WebKit::WebVideoFullscreenManagerProxy::~WebVideoFullscreenManagerProxy):
+        (WebKit::WebVideoFullscreenManagerProxy::didCommitLayerTree):
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerID):
+        (WebKit::WebVideoFullscreenManagerProxy::enterFullscreen):
+        (WebKit::WebVideoFullscreenManagerProxy::requestExitFullScreen):
+        (WebKit::WebVideoFullscreenManagerProxy::play):
+        (WebKit::WebVideoFullscreenManagerProxy::pause):
+        (WebKit::WebVideoFullscreenManagerProxy::togglePlayState):
+        (WebKit::WebVideoFullscreenManagerProxy::seekToTime):
+        (WebKit::WebVideoFullscreenManagerProxy::didExitFullscreen):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        (WebKit::RemoteLayerTreeHost::rootLayer):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        (WebKit::RemoteLayerTreeHost::getLayer):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setAcceleratedCompositingRootLayer):
+        (WebKit::WebPageProxy::acceleratedCompositingRootLayer):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::recursiveBuildTransaction):
+
 2014-02-28  Anders Carlsson  <andersca@apple.com>
 
         WebKit2.TerminateTwice test is failing.

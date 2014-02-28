@@ -94,8 +94,8 @@ private:
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     virtual void exitAcceleratedCompositingMode() override;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
-    virtual void setAcceleratedCompositingRootLayer(CALayer *) override;
-    virtual CALayer *acceleratedCompositingRootLayer() const override;
+    virtual void setAcceleratedCompositingRootLayer(LayerOrView *) override;
+    virtual LayerOrView *acceleratedCompositingRootLayer() const override;
     virtual LayerHostingMode viewLayerHostingMode() override { return LayerHostingMode::OutOfProcess; }
 
     virtual RetainPtr<CGImageRef> takeViewSnapshot() override;

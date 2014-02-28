@@ -514,7 +514,7 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
     notImplemented();
 }
 
-void WebPageProxy::setAcceleratedCompositingRootLayer(PlatformLayer* rootLayer)
+void WebPageProxy::setAcceleratedCompositingRootLayer(LayerOrView* rootLayer)
 {
     m_pageClient.setAcceleratedCompositingRootLayer(rootLayer);
 }

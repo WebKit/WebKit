@@ -71,8 +71,8 @@ private:
     virtual bool isVisuallyIdle();
     virtual LayerHostingMode viewLayerHostingMode() override;
     virtual ColorSpaceData colorSpace() override;
-    virtual void setAcceleratedCompositingRootLayer(CALayer *) override;
-    virtual CALayer *acceleratedCompositingRootLayer() const override;
+    virtual void setAcceleratedCompositingRootLayer(LayerOrView *) override;
+    virtual LayerOrView *acceleratedCompositingRootLayer() const override;
 
     virtual void processDidExit();
     virtual void pageClosed();

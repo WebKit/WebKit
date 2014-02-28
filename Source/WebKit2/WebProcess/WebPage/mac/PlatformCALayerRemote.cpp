@@ -124,7 +124,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
         }
 
         if (m_layerType == LayerTypeCustom) {
-            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), m_properties, RemoteLayerTreePropertyApplier::RelatedLayerMap());
+            RemoteLayerTreePropertyApplier::applyProperties(platformLayer(), m_properties, RemoteLayerTreePropertyApplier::RelatedLayerMap());
             m_properties.changedProperties = RemoteLayerTreeTransaction::NoChange;
             return;
         }

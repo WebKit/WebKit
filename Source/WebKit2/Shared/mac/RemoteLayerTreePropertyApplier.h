@@ -26,6 +26,7 @@
 #ifndef RemoteLayerTreePropertyApplier_h
 #define RemoteLayerTreePropertyApplier_h
 
+#include "LayerRepresentation.h"
 #include "RemoteLayerTreeTransaction.h"
 #include <wtf/HashMap.h>
 
@@ -33,8 +34,11 @@ namespace WebKit {
 
 class RemoteLayerTreePropertyApplier {
 public:
-    typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, CALayer *> RelatedLayerMap;
-    static void applyPropertiesToLayer(CALayer *, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
+    typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, LayerOrView *> RelatedLayerMap;
+    static void applyProperties(CALayer *, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
+#if PLATFORM(IOS)
+    static void applyProperties(UIView *, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
+#endif
 };
 
 } // namespace WebKit

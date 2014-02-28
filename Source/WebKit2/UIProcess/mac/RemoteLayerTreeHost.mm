@@ -60,7 +60,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         createLayer(createdLayer);
 
     bool rootLayerChanged = false;
-    CALayer *rootLayer = getLayer(transaction.rootLayerID());
+    LayerOrView *rootLayer = getLayer(transaction.rootLayerID());
     if (m_rootLayer != rootLayer) {
         m_rootLayer = rootLayer;
         rootLayerChanged = true;
@@ -70,7 +70,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         auto layerID = changedLayer.key;
         const RemoteLayerTreeTransaction::LayerProperties& properties = *changedLayer.value;
 
-        CALayer *layer = getLayer(layerID);
+        LayerOrView *layer = getLayer(layerID);
         ASSERT(layer);
 
         RemoteLayerTreePropertyApplier::RelatedLayerMap relatedLayers;
@@ -88,9 +88,9 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
             if (propertiesCopy.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged)
                 propertiesCopy.borderWidth *= 1 / indicatorScaleFactor;
             
-            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(layer, propertiesCopy, relatedLayers);
+            RemoteLayerTreePropertyApplier::applyProperties(layer, propertiesCopy, relatedLayers);
         } else
-            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(layer, properties, relatedLayers);
+            RemoteLayerTreePropertyApplier::applyProperties(layer, properties, relatedLayers);
     }
 
     for (auto destroyedLayer : transaction.destroyedLayers())
@@ -99,7 +99,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     return rootLayerChanged;
 }
 
-CALayer *RemoteLayerTreeHost::getLayer(GraphicsLayer::PlatformLayerID layerID) const
+LayerOrView *RemoteLayerTreeHost::getLayer(GraphicsLayer::PlatformLayerID layerID) const
 {
     if (!layerID)
         return nil;
@@ -107,7 +107,8 @@ CALayer *RemoteLayerTreeHost::getLayer(GraphicsLayer::PlatformLayerID layerID) c
     return m_layers.get(layerID).get();
 }
 
-CALayer *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
+#if !PLATFORM(IOS)
+LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     RetainPtr<CALayer>& layer = m_layers.add(properties.layerID, nullptr).iterator->value;
 
@@ -140,5 +141,6 @@ CALayer *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::Laye
 
     return layer.get();
 }
+#endif
 
 } // namespace WebKit

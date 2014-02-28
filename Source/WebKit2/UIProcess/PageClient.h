@@ -175,8 +175,8 @@ public:
     virtual void resetSecureInputState() = 0;
     virtual void notifyInputContextAboutDiscardedComposition() = 0;
     virtual void makeFirstResponder() = 0;
-    virtual void setAcceleratedCompositingRootLayer(CALayer *) = 0;
-    virtual CALayer *acceleratedCompositingRootLayer() const = 0;
+    virtual void setAcceleratedCompositingRootLayer(LayerOrView *) = 0;
+    virtual LayerOrView *acceleratedCompositingRootLayer() const = 0;
     virtual RetainPtr<CGImageRef> takeViewSnapshot() = 0;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) = 0;
     virtual void clearCustomSwipeViews() = 0;

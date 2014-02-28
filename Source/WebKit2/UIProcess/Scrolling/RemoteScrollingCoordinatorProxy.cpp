@@ -89,10 +89,10 @@ void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingC
     m_scrollingTree->commitNewTreeState(stateTree.release());
 }
 
+#if !PLATFORM(IOS)
 void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
-    for (auto& it : stateTree.nodeMap()) {
-        ScrollingStateNode* currNode = it.value;
+    for (auto& currNode : stateTree.nodeMap().values()) {
         switch (currNode->nodeType()) {
         case ScrollingNode: {
             ScrollingStateScrollingNode* scrollingStateNode = toScrollingStateScrollingNode(currNode);
@@ -125,6 +125,7 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
         }
     }
 }
+#endif
 
 bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& event)
 {
