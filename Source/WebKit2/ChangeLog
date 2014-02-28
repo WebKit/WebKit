@@ -1,3 +1,10 @@
+2014-02-27  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed. Fix build after r164832
+
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState):
+
 2014-02-27  Martin Robinson  <mrobinson@igalia.com>
 
         Fix build after r164832
