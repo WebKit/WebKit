@@ -32,6 +32,7 @@
 #include "Element.h"
 #include "ElementData.h"
 #include "FunctionCall.h"
+#include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "NodeRenderStyle.h"
 #include "QualifiedName.h"
@@ -90,6 +91,22 @@ enum class FunctionType {
     CannotCompile
 };
 
+class AttributeMatchingInfo {
+public:
+    AttributeMatchingInfo(const CSSSelector* selector, bool canDefaultToCaseSensitiveValueMatch)
+        : m_selector(selector)
+        , m_canDefaultToCaseSensitiveValueMatch(canDefaultToCaseSensitiveValueMatch)
+    {
+    }
+
+    bool canDefaultToCaseSensitiveValueMatch() const { return m_canDefaultToCaseSensitiveValueMatch; }
+    const CSSSelector& selector() const { return *m_selector; }
+
+private:
+    const CSSSelector* m_selector;
+    bool m_canDefaultToCaseSensitiveValueMatch;
+};
+
 struct SelectorFragment {
     SelectorFragment()
         : traversalBacktrackingAction(BacktrackingAction::NoBacktracking)
@@ -111,7 +128,7 @@ struct SelectorFragment {
     Vector<const AtomicStringImpl*, 1> classNames;
     HashSet<unsigned> pseudoClasses;
     Vector<JSC::FunctionPtr> unoptimizedPseudoClasses;
-    Vector<const CSSSelector*> attributes;
+    Vector<AttributeMatchingInfo> attributes;
 };
 
 typedef JSC::MacroAssembler Assembler;
@@ -154,7 +171,9 @@ private:
     void generateSynchronizeStyleAttribute(Assembler::RegisterID elementDataArraySizeAndFlags);
     void generateSynchronizeAllAnimatedSVGAttribute(Assembler::RegisterID elementDataArraySizeAndFlags);
     void generateElementAttributesMatching(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const SelectorFragment&);
-    void generateElementAttributeMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, Assembler::RegisterID decIndexRegister, const CSSSelector* attributeSelector);
+    void generateElementAttributeMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, Assembler::RegisterID decIndexRegister, const AttributeMatchingInfo& attributeInfo);
+    void generateElementAttributeValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AttributeMatchingInfo& attributeInfo);
+    void generateElementAttributeValueExactMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool caseSensitive);
     void generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch);
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
@@ -328,11 +347,13 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
             if (m_functionType == FunctionType::CannotCompile || m_functionType == FunctionType::CannotMatchAnything)
                 return;
             break;
+        case CSSSelector::Exact:
+            fragment.attributes.append(AttributeMatchingInfo(selector, HTMLDocument::isCaseSensitiveAttribute(selector->attribute())));
+            break;
         case CSSSelector::Set:
-            fragment.attributes.append(selector);
+            fragment.attributes.append(AttributeMatchingInfo(selector, false));
             break;
         case CSSSelector::Unknown:
-        case CSSSelector::Exact:
         case CSSSelector::List:
         case CSSSelector::Hyphen:
         case CSSSelector::PseudoElement:
@@ -372,6 +393,16 @@ CannotHandleSelector:
     m_functionType = FunctionType::CannotCompile;
 }
 
+static inline bool attributeNameTestingRequiresNamespaceRegister(const CSSSelector& attributeSelector)
+{
+    return attributeSelector.attribute().prefix() != starAtom && !attributeSelector.attribute().namespaceURI().isNull();
+}
+
+static inline bool attributeValueTestingRequiresCaseFoldingRegister(const AttributeMatchingInfo& attributeInfo)
+{
+    return !attributeInfo.canDefaultToCaseSensitiveValueMatch();
+}
+
 static inline unsigned minimumRegisterRequirements(const SelectorFragmentList& selectorFragments)
 {
     // Strict minimum to match anything interesting:
@@ -381,10 +412,10 @@ static inline unsigned minimumRegisterRequirements(const SelectorFragmentList& s
     // Attributes cause some register pressure.
     for (unsigned selectorFragmentIndex = 0; selectorFragmentIndex < selectorFragments.size(); ++selectorFragmentIndex) {
         const SelectorFragment& selectorFragment = selectorFragments[selectorFragmentIndex];
-        const Vector<const CSSSelector*>& attributes = selectorFragment.attributes;
+        const Vector<AttributeMatchingInfo>& attributes = selectorFragment.attributes;
 
         for (unsigned attributeIndex = 0; attributeIndex < attributes.size(); ++attributeIndex) {
-            // Element + ElementData + scratchRegister + attributeArrayPointer + expectedLocalName + qualifiedNameImpl.
+            // Element + ElementData + scratchRegister + attributeArrayPointer + expectedLocalName + (qualifiedNameImpl && expectedValue).
             unsigned attributeMinimum = 6;
             if (selectorFragment.traversalBacktrackingAction == BacktrackingAction::JumpToDescendantTail
                 || selectorFragment.matchingBacktrackingAction == BacktrackingAction::JumpToDescendantTail)
@@ -393,9 +424,11 @@ static inline unsigned minimumRegisterRequirements(const SelectorFragmentList& s
             if (attributes.size() != 1)
                 attributeMinimum += 2; // For the local copy of the counter and attributeArrayPointer.
 
-            const CSSSelector* attributeSelector = attributes[attributeIndex];
-            if (attributeSelector->attribute().prefix() != starAtom && !attributeSelector->attribute().namespaceURI().isNull())
-                attributeMinimum += 1; // Additional register for the expected namespace.
+            const AttributeMatchingInfo& attributeInfo = attributes[attributeIndex];
+            const CSSSelector& attributeSelector = attributeInfo.selector();
+            if (attributeNameTestingRequiresNamespaceRegister(attributeSelector)
+                || attributeValueTestingRequiresCaseFoldingRegister(attributeInfo))
+                attributeMinimum += 1;
 
             minimum = std::max(minimum, attributeMinimum);
         }
@@ -823,7 +856,7 @@ void SelectorCodeGenerator::markParentElementIfResolvingStyle(JSC::FunctionPtr m
     // Invoke the marking function on the parent element.
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(markingFunction);
-    functionCall.setFirstArgument(parentElement);
+    functionCall.setOneArgument(parentElement);
     functionCall.call();
 
     notResolvingStyle.link(&m_assembler);
@@ -958,14 +991,14 @@ static inline Assembler::Jump testIsHTMLFlagOnNode(Assembler::ResultCondition co
 static inline bool canMatchStyleAttribute(const SelectorFragment& fragment)
 {
     for (unsigned i = 0; i < fragment.attributes.size(); ++i) {
-        const CSSSelector* attributeSelector = fragment.attributes[i];
-        const QualifiedName& attributeName = attributeSelector->attribute();
+        const CSSSelector& attributeSelector = fragment.attributes[i].selector();
+        const QualifiedName& attributeName = attributeSelector.attribute();
         if (Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeName.localName(), attributeName.namespaceURI()))
             return true;
 
-        const AtomicString& canonicalLocalName = attributeSelector->attributeCanonicalLocalName();
+        const AtomicString& canonicalLocalName = attributeSelector.attributeCanonicalLocalName();
         if (attributeName.localName() != canonicalLocalName
-            && Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeSelector->attributeCanonicalLocalName(), attributeName.namespaceURI())) {
+            && Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeSelector.attributeCanonicalLocalName(), attributeName.namespaceURI())) {
             return true;
         }
     }
@@ -980,7 +1013,7 @@ void SelectorCodeGenerator::generateSynchronizeStyleAttribute(Assembler::Registe
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(StyledElement::synchronizeStyleAttributeInternal);
     Assembler::RegisterID elementAddress = elementAddressRegister;
-    functionCall.setFirstArgument(elementAddress);
+    functionCall.setOneArgument(elementAddress);
     functionCall.call();
 
     styleAttributeNotDirty.link(&m_assembler);
@@ -989,14 +1022,14 @@ void SelectorCodeGenerator::generateSynchronizeStyleAttribute(Assembler::Registe
 static inline bool canMatchAnimatableSVGAttribute(const SelectorFragment& fragment)
 {
     for (unsigned i = 0; i < fragment.attributes.size(); ++i) {
-        const CSSSelector* attributeSelector = fragment.attributes[i];
-        const QualifiedName& selectorAttributeName = attributeSelector->attribute();
+        const CSSSelector& attributeSelector = fragment.attributes[i].selector();
+        const QualifiedName& selectorAttributeName = attributeSelector.attribute();
 
         const QualifiedName& candidateForLocalName = SVGElement::animatableAttributeForName(selectorAttributeName.localName());
         if (Attribute::nameMatchesFilter(candidateForLocalName, selectorAttributeName.prefix(), selectorAttributeName.localName(), selectorAttributeName.namespaceURI()))
             return true;
 
-        const AtomicString& canonicalLocalName = attributeSelector->attributeCanonicalLocalName();
+        const AtomicString& canonicalLocalName = attributeSelector.attributeCanonicalLocalName();
         if (selectorAttributeName.localName() != canonicalLocalName) {
             const QualifiedName& candidateForCanonicalLocalName = SVGElement::animatableAttributeForName(selectorAttributeName.localName());
             if (Attribute::nameMatchesFilter(candidateForCanonicalLocalName, selectorAttributeName.prefix(), selectorAttributeName.localName(), selectorAttributeName.namespaceURI()))
@@ -1015,7 +1048,7 @@ void SelectorCodeGenerator::generateSynchronizeAllAnimatedSVGAttribute(Assembler
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(SVGElement::synchronizeAllAnimatedSVGAttribute);
     Assembler::RegisterID elementAddress = elementAddressRegister;
-    functionCall.setFirstArgument(elementAddress);
+    functionCall.setOneArgument(elementAddress);
     functionCall.call();
 
     animatedSVGAttributesNotDirty.link(&m_assembler);
@@ -1083,15 +1116,16 @@ void SelectorCodeGenerator::generateElementAttributesMatching(Assembler::JumpLis
     }
 }
 
-void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, Assembler::RegisterID decIndexRegister, const CSSSelector* attributeSelector)
+void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, Assembler::RegisterID decIndexRegister, const AttributeMatchingInfo& attributeInfo)
 {
     // Get the localName used for comparison. HTML elements use a lowercase local name known in selectors as canonicalLocalName.
     LocalRegister localNameToMatch(m_registerAllocator);
 
     // In general, canonicalLocalName and localName are the same. When they differ, we have to check if the node is HTML to know
     // which one to use.
-    const AtomicStringImpl* canonicalLocalName = attributeSelector->attributeCanonicalLocalName().impl();
-    const AtomicStringImpl* localName = attributeSelector->attribute().localName().impl();
+    const CSSSelector& attributeSelector = attributeInfo.selector();
+    const AtomicStringImpl* canonicalLocalName = attributeSelector.attributeCanonicalLocalName().impl();
+    const AtomicStringImpl* localName = attributeSelector.attribute().localName().impl();
     if (canonicalLocalName == localName)
         m_assembler.move(Assembler::TrustedImmPtr(canonicalLocalName), localNameToMatch);
     else {
@@ -1104,23 +1138,27 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
     Assembler::JumpList successCases;
     Assembler::Label loopStart(m_assembler.label());
 
-    LocalRegister qualifiedNameImpl(m_registerAllocator);
-    m_assembler.loadPtr(Assembler::Address(currentAttributeAddress, Attribute::nameMemoryOffset()), qualifiedNameImpl);
+    {
+        LocalRegister qualifiedNameImpl(m_registerAllocator);
+        m_assembler.loadPtr(Assembler::Address(currentAttributeAddress, Attribute::nameMemoryOffset()), qualifiedNameImpl);
 
-    bool shouldCheckNamespace = attributeSelector->attribute().prefix() != starAtom;
-    if (shouldCheckNamespace) {
-        Assembler::Jump nameDoesNotMatch = m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameToMatch);
+        bool shouldCheckNamespace = attributeSelector.attribute().prefix() != starAtom;
+        if (shouldCheckNamespace) {
+            Assembler::Jump nameDoesNotMatch = m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameToMatch);
 
-        const AtomicStringImpl* namespaceURI = attributeSelector->attribute().namespaceURI().impl();
-        if (namespaceURI) {
-            LocalRegister namespaceToMatch(m_registerAllocator);
-            m_assembler.move(Assembler::TrustedImmPtr(namespaceURI), namespaceToMatch);
-            successCases.append(m_assembler.branchPtr(Assembler::Equal, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), namespaceToMatch));
+            const AtomicStringImpl* namespaceURI = attributeSelector.attribute().namespaceURI().impl();
+            if (namespaceURI) {
+                LocalRegister namespaceToMatch(m_registerAllocator);
+                m_assembler.move(Assembler::TrustedImmPtr(namespaceURI), namespaceToMatch);
+                successCases.append(m_assembler.branchPtr(Assembler::Equal, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), namespaceToMatch));
+            } else
+                successCases.append(m_assembler.branchTestPtr(Assembler::Zero, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset())));
+            nameDoesNotMatch.link(&m_assembler);
         } else
-            successCases.append(m_assembler.branchTestPtr(Assembler::Zero, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset())));
-        nameDoesNotMatch.link(&m_assembler);
-    } else
-        successCases.append(m_assembler.branchPtr(Assembler::Equal, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameToMatch));
+            successCases.append(m_assembler.branchPtr(Assembler::Equal, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameToMatch));
+    }
+
+    Assembler::Label loopReEntry(m_assembler.label());
 
     // If we reached the last element -> failure.
     failureCases.append(m_assembler.branchSub32(Assembler::Zero, Assembler::TrustedImm32(1), decIndexRegister));
@@ -1128,7 +1166,69 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
     // Otherwise just loop over.
     m_assembler.addPtr(Assembler::TrustedImm32(sizeof(Attribute)), currentAttributeAddress);
     m_assembler.jump().linkTo(loopStart, &m_assembler);
+
     successCases.link(&m_assembler);
+
+    // We make the assumption that name matching fails in most cases and we keep value matching outside
+    // of the loop. We re-enter the loop if needed.
+    // FIXME: exact case sensitive value matching is so simple that it should be done in the loop.
+    Assembler::JumpList localFailureCases;
+    generateElementAttributeValueMatching(localFailureCases, currentAttributeAddress, attributeInfo);
+    localFailureCases.linkTo(loopReEntry, &m_assembler);
+}
+
+void SelectorCodeGenerator::generateElementAttributeValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AttributeMatchingInfo& attributeInfo)
+{
+    const CSSSelector& attributeSelector = attributeInfo.selector();
+    if (attributeSelector.m_match == CSSSelector::Set)
+        return;
+
+    const AtomicString& expectedValue = attributeSelector.value();
+    ASSERT(!expectedValue.isNull());
+
+    RELEASE_ASSERT(attributeSelector.m_match == CSSSelector::Exact);
+    generateElementAttributeValueExactMatching(failureCases, currentAttributeAddress, expectedValue, attributeInfo.canDefaultToCaseSensitiveValueMatch());
+}
+
+static inline Assembler::Jump testIsHTMLClassOnDocument(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID documentAddress)
+{
+    return assembler.branchTest32(condition, Assembler::Address(documentAddress, Document::documentClassesMemoryOffset()), Assembler::TrustedImm32(Document::isHTMLDocumentClassFlag()));
+}
+
+void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool canDefaultToCaseSensitiveValueMatch)
+{
+    LocalRegister expectedValueRegister(m_registerAllocator);
+    m_assembler.move(Assembler::TrustedImmPtr(expectedValue.impl()), expectedValueRegister);
+
+    if (canDefaultToCaseSensitiveValueMatch)
+        failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(currentAttributeAddress, Attribute::valueMemoryOffset()), expectedValueRegister));
+    else {
+        Assembler::Jump skipCaseInsensitiveComparison = m_assembler.branchPtr(Assembler::Equal, Assembler::Address(currentAttributeAddress, Attribute::valueMemoryOffset()), expectedValueRegister);
+
+        // If the element is an HTML element, in a HTML dcoument (not including XHTML), value matching is case insensitive.
+        // Taking the contrapositive, if we find the element is not HTML or is not in a HTML document, the condition above
+        // sould be sufficient and we can fail early.
+        failureCases.append(testIsHTMLFlagOnNode(Assembler::Zero, m_assembler, elementAddressRegister));
+
+        {
+            LocalRegister scratchRegister(m_registerAllocator);
+            // scratchRegister = pointer to treeScope.
+            m_assembler.loadPtr(Assembler::Address(elementAddressRegister, Node::treeScopeMemoryOffset()), scratchRegister);
+            // scratchRegister = pointer to document.
+            m_assembler.loadPtr(Assembler::Address(scratchRegister, TreeScope::documentScopeMemoryOffset()), scratchRegister);
+            failureCases.append(testIsHTMLClassOnDocument(Assembler::Zero, m_assembler, scratchRegister));
+        }
+
+        LocalRegister valueStringImpl(m_registerAllocator);
+        m_assembler.loadPtr(Assembler::Address(currentAttributeAddress, Attribute::valueMemoryOffset()), valueStringImpl);
+
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(WTF::equalIgnoringCaseNonNull);
+        functionCall.setTwoArguments(expectedValueRegister, valueStringImpl);
+        failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+
+        skipCaseInsensitiveComparison.link(&m_assembler);
+    }
 }
 
 void SelectorCodeGenerator::generateElementFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr testFunction)
@@ -1136,7 +1236,7 @@ void SelectorCodeGenerator::generateElementFunctionCallTest(Assembler::JumpList&
     Assembler::RegisterID elementAddress = elementAddressRegister;
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(testFunction);
-    functionCall.setFirstArgument(elementAddress);
+    functionCall.setOneArgument(elementAddress);
     failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
 }
 

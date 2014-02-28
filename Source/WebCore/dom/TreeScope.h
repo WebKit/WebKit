@@ -69,6 +69,7 @@ public:
     void removeElementByName(const AtomicStringImpl&, Element&);
 
     Document& documentScope() const { return *m_documentScope; }
+    static ptrdiff_t documentScopeMemoryOffset() { return OBJECT_OFFSETOF(TreeScope, m_documentScope); }
 
     Node* ancestorInThisScope(Node*) const;
 

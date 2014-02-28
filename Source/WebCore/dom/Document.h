@@ -518,6 +518,9 @@ public:
     bool hasSVGRootNode() const;
     virtual bool isFrameSet() const { return false; }
 
+    static ptrdiff_t documentClassesMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentClasses); }
+    static uint32_t isHTMLDocumentClassFlag() { return HTMLDocumentClass; }
+
     bool isSrcdocDocument() const { return m_isSrcdocDocument; }
 
     StyleResolver* styleResolverIfExists() const { return m_styleResolver.get(); }

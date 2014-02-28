@@ -277,8 +277,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
 static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match match, const AtomicString& selectorValue, bool caseSensitive)
 {
     const AtomicString& value = attribute.value();
-    if (value.isNull())
-        return false;
+    ASSERT(!value.isNull());
 
     switch (match) {
     case CSSSelector::Exact:

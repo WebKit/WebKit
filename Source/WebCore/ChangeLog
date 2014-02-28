@@ -1,3 +1,102 @@
+2014-02-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Compile attribute value matching
+        https://bugs.webkit.org/show_bug.cgi?id=129228
+
+        Reviewed by Geoffrey Garen.
+
+        Add support for compiling value matching when matching attributes in Selector.
+        This patch only adds exact matching, the other cases will follow.
+
+        There is a little infrastructure changes since FunctionCall now needs to support
+        calls taking 2 arguments. The fun begins when the arguments are not in the right
+        registers and need to be moved to the right place. Otherwise the code is straightforward.
+
+        In SelectorCompiler, it is necessary to handle two different cases of matching: case sensitive
+        and case insensitive. The choice is done in part at compilation time by asking HTMLDocument
+        if the name filter can include case insensitive attribute. The other part is done at runtime
+        by querying the element for its type and document.
+
+        Test: fast/selectors/case-insensitive-value-matching.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::attributeValueMatches): Null values matching should never happen, when an attribute
+        has no value, its value is empty.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::FunctionCall):
+        Add support for calls with two arguments.
+        (WebCore::FunctionCall::setOneArgument):
+        (WebCore::FunctionCall::setTwoArguments):
+        (WebCore::FunctionCall::swapArguments):
+        Here we need to swap two registers, but we cannot allocate a new register (because the context
+        of the function call may have taken all the available registers already).
+
+        On x86, the solution is simple, we can swap the two registers without side effects.
+
+        On other platforms, it is a little more complex. If there is any available register, we can just
+        use it as a temporary to make the swap.
+        If there are no available registers, we know that all the registers are taken. Since swapArguments()
+        was called after pushing all the arguments on the stack, we can safely trash the value of any of those.
+        We take the first available register that is not a function argument and use it as a temporary.
+
+        (WebCore::FunctionCall::prepareAndCall):
+        This is the fun part, we have two registers where the values must go before the function call. The values
+        can be in any combination of the allocated registers. The code here needs to move the two values to
+        their target register while avoiding conflicts.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::AttributeMatchingInfo::AttributeMatchingInfo):
+        (WebCore::SelectorCompiler::AttributeMatchingInfo::canDefaultToCaseSensitiveValueMatch):
+        (WebCore::SelectorCompiler::AttributeMatchingInfo::selector):
+        The value of HTMLDocument::isCaseSensitiveAttribute is needed at compilation time to compute the number
+        of required registers. As a result, we need to keep it along in the selector fragment.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::attributeNameTestingRequiresNamespaceRegister):
+        (WebCore::SelectorCompiler::attributeValueTestingRequiresExtraRegister):
+        (WebCore::SelectorCompiler::minimumRegisterRequirements):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::markParentElementIfResolvingStyle):
+        (WebCore::SelectorCompiler::canMatchStyleAttribute):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSynchronizeStyleAttribute):
+        (WebCore::SelectorCompiler::canMatchAnimatableSVGAttribute):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSynchronizeAllAnimatedSVGAttribute):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeMatching):
+        The matching code is moved in a local scope. This is done to recover the register of qualifiedNameImpl
+        before doing any value matching. That register can then be used to store the expected value when matching
+        an attribute value.
+        It is unfortunate there is so much register pressure in this part.
+
+        Value matching is done outside the loop. The idea is to keep the loop really small since in the vast majority
+        of cases, name matching fails.
+        If the value matching fails, we jump back into the tight loop.
+
+        This is not ideal in all situation. For example trivial name matching with trivial value matching should
+        be done in loop. There is a FIXME to improve those cases later.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueMatching):
+        (WebCore::SelectorCompiler::testIsHTMLClassOnDocument):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueExactMatching):
+        In the case sensitive branch, things are really simple. We have to AtomicStringImpl pointers, if they
+        don't match, it is a failure.
+
+        The case sensitive branch start by comparing the pointers in case the values are equal. This is a common
+        case and it simplifies the cases for SVG, XHTML, etc.
+        If the two values are not equal, we must first find if the context requires case insensitive comparison
+        (HTMLElement in HTMLDocument). If the conditions require case insensitive matching, we then fall back
+        to a function call.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementFunctionCallTest):
+        * dom/Attribute.h:
+        (WebCore::Attribute::valueMemoryOffset):
+        * dom/Document.h:
+        (WebCore::Document::documentClassesMemoryOffset):
+        (WebCore::Document::isHTMLDocumentClassFlag):
+        * dom/Node.h:
+        (WebCore::Node::treeScopeMemoryOffset):
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::documentScopeMemoryOffset):
+
 2014-02-27  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Build break when disabled CSS_GRID_LAYOUT

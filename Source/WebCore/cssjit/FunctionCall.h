@@ -42,7 +42,8 @@ public:
         , m_registerAllocator(registerAllocator)
         , m_stackAllocator(stackAllocator)
         , m_callRegistry(callRegistry)
-        , m_firstArgument(0)
+        , m_firstArgument(nullptr)
+        , m_secondArgument(nullptr)
     {
     }
 
@@ -51,9 +52,15 @@ public:
         m_functionAddress = functionAddress;
     }
 
-    void setFirstArgument(const JSC::MacroAssembler::RegisterID& registerID)
+    void setOneArgument(const JSC::MacroAssembler::RegisterID& registerID)
     {
         m_firstArgument = &registerID;
+    }
+
+    void setTwoArguments(const JSC::MacroAssembler::RegisterID& firstRegisterID, const JSC::MacroAssembler::RegisterID& secondRegisterID)
+    {
+        m_firstArgument = &firstRegisterID;
+        m_secondArgument = &secondRegisterID;
     }
 
     void call()
@@ -71,14 +78,69 @@ public:
     }
 
 private:
+    void swapArguments()
+    {
+        JSC::MacroAssembler::RegisterID a = *m_firstArgument;
+        JSC::MacroAssembler::RegisterID b = *m_secondArgument;
+        // x86 can swap without a temporary register. On other architectures, we need allocate a temporary register to switch the values.
+#if CPU(X86) || CPU(X86_64)
+        m_assembler.swap(a, b);
+#else
+        if (m_registerAllocator.availableRegisterCount()) {
+            // Usually we can just use a free register.
+            LocalRegister tempValue(m_registerAllocator);
+            m_assembler.move(a, tempValue);
+            m_assembler.move(b, a);
+            m_assembler.move(tempValue, b);
+        } else {
+            // If there is no free register, everything should be on the stack at this point. We can take
+            // the first of those saved registers and use it as a temporary.
+            JSC::MacroAssembler::RegisterID pushedRegister;
+            for (unsigned i = 0; i < m_registerAllocator.allocatedRegisters().size(); ++i) {
+                pushedRegister = m_registerAllocator.allocatedRegisters()[i];
+                if (pushedRegister != a && pushedRegister != b)
+                    break;
+            }
+            ASSERT(pushedRegister != a && pushedRegister != b);
+            m_assembler.move(a, pushedRegister);
+            m_assembler.move(b, a);
+            m_assembler.move(pushedRegister, b);
+        }
+#endif
+    }
+
     void prepareAndCall()
     {
         ASSERT(m_functionAddress.executableAddress());
+        ASSERT(!m_firstArgument || (m_firstArgument && !m_secondArgument) || (m_firstArgument && m_secondArgument));
 
         saveAllocatedRegisters();
         m_stackAllocator.alignStackPreFunctionCall();
 
-        if (m_firstArgument && *m_firstArgument != JSC::GPRInfo::argumentGPR0)
+        if (m_secondArgument) {
+            if (*m_firstArgument != JSC::GPRInfo::argumentGPR0) {
+                // If firstArgument is not in argumentGPR0, we need to handle potential conflicts:
+                // -if secondArgument and firstArgument are in inversted registers, just swap the values.
+                // -if secondArgument is in argumentGPR0 but firstArgument is not taking argumentGPR1, we can move in order secondArgument->argumentGPR1, firstArgument->argumentGPR0
+                // -if secondArgument does not take argumentGPR0, firstArgument and secondArgument can be moved safely to destination.
+                if (*m_secondArgument == JSC::GPRInfo::argumentGPR0) {
+                    if (*m_firstArgument == JSC::GPRInfo::argumentGPR1)
+                        swapArguments();
+                    else {
+                        m_assembler.move(JSC::GPRInfo::argumentGPR0, JSC::GPRInfo::argumentGPR1);
+                        m_assembler.move(*m_firstArgument, JSC::GPRInfo::argumentGPR0);
+                    }
+                } else {
+                    m_assembler.move(*m_firstArgument, JSC::GPRInfo::argumentGPR0);
+                    if (*m_secondArgument != JSC::GPRInfo::argumentGPR1)
+                        m_assembler.move(*m_secondArgument, JSC::GPRInfo::argumentGPR1);
+                }
+            } else {
+                // We know firstArgument is already in place, we can safely move secondArgument.
+                if (*m_secondArgument != JSC::GPRInfo::argumentGPR1)
+                    m_assembler.move(*m_secondArgument, JSC::GPRInfo::argumentGPR1);
+            }
+        } else if (m_firstArgument && *m_firstArgument != JSC::GPRInfo::argumentGPR0)
             m_assembler.move(*m_firstArgument, JSC::GPRInfo::argumentGPR0);
 
         JSC::MacroAssembler::Call call = m_assembler.call();
@@ -120,6 +182,7 @@ private:
 
     JSC::FunctionPtr m_functionAddress;
     const JSC::MacroAssembler::RegisterID* m_firstArgument;
+    const JSC::MacroAssembler::RegisterID* m_secondArgument;
 };
 
 } // namespace WebCore

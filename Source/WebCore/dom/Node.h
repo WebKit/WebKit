@@ -393,6 +393,7 @@ public:
         ASSERT(m_treeScope);
         return *m_treeScope;
     }
+    static ptrdiff_t treeScopeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_treeScope); }
 
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise.

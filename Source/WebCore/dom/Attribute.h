@@ -44,6 +44,7 @@ public:
     // as the Attribute stays in place. For example, calling a function that mutates
     // an Element's internal attribute storage may invalidate them.
     const AtomicString& value() const { return m_value; }
+    static ptrdiff_t valueMemoryOffset() { return OBJECT_OFFSETOF(Attribute, m_value); }
     const AtomicString& prefix() const { return m_name.prefix(); }
     const AtomicString& localName() const { return m_name.localName(); }
     const AtomicString& namespaceURI() const { return m_name.namespaceURI(); }
