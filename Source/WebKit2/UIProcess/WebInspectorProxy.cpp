@@ -364,17 +364,24 @@ bool WebInspectorProxy::isInspectorPage(WebPageProxy& page)
 
 static bool isMainOrTestInspectorPage(const WebInspectorProxy* webInspectorProxy, WKURLRequestRef requestRef)
 {
+    URL requestURL(URL(), toImpl(requestRef)->resourceRequest().url());
+    if (!WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(requestURL.protocol()))
+        return false;
+
     // Use URL so we can compare just the paths.
     URL mainPageURL(URL(), webInspectorProxy->inspectorPageURL());
-    URL testPageURL(URL(), webInspectorProxy->inspectorTestPageURL());
-    URL requestURL(URL(), toImpl(requestRef)->resourceRequest().url());
-
     ASSERT(WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(mainPageURL.protocol()));
-    ASSERT(WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(testPageURL.protocol()));
+    if (decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(mainPageURL.path()))
+        return true;
 
-    bool isMainPageURL = decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(mainPageURL.path());
-    bool isTestPageURL = decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(testPageURL.path());
-    return WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(requestURL.protocol()) && (isMainPageURL || isTestPageURL);
+    // We might not have a Test URL in Production builds.
+    String testPageURLString = webInspectorProxy->inspectorTestPageURL();
+    if (testPageURLString.isNull())
+        return false;
+
+    URL testPageURL(URL(), webInspectorProxy->inspectorTestPageURL());
+    ASSERT(WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(testPageURL.protocol()));
+    return decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(testPageURL.path());
 }
 
 static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKFrameRef, WKURLRequestRef requestRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)

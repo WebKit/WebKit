@@ -763,7 +763,10 @@ String WebInspectorProxy::inspectorTestPageURL() const
     WebInspectorUILibrary();
 
     NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Test" ofType:@"html"];
-    ASSERT([path length]);
+
+    // We might not have a Test.html in Production builds.
+    if (!path)
+        return String();
 
     return [[NSURL fileURLWithPath:path] absoluteString];
 }

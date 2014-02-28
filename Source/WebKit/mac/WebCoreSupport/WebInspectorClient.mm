@@ -464,7 +464,11 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     WebInspectorUILibrary();
 
     NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Test" ofType:@"html"];
-    ASSERT([path length]);
+
+    // We might not have a Test.html in Production builds.
+    if (!path)
+        return nil;
+
     return path;
 }
 
@@ -763,7 +767,8 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     }
 
     // Allow loading of the test inspector file.
-    if ([[request URL] isFileURL] && [[[request URL] path] isEqualToString:[self inspectorTestPagePath]]) {
+    NSString *testPagePath = [self inspectorTestPagePath];
+    if (testPagePath && [[request URL] isFileURL] && [[[request URL] path] isEqualToString:testPagePath]) {
         [listener use];
         return;
     }
