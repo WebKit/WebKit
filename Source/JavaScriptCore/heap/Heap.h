@@ -248,14 +248,48 @@ namespace JSC {
         JS_EXPORT_PRIVATE bool isValidAllocation(size_t);
         JS_EXPORT_PRIVATE void reportExtraMemoryCostSlowCase(size_t);
 
+        void suspendCompilerThreads();
+        void willStartCollection();
+        void deleteOldCode(double gcStartTime);
+        void flushOldStructureIDTables();
+        void flushWriteBarrierBuffer();
+        void stopAllocation();
+
         void markRoots();
-        void markProtectedObjects(HeapRootVisitor&);
-        void markTempSortVectors(HeapRootVisitor&);
-        template <HeapOperation collectionType>
+        void gatherStackRoots(ConservativeRoots&, void** dummy);
+        void gatherJSStackRoots(ConservativeRoots&);
+        void gatherScratchBufferRoots(ConservativeRoots&);
+        void clearLivenessData();
+        void visitSmallStrings();
+        void visitConservativeRoots(ConservativeRoots&);
+        void visitCompilerWorklists();
+        void visitProtectedObjects(HeapRootVisitor&);
+        void visitTempSortVectors(HeapRootVisitor&);
+        void visitArgumentBuffers(HeapRootVisitor&);
+        void visitException(HeapRootVisitor&);
+        void visitStrongHandles(HeapRootVisitor&);
+        void visitHandleStack(HeapRootVisitor&);
+        void traceCodeBlocksAndJITStubRoutines();
+        void converge();
+        void visitWeakHandles(HeapRootVisitor&);
+        void clearRememberedSet(Vector<const JSCell*>&);
+        void updateObjectCounts();
+        void resetVisitors();
+
+        void reapWeakHandles();
+        void sweepArrayBuffers();
+        void snapshotMarkedSpace();
+        void deleteSourceProviderCaches();
+        void notifyIncrementalSweeper();
+        void rememberCurrentlyExecutingCodeBlocks();
+        void resetAllocators();
         void copyBackingStores();
         void harvestWeakReferences();
         void finalizeUnconditionalFinalizers();
         void deleteUnmarkedCompiledCode();
+        void updateAllocationLimits();
+        void didFinishCollection(double gcStartTime);
+        void resumeCompilerThreads();
         void zombifyDeadObjects();
         void markDeadObjects();
 

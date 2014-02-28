@@ -1,3 +1,57 @@
+2014-02-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Clean up Heap::collect and Heap::markRoots
+        https://bugs.webkit.org/show_bug.cgi?id=129464
+
+        Reviewed by Geoffrey Garen.
+
+        These functions have built up a lot of cruft recently. 
+        We should do a bit of cleanup to make them easier to grok.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::gatherStackRoots):
+        (JSC::Heap::gatherJSStackRoots):
+        (JSC::Heap::gatherScratchBufferRoots):
+        (JSC::Heap::clearLivenessData):
+        (JSC::Heap::visitSmallStrings):
+        (JSC::Heap::visitConservativeRoots):
+        (JSC::Heap::visitCompilerWorklists):
+        (JSC::Heap::markProtectedObjects):
+        (JSC::Heap::markTempSortVectors):
+        (JSC::Heap::markArgumentBuffers):
+        (JSC::Heap::visitException):
+        (JSC::Heap::visitStrongHandles):
+        (JSC::Heap::visitHandleStack):
+        (JSC::Heap::traceCodeBlocksAndJITStubRoutines):
+        (JSC::Heap::converge):
+        (JSC::Heap::visitWeakHandles):
+        (JSC::Heap::clearRememberedSet):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::resetVisitors):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::copyBackingStores):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::collect):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        (JSC::Heap::suspendCompilerThreads):
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::deleteOldCode):
+        (JSC::Heap::flushOldStructureIDTables):
+        (JSC::Heap::flushWriteBarrierBuffer):
+        (JSC::Heap::stopAllocation):
+        (JSC::Heap::reapWeakHandles):
+        (JSC::Heap::sweepArrayBuffers):
+        (JSC::Heap::snapshotMarkedSpace):
+        (JSC::Heap::deleteSourceProviderCaches):
+        (JSC::Heap::notifyIncrementalSweeper):
+        (JSC::Heap::rememberCurrentlyExecutingCodeBlocks):
+        (JSC::Heap::resetAllocators):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::resumeCompilerThreads):
+        * heap/Heap.h:
+
 2014-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         indexOf and lastIndexOf shouldn't resolve ropes when needle is longer than haystack
