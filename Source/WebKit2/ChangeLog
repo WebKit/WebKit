@@ -1,3 +1,19 @@
+2014-02-27  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Stop using some deprecated functions in WKView.mm
+        https://bugs.webkit.org/show_bug.cgi?id=129455
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView firstRectForCharacterRange:actualRange:]): Use convertRectToScreen,
+        which is a replacement for convertBaseToScreen. Don't check for window being null,
+        because isn't that crazy talk?
+        (-[WKView _postFakeMouseMovedEventForFlagsChangedEvent:]): Use event's location
+        in window instead of current mouse location. Using location that is not synced to
+        event stream rarely makes sense, and it doesn't look like this is one of those cases.
+        (-[WKView performDictionaryLookupAtCurrentMouseLocation]): Ditto.
+
 2014-02-27  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed. Fix build after r164832

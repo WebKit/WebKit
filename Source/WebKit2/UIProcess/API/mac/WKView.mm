@@ -1671,13 +1671,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     
     NSRect resultRect = _data->_page->firstRectForCharacterRange(theRange.location, theRange.length);
     resultRect = [self convertRect:resultRect toView:nil];
-    
-    NSWindow *window = [self window];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (window)
-        resultRect.origin = [window convertBaseToScreen:resultRect.origin];
-#pragma clang diagnostic pop
+    resultRect = [self.window convertRectToScreen:resultRect];
 
     if (actualRange) {
         // FIXME: Update actualRange to match the range of first rect.
@@ -2151,12 +2145,9 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
 - (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:[[flagsChangedEvent window] convertScreenToBase:[NSEvent mouseLocation]]
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:flagsChangedEvent.locationInWindow
         modifierFlags:[flagsChangedEvent modifierFlags] timestamp:[flagsChangedEvent timestamp] windowNumber:[flagsChangedEvent windowNumber]
         context:[flagsChangedEvent context] eventNumber:0 clickCount:0 pressure:0];
-#pragma clang diagnostic pop
     NativeWebMouseEvent webEvent(fakeEvent, self);
     _data->_page->handleMouseEvent(webEvent);
 }
@@ -3093,14 +3084,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)performDictionaryLookupAtCurrentMouseLocation
 {
-    NSPoint thePoint = [NSEvent mouseLocation];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    thePoint = [[self window] convertScreenToBase:thePoint];
-#pragma clang diagnostic pop
-    thePoint = [self convertPoint:thePoint fromView:nil];
-
-    _data->_page->performDictionaryLookupAtLocation(FloatPoint(thePoint.x, thePoint.y));
+    _data->_page->performDictionaryLookupAtLocation([self convertPoint:[[NSApp currentEvent] locationInWindow] fromView:nil]);
 }
 
 + (void)hideWordDefinitionWindow
