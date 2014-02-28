@@ -66,12 +66,10 @@ public:
     void applyOverhang(RenderRubyRun*, RenderObject* startRenderer, RenderObject* endRenderer);
     void fitBelowFloats(bool isFirstLine = false);
     void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
-
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    void updateCurrentShapeSegment();
-#endif
-
     bool shouldIndentText() const { return m_shouldIndentText == IndentText; }
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
+    void updateLineSegment(const LayoutUnit&);
+#endif
 
 private:
     void computeAvailableWidthFromLeftAndRight();
@@ -79,6 +77,9 @@ private:
     void updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWidth, float newLineLeft, float newLineRight);
 #if ENABLE(CSS_SHAPES)
     void wrapNextToShapeOutside(bool isFirstLine);
+#if ENABLE(CSS_SHAPE_INSIDE)
+    void updateCurrentShapeSegment();
+#endif
 #endif
 
     RenderBlockFlow& m_block;

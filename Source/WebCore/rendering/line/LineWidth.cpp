@@ -216,6 +216,21 @@ void LineWidth::wrapNextToShapeOutside(bool isFirstLine)
     }
     updateLineDimension(newLineTop, newLineWidth, newLineLeft, newLineRight);
 }
+
+#if ENABLE(CSS_SHAPE_INSIDE)
+void LineWidth::updateLineSegment(const LayoutUnit& lineTop)
+{
+    ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo();
+    if (!shapeInsideInfo)
+        return;
+
+    LayoutUnit logicalOffsetFromShapeContainer = m_block.logicalOffsetFromShapeAncestorContainer(&shapeInsideInfo->owner()).height();
+    LayoutUnit lineHeight = m_block.lineHeight(false, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+    shapeInsideInfo->updateSegmentsForLine(lineTop + logicalOffsetFromShapeContainer, lineHeight);
+    updateCurrentShapeSegment();
+    updateAvailableWidth();
+}
+#endif
 #endif
 
 void LineWidth::fitBelowFloats(bool isFirstLine)
@@ -247,18 +262,12 @@ void LineWidth::fitBelowFloats(bool isFirstLine)
         newLineWidth = availableWidthAtOffset(m_block, floatLogicalBottom, shouldIndentText(), newLineLeft, newLineRight);
         lastFloatLogicalBottom = floatLogicalBottom;
 
+        if (newLineWidth >= m_uncommittedWidth) {
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-        ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo();
-        if (shapeInsideInfo) {
-            LayoutUnit logicalOffsetFromShapeContainer = m_block.logicalOffsetFromShapeAncestorContainer(&shapeInsideInfo->owner()).height();
-            LayoutUnit lineHeight = m_block.lineHeight(false, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-            shapeInsideInfo->updateSegmentsForLine(lastFloatLogicalBottom + logicalOffsetFromShapeContainer, lineHeight);
-            updateCurrentShapeSegment();
-            updateAvailableWidth();
-        }
+            updateLineSegment(lastFloatLogicalBottom);
 #endif
-        if (newLineWidth >= m_uncommittedWidth)
             break;
+        }
     }
 
     updateLineDimension(lastFloatLogicalBottom, newLineWidth, newLineLeft, newLineRight);

@@ -1,3 +1,23 @@
+2014-02-28  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Update line segments for ShapeInside only if the new line is wide enough
+        https://bugs.webkit.org/show_bug.cgi?id=129461
+
+        Reviewed by David Hyatt.
+
+        Shape-inside can make a line only narrower than the original line width, thus we don't need
+        to update the line/shape segments in fitBelowFloats for every single line inside shape-inside.
+        This patch adds a helper function, which updates the line segments, furthermore it updates the
+        line segments only when the content would fit without the shape.
+
+        No new tests, no behavior change.
+
+        * rendering/line/BreakingContextInlineHeaders.h: Use new helper.
+        (WebCore::updateSegmentsForShapes):
+        * rendering/line/LineWidth.cpp: Use new helper.
+        (WebCore::LineWidth::updateLineSegment): Add new helper.
+        (WebCore::LineWidth::fitBelowFloats):
+
 2014-02-28  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         paragraphs with different directionality in textarea with unicode-bidi: plaintext are aligned the same

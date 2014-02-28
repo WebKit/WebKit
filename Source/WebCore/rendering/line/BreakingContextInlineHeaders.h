@@ -461,6 +461,7 @@ inline float firstPositiveWidth(const WordMeasurements& wordMeasurements)
 }
 
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
+// FIXME: We can move this function & logic into LineWidth::fitBelowFloats
 inline void updateSegmentsForShapes(RenderBlockFlow& block, const FloatingObject* lastFloatFromPreviousLine, const WordMeasurements& wordMeasurements, LineWidth& width, bool isFirstLine)
 {
     ASSERT(lastFloatFromPreviousLine);
@@ -495,11 +496,7 @@ inline void updateSegmentsForShapes(RenderBlockFlow& block, const FloatingObject
         block.setLogicalHeight(shapeInsideInfo->logicalLineTop() - logicalOffsetFromShapeContainer);
     }
 
-    lineLogicalTop = block.logicalHeight() + logicalOffsetFromShapeContainer;
-
-    shapeInsideInfo->updateSegmentsForLine(lineLogicalTop, lineLogicalHeight);
-    width.updateCurrentShapeSegment();
-    width.updateAvailableWidth();
+    width.updateLineSegment(block.logicalHeight());
 }
 #endif
 
