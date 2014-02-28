@@ -1,3 +1,17 @@
+2014-02-27  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Enable support of X-Content-Type-Options: nosniff header for EFL
+        https://bugs.webkit.org/show_bug.cgi?id=128673
+
+        Reviewed by Gyuyoung Kim.
+
+        * http/tests/security/contentTypeOptions/nosniff-script-blocked-expected.txt:
+        * http/tests/security/contentTypeOptions/nosniff-script-without-content-type-blocked-expected.txt:
+        Updated expectations as console output now includes line numbers.
+        * platform/efl/TestExpectations:
+        Unskipped http/tests/security/contentTypeOptions tests.
+
+
 2014-02-27  Timothy Hatcher  <timothy@apple.com>
 
         Improve how ContentSearchUtilities::lineEndings works by supporting the three common line endings.

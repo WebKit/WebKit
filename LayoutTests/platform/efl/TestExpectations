@@ -242,9 +242,6 @@ http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 # There are no expected result set yet.
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 
-# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
-http/tests/security/contentTypeOptions
-
 # Transparent image being produced
 fast/frames/transparent-scrollbar.html
 
