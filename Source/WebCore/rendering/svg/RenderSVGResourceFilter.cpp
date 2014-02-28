@@ -99,17 +99,17 @@ std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFi
 
 bool RenderSVGResourceFilter::fitsInMaximumImageSize(const FloatSize& size, FloatSize& scale)
 {
-    bool matchesFilterSize = true;
-    if (size.width() > kMaxFilterSize) {
-        scale.setWidth(scale.width() * kMaxFilterSize / size.width());
-        matchesFilterSize = false;
-    }
-    if (size.height() > kMaxFilterSize) {
-        scale.setHeight(scale.height() * kMaxFilterSize / size.height());
-        matchesFilterSize = false;
-    }
+    FloatSize scaledSize(size);
+    scaledSize.scale(scale.width(), scale.height());
+    float scaledArea = scaledSize.width() * scaledSize.height();
 
-    return matchesFilterSize;
+    if (scaledArea <= FilterEffect::maxFilterArea())
+        return true;
+
+    // If area of scaled size is bigger than the upper limit, adjust the scale
+    // to fit.
+    scale.scale(sqrt(FilterEffect::maxFilterArea() / scaledArea));
+    return false;
 }
 
 bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, unsigned short resourceMode)

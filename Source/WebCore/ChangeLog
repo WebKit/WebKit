@@ -1,3 +1,45 @@
+2014-02-28  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Filters should test for area instead of single dimension
+        https://bugs.webkit.org/show_bug.cgi?id=123716
+
+        Reviewed by Dirk Schulze.
+
+        A filtered SVG element with a sigle dimension bigger than 5000
+        (counting the margin/border) will fail to render. So an element
+        with 4000x4000 will render fine, while another with 5000x10
+        won't. This patch instead tests against the total element area,
+        which fixes such cases.
+
+        It also fixes some layer violations where FilterEffectRenderer and
+        RenderSVGResourceFilter were directly accessing the maximum filter
+        size in FilterEffect. Since before a somewhat bigger filter would
+        be aborted, it required to change the maximum kernel size
+        for blur filter (some filters are slower to run than others for
+        bigger SVGs).
+
+        Tests: svg/filters/big-height-filter-expected.svg
+               svg/filters/big-height-filter.svg
+               svg/filters/big-width-filter-expected.svg
+               svg/filters/big-width-filter.svg
+
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::maxFilterArea): New function, returns the
+        maximum allowed element area (currently is 4096 x 4096).
+        (WebCore::FilterEffect::isFilterSizeValid): Now it tests for
+        element area instead of a single dimension. This code is reused by
+        FilterEffectRenderer.
+        * platform/graphics/filters/FilterEffect.h:
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::updateBackingStoreRect): Uses the
+        new function in FilterEffect to test for valid sizes.
+        (WebCore::FilterEffectRendererHelper::beginFilterEffect): Same case.
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::fitsInMaximumImageSize): Test
+        for maximum area and properly changes the scale of transformed
+        element to fit.
+
 2014-02-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac, iOS] Incorrect ordering of construction arguments for out-of-band text elements

@@ -43,7 +43,7 @@ static inline float gaussianKernelFactor()
     return 3 / 4.f * sqrtf(2 * piFloat);
 }
 
-static const unsigned gMaxKernelSize = 1000;
+static const unsigned gMaxKernelSize = 500;
 
 namespace WebCore {
 

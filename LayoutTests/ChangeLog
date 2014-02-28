@@ -1,3 +1,29 @@
+2014-02-28  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Filters should test for area instead of single dimension
+        https://bugs.webkit.org/show_bug.cgi?id=123716
+
+        Reviewed by Dirk Schulze.
+
+        A filtered SVG element with a sigle dimension bigger than 5000
+        (counting the margin/border) will fail to render. So an element
+        with 4000x4000 will render fine, while another with 5000x10
+        won't. This patch instead tests against the total element area,
+        which fixes such cases.
+
+        The current patch fixes the rendering issue and at same time,
+        fixes some layer violations where FilterEffectRenderer and
+        RenderSVGResourceFilter were directly accessing the kMax value
+        in FilterEffect. Since before a somewhat bigger filter would
+        be aborted, it required to change the maximum kernel size
+        for blur filter (some filters are slower to run than others for
+        bigger SVGs).
+
+        * svg/filters/big-height-filter-expected.svg: Added.
+        * svg/filters/big-height-filter.svg: Added.
+        * svg/filters/big-width-filter-expected.svg: Added.
+        * svg/filters/big-width-filter.svg: Added.
+
 2014-02-28  Zalan Bujtas  <zalan@apple.com>
 
         Add hiDPI support to DumpRenderTree/WebKitTestRunner without the need of reloading the test case.

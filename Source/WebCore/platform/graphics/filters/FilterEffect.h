@@ -37,7 +37,6 @@
 #include "FilterContextOpenCL.h"
 #endif
 
-static const float kMaxFilterSize = 5000.0f;
 
 namespace WebCore {
 
@@ -58,6 +57,9 @@ enum FilterEffectType {
 class FilterEffect : public RefCounted<FilterEffect> {
 public:
     virtual ~FilterEffect();
+
+    static bool isFilterSizeValid(const FloatRect&);
+    static float maxFilterArea();
 
     void clearResult();
     void clearResultsRecursive();
