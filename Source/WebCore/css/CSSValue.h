@@ -97,7 +97,9 @@ public:
     bool isFilterImageValue() const { return m_classType == FilterImageClass; }
     bool isWebKitCSSFilterValue() const { return m_classType == WebKitCSSFilterClass; }
 #endif // ENABLE(CSS_FILTERS)
+#if ENABLE(CSS_GRID_LAYOUT)
     bool isGridTemplateAreasValue() const { return m_classType == GridTemplateAreasClass; }
+#endif
     bool isSVGColor() const { return m_classType == SVGColorClass || m_classType == SVGPaintClass; }
     bool isSVGPaint() const { return m_classType == SVGPaintClass; }
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
@@ -157,7 +159,9 @@ protected:
         UnicodeRangeClass,
         LineBoxContainClass,
         CalculationClass,
+#if ENABLE(CSS_GRID_LAYOUT)
         GridTemplateAreasClass,
+#endif
         SVGColorClass,
         SVGPaintClass,
 

@@ -1,3 +1,12 @@
+2014-02-27  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Build break when disabled CSS_GRID_LAYOUT
+        https://bugs.webkit.org/show_bug.cgi?id=129459
+
+        Reviewed by Gyuyoung Kim.
+
+        * css/CSSValue.h: Added guards of CSS_GRID_LAYOUT for GridTemplateAreasClass.
+
 2014-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         text-decoration-skip: ink does not skip over SVG fonts
