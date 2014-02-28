@@ -1,3 +1,15 @@
+2014-02-28  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash in WebKit::WebPageProxy::registerWebProcessAccessibilityToken
+        https://bugs.webkit.org/show_bug.cgi?id=127387
+
+        Reviewed by Alexey Proskuryakov.
+
+        Speculative fix for crasher. We should check if the connection is still valid before proceeding.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::registerWebProcessAccessibilityToken):
+
 2014-02-28  Timothy Hatcher  <timothy@apple.com>
 
         Properly handle when Test.html is not present in Production builds.

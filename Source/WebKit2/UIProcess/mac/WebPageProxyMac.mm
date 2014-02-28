@@ -395,6 +395,9 @@ void WebPageProxy::didPerformDictionaryLookup(const AttributedString& text, cons
     
 void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference& data)
 {
+    if (!isValid())
+        return;
+    
     m_pageClient.accessibilityWebProcessTokenReceived(data);
 }    
     
