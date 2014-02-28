@@ -1,3 +1,11 @@
+2014-02-27  Alexey Proskuryakov  <ap@apple.com>
+
+        css3/compositing/isolation-isolate-blended-child.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=129468
+
+        * platform/mac-wk2/TestExpectations: Marked as failing on OS X 10.8 Debug WK2.
+        Not sure if it's hardware related or dependent on confuguration in some other way.
+
 2014-02-27  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Enable support of X-Content-Type-Options: nosniff header for EFL

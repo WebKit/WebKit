@@ -438,6 +438,8 @@ webkit.org/b/128315 editing/caret/caret-color.html [ Pass Failure ]
 # Temporarily disabled while working out compositing failures
 plugins/snapshotting [ Skip ]
 
+webkit.org/b/129468 [ MountainLion Debug ] css3/compositing/isolation-isolate-blended-child.html [ ImageOnlyFailure ]
+
 ### END OF (3) Unclassified failures
 ########################################
 
