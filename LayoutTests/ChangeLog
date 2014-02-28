@@ -1,3 +1,15 @@
+2014-02-28  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        ASSERTION FAILED: roundedIntPoint(rendererMappedResult) == roundedIntPoint(result) in WebCore::RenderGeometryMap::mapToContainer
+        https://bugs.webkit.org/show_bug.cgi?id=119626
+
+        Backported from Blink: https://codereview.chromium.org/143363004
+
+        Reviewed by Simon Fraser.
+
+        * svg/transforms/svg-geometry-crash-expected.txt: Added.
+        * svg/transforms/svg-geometry-crash.html: Added.
+
 2014-02-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r164859.

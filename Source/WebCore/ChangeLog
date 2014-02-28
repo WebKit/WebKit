@@ -1,3 +1,23 @@
+2014-02-28  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        ASSERTION FAILED: roundedIntPoint(rendererMappedResult) == roundedIntPoint(result) in WebCore::RenderGeometryMap::mapToContainer
+        https://bugs.webkit.org/show_bug.cgi?id=119626
+
+        SVGRenderSupport::mapLocalToContainer() was trying to apply transforms
+        in the incorrect order. Specifically, it would attempt to apply its
+        localToParentTransform before its localToBorderBoxTransform. This
+        was causing an ASSERT to fail when the computed transforms didn't
+        match up to those computed by RenderGeometryMap.
+
+        Backported from Blink: https://codereview.chromium.org/143363004
+
+        Reviewed by Simon Fraser.
+
+        Test: svg/transforms/svg-geometry-crash.html
+
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+
 2014-02-28  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] ASSERTION FAILED: !m_regionsInvalidated in RenderFlowThread::regionAtBlockOffset

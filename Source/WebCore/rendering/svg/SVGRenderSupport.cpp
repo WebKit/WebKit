@@ -83,8 +83,6 @@ void SVGRenderSupport::computeFloatRectForRepaint(const RenderElement& renderer,
 
 void SVGRenderSupport::mapLocalToContainer(const RenderElement& renderer, const RenderLayerModelObject* repaintContainer, TransformState& transformState, bool* wasFixed)
 {
-    transformState.applyTransform(renderer.localToParentTransform());
-
     ASSERT(renderer.parent());
     auto& parent = *renderer.parent();
     
@@ -93,6 +91,8 @@ void SVGRenderSupport::mapLocalToContainer(const RenderElement& renderer, const 
     // RenderSVGRoot's mapLocalToContainer method expects CSS box coordinates.
     if (parent.isSVGRoot())
         transformState.applyTransform(toRenderSVGRoot(parent).localToBorderBoxTransform());
+
+    transformState.applyTransform(renderer.localToParentTransform());
 
     MapCoordinatesFlags mode = UseTransforms;
     parent.mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
