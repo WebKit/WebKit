@@ -452,6 +452,8 @@ void Heap::markRoots()
 #if ENABLE(GGC)
     Vector<const JSCell*> rememberedSet(m_slotVisitor.markStack().size());
     m_slotVisitor.markStack().fillVector(rememberedSet);
+#else
+    Vector<const JSCell*> rememberedSet;
 #endif
 
     {
@@ -512,7 +514,7 @@ void Heap::gatherStackRoots(ConservativeRoots& roots, void** dummy)
 void Heap::gatherJSStackRoots(ConservativeRoots& roots)
 {
 #if ENABLE(LLINT_C_LOOP)
-    GCPHASE(GatherStackRoots);
+    GCPHASE(GatherJSStackRoots);
     stack().gatherConservativeRoots(roots, m_jitStubRoutines, m_codeBlocks);
 #else
     UNUSED_PARAM(roots);

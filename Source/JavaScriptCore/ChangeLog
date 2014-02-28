@@ -1,3 +1,11 @@
+2014-02-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fix !ENABLE(GGC) builds
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::gatherJSStackRoots): Also fix one of the names of the GC phases.
+
 2014-02-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Clean up Heap::collect and Heap::markRoots
