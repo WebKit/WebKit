@@ -2462,6 +2462,11 @@ bool FrameView::needsExtendedBackgroundRectForPainting() const
     // such as images, require extending the background rect to continue painting into the extended
     // region. This function finds out if it is necessary to extend the background rect for painting.
 
+#if PLATFORM(IOS)
+    // <rdar://problem/16201373>
+    return false;
+#endif
+
     if (!frame().settings().backgroundShouldExtendBeyondPage())
         return false;
 

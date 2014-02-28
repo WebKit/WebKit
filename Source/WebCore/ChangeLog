@@ -1,3 +1,15 @@
+2014-02-28  Beth Dakin  <bdakin@apple.com>
+
+        Turn off margin tiles on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129509
+        -and corresponding-
+        <rdar://problem/16200383>
+
+        Reviewed by Simon Fraser.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::needsExtendedBackgroundRectForPainting):
+
 2014-02-28  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Add subpixel support to border type of double, groove, ridge, inset and outset.
