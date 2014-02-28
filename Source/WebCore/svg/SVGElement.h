@@ -148,7 +148,7 @@ protected:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     virtual void finishParsingChildren() override;
-    virtual void attributeChanged(const QualifiedName&, const AtomicString&, AttributeModificationReason = ModifiedDirectly) override;
+    virtual void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) override;
     virtual bool childShouldCreateRenderer(const Node&) const override;
 
     SVGElementRareData& ensureSVGRareData();

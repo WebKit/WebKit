@@ -132,14 +132,14 @@ bool MathMLElement::childShouldCreateRenderer(const Node& child) const
     return child.isTextNode() || child.isMathMLElement();
 }
 
-void MathMLElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue, AttributeModificationReason reason)
+void MathMLElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
 {
     if (isSemanticAnnotation() && (name == MathMLNames::srcAttr || name == MathMLNames::encodingAttr)) {
         Element* parent = parentElement();
         if (parent && parent->isMathMLElement() && parent->hasTagName(semanticsTag))
             toMathMLElement(parent)->updateSelectedChild();
     }
-    StyledElement::attributeChanged(name, newValue, reason);
+    StyledElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 }

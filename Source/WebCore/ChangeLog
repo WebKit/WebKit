@@ -1,3 +1,40 @@
+2014-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Element::attributeChanged shouldn't do any work when attribute value didn't change
+        https://bugs.webkit.org/show_bug.cgi?id=129467
+
+        Reviewed by Geoffrey Garen.
+
+        Exit early in childrenChanged when the attribute value didn't change.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::childrenChanged):
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::parserSetAttributes):
+        (WebCore::Element::removeAttributeInternal):
+        (WebCore::Element::didAddAttribute):
+        (WebCore::Element::didModifyAttribute):
+        (WebCore::Element::didRemoveAttribute):
+        (WebCore::Element::cloneAttributesFromElement):
+        * dom/Element.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * dom/StyledElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::attributeChanged):
+        * mathml/MathMLElement.h:
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::attributeChanged):
+        * mathml/MathMLSelectElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::attributeChanged):
+        * svg/SVGElement.h:
+
 2014-02-27  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Remove duplicated keyboard string key from keyMap

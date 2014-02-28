@@ -716,9 +716,9 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     return false;
 }
 
-void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue, AttributeModificationReason)
+void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason)
 {
-    StyledElement::attributeChanged(name, newValue);
+    StyledElement::attributeChanged(name, oldValue, newValue);
 
     if (isIdAttributeName(name))
         document().accessSVGExtensions()->rebuildAllElementReferencesForTarget(this);
