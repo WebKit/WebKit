@@ -1,3 +1,18 @@
+2014-02-27  Timothy Hatcher  <timothy@apple.com>
+
+        Improve how ContentSearchUtilities::lineEndings works by supporting the three common line endings.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129458
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector-protocol/debugger/resources/mac-linebreaks.js: Added.
+        * inspector-protocol/debugger/resources/mixed-linebreaks.js: Added.
+        * inspector-protocol/debugger/resources/unix-linebreaks.js: Added.
+        * inspector-protocol/debugger/resources/windows-linebreaks.js: Added.
+        * inspector-protocol/debugger/searchInContent-linebreaks-expected.txt: Added.
+        * inspector-protocol/debugger/searchInContent-linebreaks.html: Added.
+
 2014-02-27  Brian Burg  <bburg@apple.com>
 
         Unreviewed, update test expectations after r164830.

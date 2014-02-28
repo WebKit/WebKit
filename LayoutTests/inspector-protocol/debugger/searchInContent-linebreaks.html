@@ -1,0 +1,67 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/mixed-linebreaks.js"></script>
+<script src="resources/unix-linebreaks.js"></script>
+<script src="resources/mac-linebreaks.js"></script>
+<script src="resources/windows-linebreaks.js"></script>
+<script>
+function test()
+{
+    const expectedSearchCount = 4;
+    var completedSearchCount = 0;
+
+    var testResults = [];
+
+    InspectorTest.sendCommand("Debugger.enable", {});
+
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/-linebreaks\.js$/.test(messageObject.params.url)) {
+            InspectorTest.sendCommand("Debugger.searchInContent", {"scriptId": messageObject.params.scriptId, "query": "test"}, function(url, messageObject) {
+                var results = messageObject.result.result;
+
+                var testResult = {url: url, count: results.length, matches: []};
+                for (var result of results)
+                    testResult.matches.push(result);
+
+                testResults.push(testResult);
+
+                if (++completedSearchCount >= expectedSearchCount)
+                    outputResults();
+            }.bind(null, messageObject.params.url));
+        }
+    }
+
+    function outputResults()
+    {
+        function compareResultURLs(a, b)
+        {
+            return a.url.localeCompare(b.url);
+        }
+
+        var sortedTestResults = testResults.sort(compareResultURLs);
+
+        InspectorTest.log("Scripts searched: " + sortedTestResults.length);
+        InspectorTest.log("");
+
+        for (var testResult of sortedTestResults) {
+            var fileName = /([\w-]+\.js)$/.exec(testResult.url)[1];
+            InspectorTest.log("Script: " + fileName);
+            InspectorTest.log("Results found: " + testResult.count);
+    
+            for (var match of testResult.matches)
+                InspectorTest.log("Line " + match.lineNumber + ": " + JSON.stringify(match.lineContent));    
+
+            InspectorTest.log("");
+        }
+
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+Verify that Debugger.searchInContent works with scripts that have varying line endings.
+</body>
+</html>

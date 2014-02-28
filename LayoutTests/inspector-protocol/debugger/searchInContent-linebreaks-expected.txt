@@ -1,0 +1,32 @@
+Verify that Debugger.searchInContent works with scripts that have varying line endings.
+Scripts searched: 4
+
+Script: mac-linebreaks.js
+Results found: 4
+Line 0: "// test one\r"
+Line 2: "//  test two\r"
+Line 6: "    //   test three test four\r"
+Line 9: "// test no newline"
+
+Script: mixed-linebreaks.js
+Results found: 4
+Line 0: "// test one\n"
+Line 2: "// test two\r"
+Line 6: "    //   test three test four\r\n"
+Line 9: "// test no newline"
+
+Script: unix-linebreaks.js
+Results found: 4
+Line 0: "// test one\n"
+Line 2: "//  test two\n"
+Line 6: "    // test three test four\n"
+Line 9: "// test no newline"
+
+Script: windows-linebreaks.js
+Results found: 4
+Line 0: "// test one\r\n"
+Line 2: "//  test two\r\n"
+Line 6: "    // test three test four\r\n"
+Line 9: "// test no newline"
+
+
