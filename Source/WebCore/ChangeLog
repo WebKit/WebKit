@@ -1,3 +1,21 @@
+2014-02-28  Andreas Kling  <akling@apple.com>
+
+        MouseEvent.offsetX/Y should just return 0,0 for simulated clicks.
+        <https://webkit.org/b/129477>
+
+        There's no need to compute the exact target-relative coordinates for
+        simulated mouse events, e.g those fired by HTMLElement.click().
+
+        The offsetX/Y properties are not supported by Firefox.
+
+        Test: fast/events/relative-offset-of-simulated-click.html
+
+        Reviewed by Alexey Proskuryakov.
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::offsetX):
+        (WebCore::MouseRelatedEvent::offsetY):
+
 2014-02-27  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Fix positioning grid items using named grid lines/areas

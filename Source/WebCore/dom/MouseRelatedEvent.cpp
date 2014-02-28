@@ -208,6 +208,8 @@ int MouseRelatedEvent::layerY()
 
 int MouseRelatedEvent::offsetX()
 {
+    if (isSimulated())
+        return 0;
     if (!m_hasCachedRelativePosition)
         computeRelativePosition();
     return roundToInt(m_offsetLocation.x());
@@ -215,6 +217,8 @@ int MouseRelatedEvent::offsetX()
 
 int MouseRelatedEvent::offsetY()
 {
+    if (isSimulated())
+        return 0;
     if (!m_hasCachedRelativePosition)
         computeRelativePosition();
     return roundToInt(m_offsetLocation.y());

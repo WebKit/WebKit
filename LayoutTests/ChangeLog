@@ -1,3 +1,16 @@
+2014-02-28  Andreas Kling  <akling@apple.com>
+
+        MouseEvent.offsetX/Y should just return 0,0 for simulated clicks.
+        <https://webkit.org/b/129477>
+
+        Add a test documenting the behavior of offsetX/Y on the simulated
+        mouse events that get sent by HTMLElement.click().
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/events/relative-offset-of-simulated-click-expected.txt: Added.
+        * fast/events/relative-offset-of-simulated-click.html: Added.
+
 2014-02-27  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Fix positioning grid items using named grid lines/areas
