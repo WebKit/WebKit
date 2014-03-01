@@ -298,6 +298,7 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
     m_needsClear = true;
 
     m_networkingContext = m_client.createNetworkingContext();
+    m_progressTracker = std::make_unique<FrameProgressTracker>(m_frame);
 }
 #endif
 

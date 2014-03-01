@@ -1,3 +1,15 @@
+2014-02-28  Andy Estes  <aestes@apple.com>
+
+        [iOS] FrameLoader has a NULL m_progressTracker when initialized with initForSynthesizedDocument()
+        https://bugs.webkit.org/show_bug.cgi?id=129534
+
+        Reviewed by Simon Fraser.
+
+        No new tests because TestWebKitAPI does not yet support iOS. See <http://webkit.org/b/129535>.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::initForSynthesizedDocument): Create a FrameProgressTracker.
+
 2014-02-28  Sam Weinig  <sam@webkit.org>
 
         ASSERT(isMainThread()) hit under platformUserPreferredLanguages() with WebKit1 and WebKit2 in the same process
