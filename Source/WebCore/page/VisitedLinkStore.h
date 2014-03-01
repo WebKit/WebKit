@@ -27,6 +27,7 @@
 #define VisitedLinkStore_h
 
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -44,6 +45,15 @@ public:
     // FIXME: These two members should only take the link hash.
     virtual bool isLinkVisited(Page&, LinkHash, const URL& baseURL, const AtomicString& attributeURL) = 0;
     virtual void addVisitedLink(Page&, LinkHash) = 0;
+
+    void addPage(Page&);
+    void removePage(Page&);
+
+    void invalidateStylesForAllLinks();
+    void invalidateStylesForLink(LinkHash);
+
+private:
+    HashSet<Page*> m_pages;
 };
 
 } // namespace WebCore

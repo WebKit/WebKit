@@ -26,6 +26,8 @@
 #include "config.h"
 #include "VisitedLinkStore.h"
 
+#include "Page.h"
+
 namespace WebCore {
 
 VisitedLinkStore::VisitedLinkStore()
@@ -34,6 +36,33 @@ VisitedLinkStore::VisitedLinkStore()
 
 VisitedLinkStore::~VisitedLinkStore()
 {
+    ASSERT(m_pages.isEmpty());
 }
 
+void VisitedLinkStore::addPage(Page& page)
+{
+    ASSERT(!m_pages.contains(&page));
+
+    m_pages.add(&page);
 }
+
+void VisitedLinkStore::removePage(Page& page)
+{
+    ASSERT(m_pages.contains(&page));
+
+    m_pages.remove(&page);
+}
+
+void VisitedLinkStore::invalidateStylesForAllLinks()
+{
+    for (auto& page : m_pages)
+        page->invalidateStylesForAllLinks();
+}
+
+void VisitedLinkStore::invalidateStylesForLink(LinkHash linkHash)
+{
+    for (auto& page : m_pages)
+        page->invalidateStylesForLink(linkHash);
+}
+
+} // namespace WebCore

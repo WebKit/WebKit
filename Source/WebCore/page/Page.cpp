@@ -189,6 +189,9 @@ Page::Page(PageClients& pageClients)
 {
     ASSERT(m_editorClient);
 
+    if (m_visitedLinkStore)
+        m_visitedLinkStore->addPage(*this);
+
     if (!allPages) {
         allPages = new HashSet<Page*>;
         
@@ -239,6 +242,8 @@ Page::~Page()
 
     if (m_userContentController)
         m_userContentController->removePage(*this);
+    if (m_visitedLinkStore)
+        m_visitedLinkStore->removePage(*this);
 }
 
 uint64_t Page::renderTreeSize() const
