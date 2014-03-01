@@ -37,7 +37,6 @@
 #include "EditorState.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "InteractionInformationAtPosition.h"
-#include "LayerRepresentation.h"
 #include "LayerTreeContext.h"
 #include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
@@ -93,6 +92,10 @@
 #include "WKPageEfl.h"
 #include "WebUIPopupMenuClient.h"
 #include <Evas.h>
+#endif
+
+#if PLATFORM(COCOA)
+#include "LayerRepresentation.h"
 #endif
 
 namespace API {

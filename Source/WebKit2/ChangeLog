@@ -1,3 +1,15 @@
+2014-02-28  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Fix WebKit2 build after r164890
+        https://bugs.webkit.org/show_bug.cgi?id=129533
+
+        Reviewed by Simon Fraser.
+
+        LayerRepresentation.h is included to WebPageProxy.h in r164890
+        but it is not used in non Mac or iOS port.
+
+        * UIProcess/WebPageProxy.h:
+
 2014-02-28  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Extract _data->_thumbnailView checks into a helper function
