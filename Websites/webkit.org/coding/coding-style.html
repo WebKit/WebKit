@@ -139,18 +139,16 @@ have their operators on the left side of the line instead of the right side.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
-if (attr->name() == srcAttr
-    || attr->name() == lowsrcAttr
-    || (attr->name() == usemapAttr && attr->value().domString()[0] != '#'))
-    return;
+return attribute.name() == srcAttr
+    || attribute.name() == lowsrcAttr
+    || (attribute.name() == usemapAttr &amp;&amp; attribute.value().string()[0] != '#');
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-if (attr->name() == srcAttr ||
-    attr->name() == lowsrcAttr ||
-    (attr->name() == usemapAttr && attr->value().domString()[0] != '#'))
-    return;
+return attribute.name() == srcAttr ||
+    attribute.name() == lowsrcAttr ||
+    (attribute.name() == usemapAttr &amp;&amp; attr->value().string()[0] != '#');
 </pre>
 </li>
 
@@ -192,14 +190,14 @@ return condition ? 1:0;
 <h4 class="right">Right:</h4>
 <pre class="code">
 Vector&lt;PluginModuleInfo> plugins;
-for (const auto&amp; plugin : plugins)
+for (auto&amp; plugin : plugins)
     registerPlugin(plugin);
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
 Vector&lt;PluginModuleInfo> plugins;
-for (const auto&amp; plugin: plugins)
+for (auto&amp; plugin: plugins)
     registerPlugin(plugin);
 </pre>
 </li>
@@ -421,7 +419,7 @@ for ( ; current; current = current->next);
 </li>
 </ol>
 
-<h3 id="zero">Null, false and 0</h3>
+<h3 id="zero">Null, false and zero</h3>
 <ol>
 <li id="zero-null">In C++, the null pointer value should be written as <code>nullptr</code>. In C, it should be written as <code>NULL</code>. In Objective-C and Objective-C++, follow the guideline for C or C++, respectively, but use <code>nil</code> to represent a null Objective-C object.</li>
 
@@ -716,10 +714,10 @@ line, with the colon or comma preceding the member on that line.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
-MyClass::MyClass(Document* doc)
+MyClass::MyClass(Document* document)
     : MySuperClass()
     , m_myMember(0)
-    , m_doc(doc)
+    , m_document(document)
 {
 }
 
@@ -731,21 +729,27 @@ MyOtherClass::MyOtherClass()
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-MyClass::MyClass(Document* doc) : MySuperClass()
+MyClass::MyClass(Document* document) : MySuperClass()
 {
     m_myMember = 0;
-    m_doc = doc;
+    m_document = document;
 }
 
 MyOtherClass::MyOtherClass() : MySuperClass() {}
 </pre>
 
-<li id="punctuation-vector-index">Prefer index over iterator in Vector iterations for a terse, easier-to-read code.
+<li id="punctuation-vector-index">Prefer index over iterator in Vector iterations for terse, easier-to-read code.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
-size_t frameViewsCount = frameViews.size();
-for (size_t i = 0; i &lt; frameViewsCount; ++i)
+for (auto&amp; frameView : frameViews)
+    frameView->updateLayoutAndStyleIfNeededRecursive();
+</pre>
+
+<h4 class="right">OK:</h4>
+<pre class="code">
+unsigned frameViewsCount = frameViews.size();
+for (unsigned i = 0; i &lt; frameViewsCount; ++i)
     frameViews[i]->updateLayoutAndStyleIfNeededRecursive();
 </pre>
 
@@ -855,7 +859,6 @@ Don't bother to organize them in a logical order.
 #include "Attribute.h"
 #include "HTMLElement.h"
 #include "QualifiedName.h"
-
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
@@ -1099,7 +1102,7 @@ public:
 class Vector {
 public:
     explicit Vector(int size); // Not a type conversion.
-    PassOwnPtr&lt;Vector&gt; create(Array); // Costly conversion.
+    Vector create(Array); // Costly conversion.
 ...
 
 </pre>
@@ -1108,9 +1111,9 @@ public:
 <pre class="code">
 class Task {
 public:
-    Task(ScriptExecutionContext*); // Not a type conversion.
+    Task(ScriptExecutionContext&amp;); // Not a type conversion.
     explicit Task(); // No arguments.
-    explicit Task(ScriptExecutionContext*, Other); // More than one argument.
+    explicit Task(ScriptExecutionContext&amp;, Other); // More than one argument.
 ...
 </pre>
 </li>
