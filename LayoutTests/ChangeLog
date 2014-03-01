@@ -1,3 +1,27 @@
+2014-03-01  David Kilzer  <ddkilzer@apple.com>
+
+        Fix lifetime handling of SVGPropertyTearOffs
+        <http://webkit.org/b/129211>
+        <rdar://problem/15696025>
+
+        Reviewed by Maciej Stachowiak.
+
+        Merged from Blink (patch by Ojan Vafai):
+        https://src.chromium.org/viewvc/blink?revision=157801&view=revision
+        http://crbug.com/288771
+
+            -Replace SVGStaticPropertyWithParentTearOff with SVGMatrixTearOff
+            since it's only used in that one place. This means we can get rid
+            of the templatizing and the method pointer.
+            -Change SVGPropertyTearOff to keep track of it's child tearoffs
+            and call detachWrapper on its child tearoffs when it's destroyed
+            or when it's wrapper is detached.
+            -Have SVGPropertyTearOff hold WeakPtrs to the child tearoffs
+            to avoid having a cycle.
+
+        * svg/transforms/svg-matrix-tearoff-crash-expected.txt: Added.
+        * svg/transforms/svg-matrix-tearoff-crash.html: Added.
+
 2014-02-28  Benjamin Poulain  <benjamin@webkit.org>
 
         Caller saved registers can be accidentally discarded when clearing the local stack

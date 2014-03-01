@@ -11978,6 +11978,9 @@
     <ClInclude Include="..\svg\properties\SVGListPropertyTearOff.h">
       <Filter>rendering\svg\properties</Filter>
     </ClInclude>
+    <ClInclude Include="..\svg\properties\SVGMatrixTearOff.h">
+      <Filter>rendering\svg\properties</Filter>
+    </ClInclude>
     <ClInclude Include="..\svg\properties\SVGPathSegListPropertyTearOff.h">
       <Filter>rendering\svg\properties</Filter>
     </ClInclude>
@@ -11997,9 +12000,6 @@
       <Filter>rendering\svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGStaticPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\properties\SVGStaticPropertyWithParentTearOff.h">
       <Filter>rendering\svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGTransformListPropertyTearOff.h">

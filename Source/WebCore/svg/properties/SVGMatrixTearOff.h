@@ -17,53 +17,44 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGStaticPropertyWithParentTearOff_h
-#define SVGStaticPropertyWithParentTearOff_h
+#ifndef SVGMatrixTearOff_h
+#define SVGMatrixTearOff_h
 
 #include "SVGPropertyTearOff.h"
+#include "SVGTransform.h"
 
 namespace WebCore {
 
-#if COMPILER(MSVC)
-// UpdateMethod is 12 bytes. We have to pack to a size greater than or equal to that to avoid an
-// alignment warning (C4121). 16 is the next-largest size allowed for packing, so we use that.
-#pragma pack(push, 16)
-#endif
-template<typename ParentType, typename PropertyType>
-class SVGStaticPropertyWithParentTearOff : public SVGPropertyTearOff<PropertyType> {
+class SVGMatrixTearOff : public SVGPropertyTearOff<SVGMatrix> {
 public:
-    typedef SVGStaticPropertyWithParentTearOff<ParentType, PropertyType> Self;
-    typedef void (ParentType::*UpdateMethod)();
-
     // Used for non-animated POD types that are not associated with a SVGAnimatedProperty object, nor with a XML DOM attribute
     // and that contain a parent type that's exposed to the bindings via a SVGStaticPropertyTearOff object
     // (for example: SVGTransform::matrix).
-    static PassRefPtr<Self> create(SVGProperty& parent, PropertyType& value, UpdateMethod update)
+    static PassRefPtr<SVGMatrixTearOff> create(SVGPropertyTearOff<SVGTransform>& parent, SVGMatrix& value)
     {
-        return adoptRef(new Self(&parent, value, update));
+        RefPtr<SVGMatrixTearOff> result = adoptRef(new SVGMatrixTearOff(&parent, value));
+        parent.addChild(result->m_weakFactory.createWeakPtr());
+        return result.release();
     }
 
     virtual void commitChange()
     {
-        (static_cast<SVGPropertyTearOff<ParentType>*>(m_parent.get())->propertyReference().*m_update)();
+        m_parent->propertyReference().updateSVGMatrix();
         m_parent->commitChange();
     }
 
 private:
-    SVGStaticPropertyWithParentTearOff(SVGProperty* parent, PropertyType& value, UpdateMethod update)
-        : SVGPropertyTearOff<PropertyType>(0, UndefinedRole, value)
-        , m_update(update)
+    SVGMatrixTearOff(SVGPropertyTearOff<SVGTransform>* parent, SVGMatrix& value)
+        : SVGPropertyTearOff<SVGMatrix>(0, UndefinedRole, value)
         , m_parent(parent)
+        , m_weakFactory(this)
     {
     }
 
-    UpdateMethod m_update;
-    RefPtr<SVGProperty> m_parent;
+    RefPtr<SVGPropertyTearOff<SVGTransform>> m_parent;
+    WeakPtrFactory<SVGPropertyTearOffBase> m_weakFactory;
 };
-#if COMPILER(MSVC)
-#pragma pack(pop)
-#endif
 
 }
 
-#endif // SVGStaticPropertyWithParentTearOff_h
+#endif // SVGMatrixTearOff_h

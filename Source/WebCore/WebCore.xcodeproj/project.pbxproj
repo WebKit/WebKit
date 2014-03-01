@@ -422,7 +422,7 @@
 		08C859C01274575400A5728D /* SVGAnimatedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C859BF1274575300A5728D /* SVGAnimatedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08C925190FCC7C4A00480DEC /* FilterEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C925170FCC7C4A00480DEC /* FilterEffect.cpp */; };
 		08C9251A0FCC7C4A00480DEC /* FilterEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C925180FCC7C4A00480DEC /* FilterEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		08CA3D4412894A3800FFF260 /* SVGStaticPropertyWithParentTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 08CA3D4312894A3800FFF260 /* SVGStaticPropertyWithParentTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		08CA3D4412894A3800FFF260 /* SVGMatrixTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 08CA3D4312894A3800FFF260 /* SVGMatrixTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08D46CE3127AD5FC0089694B /* SVGAnimatedEnumeration.h in Headers */ = {isa = PBXBuildFile; fileRef = 08D46CE2127AD5FC0089694B /* SVGAnimatedEnumeration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08E4FE460E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */; };
 		08EDE19F12A50B8E00B95797 /* SVGRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 08EDE19E12A50B8E00B95797 /* SVGRect.h */; };
@@ -7168,7 +7168,7 @@
 		08C859BF1274575300A5728D /* SVGAnimatedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedRect.h; sourceTree = "<group>"; };
 		08C925170FCC7C4A00480DEC /* FilterEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterEffect.cpp; path = filters/FilterEffect.cpp; sourceTree = "<group>"; };
 		08C925180FCC7C4A00480DEC /* FilterEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterEffect.h; path = filters/FilterEffect.h; sourceTree = "<group>"; };
-		08CA3D4312894A3800FFF260 /* SVGStaticPropertyWithParentTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGStaticPropertyWithParentTearOff.h; sourceTree = "<group>"; };
+		08CA3D4312894A3800FFF260 /* SVGMatrixTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMatrixTearOff.h; sourceTree = "<group>"; };
 		08D29440138669E40097C89B /* SVGTextRunRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextRunRenderingContext.cpp; sourceTree = "<group>"; };
 		08D46CE2127AD5FC0089694B /* SVGAnimatedEnumeration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedEnumeration.h; sourceTree = "<group>"; };
 		08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGLengthCustom.cpp; sourceTree = "<group>"; };
@@ -14223,6 +14223,7 @@
 				08FB3F8313BC754C0099FC18 /* SVGAttributeToPropertyMap.h */,
 				0810764312828556007C63BA /* SVGListProperty.h */,
 				088A0E00126EF1DB00978F7A /* SVGListPropertyTearOff.h */,
+				08CA3D4312894A3800FFF260 /* SVGMatrixTearOff.h */,
 				08FF101F12950F5900F00276 /* SVGPathSegListPropertyTearOff.cpp */,
 				084A0828128D7867002DB1F1 /* SVGPathSegListPropertyTearOff.h */,
 				088A0E01126EF1DB00978F7A /* SVGProperty.h */,
@@ -14232,7 +14233,6 @@
 				088A0E03126EF1DB00978F7A /* SVGPropertyTraits.h */,
 				0880F70D1282B46D00948505 /* SVGStaticListPropertyTearOff.h */,
 				0813A4E91284132600992511 /* SVGStaticPropertyTearOff.h */,
-				08CA3D4312894A3800FFF260 /* SVGStaticPropertyWithParentTearOff.h */,
 				08C7136D128956A3001B107E /* SVGTransformListPropertyTearOff.h */,
 			);
 			path = properties;
@@ -25489,6 +25489,7 @@
 				B2227A440D00BF220071B782 /* SVGMarkerElement.h in Headers */,
 				B2227A470D00BF220071B782 /* SVGMaskElement.h in Headers */,
 				0806E57A12893045007CED32 /* SVGMatrix.h in Headers */,
+				08CA3D4412894A3800FFF260 /* SVGMatrixTearOff.h in Headers */,
 				B2227A4B0D00BF220071B782 /* SVGMetadataElement.h in Headers */,
 				B2A1F2B10CEF0ABF00442F6A /* SVGMissingGlyphElement.h in Headers */,
 				B2227A4E0D00BF220071B782 /* SVGMPathElement.h in Headers */,
@@ -25569,7 +25570,6 @@
 				E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */,
 				0880F70E1282B46D00948505 /* SVGStaticListPropertyTearOff.h in Headers */,
 				0813A4EA1284132600992511 /* SVGStaticPropertyTearOff.h in Headers */,
-				08CA3D4412894A3800FFF260 /* SVGStaticPropertyWithParentTearOff.h in Headers */,
 				B2227AA90D00BF220071B782 /* SVGStopElement.h in Headers */,
 				B2227AAC0D00BF220071B782 /* SVGStringList.h in Headers */,
 				B2227AB80D00BF220071B782 /* SVGStyleElement.h in Headers */,

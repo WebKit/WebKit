@@ -20677,6 +20677,7 @@
     <ClInclude Include="..\svg\properties\SVGAttributeToPropertyMap.h" />
     <ClInclude Include="..\svg\properties\SVGListProperty.h" />
     <ClInclude Include="..\svg\properties\SVGListPropertyTearOff.h" />
+    <ClInclude Include="..\svg\properties\SVGMatrixTearOff.h" />
     <ClInclude Include="..\svg\properties\SVGPathSegListPropertyTearOff.h" />
     <ClInclude Include="..\svg\properties\SVGProperty.h" />
     <ClInclude Include="..\svg\properties\SVGPropertyInfo.h" />
@@ -20684,7 +20685,6 @@
     <ClInclude Include="..\svg\properties\SVGPropertyTraits.h" />
     <ClInclude Include="..\svg\properties\SVGStaticListPropertyTearOff.h" />
     <ClInclude Include="..\svg\properties\SVGStaticPropertyTearOff.h" />
-    <ClInclude Include="..\svg\properties\SVGStaticPropertyWithParentTearOff.h" />
     <ClInclude Include="..\svg\properties\SVGTransformListPropertyTearOff.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\ArgList.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Identifier.h" />
