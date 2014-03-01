@@ -1,3 +1,12 @@
+2014-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Node::compareDocumentPosition leaks memory structure
+        https://bugs.webkit.org/show_bug.cgi?id=120244
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/Node.cpp: (WebCore::Node::compareDocumentPosition): Don't do it.
+
 2014-03-01  David Kilzer  <ddkilzer@apple.com>
 
         Fix lifetime handling of SVGPropertyTearOffs

@@ -1,3 +1,17 @@
+2014-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Node::compareDocumentPosition leaks memory structure
+        https://bugs.webkit.org/show_bug.cgi?id=120244
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        * dom/xhtml/level3/core/nodecomparedocumentposition38-expected.txt:
+        * fast/dom/compare-document-position-disconnected-nodes-expected.txt:
+        * fast/dom/compare-document-position-disconnected-nodes.html:
+        * fast/dom/shadow/compare-document-position-expected.txt:
+        * fast/dom/shadow/compare-document-position.html:
+
 2014-03-01  David Kilzer  <ddkilzer@apple.com>
 
         Fix lifetime handling of SVGPropertyTearOffs

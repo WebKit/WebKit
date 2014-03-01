@@ -24,21 +24,6 @@ webkit.org/b/99618  mathml/presentation/roots.xhtml [ Failure ]
 webkit.org/b/57700  mathml/presentation/row.xhtml [ Failure ]
 webkit.org/b/57700  mathml/presentation/mo.xhtml [ Failure ]
 
-# These conformace tests are no longer in sync with the latest specification
-# and expect compareDocumentPosition() to return:
-# DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_DISCONNECTED
-# for disconnected nodes (missing PRECEDING / FOLLOWING information).
-# We cannot check rebaseline them because their output is likely to change
-# between test runs as it decides PRECEDING / FOLLOWING using pointer
-# comparison.
-dom/xhtml/level3/core/nodecomparedocumentposition03.xhtml [ WontFix ]
-dom/xhtml/level3/core/nodecomparedocumentposition05.xhtml [ WontFix ]
-dom/xhtml/level3/core/nodecomparedocumentposition16.xhtml [ WontFix ]
-dom/xhtml/level3/core/nodecomparedocumentposition33.xhtml [ WontFix ]
-
-# Node::compareDocumentPosition() wrongly reports an attribute and its content as disconnected.
-webkit.org/b/119325 dom/xhtml/level3/core/nodecomparedocumentposition38.xhtml [ Failure ]
-
 webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 
 webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Crash Pass ]

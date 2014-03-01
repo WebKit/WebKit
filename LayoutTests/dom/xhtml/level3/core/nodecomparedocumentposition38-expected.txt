@@ -1,2 +1,3 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodecomparedocumentposition38
-Status	Success
+Status	failure
+Message	nodecomparedocumentpositionIsContainsFollowing38: assertEquals failed, actual 33, expected 20.
