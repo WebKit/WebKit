@@ -140,6 +140,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MultiGetByOffset:
     case MultiPutByOffset:
     case ToPrimitive:
+    case PhantomArguments:
         // These are OK.
         break;
     case PutByIdDirect:

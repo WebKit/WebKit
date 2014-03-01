@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -393,66 +393,14 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     //     registers.
     
     if (haveArguments) {
-        HashSet<InlineCallFrame*, DefaultHash<InlineCallFrame*>::Hash,
-            NullableHashTraits<InlineCallFrame*>> didCreateArgumentsObject;
+        ArgumentsRecoveryGenerator argumentsRecovery;
 
         for (size_t index = 0; index < operands.size(); ++index) {
             const ValueRecovery& recovery = operands[index];
             if (recovery.technique() != ArgumentsThatWereNotCreated)
                 continue;
-            int operand = operands.operandForIndex(index);
-            // Find the right inline call frame.
-            InlineCallFrame* inlineCallFrame = 0;
-            for (InlineCallFrame* current = exit.m_codeOrigin.inlineCallFrame;
-                 current;
-                 current = current->caller.inlineCallFrame) {
-                if (current->stackOffset >= operand) {
-                    inlineCallFrame = current;
-                    break;
-                }
-            }
-
-            if (!m_jit.baselineCodeBlockFor(inlineCallFrame)->usesArguments())
-                continue;
-            VirtualRegister argumentsRegister = m_jit.baselineArgumentsRegisterFor(inlineCallFrame);
-            if (didCreateArgumentsObject.add(inlineCallFrame).isNewEntry) {
-                // We know this call frame optimized out an arguments object that
-                // the baseline JIT would have created. Do that creation now.
-                if (inlineCallFrame) {
-                    m_jit.setupArgumentsWithExecState(
-                        AssemblyHelpers::TrustedImmPtr(inlineCallFrame));
-                    m_jit.move(
-                        AssemblyHelpers::TrustedImmPtr(
-                            bitwise_cast<void*>(operationCreateInlinedArguments)),
-                        GPRInfo::nonArgGPR0);
-                } else {
-                    m_jit.setupArgumentsExecState();
-                    m_jit.move(
-                        AssemblyHelpers::TrustedImmPtr(
-                            bitwise_cast<void*>(operationCreateArguments)),
-                        GPRInfo::nonArgGPR0);
-                }
-                m_jit.call(GPRInfo::nonArgGPR0);
-                m_jit.store32(
-                    AssemblyHelpers::TrustedImm32(JSValue::CellTag),
-                    AssemblyHelpers::tagFor(argumentsRegister));
-                m_jit.store32(
-                    GPRInfo::returnValueGPR,
-                    AssemblyHelpers::payloadFor(argumentsRegister));
-                m_jit.store32(
-                    AssemblyHelpers::TrustedImm32(JSValue::CellTag),
-                    AssemblyHelpers::tagFor(unmodifiedArgumentsRegister(argumentsRegister)));
-                m_jit.store32(
-                    GPRInfo::returnValueGPR,
-                    AssemblyHelpers::payloadFor(unmodifiedArgumentsRegister(argumentsRegister)));
-                m_jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0); // no-op move on almost all platforms.
-            }
-
-            m_jit.load32(AssemblyHelpers::payloadFor(argumentsRegister), GPRInfo::regT0);
-            m_jit.store32(
-                AssemblyHelpers::TrustedImm32(JSValue::CellTag),
-                AssemblyHelpers::tagFor(operand));
-            m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor(operand));
+            argumentsRecovery.generateFor(
+                operands.operandForIndex(index), exit.m_codeOrigin, m_jit);
         }
     }
 

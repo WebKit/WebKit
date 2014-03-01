@@ -146,6 +146,12 @@ static void compileStub(
             jit.load64(AssemblyHelpers::addressFor(value.virtualRegister()), GPRInfo::regT0);
             break;
             
+        case ExitValueArgumentsObjectThatWasNotCreated:
+            // We can't actually recover this yet, but we can make the stack look sane. This is
+            // a prerequisite to running the actual arguments recovery.
+            jit.move(MacroAssembler::TrustedImm64(JSValue::encode(JSValue())), GPRInfo::regT0);
+            break;
+            
         case ExitValueRecovery:
             record->locations[value.rightRecoveryArgument()].restoreInto(
                 jit, jitCode->stackmaps, registerScratch, GPRInfo::regT1);
@@ -337,6 +343,15 @@ static void compileStub(
     
     handleExitCounts(jit, exit);
     reifyInlinedCallFrames(jit, exit);
+    
+    ArgumentsRecoveryGenerator argumentsRecovery;
+    for (unsigned index = exit.m_values.size(); index--;) {
+        if (!exit.m_values[index].isArgumentsObjectThatWasNotCreated())
+            continue;
+        int operand = exit.m_values.operandForIndex(index);
+        argumentsRecovery.generateFor(operand, exit.m_codeOrigin, jit);
+    }
+    
     adjustAndJumpToTarget(jit, exit);
     
     LinkBuffer patchBuffer(*vm, &jit, codeBlock);

@@ -282,6 +282,9 @@ private:
         case WeakJSConstant:
             compileWeakJSConstant();
             break;
+        case PhantomArguments:
+            compilePhantomArguments();
+            break;
         case GetArgument:
             compileGetArgument();
             break;
@@ -780,6 +783,11 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+    }
+
+    void compilePhantomArguments()
+    {
+        setJSValue(m_out.constInt64(JSValue::encode(JSValue())));
     }
     
     void compileWeakJSConstant()
@@ -5519,9 +5527,7 @@ private:
                 break;
                 
             case FlushedArguments:
-                // FIXME: implement PhantomArguments.
-                // https://bugs.webkit.org/show_bug.cgi?id=113986
-                RELEASE_ASSERT_NOT_REACHED();
+                exit.m_values[i] = ExitValue::argumentsObjectThatWasNotCreated();
                 break;
             }
         }
@@ -5613,9 +5619,7 @@ private:
             exit.m_values[index] = ExitValue::constant(m_graph.valueOfJSConstant(node));
             return true;
         case PhantomArguments:
-            // FIXME: implement PhantomArguments.
-            // https://bugs.webkit.org/show_bug.cgi?id=113986
-            RELEASE_ASSERT_NOT_REACHED();
+            exit.m_values[index] = ExitValue::argumentsObjectThatWasNotCreated();
             return true;
         default:
             return false;

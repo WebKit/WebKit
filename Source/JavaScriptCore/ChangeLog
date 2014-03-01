@@ -1,5 +1,45 @@
 2014-02-28  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support PhantomArguments
+        https://bugs.webkit.org/show_bug.cgi?id=113986
+
+        Reviewed by Oliver Hunt.
+        
+        Adding PhantomArguments to the FTL mostly means wiring the recovery of the Arguments
+        object into the FTL's OSR exit compiler.
+        
+        This isn't a speed-up yet, since there is still more to be done to fully support
+        all of the arguments craziness that our varargs benchmarks do.
+
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit): move the recovery code to DFGOSRExitCompilerCommon.cpp
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit): move the recovery code to DFGOSRExitCompilerCommon.cpp
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::ArgumentsRecoveryGenerator::ArgumentsRecoveryGenerator):
+        (JSC::DFG::ArgumentsRecoveryGenerator::~ArgumentsRecoveryGenerator):
+        (JSC::DFG::ArgumentsRecoveryGenerator::generateFor): this is the common place for the recovery code
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::dumpInContext):
+        * ftl/FTLExitValue.h:
+        (JSC::FTL::ExitValue::argumentsObjectThatWasNotCreated):
+        (JSC::FTL::ExitValue::isArgumentsObjectThatWasNotCreated):
+        (JSC::FTL::ExitValue::valueFormat):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compilePhantomArguments):
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::LowerDFGToLLVM::tryToSetConstantExitArgument):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub): Call into the ArgumentsRecoveryGenerator
+        * tests/stress/slightly-more-difficult-to-fold-reflective-arguments-access.js: Added.
+        * tests/stress/trivially-foldable-reflective-arguments-access.js: Added.
+
+2014-02-28  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, uncomment some code. It wasn't meant to be commented in the first place.
 
         * dfg/DFGCSEPhase.cpp:

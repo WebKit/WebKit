@@ -59,6 +59,9 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
     case ExitValueInJSStackAsDouble:
         out.print("InJSStackAsDouble:r", virtualRegister());
         return;
+    case ExitValueArgumentsObjectThatWasNotCreated:
+        out.print("ArgumentsObjectThatWasNotCreated");
+        return;
     case ExitValueRecovery:
         out.print("Recovery(", recoveryOpcode(), ", arg", leftRecoveryArgument(), ", arg", rightRecoveryArgument(), ", ", recoveryFormat(), ")");
         return;

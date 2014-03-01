@@ -37,6 +37,18 @@ void handleExitCounts(CCallHelpers&, const OSRExitBase&);
 void reifyInlinedCallFrames(CCallHelpers&, const OSRExitBase&);
 void adjustAndJumpToTarget(CCallHelpers&, const OSRExitBase&);
 
+class ArgumentsRecoveryGenerator {
+public:
+    ArgumentsRecoveryGenerator();
+    ~ArgumentsRecoveryGenerator();
+    
+    void generateFor(int operand, CodeOrigin, CCallHelpers&);
+    
+private:
+    HashSet<InlineCallFrame*, DefaultHash<InlineCallFrame*>::Hash,
+        NullableHashTraits<InlineCallFrame*>> m_didCreateArgumentsObject;
+};
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

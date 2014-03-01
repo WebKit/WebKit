@@ -51,6 +51,7 @@ enum ExitValueKind {
     ExitValueInJSStackAsInt32,
     ExitValueInJSStackAsInt52,
     ExitValueInJSStackAsDouble,
+    ExitValueArgumentsObjectThatWasNotCreated,
     ExitValueRecovery
 };
 
@@ -118,6 +119,13 @@ public:
         return result;
     }
     
+    static ExitValue argumentsObjectThatWasNotCreated()
+    {
+        ExitValue result;
+        result.m_kind = ExitValueArgumentsObjectThatWasNotCreated;
+        return result;
+    }
+    
     static ExitValue recovery(RecoveryOpcode opcode, unsigned leftArgument, unsigned rightArgument, ValueFormat format)
     {
         ExitValue result;
@@ -146,6 +154,7 @@ public:
     }
     bool isConstant() const { return kind() == ExitValueConstant; }
     bool isArgument() const { return kind() == ExitValueArgument; }
+    bool isArgumentsObjectThatWasNotCreated() const { return kind() == ExitValueArgumentsObjectThatWasNotCreated; }
     bool isRecovery() const { return kind() == ExitValueRecovery; }
     
     ExitArgument exitArgument() const
@@ -213,6 +222,7 @@ public:
         case ExitValueDead:
         case ExitValueConstant:
         case ExitValueInJSStack:
+        case ExitValueArgumentsObjectThatWasNotCreated:
             return ValueFormatJSValue;
             
         case ExitValueArgument:
