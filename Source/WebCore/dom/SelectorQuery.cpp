@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,41 @@
 
 namespace WebCore {
 
-void SelectorDataList::initialize(const CSSSelectorList& selectorList)
+#if !ASSERT_DISABLED
+static bool isSingleTagNameSelector(const CSSSelector& selector)
 {
-    ASSERT(m_selectors.isEmpty());
+    return selector.isLastInTagHistory() && selector.m_match == CSSSelector::Tag;
+}
 
+static bool isSingleClassNameSelector(const CSSSelector& selector)
+{
+    return selector.isLastInTagHistory() && selector.m_match == CSSSelector::Class;
+}
+#endif
+
+enum class IdMatchingType : uint8_t {
+    None,
+    Rightmost,
+    Filter
+};
+
+static IdMatchingType findIdMatchingType(const CSSSelector& firstSelector)
+{
+    bool inRightmost = true;
+    for (const CSSSelector* selector = &firstSelector; selector; selector = selector->tagHistory()) {
+        if (selector->m_match == CSSSelector::Id) {
+            if (inRightmost)
+                return IdMatchingType::Rightmost;
+            return IdMatchingType::Filter;
+        }
+        if (selector->relation() != CSSSelector::SubSelector)
+            inRightmost = false;
+    }
+    return IdMatchingType::None;
+}
+
+SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
+{
     unsigned selectorCount = 0;
     for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
         selectorCount++;
@@ -46,6 +77,39 @@ void SelectorDataList::initialize(const CSSSelectorList& selectorList)
     m_selectors.reserveInitialCapacity(selectorCount);
     for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
         m_selectors.uncheckedAppend(SelectorData(selector, SelectorCheckerFastPath::canUse(selector)));
+
+    if (selectorCount == 1) {
+        const CSSSelector& selector = *m_selectors.first().selector;
+        if (selector.isLastInTagHistory()) {
+            switch (selector.m_match) {
+            case CSSSelector::Tag:
+                m_matchType = TagNameMatch;
+                break;
+            case CSSSelector::Class:
+                m_matchType = ClassNameMatch;
+                break;
+            case CSSSelector::Id:
+                m_matchType = RightMostWithIdMatch;
+                break;
+            default:
+                m_matchType = CompilableSingle;
+                break;
+            }
+        } else {
+            switch (findIdMatchingType(selector)) {
+            case IdMatchingType::None:
+                m_matchType = CompilableSingle;
+                break;
+            case IdMatchingType::Rightmost:
+                m_matchType = RightMostWithIdMatch;
+                break;
+            case IdMatchingType::Filter:
+                m_matchType = CompilableSingleWithRootFilter;
+                break;
+            }
+        }
+    } else
+        m_matchType = MultipleSelectorMatch;
 }
 
 inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, Element& element, const ContainerNode& rootNode) const
@@ -157,10 +221,45 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Containe
         SelectorQueryTrait::appendOutputForElement(output, element);
 }
 
-static bool isSingleTagNameSelector(const CSSSelector& selector)
+#if ENABLE(CSS_SELECTOR_JIT)
+static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector& firstSelector)
 {
-    return selector.isLastInTagHistory() && selector.m_match == CSSSelector::Tag;
+    if (!rootNode.inDocument())
+        return rootNode;
+    if (rootNode.document().inQuirksMode())
+        return rootNode;
+
+    // If there was an Id match in the rightmost Simple Selector, we should be in a RightMostWithIdMatch, not in filter.
+    // Thus we can skip the rightmost match.
+    const CSSSelector* selector = &firstSelector;
+    do {
+        ASSERT(selector->m_match != CSSSelector::Id);
+        if (selector->relation() != CSSSelector::SubSelector)
+            break;
+        selector = selector->tagHistory();
+    } while (selector);
+
+    bool inAdjacentChain = false;
+    for (; selector; selector = selector->tagHistory()) {
+        if (selector->m_match == CSSSelector::Id) {
+            const AtomicString& idToMatch = selector->value();
+            if (ContainerNode* searchRoot = rootNode.treeScope().getElementById(idToMatch)) {
+                if (LIKELY(!rootNode.treeScope().containsMultipleElementsWithId(idToMatch))) {
+                    if (inAdjacentChain)
+                        searchRoot = searchRoot->parentNode();
+                    if (searchRoot && (isTreeScopeRoot(rootNode) || searchRoot == &rootNode || searchRoot->isDescendantOf(&rootNode)))
+                        return *searchRoot;
+                }
+            }
+        }
+        if (selector->relation() == CSSSelector::DirectAdjacent || selector->relation() == CSSSelector::IndirectAdjacent)
+            inAdjacentChain = true;
+        else
+            inAdjacentChain = false;
+    }
+    return rootNode;
 }
+#endif
 
 template <typename SelectorQueryTrait>
 static inline void elementsForLocalName(const ContainerNode& rootNode, const AtomicString& localName, typename SelectorQueryTrait::OutputType& output)
@@ -213,11 +312,6 @@ ALWAYS_INLINE void SelectorDataList::executeSingleTagNameSelectorData(const Cont
             }
         }
     }
-}
-
-static bool isSingleClassNameSelector(const CSSSelector& selector)
-{
-    return selector.isLastInTagHistory() && selector.m_match == CSSSelector::Class;
 }
 
 template <typename SelectorQueryTrait>
@@ -278,59 +372,91 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const 
         }
     }
 }
-
-template <typename SelectorQueryTrait>
-ALWAYS_INLINE void SelectorDataList::executeCompiledSelectorCheckerWithContext(const ContainerNode& rootNode, SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker, const SelectorCompiler::CheckingContext& context, typename SelectorQueryTrait::OutputType& output) const
-{
-    for (auto& element : descendantsOfType<Element>(const_cast<ContainerNode&>(rootNode))) {
-        if (selectorChecker(&element, &context)) {
-            SelectorQueryTrait::appendOutputForElement(output, &element);
-            if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
-                return;
-        }
-    }
-}
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
 template <typename SelectorQueryTrait>
 ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename SelectorQueryTrait::OutputType& output) const
 {
-    if (m_selectors.size() == 1) {
-        const SelectorData& selectorData = m_selectors[0];
-        if (const CSSSelector* idSelector = selectorForIdLookup(rootNode, *selectorData.selector))
-            executeFastPathForIdSelector<SelectorQueryTrait>(rootNode, selectorData, idSelector, output);
-        else if (isSingleTagNameSelector(*selectorData.selector))
-            executeSingleTagNameSelectorData<SelectorQueryTrait>(rootNode, selectorData, output);
-        else if (isSingleClassNameSelector(*selectorData.selector))
-            executeSingleClassNameSelectorData<SelectorQueryTrait>(rootNode, selectorData, output);
-        else {
-#if ENABLE(CSS_SELECTOR_JIT)
-            void* compiledSelectorChecker = selectorData.compiledSelectorCodeRef.code().executableAddress();
-            if (!compiledSelectorChecker && selectorData.compilationStatus == SelectorCompilationStatus::NotCompiled) {
-                JSC::VM* vm = rootNode.document().scriptExecutionContext()->vm();
-                selectorData.compilationStatus = SelectorCompiler::compileSelector(selectorData.selector, vm, SelectorCompiler::SelectorContext::QuerySelector, selectorData.compiledSelectorCodeRef);
-                RELEASE_ASSERT(selectorData.compilationStatus != SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-                compiledSelectorChecker = selectorData.compiledSelectorCodeRef.code().executableAddress();
-            }
-
-            if (compiledSelectorChecker) {
-                SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, selectorData.compilationStatus);
-                executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(rootNode, selectorChecker, output);
-                return;
-            }
-#endif // ENABLE(CSS_SELECTOR_JIT)
-
-            executeSingleSelectorData<SelectorQueryTrait>(rootNode, selectorData, output);
+    ContainerNode* searchRootNode = &rootNode;
+    switch (m_matchType) {
+    case RightMostWithIdMatch:
+        if (const CSSSelector* idSelector = selectorForIdLookup(*searchRootNode, *m_selectors.first().selector)) {
+            executeFastPathForIdSelector<SelectorQueryTrait>(*searchRootNode, m_selectors.first(), idSelector, output);
+            break;
         }
-        return;
+        FALLTHROUGH;
+    case CompilableSingleWithRootFilter:
+    case CompilableSingle:
+        {
+#if ENABLE(CSS_SELECTOR_JIT)
+        const SelectorData& selectorData = m_selectors.first();
+        ASSERT(m_matchType == RightMostWithIdMatch || selectorData.compilationStatus == SelectorCompilationStatus::NotCompiled);
+
+        JSC::VM* vm = searchRootNode->document().scriptExecutionContext()->vm();
+        selectorData.compilationStatus = SelectorCompiler::compileSelector(selectorData.selector, vm, SelectorCompiler::SelectorContext::QuerySelector, selectorData.compiledSelectorCodeRef);
+        RELEASE_ASSERT(selectorData.compilationStatus != SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
+
+        if (selectorData.compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker) {
+            if (m_matchType == CompilableSingle) {
+                m_matchType = CompiledSingle;
+                goto CompiledSingleCase;
+            }
+            if (m_matchType == CompilableSingleWithRootFilter) {
+                m_matchType = CompiledSingleWithRootFilter;
+                goto CompiledSingleWithRootFilterCase;
+            }
+            goto CompiledSingleCase;
+        }
+        if (m_matchType != RightMostWithIdMatch)
+            m_matchType = SingleSelector;
+        goto SingleSelectorCase;
+        ASSERT_NOT_REACHED();
+        break;
+#else
+        FALLTHROUGH;
+#endif // ENABLE(CSS_SELECTOR_JIT)
+        }
+    case CompiledSingleWithRootFilter:
+#if ENABLE(CSS_SELECTOR_JIT)
+        CompiledSingleWithRootFilterCase:
+        searchRootNode = &filterRootById(*searchRootNode, *m_selectors.first().selector);
+#endif // ENABLE(CSS_SELECTOR_JIT)
+        FALLTHROUGH;
+    case CompiledSingle:
+#if ENABLE(CSS_SELECTOR_JIT)
+        {
+        CompiledSingleCase:
+        const SelectorData& selectorData = m_selectors.first();
+        void* compiledSelectorChecker = selectorData.compiledSelectorCodeRef.code().executableAddress();
+        SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, selectorData.compilationStatus);
+        executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(*searchRootNode, selectorChecker, output);
+        break;
+        }
+#else
+        FALLTHROUGH;
+#endif // ENABLE(CSS_SELECTOR_JIT)
+    case SingleSelector:
+#if ENABLE(CSS_SELECTOR_JIT)
+        SingleSelectorCase:
+#endif
+        executeSingleSelectorData<SelectorQueryTrait>(*searchRootNode, m_selectors.first(), output);
+        break;
+    case TagNameMatch:
+        executeSingleTagNameSelectorData<SelectorQueryTrait>(*searchRootNode, m_selectors.first(), output);
+        break;
+    case ClassNameMatch:
+        executeSingleClassNameSelectorData<SelectorQueryTrait>(*searchRootNode, m_selectors.first(), output);
+        break;
+    case MultipleSelectorMatch:
+        executeSingleMultiSelectorData<SelectorQueryTrait>(*searchRootNode, output);
+        break;
     }
-    executeSingleMultiSelectorData<SelectorQueryTrait>(rootNode, output);
 }
 
-SelectorQuery::SelectorQuery(const CSSSelectorList& selectorList)
+SelectorQuery::SelectorQuery(CSSSelectorList&& selectorList)
     : m_selectorList(selectorList)
+    , m_selectors(m_selectorList)
 {
-    m_selectors.initialize(m_selectorList);
 }
 
 SelectorQuery* SelectorQueryCache::add(const String& selectors, Document& document, ExceptionCode& ec)
@@ -358,7 +484,7 @@ SelectorQuery* SelectorQueryCache::add(const String& selectors, Document& docume
     if (m_entries.size() == maximumSelectorQueryCacheSize)
         m_entries.remove(m_entries.begin());
     
-    return m_entries.add(selectors, std::make_unique<SelectorQuery>(selectorList)).iterator->value.get();
+    return m_entries.add(selectors, std::make_unique<SelectorQuery>(std::move(selectorList))).iterator->value.get();
 }
 
 void SelectorQueryCache::invalidate()

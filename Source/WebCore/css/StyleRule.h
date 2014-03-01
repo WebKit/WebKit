@@ -118,7 +118,7 @@ public:
     MutableStyleProperties& mutableProperties();
     
     void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
-    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
+    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList = std::move(selectors); }
     void parserAdoptSelectorArray(CSSSelector* selectors) { m_selectorList.adoptSelectorArray(selectors); }
 
     PassRef<StyleRule> copy() const { return adoptRef(*new StyleRule(*this)); }
@@ -173,7 +173,7 @@ public:
     MutableStyleProperties& mutableProperties();
 
     void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
-    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
+    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList = std::move(selectors); }
 
     PassRef<StyleRulePage> copy() const { return adoptRef(*new StyleRulePage(*this)); }
 

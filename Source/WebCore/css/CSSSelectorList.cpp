@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,11 +32,6 @@
 
 namespace WebCore {
 
-CSSSelectorList::~CSSSelectorList()
-{
-    deleteSelectors();
-}
-
 CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
 {
     unsigned otherComponentCount = other.componentCount();
@@ -45,11 +40,10 @@ CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
         new (NotNull, &m_selectorArray[i]) CSSSelector(other.m_selectorArray[i]);
 }
 
-void CSSSelectorList::adopt(CSSSelectorList& list)
+CSSSelectorList::CSSSelectorList(CSSSelectorList&& other)
+    : m_selectorArray(other.m_selectorArray)
 {
-    deleteSelectors();
-    m_selectorArray = list.m_selectorArray;
-    list.m_selectorArray = 0;
+    other.m_selectorArray = nullptr;
 }
 
 void CSSSelectorList::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector)
@@ -95,6 +89,14 @@ unsigned CSSSelectorList::componentCount() const
     while (!current->isLastInSelectorList())
         ++current;
     return (current - m_selectorArray) + 1;
+}
+
+CSSSelectorList& CSSSelectorList::operator=(CSSSelectorList&& other)
+{
+    deleteSelectors();
+    m_selectorArray = other.m_selectorArray;
+    other.m_selectorArray = nullptr;
+    return *this;
 }
 
 void CSSSelectorList::deleteSelectors()

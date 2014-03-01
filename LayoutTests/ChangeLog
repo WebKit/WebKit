@@ -1,3 +1,13 @@
+2014-03-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Optimized querySelector(All) when selector contains #id
+        https://bugs.webkit.org/show_bug.cgi?id=116502
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/querySelector-id-filtering-expected.txt: Added.
+        * fast/selectors/querySelector-id-filtering.html: Added.
+
 2014-02-28  Alexey Proskuryakov  <ap@apple.com>
 
         Node::compareDocumentPosition leaks memory structure

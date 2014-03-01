@@ -1,3 +1,42 @@
+2014-03-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Optimized querySelector(All) when selector contains #id
+        https://bugs.webkit.org/show_bug.cgi?id=116502
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/selectors/querySelector-id-filtering.html
+
+        The idea of this patch is to perform querySelector on a subtree
+        rooted at the last element with #id matching. For example, if we have the selector
+        "#foobar div a", we start by looking for the element with ID foobar in the TreeScope
+        cache, and start matching the children from there.
+
+        The idea comes from Rune for
+        https://chromium.googlesource.com/chromium/blink/+/1cd83d3588973a02ab15d94b1b05a28620853624
+        but the code as diverged too much so it had to be reimplemented specifically for WebKit.
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::CSSSelectorList):
+        (WebCore::CSSSelectorList::operator=):
+        * css/CSSSelectorList.h:
+        (WebCore::CSSSelectorList::~CSSSelectorList):
+        * css/StyleRule.h:
+        (WebCore::StyleRule::wrapperAdoptSelectorList):
+        (WebCore::StyleRulePage::wrapperAdoptSelectorList):
+        * dom/SelectorQuery.cpp:
+        (WebCore::isSingleTagNameSelector):
+        (WebCore::isSingleClassNameSelector):
+        (WebCore::findIdMatchingType):
+        (WebCore::SelectorDataList::SelectorDataList):
+        (WebCore::filterRootById):
+        (WebCore::SelectorDataList::executeCompiledSimpleSelectorChecker):
+        (WebCore::SelectorDataList::execute):
+        (WebCore::SelectorQuery::SelectorQuery):
+        (WebCore::SelectorQueryCache::add):
+        * dom/SelectorQuery.h:
+        (WebCore::SelectorDataList::SelectorData::SelectorData):
+
 2014-02-28  Alexey Proskuryakov  <ap@apple.com>
 
         Node::compareDocumentPosition leaks memory structure
