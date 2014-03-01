@@ -396,7 +396,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
         }
         const ClassInfo* info = obj->classInfo();
         if (info->hasStaticSetterOrReadonlyProperties(vm)) {
-            if (const HashEntry* entry = obj->findPropertyHashEntry(exec, propertyName)) {
+            if (const HashEntry* entry = obj->findPropertyHashEntry(vm, propertyName)) {
                 putEntry(exec, entry, obj, propertyName, value, slot);
                 return;
             }
@@ -1273,7 +1273,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
     }
 
     // Look in the static hashtable of properties
-    const HashEntry* entry = thisObject->findPropertyHashEntry(exec, propertyName);
+    const HashEntry* entry = thisObject->findPropertyHashEntry(vm, propertyName);
     if (entry) {
         if (entry->attributes() & DontDelete && !vm.isInDefineOwnProperty())
             return false; // this builtin property can't be deleted
@@ -1401,11 +1401,11 @@ JSValue JSObject::defaultValue(const JSObject* object, ExecState* exec, Preferre
     return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("No default value")));
 }
 
-const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, PropertyName propertyName) const
+const HashEntry* JSObject::findPropertyHashEntry(VM& vm, PropertyName propertyName) const
 {
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
-        if (const HashTable* propHashTable = info->propHashTable(exec)) {
-            if (const HashEntry* entry = propHashTable->entry(exec, propertyName))
+        if (const HashTable* propHashTable = info->propHashTable(vm)) {
+            if (const HashEntry* entry = propHashTable->entry(vm, propertyName))
                 return entry;
         }
     }

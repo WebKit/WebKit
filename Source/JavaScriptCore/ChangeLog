@@ -1,3 +1,19 @@
+2014-02-28  Andreas Kling  <akling@apple.com>
+
+        JSObject::findPropertyHashEntry() should take VM instead of ExecState.
+        <https://webkit.org/b/129529>
+
+        Callers already have VM in a local, and findPropertyHashEntry() only
+        uses the VM, no need to go all the way through ExecState.
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::findPropertyHashEntry):
+        * runtime/JSObject.h:
+
 2014-02-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Deadlock remotely inspecting iOS Simulator

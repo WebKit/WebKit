@@ -952,7 +952,7 @@ private:
     bool inlineGetOwnPropertySlot(ExecState*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, unsigned, PropertyOffset);
 
-    const HashEntry* findPropertyHashEntry(ExecState*, PropertyName) const;
+    const HashEntry* findPropertyHashEntry(VM&, PropertyName) const;
         
     void putIndexedDescriptor(ExecState*, SparseArrayEntry*, const PropertyDescriptor&, PropertyDescriptor& old);
         
