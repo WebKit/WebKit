@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling] ol>li {
+    background-color:rgb(1,2,3);
+}
+[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling] div>ol>li span {
+    background-color:rgb(4,5,6);
+}
+div[style="display:none"]>[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling]>div ol>li {
+    color:rgb(1,2,3);
+}
+div[style="display:none"]>[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling]>div>ol span {
+    color:rgb(4,5,6);
+}
+</style>
+</head>
+<body>
+<div style="display:none">
+    <!-- Mutli-attribute siblings matching. -->
+    <div data-a=first data-b=root></div>
+    <div data-b=root></div>
+    <div data-a=first></div>
+    <div data-a=second data-b=first-sibling></div>
+    <div data-a=second></div>
+    <div data-b=first-sibing></div>
+    <div data-a=third data-b=second-sibling>
+        <div>
+            <ul>
+                <li></li>
+            </ul>
+            <ol>
+                <li id=target1><span id=target2></span></li>
+            </ol>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+description('Some rules modify tree properties on matching. This test the robustness of complex selectors of that type');
+
+debug("Adjacent relations (tree modifiers), no descendant backtracking, multi-attribute match.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).backgroundColor', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling] ol>li")[0]).backgroundColor', 'rgb(1, 2, 3)');
+
+debug("<br>Adjacent relations (tree modifiers), deep descendant backtracking, multi-attribute match.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).backgroundColor', 'rgb(4, 5, 6)');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling] div>ol>li span")[0]).backgroundColor', 'rgb(4, 5, 6)');
+
+debug("<br>Adjacent relations (tree modifiers) in deep descendant backtracking, multi-attribute match.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).color', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("div[style=\'display:none\']>[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling]>div ol>li")[0]).color', 'rgb(1, 2, 3)');
+
+debug("<br>Adjacent backtracking, deep descendant backtracking, multi-attribute match.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).backgroundColor', 'rgb(4, 5, 6)');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("div[style=\'display:none\']>[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling]>div>ol span")[0]).backgroundColor', 'rgb(4, 5, 6)');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

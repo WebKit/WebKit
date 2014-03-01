@@ -84,6 +84,16 @@ public:
         m_offsetFromTop -= 8;
     }
 
+    void popAndDiscardUpTo(StackReference stackReference)
+    {
+        unsigned positionBeforeStackReference = stackReference - 8;
+        RELEASE_ASSERT(positionBeforeStackReference < m_offsetFromTop);
+
+        unsigned stackDelta = m_offsetFromTop - positionBeforeStackReference;
+        m_assembler.addPtr(JSC::MacroAssembler::TrustedImm32(stackDelta), JSC::MacroAssembler::stackPointerRegister);
+        m_offsetFromTop -= stackDelta;
+    }
+
     void alignStackPreFunctionCall()
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
@@ -100,13 +110,6 @@ public:
             m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(8), JSC::MacroAssembler::stackPointerRegister);
             m_hasFunctionCallPadding = false;
         }
-    }
-
-    void discard()
-    {
-        if (m_offsetFromTop)
-            m_assembler.addPtr(JSC::MacroAssembler::TrustedImm32(m_offsetFromTop), JSC::MacroAssembler::stackPointerRegister);
-        m_offsetFromTop = 0;
     }
 
     void merge(StackAllocator&& stackA, StackAllocator&& stackB)

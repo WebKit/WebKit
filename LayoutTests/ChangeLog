@@ -1,3 +1,13 @@
+2014-02-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        Caller saved registers can be accidentally discarded when clearing the local stack
+        https://bugs.webkit.org/show_bug.cgi?id=129532
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/tree-modifying-case-insensitive-selectors.html: Added.
+        * fast/selectors/tree-modifying-selectors.html: Added.
+
 2014-02-28  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Filters should test for area instead of single dimension

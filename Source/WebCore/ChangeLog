@@ -1,3 +1,21 @@
+2014-02-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        Caller saved registers can be accidentally discarded when clearing the local stack
+        https://bugs.webkit.org/show_bug.cgi?id=129532
+
+        Reviewed by Andreas Kling.
+
+        Tests: fast/selectors/tree-modifying-case-insensitive-selectors.html
+               fast/selectors/tree-modifying-selectors.html
+
+        StackAllocator::discard() no longer make sense now that we can use caller saved regsiter.
+        We should instead discard everything up to the beginning of the local stack.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::popAndDiscardUpTo):
+
 2014-02-28  Andy Estes  <aestes@apple.com>
 
         [iOS] FrameLoader has a NULL m_progressTracker when initialized with initForSynthesizedDocument()

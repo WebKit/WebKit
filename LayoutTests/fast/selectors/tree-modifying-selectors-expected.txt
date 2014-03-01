@@ -1,0 +1,24 @@
+Some rules modify tree properties on matching. This test the robustness of complex selectors of that type
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Adjacent relations (tree modifiers), no descendant backtracking, multi-attribute match.
+PASS getComputedStyle(document.getElementById("target1")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling] ol>li")[0]).backgroundColor is "rgb(1, 2, 3)"
+
+Adjacent relations (tree modifiers), deep descendant backtracking, multi-attribute match.
+PASS getComputedStyle(document.getElementById("target2")).backgroundColor is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.querySelectorAll("[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling] div>ol>li span")[0]).backgroundColor is "rgb(4, 5, 6)"
+
+Adjacent relations (tree modifiers) in deep descendant backtracking, multi-attribute match.
+PASS getComputedStyle(document.getElementById("target1")).color is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("div[style='display:none']>[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling]>div ol>li")[0]).color is "rgb(1, 2, 3)"
+
+Adjacent backtracking, deep descendant backtracking, multi-attribute match.
+PASS getComputedStyle(document.getElementById("target2")).backgroundColor is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.querySelectorAll("div[style='display:none']>[data-a=first][data-b=root]~[data-a=second][data-b=first-sibling]~[data-a=third][data-b=second-sibling]>div>ol span")[0]).backgroundColor is "rgb(4, 5, 6)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

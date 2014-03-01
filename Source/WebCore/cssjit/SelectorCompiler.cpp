@@ -698,7 +698,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
             Assembler::Jump skipFailureCase = m_assembler.jump();
 
             failureCases.link(&m_assembler);
-            failureStack.discard();
+            failureStack.popAndDiscardUpTo(m_checkingContextStackReference);
             m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
 
             skipFailureCase.link(&m_assembler);
