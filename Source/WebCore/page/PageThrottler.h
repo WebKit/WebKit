@@ -28,7 +28,7 @@
 
 #include "Timer.h"
 
-#include "UserActivity.h"
+#include "CountedUserActivity.h"
 #include "ViewState.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -82,7 +82,7 @@ private:
     Timer<PageThrottler> m_throttleHysteresisTimer;
     HashSet<PageActivityAssertionToken*> m_activityTokens;
     UserActivity m_visuallyNonIdle;
-    UserActivity m_pageActivity;
+    CountedUserActivity m_pageActivity;
 };
 
 }

@@ -23,41 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserActivity_h
-#define UserActivity_h
+#ifndef CountedUserActivity_h
+#define CountedUserActivity_h
 
-#if HAVE(NS_ACTIVITY)
-#include <wtf/RetainPtr.h>
-#include <wtf/RunLoop.h>
-OBJC_CLASS NSString;
-#endif
+#include <WebCore/UserActivity.h>
 
 namespace WebCore {
 
-// The UserActivity type is used to indicate to the operating system that
-// a user initiated or visible action is taking place, and as such that
-// resources should be allocated to the process accordingly.
-class UserActivity {
+class CountedUserActivity {
 public:
-    UserActivity(const char* description);
+    CountedUserActivity(const char* description)
+        : m_activity(description)
+        , m_count(0)
+    {
+    }
 
-    void start();
-    void stop();
+    void increment()
+    {
+        if (!m_count++)
+            m_activity.start();
+    }
+
+    void decrement()
+    {
+        if (!--m_count)
+            m_activity.stop();
+    }
 
 private:
-#if HAVE(NS_ACTIVITY)
-    void hysteresisTimerFired();
-    bool isValid();
-
-    bool m_active;
-    RetainPtr<NSString> m_description;
-    RunLoop::Timer<UserActivity> m_timer;
-    RetainPtr<id> m_activity;
-#endif
+    UserActivity m_activity;
+    size_t m_count;
 };
 
 } // namespace WebCore
 
-using WebCore::UserActivity;
+using WebCore::CountedUserActivity;
 
-#endif // UserActivity_h
+#endif // CountedUserActivity_h

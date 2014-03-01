@@ -45,7 +45,7 @@ PageThrottler::PageThrottler(Page& page, ViewState::Flags viewState)
     , m_visuallyNonIdle("Page is not visually idle.")
     , m_pageActivity("Page is active.")
 {
-    m_pageActivity.beginActivity();
+    m_pageActivity.increment();
 
     setIsVisuallyIdle(viewState & ViewState::IsVisuallyIdle);
 }
@@ -58,7 +58,7 @@ PageThrottler::~PageThrottler()
         (*it)->invalidate();
 
     if (m_throttleState != PageThrottledState)
-        m_pageActivity.endActivity();
+        m_pageActivity.decrement();
 }
 
 void PageThrottler::hiddenPageDOMTimerThrottlingStateChanged()
@@ -80,7 +80,7 @@ void PageThrottler::throttlePage()
 {
     m_throttleState = PageThrottledState;
 
-    m_pageActivity.endActivity();
+    m_pageActivity.decrement();
 
     m_page.setTimerThrottlingEnabled(true);
 }
@@ -94,7 +94,7 @@ void PageThrottler::unthrottlePage()
         return;
 
     if (oldState == PageThrottledState)
-        m_pageActivity.beginActivity();
+        m_pageActivity.increment();
     
     m_page.setTimerThrottlingEnabled(false);
 }
@@ -123,13 +123,11 @@ void PageThrottler::setIsVisuallyIdle(bool isVisuallyIdle)
     if (isVisuallyIdle) {
         m_throttleState = PageWaitingToThrottleState;
         startThrottleHysteresisTimer();
-        if (m_visuallyNonIdle.isActive())
-            m_visuallyNonIdle.endActivity();
+        m_visuallyNonIdle.stop();
     } else {
         unthrottlePage();
         stopThrottleHysteresisTimer();
-        if (!m_visuallyNonIdle.isActive())
-            m_visuallyNonIdle.beginActivity();
+        m_visuallyNonIdle.start();
     }
 }
 

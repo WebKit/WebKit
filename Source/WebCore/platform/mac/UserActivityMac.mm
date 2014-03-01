@@ -33,7 +33,7 @@ namespace WebCore {
 static const double kHysteresisSeconds = 5.0;
 
 UserActivity::UserActivity(const char* description)
-    : m_count(0)
+    : m_active(false)
     , m_description([NSString stringWithUTF8String:description])
     , m_timer(RunLoop::main(), this, &UserActivity::hysteresisTimerFired)
 {
@@ -46,14 +46,17 @@ bool UserActivity::isValid()
     // Else if count is zero then:
     //  (a) if we're holding an activity there should be an active timer to clear this,
     //  (b) if we're not holding an activity there should be no active timer.
-    return m_count ? m_activity && !m_timer.isActive() : !!m_activity == m_timer.isActive();
+    return m_active ? m_activity && !m_timer.isActive() : !!m_activity == m_timer.isActive();
 }
 
-void UserActivity::beginActivity()
+void UserActivity::start()
 {
     ASSERT(isValid());
 
-    ++m_count;
+    if (m_active)
+        return;
+    m_active = true;
+
     if (m_timer.isActive())
         m_timer.stop();
     if (!m_activity) {
@@ -64,13 +67,15 @@ void UserActivity::beginActivity()
     ASSERT(isValid());
 }
 
-void UserActivity::endActivity()
+void UserActivity::stop()
 {
-    ASSERT(m_count);
     ASSERT(isValid());
 
-    if (!--m_count)
-        m_timer.startOneShot(kHysteresisSeconds);
+    if (!m_active)
+        return;
+    m_active = false;
+
+    m_timer.startOneShot(kHysteresisSeconds);
 
     ASSERT(isValid());
 }

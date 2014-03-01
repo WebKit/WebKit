@@ -29,6 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ChildProcess.h"
+#include <WebCore/CountedUserActivity.h>
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
@@ -63,7 +64,7 @@ public:
     bool openFile(const String& urlString);
 #endif
 
-    UserActivity& connectionActivity() { return m_connectionActivity; }
+    CountedUserActivity& connectionActivity() { return m_connectionActivity; }
 
 private:
     PluginProcess();
@@ -119,7 +120,7 @@ private:
 #endif
 
     static void lowMemoryHandler(bool critical);
-    UserActivity m_connectionActivity;
+    CountedUserActivity m_connectionActivity;
 };
 
 } // namespace WebKit

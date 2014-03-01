@@ -75,13 +75,10 @@ void ChildProcess::initialize(const ChildProcessInitializationParameters& parame
 
 void ChildProcess::setProcessSuppressionEnabled(bool enabled)
 {
-    if (processSuppressionEnabled() == enabled)
-        return;
-
     if (enabled)
-        m_processSuppressionDisabled.endActivity();
+        m_processSuppressionDisabled.stop();
     else
-        m_processSuppressionDisabled.beginActivity();
+        m_processSuppressionDisabled.start();
 }
 
 void ChildProcess::initializeProcess(const ChildProcessInitializationParameters&)

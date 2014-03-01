@@ -63,7 +63,6 @@ public:
     void removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID);
 
     void setProcessSuppressionEnabled(bool);
-    bool processSuppressionEnabled() const { return !m_processSuppressionDisabled.isActive(); }
 
 #if PLATFORM(COCOA)
     void setApplicationIsDaemon();

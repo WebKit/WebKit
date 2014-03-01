@@ -1,3 +1,34 @@
+2014-03-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Split UserActivity/CountedUserActivity
+        https://bugs.webkit.org/show_bug.cgi?id=129520
+
+        Reviewed by Sam Weinig.
+
+        UserActivity currently provides an interface allowing counted, nested calls to enable/disable.
+        In some cases it would be easier to use if it were a simpler boolean enabled/disabled interface.
+
+        * PluginProcess/PluginProcess.h:
+        (WebKit::PluginProcess::connectionActivity):
+            - UserActivity->CountedUserActivity
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess):
+            - beginActivity->start
+        * Shared/ActivityAssertion.cpp:
+        (WebKit::ActivityAssertion::ActivityAssertion):
+        (WebKit::ActivityAssertion::~ActivityAssertion):
+            - beginActivity->increment, endActivity->decrement.
+        * Shared/ActivityAssertion.h:
+            - UserActivity->CountedUserActivity
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::setProcessSuppressionEnabled):
+            - beginActivity->start, endActivity->stop.
+        * Shared/ChildProcess.h:
+            - removed processSuppressionEnabled()
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+            - beginActivity->start, endActivity->stop.
+
 2014-03-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial Linux buildfix after r164905.

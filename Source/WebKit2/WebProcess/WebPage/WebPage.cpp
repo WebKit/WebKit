@@ -2623,13 +2623,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setLayoutInterval(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(store.getDoubleValueForKey(WebPreferencesKey::layoutIntervalKey()))));
     settings.setMaxParseDuration(store.getDoubleValueForKey(WebPreferencesKey::maxParseDurationKey()));
 
-    if (store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey())) {
-        if (m_processSuppressionDisabledByWebPreference.isActive())
-            m_processSuppressionDisabledByWebPreference.endActivity();
-    } else {
-        if (!m_processSuppressionDisabledByWebPreference.isActive())
-            m_processSuppressionDisabledByWebPreference.beginActivity();
-    }
+    if (store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey()))
+        m_processSuppressionDisabledByWebPreference.stop();
+    else
+        m_processSuppressionDisabledByWebPreference.start();
 
     platformPreferencesDidChange(store);
 

@@ -1,3 +1,48 @@
+2014-03-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Split UserActivity/CountedUserActivity
+        https://bugs.webkit.org/show_bug.cgi?id=129520
+
+        Reviewed by Sam Weinig.
+
+        UserActivity currently provides an interface allowing counted, nested calls to enable/disable.
+        In some cases it would be easier to use if it were a simpler boolean enabled/disabled interface.
+
+        * WebCore.exp.in:
+            - beginActivity->start, endActivity->stop.
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+        (WebCore::PageThrottler::~PageThrottler):
+        (WebCore::PageThrottler::throttlePage):
+        (WebCore::PageThrottler::unthrottlePage):
+        (WebCore::PageThrottler::setIsVisuallyIdle):
+            - beginActivity->increment, endActivity->decrement.
+        * page/PageThrottler.h:
+            - UserActivity->CountedUserActivity for m_pageActivity
+        * platform/CountedUserActivity.h: Copied from Source/WebCore/platform/UserActivity.h.
+        (WebCore::CountedUserActivity::CountedUserActivity):
+        (WebCore::CountedUserActivity::increment):
+        (WebCore::CountedUserActivity::decrement):
+            - Added, provides counted interface to UserActivity.
+        * platform/UserActivity.cpp:
+        (WebCore::UserActivity::UserActivity):
+            - m_count removed
+        (WebCore::UserActivity::start):
+        (WebCore::UserActivity::stop):
+            - beginActivity->start, endActivity->stop, implentation now empty.
+        * platform/UserActivity.h:
+            - beginActivity->start, endActivity->stop, m_count moved to HAVE(NS_ACTIVITY)
+        * platform/mac/UserActivityMac.mm:
+        (WebCore::UserActivity::UserActivity):
+            - m_count->m_started
+        (WebCore::UserActivity::isValid):
+            - m_count->m_started
+        (WebCore::UserActivity::start):
+        (WebCore::UserActivity::stop):
+            - beginActivity->start, endActivity->stop, no longer nest
+
+
 2014-02-28  Benjamin Poulain  <benjamin@webkit.org>
 
         Caller saved registers can be accidentally discarded when clearing the local stack

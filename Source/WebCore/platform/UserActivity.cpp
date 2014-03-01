@@ -31,19 +31,15 @@ namespace WebCore {
 #if !HAVE(NS_ACTIVITY)
 
 UserActivity::UserActivity(const char*)
-    : m_count(0)
 {
 }
 
-void UserActivity::beginActivity()
+void UserActivity::start()
 {
-    ++m_count;
 }
 
-void UserActivity::endActivity()
+void UserActivity::stop()
 {
-    ASSERT(m_count);
-    --m_count;
 }
 
 #endif

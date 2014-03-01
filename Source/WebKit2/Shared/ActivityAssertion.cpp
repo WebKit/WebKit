@@ -28,15 +28,15 @@
 
 namespace WebKit {
 
-ActivityAssertion::ActivityAssertion(UserActivity& activity)
+ActivityAssertion::ActivityAssertion(CountedUserActivity& activity)
     : m_activity(activity)
 {
-    m_activity.beginActivity();
+    m_activity.increment();
 }
 
 ActivityAssertion::~ActivityAssertion()
 {
-    m_activity.endActivity();
+    m_activity.decrement();
 }
 
 }
