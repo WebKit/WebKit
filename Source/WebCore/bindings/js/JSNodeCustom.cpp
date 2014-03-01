@@ -97,21 +97,25 @@ static inline bool isObservable(JSNode* jsNode, Node* node)
 static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, SlotVisitor& visitor)
 {
     if (!node->inDocument()) {
-        // If a wrapper is the last reference to an image element
-        // that is loading but not in the document, the wrapper is observable
-        // because it is the only thing keeping the image element alive, and if
-        // the element is destroyed, its load event will not fire.
-        // FIXME: The DOM should manage this issue without the help of JavaScript wrappers.
-        if (isHTMLImageElement(node)) {
-            if (toHTMLImageElement(node)->hasPendingActivity())
-                return true;
+        if (node->isElementNode()) {
+            auto& element = toElement(*node);
+
+            // If a wrapper is the last reference to an image element
+            // that is loading but not in the document, the wrapper is observable
+            // because it is the only thing keeping the image element alive, and if
+            // the element is destroyed, its load event will not fire.
+            // FIXME: The DOM should manage this issue without the help of JavaScript wrappers.
+            if (isHTMLImageElement(element)) {
+                if (toHTMLImageElement(element).hasPendingActivity())
+                    return true;
+            }
+#if ENABLE(VIDEO)
+            else if (isHTMLAudioElement(element)) {
+                if (!toHTMLAudioElement(element).paused())
+                    return true;
+            }
+#endif
         }
-    #if ENABLE(VIDEO)
-        else if (isHTMLAudioElement(node)) {
-            if (!toHTMLAudioElement(node)->paused())
-                return true;
-        }
-    #endif
 
         // If a node is firing event listeners, its wrapper is observable because
         // its wrapper is responsible for marking those event listeners.

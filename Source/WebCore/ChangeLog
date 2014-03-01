@@ -1,3 +1,16 @@
+2014-02-28  Andreas Kling  <akling@apple.com>
+
+        Micro-optimize JSNodeOwner::isReachableFromOpaqueRoots().
+        <https://webkit.org/b/129518>
+
+        Only do image and audio element specific checks for element nodes.
+        Time spent in here goes from 0.8% to 0.5% on DYEB.
+
+        Reviewed by Benjamin Poulain.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isReachableFromDOM):
+
 2014-02-28  Geoffrey Garen  <ggaren@apple.com>
 
         JSC Assertion failure every time I start Safari (r164846)
