@@ -165,6 +165,17 @@ void RemoteInspector::sendMessageToRemoteFrontend(unsigned identifier, const Str
     m_xpcConnection->sendMessage(WIRRawDataMessage, userInfo);
 }
 
+void RemoteInspector::setupFailed(unsigned identifier)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    m_connectionMap.remove(identifier);
+
+    updateHasActiveDebugSession();
+
+    pushListingSoon();
+}
+
 void RemoteInspector::start()
 {
     std::lock_guard<std::mutex> lock(m_mutex);

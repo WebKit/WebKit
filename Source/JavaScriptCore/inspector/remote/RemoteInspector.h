@@ -52,6 +52,7 @@ public:
     void unregisterDebuggable(RemoteInspectorDebuggable*);
     void updateDebuggable(RemoteInspectorDebuggable*);
     void sendMessageToRemoteFrontend(unsigned identifier, const String& message);
+    void setupFailed(unsigned identifier);
 
     bool enabled() const { return m_enabled; }
     bool hasActiveDebugSession() const { return m_hasActiveDebugSession; }

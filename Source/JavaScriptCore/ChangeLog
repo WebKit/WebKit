@@ -1,3 +1,20 @@
+2014-02-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Deadlock remotely inspecting iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=129511
+
+        Reviewed by Timothy Hatcher.
+
+        Avoid synchronous setup. Do it asynchronously, and let
+        the RemoteInspector singleton know later if it failed.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::setupFailed):
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorDebuggableConnection::setup):
+
 2014-02-28  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION(r164835): It broke 10 JSC stress test on 32 bit platforms

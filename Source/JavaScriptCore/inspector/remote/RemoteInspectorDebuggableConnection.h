@@ -57,7 +57,6 @@ public:
     virtual bool sendMessageToFrontend(const String&) override;
 
 private:
-    void dispatchSyncOnDebuggable(void (^block)());
     void dispatchAsyncOnDebuggable(void (^block)());
 
     // This connection from the RemoteInspector singleton to the Debuggable
