@@ -1,3 +1,17 @@
+2014-03-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial Linux buildfix after r164905.
+
+        setShouldCloseConnectionOnMachExceptions() is defined in the Mac only
+        Source/WebKit2/Platform/IPC/mac/ConnectionMac.cpp inside !PLATFORM(IOS)
+        which means PLATFORM(MAC), because nobody else uses this source file.
+
+        But ChildProcessProxy.cpp is used by Linux ports too, so we have to
+        use the most specific #if guard here, which is PLATFORM(MAC).
+
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+
 2014-02-28  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Assertions and bad behavior when zooming into an iframe containing apple.com
