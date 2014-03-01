@@ -73,6 +73,7 @@ struct BacktrackingFlag {
         SaveAdjacentBacktrackingStart = 1 << 3,
         DirectAdjacentTail = 1 << 4,
         DescendantTail = 1 << 5,
+        InChainWithDescendantTail = 1 << 6
     };
 };
 
@@ -351,7 +352,7 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
             fragment.attributes.append(AttributeMatchingInfo(selector, HTMLDocument::isCaseSensitiveAttribute(selector->attribute())));
             break;
         case CSSSelector::Set:
-            fragment.attributes.append(AttributeMatchingInfo(selector, false));
+            fragment.attributes.append(AttributeMatchingInfo(selector, true));
             break;
         case CSSSelector::Unknown:
         case CSSSelector::List:
@@ -414,14 +415,14 @@ static inline unsigned minimumRegisterRequirements(const SelectorFragmentList& s
         const SelectorFragment& selectorFragment = selectorFragments[selectorFragmentIndex];
         const Vector<AttributeMatchingInfo>& attributes = selectorFragment.attributes;
 
-        for (unsigned attributeIndex = 0; attributeIndex < attributes.size(); ++attributeIndex) {
+        unsigned attributeCount = attributes.size();
+        for (unsigned attributeIndex = 0; attributeIndex < attributeCount; ++attributeIndex) {
             // Element + ElementData + scratchRegister + attributeArrayPointer + expectedLocalName + (qualifiedNameImpl && expectedValue).
             unsigned attributeMinimum = 6;
-            if (selectorFragment.traversalBacktrackingAction == BacktrackingAction::JumpToDescendantTail
-                || selectorFragment.matchingBacktrackingAction == BacktrackingAction::JumpToDescendantTail)
+            if (selectorFragment.backtrackingFlags & BacktrackingFlag::InChainWithDescendantTail)
                 attributeMinimum += 1; // If there is a DescendantTail, there is a backtracking register.
 
-            if (attributes.size() != 1)
+            if (attributeIndex + 1 < attributeCount)
                 attributeMinimum += 2; // For the local copy of the counter and attributeArrayPointer.
 
             const AttributeMatchingInfo& attributeInfo = attributes[attributeIndex];
@@ -594,6 +595,9 @@ void SelectorCodeGenerator::computeBacktrackingInformation()
 
         needsAdjacentTail |= requiresAdjacentTail(fragment);
         needsDescendantTail |= requiresDescendantTail(fragment);
+
+        if (needsDescendantTail)
+            fragment.backtrackingFlags |= BacktrackingFlag::InChainWithDescendantTail;
 
         // Add code generation flags.
         if (fragment.relationToLeftFragment != FragmentRelation::Descendant && fragment.relationToRightFragment == FragmentRelation::Descendant)

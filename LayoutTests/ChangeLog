@@ -1,3 +1,13 @@
+2014-03-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Tighten minimumRegisterRequirements()
+        https://bugs.webkit.org/show_bug.cgi?id=129538
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/adjacent-descendant-tail-register-requirement-expected.txt: Added.
+        * fast/selectors/adjacent-descendant-tail-register-requirement.html: Added.
+
 2014-03-01  Yoav Weiss  <yoav@yoav.ws>
 
         Fix srcset related bugs

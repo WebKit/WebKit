@@ -1,3 +1,36 @@
+2014-03-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Tighten minimumRegisterRequirements()
+        https://bugs.webkit.org/show_bug.cgi?id=129538
+
+        Reviewed by Andreas Kling.
+
+        Fix small things that made minimumRegisterRequirements() a little optimistic
+        when dealing with attributes.
+
+        Test: fast/selectors/adjacent-descendant-tail-register-requirement.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        Attribute Set does not do value matching, the case sensitive value matching is irrelevant
+        The problem is that flag is also used by minimumRegisterRequirements()
+        to find if one more register is needed.
+
+        Set the flag to case sensitive to avoid reserving one extra register.
+
+        (WebCore::SelectorCompiler::minimumRegisterRequirements):
+        Use a new backtrackingFlag to know if there is a descendant tail, thus a backtracking register
+        reserved.
+        This is better than using the backtracking action because the backtracking chain could be
+        an adjacent chain inside a descendant chain.
+
+        The flags are designed for that, just set one for minimumRegisterRequirements().
+
+        The 2 extra registers for the attribute count and address become limited to all attributes
+        except the last one. We don't keep a copy for the last matching, those registers were not needed.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::computeBacktrackingInformation):
+
 2014-03-01  Pratik Solanki  <psolanki@apple.com>
 
         [iOS] selectionImageForcingBlackText should return autoreleased object
