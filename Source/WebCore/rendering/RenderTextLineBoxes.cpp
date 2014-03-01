@@ -697,10 +697,8 @@ RenderTextLineBoxes::~RenderTextLineBoxes()
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 void RenderTextLineBoxes::invalidateParentChildLists()
 {
-    for (auto box = m_first; box; box = box->nextTextBox()) {
-        if (auto parent = box->parent())
-            parent->setHasBadChildList();
-    }
+    for (auto box = m_first; box; box = box->nextTextBox())
+        box->invalidateParentChildList();
 }
 #endif
 

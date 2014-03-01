@@ -43,6 +43,7 @@ struct SameSizeAsInlineBox {
     float c;
     uint32_t d : 32;
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    unsigned s;
     bool f;
 #endif
 };
@@ -50,11 +51,31 @@ struct SameSizeAsInlineBox {
 COMPILE_ASSERT(sizeof(InlineBox) == sizeof(SameSizeAsInlineBox), InlineBox_size_guard);
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+
+void InlineBox::assertNotDeleted() const
+{
+    ASSERT(m_deletionSentinel == deletionSentinelNotDeletedValue);
+}
+
 InlineBox::~InlineBox()
 {
+    invalidateParentChildList();
+    m_deletionSentinel = deletionSentinelDeletedValue;
+}
+
+void InlineBox::setHasBadParent()
+{
+    assertNotDeleted();
+    m_hasBadParent = true;
+}
+
+void InlineBox::invalidateParentChildList()
+{
+    assertNotDeleted();
     if (!m_hasBadParent && m_parent)
         m_parent->setHasBadChildList();
 }
+
 #endif
 
 void InlineBox::removeFromParent()
@@ -64,6 +85,7 @@ void InlineBox::removeFromParent()
 }
 
 #ifndef NDEBUG
+
 const char* InlineBox::boxName() const
 {
     return "InlineBox";
@@ -101,6 +123,7 @@ void InlineBox::showBox(int printedCharacters) const
         fputc(' ', stderr);
     fprintf(stderr, "\t%s %p\n", renderer().renderName(), &renderer());
 }
+
 #endif
 
 float InlineBox::logicalHeight() const

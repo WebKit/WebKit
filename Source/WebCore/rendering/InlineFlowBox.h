@@ -352,17 +352,20 @@ private:
 INLINE_BOX_OBJECT_TYPE_CASTS(InlineFlowBox, isInlineFlowBox())
 
 #ifdef NDEBUG
+
 inline void InlineFlowBox::checkConsistency() const
 {
 }
+
 #endif
+
+#if ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 
 inline void InlineFlowBox::setHasBadChildList()
 {
-#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    m_hasBadChildList = true;
-#endif
 }
+
+#endif
 
 } // namespace WebCore
 

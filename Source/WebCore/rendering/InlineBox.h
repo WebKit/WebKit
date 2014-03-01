@@ -37,6 +37,8 @@ class InlineBox {
 public:
     virtual ~InlineBox();
 
+    void assertNotDeleted() const;
+
     virtual void deleteLine() = 0;
     virtual void extractLine() = 0;
     virtual void attachLine() = 0;
@@ -69,7 +71,6 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) = 0;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) = 0;
 
-public:
 #ifndef NDEBUG
     void showTreeForThis() const;
     void showLineTreeForThis() const;
@@ -148,6 +149,7 @@ public:
 
     InlineFlowBox* parent() const
     {
+        assertNotDeleted();
         ASSERT_WITH_SECURITY_IMPLICATION(!m_hasBadParent);
         return m_parent;
     }
@@ -237,6 +239,7 @@ public:
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     void setHasBadParent();
+    void invalidateParentChildList();
 #endif
 
     int expansion() const { return m_bitfields.expansion(); }
@@ -368,6 +371,7 @@ protected:
         , m_renderer(renderer)
         , m_logicalWidth(0)
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        , m_deletionSentinel(deletionSentinelNotDeletedValue)
         , m_hasBadParent(false)
 #endif
     {
@@ -383,6 +387,7 @@ protected:
         , m_logicalWidth(logicalWidth)
         , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        , m_deletionSentinel(deletionSentinelNotDeletedValue)
         , m_hasBadParent(false)
 #endif
     {
@@ -401,14 +406,17 @@ protected:
     void setHasHyphen(bool hasHyphen) { m_bitfields.setHasEllipsisBoxOrHyphen(hasHyphen); }    
     bool canHaveLeadingExpansion() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeadingExpansion(); }
     void setCanHaveLeadingExpansion(bool canHaveLeadingExpansion) { m_bitfields.setHasSelectedChildrenOrCanHaveLeadingExpansion(canHaveLeadingExpansion); }
-    signed expansion() { return m_bitfields.expansion(); }
-    void setExpansion(signed expansion) { m_bitfields.setExpansion(expansion); }
+    int expansion() { return m_bitfields.expansion(); }
+    void setExpansion(int expansion) { m_bitfields.setExpansion(expansion); }
     
     // For InlineFlowBox and InlineTextBox
     bool extracted() const { return m_bitfields.extracted(); }
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 private:
+    static const unsigned deletionSentinelNotDeletedValue = 0xF0F0F0F0U;
+    static const unsigned deletionSentinelDeletedValue = 0xF0DEADF0U;
+    unsigned m_deletionSentinel;
     bool m_hasBadParent;
 #endif
 };
@@ -417,16 +425,15 @@ private:
     TYPE_CASTS_BASE(ToValueTypeName, InlineBox, object, object->predicate, object.predicate)
 
 #if ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+
 inline InlineBox::~InlineBox()
 {
 }
-#endif
 
-#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-inline void InlineBox::setHasBadParent()
+inline void InlineBox::assertNotDeleted() const
 {
-    m_hasBadParent = true;
 }
+
 #endif
 
 } // namespace WebCore

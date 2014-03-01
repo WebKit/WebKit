@@ -1,3 +1,45 @@
+2014-03-01  Darin Adler  <darin@apple.com>
+
+        Improve "bad parent" and "bad child list" assertions in line boxes
+        https://bugs.webkit.org/show_bug.cgi?id=125656
+
+        Reviewed by Sam Weinig.
+
+        My previous fix for this problem was incomplete. This continuation of that fix addresses
+        the flaw in the original and adds additional lifetime checking so problems can be seen in
+        debug builds without a memory debugger.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::assertNotDeleted): Added. Poor man's memory debugging helper.
+        (WebCore::InlineBox::~InlineBox): Refactored body into a new function named
+        invalidateParentChildList. Added code to update the deletion sentinel to record
+        that this object is deleted.
+        (WebCore::InlineBox::setHasBadParent): Moved here from header since this debug-only
+        feature does not need to be inlined. Added a call to assertNotDeleted.
+        (WebCore::InlineBox::invalidateParentChildList): Added. Refactored from the destructor,
+        this is used by RenderTextLineBoxes.
+
+        * rendering/InlineBox.h: Added the deletion sentinel, and called it in the parent
+        function. Also changed the expansion/setExpansion functions to use the type name "int",
+        since we don't use the type name "signed" in the WebKit coding style.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::~InlineFlowBox): Call setHasBadChildList rather than doing the
+        setHasBadParent work on children directly, to avoid code duplication.
+        (WebCore::InlineFlowBox::setHasBadChildList): Moved here from header. Added code to set
+        "has bad parent" on all children, something we previously did only on destruction. Also
+        added assertNotDeleted.
+        (WebCore::InlineFlowBox::checkConsistency): Added call to assertNotDeleted. Also tweaked
+        code style and variable names a little bit.
+
+        * rendering/InlineFlowBox.h: Moved setHasBadChildList out of the header when it's on.
+        The empty version for ASSERT_WITH_SECURITY_IMPLICATION_DISABLED is still in the header.
+
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::invalidateParentChildLists): Call the new
+        InlineBox::invalidateParentChildList function instead of calling setHasBadChildList directly.
+        The new function checks m_hasBadParent, something we couldn't do here.
+
 2014-03-01  Benjamin Poulain  <benjamin@webkit.org>
 
         Optimized querySelector(All) when selector contains #id
