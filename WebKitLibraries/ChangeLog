@@ -1,5 +1,13 @@
 2014-02-28  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build fix.
+        <rdar://problem/16197002>
+
+        * win/tools/vsprops/debugsuffix.props: Set OFFICIAL_BUILD=1 for DebugSuffix target, since this
+        is the official debug analog to the Production build target.
+
+2014-02-28  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed build fix: Pass WEBKIT_LIBRARIES as argument to sub-process build steps.
         <rdar://problem/16197002>
 
