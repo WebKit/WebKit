@@ -1,3 +1,13 @@
+2014-02-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+        <rdar://problem/16197002>
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.proj: Remove trailing
+        slash from path names, as this was causing multiple arguments
+        to be concatenated together (the whitespace was getting escaped
+        by the slash.)
+
 2014-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r162723.

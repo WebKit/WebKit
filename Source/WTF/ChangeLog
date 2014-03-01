@@ -1,5 +1,18 @@
 2014-02-28  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build fix.
+        <rdar://problem/16197002>
+
+        * WTF.vcxproj/WTF.proj: Remove trailing
+        slash from path names, as this was causing multiple arguments
+        to be concatenated together (the whitespace was getting escaped
+        by the slash.)
+        * WTF.vcxproj/work-around-vs-dependency-tracking-bugs.py:
+        Check for presence of RC_XBS in environment, and exit since
+        this logic is not needed for 'official' builds.
+
+2014-02-28  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed build fix: Pass build environment to sub-processes via command line.
         <rdar://problem/16197002>
 

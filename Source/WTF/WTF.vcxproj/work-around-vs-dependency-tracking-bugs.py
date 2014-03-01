@@ -12,6 +12,10 @@ TOP_LEVEL_DIRECTORY = os.path.dirname(os.path.dirname(os.path.dirname(os.path.di
 if not os.environ.has_key('WEBKIT_LIBRARIES'):
     exit
 
+# Don't use this script outside of WebKit development builds
+if os.environ.has_key('RC_XBS'):
+    exit
+
 WEBKIT_LIBRARIES = os.environ['WEBKIT_LIBRARIES'];
 
 def main():

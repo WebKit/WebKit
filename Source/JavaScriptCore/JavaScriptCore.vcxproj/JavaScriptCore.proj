@@ -12,7 +12,7 @@
   <!-- Wrapper to build JavaScriptCore for both win32 and x64. -->
   <PropertyGroup>
     <OFFICIAL_BUILD>1</OFFICIAL_BUILD>
-    <WebKit_Libraries>$(SRCROOT)\AppleInternal\</WebKit_Libraries>
+    <WebKit_Libraries>$(SRCROOT)\AppleInternal</WebKit_Libraries>
     <WebKit_OutputDir>$(OBJROOT)</WebKit_OutputDir>
     <AppleInternal>$(DSTROOT)\AppleInternal</AppleInternal>
     <AppleInternalLib32>$(AppleInternal)\lib32</AppleInternalLib32>
@@ -21,8 +21,8 @@
     <AppleInternalBin64>$(AppleInternal)\bin64</AppleInternalBin64>
     <AppleInternal32Symbols>$(AppleInternal)\public32\sym</AppleInternal32Symbols>
     <AppleInternal64Symbols>$(AppleInternal)\public64\sym</AppleInternal64Symbols>
-    <ProgramFilesAAS32>Program Files (x86)\Common Files\Apple\Apple Application Support\</ProgramFilesAAS32>
-    <ProgramFilesAAS64>Program Files\Common Files\Apple\Apple Application Support\</ProgramFilesAAS64>
+    <ProgramFilesAAS32>Program Files (x86)\Common Files\Apple\Apple Application Support</ProgramFilesAAS32>
+    <ProgramFilesAAS64>Program Files\Common Files\Apple\Apple Application Support</ProgramFilesAAS64>
     <ConfigurationBuildDir>$(OBJROOT)\$(CONFIG)</ConfigurationBuildDir>  
     <OutputDirectory>$(DSTROOT)</OutputDirectory>
   </PropertyGroup>
