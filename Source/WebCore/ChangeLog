@@ -1,3 +1,14 @@
+2014-02-28  Dean Jackson  <dino@apple.com>
+
+        Crash at ebay.com when viewing auction items at com.apple.WebCore: WebCore::GraphicsContext3D::getExtensions + 10
+        https://bugs.webkit.org/show_bug.cgi?id=129523
+
+        Reviewed by Simon Fraser.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getSupportedExtensions): Early return if the
+        context is pending policy resolution.
+
 2014-02-28  Andreas Kling  <akling@apple.com>
 
         Micro-optimize JSNodeOwner::isReachableFromOpaqueRoots().

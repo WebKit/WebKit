@@ -2991,6 +2991,10 @@ String WebGLRenderingContext::getShaderSource(WebGLShader* shader, ExceptionCode
 Vector<String> WebGLRenderingContext::getSupportedExtensions()
 {
     Vector<String> result;
+
+    if (m_isPendingPolicyResolution)
+        return result;
+
     if (m_context->getExtensions()->supports("GL_OES_texture_float"))
         result.append("OES_texture_float");
     if (m_context->getExtensions()->supports("GL_OES_texture_float_linear"))
