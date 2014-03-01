@@ -1052,6 +1052,17 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 
 // Events
 
+-(BOOL)shouldIgnoreMouseEvents
+{
+    // FIXME: This check is surprisingly specific. Are there any other cases where we need to block mouse events?
+    // Do we actually need to in thumbnail view? And if we do, what about non-mouse events?
+#if WK_API_ENABLED
+    if (_data->_thumbnailView)
+        return YES;
+#endif
+    return NO;
+}
+
 // Override this so that AppKit will send us arrow keys as key down events so we can
 // support them via the key bindings mechanism.
 - (BOOL)_wantsKeyDownForEvent:(NSEvent *)event
@@ -1070,11 +1081,10 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
     _data->_mouseDownEvent = [event retain];
 }
 
-#if WK_API_ENABLED
 #define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
     - (void)Selector:(NSEvent *)theEvent \
     { \
-        if (_data->_thumbnailView) \
+        if ([self shouldIgnoreMouseEvents]) \
             return; \
         if ([[self inputContext] handleEvent:theEvent]) { \
             LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
@@ -1083,18 +1093,6 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         NativeWebMouseEvent webEvent(theEvent, self); \
         _data->_page->handleMouseEvent(webEvent); \
     }
-#else
-#define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
-    - (void)Selector:(NSEvent *)theEvent \
-    { \
-        if ([[self inputContext] handleEvent:theEvent]) { \
-            LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
-            return; \
-        } \
-        NativeWebMouseEvent webEvent(theEvent, self); \
-        _data->_page->handleMouseEvent(webEvent); \
-    }
-#endif
 
 NATIVE_MOUSE_EVENT_HANDLER(mouseEntered)
 NATIVE_MOUSE_EVENT_HANDLER(mouseExited)
@@ -1122,10 +1120,8 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)scrollWheel:(NSEvent *)event
 {
-#if WK_API_ENABLED
-    if (_data->_thumbnailView)
+    if ([self shouldIgnoreMouseEvents])
         return;
-#endif
 
     if (_data->_allowsBackForwardNavigationGestures) {
         [self _ensureGestureController];
@@ -1139,10 +1135,8 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseMoved:(NSEvent *)event
 {
-#if WK_API_ENABLED
-    if (_data->_thumbnailView)
+    if ([self shouldIgnoreMouseEvents])
         return;
-#endif
 
     // When a view is first responder, it gets mouse moved events even when the mouse is outside its visible rect.
     if (self == [[self window] firstResponder] && !NSPointInRect([self convertPoint:[event locationInWindow] fromView:nil], [self visibleRect]))
@@ -1153,10 +1147,8 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseDown:(NSEvent *)event
 {
-#if WK_API_ENABLED
-    if (_data->_thumbnailView)
+    if ([self shouldIgnoreMouseEvents])
         return;
-#endif
 
     [self _setMouseDownEvent:event];
     _data->_ignoringMouseDraggedEvents = NO;
@@ -1165,10 +1157,8 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseUp:(NSEvent *)event
 {
-#if WK_API_ENABLED
-    if (_data->_thumbnailView)
+    if ([self shouldIgnoreMouseEvents])
         return;
-#endif
 
     [self _setMouseDownEvent:nil];
     [self mouseUpInternal:event];
@@ -1176,10 +1166,8 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseDragged:(NSEvent *)event
 {
-#if WK_API_ENABLED
-    if (_data->_thumbnailView)
+    if ([self shouldIgnoreMouseEvents])
         return;
-#endif
 
     if (_data->_ignoringMouseDraggedEvents)
         return;

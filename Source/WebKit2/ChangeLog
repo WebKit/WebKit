@@ -1,3 +1,18 @@
+2014-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Extract _data->_thumbnailView checks into a helper function
+        https://bugs.webkit.org/show_bug.cgi?id=129517
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView shouldIgnoreMouseEvents]):
+        (-[WKView scrollWheel:]):
+        (-[WKView mouseMoved:]):
+        (-[WKView mouseDown:]):
+        (-[WKView mouseUp:]):
+        (-[WKView mouseDragged:]):
+
 2014-02-28  Pratik Solanki  <psolanki@apple.com>
 
         [iOS][WebKit2] Don't use any of the mach exception handling code on iOS
