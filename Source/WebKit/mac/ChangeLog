@@ -1,3 +1,14 @@
+2014-03-01  Pratik Solanki  <psolanki@apple.com>
+
+        [iOS] selectionImageForcingBlackText should return autoreleased object
+        https://bugs.webkit.org/show_bug.cgi?id=129437
+        <rdar://problem/15810384>
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView selectionImageForcingBlackText:selectionImageForcingBlackText:]):
+
 2014-02-28  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Remove MailQuirksUserScript.js

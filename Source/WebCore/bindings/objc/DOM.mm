@@ -611,7 +611,8 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
         return nil;
 
 #if PLATFORM(IOS)
-    return createDragImageForRange(*frame, *range, forceBlackText).leakRef();
+    CGImageRef dragImage = createDragImageForRange(*frame, *range, forceBlackText).leakRef();
+    return dragImage ? (CGImageRef)CFAutorelease(dragImage) : nil;
 #else
     return [createDragImageForRange(*frame, *range, forceBlackText).leakRef() autorelease];
 #endif

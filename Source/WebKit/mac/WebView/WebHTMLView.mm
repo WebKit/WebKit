@@ -6569,7 +6569,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return nil;
 
 #if PLATFORM(IOS)
-    return createDragImageForSelection(*coreFrame, forceBlackText).leakRef();
+    CGImageRef dragImage = createDragImageForSelection(*coreFrame, forceBlackText).leakRef();
+    return dragImage ? (CGImageRef)CFAutorelease(dragImage) : nil;
 #else
     return [createDragImageForSelection(*coreFrame, forceBlackText).leakRef() autorelease];
 #endif
