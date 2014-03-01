@@ -1,3 +1,20 @@
+2014-03-01  Timothy Hatcher  <timothy@apple.com>
+
+        Label JavaScript forced layouts as such in the Timeline.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129546
+
+        Reviewed by David Kilzer.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        * UserInterface/Models/LayoutTimelineRecord.js:
+        (WebInspector.LayoutTimelineRecord.EventType.displayName):
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+
 2014-02-28  Timothy Hatcher  <timothy@apple.com>
 
         Enable breakpoints when adding a new breakpoint or enabling an existing breakpoint.

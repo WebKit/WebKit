@@ -177,12 +177,14 @@ WebInspector.TimelineManager.prototype = {
                 break;
 
             case TimelineAgent.EventType.Layout:
+                var layoutRecordType = sourceCodeLocation ? WebInspector.LayoutTimelineRecord.EventType.ForcedLayout : WebInspector.LayoutTimelineRecord.EventType.Layout;
+
                 // COMPATIBILITY (iOS 6): Layout records did not contain area properties. This is not exposed via a quad "root".
                 var quad = recordPayload.data.root ? new WebInspector.Quad(recordPayload.data.root) : null;
                 if (quad)
-                    this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Layout, startTime, endTime, callFrames, sourceCodeLocation, quad.points[0].x, quad.points[0].y, quad.width, quad.height, quad));
+                    this._addRecord(new WebInspector.LayoutTimelineRecord(layoutRecordType, startTime, endTime, callFrames, sourceCodeLocation, quad.points[0].x, quad.points[0].y, quad.width, quad.height, quad));
                 else
-                    this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Layout, startTime, endTime, callFrames, sourceCodeLocation));
+                    this._addRecord(new WebInspector.LayoutTimelineRecord(layoutRecordType, startTime, endTime, callFrames, sourceCodeLocation));
                 break;
 
             case TimelineAgent.EventType.Paint:

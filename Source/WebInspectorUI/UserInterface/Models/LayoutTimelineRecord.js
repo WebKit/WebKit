@@ -44,6 +44,7 @@ WebInspector.LayoutTimelineRecord.EventType = {
     InvalidateStyles: "layout-timeline-record-invalidate-styles",
     RecalculateStyles: "layout-timeline-record-recalculate-styles",
     InvalidateLayout: "layout-timeline-record-invalidate-layout",
+    ForcedLayout: "layout-timeline-record-forced-layout",
     Layout: "layout-timeline-record-layout",
     Paint: "layout-timeline-record-paint"
 };
@@ -57,6 +58,8 @@ WebInspector.LayoutTimelineRecord.EventType.displayName = function(eventType)
         return WebInspector.UIString("Styles Recalculated");
     case WebInspector.LayoutTimelineRecord.EventType.InvalidateLayout:
         return WebInspector.UIString("Layout Invalidated");
+    case WebInspector.LayoutTimelineRecord.EventType.ForcedLayout:
+        return WebInspector.UIString("Forced Layout");
     case WebInspector.LayoutTimelineRecord.EventType.Layout:
         return WebInspector.UIString("Layout");
     case WebInspector.LayoutTimelineRecord.EventType.Paint:

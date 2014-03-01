@@ -54,6 +54,7 @@ WebInspector.TimelineRecordTreeElement = function(timelineRecord, subtitleNameSt
             iconStyleClass = WebInspector.TimelineRecordTreeElement.StyleRecordIconStyleClass;
             break;
         case WebInspector.LayoutTimelineRecord.EventType.InvalidateLayout:
+        case WebInspector.LayoutTimelineRecord.EventType.ForcedLayout:
         case WebInspector.LayoutTimelineRecord.EventType.Layout:
             iconStyleClass = WebInspector.TimelineRecordTreeElement.LayoutRecordIconStyleClass;
             break;
