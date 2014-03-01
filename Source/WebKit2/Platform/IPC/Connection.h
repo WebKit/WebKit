@@ -133,7 +133,7 @@ public:
 
     Client* client() const { return m_client; }
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
     void setShouldCloseConnectionOnMachExceptions();
 #endif
 

@@ -1,3 +1,11 @@
+2014-03-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r164905 and r164912.
+
+        * Platform/IPC/Connection.h: Only declare setShouldCloseConnectionOnMachExceptions() for the Mac port.
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching): Only call setShouldCloseConnectionOnMachExceptions() on the Mac port.
+
 2014-03-01  Gavin Barraclough  <barraclough@apple.com>
 
         Split UserActivity/CountedUserActivity
