@@ -1,3 +1,28 @@
+2014-02-28  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Assertions and bad behavior when zooming into an iframe containing apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=129537
+
+        Reviewed by Benjamin Poulain.
+        
+        When building RemoteLayerTreeTransactions, the ordering of setting created
+        layers and doing the recursive tree walk was wrong, such that we failed
+        to noticed layers created during the recursiveBuildTransaction().
+        
+        Also harden the UI-side code against Obj-C exceptions thrown when layers
+        are missing.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties): Assert when 
+        children are not found, and protect against Obj-C exceptions.
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties):
+        Initialize the members.
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::buildTransaction): Do the recursive walk
+        before setting created and destroyed layers, since the walk can create
+        layers (especially when swapping into tiled layers).
+
 2014-02-28  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Fix WebKit2 build after r164890

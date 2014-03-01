@@ -28,6 +28,7 @@
 
 #import "PlatformCALayerRemote.h"
 #import <QuartzCore/CALayer.h>
+#import <WebCore/BlockExceptions.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #if PLATFORM(IOS)
@@ -197,12 +198,15 @@ static void applyPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransact
 
 void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     applyPropertiesToLayer(layer, properties);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
-        for (auto& child : properties.children)
+        for (auto& child : properties.children) {
+            ASSERT(relatedLayers.get(child));
             [children addObject:relatedLayers.get(child)];
+        }
 
         layer.sublayers = children.get();
     }
@@ -225,17 +229,21 @@ void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, const Remot
 #endif
         }
     }
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 #if PLATFORM(IOS)
 void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     applyPropertiesToLayer(view.layer, properties);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
-        for (auto& child : properties.children)
+        for (auto child : properties.children) {
+            ASSERT(relatedLayers.get(child));
             [children addObject:relatedLayers.get(child)];
+        }
 
         [view _web_setSubviews:children.get()];
     }
@@ -251,6 +259,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, const RemoteL
                 maskView.layer.mask = maskView.layer;
         }
     }
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 #endif
 

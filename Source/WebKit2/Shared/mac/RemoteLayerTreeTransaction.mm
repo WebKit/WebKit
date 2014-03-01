@@ -41,6 +41,9 @@ using namespace WebCore;
 namespace WebKit {
 
 RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
+    : layerID(0)
+    , type(PlatformCALayer::LayerTypeLayer)
+    , hostingContextID(0)
 {
 }
 

@@ -95,11 +95,11 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
 {
     PlatformCALayerRemote& rootLayerRemote = toPlatformCALayerRemote(rootLayer);
     transaction.setRootLayerID(rootLayerRemote.layerID());
-    
-    transaction.setCreatedLayers(std::move(m_createdLayers));
-    transaction.setDestroyedLayerIDs(std::move(m_destroyedLayers));
 
     rootLayerRemote.recursiveBuildTransaction(transaction);
+
+    transaction.setCreatedLayers(std::move(m_createdLayers));
+    transaction.setDestroyedLayerIDs(std::move(m_destroyedLayers));
 }
 
 } // namespace WebKit
