@@ -258,6 +258,8 @@ WebInspector.contentLoaded = function()
     this.timelineSidebarPanel = new WebInspector.TimelineSidebarPanel;
     this.debuggerSidebarPanel = new WebInspector.DebuggerSidebarPanel;
 
+    this.timelineSidebarPanel.initialize();
+
     this.navigationSidebar.addSidebarPanel(this.resourceSidebarPanel);
     // FIXME: Enable timelines panel for JavaScript inspection.
     if (this.debuggableType !== WebInspector.DebuggableType.JavaScript)

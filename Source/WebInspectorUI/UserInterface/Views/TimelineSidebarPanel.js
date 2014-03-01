@@ -92,15 +92,6 @@ WebInspector.TimelineSidebarPanel = function()
     WebInspector.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStarted, this._recordingStarted, this);
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStopped, this._recordingStopped, this);
-
-    function delayedWork()
-    {
-        // Prime the creation of the singleton TimelineContentCiew since it needs to listen for events.
-        // It needs to be delayed since TimelineContentView depends on WebInspector.timelineSidebarPanel existing.
-        this._timelineContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(WebInspector.timelineManager.recording);
-    }
-
-    setTimeout(delayedWork.bind(this), 0);
 };
 
 WebInspector.TimelineSidebarPanel.StatusBarStyleClass = "status-bar";
@@ -129,6 +120,12 @@ WebInspector.TimelineSidebarPanel.prototype = {
     __proto__: WebInspector.NavigationSidebarPanel.prototype,
 
     // Public
+
+    initialize: function()
+    {
+        // Prime the creation of the singleton TimelineContentView since it needs to listen for events.
+        this._timelineContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(WebInspector.timelineManager.recording);
+    },
 
     showDefaultContentView: function()
     {

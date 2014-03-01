@@ -1,5 +1,24 @@
 2014-03-01  Timothy Hatcher  <timothy@apple.com>
 
+        Make Start Timeline Recording in the Develop menu show the Timeline view again.
+
+        This also fixes a noticeable delay between showing the sidebar and the default Timeline
+        view when initially opening the Web Inspector to the Timeline.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129545
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded): Call TimelineSidebarPanel.initialize to prime the content view.
+        This is needed so the view is ready in this run loop cycle, where it was delayed before.
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setTimelineProfilingEnabled): Call TimelineSidebarPanel.showTimelineOverview.
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.initialize): Added.
+
+2014-03-01  Timothy Hatcher  <timothy@apple.com>
+
         Select the Resource navigation sidebar by default when there is no cookie.
 
         https://bugs.webkit.org/show_bug.cgi?id=129544

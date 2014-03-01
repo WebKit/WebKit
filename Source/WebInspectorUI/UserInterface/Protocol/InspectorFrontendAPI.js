@@ -58,6 +58,7 @@ InspectorFrontendAPI = {
     {
         if (enabled) {
             WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.timelineSidebarPanel;
+            WebInspector.timelineSidebarPanel.showTimelineOverview();
             WebInspector.timelineManager.startRecording();
         } else {
             WebInspector.timelineManager.stopRecording();
