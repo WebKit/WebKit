@@ -31,20 +31,15 @@
 namespace WebCore {
 
 PageActivityAssertionToken::PageActivityAssertionToken(PageThrottler& throttler)
-    : m_throttler(&throttler)
+    : m_throttler(throttler.weakPtr())
 {
-    m_throttler->addActivityToken(*this);
+    throttler.incrementActivityCount();
 }
 
 PageActivityAssertionToken::~PageActivityAssertionToken()
 {
-    if (m_throttler)
-        m_throttler->removeActivityToken(*this);
-}
-
-void PageActivityAssertionToken::invalidate()
-{
-    m_throttler = 0;
+    if (PageThrottler* throttler = m_throttler.get())
+        throttler->decrementActivityCount();
 }
 
 } // namespace WebCore

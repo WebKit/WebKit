@@ -1,5 +1,37 @@
 2014-03-01  Gavin Barraclough  <barraclough@apple.com>
 
+        Change PageActivityAssertionToken to use a WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=129526
+
+        Reviewed by Sam Weinig.
+
+        PageThrottler effectively implements a bespoke weak pointer mechanism; remove this & just use WeakPtr.
+
+        * page/PageActivityAssertionToken.cpp:
+        (WebCore::PageActivityAssertionToken::PageActivityAssertionToken):
+        (WebCore::PageActivityAssertionToken::~PageActivityAssertionToken):
+            - addActivityToken->incrementActivityCount, removeActivityToken->decrementActivityCount
+        * page/PageActivityAssertionToken.h:
+            - removed invalidate, made m_throttler a WeakPtr
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - initialize m_weakPtrFactory, m_activityCount.
+        (WebCore::PageThrottler::~PageThrottler):
+            - removed called to invalidate.
+        (WebCore::PageThrottler::startThrottleHysteresisTimer):
+            - m_activityTokens.size()->m_activityCount
+        (WebCore::PageThrottler::throttleHysteresisTimerFired):
+            - m_activityTokens.size()->m_activityCount
+        (WebCore::PageThrottler::incrementActivityCount):
+            - m_activityTokens.add->++
+        (WebCore::PageThrottler::decrementActivityCount):
+            - m_activityTokens.remove->--
+        * page/PageThrottler.h:
+        (WebCore::PageThrottler::weakPtr):
+            - replaced HashSet with WeakPtrFactory & count.
+
+2014-03-01  Gavin Barraclough  <barraclough@apple.com>
+
         Split UserActivity/CountedUserActivity
         https://bugs.webkit.org/show_bug.cgi?id=129520
 

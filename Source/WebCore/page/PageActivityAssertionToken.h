@@ -27,6 +27,7 @@
 #define PageActivityAssertionToken_h
 
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -38,10 +39,8 @@ public:
     PageActivityAssertionToken(PageThrottler&);
     ~PageActivityAssertionToken();
 
-    void invalidate();
-
 private:
-    PageThrottler* m_throttler;
+    WeakPtr<PageThrottler> m_throttler;
 };
 
 } // namespace WebCore

@@ -42,6 +42,8 @@ PageThrottler::PageThrottler(Page& page, ViewState::Flags viewState)
     , m_viewState(viewState)
     , m_throttleState(PageNotThrottledState)
     , m_throttleHysteresisTimer(this, &PageThrottler::throttleHysteresisTimerFired)
+    , m_weakPtrFactory(this)
+    , m_activityCount(0)
     , m_visuallyNonIdle("Page is not visually idle.")
     , m_pageActivity("Page is active.")
 {
@@ -53,9 +55,6 @@ PageThrottler::PageThrottler(Page& page, ViewState::Flags viewState)
 PageThrottler::~PageThrottler()
 {
     m_page.setTimerThrottlingEnabled(false);
-
-    for (auto it = m_activityTokens.begin(), end = m_activityTokens.end(); it != end; ++it)
-        (*it)->invalidate();
 
     if (m_throttleState != PageThrottledState)
         m_pageActivity.decrement();
@@ -150,24 +149,20 @@ void PageThrottler::startThrottleHysteresisTimer()
 {
     if (m_throttleHysteresisTimer.isActive())
         m_throttleHysteresisTimer.stop();
-    if (!m_activityTokens.size())
+    if (!m_activityCount)
         m_throttleHysteresisTimer.startOneShot(kThrottleHysteresisSeconds);
 }
 
 void PageThrottler::throttleHysteresisTimerFired(Timer<PageThrottler>&)
 {
-    ASSERT(!m_activityTokens.size());
+    ASSERT(!m_activityCount);
     throttlePage();
 }
 
-void PageThrottler::addActivityToken(PageActivityAssertionToken& token)
+void PageThrottler::incrementActivityCount()
 {
-    ASSERT(!m_activityTokens.contains(&token));
-
-    m_activityTokens.add(&token);
-
     // If we've already got events that block throttling we can return early
-    if (m_activityTokens.size() > 1)
+    if (m_activityCount++)
         return;
 
     if (m_throttleState == PageNotThrottledState)
@@ -180,13 +175,9 @@ void PageThrottler::addActivityToken(PageActivityAssertionToken& token)
     stopThrottleHysteresisTimer();
 }
 
-void PageThrottler::removeActivityToken(PageActivityAssertionToken& token)
+void PageThrottler::decrementActivityCount()
 {
-    ASSERT(m_activityTokens.contains(&token));
-
-    m_activityTokens.remove(&token);
-
-    if (m_activityTokens.size())
+    if (--m_activityCount)
         return;
 
     if (m_throttleState == PageNotThrottledState)

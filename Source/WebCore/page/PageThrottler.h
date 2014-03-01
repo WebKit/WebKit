@@ -33,6 +33,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -61,8 +62,9 @@ private:
     };
 
     friend class PageActivityAssertionToken;
-    void addActivityToken(PageActivityAssertionToken&);
-    void removeActivityToken(PageActivityAssertionToken&);
+    WeakPtr<PageThrottler> weakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    void incrementActivityCount();
+    void decrementActivityCount();
 
     void reportInterestingEvent();
 
@@ -80,7 +82,8 @@ private:
     ViewState::Flags m_viewState;
     PageThrottleState m_throttleState;
     Timer<PageThrottler> m_throttleHysteresisTimer;
-    HashSet<PageActivityAssertionToken*> m_activityTokens;
+    WeakPtrFactory<PageThrottler> m_weakPtrFactory;
+    size_t m_activityCount;
     UserActivity m_visuallyNonIdle;
     CountedUserActivity m_pageActivity;
 };
