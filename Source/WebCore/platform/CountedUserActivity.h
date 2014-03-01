@@ -26,7 +26,7 @@
 #ifndef CountedUserActivity_h
 #define CountedUserActivity_h
 
-#include <WebCore/UserActivity.h>
+#include "UserActivity.h"
 
 namespace WebCore {
 
