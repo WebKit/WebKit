@@ -1,3 +1,19 @@
+2014-03-01  Andreas Kling  <akling@apple.com>
+
+        Avoid going through ExecState for VM when we already have it (in some places.)
+        <https://webkit.org/b/129554>
+
+        Tweak some places that jump through unnecessary hoops to get the VM.
+        There are many more like this.
+
+        Reviewed by Sam Weinig.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+
 2014-02-28  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support PhantomArguments

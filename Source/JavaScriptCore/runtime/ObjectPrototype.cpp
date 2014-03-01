@@ -209,19 +209,20 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
 {
+    VM& vm = exec->vm();
     JSValue thisValue = exec->hostThisValue().toThis(exec, StrictMode);
     if (thisValue.isUndefinedOrNull())
-        return JSValue::encode(jsNontrivialString(exec, String(thisValue.isUndefined() ? ASCIILiteral("[object Undefined]") : ASCIILiteral("[object Null]"))));
+        return JSValue::encode(jsNontrivialString(&vm, String(thisValue.isUndefined() ? ASCIILiteral("[object Undefined]") : ASCIILiteral("[object Null]"))));
     JSObject* thisObject = thisValue.toObject(exec);
 
-    JSString* result = thisObject->structure(exec->vm())->objectToStringValue();
+    JSString* result = thisObject->structure(vm)->objectToStringValue();
     if (!result) {
         RefPtr<StringImpl> newString = WTF::tryMakeString("[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]");
         if (!newString)
             return JSValue::encode(throwOutOfMemoryError(exec));
 
-        result = jsNontrivialString(exec, newString.release());
-        thisObject->structure(exec->vm())->setObjectToStringValue(exec->vm(), thisObject, result);
+        result = jsNontrivialString(&vm, newString.release());
+        thisObject->structure(vm)->setObjectToStringValue(vm, thisObject, result);
     }
     return JSValue::encode(result);
 }

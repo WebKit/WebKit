@@ -2020,7 +2020,7 @@ void JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
                 exec, i, value, shouldThrow, createArrayStorage(vm, 0, 0));
             break;
         }
-        if (structure(exec->vm())->needsSlowPutIndexing()) {
+        if (structure(vm)->needsSlowPutIndexing()) {
             ArrayStorage* storage = createArrayStorage(vm, i + 1, getNewVectorLength(0, 0, i + 1));
             storage->m_vector[i].set(vm, this, value);
             storage->m_numValuesInVector++;
@@ -2168,7 +2168,7 @@ bool JSObject::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSV
             return putDirectIndexBeyondVectorLengthWithArrayStorage(
                 exec, i, value, attributes, mode, createArrayStorage(vm, 0, 0));
         }
-        if (structure(exec->vm())->needsSlowPutIndexing()) {
+        if (structure(vm)->needsSlowPutIndexing()) {
             ArrayStorage* storage = createArrayStorage(vm, i + 1, getNewVectorLength(0, 0, i + 1));
             storage->m_vector[i].set(vm, this, value);
             storage->m_numValuesInVector++;
