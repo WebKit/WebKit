@@ -1,3 +1,10 @@
+2014-02-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, uncomment some code. It wasn't meant to be commented in the first place.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getPropertyStorageLoadElimination):
+
 2014-02-28  Andreas Kling  <akling@apple.com>
 
         JSObject::findPropertyHashEntry() should take VM instead of ExecState.

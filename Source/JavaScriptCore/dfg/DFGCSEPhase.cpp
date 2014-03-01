@@ -799,8 +799,8 @@ private:
                 return 0;
                 
             case MultiPutByOffset:
-                //if (node->multiPutByOffsetData().reallocatesStorage())
-                //    return 0;
+                if (node->multiPutByOffsetData().reallocatesStorage())
+                    return 0;
                 break;
                 
             default:
