@@ -65,12 +65,14 @@ void Connection::platformInvalidate()
     m_receivePortDataAvailableSource = 0;
     m_receivePort = MACH_PORT_NULL;
 
+#if !PLATFORM(IOS)
     if (m_exceptionPort) {
         dispatch_source_cancel(m_exceptionPortDataAvailableSource);
         dispatch_release(m_exceptionPortDataAvailableSource);
         m_exceptionPortDataAvailableSource = 0;
         m_exceptionPort = MACH_PORT_NULL;
     }
+#endif
 
     if (m_xpcConnection) {
         xpc_release(m_xpcConnection);
@@ -80,7 +82,10 @@ void Connection::platformInvalidate()
 
 void Connection::platformInitialize(Identifier identifier)
 {
+#if !PLATFORM(IOS)
     m_exceptionPort = MACH_PORT_NULL;
+    m_exceptionPortDataAvailableSource = nullptr;
+#endif
 
     if (m_isServer) {
         m_receivePort = identifier.port;
@@ -92,7 +97,6 @@ void Connection::platformInitialize(Identifier identifier)
 
     m_deadNameSource = nullptr;
     m_receivePortDataAvailableSource = nullptr;
-    m_exceptionPortDataAvailableSource = nullptr;
 
     m_xpcConnection = identifier.xpcConnection;
     // FIXME: Instead of explicitly retaining the connection here, Identifier::xpcConnection
@@ -149,6 +153,7 @@ bool Connection::open()
     // Register the data available handler.
     m_receivePortDataAvailableSource = createDataAvailableSource(m_receivePort, m_connectionQueue.get(), bind(&Connection::receiveSourceEventHandler, this));
 
+#if !PLATFORM(IOS)
     // If we have an exception port, register the data available handler and send over the port to the other end.
     if (m_exceptionPort) {
         m_exceptionPortDataAvailableSource = createDataAvailableSource(m_exceptionPort, m_connectionQueue.get(), bind(&Connection::exceptionSourceEventHandler, this));
@@ -158,6 +163,7 @@ bool Connection::open()
 
         sendMessage(std::move(encoder));
     }
+#endif
 
     ref();
     dispatch_async(m_connectionQueue->dispatchQueue(), ^{
@@ -165,8 +171,10 @@ bool Connection::open()
 
         if (m_deadNameSource)
             dispatch_resume(m_deadNameSource);
+#if !PLATFORM(IOS)
         if (m_exceptionPortDataAvailableSource)
             dispatch_resume(m_exceptionPortDataAvailableSource);
+#endif
 
         deref();
     });
@@ -432,6 +440,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
+#if !PLATFORM(IOS)
     if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "SetExceptionPort") {
         if (m_isServer) {
             // Server connections aren't supposed to have their exception ports overriden. Treat this as an invalid message.
@@ -445,10 +454,12 @@ void Connection::receiveSourceEventHandler()
         setMachExceptionPort(exceptionPort.port());
         return;
     }
+#endif
 
     processIncomingMessage(std::move(decoder));
 }    
 
+#if !PLATFORM(IOS)
 void Connection::exceptionSourceEventHandler()
 {
     ReceiveBuffer buffer;
@@ -493,5 +504,6 @@ void Connection::setShouldCloseConnectionOnMachExceptions()
     if (mach_port_insert_right(mach_task_self(), m_exceptionPort, m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND) != KERN_SUCCESS)
         ASSERT_NOT_REACHED();
 }
+#endif
 
 } // namespace IPC

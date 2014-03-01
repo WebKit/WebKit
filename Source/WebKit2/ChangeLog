@@ -1,3 +1,21 @@
+2014-02-28  Pratik Solanki  <psolanki@apple.com>
+
+        [iOS][WebKit2] Don't use any of the mach exception handling code on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129516
+
+        Reviewed by Sam Weinig.
+
+        This code is not used on iOS after my fix in r164883. We can just move it all under
+        !PLATFORM(IOS).
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.cpp:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::platformInitialize):
+        (IPC::Connection::open):
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+
 2014-02-28  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] highlight rects should never big bigger than the view

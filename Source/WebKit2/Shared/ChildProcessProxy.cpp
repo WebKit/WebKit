@@ -128,7 +128,7 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Id
     ASSERT(!m_connection);
 
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS)
     m_connection->setShouldCloseConnectionOnMachExceptions();
 #endif
 

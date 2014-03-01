@@ -133,7 +133,7 @@ public:
 
     Client* client() const { return m_client; }
 
-#if OS(DARWIN)
+#if !PLATFORM(IOS)
     void setShouldCloseConnectionOnMachExceptions();
 #endif
 
@@ -283,7 +283,6 @@ private:
     // Called on the connection queue.
     void receiveSourceEventHandler();
     void initializeDeadNameSource();
-    void exceptionSourceEventHandler();
 
     mach_port_t m_sendPort;
     dispatch_source_t m_deadNameSource;
@@ -291,10 +290,14 @@ private:
     mach_port_t m_receivePort;
     dispatch_source_t m_receivePortDataAvailableSource;
 
+#if !PLATFORM(IOS)
+    void exceptionSourceEventHandler();
+
     // If setShouldCloseConnectionOnMachExceptions has been called, this has
     // the exception port that exceptions from the other end will be sent on.
     mach_port_t m_exceptionPort;
     dispatch_source_t m_exceptionPortDataAvailableSource;
+#endif
 
     xpc_connection_t m_xpcConnection;
 
