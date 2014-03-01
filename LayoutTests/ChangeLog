@@ -1,3 +1,17 @@
+2014-03-01  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Set css3/filter/huge-region as skipped
+        https://bugs.webkit.org/show_bug.cgi?id=129552
+
+        It tries to use an insanely huge kernel for a huge blur filtered
+        element while it is expected to *not* execute. Thanks to the changes
+        introduced in #123716, this test will try to be executed and may
+        timeout in some machines. The proper fix will follow up in #129553.
+
+        Reviewed by Dirk Schulze.
+
+        * TestExpectations:
+
 2014-03-01  Benjamin Poulain  <benjamin@webkit.org>
 
         Optimized querySelector(All) when selector contains #id
