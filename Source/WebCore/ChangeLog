@@ -1,3 +1,18 @@
+2014-02-28  Sam Weinig  <sam@webkit.org>
+
+        ASSERT(isMainThread()) hit under platformUserPreferredLanguages() with WebKit1 and WebKit2 in the same process
+        https://bugs.webkit.org/show_bug.cgi?id=129528
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/Language.mm:
+        (WebCore::preferredLanguagesMutex):
+        (WebCore::preferredLanguages):
+        (+[WebLanguageChangeObserver languagePreferencesDidChange:]):
+        (WebCore::httpStyleLanguageCode):
+        (WebCore::platformUserPreferredLanguages):
+        Add a mutex and do an isolated copy of the strings to allow this function to be called from multiple threads.
+
 2014-02-28  Dean Jackson  <dino@apple.com>
 
         Crash at ebay.com when viewing auction items at com.apple.WebCore: WebCore::GraphicsContext3D::getExtensions + 10

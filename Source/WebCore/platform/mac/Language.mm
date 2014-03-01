@@ -28,28 +28,49 @@
 
 #import "BlockExceptions.h"
 #import "WebCoreSystemInterface.h"
+#import <mutex>
 #import <wtf/Assertions.h>
-#import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
-using namespace WebCore;
+namespace WebCore {
 
-static BOOL useCachedPreferredLanguages;
+static std::mutex& preferredLanguagesMutex()
+{
+    static dispatch_once_t onceToken;
+    static std::mutex* mutex;
 
-@interface WebLanguageChangeObserver : NSObject {
+    dispatch_once(&onceToken, ^{
+        mutex = std::make_unique<std::mutex>().release();
+    });
+
+    return *mutex;
 }
+
+static Vector<String>& preferredLanguages()
+{
+    static NeverDestroyed<Vector<String>> languages;
+    return languages;
+}
+
+}
+
+@interface WebLanguageChangeObserver : NSObject
 @end
 
 @implementation WebLanguageChangeObserver
 
-+ (void)_webkit_languagePreferencesDidChange
++ (void)languagePreferencesDidChange:(NSNotification *)notification
 {
-    ASSERT(isMainThread());
+    UNUSED_PARAM(notification);
 
-    useCachedPreferredLanguages = NO;
+    {
+        std::lock_guard<std::mutex> lock(WebCore::preferredLanguagesMutex());
+        WebCore::preferredLanguages().clear();
+    }
 
-    languageDidChange();
+    WebCore::languageDidChange();
 }
 
 @end
@@ -58,8 +79,6 @@ namespace WebCore {
 
 static String httpStyleLanguageCode(NSString *languageCode)
 {
-    ASSERT(isMainThread());
-
     // Look up the language code using CFBundle.
     RetainPtr<CFStringRef> preferredLanguageCode = adoptCF(wkCopyCFLocalizationPreferredName((CFStringRef)languageCode));
 
@@ -81,16 +100,19 @@ static String httpStyleLanguageCode(NSString *languageCode)
 
 Vector<String> platformUserPreferredLanguages()
 {
-    DEFINE_STATIC_LOCAL(Vector<String>, userPreferredLanguages, ());
-
-    ASSERT(isMainThread());
+#if PLATFORM(MAC)
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [[NSDistributedNotificationCenter defaultCenter] addObserver:[WebLanguageChangeObserver self] selector:@selector(languagePreferencesDidChange:) name:@"AppleLanguagePreferencesChangedNotification" object:nil];
+    });
+#endif
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!useCachedPreferredLanguages) {
-        useCachedPreferredLanguages = YES;
-        userPreferredLanguages.clear();
+    std::lock_guard<std::mutex> lock(preferredLanguagesMutex());
+    Vector<String>& userPreferredLanguages = preferredLanguages();
 
+    if (userPreferredLanguages.isEmpty()) {
         RetainPtr<CFArrayRef> languages = adoptCF(CFLocaleCopyPreferredLanguages());
         CFIndex languageCount = CFArrayGetCount(languages.get());
         if (!languageCount)
@@ -101,18 +123,13 @@ Vector<String> platformUserPreferredLanguages()
         }
     }
 
-#if !PLATFORM(IOS)
-    static bool languageChangeObserverAdded;
-    if (!languageChangeObserverAdded) {
-        [[NSDistributedNotificationCenter defaultCenter] addObserver:[WebLanguageChangeObserver self]
-                                                            selector:@selector(_webkit_languagePreferencesDidChange)
-                                                                name:@"AppleLanguagePreferencesChangedNotification"
-                                                              object:nil];
-        languageChangeObserverAdded = true;
-    }
-#endif // !PLATFORM(IOS)
-    
-    return userPreferredLanguages;
+    Vector<String> userPreferredLanguagesCopy;
+    userPreferredLanguagesCopy.reserveInitialCapacity(userPreferredLanguages.size());
+
+    for (auto& language : userPreferredLanguages)
+        userPreferredLanguagesCopy.uncheckedAppend(language.isolatedCopy());
+
+    return userPreferredLanguagesCopy;
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
