@@ -1,5 +1,16 @@
 2014-03-01  Timothy Hatcher  <timothy@apple.com>
 
+        Select the Resource navigation sidebar by default when there is no cookie.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129544
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._restoreInspectorViewStateFromCookie):
+
+2014-03-01  Timothy Hatcher  <timothy@apple.com>
+
         Label JavaScript forced layouts as such in the Timeline.
 
         https://bugs.webkit.org/show_bug.cgi?id=129546

@@ -1135,8 +1135,10 @@ WebInspector._contentBrowserRepresentedObjectsDidChange = function(event)
 
 WebInspector._restoreInspectorViewStateFromCookie = function(cookie, causedByReload)
 {
-    if (!cookie)
+    if (!cookie) {
+        this.navigationSidebar.selectedSidebarPanel = this.resourceSidebarPanel;
         return;
+    }
 
     // The console does not have a sidebar, so handle its special cookie here.
     if (cookie[WebInspector.SelectedSidebarPanelCookieKey] === "console") {
@@ -1146,12 +1148,15 @@ WebInspector._restoreInspectorViewStateFromCookie = function(cookie, causedByRel
 
     const matchTypeOnlyDelayForReload = 2000;
     const matchTypeOnlyDelayForReopen = 1000;
-    var sidebarPanelIdentifier = cookie[WebInspector.SelectedSidebarPanelCookieKey];
-    var sidebarPanel = WebInspector.navigationSidebar.findSidebarPanel(sidebarPanelIdentifier);
-    if (!sidebarPanel)
-        return;
 
-    WebInspector.navigationSidebar.selectedSidebarPanel = sidebarPanel;
+    var sidebarPanelIdentifier = cookie[WebInspector.SelectedSidebarPanelCookieKey];
+    var sidebarPanel = this.navigationSidebar.findSidebarPanel(sidebarPanelIdentifier);
+    if (!sidebarPanel) {
+        this.navigationSidebar.selectedSidebarPanel = this.resourceSidebarPanel;
+        return;
+    }
+
+    this.navigationSidebar.selectedSidebarPanel = sidebarPanel;
 
     var relaxMatchDelay = causedByReload ? matchTypeOnlyDelayForReload : matchTypeOnlyDelayForReopen;
     sidebarPanel.restoreStateFromCookie(cookie, relaxMatchDelay);
