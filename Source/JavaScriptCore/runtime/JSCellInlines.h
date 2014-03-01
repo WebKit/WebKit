@@ -216,10 +216,11 @@ inline bool JSCell::inherits(const ClassInfo* info) const
 // case by checking whether the hash has yet been set for this string.
 ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(VM& vm, const String& name)
 {
-    if (!structure()->typeInfo().overridesGetOwnPropertySlot() && !structure()->hasGetterSetterProperties()) {
+    Structure& structure = *this->structure(vm);
+    if (!structure.typeInfo().overridesGetOwnPropertySlot() && !structure.hasGetterSetterProperties()) {
         PropertyOffset offset = name.impl()->hasHash()
-            ? structure()->get(vm, Identifier(&vm, name))
-            : structure()->get(vm, name);
+            ? structure.get(vm, Identifier(&vm, name))
+            : structure.get(vm, name);
         if (offset != invalidOffset)
             return asObject(this)->locationForOffset(offset)->get();
     }

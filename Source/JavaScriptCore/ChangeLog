@@ -1,5 +1,18 @@
 2014-03-01  Andreas Kling  <akling@apple.com>
 
+        JSCell::fastGetOwnProperty() should get the Structure more efficiently.
+        <https://webkit.org/b/129560>
+
+        Now that structure() is nontrivial and we have a faster structure(VM&),
+        make use of that in fastGetOwnProperty() since we already have VM.
+
+        Reviewed by Sam Weinig.
+
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::fastGetOwnProperty):
+
+2014-03-01  Andreas Kling  <akling@apple.com>
+
         Avoid going through ExecState for VM when we already have it (in some places.)
         <https://webkit.org/b/129554>
 
