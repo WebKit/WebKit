@@ -1,3 +1,17 @@
+2014-02-28  Geoffrey Garen  <ggaren@apple.com>
+
+        JSC Assertion failure every time I start Safari (r164846)
+        https://bugs.webkit.org/show_bug.cgi?id=129510
+
+        Reviewed by Mark Hahnenberg.
+
+        Take the lock before allocating objects because afterward is too late.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::windowScriptNPObject):
+        (WebCore::ScriptController::jsObjectForPluginElement):
+
 2014-02-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ASSERT in WebCore::JSDOMWindowBase::supportsRichSourceInfo inspecting iOS

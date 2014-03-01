@@ -121,6 +121,8 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld& world)
 
 Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
 {
+    JSLockHolder lock(JSDOMWindowBase::commonVM());
+
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     String sourceURL = jsSourceCode.provider()->url();
 
@@ -135,8 +137,6 @@ Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode
     ExecState* exec = shell->window()->globalExec();
     const String* savedSourceURL = m_sourceURL;
     m_sourceURL = &sourceURL;
-
-    JSLockHolder lock(exec);
 
     Ref<Frame> protect(m_frame);
 
@@ -349,12 +349,12 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*,
 NPObject* ScriptController::windowScriptNPObject()
 {
     if (!m_windowScriptNPObject) {
+        JSLockHolder lock(JSDOMWindowBase::commonVM());
         if (canExecuteScripts(NotAboutToExecuteScript)) {
             // JavaScript is enabled, so there is a JavaScript window object.
             // Return an NPObject bound to the window object.
             JSDOMWindow* win = windowShell(pluginWorld())->window();
             ASSERT(win);
-            JSC::JSLockHolder lock(win->globalExec());
             Bindings::RootObject* root = bindingRootObject();
             m_windowScriptNPObject = _NPN_CreateScriptObject(0, win, root);
         } else {
@@ -395,9 +395,10 @@ JSObject* ScriptController::jsObjectForPluginElement(HTMLPlugInElement* plugin)
     if (!canExecuteScripts(NotAboutToExecuteScript))
         return 0;
 
+    JSLockHolder lock(JSDOMWindowBase::commonVM());
+
     // Create a JSObject bound to this element
     JSDOMWindow* globalObj = globalObject(pluginWorld());
-    JSLockHolder lock(globalObj->globalExec());
     // FIXME: is normal okay? - used for NP plugins?
     JSValue jsElementValue = toJS(globalObj->globalExec(), globalObj, plugin);
     if (!jsElementValue || !jsElementValue.isObject())
