@@ -31,6 +31,7 @@
 #import <wtf/RetainPtr.h>
 
 @class WKContentView;
+@class WKWebView;
 
 namespace WebKit {
 class DrawingAreaProxy;
@@ -43,26 +44,17 @@ class WebSecurityOrigin;
 struct WebPageConfiguration;
 }
 
-@protocol WKContentViewDelegate <NSObject>
-- (void)contentViewDidCommitLoadForMainFrame:(WKContentView *)contentView;
-- (void)contentView:(WKContentView *)contentView didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
-
-// FIXME: This doesn't belong in a 'delegate'.
-- (RetainPtr<CGImageRef>)takeViewSnapshotForContentView:(WKContentView *)contentView;
-@end
-
 @interface WKContentView : UIView {
 @package
     RefPtr<WebKit::WebPageProxy> _page;
 }
 
 @property (nonatomic, readonly) WKBrowsingContextController *browsingContextController;
-@property (nonatomic, assign) id <WKContentViewDelegate> delegate;
 
 @property (nonatomic, readonly) WebKit::WebPageProxy* page;
 @property (nonatomic, readonly) BOOL isAssistingNode;
 
-- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration;
+- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView;
 
 - (void)setMinimumSize:(CGSize)size;
 - (void)setMinimumLayoutSize:(CGSize)size;
@@ -85,5 +77,8 @@ struct WebPageConfiguration;
 - (void)_decidePolicyForGeolocationRequestFromOrigin:(WebKit::WebSecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame request:(WebKit::GeolocationPermissionRequestProxy&)permissionRequest;
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot;
+
+- (BOOL)_zoomToRect:(CGRect)targetRect withOrigin:(CGPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(CGFloat)minimumScrollDistance;
+- (void)_zoomOutWithOrigin:(CGPoint)origin;
 
 @end

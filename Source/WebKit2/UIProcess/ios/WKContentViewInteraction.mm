@@ -30,6 +30,7 @@
 
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
+#import "SmartMagnificationController.h"
 #import "WebEvent.h"
 #import "WebIOSEventFactory.h"
 #import "WebPageMessages.h"
@@ -151,6 +152,12 @@ static const float tapAndHoldDelay  = 0.75;
     [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
     [_singleTapGestureRecognizer requireOtherGestureToFail:_doubleTapGestureRecognizer.get()];
 
+    _twoFingerDoubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerDoubleTapRecognized:)]);
+    [_twoFingerDoubleTapGestureRecognizer setNumberOfTapsRequired:2];
+    [_twoFingerDoubleTapGestureRecognizer setNumberOfTouchesRequired:2];
+    [_twoFingerDoubleTapGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
+
     _highlightLongPressGestureRecognizer = adoptNS([[_UIWebHighlightLongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_highlightLongPressRecognized:)]);
     [_highlightLongPressGestureRecognizer setDelay:highlightDelay];
     [_highlightLongPressGestureRecognizer setDelegate:self];
@@ -174,6 +181,7 @@ static const float tapAndHoldDelay  = 0.75;
     [self useSelectionAssistantWithMode:UIWebSelectionModeWeb];
     
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
+    _smartMagnificationController = std::make_unique<SmartMagnificationController>(self);
 }
 
 - (void)cleanupInteraction
@@ -640,12 +648,12 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_doubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
-    // FIXME: Add implementation.
+    _smartMagnificationController->handleSmartMagnificationGesture(gestureRecognizer.location);
 }
 
 - (void)_twoFingerDoubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
-    // FIXME: Add implementation.
+    _smartMagnificationController->handleResetMagnificationGesture(gestureRecognizer.location);
 }
 
 - (void)_twoFingerPanRecognized:(UIPanGestureRecognizer *)gestureRecognizer

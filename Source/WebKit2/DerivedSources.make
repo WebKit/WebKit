@@ -93,6 +93,7 @@ MESSAGE_RECEIVERS = \
     RemoteScrollingCoordinator \
     SecItemShim \
     SecItemShimProxy \
+    SmartMagnificationController \
     StorageAreaMap \
     StorageManager \
     ViewGestureController \

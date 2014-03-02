@@ -49,6 +49,7 @@ class IntSize;
 
 namespace WebKit {
 class NativeWebTouchEvent;
+class SmartMagnificationController;
 class WebPageProxy;
 struct AssistedNodeInformation;
 struct InteractionInformationAtPosition;
@@ -95,6 +96,8 @@ struct WKAutoCorrectionData {
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<NSString> _markedText;
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
+
+    std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
 
     id <UITextInputDelegate> _inputDelegate;
 

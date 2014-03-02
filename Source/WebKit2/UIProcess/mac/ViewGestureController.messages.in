@@ -23,7 +23,7 @@
 messages -> ViewGestureController {
 #if !PLATFORM(IOS)
     DidCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds, bool frameHandlesMagnificationGesture)
-    DidCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, bool frameHandlesMagnificationGesture)
+    DidCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, bool frameHandlesMagnificationGesture, double viewportMinimumScale, double viewportMaximumScale)
     DidHitRenderTreeSizeThreshold()
 #endif
 }

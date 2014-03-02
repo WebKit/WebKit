@@ -144,9 +144,8 @@
 
     [self addSubview:_scrollView.get()];
 
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration)]);
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration) webView:self]);
     _page = [_contentView page];
-    [_contentView setDelegate:self];
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
     [_scrollView addSubview:_contentView.get()];
@@ -316,19 +315,17 @@
     return [_contentView browsingContextController];
 }
 
-#pragma mark WKContentViewDelegate
-
-- (void)contentViewDidCommitLoadForMainFrame:(WKContentView *)contentView
+- (void)_didCommitLoadForMainFrame
 {
     _isWaitingForNewLayerTreeAfterDidCommitLoad = YES;
 }
 
-- (void)contentView:(WKContentView *)contentView didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
+- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
     [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
     [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];
-    if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing])
+    if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom])
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
 
     if (_gestureController)
@@ -342,7 +339,7 @@
     
 }
 
-- (RetainPtr<CGImageRef>)takeViewSnapshotForContentView:(WKContentView *)contentView
+- (RetainPtr<CGImageRef>)_takeViewSnapshot
 {
     // FIXME: We should be able to use acquire an IOSurface directly, instead of going to CGImage here and back in ViewSnapshotStore.
     UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
@@ -350,6 +347,114 @@
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return image.CGImage;
+}
+
+- (void)_zoomToPoint:(WebCore::FloatPoint)point atScale:(double)scale
+{
+    double maximumZoomDuration = 0.4;
+    double minimumZoomDuration = 0.1;
+    double zoomDurationFactor = 0.3;
+
+    CFTimeInterval duration = std::min(fabs(log([_scrollView zoomScale]) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
+
+    if (scale != [_scrollView zoomScale])
+        [_contentView willStartUserTriggeredZoom];
+
+    [_scrollView _zoomToCenter:point scale:scale duration:duration];
+}
+
+- (void)_zoomToRect:(WebCore::FloatRect)targetRect atScale:(double)scale origin:(WebCore::FloatPoint)origin
+{
+    WebCore::FloatSize unobscuredContentSize = _page->unobscuredContentRect().size();
+    WebCore::FloatSize targetRectSizeAfterZoom = targetRect.size();
+    targetRectSizeAfterZoom.scale(scale);
+
+    // Center the target rect in the scroll view.
+    // If the target doesn't fit in the scroll view, center on the gesture location instead.
+    WebCore::FloatPoint zoomCenter = targetRect.center();
+
+    if (targetRectSizeAfterZoom.width() > unobscuredContentSize.width())
+        zoomCenter.setX(origin.x());
+    if (targetRectSizeAfterZoom.height() > unobscuredContentSize.height())
+        zoomCenter.setY(origin.y());
+
+    [self _zoomToPoint:zoomCenter atScale:scale];
+}
+
+static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOffset, WebCore::FloatSize contentSize, WebCore::FloatSize unobscuredContentSize)
+{
+    WebCore::FloatSize maximumContentOffset = contentSize - unobscuredContentSize;
+    contentOffset = contentOffset.shrunkTo(WebCore::FloatPoint(maximumContentOffset.width(), maximumContentOffset.height()));
+    contentOffset = contentOffset.expandedTo(WebCore::FloatPoint());
+    return contentOffset;
+}
+
+- (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance
+{
+    WebCore::FloatRect unobscuredContentRect = _page->unobscuredContentRect();
+    WebCore::FloatPoint unobscuredContentOffset = unobscuredContentRect.location();
+    WebCore::FloatSize contentSize([_contentView bounds].size);
+
+    // Center the target rect in the scroll view.
+    // If the target doesn't fit in the scroll view, center on the gesture location instead.
+    WebCore::FloatPoint newUnobscuredContentOffset;
+    if (targetRect.width() <= unobscuredContentRect.width())
+        newUnobscuredContentOffset.setX(targetRect.x() - (unobscuredContentRect.width() - targetRect.width()) / 2);
+    else
+        newUnobscuredContentOffset.setX(origin.x() - unobscuredContentRect.width() / 2);
+    if (targetRect.height() <= unobscuredContentRect.height())
+        newUnobscuredContentOffset.setY(targetRect.y() - (unobscuredContentRect.height() - targetRect.height()) / 2);
+    else
+        newUnobscuredContentOffset.setY(origin.y() - unobscuredContentRect.height() / 2);
+    newUnobscuredContentOffset = constrainContentOffset(newUnobscuredContentOffset, contentSize, unobscuredContentRect.size());
+
+    if (unobscuredContentOffset == newUnobscuredContentOffset) {
+        if (targetRect.width() > unobscuredContentRect.width())
+            newUnobscuredContentOffset.setX(origin.x() - unobscuredContentRect.width() / 2);
+        if (targetRect.height() > unobscuredContentRect.height())
+            newUnobscuredContentOffset.setY(origin.y() - unobscuredContentRect.height() / 2);
+        newUnobscuredContentOffset = constrainContentOffset(newUnobscuredContentOffset, contentSize, unobscuredContentRect.size());
+    }
+
+    WebCore::FloatSize scrollViewOffsetDelta = newUnobscuredContentOffset - unobscuredContentOffset;
+    scrollViewOffsetDelta.scale([_scrollView zoomScale]);
+
+    float scrollDistance = scrollViewOffsetDelta.diagonalLength();
+    if (scrollDistance < minimumScrollDistance)
+        return false;
+
+    [_scrollView setContentOffset:([_scrollView contentOffset] + scrollViewOffsetDelta) animated:YES];
+    return true;
+}
+
+- (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin
+{
+    [self _zoomToPoint:origin atScale:[_scrollView minimumZoomScale]];
+}
+
+- (BOOL)_zoomToRect:(WebCore::FloatRect)targetRect withOrigin:(WebCore::FloatPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(float)minimumScrollDistance
+{
+    const float maximumScaleFactorDeltaForPanScroll = 0.02;
+
+    double currentScale = [_scrollView zoomScale];
+
+    WebCore::FloatSize unobscuredContentSize = _page->unobscuredContentRect().size();
+    double horizontalScale = unobscuredContentSize.width() * currentScale / targetRect.width();
+    double verticalScale = unobscuredContentSize.height() * currentScale / targetRect.height();
+
+    horizontalScale = std::min(std::max(horizontalScale, minimumScale), maximumScale);
+    verticalScale = std::min(std::max(verticalScale, minimumScale), maximumScale);
+
+    double targetScale = fitEntireRect ? std::min(horizontalScale, verticalScale) : horizontalScale;
+    if (fabs(targetScale - currentScale) < maximumScaleFactorDeltaForPanScroll) {
+        if ([self _scrollToRect:targetRect origin:origin minimumScrollDistance:minimumScrollDistance])
+            return true;
+    } else if (targetScale != currentScale) {
+        [self _zoomToRect:targetRect atScale:targetScale origin:origin];
+        return true;
+    }
+    
+    return false;
 }
 
 #pragma mark - UIScrollViewDelegate

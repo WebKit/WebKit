@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewGestureGeometryCollector_h
-#define ViewGestureGeometryCollector_h
+#ifndef SmartMagnificationController_h
+#define SmartMagnificationController_h
+
+#if PLATFORM(IOS)
 
 #include "MessageReceiver.h"
-#include <wtf/RunLoop.h>
+#include <WebCore/FloatRect.h>
+#include <wtf/RetainPtr.h>
 
-namespace WebCore {
-class FloatPoint;
-class FloatRect;
-}
+OBJC_CLASS WKContentView;
+OBJC_CLASS UIScrollView;
 
 namespace WebKit {
 
-class WebPage;
+class WebPageProxy;
 
-class ViewGestureGeometryCollector : private IPC::MessageReceiver {
+class SmartMagnificationController : private IPC::MessageReceiver {
+    WTF_MAKE_NONCOPYABLE(SmartMagnificationController);
 public:
-    ViewGestureGeometryCollector(WebPage&);
-    ~ViewGestureGeometryCollector();
+    SmartMagnificationController(WKContentView *);
+    ~SmartMagnificationController();
 
-    void mainFrameDidLayout();
+    void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
+    void handleResetMagnificationGesture(WebCore::FloatPoint origin);
 
 private:
     // IPC::MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
-    // Message handlers.
-    void collectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin);
+    void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale);
 
-#if PLATFORM(MAC)
-    void collectGeometryForMagnificationGesture();
-    void setRenderTreeSizeNotificationThreshold(uint64_t size) { m_renderTreeSizeNotificationThreshold = size; }
-
-    void renderTreeSizeNotificationTimerFired();
-#endif
-
-    void dispatchDidCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect targetRect, WebCore::FloatRect visibleContentRect, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale);
-
-    WebPage& m_webPage;
-
-#if PLATFORM(MAC)
-    uint64_t m_renderTreeSizeNotificationThreshold;
-    RunLoop::Timer<ViewGestureGeometryCollector> m_renderTreeSizeNotificationTimer;
-#endif
+    WebPageProxy& m_webPageProxy;
+    WKContentView *m_contentView;
 };
-
+    
 } // namespace WebKit
 
-#endif // ViewGestureGeometryCollector
+#endif // PLATFORM(IOS)
+
+#endif // SmartMagnificationController_h

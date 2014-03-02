@@ -205,11 +205,8 @@ static float maximumRectangleComponentDelta(FloatRect a, FloatRect b)
     return std::max(fabs(a.x() - b.x()), std::max(fabs(a.y() - b.y()), std::max(fabs(a.width() - b.width()), fabs(a.height() - b.height()))));
 }
 
-void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect renderRect, FloatRect visibleContentRect, bool isReplacedElement, bool frameHandlesMagnificationGesture)
+void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect renderRect, FloatRect visibleContentRect, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale)
 {
-    if (frameHandlesMagnificationGesture)
-        return;
-
     double currentScaleFactor = m_webPageProxy.pageScaleFactor();
 
     FloatRect unscaledTargetRect = renderRect;

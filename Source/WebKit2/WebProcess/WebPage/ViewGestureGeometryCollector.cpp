@@ -26,17 +26,23 @@
 #include "config.h"
 #include "ViewGestureGeometryCollector.h"
 
-#if !PLATFORM(IOS)
-
-#include "ViewGestureControllerMessages.h"
 #include "ViewGestureGeometryCollectorMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/RenderView.h>
+
+#if PLATFORM(IOS)
+#include "SmartMagnificationControllerMessages.h"
+#endif
+
+#if PLATFORM(MAC)
+#include "ViewGestureControllerMessages.h"
+#endif
 
 using namespace WebCore;
 
@@ -44,8 +50,10 @@ namespace WebKit {
 
 ViewGestureGeometryCollector::ViewGestureGeometryCollector(WebPage& webPage)
     : m_webPage(webPage)
+#if PLATFORM(MAC)
     , m_renderTreeSizeNotificationThreshold(0)
     , m_renderTreeSizeNotificationTimer(RunLoop::main(), this, &ViewGestureGeometryCollector::renderTreeSizeNotificationTimerFired)
+#endif
 {
     WebProcess::shared().addMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage.pageID(), *this);
 }
@@ -55,30 +63,54 @@ ViewGestureGeometryCollector::~ViewGestureGeometryCollector()
     WebProcess::shared().removeMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage.pageID());
 }
 
-void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
+void ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect targetRect, FloatRect visibleContentRect, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale)
 {
-    FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRectIncludingScrollbars();
-    bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame()->handlesPageScaleGesture();
-    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
+#if PLATFORM(MAC)
+    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, targetRect, visibleContentRect, isReplacedElement, viewportMinimumScale, viewportMaximumScale));
+#endif
+#if PLATFORM(IOS)
+    m_webPage.send(Messages::SmartMagnificationController::DidCollectGeometryForSmartMagnificationGesture(origin, targetRect, visibleContentRect, isReplacedElement, viewportMinimumScale, viewportMaximumScale));
+#endif
 }
 
 void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint origin)
 {
     FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRectIncludingScrollbars();
-    bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame()->handlesPageScaleGesture();
 
-    FloatPoint scrolledOrigin = origin;
-    scrolledOrigin.moveBy(m_webPage.mainFrameView()->scrollPosition());
+    if (m_webPage.mainWebFrame()->handlesPageScaleGesture())
+        return;
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
-    HitTestResult hitTestResult = HitTestResult(scrolledOrigin);
+    IntPoint originInContentsSpace = m_webPage.mainFrameView()->windowToContents(roundedIntPoint(origin));
+    HitTestResult hitTestResult = HitTestResult(originInContentsSpace);
+
     m_webPage.mainFrameView()->renderView()->hitTest(request, hitTestResult);
 
-    if (hitTestResult.innerNode()) {
+    if (Node* node = hitTestResult.innerNode()) {
         bool isReplaced;
-        FloatRect renderRect = hitTestResult.innerNode()->renderRect(&isReplaced);
-        m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, renderRect, visibleContentRect, isReplaced, frameHandlesMagnificationGesture));
+        FloatRect renderRect = node->renderRect(&isReplaced);
+
+#if PLATFORM(MAC)
+        double viewportMinimumScale = 0;
+        double viewportMaximumScale = std::numeric_limits<double>::max();
+#else
+        double viewportMinimumScale = m_webPage.minimumPageScaleFactor();
+        double viewportMaximumScale = m_webPage.maximumPageScaleFactor();
+#endif
+
+        dispatchDidCollectGeometryForSmartMagnificationGesture(origin, renderRect, visibleContentRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
+        return;
     }
+
+    dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint(), FloatRect(), FloatRect(), false, 0, 0);
+}
+
+#if PLATFORM(MAC)
+void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
+{
+    FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRectIncludingScrollbars();
+    bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame()->handlesPageScaleGesture();
+    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
 }
 
 void ViewGestureGeometryCollector::mainFrameDidLayout()
@@ -93,7 +125,7 @@ void ViewGestureGeometryCollector::renderTreeSizeNotificationTimerFired()
 {
     m_webPage.send(Messages::ViewGestureController::DidHitRenderTreeSizeThreshold());
 }
+#endif
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS)

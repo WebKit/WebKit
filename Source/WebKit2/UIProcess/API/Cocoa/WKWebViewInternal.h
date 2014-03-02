@@ -31,11 +31,12 @@
 
 #if PLATFORM(IOS)
 #import "WKContentView.h"
+#import <WebCore/FloatRect.h>
 #import <UIKit/UIScrollView_Private.h>
 #endif
 
 #if PLATFORM(IOS)
-#define WK_WEB_VIEW_PROTOCOLS <UIScrollViewDelegate, WKContentViewDelegate>
+#define WK_WEB_VIEW_PROTOCOLS <UIScrollViewDelegate>
 #endif
 
 #if !defined(WK_WEB_VIEW_PROTOCOLS)
@@ -51,6 +52,16 @@ class WebPageProxy;
 @package
     RefPtr<WebKit::WebPageProxy> _page;
 }
+
+#if PLATFORM(IOS)
+- (void)_didCommitLoadForMainFrame;
+- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
+
+- (RetainPtr<CGImageRef>)_takeViewSnapshot;
+
+- (BOOL)_zoomToRect:(WebCore::FloatRect)targetRect withOrigin:(WebCore::FloatPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(float)minimumScrollDistance;
+- (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin;
+#endif
 @end
 
 #endif

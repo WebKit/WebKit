@@ -1,3 +1,14 @@
+2014-03-01  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Smart Magnification): Support for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129146
+        <rdar://problem/16032668>
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCore.exp.in:
+        Add an export.
+
 2014-03-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r164929 and r164934.

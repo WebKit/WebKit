@@ -31,6 +31,7 @@
 #import "PageClientImplIOS.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "SmartMagnificationController.h"
 #import "WebKit2Initialize.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupPrivate.h"
@@ -38,6 +39,7 @@
 #import "WKPreferencesInternal.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKProcessPoolInternal.h"
+#import "WKWebViewInternal.h"
 #import "WKWebViewConfiguration.h"
 #import "WebContext.h"
 #import "WebFrameProxy.h"
@@ -62,9 +64,11 @@ using namespace WebKit;
     RetainPtr<WKBrowsingContextController> _browsingContextController;
 
     RetainPtr<UIView> _rootContentView;
+
+    WKWebView *_webView;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration
+- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
@@ -78,6 +82,8 @@ using namespace WebKit;
     _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
     _page->setUseFixedLayout(true);
     _page->setDelegatesScrolling(true);
+
+    _webView = webView;
 
     WebContext::statistics().wkViewCount++;
 
@@ -243,9 +249,7 @@ using namespace WebKit;
 
 - (void)_didCommitLoadForMainFrame
 {
-    if ([_delegate respondsToSelector:@selector(contentViewDidCommitLoadForMainFrame:)])
-        [_delegate contentViewDidCommitLoadForMainFrame:self];
-
+    [_webView _didCommitLoadForMainFrame];
     [self _stopAssistingNode];
 }
 
@@ -256,8 +260,7 @@ using namespace WebKit;
     [self setBounds:{CGPointZero, contentsSize}];
     [_rootContentView setFrame:CGRectMake(0, 0, contentsSize.width, contentsSize.height)];
 
-    if ([_delegate respondsToSelector:@selector(contentView:didCommitLayerTree:)])
-        [_delegate contentView:self didCommitLayerTree:layerTreeTransaction];
+    [_webView _didCommitLayerTree:layerTreeTransaction];
 }
 
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView
@@ -277,7 +280,17 @@ using namespace WebKit;
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot
 {
-    return [_delegate takeViewSnapshotForContentView:self];
+    return [_webView _takeViewSnapshot];
+}
+
+- (BOOL)_zoomToRect:(CGRect)targetRect withOrigin:(CGPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(CGFloat)minimumScrollDistance
+{
+    return [_webView _zoomToRect:targetRect withOrigin:origin fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:minimumScrollDistance];
+}
+
+- (void)_zoomOutWithOrigin:(CGPoint)origin
+{
+    return [_webView _zoomOutWithOrigin:origin];
 }
 
 @end

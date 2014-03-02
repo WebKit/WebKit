@@ -992,9 +992,7 @@ private:
 
     WebCore::KeyboardEvent* m_keyboardEventBeingInterpreted;
 
-#if !PLATFORM(IOS)
     ViewGestureGeometryCollector m_viewGestureGeometryCollector;
-#endif
 
 #elif HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
     GRefPtr<WebPageAccessibilityObject> m_accessibilityObject;

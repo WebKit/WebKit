@@ -1,3 +1,91 @@
+2014-03-01  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Smart Magnification): Support for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129146
+        <rdar://problem/16032668>
+
+        Reviewed by Benjamin Poulain.
+
+        Add support for double-tap smart magnification on iOS.
+
+        * DerivedSources.make:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        WKContentView is no longer API, so it can know about WKWebView
+        and will always have one.
+
+        (-[WKWebView contentView:didCommitLayerTree:WebKit::]):
+        Don't replace the zoom scale if we're currently animating.
+
+        (-[WKWebView _takeViewSnapshot]):
+        Rename.
+
+        (-[WKWebView _zoomToPoint:WebCore::atScale:]):
+        (-[WKWebView _zoomToRect:WebCore::atScale:origin:WebCore::]):
+        (constrainContentOffset):
+        (-[WKWebView _scrollToRect:WebCore::origin:WebCore::minimumScrollDistance:]):
+        (-[WKWebView _zoomOutWithOrigin:]):
+        (-[WKWebView _zoomToRect:withOrigin:fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:]):
+        Add _zoomToRect:withOrigin:fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:
+        and _zoomOutWithOrigin: as internal API, for use by SmartMagnificationController via WKContentView.
+        These will use some heuristics to generally center the target rect in the view
+        in a way that should match WebKit1 fairly closely.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        Don't use the WKContentViewDelegate protocol for things that don't belong there.
+
+        * UIProcess/ios/SmartMagnificationController.h: Added.
+        * UIProcess/ios/SmartMagnificationController.messages.in: Added.
+        * UIProcess/ios/SmartMagnificationController.mm: Added.
+        (WebKit::SmartMagnificationController::SmartMagnificationController):
+        (WebKit::SmartMagnificationController::~SmartMagnificationController):
+        (WebKit::SmartMagnificationController::handleSmartMagnificationGesture):
+        (WebKit::SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture):
+        SmartMagnificationController sits off of WKContentView, and sends/receives
+        messages to the WebProcess to do the smart magnification hit-testing.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:context:WebKit::configuration:WebKit::webView:]):
+        As before, teach WKContentView about its owning WKWebView.
+
+        (-[WKContentView _takeViewSnapshot]):
+        Rename.
+
+        (-[WKContentView _zoomToRect:withOrigin:fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:]):
+        (-[WKContentView _zoomOutWithOrigin:]):
+        Forward _zoomToRect:::::: and _zoomOutWithOrigin: to WKWebView.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _doubleTapRecognized:]):
+        (-[WKContentView _twoFingerDoubleTapRecognized:]):
+        Forward double tap to the SmartMagnificationController.
+
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureController.messages.in:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::didCollectGeometryForSmartMagnificationGesture):
+        Retrieve the minimum/maximum viewport scale from the WebProcess.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::ViewGestureGeometryCollector):
+        (WebKit::ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificationGesture):
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture):
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForMagnificationGesture):
+        Factor out code to send the geometry back to the UI process.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        We should have a ViewGestureGeometryCollector on iOS too.
+
 2014-03-01  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed follow-up to r164905 and r164912.

@@ -254,9 +254,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_pdfPluginEnabled(false)
     , m_hasCachedWindowFrame(false)
     , m_keyboardEventBeingInterpreted(0)
-#if !PLATFORM(IOS)
     , m_viewGestureGeometryCollector(*this)
-#endif
 #elif PLATFORM(GTK) && HAVE(ACCESSIBILITY)
     , m_accessibilityObject(0)
 #endif
