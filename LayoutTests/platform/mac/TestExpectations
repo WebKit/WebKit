@@ -1215,8 +1215,6 @@ webkit.org/b/123369 [ MountainLion ] svg/css/parent-shadow-offscreen.svg [ Pass 
 webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
 webkit.org/b/123369 [ MountainLion ] svg/css/root-shadow-offscreen.svg [ Pass ]
 webkit.org/b/123369 [ Mavericks ] svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
-webkit.org/b/123369 [ Mavericks ] svg/masking/mask-type-luminance.svg [ ImageOnlyFailure ]
-webkit.org/b/123369 [ Mavericks ] svg/masking/mask-type-not-set.svg [ ImageOnlyFailure ]
 webkit.org/b/123369 [ Mavericks ] svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/123489 [ Mavericks ] inspector-protocol/debugger/call-frame-this-strict.html [ Pass Failure ]

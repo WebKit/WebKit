@@ -331,8 +331,6 @@ webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg 
 # Color space issues from switching to tiled drawing.
 webkit.org/b/122234 fast/css/computed-image-width-with-percent-height.html [ ImageOnlyFailure ]
 webkit.org/b/122234 svg/filters/color-space-conversion.svg  [ ImageOnlyFailure ]
-webkit.org/b/122234 svg/masking/mask-type-luminance.svg  [ ImageOnlyFailure ]
-webkit.org/b/122234 svg/masking/mask-type-not-set.svg  [ ImageOnlyFailure ]
 webkit.org/b/122234 svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
 webkit.org/b/122234 svg/filters/filter-cycle.html [ ImageOnlyFailure ]
 webkit.org/b/122234 css3/filters/null-effect-check.html [ ImageOnlyFailure ]

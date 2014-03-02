@@ -1,5 +1,23 @@
 2014-03-02  Dirk Schulze  <krit@webkit.org>
 
+        Reactivate SVG mask-type tests for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=129577
+
+        Reviewed by Darin Adler.
+
+        Reduce mask-type tests to the minimum to test the feature.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * svg/masking/mask-type-alpha-expected.svg:
+        * svg/masking/mask-type-alpha.svg:
+        * svg/masking/mask-type-luminance-expected.svg:
+        * svg/masking/mask-type-luminance.svg:
+        * svg/masking/mask-type-not-set-expected.svg:
+        * svg/masking/mask-type-not-set.svg:
+
+2014-03-02  Dirk Schulze  <krit@webkit.org>
+
         Remove path to non-existent SVG clip-path test from TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=129574
 
