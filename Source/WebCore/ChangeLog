@@ -1,3 +1,9 @@
+2014-03-01  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * html/parser/HTMLParserIdioms.cpp: Removed an unused function.
+
 2014-03-01  David Kilzer  <ddkilzer@apple.com>
 
         Ensure keySplines is valid in SMIL animations

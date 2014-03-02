@@ -297,11 +297,6 @@ static inline bool compareByScaleFactor(const ImageWithScale& first, const Image
     return first.scaleFactor() < second.scaleFactor();
 }
 
-static inline bool isHTMLSpaceOrComma(UChar character)
-{
-    return isHTMLSpace(character) || character == ',';
-}
-
 static bool parseDescriptors(const String& attribute, size_t start, size_t end, float& imageScaleFactor)
 {
     size_t descriptorStart;
