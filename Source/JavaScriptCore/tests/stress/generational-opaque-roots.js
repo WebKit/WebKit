@@ -1,4 +1,4 @@
-description("Tests that opaque roots behave correctly during young generation collections.");
+// Tests that opaque roots behave correctly during young generation collections
 
 // Create the primary Root.
 var root = new Root();
@@ -26,4 +26,5 @@ edenGC();
 
 // Check if the primary Root's Element exists and has our custom property.
 var elem = getElement(root);
-shouldBe("elem.customProperty", "\"hello\"");
+if (elem.customProperty != "hello")
+    throw new Error("bad value of customProperty: " + elem.customProperty);

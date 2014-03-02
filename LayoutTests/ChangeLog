@@ -1,3 +1,10 @@
+2014-03-01  Filip Pizlo  <fpizlo@apple.com>
+
+        This shouldn't be a layout test since it runs only under jsc. Moving it to JSC
+        stress tests.
+
+        * js/script-tests/generational-opaque-roots.js: Removed.
+
 2014-03-01  David Kilzer  <ddkilzer@apple.com>
 
         Ensure keySplines is valid in SMIL animations

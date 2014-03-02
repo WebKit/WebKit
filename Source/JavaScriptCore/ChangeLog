@@ -1,3 +1,10 @@
+2014-03-01  Filip Pizlo  <fpizlo@apple.com>
+
+        This shouldn't have been a layout test since it runs only under jsc. Moving it to JSC
+        stress tests.
+
+        * tests/stress/generational-opaque-roots.js: Copied from LayoutTests/js/script-tests/generational-opaque-roots.js.
+
 2014-03-01  Andreas Kling  <akling@apple.com>
 
         JSCell::fastGetOwnProperty() should get the Structure more efficiently.
