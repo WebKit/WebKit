@@ -1,3 +1,24 @@
+2014-03-02  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix srcset related bugs
+        https://bugs.webkit.org/show_bug.cgi?id=129539
+
+        These tests make sure that:
+        1. Invalid srcset descriptors are handled according to the spec. The invalid descriptors are ignored, but the resource is not.
+        2. When both src and srcset have only 1x descriptors and the DPR is higher than 1, the srcset's resource is picked.
+
+        I've also fixed the invalid inputs test, which was faulty.
+
+        Reviewed by Andreas Kling.
+
+        * fast/hidpi/image-srcset-invalid-descriptor-expected.txt: Added.
+        * fast/hidpi/image-srcset-invalid-descriptor.html: Added.
+        * fast/hidpi/image-srcset-invalid-inputs-correct-src.html:
+        * fast/hidpi/image-srcset-src-selection-1x-both-expected.txt: Added.
+        * fast/hidpi/image-srcset-src-selection-1x-both.html: Added.
+        * fast/hidpi/resources/srcset-helper.js:
+        (runTest):
+
 2014-03-02  Dirk Schulze  <krit@webkit.org>
 
         Reactivate SVG mask-type tests for Mac

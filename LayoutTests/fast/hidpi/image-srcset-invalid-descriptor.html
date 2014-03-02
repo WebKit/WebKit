@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+    window.targetScaleFactor = 1;
+</script>
+<script src="resources/srcset-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script>
+    addEventListener("load", function() {
+        shouldBeTrue('document.getElementById("foo").clientWidth==100');
+        shouldBeTrue('document.getElementById("foo2").clientWidth==200');
+    }, false);
+</script>
+</head>
+
+<body id="body">
+    <div>This test passes if the image below is a 100px blue square when the deviceScaleFactor is 1.</div>
+    <div> It tests that even though the 1x resource contains many invalid descriptors,
+        only the invalid descriptors are ignored (according to the spec).</div>
+    <img id="foo" src="" srcset="resources/blue-100-px-square.png 43q 1x dfs 3dd, resources/green-400-px-square.png 2x">
+    <img id="foo2" src="" srcset="resources/blue-100-px-square.png 300q, resources/green-400-px-square.png 2x">
+</body>
+</html>

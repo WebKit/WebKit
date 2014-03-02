@@ -297,9 +297,40 @@ static inline bool compareByScaleFactor(const ImageWithScale& first, const Image
     return first.scaleFactor() < second.scaleFactor();
 }
 
-static inline bool isHTMLSpaceOrComma(UChar character)
+static bool parseDescriptors(const String& attribute, size_t start, size_t end, float& imageScaleFactor)
 {
-    return isHTMLSpace(character) || character == ',';
+    size_t descriptorStart;
+    size_t descriptorEnd;
+    size_t position = start;
+    bool isFoundScaleFactor = false;
+    bool isEmptyDescriptor = !(end > start);
+    bool isValid = false;
+
+    while (position < end) {
+        while (isHTMLSpace(attribute[position]) && position < end)
+            ++position;
+        descriptorStart = position;
+        while (isNotHTMLSpace(attribute[position]) && position < end)
+            ++position;
+        descriptorEnd = position;
+
+        // Leave if there is only whitespace at the end of the descriptors
+        if (descriptorEnd <= descriptorStart)
+            break;
+
+        --descriptorEnd;
+        // This part differs from the spec as the current implementation only supports pixel density descriptors.
+        if (attribute[descriptorEnd] != 'x')
+            continue;
+
+        if (isFoundScaleFactor)
+            return false;
+
+        imageScaleFactor = charactersToFloat(attribute.deprecatedCharacters() + descriptorStart, descriptorEnd - descriptorStart, &isValid);
+        isFoundScaleFactor = true;
+    }
+
+    return isEmptyDescriptor || isValid;
 }
 
 // See the specifications for more details about the algorithm to follow.
@@ -335,42 +366,15 @@ static void parseImagesWithScaleFromSrcsetAttribute(const String& srcsetAttribut
         } else {
             // 7. Collect a sequence of characters that are not "," (U+002C) characters, and let that be descriptors.
             size_t imageScaleStart = srcsetAttribute.find(isNotHTMLSpace, imageURLEnd + 1);
-            if (imageScaleStart == notFound)
-                separator = srcsetAttributeLength;
-            else if (srcsetAttribute[imageScaleStart] == ',')
-                separator = imageScaleStart;
-            else {
-                // This part differs from the spec as the current implementation only supports pixel density descriptors for now.
-                size_t imageScaleEnd = srcsetAttribute.find(isHTMLSpaceOrComma, imageScaleStart + 1);
-                imageScaleEnd = (imageScaleEnd == notFound) ? srcsetAttributeLength : imageScaleEnd;
-                size_t commaPosition = imageScaleEnd;
-                // Make sure there are no other descriptors.
-                while ((commaPosition < srcsetAttributeLength - 1) && isHTMLSpace(srcsetAttribute[commaPosition]))
-                    ++commaPosition;
-                // If the first not html space character after the scale modifier is not a comma,
-                // the current candidate is an invalid input.
-                if ((commaPosition < srcsetAttributeLength - 1) && srcsetAttribute[commaPosition] != ',') {
-                    // Find the nearest comma and skip the input.
-                    commaPosition = srcsetAttribute.find(',', commaPosition + 1);
-                    if (commaPosition == notFound)
-                        break;
-                    imageCandidateStart = commaPosition + 1;
-                    continue;
-                }
-                separator = commaPosition;
-                if (srcsetAttribute[imageScaleEnd - 1] != 'x') {
-                    imageCandidateStart = separator + 1;
-                    continue;
-                }
-                bool validScaleFactor = false;
-                size_t scaleFactorLengthWithoutUnit = imageScaleEnd - imageScaleStart - 1;
-                imageScaleFactor = charactersToFloat(srcsetAttribute.deprecatedCharacters() + imageScaleStart, scaleFactorLengthWithoutUnit, &validScaleFactor);
+            imageScaleStart = (imageScaleStart == notFound) ? srcsetAttributeLength : imageScaleStart;
+            size_t imageScaleEnd = srcsetAttribute.find(',' , imageScaleStart + 1);
+            imageScaleEnd = (imageScaleEnd == notFound) ? srcsetAttributeLength : imageScaleEnd;
 
-                if (!validScaleFactor) {
-                    imageCandidateStart = separator + 1;
-                    continue;
-                }
+            if (!parseDescriptors(srcsetAttribute, imageScaleStart, imageScaleEnd, imageScaleFactor)) {
+                imageCandidateStart = imageScaleEnd + 1;
+                continue;
             }
+            separator = imageScaleEnd;
         }
         ImageWithScale image(imageURLStart, imageURLEnd - imageURLStart, imageScaleFactor);
         imageCandidates.append(image);
@@ -399,8 +403,16 @@ ImageWithScale bestFitSourceForImageAttributes(float deviceScaleFactor, const St
         if (imageCandidates[i].scaleFactor() >= deviceScaleFactor)
             return imageCandidates[i];
     }
-    const ImageWithScale& lastCandidate = imageCandidates.last();
-    return lastCandidate;
+
+    // 16. If an entry b in candidates has the same associated ... pixel density as an earlier entry a in candidates,
+    // then remove entry b
+    size_t winner = imageCandidates.size() - 1;
+    size_t previousCandidate = winner;
+    float winningScaleFactor = imageCandidates.last().scaleFactor();
+    while ((previousCandidate > 0) && (imageCandidates[--previousCandidate].scaleFactor() == winningScaleFactor))
+        winner = previousCandidate;
+
+    return imageCandidates[winner];
 }
 
 }

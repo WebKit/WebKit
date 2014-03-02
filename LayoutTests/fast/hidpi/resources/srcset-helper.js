@@ -5,6 +5,9 @@ function runTest() {
     if (!window.targetScaleFactor)
         window.targetScaleFactor = 2;
 
+    if(!sessionStorage.pageReloaded && window.targetScaleFactor == window.deviceScaleFactor)
+        return;
+
     if (!sessionStorage.scaleFactorIsSet) {
         testRunner.waitUntilDone();
         testRunner.setBackingScaleFactor(targetScaleFactor, scaleFactorIsSet);
