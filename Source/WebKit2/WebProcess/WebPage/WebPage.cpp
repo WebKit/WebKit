@@ -140,7 +140,6 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/SubstituteData.h>
-#include <WebCore/TextIterator.h>
 #include <WebCore/UserInputBridge.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/VisibleUnits.h>

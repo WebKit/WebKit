@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,12 +35,10 @@
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 
-using namespace JSC;
-using namespace WebCore;
-
 @interface WebTextIteratorPrivate : NSObject {
 @public
-    OwnPtr<TextIterator> _textIterator;
+    std::unique_ptr<WebCore::TextIterator> _textIterator;
+    Vector<unichar> _upconvertedText;
 }
 @end
 
@@ -73,13 +71,14 @@ using namespace WebCore;
         return self;
     
     _private = [[WebTextIteratorPrivate alloc] init];
-    _private->_textIterator = adoptPtr(new TextIterator(core(range)));
+    _private->_textIterator = std::make_unique<WebCore::TextIterator>(core(range));
     return self;
 }
 
 - (void)advance
 {
     _private->_textIterator->advance();
+    _private->_upconvertedText.shrink(0);
 }
 
 - (BOOL)atEnd
@@ -92,14 +91,24 @@ using namespace WebCore;
     return kit(_private->_textIterator->range().get());
 }
 
-- (const unichar *)currentTextPointer
+// FIXME: Consider deprecating this method and creating one that does not require copying 8-bit characters.
+- (const unichar*)currentTextPointer
 {
-    return _private->_textIterator->deprecatedTextIteratorCharacters();
+    StringView text = _private->_textIterator->text();
+    unsigned length = text.length();
+    if (!length)
+        return nullptr;
+    if (!text.is8Bit())
+        return text.characters16();
+    if (_private->_upconvertedText.isEmpty())
+        _private->_upconvertedText.appendRange(text.characters8(), text.characters8() + length);
+    ASSERT(_private->_upconvertedText.size() == text.length());
+    return _private->_upconvertedText.data();
 }
 
 - (NSUInteger)currentTextLength
 {
-    return _private->_textIterator->length();
+    return _private->_textIterator->text().length();
 }
 
 @end

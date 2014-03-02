@@ -47,7 +47,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/SpellChecker.h>
 #include <WebCore/StyleProperties.h>
-#include <WebCore/TextIterator.h>
 #include <WebCore/UndoStep.h>
 #include <WebCore/UserTypingGestureIndicator.h>
 #include <wtf/NeverDestroyed.h>

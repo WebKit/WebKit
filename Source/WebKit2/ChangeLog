@@ -1,3 +1,21 @@
+2014-03-02  Darin Adler  <darin@apple.com>
+
+        Change public text iterator API implementations to not depend on 16-bit character pointers
+        https://bugs.webkit.org/show_bug.cgi?id=129566
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebTextIterator.mm:
+        (-[WKDOMTextIterator initWithRange:]): Use make_unique instead of adoptPtr.
+        (-[WKDOMTextIterator advance]): Clear out the upconverted text since we are moving on to the
+        next text.
+        (-[WKDOMTextIterator currentTextPointer]): Upconvert if we have 8-bit text.
+        (-[WKDOMTextIterator currentTextLength]): Call TextIterator::text().length() since we will
+        probably be removing TextIterator::length eventually.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp: Removed unneded include of TextIterator.h.
+        * WebProcess/WebPage/WebPage.cpp: Ditto.
+
 2014-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make impossible to build with <webkit2/webkit2.h> and <webkit2/webkit-web-extension.h> included together
