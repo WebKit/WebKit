@@ -1,6 +1,7 @@
 set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/battery"
+    "${WEBCORE_DIR}/Modules/encryptedmedia"
     "${WEBCORE_DIR}/Modules/gamepad"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
@@ -124,6 +125,7 @@ set(WebCore_INCLUDE_DIRECTORIES
 
 set(WebCore_IDL_INCLUDES
     Modules/battery
+    Modules/encryptedmedia
     Modules/gamepad
     Modules/geolocation
     Modules/indexeddb
@@ -2567,6 +2569,25 @@ set(WebCore_LIBRARIES
     JavaScriptCore
     WTF
 )
+
+if (ENABLE_ENCRYPTED_MEDIA OR ENABLE_ENCRYPTED_MEDIA_V2)
+    list(APPEND WebCore_SOURCES
+        Modules/encryptedmedia/CDM.cpp
+        Modules/encryptedmedia/MediaKeyMessageEvent.cpp
+        Modules/encryptedmedia/MediaKeyNeededEvent.cpp
+        Modules/encryptedmedia/MediaKeys.cpp
+        Modules/encryptedmedia/MediaKeySession.cpp
+        html/MediaKeyEvent.cpp
+    )
+    list(APPEND WebCore_IDL_FILES
+        Modules/encryptedmedia/MediaKeyMessageEvent.idl
+        Modules/encryptedmedia/MediaKeyNeededEvent.idl
+        Modules/encryptedmedia/MediaKeySession.idl
+        Modules/encryptedmedia/MediaKeys.idl
+        html/MediaKeyEvent.idl
+        html/MediaKeyError.idl
+    )
+endif ()
 
 if (ENABLE_SQL_DATABASE)
     list(APPEND WebCore_SOURCES

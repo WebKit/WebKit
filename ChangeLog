@@ -1,3 +1,19 @@
+2014-03-02  Dirkjan Ochtman  <d.ochtman@activevideo.com>
+
+        Support ENABLE_ENCRYPTED_MEDIA in cmake builds
+        https://bugs.webkit.org/show_bug.cgi?id=129575
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsEfl.cmake:
+        Enabled ENABLE_ENCRYPTED_MEDIA{,_V2} usage.
+        * Source/cmake/OptionsGTK.cmake:
+        Enabled ENABLE_ENCRYPTED_MEDIA{,_V2} usage.
+        * Source/cmake/WebKitFeatures.cmake:
+        Enabled ENABLE_ENCRYPTED_MEDIA{,_V2} usage.
+        * Source/cmakeconfig.h.cmake:
+        Added ENABLE_ENCRYPTED_MEDIA{,_V2} flags.
+
 2014-02-27  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Enable support of X-Content-Type-Options: nosniff header for EFL
