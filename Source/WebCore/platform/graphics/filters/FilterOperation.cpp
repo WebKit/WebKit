@@ -59,9 +59,17 @@ PassRefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterO
     if (blendToPassthrough)
         return BasicColorMatrixFilterOperation::create(WebCore::blend(m_amount, passthroughAmount(), progress), m_type);
         
-    const BasicColorMatrixFilterOperation* fromOp = static_cast<const BasicColorMatrixFilterOperation*>(from);
+    const BasicColorMatrixFilterOperation* fromOp = toBasicColorMatrixFilterOperation(from);
     double fromAmount = fromOp ? fromOp->amount() : passthroughAmount();
     return BasicColorMatrixFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
+}
+
+inline bool BasicColorMatrixFilterOperation::operator==(const FilterOperation& o) const
+{
+    if (!isSameType(o))
+        return false;
+    const BasicColorMatrixFilterOperation& other = toBasicColorMatrixFilterOperation(o);
+    return m_amount == other.m_amount;
 }
 
 double BasicColorMatrixFilterOperation::passthroughAmount() const
@@ -87,9 +95,17 @@ PassRefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const F
     if (blendToPassthrough)
         return BasicComponentTransferFilterOperation::create(WebCore::blend(m_amount, passthroughAmount(), progress), m_type);
         
-    const BasicComponentTransferFilterOperation* fromOp = static_cast<const BasicComponentTransferFilterOperation*>(from);
+    const BasicComponentTransferFilterOperation* fromOp = toBasicComponentTransferFilterOperation(from);
     double fromAmount = fromOp ? fromOp->amount() : passthroughAmount();
     return BasicComponentTransferFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
+}
+
+inline bool BasicComponentTransferFilterOperation::operator==(const FilterOperation& o) const
+{
+    if (!isSameType(o))
+        return false;
+    const BasicComponentTransferFilterOperation& other = toBasicComponentTransferFilterOperation(o);
+    return m_amount == other.m_amount;
 }
 
 double BasicComponentTransferFilterOperation::passthroughAmount() const

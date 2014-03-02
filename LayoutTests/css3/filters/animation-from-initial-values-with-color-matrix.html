@@ -1,0 +1,56 @@
+<script>
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+
+var numExpectedAnimations = 4;
+
+document.addEventListener("webkitAnimationEnd", function () {
+    var r = document.getElementById("results");
+    r.innerHTML += "animation " + numExpectedAnimations + " finished<br>";
+    numExpectedAnimations--;
+    if (!numExpectedAnimations && window.testRunner)
+        window.testRunner.notifyDone();
+}, false);
+</script>
+<style>
+@-webkit-keyframes a {
+  from {}
+  to {
+    -webkit-filter: invert(0.9);
+  }
+}
+
+@-webkit-keyframes b {
+  from {}
+  to {
+    -webkit-filter: opacity(0.9);
+  }
+}
+
+@-webkit-keyframes c {
+  from {}
+  to {
+    -webkit-filter: sepia(0.9);
+  }
+}
+
+@-webkit-keyframes d {
+  from {}
+  to {
+    -webkit-filter: grayscale(0.9);
+  }
+}
+
+.anim {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-animation-duration: 0.1s;
+}
+</style>
+<div class="anim" style="-webkit-animation-name: a;"></div>
+<div class="anim" style="-webkit-animation-name: b;"></div>
+<div class="anim" style="-webkit-animation-name: c;"></div>
+<div class="anim" style="-webkit-animation-name: d;"></div>
+<div id="results"></div>

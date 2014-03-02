@@ -1,3 +1,13 @@
+2014-03-02  Dean Jackson  <dino@apple.com>
+
+        Add protected casting to FilterOperation classes.
+        https://bugs.webkit.org/show_bug.cgi?id=124062
+
+        Reviewed by Sam Weinig.
+
+        * css3/filters/animation-from-initial-values-with-color-matrix-expected.html: Added.
+        * css3/filters/animation-from-initial-values-with-color-matrix.html: Added.
+
 2014-03-02  Yoav Weiss  <yoav@yoav.ws>
 
         Fix srcset related bugs

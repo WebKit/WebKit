@@ -1,3 +1,26 @@
+2014-03-02  Dean Jackson  <dino@apple.com>
+
+        Add protected casting to FilterOperation classes.
+        https://bugs.webkit.org/show_bug.cgi?id=124062
+
+        Reviewed by Sam Weinig.
+
+        Use the type cast macro generators to produce some toFilterOperation-style
+        functions, and then use them in our PlatformCA filter code.
+
+        Test: css3/filters/animation-from-initial-values-with-color-matrix.html
+
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm: Use the toFilterOperation methods, in
+        some cases removing the unnecessary double cast.
+        (PlatformCAFilters::filterValueForOperation):
+        (PlatformCAFilters::colorMatrixValueForFilter):
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::BasicColorMatrixFilterOperation::blend):
+        (WebCore::BasicColorMatrixFilterOperation::operator==): Move this to the .cpp file so it can use the casting methods.
+        (WebCore::BasicComponentTransferFilterOperation::blend):
+        (WebCore::BasicComponentTransferFilterOperation::operator==): Ditto.
+        * platform/graphics/filters/FilterOperation.h: Add the casting macros.
+
 2014-03-02  Yoav Weiss  <yoav@yoav.ws>
 
         Fix srcset related bugs

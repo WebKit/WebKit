@@ -195,16 +195,10 @@ public:
     virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) override;
 
 private:
-    virtual bool operator==(const FilterOperation& o) const override
-    {
-        if (!isSameType(o))
-            return false;
-        const BasicColorMatrixFilterOperation* other = static_cast<const BasicColorMatrixFilterOperation*>(&o);
-        return m_amount == other->m_amount;
-    }
-    
+    virtual bool operator==(const FilterOperation&) const override;
+
     double passthroughAmount() const;
-    
+
     BasicColorMatrixFilterOperation(double amount, OperationType type)
         : FilterOperation(type)
         , m_amount(amount)
@@ -229,13 +223,7 @@ public:
     virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) override;
 
 private:
-    virtual bool operator==(const FilterOperation& o) const override
-    {
-        if (!isSameType(o))
-            return false;
-        const BasicComponentTransferFilterOperation* other = static_cast<const BasicComponentTransferFilterOperation*>(&o);
-        return m_amount == other->m_amount;
-    }
+    virtual bool operator==(const FilterOperation&) const override;
 
     double passthroughAmount() const;
 
@@ -320,10 +308,15 @@ private:
     Color m_color;
 };
 
-#define FILTER_OPERATION_CASTS(ToValueTypeName, predicate) \
+#define SIMPLE_FILTER_OPERATION_CASTS(ToValueTypeName, predicate) \
     TYPE_CASTS_BASE(ToValueTypeName, FilterOperation, operation, operation->type() == FilterOperation::predicate, operation.type() == FilterOperation::predicate)
 
-FILTER_OPERATION_CASTS(ReferenceFilterOperation, REFERENCE)
+SIMPLE_FILTER_OPERATION_CASTS(ReferenceFilterOperation, REFERENCE)
+SIMPLE_FILTER_OPERATION_CASTS(BlurFilterOperation, BLUR)
+SIMPLE_FILTER_OPERATION_CASTS(DropShadowFilterOperation, DROP_SHADOW)
+
+TYPE_CASTS_BASE(BasicColorMatrixFilterOperation, FilterOperation, operation, operation->type() == FilterOperation::GRAYSCALE || operation->type() == FilterOperation::SEPIA || operation->type() == FilterOperation::SATURATE || operation->type() == FilterOperation::HUE_ROTATE, operation.type() == FilterOperation::GRAYSCALE || operation.type() == FilterOperation::SEPIA || operation.type() == FilterOperation::SATURATE || operation.type() == FilterOperation::HUE_ROTATE)
+TYPE_CASTS_BASE(BasicComponentTransferFilterOperation, FilterOperation, operation, operation->type() == FilterOperation::INVERT || operation->type() == FilterOperation::BRIGHTNESS || operation->type() == FilterOperation::CONTRAST || operation->type() == FilterOperation::OPACITY, operation.type() == FilterOperation::INVERT || operation.type() == FilterOperation::BRIGHTNESS || operation.type() == FilterOperation::CONTRAST || operation.type() == FilterOperation::OPACITY)
 
 } // namespace WebCore
 
