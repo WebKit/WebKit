@@ -1,3 +1,30 @@
+2014-03-01  David Kilzer  <ddkilzer@apple.com>
+
+        Ensure keySplines is valid in SMIL animations
+        <http://webkit.org/b/129547>
+        <rdar://problem/15676128>
+
+        Reviewed by Darin Adler.
+
+        Merged from Blink (patch by Philip Rogers):
+        https://src.chromium.org/viewvc/blink?revision=156452&view=revision
+        http://crbug.com/276111
+
+            This patch fixes a crash in SMIL animations when keySplines are not
+            specified. The SMIL spec is clear on this:
+            http://www.w3.org/TR/2001/REC-smil-animation-20010904/#AnimFuncCalcMode
+            "If there are any errors in the keyTimes specification (bad values,
+            too many or too few values), the animation will have no effect."
+
+            This patch simply checks that keyTimes is not empty. Previously,
+            splinesCount was set to be m_keySplines.size() + 1 in
+            SVGAnimationElement.cpp; this patch changes splinesCount to be equal
+            to m_keySplines.size() to make the logic easier to follow and to
+            match other checks in SVGAnimationElement::startedActiveInterval.
+
+        * svg/animations/animate-keysplines-crash-expected.txt: Added.
+        * svg/animations/animate-keysplines-crash.html: Added.
+
 2014-03-01  Benjamin Poulain  <benjamin@webkit.org>
 
         Tighten minimumRegisterRequirements()
