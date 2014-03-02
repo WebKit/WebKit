@@ -1,3 +1,25 @@
+2014-03-02  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Updating some WebRTC and MediaStream LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=129442
+
+        Reviewed by Eric Carlson.
+
+        Due to changes in JavaScriptCore (in r163562), some LayoutTests in fast/mediastream needed to be updated:
+            - MediaStreamTrack.html: checking hasOwnProperty in __proto__ as well, until CustomGetter properties are
+            moved to the prototype chain.
+            - RTCIceCandidate.html and RTCSessionDescription.html: JSON.stringify are not considering properties in
+            __proto__, so remove this for now.
+
+        * fast/mediastream/MediaStreamTrack-expected.txt:
+        * fast/mediastream/MediaStreamTrack.html:
+        * fast/mediastream/RTCIceCandidate-expected.txt:
+        * fast/mediastream/RTCIceCandidate.html:
+        * fast/mediastream/RTCPeerConnection-have-local-answer.html: Removed. Other tests already test what this one was
+        testing
+        * fast/mediastream/RTCSessionDescription-expected.txt:
+        * fast/mediastream/RTCSessionDescription.html:
+
 2014-03-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r164929 and r164934.

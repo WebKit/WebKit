@@ -108,7 +108,10 @@
                 else
                     shouldBeEqualToString('states.sourceType', 'microphone');
                 for (var property in states) {
-                    if (states.hasOwnProperty(property))
+                    // When https://webkit.org/b/129375 is fixed, we have to remove
+                    // states.hasOwnProperty(property), because all the attributes
+                    // will be in the prototype chain.
+                    if (states.hasOwnProperty(property) || states.__proto__.hasOwnProperty(property))
                         debug("  states." + property + " = " + limitPrecision(states[property], 2));
                 }
             }

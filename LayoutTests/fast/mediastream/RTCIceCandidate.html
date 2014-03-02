@@ -16,13 +16,6 @@
             shouldBe('candidate.sdpMid', '"bar"');
             shouldBe('candidate.sdpMLineIndex', '6');
 
-            shouldNotThrow('initializer = JSON.parse(JSON.stringify(candidate));');
-
-            shouldNotThrow('candidate = new RTCIceCandidate(initializer);');
-            shouldBe('candidate.candidate', '"foo"');
-            shouldBe('candidate.sdpMid', '"bar"');
-            shouldBe('candidate.sdpMLineIndex', '6');
-
             shouldNotThrow('new RTCIceCandidate({});');
             shouldNotThrow('new RTCIceCandidate({candidate:"foo"});');
             shouldNotThrow('new RTCIceCandidate({sdpMid:"bar"});');
