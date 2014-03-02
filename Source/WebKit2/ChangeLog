@@ -1,3 +1,14 @@
+2014-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove the include dir of the C API from the WebKit2 pkg-config file
+        https://bugs.webkit.org/show_bug.cgi?id=129543
+
+        Reviewed by Martin Robinson.
+
+        We are not installing the C API headers anymore.
+
+        * webkit2gtk.pc.in:
+
 2014-03-01  Tim Horton  <timothy_horton@apple.com>
 
         Fix the Mac build.

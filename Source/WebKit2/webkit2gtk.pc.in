@@ -8,4 +8,4 @@ Description: Web content engine for GTK+
 Version: @VERSION@
 Requires: glib-2.0 gtk+-@GTK_API_VERSION@ libsoup-2.4 javascriptcoregtk-@WEBKITGTK_API_VERSION@
 Libs: -L${libdir} -lwebkit2gtk-@WEBKITGTK_API_VERSION@
-Cflags: -I${includedir}/webkitgtk-@WEBKITGTK_API_VERSION@ -I${includedir}/webkitgtk-@WEBKITGTK_API_VERSION@/webkit2
+Cflags: -I${includedir}/webkitgtk-@WEBKITGTK_API_VERSION@
