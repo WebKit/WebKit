@@ -1,3 +1,23 @@
+2014-03-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Pages using tiled compositing layers allocate too many tiles on zoom
+        https://bugs.webkit.org/show_bug.cgi?id=129471
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+        A few interesting changes here:
+        -Now that we do not use setExposedRect, we can pass the exposed area directly
+         to the drawing area since everything is now in content coordinates :)
+        -The scale is now converted to float before being compared to the Page's scaleFactor.
+         The page's scalefactor being a float, the comparison was failing most of the time.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setVisibleExtentContentRect):
+
 2014-03-02  Darin Adler  <darin@apple.com>
 
         Change public text iterator API implementations to not depend on 16-bit character pointers

@@ -108,22 +108,34 @@ IntRect ScrollView::actualVisibleContentRect() const
 
 IntRect ScrollView::visibleExtentContentRect() const
 {
-    NSScrollView *view = static_cast<NSScrollView *>(platformWidget());
+    if (NSScrollView *view = static_cast<NSScrollView *>(platformWidget())) {
+        CGRect r = CGRectZero;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        if ([view isKindOfClass:[NSScrollView class]])
+            r = [view documentVisibleExtent];
+        else {
+            r.origin = [view visibleRect].origin;
+            r.size = [view bounds].size;
+        }
 
-    CGRect r = CGRectZero;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if ([view isKindOfClass:[NSScrollView class]])
-        r = [view documentVisibleExtent];
-    else if (view) {
-        r.origin = [view visibleRect].origin;
-        r.size = [view bounds].size;
-    } else {
-        // FIXME: WebKit2 on iOS doesn't inform the WebProcess of the exposed area.
-        return IntRect(IntPoint(), contentsSize());
+        END_BLOCK_OBJC_EXCEPTIONS;
+        return enclosingIntRect(r);
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return enclosingIntRect(r);
+    const ScrollView* parent = this->parent();
+    if (!parent)
+        return m_visibleExtentContentRect;
+
+    IntRect parentViewExtentContentRect = parent->visibleExtentContentRect();
+    IntRect selfExtentContentRect = rootViewToContents(parentViewExtentContentRect);
+    selfExtentContentRect.intersect(boundsRect());
+    return selfExtentContentRect;
+}
+
+void ScrollView::setVisibleExtentContentRect(const IntRect& rect)
+{
+    ASSERT(!platformWidget());
+    m_visibleExtentContentRect = rect;
 }
 
 void ScrollView::setActualScrollPosition(const IntPoint& position)

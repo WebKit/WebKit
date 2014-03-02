@@ -75,6 +75,10 @@ private:
     virtual void setExposedRect(const WebCore::FloatRect&) override;
     virtual WebCore::FloatRect exposedRect() const override { return m_scrolledExposedRect; }
 
+#if PLATFORM(IOS)
+    virtual void setVisibleExtentContentRect(const WebCore::FloatRect&) override;
+#endif
+
     virtual void setCustomFixedPositionRect(const WebCore::FloatRect&) override;
 
     // WebCore::GraphicsLayerClient

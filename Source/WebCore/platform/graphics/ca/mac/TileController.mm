@@ -498,18 +498,28 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
     // FIXME: look at how far the document can scroll in each dimension.
     float coverageHorizontalSize = visibleRect.width();
     float coverageVerticalSize = visibleRect.height();
-    
+
+#if PLATFORM(IOS)
+    // FIXME: ViewUpdateDispatcher could do an amazing job at computing this (<rdar://problem/16205290>).
+    // In the meantime, just default to something good enough.
+    if (!largeVisibleRectChange) {
+        coverageHorizontalSize *= 1.5;
+        coverageVerticalSize *= 1.5;
+    }
+#else
     // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
     // These values were chosen because it's more common to have tall pages and to scroll vertically,
     // so we keep more tiles above and below the current area.
+
     if (m_tileCoverage & CoverageForHorizontalScrolling && !largeVisibleRectChange)
         coverageHorizontalSize *= 2;
 
     if (m_tileCoverage & CoverageForVerticalScrolling && !largeVisibleRectChange)
         coverageVerticalSize *= 3;
-    
+
     coverageVerticalSize += topMarginHeight() + bottomMarginHeight();
     coverageHorizontalSize += leftMarginWidth() + rightMarginWidth();
+#endif
 
     FloatRect coverageBounds = bounds();
     float coverageLeft = visibleRect.x() - (coverageHorizontalSize - visibleRect.width()) / 2;

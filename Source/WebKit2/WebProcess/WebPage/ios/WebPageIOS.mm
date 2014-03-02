@@ -1642,20 +1642,19 @@ void WebPage::viewportConfigurationChanged()
 
 void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
 {
-    double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), visibleContentRectUpdateInfo.scale()));
-
-    IntPoint scrollPosition = roundedIntPoint(visibleContentRectUpdateInfo.unobscuredRect().location());
-
     FloatRect exposedRect = visibleContentRectUpdateInfo.exposedRect();
-    exposedRect.scale(boundedScale);
-    m_drawingArea->setExposedRect(exposedRect);
+    m_drawingArea->setVisibleExtentContentRect(enclosingIntRect(exposedRect));
 
-    if (boundedScale != m_page->pageScaleFactor()) {
+    double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), visibleContentRectUpdateInfo.scale()));
+    float floatBoundedScale = boundedScale;
+    if (floatBoundedScale != m_page->pageScaleFactor()) {
         m_scaleWasSetByUIProcess = true;
-        m_page->setPageScaleFactor(boundedScale, scrollPosition);
+
+        IntPoint scrollPosition = roundedIntPoint(visibleContentRectUpdateInfo.unobscuredRect().location());
+        m_page->setPageScaleFactor(floatBoundedScale, scrollPosition);
         if (m_drawingArea->layerTreeHost())
             m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
-        send(Messages::WebPageProxy::PageScaleFactorDidChange(boundedScale));
+        send(Messages::WebPageProxy::PageScaleFactorDidChange(floatBoundedScale));
     }
 
     // FIXME: we should also update the frame view from unobscured rect. Altenatively, we can have it pull the values from ScrollView.

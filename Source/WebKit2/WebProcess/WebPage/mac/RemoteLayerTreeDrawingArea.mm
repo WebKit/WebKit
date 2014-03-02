@@ -246,6 +246,18 @@ void RemoteLayerTreeDrawingArea::setExposedRect(const FloatRect& exposedRect)
     updateScrolledExposedRect();
 }
 
+#if PLATFORM(IOS)
+void RemoteLayerTreeDrawingArea::setVisibleExtentContentRect(const FloatRect& visibleExtentContentRect)
+{
+    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
+    if (!frameView)
+        return;
+
+    frameView->setVisibleExtentContentRect(enclosingIntRect(visibleExtentContentRect));
+    scheduleCompositingLayerFlush();
+}
+#endif
+
 void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
 {
     FrameView* frameView = m_webPage->corePage()->mainFrame().view();

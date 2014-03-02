@@ -1,3 +1,44 @@
+2014-03-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Pages using tiled compositing layers allocate too many tiles on zoom
+        https://bugs.webkit.org/show_bug.cgi?id=129471
+
+        Reviewed by Simon Fraser.
+
+        A few issues with TileController were causing sublayers of the root layers
+        to tile incorrect surfaces on zoom.
+
+        First, the exposedRect API was not updating the sublayers. The layers go correctly
+        into tiling mode, but the tiles cover the full document instead of the visible area.
+
+        The other major issue was the margins being applied to the coverage size in document
+        coordinates. Since each margin is 512px, the total coverage size after zoom was
+        gigantic.
+
+        To solve this, this patch switch from the exposedRect API to the generic concept
+        of VisibleExtentContentRect introduced for iOS WebKit1.
+
+        * WebCore.exp.in:
+        * platform/ScrollView.h:
+        Define a VisibleExtentContentRect on the scrollview itself when there is no
+        platformWidget().
+        The case with inside frame is untested due to stability issues :(.
+        (see <rdar://problem/16199219>)
+
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::computeTileCoverageRect):
+        Remove the margin from the tile coverage.
+
+        On iOS, m_tileCoverage is always zero at the moment. Previously, the tile coverage
+        was artificially extended by the margins. With the margins removed, I temporarily added
+        a factor of 1.5.
+        ViewUpdateDispatcher has all the information to compute a great tile coverage, I will need
+        a follow up patch to fix that.
+
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::visibleExtentContentRect):
+        (WebCore::ScrollView::setVisibleExtentContentRect):
+
 2014-03-02  Darin Adler  <darin@apple.com>
 
         Sort Mac platform export files so they merge better
