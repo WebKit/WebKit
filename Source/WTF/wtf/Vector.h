@@ -30,7 +30,6 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ValueCheck.h>
 #include <wtf/VectorTraits.h>

@@ -1,3 +1,19 @@
+2014-03-02  Darin Adler  <darin@apple.com>
+
+        Cut down use of OwnPtr within WTF itself
+        https://bugs.webkit.org/show_bug.cgi?id=129567
+
+        Reviewed by Sam Weinig.
+
+        * wtf/RefCounted.h: Removed OwnPtr includes.
+
+        * wtf/StreamBuffer.h: Removed OwnPtr includes and switched to use
+        std::make_unique and std::unique_ptr instead.
+
+        * wtf/Threading.cpp: Removed OwnPtr includes.
+        * wtf/ThreadingPthreads.cpp: Ditto.
+        * wtf/Vector.h: Ditto.
+
 2014-02-26  Gavin Barraclough  <barraclough@apple.com>
 
         FastMalloc should use vm_page_shift intead of PAGE_SHIFT.

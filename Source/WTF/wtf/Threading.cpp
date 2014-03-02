@@ -25,8 +25,6 @@
 
 #include "config.h"
 #include "Threading.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 #include <string.h>
 
