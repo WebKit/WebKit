@@ -1,3 +1,18 @@
+2014-03-02  Dirk Schulze  <krit@webkit.org>
+
+        Remove path to non-existent SVG clip-path test from TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=129574
+
+        Reviewed by Simon Fraser.
+
+        The test was transformed to a ref test and moved to a different location.
+        It passes on all platforms now.
+
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2014-03-02  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Updating some WebRTC and MediaStream LayoutTests

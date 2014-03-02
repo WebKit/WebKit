@@ -561,7 +561,6 @@ webkit.org/b/120200 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-
 webkit.org/b/55126 media/video-aspect-ratio.html [ Failure Pass ]
 
 webkit.org/b/122481 svg/animations/svglengthlist-animation-3.html [ Failure Pass ]
-webkit.org/b/56561 svg/custom/clip-path-referencing-use2.svg [ Failure Pass ]
 webkit.org/b/62204 svg/custom/circular-marker-reference-4.svg [ Failure Pass ]
 
 webkit.org/b/89097 plugins/plugin-initiate-popup-window.html [ Failure Pass ]

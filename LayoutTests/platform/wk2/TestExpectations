@@ -505,7 +505,6 @@ platform/mac/fast/loader/non-html-load-event.html
 plugins/embed-attributes-style.html
 plugins/plugin-initiate-popup-window.html
 storage/websql/open-database-while-transaction-in-progress.html
-svg/custom/clip-path-referencing-use2.svg
 svg/hixie/cascade/002.xml
 tables/mozilla_expected_failures/bugs/bug8499.html
 transitions/font-family-during-transition.html

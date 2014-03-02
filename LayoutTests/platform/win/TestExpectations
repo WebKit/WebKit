@@ -416,9 +416,6 @@ fast/workers/storage/change-version-handle-reuse-sync.html
 # Sometimes fails http://webkit.org/b/49182
 animations/stop-animation-on-suspend.html
 
-# Spews a console message into the next test under Aero http://webkit.org/b/49945
-svg/custom/clip-path-referencing-use2.svg
-
 # Assertion failure http://webkit.org/b/52913
 transitions/transition-end-event-destroy-iframe.html
 
