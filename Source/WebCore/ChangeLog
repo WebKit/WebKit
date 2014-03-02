@@ -1,3 +1,18 @@
+2014-03-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r164929 and r164934.
+        http://trac.webkit.org/changeset/164929
+        http://trac.webkit.org/changeset/164934
+        https://bugs.webkit.org/show_bug.cgi?id=129570
+
+        Caused assertions on two srcset tests (Requested by ap on
+        #webkit).
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::isHTMLSpaceOrComma):
+        (WebCore::parseImagesWithScaleFromSrcsetAttribute):
+        (WebCore::bestFitSourceForImageAttributes):
+
 2014-03-01  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

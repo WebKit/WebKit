@@ -1,3 +1,21 @@
+2014-03-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r164929 and r164934.
+        http://trac.webkit.org/changeset/164929
+        http://trac.webkit.org/changeset/164934
+        https://bugs.webkit.org/show_bug.cgi?id=129570
+
+        Caused assertions on two srcset tests (Requested by ap on
+        #webkit).
+
+        * fast/hidpi/image-srcset-invalid-descriptor-expected.txt: Removed.
+        * fast/hidpi/image-srcset-invalid-descriptor.html: Removed.
+        * fast/hidpi/image-srcset-invalid-inputs-correct-src.html:
+        * fast/hidpi/image-srcset-src-selection-1x-both-expected.txt: Removed.
+        * fast/hidpi/image-srcset-src-selection-1x-both.html: Removed.
+        * fast/hidpi/resources/srcset-helper.js:
+        (runTest):
+
 2014-03-01  Filip Pizlo  <fpizlo@apple.com>
 
         This shouldn't be a layout test since it runs only under jsc. Moving it to JSC
