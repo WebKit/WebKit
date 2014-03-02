@@ -74,7 +74,7 @@ namespace WebCore {
     class SharedBuffer;
     class SubstituteResource;
 
-    typedef HashSet<RefPtr<ResourceLoader>> ResourceLoaderSet;
+    typedef HashMap<unsigned long, RefPtr<ResourceLoader>> ResourceLoaderMap;
     typedef Vector<ResourceResponse> ResponseVector;
 
     class DocumentLoader : public RefCounted<DocumentLoader>, private CachedRawResourceClient {
@@ -331,9 +331,9 @@ namespace WebCore {
         Ref<CachedResourceLoader> m_cachedResourceLoader;
 
         CachedResourceHandle<CachedRawResource> m_mainResource;
-        ResourceLoaderSet m_subresourceLoaders;
-        ResourceLoaderSet m_multipartSubresourceLoaders;
-        ResourceLoaderSet m_plugInStreamLoaders;
+        ResourceLoaderMap m_subresourceLoaders;
+        ResourceLoaderMap m_multipartSubresourceLoaders;
+        ResourceLoaderMap m_plugInStreamLoaders;
         
         mutable DocumentWriter m_writer;
 

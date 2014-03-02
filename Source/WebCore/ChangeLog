@@ -1,3 +1,39 @@
+2014-03-02  Brian Burg  <bburg@apple.com>
+
+        DocumentLoader should keep maps of ResourceLoaders instead of sets
+        https://bugs.webkit.org/show_bug.cgi?id=129388
+
+        Reviewed by Darin Adler.
+
+        For web replay, we need to be able to pull a ResourceLoader instance by
+        identifier from the DocumentLoader. This is easy to do if we convert
+        ResourceLoaderSet to ResourceLoaderMap, keyed by the loader's identifier.
+
+        Added assertions whenever adding or removing from the map to ensure
+        that we don't try to add duplicates or resources with zero identifiers.
+
+        No new tests required. No functionality was added.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::cancelAll):
+        (WebCore::setAllDefersLoading):
+        (WebCore::areAllLoadersPageCacheAcceptable):
+        (WebCore::DocumentLoader::addSubresourceLoader):
+        (WebCore::DocumentLoader::removeSubresourceLoader):
+        (WebCore::DocumentLoader::addPlugInStreamLoader):
+        (WebCore::DocumentLoader::removePlugInStreamLoader):
+        (WebCore::DocumentLoader::subresourceLoaderFinishedLoadingOnePart):
+        * loader/DocumentLoader.h:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::create): Only add the loader
+        to the document loader's map if it initialized successfully.
+        The old code was probably leaking resource loaders that failed to
+        initialize.
+
+        * loader/mac/DocumentLoaderMac.cpp:
+        (WebCore::scheduleAll):
+        (WebCore::unscheduleAll):
+
 2014-03-02  Dirkjan Ochtman  <d.ochtman@activevideo.com>
 
         Support ENABLE_ENCRYPTED_MEDIA in cmake builds
