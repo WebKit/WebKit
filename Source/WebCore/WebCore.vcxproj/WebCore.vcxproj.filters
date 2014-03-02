@@ -8120,6 +8120,9 @@
     <ClInclude Include="..\platform\UserActivity.h">
       <Filter>platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\HysteresisActivity.h">
+      <Filter>platform</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\UUID.h">
       <Filter>platform</Filter>
     </ClInclude>

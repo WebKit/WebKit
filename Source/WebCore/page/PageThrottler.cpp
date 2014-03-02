@@ -35,34 +35,25 @@
 
 namespace WebCore {
 
-static const double kThrottleHysteresisSeconds = 2.0;
-
 PageThrottler::PageThrottler(Page& page, ViewState::Flags viewState)
     : m_page(page)
     , m_viewState(viewState)
-    , m_throttleState(PageNotThrottledState)
-    , m_throttleHysteresisTimer(this, &PageThrottler::throttleHysteresisTimerFired)
     , m_weakPtrFactory(this)
+    , m_hysteresis(*this)
+    , m_activity("Page is active.")
     , m_activityCount(0)
-    , m_visuallyNonIdle("Page is not visually idle.")
-    , m_pageActivity("Page is active.")
 {
-    m_pageActivity.increment();
-
-    setIsVisuallyIdle(viewState & ViewState::IsVisuallyIdle);
-}
-
-PageThrottler::~PageThrottler()
-{
-    m_page.setTimerThrottlingEnabled(false);
-
-    if (m_throttleState != PageThrottledState)
-        m_pageActivity.decrement();
+    if (m_viewState & ViewState::IsVisuallyIdle)
+        m_page.setTimerThrottlingEnabled(true);
+    else
+        m_hysteresis.start();
 }
 
 void PageThrottler::hiddenPageDOMTimerThrottlingStateChanged()
 {
-    m_page.setTimerThrottlingEnabled(m_throttleState != PageNotThrottledState);
+    // If timer throttling is enabled, this will temporarily disable it.
+    // After a timeout it will be reenabled, rereading the setting.
+    m_hysteresis.impulse();
 }
 
 std::unique_ptr<PageActivityAssertionToken> PageThrottler::mediaActivityToken()
@@ -75,27 +66,24 @@ std::unique_ptr<PageActivityAssertionToken> PageThrottler::pageLoadActivityToken
     return std::make_unique<PageActivityAssertionToken>(*this);
 }
 
-void PageThrottler::throttlePage()
+void PageThrottler::incrementActivityCount()
 {
-    m_throttleState = PageThrottledState;
-
-    m_pageActivity.decrement();
-
-    m_page.setTimerThrottlingEnabled(true);
+    ++m_activityCount;
+    updateHysteresis();
 }
 
-void PageThrottler::unthrottlePage()
+void PageThrottler::decrementActivityCount()
 {
-    PageThrottleState oldState = m_throttleState;
-    m_throttleState = PageNotThrottledState;
+    --m_activityCount;
+    updateHysteresis();
+}
 
-    if (oldState == PageNotThrottledState)
-        return;
-
-    if (oldState == PageThrottledState)
-        m_pageActivity.increment();
-    
-    m_page.setTimerThrottlingEnabled(false);
+void PageThrottler::updateHysteresis()
+{
+    if (m_activityCount || !(m_viewState & ViewState::IsVisuallyIdle))
+        m_hysteresis.start();
+    else
+        m_hysteresis.stop();
 }
 
 void PageThrottler::setViewState(ViewState::Flags viewState)
@@ -103,88 +91,20 @@ void PageThrottler::setViewState(ViewState::Flags viewState)
     ViewState::Flags changed = m_viewState ^ viewState;
     m_viewState = viewState;
 
-    if (changed & ViewState::IsVisible)
-        setIsVisible(viewState & ViewState::IsVisible);
     if (changed & ViewState::IsVisuallyIdle)
-        setIsVisuallyIdle(viewState & ViewState::IsVisuallyIdle);
+        updateHysteresis();
 }
 
-void PageThrottler::setIsVisible(bool isVisible)
+void PageThrottler::started()
 {
-    if (isVisible)
-        m_page.setTimerThrottlingEnabled(false);
-    else if (m_throttleState != PageNotThrottledState)
-        m_page.setTimerThrottlingEnabled(true);
+    m_page.setTimerThrottlingEnabled(false);
+    m_activity.beginActivity();
 }
 
-void PageThrottler::setIsVisuallyIdle(bool isVisuallyIdle)
+void PageThrottler::stopped()
 {
-    if (isVisuallyIdle) {
-        m_throttleState = PageWaitingToThrottleState;
-        startThrottleHysteresisTimer();
-        m_visuallyNonIdle.stop();
-    } else {
-        unthrottlePage();
-        stopThrottleHysteresisTimer();
-        m_visuallyNonIdle.start();
-    }
-}
-
-void PageThrottler::stopThrottleHysteresisTimer()
-{
-    m_throttleHysteresisTimer.stop();
-}
-
-void PageThrottler::reportInterestingEvent()
-{
-    if (m_throttleState == PageNotThrottledState)
-        return;
-    if (m_throttleState == PageThrottledState)
-        unthrottlePage();
-    m_throttleState = PageWaitingToThrottleState;
-    startThrottleHysteresisTimer();
-}
-
-void PageThrottler::startThrottleHysteresisTimer()
-{
-    if (m_throttleHysteresisTimer.isActive())
-        m_throttleHysteresisTimer.stop();
-    if (!m_activityCount)
-        m_throttleHysteresisTimer.startOneShot(kThrottleHysteresisSeconds);
-}
-
-void PageThrottler::throttleHysteresisTimerFired(Timer<PageThrottler>&)
-{
-    ASSERT(!m_activityCount);
-    throttlePage();
-}
-
-void PageThrottler::incrementActivityCount()
-{
-    // If we've already got events that block throttling we can return early
-    if (m_activityCount++)
-        return;
-
-    if (m_throttleState == PageNotThrottledState)
-        return;
-
-    if (m_throttleState == PageThrottledState)
-        unthrottlePage();
-
-    m_throttleState = PageWaitingToThrottleState;
-    stopThrottleHysteresisTimer();
-}
-
-void PageThrottler::decrementActivityCount()
-{
-    if (--m_activityCount)
-        return;
-
-    if (m_throttleState == PageNotThrottledState)
-        return;
-
-    ASSERT(m_throttleState == PageWaitingToThrottleState);
-    startThrottleHysteresisTimer();
+    m_page.setTimerThrottlingEnabled(true);
+    m_activity.endActivity();
 }
 
 }

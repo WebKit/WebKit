@@ -30,65 +30,23 @@ namespace WebCore {
 
 #if HAVE(NS_ACTIVITY)
 
-static const double kHysteresisSeconds = 5.0;
-
-UserActivity::UserActivity(const char* description)
-    : m_active(false)
-    , m_description([NSString stringWithUTF8String:description])
-    , m_timer(RunLoop::main(), this, &UserActivity::hysteresisTimerFired)
+UserActivity::Impl::Impl(const char* description)
+    : m_description([NSString stringWithUTF8String:description])
 {
-    ASSERT(isValid());
 }
 
-bool UserActivity::isValid()
+void UserActivity::Impl::beginActivity()
 {
-    // If count is non-zero then we should be holding an activity, and the hysteresis timer should not be running.
-    // Else if count is zero then:
-    //  (a) if we're holding an activity there should be an active timer to clear this,
-    //  (b) if we're not holding an activity there should be no active timer.
-    return m_active ? m_activity && !m_timer.isActive() : !!m_activity == m_timer.isActive();
-}
-
-void UserActivity::start()
-{
-    ASSERT(isValid());
-
-    if (m_active)
-        return;
-    m_active = true;
-
-    if (m_timer.isActive())
-        m_timer.stop();
     if (!m_activity) {
         NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
         m_activity = [[NSProcessInfo processInfo] beginActivityWithOptions:options reason:m_description.get()];
     }
-
-    ASSERT(isValid());
 }
 
-void UserActivity::stop()
+void UserActivity::Impl::endActivity()
 {
-    ASSERT(isValid());
-
-    if (!m_active)
-        return;
-    m_active = false;
-
-    m_timer.startOneShot(kHysteresisSeconds);
-
-    ASSERT(isValid());
-}
-
-void UserActivity::hysteresisTimerFired()
-{
-    ASSERT(isValid());
-
     [[NSProcessInfo processInfo] endActivity:m_activity.get()];
     m_activity.clear();
-    m_timer.stop();
-
-    ASSERT(isValid());
 }
 
 #endif

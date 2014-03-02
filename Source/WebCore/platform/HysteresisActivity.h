@@ -23,50 +23,68 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserActivity_h
-#define UserActivity_h
+#ifndef HysteresisActivity_h
+#define HysteresisActivity_h
 
-#include "HysteresisActivity.h"
-
-#if HAVE(NS_ACTIVITY)
-#include <wtf/RetainPtr.h>
-OBJC_CLASS NSString;
-#endif
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-// The UserActivity type is used to indicate to the operating system that
-// a user initiated or visible action is taking place, and as such that
-// resources should be allocated to the process accordingly.
-class UserActivity : public HysteresisActivity<UserActivity> {
+static const double DefaultHysteresisSeconds = 5.0;
+
+template<typename Delegate>
+class HysteresisActivity {
 public:
-    class Impl {
-    public:
-        explicit Impl(const char* description);
+    explicit HysteresisActivity(Delegate& delegate, double hysteresisSeconds = DefaultHysteresisSeconds)
+        : m_delegate(delegate)
+        , m_hysteresisSeconds(hysteresisSeconds)
+        , m_active(false)
+        , m_timer(RunLoop::main(), this, &HysteresisActivity<Delegate>::hysteresisTimerFired)
+    {
+    }
 
-        void beginActivity();
-        void endActivity();
+    void start()
+    {
+        if (m_active)
+            return;
+        m_active = true;
 
-#if HAVE(NS_ACTIVITY)
-    private:
-        RetainPtr<id> m_activity;
-        RetainPtr<NSString> m_description;
-#endif
-    };
+        if (m_timer.isActive())
+            m_timer.stop();
+        else
+            m_delegate.started();
+    }
 
-    explicit UserActivity(const char* description);
+    void stop()
+    {
+        if (!m_active)
+            return;
+        m_active = false;
+
+        m_timer.startOneShot(m_hysteresisSeconds);
+    }
+
+    void impulse()
+    {
+        if (!m_active) {
+            start();
+            stop();
+        }
+    }
 
 private:
-    friend class HysteresisActivity<UserActivity>;
+    void hysteresisTimerFired()
+    {
+        m_delegate.stopped();
+        m_timer.stop();
+    }
 
-    void started();
-    void stopped();
-
-    Impl m_impl;
+    Delegate& m_delegate;
+    double m_hysteresisSeconds;
+    bool m_active;
+    RunLoop::Timer<HysteresisActivity> m_timer;
 };
 
 } // namespace WebCore
 
-using WebCore::UserActivity;
-
-#endif // UserActivity_h
+#endif // HysteresisActivity_h

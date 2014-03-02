@@ -5491,7 +5491,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/ThreadGlobalData.cpp \
 	Source/WebCore/platform/ThreadGlobalData.h \
 	Source/WebCore/platform/UserActivity.cpp \
-	Source/WebCore/platform/UserActivity.h
+	Source/WebCore/platform/UserActivity.h \
+	Source/WebCore/platform/HysteresisActivity.h
 
 platform_sources += \
 	Source/WebCore/platform/animation/AnimationUtilities.h \

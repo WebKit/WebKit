@@ -2937,6 +2937,7 @@
 		861C2EA413FB4FDD00062ABB /* DocumentLoadTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 861C2EA313FB4FDD00062ABB /* DocumentLoadTiming.cpp */; };
 		861C2EA613FB4FFF00062ABB /* ResourceLoadTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 861C2EA513FB4FFF00062ABB /* ResourceLoadTiming.cpp */; };
 		862F129E18C1576F005C54AF /* CountedUserActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = 862F129D18C1572C005C54AF /* CountedUserActivity.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		862F12A018C1DD02005C54AF /* HysteresisActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = 862F129F18C1DCE4005C54AF /* HysteresisActivity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86512EDE154A2AEF00A90426 /* PerformanceResourceTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86512EDB154A2AEE00A90426 /* PerformanceResourceTiming.cpp */; };
 		86512EDF154A2AEF00A90426 /* PerformanceResourceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 86512EDC154A2AEF00A90426 /* PerformanceResourceTiming.h */; };
 		8678D0BB1878E891003ABDE6 /* ViewState.h in Headers */ = {isa = PBXBuildFile; fileRef = 8678D0BA1878E810003ABDE6 /* ViewState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9840,6 +9841,7 @@
 		861C2EA313FB4FDD00062ABB /* DocumentLoadTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoadTiming.cpp; sourceTree = "<group>"; };
 		861C2EA513FB4FFF00062ABB /* ResourceLoadTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadTiming.cpp; sourceTree = "<group>"; };
 		862F129D18C1572C005C54AF /* CountedUserActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CountedUserActivity.h; sourceTree = "<group>"; };
+		862F129F18C1DCE4005C54AF /* HysteresisActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HysteresisActivity.h; sourceTree = "<group>"; };
 		86512EDB154A2AEE00A90426 /* PerformanceResourceTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceResourceTiming.cpp; sourceTree = "<group>"; };
 		86512EDC154A2AEF00A90426 /* PerformanceResourceTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceResourceTiming.h; sourceTree = "<group>"; };
 		86512EDD154A2AEF00A90426 /* PerformanceResourceTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceResourceTiming.idl; sourceTree = "<group>"; };
@@ -20730,6 +20732,7 @@
 				D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */,
 				D630E2AB149BF344005B2F93 /* HistogramSupport.h */,
 				BC3BC29B0E91AB0F00835588 /* HostWindow.h */,
+				862F129F18C1DCE4005C54AF /* HysteresisActivity.h */,
 				1AE00D57182DAC8D00087DD7 /* KeyedCoding.h */,
 				521D46F711AEC9B100514613 /* KillRing.h */,
 				4306E4E514955543007F17AC /* KillRingNone.cpp */,
@@ -23771,6 +23774,7 @@
 				4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */,
 				A8EA7CB00A192B9C00A8EF5F /* HTMLPreElement.h in Headers */,
 				977B3873122883E900B81FF8 /* HTMLPreloadScanner.h in Headers */,
+				862F12A018C1DD02005C54AF /* HysteresisActivity.h in Headers */,
 				A43BF5991149290A00C643CA /* HTMLProgressElement.h in Headers */,
 				A8CFF7A30A156978000A4234 /* HTMLQuoteElement.h in Headers */,
 				A8D223FE16B52E4E00157288 /* HTMLResourcePreloader.h in Headers */,

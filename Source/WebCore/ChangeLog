@@ -1,3 +1,76 @@
+2014-03-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Split UserActivity, simplify PageThrottler
+        https://bugs.webkit.org/show_bug.cgi?id=129551
+
+        Reviewed by Darin Adler.
+
+        The class UserActivity currently implements two things – a hysteresis mechanism, and
+        an abstraction of NSActivity controlled by that mechanism. PageThrottler implements
+        its own hysteresis mechanism, which directly controls DOM timer throttling and also
+        controls a couple of UserActivities, giving a total of 3 separate hysteresis mechanisms,
+        layered two deep.
+
+        Split UserActivity into three, with HysteresisActivity implementing an abstract hysteresis
+        mechanism, UserActivity::Impl controlling the NSActivity, and then UserActivity combining
+        these two back together. The interface to UserActivity is unchanged.
+
+        Remove PageThrottler's bespoke hysteresis, replacing it with a use of HysteresisActivity.
+        Replace the two UserActivities with a single UserActivity::Impl, so there are no longer
+        layered hysteresis mechanisms.
+
+        * WebCore.exp.in:
+            - exports changed.
+        * WebCore.xcodeproj/project.pbxproj:
+            - added HysteresisActivity.h.
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - if the page starts visible, begin activity. If it starts hidden throttle DOM timers.
+        (WebCore::PageThrottler::hiddenPageDOMTimerThrottlingStateChanged):
+            - when the DOM timer throttling setting changes, make sure we update.
+        (WebCore::PageThrottler::incrementActivityCount):
+        (WebCore::PageThrottler::decrementActivityCount):
+            - when m_activityCount changes update the hysteresis state.
+        (WebCore::PageThrottler::updateHysteresis):
+        (WebCore::PageThrottler::setViewState):
+            - when IsVisuallyIdle changes update the hysteresis state.
+        (WebCore::PageThrottler::started):
+        (WebCore::PageThrottler::stopped):
+            - callbacks from HysteresisActivity, these control m_activity and DOM timer throttling.
+        * page/PageThrottler.h:
+        (WebCore::PageThrottler::didReceiveUserInput):
+        (WebCore::PageThrottler::pluginDidEvaluate):
+            - call impulse to temporarily enable the activity.
+        * platform/HysteresisActivity.h: Copied from Source/WebCore/platform/UserActivity.h.
+        (WebCore::HysteresisActivity::HysteresisActivity):
+            - constructor takes a delegate optionally a timeout.
+        (WebCore::HysteresisActivity::start):
+            - start activity immediately. If stopped, call started method on delegate. If in timeout period, cancel the timer.
+        (WebCore::HysteresisActivity::stop):
+            - stop activity after hysteresis. If started, initiate timeout period.
+        (WebCore::HysteresisActivity::impulse):
+            - ensure activity for at least the timeout period.
+        (WebCore::HysteresisActivity::hysteresisTimerFired):
+            - delayed stop - when the timer fires call stopped on the delegate.
+        * platform/UserActivity.cpp:
+        (WebCore::UserActivity::Impl::Impl):
+        (WebCore::UserActivity::Impl::beginActivity):
+        (WebCore::UserActivity::Impl::endActivity):
+            - nop implementation.
+        (WebCore::UserActivity::UserActivity):
+            - UserActivity maintains existing interface with hysteresis.
+        (WebCore::UserActivity::started):
+        (WebCore::UserActivity::stopped):
+            - callbacks from HysteresisTimer; forward to Impl.
+        * platform/UserActivity.h:
+        * platform/mac/UserActivityMac.mm:
+        (WebCore::UserActivity::Impl::Impl):
+            - UserActivity::Impl, abstraction for NSActivity without added hysteresis.
+        (WebCore::UserActivity::Impl::beginActivity):
+            - allocate NSActivity.
+        (WebCore::UserActivity::Impl::endActivity):
+            - release NSActivity.
+
 2014-03-02  Brian Burg  <bburg@apple.com>
 
         DocumentLoader should keep maps of ResourceLoaders instead of sets
