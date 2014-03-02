@@ -1,3 +1,13 @@
+2014-03-02  Darin Adler  <darin@apple.com>
+
+        Sort Mac platform export files so they merge better
+        https://bugs.webkit.org/show_bug.cgi?id=129581
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/sort-export-file: Added. Quickly whipped together script that sorts
+        Mac export files in a "canonical" order for this project.
+
 2014-02-28  Zalan Bujtas  <zalan@apple.com>
 
         Add hiDPI support to DumpRenderTree/WebKitTestRunner without the need of reloading the test case.

@@ -1,0 +1,245 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2014 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+
+use Cwd;
+use FindBin;
+use Getopt::Long;
+
+my $shouldPrintWarnings = 1;
+my $shouldShowHelp;
+my $shouldBeVerbose;
+
+my $getOptionsResult = GetOptions(
+    'h|help' => \$shouldShowHelp,
+    'w|warnings!' => \$shouldPrintWarnings,
+);
+
+if (!$getOptionsResult || $shouldShowHelp) {
+    print STDERR <<END;
+Usage: @{[ basename($0) ]} [options] [path/to/file.exp.in ...]
+  -h|--help           show this help message
+  -v|--verbose        include verbose output about progress
+  -w|--[no-]warnings  show or suppress warnings (default: show warnings)
+END
+    exit 1;
+}
+
+if (!scalar @ARGV) {
+    my $prefix = "$FindBin::RealBin/Source/";
+    $prefix =~ s|/Tools\/Scripts/|/| or die "ERROR: Script not in Tools/Scripts\n";
+    my $currentDirectory = cwd();
+    $prefix =~ s|^\Q$currentDirectory\E/||;
+    @ARGV = (
+        $prefix . "WebCore/WebCore.exp.in",
+        $prefix . "WebKit/mac/WebKit.exp",
+        $prefix . "WebKit/mac/WebKit.mac.exp",
+    );
+}
+
+my @conditionalStack = ();
+my %symbols = ();
+
+sub pushConditional($);
+sub negateTopConditional();
+sub popTopConditional();
+sub addSymbol($);
+sub serializeAll();
+
+my $sawError = 0;
+my $exitStatus = 0;
+
+sub sawError($)
+{
+    my $error = shift;
+
+    warn "ERROR: $error";
+    $sawError = 1;
+    $exitStatus = 1;
+}
+
+for my $exportFile (@ARGV) {
+    if ($exportFile !~ /\.exp(\.in)?$/) {
+        print STDERR "WARNING: Not an export file: $exportFile\n" if $shouldPrintWarnings;
+        next;
+    }
+
+    print STDERR "Sorting $exportFile\n";
+
+    $sawError = 0;
+    my $before = "";
+
+    @conditionalStack = ();
+    %symbols = ();
+
+    open IN, "<", $exportFile or die "Could not open $exportFile: $!";
+    while (my $line = <IN>) {
+        $before .= $line;
+        next if $line =~ /^\s*$/;
+        if ($line =~ /^\#if (.+)$/) {
+            pushConditional($1);
+            next;
+        }
+        if ($line =~ /^\#else$/) {
+            negateTopConditional() or sawError("#else without matching #if");
+            next;
+        }
+        if ($line =~ /^\#endif$/) {
+            popTopConditional() or sawError("#else without matching #if");
+            next;
+        }
+        if ($line =~ /^(\.?[A-Za-z0-9_\?]+)$/) {
+            addSymbol($1);
+            next;
+        }
+        chomp $line;
+        sawError("Could not parse: \"$line\"");
+    }
+    close IN;
+
+    next if $sawError;
+
+    my $after = serializeAll();
+
+    if ($before eq $after) {
+        print STDERR "Leaving $exportFile alone since it is already sorted\n" if $shouldBeVerbose;
+    } else {
+        print STDERR "Writing sorted $exportFile\n" if $shouldBeVerbose;
+        open OUT, ">", $exportFile or die "Could not overwrite $exportFile: $!";
+        print OUT $after;
+        close OUT;
+    }
+}
+
+exit $exitStatus;
+
+sub makeExpressionCanonical($)
+{
+    my $expression = shift;
+
+    # PLATFORM(MAC) and PLATFORM(IOS) are mutually exclusive.
+    $expression =~ s/!PLATFORM\(IOS\)/PLATFORM(MAC)/g;
+    $expression =~ s/!PLATFORM\(MAC\)/PLATFORM(IOS)/g;
+
+    return $expression;
+}
+
+sub negateExpression($)
+{
+    my $expression = shift;
+
+    return makeExpressionCanonical(substr $expression, 1) if $expression =~ /^\!/;
+    return makeExpressionCanonical("!" . $expression) unless $expression =~ /\s/;
+    return makeExpressionCanonical("!(" . $expression . ")");
+}
+
+sub pushConditional($)
+{
+    my $expression = shift;
+
+    push @conditionalStack, makeExpressionCanonical($expression);
+}
+
+sub negateTopConditional()
+{
+    return 0 if !scalar @conditionalStack;
+    push @conditionalStack, negateExpression(pop @conditionalStack);
+    return 1;
+}
+
+sub popTopConditional()
+{
+    return 0 if !scalar @conditionalStack;
+    pop @conditionalStack;
+    return 1;
+}
+
+sub addSymbol($)
+{
+    my $symbol = shift;
+
+    $symbols{serializeConditionalStack()}{$symbol} = 1;
+}
+
+sub serializeConditionalStack()
+{
+    return join ' && ', @conditionalStack;
+}
+
+sub compareExpressions
+{
+    my $mungedA = $a;
+    my $mungedB = $b;
+
+    # NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+    $mungedA =~ s/\bNSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES\b/000/g;
+    $mungedB =~ s/\bNSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES\b/000/g;
+
+    # NDEBUG
+    $mungedA =~ s/\bNDEBUG\b/001/g;
+    $mungedB =~ s/\bNDEBUG\b/001/g;
+
+    # ASSERT_DISABLED and LOG_DISABLED
+    $mungedA =~ s/(\w+)_DISABLED/002$1/g;
+    $mungedB =~ s/(\w+)_DISABLED/002$1/g;
+
+    # PLATFORM(MAC)
+    $mungedA =~ s/\bPLATFORM\(MAC/010/g;
+    $mungedB =~ s/\bPLATFORM\(MAC/010/g;
+
+    # PLATFORM(IOS)
+    $mungedA =~ s/\bPLATFORM\(IOS/011/g;
+    $mungedB =~ s/\bPLATFORM\(IOS/011/g;
+
+    # USE(X) sorts under X, not USE
+    $mungedA =~ s/\b(\w+)\((.+?)\)/$2:$1/g;
+    $mungedB =~ s/\b(\w+)\((.+?)\)/$2:$1/g;
+
+    # Negated version of a condition sorts just after that condition.
+    $mungedA =~ s/\!\((.+)\)/$1~/g;
+    $mungedA =~ s/\!(.+)/$1~/g;
+    $mungedB =~ s/\!\((.+)\)/$1~/g;
+    $mungedB =~ s/\!(.+)/$1~/g;
+
+    return $mungedA cmp $mungedB;
+}
+
+sub serializeAll()
+{
+    my $result = "";
+    foreach my $expression (sort compareExpressions keys %symbols) {
+        $result .= "\n" if $result ne "";
+        $result .= "#if $expression\n" if $expression ne "";
+        foreach my $symbol (sort keys %{$symbols{$expression}}) {
+            $result .= "$symbol\n";
+        }
+        $result .= "#endif\n" if $expression ne "";
+    }
+    return $result;
+}

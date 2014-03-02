@@ -6,7 +6,6 @@
 .objc_class_name_WebCoreStatistics
 .objc_class_name_WebDataSource
 .objc_class_name_WebDatabaseManager
-.objc_class_name_WebStorageManager
 .objc_class_name_WebDefaultPolicyDelegate
 .objc_class_name_WebDeviceOrientation
 .objc_class_name_WebDeviceOrientationProviderMock
@@ -28,6 +27,7 @@
 .objc_class_name_WebScriptCallFrame
 .objc_class_name_WebScriptWorld
 .objc_class_name_WebSecurityOrigin
+.objc_class_name_WebStorageManager
 .objc_class_name_WebTextIterator
 .objc_class_name_WebUserContentURLPattern
 .objc_class_name_WebView
@@ -52,12 +52,12 @@ _WebElementImageKey
 _WebElementImageRectKey
 _WebElementImageURLKey
 _WebElementIsSelectedKey
-_WebElementMediaURLKey
 _WebElementLinkIsLiveKey
 _WebElementLinkLabelKey
 _WebElementLinkTargetFrameKey
 _WebElementLinkTitleKey
 _WebElementLinkURLKey
+_WebElementMediaURLKey
 _WebFrameCanSuspendActiveDOMObjects
 _WebFrameHasPlugins
 _WebFrameHasUnloadListener
@@ -94,8 +94,8 @@ _WebReportError
 _WebScriptErrorDescriptionKey
 _WebScriptErrorDomain
 _WebScriptErrorLineNumberKey
-_WebStorageDirectoryDefaultsKey
 _WebStorageDidModifyOriginNotification
+_WebStorageDirectoryDefaultsKey
 _WebViewDidBeginEditingNotification
 _WebViewDidChangeNotification
 _WebViewDidChangeSelectionNotification

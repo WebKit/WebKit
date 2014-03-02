@@ -1,3 +1,12 @@
+2014-03-02  Darin Adler  <darin@apple.com>
+
+        Sort Mac platform export files so they merge better
+        https://bugs.webkit.org/show_bug.cgi?id=129581
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in: Ran the new sort-export-file on this.
+
 2014-03-02  Dean Jackson  <dino@apple.com>
 
         Add protected casting to FilterOperation classes.

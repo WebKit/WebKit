@@ -1,5 +1,14 @@
 2014-03-02  Darin Adler  <darin@apple.com>
 
+        Sort Mac platform export files so they merge better
+        https://bugs.webkit.org/show_bug.cgi?id=129581
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.exp: Ran the new sort-export-file on this.
+
+2014-03-02  Darin Adler  <darin@apple.com>
+
         Change public text iterator API implementations to not depend on 16-bit character pointers
         https://bugs.webkit.org/show_bug.cgi?id=129566
 
