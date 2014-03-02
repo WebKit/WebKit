@@ -92,13 +92,7 @@ static CompilationResult compileImpl(
     RefPtr<Plan> plan = adoptRef(
         new Plan(codeBlock, profiledDFGCodeBlock, mode, osrEntryBytecodeIndex, mustHandleValues));
     
-    bool enableConcurrentJIT;
-#if ENABLE(CONCURRENT_JIT)
-    enableConcurrentJIT = Options::enableConcurrentJIT();
-#else // ENABLE(CONCURRENT_JIT)
-    enableConcurrentJIT = false;
-#endif // ENABLE(CONCURRENT_JIT)
-    if (enableConcurrentJIT) {
+    if (Options::enableConcurrentJIT()) {
         Worklist* worklist = ensureGlobalWorklistFor(mode);
         plan->callback = callback;
         if (logCompilationChanges(mode))

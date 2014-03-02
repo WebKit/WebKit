@@ -1,3 +1,24 @@
+2014-03-02  Mark Lam  <mark.lam@apple.com>
+
+        Clean up use of Options::enableConcurrentJIT().
+        <https://webkit.org/b/129582>
+
+        Reviewed by Filip Pizlo.
+
+        DFG Driver was conditionally checking Options::enableConcurrentJIT()
+        only if ENABLE(CONCURRENT_JIT).  Otherwise, it bypasses it with a local
+        enableConcurrentJIT set to false.
+
+        Instead we should configure Options::enableConcurrentJIT() to be false
+        in Options.cpp if !ENABLE(CONCURRENT_JIT), and DFG Driver should always
+        check Options::enableConcurrentJIT().  This makes the code read a little
+        cleaner.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2014-03-01  Filip Pizlo  <fpizlo@apple.com>
 
         This shouldn't have been a layout test since it runs only under jsc. Moving it to JSC
