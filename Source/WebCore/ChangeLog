@@ -1,3 +1,33 @@
+2014-03-03  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Multimedia controls captions icon needs its own metaphor
+        https://bugs.webkit.org/show_bug.cgi?id=129091
+
+        Reviewed by Martin Robinson.
+
+        As we got the new icon created, we used it with a fallback to the
+        old icon to keep run-time compatibility.
+
+        No new tests, current ones suffice.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintMediaToggleClosedCaptionsButton):
+        Replicated RenderThemeGtk::paintMediaButton to check for the
+        necessary icon first and do the fallback to the old and stock
+        icons.
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::getStockIconForWidgetType): Added ASSERT for non-empty
+        icon name.
+        (WebCore::getStockSymbolicIconForWidgetType): Check for non empty
+        icon name before calling getStockIconForWidgetType. Fixed coding
+        style.
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::getStockIconForWidgetType): Added ASSERT for non-empty
+        icon name.
+        (WebCore::getStockSymbolicIconForWidgetType): Check for non empty
+        icon name before calling getStockIconForWidgetType. Fixed coding
+        style.
+
 2014-03-02  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a fallback path for compiling the remaining attribute checkers

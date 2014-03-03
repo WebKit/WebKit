@@ -62,7 +62,7 @@ namespace WebCore {
 // This would be a static method, except that forward declaring GType is tricky, since its
 // definition depends on including glib.h, negating the benefit of using a forward declaration.
 extern GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType, const char* iconName, gint direction, gint state, gint iconSize);
-extern GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* symbolicIconName, const char *fallbackStockIconName, gint direction, gint state, gint iconSize);
+extern GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* symbolicIconName, const char* fallbackStockIconName, gint direction, gint state, gint iconSize);
 
 #if ENABLE(VIDEO)
 static HTMLMediaElement* getMediaElementFromRenderObject(RenderObject* o)
@@ -566,7 +566,15 @@ bool RenderThemeGtk::paintMediaSeekForwardButton(RenderObject* renderObject, con
 #if ENABLE(VIDEO_TRACK)
 bool RenderThemeGtk::paintMediaToggleClosedCaptionsButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintMediaButton(renderObject, paintInfo.context, rect, "user-invisible-symbolic", GTK_STOCK_JUSTIFY_FILL);
+    IntRect iconRect(rect.x() + (rect.width() - m_mediaIconSize) / 2, rect.y() + (rect.height() - m_mediaIconSize) / 2,
+        m_mediaIconSize, m_mediaIconSize);
+    GRefPtr<GdkPixbuf> icon = getStockSymbolicIconForWidgetType(GTK_TYPE_CONTAINER, "media-view-subtitles-symbolic", nullptr,
+        gtkTextDirection(renderObject->style().direction()), gtkIconState(this, renderObject), iconRect.width());
+    if (!icon)
+        icon = getStockSymbolicIconForWidgetType(GTK_TYPE_CONTAINER, "user-invisible-symbolic", GTK_STOCK_JUSTIFY_FILL,
+            gtkTextDirection(renderObject->style().direction()), gtkIconState(this, renderObject), iconRect.width());
+    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
+    return true;
 }
 #endif
 

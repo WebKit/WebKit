@@ -654,6 +654,7 @@ bool RenderThemeGtk::paintInnerSpinButton(RenderObject* renderObject, const Pain
 GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
 {
     ASSERT(widgetType == GTK_TYPE_CONTAINER || widgetType == GTK_TYPE_ENTRY);
+    ASSERT(iconName);
 
     RenderThemeGtk* theme = static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get());
     GtkWidget* widget = widgetType == GTK_TYPE_CONTAINER ? GTK_WIDGET(theme->gtkContainer()) : theme->gtkEntry();
@@ -666,8 +667,11 @@ GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType widgetType, const char* iconN
                                               static_cast<GtkIconSize>(iconSize), 0, 0));
 }
 
-GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* symbolicIconName, const char *fallbackStockIconName, gint direction, gint state, gint iconSize)
+GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* symbolicIconName, const char* fallbackStockIconName, gint direction, gint state, gint iconSize)
 {
+    if (!fallbackStockIconName)
+        return nullptr;
+
     return getStockIconForWidgetType(widgetType, fallbackStockIconName, direction, state, iconSize);
 }
 
