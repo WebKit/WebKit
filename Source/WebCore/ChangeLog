@@ -1,3 +1,37 @@
+2014-03-01  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Crash in MediaPlayer::rateChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=129548
+
+        Reviewed by Darin Adler.
+
+        WTF::bind will automatically ref the parameters added to it. But MediaPlayerPrivate-
+        AVFoundation and -MediaSOurceAVFObjC are not RefCounted, so by the time the bound
+        function is called, the underlying objects may have been freed.
+
+        Replace or augment callOnMainThread arguments with lambdas and weakPtrs so that
+        if the argument has been destroyed, its methods will not be called.
+
+        Make the MediaPlayerPrivateAVFoundation::Notification function type a std::function:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::Notification::Notification):
+        (WebCore::MediaPlayerPrivateAVFoundation::Notification::function):
+
+        Make createWeakPtr() public so that it can be called from non-class methods:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createWeakPtr): 
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::createWeakPtr): 
+
+        Use a weakPtr to abort callOnMainThread() if the object has been destroyed:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CMTimebaseEffectiveRateChangedCallback):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::play):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pause):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance):
+
 2014-02-28  Jer Noble  <jer.noble@apple.com>
 
         [MSE] YouTube videos fail to play

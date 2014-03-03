@@ -77,6 +77,8 @@ public:
     void keyNeeded(Uint8Array*);
 #endif
 
+    WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
 private:
     // MediaPlayerPrivateInterface
     virtual void load(const String& url) override;
@@ -152,8 +154,6 @@ private:
 
     void ensureLayer();
     void destroyLayer();
-
-    WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
     // MediaPlayer Factory Methods
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);

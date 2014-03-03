@@ -119,7 +119,12 @@ namespace WebCore {
 static void CMTimebaseEffectiveRateChangedCallback(CMNotificationCenterRef, const void *listener, CFStringRef, const void *, CFTypeRef)
 {
     MediaPlayerPrivateMediaSourceAVFObjC* player = (MediaPlayerPrivateMediaSourceAVFObjC*)listener;
-    callOnMainThread(bind(&MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged, player));
+    auto weakThis = player->createWeakPtr();
+    callOnMainThread([weakThis]{
+        if (!weakThis)
+            return;
+        weakThis.get()->effectiveRateChanged();
+    });
 }
 
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
@@ -297,7 +302,12 @@ PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::play()
 {
-    callOnMainThread(WTF::bind(&MediaPlayerPrivateMediaSourceAVFObjC::playInternal, this));
+    auto weakThis = createWeakPtr();
+    callOnMainThread([weakThis]{
+        if (!weakThis)
+            return;
+        weakThis.get()->playInternal();
+    });
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::playInternal()
@@ -308,7 +318,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pause()
 {
-    callOnMainThread(WTF::bind(&MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal, this));
+    auto weakThis = createWeakPtr();
+    callOnMainThread([weakThis]{
+        if (!weakThis)
+            return;
+        weakThis.get()->pauseInternal();
+    });
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal()
@@ -388,7 +403,12 @@ double MediaPlayerPrivateMediaSourceAVFObjC::initialTime() const
 void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(double time, double negativeThreshold, double positiveThreshold)
 {
     m_seeking = true;
-    callOnMainThread(WTF::bind(&MediaPlayerPrivateMediaSourceAVFObjC::seekInternal, this, time, negativeThreshold, positiveThreshold));
+    auto weakThis = createWeakPtr();
+    callOnMainThread([weakThis, time, negativeThreshold, positiveThreshold]{
+        if (!weakThis)
+            return;
+        weakThis.get()->seekInternal(time, negativeThreshold, positiveThreshold);
+    });
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(double time, double negativeThreshold, double positiveThreshold)

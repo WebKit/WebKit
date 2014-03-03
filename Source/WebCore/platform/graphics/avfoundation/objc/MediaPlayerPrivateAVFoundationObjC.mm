@@ -2192,7 +2192,14 @@ NSArray* itemKVOProperties()
     if (function.isNull())
         return;
 
-    m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification(function));
+    auto weakThis = m_callback->createWeakPtr();
+    m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification([weakThis, function]{
+        // weakThis and function both refer to the same MediaPlayerPrivateAVFoundationObjC instance. If the WeakPtr has
+        // been cleared, the underlying object has been destroyed, and it is unsafe to call function().
+        if (!weakThis)
+            return;
+        function();
+    }));
 }
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)

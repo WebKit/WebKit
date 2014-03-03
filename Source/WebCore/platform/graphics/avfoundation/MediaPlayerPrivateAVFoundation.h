@@ -114,7 +114,7 @@ public:
         {
         }
 
-        Notification(WTF::Function<void ()> function)
+        Notification(std::function<void ()> function)
             : m_type(FunctionType)
             , m_time(0)
             , m_finished(false)
@@ -126,13 +126,13 @@ public:
         bool isValid() { return m_type != None; }
         double time() { return m_time; }
         bool finished() { return m_finished; }
-        Function<void ()>& function() { return m_function; }
+        std::function<void ()>& function() { return m_function; }
         
     private:
         Type m_type;
         double m_time;
         bool m_finished;
-        Function<void ()> m_function;
+        std::function<void ()> m_function;
     };
 
     void scheduleMainThreadNotification(Notification);

@@ -117,10 +117,10 @@ public:
     void playbackTargetIsWirelessDidChange();
 #endif
 
+    WeakPtr<MediaPlayerPrivateAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
 private:
     MediaPlayerPrivateAVFoundationObjC(MediaPlayer*);
-
-    WeakPtr<MediaPlayerPrivateAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
     // engine support
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
