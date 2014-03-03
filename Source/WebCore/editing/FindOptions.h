@@ -39,7 +39,7 @@ enum FindOptionFlag {
     StartInSelection = 1 << 5
 };
 
-typedef unsigned FindOptions;
+typedef unsigned char FindOptions;
 
 } // namespace WebCore
 

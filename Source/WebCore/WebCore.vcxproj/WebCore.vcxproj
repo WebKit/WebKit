@@ -20172,6 +20172,7 @@
     <ClInclude Include="..\editing\TextGranularity.h" />
     <ClInclude Include="..\editing\TextInsertionBaseCommand.h" />
     <ClInclude Include="..\editing\TextIterator.h" />
+    <ClInclude Include="..\editing\TextIteratorBehavior.h" />
     <ClInclude Include="..\editing\TypingCommand.h" />
     <ClInclude Include="..\editing\UndoStep.h" />
     <ClInclude Include="..\editing\UnlinkCommand.h" />

@@ -28,6 +28,7 @@
 
 #include "FindOptions.h"
 #include "Range.h"
+#include "TextIteratorBehavior.h"
 #include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
 
@@ -37,19 +38,6 @@ class InlineTextBox;
 class RenderText;
 class RenderTextFragment;
 
-enum TextIteratorBehavior {
-    TextIteratorDefaultBehavior = 0,
-    TextIteratorEmitsCharactersBetweenAllVisiblePositions = 1 << 0,
-    TextIteratorEntersTextControls = 1 << 1,
-    TextIteratorEmitsTextsWithoutTranscoding = 1 << 2,
-    TextIteratorIgnoresStyleVisibility = 1 << 3,
-    TextIteratorEmitsObjectReplacementCharacters = 1 << 4,
-    TextIteratorEmitsOriginalText = 1 << 5,
-    TextIteratorStopsOnFormControls = 1 << 6,
-    TextIteratorEmitsImageAltText = 1 << 7,
-    TextIteratorBehavesAsIfNodesFollowing = 1 << 8,
-};
-    
 // FIXME: Can't really answer this question correctly without knowing the white-space mode.
 // FIXME: Move this somewhere else in the editing directory. It doesn't belong here.
 inline bool isCollapsibleWhitespace(UChar c)
@@ -63,8 +51,10 @@ inline bool isCollapsibleWhitespace(UChar c)
     }
 }
 
-String plainText(const Range*, TextIteratorBehavior defaultBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+String plainText(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 PassRefPtr<Range> findPlainText(const Range*, const String&, FindOptions);
+
+// FIXME: Move this somewhere else in the editing directory. It doesn't belong here.
 bool isRendererReplacedElement(RenderObject*);
 
 class BitStack {
@@ -176,25 +166,18 @@ private:
     // Used when deciding whether to emit a "positioning" (e.g. newline) before any other content
     bool m_hasEmitted;
     
-    // Used by selection preservation code.  There should be one character emitted between every VisiblePosition
-    // in the Range used to create the TextIterator.
-    // FIXME <rdar://problem/6028818>: This functionality should eventually be phased out when we rewrite 
-    // moveParagraphs to not clone/destroy moved content.
     bool m_emitsCharactersBetweenAllVisiblePositions;
     bool m_entersTextControls;
-
-    // Used when we want texts for copying, pasting, and transposing.
     bool m_emitsTextWithoutTranscoding;
-    // Used in pasting inside password field.
     bool m_emitsOriginalText;
+
     // Used when deciding text fragment created by :first-letter should be looked into.
     bool m_handledFirstLetter;
-    // Used when the visibility of the style should not affect text gathering.
+
     bool m_ignoresStyleVisibility;
-    // Used when emitting the special 0xFFFC character is required. Children for replaced objects will be ignored.
     bool m_emitsObjectReplacementCharacters;
-    // Used when the iteration should stop if form controls are reached.
     bool m_stopsOnFormControls;
+
     // Used when m_stopsOnFormControls is set to determine if the iterator should keep advancing.
     bool m_shouldStop;
 
@@ -318,8 +301,8 @@ private:
     SimplifiedBackwardsTextIterator m_textIterator;
 };
 
-// Very similar to the TextIterator, except that the chunks of text returned are "well behaved",
-// meaning they never end split up a word.  This is useful for spellcheck or (perhaps one day) searching.
+// Very similar to the TextIterator, except that the chunks of text returned are "well behaved", meaning
+// they never split up a word. This is useful for spell checking and perhaps one day for searching as well.
 class WordAwareIterator {
 public:
     explicit WordAwareIterator(const Range*);

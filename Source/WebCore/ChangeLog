@@ -1,3 +1,27 @@
+2014-03-02  Darin Adler  <darin@apple.com>
+
+        Split TextIteratorBehavior into a separate header
+        https://bugs.webkit.org/show_bug.cgi?id=129578
+
+        Reviewed by Sam Weinig.
+
+        This is in preparation to greatly cut down on includes of TextIterator.h.
+
+        * GNUmakefile.list.am: Added new header.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+         * editing/FindOptions.h: Changed typedef to unsigned char;
+        there is no reason to store these in a 32-bit integer.
+
+         * editing/TextIterator.h: Added include of TextIteratorBehavior.h
+        and moved comments about the meanings of flag bits to their definition.
+
+        * editing/TextIteratorBehavior.h: Added.
+
+        * WebCore.exp.in: Updated for type changes.
+
 2014-03-02  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] Form controls handling

@@ -118,6 +118,13 @@ for my $exportFile (@ARGV) {
             addSymbol($1);
             next;
         }
+        if ($line =~ /^  \"(\.?[A-Za-z0-9_\?]+)\", referenced from:$/) { # For easy paste from build errors
+            addSymbol($1);
+            next;
+        }
+        if ($line =~ /^      .+ in .+\.o$/) { # For easy paste from build errors
+            next;
+        }
         chomp $line;
         sawError("Could not parse: \"$line\"");
     }

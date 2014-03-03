@@ -3158,6 +3158,7 @@ webcore_sources += \
 	Source/WebCore/editing/TextInsertionBaseCommand.h \
 	Source/WebCore/editing/TextIterator.cpp \
 	Source/WebCore/editing/TextIterator.h \
+	Source/WebCore/editing/TextIteratorBehavior.h \
 	Source/WebCore/editing/TypingCommand.cpp \
 	Source/WebCore/editing/TypingCommand.h \
 	Source/WebCore/editing/UndoStep.h \

@@ -10565,6 +10565,9 @@
     <ClInclude Include="..\editing\TextIterator.h">
       <Filter>editing</Filter>
     </ClInclude>
+    <ClInclude Include="..\editing\TextIteratorBehavior.h">
+      <Filter>editing</Filter>
+    </ClInclude>
     <ClInclude Include="..\editing\TypingCommand.h">
       <Filter>editing</Filter>
     </ClInclude>

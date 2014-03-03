@@ -1,5 +1,16 @@
 2014-03-02  Darin Adler  <darin@apple.com>
 
+        Split TextIteratorBehavior into a separate header
+        https://bugs.webkit.org/show_bug.cgi?id=129578
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/sort-export-file: Added special cases to the script so you can just paste link errors
+        from WebKit in and the script will add them in as unconditional exports. This makes the "add"
+        task easy, but the remove is still a bit of a pain.
+
+2014-03-02  Darin Adler  <darin@apple.com>
+
         Sort Mac platform export files so they merge better
         https://bugs.webkit.org/show_bug.cgi?id=129581
 
