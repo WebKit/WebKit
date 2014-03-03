@@ -95,7 +95,4 @@ webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ ImageOnlyFailure ]
 
 webkit.org/b/129327 inspector-protocol/indexeddb/basics.html [ Pass Failure ]
 
-# Apparent fallout from http://trac.webkit.org/changeset/164830
-webkit.org/b/129462 [ Release ] inspector-protocol/dom/dom-search-crash.html [ Skip ]
-
 webkit.org/b/129331 inspector-protocol/page/deny-X-FrameOption.html [ Pass Failure ]

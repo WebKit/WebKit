@@ -1,3 +1,14 @@
+2014-03-03  Brian Burg  <bburg@apple.com>
+
+        Inspector test dom/dom-search-crash.html times out in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=129462
+
+        Reviewed by Timothy Hatcher.
+
+        This test passes now, so stop skipping it.
+
+        * TestExpectations:
+
 2014-03-03  Antti Koivisto  <antti@apple.com>
 
         Find results on simple lines are not marked correctly
