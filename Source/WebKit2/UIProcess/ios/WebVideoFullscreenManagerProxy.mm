@@ -72,8 +72,15 @@ void WebVideoFullscreenManagerProxy::setVideoLayerID(GraphicsLayer::PlatformLaye
 {
     RemoteLayerTreeDrawingAreaProxy* remoteDrawingAreaProxy = toRemoteLayerTreeDrawingAreaProxy(m_page->drawingArea());
 
-    UIView *videoView = remoteDrawingAreaProxy->remoteLayerTreeHost().getLayer(videoLayerID);
-    setVideoLayer(videoView.layer);
+    if (videoLayerID) {
+        // Entering fullscreen.
+        UIView *videoView = remoteDrawingAreaProxy->remoteLayerTreeHost().getLayer(videoLayerID);
+        // Remove the UIView from its superlayer, so we can reparent the layer without problems.
+        [videoView removeFromSuperview];
+        
+        setVideoLayer(videoView.layer);
+    } else
+        setVideoLayer(nil);
     
     m_videoLayerID = videoLayerID;
     m_enterFullscreenAfterVideoLayerUnparentedTransaction = true;

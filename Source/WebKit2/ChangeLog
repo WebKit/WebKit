@@ -1,3 +1,16 @@
+2014-03-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash when going into video fullscreen on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129613
+
+        Reviewed by Dean Jackson.
+        
+        We shouldn't reparent a UIView's layer without unparenting
+        the view first.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerID):
+
 2014-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKit2WebExtension GIR can't be used in vala
