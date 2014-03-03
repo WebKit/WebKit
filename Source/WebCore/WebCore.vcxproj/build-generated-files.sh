@@ -61,5 +61,6 @@ cd "${BUILT_PRODUCTS_DIR}/DerivedSources"
 export WebCore="${XSRCROOT}"
 export FEATURE_DEFINES=`$SDKROOT/tools/scripts/feature-defines.sh $SDKROOT $3`
 export InspectorScripts="$XDSTROOT/include/private/JavaScriptCore"
+export WebReplayScripts="$XDSTROOT/include/private/JavaScriptCore"
 
 make -f "$WebCore/DerivedSources.make" -j ${NUMCPUS} || exit 1

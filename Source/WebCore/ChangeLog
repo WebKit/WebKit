@@ -1,3 +1,10 @@
+2014-03-03  Brian Burg  <bburg@apple.com>
+
+        Unreviewed build fix for Windows after r164986.
+
+        * WebCore.vcxproj/build-generated-files.sh: Export WebReplayScripts
+        so that the build system knows how to find CodeGeneratorReplayInputs.py.
+
 2014-03-03  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Overset computation is incorrect in some cases
