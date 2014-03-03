@@ -2939,13 +2939,16 @@ double CodeBlock::optimizationThresholdScalingFactor()
     ASSERT(instructionCount); // Make sure this is called only after we have an instruction stream; otherwise it'll just return the value of d, which makes no sense.
     
     double result = d + a * sqrt(instructionCount + b) + c * instructionCount;
+    
+    result *= codeTypeThresholdMultiplier();
+    
     if (Options::verboseOSR()) {
         dataLog(
             *this, ": instruction count is ", instructionCount,
             ", scaling execution counter by ", result, " * ", codeTypeThresholdMultiplier(),
             "\n");
     }
-    return result * codeTypeThresholdMultiplier();
+    return result;
 }
 
 static int32_t clipThreshold(double threshold)

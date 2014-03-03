@@ -1,3 +1,19 @@
+2014-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Debugging improvements from my gbemu investigation session
+        https://bugs.webkit.org/show_bug.cgi?id=129599
+
+        Reviewed by Mark Lam.
+        
+        Various improvements from when I was investigating bug 129411.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::optimizationThresholdScalingFactor): Make the dataLog() statement print the actual multiplier.
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionDescribe): Make describe() return a string rather than printing the string.
+        (functionDescribeArray): Like describe(), but prints details about arrays.
+
 2014-02-25  Andreas Kling  <akling@apple.com>
 
         JSDOMWindow::commonVM() should return a reference.

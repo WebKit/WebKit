@@ -218,6 +218,7 @@ static EncodedJSValue JSC_HOST_CALL functionGetElement(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDebug(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDescribe(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionDescribeArray(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState*);
@@ -343,6 +344,7 @@ protected:
         
         addFunction(vm, "debug", functionDebug, 1);
         addFunction(vm, "describe", functionDescribe, 1);
+        addFunction(vm, "describeArray", functionDescribeArray, 1);
         addFunction(vm, "print", functionPrint, 1);
         addFunction(vm, "quit", functionQuit, 0);
         addFunction(vm, "gc", functionGCAndSweep, 0);
@@ -462,8 +464,19 @@ EncodedJSValue JSC_HOST_CALL functionDebug(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionDescribe(ExecState* exec)
 {
-    fprintf(stderr, "--> %s\n", toCString(exec->argument(0)).data());
-    return JSValue::encode(jsUndefined());
+    if (exec->argumentCount() < 1)
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(jsString(exec, toString(exec->argument(0))));
+}
+
+EncodedJSValue JSC_HOST_CALL functionDescribeArray(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return JSValue::encode(jsUndefined());
+    JSObject* object = jsDynamicCast<JSObject*>(exec->argument(0));
+    if (!object)
+        return JSValue::encode(jsString(exec, "<not object>"));
+    return JSValue::encode(jsString(exec, toString("<Public length: ", object->getArrayLength(), "; vector length: ", object->getVectorLength(), ">")));
 }
 
 class FunctionJSCStackFunctor {
