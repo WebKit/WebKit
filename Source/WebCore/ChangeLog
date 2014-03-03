@@ -31989,31 +31989,6 @@
         * platform/nix/SharedTimerNix.cpp: Added.
         * platform/nix/TemporaryLinkStubs.cpp: Added.
 
-2013-12-03  Tamas Gergely  <gertom@inf.u-szeged.hu>
-
-        Correct broken build on efl port with --no-netscape-plugin-api
-        configuration.
-        https://bugs.webkit.org/show_bug.cgi?id=123997
-
-        Reviewed by Zoltan Herczeg.
-
-        Build failed on efl port with --no-netscape-plugin-api configuration
-        as ld did not found some methods. The configuration uses a minimal
-        empty implementation of the class, which is now extended with empty
-        method implementations.
-
-        * plugins/PluginPackageNone.cpp:
-        (WebCore::PluginPackage::createPackage):
-          Returns NULL pointer.
-        (WebCore::PluginPackage::hash):
-          Returns 0.
-        (WebCore::PluginPackage::equal):
-          Returns true (equals).
-        (WebCore::PluginPackage::compare):
-          Returns 0 (equals).
-        (WebCore::PluginPackage::~PluginPackage):
-          Do nothing.
-
 2013-12-02  Andreas Kling  <akling@apple.com>
 
         Avoid setting style twice for generated image content.
