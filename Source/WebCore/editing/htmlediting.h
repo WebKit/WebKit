@@ -44,7 +44,6 @@ class Range;
 class VisiblePosition;
 class VisibleSelection;
 
-
 // This file contains a set of helper functions used by the editing commands
 
 // -------------------------------------------------------------------------
@@ -214,9 +213,7 @@ Node* enclosingListChild(Node*);
 // -------------------------------------------------------------------------
 // Element
 // -------------------------------------------------------------------------
-    
-// Functions returning Element
-    
+
 PassRefPtr<Element> createTabSpanElement(Document&);
 PassRefPtr<Element> createTabSpanElement(Document&, PassRefPtr<Node> tabTextNode);
 PassRefPtr<Element> createTabSpanElement(Document&, const String& tabText);
@@ -225,24 +222,28 @@ PassRefPtr<Element> createBlockPlaceholderElement(Document&);
 Element* editableRootForPosition(const Position&, EditableType = ContentIsEditable);
 Element* unsplittableElementForPosition(const Position&);
 
-// Boolean functions on Element
-    
 bool canMergeLists(Element* firstList, Element* secondList);
     
 // -------------------------------------------------------------------------
 // VisibleSelection
 // -------------------------------------------------------------------------
 
-// Functions returning VisibleSelection
 VisibleSelection selectionForParagraphIteration(const VisibleSelection&);
 
 Position adjustedSelectionStartForStyleComputation(const VisibleSelection&);
     
+// -------------------------------------------------------------------------
 
-// Miscellaneous functions on Text
+// FIXME: This is only one of many definitions of whitespace, so the name is not specific enough.
 inline bool isWhitespace(UChar c)
 {
     return c == noBreakSpace || c == ' ' || c == '\n' || c == '\t';
+}
+
+// FIXME: Can't really answer this question correctly without knowing the white-space mode.
+inline bool deprecatedIsCollapsibleWhitespace(UChar c)
+{
+    return c == ' ' || c == '\n';
 }
 
 inline bool isAmbiguousBoundaryCharacter(UChar character)

@@ -540,15 +540,15 @@ bool TextIterator::handleTextNode()
         // This code aims to produce same results as handleTextBox() below so test results don't change. It does not make much logical sense.
         unsigned runEnd = m_offset;
         unsigned runStart = m_offset;
-        while (runEnd < str.length() && (isCollapsibleWhitespace(str[runEnd]) || str[runEnd] == '\t'))
+        while (runEnd < str.length() && (deprecatedIsCollapsibleWhitespace(str[runEnd]) || str[runEnd] == '\t'))
             ++runEnd;
-        bool addSpaceForPrevious = m_lastTextNodeEndedWithCollapsedSpace && m_lastCharacter && !isCollapsibleWhitespace(m_lastCharacter);
+        bool addSpaceForPrevious = m_lastTextNodeEndedWithCollapsedSpace && m_lastCharacter && !deprecatedIsCollapsibleWhitespace(m_lastCharacter);
         if (runEnd > runStart || addSpaceForPrevious) {
             if (runEnd == str.length()) {
                 m_lastTextNodeEndedWithCollapsedSpace = true;
                 return true;
             }
-            bool addSpaceForCurrent = runStart || (m_lastCharacter && !isCollapsibleWhitespace(m_lastCharacter));
+            bool addSpaceForCurrent = runStart || (m_lastCharacter && !deprecatedIsCollapsibleWhitespace(m_lastCharacter));
             if (addSpaceForCurrent || addSpaceForPrevious) {
                 emitCharacter(' ', m_node, 0, runStart, runEnd);
                 m_offset = runEnd;
@@ -556,7 +556,7 @@ bool TextIterator::handleTextNode()
             }
             runStart = runEnd;
         }
-        while (runEnd < str.length() && !isCollapsibleWhitespace(str[runEnd]))
+        while (runEnd < str.length() && !deprecatedIsCollapsibleWhitespace(str[runEnd]))
             ++runEnd;
         if (runStart < str.length())
             emitText(m_node, renderer, runStart, runEnd);
@@ -614,7 +614,7 @@ void TextIterator::handleTextBox()
         InlineTextBox* firstTextBox = renderer->containsReversedText() ? (m_sortedTextBoxes.isEmpty() ? 0 : m_sortedTextBoxes[0]) : renderer->firstTextBox();
         bool needSpace = m_lastTextNodeEndedWithCollapsedSpace
             || (m_textBox == firstTextBox && textBoxStart == runStart && runStart > 0);
-        if (needSpace && !isCollapsibleWhitespace(m_lastCharacter) && m_lastCharacter) {
+        if (needSpace && !deprecatedIsCollapsibleWhitespace(m_lastCharacter) && m_lastCharacter) {
             if (m_lastTextNode == m_node && runStart > 0 && str[runStart - 1] == ' ') {
                 unsigned spaceRunStart = runStart - 1;
                 while (spaceRunStart > 0 && str[spaceRunStart - 1] == ' ')

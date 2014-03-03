@@ -98,18 +98,21 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TemporaryChange.h>
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(CSS_IMAGE_SET)
+#include "StyleCachedImageSet.h"
+#endif
+
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include "PlatformTouchEventIOS.h"
-#else
-#include "PlatformTouchEvent.h"
 #endif
+
+#if ENABLE(TOUCH_EVENTS)
 #include "TouchEvent.h"
 #include "TouchList.h"
 #endif
 
-#if ENABLE(CSS_IMAGE_SET)
-#include "StyleCachedImageSet.h"
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+#include "PlatformTouchEvent.h"
 #endif
 
 namespace WebCore {

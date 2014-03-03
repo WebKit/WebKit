@@ -43,6 +43,7 @@
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "Text.h"
+#include "TextIterator.h"
 #include "TextNodeTraversal.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"

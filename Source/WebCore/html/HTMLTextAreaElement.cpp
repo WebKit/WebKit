@@ -47,6 +47,7 @@
 #include "Text.h"
 #include "TextBreakIterator.h"
 #include "TextControlInnerElements.h"
+#include "TextIterator.h"
 #include "TextNodeTraversal.h"
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>

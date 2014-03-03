@@ -38,19 +38,6 @@ class InlineTextBox;
 class RenderText;
 class RenderTextFragment;
 
-// FIXME: Can't really answer this question correctly without knowing the white-space mode.
-// FIXME: Move this somewhere else in the editing directory. It doesn't belong here.
-inline bool isCollapsibleWhitespace(UChar c)
-{
-    switch (c) {
-        case ' ':
-        case '\n':
-            return true;
-        default:
-            return false;
-    }
-}
-
 String plainText(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 PassRefPtr<Range> findPlainText(const Range*, const String&, FindOptions);
 

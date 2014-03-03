@@ -2499,7 +2499,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
             }
         }
 
-        int currentTextLength = it.length();
+        int currentTextLength = it.text().length();
         if (!currentTextLength)
             continue;
 

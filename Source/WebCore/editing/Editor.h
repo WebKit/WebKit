@@ -37,7 +37,7 @@
 #include "FindOptions.h"
 #include "FrameSelection.h"
 #include "TextChecking.h"
-#include "TextIterator.h"
+#include "TextIteratorBehavior.h"
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
 

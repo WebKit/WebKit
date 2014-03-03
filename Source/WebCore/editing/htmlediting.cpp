@@ -49,6 +49,7 @@
 #include "RenderElement.h"
 #include "ShadowRoot.h"
 #include "Text.h"
+#include "TextIterator.h"
 #include "VisibleUnits.h"
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>

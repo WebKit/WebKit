@@ -1570,6 +1570,8 @@ Node* Range::firstNode() const
         return 0;
     if (m_start.container()->offsetInCharacters())
         return m_start.container();
+    // FIXME: A renderer-based rule is completely out of place here.
+    // For one thing, the renderer could be out of date if the DOM was recently changed.
     if (isRendererReplacedElement(m_start.container()->renderer()))
         return m_start.container();
     if (Node* child = m_start.container()->childNode(m_start.offset()))

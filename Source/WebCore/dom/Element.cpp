@@ -73,6 +73,7 @@
 #include "Settings.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
+#include "TextIterator.h"
 #include "VoidCallback.h"
 #include "WheelEvent.h"
 #include "XMLNSNames.h"

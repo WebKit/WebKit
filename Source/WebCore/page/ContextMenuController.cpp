@@ -718,9 +718,9 @@ static bool selectionContainsPossibleWord(Frame* frame)
 {
     // Current algorithm: look for a character that's not just a separator.
     for (TextIterator it(frame->selection().toNormalizedRange().get()); !it.atEnd(); it.advance()) {
-        int length = it.length();
+        int length = it.text().length();
         for (int i = 0; i < length; ++i) {
-            if (!(U_GET_GC_MASK(it.characterAt(i)) & U_GC_Z_MASK))
+            if (!(U_GET_GC_MASK(it.text()[i]) & U_GC_Z_MASK))
                 return true;
         }
     }

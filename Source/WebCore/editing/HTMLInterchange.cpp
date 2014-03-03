@@ -30,6 +30,7 @@
 #include "RenderText.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "htmlediting.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -50,10 +51,10 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
     unsigned consumed = 0;
     while (i < in.length()) {
         consumed = 1;
-        if (isCollapsibleWhitespace(in[i])) {
+        if (deprecatedIsCollapsibleWhitespace(in[i])) {
             // count number of adjoining spaces
             unsigned j = i + 1;
-            while (j < in.length() && isCollapsibleWhitespace(in[j]))
+            while (j < in.length() && deprecatedIsCollapsibleWhitespace(in[j]))
                 j++;
             unsigned count = j - i;
             consumed = count;

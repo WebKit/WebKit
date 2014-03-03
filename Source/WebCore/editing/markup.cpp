@@ -54,6 +54,7 @@
 #include "RenderBlock.h"
 #include "Settings.h"
 #include "StyleProperties.h"
+#include "TextIterator.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"

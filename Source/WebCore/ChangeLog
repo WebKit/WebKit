@@ -1,3 +1,93 @@
+2014-03-02  Darin Adler  <darin@apple.com>
+
+        Streamline use of TextIterator, cutting down includes and use of soon-to-be-deleted functions
+        https://bugs.webkit.org/show_bug.cgi?id=129592
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in: Re-sorted this file. Not sure how it got unsorted.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange): Call TextIterator::text
+        instead of TextIterator::length. Also removed unneeded special case for empty string
+        and exception code.
+        (WebCore::AccessibilityObject::lengthForVisiblePositionRange): Ditto.
+
+        * accessibility/AccessibilityObject.h: Include TextIteratorBehavior.h instead of
+        TextIterator.h.
+
+        * accessibility/AccessibilityRenderObject.cpp: Include TextIterator.h.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm: Removed unneeded
+        TextIterator.h include.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]): Call
+        TextIterator::text instead of TextIterator::length.
+
+        * dom/Element.cpp: Include TextIterator.h.
+
+        * dom/Node.cpp: Include Range.h.
+
+        * dom/Position.cpp:
+        (WebCore::Position::isCandidate): Cast to RenderBlockFlow since that's what the
+        type check above does. Use a return statement instead of an else for better flow.
+        (WebCore::Position::leadingWhitespacePosition): Call
+        deprecatedIsCollapsibleWhitespace by its new name (newly deprecated).
+        (WebCore::Position::trailingWhitespacePosition): Ditto.
+
+        * dom/Range.cpp:
+        (WebCore::Range::firstNode): Added a FIXME about code that clearly does not
+        belong. This is something we really need to fix.
+
+        * editing/AlternativeTextController.cpp: Include TextIterator.h.
+        * editing/ApplyStyleCommand.cpp: Ditto.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::prepareWhitespaceAtPositionForSplit): Call
+        deprecatedIsCollapsibleWhitespace by its new name (newly deprecated).
+
+        * editing/Editor.h: Include TextIteratorBehavior.h instead of TextIterator.h.
+
+        * editing/HTMLInterchange.cpp:
+        (WebCore::convertHTMLTextToInterchangeFormat): Call
+        deprecatedIsCollapsibleWhitespace by its new name (newly deprecated).
+
+        * editing/SpellingCorrectionCommand.cpp: Include TextIterator.h.
+
+        * editing/TextIterator.h: Moved isCollapsibleWhitespace from here into
+        htmlediting.h and renamed it deprecatedIsCollapsibleWhitespace.
+
+        * editing/TextIterator.cpp: Call
+        deprecatedIsCollapsibleWhitespace by its new name (newly deprecated).
+
+        * editing/TypingCommand.cpp: Include TextIterator.h.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousBoundary): Call TextIterator::text instead of
+        TextIterator::length.
+        (WebCore::nextBoundary): Ditto.
+
+        * editing/htmlediting.cpp: Include TextIterator.h.
+
+        * editing/htmlediting.h: Removed non-helpful section comments.
+        Added FIXME about isWhitespace. Added deprecatedIsCollapsibleWhitespace,
+        formerly not deprecated and in TextIterator.h.
+
+        * editing/markup.cpp: Include TextIterator.h.
+
+        * html/HTMLTextAreaElement.cpp: Include TextIterator.h.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::selectionContainsPossibleWord): Call TextIterator::text
+        instead of TextIterator::length and TextIterator::characterAt.
+
+        * page/EventHandler.cpp: Sorted conditional includes alphabetically by condition.
+
+        * platform/mac/HTMLConverter.mm:
+        (+[WebHTMLConverter editingAttributedStringFromRange:]): Call TextIterator::text
+        instead of TextIterator::length.
+
 2014-03-02  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a fallback path for compiling the remaining attribute checkers
