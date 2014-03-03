@@ -1,3 +1,14 @@
+2014-03-02  Brian Burg  <bburg@apple.com>
+
+        Web Inspector model tests load wrong inspector page under WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=129460
+
+        Reviewed by Dan Bernstein.
+
+        Stop skipping inspector/test-harness-trivially-works.html.
+
+        * platform/wk2/TestExpectations:
+
 2014-03-02  Dean Jackson  <dino@apple.com>
 
         Add protected casting to FilterOperation classes.

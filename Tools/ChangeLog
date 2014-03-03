@@ -1,3 +1,19 @@
+2014-03-02  Brian Burg  <bburg@apple.com>
+
+        Web Inspector model tests load wrong inspector page under WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=129460
+
+        Reviewed by Dan Bernstein.
+
+        Don't unconditionally open the inspector before running an inspector test.
+        Instead, the test should request that the inspector open when it's ready.
+
+        This change was lost during a rebase, but is the same change made to
+        DumpRenderTree.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke): 
+
 2014-03-02  Darin Adler  <darin@apple.com>
 
         Split TextIteratorBehavior into a separate header
