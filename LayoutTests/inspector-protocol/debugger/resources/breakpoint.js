@@ -82,3 +82,12 @@ function callNotInlineable2()
     else
         log("FAIL: result is " + result + ", expecting 20003");
 }
+
+function debuggerStatement(x)
+{
+    log("In function with debugger statement");
+    debugger;
+    log("After debugger statement");
+    return x + 3;
+}
+

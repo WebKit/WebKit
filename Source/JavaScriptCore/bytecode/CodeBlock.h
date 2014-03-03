@@ -877,7 +877,7 @@ public:
 
     bool hasOpDebugForLineAndColumn(unsigned line, unsigned column);
 
-    bool hasDebuggerRequests() const { return !!m_debuggerRequests; }
+    bool hasDebuggerRequests() const { return m_debuggerRequests; }
     void* debuggerRequestsAddress() { return &m_debuggerRequests; }
 
     void addBreakpoint(unsigned numBreakpoints);
@@ -893,7 +893,11 @@ public:
     };
     void setSteppingMode(SteppingMode);
 
-    void clearDebuggerRequests() { m_debuggerRequests = 0; }
+    void clearDebuggerRequests()
+    {
+        m_steppingMode = SteppingModeDisabled;
+        m_numBreakpoints = 0;
+    }
     
     // FIXME: Make these remaining members private.
 
@@ -1027,8 +1031,9 @@ private:
     union {
         unsigned m_debuggerRequests;
         struct {
+            unsigned m_hasDebuggerStatement : 1;
             unsigned m_steppingMode : 1;
-            unsigned m_numBreakpoints : 31;
+            unsigned m_numBreakpoints : 30;
         };
     };
     WriteBarrier<ScriptExecutable> m_ownerExecutable;

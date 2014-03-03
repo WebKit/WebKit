@@ -1420,6 +1420,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
     , m_unlinkedCode(*other.m_vm, other.m_ownerExecutable.get(), other.m_unlinkedCode.get())
+    , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
     , m_ownerExecutable(*other.m_vm, other.m_ownerExecutable.get(), other.m_ownerExecutable.get())
@@ -1477,6 +1478,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
     , m_unlinkedCode(m_globalObject->vm(), ownerExecutable, unlinkedCodeBlock)
+    , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
     , m_ownerExecutable(m_globalObject->vm(), ownerExecutable, ownerExecutable)
@@ -1776,6 +1778,12 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             ASSERT(iter != m_symbolTable->end(locker));
             iter->value.prepareToWatch();
             instructions[i + 3].u.watchpointSet = iter->value.watchpointSet();
+            break;
+        }
+
+        case op_debug: {
+            if (pc[1].u.index == DidReachBreakpoint)
+                m_hasDebuggerStatement = true;
             break;
         }
 

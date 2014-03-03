@@ -1,5 +1,27 @@
 2014-03-03  Mark Lam  <mark.lam@apple.com>
 
+        Web Inspector: debugger statements do not break.
+        <https://webkit.org/b/129524>
+
+        Reviewed by Geoff Garen.
+
+        Since we no longer call op_debug hooks unless there is a debugger request
+        made on the CodeBlock, the op_debug for the debugger statement never gets
+        serviced.
+
+        With this fix, we check in the CodeBlock constructor if any debugger
+        statements are present.  If so, we set a m_hasDebuggerStatement flag that
+        causes the CodeBlock to show as having debugger requests.  Hence,
+        breaking at debugger statements is now restored.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasDebuggerRequests):
+        (JSC::CodeBlock::clearDebuggerRequests):
+
+2014-03-03  Mark Lam  <mark.lam@apple.com>
+
         ASSERTION FAILED: m_numBreakpoints >= numBreakpoints when deleting breakpoints.
         <https://webkit.org/b/129393>
 

@@ -1,3 +1,15 @@
+2014-03-03  Mark Lam  <mark.lam@apple.com>
+
+        Web Inspector: debugger statements do not break.
+        <https://webkit.org/b/129524>
+
+        Reviewed by Geoff Garen.
+
+        * inspector-protocol/debugger/debugger-statement-expected.txt: Added.
+        * inspector-protocol/debugger/debugger-statement.html: Added.
+        * inspector-protocol/debugger/resources/breakpoint.js:
+        (debuggerStatement):
+
 2014-03-03  Brian Burg  <bburg@apple.com>
 
         Inspector test dom/dom-search-crash.html times out in release builds
