@@ -127,7 +127,8 @@ bool TouchEventContext::isTouchEventContext() const
 #ifndef NDEBUG
 void TouchEventContext::checkReachability(TouchList* touchList) const
 {
-    for (size_t i = 0; i < touchList->length(); ++i)
+    size_t length = touchList->length();
+    for (size_t i = 0; i < length; ++i)
         ASSERT(isReachable(touchList->item(i)->target()->toNode()));
 }
 #endif

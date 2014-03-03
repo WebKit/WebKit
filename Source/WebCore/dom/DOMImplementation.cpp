@@ -269,7 +269,8 @@ bool DOMImplementation::isXMLMIMEType(const String& mimeType)
         return false;
 
     // Again, mimeType ends with '+xml', no need to check the validity of that substring.
-    for (size_t i = 0; i < mimeType.length() - 4; ++i) {
+    size_t mimeLength = mimeType.length();
+    for (size_t i = 0; i < mimeLength - 4; ++i) {
         if (!isValidXMLMIMETypeChar(mimeType[i]) && i != slashPosition)
             return false;
     }
