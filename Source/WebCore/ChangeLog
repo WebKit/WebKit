@@ -1,3 +1,43 @@
+2014-03-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a fallback path for compiling the remaining attribute checkers
+        https://bugs.webkit.org/show_bug.cgi?id=129580
+
+        Reviewed by Darin Adler.
+
+        The remaining attribute checkers appear to be less common than the simple value match.
+        This patch adds them to SelectorCompiler for completeness but no attempt is made at optimizing them,
+        they all default to function calls.
+
+        If the assumption that those selectors are not common turn out to be incorrect, we should see
+        the function calls in profiles and optimize them as needed.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::attributeValueMatches):
+        If we get anything but attribute match here, something has gone horribly wrong. Update the code
+        to fail if that were to happen.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        Add the missing match type to the selector fragment.
+
+        Begin, End, Contain cannot match an empty value per specification. We can test that at compile time
+        and fail immediately. See http://www.w3.org/TR/css3-selectors/#attribute-substrings
+
+        List has the extra requirement that a value containing a space does not match anything. It also cannot
+        match with an empty string. See http://www.w3.org/TR/css3-selectors/#attribute-representation
+
+        (WebCore::SelectorCompiler::attributeValueBeginsWith):
+        (WebCore::SelectorCompiler::attributeValueContains):
+        (WebCore::SelectorCompiler::attributeValueEndsWith):
+        (WebCore::SelectorCompiler::attributeValueMatchHyphenRule):
+        (WebCore::SelectorCompiler::attributeValueSpaceSeparetedListContains):
+        The slow fallbacks.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching):
+        A generic code generator making function call to match an attribute value.
+
 2014-02-25  Andreas Kling  <akling@apple.com>
 
         JSDOMWindow::commonVM() should return a reference.
