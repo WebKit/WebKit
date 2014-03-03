@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "CacheModel.h"
 #import "HistoryClient.h"
 #import "ProcessModel.h"
 #import "WKObject.h"
@@ -72,6 +73,9 @@
     _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());
     _context->setUsesNetworkProcess(true);
     _context->setProcessModel(WebKit::ProcessModelMultipleSecondaryProcesses);
+
+    // FIXME: Add a way to configure the cache model, see <rdar://problem/16206857>.
+    _context->setCacheModel(WebKit::CacheModelPrimaryWebBrowser);
 
     return self;
 }

@@ -1,3 +1,14 @@
+2014-03-02  Sam Weinig  <sam@webkit.org>
+
+        Page Cache is not enabled when using the modern WebKit2 API
+        https://bugs.webkit.org/show_bug.cgi?id=129585
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool initWithConfiguration:]):
+        Default to CacheModelPrimaryWebBrowser until there is a way to configure it.
+
 2014-03-02  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] Form controls handling
