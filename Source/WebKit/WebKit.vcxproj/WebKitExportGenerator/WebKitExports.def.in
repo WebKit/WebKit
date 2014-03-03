@@ -180,7 +180,7 @@ EXPORTS
         symbolWithPointer(?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z, ?cacheDOMStructure@WebCore@@YAPEAVStructure@JSC@@PEAVJSDOMGlobalObject@1@PEAV23@PEBUClassInfo@3@@Z)
         symbolWithPointer(?childItemWithTarget@HistoryItem@WebCore@@QBEPAV12@ABVString@WTF@@@Z, ?childItemWithTarget@HistoryItem@WebCore@@QEBAPEAV12@AEBVString@WTF@@@Z)
         symbolWithPointer(?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@AAVDocument@2@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z, ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@AEAVDocument@2@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z)
-        symbolWithPointer(?commonVM@JSDOMWindowBase@WebCore@@SAPAVVM@JSC@@XZ, ?commonVM@JSDOMWindowBase@WebCore@@SAPEAVVM@JSC@@XZ)
+        symbolWithPointer(?commonVM@JSDOMWindowBase@WebCore@@SAAAVVM@JSC@@XZ, ?commonVM@JSDOMWindowBase@WebCore@@SAAEAVVM@JSC@@XZ)
         symbolWithPointer(?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z, ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@AEBVString@4@@Z)
 #if USE(CF)
         symbolWithPointer(?createCFString@String@WTF@@QBE?AV?$RetainPtr@PBU__CFString@@@2@XZ, ?createCFString@String@WTF@@QEBA?AV?$RetainPtr@PEBU__CFString@@@2@XZ)

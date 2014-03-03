@@ -1,3 +1,11 @@
+2014-03-02  Andreas Kling  <akling@apple.com>
+
+        Blind Windows build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
+            Tweak JSDOMWindowBase::commonVM() return type to be a reference.
+
 2014-02-28  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Remove MailQuirksUserScript.js
