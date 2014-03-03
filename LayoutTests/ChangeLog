@@ -1,3 +1,16 @@
+2014-03-02  Timothy Hatcher  <timothy@apple.com>
+
+        Remove ASSERT in ~IDBRequest since it is firing during legitimate uses in Web Inspector.
+
+        Adding the ASSERT back is tracked by https://webkit.org/b/129593.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129328
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Remove skipped tests.
+        * inspector-protocol/model/probe-manager-add-remove-actions-expected.txt: Rebaselined.
+
 2014-03-02  Brian Burg  <bburg@apple.com>
 
         Web Inspector model tests load wrong inspector page under WebKitTestRunner

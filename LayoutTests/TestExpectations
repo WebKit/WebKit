@@ -95,9 +95,6 @@ webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ ImageOnlyFailure ]
 
 webkit.org/b/129327 inspector-protocol/indexeddb/basics.html [ Pass Failure ]
 
-# These assert in IndexedDB code very freqyently.
-webkit.org/b/129328 inspector-protocol/model [ Skip ]
-
 # Apparent fallout from http://trac.webkit.org/changeset/164830
 webkit.org/b/129462 [ Release ] inspector-protocol/dom/dom-search-crash.html [ Skip ]
 
