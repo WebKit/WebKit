@@ -1,3 +1,16 @@
+2014-03-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        [x86] Improve code generation of byte test
+        https://bugs.webkit.org/show_bug.cgi?id=129597
+
+        Reviewed by Geoffrey Garen.
+
+        When possible, test the 8 bit register to itself instead of comparing it
+        to a literal.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::test32):
+
 2014-03-03  Mark Lam  <mark.lam@apple.com>
 
         Web Inspector: debugger statements do not break.

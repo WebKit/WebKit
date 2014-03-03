@@ -1149,9 +1149,12 @@ public:
     {
         if (mask.m_value == -1)
             m_assembler.testl_rr(reg, reg);
-        else if (!(mask.m_value & ~0xff) && reg < X86Registers::esp) // Using esp and greater as a byte register yields the upper half of the 16 bit registers ax, cx, dx and bx, e.g. esp, register 4, is actually ah.
-            m_assembler.testb_i8r(mask.m_value, reg);
-        else
+        else if (!(mask.m_value & ~0xff) && reg < X86Registers::esp) { // Using esp and greater as a byte register yields the upper half of the 16 bit registers ax, cx, dx and bx, e.g. esp, register 4, is actually ah.
+            if (mask.m_value == 0xff)
+                m_assembler.testb_rr(reg, reg);
+            else
+                m_assembler.testb_i8r(mask.m_value, reg);
+        } else
             m_assembler.testl_i32r(mask.m_value, reg);
     }
 
