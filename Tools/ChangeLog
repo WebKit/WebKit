@@ -1,3 +1,10 @@
+2014-03-03  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Unreviewed. Update contact email.
+        https://bugs.webkit.org/show_bug.cgi?id=129610
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-03-02  Brian Burg  <bburg@apple.com>
 
         Web Inspector model tests load wrong inspector page under WebKitTestRunner
