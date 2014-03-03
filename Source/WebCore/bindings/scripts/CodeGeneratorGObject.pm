@@ -1552,7 +1552,6 @@ EOF
 
     print PRIVHEADER $text;
     print PRIVHEADER "#if ${conditionalString}\n" if $conditionalString;
-    print PRIVHEADER map { "#include \"$_\"\n" } sort keys(%hdrPropIncludes);
     print PRIVHEADER "\n";
     $text = << "EOF";
 namespace WebKit {

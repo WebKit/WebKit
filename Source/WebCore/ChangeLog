@@ -1,3 +1,15 @@
+2014-03-03  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] CodeGeneratorGObject.pm remove usage of undefined variable
+        https://bugs.webkit.org/show_bug.cgi?id=129602
+
+        Reviewed by Martin Robinson.
+
+        Remove usage of undefined variable hdrPropIncludes in CodeGeneratorGObject.pm
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (WriteData):
+
 2014-03-03  Brian Burg  <bburg@apple.com>
 
         Web Replay: upstream input storage, capture/replay machinery, and inspector domain
