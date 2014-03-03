@@ -48,7 +48,7 @@
 using namespace WebKit;
 
 static NSString* WKPopoverTableViewCellReuseIdentifier  = @"WKPopoverTableViewCellReuseIdentifier";
-static const double MinimumOptionFontSize = 12;
+static const CGFloat minimumOptionFontSize = 12;
 
 @interface UITableViewCell (Internal)
 - (CGRect)textRectForContentRect:(CGRect)contentRect;
@@ -82,16 +82,16 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     return [NSString stringWithFormat:@"%C%@%C", directionalFormattingCharacter, string, popDirectionalFormatting];
 }
 
-static float adjustedFontSize(double textWidth, UIFont *font, double initialFontSize, const Vector<WKOptionItem>& items)
+static CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSize, const Vector<WKOptionItem>& items)
 {
-    double adjustedSize = initialFontSize;
+    CGFloat adjustedSize = initialFontSize;
     for (size_t i = 0; i < items.size(); ++i) {
         const WKOptionItem& item = items[i];
         if (item.text.isEmpty())
             continue;
         
-        double actualFontSize = initialFontSize;
-        [(NSString *)item.text _legacy_sizeWithFont:font minFontSize:MinimumOptionFontSize actualFontSize:&actualFontSize forWidth:textWidth lineBreakMode:NSLineBreakByWordWrapping];
+        CGFloat actualFontSize = initialFontSize;
+        [(NSString *)item.text _legacy_sizeWithFont:font minFontSize:minimumOptionFontSize actualFontSize:&actualFontSize forWidth:textWidth lineBreakMode:NSLineBreakByWordWrapping];
         
         if (actualFontSize > 0 && actualFontSize < adjustedSize)
             adjustedSize = actualFontSize;

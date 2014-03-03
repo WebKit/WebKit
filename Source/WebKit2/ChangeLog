@@ -1,3 +1,10 @@
+2014-03-02  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the 32-bit build.
+
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (adjustedFontSize):
+
 2014-03-02  Sam Weinig  <sam@webkit.org>
 
         Page Cache is not enabled when using the modern WebKit2 API
