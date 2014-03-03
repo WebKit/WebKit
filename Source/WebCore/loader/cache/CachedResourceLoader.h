@@ -111,6 +111,7 @@ public:
     Document* document() const { return m_document; } // Can be null
     void setDocument(Document* document) { m_document = document; }
     void clearDocumentLoader() { m_documentLoader = 0; }
+    SessionID sessionID() const;
 
     void removeCachedResource(CachedResource*) const;
 

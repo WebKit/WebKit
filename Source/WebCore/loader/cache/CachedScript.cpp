@@ -39,8 +39,8 @@
 
 namespace WebCore {
 
-CachedScript::CachedScript(const ResourceRequest& resourceRequest, const String& charset)
-    : CachedResource(resourceRequest, Script)
+CachedScript::CachedScript(const ResourceRequest& resourceRequest, const String& charset, SessionID sessionID)
+    : CachedResource(resourceRequest, Script, sessionID)
     , m_decoder(TextResourceDecoder::create(ASCIILiteral("application/javascript"), charset))
 {
     // It's javascript we want.

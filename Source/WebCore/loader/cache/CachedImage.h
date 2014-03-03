@@ -50,9 +50,10 @@ class CachedImage final : public CachedResource, public ImageObserver {
 public:
     enum CacheBehaviorType { AutomaticallyCached, ManuallyCached };
 
-    CachedImage(const ResourceRequest&);
-    CachedImage(Image*);
-    CachedImage(const URL&, Image*, CacheBehaviorType = AutomaticallyCached);
+    CachedImage(const ResourceRequest&, SessionID);
+    CachedImage(Image*, SessionID);
+    CachedImage(const URL&, Image*, SessionID);
+    CachedImage(const URL&, Image*, CacheBehaviorType, SessionID);
     virtual ~CachedImage();
 
     Image* image(); // Returns the nullImage() if the image is not available yet.

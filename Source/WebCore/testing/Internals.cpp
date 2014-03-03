@@ -356,9 +356,9 @@ bool Internals::isPreloaded(const String& url)
 
 bool Internals::isLoadingFromMemoryCache(const String& url)
 {
-    if (!contextDocument())
+    if (!contextDocument() || !contextDocument()->page())
         return false;
-    CachedResource* resource = memoryCache()->resourceForURL(contextDocument()->completeURL(url));
+    CachedResource* resource = memoryCache()->resourceForURL(contextDocument()->completeURL(url), contextDocument()->page()->sessionID());
     return resource && resource->status() == CachedResource::Cached;
 }
 

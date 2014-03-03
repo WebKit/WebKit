@@ -62,6 +62,7 @@ void DiskCacheMonitor::monitorFileBackingStoreCreation(CFCachedURLResponseRef ca
 DiskCacheMonitor::DiskCacheMonitor(CFCachedURLResponseRef cachedResponse, NetworkResourceLoader* loader)
     : m_connectionToWebProcess(loader->connectionToWebProcess())
     , m_resourceRequest(loader->request())
+    , m_sessionID(loader->sessionID())
 {
     ASSERT(RunLoop::isMain());
 
@@ -88,7 +89,7 @@ DiskCacheMonitor::DiskCacheMonitor(CFCachedURLResponseRef cachedResponse, Networ
         if (handle.isNull())
             return;
 
-        monitor->send(Messages::NetworkProcessConnection::DidCacheResource(monitor->resourceRequest(), handle));
+        monitor->send(Messages::NetworkProcessConnection::DidCacheResource(monitor->resourceRequest(), handle, m_sessionID));
     };
 
     _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, block, dispatch_get_main_queue());

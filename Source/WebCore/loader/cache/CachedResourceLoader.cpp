@@ -48,12 +48,14 @@
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MemoryCache.h"
+#include "Page.h"
 #include "PingLoader.h"
 #include "PlatformStrategies.h"
 #include "RenderElement.h"
 #include "ResourceLoadScheduler.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
+#include "SessionID.h"
 #include "Settings.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -70,35 +72,35 @@
 
 namespace WebCore {
 
-static CachedResource* createResource(CachedResource::Type type, ResourceRequest& request, const String& charset)
+static CachedResource* createResource(CachedResource::Type type, ResourceRequest& request, const String& charset, SessionID sessionID)
 {
     switch (type) {
     case CachedResource::ImageResource:
-        return new CachedImage(request);
+        return new CachedImage(request, sessionID);
     case CachedResource::CSSStyleSheet:
-        return new CachedCSSStyleSheet(request, charset);
+        return new CachedCSSStyleSheet(request, charset, sessionID);
     case CachedResource::Script:
-        return new CachedScript(request, charset);
+        return new CachedScript(request, charset, sessionID);
     case CachedResource::SVGDocumentResource:
-        return new CachedSVGDocument(request);
+        return new CachedSVGDocument(request, sessionID);
     case CachedResource::FontResource:
-        return new CachedFont(request);
+        return new CachedFont(request, sessionID);
     case CachedResource::RawResource:
     case CachedResource::MainResource:
-        return new CachedRawResource(request, type);
+        return new CachedRawResource(request, type, sessionID);
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
-        return new CachedXSLStyleSheet(request);
+        return new CachedXSLStyleSheet(request, sessionID);
 #endif
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
-        return new CachedResource(request, CachedResource::LinkPrefetch);
+        return new CachedResource(request, CachedResource::LinkPrefetch, sessionID);
     case CachedResource::LinkSubresource:
-        return new CachedResource(request, CachedResource::LinkSubresource);
+        return new CachedResource(request, CachedResource::LinkSubresource, sessionID);
 #endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
-        return new CachedTextTrack(request);
+        return new CachedTextTrack(request, sessionID);
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -147,6 +149,16 @@ Frame* CachedResourceLoader::frame() const
     return m_documentLoader ? m_documentLoader->frame() : 0;
 }
 
+SessionID CachedResourceLoader::sessionID() const
+{
+    SessionID sessionID = SessionID::defaultSessionID();
+
+    if (Frame* f = frame())
+        sessionID = f->page()->sessionID();
+
+    return sessionID;
+}
+
 CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResourceRequest& request)
 {
     if (Frame* frame = this->frame()) {
@@ -187,7 +199,7 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
     request.mutableResourceRequest().setCachePartition(document()->topOrigin()->cachePartition());
 #endif
 
-    if (CachedResource* existing = memoryCache()->resourceForRequest(request.resourceRequest())) {
+    if (CachedResource* existing = memoryCache()->resourceForRequest(request.resourceRequest(), sessionID())) {
         if (existing->type() == CachedResource::CSSStyleSheet)
             return toCachedCSSStyleSheet(existing);
         memoryCache()->remove(existing);
@@ -195,7 +207,7 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
     if (url.string() != request.resourceRequest().url())
         request.mutableResourceRequest().setURL(url);
 
-    CachedResourceHandle<CachedCSSStyleSheet> userSheet = new CachedCSSStyleSheet(request.resourceRequest(), request.charset());
+    CachedResourceHandle<CachedCSSStyleSheet> userSheet = new CachedCSSStyleSheet(request.resourceRequest(), request.charset(), sessionID());
 
     memoryCache()->add(userSheet.get());
     // FIXME: loadResource calls setOwningCachedResourceLoader() if the resource couldn't be added to cache. Does this function need to call it, too?
@@ -428,7 +440,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         request.mutableResourceRequest().setCachePartition(document()->topOrigin()->cachePartition());
 #endif
 
-    resource = memoryCache()->resourceForRequest(request.resourceRequest());
+    resource = memoryCache()->resourceForRequest(request.resourceRequest(), sessionID());
 
     const RevalidationPolicy policy = determineRevalidationPolicy(type, request.mutableResourceRequest(), request.forPreload(), resource.get(), request.defer());
     switch (policy) {
@@ -480,10 +492,11 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(co
     ASSERT(!memoryCache()->disabled());
     ASSERT(resource->canUseCacheValidator());
     ASSERT(!resource->resourceToRevalidate());
-    
+    ASSERT(resource->sessionID() == sessionID());
+
     // Copy the URL out of the resource to be revalidated in case it gets deleted by the remove() call below.
     String url = resource->url();
-    CachedResourceHandle<CachedResource> newResource = createResource(resource->type(), resource->resourceRequest(), resource->encoding());
+    CachedResourceHandle<CachedResource> newResource = createResource(resource->type(), resource->resourceRequest(), resource->encoding(), resource->sessionID());
     
     LOG(ResourceLoading, "Resource %p created to revalidate %p", newResource.get(), resource);
     newResource->setResourceToRevalidate(resource);
@@ -500,11 +513,11 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(co
 
 CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, CachedResourceRequest& request, const String& charset)
 {
-    ASSERT(!memoryCache()->resourceForRequest(request.resourceRequest()));
+    ASSERT(!memoryCache()->resourceForRequest(request.resourceRequest(), sessionID()));
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().stringCenterEllipsizedToLength().latin1().data());
 
-    CachedResourceHandle<CachedResource> resource = createResource(type, request.mutableResourceRequest(), charset);
+    CachedResourceHandle<CachedResource> resource = createResource(type, request.mutableResourceRequest(), charset, sessionID());
 
     if (!memoryCache()->add(resource.get()))
         resource->setOwningCachedResourceLoader(this);

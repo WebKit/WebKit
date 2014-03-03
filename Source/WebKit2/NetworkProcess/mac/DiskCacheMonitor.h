@@ -28,6 +28,7 @@
 
 #include "MessageSender.h"
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SessionID.h>
 #include <wtf/RunLoop.h>
 
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
@@ -52,6 +53,7 @@ private:
 
     RefPtr<NetworkConnectionToWebProcess> m_connectionToWebProcess;
     WebCore::ResourceRequest m_resourceRequest;
+    WebCore::SessionID m_sessionID;
 };
 
 

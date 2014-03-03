@@ -147,8 +147,9 @@ static double deadDecodedDataDeletionIntervalForResourceType(CachedResource::Typ
 
 DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
-CachedResource::CachedResource(const ResourceRequest& request, Type type)
+CachedResource::CachedResource(const ResourceRequest& request, Type type, SessionID sessionID)
     : m_resourceRequest(request)
+    , m_sessionID(sessionID)
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(currentTime())
     , m_decodedDataDeletionTimer(this, &CachedResource::decodedDataDeletionTimerFired, deadDecodedDataDeletionIntervalForResourceType(type))
@@ -180,6 +181,7 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type)
     , m_proxyResource(0)
 {
     ASSERT(m_type == unsigned(type)); // m_type is a bitfield, so this tests careless updates of the enum.
+    ASSERT(sessionID.isValid());
 #ifndef NDEBUG
     cachedResourceLeakCounter.increment();
 #endif
@@ -199,7 +201,7 @@ CachedResource::~CachedResource()
     ASSERT(canDelete());
     ASSERT(!inCache());
     ASSERT(!m_deleted);
-    ASSERT(url().isNull() || memoryCache()->resourceForRequest(resourceRequest()) != this);
+    ASSERT(url().isNull() || memoryCache()->resourceForRequest(resourceRequest(), sessionID()) != this);
 
 #ifndef NDEBUG
     m_deleted = true;

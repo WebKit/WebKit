@@ -36,6 +36,7 @@
 #include <WebCore/CachedResource.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/ResourceBuffer.h>
+#include <WebCore/SessionID.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
@@ -81,9 +82,9 @@ void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection*, IPC::S
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)
-void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle)
+void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle, SessionID sessionID)
 {
-    CachedResource* resource = memoryCache()->resourceForRequest(request);
+    CachedResource* resource = memoryCache()->resourceForRequest(request, sessionID);
     if (!resource)
         return;
     

@@ -37,7 +37,7 @@ namespace WebCore {
 #if ENABLE(XSLT)
     class CachedXSLStyleSheet final : public CachedResource {
     public:
-        CachedXSLStyleSheet(const ResourceRequest&);
+        CachedXSLStyleSheet(const ResourceRequest&, SessionID);
 
         const String& sheet() const { return m_sheet; }
 

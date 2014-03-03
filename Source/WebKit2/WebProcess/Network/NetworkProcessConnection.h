@@ -41,6 +41,7 @@ namespace WebCore {
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+class SessionID;
 }
 
 namespace WebKit {
@@ -70,7 +71,7 @@ private:
 
 #if ENABLE(SHAREABLE_RESOURCE)
     // Message handlers.
-    void didCacheResource(const WebCore::ResourceRequest&, const ShareableResource::Handle&);
+    void didCacheResource(const WebCore::ResourceRequest&, const ShareableResource::Handle&, WebCore::SessionID);
 #endif
 
     // The connection from the web process to the network process.
