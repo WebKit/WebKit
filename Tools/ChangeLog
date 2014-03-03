@@ -1,3 +1,9 @@
+2014-03-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Add Jeremy Jones to the contributors list as a contributor.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-03-03  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Unreviewed. Update contact email.
