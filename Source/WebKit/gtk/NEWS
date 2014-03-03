@@ -1,4 +1,22 @@
 =================
+WebKitGTK+ 2.3.91
+=================
+
+What's new in WebKitGTK+ 2.3.91?
+
+  - Use a persistent cache for plugins metadata to avoid blocking the
+    UI while scanning plugins during page loads.
+  - Make the web inspector always load in multiprocess mode.
+  - Add a pkg-config file for WebKit2 web process extensions API.
+  - Fix the generation of g_return macros for GObject DOM bindings in
+    some cases where non pointer parameters were handled as pointers.
+  - Enable DFG_JIT on FreeBSD.
+  - Use system default compiler instead of gcc when building DOM
+    generated sources.
+  - Several build fixes for FreeBSD.
+  - Fix the build with wayland support enabled.
+
+=================
 WebKitGTK+ 2.3.90
 =================
 
