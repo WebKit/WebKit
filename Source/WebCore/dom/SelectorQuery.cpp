@@ -380,9 +380,16 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
     ContainerNode* searchRootNode = &rootNode;
     switch (m_matchType) {
     case RightMostWithIdMatch:
-        if (const CSSSelector* idSelector = selectorForIdLookup(*searchRootNode, *m_selectors.first().selector)) {
+        {
+        const SelectorData& selectorData = m_selectors.first();
+        if (const CSSSelector* idSelector = selectorForIdLookup(*searchRootNode, *selectorData.selector)) {
             executeFastPathForIdSelector<SelectorQueryTrait>(*searchRootNode, m_selectors.first(), idSelector, output);
             break;
+        }
+#if ENABLE(CSS_SELECTOR_JIT)
+        if (selectorData.compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker)
+            goto CompiledSingleCase;
+#endif
         }
         FALLTHROUGH;
     case CompilableSingleWithRootFilter:

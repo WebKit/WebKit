@@ -1,3 +1,16 @@
+2014-03-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        SelectorQuery failing RightMostWithIdMatch are compiling their selectors for each execution
+        https://bugs.webkit.org/show_bug.cgi?id=129601
+
+        Reviewed by Andreas Kling.
+
+        This caused a regression after r164924 for documents in quirks mode. Since those always fail
+        selectorForIdLookup(), they ended up compiling the selector every time they were called.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::execute):
+
 2014-03-01  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Crash in MediaPlayer::rateChanged()
