@@ -138,6 +138,13 @@ private:
     Debugger& m_debugger;
 };
 
+template<typename Functor>
+void Debugger::forEachCodeBlock(Functor& functor)
+{
+    m_vm->waitForCompilationsToComplete();
+    m_vm->heap.forEachCodeBlock(functor);
+}
+
 Debugger::Debugger(bool isInWorkerThread)
     : m_vm(nullptr)
     , m_pauseOnExceptionsState(DontPauseOnExceptions)
@@ -232,7 +239,7 @@ void Debugger::setSteppingMode(SteppingMode mode)
     if (!m_vm)
         return;
     SetSteppingModeFunctor functor(this, mode);
-    m_vm->heap.forEachCodeBlock(functor);
+    forEachCodeBlock(functor);
 }
 
 void Debugger::registerCodeBlock(CodeBlock* codeBlock)
@@ -316,7 +323,7 @@ void Debugger::toggleBreakpoint(Breakpoint& breakpoint, Debugger::BreakpointStat
     if (!m_vm)
         return;
     ToggleBreakpointFunctor functor(this, breakpoint, enabledOrNot);
-    m_vm->heap.forEachCodeBlock(functor);
+    forEachCodeBlock(functor);
 }
 
 void Debugger::recompileAllJSFunctions(VM* vm)
@@ -328,7 +335,7 @@ void Debugger::recompileAllJSFunctions(VM* vm)
         return;
     }
 
-    vm->prepareToDiscardCode();
+    vm->waitForCompilationsToComplete();
 
     Recompiler recompiler(this);
     HeapIterationScope iterationScope(vm->heap);
@@ -496,7 +503,7 @@ void Debugger::clearBreakpoints()
     if (!m_vm)
         return;
     ClearCodeBlockDebuggerRequestsFunctor functor(this);
-    m_vm->heap.forEachCodeBlock(functor);
+    forEachCodeBlock(functor);
 }
 
 class Debugger::ClearDebuggerRequestsFunctor {
@@ -521,7 +528,7 @@ void Debugger::clearDebuggerRequests(JSGlobalObject* globalObject)
 {
     ASSERT(m_vm);
     ClearDebuggerRequestsFunctor functor(globalObject);
-    m_vm->heap.forEachCodeBlock(functor);
+    forEachCodeBlock(functor);
 }
 
 void Debugger::setBreakpointsActivated(bool activated)

@@ -96,6 +96,12 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced()
     }
 }
 
+void CodeBlockSet::remove(CodeBlock* codeBlock)
+{
+    codeBlock->deref();
+    m_set.remove(codeBlock);
+}
+
 void CodeBlockSet::traceMarked(SlotVisitor& visitor)
 {
     if (verbose)

@@ -41,7 +41,7 @@ public:
     virtual ~DeferredCompilationCallback();
 
     virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*) = 0;
-    virtual void compilationDidComplete(CodeBlock*, CompilationResult) = 0;
+    virtual void compilationDidComplete(CodeBlock*, CompilationResult);
 };
 
 } // namespace JSC

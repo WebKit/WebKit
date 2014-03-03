@@ -1,3 +1,105 @@
+2014-03-03  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: m_numBreakpoints >= numBreakpoints when deleting breakpoints.
+        <https://webkit.org/b/129393>
+
+        Reviewed by Geoffrey Garen.
+
+        The issue manifests because the debugger will iterate all CodeBlocks in
+        the heap when setting / clearing breakpoints, but it is possible for a
+        CodeBlock to have been instantiate but is not yet registered with the
+        debugger.  This can happen because of the following:
+
+        1. DFG worklist compilation is still in progress, and the target
+           codeBlock is not ready for installation in its executable yet.
+
+        2. DFG compilation failed and we have a codeBlock that will never be
+           installed in its executable, and the codeBlock has not been cleaned
+           up by the GC yet.
+
+        The code for installing the codeBlock in its executable is the same code
+        that registers it with the debugger.  Hence, these codeBlocks are not
+        registered with the debugger, and any pending breakpoints that would map
+        to that CodeBlock is as yet unset or will never be set.  As such, an
+        attempt to remove a breakpoint in that CodeBlock will fail that assertion.
+
+        To fix this, we do the following:
+
+        1. We'll eagerly clean up any zombie CodeBlocks due to failed DFG / FTL
+           compilation.  This is achieved by providing a
+           DeferredCompilationCallback::compilationDidComplete() that does this
+           clean up, and have all sub classes call it at the end of their
+           compilationDidComplete() methods.
+
+        2. Before the debugger or profiler iterates CodeBlocks in the heap, they
+           will wait for all compilations to complete before proceeding.  This
+           ensures that:
+           1. any zombie CodeBlocks would have been cleaned up, and won't be
+              seen by the debugger or profiler.
+           2. all CodeBlocks that the debugger and profiler needs to operate on
+              will be "ready" for whatever needs to be done to them e.g.
+              jettison'ing of DFG codeBlocks.
+
+        * bytecode/DeferredCompilationCallback.cpp:
+        (JSC::DeferredCompilationCallback::compilationDidComplete):
+        * bytecode/DeferredCompilationCallback.h:
+        - Provide default implementation method to clean up zombie CodeBlocks.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::forEachCodeBlock):
+        - Utility function to iterate CodeBlocks.  It ensures that all compilations
+          are complete before proceeding.
+        (JSC::Debugger::setSteppingMode):
+        (JSC::Debugger::toggleBreakpoint):
+        (JSC::Debugger::recompileAllJSFunctions):
+        (JSC::Debugger::clearBreakpoints):
+        (JSC::Debugger::clearDebuggerRequests):
+        - Use the utility iterator function.
+
+        * debugger/Debugger.h:
+        * dfg/DFGOperations.cpp:
+        - Added an assert to ensure that zombie CodeBlocks will be imminently cleaned up.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        - Remove unneeded code (that was not the best solution anyway) for ensuring
+          that we don't generate new DFG codeBlocks after enabling the debugger or
+          profiler.  Now that we wait for compilations to complete before proceeding
+          with debugger and profiler work, this scenario will never happen.
+
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidComplete):
+        - Call the super class method to clean up zombie codeBlocks.
+
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete):
+        - Call the super class method to clean up zombie codeBlocks.
+
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::remove):
+        * heap/CodeBlockSet.h:
+        * heap/Heap.h:
+        (JSC::Heap::removeCodeBlock):
+        - New method to remove a codeBlock from the codeBlock set.
+
+        * jit/JITOperations.cpp:
+        - Added an assert to ensure that zombie CodeBlocks will be imminently cleaned up.
+
+        * jit/JITToDFGDeferredCompilationCallback.cpp:
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidComplete):
+        - Call the super class method to clean up zombie codeBlocks.
+
+        * runtime/VM.cpp:
+        (JSC::VM::waitForCompilationsToComplete):
+        - Renamed from prepareToDiscardCode() to be clearer about what it does.
+
+        (JSC::VM::discardAllCode):
+        (JSC::VM::releaseExecutableMemory):
+        (JSC::VM::setEnabledProfiler):
+        - Wait for compilation to complete before enabling the profiler.
+
+        * runtime/VM.h:
+
 2014-03-03  Brian Burg  <bburg@apple.com>
 
         Another unreviewed build fix attempt for Windows after r164986.

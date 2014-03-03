@@ -65,6 +65,8 @@ public:
     // by this set), and that have not been marked.
     void deleteUnmarkedAndUnreferenced();
     
+    void remove(CodeBlock*);
+    
     // Trace all marked code blocks. The CodeBlock is free to make use of
     // mayBeExecuting.
     void traceMarked(SlotVisitor&);

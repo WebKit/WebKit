@@ -391,13 +391,6 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
     if (!isStillValid())
         return CompilationInvalidated;
 
-    if (vm.enabledProfiler())
-        return CompilationInvalidated;
-
-    Debugger* debugger = codeBlock->globalObject()->debugger();
-    if (debugger && (debugger->isStepping() || codeBlock->baselineAlternative()->hasDebuggerRequests()))
-        return CompilationInvalidated;
-
     bool result;
     if (codeBlock->codeType() == FunctionCode)
         result = finalizer->finalizeFunction();

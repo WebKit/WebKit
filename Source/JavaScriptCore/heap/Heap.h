@@ -209,6 +209,8 @@ namespace JSC {
         template<typename T> void releaseSoon(RetainPtr<T>&&);
 #endif
 
+        void removeCodeBlock(CodeBlock* cb) { m_codeBlocks.remove(cb); }
+
     private:
         friend class CodeBlock;
         friend class CopiedBlock;

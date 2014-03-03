@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,26 @@
 #include "config.h"
 #include "DeferredCompilationCallback.h"
 
+#include "CodeBlock.h"
+
 namespace JSC {
 
 DeferredCompilationCallback::DeferredCompilationCallback() { }
 DeferredCompilationCallback::~DeferredCompilationCallback() { }
+
+void DeferredCompilationCallback::compilationDidComplete(CodeBlock* codeBlock, CompilationResult result)
+{
+    switch (result) {
+    case CompilationFailed:
+    case CompilationInvalidated:
+        codeBlock->heap()->removeCodeBlock(codeBlock);
+        break;
+    case CompilationSuccessful:
+        break;
+    case CompilationDeferred:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
 
 } // JSC
 
