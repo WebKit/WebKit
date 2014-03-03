@@ -38,7 +38,6 @@
 #include <runtime/JSArray.h>
 #include <runtime/JSArrayBuffer.h>
 #include <runtime/JSCInlines.h>
-#include <runtime/JSDataView.h>
 #include <runtime/JSTypedArrays.h>
 #include <runtime/Lookup.h>
 #include <runtime/ObjectPrototype.h>
@@ -463,14 +462,6 @@ inline PassRefPtr<JSC::Uint16Array> toUint16Array(JSC::JSValue value) { return J
 inline PassRefPtr<JSC::Uint32Array> toUint32Array(JSC::JSValue value) { return JSC::toNativeTypedView<JSC::Uint32Adaptor>(value); }
 inline PassRefPtr<JSC::Float32Array> toFloat32Array(JSC::JSValue value) { return JSC::toNativeTypedView<JSC::Float32Adaptor>(value); }
 inline PassRefPtr<JSC::Float64Array> toFloat64Array(JSC::JSValue value) { return JSC::toNativeTypedView<JSC::Float64Adaptor>(value); }
-
-inline PassRefPtr<JSC::DataView> toDataView(JSC::JSValue value)
-{
-    JSC::JSDataView* wrapper = JSC::jsDynamicCast<JSC::JSDataView*>(value);
-    if (!wrapper)
-        return 0;
-    return wrapper->typedImpl();
-}
 
 template<class T> struct NativeValueTraits;
 
