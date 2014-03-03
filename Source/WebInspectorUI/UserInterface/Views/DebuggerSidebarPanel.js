@@ -129,6 +129,11 @@ WebInspector.DebuggerSidebarPanel.prototype = {
 
     // Public
 
+    showDefaultContentView: function()
+    {
+        WebInspector.resourceSidebarPanel.showMainFrameSourceCode();
+    },
+
     treeElementForRepresentedObject: function(representedObject)
     {
         // The main resource is used as the representedObject instead of Frame in our tree.

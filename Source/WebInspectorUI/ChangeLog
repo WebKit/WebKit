@@ -1,5 +1,20 @@
 2014-03-03  Timothy Hatcher  <timothy@apple.com>
 
+        Remove an innocuous error message and support default views for Resource and Debugger sidebars.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129622
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.showDefaultContentView): Added.
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.showDefaultContentView): Added.
+        (WebInspector.ResourceSidebarPanel.prototype.treeElementForRepresentedObject): Don't log an error
+        if the tree element isn't a Script. We try to find any represented object, and it can fail.
+
+2014-03-03  Timothy Hatcher  <timothy@apple.com>
+
         Fix an exception caused by trying to access the DOM before it is loaded.
 
         https://bugs.webkit.org/show_bug.cgi?id=129617

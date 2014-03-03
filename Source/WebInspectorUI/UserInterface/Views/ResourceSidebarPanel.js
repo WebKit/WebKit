@@ -100,6 +100,11 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
     // Public
 
+    showDefaultContentView: function()
+    {
+        this.showMainFrameDOMTree();
+    },
+
     get contentTreeOutlineToAutoPrune()
     {
         return this._searchContentTreeOutline;
@@ -261,10 +266,8 @@ WebInspector.ResourceSidebarPanel.prototype = {
             return treeElement;
 
         // Only special case Script objects.
-        if (!(representedObject instanceof WebInspector.Script)) {
-            console.error("Didn't find a TreeElement for a representedObject associated with the ResourceSidebarPanel.");
+        if (!(representedObject instanceof WebInspector.Script))
             return null;
-        }
 
         // If the Script has a URL we should have found it earlier.
         if (representedObject.url) {
