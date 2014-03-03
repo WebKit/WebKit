@@ -408,7 +408,7 @@ ScriptExecutionContext::Task::~Task()
 JSC::VM* ScriptExecutionContext::vm()
 {
      if (isDocument())
-        return JSDOMWindow::commonVM();
+        return &JSDOMWindow::commonVM();
 
     if (isWorkerGlobalScope())
         return toWorkerGlobalScope(this)->script()->vm();

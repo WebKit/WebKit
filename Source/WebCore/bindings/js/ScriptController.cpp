@@ -109,7 +109,7 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld& world)
 {
     ASSERT(!m_windowShells.contains(&world));
 
-    VM& vm = *world.vm();
+    VM& vm = world.vm();
 
     Structure* structure = JSDOMWindowShell::createStructure(vm, jsNull());
     Strong<JSDOMWindowShell> windowShell(vm, JSDOMWindowShell::create(vm, m_frame.document()->domWindow(), structure, world));
@@ -170,7 +170,7 @@ PassRefPtr<DOMWrapperWorld> ScriptController::createWorld()
 
 void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
 {
-    static_cast<WebCoreJSClientData*>(JSDOMWindow::commonVM()->clientData)->getAllWorlds(worlds);
+    static_cast<WebCoreJSClientData*>(JSDOMWindow::commonVM().clientData)->getAllWorlds(worlds);
 }
 
 void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoPageCache)
@@ -469,7 +469,7 @@ Deprecated::ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld& 
 
 bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
 {
-    CallFrame* callFrame = JSDOMWindow::commonVM()->topCallFrame;
+    CallFrame* callFrame = JSDOMWindow::commonVM().topCallFrame;
     if (callFrame == CallFrame::noCaller()) 
         return false;
     DOMWrapperWorld& domWrapperWorld = currentWorld(callFrame);

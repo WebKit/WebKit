@@ -83,7 +83,7 @@ inline void initNormalWorldClientData(JSC::VM* vm)
 {
     WebCoreJSClientData* webCoreJSClientData = new WebCoreJSClientData;
     vm->clientData = webCoreJSClientData; // ~VM deletes this pointer.
-    webCoreJSClientData->m_normalWorld = DOMWrapperWorld::create(vm, true);
+    webCoreJSClientData->m_normalWorld = DOMWrapperWorld::create(*vm, true);
     vm->m_typedArrayController = adoptRef(new WebCoreTypedArrayController());
 }
 

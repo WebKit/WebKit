@@ -460,7 +460,7 @@ void DumpRenderTreeSupportGtk::gcCollectJavascriptObjectsOnAlternateThread(bool 
 unsigned long DumpRenderTreeSupportGtk::gcCountJavascriptObjects()
 {
     JSC::JSLockHolder lock(JSDOMWindow::commonVM());
-    return JSDOMWindow::commonVM()->heap.objectCount();
+    return JSDOMWindow::commonVM().heap.objectCount();
 }
 
 void DumpRenderTreeSupportGtk::layoutFrame(WebKitWebFrame* frame)

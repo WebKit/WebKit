@@ -53,7 +53,7 @@ namespace WebCore {
     private:
         ScheduledAction(JSC::ExecState*, JSC::JSValue function, DOMWrapperWorld& isolatedWorld);
         ScheduledAction(const String& code, DOMWrapperWorld& isolatedWorld)
-            : m_function(*isolatedWorld.vm())
+            : m_function(isolatedWorld.vm())
             , m_code(code)
             , m_isolatedWorld(&isolatedWorld)
         {

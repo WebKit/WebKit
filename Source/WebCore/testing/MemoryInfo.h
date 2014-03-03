@@ -46,8 +46,8 @@ public:
 
 private:
     MemoryInfo()
-        : m_usedJSHeapSize(JSDOMWindow::commonVM()->heap.size())
-        , m_totalJSHeapSize(JSDOMWindow::commonVM()->heap.capacity())
+        : m_usedJSHeapSize(JSDOMWindow::commonVM().heap.size())
+        , m_totalJSHeapSize(JSDOMWindow::commonVM().heap.capacity())
     {
     }
 

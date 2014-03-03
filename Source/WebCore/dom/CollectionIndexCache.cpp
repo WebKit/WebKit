@@ -32,9 +32,9 @@ namespace WebCore {
 
 void reportExtraMemoryCostForCollectionIndexCache(size_t cost)
 {
-    JSC::VM* vm = JSDOMWindowBase::commonVM();
+    JSC::VM& vm = JSDOMWindowBase::commonVM();
     JSC::JSLockHolder lock(vm);
-    vm->heap.reportExtraMemoryCost(cost);
+    vm.heap.reportExtraMemoryCost(cost);
 }
 
 }

@@ -44,7 +44,7 @@ public:
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason) override;
 
-    virtual JSC::VM* globalVM() override;
+    virtual JSC::VM& globalVM() override;
     virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
 
     // FIXME: JavaScript inspector does not yet have a console object to mute.

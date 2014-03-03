@@ -562,7 +562,7 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
 
 static size_t usedHeapSize()
 {
-    return JSDOMWindow::commonVM()->heap.size();
+    return JSDOMWindow::commonVM().heap.size();
 }
 
 void InspectorTimelineAgent::setFrameIdentifier(InspectorObject* record, Frame* frame)

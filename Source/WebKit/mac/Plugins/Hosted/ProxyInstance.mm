@@ -321,7 +321,7 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
 
         if (identifier->isString()) {
             const char* str = identifier->string();
-            nameArray.add(Identifier(JSDOMWindow::commonVM(), String::fromUTF8WithLatin1Fallback(str, strlen(str))));
+            nameArray.add(Identifier(&JSDOMWindow::commonVM(), String::fromUTF8WithLatin1Fallback(str, strlen(str))));
         } else
             nameArray.add(Identifier::from(exec, identifier->number()));
     }

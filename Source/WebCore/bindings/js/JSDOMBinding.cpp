@@ -54,7 +54,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DOMConstructorWithDocument);
 
 void addImpureProperty(const AtomicString& propertyName)
 {
-    JSDOMWindow::commonVM()->addImpureProperty(propertyName);
+    JSDOMWindow::commonVM().addImpureProperty(propertyName);
 }
 
 const JSC::HashTable& getHashTableForGlobalData(VM& vm, const JSC::HashTable& staticTable)

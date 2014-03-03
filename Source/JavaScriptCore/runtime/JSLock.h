@@ -110,6 +110,7 @@ namespace JSC {
         public:
             JS_EXPORT_PRIVATE DropAllLocks(ExecState*);
             JS_EXPORT_PRIVATE DropAllLocks(VM*);
+            JS_EXPORT_PRIVATE DropAllLocks(VM&);
             JS_EXPORT_PRIVATE ~DropAllLocks();
             
             void setDropDepth(unsigned depth) { m_dropDepth = depth; }

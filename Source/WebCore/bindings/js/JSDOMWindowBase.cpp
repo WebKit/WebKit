@@ -204,7 +204,7 @@ JSDOMWindowShell* JSDOMWindowBase::shell() const
     return m_shell;
 }
 
-VM* JSDOMWindowBase::commonVM()
+VM& JSDOMWindowBase::commonVM()
 {
     ASSERT(isMainThread());
 
@@ -229,7 +229,7 @@ VM* JSDOMWindowBase::commonVM()
         initNormalWorldClientData(vm);
     }
 
-    return vm;
+    return *vm;
 }
 
 #if PLATFORM(IOS)

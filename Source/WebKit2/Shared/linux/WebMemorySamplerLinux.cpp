@@ -154,8 +154,8 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Fast Malloc Committed Memory"), fastMallocBytesCommitted);
 #endif
 
-    size_t jscHeapBytesInUse = JSDOMWindow::commonVM()->heap.size();
-    size_t jscHeapBytesCommitted = JSDOMWindow::commonVM()->heap.capacity();
+    size_t jscHeapBytesInUse = JSDOMWindow::commonVM().heap.size();
+    size_t jscHeapBytesCommitted = JSDOMWindow::commonVM().heap.capacity();
     totalBytesInUse += jscHeapBytesInUse;
     totalBytesCommitted += jscHeapBytesCommitted;
 

@@ -90,7 +90,7 @@ void WorkerRuntimeAgent::run(ErrorString*)
     m_paused = false;
 }
 
-JSC::VM* WorkerRuntimeAgent::globalVM()
+JSC::VM& WorkerRuntimeAgent::globalVM()
 {
     return JSDOMWindowBase::commonVM();
 }

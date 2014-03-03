@@ -30,18 +30,18 @@ using namespace JSC;
 
 namespace WebCore {
 
-DOMWrapperWorld::DOMWrapperWorld(JSC::VM* vm, bool isNormal)
+DOMWrapperWorld::DOMWrapperWorld(JSC::VM& vm, bool isNormal)
     : m_vm(vm)
     , m_isNormal(isNormal)
 {
-    VM::ClientData* clientData = m_vm->clientData;
+    VM::ClientData* clientData = m_vm.clientData;
     ASSERT(clientData);
     static_cast<WebCoreJSClientData*>(clientData)->rememberWorld(*this);
 }
 
 DOMWrapperWorld::~DOMWrapperWorld()
 {
-    VM::ClientData* clientData = m_vm->clientData;
+    VM::ClientData* clientData = m_vm.clientData;
     ASSERT(clientData);
     static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(*this);
 
@@ -69,7 +69,7 @@ DOMWrapperWorld& normalWorld(JSC::VM& vm)
 DOMWrapperWorld& mainThreadNormalWorld()
 {
     ASSERT(isMainThread());
-    static DOMWrapperWorld& cachedNormalWorld = normalWorld(*JSDOMWindow::commonVM());
+    static DOMWrapperWorld& cachedNormalWorld = normalWorld(JSDOMWindow::commonVM());
     return cachedNormalWorld;
 }
 

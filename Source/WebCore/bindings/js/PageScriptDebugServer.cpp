@@ -123,7 +123,7 @@ void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* 
 void PageScriptDebugServer::recompileAllJSFunctions()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    Debugger::recompileAllJSFunctions(JSDOMWindow::commonVM());
+    Debugger::recompileAllJSFunctions(&JSDOMWindow::commonVM());
 }
 
 ScriptDebugServer::ListenerSet* PageScriptDebugServer::getListenersForGlobalObject(JSGlobalObject* globalObject)

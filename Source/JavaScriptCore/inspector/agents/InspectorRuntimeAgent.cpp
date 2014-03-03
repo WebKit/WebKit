@@ -84,11 +84,11 @@ static PassRefPtr<Inspector::TypeBuilder::Runtime::ErrorRange> buildErrorRangeOb
 
 void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, Inspector::TypeBuilder::Runtime::SyntaxErrorType::Enum* result, Inspector::TypeBuilder::OptOutput<String>* message, RefPtr<Inspector::TypeBuilder::Runtime::ErrorRange>& range)
 {
-    VM* vm = globalVM();
+    VM& vm = globalVM();
     JSLockHolder lock(vm);
 
     ParserError error;
-    checkSyntax(*vm, JSC::makeSource(expression), error);
+    checkSyntax(vm, JSC::makeSource(expression), error);
 
     switch (error.m_syntaxErrorType) {
     case ParserError::SyntaxErrorNone:

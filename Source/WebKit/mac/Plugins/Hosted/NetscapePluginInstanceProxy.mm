@@ -841,7 +841,7 @@ bool NetscapePluginInstanceProxy::getWindowNPObject(uint32_t& objectID)
     if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
         objectID = 0;
     else
-        objectID = m_localObjects.idForObject(*pluginWorld().vm(), frame->script().windowShell(pluginWorld())->window());
+        objectID = m_localObjects.idForObject(pluginWorld().vm(), frame->script().windowShell(pluginWorld())->window());
         
     return true;
 }
@@ -853,7 +853,7 @@ bool NetscapePluginInstanceProxy::getPluginElementNPObject(uint32_t& objectID)
         return false;
     
     if (JSObject* object = frame->script().jsObjectForPluginElement([m_pluginView element]))
-        objectID = m_localObjects.idForObject(*pluginWorld().vm(), object);
+        objectID = m_localObjects.idForObject(pluginWorld().vm(), object);
     else
         objectID = 0;
     
@@ -883,7 +883,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
         return false;
 
     JSLockHolder lock(pluginWorld().vm());
-    Strong<JSGlobalObject> globalObject(*pluginWorld().vm(), frame->script().globalObject(pluginWorld()));
+    Strong<JSGlobalObject> globalObject(pluginWorld().vm(), frame->script().globalObject(pluginWorld()));
     ExecState* exec = globalObject->globalExec();
 
     UserGestureIndicator gestureIndicator(allowPopups ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);

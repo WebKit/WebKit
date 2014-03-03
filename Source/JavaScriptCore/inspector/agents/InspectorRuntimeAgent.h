@@ -76,7 +76,7 @@ protected:
 
     InjectedScriptManager* injectedScriptManager() { return m_injectedScriptManager; }
 
-    virtual JSC::VM* globalVM() = 0;
+    virtual JSC::VM& globalVM() = 0;
     virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) = 0;
 
     virtual void muteConsole() = 0;

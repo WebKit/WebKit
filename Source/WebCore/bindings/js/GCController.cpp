@@ -39,7 +39,7 @@ namespace WebCore {
 static void collect(void*)
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM()->heap.collectAllGarbage();
+    JSDOMWindow::commonVM().heap.collectAllGarbage();
 }
 
 GCController& gcController()
@@ -64,7 +64,7 @@ void GCController::garbageCollectSoon()
     // able to use reportAbandonedObjectGraph on more platforms.
 #if USE(CF)
     JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM()->heap.reportAbandonedObjectGraph();
+    JSDOMWindow::commonVM().heap.reportAbandonedObjectGraph();
 #else
     if (!m_GCTimer.isActive())
         m_GCTimer.startOneShot(0);
@@ -87,8 +87,8 @@ void GCController::garbageCollectNow()
     if (!JSDOMWindow::commonVMExists())
         return;
 #endif
-    if (!JSDOMWindow::commonVM()->heap.isBusy())
-        JSDOMWindow::commonVM()->heap.collectAllGarbage();
+    if (!JSDOMWindow::commonVM().heap.isBusy())
+        JSDOMWindow::commonVM().heap.collectAllGarbage();
 }
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
@@ -116,24 +116,24 @@ void GCController::releaseExecutableMemory()
 
     // We shouldn't have any javascript running on our stack when this function is called. The
     // following line asserts that.
-    ASSERT(!JSDOMWindow::commonVM()->entryScope);
+    ASSERT(!JSDOMWindow::commonVM().entryScope);
 
     // But be safe in release builds just in case...
-    if (JSDOMWindow::commonVM()->entryScope)
+    if (JSDOMWindow::commonVM().entryScope)
         return;
 
-    JSDOMWindow::commonVM()->releaseExecutableMemory();
+    JSDOMWindow::commonVM().releaseExecutableMemory();
 }
 
 void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
 {
-    JSDOMWindow::commonVM()->heap.setGarbageCollectionTimerEnabled(enable);
+    JSDOMWindow::commonVM().heap.setGarbageCollectionTimerEnabled(enable);
 }
 
 void GCController::discardAllCompiledCode()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM()->discardAllCode();
+    JSDOMWindow::commonVM().discardAllCode();
 }
 
 } // namespace WebCore

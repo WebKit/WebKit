@@ -121,7 +121,7 @@ void PageRuntimeAgent::didCreateIsolatedContext(Frame* frame, JSC::ExecState* sc
     notifyContextCreated(frameId, scriptState, origin, false);
 }
 
-JSC::VM* PageRuntimeAgent::globalVM()
+JSC::VM& PageRuntimeAgent::globalVM()
 {
     return JSDOMWindowBase::commonVM();
 }

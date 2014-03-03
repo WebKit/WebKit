@@ -1,3 +1,14 @@
+2014-02-25  Andreas Kling  <akling@apple.com>
+
+        JSDOMWindow::commonVM() should return a reference.
+        <https://webkit.org/b/129293>
+
+        Since this function always returns a VM and never null, make it
+        return a reference instead. There are more VM getters that never
+        return null, but I tried to keep the patch from snowballing.
+
+        Reviewed by Geoff Garen.
+
 2014-03-02  Timothy Hatcher  <timothy@apple.com>
 
         Remove ASSERT in ~IDBRequest since it is firing during legitimate uses in Web Inspector.

@@ -54,9 +54,9 @@ void JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconne
     m_backendDispatcher.clear();
 }
 
-VM* JSGlobalObjectRuntimeAgent::globalVM()
+VM& JSGlobalObjectRuntimeAgent::globalVM()
 {
-    return &m_globalObject.vm();
+    return m_globalObject.vm();
 }
 
 InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)

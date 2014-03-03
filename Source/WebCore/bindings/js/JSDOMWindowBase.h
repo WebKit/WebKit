@@ -71,7 +71,7 @@ namespace WebCore {
 
         JSDOMWindowShell* shell() const;
 
-        static JSC::VM* commonVM();
+        static JSC::VM& commonVM();
 #if PLATFORM(IOS)
         static bool commonVMExists();
         static JSC::VM*& commonVMInternal();
