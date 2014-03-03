@@ -280,10 +280,12 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
     ASSERT(!value.isNull());
 
     switch (match) {
+    case CSSSelector::Set:
+        return true;
     case CSSSelector::Exact:
         if (caseSensitive ? selectorValue != value : !equalIgnoringCase(selectorValue, value))
             return false;
-        break;
+        return true;
     case CSSSelector::List:
         {
             // Ignore empty selectors or selectors containing spaces
@@ -304,20 +306,20 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
                 // No match. Keep looking.
                 startSearchAt = foundPos + 1;
             }
-            break;
+            return true;
         }
     case CSSSelector::Contain:
         if (!value.contains(selectorValue, caseSensitive) || selectorValue.isEmpty())
             return false;
-        break;
+        return true;
     case CSSSelector::Begin:
         if (!value.startsWith(selectorValue, caseSensitive) || selectorValue.isEmpty())
             return false;
-        break;
+        return true;
     case CSSSelector::End:
         if (!value.endsWith(selectorValue, caseSensitive) || selectorValue.isEmpty())
             return false;
-        break;
+        return true;
     case CSSSelector::Hyphen:
         if (value.length() < selectorValue.length())
             return false;
@@ -326,14 +328,11 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
         // It they start the same, check for exact match or following '-':
         if (value.length() != selectorValue.length() && value[selectorValue.length()] != '-')
             return false;
-        break;
-    case CSSSelector::PseudoClass:
-    case CSSSelector::PseudoElement:
+        return true;
     default:
-        break;
+        ASSERT_NOT_REACHED();
+        return false;
     }
-
-    return true;
 }
 
 static bool anyAttributeMatches(Element* element, const CSSSelector* selector, const QualifiedName& selectorAttr, bool caseSensitive)

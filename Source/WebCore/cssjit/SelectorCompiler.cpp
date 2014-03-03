@@ -175,6 +175,7 @@ private:
     void generateElementAttributeMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, Assembler::RegisterID decIndexRegister, const AttributeMatchingInfo& attributeInfo);
     void generateElementAttributeValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AttributeMatchingInfo& attributeInfo);
     void generateElementAttributeValueExactMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool caseSensitive);
+    void generateElementAttributeFunctionCallValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool caseSensitive, JSC::FunctionPtr caseSensitiveTest, JSC::FunctionPtr caseInsensitiveTest);
     void generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch);
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
@@ -348,19 +349,29 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
             if (m_functionType == FunctionType::CannotCompile || m_functionType == FunctionType::CannotMatchAnything)
                 return;
             break;
+        case CSSSelector::List:
+            if (selector->value().contains(' ')) {
+                m_functionType = FunctionType::CannotMatchAnything;
+                return;
+            }
+            FALLTHROUGH;
+        case CSSSelector::Begin:
+        case CSSSelector::End:
+        case CSSSelector::Contain:
+            if (selector->value().isEmpty()) {
+                m_functionType = FunctionType::CannotMatchAnything;
+                return;
+            }
+            FALLTHROUGH;
         case CSSSelector::Exact:
+        case CSSSelector::Hyphen:
             fragment.attributes.append(AttributeMatchingInfo(selector, HTMLDocument::isCaseSensitiveAttribute(selector->attribute())));
             break;
         case CSSSelector::Set:
             fragment.attributes.append(AttributeMatchingInfo(selector, true));
             break;
         case CSSSelector::Unknown:
-        case CSSSelector::List:
-        case CSSSelector::Hyphen:
         case CSSSelector::PseudoElement:
-        case CSSSelector::Contain:
-        case CSSSelector::Begin:
-        case CSSSelector::End:
         case CSSSelector::PagePseudoClass:
             goto CannotHandleSelector;
         }
@@ -1181,17 +1192,112 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
     localFailureCases.linkTo(loopReEntry, &m_assembler);
 }
 
+enum CaseSensitivity {
+    CaseSensitive,
+    CaseInsensitive
+};
+
+template<CaseSensitivity caseSensitivity>
+static bool attributeValueBeginsWith(const Attribute* attribute, AtomicStringImpl* expectedString)
+{
+    AtomicStringImpl& valueImpl = *attribute->value().impl();
+    if (caseSensitivity == CaseSensitive)
+        return valueImpl.startsWith(expectedString);
+    return valueImpl.startsWith(expectedString, false);
+}
+
+template<CaseSensitivity caseSensitivity>
+static bool attributeValueContains(const Attribute* attribute, AtomicStringImpl* expectedString)
+{
+    AtomicStringImpl& valueImpl = *attribute->value().impl();
+    if (caseSensitivity == CaseSensitive)
+        return valueImpl.find(expectedString) != notFound;
+    return valueImpl.findIgnoringCase(expectedString) != notFound;
+}
+
+template<CaseSensitivity caseSensitivity>
+static bool attributeValueEndsWith(const Attribute* attribute, AtomicStringImpl* expectedString)
+{
+    AtomicStringImpl& valueImpl = *attribute->value().impl();
+    if (caseSensitivity == CaseSensitive)
+        return valueImpl.endsWith(expectedString);
+    return valueImpl.endsWith(expectedString, false);
+}
+
+template<CaseSensitivity caseSensitivity>
+static bool attributeValueMatchHyphenRule(const Attribute* attribute, AtomicStringImpl* expectedString)
+{
+    AtomicStringImpl& valueImpl = *attribute->value().impl();
+    if (valueImpl.length() < expectedString->length())
+        return false;
+
+    bool valueStartsWithExpectedString;
+    if (caseSensitivity == CaseSensitive)
+        valueStartsWithExpectedString = valueImpl.startsWith(expectedString);
+    else
+        valueStartsWithExpectedString = valueImpl.startsWith(expectedString, false);
+
+    if (!valueStartsWithExpectedString)
+        return false;
+
+    return valueImpl.length() == expectedString->length() || valueImpl[expectedString->length()] == '-';
+}
+
+template<CaseSensitivity caseSensitivity>
+static bool attributeValueSpaceSeparetedListContains(const Attribute* attribute, AtomicStringImpl* expectedString)
+{
+    AtomicStringImpl& value = *attribute->value().impl();
+
+    unsigned startSearchAt = 0;
+    while (true) {
+        size_t expectedStringPosition;
+        if (caseSensitivity == CaseSensitive)
+            expectedStringPosition = value.find(expectedString, startSearchAt);
+        else
+            expectedStringPosition = value.findIgnoringCase(expectedString, startSearchAt);
+        if (expectedStringPosition == notFound)
+            return false;
+        if (!expectedStringPosition || value[expectedStringPosition - 1] == ' ') {
+            unsigned positionAfterExpectedString = expectedStringPosition + expectedString->length();
+            if (positionAfterExpectedString == value.length() || value[positionAfterExpectedString] == ' ')
+                return true;
+        }
+        startSearchAt = expectedStringPosition + 1;
+    }
+    return false;
+}
+
 void SelectorCodeGenerator::generateElementAttributeValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AttributeMatchingInfo& attributeInfo)
 {
     const CSSSelector& attributeSelector = attributeInfo.selector();
-    if (attributeSelector.m_match == CSSSelector::Set)
-        return;
-
     const AtomicString& expectedValue = attributeSelector.value();
     ASSERT(!expectedValue.isNull());
+    bool defaultToCaseSensitiveValueMatch = attributeInfo.canDefaultToCaseSensitiveValueMatch();
 
-    RELEASE_ASSERT(attributeSelector.m_match == CSSSelector::Exact);
-    generateElementAttributeValueExactMatching(failureCases, currentAttributeAddress, expectedValue, attributeInfo.canDefaultToCaseSensitiveValueMatch());
+    switch (attributeSelector.m_match) {
+    case CSSSelector::Begin:
+        generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, defaultToCaseSensitiveValueMatch, attributeValueBeginsWith<CaseSensitive>, attributeValueBeginsWith<CaseInsensitive>);
+        break;
+    case CSSSelector::Contain:
+        generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, defaultToCaseSensitiveValueMatch, attributeValueContains<CaseSensitive>, attributeValueContains<CaseInsensitive>);
+        break;
+    case CSSSelector::End:
+        generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, defaultToCaseSensitiveValueMatch, attributeValueEndsWith<CaseSensitive>, attributeValueEndsWith<CaseInsensitive>);
+        break;
+    case CSSSelector::Exact:
+        generateElementAttributeValueExactMatching(failureCases, currentAttributeAddress, expectedValue, defaultToCaseSensitiveValueMatch);
+        break;
+    case CSSSelector::Hyphen:
+        generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, defaultToCaseSensitiveValueMatch, attributeValueMatchHyphenRule<CaseSensitive>, attributeValueMatchHyphenRule<CaseInsensitive>);
+        break;
+    case CSSSelector::List:
+        generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, defaultToCaseSensitiveValueMatch, attributeValueSpaceSeparetedListContains<CaseSensitive>, attributeValueSpaceSeparetedListContains<CaseInsensitive>);
+        break;
+    case CSSSelector::Set:
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 static inline Assembler::Jump testIsHTMLClassOnDocument(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID documentAddress)
@@ -1232,6 +1338,49 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
         failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
 
         skipCaseInsensitiveComparison.link(&m_assembler);
+    }
+}
+
+void SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool canDefaultToCaseSensitiveValueMatch, JSC::FunctionPtr caseSensitiveTest, JSC::FunctionPtr caseInsensitiveTest)
+{
+    LocalRegister expectedValueRegister(m_registerAllocator);
+    m_assembler.move(Assembler::TrustedImmPtr(expectedValue.impl()), expectedValueRegister);
+
+    if (canDefaultToCaseSensitiveValueMatch) {
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(caseSensitiveTest);
+        functionCall.setTwoArguments(currentAttributeAddress, expectedValueRegister);
+        failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+    } else {
+        Assembler::JumpList shouldUseCaseSensitiveComparison;
+        shouldUseCaseSensitiveComparison.append(testIsHTMLFlagOnNode(Assembler::Zero, m_assembler, elementAddressRegister));
+        {
+            LocalRegister scratchRegister(m_registerAllocator);
+            // scratchRegister = pointer to treeScope.
+            m_assembler.loadPtr(Assembler::Address(elementAddressRegister, Node::treeScopeMemoryOffset()), scratchRegister);
+            // scratchRegister = pointer to document.
+            m_assembler.loadPtr(Assembler::Address(scratchRegister, TreeScope::documentScopeMemoryOffset()), scratchRegister);
+            shouldUseCaseSensitiveComparison.append(testIsHTMLClassOnDocument(Assembler::Zero, m_assembler, scratchRegister));
+        }
+
+        {
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(caseInsensitiveTest);
+            functionCall.setTwoArguments(currentAttributeAddress, expectedValueRegister);
+            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+        }
+
+        Assembler::Jump skipCaseSensitiveCase = m_assembler.jump();
+
+        {
+            shouldUseCaseSensitiveComparison.link(&m_assembler);
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(caseSensitiveTest);
+            functionCall.setTwoArguments(currentAttributeAddress, expectedValueRegister);
+            failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+        }
+
+        skipCaseSensitiveCase.link(&m_assembler);
     }
 }
 
