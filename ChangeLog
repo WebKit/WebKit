@@ -1,3 +1,15 @@
+2014-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKit2WebExtension GIR can't be used in vala
+        https://bugs.webkit.org/show_bug.cgi?id=127179
+
+        Reviewed by Martin Robinson.
+
+        Add a different pkg-config file for the web extensions API.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * configure.ac:
+
 2014-03-02  Dirkjan Ochtman  <d.ochtman@activevideo.com>
 
         Support ENABLE_ENCRYPTED_MEDIA in cmake builds

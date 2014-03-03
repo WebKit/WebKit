@@ -54,7 +54,9 @@ fi
 if test "$enable_webkit2" = "yes"; then
     AC_CONFIG_FILES([
         DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitVersion.h:Source/WebKit2/UIProcess/API/gtk/WebKitVersion.h.in
-        Source/WebKit2/webkit2gtk-${WEBKITGTK_API_VERSION}.pc:Source/WebKit2/webkit2gtk.pc.in])
+        Source/WebKit2/webkit2gtk-${WEBKITGTK_API_VERSION}.pc:Source/WebKit2/webkit2gtk.pc.in
+        Source/WebKit2/webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}.pc:Source/WebKit2/webkit2gtk-web-extension.pc.in
+        ])
 fi
 
 m4_include([Source/autotools/PrintBuildConfiguration.m4])

@@ -285,7 +285,9 @@ webkit2gtk_h_api += \
 	$(webkit2gtk_web_extension_h_api)
 
 if ENABLE_WEBKIT2
-pkgconfig_DATA += Source/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
+pkgconfig_DATA += \
+	Source/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc \
+	Source/WebKit2/webkit2gtk-web-extension-@WEBKITGTK_API_VERSION@.pc
 
 if ENABLE_INTROSPECTION
 
@@ -358,7 +360,7 @@ WebKit2WebExtension-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) WebKit2-@WEBKIT
 	     --pkg=gobject-2.0 \
 	     --pkg=gtk+-@GTK_API_VERSION@ \
 	     --pkg=libsoup-2.4 \
-	     --pkg-export=webkit2gtk-@WEBKITGTK_API_VERSION@ \
+	     --pkg-export=webkit2gtk-web-extension-@WEBKITGTK_API_VERSION@ \
 	     --output=$@ \
 	     --add-include-path=$(WebKit2) \
 	     --add-include-path=$(top_builddir) \

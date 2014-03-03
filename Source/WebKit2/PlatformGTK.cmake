@@ -5,6 +5,7 @@ file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR})
 
 configure_file(UIProcess/API/gtk/WebKitVersion.h.in ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitVersion.h)
 configure_file(webkit2gtk.pc.in ${WebKit2_PKGCONFIG_FILE} @ONLY)
+configure_file(webkit2gtk-web-extension.pc.in ${WebKit2WebExtension_PKGCONFIG_FILE} @ONLY)
 
 add_definitions(-DWEBKIT2_COMPILATION)
 add_definitions(-DLIBEXECDIR="${CMAKE_INSTALL_FULL_LIBEXECDIR}")
@@ -741,7 +742,7 @@ add_custom_command(
         --pkg=gobject-2.0
         --pkg=gtk+-${WEBKITGTK_API_VERSION}
         --pkg=libsoup-2.4
-        --pkg-export=webkit2gtk-${WEBKITGTK_API_VERSION}
+        --pkg-export=webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}
         --output=${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
         --c-include="webkit2/webkit-web-extension.h"
         -DBUILDING_WEBKIT
@@ -779,6 +780,7 @@ install(TARGETS webkit2gtkinjectedbundle
         DESTINATION "${LIB_INSTALL_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}/injected-bundle"
 )
 install(FILES "${CMAKE_BINARY_DIR}/Source/WebKit2/webkit2gtk-${WEBKITGTK_API_VERSION}.pc"
+              "${CMAKE_BINARY_DIR}/Source/WebKit2/webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}.pc"
         DESTINATION "${LIB_INSTALL_DIR}/pkgconfig"
 )
 install(FILES ${WebKit2GTK_INSTALLED_HEADERS}
