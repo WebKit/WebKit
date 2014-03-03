@@ -1,3 +1,16 @@
+2014-03-02  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL] Remove m_initEfl from RunLoop.
+        https://bugs.webkit.org/show_bug.cgi?id=129568
+
+        Reviewed by Gyuyoung Kim.
+
+        We don't use m_initEfl except RunLoop constructor.
+
+        * wtf/RunLoop.h:
+        * wtf/efl/RunLoopEfl.cpp:
+        (WTF::RunLoop::RunLoop):
+
 2014-03-02  Darin Adler  <darin@apple.com>
 
         Cut down use of OwnPtr within WTF itself

@@ -149,8 +149,6 @@ private:
     RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
     int m_nestingLevel;
 #elif PLATFORM(EFL)
-    bool m_initEfl;
-
     Mutex m_pipeLock;
     OwnPtr<Ecore_Pipe> m_pipe;
 

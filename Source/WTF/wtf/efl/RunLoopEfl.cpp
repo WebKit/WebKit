@@ -37,11 +37,9 @@ static const char wakupEcorePipeMessage[] = "W";
 namespace WTF {
 
 RunLoop::RunLoop()
-    : m_initEfl(false)
-    , m_wakeUpEventRequested(false)
+    : m_wakeUpEventRequested(false)
 {
     m_pipe = adoptPtr(ecore_pipe_add(wakeUpEvent, this));
-    m_initEfl = true;
 }
 
 RunLoop::~RunLoop()
