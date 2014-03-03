@@ -1196,7 +1196,7 @@ PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::Region>> I
     for (unsigned i = 0; i < regionList->length(); ++i) {
         Inspector::TypeBuilder::CSS::Region::RegionOverset::Enum regionOverset;
 
-        switch (toElement(regionList->item(i))->renderNamedFlowFragment()->regionOversetState()) {
+        switch (toElement(regionList->item(i))->regionOversetState()) {
         case RegionFit:
             regionOverset = Inspector::TypeBuilder::CSS::Region::RegionOverset::Fit;
             break;

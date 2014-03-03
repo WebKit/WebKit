@@ -47,8 +47,9 @@ namespace WebCore {
 
 RenderNamedFlowThread::RenderNamedFlowThread(Document& document, PassRef<RenderStyle> style, PassRef<WebKitNamedFlow> namedFlow)
     : RenderFlowThread(document, std::move(style))
-    , m_overset(true)
     , m_hasRegionsWithStyling(false)
+    , m_dispatchRegionLayoutUpdateEvent(false)
+    , m_dispatchRegionOversetChangeEvent(false)
     , m_namedFlow(std::move(namedFlow))
     , m_regionLayoutUpdateEventTimer(this, &RenderNamedFlowThread::regionLayoutUpdateEventTimerFired)
     , m_regionOversetChangeEventTimer(this, &RenderNamedFlowThread::regionOversetChangeEventTimerFired)
@@ -354,51 +355,31 @@ LayoutRect RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment(c
     return visualOverflowRect;
 }
 
-void RenderNamedFlowThread::computeOversetStateForRegions(LayoutUnit oldClientAfterEdge)
+void RenderNamedFlowThread::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats)
 {
-    LayoutUnit height = oldClientAfterEdge;
+    RenderFlowThread::computeOverflow(oldClientAfterEdge, recomputeFloats);
 
-    // FIXME: the visual overflow of middle region (if it is the last one to contain any content in a render flow thread)
-    // might not be taken into account because the render flow thread height is greater that that regions height + its visual overflow
-    // because of how computeLogicalHeight is implemented for RenderNamedFlowThread (as a sum of all regions height).
-    // This means that the middle region will be marked as fit (even if it has visual overflow flowing into the next region)
-    if (hasRenderOverflow()
-        && ( (isHorizontalWritingMode() && visualOverflowRect().maxY() > clientBoxRect().maxY())
-            || (!isHorizontalWritingMode() && visualOverflowRect().maxX() > clientBoxRect().maxX())))
-        height = isHorizontalWritingMode() ? visualOverflowRect().maxY() : visualOverflowRect().maxX();
+    m_flowContentBottom = oldClientAfterEdge;
+}
 
-    RenderNamedFlowFragment* lastFragment = toRenderNamedFlowFragment(lastRegion());
-    for (auto& namedFlowFragment : m_regionList) {
-        LayoutUnit flowMin = height - (isHorizontalWritingMode() ? namedFlowFragment->flowThreadPortionRect().y() : namedFlowFragment->flowThreadPortionRect().x());
-        LayoutUnit flowMax = height - (isHorizontalWritingMode() ? namedFlowFragment->flowThreadPortionRect().maxY() : namedFlowFragment->flowThreadPortionRect().maxX());
-        RegionOversetState previousState = namedFlowFragment->regionOversetState();
-        RegionOversetState state = RegionFit;
-        if (flowMin <= 0)
-            state = RegionEmpty;
-        if (flowMax > 0 && namedFlowFragment == lastFragment)
-            state = RegionOverset;
-        namedFlowFragment->setRegionOversetState(state);
-        // determine whether the NamedFlow object should dispatch a regionLayoutUpdate event
-        // FIXME: currently it cannot determine whether a region whose regionOverset state remained either "fit" or "overset" has actually
-        // changed, so it just assumes that the NamedFlow should dispatch the event
-        if (previousState != state
-            || state == RegionFit
-            || state == RegionOverset)
-            setDispatchRegionLayoutUpdateEvent(true);
-        
-        if (previousState != state)
-            setDispatchRegionOversetChangeEvent(true);
-    }
-    
+void RenderNamedFlowThread::layout()
+{
+    RenderFlowThread::layout();
+
     // If the number of regions has changed since we last computed the overset property, schedule the regionOversetChange event.
     if (previousRegionCountChanged()) {
         setDispatchRegionOversetChangeEvent(true);
         updatePreviousRegionCount();
     }
 
-    // With the regions overflow state computed we can also set the overset flag for the named flow.
-    // If there are no valid regions in the chain, overset is true.
-    m_overset = lastFragment ? lastFragment->regionOversetState() == RegionOverset : true;
+    dispatchRegionLayoutUpdateEventIfNeeded();
+}
+
+void RenderNamedFlowThread::dispatchNamedFlowEvents()
+{
+    ASSERT(inFinalLayoutPhase());
+
+    dispatchRegionOversetChangeEventIfNeeded();
 }
 
 void RenderNamedFlowThread::checkInvalidRegions()
@@ -529,18 +510,24 @@ bool RenderNamedFlowThread::isChildAllowed(const RenderObject& child, const Rend
     return toElement(originalParent)->renderer()->isChildAllowed(child, style);
 }
 
-void RenderNamedFlowThread::dispatchRegionLayoutUpdateEvent()
+void RenderNamedFlowThread::dispatchRegionLayoutUpdateEventIfNeeded()
 {
-    RenderFlowThread::dispatchRegionLayoutUpdateEvent();
+    if (!m_dispatchRegionLayoutUpdateEvent)
+        return;
+
+    m_dispatchRegionLayoutUpdateEvent = false;
     InspectorInstrumentation::didUpdateRegionLayout(&document(), &namedFlow());
 
     if (!m_regionLayoutUpdateEventTimer.isActive() && namedFlow().hasEventListeners())
         m_regionLayoutUpdateEventTimer.startOneShot(0);
 }
 
-void RenderNamedFlowThread::dispatchRegionOversetChangeEvent()
+void RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded()
 {
-    RenderFlowThread::dispatchRegionOversetChangeEvent();
+    if (!m_dispatchRegionOversetChangeEvent)
+        return;
+
+    m_dispatchRegionOversetChangeEvent = false;
     InspectorInstrumentation::didChangeRegionOverset(&document(), &namedFlow());
     
     if (!m_regionOversetChangeEventTimer.isActive() && namedFlow().hasEventListeners())

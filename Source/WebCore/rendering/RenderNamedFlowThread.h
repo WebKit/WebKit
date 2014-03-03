@@ -70,9 +70,6 @@ public:
 
     LayoutRect decorationsClipRectForBoxInNamedFlowFragment(const RenderBox&, RenderNamedFlowFragment&) const;
 
-    bool overset() const { return m_overset; }
-    void computeOversetStateForRegions(LayoutUnit oldClientAfterEdge);
-
     void registerNamedFlowContentElement(Element&);
     void unregisterNamedFlowContentElement(Element&);
     const NamedFlowContentElements& contentElements() const { return m_contentElements; }
@@ -91,6 +88,12 @@ public:
 
     virtual void removeFlowChildInfo(RenderObject*) override final;
 
+    LayoutUnit flowContentBottom() const { return m_flowContentBottom; }
+    void dispatchNamedFlowEvents();
+
+    void setDispatchRegionLayoutUpdateEvent(bool value) { m_dispatchRegionLayoutUpdateEvent = value; }
+    void setDispatchRegionOversetChangeEvent(bool value) { m_dispatchRegionOversetChangeEvent = value; }
+
 protected:
     void setMarkForDestruction();
     void resetMarkForDestruction();
@@ -99,9 +102,11 @@ private:
     virtual const char* renderName() const override;
     virtual bool isRenderNamedFlowThread() const override { return true; }
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    virtual void computeOverflow(LayoutUnit, bool = false) override;
+    virtual void layout() override final;
 
-    virtual void dispatchRegionLayoutUpdateEvent() override;
-    virtual void dispatchRegionOversetChangeEvent() override;
+    void dispatchRegionLayoutUpdateEventIfNeeded();
+    void dispatchRegionOversetChangeEventIfNeeded();
 
     bool dependsOn(RenderNamedFlowThread* otherRenderFlowThread) const;
     void addDependencyOnFlowThread(RenderNamedFlowThread*);
@@ -137,14 +142,17 @@ private:
 
     RenderRegionList m_invalidRegionList;
 
-    bool m_overset : 1;
     bool m_hasRegionsWithStyling : 1;
+    bool m_dispatchRegionLayoutUpdateEvent : 1;
+    bool m_dispatchRegionOversetChangeEvent : 1;
 
     // The DOM Object that represents a named flow.
     Ref<WebKitNamedFlow> m_namedFlow;
 
     Timer<RenderNamedFlowThread> m_regionLayoutUpdateEventTimer;
     Timer<RenderNamedFlowThread> m_regionOversetChangeEventTimer;
+
+    LayoutUnit m_flowContentBottom;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderNamedFlowThread, isRenderNamedFlowThread())

@@ -59,8 +59,9 @@
     // Add visual overset, overset should be true.
     document.getElementById("article").style.webkitBoxShadow="0px 50px lime";
 
-    // Overset should be true since the content does not fit in regions
-    shouldBe("namedFlow.overset", "true");
+    // Overset should be false even if the content shadow overflows the last region
+    // since the visual overflow does not influence the overset property.
+    shouldBe("namedFlow.overset", "false");
 
     // Add the third region, overset should be false.
     var region3 = document.createElement("div");
@@ -74,8 +75,9 @@
     // Remove the first region from the flow, overset should be true.
     region.className = "";
 
-    // Overset should be true since the content does not fit the regions
-    shouldBe("namedFlow.overset", "true");
+    // Overset should be false even if the content shadow overflows the last region
+    // since the visual overflow does not influence the overset property.
+    shouldBe("namedFlow.overset", "false");
 
     // Remove the content from the flow, overset should be false.
     document.getElementById("article").className = "";

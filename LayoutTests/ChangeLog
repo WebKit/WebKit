@@ -1,3 +1,20 @@
+2014-03-03  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Overset computation is incorrect in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=129032
+
+        Reviewed by Mihnea Ovidenie.
+
+        Adjust the tests to cope with the overset changes. 
+
+        * fast/regions/cssom/element-region-overset-state-expected.txt:
+        * fast/regions/cssom/element-region-overset-state-vertical-rl-expected.txt:
+        * fast/regions/cssom/element-region-overset-state-vertical-rl.html:
+        * fast/regions/cssom/element-region-overset-state.html:
+        This test has a new case that verifies region clamping is correctly taken into account.
+        * fast/regions/cssom/webkit-named-flow-overset-expected.txt:
+        * fast/regions/cssom/webkit-named-flow-overset.html:
+
 2014-03-02  Timothy Hatcher  <timothy@apple.com>
 
         Remove ASSERT in ~IDBRequest since it is firing during legitimate uses in Web Inspector.

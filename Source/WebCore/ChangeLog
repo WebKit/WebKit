@@ -1,3 +1,72 @@
+2014-03-03  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Overset computation is incorrect in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=129032
+
+        Reviewed by Mihnea Ovidenie.
+
+        This patch reworks the way overset is computed for regions and named flows.
+
+        1. Regions overflow no longer trigger an overset changed event. This is because
+        the overflow of a box is contained within the region range of the box. The content
+        edge should be considered the logical bottom position of the content inside the
+        flow thread.
+
+        2. The regions events logic was moved from RenderFlowThread to RenderNamedFlowThread
+        and from RenderRegion to RenderNamedFlowFragment (including the regionOverset property).
+
+        3. The overset value of the named flow is no longer stored in the named flow. It is
+        extracted from the overset of the last region in the chain.
+
+        4. The regions overset is not computed every time the flow thread is laid out which
+        should improve performance for flows with many regions. With the patch, each region
+        computes the overset value during its layout when the flow thread is in the overflow
+        or the final layout phase.
+
+        5. The overset changed event is dispatched only at the end of the layout of the named flows,
+        after all the region overset changes have been considered. This means that the overset
+        event can't be dispatched in the middle of the auto-height processing algorithm that
+        requires multiple layout passes for the flow threads.
+
+        However, the region layout update event dispatch timing was not changed, it is dispatched
+        every time the flow thread has a layout. This preserves the current behavior of the event.
+
+        Tests: The old tests were modified to take into account the change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::webkitRegionOverset):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::overset):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForRegions):
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::updateFlowThreadsIntoMeasureContentPhase):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::layout):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::layoutBlock):
+        (WebCore::RenderNamedFlowFragment::setRegionOversetState):
+        (WebCore::RenderNamedFlowFragment::regionOversetState):
+        (WebCore::RenderNamedFlowFragment::updateOversetState):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::computeOverflow):
+        (WebCore::RenderNamedFlowThread::layout):
+        (WebCore::RenderNamedFlowThread::dispatchNamedFlowEvents):
+        (WebCore::RenderNamedFlowThread::dispatchRegionLayoutUpdateEventIfNeeded):
+        (WebCore::RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded):
+        * rendering/RenderNamedFlowThread.h:
+        There's a new field called m_flowContentBottom that tracks the content bottom of the flow thread
+        after layout. This value is used to compute the overset value of the regions because it's not
+        affected by relative positioning or visual overflow such as shadows.
+        * rendering/RenderRegion.cpp:
+        * rendering/RenderRegion.h:
+
 2014-03-03  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] CodeGeneratorGObject.pm remove usage of undefined variable

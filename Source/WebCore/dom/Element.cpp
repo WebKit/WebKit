@@ -2570,7 +2570,7 @@ const AtomicString& Element::webkitRegionOverset() const
     if (!document().cssRegionsEnabled() || !renderNamedFlowFragment())
         return undefinedState;
 
-    switch (renderNamedFlowFragment()->regionOversetState()) {
+    switch (regionOversetState()) {
     case RegionFit: {
         DEFINE_STATIC_LOCAL(AtomicString, fitState, ("fit", AtomicString::ConstructFromLiteral));
         return fitState;

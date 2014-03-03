@@ -246,6 +246,7 @@ void FlowThreadController::updateFlowThreadsIntoMeasureContentPhase()
         RenderNamedFlowThread* flowRenderer = *iter;
         ASSERT(flowRenderer->inFinalLayoutPhase());
 
+        flowRenderer->dispatchNamedFlowEvents();
         flowRenderer->setLayoutPhase(RenderFlowThread::LayoutPhaseMeasureContent);
     }
 }

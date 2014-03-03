@@ -58,7 +58,18 @@
     }
     function addMoreContent() {
         var c = document.getElementById("content");
+        c.style.marginTop = 0;
         c.style.height = 326;
+        var a = document.getElementById("article");
+        a.style.height = "auto";
+    }
+
+    function generateLayoutOverflow() {
+        var c = document.getElementById("content");
+        c.style.marginTop = 400;
+        c.style.height = 400;
+        var a = document.getElementById("article");
+        a.style.height = 150;
     }
 
     function test() {
@@ -69,6 +80,12 @@
         debug("Flow content");
         flowContent("article");
 
+        shouldBeEqualToString("regionOverset('region_1')", "fit");
+        shouldBeEqualToString("regionOverset('region_2')", "fit");
+        shouldBeEqualToString("regionOverset('region_3')", "empty");
+
+        debug("Generate layout overflow");
+        generateLayoutOverflow();
         shouldBeEqualToString("regionOverset('region_1')", "fit");
         shouldBeEqualToString("regionOverset('region_2')", "fit");
         shouldBeEqualToString("regionOverset('region_3')", "empty");
@@ -85,7 +102,7 @@
 
         shouldBeEqualToString("regionOverset('region_1')", "fit");
         shouldBeEqualToString("regionOverset('region_2')", "fit");
-        shouldBeEqualToString("regionOverset('region_3')", "overset");
+        shouldBeEqualToString("regionOverset('region_3')", "fit");
 
         debug("Empty content");
         flowContent("no_article");

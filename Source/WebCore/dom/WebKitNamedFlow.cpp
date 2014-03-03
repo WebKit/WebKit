@@ -69,7 +69,11 @@ bool WebKitNamedFlow::overset() const
 
     // The renderer may be destroyed or created after the style update.
     // Because this is called from JS, where the wrapper keeps a reference to the NamedFlow, no guard is necessary.
-    return m_parentFlowThread ? m_parentFlowThread->overset() : true;
+    if (!m_parentFlowThread || !m_parentFlowThread->hasRegions())
+        return true;
+
+    const RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(m_parentFlowThread->lastRegion());
+    return namedFlowFragment->regionOversetState() == RegionOverset;
 }
 
 static inline bool inFlowThread(RenderObject* renderer, RenderNamedFlowThread* flowThread)

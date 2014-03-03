@@ -181,23 +181,6 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flow
     return clipRect;
 }
 
-RegionOversetState RenderRegion::regionOversetState() const
-{
-    ASSERT(generatingElement());
-
-    if (!isValid())
-        return RegionUndefined;
-
-    return generatingElement()->regionOversetState();
-}
-
-void RenderRegion::setRegionOversetState(RegionOversetState state)
-{
-    ASSERT(generatingElement());
-
-    generatingElement()->setRegionOversetState(state);
-}
-
 LayoutUnit RenderRegion::pageLogicalTopForOffset(LayoutUnit /* offset */) const
 {
     return flowThread()->isHorizontalWritingMode() ? flowThreadPortionRect().y() : flowThreadPortionRect().x();

@@ -58,8 +58,6 @@ RenderFlowThread::RenderFlowThread(Document& document, PassRef<RenderStyle> styl
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
     , m_regionsHaveUniformLogicalHeight(true)
-    , m_dispatchRegionLayoutUpdateEvent(false)
-    , m_dispatchRegionOversetChangeEvent(false)
     , m_pageLogicalSizeChanged(false)
     , m_layoutPhase(LayoutPhaseMeasureContent)
     , m_needsTwoPhasesLayout(false)
@@ -236,12 +234,6 @@ void RenderFlowThread::layout()
         if (updateAllLayerToRegionMappings())
             layer()->compositor().setCompositingLayersNeedRebuild();
     }
-
-    if (shouldDispatchRegionLayoutUpdateEvent())
-        dispatchRegionLayoutUpdateEvent();
-    
-    if (shouldDispatchRegionOversetChangeEvent())
-        dispatchRegionOversetChangeEvent();
 }
 
 bool RenderFlowThread::hasCompositingRegionDescendant() const
