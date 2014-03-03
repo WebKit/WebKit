@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights resernved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,23 +26,64 @@
  */
 
 #include "config.h"
-#include "ReplayInputTypes.h"
+#include "ReplaySession.h"
 
 #if ENABLE(WEB_REPLAY)
 
+#include "ReplaySessionSegment.h"
+#include <wtf/CurrentTime.h>
+
 namespace WebCore {
 
-#define INITIALIZE_INPUT_TYPE(name) \
-    , name(#name, AtomicString::ConstructFromLiteral)
+static unsigned s_nextIdentifier = 1;
 
-ReplayInputTypes::ReplayInputTypes()
-    : dummy(0)
-JS_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-WEB_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
+PassRefPtr<ReplaySession> ReplaySession::create()
 {
-    UNUSED_PARAM(dummy);
+    return adoptRef(new ReplaySession());
 }
 
-} // namespace WebCore
+ReplaySession::ReplaySession()
+    : m_identifier(s_nextIdentifier++)
+    , m_timestamp(currentTimeMS())
+{
+}
+
+ReplaySession::~ReplaySession()
+{
+}
+
+PassRefPtr<ReplaySessionSegment> ReplaySession::at(size_t position) const
+{
+    return m_segments.at(position);
+}
+
+void ReplaySession::appendSegment(PassRefPtr<ReplaySessionSegment> prpSegment)
+{
+    RefPtr<ReplaySessionSegment> segment = prpSegment;
+
+    // For now, only support one segment.
+    ASSERT(!m_segments.size());
+
+    // Since replay locations are specified with segment IDs, we can only
+    // have one instance of a segment in the session.
+    size_t offset = m_segments.find(segment);
+    ASSERT_UNUSED(offset, offset == notFound);
+
+    m_segments.append(segment.release());
+}
+
+void ReplaySession::insertSegment(size_t position, PassRefPtr<ReplaySessionSegment> segment)
+{
+    ASSERT(position < m_segments.size());
+    m_segments.insert(position, segment);
+}
+
+void ReplaySession::removeSegment(size_t position)
+{
+    ASSERT(position < m_segments.size());
+    m_segments.remove(position);
+}
+
+}; // namespace WebCore
 
 #endif // ENABLE(WEB_REPLAY)

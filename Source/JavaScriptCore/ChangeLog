@@ -1,3 +1,22 @@
+2014-03-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: upstream input storage, capture/replay machinery, and inspector domain
+        https://bugs.webkit.org/show_bug.cgi?id=128782
+
+        Reviewed by Timothy Hatcher.
+
+        Alter the replay inputs code generator so that it knows when it is necessary to
+        to include headers for HEAVY_SCALAR types such as WTF::String and WebCore::URL.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (Framework.fromString):
+        (Frameworks): Add WTF as an allowed framework for code generation.
+        (Generator.generate_includes): Include headers for HEAVY_SCALAR types in the header file.
+        (Generator.generate_includes.declaration):
+        (Generator.generate_includes.or):
+        (Generator.generate_type_forward_declarations): Skip HEAVY_SCALAR types.
+
 2014-03-02  Filip Pizlo  <fpizlo@apple.com>
 
         PolymorphicPutByIdList should have a simpler construction API with basically a single entrypoint

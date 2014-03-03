@@ -1,0 +1,69 @@
+{
+    "types": {
+        "Global": [
+            { "name": "bool", "mode": "SCALAR" },
+            { "name": "double", "mode": "SCALAR" },
+            { "name": "int", "mode": "SCALAR" },
+            { "name": "unsigned", "mode": "SCALAR" },
+            { "name": "unsigned long", "mode": "SCALAR" },
+            { "name": "unsigned long long", "mode": "SCALAR" }
+        ],
+
+        "WTF": [
+            {
+                "name": "String", "mode": "HEAVY_SCALAR",
+                "header": "wtf/text/WTFString.h"
+            }
+        ],
+
+        "JavaScriptCore": [
+            {
+                "name": "InputQueue", "mode": "SCALAR", "storage": "uint8_t",
+                "flags": ["ENUM_CLASS"],
+                "values": ["EventLoopInput", "LoaderMemoizedData", "ScriptMemoizedData", "Count"],
+                "header": "replay/NondeterministicInput.h"
+            }
+        ],
+
+        "WebCore": [
+            {
+                "name": "URL", "mode": "HEAVY_SCALAR",
+                "header": "platform/URL.h"
+            },
+            {
+                "name": "SecurityOrigin", "mode": "SHARED",
+                "header": "page/SecurityOrigin.h"
+            },
+            {
+                "name": "Page", "mode": "OWNED",
+                "header": "page/Page.h"
+            }
+        ]
+    },
+
+    "inputs": [
+        {
+            "name": "BeginSegmentSentinel",
+            "description": "A sentinel input to signal the start of a segment.",
+            "queue": "EVENT_LOOP",
+            "members": [ ]
+        },
+        {
+            "name": "EndSegmentSentinel",
+            "description": "A sentinel input to signal the end of a segment.",
+            "queue": "EVENT_LOOP",
+            "members": [ ]
+        },
+        {
+            "name": "InitialNavigation",
+            "description": "Initiate the initial main frame navigation.",
+            "queue": "EVENT_LOOP",
+            "flags": ["HIDDEN", "CREATE_FROM_PAGE"],
+            "members": [
+                { "name": "securityOrigin", "type": "SecurityOrigin" },
+                { "name": "url", "type": "URL" },
+                { "name": "referrer", "type": "String" }
+            ]
+        }
+    ]
+}

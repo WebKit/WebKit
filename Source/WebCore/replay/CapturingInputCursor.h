@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights resernved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ReplayInputTypes.h"
+#ifndef CapturingInputCursor_h
+#define CapturingInputCursor_h
 
 #if ENABLE(WEB_REPLAY)
 
+#include <replay/InputCursor.h>
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
 
-#define INITIALIZE_INPUT_TYPE(name) \
-    , name(#name, AtomicString::ConstructFromLiteral)
+class SegmentedInputStorage;
 
-ReplayInputTypes::ReplayInputTypes()
-    : dummy(0)
-JS_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-WEB_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-{
-    UNUSED_PARAM(dummy);
-}
+class CapturingInputCursor final : public InputCursor {
+    WTF_MAKE_NONCOPYABLE(CapturingInputCursor);
+public:
+    static PassRefPtr<CapturingInputCursor> create(SegmentedInputStorage&);
+    virtual ~CapturingInputCursor();
+
+    virtual bool isCapturing() const override { return true; }
+    virtual bool isReplaying() const override { return false; }
+
+    virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
+    virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
+protected:
+    virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString& type) override;
+private:
+    explicit CapturingInputCursor(SegmentedInputStorage&);
+
+    SegmentedInputStorage& m_storage;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_REPLAY)
+
+#endif // CapturingInputCursor_h

@@ -1109,6 +1109,7 @@ INSPECTOR_DOMAINS = \
     $(WebCore)/inspector/protocol/Network.json \
     $(WebCore)/inspector/protocol/Page.json \
     $(WebCore)/inspector/protocol/Profiler.json \
+    $(WebCore)/inspector/protocol/Replay.json \
     $(WebCore)/inspector/protocol/Timeline.json \
     $(WebCore)/inspector/protocol/Worker.json \
 #
@@ -1141,6 +1142,22 @@ CommandLineAPIModuleSource.h : CommandLineAPIModuleSource.js
 	python $(InspectorScripts)/jsmin.py <$(WebCore)/inspector/CommandLineAPIModuleSource.js > ./CommandLineAPIModuleSource.min.js
 	perl $(InspectorScripts)/xxd.pl CommandLineAPIModuleSource_js ./CommandLineAPIModuleSource.min.js CommandLineAPIModuleSource.h
 	rm -f ./CommandLineAPIModuleSource.min.js
+
+# Web Replay inputs generator
+
+INPUT_GENERATOR_SCRIPTS = \
+    $(WebReplayScripts)/CodeGeneratorReplayInputs.py \
+    $(WebReplayScripts)/CodeGeneratorReplayInputsTemplates.py \
+#
+
+INPUT_GENERATOR_SPECIFICATIONS = \
+	$(WebCore)/replay/WebInputs.json \
+#
+
+all : WebReplayInputs.h
+
+WebReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
+	python $(WebReplayScripts)/CodeGeneratorReplayInputs.py --outputDir . --framework WebCore $(INPUT_GENERATOR_SPECIFICATIONS)
 
 -include $(JS_DOM_HEADERS:.h=.dep)
 

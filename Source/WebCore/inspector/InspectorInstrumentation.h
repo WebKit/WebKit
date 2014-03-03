@@ -1,5 +1,6 @@
 /*
 * Copyright (C) 2010 Google Inc. All rights reserved.
+* Copyright (C) 2014 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -44,6 +45,12 @@
 #include "WebSocketFrame.h"
 #include <inspector/ConsoleTypes.h>
 #include <wtf/RefPtr.h>
+
+#if ENABLE(WEB_REPLAY)
+#include "ReplaySession.h"
+#include "ReplaySessionSegment.h"
+#endif
+
 
 namespace Deprecated {
 class ScriptObject;
@@ -92,6 +99,8 @@ class ThreadableLoaderClient;
 class WorkerGlobalScope;
 class WorkerGlobalScopeProxy;
 class XMLHttpRequest;
+
+struct ReplayPosition;
 
 #define FAST_RETURN_IF_NO_FRONTENDS(value) if (LIKELY(!hasFrontends())) return value;
 
@@ -239,6 +248,24 @@ public:
     static void workerGlobalScopeTerminated(ScriptExecutionContext*, WorkerGlobalScopeProxy*);
     static void willEvaluateWorkerScript(WorkerGlobalScope*, int workerThreadStartMode);
 
+#if ENABLE(WEB_REPLAY)
+    static void sessionCreated(Page*, PassRefPtr<ReplaySession>);
+    static void sessionLoaded(Page*, PassRefPtr<ReplaySession>);
+    static void sessionModified(Page*, PassRefPtr<ReplaySession>);
+
+    static void segmentCreated(Page*, PassRefPtr<ReplaySessionSegment>);
+    static void segmentCompleted(Page*, PassRefPtr<ReplaySessionSegment>);
+    static void segmentLoaded(Page*, PassRefPtr<ReplaySessionSegment>);
+    static void segmentUnloaded(Page*);
+
+    static void captureStarted(Page*);
+    static void captureStopped(Page*);
+
+    static void playbackStarted(Page*);
+    static void playbackPaused(Page*, const ReplayPosition&);
+    static void playbackHitPosition(Page*, const ReplayPosition&);
+#endif
+
 #if ENABLE(WEB_SOCKETS)
     static void didCreateWebSocket(Document*, unsigned long identifier, const URL& requestURL, const URL& documentURL, const String& protocol);
     static void willSendWebSocketHandshakeRequest(Document*, unsigned long identifier, const ResourceRequest&);
@@ -263,11 +290,13 @@ public:
     static bool hasFrontends() { return s_frontendCounter; }
     static bool consoleAgentEnabled(ScriptExecutionContext*);
     static bool timelineAgentEnabled(ScriptExecutionContext*);
+    static bool replayAgentEnabled(ScriptExecutionContext*);
 #else
     static bool hasFrontends() { return false; }
     static bool consoleAgentEnabled(ScriptExecutionContext*) { return false; }
     static bool runtimeAgentEnabled(Frame*) { return false; }
     static bool timelineAgentEnabled(ScriptExecutionContext*) { return false; }
+    static bool replayAgentEnabled(ScriptExecutionContext*) { return false; }
 #endif
 
     static void registerInstrumentingAgents(InstrumentingAgents*);
@@ -415,6 +444,24 @@ private:
     static bool shouldPauseDedicatedWorkerOnStartImpl(InstrumentingAgents*);
     static void didStartWorkerGlobalScopeImpl(InstrumentingAgents*, WorkerGlobalScopeProxy*, const URL&);
     static void workerGlobalScopeTerminatedImpl(InstrumentingAgents*, WorkerGlobalScopeProxy*);
+
+#if ENABLE(WEB_REPLAY)
+    static void sessionCreatedImpl(InstrumentingAgents*, PassRefPtr<ReplaySession>);
+    static void sessionLoadedImpl(InstrumentingAgents*, PassRefPtr<ReplaySession>);
+    static void sessionModifiedImpl(InstrumentingAgents*, PassRefPtr<ReplaySession>);
+
+    static void segmentCreatedImpl(InstrumentingAgents*, PassRefPtr<ReplaySessionSegment>);
+    static void segmentCompletedImpl(InstrumentingAgents*, PassRefPtr<ReplaySessionSegment>);
+    static void segmentLoadedImpl(InstrumentingAgents*, PassRefPtr<ReplaySessionSegment>);
+    static void segmentUnloadedImpl(InstrumentingAgents*);
+
+    static void captureStartedImpl(InstrumentingAgents*);
+    static void captureStoppedImpl(InstrumentingAgents*);
+
+    static void playbackStartedImpl(InstrumentingAgents*);
+    static void playbackPausedImpl(InstrumentingAgents*, const ReplayPosition&);
+    static void playbackHitPositionImpl(InstrumentingAgents*, const ReplayPosition&);
+#endif
 
 #if ENABLE(WEB_SOCKETS)
     static void didCreateWebSocketImpl(InstrumentingAgents*, unsigned long identifier, const URL& requestURL, const URL& documentURL, const String& protocol, Document*);
@@ -1772,6 +1819,148 @@ inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, 
 #endif
 }
 #endif
+
+#if ENABLE(WEB_REPLAY)
+inline void InspectorInstrumentation::sessionCreated(Page* page, PassRefPtr<ReplaySession> session)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        sessionCreatedImpl(instrumentingAgents, session);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(session);
+#endif
+}
+
+inline void InspectorInstrumentation::sessionLoaded(Page* page, PassRefPtr<ReplaySession> session)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        sessionLoadedImpl(instrumentingAgents, session);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(session);
+#endif
+}
+
+inline void InspectorInstrumentation::sessionModified(Page* page, PassRefPtr<ReplaySession> session)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        sessionModifiedImpl(instrumentingAgents, session);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(session);
+#endif
+}
+
+inline void InspectorInstrumentation::segmentCreated(Page* page, PassRefPtr<ReplaySessionSegment> segment)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        segmentCreatedImpl(instrumentingAgents, segment);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(segment);
+#endif
+}
+
+inline void InspectorInstrumentation::segmentCompleted(Page* page, PassRefPtr<ReplaySessionSegment> segment)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        segmentCompletedImpl(instrumentingAgents, segment);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(segment);
+#endif
+}
+
+inline void InspectorInstrumentation::segmentLoaded(Page* page, PassRefPtr<ReplaySessionSegment> segment)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        segmentLoadedImpl(instrumentingAgents, segment);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(segment);
+#endif
+}
+
+inline void InspectorInstrumentation::segmentUnloaded(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        segmentUnloadedImpl(instrumentingAgents);
+#else
+    UNUSED_PARAM(page);
+#endif
+}
+
+inline void InspectorInstrumentation::captureStarted(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        captureStartedImpl(instrumentingAgents);
+#else
+    UNUSED_PARAM(page);
+#endif
+}
+
+inline void InspectorInstrumentation::captureStopped(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        captureStoppedImpl(instrumentingAgents);
+#else
+    UNUSED_PARAM(page);
+#endif
+}
+
+inline void InspectorInstrumentation::playbackStarted(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        playbackStartedImpl(instrumentingAgents);
+#else
+    UNUSED_PARAM(page);
+#endif
+}
+
+inline void InspectorInstrumentation::playbackPaused(Page* page, const ReplayPosition& position)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        playbackPausedImpl(instrumentingAgents, position);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(position);
+#endif
+}
+
+inline void InspectorInstrumentation::playbackHitPosition(Page* page, const ReplayPosition& position)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        playbackHitPositionImpl(instrumentingAgents, position);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(position);
+#endif
+}
+#endif // ENABLE(WEB_REPLAY)
 
 inline void InspectorInstrumentation::networkStateChanged(Page* page)
 {

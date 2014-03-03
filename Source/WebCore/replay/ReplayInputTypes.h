@@ -31,6 +31,7 @@
 #if ENABLE(WEB_REPLAY)
 
 #include "ThreadGlobalData.h"
+#include "WebReplayInputs.h"
 #include <JavaScriptCore/JSReplayInputs.h>
 #include <wtf/text/AtomicString.h>
 
@@ -44,6 +45,7 @@ public:
 
 #define DECLARE_REPLAY_INPUT_TYPES(name) AtomicString name;
     JS_REPLAY_INPUT_NAMES_FOR_EACH(DECLARE_REPLAY_INPUT_TYPES)
+    WEB_REPLAY_INPUT_NAMES_FOR_EACH(DECLARE_REPLAY_INPUT_TYPES)
 #undef DECLARE_REPLAY_INPUT_TYPES
 };
 

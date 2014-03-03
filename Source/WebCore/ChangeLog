@@ -1,3 +1,273 @@
+2014-03-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: upstream input storage, capture/replay machinery, and inspector domain
+        https://bugs.webkit.org/show_bug.cgi?id=128782
+
+        Reviewed by Timothy Hatcher, Joseph Pecoraro, and Andreas Kling.
+
+        No new tests yet, as they rely on infrastructure tracked in https://webkit.org/b/129190.
+
+        Replayable executions are organized into ReplaySessions, which can
+        contain several ReplaySessionSegments that divide overall execution
+        at main frame navigation boundaries. NondeterministicInput subclasses
+        are stored in SegmentedInputStorage according to the input's InputQueue.
+
+        Capture and playback are controlled at the page granularity by the Page's
+        ReplayController. The controller knows how to create new segments, replay to
+        arbitrary positions in the ReplaySession, and track the active InputCursor.
+
+        The capturing and replaying input cursor subclasses encapsulate state for
+        storing new inputs and loading/dispatching saved inputs, respectively.
+
+        The ReplayAgent and associated inspector protocol domain is the friendly
+        public API for programmatically capturing and replaying sessions.
+
+        * DerivedSources.make: Add replay inputs code generation target. Add the
+        replay domain specification to the list of inspector domains.
+
+        * ForwardingHeaders/replay/EncodedValue.h: Added.
+        * WebCore.xcodeproj/project.pbxproj: Add many files, and export
+        `WebReplayScripts` environment variable to DerivedSources.make.
+
+        * inspector/InspectorController.cpp: Add the replay agent.
+        (WebCore::InspectorController::InspectorController):
+
+        * inspector/InspectorInstrumentation.cpp:
+        Add events for segment lifecycle events, and loading/unloading of sessions
+        and segments, and capture/replay progress events. The replay controller
+        also needs to know about detached and committed frames.
+
+        (WebCore::InspectorInstrumentation::frameDetachedFromParentImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::sessionCreatedImpl):
+        (WebCore::InspectorInstrumentation::sessionLoadedImpl):
+        (WebCore::InspectorInstrumentation::sessionModifiedImpl):
+        (WebCore::InspectorInstrumentation::segmentCreatedImpl):
+        (WebCore::InspectorInstrumentation::segmentCompletedImpl):
+        (WebCore::InspectorInstrumentation::segmentLoadedImpl):
+        (WebCore::InspectorInstrumentation::segmentUnloadedImpl):
+        (WebCore::InspectorInstrumentation::captureStartedImpl):
+        (WebCore::InspectorInstrumentation::captureStoppedImpl):
+        (WebCore::InspectorInstrumentation::playbackStartedImpl):
+        (WebCore::InspectorInstrumentation::playbackPausedImpl):
+        (WebCore::InspectorInstrumentation::playbackHitPositionImpl):
+        (WebCore::InspectorInstrumentation::replayAgentEnabled):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::replayAgentEnabled):
+        (WebCore::InspectorInstrumentation::sessionCreated):
+        (WebCore::InspectorInstrumentation::sessionLoaded):
+        (WebCore::InspectorInstrumentation::sessionModified):
+        (WebCore::InspectorInstrumentation::segmentCreated):
+        (WebCore::InspectorInstrumentation::segmentCompleted):
+        (WebCore::InspectorInstrumentation::segmentLoaded):
+        (WebCore::InspectorInstrumentation::segmentUnloaded):
+        (WebCore::InspectorInstrumentation::captureStarted):
+        (WebCore::InspectorInstrumentation::captureStopped):
+        (WebCore::InspectorInstrumentation::playbackStarted):
+        (WebCore::InspectorInstrumentation::playbackPaused):
+        (WebCore::InspectorInstrumentation::playbackHitPosition):
+
+        * inspector/InspectorReplayAgent.cpp: Added.
+        (WebCore::buildInspectorObjectForPosition):
+        (WebCore::buildInspectorObjectForInput):
+        (WebCore::buildInspectorObjectForSession):
+        (WebCore::SerializeInputToJSONFunctor::SerializeInputToJSONFunctor):
+        (WebCore::SerializeInputToJSONFunctor::~SerializeInputToJSONFunctor):
+        (WebCore::SerializeInputToJSONFunctor::operator()):
+        (WebCore::SerializeInputToJSONFunctor::returnValue):
+        (WebCore::buildInspectorObjectForSegment):
+        (WebCore::InspectorReplayAgent::InspectorReplayAgent):
+        (WebCore::InspectorReplayAgent::~InspectorReplayAgent):
+        (WebCore::InspectorReplayAgent::sessionState):
+        (WebCore::InspectorReplayAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorReplayAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorReplayAgent::frameNavigated):
+        (WebCore::InspectorReplayAgent::frameDetached):
+        (WebCore::InspectorReplayAgent::sessionCreated):
+        (WebCore::InspectorReplayAgent::sessionModified):
+        (WebCore::InspectorReplayAgent::sessionLoaded):
+        (WebCore::InspectorReplayAgent::segmentCreated):
+        (WebCore::InspectorReplayAgent::segmentCompleted):
+        (WebCore::InspectorReplayAgent::segmentLoaded):
+        (WebCore::InspectorReplayAgent::segmentUnloaded):
+        (WebCore::InspectorReplayAgent::captureStarted):
+        (WebCore::InspectorReplayAgent::captureStopped):
+        (WebCore::InspectorReplayAgent::playbackStarted):
+        (WebCore::InspectorReplayAgent::playbackPaused):
+        (WebCore::InspectorReplayAgent::playbackHitPosition):
+        (WebCore::InspectorReplayAgent::startCapturing):
+        (WebCore::InspectorReplayAgent::stopCapturing):
+        (WebCore::InspectorReplayAgent::replayToPosition):
+        (WebCore::InspectorReplayAgent::replayToCompletion):
+        (WebCore::InspectorReplayAgent::pausePlayback):
+        (WebCore::InspectorReplayAgent::cancelPlayback):
+        (WebCore::InspectorReplayAgent::switchSession):
+        (WebCore::InspectorReplayAgent::insertSessionSegment):
+        (WebCore::InspectorReplayAgent::removeSessionSegment):
+        Provide a public API for modifying sessions. This is the backend support
+        for user editing of replay sessions to add/remove specific segments.
+
+        (WebCore::InspectorReplayAgent::findSession):
+        (WebCore::InspectorReplayAgent::findSegment):
+        (WebCore::InspectorReplayAgent::getAvailableSessions):
+        (WebCore::InspectorReplayAgent::getSerializedSession):
+        (WebCore::InspectorReplayAgent::getSerializedSegment):
+        Most of the replay protocol domain speaks in terms of sesssion and
+        segment identifiers. These functions return the actual data associated
+        with these identifiers.
+
+        * inspector/InspectorReplayAgent.h: Added.
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorReplayAgent): Added.
+        (WebCore::InstrumentingAgents::setInspectorReplayAgent): Added.
+        * inspector/protocol/Replay.json: Added.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::replayController): Added.
+        * platform/Logging.h: Add WebReplay logging channel.
+        * replay/AllReplayInputs.h: Added. Simplifies importing all input definitions.
+
+        * replay/CapturingInputCursor.cpp: Added.
+        (WebCore::CapturingInputCursor::CapturingInputCursor):
+        (WebCore::CapturingInputCursor::~CapturingInputCursor):
+        (WebCore::CapturingInputCursor::create):
+        (WebCore::CapturingInputCursor::storeInput):
+        (WebCore::CapturingInputCursor::loadInput):
+        (WebCore::CapturingInputCursor::uncheckedLoadInput):
+        * replay/CapturingInputCursor.h: Added.
+
+        * replay/EventLoopInput.h:
+        (WebCore::EventLoopInputBase::EventLoopInputBase):
+        (WebCore::EventLoopInputBase::timestamp):
+        (WebCore::EventLoopInputBase::setTimestamp): Support deserialization.
+
+        * replay/EventLoopInputDispatcher.cpp: Added. This class encapsulates the timers
+        and measurements used to dispatch event loop inputs during replay.
+
+        (WebCore::EventLoopInputDispatcher::EventLoopInputDispatcher):
+        (WebCore::EventLoopInputDispatcher::run):
+        (WebCore::EventLoopInputDispatcher::pause):
+        (WebCore::EventLoopInputDispatcher::timerFired):
+        (WebCore::EventLoopInputDispatcher::dispatchInputSoon):
+        (WebCore::EventLoopInputDispatcher::dispatchInput):
+        * replay/EventLoopInputDispatcher.h: Added.
+        (WebCore::EventLoopInputDispatcherClient::EventLoopInputDispatcherClient):
+        (WebCore::EventLoopInputDispatcherClient::~EventLoopInputDispatcherClient):
+
+        * replay/FunctorInputCursor.h: Added.
+        (WebCore::FunctorInputCursor::~FunctorInputCursor):
+        (WebCore::FunctorInputCursor::forEachInputInQueue):
+        (WebCore::FunctorInputCursor::FunctorInputCursor):
+        (WebCore::FunctorInputCursor::storeInput):
+        (WebCore::FunctorInputCursor::loadInput):
+        (WebCore::FunctorInputCursor::uncheckedLoadInput):
+
+        * replay/ReplayController.cpp: Added.
+        (WebCore::ReplayController::ReplayController):
+        (WebCore::ReplayController::switchSession):
+        (WebCore::ReplayController::createSegment):
+        (WebCore::ReplayController::completeSegment):
+        (WebCore::ReplayController::loadSegment):
+        (WebCore::ReplayController::unloadSegment):
+        (WebCore::ReplayController::startCapturing):
+        (WebCore::ReplayController::stopCapturing):
+        (WebCore::ReplayController::startPlayback):
+        (WebCore::ReplayController::pausePlayback):
+        (WebCore::ReplayController::cancelPlayback):
+        (WebCore::ReplayController::replayToPosition):
+        (WebCore::ReplayController::frameDetached):
+        (WebCore::ReplayController::frameNavigated):
+        (WebCore::ReplayController::loadedSession):
+        (WebCore::ReplayController::loadedSegment):
+        (WebCore::ReplayController::activeInputCursor):
+        (WebCore::ReplayController::dispatcher):
+        (WebCore::ReplayController::willDispatchInput):
+        (WebCore::ReplayController::didDispatchInput):
+        (WebCore::ReplayController::didDispatchFinalInput):
+        * replay/ReplayController.h: Added.
+        (WebCore::ReplayPosition::ReplayPosition):
+        (WebCore::ReplayPosition::operator<):
+        (WebCore::ReplayPosition::operator==):
+
+        * replay/ReplayInputCreationMethods.cpp: Added.
+        Static factory implementations for inputs belong here.
+        (WebCore::InitialNavigation::createFromPage):
+
+        * replay/ReplayInputDispatchMethods.cpp: Added.
+        All dispatch() implementations for generated replay inputs belong here.
+        (WebCore::BeginSegmentSentinel::dispatch):
+        (WebCore::EndSegmentSentinel::dispatch):
+        (WebCore::InitialNavigation::dispatch):
+
+        * replay/ReplayInputTypes.cpp:
+        (WebCore::ReplayInputTypes::ReplayInputTypes):
+        * replay/ReplayInputTypes.h: Define strings for WebCore inputs.
+
+        * replay/ReplaySession.cpp: Added.
+        (WebCore::ReplaySession::create):
+        (WebCore::ReplaySession::ReplaySession):
+        (WebCore::ReplaySession::~ReplaySession):
+        (WebCore::ReplaySession::appendSegment):
+        (WebCore::ReplaySession::insertSegment):
+        (WebCore::ReplaySession::removeSegment):
+        * replay/ReplaySession.h: Added.
+        (WebCore::ReplaySession::identifier):
+        (WebCore::ReplaySession::timestamp):
+        (WebCore::ReplaySession::size):
+        (WebCore::ReplaySession::at):
+        (WebCore::ReplaySession::begin):
+        (WebCore::ReplaySession::end):
+
+        * replay/ReplaySessionSegment.cpp: Added.
+        (WebCore::ReplaySessionSegment::create):
+        (WebCore::ReplaySessionSegment::ReplaySessionSegment):
+        (WebCore::ReplaySessionSegment::~ReplaySessionSegment):
+        (WebCore::ReplaySessionSegment::createCapturingCursor):
+        (WebCore::ReplaySessionSegment::createReplayingCursor):
+        (WebCore::ReplaySessionSegment::createFunctorCursor):
+        * replay/ReplaySessionSegment.h: Added.
+        (WebCore::ReplaySessionSegment::identifier):
+        (WebCore::ReplaySessionSegment::timestamp):
+
+        * replay/ReplayingInputCursor.cpp: Added.
+        (WebCore::ReplayingInputCursor::ReplayingInputCursor):
+        (WebCore::ReplayingInputCursor::~ReplayingInputCursor):
+        (WebCore::ReplayingInputCursor::create):
+        (WebCore::ReplayingInputCursor::storeInput):
+        (WebCore::ReplayingInputCursor::loadInput):
+        (WebCore::ReplayingInputCursor::uncheckedLoadInput):
+        * replay/ReplayingInputCursor.h: Added.
+
+        * replay/SegmentedInputStorage.cpp: Added.
+        (WebCore::queueTypeToLogPrefix):
+        (WebCore::jsonStringForInput):
+        (WebCore::offsetForInputQueue):
+        (WebCore::SegmentedInputStorage::SegmentedInputStorage):
+        (WebCore::SegmentedInputStorage::~SegmentedInputStorage):
+        (WebCore::SegmentedInputStorage::load):
+        (WebCore::SegmentedInputStorage::store):
+        (WebCore::SegmentedInputStorage::queueSize):
+        * replay/SegmentedInputStorage.h: Added.
+
+        * replay/SerializationMethods.cpp: Added.
+        Specializations of EncodingTraits for WebCore types belong here.
+
+        (JSC::EncodingTraits<NondeterministicInputBase>::encodeValue):
+        (JSC::EncodingTraits<NondeterministicInputBase>::decodeValue):
+        (JSC::EncodingTraits<SecurityOrigin>::encodeValue):
+        (JSC::EncodingTraits<SecurityOrigin>::decodeValue):
+        (JSC::EncodingTraits<URL>::encodeValue):
+        (JSC::EncodingTraits<URL>::decodeValue):
+        * replay/SerializationMethods.h: Added.
+        * replay/WebInputs.json: Added.
+        In this inital patch, we define BeginSegmentSentinel,
+        EndSegmentSentinel, and InitialNavigation inputs.
+
 2014-03-03  Antoine Quint  <graouts@webkit.org>
 
         Respect SVG fragment identifiers in <img> src attribute

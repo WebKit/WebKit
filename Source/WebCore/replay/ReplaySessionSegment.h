@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights resernved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ReplayInputTypes.h"
+#ifndef ReplaySessionSegment_h
+#define ReplaySessionSegment_h
 
 #if ENABLE(WEB_REPLAY)
 
+#include <replay/NondeterministicInput.h>
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
-#define INITIALIZE_INPUT_TYPE(name) \
-    , name(#name, AtomicString::ConstructFromLiteral)
+class CapturingInputCursor;
+class EventLoopInputDispatcherClient;
+class FunctorInputCursor;
+class Page;
+class ReplayingInputCursor;
+class SegmentedInputStorage;
 
-ReplayInputTypes::ReplayInputTypes()
-    : dummy(0)
-JS_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-WEB_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-{
-    UNUSED_PARAM(dummy);
-}
+class ReplaySessionSegment : public RefCounted<ReplaySessionSegment> {
+public:
+    static PassRefPtr<ReplaySessionSegment> create();
+    ~ReplaySessionSegment();
+
+    unsigned identifier() const { return m_identifier; }
+    double timestamp() const { return m_timestamp; }
+
+    PassRefPtr<CapturingInputCursor> createCapturingCursor(Page&);
+    PassRefPtr<ReplayingInputCursor> createReplayingCursor(Page&, EventLoopInputDispatcherClient*);
+    std::unique_ptr<FunctorInputCursor> createFunctorCursor();
+private:
+    ReplaySessionSegment();
+
+    std::unique_ptr<SegmentedInputStorage> m_storage;
+    unsigned m_identifier;
+    bool m_canCapture;
+    double m_timestamp;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_REPLAY)
+
+#endif // ReplaySessionSegment_h

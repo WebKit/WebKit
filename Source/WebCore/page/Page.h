@@ -99,6 +99,7 @@ class ProgressTrackerClient;
 class Range;
 class RenderObject;
 class RenderTheme;
+class ReplayController;
 class VisibleSelection;
 class ScrollableArea;
 class ScrollingCoordinator;
@@ -199,6 +200,9 @@ public:
     ContextMenuController& contextMenuController() const { return *m_contextMenuController; }
 #endif
     UserInputBridge& userInputBridge() const { return *m_userInputBridge; }
+#if ENABLE(WEB_REPLAY)
+    ReplayController& replayController() const { return *m_replayController; }
+#endif
 #if ENABLE(INSPECTOR)
     InspectorController& inspectorController() const { return *m_inspectorController; }
 #endif
@@ -447,6 +451,9 @@ private:
     const std::unique_ptr<ContextMenuController> m_contextMenuController;
 #endif
     const std::unique_ptr<UserInputBridge> m_userInputBridge;
+#if ENABLE(WEB_REPLAY)
+    const std::unique_ptr<ReplayController> m_replayController;
+#endif
 #if ENABLE(INSPECTOR)
     const std::unique_ptr<InspectorController> m_inspectorController;
 #endif

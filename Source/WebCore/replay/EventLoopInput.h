@@ -37,38 +37,22 @@ namespace WebCore {
 
 class ReplayController;
 
-struct ReplayPosition {
-public:
-    ReplayPosition()
-        : m_index(0)
-        , m_time(0.0) { }
-
-    explicit ReplayPosition(unsigned index)
-        : m_index(index)
-        , m_time(monotonicallyIncreasingTime()) { }
-
-    unsigned index() const { return m_index; }
-    double time() const { return m_time; }
-private:
-    unsigned m_index;
-    double m_time;
-};
-
 class EventLoopInputBase : public NondeterministicInputBase {
 public:
     EventLoopInputBase()
-        : m_position(ReplayPosition()) { }
+        : m_timestamp(monotonicallyIncreasingTime())
+    {
+    }
 
     virtual ~EventLoopInputBase() { }
     virtual InputQueue queue() const override final { return InputQueue::EventLoopInput; }
 
     virtual void dispatch(ReplayController&) = 0;
 
-    // During capture, the position is set when the following event loop input is captured.
-    void setPosition(const ReplayPosition& position) { m_position = position; }
-    ReplayPosition position() const { return m_position; }
+    double timestamp() const { return m_timestamp; }
+    void setTimestamp(double timestamp) { m_timestamp = timestamp; }
 protected:
-    ReplayPosition m_position;
+    double m_timestamp;
 };
 
 template <typename InputType>

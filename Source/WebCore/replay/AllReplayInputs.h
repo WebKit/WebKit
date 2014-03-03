@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights resernved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ReplayInputTypes.h"
+// This file is the include equivalent for WEB_REPLAY_INPUT_NAMES_FOR_EACH.
+// Note that there is not an exact correspondence between the two, since
+// Some input types reside in the same file.
+
+// Make sure that this stays in sync with ReplayInputTypes.h for custom inputs.
+
+#ifndef AllReplayInputs_h
+#define AllReplayInputs_h
 
 #if ENABLE(WEB_REPLAY)
 
-namespace WebCore {
+#include "WebReplayInputs.h"
+#include <JavaScriptCore/JSReplayInputs.h>
 
-#define INITIALIZE_INPUT_TYPE(name) \
-    , name(#name, AtomicString::ConstructFromLiteral)
+#define IMPORT_FROM_JSC_NAMESPACE(name) \
+using JSC::name; \
 
-ReplayInputTypes::ReplayInputTypes()
-    : dummy(0)
-JS_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-WEB_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-{
-    UNUSED_PARAM(dummy);
-}
-
-} // namespace WebCore
+JS_REPLAY_INPUT_NAMES_FOR_EACH(IMPORT_FROM_JSC_NAMESPACE)
 
 #endif // ENABLE(WEB_REPLAY)
+
+#endif // AllReplayInputs_h

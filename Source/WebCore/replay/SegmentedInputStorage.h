@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights resernved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ReplayInputTypes.h"
+#ifndef SegmentedInputStorage_h
+#define SegmentedInputStorage_h
 
 #if ENABLE(WEB_REPLAY)
 
+#include <replay/NondeterministicInput.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
-#define INITIALIZE_INPUT_TYPE(name) \
-    , name(#name, AtomicString::ConstructFromLiteral)
+class SegmentedInputStorage {
+    WTF_MAKE_NONCOPYABLE(SegmentedInputStorage);
+    friend class FunctorInputCursor;
+public:
+    SegmentedInputStorage();
+    ~SegmentedInputStorage();
 
-ReplayInputTypes::ReplayInputTypes()
-    : dummy(0)
-JS_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-WEB_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-{
-    UNUSED_PARAM(dummy);
-}
+    NondeterministicInputBase* load(InputQueue, size_t);
+    void store(std::unique_ptr<NondeterministicInputBase>);
+    size_t queueSize(InputQueue) const;
+
+private:
+    typedef Vector<std::unique_ptr<NondeterministicInputBase>> QueuedInputs;
+    const QueuedInputs& queue(InputQueue) const;
+
+    Vector<QueuedInputs*, 3> m_queues;
+    unsigned m_inputCount;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_REPLAY)
+
+#endif // SegmentedInputStorage_h

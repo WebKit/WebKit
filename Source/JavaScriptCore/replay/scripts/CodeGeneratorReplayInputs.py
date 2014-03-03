@@ -103,6 +103,10 @@ FRAMEWORK_CONFIG_MAP = {
         "namespace": ""
     },
 
+    "WTF": {
+        "prefix": "WTF",
+        "namespace": "WTF",
+    },
     "JavaScriptCore": {
         "prefix": "JS",
         "namespace": "JSC",
@@ -166,6 +170,9 @@ class Framework:
         if frameworkString == "Global":
             return Frameworks.Global
 
+        if frameworkString == "WTF":
+            return Frameworks.WTF
+
         if frameworkString == "JavaScriptCore":
             return Frameworks.JavaScriptCore
 
@@ -180,6 +187,7 @@ class Framework:
 
 class Frameworks:
     Global = Framework("Global")
+    WTF = Framework("WTF")
     JavaScriptCore = Framework("JavaScriptCore")
     WebCore = Framework("WebCore")
     Test = Framework("Test")
@@ -616,11 +624,14 @@ class Generator:
             if _type.framework is Frameworks.Global:
                 continue
             # For RefCounted types, we reverse when to include the header so that the destructor can be
-            # used in the header file. Enums within classes cannot be forward declared, so we include
-            # headers with the relevant class declaration.
+            # used in the header file.
             include_for_destructor = _type.mode is TypeModes.SHARED
+            # Enums within classes cannot be forward declared, so we include
+            # headers with the relevant class declaration.
             include_for_enclosing_class = _type.is_enum() and _type.enclosing_class is not None
-            if (not includes_for_types) ^ (include_for_destructor or include_for_enclosing_class):
+            # Include headers for types like URL and String which are copied, not owned or shared.
+            include_for_copyable_member = _type.mode is TypeModes.HEAVY_SCALAR or _type.mode is TypeModes.SCALAR
+            if (not includes_for_types) ^ (include_for_destructor or include_for_enclosing_class or include_for_copyable_member):
                 continue
 
             if self.target_framework != _type.framework:
@@ -653,6 +664,8 @@ class Generator:
             if _type.framework not in frameworks:
                 continue
             if _type.enclosing_class is not None:
+                continue
+            if _type.mode == TypeModes.SCALAR or _type.mode == TypeModes.HEAVY_SCALAR:
                 continue
             if _type.is_enum():
                 declaration = "enum %s : %s;" % (_type.type_name(), _type.underlying_storage)

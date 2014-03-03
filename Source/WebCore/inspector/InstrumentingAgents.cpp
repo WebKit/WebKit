@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -56,6 +57,9 @@ InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)
     , m_workerRuntimeAgent(nullptr)
     , m_inspectorTimelineAgent(nullptr)
     , m_inspectorDOMStorageAgent(nullptr)
+#if ENABLE(WEB_REPLAY)
+    , m_inspectorReplayAgent(nullptr)
+#endif
 #if ENABLE(SQL_DATABASE)
     , m_inspectorDatabaseAgent(nullptr)
 #endif
@@ -81,6 +85,9 @@ void InstrumentingAgents::reset()
     m_workerRuntimeAgent = nullptr;
     m_inspectorTimelineAgent = nullptr;
     m_inspectorDOMStorageAgent = nullptr;
+#if ENABLE(WEB_REPLAY)
+    m_inspectorReplayAgent = nullptr;
+#endif
 #if ENABLE(SQL_DATABASE)
     m_inspectorDatabaseAgent = nullptr;
 #endif

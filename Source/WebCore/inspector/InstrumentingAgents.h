@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -55,6 +56,7 @@ class InspectorLayerTreeAgent;
 class InspectorPageAgent;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
+class InspectorReplayAgent;
 class InspectorTimelineAgent;
 class InspectorWorkerAgent;
 class Page;
@@ -107,6 +109,11 @@ public:
     InspectorDOMStorageAgent* inspectorDOMStorageAgent() const { return m_inspectorDOMStorageAgent; }
     void setInspectorDOMStorageAgent(InspectorDOMStorageAgent* agent) { m_inspectorDOMStorageAgent = agent; }
 
+#if ENABLE(WEB_REPLAY)
+    InspectorReplayAgent* inspectorReplayAgent() const { return m_inspectorReplayAgent; }
+    void setInspectorReplayAgent(InspectorReplayAgent* agent) { m_inspectorReplayAgent = agent; }
+#endif
+
 #if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* inspectorDatabaseAgent() const { return m_inspectorDatabaseAgent; }
     void setInspectorDatabaseAgent(InspectorDatabaseAgent* agent) { m_inspectorDatabaseAgent = agent; }
@@ -152,6 +159,9 @@ private:
     WorkerRuntimeAgent* m_workerRuntimeAgent;
     InspectorTimelineAgent* m_inspectorTimelineAgent;
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent;
+#if ENABLE(WEB_REPLAY)
+    InspectorReplayAgent* m_inspectorReplayAgent;
+#endif
 #if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* m_inspectorDatabaseAgent;
 #endif

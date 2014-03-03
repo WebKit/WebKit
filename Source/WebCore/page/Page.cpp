@@ -94,6 +94,10 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringHash.h>
 
+#if ENABLE(WEB_REPLAY)
+#include "ReplayController.h"
+#endif
+
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
@@ -129,6 +133,9 @@ Page::Page(PageClients& pageClients)
     , m_contextMenuController(std::make_unique<ContextMenuController>(*this, *pageClients.contextMenuClient))
 #endif
     , m_userInputBridge(std::make_unique<UserInputBridge>(*this))
+#if ENABLE(WEB_REPLAY)
+    , m_replayController(std::make_unique<ReplayController>(*this))
+#endif
 #if ENABLE(INSPECTOR)
     , m_inspectorController(std::make_unique<InspectorController>(*this, pageClients.inspectorClient))
 #endif

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights resernved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ReplayInputTypes.h"
+#ifndef ReplayingInputCursor_h
+#define ReplayingInputCursor_h
 
 #if ENABLE(WEB_REPLAY)
 
+#include <replay/InputCursor.h>
+#include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
+
 namespace WebCore {
 
-#define INITIALIZE_INPUT_TYPE(name) \
-    , name(#name, AtomicString::ConstructFromLiteral)
+class EventLoopInputDispatcher;
+class EventLoopInputDispatcherClient;
+class Page;
+class SegmentedInputStorage;
 
-ReplayInputTypes::ReplayInputTypes()
-    : dummy(0)
-JS_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-WEB_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-{
-    UNUSED_PARAM(dummy);
-}
+class ReplayingInputCursor final : public InputCursor {
+    WTF_MAKE_NONCOPYABLE(ReplayingInputCursor);
+public:
+    static PassRefPtr<ReplayingInputCursor> create(SegmentedInputStorage&, Page&, EventLoopInputDispatcherClient*);
+    virtual ~ReplayingInputCursor();
+
+    virtual bool isCapturing() const override { return false; }
+    virtual bool isReplaying() const override { return true; }
+
+    EventLoopInputDispatcher& dispatcher() const { return *m_dispatcher; }
+
+    virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
+    virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
+protected:
+    virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString& type) override;
+private:
+    ReplayingInputCursor(SegmentedInputStorage&, Page&, EventLoopInputDispatcherClient*);
+
+    SegmentedInputStorage& m_storage;
+    std::unique_ptr<EventLoopInputDispatcher> m_dispatcher;
+    Vector<size_t> m_positions;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_REPLAY)
+
+#endif // ReplayingInputCursor_h

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights resernved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ReplayInputTypes.h"
+#ifndef ReplaySession_h
+#define ReplaySession_h
 
 #if ENABLE(WEB_REPLAY)
 
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
-#define INITIALIZE_INPUT_TYPE(name) \
-    , name(#name, AtomicString::ConstructFromLiteral)
+class ReplaySessionSegment;
 
-ReplayInputTypes::ReplayInputTypes()
-    : dummy(0)
-JS_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-WEB_REPLAY_INPUT_NAMES_FOR_EACH(INITIALIZE_INPUT_TYPE)
-{
-    UNUSED_PARAM(dummy);
-}
+typedef Vector<RefPtr<ReplaySessionSegment>>::const_iterator SegmentIterator;
+
+class ReplaySession : public RefCounted<ReplaySession> {
+    WTF_MAKE_NONCOPYABLE(ReplaySession);
+public:
+    static PassRefPtr<ReplaySession> create();
+    ~ReplaySession();
+
+    double timestamp() const { return m_timestamp; }
+    unsigned identifier() const { return m_identifier; }
+
+    size_t size() const { return m_segments.size(); }
+    PassRefPtr<ReplaySessionSegment> at(size_t position) const;
+
+    SegmentIterator begin() const { return m_segments.begin(); }
+    SegmentIterator end() const { return m_segments.end(); }
+
+    void appendSegment(PassRefPtr<ReplaySessionSegment>);
+    void insertSegment(size_t position, PassRefPtr<ReplaySessionSegment>);
+    void removeSegment(size_t position);
+
+private:
+    ReplaySession();
+
+    Vector<RefPtr<ReplaySessionSegment>> m_segments;
+    unsigned m_identifier;
+    double m_timestamp;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_REPLAY)
+
+#endif // ReplaySession_h
