@@ -1,3 +1,9 @@
+2014-03-02  Darin Adler  <darin@apple.com>
+
+        Fix build for case-sensitive file systems.
+
+        * platform/UserActivity.h: Runloop -> RunLoop.
+
 2014-03-02  Gavin Barraclough  <barraclough@apple.com>
 
         HysteresisTimer should use WebCore::Timer
