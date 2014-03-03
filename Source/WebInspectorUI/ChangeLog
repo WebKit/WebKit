@@ -1,3 +1,15 @@
+2014-03-03  Timothy Hatcher  <timothy@apple.com>
+
+        Fix an exception caused by trying to access the DOM before it is loaded.
+
+        https://bugs.webkit.org/show_bug.cgi?id=129617
+
+        Reviewed by Andreas Kling.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded): Move global event listeners from here...
+        (WebInspector.contentLoaded): ... to here.
+
 2014-03-01  Timothy Hatcher  <timothy@apple.com>
 
         Make Start Timeline Recording in the Develop menu show the Timeline view again.

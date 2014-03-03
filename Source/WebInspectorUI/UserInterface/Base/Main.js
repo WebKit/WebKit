@@ -130,21 +130,6 @@ WebInspector.loaded = function()
 
     document.addEventListener("DOMContentLoaded", this.contentLoaded.bind(this));
 
-    document.addEventListener("beforecopy", this._beforecopy.bind(this));
-    document.addEventListener("copy", this._copy.bind(this));
-
-    document.addEventListener("click", this._mouseWasClicked.bind(this));
-    document.addEventListener("dragover", this._dragOver.bind(this));
-    document.addEventListener("focus", WebInspector._focusChanged.bind(this), true);
-
-    window.addEventListener("focus", this._windowFocused.bind(this));
-    window.addEventListener("blur", this._windowBlurred.bind(this));
-    window.addEventListener("resize", this._windowResized.bind(this));
-    window.addEventListener("keydown", this._windowKeyDown.bind(this));
-    window.addEventListener("keyup", this._windowKeyUp.bind(this));
-    window.addEventListener("mousemove", this._mouseMoved.bind(this), true);
-    window.addEventListener("pagehide", this._pageHidden.bind(this));
-
     // Create settings.
     this._lastInspectorViewStateCookieSetting = new WebInspector.Setting("last-content-view-state-cookie", {});
 
@@ -181,6 +166,22 @@ WebInspector.loaded = function()
 
 WebInspector.contentLoaded = function()
 {
+    // Register for global events.
+    document.addEventListener("beforecopy", this._beforecopy.bind(this));
+    document.addEventListener("copy", this._copy.bind(this));
+
+    document.addEventListener("click", this._mouseWasClicked.bind(this));
+    document.addEventListener("dragover", this._dragOver.bind(this));
+    document.addEventListener("focus", WebInspector._focusChanged.bind(this), true);
+
+    window.addEventListener("focus", this._windowFocused.bind(this));
+    window.addEventListener("blur", this._windowBlurred.bind(this));
+    window.addEventListener("resize", this._windowResized.bind(this));
+    window.addEventListener("keydown", this._windowKeyDown.bind(this));
+    window.addEventListener("keyup", this._windowKeyUp.bind(this));
+    window.addEventListener("mousemove", this._mouseMoved.bind(this), true);
+    window.addEventListener("pagehide", this._pageHidden.bind(this));
+
     // Check for a nightly build by looking for a plus in the version number and a small number of stylesheets (indicating combined resources).
     var versionMatch = / AppleWebKit\/([^ ]+)/.exec(navigator.userAgent);
     if (versionMatch && versionMatch[1].indexOf("+") !== -1 && document.styleSheets.length < 10)
