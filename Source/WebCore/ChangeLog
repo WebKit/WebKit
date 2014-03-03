@@ -1,3 +1,17 @@
+2014-03-02  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] Form controls handling
+        https://bugs.webkit.org/show_bug.cgi?id=129344
+        <rdar://problem/16053643>
+
+        Reviewed by Simon Fraser.
+
+        Updates localizable strings and adds some exports.
+
+        * English.lproj/Localizable.strings:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-03-02  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Pages using tiled compositing layers allocate too many tiles on zoom

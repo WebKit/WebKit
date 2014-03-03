@@ -481,6 +481,7 @@ public:
     void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold);
     void setAssistedNodeValue(const String&);
     void setAssistedNodeValueAsNumber(double);
+    void setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection = false);
 #endif
 
     const EditorState& editorState() const { return m_editorState; }

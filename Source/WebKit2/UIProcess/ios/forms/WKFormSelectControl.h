@@ -23,10 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOS)
+
 #import "WKFormPeripheral.h"
+#import "WKFormPopover.h"
+#import <UIKit/UIPickerView.h>
+#import <UIKit/UIPickerView_Private.h>
 
 @class WKContentView;
 
 @interface WKFormSelectControl : NSObject<WKFormPeripheral>
 + (WKFormSelectControl *)createPeripheralWithView:(WKContentView *)view;
 @end
+
+@interface WKSelectPopover : WKFormRotatingAccessoryPopover<WKFormControl>
+- (instancetype)initWithView:(WKContentView *)view hasGroups:(BOOL)hasGroups;
+- (void)_userActionDismissedPopover:(id)sender;
+@end
+
+@interface WKSelectSinglePicker : UIPickerView <WKFormControl, UIPickerViewDataSource, UIPickerViewDelegate>
+- (instancetype)initWithView:(WKContentView *)view;
+@end
+
+#endif // PLATFORM(IOS)
+

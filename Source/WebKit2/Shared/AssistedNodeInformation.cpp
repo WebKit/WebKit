@@ -32,6 +32,35 @@
 namespace WebKit {
 
 #if PLATFORM(IOS)
+void WKOptionItem::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << text;
+    encoder << isGroup;
+    encoder << isSelected;
+    encoder << disabled;
+    encoder << parentGroupID;
+}
+
+bool WKOptionItem::decode(IPC::ArgumentDecoder& decoder, WKOptionItem& result)
+{
+    if (!decoder.decode(result.text))
+        return false;
+
+    if (!decoder.decode(result.isGroup))
+        return false;
+
+    if (!decoder.decode(result.isSelected))
+        return false;
+
+    if (!decoder.decode(result.disabled))
+        return false;
+
+    if (!decoder.decode(result.parentGroupID))
+        return false;
+    
+    return true;
+}
+
 void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << elementRect;
@@ -41,7 +70,7 @@ void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
     encoder << (uint32_t)autocapitalizeType;
     encoder << (uint32_t)elementType;
     encoder << formAction;
-    encoder << selectionOptions;
+    encoder << selectOptions;
     encoder << selectedIndex;
     encoder << isMultiSelect;
     encoder << isReadOnly;
@@ -73,7 +102,7 @@ bool AssistedNodeInformation::decode(IPC::ArgumentDecoder& decoder, AssistedNode
     if (!decoder.decode(result.formAction))
         return false;
 
-    if (!decoder.decode(result.selectionOptions))
+    if (!decoder.decode(result.selectOptions))
         return false;
 
     if (!decoder.decode(result.selectedIndex))

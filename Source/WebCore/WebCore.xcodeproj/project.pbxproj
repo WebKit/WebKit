@@ -3833,7 +3833,7 @@
 		A81369DA097374F600D74463 /* HTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369BE097374F500D74463 /* HTMLOptionsCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A81369DC097374F600D74463 /* HTMLOptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C0097374F500D74463 /* HTMLOptionElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A81369DD097374F600D74463 /* HTMLOptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C1097374F500D74463 /* HTMLOptionElement.cpp */; };
-		A81369DE097374F600D74463 /* HTMLOptGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C2097374F500D74463 /* HTMLOptGroupElement.h */; };
+		A81369DE097374F600D74463 /* HTMLOptGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C2097374F500D74463 /* HTMLOptGroupElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A81369DF097374F600D74463 /* HTMLOptGroupElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C3097374F500D74463 /* HTMLOptGroupElement.cpp */; };
 		A81369E0097374F600D74463 /* HTMLLegendElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C4097374F500D74463 /* HTMLLegendElement.h */; };
 		A81369E1097374F600D74463 /* HTMLLegendElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C5097374F500D74463 /* HTMLLegendElement.cpp */; };

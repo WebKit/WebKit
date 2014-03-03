@@ -55,6 +55,42 @@ enum WKInputType {
 };
 
 #if PLATFORM(IOS)
+struct WKOptionItem {
+    WKOptionItem()
+        : isGroup(false)
+        , isSelected(false)
+        , disabled(false)
+        , parentGroupID(0)
+    {
+    }
+
+    WKOptionItem(const WKOptionItem& item)
+        : text(item.text)
+        , isGroup(item.isGroup)
+        , isSelected(item.isSelected)
+        , disabled(item.disabled)
+        , parentGroupID(item.parentGroupID)
+    {
+    }
+
+    WKOptionItem(const String& text, bool isGroup, int parentID, bool selected, bool disabled)
+        : text(text)
+        , isGroup(isGroup)
+        , isSelected(selected)
+        , disabled(disabled)
+        , parentGroupID(parentID)
+    {
+    }
+    String text;
+    bool isGroup;
+    bool isSelected;
+    bool disabled;
+    int parentGroupID;
+
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, WKOptionItem&);
+};
+
 struct AssistedNodeInformation {
     AssistedNodeInformation()
         : hasNextNode(false)
@@ -78,7 +114,7 @@ struct AssistedNodeInformation {
     WebAutocapitalizeType autocapitalizeType;
     WKInputType elementType;
     String formAction;
-    Vector<String> selectionOptions;
+    Vector<WKOptionItem> selectOptions;
     int selectedIndex;
     String value;
     double valueAsNumber;

@@ -51,8 +51,6 @@ namespace WebKit {
 class NativeWebTouchEvent;
 class SmartMagnificationController;
 class WebPageProxy;
-struct AssistedNodeInformation;
-struct InteractionInformationAtPosition;
 }
 
 @class _UIWebHighlightLongPressGestureRecognizer;
@@ -122,7 +120,6 @@ struct WKAutoCorrectionData {
 @property (nonatomic, readonly) const WebKit::InteractionInformationAtPosition& positionInformation;
 @property (nonatomic, readonly) const WebKit::WKAutoCorrectionData& autocorrectionData;
 @property (nonatomic, readonly) const WebKit::AssistedNodeInformation& assistedNodeInformation;
-
 - (void)setupInteraction;
 - (void)cleanupInteraction;
 
@@ -142,6 +139,7 @@ struct WKAutoCorrectionData {
 - (void)_didEndScrollingOrZooming;
 - (void)_didUpdateBlockSelectionWithTouch:(WebKit::WKSelectionTouch)touch withFlags:(WebKit::WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold;
 - (void)accessoryDone;
+- (Vector<WebKit::WKOptionItem>&) assistedNodeSelectOptions;
 @end
 
 #endif // PLATFORM(IOS)

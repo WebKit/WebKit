@@ -316,6 +316,9 @@
 /* No Guesses Found context menu item */
 "No Guesses Found" = "No Guesses Found";
 
+/* Empty select list */
+"No Options Select Popover" = "No Options";
+
 /* Label for only item in menu that appears when clicking on the search field image, when no searches have been performed */
 "No recent searches" = "No recent searches";
 

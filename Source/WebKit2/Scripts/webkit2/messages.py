@@ -222,6 +222,7 @@ def struct_or_class(namespace, type):
         'WebKit::SecurityOriginData',
         'WebKit::StatisticsData',
         'WebKit::TextCheckerState',
+        'WebKit::WKOptionItem',
         'WebKit::WebNavigationDataStore',
         'WebKit::WebPageCreationParameters',
         'WebKit::WebPreferencesStore',

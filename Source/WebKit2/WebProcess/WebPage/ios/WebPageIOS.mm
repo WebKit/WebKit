@@ -52,6 +52,8 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLOptionElement.h>
+#import <WebCore/HTMLOptGroupElement.h>
+#import <WebCore/HTMLOptionElement.h>
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
@@ -416,11 +418,19 @@ void WebPage::setAssistedNodeValueAsNumber(double value)
     }
 }
 
+void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
+{
+    if (!m_assistedNode || !isHTMLSelectElement(m_assistedNode.get()))
+        return;
+    HTMLSelectElement* select = toHTMLSelectElement(m_assistedNode.get());
+    select->optionSelectedByUser(index, true, allowMultipleSelection);
+}
+
 static FloatQuad innerFrameQuad(Frame* frame, Node* assistedNode)
 {
     frame->document()->updateLayoutIgnorePendingStylesheets();
     RenderObject* renderer;
-    if (assistedNode->hasTagName(HTMLNames::textareaTag) || assistedNode->hasTagName(HTMLNames::inputTag))
+    if (assistedNode->hasTagName(HTMLNames::textareaTag) || assistedNode->hasTagName(HTMLNames::inputTag) || assistedNode->hasTagName(HTMLNames::selectTag))
         renderer = assistedNode->renderer();
     else
         renderer = assistedNode->rootEditableElement()->renderer();
@@ -1419,7 +1429,8 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
         info.clickableElementName = hitNode->nodeName();
 
         Element* element = hitNode->isElementNode() ? toElement(hitNode) : 0;
-        if (!element)
+        // FIXME: should not return here but do what is under if (!elementIsLinkOrImage)
+        if (element)
             return;
 
         Element* linkElement = nullptr;
@@ -1528,7 +1539,7 @@ static inline bool hasFocusableNode(Node* startNode, Page* page, bool isForward)
     do {
         nextNode = isForward ? page->focusController().nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextNode->document()), nextNode, key.get())
             : page->focusController().previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextNode->document()), nextNode, key.get());
-    } while (nextNode && !isAssistableNode(startNode));
+    } while (nextNode && !isAssistableNode(nextNode));
 
     return nextNode;
 }
@@ -1543,10 +1554,20 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         HTMLSelectElement* element = toHTMLSelectElement(m_assistedNode.get());
         information.elementType = WKTypeSelect;
         size_t count = element->listItems().size();
-        // FIXME: We need to handle group elements as well
+        int parentGroupID = 0;
+        // The parent group ID indicates the group the option belongs to and is 0 for group elements.
+        // If there are option elements in between groups, they are given it's own group identifier.
+        // If a select does not have groups, all the option elements have group ID 0.
         for (size_t i = 0; i < count; ++i) {
-            HTMLOptionElement* item = toHTMLOptionElement(element->listItems()[i]);
-            information.selectionOptions.append(item->text());
+            HTMLElement* item = element->listItems()[i];
+            if (isHTMLOptionElement(item)) {
+                HTMLOptionElement* option = toHTMLOptionElement(item);
+                information.selectOptions.append(WKOptionItem(option->text(), false, parentGroupID, option->selected(), option->fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
+            } else if (isHTMLOptGroupElement(item)) {
+                HTMLOptGroupElement* group = toHTMLOptGroupElement(item);
+                parentGroupID++;
+                information.selectOptions.append(WKOptionItem(group->groupLabelText(), true, 0, false, group->fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
+            }
         }
         information.selectedIndex = element->selectedIndex();
         information.isMultiSelect = element->multiple();
@@ -1606,7 +1627,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 void WebPage::elementDidFocus(WebCore::Node* node)
 {
     m_assistedNode = node;
-    if (node->hasTagName(WebCore::HTMLNames::inputTag) || node->hasTagName(WebCore::HTMLNames::textareaTag) || node->hasEditableStyle()) {
+    if (node->hasTagName(WebCore::HTMLNames::selectTag) || node->hasTagName(WebCore::HTMLNames::inputTag) || node->hasTagName(WebCore::HTMLNames::textareaTag) || node->hasEditableStyle()) {
         AssistedNodeInformation information;
         getAssistedNodeInformation(information);
         send(Messages::WebPageProxy::StartAssistingNode(information));

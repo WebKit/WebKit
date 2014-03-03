@@ -37,6 +37,7 @@
 #import "WebProcessProxy.h"
 #import "WKActionSheetAssistant.h"
 #import "WKFormInputControl.h"
+#import "WKFormSelectControl.h"
 #import <DataDetectorsUI/DDDetectionController.h>
 #import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UIWebHighlightLongPressGestureRecognizer.h>
@@ -411,8 +412,11 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
 
 - (UIView *)inputView
 {
+    if (_assistedNodeInformation.elementType == WKTypeNone)
+        return nil;
+
     if (!_inputPeripheral)
-        _inputPeripheral = adoptNS([WKFormInputControl createPeripheralWithView:self]);
+        _inputPeripheral = adoptNS(_assistedNodeInformation.elementType == WKTypeSelect ? [WKFormSelectControl createPeripheralWithView:self] : [WKFormInputControl createPeripheralWithView:self]);
     else
         [self _displayFormNodeInputView];
 
@@ -1813,6 +1817,11 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return _assistedNodeInformation;
 }
 
+- (Vector<WKOptionItem>&)assistedNodeSelectOptions
+{
+    return _assistedNodeInformation.selectOptions;
+}
+
 - (void)_startAssistingNode:(const AssistedNodeInformation&)information
 {
     _isEditable = YES;
@@ -1822,7 +1831,17 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
-    [self _startAssistingKeyboard];
+    switch (information.elementType) {
+        case WKTypeSelect:
+        case WKTypeDateTimeLocal:
+        case WKTypeTime:
+        case WKTypeMonth:
+        case WKTypeDate:
+            break;
+        default:
+            [self _startAssistingKeyboard];
+            break;
+    }
     [self reloadInputViews];
     [self _updateAccessory];
     // _inputPeripheral has been initialized in inputView called by reloadInputViews.

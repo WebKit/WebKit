@@ -494,6 +494,11 @@ void WebPageProxy::setAssistedNodeValueAsNumber(double value)
     process().send(Messages::WebPage::SetAssistedNodeValueAsNumber(value), m_pageID);
 }
 
+void WebPageProxy::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
+{
+    process().send(Messages::WebPage::SetAssistedNodeSelectedIndex(index, allowMultipleSelection), m_pageID);
+}
+
 void WebPageProxy::didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&)
 {
     notImplemented();

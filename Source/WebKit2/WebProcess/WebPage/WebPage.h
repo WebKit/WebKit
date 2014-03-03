@@ -467,6 +467,7 @@ public:
     void performActionOnElement(uint32_t action);
     void setAssistedNodeValue(const String&);
     void setAssistedNodeValueAsNumber(double);
+    void setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection);
 #endif
 
     NotificationPermissionRequestManager* notificationPermissionRequestManager();

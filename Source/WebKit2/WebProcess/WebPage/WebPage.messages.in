@@ -65,6 +65,7 @@ messages -> WebPage LegacyReceiver {
     PerformActionOnElement(uint32_t action)
     SetAssistedNodeValue(String value)
     SetAssistedNodeValueAsNumber(double value)
+    SetAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
