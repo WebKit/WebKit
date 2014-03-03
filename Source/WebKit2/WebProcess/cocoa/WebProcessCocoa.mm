@@ -203,9 +203,7 @@ void WebProcess::initializeProcessName(const ChildProcessInitializationParameter
 
 void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
 {
-#if USE(APPKIT)
     WKAXRegisterRemoteApp();
-#endif
 
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShim::shared().initialize(this);

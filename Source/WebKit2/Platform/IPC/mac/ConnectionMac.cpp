@@ -506,4 +506,9 @@ void Connection::setShouldCloseConnectionOnMachExceptions()
 }
 #endif
 
+IPC::Connection::Identifier Connection::identifier() const
+{
+    return Identifier(m_isServer ? m_receivePort : m_sendPort, m_xpcConnection);
+}
+    
 } // namespace IPC

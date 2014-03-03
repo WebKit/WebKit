@@ -29,15 +29,19 @@
 #if PLATFORM(IOS)
 
 #import "AssistedNodeInformation.h"
+#import "DataReference.h"
 #import "EditorState.h"
 #import "InteractionInformationAtPosition.h"
+#import "PluginView.h"
 #import "LayerTreeHost.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WebChromeClient.h"
 #import "WebCoreArgumentCoders.h"
+#import "WebKitSystemInterfaceIOS.h"
 #import "WebFrame.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
+#import "WKAccessibilityWebPageObjectIOS.h"
 #import "WKGestureTypes.h"
 #import <CoreText/CTFont.h>
 #import <WebCore/Chrome.h>
@@ -82,9 +86,21 @@ const int blockSelectionStartHeight = 100;
 
 void WebPage::platformInitialize()
 {
-    notImplemented();
+    platformInitializeAccessibility();
 }
 
+void WebPage::platformInitializeAccessibility()
+{
+    m_mockAccessibilityElement = [[[WKAccessibilityWebPageObject alloc] init] autorelease];
+    [m_mockAccessibilityElement setWebPage:this];
+    
+    RetainPtr<CFUUIDRef> uuid = CFUUIDCreate(kCFAllocatorDefault);
+    NSData *remoteToken = WKAXRemoteToken(uuid.get());
+    
+    IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
+    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
+}
+    
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
 {
     notImplemented();
@@ -256,9 +272,21 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
     return false;
 }
 
-void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference&, const IPC::DataReference&)
+NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 {
-    notImplemented();
+    if (!m_page)
+        return 0;
+    
+    if (PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame()))
+        return pluginView->accessibilityObject();
+    
+    return 0;
+}
+    
+void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference&)
+{
+    NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
+    [m_mockAccessibilityElement setRemoteTokenData:elementTokenData];
 }
 
 void WebPage::readSelectionFromPasteboard(const String&, bool&)

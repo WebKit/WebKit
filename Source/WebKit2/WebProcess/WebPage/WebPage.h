@@ -756,7 +756,7 @@ private:
     PassRefPtr<WebCore::Range> expandedRangeFromHandle(WebCore::Range*, WKHandlePosition);
     PassRefPtr<WebCore::Range> contractedRangeFromHandle(WebCore::Range* currentRange, WKHandlePosition, WKSelectionFlags&);
     void getAssistedNodeInformation(AssistedNodeInformation&);
-
+    void platformInitializeAccessibility();
     RefPtr<WebCore::Range> m_currentBlockSelection;
 #endif
 #if !PLATFORM(COCOA)

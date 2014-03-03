@@ -38,7 +38,7 @@
 #import "PDFPluginAnnotation.h"
 #import "PDFPluginPasswordField.h"
 #import "PluginView.h"
-#import "WKAccessibilityWebPageObject.h"
+#import "WKAccessibilityWebPageObjectMac.h"
 #import "WKPageFindMatchesClient.h"
 #import "WebContextMessages.h"
 #import "WebCoreArgumentCoders.h"

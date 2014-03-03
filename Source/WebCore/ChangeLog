@@ -1,3 +1,16 @@
+2014-02-28  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support IOS Accessibility in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=129527
+
+        Reviewed by Sam Weinig.
+
+        Update the iOS wrapper so that it can convert points to screen space in WebKit2.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]):
+        (-[WebAccessibilityObjectWrapper convertRectToScreenSpace:]):
+
 2014-03-03  Martin Hock  <mhock@apple.com>
 
         Add support for sessions to MemoryCache.

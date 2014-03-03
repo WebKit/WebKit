@@ -108,6 +108,7 @@ BOOL WKShouldBlockPlugin(NSString *bundleIdentifier, NSString *bundleVersionStri
 BOOL WKIsPluginUpdateAvailable(NSString *bundleIdentifier);
 
 // Remote Accessibility API.
+#if !TARGET_OS_IPHONE
 void WKAXRegisterRemoteApp(void);
 void WKAXInitializeElementWithPresenterPid(id, pid_t);
 NSData *WKAXRemoteTokenForElement(id);
@@ -115,6 +116,7 @@ id WKAXRemoteElementForToken(NSData *);
 void WKAXSetWindowForRemoteElement(id remoteWindow, id remoteElement);
 void WKAXRegisterRemoteProcess(bool registerProcess, pid_t);
 pid_t WKAXRemoteProcessIdentifier(id remoteElement);
+#endif
 
 void WKSetUpFontCache(void);
 

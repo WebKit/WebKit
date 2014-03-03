@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "DataReference.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
 #import "ViewUpdateDispatcherMessages.h"
@@ -416,9 +417,9 @@ void WebPageProxy::setSmartInsertDeleteEnabled(bool)
     notImplemented();
 }
 
-void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference&)
+void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference& data)
 {
-    notImplemented();
+    m_pageClient.accessibilityWebProcessTokenReceived(data);
 }    
 
 void WebPageProxy::makeFirstResponder()
@@ -426,9 +427,12 @@ void WebPageProxy::makeFirstResponder()
     notImplemented();
 }
 
-void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference&, const IPC::DataReference&)
+void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
 {
-    notImplemented();
+    if (!isValid())
+        return;
+    
+    process().send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), m_pageID);
 }
 
 void WebPageProxy::pluginFocusOrWindowFocusChanged(uint64_t, bool)

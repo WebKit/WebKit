@@ -1,3 +1,61 @@
+2014-02-28  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support IOS Accessibility in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=129527
+
+        Reviewed by Sam Weinig.
+
+        Implement enough AX hooks so that accessibility can work in WebKit2.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.cpp:
+        (IPC::Connection::identifier):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::accessibilityWebProcessTokenReceived):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _updateForScreen:]):
+        (-[WKContentView _setAccessibilityWebProcessToken:]):
+        (-[WKContentView _accessibilityRegisterUIProcessTokens]):
+        (-[WKContentView _didRelaunchProcess]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::registerWebProcessAccessibilityToken):
+        (WebKit::WebPageProxy::registerUIProcessAccessibilityTokens):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        * WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.h: Added.
+        * WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.mm: Added.
+        (-[WKAccessibilityWebPageObject init]):
+        (-[WKAccessibilityWebPageObject _accessibilityCategoryInstalled:]):
+        (-[WKAccessibilityWebPageObject pageScale]):
+        (-[WKAccessibilityWebPageObject dealloc]):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::platformInitializeAccessibility):
+        (WebKit::WebPage::accessibilityObjectForMainFramePlugin):
+        (WebKit::WebPage::registerUIProcessAccessibilityTokens):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.h: Copied from Source/WebKit2/WebProcess/WebPage/mac/WKAccessibilityWebPageObject.h.
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm: Copied from Source/WebKit2/WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm.
+        (-[WKAccessibilityWebPageObjectBase accessibilityFocusedUIElement]):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.h: Added.
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm: Added.
+        (-[WKAccessibilityWebPageObject accessibilityIsIgnored]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeNames]):
+        (-[WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames]):
+        (-[WKAccessibilityWebPageObject accessibilityIsAttributeSettable:]):
+        (-[WKAccessibilityWebPageObject accessibilitySetValue:forAttribute:]):
+        (-[WKAccessibilityWebPageObject convertScreenPointToRootView:]):
+        (-[WKAccessibilityWebPageObject accessibilityActionNames]):
+        (-[WKAccessibilityWebPageObject accessibilityChildren]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:forParameter:]):
+        (-[WKAccessibilityWebPageObject accessibilityShouldUseUniqueId]):
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2014-03-03  Martin Hock  <mhock@apple.com>
 
         Add support for sessions to MemoryCache.

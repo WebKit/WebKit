@@ -35,7 +35,7 @@
 #import "PageBanner.h"
 #import "PluginView.h"
 #import "PrintInfo.h"
-#import "WKAccessibilityWebPageObject.h"
+#import "WKAccessibilityWebPageObjectMac.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
 #import "WebEventConversion.h"

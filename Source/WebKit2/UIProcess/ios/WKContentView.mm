@@ -45,6 +45,7 @@
 #import "WebFrameProxy.h"
 #import "WebPageGroup.h"
 #import "WebSystemInterface.h"
+#import "WebKitSystemInterfaceIOS.h"
 #import <UIKit/UIWindow_Private.h>
 #import <wtf/RetainPtr.h>
 
@@ -228,6 +229,27 @@ using namespace WebKit;
 {
     ASSERT(screen);
     _page->setIntrinsicDeviceScaleFactor(screen.scale);
+    [self _accessibilityRegisterUIProcessTokens];
+}
+
+- (void)_setAccessibilityWebProcessToken:(NSData *)data
+{
+    // This means the web process has checked in and we should send information back to that process.
+    [self _accessibilityRegisterUIProcessTokens];
+}
+
+- (void)_accessibilityRegisterUIProcessTokens
+{
+    RetainPtr<CFUUIDRef> uuid = CFUUIDCreate(kCFAllocatorDefault);
+    NSData *remoteElementToken = WKAXRemoteToken(uuid.get());
+    IPC::Connection* connection = _page->process().connection();
+
+    // Store information about the WebProcess that can later be retrieved by the iOS Accessibility runtime.
+    if (connection)
+        WKAXStoreRemoteConnectionInformation(self, _page->process().processIdentifier(), connection->identifier().port, uuid.get());
+    
+    IPC::DataReference elementToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
+    _page->registerUIProcessAccessibilityTokens(elementToken, elementToken);
 }
 
 #pragma mark PageClientImpl methods
@@ -244,7 +266,7 @@ using namespace WebKit;
 
 - (void)_didRelaunchProcess
 {
-    // FIXME: Implement.
+    [self _accessibilityRegisterUIProcessTokens];
 }
 
 - (void)_didCommitLoadForMainFrame

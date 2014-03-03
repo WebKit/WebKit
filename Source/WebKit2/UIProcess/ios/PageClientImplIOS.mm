@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "DataReference.h"
 #import "NativeWebKeyboardEvent.h"
 #import "InteractionInformationAtPosition.h"
 #import "WKContentView.h"
@@ -186,9 +187,10 @@ void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo)
     notImplemented();
 }
 
-void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference&)
+void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference& data)
 {
-    notImplemented();
+    NSData *remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
+    [m_contentView _setAccessibilityWebProcessToken:remoteToken];
 }
 
 bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent&, Vector<KeypressCommand>&)

@@ -29,8 +29,11 @@
 #if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
 
 #import "AccessibilityRenderObject.h"
+#import "AccessibilityScrollView.h"
 #import "AccessibilityTable.h"
 #import "AccessibilityTableCell.h"
+#import "Chrome.h"
+#import "ChromeClient.h"
 #import "Font.h"
 #import "Frame.h"
 #import "FrameSelection.h"
@@ -41,6 +44,7 @@
 #import "HTMLNames.h"
 #import "IntRect.h"
 #import "IntSize.h"
+#import "Page.h"
 #import "Range.h"
 #import "RenderView.h"
 #import "RuntimeApplicationChecksIOS.h"
@@ -993,16 +997,45 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     CGPoint cgPoint = CGPointMake(point.x(), point.y());
     
     FrameView* frameView = m_object->documentFrameView();
-    if (frameView) {
-        WAKView* view = frameView->documentView();
-        cgPoint = [view convertPoint:cgPoint toView:nil];
+    WAKView* documentView = frameView ? frameView->documentView() : nullptr;
+    if (documentView) {
+        cgPoint = [documentView convertPoint:cgPoint toView:nil];
+
+        // we need the web document view to give us our final screen coordinates
+        // because that can take account of the scroller
+        id webDocument = [self _accessibilityWebDocumentView];
+        if (webDocument)
+            cgPoint = [webDocument convertPoint:cgPoint toView:nil];
     }
-    
-    // we need the web document view to give us our final screen coordinates
-    // because that can take account of the scroller
-    id webDocument = [self _accessibilityWebDocumentView];
-    if (webDocument)
-        cgPoint = [webDocument convertPoint:cgPoint toView:nil];
+    else {
+        // Find the appropriate scroll view to use to convert the contents to the window.
+        ScrollView* scrollView = 0;
+        AccessibilityObject* parent = 0;
+        for (parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
+            if (parent->isAccessibilityScrollView()) {
+                scrollView = toAccessibilityScrollView(parent)->scrollView();
+                break;
+            }
+        }
+        
+        IntPoint intPoint = flooredIntPoint(point);
+        if (scrollView)
+            intPoint = scrollView->contentsToRootView(intPoint);
+        
+        Page* page = m_object->page();
+        
+        // If we have an empty chrome client (like SVG) then we should use the page
+        // of the scroll view parent to help us get to the screen rect.
+        if (parent && page && page->chrome().client().isEmptyChromeClient())
+            page = parent->page();
+        
+        if (page) {
+            IntRect rect = IntRect(intPoint, IntSize(0, 0));
+            intPoint = page->chrome().rootViewToScreen(rect).location();
+        }
+        
+        cgPoint = (CGPoint)intPoint;
+    }
     
     return cgPoint;
 }
@@ -1018,16 +1051,42 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     CGRect frame = CGRectMake(point.x, point.y, size.width, size.height);
     
     FrameView* frameView = m_object->documentFrameView();
-    if (frameView) {
-        WAKView* view = frameView->documentView();
-        frame = [view convertRect:frame toView:nil];
+    WAKView* documentView = frameView ? frameView->documentView() : nil;
+    if (documentView) {
+        frame = [documentView convertRect:frame toView:nil];
+        
+        // we need the web document view to give us our final screen coordinates
+        // because that can take account of the scroller
+        id webDocument = [self _accessibilityWebDocumentView];
+        if (webDocument)
+            frame = [webDocument convertRect:frame toView:nil];
+        
+    } else {
+        // Find the appropriate scroll view to use to convert the contents to the window.
+        ScrollView* scrollView = 0;
+        AccessibilityObject* parent = 0;
+        for (parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
+            if (parent->isAccessibilityScrollView()) {
+                scrollView = toAccessibilityScrollView(parent)->scrollView();
+                break;
+            }
+        }
+        
+        if (scrollView)
+            rect = scrollView->contentsToRootView(rect);
+        
+        Page* page = m_object->page();
+        
+        // If we have an empty chrome client (like SVG) then we should use the page
+        // of the scroll view parent to help us get to the screen rect.
+        if (parent && page && page->chrome().client().isEmptyChromeClient())
+            page = parent->page();
+        
+        if (page)
+            rect = page->chrome().rootViewToScreen(rect);
+        
+        frame = (CGRect)rect;
     }
-    
-    // we need the web document view to give us our final screen coordinates
-    // because that can take account of the scroller
-    id webDocument = [self _accessibilityWebDocumentView];
-    if (webDocument)
-        frame = [webDocument convertRect:frame toView:nil];
     
     return frame;
 }
