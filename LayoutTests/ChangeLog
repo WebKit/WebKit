@@ -1,3 +1,50 @@
+2014-03-03  Dirk Schulze  <krit@webkit.org>
+
+        Transform CSS clip-path pixel tests to ref tests
+        https://bugs.webkit.org/show_bug.cgi?id=129607
+
+        Reviewed by Andreas Kling.
+
+        * css3/masking/clip-path-border-box.html:
+        * css3/masking/clip-path-circle-filter-expected.txt: Removed.
+        * css3/masking/clip-path-circle-overflow-expected.txt: Removed.
+        * css3/masking/clip-path-circle-overflow-hidden-expected.txt: Removed.
+        * css3/masking/clip-path-circle-overflow-hidden.html: Removed.
+        * css3/masking/clip-path-circle-relative-overflow-expected.txt: Removed.
+        * css3/masking/clip-path-ellipse-expected.html: Renamed from LayoutTests/css3/masking/clip-path-circle-filter.html.
+        * css3/masking/clip-path-ellipse-expected.txt: Removed.
+        * css3/masking/clip-path-ellipse.html:
+        * css3/masking/clip-path-filter-expected.html: Added.
+        * css3/masking/clip-path-filter.html: Added.
+        * css3/masking/clip-path-inset-expected.html: Copied from LayoutTests/css3/masking/clip-path-ellipse.html.
+        * css3/masking/clip-path-inset-expected.txt: Removed.
+        * css3/masking/clip-path-overflow-expected.html: Copied from LayoutTests/css3/masking/clip-path-circle-overflow.html.
+        * css3/masking/clip-path-overflow-hidden-expected.html: Copied from LayoutTests/css3/masking/clip-path-ellipse.html.
+        * css3/masking/clip-path-overflow-hidden.html: Renamed from LayoutTests/css3/masking/clip-path-circle-overflow.html.
+        * css3/masking/clip-path-overflow.html: Copied from LayoutTests/css3/masking/clip-path-ellipse.html.
+        * css3/masking/clip-path-polygon-evenodd-expected.html: Added.
+        * css3/masking/clip-path-polygon-evenodd-expected.txt: Removed.
+        * css3/masking/clip-path-polygon-evenodd.html:
+        * css3/masking/clip-path-polygon-expected.html: Copied from LayoutTests/css3/masking/clip-path-ellipse.html.
+        * css3/masking/clip-path-polygon-expected.txt: Removed.
+        * css3/masking/clip-path-polygon-nonzero-expected.html: Copied from LayoutTests/css3/masking/clip-path-ellipse.html.
+        * css3/masking/clip-path-polygon-nonzero-expected.txt: Removed.
+        * css3/masking/clip-path-polygon-nonzero.html:
+        * css3/masking/clip-path-polygon.html:
+        * platform/efl/css3/masking/clip-path-circle-overflow-expected.png: Removed.
+        * platform/efl/css3/masking/clip-path-circle-overflow-hidden-expected.png: Removed.
+        * platform/efl/css3/masking/clip-path-ellipse-expected.png: Removed.
+        * platform/gtk/css3/masking/clip-path-circle-overflow-expected.png: Removed.
+        * platform/gtk/css3/masking/clip-path-circle-overflow-hidden-expected.png: Removed.
+        * platform/gtk/css3/masking/clip-path-ellipse-expected.png: Removed.
+        * platform/mac/css3/masking/clip-path-circle-overflow-expected.png: Removed.
+        * platform/mac/css3/masking/clip-path-circle-overflow-hidden-expected.png: Removed.
+        * platform/mac/css3/masking/clip-path-ellipse-expected.png: Removed.
+        * platform/mac/css3/masking/clip-path-inset-expected.png: Removed.
+        * platform/mac/css3/masking/clip-path-polygon-evenodd-expected.png: Removed.
+        * platform/mac/css3/masking/clip-path-polygon-expected.png: Removed.
+        * platform/mac/css3/masking/clip-path-polygon-nonzero-expected.png: Removed.
+
 2014-03-03  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Overset computation is incorrect in some cases

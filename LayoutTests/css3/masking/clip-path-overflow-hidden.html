@@ -3,14 +3,19 @@
 <head>
 <style>
 div {
+	margin: 20px;
     width: 200px;
     height: 200px;
     background-color: green;
-    -webkit-clip-path: ellipse(100px 50px);
+}
+#clip {
+	background-color: red;
+ 	overflow: hidden;
+    -webkit-clip-path: inset(20px -20px 0 20px);
 }
 </style>
 </head>
 <body>
-<div>
+<div id="clip"><div>
 </body>
 </html>
