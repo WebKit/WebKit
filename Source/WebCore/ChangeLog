@@ -1,3 +1,16 @@
+2014-03-02  Gavin Barraclough  <barraclough@apple.com>
+
+        HysteresisTimer should use WebCore::Timer
+        https://bugs.webkit.org/show_bug.cgi?id=129587
+
+        Reviewed by Sam Weinig.
+
+        * platform/HysteresisActivity.h:
+        (WebCore::HysteresisActivity::HysteresisActivity):
+        (WebCore::HysteresisActivity::hysteresisTimerFired):
+            - RunLoop::Timer -> WebCore::Timer.
+        * platform/UserActivity.h:
+
 2014-03-02  Darin Adler  <darin@apple.com>
 
         Split TextIteratorBehavior into a separate header

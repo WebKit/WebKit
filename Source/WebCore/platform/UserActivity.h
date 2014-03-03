@@ -30,6 +30,7 @@
 
 #if HAVE(NS_ACTIVITY)
 #include <wtf/RetainPtr.h>
+#include <wtf/Runloop.h>
 OBJC_CLASS NSString;
 #endif
 
