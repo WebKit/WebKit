@@ -1,3 +1,42 @@
+2014-03-03  Lorenzo Tilve  <ltilve@igalia.com>
+
+        Optimize StylePropertiesSet::findPropertyIndex() to improve CSS properties performance
+        https://bugs.webkit.org/show_bug.cgi?id=129605
+
+        Reviewed by Andreas Kling.
+
+        Merged from Blink (patch by Mikhail Pozdnyakov):
+        https://src.chromium.org/viewvc/blink?view=revision&revision=167325
+
+        Avoid checking whether 'StylePropertiesSet' is mutable and accesing directly to its
+        data members to achieve performance improvements
+
+        Before the optimization applied:
+            mean: 3064.8337171934063 runs/s
+            median: 3097.5899379343855 runs/s
+            stdev: 66.89274074044187 runs/s
+            min: 2891.7479324362585 runs/s
+            max: 3113.288683440125 runs/s
+
+        After the optimization applied:
+            mean: 3343.8356114138105 runs/s
+            median: 3356.25682957446 runs/s
+            stdev: 36.297533087489036 runs/s
+            min: 3238.5468032264243 runs/s
+            max: 3368.664837531425 runs/s
+
+        Performance gain for the average value is approx. 9.1%, in the
+        range of the 10% - 8.2% for the min and max measured
+        values (Linux desktop x64).
+
+        * css/StyleProperties.cpp:
+        (WebCore::ImmutableStyleProperties::findPropertyIndex):
+        (WebCore::MutableStyleProperties::findPropertyIndex):
+        * css/StyleProperties.h:
+        (WebCore::toMutableStyleProperties):
+        (WebCore::toImmutableStyleProperties):
+        (WebCore::StyleProperties::findPropertyIndex):
+
 2014-03-03  Brian Burg  <bburg@apple.com>
 
         Unreviewed build fix for Windows after r164986.
