@@ -1,3 +1,19 @@
+2014-03-03  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] webkit_dom_range_compare_boundary_points fails when 0 is passed as how parameter
+        https://bugs.webkit.org/show_bug.cgi?id=129145
+
+        Reviewed by Carlos Garcia Campos.
+
+        While generating GObject DOM API the generator should skip non pointer
+        types while generating the g_return_val_if_fail macro.
+        This will avoid the situation when Range.START_TO_START is defined as 0,
+        thus the webkit_dom_range_compare_boundary_points function will fail
+        everytime it is called with 0 as how value.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction):
+
 2014-03-03  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
 
         [cmake] *Names.cpp file should be regenerated after touching StaticString.pm
