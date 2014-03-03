@@ -1,3 +1,22 @@
+2014-03-03  Antoine Quint  <graouts@webkit.org>
+
+        Respect SVG fragment identifiers in <img> src attribute
+        https://bugs.webkit.org/show_bug.cgi?id=129387
+
+        Reviewed by Dirk Schulze.
+
+        Following Dirk Schulze's suggestion, we set the URL on the SVGImage itself and handle the URL's
+        fragment identifier at draw time in the SVGImage itself, which will provide a sounder base for
+        handling of fragment identifier in SVG resource URLs in CSS properties, and should also deal
+        with the crasher reported in http://webkit.org/b/129498 since there is a guaranteed Frame at the
+        time we call SVGImage::draw().
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageForContainer.cpp:
+        * svg/graphics/SVGImageForContainer.h:
+
 2014-03-03  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
 
         Move function calls outside loop in dom

@@ -25,7 +25,6 @@
 #include "FloatSize.h"
 #include "FrameView.h"
 #include "Image.h"
-#include "SVGImage.h"
 
 namespace WebCore {
 
@@ -52,11 +51,6 @@ void SVGImageForContainer::drawPattern(GraphicsContext* context, const FloatRect
 PassNativeImagePtr SVGImageForContainer::nativeImageForCurrentFrame()
 {
     return m_image->nativeImageForCurrentFrame();
-}
-
-void SVGImageForContainer::setURL(const URL& url)
-{ 
-    m_image->frameView()->scrollToFragment(url);
 }
 
 } // namespace WebCore

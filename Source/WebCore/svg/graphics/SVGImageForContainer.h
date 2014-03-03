@@ -46,7 +46,7 @@ public:
 
     virtual IntSize size() const override;
 
-    void setURL(const URL&);
+    void setURL(const URL& url) { m_image->setURL(url); }
 
     virtual bool usesContainerSize() const override { return m_image->usesContainerSize(); }
     virtual bool hasRelativeWidth() const override { return m_image->hasRelativeWidth(); }

@@ -28,6 +28,7 @@
 #define SVGImage_h
 
 #include "Image.h"
+#include "URL.h"
 
 namespace WebCore {
 
@@ -51,6 +52,8 @@ public:
 
     virtual bool isSVGImage() const override { return true; }
     virtual IntSize size() const override { return m_intrinsicSize; }
+
+    void setURL(const URL& url) { m_url = url; }
 
     virtual bool hasSingleSecurityOrigin() const override;
 
@@ -95,6 +98,7 @@ private:
     std::unique_ptr<SVGImageChromeClient> m_chromeClient;
     std::unique_ptr<Page> m_page;
     IntSize m_intrinsicSize;
+    URL m_url;
 };
 
 bool isInSVGImage(const Element*);
