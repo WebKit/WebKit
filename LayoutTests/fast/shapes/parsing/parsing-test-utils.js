@@ -42,18 +42,20 @@ var validShapeValues = [
 
     "circle(10px, 20px, 30px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
 
-    ["circle()", "circle()", "circle(closest-side at 50% 50%)"],
-    ["circle(farthest-side)", "circle(farthest-side)", "circle(farthest-side at 50% 50%)"],
-    ["circle(closest-side)", "circle(closest-side)", "circle(closest-side at 50% 50%)"],
-    ["circle(10px)", "circle(10px)", "circle(10px at 50% 50%)"],
+    ["circle()", "circle(at 50% 50%)", "circle(closest-side at 50% 50%)"],
+    ["circle(farthest-side)", "circle(farthest-side at 50% 50%)", "circle(farthest-side at 50% 50%)"],
+    ["circle(closest-side)", "circle(closest-side at 50% 50%)", "circle(closest-side at 50% 50%)"],
+    ["circle(10px)", "circle(10px at 50% 50%)", "circle(10px at 50% 50%)"],
     ["circle(10px at 10px)", "circle(10px at 10px 50%)"],
     "circle(10px at 10px 10px)",
     ["circle(at 10px)", "circle(at 10px 50%)", "circle(closest-side at 10px 50%)"],
     ["circle(at 10px 10px)", "circle(at 10px 10px)", "circle(closest-side at 10px 10px)"],
     ["circle(at top left)", "circle(at 0% 0%)", "circle(closest-side at 0% 0%)"],
     ["circle(at right bottom)", "circle(at 100% 100%)", "circle(closest-side at 100% 100%)"],
-    ["circle(10px at left top 10px)", "circle(10px at left 0% top 10px)", "circle(10px at 0% 10px)"],
-    ["circle(10px at top 10px left 10px)", "circle(10px at left 10px top 10px)", "circle(10px at 10px 10px)"],
+    ["circle(10px at left top 10px)", "circle(10px at 0% 10px)", "circle(10px at 0% 10px)"],
+    ["circle(10px at top 10px left 10px)", "circle(10px at 10px 10px)", "circle(10px at 10px 10px)"],
+    ["circle(10px at right 10% bottom 10%)", "circle(10px at 90% 90%)"],
+    ["circle(10px at right 0px bottom 0px)", "circle(10px at 100% 100%)"],
     ["circle(10px at right 10px bottom 10px)", "circle(10px at right 10px bottom 10px)"],
 
     "ellipse(10px, 20px, 30px, 40px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.

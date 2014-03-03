@@ -32,6 +32,7 @@
 #include "CSSBasicShapes.h"
 
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSValuePool.h"
 #include "Pair.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -96,6 +97,47 @@ bool CSSBasicShapeRectangle::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_layoutBox, other.m_layoutBox);
 }
 
+static String serializePositionOffset(const Pair& offset, const Pair& other)
+{
+    if ((offset.first()->getValueID() == CSSValueLeft && other.first()->getValueID() == CSSValueTop)
+        || (offset.first()->getValueID() == CSSValueTop && other.first()->getValueID() == CSSValueLeft))
+        return offset.second()->cssText();
+    return offset.cssText();
+}
+
+static PassRefPtr<CSSPrimitiveValue> buildSerializablePositionOffset(PassRefPtr<CSSPrimitiveValue> offset, CSSValueID defaultSide)
+{
+    CSSValueID side = defaultSide;
+    RefPtr<CSSPrimitiveValue> amount;
+
+    if (!offset)
+        side = CSSValueCenter;
+    else if (offset->isValueID())
+        side = offset->getValueID();
+    else if (Pair* pair = offset->getPairValue()) {
+        side = pair->first()->getValueID();
+        amount = pair->second();
+    } else
+        amount = offset;
+
+    if (side == CSSValueCenter) {
+        side = defaultSide;
+        amount = cssValuePool().createValue(Length(50, Percent));
+    } else if ((side == CSSValueRight || side == CSSValueBottom)
+        && amount->isPercentage()) {
+        side = defaultSide;
+        amount = cssValuePool().createValue(Length(100 - amount->getFloatValue(), Percent));
+    } else if (amount->isLength() && !amount->getFloatValue()) {
+        if (side == CSSValueRight || side == CSSValueBottom)
+            amount = cssValuePool().createValue(Length(100, Percent));
+        else
+            amount = cssValuePool().createValue(Length(0, Percent));
+        side = defaultSide;
+    }
+
+    return cssValuePool().createValue(Pair::create(cssValuePool().createValue(side), amount.release()));
+}
+
 static String buildCircleString(const String& radius, const String& centerX, const String& centerY, const String& box)
 {
     char opening[] = "circle(";
@@ -125,9 +167,12 @@ static String buildCircleString(const String& radius, const String& centerX, con
 
 String CSSBasicShapeCircle::cssText() const
 {
+    RefPtr<CSSPrimitiveValue> normalizedCX = buildSerializablePositionOffset(m_centerX, CSSValueLeft);
+    RefPtr<CSSPrimitiveValue> normalizedCY = buildSerializablePositionOffset(m_centerY, CSSValueTop);
+
     return buildCircleString(m_radius ? m_radius->cssText() : String(),
-        m_centerX ? m_centerX->cssText() : String(),
-        m_centerY ? m_centerY->cssText() : String(),
+        serializePositionOffset(*normalizedCX->getPairValue(), *normalizedCY->getPairValue()),
+        serializePositionOffset(*normalizedCY->getPairValue(), *normalizedCX->getPairValue()),
         m_layoutBox ? m_layoutBox->cssText() : String());
 }
 

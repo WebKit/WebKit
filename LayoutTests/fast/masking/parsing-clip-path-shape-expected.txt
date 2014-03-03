@@ -7,7 +7,7 @@ PASS innerStyle("-webkit-clip-path", "circle(0, 0, 0)") is "circle(0px, 0px, 0px
 PASS innerStyle("-webkit-clip-path", "circle(-1px, +1px, 1px)") is "circle(-1px, 1px, 1px)"
 PASS innerStyle("-webkit-clip-path", "circle(-1.5px, +1.5px, 1.5px)") is "circle(-1.5px, 1.5px, 1.5px)"
 PASS innerStyle("-webkit-clip-path", "circle(-.5px, +.5px, .5px)") is "circle(-0.5px, 0.5px, 0.5px)"
-PASS innerStyle("-webkit-clip-path", "circle(0 at 0 0)") is "circle(0px at 0px 0px)"
+PASS innerStyle("-webkit-clip-path", "circle(0 at 0 0)") is "circle(0px at 0% 0%)"
 PASS innerStyle("-webkit-clip-path", "circle(1px at -1px +1px)") is "circle(1px at -1px 1px)"
 PASS innerStyle("-webkit-clip-path", "circle(1.5px at -1.5px +1.5px)") is "circle(1.5px at -1.5px 1.5px)"
 PASS innerStyle("-webkit-clip-path", "circle(.5px at -.5px +.5px)") is "circle(0.5px at -0.5px 0.5px)"

@@ -1,3 +1,18 @@
+2014-03-03  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Serialize circle positions
+        https://bugs.webkit.org/show_bug.cgi?id=129404
+
+        Reviewed by Dirk Schulze.
+
+        Modify each circle test to have a correctly serialized position.
+
+        * fast/masking/parsing-clip-path-shape-expected.html: Updated result.
+        * fast/masking/parsing-clip-path-shape.html: Updated test.
+        * fast/shapes/parsing/parsing-shape-inside-expected.txt: Updated results.
+        * fast/shapes/parsing/parsing-shape-outside-expected.txt: Updated results.
+        * fast/shapes/parsing/parsing-test-utils.js: Updated serialization results.
+
 2014-03-03  Dirk Schulze  <krit@webkit.org>
 
         Transform CSS clip-path pixel tests to ref tests
