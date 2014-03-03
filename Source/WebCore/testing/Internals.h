@@ -187,6 +187,8 @@ public:
     bool isOverwriteModeEnabled(ExceptionCode&);
     void toggleOverwriteModeEnabled(ExceptionCode&);
 
+    unsigned countMatchesForText(const String&, unsigned findOptions, const String& markMatches, ExceptionCode&);
+
     unsigned numberOfScrollableAreas(ExceptionCode&);
 
     bool isPageBoxVisible(int pageNumber, ExceptionCode&);

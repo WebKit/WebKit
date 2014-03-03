@@ -1435,6 +1435,16 @@ void Internals::toggleOverwriteModeEnabled(ExceptionCode&)
     document->frame()->editor().toggleOverwriteModeEnabled();
 }
 
+unsigned Internals::countMatchesForText(const String& text, unsigned findOptions, const String& markMatches, ExceptionCode&)
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return 0;
+
+    bool mark = markMatches == "mark";
+    return document->frame()->editor().countMatchesForText(text, nullptr, findOptions, std::numeric_limits<unsigned>::max(), mark, nullptr);
+}
+
 const ProfilesArray& Internals::consoleProfiles() const
 {
     return contextDocument()->domWindow()->console()->profiles();

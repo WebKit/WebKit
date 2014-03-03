@@ -538,9 +538,10 @@ bool TextIterator::handleTextNode()
         if (renderer->style().visibility() != VISIBLE && !m_ignoresStyleVisibility)
             return true;
         // This code aims to produce same results as handleTextBox() below so test results don't change. It does not make much logical sense.
+        const unsigned end = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : str.length();
         unsigned runEnd = m_offset;
         unsigned runStart = m_offset;
-        while (runEnd < str.length() && (deprecatedIsCollapsibleWhitespace(str[runEnd]) || str[runEnd] == '\t'))
+        while (runEnd < end && (deprecatedIsCollapsibleWhitespace(str[runEnd]) || str[runEnd] == '\t'))
             ++runEnd;
         bool addSpaceForPrevious = m_lastTextNodeEndedWithCollapsedSpace && m_lastCharacter && !deprecatedIsCollapsibleWhitespace(m_lastCharacter);
         if (runEnd > runStart || addSpaceForPrevious) {
@@ -556,12 +557,12 @@ bool TextIterator::handleTextNode()
             }
             runStart = runEnd;
         }
-        while (runEnd < str.length() && !deprecatedIsCollapsibleWhitespace(str[runEnd]))
+        while (runEnd < end && !deprecatedIsCollapsibleWhitespace(str[runEnd]))
             ++runEnd;
-        if (runStart < str.length())
+        if (runStart < end)
             emitText(m_node, renderer, runStart, runEnd);
         m_offset = runEnd;
-        return runEnd == str.length();
+        return runEnd == end;
     }
 
     if (renderer->firstTextBox())
@@ -1300,7 +1301,7 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
         return true;
 
     String text = renderer->text();
-    if (!renderer->firstTextBox() && text.length() > 0)
+    if (!renderer->hasRenderedText() && text.length() > 0)
         return true;
 
     m_positionEndOffset = m_offset;
