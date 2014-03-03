@@ -2992,6 +2992,11 @@ set(SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/InFilesParser.pm
     ${WEBCORE_DIR}/bindings/scripts/preprocessor.pm
 )
+
+set(MAKE_NAMES_DEPENDENCIES
+    ${WEBCORE_DIR}/bindings/scripts/Hasher.pm
+    ${WEBCORE_DIR}/bindings/scripts/StaticString.pm
+)
 set(IDL_FILES_TMP ${DERIVED_SOURCES_WEBCORE_DIR}/idl_files.tmp)
 set(SUPPLEMENTAL_DEPENDENCY_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/supplemental_dependency.tmp)
 set(WINDOW_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWindowConstructors.idl)

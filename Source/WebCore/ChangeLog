@@ -1,3 +1,12 @@
+2014-03-03  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
+
+        [cmake] *Names.cpp file should be regenerated after touching StaticString.pm
+        https://bugs.webkit.org/show_bug.cgi?id=129031
+
+        Reviewed by Csaba Osztrogonác.
+
+        * CMakeLists.txt: Added make_names.pl dependencies: bindings/scripts/Hasher.pm and bindings/scripts/StaticString.pm
+
 2014-03-03  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Multimedia controls captions icon needs its own metaphor

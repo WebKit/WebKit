@@ -1,3 +1,12 @@
+2014-03-03  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
+
+        [cmake] *Names.cpp file should be regenerated after touching StaticString.pm
+        https://bugs.webkit.org/show_bug.cgi?id=129031
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/cmake/WebKitMacros.cmake: Added a call for make_names.pm dependencies in GENERATE_FONT_NAMES and GENERATE_DOM_NAMES macros.
+
 2014-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKit2WebExtension GIR can't be used in vala
