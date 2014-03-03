@@ -256,7 +256,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, const RemoteL
             // FIXME: need to check that the mask view is kept alive.
             ASSERT(!maskView.layer.superlayer);
             if (!maskView.layer.superlayer)
-                maskView.layer.mask = maskView.layer;
+                view.layer.mask = maskView.layer;
         }
     }
     END_BLOCK_OBJC_EXCEPTIONS;
