@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,11 @@
 
 namespace JSC {
 
-PutByIdAccess PutByIdAccess::fromStructureStubInfo(
-    StructureStubInfo& stubInfo,
-    MacroAssemblerCodePtr initialSlowPath)
+PutByIdAccess PutByIdAccess::fromStructureStubInfo(StructureStubInfo& stubInfo)
 {
+    MacroAssemblerCodePtr initialSlowPath =
+        stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase);
+    
     PutByIdAccess result;
     
     switch (stubInfo.accessType) {
@@ -84,18 +85,14 @@ bool PutByIdAccess::visitWeak() const
 }
 
 PolymorphicPutByIdList::PolymorphicPutByIdList(
-    PutKind putKind,
-    StructureStubInfo& stubInfo,
-    MacroAssemblerCodePtr initialSlowPath)
+    PutKind putKind, StructureStubInfo& stubInfo)
     : m_kind(putKind)
 {
-    m_list.append(PutByIdAccess::fromStructureStubInfo(stubInfo, initialSlowPath));
+    m_list.append(PutByIdAccess::fromStructureStubInfo(stubInfo));
 }
 
 PolymorphicPutByIdList* PolymorphicPutByIdList::from(
-    PutKind putKind,
-    StructureStubInfo& stubInfo,
-    MacroAssemblerCodePtr initialSlowPath)
+    PutKind putKind, StructureStubInfo& stubInfo)
 {
     if (stubInfo.accessType == access_put_by_id_list)
         return stubInfo.u.putByIdList.list;
@@ -105,7 +102,7 @@ PolymorphicPutByIdList* PolymorphicPutByIdList::from(
            || stubInfo.accessType == access_put_by_id_transition_direct);
     
     PolymorphicPutByIdList* result =
-        new PolymorphicPutByIdList(putKind, stubInfo, initialSlowPath);
+        new PolymorphicPutByIdList(putKind, stubInfo);
     
     stubInfo.initPutByIdList(result);
     

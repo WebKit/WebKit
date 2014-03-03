@@ -1245,9 +1245,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
             StructureChain* prototypeChain = structure->prototypeChain(exec);
             
             // We're now committed to creating the stub. Mogrify the meta-data accordingly.
-            list = PolymorphicPutByIdList::from(
-                putKind, stubInfo,
-                stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase));
+            list = PolymorphicPutByIdList::from(putKind, stubInfo);
             
             emitPutTransitionStub(
                 exec, baseValue, propertyName, slot, stubInfo, putKind,
@@ -1262,9 +1260,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
                     stubRoutine));
         } else {
             // We're now committed to creating the stub. Mogrify the meta-data accordingly.
-            list = PolymorphicPutByIdList::from(
-                putKind, stubInfo,
-                stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase));
+            list = PolymorphicPutByIdList::from(putKind, stubInfo);
             
             emitPutReplaceStub(
                 exec, baseValue, propertyName, slot, stubInfo, putKind,

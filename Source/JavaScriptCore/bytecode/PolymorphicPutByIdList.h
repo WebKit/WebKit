@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,9 +83,7 @@ public:
         return result;
     }
     
-    static PutByIdAccess fromStructureStubInfo(
-        StructureStubInfo&,
-        MacroAssemblerCodePtr initialSlowPath);
+    static PutByIdAccess fromStructureStubInfo(StructureStubInfo&);
     
     bool isSet() const { return m_type != Invalid; }
     bool operator!() const { return !isSet(); }
@@ -122,10 +120,10 @@ public:
         return m_chain.get();
     }
     
-    PassRefPtr<JITStubRoutine> stubRoutine() const
+    JITStubRoutine* stubRoutine() const
     {
         ASSERT(isTransition() || isReplace());
-        return m_stubRoutine;
+        return m_stubRoutine.get();
     }
     
     bool visitWeak() const;
@@ -143,20 +141,9 @@ private:
 class PolymorphicPutByIdList {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // Initialize from a stub info; this will place one element in the list and it will
-    // be created by converting the stub info's put by id access information into our
-    // PutByIdAccess.
-    PolymorphicPutByIdList(
-        PutKind,
-        StructureStubInfo&,
-        MacroAssemblerCodePtr initialSlowPath);
-
     // Either creates a new polymorphic put list, or returns the one that is already
     // in place.
-    static PolymorphicPutByIdList* from(
-        PutKind,
-        StructureStubInfo&,
-        MacroAssemblerCodePtr initialSlowPath);
+    static PolymorphicPutByIdList* from(PutKind, StructureStubInfo&);
     
     ~PolymorphicPutByIdList();
     
@@ -181,6 +168,11 @@ public:
 private:
     friend class CodeBlock;
     
+    // Initialize from a stub info; this will place one element in the list and it will
+    // be created by converting the stub info's put by id access information into our
+    // PutByIdAccess.
+    PolymorphicPutByIdList(PutKind, StructureStubInfo&);
+
     Vector<PutByIdAccess, 2> m_list;
     PutKind m_kind;
 };

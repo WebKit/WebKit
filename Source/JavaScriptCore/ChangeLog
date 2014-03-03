@@ -1,5 +1,21 @@
 2014-03-02  Filip Pizlo  <fpizlo@apple.com>
 
+        PolymorphicPutByIdList should have a simpler construction API with basically a single entrypoint
+        https://bugs.webkit.org/show_bug.cgi?id=129591
+
+        Reviewed by Michael Saboff.
+
+        * bytecode/PolymorphicPutByIdList.cpp:
+        (JSC::PutByIdAccess::fromStructureStubInfo): This function can figure out the slow path target for itself.
+        (JSC::PolymorphicPutByIdList::PolymorphicPutByIdList): This constuctor should be private, only from() should call it.
+        (JSC::PolymorphicPutByIdList::from):
+        * bytecode/PolymorphicPutByIdList.h:
+        (JSC::PutByIdAccess::stubRoutine):
+        * jit/Repatch.cpp:
+        (JSC::tryBuildPutByIdList): Don't pass the slow path target since it can be derived from the stubInfo.
+
+2014-03-02  Filip Pizlo  <fpizlo@apple.com>
+
         Debugging improvements from my gbemu investigation session
         https://bugs.webkit.org/show_bug.cgi?id=129599
 
