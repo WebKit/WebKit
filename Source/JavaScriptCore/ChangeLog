@@ -1,5 +1,15 @@
 2014-03-02  Mark Lam  <mark.lam@apple.com>
 
+        CodeBlock::hasDebuggerRequests() should returning a bool instead of an int.
+        <https://webkit.org/b/129584>
+
+        Reviewed by Darin Adler.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasDebuggerRequests):
+
+2014-03-02  Mark Lam  <mark.lam@apple.com>
+
         Clean up use of Options::enableConcurrentJIT().
         <https://webkit.org/b/129582>
 

@@ -877,7 +877,7 @@ public:
 
     bool hasOpDebugForLineAndColumn(unsigned line, unsigned column);
 
-    int hasDebuggerRequests() const { return !!m_debuggerRequests; }
+    bool hasDebuggerRequests() const { return !!m_debuggerRequests; }
     void* debuggerRequestsAddress() { return &m_debuggerRequests; }
 
     void addBreakpoint(unsigned numBreakpoints);
