@@ -1287,11 +1287,20 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uin
 
 void WebPage::applyAutocorrection(const String& correction, const String& originalText, uint64_t callbackID)
 {
-    RefPtr<Range> range;
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    ASSERT(frame.selection().isCaret());
-    VisiblePosition position = frame.selection().selection().start();
+    bool correctionApplied;
+    syncApplyAutocorrection(correction, originalText, correctionApplied);
+    send(Messages::WebPageProxy::StringCallback(correctionApplied ? correction : String(), callbackID));
+}
 
+void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied)
+{
+    RefPtr<Range> range;
+    correctionApplied = false;
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame.selection().isCaret())
+        return;
+    VisiblePosition position = frame.selection().selection().start();
+    
     range = wordRangeFromPosition(position);
     String textForRange = plainText(range.get());
     if (textForRange != originalText) {
@@ -1315,17 +1324,16 @@ void WebPage::applyAutocorrection(const String& correction, const String& origin
         }
     }
     if (textForRange != originalText) {
-        send(Messages::WebPageProxy::StringCallback(String(), callbackID));
+        correctionApplied = false;
         return;
     }
-
+    
     frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
     if (correction.length())
         frame.editor().insertText(correction, 0);
     else
         frame.editor().deleteWithDirection(DirectionBackward, CharacterGranularity, false, true);
-
-    send(Messages::WebPageProxy::StringCallback(correction, callbackID));
+    correctionApplied = true;
 }
 
 static void computeAutocorrectionContext(Frame& frame, String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length)

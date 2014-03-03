@@ -1,3 +1,28 @@
+2014-03-02  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] Keyboard deadlock when accepting/dismissing autocorrection.
+        https://bugs.webkit.org/show_bug.cgi?id=129594
+        <rdar://problem/16168978>
+
+        Reviewed by Sam Weinig.
+
+        As a temporary fix, we are using a synchronous
+        message to accept autocorrection until we implement
+        a solution that processes these requests on a thread that
+        is not the main thread.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView applyAutocorrection:toString:withCompletionHandler:]):
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applyAutocorrection):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applyAutocorrection):
+        (WebKit::WebPage::syncApplyAutocorrection):
+
 2014-03-02  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the 32-bit build.

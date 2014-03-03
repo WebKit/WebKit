@@ -301,6 +301,13 @@ void WebPageProxy::applyAutocorrection(const String& correction, const String& o
     m_process->send(Messages::WebPage::ApplyAutocorrection(correction, originalText, callbackID), m_pageID);
 }
 
+bool WebPageProxy::applyAutocorrection(const String& correction, const String& originalText)
+{
+    bool autocorrectionApplied = false;
+    m_process->sendSync(Messages::WebPage::SyncApplyAutocorrection(correction, originalText), Messages::WebPage::SyncApplyAutocorrection::Reply(autocorrectionApplied), m_pageID);
+    return autocorrectionApplied;
+}
+
 void WebPageProxy::requestAutocorrectionContext(PassRefPtr<AutocorrectionContextCallback> callback)
 {
     if (!isValid()) {

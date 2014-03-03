@@ -469,6 +469,7 @@ public:
     void extendSelection(WebCore::TextGranularity);
     void requestAutocorrectionData(const String& textForAutocorrection, PassRefPtr<AutocorrectionDataCallback>);
     void applyAutocorrection(const String& correction, const String& originalText, PassRefPtr<StringCallback>);
+    bool applyAutocorrection(const String& correction, const String& originalText);
     void requestAutocorrectionContext(PassRefPtr<AutocorrectionContextCallback>);
     void getAutocorrectionContext(String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length);
     void didReceivePositionInformation(const InteractionInformationAtPosition&);

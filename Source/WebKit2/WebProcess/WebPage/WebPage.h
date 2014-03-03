@@ -455,6 +455,7 @@ public:
     void elementDidBlur(WebCore::Node*);
     void requestAutocorrectionData(const String& textForAutocorrection, uint64_t callbackID);
     void applyAutocorrection(const String& correction, const String& originalText, uint64_t callbackID);
+    void syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied);
     void requestAutocorrectionContext(uint64_t callbackID);
     void getAutocorrectionContext(String& beforeText, String& markedText, String& selectedText, String& afterText, uint64_t& location, uint64_t& length);
     void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);

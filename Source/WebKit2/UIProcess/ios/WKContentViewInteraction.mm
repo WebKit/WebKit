@@ -1234,6 +1234,13 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 // The completion handler should pass the rect of the correction text after replacing the input text, or nil if the replacement could not be performed.
 - (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler
 {
+    // FIXME: Remove the synchronous call when <rdar://problem/16207002> is fixed.
+    const bool useSyncRequest = true;
+
+    if (useSyncRequest) {
+        completionHandler(_page->applyAutocorrection(correction, input) ? [WKAutocorrectionRects autocorrectionRectsWithRects:_autocorrectionData.textFirstRect lastRect:_autocorrectionData.textLastRect] : nil);
+        return;
+    }
     _autocorrectionData.autocorrectionHandler = [completionHandler copy];
     _page->applyAutocorrection(correction, input, StringCallback::create([self](bool /*error*/, StringImpl* string) {
         _autocorrectionData.autocorrectionHandler(string ? [WKAutocorrectionRects autocorrectionRectsWithRects:_autocorrectionData.textFirstRect lastRect:_autocorrectionData.textLastRect] : nil);
@@ -1244,7 +1251,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler
 {
-    // FIXME: Remove the synchronous call as soon as Keyboard removes locking of the main thread.
+    // FIXME: Remove the synchronous call when <rdar://problem/16207002> is fixed.
     const bool useSyncRequest = true;
 
     if (useSyncRequest) {
