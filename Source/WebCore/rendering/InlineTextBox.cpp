@@ -118,7 +118,7 @@ static DashArray translateIntersectionPointsToSkipInkBoundaries(const DashArray&
     return result;
 }
 
-static void drawSkipInkUnderline(TextPainter& textPainter, GraphicsContext& context, FloatPoint localOrigin, float underlineOffset, float width, bool isPrinting)
+static void drawSkipInkUnderline(TextPainter& textPainter, GraphicsContext& context, FloatPoint localOrigin, float underlineOffset, float width, bool isPrinting, bool doubleLines)
 {
     FloatPoint adjustedLocalOrigin = localOrigin;
     adjustedLocalOrigin.move(0, underlineOffset);
@@ -127,7 +127,7 @@ static void drawSkipInkUnderline(TextPainter& textPainter, GraphicsContext& cont
     DashArray a = translateIntersectionPointsToSkipInkBoundaries(intersections, underlineBoundingBox.height(), width);
 
     ASSERT(!(a.size() % 2));
-    context.drawLinesForText(adjustedLocalOrigin, a, isPrinting);
+    context.drawLinesForText(adjustedLocalOrigin, a, isPrinting, doubleLines);
 }
 #endif
 
@@ -984,56 +984,6 @@ static void strokeWavyTextDecoration(GraphicsContext& context, FloatPoint& p1, F
     context.strokePath(path);
 }
 
-// Because finding the bounding box of an underline is structurally similar to finding
-// the bounding box of a strikethrough, we can pull out the computation and parameterize
-// by the location of the decoration (yOffset, underlineOffset, and doubleOffset).
-static FloatRect boundingBoxForSingleDecoration(GraphicsContext& context, float textDecorationThickness,
-    float width, FloatPoint localOrigin, TextDecorationStyle decorationStyle,
-    bool isPrinting, float yOffset, float underlineOffset, float doubleOffset)
-{
-    FloatRect boundingBox;
-
-    switch (decorationStyle) {
-    case TextDecorationStyleWavy: {
-        FloatPoint start(localOrigin.x(), localOrigin.y() + yOffset);
-        FloatPoint end = start + FloatSize(width, 0);
-        context.adjustLineToPixelBoundaries(start, end, textDecorationThickness, context.strokeStyle());
-
-        float controlPointDistance;
-        float step;
-        getWavyStrokeParameters(textDecorationThickness, controlPointDistance, step);
-
-        adjustStepToDecorationLength(step, controlPointDistance, width);
-
-        controlPointDistance += textDecorationThickness;
-        FloatPoint boundingBoxOrigin = start - FloatSize(0, controlPointDistance);
-        FloatSize boundingBoxSize = FloatSize(width, 2 * controlPointDistance);
-        boundingBox = FloatRect(boundingBoxOrigin, boundingBoxSize);
-        break;
-    }
-    default:
-        boundingBox = context.computeLineBoundsForText(localOrigin + FloatSize(0, underlineOffset), width, isPrinting);
-        if (decorationStyle == TextDecorationStyleDouble)
-            boundingBox.unite(context.computeLineBoundsForText(localOrigin + FloatSize(0, doubleOffset), width, isPrinting));
-    }
-    return boundingBox;
-}
-
-static FloatRect boundingBoxForAllActiveDecorations(InlineTextBox& inlineTextBox, GraphicsContext& context, TextDecoration decoration, float textDecorationThickness, float width, float doubleOffset, TextDecorationStyle decorationStyle, const FloatPoint localOrigin, const RenderStyle& lineStyle, bool isPrinting, int baseline)
-{
-    FloatRect boundingBox;
-    if (decoration & TextDecorationUnderline) {
-        int underlineOffset = computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), &inlineTextBox, textDecorationThickness);
-        
-        boundingBox.unite(boundingBoxForSingleDecoration(context, textDecorationThickness, width, localOrigin, decorationStyle, isPrinting, underlineOffset + doubleOffset, underlineOffset, baseline + 1));
-    }
-    if (decoration & TextDecorationOverline)
-        boundingBox.unite(boundingBoxForSingleDecoration(context, textDecorationThickness, width, localOrigin, decorationStyle, isPrinting, -doubleOffset, 0, -doubleOffset));
-    if (decoration & TextDecorationLineThrough)
-        boundingBox.unite(boundingBoxForSingleDecoration(context, textDecorationThickness, width, localOrigin, decorationStyle, isPrinting, 2 * baseline / 3, 2 * baseline / 3, doubleOffset + 2 * baseline / 3));
-    return boundingBox;
-}
-
 void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& boxOrigin, TextDecoration decoration, TextDecorationStyle decorationStyle, const ShadowData* shadow, TextPainter& textPainter)
 {
     // FIXME: We should improve this rule and not always just assume 1.
@@ -1107,37 +1057,9 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
             setShadow = true;
             shadow = shadow->next();
         }
-
-        // Offset between lines - always non-zero, so lines never cross each other.
-        float doubleOffset = textDecorationThickness + 1;
         
-        bool clipDecorationToMask = false;
-        
-        GraphicsContextStateSaver stateSaver(context, false);
-        
-        if (clipDecorationToMask) {
-            const float skipInkGapWidth = 1;
+        float wavyOffset = 2.f;
 
-            stateSaver.save();
-
-            FloatRect underlineRect = boundingBoxForAllActiveDecorations(*this, context, decoration, textDecorationThickness, width, doubleOffset, decorationStyle, localOrigin, lineStyle, isPrinting, baseline);
-            IntRect enclosingDeviceRect = enclosingIntRect(underlineRect);
-            std::unique_ptr<ImageBuffer> imageBuffer = context.createCompatibleBuffer(enclosingDeviceRect.size());
-
-            if (imageBuffer.get()) {
-                GraphicsContext& maskContext = *imageBuffer->context();
-                maskContext.setFillColor(Color::black, ColorSpaceDeviceRGB);
-                maskContext.setLineJoin(RoundJoin);
-                maskContext.translate(FloatPoint() - enclosingDeviceRect.location());
-
-                maskContext.fillRect(enclosingDeviceRect);
-                maskContext.setCompositeOperation(CompositeClear);
-    
-                textPainter.paintTextInContext(maskContext, skipInkGapWidth);
-
-                context.clipToImageBuffer(imageBuffer.get(), enclosingDeviceRect);
-            }
-        }
         context.setStrokeStyle(textDecorationStyleToStrokeStyle(decorationStyle));
         if (decoration & TextDecorationUnderline) {
             context.setStrokeColor(underline, colorSpace);
@@ -1146,8 +1068,8 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
 
             switch (decorationStyle) {
             case TextDecorationStyleWavy: {
-                FloatPoint start(localOrigin.x(), localOrigin.y() + underlineOffset + doubleOffset);
-                FloatPoint end(localOrigin.x() + width, localOrigin.y() + underlineOffset + doubleOffset);
+                FloatPoint start(localOrigin.x(), localOrigin.y() + underlineOffset + wavyOffset);
+                FloatPoint end(localOrigin.x() + width, localOrigin.y() + underlineOffset + wavyOffset);
                 strokeWavyTextDecoration(context, start, end, textDecorationThickness);
                 break;
             }
@@ -1155,54 +1077,34 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
                 if ((lineStyle.textDecorationSkip() == TextDecorationSkipInk || lineStyle.textDecorationSkip() == TextDecorationSkipAuto) && isHorizontal()) {
                     if (!context.paintingDisabled()) {
-                        drawSkipInkUnderline(textPainter, context, localOrigin, underlineOffset, width, isPrinting);
-
-                        if (decorationStyle == TextDecorationStyleDouble)
-                            drawSkipInkUnderline(textPainter, context, localOrigin, underlineOffset + doubleOffset, width, isPrinting);
+                        drawSkipInkUnderline(textPainter, context, localOrigin, underlineOffset, width, isPrinting, decorationStyle == TextDecorationStyleDouble);
                     }
-                } else {
+                } else
                     // FIXME: Need to support text-decoration-skip: none.
 #endif // CSS3_TEXT_DECORATION_SKIP_INK
-                    context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + underlineOffset), width, isPrinting);
-
-                    if (decorationStyle == TextDecorationStyleDouble)
-                        context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + underlineOffset + doubleOffset), width, isPrinting);
-#if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
-                }
-#endif
+                    context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + underlineOffset), width, isPrinting, decorationStyle == TextDecorationStyleDouble);
             }
         }
         if (decoration & TextDecorationOverline) {
             context.setStrokeColor(overline, colorSpace);
             switch (decorationStyle) {
             case TextDecorationStyleWavy: {
-                FloatPoint start(localOrigin.x(), localOrigin.y() - doubleOffset);
-                FloatPoint end(localOrigin.x() + width, localOrigin.y() - doubleOffset);
+                FloatPoint start(localOrigin.x(), localOrigin.y() - wavyOffset);
+                FloatPoint end(localOrigin.x() + width, localOrigin.y() - wavyOffset);
                 strokeWavyTextDecoration(context, start, end, textDecorationThickness);
                 break;
             }
             default:
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
                 if ((lineStyle.textDecorationSkip() == TextDecorationSkipInk || lineStyle.textDecorationSkip() == TextDecorationSkipAuto) && isHorizontal()) {
-                    if (!context.paintingDisabled()) {
-                        drawSkipInkUnderline(textPainter, context, localOrigin, 0, width, isPrinting);
-
-                        if (decorationStyle == TextDecorationStyleDouble)
-                            drawSkipInkUnderline(textPainter, context, localOrigin, -doubleOffset, width, isPrinting);
-                    }
-                } else {
+                    if (!context.paintingDisabled())
+                        drawSkipInkUnderline(textPainter, context, localOrigin, 0, width, isPrinting, decorationStyle == TextDecorationStyleDouble);
+                } else
                     // FIXME: Need to support text-decoration-skip: none.
 #endif // CSS3_TEXT_DECORATION_SKIP_INK
-                    context.drawLineForText(localOrigin, width, isPrinting);
-                    if (decorationStyle == TextDecorationStyleDouble)
-                        context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() - doubleOffset), width, isPrinting);
-#if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
-                }
-#endif
+                    context.drawLineForText(localOrigin, width, isPrinting, decorationStyle == TextDecorationStyleDouble);
             }
         }
-        if (clipDecorationToMask)
-            stateSaver.restore();
         if (decoration & TextDecorationLineThrough) {
             context.setStrokeColor(linethrough, colorSpace);
             switch (decorationStyle) {
@@ -1213,9 +1115,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
                 break;
             }
             default:
-                context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + 2 * baseline / 3), width, isPrinting);
-                if (decorationStyle == TextDecorationStyleDouble)
-                    context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + doubleOffset + 2 * baseline / 3), width, isPrinting);
+                context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + 2 * baseline / 3), width, isPrinting, decorationStyle == TextDecorationStyleDouble);
             }
         }
     } while (shadow);

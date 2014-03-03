@@ -1,3 +1,33 @@
+2014-03-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Space between double underlines does not scale with font size
+        https://bugs.webkit.org/show_bug.cgi?id=129521
+
+        Reviewed by Simon Fraser.
+
+        This patch moves the logic about how far to draw the second underline (when text-decoration-style: double
+        is specified) from InlineTextBox to GraphicsContext, because GraphicsContext is the authoritative source
+        about how thick underlines should be. The space between the two underlines is set to the thickness of
+        each of the underlines.
+
+        This patch also deletes some unused code in InlineTextBox that was never getting triggered, in addition
+        to unifying drawLineForText with drawLinesForText. This didn't have any performance impact in my testing.
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-style-double-space-scales.html
+
+        * platform/graphics/GraphicsContext.h: drawLineForText takes a boolean for if we should draw double
+        underlines.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLinesForText):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        * rendering/InlineTextBox.cpp: Use new boolean argument
+        (WebCore::drawSkipInkUnderline):
+        (WebCore::InlineTextBox::paintDecoration):
+
 2014-02-28  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support IOS Accessibility in WK2

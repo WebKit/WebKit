@@ -1392,36 +1392,15 @@ FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& point, flo
     return computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, dummyBool, dummyColor);
 }
 
-void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing)
+void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing, bool doubleLines)
 {
-    if (paintingDisabled())
-        return;
-
-    if (width <= 0)
-        return;
-
-    Color localStrokeColor(strokeColor());
-
-    bool shouldAntialiasLine;
-    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, shouldAntialiasLine, localStrokeColor);
-    bool fillColorIsNotEqualToStrokeColor = fillColor() != localStrokeColor;
-
-#if PLATFORM(IOS)
-    if (m_state.shouldUseContextColors)
-#endif
-        if (fillColorIsNotEqualToStrokeColor)
-            setCGFillColor(platformContext(), localStrokeColor, strokeColorSpace());
-
-    CGContextFillRect(platformContext(), bounds);
-
-#if PLATFORM(IOS)
-    if (m_state.shouldUseContextColors)
-#endif
-        if (fillColorIsNotEqualToStrokeColor)
-            setCGFillColor(platformContext(), fillColor(), fillColorSpace());
+    DashArray widths;
+    widths.append(width);
+    widths.append(0);
+    drawLinesForText(point, widths, printing, doubleLines);
 }
 
-void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray& widths, bool printing)
+void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray& widths, bool printing, bool doubleLines)
 {
     if (paintingDisabled())
         return;
@@ -1440,6 +1419,12 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
     dashBounds.reserveInitialCapacity(dashBounds.size() / 2);
     for (size_t i = 0; i < widths.size(); i += 2)
         dashBounds.append(CGRectMake(bounds.x() + widths[i], bounds.y(), widths[i+1] - widths[i], bounds.height()));
+
+    if (doubleLines) {
+        // The space between double underlines is equal to the height of the underline
+        for (size_t i = 0; i < widths.size(); i += 2)
+            dashBounds.append(CGRectMake(bounds.x() + widths[i], bounds.y() + 2 * bounds.height(), widths[i+1] - widths[i], bounds.height()));
+    }
 
 #if PLATFORM(IOS)
     if (m_state.shouldUseContextColors)

@@ -1,3 +1,18 @@
+2014-03-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Space between double underlines does not scale with font size
+        https://bugs.webkit.org/show_bug.cgi?id=129521
+
+        Reviewed by Simon Fraser.
+
+        This test renders large text with a double underline, but then barely clips off the bottom underline
+        using overflow: hidden. It makes sure that this is exactly the same as a single underline. If the
+        space between the two underlines does not scale with font size, it will appear as though there is a
+        single thick underline (because they will be drawn on top of each other) and will thus fail this test.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-style-double-space-scales-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-style-double-space-scales.html: Added.
+
 2014-03-03  Mark Lam  <mark.lam@apple.com>
 
         Web Inspector: debugger statements do not break.

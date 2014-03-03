@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test renders large text with a double underline, but then barely clips off the bottom underline
+using overflow: hidden. It makes sure that this is exactly the same as a single underline. If the
+space between the two underlines does not scale with font size, it will appear as though there is a
+single thick underline (because they will be drawn on top of each other) and will thus fail this test.
+<div style="width: 100px; height: 99px; overflow: hidden;">
+<div style="text-decoration: underline; font-size: 100px; -webkit-text-decoration-style: double; font-family: Ahem;">&nbsp;</div>
+</div>
+</body>
+</html>

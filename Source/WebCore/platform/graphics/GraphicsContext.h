@@ -368,8 +368,8 @@ namespace WebCore {
         FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides);
 
         FloatRect computeLineBoundsForText(const FloatPoint&, float width, bool printing);
-        void drawLineForText(const FloatPoint&, float width, bool printing);
-        void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing);
+        void drawLineForText(const FloatPoint&, float width, bool printing, bool doubleLines = false);
+        void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing, bool doubleLines = false);
         enum DocumentMarkerLineStyle {
 #if PLATFORM(IOS)
             TextCheckingDictationPhraseWithAlternativesLineStyle,
