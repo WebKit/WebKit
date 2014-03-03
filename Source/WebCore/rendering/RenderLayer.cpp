@@ -2052,6 +2052,12 @@ bool RenderLayer::hasAcceleratedTouchScrolling() const
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     if (!scrollsOverflow())
         return false;
+
+    // Temporary: turn off accelerated scrolling in WK2.
+    if (Page* page = renderer().frame().page()) {
+        if (page->scrollingCoordinator())
+            return false;
+    }
     
     Settings* settings = renderer().document().settings();
 
