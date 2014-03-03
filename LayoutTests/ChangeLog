@@ -1,3 +1,15 @@
+2014-03-03  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] YouTube videos fail to play
+        https://bugs.webkit.org/show_bug.cgi?id=129525
+
+        Reviewed by Darin Adler.
+
+        * media/media-source/media-source-addsourcebuffer.html: Updated.
+        * media/media-source/media-source-addsourcebuffer-expected.txt: Updated.
+        * media/media-source/media-source-fudge-factor-expected.txt: Added.
+        * media/media-source/media-source-fudge-factor.html: Added.
+
 2014-03-03  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Serialize circle positions

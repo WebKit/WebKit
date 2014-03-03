@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-fudge-factor</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+
+    var requestLength = 200000;
+    var nextRequest = 0;
+    var totalLength = 100;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+        source = new MediaSource();
+        source.addEventListener('sourceopen', startLoad);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function startLoad() {
+        sourceBuffer = source.addSourceBuffer('video/mock; codecs="mock"');
+
+        // Make an init segment with 1 video track
+        var init = makeAInit(100, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        waitForEventOnce('loadedmetadata', loadedMetadata);
+        sourceBuffer.appendBuffer(init)
+    }
+
+    function loadedMetadata() {
+        consoleWrite('Samples with presentation times after currentTime should not cause loadedData.');
+        sourceBuffer.appendBuffer(makeASample(0.5, 0.5, 0.5, 1, SAMPLE_FLAG.SYNC));
+        setTimeout(notLoadedData, 50);
+    }
+
+    function notLoadedData() {
+        testExpected('video.readyState', HTMLMediaElement.HAVE_METADATA);
+
+        consoleWrite('Samples with presentation times very close to currentTime should cause loadedData.');
+        sourceBuffer.appendBuffer(makeASample(0.01, 0.01, 0.01, 1, SAMPLE_FLAG.SYNC));
+        waitForEvent('loadeddata', loadedData);
+    }
+
+    function loadedData() {
+        testExpected('video.readyState', HTMLMediaElement.HAVE_CURRENT_DATA);
+
+        consoleWrite('Samples with presentation end times very close to currentTime should not cause canPlay.');
+        sourceBuffer.appendBuffer(makeASample(0.02, 0.02, 0.01, 1, SAMPLE_FLAG.SYNC));
+        setTimeout(notCanPlay, 50);
+    }
+
+    function notCanPlay() {
+        testExpected('video.readyState', HTMLMediaElement.HAVE_CURRENT_DATA);
+
+        consoleWrite('Continuous samples with presentation end times after currentTime should cause canPlay.');
+        sourceBuffer.appendBuffer(makeASample(0.03, 0.03, 0.47, 1, SAMPLE_FLAG.SYNC));
+        waitForEvent('canplay', canPlay);
+    }
+
+    function canPlay() {
+        testExpected('video.readyState', HTMLMediaElement.HAVE_FUTURE_DATA, '>=');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video controls width=960 height=510></video>
+</body>
+</html>

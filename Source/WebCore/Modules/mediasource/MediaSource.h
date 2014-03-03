@@ -80,6 +80,7 @@ public:
     void monitorSourceBuffers();
 
     void setDuration(double, ExceptionCode&);
+    double currentTime() const;
     const AtomicString& readyState() const { return m_readyState; }
     void setReadyState(const AtomicString&);
     void endOfStream(const AtomicString& error, ExceptionCode&);

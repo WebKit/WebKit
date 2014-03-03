@@ -83,6 +83,12 @@ public:
     TextTrackList* textTracks();
 #endif
 
+    bool hasCurrentTime() const;
+    bool hasFutureTime() const;
+    bool canPlayThrough();
+
+    bool active() const { return m_active; }
+
     // ActiveDOMObject interface
     virtual bool hasPendingActivity() const override;
     virtual void stop() override;
@@ -144,6 +150,8 @@ private:
     void provideMediaData(TrackBuffer&, AtomicString trackID);
     void didDropSample();
 
+    void monitorBufferingRate();
+
     RefPtr<SourceBufferPrivate> m_private;
     MediaSource* m_source;
     GenericEventQueue m_asyncEventQueue;
@@ -172,6 +180,9 @@ private:
     enum AppendStateType { WaitingForSegment, ParsingInitSegment, ParsingMediaSegment };
     AppendStateType m_appendState;
 
+    double m_timeOfBufferingMonitor;
+    double m_bufferedSinceLastMonitor;
+    double m_averageBufferRate;
 };
 
 } // namespace WebCore

@@ -7,6 +7,5 @@ RUN(video.src = URL.createObjectURL(source))
 EVENT(sourceopen)
 RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
 EXPECTED (source.sourceBuffers[0] == '[object SourceBuffer]') OK
-EXPECTED (source.activeSourceBuffers[0] == '[object SourceBuffer]') OK
 END OF TEST
 

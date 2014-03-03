@@ -27,7 +27,6 @@
     function sourceOpen() {
         run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
         testExpected('source.sourceBuffers[0]', sourceBuffer);
-        testExpected('source.activeSourceBuffers[0]', sourceBuffer);
         endTest();
     }
     
