@@ -807,8 +807,8 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
                 }
             }
 
-            detachScrollCoordinatedLayer(layer);
-            
+            removeFromScrollCoordinatedLayers(layer);
+
             layer.clearBacking();
             layerChanged = true;
 
@@ -3373,6 +3373,8 @@ void RenderLayerCompositor::removeFromScrollCoordinatedLayers(RenderLayer& layer
 
     m_scrollCoordinatedLayers.remove(&layer);
     m_scrollCoordinatedLayersNeedingUpdate.remove(&layer);
+
+    detachScrollCoordinatedLayer(layer);
 }
 
 FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportConstraints(RenderLayer& layer) const

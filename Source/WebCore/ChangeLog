@@ -1,3 +1,18 @@
+2014-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Crashes and assertions running iOS compositing tests
+        https://bugs.webkit.org/show_bug.cgi?id=129688
+
+        Reviewed by Dean Jackson.
+        
+        When a layer is no longer composited, we need to unregister it
+        from the scrolling coordinator, and remove it from m_scrollCoordinatedLayers.
+
+        Tested by compositing tests on iOS.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+
 2014-03-04  Antti Koivisto  <antti@apple.com>
 
         Update bindings test results after r165046.
