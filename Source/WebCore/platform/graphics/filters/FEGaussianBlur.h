@@ -42,11 +42,9 @@ public:
     EdgeModeType edgeMode() const;
     void setEdgeMode(EdgeModeType);
 
-    static float calculateStdDeviation(float);
-
     virtual void platformApplySoftware();
     virtual void dump();
-    
+
     virtual void determineAbsolutePaintRect();
     static void calculateKernelSize(Filter*, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY);
     static void calculateUnscaledKernelSize(unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY);

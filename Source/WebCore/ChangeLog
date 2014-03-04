@@ -1,3 +1,15 @@
+2014-03-04  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Remove unused StdDeviation from Gaussian Blur effect
+        https://bugs.webkit.org/show_bug.cgi?id=129693
+
+        Reviewed by Simon Fraser.
+
+        No new tests, no change on behavior.
+
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        * platform/graphics/filters/FEGaussianBlur.h:
+
 2014-03-04  Andreas Kling  <akling@apple.com>
 
         Add a Document::updateStyleIfNeededForNode(Node&).
