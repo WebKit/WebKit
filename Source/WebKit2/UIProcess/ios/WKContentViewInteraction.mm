@@ -406,7 +406,15 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
 
 - (void)_displayFormNodeInputView
 {
-    // FIXME: This is the place where we should zoom to node
+    if (UICurrentUserInterfaceIdiomIsPad())
+        [self _scrollToRect:_assistedNodeInformation.elementRect withOrigin:_page->editorState().caretRectAtStart.location() minimumScrollDistance:0];
+    else
+        [self _zoomToRect:_assistedNodeInformation.elementRect
+               withOrigin:_page->editorState().caretRectAtStart.location()
+            fitEntireRect:YES minimumScale:_assistedNodeInformation.minimumScaleFactor
+             maximumScale:_assistedNodeInformation.maximumScaleFactor
+    minimumScrollDistance:0];
+
     [self _updateAccessory];
 }
 
@@ -1850,7 +1858,8 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
             break;
     }
     [self reloadInputViews];
-    [self _updateAccessory];
+    [self _displayFormNodeInputView];
+
     // _inputPeripheral has been initialized in inputView called by reloadInputViews.
     [_inputPeripheral beginEditing];
 }

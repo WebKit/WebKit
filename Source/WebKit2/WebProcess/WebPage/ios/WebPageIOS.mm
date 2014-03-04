@@ -1583,6 +1583,8 @@ static inline bool hasFocusableNode(Node* startNode, Page* page, bool isForward)
 void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 {
     information.elementRect = m_page->focusController().focusedOrMainFrame().view()->contentsToRootView(m_assistedNode->renderer()->absoluteBoundingBoxRect());
+    information.minimumScaleFactor = m_viewportConfiguration.minimumScale();
+    information.maximumScaleFactor = m_viewportConfiguration.maximumScale();
     information.hasNextNode = hasFocusableNode(m_assistedNode.get(), m_page.get(), true);
     information.hasPreviousNode = hasFocusableNode(m_assistedNode.get(), m_page.get(), false);
 

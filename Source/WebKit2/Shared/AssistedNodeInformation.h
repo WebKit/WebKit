@@ -93,7 +93,9 @@ struct WKOptionItem {
 
 struct AssistedNodeInformation {
     AssistedNodeInformation()
-        : hasNextNode(false)
+        : minimumScaleFactor(-INFINITY)
+        , maximumScaleFactor(INFINITY)
+        , hasNextNode(false)
         , hasPreviousNode(false)
         , isAutocorrect(false)
         , isMultiSelect(false)
@@ -106,6 +108,8 @@ struct AssistedNodeInformation {
     }
 
     WebCore::IntRect elementRect;
+    double minimumScaleFactor;
+    double maximumScaleFactor;
     bool hasNextNode;
     bool hasPreviousNode;
     bool isAutocorrect;

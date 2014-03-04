@@ -64,6 +64,8 @@ bool WKOptionItem::decode(IPC::ArgumentDecoder& decoder, WKOptionItem& result)
 void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << elementRect;
+    encoder << minimumScaleFactor;
+    encoder << maximumScaleFactor;
     encoder << hasNextNode;
     encoder << hasPreviousNode;
     encoder << isAutocorrect;
@@ -82,6 +84,12 @@ void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
 bool AssistedNodeInformation::decode(IPC::ArgumentDecoder& decoder, AssistedNodeInformation& result)
 {
     if (!decoder.decode(result.elementRect))
+        return false;
+
+    if (!decoder.decode(result.minimumScaleFactor))
+        return false;
+
+    if (!decoder.decode(result.maximumScaleFactor))
         return false;
 
     if (!decoder.decode(result.hasNextNode))

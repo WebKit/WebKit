@@ -1,3 +1,30 @@
+2014-03-03  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2]: Text fields don't zoom in when focused
+        https://bugs.webkit.org/show_bug.cgi?id=129632
+        <rdar://problem/16185230>
+
+        Reviewed by Benjamin Poulain.
+
+        When focusing the node we need to zoom and center it and possibly
+        scroll to make it visible.
+        On iPad we only scroll, without zooming.
+
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::AssistedNodeInformation::encode):
+        (WebKit::AssistedNodeInformation::decode):
+        * Shared/AssistedNodeInformation.h:
+        (WebKit::AssistedNodeInformation::AssistedNodeInformation):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _scrollToRect:withOrigin:minimumScrollDistance:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _displayFormNodeInputView]):
+        (-[WKContentView _startAssistingNode:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2014-03-03  Sam Weinig  <sam@webkit.org>
 
         Fix ASSERT and leaks introduced in recent "Support IOS Accessibility in WK2" patch
