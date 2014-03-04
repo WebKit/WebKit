@@ -136,6 +136,15 @@ void ScrollingTreeScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& w
     if (!canHaveScrollbars())
         return;
 
+    if (wheelEvent.phase() == PlatformWheelEventPhaseEnded || wheelEvent.phase() == PlatformWheelEventPhaseCancelled) {
+        // If the wheel event is ending or cancelled, then we can tell the ScrollbarPainter API that we won't
+        // be updating the position from our scrolling thread anymore for the time being.
+        if (m_verticalScrollbarPainter)
+            [m_verticalScrollbarPainter setUsePresentationValue:NO];
+        if (m_horizontalScrollbarPainter)
+            [m_horizontalScrollbarPainter setUsePresentationValue:NO];
+    }
+
     m_scrollElasticityController.handleWheelEvent(wheelEvent);
     scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
     scrollingTree().handleWheelEventPhase(wheelEvent.phase());

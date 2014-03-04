@@ -563,6 +563,10 @@ enum FeatureToAnimate {
     // UIStateTransition always animates to 1. In case an animation is in progress this avoids a hard transition.
     [scrollbarPainter setUiStateTransitionProgress:1 - [scrollerImp uiStateTransitionProgress]];
 
+    // If the UI state transition is happening, then we are no longer moving the scrollbar on the scrolling thread.
+    if (_scrollbar->supportsUpdateOnSecondaryThread())
+        [scrollbarPainter setUsePresentationValue:NO];
+
     if (!_uiStateTransitionAnimation)
         _uiStateTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar 
                                                                                 featureToAnimate:UIStateTransition

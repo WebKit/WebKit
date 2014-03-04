@@ -1,3 +1,29 @@
+2014-03-04  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION: Overlay scrollbars that have grown are sometimes askew in the track
+        https://bugs.webkit.org/show_bug.cgi?id=129691
+        -and corresponding-
+        <rdar://problem/15666846>
+
+        Reviewed by Simon Fraser.
+
+        This regression started happening after we adopted the setPresentationValue 
+        ScrollbarPainter API which allows us to update the position of the scrollbar knob 
+        from our secondary scrolling thread. The bug occurs when the scrollbar grows while 
+        it still thinks it is in presentation-value mode. Whenever the scrollbar grows, it 
+        should be in non-presentation value mode.
+
+        If the wheel event has ended or been cancelled, we can switch out of presentation 
+        value mode.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::handleWheelEvent):
+
+        Sometimes we will grow the scrollbar before we have received a wheel event with 
+        the end or cancelled phase, and so automatically switch out of presentation-value 
+        mode whenever we start one of these animations.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+
 2014-03-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Move Source/WebCore/html/track/ code to std::unique_ptr
