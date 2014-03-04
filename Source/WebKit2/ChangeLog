@@ -1,3 +1,21 @@
+2014-03-03  Enrica Casucci  <enrica@apple.com>
+
+        [WK2] Selection remains after reload.
+        https://bugs.webkit.org/show_bug.cgi?id=129648
+        <rdar://problem/16207547>
+
+        Reviewed by Sam Weinig.
+
+        We normally clear the selection when resigninig first responder but
+        that doesn't get called when reloading the page or when navigating with
+        back/forward buttons. The correct place to do this is when we get
+        _didCommitLoadForMainFrame where we already stop assisting the node.
+        The method we call into webselectionassistant is resignedFirstResponder
+        which takes care of clearing the selection and removing the selection view.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _stopAssistingNode]):
+
 2014-03-04  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Move EvasGLContext and EvasGLSurface files into the efl common directory.

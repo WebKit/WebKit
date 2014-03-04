@@ -1874,6 +1874,8 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     [self _stopAssistingKeyboard];
     [self reloadInputViews];
     [self _updateAccessory];
+    // The name is misleading, but this actually clears the selection views and removes any selection.
+    [_webSelectionAssistant resignedFirstResponder];
 }
 
 - (void)_selectionChanged
