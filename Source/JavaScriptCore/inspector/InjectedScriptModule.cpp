@@ -34,7 +34,6 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "APIShims.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "ScriptFunctionCall.h"
@@ -64,7 +63,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         return;
 
     // FIXME: Make the InjectedScript a module itself.
-    JSC::APIEntryShim entryShim(injectedScript.scriptState());
+    JSC::JSLockHolder locker(injectedScript.scriptState());
     Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), ASCIILiteral("module"), injectedScriptManager->inspectorEnvironment().functionCallHandler());
     function.appendArgument(name());
     bool hadException = false;

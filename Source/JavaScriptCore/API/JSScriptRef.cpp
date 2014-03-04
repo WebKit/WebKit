@@ -26,7 +26,6 @@
 #include "config.h"
 
 #include "APICast.h"
-#include "APIShims.h"
 #include "Completion.h"
 #include "JSBasePrivate.h"
 #include "VM.h"
@@ -77,7 +76,7 @@ extern "C" {
 JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef contextGroup, JSStringRef url, int startingLineNumber, const char* source, size_t length, JSStringRef* errorMessage, int* errorLine)
 {
     VM* vm = toJS(contextGroup);
-    APIEntryShim entryShim(vm);
+    JSLockHolder locker(vm);
     for (size_t i = 0; i < length; i++) {
         if (!isASCII(source[i]))
             return 0;
@@ -102,7 +101,7 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
 JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef url, int startingLineNumber, JSStringRef source, JSStringRef* errorMessage, int* errorLine)
 {
     VM* vm = toJS(contextGroup);
-    APIEntryShim entryShim(vm);
+    JSLockHolder locker(vm);
 
     startingLineNumber = std::max(1, startingLineNumber);
 
@@ -122,20 +121,20 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
 
 void JSScriptRetain(JSScriptRef script)
 {
-    APIEntryShim entryShim(script->vm());
+    JSLockHolder locker(script->vm());
     script->ref();
 }
 
 void JSScriptRelease(JSScriptRef script)
 {
-    APIEntryShim entryShim(script->vm());
+    JSLockHolder locker(script->vm());
     script->deref();
 }
 
 JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef thisValueRef, JSValueRef* exception)
 {
     ExecState* exec = toJS(context);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     if (script->vm() != &exec->vm()) {
         RELEASE_ASSERT_NOT_REACHED();
         return 0;

@@ -27,7 +27,6 @@
 #include "JSValueRef.h"
 
 #include "APICast.h"
-#include "APIShims.h"
 #include "JSAPIWrapperObject.h"
 #include "JSCJSValue.h"
 #include "JSCallbackObject.h"
@@ -72,7 +71,7 @@ static bool evernoteHackNeeded()
         return kJSTypeUndefined;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
 
@@ -97,7 +96,7 @@ bool JSValueIsUndefined(JSContextRef ctx, JSValueRef value)
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     return jsValue.isUndefined();
@@ -110,7 +109,7 @@ bool JSValueIsNull(JSContextRef ctx, JSValueRef value)
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     return jsValue.isNull();
@@ -123,7 +122,7 @@ bool JSValueIsBoolean(JSContextRef ctx, JSValueRef value)
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     return jsValue.isBoolean();
@@ -136,7 +135,7 @@ bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     return jsValue.isNumber();
@@ -149,7 +148,7 @@ bool JSValueIsString(JSContextRef ctx, JSValueRef value)
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     return jsValue.isString();
@@ -162,7 +161,7 @@ bool JSValueIsObject(JSContextRef ctx, JSValueRef value)
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     return jsValue.isObject();
@@ -175,7 +174,7 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     
@@ -199,7 +198,7 @@ bool JSValueIsEqual(JSContextRef ctx, JSValueRef a, JSValueRef b, JSValueRef* ex
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsA = toJS(exec, a);
     JSValue jsB = toJS(exec, b);
@@ -224,7 +223,7 @@ bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b)
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsA = toJS(exec, a);
     JSValue jsB = toJS(exec, b);
@@ -239,7 +238,7 @@ bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObject
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
 
@@ -266,7 +265,7 @@ JSValueRef JSValueMakeUndefined(JSContextRef ctx)
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     return toRef(exec, jsUndefined());
 }
@@ -278,7 +277,7 @@ JSValueRef JSValueMakeNull(JSContextRef ctx)
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     return toRef(exec, jsNull());
 }
@@ -290,7 +289,7 @@ JSValueRef JSValueMakeBoolean(JSContextRef ctx, bool value)
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     return toRef(exec, jsBoolean(value));
 }
@@ -302,7 +301,7 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     // Our JSValue representation relies on a standard bit pattern for NaN. NaNs
     // generated internally to JavaScriptCore naturally have that representation,
@@ -320,7 +319,7 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     return toRef(exec, jsString(exec, string->string()));
 }
@@ -332,7 +331,7 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     String str = string->string();
     unsigned length = str.length();
     if (length && str.is8Bit()) {
@@ -350,7 +349,7 @@ JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsig
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     JSValue value = toJS(exec, apiValue);
     String result = JSONStringify(exec, value, indent);
     if (exception)
@@ -375,7 +374,7 @@ bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     return jsValue.toBoolean(exec);
@@ -388,7 +387,7 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
         return QNaN;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
 
@@ -413,7 +412,7 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     
@@ -438,7 +437,7 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     
@@ -463,7 +462,7 @@ void JSValueProtect(JSContextRef ctx, JSValueRef value)
         return;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJSForGC(exec, value);
     gcProtect(jsValue);
@@ -477,7 +476,7 @@ void JSValueUnprotect(JSContextRef ctx, JSValueRef value)
 #endif
 
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSValue jsValue = toJSForGC(exec, value);
     gcUnprotect(jsValue);

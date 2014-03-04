@@ -1,3 +1,17 @@
+2014-03-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Merge API shims and JSLock
+        https://bugs.webkit.org/show_bug.cgi?id=129650
+
+        Reviewed by Mark Lam.
+
+        JSLock is now taking on all of APIEntryShim's responsibilities since there is never a reason 
+        to take just the JSLock. Ditto for DropAllLocks and APICallbackShim.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createIndex):
+
 2014-03-03  Enrica Casucci  <enrica@apple.com>
 
         [WK2] Selection remains after reload.

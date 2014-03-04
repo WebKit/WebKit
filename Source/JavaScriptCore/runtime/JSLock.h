@@ -49,6 +49,7 @@ namespace JSC {
     // DropAllLocks object takes care to release the JSLock only if your
     // thread acquired it to begin with.
 
+    class IdentifierTable;
     class ExecState;
     class VM;
 
@@ -126,6 +127,9 @@ namespace JSC {
         void lock(intptr_t lockCount);
         void unlock(intptr_t unlockCount);
 
+        void didAcquireLock();
+        void willReleaseLock();
+
         unsigned dropAllLocks(DropAllLocks*);
         void grabAllLocks(DropAllLocks*, unsigned lockCount);
 
@@ -135,6 +139,7 @@ namespace JSC {
         unsigned m_lockDropDepth;
         bool m_hasExclusiveThread;
         VM* m_vm;
+        IdentifierTable* m_entryIdentifierTable; 
     };
 
 } // namespace

@@ -1,3 +1,30 @@
+2014-03-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Merge API shims and JSLock
+        https://bugs.webkit.org/show_bug.cgi?id=129650
+
+        Reviewed by Mark Lam.
+
+        No new tests.
+
+        JSLock is now taking on all of APIEntryShim's responsibilities since there is never a reason 
+        to take just the JSLock. Ditto for DropAllLocks and APICallbackShim.
+
+        * bindings/js/DOMRequestState.h:
+        (WebCore::DOMRequestState::Scope::Scope):
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredWrapper::resolve):
+        (WebCore::DeferredWrapper::reject):
+        (WebCore::DeferredWrapper::resolve<String>):
+        (WebCore::DeferredWrapper::resolve<bool>):
+        (WebCore::char>>):
+        (WebCore::DeferredWrapper::reject<String>):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+
 2014-03-04  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION: Overlay scrollbars that have grown are sometimes askew in the track

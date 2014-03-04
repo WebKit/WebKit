@@ -30,7 +30,6 @@
 #if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
-#import "APIShims.h"
 #import "Heap.h"
 #import "JSContextInternal.h"
 #import "JSValueInternal.h"
@@ -266,7 +265,7 @@ private:
     if (!m_lock->vm())
         return nil;
 
-    JSC::APIEntryShim shim(m_lock->vm());
+    JSC::JSLockHolder apiLocker(m_lock->vm());
     if (!m_globalObject)
         return nil;
     if (m_weakValue.isClear())

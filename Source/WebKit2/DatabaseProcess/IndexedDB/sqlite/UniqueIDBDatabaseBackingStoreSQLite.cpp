@@ -33,7 +33,6 @@
 #include "Logging.h"
 #include "SQLiteIDBCursor.h"
 #include "SQLiteIDBTransaction.h"
-#include <JavaScriptCore/APIShims.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBBindingUtilities.h>
 #include <WebCore/IDBDatabaseMetadata.h>
@@ -77,7 +76,7 @@ UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite()
     m_sqliteDB = nullptr;
 
     if (m_vm) {
-        APIEntryShim shim(m_vm.get());
+        JSLockHolder locker(m_vm.get());
         m_globalObject.clear();
         m_vm = nullptr;
     }
@@ -631,7 +630,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& trans
 
     m_cursors.set(cursor->identifier(), cursor);
 
-    OwnPtr<APIEntryShim> shim;
+    OwnPtr<JSLockHolder> locker;
     while (!cursor->currentKey().isNull) {
         const IDBKeyData& key = cursor->currentKey();
         const Vector<uint8_t>& valueBuffer = cursor->currentValueBuffer();
@@ -639,12 +638,12 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& trans
         if (!m_globalObject) {
             ASSERT(!m_vm);
             m_vm = VM::create();
-            shim = adoptPtr(new APIEntryShim(m_vm.get()));
+            locker = adoptPtr(new JSLockHolder(m_vm.get()));
             m_globalObject.set(*m_vm, JSGlobalObject::create(*m_vm, JSGlobalObject::createStructure(*m_vm, jsNull())));
         }
 
-        if (!shim)
-            shim = adoptPtr(new APIEntryShim(m_vm.get()));
+        if (!locker)
+            locker = adoptPtr(new JSLockHolder(m_vm.get()));
 
         Deprecated::ScriptValue value = deserializeIDBValueBuffer(m_globalObject->globalExec(), valueBuffer, true);
         Vector<IDBKeyData> indexKeys;

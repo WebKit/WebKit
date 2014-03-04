@@ -26,7 +26,8 @@
 #ifndef DelayedReleaseScope_h
 #define DelayedReleaseScope_h
 
-#include "APIShims.h"
+#include "Heap.h"
+#include "JSLock.h"
 #include "MarkedSpace.h"
 
 namespace JSC {
@@ -51,7 +52,7 @@ public:
         std::swap(operationInProgress, m_markedSpace.m_heap->m_operationInProgress);
 
         {
-            APICallbackShim callbackShim(*m_markedSpace.m_heap->vm());
+            JSLock::DropAllLocks dropAllLocks(*m_markedSpace.m_heap->vm());
             m_delayedReleaseObjects.clear();
         }
 

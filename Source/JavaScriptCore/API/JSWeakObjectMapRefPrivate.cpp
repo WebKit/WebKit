@@ -27,7 +27,6 @@
 #include "JSWeakObjectMapRefPrivate.h"
 
 #include "APICast.h"
-#include "APIShims.h"
 #include "JSCJSValue.h"
 #include "JSCallbackObject.h"
 #include "JSWeakObjectMapRefInternal.h"
@@ -46,7 +45,7 @@ extern "C" {
 JSWeakObjectMapRef JSWeakObjectMapCreate(JSContextRef context, void* privateData, JSWeakMapDestroyedCallback callback)
 {
     ExecState* exec = toJS(context);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     RefPtr<OpaqueJSWeakObjectMap> map = OpaqueJSWeakObjectMap::create(privateData, callback);
     exec->lexicalGlobalObject()->registerWeakMap(map.get());
     return map.get();
@@ -59,7 +58,7 @@ void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSO
         return;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     JSObject* obj = toJS(object);
     if (!obj)
         return;
@@ -74,7 +73,7 @@ JSObjectRef JSWeakObjectMapGet(JSContextRef ctx, JSWeakObjectMapRef map, void* k
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     return toRef(jsCast<JSObject*>(map->map().get(key)));
 }
 
@@ -85,7 +84,7 @@ void JSWeakObjectMapRemove(JSContextRef ctx, JSWeakObjectMapRef map, void* key)
         return;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     map->map().remove(key);
 }
 

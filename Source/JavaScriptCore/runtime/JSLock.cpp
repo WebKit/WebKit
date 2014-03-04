@@ -123,6 +123,12 @@ void JSLock::lock(intptr_t lockCount)
     ASSERT(!m_lockCount);
     m_lockCount = lockCount;
 
+    didAcquireLock();
+}
+
+void JSLock::didAcquireLock()
+{
+    // FIXME: What should happen to the per-thread identifier table if we don't have a VM?
     if (!m_vm)
         return;
 
@@ -132,6 +138,9 @@ void JSLock::lock(intptr_t lockCount)
 
     WTFThreadData& threadData = wtfThreadData();
     m_vm->setLastStackTop(threadData.savedLastStackTop());
+
+    m_entryIdentifierTable = threadData.setCurrentIdentifierTable(m_vm->identifierTable);
+    m_vm->heap.machineThreads().addCurrentThread();
 }
 
 void JSLock::unlock()
@@ -147,14 +156,21 @@ void JSLock::unlock(intptr_t unlockCount)
     m_lockCount -= unlockCount;
 
     if (!m_lockCount) {
-        if (m_vm)
-            m_vm->setStackPointerAtVMEntry(nullptr);
+        willReleaseLock();
 
         if (!m_hasExclusiveThread) {
             m_ownerThreadID = std::thread::id();
             m_lock.unlock();
         }
     }
+}
+
+void JSLock::willReleaseLock()
+{
+    if (m_vm)
+        m_vm->setStackPointerAtVMEntry(nullptr);
+
+    wtfThreadData().setCurrentIdentifierTable(m_entryIdentifierTable);
 }
 
 void JSLock::lock(ExecState* exec)
@@ -226,32 +242,28 @@ void JSLock::grabAllLocks(DropAllLocks* dropper, unsigned droppedLockCount)
     m_vm->setLastStackTop(threadData.savedLastStackTop());
 }
 
-JSLock::DropAllLocks::DropAllLocks(ExecState* exec)
+JSLock::DropAllLocks::DropAllLocks(VM* vm)
     : m_droppedLockCount(0)
-    , m_vm(exec ? &exec->vm() : nullptr)
+    // If the VM is in the middle of being destroyed then we don't want to resurrect it
+    // by allowing DropAllLocks to ref it. By this point the JSLock has already been 
+    // released anyways, so it doesn't matter that DropAllLocks is a no-op.
+    , m_vm(vm->refCount() ? vm : nullptr)
 {
     if (!m_vm)
         return;
+    wtfThreadData().resetCurrentIdentifierTable();
     RELEASE_ASSERT(!m_vm->isCollectorBusy());
     m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
 }
 
-JSLock::DropAllLocks::DropAllLocks(VM* vm)
-    : m_droppedLockCount(0)
-    , m_vm(vm)
+JSLock::DropAllLocks::DropAllLocks(ExecState* exec)
+    : DropAllLocks(exec ? &exec->vm() : nullptr)
 {
-    if (!m_vm)
-        return;
-    RELEASE_ASSERT(!m_vm->isCollectorBusy());
-    m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
 }
 
 JSLock::DropAllLocks::DropAllLocks(VM& vm)
-    : m_droppedLockCount(0)
-    , m_vm(&vm)
+    : DropAllLocks(&vm)
 {
-    RELEASE_ASSERT(!m_vm->isCollectorBusy());
-    m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
 }
 
 JSLock::DropAllLocks::~DropAllLocks()
@@ -259,6 +271,7 @@ JSLock::DropAllLocks::~DropAllLocks()
     if (!m_vm)
         return;
     m_vm->apiLock().grabAllLocks(this, m_droppedLockCount);
+    wtfThreadData().setCurrentIdentifierTable(m_vm->identifierTable);
 }
 
 } // namespace JSC

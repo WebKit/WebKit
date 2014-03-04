@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HeapTimer.h"
 
-#include "APIShims.h"
+#include "IncrementalSweeper.h"
 #include "JSObject.h"
 #include "JSString.h"
 #include "JSCInlines.h"
@@ -93,7 +93,7 @@ void HeapTimer::timerDidFire(CFRunLoopTimerRef timer, void* context)
         RELEASE_ASSERT_NOT_REACHED();
 
     {
-        APIEntryShim shim(vm);
+        JSLockHolder locker(vm);
         heapTimer->doWork();
     }
 
@@ -131,7 +131,7 @@ bool HeapTimer::timerEvent(void* info)
 {
     HeapTimer* agent = static_cast<HeapTimer*>(info);
     
-    APIEntryShim shim(agent->m_vm);
+    JSLockHolder locker(agent->m_vm);
     agent->doWork();
     agent->m_timer = 0;
     

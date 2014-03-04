@@ -28,7 +28,6 @@
 
 #include "APICallbackFunction.h"
 #include "APICast.h"
-#include "APIShims.h"
 #include "Error.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"

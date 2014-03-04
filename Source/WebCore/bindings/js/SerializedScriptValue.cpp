@@ -51,7 +51,6 @@
 #include "WebCoreJSClientData.h"
 #include <limits>
 #include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/APIShims.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/BooleanObject.h>
 #include <runtime/DateInstance.h>
@@ -2614,7 +2613,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue()
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, JSValueRef* exception)
 {
     ExecState* exec = toJS(originContext);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     JSValue value = toJS(exec, apiValue);
     RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(exec, value, nullptr, nullptr);
     if (exec->hadException()) {
@@ -2645,7 +2644,7 @@ JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* glob
 JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception)
 {
     ExecState* exec = toJS(destinationContext);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     JSValue value = deserialize(exec, exec->lexicalGlobalObject(), nullptr);
     if (exec->hadException()) {
         if (exception)

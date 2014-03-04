@@ -22,7 +22,6 @@
 
 #include "config.h"
 
-#include "APIShims.h"
 #include "ButterflyInlines.h"
 #include "BytecodeGenerator.h"
 #include "Completion.h"
@@ -1086,7 +1085,7 @@ int jscmain(int argc, char** argv)
     VM* vm = VM::create(LargeHeap).leakRef();
     int result;
     {
-        APIEntryShim shim(vm);
+        JSLockHolder locker(vm);
 
         if (options.m_profile && !vm->m_perBytecodeProfiler)
             vm->m_perBytecodeProfiler = adoptPtr(new Profiler::Database(*vm));

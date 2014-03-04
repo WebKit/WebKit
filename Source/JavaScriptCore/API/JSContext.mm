@@ -26,7 +26,6 @@
 #include "config.h"
 
 #import "APICast.h"
-#import "APIShims.h"
 #import "JSContextInternal.h"
 #import "JSGlobalObject.h"
 #import "JSValueInternal.h"
@@ -103,7 +102,7 @@
 
 - (void)setException:(JSValue *)value
 {
-    JSC::APIEntryShim entryShim(toJS(m_context));
+    JSC::JSLockHolder locker(toJS(m_context));
     if (value)
         m_exception.set(toJS(m_context)->vm(), toJS(JSValueToObject(m_context, valueInternalValue(value), 0)));
     else
@@ -271,13 +270,13 @@
 
 - (JSValue *)wrapperForObjCObject:(id)object
 {
-    JSC::APIEntryShim entryShim(toJS(m_context));
+    JSC::JSLockHolder locker(toJS(m_context));
     return [m_wrapperMap jsWrapperForObject:object];
 }
 
 - (JSValue *)wrapperForJSObject:(JSValueRef)value
 {
-    JSC::APIEntryShim entryShim(toJS(m_context));
+    JSC::JSLockHolder locker(toJS(m_context));
     return [m_wrapperMap objcWrapperForJSValueRef:value];
 }
 

@@ -28,7 +28,6 @@
 
 #include "APICallbackFunction.h"
 #include "APICast.h"
-#include "APIShims.h"
 #include "CodeBlock.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"

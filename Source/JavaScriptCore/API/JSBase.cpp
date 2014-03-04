@@ -28,7 +28,6 @@
 #include "JSBasePrivate.h"
 
 #include "APICast.h"
-#include "APIShims.h"
 #include "CallFrame.h"
 #include "Completion.h"
 #include "InitializeThreading.h"
@@ -53,7 +52,7 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     JSObject* jsThisObject = toJS(thisObject);
 
@@ -94,7 +93,7 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
         return false;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     startingLineNumber = std::max(1, startingLineNumber);
 
@@ -126,7 +125,7 @@ void JSGarbageCollect(JSContextRef ctx)
         return;
 
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec, false);
+    JSLockHolder locker(exec);
 
     exec->vm().heap.reportAbandonedObjectGraph();
 }
@@ -138,7 +137,7 @@ void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
         return;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     exec->vm().heap.reportExtraMemoryCost(size);
 }
 
@@ -150,7 +149,7 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
         return;
 
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
     exec->vm().heap.collectAllGarbage();
 }
 

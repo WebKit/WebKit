@@ -769,7 +769,6 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
 
 set(JavaScriptCore_FORWARDING_HEADERS_FILES
     API/APICast.h
-    API/APIShims.h
     API/JSBase.h
     API/JSCTestRunnerUtils.h
     API/JSContextRef.h

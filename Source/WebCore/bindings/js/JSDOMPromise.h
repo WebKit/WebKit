@@ -29,7 +29,6 @@
 #include "JSCryptoKey.h"
 #include "JSCryptoKeyPair.h"
 #include "JSDOMBinding.h"
-#include <JavaScriptCore/APIShims.h>
 #include <heap/StrongInlines.h>
 #include <runtime/JSPromiseDeferred.h>
 
@@ -59,7 +58,7 @@ template<class ResolveResultType>
 inline void DeferredWrapper::resolve(const ResolveResultType& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    JSC::APIEntryShim entryShim(exec);
+    JSC::JSLockHolder locker(exec);
     resolve(exec, toJS(exec, m_globalObject.get(), result));
 }
 
@@ -67,7 +66,7 @@ template<class RejectResultType>
 inline void DeferredWrapper::reject(const RejectResultType& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    JSC::APIEntryShim entryShim(exec);
+    JSC::JSLockHolder locker(exec);
     reject(exec, toJS(exec, m_globalObject.get(), result));
 }
 
@@ -75,7 +74,7 @@ template<>
 inline void DeferredWrapper::reject(const std::nullptr_t&)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    JSC::APIEntryShim entryShim(exec);
+    JSC::JSLockHolder locker(exec);
     reject(exec, JSC::jsNull());
 }
 
@@ -83,7 +82,7 @@ template<>
 inline void DeferredWrapper::resolve<String>(const String& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    JSC::APIEntryShim entryShim(exec);
+    JSC::JSLockHolder locker(exec);
     resolve(exec, jsString(exec, result));
 }
 
@@ -91,7 +90,7 @@ template<>
 inline void DeferredWrapper::resolve<bool>(const bool& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    JSC::APIEntryShim entryShim(exec);
+    JSC::JSLockHolder locker(exec);
     resolve(exec, JSC::jsBoolean(result));
 }
 
@@ -99,7 +98,7 @@ template<>
 inline void DeferredWrapper::resolve<Vector<unsigned char>>(const Vector<unsigned char>& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    JSC::APIEntryShim entryShim(exec);
+    JSC::JSLockHolder locker(exec);
     RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(result.data(), result.size());
     resolve(exec, toJS(exec, m_globalObject.get(), buffer.get()));
 }
@@ -108,7 +107,7 @@ template<>
 inline void DeferredWrapper::reject<String>(const String& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    JSC::APIEntryShim entryShim(exec);
+    JSC::JSLockHolder locker(exec);
     reject(exec, jsString(exec, result));
 }
 

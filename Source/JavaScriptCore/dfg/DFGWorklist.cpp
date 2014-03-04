@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "APIShims.h"
 #include "CodeBlock.h"
 #include "DeferGC.h"
 #include "DFGLongLivedState.h"

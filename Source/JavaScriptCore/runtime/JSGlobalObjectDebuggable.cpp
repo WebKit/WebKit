@@ -28,7 +28,6 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "APIShims.h"
 #include "InspectorAgentBase.h"
 #include "InspectorFrontendChannel.h"
 #include "JSGlobalObject.h"
@@ -51,21 +50,21 @@ String JSGlobalObjectDebuggable::name() const
 
 void JSGlobalObjectDebuggable::connect(InspectorFrontendChannel* frontendChannel)
 {
-    APIEntryShim entryShim(&m_globalObject.vm());
+    JSLockHolder locker(&m_globalObject.vm());
 
     m_globalObject.inspectorController().connectFrontend(frontendChannel);
 }
 
 void JSGlobalObjectDebuggable::disconnect()
 {
-    APIEntryShim entryShim(&m_globalObject.vm());
+    JSLockHolder locker(&m_globalObject.vm());
 
     m_globalObject.inspectorController().disconnectFrontend(InspectorDisconnectReason::InspectorDestroyed);
 }
 
 void JSGlobalObjectDebuggable::dispatchMessageFromRemoteFrontend(const String& message)
 {
-    APIEntryShim entryShim(&m_globalObject.vm());
+    JSLockHolder locker(&m_globalObject.vm());
 
     m_globalObject.inspectorController().dispatchMessageFromFrontend(message);
 }

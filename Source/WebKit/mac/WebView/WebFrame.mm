@@ -109,7 +109,6 @@
 #import "WebMailDelegate.h"
 #import "WebResource.h"
 #import "WebUIKitDelegate.h"
-#import <JavaScriptCore/APIShims.h>
 #import <WebCore/Document.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EditorClient.h>
@@ -694,9 +693,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 #if PLATFORM(IOS)
     ASSERT(WebThreadIsLockedOrDisabled());
     JSC::ExecState* exec = _private->coreFrame->script().globalObject(mainThreadNormalWorld())->globalExec();
-    // Need to use the full entry shim to prevent crashes arising from the UI thread being unknown
-    // to the JSC GC: <rdar://problem/11553172> Crash when breaking in the Web Inspector during stringByEvaluatingJavaScriptFromString:
-    JSC::APIEntryShim jscLock(exec);
+    JSC::JSLockHolder jscLock(exec);
 #endif
 
     JSC::JSValue result = _private->coreFrame->script().executeScript(string, forceUserGesture).jsValue();

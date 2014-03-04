@@ -26,7 +26,6 @@
 #include "config.h"
 #include "IncrementalSweeper.h"
 
-#include "APIShims.h"
 #include "DelayedReleaseScope.h"
 #include "Heap.h"
 #include "JSObject.h"

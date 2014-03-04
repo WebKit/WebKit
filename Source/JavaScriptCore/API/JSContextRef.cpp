@@ -69,7 +69,7 @@ void JSContextGroupRelease(JSContextGroupRef group)
 {
     VM& vm = *toJS(group);
 
-    APIEntryShim entryShim(&vm);
+    JSLockHolder locker(&vm);
     vm.deref();
 }
 
@@ -84,7 +84,7 @@ static bool internalScriptTimeoutCallback(ExecState* exec, void* callbackPtr, vo
 void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef group, double limit, JSShouldTerminateCallback callback, void* callbackData)
 {
     VM& vm = *toJS(group);
-    APIEntryShim entryShim(&vm);
+    JSLockHolder locker(&vm);
     Watchdog& watchdog = vm.watchdog;
     if (callback) {
         void* callbackPtr = reinterpret_cast<void*>(callback);
@@ -96,7 +96,7 @@ void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef group, double limit, 
 void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)
 {
     VM& vm = *toJS(group);
-    APIEntryShim entryShim(&vm);
+    JSLockHolder locker(&vm);
     Watchdog& watchdog = vm.watchdog;
     watchdog.setTimeLimit(vm, std::numeric_limits<double>::infinity());
 }
@@ -124,7 +124,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 
     RefPtr<VM> vm = group ? PassRefPtr<VM>(toJS(group)) : VM::createContextGroup();
 
-    APIEntryShim entryShim(vm.get(), false);
+    JSLockHolder locker(vm.get());
     vm->makeUsableFromMultipleThreads();
 
     if (!globalObjectClass) {
@@ -145,7 +145,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     VM& vm = exec->vm();
     gcProtect(exec->vmEntryGlobalObject());
@@ -158,7 +158,7 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
     IdentifierTable* savedIdentifierTable;
     ExecState* exec = toJS(ctx);
     {
-        APIEntryShim entryShim(exec);
+        JSLockHolder locker(exec);
 
         VM& vm = exec->vm();
         savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(vm.identifierTable);
@@ -179,7 +179,7 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     return toRef(jsCast<JSObject*>(exec->lexicalGlobalObject()->methodTable()->toThis(exec->lexicalGlobalObject(), exec, NotStrictMode)));
 }
@@ -201,7 +201,7 @@ JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     return toGlobalRef(exec->lexicalGlobalObject()->globalExec());
 }
@@ -214,7 +214,7 @@ JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx)
     }
 
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     String name = exec->vmEntryGlobalObject()->name();
     if (name.isNull())
@@ -231,7 +231,7 @@ void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name)
     }
 
     ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
+    JSLockHolder locker(exec);
 
     exec->vmEntryGlobalObject()->setName(name ? name->string() : String());
 }

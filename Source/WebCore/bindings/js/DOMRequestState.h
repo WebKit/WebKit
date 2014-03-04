@@ -33,8 +33,6 @@
 #include "ScriptState.h"
 #include "WorkerGlobalScope.h"
 
-#include <JavaScriptCore/APIShims.h>
-
 namespace WebCore {
 
 class ScriptExecutionContext;
@@ -63,11 +61,11 @@ public:
     class Scope {
     public:
         explicit Scope(DOMRequestState& state)
-            : m_entryShim(state.exec())
+            : m_locker(state.exec())
         {
         }
     private:
-        JSC::APIEntryShim m_entryShim;
+        JSC::JSLockHolder m_locker;
     };
 
     JSC::ExecState* exec()

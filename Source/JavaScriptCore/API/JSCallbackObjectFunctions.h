@@ -24,7 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "APIShims.h"
 #include "APICast.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
@@ -104,7 +103,7 @@ void JSCallbackObject<Parent>::init(ExecState* exec)
     
     // initialize from base to derived
     for (int i = static_cast<int>(initRoutines.size()) - 1; i >= 0; i--) {
-        APICallbackShim callbackShim(exec);
+        JSLock::DropAllLocks dropAllLocks(exec);
         JSObjectInitializeCallback initialize = initRoutines[i];
         initialize(toRef(exec), toRef(this));
     }
@@ -142,7 +141,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* e
             if (JSObjectHasPropertyCallback hasProperty = jsClass->hasProperty) {
                 if (!propertyNameRef)
                     propertyNameRef = OpaqueJSString::create(name);
-                APICallbackShim callbackShim(exec);
+                JSLock::DropAllLocks dropAllLocks(exec);
                 if (hasProperty(ctx, thisRef, propertyNameRef.get())) {
                     slot.setCustom(thisObject, ReadOnly | DontEnum, callbackGetter);
                     return true;
@@ -153,7 +152,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* e
                 JSValueRef exception = 0;
                 JSValueRef value;
                 {
-                    APICallbackShim callbackShim(exec);
+                    JSLock::DropAllLocks dropAllLocks(exec);
                     value = getProperty(ctx, thisRef, propertyNameRef.get(), &exception);
                 }
                 if (exception) {
@@ -236,7 +235,7 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName p
                 JSValueRef exception = 0;
                 bool result;
                 {
-                    APICallbackShim callbackShim(exec);
+                    JSLock::DropAllLocks dropAllLocks(exec);
                     result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
                 }
                 if (exception)
@@ -253,7 +252,7 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName p
                         JSValueRef exception = 0;
                         bool result;
                         {
-                            APICallbackShim callbackShim(exec);
+                            JSLock::DropAllLocks dropAllLocks(exec);
                             result = setProperty(ctx, thisRef, entry->propertyNameRef.get(), valueRef, &exception);
                         }
                         if (exception)
@@ -295,7 +294,7 @@ void JSCallbackObject<Parent>::putByIndex(JSCell* cell, ExecState* exec, unsigne
             JSValueRef exception = 0;
             bool result;
             {
-                APICallbackShim callbackShim(exec);
+                JSLock::DropAllLocks dropAllLocks(exec);
                 result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
             }
             if (exception)
@@ -312,7 +311,7 @@ void JSCallbackObject<Parent>::putByIndex(JSCell* cell, ExecState* exec, unsigne
                     JSValueRef exception = 0;
                     bool result;
                     {
-                        APICallbackShim callbackShim(exec);
+                        JSLock::DropAllLocks dropAllLocks(exec);
                         result = setProperty(ctx, thisRef, entry->propertyNameRef.get(), valueRef, &exception);
                     }
                     if (exception)
@@ -351,7 +350,7 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, Pro
                 JSValueRef exception = 0;
                 bool result;
                 {
-                    APICallbackShim callbackShim(exec);
+                    JSLock::DropAllLocks dropAllLocks(exec);
                     result = deleteProperty(ctx, thisRef, propertyNameRef.get(), &exception);
                 }
                 if (exception)
@@ -418,7 +417,7 @@ EncodedJSValue JSCallbackObject<Parent>::construct(ExecState* exec)
             JSValueRef exception = 0;
             JSObject* result;
             {
-                APICallbackShim callbackShim(exec);
+                JSLock::DropAllLocks dropAllLocks(exec);
                 result = toJS(callAsConstructor(execRef, constructorRef, argumentCount, arguments.data(), &exception));
             }
             if (exception)
@@ -444,7 +443,7 @@ bool JSCallbackObject<Parent>::customHasInstance(JSObject* object, ExecState* ex
             JSValueRef exception = 0;
             bool result;
             {
-                APICallbackShim callbackShim(exec);
+                JSLock::DropAllLocks dropAllLocks(exec);
                 result = hasInstance(execRef, thisRef, valueRef, &exception);
             }
             if (exception)
@@ -485,7 +484,7 @@ EncodedJSValue JSCallbackObject<Parent>::call(ExecState* exec)
             JSValueRef exception = 0;
             JSValue result;
             {
-                APICallbackShim callbackShim(exec);
+                JSLock::DropAllLocks dropAllLocks(exec);
                 result = toJS(exec, callAsFunction(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception));
             }
             if (exception)
@@ -507,7 +506,7 @@ void JSCallbackObject<Parent>::getOwnNonIndexPropertyNames(JSObject* object, Exe
     
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectGetPropertyNamesCallback getPropertyNames = jsClass->getPropertyNames) {
-            APICallbackShim callbackShim(exec);
+            JSLock::DropAllLocks dropAllLocks(exec);
             getPropertyNames(execRef, thisRef, toRef(&propertyNames));
         }
         
@@ -572,7 +571,7 @@ JSValue JSCallbackObject<Parent>::getStaticValue(ExecState* exec, PropertyName p
                         JSValueRef exception = 0;
                         JSValueRef value;
                         {
-                            APICallbackShim callbackShim(exec);
+                            JSLock::DropAllLocks dropAllLocks(exec);
                             value = getProperty(toRef(exec), thisRef, entry->propertyNameRef.get(), &exception);
                         }
                         if (exception) {
@@ -634,7 +633,7 @@ EncodedJSValue JSCallbackObject<Parent>::callbackGetter(ExecState* exec, JSObjec
                 JSValueRef exception = 0;
                 JSValueRef value;
                 {
-                    APICallbackShim callbackShim(exec);
+                    JSLock::DropAllLocks dropAllLocks(exec);
                     value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), &exception);
                 }
                 if (exception) {

@@ -30,7 +30,6 @@
 #if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
-#import "APIShims.h"
 #import "JSManagedValueInternal.h"
 #import "JSVirtualMachine.h"
 #import "JSVirtualMachineInternal.h"
@@ -157,7 +156,7 @@ static id getInternalObjcObject(id object)
     if (!object || !owner)
         return;
     
-    JSC::APIEntryShim shim(toJS(m_group));
+    JSC::JSLockHolder locker(toJS(m_group));
     
     NSMapTable *ownedObjects = [m_externalObjectGraph objectForKey:owner];
     if (!ownedObjects) {
@@ -184,7 +183,7 @@ static id getInternalObjcObject(id object)
     if (!object || !owner)
         return;
     
-    JSC::APIEntryShim shim(toJS(m_group));
+    JSC::JSLockHolder locker(toJS(m_group));
     
     NSMapTable *ownedObjects = [m_externalObjectGraph objectForKey:owner];
     if (!ownedObjects)
