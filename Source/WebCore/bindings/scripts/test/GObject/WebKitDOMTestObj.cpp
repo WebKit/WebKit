@@ -181,7 +181,7 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
         break;
     }
     case PROP_REFLECTED_STRING_ATTR: {
-        coreSelf->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+        coreSelf->setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
         break;
     }
     case PROP_REFLECTED_INTEGRAL_ATTR: {
@@ -197,11 +197,11 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
         break;
     }
     case PROP_REFLECTED_URL_ATTR: {
-        coreSelf->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+        coreSelf->setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
         break;
     }
     case PROP_REFLECTED_STRING_ATTR: {
-        coreSelf->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+        coreSelf->setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
         break;
     }
     case PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR: {
@@ -213,7 +213,7 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
         break;
     }
     case PROP_REFLECTED_CUSTOM_URL_ATTR: {
-        coreSelf->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
+        coreSelf->setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
         break;
     }
     case PROP_ATTR_WITH_GETTER_EXCEPTION: {
@@ -1909,7 +1909,7 @@ void webkit_dom_test_obj_set_reflected_string_attr(WebKitDOMTestObj* self, const
     g_return_if_fail(value);
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr, convertedValue);
 }
 
 glong webkit_dom_test_obj_get_reflected_integral_attr(WebKitDOMTestObj* self)
@@ -1979,7 +1979,7 @@ void webkit_dom_test_obj_set_reflected_url_attr(WebKitDOMTestObj* self, const gc
     g_return_if_fail(value);
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattrAttr, convertedValue);
 }
 
 gchar* webkit_dom_test_obj_get_reflected_string_attr(WebKitDOMTestObj* self)
@@ -1998,7 +1998,7 @@ void webkit_dom_test_obj_set_reflected_string_attr(WebKitDOMTestObj* self, const
     g_return_if_fail(value);
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr, convertedValue);
 }
 
 glong webkit_dom_test_obj_get_reflected_custom_integral_attr(WebKitDOMTestObj* self)
@@ -2051,7 +2051,7 @@ void webkit_dom_test_obj_set_reflected_custom_url_attr(WebKitDOMTestObj* self, c
     g_return_if_fail(value);
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, convertedValue);
 }
 
 glong webkit_dom_test_obj_get_attr_with_getter_exception(WebKitDOMTestObj* self, GError** error)

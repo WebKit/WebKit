@@ -1958,7 +1958,7 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* /* baseObject */
     const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
         return;
-    impl.setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, nativeValue);
+    impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr, nativeValue);
 }
 
 
@@ -2026,7 +2026,7 @@ void setJSTestObjReflectedURLAttr(ExecState* exec, JSObject* /* baseObject */, E
     const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
         return;
-    impl.setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, nativeValue);
+    impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattrAttr, nativeValue);
 }
 
 
@@ -2043,7 +2043,7 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* /* baseObject */
     const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
         return;
-    impl.setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, nativeValue);
+    impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr, nativeValue);
 }
 
 
@@ -2094,7 +2094,7 @@ void setJSTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* /* baseObject
     const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
         return;
-    impl.setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, nativeValue);
+    impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, nativeValue);
 }
 
 

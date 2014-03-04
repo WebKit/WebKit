@@ -267,7 +267,7 @@
 - (void)setReflectedStringAttr:(NSString *)newReflectedStringAttr
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, newReflectedStringAttr);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr, newReflectedStringAttr);
 }
 
 - (int)reflectedIntegralAttr
@@ -315,7 +315,7 @@
 - (void)setReflectedURLAttr:(NSString *)newReflectedURLAttr
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, newReflectedURLAttr);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattrAttr, newReflectedURLAttr);
 }
 
 - (NSString *)reflectedStringAttr
@@ -327,7 +327,7 @@
 - (void)setReflectedStringAttr:(NSString *)newReflectedStringAttr
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, newReflectedStringAttr);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr, newReflectedStringAttr);
 }
 
 - (int)reflectedCustomIntegralAttr
@@ -363,7 +363,7 @@
 - (void)setReflectedCustomURLAttr:(NSString *)newReflectedCustomURLAttr
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, newReflectedCustomURLAttr);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, newReflectedCustomURLAttr);
 }
 
 - (int)attrWithGetterException

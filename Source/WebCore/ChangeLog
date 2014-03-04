@@ -1,3 +1,21 @@
+2014-03-04  Antti Koivisto  <antti@apple.com>
+
+        Update bindings test results after r165046.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_set_reflected_string_attr):
+        (webkit_dom_test_obj_set_reflected_url_attr):
+        (webkit_dom_test_obj_set_reflected_custom_url_attr):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjReflectedStringAttr):
+        (WebCore::setJSTestObjReflectedURLAttr):
+        (WebCore::setJSTestObjReflectedCustomURLAttr):
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj setReflectedStringAttr:]):
+        (-[DOMTestObj setReflectedURLAttr:]):
+        (-[DOMTestObj setReflectedCustomURLAttr:]):
+
 2014-03-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Simplify the GObject DOM bindings API break check into one step
