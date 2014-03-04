@@ -1,3 +1,19 @@
+2014-03-03  Michael Saboff  <msaboff@apple.com>
+
+        Crash in JIT code while watching a video @ storyboard.tumblr.com
+        https://bugs.webkit.org/show_bug.cgi?id=129635
+
+        Reviewed by Filip Pizlo.
+
+        Clear m_set before we set bits in the TempRegisterSet(const RegisterSet& other)
+        construtor.
+
+        * jit/TempRegisterSet.cpp:
+        (JSC::TempRegisterSet::TempRegisterSet): Clear map before setting it.
+        * jit/TempRegisterSet.h:
+        (JSC::TempRegisterSet::TempRegisterSet): Use new clearAll() helper.
+        (JSC::TempRegisterSet::clearAll): New private helper.
+
 2014-03-03  Benjamin Poulain  <benjamin@webkit.org>
 
         [x86] Improve code generation of byte test

@@ -35,6 +35,8 @@ namespace JSC {
 
 TempRegisterSet::TempRegisterSet(const RegisterSet& other)
 {
+    clearAll();
+
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
         if (other.get(reg))
