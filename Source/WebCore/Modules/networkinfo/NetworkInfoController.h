@@ -42,7 +42,7 @@ public:
 
     NetworkInfoClient* client() { return m_client; }
 
-    static PassOwnPtr<NetworkInfoController> create(Page*, NetworkInfoClient*);
+    static PassOwnPtr<NetworkInfoController> create(NetworkInfoClient*);
 
     static const char* supplementName();
     static NetworkInfoController* from(Page* page) { return static_cast<NetworkInfoController*>(Supplement<Page>::from(page, supplementName())); }
@@ -53,11 +53,10 @@ public:
     void didChangeNetworkInformation(const AtomicString& eventType, PassRefPtr<NetworkInfo>);
 
 private:
-    NetworkInfoController(Page*, NetworkInfoClient*);
+    explicit NetworkInfoController(NetworkInfoClient*);
 
     typedef Vector<NetworkInfoConnection*> NetworkInfoListenerList;
 
-    Page* m_page;
     NetworkInfoClient* m_client;
     NetworkInfoListenerList m_listeners;
 };
