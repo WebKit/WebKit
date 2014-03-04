@@ -1,5 +1,15 @@
 2014-03-04  Andreas Kling  <akling@apple.com>
 
+        Fix too-narrow assertion I added in r165054.
+
+        It's okay for a 1-character string to come in here. This will happen
+        if the VM small string optimization doesn't apply (ch > 0xFF)
+
+        * runtime/JSString.h:
+        (JSC::jsStringWithWeakOwner):
+
+2014-03-04  Andreas Kling  <akling@apple.com>
+
         Micro-optimize Strings in JS bindings.
         <https://webkit.org/b/129673>
 

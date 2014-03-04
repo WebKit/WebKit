@@ -415,9 +415,7 @@ namespace JSC {
     inline JSString* jsStringWithWeakOwner(VM& vm, StringImpl& stringImpl)
     {
         WeakHandleOwner* jsStringWeakOwner = vm.jsStringWeakOwner.get();
-
-        // Should have picked a VM-global empty or single-character string already.
-        ASSERT(stringImpl.length() > 1);
+        ASSERT(stringImpl.length() > 0);
 
         // If this VM is not allowed to weakly own strings just make a new JSString.
         if (!jsStringWeakOwner)
