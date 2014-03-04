@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderReplaced.h"
 
+#include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "InlineElementBox.h"
@@ -169,8 +170,8 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         else {
             // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
             paintInfo.context->save();
-            RoundedRect roundedInnerRect = style().getRoundedInnerBorderFor(paintRect,
-                paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true);
+            FloatRoundedRect roundedInnerRect = FloatRoundedRect(style().getRoundedInnerBorderFor(paintRect,
+                paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true));
             clipRoundedInnerRect(paintInfo.context, paintRect, roundedInnerRect);
         }
     }

@@ -498,10 +498,10 @@ RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& bor
     return border;
 }
 
-void RenderBoxModelObject::clipRoundedInnerRect(GraphicsContext * context, const LayoutRect& rect, const RoundedRect& clipRect)
+void RenderBoxModelObject::clipRoundedInnerRect(GraphicsContext * context, const FloatRect& rect, const FloatRoundedRect& clipRect)
 {
     if (clipRect.isRenderable())
-        context->clipRoundedRect(FloatRoundedRect(clipRect));
+        context->clipRoundedRect(clipRect);
     else {
         // We create a rounded rect for each of the corners and clip it, while making sure we clip opposing corners together.
         if (!clipRect.radii().topLeft().isEmpty() || !clipRect.radii().bottomRight().isEmpty()) {
@@ -640,7 +640,9 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 
     bool colorVisible = bgColor.isValid() && bgColor.alpha();
-    
+    float deviceScaleFactor = document().deviceScaleFactor();
+    FloatRect pixelSnappedRect = pixelSnappedForPainting(rect, deviceScaleFactor);
+
     // Fast path for drawing simple color backgrounds.
     if (!isRoot && !clippedWithLocalScrolling && !shouldPaintBackgroundImage && isBorderFill && !bgLayer->next()) {
         if (!colorVisible)
@@ -652,17 +654,18 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             applyBoxShadowForBackground(context, &style());
 
         if (hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer) {
-            RoundedRect border = backgroundRoundedRectAdjustedForBleedAvoidance(*context, rect, bleedAvoidance, box, boxSize, includeLeftEdge, includeRightEdge);
-            if (border.isRenderable())
-                context->fillRoundedRect(FloatRoundedRect(border), bgColor, style().colorSpace());
+            FloatRoundedRect pixelSnappedBorder = backgroundRoundedRectAdjustedForBleedAvoidance(*context, rect, bleedAvoidance, box, boxSize,
+                includeLeftEdge, includeRightEdge).pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            if (pixelSnappedBorder.isRenderable())
+                context->fillRoundedRect(pixelSnappedBorder, bgColor, style().colorSpace());
             else {
                 context->save();
-                clipRoundedInnerRect(context, rect, border);
-                context->fillRect(border.rect(), bgColor, style().colorSpace());
+                clipRoundedInnerRect(context, pixelSnappedRect, pixelSnappedBorder);
+                context->fillRect(pixelSnappedBorder.rect(), bgColor, style().colorSpace());
                 context->restore();
             }
         } else
-            context->fillRect(pixelSnappedForPainting(rect, document().deviceScaleFactor()), bgColor, style().colorSpace());
+            context->fillRect(pixelSnappedRect, bgColor, style().colorSpace());
 
         return;
     }
@@ -680,7 +683,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         } else if (bgLayer->clip() == PaddingFillBox)
             border = style().getRoundedInnerBorderFor(border.rect(), includeLeftEdge, includeRightEdge);
 
-        clipRoundedInnerRect(context, rect, border);
+        clipRoundedInnerRect(context, pixelSnappedRect, border.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
     }
     
     LayoutUnit bLeft = includeLeftEdge ? borderLeft() : LayoutUnit::fromPixel(0);
@@ -1872,6 +1875,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     if (haveAllSolidEdges && outerBorder.isRounded() && allCornersClippedOut(outerBorder, info.rect))
         outerBorder.setRadii(RoundedRect::Radii());
 
+    float deviceScaleFactor = document().deviceScaleFactor();
     // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
     if ((haveAllSolidEdges || haveAllDoubleEdges) && allEdgesShareColor && innerBorder.isRenderable()) {
         // Fast path for drawing all solid edges and all unrounded double edges
@@ -1879,10 +1883,11 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
             && (haveAllSolidEdges || (!outerBorder.isRounded() && !innerBorder.isRounded()))) {
             Path path;
             
-            if (outerBorder.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
-                path.addRoundedRect(outerBorder);
+            FloatRoundedRect pixelSnappedRoundedRect = outerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            if (pixelSnappedRoundedRect.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
+                path.addRoundedRect(pixelSnappedRoundedRect);
             else
-                path.addRect(outerBorder.rect());
+                path.addRect(pixelSnappedRoundedRect.rect());
 
             if (haveAllDoubleEdges) {
                 LayoutRect innerThirdRect = outerBorder.rect();
@@ -1907,26 +1912,27 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
                     }
                 }
 
-                RoundedRect outerThird = outerBorder;
-                RoundedRect innerThird = innerBorder;
-                innerThird.setRect(innerThirdRect);
-                outerThird.setRect(outerThirdRect);
+                FloatRoundedRect pixelSnappedOuterThird = outerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+                pixelSnappedOuterThird.setRect(pixelSnappedForPainting(outerThirdRect, deviceScaleFactor));
 
-                if (outerThird.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
-                    path.addRoundedRect(outerThird);
+                if (pixelSnappedOuterThird.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
+                    path.addRoundedRect(pixelSnappedOuterThird);
                 else
-                    path.addRect(outerThird.rect());
+                    path.addRect(pixelSnappedOuterThird.rect());
 
-                if (innerThird.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
-                    path.addRoundedRect(innerThird);
+                FloatRoundedRect pixelSnappedInnerThird = innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+                pixelSnappedInnerThird.setRect(pixelSnappedForPainting(innerThirdRect, deviceScaleFactor));
+                if (pixelSnappedInnerThird.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
+                    path.addRoundedRect(pixelSnappedInnerThird);
                 else
-                    path.addRect(innerThird.rect());
+                    path.addRect(pixelSnappedInnerThird.rect());
             }
 
-            if (innerBorder.isRounded())
-                path.addRoundedRect(innerBorder);
+            FloatRoundedRect snappedInnerBorder = innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            if (snappedInnerBorder.isRounded())
+                path.addRoundedRect(snappedInnerBorder);
             else
-                path.addRect(innerBorder.rect());
+                path.addRect(snappedInnerBorder.rect());
             
             graphicsContext->setFillRule(RULE_EVENODD);
             graphicsContext->setFillColor(edges[firstVisibleEdge].color, style->colorSpace());
@@ -1961,7 +1967,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
         // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
         // The inside will be clipped out later (in clipBorderSideForComplexInnerPath)
         if (innerBorder.isRenderable())
-            graphicsContext->clipOutRoundedRect(FloatRoundedRect(innerBorder));
+            graphicsContext->clipOutRoundedRect(innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
     }
 
     // If only one edge visible antialiasing doesn't create seams

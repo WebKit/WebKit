@@ -24,6 +24,7 @@
 #include "RenderWidget.h"
 
 #include "AXObjectCache.h"
+#include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
@@ -276,8 +277,8 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
         // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
         paintInfo.context->save();
-        RoundedRect roundedInnerRect = style().getRoundedInnerBorderFor(borderRect,
-            paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true);
+        FloatRoundedRect roundedInnerRect = FloatRoundedRect(style().getRoundedInnerBorderFor(borderRect,
+            paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true));
         clipRoundedInnerRect(paintInfo.context, borderRect, roundedInnerRect);
     }
 

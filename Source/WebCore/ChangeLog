@@ -1,3 +1,22 @@
+2014-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make border-radius painting device pixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=129558
+
+        Reviewed by Simon Fraser.
+
+        Snap rounded rects to device pixels right before passing them to GraphicsContext.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::clipRoundedInnerRect):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2014-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Crashes and assertions running iOS compositing tests

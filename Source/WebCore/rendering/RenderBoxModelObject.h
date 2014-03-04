@@ -279,7 +279,7 @@ protected:
 
     static bool shouldAntialiasLines(GraphicsContext*);
 
-    static void clipRoundedInnerRect(GraphicsContext*, const LayoutRect&, const RoundedRect& clipRect);
+    static void clipRoundedInnerRect(GraphicsContext*, const FloatRect&, const FloatRoundedRect& clipRect);
 
     bool hasAutoHeightOrContainingBlockWithAutoHeight() const;
 
