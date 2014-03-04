@@ -1,3 +1,11 @@
+2014-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use DYEBench v0.9 by default.
+
+        Rubber-stamped by Benjamin Poulain.
+
+        * perf/DoYouEvenBench/index.html:
+
 2014-02-27  Darin Adler  <darin@apple.com>
 
         Some small modernizing tweaks to the coding style guide
