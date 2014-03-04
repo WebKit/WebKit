@@ -34,13 +34,11 @@
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
 #include <runtime/Error.h>
-#include <runtime/FunctionPrototype.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSArrayBuffer.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSTypedArrays.h>
 #include <runtime/Lookup.h>
-#include <runtime/ObjectPrototype.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/TypedArrays.h>
 #include <wtf/Forward.h>

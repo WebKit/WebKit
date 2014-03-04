@@ -1,3 +1,12 @@
+2014-03-03  Andreas Kling  <akling@apple.com>
+
+        Remove 2 unnecessary includes from JSDOMBinding.h
+        <https://webkit.org/b/129619>
+
+        Reviewed by Antti Koivisto.
+
+        * bindings/js/JSDOMBinding.h:
+
 2014-03-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         GraphicsContext::drawLineForText needs to be exported from WebCore.dylib for iOS builds
