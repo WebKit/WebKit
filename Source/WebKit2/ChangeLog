@@ -1,5 +1,17 @@
 2014-03-03  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] WebPage::updateVisibleContentRects can set the position directly instead of using programmatic scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=129649
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+        Update my workaround from r165003. We should not use programmatic scrolling when the scroll position is changed
+        from the UI.
+
+2014-03-03  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Update UIScrollView's contentSize when a new layer tree is committed
         https://bugs.webkit.org/show_bug.cgi?id=129641
 

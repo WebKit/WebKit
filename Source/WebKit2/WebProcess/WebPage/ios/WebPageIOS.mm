@@ -1733,7 +1733,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         send(Messages::WebPageProxy::PageScaleFactorDidChange(floatBoundedScale));
     }
 
-    m_page->mainFrame().view()->setScrollPosition(scrollPosition);
+    m_page->mainFrame().view()->setScrollOffset(scrollPosition);
     // FIXME: we should also update the frame view from unobscured rect. Altenatively, we can have it pull the values from ScrollView.
 }
 
