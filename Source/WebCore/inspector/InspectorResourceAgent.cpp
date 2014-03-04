@@ -594,7 +594,7 @@ void InspectorResourceAgent::replayXHR(ErrorString*, const String& requestId)
 #if ENABLE(CACHE_PARTITIONING)
     request.setCachePartition(m_pageAgent->mainFrame()->document()->topOrigin()->cachePartition());
 #endif
-    CachedResource* cachedResource = memoryCache()->resourceForRequest(request, m_pageAgent->page()->sessionID());
+    CachedResource* cachedResource = memoryCache()->resourceForRequest(request);
     if (cachedResource)
         memoryCache()->remove(cachedResource);
 

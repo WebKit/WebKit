@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-CachedSVGDocument::CachedSVGDocument(const ResourceRequest& request, SessionID sessionID)
-    : CachedResource(request, SVGDocumentResource, sessionID)
+CachedSVGDocument::CachedSVGDocument(const ResourceRequest& request)
+    : CachedResource(request, SVGDocumentResource)
     , m_decoder(TextResourceDecoder::create("application/xml"))
 {
     setAccept("image/svg+xml");

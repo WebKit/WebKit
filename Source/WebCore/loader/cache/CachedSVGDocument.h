@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CachedSVGDocument final : public CachedResource {
 public:
-    explicit CachedSVGDocument(const ResourceRequest&, SessionID);
+    explicit CachedSVGDocument(const ResourceRequest&);
     virtual ~CachedSVGDocument();
 
     SVGDocument* document() const { return m_document.get(); }

@@ -57,7 +57,7 @@ namespace WebCore {
         {
         }
 
-        ResourceRequest(const URL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy)
+        ResourceRequest(const URL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy) 
             : ResourceRequestBase(url, policy)
 #if PLATFORM(IOS)
             , m_mainResourceRequest(false)

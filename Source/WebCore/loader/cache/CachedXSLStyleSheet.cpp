@@ -37,8 +37,8 @@ namespace WebCore {
 
 #if ENABLE(XSLT)
 
-CachedXSLStyleSheet::CachedXSLStyleSheet(const ResourceRequest& resourceRequest, SessionID sessionID)
-    : CachedResource(resourceRequest, XSLStyleSheet, sessionID)
+CachedXSLStyleSheet::CachedXSLStyleSheet(const ResourceRequest& resourceRequest)
+    : CachedResource(resourceRequest, XSLStyleSheet)
     , m_decoder(TextResourceDecoder::create("text/xsl"))
 {
     // It's XML we want.

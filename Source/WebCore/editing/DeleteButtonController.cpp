@@ -254,7 +254,7 @@ void DeleteButtonController::createDeletionUI()
     if (buttonImage->isNull())
         return;
 
-    button->setCachedImage(new CachedImage(buttonImage.get(), m_frame.page()->sessionID()));
+    button->setCachedImage(new CachedImage(buttonImage.get()));
 
     container->appendChild(button.get(), ec);
     ASSERT(!ec);

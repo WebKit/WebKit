@@ -72,7 +72,6 @@ public:
 
     WebCore::ResourceLoadPriority priority() { return m_priority; }
     WebCore::ResourceRequest& request() { return m_request; }
-    WebCore::SessionID sessionID() const { return m_sessionID; }
 
     WebCore::ResourceHandle* handle() const { return m_handle.get(); }
     void didConvertHandleToDownload();

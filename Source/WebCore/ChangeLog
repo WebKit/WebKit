@@ -1,3 +1,90 @@
+2014-03-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r165013.
+        http://trac.webkit.org/changeset/165013
+        https://bugs.webkit.org/show_bug.cgi?id=129646
+
+        New code is not thread safe, asserting on a worker test
+        (Requested by ap on #webkit).
+
+        * WebCore.exp.in:
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::revokeObjectURL):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResource):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::replayXHR):
+        * loader/DocumentLoader.cpp:
+        (WebCore::areAllLoadersPageCacheAcceptable):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::tellClientAboutPastMemoryCacheLoads):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::CachedFont):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::revalidateResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::CachedSVGDocument):
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::CachedTextTrack):
+        * loader/cache/CachedTextTrack.h:
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        * loader/cache/CachedXSLStyleSheet.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::add):
+        (WebCore::MemoryCache::revalidationSucceeded):
+        (WebCore::MemoryCache::resourceForURL):
+        (WebCore::MemoryCache::resourceForRequest):
+        (WebCore::MemoryCache::addImageToCache):
+        (WebCore::MemoryCache::removeImageFromCache):
+        (WebCore::MemoryCache::evict):
+        (WebCore::MemoryCache::removeResourcesWithOrigin):
+        (WebCore::MemoryCache::getOriginsWithCache):
+        (WebCore::MemoryCache::removeUrlFromCache):
+        (WebCore::MemoryCache::removeRequestFromCache):
+        (WebCore::MemoryCache::removeRequestFromCacheImpl):
+        (WebCore::MemoryCache::crossThreadRemoveRequestFromCache):
+        (WebCore::MemoryCache::getStatistics):
+        (WebCore::MemoryCache::setDisabled):
+        * loader/cache/MemoryCache.h:
+        * platform/CrossThreadCopier.cpp:
+        * platform/CrossThreadCopier.h:
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::updateSnapshot):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isLoadingFromMemoryCache):
+
 2014-03-03  Sam Weinig  <sam@webkit.org>
 
         Fix the iOS Simulator build.

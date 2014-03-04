@@ -3377,7 +3377,7 @@ void FrameLoader::tellClientAboutPastMemoryCacheLoads()
 
     size_t size = pastLoads.size();
     for (size_t i = 0; i < size; ++i) {
-        CachedResource* resource = memoryCache()->resourceForRequest(pastLoads[i], m_frame.page()->sessionID());
+        CachedResource* resource = memoryCache()->resourceForRequest(pastLoads[i]);
 
         // FIXME: These loads, loaded from cache, but now gone from the cache by the time
         // Page::setMemoryCacheClientCallsEnabled(true) is called, will not be seen by the client.

@@ -124,7 +124,7 @@ void DOMURL::revokeObjectURL(ScriptExecutionContext* scriptExecutionContext, con
 #if ENABLE(CACHE_PARTITIONING)
     request.setCachePartition(scriptExecutionContext->topOrigin()->cachePartition());
 #endif
-    MemoryCache::removeRequestFromSessionCaches(scriptExecutionContext, request);
+    MemoryCache::removeRequestFromCache(scriptExecutionContext, request);
 
     scriptExecutionContext->publicURLManager().revoke(url);
 }

@@ -554,7 +554,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
 #if ENABLE(CACHE_PARTITIONING)
                 request.setCachePartition(frame->document()->topOrigin()->cachePartition());
 #endif
-                CachedResource* cachedResource = memoryCache()->resourceForRequest(request, frame->page()->sessionID());
+                CachedResource* cachedResource = memoryCache()->resourceForRequest(request);
                 if (cachedResource) {
                     ResourceBuffer* data = cachedResource->resourceBuffer();
                     resource = ArchiveResource::create(data ? data->sharedBuffer() : 0, subresourceURL, cachedResource->response());
