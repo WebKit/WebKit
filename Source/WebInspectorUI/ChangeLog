@@ -1,3 +1,15 @@
+2014-03-03  Jonathan Wells  <jonowells@apple.com>
+
+        Web Inspector: Better Debugger popovers for RegExp values
+        https://bugs.webkit.org/show_bug.cgi?id=129633
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptExpression.populate):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptExpression):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForRegExp):
+
 2014-03-03  Timothy Hatcher  <timothy@apple.com>
 
         Don't try to parse legacy CSS gradients -- we don't support them.

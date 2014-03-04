@@ -1089,7 +1089,10 @@ WebInspector.SourceCodeTextEditor.prototype = {
                 this._showPopoverForFunction(data);
                 break;
             case "object":
-                this._showPopoverForObject(data);
+                if (data.subtype === "regexp") 
+                    this._showPopoverForRegExp(data);
+                else
+                    this._showPopoverForObject(data);
                 break;
             case "string":
                 this._showPopoverForString(data);
@@ -1194,6 +1197,15 @@ WebInspector.SourceCodeTextEditor.prototype = {
         var content = document.createElement("div");
         content.className = "string console-formatted-string";
         content.textContent = "\"" + data.description + "\"";
+
+        this._showPopover(content);
+    },
+
+    _showPopoverForRegExp: function(data)
+    {
+        var content = document.createElement("div");
+        content.className = "regexp console-formatted-regexp";
+        content.textContent = data.description;
 
         this._showPopover(content);
     },
