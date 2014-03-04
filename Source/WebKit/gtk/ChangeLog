@@ -1,3 +1,17 @@
+2014-03-03  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Fix some simple gtkdoc warnings for WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=129659
+
+        Reviewed by Carlos Garcia Campos.
+
+        * docs/webkitgtk-sections.txt: Make public some enum documentation that is used
+        in public APIs.
+        * webkit/webkitwebview.cpp: Fix typos and add documentation for enums previously
+        marked as private.
+        (webkit_web_view_class_init):
+        * webkit/webkitwebview.h: Ditto.
+
 2014-02-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove console.profiles from window.console API

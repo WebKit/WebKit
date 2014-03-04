@@ -2767,7 +2767,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
      * WebKitWebView::should-show-delete-interface-for-element:
      * @web_view: the #WebKitWebView on which the signal is emitted
-     * @element: a #WebKitDOMHtmlElement
+     * @element: a #WebKitDOMHTMLElement
      *
      */
     webkit_web_view_signals[SHOULD_SHOW_DELETE_INTERFACE_FOR_ELEMENT] = g_signal_new("should-show-delete-interface-for-element",
@@ -2784,7 +2784,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the #WebKitWebView on which the signal is emitted
      * @fromRange: a #WebKitDOMRange
      * @toRange: a #WebKitDOMRange
-     * @affinity: a #WebKitElectionAffinity
+     * @affinity: a #WebKitSelectionAffinity
      * @stillSelecting: bool
      *
      */

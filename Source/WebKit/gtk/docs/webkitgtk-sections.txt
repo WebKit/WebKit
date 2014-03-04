@@ -401,6 +401,8 @@ webkit_network_response_get_type
 WebKitNavigationResponse
 WebKitWebViewTargetInfo
 WebKitWebViewViewMode
+WebKitInsertAction
+WebKitSelectionAffinity
 <TITLE>WebKitWebView</TITLE>
 WebKitWebView
 webkit_web_view_can_copy_clipboard
@@ -488,8 +490,6 @@ WEBKIT_WEB_VIEW_GET_CLASS
 webkit_web_view_get_type
 WebKitWebViewPrivate
 WebKitWebViewClass
-WebKitInsertAction
-WebKitSelectionAffinity
 </SECTION>
 
 <SECTION>

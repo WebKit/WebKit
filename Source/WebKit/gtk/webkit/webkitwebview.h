@@ -98,12 +98,27 @@ typedef enum
     WEBKIT_WEB_VIEW_VIEW_MODE_MINIMIZED
 } WebKitWebViewViewMode;
 
+/**
+ * WebKitSelectionAffinity:
+ * @WEBKIT_SELECTION_AFFINITY_UPSTREAM: Downstream selection affinity
+ * @WEBKIT_SELECTION_AFFINITY_DOWNSTREAM: Upstream selection affinity
+ *
+ * Enum values used to denote selection affinity.
+ **/
 typedef enum
 {
     WEBKIT_SELECTION_AFFINITY_UPSTREAM,
     WEBKIT_SELECTION_AFFINITY_DOWNSTREAM,
 } WebKitSelectionAffinity;
 
+/**
+ * WebKitInsertAction:
+ * @WEBKIT_INSERT_ACTION_TYPED: The insert action was from typing.
+ * @WEBKIT_INSERT_ACTION_PASTED: The insert action was from pasting.
+ * @WEBKIT_INSERT_ACTION_DROPPED: The insert action was from dragging and dropping.
+ *
+ * Enum values used to denote source of an insert action.
+ **/
 typedef enum
 {
     WEBKIT_INSERT_ACTION_TYPED,
