@@ -186,7 +186,7 @@
 		076306E017E16089005A7C4E /* JSSourceInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076306DE17E16089005A7C4E /* JSSourceInfo.cpp */; };
 		076306E117E16089005A7C4E /* JSSourceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 076306DF17E16089005A7C4E /* JSSourceInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		076306E317E22A43005A7C4E /* MediaStreamTrackSourcesRequestClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 076306E217E22A43005A7C4E /* MediaStreamTrackSourcesRequestClient.h */; };
-		07638A991884487200E15A1B /* MediaSessionManagerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 07638A971884487200E15A1B /* MediaSessionManagerIOS.h */; };
+		07638A991884487200E15A1B /* MediaSessionManagerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 07638A971884487200E15A1B /* MediaSessionManagerIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */; };
 		076970861463AD8700F502CF /* TextTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076970841463AD8700F502CF /* TextTrackList.cpp */; };
 		076970871463AD8700F502CF /* TextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 076970851463AD8700F502CF /* TextTrackList.h */; };

@@ -1,3 +1,20 @@
+2014-03-03  Jeremy Jones  <jeremyj@apple.com>
+
+        Forward application suspend resume notifications to the web process.
+        https://bugs.webkit.org/show_bug.cgi?id=129356
+
+        Reviewed by Eric Carlson.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper initWithCallback:]):
+        Observe UIApplicationDidBecomeActiveNotification,
+        WebUIApplicationDidBecomeActiveNotification,
+        WebUIApplicationWillEnterForegroundNotification, and
+        WebUIApplicationWillResignActiveNotification
+        
+        (-[WebMediaSessionHelper applicationDidBecomeActive:]):
+        Resume session.
+
 2014-03-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165013.

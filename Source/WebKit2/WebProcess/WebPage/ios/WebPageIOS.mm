@@ -62,6 +62,7 @@
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/MediaSessionManagerIOS.h>
 #import <WebCore/Node.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
@@ -1697,6 +1698,21 @@ void WebPage::viewportConfigurationChanged()
         scale = m_viewportConfiguration.initialScale();
 
     scalePage(scale, m_page->mainFrame().view()->scrollPosition());
+}
+
+void WebPage::applicationWillResignActive()
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillResignActiveNotification object:nil];
+}
+
+void WebPage::applicationWillEnterForeground()
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil];
+}
+
+void WebPage::applicationDidBecomeActive()
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationDidBecomeActiveNotification object:nil];
 }
 
 void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)

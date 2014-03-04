@@ -1,3 +1,68 @@
+2014-03-03  Jeremy Jones  <jeremyj@apple.com>
+
+        Forward application suspend resume notifications to the web process.
+        https://bugs.webkit.org/show_bug.cgi?id=129356
+
+        Reviewed by Eric Carlson.
+
+        Repost UIApplicationWillEnterForegroundNotification,
+        UIApplicationDidBecomeActiveNotification and 
+        UIApplicationWillResignActiveNotification from UIProcess to WebProcess.
+        As WebUIApplicationWillEnterForegroundNotification,
+        WebUIApplicationDidBecomeActiveNotification, and
+        WebUIApplicationWillResignActiveNotification
+
+        * UIProcess/WebPageProxy.h:
+        Add applicationWillEnterForeground()
+        applicationWillResignActive()
+        applicationDidBecomeActive()
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:context:WebKit::configuration:WebKit::]):
+        Observe notifications.
+
+        (-[WKContentView dealloc]):
+        Stop observing notifications.
+
+        (-[WKContentView _applicationWillResignActive:]):
+        Notify WebPageProxy of the event.
+
+        (-[WKContentView _applicationWillEnterForeground:]):
+        Notify WebPageProxy of the event.
+
+        (-[WKContentView _applicationDidBecomeActive:]):
+        Notify WebPageProxy of the event.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationWillEnterForeground):
+        Send corresponding Message to WebPage.
+
+        (WebKit::WebPageProxy::applicationWillResignActive):
+        Send corresponding Message to WebPage.
+
+        (WebKit::WebPageProxy::applicationDidBecomeActive):
+        Send corresponding Message to WebPage.
+
+        * WebProcess/WebPage/WebPage.h:
+        Add applicationWillEnterForeground()
+        applicationWillResignActive()
+        applicationDidBecomeActive()
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add applicationWillEnterForeground()
+        applicationWillResignActive()
+        applicationDidBecomeActive()
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationWillResignActive):
+        Post corresponding NSNotification.
+
+        (WebKit::WebPage::applicationWillEnterForeground):
+        Post corresponding NSNotification.
+
+        (WebKit::WebPage::applicationDidBecomeActive):
+        Post corresponding NSNotification.
+
 2014-03-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165013.

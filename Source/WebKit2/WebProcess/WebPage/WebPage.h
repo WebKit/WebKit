@@ -669,6 +669,9 @@ public:
     void updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
     void willStartUserTriggeredZooming();
+    void applicationWillResignActive();
+    void applicationWillEnterForeground();
+    void applicationDidBecomeActive();
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)

@@ -67,6 +67,9 @@ messages -> WebPage LegacyReceiver {
     SetAssistedNodeValue(String value)
     SetAssistedNodeValueAsNumber(double value)
     SetAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
+    ApplicationWillResignActive()
+    ApplicationWillEnterForeground()
+    ApplicationDidBecomeActive()
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

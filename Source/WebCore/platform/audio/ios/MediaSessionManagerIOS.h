@@ -33,6 +33,12 @@
 
 OBJC_CLASS WebMediaSessionHelper;
 
+#if defined(__OBJC__) && __OBJC__
+extern NSString* WebUIApplicationWillResignActiveNotification;
+extern NSString* WebUIApplicationWillEnterForegroundNotification;
+extern NSString* WebUIApplicationDidBecomeActiveNotification;
+#endif
+
 namespace WebCore {
 
 class MediaSessionManageriOS : public MediaSessionManager {

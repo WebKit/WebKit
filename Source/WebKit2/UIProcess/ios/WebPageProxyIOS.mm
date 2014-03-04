@@ -385,6 +385,21 @@ void WebPageProxy::didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t fla
     m_pageClient.didUpdateBlockSelectionWithTouch(touch, flags, growThreshold, shrinkThreshold);
 }
 
+void WebPageProxy::applicationWillEnterForeground()
+{
+    m_process->send(Messages::WebPage::ApplicationWillEnterForeground(), m_pageID);
+}
+
+void WebPageProxy::applicationWillResignActive()
+{
+    m_process->send(Messages::WebPage::ApplicationWillResignActive(), m_pageID);
+}
+
+void WebPageProxy::applicationDidBecomeActive()
+{
+    m_process->send(Messages::WebPage::ApplicationDidBecomeActive(), m_pageID);
+}
+
 void WebPageProxy::notifyRevealedSelection()
 {
     m_pageClient.selectionDidChange();

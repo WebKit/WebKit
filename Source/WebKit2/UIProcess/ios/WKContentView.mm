@@ -99,12 +99,20 @@ using namespace WebKit;
 
     self.layer.hitTestsAsOpaque = YES;
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
+
     return self;
 }
 
 - (void)dealloc
 {
     [self cleanupInteraction];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     _page->close();
 
@@ -319,6 +327,21 @@ using namespace WebKit;
 - (void)_zoomOutWithOrigin:(CGPoint)origin
 {
     return [_webView _zoomOutWithOrigin:origin];
+}
+
+- (void)_applicationWillResignActive:(NSNotification*)notification
+{
+    _page->applicationWillResignActive();
+}
+
+- (void)_applicationWillEnterForeground:(NSNotification*)notification
+{
+    _page->applicationWillEnterForeground();
+}
+
+- (void)_applicationDidBecomeActive:(NSNotification*)notification
+{
+    _page->applicationDidBecomeActive();
 }
 
 @end
