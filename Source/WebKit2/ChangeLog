@@ -1,3 +1,16 @@
+2014-03-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Update UIScrollView's contentSize when a new layer tree is committed
+        https://bugs.webkit.org/show_bug.cgi?id=129641
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        Previously, we relied on [UIScrollView setZoomScale:] to reset the contentSize for us.
+        In the cases where we would not go through [UIScrollView setZoomScale:], the UIScrollView's contentSize
+        did not match the actual WKContentView's area on screen.
+
 2014-03-03  Jeremy Jones  <jeremyj@apple.com>
 
         Forward application suspend resume notifications to the web process.
