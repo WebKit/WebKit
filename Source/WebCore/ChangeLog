@@ -1,3 +1,15 @@
+2014-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after bad merge of r154146.
+        <rdar://problem/16223155>
+
+        Two files were ommitted from the prior commit.
+
+        * platform/win/WebCoreBundleWin.cpp: Added.
+        (WebCore::createWebKitBundle):
+        (WebCore::webKitBundle):
+        * platform/win/WebCoreBundleWin.h: Added.
+
 2014-03-03  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.
