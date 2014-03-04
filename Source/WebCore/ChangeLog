@@ -1,3 +1,9 @@
+2014-03-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ CMake build
+
+        * PlatformGTK.cmake: Add a missing file to the source list.
+
 2014-03-03  Sanghyup Lee  <sh53.lee@samsung.com>
 
         :active style is not cleared when its display property is set to none before mouse released.
