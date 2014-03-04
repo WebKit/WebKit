@@ -1,3 +1,16 @@
+2014-03-04  Andreas Kling  <akling@apple.com>
+
+        Micro-optimize Strings in JS bindings.
+        <https://webkit.org/b/129673>
+
+        Tweaked for new jsStringWithWeakOwner signature. This patch removes
+        36 bytes of code from every wrapper getter that returns a DOMString.
+
+        Reviewed by Ryosuke Niwa.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsStringWithCache):
+
 2014-03-03  David Kilzer  <ddkilzer@apple.com>
 
         SVGPropertyTearOffs should detachChildren before deleting its value.

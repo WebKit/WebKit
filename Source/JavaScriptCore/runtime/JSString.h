@@ -412,25 +412,27 @@ namespace JSC {
         return JSString::create(*vm, s.impl());
     }
 
-    inline JSString* jsStringWithWeakOwner(VM* vm, const String& s)
+    inline JSString* jsStringWithWeakOwner(VM& vm, StringImpl& stringImpl)
     {
-        WeakHandleOwner* jsStringWeakOwner = vm->jsStringWeakOwner.get();
-        StringImpl* impl = s.impl();
+        WeakHandleOwner* jsStringWeakOwner = vm.jsStringWeakOwner.get();
 
-        // If this vm is not allowed to weakly own strings just call jsString.
-        if (!jsStringWeakOwner || !impl)
-            return jsString(vm, s);
+        // Should have picked a VM-global empty or single-character string already.
+        ASSERT(stringImpl.length() > 1);
+
+        // If this VM is not allowed to weakly own strings just make a new JSString.
+        if (!jsStringWeakOwner)
+            return JSString::create(vm, &stringImpl);
 
         // Check for an existing weakly owned JSString.
-        if (WeakImpl* weakImpl = impl->weakJSString()) {
+        if (WeakImpl* weakImpl = stringImpl.weakJSString()) {
             if (weakImpl->state() == WeakImpl::Live)
                 return asString(weakImpl->jsValue());
             WeakSet::deallocate(weakImpl);
-            impl->setWeakJSString(nullptr);
+            stringImpl.setWeakJSString(nullptr);
         }
 
-        JSString* string = jsString(vm, s);
-        impl->setWeakJSString(WeakSet::allocate(string, jsStringWeakOwner, impl));
+        JSString* string = JSString::create(vm, &stringImpl);
+        stringImpl.setWeakJSString(WeakSet::allocate(string, jsStringWeakOwner, &stringImpl));
         return string;
     }
 

@@ -571,19 +571,19 @@ JSC::EncodedJSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSObject*
 
 inline JSC::JSValue jsStringWithCache(JSC::ExecState* exec, const String& s)
 {
+    JSC::VM& vm = exec->vm();
+
     StringImpl* stringImpl = s.impl();
     if (!stringImpl || !stringImpl->length())
-        return jsEmptyString(exec);
+        return jsEmptyString(&vm);
 
     if (stringImpl->length() == 1) {
         UChar singleCharacter = (*stringImpl)[0u];
-        if (singleCharacter <= JSC::maxSingleCharacterString) {
-            JSC::VM* vm = &exec->vm();
-            return vm->smallStrings.singleCharacterString(static_cast<unsigned char>(singleCharacter));
-        }
+        if (singleCharacter <= JSC::maxSingleCharacterString)
+            return vm.smallStrings.singleCharacterString(static_cast<unsigned char>(singleCharacter));
     }
 
-    return JSC::jsStringWithWeakOwner(&exec->vm(), s);
+    return JSC::jsStringWithWeakOwner(vm, *stringImpl);
 }
 
 inline String propertyNameToString(JSC::PropertyName propertyName)

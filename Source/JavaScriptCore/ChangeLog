@@ -1,3 +1,20 @@
+2014-03-04  Andreas Kling  <akling@apple.com>
+
+        Micro-optimize Strings in JS bindings.
+        <https://webkit.org/b/129673>
+
+        Make jsStringWithWeakOwner() take a StringImpl& instead of a String.
+        This avoids branches in length() and operator[].
+
+        Also call JSString::create() directly instead of jsString() and just
+        assert that the string length is >1. This way we don't duplicate the
+        optimizations for empty and single-character strings.
+
+        Reviewed by Ryosuke Niwa.
+
+        * runtime/JSString.h:
+        (JSC::jsStringWithWeakOwner):
+
 2014-03-04  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Implement Number.prototype.clz()
