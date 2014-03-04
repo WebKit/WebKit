@@ -593,15 +593,19 @@ sub SetterExpression
         return ("set" . $generator->WK_ucfirst($generator->AttributeNameForGetterAndSetter($attribute)));
     }
 
+    my $attributeType = $attribute->signature->type;
+
     my $functionName;
-    if ($attribute->signature->type eq "boolean") {
+    if ($attributeType eq "boolean") {
         $functionName = "setBooleanAttribute";
-    } elsif ($attribute->signature->type eq "long") {
+    } elsif ($attributeType eq "long") {
         $functionName = "setIntegralAttribute";
-    } elsif ($attribute->signature->type eq "unsigned long") {
+    } elsif ($attributeType eq "unsigned long") {
         $functionName = "setUnsignedIntegralAttribute";
-    } else {
+    } elsif ($generator->IsSVGAnimatedType($attributeType)) {
         $functionName = "setAttribute";
+    } else {
+        $functionName = "setAttributeWithoutSynchronization";
     }
 
     return ($functionName, $contentAttributeName);

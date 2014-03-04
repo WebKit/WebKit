@@ -1007,6 +1007,12 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
     setAttributeInternal(index, name, value, NotInSynchronizationOfLazyAttribute);
 }
 
+void Element::setAttributeWithoutSynchronization(const QualifiedName& name, const AtomicString& value)
+{
+    unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
+    setAttributeInternal(index, name, value, NotInSynchronizationOfLazyAttribute);
+}
+
 void Element::setSynchronizedLazyAttribute(const QualifiedName& name, const AtomicString& value)
 {
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
@@ -2054,7 +2060,7 @@ const AtomicString& Element::pseudo() const
 
 void Element::setPseudo(const AtomicString& value)
 {
-    setAttribute(pseudoAttr, value);
+    setAttributeWithoutSynchronization(pseudoAttr, value);
 }
 
 LayoutSize Element::minimumSizeForResizing() const
