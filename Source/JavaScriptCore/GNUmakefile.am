@@ -57,6 +57,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/debugger \
 	-I$(srcdir)/Source/JavaScriptCore/dfg \
 	-I$(srcdir)/Source/JavaScriptCore/disassembler \
+	-I$(srcdir)/Source/JavaScriptCore/disassembler/udis86 \
 	-I$(srcdir)/Source/JavaScriptCore/ftl \
 	-I$(srcdir)/Source/JavaScriptCore/heap \
 	-I$(srcdir)/Source/JavaScriptCore/inspector \
@@ -126,6 +127,10 @@ DerivedSources/JavaScriptCore/LLIntAssembly.h: Programs/LLIntOffsetsExtractor$(E
 DerivedSources/JavaScriptCore/JSCBuiltins.h: DerivedSources/JavaScriptCore/JSCBuiltins.cpp
 DerivedSources/JavaScriptCore/JSCBuiltins.cpp: $(srcdir)/Source/JavaScriptCore/generate-js-builtins $(javascriptcore_builtins_js_nosources)
 	$(AM_V_GEN)$(PYTHON) $^ $@
+
+DerivedSources/JavaScriptCore/udis86_itab.h: DerivedSources/JavaScriptCore/udis86_itab.c
+DerivedSources/JavaScriptCore/udis86_itab.c: $(udis86_nosources)
+	$(AM_V_GEN)$(PYTHON) $(srcdir)/Source/JavaScriptCore/disassembler/udis86/itab.py --outputDir DerivedSources/JavaScriptCore $(srcdir)/Source/JavaScriptCore/disassembler/udis86/optable.xml
 
 $(libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_OBJECTS): DerivedSources/JavaScriptCore/LLIntAssembly.h
 
@@ -230,7 +235,8 @@ EXTRA_DIST += \
 	Source/JavaScriptCore/THANKS \
 	$(javascriptcore_builtins_js_nosources) \
 	$(llint_nosources) \
-	$(offlineasm_nosources)
+	$(offlineasm_nosources) \
+	$(udis86_nosources)
 
 CLEANFILES += \
 	$(javascriptcore_built_nosources) \

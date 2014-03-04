@@ -37,7 +37,9 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/Bytecodes.h \
 	DerivedSources/JavaScriptCore/InitBytecodes.asm \
 	DerivedSources/JavaScriptCore/LLIntDesiredOffsets.h \
-	DerivedSources/JavaScriptCore/LLIntAssembly.h
+	DerivedSources/JavaScriptCore/LLIntAssembly.h \
+	DerivedSources/JavaScriptCore/udis86_itab.c \
+	DerivedSources/JavaScriptCore/udis86_itab.h
 
 javascriptcore_builtins_js_nosources += \
 	$(wildcard $(srcdir)/Source/JavaScriptCore/builtins/*.js)
@@ -463,7 +465,22 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/disassembler/Disassembler.h \
 	Source/JavaScriptCore/disassembler/LLVMDisassembler.cpp \
 	Source/JavaScriptCore/disassembler/LLVMDisassembler.h \
+	Source/JavaScriptCore/disassembler/UDis86Disassembler.cpp \
+	Source/JavaScriptCore/disassembler/UDis86Disassembler.h \
 	Source/JavaScriptCore/disassembler/X86Disassembler.cpp \
+	Source/JavaScriptCore/disassembler/udis86/udis86.c \
+	Source/JavaScriptCore/disassembler/udis86/udis86.h \
+	Source/JavaScriptCore/disassembler/udis86/udis86_decode.c \
+	Source/JavaScriptCore/disassembler/udis86/udis86_decode.h \
+	Source/JavaScriptCore/disassembler/udis86/udis86_extern.h \
+	Source/JavaScriptCore/disassembler/udis86/udis86_input.c \
+	Source/JavaScriptCore/disassembler/udis86/udis86_input.h \
+	Source/JavaScriptCore/disassembler/udis86/udis86_itab_holder.c \
+	Source/JavaScriptCore/disassembler/udis86/udis86_syn.c \
+	Source/JavaScriptCore/disassembler/udis86/udis86_syn.h \
+	Source/JavaScriptCore/disassembler/udis86/udis86_syn-att.c \
+	Source/JavaScriptCore/disassembler/udis86/udis86_syn-intel.c \
+	Source/JavaScriptCore/disassembler/udis86/udis86_types.h \
 	Source/JavaScriptCore/ftl/FTLAbbreviatedTypes.h \
 	Source/JavaScriptCore/ftl/FTLAbbreviations.h \
 	Source/JavaScriptCore/ftl/FTLAbstractHeap.cpp \
@@ -1325,6 +1342,12 @@ offlineasm_nosources += \
 	Source/JavaScriptCore/offlineasm/sh4.rb \
 	Source/JavaScriptCore/offlineasm/transform.rb \
 	Source/JavaScriptCore/offlineasm/x86.rb
+
+udis86_nosources += \
+	Source/JavaScriptCore/disassembler/udis86/itab.py \
+	Source/JavaScriptCore/disassembler/udis86/optable.xml \
+	Source/JavaScriptCore/disassembler/udis86/ud_opcode.py \
+	Source/JavaScriptCore/disassembler/udis86/ud_optable.py
 
 # minidom
 Programs_minidom_SOURCES = \

@@ -123,6 +123,7 @@ set(includedir "${prefix}/include")
 set(VERSION ${PROJECT_VERSION})
 
 set(WTF_USE_SOUP 1)
+set(WTF_USE_UDIS86 1)
 
 set(WTF_OUTPUT_NAME WTFGTK)
 set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk-${WEBKITGTK_API_VERSION})

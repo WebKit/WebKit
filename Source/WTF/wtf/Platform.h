@@ -668,7 +668,7 @@
 /* If possible, try to enable a disassembler. This is optional. We proceed in two
    steps: first we try to find some disassembler that we can use, and then we
    decide if the high-level disassembler API can be enabled. */
-#if !defined(WTF_USE_UDIS86) && ENABLE(JIT) && ((OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)) || (PLATFORM(EFL) && OS(LINUX))) \
+#if !defined(WTF_USE_UDIS86) && ENABLE(JIT) && ((OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)) || (OS(LINUX) && (PLATFORM(EFL) || PLATFORM(GTK)))) \
     && (CPU(X86) || CPU(X86_64))
 #define WTF_USE_UDIS86 1
 #endif

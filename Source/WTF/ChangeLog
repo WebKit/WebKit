@@ -1,3 +1,12 @@
+2014-03-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Build the Udis86 disassembler
+        https://bugs.webkit.org/show_bug.cgi?id=129679
+
+        Reviewed by Michael Saboff.
+
+        * wtf/Platform.h: Also enable the Udis86 disassembler for the GTK port on Linux.
+
 2014-03-02  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL] Remove m_initEfl from RunLoop.

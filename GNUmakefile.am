@@ -76,6 +76,7 @@ javascriptcore_built_sources :=
 javascriptcore_built_nosources :=
 llint_nosources :=
 offlineasm_nosources :=
+udis86_nosources :=
 platform_webcore_cppflags :=
 platform_cppflags :=
 platform_built_sources :=
