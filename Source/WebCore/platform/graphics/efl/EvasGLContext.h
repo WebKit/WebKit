@@ -48,7 +48,7 @@ public:
     Evas_GL_Context* context() { return m_context; }
 
 private:
-    EvasGLContext(Evas_GL* evasGL, Evas_GL_Context* passContext);
+    EvasGLContext(Evas_GL*, Evas_GL_Context* passContext);
 
     Evas_GL* m_evasGL;
     Evas_GL_Context* m_context;

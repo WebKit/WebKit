@@ -26,8 +26,9 @@
 #ifndef EvasGLSurface_h
 #define EvasGLSurface_h
 
+#include "IntSize.h"
+
 #include <Evas_GL.h>
-#include <WebCore/IntSize.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
@@ -56,7 +57,7 @@ public:
     Evas_GL_Surface* surface() { return m_surface; }
 
 private:
-    EvasGLSurface(Evas_GL* evasGL, Evas_GL_Surface* passSurface);
+    EvasGLSurface(Evas_GL*, Evas_GL_Surface* passSurface);
 
     Evas_GL* m_evasGL;
     Evas_GL_Surface* m_surface;

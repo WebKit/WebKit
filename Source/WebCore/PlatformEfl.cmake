@@ -306,6 +306,8 @@ if (WTF_USE_3D_GRAPHICS)
     list(APPEND WebCore_SOURCES
         platform/graphics/cairo/DrawingBufferCairo.cpp
 
+        platform/graphics/efl/EvasGLContext.cpp
+        platform/graphics/efl/EvasGLSurface.cpp
         platform/graphics/efl/GraphicsContext3DEfl.cpp
         platform/graphics/efl/GraphicsContext3DPrivate.cpp
 
