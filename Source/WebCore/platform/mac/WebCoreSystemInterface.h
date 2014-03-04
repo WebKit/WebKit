@@ -266,13 +266,16 @@ extern CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned w
 extern CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(IOS_SIMULATOR)
+extern void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
+#endif
+
 #if !PLATFORM(IOS)
 extern int (*wkRecommendedScrollerStyle)(void);
 
 extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 
 extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
-extern void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
 
 extern NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
 

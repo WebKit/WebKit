@@ -152,10 +152,12 @@ void InitWebCoreSystemInterface(void)
 #endif
     INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
     INIT(CTRunGetInitialAdvance);
+#if PLATFORM(MAC) || PLATFORM(IOS_SIMULATOR)
+    INIT(SetCrashReportApplicationSpecificInformation);
+#endif
 #if !PLATFORM(IOS)
     INIT(RecommendedScrollerStyle);
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
-    INIT(SetCrashReportApplicationSpecificInformation);
     INIT(CopyDefaultSearchProviderDisplayName);
     INIT(AVAssetResolvedURL);
     INIT(Cursor);

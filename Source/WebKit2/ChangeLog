@@ -1,3 +1,16 @@
+2014-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow iOS DumpRenderTree crashes to show application-specific information
+        https://bugs.webkit.org/show_bug.cgi?id=129705
+
+        Reviewed by David Kilzer.
+        
+        Make the WKSI function SetCrashReportApplicationSpecificInformation available
+        in iOS simulator builds.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2014-03-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Merge API shims and JSLock

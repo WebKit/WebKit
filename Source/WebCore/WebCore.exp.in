@@ -2283,7 +2283,6 @@ _wkQTMovieSetShowClosedCaptions
 _wkQTMovieViewSetDrawSynchronously
 _wkRecommendedScrollerStyle
 _wkSetCGFontRenderingMode
-_wkSetCrashReportApplicationSpecificInformation
 _wkSetDragImage
 _wkSetMetadataURL
 _wkSignedPublicKeyAndChallengeString
@@ -2682,6 +2681,10 @@ _wkCTFontTransformGlyphs
 #if !PLATFORM(IOS_SIMULATOR)
 _wkIOSurfaceContextCreate
 _wkIOSurfaceContextCreateImage
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(IOS_SIMULATOR)
+_wkSetCrashReportApplicationSpecificInformation
 #endif
 
 #if ENABLE(3D_RENDERING)

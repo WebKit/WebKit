@@ -98,6 +98,10 @@ CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, u
 CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 #endif // !PLATFORM(IOS_SIMULATOR)
 
+#if PLATFORM(IOS_SIMULATOR)
+void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
+#endif
+
 CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
 NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
 CFHTTPCookieStorageRef (*wkCopyHTTPCookieStorage)(CFURLStorageSessionRef);
