@@ -1,3 +1,15 @@
+2014-03-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r164856): Use after free in WebCore::QualifiedName::operator== / WebCore::StyledElement::attributeChanged
+        https://bugs.webkit.org/show_bug.cgi?id=129550
+
+        Reviewed by Andreas Kling.
+
+        Added a regression test.
+
+        * fast/dom/uniquing-attributes-via-setAttribute-expected.txt: Added.
+        * fast/dom/uniquing-attributes-via-setAttribute.html: Added.
+
 2014-03-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Space between double underlines does not scale with font size
