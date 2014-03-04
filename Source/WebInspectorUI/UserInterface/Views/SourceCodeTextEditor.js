@@ -1260,20 +1260,16 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         this._popover.dismiss();
 
-        if (this._popoverEventHandler)
-            this._popoverEventHandler.stopTrackingEvents();
+        if (this._popoverEventListeners)
+            this._popoverEventListeners.unregister();
     },
 
     _trackPopoverEvents: function()
     {
-        if (!this._popoverEventHandler) {
-            this._popoverEventHandler = new WebInspector.EventHandler(this, {
-                "mouseover": this._popoverMouseover,
-                "mouseout": this._popoverMouseout,
-            });
-        }
-
-        this._popoverEventHandler.trackEvents(this._popover.element);
+        if (!this._popoverEventListeners) 
+            this._popoverEventListeners = new WebInspector.EventListenerSet(this, "Popover listeners");
+        this._popoverEventListeners.register(this._popover.element, "mouseover", this._popoverMouseover);
+        this._popoverEventListeners.register(this._popover.element, "mouseout", this._popoverMouseout);
     },
 
     _popoverMouseover: function(event)

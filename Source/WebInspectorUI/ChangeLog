@@ -1,3 +1,17 @@
+2014-03-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        Web Inspector: Remove WebInspector.EventHandler in favor of WebInspector.EventListenerSet
+        https://bugs.webkit.org/show_bug.cgi?id=129185
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/EventHandler.js: Removed.
+        * UserInterface/Main.html: Don't include EventHandler.js.
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._dismissPopover):
+        (WebInspector.SourceCodeTextEditor.prototype._trackPopoverEvents):
+        Use EventListenerSet instead of EventHandler.
+
 2014-03-03  Jonathan Wells  <jonowells@apple.com>
 
         Web Inspector: Match color of regex in source view with a popover
