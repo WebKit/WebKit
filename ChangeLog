@@ -1,3 +1,12 @@
+2014-03-04  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] ENABLE_NAVIGATOR_CONTENT_UTILS is mistakenly enabled for the CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=129502
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Disable the option for GTK+.
+
 2014-03-03  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
 
         [cmake] *Names.cpp file should be regenerated after touching StaticString.pm
