@@ -1,3 +1,40 @@
+2014-03-04  Andreas Kling  <akling@apple.com>
+
+        Remove Document::idAttributeName().
+        <https://webkit.org/b/129663>
+
+        Reviewed by Ryosuke "DYEB" Niwa.
+
+        This abstraction is not actually used and causes unnecessary indirection
+        in some pretty hot code paths.
+
+        Replace it with hard-coded HTMLNames::idAttr instead which is a compile
+        time constant pointer. We can revisit this in the future if we wish to
+        implement support for custom id attributes.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::isId):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::willModifyAttribute):
+        * dom/Element.h:
+        (WebCore::Element::getIdAttribute):
+        (WebCore::Element::getNameAttribute):
+        (WebCore::Element::setIdAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseAttribute):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseAttribute):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::parseAttribute):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::attributeChanged):
+        (WebCore::SVGElement::isKnownAttribute):
+        (WebCore::SVGElement::svgAttributeChanged):
+
 2014-03-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r164856): Use after free in WebCore::QualifiedName::operator== / WebCore::StyledElement::attributeChanged

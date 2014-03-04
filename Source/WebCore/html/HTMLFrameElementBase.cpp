@@ -94,8 +94,7 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const Atomi
         setLocation("about:srcdoc");
     else if (name == srcAttr && !fastHasAttribute(srcdocAttr))
         setLocation(stripLeadingAndTrailingHTMLSpaces(value));
-    else if (isIdAttributeName(name)) {
-        // Important to call through to base for the id attribute so the hasID bit gets set.
+    else if (name == HTMLNames::idAttr) {
         HTMLFrameOwnerElement::parseAttribute(name, value);
         m_frameName = value;
     } else if (name == nameAttr) {

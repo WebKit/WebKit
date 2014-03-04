@@ -468,7 +468,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_isSrcdocDocument(false)
     , m_eventQueue(*this)
     , m_weakFactory(this)
-    , m_idAttributeName(idAttr)
 #if ENABLE(FULLSCREEN_API)
     , m_areKeysEnabledInFullScreen(0)
     , m_fullScreenRenderer(nullptr)

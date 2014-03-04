@@ -720,7 +720,7 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString&
 {
     StyledElement::attributeChanged(name, oldValue, newValue);
 
-    if (isIdAttributeName(name))
+    if (name == HTMLNames::idAttr)
         document().accessSVGExtensions()->rebuildAllElementReferencesForTarget(this);
 
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
@@ -1014,7 +1014,7 @@ void SVGElement::collectStyleForPresentationAttribute(const QualifiedName& name,
 
 bool SVGElement::isKnownAttribute(const QualifiedName& attrName)
 {
-    return isIdAttributeName(attrName);
+    return attrName == HTMLNames::idAttr;
 }
 
 void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -1031,7 +1031,7 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (isIdAttributeName(attrName)) {
+    if (attrName == HTMLNames::idAttr) {
         auto renderer = this->renderer();
         // Notify resources about id changes, this is important as we cache resources by id in SVGDocumentExtensions
         if (renderer && renderer->isSVGResourceContainer())

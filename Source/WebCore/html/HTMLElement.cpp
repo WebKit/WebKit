@@ -338,7 +338,7 @@ static NEVER_INLINE void populateEventNameForAttributeLocalNameMap(HashMap<Atomi
 
 void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (isIdAttributeName(name) || name == classAttr || name == styleAttr)
+    if (name == HTMLNames::idAttr || name == HTMLNames::classAttr || name == HTMLNames::styleAttr)
         return StyledElement::parseAttribute(name, value);
 
     if (name == dirAttr)

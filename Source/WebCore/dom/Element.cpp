@@ -1078,7 +1078,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
     bool testShouldInvalidateStyle = inRenderedDocument() && styleResolver && styleChangeType() < FullStyleChange;
     bool shouldInvalidateStyle = false;
 
-    if (isIdAttributeName(name)) {
+    if (name == HTMLNames::idAttr) {
         AtomicString oldId = elementData()->idForStyleResolution();
         AtomicString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
         if (newId != oldId) {
@@ -2745,7 +2745,7 @@ void Element::updateLabel(TreeScope& scope, const AtomicString& oldForAttributeV
 
 void Element::willModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
 {
-    if (isIdAttributeName(name))
+    if (name == HTMLNames::idAttr)
         updateId(oldValue, newValue);
     else if (name == HTMLNames::nameAttr)
         updateName(oldValue, newValue);

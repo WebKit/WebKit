@@ -182,7 +182,7 @@ void Attr::childrenChanged(const ChildChange&)
 
 bool Attr::isId() const
 {
-    return qualifiedName().matches(document().idAttributeName());
+    return qualifiedName().matches(HTMLNames::idAttr);
 }
 
 CSSStyleDeclaration* Attr::style()

@@ -1108,8 +1108,6 @@ public:
     void removeMediaCanStartListener(MediaCanStartListener*);
     MediaCanStartListener* takeAnyMediaCanStartListener();
 
-    const QualifiedName& idAttributeName() const { return m_idAttributeName; }
-    
 #if ENABLE(FULLSCREEN_API)
     bool webkitIsFullScreen() const { return m_fullScreenElement.get(); }
     bool webkitFullScreenKeyboardInputAllowed() const { return m_fullScreenElement.get() && m_areKeysEnabledInFullScreen; }
@@ -1558,8 +1556,6 @@ private:
     WeakPtrFactory<Document> m_weakFactory;
 
     HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
-
-    QualifiedName m_idAttributeName;
 
 #if ENABLE(FULLSCREEN_API)
     bool m_areKeysEnabledInFullScreen;
