@@ -1,3 +1,16 @@
+2014-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Incorrect repaint rect cuts off content's right edge after move.
+        https://bugs.webkit.org/show_bug.cgi?id=129652
+
+        Reviewed by Simon Fraser.
+
+        When repaint rect is adjusted in order to take the distance from renderer into account,
+        the accumulated fraction value need to be added too. This is always a positive value.
+
+        * fast/borders/hidpi-border-clipping-right-after-move-expected.html: Added.
+        * fast/borders/hidpi-border-clipping-right-after-move.html: Added.
+
 2014-02-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Percentages of indefinite sizes should compute to auto
