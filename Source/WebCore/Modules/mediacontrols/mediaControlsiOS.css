@@ -53,6 +53,7 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
     -webkit-justify-content: flex-end;
     -webkit-flex-direction: column;
     font-family: -apple-system-font;
+    overflow: hidden;
 }
 
 video::-webkit-media-controls-panel input[type="button"],

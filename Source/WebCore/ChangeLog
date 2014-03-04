@@ -1,3 +1,18 @@
+2014-03-03  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Start playback button misplaced
+        https://bugs.webkit.org/show_bug.cgi?id=129628
+
+        Reviewed by Simon Fraser.
+
+        On YouTube embeds, while the video is loading it is placed into the DOM with a 0x0 size.
+        This causes the start playback button to be visible in the upper-left corner of the embed
+        area. The button wasn't visible previously (in plugin mode) because the plugin clipped its
+        drawing to its bounds, and so the <video> shadow should do the same.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (::-webkit-media-controls):
+
 2014-03-03  Enrica Casucci  <enrica@apple.com>
 
         Build fix for iOS simulator.
