@@ -510,6 +510,11 @@ void WebPageProxy::stopAssistingNode()
     m_pageClient.stopAssistingNode();
 }
 
+void WebPageProxy::focusNextAssistedNode(bool isForward)
+{
+    process().send(Messages::WebPage::FocusNextAssistedNode(isForward), m_pageID);
+}
+
 void WebPageProxy::setAssistedNodeValue(const String& value)
 {
     process().send(Messages::WebPage::SetAssistedNodeValue(value), m_pageID);

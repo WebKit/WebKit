@@ -64,6 +64,7 @@ messages -> WebPage LegacyReceiver {
     StartInteractionWithElementAtPosition(WebCore::IntPoint point)
     StopInteraction()
     PerformActionOnElement(uint32_t action)
+    FocusNextAssistedNode(bool isForward)
     SetAssistedNodeValue(String value)
     SetAssistedNodeValueAsNumber(double value)
     SetAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)

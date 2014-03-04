@@ -1,3 +1,33 @@
+2014-03-04  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2]: Next/Prev button in the accessory bar do not work.
+        https://bugs.webkit.org/show_bug.cgi?id=129690
+        <rdar://problem/16073569>
+
+        Reviewed by Simon Fraser.
+
+        Adding support for Next and Previous buttons in the accessory bar.
+        When the request is processed by the WebProcess, we identify the next
+        focusable node that needs to be assisted and we call focus() on the element
+        letting the focus changing machinery take care of updating the assisted node.
+        This change also add support for the Clear button, when appropriate and hooks up
+        the call to the WebProcess.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView accessoryTab:]):
+        (-[WKContentView accessoryClear]):
+        (-[WKContentView _updateAccessory]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::focusNextAssistedNode):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::nextFocusableElement):
+        (WebKit::hasFocusableElement):
+        (WebKit::WebPage::focusNextAssistedNode):
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2014-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Allow iOS DumpRenderTree crashes to show application-specific information

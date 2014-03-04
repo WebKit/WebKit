@@ -1568,17 +1568,29 @@ static inline bool isAssistableNode(Node* node)
     return node->isContentEditable();
 }
 
-static inline bool hasFocusableNode(Node* startNode, Page* page, bool isForward)
+static inline Element* nextFocusableElement(Node* startNode, Page* page, bool isForward)
 {
     RefPtr<KeyboardEvent> key = KeyboardEvent::create();
 
-    Node* nextNode = startNode;
+    Element* nextElement = toElement(startNode);
     do {
-        nextNode = isForward ? page->focusController().nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextNode->document()), nextNode, key.get())
-            : page->focusController().previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextNode->document()), nextNode, key.get());
-    } while (nextNode && !isAssistableNode(nextNode));
+        nextElement = isForward ? page->focusController().nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextElement->document()), nextElement, key.get())
+            : page->focusController().previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextElement->document()), nextElement, key.get());
+    } while (nextElement && !isAssistableNode(nextElement));
 
-    return nextNode;
+    return nextElement;
+}
+
+static inline bool hasFocusableElement(Node* startNode, Page* page, bool isForward)
+{
+    return nextFocusableElement(startNode, page, isForward) != nil;
+}
+
+void WebPage::focusNextAssistedNode(bool isForward)
+{
+    Element* nextElement = nextFocusableElement(m_assistedNode.get(), m_page.get(), isForward);
+    if (nextElement)
+        nextElement->focus();
 }
 
 void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
@@ -1586,8 +1598,8 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
     information.elementRect = m_page->focusController().focusedOrMainFrame().view()->contentsToRootView(m_assistedNode->renderer()->absoluteBoundingBoxRect());
     information.minimumScaleFactor = m_viewportConfiguration.minimumScale();
     information.maximumScaleFactor = m_viewportConfiguration.maximumScale();
-    information.hasNextNode = hasFocusableNode(m_assistedNode.get(), m_page.get(), true);
-    information.hasPreviousNode = hasFocusableNode(m_assistedNode.get(), m_page.get(), false);
+    information.hasNextNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), true);
+    information.hasPreviousNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), false);
 
     if (isHTMLSelectElement(m_assistedNode.get())) {
         HTMLSelectElement* element = toHTMLSelectElement(m_assistedNode.get());

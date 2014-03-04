@@ -1287,6 +1287,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 
 - (void)accessoryTab:(BOOL)isNext
 {
+    _page->focusNextAssistedNode(isNext);
 }
 
 - (void)accessoryAutoFill
@@ -1295,14 +1296,29 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 
 - (void)accessoryClear
 {
+    _page->setAssistedNodeValue(String());
 }
 
 - (void)_updateAccessory
 {
     [_formAccessoryView setNextEnabled:_assistedNodeInformation.hasNextNode];
     [_formAccessoryView setPreviousEnabled:_assistedNodeInformation.hasPreviousNode];
-    
-    [_formAccessoryView setClearVisible:NO];
+
+    if (UICurrentUserInterfaceIdiomIsPad())
+        [_formAccessoryView setClearVisible:NO];
+    else {
+        switch (_assistedNodeInformation.elementType) {
+        case WebKit::WKTypeDate:
+        case WebKit::WKTypeMonth:
+        case WebKit::WKTypeDateTimeLocal:
+        case WebKit::WKTypeTime:
+            [_formAccessoryView setClearVisible:YES];
+            break;
+        default:
+            [_formAccessoryView setClearVisible:NO];
+            break;
+        }
+    }
 
     // FIXME: hide or show the AutoFill button as needed.
 }
