@@ -1,5 +1,13 @@
 2014-03-04  Zalan Bujtas  <zalan@apple.com>
 
+        Build fix for iOS.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::addRoundedBorderClip):
+        (WebCore::RenderThemeIOS::paintFileUploadIconDecorations):
+
+2014-03-04  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel rendering: Make GraphicsLayer::fillRect FloatRoundedRect based and cleanup dependencies.
         https://bugs.webkit.org/show_bug.cgi?id=129557
 

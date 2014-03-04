@@ -310,7 +310,7 @@ FloatRect RenderThemeIOS::addRoundedBorderClip(RenderObject* box, GraphicsContex
     RoundedRect border = isChecked(box) ? style.getRoundedInnerBorderFor(rect) : style.getRoundedBorderFor(rect);
 
     if (border.isRounded())
-        context->clipRoundedRect(border);
+        context->clipRoundedRect(FloatRoundedRect(border));
     else
         context->clip(border.rect());
 
@@ -1008,7 +1008,7 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(RenderObject*, RenderObject*
     }
 
     // Foreground picture frame and icon.
-    paintInfo.context->fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize), cornerSize, pictureFrameColor, ColorSpaceDeviceRGB);
+    paintInfo.context->fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor, ColorSpaceDeviceRGB);
     icon->paint(paintInfo.context, thumbnailRect);
 
     return false;
