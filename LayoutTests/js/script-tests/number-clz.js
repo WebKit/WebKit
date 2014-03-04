@@ -1,0 +1,11 @@
+shouldBe("Number(Infinity).clz()","Infinity");
+shouldBe("Number(-Infinity).clz()","-Infinity");
+shouldBe("Number(NaN).clz()","NaN");
+shouldBe("Number(0).clz()","32");
+shouldBe("Number(1).clz()","31");
+shouldBe("Number(2147483648).clz()","0");
+shouldBe("Number(2147483647).clz()","1");
+shouldBe("Number(1073741824).clz()","1");
+shouldBe("Number(1073741823).clz()","2");
+shouldBe("Number(32768).clz()","16");
+shouldBe("Number(32767).clz()","17");

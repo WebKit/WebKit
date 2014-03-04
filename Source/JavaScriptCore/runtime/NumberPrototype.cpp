@@ -48,6 +48,7 @@ static EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncClz(ExecState*);
 
 }
 
@@ -65,6 +66,7 @@ const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, 0, 
   toFixed           numberProtoFuncToFixed          DontEnum|Function 1
   toExponential     numberProtoFuncToExponential    DontEnum|Function 1
   toPrecision       numberProtoFuncToPrecision      DontEnum|Function 1
+  clz               numberProtoFuncClz              DontEnum|Function 1
 @end
 */
 
@@ -448,6 +450,41 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 
     NumberToStringBuffer buffer;
     return JSValue::encode(jsString(exec, String(numberToFixedPrecisionString(x, significantFigures, buffer))));
+}
+
+#if !COMPILER(GCC) && !COMPILER(CLANG)
+static inline int clz(uint32_t number)
+{
+    int zeroCount = 0;
+    for (int i = 31; i >= 0; i--) {
+        if (!(number >> i))
+            zeroCount++;
+        else
+            break;
+    }
+    return zeroCount;
+}
+#endif
+
+EncodedJSValue JSC_HOST_CALL numberProtoFuncClz(ExecState* exec)
+{
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
+        return throwVMTypeError(exec);
+
+    if (!std::isfinite(x))
+        return JSValue::encode(JSValue(x));
+
+    uint32_t number = toUInt32(x);
+#if COMPILER(GCC) || COMPILER(CLANG)
+    int zeroCount = 32;
+    if (number)
+        zeroCount = __builtin_clz(number);
+
+    return JSValue::encode(JSValue(zeroCount));
+#else
+    return JSValue::encode(JSValue(clz(number)));
+#endif
 }
 
 static inline int32_t extractRadixFromArgs(ExecState* exec)

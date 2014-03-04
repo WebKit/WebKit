@@ -1,3 +1,15 @@
+2014-03-04  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Implement Number.prototype.clz()
+        https://bugs.webkit.org/show_bug.cgi?id=129479
+
+        Reviewed by Oliver Hunt.
+
+        Implemented Number.prototype.clz() as specified in the ES6 standard.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncClz):
+
 2014-03-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Avoid too early deref caused by RemoteInspectorXPCConnection::close

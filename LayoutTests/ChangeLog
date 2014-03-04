@@ -1,3 +1,18 @@
+2014-03-04  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Implement Number.prototype.clz()
+        https://bugs.webkit.org/show_bug.cgi?id=129479
+
+        Reviewed by Oliver Hunt.
+
+        Added/updated tests to account for Number.prototype.clz().
+
+        * js/number-clz.html: Added.
+        * js/number-clz-expected.txt: Added.
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/number-clz.js: Added.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2014-03-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r164856): Use after free in WebCore::QualifiedName::operator== / WebCore::StyledElement::attributeChanged
