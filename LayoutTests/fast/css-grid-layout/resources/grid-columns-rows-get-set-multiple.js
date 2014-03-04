@@ -3,6 +3,7 @@ description('Test that setting and getting grid-template-columns and grid-templa
 debug("Test getting |grid-template-columns| and |grid-template-rows| set through CSS");
 testGridTemplatesValues(document.getElementById("gridWithFixedElement"), "7px 11px", "17px 2px");
 testGridTemplatesValues(document.getElementById("gridWithPercentElement"), "53% 99%", "27% 52%", "424px 792px", "162px 312px");
+testGridTemplatesValues(document.getElementById("gridWithPercentWithoutSize"), "53% 99%", "27% 52%", "7px 0px", "11px 0px");
 testGridTemplatesValues(document.getElementById("gridWithAutoElement"), "auto auto", "auto auto", "0px 17px", "0px 3px");
 testGridTemplatesValues(document.getElementById("gridWithEMElement"), "100px 120px", "150px 170px");
 testGridTemplatesValues(document.getElementById("gridWithThreeItems"), "15px auto 100px", "120px 18px auto", "15px 0px 100px", "120px 18px 0px");

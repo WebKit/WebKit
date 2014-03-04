@@ -34,6 +34,7 @@
 #include "NotImplemented.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -450,7 +451,17 @@ const GridTrackSize& RenderGrid::gridTrackSize(GridTrackSizingDirection directio
     if (i >= trackStyles.size())
         return (direction == ForColumns) ? style().gridAutoColumns() : style().gridAutoRows();
 
-    return trackStyles[i];
+    const GridTrackSize& trackSize = trackStyles[i];
+    // If the logical width/height of the grid container is indefinite, percentage values are treated as <auto>.
+    if (trackSize.isPercentage()) {
+        Length logicalSize = direction == ForColumns ? style().logicalWidth() : style().logicalHeight();
+        if (logicalSize.isIntrinsicOrAuto()) {
+            static NeverDestroyed<GridTrackSize> autoTrackSize(Auto);
+            return autoTrackSize.get();
+        }
+    }
+
+    return trackSize;
 }
 
 size_t RenderGrid::explicitGridColumnCount() const

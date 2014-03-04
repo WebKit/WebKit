@@ -1,3 +1,21 @@
+2014-02-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Percentages of indefinite sizes should compute to auto
+        https://bugs.webkit.org/show_bug.cgi?id=128173
+
+        Reviewed by Darin Adler.
+
+        We should treat percentages of indefinite sizes as auto as
+        mandated by the spec. Otherwise we would end up calculating a
+        percentage of -1, the value we use to represent infinite.
+
+        Added some test cases to the current tests.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::gridTrackSize):
+        * rendering/style/GridTrackSize.h:
+        (WebCore::GridTrackSize::isPercentage):
+
 2014-03-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't synchronize attributes in reflect setters when we don't need to

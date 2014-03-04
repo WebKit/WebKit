@@ -1,3 +1,26 @@
+2014-02-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Percentages of indefinite sizes should compute to auto
+        https://bugs.webkit.org/show_bug.cgi?id=128173
+
+        Reviewed by Darin Adler.
+
+        Added a grid with indefinite sizes to check that we use auto to
+        compute the track breadths instead of the specified percentages.
+
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-element-repeat-get-set-expected.txt:
+        * fast/css-grid-layout/grid-element-repeat-get-set.html:
+        * fast/css-grid-layout/named-grid-line-get-set-expected.txt:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+        * fast/css-grid-layout/resources/grid.css:
+        (.indefiniteSizeGrid):
+
 2014-03-04  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Implement Number.prototype.clz()

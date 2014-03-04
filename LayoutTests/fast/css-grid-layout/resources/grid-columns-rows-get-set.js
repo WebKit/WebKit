@@ -4,6 +4,8 @@ debug("Test getting -webkit-grid-template-columns and -webkit-grid-template-rows
 testGridTemplatesValues(document.getElementById("gridWithNoneElement"), "none", "none");
 testGridTemplatesValues(document.getElementById("gridWithFixedElement"), "10px", "15px");
 testGridTemplatesValues(document.getElementById("gridWithPercentElement"), "424px", "162px");
+testGridTemplatesValues(document.getElementById("gridWithPercentWithoutSize"), "0px", "0px");
+testGridTemplatesValues(document.getElementById("gridWithPercentWithoutSizeWithChildren"), "7px", "11px");
 testGridTemplatesValues(document.getElementById("gridWithAutoElement"), "0px", "0px");
 testGridTemplatesValues(document.getElementById("gridWithAutoWithChildrenElement"), "7px", "11px");
 testGridTemplatesValues(document.getElementById("gridWithEMElement"), "100px", "150px");
@@ -49,7 +51,6 @@ testGridTemplatesSetJSValues("minmax(22em, 8vh)", "minmax(10vw, 5em)", "220px", 
 testGridTemplatesSetJSValues("minmax(-webkit-min-content, 8vh)", "minmax(10vw, -webkit-min-content)", "48px", "80px");
 testGridTemplatesSetJSValues("minmax(22em, -webkit-max-content)", "minmax(-webkit-max-content, 5em)", "220px", "50px");
 testGridTemplatesSetJSValues("minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content)", "0px", "0px");
-
 // Unit comparison should be case-insensitive.
 testGridTemplatesSetJSValues("3600Fr", "154fR", "800px", "600px", "3600fr", "154fr");
 

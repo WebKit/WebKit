@@ -8,6 +8,8 @@ PASS window.getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit
 PASS window.getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-template-rows') is "17px 2px"
 PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('-webkit-grid-template-columns') is "424px 792px"
 PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('-webkit-grid-template-rows') is "162px 312px"
+PASS window.getComputedStyle(gridWithPercentWithoutSize, '').getPropertyValue('-webkit-grid-template-columns') is "7px 0px"
+PASS window.getComputedStyle(gridWithPercentWithoutSize, '').getPropertyValue('-webkit-grid-template-rows') is "11px 0px"
 PASS window.getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-grid-template-columns') is "0px 17px"
 PASS window.getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-grid-template-rows') is "0px 3px"
 PASS window.getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-template-columns') is "100px 120px"

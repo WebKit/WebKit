@@ -6,6 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Test getting grid-template-columns and grid-template-rows set through CSS
 PASS window.getComputedStyle(singleSingleTrackRepeatWithSize, '').getPropertyValue('-webkit-grid-template-columns') is "120px"
 PASS window.getComputedStyle(singleSingleTrackRepeatWithSize, '').getPropertyValue('-webkit-grid-template-rows') is "18px"
+PASS window.getComputedStyle(singleSingleTrackRepeatWithoutSize, '').getPropertyValue('-webkit-grid-template-columns') is "0px"
+PASS window.getComputedStyle(singleSingleTrackRepeatWithoutSize, '').getPropertyValue('-webkit-grid-template-rows') is "18px"
 PASS window.getComputedStyle(twoSingleTrackRepeat, '').getPropertyValue('-webkit-grid-template-columns') is "400px 400px"
 PASS window.getComputedStyle(twoSingleTrackRepeat, '').getPropertyValue('-webkit-grid-template-rows') is "0px 0px"
 PASS window.getComputedStyle(twoSingleTrackRepeatWithChildren, '').getPropertyValue('-webkit-grid-template-columns') is "400px 400px"

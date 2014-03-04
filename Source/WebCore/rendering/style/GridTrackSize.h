@@ -99,6 +99,8 @@ public:
 
     bool isContentSized() const { return m_minTrackBreadth.isContentSized() || m_maxTrackBreadth.isContentSized(); }
 
+    bool isPercentage() const { return m_type == LengthTrackSizing && length().isLength() && length().length().isPercent(); }
+
     bool operator==(const GridTrackSize& other) const
     {
         return m_type == other.m_type && m_minTrackBreadth == other.m_minTrackBreadth && m_maxTrackBreadth == other.m_maxTrackBreadth;

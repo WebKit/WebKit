@@ -76,6 +76,7 @@ if (window.testRunner)
 </head>
 <body>
 <div class="grid singleSingleTrackRepeat" id="singleSingleTrackRepeatWithSize"></div>
+<div class="indefiniteSizeGrid singleSingleTrackRepeat" id="singleSingleTrackRepeatWithoutSize"></div>
 <div class="grid twoSingleTrackRepeat" id="twoSingleTrackRepeat"></div>
 <div class="grid twoSingleTrackRepeat" id="twoSingleTrackRepeatWithChildren">
     <div class="gridItem"></div>
@@ -103,6 +104,7 @@ if (window.testRunner)
 
     debug("Test getting grid-template-columns and grid-template-rows set through CSS");
     testGridTemplatesValues(document.getElementById("singleSingleTrackRepeatWithSize"), "120px", "18px");
+    testGridTemplatesValues(document.getElementById("singleSingleTrackRepeatWithoutSize"), "0px", "18px");
     testGridTemplatesValues(document.getElementById("twoSingleTrackRepeat"), "400px 400px", "0px 0px");
     testGridTemplatesValues(document.getElementById("twoSingleTrackRepeatWithChildren"), "400px 400px", "44px 77px");
     testGridTemplatesValues(document.getElementById("twoDoubleTrackRepeat"), "33px 120px 0px 120px", "10px 77px 10px 0px");
