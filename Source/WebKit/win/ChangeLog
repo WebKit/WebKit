@@ -1,3 +1,19 @@
+2014-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make GraphicsLayer::fillRect FloatRoundedRect based and cleanup dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=129557
+
+        Reviewed by Simon Fraser.
+
+        This is the preparation for snapping rounded rects to device pixel position. It enables
+        device pixel aware border-radius painting.
+
+        No change in functionality.
+
+        * FullscreenVideoController.cpp:
+        (HUDSlider::draw):
+        (FullscreenVideoController::draw):
+
 2014-03-02  Darin Adler  <darin@apple.com>
 
         Streamline use of TextIterator, cutting down includes and use of soon-to-be-deleted functions

@@ -34,6 +34,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Chrome.h>
+#include <WebCore/FloatRoundedRect.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontSelector.h>
 #include <WebCore/GraphicsContext.h>
@@ -135,7 +136,7 @@ void HUDSlider::draw(GraphicsContext& context)
 {
     // Draw gutter
     IntSize radius(m_rect.height() / 2, m_rect.height() / 2);
-    context.fillRoundedRect(m_rect, radius, radius, radius, radius, Color(sliderGutterColor), ColorSpaceDeviceRGB);
+    context.fillRoundedRect(FloatRoundedRect(m_rect, radius, radius, radius, radius), Color(sliderGutterColor), ColorSpaceDeviceRGB);
 
     // Draw button
     context.setStrokeColor(Color(sliderButtonColor), ColorSpaceDeviceRGB);
@@ -491,9 +492,9 @@ void FullscreenVideoController::draw()
     IntSize innerRadius(borderRadius - borderThickness, borderRadius - borderThickness);
     IntRect innerRect(borderThickness, borderThickness, windowWidth - borderThickness * 2, windowHeight - borderThickness * 2);
 
-    context.fillRoundedRect(outerRect, outerRadius, outerRadius, outerRadius, outerRadius, Color(borderColor), ColorSpaceDeviceRGB);
+    context.fillRoundedRect(FloatRoundedRect(outerRect, outerRadius, outerRadius, outerRadius, outerRadius), Color(borderColor), ColorSpaceDeviceRGB);
     context.setCompositeOperation(CompositeCopy);
-    context.fillRoundedRect(innerRect, innerRadius, innerRadius, innerRadius, innerRadius, Color(backgroundColor), ColorSpaceDeviceRGB);
+    context.fillRoundedRect(FloatRoundedRect(innerRect, innerRadius, innerRadius, innerRadius, innerRadius), Color(backgroundColor), ColorSpaceDeviceRGB);
 
     // Draw the widgets
     m_playPauseButton.draw(context);

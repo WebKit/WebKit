@@ -82,6 +82,7 @@ public:
     };
 
     explicit FloatRoundedRect(const FloatRect&, const Radii& = Radii());
+    explicit FloatRoundedRect(const RoundedRect&);
     FloatRoundedRect(float x, float y, float width, float height);
     FloatRoundedRect(const FloatRect&, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight);
 
@@ -115,6 +116,7 @@ public:
         return FloatRect(m_rect.maxX() - m_radii.bottomRight().width(), m_rect.maxY() - m_radii.bottomRight().height(), m_radii.bottomRight().width(), m_radii.bottomRight().height());
     }
 
+    bool isRenderable() const;
     bool xInterceptsAtY(float y, float& minXIntercept, float& maxXIntercept) const;
 
 private:

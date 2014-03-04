@@ -34,6 +34,7 @@
 #include "BasicShapeFunctions.h"
 #include "CalculationValue.h"
 #include "FloatRect.h"
+#include "FloatRoundedRect.h"
 #include "LengthFunctions.h"
 #include "Path.h"
 #include "RenderBox.h"
@@ -355,7 +356,7 @@ void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
     ASSERT(path.isEmpty());
     float left = floatValueForLength(m_left, boundingBox.width());
     float top = floatValueForLength(m_top, boundingBox.height());
-    path.addRoundedRect(
+    FloatRoundedRect r = FloatRoundedRect(
         FloatRect(
             left + boundingBox.x(),
             top + boundingBox.y(),
@@ -367,6 +368,7 @@ void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
         floatSizeForLengthSize(m_bottomLeftRadius, boundingBox),
         floatSizeForLengthSize(m_bottomRightRadius, boundingBox)
     );
+    path.addRoundedRect(r);
 }
 
 PassRefPtr<BasicShape> BasicShapeInset::blend(const BasicShape* other, double progress) const

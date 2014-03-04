@@ -31,6 +31,7 @@
 #import "CSSValueKeywords.h"
 #import "DateComponents.h"
 #import "Document.h"
+#import "FloatRoundedRect.h"
 #import "Font.h"
 #import "FontCache.h"
 #import "Frame.h"
@@ -450,7 +451,7 @@ bool RenderThemeIOS::paintRadioDecorations(RenderObject* box, const PaintInfo& p
         paintInfo.context->drawRaisedEllipse(clip, Color::white, ColorSpaceDeviceRGB, shadowColor(), ColorSpaceDeviceRGB);
 
         FloatSize radius(clip.width() / 2.0f, clip.height() / 2.0f);
-        paintInfo.context->clipRoundedRect(clip, radius, radius, radius, radius);
+        paintInfo.context->clipRoundedRect(FloatRoundedRect(clip, radius, radius, radius, radius));
     }
     FloatPoint bottomCenter(clip.x() + clip.width() / 2.0, clip.maxY());
     drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
@@ -465,7 +466,7 @@ bool RenderThemeIOS::paintTextFieldDecorations(RenderObject* box, const PaintInf
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    paintInfo.context->clipRoundedRect(style.getRoundedBorderFor(rect));
+    paintInfo.context->clipRoundedRect(FloatRoundedRect(style.getRoundedBorderFor(rect)));
 
     // This gradient gets drawn black when printing.
     // Do not draw the gradient if there is no visible top border.
@@ -585,9 +586,9 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(RenderObject* box, const Pai
 
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-        paintInfo.context->clipRoundedRect(titleClip, 
+        paintInfo.context->clipRoundedRect(FloatRoundedRect(titleClip,
             FloatSize(valueForLength(style.borderTopLeftRadius().width(), rect.width()) - style.borderLeftWidth(), valueForLength(style.borderTopLeftRadius().height(), rect.height()) - style.borderTopWidth()), FloatSize(0, 0),
-            FloatSize(valueForLength(style.borderBottomLeftRadius().width(), rect.width()) - style.borderLeftWidth(), valueForLength(style.borderBottomLeftRadius().height(), rect.height()) - style.borderBottomWidth()), FloatSize(0, 0));
+            FloatSize(valueForLength(style.borderBottomLeftRadius().width(), rect.width()) - style.borderLeftWidth(), valueForLength(style.borderBottomLeftRadius().height(), rect.height()) - style.borderBottomWidth()), FloatSize(0, 0)));
 
         drawAxialGradient(cgContext, gradientWithName(ShadeGradient), titleClip.location(), FloatPoint(titleClip.x(), titleClip.maxY()), LinearInterpolation);
         drawAxialGradient(cgContext, gradientWithName(ShineGradient), FloatPoint(titleClip.x(), titleClip.maxY()), titleClip.location(), ExponentialInterpolation);
@@ -605,9 +606,9 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(RenderObject* box, const Pai
     {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-        paintInfo.context->clipRoundedRect(buttonClip, 
+        paintInfo.context->clipRoundedRect(FloatRoundedRect(buttonClip,
             FloatSize(0, 0), FloatSize(valueForLength(style.borderTopRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderTopRightRadius().height(), rect.height()) - style.borderTopWidth()),
-            FloatSize(0, 0), FloatSize(valueForLength(style.borderBottomRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderBottomRightRadius().height(), rect.height()) - style.borderBottomWidth()));
+            FloatSize(0, 0), FloatSize(valueForLength(style.borderBottomRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderBottomRightRadius().height(), rect.height()) - style.borderBottomWidth())));
 
         paintInfo.context->fillRect(buttonClip, style.visitedDependentColor(CSSPropertyBorderTopColor), style.colorSpace());
 
@@ -716,7 +717,7 @@ bool RenderThemeIOS::paintSliderTrack(RenderObject* box, const PaintInfo& paintI
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
         IntSize cornerSize(cornerWidth, cornerHeight);
-        RoundedRect innerBorder(trackClip, cornerSize, cornerSize, cornerSize, cornerSize);
+        FloatRoundedRect innerBorder(trackClip, cornerSize, cornerSize, cornerSize, cornerSize);
         paintInfo.context->clipRoundedRect(innerBorder);
 
         CGContextRef cgContext = paintInfo.context->platformContext();
@@ -832,7 +833,7 @@ bool RenderThemeIOS::paintProgressBar(RenderObject* renderer, const PaintInfo& p
 
     // 1.2) Draw top gradient on the upper half. It is supposed to overlay the fill from the background and darker the stroked path.
     FloatRect border(rect.x(), rect.y() + verticalOffset, rect.width(), progressBarHeight);
-    paintInfo.context->clipRoundedRect(border, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius);
+    paintInfo.context->clipRoundedRect(FloatRoundedRect(border, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius));
 
     float upperGradientHeight = progressBarHeight / 2.;
     RefPtr<Gradient> upperGradient = Gradient::create(FloatPoint(rect.x(), verticalRenderingPosition + 0.5), FloatPoint(rect.x(), verticalRenderingPosition + upperGradientHeight - 1.5));
@@ -986,7 +987,7 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(RenderObject*, RenderObject*
 
         // Background picture frame and simple background icon with a gradient matching the button.
         Color backgroundImageColor = buttonRenderer ? Color(buttonRenderer->style().visitedDependentColor(CSSPropertyBackgroundColor).rgb()) : Color(206.0f, 206.0f, 206.0f);
-        paintInfo.context->fillRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize, pictureFrameColor, ColorSpaceDeviceRGB);
+        paintInfo.context->fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor, ColorSpaceDeviceRGB);
         paintInfo.context->fillRect(thumbnailRect, backgroundImageColor, ColorSpaceDeviceRGB);
         {
             GraphicsContextStateSaver stateSaver2(*paintInfo.context);
@@ -1007,7 +1008,7 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(RenderObject*, RenderObject*
     }
 
     // Foreground picture frame and icon.
-    paintInfo.context->fillRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize, pictureFrameColor, ColorSpaceDeviceRGB);
+    paintInfo.context->fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize), cornerSize, pictureFrameColor, ColorSpaceDeviceRGB);
     icon->paint(paintInfo.context, thumbnailRect);
 
     return false;

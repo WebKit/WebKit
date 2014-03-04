@@ -28,6 +28,7 @@
 
 #include "BidiResolver.h"
 #include "BitmapImage.h"
+#include "FloatRoundedRect.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
@@ -681,34 +682,17 @@ void GraphicsContext::clip(const IntRect& rect)
     clip(FloatRect(rect));
 }
 
-void GraphicsContext::clipRoundedRect(const RoundedRect& rect)
+void GraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)
 {
     if (paintingDisabled())
         return;
-
-    if (!rect.isRounded()) {
-        clip(rect.rect());
-        return;
-    }
 
     Path path;
     path.addRoundedRect(rect);
     clip(path);
 }
 
-// FIXME: Consider writing this in terms of a specialized RoundedRect that uses FloatRect and FloatSize radii.
-void GraphicsContext::clipRoundedRect(const FloatRect& rect, const FloatSize& topLeft, const FloatSize& topRight,
-    const FloatSize& bottomLeft, const FloatSize& bottomRight)
-{
-    if (paintingDisabled())
-        return;
-
-    Path path;
-    path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
-    clip(path);
-}
-
-void GraphicsContext::clipOutRoundedRect(const RoundedRect& rect)
+void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
 {
     if (paintingDisabled())
         return;
@@ -769,18 +753,18 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     setCompositeOperation(previousOperator);
 }
 
-void GraphicsContext::fillRoundedRect(const RoundedRect& rect, const Color& color, ColorSpace colorSpace, BlendMode blendMode)
+void GraphicsContext::fillRoundedRect(const FloatRoundedRect& rect, const Color& color, ColorSpace colorSpace, BlendMode blendMode)
 {
     if (rect.isRounded()) {
         setCompositeOperation(compositeOperation(), blendMode);
-        fillRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight(), color, colorSpace);
+        platformFillRoundedRect(rect, color, colorSpace);
         setCompositeOperation(compositeOperation());
     } else
         fillRect(rect.rect(), color, colorSpace, compositeOperation(), blendMode);
 }
 
 #if !USE(CG) && !USE(CAIRO)
-void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const RoundedRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;

@@ -23,6 +23,7 @@
 #include "GraphicsContext.h"
 
 #include "AffineTransform.h"
+#include "FloatRoundedRect.h"
 #include "Font.h"
 #include "GDIExtras.h"
 #include "GlyphBuffer.h"
@@ -1152,7 +1153,8 @@ static inline IntPoint rectCenterPoint(const RECT& rect)
 {
     return IntPoint(rect.left + (rect.right - rect.left) / 2, rect.top + (rect.bottom - rect.top) / 2);
 }
-void GraphicsContext::fillRoundedRect(const FloatRect& fillRect, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight, const Color& c, ColorSpace colorSpace)
+
+void GraphicsContext::fillRoundedRect(const FloatRoundedRect& rect, const Color& c, ColorSpace colorSpace)
 {
     ScopeDCProvider dcProvider(m_data);
     if (!m_data->m_dc)
@@ -1165,16 +1167,17 @@ void GraphicsContext::fillRoundedRect(const FloatRect& fillRect, const FloatSize
         
     getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
     
+    const FloatRect& fillRect = rect.rect();
     IntRect dstRect = fillRect;
     
     dstRect.move(stableRound(shadowOffset.width()), stableRound(shadowOffset.height()));
     dstRect.inflate(stableRound(shadowBlur));
     dstRect = m_data->mapRect(dstRect);
   
-    FloatSize newTopLeft(m_data->mapSize(topLeft));
-    FloatSize newTopRight(m_data->mapSize(topRight));
-    FloatSize newBottomLeft(m_data->mapSize(bottomLeft));
-    FloatSize newBottomRight(m_data->mapSize(bottomRight));
+    FloatSize newTopLeft(m_data->mapSize(rect.radii().topLeft()));
+    FloatSize newTopRight(m_data->mapSize(rect.radii().topRight()));
+    FloatSize newBottomLeft(m_data->mapSize(rect.radii().bottomLeft()));
+    FloatSize newBottomRight(m_data->mapSize(rect.radii().bottomRight()));
 
     TransparentLayerDC transparentDc(m_data, dstRect, &fillRect);
     HDC dc = transparentDc.hdc();
@@ -1224,7 +1227,6 @@ void GraphicsContext::fillRoundedRect(const FloatRect& fillRect, const FloatSize
 
     SelectObject(dc, oldBrush);
 }
-
 
 void GraphicsContext::drawRoundCorner(bool needsNewClip, RECT clipRect, RECT rectWin, HDC dc, int width, int height)
 {

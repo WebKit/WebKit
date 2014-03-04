@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "EventHandler.h"
 #include "FloatQuad.h"
+#include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -1211,7 +1212,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         // beginning the layer).
         RoundedRect border = style().getRoundedBorderFor(paintRect, &view());
         stateSaver.save();
-        paintInfo.context->clipRoundedRect(border);
+        paintInfo.context->clipRoundedRect(FloatRoundedRect(border));
         paintInfo.context->beginTransparencyLayer(1);
     }
 
@@ -1648,7 +1649,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     IntRect clipRect = pixelSnappedIntRect(isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, paintInfo.renderNamedFlowFragment, IgnoreOverlayScrollbarSize, paintInfo.phase));
     paintInfo.context->save();
     if (style().hasBorderRadius())
-        paintInfo.context->clipRoundedRect(style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size())));
+        paintInfo.context->clipRoundedRect(FloatRoundedRect(style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size()))));
     paintInfo.context->clip(clipRect);
     return true;
 }

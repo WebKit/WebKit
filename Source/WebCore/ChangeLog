@@ -1,3 +1,88 @@
+2014-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make GraphicsLayer::fillRect FloatRoundedRect based and cleanup dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=129557
+
+        Reviewed by Simon Fraser.
+
+        This is the preparation for snapping rounded rects to device pixel position. It enables
+        device pixel aware border-radius painting.
+
+        No change in functionality.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintMediaSliderThumb):
+        * platform/graphics/FloatRoundedRect.cpp:
+        (WebCore::FloatRoundedRect::FloatRoundedRect):
+        (WebCore::FloatRoundedRect::isRenderable):
+        * platform/graphics/FloatRoundedRect.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::clipRoundedRect):
+        (WebCore::GraphicsContext::clipOutRoundedRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addRoundedRect):
+        * platform/graphics/Path.h:
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::pixelSnappedRoundedRectForPainting):
+        * platform/graphics/RoundedRect.h:
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::drawRectShadow):
+        (WebCore::ShadowBlur::drawInsetShadow):
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        * platform/graphics/ShadowBlur.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::platformFillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::platformFillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::borderRadiiFromStyle):
+        (WebCore::RenderThemeGtk::paintMediaSliderTrack):
+        (WebCore::RenderThemeGtk::paintMediaSliderThumb):
+        (WebCore::RenderThemeGtk::paintMediaVolumeSliderTrack):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::pushContentsClip):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::clipRoundedInnerRect):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        (WebCore::RenderBoxModelObject::clipBorderSideForComplexInnerPath):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintRadioDecorations):
+        (WebCore::RenderThemeIOS::paintTextFieldDecorations):
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations):
+        (WebCore::RenderThemeIOS::paintSliderTrack):
+        (WebCore::RenderThemeIOS::paintProgressBar):
+        (WebCore::RenderThemeIOS::paintFileUploadIconDecorations):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMenuListButtonGradients):
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::BoxShape::buildDisplayPaths):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeInset::path):
+
 2014-03-04  Andreas Kling  <akling@apple.com>
 
         Micro-optimize Strings in JS bindings.

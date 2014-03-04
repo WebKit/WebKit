@@ -578,9 +578,9 @@ bool RenderThemeGtk::paintMediaToggleClosedCaptionsButton(RenderObject* renderOb
 }
 #endif
 
-static RoundedRect::Radii borderRadiiFromStyle(RenderStyle* style)
+static FloatRoundedRect::Radii borderRadiiFromStyle(RenderStyle* style)
 {
-    return RoundedRect::Radii(
+    return FloatRoundedRect::Radii(
         IntSize(style->borderTopLeftRadius().width().intValue(), style->borderTopLeftRadius().height().intValue()),
         IntSize(style->borderTopRightRadius().width().intValue(), style->borderTopRightRadius().height().intValue()),
         IntSize(style->borderBottomLeftRadius().width().intValue(), style->borderBottomLeftRadius().height().intValue()),
@@ -613,7 +613,7 @@ bool RenderThemeGtk::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
         rangeRect.setWidth(lengthRatio * totalTrackWidth);
         if (index)
             rangeRect.move(startRatio * totalTrackWidth, 0);
-        context->fillRoundedRect(RoundedRect(rangeRect, borderRadiiFromStyle(style)), style->visitedDependentColor(CSSPropertyColor), style->colorSpace());
+        context->fillRoundedRect(FloatRoundedRect(rangeRect, borderRadiiFromStyle(style)), style->visitedDependentColor(CSSPropertyColor), style->colorSpace());
     }
 
     context->restore();
@@ -623,7 +623,7 @@ bool RenderThemeGtk::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
 bool RenderThemeGtk::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     RenderStyle* style = &o->style();
-    paintInfo.context->fillRoundedRect(RoundedRect(r, borderRadiiFromStyle(style)), style->visitedDependentColor(CSSPropertyColor), style->colorSpace());
+    paintInfo.context->fillRoundedRect(FloatRoundedRect(r, borderRadiiFromStyle(style)), style->visitedDependentColor(CSSPropertyColor), style->colorSpace());
     return false;
 }
 
@@ -653,7 +653,7 @@ bool RenderThemeGtk::paintMediaVolumeSliderTrack(RenderObject* renderObject, con
     volumeRect.move(0, rectHeight - trackHeight);
     volumeRect.setHeight(ceil(trackHeight));
 
-    context->fillRoundedRect(RoundedRect(volumeRect, borderRadiiFromStyle(style)),
+    context->fillRoundedRect(FloatRoundedRect(volumeRect, borderRadiiFromStyle(style)),
         style->visitedDependentColor(CSSPropertyColor), style->colorSpace());
     context->restore();
 

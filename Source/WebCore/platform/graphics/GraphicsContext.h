@@ -75,6 +75,7 @@ namespace WebCore {
 
     class AffineTransform;
     class DrawingBuffer;
+    class FloatRoundedRect;
     class Gradient;
     class GraphicsContextPlatformPrivate;
     class ImageBuffer;
@@ -294,9 +295,8 @@ namespace WebCore {
         void fillRect(const FloatRect&, const Color&, ColorSpace);
         void fillRect(const FloatRect&, Gradient&);
         void fillRect(const FloatRect&, const Color&, ColorSpace, CompositeOperator, BlendMode = BlendModeNormal);
-        void fillRoundedRect(const FloatRect&, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight, const Color&, ColorSpace);
-        void fillRoundedRect(const RoundedRect&, const Color&, ColorSpace, BlendMode = BlendModeNormal);
-        void fillRectWithRoundedHole(const FloatRect&, const RoundedRect& roundedHoleRect, const Color&, ColorSpace);
+        void fillRoundedRect(const FloatRoundedRect&, const Color&, ColorSpace, BlendMode = BlendModeNormal);
+        void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&, ColorSpace);
 
         void clearRect(const FloatRect&);
 
@@ -327,13 +327,10 @@ namespace WebCore {
 
         void clip(const IntRect&);
         void clip(const FloatRect&);
-        void clipRoundedRect(const RoundedRect&);
-
-        // FIXME: Consider writing this in terms of a specialized RoundedRect that uses FloatRect and FloatSize radii.
-        void clipRoundedRect(const FloatRect&, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight);
+        void clipRoundedRect(const FloatRoundedRect&);
 
         void clipOut(const FloatRect&);
-        void clipOutRoundedRect(const RoundedRect&);
+        void clipOutRoundedRect(const FloatRoundedRect&);
         void clipPath(const Path&, WindRule);
         void clipConvexPolygon(size_t numPoints, const FloatPoint*, bool antialias = true);
         void clipToImageBuffer(ImageBuffer*, const FloatRect&);
@@ -569,6 +566,8 @@ namespace WebCore {
 
         void platformFillEllipse(const FloatRect&);
         void platformStrokeEllipse(const FloatRect&);
+
+        void platformFillRoundedRect(const FloatRoundedRect&, const Color&, ColorSpace);
 
         GraphicsContextPlatformPrivate* m_data;
 

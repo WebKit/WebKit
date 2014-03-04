@@ -30,6 +30,7 @@
 #include "CSSValueKeywords.h"
 #include "CairoUtilitiesEfl.h"
 #include "ExceptionCodePlaceholder.h"
+#include "FloatRoundedRect.h"
 #include "FontDescription.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
@@ -1242,7 +1243,7 @@ bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo
 bool RenderThemeEfl::paintMediaSliderThumb(RenderObject*, const PaintInfo& info, const IntRect& rect)
 {
     IntSize thumbRect(3, 3);
-    info.context->fillRoundedRect(rect, thumbRect, thumbRect, thumbRect, thumbRect, m_sliderThumbColor, ColorSpaceDeviceRGB);
+    info.context->fillRoundedRect(FloatRoundedRect(rect, thumbRect, thumbRect, thumbRect, thumbRect), m_sliderThumbColor, ColorSpaceDeviceRGB);
     return true;
 }
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderBoxModelObject.h"
 
+#include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -500,31 +501,31 @@ RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& bor
 void RenderBoxModelObject::clipRoundedInnerRect(GraphicsContext * context, const LayoutRect& rect, const RoundedRect& clipRect)
 {
     if (clipRect.isRenderable())
-        context->clipRoundedRect(clipRect);
+        context->clipRoundedRect(FloatRoundedRect(clipRect));
     else {
         // We create a rounded rect for each of the corners and clip it, while making sure we clip opposing corners together.
         if (!clipRect.radii().topLeft().isEmpty() || !clipRect.radii().bottomRight().isEmpty()) {
-            IntRect topCorner(clipRect.rect().x(), clipRect.rect().y(), rect.maxX() - clipRect.rect().x(), rect.maxY() - clipRect.rect().y());
-            RoundedRect::Radii topCornerRadii;
+            FloatRect topCorner(clipRect.rect().x(), clipRect.rect().y(), rect.maxX() - clipRect.rect().x(), rect.maxY() - clipRect.rect().y());
+            FloatRoundedRect::Radii topCornerRadii;
             topCornerRadii.setTopLeft(clipRect.radii().topLeft());
-            context->clipRoundedRect(RoundedRect(topCorner, topCornerRadii));
+            context->clipRoundedRect(FloatRoundedRect(topCorner, topCornerRadii));
 
-            IntRect bottomCorner(rect.x(), rect.y(), clipRect.rect().maxX() - rect.x(), clipRect.rect().maxY() - rect.y());
-            RoundedRect::Radii bottomCornerRadii;
+            FloatRect bottomCorner(rect.x(), rect.y(), clipRect.rect().maxX() - rect.x(), clipRect.rect().maxY() - rect.y());
+            FloatRoundedRect::Radii bottomCornerRadii;
             bottomCornerRadii.setBottomRight(clipRect.radii().bottomRight());
-            context->clipRoundedRect(RoundedRect(bottomCorner, bottomCornerRadii));
+            context->clipRoundedRect(FloatRoundedRect(bottomCorner, bottomCornerRadii));
         } 
 
         if (!clipRect.radii().topRight().isEmpty() || !clipRect.radii().bottomLeft().isEmpty()) {
-            IntRect topCorner(rect.x(), clipRect.rect().y(), clipRect.rect().maxX() - rect.x(), rect.maxY() - clipRect.rect().y());
-            RoundedRect::Radii topCornerRadii;
+            FloatRect topCorner(rect.x(), clipRect.rect().y(), clipRect.rect().maxX() - rect.x(), rect.maxY() - clipRect.rect().y());
+            FloatRoundedRect::Radii topCornerRadii;
             topCornerRadii.setTopRight(clipRect.radii().topRight());
-            context->clipRoundedRect(RoundedRect(topCorner, topCornerRadii));
+            context->clipRoundedRect(FloatRoundedRect(topCorner, topCornerRadii));
 
-            IntRect bottomCorner(clipRect.rect().x(), rect.y(), rect.maxX() - clipRect.rect().x(), clipRect.rect().maxY() - rect.y());
-            RoundedRect::Radii bottomCornerRadii;
+            FloatRect bottomCorner(clipRect.rect().x(), rect.y(), rect.maxX() - clipRect.rect().x(), clipRect.rect().maxY() - rect.y());
+            FloatRoundedRect::Radii bottomCornerRadii;
             bottomCornerRadii.setBottomLeft(clipRect.radii().bottomLeft());
-            context->clipRoundedRect(RoundedRect(bottomCorner, bottomCornerRadii));
+            context->clipRoundedRect(FloatRoundedRect(bottomCorner, bottomCornerRadii));
         }
     }
 }
@@ -653,7 +654,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         if (hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer) {
             RoundedRect border = backgroundRoundedRectAdjustedForBleedAvoidance(*context, rect, bleedAvoidance, box, boxSize, includeLeftEdge, includeRightEdge);
             if (border.isRenderable())
-                context->fillRoundedRect(border, bgColor, style().colorSpace());
+                context->fillRoundedRect(FloatRoundedRect(border), bgColor, style().colorSpace());
             else {
                 context->save();
                 clipRoundedInnerRect(context, rect, border);
@@ -1956,11 +1957,11 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     if (clipToOuterBorder) {
         // Clip to the inner and outer radii rects.
         if (bleedAvoidance != BackgroundBleedUseTransparencyLayer)
-            graphicsContext->clipRoundedRect(outerBorder);
+            graphicsContext->clipRoundedRect(FloatRoundedRect(outerBorder));
         // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
         // The inside will be clipped out later (in clipBorderSideForComplexInnerPath)
         if (innerBorder.isRenderable())
-            graphicsContext->clipOutRoundedRect(innerBorder);
+            graphicsContext->clipOutRoundedRect(FloatRoundedRect(innerBorder));
     }
 
     // If only one edge visible antialiasing doesn't create seams
@@ -2053,7 +2054,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext,
                 innerBorderTopWidth, innerBorderBottomWidth, innerBorderLeftWidth, innerBorderRightWidth,
                 includeLogicalLeftEdge, includeLogicalRightEdge);
             
-            graphicsContext->clipRoundedRect(innerClip);
+            graphicsContext->clipRoundedRect(FloatRoundedRect(innerClip));
             drawBoxSideFromPath(graphicsContext, borderRect, borderPath, edges, thickness, drawThickness, side, style, color, SOLID, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
         }
 
@@ -2072,7 +2073,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext,
             RoundedRect outerClip = style->getRoundedInnerBorderFor(outerRect,
                 outerBorderTopWidth, outerBorderBottomWidth, outerBorderLeftWidth, outerBorderRightWidth,
                 includeLogicalLeftEdge, includeLogicalRightEdge);
-            graphicsContext->clipOutRoundedRect(outerClip);
+            graphicsContext->clipOutRoundedRect(FloatRoundedRect(outerClip));
             drawBoxSideFromPath(graphicsContext, borderRect, borderPath, edges, thickness, drawThickness, side, style, color, SOLID, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
         }
         return;
@@ -2104,7 +2105,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext,
             topWidth, bottomWidth, leftWidth, rightWidth,
             includeLogicalLeftEdge, includeLogicalRightEdge);
 
-        graphicsContext->clipRoundedRect(clipRect);
+        graphicsContext->clipRoundedRect(FloatRoundedRect(clipRect));
         drawBoxSideFromPath(graphicsContext, borderRect, borderPath, edges, thickness, drawThickness, side, style, color, s2, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
         return;
     }
@@ -2353,7 +2354,7 @@ void RenderBoxModelObject::clipBorderSideForComplexInnerPath(GraphicsContext* gr
     BoxSide side, const class BorderEdge edges[])
 {
     graphicsContext->clip(calculateSideRectIncludingInner(outerBorder, edges, side));
-    graphicsContext->clipOutRoundedRect(calculateAdjustedInnerBorder(innerBorder, side));
+    graphicsContext->clipOutRoundedRect(FloatRoundedRect(calculateAdjustedInnerBorder(innerBorder, side)));
 }
 
 void RenderBoxModelObject::getBorderEdgeInfo(BorderEdge edges[], const RenderStyle* style, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
@@ -2552,7 +2553,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                 }
 
                 if (!rectToClipOut.isEmpty())
-                    context->clipOutRoundedRect(rectToClipOut);
+                    context->clipOutRoundedRect(FloatRoundedRect(rectToClipOut));
 
                 RoundedRect influenceRect(shadowRect, border.radii());
                 influenceRect.expandRadii(2 * shadowPaintingExtent + shadowSpread);
@@ -2562,7 +2563,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                     fillRect.expandRadii(shadowSpread);
                     if (!fillRect.isRenderable())
                         fillRect.adjustRadii();
-                    context->fillRoundedRect(fillRect, Color::black, s->colorSpace());
+                    context->fillRoundedRect(FloatRoundedRect(fillRect), Color::black, s->colorSpace());
                 }
             } else {
                 LayoutRect rectToClipOut = border.rect();
@@ -2590,7 +2591,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
 
             if (holeRect.isEmpty()) {
                 if (hasBorderRadius)
-                    context->fillRoundedRect(border, shadowColor, s->colorSpace());
+                    context->fillRoundedRect(FloatRoundedRect(border), shadowColor, s->colorSpace());
                 else
                     context->fillRect(border.rect(), shadowColor, s->colorSpace());
                 continue;
@@ -2635,7 +2636,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             else
                 context->setShadow(shadowOffset, shadowRadius, shadowColor, s->colorSpace());
 
-            context->fillRectWithRoundedHole(outerRect, roundedHole, fillColor, s->colorSpace());
+            context->fillRectWithRoundedHole(outerRect, FloatRoundedRect(roundedHole), fillColor, s->colorSpace());
         }
     }
 }

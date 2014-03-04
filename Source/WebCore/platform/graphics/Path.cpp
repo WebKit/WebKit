@@ -31,6 +31,7 @@
 
 #include "FloatPoint.h"
 #include "FloatRect.h"
+#include "FloatRoundedRect.h"
 #include "PathTraversalState.h"
 #include "RoundedRect.h"
 #include <math.h>
@@ -91,11 +92,6 @@ float Path::normalAngleAtLength(float length, bool& ok) const
     return traversalState.m_normalAngle;
 }
 
-void Path::addRoundedRect(const RoundedRect& r)
-{
-    addRoundedRect(r.rect(), r.radii().topLeft(), r.radii().topRight(), r.radii().bottomLeft(), r.radii().bottomRight());
-}
-
 void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii, RoundedRectStrategy strategy)
 {
     if (rect.isEmpty())
@@ -105,7 +101,7 @@ void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii,
     FloatSize halfSize(rect.width() / 2, rect.height() / 2);
 
     // Apply the SVG corner radius constraints, per the rect section of the SVG shapes spec: if
-    // one of rx,ry is negative, then the other corner radius value is used. If both values are 
+    // one of rx,ry is negative, then the other corner radius value is used. If both values are
     // negative then rx = ry = 0. If rx is greater than half of the width of the rectangle
     // then set rx to half of the width; ry is handled similarly.
 
@@ -121,36 +117,36 @@ void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii,
     if (radius.height() > halfSize.height())
         radius.setHeight(halfSize.height());
 
-    addPathForRoundedRect(rect, radius, radius, radius, radius, strategy);
+    addRoundedRect(FloatRoundedRect(rect, radius, radius, radius, radius), strategy);
 }
 
-void Path::addRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius, RoundedRectStrategy strategy)
+void Path::addRoundedRect(const FloatRoundedRect& r, RoundedRectStrategy strategy)
 {
-    if (rect.isEmpty())
+    if (r.isEmpty())
         return;
 
-    if (rect.width() < topLeftRadius.width() + topRightRadius.width()
-            || rect.width() < bottomLeftRadius.width() + bottomRightRadius.width()
-            || rect.height() < topLeftRadius.height() + bottomLeftRadius.height()
-            || rect.height() < topRightRadius.height() + bottomRightRadius.height()) {
+    const FloatRoundedRect::Radii& radii = r.radii();
+    const FloatRect& rect = r.rect();
+
+    if (!r.isRenderable()) {
         // If all the radii cannot be accommodated, return a rect.
         addRect(rect);
         return;
     }
 
-    addPathForRoundedRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, strategy);
-}
-
-void Path::addPathForRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius, RoundedRectStrategy strategy)
-{
     if (strategy == PreferNativeRoundedRect) {
 #if USE(CG)
-        platformAddPathForRoundedRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+        platformAddPathForRoundedRect(rect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
         return;
 #endif
     }
 
-    addBeziersForRoundedRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+    addBeziersForRoundedRect(rect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
+}
+
+void Path::addRoundedRect(const RoundedRect& r)
+{
+    addRoundedRect(FloatRoundedRect(r));
 }
 
 // Approximation of control point positions on a bezier to simulate a quarter of a circle.

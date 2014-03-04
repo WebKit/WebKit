@@ -40,7 +40,7 @@
 #include "DrawErrorUnderline.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
-#include "Font.h"
+#include "FloatRoundedRect.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
@@ -460,7 +460,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
         return;
 
     if (hasShadow())
-        platformContext()->shadowBlur().drawRectShadow(this, rect, RoundedRect::Radii());
+        platformContext()->shadowBlur().drawRectShadow(this, FloatRoundedRect(rect));
 
     fillRectWithColor(platformContext()->cr(), rect, color);
 }
@@ -1032,31 +1032,31 @@ void GraphicsContext::clipOut(const FloatRect& r)
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
-void GraphicsContext::fillRoundedRect(const FloatRect& r, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight, const Color& color, ColorSpace)
+void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, const Color& color, ColorSpace)
 {
     if (paintingDisabled())
         return;
 
     if (hasShadow())
-        platformContext()->shadowBlur().drawRectShadow(this, r, FloatRoundedRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
+        platformContext()->shadowBlur().drawRectShadow(this, rect);
 
     cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
     Path path;
-    path.addRoundedRect(r, topLeft, topRight, bottomLeft, bottomRight);
+    path.addRoundedRect(rect);
     appendWebCorePathToCairoContext(cr, path);
     setSourceRGBAFromColor(cr, color);
     cairo_fill(cr);
     cairo_restore(cr);
 }
 
-void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const RoundedRect& roundedHoleRect, const Color& color, ColorSpace)
+void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color, ColorSpace)
 {
     if (paintingDisabled() || !color.isValid())
         return;
 
     if (this->mustUseShadowBlur())
-        platformContext()->shadowBlur().drawInsetShadow(this, rect, roundedHoleRect.rect(), roundedHoleRect.radii());
+        platformContext()->shadowBlur().drawInsetShadow(this, rect, roundedHoleRect);
 
     Path path;
     path.addRect(rect);

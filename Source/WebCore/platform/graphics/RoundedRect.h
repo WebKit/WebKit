@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class FloatRoundedRect;
 class LayoutUnit;
 
 class RoundedRect {
@@ -102,6 +103,8 @@ public:
     // Tests whether the quad intersects any part of this rounded rectangle.
     // This only works for convex quads.
     bool intersectsQuad(const FloatQuad&) const;
+
+    FloatRoundedRect pixelSnappedRoundedRectForPainting(float deviceScaleFactor) const;
 
 private:
     LayoutRect m_rect;

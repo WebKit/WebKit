@@ -55,6 +55,7 @@
 #include "FloatConversion.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
+#include "FloatRoundedRect.h"
 #include "FlowThreadController.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -3615,7 +3616,7 @@ void RenderLayer::clipToRect(RenderLayer* rootLayer, GraphicsContext* context, c
         if (layer->renderer().hasOverflowClip() && layer->renderer().style().hasBorderRadius() && inContainingBlockChain(this, layer)) {
                 LayoutPoint delta;
                 layer->convertToLayerCoords(rootLayer, delta);
-                context->clipRoundedRect(layer->renderer().style().getRoundedInnerBorderFor(LayoutRect(delta, layer->size())));
+                context->clipRoundedRect(FloatRoundedRect(layer->renderer().style().getRoundedInnerBorderFor(LayoutRect(delta, layer->size()))));
         }
 
         if (layer == rootLayer)

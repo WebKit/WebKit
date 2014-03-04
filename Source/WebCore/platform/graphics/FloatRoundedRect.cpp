@@ -34,6 +34,12 @@
 
 namespace WebCore {
 
+FloatRoundedRect::FloatRoundedRect(const RoundedRect& rect)
+    : m_rect(rect.rect())
+    , m_radii(rect.radii())
+{
+}
+
 FloatRoundedRect::FloatRoundedRect(float x, float y, float width, float height)
     : m_rect(x, y, width, height)
 {
@@ -135,6 +141,14 @@ bool FloatRoundedRect::xInterceptsAtY(float y, float& minXIntercept, float& maxX
         maxXIntercept = m_rect.maxX();
 
     return true;
+}
+
+bool FloatRoundedRect::isRenderable() const
+{
+    return m_radii.topLeft().width() + m_radii.topRight().width() <= m_rect.width()
+        && m_radii.bottomLeft().width() + m_radii.bottomRight().width() <= m_rect.width()
+        && m_radii.topLeft().height() + m_radii.bottomLeft().height() <= m_rect.height()
+        && m_radii.topRight().height() + m_radii.bottomRight().height() <= m_rect.height();
 }
 
 } // namespace WebCore

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "RoundedRect.h"
 
+#include "FloatRoundedRect.h"
 #include "LayoutRect.h"
 #include "LayoutUnit.h"
 
@@ -234,6 +235,11 @@ bool RoundedRect::intersectsQuad(const FloatQuad& quad) const
     }
 
     return true;
+}
+
+FloatRoundedRect RoundedRect::pixelSnappedRoundedRectForPainting(float deviceScaleFactor) const
+{
+    return FloatRoundedRect(pixelSnappedForPainting(rect(), deviceScaleFactor), radii());
 }
 
 } // namespace WebCore

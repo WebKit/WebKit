@@ -29,6 +29,7 @@
 #import "Element.h"
 #import "ExceptionCodePlaceholder.h"
 #import "FileList.h"
+#import "FloatRoundedRect.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "GraphicsContextCG.h"
@@ -1143,7 +1144,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    RoundedRect border = o->style().getRoundedBorderFor(r, &o->view());
+    FloatRoundedRect border = FloatRoundedRect(o->style().getRoundedBorderFor(r, &o->view()));
     int radius = border.radii().topLeft().width();
 
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
@@ -1177,7 +1178,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
     {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, topGradient);
-        paintInfo.context->clipRoundedRect(RoundedRect(enclosingIntRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
+        paintInfo.context->clipRoundedRect(FloatRoundedRect(enclosingIntRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
         context = cgContextContainer.context();
         CGContextDrawShading(context, topShading.get());
     }
@@ -1185,7 +1186,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
     if (!bottomGradient.isEmpty()) {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, bottomGradient);
-        paintInfo.context->clipRoundedRect(RoundedRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
+        paintInfo.context->clipRoundedRect(FloatRoundedRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
         context = cgContextContainer.context();
         CGContextDrawShading(context, bottomShading.get());
     }
@@ -1414,7 +1415,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.maxY()), mainFunction.get(), false, false));
 
     IntSize radius(trackRadius, trackRadius);
-    paintInfo.context->clipRoundedRect(RoundedRect(bounds, radius, radius, radius, radius));
+    paintInfo.context->clipRoundedRect(FloatRoundedRect(bounds, radius, radius, radius, radius));
     context = localContext.cgContext();
     CGContextDrawShading(context, mainShading.get());
 

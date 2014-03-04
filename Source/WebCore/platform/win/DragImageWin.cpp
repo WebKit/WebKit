@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DragImage.h"
 
+#include "FloatRoundedRect.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
@@ -195,7 +196,7 @@ DragImageRef createDragImageForLink(URL& url, const String& inLabel, FontRenderi
     static const Color backgroundColor(140, 140, 140);
     static const IntSize radii(DragLabelRadius, DragLabelRadius);
     IntRect rect(0, 0, imageSize.width(), imageSize.height());
-    context.fillRoundedRect(rect, radii, radii, radii, radii, backgroundColor, ColorSpaceDeviceRGB);
+    context.fillRoundedRect(FloatRoundedRect(rect, radii, radii, radii, radii), backgroundColor, ColorSpaceDeviceRGB);
  
     // Draw the text
     static const Color topColor(0, 0, 0, 255); // original alpha = 0.75

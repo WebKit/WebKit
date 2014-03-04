@@ -806,7 +806,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(m_state);
-        contextShadow.drawRectShadow(this, rect, RoundedRect::Radii());
+        contextShadow.drawRectShadow(this, FloatRoundedRect(rect));
     }
 
     CGContextFillRect(context, rect);
@@ -834,7 +834,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(m_state);
-        contextShadow.drawRectShadow(this, rect, RoundedRect::Radii());
+        contextShadow.drawRectShadow(this, FloatRoundedRect(rect));
     }
 
     CGContextFillRect(context, rect);
@@ -846,7 +846,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
         setCGFillColor(context, oldFillColor, oldColorSpace);
 }
 
-void GraphicsContext::fillRoundedRect(const FloatRect& rect, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;
@@ -865,17 +865,19 @@ void GraphicsContext::fillRoundedRect(const FloatRect& rect, const FloatSize& to
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(m_state);
-        contextShadow.drawRectShadow(this, rect, FloatRoundedRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
+        contextShadow.drawRectShadow(this, rect);
     }
 
-    bool equalWidths = (topLeft.width() == topRight.width() && topRight.width() == bottomLeft.width() && bottomLeft.width() == bottomRight.width());
-    bool equalHeights = (topLeft.height() == bottomLeft.height() && bottomLeft.height() == topRight.height() && topRight.height() == bottomRight.height());
+    const FloatRect& r = rect.rect();
+    const FloatRoundedRect::Radii& radii = rect.radii();
+    bool equalWidths = (radii.topLeft().width() == radii.topRight().width() && radii.topRight().width() == radii.bottomLeft().width() && radii.bottomLeft().width() == radii.bottomRight().width());
+    bool equalHeights = (radii.topLeft().height() == radii.bottomLeft().height() && radii.bottomLeft().height() == radii.topRight().height() && radii.topRight().height() == radii.bottomRight().height());
     bool hasCustomFill = m_state.fillGradient || m_state.fillPattern;
-    if (!hasCustomFill && equalWidths && equalHeights && topLeft.width() * 2 == rect.width() && topLeft.height() * 2 == rect.height())
-        CGContextFillEllipseInRect(context, rect);
+    if (!hasCustomFill && equalWidths && equalHeights && radii.topLeft().width() * 2 == r.width() && radii.topLeft().height() * 2 == r.height())
+        CGContextFillEllipseInRect(context, r);
     else {
         Path path;
-        path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+        path.addRoundedRect(rect);
         fillPath(path);
     }
 
@@ -886,7 +888,7 @@ void GraphicsContext::fillRoundedRect(const FloatRect& rect, const FloatSize& to
         setCGFillColor(context, oldFillColor, oldColorSpace);
 }
 
-void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const RoundedRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;
@@ -916,7 +918,7 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Round
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(m_state);
-        contextShadow.drawInsetShadow(this, rect, roundedHoleRect.rect(), roundedHoleRect.radii());
+        contextShadow.drawInsetShadow(this, rect, roundedHoleRect);
     }
 
     fillPath(path);
