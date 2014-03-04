@@ -1,3 +1,24 @@
+2014-03-04  Andreas Kling  <akling@apple.com>
+
+        Add a Document::updateStyleIfNeededForNode(Node&).
+        <https://webkit.org/b/129689>
+
+        Generalize the mechanism that computed style uses to avoid doing full
+        style updates when the node we're interested in isn't actually dirty.
+
+        Reviewed by Antti Koivisto.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * dom/Document.cpp:
+        (WebCore::nodeOrItsAncestorNeedsStyleRecalc):
+        (WebCore::Document::updateStyleIfNeededForNode):
+        * dom/Document.h:
+        * editing/htmlediting.cpp:
+        (WebCore::isEditablePosition):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+
 2014-03-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Merge API shims and JSLock

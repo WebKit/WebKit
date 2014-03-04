@@ -146,7 +146,7 @@ bool isEditablePosition(const Position& p, EditableType editableType, EUpdateSty
     if (!node)
         return false;
     if (updateStyle == UpdateStyle)
-        node->document().updateStyleIfNeeded();
+        node->document().updateStyleIfNeededForNode(*node);
     else
         ASSERT(updateStyle == DoNotUpdateStyle);
 

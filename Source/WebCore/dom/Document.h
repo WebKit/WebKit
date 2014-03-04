@@ -589,6 +589,7 @@ public:
 
     void recalcStyle(Style::Change = Style::NoChange);
     void updateStyleIfNeeded();
+    bool updateStyleIfNeededForNode(const Node&);
     void updateLayout();
     void updateLayoutIgnorePendingStylesheets();
     PassRef<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);

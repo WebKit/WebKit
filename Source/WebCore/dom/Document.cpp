@@ -6049,4 +6049,21 @@ bool Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t
 }
 #endif // ENABLE(SUBTLE_CRYPTO)
 
+static inline bool nodeOrItsAncestorNeedsStyleRecalc(const Node& node)
+{
+    for (const Node* n = &node; n; n = n->parentOrShadowHostElement()) {
+        if (n->needsStyleRecalc())
+            return true;
+    }
+    return false;
+}
+
+bool Document::updateStyleIfNeededForNode(const Node& node)
+{
+    if (!hasPendingForcedStyleRecalc() && !nodeOrItsAncestorNeedsStyleRecalc(node))
+        return false;
+    updateStyleIfNeeded();
+    return true;
+}
+
 } // namespace WebCore
