@@ -197,7 +197,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
 {
     JSValue thisValue = exec->hostThisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
-    if (!castedThis)
+    if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
@@ -208,7 +208,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
         setDOMException(exec, INDEX_SIZE_ERR);
         return JSValue::encode(jsUndefined());
     }
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
 
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.item(index)));
@@ -219,7 +219,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionAddEventListener(
 {
     JSValue thisValue = exec->hostThisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
-    if (!castedThis)
+    if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
@@ -234,7 +234,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionRemoveEventListen
 {
     JSValue thisValue = exec->hostThisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
-    if (!castedThis)
+    if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
@@ -249,7 +249,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
 {
     JSValue thisValue = exec->hostThisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
-    if (!castedThis)
+    if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
@@ -257,7 +257,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     Event* evt(toEvent(exec->argument(0)));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
 
     JSC::JSValue result = jsBoolean(impl.dispatchEvent(evt, ec));

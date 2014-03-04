@@ -1,5 +1,18 @@
 2014-03-04  Andreas Kling  <akling@apple.com>
 
+        Spam static branch prediction hints on JS bindings.
+        <https://webkit.org/b/129703>
+
+        Add LIKELY hint to jsDynamicCast since it's always used in a context
+        where we expect it to succeed and takes an error path when it doesn't.
+
+        Reviewed by Geoff Garen.
+
+        * runtime/JSCell.h:
+        (JSC::jsDynamicCast):
+
+2014-03-04  Andreas Kling  <akling@apple.com>
+
         Get to Structures more efficiently in JSCell::methodTable().
         <https://webkit.org/b/129702>
 

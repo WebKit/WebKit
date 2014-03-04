@@ -215,13 +215,17 @@ inline To jsCast(JSValue from)
 template<typename To, typename From>
 inline To jsDynamicCast(From* from)
 {
-    return from->inherits(std::remove_pointer<To>::type::info()) ? static_cast<To>(from) : 0;
+    if (LIKELY(from->inherits(std::remove_pointer<To>::type::info())))
+        return static_cast<To>(from);
+    return nullptr;
 }
 
 template<typename To>
 inline To jsDynamicCast(JSValue from)
 {
-    return from.isCell() && from.asCell()->inherits(std::remove_pointer<To>::type::info()) ? static_cast<To>(from.asCell()) : 0;
+    if (LIKELY(from.isCell() && from.asCell()->inherits(std::remove_pointer<To>::type::info())))
+        return static_cast<To>(from.asCell());
+    return nullptr;
 }
 
 } // namespace JSC

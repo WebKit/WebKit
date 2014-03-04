@@ -121,10 +121,10 @@ EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterfac
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     const String& str1(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     const String& str2(exec->argument(1).isEmpty() ? String() : exec->argument(1).toString(exec)->value(exec));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     ScriptExecutionContext* context = castedThis->scriptExecutionContext();
     if (!context)
@@ -301,7 +301,7 @@ EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* exec, JSObject* slotBase
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
             ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsStr1' on a non-TestInterface object."));
@@ -322,7 +322,7 @@ EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* exec, JSObject* slotBase
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
             ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsStr2' on a non-TestInterface object."));
@@ -343,7 +343,7 @@ EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* exec, JSObject* slotBase
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
             ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsStr3' on a non-TestInterface object."));
@@ -361,7 +361,7 @@ EncodedJSValue jsTestInterfaceImplementsNode(ExecState* exec, JSObject* slotBase
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
             ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsNode' on a non-TestInterface object."));
@@ -406,7 +406,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSObject* slotBa
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
             ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalStr1' on a non-TestInterface object."));
@@ -427,7 +427,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSObject* slotBa
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
             ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalStr2' on a non-TestInterface object."));
@@ -448,7 +448,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSObject* slotBa
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
             ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalStr3' on a non-TestInterface object."));
@@ -466,7 +466,7 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSObject* slotBa
 {
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestInterfacePrototype*>(slotBase)) {
             ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalNode' on a non-TestInterface object."));
@@ -518,7 +518,7 @@ void setJSTestInterfaceConstructorImplementsStaticAttr(ExecState* exec, JSObject
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return;
     TestInterface::setImplementsStaticAttr(nativeValue);
 }
@@ -531,13 +531,13 @@ void setJSTestInterfaceImplementsStr2(ExecState* exec, JSObject* /* baseObject *
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         throwVMTypeError(exec);
         return;
     }
     TestInterface& impl = castedThis->impl();
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return;
     impl.setImplementsStr2(nativeValue);
 }
@@ -550,7 +550,7 @@ void setJSTestInterfaceImplementsStr3(ExecState* exec, JSObject* /* baseObject *
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         throwVMTypeError(exec);
         return;
     }
@@ -565,13 +565,13 @@ void setJSTestInterfaceImplementsNode(ExecState* exec, JSObject* /* baseObject *
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         throwVMTypeError(exec);
         return;
     }
     TestInterface& impl = castedThis->impl();
     Node* nativeValue(toNode(value));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return;
     impl.setImplementsNode(nativeValue);
 }
@@ -584,7 +584,7 @@ void setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSObje
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return;
     TestSupplemental::setSupplementalStaticAttr(nativeValue);
 }
@@ -597,13 +597,13 @@ void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* /* baseObject
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         throwVMTypeError(exec);
         return;
     }
     TestInterface& impl = castedThis->impl();
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return;
     TestSupplemental::setSupplementalStr2(&impl, nativeValue);
 }
@@ -616,7 +616,7 @@ void setJSTestInterfaceSupplementalStr3(ExecState* exec, JSObject* /* baseObject
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         throwVMTypeError(exec);
         return;
     }
@@ -631,13 +631,13 @@ void setJSTestInterfaceSupplementalNode(ExecState* exec, JSObject* /* baseObject
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         throwVMTypeError(exec);
         return;
     }
     TestInterface& impl = castedThis->impl();
     Node* nativeValue(toNode(value));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return;
     TestSupplemental::setSupplementalNode(&impl, nativeValue);
 }
@@ -654,7 +654,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(E
 {
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (!castedThis)
+    if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
@@ -669,7 +669,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
 {
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (!castedThis)
+    if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
@@ -680,10 +680,10 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     const String& strArg(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     TestObj* objArg(toTestObj(exec->argument(1)));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
 
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(scriptContext, strArg, objArg, ec)));
@@ -698,7 +698,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(E
 {
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (!castedThis)
+    if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     return JSValue::encode(castedThis->implementsMethod3(exec));
@@ -720,7 +720,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1
 {
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (!castedThis)
+    if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
@@ -735,7 +735,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
 {
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (!castedThis)
+    if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
@@ -746,10 +746,10 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     const String& strArg(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     TestObj* objArg(toTestObj(exec->argument(1)));
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
 
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(&impl, scriptContext, strArg, objArg, ec)));
@@ -764,7 +764,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3
 {
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (!castedThis)
+    if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     return JSValue::encode(castedThis->supplementalMethod3(exec));

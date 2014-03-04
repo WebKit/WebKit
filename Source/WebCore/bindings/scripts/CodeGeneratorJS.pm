@@ -2128,7 +2128,7 @@ sub GenerateImplementation
             if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
                 if ($interfaceName eq "DOMWindow") {
                     push(@implContent, "    ${className}* castedThis = jsDynamicCast<$className*>(JSValue::decode(thisValue));\n");
-                    push(@implContent, "    if (!castedThis) {\n");
+                    push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                     push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
                     push(@implContent, "            castedThis = shell->window();\n");
                     push(@implContent, "    }\n");
@@ -2138,7 +2138,7 @@ sub GenerateImplementation
                     push(@implContent, "    UNUSED_PARAM(slotBase);\n");
                 }
                 $implIncludes{"ScriptExecutionContext.h"} = 1;
-                push(@implContent, "    if (!castedThis) {\n");
+                push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                 push(@implContent, "        if (jsDynamicCast<${className}Prototype*>(slotBase)) {\n");
                 push(@implContent, "            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
                 push(@implContent, "            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String(\"Deprecated attempt to access property '$name' on a non-$interfaceName object.\"));\n");
@@ -2345,12 +2345,12 @@ sub GenerateImplementation
             push(@implContent, "    JSValue value = JSValue::decode(encodedValue);");
             push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
             if ($interfaceName eq "DOMWindow") {
-                push(@implContent, "    if (!castedThis) {\n");
+                push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                 push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
                 push(@implContent, "            castedThis = shell->window();\n");
                 push(@implContent, "    }\n");
             }
-            push(@implContent, "    if (!castedThis) {\n");
+            push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
             push(@implContent, "        throwVMTypeError(exec);\n");
             push(@implContent, "        return;\n");
             push(@implContent, "    }\n");
@@ -2454,12 +2454,12 @@ sub GenerateImplementation
                 if (!$attribute->isStatic) {
                     push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
                     if ($interfaceName eq "DOMWindow") {
-                        push(@implContent, "    if (!castedThis) {\n");
+                        push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                         push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
                         push(@implContent, "            castedThis = shell->window();\n");
                         push(@implContent, "    }\n");
                     }
-                    push(@implContent, "    if (!castedThis) {\n");
+                    push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                     push(@implContent, "        throwVMTypeError(exec);\n");
                     push(@implContent, "        return;\n");
                     push(@implContent, "    }\n");
@@ -2528,7 +2528,7 @@ sub GenerateImplementation
                     }
 
                     push(@implContent, "    " . GetNativeTypeFromSignature($attribute->signature) . " nativeValue(" . JSValueToNative($attribute->signature, "value") . ");\n");
-                    push(@implContent, "    if (exec->hadException())\n");
+                    push(@implContent, "    if (UNLIKELY(exec->hadException()))\n");
                     push(@implContent, "        return;\n");
 
                     if ($codeGenerator->IsEnumType($type)) {
@@ -2684,16 +2684,16 @@ sub GenerateImplementation
             } else {
                 if ($interfaceName eq "DOMWindow") {
                     push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThis(exec, NotStrictMode));\n");
-                    push(@implContent, "    if (!castedThis)\n");
+                    push(@implContent, "    if (UNLIKELY(!castedThis))\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
                 } elsif ($interface->extendedAttributes->{"WorkerGlobalScope"}) {
                     push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThis(exec, NotStrictMode));\n");
-                    push(@implContent, "    if (!castedThis)\n");
+                    push(@implContent, "    if (UNLIKELY(!castedThis))\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
                 } else {
                     push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
                     push(@implContent, "    $className* castedThis = jsDynamicCast<$className*>(thisValue);\n");
-                    push(@implContent, "    if (!castedThis)\n");
+                    push(@implContent, "    if (UNLIKELY(!castedThis))\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
                 }
 
@@ -3173,7 +3173,7 @@ sub GenerateParametersCheck
             push(@$outputArray, "    XPathNSResolver* resolver = toXPathNSResolver(exec->argument($argsIndex));\n");
             push(@$outputArray, "    if (!resolver) {\n");
             push(@$outputArray, "        customResolver = JSCustomXPathNSResolver::create(exec, exec->argument($argsIndex));\n");
-            push(@$outputArray, "        if (exec->hadException())\n");
+            push(@$outputArray, "        if (UNLIKELY(exec->hadException()))\n");
             push(@$outputArray, "            return JSValue::encode(jsUndefined());\n");
             push(@$outputArray, "        resolver = customResolver.get();\n");
             push(@$outputArray, "    }\n");
@@ -3206,7 +3206,7 @@ sub GenerateParametersCheck
             my $nativeValue = "${name}NativeValue";
             push(@$outputArray, "    $argType $name = 0;\n");
             push(@$outputArray, "    double $nativeValue = exec->argument($argsIndex).toNumber(exec);\n");
-            push(@$outputArray, "    if (exec->hadException())\n");
+            push(@$outputArray, "    if (UNLIKELY(exec->hadException()))\n");
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n\n");
             push(@$outputArray, "    if (!std::isnan($nativeValue))\n");
             push(@$outputArray, "        $name = clampTo<$argType>($nativeValue);\n\n");
@@ -3231,7 +3231,7 @@ sub GenerateParametersCheck
             } else {
                 push(@$outputArray, "    Vector<$nativeElementType> $name = toNativeArguments<$nativeElementType>(exec, $argsIndex);\n");
                 # Check if the type conversion succeeded.
-                push(@$outputArray, "    if (exec->hadException())\n");
+                push(@$outputArray, "    if (UNLIKELY(exec->hadException()))\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
 
@@ -3240,7 +3240,7 @@ sub GenerateParametersCheck
 
             my $argValue = "exec->argument($argsIndex)";
             push(@$outputArray, "    const String ${name}(${argValue}.isEmpty() ? String() : ${argValue}.toString(exec)->value(exec));\n");
-            push(@$outputArray, "    if (exec->hadException())\n");
+            push(@$outputArray, "    if (UNLIKELY(exec->hadException()))\n");
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
 
             my @enumValues = $codeGenerator->ValidEnumValues($argType);
@@ -3279,7 +3279,7 @@ sub GenerateParametersCheck
             }
 
             # Check if the type conversion succeeded.
-            push(@$outputArray, "    if (exec->hadException())\n");
+            push(@$outputArray, "    if (UNLIKELY(exec->hadException()))\n");
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
 
             if ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $interfaceName =~ /List$/) {
@@ -3526,7 +3526,7 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if $raisesException;
 
         if ($codeGenerator->ExtendedAttributeContains($function->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
-            push(@implContent, $indent . "if (exec->hadException())\n");
+            push(@implContent, $indent . "if (UNLIKELY(exec->hadException()))\n");
             push(@implContent, $indent . "    return JSValue::encode(jsUndefined());\n");
         }
 
@@ -4271,7 +4271,7 @@ EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(Exec
         return throwVMError(exec, createReferenceError(exec, "Constructor associated execution context is unavailable"));
 
     AtomicString eventType = exec->argument(0).toString(exec)->value(exec);
-    if (exec->hadException())
+    if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
 
     ${interfaceName}Init eventInit;

@@ -131,7 +131,7 @@ EncodedJSValue jsTestExceptionName(ExecState* exec, JSObject* slotBase, EncodedJ
 {
     JSTestException* castedThis = jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestExceptionPrototype*>(slotBase)) {
             ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'name' on a non-TestException object."));

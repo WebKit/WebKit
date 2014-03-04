@@ -123,7 +123,7 @@ EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJ
 {
     JSattribute* castedThis = jsDynamicCast<JSattribute*>(JSValue::decode(thisValue));
     UNUSED_PARAM(slotBase);
-    if (!castedThis) {
+    if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSattributePrototype*>(slotBase)) {
             ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readonly' on a non-attribute object."));
