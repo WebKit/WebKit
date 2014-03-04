@@ -1,3 +1,16 @@
+2014-03-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        GraphicsContext::drawLineForText needs to be exported from WebCore.dylib for iOS builds
+        https://bugs.webkit.org/show_bug.cgi?id=129647
+
+        Reviewed by NOBODY (This is a build fix).
+
+        Fixing after r165025 and r165016.
+
+        No new tests as this is a build fix.
+
+        * WebCore.exp.in:
+
 2014-03-03  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Start playback button misplaced
