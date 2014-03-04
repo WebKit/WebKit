@@ -1,3 +1,30 @@
+2014-03-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Avoid too early deref caused by RemoteInspectorXPCConnection::close
+        https://bugs.webkit.org/show_bug.cgi?id=129631
+
+        Reviewed by Timothy Hatcher.
+
+        Avoid deref() too early if a client calls close(). The xpc_connection_close
+        will cause another XPC_ERROR event to come in from the queue, deref then.
+        Likewise, protect multithreaded access to m_client. If a client calls
+        close() we want to immediately clear the pointer to prevent calls to it.
+
+        Overall the multi-threading aspects of RemoteInspectorXPCConnection are
+        growing too complicated for probably little benefit. We may want to
+        clean this up later.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        * inspector/remote/RemoteInspectorXPCConnection.h:
+        * inspector/remote/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::RemoteInspectorXPCConnection):
+        (Inspector::RemoteInspectorXPCConnection::close):
+        (Inspector::RemoteInspectorXPCConnection::closeOnQueue):
+        (Inspector::RemoteInspectorXPCConnection::deserializeMessage):
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+        (Inspector::RemoteInspectorXPCConnection::sendMessage):
+
 2014-03-03  Michael Saboff  <msaboff@apple.com>
 
         AbstractMacroAssembler::CachedTempRegister should start out invalid

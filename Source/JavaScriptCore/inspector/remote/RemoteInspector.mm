@@ -265,6 +265,8 @@ void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*
 void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* connection)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+
+    ASSERT(connection == m_xpcConnection);
     if (connection != m_xpcConnection)
         return;
 
@@ -276,10 +278,8 @@ void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* connecti
 
     updateHasActiveDebugSession();
 
-    if (m_xpcConnection) {
-        m_xpcConnection->close();
-        m_xpcConnection = nullptr;
-    }
+    // The connection will close itself.
+    m_xpcConnection = nullptr;
 }
 
 void RemoteInspector::xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection*, xpc_object_t)
