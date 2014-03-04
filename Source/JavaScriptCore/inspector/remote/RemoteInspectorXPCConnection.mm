@@ -60,7 +60,7 @@ RemoteInspectorXPCConnection::RemoteInspectorXPCConnection(xpc_connection_t conn
         handleEvent(object);
     });
 
-    // Balanced by deref when the xpc_connection receives XPC_ERROR.
+    // Balanced by deref when the xpc_connection receives XPC_ERROR_CONNECTION_INVALID.
     ref();
 
     xpc_connection_resume(m_connection);
@@ -122,17 +122,21 @@ NSDictionary *RemoteInspectorXPCConnection::deserializeMessage(xpc_object_t obje
 void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)
 {
     if (xpc_get_type(object) == XPC_TYPE_ERROR) {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        if (m_client)
-            m_client->xpcConnectionFailed(this);
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            if (m_client)
+                m_client->xpcConnectionFailed(this);
 
-        m_closed = true;
-        m_client = nullptr;
-        closeOnQueue();
+            m_closed = true;
+            m_client = nullptr;
+            closeOnQueue();
+        }
 
-        // This is the last event we will ever receive from the connection.
-        // Balance the ref() in the constructor.
-        deref();
+        if (object == XPC_ERROR_CONNECTION_INVALID) {
+            // This is the last event we will ever receive from the connection.
+            // This balances the ref() in the constructor.
+            deref();
+        }
         return;
     }
 

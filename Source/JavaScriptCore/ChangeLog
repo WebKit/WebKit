@@ -1,3 +1,14 @@
+2014-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Listen for the XPC_ERROR_CONNECTION_INVALID event to deref
+        https://bugs.webkit.org/show_bug.cgi?id=129697
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::RemoteInspectorXPCConnection):
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+
 2014-03-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Merge API shims and JSLock
