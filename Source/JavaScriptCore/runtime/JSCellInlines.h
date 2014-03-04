@@ -189,9 +189,10 @@ inline const MethodTable* JSCell::methodTableForDestruction() const
 
 inline const MethodTable* JSCell::methodTable() const
 {
-    Structure* structure = this->structure();
-    if (Structure* rootStructure = structure->structure())
-        RELEASE_ASSERT(rootStructure == rootStructure->structure());
+    VM& vm = *Heap::heap(this)->vm();
+    Structure* structure = this->structure(vm);
+    if (Structure* rootStructure = structure->structure(vm))
+        RELEASE_ASSERT(rootStructure == rootStructure->structure(vm));
 
     return &structure->classInfo()->methodTable;
 }
@@ -199,8 +200,8 @@ inline const MethodTable* JSCell::methodTable() const
 inline const MethodTable* JSCell::methodTable(VM& vm) const
 {
     Structure* structure = this->structure(vm);
-    if (Structure* rootStructure = structure->structure())
-        RELEASE_ASSERT(rootStructure == rootStructure->structure());
+    if (Structure* rootStructure = structure->structure(vm))
+        RELEASE_ASSERT(rootStructure == rootStructure->structure(vm));
 
     return &structure->classInfo()->methodTable;
 }

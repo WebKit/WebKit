@@ -1,3 +1,19 @@
+2014-03-04  Andreas Kling  <akling@apple.com>
+
+        Get to Structures more efficiently in JSCell::methodTable().
+        <https://webkit.org/b/129702>
+
+        In JSCell::methodTable(), get the VM once and pass that along to
+        structure(VM&) instead of using the heavier structure().
+
+        In JSCell::methodTable(VM&), replace calls to structure() with
+        calls to structure(VM&).
+
+        Reviewed by Mark Hahnenberg.
+
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::methodTable):
+
 2014-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Listen for the XPC_ERROR_CONNECTION_INVALID event to deref
