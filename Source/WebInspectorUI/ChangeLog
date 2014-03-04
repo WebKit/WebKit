@@ -1,5 +1,16 @@
 2014-03-03  Jonathan Wells  <jonowells@apple.com>
 
+        Web Inspector: Match color of regex in source view with a popover
+        https://bugs.webkit.org/show_bug.cgi?id=129645
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-formatted-string):
+        (.console-formatted-regexp):
+
+2014-03-03  Jonathan Wells  <jonowells@apple.com>
+
         Web Inspector: Better Debugger popovers for RegExp values
         https://bugs.webkit.org/show_bug.cgi?id=129633
 

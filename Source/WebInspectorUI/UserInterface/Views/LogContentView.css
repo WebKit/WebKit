@@ -267,8 +267,15 @@
 }
 
 .console-formatted-string, .console-formatted-regexp {
-    color: rgb(196, 26, 22);
     white-space: pre;
+}
+
+.console-formatted-string {
+    color: rgb(196, 26, 22);
+}
+
+.console-formatted-regexp {
+    color: rgb(255, 88, 0);
 }
 
 .console-formatted-null, .console-formatted-undefined {
