@@ -1,3 +1,11 @@
+2014-03-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+        <rdar://problem/16197002>
+
+        * WebCore.vcxproj/WebCore.vcxproj: Exclude 64-bit assembly code when building
+        32-bit DebugSuffix target.
+
 2014-02-28  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.
