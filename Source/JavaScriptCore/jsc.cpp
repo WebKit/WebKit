@@ -25,7 +25,6 @@
 #include "APIShims.h"
 #include "ButterflyInlines.h"
 #include "BytecodeGenerator.h"
-#include "CodeCache.h"
 #include "Completion.h"
 #include "CopiedSpaceInlines.h"
 #include "ExceptionHelpers.h"
@@ -241,7 +240,6 @@ static EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState*);
 static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionClearCodeCache(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -379,7 +377,6 @@ protected:
         putDirectNativeFunction(vm, this, Identifier(&vm, "DFGTrue"), 0, functionFalse, DFGTrue, DontEnum | JSC::Function);
         
         addFunction(vm, "effectful42", functionEffectful42, 0);
-        addFunction(vm, "clearCodeCache", functionClearCodeCache, 0);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -749,13 +746,6 @@ EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*)
 EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*)
 {
     return JSValue::encode(jsNumber(42));
-}
-
-EncodedJSValue JSC_HOST_CALL functionClearCodeCache(ExecState* exec)
-{
-    if (CodeCache* cache = exec->vm().codeCache())
-        cache->clear();
-    return JSValue::encode(jsUndefined());
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog

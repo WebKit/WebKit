@@ -1179,26 +1179,18 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         if (variableObject->next())
             variableObject->globalObject()->varInjectionWatchpoint()->fireAll();
 
-        {
-            SamplingRegion samplingRegion("variable puts");
-            
-            for (unsigned i = 0; i < numVariables; ++i) {
-                const Identifier& ident = codeBlock->variable(i);
-                if (!variableObject->hasProperty(callFrame, ident)) {
-                    PutPropertySlot slot(variableObject);
-                    variableObject->methodTable()->put(variableObject, callFrame, ident, jsUndefined(), slot);
-                }
+        for (unsigned i = 0; i < numVariables; ++i) {
+            const Identifier& ident = codeBlock->variable(i);
+            if (!variableObject->hasProperty(callFrame, ident)) {
+                PutPropertySlot slot(variableObject);
+                variableObject->methodTable()->put(variableObject, callFrame, ident, jsUndefined(), slot);
             }
         }
 
-        {
-            SamplingRegion samplingRegion("function puts");
-            
-            for (int i = 0; i < numFunctions; ++i) {
-                FunctionExecutable* function = codeBlock->functionDecl(i);
-                PutPropertySlot slot(variableObject);
-                variableObject->methodTable()->put(variableObject, callFrame, function->name(), JSFunction::create(vm, function, scope), slot);
-            }
+        for (int i = 0; i < numFunctions; ++i) {
+            FunctionExecutable* function = codeBlock->functionDecl(i);
+            PutPropertySlot slot(variableObject);
+            variableObject->methodTable()->put(variableObject, callFrame, function->name(), JSFunction::create(vm, function, scope), slot);
         }
     }
 
