@@ -840,6 +840,7 @@ protected:
     AbstractMacroAssembler()
         : m_randomSource(cryptographicallyRandomNumber())
     {
+        invalidateAllTempRegisters();
     }
 
     uint32_t random()

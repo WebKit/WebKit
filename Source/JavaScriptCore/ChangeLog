@@ -1,3 +1,16 @@
+2014-03-03  Michael Saboff  <msaboff@apple.com>
+
+        AbstractMacroAssembler::CachedTempRegister should start out invalid
+        https://bugs.webkit.org/show_bug.cgi?id=129657
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::AbstractMacroAssembler):
+        - Invalidate all cached registers in constructor as we don't know the
+          contents of any register at the entry to the code we are going to
+          generate.
+
 2014-03-03  Andreas Kling  <akling@apple.com>
 
         StructureOrOffset should be fastmalloced.
