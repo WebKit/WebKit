@@ -1,3 +1,12 @@
+2014-03-03  Andreas Kling  <akling@apple.com>
+
+        StructureOrOffset should be fastmalloced.
+        <https://webkit.org/b/129640>
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/StructureIDTable.h:
+
 2014-03-03  Michael Saboff  <msaboff@apple.com>
 
         Crash in JIT code while watching a video @ storyboard.tumblr.com

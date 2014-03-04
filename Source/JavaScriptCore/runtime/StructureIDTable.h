@@ -57,6 +57,8 @@ private:
     void resize(size_t newCapacity);
     
     union StructureOrOffset {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         Structure* structure;
         StructureID offset;
     };
