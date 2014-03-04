@@ -117,6 +117,12 @@ WebInspector.Gradient = {
 
         for (var i = 0, count = stops.length; i < count; ++i) {
             var stop = stops[i];
+
+            // If one of the stops failed to parse, then this is not a valid
+            // set of components for a gradient. So the whole thing is invalid.
+            if (!stop)
+                return null;
+
             if (!stop.offset)
                 stop.offset = i / (count - 1);
         }
@@ -182,6 +188,9 @@ WebInspector.LinearGradient.linearGradientWithComponents = function(components)
             return null;
         }
         components.shift();
+    } else {
+        // We don't support any of the legacy linear gradient formats.
+        return null;
     }
 
     var stops = WebInspector.Gradient.stopsWithComponents(components);
