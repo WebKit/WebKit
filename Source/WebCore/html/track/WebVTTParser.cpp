@@ -120,7 +120,7 @@ WebVTTParser::WebVTTParser(WebVTTParserClient* client, ScriptExecutionContext* c
     , m_state(Initial)
     , m_currentStartTime(0)
     , m_currentEndTime(0)
-    , m_tokenizer(WebVTTTokenizer::create())
+    , m_tokenizer(std::make_unique<WebVTTTokenizer>())
     , m_client(client)
 {
 }

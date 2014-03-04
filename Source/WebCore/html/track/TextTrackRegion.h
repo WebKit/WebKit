@@ -35,7 +35,6 @@
 
 #include "FloatPoint.h"
 #include "TextTrack.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

@@ -32,6 +32,7 @@
 #include "CachedResourceHandle.h"
 #include "Timer.h"
 #include "WebVTTParser.h"
+#include <memory>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -56,10 +57,7 @@ class TextTrackLoader : public CachedResourceClient, private WebVTTParserClient 
     WTF_MAKE_NONCOPYABLE(TextTrackLoader); 
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<TextTrackLoader> create(TextTrackLoaderClient& client, ScriptExecutionContext* context)
-    {
-        return adoptPtr(new TextTrackLoader(client, context));
-    }
+    TextTrackLoader(TextTrackLoaderClient&, ScriptExecutionContext*);
     virtual ~TextTrackLoader();
     
     bool load(const URL&, const String& crossOriginMode);
@@ -81,8 +79,6 @@ private:
 #endif
     virtual void fileFailedToParse() override;
     
-    TextTrackLoader(TextTrackLoaderClient&, ScriptExecutionContext*);
-    
     void processNewCueData(CachedResource*);
     void cueLoadTimerFired(Timer<TextTrackLoader>*);
     void corsPolicyPreventedLoad();
@@ -90,7 +86,7 @@ private:
     enum State { Idle, Loading, Finished, Failed };
     
     TextTrackLoaderClient& m_client;
-    OwnPtr<WebVTTParser> m_cueParser;
+    std::unique_ptr<WebVTTParser> m_cueParser;
     CachedResourceHandle<CachedTextTrack> m_resource;
     ScriptExecutionContext* m_scriptExecutionContext;
     Timer<TextTrackLoader> m_cueLoadTimer;

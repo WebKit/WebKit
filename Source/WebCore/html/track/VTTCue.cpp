@@ -397,7 +397,7 @@ void VTTCue::setText(const String& text)
 void VTTCue::createWebVTTNodeTree()
 {
     if (!m_webVTTNodeTree)
-        m_webVTTNodeTree = WebVTTParser::create(0, scriptExecutionContext())->createDocumentFragmentFromCueText(m_content);
+        m_webVTTNodeTree = std::make_unique<WebVTTParser>(nullptr, scriptExecutionContext())->createDocumentFragmentFromCueText(m_content);
 }
 
 void VTTCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerNode* parent)
@@ -650,7 +650,7 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, double previousTimestam
         if (child->nodeName() == timestampTag) {
             unsigned position = 0;
             String timestamp = child->nodeValue();
-            double currentTimestamp = WebVTTParser::create(0, scriptExecutionContext())->collectTimeStamp(timestamp, &position);
+            double currentTimestamp = std::make_unique<WebVTTParser>(nullptr, scriptExecutionContext())->collectTimeStamp(timestamp, &position);
             ASSERT(currentTimestamp != -1);
             
             if (currentTimestamp > movieTime)

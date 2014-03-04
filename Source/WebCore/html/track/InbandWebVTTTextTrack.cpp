@@ -53,7 +53,7 @@ void InbandWebVTTTextTrack::parseWebVTTCueData(InbandTextTrackPrivate* trackPriv
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     if (!m_webVTTParser)
-        m_webVTTParser = WebVTTParser::create(this, scriptExecutionContext());
+        m_webVTTParser = std::make_unique<WebVTTParser>(static_cast<WebVTTParserClient*>(this), scriptExecutionContext());
     m_webVTTParser->parseBytes(data, length);
 }
 

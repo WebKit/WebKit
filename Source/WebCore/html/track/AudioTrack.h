@@ -32,7 +32,6 @@
 #include "AudioTrackPrivate.h"
 #include "ExceptionCode.h"
 #include "TrackBase.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

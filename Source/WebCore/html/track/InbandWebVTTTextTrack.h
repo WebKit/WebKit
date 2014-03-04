@@ -30,6 +30,7 @@
 
 #include "InbandTextTrack.h"
 #include "WebVTTParser.h"
+#include <memory>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -54,7 +55,7 @@ private:
     virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) override { ASSERT_NOT_REACHED(); }
     virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) override { ASSERT_NOT_REACHED(); }
 
-    OwnPtr<WebVTTParser> m_webVTTParser;
+    std::unique_ptr<WebVTTParser> m_webVTTParser;
 };
 
 } // namespace WebCore

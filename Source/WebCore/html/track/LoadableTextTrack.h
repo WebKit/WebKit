@@ -73,7 +73,7 @@ private:
 
     HTMLTrackElement* m_trackElement;
     Timer<LoadableTextTrack> m_loadTimer;
-    OwnPtr<TextTrackLoader> m_loader;
+    std::unique_ptr<TextTrackLoader> m_loader;
     URL m_url;
     bool m_isDefault;
 };

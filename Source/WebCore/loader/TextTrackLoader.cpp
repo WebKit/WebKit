@@ -91,7 +91,7 @@ void TextTrackLoader::processNewCueData(CachedResource* resource)
         return;
 
     if (!m_cueParser)
-        m_cueParser = WebVTTParser::create(this, m_scriptExecutionContext);
+        m_cueParser = std::make_unique<WebVTTParser>(static_cast<WebVTTParserClient*>(this), m_scriptExecutionContext);
 
     const char* data;
     unsigned length;

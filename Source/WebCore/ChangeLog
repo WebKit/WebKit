@@ -1,3 +1,38 @@
+2014-03-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move Source/WebCore/html/track/ code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=129666
+
+        Reviewed by Eric Carlson.
+
+        Replace uses of OwnPtr and PassOwnPtr in code under Source/WebCore/html/track/ with std::unique_ptr.
+
+        * html/track/AudioTrack.h:
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::parseWebVTTCueData):
+        * html/track/InbandWebVTTTextTrack.h:
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::loadTimerFired):
+        (WebCore::LoadableTextTrack::newCuesAvailable):
+        (WebCore::LoadableTextTrack::cueLoadingCompleted):
+        (WebCore::LoadableTextTrack::newRegionsAvailable):
+        * html/track/LoadableTextTrack.h:
+        * html/track/TextTrack.h:
+        * html/track/TextTrackCue.h:
+        * html/track/TextTrackRegion.h:
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::createWebVTTNodeTree):
+        (WebCore::VTTCue::markFutureAndPastNodes):
+        * html/track/VTTCue.h:
+        * html/track/VideoTrack.h:
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::WebVTTParser):
+        * html/track/WebVTTParser.h:
+        * html/track/WebVTTTokenizer.h:
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::processNewCueData):
+        * loader/TextTrackLoader.h:
+
 2014-03-04  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make border-radius painting device pixel aware.
