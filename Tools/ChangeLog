@@ -1,3 +1,17 @@
+2014-03-04  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Simplify the GObject DOM bindings API break check into one step
+        https://bugs.webkit.org/show_bug.cgi?id=129571
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Add the API break check to 'make check.'
+        * gtk/check-for-webkitdom-api-breaks: Added. A combination of the two removed scripts.
+        * gtk/check-gdom-symbols: Removed.
+        * gtk/webkitdom.py: Added.
+        (header_name_list_from_gtkdoc_config_file): Gets the names of all headers from the gtkdoc config file.
+        (get_all_webkitdom_symbol_files): Find the symbol files from the names.
+
 2014-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Add Jeremy Jones to the contributors list as a contributor.

@@ -732,16 +732,5 @@ if (ENABLE_WEBKIT2)
                   bindings/gobject/WebKitDOMObject.h
             DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkitdom"
     )
-
-    add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.symbols
-        DEPENDS ${GObjectDOMBindingsSymbolsFiles} ${CMAKE_SOURCE_DIR}/Tools/gtk/check-gdom-symbols
-        COMMAND ln -n -s -f ${WEBCORE_DIR}/bindings/gobject/WebKitDOM*.symbols ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}
-        COMMAND ${CMAKE_SOURCE_DIR}/Tools/gtk/check-gdom-symbols
-    )
-
-    add_custom_target(generate-gdom-symbols-file
-        DEPENDS GObjectDOMBindings ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.symbols
-    )
 endif ()
 

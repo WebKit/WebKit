@@ -480,7 +480,6 @@ DerivedSources/webkitdom/webkitdom.h: $(WebCore)/bindings/scripts/gobject-genera
 DerivedSources/webkitdom/webkitdomdefines.h: $(WebCore)/bindings/scripts/gobject-generate-headers.pl $(WebCore)/bindings/gobject/GNUmakefile.am
 	$(AM_V_GEN)echo $(gdom_class_list) | $(PERL) $< defines > $@
 
-noinst_DATA += DerivedSources/webkitdom/webkitdom.symbols
 gdom_symbol_files += $(patsubst %.h,%.symbols, $(filter DerivedSources/webkitdom/WebKitDOM%.h, $(webkitgtk_gdom_built_h_api)))
 
 $(top_builddir)/DerivedSources/webkitdom/WebKitDOMObject.symbols: $(WebCore)/bindings/gobject/WebKitDOMObject.symbols
@@ -497,9 +496,6 @@ $(top_builddir)/DerivedSources/webkitdom/WebKitDOMDeprecated.symbols: $(WebCore)
 
 DerivedSources/webkitdom/WebKitDOM%.symbols: DerivedSources/webkitdom/WebKitDOM%.h
 	@true
-
-DerivedSources/webkitdom/webkitdom.symbols: $(gdom_symbol_files) $(WebCore)/bindings/gobject/webkitdom.symbols $(WebCore)/bindings/scripts/gobject-run-api-break-test $(srcdir)/Tools/gtk/check-gdom-symbols
-	$(AM_V_GEN)$(srcdir)/Tools/gtk/check-gdom-symbols
 
 EXTRA_DIST += \
 	$(WebCore)/bindings/gobject/WebKitDOMCustom.symbols \

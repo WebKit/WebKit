@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+# Copyright (C) 2013, 2014 Igalia S.L.
+# Copyright (C) 2013 Gustavo Noronha Silva <gns@gnome.org>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+import argparse
+import common
+import os
+import sys
+import webkitdom
+
+EXPECTED_API_PATH = common.top_level_path('Source', 'WebCore', 'bindings', 'gobject', 'webkitdom.symbols')
+
+def read_built_api():
+    apis = set()
+    for file_path in webkitdom.get_all_webkitdom_symbol_files():
+        with open(file_path) as file_handle:
+            apis.update(set(file_handle.readlines()))
+    return apis
+
+def read_expected_api():
+    with open(EXPECTED_API_PATH) as file_handle:
+        return set(file_handle.readlines())
+
+def write_expected_api(new_expected_api):
+    with open(EXPECTED_API_PATH, 'w') as file_handle:
+        file_handle.writelines(new_expected_api)
+
+def check_api(options, expected_api, built_api):
+    missing_api = expected_api.difference(built_api)
+    new_api = built_api.difference(expected_api)
+
+    if missing_api:
+        sys.stderr.write("Missing API (API break!) detected in GObject DOM bindings\n")
+        sys.stderr.write("    %s\n" % "    ".join(missing_api))
+        sys.stderr.flush()
+
+    if new_api:
+        sys.stdout.write("New API detected in GObject DOM bindings\n")
+        sys.stdout.write("    %s\n" % "    ".join(new_api))
+
+    if missing_api:
+        # This test can give false positives because the GObject
+        # DOM bindings API varies depending on the compilation options.
+        # So this shouldn't be made fatal until we figure out a way to handle it.
+        # See https://bugs.webkit.org/show_bug.cgi?id=121481
+        sys.stderr.write("Re-add the missing API and rerun the %s.\n" % __file__)
+        return 0
+
+    if new_api:
+        if options.reset_results:
+            sys.stdout.write("Resetting expected API\n")
+            write_expected_api(built_api)
+        else:
+            sys.stdout.write("API compatible changes found in GObject DOM bindings.\n")
+            sys.stdout.write("To update the symbols file, run %s --reset-results.\n" % __file__)
+
+    return 0
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Detect API breakage in the WebKitGTK+ GObject DOM bindings.')
+    parser.add_argument('--reset-results', action='store_true',
+                        help='When specified, rest the expected results file with the built results.')
+    options = parser.parse_args()
+    sys.exit(check_api(options, read_expected_api(), read_built_api()))

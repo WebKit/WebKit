@@ -267,6 +267,7 @@ endif
 
 check-local:
 	$(top_srcdir)/Tools/Scripts/run-gtk-tests --timeout=-1
+	$(top_srcdir)/Tools/gtk/check-for-webkitdom-api-breaks
 
 EXTRA_DIST += \
 	Tools/jhbuild/jhbuildutils.py \

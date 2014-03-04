@@ -1,4 +1,5 @@
 EXTRA_DIST += \
+	Tools/gtk/check-for-webkitdom-api-breaks \
 	Tools/gtk/common.py \
 	Tools/gtk/generate-feature-defines-files \
 	Tools/gtk/generate-gtkdoc \

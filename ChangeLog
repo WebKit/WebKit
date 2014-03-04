@@ -1,5 +1,15 @@
 2014-03-04  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] Simplify the GObject DOM bindings API break check into one step
+        https://bugs.webkit.org/show_bug.cgi?id=129571
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/PlatformGTK.cmake: We don't need to run the API break check before gtkdoc generation.
+        Add the check to 'make check.'
+
+2014-03-04  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK][CMake] ENABLE_NAVIGATOR_CONTENT_UTILS is mistakenly enabled for the CMake build
         https://bugs.webkit.org/show_bug.cgi?id=129502
 
