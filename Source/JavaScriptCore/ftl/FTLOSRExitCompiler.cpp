@@ -249,7 +249,8 @@ static void compileStub(
     jit.add32(
         MacroAssembler::TrustedImm32(-codeBlock->numParameters()), GPRInfo::regT2,
         GPRInfo::regT3);
-    MacroAssembler::Jump arityIntact = jit.branchTest32(MacroAssembler::Zero, GPRInfo::regT3);
+    MacroAssembler::Jump arityIntact = jit.branch32(
+        MacroAssembler::GreaterThanOrEqual, GPRInfo::regT3, MacroAssembler::TrustedImm32(0));
     jit.neg32(GPRInfo::regT3);
     jit.add32(MacroAssembler::TrustedImm32(1 + stackAlignmentRegisters() - 1), GPRInfo::regT3);
     jit.and32(MacroAssembler::TrustedImm32(-stackAlignmentRegisters()), GPRInfo::regT3);
@@ -303,8 +304,10 @@ static void compileStub(
     
     // We need to make sure that we return into the register restoration thunk. This works
     // differently depending on whether or not we had arity issues.
-    MacroAssembler::Jump arityIntactForReturnPC =
-        jit.branchTest32(MacroAssembler::Zero, GPRInfo::regT3);
+    MacroAssembler::Jump arityIntactForReturnPC = jit.branch32(
+        MacroAssembler::GreaterThanOrEqual,
+        CCallHelpers::payloadFor(JSStack::ArgumentCount),
+        MacroAssembler::TrustedImm32(codeBlock->numParameters()));
     
     // The return PC in the call frame header points at exactly the right arity restoration
     // thunk. We don't want to change that. But the arity restoration thunk's frame has a

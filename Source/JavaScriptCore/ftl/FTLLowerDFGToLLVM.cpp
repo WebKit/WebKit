@@ -303,6 +303,9 @@ private:
         case GetMyArgumentsLength:
             compileGetMyArgumentsLength();
             break;
+        case GetMyArgumentByVal:
+            compileGetMyArgumentByVal();
+            break;
         case ZombieHint:
             compileZombieHint();
             break;
@@ -1847,16 +1850,46 @@ private:
     
     void compileGetMyArgumentsLength() 
     {
-        CodeOrigin codeLocation = m_node->origin.semantic;
-        if (!isEmptySpeculation(
-            m_state.variables().operand(
-                m_graph.argumentsRegisterFor(m_node->origin.semantic)).m_type)) {
-            VirtualRegister argsReg = m_graph.machineArgumentsRegisterFor(codeLocation);
-            speculate(ArgumentsEscaped, noValue(), 0, m_out.notZero64(m_out.load64(addressFor(argsReg))));
-        }
+        checkArgumentsNotCreated();
 
-        RELEASE_ASSERT(!codeLocation.inlineCallFrame);
+        RELEASE_ASSERT(!m_node->origin.semantic.inlineCallFrame);
         setInt32(m_out.add(m_out.load32NonNegative(payloadFor(JSStack::ArgumentCount)), m_out.constInt32(-1)));
+    }
+    
+    void compileGetMyArgumentByVal()
+    {
+        checkArgumentsNotCreated();
+        
+        CodeOrigin codeOrigin = m_node->origin.semantic;
+        
+        LValue zeroBasedIndex = lowInt32(m_node->child1());
+        LValue oneBasedIndex = m_out.add(zeroBasedIndex, m_out.int32One);
+        
+        LValue limit;
+        if (codeOrigin.inlineCallFrame)
+            limit = m_out.constInt32(codeOrigin.inlineCallFrame->arguments.size());
+        else
+            limit = m_out.load32(payloadFor(JSStack::ArgumentCount));
+        
+        speculate(Uncountable, noValue(), 0, m_out.aboveOrEqual(oneBasedIndex, limit));
+        
+        SymbolTable* symbolTable = m_graph.baselineCodeBlockFor(codeOrigin)->symbolTable();
+        if (symbolTable->slowArguments()) {
+            // FIXME: FTL should support activations.
+            // https://bugs.webkit.org/show_bug.cgi?id=129576
+            
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        
+        TypedPointer base;
+        if (codeOrigin.inlineCallFrame)
+            base = addressFor(codeOrigin.inlineCallFrame->arguments[1].virtualRegister());
+        else
+            base = addressFor(virtualRegisterForArgument(1));
+        
+        LValue pointer = m_out.baseIndex(
+            base.value(), m_out.zeroExt(zeroBasedIndex, m_out.intPtr), ScaleEight);
+        setJSValue(m_out.load64(TypedPointer(m_heaps.variables.atAnyIndex(), pointer)));
     }
 
     void compileGetArrayLength()
@@ -3686,8 +3719,7 @@ private:
             m_state.variables().operand(
                 m_graph.argumentsRegisterFor(m_node->origin.semantic)).m_type));
         
-        VirtualRegister reg = m_graph.machineArgumentsRegisterFor(m_node->origin.semantic);
-        speculate(ArgumentsEscaped, noValue(), 0, m_out.notZero64(m_out.load64(addressFor(reg))));
+        checkArgumentsNotCreated();
     }
     
     void compileCountExecution()
@@ -4428,6 +4460,19 @@ private:
         
         m_out.appendTo(continuation, lastNext);
         return m_out.phi(m_out.int32, fastResult, slowResult);
+    }
+    
+    void checkArgumentsNotCreated()
+    {
+        CodeOrigin codeOrigin = m_node->origin.semantic;
+        VirtualRegister argumentsRegister = m_graph.argumentsRegisterFor(codeOrigin);
+        if (isEmptySpeculation(m_state.variables().operand(argumentsRegister).m_type))
+            return;
+        
+        VirtualRegister argsReg = m_graph.machineArgumentsRegisterFor(codeOrigin);
+        speculate(
+            ArgumentsEscaped, noValue(), 0,
+            m_out.notZero64(m_out.load64(addressFor(argsReg))));
     }
     
     void speculate(

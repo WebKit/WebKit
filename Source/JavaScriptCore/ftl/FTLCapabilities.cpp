@@ -141,6 +141,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MultiPutByOffset:
     case ToPrimitive:
     case PhantomArguments:
+    case GetMyArgumentByVal:
         // These are OK.
         break;
     case PutByIdDirect:
@@ -296,6 +297,8 @@ CapabilityLevel canCompile(Graph& graph)
         // Need this because although we also don't support
         // CreateActivation/TearOffActivation, we might not see those nodes in case of
         // OSR entry.
+        // FIXME: Support activations.
+        // https://bugs.webkit.org/show_bug.cgi?id=129576
         if (verboseCapabilities())
             dataLog("FTL rejecting ", *graph.m_codeBlock, " because it uses activations.\n");
         return CannotCompile;

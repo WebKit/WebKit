@@ -1,3 +1,36 @@
+2014-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        GetMyArgumentByVal in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=128850
+
+        Reviewed by Oliver Hunt.
+        
+        This would have been easy if the OSR exit compiler's arity checks hadn't been wrong.
+        They checked arity by doing "exec->argumentCount == codeBlock->numParameters", which
+        caused it to think that the arity check had failed if the caller had passed more
+        arguments than needed. This would cause the call frame copying to sort of go into
+        reverse (because the amount-by-which-we-failed-arity would have opposite sign,
+        throwing off a bunch of math) and the stack would end up being corrupted.
+        
+        The bug was revealed by two existing tests although as far as I could tell, neither
+        test was intending to cover this case directly. So, I added a new test.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentsLength):
+        (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckArgumentsNotCreated):
+        (JSC::FTL::LowerDFGToLLVM::checkArgumentsNotCreated):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLState.h:
+        * tests/stress/exit-from-ftl-when-caller-passed-extra-args-then-use-function-dot-arguments.js: Added.
+        * tests/stress/ftl-get-my-argument-by-val-inlined-and-not-inlined.js: Added.
+        * tests/stress/ftl-get-my-argument-by-val-inlined.js: Added.
+        * tests/stress/ftl-get-my-argument-by-val.js: Added.
+
 2014-03-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Build the Udis86 disassembler
