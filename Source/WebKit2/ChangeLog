@@ -1,3 +1,14 @@
+2014-03-03  Sam Weinig  <sam@webkit.org>
+
+        Fix ASSERT and leaks introduced in recent "Support IOS Accessibility in WK2" patch
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _accessibilityRegisterUIProcessTokens]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformInitializeAccessibility):
+
 2014-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Composited masks not working on iOS after r164890 

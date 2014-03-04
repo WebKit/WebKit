@@ -91,10 +91,10 @@ void WebPage::platformInitialize()
 
 void WebPage::platformInitializeAccessibility()
 {
-    m_mockAccessibilityElement = [[[WKAccessibilityWebPageObject alloc] init] autorelease];
+    m_mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
     [m_mockAccessibilityElement setWebPage:this];
     
-    RetainPtr<CFUUIDRef> uuid = CFUUIDCreate(kCFAllocatorDefault);
+    RetainPtr<CFUUIDRef> uuid = adoptCF(CFUUIDCreate(kCFAllocatorDefault));
     NSData *remoteToken = WKAXRemoteToken(uuid.get());
     
     IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
