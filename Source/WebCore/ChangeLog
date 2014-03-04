@@ -1,3 +1,9 @@
+2014-03-03  Sam Weinig  <sam@webkit.org>
+
+        Fix the iOS Simulator build.
+
+        * WebCore.exp.in:
+
 2014-03-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Space between double underlines does not scale with font size
