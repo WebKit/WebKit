@@ -1,3 +1,27 @@
+2014-03-03  David Kilzer  <ddkilzer@apple.com>
+
+        SVGPropertyTearOffs should detachChildren before deleting its value.
+        <http://webkit.org/b/129618>
+        <rdar://problem/15661617>
+
+        Reviewed by Maciej Stachowiak.
+
+        Merged from Blink (patch by kouhei@chromium.org):
+        https://src.chromium.org/viewvc/blink?revision=158563&view=revision
+        http://crbug.com/296276
+
+        Test: svg/transforms/svg-matrix-tearoff-crash.html
+
+        NOTE: The test does not reproduce a crash on WebKit using
+        JavaScriptCore.
+
+        * svg/properties/SVGPropertyTearOff.h:
+        (WebCore::SVGPropertyTearOff::setValue):
+        (WebCore::SVGPropertyTearOff::~SVGPropertyTearOff):
+        - Call detachChildren() if m_value is a copy.  The original
+          Blink patch did not modify the destructor code path, although
+          that seems obvious via code inspection.
+
 2014-03-04  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Incorrect repaint rect cuts off content's right edge after move.
