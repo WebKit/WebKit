@@ -96,3 +96,6 @@ webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ ImageOnlyFailure ]
 webkit.org/b/129327 inspector-protocol/indexeddb/basics.html [ Pass Failure ]
 
 webkit.org/b/129331 inspector-protocol/page/deny-X-FrameOption.html [ Pass Failure ]
+
+webkit.org/b/129639 inspector-protocol/dom/dom-search-crash.html [ Skip ]
+webkit.org/b/129642 inspector/test-harness-trivially-works.html [ Skip ]

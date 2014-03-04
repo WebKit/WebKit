@@ -1,3 +1,12 @@
+2014-03-04  Brian Burg  <bburg@apple.com>
+
+        Unreviewed gardening. Skip inspector tests that are still flaky.
+
+        Skip inspector-protocol/dom/dom-search-crash.html (tracked by https://webkit.org/b/129639).
+        Skip inspector/test-harness-trivially-works.html (tracked by https://webkit.org/b/129642).
+
+        * TestExpectations:
+
 2014-03-04  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Incorrect repaint rect cuts off content's right edge after move.
