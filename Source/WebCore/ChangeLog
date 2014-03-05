@@ -1,3 +1,37 @@
+2014-03-05  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Scrollable regions
+        https://bugs.webkit.org/show_bug.cgi?id=129301
+
+        Reviewed by David Hyatt.
+
+        Named flow fragments do not inherit the overflow property from the fragment container.
+        When asked if the flow thread content should be clipped, the named flow fragments
+        will respond using the overflow property of the named flow fragment container.
+
+        When painting the flow thread layer inside the region, the scrolled content offset of
+        the region must be used to offset the flow thread's layer.
+
+        Tests: fast/regions/scrollable-last-region.html
+               fast/regions/scrollable-single-region-bt.html
+               fast/regions/scrollable-single-region-lr.html
+               fast/regions/scrollable-single-region-relative-element.html
+               fast/regions/scrollable-single-region-rl.html
+               fast/regions/scrollable-single-region.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::mapLayerClipRectsToFragmentationLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::createStyle):
+        (WebCore::RenderNamedFlowFragment::shouldClipFlowThreadContent):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::shouldClipFlowThreadContent):
+        * rendering/RenderRegion.h:
+
 2014-03-05  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Device pixel round accumulated subpixel value when the RenderLayer with transform paints its content.

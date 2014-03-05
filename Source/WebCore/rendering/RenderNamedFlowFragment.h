@@ -66,6 +66,8 @@ public:
 
     RenderBlockFlow& fragmentContainer() const;
     RenderLayer& fragmentContainerLayer() const;
+    
+    virtual bool shouldClipFlowThreadContent() const override;
 
     bool isPseudoElementRegion() const { return parent() && parent()->isPseudoElement(); }
 

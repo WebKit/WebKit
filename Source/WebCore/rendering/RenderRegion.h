@@ -77,7 +77,7 @@ public:
 
     bool isFirstRegion() const;
     bool isLastRegion() const;
-    bool shouldClipFlowThreadContent() const;
+    virtual bool shouldClipFlowThreadContent() const;
 
     // These methods represent the width and height of a "page" and for a RenderRegion they are just the
     // content width and content height of a region. For RenderRegionSets, however, they will be the width and

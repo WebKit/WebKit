@@ -62,8 +62,6 @@ PassRef<RenderStyle> RenderNamedFlowFragment::createStyle(const RenderStyle& par
     style.get().setFlowThread(parentStyle.flowThread());
     style.get().setRegionThread(parentStyle.regionThread());
     style.get().setRegionFragment(parentStyle.regionFragment());
-    style.get().setOverflowX(parentStyle.overflowX());
-    style.get().setOverflowY(parentStyle.overflowY());
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     style.get().setShapeInside(parentStyle.shapeInside());
 #endif
@@ -245,6 +243,14 @@ RenderLayer& RenderNamedFlowFragment::fragmentContainerLayer() const
 {
     ASSERT(fragmentContainer().layer());
     return *fragmentContainer().layer();
+}
+
+bool RenderNamedFlowFragment::shouldClipFlowThreadContent() const
+{
+    if (fragmentContainer().hasOverflowClip())
+        return true;
+    
+    return isLastRegion() && (style().regionFragment() == BreakRegionFragment);
 }
 
 void RenderNamedFlowFragment::layoutBlock(bool relayoutChildren, LayoutUnit)

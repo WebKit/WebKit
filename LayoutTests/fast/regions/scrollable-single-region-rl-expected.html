@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html style="font: 16px/1.25 monospace; font-family: Ahem">
+    <head>
+        <script>
+            function testScroll()
+            {
+                var region = document.getElementById("region");
+                region.scrollLeft -= 350;
+            }
+        </script>
+
+        <style>
+            html {
+                -webkit-writing-mode: vertical-rl;
+            }
+
+            #container {
+                border: thick solid green;
+                width: 600px;
+            }
+
+            #region {
+                width: 300px;
+                height: 400px;
+                border: 2px solid red;
+                margin: 10px;
+                padding: 35px;
+                padding-right: 45px; 
+                overflow-x: scroll;
+            }
+
+            .normalText {
+                font-family: Arial;
+            }
+        </style>
+    </head>
+
+    <body onload="testScroll()">
+        <a class="normalText" href="https://bugs.webkit.org/show_bug.cgi?id=129301">[CSS Regions] Scrollable regions</a>
+        <p class="normalText">This test passes if the <span style="color:red">region</span> properly scrolls its <span style="color:green">content</span>.</p>
+
+        <div id="region">
+            <div id="container">
+                <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum, sapien vitae faucibus suscipit, massa urna sagittis libero, ac imperdiet elit lacus a ligula. Mauris a orci sem. Nullam ullamcorper ornare porttitor. Morbi laoreet pellentesque diam, vitae hendrerit sem fringilla id. Maecenas rutrum lacinia lobortis. Praesent elit lectus, porttitor sed semper vel, fringilla id dolor. Sed lacus nisl, rutrum sit amet euismod a, vulputate quis elit. Fusce commodo dui quis lacus viverra vel egestas velit tempus. Donec ut sapien sit amet purus luctus fermentum. Donec eleifend pretium neque quis bibendum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nam congue dapibus mi, id ultricies est sagittis et. Integer posuere, eros vitae laoreet congue, tortor purus euismod nibh, eu porta purus arcu id turpis. Donec vitae ultricies nibh. Nullam in urna dolor, at fringilla lorem. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+                <div style="color:red">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum, sapien vitae faucibus suscipit, massa urna sagittis libero, ac imperdiet elit lacus a ligula. Mauris a orci sem. Nullam ullamcorper ornare porttitor. Morbi laoreet pellentesque diam, vitae hendrerit sem fringilla id. Maecenas rutrum lacinia lobortis. Praesent elit lectus, porttitor sed semper vel, fringilla id dolor. Sed lacus nisl, rutrum sit amet euismod a, vulputate quis elit. Fusce commodo dui quis lacus viverra vel egestas velit tempus. Donec ut sapien sit amet purus luctus fermentum. Donec eleifend pretium neque quis bibendum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nam congue dapibus mi, id ultricies est sagittis et. Integer posuere, eros vitae laoreet congue, tortor purus euismod nibh, eu porta purus arcu id turpis. Donec vitae ultricies nibh. Nullam in urna dolor, at fringilla lorem. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+            </div>
+        </div>
+    </body>
+</html>

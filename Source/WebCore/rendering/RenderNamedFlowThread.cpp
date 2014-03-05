@@ -298,6 +298,17 @@ LayoutRect RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment(c
     // Now flip it again.
     flipForWritingModeLocalCoordinates(visualOverflowRect);
     
+    // Take the scrolled offset of the region into consideration.
+    RenderBlockFlow& fragmentContainer = fragment.fragmentContainer();
+    if (fragmentContainer.hasOverflowClip()) {
+        IntSize scrolledContentOffset = fragmentContainer.scrolledContentOffset();
+        if (style().isFlippedBlocksWritingMode())
+            scrolledContentOffset = -scrolledContentOffset;
+        
+        visualOverflowRect.inflateX(scrolledContentOffset.width());
+        visualOverflowRect.inflateY(scrolledContentOffset.height());
+    }
+    
     // Layers are in physical coordinates so the origin must be moved to the physical top-left of the flowthread.
     if (style().isFlippedBlocksWritingMode()) {
         if (style().isHorizontalWritingMode())

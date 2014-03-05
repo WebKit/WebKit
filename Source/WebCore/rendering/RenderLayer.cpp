@@ -5290,7 +5290,8 @@ void RenderLayer::mapLayerClipRectsToFragmentationLayer(RenderNamedFlowFragment*
 
     LayoutPoint portionLocation = flowThreadPortionRect.location();
     LayoutRect regionContentBox = namedFlowFragment->fragmentContainer().contentBoxRect();
-    LayoutSize moveOffset = portionLocation - regionContentBox.location();
+    IntSize scrolledContentOffset = namedFlowFragment->fragmentContainer().hasOverflowClip() ? namedFlowFragment->fragmentContainer().scrolledContentOffset() : IntSize();
+    LayoutSize moveOffset = portionLocation - regionContentBox.location() + scrolledContentOffset;
 
     ClipRect newOverflowClipRect = clipRects.overflowClipRect();
     newOverflowClipRect.move(moveOffset);
@@ -6786,6 +6787,9 @@ void RenderLayer::paintNamedFlowThreadInsideRegion(GraphicsContext* context, Ren
 {
     LayoutRect regionContentBox = toRenderBox(region->layerOwner()).contentBoxRect();
     LayoutSize moveOffset = region->flowThreadPortionLocation() - (paintOffset + regionContentBox.location());
+    if (region->fragmentContainer().hasOverflowClip())
+        moveOffset += region->fragmentContainer().scrolledContentOffset();
+    
     IntPoint adjustedPaintOffset = roundedIntPoint(-moveOffset);
     paintDirtyRect.move(moveOffset);
 

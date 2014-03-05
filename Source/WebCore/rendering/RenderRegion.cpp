@@ -202,11 +202,7 @@ bool RenderRegion::isLastRegion() const
 
 bool RenderRegion::shouldClipFlowThreadContent() const
 {
-    if (hasOverflowClip())
-        return true;
-
-    // regionFragment is CSSRegions specific therefore we take it into account only in these cases.
-    return isRenderNamedFlowFragment() ? isLastRegion() && style().regionFragment() == BreakRegionFragment : false;
+    return hasOverflowClip();
 }
 
 void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
