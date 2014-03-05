@@ -432,11 +432,6 @@ private:
                 fixEdge<ObjectUse>(node->child2());
                 break;
             }
-            if (node->child1()->shouldSpeculateMisc() && node->child2()->shouldSpeculateMisc()) {
-                fixEdge<MiscUse>(node->child1());
-                fixEdge<MiscUse>(node->child2());
-                break;
-            }
             break;
         }
 
@@ -457,7 +452,7 @@ private:
         case GetByVal: {
             node->setArrayMode(
                 node->arrayMode().refine(
-                    m_graph, node,
+                    m_graph, node->origin.semantic,
                     node->child1()->prediction(),
                     node->child2()->prediction(),
                     SpecNone, node->flags()));
@@ -515,7 +510,7 @@ private:
 
             node->setArrayMode(
                 node->arrayMode().refine(
-                    m_graph, node,
+                    m_graph, node->origin.semantic,
                     child1->prediction(),
                     child2->prediction(),
                     child3->prediction()));
@@ -601,7 +596,7 @@ private:
             // that would break things.
             node->setArrayMode(
                 node->arrayMode().refine(
-                    m_graph, node,
+                    m_graph, node->origin.semantic,
                     node->child1()->prediction() & SpecCell,
                     SpecInt32,
                     node->child2()->prediction()));
@@ -1755,7 +1750,7 @@ private:
         }
             
         arrayMode = arrayMode.refine(
-            m_graph, node, node->child1()->prediction(), node->prediction());
+            m_graph, node->origin.semantic, node->child1()->prediction(), node->prediction());
             
         if (arrayMode.type() == Array::Generic) {
             // Check if the input is something that we can't get array length for, but for which we

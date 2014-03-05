@@ -1,3 +1,47 @@
+2014-03-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r165085.
+        http://trac.webkit.org/changeset/165085
+        https://bugs.webkit.org/show_bug.cgi?id=129729
+
+        Broke imported/w3c/html-templates/template-element/template-
+        content.html (Requested by ap on #webkit).
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationToAbbreviatedString):
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine):
+        * dfg/DFGArrayMode.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToMakeGetArrayLength):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateBoolean):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        * tests/stress/float32-array-out-of-bounds.js: Removed.
+        * tests/stress/weird-equality-folding-cases.js: Removed.
+
 2014-03-04  Brian Burg  <bburg@apple.com>
 
         Inspector does not restore breakpoints after a page reload

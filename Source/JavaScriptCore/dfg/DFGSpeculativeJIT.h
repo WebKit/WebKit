@@ -1985,7 +1985,6 @@ public:
     void compileStringEquality(Node*);
     void compileStringIdentEquality(Node*);
     void compileStringZeroLength(Node*);
-    void compileMiscStrictEq(Node*);
 
     void emitObjectOrOtherBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
     void emitBranch(Node*);
@@ -2204,8 +2203,6 @@ public:
     void speculateStringOrStringObject(Edge);
     void speculateNotCell(Edge);
     void speculateOther(Edge);
-    void speculateMisc(Edge, JSValueRegs);
-    void speculateMisc(Edge);
     void speculate(Node*, Edge);
     
     JITCompiler::Jump jumpSlowForUnwantedArrayMode(GPRReg tempWithIndexingTypeReg, ArrayMode, IndexingType);

@@ -613,22 +613,6 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq(Node* node, bool invert)
     booleanResult(resultPayloadGPR, node, UseChildrenCalledExplicitly);
 }
 
-void SpeculativeJIT::compileMiscStrictEq(Node* node)
-{
-    JSValueOperand op1(this, node->child1(), ManualOperandSpeculation);
-    JSValueOperand op2(this, node->child2(), ManualOperandSpeculation);
-    GPRTemporary result(this);
-    
-    speculateMisc(node->child1(), op1.jsValueRegs());
-    speculateMisc(node->child2(), op2.jsValueRegs());
-    
-    m_jit.move(TrustedImm32(0), result.gpr());
-    JITCompiler::Jump notEqual = m_jit.branch32(JITCompiler::NotEqual, op1.tagGPR(), op2.tagGPR());
-    m_jit.compare32(JITCompiler::Equal, op1.payloadGPR(), op2.payloadGPR(), result.gpr());
-    notEqual.link(&m_jit);
-    booleanResult(result.gpr(), node);
-}
-
 void SpeculativeJIT::emitCall(Node* node)
 {
     if (node->op() != Call)

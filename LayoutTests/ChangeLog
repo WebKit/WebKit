@@ -1,3 +1,19 @@
+2014-03-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r165085.
+        http://trac.webkit.org/changeset/165085
+        https://bugs.webkit.org/show_bug.cgi?id=129729
+
+        Broke imported/w3c/html-templates/template-element/template-
+        content.html (Requested by ap on #webkit).
+
+        * js/regress/fold-strict-eq-expected.txt: Removed.
+        * js/regress/fold-strict-eq.html: Removed.
+        * js/regress/misc-strict-eq-expected.txt: Removed.
+        * js/regress/misc-strict-eq.html: Removed.
+        * js/regress/script-tests/fold-strict-eq.js: Removed.
+        * js/regress/script-tests/misc-strict-eq.js: Removed.
+
 2014-03-04  Zalan Bujtas  <zalan@apple.com>
 
         Enable device pixel repaint rect tracking.

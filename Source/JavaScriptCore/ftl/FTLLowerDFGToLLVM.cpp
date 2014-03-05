@@ -559,10 +559,6 @@ private:
         case ForceOSRExit:
             compileForceOSRExit();
             break;
-        case Throw:
-        case ThrowReferenceError:
-            compileThrow();
-            break;
         case InvalidationPoint:
             compileInvalidationPoint();
             break;
@@ -595,9 +591,6 @@ private:
         case FunctionReentryWatchpoint:
         case TypedArrayWatchpoint:
         case AllocationProfileWatchpoint:
-            break;
-        case Unreachable:
-            RELEASE_ASSERT_NOT_REACHED();
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -3369,8 +3362,7 @@ private:
         if (m_node->isBinaryUseKind(Int32Use)
             || m_node->isBinaryUseKind(MachineIntUse)
             || m_node->isBinaryUseKind(NumberUse)
-            || m_node->isBinaryUseKind(ObjectUse)
-            || m_node->isBinaryUseKind(BooleanUse)) {
+            || m_node->isBinaryUseKind(ObjectUse)) {
             compileCompareStrictEq();
             return;
         }
@@ -3430,21 +3422,6 @@ private:
                 m_out.equal(
                     lowNonNullObject(m_node->child1()),
                     lowNonNullObject(m_node->child2())));
-            return;
-        }
-        
-        if (m_node->isBinaryUseKind(BooleanUse)) {
-            setBoolean(
-                m_out.equal(lowBoolean(m_node->child1()), lowBoolean(m_node->child2())));
-            return;
-        }
-        
-        if (m_node->isBinaryUseKind(MiscUse)) {
-            LValue left = lowJSValue(m_node->child1(), ManualOperandSpeculation);
-            LValue right = lowJSValue(m_node->child2(), ManualOperandSpeculation);
-            FTL_TYPE_CHECK(jsValueValue(left), m_node->child1(), SpecMisc, isNotMisc(left));
-            FTL_TYPE_CHECK(jsValueValue(right), m_node->child2(), SpecMisc, isNotMisc(right));
-            setBoolean(m_out.equal(left, right));
             return;
         }
         
@@ -3712,11 +3689,6 @@ private:
     void compileForceOSRExit()
     {
         terminate(InadequateCoverage);
-    }
-    
-    void compileThrow()
-    {
-        terminate(Uncountable);
     }
     
     void compileInvalidationPoint()
@@ -4991,16 +4963,6 @@ private:
         return m_out.testIsZero64(jsValue, m_tagMask);
     }
     
-    LValue isNotMisc(LValue value)
-    {
-        return m_out.above(value, m_out.constInt64(TagBitTypeOther | TagBitBool | TagBitUndefined));
-    }
-    
-    LValue isMisc(LValue value)
-    {
-        return m_out.bitNot(isNotMisc(value));
-    }
-    
     LValue isNotBoolean(LValue jsValue)
     {
         return m_out.testNonZero64(
@@ -5083,9 +5045,6 @@ private:
             break;
         case NotCellUse:
             speculateNotCell(edge);
-            break;
-        case MiscUse:
-            speculateMisc(edge);
             break;
         default:
             dataLog("Unsupported speculation use kind: ", edge.useKind(), "\n");
@@ -5362,15 +5321,6 @@ private:
         
         LValue value = lowJSValue(edge);
         typeCheck(jsValueValue(value), edge, ~SpecCell, isCell(value));
-    }
-    
-    void speculateMisc(Edge edge)
-    {
-        if (!m_interpreter.needsTypeCheck(edge))
-            return;
-        
-        LValue value = lowJSValue(edge);
-        typeCheck(jsValueValue(value), edge, SpecMisc, isNotMisc(value));
     }
     
     bool masqueradesAsUndefinedWatchpointIsStillValid()
