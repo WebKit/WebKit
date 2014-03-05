@@ -374,11 +374,7 @@ inline UChar InlineIterator::characterAt(unsigned index) const
     if (!m_obj || !m_obj->isText())
         return 0;
 
-    RenderText* text = toRenderText(m_obj);
-    if (index >= text->textLength())
-        return 0;
-
-    return text->characterAt(index);
+    return toRenderText(m_obj)->characterAt(index);
 }
 
 inline UChar InlineIterator::current() const

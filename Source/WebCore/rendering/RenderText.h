@@ -70,8 +70,9 @@ public:
     const LChar* characters8() const { return m_text.impl()->characters8(); }
     const UChar* characters16() const { return m_text.impl()->characters16(); }
     const UChar* characters() const { return m_text.characters(); }
-    UChar characterAt(unsigned i) const { return is8Bit() ? characters8()[i] : characters16()[i]; }
-    UChar operator[](unsigned i) const { return characterAt(i); }
+    UChar characterAt(unsigned) const; 
+    UChar uncheckedCharacterAt(unsigned) const; 
+    UChar operator[](unsigned i) const { return uncheckedCharacterAt(i); }
     unsigned textLength() const { return m_text.length(); } // non virtual implementation of length()
     void positionLineBox(InlineBox*);
 
@@ -197,6 +198,20 @@ private:
     InlineTextBox* m_firstTextBox;
     InlineTextBox* m_lastTextBox;
 };
+
+inline UChar RenderText::uncheckedCharacterAt(unsigned i) const
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(i < textLength());
+    return is8Bit() ? characters8()[i] : characters16()[i];
+}
+
+inline UChar RenderText::characterAt(unsigned i) const
+{
+    if (i >= textLength())
+        return 0;
+
+    return uncheckedCharacterAt(i);
+}
 
 inline RenderText* toRenderText(RenderObject* object)
 { 
