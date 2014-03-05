@@ -5172,15 +5172,6 @@ private:
         }
     }
     
-    LValue hasClassInfo(LValue cell, const ClassInfo* classInfo)
-    {
-        return m_out.equal(
-            m_out.loadPtr(
-                loadStructure(cell),
-                m_heaps.Structure_classInfo),
-            m_out.constIntPtr(classInfo));
-    }
-    
     LValue isType(LValue cell, JSType type)
     {
         return m_out.equal(
@@ -5845,8 +5836,11 @@ private:
     LValue loadStructure(LValue value)
     {
         LValue tableIndex = m_out.load32(value, m_heaps.JSCell_structureID);
-        LValue tableBase = m_out.get(m_out.constIntPtr(vm().heap.structureIDTable().base()));
-        return m_out.get(m_out.baseIndex(tableBase, tableIndex, ScaleEight));
+        LValue tableBase = m_out.loadPtr(
+            m_out.absolute(vm().heap.structureIDTable().base()));
+        LValue pointerIntoTable = m_out.baseIndex(
+            tableBase, m_out.zeroExt(tableIndex, m_out.intPtr), ScaleEight);
+        return m_out.loadPtr(TypedPointer(m_heaps.structureTable, pointerIntoTable));
     }
 
     LValue weakPointer(JSCell* pointer)

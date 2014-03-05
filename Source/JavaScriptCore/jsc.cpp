@@ -94,6 +94,7 @@ namespace {
 
 class Element;
 class ElementHandleOwner;
+class Masuqerader;
 class Root;
 
 class Element : public JSNonFinalObject {
@@ -140,6 +141,35 @@ public:
         Element* element = jsCast<Element*>(handle.slot()->asCell());
         return visitor.containsOpaqueRoot(element->root());
     }
+};
+
+class Masquerader : public JSNonFinalObject {
+public:
+    Masquerader(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    typedef JSNonFinalObject Base;
+
+    static Masquerader* create(VM& vm, JSGlobalObject* globalObject)
+    {
+        globalObject->masqueradesAsUndefinedWatchpoint()->fireAll();
+        Structure* structure = createStructure(vm, globalObject, jsNull());
+        Masquerader* result = new (NotNull, allocateCell<Masquerader>(vm.heap, sizeof(Masquerader))) Masquerader(vm, structure);
+        result->finishCreation(vm);
+        return result;
+    }
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    DECLARE_INFO;
+
+protected:
+    static const unsigned StructureFlags = JSC::MasqueradesAsUndefined | Base::StructureFlags;
 };
 
 class Root : public JSDestructibleObject {
@@ -189,6 +219,7 @@ private:
 };
 
 const ClassInfo Element::s_info = { "Element", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Element) };
+const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Masquerader) };
 const ClassInfo Root::s_info = { "Root", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Root) };
 
 ElementHandleOwner* Element::handleOwner()
@@ -239,6 +270,7 @@ static EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState*);
 static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionMakeMasquerader(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -376,6 +408,7 @@ protected:
         putDirectNativeFunction(vm, this, Identifier(&vm, "DFGTrue"), 0, functionFalse, DFGTrue, DontEnum | JSC::Function);
         
         addFunction(vm, "effectful42", functionEffectful42, 0);
+        addFunction(vm, "makeMasquerader", functionMakeMasquerader, 0);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -745,6 +778,11 @@ EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*)
 EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*)
 {
     return JSValue::encode(jsNumber(42));
+}
+
+EncodedJSValue JSC_HOST_CALL functionMakeMasquerader(ExecState* exec)
+{
+    return JSValue::encode(Masquerader::create(exec->vm(), exec->lexicalGlobalObject()));
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog

@@ -204,7 +204,15 @@ public:
     LValue bitCast(LValue value, LType type) { return buildBitCast(m_builder, value, type); }
     
     LValue alloca(LType type) { return buildAlloca(m_builder, type); }
+    
+    // Access the value of an alloca. Also used as a low-level implementation primitive for
+    // load(). Never use this to load from "pointers" in the FTL sense, since FTL pointers
+    // are actually integers. This requires an LLVM pointer. Broadly speaking, you don't
+    // have any LLVM pointers even if you really think you do. A TypedPointer is not an
+    // LLVM pointer. See comment block at top of this file to understand the distinction
+    // between LLVM pointers, FTL pointers, and FTL references.
     LValue get(LValue reference) { return buildLoad(m_builder, reference); }
+    // Similar to get() but for storing to the value in an alloca.
     LValue set(LValue value, LValue reference) { return buildStore(m_builder, value, reference); }
     
     LValue load(TypedPointer, LType refType);

@@ -36,6 +36,7 @@ namespace JSC { namespace FTL {
 
 #define FOR_EACH_ABSTRACT_HEAP(macro) \
     macro(length) \
+    macro(structureTable) \
     macro(typedArrayProperties) \
     macro(WriteBarrierBuffer_bufferContents)
 

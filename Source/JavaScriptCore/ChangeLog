@@ -1,3 +1,68 @@
+2014-03-05  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL loadStructure always generates invalid IR
+        https://bugs.webkit.org/show_bug.cgi?id=129747
+
+        Reviewed by Mark Hahnenberg.
+
+        As the comment at the top of FTL::Output states, the FTL doesn't use LLVM's notion
+        of pointers. LLVM's notion of pointers tries to model C, in the sense that you have
+        to have a pointer to a type, and you can only load things of that type from that
+        pointer. Pointer arithmetic is basically not possible except through the bizarre
+        getelementptr operator. This doesn't fit with how the JS object model works since
+        the JS object model doesn't consist of nice and tidy C types placed in C arrays.
+        Also, it would be impossible to use getelementptr and LLVM pointers for accessing
+        any of JSC's C or C++ objects unless we went through the exercise of redeclaring
+        all of our fundamental data structures in LLVM IR as LLVM types. Clang could do
+        this for us, but that would require that to use the FTL, JSC itself would have to
+        be compiled with clang. Worse, it would have to be compiled with a clang that uses
+        a version of LLVM that is compatible with the one against which the FTL is linked.
+        Yuck!
+
+        The solution is to NEVER use LLVM pointers. This has always been the case in the
+        FTL. But it causes some confusion.
+        
+        Not using LLVM pointers means that if the FTL has a "pointer", it's actually a
+        pointer-wide integer (m_out.intPtr in FTL-speak). The act of "loading" and
+        "storing" from or to a pointer involves first bitcasting the intPtr to a real LLVM
+        pointer that has the type that we want. The load and store operations over pointers
+        are called Output::load* and Output::store*, where * is one of "8", "16", "32",
+        "64", "Ptr", "Float", or "Double.
+        
+        There is unavoidable confusion here. It would be bizarre for the FTL to call its
+        "pointer-wide integers" anything other than "pointers", since they are, in all
+        respects that we care about, simply pointers. But they are *not* LLVM pointers and
+        they never will be that.
+        
+        There is one exception to this "no pointers" rule. The FTL does use actual LLVM
+        pointers for refering to LLVM alloca's - i.e. local variables. To try to reduce
+        confusion, we call these "references". So an "FTL reference" is actually an "LLVM
+        pointer", while an "FTL pointer" is actually an "LLVM integer". FTL references have
+        methods for access called Output::get and Output::set. These lower to LLVM load
+        and store, since FTL references are just LLVM pointers.
+        
+        This confusion appears to have led to incorrect code in loadStructure().
+        loadStructure() was using get() and set() to access FTL pointers. But those methods
+        don't work on FTL pointers and never will, since they are for FTL references.
+        
+        The worst part of this is that it was previously impossible to have test coverage
+        for the relevant path (MasqueradesAsUndefined) without writing a DRT test. This
+        patch fixes this by introducing a Masquerader object to jsc.cpp.
+        
+        * ftl/FTLAbstractHeapRepository.h: Add an abstract heap for the structure table.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::loadStructure): This was wrong.
+        * ftl/FTLOutput.h: Add a comment to disuade people from using get() and set().
+        * jsc.cpp: Give us the power to test for MasqueradesAsUndefined.
+        (WTF::Masquerader::Masquerader):
+        (WTF::Masquerader::create):
+        (WTF::Masquerader::createStructure):
+        (GlobalObject::finishCreation):
+        (functionMakeMasquerader):
+        * tests/stress/equals-masquerader.js: Added.
+        (foo):
+        (test):
+
 2014-03-05  Anders Carlsson  <andersca@apple.com>
 
         Tweak after r165109 to avoid extra copies
