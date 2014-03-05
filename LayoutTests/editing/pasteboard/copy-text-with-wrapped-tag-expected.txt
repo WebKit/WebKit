@@ -11,3 +11,10 @@ Pasted:
 | <a>
 |   href="http://www.google.com"
 |   "AVeryLongWordThatWillWrap<#selection-caret>"
+
+Pasted2:
+| "Copy multiple spaces "
+| <a>
+|   href="http://www.google.com"
+|   "AVeryLongWordThatWillWrap<#selection-caret>"
+| <br>

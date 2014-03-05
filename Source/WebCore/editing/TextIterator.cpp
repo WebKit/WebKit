@@ -648,7 +648,7 @@ void TextIterator::handleTextBox()
                 size_t subrunEnd = str.find('\n', runStart);
                 if (subrunEnd == notFound || subrunEnd > runEnd) {
                     subrunEnd = runEnd;
-                    bool lastSpaceCollapsedByNextNonTextBox = !nextTextBox && m_hasNodesFollowing && (str.length() == runEnd + 1);
+                    bool lastSpaceCollapsedByNextNonTextBox = !nextTextBox && m_hasNodesFollowing && (str.length() > runEnd);
                     if (lastSpaceCollapsedByNextNonTextBox)
                         subrunEnd++; // runEnd stopped before last space. Increment by one to restore the space.
                 }
