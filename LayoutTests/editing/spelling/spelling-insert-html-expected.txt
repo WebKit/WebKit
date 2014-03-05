@@ -1,10 +1,19 @@
-The spellchecker shouldn't mark substrings of words after pasting.
+The spellchecker shouldn't mark substrings of words after pasting. This test succeeds if only 'zz' is marked as misspelled.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS markedText is "zz"
+
+[object Text]
+moo zz
+PASS internals.markerCountForNode(currentNode, 'spelling') became 1
+PASS internals.markerRangeForNode(currentNode, 'spelling', 0).toString() is "zz"
+[object HTMLBRElement]
+PASS internals.markerCountForNode(currentNode, 'spelling') became 0
+[object Text]
+food.
+PASS internals.markerCountForNode(currentNode, 'spelling') became 0
 PASS successfullyParsed is true
 
 TEST COMPLETE
-foo zz
+moo zz
 food.

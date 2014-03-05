@@ -493,7 +493,6 @@ webkit.org/b/105870 webaudio/audionode-channel-rules.html [ Pass Crash ]
 
 # Sometimes hit !m_hasAXObject assertion in RenderObject destructor
 webkit.org/b/105879 editing/pasteboard/4806874.html [ Pass Crash ]
-webkit.org/b/105879 editing/spelling/spelling-insert-html.html [ Pass Crash ]
 
 # Media regressions after updating to gstreamer 1.0.
 webkit.org/b/104809 media/video-src.html [ Crash Pass ]

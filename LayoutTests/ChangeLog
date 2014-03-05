@@ -1,3 +1,30 @@
+2014-03-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Refactoring spelling-insert-html.html to use asynchronous spellchecking
+        https://bugs.webkit.org/show_bug.cgi?id=129422
+
+        Reviewed by Ryosuke Niwa.
+
+        Use asynchronous text checking in spelling-insert-html.html.
+        Add more logs to the test expectation so that it becomes
+        more descriptive.
+
+        Additionally, the word "foo" was changed to "moo" due to
+        only Mac had recognized this word as spelled correctly.
+
+        * editing/spelling/spelling-insert-html-expected.txt:
+        * editing/spelling/spelling-insert-html.html:
+
+        * platform/efl/TestExpectations:
+        Remove failing expectation for EFL.
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+        Skip the tests for GTK+ because of missing asynchronous spellchecking.
+
+        * platform/mac-wk2/TestExpectations:
+        Ditto.
+
 2014-03-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG and FTL should specialize for and support CompareStrictEq over Misc (i.e. boolean, undefined, or null)

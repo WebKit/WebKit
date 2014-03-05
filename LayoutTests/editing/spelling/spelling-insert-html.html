@@ -4,14 +4,20 @@
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<pre id="description"></pre>
-<pre id="console"></pre>
 <div id="container">
-  <div id="destination" contentEditable>food.</div>
+<div id="destination" contentEditable>mood.</div>
 </div>
 
 <script>
-description("The spellchecker shouldn't mark substrings of words after pasting.");
+description("The spellchecker shouldn't mark substrings of words after pasting. "
+    + "This test succeeds if only 'zz' is marked as misspelled.");
+
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
 
 var sel = window.getSelection();
 var destination = document.getElementById("destination");
@@ -20,21 +26,36 @@ sel.setBaseAndExtent(destinationText, 2, destinationText, 2);
 
 document.execCommand("InsertHTML", false, "<div>o zz</div><div>fo</div>");
 
-if (window.internals) {
-    // The destination node has multiple text nodes, 
-    // so we need concatenate the marked text.
-    var texts = destination.childNodes;
-    var markedText = "";
-    for (var i = 0; i < texts.length; ++i) {
-        var marked = internals.markerRangeForNode(texts[i], "spelling", 0);
-        if (marked)
-            markedText += marked.toString()
-    }
+var hasSpellingMarkerForNode = [
+    true,   // moo zz
+    false,  // <br>
+    false   // food.
+];
 
-    // The first "foo" isn't checked because it crosses the pasted and base html.
-    // See http://webkit.org/b/66450.
-    shouldBeEqualToString("markedText", "zz");
+var hasSpellingMarker;
+var currentNode;
+
+function verifySpellingMarkersFor(node)
+{
+    hasSpellingMarker = hasSpellingMarkerForNode.shift();
+    currentNode = node;
+    if (!currentNode)
+        return finishJSTest();
+
+    debug(currentNode);
+    if (currentNode instanceof Text)
+        debug(currentNode.nodeValue);
+
+    shouldBecomeEqual("internals.markerCountForNode(currentNode, 'spelling')", hasSpellingMarker ? "1" : "0", function() {
+        if (hasSpellingMarker)
+            shouldBeEqualToString("internals.markerRangeForNode(currentNode, 'spelling', 0).toString()", "zz");
+
+        verifySpellingMarkersFor(node.nextSibling);
+    });
 }
+
+if (window.internals)
+    verifySpellingMarkersFor(destination.firstChild);
 
 </script>
 <script src="../../resources/js-test-post.js"></script>
