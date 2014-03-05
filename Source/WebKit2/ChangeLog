@@ -1,3 +1,9 @@
+2014-03-05  Dean Jackson  <dino@apple.com>
+
+        Unreviewed. Fix the Apple-internal builds.
+
+        * Configurations/WebKit2.xcconfig: Add -framework OpenGL.
+
 2014-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         ObjC exception when dropping files into a WKView: drag and drop uses code from WebKit.framework
