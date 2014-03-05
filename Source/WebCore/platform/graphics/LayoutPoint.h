@@ -185,6 +185,16 @@ inline IntSize pixelSnappedIntSize(const LayoutSize& s, const LayoutPoint& p)
     return IntSize(snapSizeToPixel(s.width(), p.x()), snapSizeToPixel(s.height(), p.y()));
 }
 
+inline FloatPoint roundedForPainting(const LayoutPoint& point, float pixelSnappingFactor)
+{
+#if ENABLE(SUBPIXEL_LAYOUT)
+    return FloatPoint(roundToDevicePixel(point.x(), pixelSnappingFactor), roundToDevicePixel(point.y(), pixelSnappingFactor));
+#else
+    UNUSED_PARAM(pixelSnappingFactor);
+    return FloatPoint(point);
+#endif
+}
+
 inline FloatPoint flooredForPainting(const LayoutPoint& point, float pixelSnappingFactor)
 {
 #if ENABLE(SUBPIXEL_LAYOUT)

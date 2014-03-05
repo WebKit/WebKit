@@ -4167,20 +4167,21 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const 
 {
     // This involves subtracting out the position of the layer in our current coordinate space, but preserving
     // the accumulated error for sub-pixel layout.
+    float deviceScaleFactor = renderer().document().deviceScaleFactor();
     LayoutPoint delta;
     convertToLayerCoords(paintingInfo.rootLayer, delta);
     delta.moveBy(translationOffset);
     TransformationMatrix transform(renderableTransform(paintingInfo.paintBehavior));
-    IntPoint roundedDelta = roundedIntPoint(delta);
+    FloatPoint roundedDelta = roundedForPainting(delta, deviceScaleFactor);
     transform.translateRight(roundedDelta.x(), roundedDelta.y());
-    LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + (delta - roundedDelta);
+    LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + (delta - LayoutPoint(roundedDelta));
 
     // Apply the transform.
     GraphicsContextStateSaver stateSaver(*context);
     context->concatCTM(transform.toAffineTransform());
 
     // Now do a paint with the root layer shifted to be us.
-    LayerPaintingInfo transformedPaintingInfo(this, enclosingIntRect(transform.inverse().mapRect(paintingInfo.paintDirtyRect)), paintingInfo.paintBehavior,
+    LayerPaintingInfo transformedPaintingInfo(this, LayoutRect(enclosingRectForPainting(transform.inverse().mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor)), paintingInfo.paintBehavior,
         adjustedSubPixelAccumulation, paintingInfo.subtreePaintRoot, paintingInfo.renderNamedFlowFragment, paintingInfo.overlapTestRequests);
     paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
 }

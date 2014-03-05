@@ -1,3 +1,16 @@
+2014-03-05  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Device pixel round accumulated subpixel value when the RenderLayer with transform paints its content.
+        https://bugs.webkit.org/show_bug.cgi?id=129079
+
+        Reviewed by Simon Fraser.
+
+        Snap the content to the device pixel position (as opposed to integral position) before
+        applying the transform. Recalculate the remaining subpixels that need offsetting at painting time.
+
+        * compositing/hidpi-absolute-subpixel-positioned-transformed-elements-expected.html: Added.
+        * compositing/hidpi-absolute-subpixel-positioned-transformed-elements.html: Added.
+
 2014-03-05  Michael Saboff  <msaboff@apple.com>
 
         JSDataViewPrototype::getData() and setData() crash on platforms that don't allow unaligned accesses

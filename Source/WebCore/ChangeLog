@@ -1,3 +1,20 @@
+2014-03-05  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Device pixel round accumulated subpixel value when the RenderLayer with transform paints its content.
+        https://bugs.webkit.org/show_bug.cgi?id=129079
+
+        Reviewed by Simon Fraser.
+
+        Snap the content to the device pixel position (as opposed to integral position) before
+        applying the transform. Recalculate the remaining subpixels that need offsetting at painting time.
+
+        Test: compositing/hidpi-absolute-subpixel-positioned-transformed-elements.html
+
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::roundedForPainting):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+
 2014-03-05  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Show external device name/type in placeholder
