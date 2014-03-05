@@ -391,8 +391,10 @@ int PageCache::frameCount() const
 
 void PageCache::markPagesForVistedLinkStyleRecalc()
 {
-    for (HistoryItem* current = m_head; current; current = current->m_next)
-        current->m_cachedPage->markForVistedLinkStyleRecalc();
+    for (HistoryItem* current = m_head; current; current = current->m_next) {
+        if (current->m_cachedPage)
+            current->m_cachedPage->markForVistedLinkStyleRecalc();
+    }
 }
 
 void PageCache::markPagesForFullStyleRecalc(Page* page)
@@ -401,7 +403,7 @@ void PageCache::markPagesForFullStyleRecalc(Page* page)
 
     for (HistoryItem* current = m_head; current; current = current->m_next) {
         CachedPage* cachedPage = current->m_cachedPage.get();
-        if (cachedPage->cachedMainFrame()->view()->frame() == mainFrame)
+        if (cachedPage && cachedPage->cachedMainFrame()->view()->frame() == mainFrame)
             cachedPage->markForFullStyleRecalc();
     }
 }
@@ -414,7 +416,7 @@ void PageCache::markPagesForDeviceScaleChanged(Page* page)
 
     for (HistoryItem* current = m_head; current; current = current->m_next) {
         CachedPage* cachedPage = current->m_cachedPage.get();
-        if (cachedPage->cachedMainFrame()->view()->frame() == mainFrame)
+        if (cachedPage && cachedPage->cachedMainFrame()->view()->frame() == mainFrame)
             cachedPage->markForDeviceScaleChanged();
     }
 }
@@ -423,8 +425,10 @@ void PageCache::markPagesForDeviceScaleChanged(Page* page)
 #if ENABLE(VIDEO_TRACK)
 void PageCache::markPagesForCaptionPreferencesChanged()
 {
-    for (HistoryItem* current = m_head; current; current = current->m_next)
-        current->m_cachedPage->markForCaptionPreferencesChanged();
+    for (HistoryItem* current = m_head; current; current = current->m_next) {
+        if (current->m_cachedPage)
+            current->m_cachedPage->markForCaptionPreferencesChanged();
+    }
 }
 #endif
 
