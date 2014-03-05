@@ -1979,7 +1979,7 @@ sub generateBuildSystemFromCMakeProject
     chdir($buildPath) or die;
 
     # For GTK+ we try to be smart about when to rerun cmake, so that we can have faster incremental builds.
-    if (isGtk() && -e cmakeCachePath()) {
+    if (isGtk() && -e cmakeCachePath() && -e File::Spec->catfile(baseProductDir(), configuration(), "Makefile")) {
         return 0;
     }
 

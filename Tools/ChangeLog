@@ -1,5 +1,16 @@
 2014-03-05  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK][CMake] build-webkit should rerun cmake if the Makefile is missing
+        https://bugs.webkit.org/show_bug.cgi?id=129380
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject): Check for the existence of the Makefile before
+        skipping CMake execution.
+
+2014-03-05  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] The jhbuild environment should have the latest stable release of gtk-doc
         https://bugs.webkit.org/show_bug.cgi?id=129651
 
