@@ -59,6 +59,7 @@ public:
         case StringOrStringObjectUse:
         case NotCellUse:
         case OtherUse:
+        case MiscUse:
         case MachineIntUse:
             return;
             

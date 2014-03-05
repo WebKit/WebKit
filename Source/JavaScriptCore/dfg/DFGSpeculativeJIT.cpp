@@ -3802,6 +3802,11 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
         
+    case MiscUse: {
+        compileMiscStrictEq(node);
+        return false;
+    }
+        
     case UntypedUse: {
         return nonSpeculativeStrictEq(node);
     }
@@ -4830,6 +4835,31 @@ void SpeculativeJIT::speculateOther(Edge edge)
 #endif    
 }
 
+void SpeculativeJIT::speculateMisc(Edge edge, JSValueRegs regs)
+{
+#if USE(JSVALUE64)
+    typeCheck(
+        regs, edge, SpecMisc,
+        m_jit.branch64(MacroAssembler::Above, regs.gpr(), MacroAssembler::TrustedImm64(TagBitTypeOther | TagBitBool | TagBitUndefined)));
+#else
+    typeCheck(
+        regs, edge, SpecMisc | SpecInt32,
+        m_jit.branch32(MacroAssembler::Equal, regs.tagGPR(), MacroAssembler::TrustedImm32(JSValue::Int32Tag)));
+    typeCheck(
+        regs, edge, SpecMisc,
+        m_jit.branch32(MacroAssembler::Below, regs.tagGPR(), MacroAssembler::TrustedImm32(JSValue::UndefinedTag)));
+#endif
+}
+
+void SpeculativeJIT::speculateMisc(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecMisc))
+        return;
+    
+    JSValueOperand operand(this, edge, ManualOperandSpeculation);
+    speculateMisc(edge, operand.jsValueRegs());
+}
+
 void SpeculativeJIT::speculate(Node*, Edge edge)
 {
     switch (edge.useKind()) {
@@ -4891,6 +4921,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case OtherUse:
         speculateOther(edge);
+        break;
+    case MiscUse:
+        speculateMisc(edge);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

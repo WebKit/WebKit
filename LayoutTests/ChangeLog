@@ -1,3 +1,19 @@
+2014-03-01  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG and FTL should specialize for and support CompareStrictEq over Misc (i.e. boolean, undefined, or null)
+        https://bugs.webkit.org/show_bug.cgi?id=129563
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/fold-strict-eq-expected.txt: Added.
+        * js/regress/fold-strict-eq.html: Added.
+        * js/regress/misc-strict-eq-expected.txt: Added.
+        * js/regress/misc-strict-eq.html: Added.
+        * js/regress/script-tests/fold-strict-eq.js: Added.
+        (foo):
+        (test):
+        * js/regress/script-tests/misc-strict-eq.js: Added.
+
 2014-03-04  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add test for adjusted lineTop position between left and right shape-outside floats

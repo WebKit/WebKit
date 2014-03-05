@@ -255,6 +255,8 @@ static const char* speculationToAbbreviatedString(SpeculatedType prediction)
         return "<Boolean>";
     if (isOtherSpeculation(prediction))
         return "<Other>";
+    if (isMiscSpeculation(prediction))
+        return "<Misc>";
     return "";
 }
 
@@ -389,6 +391,41 @@ TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType type)
         return TypeFloat64;
     
     return NotTypedArray;
+}
+
+SpeculatedType leastUpperBoundOfStrictlyEquivalentSpeculations(SpeculatedType type)
+{
+    if (type & SpecInteger)
+        type |= SpecInteger;
+    if (type & SpecString)
+        type |= SpecString;
+    return type;
+}
+
+bool valuesCouldBeEqual(SpeculatedType a, SpeculatedType b)
+{
+    a = leastUpperBoundOfStrictlyEquivalentSpeculations(a);
+    b = leastUpperBoundOfStrictlyEquivalentSpeculations(b);
+    
+    // Anything could be equal to a string.
+    if (a & SpecString)
+        return true;
+    if (b & SpecString)
+        return true;
+    
+    // If both sides are definitely only objects, then equality is fairly sane.
+    if (isObjectSpeculation(a) && isObjectSpeculation(b))
+        return !!(a & b);
+    
+    // If either side could be an object or not, then we could call toString or
+    // valueOf, which could return anything.
+    if (a & SpecObject)
+        return true;
+    if (b & SpecObject)
+        return true;
+    
+    // Neither side is an object or string, so the world is relatively sane.
+    return !!(a & b);
 }
 
 } // namespace JSC
