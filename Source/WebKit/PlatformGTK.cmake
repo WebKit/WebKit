@@ -200,7 +200,7 @@ add_custom_command(
         -I${DERIVED_SOURCES_DIR}
         -I${DERIVED_SOURCES_WEBKITGTK_DIR}
         -I${WEBCORE_DIR}/platform/gtk
-        ${GObjectDOMBindings_INSTALLED_HEADERS}
+        ${GObjectDOMBindings_GIR_HEADERS}
         ${WebKitGTK_INSTALLED_HEADERS}
         ${WEBKIT_DIR}/gtk/webkit/*.cpp
 )

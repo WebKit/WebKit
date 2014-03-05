@@ -756,7 +756,7 @@ add_custom_command(
         -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
         -I${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}
         -I${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk
-        ${GObjectDOMBindings_INSTALLED_HEADERS}
+        ${GObjectDOMBindings_GIR_HEADERS}
         ${WebKit2WebExtension_INSTALLED_HEADERS}
         ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/*.cpp
 )

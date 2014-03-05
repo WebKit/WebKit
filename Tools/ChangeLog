@@ -1,3 +1,16 @@
+2014-03-03  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] Generate documentation for the DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=126211
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/GNUmakefile.am: No longer generation sections and SGML files in the makefile.
+        * gtk/generate-gtkdoc: Call the code from webkitdom.py to generate sections and SGML files.
+        * gtk/generate-webkitdom-doc-files: Removed.
+        * gtk/webkitdom.py: Moved WebKit GObject DOM bindings doc generation code here, so
+        that it can be called by generate-gtkdoc.
+
 2014-03-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] build-webkit should rerun cmake if the Makefile is missing

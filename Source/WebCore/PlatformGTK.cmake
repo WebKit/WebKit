@@ -481,6 +481,7 @@ if (ENABLE_WEBKIT2)
         bindings/gobject/DOMObjectCache.cpp
         bindings/gobject/GObjectEventListener.cpp
         bindings/gobject/WebKitDOMCustom.cpp
+        bindings/gobject/WebKitDOMDeprecated.cpp
         bindings/gobject/WebKitDOMEventTarget.cpp
         bindings/gobject/WebKitDOMHTMLPrivate.cpp
         bindings/gobject/WebKitDOMObject.cpp
@@ -666,6 +667,9 @@ if (ENABLE_WEBKIT2)
          ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
          ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
          ${WEBCORE_DIR}/bindings/gobject/WebKitDOMCustom.h
+         ${WEBCORE_DIR}/bindings/gobject/WebKitDOMDeprecated.h
+         ${WEBCORE_DIR}/bindings/gobject/WebKitDOMEventTarget.h
+         ${WEBCORE_DIR}/bindings/gobject/WebKitDOMObject.h
     )
     file(GLOB GObjectDOMBindingsSymbolsFiles
         "${WEBCORE_DIR}/bindings/gobject/WebKitDOM*.symbols"
@@ -677,9 +681,6 @@ if (ENABLE_WEBKIT2)
         list(APPEND GObjectDOMBindings_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.h)
         list(APPEND GObjectDOMBindingsSymbolsFiles ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.symbols)
     endforeach ()
-
-    # Propagate this variable to the parent scope, so that it can be used in other parts of the build.
-    set(GObjectDOMBindings_INSTALLED_HEADERS ${GObjectDOMBindings_INSTALLED_HEADERS} PARENT_SCOPE)
 
     set(GOBJECT_DOM_BINDINGS_FEATURES_DEFINES "LANGUAGE_GOBJECT=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
     string(REPLACE "ENABLE_INDEXED_DATABASE=1" "" GOBJECT_DOM_BINDINGS_FEATURES_DEFINES ${GOBJECT_DOM_BINDINGS_FEATURES_DEFINES})
@@ -726,11 +727,33 @@ if (ENABLE_WEBKIT2)
         fake-installed-webkitdom-headers
     )
 
+    file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
+        "[webkitdomgtk]\n"
+        "pkgconfig_file=${WebKit2_PKGCONFIG_FILE}\n"
+        "namespace=webkit_dom\n"
+        "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
+        "       -I${WEBCORE_DIR}/bindings\n"
+        "       -I${WEBCORE_DIR}/bindings/gobject\n"
+        "       -I${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}\n"
+        "doc_dir=${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/docs\n"
+        "source_dirs=${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}\n"
+        "            ${WEBCORE_DIR}/bindings/gobject\n"
+        "headers=${GObjectDOMBindings_INSTALLED_HEADERS}\n"
+    )
+
     install(FILES ${GObjectDOMBindings_INSTALLED_HEADERS}
-                  bindings/gobject/WebKitDOMEventTarget.h
-                  bindings/gobject/WebKitDOMDeprecated.h
-                  bindings/gobject/WebKitDOMObject.h
             DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkitdom"
     )
+
+    # Some installed headers are not on the list of headers used for gir generation.
+    set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindings_INSTALLED_HEADERS})
+    list(REMOVE_ITEM GObjectDOMBindings_GIR_HEADERS
+         bindings/gobject/WebKitDOMEventTarget.h
+         bindings/gobject/WebKitDOMDeprecated.h
+         bindings/gobject/WebKitDOMObject.h)
+
+    # Propagate this variable to the parent scope, so that it can be used in other parts of the build.
+    set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindings_GIR_HEADERS} PARENT_SCOPE)
+
 endif ()
 
