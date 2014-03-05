@@ -553,3 +553,11 @@ webkit.org/b/128734 plugins/netscape-destroy-plugin-script-objects.html [ Failur
 webkit.org/b/128737 fast/events/touch/basic-multi-touch-events.html [ Failure ]
 
 webkit.org/b/128972 fast/regions/box-decorations-over-region-padding-fragmented.html [ ImageOnlyFailure ]
+
+webkit.org/b/129731 css3/masking/clip-path-filter.html [ ImageOnlyFailure ]
+
+webkit.org/b/129733 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
+
+webkit.org/b/129734 fast/css3-text/css3-text-decoration/text-decoration-style-double-space-scales.html [ ImageOnlyFailure ]
+
+webkit.org/b/129735 fast/regions/box-decorations-over-region-padding.html [ ImageOnlyFailure ]
