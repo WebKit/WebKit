@@ -1,3 +1,21 @@
+2014-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        ObjC exception when dropping files into a WKView: drag and drop uses code from WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=129752
+
+        Reviewed by Enrica Casucci.
+        
+        Get WebDragClientMac off of all WebKit headers, and WebEditorClientMac off
+        all but one by using C functions from WebCoreNSURLExtras.h rather than
+        the NSURL category.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::userVisibleString):
+        (WebKit::WebEditorClient::canonicalizeURL):
+        (WebKit::WebEditorClient::canonicalizeURLString):
+
 2014-03-05  Martin Hock  <mhock@apple.com>
 
         Add support for sessions to MemoryCache.

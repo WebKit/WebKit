@@ -1,3 +1,15 @@
+2014-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        ObjC exception when dropping files into a WKView: drag and drop uses code from WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=129752
+
+        Reviewed by Enrica Casucci.
+        
+        Call URLByCanonicalizingURL() which is implemented in WebCore.
+
+        * Misc/WebNSURLExtras.mm:
+        (-[NSURL _webkit_canonicalize]):
+
 2014-03-04  Zalan Bujtas  <zalan@apple.com>
 
         Enable device pixel repaint rect tracking.

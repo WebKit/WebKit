@@ -48,6 +48,11 @@ typedef void (* StringRangeApplierFunction)(NSString *string, NSRange range, voi
 static pthread_once_t IDNScriptWhiteListFileRead = PTHREAD_ONCE_INIT;
 static uint32_t IDNScriptWhiteList[(USCRIPT_CODE_LIMIT + 31) / 32];
 
+
+@interface NSURLProtocol (WKNSURLProtocolInternal)
++ (Class)_protocolClassForRequest:(NSURLRequest *)request;
+@end
+
 namespace WebCore {
 
 static inline BOOL isLookalikeCharacter(int charCode)
@@ -712,6 +717,23 @@ NSURL *URLByRemovingUserInfo(NSURL *URL)
     return URLByRemovingComponentAndSubsequentCharacter(URL, kCFURLComponentUserInfo);
 }
 
+NSURL *URLByCanonicalizingURL(NSURL *URL)
+{
+    RetainPtr<NSURLRequest> request = adoptNS([[NSURLRequest alloc] initWithURL:URL]);
+    Class concreteClass = [NSURLProtocol _protocolClassForRequest:request.get()];
+    if (!concreteClass) {
+        return URL;
+    }
+    
+    // This applies NSURL's concept of canonicalization, but not URL's concept. It would
+    // make sense to apply both, but when we tried that it caused a performance degradation
+    // (see 5315926). It might make sense to apply only the URL concept and not the NSURL
+    // concept, but it's too risky to make that change for WebKit 3.0.
+    NSURLRequest *newRequest = [concreteClass canonicalRequestForRequest:request.get()];
+    NSURL *newURL = [newRequest URL]; 
+    return [[newURL retain] autorelease];
+}
+
 NSData *originalURLData(NSURL *URL)
 {
     UInt8 *buffer = (UInt8 *)malloc(URL_BYTES_BUFFER_LENGTH);
@@ -878,6 +900,34 @@ BOOL isUserVisibleURL(NSString *string)
     }
     
     return valid;
+}
+
+NSRange rangeOfURLScheme(NSString *string)
+{
+    NSRange colon = [string rangeOfString:@":"];
+    if (colon.location != NSNotFound && colon.location > 0) {
+        NSRange scheme = {0, colon.location};
+        static NSCharacterSet *InverseSchemeCharacterSet = nil;
+        if (!InverseSchemeCharacterSet) {
+            /*
+             This stuff is very expensive.  10-15 msec on a 2x1.2GHz.  If not cached it swamps
+             everything else when adding items to the autocomplete DB.  Makes me wonder if we
+             even need to enforce the character set here.
+            */
+            NSString *acceptableCharacters = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+.-";
+            InverseSchemeCharacterSet = [[[NSCharacterSet characterSetWithCharactersInString:acceptableCharacters] invertedSet] retain];
+        }
+        NSRange illegals = [string rangeOfCharacterFromSet:InverseSchemeCharacterSet options:0 range:scheme];
+        if (illegals.location == NSNotFound)
+            return scheme;
+    }
+    return NSMakeRange(NSNotFound, 0);
+}
+
+BOOL looksLikeAbsoluteURL(NSString *string)
+{
+    // Trim whitespace because _web_URLWithString allows whitespace.
+    return rangeOfURLScheme(stringByTrimmingWhitespace(string)).location != NSNotFound;
 }
 
 } // namespace WebCore

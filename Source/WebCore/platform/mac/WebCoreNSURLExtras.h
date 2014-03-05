@@ -39,6 +39,7 @@ OBJC_CLASS(NSURL);
 namespace WebCore {
 
 NSString *userVisibleString(NSURL *);
+NSURL *URLByCanonicalizingURL(NSURL *);
 NSURL *URLWithUserTypedString(NSString *, NSURL *);
 NSURL *URLByRemovingUserInfo(NSURL *);
 BOOL hostNameNeedsDecodingWithRange(NSString *, NSRange);
@@ -51,6 +52,9 @@ NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *, CFIndex);
 NSURL *URLWithData(NSData *, NSURL *baseURL);
 NSData *originalURLData(NSURL *);
 NSData *dataForURLComponentType(NSURL *, CFIndex);
+
+NSRange rangeOfURLScheme(NSString *);
 BOOL isUserVisibleURL(NSString *);
-    
+BOOL looksLikeAbsoluteURL(NSString *);
+
 } // namespace WebCore

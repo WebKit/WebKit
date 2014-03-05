@@ -41,15 +41,12 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/WebCoreNSURLExtras.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/StringTruncator.h>
 #import <WebKit/WebArchive.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebNSFileManagerExtras.h>
-#import <WebKit/WebNSPasteboardExtras.h>
-#import <WebKit/WebNSURLExtras.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/StdLibExtras.h>
 
@@ -118,7 +115,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     if (title.isEmpty()) {
         title = url.lastPathComponent();
         if (title.isEmpty())
-            title = [(NSURL *)url _web_userVisibleString];
+            title = userVisibleString((NSURL *)url);
     }
 
     RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(&element);
@@ -143,7 +140,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
         memcpy(sharedMemoryBuffer->data(), buffer->data(), archiveSize);
         sharedMemoryBuffer->createHandle(archiveHandle, SharedMemory::ReadOnly);            
     }
-    m_page->send(Messages::WebPageProxy::SetPromisedData(pasteboardName, imageHandle, imageSize, String([response suggestedFilename]), extension, title, String([[response URL] absoluteString]), String([(NSURL *)url _web_userVisibleString]), archiveHandle, archiveSize));
+    m_page->send(Messages::WebPageProxy::SetPromisedData(pasteboardName, imageHandle, imageSize, String([response suggestedFilename]), extension, title, String([[response URL] absoluteString]), userVisibleString((NSURL *)url), archiveHandle, archiveSize));
 }
 
 } // namespace WebKit
