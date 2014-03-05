@@ -19,6 +19,7 @@
       <dep package="gnome-icon-theme"/>
       <dep package="gnome-icon-theme-symbolic"/>
       <dep package="gnome-themes-standard"/>
+      <dep package="gtk-doc"/>
       <dep package="libsoup"/>
       <dep package="atk"/>
       <dep package="at-spi2-core"/>
@@ -330,6 +331,15 @@
       <patch file="xserver-remove-bogus-dependencies.patch" strip="1"/>
       <patch file="xserver-fix-glx-init.patch" strip="1"/>
     </branch>
+  </autotools>
+
+  <autotools id="gtk-doc" autogen-sh="configure">
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/gtk-doc/1.20/gtk-doc-1.20.tar.xz" version="1.20"
+            repo="ftp.gnome.org"
+            hash="sha256:3e6ecf134dbf92a74c24d79848fea3a48e59ab95408a38c6405905d95a293011"/>
   </autotools>
 
 </moduleset>
