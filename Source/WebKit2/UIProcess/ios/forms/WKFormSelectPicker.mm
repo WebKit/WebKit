@@ -36,11 +36,268 @@
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIDevice_Private.h>
 #import <UIKit/UIKeyboard_Private.h>
+#import <UIKit/UIPickerContentView_Private.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;
 
 static const float DisabledOptionAlpha = 0.3;
+
+@interface UIPickerView (UIPickerViewInternal)
+- (BOOL)allowsMultipleSelection;
+- (void)setAllowsMultipleSelection:(BOOL)aFlag;
+- (UITableView*)tableViewForColumn:(NSInteger)column;
+@end
+
+@interface WKOptionPickerCell : UIPickerContentView {
+    BOOL _disabled;
+}
+
+@property(nonatomic) BOOL disabled;
+
+- (instancetype)initWithOptionItem:(const WKOptionItem&)item;
+
+@end
+
+@implementation WKOptionPickerCell
+
+- (BOOL)_isSelectable
+{
+    return !self.disabled;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super initWithFrame:CGRectZero]))
+        return nil;
+    [[self titleLabel] setLineBreakMode:NSLineBreakByTruncatingMiddle];
+    return self;
+}
+
+- (instancetype)initWithOptionItem:(const WKOptionItem&)item
+{
+    if (!(self = [self init]))
+        return nil;
+
+    NSMutableString *trimmedText = [[item.text mutableCopy] autorelease];
+    CFStringTrimWhitespace((CFMutableStringRef)trimmedText);
+
+    [[self titleLabel] setText:trimmedText];
+    [self setChecked:item.isSelected];
+    [self setDisabled:item.disabled];
+    if (_disabled)
+        [[self titleLabel] setTextColor:[UIColor colorWithWhite:0.0 alpha:DisabledOptionAlpha]];
+
+    return self;
+}
+
+@end
+
+
+@interface WKOptionGroupPickerCell : WKOptionPickerCell
+- (instancetype)initWithOptionItem:(const WKOptionItem&)item;
+@end
+
+@implementation WKOptionGroupPickerCell
+
+- (instancetype)initWithOptionItem:(const WKOptionItem&)item
+{
+    if (!(self = [self init]))
+        return nil;
+
+    NSMutableString *trimmedText = [[item.text mutableCopy] autorelease];
+    CFStringTrimWhitespace((CFMutableStringRef)trimmedText);
+
+    [[self titleLabel] setText:trimmedText];
+    [self setChecked:NO];
+    [[self titleLabel] setTextColor:[UIColor colorWithWhite:0.0 alpha:0.5]];
+    [self setDisabled:YES];
+
+    return self;
+}
+
+- (CGFloat)labelWidthForBounds:(CGRect)bounds
+{
+    return CGRectGetWidth(bounds) - [UIPickerContentView _checkmarkOffset];
+}
+
+- (void)layoutSubviews
+{
+    if (!self.titleLabel)
+        return;
+
+    CGRect bounds = self.bounds;
+    self.titleLabel.frame = CGRectMake([UIPickerContentView _checkmarkOffset], 0, CGRectGetMaxX(bounds) - [UIPickerContentView _checkmarkOffset], CGRectGetHeight(bounds));
+}
+
+@end
+
+
+@implementation WKMultipleSelectPicker {
+    WKContentView *_view;
+    NSTextAlignment _textAlignment;
+    NSUInteger _singleSelectionIndex;
+    bool _allowsMultipleSelection;
+    CGFloat _layoutWidth;
+    CGFloat _fontSize;
+    CGFloat _maximumTextWidth;
+}
+
+- (instancetype)initWithView:(WKContentView *)view
+{
+    if (!(self = [super initWithFrame:CGRectZero]))
+        return nil;
+
+    _view = view;
+    _allowsMultipleSelection = _view.assistedNodeInformation.isMultiSelect;
+    _singleSelectionIndex = NSNotFound;
+    [self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+    [self setDataSource:self];
+    [self setDelegate:self];
+    [self _setUsesCheckedSelection:YES];
+
+    [self _setMagnifierEnabled:NO];
+
+    UITextWritingDirection writingDirection = UITextWritingDirectionLeftToRight;
+    // FIXME: retrieve from WebProcess writing direction.
+    _textAlignment = (writingDirection == UITextWritingDirectionLeftToRight) ? NSTextAlignmentLeft : NSTextAlignmentRight;
+
+    [self setAllowsMultipleSelection:_allowsMultipleSelection];
+    [self setSize:[UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]]];
+    [self reloadAllComponents];
+
+    const Vector<WKOptionItem>& selectOptions = [_view assistedNodeSelectOptions];
+    int currentIndex = 0;
+    for (size_t i = 0; i < selectOptions.size(); ++i) {
+        const WKOptionItem& item = selectOptions[i];
+        if (item.isGroup)
+            continue;
+
+        if (!_allowsMultipleSelection && item.isSelected)
+            _singleSelectionIndex = currentIndex;
+
+        currentIndex++;
+    }
+
+    if (_singleSelectionIndex != NSNotFound)
+        [self selectRow:_singleSelectionIndex inComponent:0 animated:NO];
+    
+    return self;
+}
+
+- (void)dealloc
+{
+    [self setDataSource:nil];
+    [self setDelegate:nil];
+
+    [super dealloc];
+}
+
+- (UIView *)controlView
+{
+    return self;
+}
+
+- (void)controlBeginEditing
+{
+}
+
+- (void)controlEndEditing
+{
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    if (_singleSelectionIndex != NSNotFound) {
+        [self selectRow:_singleSelectionIndex inComponent:0 animated:NO];
+    }
+
+    // Make sure all rows are sized properly after a rotation.
+    if (_layoutWidth != self.frame.size.width) {
+        [self reloadAllComponents];
+        _layoutWidth = self.frame.size.width;
+    }
+}
+
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)rowIndex forComponent:(NSInteger)columnIndex reusingView:(UIView *)view
+{
+    const WKOptionItem& item = [_view assistedNodeSelectOptions][rowIndex];
+    UIPickerContentView* pickerItem = item.isGroup ? [[[WKOptionGroupPickerCell alloc] initWithOptionItem:item] autorelease] : [[[WKOptionPickerCell alloc] initWithOptionItem:item] autorelease];
+
+    // The cell starts out with a null frame. We need to set its frame now so we can find the right font size.
+    UITableView *table = [pickerView tableViewForColumn:0];
+    CGRect frame = [table rectForRowAtIndexPath:[NSIndexPath indexPathForRow:rowIndex inSection:0]];
+    pickerItem.frame = frame;
+
+    UILabel *titleTextLabel = pickerItem.titleLabel;
+    float width = [pickerItem labelWidthForBounds:CGRectMake(0, 0, CGRectGetWidth(frame), CGRectGetHeight(frame))];
+    ASSERT(width > 0);
+
+    // Assume all cells have the same available text width.
+    UIFont *font = titleTextLabel.font;
+    if (width != _maximumTextWidth || _fontSize == 0) {
+        _maximumTextWidth = width;
+        _fontSize = adjustedFontSize(_maximumTextWidth, font, titleTextLabel.font.pointSize, [_view assistedNodeSelectOptions]);
+    }
+
+    [titleTextLabel setFont:[font fontWithSize:_fontSize]];
+    [titleTextLabel setLineBreakMode:NSLineBreakByWordWrapping];
+    [titleTextLabel setNumberOfLines:2];
+    [titleTextLabel setTextAlignment:_textAlignment];
+
+    return pickerItem;
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)aPickerView
+{
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)columnIndex
+{
+    return [_view assistedNodeSelectOptions].size();
+}
+
+- (NSInteger)findItemIndexAt:(int)rowIndex
+{
+    ASSERT(rowIndex >= 0 && (size_t)rowIndex < [_view assistedNodeSelectOptions].size());
+    NSInteger itemIndex = 0;
+    for (int i = 0; i < rowIndex; ++i) {
+        if ([_view assistedNodeSelectOptions][i].isGroup)
+            continue;
+        itemIndex++;
+    }
+
+    ASSERT(itemIndex >= 0);
+    return itemIndex;
+}
+
+- (void)pickerView:(UIPickerView *)pickerView row:(int)rowIndex column:(int)columnIndex checked:(BOOL)isChecked
+{
+    if ((size_t)rowIndex >= [_view assistedNodeSelectOptions].size())
+        return;
+
+    WKOptionItem& item = [_view assistedNodeSelectOptions][rowIndex];
+
+    if ([self allowsMultipleSelection]) {
+        [_view page]->setAssistedNodeSelectedIndex([self findItemIndexAt:rowIndex], isChecked);
+        item.isSelected = isChecked;
+    } else {
+        // Single selection.
+        item.isSelected = NO;
+        _singleSelectionIndex = rowIndex;
+
+        // This private delegate often gets called for multiple rows in the picker,
+        // so we only activate and set as selected the checked item in single selection.
+        if (isChecked) {
+            [_view page]->setAssistedNodeSelectedIndex([self findItemIndexAt:rowIndex], isChecked);
+            item.isSelected = YES;
+        }
+    }
+}
+
+@end
 
 @implementation WKSelectSinglePicker {
     WKContentView *_view;
@@ -53,15 +310,14 @@ static const float DisabledOptionAlpha = 0.3;
         return nil;
 
     _view = view;
-    self.delegate = self;
-    self.dataSource = self;
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self setDelegate:self];
+    [self setDataSource:self];
+    [self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 
     _selectedIndex = NSNotFound;
 
     for (size_t i = 0; i < [view assistedNodeSelectOptions].size(); ++i) {
-        const WKOptionItem item = [_view assistedNodeSelectOptions][i];
-        if (item.isSelected) {
+        if ([_view assistedNodeSelectOptions][i].isSelected) {
             _selectedIndex = i;
             break;
         }
@@ -77,8 +333,8 @@ static const float DisabledOptionAlpha = 0.3;
 
 - (void)dealloc
 {
-    self.delegate = nil;
-    self.dataSource = nil;
+    [self setDelegate:nil];
+     [self setDataSource:nil];
 
     [super dealloc];
 }
@@ -98,7 +354,7 @@ static const float DisabledOptionAlpha = 0.3;
         return;
 
     if (_selectedIndex < (NSInteger)[_view assistedNodeSelectOptions].size()) {
-        [_view assistedNodeSelectOptions][_selectedIndex].isSelected = false;
+        [_view assistedNodeSelectOptions][_selectedIndex].isSelected = true;
         [_view page]->setAssistedNodeSelectedIndex(_selectedIndex);
     }
 }
@@ -106,33 +362,6 @@ static const float DisabledOptionAlpha = 0.3;
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
     return 1;
-}
-
-static NSString *stringByTrimmingWhitespaceAndNewlines(NSString *string)
-{
-    NSRange r = NSMakeRange(0, [string length]);
-
-    if (!r.length)
-        return string;
-
-    NSUInteger originalLength = r.length;
-
-    // First strip all white space off the end of the range
-    while (r.length > 0 && CFUniCharIsMemberOf([string characterAtIndex: r.length - 1], kCFUniCharWhitespaceAndNewlineCharacterSet))
-        r.length -= 1;
-
-    // Then, trim any whitespace from the start of the range.
-    while (r.length > 0 && CFUniCharIsMemberOf([string characterAtIndex: r.location], kCFUniCharWhitespaceAndNewlineCharacterSet)) {
-        r.location += 1;
-        r.length -= 1;
-    }
-
-    // If we changed the length of the string from what it originally was, return a new string with just those
-    // characters.  Otherwise just return.
-    if (originalLength != r.length)
-        return [string substringWithRange:r];
-
-    return string;
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)columnIndex
@@ -146,11 +375,12 @@ static NSString *stringByTrimmingWhitespaceAndNewlines(NSString *string)
         return nil;
 
     const WKOptionItem& option = [_view assistedNodeSelectOptions][row];
-    NSString *text = stringByTrimmingWhitespaceAndNewlines(option.text);
+    NSMutableString *trimmedText = [[option.text mutableCopy] autorelease];
+    CFStringTrimWhitespace((CFMutableStringRef)trimmedText);
 
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:trimmedText];
     if (option.disabled)
-        [attributedString addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithWhite:0.0 alpha:DisabledOptionAlpha] range:NSMakeRange(0, [text length])];
+        [attributedString addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithWhite:0.0 alpha:DisabledOptionAlpha] range:NSMakeRange(0, [trimmedText length])];
 
     return [attributedString autorelease];
 }

@@ -48,7 +48,6 @@
 using namespace WebKit;
 
 static NSString* WKPopoverTableViewCellReuseIdentifier  = @"WKPopoverTableViewCellReuseIdentifier";
-static const CGFloat minimumOptionFontSize = 12;
 
 @interface UITableViewCell (Internal)
 - (CGRect)textRectForContentRect:(CGRect)contentRect;
@@ -80,23 +79,6 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
         directionalFormattingCharacter = (override ? rightToLeftOverride : rightToLeftEmbedding);
     
     return [NSString stringWithFormat:@"%C%@%C", directionalFormattingCharacter, string, popDirectionalFormatting];
-}
-
-static CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSize, const Vector<WKOptionItem>& items)
-{
-    CGFloat adjustedSize = initialFontSize;
-    for (size_t i = 0; i < items.size(); ++i) {
-        const WKOptionItem& item = items[i];
-        if (item.text.isEmpty())
-            continue;
-        
-        CGFloat actualFontSize = initialFontSize;
-        [(NSString *)item.text _legacy_sizeWithFont:font minFontSize:minimumOptionFontSize actualFontSize:&actualFontSize forWidth:textWidth lineBreakMode:NSLineBreakByWordWrapping];
-        
-        if (actualFontSize > 0 && actualFontSize < adjustedSize)
-            adjustedSize = actualFontSize;
-    }
-    return adjustedSize;
 }
 
 @class WKSelectPopover;

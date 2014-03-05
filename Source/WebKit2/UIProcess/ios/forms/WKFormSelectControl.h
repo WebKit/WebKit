@@ -25,10 +25,13 @@
 
 #if PLATFORM(IOS)
 
+#import "AssistedNodeInformation.h"
 #import "WKFormPeripheral.h"
 #import "WKFormPopover.h"
 #import <UIKit/UIPickerView.h>
 #import <UIKit/UIPickerView_Private.h>
+
+CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSize, const Vector<WebKit::WKOptionItem>& items);
 
 @class WKContentView;
 
@@ -42,6 +45,10 @@
 @end
 
 @interface WKSelectSinglePicker : UIPickerView <WKFormControl, UIPickerViewDataSource, UIPickerViewDelegate>
+- (instancetype)initWithView:(WKContentView *)view;
+@end
+
+@interface WKMultipleSelectPicker : UIPickerView <WKFormControl, UIPickerViewDataSource, UIPickerViewDelegate>
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 

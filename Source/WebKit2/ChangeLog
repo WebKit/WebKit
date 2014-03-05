@@ -1,3 +1,46 @@
+2014-03-05  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] support multi-select and select with groups for iPhone.
+        https://bugs.webkit.org/show_bug.cgi?id=129344
+        <rdar://problem/16206928>
+
+        Reviewed by Simon Fraser.
+
+        This is the remaining work on select element support on iOS.
+        This adds multi-select and select with group support with UI
+        for iPhone that uses UIPickerView.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView resignFirstResponder]):
+        (-[WKContentView inputAccessoryView]): Removed incorrect early return.
+        (-[WKContentView _stopAssistingNode]):
+        * UIProcess/ios/forms/WKFormSelectControl.h:
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (adjustedFontSize): Moved here to make it available to both picker and
+        popover based implementations.
+        (-[WKFormSelectControl initWithView:]):
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKOptionPickerCell _isSelectable]):
+        (-[WKOptionPickerCell initCommon]):
+        (-[WKOptionPickerCell initWithOptionItem:]):
+        (-[WKOptionGroupPickerCell initWithOptionItem:]):
+        (-[WKOptionGroupPickerCell labelWidthForBounds:]):
+        (-[WKOptionGroupPickerCell layoutSubviews]):
+        (-[WKMultipleSelectPicker initWithView:]):
+        (-[WKMultipleSelectPicker dealloc]):
+        (-[WKMultipleSelectPicker controlView]):
+        (-[WKMultipleSelectPicker controlBeginEditing]):
+        (-[WKMultipleSelectPicker controlEndEditing]):
+        (-[WKMultipleSelectPicker layoutSubviews]):
+        (-[WKMultipleSelectPicker pickerView:viewForRow:forComponent:reusingView:]):
+        (-[WKMultipleSelectPicker numberOfComponentsInPickerView:]):
+        (-[WKMultipleSelectPicker pickerView:numberOfRowsInComponent:]):
+        (-[WKMultipleSelectPicker findItemIndexAt:]):
+        (-[WKMultipleSelectPicker pickerView:row:column:checked:]):
+        (-[WKSelectSinglePicker initWithView:]):
+        (-[WKSelectSinglePicker controlEndEditing]):
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+
 2014-03-03  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Generate documentation for the DOM bindings

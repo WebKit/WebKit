@@ -44,6 +44,25 @@
 
 using namespace WebKit;
 
+static const CGFloat minimumOptionFontSize = 12;
+
+CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSize, const Vector<WKOptionItem>& items)
+{
+    CGFloat adjustedSize = initialFontSize;
+    for (size_t i = 0; i < items.size(); ++i) {
+        const WKOptionItem& item = items[i];
+        if (item.text.isEmpty())
+            continue;
+
+        CGFloat actualFontSize = initialFontSize;
+        [(NSString *)item.text _legacy_sizeWithFont:font minFontSize:minimumOptionFontSize actualFontSize:&actualFontSize forWidth:textWidth lineBreakMode:NSLineBreakByWordWrapping];
+
+        if (actualFontSize > 0 && actualFontSize < adjustedSize)
+            adjustedSize = actualFontSize;
+    }
+    return adjustedSize;
+}
+
 @implementation WKFormSelectControl {
     RetainPtr<id<WKFormControl>> _control;
 }
@@ -63,10 +82,11 @@ using namespace WebKit;
 
     if (UICurrentUserInterfaceIdiomIsPad())
         _control = adoptNS([[WKSelectPopover alloc] initWithView:view hasGroups:hasGroups]);
-    else if (!view.assistedNodeInformation.isMultiSelect && !hasGroups)
+    else if (view.assistedNodeInformation.isMultiSelect || hasGroups)
+        _control = adoptNS([[WKMultipleSelectPicker alloc] initWithView:view]);
+    else
         _control = adoptNS([[WKSelectSinglePicker alloc] initWithView:view]);
         
-    // FIXME: Add support for iPhone UI with multiselect and or groups.
     return self;
 }
 

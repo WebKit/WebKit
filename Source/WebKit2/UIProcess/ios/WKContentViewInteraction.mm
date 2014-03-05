@@ -229,6 +229,8 @@ static const float tapAndHoldDelay  = 0.75;
 {
     // FIXME: Maybe we should call resignFirstResponder on the superclass
     // and do nothing if the return value is NO.
+    // We need to complete the editing operation before we blur the element.
+    [_inputPeripheral endEditing];
     _page->blurAssistedNode();
     [self _cancelInteraction];
     [_webSelectionAssistant resignedFirstResponder];
@@ -741,9 +743,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (UIView *)inputAccessoryView
 {
-    if (!_isEditable)
-        return nil;
-    
     if (!_formAccessoryView) {
         _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
         [_formAccessoryView setDelegate:self];
@@ -1883,7 +1882,6 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 - (void)_stopAssistingNode
 {
     _isEditable = NO;
-    [_inputPeripheral endEditing];
     _assistedNodeInformation.elementType = WKTypeNone;
     _inputPeripheral = nil;
 
