@@ -1,3 +1,11 @@
+2014-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix a stupid error in r165118 that caused userVisibleString()
+        to call itself recursively.
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::userVisibleString):
+
 2014-03-05  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS] Rename the various VisibleExtent variations to exposedContentRect
