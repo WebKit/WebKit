@@ -1,3 +1,16 @@
+2014-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Give WebProcess private RWI entitlement
+        https://bugs.webkit.org/show_bug.cgi?id=129710
+
+        Reviewed by Timothy Hatcher.
+
+        * Configurations/WebContent-iOS.entitlements:
+        Add entitlements to "WebProcess" when code signing.
+
+        * Configurations/WebContentProcess.xcconfig:
+        Add the private RWI entitlement.
+
 2014-03-04  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2]: Next/Prev button in the accessory bar do not work.

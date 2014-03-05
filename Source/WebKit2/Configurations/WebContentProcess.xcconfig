@@ -29,3 +29,5 @@ INFOPLIST_FILE = WebProcess/EntryPoint/mac/LegacyProcess/Info.plist;
 EXCLUDED_SHIM_FILE_NAME = $(EXCLUDED_SHIM_FILE_NAME_$(PLATFORM_NAME));
 EXCLUDED_SHIM_FILE_NAME_iphoneos = WebProcessShim.dylib;
 EXCLUDED_SHIM_FILE_NAME_iphonesimulator = $(EXCLUDED_SHIM_FILE_NAME_iphoneos);
+
+CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*] = Configurations/WebContent-iOS.entitlements
