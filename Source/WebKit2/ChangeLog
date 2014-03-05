@@ -1,3 +1,23 @@
+2014-03-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Consider the entire view state on update to find if a change is stable or not
+        https://bugs.webkit.org/show_bug.cgi?id=129721
+
+        Reviewed by Simon Fraser.
+
+        Changes in scroll, zoom and obscuredRect can happen simultaneously. To compute if the current state
+        is stable or not, we should consider the complete picture from all the type of updates.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didFinishScrolling]):
+        (-[WKWebView scrollViewDidScroll:]):
+        (-[WKWebView scrollViewDidZoom:]):
+        (-[WKWebView scrollViewDidEndZooming:withView:atScale:]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _setObscuredInsets:]):
+        (-[WKWebView _endInteractiveObscuredInsetsChange]):
+
 2014-03-04  Jeremy Jones  <jeremyj@apple.com>
 
         WebVideoFullscreen, should make the hand off of the video layer explicit.

@@ -483,7 +483,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_didFinishScrolling
 {
-    [self _updateVisibleContentRectsWithStableState:YES];
+    [self _updateVisibleContentRects];
     [_contentView didFinishScrolling];
 }
 
@@ -506,18 +506,18 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    [self _updateVisibleContentRectsWithStableState:NO];
+    [self _updateVisibleContentRects];
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
-    [self _updateVisibleContentRectsWithStableState:NO];
+    [self _updateVisibleContentRects];
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
     ASSERT(scrollView == _scrollView);
-    [self _updateVisibleContentRectsWithStableState:YES];
+    [self _updateVisibleContentRects];
     [_contentView didZoomToScale:scale];
 }
 
@@ -529,10 +529,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [_contentView setMinimumLayoutSize:bounds.size];
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
-    [self _updateVisibleContentRectsWithStableState:YES];
+    [self _updateVisibleContentRects];
 }
 
-- (void)_updateVisibleContentRectsWithStableState:(BOOL)isStateStable
+- (void)_updateVisibleContentRects
 {
     CGRect fullViewRect = self.bounds;
     CGRect visibleRectInContentCoordinates = [self convertRect:fullViewRect toView:_contentView.get()];
@@ -542,7 +542,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     CGFloat scaleFactor = [_scrollView zoomScale];
 
-    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates scale:scaleFactor inStableState:isStateStable];
+    BOOL isStableState = !(_isChangingObscuredInsetsInteractively || [_scrollView isDragging] || [_scrollView isDecelerating] || [_scrollView isZooming] || [_scrollView isZoomBouncing] || [_scrollView _isAnimatingZoom]);
+    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates scale:scaleFactor inStableState:isStableState];
 }
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView
@@ -805,7 +806,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     ASSERT(obscuredInsets.bottom >= 0);
     ASSERT(obscuredInsets.right >= 0);
     _obscuredInsets = obscuredInsets;
-    [self _updateVisibleContentRectsWithStableState:!_isChangingObscuredInsetsInteractively];
+    [self _updateVisibleContentRects];
 }
 
 - (UIColor *)_pageExtendedBackgroundColor
@@ -837,7 +838,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 {
     ASSERT(_isChangingObscuredInsetsInteractively);
     _isChangingObscuredInsetsInteractively = NO;
-    [self _updateVisibleContentRectsWithStableState:YES];
+    [self _updateVisibleContentRects];
 }
 
 #else
