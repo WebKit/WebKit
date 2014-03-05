@@ -1,3 +1,30 @@
+2014-03-05  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win32][LLINT] Crash when running JSC stress tests.
+        https://bugs.webkit.org/show_bug.cgi?id=129429
+
+        On Windows the reserved stack space consists of committed memory, a guard page, and uncommitted memory,
+        where the guard page is a barrier between committed and uncommitted memory.
+        When data from the guard page is read or written, the guard page is moved, and memory is committed.
+        This is how the system grows the stack.
+        When using the C stack on Windows we need to precommit the needed stack space.
+        Otherwise we might crash later if we access uncommitted stack memory.
+        This can happen if we allocate stack space larger than the page guard size (4K).
+        The system does not get the chance to move the guard page, and commit more memory,
+        and we crash if uncommitted memory is accessed.
+        The MSVC compiler fixes this by inserting a call to the _chkstk() function,
+        when needed, see http://support.microsoft.com/kb/100775.
+
+        Reviewed by Geoffrey Garen.
+
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.sh: Enable LLINT.
+        * jit/Repatch.cpp:
+        (JSC::writeBarrier): Compile fix when DFG_JIT is not enabled.
+        * offlineasm/x86.rb: Compile fix, and small simplification.
+        * runtime/VM.cpp:
+        (JSC::preCommitStackMemory): Added function to precommit stack memory.
+        (JSC::VM::updateStackLimit): Call function to precommit stack memory when stack limit is updated.
+
 2014-03-05  Michael Saboff  <msaboff@apple.com>
 
         JSDataViewPrototype::getData() and setData() crash on platforms that don't allow unaligned accesses

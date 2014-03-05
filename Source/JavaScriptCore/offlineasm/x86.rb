@@ -414,7 +414,7 @@ class BaseIndex
     end
     
     def x86Operand(kind)
-        if !isIntelSyntax || kind != :double
+        if !isIntelSyntax
             x86AddressOperand(:ptr)
         else
             "#{getSizeString(kind)}[#{offset.value} + #{base.x86Operand(:ptr)} + #{index.x86Operand(:ptr)} * #{scale}]"
@@ -1326,7 +1326,7 @@ class Instruction
                 }
             end
             op = operands[0].x86CallOperand(:ptr)
-            if isMSVC && (/\Allint_/.match(op) || /\Aslow_path/.match(op))
+            if isMSVC && (operands[0].is_a? LabelReference)
                 writeSymbolToFile(op)
             end
             $asm.puts "call #{op}"

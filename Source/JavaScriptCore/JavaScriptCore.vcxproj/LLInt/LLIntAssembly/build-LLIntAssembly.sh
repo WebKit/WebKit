@@ -29,4 +29,4 @@ printf "END" > LowLevelInterpreterWin.asm
 
 # When enabling LLINT and switching to the x86 backend, use "LowLevelInterpreterWin.asm" as output file when running asm.rb.
 
-/usr/bin/env ruby "${SRCROOT}/offlineasm/asm.rb" "${SRCROOT}/llint/LowLevelInterpreter.asm" "${BUILT_PRODUCTS_DIR}/LLIntOffsetsExtractor/LLIntOffsetsExtractor${3}.exe" "LLIntAssembly.h" || exit 1
+/usr/bin/env ruby "${SRCROOT}/offlineasm/asm.rb" "${SRCROOT}/llint/LowLevelInterpreter.asm" "${BUILT_PRODUCTS_DIR}/LLIntOffsetsExtractor/LLIntOffsetsExtractor${3}.exe" "LowLevelInterpreterWin.asm" || exit 1

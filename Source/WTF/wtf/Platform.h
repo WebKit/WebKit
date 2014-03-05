@@ -640,7 +640,7 @@
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
     && !OS(WINCE) \
-    && !OS(WINDOWS)
+    && !(OS(WINDOWS) && CPU(X86_64))
 #define ENABLE_JIT 1
 #endif
 
@@ -693,8 +693,8 @@
    low-level interpreter. */
 #if !defined(ENABLE_LLINT) \
     && ENABLE(JIT) \
-    && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD)) \
-    && ((OS(DARWIN) && !PLATFORM(EFL)) || PLATFORM(GTK)) \
+    && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(WINDOWS)) \
+    && ((OS(DARWIN) && !PLATFORM(EFL)) || PLATFORM(GTK) || PLATFORM(WIN)) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL) || CPU(ARM64) || CPU(MIPS) || CPU(SH4))
 #define ENABLE_LLINT 1
 #endif
@@ -783,7 +783,7 @@
 #endif
 
 /* Configure the interpreter */
-#if COMPILER(GCC)
+#if COMPILER(GCC) || COMPILER(MSVC)
 #define HAVE_COMPUTED_GOTO 1
 #endif
 
