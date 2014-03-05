@@ -639,14 +639,14 @@ LayoutRect RenderBox::outlineBoundsForRepaint(const RenderLayerModelObject* repa
         else
             containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
 
-        box = containerRelativeQuad.enclosingBoundingBox();
+        box = LayoutRect(containerRelativeQuad.boundingBox());
     }
     
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     box.move(view().layoutDelta());
 
-    return box;
+    return LayoutRect(pixelSnappedForPainting(box, document().deviceScaleFactor()));
 }
 
 void RenderBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*)

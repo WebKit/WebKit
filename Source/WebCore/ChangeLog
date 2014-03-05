@@ -1,3 +1,24 @@
+2014-03-05  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Wrong cliprect on absolute positioned elements.
+        https://bugs.webkit.org/show_bug.cgi?id=129656
+
+        Reviewed by Simon Fraser.
+
+        outlineBoundsForRepaint() is expected to return the outline repaint rect. Using enclosingIntRect()
+        to calculate the outline boundaries breaks repaint logic in RenderElement::repaintAfterLayoutIfNeeded().
+        Since enclosingIntRect() can return bigger rect than repaint rect, the old/new bounds' dimensions could end up
+        being different which triggers the size change repaint code path.
+
+        Test: fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::outlineBoundsForRepaint):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::repaintAfterLayoutIfNeeded):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::outlineBoundsForRepaint):
+
 2014-03-05  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose missing functionalities of AtkTableCell to AT.
