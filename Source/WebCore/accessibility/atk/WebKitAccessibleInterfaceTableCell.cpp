@@ -78,10 +78,82 @@ GPtrArray* webkitAccessibleTableCellGetRowHeaderCells(AtkTableCell* cell)
     return convertToGPtrArray(rowHeaders);
 }
 
+gint webkitAccessibleTableCellGetColumnSpan(AtkTableCell* cell)
+{
+    g_return_val_if_fail(ATK_TABLE_CELL(cell), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(cell), 0);
+
+    AccessibilityObject* axObject = core(cell);
+    if (!axObject || !axObject->isTableCell())
+        return 0;
+
+    std::pair<unsigned, unsigned> columnRange;
+    toAccessibilityTableCell(axObject)->columnIndexRange(columnRange);
+
+    return columnRange.second;
+}
+
+gint webkitAccessibleTableCellGetRowSpan(AtkTableCell* cell)
+{
+    g_return_val_if_fail(ATK_TABLE_CELL(cell), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(cell), 0);
+
+    AccessibilityObject* axObject = core(cell);
+    if (!axObject || !axObject->isTableCell())
+        return 0;
+
+    std::pair<unsigned, unsigned> rowRange;
+    toAccessibilityTableCell(axObject)->rowIndexRange(rowRange);
+
+    return rowRange.second;
+}
+
+gboolean webkitAccessibleTableCellGetPosition(AtkTableCell* cell, gint* row, gint* column)
+{
+    g_return_val_if_fail(ATK_TABLE_CELL(cell), false);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(cell), false);
+
+    AccessibilityObject* axObject = core(cell);
+    if (!axObject || !axObject->isTableCell())
+        return false;
+
+    std::pair<unsigned, unsigned> columnRowRange;
+    if (row) {
+        toAccessibilityTableCell(axObject)->rowIndexRange(columnRowRange);
+        *row = columnRowRange.first;
+    }
+    if (column) {
+        toAccessibilityTableCell(axObject)->columnIndexRange(columnRowRange);
+        *column = columnRowRange.first;
+    }
+
+    return true;
+}
+
+AtkObject* webkitAccessibleTableCellGetTable(AtkTableCell* cell)
+{
+    g_return_val_if_fail(ATK_TABLE_CELL(cell), nullptr);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(cell), nullptr);
+
+    AccessibilityObject* axObject = core(cell);
+    if (!axObject || !axObject->isTableCell())
+        return nullptr;
+
+    AtkObject* table = atk_object_get_parent(axObject->wrapper());
+    if (!table || !ATK_IS_TABLE(table))
+        return nullptr;
+
+    return ATK_OBJECT(g_object_ref(table));
+}
+
 void webkitAccessibleTableCellInterfaceInit(AtkTableCellIface* iface)
 {
     iface->get_column_header_cells = webkitAccessibleTableCellGetColumnHeaderCells;
     iface->get_row_header_cells = webkitAccessibleTableCellGetRowHeaderCells;
+    iface->get_column_span = webkitAccessibleTableCellGetColumnSpan;
+    iface->get_row_span = webkitAccessibleTableCellGetRowSpan;
+    iface->get_position = webkitAccessibleTableCellGetPosition;
+    iface->get_table = webkitAccessibleTableCellGetTable;
 }
 
 #endif

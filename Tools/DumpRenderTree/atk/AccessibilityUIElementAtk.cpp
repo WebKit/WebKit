@@ -495,12 +495,14 @@ static void convertGPtrArrayToVector(const GPtrArray* array, Vector<Accessibilit
 }
 #endif
 
-} // namespace
-
 JSStringRef indexRangeInTable(PlatformUIElement element, bool isRowRange)
 {
     GUniquePtr<gchar> rangeString(g_strdup("{0, 0}"));
 
+#if ATK_CHECK_VERSION(2,11,90)
+    if (!ATK_IS_TABLE_CELL(element))
+        return JSStringCreateWithUTF8CString(rangeString.get());
+#else
     if (!ATK_IS_OBJECT(element))
         return JSStringCreateWithUTF8CString(rangeString.get());
 
@@ -512,11 +514,20 @@ JSStringRef indexRangeInTable(PlatformUIElement element, bool isRowRange)
     gint indexInParent = atk_object_get_index_in_parent(ATK_OBJECT(element));
     if (indexInParent == -1)
         return JSStringCreateWithUTF8CString(rangeString.get());
+#endif
 
-    int row = -1;
-    int column = -1;
+    gint row = -1;
+    gint column = -1;
+    gint rowSpan = -1;
+    gint columnSpan = -1;
+#if ATK_CHECK_VERSION(2,11,90)
+    atk_table_cell_get_row_column_span(ATK_TABLE_CELL(element), &row, &column, &rowSpan, &columnSpan);
+#else
     row = atk_table_get_row_at_index(ATK_TABLE(axTable), indexInParent);
     column = atk_table_get_column_at_index(ATK_TABLE(axTable), indexInParent);
+    rowSpan = atk_table_get_row_extent_at(ATK_TABLE(axTable), row, column);
+    columnSpan = atk_table_get_column_extent_at(ATK_TABLE(axTable), row, column);
+#endif
 
     // Get the actual values, if row and columns are valid values.
     if (row != -1 && column != -1) {
@@ -524,10 +535,10 @@ JSStringRef indexRangeInTable(PlatformUIElement element, bool isRowRange)
         int length = 0;
         if (isRowRange) {
             base = row;
-            length = atk_table_get_row_extent_at(ATK_TABLE(axTable), row, column);
+            length = rowSpan;
         } else {
             base = column;
-            length = atk_table_get_column_extent_at(ATK_TABLE(axTable), row, column);
+            length = columnSpan;
         }
         rangeString.reset(g_strdup_printf("{%d, %d}", base, length));
     }
@@ -556,6 +567,8 @@ void alterCurrentValue(PlatformUIElement element, int factor)
     g_value_unset(&increment);
     g_value_unset(&currentValue);
 }
+
+} // namespace
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
