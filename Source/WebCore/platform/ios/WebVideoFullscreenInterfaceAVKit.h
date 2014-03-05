@@ -40,9 +40,18 @@ OBJC_CLASS WebAVPlayerController;
 OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS UIViewController;
 OBJC_CLASS UIWindow;
+OBJC_CLASS CALayer;
+OBJC_CLASS WebAVPlayerLayer;
 
 namespace WebCore {
 class WebVideoFullscreenModel;
+    
+class WebVideoFullscreenChangeObserver {
+public:
+    virtual ~WebVideoFullscreenChangeObserver() { };
+    virtual void didEnterFullscreen() = 0;
+    virtual void didExitFullscreen() = 0;
+};
     
 class WebVideoFullscreenInterfaceAVKit
     : public WebVideoFullscreenInterface
@@ -52,24 +61,31 @@ class WebVideoFullscreenInterfaceAVKit
     RetainPtr<AVPlayerViewController> m_playerViewController;
     RetainPtr<UIViewController> m_viewController;
     RetainPtr<UIWindow> m_window;
+    RetainPtr<CALayer> m_videoLayer;
+    RetainPtr<WebAVPlayerLayer> m_videoLayerContainer;
     WebVideoFullscreenModel* m_videoFullscreenModel;
+    WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver;
         
     WebAVPlayerController *playerController();
     
+    void doEnterFullscreen();
+        
 public:
     WebVideoFullscreenInterfaceAVKit();
     virtual ~WebVideoFullscreenInterfaceAVKit() { }
     void setWebVideoFullscreenModel(WebVideoFullscreenModel*);
+    void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
     
-    void setDuration(double) override;
-    void setCurrentTime(double currentTime, double anchorTime) override;
-    void setRate(bool isPlaying, float playbackRate) override;
-    void setVideoDimensions(bool hasVideo, float width, float height) override;
-    void setVideoLayer(PlatformLayer*) override;
-    void enterFullscreen() override;
-    void enterFullscreenWithCompletionHandler(std::function<void()>);
-    void exitFullscreen() override;
-    void exitFullscreenWithCompletionHandler(std::function<void()>);
+    virtual void setDuration(double) override;
+    virtual void setCurrentTime(double currentTime, double anchorTime) override;
+    virtual void setRate(bool isPlaying, float playbackRate) override;
+    virtual void setVideoDimensions(bool hasVideo, float width, float height) override;
+
+    virtual void willLendVideoLayer(PlatformLayer*) override;
+    virtual void didLendVideoLayer() override;
+
+    virtual void enterFullscreen();
+    virtual void exitFullscreen();
 };
 
 }

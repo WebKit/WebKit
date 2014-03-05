@@ -20,15 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# changes here must be reflected in WebVideoFullscreenModel
 #if PLATFORM(IOS)
 messages -> WebVideoFullscreenManagerProxy {
     SetCurrentTime(double currentTime, double hostTime)
-    SetVideoLayerID(WebCore::GraphicsLayer::PlatformLayerID videoLayerID)
     SetVideoDimensions(bool hasVideo, unsigned width, unsigned height)
     SetDuration(double duration)
     SetRate(bool isPlaying, double rate)
     EnterFullscreen()
+    WillLendVideoLayerWithID(WebCore::GraphicsLayer::PlatformLayerID videoLayerID)
     ExitFullscreen()
 }
 #endif

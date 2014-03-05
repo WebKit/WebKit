@@ -51,16 +51,17 @@ public:
     void setWebVideoFullscreenInterface(WebVideoFullscreenInterface* interface) {m_videoFullscreenInterface = interface;}
     void setMediaElement(HTMLMediaElement*);
     
-    void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
+    virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
     bool operator==(const EventListener& rhs) override
         {return static_cast<WebCore::EventListener*>(this) == &rhs;}
 
-    void requestExitFullScreen() override;
-    void play() override;
-    void pause() override;
-    void togglePlayState() override;
-    void seekToTime(double time) override;
-    void didExitFullscreen();
+    virtual void borrowVideoLayer() override;
+    virtual void returnVideoLayer() override;
+    virtual void play() override;
+    virtual void pause() override;
+    virtual void togglePlayState() override;
+    virtual void seekToTime(double time) override;
+    virtual void requestExitFullscreen() override;
 };
 
 }

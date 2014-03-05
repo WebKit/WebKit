@@ -67,18 +67,30 @@ protected:
     explicit WebVideoFullscreenManager(PassRefPtr<WebPage>);
     virtual bool operator==(const EventListener& rhs) override { return static_cast<WebCore::EventListener*>(this) == &rhs; }
     
+    // FullscreenInterface
     virtual void setDuration(double) override;
     virtual void setCurrentTime(double currentTime, double anchorTime) override;
     virtual void setRate(bool isPlaying, float playbackRate) override;
     virtual void setVideoDimensions(bool hasVideo, float width, float height) override;
-    virtual void setVideoLayer(PlatformLayer*) override;
-    virtual void enterFullscreen() override;
-    virtual void exitFullscreen() override;
+    virtual void willLendVideoLayer(PlatformLayer*) override;
+    virtual void didLendVideoLayer() override;
+
+    // forward to interface
+    virtual void enterFullscreen();
+    virtual void exitFullscreen();
+    
+    // additional incoming
+    virtual void didEnterFullscreen();
+    virtual void didExitFullscreen();
     
     WebPage* m_page;
     RefPtr<WebCore::Node> m_node;
     RefPtr<WebCore::PlatformCALayer> m_platformCALayer;
     bool m_sendUnparentVideoLayerTransaction;
+    
+    bool m_isAnimating;
+    bool m_targetIsFullscreen;
+    bool m_isFullscreen;
 };
     
 } // namespace WebKit

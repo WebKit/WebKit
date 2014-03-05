@@ -1,3 +1,92 @@
+2014-03-04  Jeremy Jones  <jeremyj@apple.com>
+
+        WebVideoFullscreen, should make the hand off of the video layer explicit.
+        https://bugs.webkit.org/show_bug.cgi?id=128844
+
+        Reviewed by Simon Fraser.
+
+        This change introduces a more explicit hand-off of the video layer and fullscreen transition.
+        This describes the interactions between WebVideoFullscreenInterface and WebVideoFullscreenModel
+        WebVideoFullscreenModel <-> WebVideoFullscreenInterface
+              enterFullScreen(*) ->
+                                <- borrowVideoLayer
+              willLendVideoLayer ->
+               didLendVideoLayer ->
+                                <- didEnterFullscreen
+                                ...
+                                <- requestExitFullscreen
+                  exitFullscreen ->
+                                <- returnVideoLayer
+                                <- didExitFullscreen
+        (*) enterFullScreen actually comes from WebVideoFullscreenControllerAVKit.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        Implement WebVideoFullscreenChangeObserver.
+        Add support for explicit video layer hand-off.
+        Add m_videoView to retain the videoLayer's UIView.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        WillLendVideoLayerWithID replaces SetVideoLayerID
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        Adopt new methods for explicit video layer hand-off.
+
+        (WebKit::WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy):
+        Observe fullscreen changes.
+
+        (WebKit::WebVideoFullscreenManagerProxy::didCommitLayerTree):
+        Pending fullscreen transition now does didLendVideoLayer instead of calling enter fullscreen.
+        It also removes the videoView from it's super view now that it is safe to do so.
+
+        (WebKit::WebVideoFullscreenManagerProxy::willLendVideoLayerWithID):
+        This replaces setVideoLayerID. It retains the UIView for the layer to keep it alive before it is unparented.
+
+        (WebKit::WebVideoFullscreenManagerProxy::requestExitFullscreen):
+        Adopt more explicit fullscreen transition.
+
+        (WebKit::WebVideoFullscreenManagerProxy::didExitFullscreen):
+        Adopt more explicit fullscreen transition.
+
+        (WebKit::WebVideoFullscreenManagerProxy::didEnterFullscreen):
+        Adopt more explicit fullscreen transition.
+
+        (WebKit::WebVideoFullscreenManagerProxy::borrowVideoLayer):
+        Adopt more explicit video layer hand-off.
+
+        (WebKit::WebVideoFullscreenManagerProxy::returnVideoLayer):
+        Adopt more explicit video layer hand-off.
+
+        * WebProcess/ios/WebVideoFullscreenManager.cpp:
+        Manage state of fullscreen transition more competently. Wait till an animation is complete to begin the next one.
+
+        (WebKit::WebVideoFullscreenManager::WebVideoFullscreenManager):
+        Init three new state members.
+
+        (WebKit::WebVideoFullscreenManager::enterFullscreenForNode):
+        Update animation state. Don't procede if animation is in progress.
+
+        (WebKit::WebVideoFullscreenManager::exitFullscreenForNode):
+        Update animation state. Don't procede if animation is in progress.
+
+        (WebKit::WebVideoFullscreenManager::willLendVideoLayer):
+        Adopt more explicit video layer hand-off.
+        This replaces SetVideoLayer.
+
+        (WebKit::WebVideoFullscreenManager::didLendVideoLayer):
+        This is a no-op as this will be sent through a RemoteLayerTreeTransaction.
+
+        (WebKit::WebVideoFullscreenManager::didEnterFullscreen):
+        Adopt more explicit fullscreen transition.
+
+        (WebKit::WebVideoFullscreenManager::didExitFullscreen):
+        Adopt more explicit fullscreen transition.
+
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        Adopt more explicit fullscreen transition.
+
+        * WebProcess/ios/WebVideoFullscreenManager.messages.in:
+        Adopt more explicit fullscreen/video layer transition.
+
 2014-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Get position:fixed working slightly better on iOS WK2

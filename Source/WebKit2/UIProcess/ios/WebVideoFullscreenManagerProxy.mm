@@ -53,6 +53,7 @@ WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy(WebPageProxy& pag
 {
     m_page->process().addMessageReceiver(Messages::WebVideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID(), *this);
     setWebVideoFullscreenModel(this);
+    setWebVideoFullscreenChangeObserver(this);
 }
 
 WebVideoFullscreenManagerProxy::~WebVideoFullscreenManagerProxy()
@@ -64,37 +65,35 @@ void WebVideoFullscreenManagerProxy::didCommitLayerTree(const RemoteLayerTreeTra
 {
     if (m_enterFullscreenAfterVideoLayerUnparentedTransaction && layerTreeTransaction.isVideoLayerIDPendingFullscreen(m_videoLayerID)) {
         m_enterFullscreenAfterVideoLayerUnparentedTransaction = false;
-        WebCore::WebVideoFullscreenInterfaceAVKit::enterFullscreen();
+        [m_videoView removeFromSuperview];
+        didLendVideoLayer();
     }
 }
 
-void WebVideoFullscreenManagerProxy::setVideoLayerID(GraphicsLayer::PlatformLayerID videoLayerID)
+void WebVideoFullscreenManagerProxy::willLendVideoLayerWithID(GraphicsLayer::PlatformLayerID videoLayerID)
 {
     RemoteLayerTreeDrawingAreaProxy* remoteDrawingAreaProxy = toRemoteLayerTreeDrawingAreaProxy(m_page->drawingArea());
-
-    if (videoLayerID) {
-        // Entering fullscreen.
-        UIView *videoView = remoteDrawingAreaProxy->remoteLayerTreeHost().getLayer(videoLayerID);
-        // Remove the UIView from its superlayer, so we can reparent the layer without problems.
-        [videoView removeFromSuperview];
-        
-        setVideoLayer(videoView.layer);
-    } else
-        setVideoLayer(nil);
-    
+    m_videoView = remoteDrawingAreaProxy->remoteLayerTreeHost().getLayer(videoLayerID);
+    willLendVideoLayer(m_videoView.get().layer);
     m_videoLayerID = videoLayerID;
     m_enterFullscreenAfterVideoLayerUnparentedTransaction = true;
 }
 
-void WebVideoFullscreenManagerProxy::enterFullscreen()
+void WebVideoFullscreenManagerProxy::requestExitFullscreen()
 {
+    m_page->send(Messages::WebVideoFullscreenManager::RequestExitFullscreen(), m_page->pageID());
 }
-    
-void WebVideoFullscreenManagerProxy::requestExitFullScreen()
+
+void WebVideoFullscreenManagerProxy::didExitFullscreen()
 {
-    m_page->send(Messages::WebVideoFullscreenManager::RequestExitFullScreen(), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManager::DidExitFullscreen(), m_page->pageID());
 }
-    
+
+void WebVideoFullscreenManagerProxy::didEnterFullscreen()
+{
+    m_page->send(Messages::WebVideoFullscreenManager::DidEnterFullscreen(), m_page->pageID());
+}
+
 void WebVideoFullscreenManagerProxy::play()
 {
     m_page->send(Messages::WebVideoFullscreenManager::Play(), m_page->pageID());
@@ -115,11 +114,17 @@ void WebVideoFullscreenManagerProxy::seekToTime(double time)
     m_page->send(Messages::WebVideoFullscreenManager::SeekToTime(time), m_page->pageID());
 }
     
-void WebVideoFullscreenManagerProxy::didExitFullscreen()
+void WebVideoFullscreenManagerProxy::borrowVideoLayer()
 {
-    m_page->send(Messages::WebVideoFullscreenManager::DidExitFullscreen(), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManager::BorrowVideoLayer(), m_page->pageID());
 }
-    
+
+void WebVideoFullscreenManagerProxy::returnVideoLayer()
+{
+    m_page->send(Messages::WebVideoFullscreenManager::ReturnVideoLayer(), m_page->pageID());
+    m_videoView.clear();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

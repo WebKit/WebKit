@@ -36,17 +36,33 @@
 
 using namespace WebCore;
 
+@interface WebVideoFullscreenController (FullscreenObservation)
+- (void)didEnterFullscreen;
+- (void)didExitFullscreen;
+@end
+
+class WebVideoFullscreenControllerChangeObserver : public WebVideoFullscreenChangeObserver {
+    WebVideoFullscreenController* _target;
+public:
+    void setTarget(WebVideoFullscreenController* target) { _target = target; }
+    virtual void didEnterFullscreen() override { [_target didEnterFullscreen]; }
+    virtual void didExitFullscreen() override { [_target didExitFullscreen]; }
+};
+
 @implementation WebVideoFullscreenController
 {
     RefPtr<HTMLMediaElement> _mediaElement;
     RefPtr<WebVideoFullscreenInterfaceAVKit> _interface;
     RefPtr<WebVideoFullscreenModelMediaElement> _model;
+    WebVideoFullscreenControllerChangeObserver _changeObserver;
 }
 
 - (instancetype)init
 {
     if (!(self = [super init]))
         return nil;
+    
+    _changeObserver.setTarget(self);
 
     return self;
 }
@@ -69,8 +85,11 @@ using namespace WebCore;
 
 - (void)enterFullscreen:(UIScreen *)screen
 {
+    [self retain]; // Balanced by -release in didExitFullscreen:
+    
     UNUSED_PARAM(screen);
     _interface = adoptRef(new WebVideoFullscreenInterfaceAVKit);
+    _interface->setWebVideoFullscreenChangeObserver(&_changeObserver);
     _model = adoptRef(new WebVideoFullscreenModelMediaElement);
     _model->setWebVideoFullscreenInterface(_interface.get());
     _interface->setWebVideoFullscreenModel(_model.get());
@@ -80,16 +99,24 @@ using namespace WebCore;
 
 - (void)exitFullscreen
 {
-    RetainPtr<WebVideoFullscreenController> strongSelf(self);
-    
-    _interface->exitFullscreenWithCompletionHandler([strongSelf]{
-        WebThreadRun([strongSelf]{
-            strongSelf->_model->setMediaElement(nullptr);
-            strongSelf->_interface->setWebVideoFullscreenModel(nullptr);
-            strongSelf->_model->setWebVideoFullscreenInterface(nullptr);
-            strongSelf->_model = nullptr;
-            strongSelf->_interface = nullptr;
-        });
+    _interface->exitFullscreen();
+}
+
+- (void)didEnterFullscreen
+{
+}
+
+- (void)didExitFullscreen
+{
+    WebThreadRun(^{
+        _model->setMediaElement(nullptr);
+        _interface->setWebVideoFullscreenModel(nullptr);
+        _interface->setWebVideoFullscreenChangeObserver(nullptr);
+        _model->setWebVideoFullscreenInterface(nullptr);
+        _model = nullptr;
+        _interface = nullptr;
+        
+        [self release]; // Balance the -retain we did in enterFullscreen:
     });
 }
 

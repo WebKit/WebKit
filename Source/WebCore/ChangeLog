@@ -1,3 +1,128 @@
+2014-03-04  Jeremy Jones  <jeremyj@apple.com>
+
+        WebVideoFullscreen, should make the hand off of the video layer explicit.
+        https://bugs.webkit.org/show_bug.cgi?id=128844
+
+        Reviewed by Simon Fraser.
+
+        This change introduces a more explicit hand-off of the video layer.
+        This describes the interactions between WebVideoFullscreenInterface and WebVideoFullscreenModel
+        WebVideoFullscreenModel <-> WebVideoFullscreenInterface
+              enterFullScreen(*) ->
+                                <- borrowVideoLayer
+              willLendVideoLayer ->
+               didLendVideoLayer ->
+                                <- didEnterFullscreen
+                                ...
+                                <- requestExitFullscreen
+                  exitFullscreen ->
+                                <- returnVideoLayer
+                                <- didExitFullscreen
+        (*) enterFullScreen actually comes from WebVideoFullscreenControllerAVKit.
+
+        * WebCore.exp.in:
+        Export new functions in WebVideoFullscreenInterfaceAVKit, WebVideoFullscreenModelMediaElement, etc.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        Add WebVideoFullscreenControllerChangeObserver to forward fullscreen callbacks to WebVideoFullscreenController
+
+        (WebVideoFullscreenControllerChangeObserver::setTarget):
+        Sets obj-c target of fullscreen change callbacks.
+
+        (-[WebVideoFullscreenController init]):
+        Point _changeObserver's target at self.
+
+        (-[WebVideoFullscreenController dealloc]):
+        Clear _changeObserver's target.
+
+        (-[WebVideoFullscreenController enterFullscreen:]):
+        Retain self to prevent dealloc during animation or while fullscreen.
+        Connect _interface to _changeObserver.
+
+        (-[WebVideoFullscreenController exitFullscreen]):
+        Remove use of completion move cleanup to -didExitFullscreen.
+
+        (-[WebVideoFullscreenController didEnterFullscreen]):
+        Nothing to see here.
+
+        (-[WebVideoFullscreenController didExitFullscreen]):
+        Move clean up code that was in a completion to here.
+
+        * platform/ios/WebVideoFullscreenInterface.h:
+        Add delarations for more explicit hand-off of video layer.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        Add WebVideoFullscreenChangeObserver to notify when fullscreen animations complete.
+        Add declarations for more explicit hand-off of video layer.
+        Add WebAVPlayerLayer now always wraps the m_videoLayer to prevent default behavior
+        of AVPlayerLayer.
+
+        (WebCore::WebVideoFullscreenChangeObserver::~WebVideoFullscreenChangeObserver):
+        Add empty virtual destructor.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        Include AVKit headers instead of declaring everything locally.
+        AVPlayerLayer protocol renamed to AVVideoLayer per AVKit.
+
+        (-[WebAVPlayerController dealloc]):
+        Don't refer to self.
+
+        (-[WebAVPlayerController playerViewController:shouldDismissWithReason:]):
+        Pause before requesting exit fullscreen.
+
+        (-[WebAVPlayerLayer setPlayerController:]):
+        This is required by AVVideoLayer, but we don't need it.
+
+        (WebVideoFullscreenInterfaceAVKit::playerController):
+        White space.
+
+        (WebVideoFullscreenInterfaceAVKit::setWebVideoFullscreenChangeObserver):
+        Set observer to forward fullscreen changes to.
+
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen):
+        Use more explicit video layer hand-off.
+
+        (WebVideoFullscreenInterfaceAVKit::doEnterFullscreen):
+        Move enterFullscreen logic here.
+        AVPlayerViewController now takes the video layer at init time.
+        Always provide a video layer wrapped in a WebAVPlayerLayer.
+
+        (WebVideoFullscreenInterfaceAVKit::willLendVideoLayer):
+        Use more explicit video layer hand-off.
+
+        (WebVideoFullscreenInterfaceAVKit::didLendVideoLayer):
+        Use more explicit video layer hand-off.
+
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen):
+        Use more explicit video layer hand-off.
+
+        * platform/ios/WebVideoFullscreenModel.h:
+        Add functions for more explicit video layer hand-off.
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.h:
+        Mark virtual functions as virtual.
+        Add changes for WebVideoFullscreenModel.
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        Use more explicit video layer hand-off.
+
+        (WebVideoFullscreenModelMediaElement::setMediaElement):
+        Don't push the video layer. Wait for a request for it.
+
+        (WebVideoFullscreenModelMediaElement::handleEvent):
+        Make sure m_videoFullscreenInterface is valid.
+
+        (WebVideoFullscreenModelMediaElement::borrowVideoLayer):
+        Use more explicit video layer hand-off.
+        Lend videoLayer in request to a request to borrow the videoLayer.
+        Make sure to retain the video layer before it is removed from the layer tree.
+
+        (WebVideoFullscreenModelMediaElement::returnVideoLayer):
+        Use more explicit video layer hand-off.
+
+        (WebVideoFullscreenModelMediaElement::requestExitFullscreen):
+        Don't clear the mediaElement reference until completely exited from fullscreen.
+
 2014-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Get position:fixed working slightly better on iOS

@@ -69,13 +69,6 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
     }
     m_isListening = false;
 
-    if (m_mediaElement && m_borrowedVideoLayer) {
-        if (m_videoFullscreenInterface)
-            m_videoFullscreenInterface->setVideoLayer(nullptr);
-        m_mediaElement->returnPlatformLayer(m_borrowedVideoLayer.get());
-        m_borrowedVideoLayer.clear();
-    }
-
     m_mediaElement = mediaElement;
 
     if (!m_mediaElement)
@@ -88,15 +81,8 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
     m_mediaElement->addEventListener(eventNames().timeupdateEvent, this, false);
     m_isListening = true;
 
-    if (!m_videoFullscreenInterface)
-        return;
-
     m_videoFullscreenInterface->setDuration(m_mediaElement->duration());
     m_videoFullscreenInterface->setRate(m_mediaElement->isPlaying(), m_mediaElement->playbackRate());
-
-    m_videoFullscreenInterface->setVideoLayer(m_mediaElement->platformLayer());
-
-    m_borrowedVideoLayer = m_mediaElement->borrowPlatformLayer();
 
     m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
 
@@ -108,7 +94,7 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
 
 void WebVideoFullscreenModelMediaElement::handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event* event)
 {
-    if (!m_mediaElement)
+    if (!m_mediaElement || !m_videoFullscreenInterface)
         return;
 
     LOG(Media, "handleEvent %s", event->type().characters8());
@@ -123,12 +109,29 @@ void WebVideoFullscreenModelMediaElement::handleEvent(WebCore::ScriptExecutionCo
         m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
 }
 
-void WebVideoFullscreenModelMediaElement::requestExitFullScreen()
+void WebVideoFullscreenModelMediaElement::borrowVideoLayer()
 {
+    ASSERT(!m_borrowedVideoLayer);
+    
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->pause();
-        m_mediaElement->exitFullscreen();
+        m_videoFullscreenInterface->willLendVideoLayer(m_mediaElement->platformLayer());
+        m_borrowedVideoLayer = m_mediaElement->borrowPlatformLayer();
+        if (m_borrowedVideoLayer.get())
+            m_videoFullscreenInterface->didLendVideoLayer();
+        protect.clear();
+    });
+}
+
+void WebVideoFullscreenModelMediaElement::returnVideoLayer()
+{
+    ASSERT(m_borrowedVideoLayer.get());
+    
+    __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
+    WebThreadRun(^{
+        ASSERT(m_mediaElement);
+        m_mediaElement->returnPlatformLayer(m_borrowedVideoLayer.get());
+        m_borrowedVideoLayer.clear();
         protect.clear();
     });
 }
@@ -168,11 +171,11 @@ void WebVideoFullscreenModelMediaElement::seekToTime(double time)
     });
 }
 
-void WebVideoFullscreenModelMediaElement::didExitFullscreen()
+void WebVideoFullscreenModelMediaElement::requestExitFullscreen()
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        setMediaElement(nullptr);
+        m_mediaElement->exitFullscreen();
         protect.clear();
     });
 }
