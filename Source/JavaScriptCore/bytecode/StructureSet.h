@@ -115,6 +115,15 @@ public:
         return other.isSubsetOf(*this);
     }
     
+    bool overlaps(const StructureSet& other) const
+    {
+        for (size_t i = 0; i < m_structures.size(); ++i) {
+            if (other.contains(m_structures[i]))
+                return true;
+        }
+        return false;
+    }
+    
     size_t size() const { return m_structures.size(); }
     
     // Call this if you know that the structure set must consist of exactly

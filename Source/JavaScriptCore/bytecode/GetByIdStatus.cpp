@@ -35,6 +35,16 @@
 
 namespace JSC {
 
+bool GetByIdStatus::appendVariant(const GetByIdVariant& variant)
+{
+    for (unsigned i = 0; i < m_variants.size(); ++i) {
+        if (m_variants[i].structureSet().overlaps(variant.structureSet()))
+            return false;
+    }
+    m_variants.append(variant);
+    return true;
+}
+
 #if ENABLE(DFG_JIT)
 bool GetByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex, ExitingJITType jitType)
 {
@@ -119,9 +129,7 @@ bool GetByIdStatus::computeForChain(CodeBlock* profiledBlock, StringImpl* uid, P
     if (!isValidOffset(offset))
         return false;
     
-    m_variants.append(
-        GetByIdVariant(StructureSet(chain->head()), offset, specificValue, chain));
-    return true;
+    return appendVariant(GetByIdVariant(StructureSet(chain->head()), offset, specificValue, chain));
 #else // ENABLE(JIT)
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(uid);
@@ -202,7 +210,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
         
         variant.m_structureSet.add(structure);
         variant.m_specificValue = JSValue(specificValue);
-        result.m_variants.append(variant);
+        result.appendVariant(variant);
         return result;
     }
         
@@ -256,8 +264,8 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
             if (found)
                 continue;
             
-            result.m_variants.append(
-                GetByIdVariant(StructureSet(structure), myOffset, specificValue));
+            if (!result.appendVariant(GetByIdVariant(StructureSet(structure), myOffset, specificValue)))
+                return GetByIdStatus(TakesSlowPath, true);
         }
         
         return result;

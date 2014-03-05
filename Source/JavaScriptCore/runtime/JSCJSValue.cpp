@@ -229,6 +229,9 @@ void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
             out.print("Cell: ", RawPointer(asCell()));
             out.print(" (", inContext(*asCell()->structure(), context), ")");
         }
+#if USE(JSVALUE64)
+        out.print(", ID: ", asCell()->structureID());
+#endif
     } else if (isTrue())
         out.print("True");
     else if (isFalse())

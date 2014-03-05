@@ -1,3 +1,49 @@
+2014-03-05  Filip Pizlo  <fpizlo@apple.com>
+
+        More FTL ARM fixes
+        https://bugs.webkit.org/show_bug.cgi?id=129755
+
+        Reviewed by Geoffrey Garen.
+        
+        - Be more defensive about inline caches that have degenerate chains.
+        
+        - Temporarily switch to allocating all MCJIT memory in the executable pool on non-x86
+          platforms. The bug tracking the real fix is: https://bugs.webkit.org/show_bug.cgi?id=129756
+        
+        - Don't even emit intrinsic declarations on non-x86 platforms.
+        
+        - More debug printing support.
+        
+        - Don't use vmCall() in the prologue. This should have crashed on all platforms all the time
+          but somehow it gets lucky on x86.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::appendVariant):
+        (JSC::GetByIdStatus::computeForChain):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/GetByIdStatus.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::appendVariant):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/StructureSet.h:
+        (JSC::StructureSet::overlaps):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLDataSection.cpp:
+        (JSC::FTL::DataSection::DataSection):
+        (JSC::FTL::DataSection::~DataSection):
+        * ftl/FTLDataSection.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::doubleSin):
+        (JSC::FTL::Output::doubleCos):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContext):
+        * runtime/JSCell.h:
+        (JSC::JSCell::structureID):
+
 2014-03-05  peavo@outlook.com  <peavo@outlook.com>
 
         [Win32][LLINT] Crash when running JSC stress tests.

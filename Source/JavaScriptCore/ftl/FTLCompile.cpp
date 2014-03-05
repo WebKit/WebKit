@@ -81,7 +81,8 @@ static uint8_t* mmAllocateDataSection(
 
     State& state = *static_cast<State*>(opaqueState);
     
-    RefPtr<DataSection> section = adoptRef(new DataSection(size, alignment));
+    RefPtr<DataSection> section = adoptRef(new DataSection(
+        state.graph.m_vm, state.graph.m_codeBlock, size, alignment));
     
     if (!strcmp(sectionName, "__llvm_stackmaps"))
         state.stackmapsSection = section;

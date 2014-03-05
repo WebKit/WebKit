@@ -28,13 +28,15 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "CodeBlock.h"
+#include "VM.h"
 #include <wtf/RefCounted.h>
 
 namespace JSC { namespace FTL {
 
 class DataSection : public RefCounted<DataSection> {
 public:
-    DataSection(size_t size, unsigned alignment);
+    DataSection(VM&, CodeBlock*, size_t, unsigned alignment);
     ~DataSection();
     
     void* base() { return m_base; }

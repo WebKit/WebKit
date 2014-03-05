@@ -99,6 +99,8 @@ private:
     bool computeForChain(CodeBlock*, StringImpl* uid, PassRefPtr<IntendedStructureChain>);
     static GetByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);
     
+    bool appendVariant(const GetByIdVariant&);
+    
     State m_state;
     Vector<GetByIdVariant, 1> m_variants;
     bool m_wasSeenInJIT;

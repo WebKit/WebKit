@@ -95,6 +95,8 @@ private:
 #endif
     static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);
     
+    bool appendVariant(const PutByIdVariant&);
+    
     State m_state;
     Vector<PutByIdVariant, 1> m_variants;
 };

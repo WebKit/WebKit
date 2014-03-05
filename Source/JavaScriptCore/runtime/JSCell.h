@@ -96,6 +96,7 @@ public:
 
     JSType type() const;
     IndexingType indexingType() const;
+    StructureID structureID() const { return m_structureID; }
     Structure* structure() const;
     Structure* structure(VM&) const;
     void setStructure(VM&, Structure*);

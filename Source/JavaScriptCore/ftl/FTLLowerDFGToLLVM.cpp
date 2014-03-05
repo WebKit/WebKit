@@ -102,6 +102,9 @@ public:
             addTargetDependentFunctionAttr(m_ftlState.function, "target-features", "-avx");
         }
         
+        if (verboseCompilationEnabled())
+            dataLog("Function ready, beginning lowering.\n");
+        
         m_out.initialize(m_ftlState.module, m_ftlState.function, m_heaps);
         
         m_prologue = FTL_NEW_BLOCK(m_out, ("Prologue"));
@@ -141,7 +144,7 @@ public:
             didOverflowStack(), rarely(stackOverflow), usually(lowBlock(m_graph.block(0))));
         
         m_out.appendTo(stackOverflow, m_handleExceptions);
-        vmCall(m_out.operation(operationThrowStackOverflowError), m_callFrame, m_out.constIntPtr(codeBlock()), NoExceptions);
+        m_out.call(m_out.operation(operationThrowStackOverflowError), m_callFrame, m_out.constIntPtr(codeBlock()));
         m_ftlState.handleStackOverflowExceptionStackmapID = m_stackmapIDs++;
         m_out.call(
             m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.handleStackOverflowExceptionStackmapID),

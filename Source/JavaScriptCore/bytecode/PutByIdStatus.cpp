@@ -37,6 +37,16 @@
 
 namespace JSC {
 
+bool PutByIdStatus::appendVariant(const PutByIdVariant& variant)
+{
+    for (unsigned i = 0; i < m_variants.size(); ++i) {
+        if (m_variants[i].oldStructure() == variant.oldStructure())
+            return false;
+    }
+    m_variants.append(variant);
+    return true;
+}
+
 #if ENABLE(DFG_JIT)
 bool PutByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex, ExitingJITType exitType)
 {
@@ -176,7 +186,8 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, Code
                 PropertyOffset offset = structure->getConcurrently(*profiledBlock->vm(), uid);
                 if (!isValidOffset(offset))
                     return PutByIdStatus(TakesSlowPath);
-                result.m_variants.append(PutByIdVariant::replace(structure, offset));
+                if (!result.appendVariant(PutByIdVariant::replace(structure, offset)))
+                    return PutByIdStatus(TakesSlowPath);
                 break;
             }
                 
@@ -185,11 +196,13 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, Code
                     access.newStructure()->getConcurrently(*profiledBlock->vm(), uid);
                 if (!isValidOffset(offset))
                     return PutByIdStatus(TakesSlowPath);
-                result.m_variants.append(PutByIdVariant::transition(
+                bool ok = result.appendVariant(PutByIdVariant::transition(
                     access.oldStructure(), access.newStructure(),
                     access.chain() ? adoptRef(new IntendedStructureChain(
                         profiledBlock, access.oldStructure(), access.chain())) : 0,
                     offset));
+                if (!ok)
+                    return PutByIdStatus(TakesSlowPath);
                 break;
             }
 

@@ -33,6 +33,7 @@
 #include "FTLAbstractHeapRepository.h"
 #include "FTLCommonValues.h"
 #include "FTLIntrinsicRepository.h"
+#include "FTLState.h"
 #include "FTLSwitchCase.h"
 #include "FTLTypedPointer.h"
 #include "FTLWeight.h"
@@ -170,12 +171,12 @@ public:
 
     LValue doubleSin(LValue value)
     {
-        return call(intrinsicOrOperation(doubleSinIntrinsic(), sin), value);
+        return call(isX86() ? doubleSinIntrinsic() : operation(sin), value);
         
     }
     LValue doubleCos(LValue value)
     {
-        return call(intrinsicOrOperation(doubleCosIntrinsic(), cos), value);
+        return call(isX86() ? doubleCosIntrinsic() : operation(cos), value);
     }
 
     LValue doubleSqrt(LValue value)
@@ -362,21 +363,6 @@ public:
         return intToPtr(constIntPtr(function), pointerType(operationType(function)));
     }
     
-    template<typename FunctionType>
-    LValue intrinsicOrOperation(LValue intrinsic, FunctionType function)
-    {
-        if (isX86())
-            return intrinsic;
-        
-        // LLVM's behavior with respect to math intrinsics that lower to calls is pretty odd
-        // on hardware that requires real effort during relocation.
-        // https://bugs.webkit.org/show_bug.cgi?id=129495
-        
-        // FIXME: At least mark these pure.
-        // https://bugs.webkit.org/show_bug.cgi?id=129494
-        return operation(function);
-    }
-    
     void jump(LBasicBlock destination) { buildBr(m_builder, destination); }
     void branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBasicBlock notTaken, Weight notTakenWeight);
     void branch(LValue condition, WeightedTarget taken, WeightedTarget notTaken)
@@ -438,7 +424,7 @@ public:
 };
 
 #define FTL_NEW_BLOCK(output, nameArguments) \
-    (LIKELY(!::JSC::DFG::verboseCompilationEnabled()) \
+    (LIKELY(!verboseCompilationEnabled()) \
     ? (output).newBlock() \
     : (output).newBlock((toCString nameArguments).data()))
 

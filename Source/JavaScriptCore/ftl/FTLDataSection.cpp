@@ -34,9 +34,30 @@
 
 namespace JSC { namespace FTL {
 
-DataSection::DataSection(size_t size, unsigned alignment)
+#if CPU(ARM64)
+// FIXME: We should undo this once we fix relocation issues.
+// https://bugs.webkit.org/show_bug.cgi?id=129756
+static const bool useExecutableMemory = true;
+#else
+static const bool useExecutableMemory = false;
+#endif
+
+DataSection::DataSection(VM& vm, CodeBlock* codeBlock, size_t size, unsigned alignment)
     : m_size(size)
 {
+    if (useExecutableMemory) {
+        RELEASE_ASSERT(alignment < jitAllocationGranule);
+        
+        RefPtr<ExecutableMemoryHandle> result =
+            vm.executableAllocator.allocate(
+                vm, size, codeBlock, JITCompilationMustSucceed);
+        m_base = result->start();
+        m_size = result->sizeInBytes();
+        
+        m_allocationBase = result.release().leakRef();
+        return;
+    }
+    
     RELEASE_ASSERT(WTF::bitCount(alignment) == 1);
     
     const unsigned nativeAlignment = 8;
@@ -55,7 +76,10 @@ DataSection::DataSection(size_t size, unsigned alignment)
 
 DataSection::~DataSection()
 {
-    fastFree(m_allocationBase);
+    if (useExecutableMemory)
+        static_cast<ExecutableMemoryHandle*>(m_allocationBase)->deref();
+    else
+        fastFree(m_allocationBase);
 }
 
 } } // namespace JSC::FTL
