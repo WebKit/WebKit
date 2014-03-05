@@ -3202,7 +3202,6 @@ __ZNK7WebCore16HTMLMediaElement8durationEv
 #endif
 
 #if ENABLE(VIDEO) && PLATFORM(IOS)
-__ZN7WebCore32WebVideoFullscreenChangeObserverD2Ev
 __ZN7WebCore32WebVideoFullscreenInterfaceAVKit11setDurationEd
 __ZN7WebCore32WebVideoFullscreenInterfaceAVKit14exitFullscreenEv
 __ZN7WebCore32WebVideoFullscreenInterfaceAVKit14setCurrentTimeEdd
