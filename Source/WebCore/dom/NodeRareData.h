@@ -225,39 +225,26 @@ public:
 
     void adoptDocument(Document* oldDocument, Document* newDocument)
     {
+        ASSERT(oldDocument);
         if (oldDocument == newDocument) {
             invalidateCaches();
             return;
         }
 
-        for (auto it : m_atomicNameCaches) {
-            LiveNodeList& list = *it.value;
-            oldDocument->unregisterNodeList(list);
-            newDocument->registerNodeList(list);
-            list.invalidateCache();
-        }
+        for (auto it : m_atomicNameCaches)
+            it.value->invalidateCache(*oldDocument);
 
-        for (auto it : m_nameCaches) {
-            LiveNodeList& list = *it.value;
-            oldDocument->unregisterNodeList(list);
-            newDocument->registerNodeList(list);
-            list.invalidateCache();
-        }
+        for (auto it : m_nameCaches)
+            it.value->invalidateCache(*oldDocument);
 
         for (auto it : m_tagNodeListCacheNS) {
             LiveNodeList& list = *it.value;
             ASSERT(!list.isRootedAtDocument());
-            oldDocument->unregisterNodeList(list);
-            newDocument->registerNodeList(list);
-            list.invalidateCache();
+            list.invalidateCache(*oldDocument);
         }
 
-        for (auto it : m_cachedCollections) {
-            HTMLCollection& collection = *it.value;
-            oldDocument->unregisterCollection(collection, collection.hasNamedElementCache());
-            newDocument->registerCollection(collection, collection.hasNamedElementCache());
-            collection.invalidateCache();
-        }
+        for (auto it : m_cachedCollections)
+            it.value->invalidateCache(*oldDocument);
     }
 
 private:

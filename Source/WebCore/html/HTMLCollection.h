@@ -107,11 +107,11 @@ public:
     void invalidateCache(const QualifiedName* attrName) const
     {
         if (!attrName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attrName))
-            invalidateCache();
+            invalidateCache(document());
         else if (hasNamedElementCache() && (*attrName == HTMLNames::idAttr || *attrName == HTMLNames::nameAttr))
-            invalidateNamedElementCache();
+            invalidateNamedElementCache(document());
     }
-    virtual void invalidateCache() const;
+    virtual void invalidateCache(Document&) const;
 
     // For CollectionIndexCache
     Element* collectionFirst() const;
@@ -119,6 +119,7 @@ public:
     Element* collectionTraverseForward(Element&, unsigned count, unsigned& traversedCount) const;
     Element* collectionTraverseBackward(Element&, unsigned count) const;
     bool collectionCanTraverseBackward() const { return !m_usesCustomForwardOnlyTraversal; }
+    void willValidateIndexCache() const { document().registerCollection(const_cast<HTMLCollection&>(*this)); }
 
     bool hasNamedElementCache() const { return !!m_namedElementCache; }
 
@@ -155,7 +156,7 @@ private:
 
     virtual Element* customElementAfter(Element*) const { ASSERT_NOT_REACHED(); return nullptr; }
     
-    void invalidateNamedElementCache() const;
+    void invalidateNamedElementCache(Document&) const;
 
     Ref<ContainerNode> m_ownerNode;
 

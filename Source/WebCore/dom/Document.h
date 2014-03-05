@@ -766,8 +766,8 @@ public:
 
     void registerNodeList(LiveNodeList&);
     void unregisterNodeList(LiveNodeList&);
-    void registerCollection(HTMLCollection&, bool hasNamedElementCache);
-    void unregisterCollection(HTMLCollection&, bool hasNamedElementCache);
+    void registerCollection(HTMLCollection&);
+    void unregisterCollection(HTMLCollection&);
     void collectionCachedIdNameMap(const HTMLCollection&);
     void collectionWillClearIdNameMap(const HTMLCollection&);
     bool shouldInvalidateNodeListAndCollectionCaches(const QualifiedName* attrName = nullptr) const;
@@ -1506,6 +1506,9 @@ private:
 
     HashSet<LiveNodeList*> m_listsInvalidatedAtDocument;
     HashSet<HTMLCollection*> m_collectionsInvalidatedAtDocument;
+#if !ASSERT_DISABLED
+    bool m_inInvalidateNodeListAndCollectionCaches;
+#endif
 
     unsigned m_nodeListAndCollectionCounts[numNodeListInvalidationTypes];
 

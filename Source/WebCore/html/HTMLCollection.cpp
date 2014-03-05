@@ -142,8 +142,6 @@ HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type, El
     ASSERT(m_rootType == static_cast<unsigned>(rootTypeFromCollectionType(type)));
     ASSERT(m_invalidationType == static_cast<unsigned>(invalidationTypeExcludingIdAndNameAttributes(type)));
     ASSERT(m_collectionType == static_cast<unsigned>(type));
-
-    document().registerCollection(*this, hasNamedElementCache());
 }
 
 PassRefPtr<HTMLCollection> HTMLCollection::create(ContainerNode& base, CollectionType type)
@@ -153,7 +151,10 @@ PassRefPtr<HTMLCollection> HTMLCollection::create(ContainerNode& base, Collectio
 
 HTMLCollection::~HTMLCollection()
 {
-    document().unregisterCollection(*this, hasNamedElementCache());
+    if (m_indexCache.hasValidCache())
+        document().unregisterCollection(*this);
+    if (hasNamedElementCache())
+        document().collectionWillClearIdNameMap(*this);
     // HTMLNameCollection removes cache by itself.
     if (type() != WindowNamedItems && type() != DocumentNamedItems)
         ownerNode().nodeLists()->removeCachedCollection(this);
@@ -362,17 +363,20 @@ Element* HTMLCollection::collectionTraverseBackward(Element& current, unsigned c
     return element;
 }
 
-void HTMLCollection::invalidateCache() const
+void HTMLCollection::invalidateCache(Document& document) const
 {
-    m_indexCache.invalidate();
+    if (m_indexCache.hasValidCache()) {
+        document.unregisterCollection(const_cast<HTMLCollection&>(*this));
+        m_indexCache.invalidate();
+    }
     if (hasNamedElementCache())
-        invalidateNamedElementCache();
+        invalidateNamedElementCache(document);
 }
 
-void HTMLCollection::invalidateNamedElementCache() const
+void HTMLCollection::invalidateNamedElementCache(Document& document) const
 {
     ASSERT(hasNamedElementCache());
-    document().collectionWillClearIdNameMap(*this);
+    document.collectionWillClearIdNameMap(*this);
     m_namedElementCache = nullptr;
 }
 

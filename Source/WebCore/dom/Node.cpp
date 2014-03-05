@@ -721,10 +721,19 @@ bool Document::shouldInvalidateNodeListAndCollectionCaches(const QualifiedName* 
 
 void Document::invalidateNodeListAndCollectionCaches(const QualifiedName* attrName)
 {
-    for (HashSet<LiveNodeList*>::iterator it = m_listsInvalidatedAtDocument.begin(), end = m_listsInvalidatedAtDocument.end(); it != end; ++it)
-        (*it)->invalidateCache(attrName);
-    for (HashSet<HTMLCollection*>::iterator it = m_collectionsInvalidatedAtDocument.begin(), end = m_collectionsInvalidatedAtDocument.end(); it != end; ++it)
-        (*it)->invalidateCache(attrName);
+#if !ASSERT_DISABLED
+    m_inInvalidateNodeListAndCollectionCaches = true;
+#endif
+    HashSet<LiveNodeList*> liveNodeLists = std::move(m_listsInvalidatedAtDocument);
+    for (auto it : liveNodeLists)
+        it->invalidateCache(attrName);
+
+    HashSet<HTMLCollection*> collectionLists = std::move(m_collectionsInvalidatedAtDocument);
+    for (auto it : collectionLists)
+        it->invalidateCache(attrName);
+#if !ASSERT_DISABLED
+    m_inInvalidateNodeListAndCollectionCaches = false;
+#endif
 }
 
 void Node::invalidateNodeListAndCollectionCachesInAncestors(const QualifiedName* attrName, Element* attributeOwnerElement)
@@ -1689,7 +1698,7 @@ void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
         return;
 
     for (auto& tagNodeList : m_tagNodeListCacheNS)
-        tagNodeList.value->invalidateCache();
+        tagNodeList.value->invalidateCache(nullptr);
 }
 
 void Node::getSubresourceURLs(ListHashSet<URL>& urls) const

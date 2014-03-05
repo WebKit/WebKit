@@ -750,7 +750,7 @@ const Vector<HTMLElement*>& HTMLSelectElement::listItems() const
 void HTMLSelectElement::invalidateSelectedItems()
 {
     if (HTMLCollection* collection = cachedHTMLCollection(SelectedOptions))
-        collection->invalidateCache();
+        collection->invalidateCache(document());
 }
 
 void HTMLSelectElement::setRecalcListItems()
@@ -762,7 +762,7 @@ void HTMLSelectElement::setRecalcListItems()
     setNeedsStyleRecalc();
     if (!inDocument()) {
         if (HTMLCollection* collection = cachedHTMLCollection(SelectOptions))
-            collection->invalidateCache();
+            collection->invalidateCache(document());
     }
     if (!inDocument())
         invalidateSelectedItems();

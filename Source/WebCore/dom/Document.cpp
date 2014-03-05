@@ -454,6 +454,9 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_xmlStandalone(StandaloneUnspecified)
     , m_hasXMLDeclaration(false)
     , m_designMode(inherit)
+#if !ASSERT_DISABLED
+    , m_inInvalidateNodeListAndCollectionCaches(false)
+#endif
 #if ENABLE(DASHBOARD_SUPPORT)
     , m_hasAnnotatedRegions(false)
     , m_annotatedRegionsDirty(false)
@@ -3459,27 +3462,31 @@ void Document::unregisterNodeList(LiveNodeList& list)
 {
     m_nodeListAndCollectionCounts[list.invalidationType()]--;
     if (list.isRootedAtDocument()) {
+        if (!m_listsInvalidatedAtDocument.size()) {
+            ASSERT(m_inInvalidateNodeListAndCollectionCaches);
+            return;
+        }
         ASSERT(m_listsInvalidatedAtDocument.contains(&list));
         m_listsInvalidatedAtDocument.remove(&list);
     }
 }
 
-void Document::registerCollection(HTMLCollection& collection, bool hasIdNameMap)
+void Document::registerCollection(HTMLCollection& collection)
 {
-    if (hasIdNameMap)
-        collectionCachedIdNameMap(collection);
     m_nodeListAndCollectionCounts[collection.invalidationType()]++;
     if (collection.isRootedAtDocument())
         m_collectionsInvalidatedAtDocument.add(&collection);
 }
 
-void Document::unregisterCollection(HTMLCollection& collection, bool hasIdNameMap)
+void Document::unregisterCollection(HTMLCollection& collection)
 {
-    if (hasIdNameMap)
-        collectionWillClearIdNameMap(collection);
     ASSERT(m_nodeListAndCollectionCounts[collection.invalidationType()]);
     m_nodeListAndCollectionCounts[collection.invalidationType()]--;
     if (collection.isRootedAtDocument()) {
+        if (!m_collectionsInvalidatedAtDocument.size()) {
+            ASSERT(m_inInvalidateNodeListAndCollectionCaches);
+            return;
+        }
         ASSERT(m_collectionsInvalidatedAtDocument.contains(&collection));
         m_collectionsInvalidatedAtDocument.remove(&collection);
     }

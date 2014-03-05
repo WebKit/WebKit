@@ -75,6 +75,7 @@ public:
     Node* collectionTraverseForward(Node&, unsigned count, unsigned& traversedCount) const;
     Node* collectionTraverseBackward(Node&, unsigned count) const;
     bool collectionCanTraverseBackward() const { return true; }
+    void willValidateIndexCache() const { }
 
 private:
     explicit ChildNodeList(ContainerNode& parent);

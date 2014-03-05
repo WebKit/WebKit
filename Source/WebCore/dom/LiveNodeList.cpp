@@ -148,8 +148,11 @@ size_t LiveNodeList::memoryCost() const
     return m_indexCache.memoryCost();
 }
 
-void LiveNodeList::invalidateCache() const
+void LiveNodeList::invalidateCache(Document& document) const
 {
+    if (!m_indexCache.hasValidCache())
+        return;
+    document.unregisterNodeList(const_cast<LiveNodeList&>(*this));
     m_indexCache.invalidate();
 }
 

@@ -1,3 +1,78 @@
+2014-03-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        appendChild shouldn't invalidate LiveNodeLists and HTMLCollections if they don't have valid caches
+        https://bugs.webkit.org/show_bug.cgi?id=129727
+
+        Reviewed by Andreas Kling.
+
+        Before this patch, invalidateNodeListAndCollectionCachesInAncestors invalidated node lists and HTML
+        collections on ancestors of a node whenever we're inserting or removing a child node. This patch
+        makes HTMLCollections and LiveNodeLists register themselves with Document only when they have valid
+        caches.
+
+        Each user of CollectionIndexCache now implements willValidateIndexCache member function that gets
+        called when CollectionIndexCache caches any state and necessitates the registration with document.
+
+        * dom/ChildNodeList.h: Added an empty willValidateIndexCache since child node lists are never
+        registered with document.
+
+        * dom/CollectionIndexCache.h:
+        (WebCore::CollectionIndexCache::hasValidCache): Added.
+        (WebCore::CollectionIndexCache::nodeCount): Calls willValidateIndexCache when caching node count.
+        (WebCore::CollectionIndexCache::nodeAfterCached): Ditto. Also assert that hasValidCache() true in
+        the cases where we're simply updating our caches or adding more caches.
+        (WebCore::CollectionIndexCache::nodeAt): Ditto. Also added a code to set the length cache when
+        we've reached the end of the list. This should be a slight speed up on some cases.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initializes a variable used by assertions.
+        (WebCore::Document::unregisterNodeList): Added an early exit for when m_listsInvalidatedAtDocument
+        is empty since invalidateNodeListAndCollectionCaches swaps out the list.
+        (WebCore::Document::registerCollection): Removed the boolean hasIdNameMap since we now explicitly
+        call collectionCachedIdNameMap in HTMLCollection.
+        (WebCore::Document::unregisterCollection): Ditto. Exit early if m_collectionsInvalidatedAtDocument
+        is empty since invalidateNodeListAndCollectionCaches swaps out the list.
+        * dom/Document.h:
+
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeList::invalidateCache): Unregister the node list with document if we had caches.
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeList::LiveNodeList):
+        (WebCore::LiveNodeList::~LiveNodeList): Ditto.
+        (WebCore::LiveNodeList::invalidateCache): Pass around document. This is necessary since document()
+        had already moved to the new document inside NodeListsNodeData::invalidateCaches.
+        (WebCore::LiveNodeList::willValidateIndexCache): Added. Registers itself with document.
+
+        * dom/Node.cpp:
+        (WebCore::Document::invalidateNodeListAndCollectionCaches): Swap the lists since invalidateCache
+        tries to unregister node lists and HTML collections with document. Since this is the only case in
+        which node lists and HTML collections being removed may not be in the lists in unregisterNodeList
+        and unregisterCollection, assert this condition via m_inInvalidateNodeListAndCollectionCaches.
+        (WebCore::NodeListsNodeData::invalidateCaches):
+
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptDocument): Unregister node lists and HTML collections from old
+        document via invalidateCache. We need to explicitly pass in oldDocument here since owner node's
+        document had already been changed to newDocument at this point. Since we're invalidating caches,
+        there is no need to register node lists and HTML collections with newDocument.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::~HTMLCollection): Unregister the node list with document if we had caches.
+        (WebCore::HTMLCollection::invalidateCache): Ditto.
+        (WebCore::HTMLCollection::invalidateNamedElementCache):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::invalidateCache): Pass around document as done in LiveNodeList.
+        (WebCore::HTMLCollection::willValidateIndexCache): Ditto.
+
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::invalidateCache): Ditto.
+        * html/HTMLFormControlsCollection.h:
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::invalidateSelectedItems): Ditto.
+        (WebCore::HTMLSelectElement::setRecalcListItems): Ditto.
+
 2014-03-05  Jon Lee  <jonlee@apple.com>
 
         Fix linker error after r165087

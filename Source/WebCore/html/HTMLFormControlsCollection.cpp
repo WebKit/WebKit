@@ -177,9 +177,9 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
     cache.didPopulate();
 }
 
-void HTMLFormControlsCollection::invalidateCache() const
+void HTMLFormControlsCollection::invalidateCache(Document& document) const
 {
-    HTMLCollection::invalidateCache();
+    HTMLCollection::invalidateCache(document);
     m_cachedElement = nullptr;
     m_cachedElementOffsetInArray = 0;
 }

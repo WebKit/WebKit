@@ -40,10 +40,12 @@ public:
     unsigned nodeCount(const Collection&);
     NodeType* nodeAt(const Collection&, unsigned index);
 
+    bool hasValidCache() const { return m_currentNode || m_nodeCountValid || m_listValid; }
     void invalidate();
     size_t memoryCost() { return m_cachedList.capacity() * sizeof(NodeType*); }
 
 private:
+
     unsigned computeNodeCountUpdatingListCache(const Collection&);
     NodeType* nodeBeforeCached(const Collection&, unsigned);
     NodeType* nodeAfterCached(const Collection&, unsigned);
@@ -70,6 +72,8 @@ template <class Collection, class NodeType>
 inline unsigned CollectionIndexCache<Collection, NodeType>::nodeCount(const Collection& collection)
 {
     if (!m_nodeCountValid) {
+        if (!hasValidCache())
+            collection.willValidateIndexCache();
         m_nodeCount = computeNodeCountUpdatingListCache(collection);
         m_nodeCountValid = true;
     }
@@ -132,6 +136,7 @@ inline NodeType* CollectionIndexCache<Collection, NodeType>::nodeAfterCached(con
 
     bool lastIsCloser = m_nodeCountValid && m_nodeCount - index < index - m_currentIndex;
     if (lastIsCloser && collection.collectionCanTraverseBackward()) {
+        ASSERT(hasValidCache());
         m_currentNode = collection.collectionLast();
         if (index < m_nodeCount - 1)
             m_currentNode = collection.collectionTraverseBackward(*m_currentNode, m_nodeCount - index - 1);
@@ -139,6 +144,9 @@ inline NodeType* CollectionIndexCache<Collection, NodeType>::nodeAfterCached(con
         ASSERT(m_currentNode);
         return m_currentNode;
     }
+
+    if (!hasValidCache())
+        collection.willValidateIndexCache();
 
     unsigned traversedCount;
     m_currentNode = collection.collectionTraverseForward(*m_currentNode, index - m_currentIndex, traversedCount);
@@ -151,6 +159,7 @@ inline NodeType* CollectionIndexCache<Collection, NodeType>::nodeAfterCached(con
         m_nodeCount = m_currentIndex + 1;
         m_nodeCountValid = true;
     }
+    ASSERT(hasValidCache());
     return m_currentNode;
 }
 
@@ -173,6 +182,7 @@ inline NodeType* CollectionIndexCache<Collection, NodeType>::nodeAt(const Collec
 
     bool lastIsCloser = m_nodeCountValid && m_nodeCount - index < index;
     if (lastIsCloser && collection.collectionCanTraverseBackward()) {
+        ASSERT(hasValidCache());
         m_currentNode = collection.collectionLast();
         if (index < m_nodeCount - 1)
             m_currentNode = collection.collectionTraverseBackward(*m_currentNode, m_nodeCount - index - 1);
@@ -181,12 +191,21 @@ inline NodeType* CollectionIndexCache<Collection, NodeType>::nodeAt(const Collec
         return m_currentNode;
     }
 
+    if (!hasValidCache())
+        collection.willValidateIndexCache();
+
     m_currentNode = collection.collectionFirst();
     m_currentIndex = 0;
     if (index && m_currentNode) {
         m_currentNode = collection.collectionTraverseForward(*m_currentNode, index, m_currentIndex);
         ASSERT(m_currentNode || m_currentIndex < index);
     }
+    if (!m_currentNode && !m_nodeCountValid) {
+        // Failed to find the index but at least we now know the size.
+        m_nodeCount = m_currentIndex + 1;
+        m_nodeCountValid = true;
+    }
+    ASSERT(hasValidCache());
     return m_currentNode;
 }
 

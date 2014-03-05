@@ -63,15 +63,14 @@ public:
         ASSERT(m_rootType == static_cast<unsigned>(rootType));
         ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
         ASSERT(m_type == static_cast<unsigned>(type));
-
-        document().registerNodeList(*this);
     }
     virtual Node* namedItem(const AtomicString&) const override final;
     virtual bool nodeMatches(Element*) const = 0;
 
     virtual ~LiveNodeList()
     {
-        document().unregisterNodeList(*this);
+        if (m_indexCache.hasValidCache())
+            document().unregisterNodeList(*this);
     }
 
     // DOM API
@@ -86,9 +85,9 @@ public:
     ALWAYS_INLINE void invalidateCache(const QualifiedName* attrName) const
     {
         if (!attrName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attrName))
-            invalidateCache();
+            invalidateCache(document());
     }
-    void invalidateCache() const;
+    void invalidateCache(Document&) const;
 
     // For CollectionIndexCache
     Element* collectionFirst() const;
@@ -96,6 +95,7 @@ public:
     Element* collectionTraverseForward(Element&, unsigned count, unsigned& traversedCount) const;
     Element* collectionTraverseBackward(Element&, unsigned count) const;
     bool collectionCanTraverseBackward() const { return true; }
+    void willValidateIndexCache() const { document().registerNodeList(const_cast<LiveNodeList&>(*this)); }
 
 protected:
     Document& document() const { return m_ownerNode->document(); }
