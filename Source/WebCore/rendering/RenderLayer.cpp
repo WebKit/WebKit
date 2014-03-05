@@ -5738,6 +5738,11 @@ IntRect RenderLayer::absoluteBoundingBox() const
     return pixelSnappedIntRect(boundingBox(root()));
 }
 
+FloatRect RenderLayer::absoluteBoundingBoxForPainting() const
+{
+    return pixelSnappedForPainting(boundingBox(root()), renderer().document().deviceScaleFactor());
+}
+
 LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutPoint* offsetFromRoot, CalculateLayerBoundsFlags flags) const
 {
     if (!isSelfPaintingLayer())

@@ -1,3 +1,15 @@
+2014-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        Enable device pixel repaint rect tracking.
+        https://bugs.webkit.org/show_bug.cgi?id=129712
+
+        Reviewed by Simon Fraser.
+
+        Tracked repaint rects are device pixel snapped now to support hiDPI test cases.
+
+        * fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking-expected.txt: Added.
+        * fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html: Added.
+
 2014-03-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG and FTL should specialize for and support CompareStrictEq over Misc (i.e. boolean, undefined, or null)

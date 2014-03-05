@@ -382,7 +382,7 @@ Eina_List* DumpRenderTreeSupportEfl::trackedRepaintRects(const Evas_Object* ewkF
     if (!frame->view())
         return 0;
 
-    const Vector<WebCore::IntRect>& repaintRects = frame->view()->trackedRepaintRects();
+    const Vector<WebCore::FloatRect>& repaintRects = frame->view()->trackedRepaintRects();
     size_t count = repaintRects.size();
     Eina_List* rectList = 0;
 

@@ -1,3 +1,15 @@
+2014-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        Enable device pixel repaint rect tracking.
+        https://bugs.webkit.org/show_bug.cgi?id=129712
+
+        Reviewed by Simon Fraser.
+
+        Tracked repaint rects are device pixel snapped now to support hiDPI test cases.
+
+        * WebView/WebView.mm:
+        (-[WebView trackedRepaintRects]): Keep existing behavior for now.
+
 2014-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Allow iOS DumpRenderTree crashes to show application-specific information

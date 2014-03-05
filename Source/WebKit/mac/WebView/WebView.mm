@@ -3952,11 +3952,11 @@ static inline IMP getMethod(id o, SEL s)
     if (!view || !view->isTrackingRepaints())
         return nil;
 
-    const Vector<IntRect>& repaintRects = view->trackedRepaintRects();
+    const Vector<FloatRect>& repaintRects = view->trackedRepaintRects();
     NSMutableArray* rectsArray = [[NSMutableArray alloc] initWithCapacity:repaintRects.size()];
     
     for (unsigned i = 0; i < repaintRects.size(); ++i)
-        [rectsArray addObject:[NSValue valueWithRect:pixelSnappedIntRect(repaintRects[i])]];
+        [rectsArray addObject:[NSValue valueWithRect:pixelSnappedIntRect(LayoutRect(repaintRects[i]))]];
 
     return [rectsArray autorelease];
 }

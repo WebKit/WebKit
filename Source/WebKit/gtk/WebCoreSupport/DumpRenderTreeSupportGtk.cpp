@@ -640,7 +640,7 @@ GSList* DumpRenderTreeSupportGtk::trackedRepaintRects(WebKitWebFrame* frame)
         return 0;
 
     GSList* rects = 0;
-    const Vector<IntRect>& repaintRects = coreFrame->view()->trackedRepaintRects();
+    const Vector<FloatRect>& repaintRects = coreFrame->view()->trackedRepaintRects();
     for (unsigned i = 0; i < repaintRects.size(); i++) {
         GdkRectangle* rect = g_new0(GdkRectangle, 1);
         rect->x = repaintRects[i].x();

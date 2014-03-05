@@ -560,10 +560,11 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
         ownerBox.repaintRectangle(adjustedRect);
         return;
     }
+
+    frameView().addTrackedRepaintRect(pixelSnappedForPainting(repaintRect, document().deviceScaleFactor()));
+
+    // FIXME: convert all repaint rect dependencies to FloatRect/LayoutRect
     IntRect pixelSnappedRect = pixelSnappedIntRect(repaintRect);
-
-    frameView().addTrackedRepaintRect(pixelSnappedRect);
-
     if (!m_accumulatedRepaintRegion) {
         frameView().repaintContentRectangle(pixelSnappedRect);
         return;

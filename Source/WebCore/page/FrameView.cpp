@@ -2057,12 +2057,12 @@ HostWindow* FrameView::hostWindow() const
     return 0;
 }
 
-void FrameView::addTrackedRepaintRect(const IntRect& r)
+void FrameView::addTrackedRepaintRect(const FloatRect& r)
 {
     if (!m_isTrackingRepaints || r.isEmpty())
         return;
 
-    IntRect repaintRect = r;
+    FloatRect repaintRect = r;
     repaintRect.move(-scrollOffset());
     m_trackedRepaintRects.append(repaintRect);
 }
@@ -3977,7 +3977,7 @@ String FrameView::trackedRepaintRectsAsText() const
     if (!m_trackedRepaintRects.isEmpty()) {
         ts << "(repaint rects\n";
         for (size_t i = 0; i < m_trackedRepaintRects.size(); ++i)
-            ts << "  (rect " << m_trackedRepaintRects[i].x() << " " << m_trackedRepaintRects[i].y() << " " << m_trackedRepaintRects[i].width() << " " << m_trackedRepaintRects[i].height() << ")\n";
+            ts << "  (rect " << LayoutUnit(m_trackedRepaintRects[i].x()) << " " << LayoutUnit(m_trackedRepaintRects[i].y()) << " " << LayoutUnit(m_trackedRepaintRects[i].width()) << " " << LayoutUnit(m_trackedRepaintRects[i].height()) << ")\n";
         ts << ")\n";
     }
     return ts.release();

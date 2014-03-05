@@ -1,3 +1,29 @@
+2014-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        Enable device pixel repaint rect tracking.
+        https://bugs.webkit.org/show_bug.cgi?id=129712
+
+        Reviewed by Simon Fraser.
+
+        Tracked repaint rects are device pixel snapped now to support hiDPI test cases.
+
+        Test: fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addTrackedRepaintRect):
+        (WebCore::FrameView::trackedRepaintRectsAsText): Print them as LayoutUnits to get
+        trailing zeros cut off.
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setContentsNeedDisplay):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+
 2014-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Don't clamp scrolling node offsets when the offset is changed by delegated scrolling
