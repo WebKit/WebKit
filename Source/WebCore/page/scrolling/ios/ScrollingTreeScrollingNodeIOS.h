@@ -50,7 +50,7 @@ private:
 
     FloatPoint scrollPosition() const;
     virtual void setScrollPosition(const FloatPoint&) override;
-    void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&);
+    virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
 
     void setScrollLayerPosition(const FloatPoint&);
 

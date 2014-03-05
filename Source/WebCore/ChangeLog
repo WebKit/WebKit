@@ -1,3 +1,23 @@
+2014-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't clamp scrolling node offsets when the offset is changed by delegated scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=129724
+
+        Reviewed by Sam Weinig.
+        
+        Call setScrollPositionWithoutContentEdgeConstraints() from
+        ScrollingTree::scrollPositionChangedViaDelegatedScrolling() so that
+        layers are not clamped during rubber-banding.
+        
+        This requires making setScrollPositionWithoutContentEdgeConstraints()
+        a pure virtual function on the base class.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::scrollPositionChangedViaDelegatedScrolling):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+
 2014-03-04  Jeremy Jones  <jeremyj@apple.com>
 
         WebVideoFullscreen, should make the hand off of the video layer explicit.

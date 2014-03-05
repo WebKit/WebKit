@@ -107,7 +107,7 @@ void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID n
     if (node->nodeType() != ScrollingNode)
         return;
 
-    toScrollingTreeScrollingNode(node)->setScrollPosition(scrollPosition);
+    toScrollingTreeScrollingNode(node)->setScrollPositionWithoutContentEdgeConstraints(scrollPosition);
 }
 
 void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingStateTree)
