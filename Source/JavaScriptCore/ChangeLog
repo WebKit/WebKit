@@ -1,3 +1,17 @@
+2014-03-05  Anders Carlsson  <andersca@apple.com>
+
+        Tweak after r165109 to avoid extra copies
+        https://bugs.webkit.org/show_bug.cgi?id=129745
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::visitProtectedObjects):
+        (JSC::Heap::visitTempSortVectors):
+        (JSC::Heap::clearRememberedSet):
+        * heap/Heap.h:
+        (JSC::Heap::forEachProtectedCell):
+
 2014-03-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         DFGStoreBarrierElisionPhase should should GCState directly instead of m_gcClobberSet when calling writesOverlap()

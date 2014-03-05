@@ -328,7 +328,7 @@ namespace JSC {
         HashSet<const JSCell*> m_copyingRememberedSet;
 
         ProtectCountSet m_protectedValues;
-        Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>* > m_tempSortingVectors;
+        Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>*> m_tempSortingVectors;
         OwnPtr<HashSet<MarkedArgumentBuffer*>> m_markListSet;
 
         MachineThreads m_machineThreads;
@@ -451,7 +451,7 @@ namespace JSC {
 
     template<typename Functor> inline typename Functor::ReturnType Heap::forEachProtectedCell(Functor& functor)
     {
-        for (auto pair : m_protectedValues)
+        for (auto& pair : m_protectedValues)
             functor(pair.key);
         m_handleSet.forEachStrongHandle(functor, m_protectedValues);
 
