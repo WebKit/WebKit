@@ -5469,15 +5469,15 @@ void SpeculativeJIT::compileStoreBarrier(Node* node)
     noResult(node);
 }
 
-JITCompiler::Jump SpeculativeJIT::genericWriteBarrier(CCallHelpers& jit, GPRReg owner)
+JITCompiler::Jump SpeculativeJIT::checkMarkByte(CCallHelpers& jit, GPRReg owner)
 {
-    return jit.branchTest8(MacroAssembler::Zero, MacroAssembler::Address(owner, JSCell::gcDataOffset()));
+    return jit.branchTest8(MacroAssembler::NonZero, MacroAssembler::Address(owner, JSCell::gcDataOffset()));
 }
 
-JITCompiler::Jump SpeculativeJIT::genericWriteBarrier(CCallHelpers& jit, JSCell* owner)
+JITCompiler::Jump SpeculativeJIT::checkMarkByte(CCallHelpers& jit, JSCell* owner)
 {
     uint8_t* address = reinterpret_cast<uint8_t*>(owner) + JSCell::gcDataOffset();
-    return jit.branchTest8(MacroAssembler::Zero, MacroAssembler::AbsoluteAddress(address));
+    return jit.branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(address));
 }
 
 void SpeculativeJIT::storeToWriteBarrierBuffer(GPRReg cell, GPRReg scratch1, GPRReg scratch2)
@@ -5536,16 +5536,16 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, JSCell* value, GPRReg scratch
     if (Heap::isMarked(value))
         return;
 
-    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(m_jit, ownerGPR);
+    JITCompiler::Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(m_jit, ownerGPR);
     storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
-    definitelyNotMarked.link(&m_jit);
+    ownerNotMarkedOrAlreadyRemembered.link(&m_jit);
 }
 
 void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg scratch1, GPRReg scratch2)
 {
-    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(m_jit, ownerGPR);
+    JITCompiler::Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(m_jit, ownerGPR);
     storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
-    definitelyNotMarked.link(&m_jit);
+    ownerNotMarkedOrAlreadyRemembered.link(&m_jit);
 }
 #else
 void SpeculativeJIT::compileStoreBarrier(Node* node)

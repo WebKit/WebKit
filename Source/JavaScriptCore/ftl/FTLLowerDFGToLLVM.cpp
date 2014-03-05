@@ -4082,7 +4082,7 @@ private:
         m_out.store8(m_out.constInt8(structure->indexingType()), result, m_heaps.JSCell_indexingType);
         m_out.store8(m_out.constInt8(structure->typeInfo().type()), result, m_heaps.JSCell_typeInfoType);
         m_out.store8(m_out.constInt8(structure->typeInfo().inlineTypeFlags()), result, m_heaps.JSCell_typeInfoFlags);
-        m_out.store8(m_out.constInt8(0), result, m_heaps.JSCell_gcData);
+        m_out.store8(m_out.constInt8(JSCell::NotMarked), result, m_heaps.JSCell_gcData);
         
         return result;
     }
@@ -5404,16 +5404,16 @@ private:
     {
 #if ENABLE(GGC)
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
-        LBasicBlock isMarked = FTL_NEW_BLOCK(m_out, ("Store barrier is marked block"));
+        LBasicBlock isMarkedAndNotRemembered = FTL_NEW_BLOCK(m_out, ("Store barrier is marked block"));
         LBasicBlock bufferHasSpace = FTL_NEW_BLOCK(m_out, ("Store barrier buffer is full"));
         LBasicBlock bufferIsFull = FTL_NEW_BLOCK(m_out, ("Store barrier buffer is full"));
 
         // Check the mark byte. 
         m_out.branch(
-            m_out.isZero8(loadMarkByte(base)), usually(continuation), rarely(isMarked));
+            m_out.notZero8(loadMarkByte(base)), usually(continuation), rarely(isMarkedAndNotRemembered));
 
         // Append to the write barrier buffer.
-        LBasicBlock lastNext = m_out.appendTo(isMarked, bufferHasSpace);
+        LBasicBlock lastNext = m_out.appendTo(isMarkedAndNotRemembered, bufferHasSpace);
         LValue currentBufferIndex = m_out.load32(m_out.absolute(&vm().heap.writeBarrierBuffer().m_currentIndex));
         LValue bufferCapacity = m_out.load32(m_out.absolute(&vm().heap.writeBarrierBuffer().m_capacity));
         m_out.branch(

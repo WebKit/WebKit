@@ -543,8 +543,8 @@ macro writeBarrierOnOperand(cellOperand)
         loadisFromInstruction(cellOperand, t1)
         loadConstantOrVariablePayload(t1, CellTag, t2, .writeBarrierDone)
         checkMarkByte(t2, t1, t3, 
-            macro(marked)
-                btbz marked, .writeBarrierDone
+            macro(gcData)
+                btbnz gcData, .writeBarrierDone
                 push cfr, PC
                 # We make two extra slots because cCall2 will poke.
                 subp 8, sp
@@ -577,8 +577,8 @@ macro writeBarrierOnGlobalObject(valueOperand)
         loadp CodeBlock[cfr], t3
         loadp CodeBlock::m_globalObject[t3], t3
         checkMarkByte(t3, t1, t2,
-            macro(marked)
-                btbz marked, .writeBarrierDone
+            macro(gcData)
+                btbnz gcData, .writeBarrierDone
                 push cfr, PC
                 # We make two extra slots because cCall2 will poke.
                 subp 8, sp

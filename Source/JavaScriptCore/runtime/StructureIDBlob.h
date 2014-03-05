@@ -46,7 +46,7 @@ public:
         u.fields.indexingType = indexingType;
         u.fields.type = typeInfo.type();
         u.fields.inlineTypeFlags = typeInfo.inlineTypeFlags();
-        u.fields.defaultGCData = 0;
+        u.fields.defaultGCData = JSCell::NotMarked;
     }
 
     void operator=(const StructureIDBlob& other) { u.doubleWord = other.u.doubleWord; }
@@ -79,7 +79,7 @@ private:
             IndexingType indexingType;
             JSType type;
             TypeInfo::InlineTypeFlags inlineTypeFlags;
-            uint8_t defaultGCData;
+            JSCell::GCData defaultGCData;
         } fields;
         struct {
             int32_t word1;

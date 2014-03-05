@@ -4709,9 +4709,9 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg valueTagGPR, Edge valu
     if (!isKnownCell(valueUse.node()))
         isNotCell = m_jit.branch32(JITCompiler::NotEqual, valueTagGPR, JITCompiler::TrustedImm32(JSValue::CellTag));
 
-    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(m_jit, ownerGPR);
+    JITCompiler::Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(m_jit, ownerGPR);
     storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
-    definitelyNotMarked.link(&m_jit);
+    ownerNotMarkedOrAlreadyRemembered.link(&m_jit);
 
     if (!isKnownCell(valueUse.node()))
         isNotCell.link(&m_jit);
@@ -4723,9 +4723,9 @@ void SpeculativeJIT::writeBarrier(JSCell* owner, GPRReg valueTagGPR, Edge valueU
     if (!isKnownCell(valueUse.node()))
         isNotCell = m_jit.branch32(JITCompiler::NotEqual, valueTagGPR, JITCompiler::TrustedImm32(JSValue::CellTag));
 
-    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(m_jit, owner);
+    JITCompiler::Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(m_jit, owner);
     storeToWriteBarrierBuffer(owner, scratch1, scratch2);
-    definitelyNotMarked.link(&m_jit);
+    ownerNotMarkedOrAlreadyRemembered.link(&m_jit);
 
     if (!isKnownCell(valueUse.node()))
         isNotCell.link(&m_jit);

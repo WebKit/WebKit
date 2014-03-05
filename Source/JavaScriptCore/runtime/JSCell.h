@@ -142,8 +142,31 @@ public:
 
     JSValue fastGetOwnProperty(VM&, const String&);
 
-    void mark() { m_gcData = 1; }
-    bool isMarked() const { return m_gcData; }
+    enum GCData : uint8_t {
+        Marked = 0,
+        NotMarked = 1,
+        MarkedAndRemembered = 2,
+    };
+
+    void setMarked() { m_gcData = Marked; }
+    void setRemembered(bool remembered)
+    {
+        ASSERT(m_gcData == remembered ? Marked : MarkedAndRemembered);
+        m_gcData = remembered ? MarkedAndRemembered : Marked; 
+    }
+    bool isMarked() const
+    {
+        switch (m_gcData) {
+        case Marked:
+        case MarkedAndRemembered:
+            return true;
+        case NotMarked:
+            return false;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
+    }
+    bool isRemembered() const { return m_gcData == MarkedAndRemembered; }
 
     static ptrdiff_t structureIDOffset()
     {

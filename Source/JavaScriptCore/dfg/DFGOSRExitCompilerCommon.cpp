@@ -164,7 +164,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 #if ENABLE(GGC)
 static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 {
-    AssemblyHelpers::Jump definitelyNotMarked = jit.genericWriteBarrier(owner);
+    AssemblyHelpers::Jump ownerNotMarkedOrAlreadyRemembered = jit.checkMarkByte(owner);
 
     // We need these extra slots because setupArgumentsWithExecState will use poke on x86.
 #if CPU(X86)
@@ -179,7 +179,7 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
     jit.addPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 3), MacroAssembler::stackPointerRegister);
 #endif
 
-    definitelyNotMarked.link(&jit);
+    ownerNotMarkedOrAlreadyRemembered.link(&jit);
 }
 #endif // ENABLE(GGC)
 

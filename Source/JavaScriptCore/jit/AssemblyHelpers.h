@@ -387,9 +387,9 @@ public:
     void jitAssertArgumentCountSane() { }
 #endif
 
-    Jump genericWriteBarrier(GPRReg owner)
+    Jump checkMarkByte(GPRReg owner)
     {
-        return branchTest8(Zero, Address(owner, JSCell::gcDataOffset()));
+        return branchTest8(NonZero, Address(owner, JSCell::gcDataOffset()));
     }
 
     // These methods convert between doubles, and doubles boxed and JSValues.

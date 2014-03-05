@@ -448,14 +448,7 @@ macro arrayProfile(cellAndIndexingType, profile, scratch)
 end
 
 macro checkMarkByte(cell, scratch1, scratch2, continuation)
-    move cell, scratch1
-    move cell, scratch2
-
-    andp MarkedBlockMask, scratch1
-    andp ~MarkedBlockMask, scratch2
-
-    rshiftp AtomNumberShift + BitMapWordShift, scratch2
-    loadb MarkedBlock::m_marks[scratch1, scratch2, 1], scratch1
+    loadb JSCell::m_gcData[cell], scratch1
     continuation(scratch1)
 end
 

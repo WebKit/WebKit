@@ -879,15 +879,15 @@ void JIT::emit_op_init_global_const(Instruction* currentInstruction)
 
 #endif // USE(JSVALUE64)
 
-JIT::Jump JIT::checkMarkWord(RegisterID owner)
+JIT::Jump JIT::checkMarkByte(RegisterID owner)
 {
-    return branchTest8(Zero, Address(owner, JSCell::gcDataOffset()));
+    return branchTest8(NonZero, Address(owner, JSCell::gcDataOffset()));
 }
 
-JIT::Jump JIT::checkMarkWord(JSCell* owner)
+JIT::Jump JIT::checkMarkByte(JSCell* owner)
 {
     uint8_t* address = reinterpret_cast<uint8_t*>(owner) + JSCell::gcDataOffset();
-    return branchTest8(Zero, AbsoluteAddress(address));
+    return branchTest8(NonZero, AbsoluteAddress(address));
 }
 
 #if USE(JSVALUE64)
@@ -904,9 +904,9 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
     if (mode == ShouldFilterBaseAndValue)
         ownerNotCell = branchTest64(NonZero, regT0, tagMaskRegister);
 
-    Jump ownerNotMarked = checkMarkWord(regT0);
+    Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(regT0);
     callOperation(operationUnconditionalWriteBarrier, regT0);
-    ownerNotMarked.link(this);
+    ownerNotMarkedOrAlreadyRemembered.link(this);
 
     if (mode == ShouldFilterBaseAndValue)
         ownerNotCell.link(this);
@@ -953,9 +953,9 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
     if (mode == ShouldFilterBaseAndValue)
         ownerNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
 
-    Jump ownerNotMarked = checkMarkWord(regT1);
+    Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(regT1);
     callOperation(operationUnconditionalWriteBarrier, regT1);
-    ownerNotMarked.link(this);
+    ownerNotMarkedOrAlreadyRemembered.link(this);
 
     if (mode == ShouldFilterBaseAndValue)
         ownerNotCell.link(this);
@@ -993,9 +993,9 @@ void JIT::emitWriteBarrier(JSCell* owner)
 {
 #if ENABLE(GGC)
     if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
-        Jump ownerNotMarked = checkMarkWord(owner);
+        Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(owner);
         callOperation(operationUnconditionalWriteBarrier, owner);
-        ownerNotMarked.link(this);
+        ownerNotMarkedOrAlreadyRemembered.link(this);
     } else
         callOperation(operationUnconditionalWriteBarrier, owner);
 #else

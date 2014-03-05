@@ -825,11 +825,11 @@ static MacroAssembler::Call writeBarrier(CCallHelpers& jit, GPRReg owner, GPRReg
     ASSERT(owner != scratch2);
 
 #if ENABLE(DFG_JIT)
-    MacroAssembler::Jump definitelyNotMarked = DFG::SpeculativeJIT::genericWriteBarrier(jit, owner);
+    MacroAssembler::Jump ownerNotMarkedOrAlreadyRemembered = DFG::SpeculativeJIT::checkMarkByte(jit, owner);
 #endif
     MacroAssembler::Call call = storeToWriteBarrierBuffer(jit, owner, scratch1, scratch2, allocator);
 #if ENABLE(DFG_JIT)
-    definitelyNotMarked.link(&jit);
+    ownerNotMarkedOrAlreadyRemembered.link(&jit);
 #endif
     return call;
 }

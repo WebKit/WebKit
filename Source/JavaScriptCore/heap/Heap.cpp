@@ -415,7 +415,7 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
     JSCell** registerRoots = stackRoots.roots();
     for (size_t i = 0; i < stackRootCount; i++) {
         setMarked(registerRoots[i]);
-        registerRoots[i]->mark();
+        registerRoots[i]->setMarked();
         roots.add(registerRoots[i]);
     }
 }
@@ -668,8 +668,10 @@ void Heap::clearRememberedSet(Vector<const JSCell*>& rememberedSet)
 {
 #if ENABLE(GGC)
     GCPHASE(ClearRememberedSet);
-    for (auto* cell : rememberedSet)
+    for (auto* cell : rememberedSet) {
         MarkedBlock::blockFor(cell)->clearRemembered(cell);
+        const_cast<JSCell*>(cell)->setRemembered(false);
+    }
 #else
     UNUSED_PARAM(rememberedSet);
 #endif
@@ -826,6 +828,7 @@ void Heap::addToRememberedSet(const JSCell* cell)
     if (isInRememberedSet(cell))
         return;
     MarkedBlock::blockFor(cell)->setRemembered(cell);
+    const_cast<JSCell*>(cell)->setRemembered(true);
     m_slotVisitor.unconditionallyAppend(const_cast<JSCell*>(cell));
 }
 

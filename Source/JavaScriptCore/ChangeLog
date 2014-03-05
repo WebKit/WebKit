@@ -1,3 +1,59 @@
+2014-03-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSCell::m_gcData should encode its information differently
+        https://bugs.webkit.org/show_bug.cgi?id=129741
+
+        Reviewed by Geoffrey Garen.
+
+        We want to keep track of three GC states for an object:
+
+        1. Not marked (which implies not in the remembered set)
+        2. Marked but not in the remembered set
+        3. Marked and in the remembered set
+        
+        Currently we only indicate marked vs. not marked in JSCell::m_gcData. During a write 
+        barrier, we only want to take the slow path if the object being stored to is in state #2. 
+        We'd like to make the test for state #2 as fast as possible, which means making it a 
+        compare against 0.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::osrWriteBarrier):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkMarkByte):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::allocateCell):
+        (JSC::FTL::LowerDFGToLLVM::emitStoreBarrier):
+        * heap/Heap.cpp:
+        (JSC::Heap::clearRememberedSet):
+        (JSC::Heap::addToRememberedSet):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::checkMarkByte):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::checkMarkByte):
+        (JSC::JIT::emitWriteBarrier):
+        * jit/Repatch.cpp:
+        (JSC::writeBarrier):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSCell.h:
+        (JSC::JSCell::mark):
+        (JSC::JSCell::remember):
+        (JSC::JSCell::forget):
+        (JSC::JSCell::isMarked):
+        (JSC::JSCell::isRemembered):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::JSCell):
+        * runtime/StructureIDBlob.h:
+        (JSC::StructureIDBlob::StructureIDBlob):
+
 2014-03-05  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL ARM fixes

@@ -296,8 +296,8 @@ public:
     void storeToWriteBarrierBuffer(GPRReg cell, GPRReg scratch1, GPRReg scratch2);
     void storeToWriteBarrierBuffer(JSCell*, GPRReg scratch1, GPRReg scratch2);
 
-    static JITCompiler::Jump genericWriteBarrier(CCallHelpers& jit, GPRReg owner);
-    static JITCompiler::Jump genericWriteBarrier(CCallHelpers& jit, JSCell* owner);
+    static JITCompiler::Jump checkMarkByte(CCallHelpers& jit, GPRReg owner);
+    static JITCompiler::Jump checkMarkByte(CCallHelpers& jit, JSCell* owner);
     void writeBarrier(GPRReg owner, GPRReg scratch1, GPRReg scratch2);
     void writeBarrier(GPRReg owner, JSCell* value, GPRReg scratch1, GPRReg scratch2);
 

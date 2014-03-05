@@ -38,7 +38,7 @@
 namespace JSC {
 
 inline JSCell::JSCell(CreatingEarlyCellTag)
-    : m_gcData(0)
+    : m_gcData(NotMarked)
 {
     ASSERT(!isCompilationThread());
 }
@@ -48,7 +48,7 @@ inline JSCell::JSCell(VM&, Structure* structure)
     , m_indexingType(structure->indexingType())
     , m_type(structure->typeInfo().type())
     , m_flags(structure->typeInfo().inlineTypeFlags())
-    , m_gcData(0)
+    , m_gcData(NotMarked)
 {
     ASSERT(!isCompilationThread());
 }
