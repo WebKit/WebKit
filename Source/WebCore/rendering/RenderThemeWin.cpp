@@ -36,9 +36,12 @@
 #include "Settings.h"
 #include "SoftLinking.h"
 #include "SystemInfo.h"
-#include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/win/GDIObject.h>
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+#include "UserAgentScripts.h"
+#endif
 
 #if ENABLE(VIDEO)
 #include "RenderMediaControls.h"

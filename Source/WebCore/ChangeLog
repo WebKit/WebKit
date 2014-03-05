@@ -1,3 +1,18 @@
+2014-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Fixed Windows build without MEDIA_CONTROLS_SCRIPT enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=129701
+
+        Reviewed by Jer Noble.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * DerivedSources.cpp:
+        Moved UserAgentScriptsData.cpp to DerivedSources.cpp to only be built if MEDIA_CONTROLS_SCRIPT is enabled.
+        * DerivedSources.make:
+        Only generate UserAgentScripts.cpp/h when USER_AGENT_SCRIPTS is non-empty.
+        * rendering/RenderThemeWin.cpp:
+        Only include UserAgentScripts.h when MEDIA_CONTROLS_SCRIPT is enabled.
+
 2014-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Allow iOS DumpRenderTree crashes to show application-specific information
