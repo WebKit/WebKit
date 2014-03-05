@@ -1,3 +1,26 @@
+2014-03-04  Conrad Shultz  <conrad_shultz@apple.com>
+
+        WKPage's pageExtendedBackgroundColor API exposed through WKView/WKWebView should support NSColor
+        https://bugs.webkit.org/show_bug.cgi?id=129704
+
+        Reviewed by Beth Dakin.
+
+        Add NSColor-returning methods to complement the existing UIColor-returning methods.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        Declare _pageExtendedBackgroundColor for non-TARGET_OS_IPHONE.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _pageExtendedBackgroundColor]):
+        Return an NSColor created from the pageExtendedBackgroundColor.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Declare _pageExtendedBackgroundColor for non-TARGET_OS_IPHONE.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _pageExtendedBackgroundColor]):
+        Return an NSColor created from the pageExtendedBackgroundColor.
+
 2014-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Give WebProcess private RWI entitlement

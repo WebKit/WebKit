@@ -81,6 +81,7 @@
 @property (readwrite) double magnification;
 @property (readwrite) BOOL allowsBackForwardNavigationGestures;
 
+@property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property(copy, nonatomic) NSColor *underlayColor;
 
 - (NSView*)fullScreenPlaceholderView;

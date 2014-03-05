@@ -74,6 +74,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;
+#else
+@property (readonly) NSColor *_pageExtendedBackgroundColor;
 #endif
 
 @end

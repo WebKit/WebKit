@@ -3260,6 +3260,15 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_allowsBackForwardNavigationGestures;
 }
 
+- (NSColor *)_pageExtendedBackgroundColor
+{
+    WebCore::Color color = _data->_page->pageExtendedBackgroundColor();
+    if (!color.isValid())
+        return nil;
+
+    return nsColor(color);
+}
+
 // This method forces a drawing area geometry update, even if frame size updates are disabled.
 // The updated is performed asynchronously; we don't wait for the geometry update before returning.
 // The area drawn need not match the current frame size - if it differs it will be anchored to the

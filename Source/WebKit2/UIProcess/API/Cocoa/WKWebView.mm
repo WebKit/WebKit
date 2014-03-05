@@ -67,6 +67,7 @@
 
 #if PLATFORM(MAC)
 #import "WKViewInternal.h"
+#import <WebCore/ColorMac.h>
 #endif
 
 @implementation WKWebView {
@@ -837,6 +838,19 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     ASSERT(_isChangingObscuredInsetsInteractively);
     _isChangingObscuredInsetsInteractively = NO;
     [self _updateVisibleContentRectsWithStableState:YES];
+}
+
+#else
+
+#pragma mark - OS X-specific methods
+
+- (NSColor *)_pageExtendedBackgroundColor
+{
+    WebCore::Color color = _page->pageExtendedBackgroundColor();
+    if (!color.isValid())
+        return nil;
+
+    return nsColor(color);
 }
 
 #endif
