@@ -57,7 +57,7 @@ public:
     bool isPointInNonFastScrollableRegion(const WebCore::IntPoint&) const;
 
     // Called externally when native views move around.
-    void scrollPositionChangedViaDelegatedScrolling(WebCore::ScrollingNodeID, const WebCore::IntPoint&);
+    void scrollPositionChangedViaDelegatedScrolling(WebCore::ScrollingNodeID, const WebCore::FloatPoint&);
 
     // FIXME: expose the tree and pass this to that?
     bool handleWheelEvent(const WebCore::PlatformWheelEvent&);

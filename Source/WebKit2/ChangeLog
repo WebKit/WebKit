@@ -1,3 +1,28 @@
+2014-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Get position:fixed working slightly better on iOS WK2
+        https://bugs.webkit.org/show_bug.cgi?id=129714
+
+        Reviewed by Benjamin Poulain.
+        
+        Start telling the RemoteScrollingCoordinatorProxy about scroll position changes
+        again, so it can update fixed and sticky layers.
+        
+        Send the scroll position as a FloatPoint, rather than an IntPoint.
+
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollPositionChangedViaDelegatedScrolling):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollPositionChanged):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:inStableState:]):
+        Tell the RemoteScrollingCoordinatorProxy about the scroll update.
+        Only update the customFixedPositionRect if we've finished scrolling or zooming.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateVisibleContentRects): Return a bool indicating
+        whether the visible rects changed.
+
 2014-03-04  Conrad Shultz  <conrad_shultz@apple.com>
 
         WKPage's pageExtendedBackgroundColor API exposed through WKView/WKWebView should support NSColor

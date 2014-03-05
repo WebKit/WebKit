@@ -171,11 +171,17 @@ using namespace WebKit;
         // visual noise. We filter those useless updates.
         scale = _page->displayedContentScale();
     }
+    
     _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(visibleRect, unobscuredRect, scale));
 
+    RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
+    scrollingCoordinator->scrollPositionChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), unobscuredRect.origin);
+
     if (auto drawingArea = _page->drawingArea()) {
-        FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:unobscuredRect scale:scale];
-        drawingArea->setCustomFixedPositionRect(fixedPosRect);
+        if (isStableState) {
+            FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:unobscuredRect scale:scale];
+            drawingArea->setCustomFixedPositionRect(fixedPosRect);
+        }
         drawingArea->updateDebugIndicator();
     }
 }

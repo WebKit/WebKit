@@ -1,3 +1,17 @@
+2014-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Get position:fixed working slightly better on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=129714
+
+        Reviewed by Benjamin Poulain.
+
+        Send the scroll position as a FloatPoint, rather than an IntPoint.
+
+        * WebCore.exp.in:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::scrollPositionChangedViaDelegatedScrolling):
+        * page/scrolling/ScrollingTree.h:
+
 2014-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Fixed Windows build without MEDIA_CONTROLS_SCRIPT enabled.

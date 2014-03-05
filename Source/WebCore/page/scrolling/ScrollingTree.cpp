@@ -98,7 +98,7 @@ void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         m_rootNode->handleWheelEvent(wheelEvent);
 }
 
-void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const IntPoint& scrollPosition)
+void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const FloatPoint& scrollPosition)
 {
     ScrollingTreeNode* node = nodeForID(nodeID);
     if (!node)

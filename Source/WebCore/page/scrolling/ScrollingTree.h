@@ -63,7 +63,7 @@ public:
     virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) = 0;
     bool shouldHandleWheelEventSynchronously(const PlatformWheelEvent&);
     
-    virtual void scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID, const IntPoint&);
+    virtual void scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID, const FloatPoint&);
 
     void setMainFrameIsRubberBanding(bool);
     bool isRubberBandInProgress();

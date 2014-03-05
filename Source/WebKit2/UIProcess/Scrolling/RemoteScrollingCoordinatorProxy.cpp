@@ -138,7 +138,7 @@ bool RemoteScrollingCoordinatorProxy::isPointInNonFastScrollableRegion(const Web
     return m_scrollingTree->isPointInNonFastScrollableRegion(p);
 }
 
-void RemoteScrollingCoordinatorProxy::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const IntPoint& offset)
+void RemoteScrollingCoordinatorProxy::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const FloatPoint& offset)
 {
     m_scrollingTree->scrollPositionChangedViaDelegatedScrolling(nodeID, offset);
 }
@@ -146,6 +146,11 @@ void RemoteScrollingCoordinatorProxy::scrollPositionChangedViaDelegatedScrolling
 // This comes from the scrolling tree.
 void RemoteScrollingCoordinatorProxy::scrollPositionChanged(WebCore::ScrollingNodeID scrolledNodeID, const WebCore::FloatPoint& newScrollPosition)
 {
+    // Scroll updates for the main frame are sent via WebPageProxy::updateVisibleContentRects()
+    // so don't send them here.
+    if (scrolledNodeID == rootScrollingNodeID())
+        return;
+
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition));
 }
 
