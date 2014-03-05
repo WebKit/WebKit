@@ -1,3 +1,83 @@
+2014-03-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG and FTL should specialize for and support CompareStrictEq over Misc (i.e. boolean, undefined, or null)
+        https://bugs.webkit.org/show_bug.cgi?id=129563
+
+        Reviewed by Geoffrey Garen.
+        
+        Rolling this back in after fixing an assertion failure. speculateMisc() should have
+        said DFG_TYPE_CHECK instead of typeCheck.
+        
+        This adds a specialization of CompareStrictEq over Misc. I noticed the need for this
+        when I saw that we didn't support CompareStrictEq(Untyped) in FTL but that the main
+        user of this was EarleyBoyer, and in that benchmark what it was really doing was
+        comparing undefined, null, and booleans to each other.
+        
+        This also adds support for miscellaneous things that I needed to make my various test
+        cases work. This includes comparison over booleans and the various Throw-related node
+        types.
+        
+        This also improves constant folding of CompareStrictEq and CompareEq.
+        
+        Also found a bug where we were claiming that GetByVals on typed arrays are OutOfBounds
+        based on profiling, which caused some downstream badness. We don't actually support
+        compiling OutOfBounds GetByVals on typed arrays. The DFG would ignore the flag and just
+        emit a bounds check, but in the FTL path, the SSA lowering phase would assume that it
+        shouldn't factor out the bounds check since the access is not InBounds but then the
+        backend would ignore the flag and assume that the bounds check was already emitted.
+        This showed up on an existing test but I added a test for this explicitly to have more
+        certain coverage. The fix is to not mark something as OutOfBounds if the semantics are
+        that we'll have a bounds check anyway.
+        
+        This is a 1% speed-up on Octane mostly because of raytrace, but also because of just
+        general progressions across the board. No speed-up yet on EarleyBoyer, since there is
+        still a lot more coverage work to be done there.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationToAbbreviatedString):
+        (JSC::leastUpperBoundOfStrictlyEquivalentSpeculations):
+        (JSC::valuesCouldBeEqual):
+        * bytecode/SpeculatedType.h:
+        (JSC::isMiscSpeculation):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine):
+        * dfg/DFGArrayMode.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToMakeGetArrayLength):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateMisc):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::speculateMisc):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMiscStrictEq):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMiscStrictEq):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::LowerDFGToLLVM::compileThrow):
+        (JSC::FTL::LowerDFGToLLVM::isNotMisc):
+        (JSC::FTL::LowerDFGToLLVM::isMisc):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateMisc):
+        * tests/stress/float32-array-out-of-bounds.js: Added.
+        * tests/stress/weird-equality-folding-cases.js: Added.
+
 2014-03-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165085.

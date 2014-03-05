@@ -917,8 +917,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (node->op() == CompareEqConstant || node->op() == CompareEq) {
             SpeculatedType leftType = forNode(node->child1()).m_type;
             SpeculatedType rightType = forNode(node->child2()).m_type;
-            if ((isInt32Speculation(leftType) && isOtherSpeculation(rightType))
-                || (isOtherSpeculation(leftType) && isInt32Speculation(rightType))) {
+            if (!valuesCouldBeEqual(leftType, rightType)) {
                 setConstant(node, jsBoolean(false));
                 break;
             }
@@ -943,19 +942,28 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue left = forNode(leftNode).value();
         JSValue right = forNode(rightNode).value();
         if (left && right) {
-            if (left.isNumber() && right.isNumber()) {
-                setConstant(node, jsBoolean(left.asNumber() == right.asNumber()));
-                break;
-            }
             if (left.isString() && right.isString()) {
+                // We need this case because JSValue::strictEqual is otherwise too racy for
+                // string comparisons.
                 const StringImpl* a = asString(left)->tryGetValueImpl();
                 const StringImpl* b = asString(right)->tryGetValueImpl();
                 if (a && b) {
                     setConstant(node, jsBoolean(WTF::equal(a, b)));
                     break;
                 }
+            } else {
+                setConstant(node, jsBoolean(JSValue::strictEqual(0, left, right)));
+                break;
             }
         }
+        
+        SpeculatedType leftLUB = leastUpperBoundOfStrictlyEquivalentSpeculations(forNode(leftNode).m_type);
+        SpeculatedType rightLUB = leastUpperBoundOfStrictlyEquivalentSpeculations(forNode(rightNode).m_type);
+        if (!(leftLUB & rightLUB)) {
+            setConstant(node, jsBoolean(false));
+            break;
+        }
+        
         forNode(node).setType(SpecBoolean);
         node->setCanExit(true); // This is overly conservative.
         break;

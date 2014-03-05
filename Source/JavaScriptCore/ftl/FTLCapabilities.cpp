@@ -141,6 +141,9 @@ inline CapabilityLevel canCompile(Node* node)
     case MultiPutByOffset:
     case ToPrimitive:
     case PhantomArguments:
+    case Throw:
+    case ThrowReferenceError:
+    case Unreachable:
     case GetMyArgumentByVal:
         // These are OK.
         break;
@@ -233,6 +236,8 @@ inline CapabilityLevel canCompile(Node* node)
             break;
         if (node->isBinaryUseKind(UntypedUse))
             break;
+        if (node->isBinaryUseKind(BooleanUse))
+            break;
         if (node->child1().useKind() == ObjectUse
             && node->child2().useKind() == ObjectOrOtherUse)
             break;
@@ -248,6 +253,10 @@ inline CapabilityLevel canCompile(Node* node)
         if (node->isBinaryUseKind(NumberUse))
             break;
         if (node->isBinaryUseKind(ObjectUse))
+            break;
+        if (node->isBinaryUseKind(MiscUse))
+            break;
+        if (node->isBinaryUseKind(BooleanUse))
             break;
         return CannotCompile;
     case CompareLess:
@@ -341,6 +350,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case StringOrStringObjectUse:
                 case FinalObjectUse:
                 case NotCellUse:
+                case MiscUse:
                     // These are OK.
                     break;
                 default:
