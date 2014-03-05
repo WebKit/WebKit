@@ -29,7 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGBasicBlock.h"
-#include "DFGClobberSet.h"
+#include "DFGClobberize.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
@@ -44,7 +44,6 @@ public:
         , m_currentBlock(0)
         , m_currentIndex(0)
     {
-        m_gcClobberSet.add(GCState);
     }
 
     bool run()
@@ -61,7 +60,7 @@ public:
 private:
     bool couldCauseGC(Node* node)
     {
-        return writesOverlap(m_graph, node, m_gcClobberSet);
+        return writesOverlap(m_graph, node, GCState);
     }
 
     bool allocatesFreshObject(Node* node)
@@ -139,7 +138,6 @@ private:
         return true;
     }
 
-    ClobberSet m_gcClobberSet;
     BasicBlock* m_currentBlock;
     unsigned m_currentIndex;
 };
