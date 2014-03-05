@@ -178,7 +178,7 @@ static bool shouldIgnoreRotation(UChar32 character)
         return true;
 
     if (isInRange(character, 0x0FF01, 0x0FF07) || isInRange(character, 0x0FF0A, 0x0FF0C)
-        || isInRange(character, 0x0FF0E, 0x0FF19) || isInRange(character, 0x0FF1F, 0x0FF3A))
+        || isInRange(character, 0x0FF0E, 0x0FF19) || character == 0x0FF1B || isInRange(character, 0x0FF1F, 0x0FF3A))
         return true;
 
     if (character == 0x0FF3C || character == 0x0FF3E)
