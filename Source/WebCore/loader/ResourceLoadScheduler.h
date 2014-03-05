@@ -62,6 +62,14 @@ public:
     bool isSerialLoadingEnabled() const { return m_isSerialLoadingEnabled; }
     virtual void setSerialLoadingEnabled(bool b) { m_isSerialLoadingEnabled = b; }
 
+    class Suspender {
+    public:
+        explicit Suspender(ResourceLoadScheduler& scheduler) : m_scheduler(scheduler) { m_scheduler.suspendPendingRequests(); }
+        ~Suspender() { m_scheduler.resumePendingRequests(); }
+    private:
+        ResourceLoadScheduler& m_scheduler;
+    };
+
 protected:
     ResourceLoadScheduler();
     virtual ~ResourceLoadScheduler();
