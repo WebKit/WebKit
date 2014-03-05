@@ -320,11 +320,6 @@ Bug(EFL) editing/spelling/markers.html [ Failure ]
 # EFL's text checker doesn't support the text replacement feature.
 Bug(EFL) editing/spelling/spelling-marker-description.html [ Failure ]
 
-# EFL's text checker doesn't support multi-word misspelling.
-# Mac bug: https://bugs.webkit.org/show_bug.cgi?id=114470
-editing/spelling/spelling-exactly-selected-multiple-words.html [ Failure ]
-editing/spelling/spelling-should-select-multiple-words.html [ Failure ]
-
 # Fails because MutationObservers are not notified at end-of-task.
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 

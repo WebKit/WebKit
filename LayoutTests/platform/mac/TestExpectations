@@ -998,9 +998,6 @@ webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
 webkit.org/b/119374 fast/workers/termination-early.html [ Pass Crash ]
 webkit.org/b/119375 fast/workers/worker-call.html [ Failure ]
- 
-webkit.org/b/114470 editing/spelling/spelling-exactly-selected-multiple-words.html [ Skip ]
-webkit.org/b/114470 editing/spelling/spelling-should-select-multiple-words.html [ Skip ]
 
 webkit.org/b/110027 compositing/transitions/transform-on-large-layer.html [ Pass ImageOnlyFailure ]
 
