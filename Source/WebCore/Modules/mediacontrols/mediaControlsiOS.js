@@ -68,8 +68,11 @@ ControllerIOS.prototype = {
     },
     localizedStrings: {
         // FIXME: Move localization to ext strings file <http://webkit.org/b/120956>
-        '##DEVICE_TYPE##': 'AirPlay',
-        '##DEVICE_NAME##': 'This video is playing on "##DEVICE_NAME##".',
+        '##AIRPLAY_DEVICE_TYPE##': 'AirPlay',
+        '##AIRPLAY_DEVICE_NAME##': 'This video is playing on "##DEVICE_NAME##".',
+
+        '##TVOUT_DEVICE_TYPE##': 'TV Connected',
+        '##TVOUT_DEVICE_NAME##': 'This video is playing on the TV.',
     },
 
     shouldHaveStartPlaybackButton: function() {
@@ -112,12 +115,18 @@ ControllerIOS.prototype = {
         if (this.currentPlaybackTargetIsWireless()) {
             var backgroundImageSVG = "url('" + ControllerIOS.gWirelessImage + "')";
 
-            var deviceType = this.UIString('##DEVICE_TYPE##');
+            var deviceName = "";
+            var deviceType = "";
+            var type = this.host.externalDeviceType;
+            if (type == "airplay") {
+                deviceType = this.UIString('##AIRPLAY_DEVICE_TYPE##');
+                deviceName = this.UIString('##AIRPLAY_DEVICE_NAME##').replace('##DEVICE_NAME##', this.host.externalDeviceDisplayName);
+            } else if (type == "tvout") {
+                deviceType = this.UIString('##TVOUT_DEVICE_TYPE##');
+                deviceName = this.UIString('##TVOUT_DEVICE_NAME##');
+            }
+            
             backgroundImageSVG = backgroundImageSVG.replace('##DEVICE_TYPE##', deviceType);
-
-            // FIXME: Get the device type and name from the host.
-            var deviceName = "unknown";
-            var deviceName = this.UIString('##DEVICE_NAME##').replace('##DEVICE_NAME##', deviceName);;
             backgroundImageSVG = backgroundImageSVG.replace('##DEVICE_NAME##', deviceName);
 
             this.controls.wirelessPlaybackStatus.style.backgroundImage = backgroundImageSVG;

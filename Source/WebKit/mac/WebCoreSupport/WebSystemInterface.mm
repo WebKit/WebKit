@@ -244,5 +244,8 @@ void InitWebCoreSystemInterface(void)
     INIT(CachePartitionKey);
 #endif
 
+    INIT(ExernalDeviceTypeForPlayer);
+    INIT(ExernalDeviceDisplayNameForPlayer);
+
     didInit = true;
 }

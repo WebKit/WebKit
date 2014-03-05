@@ -449,6 +449,12 @@ public:
 
 #if ENABLE(IOS_AIRPLAY)
     bool isCurrentPlaybackTargetWireless() const;
+
+    enum WirelessPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
+    WirelessPlaybackTargetType wirelessPlaybackTargetType() const;
+
+    String wirelessPlaybackTargetName() const;
+
     void showPlaybackTargetPicker();
 
     bool hasWirelessPlaybackTargets() const;

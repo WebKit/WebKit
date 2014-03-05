@@ -94,6 +94,7 @@ typedef const struct _CFURLRequest* CFURLRequestRef;
 #endif
 
 OBJC_CLASS AVAsset;
+OBJC_CLASS AVPlayer;
 OBJC_CLASS CALayer;
 OBJC_CLASS NSArray;
 OBJC_CLASS NSButtonCell;
@@ -369,6 +370,15 @@ extern bool (*wkIsPublicSuffix)(NSString *host);
 #if ENABLE(CACHE_PARTITIONING)
 extern CFStringRef (*wkCachePartitionKey)(void);
 #endif
+
+typedef enum {
+    wkExternalPlaybackTypeNone,
+    wkExternalPlaybackTypeAirPlay,
+    wkExternalPlaybackTypeTVOut,
+} wkExternalPlaybackType;
+extern int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
+extern NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
+
 }
 
 #endif

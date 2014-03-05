@@ -212,3 +212,6 @@ bool (*wkIsPublicSuffix)(NSString *host);
 #if ENABLE(CACHE_PARTITIONING)
 CFStringRef (*wkCachePartitionKey)(void);
 #endif
+
+int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
+NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);

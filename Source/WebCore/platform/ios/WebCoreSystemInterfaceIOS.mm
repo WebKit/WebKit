@@ -147,3 +147,6 @@ CFStringRef (*wkGetDeviceName)(void);
 CFStringRef (*wkGetOSNameForUserAgent)(void);
 CFStringRef (*wkGetPlatformNameForNavigator)(void);
 CFStringRef (*wkGetVendorNameForNavigator)(void);
+
+int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
+NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);

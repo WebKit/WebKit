@@ -21,6 +21,7 @@
 #endif
 
 @class AVAsset;
+@class AVPlayer;
 @class QTMovie;
 @class QTMovieView;
 
@@ -547,6 +548,15 @@ void WKCFURLCacheDeleteHostNamesInPersistentStoreForPartition(CFArrayRef hostArr
 CFStringRef WKCachePartitionKey(void);
 void WKCFURLCacheCopyAllPartitionNames(CFURLCacheCopyAllPartitionNamesResultsNotification resultsBlock);
 #endif
+
+typedef enum {
+    WKExternalPlaybackTypeNone,
+    WKExternalPlaybackTypeAirPlay,
+    WKExternalPlaybackTypeTVOut,
+} WKExternalPlaybackType;
+
+int WKExernalDeviceTypeForPlayer(AVPlayer *);
+NSString *WKExernalDeviceDisplayNameForPlayer(AVPlayer *);
 
 #ifdef __cplusplus
 }

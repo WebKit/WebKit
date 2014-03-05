@@ -145,6 +145,10 @@ public:
 
 #if ENABLE(IOS_AIRPLAY)
     virtual bool isCurrentPlaybackTargetWireless() const { return false; }
+
+    virtual String wirelessPlaybackTargetName() const { return emptyString(); }
+    virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const { return MediaPlayer::TargetTypeNone; }
+
     virtual void showPlaybackTargetPicker() { }
 
     virtual bool hasWirelessPlaybackTargets() const { return false; }

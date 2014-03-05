@@ -851,6 +851,16 @@ bool MediaPlayer::isCurrentPlaybackTargetWireless() const
     return m_private->isCurrentPlaybackTargetWireless();
 }
 
+String MediaPlayer::wirelessPlaybackTargetName() const
+{
+    return m_private->wirelessPlaybackTargetName();
+}
+
+MediaPlayer::WirelessPlaybackTargetType MediaPlayer::wirelessPlaybackTargetType() const
+{
+    return m_private->wirelessPlaybackTargetType();
+}
+
 void MediaPlayer::showPlaybackTargetPicker()
 {
     m_private->showPlaybackTargetPicker();

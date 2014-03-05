@@ -228,6 +228,8 @@ private:
 
 #if ENABLE(IOS_AIRPLAY)
     virtual bool isCurrentPlaybackTargetWireless() const override;
+    virtual String wirelessPlaybackTargetName() const override;
+    virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const override;
     virtual bool wirelessVideoPlaybackDisabled() const override;
     virtual void setWirelessVideoPlaybackDisabled(bool) override;
 #endif

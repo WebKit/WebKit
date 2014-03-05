@@ -1970,6 +1970,8 @@ _wkCreatePrivateStorageSession
 _wkDeleteAllHTTPCookies
 _wkDeleteHTTPCookie
 _wkDestroyRenderingResources
+_wkExernalDeviceDisplayNameForPlayer
+_wkExernalDeviceTypeForPlayer
 _wkGetCFURLResponseHTTPResponse
 _wkGetCFURLResponseMIMEType
 _wkGetCFURLResponseURL

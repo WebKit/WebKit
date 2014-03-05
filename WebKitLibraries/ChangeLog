@@ -1,3 +1,15 @@
+2014-03-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Show external device name/type in placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=129723
+
+        Reviewed by Jer Noble.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMavericks.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2014-02-21  Jeffrey Pfau  <jpfau@apple.com>
 
         [Mac] Cache callbacks for cache partitioning may be passed null

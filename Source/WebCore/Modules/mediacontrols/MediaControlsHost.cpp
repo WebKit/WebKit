@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "CaptionUserPreferences.h"
 #include "Element.h"
 #include "HTMLMediaElement.h"
+#include "Logging.h"
 #include "MediaControlElements.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -163,6 +164,57 @@ bool MediaControlsHost::userGestureRequired() const
     return !m_mediaElement->mediaSession().playbackPermitted(*m_mediaElement);
 }
 
+String MediaControlsHost::externalDeviceDisplayName() const
+{
+#if ENABLE(IOS_AIRPLAY)
+    MediaPlayer* player = m_mediaElement->player();
+    if (!player) {
+        LOG(Media, "MediaControlsHost::externalDeviceDisplayName - returning \"\" because player is NULL");
+        return emptyString();
+    }
+    
+    String name = player->wirelessPlaybackTargetName();
+    LOG(Media, "MediaControlsHost::externalDeviceDisplayName - returning \"%s\"", name.utf8().data());
+    
+    return name;
+#else
+    return emptyString();
+#endif
+}
+
+String MediaControlsHost::externalDeviceType() const
+{
+    DEFINE_STATIC_LOCAL(String, none, (ASCIILiteral("none")));
+    String type = none;
+    
+#if ENABLE(IOS_AIRPLAY)
+    DEFINE_STATIC_LOCAL(String, airplay, (ASCIILiteral("airplay")));
+    DEFINE_STATIC_LOCAL(String, tvout, (ASCIILiteral("tvout")));
+    
+    MediaPlayer* player = m_mediaElement->player();
+    if (!player) {
+        LOG(Media, "MediaControlsHost::externalDeviceType - returning \"none\" because player is NULL");
+        return none;
+    }
+    
+    switch (player->wirelessPlaybackTargetType()) {
+    case MediaPlayer::TargetTypeNone:
+        type = none;
+        break;
+    case MediaPlayer::TargetTypeAirPlay:
+        type = airplay;
+        break;
+    case MediaPlayer::TargetTypeTVOut:
+        type = tvout;
+        break;
+    }
+#endif
+    
+    LOG(Media, "MediaControlsHost::externalDeviceType - returning \"%s\"", type.utf8().data());
+    
+    return type;
+}
+    
 }
 
 #endif

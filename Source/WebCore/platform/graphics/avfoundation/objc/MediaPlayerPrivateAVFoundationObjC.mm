@@ -87,7 +87,6 @@
 @end
 #endif
 
-
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreImage)
@@ -1915,6 +1914,35 @@ bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
     bool wirelessTarget = [m_avPlayer.get() isExternalPlaybackActive];
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless(%p) - returning %s", this, boolString(wirelessTarget));
     return wirelessTarget;
+}
+
+MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetType() const
+{
+    if (!m_avPlayer)
+        return MediaPlayer::TargetTypeNone;
+
+    switch (wkExernalDeviceTypeForPlayer(m_avPlayer.get())) {
+    case wkExternalPlaybackTypeNone:
+        return MediaPlayer::TargetTypeNone;
+    case wkExternalPlaybackTypeAirPlay:
+        return MediaPlayer::TargetTypeAirPlay;
+    case wkExternalPlaybackTypeTVOut:
+        return MediaPlayer::TargetTypeTVOut;
+    }
+
+    ASSERT_NOT_REACHED();
+    return MediaPlayer::TargetTypeNone;
+}
+
+String MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName() const
+{
+    if (!m_avPlayer)
+        return emptyString();
+    
+    String wirelessTargetName = wkExernalDeviceDisplayNameForPlayer(m_avPlayer.get());
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName(%p) - returning %s", this, wirelessTargetName.utf8().data());
+
+    return wirelessTargetName;
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled() const
