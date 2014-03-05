@@ -27,6 +27,7 @@
 
 #include "NativeImagePtr.h"
 #include "SecurityOriginHash.h"
+#include "SessionIDHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -87,6 +88,7 @@ public:
 #else
     typedef HashMap<String, CachedResource*> CachedResourceMap;
 #endif
+    typedef HashMap<SessionID, std::unique_ptr<CachedResourceMap>> SessionCachedResourceMap;
 
     struct LRUList {
         CachedResource* m_head;
@@ -119,9 +121,10 @@ public:
     };
 
     CachedResource* resourceForURL(const URL&);
-    CachedResource* resourceForRequest(const ResourceRequest&);
-    
-    bool add(CachedResource* resource);
+    CachedResource* resourceForURL(const URL&, SessionID);
+    CachedResource* resourceForRequest(const ResourceRequest&, SessionID);
+
+    bool add(CachedResource*);
     void remove(CachedResource* resource) { evict(resource); }
 
     static URL removeFragmentIdentifierIfNeeded(const URL& originalURL);
@@ -170,8 +173,9 @@ public:
     void flushCachedImagesToDisk(); // Flush encoded data from resources still referenced by web pages.
 #endif
 
-    static void removeUrlFromCache(ScriptExecutionContext*, const String& urlString);
-    static void removeRequestFromCache(ScriptExecutionContext*, const ResourceRequest&);
+    static void removeUrlFromCache(ScriptExecutionContext*, const String& urlString, SessionID);
+    static void removeRequestFromCache(ScriptExecutionContext*, const ResourceRequest&, SessionID);
+    static void removeRequestFromSessionCaches(ScriptExecutionContext*, const ResourceRequest&);
 
     // Function to collect cache statistics for the caches window in the Safari Debug menu.
     Statistics getStatistics();
@@ -221,8 +225,13 @@ private:
     bool makeResourcePurgeable(CachedResource*);
     void evict(CachedResource*);
 
-    static void removeRequestFromCacheImpl(ScriptExecutionContext*, const ResourceRequest&);
-    static void crossThreadRemoveRequestFromCache(ScriptExecutionContext*, PassOwnPtr<CrossThreadResourceRequestData>);
+    CachedResource* resourceForRequestImpl(const ResourceRequest&, CachedResourceMap&);
+    static void removeRequestFromCacheImpl(ScriptExecutionContext*, const ResourceRequest&, SessionID);
+    static void removeRequestFromSessionCachesImpl(ScriptExecutionContext*, const ResourceRequest&);
+    static void crossThreadRemoveRequestFromCache(ScriptExecutionContext*, PassOwnPtr<CrossThreadResourceRequestData>, SessionID);
+    static void crossThreadRemoveRequestFromSessionCaches(ScriptExecutionContext*, PassOwnPtr<CrossThreadResourceRequestData>);
+
+    CachedResourceMap& getSessionMap(SessionID);
 
     bool m_disabled;  // Whether or not the cache is enabled.
     bool m_pruneEnabled;
@@ -246,7 +255,7 @@ private:
     
     // A URL-based map of all resources that are in the cache (including the freshest version of objects that are currently being 
     // referenced by a Web page).
-    CachedResourceMap m_resources;
+    SessionCachedResourceMap m_sessionResources;
 };
 
 inline bool MemoryCache::shouldMakeResourcePurgeableOnEviction()

@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest, Type type)
-    : CachedResource(resourceRequest, type)
+CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest, Type type, SessionID sessionID)
+    : CachedResource(resourceRequest, type, sessionID)
     , m_identifier(0)
 {
     // FIXME: The wrong CachedResource::Type here may cause a bad cast elsewhere.

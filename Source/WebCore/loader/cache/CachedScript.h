@@ -35,7 +35,7 @@ namespace WebCore {
 
     class CachedScript final : public CachedResource {
     public:
-        CachedScript(const ResourceRequest&, const String& charset);
+        CachedScript(const ResourceRequest&, const String& charset, SessionID);
         virtual ~CachedScript();
 
         const String& script();

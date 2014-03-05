@@ -37,6 +37,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SerializedScriptValue.h"
+#include "SessionID.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
@@ -72,6 +73,11 @@ CrossThreadCopierBase<false, false, ResourceRequest>::Type CrossThreadCopierBase
 CrossThreadCopierBase<false, false, ResourceResponse>::Type CrossThreadCopierBase<false, false, ResourceResponse>::copy(const ResourceResponse& response)
 {
     return response.copyData();
+}
+
+CrossThreadCopierBase<false, false, SessionID>::Type CrossThreadCopierBase<false, false, SessionID>::copy(const SessionID& sessionID)
+{
+    return sessionID;
 }
 
 #if ENABLE(INDEXED_DATABASE)

@@ -1,3 +1,96 @@
+2014-03-05  Martin Hock  <mhock@apple.com>
+
+        Add support for sessions to MemoryCache.
+        https://bugs.webkit.org/show_bug.cgi?id=127794
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI): Initialize CachedImage with sessionID.
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::revokeObjectURL): Remove URL from MemoryCache for all sessions.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResource): Pass sessionID to MemoryCache.
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::replayXHR): Ditto.
+        * loader/DocumentLoader.cpp:
+        (WebCore::areAllLoadersPageCacheAcceptable): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::tellClientAboutPastMemoryCacheLoads): Ditto.
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement): Initialize CachedImage with sessionID.
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create): Pass sessionID to MemoryCache.
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet): Constructor takes sessionID.
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.cpp: Ditto.
+        (WebCore::CachedFont::CachedFont):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp: Ditto.
+        (WebCore::CachedImage::CachedImage):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp: Ditto.
+        (WebCore::CachedRawResource::CachedRawResource):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp: Ditto.
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource): Pass sessionID to MemoryCache.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::sessionID):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource): Constructors take sessionID.
+        (WebCore::CachedResourceLoader::sessionID): Retrieve sessionID from page.
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet): Pass sessionID to MemoryCache.
+        (WebCore::CachedResourceLoader::requestResource): Initialize CachedCSSStyleSheet with sessionID.
+        (WebCore::CachedResourceLoader::revalidateResource): Initialize cached resource with sessionID.
+        (WebCore::CachedResourceLoader::loadResource): Pass sessionID to MemoryCache and initialize cached resource with sessionID.
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedSVGDocument.cpp: Constructor takes sessionID.
+        (WebCore::CachedSVGDocument::CachedSVGDocument):
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedScript.cpp: Ditto.
+        (WebCore::CachedScript::CachedScript):
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedTextTrack.cpp: Ditto.
+        (WebCore::CachedTextTrack::CachedTextTrack):
+        * loader/cache/CachedTextTrack.h:
+        * loader/cache/CachedXSLStyleSheet.cpp: Ditto.
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        * loader/cache/CachedXSLStyleSheet.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::getSessionMap): Retrieve CachedResourceMap based on sessionID.
+        (WebCore::MemoryCache::add): Use sessionID from CachedResource parameter.
+        (WebCore::MemoryCache::revalidationSucceeded): Add sessionID parameter.
+        (WebCore::MemoryCache::resourceForURL): Ditto.
+        (WebCore::MemoryCache::resourceForRequest): Ditto, also move impl into impl method.
+        (WebCore::MemoryCache::resourceForRequestImpl): Add CachedResourceMap parameter.
+        (WebCore::MemoryCache::addImageToCache): Use default sessionID.
+        (WebCore::MemoryCache::removeImageFromCache): Ditto.
+        (WebCore::MemoryCache::evict): Use sessionID from CachedResource parameter.
+        (WebCore::MemoryCache::removeResourcesWithOrigin): Iterate through all CachedResourceMaps.
+        (WebCore::MemoryCache::getOriginsWithCache): Ditto.
+        (WebCore::MemoryCache::removeUrlFromCache): Add sessionID parameter.
+        (WebCore::MemoryCache::removeRequestFromCache): Ditto.
+        (WebCore::MemoryCache::removeRequestFromSessionCaches): Remove request from all CachedResourceMaps, with multithread support.
+        (WebCore::MemoryCache::removeRequestFromCacheImpl): Add sessionID parameter.
+        (WebCore::MemoryCache::removeRequestFromSessionCachesImpl): Iterate through all CachedResourceMaps.
+        (WebCore::MemoryCache::crossThreadRemoveRequestFromCache): Add sessionID parameter.
+        (WebCore::MemoryCache::crossThreadRemoveRequestFromSessionCaches): Pass on request to removeRequestFromSessionCachesImpl.
+        (WebCore::MemoryCache::getStatistics): Iterate through all CachedResourceMaps.
+        (WebCore::MemoryCache::setDisabled): Ditto.
+        * loader/cache/MemoryCache.h: Create another level for cache.
+        * platform/CrossThreadCopier.cpp: Allow copying SessionIDs across threads.
+        (WebCore::SessionID>::copy):
+        * platform/CrossThreadCopier.h:
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest): Remove trailing whitespace.
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::updateSnapshot): Initialize CachedImage with sessionID.
+        * testing/Internals.cpp:
+        (WebCore::Internals::isLoadingFromMemoryCache): Pass sessionID to MemoryCache.
+
 2014-03-03  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Generate documentation for the DOM bindings

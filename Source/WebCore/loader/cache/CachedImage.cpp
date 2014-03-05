@@ -60,8 +60,8 @@
 
 namespace WebCore {
 
-CachedImage::CachedImage(const ResourceRequest& resourceRequest)
-    : CachedResource(resourceRequest, ImageResource)
+CachedImage::CachedImage(const ResourceRequest& resourceRequest, SessionID sessionID)
+    : CachedResource(resourceRequest, ImageResource, sessionID)
     , m_image(0)
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
@@ -69,8 +69,8 @@ CachedImage::CachedImage(const ResourceRequest& resourceRequest)
     setStatus(Unknown);
 }
 
-CachedImage::CachedImage(Image* image)
-    : CachedResource(ResourceRequest(), ImageResource)
+CachedImage::CachedImage(Image* image, SessionID sessionID)
+    : CachedResource(ResourceRequest(), ImageResource, sessionID)
     , m_image(image)
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
@@ -79,8 +79,18 @@ CachedImage::CachedImage(Image* image)
     setLoading(false);
 }
 
-CachedImage::CachedImage(const URL& url, Image* image, CachedImage::CacheBehaviorType type)
-    : CachedResource(ResourceRequest(url), ImageResource)
+CachedImage::CachedImage(const URL& url, Image* image, SessionID sessionID)
+    : CachedResource(ResourceRequest(url), ImageResource, sessionID)
+    , m_image(image)
+    , m_isManuallyCached(false)
+    , m_shouldPaintBrokenImage(true)
+{
+    setStatus(Cached);
+    setLoading(false);
+}
+
+CachedImage::CachedImage(const URL& url, Image* image, CachedImage::CacheBehaviorType type, SessionID sessionID)
+    : CachedResource(ResourceRequest(url), ImageResource, sessionID)
     , m_image(image)
     , m_isManuallyCached(type == CachedImage::ManuallyCached)
     , m_shouldPaintBrokenImage(true)

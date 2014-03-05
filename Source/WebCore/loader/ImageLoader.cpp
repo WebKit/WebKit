@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
+#include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
 #include "SecurityOrigin.h"
@@ -188,7 +189,7 @@ void ImageLoader::updateFromElement()
         if (m_loadManually) {
             bool autoLoadOtherImages = document.cachedResourceLoader()->autoLoadImages();
             document.cachedResourceLoader()->setAutoLoadImages(false);
-            newImage = new CachedImage(request.resourceRequest());
+            newImage = new CachedImage(request.resourceRequest(), m_element.document().page()->sessionID());
             newImage->setLoading(true);
             newImage->setOwningCachedResourceLoader(document.cachedResourceLoader());
             document.cachedResourceLoader()->m_documentResources.set(newImage->url(), newImage.get());

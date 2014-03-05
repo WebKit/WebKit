@@ -1,3 +1,20 @@
+2014-03-05  Martin Hock  <mhock@apple.com>
+
+        Add support for sessions to MemoryCache.
+        https://bugs.webkit.org/show_bug.cgi?id=127794
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkResourceLoader.h: Add sessionID() method.
+        (WebKit::NetworkResourceLoader::sessionID):
+        * NetworkProcess/mac/DiskCacheMonitor.h: Add sessionID member.
+        * NetworkProcess/mac/DiskCacheMonitor.mm:
+        (WebKit::DiskCacheMonitor::DiskCacheMonitor): Send sessionID to NetworkProcessConnection::DidCacheResource.
+        * WebProcess/Network/NetworkProcessConnection.cpp: Add sessionID parameter to didCacheResource and pass to MemoryCache.
+        (WebKit::NetworkProcessConnection::didCacheResource):
+        * WebProcess/Network/NetworkProcessConnection.h: Ditto.
+        * WebProcess/Network/NetworkProcessConnection.messages.in: Ditto.
+
 2014-03-05  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] support multi-select and select with groups for iPhone.

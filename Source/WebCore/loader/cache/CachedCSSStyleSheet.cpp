@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-CachedCSSStyleSheet::CachedCSSStyleSheet(const ResourceRequest& resourceRequest, const String& charset)
-    : CachedResource(resourceRequest, CSSStyleSheet)
+CachedCSSStyleSheet::CachedCSSStyleSheet(const ResourceRequest& resourceRequest, const String& charset, SessionID sessionID)
+    : CachedResource(resourceRequest, CSSStyleSheet, sessionID)
     , m_decoder(TextResourceDecoder::create("text/css", charset))
 {
     // Prefer text/css but accept any type (dell.com serves a stylesheet

@@ -31,6 +31,7 @@
 #include "ChromeClient.h"
 #include "Cursor.h"
 #include "Filter.h"
+#include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "Gradient.h"
@@ -85,7 +86,7 @@ void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
     if (!image)
         return;
 
-    m_snapshotResource->setCachedImage(new CachedImage(image.get()));
+    m_snapshotResource->setCachedImage(new CachedImage(image.get(), view().frameView().frame().page()->sessionID()));
     repaint();
 }
 

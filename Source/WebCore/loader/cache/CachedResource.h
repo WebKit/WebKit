@@ -31,6 +31,7 @@
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SessionID.h"
 #include "Timer.h"
 #include <time.h>
 #include <wtf/HashCountedSet.h>
@@ -89,7 +90,7 @@ public:
         DecodeError
     };
 
-    CachedResource(const ResourceRequest&, Type);
+    CachedResource(const ResourceRequest&, Type, SessionID);
     virtual ~CachedResource();
 
     virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&);
@@ -111,6 +112,7 @@ public:
 #if ENABLE(CACHE_PARTITIONING)
     const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
 #endif
+    SessionID sessionID() const { return m_sessionID; }
     Type type() const { return static_cast<Type>(m_type); }
     
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
@@ -290,6 +292,7 @@ protected:
     HashMap<CachedResourceClient*, OwnPtr<CachedResourceCallback>> m_clientsAwaitingCallback;
 
     ResourceRequest m_resourceRequest;
+    SessionID m_sessionID;
     String m_accept;
     RefPtr<SubresourceLoader> m_loader;
     ResourceLoaderOptions m_options;

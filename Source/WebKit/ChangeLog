@@ -1,3 +1,12 @@
+2014-03-05  Martin Hock  <mhock@apple.com>
+
+        Add support for sessions to MemoryCache.
+        https://bugs.webkit.org/show_bug.cgi?id=127794
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-03-03  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Generate documentation for the DOM bindings
