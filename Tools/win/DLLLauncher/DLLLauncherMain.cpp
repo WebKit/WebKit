@@ -133,12 +133,15 @@ static bool modifyPath(const wstring& programName)
 #ifdef WIN_CAIRO
 
 #if defined(_M_X64)
-    wstring path = copyEnvironmentVariable(L"GSTREAMER_1_0_ROOT_X86_64") + L"bin";
+    wstring pathGStreamer = copyEnvironmentVariable(L"GSTREAMER_1_0_ROOT_X86_64") + L"bin";
+    wstring pathWinCairo = copyEnvironmentVariable(L"WEBKIT_LIBRARIES") + L"\\bin64";
 #else
-    wstring path = copyEnvironmentVariable(L"GSTREAMER_1_0_ROOT_X86") + L"bin";
+    wstring pathGStreamer = copyEnvironmentVariable(L"GSTREAMER_1_0_ROOT_X86") + L"bin";
+    wstring pathWinCairo = copyEnvironmentVariable(L"WEBKIT_LIBRARIES") + L"\\bin32";
 #endif
-    if (directoryExists(path))
-        prependPath(path);
+    prependPath(pathWinCairo);
+    if (directoryExists(pathGStreamer))
+        prependPath(pathGStreamer);
     return true;
 
 #else

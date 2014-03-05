@@ -1,3 +1,17 @@
+2014-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Preparing to run layout tests on Wincairo.
+        https://bugs.webkit.org/show_bug.cgi?id=129709
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitdirs.pm:
+        (setPathForRunningWebKitApp):
+        Add GStreamer directory for WinCairo running layout tests.
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (modifyPath):
+        Added the WinCairo bin32 or bin64 directory for running WinLauncher.
+
 2014-03-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Simplify the GObject DOM bindings API break check into one step
