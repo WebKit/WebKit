@@ -86,11 +86,6 @@
     WKScrollViewDelegateForwarder *_delegateForwarder;
 }
 
-- (BOOL)touchesShouldCancelInContentView:(UIView *)contentView
-{
-    return NO;
-}
-
 - (void)setInternalDelegate:(id <UIScrollViewDelegate>)internalDelegate
 {
     if (internalDelegate == _internalDelegate)

@@ -1,5 +1,16 @@
 2014-03-04  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] WKScrollView should be able to cancel touches in content view
+        https://bugs.webkit.org/show_bug.cgi?id=129711
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKScrollView.mm:
+        We should not override UIWebScrollView behavior regarding touch cancellation otherwise we force
+        other gesture recognizers to fail if delayed touches have been dispatched.
+
+2014-03-04  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Consider the entire view state on update to find if a change is stable or not
         https://bugs.webkit.org/show_bug.cgi?id=129721
 
