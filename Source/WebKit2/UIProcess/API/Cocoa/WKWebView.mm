@@ -63,6 +63,10 @@
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary*)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
 @end
 
+@interface UIPeripheralHost(UIKitInternal)
+- (CGFloat)getVerticalOverlapForView:(UIView *)view usingKeyboardInfo:(NSDictionary *)info;
+@end
+
 #endif
 
 #if PLATFORM(MAC)
@@ -88,6 +92,7 @@
     UIEdgeInsets _obscuredInsets;
     bool _isChangingObscuredInsetsInteractively;
     CGFloat _lastAdjustmentForScroller;
+    CGFloat _keyboardVerticalOverlap;
 
     std::unique_ptr<WebKit::ViewGestureController> _gestureController;
     BOOL _allowsBackForwardNavigationGestures;
@@ -537,7 +542,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGRect fullViewRect = self.bounds;
     CGRect visibleRectInContentCoordinates = [self convertRect:fullViewRect toView:_contentView.get()];
 
-    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, _obscuredInsets);
+    UIEdgeInsets obscuredInsets = _obscuredInsets;
+    obscuredInsets.bottom = std::max(_obscuredInsets.bottom, _keyboardVerticalOverlap);
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, obscuredInsets);
     CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
 
     CGFloat scaleFactor = [_scrollView zoomScale];
@@ -548,7 +555,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView
 {
-    // FIXME: We will also need to adjust the unobscured rect by taking into account the keyboard rect and the obscured insets.
+    _keyboardVerticalOverlap = [[UIPeripheralHost sharedInstance] getVerticalOverlapForView:self usingKeyboardInfo:keyboardInfo];
+    [self _updateVisibleContentRectsWithStableState:YES];
+
     if (adjustScrollView)
         [_scrollView _adjustForAutomaticKeyboardInfo:keyboardInfo animated:YES lastAdjustment:&_lastAdjustmentForScroller];
 }

@@ -1,3 +1,16 @@
+2014-03-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Account for the keyboard when computing the unobscuredRect
+        https://bugs.webkit.org/show_bug.cgi?id=129660
+
+        Reviewed by Enrica Casucci.
+
+        Adjust the unobscuredRect when a docked keyboard is on screen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateVisibleContentRectsWithStableState:]):
+        (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+
 2014-03-04  Andy Estes  <aestes@apple.com>
 
         [iOS][WebKit2] Exclude plug-in sandbox profiles from the build
