@@ -568,9 +568,9 @@ void Heap::visitProtectedObjects(HeapRootVisitor& heapRootVisitor)
 {
     GCPHASE(VisitProtectedObjects);
     MARK_LOG_ROOT(m_slotVisitor, "Protected Objects");
-    ProtectCountSet::iterator end = m_protectedValues.end();
-    for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
-        heapRootVisitor.visit(&it->key);
+
+    for (auto pair : m_protectedValues)
+        heapRootVisitor.visit(&pair.key);
     m_slotVisitor.donateAndDrain();
 }
 
@@ -581,14 +581,10 @@ void Heap::visitTempSortVectors(HeapRootVisitor& heapRootVisitor)
 
     typedef Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>* > VectorOfValueStringVectors;
 
-    VectorOfValueStringVectors::iterator end = m_tempSortingVectors.end();
-    for (VectorOfValueStringVectors::iterator it = m_tempSortingVectors.begin(); it != end; ++it) {
-        Vector<ValueStringPair, 0, UnsafeVectorOverflow>* tempSortingVector = *it;
-
-        Vector<ValueStringPair>::iterator vectorEnd = tempSortingVector->end();
-        for (Vector<ValueStringPair>::iterator vectorIt = tempSortingVector->begin(); vectorIt != vectorEnd; ++vectorIt) {
-            if (vectorIt->first)
-                heapRootVisitor.visit(&vectorIt->first);
+    for (auto vector : m_tempSortingVectors) {
+        for (auto valueStringPair : *vector) {
+            if (valueStringPair.first)
+                heapRootVisitor.visit(&valueStringPair.first);
         }
     }
     m_slotVisitor.donateAndDrain();
@@ -672,10 +668,8 @@ void Heap::clearRememberedSet(Vector<const JSCell*>& rememberedSet)
 {
 #if ENABLE(GGC)
     GCPHASE(ClearRememberedSet);
-    for (unsigned i = 0; i < rememberedSet.size(); ++i) {
-        const JSCell* cell = rememberedSet[i];
+    for (auto cell : rememberedSet)
         MarkedBlock::blockFor(cell)->clearRemembered(cell);
-    }
 #else
     UNUSED_PARAM(rememberedSet);
 #endif

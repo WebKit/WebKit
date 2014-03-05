@@ -41,10 +41,8 @@ CodeBlockSet::CodeBlockSet(BlockAllocator& blockAllocator)
 
 CodeBlockSet::~CodeBlockSet()
 {
-    HashSet<CodeBlock*>::iterator iter = m_set.begin();
-    HashSet<CodeBlock*>::iterator end = m_set.end();
-    for (; iter != end; ++iter)
-        (*iter)->deref();
+    for (CodeBlock* codeBlock : m_set)
+        codeBlock->deref();
 }
 
 void CodeBlockSet::add(PassRefPtr<CodeBlock> codeBlock)
@@ -56,10 +54,7 @@ void CodeBlockSet::add(PassRefPtr<CodeBlock> codeBlock)
 
 void CodeBlockSet::clearMarks()
 {
-    HashSet<CodeBlock*>::iterator iter = m_set.begin();
-    HashSet<CodeBlock*>::iterator end = m_set.end();
-    for (; iter != end; ++iter) {
-        CodeBlock* codeBlock = *iter;
+    for (CodeBlock* codeBlock : m_set) {
         codeBlock->m_mayBeExecuting = false;
         codeBlock->m_visitAggregateHasBeenCalled = false;
     }
@@ -75,10 +70,7 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced()
     if (verbose)
         dataLog("Fixpointing over unmarked, set size = ", m_set.size(), "...\n");
     for (;;) {
-        HashSet<CodeBlock*>::iterator iter = m_set.begin();
-        HashSet<CodeBlock*>::iterator end = m_set.end();
-        for (; iter != end; ++iter) {
-            CodeBlock* codeBlock = *iter;
+        for (CodeBlock* codeBlock : m_set) {
             if (!codeBlock->hasOneRef())
                 continue;
             if (codeBlock->m_mayBeExecuting)
@@ -90,8 +82,8 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced()
             dataLog("    Removing ", toRemove.size(), " blocks.\n");
         if (toRemove.isEmpty())
             break;
-        for (unsigned i = toRemove.size(); i--;)
-            m_set.remove(toRemove[i]);
+        for (CodeBlock* codeBlock : toRemove)
+            m_set.remove(codeBlock);
         toRemove.resize(0);
     }
 }
@@ -106,10 +98,7 @@ void CodeBlockSet::traceMarked(SlotVisitor& visitor)
 {
     if (verbose)
         dataLog("Tracing ", m_set.size(), " code blocks.\n");
-    HashSet<CodeBlock*>::iterator iter = m_set.begin();
-    HashSet<CodeBlock*>::iterator end = m_set.end();
-    for (; iter != end; ++iter) {
-        CodeBlock* codeBlock = *iter;
+    for (CodeBlock* codeBlock : m_set) {
         if (!codeBlock->m_mayBeExecuting)
             continue;
         codeBlock->visitAggregate(visitor);

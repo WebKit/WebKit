@@ -451,9 +451,8 @@ namespace JSC {
 
     template<typename Functor> inline typename Functor::ReturnType Heap::forEachProtectedCell(Functor& functor)
     {
-        ProtectCountSet::iterator end = m_protectedValues.end();
-        for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
-            functor(it->key);
+        for (auto pair : m_protectedValues)
+            functor(pair.key);
         m_handleSet.forEachStrongHandle(functor, m_protectedValues);
 
         return functor.returnValue();
