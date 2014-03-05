@@ -1,3 +1,12 @@
+2014-03-04  Andy Estes  <aestes@apple.com>
+
+        [iOS][WebKit2] Exclude plug-in sandbox profiles from the build
+        https://bugs.webkit.org/show_bug.cgi?id=129719
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/WebKit2.xcconfig:
+
 2014-03-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] WKScrollView should be able to cancel touches in content view
