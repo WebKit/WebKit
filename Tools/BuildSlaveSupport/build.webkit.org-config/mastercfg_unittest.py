@@ -381,6 +381,51 @@ class BuildStepsConstructorTest(unittest.TestCase):
                 self.fail("Error during instantiation %s buildstep for %s builder: %s\n" % (buildStepName, builderName, e))
         return doTest
 
+class RunGtkWebKitGObjectDOMBindingsAPIBreakTestsTest(unittest.TestCase):
+    def assertResults(self, expected_missing, expected_new, stdio):
+        expected_text = ""
+        expected_results = SUCCESS
+        if expected_new:
+            expected_results = WARNINGS
+        if expected_missing:
+            expected_results = FAILURE
+
+        cmd = StubRemoteCommand(0, stdio)
+        step = RunGtkWebKitGObjectDOMBindingsAPIBreakTests()
+        step.commandComplete(cmd)
+
+        actual_results = step.evaluateCommand(cmd)
+        self.assertEqual(expected_results, actual_results)
+        self.assertEqual(expected_missing, step.missingAPI)
+        self.assertEqual(expected_new, step.newAPI)
+
+    def test_missing_and_new_api(self):
+        self.assertResults(expected_missing=True, expected_new=True, stdio="""Missing API (API break!) detected in GObject DOM bindings
+    gboolean webkit_dom_html_input_element_get_webkitdirectory(WebKitDOMHTMLInputElement*)
+    gchar* webkit_dom_text_track_cue_get_text(WebKitDOMTextTrackCue*)
+
+New API detected in GObject DOM bindings
+    void webkit_dom_html_input_element_set_capture(WebKitDOMHTMLInputElement*, gboolean)
+    gboolean webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement*)
+    void webkit_dom_text_track_add_cue(WebKitDOMTextTrack*, WebKitDOMTextTrackCue*, GError**)
+    gchar* webkit_dom_document_get_origin(WebKitDOMDocument*)""")
+
+    def test_missing_api(self):
+        self.assertResults(expected_missing=True, expected_new=False, stdio="""Missing API (API break!) detected in GObject DOM bindings
+    gboolean webkit_dom_html_input_element_get_webkitdirectory(WebKitDOMHTMLInputElement*)
+    gchar* webkit_dom_text_track_cue_get_text(WebKitDOMTextTrackCue*)""")
+
+    def test_new_api(self):
+        self.assertResults(expected_missing=False, expected_new=True, stdio="""New API detected in GObject DOM bindings
+    void webkit_dom_html_input_element_set_capture(WebKitDOMHTMLInputElement*, gboolean)
+    gboolean webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement*)
+    void webkit_dom_text_track_add_cue(WebKitDOMTextTrack*, WebKitDOMTextTrackCue*, GError**)
+    gchar* webkit_dom_document_get_origin(WebKitDOMDocument*)""")
+
+    def test_success(self):
+        self.assertResults(expected_missing=False, expected_new=False, stdio="")
+
+
 # FIXME: We should run this file as part of test-webkitpy.
 # Unfortunately test-webkitpy currently requires that unittests
 # be located in a directory with a valid module name.

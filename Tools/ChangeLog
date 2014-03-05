@@ -1,3 +1,18 @@
+2014-03-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Give the WebKit GObject DOM bindings API break detection it's own buildbot bubble
+        https://bugs.webkit.org/show_bug.cgi?id=129637
+
+        Reviewed by Carlos Garcia Campos.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunGtkWebKitGObjectDOMBindingsAPIBreakTests): Added this test runner.
+        (RunGtkWebKitGObjectDOMBindingsAPIBreakTests.commandComplete): Run the breakage test command and scan the output.
+        (RunGtkWebKitGObjectDOMBindingsAPIBreakTests.evaluateCommand): Return failure if there is missing API (an API break).
+        New API typically just requires a rebaseline and isn't necessarily a faiulre.
+        (TestFactory.__init__): Add the test for GTK+.
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py: Add a unit test for the new bubble.
+
 2014-03-05  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose missing functionalities of AtkTableCell to AT
