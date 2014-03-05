@@ -116,13 +116,24 @@ EncodedJSValue getData(ExecState* exec)
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
         return throwVMError(exec, createRangeError(exec, "Out of bounds access"));
-    
-    typename Adaptor::Type value = *reinterpret_cast<typename Adaptor::Type*>(static_cast<uint8_t*>(dataView->vector()) + byteOffset);
-    
-    if (needToFlipBytesIfLittleEndian(littleEndian))
-        value = flipBytes(value);
-    
-    return JSValue::encode(Adaptor::toJSValue(value));
+
+    const unsigned dataSize = sizeof(typename Adaptor::Type);
+    union {
+        typename Adaptor::Type value;
+        uint8_t rawBytes[dataSize];
+    } u;
+
+    uint8_t* dataPtr = static_cast<uint8_t*>(dataView->vector()) + byteOffset;
+
+    if (needToFlipBytesIfLittleEndian(littleEndian)) {
+        for (unsigned i = dataSize; i--;)
+            u.rawBytes[i] = *dataPtr++;
+    } else {
+        for (unsigned i = 0; i < dataSize; i++)
+            u.rawBytes[i] = *dataPtr++;
+    }
+
+    return JSValue::encode(Adaptor::toJSValue(u.value));
 }
 
 template<typename Adaptor>
@@ -138,8 +149,14 @@ EncodedJSValue setData(ExecState* exec)
     unsigned byteOffset = exec->uncheckedArgument(0).toUInt32(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    
-    typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, exec->uncheckedArgument(1));
+
+    const unsigned dataSize = sizeof(typename Adaptor::Type);
+    union {
+        typename Adaptor::Type value;
+        uint8_t rawBytes[dataSize];
+    } u;
+
+    u.value = toNativeFromValue<Adaptor>(exec, exec->uncheckedArgument(1));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     
@@ -154,12 +171,17 @@ EncodedJSValue setData(ExecState* exec)
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
         return throwVMError(exec, createRangeError(exec, "Out of bounds access"));
-    
-    if (needToFlipBytesIfLittleEndian(littleEndian))
-        value = flipBytes(value);
-    
-    *reinterpret_cast<typename Adaptor::Type*>(static_cast<uint8_t*>(dataView->vector()) + byteOffset) = value;
-    
+
+    uint8_t* dataPtr = static_cast<uint8_t*>(dataView->vector()) + byteOffset;
+
+    if (needToFlipBytesIfLittleEndian(littleEndian)) {
+        for (unsigned i = dataSize; i--;)
+            *dataPtr++ = u.rawBytes[i];
+    } else {
+        for (unsigned i = 0; i < dataSize; i++)
+            *dataPtr++ = u.rawBytes[i];
+    }
+
     return JSValue::encode(jsUndefined());
 }
 

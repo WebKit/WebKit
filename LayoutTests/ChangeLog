@@ -1,3 +1,20 @@
+2014-03-05  Michael Saboff  <msaboff@apple.com>
+
+        JSDataViewPrototype::getData() and setData() crash on platforms that don't allow unaligned accesses
+        https://bugs.webkit.org/show_bug.cgi?id=129746
+
+        Reviewed by Filip Pizlo.
+
+        New test to validate proper operation of DataView operations at
+        various byte offsets using both little and big endian.
+
+        * js/arraybuffer-dataview-expected.txt: Added.
+        * js/arraybuffer-dataview.html: Added.
+        * js/script-tests/arraybuffer-dataview.js: Added.
+        (paddedHex):
+        (byteString):
+        (clearView):
+
 2014-03-05  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Wrong cliprect on absolute positioned elements.
