@@ -302,7 +302,8 @@ void ProgressTracker::progressHeartbeatTimerFired(Timer<ProgressTracker>*)
 
     m_totalBytesReceivedBeforePreviousHeartbeat = m_totalBytesReceived;
 
-    m_originatingProgressFrame->loader()->loadProgressingStatusChanged();
+    if (m_originatingProgressFrame)
+        m_originatingProgressFrame->loader()->loadProgressingStatusChanged();
 
     if (m_progressValue >= finalProgressValue)
         m_progressHeartbeatTimer.stop();
