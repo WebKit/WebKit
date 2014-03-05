@@ -139,7 +139,8 @@ private:
 
     PassRefPtr<Inspector::TypeBuilder::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
     bool assertPaused(ErrorString*);
-    void clearResolvedBreakpointState();
+    void clearDebuggerBreakpointState();
+    void clearInspectorBreakpointState();
     void clearBreakDetails();
 
     bool breakpointActionsFromProtocol(ErrorString*, RefPtr<InspectorArray>& actions, Vector<ScriptBreakpointAction>* result);

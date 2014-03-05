@@ -108,10 +108,10 @@ void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
     if (!m_enabled)
         return;
 
-    m_javaScriptBreakpoints.clear();
-
     stopListeningScriptDebugServer(isBeingDestroyed);
-    clearResolvedBreakpointState();
+    clearInspectorBreakpointState();
+
+    ASSERT(m_javaScriptBreakpoints.isEmpty());
 
     if (m_listener)
         m_listener->debuggerWasDisabled();
@@ -686,7 +686,7 @@ void InspectorDebuggerAgent::breakProgram(InspectorDebuggerFrontendDispatcher::R
     scriptDebugServer().breakProgram();
 }
 
-void InspectorDebuggerAgent::clearResolvedBreakpointState()
+void InspectorDebuggerAgent::clearInspectorBreakpointState()
 {
     ErrorString dummyError;
     Vector<String> breakpointIdentifiers;
@@ -694,7 +694,12 @@ void InspectorDebuggerAgent::clearResolvedBreakpointState()
     for (const String& identifier : breakpointIdentifiers)
         removeBreakpoint(&dummyError, identifier);
 
-    scriptDebugServer().continueProgram();
+    clearDebuggerBreakpointState();
+}
+
+void InspectorDebuggerAgent::clearDebuggerBreakpointState()
+{
+    scriptDebugServer().clearBreakpoints();
 
     m_pausedScriptState = nullptr;
     m_currentCallStack = Deprecated::ScriptValue();
@@ -703,7 +708,18 @@ void InspectorDebuggerAgent::clearResolvedBreakpointState()
     m_continueToLocationBreakpointID = JSC::noBreakpointID;
     clearBreakDetails();
     m_javaScriptPauseScheduled = false;
-    setOverlayMessage(&dummyError, nullptr);
+
+    scriptDebugServer().continueProgram();
+}
+
+void InspectorDebuggerAgent::didClearGlobalObject()
+{
+    // Clear breakpoints from the debugger, but keep the inspector's model of which
+    // pages have what breakpoints, as the mapping is only sent to DebuggerAgent once.
+    clearDebuggerBreakpointState();
+
+    if (m_frontendDispatcher)
+        m_frontendDispatcher->globalObjectCleared();
 }
 
 bool InspectorDebuggerAgent::assertPaused(ErrorString* errorString)
@@ -722,13 +738,6 @@ void InspectorDebuggerAgent::clearBreakDetails()
     m_breakAuxData = nullptr;
 }
 
-void InspectorDebuggerAgent::didClearGlobalObject()
-{
-    if (m_frontendDispatcher)
-        m_frontendDispatcher->globalObjectCleared();
-
-    clearResolvedBreakpointState();
-}
 
 } // namespace Inspector
 

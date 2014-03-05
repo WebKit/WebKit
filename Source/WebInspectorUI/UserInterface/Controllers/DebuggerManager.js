@@ -305,7 +305,7 @@ WebInspector.DebuggerManager.prototype = {
         if (!breakpoint)
             return;
 
-        console.assert(breakpoint.id === breakpointIdentifier);
+        console.assert(breakpoint.identifier === breakpointIdentifier);
 
         breakpoint.resolved = true;
     },
@@ -411,7 +411,7 @@ WebInspector.DebuggerManager.prototype = {
     {
         // Don't add the script again if it is already known.
         if (this._scriptIdMap[scriptIdentifier]) {
-            console.assert(this._scriptIdMap[scriptIdentifier].url === url);
+            console.assert(this._scriptIdMap[scriptIdentifier].url === (url || null));
             console.assert(this._scriptIdMap[scriptIdentifier].range.startLine === startLine);
             console.assert(this._scriptIdMap[scriptIdentifier].range.startColumn === startColumn);
             console.assert(this._scriptIdMap[scriptIdentifier].range.endLine === endLine);

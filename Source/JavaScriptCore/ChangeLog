@@ -1,3 +1,28 @@
+2014-03-04  Brian Burg  <bburg@apple.com>
+
+        Inspector does not restore breakpoints after a page reload
+        https://bugs.webkit.org/show_bug.cgi?id=129655
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix a regression introduced by r162096 that erroneously removed
+        the inspector backend's mapping of files to breakpoints whenever the
+        global object was cleared.
+
+        The inspector's breakpoint mappings should only be cleared when the
+        debugger agent is disabled or destroyed. We should only clear the
+        debugger's breakpoint state when the global object is cleared.
+
+        To make it clearer what state is being cleared, the two cases have
+        been split into separate methods.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::disable):
+        (Inspector::InspectorDebuggerAgent::clearInspectorBreakpointState):
+        (Inspector::InspectorDebuggerAgent::clearDebuggerBreakpointState):
+        (Inspector::InspectorDebuggerAgent::didClearGlobalObject):
+        * inspector/agents/InspectorDebuggerAgent.h:
+
 2014-03-04  Andreas Kling  <akling@apple.com>
 
         Streamline JSValue::get().

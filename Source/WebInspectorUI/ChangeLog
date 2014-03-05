@@ -1,3 +1,18 @@
+2014-03-04  Brian Burg  <bburg@apple.com>
+
+        Inspector does not restore breakpoints after a page reload
+        https://bugs.webkit.org/show_bug.cgi?id=129655
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix some console asserts that fire when breakpoints resolve.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.breakpointResolved):
+        This had a typo, it should be `breakpoint.identifier`.
+        (WebInspector.DebuggerManager.prototype.scriptDidParse):
+        Sometimes the `url` parameter is empty instead of null.
+
 2014-03-04  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: Remove WebInspector.EventHandler in favor of WebInspector.EventListenerSet
