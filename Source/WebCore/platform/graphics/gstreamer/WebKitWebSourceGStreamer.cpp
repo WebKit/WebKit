@@ -135,7 +135,6 @@ struct _WebKitWebSrcPrivate {
     GRefPtr<GstBuffer> buffer;
 
     // icecast stuff
-    gboolean iradioMode;
     gchar* iradioName;
     gchar* iradioGenre;
     gchar* iradioUrl;
@@ -143,8 +142,7 @@ struct _WebKitWebSrcPrivate {
 };
 
 enum {
-    PROP_IRADIO_MODE = 1,
-    PROP_IRADIO_NAME,
+    PROP_IRADIO_NAME = 1,
     PROP_IRADIO_GENRE,
     PROP_IRADIO_URL,
     PROP_IRADIO_TITLE,
@@ -203,14 +201,6 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
                                "Sebastian Dröge <sebastian.droege@collabora.co.uk>");
 
     // icecast stuff
-    g_object_class_install_property(oklass,
-                                    PROP_IRADIO_MODE,
-                                    g_param_spec_boolean("iradio-mode",
-                                                         "iradio-mode",
-                                                         "Enable internet radio mode (extraction of shoutcast/icecast metadata)",
-                                                         FALSE,
-                                                         (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
-
     g_object_class_install_property(oklass,
                                     PROP_IRADIO_NAME,
                                     g_param_spec_string("iradio-name",
@@ -331,14 +321,8 @@ static void webKitWebSrcFinalize(GObject* object)
 static void webKitWebSrcSetProperty(GObject* object, guint propID, const GValue* value, GParamSpec* pspec)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(object);
-    WebKitWebSrcPrivate* priv = src->priv;
 
     switch (propID) {
-    case PROP_IRADIO_MODE: {
-        GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
-        priv->iradioMode = g_value_get_boolean(value);
-        break;
-    }
     case PROP_LOCATION:
         gst_uri_handler_set_uri(reinterpret_cast<GstURIHandler*>(src), g_value_get_string(value), 0);
         break;
@@ -355,9 +339,6 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
     switch (propID) {
-    case PROP_IRADIO_MODE:
-        g_value_set_boolean(value, priv->iradioMode);
-        break;
     case PROP_IRADIO_NAME:
         g_value_set_string(value, priv->iradioName);
         break;
@@ -507,8 +488,8 @@ static gboolean webKitWebSrcStart(WebKitWebSrc* src)
     }
     priv->offset = priv->requestedOffset;
 
-    if (priv->iradioMode)
-        request.setHTTPHeaderField("icy-metadata", "1");
+    // We always request Icecast/Shoutcast metadata, just in case ...
+    request.setHTTPHeaderField("icy-metadata", "1");
 
     // Needed to use DLNA streaming servers
     request.setHTTPHeaderField("transferMode.dlna", "Streaming");
