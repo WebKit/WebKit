@@ -106,13 +106,13 @@ IntRect ScrollView::actualVisibleContentRect() const
     return enclosingIntRect(r);
 }
 
-IntRect ScrollView::visibleExtentContentRect() const
+IntRect ScrollView::exposedContentRect() const
 {
     if (NSScrollView *view = static_cast<NSScrollView *>(platformWidget())) {
         CGRect r = CGRectZero;
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         if ([view isKindOfClass:[NSScrollView class]])
-            r = [view documentVisibleExtent];
+            r = [view exposedContentRect];
         else {
             r.origin = [view visibleRect].origin;
             r.size = [view bounds].size;
@@ -124,18 +124,18 @@ IntRect ScrollView::visibleExtentContentRect() const
 
     const ScrollView* parent = this->parent();
     if (!parent)
-        return m_visibleExtentContentRect;
+        return m_exposedContentRect;
 
-    IntRect parentViewExtentContentRect = parent->visibleExtentContentRect();
+    IntRect parentViewExtentContentRect = parent->exposedContentRect();
     IntRect selfExtentContentRect = rootViewToContents(parentViewExtentContentRect);
     selfExtentContentRect.intersect(boundsRect());
     return selfExtentContentRect;
 }
 
-void ScrollView::setVisibleExtentContentRect(const IntRect& rect)
+void ScrollView::setExposedContentRect(const IntRect& rect)
 {
     ASSERT(!platformWidget());
-    m_visibleExtentContentRect = rect;
+    m_exposedContentRect = rect;
 }
 
 void ScrollView::setActualScrollPosition(const IntPoint& position)

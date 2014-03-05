@@ -420,7 +420,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 
     if (GraphicsLayer* rootLayer = rootGraphicsLayer()) {
 #if PLATFORM(IOS)
-        rootLayer->flushCompositingState(frameView.visibleExtentContentRect());
+        rootLayer->flushCompositingState(frameView.exposedContentRect());
 #else
         // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
         IntRect visibleRect = m_clipLayer ? IntRect(IntPoint(), frameView.contentsSize()) : frameView.visibleContentRect();
@@ -518,7 +518,7 @@ void RenderLayerCompositor::didChangeVisibleRect()
     const FrameView& frameView = m_renderView.frameView();
 
 #if PLATFORM(IOS)
-    IntRect visibleRect = frameView.visibleExtentContentRect();
+    IntRect visibleRect = frameView.exposedContentRect();
 #else
     IntRect visibleRect = m_clipLayer ? IntRect(IntPoint(), frameView.contentsSize()) : frameView.visibleContentRect();
 #endif

@@ -1730,7 +1730,7 @@ void WebPage::applicationDidBecomeActive()
 void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
 {
     FloatRect exposedRect = visibleContentRectUpdateInfo.exposedRect();
-    m_drawingArea->setVisibleExtentContentRect(enclosingIntRect(exposedRect));
+    m_drawingArea->setExposedContentRect(enclosingIntRect(exposedRect));
 
     IntPoint scrollPosition = roundedIntPoint(visibleContentRectUpdateInfo.unobscuredRect().location());
 

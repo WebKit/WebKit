@@ -376,9 +376,9 @@ static BOOL scrollViewToPoint(WAKScrollView *scrollView, CGPoint point)
     return [_documentView convertRect:windowVisibleRect fromView:nil];
 }
 
-- (CGRect)documentVisibleExtent
+- (CGRect)exposedContentRect
 {
-    // Only called by WebCore::ScrollView::visibleExtentContentRect
+    // Only called by WebCore::ScrollView::exposedContentRect
     WAKView* view = self;
     while ((view = [view superview])) {
         if ([view isKindOfClass:[WAKScrollView class]])

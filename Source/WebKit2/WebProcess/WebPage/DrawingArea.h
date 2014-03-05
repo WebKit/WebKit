@@ -94,7 +94,7 @@ public:
     virtual void setCustomFixedPositionRect(const WebCore::FloatRect&) = 0;
 #endif
 #if PLATFORM(IOS)
-    virtual void setVisibleExtentContentRect(const WebCore::FloatRect&) = 0;
+    virtual void setExposedContentRect(const WebCore::FloatRect&) = 0;
 #endif
     virtual void mainFrameScrollabilityChanged(bool) { }
 

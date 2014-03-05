@@ -170,8 +170,8 @@ public:
     // This is the area that is not covered by UI elements.
     IntRect actualVisibleContentRect() const;
     // This is the area that is partially or fully exposed, and may extend under overlapping UI elements.
-    IntRect visibleExtentContentRect() const;
-    void setVisibleExtentContentRect(const IntRect&);
+    IntRect exposedContentRect() const;
+    void setExposedContentRect(const IntRect&);
 
     void setActualScrollPosition(const IntPoint&);
     TileCache* tileCache();
@@ -393,10 +393,10 @@ private:
     // whether it is safe to blit on scroll.
     bool m_canBlitOnScroll;
 
-    // FIXME: visibleExtentContentRect is a very similar concept to fixedVisibleContentRect except it does not differentiate
+    // FIXME: exposedContentRect is a very similar concept to fixedVisibleContentRect except it does not differentiate
     // between exposed rect and unobscuredRects. The two attributes should eventually be merged.
 #if PLATFORM(IOS)
-    IntRect m_visibleExtentContentRect;
+    IntRect m_exposedContentRect;
 #else
     IntRect m_fixedVisibleContentRect;
 #endif

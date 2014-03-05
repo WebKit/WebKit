@@ -1,3 +1,28 @@
+2014-03-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS] Rename the various VisibleExtent variations to exposedContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=129728
+
+        Reviewed by Simon Fraser.
+
+        Rename DocumentVisibleExtent and VisibleExtentContentRect to ExposedContentRect in a desperate
+        attempt to make things a tiny little bit less confusing.
+
+        The name is ExposedContentRect and not ExposedRect as that rect is exposed on ScrollView, while the
+        rect is in document coordinates (which does not make any difference on WebKit1...).
+
+        * WebCore.exp.in:
+        * platform/ScrollView.h:
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::exposedContentRect):
+        (WebCore::ScrollView::setExposedContentRect):
+        * platform/ios/wak/WAKScrollView.h:
+        * platform/ios/wak/WAKScrollView.mm:
+        (-[WAKScrollView exposedContentRect]):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::didChangeVisibleRect):
+
 2014-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         ObjC exception when dropping files into a WKView: drag and drop uses code from WebKit.framework

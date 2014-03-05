@@ -247,13 +247,13 @@ void RemoteLayerTreeDrawingArea::setExposedRect(const FloatRect& exposedRect)
 }
 
 #if PLATFORM(IOS)
-void RemoteLayerTreeDrawingArea::setVisibleExtentContentRect(const FloatRect& visibleExtentContentRect)
+void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedContentRect)
 {
     FrameView* frameView = m_webPage->corePage()->mainFrame().view();
     if (!frameView)
         return;
 
-    frameView->setVisibleExtentContentRect(enclosingIntRect(visibleExtentContentRect));
+    frameView->setExposedContentRect(enclosingIntRect(exposedContentRect));
     scheduleCompositingLayerFlush();
 }
 #endif
