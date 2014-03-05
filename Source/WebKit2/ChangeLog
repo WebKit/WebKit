@@ -1,5 +1,12 @@
 2014-03-04  Benjamin Poulain  <bpoulain@apple.com>
 
+        Fix the build after r165095
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+
+2014-03-04  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Account for the keyboard when computing the unobscuredRect
         https://bugs.webkit.org/show_bug.cgi?id=129660
 

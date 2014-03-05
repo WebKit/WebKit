@@ -556,7 +556,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView
 {
     _keyboardVerticalOverlap = [[UIPeripheralHost sharedInstance] getVerticalOverlapForView:self usingKeyboardInfo:keyboardInfo];
-    [self _updateVisibleContentRectsWithStableState:YES];
+    [self _updateVisibleContentRects];
 
     if (adjustScrollView)
         [_scrollView _adjustForAutomaticKeyboardInfo:keyboardInfo animated:YES lastAdjustment:&_lastAdjustmentForScroller];
