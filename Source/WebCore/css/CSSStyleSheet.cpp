@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2012, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@
 #include "CSSStyleRule.h"
 #include "CachedCSSStyleSheet.h"
 #include "Document.h"
+#include "DocumentStyleSheetCollection.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
@@ -125,12 +126,12 @@ CSSStyleSheet::~CSSStyleSheet()
     m_contents->unregisterClient(this);
 }
 
-void CSSStyleSheet::willMutateRules()
+CSSStyleSheet::WhetherContentsWereClonedForMutation CSSStyleSheet::willMutateRules()
 {
     // If we are the only client it is safe to mutate.
     if (m_contents->hasOneClient() && !m_contents->isInMemoryCache()) {
         m_contents->setMutable();
-        return;
+        return ContentsWereNotClonedForMutation;
     }
     // Only cacheable stylesheets should have multiple clients.
     ASSERT(m_contents->isCacheable());
@@ -144,9 +145,18 @@ void CSSStyleSheet::willMutateRules()
 
     // Any existing CSSOM wrappers need to be connected to the copied child rules.
     reattachChildRuleCSSOMWrappers();
+
+    return ContentsWereClonedForMutation;
 }
 
-void CSSStyleSheet::didMutateRules(RuleMutationType mutationType)
+void CSSStyleSheet::didMutateRuleFromCSSStyleDeclaration()
+{
+    ASSERT(m_contents->isMutable());
+    ASSERT(m_contents->hasOneClient());
+    didMutate();
+}
+
+void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContentsWereClonedForMutation contentsWereClonedForMutation)
 {
     ASSERT(m_contents->isMutable());
     ASSERT(m_contents->hasOneClient());
@@ -154,7 +164,13 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType)
     Document* owner = ownerDocument();
     if (!owner)
         return;
-    owner->styleResolverChanged(mutationType == InsertionIntoEmptySheet ? DeferRecalcStyleIfNeeded : DeferRecalcStyle);
+
+    if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !owner->styleSheetCollection()->activeStyleSheetsContains(this)) {
+        owner->scheduleOptimizedStyleSheetUpdate();
+        return;
+    }
+
+    owner->styleResolverChanged(DeferRecalcStyle);
 }
 
 void CSSStyleSheet::didMutate()
@@ -278,8 +294,7 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
         return 0;
     }
 
-    RuleMutationType mutationType = !length() ? InsertionIntoEmptySheet : OtherMutation;
-    RuleMutationScope mutationScope(this, mutationType);
+    RuleMutationScope mutationScope(this, RuleInsertion);
 
     bool success = m_contents->wrapperInsertRule(rule, index);
     if (!success) {
@@ -383,6 +398,29 @@ Document* CSSStyleSheet::ownerDocument() const
 void CSSStyleSheet::clearChildRuleCSSOMWrappers()
 {
     m_childRuleCSSOMWrappers.clear();
+}
+
+CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSStyleSheet* sheet, RuleMutationType mutationType)
+    : m_styleSheet(sheet)
+    , m_mutationType(mutationType)
+{
+    ASSERT(m_styleSheet);
+    m_contentsWereClonedForMutation = m_styleSheet->willMutateRules();
+}
+
+CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSRule* rule)
+    : m_styleSheet(rule ? rule->parentStyleSheet() : 0)
+    , m_mutationType(OtherMutation)
+    , m_contentsWereClonedForMutation(ContentsWereNotClonedForMutation)
+{
+    if (m_styleSheet)
+        m_contentsWereClonedForMutation = m_styleSheet->willMutateRules();
+}
+
+CSSStyleSheet::RuleMutationScope::~RuleMutationScope()
+{
+    if (m_styleSheet)
+        m_styleSheet->didMutateRules(m_mutationType, m_contentsWereClonedForMutation);
 }
 
 }
