@@ -1,3 +1,19 @@
+2014-03-04  Andreas Kling  <akling@apple.com>
+
+        Streamline JSValue::get().
+        <https://webkit.org/b/129720>
+
+        Fetch each Structure and VM only once when walking the prototype chain
+        in JSObject::getPropertySlot(), then pass it along to the functions
+        we call from there, so they don't have to re-fetch it.
+
+        Reviewed by Geoff Garen.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSObject::fastGetOwnPropertySlot):
+        (JSC::JSObject::getPropertySlot):
+
 2014-03-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG and FTL should specialize for and support CompareStrictEq over Misc (i.e. boolean, undefined, or null)
