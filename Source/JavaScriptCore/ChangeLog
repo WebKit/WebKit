@@ -1,3 +1,39 @@
+2014-03-06  Mark Lam  <mark.lam@apple.com>
+
+        Merge r164077, r164089: <rdar://problem/16136637>
+
+    2014-02-13  Mark Lam  <mark.lam@apple.com>
+
+            The JSContainerConvertor and ObjcContainerConvertor need to protect JSValueRefs. Part 2.
+            <https://webkit.org/b/128764>
+
+            Reviewed by Mark Hahnenberg.
+
+            toJS() is the wrong cast function to use. We need to use toJSForGC() instead.
+            Also we need to acquire the JSLock to prevent concurrent accesses to the
+            Strong handle list.
+
+            * API/JSValue.mm:
+            (JSContainerConvertor::add):
+            (containerValueToObject):
+            (ObjcContainerConvertor::add):
+            (objectToValue):
+
+    2014-02-13  Mark Lam  <mark.lam@apple.com>
+
+            The JSContainerConvertor and ObjcContainerConvertor need to protect JSValueRefs.
+            <https://webkit.org/b/128764>
+
+            Reviewed by Mark Hahnenberg.
+
+            Added a vector of Strong<Unknown> references in the 2 containers, and append
+            the newly created JSValues to those vectors. This will keep all those JS objects
+            alive for the duration of the conversion.
+
+            * API/JSValue.mm:
+            (JSContainerConvertor::add):
+            (ObjcContainerConvertor::add):
+
 2014-03-03  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.
