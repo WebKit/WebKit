@@ -29,8 +29,8 @@
 #ifndef PageConsole_h
 #define PageConsole_h
 
-#include <inspector/ConsoleTypes.h>
 #include <inspector/ScriptCallStack.h>
+#include <runtime/ConsoleClient.h>
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -42,27 +42,39 @@ namespace WebCore {
 
 class Document;
 class Page;
+class ScriptProfile;
+typedef Vector<RefPtr<ScriptProfile>> ProfilesArray;
 
-class PageConsole {
+class PageConsole final : public JSC::ConsoleClient {
 public:
-    PageConsole(Page&);
-    ~PageConsole();
-
-    static void printSourceURLAndPosition(const String& sourceURL, unsigned lineNumber, unsigned columnNumber = 0);
-    static void printMessageSourceAndLevelPrefix(MessageSource, MessageLevel, bool showAsTrace = false);
-
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack> = 0, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
-    void addMessage(MessageSource, MessageLevel, const String& message, PassRefPtr<Inspector::ScriptCallStack>);
-    void addMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = 0);
-
-    static void mute();
-    static void unmute();
+    explicit PageConsole(Page&);
+    virtual ~PageConsole();
 
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);
 
+    static void mute();
+    static void unmute();
+
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack> = nullptr, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
+    void addMessage(MessageSource, MessageLevel, const String& message, PassRefPtr<Inspector::ScriptCallStack>);
+    void addMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = nullptr);
+
+    const ProfilesArray& profiles() const { return m_profiles; }
+    void clearProfiles();
+
+protected:
+    virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>) override;
+    virtual void count(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>) override;
+    virtual void profile(JSC::ExecState*, const String& title) override;
+    virtual void profileEnd(JSC::ExecState*, const String& title) override;
+    virtual void time(JSC::ExecState*, const String& title) override;
+    virtual void timeEnd(JSC::ExecState*, const String& title) override;
+    virtual void timeStamp(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>) override;
+
 private:
     Page& m_page;
+    ProfilesArray m_profiles;
 };
 
 } // namespace WebCore

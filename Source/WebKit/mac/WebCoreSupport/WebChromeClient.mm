@@ -55,7 +55,6 @@
 #import <Foundation/Foundation.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/ColorChooser.h>
-#import <WebCore/Console.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Cursor.h>
@@ -95,7 +94,6 @@
 #endif
 
 #if PLATFORM(IOS)
-#import <WebCore/Console.h>
 #import <WebCore/WAKClipView.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThreadMessage.h>

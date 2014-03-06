@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2008, Google Inc. All rights reserved.
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -15,7 +15,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "GCController.h"
 #include "Page.h"
+#include "PageConsole.h"
 #include "PageGroup.h"
 #include <heap/StrongInlines.h>
 #include <runtime/JSLock.h>
@@ -56,9 +57,10 @@ ScriptCachedFrameData::ScriptCachedFrameData(Frame& frame)
     for (ScriptController::ShellMap::iterator iter = windowShells.begin(); iter != windowShellsEnd; ++iter) {
         JSDOMWindow* window = iter->value->window();
         m_windows.add(iter->key.get(), Strong<JSDOMWindow>(window->vm(), window));
+        window->setConsoleClient(nullptr);
     }
 
-    scriptController.attachDebugger(0);
+    scriptController.attachDebugger(nullptr);
 }
 
 ScriptCachedFrameData::~ScriptCachedFrameData()
@@ -70,6 +72,7 @@ void ScriptCachedFrameData::restore(Frame& frame)
 {
     JSLockHolder lock(JSDOMWindowBase::commonVM());
 
+    Page* page = frame.page();
     ScriptController& scriptController = frame.script();
     ScriptController::ShellMap& windowShells = scriptController.m_windowShells;
 
@@ -86,11 +89,14 @@ void ScriptCachedFrameData::restore(Frame& frame)
 
             windowShell->setWindow(domWindow);
 
-            if (Page* page = frame.page()) {
+            if (page) {
                 scriptController.attachDebugger(windowShell, page->debugger());
                 windowShell->window()->setProfileGroup(page->group().identifier());
             }
         }
+
+        if (page)
+            windowShell->window()->setConsoleClient(&page->console());
     }
 }
 

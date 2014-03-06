@@ -175,19 +175,6 @@ WEBKIT_DEPRECATED gboolean
 webkit_dom_bar_info_get_visible(void* self);
 
 /**
- * webkit_dom_console_get_memory:
- * @self: A #WebKitDOMConsole
- *
- * This functionality has been removed from WebKit, this function does nothing.
- *
- * Returns: (transfer none):
- *
- * Deprecated: 2.2
- */
-WEBKIT_DEPRECATED void*
-webkit_dom_console_get_memory(WebKitDOMConsole* self);
-
-/**
  * webkit_dom_css_style_declaration_get_property_css_value:
  * @self: A #WebKitDOMCSSStyleDeclaration
  * @propertyName: A #gchar

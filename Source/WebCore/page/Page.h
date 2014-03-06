@@ -50,10 +50,6 @@
 #include <wtf/SchedulePair.h>
 #endif
 
-#if PLATFORM(IOS)
-#include "Settings.h"
-#endif
-
 namespace JSC {
 class Debugger;
 }

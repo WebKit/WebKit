@@ -1,3 +1,119 @@
+2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Expose the console object in JSContexts to interact with Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=127944
+
+        Reviewed by Geoffrey Garen.
+
+        Always expose the Console object in JSContexts, just like we
+        do for web pages. The default behavior will route to an
+        attached JSContext inspector. This can be overriden by
+        setting the ConsoleClient on the JSGlobalObject, which WebCore
+        does to get slightly different behavior.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Update build systems.
+
+        * API/tests/testapi.js:
+        * API/tests/testapi.mm:
+        Test that "console" exists in C and ObjC contexts.
+
+        * runtime/ConsoleClient.cpp: Added.
+        (JSC::ConsoleClient::printURLAndPosition):
+        (JSC::ConsoleClient::printMessagePrefix):
+        (JSC::ConsoleClient::printConsoleMessage):
+        (JSC::ConsoleClient::printConsoleMessageWithArguments):
+        (JSC::ConsoleClient::internalMessageWithTypeAndLevel):
+        (JSC::ConsoleClient::logWithLevel):
+        (JSC::ConsoleClient::clear):
+        (JSC::ConsoleClient::dir):
+        (JSC::ConsoleClient::dirXML):
+        (JSC::ConsoleClient::table):
+        (JSC::ConsoleClient::trace):
+        (JSC::ConsoleClient::assertCondition):
+        (JSC::ConsoleClient::group):
+        (JSC::ConsoleClient::groupCollapsed):
+        (JSC::ConsoleClient::groupEnd):
+        * runtime/ConsoleClient.h: Added.
+        (JSC::ConsoleClient::~ConsoleClient):
+        New private interface for handling the console object's methods.
+        A lot of the methods funnel through messageWithTypeAndLevel.
+
+        * runtime/ConsoleTypes.h: Renamed from Source/JavaScriptCore/inspector/ConsoleTypes.h.
+        Moved to JSC namespace.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        Create the "console" object when initializing the environment.
+        Also set the default console client to be the JS context inspector.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::setConsoleClient):
+        (JSC::JSGlobalObject::consoleClient):
+        Ability to change the console client, so WebCore can set a custom client.
+
+        * runtime/ConsolePrototype.cpp: Added.
+        (JSC::ConsolePrototype::finishCreation):
+        (JSC::valueToStringWithUndefinedOrNullCheck):
+        (JSC::consoleLogWithLevel):
+        (JSC::consoleProtoFuncDebug):
+        (JSC::consoleProtoFuncError):
+        (JSC::consoleProtoFuncLog):
+        (JSC::consoleProtoFuncWarn):
+        (JSC::consoleProtoFuncClear):
+        (JSC::consoleProtoFuncDir):
+        (JSC::consoleProtoFuncDirXML):
+        (JSC::consoleProtoFuncTable):
+        (JSC::consoleProtoFuncTrace):
+        (JSC::consoleProtoFuncAssert):
+        (JSC::consoleProtoFuncCount):
+        (JSC::consoleProtoFuncProfile):
+        (JSC::consoleProtoFuncProfileEnd):
+        (JSC::consoleProtoFuncTime):
+        (JSC::consoleProtoFuncTimeEnd):
+        (JSC::consoleProtoFuncTimeStamp):
+        (JSC::consoleProtoFuncGroup):
+        (JSC::consoleProtoFuncGroupCollapsed):
+        (JSC::consoleProtoFuncGroupEnd):
+        * runtime/ConsolePrototype.h: Added.
+        (JSC::ConsolePrototype::create):
+        (JSC::ConsolePrototype::createStructure):
+        (JSC::ConsolePrototype::ConsolePrototype):
+        Define the console object interface. Parse out required / expected
+        arguments and throw expcetions when methods are misused.
+
+        * runtime/JSConsole.cpp: Added.
+        * runtime/JSConsole.h: Added.
+        (JSC::JSConsole::createStructure):
+        (JSC::JSConsole::create):
+        (JSC::JSConsole::JSConsole):
+        Empty "console" object. Everything is in the prototype.
+
+        * inspector/JSConsoleClient.cpp: Added.
+        (Inspector::JSConsoleClient::JSGlobalObjectConsole):
+        (Inspector::JSConsoleClient::count):
+        (Inspector::JSConsoleClient::profile):
+        (Inspector::JSConsoleClient::profileEnd):
+        (Inspector::JSConsoleClient::time):
+        (Inspector::JSConsoleClient::timeEnd):
+        (Inspector::JSConsoleClient::timeStamp):
+        (Inspector::JSConsoleClient::warnUnimplemented):
+        (Inspector::JSConsoleClient::internalAddMessage):
+        * inspector/JSConsoleClient.h: Added.
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::consoleClient):
+        * inspector/JSGlobalObjectInspectorController.h:
+        Default JSContext ConsoleClient implementation. Handle nearly
+        everything exception profile/profileEnd and timeStamp.
+
 2014-03-06  Andreas Kling  <akling@apple.com>
 
         Drop unlinked function code on memory pressure.

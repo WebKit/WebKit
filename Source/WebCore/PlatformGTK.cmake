@@ -617,7 +617,6 @@ list(APPEND GObjectDOMBindings_IDL_FILES
     loader/appcache/DOMApplicationCache.idl
 
     page/BarProp.idl
-    page/Console.idl
     page/DOMSecurityPolicy.idl
     page/DOMSelection.idl
     page/DOMWindow.idl

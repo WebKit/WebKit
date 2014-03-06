@@ -677,7 +677,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/icu/unicode/uversion.h \
 	Source/JavaScriptCore/inspector/ConsoleMessage.cpp \
 	Source/JavaScriptCore/inspector/ConsoleMessage.h \
-	Source/JavaScriptCore/inspector/ConsoleTypes.h \
 	Source/JavaScriptCore/inspector/ContentSearchUtilities.cpp \
 	Source/JavaScriptCore/inspector/ContentSearchUtilities.h \
 	Source/JavaScriptCore/inspector/IdentifiersFactory.cpp \
@@ -942,6 +941,11 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/CodeCache.h \
 	Source/JavaScriptCore/runtime/CodeSpecializationKind.cpp \
 	Source/JavaScriptCore/runtime/CodeSpecializationKind.h \
+	Source/JavaScriptCore/runtime/ConsoleClient.cpp \
+	Source/JavaScriptCore/runtime/ConsoleClient.h \
+	Source/JavaScriptCore/runtime/ConsolePrototype.cpp \
+	Source/JavaScriptCore/runtime/ConsolePrototype.h \
+	Source/JavaScriptCore/runtime/ConsoleTypes.h \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.cpp \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.h \
 	Source/JavaScriptCore/runtime/CommonSlowPathsExceptions.cpp \
@@ -1035,6 +1039,8 @@ javascriptcore_sources += \
     Source/JavaScriptCore/runtime/JSArrayIterator.h \
 	Source/JavaScriptCore/runtime/JSCell.cpp \
 	Source/JavaScriptCore/runtime/JSCell.h \
+	Source/JavaScriptCore/runtime/JSConsole.cpp \
+	Source/JavaScriptCore/runtime/JSConsole.h \
 	Source/JavaScriptCore/runtime/JSDataView.cpp \
 	Source/JavaScriptCore/runtime/JSDataView.h \
 	Source/JavaScriptCore/runtime/JSDataViewPrototype.cpp \

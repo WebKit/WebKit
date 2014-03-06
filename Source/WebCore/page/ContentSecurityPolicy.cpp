@@ -27,7 +27,6 @@
 #include "config.h"
 #include "ContentSecurityPolicy.h"
 
-#include "Console.h"
 #include "DOMStringList.h"
 #include "Document.h"
 #include "FormData.h"

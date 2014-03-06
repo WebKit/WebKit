@@ -32,7 +32,7 @@
 #include "SecurityContext.h"
 #include "Supplementable.h"
 #include "URL.h"
-#include <inspector/ConsoleTypes.h>
+#include <runtime/ConsoleTypes.h>
 #include <wtf/HashSet.h>
 
 namespace JSC {

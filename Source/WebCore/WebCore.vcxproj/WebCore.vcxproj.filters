@@ -669,9 +669,6 @@
     <ClCompile Include="..\page\animation\CompositeAnimation.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\Console.cpp">
-      <Filter>page</Filter>
-    </ClCompile>
     <ClCompile Include="..\page\ContentSecurityPolicy.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -5227,9 +5224,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCompositionEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSConsole.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCoordinates.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -7458,9 +7452,6 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\animation\CompositeAnimation.h">
-      <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\Console.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\ContentSecurityPolicy.h">
@@ -12071,9 +12062,6 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\ConsoleMessage.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\inspector\ConsoleTypes.h">
-      <Filter>ForwardingHeaders\inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\inspector\IdentifiersFactory.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
@@ -12477,6 +12465,9 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\Completion.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\runtime\ConsoleTypes.h">
+      <Filter>ForwardingHeaders\runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\runtime\ConstructData.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
@@ -12744,6 +12735,9 @@
     <ClInclude Include="..\page\OriginAccessEntry.h">
       <Filter>page</Filter>
     </ClInclude>
+    <ClInclude Include="..\page\PageConsole.h">
+      <Filter>page</Filter>
+    </ClInclude>
     <ClInclude Include="..\page\PageGroup.h">
       <Filter>page</Filter>
     </ClInclude>
@@ -12974,9 +12968,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCompositionEvent.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSConsole.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCoordinates.h">

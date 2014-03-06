@@ -54,6 +54,7 @@ namespace JSC {
 
 class ArrayPrototype;
 class BooleanPrototype;
+class ConsoleClient;
 class Debugger;
 class ErrorConstructor;
 class ErrorPrototype;
@@ -203,6 +204,7 @@ protected:
     WriteBarrier<Structure> m_privateNameStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
     WriteBarrier<Structure> m_regExpStructure;
+    WriteBarrier<Structure> m_consoleStructure;
     WriteBarrier<Structure> m_internalFunctionStructure;
     
     WriteBarrier<Structure> m_iteratorResultStructure;
@@ -252,6 +254,7 @@ protected:
     bool m_evalEnabled;
     String m_evalDisabledErrorMessage;
     bool m_experimentsEnabled;
+    ConsoleClient* m_consoleClient;
 
     static JS_EXPORTDATA const GlobalObjectMethodTable s_globalObjectMethodTable;
     const GlobalObjectMethodTable* m_globalObjectMethodTable;
@@ -438,6 +441,9 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::JSGlobalObjectInspectorController& inspectorController() const { return *m_inspectorController.get(); }
 #endif
+
+    JS_EXPORT_PRIVATE void setConsoleClient(ConsoleClient* consoleClient) { m_consoleClient = consoleClient; }
+    ConsoleClient* consoleClient() const { return m_consoleClient; }
 
     void setName(const String&);
     const String& name() const { return m_name; }

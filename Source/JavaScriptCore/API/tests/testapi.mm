@@ -763,6 +763,14 @@ void testObjectiveCAPI()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
+        JSValue *result = [context evaluateScript:@"String(console)"];
+        checkResult(@"String(console)", [result isEqualToObject:@"[object Console]"]);
+        result = [context evaluateScript:@"typeof console.log"];
+        checkResult(@"typeof console.log", [result isEqualToObject:@"function"]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
         TestObject* testObject = [TestObject testObject];
         context[@"testObject"] = testObject;
         JSValue *result = [context evaluateScript:@"String(testObject)"];

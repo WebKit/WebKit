@@ -26,7 +26,7 @@
 #ifndef ConsoleTypes_h
 #define ConsoleTypes_h
 
-namespace Inspector {
+namespace JSC {
 
 enum class MessageSource {
     XML,
@@ -64,11 +64,10 @@ enum class MessageLevel {
     Debug = 4,
 };
 
-} // namespace Inspector
+} // namespace JSC
 
-// These will likely move out of the inspector namespace.
-using Inspector::MessageSource;
-using Inspector::MessageType;
-using Inspector::MessageLevel;
+using JSC::MessageSource;
+using JSC::MessageType;
+using JSC::MessageLevel;
 
 #endif // ConsoleTypes_h

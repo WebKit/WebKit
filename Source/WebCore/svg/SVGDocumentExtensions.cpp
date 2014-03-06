@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGDocumentExtensions.h"
 
-#include "Console.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "EventListener.h"

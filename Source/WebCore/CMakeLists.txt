@@ -545,7 +545,6 @@ set(WebCore_IDL_FILES
     loader/appcache/DOMApplicationCache.idl
 
     page/BarProp.idl
-    page/Console.idl
     page/Crypto.idl
     page/DOMSecurityPolicy.idl
     page/DOMSelection.idl
@@ -1692,7 +1691,6 @@ set(WebCore_SOURCES
     page/BarProp.cpp
     page/CaptionUserPreferences.cpp
     page/Chrome.cpp
-    page/Console.cpp
     page/ContentSecurityPolicy.cpp
     page/ContextMenuContext.cpp
     page/ContextMenuController.cpp

@@ -31,7 +31,7 @@
 #define CommandLineAPIHost_h
 
 #include "ScriptState.h"
-#include <inspector/ConsoleTypes.h>
+#include <runtime/ConsoleTypes.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

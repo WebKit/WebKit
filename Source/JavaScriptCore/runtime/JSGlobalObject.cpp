@@ -41,6 +41,7 @@
 #include "BooleanPrototype.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
+#include "ConsolePrototype.h"
 #include "DateConstructor.h"
 #include "DatePrototype.h"
 #include "Debugger.h"
@@ -64,6 +65,7 @@
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
+#include "JSConsole.h"
 #include "JSDataView.h"
 #include "JSDataViewPrototype.h"
 #include "JSFunction.h"
@@ -165,6 +167,8 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_varInjectionWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_evalEnabled(true)
+    , m_experimentsEnabled(false)
+    , m_consoleClient(nullptr)
     , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
 {
 }
@@ -206,6 +210,7 @@ void JSGlobalObject::init(JSObject* thisValue)
     m_inspectorDebuggable = std::make_unique<JSGlobalObjectDebuggable>(*this);
     m_inspectorDebuggable->init();
     m_inspectorDebuggable->setRemoteDebuggingAllowed(true);
+    m_consoleClient = m_inspectorController->consoleClient();
 #endif
 
     reset(prototype());
@@ -458,6 +463,11 @@ void JSGlobalObject::reset(JSValue prototype)
     m_specialPointers[Special::ObjectConstructor] = objectConstructor;
     m_specialPointers[Special::ArrayConstructor] = arrayConstructor;
 
+    ConsolePrototype* consolePrototype = ConsolePrototype::create(vm, this, ConsolePrototype::createStructure(vm, this, m_objectPrototype.get()));
+    m_consoleStructure.set(vm, this, JSConsole::createStructure(vm, this, consolePrototype));
+    JSConsole* consoleObject = JSConsole::create(vm, m_consoleStructure.get());
+    putDirectWithoutTransition(vm, Identifier(exec, "console"), consoleObject, DontEnum);
+
     if (m_experimentsEnabled) {
         NamePrototype* privateNamePrototype = NamePrototype::create(exec, NamePrototype::createStructure(vm, this, m_objectPrototype.get()));
         m_privateNameStructure.set(vm, this, NameInstance::createStructure(vm, this, privateNamePrototype));
@@ -666,6 +676,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_privateNameStructure);
     visitor.append(&thisObject->m_regExpMatchesArrayStructure);
     visitor.append(&thisObject->m_regExpStructure);
+    visitor.append(&thisObject->m_consoleStructure);
     visitor.append(&thisObject->m_internalFunctionStructure);
 
 #if ENABLE(PROMISES)

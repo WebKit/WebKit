@@ -33,7 +33,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "CommandLineAPIHost.h"
-#include "Console.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
@@ -45,10 +44,10 @@
 #include "WebInjectedScriptManager.h"
 #include "WorkerScriptDebugServer.h"
 #include <bindings/ScriptObject.h>
-#include <inspector/ConsoleTypes.h>
 #include <inspector/InjectedScript.h>
 #include <inspector/InspectorValues.h>
 #include <inspector/agents/InspectorConsoleAgent.h>
+#include <runtime/ConsoleTypes.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/StringConcatenate.h>
 

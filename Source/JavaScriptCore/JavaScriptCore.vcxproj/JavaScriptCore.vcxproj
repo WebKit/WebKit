@@ -600,6 +600,8 @@
     <ClCompile Include="..\runtime\CommonSlowPathsExceptions.cpp" />
     <ClCompile Include="..\runtime\CompilationResult.cpp" />
     <ClCompile Include="..\runtime\Completion.cpp" />
+    <ClCompile Include="..\runtime\ConsoleClient.cpp" />
+    <ClCompile Include="..\runtime\ConsolePrototype.cpp" />
     <ClCompile Include="..\runtime\ConstructData.cpp" />
     <ClCompile Include="..\runtime\DataView.cpp" />
     <ClCompile Include="..\runtime\DateConstructor.cpp" />
@@ -636,6 +638,7 @@
     <ClCompile Include="..\runtime\JSBoundFunction.cpp" />
     <ClCompile Include="..\runtime\JSCJSValue.cpp" />
     <ClCompile Include="..\runtime\JSCell.cpp" />
+    <ClCompile Include="..\runtime\JSConsole.cpp" />
     <ClCompile Include="..\runtime\JSDataView.cpp" />
     <ClCompile Include="..\runtime\JSDataViewPrototype.cpp" />
     <ClCompile Include="..\runtime\JSDateMath.cpp" />
@@ -1087,7 +1090,6 @@
     <ClInclude Include="..\heap\WriteBarrierBuffer.h" />
     <ClInclude Include="..\heap\WriteBarrierSupport.h" />
     <ClInclude Include="..\inspector\ConsoleMessage.h" />
-    <ClInclude Include="..\inspector\ConsoleTypes.h" />
     <ClInclude Include="..\inspector\ContentSearchUtilities.h" />
     <ClInclude Include="..\inspector\IdentifiersFactory.h" />
     <ClInclude Include="..\inspector\InjectedScript.h" />
@@ -1241,6 +1243,9 @@
     <ClInclude Include="..\runtime\CommonSlowPathsExceptions.h" />
     <ClInclude Include="..\runtime\CompilationResult.h" />
     <ClInclude Include="..\runtime\Completion.h" />
+    <ClInclude Include="..\runtime\ConsoleClient.h" />
+    <ClInclude Include="..\runtime\ConsolePrototype.h" />
+    <ClInclude Include="..\runtime\ConsoleTypes.h" />
     <ClInclude Include="..\runtime\ConstantMode.h" />
     <ClInclude Include="..\runtime\ConstructData.h" />
     <ClInclude Include="..\runtime\DataView.h" />
@@ -1292,6 +1297,7 @@
     <ClInclude Include="..\runtime\JSCJSValue.h" />
     <ClInclude Include="..\runtime\JSCJSValueInlines.h" />
     <ClInclude Include="..\runtime\JSCell.h" />
+    <ClInclude Include="..\runtime\JSConsole.h" />
     <ClInclude Include="..\runtime\JSDataView.h" />
     <ClInclude Include="..\runtime\JSDataViewPrototype.h" />
     <ClInclude Include="..\runtime\JSDateMath.h" />

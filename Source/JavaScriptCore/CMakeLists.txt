@@ -352,6 +352,8 @@ set(JavaScriptCore_SOURCES
     runtime/CommonSlowPathsExceptions.cpp
     runtime/CompilationResult.cpp
     runtime/Completion.cpp
+    runtime/ConsoleClient.cpp
+    runtime/ConsolePrototype.cpp
     runtime/ConstructData.cpp
     runtime/DataView.cpp
     runtime/DataView.h
@@ -389,6 +391,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSBoundFunction.cpp
     runtime/JSCJSValue.cpp
     runtime/JSCell.cpp
+    runtime/JSConsole.cpp
     runtime/JSDataView.cpp
     runtime/JSDataViewPrototype.cpp
     runtime/JSDateMath.cpp

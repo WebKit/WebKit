@@ -30,7 +30,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "CommandLineAPIHost.h"
-#include "Console.h"
 #include "DOMWindow.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"

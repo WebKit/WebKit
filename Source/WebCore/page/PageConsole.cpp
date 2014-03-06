@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,25 +36,20 @@
 #include "InspectorConsoleInstrumentation.h"
 #include "InspectorController.h"
 #include "JSMainThreadExecState.h"
+#include "MainFrame.h"
 #include "Page.h"
+#include "ScriptProfile.h"
+#include "ScriptProfiler.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <bindings/ScriptValue.h>
-#include <inspector/ConsoleTypes.h>
 #include <inspector/ScriptArguments.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
-#include <stdio.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
 using namespace Inspector;
 
 namespace WebCore {
-
-namespace {
-    int muteCount = 0;
-}
 
 PageConsole::PageConsole(Page& page)
     : m_page(page)
@@ -65,82 +60,28 @@ PageConsole::~PageConsole()
 {
 }
 
-void PageConsole::printSourceURLAndPosition(const String& sourceURL, unsigned lineNumber, unsigned columnNumber)
+static int muteCount = 0;
+static bool printExceptions = false;
+
+bool PageConsole::shouldPrintExceptions()
 {
-    if (!sourceURL.isEmpty()) {
-        if (lineNumber > 0 && columnNumber > 0)
-            printf("%s:%u:%u", sourceURL.utf8().data(), lineNumber, columnNumber);
-        else if (lineNumber > 0)
-            printf("%s:%u", sourceURL.utf8().data(), lineNumber);
-        else
-            printf("%s", sourceURL.utf8().data());
-    }
+    return printExceptions;
 }
 
-void PageConsole::printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel level, bool showAsTrace)
+void PageConsole::setShouldPrintExceptions(bool print)
 {
-    const char* sourceString;
-    switch (source) {
-    case MessageSource::XML:
-        sourceString = "XML";
-        break;
-    case MessageSource::JS:
-        sourceString = "JS";
-        break;
-    case MessageSource::Network:
-        sourceString = "NETWORK";
-        break;
-    case MessageSource::ConsoleAPI:
-        sourceString = "CONSOLE";
-        break;
-    case MessageSource::Storage:
-        sourceString = "STORAGE";
-        break;
-    case MessageSource::AppCache:
-        sourceString = "APPCACHE";
-        break;
-    case MessageSource::Rendering:
-        sourceString = "RENDERING";
-        break;
-    case MessageSource::CSS:
-        sourceString = "CSS";
-        break;
-    case MessageSource::Security:
-        sourceString = "SECURITY";
-        break;
-    case MessageSource::Other:
-        sourceString = "OTHER";
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        sourceString = "UNKNOWN";
-        break;
-    }
+    printExceptions = print;
+}
 
-    const char* levelString;
-    switch (level) {
-    case MessageLevel::Debug:
-        levelString = "DEBUG";
-        break;
-    case MessageLevel::Log:
-        levelString = "LOG";
-        break;
-    case MessageLevel::Warning:
-        levelString = "WARN";
-        break;
-    case MessageLevel::Error:
-        levelString = "ERROR";
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        levelString = "UNKNOWN";
-        break;
-    }
+void PageConsole::mute()
+{
+    muteCount++;
+}
 
-    if (showAsTrace)
-        levelString = "TRACE";
-
-    printf("%s %s:", sourceString, levelString);
+void PageConsole::unmute()
+{
+    ASSERT(muteCount > 0);
+    muteCount--;
 }
 
 void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier, Document* document)
@@ -193,38 +134,88 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     if (!m_page.settings().logsPageMessagesToSystemConsoleEnabled() && !shouldPrintExceptions())
         return;
 
-    printSourceURLAndPosition(url, lineNumber, columnNumber);
-
-    printf(": ");
-
-    printMessageSourceAndLevelPrefix(source, level);
-
-    printf(" %s\n", message.utf8().data());
+    ConsoleClient::printConsoleMessage(MessageSource::ConsoleAPI, MessageType::Log, level, message, url, lineNumber, columnNumber);
 }
 
-// static
-void PageConsole::mute()
+
+void PageConsole::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, PassRefPtr<Inspector::ScriptArguments> prpArguments)
 {
-    muteCount++;
+    RefPtr<ScriptArguments> arguments = prpArguments;
+
+    String message;
+    bool gotMessage = arguments->getFirstArgumentAsString(message);
+    InspectorInstrumentation::addMessageToConsole(&m_page, MessageSource::ConsoleAPI, type, level, message, exec, arguments);
+
+    if (m_page.settings().privateBrowsingEnabled())
+        return;
+
+    if (gotMessage) {
+        size_t stackSize = type == MessageType::Trace ? ScriptCallStack::maxCallStackSizeToCapture : 1;
+        RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, stackSize));
+        const ScriptCallFrame& lastCaller = callStack->at(0);
+        m_page.chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, type, level, message, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
+    }
+
+    if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || PageConsole::shouldPrintExceptions())
+        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, arguments.release());
 }
 
-// static
-void PageConsole::unmute()
+void PageConsole::count(JSC::ExecState* exec, PassRefPtr<ScriptArguments> arguments)
 {
-    ASSERT(muteCount > 0);
-    muteCount--;
+    InspectorInstrumentation::consoleCount(&m_page, exec, arguments);
 }
 
-static bool printExceptions = false;
-
-bool PageConsole::shouldPrintExceptions()
+void PageConsole::profile(JSC::ExecState* exec, const String& title)
 {
-    return printExceptions;
+    // FIXME: log a console message when profiling is disabled.
+    if (!InspectorInstrumentation::profilerEnabled(&m_page))
+        return;
+
+    // If no title is given, build the next user initiated profile title.
+    String resolvedTitle = title;
+    if (title.isNull())
+        resolvedTitle = InspectorInstrumentation::getCurrentUserInitiatedProfileName(&m_page, true);
+
+    ScriptProfiler::start(exec, resolvedTitle);
+
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
+    const ScriptCallFrame& lastCaller = callStack->at(0);
+    InspectorInstrumentation::addStartProfilingMessageToConsole(&m_page, resolvedTitle, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
 }
 
-void PageConsole::setShouldPrintExceptions(bool print)
+void PageConsole::profileEnd(JSC::ExecState* exec, const String& title)
 {
-    printExceptions = print;
+    if (!InspectorInstrumentation::profilerEnabled(&m_page))
+        return;
+
+    RefPtr<ScriptProfile> profile = ScriptProfiler::stop(exec, title);
+    if (!profile)
+        return;
+
+    m_profiles.append(profile);
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
+    InspectorInstrumentation::addProfile(&m_page, profile, callStack);
+}
+
+void PageConsole::time(JSC::ExecState*, const String& title)
+{
+    InspectorInstrumentation::startConsoleTiming(&m_page.mainFrame(), title);
+}
+
+void PageConsole::timeEnd(JSC::ExecState* exec, const String& title)
+{
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
+    InspectorInstrumentation::stopConsoleTiming(&m_page.mainFrame(), title, callStack.release());
+}
+
+void PageConsole::timeStamp(JSC::ExecState*, PassRefPtr<ScriptArguments> arguments)
+{
+    InspectorInstrumentation::consoleTimeStamp(&m_page.mainFrame(), arguments);
+}
+
+void PageConsole::clearProfiles()
+{
+    m_profiles.clear();
 }
 
 } // namespace WebCore

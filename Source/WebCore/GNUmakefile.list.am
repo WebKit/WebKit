@@ -111,8 +111,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSComment.h \
 	DerivedSources/WebCore/JSCompositionEvent.cpp \
 	DerivedSources/WebCore/JSCompositionEvent.h \
-	DerivedSources/WebCore/JSConsole.cpp \
-	DerivedSources/WebCore/JSConsole.h \
 	DerivedSources/WebCore/JSConvolverNode.cpp \
 	DerivedSources/WebCore/JSConvolverNode.h \
 	DerivedSources/WebCore/JSCoordinates.cpp \
@@ -1556,7 +1554,6 @@ dom_binding_idls += \
 	$(WebCore)/inspector/ScriptProfileNode.idl \
 	$(WebCore)/loader/appcache/DOMApplicationCache.idl \
 	$(WebCore)/page/BarProp.idl \
-	$(WebCore)/page/Console.idl \
 	$(WebCore)/page/Crypto.idl \
 	$(WebCore)/page/DOMSecurityPolicy.idl \
 	$(WebCore)/page/DOMSelection.idl \
@@ -4041,8 +4038,6 @@ webcore_sources += \
 	Source/WebCore/page/Chrome.cpp \
 	Source/WebCore/page/Chrome.h \
 	Source/WebCore/page/ChromeClient.h \
-	Source/WebCore/page/Console.cpp \
-	Source/WebCore/page/Console.h \
 	Source/WebCore/page/ContentSecurityPolicy.cpp \
 	Source/WebCore/page/ContentSecurityPolicy.h \
 	Source/WebCore/page/ContextMenuClient.h \

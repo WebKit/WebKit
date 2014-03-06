@@ -169,8 +169,6 @@
     readonly attribute long orientation;
 #endif
 
-    [Replaceable] readonly attribute Console console;
-
     // cross-document messaging
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [DoNotCheckSecurity, Custom, RaisesException] void postMessage(SerializedScriptValue message, DOMString targetOrigin, optional Array messagePorts);

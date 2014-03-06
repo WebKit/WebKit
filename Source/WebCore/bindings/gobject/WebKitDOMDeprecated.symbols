@@ -12,7 +12,6 @@ WebKitDOMNodeList* webkit_dom_webkit_named_flow_get_content_nodes(WebKitDOMWebKi
 WebKitDOMNodeList* webkit_dom_webkit_named_flow_get_regions_by_content_node(WebKitDOMWebKitNamedFlow*, WebKitDOMNode*)
 GType webkit_dom_bar_info_get_type(void)
 gboolean webkit_dom_bar_info_get_visible(void*)
-void* webkit_dom_console_get_memory(WebKitDOMConsole*)
 WebKitDOMCSSValue* webkit_dom_css_style_declaration_get_property_css_value(WebKitDOMCSSStyleDeclaration*, const gchar*)
 gboolean webkit_dom_document_get_webkit_hidden(WebKitDOMDocument*)
 gchar* webkit_dom_document_get_webkit_visibility_state(WebKitDOMDocument*)

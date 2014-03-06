@@ -34,8 +34,10 @@
 #include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSMainThreadExecState.h"
+#include "MainFrame.h"
 #include "NP_jsobject.h"
 #include "Page.h"
+#include "PageConsole.h"
 #include "PageGroup.h"
 #include "PluginView.h"
 #include "ScriptSourceCode.h"
@@ -186,8 +188,16 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
         if (&windowShell->window()->impl() == newDOMWindow)
             continue;
 
-        // Clear the debugger from the current window before setting the new window.
-        attachDebugger(windowShell, 0);
+        // Clear the debugger and console from the current window before setting the new window.
+        attachDebugger(windowShell, nullptr);
+        windowShell->window()->setConsoleClient(nullptr);
+
+        // FIXME: We should clear console profiles for each frame as soon as the frame is destroyed.
+        // Instead of clearing all of them when the main frame is destroyed.
+        if (m_frame.isMainFrame()) {
+            if (Page* page = m_frame.page())
+                page->console().clearProfiles();
+        }
 
         windowShell->window()->willRemoveFromWindowShell();
         windowShell->setWindow(newDOMWindow);
@@ -200,6 +210,7 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
         if (Page* page = m_frame.page()) {
             attachDebugger(windowShell, page->debugger());
             windowShell->window()->setProfileGroup(page->group().identifier());
+            windowShell->window()->setConsoleClient(&page->console());
         }
     }
 
@@ -225,6 +236,7 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld& world)
     if (Page* page = m_frame.page()) {
         attachDebugger(windowShell, page->debugger());
         windowShell->window()->setProfileGroup(page->group().identifier());
+        windowShell->window()->setConsoleClient(&page->console());
     }
 
     m_frame.loader().dispatchDidClearWindowObjectInWorld(world);

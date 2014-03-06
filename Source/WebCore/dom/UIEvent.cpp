@@ -23,7 +23,6 @@
 #include "config.h"
 #include "UIEvent.h"
 
-#include "Console.h"
 #include "Node.h"
 
 namespace WebCore {

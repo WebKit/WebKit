@@ -1,3 +1,13 @@
+2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Expose the console object in JSContexts to interact with Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=127944
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Update namespaces.
+
 2014-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Close the page when the view is disposed instead of when finalized

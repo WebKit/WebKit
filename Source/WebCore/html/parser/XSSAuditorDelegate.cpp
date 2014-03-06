@@ -26,8 +26,6 @@
 #include "config.h"
 #include "XSSAuditorDelegate.h"
 
-#include "Console.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FormData.h"

@@ -13,8 +13,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMCharacterDataPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMComment.cpp \
 	DerivedSources/webkitdom/WebKitDOMCommentPrivate.h \
-	DerivedSources/webkitdom/WebKitDOMConsole.cpp \
-	DerivedSources/webkitdom/WebKitDOMConsolePrivate.h \
 	DerivedSources/webkitdom/WebKitDOMCSSRule.cpp \
 	DerivedSources/webkitdom/WebKitDOMCSSRuleList.cpp \
 	DerivedSources/webkitdom/WebKitDOMCSSRuleListPrivate.h \
@@ -398,7 +396,6 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMValidityState.h \
 	DerivedSources/webkitdom/WebKitDOMDOMApplicationCache.h \
 	DerivedSources/webkitdom/WebKitDOMBarProp.h \
-	DerivedSources/webkitdom/WebKitDOMConsole.h \
 	DerivedSources/webkitdom/WebKitDOMCustom.h \
 	DerivedSources/webkitdom/WebKitDOMDeprecated.h \
 	DerivedSources/webkitdom/WebKitDOMDOMWindowCSS.h \

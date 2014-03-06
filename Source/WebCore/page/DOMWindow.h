@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef DOMWindow_h
@@ -43,7 +43,6 @@ namespace WebCore {
     class BarProp;
     class CSSRuleList;
     class CSSStyleDeclaration;
-    class Console;
     class Crypto;
     class DOMApplicationCache;
     class DOMSelection;
@@ -230,9 +229,8 @@ namespace WebCore {
         double devicePixelRatio() const;
 
         PassRefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
-        PassRefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;        
+        PassRefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
 
-        Console* console() const;
         PageConsole* pageConsole() const;
 
         void printErrorMessage(const String&);
@@ -473,7 +471,6 @@ namespace WebCore {
         mutable RefPtr<BarProp> m_scrollbars;
         mutable RefPtr<BarProp> m_statusbar;
         mutable RefPtr<BarProp> m_toolbar;
-        mutable RefPtr<Console> m_console;
         mutable RefPtr<Navigator> m_navigator;
         mutable RefPtr<Location> m_location;
         mutable RefPtr<StyleMedia> m_media;
@@ -513,7 +510,7 @@ namespace WebCore {
     inline String DOMWindow::defaultStatus() const
     {
         return m_defaultStatus;
-    } 
+    }
 
 } // namespace WebCore
 

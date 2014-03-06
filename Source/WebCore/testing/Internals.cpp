@@ -36,7 +36,6 @@
 #include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
-#include "Console.h"
 #include "ContentDistributor.h"
 #include "Cursor.h"
 #include "DOMStringList.h"
@@ -74,6 +73,7 @@
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
 #include "Page.h"
+#include "PageConsole.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "Range.h"
@@ -1447,7 +1447,7 @@ unsigned Internals::countMatchesForText(const String& text, unsigned findOptions
 
 const ProfilesArray& Internals::consoleProfiles() const
 {
-    return contextDocument()->domWindow()->console()->profiles();
+    return contextDocument()->page()->console().profiles();
 }
 
 unsigned Internals::numberOfLiveNodes() const

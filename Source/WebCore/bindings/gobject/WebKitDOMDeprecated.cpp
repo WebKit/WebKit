@@ -151,14 +151,6 @@ gboolean webkit_dom_bar_info_get_visible(void*)
     return FALSE;
 }
 
-// WebKitDOMConsole
-
-void* webkit_dom_console_get_memory(WebKitDOMConsole*)
-{
-    g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
-    return 0;
-}
-
 // WebKitDOMCSSStyleDeclaration
 
 WebKitDOMCSSValue* webkit_dom_css_style_declaration_get_property_css_value(WebKitDOMCSSStyleDeclaration*, const gchar*)

@@ -1,3 +1,12 @@
+2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Expose the console object in JSContexts to interact with Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=127944
+
+        Reviewed by Geoffrey Garen.
+
+        * http/tests/security/cross-frame-access-getOwnPropertyDescriptor-expected.txt:
+
 2014-03-06  Brendan Long  <b.long@cablelabs.com>
 
         Implement VideoTrackList.selectedIndex

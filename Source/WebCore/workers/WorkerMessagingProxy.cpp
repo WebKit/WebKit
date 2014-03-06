@@ -46,9 +46,9 @@
 #include "Worker.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerInspectorController.h"
-#include <inspector/ConsoleTypes.h>
 #include <inspector/InspectorAgentBase.h>
 #include <inspector/ScriptCallStack.h>
+#include <runtime/ConsoleTypes.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

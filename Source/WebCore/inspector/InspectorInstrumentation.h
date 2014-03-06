@@ -43,7 +43,7 @@
 #include "ScriptState.h"
 #include "StorageArea.h"
 #include "WebSocketFrame.h"
-#include <inspector/ConsoleTypes.h>
+#include <runtime/ConsoleTypes.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(WEB_REPLAY)

@@ -30,8 +30,8 @@
 
 #include "InspectorJSBackendDispatchers.h"
 #include "InspectorJSFrontendDispatchers.h"
-#include "inspector/ConsoleTypes.h"
 #include "inspector/InspectorAgentBase.h"
+#include "runtime/ConsoleTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>

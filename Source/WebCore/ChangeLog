@@ -1,3 +1,95 @@
+2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Expose the console object in JSContexts to interact with Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=127944
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * ForwardingHeaders/runtime/ConsoleClient.h: Added.
+        * ForwardingHeaders/runtime/ConsoleTypes.h: Renamed from Source/WebCore/ForwardingHeaders/inspector/ConsoleTypes.h.
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/gobject/GNUmakefile.am:
+        Update build systems.
+
+        * page/Console.cpp: Removed.
+        * page/Console.h: Removed.
+        * page/Console.idl: Removed.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::~DOMWindow):
+        (WebCore::DOMWindow::resetDOMWindowProperties):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::defaultStatus):
+        * page/DOMWindow.idl:
+        Removed the old IDL generated Console object on window.
+
+        * page/PageConsole.cpp:
+        (WebCore::PageConsole::shouldPrintExceptions):
+        (WebCore::PageConsole::setShouldPrintExceptions):
+        (WebCore::PageConsole::mute):
+        (WebCore::PageConsole::unmute):
+        (WebCore::PageConsole::messageWithTypeAndLevel):
+        (WebCore::PageConsole::count):
+        (WebCore::PageConsole::profile):
+        (WebCore::PageConsole::profileEnd):
+        (WebCore::PageConsole::time):
+        (WebCore::PageConsole::timeEnd):
+        (WebCore::PageConsole::timeStamp):
+        (WebCore::PageConsole::group):
+        (WebCore::PageConsole::groupCollapsed):
+        (WebCore::PageConsole::groupEnd):
+        (WebCore::PageConsole::clearProfiles):
+        * page/PageConsole.h:
+        Move the handling of Console object into PageConsole.
+
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::initScript):
+        Set the PageConsole as the ConsoleClient of the JSGlobalObject
+        so that WebCore may handle console messages directly. For instance
+        it may pass messages on to the ChromeClient.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::consoleProfiles):
+        To access profiles, go through PageConsole now instead of Console.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/objc/WebScriptObject.mm:
+        * css/MediaList.cpp:
+        * dom/ScriptExecutionContext.h:
+        * dom/UIEvent.cpp:
+        * dom/ViewportArguments.cpp:
+        * html/parser/XSSAuditorDelegate.cpp:
+        * inspector/CommandLineAPIHost.h:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        * inspector/WebConsoleAgent.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/MixedContentChecker.cpp:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        * loader/cache/CachedResourceLoader.cpp:
+        * page/ChromeClient.h:
+        * page/ContentSecurityPolicy.cpp:
+        * page/Page.cpp:
+        * page/Page.h:
+        * svg/SVGDocumentExtensions.cpp:
+        * workers/WorkerMessagingProxy.cpp:
+        * workers/WorkerReportingProxy.h:
+        Update includes.
+
 2014-03-06  Zsolt Borbely  <borbezs@inf.u-szeged.hu>
 
         Fix the !ENABLE(CSS_STICKY_POSITION) build
