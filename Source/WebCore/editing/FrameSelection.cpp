@@ -1705,11 +1705,14 @@ bool FrameSelection::isInPasswordField() const
 void FrameSelection::focusedOrActiveStateChanged()
 {
     bool activeAndFocused = isFocusedAndActive();
+    RefPtr<Document> document = m_frame->document();
+
+    document->updateStyleIfNeeded();
 
     // Because RenderObject::selectionBackgroundColor() and
     // RenderObject::selectionForegroundColor() check if the frame is active,
     // we have to update places those colors were painted.
-    if (RenderView* view = m_frame->document()->renderView())
+    if (RenderView* view = document->renderView())
         view->repaintSelection();
 
     // Caret appears in the active frame.
@@ -1723,7 +1726,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     // Because StyleResolver::checkOneSelector() and
     // RenderTheme::isFocused() check if the frame is active, we have to
     // update style and theme state that depended on those.
-    if (Element* element = m_frame->document()->focusedElement()) {
+    if (Element* element = document->focusedElement()) {
         element->setNeedsStyleRecalc();
         if (RenderObject* renderer = element->renderer())
             if (renderer && renderer->style()->hasAppearance())
@@ -1936,6 +1939,10 @@ bool FrameSelection::shouldDeleteSelection(const VisibleSelection& selection) co
 
 FloatRect FrameSelection::bounds(bool clipToVisibleContent) const
 {
+    if (!m_frame->document())
+        return LayoutRect();
+
+    m_frame->document()->updateStyleIfNeeded();
     RenderView* root = m_frame->contentRenderer();
     FrameView* view = m_frame->view();
     if (!root || !view)
