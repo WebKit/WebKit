@@ -1,5 +1,49 @@
 2014-03-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Clarify how we deal with "special" registers
+        https://bugs.webkit.org/show_bug.cgi?id=129806
+
+        Reviewed by Michael Saboff.
+        
+        Previously we had two different places that defined what "stack" registers are, a thing
+        called "specialRegisters" that had unclear meaning, and a really weird "firstRealRegister"/
+        "secondRealRegister"/"nextRegister" idiom in MacroAssembler that appeared to only be used by
+        one place and had a baked-in notion of what it meant for a register to be "real" or not.
+        
+        It's not cool to use words like "real" and "special" to describe registers, especially if you
+        fail to qualify what that means. This originally made sense on X86 - "real" registers were
+        the ones that weren't "stack related" (so "real" was the opposite of "stack"). But on ARM64,
+        you also have to worry about the LR register, which we'd want to say is "not real" but it's
+        also not a "stack" register. This got super confusing.
+        
+        So, this patch removes any mention of "real" registers, consolidates the knowledge of what is
+        a "stack" register, and uses the word special only in places where it's clearly defined and
+        where no better word comes to mind.
+        
+        This cleans up the code and fixes what seems like it was probably a harmless ARM64 bug: the
+        Reg and RegisterSet data structures would sometimes think that FP was Q0. Somehow this
+        magically didn't break anything because you never need to save/restore either FP or Q0, but
+        it was still super weird.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::lastRegister):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::nextRegister):
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::restoreInto):
+        * ftl/FTLSaveRestore.cpp:
+        (JSC::FTL::saveAllRegisters):
+        (JSC::FTL::restoreAllRegisters):
+        * ftl/FTLSlowPathCall.cpp:
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::reservedHardwareRegisters):
+        (JSC::RegisterSet::runtimeRegisters):
+        (JSC::RegisterSet::specialRegisters):
+        (JSC::RegisterSet::calleeSaveRegisters):
+        * jit/RegisterSet.h:
+
+2014-03-06  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix build.
 
         * disassembler/ARM64Disassembler.cpp:
