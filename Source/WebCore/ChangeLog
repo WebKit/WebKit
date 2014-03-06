@@ -1,3 +1,13 @@
+2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Leak: dispatch_semaphore leak allocated in MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange
+        https://bugs.webkit.org/show_bug.cgi?id=129792
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC):
+
 2014-03-06  Brendan Long  <b.long@cablelabs.com>
 
         Implement VideoTrackList.selectedIndex

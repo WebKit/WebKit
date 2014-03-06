@@ -351,6 +351,8 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     [m_videoOutputDelegate setCallback:0];
     [m_videoOutput setDelegate:nil queue:0];
+    if (m_videoOutputSemaphore)
+        dispatch_release(m_videoOutputSemaphore);
 #endif
     cancelLoad();
 }
