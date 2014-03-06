@@ -1,3 +1,9 @@
+2014-03-05  Jae Hyun Park  <jaepark@webkit.org>
+
+        Unreviewed. Update my email in contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-03-05  Dean Jackson  <dino@apple.com>
 
         [WebGL] Use WKSI to see what the system policy for WebGL is
