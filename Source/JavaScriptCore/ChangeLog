@@ -1,3 +1,12 @@
+2014-03-06  Julien Brianceau  <jbriance@cisco.com>
+
+        Build fix: add missing include in JSConole.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=129833
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSConsole.cpp:
+
 2014-03-06  Oliver Hunt  <oliver@apple.com>
 
         Fix ARMv7

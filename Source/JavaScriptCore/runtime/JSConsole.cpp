@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+
+#include "JSCJSValueInlines.h"
 #include "JSConsole.h"
 
 namespace JSC {
