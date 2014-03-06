@@ -985,6 +985,12 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             return loadPolicy;
         }
 
+        virtual void setSystemWebGLLoadPolicy(WebPageProxy* page, WebCore::WebGLLoadPolicy policy) const override
+        {
+            if (m_client.setSystemWebGLLoadPolicy)
+                m_client.setSystemWebGLLoadPolicy(toAPI(page), toAPI(policy), m_client.base.clientInfo);
+        }
+
 #endif // ENABLE(WEBGL)
     };
 

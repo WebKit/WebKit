@@ -1125,6 +1125,10 @@ private:
     double m_pageScaleWithoutThumbnailScale;
     WebCore::IntPoint m_scrollPositionIgnoringThumbnailScale;
     double m_thumbnailScale;
+
+#if ENABLE(WEBGL)
+    WebCore::WebGLLoadPolicy m_systemWebGLPolicy;
+#endif
 };
 
 } // namespace WebKit

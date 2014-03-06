@@ -99,6 +99,7 @@ public:
 #if ENABLE(WEBGL)
     virtual WebCore::WebGLLoadPolicy webGLLoadPolicy(WebKit::WebPageProxy*, const WTF::String&) const { return WebCore::WebGLLoadPolicy::WebGLAllowCreation; }
     virtual WebCore::WebGLLoadPolicy resolveWebGLLoadPolicy(WebKit::WebPageProxy*, const WTF::String&) const { return WebCore::WebGLLoadPolicy::WebGLAllowCreation; }
+    virtual void setSystemWebGLLoadPolicy(WebKit::WebPageProxy*, WebCore::WebGLLoadPolicy) const { }
 #endif // ENABLE(WEBGL)
 };
 

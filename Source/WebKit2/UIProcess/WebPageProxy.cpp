@@ -2753,6 +2753,11 @@ void WebPageProxy::resolveWebGLPolicyForURL(const String& url, uint32_t& loadPol
 {
     loadPolicy = static_cast<uint32_t>(m_loaderClient->resolveWebGLLoadPolicy(this, url));
 }
+
+void WebPageProxy::setSystemWebGLPolicy(uint32_t loadPolicy)
+{
+    m_loaderClient->setSystemWebGLLoadPolicy(this, static_cast<WebCore::WebGLLoadPolicy>(loadPolicy));
+}
 #endif // ENABLE(WEBGL)
 
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)

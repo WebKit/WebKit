@@ -1,3 +1,40 @@
+2014-03-05  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Use WKSI to see what the system policy for WebGL is
+        https://bugs.webkit.org/show_bug.cgi?id=129722
+        <rdar://problem/15790542>
+
+        Reviewed by Tim Horton.
+
+        Use the WebKitSystemInterface methods WKShouldBlockWebGL
+        and WKShouldSuggestBlockingWebGL to query what the host
+        system thinks about the hardware. Tell the client about
+        the result in a new WebPage method setSystemWebGLPolicy.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::setSystemWebGLLoadPolicy): New empty definition.
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI): Convert a WebGLLoadPolicy into a WKWebGLLoadPolicy.
+        * UIProcess/API/C/WKPage.cpp: Call setSystemWebGLLoadPolicy.
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/C/WKPageLoaderClient.h: New typedef and entry in client structure.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setSystemWebGLPolicy):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Add SetSystemWebGLPolicy.
+        * Source/WebKit2/Configurations/WebKit2.xcconfig: We have to link against OpenGL now, because WKSI
+        uses it for hardware detection.
+        * WebProcess/WebPage/WebPage.cpp: Remove the implementation here, but leave
+        empty methods for non-Apple platforms.
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::webGLPolicyForURL):
+        (WebKit::WebPage::resolveWebGLPolicyForURL):
+        * WebProcess/WebPage/WebPage.h: Add m_systemWebGLPolicy.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::webGLPolicyForURL): Moved in from WebPage, but now they call
+        into WKSI and send the result to the client if necessary.
+        (WebKit::WebPage::resolveWebGLPolicyForURL):
+
 2014-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix a stupid error in r165118 that caused userVisibleString()

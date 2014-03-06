@@ -487,6 +487,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         pluginLoadPolicy, // pluginLoadPolicy
         0, // webGLLoadPolicy
         0, // resolveWebGLLoadPolicy
+        0, // setSystemWebGLLoadPolicy
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient.base);
 
