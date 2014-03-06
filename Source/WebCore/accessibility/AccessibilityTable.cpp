@@ -178,7 +178,7 @@ bool AccessibilityTable::isDataTable() const
             if (!cell)
                 continue;
             Node* cellNode = cell->node();
-            if (!cellNode)
+            if (!cellNode || !cellNode->isElementNode())
                 continue;
             
             if (cell->width() < 1 || cell->height() < 1)
@@ -186,7 +186,7 @@ bool AccessibilityTable::isDataTable() const
             
             validCellCount++;
             
-            HTMLTableCellElement* cellElement = static_cast<HTMLTableCellElement*>(cellNode);
+            Element* cellElement = toElement(cellNode);
             
             bool isTHCell = cellElement->hasTagName(thTag);
             // If the first row is comprised of all <th> tags, assume it is a data table.
@@ -198,9 +198,13 @@ bool AccessibilityTable::isDataTable() const
                 headersInFirstColumnCount++;
             
             // in this case, the developer explicitly assigned a "data" table attribute
-            if (!cellElement->headers().isEmpty() || !cellElement->abbr().isEmpty()
-                || !cellElement->axis().isEmpty() || !cellElement->scope().isEmpty())
-                return true;
+            if (cellElement->hasTagName(tdTag) || cellElement->hasTagName(thTag)) {
+                HTMLTableCellElement* tableCellElement = static_cast<HTMLTableCellElement*>(cellNode);
+
+                if (!tableCellElement->headers().isEmpty() || !tableCellElement->abbr().isEmpty()
+                    || !tableCellElement->axis().isEmpty() || !tableCellElement->scope().isEmpty())
+                    return true;
+            }
             
             RenderStyle* renderStyle = cell->style();
             if (!renderStyle)
